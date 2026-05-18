@@ -30,8 +30,10 @@ Expected specialist roles:
 
 A milestone is done only when:
 
+- Acceptance criteria are written clearly enough to review.
 - The code or lab infrastructure works against its acceptance criteria.
 - The result has been verified with the smallest meaningful test.
+- Hardware-dependent claims have completed the pre-hardware review, single-board hardware test, and post-hardware evidence review loop.
 - The roadmap status is updated.
 - Relevant architecture, hardware, ADR, or runbook docs are updated.
 - Remaining risks are documented.

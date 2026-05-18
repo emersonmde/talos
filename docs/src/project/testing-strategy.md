@@ -68,11 +68,30 @@ The physical lab is the source of truth for the talos-rpi5-bcm2712 target.
 - Do not write ignored tests for hardware that QEMU cannot run. Prefer pure tests plus physical diagnostics.
 - Every hardware milestone needs a diagnostic command or serial-observable result.
 - Every boot attempt that changes direction should record the archive digest, power-cycle time, serial result, and classification.
+- Only one physical Pi 5 test may run at a time. The lab board is a shared serial hardware resource, so hardware runs must use a durable test lock or queue.
+- Code must pass review before it is sent to the physical Pi 5. Hardware time should be spent on plausible candidates, not unreviewed work.
+- Hardware results must be reviewed after the run. Serial logs, boot classification, and lab-controller metadata are part of the task evidence, and the implementation may need another coding iteration before acceptance.
+- A task is accepted only when its stated acceptance criteria pass at the required validation level and the evidence is recorded.
 - Treat flaky timing tests as bugs in the test design until proven otherwise.
 - Keep QEMU tests deterministic where possible.
 - Add property-style or fuzz-style host tests for path normalization, packet parsing, and descriptor-table lifetime rules once those modules exist.
 - Add negative QEMU tests for bad syscalls, deliberate faults, allocator exhaustion, interrupt masking, and bad user pointers.
 - Keep persistent lab boot-attempt artifacts for regressions: boot archive digest, timestamps, serial tail, and classification.
+
+## Hardware Test Flow
+
+Physical Pi 5 testing follows a controlled acceptance loop:
+
+1. Define acceptance criteria for the task before requesting hardware time.
+2. Complete implementation and local validation at the smallest meaningful non-hardware level.
+3. Run a focused code review and resolve blocking findings.
+4. Acquire the hardware test lock, publish the boot artifact, power-cycle the board, and capture serial/lab-controller evidence.
+5. Release the hardware test lock even if the test fails.
+6. Review the hardware evidence against the acceptance criteria.
+7. Iterate if the evidence shows a code, assumptions, or test-design issue.
+8. Accept the task only after the post-hardware review finds the criteria satisfied at the required validation level.
+
+Failed hardware tests are useful evidence, not automatic blockers. Record the failure mode, classify it, and decide whether the next step is another implementation iteration, a better diagnostic, a lab-controller fix, or a hold for Matthew input.
 
 ## Validation Gates
 
