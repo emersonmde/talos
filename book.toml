@@ -1,0 +1,5 @@
+[book]
+title = "Talos Project Documentation"
+authors = ["Matthew Emerson", "Seldon"]
+language = "en"
+src = "docs/src"
