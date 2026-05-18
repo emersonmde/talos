@@ -60,6 +60,8 @@ The first target is QEMU virt, not Raspberry Pi 5 emulation. Pi 5 hardware valid
 - Added scripts/qemu-runner.sh for cargo run / cargo test and
   scripts/qemu-smoke.sh for a clear boot-log smoke gate.
 - Updated README and architecture docs with exact commands and layout notes.
+- Added an aligned EL1 exception vector table and early exception diagnostics
+  that print ESR_EL1, ELR_EL1, FAR_EL1, and the vector class before halting.
 
 ## Evidence
 
@@ -82,6 +84,24 @@ Command results:
 - ./scripts/qemu-smoke.sh: passed on system QEMU 7.2.22.
 - cargo -Zjson-target-spec test: passed; QEMU ran 1 no_std smoke test.
 - mdbook build: passed and rebuilt book/.
+
+Follow-up supervisor verification after adding exception-vector diagnostics:
+
+~~~bash
+cargo fmt --check
+cargo -Zjson-target-spec build
+./scripts/qemu-smoke.sh
+cargo -Zjson-target-spec test
+mdbook build
+~~~
+
+Command results:
+
+- cargo fmt --check: passed.
+- cargo -Zjson-target-spec build: passed.
+- ./scripts/qemu-smoke.sh: passed with the same boot banner and PASS marker.
+- cargo -Zjson-target-spec test: passed; QEMU ran 1 no_std smoke test.
+- mdbook build: passed.
 
 QEMU serial evidence:
 
@@ -109,11 +129,12 @@ Target and linker assumptions:
 
 Phase 1.1/1.2 scaffold is complete for QEMU virt. The repository now has a
 buildable no_std Rust kernel, target split, linker layout, boot assembly, serial
-hello path, semihosting QEMU exit, and a working custom no_std test runner.
+hello path, semihosting QEMU exit, a working custom no_std test runner, and
+early EL1 exception diagnostics.
 
 ## Follow-up
 
 - Replace the Pi 5 target stub with the real firmware handoff path once serial
   hardware is available through the lab controller.
-- Add exception vectors before MMU and deliberate-fault diagnostics.
+- Add deliberate-fault diagnostics now that the vector table exists.
 - Add an allocator using the reserved linker heap once Phase 3 begins.

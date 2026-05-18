@@ -1,5 +1,7 @@
 use core::arch::asm;
 
+pub mod exceptions;
+
 pub fn current_el() -> u8 {
     let el: u64;
     unsafe {
@@ -8,7 +10,6 @@ pub fn current_el() -> u8 {
     ((el >> 2) & 0b11) as u8
 }
 
-#[cfg(not(test))]
 pub fn halt() -> ! {
     loop {
         unsafe {

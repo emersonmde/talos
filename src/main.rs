@@ -16,6 +16,7 @@ use boot::BootInfo;
 pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
     let boot_info = BootInfo::from_aarch64_x0(dtb_pa);
     target::init(&boot_info);
+    arch::aarch64::exceptions::init();
 
     #[cfg(test)]
     {

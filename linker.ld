@@ -13,6 +13,10 @@ SECTIONS
         KEEP(*(.text.boot))
     }
 
+    .vectors : ALIGN(2K) {
+        KEEP(*(.vectors))
+    }
+
     .text : ALIGN(4K) {
         *(.text .text.*)
     }
