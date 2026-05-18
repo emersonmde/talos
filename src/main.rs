@@ -6,6 +6,8 @@
 
 mod arch;
 mod boot;
+mod device_tree;
+mod mmio;
 mod target;
 
 use core::panic::PanicInfo;
@@ -43,9 +45,21 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
         boot_info.exception_level,
         boot_info.target.name()
     );
-    println!("talos: hello from qemu virt");
+    let services = target::services(boot_info);
+    println!(
+        "target-services: uart={} timer={} irq={} dtb={:#018x?}",
+        services.uart.name(),
+        services.timer.name(),
+        services.interrupt_controller.name(),
+        services.device_tree.physical_address()
+    );
+    println!("mmio-regions: {}", services.mmio_map.regions().len());
+    println!("talos: hello from {}", boot_info.target.name());
     println!("talos: qemu smoke PASS");
-    target::qemu::exit_success();
+    match boot_info.target {
+        target::TargetKind::QemuVirt => target::qemu::exit_success(),
+        target::TargetKind::Rpi5Bcm2712 => arch::aarch64::halt(),
+    }
 }
 
 #[panic_handler]
@@ -89,4 +103,20 @@ fn test_runner(tests: &[&dyn Testable]) {
 #[test_case]
 fn smoke_test_runs() {
     assert_eq!(2 + 2, 4);
+}
+
+#[cfg(test)]
+#[test_case]
+fn target_services_include_qemu_console() {
+    let boot_info = BootInfo::from_aarch64_x0(0x4000_0000);
+    let services = target::services(&boot_info);
+
+    assert_eq!(services.uart, target::UartKind::Pl011);
+    assert_eq!(services.uart.name(), "pl011");
+    assert_eq!(services.timer.name(), "arm-generic");
+    assert_eq!(services.interrupt_controller.name(), "gic-v2");
+    assert_eq!(services.mmio_map.regions().len(), 1);
+    assert!(services.device_tree.physical_address().is_some());
+    assert_eq!(services.device_tree.physical_address(), Some(0x4000_0000));
+    assert_eq!(boot_info.target.name(), "talos-aarch64-virt");
 }

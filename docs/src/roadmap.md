@@ -23,11 +23,15 @@ Completed:
 - TFTP boot archive publishing and PoE control API are documented.
 - Minimal Rust no_std AArch64 kernel skeleton created for QEMU virt.
 - Pi 5 target definition and target boundary stubs created.
+- Early target service descriptors added for boot info, UART kind, timer kind,
+  interrupt-controller kind, MMIO map, and device tree pointer.
 
 Blocked or pending:
 
 - Physical serial cable installation. Until serial is configured, Talos cannot complete autonomous boot-result classification.
 - Physical Pi 5 first-light implementation is pending serial/lab feedback.
+- Pi 5 service descriptors are build-checked stubs until serial hardware
+  evidence confirms the real firmware handoff and UART path.
 
 ## Roadmap Principles
 
@@ -117,8 +121,8 @@ Milestone 1.3: Early Architecture Boundaries
 
 Acceptance criteria:
 
-- QEMU virt implements enough target operations for boot and test output.
-- Pi 5 target has explicit stubs or early implementations with documented unknowns.
+- QEMU virt implements enough target operations for boot and test output. [done: QEMU test gate]
+- Pi 5 target has explicit stubs or early implementations with documented unknowns. [done: build gate, pending hardware evidence]
 
 ## Phase 2: Raspberry Pi 5 First Light
 

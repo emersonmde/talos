@@ -14,7 +14,19 @@ impl BootInfo {
             dtb_pa,
             primary_core: 0,
             exception_level: arch::aarch64::current_el(),
-            target: TargetKind::QemuVirt,
+            target: active_target(),
         }
+    }
+}
+
+const fn active_target() -> TargetKind {
+    #[cfg(talos_target_rpi5_bcm2712)]
+    {
+        TargetKind::Rpi5Bcm2712
+    }
+
+    #[cfg(not(talos_target_rpi5_bcm2712))]
+    {
+        TargetKind::QemuVirt
     }
 }

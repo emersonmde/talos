@@ -8,6 +8,14 @@ fn main() {
     println!("cargo:rerun-if-changed=linker.ld");
 
     let target = env::var("TARGET").expect("TARGET is set by Cargo");
+    println!("cargo:rustc-check-cfg=cfg(talos_target_qemu_virt)");
+    println!("cargo:rustc-check-cfg=cfg(talos_target_rpi5_bcm2712)");
+    if target.contains("rpi5") || target.contains("bcm2712") {
+        println!("cargo:rustc-cfg=talos_target_rpi5_bcm2712");
+    } else {
+        println!("cargo:rustc-cfg=talos_target_qemu_virt");
+    }
+
     if !target.starts_with("aarch64") {
         return;
     }

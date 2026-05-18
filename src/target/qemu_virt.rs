@@ -1,5 +1,12 @@
 use core::{arch::asm, fmt};
 
+use crate::{
+    boot::BootInfo,
+    device_tree::DeviceTree,
+    mmio::{MmioMap, MmioRegion},
+    target::{InterruptControllerKind, TargetServices, TimerKind, UartKind},
+};
+
 const PL011_BASE: usize = 0x0900_0000;
 const UART_FR: usize = 0x18;
 const UART_IBRD: usize = 0x24;
@@ -10,6 +17,8 @@ const UART_IMSC: usize = 0x38;
 const UART_ICR: usize = 0x44;
 
 const UART_FR_TXFF: u32 = 1 << 5;
+
+const MMIO_REGIONS: &[MmioRegion] = &[MmioRegion::new("qemu-virt-pl011-uart0", PL011_BASE, 0x1000)];
 
 #[derive(Clone, Copy)]
 pub struct Pl011 {
@@ -81,4 +90,14 @@ pub fn init() {
 
 pub fn console() -> Pl011 {
     Pl011::new(PL011_BASE)
+}
+
+pub fn services(boot_info: &BootInfo) -> TargetServices {
+    TargetServices {
+        uart: UartKind::Pl011,
+        timer: TimerKind::ArmGeneric,
+        interrupt_controller: InterruptControllerKind::GicV2,
+        mmio_map: MmioMap::new(MMIO_REGIONS),
+        device_tree: DeviceTree::from_physical_address(boot_info.dtb_pa),
+    }
 }

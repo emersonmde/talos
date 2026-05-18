@@ -8,8 +8,15 @@ flow, panic output, and pure no_std tests. It is not a Raspberry Pi 5 emulator.
 
 - talos-aarch64-virt uses QEMU virt, Cortex-A76, and the PL011 UART at
   0x0900_0000.
-- talos-rpi5-bcm2712 has a target JSON and Rust target stub, but no board MMIO
-  assumptions yet.
+- talos-rpi5-bcm2712 has a target JSON, Rust target stub, and early service
+  descriptors for build-time architecture boundaries.
+
+Early target service descriptors now expose the narrow facts boot code needs:
+UART kind, timer kind, interrupt-controller kind, MMIO regions, and the
+firmware/QEMU-provided device-tree pointer. QEMU virt reports its PL011 UART and
+GICv2-style interrupt controller. The Pi 5 target reports firmware-preserved
+serial and early BCM2712/GIC regions as stubs; those values are not accepted as
+hardware-validated until the lab serial loop confirms them.
 
 The AArch64 entry path preserves the firmware/QEMU x0 value in BootInfo::dtb_pa.
 For QEMU this may be zero or a generated DTB pointer. For the Pi 5 target it will
@@ -45,6 +52,7 @@ inspection.
 cargo +nightly -Zjson-target-spec -Zbuild-std=core,compiler_builtins -Zbuild-std-features=compiler-builtins-mem build
 ./scripts/qemu-smoke.sh
 cargo -Zjson-target-spec test
+cargo -Zjson-target-spec build --target targets/aarch64-talos-rpi5-bcm2712.json
 mdbook build
 ~~~
 

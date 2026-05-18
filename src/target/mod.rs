@@ -1,4 +1,4 @@
-use crate::boot::BootInfo;
+use crate::{boot::BootInfo, device_tree::DeviceTree, mmio::MmioMap};
 
 pub mod qemu;
 pub mod qemu_virt;
@@ -6,18 +6,75 @@ pub mod rpi5;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum TargetKind {
+    #[allow(dead_code)]
     QemuVirt,
     #[allow(dead_code)]
     Rpi5Bcm2712,
 }
 
 impl TargetKind {
-    #[cfg(not(test))]
     pub const fn name(self) -> &'static str {
         match self {
             Self::QemuVirt => "talos-aarch64-virt",
             Self::Rpi5Bcm2712 => "talos-rpi5-bcm2712",
         }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum UartKind {
+    Pl011,
+    FirmwarePreserved,
+}
+
+impl UartKind {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::Pl011 => "pl011",
+            Self::FirmwarePreserved => "firmware-preserved",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum TimerKind {
+    ArmGeneric,
+}
+
+impl TimerKind {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::ArmGeneric => "arm-generic",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum InterruptControllerKind {
+    GicV2,
+}
+
+impl InterruptControllerKind {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::GicV2 => "gic-v2",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct TargetServices {
+    pub uart: UartKind,
+    pub timer: TimerKind,
+    pub interrupt_controller: InterruptControllerKind,
+    pub mmio_map: MmioMap,
+    pub device_tree: DeviceTree,
+}
+
+pub fn services(boot_info: &BootInfo) -> TargetServices {
+    match boot_info.target {
+        TargetKind::QemuVirt => qemu_virt::services(boot_info),
+        TargetKind::Rpi5Bcm2712 => rpi5::services(boot_info),
     }
 }
 
