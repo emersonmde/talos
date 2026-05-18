@@ -91,7 +91,7 @@ Physical Pi 5 testing follows a controlled acceptance loop:
 7. Iterate if the evidence shows a code, assumptions, or test-design issue.
 8. Accept the task only after the post-hardware review finds the criteria satisfied at the required validation level.
 
-Failed hardware tests are useful evidence, not automatic blockers. Record the failure mode, classify it, and decide whether the next step is another implementation iteration, a better diagnostic, a lab-controller fix, or a hold for Matthew input.
+Failed hardware tests are useful evidence, not automatic blockers. Record the failure mode, classify it, and decide whether the next step is another implementation iteration, a better diagnostic, a lab-controller fix, or a blocked state with the specific unblock requirement.
 
 ## Validation Gates
 
