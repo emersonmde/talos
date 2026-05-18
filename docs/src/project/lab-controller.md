@@ -230,6 +230,27 @@ For early kernel bring-up:
 
 This hybrid TFTP-boot/SD-root setup is good for changing boot files without rebuilding a full OS image.
 
+Talos now has local staging scripts for the first Talos boot archive candidate:
+
+```bash
+./scripts/rpi5-image.sh
+./scripts/rpi5-boot-tree.sh /path/to/pi-firmware-boot-source target/rpi5-boot-tree
+tar -C target/rpi5-boot-tree -czf target/talos-rpi5-boot.tar.gz .
+```
+
+The source directory must contain at least:
+
+```text
+config.txt
+cmdline.txt
+bcm2712-rpi-5-b.dtb
+```
+
+The staging script builds Talos as `kernel_2712.img` and copies only a narrow
+set of firmware files needed for early boot. It intentionally does not upload,
+power-cycle, or claim hardware success. Publishing remains a controlled hardware
+test step after acceptance criteria and review.
+
 Later, if Talos needs reproducible userspace, add a generated root filesystem path such as NFS root, iSCSI root, or a generated SD/image root. That future step must explicitly provision:
 
 - `matthew` user.

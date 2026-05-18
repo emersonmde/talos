@@ -25,6 +25,8 @@ Completed:
 - Pi 5 target definition and target boundary stubs created.
 - Early target service descriptors added for boot info, UART kind, timer kind,
   interrupt-controller kind, MMIO map, and device tree pointer.
+- Pi 5 kernel image and boot-tree staging scripts added for local archive
+  preparation.
 
 Blocked or pending:
 
@@ -139,7 +141,7 @@ Milestone 2.1: Firmware Handoff and Firmware-Preserved Serial
 
 Acceptance criteria:
 
-- The lab can publish the Talos boot archive.
+- The lab can publish the Talos boot archive. [local staging tool exists; publish not yet run]
 - Power cycle reaches Talos code on the Pi 5.
 - Serial output includes a version string, exception level, core ID, and panic path.
 - A failed boot can be rolled back.
