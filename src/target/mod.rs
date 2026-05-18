@@ -89,9 +89,19 @@ pub mod console {
     use core::fmt::{self, Write};
 
     pub fn _print(args: fmt::Arguments<'_>) {
-        crate::target::qemu_virt::console()
+        console()
             .write_fmt(args)
             .expect("serial console write failed");
+    }
+
+    #[cfg(talos_target_rpi5_bcm2712)]
+    fn console() -> impl Write {
+        crate::target::rpi5::firmware_console()
+    }
+
+    #[cfg(not(talos_target_rpi5_bcm2712))]
+    fn console() -> impl Write {
+        crate::target::qemu_virt::console()
     }
 }
 

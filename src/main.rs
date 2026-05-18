@@ -8,6 +8,7 @@ mod arch;
 mod boot;
 mod device_tree;
 mod mmio;
+mod pl011;
 mod target;
 
 use core::panic::PanicInfo;
@@ -119,4 +120,10 @@ fn target_services_include_qemu_console() {
     assert!(services.device_tree.physical_address().is_some());
     assert_eq!(services.device_tree.physical_address(), Some(0x4000_0000));
     assert_eq!(boot_info.target.name(), "talos-aarch64-virt");
+}
+
+#[cfg(test)]
+#[test_case]
+fn pi5_uart10_address_matches_bcm2712_soc_range() {
+    assert_eq!(target::rpi5::UART10_BASE, 0x10_7d00_1000);
 }

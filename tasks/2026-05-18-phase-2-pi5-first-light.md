@@ -40,6 +40,11 @@ Required validation level:
 - Added local Pi 5 image generation and boot-tree staging scripts.
 - Documented the staging flow in the lab-controller notes.
 - Marked the Phase 2.1 archive-publish criterion as having local staging support, with publish still intentionally not run.
+- Split QEMU and Pi 5 console selection so the Pi 5 build no longer writes
+  diagnostics to QEMU's PL011 address.
+- Added an early Pi 5 firmware-preserved PL011 console path at physical
+  `0x10_7d00_1000`, derived from Raspberry Pi Linux `bcm2712.dtsi`
+  `soc@107c000000` ranges plus `uart10: serial@7d001000`.
 
 ## Evidence
 
@@ -62,8 +67,9 @@ Results:
 - Pi 5 image generation produced `target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712.img`.
 - Synthetic boot-tree staging produced the required archive-root files: `config.txt`, `cmdline.txt`, `bcm2712-rpi-5-b.dtb`, and `kernel_2712.img`.
 - Synthetic tar archive inspection showed only relative safe paths.
-- QEMU no_std tests passed: 2 tests.
+- QEMU no_std tests passed: 3 tests.
 - Pi 5 target build passed.
+- Pi 5 image generation passed after routing the Pi 5 console to UART10.
 - mdBook build passed.
 
 ## Review
@@ -74,7 +80,7 @@ Results:
 
 ## Result
 
-Local Phase 2.1 preparation is in place. The next hardware-facing step is a pre-hardware archive review using a real Pi firmware boot source, then exactly one controlled lab publish/power-cycle once serial evidence is available.
+Local Phase 2.1 preparation is in place. The next hardware-facing step is a pre-hardware archive review using a real Pi firmware boot source, then exactly one controlled lab publish/power-cycle once serial evidence is available. The UART10 address is source-derived but remains hardware-unvalidated until a serial run proves output on the lab Pi 5.
 
 ## Follow-Up
 
