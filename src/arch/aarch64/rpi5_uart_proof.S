@@ -11,6 +11,19 @@
 .global _start
 
 _start:
+    b image_entry
+    .word 0
+    .quad 0
+    .quad __image_end - _start
+    .quad 0xc
+    .quad 0
+    .quad 0
+    .quad 0
+    .ascii "ARMd"
+    .word 0
+
+.balign 8
+image_entry:
     mov x19, x0
 
     mrs x0, mpidr_el1
@@ -72,3 +85,9 @@ delay_loop:
 
 marker:
     .asciz "TA\r\n"
+
+.balign 8
+    .ltorg
+
+.balign 8
+__image_end:

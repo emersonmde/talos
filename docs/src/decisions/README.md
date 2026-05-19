@@ -273,3 +273,12 @@ ADR template:
 - Hardware follow-up: A wait-for-TFTP rerun of the 224-byte RP1 GPIO-mux assembly UART proof captured fresh TFTP events for `da591740/kernel_2712.img` at 224 bytes before rollback. The serial output still stopped at the same firmware/DDR boundary with no `TA` marker, so the current archive is now proven fetched even though the UART proof is still not visible.
 - Risks: If the TFTP log grows past 1 MiB, this helper can become truncated again. If that happens, use the endpoint's large-cursor clamp behavior or add a lab API cursor endpoint rather than relying on the default window.
 - Alternatives considered: ignore TFTP deltas and use only serial evidence, or continue manually tuning cursor requests per run. A small helper gives repeatable evidence without changing the Talos boot image.
+
+## 2026-05-19 - Add Minimal Image Header to Assembly UART Proof
+
+- Status: accepted
+- Context: The wait-for-TFTP hardware run proved the current 224-byte assembly UART proof is fetched as `da591740/kernel_2712.img`, but the lab UART still shows no `TA` marker. Circle's Pi 5 examples use raw binaries, but the Linux arm64 boot ABI and Talos' normal kernel image use an arm64 Image header with magic `ARMd`, size, text offset, and flags.
+- Decision: Keep the first-light proof assembly-only and direct-entry, but prepend the minimal arm64 Image header before branching to the existing UART proof code. The header advertises `text_offset=0`, exact image size, flags `0xc`, and magic `ARMd`. This tests a firmware image-contract hypothesis without adding Rust, stack, BSS, exception handling, reset side effects, or loader machinery.
+- Required validation: Local validation must inspect the generated header, confirm the marker bytes still exist, pass archive review, mdBook, and diff check before any future hardware run.
+- Risks: If Raspberry Pi firmware happily boots raw binaries, this will not change behavior. If firmware uses the header for placement or validation in this TFTP path, the header may be the missing contract needed before entry.
+- Alternatives considered: keep repeating raw 224-byte proof runs, add more UART-side setup, or reintroduce loader diagnostics. The header is a smaller single-premise change now that fresh TFTP evidence proves the tiny image is fetched.
