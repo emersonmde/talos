@@ -155,3 +155,12 @@ ADR template:
 - Required validation: Build and disassemble the raw loader to confirm the SMC instruction is present, pass archive review and standard Talos local gates, run exactly one hardware cycle under `hardwareTestLock`, observe serial long enough for a possible monitor-mediated reboot, then roll back the archive.
 - Risks: PSCI may be unavailable in the firmware handoff state, or the SMC may return without side effects. If no reset occurs, the result is evidence against this specific non-MMIO side channel, not proof that Talos can never execute.
 - Alternatives considered: switch immediately to a Linux/UEFI-loaded payload, require EEPROM/vclog support, or keep adding UART-only markers. PSCI reset is a small, reversible diagnostic and tests a different side-effect class than RP1 UART or PM watchdog MMIO.
+
+## 2026-05-19 - Add UEFI Intermediate-Loader Diagnostic
+
+- Status: accepted
+- Context: Direct Raspberry Pi firmware handoff has loaded Talos files but has not produced markers through UART, custom armstub, raw loader, watchdog reset, or PSCI reset. A known-running intermediate loader can separate Talos execution mechanics from the Pi firmware handoff boundary.
+- Decision: Add a minimal AArch64 UEFI application diagnostic that prints `Talos EFI first-light PASS` through UEFI text output, plus a FAT-image staging script and QEMU/AAVMF smoke test. This creates a locally validated payload for a future U-Boot/UEFI hardware path without changing the normal Talos kernel image.
+- Required validation: The EFI file must be PE32+ AArch64 with EFI application subsystem, the FAT image must contain `EFI/BOOT/BOOTAA64.EFI` and `startup.nsh`, QEMU/AAVMF must print the PASS marker, and standard Talos gates must still pass.
+- Risks: QEMU/AAVMF validation proves the payload and UEFI call path, not Pi 5 hardware execution. A physical test still requires a UEFI-capable stage such as U-Boot in the lab boot tree, and that staging should be reviewed separately before one controlled hardware run.
+- Alternatives considered: continue direct firmware diagnostics, require EEPROM/vclog support, or build a Linux/kexec path first. UEFI is the smallest intermediate-loader proof available with existing local tools and gives a clean next artifact for U-Boot hardware work.
