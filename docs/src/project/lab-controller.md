@@ -481,7 +481,7 @@ Serial shows RP1 firmware output but no Talos banner:
 - The Pi has rebooted and the lab cable is receiving boot-time serial output.
 - Confirm the TFTP request sequence from `docker logs talos-tftp`.
 - Recheck `kernel_2712.img` format, arm64 image header/load address expectations, `config.txt` kernel settings, and the earliest UART write path.
-- For Talos, confirm the Pi 5 target is linked at `0x00200000`, not QEMU virt's `0x40200000`. Both targets use the arm64 Image `0x00200000` text offset, but their physical RAM bases differ.
+- For Talos, confirm the Pi 5 target is linked at `0x00000000`, not QEMU virt's `0x40200000`. The official Raspberry Pi 5 `kernel_2712.img` raw image advertises arm64 Image `text_offset=0`, so Talos follows that contract for the physical target while keeping QEMU's separate load address.
 - Confirm the arm64 Image header `image_size` matches the generated `kernel_2712.img` byte length. `scripts/rpi5-image.sh` checks this automatically.
 - Consider a tiny assembly-only UART diagnostic before Rust clears BSS or switches stacks.
 

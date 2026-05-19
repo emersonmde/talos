@@ -22,7 +22,7 @@ ADR template:
 
 ## 2026-05-19 - Target-Specific Physical Link Bases
 
-- Status: accepted
+- Status: superseded by 2026-05-19 - Match Raspberry Pi 5 Kernel Image Text Offset
 - Context: The first Pi 5 hardware boot emitted RP1 firmware serial messages but no Talos banner. Static inspection showed the shared linker script placed Talos at `0x40200000`, matching QEMU virt RAM base `0x40000000` plus the arm64 Image `0x200000` text offset. Raspberry Pi firmware should instead load the arm64 Image at the text offset from the Pi RAM base, so early absolute symbols such as BSS and stack must resolve near `0x00200000` for the physical Pi path.
 - Decision: Keep the arm64 Image text offset at `0x00200000`, keep QEMU virt linked at `0x40200000`, and give the Pi 5 target its own linker script that links `kernel_2712.img` at `0x00200000`.
 - Required validation: QEMU smoke must continue passing for the generic target. Pi 5 target builds must show `_start` and `__kernel_start` at `0x00200000` before the next hardware archive is published. Physical acceptance still requires lab-controller publish, one controlled power-cycle, serial output proving Talos reached entry, and rollback/recovery if the boot fails.
@@ -55,3 +55,12 @@ ADR template:
 - Required validation: The archive review gate must fail if `dtoverlay=uart0-pi5` remains in the staged config. Physical acceptance still requires one controlled hardware run and serial output proving Talos reached entry.
 - Risks: If later Talos relies on firmware-applied overlays or Linux-compatible DTB mutations, this should be revisited after a DTB parser exists. For first-light, removing the overlay reduces firmware work before entry and narrows the failure surface.
 - Alternatives considered: keep all Linux boot-source config lines unchanged, remove all overlays from the archive, or switch to a boot ramdisk flow. Stripping only the Linux UART overlay is the smallest change tied to the current failure mode.
+
+## 2026-05-19 - Match Raspberry Pi 5 Kernel Image Text Offset
+
+- Status: accepted
+- Context: Repeated hardware attempts reached Raspberry Pi firmware and RP1 firmware logging but never emitted the Talos entry marker. The Talos Pi 5 image advertised arm64 Image `text_offset=0x00200000`. A comparison against the official Raspberry Pi `kernel_2712.img` showed the decompressed Pi 5 kernel image advertises `text_offset=0`, `image_size=30081024`, flags `0xc`, and `ARMd` magic.
+- Decision: Link the Talos Pi 5 image at physical `0x00000000` and advertise arm64 Image `text_offset=0` for `kernel_2712.img`. Keep the QEMU virt target at its QEMU-specific `0x40200000` link/load address.
+- Required validation: Local Pi 5 image generation and archive review must show `text_offset=0`, matching the Raspberry Pi 5 kernel image convention. Physical acceptance still requires a controlled hardware run that reaches the Talos entry marker or later serial output.
+- Risks: If the firmware places the image at a nonzero physical base while using a zero header offset, Talos' absolute BSS/stack symbols will still be wrong; hardware evidence decides this. If that happens, the next iteration should move the earliest marker to fully position-independent code before any absolute symbol use.
+- Alternatives considered: keep the generic arm64 `0x200000` offset, set `image_size=0` legacy mode, or add a custom armstub. Matching the official Pi 5 kernel image header is the narrowest project-local correction.

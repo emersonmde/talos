@@ -68,7 +68,7 @@ text_offset="$(od -An -tu8 -j8 -N8 "$extract_dir/kernel_2712.img" | tr -d ' ')"
 header_image_size="$(od -An -tu8 -j16 -N8 "$extract_dir/kernel_2712.img" | tr -d ' ')"
 magic="$(dd if="$extract_dir/kernel_2712.img" bs=1 skip=56 count=4 2>/dev/null)"
 
-if [ "$text_offset" != "2097152" ]; then
+if [ "$text_offset" != "0" ]; then
     echo "unexpected arm64 Image text offset: $text_offset" >&2
     exit 1
 fi
