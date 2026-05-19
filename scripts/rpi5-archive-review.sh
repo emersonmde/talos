@@ -69,6 +69,13 @@ if grep -qx 'boot_ramdisk=1' "$extract_dir/config.txt"; then
     fi
 fi
 
+if grep -qx 'armstub=armstub8-2712.bin' "$extract_dir/config.txt"; then
+    if [ ! -s "$extract_dir/armstub8-2712.bin" ]; then
+        echo "config.txt selects armstub8-2712.bin but archive has no non-empty armstub" >&2
+        exit 1
+    fi
+fi
+
 if ! cmp -s "$extract_dir/kernel_2712.img" "$extract_dir/kernel8.img"; then
     echo "kernel_2712.img and kernel8.img should match during first-light fallback testing" >&2
     exit 1

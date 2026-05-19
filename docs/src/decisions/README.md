@@ -74,3 +74,12 @@ ADR template:
 - Required validation: Local archive review must prove `boot.img` is readable by mtools and contains `config.txt`, `kernel_2712.img`, and `kernel8.img`. Physical validation requires one controlled Pi 5 power cycle and serial evidence.
 - Risks: If the firmware stops even earlier or ignores `boot_ramdisk=1` for this network path, the evidence should push the next iteration back toward bootloader/TFTP visibility or a lower-level firmware diagnostic.
 - Alternatives considered: keep iterating only on the raw `kernel_2712.img`, require a lab API TFTP-log endpoint first, or add a custom armstub. The boot ramdisk path is a documented Pi 5 network-boot shape and is small enough to test safely.
+
+## 2026-05-19 - Add a Custom Armstub Diagnostic
+
+- Status: accepted
+- Context: Direct-root, minimal-config, Pi 5 Image-header-matched, and `boot_ramdisk=1` hardware attempts all rebooted the board and emitted Raspberry Pi firmware/RP1 serial output, but none emitted Talos' `T1` entry marker. The repeated boundary suggests the next useful evidence should come before the normal `kernel_2712.img` handoff rather than from another kernel header tweak.
+- Decision: Add a bounded custom armstub diagnostic path. The normal Talos boot-tree script remains unchanged; a separate staging script appends `armstub=armstub8-2712.bin` and includes a tiny AArch64 binary that writes `S1\r\n` to firmware-preserved RP1 UART0 at `0x1c00030000`, then waits.
+- Required validation: Local validation must prove the armstub binary is non-empty and the archive review gate accepts the optional armstub file. Physical validation is exactly one controlled lab power-cycle under the hardware lock. `S1` on serial proves the custom armstub path ran; no `S1` keeps the investigation at the firmware/config/file-load boundary.
+- Risks: A custom armstub is diagnostic-only and does not prove the normal kernel handoff. If it runs, the next step is to decide whether to evolve it into a real handoff helper or use it only to instrument the bootloader boundary. If it does not run, the issue is still earlier than that path or the Pi 5 network boot firmware ignores this armstub setting.
+- Alternatives considered: require a new lab TFTP-log endpoint, keep iterating on `kernel_2712.img`, or change rollback strategy. The armstub diagnostic is small, local, and reversible, and it creates pre-entry evidence without new privileged host access.

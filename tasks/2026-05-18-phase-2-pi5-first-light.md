@@ -122,6 +122,7 @@ Results:
 - 2026-05-19 added `scripts/rpi5-boot-img.sh` and `scripts/rpi5-boot-ramdisk-tree.sh` to stage a documented Pi 5 `boot_ramdisk=1` network-boot experiment. The archive review gate now verifies `boot.img` is a readable FAT image containing the required config/kernel files when `boot_ramdisk=1` is enabled.
 - 2026-05-19 boot-ramdisk hardware attempt published archive digest `4d6fc4527e6af0691167e974f4ca3e33c2afa1b3cf0ae8922e39c6e772e1bd94`; `PUT /boot/archive` returned `ok=true`, `file_count=9`, and `extracted_bytes=67361394`; `POST /power/cycle` returned `ok=true`; serial advanced from cursor `31145` to `31853` and again stopped at the same firmware/RP1 boundary without `T1`, Talos output, or visible `sha256=1` file-load hashes.
 - 2026-05-19 post-hardware review: the unchanged boundary across direct-root, minimal-config, Pi5-header-matched, and `boot_ramdisk=1` archives suggests the next hypothesis is before or at the bootloader file-load/config phase rather than in Talos' Rust/BSS/stack path. Further Talos image-header tweaks have diminishing value without a way to see file-load progress or a different firmware entry path such as a custom armstub.
+- 2026-05-19 added a custom armstub diagnostic path. `scripts/rpi5-armstub-diagnostic.sh` builds `armstub8-2712.bin` from a minimal AArch64 assembly stub that writes `S1\r\n` to firmware-preserved RP1 UART0 and waits. `scripts/rpi5-armstub-diagnostic-tree.sh` stages a one-off archive with `armstub=armstub8-2712.bin`, while the normal boot-tree path remains unchanged. The archive review gate now validates this optional armstub file when selected.
 
 ## Review
 
@@ -137,5 +138,6 @@ The first Talos boot archive was published to the lab TFTP root and controlled r
 
 - Add lab API visibility for TFTP requests or bootloader file-load logs; current serial evidence stops before confirming that `config.txt`, `kernel_2712.img`, or `kernel8.img` are requested after DDR init.
 - Re-check whether this network boot path needs a `boot.img` ramdisk or fuller Pi OS boot tree shape even though Pi 5 embeds the old `start.elf` role in EEPROM firmware.
+- Run one controlled custom-armstub hardware diagnostic. Seeing `S1` means firmware honored the armstub path before the kernel handoff; not seeing it keeps the failure boundary before that diagnostic entry.
 - Inspect the remaining staged `config.txt`, `cmdline.txt`, and `kernel_2712.img` contract against Raspberry Pi 5 firmware expectations, especially whether the raw ELF-stripped binary is acceptable as `kernel_2712.img` in this network boot path.
 - Restore or recreate a known-good Pi OS Lite TFTP boot tree source before further repeated publish cycles; the lab API keeps only one rollback archive, so repeated Talos publishes can displace the known-good rollback.
