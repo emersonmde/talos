@@ -62,6 +62,9 @@ circle_config_loader_diagnostic=false
 if grep -qx 'talos_loader_diagnostic=raw-pi5' "$extract_dir/config.txt"; then
     loader_diagnostic=true
 fi
+if grep -qx 'talos_loader_diagnostic=asm-uart-proof' "$extract_dir/config.txt"; then
+    loader_diagnostic=true
+fi
 if grep -qx 'talos_loader_diagnostic=raw-pi5-circle-config' "$extract_dir/config.txt"; then
     loader_diagnostic=true
     circle_config_loader_diagnostic=true
