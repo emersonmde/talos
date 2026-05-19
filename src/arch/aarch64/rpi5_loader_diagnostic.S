@@ -17,12 +17,17 @@ _start:
     mrs x1, CurrentEL
     cmp x1, #(2 << 2)
     b.eq 0f
+    cmp x1, #(3 << 2)
+    b.eq 2f
     cmp x1, #(1 << 2)
     b.ne 1f
     msr vbar_el1, x0
     b 1f
 0:
     msr vbar_el2, x0
+    b 1f
+2:
+    msr vbar_el3, x0
 1:
     isb
 
@@ -166,6 +171,8 @@ skip_exception:
     mrs x20, CurrentEL
     cmp x20, #(2 << 2)
     b.eq 7f
+    cmp x20, #(3 << 2)
+    b.eq 9f
     cmp x20, #(1 << 2)
     b.ne 8f
     mrs x21, elr_el1
@@ -176,6 +183,11 @@ skip_exception:
     mrs x21, elr_el2
     add x21, x21, #4
     msr elr_el2, x21
+    eret
+9:
+    mrs x21, elr_el3
+    add x21, x21, #4
+    msr elr_el3, x21
     eret
 8:
     wfe
