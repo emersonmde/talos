@@ -81,6 +81,7 @@ Local Daedalus references:
 - BCM2712 exposes GIC-400 / GICv2, and the architectural timer PPIs are the first timer-interrupt path to bring up.
 - Raspberry Pi Linux device tree advertises PSCI 1.0 with SMC and cpu_on 0xc4000003. PSCI should be the primary SMP bring-up path.
 - U-Boot's normal arm64 handoff path uses the arm64 Image format via `booti`, while its UEFI path can run `BOOTAA64.EFI` from a FAT filesystem. A UEFI diagnostic is a useful intermediate proof because it can run under QEMU/AAVMF now and later under U-Boot or another UEFI-capable loader on the Pi.
+- U-Boot's Raspberry Pi default environment uses `boot_targets=mmc usb pxe dhcp` and memory variables including `kernel_addr_r=0x00080000`, `scriptaddr=0x05400000`, `pxefile_addr_r=0x05500000`, `fdt_addr_r=0x05600000`, and `ramdisk_addr_r=0x05700000`. For a lab TFTP experiment, a staged `boot.scr` should try both filesystem-style `load ... EFI/BOOT/BOOTAA64.EFI` and `tftpboot ... EFI/BOOT/BOOTAA64.EFI`.
 - RP1 Ethernet appears as rp1_eth, compatible with raspberrypi,rp1-gem and cdns,macb.
 - SD card runtime access is BCM2712 SDHCI; NVMe requires PCIe root complex plus NVMe driver and should not be the first persistent-storage path.
 - The current lab TFTP boot sequence successfully requests Pi 5 files including config.txt, bcm2712-rpi-5-b.dtb, kernel_2712.img, initramfs_2712, overlays, and cmdline.txt.
@@ -95,6 +96,7 @@ Local Daedalus references:
 - QEMU raspi4b is incomplete for Pi 4 networking and PCIe and should not be used as Pi 5 validation.
 - QEMU virt with -cpu cortex-a76 is the useful emulator path for generic AArch64 work.
 - QEMU virt with AAVMF/QEMU_EFI can run Talos' minimal AArch64 UEFI diagnostic from a FAT image and prints `Talos EFI first-light PASS`. This is substitute validation for an intermediate-loader path, not physical Pi 5 validation.
+- The current OpenClaw container can build and run the EFI diagnostic, but it cannot currently build U-Boot: `bison`, `flex`, `dtc`, `aarch64-linux-gnu-gcc`, and `mkimage` are absent, and `apt-get` cannot acquire package-manager locks without elevated host privileges. Use this as an environment finding, not a Talos architecture blocker.
 
 ## Open Questions
 

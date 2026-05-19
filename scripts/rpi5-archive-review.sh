@@ -82,6 +82,29 @@ if grep -qx 'talos_loader_diagnostic=raw-pi5' "$extract_dir/config.txt"; then
     loader_diagnostic=true
 fi
 
+uboot_efi_diagnostic=false
+if grep -qx 'talos_loader_diagnostic=uboot-efi' "$extract_dir/config.txt"; then
+    uboot_efi_diagnostic=true
+    if [ ! -s "$extract_dir/EFI/BOOT/BOOTAA64.EFI" ]; then
+        echo "U-Boot EFI diagnostic archive missing EFI/BOOT/BOOTAA64.EFI" >&2
+        exit 1
+    fi
+    if [ ! -s "$extract_dir/boot.scr" ]; then
+        echo "U-Boot EFI diagnostic archive missing boot.scr" >&2
+        exit 1
+    fi
+    if [ -d "$extract_dir/$serial_prefix" ]; then
+        if [ ! -s "$extract_dir/$serial_prefix/EFI/BOOT/BOOTAA64.EFI" ]; then
+            echo "serial-prefixed U-Boot EFI diagnostic mirror missing BOOTAA64.EFI" >&2
+            exit 1
+        fi
+        if [ ! -s "$extract_dir/$serial_prefix/boot.scr" ]; then
+            echo "serial-prefixed U-Boot EFI diagnostic mirror missing boot.scr" >&2
+            exit 1
+        fi
+    fi
+fi
+
 if grep -qx 'boot_ramdisk=1' "$extract_dir/config.txt"; then
     if [ ! -f "$extract_dir/boot.img" ]; then
         echo "config.txt enables boot_ramdisk=1 but archive has no boot.img" >&2
@@ -128,7 +151,7 @@ header_image_size="$(od -An -tu8 -j16 -N8 "$extract_dir/kernel_2712.img" | tr -d
 flags="$(od -An -tu8 -j24 -N8 "$extract_dir/kernel_2712.img" | tr -d ' ')"
 magic="$(dd if="$extract_dir/kernel_2712.img" bs=1 skip=56 count=4 2>/dev/null)"
 
-if [ "$loader_diagnostic" = false ]; then
+if [ "$loader_diagnostic" = false ] && [ "$uboot_efi_diagnostic" = false ]; then
     if [ "$text_offset" != "0" ]; then
         echo "unexpected arm64 Image text offset: $text_offset" >&2
         exit 1
@@ -158,5 +181,6 @@ printf 'header_image_size=%s\n' "$header_image_size"
 printf 'text_offset=%s\n' "$text_offset"
 printf 'flags=%s\n' "$flags"
 printf 'loader_diagnostic=%s\n' "$loader_diagnostic"
+printf 'uboot_efi_diagnostic=%s\n' "$uboot_efi_diagnostic"
 printf 'manifest:\n'
 sed 's/^/  /' "$manifest"
