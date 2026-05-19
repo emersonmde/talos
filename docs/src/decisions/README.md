@@ -92,3 +92,12 @@ ADR template:
 - Required validation: Local archive review must pass and show both root and `da591740/` files. Physical validation requires one controlled lab power-cycle and serial evidence.
 - Risks: If this runs, it proves the root-only tree was not equivalent in this lab network-boot path, but it does not explain why fallback differed. If it does not run, it rules out the simplest serial-prefix hypothesis and pushes the next step back toward lab-side TFTP visibility or firmware/EEPROM diagnostics.
 - Alternatives considered: require direct TFTP logs, keep adding kernel diagnostics, or restore a full Pi OS Lite source tree. The prefix mirror is reversible and can be tested with existing archive tooling.
+
+## 2026-05-19 - Stop Archive-Shape Iterations Without File-Load Evidence
+
+- Status: accepted
+- Context: Direct-root, minimal-config, Image-header-matched, `boot_ramdisk=1`, custom armstub, serial-prefix mirror, and combined serial-prefix plus armstub archives all rebooted the Pi and emitted the same Raspberry Pi firmware/RP1 serial boundary, but none emitted the `S1` armstub marker, `T1` Talos entry marker, or Talos banner.
+- Decision: Stop adding new Talos archive-shape variants until the workflow has lab-side TFTP request/file-load visibility, EEPROM boot diagnostics, or a recreated known-good Pi OS Lite boot source that can be compared directly. The current evidence is pre-entry and does not justify more Rust-side or arm64 Image-header changes.
+- Required validation: The next hardware-dependent step should first prove which files the Pi requests and successfully loads, or prove the known-good boot source shape that differs from the staged Talos source. Hardware claims still require one controlled Pi 5 power-cycle under the hardware lock and serial/TFTP evidence.
+- Risks: This hold delays continued trial-and-error, but it avoids consuming rollback history and power cycles on low-signal variants. If new lab visibility shows the firmware is loading Talos files correctly, revisit position-independent earliest-entry code or a different UART assumption.
+- Alternatives considered: continue adding config variants, restore older header/linker choices, or evolve the diagnostic armstub into a handoff helper. Those paths now have low expected value because the configured armstub itself has not produced output.
