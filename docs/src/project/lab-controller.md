@@ -291,6 +291,8 @@ dtoverlay=uart0-pi5
 
 `enable_rp1_uart=1` asks Pi 5 firmware to initialize RP1 UART0 at 115200 bps and preserve that state for early bare-metal output.
 
+The staging script strips `dtoverlay=uart0-pi5` from the Talos archive even if it exists in the Linux boot-source config. Talos first-light writes RP1 UART0 directly and should avoid Linux-only overlay work before the entry marker is visible.
+
 Talos now has local staging scripts for the first Talos boot archive candidate:
 
 ```bash

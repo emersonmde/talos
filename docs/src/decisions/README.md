@@ -46,3 +46,12 @@ ADR template:
 - Required validation: Pi 5 image generation must report matching file/header sizes. QEMU smoke must continue to boot the generic target, and physical Pi 5 acceptance still requires a controlled hardware run with serial evidence.
 - Risks: If Raspberry Pi firmware wants a different interpretation of the arm64 `image_size` field for this network boot mode, revisit with TFTP/firmware evidence. The current choice aligns the header with the actual binary loaded by firmware.
 - Alternatives considered: leave `image_size` at the text offset, set `image_size=0`, or include `NOLOAD` reservations in the file size. Matching the generated file size is the narrowest correction and gives the build a regression check.
+
+## 2026-05-19 - Keep First-Light Firmware Configuration Minimal
+
+- Status: accepted
+- Context: Corrected-image hardware evidence reached Raspberry Pi firmware and RP1 firmware logging, but still did not emit the Talos entry marker. The staged boot tree inherited `dtoverlay=uart0-pi5` from the Linux boot source. Talos first-light writes RP1 UART0 directly through the firmware-preserved mapping, before parsing or relying on the device tree.
+- Decision: Strip `dtoverlay=uart0-pi5` from Talos first-light `config.txt`. Keep `enable_rp1_uart=1`, `pciex4_reset=0`, and `uart_2ndstage=1`, because those are directly relevant to preserving the 40-pin header UART and observing firmware logs.
+- Required validation: The archive review gate must fail if `dtoverlay=uart0-pi5` remains in the staged config. Physical acceptance still requires one controlled hardware run and serial output proving Talos reached entry.
+- Risks: If later Talos relies on firmware-applied overlays or Linux-compatible DTB mutations, this should be revisited after a DTB parser exists. For first-light, removing the overlay reduces firmware work before entry and narrows the failure surface.
+- Alternatives considered: keep all Linux boot-source config lines unchanged, remove all overlays from the archive, or switch to a boot ramdisk flow. Stripping only the Linux UART overlay is the smallest change tied to the current failure mode.

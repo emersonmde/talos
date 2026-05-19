@@ -53,6 +53,11 @@ if ! grep -qx 'pciex4_reset=0' "$extract_dir/config.txt"; then
     exit 1
 fi
 
+if grep -qx 'dtoverlay=uart0-pi5' "$extract_dir/config.txt"; then
+    echo "config.txt should not apply the Linux uart0-pi5 overlay during bare-metal first light" >&2
+    exit 1
+fi
+
 if ! cmp -s "$extract_dir/kernel_2712.img" "$extract_dir/kernel8.img"; then
     echo "kernel_2712.img and kernel8.img should match during first-light fallback testing" >&2
     exit 1

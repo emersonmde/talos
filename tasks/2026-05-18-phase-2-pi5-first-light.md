@@ -111,6 +111,8 @@ Results:
 - 2026-05-19 lab API probe found no exposed TFTP log endpoint: `/boot/logs`, `/tftp/logs`, and `/logs/tftp` all returned 404. The existing exposed read-only evidence is `/status`, `/boot/files`, `/serial/peek`, and `/serial/tail`.
 - 2026-05-19 added `scripts/rpi5-archive-review.sh` as a local pre-hardware gate. It checks required archive files, unsafe paths, `config.txt` first-light settings, `kernel_2712.img`/`kernel8.img` equality, arm64 Image magic, text offset, and header image size.
 - 2026-05-19 corrected-image archive pre-hardware review passed for `target/talos-rpi5-boot.tar.gz`: sha256 `7c3994c313c5491414927d998c535522c8b1f920a2e608debafb4676fb7aadff`, required files present, `kernel_2712.img` and `kernel8.img` identical, `kernel_size=82616`, `header_image_size=82616`, and `text_offset=2097152`.
+- 2026-05-19 corrected-image hardware attempt published archive digest `b437659350d6c110f056a664d17fb48a3dfb24117440e04013454f44b1918ab9`; `PUT /boot/archive` returned `ok=true`, `file_count=8`, and `extracted_bytes=252535`; `POST /power/cycle` returned `ok=true`; serial advanced from cursor `28313` to `29021` and emitted Pi firmware logs through `DDR 4267 1 0 64 152 BL:1`, then `RP1 FW: load 0` and `RP1_BOOT chip ID: 0x20001927`. No `T1` marker or Talos banner appeared.
+- 2026-05-19 post-hardware review classified the corrected-image run as still failing before Talos entry. The next bounded hypothesis is that the inherited Linux `dtoverlay=uart0-pi5` is unnecessary for bare-metal first-light and may add avoidable firmware/device-tree work before entry. The staging script now strips that line and the archive review gate rejects it.
 
 ## Review
 

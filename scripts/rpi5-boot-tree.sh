@@ -36,6 +36,12 @@ cp "$KERNEL_IMG" "$OUTPUT_DIR/kernel8.img"
 # MMIO address used by Talos early boot.
 sed -i 's/earlycon=pl011,mmio32,0x1f00030000/earlycon=pl011,mmio32,0x1c00030000/g' "$OUTPUT_DIR/cmdline.txt"
 
+# The first-light kernel is bare metal and writes the firmware-preserved RP1
+# UART0 directly. Avoid applying the Linux UART overlay before Talos entry;
+# it is useful for Linux, but it adds an unnecessary firmware/device-tree step
+# to the earliest hardware diagnostic path.
+sed -i '/^dtoverlay=uart0-pi5$/d' "$OUTPUT_DIR/config.txt"
+
 if [ -d "$SOURCE_DIR/overlays" ]; then
     mkdir -p "$OUTPUT_DIR/overlays"
     for overlay in overlay_map.dtb bcm2712d0.dtbo uart0-pi5.dtbo; do
