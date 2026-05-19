@@ -2,9 +2,9 @@
  * Minimal Raspberry Pi 5 assembly-only UART proof.
  *
  * Keep this intentionally smaller than the raw loader diagnostic: firmware
- * entry, park secondary cores, touch one plausible PL011 UART path, and repeat
- * fixed bytes forever. No Rust, stack, BSS, exception vectors, watchdog, PSCI,
- * or multi-device fallback logic.
+ * entry, park secondary cores, use the firmware-preserved RP1 UART0 path, and
+ * repeat fixed bytes forever. No Rust, stack, BSS, exception vectors, GPIO mux,
+ * PL011 reinitialization, watchdog, PSCI, or multi-device fallback logic.
  */
 
 .section .text, "ax"
@@ -35,35 +35,7 @@ secondary_park:
     b secondary_park
 
 primary_core:
-    ldr x13, =0x1f000f003c
-    mov w12, #0x40
-    str w12, [x13]
-    ldr x13, =0x1f000f0040
-    mov w12, #0x48
-    str w12, [x13]
-    ldr x13, =0x1f000d0074
-    mov w12, #4
-    str w12, [x13]
-    ldr x13, =0x1f000d007c
-    str w12, [x13]
-    dsb sy
-
-    ldr x9, =0x1f00030000
-
-    mov w12, #0
-    str w12, [x9, #0x30]
-    mov w12, #0x7ff
-    str w12, [x9, #0x44]
-    mov w12, #1
-    str w12, [x9, #0x24]
-    mov w12, #40
-    str w12, [x9, #0x28]
-    mov w12, #(3 << 5)
-    str w12, [x9, #0x2c]
-    mov w12, #0
-    str w12, [x9, #0x38]
-    mov w12, #0x301
-    str w12, [x9, #0x30]
+    ldr x9, =0x1c00030000
 
 write_loop:
     adr x10, marker
