@@ -13,6 +13,24 @@ _start:
     ldr x0, =0x08000000
     mov sp, x0
 
+    adr x0, exception_vectors
+    mrs x1, CurrentEL
+    cmp x1, #(2 << 2)
+    b.eq 0f
+    cmp x1, #(1 << 2)
+    b.ne 1f
+    msr vbar_el1, x0
+    b 1f
+0:
+    msr vbar_el2, x0
+1:
+    isb
+
+    ldr x9, =0x107d001000
+    bl init_pl011_fixed
+    adr x10, soc_initialized_marker
+    bl write_marker
+
     ldr x9, =0x1c00030000
     adr x10, rp1_preserved_marker
     bl write_marker
@@ -20,11 +38,6 @@ _start:
     ldr x9, =0x1c00030000
     bl init_pl011_fixed
     adr x10, rp1_initialized_marker
-    bl write_marker
-
-    ldr x9, =0x107d001000
-    bl init_pl011_fixed
-    adr x10, soc_initialized_marker
     bl write_marker
 
 1:
@@ -78,3 +91,56 @@ soc_initialized_marker:
     .asciz "U1\r\n"
 heartbeat_marker:
     .asciz "."
+
+.align 11
+exception_vectors:
+    b skip_exception
+    .space 0x80 - (. - exception_vectors)
+    b skip_exception
+    .space 0x100 - (. - exception_vectors)
+    b skip_exception
+    .space 0x180 - (. - exception_vectors)
+    b skip_exception
+    .space 0x200 - (. - exception_vectors)
+    b skip_exception
+    .space 0x280 - (. - exception_vectors)
+    b skip_exception
+    .space 0x300 - (. - exception_vectors)
+    b skip_exception
+    .space 0x380 - (. - exception_vectors)
+    b skip_exception
+    .space 0x400 - (. - exception_vectors)
+    b skip_exception
+    .space 0x480 - (. - exception_vectors)
+    b skip_exception
+    .space 0x500 - (. - exception_vectors)
+    b skip_exception
+    .space 0x580 - (. - exception_vectors)
+    b skip_exception
+    .space 0x600 - (. - exception_vectors)
+    b skip_exception
+    .space 0x680 - (. - exception_vectors)
+    b skip_exception
+    .space 0x700 - (. - exception_vectors)
+    b skip_exception
+    .space 0x780 - (. - exception_vectors)
+    b skip_exception
+
+skip_exception:
+    mrs x20, CurrentEL
+    cmp x20, #(2 << 2)
+    b.eq 7f
+    cmp x20, #(1 << 2)
+    b.ne 8f
+    mrs x21, elr_el1
+    add x21, x21, #4
+    msr elr_el1, x21
+    eret
+7:
+    mrs x21, elr_el2
+    add x21, x21, #4
+    msr elr_el2, x21
+    eret
+8:
+    wfe
+    b 8b

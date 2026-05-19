@@ -128,3 +128,12 @@ ADR template:
 - Required validation: Local validation must include shell syntax checks, raw diagnostic binary generation, archive review in `loader_diagnostic=true` mode, standard Talos formatting/tests/Pi 5 build/QEMU smoke/mdBook, and exactly one controlled Pi 5 hardware run under the hardware lock.
 - Risks: Absence of RP1 UART output from a raw executable does not by itself prove CPU execution never happened, because the lab-visible UART path may be the wrong ARM-side output path despite firmware logs using it. If the raw diagnostic still shows no marker while TFTP proves the 216-byte image was served, the next diagnostic should avoid relying solely on RP1 UART visibility.
 - Alternatives considered: keep changing arm64 Image header fields, require EEPROM/vclog support before continuing, or switch immediately to a Linux-loaded payload. The raw loader diagnostic is smaller and directly tests a public Pi 5 bare-metal image shape already used by Circle.
+
+## 2026-05-19 - Make the Raw Loader Diagnostic Exception-Tolerant
+
+- Status: accepted
+- Context: The first raw loader diagnostic attempted RP1 UART0 before the BCM2712 UART10 path. If RP1 MMIO was inaccessible after firmware handoff, a synchronous abort could stop the diagnostic before it reached alternate output paths.
+- Decision: Install a current-EL exception vector in the raw loader diagnostic before touching MMIO, advance `ELR_EL1` or `ELR_EL2` by one instruction on exceptions, and try BCM2712 UART10 before RP1 UART0. This keeps the diagnostic tiny while making MMIO-abort behavior observable by continued control flow.
+- Required validation: Build/disassemble the raw diagnostic, pass archive review in loader-diagnostic mode, pass standard local Talos gates, then run one controlled Pi 5 hardware iteration under `hardwareTestLock`.
+- Risks: Skipping faulting MMIO instructions can only keep the diagnostic moving; it cannot make an unobservable UART path visible. If this still emits no marker while TFTP proves the image was served, the next evidence needs a different side effect or a different boot path.
+- Alternatives considered: switch immediately to Linux-loaded payload work, keep trying UART-only variants, or require EEPROM/vclog support. Exception-tolerant control flow is a bounded diagnostic improvement that addresses a concrete flaw in the first raw-loader attempt.
