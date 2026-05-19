@@ -29,6 +29,16 @@ for file in $required_files; do
     fi
 done
 
+serial_prefix="da591740"
+if grep -q "^$serial_prefix/" "$manifest"; then
+    for file in $required_files; do
+        if ! grep -qx "$serial_prefix/$file" "$manifest"; then
+            echo "serial-prefixed boot mirror missing file: $serial_prefix/$file" >&2
+            exit 1
+        fi
+    done
+fi
+
 if grep -Eq '(^/|(^|/)\.\.?(/|$)|(^|/)\.[^/]+)' "$manifest"; then
     echo "archive contains an unsafe path" >&2
     exit 1
@@ -79,6 +89,15 @@ fi
 if ! cmp -s "$extract_dir/kernel_2712.img" "$extract_dir/kernel8.img"; then
     echo "kernel_2712.img and kernel8.img should match during first-light fallback testing" >&2
     exit 1
+fi
+
+if [ -d "$extract_dir/$serial_prefix" ]; then
+    for file in kernel_2712.img kernel8.img config.txt cmdline.txt bcm2712-rpi-5-b.dtb; do
+        if ! cmp -s "$extract_dir/$file" "$extract_dir/$serial_prefix/$file"; then
+            echo "serial-prefixed boot mirror differs from root file: $file" >&2
+            exit 1
+        fi
+    done
 fi
 
 image_size="$(wc -c < "$extract_dir/kernel_2712.img" | tr -d ' ')"

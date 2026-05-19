@@ -83,3 +83,12 @@ ADR template:
 - Required validation: Local validation must prove the armstub binary is non-empty and the archive review gate accepts the optional armstub file. Physical validation is exactly one controlled lab power-cycle under the hardware lock. `S1` on serial proves the custom armstub path ran; no `S1` keeps the investigation at the firmware/config/file-load boundary.
 - Risks: A custom armstub is diagnostic-only and does not prove the normal kernel handoff. If it runs, the next step is to decide whether to evolve it into a real handoff helper or use it only to instrument the bootloader boundary. If it does not run, the issue is still earlier than that path or the Pi 5 network boot firmware ignores this armstub setting.
 - Alternatives considered: require a new lab TFTP-log endpoint, keep iterating on `kernel_2712.img`, or change rollback strategy. The armstub diagnostic is small, local, and reversible, and it creates pre-entry evidence without new privileged host access.
+
+## 2026-05-19 - Test Serial-Prefixed Network Boot Mirror
+
+- Status: accepted
+- Context: The known-good Pi OS Lite TFTP sequence probes `da591740/config.txt` before falling back to root `config.txt`. Earlier evidence says that miss was not fatal for Linux, but repeated Talos runs stop before any kernel or armstub marker. If the Talos archive shape changes the fallback behavior, a serial-prefixed mirror is a small way to test that boundary without changing the kernel image.
+- Decision: Add a separate staging script that keeps the normal root boot files and duplicates the same required files under `da591740/`. The archive review gate verifies the prefixed mirror is complete and byte-identical to the root files when present.
+- Required validation: Local archive review must pass and show both root and `da591740/` files. Physical validation requires one controlled lab power-cycle and serial evidence.
+- Risks: If this runs, it proves the root-only tree was not equivalent in this lab network-boot path, but it does not explain why fallback differed. If it does not run, it rules out the simplest serial-prefix hypothesis and pushes the next step back toward lab-side TFTP visibility or firmware/EEPROM diagnostics.
+- Alternatives considered: require direct TFTP logs, keep adding kernel diagnostics, or restore a full Pi OS Lite source tree. The prefix mirror is reversible and can be tested with existing archive tooling.
