@@ -22,7 +22,20 @@ secondary_park:
     b secondary_park
 
 primary_core:
-    ldr x9, =0x107d001000
+    ldr x13, =0x1f000f003c
+    mov w12, #0x40
+    str w12, [x13]
+    ldr x13, =0x1f000f0040
+    mov w12, #0x48
+    str w12, [x13]
+    ldr x13, =0x1f000d0074
+    mov w12, #4
+    str w12, [x13]
+    ldr x13, =0x1f000d007c
+    str w12, [x13]
+    dsb sy
+
+    ldr x9, =0x1f00030000
 
     mov w12, #0
     str w12, [x9, #0x30]
