@@ -143,9 +143,20 @@ ADR template:
 - Status: accepted
 - Context: The exception-tolerant raw loader still emitted no UART marker. Circle's Pi 5-capable watchdog/reset path documents the power-manager watchdog registers at `ARM_IO_BASE + 0x1200000` for Pi 5, with writes to `ARM_PM_WDOG` and `ARM_PM_RSTC` causing a reset. A watchdog-triggered second firmware boot would prove CPU execution even if UART output is unavailable.
 - Decision: Add a watchdog reset attempt after the raw loader's UART attempts. The hardware test must roll back the archive after observation so a successful watchdog diagnostic does not leave the Pi in a reset loop.
+
 - Required validation: Build/disassemble the raw loader, pass archive review and standard local Talos gates, run exactly one hardware cycle, observe serial long enough for a watchdog reset, inspect TFTP evidence, then restore the previous archive.
 - Risks: If the CPU never reaches the raw loader, no watchdog reset occurs. If PM watchdog MMIO is inaccessible or the reset sequence is wrong for this boot state, the result is still no side effect. A successful reset would be useful but requires immediate cleanup.
 - Alternatives considered: another UART-only variant, requiring EEPROM/vclog evidence, or switching directly to a Linux-loaded payload. Watchdog reset is a small non-UART side effect available from public Pi references and fits one controlled hardware iteration.
+
+## 2026-05-19 - Try Linux-Derived RP1 UART0 CPU Address First
+
+- Status: accepted
+- Context: Matthew clarified that no-UART-output first-light failures should be treated as hardware-contract evidence and that correct Pi 5 offsets should make first UART output simple. A fresh Raspberry Pi Linux reference checkout shows `rp1.dtsi` declaring RP1 UART0 at RP1 bus address `0xc0_40030000`, while `bcm2712.dtsi` maps the pcie2 32-bit non-prefetchable window to CPU physical `0x1f00000000`. That implies the CPU-visible RP1 UART0 address is `0x1f00030000`. Talos had centered first-light diagnostics on `0x1c00030000`, based on earlier firmware-preserved UART evidence, and repeated hardware runs produced no marker.
+- Decision: Treat `0x1f00030000` as the Linux-derived RP1 UART0 CPU address for new Pi 5 diagnostics and keep `0x1c00030000` as a fallback firmware-preserved probe. The raw loader now writes `N0`/`N1` through the Linux-derived address before trying the older `L0`/`L1` probes.
+- Required validation: Local validation must show the raw diagnostic embeds both RP1 UART0 addresses, standard Talos formatting/tests/build/smoke gates pass, and one controlled Pi 5 hardware run under `hardwareTestLock` records whether `N0`, `N1`, `L0`, `L1`, or other side effects appear.
+- Risks: The pcie2 non-prefetchable address may only become valid after a state transition the raw loader has not reached, or the firmware-preserved address may still be the only inherited early mapping. Trying both addresses keeps the experiment bounded.
+- Alternatives considered: keep using only `0x1c00030000`, switch to a non-UART side effect immediately, or wait for vclog/EEPROM diagnostics. The source-backed address correction is the smallest productive offset experiment.
+- Hardware result: The first controlled run with this diagnostic published archive `b5cb364106dae20de1a61a25fed66ef1df9f36023362ec1c443f34b44205dc90`. TFTP served the updated 4096-byte raw loader, but serial again stopped at the firmware/RP1 boundary with no `N0`/`N1`/`L0`/`L1`/`U1`/`W0` marker and no reset side effect. This rules out the Linux-derived RP1 UART0 address as sufficient by itself; the workflow remains unblocked for the next hardware-contract or handoff diagnostic.
 
 ## 2026-05-19 - Try PSCI Reset Before MMIO Watchdog
 

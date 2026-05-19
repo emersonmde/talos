@@ -31,6 +31,15 @@ _start:
     adr x10, soc_initialized_marker
     bl write_marker
 
+    ldr x9, =0x1f00030000
+    adr x10, rp1_pcie2_preserved_marker
+    bl write_marker
+
+    ldr x9, =0x1f00030000
+    bl init_pl011_fixed
+    adr x10, rp1_pcie2_initialized_marker
+    bl write_marker
+
     ldr x9, =0x1c00030000
     adr x10, rp1_preserved_marker
     bl write_marker
@@ -108,6 +117,10 @@ rp1_preserved_marker:
     .asciz "L0\r\n"
 rp1_initialized_marker:
     .asciz "L1\r\n"
+rp1_pcie2_preserved_marker:
+    .asciz "N0\r\n"
+rp1_pcie2_initialized_marker:
+    .asciz "N1\r\n"
 soc_initialized_marker:
     .asciz "U1\r\n"
 heartbeat_marker:
