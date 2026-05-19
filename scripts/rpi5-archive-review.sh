@@ -37,6 +37,10 @@ if grep -q "^$serial_prefix/" "$manifest"; then
             exit 1
         fi
     done
+    if grep -qx "armstub8-2712.bin" "$manifest" && ! grep -qx "$serial_prefix/armstub8-2712.bin" "$manifest"; then
+        echo "serial-prefixed boot mirror missing file: $serial_prefix/armstub8-2712.bin" >&2
+        exit 1
+    fi
 fi
 
 if grep -Eq '(^/|(^|/)\.\.?(/|$)|(^|/)\.[^/]+)' "$manifest"; then
@@ -84,6 +88,10 @@ if grep -qx 'armstub=armstub8-2712.bin' "$extract_dir/config.txt"; then
         echo "config.txt selects armstub8-2712.bin but archive has no non-empty armstub" >&2
         exit 1
     fi
+    if [ -d "$extract_dir/$serial_prefix" ] && [ ! -s "$extract_dir/$serial_prefix/armstub8-2712.bin" ]; then
+        echo "serial-prefixed config selects armstub8-2712.bin but mirror has no non-empty armstub" >&2
+        exit 1
+    fi
 fi
 
 if ! cmp -s "$extract_dir/kernel_2712.img" "$extract_dir/kernel8.img"; then
@@ -98,6 +106,10 @@ if [ -d "$extract_dir/$serial_prefix" ]; then
             exit 1
         fi
     done
+    if [ -f "$extract_dir/armstub8-2712.bin" ] && ! cmp -s "$extract_dir/armstub8-2712.bin" "$extract_dir/$serial_prefix/armstub8-2712.bin"; then
+        echo "serial-prefixed boot mirror differs from root file: armstub8-2712.bin" >&2
+        exit 1
+    fi
 fi
 
 image_size="$(wc -c < "$extract_dir/kernel_2712.img" | tr -d ' ')"

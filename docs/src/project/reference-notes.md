@@ -72,6 +72,8 @@ Local Daedalus references:
 - BCM2712 is documented as quad-core Arm Cortex-A76, Armv8-A, up to 2.4 GHz, with 64 KiB I/D L1, 512 KiB L2 per core, and 2 MiB shared L3.
 - Pi 5 uses EEPROM boot. The firmware loads the kernel directly; start.elf is not the Pi 5 kernel-loading path.
 - Pi 5 firmware defaults to kernel_2712.img and falls back to kernel8.img. Pi 5 is 64-bit only for kernel boot.
+- The `armstub` config option names a boot-partition file containing a small Arm stub that runs before the kernel. The Pi 5 firmware has an embedded default stub, but a configured custom stub is still a useful diagnostic for whether config parsing and pre-kernel handoff are reached.
+- `os_prefix` applies to operating-system files such as kernels, initramfs, cmdline, DTBs, and overlays; firmware first tests a prefix for viability using key files and ignores it if the expected kernel and DTB are not found. This makes a serial-prefixed mirror useful only if it includes the config-selected kernel and DTB.
 - The arm64 boot ABI passes the physical DTB address in x0, with interrupts masked and MMU off. Non-secure EL2 is preferred, EL1 is allowed.
 - Linux Pi 5 DTS declares compatible values for raspberrypi,5-model-b and brcm,bcm2712.
 - Pi 5 uses RP1 as a major I/O controller behind PCIe. RP1 owns practical peripherals including GPIO, UARTs, SPI, I2C, Ethernet, USB, SDIO, PWM, and DMA.
@@ -81,6 +83,7 @@ Local Daedalus references:
 - RP1 Ethernet appears as rp1_eth, compatible with raspberrypi,rp1-gem and cdns,macb.
 - SD card runtime access is BCM2712 SDHCI; NVMe requires PCIe root complex plus NVMe driver and should not be the first persistent-storage path.
 - The current lab TFTP boot sequence successfully requests Pi 5 files including config.txt, bcm2712-rpi-5-b.dtb, kernel_2712.img, initramfs_2712, overlays, and cmdline.txt.
+- Direct-root, `boot_ramdisk=1`, root-only armstub, and serial-prefixed mirror Talos archives all stop at the same firmware/RP1 serial boundary. The one remaining cheap file-layout hypothesis is combined serial-prefix plus armstub, because the previous prefix test did not request the custom armstub from the prefixed config.
 - A public BCM2712 peripherals PDF does not appear to exist at the expected datasheets.raspberrypi.com path; Raspberry Pi Linux DTS files are currently the most practical register-map source for BCM2712.
 
 ## Current QEMU Findings

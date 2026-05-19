@@ -334,6 +334,18 @@ tar -C target/rpi5-boot-tree -czf target/talos-rpi5-boot.tar.gz .
 ./scripts/rpi5-archive-review.sh target/talos-rpi5-boot.tar.gz
 ```
 
+To test the remaining combined prefix-plus-armstub hypothesis, stage both the
+`armstub=armstub8-2712.bin` diagnostic and the `da591740/` mirror in one
+archive. This covers the case where the bootloader reads the serial-prefixed
+`config.txt` first and therefore would never see an armstub line that exists
+only in the root config.
+
+```bash
+./scripts/rpi5-prefixed-armstub-diagnostic-tree.sh /path/to/pi-firmware-boot-source target/rpi5-boot-tree
+tar -C target/rpi5-boot-tree -czf target/talos-rpi5-boot.tar.gz .
+./scripts/rpi5-archive-review.sh target/talos-rpi5-boot.tar.gz
+```
+
 Expected project file layout:
 
 ```text
@@ -344,6 +356,7 @@ scripts/rpi5-boot-ramdisk-tree.sh # stages boot_ramdisk=1 plus boot.img
 scripts/rpi5-armstub-diagnostic.sh # builds the S1 custom armstub diagnostic
 scripts/rpi5-armstub-diagnostic-tree.sh # stages armstub=armstub8-2712.bin
 scripts/rpi5-prefixed-boot-tree.sh # mirrors boot files under da591740/
+scripts/rpi5-prefixed-armstub-diagnostic-tree.sh # combines the S1 armstub and da591740/ mirror
 scripts/rpi5-archive-review.sh  # checks archive contents and arm64 Image header fields
 target/rpi5-boot-tree/          # generated TFTP boot tree; do not hand-edit as source
 target/talos-rpi5-boot.tar.gz   # generated upload archive; remove when no longer needed
