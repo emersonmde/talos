@@ -13,14 +13,15 @@ DEADLINE=$(($(date +%s) + TIMEOUT_SECONDS))
 
 while :; do
     response="$(curl -fsS "${API_BASE}/tftp/logs?cursor=${CURSOR}&max_bytes=1048576&limit=2000")"
-    printf '%s\n' "$response"
 
     event_count="$(printf '%s' "$response" | jq '.tftp.events | length')"
     if [ "$event_count" -gt 0 ]; then
+        printf '%s\n' "$response"
         exit 0
     fi
 
     if [ "$(date +%s)" -ge "$DEADLINE" ]; then
+        printf '%s\n' "$response"
         exit 1
     fi
 
