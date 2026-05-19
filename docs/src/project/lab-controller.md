@@ -302,11 +302,22 @@ tar -C target/rpi5-boot-tree -czf target/talos-rpi5-boot.tar.gz .
 ./scripts/rpi5-archive-review.sh target/talos-rpi5-boot.tar.gz
 ```
 
+To test the Pi 5 `boot_ramdisk=1` network-boot path, stage a FAT32 `boot.img`
+inside the archive:
+
+```bash
+./scripts/rpi5-boot-ramdisk-tree.sh /path/to/pi-firmware-boot-source target/rpi5-boot-tree
+tar -C target/rpi5-boot-tree -czf target/talos-rpi5-boot.tar.gz .
+./scripts/rpi5-archive-review.sh target/talos-rpi5-boot.tar.gz
+```
+
 Expected project file layout:
 
 ```text
 scripts/rpi5-image.sh           # builds the Talos Pi 5 kernel/image artifact
 scripts/rpi5-boot-tree.sh       # stages firmware/config/cmdline/kernel into a boot tree
+scripts/rpi5-boot-img.sh        # creates a plain FAT32 boot.img from a boot tree
+scripts/rpi5-boot-ramdisk-tree.sh # stages boot_ramdisk=1 plus boot.img
 scripts/rpi5-archive-review.sh  # checks archive contents and arm64 Image header fields
 target/rpi5-boot-tree/          # generated TFTP boot tree; do not hand-edit as source
 target/talos-rpi5-boot.tar.gz   # generated upload archive; remove when no longer needed

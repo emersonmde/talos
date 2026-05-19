@@ -119,6 +119,7 @@ Results:
 - 2026-05-19 follow-up image-contract review found another header mismatch: the official decompressed Pi 5 kernel image advertises arm64 Image flags `0xc`, while Talos advertised `0`. Talos now emits flags `0xc` for the Pi 5 image and the archive review gate checks that value.
 - 2026-05-19 flags-matched hardware attempt published archive digest `22057bcd3614ebc871e3974a9f99bde524eb3241250105ca3343d1c07b21d462`; `PUT /boot/archive` returned `ok=true`; `POST /power/cycle` returned `ok=true`; serial advanced from cursor `30437` to `31145` and again stopped at the same firmware/RP1 boundary without `T1` or Talos output.
 - 2026-05-19 post-hardware review: matching the official Pi 5 `text_offset` and flags did not change the failure boundary. The next useful direction is to determine whether the bootloader is actually reaching the TFTP/config/kernel load phase after RP1 firmware, or to try the Pi 5 `boot_ramdisk=1` path with a FAT32 `boot.img` so the network boot path receives a fuller boot filesystem shape.
+- 2026-05-19 added `scripts/rpi5-boot-img.sh` and `scripts/rpi5-boot-ramdisk-tree.sh` to stage a documented Pi 5 `boot_ramdisk=1` network-boot experiment. The archive review gate now verifies `boot.img` is a readable FAT image containing the required config/kernel files when `boot_ramdisk=1` is enabled.
 
 ## Review
 

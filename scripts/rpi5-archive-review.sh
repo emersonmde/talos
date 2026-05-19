@@ -58,6 +58,17 @@ if grep -qx 'dtoverlay=uart0-pi5' "$extract_dir/config.txt"; then
     exit 1
 fi
 
+if grep -qx 'boot_ramdisk=1' "$extract_dir/config.txt"; then
+    if [ ! -f "$extract_dir/boot.img" ]; then
+        echo "config.txt enables boot_ramdisk=1 but archive has no boot.img" >&2
+        exit 1
+    fi
+    if ! mdir -i "$extract_dir/boot.img" ::/config.txt ::/kernel_2712.img ::/kernel8.img >/dev/null 2>&1; then
+        echo "boot.img must be a readable FAT image containing config and kernel files" >&2
+        exit 1
+    fi
+fi
+
 if ! cmp -s "$extract_dir/kernel_2712.img" "$extract_dir/kernel8.img"; then
     echo "kernel_2712.img and kernel8.img should match during first-light fallback testing" >&2
     exit 1

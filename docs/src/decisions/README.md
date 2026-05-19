@@ -65,3 +65,12 @@ ADR template:
 - Required validation: Local Pi 5 image generation and archive review must show `text_offset=0`, matching the Raspberry Pi 5 kernel image convention. Physical acceptance still requires a controlled hardware run that reaches the Talos entry marker or later serial output.
 - Risks: If the firmware places the image at a nonzero physical base while using a zero header offset, Talos' absolute BSS/stack symbols will still be wrong; hardware evidence decides this. If that happens, the next iteration should move the earliest marker to fully position-independent code before any absolute symbol use.
 - Alternatives considered: keep the generic arm64 `0x200000` offset, set `image_size=0` legacy mode, or add a custom armstub. Matching the official Pi 5 kernel image header is the narrowest project-local correction.
+
+## 2026-05-19 - Test Pi 5 Boot Ramdisk Path
+
+- Status: accepted
+- Context: Direct TFTP boot-tree attempts repeatedly reached the same firmware/RP1 boundary before Talos entry. Raspberry Pi documentation describes `boot_ramdisk=1` as useful for network boot, where the bootloader loads a raw FAT32 `boot.img` and reads subsequent boot files from it.
+- Decision: Add a bounded first-light experiment that stages `boot_ramdisk=1` and a plain FAT32 `boot.img` containing the same Talos config, DTB, overlays, and kernel images. Keep the ordinary root files in the archive as well so the lab archive contract remains satisfied.
+- Required validation: Local archive review must prove `boot.img` is readable by mtools and contains `config.txt`, `kernel_2712.img`, and `kernel8.img`. Physical validation requires one controlled Pi 5 power cycle and serial evidence.
+- Risks: If the firmware stops even earlier or ignores `boot_ramdisk=1` for this network path, the evidence should push the next iteration back toward bootloader/TFTP visibility or a lower-level firmware diagnostic.
+- Alternatives considered: keep iterating only on the raw `kernel_2712.img`, require a lab API TFTP-log endpoint first, or add a custom armstub. The boot ramdisk path is a documented Pi 5 network-boot shape and is small enough to test safely.
