@@ -91,6 +91,7 @@ Local Daedalus references:
 - The current assembly-only first-light proof deliberately has no Rust, stack setup, BSS clearing, exception vectors, GPIO mux writes, PL011 reinitialization, MPIDR filtering, or PL011 flag polling. It starts with a minimal arm64 Image header and repeatedly writes fixed bytes directly to firmware-preserved RP1 UART0.
 - The current non-UART entry discriminator is `asm-entry-reset-proof`: a 96-byte assembly-only Image that preserves x0, performs no MMIO, and calls PSCI `SYSTEM_RESET`. It is intended to prove or disprove BL33 entry independently of RP1 UART.
 - The `asm-entry-reset-firmware-address` variant uses the same 96-byte Image but removes `kernel_address=0x80000` to let Pi 5 firmware choose placement while keeping Image `text_offset=0`, matching the official Pi 5 Image convention more closely than the Circle-style forced-address path. Its hardware run served the 96-byte image and then produced a second TFTP boot sequence before restore, so the next UART marker proof should use the firmware-selected Image placement rather than the forced Circle-style address.
+- The `asm-uart-proof-firmware-address` variant keeps the current assembly-only firmware-preserved RP1 UART0 marker proof but uses the same no-`kernel_address` Image placement as the successful reset discriminator.
 - A public BCM2712 peripherals PDF does not appear to exist at the expected datasheets.raspberrypi.com path; Raspberry Pi Linux DTS files are currently the most practical register-map source for BCM2712.
 
 ## Current QEMU Findings
