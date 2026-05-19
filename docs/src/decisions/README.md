@@ -101,3 +101,12 @@ ADR template:
 - Required validation: The next hardware-dependent step should first prove which files the Pi requests and successfully loads, or prove the known-good boot source shape that differs from the staged Talos source. Hardware claims still require one controlled Pi 5 power-cycle under the hardware lock and serial/TFTP evidence.
 - Risks: This hold delays continued trial-and-error, but it avoids consuming rollback history and power cycles on low-signal variants. If new lab visibility shows the firmware is loading Talos files correctly, revisit position-independent earliest-entry code or a different UART assumption.
 - Alternatives considered: continue adding config variants, restore older header/linker choices, or evolve the diagnostic armstub into a handoff helper. Those paths now have low expected value because the configured armstub itself has not produced output.
+
+## 2026-05-19 - Separate Firmware-Preserved UART From UART Reinit
+
+- Status: accepted
+- Context: The upgraded lab API proved the Pi is served the prefixed `config.txt`, `kernel_2712.img`, DTB, overlays, `cmdline.txt`, and `armstub8-2712.bin`. The original armstub and kernel markers reinitialized PL011 before writing but did not fully mirror the Rust PL011 baud and interrupt-mask setup.
+- Decision: Make the custom armstub and Pi 5 entry marker write through the firmware-preserved RP1 UART0 before changing any PL011 registers, then run the explicit PL011 init and write the existing initialized marker. The armstub now attempts `P0` then `S1`; the kernel entry marker attempts `P1` then `T1`.
+- Required validation: Local validation must pass formatting, unit tests, Pi 5 target build, image generation, archive review, and QEMU smoke. Physical validation is a controlled Pi 5 power-cycle with serial and TFTP-log evidence.
+- Risks: If no preserved or initialized marker appears while TFTP logs prove the armstub and kernel files were served, the next failure boundary is no longer ordinary archive layout or PL011 initialization. It points toward firmware handoff semantics, custom armstub execution assumptions, or a mismatch between loaded files and executed code.
+- Alternatives considered: keep testing more archive layouts, restore older Image header fields, or require Matthew input immediately. The preserved-UART marker is a small code diagnostic that directly tests the remaining UART-reinit hypothesis.

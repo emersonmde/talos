@@ -12,12 +12,36 @@
 _start:
     ldr x9, =0x1c00030000
 
+    adr x10, preserved_marker
+
+preserved_write_loop:
+    ldrb w11, [x10], #1
+    cbz w11, configure_uart
+    mov w13, #0x10000
+
+preserved_wait:
+    ldr w12, [x9, #0x18]
+    tbz w12, #5, preserved_write
+    subs w13, w13, #1
+    b.ne preserved_wait
+
+preserved_write:
+    str w11, [x9]
+    b preserved_write_loop
+
+configure_uart:
     mov w12, #0
     str w12, [x9, #0x30]
     mov w12, #0x7ff
     str w12, [x9, #0x44]
+    mov w12, #1
+    str w12, [x9, #0x24]
+    mov w12, #40
+    str w12, [x9, #0x28]
     mov w12, #(3 << 5)
     str w12, [x9, #0x2c]
+    mov w12, #0
+    str w12, [x9, #0x38]
     mov w12, #0x301
     str w12, [x9, #0x30]
 
@@ -44,3 +68,6 @@ _start:
 
 armstub_marker:
     .asciz "S1\r\n"
+
+preserved_marker:
+    .asciz "P0\r\n"

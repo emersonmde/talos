@@ -54,12 +54,32 @@ _start:
 .type rpi5_uart0_marker, %function
 rpi5_uart0_marker:
     ldr x9, =0x1c00030000
+    adr x10, 9f
+10:
+    ldrb w11, [x10], #1
+    cbz w11, 11f
+    mov w13, #0x10000
+12:
+    ldr w12, [x9, #0x18]
+    tbz w12, #5, 13f
+    subs w13, w13, #1
+    b.ne 12b
+13:
+    str w11, [x9]
+    b 10b
+11:
     mov w12, #0
     str w12, [x9, #0x30]
     mov w12, #0x7ff
     str w12, [x9, #0x44]
+    mov w12, #1
+    str w12, [x9, #0x24]
+    mov w12, #40
+    str w12, [x9, #0x28]
     mov w12, #(3 << 5)
     str w12, [x9, #0x2c]
+    mov w12, #0
+    str w12, [x9, #0x38]
     mov w12, #0x301
     str w12, [x9, #0x30]
     adr x10, 4f
@@ -80,6 +100,8 @@ rpi5_uart0_marker:
 
 4:
     .asciz "T1\r\n"
+9:
+    .asciz "P1\r\n"
 
 .size rpi5_uart0_marker, . - rpi5_uart0_marker
 #endif
