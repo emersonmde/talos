@@ -495,6 +495,7 @@ Serial shows RP1 firmware output but no Talos banner:
 - For Talos, confirm the Pi 5 target is linked at `0x00000000`, not QEMU virt's `0x40200000`. The official Raspberry Pi 5 `kernel_2712.img` raw image advertises arm64 Image `text_offset=0`, so Talos follows that contract for the physical target while keeping QEMU's separate load address.
 - Confirm the arm64 Image header `image_size` matches the generated `kernel_2712.img` byte length. `scripts/rpi5-image.sh` checks this automatically.
 - Consider a tiny assembly-only UART diagnostic before Rust clears BSS or switches stacks.
+- If several archives all stop immediately after `RP1 FW: load 0` / `RP1_BOOT chip ID`, classify the evidence as pre-entry and possibly pre-config/kernel-load. At that point, prefer bootloader file-load visibility, EEPROM/network-boot diagnostics, or a different firmware entry path over more Rust-side changes.
 
 Pi boots but hostname/files look unchanged:
 
