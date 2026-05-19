@@ -137,3 +137,12 @@ ADR template:
 - Required validation: Build/disassemble the raw diagnostic, pass archive review in loader-diagnostic mode, pass standard local Talos gates, then run one controlled Pi 5 hardware iteration under `hardwareTestLock`.
 - Risks: Skipping faulting MMIO instructions can only keep the diagnostic moving; it cannot make an unobservable UART path visible. If this still emits no marker while TFTP proves the image was served, the next evidence needs a different side effect or a different boot path.
 - Alternatives considered: switch immediately to Linux-loaded payload work, keep trying UART-only variants, or require EEPROM/vclog support. Exception-tolerant control flow is a bounded diagnostic improvement that addresses a concrete flaw in the first raw-loader attempt.
+
+## 2026-05-19 - Add Watchdog Reset as a Non-UART Execution Signal
+
+- Status: accepted
+- Context: The exception-tolerant raw loader still emitted no UART marker. Circle's Pi 5-capable watchdog/reset path documents the power-manager watchdog registers at `ARM_IO_BASE + 0x1200000` for Pi 5, with writes to `ARM_PM_WDOG` and `ARM_PM_RSTC` causing a reset. A watchdog-triggered second firmware boot would prove CPU execution even if UART output is unavailable.
+- Decision: Add a watchdog reset attempt after the raw loader's UART attempts. The hardware test must roll back the archive after observation so a successful watchdog diagnostic does not leave the Pi in a reset loop.
+- Required validation: Build/disassemble the raw loader, pass archive review and standard local Talos gates, run exactly one hardware cycle, observe serial long enough for a watchdog reset, inspect TFTP evidence, then restore the previous archive.
+- Risks: If the CPU never reaches the raw loader, no watchdog reset occurs. If PM watchdog MMIO is inaccessible or the reset sequence is wrong for this boot state, the result is still no side effect. A successful reset would be useful but requires immediate cleanup.
+- Alternatives considered: another UART-only variant, requiring EEPROM/vclog evidence, or switching directly to a Linux-loaded payload. Watchdog reset is a small non-UART side effect available from public Pi references and fits one controlled hardware iteration.

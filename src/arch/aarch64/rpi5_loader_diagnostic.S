@@ -48,6 +48,10 @@ _start:
 2:
     subs x0, x0, #1
     b.ne 2b
+    ldr x9, =0x1c00030000
+    adr x10, watchdog_marker
+    bl write_marker
+    bl trigger_watchdog_reset
     b 1b
 
 init_pl011_fixed:
@@ -83,6 +87,17 @@ write_marker:
 6:
     ret
 
+trigger_watchdog_reset:
+    ldr x9, =0x107d200024
+    ldr w12, =0x5a000001
+    str w12, [x9]
+    ldr x9, =0x107d20001c
+    ldr w12, =0x5a000020
+    str w12, [x9]
+7:
+    wfe
+    b 7b
+
 rp1_preserved_marker:
     .asciz "L0\r\n"
 rp1_initialized_marker:
@@ -91,6 +106,8 @@ soc_initialized_marker:
     .asciz "U1\r\n"
 heartbeat_marker:
     .asciz "."
+watchdog_marker:
+    .asciz "W0\r\n"
 
 .align 11
 exception_vectors:
