@@ -293,3 +293,12 @@ ADR template:
 - Hardware result: Archive `f839443aae5673677d2cf4f571517347d8efc5b666309b426567191a1c7c05e6` was published and power-cycled successfully. Corrected TFTP evidence captured cursor `352704->354055` with 13 fresh events, including served `da591740/kernel_2712.img` at 152 bytes twice. Serial advanced from `46967->47389` and, unlike the previous headered GPIO proof, reached firmware `Starting OS` messages followed by `NOTICE: BL31: v2.6...`; it still showed no repeated `TA` marker. Rollback restored the previous boot tree hash `02a1311a6419ca764a2b19b2a34e4ad1b71e74972c6484e7b5620fc8018ec7d9`.
 - Risks: If the firmware-preserved mapping is not valid for the loaded kernel, this will still produce no marker. The useful distinction is that failure will no longer be attributable to pre-UART GPIO/control writes.
 - Alternatives considered: add exception recovery around RP1 MMIO, switch back to raw loader diagnostics, or add non-UART side effects. Those add complexity before this single-premise simplification has been tested with corrected TFTP evidence.
+
+## 2026-05-19 - Remove MPIDR Core Filter From UART Proof
+
+- Status: accepted
+- Context: The preserved-UART proof reached the `Starting OS` / BL31 boundary but still emitted no `TA`. The remaining pre-UART logic read `MPIDR_EL1` and parked unless `AFF0 == 0`. If BL31 hands control to a CPU whose low affinity is not zero, or if the handoff state makes that system-register path unsuitable, the proof can silently park before the first UART write.
+- Decision: Remove MPIDR filtering and secondary-core parking from the first-light proof. The entry CPU now preserves `x0`, loads the firmware-preserved UART base `0x1c00030000`, and immediately enters the `TA\r\n` write loop.
+- Required validation: Local validation must inspect the disassembly for the absence of `mrs MPIDR_EL1`, `wfe`, and the presence of the UART literal, Image header fields, marker bytes, prefixed archive review, mdBook, and diff check before one controlled hardware run.
+- Risks: If multiple cores actually enter this image, they may all write the same `TA` marker. That is acceptable for first light because any `TA` proves execution; later boot code can reintroduce disciplined CPU parking.
+- Alternatives considered: keep the core filter, add exception vectors, or change UART/device-map assumptions again. Removing the filter is the smallest BL31-handoff-sensitive simplification before adding exception machinery.
