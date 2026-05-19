@@ -117,6 +117,8 @@ Results:
 - 2026-05-19 post-hardware image-contract review compared Talos with the official Raspberry Pi `kernel_2712.img`. The official decompressed Pi 5 kernel image advertises arm64 Image `text_offset=0`, while Talos advertised `0x00200000`. The Pi 5 linker now uses `KERNEL_IMAGE_TEXT_OFFSET=0`, and the archive review gate expects `text_offset=0` for Pi 5.
 - 2026-05-19 offset-zero hardware attempt published archive digest `a2b2fe61e41f0178f68437527e03a837d1cd21c9e10635b65c5ffa9aeac94116`; `PUT /boot/archive` returned `ok=true`; `POST /power/cycle` returned `ok=true`; serial advanced from cursor `29729` to `30437` and still stopped at the same firmware/RP1 boundary without `T1` or Talos output.
 - 2026-05-19 follow-up image-contract review found another header mismatch: the official decompressed Pi 5 kernel image advertises arm64 Image flags `0xc`, while Talos advertised `0`. Talos now emits flags `0xc` for the Pi 5 image and the archive review gate checks that value.
+- 2026-05-19 flags-matched hardware attempt published archive digest `22057bcd3614ebc871e3974a9f99bde524eb3241250105ca3343d1c07b21d462`; `PUT /boot/archive` returned `ok=true`; `POST /power/cycle` returned `ok=true`; serial advanced from cursor `30437` to `31145` and again stopped at the same firmware/RP1 boundary without `T1` or Talos output.
+- 2026-05-19 post-hardware review: matching the official Pi 5 `text_offset` and flags did not change the failure boundary. The next useful direction is to determine whether the bootloader is actually reaching the TFTP/config/kernel load phase after RP1 firmware, or to try the Pi 5 `boot_ramdisk=1` path with a FAT32 `boot.img` so the network boot path receives a fuller boot filesystem shape.
 
 ## Review
 
