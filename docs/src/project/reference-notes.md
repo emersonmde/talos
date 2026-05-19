@@ -50,13 +50,12 @@ their proven patterns where appropriate, especially around no_std, custom test
 harnesses, panic paths, allocators, paging, and interrupt setup, while adapting
 them to AArch64 and Raspberry Pi 5 hardware instead of copying x86 assumptions.
 
-Linux and U-Boot source areas to index before implementation:
+Linux, Raspberry Pi firmware, and bare-metal source areas to index before implementation:
 
 - Linux Cadence MACB/GEM Ethernet driver.
 - Linux GICv2 and ARM generic timer drivers.
 - Linux Raspberry Pi pinctrl/GPIO and RP1 support.
 - Linux DMA mapping and cache-maintenance paths relevant to arm64 noncoherent devices.
-- U-Boot Raspberry Pi 5 board code and boot flow.
 - Any available Cadence GEM/macb public programming reference.
 
 Local Daedalus references:
@@ -80,8 +79,7 @@ Local Daedalus references:
 - UART has two important paths: firmware console serial10 maps to the Pi 5 debug UART path; the 40-pin header UART is RP1 UART0. The lab USB serial cable observes the 40-pin login prompt, so first-light Talos output should use RP1 UART0 through the firmware-preserved RP1 mapping at physical 0x1c00030000 with initialization preserved by enable_rp1_uart=1 and pciex4_reset=0. Linux's RP1 DTS describes UART0 as RP1 bus offset 0xc0_40030000; Raspberry Pi firmware reports the preserved RP1 UART MMIO address as 0x0000001c00030000 when enable_rp1_uart=1.
 - BCM2712 exposes GIC-400 / GICv2, and the architectural timer PPIs are the first timer-interrupt path to bring up.
 - Raspberry Pi Linux device tree advertises PSCI 1.0 with SMC and cpu_on 0xc4000003. PSCI should be the primary SMP bring-up path.
-- U-Boot's normal arm64 handoff path uses the arm64 Image format via `booti`, while its UEFI path can run `BOOTAA64.EFI` from a FAT filesystem. A UEFI diagnostic is a useful intermediate proof because it can run under QEMU/AAVMF now and later under U-Boot or another UEFI-capable loader on the Pi.
-- U-Boot's Raspberry Pi default environment uses `boot_targets=mmc usb pxe dhcp` and memory variables including `kernel_addr_r=0x00080000`, `scriptaddr=0x05400000`, `pxefile_addr_r=0x05500000`, `fdt_addr_r=0x05600000`, and `ramdisk_addr_r=0x05700000`. For a lab TFTP experiment, a staged `boot.scr` should try both filesystem-style `load ... EFI/BOOT/BOOTAA64.EFI` and `tftpboot ... EFI/BOOT/BOOTAA64.EFI`.
+- External bootloaders are not Talos implementation dependencies or hardware boot targets. They may be inspected only as reference material for public hardware contracts and boot behavior.
 - RP1 Ethernet appears as rp1_eth, compatible with raspberrypi,rp1-gem and cdns,macb.
 - SD card runtime access is BCM2712 SDHCI; NVMe requires PCIe root complex plus NVMe driver and should not be the first persistent-storage path.
 - The current lab TFTP boot sequence successfully requests Pi 5 files including config.txt, bcm2712-rpi-5-b.dtb, kernel_2712.img, initramfs_2712, overlays, and cmdline.txt.
@@ -95,8 +93,7 @@ Local Daedalus references:
 - No raspi5, bcm2712, or RP1 machine model is available in the checked local QEMU versions.
 - QEMU raspi4b is incomplete for Pi 4 networking and PCIe and should not be used as Pi 5 validation.
 - QEMU virt with -cpu cortex-a76 is the useful emulator path for generic AArch64 work.
-- QEMU virt with AAVMF/QEMU_EFI can run Talos' minimal AArch64 UEFI diagnostic from a FAT image and prints `Talos EFI first-light PASS`. This is substitute validation for an intermediate-loader path, not physical Pi 5 validation.
-- The current OpenClaw container can build and run the EFI diagnostic, but it cannot currently build U-Boot: `bison`, `flex`, `dtc`, `aarch64-linux-gnu-gcc`, and `mkimage` are absent, and `apt-get` cannot acquire package-manager locks without elevated host privileges. Use this as an environment finding, not a Talos architecture blocker.
+- QEMU virt with AAVMF/QEMU_EFI can run Talos' minimal AArch64 UEFI diagnostic from a FAT image and prints `Talos EFI first-light PASS`. This is substitute validation for loader-call mechanics, not physical Pi 5 validation or a hardware boot plan.
 
 ## Open Questions
 

@@ -40,7 +40,7 @@ Blocked or pending:
 - Use Rust for kernel code, with small AArch64 assembly stubs where the hardware requires it.
 - Use established Rust kernel development practices where they fit: pinned nightly toolchain, explicit custom targets, no_std, build-std, small unsafe boundaries, narrow target abstractions, and QEMU-backed smoke tests for generic architecture work.
 - Keep POSIX direction visible from the start: processes, file descriptors, pipes, paths, sockets, exit/wait, and exec-style program loading should shape interfaces even before compatibility is complete.
-- Treat Pi 5 hardware facts as evidence, not assumptions. Device tree, Linux drivers, U-Boot, Raspberry Pi firmware docs, serial logs, and lab results should be cited in task notes.
+- Treat Pi 5 hardware facts as evidence, not assumptions. Device tree, Linux drivers, Raspberry Pi firmware docs, Circle/RPi bare-metal examples, serial logs, and lab results should be cited in task notes.
 - Keep board-specific code behind clear target boundaries. The QEMU virt target and Pi 5 target should share architecture code where possible, but not pretend to have the same devices.
 - Prefer small, inspectable milestones with a boot/test gate over broad subsystem rewrites.
 - Every milestone must update docs, ADRs, or task records when it changes architecture or hardware understanding.
@@ -51,7 +51,7 @@ Goal: make the development system trustworthy before kernel implementation accel
 
 Milestone 0.1: Source Map
 
-- Build a curated source index for Pi 5, BCM2712, RP1, ARMv8-A, QEMU, Linux, U-Boot, and Daedalus references.
+- Build a curated source index for Pi 5, BCM2712, RP1, ARMv8-A, QEMU, Linux, Raspberry Pi firmware, Circle/RPi bare-metal, and Daedalus references.
 - Record which sources are authoritative and which are advisory.
 - Identify missing datasheets or areas that require Linux-source archaeology.
 
