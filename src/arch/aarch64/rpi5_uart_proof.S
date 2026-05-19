@@ -2,10 +2,10 @@
  * Minimal Raspberry Pi 5 assembly-only UART proof.
  *
  * Keep this intentionally smaller than the raw loader diagnostic: firmware
- * entry, use the firmware-preserved RP1 UART0 path, and repeat fixed bytes
- * forever. No Rust, stack, BSS, exception vectors, GPIO mux, PL011
- * reinitialization, watchdog, PSCI, MPIDR filtering, or multi-device fallback
- * logic.
+ * entry, use the firmware-preserved RP1 UART0 data register, and repeat fixed
+ * bytes forever. No Rust, stack, BSS, exception vectors, GPIO mux, PL011
+ * reinitialization, PL011 flag polling, watchdog, PSCI, MPIDR filtering, or
+ * multi-device fallback logic.
  */
 
 .section .text, "ax"
@@ -33,9 +33,6 @@ write_loop:
 write_byte:
     ldrb w11, [x10], #1
     cbz w11, delay
-wait_tx:
-    ldr w12, [x9, #0x18]
-    tbnz w12, #5, wait_tx
     str w11, [x9]
     b write_byte
 
