@@ -66,6 +66,7 @@ fi
 image_size="$(wc -c < "$extract_dir/kernel_2712.img" | tr -d ' ')"
 text_offset="$(od -An -tu8 -j8 -N8 "$extract_dir/kernel_2712.img" | tr -d ' ')"
 header_image_size="$(od -An -tu8 -j16 -N8 "$extract_dir/kernel_2712.img" | tr -d ' ')"
+flags="$(od -An -tu8 -j24 -N8 "$extract_dir/kernel_2712.img" | tr -d ' ')"
 magic="$(dd if="$extract_dir/kernel_2712.img" bs=1 skip=56 count=4 2>/dev/null)"
 
 if [ "$text_offset" != "0" ]; then
@@ -75,6 +76,11 @@ fi
 
 if [ "$header_image_size" != "$image_size" ]; then
     echo "arm64 Image header size mismatch: header=$header_image_size file=$image_size" >&2
+    exit 1
+fi
+
+if [ "$flags" != "12" ]; then
+    echo "unexpected arm64 Image flags: $flags" >&2
     exit 1
 fi
 
@@ -89,5 +95,6 @@ printf 'file_count=%s\n' "$(wc -l < "$manifest" | tr -d ' ')"
 printf 'kernel_size=%s\n' "$image_size"
 printf 'header_image_size=%s\n' "$header_image_size"
 printf 'text_offset=%s\n' "$text_offset"
+printf 'flags=%s\n' "$flags"
 printf 'manifest:\n'
 sed 's/^/  /' "$manifest"

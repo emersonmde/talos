@@ -7,7 +7,11 @@ _start:
     .long 0
     .quad KERNEL_IMAGE_TEXT_OFFSET
     .quad __kernel_image_end - _start
+#ifdef TALOS_TARGET_RPI5_BCM2712
+    .quad 0xc
+#else
     .quad 0
+#endif
     .quad 0
     .quad 0
     .quad 0
