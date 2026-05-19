@@ -110,3 +110,12 @@ ADR template:
 - Required validation: Local validation must pass formatting, unit tests, Pi 5 target build, image generation, archive review, and QEMU smoke. Physical validation is a controlled Pi 5 power-cycle with serial and TFTP-log evidence.
 - Risks: If no preserved or initialized marker appears while TFTP logs prove the armstub and kernel files were served, the next failure boundary is no longer ordinary archive layout or PL011 initialization. It points toward firmware handoff semantics, custom armstub execution assumptions, or a mismatch between loaded files and executed code.
 - Alternatives considered: keep testing more archive layouts, restore older Image header fields, or require Matthew input immediately. The preserved-UART marker is a small code diagnostic that directly tests the remaining UART-reinit hypothesis.
+
+## 2026-05-19 - Use Circle-Style Pi 5 Bare-Metal Kernel Address
+
+- Status: accepted
+- Context: After TFTP logs proved the Pi is served Talos' config, kernel, DTB, overlays, cmdline, and custom armstub, serial still stopped before any preserved-UART or initialized-UART marker. The official Raspberry Pi documentation says `kernel` selects `kernel_2712.img` on Pi 5 and `kernel_address` can control the load address. Circle's Pi 5 bare-metal `config64.txt` keeps `kernel_2712.img` and sets `kernel_address=0x80000`.
+- Decision: Keep the Pi 5 arm64 Image `text_offset=0` and flags `0xc`, but link Talos at physical `0x80000` and stage `kernel_address=0x80000` in the first-light `config.txt`. Keep QEMU virt on its separate QEMU-specific link base.
+- Required validation: Pi 5 target builds must show `_start` and `__kernel_start` at `0x80000`; archive review must require `kernel_address=0x80000`; physical validation requires one controlled hardware run with serial and TFTP evidence.
+- Risks: This does not explain why the custom armstub marker did not appear; if the next hardware run still stops at the same boundary, the remaining issue is likely firmware handoff semantics or lab-visible UART assumptions rather than ordinary kernel load address.
+- Alternatives considered: continue with `kernel_address` omitted and link at zero, add more archive-layout variants, or switch immediately to a Linux-loaded payload. The Circle-style address is a reference-backed, bounded change that can be validated locally before one hardware iteration.

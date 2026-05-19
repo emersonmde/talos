@@ -67,6 +67,11 @@ if ! grep -qx 'pciex4_reset=0' "$extract_dir/config.txt"; then
     exit 1
 fi
 
+if ! grep -qx 'kernel_address=0x80000' "$extract_dir/config.txt"; then
+    echo "config.txt must select the Circle-style Pi 5 bare-metal kernel address" >&2
+    exit 1
+fi
+
 if grep -qx 'dtoverlay=uart0-pi5' "$extract_dir/config.txt"; then
     echo "config.txt should not apply the Linux uart0-pi5 overlay during bare-metal first light" >&2
     exit 1

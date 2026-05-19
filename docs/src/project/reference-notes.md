@@ -83,7 +83,8 @@ Local Daedalus references:
 - RP1 Ethernet appears as rp1_eth, compatible with raspberrypi,rp1-gem and cdns,macb.
 - SD card runtime access is BCM2712 SDHCI; NVMe requires PCIe root complex plus NVMe driver and should not be the first persistent-storage path.
 - The current lab TFTP boot sequence successfully requests Pi 5 files including config.txt, bcm2712-rpi-5-b.dtb, kernel_2712.img, initramfs_2712, overlays, and cmdline.txt.
-- Direct-root, `boot_ramdisk=1`, root-only armstub, and serial-prefixed mirror Talos archives all stop at the same firmware/RP1 serial boundary. The one remaining cheap file-layout hypothesis is combined serial-prefix plus armstub, because the previous prefix test did not request the custom armstub from the prefixed config.
+- Direct-root, `boot_ramdisk=1`, root-only armstub, serial-prefixed mirror, combined prefix-plus-armstub, and preserved-UART marker Talos archives all stop at the same firmware/RP1 serial boundary. TFTP logs now prove the Pi is served the selected config, kernel, DTB, overlays, cmdline, and custom armstub files.
+- Circle's Raspberry Pi 5 bare-metal configuration keeps `kernel_2712.img` but sets `kernel_address=0x80000`. Talos now uses the same firmware load base while keeping arm64 Image `text_offset=0`, so post-marker absolute symbols match a reference bare-metal handoff convention.
 - A public BCM2712 peripherals PDF does not appear to exist at the expected datasheets.raspberrypi.com path; Raspberry Pi Linux DTS files are currently the most practical register-map source for BCM2712.
 
 ## Current QEMU Findings

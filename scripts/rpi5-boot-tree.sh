@@ -42,6 +42,12 @@ sed -i 's/earlycon=pl011,mmio32,0x1f00030000/earlycon=pl011,mmio32,0x1c00030000/
 # to the earliest hardware diagnostic path.
 sed -i '/^dtoverlay=uart0-pi5$/d' "$OUTPUT_DIR/config.txt"
 
+# Circle's Pi 5 bare-metal path pins the firmware load address at 0x80000.
+# Keep the arm64 Image text offset at zero, but link Talos and ask firmware to
+# load the image at the same base so early absolute symbols match handoff.
+sed -i '/^kernel_address=/d' "$OUTPUT_DIR/config.txt"
+printf '%s\n' 'kernel_address=0x80000' >> "$OUTPUT_DIR/config.txt"
+
 if [ -d "$SOURCE_DIR/overlays" ]; then
     mkdir -p "$OUTPUT_DIR/overlays"
     for overlay in overlay_map.dtb bcm2712d0.dtbo uart0-pi5.dtbo; do
