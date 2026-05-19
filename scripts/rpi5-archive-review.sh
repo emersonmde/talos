@@ -57,14 +57,26 @@ if ! grep -qx 'kernel=kernel_2712.img' "$extract_dir/config.txt"; then
     exit 1
 fi
 
-if ! grep -qx 'enable_rp1_uart=1' "$extract_dir/config.txt"; then
-    echo "config.txt must preserve RP1 UART0 for first-light serial" >&2
-    exit 1
+loader_diagnostic=false
+circle_config_loader_diagnostic=false
+if grep -qx 'talos_loader_diagnostic=raw-pi5' "$extract_dir/config.txt"; then
+    loader_diagnostic=true
+fi
+if grep -qx 'talos_loader_diagnostic=raw-pi5-circle-config' "$extract_dir/config.txt"; then
+    loader_diagnostic=true
+    circle_config_loader_diagnostic=true
 fi
 
-if ! grep -qx 'pciex4_reset=0' "$extract_dir/config.txt"; then
-    echo "config.txt must preserve RP1 state with pciex4_reset=0" >&2
-    exit 1
+if [ "$circle_config_loader_diagnostic" = false ]; then
+    if ! grep -qx 'enable_rp1_uart=1' "$extract_dir/config.txt"; then
+        echo "config.txt must preserve RP1 UART0 for first-light serial" >&2
+        exit 1
+    fi
+
+    if ! grep -qx 'pciex4_reset=0' "$extract_dir/config.txt"; then
+        echo "config.txt must preserve RP1 state with pciex4_reset=0" >&2
+        exit 1
+    fi
 fi
 
 if ! grep -qx 'kernel_address=0x80000' "$extract_dir/config.txt"; then
@@ -75,11 +87,6 @@ fi
 if grep -qx 'dtoverlay=uart0-pi5' "$extract_dir/config.txt"; then
     echo "config.txt should not apply the Linux uart0-pi5 overlay during bare-metal first light" >&2
     exit 1
-fi
-
-loader_diagnostic=false
-if grep -qx 'talos_loader_diagnostic=raw-pi5' "$extract_dir/config.txt"; then
-    loader_diagnostic=true
 fi
 
 if grep -qx 'boot_ramdisk=1' "$extract_dir/config.txt"; then
@@ -158,5 +165,6 @@ printf 'header_image_size=%s\n' "$header_image_size"
 printf 'text_offset=%s\n' "$text_offset"
 printf 'flags=%s\n' "$flags"
 printf 'loader_diagnostic=%s\n' "$loader_diagnostic"
+printf 'circle_config_loader_diagnostic=%s\n' "$circle_config_loader_diagnostic"
 printf 'manifest:\n'
 sed 's/^/  /' "$manifest"

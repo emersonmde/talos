@@ -173,3 +173,12 @@ ADR template:
 - Required validation: Remove U-Boot-specific staging from the active tool path. Continue with Talos-owned loader diagnostics, local gates, and one controlled hardware test at a time.
 - Risks: External bootloader staging would hide Talos bootloader bugs and move the project away from the from-scratch kernel goal.
 - Alternatives considered: use U-Boot as a bridge. Rejected because it does not match the project direction.
+
+## 2026-05-19 - Test Raw Loader Under Circle-Style Minimal Config
+
+- Status: accepted
+- Context: Matthew clarified that Talos must own its bootloader path. The existing raw loader is Talos-owned, but previous hardware tests used the Talos first-light config with `enable_rp1_uart=1`, `pciex4_reset=0`, UART debug settings, and extra diagnostic options. Circle's Pi 5 bare-metal config is much smaller.
+- Decision: Add a separate raw-loader staging path that keeps the Talos-owned loader binary but uses a Circle-style minimal Pi 5 config: `arm_64bit=1`, `kernel_address=0x80000`, `initial_turbo=0`, `[pi5]`, and `kernel=kernel_2712.img`. This tests the config-shape hypothesis without introducing an external bootloader.
+- Required validation: Archive review must identify the diagnostic as `raw-pi5-circle-config`, allow the intentionally omitted RP1-preservation settings only for that diagnostic, and standard local gates must pass before exactly one hardware run under `hardwareTestLock`.
+- Risks: Omitting RP1 UART preservation may make loader UART output less likely, so the meaningful hardware side effects are still firmware re-entry/reset evidence and any serial/TFTP movement. No marker still does not prove CPU execution is impossible.
+- Alternatives considered: continue with U-Boot staging, repeat the prior first-light config, or wait for EEPROM/vclog evidence. The minimal-config raw loader is the smallest Talos-owned experiment that directly follows from the reference comparison.
