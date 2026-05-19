@@ -146,3 +146,12 @@ ADR template:
 - Required validation: Build/disassemble the raw loader, pass archive review and standard local Talos gates, run exactly one hardware cycle, observe serial long enough for a watchdog reset, inspect TFTP evidence, then restore the previous archive.
 - Risks: If the CPU never reaches the raw loader, no watchdog reset occurs. If PM watchdog MMIO is inaccessible or the reset sequence is wrong for this boot state, the result is still no side effect. A successful reset would be useful but requires immediate cleanup.
 - Alternatives considered: another UART-only variant, requiring EEPROM/vclog evidence, or switching directly to a Linux-loaded payload. Watchdog reset is a small non-UART side effect available from public Pi references and fits one controlled hardware iteration.
+
+## 2026-05-19 - Try PSCI Reset Before MMIO Watchdog
+
+- Status: accepted
+- Context: The watchdog raw loader diagnostic did not produce UART output or a second firmware boot. That leaves two different possibilities: the firmware never transfers CPU execution to the raw loader, or the loader runs in a state where both lab-visible UART and BCM2712 watchdog MMIO are ineffective.
+- Decision: Add a PSCI `SYSTEM_RESET` SMC call before the MMIO watchdog reset in the diagnostic loader. This is still a diagnostic-only path and leaves the normal Talos image unchanged.
+- Required validation: Build and disassemble the raw loader to confirm the SMC instruction is present, pass archive review and standard Talos local gates, run exactly one hardware cycle under `hardwareTestLock`, observe serial long enough for a possible monitor-mediated reboot, then roll back the archive.
+- Risks: PSCI may be unavailable in the firmware handoff state, or the SMC may return without side effects. If no reset occurs, the result is evidence against this specific non-MMIO side channel, not proof that Talos can never execute.
+- Alternatives considered: switch immediately to a Linux/UEFI-loaded payload, require EEPROM/vclog support, or keep adding UART-only markers. PSCI reset is a small, reversible diagnostic and tests a different side-effect class than RP1 UART or PM watchdog MMIO.

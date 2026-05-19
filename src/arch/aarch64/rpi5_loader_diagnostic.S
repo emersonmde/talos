@@ -51,6 +51,7 @@ _start:
     ldr x9, =0x1c00030000
     adr x10, watchdog_marker
     bl write_marker
+    bl trigger_psci_reset
     bl trigger_watchdog_reset
     b 1b
 
@@ -97,6 +98,11 @@ trigger_watchdog_reset:
 7:
     wfe
     b 7b
+
+trigger_psci_reset:
+    ldr x0, =0x84000009
+    smc #0
+    ret
 
 rp1_preserved_marker:
     .asciz "L0\r\n"
