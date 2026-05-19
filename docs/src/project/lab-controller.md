@@ -23,7 +23,7 @@ The API owns:
 - Power-cycle actions.
 - TFTP boot archive publishing.
 - One-archive rollback.
-- Serial access later, after the serial cable is installed.
+- Serial console access through the attached USB UART cable.
 
 OpenClaw should not call UniFi directly and should not ask for UniFi keys.
 
@@ -40,7 +40,9 @@ site ID:   88f7af54-98f8-306a-a1c7-c9349722b1f6
 device ID: 99dd2845-8d30-3258-b27f-43295483fa7d
 ```
 
-The API verifies the live UniFi client mapping before any power action. If `88:a2:9e:ae:c8:7f` / `10.42.1.4` is not still on Weathertop port 8, power control fails closed.
+Power control is intentionally fixed-port. `POST /power/cycle` always sends UniFi `POWER_CYCLE` to Weathertop port 8 using the configured switch ID and port index. It does not depend on a live UniFi client record for `10.42.1.4`, because failed kernel or bootloader states may leave Talos absent from UniFi's client list exactly when a power cycle is needed.
+
+The API still checks that the configured UniFi device exposes port 8 and that PoE is enabled on that port. It does not try to discover or choose a port dynamically.
 
 ## API Commands
 
@@ -84,6 +86,45 @@ curl -fsS -X POST http://talos-lab-api:8080/boot/rollback
 
 The API keeps exactly one rollback archive and removes upload/staging files after each publish attempt. Do not leave large boot tarballs in the OpenClaw workspace after upload.
 
+Power-cycle response shape:
+
+```text
+POST /power/cycle
+Response:
+  action, ok, unifi.guard.mode, unifi.guard.switch_name,
+  unifi.guard.switch_id, unifi.guard.port_idx, unifi.guard.poe_state,
+  unifi.response
+```
+
+Expected guard mode is `fixed-port`. A 400 from this endpoint means the fixed UniFi device/port/PoE lookup or the UniFi action failed, not that Talos was missing from the client list.
+
+Current verified behavior:
+
+- `GET /status` reports guard `fixed-port`, switch `Weathertop`, port `8`, and `poe_state=UP`.
+- `POST /power/cycle` succeeds without consulting the live UniFi client list for `talos-pi5`.
+- After a successful power cycle, serial may emit Raspberry Pi firmware/RP1 boot messages before any kernel output. Treat firmware output as proof of reboot and serial wiring, not proof that Talos reached entry.
+
+Serial peek, read, write, and observe:
+
+```bash
+curl -fsS 'http://talos-lab-api:8080/serial/peek?max_bytes=500&drain=true'
+curl -fsS -X POST -H 'Content-Type: application/json' \
+  --data '{"text":"uname -a","append_newline":true}' \
+  http://talos-lab-api:8080/serial/write
+curl -fsS -X POST -H 'Content-Type: application/json' \
+  --data '{"cursor":0,"timeout_seconds":5,"settle_ms":250,"max_bytes":4096}' \
+  http://talos-lab-api:8080/serial/observe
+```
+
+`peek` returns the latest retained serial log bytes without consuming them. It also returns a `cursor` byte offset. The best agent loop is:
+
+1. `GET /serial/peek?max_bytes=500&drain=true` and save `cursor`.
+2. If the text shows a prompt or login state, `POST /serial/write`.
+3. `POST /serial/observe` with the saved cursor to get only bytes that appeared after that point.
+4. Repeat `peek` as needed. Repeated `peek` calls return the same tail until new serial data arrives.
+
+Use `observe`, not `transact`, for kernel logs and unknown prompts. `transact` is only a convenience helper for known interactive prompts because it depends on regex matching.
+
 ## Boot Archive Contract
 
 `/boot/archive` accepts a gzip-compressed tar archive. The archive root becomes the Pi's TFTP boot root.
@@ -105,6 +146,12 @@ overlays/
 start*.elf
 fixup*.dat
 ```
+
+For early Talos bring-up, include both `kernel_2712.img` and a duplicate
+`kernel8.img` until the lab loop proves which firmware path is selected on every
+network boot. The Pi 5 default is `kernel_2712.img`, but the lab status helper
+has reported `kernel8.img` as active even for a Talos archive whose `config.txt`
+explicitly names `kernel_2712.img`.
 
 The API rejects unsafe archives:
 
@@ -230,6 +277,20 @@ For early kernel bring-up:
 
 This hybrid TFTP-boot/SD-root setup is good for changing boot files without rebuilding a full OS image.
 
+For the lab cable on the 40-pin header, first-light Talos output should target RP1 UART0. The first Talos archive used:
+
+~~~text
+enable_uart=1
+enable_rp1_uart=1
+pciex4_reset=0
+uart_2ndstage=1
+kernel=kernel_2712.img
+os_check=0
+dtoverlay=uart0-pi5
+~~~
+
+`enable_rp1_uart=1` asks Pi 5 firmware to initialize RP1 UART0 at 115200 bps and preserve that state for early bare-metal output.
+
 Talos now has local staging scripts for the first Talos boot archive candidate:
 
 ```bash
@@ -237,6 +298,20 @@ Talos now has local staging scripts for the first Talos boot archive candidate:
 ./scripts/rpi5-boot-tree.sh /path/to/pi-firmware-boot-source target/rpi5-boot-tree
 tar -C target/rpi5-boot-tree -czf target/talos-rpi5-boot.tar.gz .
 ```
+
+Expected project file layout:
+
+```text
+scripts/rpi5-image.sh           # builds the Talos Pi 5 kernel/image artifact
+scripts/rpi5-boot-tree.sh       # stages firmware/config/cmdline/kernel into a boot tree
+target/rpi5-boot-tree/          # generated TFTP boot tree; do not hand-edit as source
+target/talos-rpi5-boot.tar.gz   # generated upload archive; remove when no longer needed
+src/                            # Talos source code
+docs/                           # project documentation
+tasks/                          # task records and hardware-test notes
+```
+
+Treat `target/` as generated output. If a hardware test needs to preserve exact evidence, record the command output and observed serial/TFTP logs in `tasks/`, not by checking generated boot trees into source.
 
 The source directory must contain at least:
 
@@ -261,29 +336,126 @@ Later, if Talos needs reproducible userspace, add a generated root filesystem pa
 
 ## Serial Status
 
-The serial API contract has been tested against a fake PTY-backed serial peer:
+Serial is live through a Waveshare FTDI USB UART adapter. Strider sees the adapter as:
 
 ```text
-POST /serial/transact -> echo: version
-POST /serial/write    -> writes command text
-GET  /serial/tail     -> returns captured serial log lines
+/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_BG02PSTC-if00-port0
 ```
 
-The deployed API is currently restored to `serial.configured=false` until the physical USB serial cable is attached.
-
-When the cable arrives, prefer a stable device path:
+The API container mounts that stable host path as:
 
 ```text
-/dev/serial/by-id/...
+/dev/talos-serial
 ```
 
-If the adapter has no unique ID, use:
+The deployed config uses:
 
 ```text
-/dev/serial/by-path/...
+device: /dev/talos-serial
+baud: 115200
+log: /state/serial.log
 ```
 
-Avoid raw `/dev/ttyUSB0` or `/dev/ttyACM0` in persistent config because those names can change after reboot or reconnect. The API container should mount the stable host path to a fixed in-container path such as `/dev/talos-serial`, and config should point to that stable in-container path.
+The stable `/dev/serial/by-id/...` path should survive host reboot and plugging the same cable into a different USB port. If the cable is unplugged/replugged while `talos-lab-api` is already running, restart that container before relying on serial. A different USB UART cable will likely have a different by-id path and requires a config/compose update.
+
+The serial log is retained inside Talos Lab state and capped to the most recent bytes so it does not grow unbounded. Default retention is 4 MiB and can be changed with `TALOS_LAB_SERIAL_LOG_MAX_BYTES`.
+
+Serial endpoints:
+
+```text
+GET  /serial/peek?max_bytes=4096&drain=true
+POST /serial/read
+POST /serial/write
+POST /serial/observe
+POST /serial/transact
+GET  /serial/tail?lines=80&max_bytes=65536
+```
+
+Endpoint behavior:
+
+- `peek`: returns the last retained serial bytes and a cursor. Does not consume the log. `drain=true` first pulls any currently available device bytes into the log.
+- `read`: consumes newly available serial device bytes over a timeout/settle window, appends them to the log, and returns base64 plus best-effort decoded text.
+- `write`: writes text to serial, optionally with a newline.
+- `observe`: consumes newly available serial bytes, then returns log bytes after a supplied cursor. This is the preferred agent endpoint after `write`.
+- `transact`: writes text and waits for a regex. Use only when the expected prompt is known.
+- `tail`: line-oriented log view for humans.
+
+Serial endpoint reference:
+
+```text
+GET /serial/peek
+Query:
+  max_bytes: integer, default 4096, range 1..1048576
+  drain: boolean, default true
+  encoding: string, default utf-8
+Response:
+  action, ok, bytes, base64, text, encoding, cursor, drained
+
+POST /serial/read
+JSON:
+  timeout_seconds: number, default 5.0, range >0..300
+  settle_ms: integer, default 250, range 0..5000
+  max_bytes: integer, default 65536, range 1..1048576
+  encoding: string, default utf-8
+Response:
+  action, ok, bytes, base64, text, encoding, cursor, truncated
+
+POST /serial/write
+JSON:
+  text: string, required
+  append_newline: boolean, default true
+Response:
+  action, ok, bytes
+
+POST /serial/observe
+JSON:
+  cursor: integer, optional; omit to observe from current end of log
+  timeout_seconds: number, default 5.0, range >0..300
+  settle_ms: integer, default 250, range 0..5000
+  max_bytes: integer, default 65536, range 1..1048576
+  encoding: string, default utf-8
+Response:
+  action, ok, bytes, base64, text, encoding, cursor_start, cursor_end, truncated
+
+POST /serial/transact
+JSON:
+  text: string, required
+  timeout_seconds: number, default 10.0, range >0..300
+  until_regex: string, optional; defaults to configured prompt regex
+  settle_ms: integer, default 100, range 0..5000
+  max_bytes: integer, default 65536, range 1..1048576
+Response:
+  action, ok, output
+
+GET /serial/tail
+Query:
+  lines: integer, default 80, range 1..2000
+  max_bytes: integer, default 65536, range 1..1048576
+Response:
+  action, ok, lines, line_count
+```
+
+Booleans accept `true`, `false`, `1`, `0`, `yes`, `no`, `on`, and `off`.
+
+Cursor notes:
+
+- Cursors are byte offsets into the retained serial log.
+- `peek` returns the current end-of-log cursor.
+- `observe` with a cursor returns the bytes after that cursor.
+- `observe` without a cursor starts at the current end of log, waits, and returns only newly arriving bytes.
+- If the rolling log has trimmed older bytes, very old cursors may no longer be meaningful. In normal agent loops, use a cursor from the immediately preceding `peek`.
+
+For boot/kernel output, do not wait for `login:` or a shell prompt. Use `read` or `observe` with a timeout and inspect `base64`/`text`. The base64 field preserves raw bytes for diagnosing ANSI escape sequences, encoding problems, or baud-rate issues. The current baud rate is known good because the API has received `talos-pi5 login:` from the Pi.
+
+Example agent interaction from a login prompt:
+
+```bash
+cursor="$(curl -fsS 'http://talos-lab-api:8080/serial/peek?max_bytes=500&drain=true' | jq -r .cursor)"
+curl -fsS -X POST -H 'Content-Type: application/json' --data '{"text":"matthew"}' http://talos-lab-api:8080/serial/write
+curl -fsS -X POST -H 'Content-Type: application/json' --data "{\"cursor\":${cursor},\"timeout_seconds\":5,\"settle_ms\":250,\"max_bytes\":4096}" http://talos-lab-api:8080/serial/observe
+```
+
+The observed output should show the next console state, such as `Password:` or `talos-pi5 login:`.
 
 ## Failure Signals
 
@@ -299,6 +471,15 @@ TFTP requests happen but the Pi falls back to SD boot partition:
 - Check kernel/initramfs compatibility.
 - Check missing DTB/overlay files.
 - Use serial logs once serial is connected.
+
+Serial shows RP1 firmware output but no Talos banner:
+
+- The Pi has rebooted and the lab cable is receiving boot-time serial output.
+- Confirm the TFTP request sequence from `docker logs talos-tftp`.
+- Recheck `kernel_2712.img` format, arm64 image header/load address expectations, `config.txt` kernel settings, and the earliest UART write path.
+- For Talos, confirm the Pi 5 target is linked at `0x00200000`, not QEMU virt's `0x40200000`. Both targets use the arm64 Image `0x00200000` text offset, but their physical RAM bases differ.
+- Confirm the arm64 Image header `image_size` matches the generated `kernel_2712.img` byte length. `scripts/rpi5-image.sh` checks this automatically.
+- Consider a tiny assembly-only UART diagnostic before Rust clears BSS or switches stacks.
 
 Pi boots but hostname/files look unchanged:
 

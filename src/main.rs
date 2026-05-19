@@ -126,4 +126,5 @@ fn target_services_include_qemu_console() {
 #[test_case]
 fn pi5_uart10_address_matches_bcm2712_soc_range() {
     assert_eq!(target::rpi5::UART10_BASE, 0x10_7d00_1000);
+    assert_eq!(target::rpi5::RP1_UART0_BASE, 0x1c_0003_0000);
 }

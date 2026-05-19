@@ -30,6 +30,11 @@ cp "$SOURCE_DIR/config.txt" "$OUTPUT_DIR/config.txt"
 cp "$SOURCE_DIR/cmdline.txt" "$OUTPUT_DIR/cmdline.txt"
 cp "$SOURCE_DIR/bcm2712-rpi-5-b.dtb" "$OUTPUT_DIR/bcm2712-rpi-5-b.dtb"
 cp "$KERNEL_IMG" "$OUTPUT_DIR/kernel_2712.img"
+cp "$KERNEL_IMG" "$OUTPUT_DIR/kernel8.img"
+
+# Keep diagnostic command-line hints aligned with the firmware-preserved RP1 UART0
+# MMIO address used by Talos early boot.
+sed -i 's/earlycon=pl011,mmio32,0x1f00030000/earlycon=pl011,mmio32,0x1c00030000/g' "$OUTPUT_DIR/cmdline.txt"
 
 if [ -d "$SOURCE_DIR/overlays" ]; then
     mkdir -p "$OUTPUT_DIR/overlays"

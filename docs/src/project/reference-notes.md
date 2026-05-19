@@ -75,7 +75,7 @@ Local Daedalus references:
 - The arm64 boot ABI passes the physical DTB address in x0, with interrupts masked and MMU off. Non-secure EL2 is preferred, EL1 is allowed.
 - Linux Pi 5 DTS declares compatible values for raspberrypi,5-model-b and brcm,bcm2712.
 - Pi 5 uses RP1 as a major I/O controller behind PCIe. RP1 owns practical peripherals including GPIO, UARTs, SPI, I2C, Ethernet, USB, SDIO, PWM, and DMA.
-- UART has two important paths: firmware console serial10 maps to BCM2712 uarta; 40-pin header UART is RP1 UART0 and can be firmware-initialized with enable_rp1_uart=1.
+- UART has two important paths: firmware console serial10 maps to the Pi 5 debug UART path; the 40-pin header UART is RP1 UART0. The lab USB serial cable observes the 40-pin login prompt, so first-light Talos output should use RP1 UART0 through the firmware-preserved RP1 mapping at physical 0x1c00030000 with initialization preserved by enable_rp1_uart=1 and pciex4_reset=0. Linux's RP1 DTS describes UART0 as RP1 bus offset 0xc0_40030000; Raspberry Pi firmware reports the preserved RP1 UART MMIO address as 0x0000001c00030000 when enable_rp1_uart=1.
 - BCM2712 exposes GIC-400 / GICv2, and the architectural timer PPIs are the first timer-interrupt path to bring up.
 - Raspberry Pi Linux device tree advertises PSCI 1.0 with SMC and cpu_on 0xc4000003. PSCI should be the primary SMP bring-up path.
 - RP1 Ethernet appears as rp1_eth, compatible with raspberrypi,rp1-gem and cdns,macb.

@@ -14,6 +14,6 @@ rustflags = [
 
 [target.aarch64-talos-rpi5-bcm2712]
 rustflags = [
-    "-C", "link-arg=-Tlinker.ld",
+    "-C", "link-arg=-Tlinker-rpi5.ld",
     "-C", "link-arg=-Map=target/talos-rpi5-bcm2712.map",
 ]

@@ -9,18 +9,20 @@ use crate::{
 use crate::pl011::Pl011;
 
 pub const UART10_BASE: usize = 0x10_7d00_1000;
+pub const RP1_UART0_BASE: usize = 0x1c_0003_0000;
 
 const MMIO_REGIONS: &[MmioRegion] = &[
     MmioRegion::new("bcm2712-local-peripherals", 0x10_7c00_0000, 0x0400_0000),
     MmioRegion::new("bcm2712-gic-400", 0x10_7fff_9000, 0x0001_0000),
     MmioRegion::new("bcm2712-uart10-pl011", UART10_BASE, 0x0000_0200),
+    MmioRegion::new("rp1-uart0-pl011", RP1_UART0_BASE, 0x0000_0100),
 ];
 
 pub fn init_stub() {}
 
 #[cfg(talos_target_rpi5_bcm2712)]
 pub fn firmware_console() -> Pl011 {
-    Pl011::new(UART10_BASE)
+    Pl011::new(RP1_UART0_BASE)
 }
 
 pub fn services(boot_info: &BootInfo) -> TargetServices {
