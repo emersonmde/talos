@@ -119,3 +119,12 @@ ADR template:
 - Required validation: Pi 5 target builds must show `_start` and `__kernel_start` at `0x80000`; archive review must require `kernel_address=0x80000`; physical validation requires one controlled hardware run with serial and TFTP evidence.
 - Risks: This does not explain why the custom armstub marker did not appear; if the next hardware run still stops at the same boundary, the remaining issue is likely firmware handoff semantics or lab-visible UART assumptions rather than ordinary kernel load address.
 - Alternatives considered: continue with `kernel_address` omitted and link at zero, add more archive-layout variants, or switch immediately to a Linux-loaded payload. The Circle-style address is a reference-backed, bounded change that can be validated locally before one hardware iteration.
+
+## 2026-05-19 - Add Raw Pi 5 Loader Diagnostic
+
+- Status: accepted
+- Context: Circle's Pi 5 bootloader builds `kernel_2712.img` as a raw position-linked binary at `0x80000`, while Talos' normal Pi 5 image starts with an arm64 Image header before branching to code. After Circle-style `kernel_address=0x80000` still produced no marker, Matthew clarified the workflow should keep using bounded reference-backed diagnostics rather than treat the state as blocked.
+- Decision: Add a separate raw loader diagnostic path that stages a tiny `kernel_2712.img` without the arm64 Image header. The diagnostic writes markers to firmware-preserved RP1 UART0, reinitialized RP1 UART0, and BCM2712 UART10, then loops with heartbeat dots. The normal Talos kernel image and boot tree remain unchanged.
+- Required validation: Local validation must include shell syntax checks, raw diagnostic binary generation, archive review in `loader_diagnostic=true` mode, standard Talos formatting/tests/Pi 5 build/QEMU smoke/mdBook, and exactly one controlled Pi 5 hardware run under the hardware lock.
+- Risks: Absence of RP1 UART output from a raw executable does not by itself prove CPU execution never happened, because the lab-visible UART path may be the wrong ARM-side output path despite firmware logs using it. If the raw diagnostic still shows no marker while TFTP proves the 216-byte image was served, the next diagnostic should avoid relying solely on RP1 UART visibility.
+- Alternatives considered: keep changing arm64 Image header fields, require EEPROM/vclog support before continuing, or switch immediately to a Linux-loaded payload. The raw loader diagnostic is smaller and directly tests a public Pi 5 bare-metal image shape already used by Circle.

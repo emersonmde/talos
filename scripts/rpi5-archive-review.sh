@@ -77,6 +77,11 @@ if grep -qx 'dtoverlay=uart0-pi5' "$extract_dir/config.txt"; then
     exit 1
 fi
 
+loader_diagnostic=false
+if grep -qx 'talos_loader_diagnostic=raw-pi5' "$extract_dir/config.txt"; then
+    loader_diagnostic=true
+fi
+
 if grep -qx 'boot_ramdisk=1' "$extract_dir/config.txt"; then
     if [ ! -f "$extract_dir/boot.img" ]; then
         echo "config.txt enables boot_ramdisk=1 but archive has no boot.img" >&2
@@ -123,24 +128,26 @@ header_image_size="$(od -An -tu8 -j16 -N8 "$extract_dir/kernel_2712.img" | tr -d
 flags="$(od -An -tu8 -j24 -N8 "$extract_dir/kernel_2712.img" | tr -d ' ')"
 magic="$(dd if="$extract_dir/kernel_2712.img" bs=1 skip=56 count=4 2>/dev/null)"
 
-if [ "$text_offset" != "0" ]; then
-    echo "unexpected arm64 Image text offset: $text_offset" >&2
-    exit 1
-fi
+if [ "$loader_diagnostic" = false ]; then
+    if [ "$text_offset" != "0" ]; then
+        echo "unexpected arm64 Image text offset: $text_offset" >&2
+        exit 1
+    fi
 
-if [ "$header_image_size" != "$image_size" ]; then
-    echo "arm64 Image header size mismatch: header=$header_image_size file=$image_size" >&2
-    exit 1
-fi
+    if [ "$header_image_size" != "$image_size" ]; then
+        echo "arm64 Image header size mismatch: header=$header_image_size file=$image_size" >&2
+        exit 1
+    fi
 
-if [ "$flags" != "12" ]; then
-    echo "unexpected arm64 Image flags: $flags" >&2
-    exit 1
-fi
+    if [ "$flags" != "12" ]; then
+        echo "unexpected arm64 Image flags: $flags" >&2
+        exit 1
+    fi
 
-if [ "$magic" != "ARMd" ]; then
-    echo "arm64 Image magic missing at header offset 56" >&2
-    exit 1
+    if [ "$magic" != "ARMd" ]; then
+        echo "arm64 Image magic missing at header offset 56" >&2
+        exit 1
+    fi
 fi
 
 printf 'archive=%s\n' "$ARCHIVE"
@@ -150,5 +157,6 @@ printf 'kernel_size=%s\n' "$image_size"
 printf 'header_image_size=%s\n' "$header_image_size"
 printf 'text_offset=%s\n' "$text_offset"
 printf 'flags=%s\n' "$flags"
+printf 'loader_diagnostic=%s\n' "$loader_diagnostic"
 printf 'manifest:\n'
 sed 's/^/  /' "$manifest"
