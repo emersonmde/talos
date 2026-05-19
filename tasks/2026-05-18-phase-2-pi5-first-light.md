@@ -62,6 +62,7 @@ sh -n scripts/rpi5-image.sh scripts/rpi5-boot-tree.sh
 ./scripts/rpi5-image.sh
 ./scripts/rpi5-boot-tree.sh target/test-pi-boot-source target/test-rpi5-boot-tree
 tar -C target/test-rpi5-boot-tree -czf target/test-talos-rpi5-boot.tar.gz .
+./scripts/rpi5-archive-review.sh target/test-talos-rpi5-boot.tar.gz
 cargo fmt --check
 cargo -Zjson-target-spec test
 cargo -Zjson-target-spec build --target targets/aarch64-talos-rpi5-bcm2712.json
@@ -107,6 +108,9 @@ Results:
 - 2026-05-19 added a duplicate `kernel8.img` alongside `kernel_2712.img` because the lab API status helper reported `active_name=kernel8.img` even when the Talos config selected `kernel_2712.img`. Local validation passed. Hardware attempt published archive digest `5b2bea918f23756c64cbc98529b55d95e246c342cc364010ee5581281ff8fbe5`; `POST /power/cycle` returned `ok=true`; serial advanced from cursor `27665` to `28313` and still stopped at the firmware/DDR boundary without a Talos marker.
 - 2026-05-19 non-hardware image-format review found the arm64 Image header advertised `image_size=0x200000` even though the generated binary was 82616 bytes. Talos now emits `__kernel_image_end - _start` in the Image header and `scripts/rpi5-image.sh` fails if the header size differs from the generated file size.
 - 2026-05-19 local validation after the arm64 Image header correction passed: `cargo fmt --check`, `cargo -Zjson-target-spec test`, `cargo -Zjson-target-spec build --target targets/aarch64-talos-rpi5-bcm2712.json`, `./scripts/rpi5-image.sh`, `./scripts/qemu-smoke.sh`, and `mdbook build`. Header inspection showed `file=82616`, `header_size=82616`, and `text_offset=0x00200000`.
+- 2026-05-19 lab API probe found no exposed TFTP log endpoint: `/boot/logs`, `/tftp/logs`, and `/logs/tftp` all returned 404. The existing exposed read-only evidence is `/status`, `/boot/files`, `/serial/peek`, and `/serial/tail`.
+- 2026-05-19 added `scripts/rpi5-archive-review.sh` as a local pre-hardware gate. It checks required archive files, unsafe paths, `config.txt` first-light settings, `kernel_2712.img`/`kernel8.img` equality, arm64 Image magic, text offset, and header image size.
+- 2026-05-19 corrected-image archive pre-hardware review passed for `target/talos-rpi5-boot.tar.gz`: sha256 `7c3994c313c5491414927d998c535522c8b1f920a2e608debafb4676fb7aadff`, required files present, `kernel_2712.img` and `kernel8.img` identical, `kernel_size=82616`, `header_image_size=82616`, and `text_offset=2097152`.
 
 ## Review
 

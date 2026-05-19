@@ -297,6 +297,7 @@ Talos now has local staging scripts for the first Talos boot archive candidate:
 ./scripts/rpi5-image.sh
 ./scripts/rpi5-boot-tree.sh /path/to/pi-firmware-boot-source target/rpi5-boot-tree
 tar -C target/rpi5-boot-tree -czf target/talos-rpi5-boot.tar.gz .
+./scripts/rpi5-archive-review.sh target/talos-rpi5-boot.tar.gz
 ```
 
 Expected project file layout:
@@ -304,6 +305,7 @@ Expected project file layout:
 ```text
 scripts/rpi5-image.sh           # builds the Talos Pi 5 kernel/image artifact
 scripts/rpi5-boot-tree.sh       # stages firmware/config/cmdline/kernel into a boot tree
+scripts/rpi5-archive-review.sh  # checks archive contents and arm64 Image header fields
 target/rpi5-boot-tree/          # generated TFTP boot tree; do not hand-edit as source
 target/talos-rpi5-boot.tar.gz   # generated upload archive; remove when no longer needed
 src/                            # Talos source code
