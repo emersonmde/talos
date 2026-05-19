@@ -89,6 +89,7 @@ Local Daedalus references:
 - Direct-root, `boot_ramdisk=1`, root-only armstub, serial-prefixed mirror, combined prefix-plus-armstub, and preserved-UART marker Talos archives all stop at the same firmware/RP1 serial boundary. TFTP logs now prove the Pi is served the selected config, kernel, DTB, overlays, cmdline, and custom armstub files.
 - Circle's Raspberry Pi 5 bare-metal configuration keeps `kernel_2712.img` but sets `kernel_address=0x80000`. Talos now uses the same firmware load base while keeping arm64 Image `text_offset=0`, so post-marker absolute symbols match a reference bare-metal handoff convention.
 - The current assembly-only first-light proof deliberately has no Rust, stack setup, BSS clearing, exception vectors, GPIO mux writes, PL011 reinitialization, MPIDR filtering, or PL011 flag polling. It starts with a minimal arm64 Image header and repeatedly writes fixed bytes directly to firmware-preserved RP1 UART0.
+- The current non-UART entry discriminator is `asm-entry-reset-proof`: a 96-byte assembly-only Image that preserves x0, performs no MMIO, and calls PSCI `SYSTEM_RESET`. It is intended to prove or disprove BL33 entry independently of RP1 UART.
 - A public BCM2712 peripherals PDF does not appear to exist at the expected datasheets.raspberrypi.com path; Raspberry Pi Linux DTS files are currently the most practical register-map source for BCM2712.
 
 ## Current QEMU Findings

@@ -65,6 +65,9 @@ fi
 if grep -qx 'talos_loader_diagnostic=asm-uart-proof' "$extract_dir/config.txt"; then
     loader_diagnostic=true
 fi
+if grep -qx 'talos_loader_diagnostic=asm-entry-reset-proof' "$extract_dir/config.txt"; then
+    loader_diagnostic=true
+fi
 if grep -qx 'talos_loader_diagnostic=raw-pi5-circle-config' "$extract_dir/config.txt"; then
     loader_diagnostic=true
     circle_config_loader_diagnostic=true
@@ -158,14 +161,14 @@ if [ "$loader_diagnostic" = false ]; then
         echo "arm64 Image magic missing at header offset 56" >&2
         exit 1
     fi
-elif grep -qx 'talos_loader_diagnostic=asm-uart-proof' "$extract_dir/config.txt" && [ "$magic" = "ARMd" ]; then
+elif { grep -qx 'talos_loader_diagnostic=asm-uart-proof' "$extract_dir/config.txt" || grep -qx 'talos_loader_diagnostic=asm-entry-reset-proof' "$extract_dir/config.txt"; } && [ "$magic" = "ARMd" ]; then
     if [ "$header_image_size" != "$image_size" ]; then
-        echo "asm UART proof Image header size mismatch: header=$header_image_size file=$image_size" >&2
+        echo "asm proof Image header size mismatch: header=$header_image_size file=$image_size" >&2
         exit 1
     fi
 
     if [ "$flags" != "12" ]; then
-        echo "unexpected asm UART proof Image flags: $flags" >&2
+        echo "unexpected asm proof Image flags: $flags" >&2
         exit 1
     fi
 fi
