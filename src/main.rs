@@ -23,10 +23,11 @@ use boot::BootInfo;
 pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
     let boot_info = BootInfo::from_aarch64_x0(dtb_pa);
 
+    target::init(&boot_info);
+
     #[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_rust_entry_diagnostic))]
     rpi5_rust_entry_reset_probe();
 
-    target::init(&boot_info);
     arch::aarch64::exceptions::init();
 
     #[cfg(test)]
@@ -81,7 +82,7 @@ fn rpi5_rust_entry_reset_probe() -> ! {
             "ldr w12, [x9, #0x18]",
             "str w11, [x14]",
             "ldr w12, [x14, #0x18]",
-            "mov w11, #0x42",
+            "mov w11, #0x54",
             "str w11, [x9]",
             "ldr w12, [x9, #0x18]",
             "str w11, [x14]",
