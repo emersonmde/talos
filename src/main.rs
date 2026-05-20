@@ -127,6 +127,7 @@ fn rpi5_minimal_format_reset_probe() -> ! {
         all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_diagnostic),
         all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_static_sink_diagnostic),
         all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_direct_diagnostic),
+        all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_dyn_direct_diagnostic),
     ),
     allow(unreachable_code)
 )]
@@ -189,6 +190,9 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
         #[cfg(talos_rpi5_fmt_sink_direct_diagnostic)]
         rpi5_fmt_sink_direct_diagnostic();
 
+        #[cfg(talos_rpi5_fmt_sink_dyn_direct_diagnostic)]
+        rpi5_fmt_sink_dyn_direct_diagnostic();
+
         #[cfg(talos_rpi5_minimal_format_diagnostic)]
         rpi5_minimal_format_reset_probe();
 
@@ -233,6 +237,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_diagnostic),
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_static_sink_diagnostic),
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_direct_diagnostic),
+    all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_dyn_direct_diagnostic),
 ))]
 struct Rpi5FmtSink;
 
@@ -240,6 +245,7 @@ struct Rpi5FmtSink;
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_diagnostic),
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_static_sink_diagnostic),
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_direct_diagnostic),
+    all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_dyn_direct_diagnostic),
 ))]
 impl core::fmt::Write for Rpi5FmtSink {
     #[inline(never)]
@@ -272,10 +278,22 @@ fn rpi5_fmt_sink_direct_diagnostic() -> ! {
     }
 }
 
+#[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_dyn_direct_diagnostic))]
+#[inline(never)]
+fn rpi5_fmt_sink_dyn_direct_diagnostic() -> ! {
+    let mut sink = Rpi5FmtSink;
+    let writer: &mut dyn core::fmt::Write = &mut sink;
+    match writer.write_str("fmt sink dyn direct") {
+        Ok(()) => rpi5_fmt_sink_reset_probe(),
+        Err(_) => arch::aarch64::halt(),
+    }
+}
+
 #[cfg(any(
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_diagnostic),
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_static_sink_diagnostic),
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_direct_diagnostic),
+    all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_dyn_direct_diagnostic),
 ))]
 fn rpi5_fmt_sink_reset_probe() -> ! {
     unsafe {
