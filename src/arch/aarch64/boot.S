@@ -182,6 +182,12 @@ rpi5_text_boot_next_branch_marker_loop:
 4:
     wfe
     b 4b
+#elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_ASM_BTI_INDIRECT_TO_RUST_RESET_DIAGNOSTIC)
+    ldr x20, =rpi5_asm_bti_to_rust_reset_veneer
+    blr x20
+4:
+    wfe
+    b 4b
 #elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_VECTOR_SECTION_DIAGNOSTIC)
     bl rpi5_vector_section_marker_loop
 #elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_TEXT_SECTION_DIAGNOSTIC)
@@ -207,6 +213,16 @@ rpi5_asm_indirect_reset_probe:
     b 4b
 
 .size rpi5_asm_indirect_reset_probe, . - rpi5_asm_indirect_reset_probe
+#endif
+
+#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_ASM_BTI_INDIRECT_TO_RUST_RESET_DIAGNOSTIC)
+.balign 4
+.type rpi5_asm_bti_to_rust_reset_veneer, %function
+rpi5_asm_bti_to_rust_reset_veneer:
+    hint #34
+    b rpi5_asm_to_rust_reset_probe
+
+.size rpi5_asm_bti_to_rust_reset_veneer, . - rpi5_asm_bti_to_rust_reset_veneer
 #endif
 
 #if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_ASM_DIRECT_RESET_DIAGNOSTIC)

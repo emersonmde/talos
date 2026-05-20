@@ -336,6 +336,10 @@ fn rpi5_fnptr_reset_diagnostic() -> ! {
         talos_target_rpi5_bcm2712,
         talos_rpi5_asm_indirect_to_rust_reset_diagnostic
     ),
+    all(
+        talos_target_rpi5_bcm2712,
+        talos_rpi5_asm_bti_indirect_to_rust_reset_diagnostic
+    ),
 ))]
 fn rpi5_fmt_sink_reset_probe() -> ! {
     unsafe {
@@ -354,6 +358,10 @@ fn rpi5_fmt_sink_reset_probe() -> ! {
     all(
         talos_target_rpi5_bcm2712,
         talos_rpi5_asm_indirect_to_rust_reset_diagnostic
+    ),
+    all(
+        talos_target_rpi5_bcm2712,
+        talos_rpi5_asm_bti_indirect_to_rust_reset_diagnostic
     ),
 ))]
 #[unsafe(no_mangle)]
