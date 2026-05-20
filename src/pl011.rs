@@ -94,6 +94,21 @@ impl Pl011 {
 }
 
 impl fmt::Write for Pl011 {
+    #[cfg_attr(
+        all(talos_target_rpi5_bcm2712, talos_rpi5_rust_entry_diagnostic),
+        allow(unreachable_code, unused_variables)
+    )]
+    fn write_fmt(&mut self, args: fmt::Arguments<'_>) -> fmt::Result {
+        #[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_rust_entry_diagnostic))]
+        crate::rpi5_rust_entry_reset_probe();
+
+        fmt::write(self, args)
+    }
+
+    #[cfg_attr(
+        all(talos_target_rpi5_bcm2712, talos_rpi5_rust_entry_diagnostic),
+        allow(unreachable_code, unused_variables)
+    )]
     fn write_str(&mut self, s: &str) -> fmt::Result {
         for byte in s.bytes() {
             if byte == b'\n' {
