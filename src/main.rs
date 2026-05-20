@@ -55,6 +55,7 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
             "movz x14, #0x0000",
             "movk x14, #0x0003, lsl #16",
             "movk x14, #0x001f, lsl #32",
+            "mov x20, #8",
             "2:",
             "mov w11, #0x52",
             "str w11, [x9]",
@@ -77,7 +78,13 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
             "str w11, [x14]",
             "ldr w12, [x14, #0x18]",
             "dsb sy",
-            "b 2b",
+            "subs x20, x20, #1",
+            "b.ne 2b",
+            "3:",
+            "ldr x0, =0x84000009",
+            "smc #0",
+            "wfe",
+            "b 3b",
             options(noreturn)
         );
     }

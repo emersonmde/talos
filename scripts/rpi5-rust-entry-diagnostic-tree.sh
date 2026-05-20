@@ -16,7 +16,7 @@ IMG="$(./scripts/rpi5-rust-entry-diagnostic-image.sh)"
 cp "$IMG" "$OUTPUT_DIR/kernel_2712.img"
 cp "$IMG" "$OUTPUT_DIR/kernel8.img"
 
-printf '%s\n' 'talos_loader_diagnostic=rust-entry-diagnostic' >> "$OUTPUT_DIR/config.txt"
+printf '%s\n' 'talos_loader_diagnostic=rust-entry-reset-diagnostic' >> "$OUTPUT_DIR/config.txt"
 
 mkdir -p "$OUTPUT_DIR/$SERIAL_PREFIX"
 for path in config.txt cmdline.txt bcm2712-rpi-5-b.dtb kernel_2712.img kernel8.img; do
