@@ -163,6 +163,11 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
         }
         target::console::write_static("\n");
 
+        #[cfg(talos_rpi5_exception_report_diagnostic)]
+        unsafe {
+            core::arch::asm!("brk #0", options(nomem, nostack, preserves_flags));
+        }
+
         #[cfg(talos_rpi5_minimal_format_diagnostic)]
         rpi5_minimal_format_reset_probe();
 

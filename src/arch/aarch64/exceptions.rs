@@ -101,6 +101,10 @@ pub extern "C" fn rust_exception_handler(esr: u64, elr: u64, far: u64, vector: u
         crate::target::console::write_static(" far=");
         crate::target::console::write_hex_u64(far);
         crate::target::console::write_static("\n");
+
+        #[cfg(talos_rpi5_exception_report_diagnostic)]
+        exception_report_reset_probe();
+
         crate::arch::aarch64::halt()
     }
 
@@ -114,5 +118,18 @@ pub extern "C" fn rust_exception_handler(esr: u64, elr: u64, far: u64, vector: u
         );
 
         crate::arch::aarch64::halt()
+    }
+}
+
+#[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_exception_report_diagnostic))]
+fn exception_report_reset_probe() -> ! {
+    unsafe {
+        core::arch::asm!(
+            "ldr x0, =0x84000009",
+            "smc #0",
+            "wfe",
+            "b .-4",
+            options(noreturn)
+        );
     }
 }

@@ -484,9 +484,10 @@ ADR template:
 
 ## 2026-05-20 - Keep Pi 5 Panic And Exception Output Off Dynamic Formatting
 
-- Status: accepted for local/QEMU/Pi 5 build evidence; hardware exception-path proof remains pending.
+- Status: accepted
 - Context: Pi 5 generic dynamic formatting is still unaccepted. The previous panic and exception paths used formatted `println!` output, so a later panic or exception on hardware could hang inside the same formatting boundary instead of reporting useful fault state.
 - Decision: On Pi 5, keep panic output static and route exception-vector reporting through the minimal early formatter. Exception output writes the vector name and ESR/ELR/FAR as `u64` hex values without calling `core::fmt::write`. QEMU keeps the richer formatted output.
-- Required validation: Local validation must pass formatting, unit tests for the added `u64` formatter, QEMU smoke, Pi 5 image build, mdBook, and diff check. Hardware validation is deferred until a deliberate exception diagnostic is needed.
+- Required validation: Local validation must pass formatting, unit tests for the added `u64` formatter, QEMU smoke, Pi 5 image build, diagnostic image/archive review, disassembly inspection for deliberate `brk #0` and post-report `smc #0`, mdBook, and diff check. Hardware validation requires one controlled Pi 5 run under `hardwareTestLock`, corrected TFTP cursor evidence of repeated 71,528-byte diagnostic kernel serves before restore, and restore to the accepted first-light proof tree.
+- Hardware result: The deliberate exception-report run `rpi5-exception-report-reset-20260520092633` used archive `f41eb916fb13c3cbaeaf40f4bc35f3a461aefb6c1214d26c9aebc8a355b4f36d` with kernel `ef346d16be9833c7bbadf1c2a3f106181d1e2bdf1b758a9598919d1dd2a89af0` / 71,528 bytes. TFTP cursor `716089->720142` captured 39 fresh events and six served `da591740/kernel_2712.img` events at 71,528 bytes before restore, proving the exception report path reached the PSCI reset side effect. Restore returned the lab to accepted first-light proof tree `da58994fc0492a8cfee9c7b081c49a4cd0a15f7ed97a0508e0035a9671d5e102`.
 - Rationale: This protects fault reporting from a known unaccepted dependency while preserving QEMU developer ergonomics. It also extends the minimal formatter only as far as the current fault-reporting need requires.
-- Risks: This does not prove exception reporting on Pi 5 hardware. It also intentionally drops panic detail on Pi 5 until the formatter path is accepted or a dedicated panic formatter exists.
+- Risks: The hardware proof is TFTP reset-side-effect evidence, not clean serial capture of the exception text. Panic output still intentionally drops detail on Pi 5 until the formatter path is accepted or a dedicated panic formatter exists.
