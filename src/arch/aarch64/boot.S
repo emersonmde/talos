@@ -297,6 +297,32 @@ rpi5_bti_brk_precheck_after_brk:
     isb
     brk #0
     b rpi5_direct_exception_immediate_park
+#elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_BRK_ERET_RESUME_RESET_DIAGNOSTIC)
+    adr x0, rpi5_brk_eret_resume_reset_vectors
+    mrs x1, CurrentEL
+    cmp x1, #(1 << 2)
+    b.eq 5f
+    cmp x1, #(2 << 2)
+    b.eq 6f
+    cmp x1, #(3 << 2)
+    b.eq 7f
+    b rpi5_brk_eret_resume_reset_park
+5:
+    msr vbar_el1, x0
+    b 8f
+6:
+    msr vbar_el2, x0
+    b 8f
+7:
+    msr vbar_el3, x0
+8:
+    isb
+    brk #0
+    b rpi5_brk_eret_resume_reset_park
+rpi5_brk_eret_resume_reset_continuation:
+    ldr x0, =0x84000009
+    smc #0
+    b rpi5_brk_eret_resume_reset_park
 #elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_VECTOR_SECTION_DIAGNOSTIC)
     bl rpi5_vector_section_marker_loop
 #elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_TEXT_SECTION_DIAGNOSTIC)
@@ -556,6 +582,83 @@ rpi5_bti_brk_precheck_bte_reset:
 rpi5_bti_brk_precheck_park:
     wfe
     b rpi5_bti_brk_precheck_park
+
+.section .text.boot, "ax"
+#endif
+
+#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_BRK_ERET_RESUME_RESET_DIAGNOSTIC)
+.section .text.rpi5_brk_eret_resume_reset_diagnostic, "ax"
+.balign 2048
+rpi5_brk_eret_resume_reset_vectors:
+    b rpi5_brk_eret_resume_reset_handler
+    .space 0x80 - (. - rpi5_brk_eret_resume_reset_vectors)
+    b rpi5_brk_eret_resume_reset_handler
+    .space 0x100 - (. - rpi5_brk_eret_resume_reset_vectors)
+    b rpi5_brk_eret_resume_reset_handler
+    .space 0x180 - (. - rpi5_brk_eret_resume_reset_vectors)
+    b rpi5_brk_eret_resume_reset_handler
+    .space 0x200 - (. - rpi5_brk_eret_resume_reset_vectors)
+    b rpi5_brk_eret_resume_reset_handler
+    .space 0x280 - (. - rpi5_brk_eret_resume_reset_vectors)
+    b rpi5_brk_eret_resume_reset_handler
+    .space 0x300 - (. - rpi5_brk_eret_resume_reset_vectors)
+    b rpi5_brk_eret_resume_reset_handler
+    .space 0x380 - (. - rpi5_brk_eret_resume_reset_vectors)
+    b rpi5_brk_eret_resume_reset_handler
+    .space 0x400 - (. - rpi5_brk_eret_resume_reset_vectors)
+    b rpi5_brk_eret_resume_reset_handler
+    .space 0x480 - (. - rpi5_brk_eret_resume_reset_vectors)
+    b rpi5_brk_eret_resume_reset_handler
+    .space 0x500 - (. - rpi5_brk_eret_resume_reset_vectors)
+    b rpi5_brk_eret_resume_reset_handler
+    .space 0x580 - (. - rpi5_brk_eret_resume_reset_vectors)
+    b rpi5_brk_eret_resume_reset_handler
+    .space 0x600 - (. - rpi5_brk_eret_resume_reset_vectors)
+    b rpi5_brk_eret_resume_reset_handler
+    .space 0x680 - (. - rpi5_brk_eret_resume_reset_vectors)
+    b rpi5_brk_eret_resume_reset_handler
+    .space 0x700 - (. - rpi5_brk_eret_resume_reset_vectors)
+    b rpi5_brk_eret_resume_reset_handler
+    .space 0x780 - (. - rpi5_brk_eret_resume_reset_vectors)
+    b rpi5_brk_eret_resume_reset_handler
+
+rpi5_brk_eret_resume_reset_handler:
+    mrs x20, CurrentEL
+    cmp x20, #(1 << 2)
+    b.eq 1f
+    cmp x20, #(2 << 2)
+    b.eq 2f
+    cmp x20, #(3 << 2)
+    b.eq 3f
+    b rpi5_brk_eret_resume_reset_park
+1:
+    mrs x21, esr_el1
+    ldr x22, =rpi5_brk_eret_resume_reset_continuation
+    lsr x21, x21, #26
+    cmp x21, #0x3c
+    b.ne rpi5_brk_eret_resume_reset_park
+    msr elr_el1, x22
+    eret
+2:
+    mrs x21, esr_el2
+    ldr x22, =rpi5_brk_eret_resume_reset_continuation
+    lsr x21, x21, #26
+    cmp x21, #0x3c
+    b.ne rpi5_brk_eret_resume_reset_park
+    msr elr_el2, x22
+    eret
+3:
+    mrs x21, esr_el3
+    ldr x22, =rpi5_brk_eret_resume_reset_continuation
+    lsr x21, x21, #26
+    cmp x21, #0x3c
+    b.ne rpi5_brk_eret_resume_reset_park
+    msr elr_el3, x22
+    eret
+
+rpi5_brk_eret_resume_reset_park:
+    wfe
+    b rpi5_brk_eret_resume_reset_park
 
 .section .text.boot, "ax"
 #endif
