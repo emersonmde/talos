@@ -481,3 +481,12 @@ ADR template:
 - Hardware result: The accepted long-window run `rpi5-minimal-format-reset-long-20260520084921` used archive `4571b47eeb02386dc4c53d9080aba949785f425d649825e77a1bfe8b12be44fc` with kernel `9a0251dbba2f0c2441c321159ca59789f032c32583560e6fef9e01031a12ebf1` / 79,984 bytes. TFTP cursor `709334->716089` captured 65 fresh events, including ten served `da591740/kernel_2712.img` events at 79,984 bytes before restore. Restore returned the lab to accepted first-light proof tree `da58994fc0492a8cfee9c7b081c49a4cd0a15f7ed97a0508e0035a9671d5e102`, with post-restore cursor evidence showing four 272-byte proof-image serves.
 - Rationale: This restores useful Pi 5 boot-info output without depending on the still-failing generic formatting path. It keeps the bring-up path simple and evidence-backed while leaving dynamic formatting as a separate future boundary.
 - Risks: This is not a replacement for the final formatting stack. The generic `core::fmt::write` path remains unaccepted and should be investigated separately before formatted Pi 5 banners or panic output are treated as hardware-ready.
+
+## 2026-05-20 - Keep Pi 5 Panic And Exception Output Off Dynamic Formatting
+
+- Status: accepted for local/QEMU/Pi 5 build evidence; hardware exception-path proof remains pending.
+- Context: Pi 5 generic dynamic formatting is still unaccepted. The previous panic and exception paths used formatted `println!` output, so a later panic or exception on hardware could hang inside the same formatting boundary instead of reporting useful fault state.
+- Decision: On Pi 5, keep panic output static and route exception-vector reporting through the minimal early formatter. Exception output writes the vector name and ESR/ELR/FAR as `u64` hex values without calling `core::fmt::write`. QEMU keeps the richer formatted output.
+- Required validation: Local validation must pass formatting, unit tests for the added `u64` formatter, QEMU smoke, Pi 5 image build, mdBook, and diff check. Hardware validation is deferred until a deliberate exception diagnostic is needed.
+- Rationale: This protects fault reporting from a known unaccepted dependency while preserving QEMU developer ergonomics. It also extends the minimal formatter only as far as the current fault-reporting need requires.
+- Risks: This does not prove exception reporting on Pi 5 hardware. It also intentionally drops panic detail on Pi 5 until the formatter path is accepted or a dedicated panic formatter exists.

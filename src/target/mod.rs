@@ -112,6 +112,11 @@ pub mod console {
     }
 
     #[allow(dead_code)]
+    pub fn write_hex_u64(value: u64) {
+        early_format::write_hex_u64(console(), value).expect("serial console write failed");
+    }
+
+    #[allow(dead_code)]
     pub fn write_dec_usize(value: usize) {
         early_format::write_dec_usize(console(), value).expect("serial console write failed");
     }

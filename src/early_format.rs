@@ -3,10 +3,14 @@ use core::fmt::{self, Write};
 const HEX_DIGITS: &[u8; 16] = b"0123456789abcdef";
 
 pub fn write_hex_usize(mut writer: impl Write, value: usize) -> fmt::Result {
+    write_hex_u64(&mut writer, value as u64)
+}
+
+pub fn write_hex_u64(mut writer: impl Write, value: u64) -> fmt::Result {
     writer.write_str("0x")?;
 
     let mut started = false;
-    for shift in (0..usize::BITS).step_by(4).rev() {
+    for shift in (0..u64::BITS).step_by(4).rev() {
         let nibble = ((value >> shift) & 0xf) as usize;
         if nibble != 0 || started || shift == 0 {
             started = true;
@@ -75,6 +79,13 @@ mod tests {
         let mut buffer = Buffer::new();
         write_hex_usize(&mut buffer, 0x10_7d00_1000).expect("format hex");
         assert_eq!(buffer.as_str(), "0x107d001000");
+    }
+
+    #[test_case]
+    fn hex_formatter_writes_full_width_u64_values() {
+        let mut buffer = Buffer::new();
+        super::write_hex_u64(&mut buffer, 0xfedc_ba98_7654_3210).expect("format hex");
+        assert_eq!(buffer.as_str(), "0xfedcba9876543210");
     }
 
     #[test_case]

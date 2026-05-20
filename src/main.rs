@@ -204,15 +204,25 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
 }
 
 #[panic_handler]
+#[cfg_attr(talos_target_rpi5_bcm2712, allow(unused_variables))]
 fn panic(info: &PanicInfo<'_>) -> ! {
-    println!();
-    println!("talos panic: {}", info);
+    #[cfg(talos_target_rpi5_bcm2712)]
+    {
+        target::console::write_static("\ntalos panic\n");
+        arch::aarch64::halt()
+    }
 
-    #[cfg(test)]
-    target::qemu::exit_failure();
+    #[cfg(not(talos_target_rpi5_bcm2712))]
+    {
+        println!();
+        println!("talos panic: {}", info);
 
-    #[cfg(not(test))]
-    arch::aarch64::halt()
+        #[cfg(test)]
+        target::qemu::exit_failure();
+
+        #[cfg(not(test))]
+        arch::aarch64::halt()
+    }
 }
 
 pub trait Testable {

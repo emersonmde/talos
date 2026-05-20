@@ -1,5 +1,6 @@
 use core::arch::asm;
 
+#[cfg(not(talos_target_rpi5_bcm2712))]
 use crate::println;
 
 #[derive(Clone, Copy)]
@@ -88,12 +89,30 @@ pub fn init() {
 #[unsafe(no_mangle)]
 pub extern "C" fn rust_exception_handler(esr: u64, elr: u64, far: u64, vector: u64) -> ! {
     let vector = ExceptionVector::from(vector);
-    println!();
-    println!("talos exception: {}", vector.name());
-    println!(
-        "exception-info: esr={:#018x} elr={:#018x} far={:#018x}",
-        esr, elr, far
-    );
 
-    crate::arch::aarch64::halt()
+    #[cfg(talos_target_rpi5_bcm2712)]
+    {
+        crate::target::console::write_static("\ntalos exception: ");
+        crate::target::console::write_static(vector.name());
+        crate::target::console::write_static("\nexception-info: esr=");
+        crate::target::console::write_hex_u64(esr);
+        crate::target::console::write_static(" elr=");
+        crate::target::console::write_hex_u64(elr);
+        crate::target::console::write_static(" far=");
+        crate::target::console::write_hex_u64(far);
+        crate::target::console::write_static("\n");
+        crate::arch::aarch64::halt()
+    }
+
+    #[cfg(not(talos_target_rpi5_bcm2712))]
+    {
+        println!();
+        println!("talos exception: {}", vector.name());
+        println!(
+            "exception-info: esr={:#018x} elr={:#018x} far={:#018x}",
+            esr, elr, far
+        );
+
+        crate::arch::aarch64::halt()
+    }
 }
