@@ -129,6 +129,7 @@ fn rpi5_minimal_format_reset_probe() -> ! {
         all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_direct_diagnostic),
         all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_dyn_direct_diagnostic),
         all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_fnptr_direct_diagnostic),
+        all(talos_target_rpi5_bcm2712, talos_rpi5_fnptr_reset_diagnostic),
     ),
     allow(unreachable_code)
 )]
@@ -196,6 +197,9 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
 
         #[cfg(talos_rpi5_fmt_sink_fnptr_direct_diagnostic)]
         rpi5_fmt_sink_fnptr_direct_diagnostic();
+
+        #[cfg(talos_rpi5_fnptr_reset_diagnostic)]
+        rpi5_fnptr_reset_diagnostic();
 
         #[cfg(talos_rpi5_minimal_format_diagnostic)]
         rpi5_minimal_format_reset_probe();
@@ -313,12 +317,20 @@ fn rpi5_fmt_sink_fnptr_direct_diagnostic() -> ! {
     }
 }
 
+#[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_fnptr_reset_diagnostic))]
+#[inline(never)]
+fn rpi5_fnptr_reset_diagnostic() -> ! {
+    let reset: fn() -> ! = core::hint::black_box(rpi5_fmt_sink_reset_probe);
+    reset()
+}
+
 #[cfg(any(
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_diagnostic),
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_static_sink_diagnostic),
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_direct_diagnostic),
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_dyn_direct_diagnostic),
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_fnptr_direct_diagnostic),
+    all(talos_target_rpi5_bcm2712, talos_rpi5_fnptr_reset_diagnostic),
 ))]
 fn rpi5_fmt_sink_reset_probe() -> ! {
     unsafe {
