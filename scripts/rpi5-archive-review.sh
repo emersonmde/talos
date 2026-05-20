@@ -70,6 +70,7 @@ if grep -qx 'talos_loader_diagnostic=asm-entry-reset-proof' "$extract_dir/config
 fi
 firmware_address_reset_proof=false
 firmware_address_uart_proof=false
+firmware_address_uart_then_reset_proof=false
 if grep -qx 'talos_loader_diagnostic=asm-entry-reset-firmware-address' "$extract_dir/config.txt"; then
     loader_diagnostic=true
     firmware_address_reset_proof=true
@@ -77,6 +78,10 @@ fi
 if grep -qx 'talos_loader_diagnostic=asm-uart-proof-firmware-address' "$extract_dir/config.txt"; then
     loader_diagnostic=true
     firmware_address_uart_proof=true
+fi
+if grep -qx 'talos_loader_diagnostic=asm-uart-then-reset-firmware-address' "$extract_dir/config.txt"; then
+    loader_diagnostic=true
+    firmware_address_uart_then_reset_proof=true
 fi
 if grep -qx 'talos_loader_diagnostic=raw-pi5-circle-config' "$extract_dir/config.txt"; then
     loader_diagnostic=true
@@ -95,7 +100,7 @@ if [ "$circle_config_loader_diagnostic" = false ]; then
     fi
 fi
 
-if [ "$firmware_address_reset_proof" = false ] && [ "$firmware_address_uart_proof" = false ] && ! grep -qx 'kernel_address=0x80000' "$extract_dir/config.txt"; then
+if [ "$firmware_address_reset_proof" = false ] && [ "$firmware_address_uart_proof" = false ] && [ "$firmware_address_uart_then_reset_proof" = false ] && ! grep -qx 'kernel_address=0x80000' "$extract_dir/config.txt"; then
     echo "config.txt must select the Circle-style Pi 5 bare-metal kernel address" >&2
     exit 1
 fi
@@ -171,7 +176,7 @@ if [ "$loader_diagnostic" = false ]; then
         echo "arm64 Image magic missing at header offset 56" >&2
         exit 1
     fi
-elif { grep -qx 'talos_loader_diagnostic=asm-uart-proof' "$extract_dir/config.txt" || grep -qx 'talos_loader_diagnostic=asm-uart-proof-firmware-address' "$extract_dir/config.txt" || grep -qx 'talos_loader_diagnostic=asm-entry-reset-proof' "$extract_dir/config.txt" || grep -qx 'talos_loader_diagnostic=asm-entry-reset-firmware-address' "$extract_dir/config.txt"; } && [ "$magic" = "ARMd" ]; then
+elif { grep -qx 'talos_loader_diagnostic=asm-uart-proof' "$extract_dir/config.txt" || grep -qx 'talos_loader_diagnostic=asm-uart-proof-firmware-address' "$extract_dir/config.txt" || grep -qx 'talos_loader_diagnostic=asm-uart-then-reset-firmware-address' "$extract_dir/config.txt" || grep -qx 'talos_loader_diagnostic=asm-entry-reset-proof' "$extract_dir/config.txt" || grep -qx 'talos_loader_diagnostic=asm-entry-reset-firmware-address' "$extract_dir/config.txt"; } && [ "$magic" = "ARMd" ]; then
     if [ "$header_image_size" != "$image_size" ]; then
         echo "asm proof Image header size mismatch: header=$header_image_size file=$image_size" >&2
         exit 1
