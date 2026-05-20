@@ -11,7 +11,7 @@ git -C "$repo_root" ls-files -z \
     | tar -C "$repo_root" --null -T - -cf - \
     | tar -C "$work_dir" -xf -
 
-perl -0pi -e 's/println!\("Talos booting on talos-rpi5-bcm2712"\);/println!("Talos booting on {}", boot_info.target.name());/' \
+perl -0pi -e 's/println!\("talos: board raspberry-pi-5-bcm2712"\);/println!("Talos booting on {}", boot_info.target.name());/' \
     "$work_dir/src/main.rs"
 
 set +e

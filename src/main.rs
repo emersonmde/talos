@@ -133,14 +133,14 @@ fn rpi5_minimal_format_reset_probe() -> ! {
 fn kernel_main(boot_info: &BootInfo) -> ! {
     #[cfg(talos_target_rpi5_bcm2712)]
     {
-        println!();
-        println!("Talos booting on talos-rpi5-bcm2712");
+        println!("\ntalos: boot start");
+        println!("talos: board raspberry-pi-5-bcm2712");
 
         #[cfg(talos_rpi5_rust_entry_diagnostic)]
         crate::rpi5_rust_entry_reset_probe();
 
-        println!("talos: static Pi 5 console path");
-        target::console::write_static("boot-info: dtb_pa=");
+        println!("talos: console early-uart static/minimal");
+        target::console::write_static("talos: boot info: dtb=");
         target::console::write_hex_usize(boot_info.dtb_pa);
         target::console::write_static(" core=");
         target::console::write_dec_usize(boot_info.primary_core as usize);
@@ -151,13 +151,13 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
         target::console::write_static("\n");
 
         let services = target::services(boot_info);
-        target::console::write_static("target-services: uart=");
+        target::console::write_static("talos: services: uart=");
         target::console::write_static(services.uart.name());
         target::console::write_static(" timer=");
         target::console::write_static(services.timer.name());
         target::console::write_static(" irq=");
         target::console::write_static(services.interrupt_controller.name());
-        target::console::write_static(" mmio-regions=");
+        target::console::write_static(" mmio_regions=");
         target::console::write_dec_usize(services.mmio_map.regions().len());
         target::console::write_static(" dtb=");
         if let Some(dtb_pa) = services.device_tree.physical_address() {
@@ -166,6 +166,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
             target::console::write_static("none");
         }
         target::console::write_static("\n");
+        println!("talos: status early boot log ready");
 
         #[cfg(talos_rpi5_exception_report_diagnostic)]
         unsafe {

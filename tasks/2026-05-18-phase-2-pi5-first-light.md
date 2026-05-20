@@ -155,6 +155,8 @@ Results:
 - 2026-05-19 Circle-style minimal-config raw loader local validation passed: shell syntax, raw loader build, archive review with `loader_diagnostic=true`, `circle_config_loader_diagnostic=true`, `kernel_size=4088`, and archive digest `2373703743cd87384ad7724d2ce4a358e2fc9ffc6986e8ef447ddb5d0b82fc69`; `cargo fmt --check`, `cargo -Zjson-target-spec test`, raw loader build, QEMU smoke, and `mdbook build` all passed.
 - 2026-05-19 Circle-style minimal-config raw loader hardware attempt published archive digest `2373703743cd87384ad7724d2ce4a358e2fc9ffc6986e8ef447ddb5d0b82fc69`. `PUT /boot/archive` and `POST /power/cycle` returned `ok=true`; serial advanced from cursor `39581` to `40289` through the same firmware/RP1 boundary and showed no `U1`, `L0`, `L1`, `W0`, heartbeat, Talos output, or second firmware boot from PSCI/watchdog side effects during a 75-second observe. The TFTP cursor/tail query did not expose a fresh delta for this run. The archive was rolled back after observation.
 
+- 2026-05-20 boot-log readability nudge: updated the accepted Pi 5 static/minimal runtime output to read as explicit human-facing phase/status lines: boot start, board, console mode, boot info, services, and early-log-ready status. This handles Matthew's temporary boot-log readability nudge without changing the dynamic formatter guard or requiring new hardware proof.
+
 ## Review
 
 - Pre-hardware review findings: passed for one controlled attempt. The archive uses only explicit relative paths, includes the lab-controller required Pi 5 files, selects `kernel_2712.img`, enables RP1 UART0 preservation, and has rollback available.
