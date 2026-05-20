@@ -43,6 +43,7 @@ fn main() {
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_BRK_ERET_RESUME_RESET_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_BRK_ELR_WRITE_RESET_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_BRK_SPSR_ERET_RESET_DIAGNOSTIC");
+    println!("cargo:rerun-if-env-changed=TALOS_RPI5_BRK_SPSR_HANDLER_RESET_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_BRK_ERET_UART_MARKER_DIAGNOSTIC");
 
     let target = env::var("TARGET").expect("TARGET is set by Cargo");
@@ -175,6 +176,9 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
     }
     if env::var_os("TALOS_RPI5_BRK_SPSR_ERET_RESET_DIAGNOSTIC").is_some() {
         command.arg("-DTALOS_RPI5_BRK_SPSR_ERET_RESET_DIAGNOSTIC");
+    }
+    if env::var_os("TALOS_RPI5_BRK_SPSR_HANDLER_RESET_DIAGNOSTIC").is_some() {
+        command.arg("-DTALOS_RPI5_BRK_SPSR_HANDLER_RESET_DIAGNOSTIC");
     }
     if env::var_os("TALOS_RPI5_BRK_ERET_UART_MARKER_DIAGNOSTIC").is_some() {
         command.arg("-DTALOS_RPI5_BRK_ERET_UART_MARKER_DIAGNOSTIC");
