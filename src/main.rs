@@ -7,6 +7,7 @@
 mod arch;
 mod boot;
 mod device_tree;
+mod early_format;
 mod mmio;
 mod pl011;
 mod target;
@@ -107,7 +108,23 @@ pub(crate) fn rpi5_rust_entry_reset_probe() -> ! {
     }
 }
 
-#[cfg_attr(talos_target_rpi5_bcm2712, allow(unused_variables))]
+#[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_minimal_format_diagnostic))]
+fn rpi5_minimal_format_reset_probe() -> ! {
+    unsafe {
+        core::arch::asm!(
+            "ldr x0, =0x84000009",
+            "smc #0",
+            "wfe",
+            "b .-4",
+            options(noreturn)
+        );
+    }
+}
+
+#[cfg_attr(
+    all(talos_target_rpi5_bcm2712, talos_rpi5_minimal_format_diagnostic),
+    allow(unreachable_code)
+)]
 #[cfg(not(test))]
 fn kernel_main(boot_info: &BootInfo) -> ! {
     #[cfg(talos_target_rpi5_bcm2712)]
@@ -119,6 +136,36 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
         crate::rpi5_rust_entry_reset_probe();
 
         println!("talos: static Pi 5 console path");
+        target::console::write_static("boot-info: dtb_pa=");
+        target::console::write_hex_usize(boot_info.dtb_pa);
+        target::console::write_static(" core=");
+        target::console::write_dec_usize(boot_info.primary_core as usize);
+        target::console::write_static(" el=");
+        target::console::write_dec_usize(boot_info.exception_level as usize);
+        target::console::write_static(" target=");
+        target::console::write_static(boot_info.target.name());
+        target::console::write_static("\n");
+
+        let services = target::services(boot_info);
+        target::console::write_static("target-services: uart=");
+        target::console::write_static(services.uart.name());
+        target::console::write_static(" timer=");
+        target::console::write_static(services.timer.name());
+        target::console::write_static(" irq=");
+        target::console::write_static(services.interrupt_controller.name());
+        target::console::write_static(" mmio-regions=");
+        target::console::write_dec_usize(services.mmio_map.regions().len());
+        target::console::write_static(" dtb=");
+        if let Some(dtb_pa) = services.device_tree.physical_address() {
+            target::console::write_hex_usize(dtb_pa);
+        } else {
+            target::console::write_static("none");
+        }
+        target::console::write_static("\n");
+
+        #[cfg(talos_rpi5_minimal_format_diagnostic)]
+        rpi5_minimal_format_reset_probe();
+
         arch::aarch64::halt()
     }
 

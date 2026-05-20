@@ -1,5 +1,6 @@
 use crate::{boot::BootInfo, device_tree::DeviceTree, mmio::MmioMap};
 
+#[cfg_attr(talos_target_rpi5_bcm2712, allow(dead_code))]
 pub mod qemu;
 pub mod qemu_virt;
 pub mod rpi5;
@@ -86,6 +87,7 @@ pub fn init(boot_info: &BootInfo) {
 }
 
 pub mod console {
+    use crate::early_format;
     use core::fmt::{self, Write};
 
     pub fn _print(args: fmt::Arguments<'_>) {
@@ -97,6 +99,21 @@ pub mod console {
         console
             .write_fmt(args)
             .expect("serial console write failed");
+    }
+
+    #[allow(dead_code)]
+    pub fn write_static(s: &str) {
+        console().write_str(s).expect("serial console write failed");
+    }
+
+    #[allow(dead_code)]
+    pub fn write_hex_usize(value: usize) {
+        early_format::write_hex_usize(console(), value).expect("serial console write failed");
+    }
+
+    #[allow(dead_code)]
+    pub fn write_dec_usize(value: usize) {
+        early_format::write_dec_usize(console(), value).expect("serial console write failed");
     }
 
     #[cfg(talos_target_rpi5_bcm2712)]
