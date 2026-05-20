@@ -189,8 +189,13 @@ rpi5_text_boot_next_branch_marker_loop:
     wfe
     b 4b
 #elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_ASM_TEXT_INDIRECT_RESET_DIAGNOSTIC)
-    ldr x20, =rpi5_asm_text_indirect_reset_probe
+    ldr x20, =rpi5_asm_text_reset_probe
     blr x20
+4:
+    wfe
+    b 4b
+#elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_ASM_TEXT_DIRECT_RESET_DIAGNOSTIC)
+    bl rpi5_asm_text_reset_probe
 4:
     wfe
     b 4b
@@ -231,11 +236,11 @@ rpi5_asm_bti_to_rust_reset_veneer:
 .size rpi5_asm_bti_to_rust_reset_veneer, . - rpi5_asm_bti_to_rust_reset_veneer
 #endif
 
-#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_ASM_TEXT_INDIRECT_RESET_DIAGNOSTIC)
+#if defined(TALOS_TARGET_RPI5_BCM2712) && (defined(TALOS_RPI5_ASM_TEXT_INDIRECT_RESET_DIAGNOSTIC) || defined(TALOS_RPI5_ASM_TEXT_DIRECT_RESET_DIAGNOSTIC))
 .section .text.rpi5_asm_text_indirect_reset_diagnostic, "ax"
 .balign 16
-.type rpi5_asm_text_indirect_reset_probe, %function
-rpi5_asm_text_indirect_reset_probe:
+.type rpi5_asm_text_reset_probe, %function
+rpi5_asm_text_reset_probe:
     hint #34
     ldr x0, =0x84000009
     smc #0
@@ -243,7 +248,7 @@ rpi5_asm_text_indirect_reset_probe:
     wfe
     b 4b
 
-.size rpi5_asm_text_indirect_reset_probe, . - rpi5_asm_text_indirect_reset_probe
+.size rpi5_asm_text_reset_probe, . - rpi5_asm_text_reset_probe
 .section .text.boot, "ax"
 #endif
 
