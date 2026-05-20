@@ -62,7 +62,7 @@ fn write_rp1_reg_flush(addr: usize, value: u32) {
 
 #[cfg(talos_target_rpi5_bcm2712)]
 pub fn firmware_console() -> Pl011 {
-    Pl011::new_with_posted_write_flush(RP1_UART0_BASE)
+    Pl011::new_with_posted_write_flush_unpolled(RP1_UART0_BASE)
 }
 
 pub fn services(boot_info: &BootInfo) -> TargetServices {

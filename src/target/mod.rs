@@ -88,20 +88,13 @@ pub fn init(boot_info: &BootInfo) {
 pub mod console {
     use core::fmt::{self, Write};
 
-    #[cfg_attr(
-        all(talos_target_rpi5_bcm2712, talos_rpi5_rust_entry_diagnostic),
-        allow(unreachable_code, unused_variables)
-    )]
     pub fn _print(args: fmt::Arguments<'_>) {
-        #[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_rust_entry_diagnostic))]
-        {
-            let console = crate::target::rpi5::firmware_console();
-            console.write_byte_unchecked(b'\r');
-            console.write_byte_unchecked(b'\n');
-            crate::rpi5_rust_entry_reset_probe();
+        let mut console = console();
+        if let Some(s) = args.as_str() {
+            console.write_str(s).expect("serial console write failed");
+            return;
         }
-
-        console()
+        console
             .write_fmt(args)
             .expect("serial console write failed");
     }

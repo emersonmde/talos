@@ -79,7 +79,7 @@ pub(crate) fn rpi5_rust_entry_reset_probe() -> ! {
             "ldr w12, [x9, #0x18]",
             "str w11, [x14]",
             "ldr w12, [x14, #0x18]",
-            "mov w11, #0x55",
+            "mov w11, #0x53",
             "str w11, [x9]",
             "ldr w12, [x9, #0x18]",
             "str w11, [x14]",
@@ -107,35 +107,52 @@ pub(crate) fn rpi5_rust_entry_reset_probe() -> ! {
     }
 }
 
+#[cfg_attr(talos_target_rpi5_bcm2712, allow(unused_variables))]
 #[cfg(not(test))]
 fn kernel_main(boot_info: &BootInfo) -> ! {
-    println!();
-    println!(
-        "Talos {} booting on {}",
-        env!("CARGO_PKG_VERSION"),
-        boot_info.target.name()
-    );
-    println!(
-        "boot-info: dtb_pa={:#018x} core={} el={} target={}",
-        boot_info.dtb_pa,
-        boot_info.primary_core,
-        boot_info.exception_level,
-        boot_info.target.name()
-    );
-    let services = target::services(boot_info);
-    println!(
-        "target-services: uart={} timer={} irq={} dtb={:#018x?}",
-        services.uart.name(),
-        services.timer.name(),
-        services.interrupt_controller.name(),
-        services.device_tree.physical_address()
-    );
-    println!("mmio-regions: {}", services.mmio_map.regions().len());
-    println!("talos: hello from {}", boot_info.target.name());
-    println!("talos: qemu smoke PASS");
-    match boot_info.target {
-        target::TargetKind::QemuVirt => target::qemu::exit_success(),
-        target::TargetKind::Rpi5Bcm2712 => arch::aarch64::halt(),
+    #[cfg(talos_target_rpi5_bcm2712)]
+    {
+        println!();
+        println!("Talos booting on talos-rpi5-bcm2712");
+
+        #[cfg(talos_rpi5_rust_entry_diagnostic)]
+        crate::rpi5_rust_entry_reset_probe();
+
+        println!("talos: static Pi 5 console path");
+        arch::aarch64::halt()
+    }
+
+    #[cfg(not(talos_target_rpi5_bcm2712))]
+    {
+        println!();
+        println!(
+            "Talos {} booting on {}",
+            env!("CARGO_PKG_VERSION"),
+            boot_info.target.name()
+        );
+
+        println!(
+            "boot-info: dtb_pa={:#018x} core={} el={} target={}",
+            boot_info.dtb_pa,
+            boot_info.primary_core,
+            boot_info.exception_level,
+            boot_info.target.name()
+        );
+        let services = target::services(boot_info);
+        println!(
+            "target-services: uart={} timer={} irq={} dtb={:#018x?}",
+            services.uart.name(),
+            services.timer.name(),
+            services.interrupt_controller.name(),
+            services.device_tree.physical_address()
+        );
+        println!("mmio-regions: {}", services.mmio_map.regions().len());
+        println!("talos: hello from {}", boot_info.target.name());
+        println!("talos: qemu smoke PASS");
+        match boot_info.target {
+            target::TargetKind::QemuVirt => target::qemu::exit_success(),
+            target::TargetKind::Rpi5Bcm2712 => arch::aarch64::halt(),
+        }
     }
 }
 

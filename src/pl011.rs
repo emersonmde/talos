@@ -15,6 +15,7 @@ const UART_FR_TXFF: u32 = 1 << 5;
 pub struct Pl011 {
     base: usize,
     flush_posted_writes: bool,
+    poll_tx_ready: bool,
 }
 
 impl Pl011 {
@@ -22,6 +23,7 @@ impl Pl011 {
         Self {
             base,
             flush_posted_writes: false,
+            poll_tx_ready: true,
         }
     }
 
@@ -30,6 +32,16 @@ impl Pl011 {
         Self {
             base,
             flush_posted_writes: true,
+            poll_tx_ready: true,
+        }
+    }
+
+    #[allow(dead_code)]
+    pub const fn new_with_posted_write_flush_unpolled(base: usize) -> Self {
+        Self {
+            base,
+            flush_posted_writes: true,
+            poll_tx_ready: false,
         }
     }
 
@@ -44,12 +56,9 @@ impl Pl011 {
     }
 
     pub fn write_byte(self, byte: u8) {
-        while self.read_reg(UART_FR) & UART_FR_TXFF != 0 {}
-        self.write_data(byte as u32);
-    }
-
-    #[allow(dead_code)]
-    pub fn write_byte_unchecked(self, byte: u8) {
+        if self.poll_tx_ready {
+            while self.read_reg(UART_FR) & UART_FR_TXFF != 0 {}
+        }
         self.write_data(byte as u32);
     }
 
