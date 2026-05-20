@@ -104,6 +104,9 @@ _start:
     b 0b
 
 1:
+    adrp x0, __stack_top
+    add x0, x0, :lo12:__stack_top
+    mov sp, x0
 #if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_TRANSITION_DIAGNOSTIC)
 4:
     ldr x9, =0x107d001000
@@ -112,9 +115,6 @@ _start:
     bl rpi5_write_marker
     b 4b
 #endif
-    adrp x0, __stack_top
-    add x0, x0, :lo12:__stack_top
-    mov sp, x0
     mov x0, x19
     bl rust_entry
 
@@ -141,7 +141,7 @@ rpi5_write_marker:
 #ifdef TALOS_RPI5_CARGO_ASM_UART_PROOF
     .asciz "CL\r\n"
 #elif defined(TALOS_RPI5_TRANSITION_DIAGNOSTIC)
-    .asciz "BS\r\n"
+    .asciz "SP\r\n"
 #else
     .asciz "BI\r\n"
 #endif

@@ -103,6 +103,7 @@ Local Daedalus references:
 - Reusing the exact successful `rpi5_write_marker`/literal shape under the transition diagnostic printed repeated `CT`-shaped output on hardware after the image was served twice. This rules the RP1 pinmux boundary back in as working when the proven helper/literal shape is preserved; the failed `S0`/`S1` variants were diagnostic-shape issues, not evidence that pinmux itself broke the transition.
 - Reintroducing the CPACR_EL1 FP/SIMD enable before the repeated marker loop also printed repeated `CP`-shaped output on hardware. This clears CPACR as the next startup boundary when using the proven marker shape; the next narrow transition is BSS clearing.
 - Moving the repeated marker loop after BSS clearing printed repeated `BS`-shaped output on hardware. This clears BSS zeroing as a startup boundary when the proven marker helper/literal shape is preserved; the next narrow transition is stack pointer setup.
+- Moving the repeated marker loop after stack pointer setup printed repeated `SP`-shaped output on hardware. This clears stack setup as a startup boundary when the proven marker helper/literal shape is preserved; the next narrow transition is entering `rust_entry` or placing a marker immediately at Rust entry.
 - A public BCM2712 peripherals PDF does not appear to exist at the expected datasheets.raspberrypi.com path; Raspberry Pi Linux DTS files are currently the most practical register-map source for BCM2712.
 
 ## Current QEMU Findings
