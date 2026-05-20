@@ -264,6 +264,7 @@ tftp.events[] fields:
 ```
 
 Use `cursor_end` like the serial cursor: capture it before a power cycle, then call `/tftp/logs?cursor=<old cursor>` after the run to see only new TFTP activity.
+For acceptance evidence that depends on served file sizes, query TFTP logs before restoring the boot tree. The `bytes` field is computed from the current TFTP file at query time, not parsed from the dnsmasq line, so querying after restore can label an earlier diagnostic serve with the restored file's size. Keep `limit` within the endpoint range, currently `1..2000`, or the request fails and can accidentally push evidence collection until after restore.
 
 Verified request sequence:
 
