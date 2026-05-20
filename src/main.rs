@@ -21,7 +21,26 @@ use boot::BootInfo;
     allow(unreachable_code, unused_variables)
 )]
 pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
+    let boot_info = BootInfo::from_aarch64_x0(dtb_pa);
+
     #[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_rust_entry_diagnostic))]
+    rpi5_rust_entry_reset_probe();
+
+    target::init(&boot_info);
+    arch::aarch64::exceptions::init();
+
+    #[cfg(test)]
+    {
+        test_main();
+        target::qemu::exit_success();
+    }
+
+    #[cfg(not(test))]
+    kernel_main(&boot_info)
+}
+
+#[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_rust_entry_diagnostic))]
+fn rpi5_rust_entry_reset_probe() -> ! {
     unsafe {
         core::arch::asm!(
             "movz x13, #0x003c",
@@ -62,7 +81,7 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
             "ldr w12, [x9, #0x18]",
             "str w11, [x14]",
             "ldr w12, [x14, #0x18]",
-            "mov w11, #0x49",
+            "mov w11, #0x42",
             "str w11, [x9]",
             "ldr w12, [x9, #0x18]",
             "str w11, [x14]",
@@ -88,19 +107,6 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
             options(noreturn)
         );
     }
-
-    let boot_info = BootInfo::from_aarch64_x0(dtb_pa);
-    target::init(&boot_info);
-    arch::aarch64::exceptions::init();
-
-    #[cfg(test)]
-    {
-        test_main();
-        target::qemu::exit_success();
-    }
-
-    #[cfg(not(test))]
-    kernel_main(&boot_info)
 }
 
 #[cfg(not(test))]
