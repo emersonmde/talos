@@ -47,7 +47,10 @@ _start:
     bl rpi5_write_marker
 
 4:
-    wfe
+    ldr x9, =0x107d001000
+    bl rpi5_write_marker
+    ldr x9, =0x1f00030000
+    bl rpi5_write_marker
     b 4b
 #else
     ldr x9, =0x107d001000
@@ -119,7 +122,7 @@ rpi5_write_marker:
 
 9:
 #ifdef TALOS_RPI5_CARGO_ASM_UART_PROOF
-    .asciz "CA\r\n"
+    .asciz "CL\r\n"
 #else
     .asciz "BI\r\n"
 #endif
