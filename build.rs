@@ -37,6 +37,7 @@ fn main() {
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_ASM_TEXT_DIRECT_RESET_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_ASM_TEXT_JC_INDIRECT_RESET_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_BTI_EXCEPTION_CLASSIFIER_DIAGNOSTIC");
+    println!("cargo:rerun-if-env-changed=TALOS_RPI5_BTI_CLASSIFIER_WITH_BRK_PRECHECK_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_DIRECT_EXCEPTION_CONTROL_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_DIRECT_EXCEPTION_IMMEDIATE_RESET_DIAGNOSTIC");
 
@@ -152,6 +153,9 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
     }
     if env::var_os("TALOS_RPI5_BTI_EXCEPTION_CLASSIFIER_DIAGNOSTIC").is_some() {
         command.arg("-DTALOS_RPI5_BTI_EXCEPTION_CLASSIFIER_DIAGNOSTIC");
+    }
+    if env::var_os("TALOS_RPI5_BTI_CLASSIFIER_WITH_BRK_PRECHECK_DIAGNOSTIC").is_some() {
+        command.arg("-DTALOS_RPI5_BTI_CLASSIFIER_WITH_BRK_PRECHECK_DIAGNOSTIC");
     }
     if env::var_os("TALOS_RPI5_DIRECT_EXCEPTION_CONTROL_DIAGNOSTIC").is_some() {
         command.arg("-DTALOS_RPI5_DIRECT_EXCEPTION_CONTROL_DIAGNOSTIC");
