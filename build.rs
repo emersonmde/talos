@@ -8,6 +8,7 @@ fn main() {
     println!("cargo:rerun-if-changed=linker.ld");
     println!("cargo:rerun-if-changed=linker-rpi5.ld");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_CARGO_ASM_UART_PROOF");
+    println!("cargo:rerun-if-env-changed=TALOS_RPI5_TRANSITION_DIAGNOSTIC");
 
     let target = env::var("TARGET").expect("TARGET is set by Cargo");
     println!("cargo:rustc-check-cfg=cfg(talos_target_qemu_virt)");
@@ -48,6 +49,9 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
     }
     if env::var_os("TALOS_RPI5_CARGO_ASM_UART_PROOF").is_some() {
         command.arg("-DTALOS_RPI5_CARGO_ASM_UART_PROOF");
+    }
+    if env::var_os("TALOS_RPI5_TRANSITION_DIAGNOSTIC").is_some() {
+        command.arg("-DTALOS_RPI5_TRANSITION_DIAGNOSTIC");
     }
 
     let status = command
