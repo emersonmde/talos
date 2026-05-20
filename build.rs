@@ -16,6 +16,8 @@ fn main() {
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_TEXT_BOOT_NEAR_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_TEXT_BOOT_NEAR_BRANCH_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_TEXT_BOOT_NEXT_BRANCH_DIAGNOSTIC");
+    println!("cargo:rerun-if-env-changed=TALOS_RPI5_FALLTHROUGH_RUST_DIAGNOSTIC");
+    println!("cargo:rerun-if-env-changed=TALOS_RPI5_POST_STACK_NOP_DIAGNOSTIC");
 
     let target = env::var("TARGET").expect("TARGET is set by Cargo");
     println!("cargo:rustc-check-cfg=cfg(talos_target_qemu_virt)");
@@ -78,6 +80,12 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
     }
     if env::var_os("TALOS_RPI5_TEXT_BOOT_NEXT_BRANCH_DIAGNOSTIC").is_some() {
         command.arg("-DTALOS_RPI5_TEXT_BOOT_NEXT_BRANCH_DIAGNOSTIC");
+    }
+    if env::var_os("TALOS_RPI5_FALLTHROUGH_RUST_DIAGNOSTIC").is_some() {
+        command.arg("-DTALOS_RPI5_FALLTHROUGH_RUST_DIAGNOSTIC");
+    }
+    if env::var_os("TALOS_RPI5_POST_STACK_NOP_DIAGNOSTIC").is_some() {
+        command.arg("-DTALOS_RPI5_POST_STACK_NOP_DIAGNOSTIC");
     }
     if env::var_os("TALOS_RPI5_RUST_ENTRY_DIAGNOSTIC").is_some() {
         println!("cargo:rustc-cfg=talos_rpi5_rust_entry_diagnostic");
