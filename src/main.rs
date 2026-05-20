@@ -79,7 +79,7 @@ pub(crate) fn rpi5_rust_entry_reset_probe() -> ! {
             "ldr w12, [x9, #0x18]",
             "str w11, [x14]",
             "ldr w12, [x14, #0x18]",
-            "mov w11, #0x4d",
+            "mov w11, #0x55",
             "str w11, [x9]",
             "ldr w12, [x9, #0x18]",
             "str w11, [x14]",
