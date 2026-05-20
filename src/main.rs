@@ -168,6 +168,12 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
             core::arch::asm!("brk #0", options(nomem, nostack, preserves_flags));
         }
 
+        #[cfg(talos_rpi5_dynamic_format_fallback_diagnostic)]
+        {
+            println!("dynamic formatting fallback probe {}", 1);
+            rpi5_dynamic_format_fallback_reset_probe();
+        }
+
         #[cfg(talos_rpi5_minimal_format_diagnostic)]
         rpi5_minimal_format_reset_probe();
 
@@ -205,6 +211,22 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
             target::TargetKind::QemuVirt => target::qemu::exit_success(),
             target::TargetKind::Rpi5Bcm2712 => arch::aarch64::halt(),
         }
+    }
+}
+
+#[cfg(all(
+    talos_target_rpi5_bcm2712,
+    talos_rpi5_dynamic_format_fallback_diagnostic
+))]
+fn rpi5_dynamic_format_fallback_reset_probe() -> ! {
+    unsafe {
+        core::arch::asm!(
+            "ldr x0, =0x84000009",
+            "smc #0",
+            "wfe",
+            "b .-4",
+            options(noreturn)
+        );
     }
 }
 

@@ -96,6 +96,16 @@ pub mod console {
             console.write_str(s).expect("serial console write failed");
             return;
         }
+
+        #[cfg(talos_target_rpi5_bcm2712)]
+        {
+            console
+                .write_str("talos: dynamic formatting disabled on early Pi 5 console\n")
+                .expect("serial console write failed");
+            return;
+        }
+
+        #[cfg(not(talos_target_rpi5_bcm2712))]
         console
             .write_fmt(args)
             .expect("serial console write failed");
