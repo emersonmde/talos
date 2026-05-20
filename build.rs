@@ -36,6 +36,7 @@ fn main() {
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_ASM_TEXT_INDIRECT_RESET_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_ASM_TEXT_DIRECT_RESET_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_ASM_TEXT_JC_INDIRECT_RESET_DIAGNOSTIC");
+    println!("cargo:rerun-if-env-changed=TALOS_RPI5_BTI_EXCEPTION_CLASSIFIER_DIAGNOSTIC");
 
     let target = env::var("TARGET").expect("TARGET is set by Cargo");
     println!("cargo:rustc-check-cfg=cfg(talos_target_qemu_virt)");
@@ -146,6 +147,9 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
     }
     if env::var_os("TALOS_RPI5_ASM_TEXT_JC_INDIRECT_RESET_DIAGNOSTIC").is_some() {
         command.arg("-DTALOS_RPI5_ASM_TEXT_JC_INDIRECT_RESET_DIAGNOSTIC");
+    }
+    if env::var_os("TALOS_RPI5_BTI_EXCEPTION_CLASSIFIER_DIAGNOSTIC").is_some() {
+        command.arg("-DTALOS_RPI5_BTI_EXCEPTION_CLASSIFIER_DIAGNOSTIC");
     }
     if env::var_os("TALOS_RPI5_RUST_ENTRY_DIAGNOSTIC").is_some() {
         println!("cargo:rustc-cfg=talos_rpi5_rust_entry_diagnostic");
