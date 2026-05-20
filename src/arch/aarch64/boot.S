@@ -54,9 +54,8 @@ _start:
     b 4b
 #else
 #ifdef TALOS_RPI5_TRANSITION_DIAGNOSTIC
-    adr x10, marker_s0
     ldr x9, =0x107d001000
-    bl rpi5_write_cstr
+    bl rpi5_write_marker
 #else
     ldr x9, =0x107d001000
     bl rpi5_write_marker
@@ -81,9 +80,15 @@ _start:
     dsb sy
 
 #ifdef TALOS_RPI5_TRANSITION_DIAGNOSTIC
-    adr x10, marker_s1
-    bl rpi5_write_stage
-    b 2f
+    ldr x9, =0x1f00030000
+    bl rpi5_write_marker
+
+4:
+    ldr x9, =0x107d001000
+    bl rpi5_write_marker
+    ldr x9, =0x1f00030000
+    bl rpi5_write_marker
+    b 4b
 #else
     ldr x9, =0x1f00030000
     bl rpi5_write_marker
@@ -95,11 +100,6 @@ _start:
     orr x0, x0, #(0b11 << 20)
     msr cpacr_el1, x0
     isb
-#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_TRANSITION_DIAGNOSTIC)
-    adr x10, marker_s2
-    bl rpi5_write_stage
-#endif
-
     adrp x0, __bss_start
     add x0, x0, :lo12:__bss_start
     adrp x1, __bss_end
@@ -111,17 +111,9 @@ _start:
     b 0b
 
 1:
-#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_TRANSITION_DIAGNOSTIC)
-    adr x10, marker_s3
-    bl rpi5_write_stage
-#endif
     adrp x0, __stack_top
     add x0, x0, :lo12:__stack_top
     mov sp, x0
-#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_TRANSITION_DIAGNOSTIC)
-    adr x10, marker_s4
-    bl rpi5_write_stage
-#endif
     mov x0, x19
     bl rust_entry
 
@@ -132,33 +124,6 @@ _start:
 .size _start, . - _start
 
 #ifdef TALOS_TARGET_RPI5_BCM2712
-#ifdef TALOS_RPI5_TRANSITION_DIAGNOSTIC
-rpi5_write_stage:
-    mov x17, x30
-    mov x14, #16
-14:
-    ldr x9, =0x107d001000
-    bl rpi5_write_cstr
-    ldr x9, =0x1f00030000
-    bl rpi5_write_cstr
-    subs x14, x14, #1
-    b.ne 14b
-    mov x30, x17
-    ret
-
-rpi5_write_cstr:
-    mov x15, x10
-15:
-    ldrb w11, [x15], #1
-    cbz w11, 16f
-    str w11, [x9]
-    ldr w12, [x9, #0x18]
-    b 15b
-16:
-    dsb sy
-    ret
-#endif
-
 rpi5_write_marker:
     adr x10, 9f
 12:
@@ -174,21 +139,10 @@ rpi5_write_marker:
 9:
 #ifdef TALOS_RPI5_CARGO_ASM_UART_PROOF
     .asciz "CL\r\n"
+#elif defined(TALOS_RPI5_TRANSITION_DIAGNOSTIC)
+    .asciz "CT\r\n"
 #else
     .asciz "BI\r\n"
-#endif
-
-#ifdef TALOS_RPI5_TRANSITION_DIAGNOSTIC
-marker_s0:
-    .asciz "S0\r\n"
-marker_s1:
-    .asciz "S1\r\n"
-marker_s2:
-    .asciz "S2\r\n"
-marker_s3:
-    .asciz "S3\r\n"
-marker_s4:
-    .asciz "S4\r\n"
 #endif
 
 #endif
