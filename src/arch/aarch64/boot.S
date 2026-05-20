@@ -228,6 +228,28 @@ rpi5_text_boot_next_branch_marker_loop:
     ldr x20, =rpi5_bti_classifier_target
     blr x20
     b rpi5_bti_classifier_park
+#elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_DIRECT_EXCEPTION_CONTROL_DIAGNOSTIC)
+    adr x0, rpi5_direct_exception_vectors
+    mrs x1, CurrentEL
+    cmp x1, #(1 << 2)
+    b.eq 5f
+    cmp x1, #(2 << 2)
+    b.eq 6f
+    cmp x1, #(3 << 2)
+    b.eq 7f
+    b rpi5_direct_exception_park
+5:
+    msr vbar_el1, x0
+    b 8f
+6:
+    msr vbar_el2, x0
+    b 8f
+7:
+    msr vbar_el3, x0
+8:
+    isb
+    brk #0
+    b rpi5_direct_exception_park
 #elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_VECTOR_SECTION_DIAGNOSTIC)
     bl rpi5_vector_section_marker_loop
 #elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_TEXT_SECTION_DIAGNOSTIC)
@@ -378,6 +400,81 @@ rpi5_bti_exception_handler:
 rpi5_bti_classifier_park:
     wfe
     b rpi5_bti_classifier_park
+
+.section .text.boot, "ax"
+#endif
+
+#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_DIRECT_EXCEPTION_CONTROL_DIAGNOSTIC)
+.section .text.rpi5_direct_exception_control_diagnostic, "ax"
+.balign 2048
+rpi5_direct_exception_vectors:
+    b rpi5_direct_exception_handler
+    .space 0x80 - (. - rpi5_direct_exception_vectors)
+    b rpi5_direct_exception_handler
+    .space 0x100 - (. - rpi5_direct_exception_vectors)
+    b rpi5_direct_exception_handler
+    .space 0x180 - (. - rpi5_direct_exception_vectors)
+    b rpi5_direct_exception_handler
+    .space 0x200 - (. - rpi5_direct_exception_vectors)
+    b rpi5_direct_exception_handler
+    .space 0x280 - (. - rpi5_direct_exception_vectors)
+    b rpi5_direct_exception_handler
+    .space 0x300 - (. - rpi5_direct_exception_vectors)
+    b rpi5_direct_exception_handler
+    .space 0x380 - (. - rpi5_direct_exception_vectors)
+    b rpi5_direct_exception_handler
+    .space 0x400 - (. - rpi5_direct_exception_vectors)
+    b rpi5_direct_exception_handler
+    .space 0x480 - (. - rpi5_direct_exception_vectors)
+    b rpi5_direct_exception_handler
+    .space 0x500 - (. - rpi5_direct_exception_vectors)
+    b rpi5_direct_exception_handler
+    .space 0x580 - (. - rpi5_direct_exception_vectors)
+    b rpi5_direct_exception_handler
+    .space 0x600 - (. - rpi5_direct_exception_vectors)
+    b rpi5_direct_exception_handler
+    .space 0x680 - (. - rpi5_direct_exception_vectors)
+    b rpi5_direct_exception_handler
+    .space 0x700 - (. - rpi5_direct_exception_vectors)
+    b rpi5_direct_exception_handler
+    .space 0x780 - (. - rpi5_direct_exception_vectors)
+    b rpi5_direct_exception_handler
+
+rpi5_direct_exception_handler:
+    mrs x20, CurrentEL
+    cmp x20, #(1 << 2)
+    b.eq 1f
+    cmp x20, #(2 << 2)
+    b.eq 2f
+    cmp x20, #(3 << 2)
+    b.eq 3f
+    b rpi5_direct_exception_park
+1:
+    mrs x21, esr_el1
+    b 4f
+2:
+    mrs x21, esr_el2
+    b 4f
+3:
+    mrs x21, esr_el3
+4:
+    lsr x21, x21, #26
+    cmp x21, #0x3c
+    b.ne rpi5_direct_exception_park
+    mov x23, #4
+5:
+    ldr x22, =0x10000000
+6:
+    subs x22, x22, #1
+    b.ne 6b
+    subs x23, x23, #1
+    b.ne 5b
+    ldr x0, =0x84000009
+    smc #0
+
+rpi5_direct_exception_park:
+    wfe
+    b rpi5_direct_exception_park
 
 .section .text.boot, "ax"
 #endif
