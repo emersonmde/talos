@@ -128,6 +128,10 @@ fn pi5_uart10_address_matches_bcm2712_soc_range() {
     assert_eq!(target::rpi5::UART10_BASE, 0x10_7d00_1000);
     assert_eq!(target::rpi5::RP1_UART0_PCIE2_BASE, 0x1f_0003_0000);
     assert_eq!(target::rpi5::RP1_UART0_FIRMWARE_BASE, 0x1c_0003_0000);
+    assert_eq!(target::rpi5::RP1_UART0_GPIO14_PAD, 0x1f_000f_003c);
+    assert_eq!(target::rpi5::RP1_UART0_GPIO15_PAD, 0x1f_000f_0040);
+    assert_eq!(target::rpi5::RP1_UART0_GPIO14_CTRL, 0x1f_000d_0074);
+    assert_eq!(target::rpi5::RP1_UART0_GPIO15_CTRL, 0x1f_000d_007c);
     assert_eq!(
         target::rpi5::RP1_UART0_BASE,
         target::rpi5::RP1_UART0_PCIE2_BASE

@@ -58,6 +58,18 @@ Status:
 curl -fsS http://talos-lab-api:8080/status
 ```
 
+Important `status.boot` fields:
+
+```text
+active_name         configured fallback name from lab config
+configured_kernel  kernel= value parsed from current config.txt, if present
+effective_kernel   configured_kernel when present, otherwise active_name
+config             parsed config.txt keys: kernel, armstub, boot_ramdisk,
+                   enable_rp1_uart, os_check
+tree_hash          SHA-256 over the visible current TFTP boot tree
+snapshots          named snapshot list
+```
+
 Power-cycle the Pi:
 
 ```bash
@@ -84,7 +96,17 @@ Rollback to the previous boot tree:
 curl -fsS -X POST http://talos-lab-api:8080/boot/rollback
 ```
 
-The API keeps exactly one rollback archive and removes upload/staging files after each publish attempt. Do not leave large boot tarballs in the OpenClaw workspace after upload.
+Create or restore a named boot snapshot:
+
+```bash
+curl -fsS -X POST 'http://talos-lab-api:8080/boot/snapshot?name=known-good-linux'
+curl -fsS 'http://talos-lab-api:8080/boot/snapshots'
+curl -fsS -X POST 'http://talos-lab-api:8080/boot/restore?name=known-good-linux'
+```
+
+The API keeps one rolling rollback archive after each publish or restore. Named snapshots are separate from that rolling rollback and are better for pinned restore points such as `known-good-linux`. Do not create a snapshot named `known-good-*` unless the current boot tree has actually been validated as good.
+
+The API removes upload/staging files after each publish attempt. Do not leave large boot tarballs in the OpenClaw workspace after upload.
 
 Power-cycle response shape:
 
@@ -97,6 +119,26 @@ Response:
 ```
 
 Expected guard mode is `fixed-port`. A 400 from this endpoint means the fixed UniFi device/port/PoE lookup or the UniFi action failed, not that Talos was missing from the client list.
+
+Boot snapshot endpoint reference:
+
+```text
+GET /boot/snapshots
+Response:
+  action, ok, snapshots[{name, bytes, mtime}]
+
+POST /boot/snapshot?name=<snapshot-name>
+Query:
+  name: required; letters, digits, dot, underscore, hyphen; max 80 chars
+Response:
+  action, ok, snapshot{name, archive, bytes}, snapshots[]
+
+POST /boot/restore?name=<snapshot-name>
+Query:
+  name: required
+Response:
+  action, ok, boot, archive{name, files, file_count, extracted_bytes, rollback_archive}
+```
 
 Current verified behavior:
 
@@ -149,9 +191,9 @@ fixup*.dat
 
 For early Talos bring-up, include both `kernel_2712.img` and a duplicate
 `kernel8.img` until the lab loop proves which firmware path is selected on every
-network boot. The Pi 5 default is `kernel_2712.img`, but the lab status helper
-has reported `kernel8.img` as active even for a Talos archive whose `config.txt`
-explicitly names `kernel_2712.img`.
+network boot. The Pi 5 default is `kernel_2712.img`. Use
+`GET /status` and check `boot.configured_kernel` / `boot.effective_kernel`
+rather than relying on `boot.active_name`, which is only the lab config fallback.
 
 The API rejects unsafe archives:
 
@@ -194,11 +236,34 @@ Strider firewalld allows UDP/69 only from the Pi:
 10.42.1.4/32 -> UDP/69
 ```
 
-TFTP is served by `talos-tftp` using dnsmasq in TFTP-only mode. Request logs are visible on Strider with:
+TFTP is served by `talos-tftp` using dnsmasq in TFTP-only mode. OpenClaw should use the API for TFTP request logs instead of host Docker logs:
 
 ```bash
-docker logs talos-tftp
+curl -fsS 'http://talos-lab-api:8080/tftp/logs?cursor=0&limit=200'
 ```
+
+TFTP log endpoint reference:
+
+```text
+GET /tftp/logs
+Query:
+  cursor: integer byte offset, default 0
+  max_bytes: integer, default 65536, range 1..1048576
+  limit: integer line/event limit, default 200, range 1..2000
+Response:
+  action, ok, tftp.log, tftp.cursor_start, tftp.cursor_end,
+  tftp.truncated, tftp.lines[], tftp.events[]
+
+tftp.events[] fields:
+  status: served or not_found
+  filename: requested TFTP path relative to the TFTP root
+  client_ip: requester IP
+  client_mac: known target MAC when client_ip is 10.42.1.4, otherwise null
+  bytes: current file size for served files when available, otherwise null
+  line: raw dnsmasq log line
+```
+
+Use `cursor_end` like the serial cursor: capture it before a power cycle, then call `/tftp/logs?cursor=<old cursor>` after the run to see only new TFTP activity.
 
 Verified request sequence:
 

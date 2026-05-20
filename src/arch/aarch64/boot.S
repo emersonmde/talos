@@ -19,19 +19,72 @@ _start:
     .long 0
 
 3:
-#ifdef TALOS_TARGET_RPI5_BCM2712
-    bl rpi5_uart0_marker
-#endif
-
     mov x19, x0
+#ifdef TALOS_TARGET_RPI5_BCM2712
+#ifdef TALOS_RPI5_CARGO_ASM_UART_PROOF
+    ldr x9, =0x107d001000
+    bl rpi5_write_marker
+
+    ldr x13, =0x1f000f003c
+    mov w12, #0x40
+    str w12, [x13]
+    ldr w12, [x13]
+    ldr x13, =0x1f000f0040
+    mov w12, #0x48
+    str w12, [x13]
+    ldr w12, [x13]
+    ldr x13, =0x1f000d0074
+    mov w12, #4
+    str w12, [x13]
+    ldr w12, [x13]
+    ldr x13, =0x1f000d007c
+    mov w12, #4
+    str w12, [x13]
+    ldr w12, [x13]
+    dsb sy
+
+    ldr x9, =0x1f00030000
+    bl rpi5_write_marker
+
+4:
+    wfe
+    b 4b
+#else
+    ldr x9, =0x107d001000
+    bl rpi5_write_marker
+
+    ldr x13, =0x1f000f003c
+    mov w12, #0x40
+    str w12, [x13]
+    ldr w12, [x13]
+    ldr x13, =0x1f000f0040
+    mov w12, #0x48
+    str w12, [x13]
+    ldr w12, [x13]
+    ldr x13, =0x1f000d0074
+    mov w12, #4
+    str w12, [x13]
+    ldr w12, [x13]
+    ldr x13, =0x1f000d007c
+    mov w12, #4
+    str w12, [x13]
+    ldr w12, [x13]
+    dsb sy
+
+    ldr x9, =0x1f00030000
+    bl rpi5_write_marker
+#endif
+#endif
 
     mrs x0, cpacr_el1
     orr x0, x0, #(0b11 << 20)
     msr cpacr_el1, x0
     isb
 
-    ldr x0, =__bss_start
-    ldr x1, =__bss_end
+    adrp x0, __bss_start
+    add x0, x0, :lo12:__bss_start
+    adrp x1, __bss_end
+    add x1, x1, :lo12:__bss_end
 0:
     cmp x0, x1
     b.hs 1f
@@ -39,7 +92,8 @@ _start:
     b 0b
 
 1:
-    ldr x0, =__stack_top
+    adrp x0, __stack_top
+    add x0, x0, :lo12:__stack_top
     mov sp, x0
     mov x0, x19
     bl rust_entry
@@ -51,57 +105,23 @@ _start:
 .size _start, . - _start
 
 #ifdef TALOS_TARGET_RPI5_BCM2712
-.type rpi5_uart0_marker, %function
-rpi5_uart0_marker:
-    ldr x9, =0x1c00030000
+rpi5_write_marker:
     adr x10, 9f
-10:
-    ldrb w11, [x10], #1
-    cbz w11, 11f
-    mov w13, #0x10000
 12:
-    ldr w12, [x9, #0x18]
-    tbz w12, #5, 13f
-    subs w13, w13, #1
-    b.ne 12b
-13:
-    str w11, [x9]
-    b 10b
-11:
-    mov w12, #0
-    str w12, [x9, #0x30]
-    mov w12, #0x7ff
-    str w12, [x9, #0x44]
-    mov w12, #1
-    str w12, [x9, #0x24]
-    mov w12, #40
-    str w12, [x9, #0x28]
-    mov w12, #(3 << 5)
-    str w12, [x9, #0x2c]
-    mov w12, #0
-    str w12, [x9, #0x38]
-    mov w12, #0x301
-    str w12, [x9, #0x30]
-    adr x10, 4f
-5:
     ldrb w11, [x10], #1
-    cbz w11, 7f
-    mov w13, #0x10000
-6:
-    ldr w12, [x9, #0x18]
-    tbz w12, #5, 8f
-    subs w13, w13, #1
-    b.ne 6b
-8:
+    cbz w11, 13f
     str w11, [x9]
-    b 5b
-7:
+    ldr w12, [x9, #0x18]
+    b 12b
+13:
+    dsb sy
     ret
 
-4:
-    .asciz "T1\r\n"
 9:
-    .asciz "P1\r\n"
+#ifdef TALOS_RPI5_CARGO_ASM_UART_PROOF
+    .asciz "CA\r\n"
+#else
+    .asciz "BI\r\n"
+#endif
 
-.size rpi5_uart0_marker, . - rpi5_uart0_marker
 #endif

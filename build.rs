@@ -7,6 +7,7 @@ fn main() {
     println!("cargo:rerun-if-changed=src/arch/aarch64/vectors.S");
     println!("cargo:rerun-if-changed=linker.ld");
     println!("cargo:rerun-if-changed=linker-rpi5.ld");
+    println!("cargo:rerun-if-env-changed=TALOS_RPI5_CARGO_ASM_UART_PROOF");
 
     let target = env::var("TARGET").expect("TARGET is set by Cargo");
     println!("cargo:rustc-check-cfg=cfg(talos_target_qemu_virt)");
@@ -44,6 +45,9 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
 
     if target.contains("rpi5") || target.contains("bcm2712") {
         command.arg("-DTALOS_TARGET_RPI5_BCM2712");
+    }
+    if env::var_os("TALOS_RPI5_CARGO_ASM_UART_PROOF").is_some() {
+        command.arg("-DTALOS_RPI5_CARGO_ASM_UART_PROOF");
     }
 
     let status = command

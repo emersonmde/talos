@@ -14,11 +14,23 @@ const UART_FR_TXFF: u32 = 1 << 5;
 #[derive(Clone, Copy)]
 pub struct Pl011 {
     base: usize,
+    flush_posted_writes: bool,
 }
 
 impl Pl011 {
     pub const fn new(base: usize) -> Self {
-        Self { base }
+        Self {
+            base,
+            flush_posted_writes: false,
+        }
+    }
+
+    #[allow(dead_code)]
+    pub const fn new_with_posted_write_flush(base: usize) -> Self {
+        Self {
+            base,
+            flush_posted_writes: true,
+        }
     }
 
     pub fn init_early(self) {
@@ -33,7 +45,7 @@ impl Pl011 {
 
     pub fn write_byte(self, byte: u8) {
         while self.read_reg(UART_FR) & UART_FR_TXFF != 0 {}
-        self.write_reg(UART_DR, byte as u32);
+        self.write_data(byte as u32);
     }
 
     fn read_reg(self, offset: usize) -> u32 {
@@ -59,6 +71,24 @@ impl Pl011 {
                 addr = in(reg) addr,
                 options(nostack, preserves_flags)
             );
+        }
+        if self.flush_posted_writes {
+            let _ = self.read_reg(offset);
+        }
+    }
+
+    fn write_data(self, value: u32) {
+        let addr = (self.base + UART_DR) as *mut u32;
+        unsafe {
+            asm!(
+                "str {value:w}, [{addr}]",
+                value = in(reg) value,
+                addr = in(reg) addr,
+                options(nostack, preserves_flags)
+            );
+        }
+        if self.flush_posted_writes {
+            let _ = self.read_reg(UART_FR);
         }
     }
 }

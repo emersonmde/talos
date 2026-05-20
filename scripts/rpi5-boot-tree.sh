@@ -32,9 +32,9 @@ cp "$SOURCE_DIR/bcm2712-rpi-5-b.dtb" "$OUTPUT_DIR/bcm2712-rpi-5-b.dtb"
 cp "$KERNEL_IMG" "$OUTPUT_DIR/kernel_2712.img"
 cp "$KERNEL_IMG" "$OUTPUT_DIR/kernel8.img"
 
-# Keep diagnostic command-line hints aligned with the firmware-preserved RP1 UART0
-# MMIO address used by Talos early boot.
-sed -i 's/earlycon=pl011,mmio32,0x1f00030000/earlycon=pl011,mmio32,0x1c00030000/g' "$OUTPUT_DIR/cmdline.txt"
+# Keep diagnostic command-line hints aligned with the RP1 UART0 pcie2 MMIO
+# address used by Talos after RP1 posted-write flushing is configured.
+sed -i 's/earlycon=pl011,mmio32,0x1c00030000/earlycon=pl011,mmio32,0x1f00030000/g' "$OUTPUT_DIR/cmdline.txt"
 
 # The first-light kernel is bare metal and writes the firmware-preserved RP1
 # UART0 directly. Avoid applying the Linux UART overlay before Talos entry;
@@ -42,11 +42,11 @@ sed -i 's/earlycon=pl011,mmio32,0x1f00030000/earlycon=pl011,mmio32,0x1c00030000/
 # to the earliest hardware diagnostic path.
 sed -i '/^dtoverlay=uart0-pi5$/d' "$OUTPUT_DIR/config.txt"
 
-# Circle's Pi 5 bare-metal path pins the firmware load address at 0x80000.
-# Keep the arm64 Image text offset at zero, but link Talos and ask firmware to
-# load the image at the same base so early absolute symbols match handoff.
+# Let Pi 5 firmware choose the normal arm64 Image placement. The first-light
+# reset proof only produced a visible BL33 side effect without a forced
+# kernel_address, and the accepted UART proof uses the same firmware-selected
+# contract.
 sed -i '/^kernel_address=/d' "$OUTPUT_DIR/config.txt"
-printf '%s\n' 'kernel_address=0x80000' >> "$OUTPUT_DIR/config.txt"
 
 if [ -d "$SOURCE_DIR/overlays" ]; then
     mkdir -p "$OUTPUT_DIR/overlays"
