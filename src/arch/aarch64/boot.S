@@ -114,6 +114,8 @@ _start:
     ldr x9, =0x1f00030000
     bl rpi5_write_marker
     b 4b
+#elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_TEXT_SECTION_DIAGNOSTIC)
+    bl rpi5_text_section_marker_loop
 #endif
     mov x0, x19
     bl rust_entry
@@ -142,8 +144,24 @@ rpi5_write_marker:
     .asciz "CL\r\n"
 #elif defined(TALOS_RPI5_TRANSITION_DIAGNOSTIC)
     .asciz "SP\r\n"
+#elif defined(TALOS_RPI5_TEXT_SECTION_DIAGNOSTIC)
+    .asciz "TX\r\n"
 #else
     .asciz "BI\r\n"
+#endif
+
+#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_TEXT_SECTION_DIAGNOSTIC)
+.section .text.rpi5_text_section_diagnostic, "ax"
+.type rpi5_text_section_marker_loop, %function
+rpi5_text_section_marker_loop:
+4:
+    ldr x9, =0x107d001000
+    bl rpi5_write_marker
+    ldr x9, =0x1f00030000
+    bl rpi5_write_marker
+    b 4b
+
+.size rpi5_text_section_marker_loop, . - rpi5_text_section_marker_loop
 #endif
 
 #endif

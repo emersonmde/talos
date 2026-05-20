@@ -16,7 +16,72 @@ use core::panic::PanicInfo;
 use boot::BootInfo;
 
 #[unsafe(no_mangle)]
+#[cfg_attr(
+    all(talos_target_rpi5_bcm2712, talos_rpi5_rust_entry_diagnostic),
+    allow(unreachable_code, unused_variables)
+)]
 pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
+    #[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_rust_entry_diagnostic))]
+    unsafe {
+        core::arch::asm!(
+            "movz x13, #0x003c",
+            "movk x13, #0x000f, lsl #16",
+            "movk x13, #0x001f, lsl #32",
+            "mov w12, #0x40",
+            "str w12, [x13]",
+            "ldr w12, [x13]",
+            "movz x13, #0x0040",
+            "movk x13, #0x000f, lsl #16",
+            "movk x13, #0x001f, lsl #32",
+            "mov w12, #0x48",
+            "str w12, [x13]",
+            "ldr w12, [x13]",
+            "movz x13, #0x0074",
+            "movk x13, #0x000d, lsl #16",
+            "movk x13, #0x001f, lsl #32",
+            "mov w12, #4",
+            "str w12, [x13]",
+            "ldr w12, [x13]",
+            "movz x13, #0x007c",
+            "movk x13, #0x000d, lsl #16",
+            "movk x13, #0x001f, lsl #32",
+            "mov w12, #4",
+            "str w12, [x13]",
+            "ldr w12, [x13]",
+            "dsb sy",
+            "movz x9, #0x1000",
+            "movk x9, #0x7d00, lsl #16",
+            "movk x9, #0x0010, lsl #32",
+            "movz x14, #0x0000",
+            "movk x14, #0x0003, lsl #16",
+            "movk x14, #0x001f, lsl #32",
+            "2:",
+            "mov w11, #0x52",
+            "str w11, [x9]",
+            "ldr w12, [x9, #0x18]",
+            "str w11, [x14]",
+            "ldr w12, [x14, #0x18]",
+            "mov w11, #0x49",
+            "str w11, [x9]",
+            "ldr w12, [x9, #0x18]",
+            "str w11, [x14]",
+            "ldr w12, [x14, #0x18]",
+            "mov w11, #0x0d",
+            "str w11, [x9]",
+            "ldr w12, [x9, #0x18]",
+            "str w11, [x14]",
+            "ldr w12, [x14, #0x18]",
+            "mov w11, #0x0a",
+            "str w11, [x9]",
+            "ldr w12, [x9, #0x18]",
+            "str w11, [x14]",
+            "ldr w12, [x14, #0x18]",
+            "dsb sy",
+            "b 2b",
+            options(noreturn)
+        );
+    }
+
     let boot_info = BootInfo::from_aarch64_x0(dtb_pa);
     target::init(&boot_info);
     arch::aarch64::exceptions::init();

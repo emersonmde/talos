@@ -20,6 +20,7 @@ SECTIONS
     }
 
     .text : ALIGN(4K) {
+        KEEP(*(.text.rpi5_text_section_diagnostic))
         *(.text .text.*)
     }
 

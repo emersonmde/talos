@@ -9,10 +9,13 @@ fn main() {
     println!("cargo:rerun-if-changed=linker-rpi5.ld");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_CARGO_ASM_UART_PROOF");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_TRANSITION_DIAGNOSTIC");
+    println!("cargo:rerun-if-env-changed=TALOS_RPI5_RUST_ENTRY_DIAGNOSTIC");
+    println!("cargo:rerun-if-env-changed=TALOS_RPI5_TEXT_SECTION_DIAGNOSTIC");
 
     let target = env::var("TARGET").expect("TARGET is set by Cargo");
     println!("cargo:rustc-check-cfg=cfg(talos_target_qemu_virt)");
     println!("cargo:rustc-check-cfg=cfg(talos_target_rpi5_bcm2712)");
+    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_rust_entry_diagnostic)");
     if target.contains("rpi5") || target.contains("bcm2712") {
         println!("cargo:rustc-cfg=talos_target_rpi5_bcm2712");
     } else {
@@ -52,6 +55,12 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
     }
     if env::var_os("TALOS_RPI5_TRANSITION_DIAGNOSTIC").is_some() {
         command.arg("-DTALOS_RPI5_TRANSITION_DIAGNOSTIC");
+    }
+    if env::var_os("TALOS_RPI5_TEXT_SECTION_DIAGNOSTIC").is_some() {
+        command.arg("-DTALOS_RPI5_TEXT_SECTION_DIAGNOSTIC");
+    }
+    if env::var_os("TALOS_RPI5_RUST_ENTRY_DIAGNOSTIC").is_some() {
+        println!("cargo:rustc-cfg=talos_rpi5_rust_entry_diagnostic");
     }
 
     let status = command
