@@ -16,6 +16,7 @@ SECTIONS
     }
 
     .vectors : ALIGN(2K) {
+        KEEP(*(.vectors.rpi5_vector_section_diagnostic))
         KEEP(*(.vectors))
     }
 
