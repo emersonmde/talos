@@ -122,7 +122,11 @@ fn rpi5_minimal_format_reset_probe() -> ! {
 }
 
 #[cfg_attr(
-    all(talos_target_rpi5_bcm2712, talos_rpi5_minimal_format_diagnostic),
+    any(
+        all(talos_target_rpi5_bcm2712, talos_rpi5_minimal_format_diagnostic),
+        all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_diagnostic),
+        all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_static_sink_diagnostic),
+    ),
     allow(unreachable_code)
 )]
 #[cfg(not(test))]
@@ -174,6 +178,12 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
             rpi5_dynamic_format_fallback_reset_probe();
         }
 
+        #[cfg(talos_rpi5_fmt_sink_diagnostic)]
+        rpi5_fmt_sink_diagnostic();
+
+        #[cfg(talos_rpi5_fmt_static_sink_diagnostic)]
+        rpi5_fmt_static_sink_diagnostic();
+
         #[cfg(talos_rpi5_minimal_format_diagnostic)]
         rpi5_minimal_format_reset_probe();
 
@@ -211,6 +221,52 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
             target::TargetKind::QemuVirt => target::qemu::exit_success(),
             target::TargetKind::Rpi5Bcm2712 => arch::aarch64::halt(),
         }
+    }
+}
+
+#[cfg(any(
+    all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_diagnostic),
+    all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_static_sink_diagnostic),
+))]
+struct Rpi5FmtSink;
+
+#[cfg(any(
+    all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_diagnostic),
+    all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_static_sink_diagnostic),
+))]
+impl core::fmt::Write for Rpi5FmtSink {
+    fn write_str(&mut self, _s: &str) -> core::fmt::Result {
+        Ok(())
+    }
+}
+
+#[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_diagnostic))]
+fn rpi5_fmt_sink_diagnostic() -> ! {
+    let mut sink = Rpi5FmtSink;
+    core::fmt::write(&mut sink, format_args!("fmt sink {}", 1)).expect("sink formatting failed");
+    rpi5_fmt_sink_reset_probe()
+}
+
+#[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_static_sink_diagnostic))]
+fn rpi5_fmt_static_sink_diagnostic() -> ! {
+    let mut sink = Rpi5FmtSink;
+    core::fmt::write(&mut sink, format_args!("fmt static")).expect("sink formatting failed");
+    rpi5_fmt_sink_reset_probe()
+}
+
+#[cfg(any(
+    all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_diagnostic),
+    all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_static_sink_diagnostic),
+))]
+fn rpi5_fmt_sink_reset_probe() -> ! {
+    unsafe {
+        core::arch::asm!(
+            "ldr x0, =0x84000009",
+            "smc #0",
+            "wfe",
+            "b .-4",
+            options(noreturn)
+        );
     }
 }
 
