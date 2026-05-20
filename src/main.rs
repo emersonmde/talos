@@ -27,9 +27,6 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
 
     arch::aarch64::exceptions::init();
 
-    #[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_rust_entry_diagnostic))]
-    rpi5_rust_entry_reset_probe();
-
     #[cfg(test)]
     {
         test_main();
@@ -41,7 +38,7 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
 }
 
 #[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_rust_entry_diagnostic))]
-fn rpi5_rust_entry_reset_probe() -> ! {
+pub(crate) fn rpi5_rust_entry_reset_probe() -> ! {
     unsafe {
         core::arch::asm!(
             "movz x13, #0x003c",
@@ -82,7 +79,7 @@ fn rpi5_rust_entry_reset_probe() -> ! {
             "ldr w12, [x9, #0x18]",
             "str w11, [x14]",
             "ldr w12, [x14, #0x18]",
-            "mov w11, #0x58",
+            "mov w11, #0x46",
             "str w11, [x9]",
             "ldr w12, [x9, #0x18]",
             "str w11, [x14]",
