@@ -17,6 +17,7 @@ fn main() {
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_FMT_STATIC_SINK_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_FMT_SINK_DIRECT_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_FMT_SINK_DYN_DIRECT_DIAGNOSTIC");
+    println!("cargo:rerun-if-env-changed=TALOS_RPI5_FMT_SINK_FNPTR_DIRECT_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_TEXT_SECTION_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_VECTOR_SECTION_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_TEXT_BOOT_FAR_DIAGNOSTIC");
@@ -38,6 +39,7 @@ fn main() {
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_fmt_static_sink_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_fmt_sink_direct_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_fmt_sink_dyn_direct_diagnostic)");
+    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_fmt_sink_fnptr_direct_diagnostic)");
     if target.contains("rpi5") || target.contains("bcm2712") {
         println!("cargo:rustc-cfg=talos_target_rpi5_bcm2712");
     } else {
@@ -128,6 +130,9 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
     }
     if env::var_os("TALOS_RPI5_FMT_SINK_DYN_DIRECT_DIAGNOSTIC").is_some() {
         println!("cargo:rustc-cfg=talos_rpi5_fmt_sink_dyn_direct_diagnostic");
+    }
+    if env::var_os("TALOS_RPI5_FMT_SINK_FNPTR_DIRECT_DIAGNOSTIC").is_some() {
+        println!("cargo:rustc-cfg=talos_rpi5_fmt_sink_fnptr_direct_diagnostic");
     }
 
     let status = command

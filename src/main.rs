@@ -128,6 +128,7 @@ fn rpi5_minimal_format_reset_probe() -> ! {
         all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_static_sink_diagnostic),
         all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_direct_diagnostic),
         all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_dyn_direct_diagnostic),
+        all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_fnptr_direct_diagnostic),
     ),
     allow(unreachable_code)
 )]
@@ -193,6 +194,9 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
         #[cfg(talos_rpi5_fmt_sink_dyn_direct_diagnostic)]
         rpi5_fmt_sink_dyn_direct_diagnostic();
 
+        #[cfg(talos_rpi5_fmt_sink_fnptr_direct_diagnostic)]
+        rpi5_fmt_sink_fnptr_direct_diagnostic();
+
         #[cfg(talos_rpi5_minimal_format_diagnostic)]
         rpi5_minimal_format_reset_probe();
 
@@ -238,6 +242,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_static_sink_diagnostic),
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_direct_diagnostic),
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_dyn_direct_diagnostic),
+    all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_fnptr_direct_diagnostic),
 ))]
 struct Rpi5FmtSink;
 
@@ -246,6 +251,7 @@ struct Rpi5FmtSink;
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_static_sink_diagnostic),
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_direct_diagnostic),
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_dyn_direct_diagnostic),
+    all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_fnptr_direct_diagnostic),
 ))]
 impl core::fmt::Write for Rpi5FmtSink {
     #[inline(never)]
@@ -289,11 +295,30 @@ fn rpi5_fmt_sink_dyn_direct_diagnostic() -> ! {
     }
 }
 
+#[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_fnptr_direct_diagnostic))]
+#[inline(never)]
+fn rpi5_fmt_sink_fnptr_write_str(sink: &mut Rpi5FmtSink, text: &str) -> core::fmt::Result {
+    core::fmt::Write::write_str(sink, text)
+}
+
+#[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_fnptr_direct_diagnostic))]
+#[inline(never)]
+fn rpi5_fmt_sink_fnptr_direct_diagnostic() -> ! {
+    let mut sink = Rpi5FmtSink;
+    let write: fn(&mut Rpi5FmtSink, &str) -> core::fmt::Result =
+        core::hint::black_box(rpi5_fmt_sink_fnptr_write_str);
+    match write(&mut sink, "fmt sink fnptr direct") {
+        Ok(()) => rpi5_fmt_sink_reset_probe(),
+        Err(_) => arch::aarch64::halt(),
+    }
+}
+
 #[cfg(any(
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_diagnostic),
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_static_sink_diagnostic),
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_direct_diagnostic),
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_dyn_direct_diagnostic),
+    all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_fnptr_direct_diagnostic),
 ))]
 fn rpi5_fmt_sink_reset_probe() -> ! {
     unsafe {
