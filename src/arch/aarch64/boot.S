@@ -55,7 +55,8 @@ _start:
 #else
 #ifdef TALOS_RPI5_TRANSITION_DIAGNOSTIC
     adr x10, marker_s0
-    bl rpi5_write_stage_uart10
+    ldr x9, =0x107d001000
+    bl rpi5_write_cstr
 #else
     ldr x9, =0x107d001000
     bl rpi5_write_marker
@@ -82,6 +83,7 @@ _start:
 #ifdef TALOS_RPI5_TRANSITION_DIAGNOSTIC
     adr x10, marker_s1
     bl rpi5_write_stage
+    b 2f
 #else
     ldr x9, =0x1f00030000
     bl rpi5_write_marker
@@ -131,17 +133,6 @@ _start:
 
 #ifdef TALOS_TARGET_RPI5_BCM2712
 #ifdef TALOS_RPI5_TRANSITION_DIAGNOSTIC
-rpi5_write_stage_uart10:
-    mov x17, x30
-    mov x14, #16
-17:
-    ldr x9, =0x107d001000
-    bl rpi5_write_cstr
-    subs x14, x14, #1
-    b.ne 17b
-    mov x30, x17
-    ret
-
 rpi5_write_stage:
     mov x17, x30
     mov x14, #16
