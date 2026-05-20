@@ -373,6 +373,40 @@ rpi5_brk_spsr_eret_reset_continuation:
     ldr x0, =0x84000009
     smc #0
     b rpi5_brk_spsr_eret_reset_park
+#elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_BRK_ERET_UART_MARKER_DIAGNOSTIC)
+    adr x0, rpi5_brk_eret_uart_marker_vectors
+    mrs x1, CurrentEL
+    cmp x1, #(1 << 2)
+    b.eq 5f
+    cmp x1, #(2 << 2)
+    b.eq 6f
+    cmp x1, #(3 << 2)
+    b.eq 7f
+    b rpi5_brk_eret_uart_marker_park
+5:
+    msr vbar_el1, x0
+    b 8f
+6:
+    msr vbar_el2, x0
+    b 8f
+7:
+    msr vbar_el3, x0
+8:
+    isb
+    brk #0
+    b rpi5_brk_eret_uart_marker_park
+rpi5_brk_eret_uart_marker_continuation:
+    mov x20, #8
+4:
+    ldr x9, =0x107d001000
+    bl rpi5_write_eret_marker
+    ldr x9, =0x1f00030000
+    bl rpi5_write_eret_marker
+    subs x20, x20, #1
+    b.ne 4b
+    ldr x0, =0x84000009
+    smc #0
+    b rpi5_brk_eret_uart_marker_park
 #elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_VECTOR_SECTION_DIAGNOSTIC)
     bl rpi5_vector_section_marker_loop
 #elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_TEXT_SECTION_DIAGNOSTIC)
@@ -632,6 +666,89 @@ rpi5_bti_brk_precheck_bte_reset:
 rpi5_bti_brk_precheck_park:
     wfe
     b rpi5_bti_brk_precheck_park
+
+.section .text.boot, "ax"
+#endif
+
+#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_BRK_ERET_UART_MARKER_DIAGNOSTIC)
+.section .text.rpi5_brk_eret_uart_marker_diagnostic, "ax"
+.balign 2048
+rpi5_brk_eret_uart_marker_vectors:
+    b rpi5_brk_eret_uart_marker_handler
+    .space 0x80 - (. - rpi5_brk_eret_uart_marker_vectors)
+    b rpi5_brk_eret_uart_marker_handler
+    .space 0x100 - (. - rpi5_brk_eret_uart_marker_vectors)
+    b rpi5_brk_eret_uart_marker_handler
+    .space 0x180 - (. - rpi5_brk_eret_uart_marker_vectors)
+    b rpi5_brk_eret_uart_marker_handler
+    .space 0x200 - (. - rpi5_brk_eret_uart_marker_vectors)
+    b rpi5_brk_eret_uart_marker_handler
+    .space 0x280 - (. - rpi5_brk_eret_uart_marker_vectors)
+    b rpi5_brk_eret_uart_marker_handler
+    .space 0x300 - (. - rpi5_brk_eret_uart_marker_vectors)
+    b rpi5_brk_eret_uart_marker_handler
+    .space 0x380 - (. - rpi5_brk_eret_uart_marker_vectors)
+    b rpi5_brk_eret_uart_marker_handler
+    .space 0x400 - (. - rpi5_brk_eret_uart_marker_vectors)
+    b rpi5_brk_eret_uart_marker_handler
+    .space 0x480 - (. - rpi5_brk_eret_uart_marker_vectors)
+    b rpi5_brk_eret_uart_marker_handler
+    .space 0x500 - (. - rpi5_brk_eret_uart_marker_vectors)
+    b rpi5_brk_eret_uart_marker_handler
+    .space 0x580 - (. - rpi5_brk_eret_uart_marker_vectors)
+    b rpi5_brk_eret_uart_marker_handler
+    .space 0x600 - (. - rpi5_brk_eret_uart_marker_vectors)
+    b rpi5_brk_eret_uart_marker_handler
+    .space 0x680 - (. - rpi5_brk_eret_uart_marker_vectors)
+    b rpi5_brk_eret_uart_marker_handler
+    .space 0x700 - (. - rpi5_brk_eret_uart_marker_vectors)
+    b rpi5_brk_eret_uart_marker_handler
+    .space 0x780 - (. - rpi5_brk_eret_uart_marker_vectors)
+    b rpi5_brk_eret_uart_marker_handler
+
+rpi5_brk_eret_uart_marker_handler:
+    mrs x20, CurrentEL
+    cmp x20, #(1 << 2)
+    b.eq 1f
+    cmp x20, #(2 << 2)
+    b.eq 2f
+    cmp x20, #(3 << 2)
+    b.eq 3f
+    b rpi5_brk_eret_uart_marker_park
+1:
+    mrs x21, esr_el1
+    ldr x22, =rpi5_brk_eret_uart_marker_continuation
+    lsr x21, x21, #26
+    cmp x21, #0x3c
+    b.ne rpi5_brk_eret_uart_marker_park
+    mov x23, #0x3c5
+    msr spsr_el1, x23
+    msr elr_el1, x22
+    eret
+2:
+    mrs x21, esr_el2
+    ldr x22, =rpi5_brk_eret_uart_marker_continuation
+    lsr x21, x21, #26
+    cmp x21, #0x3c
+    b.ne rpi5_brk_eret_uart_marker_park
+    mov x23, #0x3c9
+    msr spsr_el2, x23
+    msr elr_el2, x22
+    eret
+3:
+    mrs x21, esr_el3
+    ldr x22, =rpi5_brk_eret_uart_marker_continuation
+    lsr x21, x21, #26
+    cmp x21, #0x3c
+    b.ne rpi5_brk_eret_uart_marker_park
+    mov x23, #0x3cd
+    msr spsr_el3, x23
+    msr elr_el3, x22
+    eret
+
+rpi5_brk_eret_uart_marker_park:
+    wfe
+    b rpi5_brk_eret_uart_marker_park
 
 .section .text.boot, "ax"
 #endif
@@ -1069,6 +1186,26 @@ rpi5_write_marker:
     .asciz "TX\r\n"
 #else
     .asciz "BI\r\n"
+#endif
+
+#if defined(TALOS_RPI5_BRK_ERET_UART_MARKER_DIAGNOSTIC)
+.balign 4
+.type rpi5_write_eret_marker, %function
+rpi5_write_eret_marker:
+    adr x10, 9f
+12:
+    ldrb w11, [x10], #1
+    cbz w11, 13f
+    str w11, [x9]
+    ldr w12, [x9, #0x18]
+    b 12b
+13:
+    dsb sy
+    ret
+
+9:
+    .asciz "EM\r\n"
+.size rpi5_write_eret_marker, . - rpi5_write_eret_marker
 #endif
 
 #if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_TEXT_SECTION_DIAGNOSTIC)
