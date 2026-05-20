@@ -176,6 +176,12 @@ rpi5_text_boot_next_branch_marker_loop:
 4:
     wfe
     b 4b
+#elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_ASM_INDIRECT_TO_RUST_RESET_DIAGNOSTIC)
+    ldr x20, =rpi5_asm_to_rust_reset_probe
+    blr x20
+4:
+    wfe
+    b 4b
 #elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_VECTOR_SECTION_DIAGNOSTIC)
     bl rpi5_vector_section_marker_loop
 #elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_TEXT_SECTION_DIAGNOSTIC)

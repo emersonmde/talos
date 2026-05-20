@@ -332,6 +332,10 @@ fn rpi5_fnptr_reset_diagnostic() -> ! {
     all(talos_target_rpi5_bcm2712, talos_rpi5_fmt_sink_fnptr_direct_diagnostic),
     all(talos_target_rpi5_bcm2712, talos_rpi5_fnptr_reset_diagnostic),
     all(talos_target_rpi5_bcm2712, talos_rpi5_asm_to_rust_reset_diagnostic),
+    all(
+        talos_target_rpi5_bcm2712,
+        talos_rpi5_asm_indirect_to_rust_reset_diagnostic
+    ),
 ))]
 fn rpi5_fmt_sink_reset_probe() -> ! {
     unsafe {
@@ -345,7 +349,13 @@ fn rpi5_fmt_sink_reset_probe() -> ! {
     }
 }
 
-#[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_asm_to_rust_reset_diagnostic))]
+#[cfg(any(
+    all(talos_target_rpi5_bcm2712, talos_rpi5_asm_to_rust_reset_diagnostic),
+    all(
+        talos_target_rpi5_bcm2712,
+        talos_rpi5_asm_indirect_to_rust_reset_diagnostic
+    ),
+))]
 #[unsafe(no_mangle)]
 pub extern "C" fn rpi5_asm_to_rust_reset_probe() -> ! {
     rpi5_fmt_sink_reset_probe()
