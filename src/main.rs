@@ -261,7 +261,8 @@ where
     T: Fn(),
 {
     fn run(&self) {
-        print!("{} ... ", core::any::type_name::<T>());
+        target::console::write_static(core::any::type_name::<T>());
+        target::console::write_static(" ... ");
         self();
         println!("ok");
     }
@@ -270,11 +271,15 @@ where
 #[cfg(test)]
 fn test_runner(tests: &[&dyn Testable]) {
     println!();
-    println!("running {} talos no_std tests", tests.len());
+    target::console::write_static("running ");
+    target::console::write_dec_usize(tests.len());
+    target::console::write_static(" talos no_std tests\n");
     for test in tests {
         test.run();
     }
-    println!("test result: ok. {} passed", tests.len());
+    target::console::write_static("test result: ok. ");
+    target::console::write_dec_usize(tests.len());
+    target::console::write_static(" passed\n");
 }
 
 #[cfg(test)]

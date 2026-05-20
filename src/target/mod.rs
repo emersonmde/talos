@@ -144,9 +144,28 @@ pub mod console {
 
 #[macro_export]
 macro_rules! print {
-    ($($arg:tt)*) => {
-        $crate::target::console::_print(format_args!($($arg)*));
+    ($fmt:expr) => {
+        $crate::target::console::_print(format_args!($fmt));
     };
+    ($fmt:expr, $($arg:tt)+) => {{
+        #[cfg(all(
+            talos_target_rpi5_bcm2712,
+            not(talos_rpi5_dynamic_format_fallback_diagnostic)
+        ))]
+        {
+            compile_error!(
+                "Pi 5 early console only accepts static print!/println! literals; use target::console minimal formatter helpers or add an accepted diagnostic"
+            );
+        }
+
+        #[cfg(any(
+            not(talos_target_rpi5_bcm2712),
+            talos_rpi5_dynamic_format_fallback_diagnostic
+        ))]
+        {
+            $crate::target::console::_print(format_args!($fmt, $($arg)+));
+        }
+    }};
 }
 
 #[macro_export]
