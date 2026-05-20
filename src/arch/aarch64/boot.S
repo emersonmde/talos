@@ -146,6 +146,20 @@ rpi5_text_boot_next_branch_marker_loop:
     ldr x9, =0x1f00030000
     bl rpi5_write_marker
     b 4b
+#elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_POST_STACK_RESET_DIAGNOSTIC)
+    mov x20, #8
+4:
+    ldr x9, =0x107d001000
+    bl rpi5_write_marker
+    ldr x9, =0x1f00030000
+    bl rpi5_write_marker
+    subs x20, x20, #1
+    b.ne 4b
+5:
+    ldr x0, =0x84000009
+    smc #0
+    wfe
+    b 5b
 #elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_VECTOR_SECTION_DIAGNOSTIC)
     bl rpi5_vector_section_marker_loop
 #elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_TEXT_SECTION_DIAGNOSTIC)
@@ -190,6 +204,8 @@ rpi5_write_marker:
     .asciz "FR\r\n"
 #elif defined(TALOS_RPI5_POST_STACK_NOP_DIAGNOSTIC)
     .asciz "PN\r\n"
+#elif defined(TALOS_RPI5_POST_STACK_RESET_DIAGNOSTIC)
+    .asciz "RS\r\n"
 #elif defined(TALOS_RPI5_VECTOR_SECTION_DIAGNOSTIC)
     .asciz "VX\r\n"
 #elif defined(TALOS_RPI5_TEXT_SECTION_DIAGNOSTIC)
