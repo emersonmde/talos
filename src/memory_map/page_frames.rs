@@ -17,6 +17,12 @@ pub const EARLY_PAGE_FRAME_ALLOCATOR_OWNED_KIND: &str = "bootstrap-bump-owned";
 pub const EARLY_PAGE_FRAME_DEFERRED_KIND: &str = "outside-conservative-low-tail";
 #[allow(dead_code)]
 pub const EARLY_BOOTSTRAP_SLACK_RESERVED_KIND: &str = "bootstrap-reserved-unused";
+#[allow(dead_code)]
+pub const EARLY_HEAP_EXPANSION_FRAME_SOURCE_KIND: &str = "bootstrap-bump-owned-low-tail";
+#[allow(dead_code)]
+pub const EARLY_HEAP_RECOVERABLE_OOM_KIND: &str = "fallible-allocator-error";
+#[allow(dead_code)]
+pub const EARLY_HEAP_FATAL_OOM_KIND: &str = "alloc-error-handler-spin";
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct EarlyPageFrameSeed {
@@ -65,6 +71,18 @@ pub struct EarlyPageFrameOwnershipContract {
     pub bootstrap_slack_reserved_kind: &'static str,
     pub allocator_owned_kind: &'static str,
     pub deferred_kind: &'static str,
+}
+
+#[allow(dead_code)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct EarlyHeapExpansionPolicy {
+    pub frame_source: EarlyPageFrameSpan,
+    pub frame_source_kind: &'static str,
+    pub max_extension_bytes: u64,
+    pub recoverable_oom_kind: &'static str,
+    pub fatal_oom_kind: &'static str,
+    pub protects_bootstrap_reserved: bool,
+    pub protects_translation_tables: bool,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -187,6 +205,40 @@ pub fn early_page_frame_reuse_allocator<'a>(
         allocated_count: 0,
         metadata_start,
         metadata_end,
+    })
+}
+
+#[allow(dead_code)]
+pub fn early_heap_expansion_policy(
+    contract: EarlyPageFrameOwnershipContract,
+    allocator: EarlyBootstrapAllocatorPlan,
+) -> Option<EarlyHeapExpansionPolicy> {
+    let allocator_span = page_frame_span(allocator.start, allocator.end, allocator.page_size)?;
+    if allocator_span != contract.allocator_owned || allocator.size == 0 {
+        return None;
+    }
+    if ranges_intersect(
+        contract.bootstrap_reserved.start,
+        contract.bootstrap_reserved.end,
+        allocator_span.start,
+        allocator_span.end,
+    ) || ranges_intersect(
+        contract.translation_tables.start,
+        contract.translation_tables.end,
+        allocator_span.start,
+        allocator_span.end,
+    ) {
+        return None;
+    }
+
+    Some(EarlyHeapExpansionPolicy {
+        frame_source: allocator_span,
+        frame_source_kind: EARLY_HEAP_EXPANSION_FRAME_SOURCE_KIND,
+        max_extension_bytes: allocator.size,
+        recoverable_oom_kind: EARLY_HEAP_RECOVERABLE_OOM_KIND,
+        fatal_oom_kind: EARLY_HEAP_FATAL_OOM_KIND,
+        protects_bootstrap_reserved: true,
+        protects_translation_tables: true,
     })
 }
 
@@ -785,5 +837,65 @@ mod tests {
             early_page_frame_reuse_allocator(owned, &mut metadata, 0x2f01_1000, 0x2f01_1020)
                 .is_none()
         );
+    }
+
+    #[test_case]
+    fn heap_expansion_policy_uses_allocator_owned_low_tail_and_protects_reserved_frames() {
+        let candidate = EarlyUsableMemory {
+            bank_index: 0,
+            start: 0x2f00_0000,
+            end: 0x3fc0_0000,
+            size: 0x10c0_0000,
+            alignment: EARLY_PAGE_SIZE,
+        };
+        let seed = early_page_frame_seed_span(candidate).expect("seed");
+        let reservation = early_bootstrap_page_reservation(seed, EARLY_BOOTSTRAP_RESERVE_PAGES)
+            .expect("reservation");
+        let layout = early_translation_table_layout(reservation).expect("translation layout");
+        let allocator =
+            early_bootstrap_allocator_plan(reservation.remaining).expect("allocator plan");
+        let contract = early_page_frame_ownership_contract(seed, reservation, layout, allocator)
+            .expect("ownership contract");
+
+        let policy = early_heap_expansion_policy(contract, allocator).expect("heap policy");
+
+        assert_eq!(policy.frame_source, contract.allocator_owned);
+        assert_eq!(
+            policy.frame_source_kind,
+            EARLY_HEAP_EXPANSION_FRAME_SOURCE_KIND
+        );
+        assert_eq!(policy.max_extension_bytes, allocator.size);
+        assert_eq!(policy.recoverable_oom_kind, EARLY_HEAP_RECOVERABLE_OOM_KIND);
+        assert_eq!(policy.fatal_oom_kind, EARLY_HEAP_FATAL_OOM_KIND);
+        assert!(policy.protects_bootstrap_reserved);
+        assert!(policy.protects_translation_tables);
+    }
+
+    #[test_case]
+    fn heap_expansion_policy_rejects_non_allocator_owned_source() {
+        let candidate = EarlyUsableMemory {
+            bank_index: 0,
+            start: 0x2f00_0000,
+            end: 0x3fc0_0000,
+            size: 0x10c0_0000,
+            alignment: EARLY_PAGE_SIZE,
+        };
+        let seed = early_page_frame_seed_span(candidate).expect("seed");
+        let reservation = early_bootstrap_page_reservation(seed, EARLY_BOOTSTRAP_RESERVE_PAGES)
+            .expect("reservation");
+        let layout = early_translation_table_layout(reservation).expect("translation layout");
+        let allocator =
+            early_bootstrap_allocator_plan(reservation.remaining).expect("allocator plan");
+        let contract = early_page_frame_ownership_contract(seed, reservation, layout, allocator)
+            .expect("ownership contract");
+        let bad_allocator = EarlyBootstrapAllocatorPlan {
+            start: reservation.start,
+            end: reservation.end,
+            page_size: reservation.page_size,
+            page_count: reservation.page_count,
+            size: reservation.end - reservation.start,
+        };
+
+        assert_eq!(early_heap_expansion_policy(contract, bad_allocator), None);
     }
 }

@@ -23,6 +23,18 @@ pub struct BumpAllocatorState {
     pub remaining_bytes: usize,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum BumpAllocatorAllocError {
+    Uninitialized,
+    InvalidAlignment,
+    AddressOverflow,
+    Exhausted {
+        requested_size: usize,
+        requested_align: usize,
+        remaining_bytes: usize,
+    },
+}
+
 impl BumpAllocator {
     pub const fn new() -> Self {
         Self {
@@ -68,27 +80,34 @@ impl BumpAllocator {
             remaining_bytes: end - next,
         })
     }
-}
 
-unsafe impl GlobalAlloc for BumpAllocator {
-    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+    pub fn try_allocate_layout(&self, layout: Layout) -> Result<*mut u8, BumpAllocatorAllocError> {
+        self.try_allocate(layout.size(), layout.align())
+    }
+
+    fn try_allocate(
+        &self,
+        size: usize,
+        alignment: usize,
+    ) -> Result<*mut u8, BumpAllocatorAllocError> {
         let end = self.end.load(Ordering::Acquire);
         let mut current = self.next.load(Ordering::Acquire);
         if current == 0 || end == 0 {
-            return ptr::null_mut();
+            return Err(BumpAllocatorAllocError::Uninitialized);
         }
 
         loop {
-            let aligned = match align_up(current, layout.align()) {
-                Some(aligned) => aligned,
-                None => return ptr::null_mut(),
-            };
-            let alloc_end = match aligned.checked_add(layout.size()) {
-                Some(alloc_end) => alloc_end,
-                None => return ptr::null_mut(),
-            };
+            let aligned =
+                align_up(current, alignment).ok_or(BumpAllocatorAllocError::InvalidAlignment)?;
+            let alloc_end = aligned
+                .checked_add(size)
+                .ok_or(BumpAllocatorAllocError::AddressOverflow)?;
             if alloc_end > end {
-                return ptr::null_mut();
+                return Err(BumpAllocatorAllocError::Exhausted {
+                    requested_size: size,
+                    requested_align: alignment,
+                    remaining_bytes: end.saturating_sub(current),
+                });
             }
 
             match self.next.compare_exchange(
@@ -97,10 +116,16 @@ unsafe impl GlobalAlloc for BumpAllocator {
                 Ordering::AcqRel,
                 Ordering::Acquire,
             ) {
-                Ok(_) => return aligned as *mut u8,
+                Ok(_) => return Ok(aligned as *mut u8),
                 Err(next) => current = next,
             }
         }
+    }
+}
+
+unsafe impl GlobalAlloc for BumpAllocator {
+    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+        self.try_allocate_layout(layout).unwrap_or(ptr::null_mut())
     }
 
     unsafe fn dealloc(&self, _ptr: *mut u8, _layout: Layout) {}
@@ -211,6 +236,33 @@ mod tests {
         assert_eq!(state.next, 0x2f01_0000);
         assert_eq!(state.used_bytes, 0);
         assert_eq!(state.remaining_bytes, 0x40);
+    }
+
+    #[test_case]
+    fn fallible_allocation_reports_exhaustion_without_advancing() {
+        let allocator = BumpAllocator::new();
+        let plan = EarlyBootstrapAllocatorPlan {
+            start: 0x2f01_0000,
+            end: 0x2f01_0040,
+            page_size: EARLY_PAGE_SIZE,
+            page_count: 1,
+            size: 0x40,
+        };
+        allocator.init_from_plan(plan).expect("allocator state");
+        let before = allocator.state().expect("before state");
+
+        let result =
+            allocator.try_allocate_layout(Layout::from_size_align(0x80, 8).expect("layout"));
+
+        assert_eq!(
+            result,
+            Err(BumpAllocatorAllocError::Exhausted {
+                requested_size: 0x80,
+                requested_align: 8,
+                remaining_bytes: 0x40,
+            })
+        );
+        assert_eq!(allocator.state(), Some(before));
     }
 
     #[test_case]

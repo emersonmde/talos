@@ -23,6 +23,7 @@ fn main() {
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_STRING_GROWTH_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_ALLOC_FORMAT_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_PAGE_FRAME_REUSE_DIAGNOSTIC");
+    println!("cargo:rerun-if-env-changed=TALOS_RPI5_HEAP_EXPANSION_POLICY_DIAGNOSTIC");
 
     let target = env::var("TARGET").expect("TARGET is set by Cargo");
     println!("cargo:rustc-check-cfg=cfg(talos_target_qemu_virt)");
@@ -43,6 +44,7 @@ fn main() {
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_string_growth_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_alloc_format_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_page_frame_reuse_diagnostic)");
+    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_heap_expansion_policy_diagnostic)");
     if target.contains("rpi5") || target.contains("bcm2712") {
         println!("cargo:rustc-cfg=talos_target_rpi5_bcm2712");
     } else {
@@ -126,6 +128,9 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
     }
     if env::var_os("TALOS_RPI5_PAGE_FRAME_REUSE_DIAGNOSTIC").is_some() {
         println!("cargo:rustc-cfg=talos_rpi5_page_frame_reuse_diagnostic");
+    }
+    if env::var_os("TALOS_RPI5_HEAP_EXPANSION_POLICY_DIAGNOSTIC").is_some() {
+        println!("cargo:rustc-cfg=talos_rpi5_heap_expansion_policy_diagnostic");
     }
 
     let status = command

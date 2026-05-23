@@ -13,13 +13,16 @@ pub use layout::{
 #[allow(unused_imports)]
 pub use page_frames::{
     EARLY_BOOTSTRAP_ALLOCATOR_KIND, EARLY_BOOTSTRAP_RESERVE_PAGES, EARLY_BOOTSTRAP_RESERVE_REASON,
-    EARLY_BOOTSTRAP_SLACK_RESERVED_KIND, EARLY_PAGE_FRAME_ALLOCATOR_OWNED_KIND,
-    EARLY_PAGE_FRAME_DEFERRED_KIND, EARLY_PAGE_FRAME_RESERVED_KIND, EARLY_PAGE_SIZE,
-    EarlyBootstrapAllocatorPlan, EarlyBootstrapPageReservation, EarlyPageFrameOwnershipContract,
+    EARLY_BOOTSTRAP_SLACK_RESERVED_KIND, EARLY_HEAP_EXPANSION_FRAME_SOURCE_KIND,
+    EARLY_HEAP_FATAL_OOM_KIND, EARLY_HEAP_RECOVERABLE_OOM_KIND,
+    EARLY_PAGE_FRAME_ALLOCATOR_OWNED_KIND, EARLY_PAGE_FRAME_DEFERRED_KIND,
+    EARLY_PAGE_FRAME_RESERVED_KIND, EARLY_PAGE_SIZE, EarlyBootstrapAllocatorPlan,
+    EarlyBootstrapPageReservation, EarlyHeapExpansionPolicy, EarlyPageFrameOwnershipContract,
     EarlyPageFrameReuseAllocator, EarlyPageFrameReuseAllocatorState, EarlyPageFrameReuseFreeError,
     EarlyPageFrameSeed, EarlyPageFrameSpan, early_bootstrap_allocator_plan,
-    early_bootstrap_page_reservation, early_page_frame_ownership_contract,
-    early_page_frame_reuse_allocator, early_page_frame_seed_span,
+    early_bootstrap_page_reservation, early_heap_expansion_policy,
+    early_page_frame_ownership_contract, early_page_frame_reuse_allocator,
+    early_page_frame_seed_span,
 };
 #[allow(unused_imports)]
 pub use translation::{

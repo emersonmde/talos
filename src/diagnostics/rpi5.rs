@@ -48,13 +48,24 @@ pub(crate) fn run_allocator_diagnostic_or_smoke(
         talos_rpi5_page_frame_reuse_diagnostic
     ))]
     rpi5_page_frame_reuse_diagnostic(_allocator_plan);
+    #[cfg(all(
+        not(talos_rpi5_alloc_oom_diagnostic),
+        not(talos_rpi5_realloc_growth_diagnostic),
+        not(talos_rpi5_vec_growth_diagnostic),
+        not(talos_rpi5_string_growth_diagnostic),
+        not(talos_rpi5_alloc_format_diagnostic),
+        not(talos_rpi5_page_frame_reuse_diagnostic),
+        talos_rpi5_heap_expansion_policy_diagnostic
+    ))]
+    rpi5_heap_expansion_policy_diagnostic(_allocator_plan);
     #[cfg(not(any(
         talos_rpi5_alloc_oom_diagnostic,
         talos_rpi5_realloc_growth_diagnostic,
         talos_rpi5_vec_growth_diagnostic,
         talos_rpi5_string_growth_diagnostic,
         talos_rpi5_alloc_format_diagnostic,
-        talos_rpi5_page_frame_reuse_diagnostic
+        talos_rpi5_page_frame_reuse_diagnostic,
+        talos_rpi5_heap_expansion_policy_diagnostic
     )))]
     rpi5_bootstrap_alloc_smoke();
 }
@@ -653,6 +664,74 @@ fn rpi5_page_frame_reuse_diagnostic(allocator_plan: memory_map::EarlyBootstrapAl
     }
 }
 
+#[cfg(all(
+    not(test),
+    talos_target_rpi5_bcm2712,
+    talos_rpi5_heap_expansion_policy_diagnostic
+))]
+fn rpi5_heap_expansion_policy_diagnostic(
+    allocator_plan: memory_map::EarlyBootstrapAllocatorPlan,
+) -> ! {
+    let mut request = 0usize;
+    let mut remaining = 0usize;
+    let mut recoverable_oom = false;
+    let mut advanced = true;
+    let mut error_size = 0usize;
+    let mut error_align = 0usize;
+    let mut error_remaining = 0usize;
+
+    if let Some(before) = KERNEL_GLOBAL_ALLOCATOR.state() {
+        remaining = before.remaining_bytes;
+        request = remaining.saturating_add(8);
+        let layout = unsafe { core::alloc::Layout::from_size_align_unchecked(request, 8) };
+        let result = KERNEL_GLOBAL_ALLOCATOR.try_allocate_layout(layout);
+        if let Some(after) = KERNEL_GLOBAL_ALLOCATOR.state() {
+            advanced = after.next != before.next;
+        }
+        if let Err(crate::allocator::BumpAllocatorAllocError::Exhausted {
+            requested_size,
+            requested_align,
+            remaining_bytes,
+        }) = result
+        {
+            recoverable_oom = true;
+            error_size = requested_size;
+            error_align = requested_align;
+            error_remaining = remaining_bytes;
+        }
+    }
+
+    let frame_source_ok = allocator_plan.start < allocator_plan.end
+        && allocator_plan.page_size == memory_map::EARLY_PAGE_SIZE
+        && allocator_plan.size == allocator_plan.end - allocator_plan.start;
+    let ok = frame_source_ok
+        && recoverable_oom
+        && !advanced
+        && error_size == request
+        && error_align == 8
+        && error_remaining == remaining;
+
+    println!(
+        "talos: heap expansion policy diagnostic: source_start={:#x} source_end={:#x} max_extension={:#x} source_kind={} recoverable_kind={} fatal_kind={} request={:#x} remaining={:#x} recovered={} advanced={} ok={}",
+        allocator_plan.start,
+        allocator_plan.end,
+        allocator_plan.size,
+        memory_map::EARLY_HEAP_EXPANSION_FRAME_SOURCE_KIND,
+        memory_map::EARLY_HEAP_RECOVERABLE_OOM_KIND,
+        memory_map::EARLY_HEAP_FATAL_OOM_KIND,
+        request,
+        remaining,
+        recoverable_oom,
+        advanced,
+        ok
+    );
+    target::rpi5::wait_uart10_empty_early_phase();
+
+    loop {
+        core::hint::spin_loop();
+    }
+}
+
 #[cfg(all(not(test), talos_target_rpi5_bcm2712))]
 #[cfg_attr(
     any(
@@ -661,7 +740,8 @@ fn rpi5_page_frame_reuse_diagnostic(allocator_plan: memory_map::EarlyBootstrapAl
         talos_rpi5_vec_growth_diagnostic,
         talos_rpi5_string_growth_diagnostic,
         talos_rpi5_alloc_format_diagnostic,
-        talos_rpi5_page_frame_reuse_diagnostic
+        talos_rpi5_page_frame_reuse_diagnostic,
+        talos_rpi5_heap_expansion_policy_diagnostic
     ),
     allow(dead_code)
 )]

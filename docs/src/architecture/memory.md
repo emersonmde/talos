@@ -172,6 +172,15 @@ range and reused frame, then halts. This does not replace
 `KERNEL_GLOBAL_ALLOCATOR`, provide heap deallocation, expand the heap, or claim
 ownership outside the accepted low identity-mapped span.
 
+The heap expansion policy boundary now uses that same owned-span contract to
+name the only accepted frame source for early heap growth:
+`bootstrap-bump-owned-low-tail`, matching the post-bootstrap allocator plan.
+The policy explicitly protects the bootstrap reservation and translation-table
+pages and keeps high memory, DMA buffers, and all memory outside the
+conservative low-tail candidate deferred. This is a source-of-truth policy and
+test boundary; Talos still does not add dynamic page-frame-backed heap growth or
+change the global allocator from its current no-free bump behavior.
+
 Talos now zeroes and populates those four pages with a deterministic stage-1
 4 KiB translation skeleton, but still does not enable translation:
 
@@ -348,6 +357,23 @@ talos: alloc oom diagnostic: request=0x10bf0008 remaining=0x10bf0000 align=0x1
 talos: alloc error: size=0x10bf0008 align=0x1
 ```
 
+The recoverable counterpart is `BumpAllocator::try_allocate_layout`, which
+returns a typed error instead of entering the `alloc_error_handler`. The
+cfg-gated `TALOS_RPI5_HEAP_EXPANSION_POLICY_DIAGNOSTIC` image reports the
+accepted low-tail frame source, then makes an oversized fallible request and
+requires `next` to remain unchanged:
+
+```text
+talos: heap expansion policy diagnostic: source_start=0x2f010000 source_end=0x3fc00000 max_extension=0x10bf0000 source_kind=bootstrap-bump-owned-low-tail recoverable_kind=fallible-allocator-error fatal_kind=alloc-error-handler-spin request=0x10bf0008 remaining=0x10bf0000 recovered=true advanced=false ok=true
+```
+
+This accepts a recoverable OOM API for direct kernel callers that choose it and
+a policy for future heap extension. It does not make normal `alloc`-crate
+allocation recoverable, install a growing heap, reuse freed objects, or consume
+frames outside the accepted low identity-mapped span. The fatal OOM diagnostic
+above remains available as the behavior for infallible `alloc`-crate allocation
+failure.
+
 Talos also has a direct realloc growth diagnostic gated by
 `TALOS_RPI5_REALLOC_GROWTH_DIAGNOSTIC`. It allocates two bytes through the
 global allocator, grows that allocation to four bytes through
@@ -414,8 +440,11 @@ construction path, not general runtime string-formatting policy for kernel code.
 
 The allocator state now preserves `start`, `next`, `end`, `used`, and
 `remaining` accounting. The smoke path also attempts one deliberately oversized
-direct allocation and requires it to return null without advancing `next`. This
-is an exhaustion guard for the bump allocator contract, not a free/reuse policy.
+direct allocation and requires it to return null without advancing `next`; the
+fallible direct-allocation API reports the same exhaustion as a recoverable
+error for callers that avoid infallible `alloc`-crate construction. This is an
+exhaustion and policy boundary for the bump allocator contract, not a
+free/reuse or dynamic heap-growth implementation.
 
 Earlier broad `alloc`-crate variants using multiple containers at once were
 deferred after inconclusive hardware captures. The accepted boundary is now the
@@ -425,10 +454,11 @@ fatal alloc-crate OOM diagnostic under the already-enabled MMU, instruction
 cache, and data cache. It also has one direct realloc growth diagnostic for the
 underlying global allocator, one cfg-gated `Vec<u8>` growth diagnostic, and one
 cfg-gated ASCII `String` growth diagnostic that use the alloc-crate reserve
-path. Talos has not accepted recoverable OOM handling, collection-heavy runtime
-allocation, UTF-8/string policy beyond the four-byte ASCII diagnostics, broad
-runtime string-formatting policy beyond the explicit `alloc::format!` smoke, or
-free/reuse.
+path. Talos has not accepted collection-heavy runtime allocation, UTF-8/string
+policy beyond the four-byte ASCII diagnostics, broad runtime string-formatting
+policy beyond the explicit `alloc::format!` smoke, or general free/reuse.
+Recoverable OOM is accepted only through the explicit fallible allocator API
+and heap-expansion policy diagnostic.
 
 During the follow-up `Vec` smoke investigation, normal dev-profile Pi 5 images
 hit a hardware handoff/output cliff between 181,176 and 181,184 bytes, and an
@@ -480,16 +510,13 @@ does not declare any new runtime behavior.
 | Page-frame ownership and bounded reuse diagnostic | Talos names the current low-tail frame partitions and can prove a small tracked-window allocate/free/reallocate cycle with metadata outside the managed frames. | Local no-std tests, QEMU substitute, normal Pi 5 image generation, and cfg-gated diagnostic image generation; no normal Pi 5 boot-output change. | Ownership tests plus `page_frame_reuse_allocator_allocates_frees_and_reuses_frame`, `page_frame_reuse_allocator_rejects_double_free_and_out_of_range_frame`, and `page_frame_reuse_allocator_requires_metadata_outside_managed_frames`; current task commit. | The global allocator remains no-free. This does not add heap deallocation, heap expansion, high-memory ownership, DMA-safe frame policy, or a complete physical memory manager. |
 | Translation skeleton | The accepted four-page EL2 stage-1 skeleton maps low memory and the BCM2712 local-peripheral window, reports population counts, and has a matching MAIR/TCR/TTBR/SCTLR plan. | Pi 5 serial/TFTP hardware for normal boot, plus local/QEMU gates for code paths. | target/tmp/rpi5-translation-population-post-println-readloop-20260523T1558Z-evidence; commit d3be399. | The map is intentionally narrow. It does not map RP1 PCIe, high memory, user address spaces, DMA buffers, or demand/fault recovery regions. |
 | MMU and cache bring-up | EL2 stage-1 translation, instruction cache, and data cache are enabled on the normal Pi 5 path while preserving serial output; data-cache-enabled is accepted on the ordinary println surface. | Pi 5 serial/TFTP hardware. | target/tmp/rpi5-data-cache-enabled-println-20260523T111335Z-evidence and later surrounding evidence; commit d3be399. | Cache enablement is an early-kernel execution boundary, not a DMA coherency contract or driver cache-maintenance API. |
-| Bootstrap allocator | A no-free bump allocator owns the post-bootstrap low-tail span 0x2f010000..0x3fc00000 for early kernel allocation smoke tests. | Pi 5 serial/TFTP hardware for normal boot reports and cfg-gated diagnostics; local tests and QEMU smoke for generic support. | Normal reports in target/tmp/rpi5-bootstrap-allocator-plan-println-20260523T105926Z-evidence, target/tmp/rpi5-bootstrap-allocator-init-println-polled-20260523T104717Z-evidence, and later surrounding evidence; commit d3be399. | The global allocator remains no-free. It does not provide page-frame free/reuse, heap expansion, recoverable OOM, or broad collection-heavy runtime policy. |
-| Alloc-crate diagnostics | Bounded Box, Vec, String, direct realloc growth, Vec growth, String growth, alloc-backed formatting, and fatal OOM diagnostics have each been proven in narrow cfg-gated or normal paths. | Pi 5 serial/TFTP hardware for each accepted diagnostic, plus local gates. | Accepted diagnostic evidence recorded in the 2026-05-23 decision log; latest normal commit baseline d3be399. | These are small smoke boundaries. They do not accept arbitrary growth-heavy kernel allocation, UTF-8 policy, free/reuse, or recoverable OOM. |
+| Bootstrap allocator and heap policy | A no-free bump allocator owns the post-bootstrap low-tail span 0x2f010000..0x3fc00000 for early kernel allocation smoke tests. Direct kernel code now has a fallible allocation API and policy identifying that same span as the only accepted future heap-extension source. | Pi 5 serial/TFTP hardware for normal boot reports and cfg-gated fatal diagnostics; local unit tests, QEMU substitute, normal Pi 5 image generation, and cfg-gated heap-policy image generation for the recoverable boundary. | Normal reports in target/tmp/rpi5-bootstrap-allocator-plan-println-20260523T105926Z-evidence, target/tmp/rpi5-bootstrap-allocator-init-println-polled-20260523T104717Z-evidence, and later surrounding evidence; `fallible_allocation_reports_exhaustion_without_advancing`, `heap_expansion_policy_uses_allocator_owned_low_tail_and_protects_reserved_frames`, and current task commit. | The global allocator remains no-free. This does not install dynamic page-frame-backed heap growth, heap deallocation, broad collection-heavy runtime policy, or recoverable infallible `alloc`-crate allocation. |
+| Alloc-crate diagnostics | Bounded Box, Vec, String, direct realloc growth, Vec growth, String growth, alloc-backed formatting, and fatal OOM diagnostics have each been proven in narrow cfg-gated or normal paths. | Pi 5 serial/TFTP hardware for each accepted diagnostic, plus local gates. | Accepted diagnostic evidence recorded in the 2026-05-23 decision log; latest normal commit baseline d3be399. | These are small smoke boundaries. They do not accept arbitrary growth-heavy kernel allocation, UTF-8 policy, free/reuse, or recoverable infallible alloc-crate OOM. |
 | Exceptions and faults | Panic, BRK return/resume, undefined-instruction fatal reporting, ESR class labels, and a controlled translation-fault diagnostic can report useful AArch64 state. | Pi 5 serial/TFTP hardware for accepted diagnostics; QEMU remains useful for generic exception tests. | Decision-log entries from 2026-05-21 through 2026-05-23; current memory baseline commit d3be399. | Fault handling is fatal/reporting-oriented. Talos has not implemented page-fault recovery, lower-EL fault routing, or invalid-user-memory handling. |
 
-Remaining Phase 3 implementation backlog after the bounded page-frame reuse
-diagnostic:
+Remaining Phase 3 implementation backlog after the recoverable OOM and heap
+policy boundary:
 
-- Heap expansion and recoverable OOM policy: define the frame source for any
-  heap growth and prove a recoverable failure boundary while keeping the fatal
-  alloc-error diagnostic explicit.
 - High-memory, DMA, and cache boundary: document or guard that current
   allocation consumes only the accepted low identity-mapped span, and defer
   high memory, RP1/PCIe DMA, DMA-safe buffers, and driver cache maintenance.
