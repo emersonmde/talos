@@ -62,12 +62,34 @@ The scripts/ directory contains many one-off Pi 5 diagnostic image/tree
 wrappers. They are useful evidence tools, but future refactors should avoid
 adding more wrappers that duplicate environment setup or image staging logic.
 
+## Diagnostic Disposition
+
+The cleanup policy is deletion-first: a diagnostic stays only if it is still a
+boot-process probe, a hardware regression gate, or the clearest way to validate
+an explicit task. If a probe only preserves knowledge already accepted in
+hardware evidence, the next cleanup task must document that fact in the relevant
+architecture/decision note or encode it in a real test before deleting the
+function, script wrapper, cfg flag, and build.rs plumbing.
+
+| Family | Examples | Classification | Cleanup requirement |
+| --- | --- | --- | --- |
+| Normal boot image and format gates | scripts/rpi5-image.sh, scripts/rpi5-boot-tree.sh, scripts/rpi5-boot-img.sh, scripts/rpi5-format-guard-check.sh, scripts/rpi5-archive-review.sh | keep-as-boot/regression diagnostic | Keep. These are validation gates, not stale probes. |
+| Allocator and alloc-crate diagnostics | talos_rpi5_alloc_oom_diagnostic, talos_rpi5_realloc_growth_diagnostic, talos_rpi5_vec_growth_diagnostic, talos_rpi5_string_growth_diagnostic, talos_rpi5_alloc_format_diagnostic and matching scripts | promote-to-feature | Convert into allocator/page-frame/heap policy tests or explicit diagnostic modules. Delete one-off image padding knobs after the accepted behavior is covered by tests or task records. |
+| Exception/fault report diagnostics | talos_rpi5_normal_exception_report_diagnostic, talos_rpi5_undefined_instruction_report_diagnostic, talos_rpi5_data_abort_report_diagnostic, talos_rpi5_translation_fault_diagnostic, talos_rpi5_current_sp0_sync_diagnostic and matching scripts | keep-as-boot/regression diagnostic | Keep only the deliberate exception/fault cases that exercise active reporting paths. Move them out of src/main.rs. Delete duplicate or superseded wrappers after preserving the accepted ESR/class/status facts in docs/tests. |
+| Panic diagnostics | talos_rpi5_panic_report_diagnostic, talos_rpi5_full_panic_info_diagnostic, talos_rpi5_nested_panic_diagnostic and matching scripts | keep-as-boot/regression diagnostic | Keep a minimal panic and nested-panic regression path. Remove older full-info variants if the normal panic report already proves the same output contract. |
+| Early serial and handoff probes | talos_rpi5_runtime_uart_probe_diagnostic, talos_rpi5_handoff_uart_diagnostic, talos_rpi5_rust_uart10_diagnostic, rpi5-uart-*-proof*.sh, rpi5-entry-*-diagnostic*.sh, fresh-entry label/continue/reset helpers | document-and-delete | The project has accepted firmware-console, UART10, rust_entry, and readable Talos-origin serial facts. Capture any still-useful address/firmware facts in early-serial docs, then delete stale probes and proof scripts. Keep only one fresh-entry/readable-output control if the lab workflow still needs it as a regression discriminator. |
+| Entry boundary, stack, text, and assembly reset probes | transition/text/vector/boot-near/boot-far/fallthrough/post-stack/asm-direct/asm-indirect/asm-to-rust/BTI/direct-exception/BRK reset cfgs and scripts | document-and-delete | These were bring-up boundary finders for first-light and exception-return work. Preserve accepted boundaries in decisions/architecture notes, then remove the cfgs, assembly conditionals, build.rs env plumbing, and scripts unless one is explicitly promoted as a current regression gate. |
+| println, format-sink, rodata, and function-pointer probes | talos_rpi5_minimal_format_diagnostic, talos_rpi5_dynamic_format_fallback_diagnostic, talos_rpi5_fmt_*_diagnostic, talos_rpi5_fnptr_reset_diagnostic, talos_rpi5_println_phase_diagnostic, talos_rpi5_rodata_address_diagnostic, talos_rpi5_static_format_boundary_diagnostic | delete-as-stale | The accepted post-data-cache println boundary and UART polling fix are now the real feature. Record the learned formatter/rodata boundary in early-serial docs if missing, then delete these probes. |
+| Phase ladder/reset probes | talos_rpi5_phase_ladder_diagnostic, talos_rpi5_phase_p0/p1/p1_short/p2 diagnostics, CPACR/BSS/stack/stack-to-text/stack-to-rust/continue scripts | document-and-delete | These bracketed the path into Rust. Current normal boot and rust_entry evidence supersede them. Delete after the accepted boot-stage sequence is documented. |
+| Loader, armstub, EFI, Circle, and alternative boot experiments | rpi5-loader-diagnostic*, rpi5-armstub-diagnostic*, rpi5-efi-diagnostic*, rpi5-circle-loader-diagnostic-tree.sh, prefixed loader/armstub scripts | delete-as-stale | These are not on the accepted normal firmware handoff path. Delete unless a future supervisor task explicitly reopens alternative boot research. |
+
 ## Ordered Refactor Tasks
 
 1. phase3-main-entry-diagnostics-refactor-20260523
 
    Primary write scope: src/main.rs, new entry/report/diagnostic modules, and
-   only the diagnostic scripts that must follow moved cfg names.
+   diagnostic/build-script cleanup for the families above. This task must not
+   simply move stale diagnostics into nicer modules.
 
    Proposed module layout:
 
@@ -85,7 +107,10 @@ adding more wrappers that duplicate environment setup or image staging logic.
      first refactor;
    - make kernel_main read as an ordered boot pipeline rather than a deeply
      nested if-let tree;
-   - move diagnostic dispatch behind named cfg-gated functions;
+   - delete stale diagnostic functions, scripts, cfg flags, and build.rs env
+     plumbing after recording accepted facts;
+   - move only still-justified diagnostic dispatch behind named cfg-gated
+     functions;
    - keep accepted normal boot log order unchanged.
 
 2. phase3-memory-fdt-module-refactor-20260523
