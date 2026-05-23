@@ -14,6 +14,7 @@
 - [Testing Strategy](project/testing-strategy.md)
 - [Reference Notes](project/reference-notes.md)
 - [Early POSIX Shape](project/early-posix-shape.md)
+- [Phase 3 Closeout Checkpoint](project/phase3-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

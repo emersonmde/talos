@@ -35,12 +35,16 @@ Completed:
   on hardware while preserving serial output.
 - A no-free bootstrap allocator and narrow Rust alloc-crate diagnostics for
   Box, Vec, String, and alloc-backed formatting have hardware evidence.
+- Phase 3 has an accepted closeout checkpoint for the current memory, MMU, and
+  kernel-runtime boundary. The checkpoint recommends planning Phase 4 next while
+  preserving explicit deferrals for high memory, DMA/cache ownership, lower-EL
+  userspace, SMP, filesystem/userland, and networking.
 
 Blocked or pending:
 
-- Phase 3 is not complete: Talos still needs free/reuse-capable allocation,
-  page-frame ownership, heap expansion policy, high-memory policy, DMA/cache
-  ownership, lower-EL mappings, and userspace mappings.
+- Phase 4 is not planned yet. The next supervisor step is to create bounded
+  interrupt-controller and timer/preemption tasks from the accepted Phase 3
+  closeout checkpoint.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
@@ -195,6 +199,11 @@ Acceptance criteria:
 ## Phase 3: Memory, MMU, and Kernel Runtime
 
 Goal: build the foundations for safe Rust allocation, virtual memory, and later userspace.
+
+Status: accepted for the current closeout boundary. See
+[Phase 3 Closeout Checkpoint](project/phase3-closeout-checkpoint.md) for the
+accepted capabilities, commit references, deferred work, and Phase 4
+recommendation.
 
 Milestone 3.1: Physical Memory Map
 

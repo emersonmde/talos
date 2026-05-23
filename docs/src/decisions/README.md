@@ -1525,3 +1525,13 @@ ADR template:
 - Validation: Documentation-only readiness audit. `git diff --check` passed; `mdbook build` was unavailable; Rust fmt/tests and Pi 5 hardware were not required because no code or normal boot behavior changed.
 - Rationale: A dedicated readiness boundary keeps Phase 7 prerequisites explicit before interrupt/timer work resumes, without starting userspace implementation or overloading the Phase 3 closeout checkpoint.
 - Risks: This does not enter EL0, implement syscalls, create process address spaces, add file descriptors, change exception-vector behavior, change translation-table contents, or close Phase 3.
+
+## 2026-05-23 - Phase 3 Closeout Checkpoint Accepted
+
+- Status: accepted as the explicit go/no-go checkpoint before Phase 4 planning. No kernel/runtime code, normal Pi 5 boot output, boot image, hardware lock, or hardware run changed in this task.
+- Context: Phase 3 now has accepted evidence for the current memory/MMU/runtime boundary, maintainability cleanup, page-frame ownership, a bounded free/reuse diagnostic, recoverable direct-allocation failure, heap-expansion source policy, high-memory/DMA/cache deferrals, and lower-EL/userspace readiness. The supervisor queue requires an explicit checkpoint before any interrupt/timer/preemption task starts.
+- Decision: Close Phase 3 for the current boundary and recommend Phase 4 planning next. The accepted checkpoint is documented in `docs/src/project/phase3-closeout-checkpoint.md` and linked from the roadmap and mdBook summary.
+- Consequences: The supervisor should plan bounded Phase 4 interrupt-controller discovery and timer interrupt work. Those tasks may use the accepted EL2 kernel map and low-tail allocation boundary, but must not rely on high-memory allocation, DMA-safe buffers, lower-EL isolation, process address spaces, or a free/reuse global heap unless a new task explicitly designs and validates that dependency.
+- Validation: Documentation-only checkpoint. `git status --short` was inspected before edits, `git diff --check` passed after edits, and `mdbook build` was unavailable. Rust fmt/tests, QEMU, Pi 5 image builds, and hardware were not required because only docs and durable task state changed.
+- Rationale: A dedicated checkpoint prevents Phase 4 from inheriting hidden Phase 3 assumptions and gives the supervisor a clear planning handoff rather than letting the worker invent the next phase queue.
+- Risks: This does not implement interrupts, timers, preemption, SMP, lower-EL entry, userspace, dynamic heap growth, DMA/cache APIs, filesystems, networking, or SSH.
