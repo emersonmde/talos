@@ -920,6 +920,24 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                             talos_rpi5_string_growth_diagnostic,
                             talos_rpi5_alloc_format_diagnostic
                         )))]
+                        write_rpi5_translation_table_layout_post_allocator_line(reservation);
+                        #[cfg(not(any(
+                            talos_rpi5_vec_growth_diagnostic,
+                            talos_rpi5_string_growth_diagnostic,
+                            talos_rpi5_alloc_format_diagnostic
+                        )))]
+                        write_rpi5_translation_table_slots_post_allocator_line(reservation);
+                        #[cfg(not(any(
+                            talos_rpi5_vec_growth_diagnostic,
+                            talos_rpi5_string_growth_diagnostic,
+                            talos_rpi5_alloc_format_diagnostic
+                        )))]
+                        write_rpi5_translation_table_population_post_allocator_line(reservation);
+                        #[cfg(not(any(
+                            talos_rpi5_vec_growth_diagnostic,
+                            talos_rpi5_string_growth_diagnostic,
+                            talos_rpi5_alloc_format_diagnostic
+                        )))]
                         write_rpi5_memory_usable_candidate_println_line(candidate);
                         #[cfg(not(any(
                             talos_rpi5_vec_growth_diagnostic,
@@ -1637,6 +1655,22 @@ fn write_rpi5_translation_table_layout_line(layout: memory_map::EarlyTranslation
 }
 
 #[cfg(all(not(test), talos_target_rpi5_bcm2712))]
+fn write_rpi5_translation_table_layout_post_allocator_line(
+    reservation: memory_map::EarlyBootstrapPageReservation,
+) {
+    let table_bytes = memory_map::EARLY_TRANSLATION_TABLE_PAGES * reservation.page_size;
+    let table_end = reservation.start + table_bytes;
+    println!(
+        "talos: translation tables: start={:#x} end={:#x} pages={:#x} page_size={:#x} kind=layout-only phase=post-allocator",
+        reservation.start,
+        table_end,
+        memory_map::EARLY_TRANSLATION_TABLE_PAGES,
+        reservation.page_size,
+    );
+    target::rpi5::wait_uart10_empty_early_phase();
+}
+
+#[cfg(all(not(test), talos_target_rpi5_bcm2712))]
 fn write_rpi5_translation_table_slots_line(layout: memory_map::EarlyTranslationTableLayout) {
     target::console::write_static("talos: translation table slots: root=");
     target::console::write_hex_u64(layout.root_table);
@@ -1647,6 +1681,51 @@ fn write_rpi5_translation_table_slots_line(layout: memory_map::EarlyTranslationT
     target::console::write_static(" l2_mmio=");
     target::console::write_hex_u64(layout.mmio_l2_table);
     target::console::write_static("\n");
+    target::rpi5::wait_uart10_empty_early_phase();
+}
+
+#[cfg(all(not(test), talos_target_rpi5_bcm2712))]
+fn write_rpi5_translation_table_slots_post_allocator_line(
+    reservation: memory_map::EarlyBootstrapPageReservation,
+) {
+    if let Some(layout) = memory_map::early_translation_table_layout(reservation) {
+        println!(
+            "talos: translation table slots: root={:#x} l1={:#x} l2_low={:#x} l2_mmio={:#x} phase=post-allocator",
+            layout.root_table, layout.l1_table, layout.low_l2_table, layout.mmio_l2_table,
+        );
+    } else {
+        target::console::write_static(
+            "talos: translation table slots: unavailable phase=post-allocator\n",
+        );
+    }
+    target::rpi5::wait_uart10_empty_early_phase();
+}
+
+#[cfg(all(not(test), talos_target_rpi5_bcm2712))]
+fn write_rpi5_translation_table_population_post_allocator_line(
+    reservation: memory_map::EarlyBootstrapPageReservation,
+) {
+    if let Some(layout) = memory_map::early_translation_table_layout(reservation) {
+        if let Some(population) = memory_map::early_translation_table_population_plan(layout) {
+            println!(
+                "talos: translation table population: root_entries={:#x} l1_entries={:#x} low_l2_blocks={:#x} mmio_l2_blocks={:#x} block_size={:#x} kind={} phase=post-allocator",
+                population.root_entries,
+                population.l1_entries,
+                population.low_l2_blocks,
+                population.mmio_l2_blocks,
+                population.block_size,
+                memory_map::EARLY_TRANSLATION_TABLE_POPULATION_KIND
+            );
+        } else {
+            target::console::write_static(
+                "talos: translation table population: unavailable phase=post-allocator\n",
+            );
+        }
+    } else {
+        target::console::write_static(
+            "talos: translation table population: unavailable phase=post-allocator\n",
+        );
+    }
     target::rpi5::wait_uart10_empty_early_phase();
 }
 

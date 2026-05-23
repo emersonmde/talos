@@ -37,9 +37,10 @@ the PL011 TX-ready flag, but the accepted policy is still incremental: bounded
 runtime reports are promoted only when hardware evidence proves them readable.
 The current accepted normal `println!` surface includes the post-data-cache
 status line, bootstrap allocator plan/init reports, the bounded String smoke,
-and post-allocator bootstrap-reserve, page-frame remaining, and DTB memory
-reports. The instruction-cache enabled report remains formatter-free because
-its pre-data-cache `println!` candidate did not produce Talos-origin serial on
+post-allocator translation-table layout/slot/population reports, and
+post-allocator bootstrap-reserve, page-frame remaining, and DTB memory reports.
+The instruction-cache enabled report remains formatter-free because its
+pre-data-cache `println!` candidate did not produce Talos-origin serial on
 hardware.
 
 ## Pi 5 Bring-Up Policy
@@ -810,3 +811,66 @@ This keeps the formatter-free pre-data-cache seed diagnostic in place and adds a
 second human-readable copy after the accepted formatter boundary. It does not
 change low-memory selection, reservation layout, allocator ownership, cache/MMU
 programming, or the earlier unaccepted pre-data-cache `println!` boundary.
+
+The normal translation-table layout report is accepted on the same
+post-allocator `println!` surface. Hardware run
+`rpi5-translation-table-layout-post-literal-readloop-20260523T153123Z` used
+the 81,093-byte normal kernel
+`786163b8f4d55a7f9782e28afd9ab3aa1e4e25a0c585d19db139c0cfe1808cc0`.
+TFTP served `da591740/kernel_2712.img` twice, and a serial read-loop captured
+normal boot through data-cache enablement, allocator plan/init, String smoke,
+then the `println!`-backed post-allocator layout line before the accepted
+memory/page-frame reports:
+
+```text
+talos: string smoke: ptr=0x2f010000 len=5 cap=8 sum=0x203 next=0x2f010008 used=0x8 rem=0x10befff8 ex=true stable=true ok=true
+talos: translation tables: start=0x2f000000 end=0x2f004000 pages=0x4 page_size=0x1000 kind=layout-only phase=post-allocator
+talos: memory usable: bank=0 start=0x2f000000 end=0x3fc00000 size=0x10c00000 align=0x1000 policy=low-tail
+talos: page frames seed: start=0x2f000000 end=0x3fc00000 pages=0x10c00 page_size=0x1000 source=memory-usable phase=post-allocator
+```
+
+This keeps the formatter-free pre-data-cache translation-table diagnostics in
+place and adds a second human-readable layout copy after the accepted formatter
+boundary. It does not change table placement, population, register programming,
+cache/MMU behavior, allocator setup, or page-frame ownership.
+
+The normal translation-table slot report is now accepted immediately after that
+post-allocator layout line on the same `println!` surface. Hardware run
+`rpi5-translation-table-slots-post-println-20260523T154311Z` used the
+81,517-byte normal kernel
+`c43e72b76cd785eadaa4bc9c623345897ee8eca84ed5516e82a4309f1fa97790`.
+Current-run TFTP served `da591740/kernel_2712.img` twice, and the serial
+read-loop captured the new slot line before the accepted memory/page-frame
+reports:
+
+```text
+talos: translation tables: start=0x2f000000 end=0x2f004000 pages=0x4 page_size=0x1000 kind=layout-only phase=post-allocator
+talos: translation table slots: root=0x2f000000 l1=0x2f001000 l2_low=0x2f002000 l2_mmio=0x2f003000 phase=post-allocator
+talos: memory usable: bank=0 start=0x2f000000 end=0x3fc00000 size=0x10c00000 align=0x1000 policy=low-tail
+```
+
+This preserves the pre-data-cache formatter-free slot report and adds a second
+human-readable copy after the accepted formatter boundary. It does not change
+table placement, population, register programming, cache/MMU behavior,
+allocator setup, or page-frame ownership.
+
+The normal translation-table population report is also accepted on that
+post-allocator `println!` surface. Hardware run
+`rpi5-translation-population-post-println-readloop-20260523T1558Z` used the
+82,045-byte normal kernel
+`aa93a86a36ae942e410e11767dc75a657b2d02855fe6fa08249a0f4e2f07be0e`.
+After a read-loop control first recovered fresh serial output for the accepted
+slot image, the candidate run TFTP-served `da591740/kernel_2712.img` at 82,045
+bytes and captured the population line between the accepted post-allocator slot
+and memory-usable lines:
+
+```text
+talos: translation table slots: root=0x2f000000 l1=0x2f001000 l2_low=0x2f002000 l2_mmio=0x2f003000 phase=post-allocator
+talos: translation table population: root_entries=0x1 l1_entries=0x2 low_l2_blocks=0x200 mmio_l2_blocks=0x20 block_size=0x200000 kind=stage1-4k-no-enable phase=post-allocator
+talos: memory usable: bank=0 start=0x2f000000 end=0x3fc00000 size=0x10c00000 align=0x1000 policy=low-tail
+```
+
+This preserves the pre-data-cache formatter-free population report and adds a
+second human-readable copy after the accepted formatter boundary. It does not
+repopulate table entries, change map policy, alter register programming, or
+change cache/MMU behavior, allocator setup, or page-frame ownership.

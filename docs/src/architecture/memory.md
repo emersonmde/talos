@@ -92,6 +92,45 @@ talos: translation tables: start=0x2f000000 end=0x2f004000 pages=0x4 page_size=0
 talos: translation table slots: root=0x2f000000 l1=0x2f001000 l2_low=0x2f002000 l2_mmio=0x2f003000
 ```
 
+The normal Pi 5 path also emits the layout report a second time through the
+ordinary post-allocator `println!` surface, after data-cache enablement,
+bootstrap allocator initialization, and the bounded String smoke:
+
+```text
+talos: translation tables: start=0x2f000000 end=0x2f004000 pages=0x4 page_size=0x1000 kind=layout-only phase=post-allocator
+```
+
+The post-allocator copy is a human-readable report of the same fixed
+translation-table layout. It does not allocate new table pages, change the
+bootstrap reservation, repopulate entries, alter cache/MMU programming, or
+transfer page-frame ownership.
+
+The slot-address report is also accepted on the post-allocator `println!`
+surface:
+
+```text
+talos: translation table slots: root=0x2f000000 l1=0x2f001000 l2_low=0x2f002000 l2_mmio=0x2f003000 phase=post-allocator
+```
+
+This second copy reports the same deterministic root, L1, low-memory L2, and
+MMIO L2 table pages as the earlier formatter-free line. It does not allocate,
+move, zero, or populate translation tables, and it does not change the
+bootstrap reservation or post-reservation frame span.
+
+The population-count report is now accepted on the same post-allocator
+`println!` surface:
+
+```text
+talos: translation table population: root_entries=0x1 l1_entries=0x2 low_l2_blocks=0x200 mmio_l2_blocks=0x20 block_size=0x200000 kind=stage1-4k-no-enable phase=post-allocator
+```
+
+This second copy reports the same descriptor counts and block size as the
+earlier formatter-free population line. It is emitted after the accepted
+post-allocator slot report and before the accepted post-allocator
+memory-usable/page-frame reports. It does not repopulate table entries, change
+the map policy, alter MAIR/TCR/TTBR/SCTLR programming, or change allocator or
+page-frame ownership.
+
 The layout consumes four 4 KiB table slots inside the reserved 64 KiB bootstrap
 span and leaves the reported post-reservation page-frame seed unchanged. These
 addresses are the only table pages Talos mutates during the current early MMU
