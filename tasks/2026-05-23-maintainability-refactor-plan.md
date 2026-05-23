@@ -344,3 +344,74 @@ Validation after the memory/FDT split:
   change accepted normal boot output, memory ownership values, translation
   table layout/population, MMU/cache programming, allocator behavior, or FDT
   interpretation policy.
+
+### phase3-maintainability-review-checkpoint-20260523
+
+The review accepts the module-boundary work for main/boot reports, retained
+diagnostics, memory-map responsibilities, and FDT parsing/policy boundaries,
+but it does not clear the maintainability intervention yet. The next worker
+must run one more deletion-focused cleanup before feature work resumes.
+
+Largest Rust files after the refactors:
+
+| File | Lines | Review note |
+| --- | ---: | --- |
+| src/target/rpi5.rs | 812 | Still mixes stable Pi 5 target services with early UART/handoff/phase-ladder reset diagnostics. |
+| src/diagnostics/rpi5.rs | 643 | Retained current allocator, exception/fault, panic, and translation-fault diagnostics are isolated from the normal boot pipeline. |
+| src/memory_map/translation.rs | 639 | Translation-table layout/population code and tests are cohesive and below the review target. |
+| src/main.rs | 624 | Top-level entry, panic/OOM handling, QEMU smoke, and tests remain; normal Pi 5 boot orchestration moved out. |
+| src/memory_map/page_frames.rs | 589 | Page-frame seed/reservation/ownership contract is cohesive and below the review target. |
+| src/boot/rpi5.rs | 548 | Normal Pi 5 boot pipeline is still dense but no longer buried in src/main.rs. |
+| src/device_tree/memory.rs | 543 | FDT memory policy extraction is separate from raw token/cell walking. |
+| src/boot/rpi5_reports.rs | 543 | Normal report formatting helpers are isolated from boot-state transitions. |
+
+Review findings:
+
+- src/main.rs is no longer the catch-all orchestration module.
+- Normal Pi 5 reports, retained diagnostic bodies, memory-map logic, and FDT
+  parser/policy boundaries are visible from module paths.
+- The current memory/FDT split should be preserved: raw FDT cursor/cell/string
+  helpers belong in src/device_tree/raw.rs, Talos memory interpretation belongs
+  in src/device_tree/memory.rs, and page-frame ownership should not drift back
+  into translation-table descriptor code.
+- Future workers must not add new one-off Pi 5 bring-up probes to src/main.rs
+  or src/target/rpi5.rs. A diagnostic must either be a current regression gate,
+  a bounded task diagnostic, or a documented fact with the stale code deleted.
+- The cleanup sequence is not done because the repository still contains many
+  stale bring-up scripts and cfgs from the audit's document-and-delete and
+  delete-as-stale families. Examples include loader/armstub/EFI experiments,
+  UART proof trees, entry/transition/vector/text reset probes, direct assembly
+  reset probes, and the still-wired runtime UART, handoff UART, rust-uart10,
+  boundary-entry reset, and phase-ladder target helpers.
+
+Queued follow-up cleanup:
+
+- phase3-target-rpi5-diagnostic-deletion-20260523 owns src/target/rpi5.rs,
+  build.rs cfg/env plumbing, and stale scripts/rpi5-* diagnostic/proof wrappers
+  that are not current validation gates.
+- It must preserve only the accepted normal boot image/format gates and
+  currently useful allocator, exception/fault, panic, and translation-fault
+  diagnostic wrappers.
+- It must document any remaining early serial or boot-boundary facts before
+  deleting stale helper code, cfgs, and scripts.
+- It must not implement page-frame free/reuse, heap expansion, high-memory/DMA,
+  lower-EL/userspace, Phase 4 work, or normal boot-output changes.
+
+Validation for this review checkpoint:
+
+- Static inspection confirmed the module boundaries above.
+- Static script/cfg inventory found remaining stale diagnostic/proof wrappers
+  and target helpers, so another cleanup task is required.
+- cargo fmt --all -- --check passed.
+- cargo -Zjson-target-spec test passed: 41 no_std tests.
+- scripts/qemu-smoke.sh passed.
+- scripts/rpi5-image.sh passed and produced
+  target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712.img.
+- scripts/rpi5-format-guard-check.sh passed.
+- git diff --check passed.
+- mdbook build was not run because mdbook is unavailable in the container.
+- No Pi 5 hardware run was required because this checkpoint changed docs and
+  durable task state only; it introduced no runtime or boot-image behavior.
+- Matthew notification remains required. Because this isolated cron run has no
+  direct Telegram delivery surface, the supervisor state keeps a pending
+  delivery note with the exact remaining cleanup work.
