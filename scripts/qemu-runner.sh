@@ -9,7 +9,10 @@ fi
 ELF_FILE="$1"
 IMG_FILE="$1.img"
 
-rust-objcopy -O binary "$ELF_FILE" "$IMG_FILE"
+script_dir="$(CDPATH= cd "$(dirname "$0")" && pwd)"
+. "$script_dir/objcopy-tool.sh"
+
+"$objcopy_tool" -O binary "$ELF_FILE" "$IMG_FILE"
 
 exec qemu-system-aarch64 \
     -M virt \

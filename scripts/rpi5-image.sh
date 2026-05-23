@@ -1,12 +1,18 @@
 #!/bin/sh
 set -eu
 
+: "${CARGO_PROFILE_DEV_OPT_LEVEL:=z}"
+export CARGO_PROFILE_DEV_OPT_LEVEL
+
 cargo -Zjson-target-spec build --target targets/aarch64-talos-rpi5-bcm2712.json "$@"
 
 ELF_FILE="target/aarch64-talos-rpi5-bcm2712/debug/talos"
 IMG_FILE="target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712.img"
 
-rust-objcopy -O binary "$ELF_FILE" "$IMG_FILE"
+script_dir="$(CDPATH= cd "$(dirname "$0")" && pwd)"
+. "$script_dir/objcopy-tool.sh"
+
+"$objcopy_tool" -O binary "$ELF_FILE" "$IMG_FILE"
 
 image_size="$(wc -c < "$IMG_FILE" | tr -d ' ')"
 header_image_size="$(od -An -tu8 -j16 -N8 "$IMG_FILE" | tr -d ' ')"

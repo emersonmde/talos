@@ -1,10 +1,12 @@
 # Architecture Index
 
-Architecture documentation will be added as the design becomes concrete.
+Architecture documentation is added as Talos design becomes concrete.
 
-Expected topics include:
+Current topics:
 
 - Boot and board support.
+- Early serial and printing.
+- AArch64 exception vectors and early exception reports.
 - Memory management.
 - Multi-core scheduling and preemption.
 - Process and syscall model.

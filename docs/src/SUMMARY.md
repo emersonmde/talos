@@ -19,6 +19,9 @@
 # Architecture
 
 - [Architecture Index](architecture/README.md)
+- [Early Serial and Printing](architecture/early-serial.md)
+- [AArch64 Exceptions](architecture/exceptions.md)
+- [Memory Management](architecture/memory.md)
 - [QEMU Skeleton](architecture/qemu-skeleton.md)
 
 # Decisions

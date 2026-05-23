@@ -97,15 +97,6 @@ pub mod console {
             return;
         }
 
-        #[cfg(talos_target_rpi5_bcm2712)]
-        {
-            console
-                .write_str("talos: dynamic formatting disabled on early Pi 5 console\n")
-                .expect("serial console write failed");
-            return;
-        }
-
-        #[cfg(not(talos_target_rpi5_bcm2712))]
         console
             .write_fmt(args)
             .expect("serial console write failed");
@@ -113,16 +104,34 @@ pub mod console {
 
     #[allow(dead_code)]
     pub fn write_static(s: &str) {
+        #[cfg(talos_target_rpi5_bcm2712)]
+        {
+            crate::target::rpi5::write_early_static(s);
+        }
+
+        #[cfg(not(talos_target_rpi5_bcm2712))]
         console().write_str(s).expect("serial console write failed");
     }
 
     #[allow(dead_code)]
     pub fn write_hex_usize(value: usize) {
+        #[cfg(talos_target_rpi5_bcm2712)]
+        {
+            crate::target::rpi5::write_early_hex_u64(value as u64);
+        }
+
+        #[cfg(not(talos_target_rpi5_bcm2712))]
         early_format::write_hex_usize(console(), value).expect("serial console write failed");
     }
 
     #[allow(dead_code)]
     pub fn write_hex_u64(value: u64) {
+        #[cfg(talos_target_rpi5_bcm2712)]
+        {
+            crate::target::rpi5::write_early_hex_u64(value);
+        }
+
+        #[cfg(not(talos_target_rpi5_bcm2712))]
         early_format::write_hex_u64(console(), value).expect("serial console write failed");
     }
 
@@ -144,28 +153,9 @@ pub mod console {
 
 #[macro_export]
 macro_rules! print {
-    ($fmt:expr) => {
-        $crate::target::console::_print(format_args!($fmt));
+    ($($arg:tt)*) => {
+        $crate::target::console::_print(format_args!($($arg)*));
     };
-    ($fmt:expr, $($arg:tt)+) => {{
-        #[cfg(all(
-            talos_target_rpi5_bcm2712,
-            not(talos_rpi5_dynamic_format_fallback_diagnostic)
-        ))]
-        {
-            compile_error!(
-                "Pi 5 early console only accepts static print!/println! literals; use target::console minimal formatter helpers or add an accepted diagnostic"
-            );
-        }
-
-        #[cfg(any(
-            not(talos_target_rpi5_bcm2712),
-            talos_rpi5_dynamic_format_fallback_diagnostic
-        ))]
-        {
-            $crate::target::console::_print(format_args!($fmt, $($arg)+));
-        }
-    }};
 }
 
 #[macro_export]
@@ -173,10 +163,7 @@ macro_rules! println {
     () => {
         $crate::print!("\n");
     };
-    ($fmt:expr) => {
-        $crate::print!(concat!($fmt, "\n"));
-    };
-    ($fmt:expr, $($arg:tt)*) => {
-        $crate::print!(concat!($fmt, "\n"), $($arg)*);
+    ($($arg:tt)*) => {
+        $crate::print!("{}\n", format_args!($($arg)*));
     };
 }

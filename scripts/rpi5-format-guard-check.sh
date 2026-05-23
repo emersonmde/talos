@@ -2,38 +2,26 @@
 set -eu
 
 repo_root="$(git rev-parse --show-toplevel)"
-tmp_root="$repo_root/target/tmp"
-mkdir -p "$tmp_root"
-work_dir="$(mktemp -d "$tmp_root/talos-rpi5-format-guard.XXXXXX")"
-trap 'rm -rf "$work_dir"' EXIT INT TERM
 
-git -C "$repo_root" ls-files -z \
-    | tar -C "$repo_root" --null -T - -cf - \
-    | tar -C "$work_dir" -xf -
+(
+    cd "$repo_root"
+    env -u TALOS_RPI5_DYNAMIC_FORMAT_FALLBACK_DIAGNOSTIC ./scripts/rpi5-image.sh
+) >/dev/null
 
-perl -0pi -e 's/println!\("talos: board raspberry-pi-5-bcm2712"\);/println!("Talos booting on {}", boot_info.target.name());/' \
-    "$work_dir/src/main.rs"
+. "$repo_root/scripts/objcopy-tool.sh"
+case "$objcopy_tool" in
+    *rust-objcopy) objdump_tool="${objcopy_tool%rust-objcopy}llvm-objdump" ;;
+    *) objdump_tool="${objcopy_tool%objcopy}objdump" ;;
+esac
+elf_file="$repo_root/target/aarch64-talos-rpi5-bcm2712/debug/talos"
+disasm_file="$repo_root/target/aarch64-talos-rpi5-bcm2712/debug/write_early_hex_digit.disasm"
 
-set +e
-output="$(
-    cd "$work_dir"
-    env -u TALOS_RPI5_DYNAMIC_FORMAT_FALLBACK_DIAGNOSTIC ./scripts/rpi5-image.sh 2>&1
-)"
-status="$?"
-set -e
+"$objdump_tool" -d --demangle "$elf_file" |
+    awk '/<talos::target::rpi5::write_early_hex_digit>:/ {in_fn=1; next} in_fn && /^$/ {exit} in_fn {print}' > "$disasm_file"
 
-if [ "$status" -eq 0 ]; then
-    echo "expected Pi 5 formatted early-console build to fail, but it passed" >&2
+if grep -Eq 'br[[:space:]]+x|ldrsw|panic_const|[.]word[[:space:]]+0x' "$disasm_file"; then
+    echo "Pi 5 early hex digit writer must not use jump tables, panic paths, or literal data" >&2
     exit 1
 fi
 
-case "$output" in
-    *"Pi 5 early console only accepts static print!/println! literals"*)
-        printf '%s\n' "Pi 5 early formatting guard PASS"
-        ;;
-    *)
-        printf '%s\n' "$output" >&2
-        echo "Pi 5 formatted early-console build failed for the wrong reason" >&2
-        exit 1
-        ;;
-esac
+printf '%s\n' "Pi 5 formatted early-console build PASS"

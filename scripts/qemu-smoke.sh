@@ -7,7 +7,10 @@ ELF_FILE="target/aarch64-talos-virt/debug/talos"
 IMG_FILE="$ELF_FILE.img"
 LOG_FILE="target/qemu-smoke.log"
 
-rust-objcopy -O binary "$ELF_FILE" "$IMG_FILE"
+script_dir="$(CDPATH= cd "$(dirname "$0")" && pwd)"
+. "$script_dir/objcopy-tool.sh"
+
+"$objcopy_tool" -O binary "$ELF_FILE" "$IMG_FILE"
 
 qemu-system-aarch64 \
     -M virt \
