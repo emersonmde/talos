@@ -15,11 +15,11 @@ jobs:
       - name: Install system tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang llvm qemu-system-aarch64
+          sudo apt-get install -y clang llvm qemu-system-arm
 
       - name: Install Rust toolchain
         run: |
-          rustup toolchain install nightly-2026-05-20 --component llvm-tools-preview --component rust-src
+          rustup toolchain install nightly-2026-05-20 --component llvm-tools-preview --component rust-src --component rustfmt
           rustup default nightly-2026-05-20
 
       - name: Install mdBook
