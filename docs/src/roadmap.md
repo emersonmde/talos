@@ -84,7 +84,7 @@ Acceptance criteria:
 Milestone 0.2: Lab Controller Readiness
 
 - Verify health, status, boot files, boot archive upload, power cycle, rollback, and serial endpoints.
-- Keep UniFi credentials outside OpenClaw; use only the lab API.
+- Keep network-controller credentials outside OpenClaw; use only the lab API.
 - Establish a boot-attempt record format with archive digest, power-cycle time, serial tail, and result classification.
 
 Acceptance criteria:

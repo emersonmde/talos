@@ -22,7 +22,7 @@ Expected specialist roles:
 
 - Kernel Architect: OS structure, subsystem boundaries, and POSIX path.
 - Board Bring-Up Engineer: Pi 5 boot, MMIO, UART, timers, interrupts, and board-specific drivers.
-- Automation Engineer: UniFi power control, PXE image publishing, serial log capture, boot classification, and lab APIs.
+- Automation Engineer: power control, PXE image publishing, serial log capture, boot classification, and lab APIs.
 - Reference Researcher: Linux, Raspberry Pi firmware docs, Circle/RPi bare-metal examples, ARM docs, and hardware datasheets.
 - Cautious Reviewer: failure modes, unsafe assumptions, scope creep, and rollback strategy.
 

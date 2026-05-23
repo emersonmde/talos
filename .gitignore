@@ -1,2 +1,28 @@
 /target/
 /book/
+
+# Local OpenClaw/agent runtime state. These files may contain personal context,
+# workspace cursors, or machine-local notes and should not be committed.
+/.openclaw/
+/AGENTS.md
+/HEARTBEAT.md
+/IDENTITY.md
+/SOUL.md
+/TOOLS.md
+/USER.md
+/MEMORY.md
+/memory/
+
+# Local lab/runtime scratch files.
+/[0-9]*
+*.log
+*.tmp
+*.tar
+*.tar.gz
+*.img
+*.elf
+
+# Editor and OS noise.
+.DS_Store
+*.swp
+*.swo

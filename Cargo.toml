@@ -3,6 +3,7 @@ name = "talos"
 version = "0.1.0"
 edition = "2024"
 build = "build.rs"
+license = "MIT"
 
 [dependencies]
 
@@ -10,4 +11,3 @@ build = "build.rs"
 name = "talos"
 test = true
 bench = false
-

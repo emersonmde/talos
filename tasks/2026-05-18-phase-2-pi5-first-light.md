@@ -15,7 +15,7 @@ Boot Talos through the normal Raspberry Pi 5 firmware path and capture enough se
 ## Acceptance Criteria
 
 - A local boot tree can be staged with `config.txt`, `cmdline.txt`, `bcm2712-rpi-5-b.dtb`, and Talos `kernel_2712.img`.
-- Pre-hardware review confirms the archive contents match the lab-controller contract and does not require direct UniFi access or credential handling.
+- Pre-hardware review confirms the archive contents match the lab-controller contract and does not require direct network-controller access or credential handling.
 - The lab publishes the archive through `PUT /boot/archive`.
 - A single controlled power cycle reaches Talos code on the Pi 5.
 - Serial output includes Talos version, exception level, DTB physical address, target name, service summary, and panic/halt behavior if boot fails later.
@@ -83,16 +83,16 @@ Results:
 - 2026-05-19 supervisor recheck: QEMU smoke passed and printed the expected Talos boot banner.
 - 2026-05-19 lab API check: health ok, serial.configured=true, boot tree lists required Pi 5 files, and rollback is available.
 - 2026-05-19 lab API check: serial peek returned the retained Linux login prompt, proving the serial read path is live.
-- 2026-05-19 lab API check: UniFi guard status reported `GET /proxy/network/api/s/default/stat/sta/88:a2:9e:ae:c8:7f: HTTP Error 400`, so no power-cycle was attempted.
+- 2026-05-19 lab API check: controller guard status reported a fixed-port lookup error, so no power-cycle was attempted.
 - 2026-05-19 Matthew clarified the Pi OS Lite TFTP tree is disposable and authorized replacing it with Talos boot files.
 - 2026-05-19 official Raspberry Pi boot docs recheck: Pi 5 firmware defaults to `kernel_2712.img`, requires `config.txt` for a bootable partition, supports `enable_rp1_uart=1` to preserve 40-pin header RP1 UART0 at 115200, and `os_check=0` is appropriate for bare-metal development.
 - 2026-05-19 local validation after RP1 UART0 routing passed: `cargo fmt --check`, `cargo -Zjson-target-spec test`, `cargo -Zjson-target-spec build --target targets/aarch64-talos-rpi5-bcm2712.json`, and `./scripts/rpi5-image.sh`.
 - 2026-05-19 staged archive `target/talos-rpi5-boot.tar.gz` with digest `9db4ed077db8a5ae7f5985dfab750ff194c0c6eade2e78454753520b720cd644`; contents were exactly `config.txt`, `cmdline.txt`, `bcm2712-rpi-5-b.dtb`, `kernel_2712.img`, `overlays/overlay_map.dtb`, `overlays/bcm2712d0.dtbo`, and `overlays/uart0-pi5.dtbo`.
 - 2026-05-19 lab publish succeeded through `PUT /boot/archive`; the API reported `ok=true`, `file_count=7`, `extracted_bytes=169919`, and rollback archive `/state/boot-previous.tar.gz`.
-- 2026-05-19 the controlled power-cycle did not run. Five bounded status retries all reported the UniFi guard error `GET /proxy/network/api/s/default/stat/sta/88:a2:9e:ae:c8:7f: HTTP Error 400`, so the lab API failed closed before power action.
+- 2026-05-19 the controlled power-cycle did not run. Five bounded status retries all reported the controller guard error, so the lab API failed closed before power action.
 - 2026-05-19 serial cursor remained at 57 with the retained `talos-pi5 login:` prompt after the blocked power attempt, confirming no new boot output was observed.
-- 2026-05-19 follow-up lab API check after the fixed-port API update: status returned `ok=true`, `serial.configured=true`, guard `fixed-port`, Weathertop port 8 `poe_state=UP`, and the active boot tree still contained the published Talos files.
-- 2026-05-19 controlled power cycle succeeded through `POST /power/cycle`; response `ok=true`, guard `mode=fixed-port`, `switch_name=Weathertop`, `port_idx=8`, `poe_state=UP`.
+- 2026-05-19 follow-up lab API check after the fixed-port API update: status returned `ok=true`, `serial.configured=true`, guard `fixed-port`, configured PoE port `poe_state=UP`, and the active boot tree still contained the published Talos files.
+- 2026-05-19 controlled power cycle succeeded through `POST /power/cycle`; response `ok=true`, guard `mode=fixed-port`, configured `port_idx`, and `poe_state=UP`.
 - 2026-05-19 serial observe from cursor 57 captured RP1 firmware output only: `1.81 RP1 FW: load 0` and `1.82 RP1_BOOT chip ID: 0x20001927`, followed by a NUL/newline on the longer observe window. No Talos banner, boot-info line, or panic/halt output was observed.
 - 2026-05-19 rollback succeeded through `POST /boot/rollback`; the restored Pi OS Lite boot tree contains 414 files including `config.txt`, `cmdline.txt`, `bcm2712-rpi-5-b.dtb`, `initramfs_2712`, `kernel8.img`, and `kernel_2712.img`.
 - 2026-05-19 recovery power cycle succeeded after rollback. Serial confirmed Linux boot resumed: `Linux 6.12.75+rpt-rpi-2712`, RP1 PCIe enumeration, SD root mount, systemd start, hostname `talos`, and root filesystem remounted read/write.

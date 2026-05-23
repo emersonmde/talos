@@ -60,9 +60,9 @@ Linux, Raspberry Pi firmware, and bare-metal source areas to index before implem
 
 Local Daedalus references:
 
-- Daedalus roadmap: /opt/strider/openclaw/current/workspace/projects/daedalus/docs/src/roadmap.md
-- Daedalus testing strategy: /opt/strider/openclaw/current/workspace/projects/daedalus/docs/src/architecture/testing.md
-- Daedalus Raspberry Pi references: /opt/strider/openclaw/current/workspace/projects/daedalus/docs/src/references/raspberry-pi.md
+- Daedalus roadmap: sibling `daedalus/docs/src/roadmap.md`
+- Daedalus testing strategy: sibling `daedalus/docs/src/architecture/testing.md`
+- Daedalus Raspberry Pi references: sibling `daedalus/docs/src/references/raspberry-pi.md`
 - Daedalus target/toolchain files: .cargo/config.toml, aarch64-daedalus.json, build.rs, linker.ld, and scripts/qemu-runner.sh
 
 ## Current Hardware Findings

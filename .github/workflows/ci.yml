@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  rust:
+    name: Rust and docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install system tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang llvm qemu-system-aarch64
+
+      - name: Install Rust toolchain
+        run: |
+          rustup toolchain install nightly-2026-05-20 --component llvm-tools-preview --component rust-src
+          rustup default nightly-2026-05-20
+
+      - name: Install mdBook
+        run: cargo install mdbook --locked
+
+      - name: Format
+        run: cargo fmt --check
+
+      - name: Test
+        run: cargo -Zjson-target-spec test
+
+      - name: QEMU smoke
+        run: ./scripts/qemu-smoke.sh
+
+      - name: Docs
+        run: mdbook build
+
+      - name: Whitespace
+        run: git diff --check

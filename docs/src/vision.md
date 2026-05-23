@@ -42,7 +42,7 @@ The design should not close these doors. Talos should grow toward POSIX-like abs
 
 The development loop should move from manual SD-card iteration to an automated physical lab:
 
-- The Pi 5 is powered through a PoE hat connected to a UniFi switch.
+- The Pi 5 is powered through a PoE hat connected to a managed switch.
 - A host-side controller exposes narrow APIs for power off, power on, and power cycle operations.
 - A host-side boot service publishes the image that the Pi 5 should network boot.
 - A host-side serial service captures UART output and exposes logs to the agent environment.

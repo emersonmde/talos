@@ -1,48 +1,50 @@
 # Lab Controller
 
-Talos uses a narrow lab controller on Strider to automate the Raspberry Pi 5 boot loop. OpenClaw should treat this as the control surface for physical Pi operations.
+Talos uses a narrow lab controller to automate the Raspberry Pi 5 boot loop.
+OpenClaw should treat this as the control surface for physical Pi operations.
 
 ## Current Shape
 
-The deployed lab service lives on Strider, outside the OpenClaw workspace:
-
-```text
-/opt/strider/talos-lab
-```
-
-OpenClaw does not need to read that directory. Use the private API from inside the OpenClaw container:
+The deployed lab service lives outside the Talos repository. In the current lab,
+agents reach it through the internal Docker service name:
 
 ```text
 http://talos-lab-api:8080
 ```
 
+OpenClaw does not need direct access to the service's host directory or network
+controller credentials.
+
 The API owns:
 
-- UniFi credentials.
-- The fixed Weathertop port mapping.
+- Network-controller credentials.
+- The fixed PoE switch/port mapping.
 - Power-cycle actions.
 - TFTP boot archive publishing.
 - One-archive rollback.
 - Serial console access through the attached USB UART cable.
 
-OpenClaw should not call UniFi directly and should not ask for UniFi keys.
+OpenClaw should not call the network controller directly and should not ask for
+controller keys.
 
 ## Target Facts
 
 ```text
-strider:   10.42.1.3
 talos-pi5: 10.42.1.4
-talos DNS: talos.memerson.net
 pi5 MAC:   88:a2:9e:ae:c8:7f
-gateway:   Weathertop / UDM Pro SE / 10.42.1.1
-PoE port:  Weathertop port 8
-site ID:   88f7af54-98f8-306a-a1c7-c9349722b1f6
-device ID: 99dd2845-8d30-3258-b27f-43295483fa7d
+prefix:    da591740
+serial:    115200 baud
 ```
 
-Power control is intentionally fixed-port. `POST /power/cycle` always sends UniFi `POWER_CYCLE` to Weathertop port 8 using the configured switch ID and port index. It does not depend on a live UniFi client record for `10.42.1.4`, because failed kernel or bootloader states may leave Talos absent from UniFi's client list exactly when a power cycle is needed.
+Power control is intentionally fixed-port. `POST /power/cycle` always sends the
+configured controller action to the configured PoE switch port. It does not
+depend on a live client record for `10.42.1.4`, because failed kernel or
+bootloader states may leave Talos absent from the client list exactly when a
+power cycle is needed.
 
-The API still checks that the configured UniFi device exposes port 8 and that PoE is enabled on that port. It does not try to discover or choose a port dynamically.
+The API still checks that the configured switch exposes the configured port and
+that PoE is enabled on that port. It does not try to discover or choose a port
+dynamically.
 
 ## API Commands
 
@@ -113,12 +115,13 @@ Power-cycle response shape:
 ```text
 POST /power/cycle
 Response:
-  action, ok, unifi.guard.mode, unifi.guard.switch_name,
-  unifi.guard.switch_id, unifi.guard.port_idx, unifi.guard.poe_state,
-  unifi.response
+  action, ok, controller.guard.mode, controller.guard.port_idx,
+  controller.guard.poe_state, controller.response
 ```
 
-Expected guard mode is `fixed-port`. A 400 from this endpoint means the fixed UniFi device/port/PoE lookup or the UniFi action failed, not that Talos was missing from the client list.
+Expected guard mode is `fixed-port`. A 400 from this endpoint means the fixed
+controller device/port/PoE lookup or the controller action failed, not that
+Talos was missing from the client list.
 
 Boot snapshot endpoint reference:
 
@@ -142,8 +145,8 @@ Response:
 
 Current verified behavior:
 
-- `GET /status` reports guard `fixed-port`, switch `Weathertop`, port `8`, and `poe_state=UP`.
-- `POST /power/cycle` succeeds without consulting the live UniFi client list for `talos-pi5`.
+- `GET /status` reports guard `fixed-port`, a configured port index, and `poe_state=UP`.
+- `POST /power/cycle` succeeds without consulting the live client list for `talos-pi5`.
 - After a successful power cycle, serial may emit Raspberry Pi firmware/RP1 boot messages before any kernel output. Treat firmware output as proof of reboot and serial wiring, not proof that Talos reached entry.
 
 Serial peek, read, write, and observe:
@@ -222,12 +225,11 @@ Read right-to-left:
 f = restart loop
 ```
 
-UniFi DHCP on the `10.42.1.0/24` network is configured with:
+The lab network boot configuration points the Pi at the internal TFTP service:
 
 ```text
-Network Boot server:   10.42.1.3
 Network Boot filename: config.txt
-TFTP Server:           10.42.1.3
+TFTP Server:           internal lab TFTP host
 ```
 
 Strider firewalld allows UDP/69 only from the Pi:
@@ -582,8 +584,8 @@ The observed output should show the next console state, such as `Password:` or `
 No TFTP log entries during reboot:
 
 - Check Pi EEPROM `BOOT_ORDER`.
-- Check UniFi Network Boot and TFTP Server fields.
-- Check Strider firewalld UDP/69 allow from `10.42.1.4`.
+- Check network-controller boot-server and TFTP-server fields.
+- Check host firewall UDP/69 allow rules for `10.42.1.4`.
 
 TFTP requests happen but the Pi falls back to SD boot partition:
 
