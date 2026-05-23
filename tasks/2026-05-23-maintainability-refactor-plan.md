@@ -1,0 +1,181 @@
+# 2026-05-23 Maintainability Refactor Plan
+
+## Audit Summary
+
+This audit was triggered before more Phase 3 feature work because the current
+Talos source layout is carrying too much implementation history in a few files.
+No kernel code changed in this task.
+
+Pre-audit git status --short showed an existing README.md modification that is
+outside this task and was left untouched.
+
+Largest Rust files at audit time:
+
+| File | Bytes | Lines | Current responsibility mix |
+| --- | ---: | ---: | --- |
+| src/main.rs | 114127 | 2758 | Entry flow, normal Pi 5 boot orchestration, report formatting, hardware diagnostics, panic/allocation handlers, and FDT tests. |
+| src/memory_map.rs | 51807 | 1590 | Memory-bank policy, page-frame seed/reservation/ownership, translation-table layout/population/register planning, descriptor helpers, and tests. |
+| src/target/rpi5.rs | 41945 | 1252 | Pi 5 target services, UART/MMIO constants, early phase output, firmware console, and many hardware diagnostics. |
+| src/device_tree.rs | 28120 | 795 | FDT public data types, unsafe raw cursor parsing, /chosen, reservation block, /memory, and /reserved-memory interpretation. |
+| src/arch/aarch64/exceptions.rs | 10036 | 315 | Exception entry/reporting. |
+| src/allocator.rs | 9429 | 300 | Bootstrap bump allocator. |
+| src/arch/aarch64/mod.rs | 6763 | 243 | AArch64 MMU/cache/register helpers and test exit. |
+
+## Hotspots
+
+src/main.rs is the first cleanup target. kernel_main currently contains the
+normal Pi 5 boot sequence and the memory/MMU/cache/allocator progression inside
+a long nested Option chain. The deepest section around memory selection,
+page-frame seed, bootstrap reservation, translation-table layout/population,
+MMU enable, instruction-cache enable, data-cache enable, allocator init, and
+post-allocator reports spans hundreds of lines and repeatedly embeds:
+
+- cfg exclusions for talos_rpi5_vec_growth_diagnostic,
+  talos_rpi5_string_growth_diagnostic, and talos_rpi5_alloc_format_diagnostic.
+- diagnostic escapes such as talos_rpi5_translation_fault_diagnostic.
+- immediate report writes mixed with state transitions.
+- allocator smoke and diagnostic dispatch mixed into the accepted normal boot path.
+
+The same file also holds many Pi 5-only report writer helpers (write_rpi5_*)
+and diagnostic implementations from roughly the post-boot-report section
+onward. That makes the entry flow hard to review because behavior,
+presentation, and temporary hardware probes share one module.
+
+src/target/rpi5.rs has a similar split problem. The stable target surface
+(services, MMIO ranges, firmware console, UART constants) is adjacent to long
+early-phase and diagnostic routines. The char-by-char early phase output is
+legitimate early-boot code, but its current placement makes the target module
+look like a diagnostic archive rather than a board support boundary.
+
+src/memory_map.rs should become several memory modules. The current file mixes
+four responsibilities: choosing a conservative usable low-memory span, naming
+page-frame ownership partitions, constructing early translation-table metadata,
+and populating raw AArch64 descriptors. These are related, but they now have
+different review and test surfaces.
+
+src/device_tree.rs should split raw FDT walking from Talos-specific memory
+interpretation. Header/block validation, structure-token walking, and cell
+decoding are lower-level parser concerns; /memory, reservation-block,
+/reserved-memory, and /chosen outputs are policy-facing data extraction.
+
+The scripts/ directory contains many one-off Pi 5 diagnostic image/tree
+wrappers. They are useful evidence tools, but future refactors should avoid
+adding more wrappers that duplicate environment setup or image staging logic.
+
+## Ordered Refactor Tasks
+
+1. phase3-main-entry-diagnostics-refactor-20260523
+
+   Primary write scope: src/main.rs, new entry/report/diagnostic modules, and
+   only the diagnostic scripts that must follow moved cfg names.
+
+   Proposed module layout:
+
+   - src/boot/entry.rs or src/runtime_boot.rs: short kernel_main driver and
+     named boot-step functions.
+   - src/boot/rpi5_reports.rs: normal Pi 5 boot report formatting helpers.
+   - src/diagnostics/rpi5_alloc.rs: alloc, realloc, Vec, String, and
+     alloc-format diagnostics.
+   - src/diagnostics/rpi5_boot.rs: reset, println, format, translation-fault,
+     and panic/exception diagnostic entry points.
+
+   Code-quality targets:
+
+   - shrink src/main.rs substantially, with a target below 900 lines after the
+     first refactor;
+   - make kernel_main read as an ordered boot pipeline rather than a deeply
+     nested if-let tree;
+   - move diagnostic dispatch behind named cfg-gated functions;
+   - keep accepted normal boot log order unchanged.
+
+2. phase3-memory-fdt-module-refactor-20260523
+
+   Primary write scope: src/memory_map.rs, src/device_tree.rs, and new
+   src/memory_map/ and src/device_tree/ module files. This task should not edit
+   the entry/diagnostic modules except for import/call-site fallout.
+
+   Proposed memory layout:
+
+   - src/memory_map/mod.rs: public re-exports and high-level contract.
+   - src/memory_map/layout.rs: kernel/FDT range inputs and low-tail candidate
+     selection.
+   - src/memory_map/page_frames.rs: seed, bootstrap reservation, ownership
+     contract, and allocator-owned span metadata.
+   - src/memory_map/translation.rs: table layout, population counts, raw
+     descriptor helpers, and register/cache plans.
+
+   Proposed FDT layout:
+
+   - src/device_tree/mod.rs: public DeviceTree facade and re-exports.
+   - src/device_tree/raw.rs: FDT header, block validation, cursor, token
+     walking, alignment, and big-endian cell helpers.
+   - src/device_tree/memory.rs: reservation block, /memory, and
+     /reserved-memory interpretation.
+   - src/device_tree/chosen.rs: /chosen properties such as bootargs.
+
+   Code-quality targets:
+
+   - keep each new memory/FDT module under roughly 700 lines unless tests justify
+     the size;
+   - keep public type names stable unless a rename removes real ambiguity;
+   - add focused boundary tests for parser/policy splits exposed by the move;
+   - preserve accepted ownership values and normal boot output.
+
+3. phase3-maintainability-review-checkpoint-20260523
+
+   Primary write scope: task records, supervisor state, and docs only unless the
+   review finds a small cleanup that must happen before feature work resumes.
+
+   Review targets:
+
+   - record the largest Rust files after refactor;
+   - confirm src/main.rs is no longer the catch-all orchestration module;
+   - confirm Pi 5 diagnostics are cfg-gated outside the normal boot flow;
+   - confirm memory/FDT responsibilities are visible from module paths;
+   - either insert one more bounded cleanup task or mark the next Phase 3
+     feature task ready.
+
+## Behavior-Preservation Risks
+
+The riskiest refactor is the entry/diagnostic split because moving code around
+kernel_main can accidentally reorder accepted serial lines or change which
+cfg-gated diagnostic path suppresses normal reports. The refactor must preserve
+the accepted post-data-cache/allocator/String/translation-table/page-frame/DTB
+report order and must not remove any accepted diagnostic capability without a
+replacement path.
+
+The memory/FDT split is lower boot-output risk but higher semantic risk. Moving
+raw FDT parsing helpers away from memory policy must not change reservation
+counting, truncation behavior, low-tail candidate selection, page-frame
+ownership partitions, table slots, descriptor counts, or register plans.
+
+## Validation Gates
+
+For no-behavior-change Rust refactors:
+
+- git status --short before and after;
+- cargo fmt --all -- --check;
+- cargo -Zjson-target-spec test;
+- scripts/qemu-smoke.sh;
+- scripts/rpi5-image.sh;
+- scripts/rpi5-format-guard-check.sh;
+- git diff --check;
+- mdbook build if available when docs are touched.
+
+Serialized Pi 5 hardware evidence is required only if a refactor changes normal
+Pi 5 boot output, accepted line order, diagnostic image behavior that is being
+accepted, or hardware-facing register/MMU/cache behavior. Pure module moves with
+unchanged output should record a no-normal-boot-output-change rationale instead
+of consuming the hardware lock.
+
+## Audit Validation
+
+- git status --short before audit changes: README.md was already modified and
+  was not touched by this task.
+- git status --short after audit changes: README.md remained modified outside
+  this task, and this task added tasks/2026-05-23-maintainability-refactor-plan.md.
+- git diff --check passed.
+- mdbook build was not run because mdbook is unavailable in the container.
+- Rust formatting and tests were not required for this audit because no Rust
+  files changed.
+- Hardware validation was not required because no boot behavior changed.
