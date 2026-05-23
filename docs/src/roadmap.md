@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Planning, lab setup, and the first Rust no_std skeleton are in progress.
+Talos has moved past first-light into Pi 5 memory-management and runtime bring-up.
 
 Completed:
 
@@ -27,19 +27,40 @@ Completed:
   interrupt-controller kind, MMIO map, and device tree pointer.
 - Pi 5 kernel image and boot-tree staging scripts added for local archive
   preparation.
+- Physical Pi 5 first-light reached Talos code.
+- Readable Talos-origin serial output is available through the lab controller.
+- Exception and panic diagnostics report useful AArch64 state.
+- The Pi 5 boot path parses firmware handoff state and DTB memory metadata.
+- Early EL2 stage-1 translation, instruction cache, and data cache have booted
+  on hardware while preserving serial output.
+- A no-free bootstrap allocator and narrow Rust alloc-crate diagnostics for
+  Box, Vec, String, and alloc-backed formatting have hardware evidence.
 
 Blocked or pending:
 
-- Physical serial cable installation. Until serial is configured, Talos cannot complete autonomous boot-result classification.
-- Physical Pi 5 first-light implementation is pending serial/lab feedback.
-- Pi 5 service descriptors are build-checked stubs until serial hardware
-  evidence confirms the real firmware handoff and UART path.
+- Phase 3 is not complete: Talos still needs free/reuse-capable allocation,
+  page-frame ownership, heap expansion policy, high-memory policy, DMA/cache
+  ownership, lower-EL mappings, and userspace mappings.
+- The roadmap order below now prioritizes a local Unix-like OS before network
+  shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
+  filesystem, and syscall mechanisms rather than define them.
 
 ## Roadmap Principles
 
 - Use Rust for kernel code, with small AArch64 assembly stubs where the hardware requires it.
 - Use established Rust kernel development practices where they fit: pinned nightly toolchain, explicit custom targets, no_std, build-std, small unsafe boundaries, narrow target abstractions, and QEMU-backed smoke tests for generic architecture work.
 - Keep POSIX direction visible from the start: processes, file descriptors, pipes, paths, sockets, exit/wait, and exec-style program loading should shape interfaces even before compatibility is complete.
+- Prefer local OS capability before remote access: serial/local TTY, stdio,
+  user processes, ramfs/initramfs, VFS, libc, and a local shell come before
+  Ethernet and SSH on the critical path.
+- Reuse proven libraries where they shorten the path without hiding kernel
+  responsibilities. smoltcp is preferred for TCP/IP evaluation over
+  hand-rolling TCP; Rust uutils is preferred for core utilities once the Rust
+  userspace target is viable.
+- Treat self-hosting as a long-term north star, not a committed roadmap phase.
+  Native compilers such as GCC, LLVM, or rustc require a mature userspace,
+  filesystem, process model, libc/Rust std target, linker, storage, memory
+  reclamation, and developer tooling.
 - Treat Pi 5 hardware facts as evidence, not assumptions. Device tree, Linux drivers, Raspberry Pi firmware docs, Circle/RPi bare-metal examples, serial logs, and lab results should be cited in task notes.
 - Keep board-specific code behind clear target boundaries. The QEMU virt target and Pi 5 target should share architecture code where possible, but not pretend to have the same devices.
 - Prefer small, inspectable milestones with a boot/test gate over broad subsystem rewrites.
@@ -247,42 +268,51 @@ Acceptance criteria:
 - Multiple kernel threads make progress under preemption.
 - A diagnostic shows task state and context-switch counts.
 
-## Phase 5: RP1, PCIe, DMA, and Hardware Substrate
+## Phase 5: Local Console, TTY, and Kernel Diagnostics
 
-Goal: understand the Pi 5 I/O substrate before relying on RP1 devices for networking, GPIO, storage, or shell access.
+Goal: make Talos locally operable over serial before adding network access.
 
-Milestone 5.1: RP1 and PCIe Mapping
+Milestone 5.1: Console Device Model
 
-- Determine whether firmware leaves RP1 configured and usable for early bare-metal access.
-- Map the BCM2712 PCIe2 window, RP1 BAR/peripheral ranges, and address translations from device tree.
-- Decide how much PCIe enumeration Talos needs for built-in RP1 versus external PCIe devices.
-
-Acceptance criteria:
-
-- A hardware note documents CPU physical addresses for initial RP1 access.
-- A diagnostic can read a stable RP1 register or otherwise prove RP1 mapping assumptions.
-- Known limitations around firmware-initialized state are recorded.
-
-Milestone 5.2: RP1 Interrupts, Clocks, and GPIO
-
-- Trace RP1 interrupt delivery into the BCM2712/GIC path.
-- Identify clock/reset dependencies needed before Talos-owned RP1 drivers.
-- Add a narrow GPIO or status-LED diagnostic only after mapping and interrupt assumptions are understood.
+- Split early boot logging from a runtime console device.
+- Preserve the proven firmware-preserved UART path while defining the ownership
+  boundary for later Talos-owned serial drivers.
+- Route console reads and writes through interfaces that can become file
+  descriptors and TTY devices.
 
 Acceptance criteria:
 
-- RP1 interrupt routing is documented with source references.
-- A minimal RP1 diagnostic works or the blocker is captured with serial evidence.
+- Kernel diagnostics can write through a runtime console abstraction.
+- The early boot logger and runtime console ownership rules are documented.
+- Console paths do not depend on ad hoc shell-only code.
 
-Milestone 5.3: DMA, IOMMU, and Cache Maintenance
+Milestone 5.2: TTY and Stdio Shape
 
-- Determine RP1 DMA addressability, dma-ranges, IOMMU behavior, and cache-coherency requirements.
-- Define kernel APIs for cache clean/invalidate and DMA-safe buffers before Ethernet or block drivers use DMA.
+- Define the first TTY line discipline: raw/canonical input policy, newline
+  handling, backspace, echo, and control-character behavior.
+- Model stdin, stdout, and stderr as descriptor-capable streams even before
+  full userspace exists.
+- Keep the design compatible with later PTY/SSH sessions.
 
 Acceptance criteria:
 
-- DMA buffer ownership and cache-maintenance rules are documented.
-- A small DMA or driver-adjacent diagnostic exists before networking depends on DMA.
+- A local serial TTY diagnostic can accept input and echo/process lines.
+- Stdio streams can be represented by the same descriptor model planned for
+  user processes.
+- TTY behavior and known POSIX gaps are documented.
+
+Milestone 5.3: Local Kernel Diagnostic Command Channel
+
+- Add a constrained local diagnostic command channel over the serial TTY.
+- Keep commands clearly kernel-owned until EL0 programs and a real shell exist.
+- Prefer diagnostics that exercise scheduler, memory, filesystem, and process
+  state without becoming permanent shell architecture.
+
+Acceptance criteria:
+
+- A user at the serial console can run bounded kernel diagnostic commands.
+- Diagnostic commands are separated from the later user shell design.
+- The command channel remains usable while scheduler/timer work is active.
 
 ## Phase 6: SMP and Multi-Core Scheduling
 
@@ -400,11 +430,156 @@ Acceptance criteria:
 
 - A separate user program can be launched and waited on.
 
-## Phase 9: Networking and Remote Shell
+## Phase 9: Libc, Rust Std, and Portable Userland
+
+Goal: make existing user programs portable to Talos instead of hand-writing a
+complete command suite.
+
+Milestone 9.1: Libc Strategy
+
+- Define the Talos userspace ABI: startup, crt objects, errno, environment,
+  arguments, TLS expectations, allocator hooks, and syscall wrappers.
+- Evaluate a small libc path first: Talos-native libc shim, relibc, newlib, or
+  musl when the syscall surface is mature enough.
+- Treat glibc as a later compatibility target, not the first libc goal. It
+  assumes a broad Linux-like environment and is too heavy for the first
+  userspace porting layer.
+
+Acceptance criteria:
+
+- An ADR chooses the first libc strategy and records why glibc is deferred or
+  rejected for the initial port.
+- Simple C programs can call libc wrappers for write, read, open, close, exit,
+  malloc/free, and basic path operations.
+- Host-side and QEMU tests cover syscall-wrapper error behavior.
+
+Milestone 9.2: Rust Userspace Target and Std Subset
+
+- Define a Talos Rust userspace target distinct from the kernel target.
+- Bring up enough Rust runtime support for no_std user programs first, then a
+  constrained std subset when libc, allocation, filesystem, time, and descriptor
+  behavior are ready.
+- Keep proc-macros, build scripts, dynamic loading, and native compilation out
+  of scope for this milestone.
+
+Acceptance criteria:
+
+- A cross-compiled Rust user program runs on Talos and uses arguments, stdio,
+  heap allocation, and file reads.
+- The supported and unsupported Rust std APIs are documented.
+- Cargo target configuration for Talos userspace exists.
+
+Milestone 9.3: Core Utilities Port
+
+- Prefer Rust uutils/coreutils once the Rust userspace target is viable.
+- Keep toybox, busybox, or GNU coreutils as fallback/reference ports if they
+  expose missing POSIX semantics more clearly.
+- Start with a small command set: cat, echo, true, false, ls, pwd, cp, mv, rm,
+  mkdir, and sh-compatible process launching where practical.
+
+Acceptance criteria:
+
+- A cross-compiled utility suite can be packaged into initramfs/ramfs.
+- Basic utilities run as separate user programs through the normal process,
+  descriptor, and filesystem paths.
+- Porting gaps become tracked syscall/libc/VFS tasks instead of local hacks.
+
+## Phase 10: Local Shell and Developer UX
+
+Goal: make Talos useful from a local console before depending on Ethernet.
+
+Milestone 10.1: Local Shell
+
+- Implement or port a small shell that runs as a user program.
+- Use the normal process, descriptor, TTY, filesystem, and program-loader
+  mechanisms.
+- Support built-ins only where they reflect normal shell behavior, not kernel
+  shortcuts.
+
+Acceptance criteria:
+
+- A user can interact through the serial TTY, run commands, inspect files, and
+  launch separate user programs.
+- Shell I/O uses stdin/stdout/stderr descriptors.
+- Shell limitations and POSIX gaps are documented.
+
+Milestone 10.2: Pipelines and Process Control
+
+- Add pipes, redirection, exit status, wait, and basic job/process accounting.
+- Keep signals minimal at first but avoid designs that make POSIX signals
+  impossible later.
+
+Acceptance criteria:
+
+- The shell can run simple pipelines and report exit statuses.
+- Multiple user programs can make progress while the shell remains responsive.
+- Descriptor inheritance and close-on-exec behavior are tested.
+
+Milestone 10.3: Persistent or Larger Local Storage
+
+- Evaluate SD, USB mass storage, generated image roots, and TFTP-loaded
+  initramfs expansion for a practical development filesystem.
+- Add a persistent filesystem path only after VFS and block/storage ownership
+  rules are clear.
+
+Acceptance criteria:
+
+- Talos can load a nontrivial userland image without rebuilding the kernel for
+  every user program change.
+- Documentation explains the chosen local storage path and remaining risks.
+
+## Phase 11: RP1, PCIe, DMA, and Hardware Substrate
+
+Goal: understand the Pi 5 I/O substrate before relying on RP1 devices for
+networking, GPIO, storage, or broader hardware support.
+
+Milestone 11.1: RP1 and PCIe Mapping
+
+- Determine whether firmware leaves RP1 configured and usable for early
+  bare-metal access.
+- Map the BCM2712 PCIe2 window, RP1 BAR/peripheral ranges, and address
+  translations from device tree.
+- Decide how much PCIe enumeration Talos needs for built-in RP1 versus external
+  PCIe devices.
+
+Acceptance criteria:
+
+- A hardware note documents CPU physical addresses for initial RP1 access.
+- A diagnostic can read a stable RP1 register or otherwise prove RP1 mapping
+  assumptions.
+- Known limitations around firmware-initialized state are recorded.
+
+Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
+
+- Trace RP1 interrupt delivery into the BCM2712/GIC path.
+- Identify clock/reset dependencies needed before Talos-owned RP1 drivers.
+- Add a narrow GPIO or status-LED diagnostic only after mapping and interrupt
+  assumptions are understood.
+
+Acceptance criteria:
+
+- RP1 interrupt routing is documented with source references.
+- A minimal RP1 diagnostic works or the blocker is captured with serial
+  evidence.
+
+Milestone 11.3: DMA, IOMMU, and Cache Maintenance
+
+- Determine RP1 DMA addressability, dma-ranges, IOMMU behavior, and
+  cache-coherency requirements.
+- Define kernel APIs for cache clean/invalidate and DMA-safe buffers before
+  Ethernet or block drivers use DMA.
+
+Acceptance criteria:
+
+- DMA buffer ownership and cache-maintenance rules are documented.
+- A small DMA or driver-adjacent diagnostic exists before networking depends on
+  DMA.
+
+## Phase 12: Networking and SSH Development Access
 
 Goal: reach Talos over the network and make the system usable without serial.
 
-Milestone 9.1: RP1 Ethernet Research Spike
+Milestone 12.1: RP1 Ethernet Research Spike
 
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
@@ -415,7 +590,7 @@ Acceptance criteria:
 - A design note or ADR records the chosen Ethernet path.
 - Unknown hardware behavior has diagnostic tasks.
 
-Milestone 9.2: Network Device Abstraction
+Milestone 12.2: Network Device Abstraction
 
 - Reuse the Daedalus idea of a small NetworkDevice trait, but revise it for Talos needs.
 - Keep packet parsing and protocol logic testable without hardware.
@@ -425,9 +600,10 @@ Acceptance criteria:
 - Ethernet, ARP, and IP parsing tests run in QEMU or host-side unit tests.
 - Driver-specific code is isolated from protocol code.
 
-Milestone 9.3: IP Stack
+Milestone 12.3: IP Stack
 
-- Evaluate smoltcp for no_std TCP/IP rather than hand-rolling TCP.
+- Prefer smoltcp for no_std TCP/IP evaluation rather than hand-rolling TCP
+  unless a concrete Talos constraint rules it out.
 - Implement packet buffers, ARP, IPv4, ICMP, UDP/TCP, and socket integration.
 
 Acceptance criteria:
@@ -435,22 +611,25 @@ Acceptance criteria:
 - Talos responds to ping on the lab network.
 - Talos can establish a TCP connection or accept one through a test service.
 
-Milestone 9.4: Non-SSH Remote Shell Gate
+Milestone 12.4: Socket Integration
 
-- Build a constrained TCP shell or debug command channel before SSH.
-- Exercise blocking socket semantics, descriptor integration, process interaction, and shell I/O without crypto complexity.
-- Treat this as an intermediate gate, not the final remote-access goal.
+- Integrate sockets with the existing descriptor table, scheduler, blocking I/O,
+  poll/wakeup model, and process lifetime rules.
+- Add network diagnostics as user programs where possible, not kernel-only
+  command paths.
 
 Acceptance criteria:
 
-- A remote TCP client can run diagnostic shell commands.
-- Multiple tasks continue making progress while a shell session is active.
-- The limitations versus SSH are documented.
+- User programs can open sockets through the normal syscall/libc path.
+- A network diagnostic program can accept or initiate a TCP connection.
+- Blocking network I/O does not stall unrelated tasks.
 
-Milestone 9.5: Entropy, Crypto, and SSH Feasibility
+Milestone 12.5: Entropy, Crypto, and SSH Strategy
 
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
-- Evaluate no_std-compatible crypto and SSH crates, or document why a custom subset is required.
+- Evaluate porting an existing SSH server before writing one. OpenSSH is the
+  compatibility target, but a smaller Rust SSH server may be a better first
+  user-space port if it fits Talos libc/std and crypto constraints sooner.
 - Define host key provisioning, authorized key storage, authentication policy, time requirements, heap-pressure expectations, and failure modes.
 
 Acceptance criteria:
@@ -458,31 +637,39 @@ Acceptance criteria:
 - ADR records the SSH implementation strategy.
 - Entropy and key-management diagnostics exist before accepting SSH connections.
 
-Milestone 9.6: SSH and Shell
+Milestone 12.6: SSH and Shell
 
-- Implement the chosen SSH path and connect it to the shell and descriptor model.
+- Implement or port the chosen SSH server and connect it to the existing local
+  shell, PTY/TTY, descriptor, process, and filesystem model.
+- Use SSH as the preferred path for user-space development and testing once it
+  is reliable. Kernel changes may still use TFTP and lab power control, but
+  user programs should not require serial-only workflows.
 
 Acceptance criteria:
 
 - User can connect remotely and run a shell.
 - Multiple programs or commands can make progress concurrently.
+- User-space programs can be copied, launched, and tested over SSH without using
+  serial as the primary interaction channel.
 
-## Phase 10: Toward a Useful Unix-Like System
+## Phase 13: Toward a Useful Unix-Like System
 
-Goal: grow from remote shell to a practical small OS.
+Goal: grow from a local and remote shell into a practical small OS.
 
 Milestones:
 
-- Pipes and shell pipelines.
 - Process spawning and wait/exit status.
-- Persistent filesystem path, likely after evaluating SD, USB mass storage, NFS root, or generated image roots.
-- Basic command-line programs.
 - Permissions and user model sufficient for local experimentation.
 - More complete POSIX compatibility review.
+- Package/update workflow for user-space programs.
+- Broader utility and service ports.
+- Native build tools may be explored incrementally, but self-hosting GCC, LLVM,
+  or rustc remains a north-star objective outside the committed roadmap.
 
 Acceptance criteria:
 
-- The shell can run separate programs, pipe output, inspect files, and operate over SSH.
+- The shell can run separate programs, pipe output, inspect files, and operate
+  locally or over SSH.
 - Documentation explains how each major subsystem works and what POSIX gaps remain.
 
 ## Rolling Documentation Requirements
