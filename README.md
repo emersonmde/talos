@@ -1,112 +1,119 @@
 # Talos
 
-Talos is an experimental Rust bare-metal operating system project for AArch64.
-The first physical target is a Raspberry Pi 5; the fast local validation target
-is QEMU `virt`.
+Talos is a small Rust bare-metal operating system project for AArch64. The
+first real board target is Raspberry Pi 5. QEMU `virt` is used for fast local
+validation of architecture-independent work.
 
-This repository is also an experiment in asynchronous agentic kernel
-development. Most work is planned, implemented, reviewed, and validated by
-OpenClaw agents operating against a real lab controller. Human review still
-sets direction and decides what is worth keeping.
+The project has two goals:
 
-Talos is not production software. It is a research and learning project for
-kernel architecture, Raspberry Pi 5 bring-up, early serial output, exception
-handling, memory discovery, paging, and eventually small Unix/POSIX-like
-abstractions.
+- Build an understandable kernel that can grow toward Unix-like abstractions:
+  processes, file descriptors, pipes, filesystems, sockets, a shell, and basic
+  command-line programs.
+- Test whether a real hardware lab plus asynchronous agent work can move a
+  kernel project forward without losing engineering discipline.
 
-## Current Status
+This is not a production OS, a Linux replacement, or a stable platform. It is an
+early kernel and lab workflow with a strong bias toward small steps, evidence,
+and documentation that stays close to the code.
+
+## Status
 
 Talos currently has:
 
 - A `no_std` Rust AArch64 kernel skeleton.
-- QEMU `virt` boot/smoke support.
-- Raspberry Pi 5 image and TFTP boot-tree staging scripts.
-- Early PL011/RP1 UART paths for first-light diagnostics.
-- AArch64 exception-vector plumbing and early panic reporting.
-- Early firmware device-tree parsing for boot arguments, memory banks, and
+- Custom target definitions for QEMU `virt` and Raspberry Pi 5.
+- QEMU boot and smoke-test support.
+- Raspberry Pi 5 image and boot-tree staging scripts.
+- Early PL011/RP1 UART output paths.
+- AArch64 exception-vector setup and early panic reporting.
+- Bounded firmware device-tree parsing for boot arguments, memory banks, and
   reserved ranges.
 - Early low-memory bootstrap allocation and initial EL2 translation-table work.
 
-The project is still before userspace, scheduling, filesystems, networking, or a
-stable public API.
+Talos does not yet have userspace, scheduling, filesystems, networking, storage
+drivers, or a stable syscall interface.
 
-## Agentic Workflow
+## Development Model
 
-The Talos workflow is intentionally asynchronous:
+Talos is developed with a mix of human review and OpenClaw agents. The agents
+are useful for long-running implementation and hardware loops, but their output
+is treated as evidence, not authority.
 
-- A supervisor agent keeps the roadmap, task records, acceptance criteria, and
-  publishability constraints aligned.
-- Worker agents take bounded tasks such as one hardware diagnostic, one memory
-  milestone, or one documentation update.
-- The lab controller gives agents a narrow control surface for Raspberry Pi 5
-  boot testing: publish a TFTP boot archive, power-cycle the board, read serial
-  output, inspect TFTP request logs, and roll back.
-- Task notes record what was attempted, what passed locally, what hardware
-  evidence was observed, and what remains ambiguous.
+The working pattern is:
 
-The goal is not to pretend the agents are always right. The goal is to make each
-increment small enough that a human or later agent can audit the evidence and
-continue from a known state.
+1. Define a narrow task with acceptance criteria.
+2. Implement a small change.
+3. Run local gates such as format, tests, QEMU smoke, and docs.
+4. For Pi 5 work, stage a boot archive and review it before publishing.
+5. Use Talos Lab to publish, power-cycle, capture serial/TFTP evidence, and
+   roll back when needed.
+6. Record the result in task notes, architecture docs, or ADRs before calling
+   the work done.
+
+The supervisor role keeps roadmap, task records, and acceptance criteria
+aligned. Worker agents take bounded implementation or diagnostic tasks. The
+project lead still owns integration and final direction.
 
 ## Talos Lab
 
-Talos Lab is a private lab-control service used by OpenClaw. It may become a
-separate GitHub project later. In this repository it is documented only as the
-development interface that makes Pi 5 testing repeatable.
+Talos Lab is a private lab-control service used for physical Raspberry Pi 5
+testing. It is intentionally separate from this kernel repository. Its job is to
+provide a narrow API for:
 
-The lab keeps secrets and authority out of the kernel repo:
+- Publishing a reviewed TFTP boot archive.
+- Power-cycling the board.
+- Reading serial output.
+- Inspecting TFTP request logs.
+- Rolling back to a known-good boot tree.
 
-- Controller credentials stay in the lab service configuration.
-- Agents use an internal HTTP API rather than direct controller access.
-- Boot archives are bounded and reviewed before publish.
-- Rollback is part of every hardware loop.
-- Serial and TFTP logs are collected as evidence rather than treated as magic.
+The important idea is the boundary: agents do not need broad host access,
+controller credentials, or direct hardware ownership to run a hardware test.
+Deployment-specific network and switch details belong in private lab
+configuration, not in the README.
 
-The current physical target facts that are useful for reproducing the lab shape
-are intentionally narrow:
+See `docs/src/project/lab-controller.md` for the internal contract.
 
-```text
-talos-pi5 IP:  10.42.1.4
-talos-pi5 MAC: 88:a2:9e:ae:c8:7f
-serial prefix: da591740
-serial baud:   115200
-```
+## Build And Test
 
-Deployment-specific switch names, controller IDs, credentials, and private host
-paths should stay out of commits.
+Talos uses the pinned nightly toolchain in `rust-toolchain.toml`. The Cargo
+configuration builds `core`, `alloc`, and `compiler_builtins` for custom
+targets.
 
-See `docs/src/project/lab-controller.md` for the internal API contract and the
-expected agent loop.
-
-## Build And Run
-
-Use the pinned nightly toolchain from `rust-toolchain.toml`. The Cargo config
-builds `core`, `alloc`, and `compiler_builtins` for custom targets.
+Run the normal local checks:
 
 ```bash
-cargo -Zjson-target-spec build
-./scripts/qemu-smoke.sh
+cargo fmt --check
 cargo -Zjson-target-spec test
+./scripts/qemu-smoke.sh
+mdbook build
+git diff --check
 ```
 
-The smoke script boots QEMU `virt` with a Cortex-A76 CPU and expects:
+The QEMU smoke test expects this line:
 
 ```text
 talos: qemu smoke PASS
 ```
 
-Useful explicit forms:
+Build the default QEMU target:
 
 ```bash
-cargo +nightly-2026-05-20 -Zjson-target-spec -Zbuild-std=core,compiler_builtins,alloc -Zbuild-std-features=compiler-builtins-mem build --target targets/aarch64-talos-virt.json
-cargo -Zjson-target-spec run
+cargo -Zjson-target-spec build
 ```
 
-The linker map is emitted at `target/talos-aarch64-virt.map`.
+Build an explicit target:
 
-## Raspberry Pi 5 Boot Artifacts
+```bash
+cargo +nightly-2026-05-20 \
+  -Zjson-target-spec \
+  -Zbuild-std=core,compiler_builtins,alloc \
+  -Zbuild-std-features=compiler-builtins-mem \
+  build --target targets/aarch64-talos-virt.json
+```
 
-Build and review a Pi 5 boot archive with:
+## Raspberry Pi 5 Artifacts
+
+Build and review a Pi 5 boot archive:
 
 ```bash
 ./scripts/rpi5-image.sh
@@ -115,41 +122,26 @@ tar -C target/rpi5-boot-tree -czf target/talos-rpi5-boot.tar.gz .
 ./scripts/rpi5-archive-review.sh target/talos-rpi5-boot.tar.gz
 ```
 
-Publishing and power cycling are deliberately separate lab actions. The staging
-scripts should not imply hardware success; task notes should record the actual
-serial and TFTP evidence.
+These scripts prepare artifacts. They do not prove hardware success. Hardware
+claims need serial output, TFTP evidence, and a task note that describes what
+was observed.
 
 ## Documentation
 
-Project docs live in `docs/src/` and are built with mdBook:
+The project book is built with mdBook from `docs/src/`:
 
 ```bash
 mdbook build
 ```
 
-Useful entry points:
+Useful starting points:
 
 - `docs/src/vision.md`
 - `docs/src/roadmap.md`
 - `docs/src/project/operating-model.md`
 - `docs/src/project/testing-strategy.md`
 - `docs/src/project/lab-controller.md`
-
-## Repository Hygiene
-
-Before committing or pushing:
-
-```bash
-git status --short
-git diff --check
-cargo fmt --check
-cargo -Zjson-target-spec test
-./scripts/qemu-smoke.sh
-mdbook build
-```
-
-Do not commit generated output, boot archives, images, private OpenClaw memory,
-controller credentials, private keys, tokens, or machine-local deployment state.
+- `docs/src/architecture/README.md`
 
 ## License
 
