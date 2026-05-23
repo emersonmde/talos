@@ -47,9 +47,21 @@ span:
 talos: page frames seed: start=0x2f000000 end=0x3fc00000 pages=0x10c00 page_size=0x1000 source=memory-usable
 ```
 
+The normal Pi 5 path intentionally emits this seed twice for now. The first copy
+stays formatter-free before bootstrap reservation and translation-table layout.
+The second copy uses ordinary `println!` after data-cache enablement, bootstrap
+allocator initialization, the bounded String smoke, and the post-allocator
+memory-usable line:
+
+```text
+talos: page frames seed: start=0x2f000000 end=0x3fc00000 pages=0x10c00 page_size=0x1000 source=memory-usable phase=post-allocator
+```
+
 This line means the span is page-aligned and large enough to describe 4 KiB
-frames. It does not mean Talos has initialized a mutable allocator or handed the
-span to a free list.
+frames. It does not mean Talos has initialized a mutable allocator, handed the
+span to a free list, or changed the underlying low-tail candidate. The
+post-allocator `println!` copy is a human-readable report on the accepted
+formatter surface, not a new ownership boundary.
 
 The next bootstrap boundary reserves the first 16 pages, or 64 KiB, from the
 seed for early page-table/bootstrap work and reports the remaining span:

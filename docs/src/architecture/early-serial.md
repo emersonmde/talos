@@ -787,3 +787,26 @@ talos: dtb memory[2]: addr=0x100000000 size=0x100000000
 This extends the normal post-data-cache `println!` surface without changing
 DTB parsing, memory-bank accounting, page-frame reservation policy, or allocator
 ownership.
+
+The normal page-frame seed report is also accepted on the post-allocator
+`println!` surface. Hardware run
+`rpi5-page-frame-seed-callsite-recovery-rerun-20260523T144337Z` used the
+80,541-byte serial-prefixed candidate kernel
+`059d1d879c8d7d5c26bbb02cdfa7b65412c256410b0fa520e9c6549c2fc44824`.
+After a 76,152-byte accepted-control run recovered fresh serial/Talos capture,
+the candidate run TFTP-served `da591740/kernel_2712.img` twice and serial
+captured the normal boot through data-cache enablement, allocator plan/init,
+String smoke, the post-allocator memory-usable line, then the `println!`-backed
+seed line before bootstrap reserve and page-frames-remaining:
+
+```text
+talos: memory usable: bank=0 start=0x2f000000 end=0x3fc00000 size=0x10c00000 align=0x1000 policy=low-tail
+talos: page frames seed: start=0x2f000000 end=0x3fc00000 pages=0x10c00 page_size=0x1000 source=memory-usable phase=post-allocator
+talos: bootstrap reserve: start=0x2f000000 end=0x2f010000 pages=0x10 page_size=0x1000 reason=bootstrap-page-tables
+talos: page frames remaining: start=0x2f010000 end=0x3fc00000 pages=0x10bf0 page_size=0x1000 source=bootstrap-reserve
+```
+
+This keeps the formatter-free pre-data-cache seed diagnostic in place and adds a
+second human-readable copy after the accepted formatter boundary. It does not
+change low-memory selection, reservation layout, allocator ownership, cache/MMU
+programming, or the earlier unaccepted pre-data-cache `println!` boundary.
