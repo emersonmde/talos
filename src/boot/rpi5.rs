@@ -377,7 +377,9 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
                                                             write_rpi5_bootstrap_allocator_init_line(
                                                                 allocator_state,
                                                             );
-                                                            diagnostics::rpi5::run_allocator_diagnostic_or_smoke();
+                                                            diagnostics::rpi5::run_allocator_diagnostic_or_smoke(
+                                                                allocator_plan,
+                                                            );
                                                         } else {
                                                             target::console::write_static(
                                                                 "talos: bootstrap allocator init: unavailable\n",

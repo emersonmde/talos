@@ -1,14 +1,16 @@
 #[allow(unused_imports)]
 use crate::boot::rpi5_reports::write_rpi5_bool;
 #[allow(unused_imports)]
-use crate::{KERNEL_GLOBAL_ALLOCATOR, PANIC_IN_PROGRESS, arch, println, target};
+use crate::{KERNEL_GLOBAL_ALLOCATOR, PANIC_IN_PROGRESS, arch, memory_map, println, target};
 
 #[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_exception_return_diagnostic))]
 unsafe extern "C" {
     fn rpi5_brk_register_preserve_probe(after_x9: *mut u64, after_x19: *mut u64) -> u64;
 }
 
-pub(crate) fn run_allocator_diagnostic_or_smoke() {
+pub(crate) fn run_allocator_diagnostic_or_smoke(
+    _allocator_plan: memory_map::EarlyBootstrapAllocatorPlan,
+) {
     #[cfg(talos_rpi5_alloc_oom_diagnostic)]
     rpi5_alloc_oom_diagnostic();
     #[cfg(all(
@@ -37,12 +39,22 @@ pub(crate) fn run_allocator_diagnostic_or_smoke() {
         talos_rpi5_alloc_format_diagnostic
     ))]
     rpi5_alloc_format_diagnostic();
+    #[cfg(all(
+        not(talos_rpi5_alloc_oom_diagnostic),
+        not(talos_rpi5_realloc_growth_diagnostic),
+        not(talos_rpi5_vec_growth_diagnostic),
+        not(talos_rpi5_string_growth_diagnostic),
+        not(talos_rpi5_alloc_format_diagnostic),
+        talos_rpi5_page_frame_reuse_diagnostic
+    ))]
+    rpi5_page_frame_reuse_diagnostic(_allocator_plan);
     #[cfg(not(any(
         talos_rpi5_alloc_oom_diagnostic,
         talos_rpi5_realloc_growth_diagnostic,
         talos_rpi5_vec_growth_diagnostic,
         talos_rpi5_string_growth_diagnostic,
-        talos_rpi5_alloc_format_diagnostic
+        talos_rpi5_alloc_format_diagnostic,
+        talos_rpi5_page_frame_reuse_diagnostic
     )))]
     rpi5_bootstrap_alloc_smoke();
 }
@@ -563,6 +575,84 @@ fn rpi5_alloc_format_diagnostic() -> ! {
     }
 }
 
+#[cfg(all(
+    not(test),
+    talos_target_rpi5_bcm2712,
+    talos_rpi5_page_frame_reuse_diagnostic
+))]
+fn rpi5_page_frame_reuse_diagnostic(allocator_plan: memory_map::EarlyBootstrapAllocatorPlan) -> ! {
+    let owned = memory_map::EarlyPageFrameSpan {
+        start: allocator_plan.start,
+        end: allocator_plan.end,
+        page_size: allocator_plan.page_size,
+        page_count: allocator_plan.page_count,
+    };
+    let mut metadata = [0u64; 4];
+    let metadata_start = metadata.as_ptr() as u64;
+    let metadata_end = metadata_start + core::mem::size_of_val(&metadata) as u64;
+
+    let mut ok = false;
+    let mut managed = memory_map::EarlyPageFrameSpan {
+        start: 0,
+        end: 0,
+        page_size: memory_map::EARLY_PAGE_SIZE,
+        page_count: 0,
+    };
+    let mut first = 0;
+    let mut second = 0;
+    let mut reused = 0;
+    let mut double_free_rejected = false;
+    let mut out_of_range_rejected = false;
+
+    if let Some(mut allocator) = memory_map::early_page_frame_reuse_allocator(
+        owned,
+        &mut metadata,
+        metadata_start,
+        metadata_end,
+    ) {
+        managed = allocator.state().managed;
+        if let Some(first_frame) = allocator.allocate_frame() {
+            first = first_frame;
+            if let Some(second_frame) = allocator.allocate_frame() {
+                second = second_frame;
+                if allocator.free_frame(first_frame).is_ok() {
+                    reused = allocator.allocate_frame().unwrap_or(0);
+                    if allocator.free_frame(second_frame).is_ok() {
+                        double_free_rejected = matches!(
+                            allocator.free_frame(second_frame),
+                            Err(memory_map::EarlyPageFrameReuseFreeError::DoubleFree)
+                        );
+                    }
+                    out_of_range_rejected = matches!(
+                        allocator.free_frame(owned.end),
+                        Err(memory_map::EarlyPageFrameReuseFreeError::OutOfRange)
+                    );
+                    ok = reused == first_frame && double_free_rejected && out_of_range_rejected;
+                }
+            }
+        }
+    }
+
+    println!(
+        "talos: page frame reuse diagnostic: managed_start={:#x} managed_pages={:#x} metadata_start={:#x} metadata_end={:#x} first={:#x} second={:#x} reused={:#x} double_free_rejected={} out_of_range_rejected={} ok={}",
+        managed.start,
+        managed.page_count,
+        metadata_start,
+        metadata_end,
+        first,
+        second,
+        reused,
+        double_free_rejected,
+        out_of_range_rejected,
+        ok
+    );
+    target::rpi5::wait_uart10_empty_early_phase();
+
+    loop {
+        core::hint::spin_loop();
+    }
+}
+
 #[cfg(all(not(test), talos_target_rpi5_bcm2712))]
 #[cfg_attr(
     any(
@@ -570,7 +660,8 @@ fn rpi5_alloc_format_diagnostic() -> ! {
         talos_rpi5_realloc_growth_diagnostic,
         talos_rpi5_vec_growth_diagnostic,
         talos_rpi5_string_growth_diagnostic,
-        talos_rpi5_alloc_format_diagnostic
+        talos_rpi5_alloc_format_diagnostic,
+        talos_rpi5_page_frame_reuse_diagnostic
     ),
     allow(dead_code)
 )]

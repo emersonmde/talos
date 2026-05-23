@@ -67,6 +67,129 @@ pub struct EarlyPageFrameOwnershipContract {
     pub deferred_kind: &'static str,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[allow(dead_code)]
+pub struct EarlyPageFrameReuseAllocatorState {
+    pub managed: EarlyPageFrameSpan,
+    pub free_count: u64,
+    pub allocated_count: u64,
+    pub metadata_start: u64,
+    pub metadata_end: u64,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[allow(dead_code)]
+pub enum EarlyPageFrameReuseFreeError {
+    Unaligned,
+    OutOfRange,
+    DoubleFree,
+    MetadataFull,
+}
+
+#[derive(Debug)]
+#[allow(dead_code)]
+pub struct EarlyPageFrameReuseAllocator<'a> {
+    managed: EarlyPageFrameSpan,
+    free_frames: &'a mut [u64],
+    free_len: usize,
+    allocated_count: u64,
+    metadata_start: u64,
+    metadata_end: u64,
+}
+
+impl<'a> EarlyPageFrameReuseAllocator<'a> {
+    #[allow(dead_code)]
+    pub fn state(&self) -> EarlyPageFrameReuseAllocatorState {
+        EarlyPageFrameReuseAllocatorState {
+            managed: self.managed,
+            free_count: self.free_len as u64,
+            allocated_count: self.allocated_count,
+            metadata_start: self.metadata_start,
+            metadata_end: self.metadata_end,
+        }
+    }
+
+    #[allow(dead_code)]
+    pub fn allocate_frame(&mut self) -> Option<u64> {
+        if self.free_len == 0 {
+            return None;
+        }
+
+        self.free_len -= 1;
+        self.allocated_count = self.allocated_count.checked_add(1)?;
+        Some(self.free_frames[self.free_len])
+    }
+
+    #[allow(dead_code)]
+    pub fn free_frame(&mut self, frame: u64) -> Result<(), EarlyPageFrameReuseFreeError> {
+        if !is_aligned(frame, self.managed.page_size) {
+            return Err(EarlyPageFrameReuseFreeError::Unaligned);
+        }
+        if frame < self.managed.start || frame >= self.managed.end {
+            return Err(EarlyPageFrameReuseFreeError::OutOfRange);
+        }
+
+        let mut index = 0usize;
+        while index < self.free_len {
+            if self.free_frames[index] == frame {
+                return Err(EarlyPageFrameReuseFreeError::DoubleFree);
+            }
+            index += 1;
+        }
+
+        if self.free_len >= self.free_frames.len() {
+            return Err(EarlyPageFrameReuseFreeError::MetadataFull);
+        }
+
+        self.free_frames[self.free_len] = frame;
+        self.free_len += 1;
+        self.allocated_count = self.allocated_count.saturating_sub(1);
+        Ok(())
+    }
+}
+
+#[allow(dead_code)]
+pub fn early_page_frame_reuse_allocator<'a>(
+    owned: EarlyPageFrameSpan,
+    metadata: &'a mut [u64],
+    metadata_start: u64,
+    metadata_end: u64,
+) -> Option<EarlyPageFrameReuseAllocator<'a>> {
+    if owned.page_size != EARLY_PAGE_SIZE
+        || owned.page_count == 0
+        || owned.start >= owned.end
+        || !is_aligned(owned.start, owned.page_size)
+        || !is_aligned(owned.end, owned.page_size)
+        || metadata.is_empty()
+        || metadata_start >= metadata_end
+        || ranges_intersect(metadata_start, metadata_end, owned.start, owned.end)
+    {
+        return None;
+    }
+
+    let managed_page_count = core::cmp::min(owned.page_count, metadata.len() as u64);
+    let managed_size = managed_page_count.checked_mul(owned.page_size)?;
+    let managed_end = owned.start.checked_add(managed_size)?;
+    let managed = page_frame_span(owned.start, managed_end, owned.page_size)?;
+
+    let mut index = 0usize;
+    while index < managed.page_count as usize {
+        metadata[index] = managed
+            .start
+            .checked_add((index as u64).checked_mul(managed.page_size)?)?;
+        index += 1;
+    }
+
+    Some(EarlyPageFrameReuseAllocator {
+        managed,
+        free_frames: metadata,
+        free_len: managed.page_count as usize,
+        allocated_count: 0,
+        metadata_start,
+        metadata_end,
+    })
+}
+
 pub fn early_page_frame_seed_span(candidate: EarlyUsableMemory) -> Option<EarlyPageFrameSeed> {
     let start = align_up(candidate.start, EARLY_PAGE_SIZE)?;
     let end = align_down(candidate.end, EARLY_PAGE_SIZE);
@@ -585,5 +708,82 @@ mod tests {
             contract.allocator_owned.start,
             contract.allocator_owned.end
         ));
+    }
+
+    #[test_case]
+    fn page_frame_reuse_allocator_allocates_frees_and_reuses_frame() {
+        let owned = EarlyPageFrameSpan {
+            start: 0x2f01_0000,
+            end: 0x2f01_4000,
+            page_size: EARLY_PAGE_SIZE,
+            page_count: 4,
+        };
+        let mut metadata = [0; 4];
+
+        let mut allocator = early_page_frame_reuse_allocator(owned, &mut metadata, 0x8000, 0x8020)
+            .expect("allocator");
+
+        let first = allocator.allocate_frame().expect("first frame");
+        let second = allocator.allocate_frame().expect("second frame");
+
+        assert_eq!(first, 0x2f01_3000);
+        assert_eq!(second, 0x2f01_2000);
+        assert_eq!(allocator.free_frame(first), Ok(()));
+        assert_eq!(allocator.allocate_frame(), Some(first));
+        assert_eq!(
+            allocator.state(),
+            EarlyPageFrameReuseAllocatorState {
+                managed: owned,
+                free_count: 2,
+                allocated_count: 2,
+                metadata_start: 0x8000,
+                metadata_end: 0x8020,
+            }
+        );
+    }
+
+    #[test_case]
+    fn page_frame_reuse_allocator_rejects_double_free_and_out_of_range_frame() {
+        let owned = EarlyPageFrameSpan {
+            start: 0x2f01_0000,
+            end: 0x2f01_3000,
+            page_size: EARLY_PAGE_SIZE,
+            page_count: 3,
+        };
+        let mut metadata = [0; 3];
+        let mut allocator = early_page_frame_reuse_allocator(owned, &mut metadata, 0x8000, 0x8018)
+            .expect("allocator");
+
+        let frame = allocator.allocate_frame().expect("frame");
+
+        assert_eq!(allocator.free_frame(frame), Ok(()));
+        assert_eq!(
+            allocator.free_frame(frame),
+            Err(EarlyPageFrameReuseFreeError::DoubleFree)
+        );
+        assert_eq!(
+            allocator.free_frame(owned.end),
+            Err(EarlyPageFrameReuseFreeError::OutOfRange)
+        );
+        assert_eq!(
+            allocator.free_frame(owned.start + 1),
+            Err(EarlyPageFrameReuseFreeError::Unaligned)
+        );
+    }
+
+    #[test_case]
+    fn page_frame_reuse_allocator_requires_metadata_outside_managed_frames() {
+        let owned = EarlyPageFrameSpan {
+            start: 0x2f01_0000,
+            end: 0x2f01_4000,
+            page_size: EARLY_PAGE_SIZE,
+            page_count: 4,
+        };
+        let mut metadata = [0; 4];
+
+        assert!(
+            early_page_frame_reuse_allocator(owned, &mut metadata, 0x2f01_1000, 0x2f01_1020)
+                .is_none()
+        );
     }
 }

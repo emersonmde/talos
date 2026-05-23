@@ -22,7 +22,8 @@
             talos_rpi5_realloc_growth_diagnostic,
             talos_rpi5_vec_growth_diagnostic,
             talos_rpi5_string_growth_diagnostic,
-            talos_rpi5_alloc_format_diagnostic
+            talos_rpi5_alloc_format_diagnostic,
+            talos_rpi5_page_frame_reuse_diagnostic
         )
     ),
     allow(dead_code, unused_imports, unused_variables)

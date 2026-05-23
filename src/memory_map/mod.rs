@@ -16,9 +16,10 @@ pub use page_frames::{
     EARLY_BOOTSTRAP_SLACK_RESERVED_KIND, EARLY_PAGE_FRAME_ALLOCATOR_OWNED_KIND,
     EARLY_PAGE_FRAME_DEFERRED_KIND, EARLY_PAGE_FRAME_RESERVED_KIND, EARLY_PAGE_SIZE,
     EarlyBootstrapAllocatorPlan, EarlyBootstrapPageReservation, EarlyPageFrameOwnershipContract,
+    EarlyPageFrameReuseAllocator, EarlyPageFrameReuseAllocatorState, EarlyPageFrameReuseFreeError,
     EarlyPageFrameSeed, EarlyPageFrameSpan, early_bootstrap_allocator_plan,
     early_bootstrap_page_reservation, early_page_frame_ownership_contract,
-    early_page_frame_seed_span,
+    early_page_frame_reuse_allocator, early_page_frame_seed_span,
 };
 #[allow(unused_imports)]
 pub use translation::{

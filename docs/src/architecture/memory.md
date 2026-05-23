@@ -160,6 +160,18 @@ an ownership-description and non-overlap proof only: it does not implement
 free/reuse, change the global allocator, expand the heap, place mutable allocator
 metadata, claim high-memory ownership, or add DMA/cache-safe frame policy.
 
+The bounded free/reuse diagnostic is separate from the global heap. In code,
+`early_page_frame_reuse_allocator` manages an explicit tracked window inside the
+accepted `bootstrap-bump-owned` span using caller-provided metadata. The
+constructor rejects metadata that intersects the managed frames, and the focused
+tests prove allocate/free/reallocate behavior plus double-free, unaligned, and
+out-of-range rejection. The Pi 5 diagnostic flag
+`TALOS_RPI5_PAGE_FRAME_REUSE_DIAGNOSTIC` exercises a four-frame tracked window
+after the bootstrap allocator plan is known; it reports the metadata address
+range and reused frame, then halts. This does not replace
+`KERNEL_GLOBAL_ALLOCATOR`, provide heap deallocation, expand the heap, or claim
+ownership outside the accepted low identity-mapped span.
+
 Talos now zeroes and populates those four pages with a deterministic stage-1
 4 KiB translation skeleton, but still does not enable translation:
 
@@ -465,18 +477,16 @@ does not declare any new runtime behavior.
 | Firmware handoff and DTB memory discovery | Pi 5 reads the firmware DTB pointer, reports the current three /memory banks, and preserves the normal boot handoff. | Pi 5 serial/TFTP hardware. | Recent accepted DTB memory evidence through target/tmp/rpi5-dtb-memory-summary-println-20260523T1228Z-evidence; later surrounding evidence retained in target/tmp/rpi5-translation-population-post-println-readloop-20260523T1558Z-evidence; commit d3be399. | This is read-only DTB reporting, not high-memory ownership, bank balancing, or a complete physical memory manager. |
 | Low-tail usable candidate | Talos derives and reports one conservative page-aligned low-bank tail, 0x2f000000..0x3fc00000, after kernel, DTB/FDT, reserved-memory, early heap, and boot stack exclusions. | Pi 5 serial/TFTP hardware for both early formatter-free and post-allocator println copies. | target/tmp/rpi5-memory-usable-println-20260523T1256Z-evidence; later surrounding evidence in target/tmp/rpi5-translation-population-post-println-readloop-20260523T1558Z-evidence; commit d3be399. | The candidate is not a free list, not allocator ownership transfer, and not permission to allocate from high memory. |
 | Bootstrap reservation and table staging | The first 16 low-tail pages are reserved for early page-table/bootstrap work; four 4 KiB translation-table pages inside that span have fixed slots. | Pi 5 serial/TFTP hardware. | target/tmp/rpi5-bootstrap-reserve-post-println-20260523T1248Z-evidence, target/tmp/rpi5-translation-table-layout-post-literal-readloop-20260523T153123Z-evidence, target/tmp/rpi5-translation-table-slots-post-println-20260523T154311Z-evidence/summary-corrected.json; commit d3be399. | The reservation is static policy. It is not metadata placement for a mutable page allocator and does not transfer ownership of remaining frames. |
-| Page-frame ownership contract | Talos names the current low-tail frame partitions as bootstrap-reserved, translation-table pages, reserved bootstrap slack, bootstrap-bump-owned, and outside-low-tail deferred. | Local no-std tests and QEMU substitute; no normal Pi 5 boot-output change. | `page_frame_ownership_contract_names_current_low_tail_partitions`, `page_frame_ownership_contract_rejects_mismatched_allocator_span`, and `page_frame_ownership_contract_excludes_kernel_dtb_reservations_stack_and_tables`; current task commit. | This is metadata and static non-overlap checking only. It does not add free/reuse, allocator metadata placement, heap expansion, high-memory ownership, or DMA-safe frame policy. |
+| Page-frame ownership and bounded reuse diagnostic | Talos names the current low-tail frame partitions and can prove a small tracked-window allocate/free/reallocate cycle with metadata outside the managed frames. | Local no-std tests, QEMU substitute, normal Pi 5 image generation, and cfg-gated diagnostic image generation; no normal Pi 5 boot-output change. | Ownership tests plus `page_frame_reuse_allocator_allocates_frees_and_reuses_frame`, `page_frame_reuse_allocator_rejects_double_free_and_out_of_range_frame`, and `page_frame_reuse_allocator_requires_metadata_outside_managed_frames`; current task commit. | The global allocator remains no-free. This does not add heap deallocation, heap expansion, high-memory ownership, DMA-safe frame policy, or a complete physical memory manager. |
 | Translation skeleton | The accepted four-page EL2 stage-1 skeleton maps low memory and the BCM2712 local-peripheral window, reports population counts, and has a matching MAIR/TCR/TTBR/SCTLR plan. | Pi 5 serial/TFTP hardware for normal boot, plus local/QEMU gates for code paths. | target/tmp/rpi5-translation-population-post-println-readloop-20260523T1558Z-evidence; commit d3be399. | The map is intentionally narrow. It does not map RP1 PCIe, high memory, user address spaces, DMA buffers, or demand/fault recovery regions. |
 | MMU and cache bring-up | EL2 stage-1 translation, instruction cache, and data cache are enabled on the normal Pi 5 path while preserving serial output; data-cache-enabled is accepted on the ordinary println surface. | Pi 5 serial/TFTP hardware. | target/tmp/rpi5-data-cache-enabled-println-20260523T111335Z-evidence and later surrounding evidence; commit d3be399. | Cache enablement is an early-kernel execution boundary, not a DMA coherency contract or driver cache-maintenance API. |
 | Bootstrap allocator | A no-free bump allocator owns the post-bootstrap low-tail span 0x2f010000..0x3fc00000 for early kernel allocation smoke tests. | Pi 5 serial/TFTP hardware for normal boot reports and cfg-gated diagnostics; local tests and QEMU smoke for generic support. | Normal reports in target/tmp/rpi5-bootstrap-allocator-plan-println-20260523T105926Z-evidence, target/tmp/rpi5-bootstrap-allocator-init-println-polled-20260523T104717Z-evidence, and later surrounding evidence; commit d3be399. | The global allocator remains no-free. It does not provide page-frame free/reuse, heap expansion, recoverable OOM, or broad collection-heavy runtime policy. |
 | Alloc-crate diagnostics | Bounded Box, Vec, String, direct realloc growth, Vec growth, String growth, alloc-backed formatting, and fatal OOM diagnostics have each been proven in narrow cfg-gated or normal paths. | Pi 5 serial/TFTP hardware for each accepted diagnostic, plus local gates. | Accepted diagnostic evidence recorded in the 2026-05-23 decision log; latest normal commit baseline d3be399. | These are small smoke boundaries. They do not accept arbitrary growth-heavy kernel allocation, UTF-8 policy, free/reuse, or recoverable OOM. |
 | Exceptions and faults | Panic, BRK return/resume, undefined-instruction fatal reporting, ESR class labels, and a controlled translation-fault diagnostic can report useful AArch64 state. | Pi 5 serial/TFTP hardware for accepted diagnostics; QEMU remains useful for generic exception tests. | Decision-log entries from 2026-05-21 through 2026-05-23; current memory baseline commit d3be399. | Fault handling is fatal/reporting-oriented. Talos has not implemented page-fault recovery, lower-EL fault routing, or invalid-user-memory handling. |
 
-Remaining Phase 3 implementation backlog after the page-frame ownership
-contract slice:
+Remaining Phase 3 implementation backlog after the bounded page-frame reuse
+diagnostic:
 
-- Page-frame free/reuse diagnostic: prove bounded 4 KiB allocate/free/reuse
-  behavior without changing the Rust global allocator.
 - Heap expansion and recoverable OOM policy: define the frame source for any
   heap growth and prove a recoverable failure boundary while keeping the fatal
   alloc-error diagnostic explicit.
