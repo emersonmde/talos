@@ -1515,3 +1515,13 @@ ADR template:
 - Validation: `git diff --check` passed. `mdbook build` was not run because `mdbook` is unavailable in the container. Rust formatting and tests were not required because no Rust files changed.
 - Rationale: Phase 4 can use ordinary early-kernel allocations, but should not accidentally depend on unaccepted high-memory mapping, DMA-safe allocation, or driver cache-coherency behavior. Keeping the boundary in the architecture doc prevents later driver or interrupt work from treating a boot log or DTB bank as an ownership handoff.
 - Risks: This does not map high memory, implement DMA APIs, add cache-maintenance routines, change allocator behavior, retarget work to RP1/PCIe/networking, or close Phase 3.
+
+## 2026-05-23 - Lower-EL And Userspace Mapping Readiness Boundary
+
+- Status: accepted as a documentation boundary for Phase 3 closeout. No kernel/runtime code, normal Pi 5 boot output, boot image, hardware lock, or hardware run changed in this task.
+- Context: The current Pi 5 kernel has hardware evidence for an EL2 stage-1 identity map, cache-enabled early execution, and same-EL exception diagnostics. Phase 7 will eventually need EL0, syscalls, and user address spaces, but Phase 3 closeout must not let the current identity map masquerade as userspace isolation.
+- Decision: Document the current map as an EL2 kernel bring-up map only. It proves the kernel can run with low DRAM and the BCM2712 local-peripheral MMIO window identity-mapped, but it does not prove user/kernel permissions, lower-EL trap return, user stack/heap mappings, syscall ABI, or invalid-user-memory handling.
+- Consequences: Phase 4 may proceed using the current EL2 kernel map for kernel execution, but no task may treat it as permission to enter EL0, run untrusted payloads, or expose MMIO/kernel memory to user code. EL0 work remains gated on explicit address-space shape, descriptor permissions, TTBR/TCR/SCTLR policy, lower-EL exception routing, copy-in/copy-out, and bad-pointer tests.
+- Validation: Documentation-only readiness audit. `git diff --check` passed; `mdbook build` was unavailable; Rust fmt/tests and Pi 5 hardware were not required because no code or normal boot behavior changed.
+- Rationale: A dedicated readiness boundary keeps Phase 7 prerequisites explicit before interrupt/timer work resumes, without starting userspace implementation or overloading the Phase 3 closeout checkpoint.
+- Risks: This does not enter EL0, implement syscalls, create process address spaces, add file descriptors, change exception-vector behavior, change translation-table contents, or close Phase 3.
