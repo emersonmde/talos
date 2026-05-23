@@ -926,7 +926,16 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                             talos_rpi5_string_growth_diagnostic,
                             talos_rpi5_alloc_format_diagnostic
                         )))]
-                        write_rpi5_page_frame_seed_println_line(seed);
+                        println!(
+                            "talos: page frames seed: start={:#x} end={:#x} pages={:#x} page_size={:#x} source=memory-usable phase=post-allocator",
+                            seed.start, seed.end, seed.page_count, seed.page_size,
+                        );
+                        #[cfg(not(any(
+                            talos_rpi5_vec_growth_diagnostic,
+                            talos_rpi5_string_growth_diagnostic,
+                            talos_rpi5_alloc_format_diagnostic
+                        )))]
+                        target::rpi5::wait_uart10_empty_early_phase();
                         #[cfg(not(any(
                             talos_rpi5_vec_growth_diagnostic,
                             talos_rpi5_string_growth_diagnostic,
@@ -1575,17 +1584,6 @@ fn write_rpi5_page_frame_seed_line(seed: memory_map::EarlyPageFrameSeed) {
     target::console::write_static(" page_size=");
     target::console::write_hex_u64(seed.page_size);
     target::console::write_static(" source=memory-usable\n");
-    target::rpi5::wait_uart10_empty_early_phase();
-}
-
-#[cfg(all(not(test), talos_target_rpi5_bcm2712))]
-#[inline(never)]
-fn write_rpi5_page_frame_seed_println_line(seed: memory_map::EarlyPageFrameSeed) {
-    print!("talos: page frames seed: start={:#x}", seed.start);
-    print!(" end={:#x}", seed.end);
-    print!(" pages={:#x}", seed.page_count);
-    print!(" page_size={:#x}", seed.page_size);
-    println!(" source=memory-usable phase=post-allocator");
     target::rpi5::wait_uart10_empty_early_phase();
 }
 
