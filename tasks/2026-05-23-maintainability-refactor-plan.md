@@ -415,3 +415,72 @@ Validation for this review checkpoint:
 - Matthew notification remains required. Because this isolated cron run has no
   direct Telegram delivery surface, the supervisor state keeps a pending
   delivery note with the exact remaining cleanup work.
+
+### phase3-target-rpi5-diagnostic-deletion-20260523
+
+This deletion pass completed the maintainability follow-up from the review
+checkpoint. It removed stale Pi 5 bring-up wrapper scripts for the
+loader/armstub/EFI alternatives, UART proof trees, entry/fresh-entry/candidate
+serial probes, transition/text/vector/fallthrough/post-stack boundary probes,
+direct assembly reset/BRK/BTI exception classifier probes, boundary-entry
+reset, and phase-ladder reset families. Those families were historical
+bring-up experiments; accepted facts from them remain in the early-serial and
+decision-log history rather than as active wrappers.
+
+Before/after cleanup inventory:
+
+| Item | Before | After |
+| --- | ---: | ---: |
+| src/target/rpi5.rs | 812 lines | 458 lines |
+| build.rs | 354 lines | 136 lines |
+| stale rpi5 script wrappers deleted | 0 | 82 |
+| retained rpi5 scripts | many one-off probes plus gates | 25 current gate/diagnostic helpers |
+
+Retained wrapper families:
+
+- Normal Pi 5 image, boot tree/image, boot ramdisk tree, format guard, archive
+  review, TFTP cursor, and TFTP wait helpers.
+- Allocator and alloc-crate diagnostics: alloc OOM, realloc growth, Vec
+  growth, String growth, and alloc format.
+- Exception/fault diagnostics: exception report, normal exception report,
+  exception return, undefined instruction, data abort, current SP0 sync, and
+  translation fault.
+- Panic diagnostics: panic report, full panic info, nested panic, and the
+  nested-panic boot tree.
+
+Code cleanup summary:
+
+- src/target/rpi5.rs now contains stable Pi 5 target services, UART constants,
+  early phase output, relocation helpers, and TargetServices construction; the
+  stale runtime UART, handoff UART, rust-uart10, boundary-entry reset, and
+  phase-ladder diagnostic entry points were deleted.
+- build.rs now advertises and consumes only current allocator,
+  exception/fault, panic, and translation-fault diagnostic env/cfg flags.
+- Retained diagnostic wrappers no longer unset or compose stale bring-up env
+  flags. The alloc-format wrapper now builds directly through the active
+  alloc-format cfg instead of depending on a fresh-entry side marker.
+- src/arch/aarch64/boot.S still contains dormant historical conditional
+  assembly blocks, but no remaining build.rs or script path advertises or
+  enables those stale flags. A future cleanup can remove the unreachable
+  assembly bodies if it is worth the diff risk; this task removed the active
+  repository surface that future workers would run.
+
+Validation for this deletion pass:
+
+- cargo fmt --all -- --check passed.
+- cargo -Zjson-target-spec test passed: 41 no_std tests.
+- scripts/qemu-smoke.sh passed.
+- scripts/rpi5-image.sh passed and produced
+  target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712.img.
+- scripts/rpi5-format-guard-check.sh passed.
+- Representative retained diagnostic image builds passed:
+  scripts/rpi5-panic-report-diagnostic-image.sh,
+  scripts/rpi5-normal-exception-report-diagnostic-image.sh,
+  scripts/rpi5-translation-fault-diagnostic-image.sh,
+  scripts/rpi5-alloc-oom-diagnostic-image.sh, and
+  scripts/rpi5-alloc-format-diagnostic-image.sh.
+- git diff --check passed.
+- mdbook build was not run because mdbook is unavailable in the container.
+- No Pi 5 hardware run was required because normal boot output, MMU/cache
+  programming, allocator policy, FDT interpretation, and hardware-facing normal
+  boot behavior were not intentionally changed.

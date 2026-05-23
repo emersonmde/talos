@@ -3,7 +3,6 @@ use crate::{KERNEL_GLOBAL_ALLOCATOR, arch, diagnostics, memory_map, println, tar
 
 #[cfg_attr(
     any(
-        talos_rpi5_runtime_uart_probe_diagnostic,
         talos_rpi5_panic_report_diagnostic,
         talos_rpi5_full_panic_info_diagnostic,
         talos_rpi5_normal_exception_report_diagnostic,

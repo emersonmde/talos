@@ -54,6 +54,24 @@ The `early_format` helpers remain available for tiny diagnostics and exception
 paths that must avoid the generic formatter. They are an escape hatch, not the
 desired public interface for normal kernel code.
 
+## Retired Bring-Up Probes
+
+The historical Pi 5 loader/armstub/EFI alternatives, UART proof trees,
+entry/fresh-entry/candidate serial probes, transition/text/vector/fallthrough
+boundary probes, direct assembly reset and BRK/BTI classifier probes,
+boundary-entry reset helpers, and phase-ladder reset wrappers were retired
+after the normal boot path accepted UART10, Rust entry, early phase lines,
+formatter pacing, post-data-cache `println!` output, allocator smoke, and the
+post-allocator memory/page-frame/translation-table/DTB report tail. Their
+evidence remains in the task records and decision log; they are no longer
+active scripts or build.rs env/cfg surfaces.
+
+Current Pi 5 diagnostic wrappers are limited to active allocator, panic,
+exception/fault, and translation-fault checks plus normal image/archive/format
+gates. New bring-up probes should either become a bounded task diagnostic with
+an explicit retirement condition, a reusable validation gate, or a documented
+fact with the one-off code deleted.
+
 ## Current Risk
 
 Generic `core::fmt` on Pi 5 early boot is being enabled deliberately to converge

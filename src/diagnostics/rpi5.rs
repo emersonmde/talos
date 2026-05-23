@@ -1,4 +1,6 @@
 #[allow(unused_imports)]
+use crate::boot::rpi5_reports::write_rpi5_bool;
+#[allow(unused_imports)]
 use crate::{KERNEL_GLOBAL_ALLOCATOR, PANIC_IN_PROGRESS, arch, println, target};
 
 #[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_exception_return_diagnostic))]

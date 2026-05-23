@@ -101,34 +101,9 @@ fn alloc_error(layout: core::alloc::Layout) -> ! {
 }
 
 #[unsafe(no_mangle)]
-#[cfg_attr(
-    any(
-        all(talos_target_rpi5_bcm2712, talos_rpi5_runtime_uart_probe_diagnostic),
-        all(talos_target_rpi5_bcm2712, talos_rpi5_handoff_uart_diagnostic),
-        all(talos_target_rpi5_bcm2712, talos_rpi5_rust_uart10_diagnostic),
-        all(talos_target_rpi5_bcm2712, talos_rpi5_boundary_entry_reset_diagnostic),
-        all(talos_target_rpi5_bcm2712, talos_rpi5_phase_ladder_diagnostic),
-    ),
-    allow(unreachable_code, unused_variables)
-)]
 pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
     #[cfg(talos_target_rpi5_bcm2712)]
     target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::RustEntry);
-
-    #[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_rust_uart10_diagnostic))]
-    target::rpi5::rust_uart10_diagnostic();
-
-    #[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_boundary_entry_reset_diagnostic))]
-    target::rpi5::boundary_entry_reset_diagnostic();
-
-    #[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_phase_ladder_diagnostic))]
-    target::rpi5::phase_ladder_diagnostic();
-
-    #[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_handoff_uart_diagnostic))]
-    target::rpi5::handoff_uart_diagnostic();
-
-    #[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_runtime_uart_probe_diagnostic))]
-    target::rpi5::runtime_uart_probe_diagnostic();
 
     let boot_info = BootInfo::from_aarch64_x0(dtb_pa);
 
@@ -157,7 +132,6 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
 
 #[cfg_attr(
     any(
-        all(talos_target_rpi5_bcm2712, talos_rpi5_runtime_uart_probe_diagnostic),
         all(talos_target_rpi5_bcm2712, talos_rpi5_panic_report_diagnostic),
         all(talos_target_rpi5_bcm2712, talos_rpi5_full_panic_info_diagnostic),
         all(

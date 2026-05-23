@@ -8,7 +8,7 @@ for name in $(env | sed -n 's/^\(TALOS_RPI5_[A-Za-z0-9_]*\)=.*/\1/p'); do
     unset "$name"
 done
 
-base_img="$(env TALOS_RPI5_ALLOC_FORMAT_DIAGNOSTIC=1 TALOS_RPI5_FRESH_ENTRY_CONTINUE_DIAGNOSTIC=1 TALOS_RPI5_FRESH_ENTRY_LABEL='TALOS: alloc-format entry' ./scripts/rpi5-image.sh)"
+base_img="$(env TALOS_RPI5_ALLOC_FORMAT_DIAGNOSTIC=1 ./scripts/rpi5-image.sh)"
 img_file="target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-alloc-format-diagnostic.img"
 target_size="${TALOS_RPI5_ALLOC_FORMAT_DIAGNOSTIC_PAD_SIZE:-}"
 
