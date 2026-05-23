@@ -9,8 +9,6 @@ fn main() {
     println!("cargo:rerun-if-changed=linker-rpi5.ld");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_CARGO_ASM_UART_PROOF");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_TRANSITION_DIAGNOSTIC");
-    println!("cargo:rerun-if-env-changed=TALOS_RPI5_RUST_ENTRY_DIAGNOSTIC");
-    println!("cargo:rerun-if-env-changed=TALOS_RPI5_MINIMAL_FORMAT_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_EXCEPTION_REPORT_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_NORMAL_EXCEPTION_REPORT_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_UNDEFINED_INSTRUCTION_REPORT_DIAGNOSTIC");
@@ -26,13 +24,6 @@ fn main() {
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_VEC_GROWTH_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_STRING_GROWTH_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_ALLOC_FORMAT_DIAGNOSTIC");
-    println!("cargo:rerun-if-env-changed=TALOS_RPI5_DYNAMIC_FORMAT_FALLBACK_DIAGNOSTIC");
-    println!("cargo:rerun-if-env-changed=TALOS_RPI5_FMT_SINK_DIAGNOSTIC");
-    println!("cargo:rerun-if-env-changed=TALOS_RPI5_FMT_STATIC_SINK_DIAGNOSTIC");
-    println!("cargo:rerun-if-env-changed=TALOS_RPI5_FMT_SINK_DIRECT_DIAGNOSTIC");
-    println!("cargo:rerun-if-env-changed=TALOS_RPI5_FMT_SINK_DYN_DIRECT_DIAGNOSTIC");
-    println!("cargo:rerun-if-env-changed=TALOS_RPI5_FMT_SINK_FNPTR_DIRECT_DIAGNOSTIC");
-    println!("cargo:rerun-if-env-changed=TALOS_RPI5_FNPTR_RESET_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_TEXT_SECTION_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_VECTOR_SECTION_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_TEXT_BOOT_FAR_DIAGNOSTIC");
@@ -44,9 +35,6 @@ fn main() {
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_POST_STACK_RESET_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_ASM_INDIRECT_RESET_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_ASM_DIRECT_RESET_DIAGNOSTIC");
-    println!("cargo:rerun-if-env-changed=TALOS_RPI5_ASM_TO_RUST_RESET_DIAGNOSTIC");
-    println!("cargo:rerun-if-env-changed=TALOS_RPI5_ASM_INDIRECT_TO_RUST_RESET_DIAGNOSTIC");
-    println!("cargo:rerun-if-env-changed=TALOS_RPI5_ASM_BTI_INDIRECT_TO_RUST_RESET_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_ASM_TEXT_INDIRECT_RESET_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_ASM_TEXT_DIRECT_RESET_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_ASM_TEXT_JC_INDIRECT_RESET_DIAGNOSTIC");
@@ -70,9 +58,6 @@ fn main() {
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_FRESH_ENTRY_LABEL");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_UART_CANDIDATE_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_RUST_UART10_DIAGNOSTIC");
-    println!("cargo:rerun-if-env-changed=TALOS_RPI5_PRINTLN_PHASE_DIAGNOSTIC");
-    println!("cargo:rerun-if-env-changed=TALOS_RPI5_RODATA_ADDRESS_DIAGNOSTIC");
-    println!("cargo:rerun-if-env-changed=TALOS_RPI5_STATIC_FORMAT_BOUNDARY_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_BOUNDARY_ENTRY_RESET_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_PHASE_LADDER_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_PHASE_P0_RESET_DIAGNOSTIC");
@@ -83,14 +68,11 @@ fn main() {
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_PHASE_BSS_RESET_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_PHASE_STACK_RESET_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_PHASE_STACK_TO_TEXT_RESET_DIAGNOSTIC");
-    println!("cargo:rerun-if-env-changed=TALOS_RPI5_PHASE_STACK_TO_RUST_RESET_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_PHASE_CONTINUE_DIAGNOSTIC");
 
     let target = env::var("TARGET").expect("TARGET is set by Cargo");
     println!("cargo:rustc-check-cfg=cfg(talos_target_qemu_virt)");
     println!("cargo:rustc-check-cfg=cfg(talos_target_rpi5_bcm2712)");
-    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_rust_entry_diagnostic)");
-    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_minimal_format_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_exception_report_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_normal_exception_report_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_undefined_instruction_report_diagnostic)");
@@ -106,29 +88,15 @@ fn main() {
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_vec_growth_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_string_growth_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_alloc_format_diagnostic)");
-    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_dynamic_format_fallback_diagnostic)");
-    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_fmt_sink_diagnostic)");
-    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_fmt_static_sink_diagnostic)");
-    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_fmt_sink_direct_diagnostic)");
-    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_fmt_sink_dyn_direct_diagnostic)");
-    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_fmt_sink_fnptr_direct_diagnostic)");
-    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_fnptr_reset_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_runtime_uart_probe_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_handoff_uart_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_rust_uart10_diagnostic)");
-    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_println_phase_diagnostic)");
-    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_rodata_address_diagnostic)");
-    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_static_format_boundary_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_boundary_entry_reset_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_phase_ladder_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_phase_p0_reset_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_phase_p1_reset_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_phase_p1_short_reset_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_phase_p2_reset_diagnostic)");
-    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_phase_stack_to_rust_reset_diagnostic)");
-    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_asm_to_rust_reset_diagnostic)");
-    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_asm_indirect_to_rust_reset_diagnostic)");
-    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_asm_bti_indirect_to_rust_reset_diagnostic)");
     if target.contains("rpi5") || target.contains("bcm2712") {
         println!("cargo:rustc-cfg=talos_target_rpi5_bcm2712");
     } else {
@@ -202,18 +170,6 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
     if env::var_os("TALOS_RPI5_ASM_DIRECT_RESET_DIAGNOSTIC").is_some() {
         command.arg("-DTALOS_RPI5_ASM_DIRECT_RESET_DIAGNOSTIC");
     }
-    if env::var_os("TALOS_RPI5_ASM_TO_RUST_RESET_DIAGNOSTIC").is_some() {
-        command.arg("-DTALOS_RPI5_ASM_TO_RUST_RESET_DIAGNOSTIC");
-        println!("cargo:rustc-cfg=talos_rpi5_asm_to_rust_reset_diagnostic");
-    }
-    if env::var_os("TALOS_RPI5_ASM_INDIRECT_TO_RUST_RESET_DIAGNOSTIC").is_some() {
-        command.arg("-DTALOS_RPI5_ASM_INDIRECT_TO_RUST_RESET_DIAGNOSTIC");
-        println!("cargo:rustc-cfg=talos_rpi5_asm_indirect_to_rust_reset_diagnostic");
-    }
-    if env::var_os("TALOS_RPI5_ASM_BTI_INDIRECT_TO_RUST_RESET_DIAGNOSTIC").is_some() {
-        command.arg("-DTALOS_RPI5_ASM_BTI_INDIRECT_TO_RUST_RESET_DIAGNOSTIC");
-        println!("cargo:rustc-cfg=talos_rpi5_asm_bti_indirect_to_rust_reset_diagnostic");
-    }
     if env::var_os("TALOS_RPI5_ASM_TEXT_INDIRECT_RESET_DIAGNOSTIC").is_some() {
         command.arg("-DTALOS_RPI5_ASM_TEXT_INDIRECT_RESET_DIAGNOSTIC");
     }
@@ -252,12 +208,6 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
     }
     if env::var_os("TALOS_RPI5_READABLE_BOOT_LOG_DIAGNOSTIC").is_some() {
         command.arg("-DTALOS_RPI5_READABLE_BOOT_LOG_DIAGNOSTIC");
-    }
-    if env::var_os("TALOS_RPI5_RUST_ENTRY_DIAGNOSTIC").is_some() {
-        println!("cargo:rustc-cfg=talos_rpi5_rust_entry_diagnostic");
-    }
-    if env::var_os("TALOS_RPI5_MINIMAL_FORMAT_DIAGNOSTIC").is_some() {
-        println!("cargo:rustc-cfg=talos_rpi5_minimal_format_diagnostic");
     }
     if env::var_os("TALOS_RPI5_EXCEPTION_REPORT_DIAGNOSTIC").is_some() {
         command.arg("-DTALOS_RPI5_EXCEPTION_REPORT_DIAGNOSTIC");
@@ -306,27 +256,6 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
     if env::var_os("TALOS_RPI5_ALLOC_FORMAT_DIAGNOSTIC").is_some() {
         println!("cargo:rustc-cfg=talos_rpi5_alloc_format_diagnostic");
     }
-    if env::var_os("TALOS_RPI5_DYNAMIC_FORMAT_FALLBACK_DIAGNOSTIC").is_some() {
-        println!("cargo:rustc-cfg=talos_rpi5_dynamic_format_fallback_diagnostic");
-    }
-    if env::var_os("TALOS_RPI5_FMT_SINK_DIAGNOSTIC").is_some() {
-        println!("cargo:rustc-cfg=talos_rpi5_fmt_sink_diagnostic");
-    }
-    if env::var_os("TALOS_RPI5_FMT_STATIC_SINK_DIAGNOSTIC").is_some() {
-        println!("cargo:rustc-cfg=talos_rpi5_fmt_static_sink_diagnostic");
-    }
-    if env::var_os("TALOS_RPI5_FMT_SINK_DIRECT_DIAGNOSTIC").is_some() {
-        println!("cargo:rustc-cfg=talos_rpi5_fmt_sink_direct_diagnostic");
-    }
-    if env::var_os("TALOS_RPI5_FMT_SINK_DYN_DIRECT_DIAGNOSTIC").is_some() {
-        println!("cargo:rustc-cfg=talos_rpi5_fmt_sink_dyn_direct_diagnostic");
-    }
-    if env::var_os("TALOS_RPI5_FMT_SINK_FNPTR_DIRECT_DIAGNOSTIC").is_some() {
-        println!("cargo:rustc-cfg=talos_rpi5_fmt_sink_fnptr_direct_diagnostic");
-    }
-    if env::var_os("TALOS_RPI5_FNPTR_RESET_DIAGNOSTIC").is_some() {
-        println!("cargo:rustc-cfg=talos_rpi5_fnptr_reset_diagnostic");
-    }
     if env::var_os("TALOS_RPI5_RUNTIME_UART_PROBE_DIAGNOSTIC").is_some() {
         println!("cargo:rustc-cfg=talos_rpi5_runtime_uart_probe_diagnostic");
     }
@@ -337,15 +266,6 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
     if env::var_os("TALOS_RPI5_RUST_UART10_DIAGNOSTIC").is_some() {
         command.arg("-DTALOS_RPI5_RUST_UART10_DIAGNOSTIC");
         println!("cargo:rustc-cfg=talos_rpi5_rust_uart10_diagnostic");
-    }
-    if env::var_os("TALOS_RPI5_PRINTLN_PHASE_DIAGNOSTIC").is_some() {
-        println!("cargo:rustc-cfg=talos_rpi5_println_phase_diagnostic");
-    }
-    if env::var_os("TALOS_RPI5_RODATA_ADDRESS_DIAGNOSTIC").is_some() {
-        println!("cargo:rustc-cfg=talos_rpi5_rodata_address_diagnostic");
-    }
-    if env::var_os("TALOS_RPI5_STATIC_FORMAT_BOUNDARY_DIAGNOSTIC").is_some() {
-        println!("cargo:rustc-cfg=talos_rpi5_static_format_boundary_diagnostic");
     }
     if env::var_os("TALOS_RPI5_BOUNDARY_ENTRY_RESET_DIAGNOSTIC").is_some() {
         println!("cargo:rustc-cfg=talos_rpi5_boundary_entry_reset_diagnostic");
@@ -381,10 +301,6 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
     }
     if env::var_os("TALOS_RPI5_PHASE_STACK_TO_TEXT_RESET_DIAGNOSTIC").is_some() {
         command.arg("-DTALOS_RPI5_PHASE_STACK_TO_TEXT_RESET_DIAGNOSTIC");
-    }
-    if env::var_os("TALOS_RPI5_PHASE_STACK_TO_RUST_RESET_DIAGNOSTIC").is_some() {
-        command.arg("-DTALOS_RPI5_PHASE_STACK_TO_RUST_RESET_DIAGNOSTIC");
-        println!("cargo:rustc-cfg=talos_rpi5_phase_stack_to_rust_reset_diagnostic");
     }
     if env::var_os("TALOS_RPI5_PHASE_CONTINUE_DIAGNOSTIC").is_some() {
         command.arg("-DTALOS_RPI5_PHASE_CONTINUE_DIAGNOSTIC");

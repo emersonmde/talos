@@ -1,3 +1,8 @@
+#[cfg(all(not(test), talos_target_rpi5_bcm2712))]
+pub(crate) mod rpi5;
+#[cfg(all(not(test), talos_target_rpi5_bcm2712))]
+pub(crate) mod rpi5_reports;
+
 use crate::{arch, target::TargetKind};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

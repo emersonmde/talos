@@ -204,3 +204,81 @@ of consuming the hardware lock.
 - Rust formatting and tests were not required for this audit because no Rust
   files changed.
 - Hardware validation was not required because no boot behavior changed.
+
+## Refactor Progress
+
+### phase3-main-entry-diagnostics-refactor-20260523
+
+First cleanup pass removed the stale rust-entry reset, format-sink,
+println-phase, rodata-address, static-format-boundary, and
+stack-to-rust/asm-to-rust reset diagnostic paths classified as
+document-and-delete or delete-as-stale. The pass deleted their standalone image
+scripts, removed their build.rs cfg/env plumbing, removed stale env unsets from
+retained exception/panic scripts, and deleted the corresponding src/main.rs and
+src/target/rpi5.rs implementations.
+
+Before/after line counts for this pass:
+
+| File | Before | After |
+| --- | ---: | ---: |
+| src/main.rs | 2758 | 2307 |
+| src/target/rpi5.rs | 1252 | 812 |
+| build.rs | 438 | 354 |
+
+Validation for the first cleanup pass:
+
+- cargo fmt --all -- --check passed.
+- cargo -Zjson-target-spec test passed: 39 no_std tests.
+- scripts/qemu-smoke.sh passed.
+- scripts/rpi5-image.sh passed and produced target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712.img.
+- scripts/rpi5-format-guard-check.sh passed.
+- Representative retained diagnostic build passed:
+  scripts/rpi5-panic-report-diagnostic-image.sh.
+- git diff --check passed.
+- No Pi 5 hardware run was required because no accepted normal boot output,
+  entry register programming, MMU/cache programming, or allocator behavior was
+  intentionally changed.
+
+Second extraction pass moved the retained normal Pi 5 boot path, boot-report
+formatting helpers, allocator diagnostics/bootstrap allocation smoke, and
+exception/fault/panic diagnostic dispatch out of src/main.rs.
+
+Final module layout for this task:
+
+- src/boot/rpi5.rs owns the normal Pi 5 boot pipeline and calls named report
+  and diagnostic helpers.
+- src/boot/rpi5_reports.rs owns the normal Pi 5 report formatting helpers and
+  linker-symbol layout report.
+- src/diagnostics/rpi5.rs owns retained allocator, translation-fault,
+  exception/fault, and panic diagnostic bodies.
+- src/main.rs keeps rust_entry, panic/OOM handling, QEMU smoke entry, tests,
+  and top-level orchestration only.
+
+Final line counts after the extraction pass:
+
+| File | Lines | Bytes |
+| --- | ---: | ---: |
+| src/main.rs | 612 | 22637 |
+| src/boot/rpi5.rs | 548 | 27955 |
+| src/boot/rpi5_reports.rs | 543 | 22180 |
+| src/diagnostics/rpi5.rs | 643 | 23107 |
+| src/target/rpi5.rs | 812 | 28272 |
+| build.rs | 354 | 19459 |
+
+Validation after the module split:
+
+- cargo fmt --all -- --check passed.
+- cargo -Zjson-target-spec test passed: 39 no_std tests.
+- scripts/qemu-smoke.sh passed.
+- scripts/rpi5-image.sh passed and produced target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712.img.
+- scripts/rpi5-format-guard-check.sh passed.
+- Representative retained diagnostic builds passed:
+  scripts/rpi5-panic-report-diagnostic-image.sh,
+  scripts/rpi5-normal-exception-report-diagnostic-image.sh,
+  scripts/rpi5-translation-fault-diagnostic-image.sh, and
+  scripts/rpi5-alloc-oom-diagnostic-image.sh.
+- git diff --check passed.
+- No Pi 5 hardware run was required because the refactor moved code without
+  intentionally changing accepted normal boot output order, entry register
+  programming, MMU/cache programming, allocator policy, or diagnostic cfg
+  behavior.

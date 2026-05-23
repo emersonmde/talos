@@ -5,7 +5,7 @@ repo_root="$(git rev-parse --show-toplevel)"
 
 (
     cd "$repo_root"
-    env -u TALOS_RPI5_DYNAMIC_FORMAT_FALLBACK_DIAGNOSTIC ./scripts/rpi5-image.sh
+    ./scripts/rpi5-image.sh
 ) >/dev/null
 
 . "$repo_root/scripts/objcopy-tool.sh"
