@@ -282,3 +282,65 @@ Validation after the module split:
   intentionally changing accepted normal boot output order, entry register
   programming, MMU/cache programming, allocator policy, or diagnostic cfg
   behavior.
+
+### phase3-memory-fdt-module-refactor-20260523
+
+The memory and FDT code split keeps the previous public memory_map::... and
+device_tree::... call sites stable through module-level re-exports while moving
+implementation responsibilities into named files.
+
+Final module layout for this task:
+
+- src/memory_map/mod.rs owns public re-exports and the high-level module
+  boundary.
+- src/memory_map/layout.rs owns kernel/FDT range inputs and conservative
+  low-tail usable-memory candidate selection.
+- src/memory_map/page_frames.rs owns page-frame seed, bootstrap reservation,
+  no-free bootstrap allocator plan, and current ownership-contract metadata.
+- src/memory_map/translation.rs owns translation-table layout, descriptor
+  population, register/cache enable plans, and descriptor helper tests.
+- src/memory_map/common.rs owns small range/alignment helpers shared by the
+  layout, page-frame, and translation modules.
+- src/device_tree/mod.rs owns the DeviceTree facade and public FDT re-exports.
+- src/device_tree/raw.rs owns FDT header reads, structure-block cursoring,
+  token constants, string lookup, block validation, and raw cell/string helpers.
+- src/device_tree/memory.rs owns reservation-block, /memory, and
+  /reserved-memory interpretation.
+- src/device_tree/chosen.rs owns /chosen property lookup and bootargs decoding.
+
+Before/after line counts for the extracted files:
+
+| File | Before | After |
+| --- | ---: | ---: |
+| src/memory_map.rs | 1590 | removed |
+| src/memory_map/mod.rs | new | 41 |
+| src/memory_map/layout.rs | new | 330 |
+| src/memory_map/page_frames.rs | new | 589 |
+| src/memory_map/translation.rs | new | 639 |
+| src/memory_map/common.rs | new | 70 |
+| src/device_tree.rs | 795 | removed |
+| src/device_tree/mod.rs | new | 28 |
+| src/device_tree/raw.rs | new | 246 |
+| src/device_tree/memory.rs | new | 543 |
+| src/device_tree/chosen.rs | new | 65 |
+
+Boundary tests added during this task:
+
+- talos::device_tree::raw::tests::raw_fdt_helpers_bound_alignment_blocks_and_strings
+- talos::device_tree::memory::tests::memory_cell_decoder_accepts_only_one_or_two_complete_cells
+
+Validation after the memory/FDT split:
+
+- cargo fmt --all -- --check passed.
+- cargo -Zjson-target-spec test passed: 41 no_std tests.
+- scripts/qemu-smoke.sh passed.
+- scripts/rpi5-image.sh passed and produced
+  target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712.img.
+- scripts/rpi5-format-guard-check.sh passed.
+- git diff --check passed.
+- mdbook build was not run because mdbook is unavailable in the container.
+- No Pi 5 hardware run was required because the refactor only moved code,
+  preserved public call sites through re-exports, and did not intentionally
+  change accepted normal boot output, memory ownership values, translation
+  table layout/population, MMU/cache programming, allocator behavior, or FDT
+  interpretation policy.
