@@ -181,6 +181,42 @@ conservative low-tail candidate deferred. This is a source-of-truth policy and
 test boundary; Talos still does not add dynamic page-frame-backed heap growth or
 change the global allocator from its current no-free bump behavior.
 
+## High-Memory, DMA, and Cache Ownership Boundary
+
+The accepted Phase 3 allocation boundary is the low identity-mapped tail only.
+For current kernel allocation, Talos may describe and consume frames from
+`0x2f010000..0x3fc00000` after the fixed bootstrap reservation inside bank 0
+(`0x0..0x3fc00000`). That span is already covered by the early EL2 identity map
+and by the no-free bootstrap bump allocator policy.
+
+The other firmware-reported banks remain discovered but unowned by current
+allocation policy:
+
+- bank 1: `0x40000000..0x100000000`.
+- bank 2: `0x100000000..0x200000000`.
+
+Those banks are high memory for the current kernel. Talos does not map them in
+the accepted early translation skeleton, does not allocate from them, and does
+not use them as page-frame metadata, heap-extension, or DMA-buffer sources. Any
+future use must first add an explicit map, ownership transfer, reservation
+policy, and validation evidence instead of treating DTB discovery as permission
+to allocate.
+
+The accepted data-cache-enabled state is likewise an early-kernel execution
+boundary, not a driver DMA coherency contract. Device MMIO remains mapped as
+Device-nGnRE, but Talos has not accepted:
+
+- DMA-safe buffer allocation or pinning.
+- RP1/PCIe addressability, `dma-ranges`, or IOMMU policy.
+- Cache clean/invalidate APIs for driver-owned buffers.
+- Cacheable versus non-cacheable DMA mapping rules.
+- Ownership rules for allocator metadata under driver DMA pressure.
+
+Until those pieces are designed and validated, Phase 4 interrupt/timer work must
+assume only the accepted low identity-mapped allocator span is available for
+ordinary kernel allocations, and no driver may infer DMA safety from the current
+cache-enabled boot status.
+
 Talos now zeroes and populates those four pages with a deterministic stage-1
 4 KiB translation skeleton, but still does not enable translation:
 
@@ -273,10 +309,10 @@ TALOS: dcache enable done
 talos: data cache enabled: el=0x2 sctlr=0x30c51835 kind=el2-stage1-dcache-enabled
 ```
 
-This is still an early-kernel cache boundary, not a complete coherency policy.
-Device mappings remain Device-nGnRE and Talos has not yet defined DMA buffer
-ownership, explicit clean/invalidate APIs for drivers, or allocator metadata
-placement under the cache-enabled regime.
+This is still the early-kernel cache boundary described above, not a complete
+coherency policy. Device mappings remain Device-nGnRE and Talos has not yet
+defined DMA buffer ownership, explicit clean/invalidate APIs for drivers, or
+allocator metadata placement under the cache-enabled regime.
 
 ## Bootstrap Allocator Smoke
 
@@ -514,12 +550,9 @@ does not declare any new runtime behavior.
 | Alloc-crate diagnostics | Bounded Box, Vec, String, direct realloc growth, Vec growth, String growth, alloc-backed formatting, and fatal OOM diagnostics have each been proven in narrow cfg-gated or normal paths. | Pi 5 serial/TFTP hardware for each accepted diagnostic, plus local gates. | Accepted diagnostic evidence recorded in the 2026-05-23 decision log; latest normal commit baseline d3be399. | These are small smoke boundaries. They do not accept arbitrary growth-heavy kernel allocation, UTF-8 policy, free/reuse, or recoverable infallible alloc-crate OOM. |
 | Exceptions and faults | Panic, BRK return/resume, undefined-instruction fatal reporting, ESR class labels, and a controlled translation-fault diagnostic can report useful AArch64 state. | Pi 5 serial/TFTP hardware for accepted diagnostics; QEMU remains useful for generic exception tests. | Decision-log entries from 2026-05-21 through 2026-05-23; current memory baseline commit d3be399. | Fault handling is fatal/reporting-oriented. Talos has not implemented page-fault recovery, lower-EL fault routing, or invalid-user-memory handling. |
 
-Remaining Phase 3 implementation backlog after the recoverable OOM and heap
-policy boundary:
+Remaining Phase 3 implementation backlog after the high-memory/DMA/cache
+boundary:
 
-- High-memory, DMA, and cache boundary: document or guard that current
-  allocation consumes only the accepted low identity-mapped span, and defer
-  high memory, RP1/PCIe DMA, DMA-safe buffers, and driver cache maintenance.
 - Lower-EL/userspace mapping readiness: record what the current EL2 identity
   map proves, what it does not prove for EL0, and the prerequisites for later
   syscall/user-memory work.
