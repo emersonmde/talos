@@ -93,6 +93,14 @@ QEMU substitute evidence:
   diagnostic path raised a current-SPx synchronous exception with ESR
   `0x5a000000` under QEMU. The accepted QEMU proof therefore uses SMC for this
   EL2 boot model while preserving the Pi 5 firmware/DTB SMC contract.
+- Implemented per-core ownership boundary: `src/smp.rs` now defines four
+  possible cores, 4 KiB secondary kernel stack slots, a bounded lifecycle
+  `parked -> entered -> stack-ready -> registered -> handoff-ready`, per-core
+  atomic identity/state records, stack-slot validation, and the Pi 5 MPIDR
+  affinity map `0x000`, `0x100`, `0x200`, `0x300`. The QEMU discriminator uses
+  this shared state/stack boundary behind its focused diagnostic gate. This is
+  not scheduler migration, SMP-safe locking, cross-core wakeup, or Pi 5 hardware
+  proof.
 
 Pi 5 hardware evidence:
 
@@ -115,11 +123,12 @@ RP1/PCIe/DMA work, or a local shell.
 ## Next Worker Task
 
 The accepted QEMU discriminator task is
-`phase6-qemu-secondary-core-bringup-discriminator-20260524`. The next queued
-worker task is `phase6-per-core-state-and-stacks-20260524`; it may turn the
-diagnostic-only state/stack proof into the supervisor-planned per-core ownership
-slice, but must still stay separate from Pi 5 hardware proof, SMP-safe locking,
-and scheduler migration unless the durable task says otherwise.
+`phase6-qemu-secondary-core-bringup-discriminator-20260524`. The per-core
+state/stacks boundary is accepted in
+`phase6-per-core-state-and-stacks-20260524` and recorded in
+`tasks/2026-05-24-phase6-per-core-state-and-stacks.md`. The next queued Phase
+6.1 task remains separate from SMP-safe locking and scheduler migration and must
+not claim Pi 5 hardware behavior without serialized hardware evidence.
 
 ## Validation
 

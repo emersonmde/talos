@@ -61,8 +61,8 @@ talos_aarch64_qemu_secondary_entry:
     cmp x19, #3
     b.hi 4f
 
-    adrp x1, talos_qemu_secondary_stacks
-    add x1, x1, :lo12:talos_qemu_secondary_stacks
+    adrp x1, talos_secondary_core_stacks
+    add x1, x1, :lo12:talos_secondary_core_stacks
     add x1, x1, x19, lsl #12
     add x1, x1, #4096
     mov sp, x1
@@ -76,12 +76,12 @@ talos_aarch64_qemu_secondary_entry:
 
 .size talos_aarch64_qemu_secondary_entry, . - talos_aarch64_qemu_secondary_entry
 
-.section .bss.qemu_secondary_stacks, "aw", %nobits
+.section .bss.secondary_core_stacks, "aw", %nobits
 .align 12
-.global talos_qemu_secondary_stacks
-talos_qemu_secondary_stacks:
+.global talos_secondary_core_stacks
+talos_secondary_core_stacks:
     .skip 4 * 4096
-.global talos_qemu_secondary_stacks_end
-talos_qemu_secondary_stacks_end:
+.global talos_secondary_core_stacks_end
+talos_secondary_core_stacks_end:
 .previous
 #endif

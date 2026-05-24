@@ -16,6 +16,11 @@ use core::sync::atomic::{AtomicU64, Ordering};
 use crate::scheduler::ContextFrame;
 #[cfg(any(talos_qemu_scheduler_yield_smoke, talos_qemu_timer_preemption_smoke))]
 use crate::scheduler::{KernelStack, SingleCoreScheduler, Task, TaskId, TaskState};
+use crate::smp::MAX_CORES;
+#[cfg(talos_qemu_secondary_core_discriminator)]
+use crate::smp::{
+    self, CoreLifecycle, CoreStackLayout, SECONDARY_CORE_STATES, SECONDARY_KERNEL_STACK_SIZE,
+};
 use crate::{
     arch::aarch64::{
         self, generic_timer,
@@ -33,10 +38,6 @@ const GICD_BASE: usize = 0x0800_0000;
 const GICC_BASE: usize = 0x0801_0000;
 const EL2_PHYSICAL_TIMER_INTID: u32 = 26;
 const TIMER_IRQ_WAIT_LIMIT: usize = 1_000_000;
-#[cfg(talos_qemu_secondary_core_discriminator)]
-const QEMU_SECONDARY_CORE_COUNT: usize = 4;
-#[cfg(talos_qemu_secondary_core_discriminator)]
-const QEMU_SECONDARY_STACK_SIZE: usize = 4096;
 #[cfg(talos_qemu_secondary_core_discriminator)]
 const QEMU_SECONDARY_WAIT_LIMIT: usize = 10_000_000;
 #[cfg(any(
@@ -66,36 +67,12 @@ static LAST_INTID: AtomicU64 = AtomicU64::new(0);
 static UNEXPECTED_GIC_IRQ_COUNT: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_qemu_timer_preemption_smoke)]
 static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
-#[cfg(talos_qemu_secondary_core_discriminator)]
-static SECONDARY_STATES: [AtomicU64; QEMU_SECONDARY_CORE_COUNT] =
-    [const { AtomicU64::new(0) }; QEMU_SECONDARY_CORE_COUNT];
-#[cfg(talos_qemu_secondary_core_discriminator)]
-static SECONDARY_MPIDR: [AtomicU64; QEMU_SECONDARY_CORE_COUNT] =
-    [const { AtomicU64::new(0) }; QEMU_SECONDARY_CORE_COUNT];
-#[cfg(talos_qemu_secondary_core_discriminator)]
-static SECONDARY_AFFINITY: [AtomicU64; QEMU_SECONDARY_CORE_COUNT] =
-    [const { AtomicU64::new(0) }; QEMU_SECONDARY_CORE_COUNT];
-#[cfg(talos_qemu_secondary_core_discriminator)]
-static SECONDARY_STACK_POINTER: [AtomicU64; QEMU_SECONDARY_CORE_COUNT] =
-    [const { AtomicU64::new(0) }; QEMU_SECONDARY_CORE_COUNT];
-#[cfg(talos_qemu_secondary_core_discriminator)]
-static SECONDARY_CONTEXT: [AtomicU64; QEMU_SECONDARY_CORE_COUNT] =
-    [const { AtomicU64::new(0) }; QEMU_SECONDARY_CORE_COUNT];
-
-#[cfg(talos_qemu_secondary_core_discriminator)]
-const SECONDARY_STATE_NONE: u64 = 0;
-#[cfg(talos_qemu_secondary_core_discriminator)]
-const SECONDARY_STATE_ENTERED: u64 = 1;
-#[cfg(talos_qemu_secondary_core_discriminator)]
-const SECONDARY_STATE_REGISTERED: u64 = 2;
-#[cfg(talos_qemu_secondary_core_discriminator)]
-const SECONDARY_STATE_HANDOFF_READY: u64 = 3;
 
 #[cfg(talos_qemu_secondary_core_discriminator)]
 unsafe extern "C" {
     fn talos_aarch64_qemu_secondary_entry();
-    static talos_qemu_secondary_stacks: u8;
-    static talos_qemu_secondary_stacks_end: u8;
+    static talos_secondary_core_stacks: u8;
+    static talos_secondary_core_stacks_end: u8;
 }
 
 #[cfg(any(
@@ -449,34 +426,24 @@ struct SingleCoreIrqMaskProbe {
 
 #[allow(dead_code)]
 pub const fn qemu_logical_cpu_from_mpidr_affinity(affinity: u64) -> Option<usize> {
-    match affinity {
-        0 => Some(0),
-        1 => Some(1),
-        2 => Some(2),
-        3 => Some(3),
-        _ => None,
+    if affinity < MAX_CORES as u64 {
+        Some(affinity as usize)
+    } else {
+        None
     }
 }
 
 #[cfg(talos_qemu_secondary_core_discriminator)]
-fn secondary_stack_bounds(logical_cpu: usize) -> (usize, usize) {
-    let base = core::ptr::addr_of!(talos_qemu_secondary_stacks) as usize;
-    let end = core::ptr::addr_of!(talos_qemu_secondary_stacks_end) as usize;
-    let bottom = base + logical_cpu * QEMU_SECONDARY_STACK_SIZE;
-    let top = bottom + QEMU_SECONDARY_STACK_SIZE;
-    debug_assert!(top <= end);
-    (bottom, top)
+fn secondary_stack_layout() -> CoreStackLayout {
+    let base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
+    let end = core::ptr::addr_of!(talos_secondary_core_stacks_end) as usize;
+    CoreStackLayout::new(base, end, MAX_CORES, SECONDARY_KERNEL_STACK_SIZE)
+        .expect("valid linked secondary-core stack layout")
 }
 
 #[cfg(talos_qemu_secondary_core_discriminator)]
 fn secondary_state_name(state: u64) -> &'static str {
-    match state {
-        SECONDARY_STATE_NONE => "none",
-        SECONDARY_STATE_ENTERED => "entered",
-        SECONDARY_STATE_REGISTERED => "registered",
-        SECONDARY_STATE_HANDOFF_READY => "handoff-ready",
-        _ => "unknown",
-    }
+    CoreLifecycle::from_raw(state).map_or("unknown", CoreLifecycle::name)
 }
 
 #[cfg(talos_qemu_secondary_core_discriminator)]
@@ -530,19 +497,17 @@ pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
     let mpidr = aarch64::mpidr_el1();
     let affinity = aarch64::mpidr_affinity(mpidr);
     let logical_cpu = qemu_logical_cpu_from_mpidr_affinity(affinity).unwrap_or(context);
-    if logical_cpu < QEMU_SECONDARY_CORE_COUNT {
-        SECONDARY_STATES[logical_cpu].store(SECONDARY_STATE_ENTERED, Ordering::Release);
-        SECONDARY_CONTEXT[logical_cpu].store(context as u64, Ordering::Release);
-        SECONDARY_MPIDR[logical_cpu].store(mpidr, Ordering::Release);
-        SECONDARY_AFFINITY[logical_cpu].store(affinity, Ordering::Release);
+    if logical_cpu < MAX_CORES {
+        let core_state = &SECONDARY_CORE_STATES[logical_cpu];
+        core_state.enter(context, mpidr, affinity);
 
         let stack_pointer: u64;
         unsafe {
             core::arch::asm!("mov {stack_pointer}, sp", stack_pointer = out(reg) stack_pointer, options(nomem, nostack, preserves_flags));
         }
-        SECONDARY_STACK_POINTER[logical_cpu].store(stack_pointer, Ordering::Release);
-        SECONDARY_STATES[logical_cpu].store(SECONDARY_STATE_REGISTERED, Ordering::Release);
-        SECONDARY_STATES[logical_cpu].store(SECONDARY_STATE_HANDOFF_READY, Ordering::Release);
+        core_state.mark_stack_ready(stack_pointer as usize);
+        core_state.mark_registered();
+        core_state.mark_handoff_ready();
     }
 
     loop {
@@ -554,24 +519,19 @@ pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
 
 #[cfg(talos_qemu_secondary_core_discriminator)]
 pub fn run_secondary_core_discriminator() -> bool {
-    for logical_cpu in 0..QEMU_SECONDARY_CORE_COUNT {
-        SECONDARY_STATES[logical_cpu].store(SECONDARY_STATE_NONE, Ordering::Release);
-        SECONDARY_CONTEXT[logical_cpu].store(0, Ordering::Release);
-        SECONDARY_MPIDR[logical_cpu].store(0, Ordering::Release);
-        SECONDARY_AFFINITY[logical_cpu].store(0, Ordering::Release);
-        SECONDARY_STACK_POINTER[logical_cpu].store(0, Ordering::Release);
-    }
+    smp::reset_secondary_core_states();
 
     let boot_mpidr = aarch64::mpidr_el1();
     let boot_affinity = aarch64::mpidr_affinity(boot_mpidr);
     let boot_logical = qemu_logical_cpu_from_mpidr_affinity(boot_affinity);
     let entry = talos_aarch64_qemu_secondary_entry as *const () as usize;
-    let stack_base = core::ptr::addr_of!(talos_qemu_secondary_stacks) as usize;
-    let stack_end = core::ptr::addr_of!(talos_qemu_secondary_stacks_end) as usize;
+    let stack_layout = secondary_stack_layout();
+    let stack_base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
+    let stack_end = core::ptr::addr_of!(talos_secondary_core_stacks_end) as usize;
 
     crate::println!(
         "qemu-secondary-core-discriminator: start conduit=smc cores={} boot-mpidr={:#018x} boot-affinity={:#x} boot-logical={:?} entry={:#018x} stack-range=[{:#018x},{:#018x})",
-        QEMU_SECONDARY_CORE_COUNT,
+        MAX_CORES,
         boot_mpidr,
         boot_affinity,
         boot_logical,
@@ -581,7 +541,7 @@ pub fn run_secondary_core_discriminator() -> bool {
     );
 
     let mut cpu_on_ok = true;
-    for logical_cpu in 1..QEMU_SECONDARY_CORE_COUNT {
+    for logical_cpu in 1..MAX_CORES {
         let target_affinity = logical_cpu as u64;
         let result = unsafe { psci_cpu_on_smc(target_affinity, entry, logical_cpu) };
         crate::println!(
@@ -595,8 +555,11 @@ pub fn run_secondary_core_discriminator() -> bool {
 
     let mut remaining = QEMU_SECONDARY_WAIT_LIMIT;
     while remaining > 0 {
-        let all_ready = (1..QEMU_SECONDARY_CORE_COUNT).all(|logical_cpu| {
-            SECONDARY_STATES[logical_cpu].load(Ordering::Acquire) >= SECONDARY_STATE_HANDOFF_READY
+        let all_ready = (1..MAX_CORES).all(|logical_cpu| {
+            SECONDARY_CORE_STATES[logical_cpu]
+                .snapshot(logical_cpu)
+                .lifecycle
+                >= CoreLifecycle::HandoffReady
         });
         if all_ready {
             break;
@@ -608,17 +571,15 @@ pub fn run_secondary_core_discriminator() -> bool {
     }
 
     let mut reports_ok = cpu_on_ok && boot_logical == Some(0);
-    for logical_cpu in 1..QEMU_SECONDARY_CORE_COUNT {
-        let state = SECONDARY_STATES[logical_cpu].load(Ordering::Acquire);
-        let context = SECONDARY_CONTEXT[logical_cpu].load(Ordering::Acquire);
-        let mpidr = SECONDARY_MPIDR[logical_cpu].load(Ordering::Acquire);
-        let affinity = SECONDARY_AFFINITY[logical_cpu].load(Ordering::Acquire);
-        let stack_pointer = SECONDARY_STACK_POINTER[logical_cpu].load(Ordering::Acquire) as usize;
-        let logical_from_mpidr = qemu_logical_cpu_from_mpidr_affinity(affinity);
-        let (stack_bottom, stack_top) = secondary_stack_bounds(logical_cpu);
-        let stack_owned = stack_pointer >= stack_bottom && stack_pointer <= stack_top;
-        let report_ok = state >= SECONDARY_STATE_HANDOFF_READY
-            && context == logical_cpu as u64
+    for logical_cpu in 1..MAX_CORES {
+        let report = SECONDARY_CORE_STATES[logical_cpu].snapshot(logical_cpu);
+        let logical_from_mpidr = qemu_logical_cpu_from_mpidr_affinity(report.affinity);
+        let stack_slot = stack_layout
+            .slot(logical_cpu)
+            .expect("stack slot for possible QEMU core");
+        let stack_owned = stack_slot.contains_stack_pointer(report.stack_pointer);
+        let report_ok = report.lifecycle >= CoreLifecycle::HandoffReady
+            && report.context == logical_cpu
             && logical_from_mpidr == Some(logical_cpu)
             && stack_owned;
         reports_ok &= report_ok;
@@ -626,14 +587,14 @@ pub fn run_secondary_core_discriminator() -> bool {
         crate::println!(
             "qemu-secondary-core-discriminator: report logical={} state={} context={} mpidr={:#018x} affinity={:#x} mapped={:?} sp={:#018x} stack=[{:#018x},{:#018x}) ok={}",
             logical_cpu,
-            secondary_state_name(state),
-            context,
-            mpidr,
-            affinity,
+            secondary_state_name(report.lifecycle.raw()),
+            report.context,
+            report.mpidr,
+            report.affinity,
             logical_from_mpidr,
-            stack_pointer,
-            stack_bottom,
-            stack_top,
+            report.stack_pointer,
+            stack_slot.bottom,
+            stack_slot.top,
             report_ok
         );
     }

@@ -82,6 +82,38 @@ ADR template:
   per-core stacks/state, call PSCI, or coordinate concurrent console output.
   Those risks belong to later explicit Phase 6.1 tasks.
 
+## 2026-05-24 - Accept Phase 6.1 Per-Core State/Stack Boundary
+
+- Status: accepted as the first implementation boundary for Phase 6.1
+  secondary-core state and stack ownership. No Pi 5 hardware publish,
+  power-cycle, hardware lock, scheduler migration, SMP-safe primitive,
+  cross-core preemption, load balancing, EL0, syscall, descriptor, filesystem,
+  networking, SSH, or shell behavior changed in this task.
+- Context: The accepted Phase 6.1 contract required each secondary core to
+  prove identity, exclusive stack ownership, per-core state registration, and a
+  controlled handoff before any scheduler work. The QEMU discriminator had
+  already proven PSCI SMC secondary startup under QEMU virt, but its state and
+  stack reporting was diagnostic-local.
+- Decision: Add `src/smp.rs` as the shared Phase 6.1 per-core ownership
+  boundary: four possible cores, 4 KiB secondary kernel stack slots, the
+  `parked -> entered -> stack-ready -> registered -> handoff-ready` lifecycle,
+  per-core atomic identity/state records, stack-slot validation, and the Pi 5
+  MPIDR affinity map. Retain the QEMU discriminator as the focused substitute
+  gate using this boundary.
+- Evidence level: static inspection, no_std unit tests, QEMU/substitute, and
+  image/archive inspection. `cargo -Zjson-target-spec test` passed 96 tests;
+  `scripts/qemu-secondary-core-discriminator.sh` reported all three secondary
+  QEMU cores at `handoff-ready` on distinct stack slots; `scripts/qemu-smoke.sh`,
+  `scripts/rpi5-image.sh`, and `scripts/rpi5-format-guard-check.sh` passed.
+- Consequences: The next Phase 6.1 hardware proof can reuse the accepted
+  state/stack ownership vocabulary, but it still needs serialized Pi 5 evidence
+  before claiming hardware behavior. Scheduler migration and SMP-safe
+  primitives remain explicitly deferred.
+- Alternatives considered: keep state reporting inside the QEMU diagnostic or
+  combine this task with Pi 5 hardware proof. Keeping it diagnostic-local would
+  blur the production ownership boundary; combining it with hardware would
+  increase risk and skip the queued task decomposition.
+
 ## 2026-05-24 - Accept QEMU Polling TTY RX Diagnostic
 
 - Status: accepted as the first Milestone 5.2 local serial input proof. No Pi 5

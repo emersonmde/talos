@@ -336,3 +336,16 @@ preemption-disable counters, switching directly from an asynchronous exception
 frame, sleep and wakeup queues, SMP run-queue locking, task migration, lower-EL
 state, process address spaces, descriptor tables, POSIX process lifetime, and
 all filesystem, console/TTY, networking, and SSH behavior.
+
+## Phase 6.1 Per-Core Boundary
+
+Phase 6.1 now has a separate `src/smp.rs` per-core ownership boundary for
+secondary-core bring-up. That boundary records possible core count, secondary
+stack slot ownership, MPIDR/logical identity, and the boot-time lifecycle
+through `handoff-ready`.
+
+The scheduler remains single-core. `src/smp.rs` does not provide scheduler
+locks, runnable queues, migration, load balancing, cross-core preemption,
+sleep/wakeup behavior, IPIs, or process resources. Secondary cores that reach
+`handoff-ready` must still park or run a separately planned bounded workload
+until a later supervisor task accepts SMP-safe scheduler primitives.
