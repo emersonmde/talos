@@ -49,6 +49,38 @@ ADR template:
   accepted IRQ-mask primitive is not an SMP lock. Phase 5 must preserve the
   early logging/runtime console boundary before introducing input or TTY state.
 
+## 2026-05-24 - Accept QEMU Polling TTY RX Diagnostic
+
+- Status: accepted as the first Milestone 5.2 local serial input proof. No Pi 5
+  hardware publish, power-cycle, hardware lock, descriptor table, syscall,
+  userspace, shell, filesystem, networking, SSH, UART interrupt, or scheduler
+  blocking behavior changed in this task.
+- Context: Phase 5.1 accepted `runtime-console0` as the default runtime console
+  identity and inventoried QEMU PL011 polling RX as the lowest-risk first local
+  input surface. The TTY/stdio shape then required canonical-lite behavior to
+  sit above the runtime-console/TTY boundary rather than in a target UART
+  shortcut.
+- Decision: Add a QEMU-only diagnostic gated by
+  `TALOS_QEMU_POLLING_TTY_RX_DIAGNOSTIC` and
+  `scripts/qemu-tty-rx-diagnostic.sh`. The PL011 backend exposes
+  `poll_read_byte`, runtime console exposes a polling input trait, and the TTY
+  diagnostic records exact raw input, line bytes, echo bytes, control events,
+  truncation, and bounded timeout classification.
+- Evidence level: QEMU/substitute plus unit tests. The focused script injects
+  `61 62 58 08 63 59 7f 64 03 65 66 67 68 69 0d` and the serial log reports
+  `line-hex=61 62 63 64 65 66 67 68`,
+  `echo-hex=61 62 58 08 20 08 63 59 08 20 08 64 65 66 67 68 0d 0a`,
+  `control-events=ctrl-c`, truncation=true, timeout=false, and
+  `qemu-tty-rx-diagnostic: PASS`.
+- Consequences: Milestone 5.2 now has a local QEMU input proof. The next worker
+  task may promote the line discipline into target-independent code or define
+  the input result contract, but Pi 5 UART10 input remains a serialized
+  hardware task and must not be inferred from QEMU evidence.
+- Alternatives considered: read PL011 directly from the diagnostic client, wait
+  for Pi 5 input first, or build descriptor/syscall reads now. Those would blur
+  subsystem boundaries, add hardware risk before local proof, or jump ahead of
+  the accepted roadmap.
+
 ## 2026-05-24 - Phase 4 Pre-Scheduler Closeout Accepted
 
 - Status: accepted as the checkpoint between Phase 4.1/4.2 interrupt/timer

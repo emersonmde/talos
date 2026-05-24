@@ -439,6 +439,78 @@ pub fn services(boot_info: &BootInfo) -> TargetServices {
     }
 }
 
+#[cfg(talos_qemu_polling_tty_rx_diagnostic)]
+pub fn run_polling_tty_rx_diagnostic() -> bool {
+    crate::println!(
+        "qemu-tty-rx-diagnostic: ready capacity={} wait-limit={} backend=runtime-console0/qemu-virt-pl011",
+        crate::tty::CANONICAL_LINE_CAPACITY,
+        crate::tty::POLLING_RX_WAIT_LIMIT
+    );
+
+    let result = crate::tty::run_polling_rx_diagnostic(console());
+    crate::println!();
+    crate::println!(
+        "qemu-tty-rx-diagnostic: raw-len={} line-len={} terminated={} timeout={} truncated={} backspaces={} deletes={} controls={}",
+        result.raw_bytes(),
+        result.line().len(),
+        result.terminated(),
+        result.timed_out(),
+        result.truncated(),
+        result.backspaces(),
+        result.deletes(),
+        result.controls().len()
+    );
+    crate::print!("qemu-tty-rx-diagnostic: line-hex=");
+    print_hex_bytes(result.line());
+    crate::println!();
+    crate::print!("qemu-tty-rx-diagnostic: echo-hex=");
+    print_hex_bytes(result.echo());
+    crate::println!();
+    crate::print!("qemu-tty-rx-diagnostic: control-events=");
+    print_control_events(result.controls());
+    crate::println!();
+
+    if result.passed() && result.truncated() && !result.controls().is_empty() {
+        crate::println!("qemu-tty-rx-diagnostic: PASS");
+        true
+    } else {
+        crate::println!("qemu-tty-rx-diagnostic: FAIL");
+        false
+    }
+}
+
+#[cfg(talos_qemu_polling_tty_rx_diagnostic)]
+fn print_hex_bytes(bytes: &[u8]) {
+    for (index, byte) in bytes.iter().enumerate() {
+        if index != 0 {
+            crate::print!(" ");
+        }
+        crate::print!("{:02x}", byte);
+    }
+}
+
+#[cfg(talos_qemu_polling_tty_rx_diagnostic)]
+fn print_control_events(events: &[Option<crate::tty::TtyControlEvent>]) {
+    if events.is_empty() {
+        crate::print!("none");
+        return;
+    }
+
+    for (index, event) in events.iter().enumerate() {
+        if index != 0 {
+            crate::print!(",");
+        }
+        match event {
+            Some(event) => {
+                crate::print!("{}", event.name());
+            }
+            None => {
+                crate::print!("empty");
+            }
+        }
+    }
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct TimerIrqSnapshot {
     pub timer_count: u64,

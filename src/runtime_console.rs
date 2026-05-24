@@ -4,6 +4,11 @@ pub trait ConsoleBackend {
     fn write_str(&mut self, s: &str) -> fmt::Result;
 }
 
+#[cfg_attr(not(any(test, talos_qemu_polling_tty_rx_diagnostic)), allow(dead_code))]
+pub trait ConsoleInputBackend {
+    fn poll_read_byte(&mut self) -> Option<u8>;
+}
+
 impl<T> ConsoleBackend for T
 where
     T: Write,
@@ -116,6 +121,14 @@ where
     B: ConsoleBackend,
 {
     RuntimeConsole::new(backend).write_kernel_args(args)
+}
+
+#[cfg_attr(not(any(test, talos_qemu_polling_tty_rx_diagnostic)), allow(dead_code))]
+pub fn poll_default_console_input<B>(backend: &mut B) -> Option<u8>
+where
+    B: ConsoleInputBackend,
+{
+    backend.poll_read_byte()
 }
 
 #[cfg(test)]

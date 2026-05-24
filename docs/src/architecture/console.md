@@ -29,7 +29,7 @@ Raspberry Pi 5 owns a firmware-preserved early UART path:
 
 The early helper path remains intentionally separate: `target::console::write_static`, `write_hex_usize`, `write_hex_u64`, and `write_dec_usize`. On Pi 5 those helpers route to the proven UART10 word-write path and are used for panic/OOM, exception/fault reports, DTB and memory reports, and other bring-up diagnostics that must not rely on broad formatting or allocation.
 
-There is no accepted receive path today. `src/pl011.rs` names PL011 data, flag, interrupt-mask, and interrupt-clear registers, but it only exposes TX initialization, TX-ready polling, data writes, posted-write flushing, and `core::fmt::Write`. No code reads UART data-register bytes, checks RX-empty state, enables UART receive interrupts, buffers input, or reports input readiness to runtime console code.
+The first accepted receive path is QEMU-only and polling. `src/pl011.rs` now exposes a small RX-empty check plus data-register byte read for PL011, and `runtime_console::ConsoleInputBackend` gives the diagnostic a console-facing polling boundary. This does not enable UART interrupts, buffering, scheduler readiness, descriptor reads, or Pi 5 input.
 
 ## Runtime Console Ownership Boundary
 
@@ -49,14 +49,14 @@ The runtime console must not own POSIX process resources. Later descriptor work 
 
 The first local input work should start as a polling diagnostic, not a TTY, blocking read, shell command channel, or UART-interrupt path.
 
-QEMU virt has the smallest input surface:
+QEMU virt has the accepted first input surface:
 
 - source: `src/target/qemu_virt.rs`;
 - UART: `qemu-virt-pl011-uart0` at `0x0900_0000`;
 - current ownership: QEMU target code initializes the PL011 and backs `runtime-console0` output through `qemu_virt::console()`;
-- future input shape: add a small PL011 RX operation that checks RX-empty state and reads complete bytes from the same target-owned UART backend, then expose it to runtime console code as an input-capable backend for a QEMU-only smoke.
+- input shape: `Pl011::poll_read_byte` checks RX-empty before reading, and `phase5-qemu-polling-tty-rx-diagnostic-20260524` passes the target-owned backend through the runtime-console/TTY boundary for a QEMU-only smoke.
 
-This should be the first implementation target because it is fast, local, and does not require the Pi 5 hardware lock. The task should remain polling and bounded: prove that a byte or short line injected through QEMU serial reaches a kernel diagnostic report. It should not add canonical mode, echo policy, descriptor allocation, task blocking, scheduler wakeups, userspace, shell commands, or UART interrupts.
+This remains polling and bounded. The accepted diagnostic proves that a short injected QEMU serial line reaches kernel code, applies the canonical-lite newline, backspace/delete, echo, control-event, truncation, and timeout policy, and reports exact line and echo bytes. It does not add descriptor allocation, task blocking, scheduler wakeups, userspace, shell commands, Pi 5 input, or UART interrupts.
 
 Raspberry Pi 5 has two plausible local UART surfaces, with different risks:
 
@@ -90,10 +90,10 @@ The accepted Phase 5.1 model is output-capable and input-planned. runtime-consol
 
 Milestone 5.2 may start with a TTY/stdio shape document only. That design task may define raw/canonical behavior, newline/backspace/echo/control-character policy, and descriptor-facing stdin/stdout/stderr shape, but it must not implement UART RX, line discipline, descriptor tables, syscalls, userspace, shell behavior, hardware tests, or blocking I/O.
 
-The accepted Milestone 5.2 shape is documented in [TTY and Stdio Shape](tty-stdio.md). It keeps TTY policy above the runtime console backend, treats stdin, stdout, and stderr as future descriptor-owned streams, and recommends the first implementation slice as a QEMU-only polling PL011 RX diagnostic with bounded echo and line capture.
+The accepted Milestone 5.2 shape is documented in [TTY and Stdio Shape](tty-stdio.md). It keeps TTY policy above the runtime console backend, treats stdin, stdout, and stderr as future descriptor-owned streams, and is now backed by the first QEMU-only polling PL011 RX diagnostic with bounded echo and line capture.
 
 ## Next Implementation Boundary
 
-The bounded implementation task `phase5-runtime-console-write-core-20260524` added the output-only runtime console write core. The follow-up `phase5-console-write-result-contract-20260524` made its success/error boundary explicit with complete-write byte accounting for future descriptor compatibility. The `phase5-console-device-identity-boundary-20260524` slice named the default output-side console identity as `runtime-console0` and routed normal kernel diagnostics through `write_default_console_output`. The `phase5-console-input-source-inventory-20260524` slice inventoried QEMU and Pi 5 local input options and recommends a QEMU-only polling PL011 RX diagnostic as the first later input implementation task.
+The bounded implementation task `phase5-runtime-console-write-core-20260524` added the output-only runtime console write core. The follow-up `phase5-console-write-result-contract-20260524` made its success/error boundary explicit with complete-write byte accounting for future descriptor compatibility. The `phase5-console-device-identity-boundary-20260524` slice named the default output-side console identity as `runtime-console0` and routed normal kernel diagnostics through `write_default_console_output`. The `phase5-console-input-source-inventory-20260524` slice inventoried QEMU and Pi 5 local input options, and `phase5-qemu-polling-tty-rx-diagnostic-20260524` accepted the QEMU-only polling PL011 RX diagnostic as the first local input proof.
 
-The core is backed by the existing polling PL011 paths and preserves the accepted early serial output contract. It does not add UART interrupts, input, TTY line discipline, descriptor tables, userspace, filesystems, networking, SSH, a shell, or sleep/blocking behavior.
+The core is backed by the existing polling PL011 paths and preserves the accepted early serial output contract. The QEMU input diagnostic adds only bounded polling RX and a diagnostic-local canonical-lite parser. It does not add UART interrupts, descriptor tables, userspace, filesystems, networking, SSH, a shell, or sleep/blocking behavior.

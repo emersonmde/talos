@@ -83,13 +83,13 @@ The first TTY is intentionally not POSIX-complete. Deferred work includes:
 
 The design should still leave room for those features by keeping TTY state above the console backend and below descriptor/syscall policy.
 
-## First Implementation Slice
+## First QEMU Polling RX Diagnostic
 
-The first bounded implementation after this design should be a QEMU-only polling TTY RX diagnostic:
+The first bounded implementation after this design is `phase5-qemu-polling-tty-rx-diagnostic-20260524`, a QEMU-only polling TTY RX diagnostic:
 
-- add a PL011 polling RX byte operation for QEMU virt that checks RX-empty state before reading;
-- expose it to runtime console or TTY code as an input-capable backend for QEMU only;
-- add a bounded diagnostic that reads injected serial bytes, applies the canonical-lite newline/backspace/echo policy, and prints the observed line or timeout classification;
+- `Pl011::poll_read_byte` checks RX-empty state before reading the data register;
+- `runtime_console::ConsoleInputBackend` exposes the input-capable backend without making diagnostic clients call target UART MMIO directly;
+- `tty::run_polling_rx_diagnostic` reads injected serial bytes, applies the canonical-lite newline, backspace/delete, echo, control-event, truncation, and timeout policy, and prints the observed line or timeout classification;
 - keep descriptor tables, syscalls, userspace, scheduler blocking, UART interrupts, Pi 5 hardware, shell commands, filesystem, networking, and SSH out of scope.
 
-Acceptance for that implementation should be QEMU/substitute evidence showing injected serial input reaches the diagnostic with exact echoed/output bytes or a labeled timeout. Pi 5 input proof remains a later hardware-locked task.
+Acceptance evidence is captured by `scripts/qemu-tty-rx-diagnostic.sh`, which injects `61 62 58 08 63 59 7f 64 03 65 66 67 68 69 0d` and records `line-hex=61 62 63 64 65 66 67 68`, the exact echo bytes, `control-events=ctrl-c`, truncation, and `qemu-tty-rx-diagnostic: PASS`. Pi 5 input proof remains a later hardware-locked task.

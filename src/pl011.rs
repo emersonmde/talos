@@ -9,6 +9,7 @@ const UART_CR: usize = 0x30;
 const UART_IMSC: usize = 0x38;
 const UART_ICR: usize = 0x44;
 
+const UART_FR_RXFE: u32 = 1 << 4;
 const UART_FR_TXFF: u32 = 1 << 5;
 const UART_FR_TXFE: u32 = 1 << 7;
 const UART_TX_READY_WAIT_LIMIT: usize = 0x1_0000;
@@ -86,6 +87,15 @@ impl Pl011 {
             self.wait_tx_ready_bounded();
         }
         self.write_data(byte as u32);
+    }
+
+    #[cfg_attr(not(any(test, talos_qemu_polling_tty_rx_diagnostic)), allow(dead_code))]
+    pub fn poll_read_byte(self) -> Option<u8> {
+        if self.read_reg(UART_FR) & UART_FR_RXFE != 0 {
+            return None;
+        }
+
+        Some((self.read_reg(UART_DR) & 0xff) as u8)
     }
 
     fn wait_tx_ready_bounded(self) {
@@ -181,5 +191,11 @@ impl fmt::Write for Pl011 {
             self.wait_tx_empty_bounded();
         }
         Ok(())
+    }
+}
+
+impl crate::runtime_console::ConsoleInputBackend for Pl011 {
+    fn poll_read_byte(&mut self) -> Option<u8> {
+        (*self).poll_read_byte()
     }
 }

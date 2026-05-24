@@ -29,6 +29,10 @@
     ),
     allow(dead_code, unused_imports, unused_variables)
 )]
+#![cfg_attr(
+    all(not(test), talos_qemu_polling_tty_rx_diagnostic),
+    allow(dead_code, unused_imports, unused_variables, unreachable_code)
+)]
 #![feature(custom_test_frameworks)]
 #![test_runner(crate::test_runner)]
 #![reexport_test_harness_main = "test_main"]
@@ -50,6 +54,8 @@ mod runtime_console;
 #[cfg_attr(not(test), allow(dead_code))]
 mod scheduler;
 mod target;
+#[cfg_attr(not(talos_qemu_polling_tty_rx_diagnostic), allow(dead_code))]
+mod tty;
 
 use core::panic::PanicInfo;
 #[cfg(talos_target_rpi5_bcm2712)]
@@ -185,6 +191,14 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
         );
         println!("mmio-regions: {}", services.mmio_map.regions().len());
         if boot_info.target == target::TargetKind::QemuVirt && boot_info.exception_level == 2 {
+            #[cfg(talos_qemu_polling_tty_rx_diagnostic)]
+            {
+                if target::qemu_virt::run_polling_tty_rx_diagnostic() {
+                    target::qemu::exit_success();
+                }
+                target::qemu::exit_failure();
+            }
+
             #[cfg(talos_qemu_timer_preemption_smoke)]
             {
                 if target::qemu_virt::run_el2_timer_preemption_smoke() {
@@ -217,6 +231,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
             }
 
             #[cfg(not(any(
+                talos_qemu_polling_tty_rx_diagnostic,
                 talos_qemu_timer_preemption_smoke,
                 talos_qemu_scheduler_yield_smoke,
                 talos_qemu_context_switch_smoke
