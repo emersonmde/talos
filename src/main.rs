@@ -25,7 +25,8 @@
             talos_rpi5_alloc_format_diagnostic,
             talos_rpi5_page_frame_reuse_diagnostic,
             talos_rpi5_timer_preemption_diagnostic,
-            talos_rpi5_diagnostic_command_channel_proof
+            talos_rpi5_diagnostic_command_channel_proof,
+            talos_rpi5_psci_secondary_core_alive_proof
         )
     ),
     allow(dead_code, unused_imports, unused_variables)

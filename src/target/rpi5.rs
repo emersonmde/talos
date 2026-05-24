@@ -8,6 +8,11 @@ use crate::arch::aarch64::{
 };
 #[cfg(talos_rpi5_timer_preemption_diagnostic)]
 use crate::scheduler::{ContextFrame, KernelStack, SingleCoreScheduler, Task, TaskId, TaskState};
+#[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
+use crate::smp::{
+    self, CoreLifecycle, CoreStackLayout, MAX_CORES, SECONDARY_CORE_STATES,
+    SECONDARY_KERNEL_STACK_SIZE, pi5_logical_cpu_from_mpidr_affinity,
+};
 use crate::{
     boot::BootInfo,
     device_tree::DeviceTree,
@@ -18,7 +23,8 @@ use crate::{
 use core::cell::UnsafeCell;
 #[cfg(any(
     talos_rpi5_timer_irq_diagnostic,
-    talos_rpi5_timer_preemption_diagnostic
+    talos_rpi5_timer_preemption_diagnostic,
+    talos_rpi5_psci_secondary_core_alive_proof
 ))]
 use core::sync::atomic::{AtomicU64, Ordering};
 
@@ -67,6 +73,12 @@ const CONTEXT_SWITCH_STACK_SIZE: usize = 4096;
 const TIMER_PREEMPTION_TARGET_PROGRESS: u64 = 3;
 #[cfg(talos_rpi5_timer_preemption_diagnostic)]
 const TIMER_PREEMPTION_TARGET_SWITCHES: u64 = 6;
+#[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
+const RPI5_SECONDARY_WAIT_LIMIT: usize = 200_000_000;
+#[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
+const PSCI_AFFINITY_INFO: u64 = 0x8400_0004;
+#[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
+const PSCI_CPU_ON: u64 = 0xc400_0003;
 
 const MMIO_REGIONS: &[MmioRegion] = &[
     MmioRegion::new("bcm2712-local-peripherals", 0x10_7c00_0000, 0x0400_0000),
@@ -105,6 +117,13 @@ static UNEXPECTED_GIC_IRQ_COUNT: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_rpi5_timer_preemption_diagnostic)]
 static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
 
+#[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
+unsafe extern "C" {
+    fn talos_aarch64_rpi5_secondary_entry();
+    static talos_secondary_core_stacks: u8;
+    static talos_secondary_core_stacks_end: u8;
+}
+
 pub fn init_stub() {
     init_rp1_uart0_pins();
     // serial10 is already active for firmware/BL31 logs; avoid disturbing baud
@@ -135,6 +154,227 @@ fn write_rp1_reg_flush(addr: usize, value: u32) {
 #[cfg(talos_target_rpi5_bcm2712)]
 pub fn firmware_console() -> Pl011 {
     Pl011::new_with_posted_write_flush(UART10_BASE)
+}
+
+#[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
+fn secondary_stack_layout() -> CoreStackLayout {
+    let base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
+    let end = core::ptr::addr_of!(talos_secondary_core_stacks_end) as usize;
+    CoreStackLayout::new(base, end, MAX_CORES, SECONDARY_KERNEL_STACK_SIZE)
+        .expect("valid linked secondary-core stack layout")
+}
+
+#[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
+fn secondary_state_name(state: u64) -> &'static str {
+    CoreLifecycle::from_raw(state).map_or("unknown", CoreLifecycle::name)
+}
+
+#[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
+unsafe fn psci_smc(function_id: u64, arg1: u64, arg2: u64, arg3: u64) -> i64 {
+    let mut result = function_id;
+    let scratch1 = arg1;
+    let scratch2 = arg2;
+    let scratch3 = arg3;
+    unsafe {
+        core::arch::asm!(
+            "smc #0",
+            inout("x0") result,
+            inout("x1") scratch1 => _,
+            inout("x2") scratch2 => _,
+            inout("x3") scratch3 => _,
+            lateout("x4") _,
+            lateout("x5") _,
+            lateout("x6") _,
+            lateout("x7") _,
+            lateout("x8") _,
+            lateout("x9") _,
+            lateout("x10") _,
+            lateout("x11") _,
+            lateout("x12") _,
+            lateout("x13") _,
+            lateout("x14") _,
+            lateout("x15") _,
+            lateout("x16") _,
+            lateout("x17") _,
+            options(nostack)
+        );
+    }
+    result as i64
+}
+
+#[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
+unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) -> i64 {
+    unsafe { psci_smc(PSCI_CPU_ON, target_affinity, entry as u64, context as u64) }
+}
+
+#[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
+unsafe fn psci_affinity_info_smc(target_affinity: u64, lowest_affinity_level: u64) -> i64 {
+    unsafe {
+        psci_smc(
+            PSCI_AFFINITY_INFO,
+            target_affinity,
+            lowest_affinity_level,
+            0,
+        )
+    }
+}
+
+#[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
+fn psci_affinity_state_name(state: i64) -> &'static str {
+    match state {
+        0 => "on",
+        1 => "off",
+        2 => "on-pending",
+        _ => "error-or-unknown",
+    }
+}
+
+#[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
+#[unsafe(no_mangle)]
+pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
+    write_uart10_bytes_early_phase(b"TALOS: secondary_rust_entry\r\n");
+
+    let mpidr = crate::arch::aarch64::mpidr_el1();
+    let affinity = crate::arch::aarch64::mpidr_affinity(mpidr);
+    let logical_cpu = pi5_logical_cpu_from_mpidr_affinity(affinity).unwrap_or(context);
+    if logical_cpu < MAX_CORES {
+        let core_state = &SECONDARY_CORE_STATES[logical_cpu];
+        core_state.enter(context, mpidr, affinity);
+
+        let stack_pointer: u64;
+        unsafe {
+            core::arch::asm!("mov {stack_pointer}, sp", stack_pointer = out(reg) stack_pointer, options(nomem, nostack, preserves_flags));
+        }
+        core_state.mark_stack_ready(stack_pointer as usize);
+        core_state.mark_registered();
+        core_state.mark_handoff_ready();
+        core_state.clean_to_poc();
+        write_uart10_bytes_early_phase(b"TALOS: secondary_state_published\r\n");
+    }
+
+    loop {
+        unsafe {
+            core::arch::asm!("wfe", options(nomem, nostack, preserves_flags));
+        }
+    }
+}
+
+#[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
+pub fn run_psci_secondary_core_alive_proof() -> bool {
+    smp::reset_secondary_core_states();
+
+    let boot_mpidr = crate::arch::aarch64::mpidr_el1();
+    let boot_affinity = crate::arch::aarch64::mpidr_affinity(boot_mpidr);
+    let boot_logical = pi5_logical_cpu_from_mpidr_affinity(boot_affinity);
+    let entry = talos_aarch64_rpi5_secondary_entry as *const () as usize;
+    let stack_layout = secondary_stack_layout();
+    let stack_base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
+    let stack_end = core::ptr::addr_of!(talos_secondary_core_stacks_end) as usize;
+
+    crate::println!(
+        "rpi5-psci-secondary-core-alive: start conduit=smc cores={} boot-mpidr={:#018x} boot-affinity={:#x} boot-logical={:?} entry={:#018x} stack-range=[{:#018x},{:#018x})",
+        MAX_CORES,
+        boot_mpidr,
+        boot_affinity,
+        boot_logical,
+        entry,
+        stack_base,
+        stack_end
+    );
+    wait_uart10_empty_early_phase();
+
+    let mut cpu_on_ok = true;
+    for logical_cpu in 1..MAX_CORES {
+        let target_affinity = (logical_cpu as u64) << 8;
+        let result = unsafe { psci_cpu_on_smc(target_affinity, entry, logical_cpu) };
+        crate::println!(
+            "rpi5-psci-secondary-core-alive: cpu-on logical={} target-affinity={:#x} result={}",
+            logical_cpu,
+            target_affinity,
+            result
+        );
+        cpu_on_ok &= result == 0;
+        let affinity_after = unsafe { psci_affinity_info_smc(target_affinity, 0) };
+        crate::println!(
+            "rpi5-psci-secondary-core-alive: affinity-after logical={} target-affinity={:#x} level=0 state={} raw={}",
+            logical_cpu,
+            target_affinity,
+            psci_affinity_state_name(affinity_after),
+            affinity_after
+        );
+        wait_uart10_empty_early_phase();
+    }
+
+    let mut remaining = RPI5_SECONDARY_WAIT_LIMIT;
+    while remaining > 0 {
+        let all_ready = (1..MAX_CORES).all(|logical_cpu| {
+            SECONDARY_CORE_STATES[logical_cpu].invalidate_from_poc();
+            SECONDARY_CORE_STATES[logical_cpu]
+                .snapshot(logical_cpu)
+                .lifecycle
+                >= CoreLifecycle::HandoffReady
+        });
+        if all_ready {
+            break;
+        }
+        core::hint::spin_loop();
+        remaining -= 1;
+    }
+
+    let mut reports_ok = cpu_on_ok && boot_logical == Some(0);
+    for logical_cpu in 1..MAX_CORES {
+        SECONDARY_CORE_STATES[logical_cpu].invalidate_from_poc();
+        let report = SECONDARY_CORE_STATES[logical_cpu].snapshot(logical_cpu);
+        let logical_from_mpidr = pi5_logical_cpu_from_mpidr_affinity(report.affinity);
+        let stack_slot = stack_layout
+            .slot(logical_cpu)
+            .expect("stack slot for possible Pi 5 core");
+        let stack_owned = stack_slot.contains_stack_pointer(report.stack_pointer);
+        let report_ok = report.lifecycle >= CoreLifecycle::HandoffReady
+            && report.context == logical_cpu
+            && logical_from_mpidr == Some(logical_cpu)
+            && stack_owned;
+        reports_ok &= report_ok;
+
+        crate::println!(
+            "rpi5-psci-secondary-core-alive: report logical={} state={} context={} mpidr={:#018x} affinity={:#x} mapped={:?} sp={:#018x} stack=[{:#018x},{:#018x}) ok={}",
+            logical_cpu,
+            secondary_state_name(report.lifecycle.raw()),
+            report.context,
+            report.mpidr,
+            report.affinity,
+            logical_from_mpidr,
+            report.stack_pointer,
+            stack_slot.bottom,
+            stack_slot.top,
+            report_ok
+        );
+        wait_uart10_empty_early_phase();
+    }
+
+    let classification = if reports_ok {
+        "pi5-psci-smc-secondary-cores-alive"
+    } else if !cpu_on_ok {
+        "pi5-psci-smc-cpu-on-failed"
+    } else if boot_logical != Some(0) {
+        "pi5-psci-boot-core-identity-mismatch"
+    } else {
+        "pi5-psci-started-but-state-or-stack-incomplete"
+    };
+    crate::println!(
+        "rpi5-psci-secondary-core-alive: wait-remaining={} classification={}",
+        remaining,
+        classification
+    );
+
+    if reports_ok {
+        crate::println!("rpi5-psci-secondary-core-alive: PASS");
+    } else {
+        crate::println!("rpi5-psci-secondary-core-alive: FAIL");
+    }
+    wait_uart10_empty_early_phase();
+
+    reports_ok
 }
 
 #[cfg(talos_rpi5_uart10_polling_rx_diagnostic)]
@@ -1174,6 +1414,14 @@ pub(crate) fn write_uart10_byte_early_phase(byte: u8) {
             options(nostack, preserves_flags)
         );
     }
+}
+
+#[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_psci_secondary_core_alive_proof))]
+pub(crate) fn write_uart10_bytes_early_phase(bytes: &[u8]) {
+    for &byte in bytes {
+        write_uart10_byte_early_phase(byte);
+    }
+    wait_uart10_empty_early_phase();
 }
 
 #[cfg(talos_target_rpi5_bcm2712)]

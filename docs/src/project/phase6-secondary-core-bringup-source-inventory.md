@@ -112,6 +112,55 @@ Pi 5 hardware evidence:
 - Acceptance requires all four Cortex-A76 cores to report alive with distinct
   MPIDR/logical CPU identities, distinct stack ownership, per-core registration,
   and a controlled handoff result.
+- First hardware attempt for
+  `phase6-pi5-psci-secondary-core-alive-proof-20260524` built and served the
+  focused PSCI candidate archive, but serial capture after two candidate
+  power-cycles contained only a NUL/newline and no Talos PSCI alive transcript.
+  This is classified as `serial-capture-or-pre-entry-output-ambiguity`, not as
+  accepted Pi 5 PSCI proof.
+- Follow-up pre-entry/early-serial discriminator evidence for the same task
+  proved the Pi fetched and entered the candidate image: serial showed
+  `asm_start`, `asm_pre_rust_entry`, `rust_entry`, normal Talos boot output,
+  and PSCI `CPU_ON` result 0 for target affinities `0x100`, `0x200`, and
+  `0x300`. The secondary records still remained `parked` with no owned
+  stack/state, so this is classified as
+  `pi5-psci-started-but-state-or-stack-incomplete`, not accepted Pi 5 PSCI
+  proof.
+- A secondary-entry discriminator then added fixed UART10 markers at the first
+  secondary trampoline instruction and immediately before the Rust secondary
+  entry. Corrected hardware evidence again proved candidate TFTP fetch,
+  `rust_entry`, and PSCI `CPU_ON` result 0 for `0x100`, `0x200`, and `0x300`,
+  but neither secondary-entry marker appeared. The current classification is
+  `pi5-psci-accepted-secondary-entry-not-observed`, so Pi 5 secondary-core
+  alive proof remains unaccepted pending a PSCI-entry-address or PSCI-state
+  discriminator.
+- A follow-up PSCI state discriminator added `PSCI_VERSION`, `PSCI_FEATURES`,
+  and `AFFINITY_INFO` calls around the same CPU_ON path. The corrected
+  hardware run proved the Pi fetched the 91,000-byte candidate image from TFTP,
+  but serial did not show BL31, `TALOS: asm_start`, `TALOS: rust_entry`, or
+  PSCI state-discriminator lines for that boot. The current classification is
+  `pi5-state-discriminator-candidate-fetched-no-bl31-or-asm-entry`; this is
+  not accepted Pi 5 PSCI proof and needs local image/disassembly review or a
+  smaller state discriminator before another hardware acceptance attempt.
+- Local image/disassembly review found the state-discriminator image header,
+  early markers, and entry symbols structurally sound. A smaller discriminator
+  with explicit SMC clobbers and only a post-`CPU_ON` `AFFINITY_INFO` probe was
+  then fetched repeatedly at 90,416 bytes, but current-run serial still did not
+  show BL31-to-Talos entry or the new affinity-state lines. The current
+  classification is
+  `pi5-minstate-discriminator-candidate-fetched-no-current-entry`; the original
+  CPU_ON-success/no-secondary-entry result remains unexplained and unaccepted.
+- A comparison rerun proved the last Talos-entry image could still reach
+  secondary trampoline markers, and a Rust-entry marker run proved each
+  secondary reached `talos_rpi5_secondary_entry` and emitted a state-published
+  marker while the primary still saw parked zero records. The accepted fix
+  keeps the diagnostic's per-core state cache-visible by cleaning secondary
+  updates to the point of coherency and invalidating the primary view before
+  snapshots. The final Pi 5 hardware run served the 90,784-byte candidate
+  before restore and serial proved cores 1-3 with MPIDR affinities `0x100`,
+  `0x200`, and `0x300`, owned stack slots, `handoff-ready` state, and
+  classification `pi5-psci-smc-secondary-cores-alive`. The Pi 5 PSCI
+  secondary-core alive proof is accepted for boot-time alive/park behavior.
 
 ## Deferred Work
 
@@ -126,9 +175,11 @@ The accepted QEMU discriminator task is
 `phase6-qemu-secondary-core-bringup-discriminator-20260524`. The per-core
 state/stacks boundary is accepted in
 `phase6-per-core-state-and-stacks-20260524` and recorded in
-`tasks/2026-05-24-phase6-per-core-state-and-stacks.md`. The next queued Phase
-6.1 task remains separate from SMP-safe locking and scheduler migration and must
-not claim Pi 5 hardware behavior without serialized hardware evidence.
+`tasks/2026-05-24-phase6-per-core-state-and-stacks.md`. The accepted Pi 5
+hardware proof is
+`phase6-pi5-psci-secondary-core-alive-proof-20260524`. The next queued Phase
+6.1 task remains separate from SMP-safe locking and scheduler migration unless
+the durable supervisor task explicitly broadens that scope.
 
 ## Validation
 

@@ -180,6 +180,12 @@ Completed:
   1, 2, and 3; each reports distinct MPIDR affinity, runs on its reserved
   stack, reaches `handoff-ready`, and parks without claiming Pi 5 hardware
   behavior.
+- Phase 6.1 Pi 5 PSCI secondary-core alive proof is accepted. Serialized
+  hardware evidence shows the Pi fetched the 90,784-byte candidate image and
+  cores 1, 2, and 3 reported MPIDR affinities `0x100`, `0x200`, and
+  `0x300`, distinct owned stack slots, `handoff-ready` state, and
+  `pi5-psci-smc-secondary-cores-alive` before the pre-run boot snapshot was
+  restored.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -187,10 +193,9 @@ Completed:
 
 Blocked or pending:
 
-- The next explicit worker task is supervisor-queued per-core state and stack
-  ownership work. It must not start Pi 5 hardware proof, SMP-safe primitives,
-  scheduler migration, filesystem, networking, SSH, or shell work unless the
-  durable task says so.
+- The next explicit worker task remains supervisor-queued. It must not start
+  controlled secondary workloads, SMP-safe primitives, scheduler migration,
+  filesystem, networking, SSH, or shell work unless the durable task says so.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
@@ -481,8 +486,8 @@ Acceptance criteria:
 
 Goal: use all Pi 5 CPU cores with correct synchronization and preemptive scheduling.
 
-Status: Phase 6.1 source inventory/contract and QEMU secondary-core
-discriminator accepted. See
+Status: Phase 6.1 source inventory/contract, QEMU secondary-core
+discriminator, and Pi 5 PSCI secondary-core alive proof accepted. See
 [Phase 6 Secondary-Core Bring-Up Source Inventory](project/phase6-secondary-core-bringup-source-inventory.md).
 
 Milestone 6.1: Secondary Core Bring-Up

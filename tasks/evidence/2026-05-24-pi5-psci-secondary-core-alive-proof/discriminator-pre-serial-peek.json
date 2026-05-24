@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "PTIgc3RhdHVzPXVua25vd24tY29tbWFuZCByZXNwb25zZXM9MQ0KcnBpNS1kaWFnbm9zdGljLWNvbW1hbmQtY2hhbm5lbC1wcm9vZjogcmVhZHkgY29tbWFuZD0zDQoNCnJwaTUtZGlhZ25vc3RpYy1jb21tYW5kLWNoYW5uZWwtcHJvb2Y6IGxpbmUgY29tbWFuZD0zIGhleD03MyA3NCA2MSA3NCA3NSA3Mw0KZGlhZzogb2sgc3RhdHVzDQpkaWFnOiB2ZXJzaW9uIHBoYXNlNS4zLWNvbnRyYWN0LXYxDQpkaWFnOiBydW50aW1lLWNvbnNvbGUgcnVudGltZS1jb25zb2xlMA0KZGlhZzogdHR5IGNhbm9uaWNhbC1saXRlIGxpbmUtY2FwYWNpdHkgOA0KZGlhZzogY29tbWFuZC1jb3VudCAzDQpkaWFnOiBjb21tYW5kcyBoZWxwIGxpc3Qgc3RhdHVzDQpycGk1LWRpYWdub3N0aWMtY29tbWFuZC1jaGFubmVsLXByb29mOiBkaXNwYXRjaCBjb21tYW5kPTMgc3RhdHVzPWhhbmRsZWQgcmVzcG9uc2VzPTYNCnJwaTUtZGlhZ25vc3RpYy1jb21tYW5kLWNoYW5uZWwtcHJvb2Y6IFBBU1MNCgAKAAo=",
+  "bytes": 500,
+  "cursor": 1939013,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "=2 status=unknown-command responses=1\r\nrpi5-diagnostic-command-channel-proof: ready command=3\r\n\r\nrpi5-diagnostic-command-channel-proof: line command=3 hex=73 74 61 74 75 73\r\ndiag: ok status\r\ndiag: version phase5.3-contract-v1\r\ndiag: runtime-console runtime-console0\r\ndiag: tty canonical-lite line-capacity 8\r\ndiag: command-count 3\r\ndiag: commands help list status\r\nrpi5-diagnostic-command-channel-proof: dispatch command=3 status=handled responses=6\r\nrpi5-diagnostic-command-channel-proof: PASS\r\n\u0000\n\u0000\n"
+}

@@ -121,6 +121,23 @@ impl PerCoreState {
                 .unwrap_or(CoreLifecycle::Parked),
         }
     }
+
+    pub fn clean_to_poc(&self) {
+        clean_cache_line_to_poc(&self.lifecycle);
+        clean_cache_line_to_poc(&self.context);
+        clean_cache_line_to_poc(&self.mpidr);
+        clean_cache_line_to_poc(&self.affinity);
+        clean_cache_line_to_poc(&self.stack_pointer);
+    }
+
+    #[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
+    pub fn invalidate_from_poc(&self) {
+        invalidate_cache_line_from_poc(&self.lifecycle);
+        invalidate_cache_line_from_poc(&self.context);
+        invalidate_cache_line_from_poc(&self.mpidr);
+        invalidate_cache_line_from_poc(&self.affinity);
+        invalidate_cache_line_from_poc(&self.stack_pointer);
+    }
 }
 
 pub static SECONDARY_CORE_STATES: [PerCoreState; MAX_CORES] =
@@ -129,8 +146,42 @@ pub static SECONDARY_CORE_STATES: [PerCoreState; MAX_CORES] =
 pub fn reset_secondary_core_states() {
     for state in SECONDARY_CORE_STATES.iter() {
         state.reset();
+        state.clean_to_poc();
     }
 }
+
+#[cfg(target_arch = "aarch64")]
+fn clean_cache_line_to_poc<T>(value: &T) {
+    unsafe {
+        core::arch::asm!(
+            "dc cvac, {addr}",
+            "dsb sy",
+            addr = in(reg) value as *const T as usize,
+            options(nostack, preserves_flags)
+        );
+    }
+}
+
+#[cfg(not(target_arch = "aarch64"))]
+fn clean_cache_line_to_poc<T>(_value: &T) {}
+
+#[cfg(all(target_arch = "aarch64", talos_rpi5_psci_secondary_core_alive_proof))]
+fn invalidate_cache_line_from_poc<T>(value: &T) {
+    unsafe {
+        core::arch::asm!(
+            "dc ivac, {addr}",
+            "dsb sy",
+            addr = in(reg) value as *const T as usize,
+            options(nostack, preserves_flags)
+        );
+    }
+}
+
+#[cfg(all(
+    not(target_arch = "aarch64"),
+    talos_rpi5_psci_secondary_core_alive_proof
+))]
+fn invalidate_cache_line_from_poc<T>(_value: &T) {}
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct CoreStackSlot {

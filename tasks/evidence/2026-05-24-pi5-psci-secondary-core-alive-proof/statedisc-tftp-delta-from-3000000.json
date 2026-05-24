@@ -1,0 +1,4050 @@
+{
+  "action": "tftp logs",
+  "ok": true,
+  "tftp": {
+    "cursor_end": 3648996,
+    "cursor_start": 3000000,
+    "events": [
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 14:42:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 14:42:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 23 14:42:22 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 14:42:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 14:42:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 14:42:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 23 14:42:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 23 14:42:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 23 14:42:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 14:42:23 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 23 14:42:23 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 23 14:42:23 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 14:42:23 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 14:44:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 14:44:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 23 14:44:01 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 14:44:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 14:44:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 14:44:02 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 23 14:44:02 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 23 14:44:02 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 23 14:44:02 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 14:44:02 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 23 14:44:02 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 23 14:44:02 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 14:44:02 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 15:00:37 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 15:00:37 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 23 15:00:37 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:00:37 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:00:37 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 15:00:37 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 23 15:00:37 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 23 15:00:38 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 23 15:00:38 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:00:38 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 23 15:00:38 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 23 15:00:38 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 15:00:38 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 15:03:33 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 15:03:34 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 23 15:03:34 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:03:34 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:03:34 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 15:03:34 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 23 15:03:34 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 23 15:03:34 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 23 15:03:34 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:03:34 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 23 15:03:34 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 23 15:03:35 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 15:03:35 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 15:06:08 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 15:06:08 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 23 15:06:08 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:06:08 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:06:08 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 15:06:08 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 23 15:06:08 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 23 15:06:08 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 23 15:06:08 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:06:08 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 23 15:06:09 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 23 15:06:09 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 15:06:09 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 15:19:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 15:19:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 23 15:19:14 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:19:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:19:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 15:19:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 23 15:19:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 23 15:19:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 23 15:19:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:19:15 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 23 15:19:15 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 23 15:19:15 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 15:19:15 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 15:27:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 15:27:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 23 15:27:12 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:27:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:27:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 15:27:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 23 15:27:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 23 15:27:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 23 15:27:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:27:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 23 15:27:13 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 23 15:27:13 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 15:27:13 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 15:29:49 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 15:29:49 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 23 15:29:49 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:29:49 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:29:49 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 15:29:50 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 23 15:29:50 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 23 15:29:50 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 23 15:29:50 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:29:50 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 23 15:29:50 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 23 15:29:50 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 15:29:50 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 15:31:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 15:31:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 23 15:31:48 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:31:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:31:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 15:31:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 23 15:31:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 23 15:31:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 23 15:31:49 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:31:49 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 23 15:31:49 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 23 15:31:49 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 15:31:49 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 15:47:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 15:47:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 23 15:47:06 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:47:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:47:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 15:47:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 23 15:47:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 23 15:47:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 23 15:47:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 15:47:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 23 15:47:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 23 15:47:07 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 15:47:07 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 16:01:20 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 16:01:20 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 23 16:01:20 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 16:01:20 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 16:01:20 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 16:01:20 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 23 16:01:20 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 23 16:01:20 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 23 16:01:20 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 16:01:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 23 16:01:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 23 16:01:21 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 16:01:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 16:01:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 16:01:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 23 16:01:55 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 16:01:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 16:01:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 16:01:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 23 16:01:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 23 16:01:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 23 16:01:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 16:01:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 23 16:01:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 23 16:01:56 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 16:01:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 16:03:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 16:03:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 23 16:03:22 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 16:03:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 16:03:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 16:03:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 23 16:03:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 23 16:03:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 23 16:03:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 16:03:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 23 16:03:23 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 23 16:03:23 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 16:03:23 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 16:05:13 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 23 16:05:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 23 16:05:14 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 16:05:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 16:05:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 16:05:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 23 16:05:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 23 16:05:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 23 16:05:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 23 16:05:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 23 16:05:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 23 16:05:15 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 23 16:05:15 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 04:48:20 dnsmasq-tftp[1]: file /var/tftpboot/da591740/config.txt not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 04:48:20 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "pieeprom.sig",
+        "line": "May 24 04:48:20 dnsmasq-tftp[1]: file /var/tftpboot/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 04:48:20 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 04:48:20 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "kernel_2712.img",
+        "line": "May 24 04:48:21 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "bcm2712-rpi-5-b.dtb",
+        "line": "May 24 04:48:21 dnsmasq-tftp[1]: sent /var/tftpboot/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "overlays/overlay_map.dtb",
+        "line": "May 24 04:48:21 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "overlays/bcm2712d0.dtbo",
+        "line": "May 24 04:48:21 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 04:48:21 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "cmdline.txt",
+        "line": "May 24 04:48:21 dnsmasq-tftp[1]: sent /var/tftpboot/cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "armstub8-2712.bin",
+        "line": "May 24 04:48:21 dnsmasq-tftp[1]: file /var/tftpboot/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "kernel_2712.img",
+        "line": "May 24 04:48:21 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 05:19:05 dnsmasq-tftp[1]: file /var/tftpboot/da591740/config.txt not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 05:19:05 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "pieeprom.sig",
+        "line": "May 24 05:19:05 dnsmasq-tftp[1]: file /var/tftpboot/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 05:19:05 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 05:19:05 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "kernel_2712.img",
+        "line": "May 24 05:19:05 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "bcm2712-rpi-5-b.dtb",
+        "line": "May 24 05:19:06 dnsmasq-tftp[1]: sent /var/tftpboot/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "overlays/overlay_map.dtb",
+        "line": "May 24 05:19:06 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "overlays/bcm2712d0.dtbo",
+        "line": "May 24 05:19:06 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 05:19:06 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "cmdline.txt",
+        "line": "May 24 05:19:06 dnsmasq-tftp[1]: sent /var/tftpboot/cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "armstub8-2712.bin",
+        "line": "May 24 05:19:06 dnsmasq-tftp[1]: file /var/tftpboot/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "kernel_2712.img",
+        "line": "May 24 05:19:06 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 05:19:47 dnsmasq-tftp[1]: file /var/tftpboot/da591740/config.txt not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 05:19:47 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "pieeprom.sig",
+        "line": "May 24 05:19:47 dnsmasq-tftp[1]: file /var/tftpboot/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 05:19:47 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 05:19:47 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "kernel_2712.img",
+        "line": "May 24 05:19:47 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "bcm2712-rpi-5-b.dtb",
+        "line": "May 24 05:19:47 dnsmasq-tftp[1]: sent /var/tftpboot/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "overlays/overlay_map.dtb",
+        "line": "May 24 05:19:47 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "overlays/bcm2712d0.dtbo",
+        "line": "May 24 05:19:47 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 05:19:47 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "cmdline.txt",
+        "line": "May 24 05:19:47 dnsmasq-tftp[1]: sent /var/tftpboot/cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "armstub8-2712.bin",
+        "line": "May 24 05:19:48 dnsmasq-tftp[1]: file /var/tftpboot/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "kernel_2712.img",
+        "line": "May 24 05:19:48 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 05:24:45 dnsmasq-tftp[1]: file /var/tftpboot/da591740/config.txt not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 05:24:45 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "pieeprom.sig",
+        "line": "May 24 05:24:45 dnsmasq-tftp[1]: file /var/tftpboot/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 05:24:45 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 05:24:45 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "kernel_2712.img",
+        "line": "May 24 05:24:45 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "bcm2712-rpi-5-b.dtb",
+        "line": "May 24 05:24:45 dnsmasq-tftp[1]: sent /var/tftpboot/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "overlays/overlay_map.dtb",
+        "line": "May 24 05:24:45 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "overlays/bcm2712d0.dtbo",
+        "line": "May 24 05:24:45 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 05:24:45 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "cmdline.txt",
+        "line": "May 24 05:24:45 dnsmasq-tftp[1]: sent /var/tftpboot/cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "armstub8-2712.bin",
+        "line": "May 24 05:24:46 dnsmasq-tftp[1]: file /var/tftpboot/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "kernel_2712.img",
+        "line": "May 24 05:24:46 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 09:06:12 dnsmasq-tftp[1]: file /var/tftpboot/da591740/config.txt not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 09:06:12 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "pieeprom.sig",
+        "line": "May 24 09:06:12 dnsmasq-tftp[1]: file /var/tftpboot/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 09:06:13 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 09:06:13 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "kernel_2712.img",
+        "line": "May 24 09:06:13 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "bcm2712-rpi-5-b.dtb",
+        "line": "May 24 09:06:13 dnsmasq-tftp[1]: sent /var/tftpboot/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "overlays/overlay_map.dtb",
+        "line": "May 24 09:06:13 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "overlays/bcm2712d0.dtbo",
+        "line": "May 24 09:06:13 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 09:06:13 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "cmdline.txt",
+        "line": "May 24 09:06:13 dnsmasq-tftp[1]: sent /var/tftpboot/cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "armstub8-2712.bin",
+        "line": "May 24 09:06:13 dnsmasq-tftp[1]: file /var/tftpboot/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "kernel_2712.img",
+        "line": "May 24 09:06:14 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 09:06:39 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 09:06:39 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 24 09:06:39 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 09:06:39 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 09:06:39 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 09:06:39 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 24 09:06:39 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 24 09:06:39 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 24 09:06:39 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 09:06:40 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 24 09:06:40 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 24 09:06:40 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 09:06:40 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 14:02:49 dnsmasq-tftp[1]: file /var/tftpboot/da591740/config.txt not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 14:02:49 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "pieeprom.sig",
+        "line": "May 24 14:02:49 dnsmasq-tftp[1]: file /var/tftpboot/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 14:02:49 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 14:02:49 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "kernel_2712.img",
+        "line": "May 24 14:02:49 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "bcm2712-rpi-5-b.dtb",
+        "line": "May 24 14:02:49 dnsmasq-tftp[1]: sent /var/tftpboot/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "overlays/overlay_map.dtb",
+        "line": "May 24 14:02:50 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "overlays/bcm2712d0.dtbo",
+        "line": "May 24 14:02:50 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 14:02:50 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "cmdline.txt",
+        "line": "May 24 14:02:50 dnsmasq-tftp[1]: sent /var/tftpboot/cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "armstub8-2712.bin",
+        "line": "May 24 14:02:50 dnsmasq-tftp[1]: file /var/tftpboot/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "kernel_2712.img",
+        "line": "May 24 14:02:50 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 14:06:07 dnsmasq-tftp[1]: file /var/tftpboot/da591740/config.txt not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 14:06:07 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "pieeprom.sig",
+        "line": "May 24 14:06:07 dnsmasq-tftp[1]: file /var/tftpboot/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 14:06:07 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 14:06:07 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "kernel_2712.img",
+        "line": "May 24 14:06:07 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "bcm2712-rpi-5-b.dtb",
+        "line": "May 24 14:06:07 dnsmasq-tftp[1]: sent /var/tftpboot/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "overlays/overlay_map.dtb",
+        "line": "May 24 14:06:07 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "overlays/bcm2712d0.dtbo",
+        "line": "May 24 14:06:07 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 14:06:07 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "cmdline.txt",
+        "line": "May 24 14:06:07 dnsmasq-tftp[1]: sent /var/tftpboot/cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "armstub8-2712.bin",
+        "line": "May 24 14:06:08 dnsmasq-tftp[1]: file /var/tftpboot/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "kernel_2712.img",
+        "line": "May 24 14:06:08 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 15:49:33 dnsmasq-tftp[1]: file /var/tftpboot/da591740/config.txt not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 15:49:33 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "pieeprom.sig",
+        "line": "May 24 15:49:33 dnsmasq-tftp[1]: file /var/tftpboot/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 15:49:33 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 15:49:33 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "kernel_2712.img",
+        "line": "May 24 15:49:33 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "bcm2712-rpi-5-b.dtb",
+        "line": "May 24 15:49:33 dnsmasq-tftp[1]: sent /var/tftpboot/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "overlays/overlay_map.dtb",
+        "line": "May 24 15:49:33 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "overlays/bcm2712d0.dtbo",
+        "line": "May 24 15:49:33 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 15:49:33 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "cmdline.txt",
+        "line": "May 24 15:49:34 dnsmasq-tftp[1]: sent /var/tftpboot/cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "armstub8-2712.bin",
+        "line": "May 24 15:49:34 dnsmasq-tftp[1]: file /var/tftpboot/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "kernel_2712.img",
+        "line": "May 24 15:49:34 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 15:51:53 dnsmasq-tftp[1]: file /var/tftpboot/da591740/config.txt not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 15:51:53 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "pieeprom.sig",
+        "line": "May 24 15:51:53 dnsmasq-tftp[1]: file /var/tftpboot/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 15:51:53 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 15:51:54 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "kernel_2712.img",
+        "line": "May 24 15:51:54 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "bcm2712-rpi-5-b.dtb",
+        "line": "May 24 15:51:54 dnsmasq-tftp[1]: sent /var/tftpboot/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "overlays/overlay_map.dtb",
+        "line": "May 24 15:51:54 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "overlays/bcm2712d0.dtbo",
+        "line": "May 24 15:51:54 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "config.txt",
+        "line": "May 24 15:51:54 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "cmdline.txt",
+        "line": "May 24 15:51:54 dnsmasq-tftp[1]: sent /var/tftpboot/cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "armstub8-2712.bin",
+        "line": "May 24 15:51:54 dnsmasq-tftp[1]: file /var/tftpboot/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "kernel_2712.img",
+        "line": "May 24 15:51:54 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 15:54:00 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 15:54:00 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 24 15:54:00 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 15:54:00 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 15:54:00 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 15:54:00 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 24 15:54:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 24 15:54:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 24 15:54:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 15:54:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 24 15:54:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 24 15:54:01 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 15:54:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 15:56:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 15:56:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 24 15:56:10 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 15:56:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 15:56:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 15:56:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 24 15:56:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 24 15:56:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 24 15:56:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 15:56:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 24 15:56:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 24 15:56:11 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 15:56:11 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 15:58:47 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 15:58:47 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 24 15:58:47 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 15:58:47 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 15:58:47 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 15:58:47 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 24 15:58:47 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 24 15:58:47 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 24 15:58:47 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 15:58:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 24 15:58:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 24 15:58:48 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 15:58:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 18:03:03 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 18:03:03 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 24 18:03:03 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 18:03:03 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 18:03:03 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 18:03:04 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 24 18:03:04 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 24 18:03:04 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 24 18:03:04 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 18:03:04 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 24 18:03:04 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 24 18:03:04 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 18:03:04 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 18:06:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 18:06:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 24 18:06:21 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 18:06:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 18:06:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 18:06:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 24 18:06:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 24 18:06:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 24 18:06:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 18:06:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 24 18:06:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 24 18:06:22 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 18:06:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 18:30:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 18:30:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 24 18:30:54 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 18:30:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 18:30:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 18:30:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 24 18:30:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 24 18:30:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 24 18:30:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 18:30:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 24 18:30:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 24 18:30:55 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 18:30:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 18:32:58 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 18:32:58 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 24 18:32:58 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 18:32:58 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 18:32:59 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 18:32:59 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 24 18:32:59 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 24 18:32:59 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 24 18:32:59 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 18:32:59 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 24 18:32:59 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 24 18:32:59 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 18:32:59 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 18:44:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 18:44:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 24 18:44:06 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 18:44:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 18:44:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 18:44:07 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 24 18:44:07 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 24 18:44:07 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 24 18:44:07 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 18:44:07 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 24 18:44:07 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 24 18:44:07 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 18:44:07 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 18:45:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 18:45:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 24 18:45:21 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 18:45:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 18:45:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 18:45:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 24 18:45:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 24 18:45:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 24 18:45:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 18:45:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 24 18:45:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 24 18:45:22 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 18:45:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 19:04:31 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "May 24 19:04:31 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "May 24 19:04:31 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 19:04:31 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 19:04:32 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 19:04:32 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "May 24 19:04:32 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "May 24 19:04:32 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "May 24 19:04:32 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//config.txt",
+        "line": "May 24 19:04:32 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740//cmdline.txt",
+        "line": "May 24 19:04:32 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "May 24 19:04:32 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "May 24 19:04:33 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      }
+    ],
+    "lines": [
+      "May 23 14:42:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 14:42:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 14:42:22 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 23 14:42:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 14:42:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 14:42:22 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 14:42:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 14:42:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 23 14:42:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 23 14:42:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 23 14:42:23 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 14:42:23 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 23 14:42:23 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 23 14:42:23 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 14:44:01 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 14:44:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 14:44:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 14:44:01 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 23 14:44:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 14:44:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 14:44:02 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 14:44:02 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 14:44:02 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 23 14:44:02 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 23 14:44:02 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 23 14:44:02 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 14:44:02 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 23 14:44:02 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 23 14:44:02 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 15:00:37 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 15:00:37 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 15:00:37 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 15:00:37 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 23 15:00:37 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:00:37 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:00:37 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 15:00:37 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 15:00:37 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 23 15:00:38 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 23 15:00:38 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 23 15:00:38 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:00:38 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 23 15:00:38 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 23 15:00:38 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 15:03:33 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 15:03:33 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 15:03:34 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 15:03:34 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 23 15:03:34 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:03:34 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:03:34 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 15:03:34 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 15:03:34 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 23 15:03:34 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 23 15:03:34 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 23 15:03:34 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:03:34 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 23 15:03:35 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 23 15:03:35 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 15:06:08 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 15:06:08 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 15:06:08 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 15:06:08 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 23 15:06:08 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:06:08 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:06:08 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 15:06:08 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 15:06:08 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 23 15:06:08 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 23 15:06:08 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 23 15:06:08 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:06:09 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 23 15:06:09 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 23 15:06:09 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 15:19:14 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 15:19:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 15:19:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 15:19:14 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 23 15:19:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:19:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:19:14 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 15:19:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 15:19:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 23 15:19:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 23 15:19:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 23 15:19:15 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:19:15 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 23 15:19:15 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 23 15:19:15 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 15:27:12 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 15:27:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 15:27:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 15:27:12 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 23 15:27:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:27:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:27:12 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 15:27:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 15:27:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 23 15:27:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 23 15:27:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 23 15:27:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:27:13 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 23 15:27:13 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 23 15:27:13 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 15:29:49 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 15:29:49 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 15:29:49 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 15:29:49 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 23 15:29:49 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:29:49 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:29:50 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 15:29:50 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 15:29:50 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 23 15:29:50 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 23 15:29:50 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 23 15:29:50 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:29:50 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 23 15:29:50 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 23 15:29:50 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 15:31:48 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 15:31:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 15:31:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 15:31:48 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 23 15:31:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:31:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:31:48 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 15:31:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 15:31:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 23 15:31:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 23 15:31:49 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 23 15:31:49 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:31:49 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 23 15:31:49 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 23 15:31:49 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 15:47:06 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 15:47:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 15:47:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 15:47:06 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 23 15:47:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:47:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:47:06 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 15:47:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 15:47:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 23 15:47:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 23 15:47:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 23 15:47:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 15:47:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 23 15:47:07 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 23 15:47:07 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 16:01:20 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 16:01:20 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 16:01:20 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 16:01:20 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 23 16:01:20 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 16:01:20 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 16:01:20 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 16:01:20 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 16:01:20 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 23 16:01:20 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 23 16:01:20 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 23 16:01:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 16:01:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 23 16:01:21 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 23 16:01:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 16:01:55 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 16:01:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 16:01:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 16:01:55 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 23 16:01:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 16:01:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 16:01:55 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 16:01:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 16:01:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 23 16:01:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 23 16:01:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 23 16:01:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 16:01:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 23 16:01:56 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 23 16:01:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 16:03:22 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 16:03:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 16:03:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 16:03:22 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 23 16:03:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 16:03:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 16:03:22 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 16:03:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 16:03:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 23 16:03:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 23 16:03:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 23 16:03:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 16:03:23 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 23 16:03:23 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 23 16:03:23 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 16:05:13 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 16:05:13 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 16:05:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 23 16:05:14 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 23 16:05:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 16:05:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 16:05:14 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 23 16:05:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 23 16:05:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 23 16:05:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 23 16:05:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 23 16:05:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 23 16:05:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 23 16:05:15 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 23 16:05:15 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 04:48:20 dnsmasq-tftp[1]: file /var/tftpboot/da591740/config.txt not found for 10.42.1.4",
+      "May 24 04:48:20 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 04:48:20 dnsmasq-tftp[1]: file /var/tftpboot/pieeprom.sig not found for 10.42.1.4",
+      "May 24 04:48:20 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 04:48:20 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 04:48:21 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 04:48:21 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+      "May 24 04:48:21 dnsmasq-tftp[1]: sent /var/tftpboot/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 24 04:48:21 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/overlay_map.dtb to 10.42.1.4",
+      "May 24 04:48:21 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 24 04:48:21 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 04:48:21 dnsmasq-tftp[1]: sent /var/tftpboot/cmdline.txt to 10.42.1.4",
+      "May 24 04:48:21 dnsmasq-tftp[1]: file /var/tftpboot/armstub8-2712.bin not found for 10.42.1.4",
+      "May 24 04:48:21 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+      "May 24 05:19:05 dnsmasq-tftp[1]: file /var/tftpboot/da591740/config.txt not found for 10.42.1.4",
+      "May 24 05:19:05 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 05:19:05 dnsmasq-tftp[1]: file /var/tftpboot/pieeprom.sig not found for 10.42.1.4",
+      "May 24 05:19:05 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 05:19:05 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 05:19:05 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 05:19:05 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+      "May 24 05:19:06 dnsmasq-tftp[1]: sent /var/tftpboot/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 24 05:19:06 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/overlay_map.dtb to 10.42.1.4",
+      "May 24 05:19:06 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 24 05:19:06 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 05:19:06 dnsmasq-tftp[1]: sent /var/tftpboot/cmdline.txt to 10.42.1.4",
+      "May 24 05:19:06 dnsmasq-tftp[1]: file /var/tftpboot/armstub8-2712.bin not found for 10.42.1.4",
+      "May 24 05:19:06 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+      "May 24 05:19:47 dnsmasq-tftp[1]: file /var/tftpboot/da591740/config.txt not found for 10.42.1.4",
+      "May 24 05:19:47 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 05:19:47 dnsmasq-tftp[1]: file /var/tftpboot/pieeprom.sig not found for 10.42.1.4",
+      "May 24 05:19:47 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 05:19:47 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 05:19:47 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 05:19:47 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+      "May 24 05:19:47 dnsmasq-tftp[1]: sent /var/tftpboot/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 24 05:19:47 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/overlay_map.dtb to 10.42.1.4",
+      "May 24 05:19:47 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 24 05:19:47 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 05:19:47 dnsmasq-tftp[1]: sent /var/tftpboot/cmdline.txt to 10.42.1.4",
+      "May 24 05:19:48 dnsmasq-tftp[1]: file /var/tftpboot/armstub8-2712.bin not found for 10.42.1.4",
+      "May 24 05:19:48 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+      "May 24 05:24:45 dnsmasq-tftp[1]: file /var/tftpboot/da591740/config.txt not found for 10.42.1.4",
+      "May 24 05:24:45 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 05:24:45 dnsmasq-tftp[1]: file /var/tftpboot/pieeprom.sig not found for 10.42.1.4",
+      "May 24 05:24:45 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 05:24:45 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 05:24:45 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 05:24:45 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+      "May 24 05:24:45 dnsmasq-tftp[1]: sent /var/tftpboot/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 24 05:24:45 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/overlay_map.dtb to 10.42.1.4",
+      "May 24 05:24:45 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 24 05:24:45 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 05:24:45 dnsmasq-tftp[1]: sent /var/tftpboot/cmdline.txt to 10.42.1.4",
+      "May 24 05:24:46 dnsmasq-tftp[1]: file /var/tftpboot/armstub8-2712.bin not found for 10.42.1.4",
+      "May 24 05:24:46 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+      "May 24 09:06:12 dnsmasq-tftp[1]: file /var/tftpboot/da591740/config.txt not found for 10.42.1.4",
+      "May 24 09:06:12 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 09:06:12 dnsmasq-tftp[1]: file /var/tftpboot/pieeprom.sig not found for 10.42.1.4",
+      "May 24 09:06:13 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 09:06:13 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 09:06:13 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 09:06:13 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+      "May 24 09:06:13 dnsmasq-tftp[1]: sent /var/tftpboot/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 24 09:06:13 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/overlay_map.dtb to 10.42.1.4",
+      "May 24 09:06:13 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 24 09:06:13 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 09:06:13 dnsmasq-tftp[1]: sent /var/tftpboot/cmdline.txt to 10.42.1.4",
+      "May 24 09:06:13 dnsmasq-tftp[1]: file /var/tftpboot/armstub8-2712.bin not found for 10.42.1.4",
+      "May 24 09:06:14 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+      "May 24 09:06:39 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 09:06:39 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 09:06:39 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 09:06:39 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 24 09:06:39 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 09:06:39 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 09:06:39 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 09:06:39 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 09:06:39 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 24 09:06:39 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 24 09:06:39 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 24 09:06:40 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 09:06:40 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 24 09:06:40 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 24 09:06:40 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 14:02:49 dnsmasq-tftp[1]: file /var/tftpboot/da591740/config.txt not found for 10.42.1.4",
+      "May 24 14:02:49 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 14:02:49 dnsmasq-tftp[1]: file /var/tftpboot/pieeprom.sig not found for 10.42.1.4",
+      "May 24 14:02:49 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 14:02:49 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 14:02:49 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 14:02:49 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+      "May 24 14:02:49 dnsmasq-tftp[1]: sent /var/tftpboot/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 24 14:02:50 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/overlay_map.dtb to 10.42.1.4",
+      "May 24 14:02:50 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 24 14:02:50 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 14:02:50 dnsmasq-tftp[1]: sent /var/tftpboot/cmdline.txt to 10.42.1.4",
+      "May 24 14:02:50 dnsmasq-tftp[1]: file /var/tftpboot/armstub8-2712.bin not found for 10.42.1.4",
+      "May 24 14:02:50 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+      "May 24 14:06:07 dnsmasq-tftp[1]: file /var/tftpboot/da591740/config.txt not found for 10.42.1.4",
+      "May 24 14:06:07 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 14:06:07 dnsmasq-tftp[1]: file /var/tftpboot/pieeprom.sig not found for 10.42.1.4",
+      "May 24 14:06:07 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 14:06:07 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 14:06:07 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 14:06:07 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+      "May 24 14:06:07 dnsmasq-tftp[1]: sent /var/tftpboot/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 24 14:06:07 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/overlay_map.dtb to 10.42.1.4",
+      "May 24 14:06:07 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 24 14:06:07 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 14:06:07 dnsmasq-tftp[1]: sent /var/tftpboot/cmdline.txt to 10.42.1.4",
+      "May 24 14:06:08 dnsmasq-tftp[1]: file /var/tftpboot/armstub8-2712.bin not found for 10.42.1.4",
+      "May 24 14:06:08 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+      "May 24 15:49:33 dnsmasq-tftp[1]: file /var/tftpboot/da591740/config.txt not found for 10.42.1.4",
+      "May 24 15:49:33 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 15:49:33 dnsmasq-tftp[1]: file /var/tftpboot/pieeprom.sig not found for 10.42.1.4",
+      "May 24 15:49:33 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 15:49:33 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 15:49:33 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 15:49:33 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+      "May 24 15:49:33 dnsmasq-tftp[1]: sent /var/tftpboot/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 24 15:49:33 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/overlay_map.dtb to 10.42.1.4",
+      "May 24 15:49:33 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 24 15:49:33 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 15:49:34 dnsmasq-tftp[1]: sent /var/tftpboot/cmdline.txt to 10.42.1.4",
+      "May 24 15:49:34 dnsmasq-tftp[1]: file /var/tftpboot/armstub8-2712.bin not found for 10.42.1.4",
+      "May 24 15:49:34 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+      "May 24 15:51:53 dnsmasq-tftp[1]: file /var/tftpboot/da591740/config.txt not found for 10.42.1.4",
+      "May 24 15:51:53 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 15:51:53 dnsmasq-tftp[1]: file /var/tftpboot/pieeprom.sig not found for 10.42.1.4",
+      "May 24 15:51:53 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 15:51:54 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 15:51:54 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 15:51:54 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+      "May 24 15:51:54 dnsmasq-tftp[1]: sent /var/tftpboot/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 24 15:51:54 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/overlay_map.dtb to 10.42.1.4",
+      "May 24 15:51:54 dnsmasq-tftp[1]: sent /var/tftpboot/overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 24 15:51:54 dnsmasq-tftp[1]: sent /var/tftpboot/config.txt to 10.42.1.4",
+      "May 24 15:51:54 dnsmasq-tftp[1]: sent /var/tftpboot/cmdline.txt to 10.42.1.4",
+      "May 24 15:51:54 dnsmasq-tftp[1]: file /var/tftpboot/armstub8-2712.bin not found for 10.42.1.4",
+      "May 24 15:51:54 dnsmasq-tftp[1]: sent /var/tftpboot/kernel_2712.img to 10.42.1.4",
+      "May 24 15:54:00 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 15:54:00 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 15:54:00 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 15:54:00 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 24 15:54:00 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 15:54:00 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 15:54:00 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 15:54:00 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 15:54:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 24 15:54:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 24 15:54:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 24 15:54:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 15:54:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 24 15:54:01 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 24 15:54:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 15:56:10 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 15:56:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 15:56:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 15:56:10 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 24 15:56:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 15:56:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 15:56:10 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 15:56:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 15:56:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 24 15:56:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 24 15:56:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 24 15:56:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 15:56:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 24 15:56:11 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 24 15:56:11 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 15:58:47 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 15:58:47 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 15:58:47 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 15:58:47 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 24 15:58:47 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 15:58:47 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 15:58:47 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 15:58:47 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 15:58:47 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 24 15:58:47 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 24 15:58:47 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 24 15:58:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 15:58:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 24 15:58:48 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 24 15:58:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 18:03:03 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 18:03:03 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 18:03:03 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 18:03:03 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 24 18:03:03 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 18:03:03 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 18:03:04 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 18:03:04 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 18:03:04 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 24 18:03:04 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 24 18:03:04 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 24 18:03:04 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 18:03:04 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 24 18:03:04 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 24 18:03:04 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 18:06:21 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 18:06:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 18:06:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 18:06:21 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 24 18:06:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 18:06:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 18:06:21 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 18:06:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 18:06:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 24 18:06:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 24 18:06:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 24 18:06:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 18:06:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 24 18:06:22 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 24 18:06:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 18:30:54 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 18:30:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 18:30:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 18:30:54 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 24 18:30:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 18:30:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 18:30:54 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 18:30:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 18:30:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 24 18:30:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 24 18:30:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 24 18:30:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 18:30:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 24 18:30:55 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 24 18:30:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 18:32:58 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 18:32:58 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 18:32:58 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 18:32:58 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 24 18:32:58 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 18:32:59 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 18:32:59 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 18:32:59 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 18:32:59 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 24 18:32:59 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 24 18:32:59 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 24 18:32:59 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 18:32:59 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 24 18:32:59 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 24 18:32:59 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 18:44:06 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 18:44:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 18:44:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 18:44:06 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 24 18:44:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 18:44:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 18:44:07 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 18:44:07 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 18:44:07 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 24 18:44:07 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 24 18:44:07 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 24 18:44:07 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 18:44:07 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 24 18:44:07 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 24 18:44:07 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 18:45:21 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 18:45:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 18:45:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 18:45:21 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 24 18:45:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 18:45:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 18:45:21 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 18:45:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 18:45:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 24 18:45:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 24 18:45:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 24 18:45:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 18:45:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 24 18:45:22 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 24 18:45:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 19:04:31 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 19:04:31 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 19:04:31 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "May 24 19:04:31 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "May 24 19:04:31 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 19:04:32 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 19:04:32 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "May 24 19:04:32 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "May 24 19:04:32 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "May 24 19:04:32 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "May 24 19:04:32 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "May 24 19:04:32 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "May 24 19:04:32 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "May 24 19:04:32 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "May 24 19:04:33 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4"
+    ],
+    "log": "/state/tftp.log",
+    "truncated": false
+  }
+}

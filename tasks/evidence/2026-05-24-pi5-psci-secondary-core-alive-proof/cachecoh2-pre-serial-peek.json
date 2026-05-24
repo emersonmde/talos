@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "IGNvbnRleHQ9MiBtcGlkcj0weDAwMDAwMDAwODEwMDAyMDAgYWZmaW5pdHk9MHgyMDAgbWFwcGVkPVNvbWUoMikgc3A9MHgwMDAwMDAwMDAwMjFhZmYwIHN0YWNrPVsweDAwMDAwMDAwMDAyMWEwMDAsMHgwMDAwMDAwMDAwMjFiMDAwKSBvaz10cnVlDQpycGk1LXBzY2ktc2Vjb25kYXJ5LWNvcmUtYWxpdmU6IHJlcG9ydCBsb2dpY2FsPTMgc3RhdGU9aGFuZG9mZi1yZWFkeSBjb250ZXh0PTMgbXBpZHI9MHgwMDAwMDAwMDgxMDAwMzAwIGFmZmluaXR5PTB4MzAwIG1hcHBlZD1Tb21lKDMpIHNwPTB4MDAwMDAwMDAwMDIxYmZmMCBzdGFjaz1bMHgwMDAwMDAwMDAwMjFiMDAwLDB4MDAwMDAwMDAwMDIxYzAwMCkgb2s9dHJ1ZQ0KcnBpNS1wc2NpLXNlY29uZGFyeS1jb3JlLWFsaXZlOiB3YWl0LXJlbWFpbmluZz0yMDAwMDAwMDAgY2xhc3NpZmljYXRpb249cGk1LXBzY2ktc21jLXNlY29uZGFyeS1jb3Jlcy1hbGl2ZQ0KcnBpNS1wc2NpLXNlY29uZGFyeS1jb3JlLWFsaXZlOiBQQVNTDQo=",
+  "bytes": 500,
+  "cursor": 1968414,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": " context=2 mpidr=0x0000000081000200 affinity=0x200 mapped=Some(2) sp=0x000000000021aff0 stack=[0x000000000021a000,0x000000000021b000) ok=true\r\nrpi5-psci-secondary-core-alive: report logical=3 state=handoff-ready context=3 mpidr=0x0000000081000300 affinity=0x300 mapped=Some(3) sp=0x000000000021bff0 stack=[0x000000000021b000,0x000000000021c000) ok=true\r\nrpi5-psci-secondary-core-alive: wait-remaining=200000000 classification=pi5-psci-smc-secondary-cores-alive\r\nrpi5-psci-secondary-core-alive: PASS\r\n"
+}
