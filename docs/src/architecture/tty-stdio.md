@@ -26,10 +26,12 @@ Canonical mode means the TTY collects an editable line until a line terminator o
 - \r, \n, and a collapsed \r\n pair terminate the current line.
 - Backspace 0x08 and delete 0x7f remove the previous buffered byte when the line is non-empty.
 - Printable ASCII bytes and tab are appended while capacity remains.
-- Other C0 control bytes are recorded as named control events, not delivered as signals.
+- Other C0 control bytes except Escape are recorded as named control events, not delivered as signals.
 - On buffer exhaustion, the diagnostic reports truncation and terminates or drains the line according to the task-specific test contract.
 
 Canonical editing should remain byte-oriented at first. UTF-8 validation, locale, grapheme deletion, history, cursor motion, and terminal escape parsing are deferred.
+
+`src/tty.rs` now expresses this first behavior as the target-independent `TtyLineDiscipline` core. `TtyMode::Raw` records pass-through bytes without canonical translation or echo, while `TtyMode::CanonicalLite` performs bounded line assembly, deterministic echo decisions, named deferred control events, Escape as input data, and explicit buffer-limit reporting. Polling diagnostics own timeout policy around the core; the line discipline itself reports parser outcomes and does not know about QEMU, PL011 MMIO, Pi 5 hardware, scheduler blocking, descriptors, or shell commands.
 
 ## Newline And Echo Policy
 
