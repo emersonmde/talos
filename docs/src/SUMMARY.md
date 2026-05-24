@@ -28,6 +28,7 @@
 - [Phase 5 Console Model Checkpoint](project/phase5-console-model-checkpoint.md)
 - [Phase 5 TTY and Stdio Shape](project/phase5-tty-stdio-shape.md)
 - [Phase 5 TTY and Stdio Closeout Checkpoint](project/phase5-tty-stdio-closeout-checkpoint.md)
+- [Phase 5 Diagnostic Command Channel Source Inventory](project/phase5-local-diagnostic-command-channel-source-inventory.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

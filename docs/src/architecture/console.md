@@ -97,6 +97,14 @@ The first `stdin` descriptor should attach to the input side of the selected con
 
 Phase 4 QEMU and Pi 5 timer/scheduler boot images remain validation surfaces, not console interfaces. A future local diagnostic command channel may replace some special boot-image diagnostics, but that channel must be planned as a console/TTY feature rather than hidden in timer, scheduler, or target code.
 
+The accepted Milestone 5.3 source inventory keeps that channel above the TTY
+line boundary. It should consume complete TTY lines, write bounded responses
+through runtime-console0, and classify existing diagnostics before exposing
+them. QEMU architecture smokes, Pi 5 hardware proof images, exception/fault
+triggers, allocator stress diagnostics, and deleted stale proof paths remain
+boot-only regression or retired surfaces until a later checkpoint explicitly
+changes their lifetime.
+
 ## Phase 5.1 Checkpoint
 
 The accepted Phase 5.1 model is output-capable and input-planned. runtime-console0 is the default runtime console identity for normal kernel diagnostics. The runtime console owns output routing and its internal write-result contract, while target modules own the physical PL011 backend for QEMU and Pi 5.

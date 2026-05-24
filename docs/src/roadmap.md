@@ -140,6 +140,10 @@ Completed:
   supervisor-planned slice should be a Milestone 5.3 local kernel diagnostic
   command-channel source inventory, not an implementation shortcut around the
   accepted runtime-console and TTY boundaries.
+- Phase 5.3 local diagnostic command-channel source inventory is accepted. The
+  command channel must consume completed TTY lines, write bounded responses
+  through runtime-console0, classify existing diagnostics before exposing them,
+  and remain separate from descriptor/syscall/POSIX shell semantics.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -147,11 +151,12 @@ Completed:
 
 Blocked or pending:
 
-- The next Phase 5 slice needs supervisor planning. The recommended bounded
-  task is a Milestone 5.3 local kernel diagnostic command-channel source
-  inventory. UART interrupts, descriptors, syscalls, userspace, shell,
-  filesystem, networking, SSH, SMP, and scheduler blocking I/O remain out of
-  scope until explicitly queued.
+- The next Phase 5 slice is the supervisor-queued
+  phase5-diagnostic-command-channel-contract-20260524 task. It should define
+  the durable command-channel contract and minimal parser/dispatcher shape
+  without adding descriptor tables, syscalls, userspace shell behavior,
+  filesystem-backed commands, networking, SSH, SMP, UART interrupts, or
+  scheduler blocking I/O.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
