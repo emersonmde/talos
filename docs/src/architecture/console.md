@@ -1,6 +1,6 @@
 # Console Device Model
 
-This note defines the Phase 5 starting boundary for Talos console work. It covers the accepted source inventory and the first runtime console write core. Talos still does not implement descriptor tables, TTY line discipline, input, userspace, filesystem, networking, SSH, or a shell.
+This note defines the Phase 5 starting boundary for Talos console work. It covers the accepted source inventory, the first runtime console write core, and the internal write-result contract. Talos still does not implement descriptor tables, TTY line discipline, input, userspace, filesystem, networking, SSH, or a shell.
 
 ## Current Early Logging Surface
 
@@ -35,11 +35,15 @@ Early logging is allowed to stay polling-only, synchronous, output-only, target-
 
 `src/runtime_console.rs` is the first runtime console write core. It owns normal kernel console write routing through `RuntimeConsole` and `write_kernel_output`, while `print!` / `println!` remain the public kernel formatting surface. This first responsibility is output only: formatted kernel text is routed to the current target backend through a named runtime console facade.
 
+The write core returns an internal `ConsoleWriteOutcome`. Successful writes report `ConsoleWriteResult { bytes_written }` for the complete formatted kernel message accepted by the runtime facade. Failed writes return `ConsoleWriteError::BackendWriteFailed { bytes_accepted }`, where `bytes_accepted` counts only complete string fragments the backend accepted before the failure. The current PL011 backends are still polling and normally infallible, so `target::console::_print` continues to panic on a runtime write failure rather than exposing a recoverable kernel diagnostic API.
+
+This result contract is internal to the kernel console boundary. It is not a POSIX errno value, syscall ABI, descriptor status, blocking contract, or partial-write promise for userspace.
+
 The runtime console must not own POSIX process resources. Later descriptor work should attach `stdin`, `stdout`, and `stderr` handles to console objects through the descriptor layer, not by teaching the scheduler, boot code, or shell a private printing shortcut.
 
 ## Descriptor And TTY Compatibility Constraints
 
-Descriptor writes should eventually call the same console write operation used by kernel diagnostics. `stdin` requires a real input source and should not be faked by output-only console work. Line editing, canonical mode, echo, signals, PTYs, and terminal window state belong to a later TTY layer. Blocking writes or reads can only sleep tasks after scheduler sleep/wakeup queues exist. Internal errors should be structured so a later syscall boundary can map them to errno-style values. QEMU and Pi 5 target differences should remain behind target/runtime console backend boundaries.
+Descriptor writes should eventually call the same console write operation used by kernel diagnostics, translating `ConsoleWriteOutcome` through a descriptor layer once descriptor ownership, blocking behavior, and errno mapping exist. `stdin` requires a real input source and should not be faked by output-only console work. Line editing, canonical mode, echo, signals, PTYs, and terminal window state belong to a later TTY layer. Blocking writes or reads can only sleep tasks after scheduler sleep/wakeup queues exist. Internal errors should remain structured so a later syscall boundary can map them to errno-style values without exposing current kernel-console names as ABI. QEMU and Pi 5 target differences should remain behind target/runtime console backend boundaries.
 
 ## Diagnostic Surface Policy
 
@@ -47,6 +51,6 @@ Phase 4 QEMU and Pi 5 timer/scheduler boot images remain validation surfaces, no
 
 ## Next Implementation Boundary
 
-The bounded implementation task `phase5-runtime-console-write-core-20260524` added the output-only runtime console write core.
+The bounded implementation task `phase5-runtime-console-write-core-20260524` added the output-only runtime console write core. The follow-up `phase5-console-write-result-contract-20260524` made its success/error boundary explicit with complete-write byte accounting for future descriptor compatibility.
 
 The core is backed by the existing polling PL011 paths and preserves the accepted early serial output contract. It does not add UART interrupts, input, TTY line discipline, descriptor tables, userspace, filesystems, networking, SSH, a shell, or sleep/blocking behavior.
