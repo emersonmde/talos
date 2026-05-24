@@ -1,5 +1,3 @@
-#![cfg_attr(any(test, talos_target_rpi5_bcm2712), allow(dead_code))]
-
 const GICD_CTLR: usize = 0x000;
 const GICD_ISENABLER: usize = 0x100;
 const GICD_ICENABLER: usize = 0x180;

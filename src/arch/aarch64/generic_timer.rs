@@ -1,5 +1,3 @@
-#![cfg_attr(any(test, talos_target_rpi5_bcm2712), allow(dead_code))]
-
 use core::arch::asm;
 
 const CNTHP_CTL_ENABLE: u64 = 1 << 0;
