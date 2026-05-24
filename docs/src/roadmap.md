@@ -198,6 +198,11 @@ Completed:
   queues, cross-core wakeups, userspace, descriptors, filesystem, networking,
   SSH, shell behavior, UART interrupts, RP1/PCIe, and DMA/cache policy remain
   deferred.
+- Phase 6.2 SMP-safe primitives source inventory and contract is accepted. It
+  separates local IRQ masking, SMP mutual exclusion, memory ordering, and cache
+  maintenance; carries forward the accepted Pi 5 cache-maintenance lesson; and
+  names `phase6-spinlock-barrier-core-20260524` as the first bounded
+  implementation task before scheduler migration or shared run queues.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -205,10 +210,12 @@ Completed:
 
 Blocked or pending:
 
-- The next explicit worker task requires supervisor planning. The recommended
-  next planning target is a Milestone 6.2 SMP-safe primitives source inventory
-  and contract that carries forward the accepted Pi 5 cache-maintenance lesson
-  before implementing locks or shared scheduler data structures.
+- The next explicit worker task is the supervisor-queued
+  `phase6-spinlock-barrier-core-20260524` implementation of the narrow
+  SMP-safe primitive core. Multi-core scheduler migration, shared run queues,
+  cross-core wakeups, userspace, descriptors, filesystem, networking, SSH,
+  shell behavior, UART interrupts, RP1/PCIe, and DMA/cache-coherent driver
+  policy remain deferred.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
@@ -500,10 +507,13 @@ Acceptance criteria:
 Goal: use all Pi 5 CPU cores with correct synchronization and preemptive scheduling.
 
 Status: Milestone 6.1 is accepted through the secondary-core bring-up closeout
-checkpoint. See
+checkpoint. Milestone 6.2 has an accepted SMP-safe primitive source inventory
+and contract. See
 [Phase 6 Secondary-Core Bring-Up Closeout Checkpoint](project/phase6-secondary-core-bringup-closeout-checkpoint.md)
 and
-[Phase 6 Secondary-Core Bring-Up Source Inventory](project/phase6-secondary-core-bringup-source-inventory.md).
+[Phase 6 Secondary-Core Bring-Up Source Inventory](project/phase6-secondary-core-bringup-source-inventory.md),
+plus
+[Phase 6 SMP-Safe Primitives Source Inventory](project/phase6-smp-safe-primitives-source-inventory.md).
 
 Milestone 6.1: Secondary Core Bring-Up
 

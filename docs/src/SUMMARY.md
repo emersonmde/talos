@@ -32,6 +32,7 @@
 - [Phase 5 Diagnostic Command Channel Closeout Checkpoint](project/phase5-diagnostic-command-channel-closeout-checkpoint.md)
 - [Phase 6 Secondary-Core Bring-Up Source Inventory](project/phase6-secondary-core-bringup-source-inventory.md)
 - [Phase 6 Secondary-Core Bring-Up Closeout Checkpoint](project/phase6-secondary-core-bringup-closeout-checkpoint.md)
+- [Phase 6 SMP-Safe Primitives Source Inventory](project/phase6-smp-safe-primitives-source-inventory.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

@@ -82,6 +82,37 @@ ADR template:
   per-core stacks/state, call PSCI, or coordinate concurrent console output.
   Those risks belong to later explicit Phase 6.1 tasks.
 
+## 2026-05-24 - Accept Phase 6.2 SMP-Safe Primitive Contract
+
+- Status: accepted as the Milestone 6.2 synchronization contract before shared
+  lock implementation. No Rust implementation, boot archive, hardware publish,
+  power-cycle, hardware lock, scheduler migration, shared run queue,
+  cross-core wakeup, userspace, descriptor, filesystem, networking, SSH, shell,
+  UART interrupt, RP1/PCIe, or DMA behavior changed in this task.
+- Context: Phase 6.1 proved Pi 5 secondary-core startup and a controlled
+  diagnostic workload, but the accepted hardware proof required explicit
+  cache maintenance before primary-side state snapshots became reliable. The
+  existing `single_core_irq_mask_save()` primitive is documented as boot-CPU
+  IRQ masking only, and `src/scheduler.rs` remains ordinary single-core mutable
+  state.
+- Decision: Accept
+  `docs/src/project/phase6-smp-safe-primitives-source-inventory.md` as the
+  source-backed contract for Milestone 6.2. Talos will keep local IRQ masking,
+  SMP mutual exclusion, memory ordering, and cache maintenance as separate
+  responsibilities. The next implementation task is
+  `phase6-spinlock-barrier-core-20260524`.
+- Evidence level: static source inventory over `src/smp.rs`,
+  `src/arch/aarch64/mod.rs`, `src/scheduler.rs`, target diagnostic call sites,
+  Phase 6.1 evidence summaries, and the accepted scheduler/interrupt docs.
+- Validation: `git status --short` was inspected before documentation edits and
+  was clean. `git diff --check` passed. `mdbook build` was not run because
+  `mdbook` is unavailable in the container. Rust fmt/tests were not required
+  because no Rust files changed.
+- Consequences: A future lock primitive must document held-lock constraints,
+  acquire/release ordering, IRQ-mask composition, and non-recursive misuse.
+  Scheduler shared data structures, task migration, load balancing, IPIs, and
+  cross-core wakeups remain deferred until separately planned.
+
 ## 2026-05-24 - Accept Phase 6.1 Per-Core State/Stack Boundary
 
 - Status: accepted as the first implementation boundary for Phase 6.1
