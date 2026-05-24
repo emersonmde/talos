@@ -540,4 +540,237 @@ mod tests {
         assert_eq!(fdt_cell_value(&[0, 0, 0], 1), None);
         assert_eq!(fdt_cell_value(&[0; 12], 3), None);
     }
+
+    #[test_case]
+    fn device_tree_reads_memory_reservations() {
+        #[repr(align(4))]
+        struct Aligned<const N: usize>([u8; N]);
+
+        static TEST_FDT: Aligned<88> = Aligned([
+            0xd0, 0x0d, 0xfe, 0xed, // magic
+            0x00, 0x00, 0x00, 0x58, // totalsize
+            0x00, 0x00, 0x00, 0x58, // off_dt_struct
+            0x00, 0x00, 0x00, 0x58, // off_dt_strings
+            0x00, 0x00, 0x00, 0x28, // off_mem_rsvmap
+            0x00, 0x00, 0x00, 0x11, // version
+            0x00, 0x00, 0x00, 0x10, // last_comp_version
+            0x00, 0x00, 0x00, 0x00, // boot_cpuid_phys
+            0x00, 0x00, 0x00, 0x00, // size_dt_strings
+            0x00, 0x00, 0x00, 0x00, // size_dt_struct
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, // reserve 0 address
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20, 0x00, // reserve 0 size
+            0x00, 0x00, 0x00, 0x00, 0x3f, 0x00, 0x00, 0x00, // reserve 1 address
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, // reserve 1 size
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // terminator address
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // terminator size
+        ]);
+
+        let device_tree = DeviceTree::from_physical_address(TEST_FDT.0.as_ptr() as usize);
+        let reservations =
+            unsafe { device_tree.memory_reservations() }.expect("memory reservations");
+
+        assert_eq!(reservations.count, 2);
+        assert_eq!(reservations.reported_len(), 2);
+        assert!(!reservations.truncated);
+        assert_eq!(
+            reservations.entries[0],
+            Some(FdtMemoryReservation {
+                address: 0x10_0000,
+                size: 0x2000
+            })
+        );
+        assert_eq!(
+            reservations.entries[1],
+            Some(FdtMemoryReservation {
+                address: 0x3f00_0000,
+                size: 0x10_0000
+            })
+        );
+    }
+
+    #[test_case]
+    fn device_tree_reads_memory_banks() {
+        #[repr(align(4))]
+        struct Aligned<const N: usize>([u8; N]);
+
+        static TEST_FDT: Aligned<199> = Aligned([
+            0xd0, 0x0d, 0xfe, 0xed, // magic
+            0x00, 0x00, 0x00, 0xc7, // totalsize
+            0x00, 0x00, 0x00, 0x38, // off_dt_struct
+            0x00, 0x00, 0x00, 0xa8, // off_dt_strings
+            0x00, 0x00, 0x00, 0x28, // off_mem_rsvmap
+            0x00, 0x00, 0x00, 0x11, // version
+            0x00, 0x00, 0x00, 0x10, // last_comp_version
+            0x00, 0x00, 0x00, 0x00, // boot_cpuid_phys
+            0x00, 0x00, 0x00, 0x1f, // size_dt_strings
+            0x00, 0x00, 0x00, 0x70, // size_dt_struct
+            0x00, 0x00, 0x00, 0x00, // mem_rsvmap address high
+            0x00, 0x00, 0x00, 0x00, // mem_rsvmap address low
+            0x00, 0x00, 0x00, 0x00, // mem_rsvmap size high
+            0x00, 0x00, 0x00, 0x00, // mem_rsvmap size low
+            0x00, 0x00, 0x00, 0x01, // FDT_BEGIN_NODE
+            0x00, 0x00, 0x00, 0x00, // root node name
+            0x00, 0x00, 0x00, 0x03, // FDT_PROP
+            0x00, 0x00, 0x00, 0x04, // property length
+            0x00, 0x00, 0x00, 0x00, // property name offset: #address-cells
+            0x00, 0x00, 0x00, 0x02, // property value
+            0x00, 0x00, 0x00, 0x03, // FDT_PROP
+            0x00, 0x00, 0x00, 0x04, // property length
+            0x00, 0x00, 0x00, 0x0f, // property name offset: #size-cells
+            0x00, 0x00, 0x00, 0x02, // property value
+            0x00, 0x00, 0x00, 0x01, // FDT_BEGIN_NODE
+            b'm', b'e', b'm', b'o', b'r', b'y', b'@', b'0', // node name
+            0x00, 0x00, 0x00, 0x00, // node name terminator + padding
+            0x00, 0x00, 0x00, 0x03, // FDT_PROP
+            0x00, 0x00, 0x00, 0x20, // property length
+            0x00, 0x00, 0x00, 0x1b, // property name offset: reg
+            0x00, 0x00, 0x00, 0x00, // bank 0 address high
+            0x00, 0x00, 0x00, 0x00, // bank 0 address low
+            0x00, 0x00, 0x00, 0x00, // bank 0 size high
+            0x40, 0x00, 0x00, 0x00, // bank 0 size low
+            0x00, 0x00, 0x00, 0x01, // bank 1 address high
+            0x00, 0x00, 0x00, 0x00, // bank 1 address low
+            0x00, 0x00, 0x00, 0x00, // bank 1 size high
+            0x80, 0x00, 0x00, 0x00, // bank 1 size low
+            0x00, 0x00, 0x00, 0x02, // FDT_END_NODE
+            0x00, 0x00, 0x00, 0x02, // FDT_END_NODE
+            0x00, 0x00, 0x00, 0x09, // FDT_END
+            b'#', b'a', b'd', b'd', b'r', b'e', b's', b's', b'-', b'c', b'e', b'l', b'l', b's',
+            0x00, b'#', b's', b'i', b'z', b'e', b'-', b'c', b'e', b'l', b'l', b's', 0x00, b'r',
+            b'e', b'g', 0x00,
+        ]);
+
+        let device_tree = DeviceTree::from_physical_address(TEST_FDT.0.as_ptr() as usize);
+        let banks = unsafe { device_tree.memory_banks() }.expect("memory banks");
+
+        assert_eq!(banks.address_cells, 2);
+        assert_eq!(banks.size_cells, 2);
+        assert_eq!(banks.count, 2);
+        assert_eq!(banks.reported_len(), 2);
+        assert!(!banks.truncated);
+        assert_eq!(
+            banks.entries[0],
+            Some(FdtMemoryBank {
+                address: 0,
+                size: 0x4000_0000
+            })
+        );
+        assert_eq!(
+            banks.entries[1],
+            Some(FdtMemoryBank {
+                address: 0x1_0000_0000,
+                size: 0x8000_0000
+            })
+        );
+    }
+
+    #[test_case]
+    fn device_tree_reads_reserved_memory_ranges() {
+        #[repr(align(4))]
+        struct Aligned<const N: usize>([u8; N]);
+
+        static TEST_FDT: Aligned<366> = Aligned([
+            0xd0, 0x0d, 0xfe, 0xed, // magic
+            0x00, 0x00, 0x01, 0x6e, // totalsize
+            0x00, 0x00, 0x00, 0x38, // off_dt_struct
+            0x00, 0x00, 0x01, 0x38, // off_dt_strings
+            0x00, 0x00, 0x00, 0x28, // off_mem_rsvmap
+            0x00, 0x00, 0x00, 0x11, // version
+            0x00, 0x00, 0x00, 0x10, // last_comp_version
+            0x00, 0x00, 0x00, 0x00, // boot_cpuid_phys
+            0x00, 0x00, 0x00, 0x36, // size_dt_strings
+            0x00, 0x00, 0x01, 0x00, // size_dt_struct
+            0x00, 0x00, 0x00, 0x00, // mem_rsvmap address high
+            0x00, 0x00, 0x00, 0x00, // mem_rsvmap address low
+            0x00, 0x00, 0x00, 0x00, // mem_rsvmap size high
+            0x00, 0x00, 0x00, 0x00, // mem_rsvmap size low
+            0x00, 0x00, 0x00, 0x01, // FDT_BEGIN_NODE
+            0x00, 0x00, 0x00, 0x00, // root node name
+            0x00, 0x00, 0x00, 0x03, // FDT_PROP
+            0x00, 0x00, 0x00, 0x04, // property length
+            0x00, 0x00, 0x00, 0x00, // property name offset: #address-cells
+            0x00, 0x00, 0x00, 0x02, // property value
+            0x00, 0x00, 0x00, 0x03, // FDT_PROP
+            0x00, 0x00, 0x00, 0x04, // property length
+            0x00, 0x00, 0x00, 0x0f, // property name offset: #size-cells
+            0x00, 0x00, 0x00, 0x02, // property value
+            0x00, 0x00, 0x00, 0x01, // FDT_BEGIN_NODE
+            b'r', b'e', b's', b'e', b'r', b'v', b'e', b'd', b'-', b'm', b'e', b'm', b'o', b'r',
+            b'y', 0x00, 0x00, 0x00, 0x00, 0x03, // FDT_PROP
+            0x00, 0x00, 0x00, 0x04, // property length
+            0x00, 0x00, 0x00, 0x00, // property name offset: #address-cells
+            0x00, 0x00, 0x00, 0x02, // property value
+            0x00, 0x00, 0x00, 0x03, // FDT_PROP
+            0x00, 0x00, 0x00, 0x04, // property length
+            0x00, 0x00, 0x00, 0x0f, // property name offset: #size-cells
+            0x00, 0x00, 0x00, 0x02, // property value
+            0x00, 0x00, 0x00, 0x03, // FDT_PROP
+            0x00, 0x00, 0x00, 0x00, // property length
+            0x00, 0x00, 0x00, 0x1b, // property name offset: ranges
+            0x00, 0x00, 0x00, 0x01, // FDT_BEGIN_NODE
+            b'f', b'r', b'a', b'm', b'e', b'b', b'u', b'f', b'f', b'e', b'r', b'@', b'3', b'f',
+            b'0', b'0', b'0', b'0', b'0', b'0', 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x03, // FDT_PROP
+            0x00, 0x00, 0x00, 0x10, // property length
+            0x00, 0x00, 0x00, 0x22, // property name offset: reg
+            0x00, 0x00, 0x00, 0x00, // address high
+            0x3f, 0x00, 0x00, 0x00, // address low
+            0x00, 0x00, 0x00, 0x00, // size high
+            0x01, 0x00, 0x00, 0x00, // size low
+            0x00, 0x00, 0x00, 0x03, // FDT_PROP
+            0x00, 0x00, 0x00, 0x00, // property length
+            0x00, 0x00, 0x00, 0x26, // property name offset: no-map
+            0x00, 0x00, 0x00, 0x02, // FDT_END_NODE
+            0x00, 0x00, 0x00, 0x01, // FDT_BEGIN_NODE
+            b'r', b'e', b'u', b's', b'a', b'b', b'l', b'e', b'@', b'1', b'0', b'0', b'0', b'0',
+            b'0', b'0', b'0', b'0', 0x00, 0x00, // node name + padding
+            0x00, 0x00, 0x00, 0x03, // FDT_PROP
+            0x00, 0x00, 0x00, 0x10, // property length
+            0x00, 0x00, 0x00, 0x22, // property name offset: reg
+            0x00, 0x00, 0x00, 0x01, // address high
+            0x00, 0x00, 0x00, 0x00, // address low
+            0x00, 0x00, 0x00, 0x00, // size high
+            0x02, 0x00, 0x00, 0x00, // size low
+            0x00, 0x00, 0x00, 0x03, // FDT_PROP
+            0x00, 0x00, 0x00, 0x00, // property length
+            0x00, 0x00, 0x00, 0x2d, // property name offset: reusable
+            0x00, 0x00, 0x00, 0x02, // FDT_END_NODE
+            0x00, 0x00, 0x00, 0x02, // FDT_END_NODE
+            0x00, 0x00, 0x00, 0x02, // FDT_END_NODE
+            0x00, 0x00, 0x00, 0x09, // FDT_END
+            b'#', b'a', b'd', b'd', b'r', b'e', b's', b's', b'-', b'c', b'e', b'l', b'l', b's',
+            0x00, b'#', b's', b'i', b'z', b'e', b'-', b'c', b'e', b'l', b'l', b's', 0x00, b'r',
+            b'a', b'n', b'g', b'e', b's', 0x00, b'r', b'e', b'g', 0x00, b'n', b'o', b'-', b'm',
+            b'a', b'p', 0x00, b'r', b'e', b'u', b's', b'a', b'b', b'l', b'e', 0x00,
+        ]);
+
+        let device_tree = DeviceTree::from_physical_address(TEST_FDT.0.as_ptr() as usize);
+        let ranges =
+            unsafe { device_tree.reserved_memory_ranges() }.expect("reserved-memory ranges");
+
+        assert_eq!(ranges.address_cells, 2);
+        assert_eq!(ranges.size_cells, 2);
+        assert_eq!(ranges.node_count, 2);
+        assert_eq!(ranges.range_count, 2);
+        assert_eq!(ranges.reported_len(), 2);
+        assert!(!ranges.truncated);
+        assert_eq!(
+            ranges.entries[0],
+            Some(FdtReservedMemoryRange {
+                address: 0x3f00_0000,
+                size: 0x0100_0000,
+                no_map: true,
+                reusable: false,
+            })
+        );
+        assert_eq!(
+            ranges.entries[1],
+            Some(FdtReservedMemoryRange {
+                address: 0x1_0000_0000,
+                size: 0x0200_0000,
+                no_map: false,
+                reusable: true,
+            })
+        );
+    }
 }

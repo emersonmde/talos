@@ -167,3 +167,27 @@ macro_rules! println {
         $crate::print!("{}\n", format_args!($($arg)*));
     };
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test_case]
+    fn target_services_include_qemu_console() {
+        let boot_info = crate::boot::BootInfo::from_aarch64_x0(0x4000_0000);
+        let services = services(&boot_info);
+
+        assert_eq!(services.uart, UartKind::Pl011);
+        assert_eq!(services.uart.name(), "pl011");
+        assert_eq!(services.timer.name(), "arm-generic");
+        assert_eq!(services.interrupt_controller.name(), "gic-v2");
+        let regions = services.mmio_map.regions();
+        assert_eq!(regions.len(), 3);
+        assert_eq!(regions[0].name, "qemu-virt-gicv2-distributor");
+        assert_eq!(regions[1].name, "qemu-virt-gicv2-cpu-interface");
+        assert_eq!(regions[2].name, "qemu-virt-pl011-uart0");
+        assert!(services.device_tree.physical_address().is_some());
+        assert_eq!(services.device_tree.physical_address(), Some(0x4000_0000));
+        assert_eq!(boot_info.target.name(), "talos-aarch64-virt");
+    }
+}

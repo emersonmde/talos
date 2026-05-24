@@ -243,4 +243,36 @@ mod tests {
             None
         );
     }
+
+    #[test_case]
+    fn device_tree_reads_fdt_header() {
+        #[repr(align(4))]
+        struct Aligned<const N: usize>([u8; N]);
+
+        static TEST_FDT: Aligned<40> = Aligned([
+            0xd0, 0x0d, 0xfe, 0xed, // magic
+            0x00, 0x00, 0x01, 0x80, // totalsize
+            0x00, 0x00, 0x00, 0x38, // off_dt_struct
+            0x00, 0x00, 0x01, 0x20, // off_dt_strings
+            0x00, 0x00, 0x00, 0x28, // off_mem_rsvmap
+            0x00, 0x00, 0x00, 0x11, // version
+            0x00, 0x00, 0x00, 0x10, // last_comp_version
+            0x00, 0x00, 0x00, 0x00, // boot_cpuid_phys
+            0x00, 0x00, 0x00, 0x40, // size_dt_strings
+            0x00, 0x00, 0x00, 0xe8, // size_dt_struct
+        ]);
+
+        let device_tree = DeviceTree::from_physical_address(TEST_FDT.0.as_ptr() as usize);
+        let header = unsafe { device_tree.fdt_header() }.expect("valid FDT header");
+
+        assert_eq!(header.magic, FdtHeader::MAGIC);
+        assert_eq!(header.total_size, 0x180);
+        assert_eq!(header.off_dt_struct, 0x38);
+        assert_eq!(header.off_dt_strings, 0x120);
+        assert_eq!(header.off_mem_rsvmap, 0x28);
+        assert_eq!(header.version, 17);
+        assert_eq!(header.last_comp_version, 16);
+        assert_eq!(header.size_dt_strings, 0x40);
+        assert_eq!(header.size_dt_struct, 0xe8);
+    }
 }
