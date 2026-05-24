@@ -94,6 +94,12 @@ Completed:
   handled=6, timer-preemptions=6, dispatch-switches=6, voluntary-yields=0,
   INTID 26, unexpected=0, and PASS before the pre-run boot snapshot was
   restored.
+- Phase 4.3 scheduler/preemption contract consolidation is accepted. The
+  production boundary is the single-core scheduler data model, short
+  IRQ-masked scheduler mutation windows, and an IRQ hot path limited to
+  acknowledge/classify/tick/request/reprogram/EOI. The QEMU and Pi 5
+  timer-preemption boot images remain validation surfaces, not supported
+  kernel interfaces.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -101,8 +107,8 @@ Completed:
 
 Blocked or pending:
 
-- The next queued Phase 4.3 slice is scheduler/preemption contract
-  consolidation before the Phase 4 closeout checkpoint.
+- The next queued Phase 4 slice is the Phase 4 closeout checkpoint before any
+  Phase 5 console/TTY work starts.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.

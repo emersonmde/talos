@@ -285,3 +285,54 @@ preemptions, six dispatch switches, zero voluntary yields, INTID 26, and
 acknowledges/classifies INTID 26, records tick and preemption-request counters,
 reprograms `CNTHP_CVAL_EL2`, writes `GICC_EOIR`, and returns; scheduler
 mutation and diagnostic output stay after IRQ return.
+
+## Consolidated Scheduler/Preemption Contract
+
+The accepted production contract after the QEMU and Pi 5 timer-preemption
+proofs is deliberately smaller than a complete preemptive scheduler:
+
+- the scheduler owns task IDs, task state, per-task kernel stacks, saved
+  cooperative context frames, the single boot-CPU runnable queue, and dispatch
+  counters;
+- the EL2 physical timer IRQ path owns only acknowledge/classification,
+  monotonic tick accounting, bounded preemption-request accounting,
+  `CNTHP_CVAL_EL2` reprogramming, and `GICC_EOIR`;
+- timer-driven switching is performed by kernel-thread code after IRQ return
+  when it observes a pending request;
+- scheduler mutation remains inside short
+  `single_core_irq_mask_save()` / `single_core_irq_restore()` windows that
+  update current/runnable task state, dispatch counters, and context-frame
+  pointers before crossing `talos_aarch64_context_switch`.
+
+Those short masked windows are boot-CPU critical sections, not general locks.
+They do not provide SMP mutual exclusion, blocking or sleepable locking,
+preemption-disable nesting, lower-EL interrupt policy, or cross-core memory
+ordering. They must stay bounded and must not allocate, format, print, block,
+sleep, run callbacks, or walk unrelated queues.
+
+The retained diagnostic surfaces are owned by Phase 4 validation:
+
+- `TALOS_QEMU_CONTEXT_SWITCH_SMOKE` and
+  `scripts/qemu-context-switch-smoke.sh` keep the raw cooperative switch
+  primitive covered until a non-diagnostic kernel-thread launcher replaces the
+  smoke.
+- `TALOS_QEMU_SCHEDULER_YIELD_SMOKE` and
+  `scripts/qemu-scheduler-yield-smoke.sh` keep voluntary-yield dispatch
+  covered until the scheduler has a regular in-kernel yield path.
+- `TALOS_QEMU_TIMER_PREEMPTION_SMOKE` and
+  `scripts/qemu-timer-preemption-smoke.sh` keep the fast substitute proof for
+  timer-driven dispatch and should remain a regression gate through Phase 4
+  closeout.
+- `TALOS_RPI5_TIMER_IRQ_DIAGNOSTIC`,
+  `TALOS_RPI5_TIMER_PREEMPTION_DIAGNOSTIC`,
+  `scripts/rpi5-timer-irq-diagnostic-image.sh`, and
+  `scripts/rpi5-timer-preemption-diagnostic-image.sh` are serialized hardware
+  evidence surfaces. Revisit or remove them after Phase 4 closeout once their
+  contracts are covered by ordinary boot diagnostics or by a later local
+  console diagnostic command.
+
+The following remain explicit deferrals: real quantum policy,
+preemption-disable counters, switching directly from an asynchronous exception
+frame, sleep and wakeup queues, SMP run-queue locking, task migration, lower-EL
+state, process address spaces, descriptor tables, POSIX process lifetime, and
+all filesystem, console/TTY, networking, and SSH behavior.

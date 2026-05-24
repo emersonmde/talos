@@ -43,6 +43,38 @@ ADR template:
   SMP locks, UART interrupts, lower-EL timer access, DMA, RP1/PCIe routing,
   filesystems, userspace, networking, or SSH.
 
+## 2026-05-24 - Consolidate Scheduler/Preemption Contract
+
+- Status: accepted as the final scheduler/preemption contract checkpoint before
+  Phase 4 closeout. No kernel code, boot image, hardware lock, or hardware run
+  changed in this task.
+- Context: QEMU and Pi 5 both accepted the timer-driven single-core
+  kernel-thread preemption smoke. Before closeout, Talos needed to separate the
+  durable scheduler contract from one-off diagnostic boot surfaces.
+- Decision: Treat the production Phase 4 contract as the scheduler-owned
+  task/runnable-queue/context-frame model, short boot-CPU IRQ-masked scheduler
+  mutation windows, and a timer IRQ hot path limited to
+  acknowledge/classify/tick/request/reprogram/EOI. Retain the QEMU
+  context-switch, scheduler-yield, timer-preemption, and Pi 5 timer diagnostic
+  surfaces only as validation gates with named revisit conditions.
+- Evidence level: static inspection and documentation checkpoint over accepted
+  QEMU proof commit `2cf0e64`, Pi 5 hardware proof commit `9e53676`,
+  `src/target/qemu_virt.rs`, `src/target/rpi5.rs`,
+  `src/scheduler.rs`, and the task/evidence records under
+  `tasks/evidence/2026-05-24-pi5-timer-preemption-hardware-proof/`.
+- Validation: `git diff --check` passed. `mdbook build` was not run because
+  `mdbook` is unavailable in the container. Rust tests and hardware gates were
+  not rerun because this task changed docs and task records only.
+- Consequences: The Phase 4 closeout checkpoint may start next. Phase 5 must
+  not treat the retained timer-preemption boot images as supported kernel
+  interfaces; they are regression/evidence surfaces until ordinary boot or
+  local console diagnostics cover the same counters.
+- Alternatives considered: delete the diagnostic surfaces immediately, keep
+  them undocumented, or promote the smoke harnesses into general scheduler
+  interfaces. Immediate deletion would remove useful regression gates before
+  closeout, while undocumented retention or promotion would blur the Phase 4
+  kernel contract.
+
 ## 2026-05-24 - Accept EL2 Physical Timer IRQ Smoke on Pi 5
 
 - Status: accepted

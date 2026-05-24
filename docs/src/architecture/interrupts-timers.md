@@ -231,6 +231,23 @@ scheduler dispatch, context switch, and diagnostic output happen after the
 handler has reprogrammed the timer, written GICC_EOIR, and returned from IRQ
 context.
 
+After the scheduler/preemption consolidation, the timer IRQ ownership boundary
+is unchanged. The shared QEMU and Pi 5 hot path may acknowledge with
+`GICC_IAR`, classify INTID 26, store vector/IAR/INTID evidence, record the
+monotonic tick, increment a bounded preemption-request counter when the
+timer-preemption diagnostic is enabled, reprogram `CNTHP_CVAL_EL2`, write
+`GICC_EOIR`, and return. It must not allocate, format, print to serial, block,
+sleep, call scheduler dispatch, mutate runnable queues, or perform the context
+switch.
+
+`TALOS_RPI5_TIMER_IRQ_DIAGNOSTIC` and
+`TALOS_RPI5_TIMER_PREEMPTION_DIAGNOSTIC` remain retained hardware-validation
+surfaces, not supported kernel interfaces. Their owner is Phase 4 validation;
+their role is to recreate serialized Pi 5 evidence for EL2 physical timer IRQ
+delivery and timer-driven scheduler handoff; their revisit condition is Phase 4
+closeout or the first Phase 5 local diagnostic command channel that can report
+the same counters without special boot images.
+
 ## Minimal GICv2 Register Checklist
 
 The next implementation task should keep GICv2 target-specific but share the
