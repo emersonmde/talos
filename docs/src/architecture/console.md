@@ -1,0 +1,51 @@
+# Console Device Model
+
+This note defines the Phase 5 starting boundary for Talos console work. It is a source inventory and ownership contract only: it does not implement a runtime console, descriptor tables, TTY line discipline, input, userspace, filesystem, networking, SSH, or a shell.
+
+## Current Early Logging Surface
+
+The current kernel printing path is target-routed and synchronous:
+
+- `print!` and `println!` build `core::fmt::Arguments`.
+- `target::console::_print` creates the active target console.
+- The target console implements `core::fmt::Write::write_str`.
+- `Pl011` writes bytes through polling MMIO and translates line feeds to CRLF.
+
+QEMU virt owns the simple PL011 path:
+
+- source: `src/target/qemu_virt.rs`;
+- UART: `qemu-virt-pl011-uart0` at `0x0900_0000`;
+- initialization: `qemu_virt::init()` calls `console().init_early()`;
+- backend: `Pl011::new(PL011_BASE)`.
+
+Raspberry Pi 5 owns a firmware-preserved early UART path:
+
+- sources: `src/target/rpi5.rs`, `src/boot/rpi5.rs`, and `src/boot/rpi5_reports.rs`;
+- primary lab-visible UART: BCM2712 UART10 at `0x10_7d00_1000`;
+- backend: `rpi5::firmware_console()` returns `Pl011::new_with_posted_write_flush(UART10_BASE)`;
+- policy: preserve firmware/BL31 UART10 baud programming, poll TX-ready, use 32-bit PL011 data-register writes, and flush posted writes;
+- RP1 UART0 pin setup exists in `rpi5::init_stub()`, but the accepted normal console path does not depend on RP1 UART0 for visible output.
+
+The early helper path remains intentionally separate: `target::console::write_static`, `write_hex_usize`, `write_hex_u64`, and `write_dec_usize`. On Pi 5 those helpers route to the proven UART10 word-write path and are used for panic/OOM, exception/fault reports, DTB and memory reports, and other bring-up diagnostics that must not rely on broad formatting or allocation.
+
+## Runtime Console Ownership Boundary
+
+Early logging is allowed to stay polling-only, synchronous, output-only, target-owned, and best effort. It has no input path, no interrupt-driven UART behavior, no descriptor identity, no blocking semantics, no scheduler sleep or wakeup dependency, and no shell-specific command channel.
+
+The first runtime console device must become the owner of normal kernel console writes after early boot, while keeping the public `print!` / `println!` surface stable. Its first responsibility is output only: route formatted kernel text to the current target backend through a named runtime console object or facade.
+
+The runtime console must not own POSIX process resources. Later descriptor work should attach `stdin`, `stdout`, and `stderr` handles to console objects through the descriptor layer, not by teaching the scheduler, boot code, or shell a private printing shortcut.
+
+## Descriptor And TTY Compatibility Constraints
+
+Descriptor writes should eventually call the same console write operation used by kernel diagnostics. `stdin` requires a real input source and should not be faked by output-only console work. Line editing, canonical mode, echo, signals, PTYs, and terminal window state belong to a later TTY layer. Blocking writes or reads can only sleep tasks after scheduler sleep/wakeup queues exist. Internal errors should be structured so a later syscall boundary can map them to errno-style values. QEMU and Pi 5 target differences should remain behind target/runtime console backend boundaries.
+
+## Diagnostic Surface Policy
+
+Phase 4 QEMU and Pi 5 timer/scheduler boot images remain validation surfaces, not console interfaces. A future local diagnostic command channel may replace some special boot-image diagnostics, but that channel must be planned as a console/TTY feature rather than hidden in timer, scheduler, or target code.
+
+## Next Implementation Boundary
+
+The next bounded implementation task is `phase5-runtime-console-write-core-20260524`.
+
+That task may add a runtime console write core backed by the existing polling PL011 paths and may route normal kernel printing through it if the accepted early serial output contract is preserved. It must not add UART interrupts, input, TTY line discipline, descriptor tables, userspace, filesystems, networking, SSH, a shell, or sleep/blocking behavior.

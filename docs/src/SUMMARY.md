@@ -20,6 +20,7 @@
 - [Phase 4 Pre-Scheduler Closeout](project/phase4-prescheduler-closeout.md)
 - [Phase 4 Preemption-Entry Checkpoint](project/phase4-preemption-entry-checkpoint.md)
 - [Phase 4 Closeout Checkpoint](project/phase4-closeout-checkpoint.md)
+- [Phase 5 Console Source Inventory](project/phase5-console-device-model-source-inventory.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture
@@ -31,6 +32,7 @@
 - [Lower-EL and Userspace Mapping Readiness](architecture/lower-el-userspace.md)
 - [Interrupts and Timers](architecture/interrupts-timers.md)
 - [Scheduler Shape](architecture/scheduler.md)
+- [Console Device Model](architecture/console.md)
 - [QEMU Skeleton](architecture/qemu-skeleton.md)
 
 # Decisions

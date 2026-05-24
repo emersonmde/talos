@@ -104,6 +104,11 @@ Completed:
   Pi 5 interrupt/timer/preemption evidence, names remaining deferrals and
   risks, and allows Phase 5 planning to start with a bounded local console
   device-model source inventory.
+- Phase 5 console device-model source inventory is accepted. The current early
+  logging surfaces are inventoried, the early/runtime console ownership
+  boundary is documented, and descriptor/TTY compatibility constraints are
+  named without implementing descriptor tables, input, userspace, filesystem,
+  networking, SSH, or shell behavior.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -111,11 +116,11 @@ Completed:
 
 Blocked or pending:
 
-- The next queued Phase 5 slice is the console device-model source inventory.
-  It may document early/runtime console ownership and the descriptor/TTY
-  compatibility boundary, but it must not implement console/TTY behavior,
-  descriptor tables, userspace, filesystems, networking, SSH, or shell
-  behavior.
+- The next queued Phase 5 slice is the runtime console write core. It may move
+  normal kernel output behind a named runtime console facade backed by the
+  existing polling PL011 paths, but it must not implement UART interrupts,
+  input, TTY line discipline, descriptor tables, userspace, filesystems,
+  networking, SSH, shell behavior, or blocking I/O.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.

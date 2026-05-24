@@ -11,6 +11,7 @@ Current topics:
 - Lower-EL and userspace mapping readiness.
 - Interrupt-controller and timer bring-up.
 - Multi-core scheduling and preemption.
+- Console device model.
 - Process and syscall model.
 - File descriptors and VFS.
 - Networking and sockets.
