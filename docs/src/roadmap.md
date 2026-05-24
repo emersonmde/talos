@@ -127,6 +127,12 @@ Completed:
   output-capable and input-planned: normal diagnostics route through
   runtime-console0, target modules own QEMU/Pi 5 PL011 backend selection,
   and Milestone 5.2 may start with a documentation-only TTY/stdio shape task.
+- Phase 5.2 TTY/stdio shape is accepted as a design boundary. Raw mode,
+  canonical-lite line assembly, newline/backspace/echo/control-character
+  policy, and descriptor-facing stdin/stdout/stderr shape are documented.
+  The first recommended implementation slice is a QEMU-only polling PL011 RX
+  TTY diagnostic with no descriptor, syscall, userspace, shell, hardware, or
+  scheduler blocking behavior.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -134,10 +140,10 @@ Completed:
 
 Blocked or pending:
 
-- The next Phase 5 slice is the Milestone 5.2 TTY/stdio shape document.
-  UART interrupts, input implementation, TTY line discipline implementation,
-  descriptor tables, userspace, filesystems, networking, SSH, shell behavior,
-  and blocking I/O remain deferred.
+- The next Phase 5 slice should be a bounded QEMU polling TTY RX diagnostic.
+  Pi 5 input, UART interrupts, descriptors, syscalls, userspace, shell,
+  filesystem, networking, SSH, and scheduler blocking I/O remain out of scope
+  until explicitly queued.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.

@@ -26,6 +26,7 @@
 - [Phase 5 Console Device Identity Boundary](project/phase5-console-device-identity-boundary.md)
 - [Phase 5 Console Input Source Inventory](project/phase5-console-input-source-inventory.md)
 - [Phase 5 Console Model Checkpoint](project/phase5-console-model-checkpoint.md)
+- [Phase 5 TTY and Stdio Shape](project/phase5-tty-stdio-shape.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture
@@ -38,6 +39,7 @@
 - [Interrupts and Timers](architecture/interrupts-timers.md)
 - [Scheduler Shape](architecture/scheduler.md)
 - [Console Device Model](architecture/console.md)
+- [TTY and Stdio Shape](architecture/tty-stdio.md)
 - [QEMU Skeleton](architecture/qemu-skeleton.md)
 
 # Decisions

@@ -90,6 +90,8 @@ The accepted Phase 5.1 model is output-capable and input-planned. runtime-consol
 
 Milestone 5.2 may start with a TTY/stdio shape document only. That design task may define raw/canonical behavior, newline/backspace/echo/control-character policy, and descriptor-facing stdin/stdout/stderr shape, but it must not implement UART RX, line discipline, descriptor tables, syscalls, userspace, shell behavior, hardware tests, or blocking I/O.
 
+The accepted Milestone 5.2 shape is documented in [TTY and Stdio Shape](tty-stdio.md). It keeps TTY policy above the runtime console backend, treats stdin, stdout, and stderr as future descriptor-owned streams, and recommends the first implementation slice as a QEMU-only polling PL011 RX diagnostic with bounded echo and line capture.
+
 ## Next Implementation Boundary
 
 The bounded implementation task `phase5-runtime-console-write-core-20260524` added the output-only runtime console write core. The follow-up `phase5-console-write-result-contract-20260524` made its success/error boundary explicit with complete-write byte accounting for future descriptor compatibility. The `phase5-console-device-identity-boundary-20260524` slice named the default output-side console identity as `runtime-console0` and routed normal kernel diagnostics through `write_default_console_output`. The `phase5-console-input-source-inventory-20260524` slice inventoried QEMU and Pi 5 local input options and recommends a QEMU-only polling PL011 RX diagnostic as the first later input implementation task.

@@ -12,6 +12,7 @@ Current topics:
 - Interrupt-controller and timer bring-up.
 - Multi-core scheduling and preemption.
 - Console device model.
+- TTY and stdio shape.
 - Process and syscall model.
 - File descriptors and VFS.
 - Networking and sockets.
