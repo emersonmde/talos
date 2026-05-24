@@ -51,8 +51,9 @@ Completed:
   candidate image was fetched, the IRQ handler acknowledged and EOI'd INTID 26,
   and execution returned to a bounded post-IRQ workload.
 - The Phase 4 timer-smoke checkpoint reconciles the accepted QEMU and Pi 5
-  evidence and selects monotonic tick accounting as the next bounded
-  implementation slice.
+  evidence, and monotonic tick accounting now reprograms the EL2 physical
+  timer for four periodic ticks on QEMU and Pi 5 before reporting outside the
+  IRQ path.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -60,9 +61,8 @@ Completed:
 
 Blocked or pending:
 
-- Monotonic tick accounting and explicit interrupt-time constraints are the
-  next Phase 4 implementation step before critical-section policy or scheduler
-  structures.
+- Explicit interrupt masking and critical-section policy is the next Phase 4
+  implementation step before scheduler structures.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.

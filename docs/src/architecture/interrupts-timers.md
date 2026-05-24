@@ -84,9 +84,9 @@ Accepted QEMU implementation contract:
   enables the INTID 26 PPI bank bit, and programs `CNTHP_CVAL_EL2` plus
   `CNTHP_CTL_EL2.ENABLE`.
 - The current-EL IRQ handler acknowledges the active interrupt with `GICC_IAR`,
-  recognizes INTID 26, masks `CNTHP_CTL_EL2`, writes the same acknowledge
-  value to `GICC_EOIR`, increments a bounded atomic count, and returns through
-  the saved `x0..x30` frame.
+  recognizes INTID 26, increments the shared monotonic tick counter, reprograms
+  `CNTHP_CVAL_EL2` for the next tick, writes the same acknowledge value to
+  `GICC_EOIR`, and returns through the saved `x0..x30` frame.
 - Unexpected GIC INTIDs are counted with atomics, EOI'd when they are real
   active INTIDs, and reported after interrupts are masked again. The IRQ hot
   path still does not allocate or format.
@@ -95,6 +95,8 @@ The accepted QEMU smoke transcript is captured by
 `scripts/qemu-timer-irq-smoke.sh` in `target/qemu-timer-irq-smoke.log`. A
 passing run includes EL2 boot, `intid=26`, `irq-count=1`,
 `iar=0x0000001a`, and `qemu-timer-irq-smoke: PASS`.
+The monotonic tick extension updates this to `tick-count=4 target=4`, proving
+periodic reprogramming rather than a one-shot interrupt.
 
 ## Raspberry Pi 5 Target
 
@@ -144,9 +146,9 @@ Accepted Pi 5 implementation contract:
   CNTHP_CTL_EL2 state, enables PPI 10 / INTID 26 in the GIC-400 distributor
   and CPU interface, and programs CNTHP_CVAL_EL2 plus CNTHP_CTL_EL2.ENABLE.
 - The current-EL IRQ handler acknowledges the active interrupt with GICC_IAR,
-  recognizes INTID 26, masks CNTHP_CTL_EL2, writes the same acknowledge value
-  to GICC_EOIR, increments a bounded atomic count, and returns through the
-  saved x0..x30 frame.
+  recognizes INTID 26, increments the shared monotonic tick counter, reprograms
+  CNTHP_CVAL_EL2 for the next tick, writes the same acknowledge value to
+  GICC_EOIR, and returns through the saved x0..x30 frame.
 - Unexpected GIC INTIDs are counted with atomics, EOI'd when they are real
   active INTIDs, and reported after interrupts are masked again. The IRQ hot
   path still does not allocate or format.
@@ -157,24 +159,42 @@ rpi5-timer-irq-smoke: irq-count=1 vector=5 iar=0x0000001a intid=26
 unexpected=0 ctl=0x2, the GIC state after EOI, continued post-IRQ workload,
 and rpi5-timer-irq-smoke: PASS. TFTP evidence shows the Pi fetched the
 86,429-byte kernel_2712.img served from the candidate archive.
+The monotonic tick evidence extends this shape to `tick-count=4 target=4` on the
+same INTID with continued post-tick workload progress.
 
 ## Timer-Smoke Checkpoint
 
-The accepted QEMU and Pi 5 smokes prove the first one-shot EL2 physical timer
-interrupt boundary on both current targets. The shared contract is:
+The accepted QEMU and Pi 5 smokes prove the EL2 physical timer interrupt
+boundary on both current targets. The shared contract is:
 
 - Program `CNTHP_CVAL_EL2` and `CNTHP_CTL_EL2` for PPI 10 / INTID 26.
 - Route physical IRQs to EL2 with `HCR_EL2.IMO` while executing at EL2.
-- Acknowledge with `GICC_IAR`, recognize INTID 26, mask the EL2 physical
-  timer, EOI with `GICC_EOIR`, and return through the saved current-EL IRQ
-  frame.
+- Acknowledge with `GICC_IAR`, recognize INTID 26, reprogram the EL2 physical
+  timer before EOI, write `GICC_EOIR`, and return through the saved current-EL
+  IRQ frame.
 - Keep allocation and formatting outside the IRQ hot path; report bounded
   counters after IRQs are masked again.
 
-No further delivery discriminator is required before monotonic tick accounting.
-Periodic tick work must still define the reprogramming cadence, interrupt-time
-rules, and single-core limitations explicitly before scheduler policy consumes
-it.
+## Monotonic Tick Accounting
+
+Talos now has a minimal single-core monotonic tick counter for the accepted EL2
+physical timer path. The diagnostic cadence is one centisecond of the reported
+`CNTFRQ_EL0` frequency, with a 1,000-counter floor for unusually small
+frequencies. The proof target is four ticks.
+
+The IRQ hot path is intentionally narrow:
+
+- no allocation, formatting, serial output, scheduler callbacks, or sleeping;
+- relaxed atomic tick accounting only;
+- reprogram `CNTHP_CVAL_EL2` from the current architectural counter before
+  writing `GICC_EOIR`, so the level interrupt is deasserted before completion;
+- keep the GIC acknowledgement/EOI value target-local while the tick counter and
+  reprogramming policy live in the shared generic-timer module.
+
+This is still not scheduler policy. It does not define time slicing, sleep
+queues, preemption disable counters, wall-clock time, SMP per-core state,
+lower-EL timer routing, or POSIX clocks. The next Phase 4 slice is the explicit
+interrupt masking and critical-section contract.
 
 ## Minimal GICv2 Register Checklist
 

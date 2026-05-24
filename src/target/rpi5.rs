@@ -51,8 +51,6 @@ const MMIO_REGIONS: &[MmioRegion] = &[
 ];
 
 #[cfg(talos_rpi5_timer_irq_diagnostic)]
-static TIMER_IRQ_COUNT: AtomicU64 = AtomicU64::new(0);
-#[cfg(talos_rpi5_timer_irq_diagnostic)]
 static LAST_IRQ_VECTOR: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_rpi5_timer_irq_diagnostic)]
 static LAST_IAR: AtomicU64 = AtomicU64::new(0);
@@ -106,7 +104,7 @@ pub struct TimerIrqSnapshot {
 #[cfg(talos_rpi5_timer_irq_diagnostic)]
 pub fn timer_irq_snapshot() -> TimerIrqSnapshot {
     TimerIrqSnapshot {
-        timer_count: TIMER_IRQ_COUNT.load(Ordering::Relaxed),
+        timer_count: generic_timer::monotonic_ticks(),
         last_vector: LAST_IRQ_VECTOR.load(Ordering::Relaxed),
         last_iar: LAST_IAR.load(Ordering::Relaxed),
         last_intid: LAST_INTID.load(Ordering::Relaxed),
@@ -125,11 +123,10 @@ pub fn handle_irq(vector: u64) -> bool {
     LAST_INTID.store(intid as u64, Ordering::Relaxed);
 
     if intid == EL2_PHYSICAL_TIMER_INTID {
+        unsafe { generic_timer::record_el2_physical_tick_and_rearm() };
         unsafe {
-            generic_timer::mask_el2_physical_timer();
             gic.end_interrupt(iar);
         }
-        TIMER_IRQ_COUNT.fetch_add(1, Ordering::Relaxed);
         return true;
     }
 
@@ -150,11 +147,18 @@ pub fn run_el2_timer_irq_smoke() -> bool {
         generic_timer::mask_el2_physical_timer();
         GicV2::new(GICD_BASE, GICC_BASE).enable_ppi_or_spi(EL2_PHYSICAL_TIMER_INTID);
     }
+    LAST_IRQ_VECTOR.store(0, Ordering::Relaxed);
+    LAST_IAR.store(0, Ordering::Relaxed);
+    LAST_INTID.store(0, Ordering::Relaxed);
+    UNEXPECTED_GIC_IRQ_COUNT.store(0, Ordering::Relaxed);
+    generic_timer::reset_monotonic_ticks();
 
     let freq = generic_timer::counter_frequency_hz();
     let start = generic_timer::physical_count();
-    let delta = generic_timer::first_smoke_delta_ticks(freq);
+    let delta = generic_timer::periodic_tick_delta_ticks(freq);
     let compare = start.wrapping_add(delta);
+    let target_ticks = generic_timer::periodic_tick_proof_count();
+    generic_timer::configure_periodic_tick_delta(delta);
 
     crate::println!(
         "rpi5-timer-irq-smoke: gicd={:#014x} gicc={:#014x} intid={}",
@@ -163,11 +167,12 @@ pub fn run_el2_timer_irq_smoke() -> bool {
         EL2_PHYSICAL_TIMER_INTID
     );
     crate::println!(
-        "rpi5-timer-irq-smoke: cntfrq={} start={} cval={} delta={}",
+        "rpi5-timer-irq-smoke: cntfrq={} start={} cval={} delta={} target-ticks={}",
         freq,
         start,
         compare,
-        delta
+        delta,
+        target_ticks
     );
 
     let mut workload = 0x1234_5678_9abc_def0u64;
@@ -177,7 +182,7 @@ pub fn run_el2_timer_irq_smoke() -> bool {
     }
 
     let mut remaining = TIMER_IRQ_WAIT_LIMIT;
-    while timer_irq_snapshot().timer_count == 0 && remaining > 0 {
+    while timer_irq_snapshot().timer_count < target_ticks && remaining > 0 {
         workload = workload.rotate_left(7) ^ 0x0f0e_0d0c_0b0a_0908;
         unsafe {
             core::arch::asm!("wfe", options(nomem, nostack, preserves_flags));
@@ -202,8 +207,9 @@ pub fn run_el2_timer_irq_smoke() -> bool {
     let daif = crate::arch::aarch64::daif();
     let control = generic_timer::el2_physical_control();
     crate::println!(
-        "rpi5-timer-irq-smoke: irq-count={} vector={} iar={:#010x} intid={} unexpected={} ctl={:#x}",
+        "rpi5-timer-irq-smoke: tick-count={} target={} vector={} iar={:#010x} intid={} unexpected={} ctl={:#x}",
         snapshot.timer_count,
+        target_ticks,
         snapshot.last_vector,
         snapshot.last_iar,
         snapshot.last_intid,
@@ -225,6 +231,7 @@ pub fn run_el2_timer_irq_smoke() -> bool {
     );
 
     let passed = snapshot.timer_count > 0
+        && snapshot.timer_count >= target_ticks
         && snapshot.last_intid == EL2_PHYSICAL_TIMER_INTID as u64
         && snapshot.unexpected_gic_count == 0;
 
