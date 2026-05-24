@@ -1,14 +1,14 @@
 # Console Device Model
 
-This note defines the Phase 5 starting boundary for Talos console work. It covers the accepted source inventory, the first runtime console write core, and the internal write-result contract. Talos still does not implement descriptor tables, TTY line discipline, input, userspace, filesystem, networking, SSH, or a shell.
+This note defines the Phase 5 starting boundary for Talos console work. It covers the accepted source inventory, the first runtime console write core, the named default console identity, and the internal write-result contract. Talos still does not implement descriptor tables, TTY line discipline, input, userspace, filesystem, networking, SSH, or a shell.
 
 ## Current Early Logging Surface
 
 The current kernel printing path is target-routed and synchronous:
 
 - `print!` and `println!` build `core::fmt::Arguments`.
-- `target::console::_print` passes the active target backend to `runtime_console::write_kernel_output`.
-- `runtime_console::RuntimeConsole` owns normal kernel write routing.
+- `target::console::_print` passes the active target backend to `runtime_console::write_default_console_output`.
+- `runtime_console::RuntimeConsole` owns normal kernel write routing for the named `runtime-console0` default console.
 - The target backend implements `core::fmt::Write::write_str`.
 - `Pl011` writes bytes through polling MMIO and translates line feeds to CRLF.
 
@@ -33,13 +33,15 @@ The early helper path remains intentionally separate: `target::console::write_st
 
 Early logging is allowed to stay polling-only, synchronous, output-only, target-owned, and best effort. It has no input path, no interrupt-driven UART behavior, no descriptor identity, no blocking semantics, no scheduler sleep or wakeup dependency, and no shell-specific command channel.
 
-`src/runtime_console.rs` is the first runtime console write core. It owns normal kernel console write routing through `RuntimeConsole` and `write_kernel_output`, while `print!` / `println!` remain the public kernel formatting surface. This first responsibility is output only: formatted kernel text is routed to the current target backend through a named runtime console facade.
+`src/runtime_console.rs` is the first runtime console write core. It owns normal kernel console write routing through `RuntimeConsole` and the named default-console facade, while `print!` / `println!` remain the public kernel formatting surface. This first responsibility is output only: formatted kernel text is routed to the current target backend through the `runtime-console0` runtime console identity.
 
-The write core returns an internal `ConsoleWriteOutcome`. Successful writes report `ConsoleWriteResult { bytes_written }` for the complete formatted kernel message accepted by the runtime facade. Failed writes return `ConsoleWriteError::BackendWriteFailed { bytes_accepted }`, where `bytes_accepted` counts only complete string fragments the backend accepted before the failure. The current PL011 backends are still polling and normally infallible, so `target::console::_print` continues to panic on a runtime write failure rather than exposing a recoverable kernel diagnostic API.
+`DEFAULT_RUNTIME_CONSOLE` names this identity and exposes the stable internal name `runtime-console0`. `target::console::_print` now calls `write_default_console_output`, which constructs a `RuntimeConsole` for `DEFAULT_RUNTIME_CONSOLE` around the target-selected backend. The identity belongs to runtime console code; QEMU virt and Raspberry Pi 5 target modules still own which PL011 backend backs that identity on a given boot.
+
+The write core returns an internal `ConsoleWriteOutcome`. Successful writes report `ConsoleWriteResult { device, bytes_written }` for the named console and complete formatted kernel message accepted by the runtime facade. Failed writes return `ConsoleWriteError::BackendWriteFailed { device, bytes_accepted }`, where `bytes_accepted` counts only complete string fragments the backend accepted before the failure. The current PL011 backends are still polling and normally infallible, so `target::console::_print` continues to panic on a runtime write failure rather than exposing a recoverable kernel diagnostic API.
 
 This result contract is internal to the kernel console boundary. It is not a POSIX errno value, syscall ABI, descriptor status, blocking contract, or partial-write promise for userspace.
 
-The runtime console must not own POSIX process resources. Later descriptor work should attach `stdin`, `stdout`, and `stderr` handles to console objects through the descriptor layer, not by teaching the scheduler, boot code, or shell a private printing shortcut.
+The runtime console must not own POSIX process resources. Later descriptor work should attach `stdin`, `stdout`, and `stderr` handles to console objects through the descriptor layer, not by teaching the scheduler, boot code, or shell a private printing shortcut. The first `stdout` and `stderr` descriptors should point at `runtime-console0` through descriptor-owned handles; they should not call QEMU or Pi 5 target backends directly.
 
 ## Descriptor And TTY Compatibility Constraints
 
@@ -51,6 +53,6 @@ Phase 4 QEMU and Pi 5 timer/scheduler boot images remain validation surfaces, no
 
 ## Next Implementation Boundary
 
-The bounded implementation task `phase5-runtime-console-write-core-20260524` added the output-only runtime console write core. The follow-up `phase5-console-write-result-contract-20260524` made its success/error boundary explicit with complete-write byte accounting for future descriptor compatibility.
+The bounded implementation task `phase5-runtime-console-write-core-20260524` added the output-only runtime console write core. The follow-up `phase5-console-write-result-contract-20260524` made its success/error boundary explicit with complete-write byte accounting for future descriptor compatibility. The `phase5-console-device-identity-boundary-20260524` slice named the default output-side console identity as `runtime-console0` and routed normal kernel diagnostics through `write_default_console_output`.
 
 The core is backed by the existing polling PL011 paths and preserves the accepted early serial output contract. It does not add UART interrupts, input, TTY line discipline, descriptor tables, userspace, filesystems, networking, SSH, a shell, or sleep/blocking behavior.

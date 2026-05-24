@@ -4,7 +4,7 @@ Status: accepted as the first Phase 5.1 runtime console implementation slice.
 
 ## Scope
 
-This task adds `src/runtime_console.rs`, an output-only runtime console write core. Normal kernel formatted output still enters through `print!` and `println!`, but `target::console::_print` now hands the active target backend to `runtime_console::write_kernel_output`.
+This task adds `src/runtime_console.rs`, an output-only runtime console write core. Normal kernel formatted output still enters through `print!` and `println!`, but `target::console::_print` now hands the active target backend to `runtime_console::write_default_console_output`.
 
 The target modules still own hardware differences:
 
@@ -20,7 +20,7 @@ Normal Pi 5 serial output is intended to be preserved, not changed. The implemen
 
 ## Evidence
 
-- Static inspection: `target::console::_print` routes through `runtime_console::write_kernel_output`, while target-owned backend selection remains in `target::console::runtime_backend`.
+- Static inspection: `target::console::_print` routes through `runtime_console::write_default_console_output`, while target-owned backend selection remains in `target::console::runtime_backend`.
 - Unit tests: `runtime_console` tests cover static and formatted kernel output routing to a captured backend.
 - QEMU/substitute: `scripts/qemu-smoke.sh` passed after the write-core refactor.
 - Image/archive inspection: `scripts/rpi5-image.sh` passed for the normal Pi 5 image after the write-core refactor.

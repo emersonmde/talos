@@ -91,7 +91,7 @@ pub mod console {
     use core::fmt::{self, Write};
 
     pub fn _print(args: fmt::Arguments<'_>) {
-        crate::runtime_console::write_kernel_output(runtime_backend(), args)
+        crate::runtime_console::write_default_console_output(runtime_backend(), args)
             .expect("serial console write failed");
     }
 

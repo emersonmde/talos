@@ -109,11 +109,16 @@ Completed:
   boundary is documented, and descriptor/TTY compatibility constraints are
   named without implementing descriptor tables, input, userspace, filesystem,
   networking, SSH, or shell behavior.
-- Phase 5 runtime console write core is accepted. Normal kernel output now
-  routes through `runtime_console::write_kernel_output` while preserving
+- Phase 5 runtime console write core and write-result contract are accepted.
+  Normal kernel output now routes through the named
+  `runtime_console::write_default_console_output` boundary while preserving
   `print!` / `println!` and the existing target-owned polling PL011 backends.
   Pi 5 normal serial output is intended to be preserved through the existing
   firmware-preserved UART10 backend.
+- Phase 5 default console identity is accepted. The output-side runtime console
+  is named `runtime-console0`; later `stdout` and `stderr` descriptors
+  should attach to that console through descriptor-owned handles instead of
+  calling target backends directly.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -121,10 +126,9 @@ Completed:
 
 Blocked or pending:
 
-- The next Phase 5 slice needs supervisor planning. Runtime console output is
-  now behind a named facade; UART interrupts, input, TTY line discipline,
-  descriptor tables, userspace, filesystems, networking, SSH, shell behavior,
-  and blocking I/O remain deferred.
+- The next Phase 5 slice is the console input-source inventory. UART interrupts,
+  input implementation, TTY line discipline, descriptor tables, userspace,
+  filesystems, networking, SSH, shell behavior, and blocking I/O remain deferred.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
