@@ -183,9 +183,19 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
         );
         println!("mmio-regions: {}", services.mmio_map.regions().len());
         if boot_info.target == target::TargetKind::QemuVirt && boot_info.exception_level == 2 {
+            #[cfg(talos_qemu_context_switch_smoke)]
+            {
+                if target::qemu_virt::run_el2_context_switch_smoke() {
+                    target::qemu::exit_success();
+                }
+                target::qemu::exit_failure();
+            }
+
+            #[cfg(not(talos_qemu_context_switch_smoke))]
             if target::qemu_virt::run_el2_timer_irq_smoke() {
                 target::qemu::exit_success();
             }
+            #[cfg(not(talos_qemu_context_switch_smoke))]
             target::qemu::exit_failure();
         }
         println!("talos: hello from {}", boot_info.target.name());

@@ -71,16 +71,62 @@ impl KernelStack {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
 pub struct ContextFrame {
+    x19: usize,
+    x20: usize,
+    x21: usize,
+    x22: usize,
+    x23: usize,
+    x24: usize,
+    x25: usize,
+    x26: usize,
+    x27: usize,
+    x28: usize,
+    x29: usize,
+    link_register: usize,
     stack_pointer: usize,
-    program_counter: usize,
 }
 
 impl ContextFrame {
     pub const fn new(stack_pointer: usize, program_counter: usize) -> Self {
         Self {
+            x19: 0,
+            x20: 0,
+            x21: 0,
+            x22: 0,
+            x23: 0,
+            x24: 0,
+            x25: 0,
+            x26: 0,
+            x27: 0,
+            x28: 0,
+            x29: 0,
+            link_register: program_counter,
             stack_pointer,
-            program_counter,
+        }
+    }
+
+    pub const fn kernel_thread_bootstrap(
+        stack_pointer: usize,
+        trampoline: usize,
+        entry: usize,
+        argument: usize,
+    ) -> Self {
+        Self {
+            x19: argument,
+            x20: entry,
+            x21: 0,
+            x22: 0,
+            x23: 0,
+            x24: 0,
+            x25: 0,
+            x26: 0,
+            x27: 0,
+            x28: 0,
+            x29: 0,
+            link_register: trampoline,
+            stack_pointer,
         }
     }
 
@@ -89,7 +135,15 @@ impl ContextFrame {
     }
 
     pub const fn program_counter(self) -> usize {
-        self.program_counter
+        self.link_register
+    }
+
+    pub const fn bootstrap_argument(self) -> usize {
+        self.x19
+    }
+
+    pub const fn bootstrap_entry(self) -> usize {
+        self.x20
     }
 }
 
@@ -288,6 +342,8 @@ impl<const RUNNABLE_CAPACITY: usize> Default for SingleCoreScheduler<RUNNABLE_CA
 
 #[cfg(test)]
 mod tests {
+    use core::mem::{offset_of, size_of};
+
     use super::{
         ContextFrame, KernelStack, ProcessOwnerId, RunnableQueue, RunnableQueueError,
         SingleCoreScheduler, Task, TaskId, TaskState,
@@ -410,5 +466,33 @@ mod tests {
         task.set_state(TaskState::Running);
 
         assert_eq!(task.state(), TaskState::Running);
+    }
+
+    #[test_case]
+    fn context_frame_bootstrap_records_thread_entry_and_argument() {
+        let context = ContextFrame::kernel_thread_bootstrap(0x8ff0, 0x4000, 0x5000, 7);
+
+        assert_eq!(context.stack_pointer(), 0x8ff0);
+        assert_eq!(context.program_counter(), 0x4000);
+        assert_eq!(context.bootstrap_entry(), 0x5000);
+        assert_eq!(context.bootstrap_argument(), 7);
+    }
+
+    #[test_case]
+    fn context_frame_layout_matches_aarch64_switch_offsets() {
+        assert_eq!(offset_of!(ContextFrame, x19), 0);
+        assert_eq!(offset_of!(ContextFrame, x20), 8);
+        assert_eq!(offset_of!(ContextFrame, x21), 16);
+        assert_eq!(offset_of!(ContextFrame, x22), 24);
+        assert_eq!(offset_of!(ContextFrame, x23), 32);
+        assert_eq!(offset_of!(ContextFrame, x24), 40);
+        assert_eq!(offset_of!(ContextFrame, x25), 48);
+        assert_eq!(offset_of!(ContextFrame, x26), 56);
+        assert_eq!(offset_of!(ContextFrame, x27), 64);
+        assert_eq!(offset_of!(ContextFrame, x28), 72);
+        assert_eq!(offset_of!(ContextFrame, x29), 80);
+        assert_eq!(offset_of!(ContextFrame, link_register), 88);
+        assert_eq!(offset_of!(ContextFrame, stack_pointer), 96);
+        assert_eq!(size_of::<ContextFrame>(), 104);
     }
 }

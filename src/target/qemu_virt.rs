@@ -1,7 +1,11 @@
 #![cfg_attr(any(test, talos_target_rpi5_bcm2712), allow(dead_code))]
 
+#[cfg(talos_qemu_context_switch_smoke)]
+use core::cell::UnsafeCell;
 use core::sync::atomic::{AtomicU64, Ordering};
 
+#[cfg(talos_qemu_context_switch_smoke)]
+use crate::scheduler::ContextFrame;
 use crate::{
     arch::aarch64::{
         self, generic_timer,
@@ -19,6 +23,10 @@ const GICD_BASE: usize = 0x0800_0000;
 const GICC_BASE: usize = 0x0801_0000;
 const EL2_PHYSICAL_TIMER_INTID: u32 = 26;
 const TIMER_IRQ_WAIT_LIMIT: usize = 1_000_000;
+#[cfg(talos_qemu_context_switch_smoke)]
+const CONTEXT_SWITCH_STACK_SIZE: usize = 4096;
+#[cfg(talos_qemu_context_switch_smoke)]
+const CONTEXT_SWITCH_TARGET_PROGRESS: u64 = 2;
 
 const MMIO_REGIONS: &[MmioRegion] = &[
     MmioRegion::new("qemu-virt-gicv2-distributor", GICD_BASE, 0x0001_0000),
@@ -30,6 +38,91 @@ static LAST_IRQ_VECTOR: AtomicU64 = AtomicU64::new(0);
 static LAST_IAR: AtomicU64 = AtomicU64::new(0);
 static LAST_INTID: AtomicU64 = AtomicU64::new(0);
 static UNEXPECTED_GIC_IRQ_COUNT: AtomicU64 = AtomicU64::new(0);
+
+#[cfg(talos_qemu_context_switch_smoke)]
+#[repr(align(16))]
+struct KernelThreadStack([u8; CONTEXT_SWITCH_STACK_SIZE]);
+
+#[cfg(talos_qemu_context_switch_smoke)]
+impl KernelThreadStack {
+    const fn new() -> Self {
+        Self([0; CONTEXT_SWITCH_STACK_SIZE])
+    }
+
+    fn top(&self) -> usize {
+        self.0.as_ptr() as usize + self.0.len()
+    }
+}
+
+#[cfg(talos_qemu_context_switch_smoke)]
+struct ContextSwitchSmokeState {
+    main_context: ContextFrame,
+    worker_contexts: [ContextFrame; 2],
+    worker_stacks: [KernelThreadStack; 2],
+    progress: [u64; 2],
+    switch_count: u64,
+    current_task: u64,
+    runnable_task: u64,
+}
+
+#[cfg(talos_qemu_context_switch_smoke)]
+impl ContextSwitchSmokeState {
+    const fn new() -> Self {
+        Self {
+            main_context: ContextFrame::new(0, 0),
+            worker_contexts: [ContextFrame::new(0, 0); 2],
+            worker_stacks: [KernelThreadStack::new(), KernelThreadStack::new()],
+            progress: [0; 2],
+            switch_count: 0,
+            current_task: 0,
+            runnable_task: 0,
+        }
+    }
+
+    fn reset(&mut self) {
+        self.progress = [0; 2];
+        self.switch_count = 0;
+        self.current_task = 0;
+        self.runnable_task = 1;
+        self.worker_contexts[0] = ContextFrame::kernel_thread_bootstrap(
+            self.worker_stacks[0].top(),
+            aarch64::kernel_thread_trampoline_address(),
+            qemu_context_switch_thread as *const () as usize,
+            0,
+        );
+        self.worker_contexts[1] = ContextFrame::kernel_thread_bootstrap(
+            self.worker_stacks[1].top(),
+            aarch64::kernel_thread_trampoline_address(),
+            qemu_context_switch_thread as *const () as usize,
+            1,
+        );
+    }
+
+    fn all_workers_made_progress(&self) -> bool {
+        self.progress[0] >= CONTEXT_SWITCH_TARGET_PROGRESS
+            && self.progress[1] >= CONTEXT_SWITCH_TARGET_PROGRESS
+    }
+}
+
+#[cfg(talos_qemu_context_switch_smoke)]
+struct ContextSwitchSmokeCell(UnsafeCell<ContextSwitchSmokeState>);
+
+#[cfg(talos_qemu_context_switch_smoke)]
+unsafe impl Sync for ContextSwitchSmokeCell {}
+
+#[cfg(talos_qemu_context_switch_smoke)]
+impl ContextSwitchSmokeCell {
+    const fn new() -> Self {
+        Self(UnsafeCell::new(ContextSwitchSmokeState::new()))
+    }
+
+    unsafe fn get(&self) -> *mut ContextSwitchSmokeState {
+        self.0.get()
+    }
+}
+
+#[cfg(talos_qemu_context_switch_smoke)]
+static CONTEXT_SWITCH_SMOKE: ContextSwitchSmokeCell = ContextSwitchSmokeCell::new();
 
 #[derive(Clone, Copy)]
 struct SingleCoreIrqMaskProbe {
@@ -113,6 +206,106 @@ pub fn handle_irq(vector: u64) -> bool {
         }
     }
     true
+}
+
+#[cfg(talos_qemu_context_switch_smoke)]
+extern "C" fn qemu_context_switch_thread(raw_task_index: usize) -> ! {
+    let task_index = raw_task_index & 1;
+    loop {
+        unsafe {
+            let state = CONTEXT_SWITCH_SMOKE.get();
+            (*state).current_task = task_index as u64 + 1;
+            (*state).progress[task_index] += 1;
+
+            if (*state).all_workers_made_progress() {
+                (*state).runnable_task = 0;
+                (*state).switch_count += 1;
+                aarch64::cooperative_context_switch(
+                    core::ptr::addr_of_mut!((*state).worker_contexts[task_index]),
+                    core::ptr::addr_of!((*state).main_context),
+                );
+            } else {
+                let next_task_index = 1 - task_index;
+                (*state).runnable_task = next_task_index as u64 + 1;
+                (*state).switch_count += 1;
+                aarch64::cooperative_context_switch(
+                    core::ptr::addr_of_mut!((*state).worker_contexts[task_index]),
+                    core::ptr::addr_of!((*state).worker_contexts[next_task_index]),
+                );
+            }
+        }
+    }
+}
+
+#[cfg(talos_qemu_context_switch_smoke)]
+pub fn run_el2_context_switch_smoke() -> bool {
+    let _keep_timer_smoke_reachable: fn() -> bool = run_el2_timer_irq_smoke;
+
+    unsafe {
+        aarch64::disable_irq();
+    }
+
+    unsafe {
+        let state = CONTEXT_SWITCH_SMOKE.get();
+        (*state).reset();
+        crate::println!(
+            "qemu-context-switch-smoke: stack0={:#018x} stack1={:#018x} trampoline={:#018x}",
+            (*state).worker_stacks[0].top(),
+            (*state).worker_stacks[1].top(),
+            aarch64::kernel_thread_trampoline_address()
+        );
+        crate::println!(
+            "qemu-context-switch-smoke: start current={} runnable={}",
+            (*state).current_task,
+            (*state).runnable_task
+        );
+
+        (*state).current_task = 0;
+        (*state).runnable_task = 1;
+        (*state).switch_count += 1;
+        aarch64::cooperative_context_switch(
+            core::ptr::addr_of_mut!((*state).main_context),
+            core::ptr::addr_of!((*state).worker_contexts[0]),
+        );
+    }
+
+    unsafe {
+        aarch64::disable_irq();
+    }
+
+    let (progress0, progress1, switch_count, current_task, runnable_task) = unsafe {
+        let state = CONTEXT_SWITCH_SMOKE.get();
+        (
+            (*state).progress[0],
+            (*state).progress[1],
+            (*state).switch_count,
+            (*state).current_task,
+            (*state).runnable_task,
+        )
+    };
+
+    crate::println!(
+        "qemu-context-switch-smoke: progress task1={} task2={} switches={} current={} runnable={}",
+        progress0,
+        progress1,
+        switch_count,
+        current_task,
+        runnable_task
+    );
+
+    let passed = progress0 >= CONTEXT_SWITCH_TARGET_PROGRESS
+        && progress1 >= CONTEXT_SWITCH_TARGET_PROGRESS
+        && switch_count >= 5
+        && current_task != 0
+        && runnable_task == 0;
+
+    if passed {
+        crate::println!("qemu-context-switch-smoke: PASS");
+    } else {
+        crate::println!("qemu-context-switch-smoke: FAIL");
+    }
+
+    passed
 }
 
 fn run_single_core_irq_mask_probe() -> SingleCoreIrqMaskProbe {

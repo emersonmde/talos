@@ -2,10 +2,28 @@ use core::arch::asm;
 
 #[cfg(talos_target_rpi5_bcm2712)]
 use crate::memory_map;
+use crate::scheduler::ContextFrame;
 
 pub mod exceptions;
 pub mod generic_timer;
 pub mod gicv2;
+
+unsafe extern "C" {
+    fn talos_aarch64_context_switch(current: *mut ContextFrame, next: *const ContextFrame);
+    fn talos_aarch64_kernel_thread_trampoline();
+}
+
+#[allow(dead_code)]
+pub fn kernel_thread_trampoline_address() -> usize {
+    talos_aarch64_kernel_thread_trampoline as *const () as usize
+}
+
+#[allow(dead_code)]
+pub unsafe fn cooperative_context_switch(current: *mut ContextFrame, next: *const ContextFrame) {
+    unsafe {
+        talos_aarch64_context_switch(current, next);
+    }
+}
 
 pub fn current_el() -> u8 {
     let el: u64;

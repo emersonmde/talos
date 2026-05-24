@@ -140,14 +140,13 @@ compiler's ordinary call-preservation rules. The primitive must not change the
 exception level, install an EL0 context, or use `ERET` for this first
 cooperative switch.
 
-`ContextFrame` is currently only a placeholder containing a stack pointer and
-program counter. Before assembly switching is implemented it must grow, or be
-paired with an architecture-owned saved frame, so that the saved `x19..x30`
-state has an explicit home. `KernelStack` continues to own the stack bounds for
-that saved frame. A newly created kernel thread should start from a trampoline
+`ContextFrame` now stores the cooperative switch frame directly: `x19..x29`,
+`x30`, and `SP_EL2`. Fresh kernel-thread contexts use `x30` as the trampoline
+resume address, `x19` as the first bootstrap argument, and `x20` as the
+kernel-thread entry function. `KernelStack` continues to own the stack bounds
+for that saved frame. A newly created kernel thread starts from a trampoline
 whose initial frame uses a 16-byte-aligned `SP_EL2` inside the task's
-`KernelStack` and a program counter for the kernel-thread entry function or
-entry shim.
+`KernelStack`.
 
 The switch boundary assumes:
 
@@ -181,3 +180,22 @@ with separate stacks and bounded progress counters, cooperatively switch between
 them, and print or otherwise record the counters after returning outside the
 switch hot path. Pi 5 hardware is not required for this contract because no
 board-specific timer, interrupt-controller, UART, or boot behavior changes.
+
+## Cooperative Context-Switch Implementation
+
+The first implementation keeps the boundary QEMU-only behind
+`TALOS_QEMU_CONTEXT_SWITCH_SMOKE=1` and `scripts/qemu-context-switch-smoke.sh`.
+The AArch64 primitive lives at `talos_aarch64_context_switch`: it saves
+`x19..x30` and `SP_EL2` into the outgoing `ContextFrame`, loads the same state
+from the incoming `ContextFrame`, and returns through the restored `x30`.
+
+`talos_aarch64_kernel_thread_trampoline` is the bootstrap entry for fresh
+kernel-thread contexts. It passes the saved `x19` value as the thread argument
+and branches through the saved `x20` entry function. The QEMU smoke uses two
+static 16-byte-aligned stacks, two saved contexts, bounded per-task progress
+counters, and prints the switch count plus current/runnable task IDs only after
+returning to the main kernel context.
+
+This is still direct cooperative switching, not scheduler dispatch. Voluntary
+yield, round-robin queue selection, timer preemption, sleeping, SMP, EL0, and
+process resources remain deferred to later tasks.
