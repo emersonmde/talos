@@ -158,6 +158,24 @@ unexpected=0 ctl=0x2, the GIC state after EOI, continued post-IRQ workload,
 and rpi5-timer-irq-smoke: PASS. TFTP evidence shows the Pi fetched the
 86,429-byte kernel_2712.img served from the candidate archive.
 
+## Timer-Smoke Checkpoint
+
+The accepted QEMU and Pi 5 smokes prove the first one-shot EL2 physical timer
+interrupt boundary on both current targets. The shared contract is:
+
+- Program `CNTHP_CVAL_EL2` and `CNTHP_CTL_EL2` for PPI 10 / INTID 26.
+- Route physical IRQs to EL2 with `HCR_EL2.IMO` while executing at EL2.
+- Acknowledge with `GICC_IAR`, recognize INTID 26, mask the EL2 physical
+  timer, EOI with `GICC_EOIR`, and return through the saved current-EL IRQ
+  frame.
+- Keep allocation and formatting outside the IRQ hot path; report bounded
+  counters after IRQs are masked again.
+
+No further delivery discriminator is required before monotonic tick accounting.
+Periodic tick work must still define the reprogramming cadence, interrupt-time
+rules, and single-core limitations explicitly before scheduler policy consumes
+it.
+
 ## Minimal GICv2 Register Checklist
 
 The next implementation task should keep GICv2 target-specific but share the
@@ -234,7 +252,8 @@ The source-backed order is:
    the last vector/ELR/SPSR with atomics; it does not allocate, print, program a
    controller, acknowledge an interrupt, or enable delivery.
 2. Add a QEMU-only GICv2 plus EL2 generic-timer smoke for PPI 10 / INTID 26.
+   This is accepted at commit `bce215d`.
 3. Carry the same EL2 timer shape to Pi 5 GIC-400 hardware with serialized lab
-   evidence.
-4. Only after both smokes are accepted, add monotonic tick accounting and
-   critical-section policy.
+   evidence. This is accepted at commit `966d453`.
+4. Add monotonic tick accounting, then critical-section policy, before any
+   scheduler task structures.

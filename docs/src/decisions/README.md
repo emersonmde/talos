@@ -40,6 +40,35 @@ ADR template:
   delivery. Those would not satisfy the Phase 4 hardware interrupt-delivery
   requirement.
 
+## 2026-05-24 - Phase 4 Timer-Smoke Checkpoint Accepted
+
+- Status: accepted as the checkpoint between one-shot timer delivery smokes and
+  reusable timekeeping policy. No kernel code, boot image, hardware lock, or
+  hardware run changed in this task.
+- Context: QEMU virt and Pi 5 both had accepted EL2 physical timer IRQ evidence
+  for CNTHP_*_EL2, PPI 10 / INTID 26, GIC acknowledgement/EOI, bounded IRQ
+  accounting, and return to post-IRQ work. Phase 4 needed a checkpoint before
+  monotonic tick accounting or scheduler-adjacent work could start.
+- Decision: Accept the shared one-shot timer delivery boundary and make
+  monotonic tick accounting the next bounded implementation slice. No additional
+  delivery discriminator is needed first, but the tick task must keep
+  interrupt-time constraints, reprogramming order, and single-core limitations
+  explicit.
+- Evidence level: static documentation checkpoint over accepted commits and
+  task records. QEMU evidence is commit `bce215d` and
+  `tasks/2026-05-24-phase4-qemu-el2-timer-irq-smoke.md`; Pi 5 evidence is
+  commit `966d453` and
+  `tasks/evidence/2026-05-24-pi5-el2-timer-irq-smoke/`.
+- Validation: `git diff --check` passed. `mdbook build` was not run because
+  `mdbook` is unavailable in the container.
+- Rationale: Both active targets have now proven interrupt-driven delivery for
+  the same EL2 physical timer PPI, so another one-shot probe would add little
+  value before periodic tick accounting. The checkpoint prevents scheduler or
+  preemption policy from being inferred from a smoke test.
+- Risks: This does not implement periodic ticks, interrupt mask/restore policy,
+  scheduler structures, preemption, SMP, UART interrupts, lower-EL timer
+  routing, DMA, RP1/PCIe, filesystem/userland, networking, or SSH.
+
 ## 2026-05-18 - Repository and Target Strategy
 
 - Status: accepted

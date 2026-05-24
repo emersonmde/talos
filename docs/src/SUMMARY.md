@@ -16,6 +16,7 @@
 - [Early POSIX Shape](project/early-posix-shape.md)
 - [Phase 3 Closeout Checkpoint](project/phase3-closeout-checkpoint.md)
 - [Maintainability Remediation Checkpoint](project/maintainability-remediation-checkpoint.md)
+- [Phase 4 Timer-Smoke Checkpoint](project/phase4-timer-smoke-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture
