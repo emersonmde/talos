@@ -59,6 +59,10 @@ Completed:
   interrupt-mask/restore boundary. Milestone 4.3 may start with a bounded
   scheduler-shape task that checks task/process terminology against the early
   POSIX note before committing scheduler structs.
+- Phase 4.3 scheduler shape is accepted as a single-core, kernel-thread-first
+  boundary. The next bounded implementation step is scheduler structs and a
+  runnable queue, without context switching, preemption time slicing, SMP,
+  userspace, file descriptors, console/TTY, filesystem, networking, or SSH.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -66,9 +70,10 @@ Completed:
 
 Blocked or pending:
 
-- Phase 4.3 scheduler shape is the next Phase 4 planning/implementation step;
-  it must remain single-core first and must not infer SMP, userspace, blocking
-  I/O, or time slicing from the timer evidence.
+- Phase 4.3 scheduler structs and runnable queue are the next Phase 4
+  implementation step; they must remain single-core first and must not infer
+  context switching, SMP, userspace, blocking I/O, or time slicing from the
+  accepted scheduler-shape note.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
@@ -292,9 +297,12 @@ Acceptance criteria:
 
 Milestone 4.3: Kernel Threads and Scheduler
 
-- Implement kernel task structures, runnable queues, context switch, sleeping, yielding, and preemptive time slicing.
+- Define the scheduler shape against the early POSIX note before committing
+  structs. [done: single-core kernel-thread-first boundary]
+- Implement kernel task structures and a single-core runnable queue before
+  context switch, sleeping, yielding, or preemptive time slicing.
 - Start with one core; keep data structures ready for SMP.
-- Check task/process terminology and lifetime assumptions against the early POSIX shape note before committing scheduler structs.
+- Check task/process terminology and lifetime assumptions against the early POSIX shape note before committing scheduler structs. [done: scheduler shape note]
 
 Acceptance criteria:
 
