@@ -119,6 +119,10 @@ Completed:
   is named `runtime-console0`; later `stdout` and `stderr` descriptors
   should attach to that console through descriptor-owned handles instead of
   calling target backends directly.
+- Phase 5 console input-source inventory is accepted. QEMU PL011 polling RX is
+  the recommended first input implementation proof; Pi 5 input should follow
+  only with serialized hardware evidence, preferably starting from the accepted
+  UART10 console path before revisiting RP1 UART0 risk.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -126,9 +130,10 @@ Completed:
 
 Blocked or pending:
 
-- The next Phase 5 slice is the console input-source inventory. UART interrupts,
-  input implementation, TTY line discipline, descriptor tables, userspace,
-  filesystems, networking, SSH, shell behavior, and blocking I/O remain deferred.
+- The next Phase 5 slice is the console model checkpoint before Milestone 5.2
+  TTY/stdio planning. UART interrupts, input implementation, TTY line
+  discipline, descriptor tables, userspace, filesystems, networking, SSH, shell
+  behavior, and blocking I/O remain deferred.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.

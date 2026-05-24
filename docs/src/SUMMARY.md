@@ -24,6 +24,7 @@
 - [Phase 5 Runtime Console Write Core](project/phase5-runtime-console-write-core.md)
 - [Phase 5 Console Write Result Contract](project/phase5-console-write-result-contract.md)
 - [Phase 5 Console Device Identity Boundary](project/phase5-console-device-identity-boundary.md)
+- [Phase 5 Console Input Source Inventory](project/phase5-console-input-source-inventory.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture
