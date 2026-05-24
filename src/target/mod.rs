@@ -91,14 +91,7 @@ pub mod console {
     use core::fmt::{self, Write};
 
     pub fn _print(args: fmt::Arguments<'_>) {
-        let mut console = console();
-        if let Some(s) = args.as_str() {
-            console.write_str(s).expect("serial console write failed");
-            return;
-        }
-
-        console
-            .write_fmt(args)
+        crate::runtime_console::write_kernel_output(runtime_backend(), args)
             .expect("serial console write failed");
     }
 
@@ -110,7 +103,9 @@ pub mod console {
         }
 
         #[cfg(not(talos_target_rpi5_bcm2712))]
-        console().write_str(s).expect("serial console write failed");
+        runtime_backend()
+            .write_str(s)
+            .expect("serial console write failed");
     }
 
     #[allow(dead_code)]
@@ -121,7 +116,8 @@ pub mod console {
         }
 
         #[cfg(not(talos_target_rpi5_bcm2712))]
-        early_format::write_hex_usize(console(), value).expect("serial console write failed");
+        early_format::write_hex_usize(runtime_backend(), value)
+            .expect("serial console write failed");
     }
 
     #[allow(dead_code)]
@@ -132,21 +128,22 @@ pub mod console {
         }
 
         #[cfg(not(talos_target_rpi5_bcm2712))]
-        early_format::write_hex_u64(console(), value).expect("serial console write failed");
+        early_format::write_hex_u64(runtime_backend(), value).expect("serial console write failed");
     }
 
     #[allow(dead_code)]
     pub fn write_dec_usize(value: usize) {
-        early_format::write_dec_usize(console(), value).expect("serial console write failed");
+        early_format::write_dec_usize(runtime_backend(), value)
+            .expect("serial console write failed");
     }
 
     #[cfg(talos_target_rpi5_bcm2712)]
-    fn console() -> impl Write {
+    fn runtime_backend() -> impl Write {
         crate::target::rpi5::firmware_console()
     }
 
     #[cfg(not(talos_target_rpi5_bcm2712))]
-    fn console() -> impl Write {
+    fn runtime_backend() -> impl Write {
         crate::target::qemu_virt::console()
     }
 }

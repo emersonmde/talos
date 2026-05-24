@@ -109,6 +109,11 @@ Completed:
   boundary is documented, and descriptor/TTY compatibility constraints are
   named without implementing descriptor tables, input, userspace, filesystem,
   networking, SSH, or shell behavior.
+- Phase 5 runtime console write core is accepted. Normal kernel output now
+  routes through `runtime_console::write_kernel_output` while preserving
+  `print!` / `println!` and the existing target-owned polling PL011 backends.
+  Pi 5 normal serial output is intended to be preserved through the existing
+  firmware-preserved UART10 backend.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -116,11 +121,10 @@ Completed:
 
 Blocked or pending:
 
-- The next queued Phase 5 slice is the runtime console write core. It may move
-  normal kernel output behind a named runtime console facade backed by the
-  existing polling PL011 paths, but it must not implement UART interrupts,
-  input, TTY line discipline, descriptor tables, userspace, filesystems,
-  networking, SSH, shell behavior, or blocking I/O.
+- The next Phase 5 slice needs supervisor planning. Runtime console output is
+  now behind a named facade; UART interrupts, input, TTY line discipline,
+  descriptor tables, userspace, filesystems, networking, SSH, shell behavior,
+  and blocking I/O remain deferred.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.

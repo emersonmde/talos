@@ -21,6 +21,7 @@
 - [Phase 4 Preemption-Entry Checkpoint](project/phase4-preemption-entry-checkpoint.md)
 - [Phase 4 Closeout Checkpoint](project/phase4-closeout-checkpoint.md)
 - [Phase 5 Console Source Inventory](project/phase5-console-device-model-source-inventory.md)
+- [Phase 5 Runtime Console Write Core](project/phase5-runtime-console-write-core.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

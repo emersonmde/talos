@@ -1,14 +1,15 @@
 # Console Device Model
 
-This note defines the Phase 5 starting boundary for Talos console work. It is a source inventory and ownership contract only: it does not implement a runtime console, descriptor tables, TTY line discipline, input, userspace, filesystem, networking, SSH, or a shell.
+This note defines the Phase 5 starting boundary for Talos console work. It covers the accepted source inventory and the first runtime console write core. Talos still does not implement descriptor tables, TTY line discipline, input, userspace, filesystem, networking, SSH, or a shell.
 
 ## Current Early Logging Surface
 
 The current kernel printing path is target-routed and synchronous:
 
 - `print!` and `println!` build `core::fmt::Arguments`.
-- `target::console::_print` creates the active target console.
-- The target console implements `core::fmt::Write::write_str`.
+- `target::console::_print` passes the active target backend to `runtime_console::write_kernel_output`.
+- `runtime_console::RuntimeConsole` owns normal kernel write routing.
+- The target backend implements `core::fmt::Write::write_str`.
 - `Pl011` writes bytes through polling MMIO and translates line feeds to CRLF.
 
 QEMU virt owns the simple PL011 path:
@@ -32,7 +33,7 @@ The early helper path remains intentionally separate: `target::console::write_st
 
 Early logging is allowed to stay polling-only, synchronous, output-only, target-owned, and best effort. It has no input path, no interrupt-driven UART behavior, no descriptor identity, no blocking semantics, no scheduler sleep or wakeup dependency, and no shell-specific command channel.
 
-The first runtime console device must become the owner of normal kernel console writes after early boot, while keeping the public `print!` / `println!` surface stable. Its first responsibility is output only: route formatted kernel text to the current target backend through a named runtime console object or facade.
+`src/runtime_console.rs` is the first runtime console write core. It owns normal kernel console write routing through `RuntimeConsole` and `write_kernel_output`, while `print!` / `println!` remain the public kernel formatting surface. This first responsibility is output only: formatted kernel text is routed to the current target backend through a named runtime console facade.
 
 The runtime console must not own POSIX process resources. Later descriptor work should attach `stdin`, `stdout`, and `stderr` handles to console objects through the descriptor layer, not by teaching the scheduler, boot code, or shell a private printing shortcut.
 
@@ -46,6 +47,6 @@ Phase 4 QEMU and Pi 5 timer/scheduler boot images remain validation surfaces, no
 
 ## Next Implementation Boundary
 
-The next bounded implementation task is `phase5-runtime-console-write-core-20260524`.
+The bounded implementation task `phase5-runtime-console-write-core-20260524` added the output-only runtime console write core.
 
-That task may add a runtime console write core backed by the existing polling PL011 paths and may route normal kernel printing through it if the accepted early serial output contract is preserved. It must not add UART interrupts, input, TTY line discipline, descriptor tables, userspace, filesystems, networking, SSH, a shell, or sleep/blocking behavior.
+The core is backed by the existing polling PL011 paths and preserves the accepted early serial output contract. It does not add UART interrupts, input, TTY line discipline, descriptor tables, userspace, filesystems, networking, SSH, a shell, or sleep/blocking behavior.
