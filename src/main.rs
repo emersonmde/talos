@@ -44,6 +44,9 @@ mod early_format;
 mod memory_map;
 mod mmio;
 mod pl011;
+// Phase 4.3 accepts scheduler data structures before wiring boot-time use.
+#[cfg_attr(not(test), allow(dead_code))]
+mod scheduler;
 mod target;
 
 use core::panic::PanicInfo;

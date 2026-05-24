@@ -91,3 +91,29 @@ single-core runnable queue. It should not add context switching, assembly
 switch code, preemptive time slicing, sleep queues, SMP locks, userspace,
 syscalls, file descriptors, filesystem, console/TTY, networking, or SSH.
 
+## Implemented Struct Boundary
+
+The first implementation lives in `src/scheduler.rs` and keeps the accepted
+shape intentionally narrow:
+
+- `TaskId` is scheduler-local and rejects zero; it is not a process ID.
+- `TaskState` currently records `Running`, `Runnable`, and `Blocked` states.
+  No blocking, wakeup, sleep queue, or exit policy exists yet.
+- `KernelStack` records per-task stack bounds, and `ContextFrame` records the
+  stack pointer and program counter placeholder that a later assembly context
+  switch can save or restore.
+- `Task::kernel_thread` creates a kernel-thread task with no process owner.
+  `ProcessOwnerId` is an optional future extension point only; it does not add
+  address spaces, descriptors, credentials, wait state, or other process
+  resources.
+- `RunnableQueue` is a fixed-capacity FIFO over task IDs for the single boot
+  CPU. It is a pure data structure and does not hide interrupt masking or
+  preemption policy.
+- `SingleCoreScheduler` wraps the runnable queue with a small state-transition
+  counter for diagnostics.
+
+Because this slice has no global scheduler instance or interrupt-time mutation
+path, it does not call `single_core_irq_mask_save()` internally. Future code
+that mutates scheduler-owned global state from an interruptible path must place
+the accepted short single-core IRQ mask/restore boundary explicitly around that
+call-site invariant.

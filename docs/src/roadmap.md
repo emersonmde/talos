@@ -63,6 +63,12 @@ Completed:
   boundary. The next bounded implementation step is scheduler structs and a
   runnable queue, without context switching, preemption time slicing, SMP,
   userspace, file descriptors, console/TTY, filesystem, networking, or SSH.
+- Phase 4.3 now has the first scheduler data structures: scheduler-local task
+  IDs, kernel-thread state, per-task kernel stack and context placeholders, an
+  optional future process-owner hook, a fixed single-core runnable queue, and
+  unit tests for the queue/state invariants. Context switching, sleep queues,
+  preemption, SMP, userspace, descriptors, console/TTY, filesystem, networking,
+  and SSH remain deferred.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -70,10 +76,10 @@ Completed:
 
 Blocked or pending:
 
-- Phase 4.3 scheduler structs and runnable queue are the next Phase 4
-  implementation step; they must remain single-core first and must not infer
-  context switching, SMP, userspace, blocking I/O, or time slicing from the
-  accepted scheduler-shape note.
+- The next Phase 4.3 implementation step needs supervisor planning after the
+  accepted scheduler structs/runnable queue task. It must not infer context
+  switching, SMP, userspace, blocking I/O, or time slicing from the accepted
+  scheduler-shape note or data-structure baseline.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
