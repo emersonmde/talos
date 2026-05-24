@@ -162,6 +162,13 @@ Completed:
   `status` command sequence through canonical-lite TTY input and
   runtime-console0 responses, with TFTP evidence tying the output to the
   staged candidate image.
+- The Phase 5.3 diagnostic command-channel closeout checkpoint is accepted.
+  Milestone 5.3 now has reconciled source inventory, parser/dispatcher
+  contract, QEMU smoke, and Pi 5 UART10 hardware proof evidence. The accepted
+  command channel remains kernel-owned and diagnostic-only; descriptor tables,
+  syscalls, userspace shell behavior, filesystem-backed commands, networking,
+  SSH, SMP, UART interrupts, RP1 UART0, and scheduler blocking I/O remain
+  deferred.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -169,10 +176,10 @@ Completed:
 
 Blocked or pending:
 
-- The next Phase 5 slice is the supervisor-queued diagnostic command-channel
-  closeout checkpoint. It should consolidate QEMU and Pi 5 evidence before any
-  descriptor table, syscall, userspace shell, filesystem, networking, SSH, SMP,
-  UART interrupt, or scheduler blocking I/O work starts.
+- Supervisor planning is required before the next worker task. The accepted
+  Phase 5.3 closeout recommends a bounded Phase 6.1 secondary-core bring-up
+  source inventory and contract task, without starting SMP implementation until
+  the supervisor explicitly queues it.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
