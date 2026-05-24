@@ -229,3 +229,27 @@ This is not timer-driven preemption. The timer IRQ path still does not call into
 the scheduler, no task is switched from asynchronous exception context, and no
 sleeping, blocking, wakeup, SMP, EL0, descriptor, filesystem, console/TTY,
 networking, or SSH behavior is introduced.
+
+## Timer-Preemption Entry Policy
+
+The accepted preemption-entry checkpoint permits the next bounded task to try a
+QEMU-only timer-driven scheduler smoke. The entry policy is intentionally
+smaller than a general preemptive scheduler: the EL2 physical timer IRQ may
+record a bounded preemption request only after preserving the accepted timer
+ordering of acknowledge, INTID classification, tick accounting, next-deadline
+programming, and EOI. Context switching and diagnostics must happen outside the
+IRQ hot path.
+
+The IRQ handler must not allocate, format, print, block, sleep, walk arbitrary
+queues, or run callbacks. Scheduler-owned global state remains protected by
+short boot-CPU single_core_irq_mask_save() / single_core_irq_restore() windows
+around current-task, runnable-queue, selected-task, context-frame, and counter
+updates. Those windows are still not SMP locks, blocking locks, lower-EL policy,
+or process-resource policy.
+
+The first smoke remains EL2 kernel-thread only. It may prove that timer ticks
+drive progress between runnable kernel threads, but it must not add sleep
+queues, wakeups, SMP run queues, task migration, EL0 state, process resources,
+descriptors, filesystem, console/TTY, networking, or SSH. Pi 5 hardware
+preemption evidence is deferred until after QEMU proves the shape or a separate
+serialized hardware task is planned.

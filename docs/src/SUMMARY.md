@@ -18,6 +18,7 @@
 - [Maintainability Remediation Checkpoint](project/maintainability-remediation-checkpoint.md)
 - [Phase 4 Timer-Smoke Checkpoint](project/phase4-timer-smoke-checkpoint.md)
 - [Phase 4 Pre-Scheduler Closeout](project/phase4-prescheduler-closeout.md)
+- [Phase 4 Preemption-Entry Checkpoint](project/phase4-preemption-entry-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

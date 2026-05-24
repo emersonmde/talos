@@ -79,6 +79,10 @@ Completed:
   voluntary yields and dispatch switches, and cross the cooperative switch
   boundary while keeping the short scheduler mutation window IRQ-masked.
   Timer-driven preemption and async exception-frame switching remain deferred.
+- The Phase 4.3 preemption-entry policy checkpoint is accepted. The next bounded
+  task may attempt a QEMU-only timer-preemption smoke that preserves
+  acknowledge/reprogram/EOI ordering, keeps scheduler switching and diagnostics
+  out of the IRQ hot path, and remains single-core EL2 kernel-thread only.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -86,10 +90,10 @@ Completed:
 
 Blocked or pending:
 
-- The next Phase 4.3 checkpoint is the preemption-entry policy note. It must
-  reconcile accepted timer IRQ, monotonic tick, IRQ mask, cooperative context
-  switch, and voluntary dispatch evidence before any timer-driven scheduler
-  callback is implemented.
+- The next Phase 4.3 implementation slice is the QEMU-only timer-preemption
+  smoke authorized by the preemption-entry policy checkpoint. A Pi 5 preemption
+  proof remains a separate serialized follow-up unless the QEMU task changes
+  normal hardware-facing boot or timer behavior.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
