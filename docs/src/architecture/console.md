@@ -84,6 +84,12 @@ The first `stdin` descriptor should attach to the input side of the selected con
 
 Phase 4 QEMU and Pi 5 timer/scheduler boot images remain validation surfaces, not console interfaces. A future local diagnostic command channel may replace some special boot-image diagnostics, but that channel must be planned as a console/TTY feature rather than hidden in timer, scheduler, or target code.
 
+## Phase 5.1 Checkpoint
+
+The accepted Phase 5.1 model is output-capable and input-planned. runtime-console0 is the default runtime console identity for normal kernel diagnostics. The runtime console owns output routing and its internal write-result contract, while target modules own the physical PL011 backend for QEMU and Pi 5.
+
+Milestone 5.2 may start with a TTY/stdio shape document only. That design task may define raw/canonical behavior, newline/backspace/echo/control-character policy, and descriptor-facing stdin/stdout/stderr shape, but it must not implement UART RX, line discipline, descriptor tables, syscalls, userspace, shell behavior, hardware tests, or blocking I/O.
+
 ## Next Implementation Boundary
 
 The bounded implementation task `phase5-runtime-console-write-core-20260524` added the output-only runtime console write core. The follow-up `phase5-console-write-result-contract-20260524` made its success/error boundary explicit with complete-write byte accounting for future descriptor compatibility. The `phase5-console-device-identity-boundary-20260524` slice named the default output-side console identity as `runtime-console0` and routed normal kernel diagnostics through `write_default_console_output`. The `phase5-console-input-source-inventory-20260524` slice inventoried QEMU and Pi 5 local input options and recommends a QEMU-only polling PL011 RX diagnostic as the first later input implementation task.

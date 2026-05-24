@@ -1822,3 +1822,13 @@ ADR template:
 - Validation: `git status --short` was clean before edits. `git diff --check` passed after edits. `mdbook build` was not run because `mdbook` is unavailable in the container. Rust fmt/tests were not required because this task changed only documentation.
 - Rationale: QEMU polling RX can prove the console input shape without the Pi 5 hardware lock or RP1 hardware ambiguity. Requiring explicit Pi 5 serial-write, serial-capture, TFTP, digest, and classification evidence prevents a future task from treating output-only UART evidence as an input claim.
 - Risks: This does not implement input or prove that Pi 5 receives bytes on UART10. Blocking reads, echo, canonical mode, descriptor lifetime, scheduler wakeups, UART interrupts, userspace, local shell behavior, and RP1 UART0 ownership remain deferred.
+
+## 2026-05-24 - Phase 5 Console Model Checkpoint Accepted
+
+- Status: accepted as the Phase 5.1 closeout checkpoint before Milestone 5.2. No kernel code, boot image, hardware publish, hardware test, descriptor implementation, input implementation, TTY implementation, shell, networking, or scheduler behavior changed in this task.
+- Context: Phase 5.1 accepted the source inventory, runtime console write core, write-result contract, default console identity, and input-source inventory. A checkpoint was required before TTY/stdio work could begin.
+- Decision: Accept the Phase 5.1 console model as output-capable and input-planned. Normal diagnostics route through runtime-console0; target modules still own QEMU and Pi 5 PL011 backend selection; the write-result contract remains internal kernel-console state. Milestone 5.2 may start with the documentation-only phase5-tty-stdio-shape-doc-20260524 task.
+- Evidence level: static documentation inspection, task-record reconciliation, whitespace inspection, and mdBook availability inspection.
+- Validation: git status --short was clean before edits and git diff --check passed. mdbook build was not run because mdbook is unavailable in the container. Rust fmt/tests and hardware gates were not required because this checkpoint changed only Markdown documentation and durable task state.
+- Rationale: The output-side console object is stable enough for TTY/stdio design, but input and descriptor implementation are not. Keeping Milestone 5.2 documentation-only prevents descriptor or shell shortcuts from bypassing the accepted console boundary.
+- Risks: stdin still has no input backend; Pi 5 UART10 input is unproven; descriptor lifetime, syscall errno mapping, scheduler blocking I/O, line discipline, PTYs, userspace, filesystems, networking, and SSH remain deferred.
