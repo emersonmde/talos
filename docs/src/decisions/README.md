@@ -2100,3 +2100,13 @@ ADR template:
 - Validation: `git status --short` was clean before edits. `cargo fmt --all -- --check`, `cargo -Zjson-target-spec test` with 102 no_std tests, `scripts/qemu-smoke.sh`, and `git diff --check` passed. `mdbook` was unavailable in the container.
 - Rationale: This gives later QEMU and Pi 5 contention diagnostics a reusable synchronization primitive without prematurely converting the scheduler to SMP or hiding cache-maintenance policy inside a generic lock.
 - Risks: The primitive is not yet proven under multi-core contention, and no Pi 5 cache/coherence proof has exercised it. Scheduler runnable queues, task migration, cross-core wakeups, IPIs, multi-core preemption, concurrent console ownership, userspace, descriptors, filesystem, networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and DMA/cache-coherent driver policy remain deferred.
+
+## 2026-05-24 - Phase 6.2 QEMU SMP Lock Contention Smoke Accepted
+
+- Status: accepted as the QEMU/substitute contention proof for the first Milestone 6.2 SMP-safe primitive. No Pi 5 hardware publish/test, scheduler migration, shared run queue, cross-core wakeup, IPI, userspace, descriptor, filesystem, networking, SSH, shell, UART interrupt, RP1/PCIe, or DMA behavior was added.
+- Context: The accepted spinlock/barrier core needed a bounded multi-core contention diagnostic before moving to physical Pi 5 cache/coherence proof.
+- Decision: Add `TALOS_QEMU_SMP_LOCK_CONTENTION_SMOKE`, `scripts/qemu-smp-lock-contention-smoke.sh`, and a QEMU virt diagnostic that starts secondary cores through the accepted PSCI/trampoline path and has cores 1-3 contend on a shared `SpinLock<T>` around a deterministic counter.
+- Evidence level: static source inspection, fmt/lint/typecheck, no_std unit tests, QEMU/substitute smoke, focused QEMU SMP contention transcript, whitespace inspection, and mdBook availability inspection.
+- Validation: `cargo fmt --all -- --check`, `cargo -Zjson-target-spec test` with 102 no_std tests, `scripts/qemu-smoke.sh`, `scripts/qemu-smp-lock-contention-smoke.sh`, and `git diff --check` passed. `mdbook` was unavailable in the container.
+- Rationale: The focused QEMU transcript reports cores 1, 2, and 3 each reached `workload-complete` with `lock-count=64`, the final invariant `counter=192 expected=192 participants=3 errors=0`, and classification `qemu-smp-lock-contention-complete`.
+- Risks: This remains QEMU/substitute evidence only. The separate Pi 5 task must prove or decisively classify physical cache/coherence behavior; scheduler migration, shared run queues, cross-core wakeups, IPIs, userspace, descriptors, filesystem, networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and DMA/cache-coherent driver policy remain deferred.

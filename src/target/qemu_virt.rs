@@ -18,17 +18,21 @@ use crate::scheduler::ContextFrame;
 use crate::scheduler::{KernelStack, SingleCoreScheduler, Task, TaskId, TaskState};
 #[cfg(not(any(
     talos_qemu_secondary_core_discriminator,
-    talos_qemu_secondary_core_workload_smoke
+    talos_qemu_secondary_core_workload_smoke,
+    talos_qemu_smp_lock_contention_smoke
 )))]
 use crate::smp::MAX_CORES;
 #[cfg(any(
     talos_qemu_secondary_core_discriminator,
-    talos_qemu_secondary_core_workload_smoke
+    talos_qemu_secondary_core_workload_smoke,
+    talos_qemu_smp_lock_contention_smoke
 ))]
 use crate::smp::{
     self, CoreLifecycle, CoreStackLayout, MAX_CORES, SECONDARY_CORE_STATES,
     SECONDARY_CORE_WORKLOAD_TARGET, SECONDARY_KERNEL_STACK_SIZE,
 };
+#[cfg(talos_qemu_smp_lock_contention_smoke)]
+use crate::smp_sync::{SpinLock, smp_full_barrier};
 use crate::{
     arch::aarch64::{
         self, generic_timer,
@@ -48,9 +52,12 @@ const EL2_PHYSICAL_TIMER_INTID: u32 = 26;
 const TIMER_IRQ_WAIT_LIMIT: usize = 1_000_000;
 #[cfg(any(
     talos_qemu_secondary_core_discriminator,
-    talos_qemu_secondary_core_workload_smoke
+    talos_qemu_secondary_core_workload_smoke,
+    talos_qemu_smp_lock_contention_smoke
 ))]
 const QEMU_SECONDARY_WAIT_LIMIT: usize = 10_000_000;
+#[cfg(talos_qemu_smp_lock_contention_smoke)]
+const SMP_LOCK_CONTENTION_TARGET_PER_CORE: u64 = 64;
 #[cfg(any(
     talos_qemu_context_switch_smoke,
     talos_qemu_scheduler_yield_smoke,
@@ -81,7 +88,8 @@ static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
 
 #[cfg(any(
     talos_qemu_secondary_core_discriminator,
-    talos_qemu_secondary_core_workload_smoke
+    talos_qemu_secondary_core_workload_smoke,
+    talos_qemu_smp_lock_contention_smoke
 ))]
 unsafe extern "C" {
     fn talos_aarch64_qemu_secondary_entry();
@@ -449,7 +457,8 @@ pub const fn qemu_logical_cpu_from_mpidr_affinity(affinity: u64) -> Option<usize
 
 #[cfg(any(
     talos_qemu_secondary_core_discriminator,
-    talos_qemu_secondary_core_workload_smoke
+    talos_qemu_secondary_core_workload_smoke,
+    talos_qemu_smp_lock_contention_smoke
 ))]
 fn secondary_stack_layout() -> CoreStackLayout {
     let base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
@@ -460,7 +469,8 @@ fn secondary_stack_layout() -> CoreStackLayout {
 
 #[cfg(any(
     talos_qemu_secondary_core_discriminator,
-    talos_qemu_secondary_core_workload_smoke
+    talos_qemu_secondary_core_workload_smoke,
+    talos_qemu_smp_lock_contention_smoke
 ))]
 fn secondary_state_name(state: u64) -> &'static str {
     CoreLifecycle::from_raw(state).map_or("unknown", CoreLifecycle::name)
@@ -468,7 +478,8 @@ fn secondary_state_name(state: u64) -> &'static str {
 
 #[cfg(any(
     talos_qemu_secondary_core_discriminator,
-    talos_qemu_secondary_core_workload_smoke
+    talos_qemu_secondary_core_workload_smoke,
+    talos_qemu_smp_lock_contention_smoke
 ))]
 unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) -> i64 {
     let mut function_id = 0xc400_0003u64;
@@ -516,7 +527,8 @@ pub fn services(boot_info: &BootInfo) -> TargetServices {
 
 #[cfg(any(
     talos_qemu_secondary_core_discriminator,
-    talos_qemu_secondary_core_workload_smoke
+    talos_qemu_secondary_core_workload_smoke,
+    talos_qemu_smp_lock_contention_smoke
 ))]
 #[unsafe(no_mangle)]
 pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
@@ -536,6 +548,8 @@ pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
         core_state.mark_handoff_ready();
         #[cfg(talos_qemu_secondary_core_workload_smoke)]
         smp::run_controlled_secondary_workload(core_state, SECONDARY_CORE_WORKLOAD_TARGET);
+        #[cfg(talos_qemu_smp_lock_contention_smoke)]
+        run_smp_lock_contention_secondary(core_state, logical_cpu);
     }
 
     loop {
@@ -543,6 +557,69 @@ pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
             core::arch::asm!("wfe", options(nomem, nostack, preserves_flags));
         }
     }
+}
+
+#[cfg(talos_qemu_smp_lock_contention_smoke)]
+#[derive(Clone, Copy)]
+struct SmpLockContentionState {
+    shared_counter: u64,
+    per_core_counts: [u64; MAX_CORES],
+    error_count: u64,
+}
+
+#[cfg(talos_qemu_smp_lock_contention_smoke)]
+impl SmpLockContentionState {
+    const fn new() -> Self {
+        Self {
+            shared_counter: 0,
+            per_core_counts: [0; MAX_CORES],
+            error_count: 0,
+        }
+    }
+}
+
+#[cfg(talos_qemu_smp_lock_contention_smoke)]
+static SMP_LOCK_CONTENTION_STATE: SpinLock<SmpLockContentionState> =
+    SpinLock::new(SmpLockContentionState::new());
+
+#[cfg(talos_qemu_smp_lock_contention_smoke)]
+fn reset_smp_lock_contention_state() {
+    let mut state = SMP_LOCK_CONTENTION_STATE.lock();
+    *state = SmpLockContentionState::new();
+}
+
+#[cfg(talos_qemu_smp_lock_contention_smoke)]
+fn run_smp_lock_contention_secondary(core_state: &smp::PerCoreState, logical_cpu: usize) {
+    core_state.mark_workload_running();
+    core_state.clean_to_poc();
+
+    let mut progress = 0;
+    while progress < SMP_LOCK_CONTENTION_TARGET_PER_CORE {
+        let expected_after = {
+            let mut state = SMP_LOCK_CONTENTION_STATE.lock();
+            let before = state.shared_counter;
+            state.shared_counter = before + 1;
+            state.per_core_counts[logical_cpu] += 1;
+            if state.shared_counter != before + 1 {
+                state.error_count += 1;
+            }
+            state.per_core_counts[logical_cpu]
+        };
+        progress += 1;
+        if expected_after != progress {
+            let mut state = SMP_LOCK_CONTENTION_STATE.lock();
+            state.error_count += 1;
+        }
+        core_state.record_workload_progress(progress);
+        if progress == SMP_LOCK_CONTENTION_TARGET_PER_CORE || progress & 0xf == 0 {
+            core_state.clean_to_poc();
+        }
+        smp_full_barrier();
+        core::hint::spin_loop();
+    }
+
+    core_state.mark_workload_complete(progress);
+    core_state.clean_to_poc();
 }
 
 #[cfg(talos_qemu_secondary_core_discriminator)]
@@ -747,6 +824,137 @@ pub fn run_secondary_core_workload_smoke() -> bool {
         crate::println!("qemu-secondary-core-workload: PASS");
     } else {
         crate::println!("qemu-secondary-core-workload: FAIL");
+    }
+
+    reports_ok
+}
+
+#[cfg(talos_qemu_smp_lock_contention_smoke)]
+pub fn run_smp_lock_contention_smoke() -> bool {
+    smp::reset_secondary_core_states();
+    reset_smp_lock_contention_state();
+
+    let boot_mpidr = aarch64::mpidr_el1();
+    let boot_affinity = aarch64::mpidr_affinity(boot_mpidr);
+    let boot_logical = qemu_logical_cpu_from_mpidr_affinity(boot_affinity);
+    let entry = talos_aarch64_qemu_secondary_entry as *const () as usize;
+    let stack_layout = secondary_stack_layout();
+    let stack_base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
+    let stack_end = core::ptr::addr_of!(talos_secondary_core_stacks_end) as usize;
+    let expected_total = SMP_LOCK_CONTENTION_TARGET_PER_CORE * (MAX_CORES as u64 - 1);
+
+    crate::println!(
+        "qemu-smp-lock-contention: start conduit=smc cores={} target-per-core={} expected-total={} boot-mpidr={:#018x} boot-affinity={:#x} boot-logical={:?} entry={:#018x} stack-range=[{:#018x},{:#018x})",
+        MAX_CORES,
+        SMP_LOCK_CONTENTION_TARGET_PER_CORE,
+        expected_total,
+        boot_mpidr,
+        boot_affinity,
+        boot_logical,
+        entry,
+        stack_base,
+        stack_end
+    );
+
+    let mut cpu_on_ok = true;
+    for logical_cpu in 1..MAX_CORES {
+        let target_affinity = logical_cpu as u64;
+        let result = unsafe { psci_cpu_on_smc(target_affinity, entry, logical_cpu) };
+        crate::println!(
+            "qemu-smp-lock-contention: cpu-on logical={} target-affinity={:#x} result={}",
+            logical_cpu,
+            target_affinity,
+            result
+        );
+        cpu_on_ok &= result == 0;
+    }
+
+    let mut remaining = QEMU_SECONDARY_WAIT_LIMIT;
+    while remaining > 0 {
+        let all_complete = (1..MAX_CORES).all(|logical_cpu| {
+            SECONDARY_CORE_STATES[logical_cpu]
+                .snapshot(logical_cpu)
+                .lifecycle
+                >= CoreLifecycle::WorkloadComplete
+        });
+        if all_complete {
+            break;
+        }
+        core::hint::spin_loop();
+        remaining -= 1;
+    }
+
+    let final_state = SMP_LOCK_CONTENTION_STATE.try_lock().map(|state| *state);
+    let lock_available = final_state.is_some();
+    let final_state = final_state.unwrap_or_else(SmpLockContentionState::new);
+    let mut participants = 0;
+    let mut reports_ok = cpu_on_ok
+        && boot_logical == Some(0)
+        && lock_available
+        && final_state.shared_counter == expected_total
+        && final_state.error_count == 0;
+
+    for logical_cpu in 1..MAX_CORES {
+        let report = SECONDARY_CORE_STATES[logical_cpu].snapshot(logical_cpu);
+        let logical_from_mpidr = qemu_logical_cpu_from_mpidr_affinity(report.affinity);
+        let stack_slot = stack_layout
+            .slot(logical_cpu)
+            .expect("stack slot for possible QEMU core");
+        let stack_owned = stack_slot.contains_stack_pointer(report.stack_pointer);
+        let locked_count = final_state.per_core_counts[logical_cpu];
+        let report_ok = report.lifecycle >= CoreLifecycle::WorkloadComplete
+            && report.context == logical_cpu
+            && logical_from_mpidr == Some(logical_cpu)
+            && stack_owned
+            && report.workload_progress == SMP_LOCK_CONTENTION_TARGET_PER_CORE
+            && locked_count == SMP_LOCK_CONTENTION_TARGET_PER_CORE;
+        if locked_count == SMP_LOCK_CONTENTION_TARGET_PER_CORE {
+            participants += 1;
+        }
+        reports_ok &= report_ok;
+
+        crate::println!(
+            "qemu-smp-lock-contention: report logical={} state={} context={} mpidr={:#018x} affinity={:#x} mapped={:?} sp={:#018x} stack=[{:#018x},{:#018x}) lock-count={} progress={} target={} ok={}",
+            logical_cpu,
+            secondary_state_name(report.lifecycle.raw()),
+            report.context,
+            report.mpidr,
+            report.affinity,
+            logical_from_mpidr,
+            report.stack_pointer,
+            stack_slot.bottom,
+            stack_slot.top,
+            locked_count,
+            report.workload_progress,
+            SMP_LOCK_CONTENTION_TARGET_PER_CORE,
+            report_ok
+        );
+    }
+
+    let classification = if reports_ok {
+        "qemu-smp-lock-contention-complete"
+    } else if !lock_available {
+        "qemu-smp-lock-contention-lock-still-held"
+    } else if cpu_on_ok {
+        "qemu-smp-lock-contention-invariant-failed"
+    } else {
+        "qemu-psci-smc-cpu-on-failed"
+    };
+    crate::println!(
+        "qemu-smp-lock-contention: final counter={} expected={} participants={} errors={} lock-available={} wait-remaining={} classification={}",
+        final_state.shared_counter,
+        expected_total,
+        participants,
+        final_state.error_count,
+        lock_available,
+        remaining,
+        classification
+    );
+
+    if reports_ok {
+        crate::println!("qemu-smp-lock-contention: PASS");
+    } else {
+        crate::println!("qemu-smp-lock-contention: FAIL");
     }
 
     reports_ok

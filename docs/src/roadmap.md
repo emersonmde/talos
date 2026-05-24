@@ -207,6 +207,13 @@ Completed:
   narrow `SpinLock<T>`, RAII guard, AArch64 IRQ-save lock composition, and a
   named `dmb ish` full-barrier boundary without wiring scheduler migration,
   shared run queues, cross-core wakeups, or cache maintenance into the lock.
+- Phase 6.2 QEMU SMP lock contention smoke is accepted. QEMU virt with
+  `-smp 4` starts secondary cores 1, 2, and 3 through the accepted PSCI
+  trampoline path; each core contends on the shared `SpinLock<T>` for 64
+  iterations, and the transcript reports `counter=192 expected=192`,
+  `participants=3`, `errors=0`, and
+  `qemu-smp-lock-contention-complete`. This is QEMU/substitute evidence only;
+  Pi 5 cache/coherence proof remains a separate hardware-locked task.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -215,11 +222,11 @@ Completed:
 Blocked or pending:
 
 - The next explicit worker task is the supervisor-queued
-  `phase6-qemu-smp-lock-contention-smoke-20260524` QEMU contention diagnostic
-  for the accepted primitive core. Multi-core scheduler migration, shared run
-  queues, cross-core wakeups, userspace, descriptors, filesystem, networking,
-  SSH, shell behavior, UART interrupts, RP1/PCIe, and DMA/cache-coherent
-  driver policy remain deferred.
+  `phase6-pi5-smp-lock-cache-coherence-proof-20260524` serialized Pi 5
+  hardware proof for the accepted primitive core. Multi-core scheduler
+  migration, shared run queues, cross-core wakeups, userspace, descriptors,
+  filesystem, networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and
+  DMA/cache-coherent driver policy remain deferred.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
