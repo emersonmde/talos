@@ -85,11 +85,11 @@ blocked by a global singleton.
 
 ## Next Implementation Boundary
 
-The next bounded task may implement the first scheduler structs and local unit
-tests for task state, kernel-stack descriptors, scheduler-local IDs, and a
-single-core runnable queue. It should not add context switching, assembly
-switch code, preemptive time slicing, sleep queues, SMP locks, userspace,
-syscalls, file descriptors, filesystem, console/TTY, networking, or SSH.
+The first scheduler structs and runnable queue now exist. The next bounded
+implementation task may add the first cooperative EL2 kernel-thread context
+switch only after it follows the contract below. It should not add timer-driven
+preemption, sleep queues, SMP locks, userspace, syscalls, file descriptors,
+filesystem, console/TTY, networking, or SSH.
 
 ## Implemented Struct Boundary
 
@@ -117,3 +117,67 @@ path, it does not call `single_core_irq_mask_save()` internally. Future code
 that mutates scheduler-owned global state from an interruptible path must place
 the accepted short single-core IRQ mask/restore boundary explicitly around that
 call-site invariant.
+
+## Cooperative Context-Switch Contract
+
+The first context switch is a current-EL2 cooperative switch between kernel
+threads on the boot CPU. It is entered from normal kernel control flow, not from
+an IRQ exception frame, and it returns as if a regular function call resumed in
+the selected task.
+
+The minimal saved context for this cooperative boundary is the AArch64
+callee-saved call state plus the stack and resume address:
+
+- `x19` through `x29`;
+- `x30` as the resumed link register, or an equivalent saved program counter
+  for a freshly bootstrapped task;
+- `SP_EL2` for the task's kernel stack pointer.
+
+The switch primitive may use `x0` through `x18` as caller-saved scratch in
+the normal AArch64 procedure-call sense. Kernel code that calls the cooperative
+yield boundary must not expect those registers to survive except through the
+compiler's ordinary call-preservation rules. The primitive must not change the
+exception level, install an EL0 context, or use `ERET` for this first
+cooperative switch.
+
+`ContextFrame` is currently only a placeholder containing a stack pointer and
+program counter. Before assembly switching is implemented it must grow, or be
+paired with an architecture-owned saved frame, so that the saved `x19..x30`
+state has an explicit home. `KernelStack` continues to own the stack bounds for
+that saved frame. A newly created kernel thread should start from a trampoline
+whose initial frame uses a 16-byte-aligned `SP_EL2` inside the task's
+`KernelStack` and a program counter for the kernel-thread entry function or
+entry shim.
+
+The switch boundary assumes:
+
+- every switched task is a kernel thread running at EL2 in the shared kernel
+  address space;
+- `SP_EL2` is 16-byte aligned at every public call boundary;
+- the saved stack pointer remains within the task's `KernelStack` bounds;
+- no process address space, user stack, descriptor table, or EL0 state belongs
+  to the task yet;
+- the first implementation is single-core only and cannot migrate tasks.
+
+Scheduler-owned global state must be coherent while the current task, runnable
+queue, and saved context pointers are changed. The accepted
+`single_core_irq_mask_save()` / `single_core_irq_restore()` primitive protects
+only that short boot-CPU invariant: choose the next runnable task, mark the old
+and new task states, install or read the two context-frame pointers, and cross
+the assembly switch boundary. It is not a general spinlock or SMP policy, and
+the masked section must not allocate, format, print, block, or run arbitrary
+callbacks.
+
+For the cooperative switch, `PSTATE` is not a schedulable lower-EL user state.
+The first switch runs with IRQs masked by the scheduler boundary and resumes
+kernel code at EL2. Timer-driven preemption later needs a separate exception
+frame contract that captures asynchronous caller-saved state, `ELR_EL2`,
+`SPSR_EL2`, interrupt acknowledge/reprogram/EOI ordering, and the rules for
+leaving IRQ context before diagnostics or blocking work. Those pieces are
+intentionally not part of this cooperative contract.
+
+The first validation should be QEMU-first: create two kernel-thread contexts
+with separate stacks and bounded progress counters, cooperatively switch between
+them, and print or otherwise record the counters after returning outside the
+switch hot path. Pi 5 hardware is not required for this contract because no
+board-specific timer, interrupt-controller, UART, or boot behavior changes.
