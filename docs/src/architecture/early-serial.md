@@ -72,6 +72,11 @@ gates. New bring-up probes should either become a bounded task diagnostic with
 an explicit retirement condition, a reusable validation gate, or a documented
 fact with the one-off code deleted.
 
+The older bring-up narrative below is archival evidence. Its named probe flags
+and proof modes record what was run at the time; they are not current build or
+archive surfaces unless they also appear in `build.rs` and a current wrapper
+script.
+
 ## Current Risk
 
 Generic `core::fmt` on Pi 5 early boot is being enabled deliberately to converge

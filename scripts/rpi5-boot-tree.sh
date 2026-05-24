@@ -42,10 +42,9 @@ sed -i 's/earlycon=pl011,mmio32,0x1c00030000/earlycon=pl011,mmio32,0x1f00030000/
 # to the earliest hardware diagnostic path.
 sed -i '/^dtoverlay=uart0-pi5$/d' "$OUTPUT_DIR/config.txt"
 
-# Let Pi 5 firmware choose the normal arm64 Image placement. The first-light
-# reset proof only produced a visible BL33 side effect without a forced
-# kernel_address, and the accepted UART proof uses the same firmware-selected
-# contract.
+# Let Pi 5 firmware choose the normal arm64 Image placement. Historical
+# bring-up proofs established that contract; the runnable proof surfaces have
+# since been deleted so this script only stages the supported Rust image path.
 sed -i '/^kernel_address=/d' "$OUTPUT_DIR/config.txt"
 
 if [ -d "$SOURCE_DIR/overlays" ]; then

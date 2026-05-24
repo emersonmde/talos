@@ -59,35 +59,23 @@ fi
 
 loader_diagnostic=false
 circle_config_loader_diagnostic=false
-if grep -qx 'talos_loader_diagnostic=raw-pi5' "$extract_dir/config.txt"; then
-    loader_diagnostic=true
-fi
-if grep -qx 'talos_loader_diagnostic=asm-uart-proof' "$extract_dir/config.txt"; then
-    loader_diagnostic=true
-fi
-if grep -qx 'talos_loader_diagnostic=asm-entry-reset-proof' "$extract_dir/config.txt"; then
-    loader_diagnostic=true
-fi
 forced_kernel_address_allowed=false
-if grep -qx 'talos_loader_diagnostic=asm-entry-reset-firmware-address' "$extract_dir/config.txt"; then
-    loader_diagnostic=true
-fi
-if grep -qx 'talos_loader_diagnostic=asm-uart-proof-firmware-address' "$extract_dir/config.txt"; then
-    loader_diagnostic=true
-fi
-if grep -qx 'talos_loader_diagnostic=asm-uart-then-reset-firmware-address' "$extract_dir/config.txt"; then
-    loader_diagnostic=true
-fi
-if grep -qx 'talos_loader_diagnostic=cargo-asm-uart-proof' "$extract_dir/config.txt"; then
-    loader_diagnostic=true
-fi
-if grep -qx 'talos_loader_diagnostic=transition-diagnostic' "$extract_dir/config.txt"; then
-    loader_diagnostic=true
-fi
-if grep -qx 'talos_loader_diagnostic=raw-pi5-circle-config' "$extract_dir/config.txt"; then
-    loader_diagnostic=true
-    circle_config_loader_diagnostic=true
-    forced_kernel_address_allowed=true
+loader_diagnostic_mode="$(sed -n 's/^talos_loader_diagnostic=//p' "$extract_dir/config.txt")"
+if [ -n "$loader_diagnostic_mode" ]; then
+    case "$loader_diagnostic_mode" in
+        raw-pi5)
+            loader_diagnostic=true
+            ;;
+        raw-pi5-circle-config)
+            loader_diagnostic=true
+            circle_config_loader_diagnostic=true
+            forced_kernel_address_allowed=true
+            ;;
+        *)
+            echo "unsupported talos_loader_diagnostic mode: $loader_diagnostic_mode" >&2
+            exit 1
+            ;;
+    esac
 fi
 
 if [ "$circle_config_loader_diagnostic" = false ]; then
@@ -176,16 +164,6 @@ if [ "$loader_diagnostic" = false ]; then
 
     if [ "$magic" != "ARMd" ]; then
         echo "arm64 Image magic missing at header offset 56" >&2
-        exit 1
-    fi
-elif { grep -qx 'talos_loader_diagnostic=asm-uart-proof' "$extract_dir/config.txt" || grep -qx 'talos_loader_diagnostic=asm-uart-proof-firmware-address' "$extract_dir/config.txt" || grep -qx 'talos_loader_diagnostic=asm-uart-then-reset-firmware-address' "$extract_dir/config.txt" || grep -qx 'talos_loader_diagnostic=asm-entry-reset-proof' "$extract_dir/config.txt" || grep -qx 'talos_loader_diagnostic=asm-entry-reset-firmware-address' "$extract_dir/config.txt" || grep -qx 'talos_loader_diagnostic=cargo-asm-uart-proof' "$extract_dir/config.txt" || grep -qx 'talos_loader_diagnostic=transition-diagnostic' "$extract_dir/config.txt"; } && [ "$magic" = "ARMd" ]; then
-    if [ "$header_image_size" != "$image_size" ]; then
-        echo "asm proof Image header size mismatch: header=$header_image_size file=$image_size" >&2
-        exit 1
-    fi
-
-    if [ "$flags" != "12" ]; then
-        echo "unexpected asm proof Image flags: $flags" >&2
         exit 1
     fi
 fi
