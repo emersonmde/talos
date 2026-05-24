@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "NjIgNjMgNjQgNjUgNjYgNjcgNjgNCnJwaTUtdWFydDEwLXJ4LWRpYWdub3N0aWM6IGVjaG8taGV4PTYxIDYyIDU4IDA4IDIwIDA4IDYzIDU5IDA4IDIwIDA4IDY0IDY1IDY2IDY3IDY4IDBkIDBhDQpycGk1LXVhcnQxMC1yeC1kaWFnbm9zdGljOiBjb250cm9sLWV2ZW50cz1jdHJsLWMNCnJwaTUtdWFydDEwLXJ4LWRpYWdub3N0aWM6IFBBU1MNCg==",
+  "bytes": 196,
+  "cursor_end": 1909901,
+  "cursor_start": 1909705,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "62 63 64 65 66 67 68\r\nrpi5-uart10-rx-diagnostic: echo-hex=61 62 58 08 20 08 63 59 08 20 08 64 65 66 67 68 0d 0a\r\nrpi5-uart10-rx-diagnostic: control-events=ctrl-c\r\nrpi5-uart10-rx-diagnostic: PASS\r\n",
+  "truncated": false
+}

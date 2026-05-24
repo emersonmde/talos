@@ -54,6 +54,8 @@ const GICC_BASE: usize = 0x10_7fff_a000;
 const EL2_PHYSICAL_TIMER_INTID: u32 = 26;
 #[cfg(talos_rpi5_timer_irq_diagnostic)]
 const TIMER_IRQ_WAIT_LIMIT: usize = 8_000_000;
+#[cfg(talos_rpi5_uart10_polling_rx_diagnostic)]
+const UART10_RX_WAIT_LIMIT: usize = 200_000_000;
 #[cfg(talos_rpi5_timer_preemption_diagnostic)]
 const CONTEXT_SWITCH_STACK_SIZE: usize = 4096;
 #[cfg(talos_rpi5_timer_preemption_diagnostic)]
@@ -128,6 +130,83 @@ fn write_rp1_reg_flush(addr: usize, value: u32) {
 #[cfg(talos_target_rpi5_bcm2712)]
 pub fn firmware_console() -> Pl011 {
     Pl011::new_with_posted_write_flush(UART10_BASE)
+}
+
+#[cfg(talos_rpi5_uart10_polling_rx_diagnostic)]
+pub fn run_uart10_polling_tty_rx_diagnostic() -> bool {
+    crate::println!(
+        "rpi5-uart10-rx-diagnostic: ready capacity={} wait-limit={} backend=runtime-console0/bcm2712-uart10-pl011 inject-hex=61 62 58 08 63 59 7f 64 03 65 66 67 68 69 0d",
+        crate::tty::CANONICAL_LINE_CAPACITY,
+        UART10_RX_WAIT_LIMIT
+    );
+    wait_uart10_empty_early_phase();
+
+    let result =
+        crate::tty::run_polling_rx_diagnostic_with_limit(firmware_console(), UART10_RX_WAIT_LIMIT);
+    crate::println!();
+    crate::println!(
+        "rpi5-uart10-rx-diagnostic: raw-len={} line-len={} terminated={} timeout={} outcome={} truncated={} backspaces={} deletes={} controls={}",
+        result.raw_bytes(),
+        result.line().len(),
+        result.terminated(),
+        result.timed_out(),
+        result.outcome_name(),
+        result.truncated(),
+        result.backspaces(),
+        result.deletes(),
+        result.controls().len()
+    );
+    crate::print!("rpi5-uart10-rx-diagnostic: line-hex=");
+    print_tty_hex_bytes(result.line());
+    crate::println!();
+    crate::print!("rpi5-uart10-rx-diagnostic: echo-hex=");
+    print_tty_hex_bytes(result.echo());
+    crate::println!();
+    crate::print!("rpi5-uart10-rx-diagnostic: control-events=");
+    print_tty_control_events(result.controls());
+    crate::println!();
+
+    let passed = result.passed() && result.truncated() && !result.controls().is_empty();
+    if passed {
+        crate::println!("rpi5-uart10-rx-diagnostic: PASS");
+    } else {
+        crate::println!("rpi5-uart10-rx-diagnostic: FAIL");
+    }
+    wait_uart10_empty_early_phase();
+
+    passed
+}
+
+#[cfg(talos_rpi5_uart10_polling_rx_diagnostic)]
+fn print_tty_hex_bytes(bytes: &[u8]) {
+    for (index, byte) in bytes.iter().enumerate() {
+        if index != 0 {
+            crate::print!(" ");
+        }
+        crate::print!("{:02x}", byte);
+    }
+}
+
+#[cfg(talos_rpi5_uart10_polling_rx_diagnostic)]
+fn print_tty_control_events(events: &[Option<crate::tty::TtyControlEvent>]) {
+    if events.is_empty() {
+        crate::print!("none");
+        return;
+    }
+
+    for (index, event) in events.iter().enumerate() {
+        if index != 0 {
+            crate::print!(",");
+        }
+        match event {
+            Some(event) => {
+                crate::print!("{}", event.name());
+            }
+            None => {
+                crate::print!("empty");
+            }
+        }
+    }
 }
 
 #[cfg(talos_rpi5_timer_preemption_diagnostic)]

@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "ZXJ2ZWQtbWVtb3J5WzBdOiBhZGRyPTB4MCBzaXplPTB4ODAwMDAgbm9fbWFwPXRydWUgcmV1c2FibGU9ZmFsc2UNCnRhbG9zOiByZXNlcnZlZC1tZW1vcnlbMV06IGFkZHI9MHgzZmQyMzE2MCBzaXplPTB4M2Qgbm9fbWFwPXRydWUgcmV1c2FibGU9ZmFsc2UNCnRhbG9zOiByZXNlcnZlZC1tZW1vcnlbMl06IGFkZHI9MHgwIHNpemU9MHgwIG5vX21hcD10cnVlIHJldXNhYmxlPWZhbHNlDQpUQUxPUzogZHRiIG1lbW9yeSBzY2FuIHN0YXJ0DQo=",
+  "bytes": 251,
+  "cursor_end": 1897643,
+  "cursor_start": 1897392,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "erved-memory[0]: addr=0x0 size=0x80000 no_map=true reusable=false\r\ntalos: reserved-memory[1]: addr=0x3fd23160 size=0x3d no_map=true reusable=false\r\ntalos: reserved-memory[2]: addr=0x0 size=0x0 no_map=true reusable=false\r\nTALOS: dtb memory scan start\r\n",
+  "truncated": false
+}

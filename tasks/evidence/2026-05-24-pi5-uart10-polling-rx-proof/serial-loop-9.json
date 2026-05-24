@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "CiAgNC4xOCB1c2JfcGRfaW5pdCBzdGF0dXMgMA0K",
+  "bytes": 30,
+  "cursor_end": 1893543,
+  "cursor_start": 1893513,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\n  4.18 usb_pd_init status 0\r\n",
+  "truncated": false
+}

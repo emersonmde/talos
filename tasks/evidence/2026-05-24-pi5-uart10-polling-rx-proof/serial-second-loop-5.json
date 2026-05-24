@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "ICAxLjgyIFJQMSBGVzogbG9hZCAwDQogIDEuODMgUlAxX0JPT1QgY2hpcCBJRDogMHgyMDAwMTkyNw0K",
+  "bytes": 60,
+  "cursor_end": 1901128,
+  "cursor_start": 1901068,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "  1.82 RP1 FW: load 0\r\n  1.83 RP1_BOOT chip ID: 0x20001927\r\n",
+  "truncated": false
+}

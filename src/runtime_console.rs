@@ -4,7 +4,14 @@ pub trait ConsoleBackend {
     fn write_str(&mut self, s: &str) -> fmt::Result;
 }
 
-#[cfg_attr(not(any(test, talos_qemu_polling_tty_rx_diagnostic)), allow(dead_code))]
+#[cfg_attr(
+    not(any(
+        test,
+        talos_qemu_polling_tty_rx_diagnostic,
+        talos_rpi5_uart10_polling_rx_diagnostic
+    )),
+    allow(dead_code)
+)]
 pub trait ConsoleInputBackend {
     fn poll_read_byte(&mut self) -> Option<u8>;
 }
@@ -67,9 +74,13 @@ pub enum ConsoleInputPollOutcome {
     NoData {
         device: RuntimeConsoleDevice,
     },
+    // Contract variant for targets where runtime-console0 has no input backend yet.
+    #[allow(dead_code)]
     BackendUnavailable {
         device: RuntimeConsoleDevice,
     },
+    // Contract variant for future recoverable input backend failures.
+    #[allow(dead_code)]
     BackendError {
         device: RuntimeConsoleDevice,
     },
@@ -140,7 +151,14 @@ where
     RuntimeConsole::new(backend).write_kernel_args(args)
 }
 
-#[cfg_attr(not(any(test, talos_qemu_polling_tty_rx_diagnostic)), allow(dead_code))]
+#[cfg_attr(
+    not(any(
+        test,
+        talos_qemu_polling_tty_rx_diagnostic,
+        talos_rpi5_uart10_polling_rx_diagnostic
+    )),
+    allow(dead_code)
+)]
 pub fn poll_default_console_input<B>(backend: &mut B) -> ConsoleInputPollOutcome
 where
     B: ConsoleInputBackend,
@@ -156,14 +174,14 @@ where
     }
 }
 
-#[cfg_attr(not(any(test, talos_qemu_polling_tty_rx_diagnostic)), allow(dead_code))]
+#[cfg_attr(not(test), allow(dead_code))]
 pub const fn default_console_input_unavailable() -> ConsoleInputPollOutcome {
     ConsoleInputPollOutcome::BackendUnavailable {
         device: DEFAULT_RUNTIME_CONSOLE,
     }
 }
 
-#[cfg_attr(not(any(test, talos_qemu_polling_tty_rx_diagnostic)), allow(dead_code))]
+#[cfg_attr(not(test), allow(dead_code))]
 pub const fn default_console_input_backend_error() -> ConsoleInputPollOutcome {
     ConsoleInputPollOutcome::BackendError {
         device: DEFAULT_RUNTIME_CONSOLE,

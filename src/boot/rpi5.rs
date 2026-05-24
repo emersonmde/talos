@@ -67,6 +67,9 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
 
     report_dtb_memory_banks(dtb.memory_banks);
 
+    #[cfg(talos_rpi5_uart10_polling_rx_diagnostic)]
+    target::rpi5::run_uart10_polling_tty_rx_diagnostic();
+
     #[cfg(talos_rpi5_timer_preemption_diagnostic)]
     target::rpi5::run_el2_timer_preemption_smoke();
 

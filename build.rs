@@ -26,6 +26,7 @@ fn main() {
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_HEAP_EXPANSION_POLICY_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_TIMER_IRQ_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_TIMER_PREEMPTION_DIAGNOSTIC");
+    println!("cargo:rerun-if-env-changed=TALOS_RPI5_UART10_POLLING_RX_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_CONTEXT_SWITCH_SMOKE");
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_SCHEDULER_YIELD_SMOKE");
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_TIMER_PREEMPTION_SMOKE");
@@ -53,6 +54,7 @@ fn main() {
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_heap_expansion_policy_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_timer_irq_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_timer_preemption_diagnostic)");
+    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_uart10_polling_rx_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_context_switch_smoke)");
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_scheduler_yield_smoke)");
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_timer_preemption_smoke)");
@@ -149,6 +151,9 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
     }
     if env::var_os("TALOS_RPI5_TIMER_PREEMPTION_DIAGNOSTIC").is_some() {
         println!("cargo:rustc-cfg=talos_rpi5_timer_preemption_diagnostic");
+    }
+    if env::var_os("TALOS_RPI5_UART10_POLLING_RX_DIAGNOSTIC").is_some() {
+        println!("cargo:rustc-cfg=talos_rpi5_uart10_polling_rx_diagnostic");
     }
     if env::var_os("TALOS_QEMU_CONTEXT_SWITCH_SMOKE").is_some() {
         println!("cargo:rustc-cfg=talos_qemu_context_switch_smoke");

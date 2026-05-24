@@ -89,7 +89,14 @@ impl Pl011 {
         self.write_data(byte as u32);
     }
 
-    #[cfg_attr(not(any(test, talos_qemu_polling_tty_rx_diagnostic)), allow(dead_code))]
+    #[cfg_attr(
+        not(any(
+            test,
+            talos_qemu_polling_tty_rx_diagnostic,
+            talos_rpi5_uart10_polling_rx_diagnostic
+        )),
+        allow(dead_code)
+    )]
     pub fn poll_read_byte(self) -> Option<u8> {
         if self.read_reg(UART_FR) & UART_FR_RXFE != 0 {
             return None;
