@@ -130,9 +130,16 @@ Completed:
 - Phase 5.2 TTY/stdio shape is accepted as a design boundary. Raw mode,
   canonical-lite line assembly, newline/backspace/echo/control-character
   policy, and descriptor-facing stdin/stdout/stderr shape are documented.
-  The first recommended implementation slice is a QEMU-only polling PL011 RX
-  TTY diagnostic with no descriptor, syscall, userspace, shell, hardware, or
-  scheduler blocking behavior.
+- Phase 5.2 QEMU polling TTY RX, the shared line-discipline core, the internal
+  console input result contract, and the Pi 5 UART10 polling RX proof are
+  accepted. QEMU and Pi 5 both use the same injected byte sequence through the
+  runtime-console/TTY boundary and report deterministic echo, line, truncation,
+  and control-event evidence without adding descriptors, syscalls, userspace,
+  shell behavior, UART interrupts, networking, SSH, or scheduler blocking I/O.
+- The Phase 5.2 TTY/stdio closeout checkpoint is accepted. The next
+  supervisor-planned slice should be a Milestone 5.3 local kernel diagnostic
+  command-channel source inventory, not an implementation shortcut around the
+  accepted runtime-console and TTY boundaries.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -140,10 +147,11 @@ Completed:
 
 Blocked or pending:
 
-- The next Phase 5 slice should be a bounded QEMU polling TTY RX diagnostic.
-  Pi 5 input, UART interrupts, descriptors, syscalls, userspace, shell,
-  filesystem, networking, SSH, and scheduler blocking I/O remain out of scope
-  until explicitly queued.
+- The next Phase 5 slice needs supervisor planning. The recommended bounded
+  task is a Milestone 5.3 local kernel diagnostic command-channel source
+  inventory. UART interrupts, descriptors, syscalls, userspace, shell,
+  filesystem, networking, SSH, SMP, and scheduler blocking I/O remain out of
+  scope until explicitly queued.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
