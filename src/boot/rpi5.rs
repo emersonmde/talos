@@ -70,6 +70,9 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
     #[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
     target::rpi5::run_psci_secondary_core_alive_proof();
 
+    #[cfg(talos_rpi5_secondary_core_workload_proof)]
+    target::rpi5::run_secondary_core_workload_proof();
+
     #[cfg(talos_rpi5_uart10_polling_rx_diagnostic)]
     target::rpi5::run_uart10_polling_tty_rx_diagnostic();
 

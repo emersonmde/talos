@@ -29,12 +29,14 @@ fn main() {
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_UART10_POLLING_RX_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_DIAGNOSTIC_COMMAND_CHANNEL_PROOF");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_PSCI_SECONDARY_CORE_ALIVE_PROOF");
+    println!("cargo:rerun-if-env-changed=TALOS_RPI5_SECONDARY_CORE_WORKLOAD_PROOF");
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_CONTEXT_SWITCH_SMOKE");
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_SCHEDULER_YIELD_SMOKE");
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_TIMER_PREEMPTION_SMOKE");
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_POLLING_TTY_RX_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_DIAGNOSTIC_COMMAND_CHANNEL_SMOKE");
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_SECONDARY_CORE_DISCRIMINATOR");
+    println!("cargo:rerun-if-env-changed=TALOS_QEMU_SECONDARY_CORE_WORKLOAD_SMOKE");
 
     let target = env::var("TARGET").expect("TARGET is set by Cargo");
     println!("cargo:rustc-check-cfg=cfg(talos_target_qemu_virt)");
@@ -61,12 +63,14 @@ fn main() {
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_uart10_polling_rx_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_diagnostic_command_channel_proof)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_psci_secondary_core_alive_proof)");
+    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_secondary_core_workload_proof)");
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_context_switch_smoke)");
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_scheduler_yield_smoke)");
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_timer_preemption_smoke)");
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_polling_tty_rx_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_diagnostic_command_channel_smoke)");
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_secondary_core_discriminator)");
+    println!("cargo:rustc-check-cfg=cfg(talos_qemu_secondary_core_workload_smoke)");
     if target.contains("rpi5") || target.contains("bcm2712") {
         println!("cargo:rustc-cfg=talos_target_rpi5_bcm2712");
     } else {
@@ -170,6 +174,10 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
         command.arg("-DTALOS_RPI5_PSCI_SECONDARY_CORE_ALIVE_PROOF");
         println!("cargo:rustc-cfg=talos_rpi5_psci_secondary_core_alive_proof");
     }
+    if env::var_os("TALOS_RPI5_SECONDARY_CORE_WORKLOAD_PROOF").is_some() {
+        command.arg("-DTALOS_RPI5_SECONDARY_CORE_WORKLOAD_PROOF");
+        println!("cargo:rustc-cfg=talos_rpi5_secondary_core_workload_proof");
+    }
     if env::var_os("TALOS_QEMU_CONTEXT_SWITCH_SMOKE").is_some() {
         println!("cargo:rustc-cfg=talos_qemu_context_switch_smoke");
     }
@@ -188,6 +196,10 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
     if env::var_os("TALOS_QEMU_SECONDARY_CORE_DISCRIMINATOR").is_some() {
         command.arg("-DTALOS_QEMU_SECONDARY_CORE_DISCRIMINATOR");
         println!("cargo:rustc-cfg=talos_qemu_secondary_core_discriminator");
+    }
+    if env::var_os("TALOS_QEMU_SECONDARY_CORE_WORKLOAD_SMOKE").is_some() {
+        command.arg("-DTALOS_QEMU_SECONDARY_CORE_WORKLOAD_SMOKE");
+        println!("cargo:rustc-cfg=talos_qemu_secondary_core_workload_smoke");
     }
 
     let status = command

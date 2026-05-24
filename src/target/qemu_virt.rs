@@ -16,10 +16,18 @@ use core::sync::atomic::{AtomicU64, Ordering};
 use crate::scheduler::ContextFrame;
 #[cfg(any(talos_qemu_scheduler_yield_smoke, talos_qemu_timer_preemption_smoke))]
 use crate::scheduler::{KernelStack, SingleCoreScheduler, Task, TaskId, TaskState};
+#[cfg(not(any(
+    talos_qemu_secondary_core_discriminator,
+    talos_qemu_secondary_core_workload_smoke
+)))]
 use crate::smp::MAX_CORES;
-#[cfg(talos_qemu_secondary_core_discriminator)]
+#[cfg(any(
+    talos_qemu_secondary_core_discriminator,
+    talos_qemu_secondary_core_workload_smoke
+))]
 use crate::smp::{
-    self, CoreLifecycle, CoreStackLayout, SECONDARY_CORE_STATES, SECONDARY_KERNEL_STACK_SIZE,
+    self, CoreLifecycle, CoreStackLayout, MAX_CORES, SECONDARY_CORE_STATES,
+    SECONDARY_CORE_WORKLOAD_TARGET, SECONDARY_KERNEL_STACK_SIZE,
 };
 use crate::{
     arch::aarch64::{
@@ -38,7 +46,10 @@ const GICD_BASE: usize = 0x0800_0000;
 const GICC_BASE: usize = 0x0801_0000;
 const EL2_PHYSICAL_TIMER_INTID: u32 = 26;
 const TIMER_IRQ_WAIT_LIMIT: usize = 1_000_000;
-#[cfg(talos_qemu_secondary_core_discriminator)]
+#[cfg(any(
+    talos_qemu_secondary_core_discriminator,
+    talos_qemu_secondary_core_workload_smoke
+))]
 const QEMU_SECONDARY_WAIT_LIMIT: usize = 10_000_000;
 #[cfg(any(
     talos_qemu_context_switch_smoke,
@@ -68,7 +79,10 @@ static UNEXPECTED_GIC_IRQ_COUNT: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_qemu_timer_preemption_smoke)]
 static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
 
-#[cfg(talos_qemu_secondary_core_discriminator)]
+#[cfg(any(
+    talos_qemu_secondary_core_discriminator,
+    talos_qemu_secondary_core_workload_smoke
+))]
 unsafe extern "C" {
     fn talos_aarch64_qemu_secondary_entry();
     static talos_secondary_core_stacks: u8;
@@ -433,7 +447,10 @@ pub const fn qemu_logical_cpu_from_mpidr_affinity(affinity: u64) -> Option<usize
     }
 }
 
-#[cfg(talos_qemu_secondary_core_discriminator)]
+#[cfg(any(
+    talos_qemu_secondary_core_discriminator,
+    talos_qemu_secondary_core_workload_smoke
+))]
 fn secondary_stack_layout() -> CoreStackLayout {
     let base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
     let end = core::ptr::addr_of!(talos_secondary_core_stacks_end) as usize;
@@ -441,12 +458,18 @@ fn secondary_stack_layout() -> CoreStackLayout {
         .expect("valid linked secondary-core stack layout")
 }
 
-#[cfg(talos_qemu_secondary_core_discriminator)]
+#[cfg(any(
+    talos_qemu_secondary_core_discriminator,
+    talos_qemu_secondary_core_workload_smoke
+))]
 fn secondary_state_name(state: u64) -> &'static str {
     CoreLifecycle::from_raw(state).map_or("unknown", CoreLifecycle::name)
 }
 
-#[cfg(talos_qemu_secondary_core_discriminator)]
+#[cfg(any(
+    talos_qemu_secondary_core_discriminator,
+    talos_qemu_secondary_core_workload_smoke
+))]
 unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) -> i64 {
     let mut function_id = 0xc400_0003u64;
     unsafe {
@@ -491,7 +514,10 @@ pub fn services(boot_info: &BootInfo) -> TargetServices {
     }
 }
 
-#[cfg(talos_qemu_secondary_core_discriminator)]
+#[cfg(any(
+    talos_qemu_secondary_core_discriminator,
+    talos_qemu_secondary_core_workload_smoke
+))]
 #[unsafe(no_mangle)]
 pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
     let mpidr = aarch64::mpidr_el1();
@@ -508,6 +534,8 @@ pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
         core_state.mark_stack_ready(stack_pointer as usize);
         core_state.mark_registered();
         core_state.mark_handoff_ready();
+        #[cfg(talos_qemu_secondary_core_workload_smoke)]
+        smp::run_controlled_secondary_workload(core_state, SECONDARY_CORE_WORKLOAD_TARGET);
     }
 
     loop {
@@ -564,9 +592,7 @@ pub fn run_secondary_core_discriminator() -> bool {
         if all_ready {
             break;
         }
-        unsafe {
-            core::arch::asm!("wfe", options(nomem, nostack, preserves_flags));
-        }
+        core::hint::spin_loop();
         remaining -= 1;
     }
 
@@ -615,6 +641,112 @@ pub fn run_secondary_core_discriminator() -> bool {
         crate::println!("qemu-secondary-core-discriminator: PASS");
     } else {
         crate::println!("qemu-secondary-core-discriminator: FAIL");
+    }
+
+    reports_ok
+}
+
+#[cfg(talos_qemu_secondary_core_workload_smoke)]
+pub fn run_secondary_core_workload_smoke() -> bool {
+    smp::reset_secondary_core_states();
+
+    let boot_mpidr = aarch64::mpidr_el1();
+    let boot_affinity = aarch64::mpidr_affinity(boot_mpidr);
+    let boot_logical = qemu_logical_cpu_from_mpidr_affinity(boot_affinity);
+    let entry = talos_aarch64_qemu_secondary_entry as *const () as usize;
+    let stack_layout = secondary_stack_layout();
+    let stack_base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
+    let stack_end = core::ptr::addr_of!(talos_secondary_core_stacks_end) as usize;
+
+    crate::println!(
+        "qemu-secondary-core-workload: start conduit=smc cores={} target={} boot-mpidr={:#018x} boot-affinity={:#x} boot-logical={:?} entry={:#018x} stack-range=[{:#018x},{:#018x})",
+        MAX_CORES,
+        SECONDARY_CORE_WORKLOAD_TARGET,
+        boot_mpidr,
+        boot_affinity,
+        boot_logical,
+        entry,
+        stack_base,
+        stack_end
+    );
+
+    let mut cpu_on_ok = true;
+    for logical_cpu in 1..MAX_CORES {
+        let target_affinity = logical_cpu as u64;
+        let result = unsafe { psci_cpu_on_smc(target_affinity, entry, logical_cpu) };
+        crate::println!(
+            "qemu-secondary-core-workload: cpu-on logical={} target-affinity={:#x} result={}",
+            logical_cpu,
+            target_affinity,
+            result
+        );
+        cpu_on_ok &= result == 0;
+    }
+
+    let mut remaining = QEMU_SECONDARY_WAIT_LIMIT;
+    while remaining > 0 {
+        let all_complete = (1..MAX_CORES).all(|logical_cpu| {
+            SECONDARY_CORE_STATES[logical_cpu]
+                .snapshot(logical_cpu)
+                .lifecycle
+                >= CoreLifecycle::WorkloadComplete
+        });
+        if all_complete {
+            break;
+        }
+        core::hint::spin_loop();
+        remaining -= 1;
+    }
+
+    let mut reports_ok = cpu_on_ok && boot_logical == Some(0);
+    for logical_cpu in 1..MAX_CORES {
+        let report = SECONDARY_CORE_STATES[logical_cpu].snapshot(logical_cpu);
+        let logical_from_mpidr = qemu_logical_cpu_from_mpidr_affinity(report.affinity);
+        let stack_slot = stack_layout
+            .slot(logical_cpu)
+            .expect("stack slot for possible QEMU core");
+        let stack_owned = stack_slot.contains_stack_pointer(report.stack_pointer);
+        let report_ok = report.lifecycle >= CoreLifecycle::WorkloadComplete
+            && report.context == logical_cpu
+            && logical_from_mpidr == Some(logical_cpu)
+            && stack_owned
+            && report.workload_progress == SECONDARY_CORE_WORKLOAD_TARGET;
+        reports_ok &= report_ok;
+
+        crate::println!(
+            "qemu-secondary-core-workload: report logical={} state={} context={} mpidr={:#018x} affinity={:#x} mapped={:?} sp={:#018x} stack=[{:#018x},{:#018x}) progress={} target={} ok={}",
+            logical_cpu,
+            secondary_state_name(report.lifecycle.raw()),
+            report.context,
+            report.mpidr,
+            report.affinity,
+            logical_from_mpidr,
+            report.stack_pointer,
+            stack_slot.bottom,
+            stack_slot.top,
+            report.workload_progress,
+            SECONDARY_CORE_WORKLOAD_TARGET,
+            report_ok
+        );
+    }
+
+    let classification = if reports_ok {
+        "qemu-secondary-core-controlled-workload-complete"
+    } else if cpu_on_ok {
+        "qemu-secondary-core-workload-incomplete"
+    } else {
+        "qemu-psci-smc-cpu-on-failed"
+    };
+    crate::println!(
+        "qemu-secondary-core-workload: wait-remaining={} classification={}",
+        remaining,
+        classification
+    );
+
+    if reports_ok {
+        crate::println!("qemu-secondary-core-workload: PASS");
+    } else {
+        crate::println!("qemu-secondary-core-workload: FAIL");
     }
 
     reports_ok

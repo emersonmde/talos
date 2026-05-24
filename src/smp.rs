@@ -18,6 +18,8 @@ pub enum CoreLifecycle {
     StackReady = 2,
     Registered = 3,
     HandoffReady = 4,
+    WorkloadRunning = 5,
+    WorkloadComplete = 6,
 }
 
 impl CoreLifecycle {
@@ -28,6 +30,8 @@ impl CoreLifecycle {
             2 => Some(Self::StackReady),
             3 => Some(Self::Registered),
             4 => Some(Self::HandoffReady),
+            5 => Some(Self::WorkloadRunning),
+            6 => Some(Self::WorkloadComplete),
             _ => None,
         }
     }
@@ -43,9 +47,13 @@ impl CoreLifecycle {
             Self::StackReady => "stack-ready",
             Self::Registered => "registered",
             Self::HandoffReady => "handoff-ready",
+            Self::WorkloadRunning => "workload-running",
+            Self::WorkloadComplete => "workload-complete",
         }
     }
 }
+
+pub const SECONDARY_CORE_WORKLOAD_TARGET: u64 = 64;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct CoreRegistration {
@@ -55,6 +63,7 @@ pub struct CoreRegistration {
     pub affinity: u64,
     pub stack_pointer: usize,
     pub lifecycle: CoreLifecycle,
+    pub workload_progress: u64,
 }
 
 pub struct PerCoreState {
@@ -63,6 +72,7 @@ pub struct PerCoreState {
     mpidr: AtomicU64,
     affinity: AtomicU64,
     stack_pointer: AtomicU64,
+    workload_progress: AtomicU64,
 }
 
 impl PerCoreState {
@@ -73,6 +83,7 @@ impl PerCoreState {
             mpidr: AtomicU64::new(0),
             affinity: AtomicU64::new(0),
             stack_pointer: AtomicU64::new(0),
+            workload_progress: AtomicU64::new(0),
         }
     }
 
@@ -81,6 +92,7 @@ impl PerCoreState {
         self.mpidr.store(0, Ordering::Release);
         self.affinity.store(0, Ordering::Release);
         self.stack_pointer.store(0, Ordering::Release);
+        self.workload_progress.store(0, Ordering::Release);
         self.lifecycle
             .store(CoreLifecycle::Parked.raw(), Ordering::Release);
     }
@@ -110,6 +122,22 @@ impl PerCoreState {
             .store(CoreLifecycle::HandoffReady.raw(), Ordering::Release);
     }
 
+    pub fn mark_workload_running(&self) {
+        self.workload_progress.store(0, Ordering::Release);
+        self.lifecycle
+            .store(CoreLifecycle::WorkloadRunning.raw(), Ordering::Release);
+    }
+
+    pub fn record_workload_progress(&self, progress: u64) {
+        self.workload_progress.store(progress, Ordering::Release);
+    }
+
+    pub fn mark_workload_complete(&self, progress: u64) {
+        self.workload_progress.store(progress, Ordering::Release);
+        self.lifecycle
+            .store(CoreLifecycle::WorkloadComplete.raw(), Ordering::Release);
+    }
+
     pub fn snapshot(&self, logical_cpu: usize) -> CoreRegistration {
         CoreRegistration {
             logical_cpu,
@@ -119,6 +147,7 @@ impl PerCoreState {
             stack_pointer: self.stack_pointer.load(Ordering::Acquire) as usize,
             lifecycle: CoreLifecycle::from_raw(self.lifecycle.load(Ordering::Acquire))
                 .unwrap_or(CoreLifecycle::Parked),
+            workload_progress: self.workload_progress.load(Ordering::Acquire),
         }
     }
 
@@ -128,16 +157,40 @@ impl PerCoreState {
         clean_cache_line_to_poc(&self.mpidr);
         clean_cache_line_to_poc(&self.affinity);
         clean_cache_line_to_poc(&self.stack_pointer);
+        clean_cache_line_to_poc(&self.workload_progress);
     }
 
-    #[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
+    #[cfg(any(
+        talos_rpi5_psci_secondary_core_alive_proof,
+        talos_rpi5_secondary_core_workload_proof
+    ))]
     pub fn invalidate_from_poc(&self) {
         invalidate_cache_line_from_poc(&self.lifecycle);
         invalidate_cache_line_from_poc(&self.context);
         invalidate_cache_line_from_poc(&self.mpidr);
         invalidate_cache_line_from_poc(&self.affinity);
         invalidate_cache_line_from_poc(&self.stack_pointer);
+        invalidate_cache_line_from_poc(&self.workload_progress);
     }
+}
+
+pub fn run_controlled_secondary_workload(state: &PerCoreState, target: u64) -> u64 {
+    state.mark_workload_running();
+    state.clean_to_poc();
+
+    let mut progress = 0;
+    while progress < target {
+        progress += 1;
+        state.record_workload_progress(progress);
+        if progress == target || progress & 0xf == 0 {
+            state.clean_to_poc();
+        }
+        core::hint::spin_loop();
+    }
+
+    state.mark_workload_complete(progress);
+    state.clean_to_poc();
+    progress
 }
 
 pub static SECONDARY_CORE_STATES: [PerCoreState; MAX_CORES] =
@@ -165,7 +218,13 @@ fn clean_cache_line_to_poc<T>(value: &T) {
 #[cfg(not(target_arch = "aarch64"))]
 fn clean_cache_line_to_poc<T>(_value: &T) {}
 
-#[cfg(all(target_arch = "aarch64", talos_rpi5_psci_secondary_core_alive_proof))]
+#[cfg(all(
+    target_arch = "aarch64",
+    any(
+        talos_rpi5_psci_secondary_core_alive_proof,
+        talos_rpi5_secondary_core_workload_proof
+    )
+))]
 fn invalidate_cache_line_from_poc<T>(value: &T) {
     unsafe {
         core::arch::asm!(
@@ -179,7 +238,10 @@ fn invalidate_cache_line_from_poc<T>(value: &T) {
 
 #[cfg(all(
     not(target_arch = "aarch64"),
-    talos_rpi5_psci_secondary_core_alive_proof
+    any(
+        talos_rpi5_psci_secondary_core_alive_proof,
+        talos_rpi5_secondary_core_workload_proof
+    )
 ))]
 fn invalidate_cache_line_from_poc<T>(_value: &T) {}
 
@@ -270,7 +332,10 @@ mod tests {
         assert_eq!(CoreLifecycle::StackReady.name(), "stack-ready");
         assert_eq!(CoreLifecycle::Registered.name(), "registered");
         assert_eq!(CoreLifecycle::HandoffReady.name(), "handoff-ready");
+        assert_eq!(CoreLifecycle::WorkloadRunning.name(), "workload-running");
+        assert_eq!(CoreLifecycle::WorkloadComplete.name(), "workload-complete");
         assert!(CoreLifecycle::HandoffReady > CoreLifecycle::Registered);
+        assert!(CoreLifecycle::WorkloadComplete > CoreLifecycle::HandoffReady);
     }
 
     #[test_case]
@@ -289,6 +354,26 @@ mod tests {
         assert_eq!(snapshot.affinity, 2);
         assert_eq!(snapshot.stack_pointer, 0x4022_1fa0);
         assert_eq!(snapshot.lifecycle, CoreLifecycle::HandoffReady);
+        assert_eq!(snapshot.workload_progress, 0);
+    }
+
+    #[test_case]
+    fn controlled_workload_records_progress_and_completion() {
+        reset_secondary_core_states();
+        let state = &SECONDARY_CORE_STATES[1];
+        state.enter(1, 0x8000_0001, 1);
+        state.mark_stack_ready(0x4022_0fa0);
+        state.mark_registered();
+        state.mark_handoff_ready();
+
+        assert_eq!(super::SECONDARY_CORE_WORKLOAD_TARGET, 64);
+
+        let progress = super::run_controlled_secondary_workload(state, 8);
+        let snapshot = state.snapshot(1);
+
+        assert_eq!(progress, 8);
+        assert_eq!(snapshot.lifecycle, CoreLifecycle::WorkloadComplete);
+        assert_eq!(snapshot.workload_progress, 8);
     }
 
     #[test_case]

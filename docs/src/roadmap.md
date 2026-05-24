@@ -186,6 +186,11 @@ Completed:
   `0x300`, distinct owned stack slots, `handoff-ready` state, and
   `pi5-psci-smc-secondary-cores-alive` before the pre-run boot snapshot was
   restored.
+- Phase 6.1 controlled secondary-core workload is accepted. QEMU and serialized
+  Pi 5 hardware evidence show secondary cores 1, 2, and 3 reach
+  `workload-complete` with `progress=64 target=64 ok=true` through the
+  accepted PSCI/trampoline/stack boundary while the production scheduler
+  remains single-core.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -194,8 +199,9 @@ Completed:
 Blocked or pending:
 
 - The next explicit worker task remains supervisor-queued. It must not start
-  controlled secondary workloads, SMP-safe primitives, scheduler migration,
-  filesystem, networking, SSH, or shell work unless the durable task says so.
+  SMP-safe primitives, scheduler migration, filesystem, networking, SSH, or
+  shell work unless the durable task says so. The Phase 6.1 closeout checkpoint
+  must reconcile the accepted alive and workload evidence before Milestone 6.2.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
@@ -487,7 +493,8 @@ Acceptance criteria:
 Goal: use all Pi 5 CPU cores with correct synchronization and preemptive scheduling.
 
 Status: Phase 6.1 source inventory/contract, QEMU secondary-core
-discriminator, and Pi 5 PSCI secondary-core alive proof accepted. See
+discriminator, Pi 5 PSCI secondary-core alive proof, and controlled
+secondary-core workload proof accepted. See
 [Phase 6 Secondary-Core Bring-Up Source Inventory](project/phase6-secondary-core-bringup-source-inventory.md).
 
 Milestone 6.1: Secondary Core Bring-Up

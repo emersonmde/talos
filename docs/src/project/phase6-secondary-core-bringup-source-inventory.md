@@ -162,6 +162,28 @@ Pi 5 hardware evidence:
   classification `pi5-psci-smc-secondary-cores-alive`. The Pi 5 PSCI
   secondary-core alive proof is accepted for boot-time alive/park behavior.
 
+Controlled workload evidence:
+
+- The follow-up
+  `phase6-secondary-core-controlled-kthread-workload-20260524` is accepted as
+  a diagnostic-only secondary-core workload proof. It extends the per-core
+  state boundary with `workload-running`, `workload-complete`, and
+  `workload_progress`, but it remains outside the production scheduler.
+- QEMU substitute evidence from `scripts/qemu-secondary-core-workload-smoke.sh`
+  starts secondary CPUs 1, 2, and 3 through the same PSCI/trampoline boundary
+  and reports `progress=64 target=64 ok=true` for each secondary with
+  classification `qemu-secondary-core-controlled-workload-complete`.
+- Serialized Pi 5 hardware evidence served the 91,288-byte candidate image,
+  then serial proved logical cores 1, 2, and 3 reached `workload-complete`
+  with MPIDR affinities `0x100`, `0x200`, and `0x300`, owned stack slots,
+  `progress=64 target=64 ok=true`, classification
+  `pi5-secondary-core-controlled-workload-complete`, and PASS before the
+  pre-run boot snapshot was restored.
+- This satisfies the Milestone 6.1 controlled secondary workload criterion. It
+  does not accept SMP-safe primitives, scheduler migration, run-queue sharing,
+  load balancing, cross-core preemption, userspace, descriptors, syscalls,
+  filesystem, networking, SSH, or shell behavior.
+
 ## Deferred Work
 
 This contract does not accept SMP-safe primitives, scheduler migration,
@@ -176,10 +198,13 @@ The accepted QEMU discriminator task is
 state/stacks boundary is accepted in
 `phase6-per-core-state-and-stacks-20260524` and recorded in
 `tasks/2026-05-24-phase6-per-core-state-and-stacks.md`. The accepted Pi 5
-hardware proof is
-`phase6-pi5-psci-secondary-core-alive-proof-20260524`. The next queued Phase
-6.1 task remains separate from SMP-safe locking and scheduler migration unless
-the durable supervisor task explicitly broadens that scope.
+hardware proof is `phase6-pi5-psci-secondary-core-alive-proof-20260524`. The
+controlled secondary-core workload proof is accepted in
+`phase6-secondary-core-controlled-kthread-workload-20260524` and recorded in
+`tasks/2026-05-24-phase6-secondary-core-controlled-kthread-workload.md`. The
+next queued Phase 6.1 closeout checkpoint remains separate from SMP-safe
+locking and scheduler migration unless the durable supervisor task explicitly
+broadens that scope.
 
 ## Validation
 
