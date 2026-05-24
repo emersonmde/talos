@@ -4,6 +4,8 @@ use core::arch::asm;
 use crate::memory_map;
 
 pub mod exceptions;
+pub mod generic_timer;
+pub mod gicv2;
 
 pub fn current_el() -> u8 {
     let el: u64;
@@ -240,4 +242,52 @@ pub fn halt() -> ! {
             asm!("wfe", options(nomem, nostack, preserves_flags));
         }
     }
+}
+
+#[allow(dead_code)]
+pub unsafe fn enable_irq() {
+    unsafe {
+        asm!(
+            "msr DAIFClr, #2",
+            "isb",
+            options(nomem, nostack, preserves_flags)
+        );
+    }
+}
+
+#[allow(dead_code)]
+pub unsafe fn disable_irq() {
+    unsafe {
+        asm!(
+            "msr DAIFSet, #2",
+            "isb",
+            options(nomem, nostack, preserves_flags)
+        );
+    }
+}
+
+#[allow(dead_code)]
+pub fn daif() -> u64 {
+    let value: u64;
+    unsafe {
+        asm!("mrs {value}, DAIF", value = out(reg) value, options(nomem, nostack, preserves_flags));
+    }
+    value
+}
+
+#[allow(dead_code)]
+pub unsafe fn route_physical_irqs_to_el2() -> u64 {
+    const HCR_EL2_IMO: u64 = 1 << 4;
+    let mut value: u64;
+    unsafe {
+        asm!("mrs {value}, HCR_EL2", value = out(reg) value, options(nomem, nostack, preserves_flags));
+        value |= HCR_EL2_IMO;
+        asm!(
+            "msr HCR_EL2, {value}",
+            "isb",
+            value = in(reg) value,
+            options(nomem, nostack, preserves_flags)
+        );
+    }
+    value
 }

@@ -180,6 +180,11 @@ pub extern "C" fn rust_irq_handler(
     spsr: u64,
     _saved_frame: *const ExceptionFrame,
 ) {
+    #[cfg(all(talos_target_qemu_virt, not(test)))]
+    if crate::target::qemu_virt::handle_irq(vector) {
+        return;
+    }
+
     LAST_UNEXPECTED_IRQ_VECTOR.store(vector, Ordering::Relaxed);
     LAST_UNEXPECTED_IRQ_ELR.store(elr, Ordering::Relaxed);
     LAST_UNEXPECTED_IRQ_SPSR.store(spsr, Ordering::Relaxed);

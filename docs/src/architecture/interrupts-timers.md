@@ -67,9 +67,34 @@ Accepted QEMU architectural timer facts:
   - virtual: GIC_PPI 11, INTID 27, flags 0x104.
   - hypervisor physical: GIC_PPI 10, INTID 26, flags 0x104.
 
-Talos currently starts at EL2. The first QEMU timer smoke should target the EL2
-hypervisor physical timer path: CNTHP_*_EL2 plus PPI 10 / INTID 26. Virtual
-timer, EL1 physical timer, and lower-EL timer routing remain deferred.
+Talos starts at EL2 when QEMU virt is run with virtualization enabled. The
+first QEMU timer smoke targets the EL2 hypervisor physical timer path:
+CNTHP_*_EL2 plus PPI 10 / INTID 26. Virtual timer, EL1 physical timer, and
+lower-EL timer routing remain deferred.
+
+Accepted QEMU implementation contract:
+
+- The focused timer diagnostic runs QEMU with
+  `-M virt,gic-version=2,virtualization=on` so Talos enters EL2. The older
+  default QEMU smoke may still boot without virtualization and report EL1.
+- Before unmasking `PSTATE.I`, Talos sets `HCR_EL2.IMO` so physical IRQs
+  route to EL2 while the diagnostic is executing at EL2.
+- The diagnostic leaves PPI 10 / INTID 26 in the reset interrupt group, enables
+  the GICv2 distributor and CPU interface, sets a permissive priority mask,
+  enables the INTID 26 PPI bank bit, and programs `CNTHP_CVAL_EL2` plus
+  `CNTHP_CTL_EL2.ENABLE`.
+- The current-EL IRQ handler acknowledges the active interrupt with `GICC_IAR`,
+  recognizes INTID 26, masks `CNTHP_CTL_EL2`, writes the same acknowledge
+  value to `GICC_EOIR`, increments a bounded atomic count, and returns through
+  the saved `x0..x30` frame.
+- Unexpected GIC INTIDs are counted with atomics, EOI'd when they are real
+  active INTIDs, and reported after interrupts are masked again. The IRQ hot
+  path still does not allocate or format.
+
+The accepted QEMU smoke transcript is captured by
+`scripts/qemu-timer-irq-smoke.sh` in `target/qemu-timer-irq-smoke.log`. A
+passing run includes EL2 boot, `intid=26`, `irq-count=1`,
+`iar=0x0000001a`, and `qemu-timer-irq-smoke: PASS`.
 
 ## Raspberry Pi 5 Target
 

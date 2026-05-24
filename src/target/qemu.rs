@@ -3,7 +3,6 @@ use core::arch::asm;
 #[repr(u64)]
 pub enum ExitCode {
     Success = 0,
-    #[cfg(test)]
     Failure = 1,
 }
 
@@ -11,7 +10,6 @@ pub fn exit_success() -> ! {
     exit(ExitCode::Success)
 }
 
-#[cfg(test)]
 pub fn exit_failure() -> ! {
     exit(ExitCode::Failure)
 }
