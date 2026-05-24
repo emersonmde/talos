@@ -34,6 +34,20 @@ pub fn current_el() -> u8 {
 }
 
 #[allow(dead_code)]
+pub fn mpidr_el1() -> u64 {
+    let mpidr: u64;
+    unsafe {
+        asm!("mrs {mpidr}, MPIDR_EL1", mpidr = out(reg) mpidr, options(nomem, nostack, preserves_flags));
+    }
+    mpidr
+}
+
+#[allow(dead_code)]
+pub const fn mpidr_affinity(mpidr: u64) -> u64 {
+    (mpidr & 0x00ff_ffff) | (mpidr & 0xff00_0000_00)
+}
+
+#[allow(dead_code)]
 pub fn current_vbar() -> u64 {
     let vbar: u64;
     match current_el() {
@@ -349,7 +363,7 @@ pub fn daif() -> u64 {
 
 #[cfg(test)]
 mod tests {
-    use super::{SingleCoreIrqMaskState, SingleCoreIrqRestoreAction};
+    use super::{SingleCoreIrqMaskState, SingleCoreIrqRestoreAction, mpidr_affinity};
 
     #[test_case]
     fn irq_mask_state_records_masked_snapshot() {
@@ -383,6 +397,13 @@ mod tests {
             outer.restore_action(),
             SingleCoreIrqRestoreAction::LeaveMasked
         );
+    }
+
+    #[test_case]
+    fn mpidr_affinity_masks_non_affinity_bits() {
+        let mpidr = (1 << 31) | (1 << 30) | (1 << 24) | 0x0201_0304 | (0x80 << 32);
+
+        assert_eq!(mpidr_affinity(mpidr), 0x8000_0103_04);
     }
 }
 

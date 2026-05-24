@@ -175,6 +175,11 @@ Completed:
   scheduler work, each secondary core must prove MPIDR/logical identity,
   exclusive stack ownership, per-core state registration, and controlled
   handoff.
+- Phase 6.1 QEMU secondary-core discriminator is accepted. Under QEMU virt with
+  EL2 virtualization enabled, PSCI `CPU_ON` through SMC starts secondary CPUs
+  1, 2, and 3; each reports distinct MPIDR affinity, runs on its reserved
+  stack, reaches `handoff-ready`, and parks without claiming Pi 5 hardware
+  behavior.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -182,10 +187,10 @@ Completed:
 
 Blocked or pending:
 
-- The next explicit worker task is the bounded QEMU/substitute Phase 6.1
-  secondary-core discriminator. It must not start Pi 5 hardware proof,
-  per-core stacks/state, SMP-safe primitives, scheduler migration, filesystem,
-  networking, SSH, or shell work.
+- The next explicit worker task is supervisor-queued per-core state and stack
+  ownership work. It must not start Pi 5 hardware proof, SMP-safe primitives,
+  scheduler migration, filesystem, networking, SSH, or shell work unless the
+  durable task says so.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
@@ -476,7 +481,8 @@ Acceptance criteria:
 
 Goal: use all Pi 5 CPU cores with correct synchronization and preemptive scheduling.
 
-Status: Phase 6.1 source inventory and bring-up contract accepted. See
+Status: Phase 6.1 source inventory/contract and QEMU secondary-core
+discriminator accepted. See
 [Phase 6 Secondary-Core Bring-Up Source Inventory](project/phase6-secondary-core-bringup-source-inventory.md).
 
 Milestone 6.1: Secondary Core Bring-Up

@@ -33,6 +33,12 @@ const GICD_BASE: usize = 0x0800_0000;
 const GICC_BASE: usize = 0x0801_0000;
 const EL2_PHYSICAL_TIMER_INTID: u32 = 26;
 const TIMER_IRQ_WAIT_LIMIT: usize = 1_000_000;
+#[cfg(talos_qemu_secondary_core_discriminator)]
+const QEMU_SECONDARY_CORE_COUNT: usize = 4;
+#[cfg(talos_qemu_secondary_core_discriminator)]
+const QEMU_SECONDARY_STACK_SIZE: usize = 4096;
+#[cfg(talos_qemu_secondary_core_discriminator)]
+const QEMU_SECONDARY_WAIT_LIMIT: usize = 10_000_000;
 #[cfg(any(
     talos_qemu_context_switch_smoke,
     talos_qemu_scheduler_yield_smoke,
@@ -60,6 +66,37 @@ static LAST_INTID: AtomicU64 = AtomicU64::new(0);
 static UNEXPECTED_GIC_IRQ_COUNT: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_qemu_timer_preemption_smoke)]
 static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_qemu_secondary_core_discriminator)]
+static SECONDARY_STATES: [AtomicU64; QEMU_SECONDARY_CORE_COUNT] =
+    [const { AtomicU64::new(0) }; QEMU_SECONDARY_CORE_COUNT];
+#[cfg(talos_qemu_secondary_core_discriminator)]
+static SECONDARY_MPIDR: [AtomicU64; QEMU_SECONDARY_CORE_COUNT] =
+    [const { AtomicU64::new(0) }; QEMU_SECONDARY_CORE_COUNT];
+#[cfg(talos_qemu_secondary_core_discriminator)]
+static SECONDARY_AFFINITY: [AtomicU64; QEMU_SECONDARY_CORE_COUNT] =
+    [const { AtomicU64::new(0) }; QEMU_SECONDARY_CORE_COUNT];
+#[cfg(talos_qemu_secondary_core_discriminator)]
+static SECONDARY_STACK_POINTER: [AtomicU64; QEMU_SECONDARY_CORE_COUNT] =
+    [const { AtomicU64::new(0) }; QEMU_SECONDARY_CORE_COUNT];
+#[cfg(talos_qemu_secondary_core_discriminator)]
+static SECONDARY_CONTEXT: [AtomicU64; QEMU_SECONDARY_CORE_COUNT] =
+    [const { AtomicU64::new(0) }; QEMU_SECONDARY_CORE_COUNT];
+
+#[cfg(talos_qemu_secondary_core_discriminator)]
+const SECONDARY_STATE_NONE: u64 = 0;
+#[cfg(talos_qemu_secondary_core_discriminator)]
+const SECONDARY_STATE_ENTERED: u64 = 1;
+#[cfg(talos_qemu_secondary_core_discriminator)]
+const SECONDARY_STATE_REGISTERED: u64 = 2;
+#[cfg(talos_qemu_secondary_core_discriminator)]
+const SECONDARY_STATE_HANDOFF_READY: u64 = 3;
+
+#[cfg(talos_qemu_secondary_core_discriminator)]
+unsafe extern "C" {
+    fn talos_aarch64_qemu_secondary_entry();
+    static talos_qemu_secondary_stacks: u8;
+    static talos_qemu_secondary_stacks_end: u8;
+}
 
 #[cfg(any(
     talos_qemu_context_switch_smoke,
@@ -410,6 +447,54 @@ struct SingleCoreIrqMaskProbe {
     restored_unmasked: bool,
 }
 
+#[allow(dead_code)]
+pub const fn qemu_logical_cpu_from_mpidr_affinity(affinity: u64) -> Option<usize> {
+    match affinity {
+        0 => Some(0),
+        1 => Some(1),
+        2 => Some(2),
+        3 => Some(3),
+        _ => None,
+    }
+}
+
+#[cfg(talos_qemu_secondary_core_discriminator)]
+fn secondary_stack_bounds(logical_cpu: usize) -> (usize, usize) {
+    let base = core::ptr::addr_of!(talos_qemu_secondary_stacks) as usize;
+    let end = core::ptr::addr_of!(talos_qemu_secondary_stacks_end) as usize;
+    let bottom = base + logical_cpu * QEMU_SECONDARY_STACK_SIZE;
+    let top = bottom + QEMU_SECONDARY_STACK_SIZE;
+    debug_assert!(top <= end);
+    (bottom, top)
+}
+
+#[cfg(talos_qemu_secondary_core_discriminator)]
+fn secondary_state_name(state: u64) -> &'static str {
+    match state {
+        SECONDARY_STATE_NONE => "none",
+        SECONDARY_STATE_ENTERED => "entered",
+        SECONDARY_STATE_REGISTERED => "registered",
+        SECONDARY_STATE_HANDOFF_READY => "handoff-ready",
+        _ => "unknown",
+    }
+}
+
+#[cfg(talos_qemu_secondary_core_discriminator)]
+unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) -> i64 {
+    let mut function_id = 0xc400_0003u64;
+    unsafe {
+        core::arch::asm!(
+            "smc #0",
+            inout("x0") function_id,
+            in("x1") target_affinity,
+            in("x2") entry as u64,
+            in("x3") context as u64,
+            options(nostack)
+        );
+    }
+    function_id as i64
+}
+
 impl SingleCoreIrqMaskProbe {
     const fn passed(self) -> bool {
         self.nested_start_masked
@@ -437,6 +522,141 @@ pub fn services(boot_info: &BootInfo) -> TargetServices {
         mmio_map: MmioMap::new(MMIO_REGIONS),
         device_tree: DeviceTree::from_physical_address(boot_info.dtb_pa),
     }
+}
+
+#[cfg(talos_qemu_secondary_core_discriminator)]
+#[unsafe(no_mangle)]
+pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
+    let mpidr = aarch64::mpidr_el1();
+    let affinity = aarch64::mpidr_affinity(mpidr);
+    let logical_cpu = qemu_logical_cpu_from_mpidr_affinity(affinity).unwrap_or(context);
+    if logical_cpu < QEMU_SECONDARY_CORE_COUNT {
+        SECONDARY_STATES[logical_cpu].store(SECONDARY_STATE_ENTERED, Ordering::Release);
+        SECONDARY_CONTEXT[logical_cpu].store(context as u64, Ordering::Release);
+        SECONDARY_MPIDR[logical_cpu].store(mpidr, Ordering::Release);
+        SECONDARY_AFFINITY[logical_cpu].store(affinity, Ordering::Release);
+
+        let stack_pointer: u64;
+        unsafe {
+            core::arch::asm!("mov {stack_pointer}, sp", stack_pointer = out(reg) stack_pointer, options(nomem, nostack, preserves_flags));
+        }
+        SECONDARY_STACK_POINTER[logical_cpu].store(stack_pointer, Ordering::Release);
+        SECONDARY_STATES[logical_cpu].store(SECONDARY_STATE_REGISTERED, Ordering::Release);
+        SECONDARY_STATES[logical_cpu].store(SECONDARY_STATE_HANDOFF_READY, Ordering::Release);
+    }
+
+    loop {
+        unsafe {
+            core::arch::asm!("wfe", options(nomem, nostack, preserves_flags));
+        }
+    }
+}
+
+#[cfg(talos_qemu_secondary_core_discriminator)]
+pub fn run_secondary_core_discriminator() -> bool {
+    for logical_cpu in 0..QEMU_SECONDARY_CORE_COUNT {
+        SECONDARY_STATES[logical_cpu].store(SECONDARY_STATE_NONE, Ordering::Release);
+        SECONDARY_CONTEXT[logical_cpu].store(0, Ordering::Release);
+        SECONDARY_MPIDR[logical_cpu].store(0, Ordering::Release);
+        SECONDARY_AFFINITY[logical_cpu].store(0, Ordering::Release);
+        SECONDARY_STACK_POINTER[logical_cpu].store(0, Ordering::Release);
+    }
+
+    let boot_mpidr = aarch64::mpidr_el1();
+    let boot_affinity = aarch64::mpidr_affinity(boot_mpidr);
+    let boot_logical = qemu_logical_cpu_from_mpidr_affinity(boot_affinity);
+    let entry = talos_aarch64_qemu_secondary_entry as *const () as usize;
+    let stack_base = core::ptr::addr_of!(talos_qemu_secondary_stacks) as usize;
+    let stack_end = core::ptr::addr_of!(talos_qemu_secondary_stacks_end) as usize;
+
+    crate::println!(
+        "qemu-secondary-core-discriminator: start conduit=smc cores={} boot-mpidr={:#018x} boot-affinity={:#x} boot-logical={:?} entry={:#018x} stack-range=[{:#018x},{:#018x})",
+        QEMU_SECONDARY_CORE_COUNT,
+        boot_mpidr,
+        boot_affinity,
+        boot_logical,
+        entry,
+        stack_base,
+        stack_end
+    );
+
+    let mut cpu_on_ok = true;
+    for logical_cpu in 1..QEMU_SECONDARY_CORE_COUNT {
+        let target_affinity = logical_cpu as u64;
+        let result = unsafe { psci_cpu_on_smc(target_affinity, entry, logical_cpu) };
+        crate::println!(
+            "qemu-secondary-core-discriminator: cpu-on logical={} target-affinity={:#x} result={}",
+            logical_cpu,
+            target_affinity,
+            result
+        );
+        cpu_on_ok &= result == 0;
+    }
+
+    let mut remaining = QEMU_SECONDARY_WAIT_LIMIT;
+    while remaining > 0 {
+        let all_ready = (1..QEMU_SECONDARY_CORE_COUNT).all(|logical_cpu| {
+            SECONDARY_STATES[logical_cpu].load(Ordering::Acquire) >= SECONDARY_STATE_HANDOFF_READY
+        });
+        if all_ready {
+            break;
+        }
+        unsafe {
+            core::arch::asm!("wfe", options(nomem, nostack, preserves_flags));
+        }
+        remaining -= 1;
+    }
+
+    let mut reports_ok = cpu_on_ok && boot_logical == Some(0);
+    for logical_cpu in 1..QEMU_SECONDARY_CORE_COUNT {
+        let state = SECONDARY_STATES[logical_cpu].load(Ordering::Acquire);
+        let context = SECONDARY_CONTEXT[logical_cpu].load(Ordering::Acquire);
+        let mpidr = SECONDARY_MPIDR[logical_cpu].load(Ordering::Acquire);
+        let affinity = SECONDARY_AFFINITY[logical_cpu].load(Ordering::Acquire);
+        let stack_pointer = SECONDARY_STACK_POINTER[logical_cpu].load(Ordering::Acquire) as usize;
+        let logical_from_mpidr = qemu_logical_cpu_from_mpidr_affinity(affinity);
+        let (stack_bottom, stack_top) = secondary_stack_bounds(logical_cpu);
+        let stack_owned = stack_pointer >= stack_bottom && stack_pointer <= stack_top;
+        let report_ok = state >= SECONDARY_STATE_HANDOFF_READY
+            && context == logical_cpu as u64
+            && logical_from_mpidr == Some(logical_cpu)
+            && stack_owned;
+        reports_ok &= report_ok;
+
+        crate::println!(
+            "qemu-secondary-core-discriminator: report logical={} state={} context={} mpidr={:#018x} affinity={:#x} mapped={:?} sp={:#018x} stack=[{:#018x},{:#018x}) ok={}",
+            logical_cpu,
+            secondary_state_name(state),
+            context,
+            mpidr,
+            affinity,
+            logical_from_mpidr,
+            stack_pointer,
+            stack_bottom,
+            stack_top,
+            report_ok
+        );
+    }
+
+    crate::println!(
+        "qemu-secondary-core-discriminator: wait-remaining={} classification={}",
+        remaining,
+        if reports_ok {
+            "qemu-psci-smc-secondary-cores-alive"
+        } else if cpu_on_ok {
+            "qemu-psci-smc-started-but-report-incomplete"
+        } else {
+            "qemu-psci-smc-cpu-on-failed"
+        }
+    );
+
+    if reports_ok {
+        crate::println!("qemu-secondary-core-discriminator: PASS");
+    } else {
+        crate::println!("qemu-secondary-core-discriminator: FAIL");
+    }
+
+    reports_ok
 }
 
 #[cfg(talos_qemu_polling_tty_rx_diagnostic)]
@@ -1115,6 +1335,20 @@ fn run_single_core_irq_mask_probe() -> SingleCoreIrqMaskProbe {
         unmasked_start,
         saved_unmasked_masked,
         restored_unmasked,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::qemu_logical_cpu_from_mpidr_affinity;
+
+    #[test_case]
+    fn qemu_mpidr_affinity_maps_four_virt_cpus() {
+        assert_eq!(qemu_logical_cpu_from_mpidr_affinity(0), Some(0));
+        assert_eq!(qemu_logical_cpu_from_mpidr_affinity(1), Some(1));
+        assert_eq!(qemu_logical_cpu_from_mpidr_affinity(2), Some(2));
+        assert_eq!(qemu_logical_cpu_from_mpidr_affinity(3), Some(3));
+        assert_eq!(qemu_logical_cpu_from_mpidr_affinity(0x100), None);
     }
 }
 

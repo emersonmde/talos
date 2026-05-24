@@ -33,6 +33,7 @@ fn main() {
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_TIMER_PREEMPTION_SMOKE");
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_POLLING_TTY_RX_DIAGNOSTIC");
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_DIAGNOSTIC_COMMAND_CHANNEL_SMOKE");
+    println!("cargo:rerun-if-env-changed=TALOS_QEMU_SECONDARY_CORE_DISCRIMINATOR");
 
     let target = env::var("TARGET").expect("TARGET is set by Cargo");
     println!("cargo:rustc-check-cfg=cfg(talos_target_qemu_virt)");
@@ -63,6 +64,7 @@ fn main() {
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_timer_preemption_smoke)");
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_polling_tty_rx_diagnostic)");
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_diagnostic_command_channel_smoke)");
+    println!("cargo:rustc-check-cfg=cfg(talos_qemu_secondary_core_discriminator)");
     if target.contains("rpi5") || target.contains("bcm2712") {
         println!("cargo:rustc-cfg=talos_target_rpi5_bcm2712");
     } else {
@@ -176,6 +178,10 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
     }
     if env::var_os("TALOS_QEMU_DIAGNOSTIC_COMMAND_CHANNEL_SMOKE").is_some() {
         println!("cargo:rustc-cfg=talos_qemu_diagnostic_command_channel_smoke");
+    }
+    if env::var_os("TALOS_QEMU_SECONDARY_CORE_DISCRIMINATOR").is_some() {
+        command.arg("-DTALOS_QEMU_SECONDARY_CORE_DISCRIMINATOR");
+        println!("cargo:rustc-cfg=talos_qemu_secondary_core_discriminator");
     }
 
     let status = command

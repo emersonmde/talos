@@ -35,7 +35,8 @@
         not(test),
         any(
             talos_qemu_polling_tty_rx_diagnostic,
-            talos_qemu_diagnostic_command_channel_smoke
+            talos_qemu_diagnostic_command_channel_smoke,
+            talos_qemu_secondary_core_discriminator
         )
     ),
     allow(dead_code, unused_imports, unused_variables, unreachable_code)
@@ -216,6 +217,14 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
         );
         println!("mmio-regions: {}", services.mmio_map.regions().len());
         if boot_info.target == target::TargetKind::QemuVirt && boot_info.exception_level == 2 {
+            #[cfg(talos_qemu_secondary_core_discriminator)]
+            {
+                if target::qemu_virt::run_secondary_core_discriminator() {
+                    target::qemu::exit_success();
+                }
+                target::qemu::exit_failure();
+            }
+
             #[cfg(talos_qemu_diagnostic_command_channel_smoke)]
             {
                 if target::qemu_virt::run_diagnostic_command_channel_smoke() {
@@ -268,7 +277,8 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_qemu_polling_tty_rx_diagnostic,
                 talos_qemu_timer_preemption_smoke,
                 talos_qemu_scheduler_yield_smoke,
-                talos_qemu_context_switch_smoke
+                talos_qemu_context_switch_smoke,
+                talos_qemu_secondary_core_discriminator
             )))]
             if target::qemu_virt::run_el2_timer_irq_smoke() {
                 target::qemu::exit_success();
@@ -277,7 +287,8 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_qemu_diagnostic_command_channel_smoke,
                 talos_qemu_timer_preemption_smoke,
                 talos_qemu_scheduler_yield_smoke,
-                talos_qemu_context_switch_smoke
+                talos_qemu_context_switch_smoke,
+                talos_qemu_secondary_core_discriminator
             )))]
             target::qemu::exit_failure();
         }

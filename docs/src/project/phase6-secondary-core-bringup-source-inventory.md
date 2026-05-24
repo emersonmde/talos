@@ -82,6 +82,17 @@ QEMU substitute evidence:
 - QEMU evidence is not Pi 5 hardware proof. It can check target-independent
   parsing, MPIDR mapping helpers, state-machine tests, and archive-free smoke
   behavior.
+- Accepted QEMU discriminator result: `scripts/qemu-secondary-core-discriminator.sh`
+  builds `TALOS_QEMU_SECONDARY_CORE_DISCRIMINATOR=1` and runs QEMU virt with
+  EL2 virtualization, GICv2, Cortex-A76, and four CPUs. PSCI `CPU_ON` through
+  SMC returns success for logical CPUs 1, 2, and 3. Each secondary reaches
+  `handoff-ready`, reports MPIDR affinities `0x1`, `0x2`, and `0x3`, runs on
+  its reserved 4 KiB stack slot, and parks. This proves the QEMU/substitute
+  discriminator only; it does not weaken the Pi 5 hardware proof requirements.
+- Runtime discriminator note: an exploratory HVC `CPU_ON` call from the EL2
+  diagnostic path raised a current-SPx synchronous exception with ESR
+  `0x5a000000` under QEMU. The accepted QEMU proof therefore uses SMC for this
+  EL2 boot model while preserving the Pi 5 firmware/DTB SMC contract.
 
 Pi 5 hardware evidence:
 
@@ -103,11 +114,12 @@ RP1/PCIe/DMA work, or a local shell.
 
 ## Next Worker Task
 
-The next bounded worker task is
-`phase6-qemu-secondary-core-bringup-discriminator-20260524`. It should stay
-QEMU/substitute and source-backed: prove or reject the smallest QEMU-side
-secondary-core discriminator before per-core stacks/state or Pi 5 PSCI hardware
-proof work starts.
+The accepted QEMU discriminator task is
+`phase6-qemu-secondary-core-bringup-discriminator-20260524`. The next queued
+worker task is `phase6-per-core-state-and-stacks-20260524`; it may turn the
+diagnostic-only state/stack proof into the supervisor-planned per-core ownership
+slice, but must still stay separate from Pi 5 hardware proof, SMP-safe locking,
+and scheduler migration unless the durable task says otherwise.
 
 ## Validation
 
