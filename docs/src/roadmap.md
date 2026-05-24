@@ -191,6 +191,13 @@ Completed:
   `workload-complete` with `progress=64 target=64 ok=true` through the
   accepted PSCI/trampoline/stack boundary while the production scheduler
   remains single-core.
+- The Phase 6.1 secondary-core bring-up closeout checkpoint is accepted.
+  Milestone 6.1 now has reconciled source inventory, QEMU discriminator,
+  per-core state/stacks, Pi 5 PSCI alive proof, and controlled secondary-core
+  workload evidence. SMP-safe primitives, scheduler migration, shared run
+  queues, cross-core wakeups, userspace, descriptors, filesystem, networking,
+  SSH, shell behavior, UART interrupts, RP1/PCIe, and DMA/cache policy remain
+  deferred.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -198,10 +205,10 @@ Completed:
 
 Blocked or pending:
 
-- The next explicit worker task remains supervisor-queued. It must not start
-  SMP-safe primitives, scheduler migration, filesystem, networking, SSH, or
-  shell work unless the durable task says so. The Phase 6.1 closeout checkpoint
-  must reconcile the accepted alive and workload evidence before Milestone 6.2.
+- The next explicit worker task requires supervisor planning. The recommended
+  next planning target is a Milestone 6.2 SMP-safe primitives source inventory
+  and contract that carries forward the accepted Pi 5 cache-maintenance lesson
+  before implementing locks or shared scheduler data structures.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
@@ -492,9 +499,10 @@ Acceptance criteria:
 
 Goal: use all Pi 5 CPU cores with correct synchronization and preemptive scheduling.
 
-Status: Phase 6.1 source inventory/contract, QEMU secondary-core
-discriminator, Pi 5 PSCI secondary-core alive proof, and controlled
-secondary-core workload proof accepted. See
+Status: Milestone 6.1 is accepted through the secondary-core bring-up closeout
+checkpoint. See
+[Phase 6 Secondary-Core Bring-Up Closeout Checkpoint](project/phase6-secondary-core-bringup-closeout-checkpoint.md)
+and
 [Phase 6 Secondary-Core Bring-Up Source Inventory](project/phase6-secondary-core-bringup-source-inventory.md).
 
 Milestone 6.1: Secondary Core Bring-Up
