@@ -8,6 +8,7 @@ pub trait ConsoleBackend {
     not(any(
         test,
         talos_qemu_polling_tty_rx_diagnostic,
+        talos_qemu_diagnostic_command_channel_smoke,
         talos_rpi5_uart10_polling_rx_diagnostic
     )),
     allow(dead_code)
@@ -155,6 +156,7 @@ where
     not(any(
         test,
         talos_qemu_polling_tty_rx_diagnostic,
+        talos_qemu_diagnostic_command_channel_smoke,
         talos_rpi5_uart10_polling_rx_diagnostic
     )),
     allow(dead_code)

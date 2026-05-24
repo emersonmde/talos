@@ -59,6 +59,31 @@ arguments emit `diag: error unexpected-argument`. Responses are deterministic
 newline-framed text and avoid filesystem, process, environment, path lookup,
 redirection, globbing, pipelines, or script semantics.
 
+## QEMU Smoke Evidence
+
+The accepted QEMU diagnostic command-channel smoke injects four serial commands
+through the QEMU virt PL011 polling input backend. Each command is first
+assembled by the TTY canonical-lite line discipline and only then dispatched by
+`src/diagnostic_command.rs`. The captured transcript lives at
+`target/qemu-diagnostic-command-channel-smoke.log` for the run and is
+summarized in `tasks/2026-05-24-phase5-qemu-diagnostic-command-channel-smoke.md`.
+
+Retained command classifications:
+
+- `help`: retained discovery command; handled with two bounded response lines.
+- `list`: retained command-list command; handled with two bounded response
+  lines.
+- `status`: retained status command tied to accepted command-channel,
+  runtime-console0, and TTY state; handled with six bounded response lines.
+- `bogus`: retained negative smoke input; classified as deterministic
+  `unknown-command` with one bounded error line.
+
+The smoke emits the response transcript outside IRQ context from the QEMU
+diagnostic path in `kernel_main`. It does not allocate, does not print from
+the IRQ handler, and does not introduce descriptors, syscalls, userspace shell
+behavior, filesystem-backed commands, networking, SSH, SMP, UART interrupts, or
+scheduler blocking I/O.
+
 ## Current Deferrals
 
 The command-channel contract intentionally defers:
@@ -77,7 +102,6 @@ The command-channel contract intentionally defers:
 ## Validation Role
 
 This contract is source-backed by focused no_std parser/dispatcher tests. The
-next bounded task is `phase5-qemu-diagnostic-command-channel-smoke-20260524`.
-That task should inject serial commands through the accepted QEMU polling TTY
-path and capture a transcript for help/list, unknown-command handling, and one
-accepted status response. Pi 5 proof remains a later serialized hardware task.
+QEMU command-channel smoke now covers help/list, unknown-command handling, and
+status over the accepted polling TTY path. Pi 5 proof remains a later
+serialized hardware task.

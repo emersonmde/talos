@@ -151,6 +151,12 @@ Completed:
   to runtime-console0 without adding a shell, descriptor table, syscall ABI,
   filesystem command execution, networking, SSH, SMP, UART interrupts, or
   scheduler blocking I/O.
+- Phase 5.3 QEMU diagnostic command-channel smoke is accepted. The QEMU serial
+  transcript proves `help`, `list`, deterministic unknown-command handling,
+  and `status` through the accepted polling TTY line path and
+  runtime-console0 response sink without adding Pi 5 hardware behavior,
+  descriptors, syscalls, userspace shell behavior, filesystem-backed commands,
+  networking, SSH, SMP, UART interrupts, or scheduler blocking I/O.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -158,13 +164,11 @@ Completed:
 
 Blocked or pending:
 
-- The next Phase 5 slice is the supervisor-queued
-  phase5-qemu-diagnostic-command-channel-smoke-20260524 task. It should prove
-  the accepted command-channel contract over the QEMU polling TTY path with a
-  deterministic transcript for help/list, unknown command handling, and one
-  accepted status response. It must not add Pi 5 hardware proof, descriptor
-  tables, syscalls, userspace shell behavior, filesystem-backed commands,
-  networking, SSH, SMP, UART interrupts, or scheduler blocking I/O.
+- The next Phase 5 slice is the supervisor-queued serialized Pi 5 diagnostic
+  command-channel proof. It should reuse the accepted command-channel contract
+  and QEMU transcript expectations through the lab serial path before any
+  descriptor table, syscall, userspace shell, filesystem, networking, SSH, SMP,
+  UART interrupt, or scheduler blocking I/O work starts.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.

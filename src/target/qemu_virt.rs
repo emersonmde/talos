@@ -480,7 +480,121 @@ pub fn run_polling_tty_rx_diagnostic() -> bool {
     }
 }
 
-#[cfg(talos_qemu_polling_tty_rx_diagnostic)]
+#[cfg(talos_qemu_diagnostic_command_channel_smoke)]
+pub fn run_diagnostic_command_channel_smoke() -> bool {
+    crate::println!(
+        "qemu-diagnostic-command-channel-smoke: start command-count=4 backend=runtime-console0/qemu-virt-pl011 input=tty-canonical-lite"
+    );
+
+    let mut passed = true;
+
+    for command_index in 0..4 {
+        crate::println!(
+            "qemu-diagnostic-command-channel-smoke: ready command={}",
+            command_index
+        );
+
+        let result = crate::tty::run_polling_rx_diagnostic(console());
+        crate::println!();
+        crate::print!(
+            "qemu-diagnostic-command-channel-smoke: line command={} hex=",
+            command_index
+        );
+        print_hex_bytes(result.line());
+        crate::println!();
+
+        if !result.passed() || result.truncated() || !result.controls().is_empty() {
+            crate::println!(
+                "qemu-diagnostic-command-channel-smoke: input-fail command={} outcome={} truncated={} controls={}",
+                command_index,
+                result.outcome_name(),
+                result.truncated(),
+                result.controls().len()
+            );
+            passed = false;
+            continue;
+        }
+
+        let mut sink = crate::runtime_console::RuntimeConsole::new(console());
+        let dispatch = crate::diagnostic_command::dispatch_default_diagnostic_command(
+            result.line(),
+            &mut sink,
+        );
+        let dispatch = match dispatch {
+            Ok(dispatch) => dispatch,
+            Err(_) => {
+                crate::println!(
+                    "qemu-diagnostic-command-channel-smoke: dispatch-fail command={} response-write-failed",
+                    command_index
+                );
+                passed = false;
+                continue;
+            }
+        };
+
+        let status_name = diagnostic_dispatch_status_name(dispatch.status);
+        crate::println!(
+            "qemu-diagnostic-command-channel-smoke: dispatch command={} status={} responses={}",
+            command_index,
+            status_name,
+            dispatch.response_lines
+        );
+
+        if !expected_diagnostic_dispatch(
+            command_index,
+            result.line(),
+            dispatch.status,
+            dispatch.response_lines,
+        ) {
+            passed = false;
+        }
+    }
+
+    if passed {
+        crate::println!("qemu-diagnostic-command-channel-smoke: PASS");
+    } else {
+        crate::println!("qemu-diagnostic-command-channel-smoke: FAIL");
+    }
+
+    passed
+}
+
+#[cfg(talos_qemu_diagnostic_command_channel_smoke)]
+fn diagnostic_dispatch_status_name(
+    status: crate::diagnostic_command::DiagnosticDispatchStatus,
+) -> &'static str {
+    match status {
+        crate::diagnostic_command::DiagnosticDispatchStatus::Handled => "handled",
+        crate::diagnostic_command::DiagnosticDispatchStatus::UnknownCommand => "unknown-command",
+        crate::diagnostic_command::DiagnosticDispatchStatus::UnexpectedArgument => {
+            "unexpected-argument"
+        }
+        crate::diagnostic_command::DiagnosticDispatchStatus::ParseError(_) => "parse-error",
+    }
+}
+
+#[cfg(talos_qemu_diagnostic_command_channel_smoke)]
+fn expected_diagnostic_dispatch(
+    command_index: usize,
+    line: &[u8],
+    status: crate::diagnostic_command::DiagnosticDispatchStatus,
+    response_lines: usize,
+) -> bool {
+    use crate::diagnostic_command::DiagnosticDispatchStatus::{Handled, UnknownCommand};
+
+    match command_index {
+        0 => line == b"help" && status == Handled && response_lines == 2,
+        1 => line == b"list" && status == Handled && response_lines == 2,
+        2 => line == b"bogus" && status == UnknownCommand && response_lines == 1,
+        3 => line == b"status" && status == Handled && response_lines == 6,
+        _ => false,
+    }
+}
+
+#[cfg(any(
+    talos_qemu_polling_tty_rx_diagnostic,
+    talos_qemu_diagnostic_command_channel_smoke
+))]
 fn print_hex_bytes(bytes: &[u8]) {
     for (index, byte) in bytes.iter().enumerate() {
         if index != 0 {

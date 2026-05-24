@@ -30,7 +30,13 @@
     allow(dead_code, unused_imports, unused_variables)
 )]
 #![cfg_attr(
-    all(not(test), talos_qemu_polling_tty_rx_diagnostic),
+    all(
+        not(test),
+        any(
+            talos_qemu_polling_tty_rx_diagnostic,
+            talos_qemu_diagnostic_command_channel_smoke
+        )
+    ),
     allow(dead_code, unused_imports, unused_variables, unreachable_code)
 )]
 #![feature(custom_test_frameworks)]
@@ -44,7 +50,10 @@ mod allocator;
 mod arch;
 mod boot;
 mod device_tree;
-#[cfg_attr(not(test), allow(dead_code))]
+#[cfg_attr(
+    all(not(test), not(talos_qemu_diagnostic_command_channel_smoke)),
+    allow(dead_code)
+)]
 mod diagnostic_command;
 mod diagnostics;
 mod early_format;
@@ -56,7 +65,13 @@ mod runtime_console;
 #[cfg_attr(not(test), allow(dead_code))]
 mod scheduler;
 mod target;
-#[cfg_attr(not(talos_qemu_polling_tty_rx_diagnostic), allow(dead_code))]
+#[cfg_attr(
+    not(any(
+        talos_qemu_polling_tty_rx_diagnostic,
+        talos_qemu_diagnostic_command_channel_smoke
+    )),
+    allow(dead_code)
+)]
 mod tty;
 
 use core::panic::PanicInfo;
@@ -193,6 +208,14 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
         );
         println!("mmio-regions: {}", services.mmio_map.regions().len());
         if boot_info.target == target::TargetKind::QemuVirt && boot_info.exception_level == 2 {
+            #[cfg(talos_qemu_diagnostic_command_channel_smoke)]
+            {
+                if target::qemu_virt::run_diagnostic_command_channel_smoke() {
+                    target::qemu::exit_success();
+                }
+                target::qemu::exit_failure();
+            }
+
             #[cfg(talos_qemu_polling_tty_rx_diagnostic)]
             {
                 if target::qemu_virt::run_polling_tty_rx_diagnostic() {
@@ -233,6 +256,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
             }
 
             #[cfg(not(any(
+                talos_qemu_diagnostic_command_channel_smoke,
                 talos_qemu_polling_tty_rx_diagnostic,
                 talos_qemu_timer_preemption_smoke,
                 talos_qemu_scheduler_yield_smoke,
@@ -242,6 +266,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_success();
             }
             #[cfg(not(any(
+                talos_qemu_diagnostic_command_channel_smoke,
                 talos_qemu_timer_preemption_smoke,
                 talos_qemu_scheduler_yield_smoke,
                 talos_qemu_context_switch_smoke
