@@ -349,3 +349,22 @@ locks, runnable queues, migration, load balancing, cross-core preemption,
 sleep/wakeup behavior, IPIs, or process resources. Secondary cores that reach
 `handoff-ready` must still park or run a separately planned bounded workload
 until a later supervisor task accepts SMP-safe scheduler primitives.
+
+## Phase 6.2 Primitive Boundary
+
+`src/smp_sync.rs` now owns the first narrow SMP-safe primitive core:
+`SpinLock<T>`, `SpinLockGuard`, AArch64 `lock_irqsave()` composition, and
+`smp_full_barrier()`. The lock uses acquire ordering to enter and release
+ordering to unlock. The IRQ-save wrapper keeps the accepted ordering rule
+explicit: save/mask local IRQ state first, acquire the SMP lock second, release
+the lock first, then restore the saved IRQ state.
+
+This does not make `src/scheduler.rs` SMP-safe. Scheduler runnable queues,
+current-task state, task migration, load balancing, IPIs, cross-core wakeups,
+and multi-core preemption remain deferred until a later task wires shared
+scheduler state to accepted synchronization and proves it under contention.
+
+The primitive also keeps cache maintenance out of the generic lock. Early
+boot-time secondary-core state that needs explicit clean/invalidate operations
+must keep using a named cache-sharing boundary rather than assuming the lock
+solves non-coherent publication.

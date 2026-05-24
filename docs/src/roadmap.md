@@ -203,6 +203,10 @@ Completed:
   maintenance; carries forward the accepted Pi 5 cache-maintenance lesson; and
   names `phase6-spinlock-barrier-core-20260524` as the first bounded
   implementation task before scheduler migration or shared run queues.
+- Phase 6.2 spinlock/barrier core is accepted. `src/smp_sync.rs` provides a
+  narrow `SpinLock<T>`, RAII guard, AArch64 IRQ-save lock composition, and a
+  named `dmb ish` full-barrier boundary without wiring scheduler migration,
+  shared run queues, cross-core wakeups, or cache maintenance into the lock.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -211,11 +215,11 @@ Completed:
 Blocked or pending:
 
 - The next explicit worker task is the supervisor-queued
-  `phase6-spinlock-barrier-core-20260524` implementation of the narrow
-  SMP-safe primitive core. Multi-core scheduler migration, shared run queues,
-  cross-core wakeups, userspace, descriptors, filesystem, networking, SSH,
-  shell behavior, UART interrupts, RP1/PCIe, and DMA/cache-coherent driver
-  policy remain deferred.
+  `phase6-qemu-smp-lock-contention-smoke-20260524` QEMU contention diagnostic
+  for the accepted primitive core. Multi-core scheduler migration, shared run
+  queues, cross-core wakeups, userspace, descriptors, filesystem, networking,
+  SSH, shell behavior, UART interrupts, RP1/PCIe, and DMA/cache-coherent
+  driver policy remain deferred.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
@@ -507,8 +511,8 @@ Acceptance criteria:
 Goal: use all Pi 5 CPU cores with correct synchronization and preemptive scheduling.
 
 Status: Milestone 6.1 is accepted through the secondary-core bring-up closeout
-checkpoint. Milestone 6.2 has an accepted SMP-safe primitive source inventory
-and contract. See
+checkpoint. Milestone 6.2 has an accepted SMP-safe primitive source inventory,
+contract, and first spinlock/barrier core. See
 [Phase 6 Secondary-Core Bring-Up Closeout Checkpoint](project/phase6-secondary-core-bringup-closeout-checkpoint.md)
 and
 [Phase 6 Secondary-Core Bring-Up Source Inventory](project/phase6-secondary-core-bringup-source-inventory.md),

@@ -141,6 +141,32 @@ The next bounded implementation task is
 SMP mutual-exclusion and barrier core described here, without changing
 scheduler data structures or starting Milestone 6.3.
 
+## Accepted Primitive Core
+
+`phase6-spinlock-barrier-core-20260524` adds the first implementation in
+`src/smp_sync.rs`:
+
+- `SpinLock<T>` uses an `AtomicBool` compare-exchange loop with acquire
+  ordering on successful acquisition and release ordering on unlock.
+- `SpinLockGuard` releases on drop and is the only mutable access path to the
+  protected `UnsafeCell<T>`; the guard carries a CPU-local marker so it is
+  not a cross-core transfer token.
+- `try_lock()` exposes the non-recursive policy to tests: taking the same lock
+  while a guard is live returns `None` instead of claiming supported nesting.
+- `lock_irqsave()` composes local IRQ masking with SMP mutual exclusion on
+  AArch64 by saving/masking DAIF first, acquiring the lock second, releasing
+  the lock on guard drop, then restoring the saved IRQ state.
+- `smp_full_barrier()` names the first architecture barrier boundary and maps
+  to `dmb ish` on AArch64.
+
+The primitive deliberately does not clean or invalidate caches. The accepted
+Pi 5 cache-maintenance lesson remains a separate early-boot sharing contract,
+not behavior hidden inside the generic lock.
+
+The implementation does not wire any scheduler data structure, secondary-core
+diagnostic, console path, descriptor, syscall, filesystem, networking, SSH,
+shell, RP1/PCIe, or DMA behavior to the new lock.
+
 ## Validation
 
 - static inspection: `git status --short` was clean before documentation
@@ -155,3 +181,19 @@ scheduler data structures or starting Milestone 6.3.
   build was not run.
 - Rust fmt/tests were not required because this task changed only Markdown
   documentation and durable task state.
+
+## Implementation Validation
+
+- static inspection: `git status --short` was clean before implementation
+  edits.
+- static inspection: unsafe and architecture-specific boundaries are limited to
+  `SpinLock<T>`'s `UnsafeCell<T>` access, the `Sync`/`Send` impls gated
+  by `T: Send`, `SpinLockGuard`'s CPU-local marker,
+  `IrqSpinLockGuard`'s manual drop ordering, and `smp_full_barrier()`'s
+  AArch64 `dmb ish`.
+- fmt/lint/typecheck: `cargo fmt --all -- --check` passed.
+- unit tests: `cargo -Zjson-target-spec test` passed with 102 no_std tests.
+- QEMU/substitute: `scripts/qemu-smoke.sh` passed.
+- static inspection: `git diff --check` passed.
+- static inspection: `mdbook` was unavailable in the container, so mdBook
+  build was not run.
