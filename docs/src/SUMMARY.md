@@ -24,6 +24,7 @@
 - [AArch64 Exceptions](architecture/exceptions.md)
 - [Memory Management](architecture/memory.md)
 - [Lower-EL and Userspace Mapping Readiness](architecture/lower-el-userspace.md)
+- [Interrupts and Timers](architecture/interrupts-timers.md)
 - [QEMU Skeleton](architecture/qemu-skeleton.md)
 
 # Decisions

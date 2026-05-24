@@ -1,0 +1,188 @@
+# Interrupts and Timers
+
+This note is the Phase 4 source inventory for the first interrupt and timer
+bring-up tasks. It turns the roadmap intent into a target contract; it does not
+enable interrupts, program a timer, or implement a driver.
+
+## Source Evidence
+
+The accepted facts below come from these sources:
+
+- QEMU 9.2.0 virt machine source: hw/arm/virt.c in the QEMU v9.2.0 tree.
+- QEMU-generated device tree from qemu-system-aarch64 with
+  -M virt,gic-version=2,dumpdtb=... and -cpu cortex-a76.
+- Raspberry Pi Linux rpi-6.12.y device-tree sources:
+  arch/arm64/boot/dts/broadcom/bcm2712.dtsi, bcm2712-rpi.dtsi, and
+  bcm2712-rpi-5-b.dts.
+- A lab-staged Pi 5 bcm2712-rpi-5-b.dtb copied from the accepted boot tree
+  target/tmp/rpi5-bootstrap-reserve-post-println-20260523T1248Z-tree.
+- Linux devicetree bindings for arm,gic.yaml and arm,arch_timer.yaml, plus
+  include/dt-bindings/interrupt-controller/arm-gic.h and irq.h.
+- Linux driver references drivers/irqchip/irq-gic.c,
+  include/linux/irqchip/arm-gic.h, and drivers/clocksource/arm_arch_timer.c.
+- ARM Architecture Reference Manual and GIC architecture references remain the
+  primary architectural specifications for final register semantics.
+
+The temporary source excerpts used by this inventory were staged under
+target/tmp/phase4-interrupt-timer-source-inventory/. They are build evidence,
+not repository inputs.
+
+## Interrupt Specifier Contract
+
+Both current targets use the standard GIC devicetree interrupt specifier with
+#interrupt-cells = <3>:
+
+- Cell 0 is the interrupt class: GIC_SPI = 0, GIC_PPI = 1.
+- Cell 1 is the interrupt number within that class. For PPIs, the hardware
+  INTID is 16 + cell1.
+- Cell 2 contains trigger flags in bits 3:0 and, for PPIs, a CPU mask in bits
+  15:8.
+
+Linux irq.h defines IRQ_TYPE_LEVEL_HIGH = 4 and IRQ_TYPE_LEVEL_LOW = 8. QEMU's
+generated timer PPIs use active-high level flags. The Pi 5 DTB uses active-low
+level flags with a four-CPU PPI mask.
+
+## QEMU Virt Target
+
+Talos' fast target is talos-aarch64-virt, run as QEMU virt with gic-version=2
+and -cpu cortex-a76.
+
+Accepted QEMU interrupt-controller facts:
+
+- Main controller: GICv2 compatible arm,cortex-a15-gic.
+- Distributor base: 0x0800_0000, size 0x0001_0000.
+- CPU interface base: 0x0801_0000, size 0x0001_0000.
+- Optional GICv2m MSI frame exists at 0x0802_0000, but it is out of scope for
+  timer bring-up.
+- PL011 UART0 remains at 0x0900_0000; its SPI is a later UART-interrupt task,
+  not the first timer task.
+
+Accepted QEMU architectural timer facts:
+
+- Timer node compatible: arm,armv8-timer, arm,armv7-timer.
+- The timer node has always-on.
+- Timer interrupts in DTB order:
+  - secure physical: GIC_PPI 13, INTID 29, flags 0x104.
+  - non-secure physical: GIC_PPI 14, INTID 30, flags 0x104.
+  - virtual: GIC_PPI 11, INTID 27, flags 0x104.
+  - hypervisor physical: GIC_PPI 10, INTID 26, flags 0x104.
+
+Talos currently starts at EL2. The first QEMU timer smoke should target the EL2
+hypervisor physical timer path: CNTHP_*_EL2 plus PPI 10 / INTID 26. Virtual
+timer, EL1 physical timer, and lower-EL timer routing remain deferred.
+
+## Raspberry Pi 5 Target
+
+The physical target is talos-rpi5-bcm2712. The Pi 5 DTB root declares
+compatible = "raspberrypi,5-model-b", "brcm,bcm2712" and routes interrupts
+through the gicv2 node.
+
+The soc@107c000000 bus maps child addresses to CPU physical addresses with:
+
+    ranges = <0x00000000 0x10 0x00000000 0x80000000>
+
+So a child address 0x7fff9000 becomes CPU physical 0x10_7fff9000.
+
+Accepted Pi 5 interrupt-controller facts:
+
+- Main controller: GIC-400 / GICv2 compatible arm,gic-400.
+- Distributor base: 0x10_7fff9000, size 0x1000.
+- CPU interface base: 0x10_7fffa000, size 0x2000.
+- Virtualization control/interface regions are present in the DTB at
+  0x10_7fffc000 and 0x10_7fffe000, each size 0x2000, but they are not needed
+  for the first timer smoke.
+- GIC maintenance interrupt is GIC_PPI 9, INTID 25, flags 0xf04.
+- BCM2712 secondary interrupt controllers and the BCM2835-compatible system
+  timer are present in the DTB, but they are out of scope for the first
+  scheduler clock.
+
+Accepted Pi 5 architectural timer facts:
+
+- Timer node compatible: arm,armv8-timer.
+- Timer interrupts in DTB order:
+  - secure physical: GIC_PPI 13, INTID 29, flags 0xf08.
+  - non-secure physical: GIC_PPI 14, INTID 30, flags 0xf08.
+  - virtual: GIC_PPI 11, INTID 27, flags 0xf08.
+  - hypervisor physical: GIC_PPI 10, INTID 26, flags 0xf08.
+  - hypervisor virtual: GIC_PPI 12, INTID 28, flags 0xf08.
+
+Talos' accepted Pi 5 boot evidence enters non-secure EL2. The first Pi 5 timer
+hardware smoke should use the same EL2 hypervisor physical timer target as QEMU:
+CNTHP_*_EL2 plus PPI 10 / INTID 26. The extra Pi 5 hypervisor virtual PPI is
+recorded evidence, not an implementation target for the first smoke.
+
+## Minimal GICv2 Register Checklist
+
+The next implementation task should keep GICv2 target-specific but share the
+small architectural register surface where possible.
+
+Minimum distributor/CPU-interface register references from the Linux GICv2
+headers:
+
+- Distributor:
+  - GICD_CTLR offset 0x000.
+  - GICD_ISENABLERn base offset 0x100.
+  - GICD_ICENABLERn base offset 0x180.
+  - GICD_IPRIORITYRn base offset 0x400.
+  - GICD_ITARGETSRn base offset 0x800 for SPIs; PPIs are per-CPU/banked and
+    should not need target routing for the first timer smoke.
+  - GICD_ICFGRn base offset 0xc00; PPI configurability is implementation
+    defined, so DTB trigger flags are evidence but the task must tolerate fixed
+    PPI trigger behavior.
+- CPU interface:
+  - GICC_CTLR offset 0x00.
+  - GICC_PMR offset 0x04.
+  - GICC_IAR offset 0x0c.
+  - GICC_EOIR offset 0x10.
+
+For the first diagnostic, set a permissive priority mask, enable the CPU
+interface, enable the distributor, enable INTID 26 in the PPI/SGI enable
+register bank, then acknowledge and EOI the active interrupt in the IRQ handler.
+Do not add MSI, SPI target routing, cascaded interrupt controllers, UART
+interrupts, or RP1 interrupt routing in the first timer task.
+
+## Minimal Generic-Timer Checklist
+
+Linux's ARM architected timer driver uses the same basic shape Talos needs for
+the first diagnostic:
+
+- Program the selected timer compare value or delta.
+- Set ENABLE.
+- Clear the interrupt mask bit.
+- In the handler, observe the interrupt status and mask or reprogram the timer
+  before returning.
+
+For EL2 hypervisor physical timer bring-up, the first tasks should use the EL2
+CNTHP_*_EL2 register family and read the counter/frequency from the
+architectural counter registers. The diagnostic must prove interrupt delivery by
+showing timer programming, interrupt unmasking, IRQ handler entry/count, and
+return to a simple workload or post-IRQ line. Polling the counter is not
+acceptance for timer delivery.
+
+## Deferred Uncertainties
+
+These items are deliberately outside this inventory and must not be hidden in
+the first implementation tasks:
+
+- Whether Pi 5 PPI polarity/configuration bits are writable or fixed by GIC-400
+  implementation behavior. The DTB records active-low level flags; the driver
+  should avoid depending on reprogramming PPI trigger mode for acceptance.
+- Whether Talos should eventually use EL2 physical, EL2 virtual, EL1 physical,
+  or virtual timers for scheduler time after lower-EL work exists.
+- UART interrupts, BCM2835 system timer SPIs, BCM2712 secondary interrupt
+  controllers, RP1/PCIe interrupts, MSI, DMA, and IOMMU/cache policy.
+- SMP routing, per-core timer setup, secondary-core enablement, and
+  interrupt-safe locking beyond the boot CPU.
+- Lower-EL/user timer access and CNTKCTL_EL* policy.
+
+## Next Implementation Tasks
+
+The source-backed order is:
+
+1. Establish the IRQ entry/exit saved-register frame contract with interrupts
+   still disabled.
+2. Add a QEMU-only GICv2 plus EL2 generic-timer smoke for PPI 10 / INTID 26.
+3. Carry the same EL2 timer shape to Pi 5 GIC-400 hardware with serialized lab
+   evidence.
+4. Only after both smokes are accepted, add monotonic tick accounting and
+   critical-section policy.

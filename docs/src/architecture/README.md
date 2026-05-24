@@ -9,6 +9,7 @@ Current topics:
 - AArch64 exception vectors and early exception reports.
 - Memory management.
 - Lower-EL and userspace mapping readiness.
+- Interrupt-controller and timer bring-up.
 - Multi-core scheduling and preemption.
 - Process and syscall model.
 - File descriptors and VFS.

@@ -13,7 +13,8 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos has moved past first-light into Pi 5 memory-management and runtime bring-up.
+Talos has moved past first-light and Phase 3 memory/runtime closeout into
+source-backed Phase 4 interrupt and timer planning.
 
 Completed:
 
@@ -39,12 +40,13 @@ Completed:
   kernel-runtime boundary. The checkpoint recommends planning Phase 4 next while
   preserving explicit deferrals for high memory, DMA/cache ownership, lower-EL
   userspace, SMP, filesystem/userland, and networking.
+- Phase 4 has a source-backed interrupt/timer inventory naming the first QEMU
+  virt and Pi 5 GICv2 plus ARM generic-timer targets.
 
 Blocked or pending:
 
-- Phase 4 is not planned yet. The next supervisor step is to create bounded
-  interrupt-controller and timer/preemption tasks from the accepted Phase 3
-  closeout checkpoint.
+- Phase 4 implementation has not enabled IRQs yet. The next bounded task is the
+  IRQ entry/exit frame contract before GIC/timer driver work.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
