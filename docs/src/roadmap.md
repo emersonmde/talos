@@ -54,6 +54,11 @@ Completed:
   evidence, and monotonic tick accounting now reprograms the EL2 physical
   timer for four periodic ticks on QEMU and Pi 5 before reporting outside the
   IRQ path.
+- Phase 4.1/4.2 has a pre-scheduler closeout checkpoint covering the accepted
+  interrupt-controller, EL2 physical timer, periodic tick, and single-core
+  interrupt-mask/restore boundary. Milestone 4.3 may start with a bounded
+  scheduler-shape task that checks task/process terminology against the early
+  POSIX note before committing scheduler structs.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -61,8 +66,9 @@ Completed:
 
 Blocked or pending:
 
-- Explicit interrupt masking and critical-section policy is the next Phase 4
-  implementation step before scheduler structures.
+- Phase 4.3 scheduler shape is the next Phase 4 planning/implementation step;
+  it must remain single-core first and must not infer SMP, userspace, blocking
+  I/O, or time slicing from the timer evidence.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.

@@ -12,6 +12,37 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-24 - Phase 4 Pre-Scheduler Closeout Accepted
+
+- Status: accepted as the checkpoint between Phase 4.1/4.2 interrupt/timer
+  bring-up and Milestone 4.3 scheduler shape work. No kernel code, boot image,
+  hardware lock, or hardware run changed in this task.
+- Context: Talos had accepted QEMU and Pi 5 EL2 physical timer IRQ delivery,
+  a timer-smoke checkpoint, periodic monotonic tick accounting on QEMU and
+  Pi 5, and an explicit single-core IRQ mask/restore primitive. Before
+  scheduler structures begin, those facts needed one documented boundary with
+  deferred work named explicitly.
+- Decision: Accept the Phase 4.1/4.2 boundary documented in
+  `docs/src/project/phase4-prescheduler-closeout.md`. Milestone 4.3 may start
+  with a bounded scheduler-shape task that checks task/process terminology and
+  ownership against `docs/src/project/early-posix-shape.md` before committing
+  scheduler structs.
+- Evidence level: static documentation checkpoint over accepted commits and
+  task records: `0fb6260`, `de40482`, `bce215d`, `966d453`, `957bbc8`,
+  `54d2075`, and `1bbfec6`. Pi 5 hardware evidence remains in
+  `tasks/evidence/2026-05-24-pi5-el2-timer-irq-smoke/` and
+  `tasks/evidence/2026-05-24-pi5-monotonic-tick-accounting/`.
+- Validation: `git status --short` was inspected before checkpoint edits and
+  was clean. `git diff --check` passed. `mdbook build` was not run because
+  `mdbook` is unavailable in the container.
+- Consequences: The worker queue may move to scheduler-shape planning. The next
+  task must stay single-core first and must not infer SMP, userspace, blocking
+  I/O, POSIX clocks, filesystems, networking, or SSH from the timer evidence.
+- Risks: This does not implement kernel threads, runnable queues, context
+  switching, preemptive time slicing, sleep queues, preemption-disable policy,
+  SMP locks, UART interrupts, lower-EL timer access, DMA, RP1/PCIe routing,
+  filesystems, userspace, networking, or SSH.
+
 ## 2026-05-24 - Accept EL2 Physical Timer IRQ Smoke on Pi 5
 
 - Status: accepted
