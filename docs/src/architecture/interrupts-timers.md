@@ -140,8 +140,10 @@ is recorded evidence, not an implementation target for the first smoke.
 
 Accepted Pi 5 implementation contract:
 
-- The focused diagnostic is gated by TALOS_RPI5_TIMER_IRQ_DIAGNOSTIC; the
-  normal Pi 5 image continues to build without running the timer smoke.
+- The focused timer IRQ diagnostic is gated by
+  TALOS_RPI5_TIMER_IRQ_DIAGNOSTIC, and the focused timer-preemption diagnostic
+  is gated by TALOS_RPI5_TIMER_PREEMPTION_DIAGNOSTIC. The normal Pi 5 image
+  continues to build without running either smoke.
 - Before unmasking PSTATE.I, Talos sets HCR_EL2.IMO, masks stale
   CNTHP_CTL_EL2 state, enables PPI 10 / INTID 26 in the GIC-400 distributor
   and CPU interface, and programs CNTHP_CVAL_EL2 plus CNTHP_CTL_EL2.ENABLE.
@@ -161,6 +163,12 @@ and rpi5-timer-irq-smoke: PASS. TFTP evidence shows the Pi fetched the
 86,429-byte kernel_2712.img served from the candidate archive.
 The monotonic tick evidence extends this shape to `tick-count=4 target=4` on the
 same INTID with continued post-tick workload progress.
+The timer-preemption hardware evidence extends it again in
+tasks/evidence/2026-05-24-pi5-timer-preemption-hardware-proof/: the Pi fetched
+the 103,152-byte candidate `kernel_2712.img`, reached
+`rpi5-timer-preemption-smoke`, reported task1=3, task2=3, ticks=6,
+requests=6, handled=6, timer-preemptions=6, dispatch-switches=6,
+voluntary-yields=0, vector=5, iar=0x0000001a, INTID 26, unexpected=0, and PASS.
 
 ## Timer-Smoke Checkpoint
 
@@ -217,10 +225,11 @@ bounded workload iteration in a short save/restore critical section while the
 periodic timer still reaches the four-tick proof target. Diagnostic output
 remains outside the IRQ handler, after interrupts are masked again.
 
-The later QEMU timer-preemption smoke keeps this timer IRQ contract. INTID 26
-adds only a bounded preemption-request counter to the hot path; the scheduler
-dispatch, context switch, and diagnostic output happen after the handler has
-reprogrammed the timer, written GICC_EOIR, and returned from IRQ context.
+The QEMU and Pi 5 timer-preemption smokes keep this timer IRQ contract. INTID
+26 adds only a bounded preemption-request counter to the hot path; the
+scheduler dispatch, context switch, and diagnostic output happen after the
+handler has reprogrammed the timer, written GICC_EOIR, and returned from IRQ
+context.
 
 ## Minimal GICv2 Register Checklist
 

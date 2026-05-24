@@ -67,7 +67,13 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
 
     report_dtb_memory_banks(dtb.memory_banks);
 
-    #[cfg(talos_rpi5_timer_irq_diagnostic)]
+    #[cfg(talos_rpi5_timer_preemption_diagnostic)]
+    target::rpi5::run_el2_timer_preemption_smoke();
+
+    #[cfg(all(
+        talos_rpi5_timer_irq_diagnostic,
+        not(talos_rpi5_timer_preemption_diagnostic)
+    ))]
     target::rpi5::run_el2_timer_irq_smoke();
 
     unsafe { diagnostics::rpi5::run_exception_fault_panic_diagnostics() }

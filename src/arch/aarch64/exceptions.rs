@@ -185,7 +185,14 @@ pub extern "C" fn rust_irq_handler(
         return;
     }
 
-    #[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_timer_irq_diagnostic, not(test)))]
+    #[cfg(all(
+        talos_target_rpi5_bcm2712,
+        any(
+            talos_rpi5_timer_irq_diagnostic,
+            talos_rpi5_timer_preemption_diagnostic
+        ),
+        not(test)
+    ))]
     if crate::target::rpi5::handle_irq(vector) {
         return;
     }

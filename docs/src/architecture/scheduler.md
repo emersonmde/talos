@@ -275,5 +275,13 @@ scheduler mutation and diagnostic reporting outside the IRQ hot path.
 This remains a single-core EL2 kernel-thread proof. It does not define a real
 quantum policy, preemption-disable counters, async exception-frame switching,
 sleep queues, wait queues, SMP run-queue locking, lower-EL state, process
-resources, descriptors, filesystem, console/TTY, networking, or SSH. Pi 5
-timer-preemption hardware evidence remains a separate serialized task.
+resources, descriptors, filesystem, console/TTY, networking, or SSH.
+
+The Pi 5 hardware diagnostic uses the same accepted boundary behind
+`TALOS_RPI5_TIMER_PREEMPTION_DIAGNOSTIC`. The physical run reached two
+kernel threads, six timer ticks, six preemption requests, six handled
+preemptions, six dispatch switches, zero voluntary yields, INTID 26, and
+`rpi5-timer-preemption-smoke: PASS`. Its IRQ handler still only
+acknowledges/classifies INTID 26, records tick and preemption-request counters,
+reprograms `CNTHP_CVAL_EL2`, writes `GICC_EOIR`, and returns; scheduler
+mutation and diagnostic output stay after IRQ return.

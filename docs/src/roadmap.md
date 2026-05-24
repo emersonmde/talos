@@ -88,6 +88,12 @@ Completed:
   performs scheduler dispatch and context switching outside IRQ context. Two
   QEMU kernel threads make progress from timer-driven preemption with zero
   voluntary-yield dispatches.
+- Phase 4.3 Pi 5 timer-preemption hardware proof is accepted. The physical Pi
+  5 fetched the 103,152-byte candidate kernel over TFTP, reached the EL2
+  timer-preemption smoke, and reported task1=3, task2=3, ticks=6, requests=6,
+  handled=6, timer-preemptions=6, dispatch-switches=6, voluntary-yields=0,
+  INTID 26, unexpected=0, and PASS before the pre-run boot snapshot was
+  restored.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -95,9 +101,8 @@ Completed:
 
 Blocked or pending:
 
-- The next Phase 4.3 implementation slice needs supervisor planning. A Pi 5
-  timer-preemption proof remains a separate serialized follow-up unless the
-  supervisor chooses a different bounded scheduler closeout step first.
+- The next queued Phase 4.3 slice is scheduler/preemption contract
+  consolidation before the Phase 4 closeout checkpoint.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
