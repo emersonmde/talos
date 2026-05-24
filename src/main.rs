@@ -44,6 +44,8 @@ mod allocator;
 mod arch;
 mod boot;
 mod device_tree;
+#[cfg_attr(not(test), allow(dead_code))]
+mod diagnostic_command;
 mod diagnostics;
 mod early_format;
 mod memory_map;

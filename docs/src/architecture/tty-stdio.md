@@ -72,6 +72,28 @@ stdin, stdout, and stderr should become process-local file descriptors through t
 
 Until descriptor tables exist, kernel diagnostics may call TTY functions directly. They must not present those direct calls as POSIX read or write.
 
+## Diagnostic Command Client
+
+The first kernel diagnostic command channel is a TTY client, not part of the TTY
+line discipline itself. `src/diagnostic_command.rs` consumes completed TTY
+lines as byte slices and parses bounded whitespace-separated tokens. It does not
+poll UART MMIO, implement descriptor reads, own stdin/stdout/stderr, or define
+shell syntax.
+
+The accepted contract has three built-in commands: `help`, `list`, and
+`status`. Command tokens are limited to 16 bytes, at most two argument tokens
+are accepted by the parser, and the current built-in commands reject arguments.
+Responses are newline-framed kernel diagnostic text written through a
+`DiagnosticResponseSink`; `runtime_console::RuntimeConsole` implements that
+sink so later smokes can attach the channel to runtime-console0 output without
+making the parser target-specific.
+
+Malformed input reports deterministic diagnostic errors such as
+`empty-command`, `invalid-utf8`, `unsupported-token-byte`,
+`token-too-long`, and `too-many-arguments`. Unknown commands report
+`unknown-command`. These labels are internal kernel diagnostic strings, not
+POSIX errno, shell exit status, syscall ABI, or filesystem command results.
+
 ## POSIX Gaps
 
 The first TTY is intentionally not POSIX-complete. Deferred work includes:

@@ -144,6 +144,13 @@ Completed:
   command channel must consume completed TTY lines, write bounded responses
   through runtime-console0, classify existing diagnostics before exposing them,
   and remain separate from descriptor/syscall/POSIX shell semantics.
+- Phase 5.3 diagnostic command-channel contract is accepted. The
+  target-independent parser/dispatcher consumes complete TTY lines, bounds
+  command and argument tokens, exposes deterministic help/list/status responses,
+  reports unknown and malformed commands, and keeps the response sink attached
+  to runtime-console0 without adding a shell, descriptor table, syscall ABI,
+  filesystem command execution, networking, SSH, SMP, UART interrupts, or
+  scheduler blocking I/O.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -152,11 +159,12 @@ Completed:
 Blocked or pending:
 
 - The next Phase 5 slice is the supervisor-queued
-  phase5-diagnostic-command-channel-contract-20260524 task. It should define
-  the durable command-channel contract and minimal parser/dispatcher shape
-  without adding descriptor tables, syscalls, userspace shell behavior,
-  filesystem-backed commands, networking, SSH, SMP, UART interrupts, or
-  scheduler blocking I/O.
+  phase5-qemu-diagnostic-command-channel-smoke-20260524 task. It should prove
+  the accepted command-channel contract over the QEMU polling TTY path with a
+  deterministic transcript for help/list, unknown command handling, and one
+  accepted status response. It must not add Pi 5 hardware proof, descriptor
+  tables, syscalls, userspace shell behavior, filesystem-backed commands,
+  networking, SSH, SMP, UART interrupts, or scheduler blocking I/O.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.

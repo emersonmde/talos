@@ -42,6 +42,7 @@
 - [Scheduler Shape](architecture/scheduler.md)
 - [Console Device Model](architecture/console.md)
 - [TTY and Stdio Shape](architecture/tty-stdio.md)
+- [Diagnostic Command Channel](architecture/diagnostic-command-channel.md)
 - [QEMU Skeleton](architecture/qemu-skeleton.md)
 
 # Decisions
