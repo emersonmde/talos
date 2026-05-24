@@ -46,6 +46,10 @@ Completed:
   enabled, CNTHP_*_EL2 raises PPI 10 / INTID 26 through GICv2, the current-EL
   IRQ frame path acknowledges and EOIs it, and execution returns to a bounded
   post-IRQ workload.
+- The senior-review maintainability remediation checkpoint is accepted: stale
+  Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
+  Pi 5 boot pipeline is split into named phases, and cross-module tests now
+  live in owning modules.
 
 Blocked or pending:
 

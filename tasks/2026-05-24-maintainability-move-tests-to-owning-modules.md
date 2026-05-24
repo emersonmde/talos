@@ -1,6 +1,6 @@
 # 2026-05-24 - Move Tests To Owning Modules
 
-Status: accepted locally; pending commit
+Status: accepted and committed as aee54d2
 
 Task: `talos-maintainability-move-tests-to-owning-modules-20260524`
 

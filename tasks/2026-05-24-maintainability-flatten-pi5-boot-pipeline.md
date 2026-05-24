@@ -1,6 +1,6 @@
 # 2026-05-24 - Flatten Pi 5 Boot Pipeline
 
-Status: accepted locally; pending commit
+Status: accepted and committed as 6169369
 
 Task: `talos-maintainability-flatten-pi5-boot-pipeline-20260524`
 

@@ -1,6 +1,6 @@
 # 2026-05-24 - Delete Stale Pi 5 Probe Surfaces
 
-Status: accepted locally; pending commit
+Status: accepted and committed as 964be83
 
 Task: `talos-maintainability-delete-stale-pi5-probes-20260524`
 

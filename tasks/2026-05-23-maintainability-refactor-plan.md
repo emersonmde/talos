@@ -484,3 +484,38 @@ Validation for this deletion pass:
 - No Pi 5 hardware run was required because normal boot output, MMU/cache
   programming, allocator policy, FDT interpretation, and hardware-facing normal
   boot behavior were not intentionally changed.
+
+### talos-maintainability-remediation-checkpoint-20260524
+
+The senior-review remediation sequence is accepted. The follow-up tasks mapped
+each finding to a bounded commit:
+
+| Finding | Commit | Outcome |
+| --- | --- | --- |
+| Validation hygiene drift and broad Phase 4 warning allowances | 45e9e1a | Removed broad generic_timer/gicv2 dead-code allowances and restored the standard local validation baseline. |
+| Dormant stale Pi 5 proof/probe assembly and stale archive modes | 964be83 | Deleted historical boot.S probe blocks, standalone rpi5_*.S proofs, and stale archive-review modes while preserving current diagnostics. |
+| Deeply nested Pi 5 boot orchestration | 6169369 | Flattened src/boot/rpi5.rs into named boot phases with explicit unavailable reporting. |
+| Cross-module fixtures/tests in src/main.rs | aee54d2 | Moved FDT and target tests into the owning device_tree and target modules. |
+
+Final inspection found src/main.rs at 265 lines, src/boot/rpi5.rs at 532
+lines, and src/arch/aarch64/boot.S at 51 lines. No stale standalone
+src/arch/aarch64/rpi5_*.S files remain. Stale proof names remain only in
+historical docs/task records, not active source or scripts.
+
+No additional maintainability cleanup task is required before returning to
+Phase 4. The queued Pi 5 GIC-400 EL2 timer smoke remains responsible for the
+next hardware lock and hardware evidence.
+
+Final checkpoint validation:
+
+- cargo fmt --all -- --check passed.
+- cargo -Zjson-target-spec test passed: 51 no-std tests.
+- scripts/qemu-smoke.sh passed.
+- scripts/rpi5-image.sh produced
+  target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712.img.
+- scripts/rpi5-format-guard-check.sh passed.
+- Representative retained diagnostic images passed: panic report, normal
+  exception report, translation fault, alloc OOM, page-frame reuse, and heap
+  expansion policy.
+- git diff --check passed.
+- mdbook build was not run because mdbook is unavailable in the container.
