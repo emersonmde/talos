@@ -23,6 +23,7 @@ qemu-system-aarch64 \
 
 grep -q "boot-info: .* el=2 " "$LOG_FILE"
 grep -q "qemu-timer-irq-smoke: gicd=0x08000000 gicc=0x08010000 intid=26" "$LOG_FILE"
+grep -q "qemu-timer-irq-smoke: irq-mask nested-start=true inner-restored=true outer-restored=true unmasked-start=true saved-mask=true restored-unmasked=true" "$LOG_FILE"
 grep -Eq "qemu-timer-irq-smoke: tick-count=[4-9][0-9]* target=4 .* intid=26 unexpected=0" "$LOG_FILE"
 grep -q "qemu-timer-irq-smoke: PASS" "$LOG_FILE"
 

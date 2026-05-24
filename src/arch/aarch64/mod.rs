@@ -244,6 +244,41 @@ pub fn halt() -> ! {
     }
 }
 
+const DAIF_IRQ_MASK: u64 = 1 << 7;
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum SingleCoreIrqRestoreAction {
+    LeaveMasked,
+    Unmask,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct SingleCoreIrqMaskState {
+    daif: u64,
+}
+
+impl SingleCoreIrqMaskState {
+    const fn from_daif_snapshot(daif: u64) -> Self {
+        Self { daif }
+    }
+
+    pub const fn was_irq_masked(self) -> bool {
+        (self.daif & DAIF_IRQ_MASK) != 0
+    }
+
+    const fn restore_action(self) -> SingleCoreIrqRestoreAction {
+        if self.was_irq_masked() {
+            SingleCoreIrqRestoreAction::LeaveMasked
+        } else {
+            SingleCoreIrqRestoreAction::Unmask
+        }
+    }
+}
+
+pub fn irq_masked() -> bool {
+    (daif() & DAIF_IRQ_MASK) != 0
+}
+
 #[allow(dead_code)]
 pub unsafe fn enable_irq() {
     unsafe {
@@ -266,6 +301,25 @@ pub unsafe fn disable_irq() {
     }
 }
 
+pub unsafe fn single_core_irq_mask_save() -> SingleCoreIrqMaskState {
+    let previous = SingleCoreIrqMaskState::from_daif_snapshot(daif());
+    unsafe {
+        disable_irq();
+    }
+    previous
+}
+
+pub unsafe fn single_core_irq_restore(previous: SingleCoreIrqMaskState) {
+    match previous.restore_action() {
+        SingleCoreIrqRestoreAction::LeaveMasked => unsafe {
+            disable_irq();
+        },
+        SingleCoreIrqRestoreAction::Unmask => unsafe {
+            enable_irq();
+        },
+    }
+}
+
 #[allow(dead_code)]
 pub fn daif() -> u64 {
     let value: u64;
@@ -273,6 +327,45 @@ pub fn daif() -> u64 {
         asm!("mrs {value}, DAIF", value = out(reg) value, options(nomem, nostack, preserves_flags));
     }
     value
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{SingleCoreIrqMaskState, SingleCoreIrqRestoreAction};
+
+    #[test_case]
+    fn irq_mask_state_records_masked_snapshot() {
+        let state = SingleCoreIrqMaskState::from_daif_snapshot(1 << 7);
+
+        assert!(state.was_irq_masked());
+        assert_eq!(
+            state.restore_action(),
+            SingleCoreIrqRestoreAction::LeaveMasked
+        );
+    }
+
+    #[test_case]
+    fn irq_mask_state_records_unmasked_snapshot() {
+        let state = SingleCoreIrqMaskState::from_daif_snapshot(0);
+
+        assert!(!state.was_irq_masked());
+        assert_eq!(state.restore_action(), SingleCoreIrqRestoreAction::Unmask);
+    }
+
+    #[test_case]
+    fn nested_irq_mask_restore_preserves_outer_masked_state() {
+        let outer = SingleCoreIrqMaskState::from_daif_snapshot(1 << 7);
+        let inner = SingleCoreIrqMaskState::from_daif_snapshot(1 << 7);
+
+        assert_eq!(
+            inner.restore_action(),
+            SingleCoreIrqRestoreAction::LeaveMasked
+        );
+        assert_eq!(
+            outer.restore_action(),
+            SingleCoreIrqRestoreAction::LeaveMasked
+        );
+    }
 }
 
 #[allow(dead_code)]

@@ -196,6 +196,27 @@ queues, preemption disable counters, wall-clock time, SMP per-core state,
 lower-EL timer routing, or POSIX clocks. The next Phase 4 slice is the explicit
 interrupt masking and critical-section contract.
 
+## Single-Core Critical Sections
+
+Talos now has a deliberately small interrupt masking contract for single-core
+kernel code. `single_core_irq_mask_save()` snapshots `DAIF`, masks `PSTATE.I`,
+and returns a `SingleCoreIrqMaskState`; `single_core_irq_restore()` restores the
+previous IRQ-mask state from that snapshot. A nested critical section therefore
+keeps IRQs masked when the outer scope entered masked, while a scope entered
+with IRQs unmasked restores unmasked delivery on exit.
+
+This policy is only a boot-CPU critical-section primitive. It does not provide
+SMP mutual exclusion, a spinlock, a blocking lock, a sleepable lock, a preemption
+disable counter, or lower-EL interrupt policy. Scheduler work may use it to
+protect very short single-core invariants, but SMP will need per-core state and
+real locking before secondary cores can share scheduler data.
+
+The QEMU EL2 timer diagnostic proves the contract before the timer workload by
+checking nested masked restore and unmasked save/restore. It also wraps each
+bounded workload iteration in a short save/restore critical section while the
+periodic timer still reaches the four-tick proof target. Diagnostic output
+remains outside the IRQ handler, after interrupts are masked again.
+
 ## Minimal GICv2 Register Checklist
 
 The next implementation task should keep GICv2 target-specific but share the

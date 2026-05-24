@@ -4,7 +4,7 @@ use core::sync::atomic::{AtomicU64, Ordering};
 
 use crate::{
     arch::aarch64::{
-        generic_timer,
+        self, generic_timer,
         gicv2::{GicV2, SPURIOUS_INTID},
     },
     boot::BootInfo,
@@ -30,6 +30,27 @@ static LAST_IRQ_VECTOR: AtomicU64 = AtomicU64::new(0);
 static LAST_IAR: AtomicU64 = AtomicU64::new(0);
 static LAST_INTID: AtomicU64 = AtomicU64::new(0);
 static UNEXPECTED_GIC_IRQ_COUNT: AtomicU64 = AtomicU64::new(0);
+
+#[derive(Clone, Copy)]
+struct SingleCoreIrqMaskProbe {
+    nested_start_masked: bool,
+    inner_restored_masked: bool,
+    outer_restored_masked: bool,
+    unmasked_start: bool,
+    saved_unmasked_masked: bool,
+    restored_unmasked: bool,
+}
+
+impl SingleCoreIrqMaskProbe {
+    const fn passed(self) -> bool {
+        self.nested_start_masked
+            && self.inner_restored_masked
+            && self.outer_restored_masked
+            && self.unmasked_start
+            && self.saved_unmasked_masked
+            && self.restored_unmasked
+    }
+}
 
 pub fn init() {
     console().init_early();
@@ -94,11 +115,54 @@ pub fn handle_irq(vector: u64) -> bool {
     true
 }
 
+fn run_single_core_irq_mask_probe() -> SingleCoreIrqMaskProbe {
+    unsafe {
+        aarch64::disable_irq();
+    }
+    let nested_start_masked = aarch64::irq_masked();
+    let outer = unsafe { aarch64::single_core_irq_mask_save() };
+    let inner = unsafe { aarch64::single_core_irq_mask_save() };
+    unsafe {
+        aarch64::single_core_irq_restore(inner);
+    }
+    let inner_restored_masked = aarch64::irq_masked();
+    unsafe {
+        aarch64::single_core_irq_restore(outer);
+    }
+    let outer_restored_masked = aarch64::irq_masked();
+
+    unsafe {
+        aarch64::enable_irq();
+    }
+    let unmasked_start = !aarch64::irq_masked();
+    let unmasked = unsafe { aarch64::single_core_irq_mask_save() };
+    let saved_unmasked_masked = !unmasked.was_irq_masked() && aarch64::irq_masked();
+    unsafe {
+        aarch64::single_core_irq_restore(unmasked);
+    }
+    let restored_unmasked = !aarch64::irq_masked();
+    unsafe {
+        aarch64::disable_irq();
+    }
+
+    SingleCoreIrqMaskProbe {
+        nested_start_masked,
+        inner_restored_masked,
+        outer_restored_masked,
+        unmasked_start,
+        saved_unmasked_masked,
+        restored_unmasked,
+    }
+}
+
 pub fn run_el2_timer_irq_smoke() -> bool {
     unsafe {
-        crate::arch::aarch64::disable_irq();
-        crate::arch::aarch64::route_physical_irqs_to_el2();
+        aarch64::disable_irq();
+        aarch64::route_physical_irqs_to_el2();
         generic_timer::mask_el2_physical_timer();
+    }
+    let irq_mask_probe = run_single_core_irq_mask_probe();
+    unsafe {
         GicV2::new(GICD_BASE, GICC_BASE).enable_ppi_or_spi(EL2_PHYSICAL_TIMER_INTID);
     }
     LAST_IRQ_VECTOR.store(0, Ordering::Relaxed);
@@ -128,16 +192,31 @@ pub fn run_el2_timer_irq_smoke() -> bool {
         delta,
         target_ticks
     );
+    crate::println!(
+        "qemu-timer-irq-smoke: irq-mask nested-start={} inner-restored={} outer-restored={} unmasked-start={} saved-mask={} restored-unmasked={}",
+        irq_mask_probe.nested_start_masked,
+        irq_mask_probe.inner_restored_masked,
+        irq_mask_probe.outer_restored_masked,
+        irq_mask_probe.unmasked_start,
+        irq_mask_probe.saved_unmasked_masked,
+        irq_mask_probe.restored_unmasked
+    );
 
     let mut workload = 0x1234_5678_9abc_def0u64;
     unsafe {
         generic_timer::program_el2_physical_compare(compare);
-        crate::arch::aarch64::enable_irq();
+        aarch64::enable_irq();
     }
 
     let mut remaining = TIMER_IRQ_WAIT_LIMIT;
+    let mut critical_sections = 0usize;
     while timer_irq_snapshot().timer_count < target_ticks && remaining > 0 {
+        let saved_irq_state = unsafe { aarch64::single_core_irq_mask_save() };
         workload = workload.rotate_left(7) ^ 0x0f0e_0d0c_0b0a_0908;
+        unsafe {
+            aarch64::single_core_irq_restore(saved_irq_state);
+        }
+        critical_sections += 1;
         unsafe {
             core::arch::asm!("wfe", options(nomem, nostack, preserves_flags));
         }
@@ -145,7 +224,7 @@ pub fn run_el2_timer_irq_smoke() -> bool {
     }
 
     unsafe {
-        crate::arch::aarch64::disable_irq();
+        aarch64::disable_irq();
     }
 
     let snapshot = timer_irq_snapshot();
@@ -158,7 +237,7 @@ pub fn run_el2_timer_irq_smoke() -> bool {
             gic.highest_pending(),
         )
     };
-    let daif = crate::arch::aarch64::daif();
+    let daif = aarch64::daif();
     let control = generic_timer::el2_physical_control();
     crate::println!(
         "qemu-timer-irq-smoke: tick-count={} target={} vector={} iar={:#010x} intid={} unexpected={} ctl={:#x}",
@@ -179,15 +258,18 @@ pub fn run_el2_timer_irq_smoke() -> bool {
         daif
     );
     crate::println!(
-        "qemu-timer-irq-smoke: post-irq workload={:#018x} remaining={}",
+        "qemu-timer-irq-smoke: post-irq workload={:#018x} remaining={} critical-sections={}",
         workload,
-        remaining
+        remaining,
+        critical_sections
     );
 
     let passed = snapshot.timer_count > 0
         && snapshot.timer_count >= target_ticks
         && snapshot.last_intid == EL2_PHYSICAL_TIMER_INTID as u64
-        && snapshot.unexpected_gic_count == 0;
+        && snapshot.unexpected_gic_count == 0
+        && irq_mask_probe.passed()
+        && critical_sections > 0;
 
     if passed {
         crate::println!("qemu-timer-irq-smoke: PASS");
