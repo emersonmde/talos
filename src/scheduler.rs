@@ -2,8 +2,9 @@
 //!
 //! This module owns only the first boot-CPU scheduler shape: scheduler-local
 //! task identifiers, kernel-thread state, kernel stack descriptors, saved
-//! context placeholders, and a fixed runnable queue. It does not switch
-//! contexts, sleep tasks, implement preemption, or create process resources.
+//! context placeholders, a fixed runnable queue, and a voluntary-yield dispatch
+//! primitive. It does not switch contexts itself, sleep tasks, implement
+//! preemption, or create process resources.
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct TaskId(u64);
@@ -205,6 +206,13 @@ pub enum RunnableQueueError {
     Full,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum VoluntaryYieldError {
+    CurrentTaskNotRunning,
+    NoRunnableTask,
+    RunnableQueueFull,
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct RunnableQueue<const CAPACITY: usize> {
     entries: [Option<TaskId>; CAPACITY],
@@ -262,6 +270,14 @@ impl<const CAPACITY: usize> RunnableQueue<CAPACITY> {
         task_id
     }
 
+    pub fn front(&self) -> Option<TaskId> {
+        if self.is_empty() {
+            None
+        } else {
+            self.entries[self.head]
+        }
+    }
+
     pub fn contains(&self, task_id: TaskId) -> bool {
         let mut offset = 0;
         while offset < self.len {
@@ -291,11 +307,21 @@ impl<const CAPACITY: usize> Default for RunnableQueue<CAPACITY> {
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct SchedulerCounters {
     state_transitions: u64,
+    voluntary_yields: u64,
+    context_switches: u64,
 }
 
 impl SchedulerCounters {
     pub const fn state_transitions(self) -> u64 {
         self.state_transitions
+    }
+
+    pub const fn voluntary_yields(self) -> u64 {
+        self.voluntary_yields
+    }
+
+    pub const fn context_switches(self) -> u64 {
+        self.context_switches
     }
 }
 
@@ -311,6 +337,8 @@ impl<const RUNNABLE_CAPACITY: usize> SingleCoreScheduler<RUNNABLE_CAPACITY> {
             runnable: RunnableQueue::new(),
             counters: SchedulerCounters {
                 state_transitions: 0,
+                voluntary_yields: 0,
+                context_switches: 0,
             },
         }
     }
@@ -332,6 +360,32 @@ impl<const RUNNABLE_CAPACITY: usize> SingleCoreScheduler<RUNNABLE_CAPACITY> {
     pub fn pick_next(&mut self) -> Option<TaskId> {
         self.runnable.dequeue()
     }
+
+    pub fn voluntary_yield(&mut self, current: &mut Task) -> Result<TaskId, VoluntaryYieldError> {
+        if current.state() != TaskState::Running {
+            return Err(VoluntaryYieldError::CurrentTaskNotRunning);
+        }
+        if self.runnable.is_empty() {
+            return Err(VoluntaryYieldError::NoRunnableTask);
+        }
+        if self.runnable.is_full() {
+            return Err(VoluntaryYieldError::RunnableQueueFull);
+        }
+
+        current.set_state(TaskState::Runnable);
+        self.counters.state_transitions += 1;
+        self.runnable
+            .enqueue(current.id())
+            .map_err(|_| VoluntaryYieldError::RunnableQueueFull)?;
+
+        let next = self
+            .runnable
+            .dequeue()
+            .expect("non-empty runnable queue after preflight");
+        self.counters.voluntary_yields += 1;
+        self.counters.context_switches += 1;
+        Ok(next)
+    }
 }
 
 impl<const RUNNABLE_CAPACITY: usize> Default for SingleCoreScheduler<RUNNABLE_CAPACITY> {
@@ -346,7 +400,7 @@ mod tests {
 
     use super::{
         ContextFrame, KernelStack, ProcessOwnerId, RunnableQueue, RunnableQueueError,
-        SingleCoreScheduler, Task, TaskId, TaskState,
+        SingleCoreScheduler, Task, TaskId, TaskState, VoluntaryYieldError,
     };
 
     fn task_id(raw: u64) -> TaskId {
@@ -416,9 +470,12 @@ mod tests {
         queue.enqueue(task_id(2)).expect("enqueue task 2");
 
         assert_eq!(queue.len(), 2);
+        assert_eq!(queue.front(), Some(task_id(1)));
         assert!(queue.contains(task_id(1)));
         assert_eq!(queue.dequeue(), Some(task_id(1)));
+        assert_eq!(queue.front(), Some(task_id(2)));
         assert_eq!(queue.dequeue(), Some(task_id(2)));
+        assert_eq!(queue.front(), None);
         assert_eq!(queue.dequeue(), None);
         assert!(queue.is_empty());
 
@@ -457,6 +514,46 @@ mod tests {
         assert_eq!(scheduler.counters().state_transitions(), 1);
         assert!(scheduler.runnable().contains(task_id(1)));
         assert_eq!(scheduler.pick_next(), Some(task_id(1)));
+    }
+
+    #[test_case]
+    fn voluntary_yield_requeues_current_and_counts_dispatch_switch() {
+        let mut scheduler = SingleCoreScheduler::<2>::new();
+        let mut current = Task::kernel_thread(task_id(1), kernel_stack(), context());
+        let mut next = Task::kernel_thread(task_id(2), kernel_stack(), context());
+        current.set_state(TaskState::Running);
+
+        scheduler
+            .make_runnable(&mut next)
+            .expect("make next runnable");
+
+        let next_id = scheduler
+            .voluntary_yield(&mut current)
+            .expect("yield to runnable task");
+
+        assert_eq!(next_id, task_id(2));
+        assert_eq!(current.state(), TaskState::Runnable);
+        assert_eq!(scheduler.runnable().front(), Some(task_id(1)));
+        assert_eq!(scheduler.counters().voluntary_yields(), 1);
+        assert_eq!(scheduler.counters().context_switches(), 1);
+        assert_eq!(scheduler.counters().state_transitions(), 2);
+    }
+
+    #[test_case]
+    fn voluntary_yield_rejects_non_running_or_empty_dispatch() {
+        let mut scheduler = SingleCoreScheduler::<1>::new();
+        let mut current = Task::kernel_thread(task_id(1), kernel_stack(), context());
+
+        assert_eq!(
+            scheduler.voluntary_yield(&mut current),
+            Err(VoluntaryYieldError::CurrentTaskNotRunning)
+        );
+
+        current.set_state(TaskState::Running);
+        assert_eq!(
+            scheduler.voluntary_yield(&mut current),
+            Err(VoluntaryYieldError::NoRunnableTask)
+        );
     }
 
     #[test_case]

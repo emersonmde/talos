@@ -100,8 +100,7 @@ shape intentionally narrow:
 - `TaskState` currently records `Running`, `Runnable`, and `Blocked` states.
   No blocking, wakeup, sleep queue, or exit policy exists yet.
 - `KernelStack` records per-task stack bounds, and `ContextFrame` records the
-  stack pointer and program counter placeholder that a later assembly context
-  switch can save or restore.
+  saved cooperative switch frame for `x19..x29`, `x30`, and `SP_EL2`.
 - `Task::kernel_thread` creates a kernel-thread task with no process owner.
   `ProcessOwnerId` is an optional future extension point only; it does not add
   address spaces, descriptors, credentials, wait state, or other process
@@ -109,14 +108,13 @@ shape intentionally narrow:
 - `RunnableQueue` is a fixed-capacity FIFO over task IDs for the single boot
   CPU. It is a pure data structure and does not hide interrupt masking or
   preemption policy.
-- `SingleCoreScheduler` wraps the runnable queue with a small state-transition
-  counter for diagnostics.
+- `SingleCoreScheduler` wraps the runnable queue with state-transition,
+  voluntary-yield, and dispatch-switch counters for diagnostics.
 
-Because this slice has no global scheduler instance or interrupt-time mutation
-path, it does not call `single_core_irq_mask_save()` internally. Future code
-that mutates scheduler-owned global state from an interruptible path must place
-the accepted short single-core IRQ mask/restore boundary explicitly around that
-call-site invariant.
+The pure scheduler data structures do not call `single_core_irq_mask_save()`
+internally. Code that mutates scheduler-owned global state from an
+interruptible path must place the accepted short single-core IRQ mask/restore
+boundary explicitly around that call-site invariant.
 
 ## Cooperative Context-Switch Contract
 
@@ -199,3 +197,35 @@ returning to the main kernel context.
 This is still direct cooperative switching, not scheduler dispatch. Voluntary
 yield, round-robin queue selection, timer preemption, sleeping, SMP, EL0, and
 process resources remain deferred to later tasks.
+
+## Voluntary Yield Dispatch
+
+The first scheduler-owned dispatch boundary is
+`SingleCoreScheduler::voluntary_yield()`. It is still cooperative: a running
+kernel thread explicitly yields from normal kernel control flow, the scheduler
+places that task at the back of the single-core runnable queue, dequeues the
+next runnable task ID, and increments voluntary-yield and dispatch-switch
+counters. The method returns only the next scheduler-local `TaskId`; the
+architecture-specific caller still owns the actual `ContextFrame` pointers and
+crosses `talos_aarch64_context_switch`.
+
+The dispatch boundary is intentionally narrow:
+
+- the current task must be `Running`;
+- at least one peer must already be runnable;
+- the runnable queue must have capacity to requeue the yielding task;
+- the yielded task becomes `Runnable`, and the caller marks the selected task
+  `Running` before switching;
+- process-owner metadata remains only an optional future hook and does not add
+  address spaces, descriptors, wait state, or process lifetime rules.
+
+The QEMU diagnostic call site wraps only the scheduler-owned mutation in
+`single_core_irq_mask_save()` / `single_core_irq_restore()`: current/yielded
+task state, queue contents, selected next task, and counters. That masked window
+does not allocate, format, print, block, or run callbacks. Diagnostic output is
+emitted after switching returns to the main context.
+
+This is not timer-driven preemption. The timer IRQ path still does not call into
+the scheduler, no task is switched from asynchronous exception context, and no
+sleeping, blocking, wakeup, SMP, EL0, descriptor, filesystem, console/TTY,
+networking, or SSH behavior is introduced.

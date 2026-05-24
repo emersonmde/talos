@@ -1,11 +1,13 @@
 #![cfg_attr(any(test, talos_target_rpi5_bcm2712), allow(dead_code))]
 
-#[cfg(talos_qemu_context_switch_smoke)]
+#[cfg(any(talos_qemu_context_switch_smoke, talos_qemu_scheduler_yield_smoke))]
 use core::cell::UnsafeCell;
 use core::sync::atomic::{AtomicU64, Ordering};
 
-#[cfg(talos_qemu_context_switch_smoke)]
+#[cfg(any(talos_qemu_context_switch_smoke, talos_qemu_scheduler_yield_smoke))]
 use crate::scheduler::ContextFrame;
+#[cfg(talos_qemu_scheduler_yield_smoke)]
+use crate::scheduler::{KernelStack, SingleCoreScheduler, Task, TaskId, TaskState};
 use crate::{
     arch::aarch64::{
         self, generic_timer,
@@ -23,10 +25,12 @@ const GICD_BASE: usize = 0x0800_0000;
 const GICC_BASE: usize = 0x0801_0000;
 const EL2_PHYSICAL_TIMER_INTID: u32 = 26;
 const TIMER_IRQ_WAIT_LIMIT: usize = 1_000_000;
-#[cfg(talos_qemu_context_switch_smoke)]
+#[cfg(any(talos_qemu_context_switch_smoke, talos_qemu_scheduler_yield_smoke))]
 const CONTEXT_SWITCH_STACK_SIZE: usize = 4096;
 #[cfg(talos_qemu_context_switch_smoke)]
 const CONTEXT_SWITCH_TARGET_PROGRESS: u64 = 2;
+#[cfg(talos_qemu_scheduler_yield_smoke)]
+const SCHEDULER_YIELD_TARGET_PROGRESS: u64 = 3;
 
 const MMIO_REGIONS: &[MmioRegion] = &[
     MmioRegion::new("qemu-virt-gicv2-distributor", GICD_BASE, 0x0001_0000),
@@ -39,11 +43,11 @@ static LAST_IAR: AtomicU64 = AtomicU64::new(0);
 static LAST_INTID: AtomicU64 = AtomicU64::new(0);
 static UNEXPECTED_GIC_IRQ_COUNT: AtomicU64 = AtomicU64::new(0);
 
-#[cfg(talos_qemu_context_switch_smoke)]
+#[cfg(any(talos_qemu_context_switch_smoke, talos_qemu_scheduler_yield_smoke))]
 #[repr(align(16))]
 struct KernelThreadStack([u8; CONTEXT_SWITCH_STACK_SIZE]);
 
-#[cfg(talos_qemu_context_switch_smoke)]
+#[cfg(any(talos_qemu_context_switch_smoke, talos_qemu_scheduler_yield_smoke))]
 impl KernelThreadStack {
     const fn new() -> Self {
         Self([0; CONTEXT_SWITCH_STACK_SIZE])
@@ -123,6 +127,126 @@ impl ContextSwitchSmokeCell {
 
 #[cfg(talos_qemu_context_switch_smoke)]
 static CONTEXT_SWITCH_SMOKE: ContextSwitchSmokeCell = ContextSwitchSmokeCell::new();
+
+#[cfg(talos_qemu_scheduler_yield_smoke)]
+struct SchedulerYieldSmokeState {
+    main_context: ContextFrame,
+    worker_contexts: [ContextFrame; 2],
+    worker_stacks: [KernelThreadStack; 2],
+    tasks: [Option<Task>; 2],
+    scheduler: SingleCoreScheduler<2>,
+    progress: [u64; 2],
+    current_task: u64,
+    runnable_task: u64,
+    yielded_task: u64,
+}
+
+#[cfg(talos_qemu_scheduler_yield_smoke)]
+impl SchedulerYieldSmokeState {
+    const fn new() -> Self {
+        Self {
+            main_context: ContextFrame::new(0, 0),
+            worker_contexts: [ContextFrame::new(0, 0); 2],
+            worker_stacks: [KernelThreadStack::new(), KernelThreadStack::new()],
+            tasks: [None, None],
+            scheduler: SingleCoreScheduler::new(),
+            progress: [0; 2],
+            current_task: 0,
+            runnable_task: 0,
+            yielded_task: 0,
+        }
+    }
+
+    fn reset(&mut self) {
+        self.progress = [0; 2];
+        self.current_task = 1;
+        self.runnable_task = 2;
+        self.yielded_task = 0;
+        self.scheduler = SingleCoreScheduler::new();
+
+        self.worker_contexts[0] = ContextFrame::kernel_thread_bootstrap(
+            self.worker_stacks[0].top(),
+            aarch64::kernel_thread_trampoline_address(),
+            qemu_scheduler_yield_thread as *const () as usize,
+            0,
+        );
+        self.worker_contexts[1] = ContextFrame::kernel_thread_bootstrap(
+            self.worker_stacks[1].top(),
+            aarch64::kernel_thread_trampoline_address(),
+            qemu_scheduler_yield_thread as *const () as usize,
+            1,
+        );
+
+        let task1_id = TaskId::new(1).expect("nonzero task id");
+        let task2_id = TaskId::new(2).expect("nonzero task id");
+        let stack1 = KernelStack::new(
+            self.worker_stacks[0].top() - CONTEXT_SWITCH_STACK_SIZE,
+            CONTEXT_SWITCH_STACK_SIZE,
+        )
+        .expect("valid task 1 stack");
+        let stack2 = KernelStack::new(
+            self.worker_stacks[1].top() - CONTEXT_SWITCH_STACK_SIZE,
+            CONTEXT_SWITCH_STACK_SIZE,
+        )
+        .expect("valid task 2 stack");
+        let mut task1 = Task::kernel_thread(task1_id, stack1, self.worker_contexts[0]);
+        let mut task2 = Task::kernel_thread(task2_id, stack2, self.worker_contexts[1]);
+        task1.set_state(TaskState::Running);
+        self.scheduler
+            .make_runnable(&mut task2)
+            .expect("scheduler-yield smoke has runnable capacity");
+        self.tasks = [Some(task1), Some(task2)];
+    }
+
+    fn all_workers_made_progress(&self) -> bool {
+        self.progress[0] >= SCHEDULER_YIELD_TARGET_PROGRESS
+            && self.progress[1] >= SCHEDULER_YIELD_TARGET_PROGRESS
+    }
+
+    fn dispatch_voluntary_yield_from(&mut self, task_index: usize) -> usize {
+        let current = self.tasks[task_index]
+            .as_mut()
+            .expect("current scheduler-yield task exists");
+        let yielded_task = current.id();
+        let next_task = self
+            .scheduler
+            .voluntary_yield(current)
+            .expect("scheduler-yield smoke has a runnable peer");
+        let next_task_index = (next_task.raw() - 1) as usize;
+        self.tasks[next_task_index]
+            .as_mut()
+            .expect("next scheduler-yield task exists")
+            .set_state(TaskState::Running);
+        self.current_task = next_task.raw();
+        self.runnable_task = self
+            .scheduler
+            .runnable()
+            .front()
+            .map_or(0, |task_id| task_id.raw());
+        self.yielded_task = yielded_task.raw();
+        next_task_index
+    }
+}
+
+#[cfg(talos_qemu_scheduler_yield_smoke)]
+struct SchedulerYieldSmokeCell(UnsafeCell<SchedulerYieldSmokeState>);
+
+#[cfg(talos_qemu_scheduler_yield_smoke)]
+unsafe impl Sync for SchedulerYieldSmokeCell {}
+
+#[cfg(talos_qemu_scheduler_yield_smoke)]
+impl SchedulerYieldSmokeCell {
+    const fn new() -> Self {
+        Self(UnsafeCell::new(SchedulerYieldSmokeState::new()))
+    }
+
+    unsafe fn get(&self) -> *mut SchedulerYieldSmokeState {
+        self.0.get()
+    }
+}
+
+#[cfg(talos_qemu_scheduler_yield_smoke)]
+static SCHEDULER_YIELD_SMOKE: SchedulerYieldSmokeCell = SchedulerYieldSmokeCell::new();
 
 #[derive(Clone, Copy)]
 struct SingleCoreIrqMaskProbe {
@@ -206,6 +330,129 @@ pub fn handle_irq(vector: u64) -> bool {
         }
     }
     true
+}
+
+#[cfg(talos_qemu_scheduler_yield_smoke)]
+extern "C" fn qemu_scheduler_yield_thread(raw_task_index: usize) -> ! {
+    let task_index = raw_task_index & 1;
+    loop {
+        unsafe {
+            let state = SCHEDULER_YIELD_SMOKE.get();
+            (*state).current_task = task_index as u64 + 1;
+            (*state).progress[task_index] += 1;
+
+            if (*state).all_workers_made_progress() {
+                (*state).runnable_task = (*state)
+                    .scheduler
+                    .runnable()
+                    .front()
+                    .map_or(0, |task_id| task_id.raw());
+                aarch64::cooperative_context_switch(
+                    core::ptr::addr_of_mut!((*state).worker_contexts[task_index]),
+                    core::ptr::addr_of!((*state).main_context),
+                );
+            } else {
+                // This is the accepted single-core critical section: scheduler-owned
+                // queue/current/yielded state is mutated with IRQs masked, and the
+                // section performs no allocation, formatting, printing, or callbacks.
+                let irq_state = aarch64::single_core_irq_mask_save();
+                let next_task_index = (*state).dispatch_voluntary_yield_from(task_index);
+                aarch64::single_core_irq_restore(irq_state);
+                aarch64::cooperative_context_switch(
+                    core::ptr::addr_of_mut!((*state).worker_contexts[task_index]),
+                    core::ptr::addr_of!((*state).worker_contexts[next_task_index]),
+                );
+            }
+        }
+    }
+}
+
+#[cfg(talos_qemu_scheduler_yield_smoke)]
+pub fn run_el2_scheduler_yield_smoke() -> bool {
+    let _keep_timer_smoke_reachable: fn() -> bool = run_el2_timer_irq_smoke;
+
+    unsafe {
+        aarch64::disable_irq();
+    }
+
+    unsafe {
+        let state = SCHEDULER_YIELD_SMOKE.get();
+        (*state).reset();
+        crate::println!(
+            "qemu-scheduler-yield-smoke: stack0={:#018x} stack1={:#018x} trampoline={:#018x}",
+            (*state).worker_stacks[0].top(),
+            (*state).worker_stacks[1].top(),
+            aarch64::kernel_thread_trampoline_address()
+        );
+        crate::println!(
+            "qemu-scheduler-yield-smoke: start current={} runnable={} yielded={}",
+            (*state).current_task,
+            (*state).runnable_task,
+            (*state).yielded_task
+        );
+
+        aarch64::cooperative_context_switch(
+            core::ptr::addr_of_mut!((*state).main_context),
+            core::ptr::addr_of!((*state).worker_contexts[0]),
+        );
+    }
+
+    unsafe {
+        aarch64::disable_irq();
+    }
+
+    let (
+        progress0,
+        progress1,
+        state_transitions,
+        voluntary_yields,
+        dispatch_switches,
+        current_task,
+        runnable_task,
+        yielded_task,
+    ) = unsafe {
+        let state = SCHEDULER_YIELD_SMOKE.get();
+        let counters = (*state).scheduler.counters();
+        (
+            (*state).progress[0],
+            (*state).progress[1],
+            counters.state_transitions(),
+            counters.voluntary_yields(),
+            counters.context_switches(),
+            (*state).current_task,
+            (*state).runnable_task,
+            (*state).yielded_task,
+        )
+    };
+
+    crate::println!(
+        "qemu-scheduler-yield-smoke: progress task1={} task2={} yields={} dispatch-switches={} transitions={} current={} runnable={} yielded={}",
+        progress0,
+        progress1,
+        voluntary_yields,
+        dispatch_switches,
+        state_transitions,
+        current_task,
+        runnable_task,
+        yielded_task
+    );
+
+    let passed = progress0 >= SCHEDULER_YIELD_TARGET_PROGRESS
+        && progress1 >= SCHEDULER_YIELD_TARGET_PROGRESS
+        && voluntary_yields >= 5
+        && dispatch_switches == voluntary_yields
+        && state_transitions >= voluntary_yields
+        && current_task != 0
+        && runnable_task != 0
+        && yielded_task != 0;
+
+    if passed {
+        crate::println!("qemu-scheduler-yield-smoke: PASS");
+    } else {
+        crate::println!("qemu-scheduler-yield-smoke: FAIL");
+    }
+
+    passed
 }
 
 #[cfg(talos_qemu_context_switch_smoke)]

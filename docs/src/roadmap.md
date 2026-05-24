@@ -70,11 +70,15 @@ Completed:
   preemption, SMP, userspace, descriptors, console/TTY, filesystem, networking,
   and SSH remain deferred.
 - Phase 4.3 has a documented EL2 cooperative context-switch contract for
-  single-core kernel threads. It names the saved callee-saved register state,
-  stack and resume-address invariants, the short IRQ-masked scheduler ownership
-  boundary, the required `ContextFrame` growth before assembly switching, and
-  the QEMU-first validation shape. Timer-driven preemption and async exception
-  frame switching remain deferred.
+  single-core kernel threads. The first QEMU context-switch smoke is accepted:
+  two kernel-thread contexts with separate stacks make bounded progress through
+  the AArch64 save/restore primitive, and the implementation reports switch,
+  current-task, and runnable-task state outside the switch hot path.
+- Phase 4.3 voluntary-yield dispatch is accepted in QEMU. The single-core
+  scheduler can requeue a running task, select the next runnable task, count
+  voluntary yields and dispatch switches, and cross the cooperative switch
+  boundary while keeping the short scheduler mutation window IRQ-masked.
+  Timer-driven preemption and async exception-frame switching remain deferred.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -82,10 +86,10 @@ Completed:
 
 Blocked or pending:
 
-- The next Phase 4.3 implementation step is the first cooperative
-  context-switch QEMU smoke. It must follow the accepted EL2 cooperative
-  contract and must not infer timer-driven preemption, SMP, userspace, blocking
-  I/O, or time slicing from the scheduler data-structure baseline.
+- The next Phase 4.3 checkpoint is the preemption-entry policy note. It must
+  reconcile accepted timer IRQ, monotonic tick, IRQ mask, cooperative context
+  switch, and voluntary dispatch evidence before any timer-driven scheduler
+  callback is implemented.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
