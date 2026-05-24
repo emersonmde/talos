@@ -1,12 +1,20 @@
 #![cfg_attr(any(test, talos_target_rpi5_bcm2712), allow(dead_code))]
 
-#[cfg(any(talos_qemu_context_switch_smoke, talos_qemu_scheduler_yield_smoke))]
+#[cfg(any(
+    talos_qemu_context_switch_smoke,
+    talos_qemu_scheduler_yield_smoke,
+    talos_qemu_timer_preemption_smoke
+))]
 use core::cell::UnsafeCell;
 use core::sync::atomic::{AtomicU64, Ordering};
 
-#[cfg(any(talos_qemu_context_switch_smoke, talos_qemu_scheduler_yield_smoke))]
+#[cfg(any(
+    talos_qemu_context_switch_smoke,
+    talos_qemu_scheduler_yield_smoke,
+    talos_qemu_timer_preemption_smoke
+))]
 use crate::scheduler::ContextFrame;
-#[cfg(talos_qemu_scheduler_yield_smoke)]
+#[cfg(any(talos_qemu_scheduler_yield_smoke, talos_qemu_timer_preemption_smoke))]
 use crate::scheduler::{KernelStack, SingleCoreScheduler, Task, TaskId, TaskState};
 use crate::{
     arch::aarch64::{
@@ -25,12 +33,20 @@ const GICD_BASE: usize = 0x0800_0000;
 const GICC_BASE: usize = 0x0801_0000;
 const EL2_PHYSICAL_TIMER_INTID: u32 = 26;
 const TIMER_IRQ_WAIT_LIMIT: usize = 1_000_000;
-#[cfg(any(talos_qemu_context_switch_smoke, talos_qemu_scheduler_yield_smoke))]
+#[cfg(any(
+    talos_qemu_context_switch_smoke,
+    talos_qemu_scheduler_yield_smoke,
+    talos_qemu_timer_preemption_smoke
+))]
 const CONTEXT_SWITCH_STACK_SIZE: usize = 4096;
 #[cfg(talos_qemu_context_switch_smoke)]
 const CONTEXT_SWITCH_TARGET_PROGRESS: u64 = 2;
 #[cfg(talos_qemu_scheduler_yield_smoke)]
 const SCHEDULER_YIELD_TARGET_PROGRESS: u64 = 3;
+#[cfg(talos_qemu_timer_preemption_smoke)]
+const TIMER_PREEMPTION_TARGET_PROGRESS: u64 = 3;
+#[cfg(talos_qemu_timer_preemption_smoke)]
+const TIMER_PREEMPTION_TARGET_SWITCHES: u64 = 6;
 
 const MMIO_REGIONS: &[MmioRegion] = &[
     MmioRegion::new("qemu-virt-gicv2-distributor", GICD_BASE, 0x0001_0000),
@@ -42,12 +58,22 @@ static LAST_IRQ_VECTOR: AtomicU64 = AtomicU64::new(0);
 static LAST_IAR: AtomicU64 = AtomicU64::new(0);
 static LAST_INTID: AtomicU64 = AtomicU64::new(0);
 static UNEXPECTED_GIC_IRQ_COUNT: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_qemu_timer_preemption_smoke)]
+static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
 
-#[cfg(any(talos_qemu_context_switch_smoke, talos_qemu_scheduler_yield_smoke))]
+#[cfg(any(
+    talos_qemu_context_switch_smoke,
+    talos_qemu_scheduler_yield_smoke,
+    talos_qemu_timer_preemption_smoke
+))]
 #[repr(align(16))]
 struct KernelThreadStack([u8; CONTEXT_SWITCH_STACK_SIZE]);
 
-#[cfg(any(talos_qemu_context_switch_smoke, talos_qemu_scheduler_yield_smoke))]
+#[cfg(any(
+    talos_qemu_context_switch_smoke,
+    talos_qemu_scheduler_yield_smoke,
+    talos_qemu_timer_preemption_smoke
+))]
 impl KernelThreadStack {
     const fn new() -> Self {
         Self([0; CONTEXT_SWITCH_STACK_SIZE])
@@ -248,6 +274,132 @@ impl SchedulerYieldSmokeCell {
 #[cfg(talos_qemu_scheduler_yield_smoke)]
 static SCHEDULER_YIELD_SMOKE: SchedulerYieldSmokeCell = SchedulerYieldSmokeCell::new();
 
+#[cfg(talos_qemu_timer_preemption_smoke)]
+struct TimerPreemptionSmokeState {
+    main_context: ContextFrame,
+    worker_contexts: [ContextFrame; 2],
+    worker_stacks: [KernelThreadStack; 2],
+    tasks: [Option<Task>; 2],
+    scheduler: SingleCoreScheduler<2>,
+    progress: [u64; 2],
+    handled_requests: u64,
+    current_task: u64,
+    runnable_task: u64,
+    preempted_task: u64,
+}
+
+#[cfg(talos_qemu_timer_preemption_smoke)]
+impl TimerPreemptionSmokeState {
+    const fn new() -> Self {
+        Self {
+            main_context: ContextFrame::new(0, 0),
+            worker_contexts: [ContextFrame::new(0, 0); 2],
+            worker_stacks: [KernelThreadStack::new(), KernelThreadStack::new()],
+            tasks: [None, None],
+            scheduler: SingleCoreScheduler::new(),
+            progress: [0; 2],
+            handled_requests: 0,
+            current_task: 0,
+            runnable_task: 0,
+            preempted_task: 0,
+        }
+    }
+
+    fn reset(&mut self) {
+        self.progress = [0; 2];
+        self.handled_requests = 0;
+        self.current_task = 1;
+        self.runnable_task = 2;
+        self.preempted_task = 0;
+        self.scheduler = SingleCoreScheduler::new();
+
+        self.worker_contexts[0] = ContextFrame::kernel_thread_bootstrap(
+            self.worker_stacks[0].top(),
+            aarch64::kernel_thread_trampoline_address(),
+            qemu_timer_preemption_thread as *const () as usize,
+            0,
+        );
+        self.worker_contexts[1] = ContextFrame::kernel_thread_bootstrap(
+            self.worker_stacks[1].top(),
+            aarch64::kernel_thread_trampoline_address(),
+            qemu_timer_preemption_thread as *const () as usize,
+            1,
+        );
+
+        let task1_id = TaskId::new(1).expect("nonzero task id");
+        let task2_id = TaskId::new(2).expect("nonzero task id");
+        let stack1 = KernelStack::new(
+            self.worker_stacks[0].top() - CONTEXT_SWITCH_STACK_SIZE,
+            CONTEXT_SWITCH_STACK_SIZE,
+        )
+        .expect("valid timer-preemption task 1 stack");
+        let stack2 = KernelStack::new(
+            self.worker_stacks[1].top() - CONTEXT_SWITCH_STACK_SIZE,
+            CONTEXT_SWITCH_STACK_SIZE,
+        )
+        .expect("valid timer-preemption task 2 stack");
+        let mut task1 = Task::kernel_thread(task1_id, stack1, self.worker_contexts[0]);
+        let mut task2 = Task::kernel_thread(task2_id, stack2, self.worker_contexts[1]);
+        task1.set_state(TaskState::Running);
+        self.scheduler
+            .make_runnable(&mut task2)
+            .expect("timer-preemption smoke has runnable capacity");
+        self.tasks = [Some(task1), Some(task2)];
+    }
+
+    fn proof_complete(&self) -> bool {
+        let counters = self.scheduler.counters();
+        self.progress[0] >= TIMER_PREEMPTION_TARGET_PROGRESS
+            && self.progress[1] >= TIMER_PREEMPTION_TARGET_PROGRESS
+            && counters.timer_preemptions() >= TIMER_PREEMPTION_TARGET_SWITCHES
+    }
+
+    fn dispatch_timer_preemption_from(&mut self, task_index: usize, request_count: u64) -> usize {
+        let current = self.tasks[task_index]
+            .as_mut()
+            .expect("current timer-preemption task exists");
+        let preempted_task = current.id();
+        let next_task = self
+            .scheduler
+            .timer_preempt(current)
+            .expect("timer-preemption smoke has a runnable peer");
+        let next_task_index = (next_task.raw() - 1) as usize;
+        self.tasks[next_task_index]
+            .as_mut()
+            .expect("next timer-preemption task exists")
+            .set_state(TaskState::Running);
+        self.handled_requests = request_count;
+        self.current_task = next_task.raw();
+        self.runnable_task = self
+            .scheduler
+            .runnable()
+            .front()
+            .map_or(0, |task_id| task_id.raw());
+        self.preempted_task = preempted_task.raw();
+        next_task_index
+    }
+}
+
+#[cfg(talos_qemu_timer_preemption_smoke)]
+struct TimerPreemptionSmokeCell(UnsafeCell<TimerPreemptionSmokeState>);
+
+#[cfg(talos_qemu_timer_preemption_smoke)]
+unsafe impl Sync for TimerPreemptionSmokeCell {}
+
+#[cfg(talos_qemu_timer_preemption_smoke)]
+impl TimerPreemptionSmokeCell {
+    const fn new() -> Self {
+        Self(UnsafeCell::new(TimerPreemptionSmokeState::new()))
+    }
+
+    unsafe fn get(&self) -> *mut TimerPreemptionSmokeState {
+        self.0.get()
+    }
+}
+
+#[cfg(talos_qemu_timer_preemption_smoke)]
+static TIMER_PREEMPTION_SMOKE: TimerPreemptionSmokeCell = TimerPreemptionSmokeCell::new();
+
 #[derive(Clone, Copy)]
 struct SingleCoreIrqMaskProbe {
     nested_start_masked: bool,
@@ -317,6 +469,8 @@ pub fn handle_irq(vector: u64) -> bool {
 
     if intid == EL2_PHYSICAL_TIMER_INTID {
         unsafe { generic_timer::record_el2_physical_tick_and_rearm() };
+        #[cfg(talos_qemu_timer_preemption_smoke)]
+        TIMER_PREEMPTION_REQUESTS.fetch_add(1, Ordering::Relaxed);
         unsafe {
             gic.end_interrupt(iar);
         }
@@ -330,6 +484,188 @@ pub fn handle_irq(vector: u64) -> bool {
         }
     }
     true
+}
+
+#[cfg(talos_qemu_timer_preemption_smoke)]
+extern "C" fn qemu_timer_preemption_thread(raw_task_index: usize) -> ! {
+    let task_index = raw_task_index & 1;
+    loop {
+        unsafe {
+            let state = TIMER_PREEMPTION_SMOKE.get();
+            (*state).current_task = task_index as u64 + 1;
+
+            if (*state).proof_complete() {
+                (*state).runnable_task = (*state)
+                    .scheduler
+                    .runnable()
+                    .front()
+                    .map_or(0, |task_id| task_id.raw());
+                aarch64::cooperative_context_switch(
+                    core::ptr::addr_of_mut!((*state).worker_contexts[task_index]),
+                    core::ptr::addr_of!((*state).main_context),
+                );
+            }
+
+            let request_count = TIMER_PREEMPTION_REQUESTS.load(Ordering::Relaxed);
+            if request_count != (*state).handled_requests {
+                (*state).progress[task_index] += 1;
+                let irq_state = aarch64::single_core_irq_mask_save();
+                let next_task_index =
+                    (*state).dispatch_timer_preemption_from(task_index, request_count);
+                aarch64::single_core_irq_restore(irq_state);
+                aarch64::cooperative_context_switch(
+                    core::ptr::addr_of_mut!((*state).worker_contexts[task_index]),
+                    core::ptr::addr_of!((*state).worker_contexts[next_task_index]),
+                );
+            }
+        }
+
+        unsafe {
+            core::arch::asm!("wfe", options(nomem, nostack, preserves_flags));
+        }
+    }
+}
+
+#[cfg(talos_qemu_timer_preemption_smoke)]
+pub fn run_el2_timer_preemption_smoke() -> bool {
+    let _keep_timer_smoke_reachable: fn() -> bool = run_el2_timer_irq_smoke;
+
+    unsafe {
+        aarch64::disable_irq();
+        aarch64::route_physical_irqs_to_el2();
+        generic_timer::mask_el2_physical_timer();
+    }
+    unsafe {
+        GicV2::new(GICD_BASE, GICC_BASE).enable_ppi_or_spi(EL2_PHYSICAL_TIMER_INTID);
+    }
+    LAST_IRQ_VECTOR.store(0, Ordering::Relaxed);
+    LAST_IAR.store(0, Ordering::Relaxed);
+    LAST_INTID.store(0, Ordering::Relaxed);
+    UNEXPECTED_GIC_IRQ_COUNT.store(0, Ordering::Relaxed);
+    TIMER_PREEMPTION_REQUESTS.store(0, Ordering::Relaxed);
+    generic_timer::reset_monotonic_ticks();
+
+    let freq = generic_timer::counter_frequency_hz();
+    let start = generic_timer::physical_count();
+    let delta = generic_timer::periodic_tick_delta_ticks(freq);
+    let compare = start.wrapping_add(delta);
+    generic_timer::configure_periodic_tick_delta(delta);
+
+    unsafe {
+        let state = TIMER_PREEMPTION_SMOKE.get();
+        (*state).reset();
+        crate::println!(
+            "qemu-timer-preemption-smoke: stack0={:#018x} stack1={:#018x} trampoline={:#018x}",
+            (*state).worker_stacks[0].top(),
+            (*state).worker_stacks[1].top(),
+            aarch64::kernel_thread_trampoline_address()
+        );
+        crate::println!(
+            "qemu-timer-preemption-smoke: gicd={:#010x} gicc={:#010x} intid={} cntfrq={} start={} cval={} delta={}",
+            GICD_BASE,
+            GICC_BASE,
+            EL2_PHYSICAL_TIMER_INTID,
+            freq,
+            start,
+            compare,
+            delta
+        );
+        crate::println!(
+            "qemu-timer-preemption-smoke: start current={} runnable={} preempted={} requests={}",
+            (*state).current_task,
+            (*state).runnable_task,
+            (*state).preempted_task,
+            TIMER_PREEMPTION_REQUESTS.load(Ordering::Relaxed)
+        );
+
+        generic_timer::program_el2_physical_compare(compare);
+        aarch64::enable_irq();
+        aarch64::cooperative_context_switch(
+            core::ptr::addr_of_mut!((*state).main_context),
+            core::ptr::addr_of!((*state).worker_contexts[0]),
+        );
+    }
+
+    unsafe {
+        aarch64::disable_irq();
+    }
+
+    let (
+        progress0,
+        progress1,
+        state_transitions,
+        voluntary_yields,
+        timer_preemptions,
+        dispatch_switches,
+        handled_requests,
+        current_task,
+        runnable_task,
+        preempted_task,
+    ) = unsafe {
+        let state = TIMER_PREEMPTION_SMOKE.get();
+        let counters = (*state).scheduler.counters();
+        (
+            (*state).progress[0],
+            (*state).progress[1],
+            counters.state_transitions(),
+            counters.voluntary_yields(),
+            counters.timer_preemptions(),
+            counters.context_switches(),
+            (*state).handled_requests,
+            (*state).current_task,
+            (*state).runnable_task,
+            (*state).preempted_task,
+        )
+    };
+    let snapshot = timer_irq_snapshot();
+    let daif = aarch64::daif();
+    let control = generic_timer::el2_physical_control();
+
+    crate::println!(
+        "qemu-timer-preemption-smoke: progress task1={} task2={} ticks={} requests={} handled={} timer-preemptions={} dispatch-switches={} voluntary-yields={} transitions={} current={} runnable={} preempted={}",
+        progress0,
+        progress1,
+        snapshot.timer_count,
+        TIMER_PREEMPTION_REQUESTS.load(Ordering::Relaxed),
+        handled_requests,
+        timer_preemptions,
+        dispatch_switches,
+        voluntary_yields,
+        state_transitions,
+        current_task,
+        runnable_task,
+        preempted_task
+    );
+    crate::println!(
+        "qemu-timer-preemption-smoke: irq vector={} iar={:#010x} intid={} unexpected={} ctl={:#x} daif={:#x}",
+        snapshot.last_vector,
+        snapshot.last_iar,
+        snapshot.last_intid,
+        snapshot.unexpected_gic_count,
+        control,
+        daif
+    );
+
+    let passed = progress0 >= TIMER_PREEMPTION_TARGET_PROGRESS
+        && progress1 >= TIMER_PREEMPTION_TARGET_PROGRESS
+        && snapshot.timer_count >= TIMER_PREEMPTION_TARGET_SWITCHES
+        && handled_requests >= TIMER_PREEMPTION_TARGET_SWITCHES
+        && timer_preemptions >= TIMER_PREEMPTION_TARGET_SWITCHES
+        && dispatch_switches == timer_preemptions
+        && voluntary_yields == 0
+        && snapshot.last_intid == EL2_PHYSICAL_TIMER_INTID as u64
+        && snapshot.unexpected_gic_count == 0
+        && current_task != 0
+        && runnable_task != 0
+        && preempted_task != 0;
+
+    if passed {
+        crate::println!("qemu-timer-preemption-smoke: PASS");
+    } else {
+        crate::println!("qemu-timer-preemption-smoke: FAIL");
+    }
+
+    passed
 }
 
 #[cfg(talos_qemu_scheduler_yield_smoke)]

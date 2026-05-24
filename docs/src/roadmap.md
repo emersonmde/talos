@@ -83,6 +83,11 @@ Completed:
   task may attempt a QEMU-only timer-preemption smoke that preserves
   acknowledge/reprogram/EOI ordering, keeps scheduler switching and diagnostics
   out of the IRQ hot path, and remains single-core EL2 kernel-thread only.
+- Phase 4.3 QEMU timer-preemption smoke is accepted. EL2 timer ticks now record
+  bounded preemption requests in the IRQ hot path, then kernel-thread code
+  performs scheduler dispatch and context switching outside IRQ context. Two
+  QEMU kernel threads make progress from timer-driven preemption with zero
+  voluntary-yield dispatches.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -90,10 +95,9 @@ Completed:
 
 Blocked or pending:
 
-- The next Phase 4.3 implementation slice is the QEMU-only timer-preemption
-  smoke authorized by the preemption-entry policy checkpoint. A Pi 5 preemption
-  proof remains a separate serialized follow-up unless the QEMU task changes
-  normal hardware-facing boot or timer behavior.
+- The next Phase 4.3 implementation slice needs supervisor planning. A Pi 5
+  timer-preemption proof remains a separate serialized follow-up unless the
+  supervisor chooses a different bounded scheduler closeout step first.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.

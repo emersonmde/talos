@@ -213,6 +213,13 @@ pub enum VoluntaryYieldError {
     RunnableQueueFull,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum TimerPreemptError {
+    CurrentTaskNotRunning,
+    NoRunnableTask,
+    RunnableQueueFull,
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct RunnableQueue<const CAPACITY: usize> {
     entries: [Option<TaskId>; CAPACITY],
@@ -308,6 +315,7 @@ impl<const CAPACITY: usize> Default for RunnableQueue<CAPACITY> {
 pub struct SchedulerCounters {
     state_transitions: u64,
     voluntary_yields: u64,
+    timer_preemptions: u64,
     context_switches: u64,
 }
 
@@ -318,6 +326,10 @@ impl SchedulerCounters {
 
     pub const fn voluntary_yields(self) -> u64 {
         self.voluntary_yields
+    }
+
+    pub const fn timer_preemptions(self) -> u64 {
+        self.timer_preemptions
     }
 
     pub const fn context_switches(self) -> u64 {
@@ -338,6 +350,7 @@ impl<const RUNNABLE_CAPACITY: usize> SingleCoreScheduler<RUNNABLE_CAPACITY> {
             counters: SchedulerCounters {
                 state_transitions: 0,
                 voluntary_yields: 0,
+                timer_preemptions: 0,
                 context_switches: 0,
             },
         }
@@ -386,6 +399,32 @@ impl<const RUNNABLE_CAPACITY: usize> SingleCoreScheduler<RUNNABLE_CAPACITY> {
         self.counters.context_switches += 1;
         Ok(next)
     }
+
+    pub fn timer_preempt(&mut self, current: &mut Task) -> Result<TaskId, TimerPreemptError> {
+        if current.state() != TaskState::Running {
+            return Err(TimerPreemptError::CurrentTaskNotRunning);
+        }
+        if self.runnable.is_empty() {
+            return Err(TimerPreemptError::NoRunnableTask);
+        }
+        if self.runnable.is_full() {
+            return Err(TimerPreemptError::RunnableQueueFull);
+        }
+
+        current.set_state(TaskState::Runnable);
+        self.counters.state_transitions += 1;
+        self.runnable
+            .enqueue(current.id())
+            .map_err(|_| TimerPreemptError::RunnableQueueFull)?;
+
+        let next = self
+            .runnable
+            .dequeue()
+            .expect("non-empty runnable queue after preflight");
+        self.counters.timer_preemptions += 1;
+        self.counters.context_switches += 1;
+        Ok(next)
+    }
 }
 
 impl<const RUNNABLE_CAPACITY: usize> Default for SingleCoreScheduler<RUNNABLE_CAPACITY> {
@@ -400,7 +439,7 @@ mod tests {
 
     use super::{
         ContextFrame, KernelStack, ProcessOwnerId, RunnableQueue, RunnableQueueError,
-        SingleCoreScheduler, Task, TaskId, TaskState, VoluntaryYieldError,
+        SingleCoreScheduler, Task, TaskId, TaskState, TimerPreemptError, VoluntaryYieldError,
     };
 
     fn task_id(raw: u64) -> TaskId {
@@ -540,6 +579,30 @@ mod tests {
     }
 
     #[test_case]
+    fn timer_preempt_requeues_current_without_counting_voluntary_yield() {
+        let mut scheduler = SingleCoreScheduler::<2>::new();
+        let mut current = Task::kernel_thread(task_id(1), kernel_stack(), context());
+        let mut next = Task::kernel_thread(task_id(2), kernel_stack(), context());
+        current.set_state(TaskState::Running);
+
+        scheduler
+            .make_runnable(&mut next)
+            .expect("make next runnable");
+
+        let next_id = scheduler
+            .timer_preempt(&mut current)
+            .expect("timer preempts to runnable task");
+
+        assert_eq!(next_id, task_id(2));
+        assert_eq!(current.state(), TaskState::Runnable);
+        assert_eq!(scheduler.runnable().front(), Some(task_id(1)));
+        assert_eq!(scheduler.counters().voluntary_yields(), 0);
+        assert_eq!(scheduler.counters().timer_preemptions(), 1);
+        assert_eq!(scheduler.counters().context_switches(), 1);
+        assert_eq!(scheduler.counters().state_transitions(), 2);
+    }
+
+    #[test_case]
     fn voluntary_yield_rejects_non_running_or_empty_dispatch() {
         let mut scheduler = SingleCoreScheduler::<1>::new();
         let mut current = Task::kernel_thread(task_id(1), kernel_stack(), context());
@@ -553,6 +616,10 @@ mod tests {
         assert_eq!(
             scheduler.voluntary_yield(&mut current),
             Err(VoluntaryYieldError::NoRunnableTask)
+        );
+        assert_eq!(
+            scheduler.timer_preempt(&mut current),
+            Err(TimerPreemptError::NoRunnableTask)
         );
     }
 

@@ -217,6 +217,11 @@ bounded workload iteration in a short save/restore critical section while the
 periodic timer still reaches the four-tick proof target. Diagnostic output
 remains outside the IRQ handler, after interrupts are masked again.
 
+The later QEMU timer-preemption smoke keeps this timer IRQ contract. INTID 26
+adds only a bounded preemption-request counter to the hot path; the scheduler
+dispatch, context switch, and diagnostic output happen after the handler has
+reprogrammed the timer, written GICC_EOIR, and returned from IRQ context.
+
 ## Minimal GICv2 Register Checklist
 
 The next implementation task should keep GICv2 target-specific but share the

@@ -253,3 +253,27 @@ queues, wakeups, SMP run queues, task migration, EL0 state, process resources,
 descriptors, filesystem, console/TTY, networking, or SSH. Pi 5 hardware
 preemption evidence is deferred until after QEMU proves the shape or a separate
 serialized hardware task is planned.
+
+## Timer-Driven QEMU Preemption Smoke
+
+The first timer-driven scheduler smoke is accepted for QEMU virt only. It keeps
+the same EL2 physical timer and GICv2 path as the earlier timer smokes, but the
+IRQ handler only records the bounded tick and a preemption-request counter after
+INTID 26 classification. It then reprograms CNTHP_CVAL_EL2 and writes
+GICC_EOIR before returning through the saved IRQ frame. The IRQ hot path still
+does not allocate, format, print, block, sleep, walk scheduler queues, or call
+the scheduler.
+
+The diagnostic kernel threads observe the pending request after returning from
+IRQ context. The call site then masks IRQs for a short boot-CPU critical
+section, calls `SingleCoreScheduler::timer_preempt()`, updates current/runnable
+task state and counters, restores the previous IRQ mask state, and crosses the
+existing cooperative AArch64 context-switch primitive. This proves timer-driven
+progress without explicit voluntary-yield calls while keeping the actual
+scheduler mutation and diagnostic reporting outside the IRQ hot path.
+
+This remains a single-core EL2 kernel-thread proof. It does not define a real
+quantum policy, preemption-disable counters, async exception-frame switching,
+sleep queues, wait queues, SMP run-queue locking, lower-EL state, process
+resources, descriptors, filesystem, console/TTY, networking, or SSH. Pi 5
+timer-preemption hardware evidence remains a separate serialized task.

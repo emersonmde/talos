@@ -183,7 +183,18 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
         );
         println!("mmio-regions: {}", services.mmio_map.regions().len());
         if boot_info.target == target::TargetKind::QemuVirt && boot_info.exception_level == 2 {
-            #[cfg(talos_qemu_scheduler_yield_smoke)]
+            #[cfg(talos_qemu_timer_preemption_smoke)]
+            {
+                if target::qemu_virt::run_el2_timer_preemption_smoke() {
+                    target::qemu::exit_success();
+                }
+                target::qemu::exit_failure();
+            }
+
+            #[cfg(all(
+                not(talos_qemu_timer_preemption_smoke),
+                talos_qemu_scheduler_yield_smoke
+            ))]
             {
                 if target::qemu_virt::run_el2_scheduler_yield_smoke() {
                     target::qemu::exit_success();
@@ -191,7 +202,11 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
-            #[cfg(all(not(talos_qemu_scheduler_yield_smoke), talos_qemu_context_switch_smoke))]
+            #[cfg(all(
+                not(talos_qemu_timer_preemption_smoke),
+                not(talos_qemu_scheduler_yield_smoke),
+                talos_qemu_context_switch_smoke
+            ))]
             {
                 if target::qemu_virt::run_el2_context_switch_smoke() {
                     target::qemu::exit_success();
@@ -199,11 +214,19 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
-            #[cfg(not(any(talos_qemu_scheduler_yield_smoke, talos_qemu_context_switch_smoke)))]
+            #[cfg(not(any(
+                talos_qemu_timer_preemption_smoke,
+                talos_qemu_scheduler_yield_smoke,
+                talos_qemu_context_switch_smoke
+            )))]
             if target::qemu_virt::run_el2_timer_irq_smoke() {
                 target::qemu::exit_success();
             }
-            #[cfg(not(any(talos_qemu_scheduler_yield_smoke, talos_qemu_context_switch_smoke)))]
+            #[cfg(not(any(
+                talos_qemu_timer_preemption_smoke,
+                talos_qemu_scheduler_yield_smoke,
+                talos_qemu_context_switch_smoke
+            )))]
             target::qemu::exit_failure();
         }
         println!("talos: hello from {}", boot_info.target.name());
