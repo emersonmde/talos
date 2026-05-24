@@ -30,6 +30,7 @@
 - [Phase 5 TTY and Stdio Closeout Checkpoint](project/phase5-tty-stdio-closeout-checkpoint.md)
 - [Phase 5 Diagnostic Command Channel Source Inventory](project/phase5-local-diagnostic-command-channel-source-inventory.md)
 - [Phase 5 Diagnostic Command Channel Closeout Checkpoint](project/phase5-diagnostic-command-channel-closeout-checkpoint.md)
+- [Phase 6 Secondary-Core Bring-Up Source Inventory](project/phase6-secondary-core-bringup-source-inventory.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

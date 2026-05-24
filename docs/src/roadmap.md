@@ -169,6 +169,12 @@ Completed:
   syscalls, userspace shell behavior, filesystem-backed commands, networking,
   SSH, SMP, UART interrupts, RP1 UART0, and scheduler blocking I/O remain
   deferred.
+- Phase 6.1 secondary-core bring-up source inventory and contract is accepted.
+  PSCI with the firmware/DTB SMC conduit is the default bring-up path;
+  spin-table and custom mailbox approaches remain fallback research. Before
+  scheduler work, each secondary core must prove MPIDR/logical identity,
+  exclusive stack ownership, per-core state registration, and controlled
+  handoff.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -176,10 +182,10 @@ Completed:
 
 Blocked or pending:
 
-- Supervisor planning is required before the next worker task. The accepted
-  Phase 5.3 closeout recommends a bounded Phase 6.1 secondary-core bring-up
-  source inventory and contract task, without starting SMP implementation until
-  the supervisor explicitly queues it.
+- The next explicit worker task is the bounded QEMU/substitute Phase 6.1
+  secondary-core discriminator. It must not start Pi 5 hardware proof,
+  per-core stacks/state, SMP-safe primitives, scheduler migration, filesystem,
+  networking, SSH, or shell work.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
@@ -469,6 +475,9 @@ Acceptance criteria:
 ## Phase 6: SMP and Multi-Core Scheduling
 
 Goal: use all Pi 5 CPU cores with correct synchronization and preemptive scheduling.
+
+Status: Phase 6.1 source inventory and bring-up contract accepted. See
+[Phase 6 Secondary-Core Bring-Up Source Inventory](project/phase6-secondary-core-bringup-source-inventory.md).
 
 Milestone 6.1: Secondary Core Bring-Up
 

@@ -49,6 +49,39 @@ ADR template:
   accepted IRQ-mask primitive is not an SMP lock. Phase 5 must preserve the
   early logging/runtime console boundary before introducing input or TTY state.
 
+## 2026-05-24 - Phase 6.1 Secondary-Core Bring-Up Contract Accepted
+
+- Status: accepted as the source inventory and contract before Phase 6.1 SMP
+  implementation. No code, boot archive, hardware lock, hardware run,
+  scheduler migration, SMP-safe primitive, userspace, filesystem, networking,
+  SSH, descriptor, or shell behavior changed in this task.
+- Context: Phase 5.3 closed the local diagnostic command channel and deferred
+  SMP until a bounded supervisor-planned task. The roadmap names PSCI as the
+  primary Pi 5 secondary-core path, and Raspberry Pi Linux device-tree evidence
+  advertises four Cortex-A76 CPU nodes using `enable-method = "psci"` with an
+  SMC PSCI node.
+- Decision: Accept
+  `docs/src/project/phase6-secondary-core-bringup-source-inventory.md` as the
+  Phase 6.1 contract. PSCI `CPU_ON` via SMC is the default path; spin-table,
+  VideoCore mailbox, or custom mailbox bring-up remains fallback research only.
+  A secondary core is not considered alive for scheduler work until it proves
+  MPIDR/logical identity, exclusive stack ownership, per-core state
+  registration, and controlled handoff.
+- Evidence level: static source inventory over repository roadmap/reference
+  docs, current AArch64 boot and target boundaries, Raspberry Pi Linux
+  `bcm2712.dtsi`, and QEMU 9.2.0 generated `virt` DTB strings for
+  `virt,gic-version=2,virtualization=on -cpu cortex-a76 -smp 4`.
+- Validation: `git status --short` was inspected before edits and was clean.
+  `git diff --check` passed. `mdbook build` was not run because `mdbook` is
+  unavailable in the container. Rust fmt/tests were not required because no
+  Rust files changed.
+- Consequences: The next bounded worker task is
+  `phase6-qemu-secondary-core-bringup-discriminator-20260524`. QEMU
+  substitute evidence and Pi 5 hardware proof requirements stay separate.
+- Risks: Talos does not yet read `MPIDR_EL1`, parse CPU nodes, allocate
+  per-core stacks/state, call PSCI, or coordinate concurrent console output.
+  Those risks belong to later explicit Phase 6.1 tasks.
+
 ## 2026-05-24 - Accept QEMU Polling TTY RX Diagnostic
 
 - Status: accepted as the first Milestone 5.2 local serial input proof. No Pi 5
