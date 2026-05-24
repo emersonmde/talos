@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "DQpycGk1LWRpYWdub3N0aWMtY29tbWFuZC1jaGFubmVsLXByb29mOiBsaW5lIGNvbW1hbmQ9MSBoZXg9NmMgNjkgNzMgNzQNCmRpYWc6IG9rIGxpc3QNCmRpYWc6IGNvbW1hbmRzIGhlbHAgbGlzdCBzdGF0dXMNCnJwaTUtZGlhZ25vc3RpYy1jb21tYW5kLWNoYW5uZWwtcHJvb2Y6IGRpc3BhdGNoIGNvbW1hbmQ9MSBzdGF0dXM9aGFuZGxlZCByZXNwb25zZXM9Mg0KcnBpNS1kaWFnbm9zdGljLWNvbW1hbmQtY2hhbm5lbC1wcm9vZjogcmVhZHkgY29tbWFuZD0yDQo=",
+  "bytes": 263,
+  "cursor_end": 1938353,
+  "cursor_start": 1938090,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\r\nrpi5-diagnostic-command-channel-proof: line command=1 hex=6c 69 73 74\r\ndiag: ok list\r\ndiag: commands help list status\r\nrpi5-diagnostic-command-channel-proof: dispatch command=1 status=handled responses=2\r\nrpi5-diagnostic-command-channel-proof: ready command=2\r\n",
+  "truncated": false
+}

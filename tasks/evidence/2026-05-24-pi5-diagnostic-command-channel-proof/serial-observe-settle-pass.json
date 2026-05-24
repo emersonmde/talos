@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "DQpycGk1LWRpYWdub3N0aWMtY29tbWFuZC1jaGFubmVsLXByb29mOiBsaW5lIGNvbW1hbmQ9MyBoZXg9NzMgNzQgNjEgNzQgNzUgNzMNCmRpYWc6IG9rIHN0YXR1cw0KZGlhZzogdmVyc2lvbiBwaGFzZTUuMy1jb250cmFjdC12MQ0KZGlhZzogcnVudGltZS1jb25zb2xlIHJ1bnRpbWUtY29uc29sZTANCmRpYWc6IHR0eSBjYW5vbmljYWwtbGl0ZSBsaW5lLWNhcGFjaXR5IDgNCmRpYWc6IGNvbW1hbmQtY291bnQgMw0KZGlhZzogY29tbWFuZHMgaGVscCBsaXN0IHN0YXR1cw0KcnBpNS1kaWFnbm9zdGljLWNvbW1hbmQtY2hhbm5lbC1wcm9vZjogZGlzcGF0Y2ggY29tbWFuZD0zIHN0YXR1cz1oYW5kbGVkIHJlc3BvbnNlcz02DQpycGk1LWRpYWdub3N0aWMtY29tbWFuZC1jaGFubmVsLXByb29mOiBQQVNTDQo=",
+  "bytes": 401,
+  "cursor_end": 1939009,
+  "cursor_start": 1938608,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\r\nrpi5-diagnostic-command-channel-proof: line command=3 hex=73 74 61 74 75 73\r\ndiag: ok status\r\ndiag: version phase5.3-contract-v1\r\ndiag: runtime-console runtime-console0\r\ndiag: tty canonical-lite line-capacity 8\r\ndiag: command-count 3\r\ndiag: commands help list status\r\nrpi5-diagnostic-command-channel-proof: dispatch command=3 status=handled responses=6\r\nrpi5-diagnostic-command-channel-proof: PASS\r\n",
+  "truncated": false
+}

@@ -24,7 +24,8 @@
             talos_rpi5_string_growth_diagnostic,
             talos_rpi5_alloc_format_diagnostic,
             talos_rpi5_page_frame_reuse_diagnostic,
-            talos_rpi5_timer_preemption_diagnostic
+            talos_rpi5_timer_preemption_diagnostic,
+            talos_rpi5_diagnostic_command_channel_proof
         )
     ),
     allow(dead_code, unused_imports, unused_variables)
@@ -51,7 +52,13 @@ mod arch;
 mod boot;
 mod device_tree;
 #[cfg_attr(
-    all(not(test), not(talos_qemu_diagnostic_command_channel_smoke)),
+    all(
+        not(test),
+        not(any(
+            talos_qemu_diagnostic_command_channel_smoke,
+            talos_rpi5_diagnostic_command_channel_proof
+        ))
+    ),
     allow(dead_code)
 )]
 mod diagnostic_command;
@@ -68,7 +75,8 @@ mod target;
 #[cfg_attr(
     not(any(
         talos_qemu_polling_tty_rx_diagnostic,
-        talos_qemu_diagnostic_command_channel_smoke
+        talos_qemu_diagnostic_command_channel_smoke,
+        talos_rpi5_diagnostic_command_channel_proof
     )),
     allow(dead_code)
 )]

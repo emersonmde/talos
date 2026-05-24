@@ -54,8 +54,13 @@ const GICC_BASE: usize = 0x10_7fff_a000;
 const EL2_PHYSICAL_TIMER_INTID: u32 = 26;
 #[cfg(talos_rpi5_timer_irq_diagnostic)]
 const TIMER_IRQ_WAIT_LIMIT: usize = 8_000_000;
-#[cfg(talos_rpi5_uart10_polling_rx_diagnostic)]
+#[cfg(any(
+    talos_rpi5_uart10_polling_rx_diagnostic,
+    talos_rpi5_diagnostic_command_channel_proof
+))]
 const UART10_RX_WAIT_LIMIT: usize = 200_000_000;
+#[cfg(talos_rpi5_diagnostic_command_channel_proof)]
+const DIAGNOSTIC_COMMAND_CAPTURE_SETTLE_SPINS: usize = 10_000_000;
 #[cfg(talos_rpi5_timer_preemption_diagnostic)]
 const CONTEXT_SWITCH_STACK_SIZE: usize = 4096;
 #[cfg(talos_rpi5_timer_preemption_diagnostic)]
@@ -177,7 +182,136 @@ pub fn run_uart10_polling_tty_rx_diagnostic() -> bool {
     passed
 }
 
-#[cfg(talos_rpi5_uart10_polling_rx_diagnostic)]
+#[cfg(talos_rpi5_diagnostic_command_channel_proof)]
+pub fn run_diagnostic_command_channel_proof() -> bool {
+    crate::println!(
+        "rpi5-diagnostic-command-channel-proof: start command-count=4 backend=runtime-console0/bcm2712-uart10-pl011 input=tty-canonical-lite"
+    );
+    wait_uart10_empty_early_phase();
+
+    let mut passed = true;
+
+    for command_index in 0..4 {
+        crate::println!(
+            "rpi5-diagnostic-command-channel-proof: ready command={}",
+            command_index
+        );
+        wait_uart10_empty_early_phase();
+
+        let result = crate::tty::run_polling_rx_diagnostic_with_limit(
+            firmware_console(),
+            UART10_RX_WAIT_LIMIT,
+        );
+        settle_for_serial_capture();
+        crate::println!();
+        crate::print!(
+            "rpi5-diagnostic-command-channel-proof: line command={} hex=",
+            command_index
+        );
+        print_tty_hex_bytes(result.line());
+        crate::println!();
+
+        if !result.passed() || result.truncated() || !result.controls().is_empty() {
+            crate::println!(
+                "rpi5-diagnostic-command-channel-proof: input-fail command={} outcome={} truncated={} controls={}",
+                command_index,
+                result.outcome_name(),
+                result.truncated(),
+                result.controls().len()
+            );
+            passed = false;
+            continue;
+        }
+
+        let mut sink = crate::runtime_console::RuntimeConsole::new(firmware_console());
+        let dispatch = crate::diagnostic_command::dispatch_default_diagnostic_command(
+            result.line(),
+            &mut sink,
+        );
+        let dispatch = match dispatch {
+            Ok(dispatch) => dispatch,
+            Err(_) => {
+                crate::println!(
+                    "rpi5-diagnostic-command-channel-proof: dispatch-fail command={} response-write-failed",
+                    command_index
+                );
+                passed = false;
+                continue;
+            }
+        };
+
+        let status_name = diagnostic_dispatch_status_name(dispatch.status);
+        crate::println!(
+            "rpi5-diagnostic-command-channel-proof: dispatch command={} status={} responses={}",
+            command_index,
+            status_name,
+            dispatch.response_lines
+        );
+
+        if !expected_diagnostic_dispatch(
+            command_index,
+            result.line(),
+            dispatch.status,
+            dispatch.response_lines,
+        ) {
+            passed = false;
+        }
+        wait_uart10_empty_early_phase();
+    }
+
+    if passed {
+        crate::println!("rpi5-diagnostic-command-channel-proof: PASS");
+    } else {
+        crate::println!("rpi5-diagnostic-command-channel-proof: FAIL");
+    }
+    wait_uart10_empty_early_phase();
+
+    passed
+}
+
+#[cfg(talos_rpi5_diagnostic_command_channel_proof)]
+fn settle_for_serial_capture() {
+    for _ in 0..DIAGNOSTIC_COMMAND_CAPTURE_SETTLE_SPINS {
+        core::hint::spin_loop();
+    }
+}
+
+#[cfg(talos_rpi5_diagnostic_command_channel_proof)]
+fn diagnostic_dispatch_status_name(
+    status: crate::diagnostic_command::DiagnosticDispatchStatus,
+) -> &'static str {
+    match status {
+        crate::diagnostic_command::DiagnosticDispatchStatus::Handled => "handled",
+        crate::diagnostic_command::DiagnosticDispatchStatus::UnknownCommand => "unknown-command",
+        crate::diagnostic_command::DiagnosticDispatchStatus::UnexpectedArgument => {
+            "unexpected-argument"
+        }
+        crate::diagnostic_command::DiagnosticDispatchStatus::ParseError(_) => "parse-error",
+    }
+}
+
+#[cfg(talos_rpi5_diagnostic_command_channel_proof)]
+fn expected_diagnostic_dispatch(
+    command_index: usize,
+    line: &[u8],
+    status: crate::diagnostic_command::DiagnosticDispatchStatus,
+    response_lines: usize,
+) -> bool {
+    use crate::diagnostic_command::DiagnosticDispatchStatus::{Handled, UnknownCommand};
+
+    match command_index {
+        0 => line == b"help" && status == Handled && response_lines == 2,
+        1 => line == b"list" && status == Handled && response_lines == 2,
+        2 => line == b"bogus" && status == UnknownCommand && response_lines == 1,
+        3 => line == b"status" && status == Handled && response_lines == 6,
+        _ => false,
+    }
+}
+
+#[cfg(any(
+    talos_rpi5_uart10_polling_rx_diagnostic,
+    talos_rpi5_diagnostic_command_channel_proof
+))]
 fn print_tty_hex_bytes(bytes: &[u8]) {
     for (index, byte) in bytes.iter().enumerate() {
         if index != 0 {

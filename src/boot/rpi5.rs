@@ -70,6 +70,9 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
     #[cfg(talos_rpi5_uart10_polling_rx_diagnostic)]
     target::rpi5::run_uart10_polling_tty_rx_diagnostic();
 
+    #[cfg(talos_rpi5_diagnostic_command_channel_proof)]
+    target::rpi5::run_diagnostic_command_channel_proof();
+
     #[cfg(talos_rpi5_timer_preemption_diagnostic)]
     target::rpi5::run_el2_timer_preemption_smoke();
 

@@ -93,7 +93,8 @@ impl Pl011 {
         not(any(
             test,
             talos_qemu_polling_tty_rx_diagnostic,
-            talos_rpi5_uart10_polling_rx_diagnostic
+            talos_rpi5_uart10_polling_rx_diagnostic,
+            talos_rpi5_diagnostic_command_channel_proof
         )),
         allow(dead_code)
     )]

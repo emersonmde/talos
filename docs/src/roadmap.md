@@ -157,6 +157,11 @@ Completed:
   runtime-console0 response sink without adding Pi 5 hardware behavior,
   descriptors, syscalls, userspace shell behavior, filesystem-backed commands,
   networking, SSH, SMP, UART interrupts, or scheduler blocking I/O.
+- Phase 5.3 Pi 5 diagnostic command-channel proof is accepted. The serialized
+  UART10 hardware transcript proves the same `help`, `list`, `bogus`, and
+  `status` command sequence through canonical-lite TTY input and
+  runtime-console0 responses, with TFTP evidence tying the output to the
+  staged candidate image.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -164,9 +169,8 @@ Completed:
 
 Blocked or pending:
 
-- The next Phase 5 slice is the supervisor-queued serialized Pi 5 diagnostic
-  command-channel proof. It should reuse the accepted command-channel contract
-  and QEMU transcript expectations through the lab serial path before any
+- The next Phase 5 slice is the supervisor-queued diagnostic command-channel
+  closeout checkpoint. It should consolidate QEMU and Pi 5 evidence before any
   descriptor table, syscall, userspace shell, filesystem, networking, SSH, SMP,
   UART interrupt, or scheduler blocking I/O work starts.
 - The roadmap order below now prioritizes a local Unix-like OS before network

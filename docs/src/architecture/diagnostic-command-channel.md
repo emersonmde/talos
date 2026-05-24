@@ -84,11 +84,32 @@ the IRQ handler, and does not introduce descriptors, syscalls, userspace shell
 behavior, filesystem-backed commands, networking, SSH, SMP, UART interrupts, or
 scheduler blocking I/O.
 
+## Pi 5 Hardware Evidence
+
+The accepted Pi 5 diagnostic command-channel proof reuses the same command
+sequence over the firmware-preserved UART10 path. The hardware transcript in
+`tasks/evidence/2026-05-24-pi5-diagnostic-command-channel-proof/serial-observe-settle-full.json`
+shows `help`, `list`, `bogus`, and `status` entering through canonical-lite
+TTY line assembly and dispatching through the same target-independent command
+boundary.
+
+The accepted archive was
+`target/talos-rpi5-diagnostic-command-channel-prefixed-boot.tar.gz` with
+SHA256 `babf8d0161fa37891319461e136f53d616d453966f63059ba479eb44afc10f66`.
+Its kernel image was 96,304 bytes with SHA256
+`83aa4425449e79989e15a91df35902de047b1db2d9e303027f766caf91a8305b`. TFTP
+evidence shows the Pi fetched `da591740/kernel_2712.img` at the same size.
+
+The Pi 5 diagnostic path inserts a bounded hardware-proof-only settle window
+after receiving a complete command line and before emitting the response
+transcript. This is not scheduler blocking I/O, a descriptor wait, or a shell
+prompt; it exists only to let the lab serial collector capture complete
+bounded proof lines.
+
 ## Current Deferrals
 
 The command-channel contract intentionally defers:
 
-- Pi 5 hardware proof until after the QEMU command-channel smoke is accepted;
 - descriptor tables, syscall ABI, user/kernel copy, POSIX `read` or `write`,
   readiness polling, errno mapping, and blocking I/O;
 - userspace shell grammar, command execution, environment variables, pipelines,
@@ -102,6 +123,5 @@ The command-channel contract intentionally defers:
 ## Validation Role
 
 This contract is source-backed by focused no_std parser/dispatcher tests. The
-QEMU command-channel smoke now covers help/list, unknown-command handling, and
-status over the accepted polling TTY path. Pi 5 proof remains a later
-serialized hardware task.
+QEMU and Pi 5 command-channel smokes now cover help/list, unknown-command
+handling, and status over the accepted polling TTY path.
