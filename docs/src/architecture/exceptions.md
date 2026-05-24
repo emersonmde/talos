@@ -168,6 +168,21 @@ This makes saved-register reporting the default Pi 5 fatal exception contract
 while keeping the `ERET` resume logic confined to the explicit
 exception-return diagnostic build.
 
+Phase 4 promotes the same saved-register frame shape into the production
+current-EL IRQ entry contract for both QEMU virt and Pi 5. In normal builds,
+each vector slot saves interrupted `x0`/`x1` plus the vector number, then the
+shared entry shim saves `x0..x30` in a 31-register `ExceptionFrame`. Current-EL
+IRQ vectors dispatch to `rust_irq_handler(vector, elr, spsr, frame)`, restore
+the full saved frame, and return with `ERET`. The Rust IRQ stub is intentionally
+inert: it records a count plus the last vector, ELR, and SPSR using atomics and
+does not allocate, print, acknowledge a GIC interrupt, or program a timer.
+
+This contract is only a state-preserving IRQ entry/return foundation.
+Interrupts remain masked by the normal boot path until the later GIC and generic
+timer smoke tasks explicitly unmask them. FIQ, SError, nested IRQs, lower-EL IRQ
+policy, interrupt acknowledgement/EOI, and preemption/context switching remain
+unaccepted.
+
 The default fatal report is now also accepted for a non-BRK same-EL synchronous
 exception. The undefined-instruction diagnostic emits a fresh entry label, runs
 through normal boot/status output, prints `TALOS: before undefined instruction`,

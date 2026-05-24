@@ -1,4 +1,7 @@
-use core::arch::asm;
+use core::{
+    arch::asm,
+    sync::atomic::{AtomicU64, Ordering},
+};
 
 use crate::println;
 
@@ -70,6 +73,19 @@ impl From<u64> for ExceptionVector {
     }
 }
 
+impl ExceptionVector {
+    #[allow(dead_code)]
+    pub const fn is_irq(self) -> bool {
+        matches!(
+            self,
+            Self::CurrentSp0Irq
+                | Self::CurrentSpxIrq
+                | Self::LowerAarch64Irq
+                | Self::LowerAarch32Irq
+        )
+    }
+}
+
 unsafe extern "C" {
     static __exception_vectors: u8;
 }
@@ -119,17 +135,55 @@ fn relocated_exception_vectors_addr() -> usize {
     }
 }
 
-#[cfg(all(talos_target_rpi5_bcm2712, not(talos_rpi5_exception_report_diagnostic)))]
 #[repr(C)]
-pub(crate) struct ExceptionFrame {
+pub struct ExceptionFrame {
     regs: [u64; 31],
 }
 
-#[cfg(all(talos_target_rpi5_bcm2712, not(talos_rpi5_exception_report_diagnostic)))]
+#[cfg_attr(not(talos_target_rpi5_bcm2712), allow(dead_code))]
 impl ExceptionFrame {
-    fn reg(&self, index: usize) -> u64 {
+    pub const REGISTER_COUNT: usize = 31;
+
+    pub fn reg(&self, index: usize) -> u64 {
         self.regs[index]
     }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[allow(dead_code)]
+pub struct IrqDispatchSnapshot {
+    pub count: u64,
+    pub vector: u64,
+    pub elr: u64,
+    pub spsr: u64,
+}
+
+static UNEXPECTED_IRQ_COUNT: AtomicU64 = AtomicU64::new(0);
+static LAST_UNEXPECTED_IRQ_VECTOR: AtomicU64 = AtomicU64::new(0);
+static LAST_UNEXPECTED_IRQ_ELR: AtomicU64 = AtomicU64::new(0);
+static LAST_UNEXPECTED_IRQ_SPSR: AtomicU64 = AtomicU64::new(0);
+
+#[allow(dead_code)]
+pub fn unexpected_irq_snapshot() -> IrqDispatchSnapshot {
+    IrqDispatchSnapshot {
+        count: UNEXPECTED_IRQ_COUNT.load(Ordering::Relaxed),
+        vector: LAST_UNEXPECTED_IRQ_VECTOR.load(Ordering::Relaxed),
+        elr: LAST_UNEXPECTED_IRQ_ELR.load(Ordering::Relaxed),
+        spsr: LAST_UNEXPECTED_IRQ_SPSR.load(Ordering::Relaxed),
+    }
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn rust_irq_handler(
+    vector: u64,
+    elr: u64,
+    spsr: u64,
+    _saved_frame: *const ExceptionFrame,
+) {
+    LAST_UNEXPECTED_IRQ_VECTOR.store(vector, Ordering::Relaxed);
+    LAST_UNEXPECTED_IRQ_ELR.store(elr, Ordering::Relaxed);
+    LAST_UNEXPECTED_IRQ_SPSR.store(spsr, Ordering::Relaxed);
+    UNEXPECTED_IRQ_COUNT.fetch_add(1, Ordering::Relaxed);
 }
 
 #[unsafe(no_mangle)]
@@ -247,7 +301,12 @@ fn write_exception_context(spsr: u64, saved_frame: *const ExceptionFrame) {
     write_saved_register_line("exception-regs4:", frame, 16, 20);
     write_saved_register_line("exception-regs5:", frame, 20, 24);
     write_saved_register_line("exception-regs6:", frame, 24, 28);
-    write_saved_register_line("exception-regs7:", frame, 28, 31);
+    write_saved_register_line(
+        "exception-regs7:",
+        frame,
+        28,
+        ExceptionFrame::REGISTER_COUNT,
+    );
 }
 
 #[cfg(all(talos_target_rpi5_bcm2712, not(talos_rpi5_exception_report_diagnostic)))]
@@ -274,7 +333,14 @@ pub extern "C" fn rust_exception_handler(esr: u64, elr: u64, far: u64, vector: u
 
 #[unsafe(no_mangle)]
 #[cfg(not(talos_target_rpi5_bcm2712))]
-pub extern "C" fn rust_exception_handler(esr: u64, elr: u64, far: u64, vector: u64) -> ! {
+pub extern "C" fn rust_exception_handler(
+    esr: u64,
+    elr: u64,
+    far: u64,
+    vector: u64,
+    _spsr: u64,
+    _saved_frame: *const ExceptionFrame,
+) -> ! {
     let vector = ExceptionVector::from(vector);
 
     println!();
@@ -311,5 +377,39 @@ fn rpi5_system_reset() -> ! {
             "b 1b",
             options(noreturn)
         );
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{ExceptionVector, rust_irq_handler, unexpected_irq_snapshot};
+
+    #[test_case]
+    fn irq_vector_classifier_names_irq_slots() {
+        assert!(ExceptionVector::CurrentSp0Irq.is_irq());
+        assert!(ExceptionVector::CurrentSpxIrq.is_irq());
+        assert!(ExceptionVector::LowerAarch64Irq.is_irq());
+        assert!(ExceptionVector::LowerAarch32Irq.is_irq());
+        assert!(!ExceptionVector::CurrentSpxSync.is_irq());
+        assert!(!ExceptionVector::CurrentSpxFiq.is_irq());
+        assert!(!ExceptionVector::CurrentSpxSError.is_irq());
+    }
+
+    #[test_case]
+    fn irq_dispatch_stub_counts_and_records_context_without_frame() {
+        let before = unexpected_irq_snapshot().count;
+
+        rust_irq_handler(
+            ExceptionVector::CurrentSpxIrq as u64,
+            0x1234_5678,
+            0x2000_03c9,
+            core::ptr::null(),
+        );
+
+        let after = unexpected_irq_snapshot();
+        assert_eq!(after.count, before + 1);
+        assert_eq!(after.vector, ExceptionVector::CurrentSpxIrq as u64);
+        assert_eq!(after.elr, 0x1234_5678);
+        assert_eq!(after.spsr, 0x2000_03c9);
     }
 }

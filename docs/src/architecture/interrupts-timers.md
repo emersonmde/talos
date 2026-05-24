@@ -180,7 +180,12 @@ the first implementation tasks:
 The source-backed order is:
 
 1. Establish the IRQ entry/exit saved-register frame contract with interrupts
-   still disabled.
+   still disabled. This is now the accepted Phase 4 entry foundation: normal
+   vector slots save `x0..x30`, current-EL IRQs call
+   `rust_irq_handler(vector, elr, spsr, frame)`, and the shim restores the full
+   frame before `ERET`. The Rust stub only records an unexpected-IRQ count and
+   the last vector/ELR/SPSR with atomics; it does not allocate, print, program a
+   controller, acknowledge an interrupt, or enable delivery.
 2. Add a QEMU-only GICv2 plus EL2 generic-timer smoke for PPI 10 / INTID 26.
 3. Carry the same EL2 timer shape to Pi 5 GIC-400 hardware with serialized lab
    evidence.

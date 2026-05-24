@@ -129,7 +129,7 @@
     str x0, [sp, #16]
     b __exception_entry_return
 .endm
-#elif defined(TALOS_TARGET_RPI5_BCM2712)
+#else
 .macro vector_entry kind
     .balign 128
     sub sp, sp, #32
@@ -137,12 +137,6 @@
     mov x0, #\kind
     str x0, [sp, #16]
     b __exception_entry_frame
-.endm
-#else
-.macro vector_entry kind
-    .balign 128
-    mov x3, #\kind
-    b __exception_entry
 .endm
 #endif
 
@@ -283,7 +277,7 @@ __exception_entry_return:
 .size __exception_entry_return, . - __exception_entry_return
 #endif
 
-#if defined(TALOS_TARGET_RPI5_BCM2712) && !defined(TALOS_RPI5_EXCEPTION_REPORT_DIAGNOSTIC) && !defined(TALOS_RPI5_EXCEPTION_RETURN_DIAGNOSTIC)
+#if !defined(TALOS_RPI5_EXCEPTION_REPORT_DIAGNOSTIC) && !defined(TALOS_RPI5_EXCEPTION_RETURN_DIAGNOSTIC)
 .type __exception_entry_frame, %function
 __exception_entry_frame:
     sub sp, sp, #272
@@ -305,6 +299,15 @@ __exception_entry_frame:
     ldp x4, x5, [sp, #272]
     stp x4, x5, [sp]
     ldr x3, [sp, #288]
+
+    cmp x3, #1
+    b.eq 5f
+    cmp x3, #5
+    b.eq 5f
+    cmp x3, #9
+    b.eq 5f
+    cmp x3, #13
+    b.eq 5f
 
     mrs x4, CurrentEL
     cmp x4, #(2 << 2)
@@ -340,6 +343,55 @@ __exception_entry_frame:
 4:
     wfe
     b 4b
+
+5:
+    mrs x4, CurrentEL
+    cmp x4, #(2 << 2)
+    b.eq 6f
+    cmp x4, #(3 << 2)
+    b.eq 7f
+
+    mov x0, x3
+    mrs x1, ELR_EL1
+    mrs x2, SPSR_EL1
+    mov x3, sp
+    bl rust_irq_handler
+    b 8f
+
+6:
+    mov x0, x3
+    mrs x1, ELR_EL2
+    mrs x2, SPSR_EL2
+    mov x3, sp
+    bl rust_irq_handler
+    b 8f
+
+7:
+    mov x0, x3
+    mrs x1, ELR_EL3
+    mrs x2, SPSR_EL3
+    mov x3, sp
+    bl rust_irq_handler
+
+8:
+    ldp x0, x1, [sp]
+    ldp x2, x3, [sp, #16]
+    ldp x4, x5, [sp, #32]
+    ldp x6, x7, [sp, #48]
+    ldp x8, x9, [sp, #64]
+    ldp x10, x11, [sp, #80]
+    ldp x12, x13, [sp, #96]
+    ldp x14, x15, [sp, #112]
+    ldp x16, x17, [sp, #128]
+    ldp x18, x19, [sp, #144]
+    ldp x20, x21, [sp, #160]
+    ldp x22, x23, [sp, #176]
+    ldp x24, x25, [sp, #192]
+    ldp x26, x27, [sp, #208]
+    ldp x28, x29, [sp, #224]
+    ldr x30, [sp, #240]
+    add sp, sp, #304
+    eret
 
 .size __exception_entry_frame, . - __exception_entry_frame
 #endif
