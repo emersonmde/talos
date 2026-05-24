@@ -12,6 +12,34 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-24 - Accept EL2 Physical Timer IRQ Smoke on Pi 5
+
+- Status: accepted
+- Context: QEMU virt had accepted evidence for CNTHP_*_EL2 raising PPI 10 /
+  INTID 26 through GICv2 and returning through the current-EL IRQ frame. Phase 4
+  needed the same shape proven on Pi 5 GIC-400 before moving toward reusable
+  tick accounting.
+- Decision: Add a focused Pi 5 diagnostic gated by
+  TALOS_RPI5_TIMER_IRQ_DIAGNOSTIC. It uses GIC-400 distributor
+  0x10_7fff_9000, CPU interface 0x10_7fff_a000, CNTHP_*_EL2, and PPI 10 /
+  INTID 26. The IRQ path acknowledges with GICC_IAR, masks the EL2 physical
+  timer, EOIs with GICC_EOIR, records bounded atomics, and returns through the
+  saved exception frame; all formatting remains outside the IRQ path.
+- Evidence: Serialized lab run
+  tasks/evidence/2026-05-24-pi5-el2-timer-irq-smoke/ published archive
+  1861b6978b505381fd28ffb21320f1db9434405c4ce44af69354d6e1e82f5bb2 with
+  image hash 850902110e96af341e595f1493c0802f742e6618ad57546f0f37dc06236d3e0a
+  and size 86,429 bytes. TFTP served kernel_2712.img; serial showed
+  irq-count=1, vector 5, iar=0x0000001a, intid=26, unexpected=0, post-IRQ
+  workload progress, and rpi5-timer-irq-smoke: PASS.
+- Consequences: Phase 4 can checkpoint the target timer-smoke behavior before
+  periodic tick accounting. UART interrupts, SMP routing, lower ELs, scheduler
+  policy, RP1/PCIe, DMA, and networking remain explicitly out of scope.
+- Alternatives considered: accept QEMU-only evidence, switch to the EL1
+  physical or virtual timer first, or poll the timer status without IRQ
+  delivery. Those would not satisfy the Phase 4 hardware interrupt-delivery
+  requirement.
+
 ## 2026-05-18 - Repository and Target Strategy
 
 - Status: accepted

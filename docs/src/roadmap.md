@@ -46,6 +46,10 @@ Completed:
   enabled, CNTHP_*_EL2 raises PPI 10 / INTID 26 through GICv2, the current-EL
   IRQ frame path acknowledges and EOIs it, and execution returns to a bounded
   post-IRQ workload.
+- Pi 5 has a focused EL2 timer-interrupt smoke using the same CNTHP_*_EL2 /
+  PPI 10 / INTID 26 shape through GIC-400. Serialized lab evidence shows the
+  candidate image was fetched, the IRQ handler acknowledged and EOI'd INTID 26,
+  and execution returned to a bounded post-IRQ workload.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -53,8 +57,8 @@ Completed:
 
 Blocked or pending:
 
-- The QEMU timer IRQ shape has not yet been carried to Pi 5 GIC-400 hardware.
-  The next bounded implementation task is the serialized Pi 5 timer smoke.
+- The QEMU and Pi 5 timer-smoke results need a checkpoint before reusable
+  timekeeping, monotonic tick accounting, or scheduler work starts.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.

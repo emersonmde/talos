@@ -131,10 +131,32 @@ Accepted Pi 5 architectural timer facts:
   - hypervisor physical: GIC_PPI 10, INTID 26, flags 0xf08.
   - hypervisor virtual: GIC_PPI 12, INTID 28, flags 0xf08.
 
-Talos' accepted Pi 5 boot evidence enters non-secure EL2. The first Pi 5 timer
-hardware smoke should use the same EL2 hypervisor physical timer target as QEMU:
-CNTHP_*_EL2 plus PPI 10 / INTID 26. The extra Pi 5 hypervisor virtual PPI is
-recorded evidence, not an implementation target for the first smoke.
+Talos' accepted Pi 5 boot evidence enters non-secure EL2. The first accepted
+Pi 5 timer hardware smoke uses the same EL2 hypervisor physical timer target as
+QEMU: CNTHP_*_EL2 plus PPI 10 / INTID 26. The extra Pi 5 hypervisor virtual PPI
+is recorded evidence, not an implementation target for the first smoke.
+
+Accepted Pi 5 implementation contract:
+
+- The focused diagnostic is gated by TALOS_RPI5_TIMER_IRQ_DIAGNOSTIC; the
+  normal Pi 5 image continues to build without running the timer smoke.
+- Before unmasking PSTATE.I, Talos sets HCR_EL2.IMO, masks stale
+  CNTHP_CTL_EL2 state, enables PPI 10 / INTID 26 in the GIC-400 distributor
+  and CPU interface, and programs CNTHP_CVAL_EL2 plus CNTHP_CTL_EL2.ENABLE.
+- The current-EL IRQ handler acknowledges the active interrupt with GICC_IAR,
+  recognizes INTID 26, masks CNTHP_CTL_EL2, writes the same acknowledge value
+  to GICC_EOIR, increments a bounded atomic count, and returns through the
+  saved x0..x30 frame.
+- Unexpected GIC INTIDs are counted with atomics, EOI'd when they are real
+  active INTIDs, and reported after interrupts are masked again. The IRQ hot
+  path still does not allocate or format.
+
+The accepted hardware evidence is in
+tasks/evidence/2026-05-24-pi5-el2-timer-irq-smoke/. The serial capture shows
+rpi5-timer-irq-smoke: irq-count=1 vector=5 iar=0x0000001a intid=26
+unexpected=0 ctl=0x2, the GIC state after EOI, continued post-IRQ workload,
+and rpi5-timer-irq-smoke: PASS. TFTP evidence shows the Pi fetched the
+86,429-byte kernel_2712.img served from the candidate archive.
 
 ## Minimal GICv2 Register Checklist
 

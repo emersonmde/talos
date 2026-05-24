@@ -1,9 +1,16 @@
+#[cfg(talos_rpi5_timer_irq_diagnostic)]
+use crate::arch::aarch64::{
+    generic_timer,
+    gicv2::{GicV2, SPURIOUS_INTID},
+};
 use crate::{
     boot::BootInfo,
     device_tree::DeviceTree,
     mmio::{MmioMap, MmioRegion},
     target::{InterruptControllerKind, TargetServices, TimerKind, UartKind},
 };
+#[cfg(talos_rpi5_timer_irq_diagnostic)]
+use core::sync::atomic::{AtomicU64, Ordering};
 
 #[cfg(talos_target_rpi5_bcm2712)]
 use crate::pl011::Pl011;
@@ -20,6 +27,14 @@ pub const RP1_UART0_GPIO15_PAD: usize = 0x1f_000f_0040;
 pub const RP1_UART0_GPIO14_CTRL: usize = 0x1f_000d_0074;
 #[allow(dead_code)]
 pub const RP1_UART0_GPIO15_CTRL: usize = 0x1f_000d_007c;
+#[cfg(talos_rpi5_timer_irq_diagnostic)]
+const GICD_BASE: usize = 0x10_7fff_9000;
+#[cfg(talos_rpi5_timer_irq_diagnostic)]
+const GICC_BASE: usize = 0x10_7fff_a000;
+#[cfg(talos_rpi5_timer_irq_diagnostic)]
+const EL2_PHYSICAL_TIMER_INTID: u32 = 26;
+#[cfg(talos_rpi5_timer_irq_diagnostic)]
+const TIMER_IRQ_WAIT_LIMIT: usize = 8_000_000;
 
 const MMIO_REGIONS: &[MmioRegion] = &[
     MmioRegion::new("bcm2712-local-peripherals", 0x10_7c00_0000, 0x0400_0000),
@@ -34,6 +49,17 @@ const MMIO_REGIONS: &[MmioRegion] = &[
         0x0000_0100,
     ),
 ];
+
+#[cfg(talos_rpi5_timer_irq_diagnostic)]
+static TIMER_IRQ_COUNT: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_rpi5_timer_irq_diagnostic)]
+static LAST_IRQ_VECTOR: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_rpi5_timer_irq_diagnostic)]
+static LAST_IAR: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_rpi5_timer_irq_diagnostic)]
+static LAST_INTID: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_rpi5_timer_irq_diagnostic)]
+static UNEXPECTED_GIC_IRQ_COUNT: AtomicU64 = AtomicU64::new(0);
 
 pub fn init_stub() {
     init_rp1_uart0_pins();
@@ -65,6 +91,151 @@ fn write_rp1_reg_flush(addr: usize, value: u32) {
 #[cfg(talos_target_rpi5_bcm2712)]
 pub fn firmware_console() -> Pl011 {
     Pl011::new_with_posted_write_flush(UART10_BASE)
+}
+
+#[cfg(talos_rpi5_timer_irq_diagnostic)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct TimerIrqSnapshot {
+    pub timer_count: u64,
+    pub last_vector: u64,
+    pub last_iar: u64,
+    pub last_intid: u64,
+    pub unexpected_gic_count: u64,
+}
+
+#[cfg(talos_rpi5_timer_irq_diagnostic)]
+pub fn timer_irq_snapshot() -> TimerIrqSnapshot {
+    TimerIrqSnapshot {
+        timer_count: TIMER_IRQ_COUNT.load(Ordering::Relaxed),
+        last_vector: LAST_IRQ_VECTOR.load(Ordering::Relaxed),
+        last_iar: LAST_IAR.load(Ordering::Relaxed),
+        last_intid: LAST_INTID.load(Ordering::Relaxed),
+        unexpected_gic_count: UNEXPECTED_GIC_IRQ_COUNT.load(Ordering::Relaxed),
+    }
+}
+
+#[cfg(talos_rpi5_timer_irq_diagnostic)]
+pub fn handle_irq(vector: u64) -> bool {
+    let gic = GicV2::new(GICD_BASE, GICC_BASE);
+    let iar = unsafe { gic.acknowledge() };
+    let intid = iar & 0x03ff;
+
+    LAST_IRQ_VECTOR.store(vector, Ordering::Relaxed);
+    LAST_IAR.store(iar as u64, Ordering::Relaxed);
+    LAST_INTID.store(intid as u64, Ordering::Relaxed);
+
+    if intid == EL2_PHYSICAL_TIMER_INTID {
+        unsafe {
+            generic_timer::mask_el2_physical_timer();
+            gic.end_interrupt(iar);
+        }
+        TIMER_IRQ_COUNT.fetch_add(1, Ordering::Relaxed);
+        return true;
+    }
+
+    UNEXPECTED_GIC_IRQ_COUNT.fetch_add(1, Ordering::Relaxed);
+    if intid != SPURIOUS_INTID {
+        unsafe {
+            gic.end_interrupt(iar);
+        }
+    }
+    true
+}
+
+#[cfg(talos_rpi5_timer_irq_diagnostic)]
+pub fn run_el2_timer_irq_smoke() -> bool {
+    unsafe {
+        crate::arch::aarch64::disable_irq();
+        crate::arch::aarch64::route_physical_irqs_to_el2();
+        generic_timer::mask_el2_physical_timer();
+        GicV2::new(GICD_BASE, GICC_BASE).enable_ppi_or_spi(EL2_PHYSICAL_TIMER_INTID);
+    }
+
+    let freq = generic_timer::counter_frequency_hz();
+    let start = generic_timer::physical_count();
+    let delta = generic_timer::first_smoke_delta_ticks(freq);
+    let compare = start.wrapping_add(delta);
+
+    crate::println!(
+        "rpi5-timer-irq-smoke: gicd={:#014x} gicc={:#014x} intid={}",
+        GICD_BASE,
+        GICC_BASE,
+        EL2_PHYSICAL_TIMER_INTID
+    );
+    crate::println!(
+        "rpi5-timer-irq-smoke: cntfrq={} start={} cval={} delta={}",
+        freq,
+        start,
+        compare,
+        delta
+    );
+
+    let mut workload = 0x1234_5678_9abc_def0u64;
+    unsafe {
+        generic_timer::program_el2_physical_compare(compare);
+        crate::arch::aarch64::enable_irq();
+    }
+
+    let mut remaining = TIMER_IRQ_WAIT_LIMIT;
+    while timer_irq_snapshot().timer_count == 0 && remaining > 0 {
+        workload = workload.rotate_left(7) ^ 0x0f0e_0d0c_0b0a_0908;
+        unsafe {
+            core::arch::asm!("wfe", options(nomem, nostack, preserves_flags));
+        }
+        remaining -= 1;
+    }
+
+    unsafe {
+        crate::arch::aarch64::disable_irq();
+    }
+
+    let snapshot = timer_irq_snapshot();
+    let gic = GicV2::new(GICD_BASE, GICC_BASE);
+    let (enable_bits, pending_bits, active_bits, highest_pending) = unsafe {
+        (
+            gic.enable_bits(EL2_PHYSICAL_TIMER_INTID),
+            gic.pending_bits(EL2_PHYSICAL_TIMER_INTID),
+            gic.active_bits(EL2_PHYSICAL_TIMER_INTID),
+            gic.highest_pending(),
+        )
+    };
+    let daif = crate::arch::aarch64::daif();
+    let control = generic_timer::el2_physical_control();
+    crate::println!(
+        "rpi5-timer-irq-smoke: irq-count={} vector={} iar={:#010x} intid={} unexpected={} ctl={:#x}",
+        snapshot.timer_count,
+        snapshot.last_vector,
+        snapshot.last_iar,
+        snapshot.last_intid,
+        snapshot.unexpected_gic_count,
+        control
+    );
+    crate::println!(
+        "rpi5-timer-irq-smoke: gic enable={:#010x} pending={:#010x} active={:#010x} hppir={:#010x} daif={:#x}",
+        enable_bits,
+        pending_bits,
+        active_bits,
+        highest_pending,
+        daif
+    );
+    crate::println!(
+        "rpi5-timer-irq-smoke: post-irq workload={:#018x} remaining={}",
+        workload,
+        remaining
+    );
+
+    let passed = snapshot.timer_count > 0
+        && snapshot.last_intid == EL2_PHYSICAL_TIMER_INTID as u64
+        && snapshot.unexpected_gic_count == 0;
+
+    if passed {
+        crate::println!("rpi5-timer-irq-smoke: PASS");
+    } else {
+        crate::println!("rpi5-timer-irq-smoke: FAIL");
+    }
+    wait_uart10_empty_early_phase();
+
+    passed
 }
 
 #[cfg(talos_target_rpi5_bcm2712)]
