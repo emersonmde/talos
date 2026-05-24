@@ -1,4 +1,4 @@
-use crate::runtime_console::{self, ConsoleInputBackend};
+use crate::runtime_console::{self, ConsoleInputBackend, ConsoleInputPollOutcome};
 
 pub const CANONICAL_LINE_CAPACITY: usize = 8;
 pub const CANONICAL_ECHO_CAPACITY: usize = 32;
@@ -38,6 +38,27 @@ pub enum TtyInputOutcome {
     LineComplete,
     RawByte(u8),
     BufferLimit,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum PollingTtyRxOutcome {
+    Pending,
+    LineComplete,
+    Timeout,
+    InputUnavailable,
+    BackendError,
+}
+
+impl PollingTtyRxOutcome {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::Pending => "pending",
+            Self::LineComplete => "line-complete",
+            Self::Timeout => "timeout",
+            Self::InputUnavailable => "input-unavailable",
+            Self::BackendError => "backend-error",
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -237,14 +258,14 @@ impl TtyLineDiscipline {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct PollingTtyRxResult {
     discipline: TtyLineDiscipline,
-    timed_out: bool,
+    outcome: PollingTtyRxOutcome,
 }
 
 impl PollingTtyRxResult {
     const fn new() -> Self {
         Self {
             discipline: TtyLineDiscipline::canonical_lite(),
-            timed_out: false,
+            outcome: PollingTtyRxOutcome::Pending,
         }
     }
 
@@ -285,19 +306,37 @@ impl PollingTtyRxResult {
     }
 
     pub const fn timed_out(&self) -> bool {
-        self.timed_out
+        matches!(self.outcome, PollingTtyRxOutcome::Timeout)
+    }
+
+    pub const fn outcome(&self) -> PollingTtyRxOutcome {
+        self.outcome
+    }
+
+    pub const fn outcome_name(&self) -> &'static str {
+        self.outcome.name()
     }
 
     pub const fn passed(&self) -> bool {
-        self.discipline.terminated() && !self.timed_out && self.discipline.raw_bytes() > 0
+        matches!(self.outcome, PollingTtyRxOutcome::LineComplete) && self.discipline.raw_bytes() > 0
     }
 
     fn mark_timeout(&mut self) {
-        self.timed_out = true;
+        self.outcome = PollingTtyRxOutcome::Timeout;
+    }
+
+    fn mark_input_unavailable(&mut self) {
+        self.outcome = PollingTtyRxOutcome::InputUnavailable;
+    }
+
+    fn mark_backend_error(&mut self) {
+        self.outcome = PollingTtyRxOutcome::BackendError;
     }
 
     fn accept_byte(&mut self, byte: u8) {
-        let _ = self.discipline.process_byte(byte);
+        if self.discipline.process_byte(byte) == TtyInputOutcome::LineComplete {
+            self.outcome = PollingTtyRxOutcome::LineComplete;
+        }
     }
 }
 
@@ -319,16 +358,27 @@ where
     let mut idle_polls = 0usize;
 
     while !result.terminated() {
-        if let Some(byte) = runtime_console::poll_default_console_input(&mut backend) {
-            idle_polls = 0;
-            result.accept_byte(byte);
-        } else {
-            if idle_polls >= wait_limit {
-                result.mark_timeout();
+        match runtime_console::poll_default_console_input(&mut backend) {
+            ConsoleInputPollOutcome::ByteAvailable { byte, .. } => {
+                idle_polls = 0;
+                result.accept_byte(byte);
+            }
+            ConsoleInputPollOutcome::NoData { .. } => {
+                if idle_polls >= wait_limit {
+                    result.mark_timeout();
+                    break;
+                }
+                idle_polls += 1;
+                core::hint::spin_loop();
+            }
+            ConsoleInputPollOutcome::BackendUnavailable { .. } => {
+                result.mark_input_unavailable();
                 break;
             }
-            idle_polls += 1;
-            core::hint::spin_loop();
+            ConsoleInputPollOutcome::BackendError { .. } => {
+                result.mark_backend_error();
+                break;
+            }
         }
     }
 
@@ -474,6 +524,8 @@ mod tests {
         );
 
         assert!(result.passed());
+        assert_eq!(result.outcome(), PollingTtyRxOutcome::LineComplete);
+        assert_eq!(result.outcome_name(), "line-complete");
         assert_eq!(result.line(), b"abcdefgh");
         assert_eq!(result.echo(), b"abX\x08 \x08cY\x08 \x08defgh\r\n");
         assert_eq!(result.raw_bytes(), 15);
@@ -489,6 +541,8 @@ mod tests {
 
         assert!(!result.passed());
         assert!(result.timed_out());
+        assert_eq!(result.outcome(), PollingTtyRxOutcome::Timeout);
+        assert_eq!(result.outcome_name(), "timeout");
         assert_eq!(result.raw_bytes(), 0);
         assert_eq!(result.line(), b"");
     }

@@ -58,6 +58,23 @@ pub enum ConsoleWriteError {
 
 pub type ConsoleWriteOutcome = Result<ConsoleWriteResult, ConsoleWriteError>;
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum ConsoleInputPollOutcome {
+    ByteAvailable {
+        device: RuntimeConsoleDevice,
+        byte: u8,
+    },
+    NoData {
+        device: RuntimeConsoleDevice,
+    },
+    BackendUnavailable {
+        device: RuntimeConsoleDevice,
+    },
+    BackendError {
+        device: RuntimeConsoleDevice,
+    },
+}
+
 impl<B> RuntimeConsole<B>
 where
     B: ConsoleBackend,
@@ -124,11 +141,33 @@ where
 }
 
 #[cfg_attr(not(any(test, talos_qemu_polling_tty_rx_diagnostic)), allow(dead_code))]
-pub fn poll_default_console_input<B>(backend: &mut B) -> Option<u8>
+pub fn poll_default_console_input<B>(backend: &mut B) -> ConsoleInputPollOutcome
 where
     B: ConsoleInputBackend,
 {
-    backend.poll_read_byte()
+    match backend.poll_read_byte() {
+        Some(byte) => ConsoleInputPollOutcome::ByteAvailable {
+            device: DEFAULT_RUNTIME_CONSOLE,
+            byte,
+        },
+        None => ConsoleInputPollOutcome::NoData {
+            device: DEFAULT_RUNTIME_CONSOLE,
+        },
+    }
+}
+
+#[cfg_attr(not(any(test, talos_qemu_polling_tty_rx_diagnostic)), allow(dead_code))]
+pub const fn default_console_input_unavailable() -> ConsoleInputPollOutcome {
+    ConsoleInputPollOutcome::BackendUnavailable {
+        device: DEFAULT_RUNTIME_CONSOLE,
+    }
+}
+
+#[cfg_attr(not(any(test, talos_qemu_polling_tty_rx_diagnostic)), allow(dead_code))]
+pub const fn default_console_input_backend_error() -> ConsoleInputPollOutcome {
+    ConsoleInputPollOutcome::BackendError {
+        device: DEFAULT_RUNTIME_CONSOLE,
+    }
 }
 
 #[cfg(test)]
@@ -179,6 +218,26 @@ mod tests {
             self.len = end;
             self.writes += 1;
             Ok(())
+        }
+    }
+
+    struct ScriptedInput {
+        byte: Option<u8>,
+    }
+
+    impl ScriptedInput {
+        const fn with_byte(byte: u8) -> Self {
+            Self { byte: Some(byte) }
+        }
+
+        const fn empty() -> Self {
+            Self { byte: None }
+        }
+    }
+
+    impl ConsoleInputBackend for ScriptedInput {
+        fn poll_read_byte(&mut self) -> Option<u8> {
+            self.byte.take()
         }
     }
 
@@ -245,5 +304,41 @@ mod tests {
         );
         assert_eq!(backend.as_str(), "");
         assert_eq!(backend.writes, 0);
+    }
+
+    #[test_case]
+    fn default_console_input_reports_byte_and_no_data_outcomes() {
+        let mut with_byte = ScriptedInput::with_byte(0x61);
+        let mut empty = ScriptedInput::empty();
+
+        assert_eq!(
+            poll_default_console_input(&mut with_byte),
+            ConsoleInputPollOutcome::ByteAvailable {
+                device: DEFAULT_RUNTIME_CONSOLE,
+                byte: 0x61,
+            }
+        );
+        assert_eq!(
+            poll_default_console_input(&mut empty),
+            ConsoleInputPollOutcome::NoData {
+                device: DEFAULT_RUNTIME_CONSOLE,
+            }
+        );
+    }
+
+    #[test_case]
+    fn default_console_input_names_unavailable_and_backend_error_outcomes() {
+        assert_eq!(
+            default_console_input_unavailable(),
+            ConsoleInputPollOutcome::BackendUnavailable {
+                device: DEFAULT_RUNTIME_CONSOLE,
+            }
+        );
+        assert_eq!(
+            default_console_input_backend_error(),
+            ConsoleInputPollOutcome::BackendError {
+                device: DEFAULT_RUNTIME_CONSOLE,
+            }
+        );
     }
 }

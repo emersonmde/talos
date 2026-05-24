@@ -1,6 +1,6 @@
 # Console Device Model
 
-This note defines the Phase 5 starting boundary for Talos console work. It covers the accepted source inventory, the first runtime console write core, the named default console identity, the internal write-result contract, and the local input source inventory. Talos still does not implement descriptor tables, TTY line discipline, input reads, userspace, filesystem, networking, SSH, or a shell.
+This note defines the Phase 5 starting boundary for Talos console work. It covers the accepted source inventory, the first runtime console write core, the named default console identity, the internal write-result and input-result contracts, and the local input source inventory. Talos still does not implement descriptor tables, userspace, filesystem, networking, SSH, or a shell.
 
 ## Current Early Logging Surface
 
@@ -29,7 +29,7 @@ Raspberry Pi 5 owns a firmware-preserved early UART path:
 
 The early helper path remains intentionally separate: `target::console::write_static`, `write_hex_usize`, `write_hex_u64`, and `write_dec_usize`. On Pi 5 those helpers route to the proven UART10 word-write path and are used for panic/OOM, exception/fault reports, DTB and memory reports, and other bring-up diagnostics that must not rely on broad formatting or allocation.
 
-The first accepted receive path is QEMU-only and polling. `src/pl011.rs` now exposes a small RX-empty check plus data-register byte read for PL011, and `runtime_console::ConsoleInputBackend` gives the diagnostic a console-facing polling boundary. This does not enable UART interrupts, buffering, scheduler readiness, descriptor reads, or Pi 5 input.
+The first accepted receive path is QEMU-only and polling. `src/pl011.rs` now exposes a small RX-empty check plus data-register byte read for PL011, and `runtime_console::ConsoleInputBackend` gives the diagnostic a console-facing polling boundary. `ConsoleInputPollOutcome` names the internal polling result as byte available, no data, backend unavailable, or backend error. This does not enable UART interrupts, buffering, scheduler readiness, descriptor reads, or Pi 5 input.
 
 ## Runtime Console Ownership Boundary
 
@@ -42,6 +42,15 @@ Early logging is allowed to stay polling-only, synchronous, output-only, target-
 The write core returns an internal `ConsoleWriteOutcome`. Successful writes report `ConsoleWriteResult { device, bytes_written }` for the named console and complete formatted kernel message accepted by the runtime facade. Failed writes return `ConsoleWriteError::BackendWriteFailed { device, bytes_accepted }`, where `bytes_accepted` counts only complete string fragments the backend accepted before the failure. The current PL011 backends are still polling and normally infallible, so `target::console::_print` continues to panic on a runtime write failure rather than exposing a recoverable kernel diagnostic API.
 
 This result contract is internal to the kernel console boundary. It is not a POSIX errno value, syscall ABI, descriptor status, blocking contract, or partial-write promise for userspace.
+
+The input side has a matching internal polling contract. `poll_default_console_input` returns `ConsoleInputPollOutcome` for `runtime-console0`:
+
+- `ByteAvailable { device, byte }` means the selected backend produced one input byte during this poll.
+- `NoData { device }` means the backend was present but RX was empty at poll time.
+- `BackendUnavailable { device }` means no accepted input backend is attached to that console identity.
+- `BackendError { device }` names a future backend failure that is distinct from ordinary RX-empty polling.
+
+QEMU PL011 currently uses only `ByteAvailable` and `NoData`, because the accepted backend can distinguish data from RX-empty but has no recoverable error channel. Polling diagnostics own their own timeout policy around repeated `NoData`; timeout is not a console-backend result. These names are deliberately internal. Later descriptor and syscall work may map them to readiness, blocking, EOF, or errno-style behavior, but this contract does not implement POSIX `read`, `poll`, nonblocking I/O, or descriptor lifetime.
 
 The runtime console must not own POSIX process resources. Later descriptor work should attach `stdin`, `stdout`, and `stderr` handles to console objects through the descriptor layer, not by teaching the scheduler, boot code, or shell a private printing shortcut. The first `stdout` and `stderr` descriptors should point at `runtime-console0` through descriptor-owned handles; they should not call QEMU or Pi 5 target backends directly.
 
@@ -56,7 +65,7 @@ QEMU virt has the accepted first input surface:
 - current ownership: QEMU target code initializes the PL011 and backs `runtime-console0` output through `qemu_virt::console()`;
 - input shape: `Pl011::poll_read_byte` checks RX-empty before reading, and `phase5-qemu-polling-tty-rx-diagnostic-20260524` passes the target-owned backend through the runtime-console/TTY boundary for a QEMU-only smoke.
 
-This remains polling and bounded. The accepted diagnostic proves that a short injected QEMU serial line reaches kernel code, applies the canonical-lite newline, backspace/delete, echo, control-event, truncation, and timeout policy, and reports exact line and echo bytes. It does not add descriptor allocation, task blocking, scheduler wakeups, userspace, shell commands, Pi 5 input, or UART interrupts.
+This remains polling and bounded. The accepted diagnostic proves that a short injected QEMU serial line reaches kernel code through `ConsoleInputPollOutcome::ByteAvailable`, treats repeated `NoData` as a diagnostic-level timeout only after its bounded wait limit, applies the canonical-lite newline, backspace/delete, echo, control-event, and truncation policy, and reports exact line and echo bytes. It does not add descriptor allocation, task blocking, scheduler wakeups, userspace, shell commands, Pi 5 input, or UART interrupts.
 
 Raspberry Pi 5 has two plausible local UART surfaces, with different risks:
 
@@ -76,7 +85,7 @@ Failed input boots or timeouts are evidence, not incidents. They should be class
 
 ## Descriptor And TTY Compatibility Constraints
 
-Descriptor writes should eventually call the same console write operation used by kernel diagnostics, translating `ConsoleWriteOutcome` through a descriptor layer once descriptor ownership, blocking behavior, and errno mapping exist. `stdin` requires a real input source and should not be faked by output-only console work. Line editing, canonical mode, echo, signals, PTYs, and terminal window state belong to a later TTY layer. Blocking writes or reads can only sleep tasks after scheduler sleep/wakeup queues exist. Internal errors should remain structured so a later syscall boundary can map them to errno-style values without exposing current kernel-console names as ABI. QEMU and Pi 5 target differences should remain behind target/runtime console backend boundaries.
+Descriptor writes should eventually call the same console write operation used by kernel diagnostics, translating `ConsoleWriteOutcome` through a descriptor layer once descriptor ownership, blocking behavior, and errno mapping exist. Descriptor reads should similarly translate `ConsoleInputPollOutcome` through descriptor-owned readiness and blocking policy only after those layers exist. `stdin` requires a real input source and should not be faked by output-only console work. Line editing, canonical mode, echo, signals, PTYs, and terminal window state belong to the TTY layer. Blocking writes or reads can only sleep tasks after scheduler sleep/wakeup queues exist. Internal errors should remain structured so a later syscall boundary can map them to errno-style values without exposing current kernel-console names as ABI. QEMU and Pi 5 target differences should remain behind target/runtime console backend boundaries.
 
 The first `stdin` descriptor should attach to the input side of the selected console object only after an input source exists. Until scheduler sleep/wakeup and descriptor lifetime exist, input diagnostics should report readiness or bounded polling results directly to kernel diagnostics instead of pretending to offer POSIX `read`.
 
@@ -96,4 +105,4 @@ The accepted Milestone 5.2 shape is documented in [TTY and Stdio Shape](tty-stdi
 
 The bounded implementation task `phase5-runtime-console-write-core-20260524` added the output-only runtime console write core. The follow-up `phase5-console-write-result-contract-20260524` made its success/error boundary explicit with complete-write byte accounting for future descriptor compatibility. The `phase5-console-device-identity-boundary-20260524` slice named the default output-side console identity as `runtime-console0` and routed normal kernel diagnostics through `write_default_console_output`. The `phase5-console-input-source-inventory-20260524` slice inventoried QEMU and Pi 5 local input options, and `phase5-qemu-polling-tty-rx-diagnostic-20260524` accepted the QEMU-only polling PL011 RX diagnostic as the first local input proof.
 
-The core is backed by the existing polling PL011 paths and preserves the accepted early serial output contract. The QEMU input diagnostic adds only bounded polling RX and a diagnostic-local canonical-lite parser. It does not add UART interrupts, descriptor tables, userspace, filesystems, networking, SSH, a shell, or sleep/blocking behavior.
+The core is backed by the existing polling PL011 paths and preserves the accepted early serial output contract. The QEMU input diagnostic adds only bounded polling RX through the structured internal input result contract and the shared TTY line-discipline core. It does not add UART interrupts, descriptor tables, userspace, filesystems, networking, SSH, a shell, or sleep/blocking behavior.

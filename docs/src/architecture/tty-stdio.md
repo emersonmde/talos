@@ -33,6 +33,8 @@ Canonical editing should remain byte-oriented at first. UTF-8 validation, locale
 
 `src/tty.rs` now expresses this first behavior as the target-independent `TtyLineDiscipline` core. `TtyMode::Raw` records pass-through bytes without canonical translation or echo, while `TtyMode::CanonicalLite` performs bounded line assembly, deterministic echo decisions, named deferred control events, Escape as input data, and explicit buffer-limit reporting. Polling diagnostics own timeout policy around the core; the line discipline itself reports parser outcomes and does not know about QEMU, PL011 MMIO, Pi 5 hardware, scheduler blocking, descriptors, or shell commands.
 
+`PollingTtyRxResult` names the diagnostic-level completion outcome separately from the runtime-console poll result. A completed line is `line-complete`; repeated `ConsoleInputPollOutcome::NoData` past the bounded wait limit becomes `timeout`; and the structured but currently unused `input-unavailable` and `backend-error` cases remain distinct for later non-QEMU backends. These outcomes are diagnostic labels only. They are not POSIX EOF, errno, readiness, or nonblocking-read results.
+
 ## Newline And Echo Policy
 
 Output written through stdout or stderr should preserve the existing console output convention: logical \n text reaches the serial console as CRLF through the backend path. The descriptor layer may later expose partial-write and errno semantics, but the current console write-result contract stays internal until that boundary exists.
@@ -91,6 +93,7 @@ The first bounded implementation after this design is `phase5-qemu-polling-tty-r
 
 - `Pl011::poll_read_byte` checks RX-empty state before reading the data register;
 - `runtime_console::ConsoleInputBackend` exposes the input-capable backend without making diagnostic clients call target UART MMIO directly;
+- `runtime_console::ConsoleInputPollOutcome` preserves the internal distinction between a byte, RX-empty/no data, input unavailable, and backend error;
 - `tty::run_polling_rx_diagnostic` reads injected serial bytes, applies the canonical-lite newline, backspace/delete, echo, control-event, truncation, and timeout policy, and prints the observed line or timeout classification;
 - keep descriptor tables, syscalls, userspace, scheduler blocking, UART interrupts, Pi 5 hardware, shell commands, filesystem, networking, and SSH out of scope.
 

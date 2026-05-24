@@ -450,11 +450,12 @@ pub fn run_polling_tty_rx_diagnostic() -> bool {
     let result = crate::tty::run_polling_rx_diagnostic(console());
     crate::println!();
     crate::println!(
-        "qemu-tty-rx-diagnostic: raw-len={} line-len={} terminated={} timeout={} truncated={} backspaces={} deletes={} controls={}",
+        "qemu-tty-rx-diagnostic: raw-len={} line-len={} terminated={} timeout={} outcome={} truncated={} backspaces={} deletes={} controls={}",
         result.raw_bytes(),
         result.line().len(),
         result.terminated(),
         result.timed_out(),
+        result.outcome_name(),
         result.truncated(),
         result.backspaces(),
         result.deletes(),
