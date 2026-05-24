@@ -12,6 +12,43 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-24 - Phase 4 Closeout Accepted
+
+- Status: accepted as the checkpoint closing Phase 4 interrupts, timers, and
+  single-core scheduler preemption before Phase 5 planning. No kernel code,
+  boot image, hardware lock, or hardware run changed in this task.
+- Context: Talos had accepted QEMU and Pi 5 EL2 timer IRQ delivery, monotonic
+  tick accounting, single-core interrupt-mask critical sections, scheduler
+  structures, cooperative context switching, voluntary yield dispatch, QEMU
+  timer-driven preemption, Pi 5 timer-driven preemption, and a consolidated
+  scheduler/preemption contract. Before Phase 5 local console planning starts,
+  the accepted evidence and remaining deferrals needed one closeout record.
+- Decision: Accept `docs/src/project/phase4-closeout-checkpoint.md` as the
+  Phase 4 closeout. Phase 5 planning may start with
+  `phase5-console-device-model-source-inventory-20260524`, limited to source
+  inventory and early/runtime console ownership docs. Console/TTY
+  implementation, descriptor tables, userspace, filesystems, networking, SSH,
+  and shell behavior remain out of scope until separately planned.
+- Evidence level: static documentation checkpoint over accepted commits and
+  task records: `0fb6260`, `de40482`, `bce215d`, `966d453`, `957bbc8`,
+  `54d2075`, `1bbfec6`, `68e3529`, `37ce658`, `7ce1a91`, `988ea31`,
+  `6f24076`, `24c25c6`, `8134e7c`, `2cf0e64`, `9e53676`, and `f1e0cd2`.
+  Pi 5 hardware evidence remains in
+  `tasks/evidence/2026-05-24-pi5-el2-timer-irq-smoke/`,
+  `tasks/evidence/2026-05-24-pi5-monotonic-tick-accounting/`, and
+  `tasks/evidence/2026-05-24-pi5-timer-preemption-hardware-proof/`.
+- Validation: `git status --short` was inspected before checkpoint edits and
+  was clean. `git diff --check` and `git diff --cached --check` passed.
+  `mdbook build` was not run because `mdbook` is unavailable in the container.
+- Consequences: The worker queue may mark the Phase 5 console inventory task
+  ready. The next task must not infer runtime console, TTY, descriptor,
+  userspace, filesystem, networking, SSH, or shell implementation from the
+  Phase 4 scheduler evidence.
+- Risks: Current timer-preemption boot images are validation surfaces, not
+  supported kernel interfaces. The scheduler remains single-core only; the
+  accepted IRQ-mask primitive is not an SMP lock. Phase 5 must preserve the
+  early logging/runtime console boundary before introducing input or TTY state.
+
 ## 2026-05-24 - Phase 4 Pre-Scheduler Closeout Accepted
 
 - Status: accepted as the checkpoint between Phase 4.1/4.2 interrupt/timer

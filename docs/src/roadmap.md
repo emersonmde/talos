@@ -100,6 +100,10 @@ Completed:
   acknowledge/classify/tick/request/reprogram/EOI. The QEMU and Pi 5
   timer-preemption boot images remain validation surfaces, not supported
   kernel interfaces.
+- Phase 4 closeout is accepted. The checkpoint reconciles the accepted QEMU and
+  Pi 5 interrupt/timer/preemption evidence, names remaining deferrals and
+  risks, and allows Phase 5 planning to start with a bounded local console
+  device-model source inventory.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -107,8 +111,11 @@ Completed:
 
 Blocked or pending:
 
-- The next queued Phase 4 slice is the Phase 4 closeout checkpoint before any
-  Phase 5 console/TTY work starts.
+- The next queued Phase 5 slice is the console device-model source inventory.
+  It may document early/runtime console ownership and the descriptor/TTY
+  compatibility boundary, but it must not implement console/TTY behavior,
+  descriptor tables, userspace, filesystems, networking, SSH, or shell
+  behavior.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
@@ -306,6 +313,11 @@ Acceptance criteria:
 ## Phase 4: Interrupts, Timers, and Preemption
 
 Goal: move from cooperative boot code to timer-driven kernel scheduling.
+
+Status: accepted for the current closeout boundary. See
+[Phase 4 Closeout Checkpoint](project/phase4-closeout-checkpoint.md) for the
+accepted capabilities, commit references, deferred work, risks, and Phase 5
+planning recommendation.
 
 Milestone 4.1: Interrupt Controller
 
