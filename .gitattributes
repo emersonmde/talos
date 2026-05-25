@@ -1,0 +1,2 @@
+# Hardware serial captures preserve firmware CRLF and spacing verbatim.
+tasks/evidence/**/*.txt -whitespace

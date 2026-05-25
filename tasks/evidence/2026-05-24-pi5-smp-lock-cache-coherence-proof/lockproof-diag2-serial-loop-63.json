@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "ZXNzPTAgZGlhZy1waGFzZT1iZWZvcmUtbG9jay1hdHRlbXB0IGRpYWctcHJvZ3Jlc3M9MCBkaWFnLWF0dGVtcHRzPTAgZGlhZy10aW1lb3V0cz0wIGRpYWctcmVsZWFzZXM9MCBkaWFnLXNjdGxyLWVsMj0weDAwMDAwMDAwMzBjNTA4MzAgZGlhZy1jYWNoZWFibGUtbW11PWZhbHNlDQo=",
+  "bytes": 161,
+  "cursor_end": 2047687,
+  "cursor_start": 2047526,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "ess=0 diag-phase=before-lock-attempt diag-progress=0 diag-attempts=0 diag-timeouts=0 diag-releases=0 diag-sctlr-el2=0x0000000030c50830 diag-cacheable-mmu=false\r\n",
+  "truncated": false
+}

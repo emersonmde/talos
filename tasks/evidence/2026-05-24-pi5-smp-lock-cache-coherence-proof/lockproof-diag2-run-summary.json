@@ -1,0 +1,13 @@
+{
+  "name": "lockproof-diag2",
+  "snapshot": "pre-phase6-pi5-smp-lock-diag2-20260524T235223Z",
+  "archiveSha256": "aece5aa77113905e5b48404d126d693340010f97ab4c16df998ce1460f43170a",
+  "kernelSha256": "25ec4753a89987af5d3637cf79cd2ec5fc3aab95e80995cd6ba18e23089484f9",
+  "kernelSize": 95608,
+  "serialLoop": {
+    "found": 0,
+    "iterations": 75,
+    "marker": "",
+    "note": ""
+  }
+}

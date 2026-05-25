@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "dGFsb3M6IHN0YXR1cyBlYXJseSBib290IGxvZyByZWFkeQ0KVEFMT1M6IGR0YiByZXNlcnZlZCBzdGFydA0KdGFsb3M6IGR0YiByZXNlcnZlZDogY291bnQ9MCBzaG93bj0wIHRydW5jYXRlZD1mYWxzZQ0KVEFMT1M6IGR0YiByZXNlcnZlZCBkb25lDQpUQUxPUzogcmVzZXJ2ZWQtbWVtb3J5IHN0YXJ0DQo=",
+  "bytes": 173,
+  "cursor_end": 2024919,
+  "cursor_start": 2024746,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "talos: status early boot log ready\r\nTALOS: dtb reserved start\r\ntalos: dtb reserved: count=0 shown=0 truncated=false\r\nTALOS: dtb reserved done\r\nTALOS: reserved-memory start\r\n",
+  "truncated": false
+}

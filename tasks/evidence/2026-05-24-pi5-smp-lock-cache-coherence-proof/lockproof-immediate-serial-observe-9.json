@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "MDAxDQogIDQuMTMgUlAxX0NISVBfSU5GTyAyMDAwMTkyNw0KDQogIDQuMTQgUlBpOiBCT09UTE9BREVSIHJlbGVhc2UgVkVSU0lPTjoyMjI2YTg1MyBEQVRFOiAyMDI1LzEyLzA4IFRJTUU6IDE5OjI5OjU0DQogIDQuMTQgQk9PVE1PREU6IDB4MDYgcGFydGl0aW9uIDAgYnVpbGQtdHMgQlVJTERfVElNRVNUQU1QPTE3NjUyMjIxOTQgc2VyaWFsIGRhNTkxNzQwIGJvYXJkcmV2IGQwNDE3MSBzdGMgNDE0OTIyOQ0KICA0LjE4IHVzYl9wZF9pbml0IHN0YXR1cyAwDQo=",
+  "bytes": 263,
+  "cursor_end": 2012316,
+  "cursor_start": 2012053,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "001\r\n  4.13 RP1_CHIP_INFO 20001927\r\n\r\n  4.14 RPi: BOOTLOADER release VERSION:2226a853 DATE: 2025/12/08 TIME: 19:29:54\r\n  4.14 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 4149229\r\n  4.18 usb_pd_init status 0\r\n",
+  "truncated": false
+}

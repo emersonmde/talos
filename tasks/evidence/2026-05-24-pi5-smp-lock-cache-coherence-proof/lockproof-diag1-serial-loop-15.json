@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "bW9yeTogYWRkcl9jZWxscz0yIHNpemVfY2VsbHM9MiBub2Rlcz00IHJhbmdlcz0zIHNob3duPTMgdHJ1bmNhdGVkPWZhbHNlDQp0YWxvczogcmVzZXJ2ZWQtbWVtb3J5WzBdOiBhZGRyPTB4MCBzaXplPTB4ODAwMDAgbm9fbWFwPXRydWUgcmV1c2FibGU9ZmFsc2UNCnRhbG9zOiByZXNlcnZlZC1tZW1vcnlbMV06IGFkZHI9MHgzZmQyMzE2MCBzaXplPTB4M2Qgbm9fbWFwPXRydWUgcmV1c2FibGU9ZmFsc2UNCnRhbG9zOiByZXNlcnZlZC1tZW1vcnlbMl06IGFkZHI9MHgwIHNpemU9MHgwIG5vX21hcD10cnVlIHJldXNhYmxlPWZhbHNlDQpUQUxPUzogZHRiIG1lbW9yeSBzY2FuIHN0YXJ0DQo=",
+  "bytes": 335,
+  "cursor_end": 2032636,
+  "cursor_start": 2032301,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "mory: addr_cells=2 size_cells=2 nodes=4 ranges=3 shown=3 truncated=false\r\ntalos: reserved-memory[0]: addr=0x0 size=0x80000 no_map=true reusable=false\r\ntalos: reserved-memory[1]: addr=0x3fd23160 size=0x3d no_map=true reusable=false\r\ntalos: reserved-memory[2]: addr=0x0 size=0x0 no_map=true reusable=false\r\nTALOS: dtb memory scan start\r\n",
+  "truncated": false
+}

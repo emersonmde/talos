@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "IDIxLjU1IFBDSTEgcmVzZXQNCiAyMS41NiBzZXRfcmVib290X29yZGVyIDANCiAyMS41NiBzZXRfcmVib290X2FyZzEgMA0KIDIxLjU2IFVTQi1PVEcgZGlzY29ubmVjdA0K",
+  "bytes": 99,
+  "cursor_end": 2024000,
+  "cursor_start": 2023901,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": " 21.55 PCI1 reset\r\n 21.56 set_reboot_order 0\r\n 21.56 set_reboot_arg1 0\r\n 21.56 USB-OTG disconnect\r\n",
+  "truncated": false
+}

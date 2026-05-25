@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "LWFmZmluaXR5PTB4MCBib290LWxvZ2ljYWw9U29tZSgwKSBlbnRyeT0weDAwMDAwMDAwMDAyMDAxNDQgc3RhY2stcmFuZ2U9WzB4MDAwMDAwMDAwMDIxODAwMCwweDAwMDAwMDAwMDAyMWMwMDApIGNhY2hlLXBvbGljeT1nZW5lcmljLWxvY2stbm8tY2FjaGUtbWFpbnRlbmFuY2UNCnJwaTUtc21wLWxvY2stY2FjaGUtY29oZXJlbmNlOiBjcHUtb24gbG9naWNhbD0xIHRhcmdldC1hZmZpbmlUdHk9QUxPUzogc2Vjb25kYXIweFRBTE9TOiBzZWNvbmRhcnlfcnVzdF9lbnRyeQ0KMTAwVEFMT1M6IHNlY29uZGFyeV9zdGF0ZV9wdWJsaXMgcmVzdWx0PTANCnJwaTUtc21wLWxvY2stY2FjaGUtY29oZXJlbmNlOiBhZmZpbml0eS1hZnRlciBsb2dpY2FsPTEgdGFyZ2V0LWFmZmluaXR5PTB4MTAwIGxldmVsPTAgc3RhdGU9b24gcmF3PTANCnJwaTUtc21wLWxvY2stY2FjaGUtY29oZXJlbmNlOiBUcHUtb24gbG9naWNhbD0yVEFMT1M6IHNlY29uZGFyeV9wcmVfcnVzdF9lbnRyeSB0YXJnAAo=",
+  "bytes": 500,
+  "cursor": 2028889,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "-affinity=0x0 boot-logical=Some(0) entry=0x0000000000200144 stack-range=[0x0000000000218000,0x000000000021c000) cache-policy=generic-lock-no-cache-maintenance\r\nrpi5-smp-lock-cache-coherence: cpu-on logical=1 target-affiniTty=ALOS: secondar0xTALOS: secondary_rust_entry\r\n100TALOS: secondary_state_publis result=0\r\nrpi5-smp-lock-cache-coherence: affinity-after logical=1 target-affinity=0x100 level=0 state=on raw=0\r\nrpi5-smp-lock-cache-coherence: Tpu-on logical=2TALOS: secondary_pre_rust_entry targ\u0000\n"
+}

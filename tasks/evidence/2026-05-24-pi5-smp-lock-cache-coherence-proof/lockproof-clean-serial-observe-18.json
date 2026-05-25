@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "IDExLjk3IExJTksgU1RBVFVTOiBzcGVlZDogMTAwMCBmdWxsIGR1cGxleA0KIDExLjc1IExpbmsgcmVhZHkNCg==",
+  "bytes": 64,
+  "cursor_end": 2021646,
+  "cursor_start": 2021582,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": " 11.97 LINK STATUS: speed: 1000 full duplex\r\n 11.75 Link ready\r\n",
+  "truncated": false
+}

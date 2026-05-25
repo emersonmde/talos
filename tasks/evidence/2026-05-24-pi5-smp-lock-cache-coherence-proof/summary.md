@@ -323,3 +323,36 @@ hardware proof for the generic lock; it decisively classifies the current
 physical proof setup as invalid until secondary cores enter the same cacheable
 MMU regime as the boot CPU or the supervisor closes the task as a documented
 cache-regime blocker.
+
+## Post-Handoff Report Invariant Failure
+
+The follow-up secondary cacheable-MMU handoff proof is accepted separately in
+`tasks/2026-05-25-phase6-secondary-cacheable-mmu-handoff-pi5-proof.md`.
+That run proves the mixed-cache/MMU blocker is removed, but it does not accept
+this lock proof.
+
+Evidence:
+`tasks/evidence/2026-05-25-pi5-secondary-cacheable-mmu-handoff-proof/serial-key-lines.txt`.
+
+Observed facts from the post-handoff run:
+
+- Boot CPU and all three secondary diagnostics used
+  `diag-sctlr-el2=0x0000000030c51835` with `diag-cacheable-mmu=true`.
+- The shared lock state completed:
+  `counter=192 expected=192 participants=3 diag-participants=3 errors=0`,
+  `lock-available=true`, `generic-state-visible=true`, and
+  `mixed-cache-mmu=false`.
+- Logical cores 1 and 2 reported `lock-count=64`, `progress=64`,
+  `diag-progress=64`, `diag-attempts=64`, and `diag-releases=64`, but
+  their final identity fields were zero:
+  `context=0 mpidr=0x0000000000000000 affinity=0x0 sp=0x0000000000000000`.
+- Logical core 3 reported the expected identity and stack ownership fields.
+
+Current classification:
+`pi5-smp-lock-cache-coherence-invariant-failed`.
+
+The report-invariant inventory in
+`tasks/2026-05-25-phase6-smp-lock-evidence-hygiene-and-report-inventory.md`
+narrows the next implementation surface to `PerCoreState` identity
+publication/reset/cache-maintenance around secondary entry and cacheable-MMU
+handoff. It does not identify a generic `SpinLock<T>` contract bug.

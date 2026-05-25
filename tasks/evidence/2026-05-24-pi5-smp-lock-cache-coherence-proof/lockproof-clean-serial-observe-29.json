@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "Ck5PVElDRTogIEJMMzE6IHYyLjYocmVsZWFzZSk6djIuNi0yNDAtZ2ZjNDViYzQ5Mg0KTk9USUNFOiAgQkwzMTogQnVpbHQgOiAxMjo1NToxMywgRGVjICA0IDIwMjQNClRBTE9TOiBhc21fc3RhcnQNClRBTE9TOiBhc21fcHJlX3J1c3RfZW50cnkNClRBTE9TOiBydXN0X2VudHJ5DQpUQUxPUzogYm9vdCBpbmZvIHBhcnNlZA0KVEFMT1M6IHRhcmdldCBpbml0DQpUQUxPUzogZXhjZXB0aW9ucyByZWFkeQ0KVEFMT1M6IGtlcm5lbF9tYWluDQoNCnRhbG9zOiBib290IHN0YXJ0DQp0YWxvczogYm9hcmQgcmFzcGJlcnJ5LXBpLTUtYmNtMjcxMg0KdGFsb3M6IHZlcnNpb24gMC4xLjANCnRhbG9zOiBjb25zb2xlIGVhcmx5LXVhcnQgZm10DQp0YWxvczogYm9vdCBjb3JlIDANCnRhbG9zOiBib290IGR0YiAweDJlZmVjNjAwDQp0YWxvczogYm9vdCB0YXJnZXQgdGFsb3MtcnBpNS1iY20yNzEyDQp0YWxvczogcG9pbnRlciBkZWx0YSAweDANCnRhbG9zOiBib290IGluZm86IGR0Yj0weDJlZmVjNjAwIGNvcmU9MCBlbD0yIHRhcmdldD10YWxvcy1ycGk1LWJjbTI3MTINCnRhbG9zOiBzZXJ2aWNlczogdWFydD1maXJtd2FyZS1wcmVzZXJ2ZWQgdGltZXI9YXJtLWdlbmVyaWMgaXJxPWdpYy12MiBtbWlvX3JlZ2lvbnM9NyBkdGI9MHgyZWZlYzYwMA0KdGFsb3M6IGR0YiBoZWFkZXI6IG1hZ2ljPTB4ZDAwZGZlZWQgc2l6ZT04MDI1NCB2ZXJzaW9uPTE3IGxhc3RfY29tcD0xNiBzdHJ1Y3Q9NzI0OTYgc3RyaW5ncz03NzAyDQo=",
+  "bytes": 746,
+  "cursor_end": 2024746,
+  "cursor_start": 2024000,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\nNOTICE:  BL31: v2.6(release):v2.6-240-gfc45bc492\r\nNOTICE:  BL31: Built : 12:55:13, Dec  4 2024\r\nTALOS: asm_start\r\nTALOS: asm_pre_rust_entry\r\nTALOS: rust_entry\r\nTALOS: boot info parsed\r\nTALOS: target init\r\nTALOS: exceptions ready\r\nTALOS: kernel_main\r\n\r\ntalos: boot start\r\ntalos: board raspberry-pi-5-bcm2712\r\ntalos: version 0.1.0\r\ntalos: console early-uart fmt\r\ntalos: boot core 0\r\ntalos: boot dtb 0x2efec600\r\ntalos: boot target talos-rpi5-bcm2712\r\ntalos: pointer delta 0x0\r\ntalos: boot info: dtb=0x2efec600 core=0 el=2 target=talos-rpi5-bcm2712\r\ntalos: services: uart=firmware-preserved timer=arm-generic irq=gic-v2 mmio_regions=7 dtb=0x2efec600\r\ntalos: dtb header: magic=0xd00dfeed size=80254 version=17 last_comp=16 struct=72496 strings=7702\r\n",
+  "truncated": false
+}

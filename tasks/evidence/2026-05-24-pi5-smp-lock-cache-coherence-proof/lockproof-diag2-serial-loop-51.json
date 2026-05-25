@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "cnBpNS1zbXAtbG9jay1jYWNoZS1jb2hlcmVuY2U6IHdhaXQgbG9naWNhbD0xIHJlbWFpbmluZz0xNDAwMDAwMDAgc3RhdGU9d29ya2xvYWQtcnVubmluZyBwcm9ncmVzcz0wIGRpYWctcGhhc2U9YmVmb3JlLWxvY2stYXR0ZW1wdCBkaWFnLXByb2dyZXNzPTAgZGlhZy1hdHRlbXB0cz0wIGRpYWctdGltZW91dHM9MCBkaWFnLXJlbGVhc2VzPTAgZGlhZy1zY3Rsci1lbDI9MHgwMDAwMDAwMDMwYzUwODMwIGRpYWctY2FjaGVhYmxlLW1tdT1mYWxzZQ0KcnBpNS1zbXAtbG9jay1jYWNoZS1jb2hlcmVuY2U6IHdhaXQgbG9naWNhbD0yIHJlbWFpbmluZz0xNDAwMDAwMDAgc3RhdGU9d29ya2xvYWQtcnVubmluZyBwcm9ncmVzcz0wIGRpYWctcGhhc2U9YmVmb3JlLWxvY2stYXR0ZW1wdCBkaWFnLXByb2dyZXNzPTAgZGlhZy1hdHRlbXB0cz0wIGRpYWctdGltZW91dHM9MCBkaWFnLXJlbGVhc2VzPTAgZGlhZy1zY3Rsci1lbDI9MHgwMDAwMDAwMDMwYzUwODMwIGRpYWctY2FjaGVhYmxlLW1tdT1mYWxzZQ0KcnBpNS1zbXAtbG9jay1jYWNoZS1jb2hlcmVuY2U6IHdhaXQgbG9naWNhbD0zIHJlbWFpbmluZz0xNDAwMDAwMDAgc3RhdGU9d29ya2xvYWQtcnVubmluZyBwcm9ncmVzcz0wIGRpYWctcGhhc2U9YmVmb3JlLWxvY2stYXR0ZW1wdCBkaWFnLXByb2dyZXNzPTAgZGlhZy1hdHRlbXB0cz0wIGRpYWctdGltZW91dHM9MCBkaWFnLXJlbGVhc2VzPTAgZGlhZy1zY3Rsci1lbDI9MHgwMDAwMDAwMDMwYzUwODMwIGRpYWctY2FjaGVhYmxlLW1tdT1mYWxzZQ0K",
+  "bytes": 765,
+  "cursor_end": 2047526,
+  "cursor_start": 2046761,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "rpi5-smp-lock-cache-coherence: wait logical=1 remaining=140000000 state=workload-running progress=0 diag-phase=before-lock-attempt diag-progress=0 diag-attempts=0 diag-timeouts=0 diag-releases=0 diag-sctlr-el2=0x0000000030c50830 diag-cacheable-mmu=false\r\nrpi5-smp-lock-cache-coherence: wait logical=2 remaining=140000000 state=workload-running progress=0 diag-phase=before-lock-attempt diag-progress=0 diag-attempts=0 diag-timeouts=0 diag-releases=0 diag-sctlr-el2=0x0000000030c50830 diag-cacheable-mmu=false\r\nrpi5-smp-lock-cache-coherence: wait logical=3 remaining=140000000 state=workload-running progress=0 diag-phase=before-lock-attempt diag-progress=0 diag-attempts=0 diag-timeouts=0 diag-releases=0 diag-sctlr-el2=0x0000000030c50830 diag-cacheable-mmu=false\r\n",
+  "truncated": false
+}

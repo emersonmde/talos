@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "CiAgNC4zMyBTRF9PQzogMA0KICA0LjM0IEJvb3QgbW9kZTogTkVUV09SSyAoMDIpIG9yZGVyIGYxDQo=",
+  "bytes": 59,
+  "cursor_end": 2012375,
+  "cursor_start": 2012316,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\n  4.33 SD_OC: 0\r\n  4.34 Boot mode: NETWORK (02) order f1\r\n",
+  "truncated": false
+}

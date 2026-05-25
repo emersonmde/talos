@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "YXRlZD1mYWxzZQ0KVEFMT1M6IGR0YiByZXNlcnZlZCBkb25lDQpUQUxPUzogcmVzZXJ2ZWQtbWVtb3J5IHN0YXJ0DQpUQUxPUzogcmVzZXJ2ZWQtbWVtb3J5IGRvbmUNCnRhbG9zOiByZXNlcnZlZC1tZW1vcnk6IGFkZHJfY2VsbHM9MiBzaXplX2NlbGxzPTIgbm9kZXM9NCByYW5nZXM9MyBzaG93bj0zIHRydW5jYXRlZD1mYWxzZQ0KdGFsb3M6IHJlc2VydmVkLW1lbW9yeVswXTogYWRkcj0weDAgc2l6ZT0weDgwMDAwIG5vX21hcD10cnVlIHJldXNhYmxlPWZhbHNlDQp0YWxvczogcmVzZXJ2ZWQtbWVtb3J5WzFdOiBhZGRyPTB4M2ZkMjMxNjAgc2l6ZT0weDNkIG5vX21hcD10cnVlIHJldXNhYmxlPWZhbHNlDQp0YWxvczogcmVzZXJ2ZWQtbWVtb3J5WzJdOiBhZGRyPTB4MCBzaXplPTB4MCBub19tYXA9dHJ1ZSByZXVzYWJsZT1mYWxzZQ0KVEFMT1M6IGR0YiBtZW1vcnkgc2NhbiBzdGFydA0K",
+  "bytes": 450,
+  "cursor_end": 2040174,
+  "cursor_start": 2039724,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "ated=false\r\nTALOS: dtb reserved done\r\nTALOS: reserved-memory start\r\nTALOS: reserved-memory done\r\ntalos: reserved-memory: addr_cells=2 size_cells=2 nodes=4 ranges=3 shown=3 truncated=false\r\ntalos: reserved-memory[0]: addr=0x0 size=0x80000 no_map=true reusable=false\r\ntalos: reserved-memory[1]: addr=0x3fd23160 size=0x3d no_map=true reusable=false\r\ntalos: reserved-memory[2]: addr=0x0 size=0x0 no_map=true reusable=false\r\nTALOS: dtb memory scan start\r\n",
+  "truncated": false
+}

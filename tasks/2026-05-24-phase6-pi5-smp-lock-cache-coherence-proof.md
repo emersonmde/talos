@@ -258,6 +258,7 @@ method.
   SHA256
   `4bf352206804e4093b53c5ef791eaabe83d7850a443e80bda23f98b1cb089616`,
   kernel size 92,376 bytes.
+
 - Evidence:
   `lockproof-clean-serial-combined.txt`,
   `lockproof-clean-serial-loop-result.json`,
@@ -340,3 +341,26 @@ not be accepted as a passing hardware proof until the supervisor either plans
 a bounded secondary-cache/MMU handoff task or closes this task as a documented
 hardware/cache-regime blocker. Keep the entry-discriminator scaffolding
 quarantined as evidence-only until that planning decision is made.
+
+## Post-Handoff Status
+
+The secondary cacheable-MMU handoff prerequisite was accepted in
+`tasks/2026-05-25-phase6-secondary-cacheable-mmu-handoff-pi5-proof.md`, but
+this lock proof remains unaccepted.
+
+Post-handoff Pi 5 evidence reached the shared lock invariant:
+`counter=192 expected=192 participants=3 diag-participants=3 errors=0`,
+`lock-available=true`, `generic-state-visible=true`, and
+`mixed-cache-mmu=false`. It still failed the final report invariant because
+logical cores 1 and 2 reported complete lock progress while their final
+`PerCoreState` identity fields were zeroed:
+`context=0 mpidr=0x0000000000000000 affinity=0x0 sp=0x0000000000000000`.
+
+Current classification:
+`pi5-smp-lock-cache-coherence-invariant-failed`.
+
+The bounded inventory task
+`tasks/2026-05-25-phase6-smp-lock-evidence-hygiene-and-report-inventory.md`
+reconciles the evidence and recommends targeting `PerCoreState` identity
+publication/reset/cache-maintenance after secondary cacheable-MMU handoff,
+without broadening into scheduler or generic lock contract work.
