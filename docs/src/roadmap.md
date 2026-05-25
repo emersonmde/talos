@@ -548,12 +548,16 @@ Goal: use all Pi 5 CPU cores with correct synchronization and preemptive schedul
 Status: Milestone 6.1 is accepted through the secondary-core bring-up closeout
 checkpoint. Milestone 6.2 has an accepted SMP-safe primitive source inventory,
 contract, first spinlock/barrier core, QEMU SMP contention smoke, and physical
-Pi 5 lock cache/coherence proof. See
+Pi 5 lock cache/coherence proof. Milestone 6.3 has accepted the first
+scheduler-migration slice: CPU-local scheduler ownership, QEMU per-core
+ownership evidence, and cross-core wakeup/IPI source inventory. See
 [Phase 6 Secondary-Core Bring-Up Closeout Checkpoint](project/phase6-secondary-core-bringup-closeout-checkpoint.md)
 and
 [Phase 6 Secondary-Core Bring-Up Source Inventory](project/phase6-secondary-core-bringup-source-inventory.md),
 plus
-[Phase 6 SMP-Safe Primitives Source Inventory](project/phase6-smp-safe-primitives-source-inventory.md).
+[Phase 6 SMP-Safe Primitives Source Inventory](project/phase6-smp-safe-primitives-source-inventory.md)
+and
+[Phase 6 Scheduler Migration Slice Checkpoint](project/phase6-scheduler-migration-slice-checkpoint.md).
 
 Milestone 6.1: Secondary Core Bring-Up
 
