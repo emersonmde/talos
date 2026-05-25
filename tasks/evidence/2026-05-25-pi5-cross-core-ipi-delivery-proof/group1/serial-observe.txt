@@ -1,0 +1,80 @@
+uart=firmware-preserved timer=arm-generic irq=gic-v2 mmio_regions=7 dtb=0x2efec600
+talos: dtb header: magic=0xd00dfeed size=80254 version=17 last_comp=16 struct=72496 strings=7702
+talos: dtb chosen bootargs: reboot=w coherent_pool=1M 8250.nr_uarts=1 pci=pcie_bus_safe cgroup_disable=memory numa_policy=interleave nvme.max_host_mem_size_mb=32 bcm2708_fb.fbwidth=640 bcm2708_fb.fbheight=480 bcm2708_fb.fbdepth=16 bcm2708_fb.fbswap=1 numa=fake=8 system_heap.max_order=0 iommu_dma_numa_policy=interleave smsc95xx.macaddr=88:A2:9E:AE:C8:7F vc_mem.mem_base=0x3fc00000 vc_mem.mem_size=0x40000000  console=ttyAMA10,115200 earlycon=pl011,mmio32,0x1f00030000 talos.boot=first-light
+talos: status early boot log ready
+TALOS: dtb reserved start
+talos: dtb reserved: count=0 shown=0 truncated=false
+TALOS: dtb reserved done
+TALOS: reserved-memory start
+TALOS: reserved-memory done
+talos: reserved-memory: addr_cells=2 size_cells=2 nodes=4 ranges=3 shown=3 truncated=false
+talos: reserved-memory[0]: addr=0x0 size=0x80000 no_map=true reusable=false
+talos: reserved-memory[1]: addr=0x3fd23160 size=0x3d no_map=true reusable=false
+talos: reserved-memory[2]: addr=0x0 size=0x0 no_map=true reusable=false
+TALOS: dtb memory scan start
+TALOS: dtb memory scan done
+talos: memory layout: kernel=0x200000..0x35d000 heap=0x21d000..0x31d000 stack=0x31d000..0x35d000
+talos: memory layout: dtb=0x2efec600..0x2effff7e size=0x1397e
+talos: memory usable: bank=0 start=0x2f000000 end=0x3fc00000 size=0x10c00000 align=0x1000 policy=low-tail
+talos: page frames seed: start=0x2f000000 end=0x3fc00000 pages=0x10c00 page_size=0x1000 source=memory-usable
+talos: bootstrap reserve: start=0x2f000000 end=0x2f010000 pages=0x10 page_size=0x1000 reason=bootstrap-page-tables
+talos: translation tables: start=0x2f000000 end=0x2f004000 pages=0x4 page_size=0x1000 kind=layout-only
+talos: translation table slots: root=0x2f000000 l1=0x2f001000 l2_low=0x2f002000 l2_mmio=0x2f003000
+talos: translation table population: root_entries=0x1 l1_entries=0x2 low_l2_blocks=0x200 mmio_l2_blocks=0x20 block_size=0x200000 kind=stage1-4k-no-enable
+talos: translation map policy: low=0x0..0x40000000 mmio=0x107c000000..0x1080000000 root_index=0x0 low_l1_index=0x0 mmio_l1_index=0x41 normal_attr=0x0 device_attr=0x1
+talos: translation control plan: el=0x2 mair=0x4ff tcr=0x53510 ttbr0=0x2f000000 sctlr_set=0x1 va_bits=0x30 pa_bits=0x30 kind=el2-stage1-4k-no-enable
+TALOS: mmu enable start
+TALOS: mmu enable done
+talos: translation enabled: el=0x2 sctlr=0x30c50831 ttbr0=0x2f000000 kind=el2-stage1-4k-enabled
+talos: instruction cache plan: el=0x2 sctlr_before=0x30c50831 sctlr_set=0x1000 kind=el2-stage1-icache-enabled
+TALOS: icache enable start
+TALOS: icache enable done
+talos: instruction cache enabled: el=0x2 sctlr=0x30c51831 kind=el2-stage1-icache-enabled
+talos: data cache plan: el=0x2 sctlr_before=0x30c51831 sctlr_set=0x4 kind=el2-stage1-dcache-enabled
+TALOS: dcache enable start
+TALOS: dcache enable done
+talos: data cache enabled: el=0x2 sctlr=0x30c51835 kind=el2-stage1-dcache-enabled
+talos: bootstrap allocator plan: start=0x2f010000 end=0x3fc00000 bytes=0x10bf0000 pages=0x10bf0 page_size=0x1000 kind=bump-no-free-low-tail
+talos: bootstrap allocator init: start=0x2f010000 next=0x2f010000 end=0x3fc00000 policy=no-free
+talos: string smoke: ptr=0x2f010000 len=5 cap=8 sum=0x203 next=0x2f010008 used=0x8 rem=0x10befff8 ex=true stable=true ok=true
+talos: translation tables: start=0x2f000000 end=0x2f004000 pages=0x4 page_size=0x1000 kind=layout-only phase=post-allocator
+talos: translation table slots: root=0x2f000000 l1=0x2f001000 l2_low=0x2f002000 l2_mmio=0x2f003000 phase=post-allocator
+talos: translation table population: root_entries=0x1 l1_entries=0x2 low_l2_blocks=0x200 mmio_l2_blocks=0x20 block_size=0x200000 kind=stage1-4k-no-enable phase=post-allocator
+talos: memory usable: bank=0 start=0x2f000000 end=0x3fc00000 size=0x10c00000 align=0x1000 policy=low-tail
+talos: page frames seed: start=0x2f000000 end=0x3fc00000 pages=0x10c00 page_size=0x1000 source=memory-usable phase=post-allocator
+talos: bootstrap reserve: start=0x2f000000 end=0x2f010000 pages=0x10 page_size=0x1000 reason=bootstrap-page-tables
+talos: page frames remaining: start=0x2f010000 end=0x3fc00000 pages=0x10bf0 page_size=0x1000 source=bootstrap-reserve
+talos: dtb memory: address_cells=2 size_cells=2 count=3 shown=3 truncated=false
+talos: dtb memory[0]: addr=0x0 size=0x3fc00000
+talos: dtb memory[1]: addr=0x40000000 size=0xc0000000
+talos: dtb memory[2]: addr=0x100000000 size=0x100000000
+rpi5-cross-core-ipi-delivery: start conduit=smc cores=4 sgi-intid=1 expected-mask=0xe boot-mpidr=0x0000000081000000 boot-affinity=0x0 boot-logical=Some(0) boot-sctlr-el2=0x0000000030c51835 boot-cacheable-mmu=true entry=0x0000000000200144 stack-range=[0x0000000000219000,0x000000000021d000)
+rpi5-cross-core-ipi-delivery: secondary-cacheable-mmu-handoff-plan mair-el2=0x00000000000004ff tcr-el2=0x0000000000053510 ttbr0-el2=0x000000002f000000 sctlr-el2=0x0000000030c51835 cacheable-mmu=true
+rpi5-cross-core-ipi-delivery: cpu-on logical=1 target-affinTity=ALOS: secondar0xTALOS: secondary_rust_entry
+100 result=0
+rpi5-cross-core-ipi-delivery: affinity-after logical=1 target-affinity=0x100 level=0 state=on raw=0
+rpi5-cross-core-ipi-delivery: cpu-on logical=2TALOS: secondary_pre_rust_entryTALOS:  target-affinity=0xTALOS: secondary_rust_entry
+200 result=0
+rpi5-cross-core-ipi-delivery: affinity-after logical=2 target-affinity=0x200 level=0 state=on raw=0
+rpi5-cross-core-ipi-delivery: cpu-on logical=3TALOS: secondary_pre_rust_entryTALOS: sec target-affinity=TALOS: secondar0x300 result=0
+rpi5-cross-core-ipi-delivery: affinity-after logical=3 target-affinity=0x300 level=0 state=on raw=0
+rpi5-cross-core-ipi-delivery: wait remaining=TALOS: secondary_state_publis200000000 ready-mask=0x6 complete-mask=0x0
+rpi5-cross-core-ipi-delivery: send sender=0 target-logical=1 target-list-bit=0x02 sgi-intid=1 sgir=0x00020001
+rpi5-cross-core-ipi-delivery: send sender=0 target-logical=2 target-list-bit=0x04 sgi-intid=1 sgir=0x00040001
+rpi5-cross-core-ipi-delivery: send sender=0 target-logical=3 target-list-bit=0x08 sgi-intid=1 sgir=0x00080001
+rpi5-cross-core-ipi-delivery: wait remaining=200000000 ready-mask=0xe complete-mask=0x0
+rpi5-cross-core-ipi-delivery: wait remaining=180000000 ready-mask=0xe complete-mask=0x0
+rpi5-cross-core-ipi-delivery: wait remaining=160000000 ready-mask=0xe complete-mask=0x0
+rpi5-cross-core-ipi-delivery: wait remaining=140000000 ready-mask=0xe complete-mask=0x0
+rpi5-cross-core-ipi-delivery: wait remaining=120000000 ready-mask=0xe complete-mask=0x0
+rpi5-cross-core-ipi-delivery: wait remaining=100000000 ready-mask=0xe complete-mask=0x0
+rpi5-cross-core-ipi-delivery: wait remaining=80000000 ready-mask=0xe complete-mask=0x0
+rpi5-cross-core-ipi-delivery: wait remaining=60000000 ready-mask=0xe complete-mask=0x0
+rpi5-cross-core-ipi-delivery: wait remaining=40000000 ready-mask=0xe complete-mask=0x0
+rpi5-cross-core-ipi-delivery: wait remaining=20000000 ready-mask=0xe complete-mask=0x0
+rpi5-cross-core-ipi-delivery: report sender=0 receiver=1 state=workload-running context=1 mpidr=0x0000000081000100 affinity=0x100 mapped=Some(1) sp=0x000000000021af70 stack=[0x000000000021a000,0x000000000021b000) target-list-bit=0x02 sgir=0x00020001 vector=0 iar=0x00000000 intid=0 receive-count=0 eoi-count=0 errors=0 ok=false
+rpi5-cross-core-ipi-delivery: report sender=0 receiver=2 state=workload-running context=2 mpidr=0x0000000081000200 affinity=0x200 mapped=Some(2) sp=0x000000000021bf70 stack=[0x000000000021b000,0x000000000021c000) target-list-bit=0x04 sgir=0x00040001 vector=0 iar=0x00000000 intid=0 receive-count=0 eoi-count=0 errors=0 ok=false
+rpi5-cross-core-ipi-delivery: report sender=0 receiver=3 state=workload-running context=3 mpidr=0x0000000081000300 affinity=0x300 mapped=Some(3) sp=0x000000000021cf70 stack=[0x000000000021c000,0x000000000021d000) target-list-bit=0x08 sgir=0x00080001 vector=0 iar=0x00000000 intid=0 receive-count=0 eoi-count=0 errors=0 ok=false
+rpi5-cross-core-ipi-delivery: final participants=0 expected=3 errors=0 ready-mask=0xe complete-mask=0x0 ready-wait-remaining=199999999 complete-wait-remaining=0 classification=pi5-cross-core-ipi-delivery-invariant-failed
+rpi5-cross-core-ipi-delivery: FAIL
+

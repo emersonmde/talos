@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "aXN0LWJpdD0weDBlIHNnaXI9MHgwMTAwMDAwMSB2ZWN0b3I9MCBpYXI9MHgwMDAwMDAwMCBpbnRpZD0wIHJlY2VpdmUtY291bnQ9MCBlb2ktY291bnQ9MCBwb2xsLWNvdW50PTAgcG9sbC1ocHBpcj0weDAwMDAwMDAwIHBvbGwtaWFyPTB4MDAwMDAwMDAgcG9sbC1pbnRpZD0wIHBvbGwtZGFpZj0weDAgcG9sbC1oY3I9MHgwMDAwMDAwMDAwMDAwMDAwIHBvbGwtb2JzZXJ2ZWQtc2dpPWZhbHNlIGVycm9ycz0wIG9rPWZhbHNlDQpycGk1LWNyb3NzLWNvcmUtaXBpLWRlbGl2ZXJ5OiBmaW5hbCBwYXJ0aWNpcGFudHM9MCBleHBlY3RlZD0zIGVycm9ycz0wIHJlYWR5LW1hc2s9MHhlIGNvbXBsZXRlLW1hc2s9MHgwIHJlYWR5LXdhaXQtcmVtYWluaW5nPTE5OTk5OTk5OSBjb21wbGV0ZS13YWl0LXJlbWFpbmluZz0wIGNsYXNzaWZpY2F0aW9uPXBpNS1jcm9zcy1jb3JlLWlwaS1kZWxpdmVyeS1pbnZhcmlhbnQtZmFpbGVkDQpycGk1LWNyb3NzLWNvcmUtaXBpLWRlbGl2ZXJ5OiBGQUlMDQo=",
+  "bytes": 500,
+  "cursor": 2106765,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "ist-bit=0x0e sgir=0x01000001 vector=0 iar=0x00000000 intid=0 receive-count=0 eoi-count=0 poll-count=0 poll-hppir=0x00000000 poll-iar=0x00000000 poll-intid=0 poll-daif=0x0 poll-hcr=0x0000000000000000 poll-observed-sgi=false errors=0 ok=false\r\nrpi5-cross-core-ipi-delivery: final participants=0 expected=3 errors=0 ready-mask=0xe complete-mask=0x0 ready-wait-remaining=199999999 complete-wait-remaining=0 classification=pi5-cross-core-ipi-delivery-invariant-failed\r\nrpi5-cross-core-ipi-delivery: FAIL\r\n"
+}

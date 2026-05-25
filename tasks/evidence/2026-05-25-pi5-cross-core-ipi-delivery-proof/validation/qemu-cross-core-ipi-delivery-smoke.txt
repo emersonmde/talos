@@ -1,0 +1,21 @@
+   Compiling talos v0.1.0 (/opt/strider/openclaw/current/workspace/projects/talos)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.74s
+
+Talos 0.1.0 booting on talos-aarch64-virt
+boot-info: dtb_pa=0x0000000048000000 core=0 el=2 target=talos-aarch64-virt
+target-services: uart=pl011 timer=arm-generic irq=gic-v2 dtb=Some(
+    0x0000000048000000,
+)
+mmio-regions: 3
+qemu-cross-core-ipi-delivery: start conduit=smc cores=4 sgi-intid=1 expected-mask=0xe boot-mpidr=0x0000000080000000 boot-affinity=0x0 boot-logical=Some(0) entry=0x0000000040200090 stack-range=[0x0000000040222000,0x0000000040226000)
+qemu-cross-core-ipi-delivery: cpu-on logical=1 target-affinity=0x1 result=0
+qemu-cross-core-ipi-delivery: cpu-on logical=2 target-affinity=0x2 result=0
+qemu-cross-core-ipi-delivery: cpu-on logical=3 target-affinity=0x3 result=0
+qemu-cross-core-ipi-delivery: send sender=0 target-logical=1 target-list-bit=0x02 sgi-intid=1 sgir=0x00020001
+qemu-cross-core-ipi-delivery: send sender=0 target-logical=2 target-list-bit=0x04 sgi-intid=1 sgir=0x00040001
+qemu-cross-core-ipi-delivery: send sender=0 target-logical=3 target-list-bit=0x08 sgi-intid=1 sgir=0x00080001
+qemu-cross-core-ipi-delivery: report sender=0 receiver=1 state=workload-complete context=1 mapped=Some(1) target-list-bit=0x02 sgir=0x00020001 vector=5 iar=0x00000001 intid=1 receive-count=1 eoi-count=1 errors=0 ok=true
+qemu-cross-core-ipi-delivery: report sender=0 receiver=2 state=workload-complete context=2 mapped=Some(2) target-list-bit=0x04 sgir=0x00040001 vector=5 iar=0x00000001 intid=1 receive-count=1 eoi-count=1 errors=0 ok=true
+qemu-cross-core-ipi-delivery: report sender=0 receiver=3 state=workload-complete context=3 mapped=Some(3) target-list-bit=0x08 sgir=0x00080001 vector=5 iar=0x00000001 intid=1 receive-count=1 eoi-count=1 errors=0 ok=true
+qemu-cross-core-ipi-delivery: final participants=3 expected=3 errors=0 ready-mask=0xe complete-mask=0xe ready-wait-remaining=10000000 complete-wait-remaining=10000000 classification=qemu-cross-core-ipi-delivery-complete
+qemu-cross-core-ipi-delivery: PASS

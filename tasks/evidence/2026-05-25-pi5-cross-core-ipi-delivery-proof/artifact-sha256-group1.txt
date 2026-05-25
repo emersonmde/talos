@@ -1,0 +1,2 @@
+740efe16750dc9b1056d453120871c9456306907b90ada934139e564d2843f16  target/talos-rpi5-cross-core-ipi-delivery-boot.tar.gz
+38188d75e89f437a525622c79f267a551b1e4abd9a1e1f221173f245b7cfd923  target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-cross-core-ipi-delivery.img

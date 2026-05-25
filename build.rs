@@ -31,6 +31,7 @@ fn main() {
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_PSCI_SECONDARY_CORE_ALIVE_PROOF");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_SECONDARY_CORE_WORKLOAD_PROOF");
     println!("cargo:rerun-if-env-changed=TALOS_RPI5_SMP_LOCK_CACHE_COHERENCE_PROOF");
+    println!("cargo:rerun-if-env-changed=TALOS_RPI5_CROSS_CORE_IPI_DELIVERY_PROOF");
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_CONTEXT_SWITCH_SMOKE");
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_SCHEDULER_YIELD_SMOKE");
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_TIMER_PREEMPTION_SMOKE");
@@ -69,6 +70,7 @@ fn main() {
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_psci_secondary_core_alive_proof)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_secondary_core_workload_proof)");
     println!("cargo:rustc-check-cfg=cfg(talos_rpi5_smp_lock_cache_coherence_proof)");
+    println!("cargo:rustc-check-cfg=cfg(talos_rpi5_cross_core_ipi_delivery_proof)");
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_context_switch_smoke)");
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_scheduler_yield_smoke)");
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_timer_preemption_smoke)");
@@ -189,6 +191,10 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
     if env::var_os("TALOS_RPI5_SMP_LOCK_CACHE_COHERENCE_PROOF").is_some() {
         command.arg("-DTALOS_RPI5_SMP_LOCK_CACHE_COHERENCE_PROOF");
         println!("cargo:rustc-cfg=talos_rpi5_smp_lock_cache_coherence_proof");
+    }
+    if env::var_os("TALOS_RPI5_CROSS_CORE_IPI_DELIVERY_PROOF").is_some() {
+        command.arg("-DTALOS_RPI5_CROSS_CORE_IPI_DELIVERY_PROOF");
+        println!("cargo:rustc-cfg=talos_rpi5_cross_core_ipi_delivery_proof");
     }
     if env::var_os("TALOS_QEMU_CONTEXT_SWITCH_SMOKE").is_some() {
         println!("cargo:rustc-cfg=talos_qemu_context_switch_smoke");

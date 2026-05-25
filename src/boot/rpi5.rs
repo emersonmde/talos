@@ -76,6 +76,9 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
     #[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
     target::rpi5::run_smp_lock_cache_coherence_proof();
 
+    #[cfg(talos_rpi5_cross_core_ipi_delivery_proof)]
+    target::rpi5::run_cross_core_ipi_delivery_proof();
+
     #[cfg(talos_rpi5_uart10_polling_rx_diagnostic)]
     target::rpi5::run_uart10_polling_tty_rx_diagnostic();
 

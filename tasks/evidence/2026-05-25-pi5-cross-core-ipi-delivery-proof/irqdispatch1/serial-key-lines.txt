@@ -1,0 +1,42 @@
+  1.09 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 1094130
+  4.15 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 4152723
+ 20.28 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740/config.txt
+ 20.30 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740/config.txt
+ 20.33 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740/pieeprom.sig
+ 20.42 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740//config.txt
+ 21.82 MESS:00:00:21.822641:0: Starting OS 21822 ms
+NOTICE:  BL31: v2.6(release):v2.6-240-gfc45bc492
+NOTICE:  BL31: Built : 12:55:13, Dec  4 2024
+TALOS: asm_start
+TALOS: asm_pre_rust_entry
+TALOS: rust_entry
+TALOS: boot info parsed
+TALOS: target init
+TALOS: exceptions ready
+TALOS: kernel_main
+TALOS: dtb reserved start
+TALOS: dtb reserved done
+TALOS: reserved-memory start
+TALOS: reserved-memory done
+TALOS: dtb memory scan start
+TALOS: dtb memory scan done
+TALOS: mmu enable start
+TALOS: mmu enable done
+TALOS: icache enable start
+TALOS: icache enable done
+TALOS: dcache enable start
+TALOS: dcache enable done
+rpi5-cross-core-ipi-delivery: start conduit=smc cores=4 sgi-intid=1 expected-mask=0xe cpuif-poll=active-spin poll-interval=1024 boot-mpidr=0x0000000081000000 boot-affinity=0x0 boot-logical=Some(0) boot-sctlr-el2=0x0000000030c51835 boot-cacheable-mmu=true entry=0x0000000000200144 stack-range=[0x0000000000219000,0x000000000021d000)
+rpi5-cross-core-ipi-delivery: secondary-cacheable-mmu-handoff-plan mair-el2=0x00000000000004ff tcr-el2=0x0000000000053510 ttbr0-el2=0x000000002f000000 sctlr-el2=0x0000000030c51835 cacheable-mmu=true
+rpi5-cross-core-ipi-delivery: cpu-on logical=1TALOS: secondary_pre_rust_entry target-affinity=0xTALOS: secondary_rust_entry
+rpi5-cross-core-ipi-delivery: affinity-after logical=1 target-affinity=0x100 level=0 state=on raw=0
+rpi5-cross-core-ipi-delivery: cpu-on logical=2TALOS: secondary_pre_rust_entryTALOS:  target-affinity=TALOS: secondar0x200 result=0
+rpi5-cross-core-ipi-delivery: affinity-after logical=2 target-affinity=0x200 level=0 state=on raw=0
+rpi5-cross-core-ipi-delivery: cpu-on logical=3 target-affinity=TALOS: secondary_st0xTALOS: secondary_pre_rust_entr300TALOS: secondary_rust_entry
+rpi5-cross-core-ipi-delivery: affinity-after logical=3 target-affinity=0x300 level=0 state=on raw=0
+rpi5-cross-core-ipi-delivery: wait remaining=200000000TALOS: secondary_state_pu ready-mask=0x6 complete-mask=0x0
+rpi5-cross-core-ipi-delivery: report sender=0 receiver=1 state=workload-complete context=1 mpidr=0x0000000081000100 affinity=0x100 mapped=Some(1) sp=0x000000000021af60 stack=[0x000000000021a000,0x000000000021b000) target-list-bit=0x0e sgir=0x01000001 vector=5 iar=0x00000001 intid=1 receive-count=1 eoi-count=1 poll-count=3026 poll-hppir=0x000003ff poll-iar=0x000003ff poll-intid=1023 poll-daif=0x340 poll-hcr=0x0000000080000010 poll-observed-sgi=false errors=0 ok=true
+rpi5-cross-core-ipi-delivery: report sender=0 receiver=2 state=workload-complete context=2 mpidr=0x0000000081000200 affinity=0x200 mapped=Some(2) sp=0x000000000021bf60 stack=[0x000000000021b000,0x000000000021c000) target-list-bit=0x0e sgir=0x01000001 vector=5 iar=0x00000001 intid=1 receive-count=1 eoi-count=1 poll-count=1684 poll-hppir=0x000003ff poll-iar=0x000003ff poll-intid=1023 poll-daif=0x340 poll-hcr=0x0000000080000010 poll-observed-sgi=false errors=0 ok=true
+rpi5-cross-core-ipi-delivery: report sender=0 receiver=3 state=workload-complete context=3 mpidr=0x0000000081000300 affinity=0x300 mapped=Some(3) sp=0x000000000021cf60 stack=[0x000000000021c000,0x000000000021d000) target-list-bit=0x0e sgir=0x01000001 vector=5 iar=0x00000001 intid=1 receive-count=1 eoi-count=1 poll-count=203 poll-hppir=0x000003ff poll-iar=0x000003ff poll-intid=1023 poll-daif=0x340 poll-hcr=0x0000000080000010 poll-observed-sgi=false errors=0 ok=true
+rpi5-cross-core-ipi-delivery: final participants=3 expected=3 errors=0 ready-mask=0xe complete-mask=0xe ready-wait-remaining=199999999 complete-wait-remaining=200000000 classification=pi5-cross-core-ipi-delivery-complete
+rpi5-cross-core-ipi-delivery: PASS

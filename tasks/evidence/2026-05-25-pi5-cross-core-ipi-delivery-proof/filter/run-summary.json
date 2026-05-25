@@ -1,0 +1,9 @@
+{
+  "classification": "pi5-cross-core-ipi-delivery-invariant-failed",
+  "pre_snapshot": "pre-phase6-pi5-cross-core-ipi-filter-20260525T074749Z",
+  "serial_exit": 0,
+  "tftp_exit": 0,
+  "archive_sha256": "263fdf38c2b138e13ab2ebcca50d401524551181a3156a078bf5b545fda57053",
+  "kernel_sha256": "563489cc5bf06c2e271d00e26d0ba2d6d05845d2927a02bc33f854df4d254a98",
+  "kernel_size": 95872
+}

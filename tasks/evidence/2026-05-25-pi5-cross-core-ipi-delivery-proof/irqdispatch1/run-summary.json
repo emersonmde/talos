@@ -1,0 +1,7 @@
+{
+  "classification": "pi5-cross-core-ipi-delivery-complete",
+  "pre_snapshot": "pre-phase6-pi5-cross-core-ipi-irqdispatch1-20260525T083059Z",
+  "archive_sha256": "a6c5cb6999784e8f8c61a07765d39e9549c19c0ae37a54267c738b116a521a79",
+  "kernel_sha256": "44792c6681d0e67df08abeaebd18f2408680940ead47e2cf1e0b44f5b3956837",
+  "kernel_size": 97016
+}

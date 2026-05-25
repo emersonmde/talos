@@ -59,6 +59,48 @@ ADR template:
   mutual exclusion with cache/coherency policy needed later for DMA and mixed
   memory attributes.
 
+## 2026-05-25 - Pi 5 Raw Cross-Core SGI Delivery Accepted
+
+- Status: accepted as the physical Pi 5 hardware proof for raw GIC-400/GICv2
+  SGI delivery before scheduler wakeups depend on IPIs. This does not accept
+  scheduler remote wakeups, remote enqueue ownership, shared run queues, task
+  migration, production IPI use, userspace, descriptors, filesystem,
+  networking, SSH, shell behavior, RP1/PCIe, UART interrupt ownership, or DMA
+  behavior.
+- Context: QEMU had already proven the raw SGI delivery boundary, but Pi 5
+  evidence initially showed secondary cores ready with no receive/EOI counts.
+  The decisive implementation gap was in the Pi 5 exception dispatch cfg: the
+  cross-core IPI proof installed the target handler, but the target IRQ
+  dispatcher did not compile that path for the proof flag.
+- Decision: Accept
+  `tasks/2026-05-25-phase6-pi5-cross-core-ipi-delivery-proof.md` and evidence
+  in `tasks/evidence/2026-05-25-pi5-cross-core-ipi-delivery-proof/irqdispatch1/`
+  as the hardware proof that the boot CPU can send SGI INTID 1 to secondary
+  cores 1, 2, and 3 and each secondary can receive and EOI it under Talos on
+  Pi 5.
+- Evidence level: serialized Pi 5 hardware run under `hardwareTestLock`, with
+  archive digest
+  `a6c5cb6999784e8f8c61a07765d39e9549c19c0ae37a54267c738b116a521a79`,
+  kernel digest
+  `44792c6681d0e67df08abeaebd18f2408680940ead47e2cf1e0b44f5b3956837`,
+  TFTP fetch evidence, cursor-valid serial output, and restore evidence.
+  Serial output shows `participants=3`, `errors=0`, `ready-mask=0xe`,
+  `complete-mask=0xe`,
+  `classification=pi5-cross-core-ipi-delivery-complete`, and PASS.
+- Validation: `cargo fmt --all -- --check`, `cargo -Zjson-target-spec test`,
+  `scripts/qemu-smoke.sh`, `scripts/qemu-cross-core-ipi-delivery-smoke.sh`,
+  `scripts/rpi5-cross-core-ipi-delivery-image.sh`,
+  `scripts/rpi5-archive-review.sh`, and `git diff --check` passed.
+- Consequences: Phase 6 can plan remote wakeup ownership on top of a proven
+  raw Pi 5 SGI delivery path. The raw proof remains diagnostic-only until a
+  later task introduces scheduler-owned IPI semantics, remote enqueue
+  invariants, and production wakeup policy.
+- Alternatives considered: Keep treating the Pi 5 SGI evidence as a hardware
+  delivery failure or accept QEMU behavior as sufficient. The first would have
+  mistaken a target cfg dispatch gap for GIC non-delivery; the second would
+  have skipped required physical evidence before scheduler wakeups rely on
+  IPIs.
+
 ## 2026-05-25 - Pi 5 Secondary Cacheable-MMU Handoff Accepted
 
 - Status: accepted as the hardware proof for the secondary cacheable EL2 stage-1 handoff gate. The Pi 5 SMP lock/cache-coherence proof is not accepted by this decision.

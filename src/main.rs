@@ -28,7 +28,8 @@
             talos_rpi5_diagnostic_command_channel_proof,
             talos_rpi5_psci_secondary_core_alive_proof,
             talos_rpi5_secondary_core_workload_proof,
-            talos_rpi5_smp_lock_cache_coherence_proof
+            talos_rpi5_smp_lock_cache_coherence_proof,
+            talos_rpi5_cross_core_ipi_delivery_proof
         )
     ),
     allow(dead_code, unused_imports, unused_variables)

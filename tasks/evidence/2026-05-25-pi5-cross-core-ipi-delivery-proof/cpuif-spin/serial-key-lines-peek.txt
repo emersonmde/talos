@@ -1,0 +1,24 @@
+rpi5-cross-core-ipi-delivery: start conduit=smc cores=4 sgi-intid=1 expected-mask=0xe boot-mpidr=0x0000000081000000 boot-affinity=0x0 boot-logical=Some(0) boot-sctlr-el2=0x0000000030c51835 boot-cacheable-mmu=true entry=0x0000000000200144 stack-range=[0x0000000000219000,0x000000000021d000)
+rpi5-cross-core-ipi-delivery: secondary-cacheable-mmu-handoff-plan mair-el2=0x00000000000004ff tcr-el2=0x0000000000053510 ttbr0-el2=0x000000002f000000 sctlr-el2=0x0000000030c51835 cacheable-mmu=true
+rpi5-cross-core-ipi-delivery: cpu-on logical=1TALOS: secondary_pre_rust_entry target-affinity=0xTALOS: secondary_rust_entry
+rpi5-cross-core-ipi-delivery: affinity-after logical=1 target-affinity=0x100 level=0 state=on raw=0
+rpi5-cross-core-ipi-delivery: cpu-on logical=2TALOS: secondary_pre_rust_entryTALOS:  target-affinity=TALOS: secondar0x200 result=0
+rpi5-cross-core-ipi-delivery: affinity-after logical=2 target-affinity=0x200 level=0 state=on raw=0
+rpi5-cross-core-ipi-delivery: cpu-on logical=3TALOS: secondary_pre_rust_entryTALOS target-affinity=TALOS: secondar0x300 result=0
+rpi5-cross-core-ipi-delivery: affinity-after logical=3 target-affinity=0x300 level=0 state=on raw=0
+rpi5-cross-core-ipi-delivery: wait remaining=TALOS: secondary_state_publis200000000 ready-mask=0x6 complete-mask=0x0
+rpi5-cross-core-ipi-delivery: send sender=0 target-logical=all-secondaries target-list-bit=0x0e target-filter=all-except-self sgi-intid=1 sgir=0x01000001
+rpi5-cross-core-ipi-delivery: wait remaining=200000000 ready-mask=0xe complete-mask=0x0
+rpi5-cross-core-ipi-delivery: wait remaining=180000000 ready-mask=0xe complete-mask=0x0
+rpi5-cross-core-ipi-delivery: wait remaining=160000000 ready-mask=0xe complete-mask=0x0
+rpi5-cross-core-ipi-delivery: wait remaining=140000000 ready-mask=0xe complete-mask=0x0
+rpi5-cross-core-ipi-delivery: wait remaining=120000000 ready-mask=0xe complete-mask=0x0
+rpi5-cross-core-ipi-delivery: wait remaining=100000000 ready-mask=0xe complete-mask=0x0
+rpi5-cross-core-ipi-delivery: wait remaining=80000000 ready-mask=0xe complete-mask=0x0
+rpi5-cross-core-ipi-delivery: wait remaining=60000000 ready-mask=0xe complete-mask=0x0
+rpi5-cross-core-ipi-delivery: wait remaining=40000000 ready-mask=0xe complete-mask=0x0
+rpi5-cross-core-ipi-delivery: wait remaining=20000000 ready-mask=0xe complete-mask=0x0
+rpi5-cross-core-ipi-delivery: report sender=0 receiver=2 state=workload-running context=2 mpidr=0x0000000081000200 affinity=0x200 mapped=Some(2) sp=0x000000000021bf60 stack=[0x000000000021b000,0x000000000021c000) target-list-bit=0x0e sgir=0x01000001 vector=0 iar=0x00000000 intid=0 receive-count=0 eoi-count=0 poll-count=0 poll-hppir=0x00000000 poll-iar=0x00000000 poll-intid=0 poll-daif=0x0 poll-hcr=0x0000000000000000 poll-observed-sgi=false errors=0 ok=false
+rpi5-cross-core-ipi-delivery: report sender=0 receiver=3 state=workload-running context=3 mpidr=0x0000000081000300 affinity=0x300 mapped=Some(3) sp=0x000000000021cf60 stack=[0x000000000021c000,0x000000000021d000) target-list-bit=0x0e sgir=0x01000001 vector=0 iar=0x00000000 intid=0 receive-count=0 eoi-count=0 poll-count=0 poll-hppir=0x00000000 poll-iar=0x00000000 poll-intid=0 poll-daif=0x0 poll-hcr=0x0000000000000000 poll-observed-sgi=false errors=0 ok=false
+rpi5-cross-core-ipi-delivery: final participants=0 expected=3 errors=0 ready-mask=0xe complete-mask=0x0 ready-wait-remaining=199999999 complete-wait-remaining=0 classification=pi5-cross-core-ipi-delivery-invariant-failed
+rpi5-cross-core-ipi-delivery: FAIL
