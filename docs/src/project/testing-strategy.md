@@ -71,6 +71,11 @@ The physical lab is the source of truth for the talos-rpi5-bcm2712 target.
 - Keep accepted evidence reviewable through task records and summaries. Raw lab
   captures belong in Git only when compact, decisive, or retained by an explicit
   evidence policy; see [Evidence Retention Policy](evidence-retention-policy.md).
+- Keep one-off diagnostic flags, proof scripts, and serial markers on a named
+  lifecycle. A diagnostic is either a retained gate, promoted into ordinary
+  product behavior or tests, quarantined for a bounded follow-up, or retired
+  after its accepted evidence is summarized; see
+  [Diagnostic Surface Policy](diagnostic-surface-policy.md).
 - Only one physical Pi 5 test may run at a time. The lab board is a shared serial hardware resource, so hardware runs must use a durable test lock or queue.
 - Code must pass review before it is sent to the physical Pi 5. Hardware time should be spent on plausible candidates, not unreviewed work.
 - Hardware results must be reviewed after the run. Serial logs, boot classification, and lab-controller metadata are part of the task evidence, and the implementation may need another coding iteration before acceptance.

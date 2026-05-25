@@ -13,6 +13,7 @@
 - [Lab Controller](project/lab-controller.md)
 - [Testing Strategy](project/testing-strategy.md)
 - [Evidence Retention Policy](project/evidence-retention-policy.md)
+- [Diagnostic Surface Policy](project/diagnostic-surface-policy.md)
 - [Reference Notes](project/reference-notes.md)
 - [Early POSIX Shape](project/early-posix-shape.md)
 - [Phase 3 Closeout Checkpoint](project/phase3-closeout-checkpoint.md)
