@@ -578,7 +578,29 @@ each target scheduler, duplicate-local-enqueue rejection, cross-owner
 scheduler mutation rejection, and deferred production dispatch for logical
 CPUs 1, 2, and 3.
 
-Pi 5 hardware proof, shared run queues, global task lookup, task migration,
-load balancing, production secondary scheduler dispatch, multi-core
-preemption, Phase 7, filesystem, networking, SSH, shell behavior, RP1/PCIe,
-UART interrupt ownership, and DMA policy remain deferred.
+The serialized Pi 5 proof carries the same invariant to hardware. The accepted
+run proves request publication for logical CPUs 1, 2, and 3, duplicate request
+coalescing, SGI INTID 1 observation/EOI, target-owned request drain, local
+Blocked -> Runnable transitions for target-owned diagnostic tasks, duplicate
+local enqueue rejection, drained queues, cross-owner rejection, and deferred
+production secondary dispatch.
+
+Shared run queues, global task lookup, task migration, load balancing,
+production secondary scheduler dispatch, multi-core preemption, Phase 7,
+filesystem, networking, SSH, shell behavior, RP1/PCIe, UART interrupt
+ownership, and DMA policy remain deferred.
+
+## Phase 6.3 Remote Wakeup Scheduler Integration Closeout
+
+The remote wakeup scheduler-integration closeout accepts the current diagnostic
+bridge from raw SGI delivery to a target-owned local runnable transition. It
+does not make the scheduler topology shared. Remote CPUs may publish bounded
+requests and signal with SGI INTID 1, but local runnable state remains owned by
+the target CPU.
+
+Talos is ready for a production secondary scheduler dispatch source inventory
+and contract. That next task must define how secondary cores can leave
+diagnostic dispatch and run production scheduler work while preserving the
+existing IPI, wake-drain, context-switch, timer/preemption, console/output, and
+failure-diagnostic boundaries. It should not implement production secondary
+dispatch.

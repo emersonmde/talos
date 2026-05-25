@@ -277,6 +277,13 @@ Completed:
   reject duplicate local enqueue, preserve SGI INTID 1 observation/EOI,
   preserve duplicate request coalescing and cross-owner rejection, and leave
   production secondary dispatch deferred.
+- The Phase 6.3 remote wakeup scheduler-integration closeout checkpoint is
+  accepted. It reconciles raw SGI delivery, bounded remote wake-request
+  publication/consumption, target-owned local Blocked -> Runnable transitions,
+  retained gates, deferrals, and risks. Talos is ready for a
+  supervisor-planned production secondary scheduler dispatch source inventory
+  and contract, not implementation, shared run queues, task migration,
+  multi-core preemption, Phase 7, filesystem, networking, SSH, or shell work.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -285,11 +292,12 @@ Completed:
 Blocked or pending:
 
 - The next explicit worker task should stay within Phase 6.3 and, if queued,
-  close out the remote wakeup scheduler-integration slice. It should not start
-  broader scheduler migration, shared run queues, task migration, production
-  secondary scheduler dispatch, multi-core preemption, userspace, descriptors,
-  filesystem, networking, SSH, shell behavior, UART interrupts, RP1/PCIe, or
-  DMA/cache-coherent driver policy until an explicit durable task is queued.
+  start a production secondary scheduler dispatch source inventory and
+  contract. It should not implement production secondary dispatch, start
+  broader scheduler migration, shared run queues, task migration, multi-core
+  preemption, userspace, descriptors, filesystem, networking, SSH, shell
+  behavior, UART interrupts, RP1/PCIe, or DMA/cache-coherent driver policy
+  until an explicit durable task is queued.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
@@ -586,14 +594,17 @@ contract, first spinlock/barrier core, QEMU SMP contention smoke, and physical
 Pi 5 lock cache/coherence proof. Milestone 6.3 has accepted the first
 scheduler-migration slice, raw QEMU/Pi 5 SGI delivery, remote wake-request
 publication/consumption evidence, the target-owned wake-consumption contract,
-and a QEMU blocked-to-runnable target-owned wake proof. See
+QEMU and Pi 5 blocked-to-runnable target-owned wake proofs, and the remote
+wakeup scheduler-integration closeout. See
 [Phase 6 Secondary-Core Bring-Up Closeout Checkpoint](project/phase6-secondary-core-bringup-closeout-checkpoint.md)
 and
 [Phase 6 Secondary-Core Bring-Up Source Inventory](project/phase6-secondary-core-bringup-source-inventory.md),
 plus
 [Phase 6 SMP-Safe Primitives Source Inventory](project/phase6-smp-safe-primitives-source-inventory.md)
 and
-[Phase 6 Scheduler Migration Slice Checkpoint](project/phase6-scheduler-migration-slice-checkpoint.md).
+[Phase 6 Scheduler Migration Slice Checkpoint](project/phase6-scheduler-migration-slice-checkpoint.md),
+and
+[Phase 6 Remote Wakeup Scheduler Integration Closeout](project/phase6-remote-wakeup-scheduler-integration-closeout.md).
 
 Milestone 6.1: Secondary Core Bring-Up
 
