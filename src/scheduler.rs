@@ -884,6 +884,270 @@ impl<const RUNNABLE_CAPACITY: usize> PerCoreScheduler<RUNNABLE_CAPACITY> {
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct SchedulerTaskSnapshot {
+    task_id: TaskId,
+    owner: LogicalCpuId,
+    state: TaskState,
+    process_owner: Option<ProcessOwnerId>,
+    kernel_stack: KernelStack,
+    current_on_owner: bool,
+    runnable_on_owner: bool,
+    generation: u64,
+}
+
+impl SchedulerTaskSnapshot {
+    pub const fn task_id(self) -> TaskId {
+        self.task_id
+    }
+
+    pub const fn owner(self) -> LogicalCpuId {
+        self.owner
+    }
+
+    pub const fn state(self) -> TaskState {
+        self.state
+    }
+
+    pub const fn process_owner(self) -> Option<ProcessOwnerId> {
+        self.process_owner
+    }
+
+    pub const fn kernel_stack(self) -> KernelStack {
+        self.kernel_stack
+    }
+
+    pub const fn current_on_owner(self) -> bool {
+        self.current_on_owner
+    }
+
+    pub const fn runnable_on_owner(self) -> bool {
+        self.runnable_on_owner
+    }
+
+    pub const fn generation(self) -> u64 {
+        self.generation
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum SharedSchedulerMetadataError {
+    InvalidOwner {
+        owner: LogicalCpuId,
+        cpu_capacity: usize,
+    },
+    WrongOwner {
+        owner: LogicalCpuId,
+        requester: LogicalCpuId,
+    },
+    Full,
+    DuplicateTask {
+        task_id: TaskId,
+        existing_owner: LogicalCpuId,
+        attempted_owner: LogicalCpuId,
+    },
+    UnknownTask {
+        task_id: TaskId,
+    },
+    StaleSnapshot {
+        task_id: TaskId,
+        expected_generation: u64,
+        actual_generation: u64,
+    },
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct SharedSchedulerMetadata<const TASK_CAPACITY: usize, const CPU_CAPACITY: usize> {
+    entries: [Option<SchedulerTaskSnapshot>; TASK_CAPACITY],
+    len: usize,
+    generation: u64,
+}
+
+/// SMP-protected shared scheduler metadata boundary.
+///
+/// Local runnable queues remain owned by `PerCoreScheduler`; this lock may
+/// protect only the read-oriented metadata table, with IRQ masking handled by
+/// the caller according to the accepted scheduler lock-ordering rule.
+pub type SharedSchedulerMetadataLock<const TASK_CAPACITY: usize, const CPU_CAPACITY: usize> =
+    crate::smp_sync::SpinLock<SharedSchedulerMetadata<TASK_CAPACITY, CPU_CAPACITY>>;
+
+impl<const TASK_CAPACITY: usize, const CPU_CAPACITY: usize>
+    SharedSchedulerMetadata<TASK_CAPACITY, CPU_CAPACITY>
+{
+    pub const fn new() -> Self {
+        Self {
+            entries: [None; TASK_CAPACITY],
+            len: 0,
+            generation: 0,
+        }
+    }
+
+    pub const fn len(&self) -> usize {
+        self.len
+    }
+
+    pub const fn capacity(&self) -> usize {
+        TASK_CAPACITY
+    }
+
+    pub const fn generation(&self) -> u64 {
+        self.generation
+    }
+
+    pub const fn is_empty(&self) -> bool {
+        self.len == 0
+    }
+
+    pub fn register_local_task<const RUNNABLE_CAPACITY: usize>(
+        &mut self,
+        requester: LogicalCpuId,
+        owner_scheduler: &PerCoreScheduler<RUNNABLE_CAPACITY>,
+        task: &Task,
+    ) -> Result<SchedulerTaskSnapshot, SharedSchedulerMetadataError> {
+        let owner = owner_scheduler.owner();
+        self.ensure_valid_owner(owner)?;
+        self.ensure_requester_owns_scheduler(requester, owner)?;
+        if let Some(existing) = self.find_task(task.id()) {
+            return Err(SharedSchedulerMetadataError::DuplicateTask {
+                task_id: task.id(),
+                existing_owner: existing.owner,
+                attempted_owner: owner,
+            });
+        }
+        if self.len == TASK_CAPACITY {
+            return Err(SharedSchedulerMetadataError::Full);
+        }
+
+        let generation = self.advance_generation();
+        let snapshot = Self::snapshot_from_local_scheduler(owner_scheduler, task, generation);
+        self.entries[self.len] = Some(snapshot);
+        self.len += 1;
+        Ok(snapshot)
+    }
+
+    pub fn refresh_local_task<const RUNNABLE_CAPACITY: usize>(
+        &mut self,
+        requester: LogicalCpuId,
+        owner_scheduler: &PerCoreScheduler<RUNNABLE_CAPACITY>,
+        task: &Task,
+    ) -> Result<SchedulerTaskSnapshot, SharedSchedulerMetadataError> {
+        let owner = owner_scheduler.owner();
+        self.ensure_valid_owner(owner)?;
+        self.ensure_requester_owns_scheduler(requester, owner)?;
+        let index = self
+            .find_task_index(task.id())
+            .ok_or(SharedSchedulerMetadataError::UnknownTask { task_id: task.id() })?;
+        let existing = self.entries[index].expect("find_task_index returns a populated slot");
+        if existing.owner != owner {
+            return Err(SharedSchedulerMetadataError::WrongOwner {
+                owner: existing.owner,
+                requester,
+            });
+        }
+
+        let generation = self.advance_generation();
+        let snapshot = Self::snapshot_from_local_scheduler(owner_scheduler, task, generation);
+        self.entries[index] = Some(snapshot);
+        Ok(snapshot)
+    }
+
+    pub fn lookup_task(
+        &self,
+        task_id: TaskId,
+    ) -> Result<SchedulerTaskSnapshot, SharedSchedulerMetadataError> {
+        self.find_task(task_id)
+            .ok_or(SharedSchedulerMetadataError::UnknownTask { task_id })
+    }
+
+    pub fn lookup_task_at_generation(
+        &self,
+        task_id: TaskId,
+        expected_generation: u64,
+    ) -> Result<SchedulerTaskSnapshot, SharedSchedulerMetadataError> {
+        let snapshot = self.lookup_task(task_id)?;
+        if snapshot.generation == expected_generation {
+            Ok(snapshot)
+        } else {
+            Err(SharedSchedulerMetadataError::StaleSnapshot {
+                task_id,
+                expected_generation,
+                actual_generation: snapshot.generation,
+            })
+        }
+    }
+
+    fn ensure_valid_owner(&self, owner: LogicalCpuId) -> Result<(), SharedSchedulerMetadataError> {
+        if owner.raw() < CPU_CAPACITY {
+            Ok(())
+        } else {
+            Err(SharedSchedulerMetadataError::InvalidOwner {
+                owner,
+                cpu_capacity: CPU_CAPACITY,
+            })
+        }
+    }
+
+    fn ensure_requester_owns_scheduler(
+        &self,
+        requester: LogicalCpuId,
+        owner: LogicalCpuId,
+    ) -> Result<(), SharedSchedulerMetadataError> {
+        if requester == owner {
+            Ok(())
+        } else {
+            Err(SharedSchedulerMetadataError::WrongOwner { owner, requester })
+        }
+    }
+
+    fn snapshot_from_local_scheduler<const RUNNABLE_CAPACITY: usize>(
+        owner_scheduler: &PerCoreScheduler<RUNNABLE_CAPACITY>,
+        task: &Task,
+        generation: u64,
+    ) -> SchedulerTaskSnapshot {
+        SchedulerTaskSnapshot {
+            task_id: task.id(),
+            owner: owner_scheduler.owner(),
+            state: task.state(),
+            process_owner: task.process_owner(),
+            kernel_stack: task.kernel_stack(),
+            current_on_owner: owner_scheduler.current_task() == Some(task.id()),
+            runnable_on_owner: owner_scheduler.scheduler().runnable().contains(task.id()),
+            generation,
+        }
+    }
+
+    fn find_task(&self, task_id: TaskId) -> Option<SchedulerTaskSnapshot> {
+        self.find_task_index(task_id)
+            .and_then(|index| self.entries[index])
+    }
+
+    fn find_task_index(&self, task_id: TaskId) -> Option<usize> {
+        let mut index = 0;
+        while index < self.len {
+            if let Some(snapshot) = self.entries[index]
+                && snapshot.task_id == task_id
+            {
+                return Some(index);
+            }
+            index += 1;
+        }
+        None
+    }
+
+    fn advance_generation(&mut self) -> u64 {
+        self.generation = self.generation.checked_add(1).unwrap_or(1);
+        self.generation
+    }
+}
+
+impl<const TASK_CAPACITY: usize, const CPU_CAPACITY: usize> Default
+    for SharedSchedulerMetadata<TASK_CAPACITY, CPU_CAPACITY>
+{
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl From<PerCoreSchedulerAccessError> for ProductionDispatchError {
     fn from(error: PerCoreSchedulerAccessError) -> Self {
         match error {
@@ -905,7 +1169,8 @@ mod tests {
         ContextFrame, KernelStack, LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError,
         ProcessOwnerId, ProductionDispatchError, RemoteWakePublishOutcome, RemoteWakeQueue,
         RemoteWakeRequest, RemoteWakeRequestError, RunnableQueue, RunnableQueueError,
-        SchedulerCoreRole, SingleCoreScheduler, TargetWakeConsumptionError, Task, TaskId,
+        SchedulerCoreRole, SharedSchedulerMetadata, SharedSchedulerMetadataError,
+        SharedSchedulerMetadataLock, SingleCoreScheduler, TargetWakeConsumptionError, Task, TaskId,
         TaskState, TimerPreemptError, VoluntaryYieldError,
     };
 
@@ -1448,6 +1713,157 @@ mod tests {
         );
         assert_eq!(task.state(), TaskState::Runnable);
         assert_eq!(scheduler.scheduler().runnable().len(), 1);
+    }
+
+    #[test_case]
+    fn shared_scheduler_metadata_registers_local_task_snapshot() {
+        let owner = LogicalCpuId::new(1);
+        let mut scheduler = PerCoreScheduler::<2>::production_secondary_diagnostic(owner);
+        let mut task = Task::kernel_thread(task_id(101), kernel_stack(), context());
+        task.attach_process_owner(ProcessOwnerId::new(7).expect("process owner"));
+        scheduler
+            .set_current_task(owner, task.id())
+            .expect("diagnostic owner records current task");
+        let mut metadata = SharedSchedulerMetadata::<4, 4>::new();
+
+        assert!(metadata.is_empty());
+        assert_eq!(metadata.capacity(), 4);
+        let snapshot = metadata
+            .register_local_task(owner, &scheduler, &task)
+            .expect("owner publishes local metadata");
+
+        assert_eq!(metadata.len(), 1);
+        assert_eq!(metadata.generation(), 1);
+        assert_eq!(snapshot.task_id(), task.id());
+        assert_eq!(snapshot.owner(), owner);
+        assert_eq!(snapshot.state(), TaskState::Runnable);
+        assert_eq!(snapshot.process_owner(), task.process_owner());
+        assert_eq!(snapshot.kernel_stack(), task.kernel_stack());
+        assert!(snapshot.current_on_owner());
+        assert!(!snapshot.runnable_on_owner());
+        assert_eq!(
+            metadata
+                .lookup_task(task.id())
+                .expect("snapshot is present"),
+            snapshot
+        );
+    }
+
+    #[test_case]
+    fn shared_scheduler_metadata_refresh_tracks_owner_local_membership() {
+        let owner = LogicalCpuId::new(2);
+        let mut scheduler = PerCoreScheduler::<2>::deferred_secondary(owner);
+        let mut task = Task::kernel_thread(task_id(202), kernel_stack(), context());
+        task.set_state(TaskState::Blocked);
+        let mut metadata = SharedSchedulerMetadata::<4, 4>::new();
+        let first = metadata
+            .register_local_task(owner, &scheduler, &task)
+            .expect("owner registers blocked task");
+        assert_eq!(first.state(), TaskState::Blocked);
+        assert!(!first.runnable_on_owner());
+
+        task.set_state(TaskState::Runnable);
+        scheduler
+            .local_scheduler_mut(owner)
+            .expect("owner mutates local queue")
+            .make_runnable(&mut task)
+            .expect("local queue has capacity");
+        let refreshed = metadata
+            .refresh_local_task(owner, &scheduler, &task)
+            .expect("owner refreshes local metadata");
+
+        assert_eq!(refreshed.state(), TaskState::Runnable);
+        assert!(refreshed.runnable_on_owner());
+        assert_eq!(refreshed.generation(), first.generation() + 1);
+        assert_eq!(
+            metadata.lookup_task_at_generation(task.id(), first.generation()),
+            Err(SharedSchedulerMetadataError::StaleSnapshot {
+                task_id: task.id(),
+                expected_generation: first.generation(),
+                actual_generation: refreshed.generation()
+            })
+        );
+    }
+
+    #[test_case]
+    fn shared_scheduler_metadata_rejects_duplicate_and_unknown_tasks() {
+        let owner = LogicalCpuId::BOOT;
+        let scheduler = PerCoreScheduler::<2>::boot_cpu();
+        let task = Task::kernel_thread(task_id(1), kernel_stack(), context());
+        let unknown = task_id(2);
+        let mut metadata = SharedSchedulerMetadata::<1, 4>::new();
+
+        metadata
+            .register_local_task(owner, &scheduler, &task)
+            .expect("first registration succeeds");
+
+        assert_eq!(
+            metadata.register_local_task(owner, &scheduler, &task),
+            Err(SharedSchedulerMetadataError::DuplicateTask {
+                task_id: task.id(),
+                existing_owner: owner,
+                attempted_owner: owner
+            })
+        );
+        assert_eq!(
+            metadata.lookup_task(unknown),
+            Err(SharedSchedulerMetadataError::UnknownTask { task_id: unknown })
+        );
+    }
+
+    #[test_case]
+    fn shared_scheduler_metadata_rejects_invalid_owner_and_task_id_zero() {
+        let invalid_owner = LogicalCpuId::new(4);
+        let scheduler = PerCoreScheduler::<2>::deferred_secondary(invalid_owner);
+        let task = Task::kernel_thread(task_id(4), kernel_stack(), context());
+        let mut metadata = SharedSchedulerMetadata::<2, 4>::new();
+
+        assert_eq!(TaskId::new(0), None);
+        assert_eq!(
+            metadata.register_local_task(invalid_owner, &scheduler, &task),
+            Err(SharedSchedulerMetadataError::InvalidOwner {
+                owner: invalid_owner,
+                cpu_capacity: 4
+            })
+        );
+    }
+
+    #[test_case]
+    fn shared_scheduler_metadata_rejects_cross_owner_publication_without_queue_mutation() {
+        let owner = LogicalCpuId::new(1);
+        let requester = LogicalCpuId::BOOT;
+        let mut scheduler = PerCoreScheduler::<2>::deferred_secondary(owner);
+        let mut task = Task::kernel_thread(task_id(55), kernel_stack(), context());
+        scheduler
+            .local_scheduler_mut(owner)
+            .expect("owner seeds local queue")
+            .make_runnable(&mut task)
+            .expect("local queue has capacity");
+        let queue_len = scheduler.scheduler().runnable().len();
+        let mut metadata = SharedSchedulerMetadata::<2, 4>::new();
+
+        assert_eq!(
+            metadata.register_local_task(requester, &scheduler, &task),
+            Err(SharedSchedulerMetadataError::WrongOwner { owner, requester })
+        );
+
+        assert_eq!(metadata.len(), 0);
+        assert_eq!(scheduler.scheduler().runnable().len(), queue_len);
+        assert_eq!(scheduler.scheduler().runnable().front(), Some(task.id()));
+    }
+
+    #[test_case]
+    fn shared_scheduler_metadata_lock_protects_metadata_table_only() {
+        let lock = SharedSchedulerMetadataLock::<2, 4>::new(SharedSchedulerMetadata::new());
+
+        {
+            let metadata = lock.lock();
+            assert!(metadata.is_empty());
+            assert_eq!(metadata.capacity(), 2);
+            assert_eq!(metadata.generation(), 0);
+        }
+
+        assert!(!lock.is_locked());
     }
 
     #[test_case]

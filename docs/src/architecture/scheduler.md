@@ -700,3 +700,21 @@ lookup with mutation authority, remote enqueue queues, task migration, load
 balancing, work stealing, multi-core preemption, Phase 7, filesystem,
 networking, SSH, shell behavior, RP1/PCIe, UART interrupt ownership, and
 DMA/cache-coherent driver policy remain deferred.
+
+The shared scheduler metadata core now implements that first slice in
+src/scheduler.rs. SchedulerTaskSnapshot records the scheduler-local task ID,
+owning logical CPU, task state, optional process owner, kernel-stack bounds,
+owner-local current/runnable membership, and a generation number.
+SharedSchedulerMetadata is a bounded table for owner-published snapshots, and
+SharedSchedulerMetadataLock names the accepted SpinLock boundary for callers
+that share that table across CPUs. The table does not contain a runnable queue
+and does not grant mutation authority over another CPU's PerCoreScheduler.
+
+Only the owner CPU can register or refresh a task snapshot for its local
+PerCoreScheduler; wrong-owner publication is rejected before the metadata table
+changes. Lookup is read-only, duplicate task registration and unknown task IDs
+are explicit outcomes, invalid logical CPU owners are rejected by the table's
+CPU-capacity boundary, and generation-qualified lookups reject stale snapshots.
+This is enough to name CPU-local diagnostic tasks across cores for later
+proofs, but it is not shared dispatch, remote enqueue, task migration, load
+balancing, or multi-core preemption.

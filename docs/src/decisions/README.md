@@ -2437,3 +2437,39 @@ ADR template:
   balancing, work stealing, multi-core preemption, userspace, descriptors,
   filesystem, networking, SSH, shell behavior, RP1/PCIe, UART interrupt
   ownership, and DMA/cache policy remain deferred.
+
+## 2026-05-25 - Phase 6.3 Shared Scheduler Metadata Core Accepted
+
+- Status: accepted as the first shared scheduler metadata implementation
+  slice. The change adds Rust data structures and tests only; no boot archive,
+  Pi 5 hardware publish/test, shared run queue, remote enqueue, task migration,
+  load balancing, multi-core preemption, Phase 7, filesystem, networking, SSH,
+  shell, RP1/PCIe, UART interrupt ownership, or DMA behavior was added.
+- Context: The accepted source inventory selected read-oriented metadata that
+  can name CPU-local scheduler tasks across cores while preserving
+  target-owned local runnable queues and production secondary dispatch
+  invariants.
+- Decision: Accept phase6-shared-scheduler-metadata-core-20260525.
+  SchedulerTaskSnapshot records task ID, owning CPU, state, optional process
+  owner, kernel-stack bounds, owner-local current/runnable membership, and a
+  generation. SharedSchedulerMetadata exposes owner-only registration/refresh,
+  read-only lookup, duplicate/unknown/invalid-owner/stale-snapshot outcomes,
+  and SharedSchedulerMetadataLock names the accepted SpinLock boundary for
+  future shared table use.
+- Evidence level: static inspection, no_std unit tests, retained QEMU
+  substitute smokes, mdBook validation, and whitespace inspection.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec test
+  passed with 125 no_std tests; scripts/qemu-smoke.sh,
+  scripts/qemu-per-core-scheduler-ownership-smoke.sh,
+  scripts/qemu-remote-wake-to-local-runnable-smoke.sh, and
+  scripts/qemu-production-secondary-dispatch-smoke.sh passed; git diff --check
+  passed; mdbook build passed.
+- Rationale: The metadata table gives future QEMU and Pi 5 proofs a bounded
+  identity surface without granting remote mutation authority over local
+  scheduler state. Keeping the table separate from RunnableQueue preserves the
+  CPU-local dispatch topology.
+- Risks: The metadata is not a global mutable task registry. Shared run queues,
+  remote enqueue, migration, load balancing, work stealing, multi-core
+  preemption, userspace, descriptors, filesystem, networking, SSH, shell
+  behavior, RP1/PCIe, UART interrupt ownership, and DMA/cache policy remain
+  deferred.
