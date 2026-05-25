@@ -1,10 +1,25 @@
-//! Single-core scheduler data structures.
+//! Scheduler data structures.
 //!
-//! This module owns only the first boot-CPU scheduler shape: scheduler-local
-//! task identifiers, kernel-thread state, kernel stack descriptors, saved
-//! context placeholders, a fixed runnable queue, and a voluntary-yield dispatch
-//! primitive. It does not switch contexts itself, sleep tasks, implement
-//! preemption, or create process resources.
+//! This module owns the first boot-CPU scheduler shape plus the Phase 6.3
+//! CPU-local ownership wrapper. Task identifiers remain scheduler-local,
+//! runnable queues are still owned by exactly one logical CPU, and the wrapper
+//! does not add migration, shared queues, IPIs, or secondary-core production
+//! dispatch.
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LogicalCpuId(usize);
+
+impl LogicalCpuId {
+    pub const BOOT: Self = Self(0);
+
+    pub const fn new(raw: usize) -> Self {
+        Self(raw)
+    }
+
+    pub const fn raw(self) -> usize {
+        self.0
+    }
+}
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct TaskId(u64);
@@ -220,6 +235,29 @@ pub enum TimerPreemptError {
     RunnableQueueFull,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum SchedulerCoreRole {
+    BootCpuProduction,
+    SecondaryDeferred,
+}
+
+impl SchedulerCoreRole {
+    pub const fn production_dispatch_enabled(self) -> bool {
+        matches!(self, Self::BootCpuProduction)
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum PerCoreSchedulerAccessError {
+    WrongOwner {
+        owner: LogicalCpuId,
+        requester: LogicalCpuId,
+    },
+    ProductionDispatchDeferred {
+        owner: LogicalCpuId,
+    },
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct RunnableQueue<const CAPACITY: usize> {
     entries: [Option<TaskId>; CAPACITY],
@@ -433,13 +471,121 @@ impl<const RUNNABLE_CAPACITY: usize> Default for SingleCoreScheduler<RUNNABLE_CA
     }
 }
 
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct PerCoreScheduler<const RUNNABLE_CAPACITY: usize> {
+    owner: LogicalCpuId,
+    role: SchedulerCoreRole,
+    current_task: Option<TaskId>,
+    scheduler: SingleCoreScheduler<RUNNABLE_CAPACITY>,
+}
+
+impl<const RUNNABLE_CAPACITY: usize> PerCoreScheduler<RUNNABLE_CAPACITY> {
+    pub const fn new(owner: LogicalCpuId, role: SchedulerCoreRole) -> Self {
+        Self {
+            owner,
+            role,
+            current_task: None,
+            scheduler: SingleCoreScheduler::new(),
+        }
+    }
+
+    pub const fn boot_cpu() -> Self {
+        Self::new(LogicalCpuId::BOOT, SchedulerCoreRole::BootCpuProduction)
+    }
+
+    pub const fn deferred_secondary(owner: LogicalCpuId) -> Self {
+        Self::new(owner, SchedulerCoreRole::SecondaryDeferred)
+    }
+
+    pub const fn owner(&self) -> LogicalCpuId {
+        self.owner
+    }
+
+    pub const fn role(&self) -> SchedulerCoreRole {
+        self.role
+    }
+
+    pub const fn production_dispatch_enabled(&self) -> bool {
+        self.role.production_dispatch_enabled()
+    }
+
+    pub const fn current_task(&self) -> Option<TaskId> {
+        self.current_task
+    }
+
+    pub const fn scheduler(&self) -> &SingleCoreScheduler<RUNNABLE_CAPACITY> {
+        &self.scheduler
+    }
+
+    pub fn local_scheduler_mut(
+        &mut self,
+        requester: LogicalCpuId,
+    ) -> Result<&mut SingleCoreScheduler<RUNNABLE_CAPACITY>, PerCoreSchedulerAccessError> {
+        self.ensure_local_owner(requester)?;
+        Ok(&mut self.scheduler)
+    }
+
+    pub fn production_scheduler_mut(
+        &mut self,
+        requester: LogicalCpuId,
+    ) -> Result<&mut SingleCoreScheduler<RUNNABLE_CAPACITY>, PerCoreSchedulerAccessError> {
+        self.ensure_production_owner(requester)?;
+        Ok(&mut self.scheduler)
+    }
+
+    pub fn set_current_task(
+        &mut self,
+        requester: LogicalCpuId,
+        task_id: TaskId,
+    ) -> Result<(), PerCoreSchedulerAccessError> {
+        self.ensure_production_owner(requester)?;
+        self.current_task = Some(task_id);
+        Ok(())
+    }
+
+    pub fn clear_current_task(
+        &mut self,
+        requester: LogicalCpuId,
+    ) -> Result<Option<TaskId>, PerCoreSchedulerAccessError> {
+        self.ensure_production_owner(requester)?;
+        Ok(self.current_task.take())
+    }
+
+    fn ensure_local_owner(
+        &self,
+        requester: LogicalCpuId,
+    ) -> Result<(), PerCoreSchedulerAccessError> {
+        if requester == self.owner {
+            Ok(())
+        } else {
+            Err(PerCoreSchedulerAccessError::WrongOwner {
+                owner: self.owner,
+                requester,
+            })
+        }
+    }
+
+    fn ensure_production_owner(
+        &self,
+        requester: LogicalCpuId,
+    ) -> Result<(), PerCoreSchedulerAccessError> {
+        self.ensure_local_owner(requester)?;
+        if self.production_dispatch_enabled() {
+            Ok(())
+        } else {
+            Err(PerCoreSchedulerAccessError::ProductionDispatchDeferred { owner: self.owner })
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use core::mem::{offset_of, size_of};
 
     use super::{
-        ContextFrame, KernelStack, ProcessOwnerId, RunnableQueue, RunnableQueueError,
-        SingleCoreScheduler, Task, TaskId, TaskState, TimerPreemptError, VoluntaryYieldError,
+        ContextFrame, KernelStack, LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError,
+        ProcessOwnerId, RunnableQueue, RunnableQueueError, SchedulerCoreRole, SingleCoreScheduler,
+        Task, TaskId, TaskState, TimerPreemptError, VoluntaryYieldError,
     };
 
     fn task_id(raw: u64) -> TaskId {
@@ -458,6 +604,12 @@ mod tests {
     fn task_id_rejects_zero_and_preserves_scheduler_local_value() {
         assert_eq!(TaskId::new(0), None);
         assert_eq!(task_id(7).raw(), 7);
+    }
+
+    #[test_case]
+    fn logical_cpu_id_preserves_cpu_local_owner_identity() {
+        assert_eq!(LogicalCpuId::BOOT.raw(), 0);
+        assert_eq!(LogicalCpuId::new(3).raw(), 3);
     }
 
     #[test_case]
@@ -630,6 +782,92 @@ mod tests {
         task.set_state(TaskState::Running);
 
         assert_eq!(task.state(), TaskState::Running);
+    }
+
+    #[test_case]
+    fn per_core_scheduler_records_boot_cpu_owner_and_current_task() {
+        let mut per_core = PerCoreScheduler::<2>::boot_cpu();
+
+        assert_eq!(per_core.owner(), LogicalCpuId::BOOT);
+        assert_eq!(per_core.role(), SchedulerCoreRole::BootCpuProduction);
+        assert!(per_core.production_dispatch_enabled());
+        assert_eq!(per_core.current_task(), None);
+
+        per_core
+            .set_current_task(LogicalCpuId::BOOT, task_id(1))
+            .expect("boot CPU owns production scheduler state");
+
+        assert_eq!(per_core.current_task(), Some(task_id(1)));
+        assert_eq!(
+            per_core
+                .clear_current_task(LogicalCpuId::BOOT)
+                .expect("boot CPU clears current task"),
+            Some(task_id(1))
+        );
+        assert_eq!(per_core.current_task(), None);
+    }
+
+    #[test_case]
+    fn per_core_scheduler_rejects_cross_owner_queue_mutation() {
+        let mut per_core = PerCoreScheduler::<2>::boot_cpu();
+        let requester = LogicalCpuId::new(1);
+
+        assert_eq!(
+            per_core.local_scheduler_mut(requester).unwrap_err(),
+            PerCoreSchedulerAccessError::WrongOwner {
+                owner: LogicalCpuId::BOOT,
+                requester
+            }
+        );
+        assert_eq!(per_core.scheduler().runnable().len(), 0);
+    }
+
+    #[test_case]
+    fn per_core_scheduler_keeps_secondary_dispatch_deferred() {
+        let mut per_core = PerCoreScheduler::<2>::deferred_secondary(LogicalCpuId::new(1));
+
+        assert_eq!(per_core.owner(), LogicalCpuId::new(1));
+        assert_eq!(per_core.role(), SchedulerCoreRole::SecondaryDeferred);
+        assert!(!per_core.production_dispatch_enabled());
+        assert_eq!(
+            per_core.production_scheduler_mut(LogicalCpuId::new(1)),
+            Err(PerCoreSchedulerAccessError::ProductionDispatchDeferred {
+                owner: LogicalCpuId::new(1)
+            })
+        );
+        assert_eq!(
+            per_core.set_current_task(LogicalCpuId::new(1), task_id(2)),
+            Err(PerCoreSchedulerAccessError::ProductionDispatchDeferred {
+                owner: LogicalCpuId::new(1)
+            })
+        );
+    }
+
+    #[test_case]
+    fn per_core_scheduler_local_queue_keeps_single_core_invariants() {
+        let mut per_core = PerCoreScheduler::<2>::boot_cpu();
+        let mut current = Task::kernel_thread(task_id(1), kernel_stack(), context());
+        let mut next = Task::kernel_thread(task_id(2), kernel_stack(), context());
+        current.set_state(TaskState::Running);
+
+        per_core
+            .set_current_task(LogicalCpuId::BOOT, current.id())
+            .expect("boot CPU sets current task");
+        let scheduler = per_core
+            .production_scheduler_mut(LogicalCpuId::BOOT)
+            .expect("boot CPU mutates its local production scheduler");
+        scheduler
+            .make_runnable(&mut next)
+            .expect("local queue has capacity");
+        let next_id = scheduler
+            .timer_preempt(&mut current)
+            .expect("local timer preempts to runnable task");
+
+        assert_eq!(next_id, task_id(2));
+        assert_eq!(current.state(), TaskState::Runnable);
+        assert_eq!(scheduler.runnable().front(), Some(task_id(1)));
+        assert_eq!(scheduler.counters().timer_preemptions(), 1);
+        assert_eq!(scheduler.counters().context_switches(), 1);
     }
 
     #[test_case]

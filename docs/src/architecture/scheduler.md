@@ -400,3 +400,24 @@ IRQ state. Scheduler locks must not be held across
 `talos_aarch64_context_switch`, and code must not allocate, format, print,
 poll UART input, dispatch diagnostic commands, block, sleep, or run arbitrary
 callbacks while holding scheduler locks.
+
+## Phase 6.3 Per-Core Scheduler State
+
+`src/scheduler.rs` now exposes the first CPU-local scheduler ownership data
+boundary:
+
+- `LogicalCpuId` records the logical CPU that owns a local scheduler state.
+- `SchedulerCoreRole` separates `BootCpuProduction` from
+  `SecondaryDeferred`; only the boot-CPU role can enter production dispatch in
+  this slice.
+- `PerCoreScheduler` wraps a local `SingleCoreScheduler`, its owning logical
+  CPU, role, and current-task slot. `local_scheduler_mut()` rejects callers
+  from another CPU, and `production_scheduler_mut()` additionally rejects
+  deferred secondary owners.
+
+This is a data boundary, not scheduler migration. `SingleCoreScheduler`
+continues to own the same fixed FIFO runnable queue and dispatch counters, and
+existing cooperative and timer-preemption diagnostics remain boot-CPU evidence.
+Purely CPU-local queues still do not take `SpinLock<T>`; future shared
+scheduler structures must name their lock, IRQ-mask ordering, and validation
+evidence before implementation.
