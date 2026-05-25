@@ -249,6 +249,11 @@ Completed:
   first model is a bounded per-target remote wake-request list: a remote sender
   may publish a bounded request and signal with SGI INTID 1, while the target
   CPU owns request consumption and any later local scheduler effect.
+- Phase 6.3 QEMU remote wake-request evidence and the cross-core wakeup
+  closeout checkpoint are accepted. QEMU proves request publication, duplicate
+  coalescing, SGI signaling, target-owned observation/EOI/consumption, and
+  cross-owner mutation rejection for logical CPUs 1, 2, and 3. This is
+  scheduler-facing substitute evidence, not a Pi 5 scheduler wakeup claim.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -256,14 +261,15 @@ Completed:
 
 Blocked or pending:
 
-- The next explicit worker task should stay within Phase 6.3 and prove the
-  accepted remote wake-request model under QEMU before any Pi 5
-  scheduler-facing wakeup proof. The recommended bounded slice is
-  `phase6-qemu-remote-wakeup-request-smoke-20260525`. Multi-core scheduler
-  migration, shared run queues, task migration, production remote wakeups,
-  userspace, descriptors, filesystem, networking, SSH, shell behavior, UART
-  interrupts, RP1/PCIe, and DMA/cache-coherent driver policy remain deferred
-  until an explicit durable task is queued.
+- The next explicit worker task should stay within Phase 6.3 and carry the
+  accepted remote wake-request model to a serialized Pi 5 scheduler-facing
+  proof before any broader scheduler migration. The recommended bounded slice
+  is `phase6-pi5-remote-wakeup-request-proof-20260525`. Multi-core scheduler
+  migration, shared run queues, task migration, production secondary scheduler
+  dispatch, multi-core preemption, userspace, descriptors, filesystem,
+  networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and
+  DMA/cache-coherent driver policy remain deferred until an explicit durable
+  task is queued.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
