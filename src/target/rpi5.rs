@@ -799,16 +799,6 @@ fn run_smp_lock_contention_secondary(core_state: &smp::PerCoreState, logical_cpu
 
 #[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
 pub fn run_smp_lock_cache_coherence_proof() -> bool {
-    if cfg!(talos_rpi5_smp_lock_cache_coherence_entry_discriminator) {
-        write_uart10_bytes_early_phase(
-            b"rpi5-smp-lock-cache-coherence: entry-discriminator start\r\n",
-        );
-        write_uart10_bytes_early_phase(
-            b"rpi5-smp-lock-cache-coherence: entry-discriminator PASS\r\n",
-        );
-        return true;
-    }
-
     let boot_mpidr = crate::arch::aarch64::mpidr_el1();
     let boot_affinity = crate::arch::aarch64::mpidr_affinity(boot_mpidr);
     let boot_logical = pi5_logical_cpu_from_mpidr_affinity(boot_affinity);

@@ -384,3 +384,24 @@ The bounded inventory task
 reconciles the evidence and recommends targeting `PerCoreState` identity
 publication/reset/cache-maintenance after secondary cacheable-MMU handoff,
 without broadening into scheduler or generic lock contract work.
+
+## Scaffolding Quarantine
+
+The final follow-up task
+`tasks/2026-05-25-phase6-pi5-smp-lock-cache-coherence-final-proof.md`
+accepted the physical Pi 5 lock/cache-coherence proof after the secondary
+cacheable-MMU handoff and report-invariant correction.
+
+Temporary entry-discriminator scaffolding used during the inconclusive
+candidate-execution investigation has been removed from production paths:
+
+- Removed the `TALOS_RPI5_SMP_LOCK_CACHE_COHERENCE_ENTRY_DISCRIMINATOR`
+  build flag and Rust `cfg`.
+- Removed the early assembly, Rust-entry, kernel-main, and proof-function
+  entry-discriminator serial markers.
+- Removed the two entry-discriminator Pi 5 image/boot-tree scripts.
+
+The committed evidence files and this task record retain the discriminator
+history needed to explain the investigation. The retained Pi 5 lock proof
+image/archive path remains `scripts/rpi5-smp-lock-cache-coherence-image.sh`
+and `scripts/rpi5-smp-lock-cache-coherence-boot-tree.sh`.

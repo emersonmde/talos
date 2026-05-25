@@ -27,13 +27,6 @@ _start:
     mov x1, #(talos_rpi5_asm_start_line_end - talos_rpi5_asm_start_line)
     bl talos_rpi5_early_uart_write
 #endif
-#if defined(TALOS_RPI5_SMP_LOCK_CACHE_COHERENCE_ENTRY_DISCRIMINATOR)
-    adrp x0, talos_rpi5_smp_lock_entrydisc_asm_start_line
-    add x0, x0, :lo12:talos_rpi5_smp_lock_entrydisc_asm_start_line
-    mov x1, #(talos_rpi5_smp_lock_entrydisc_asm_start_line_end - talos_rpi5_smp_lock_entrydisc_asm_start_line)
-    bl talos_rpi5_early_uart_write
-#endif
-
     mrs x0, cpacr_el1
     orr x0, x0, #(0b11 << 20)
     msr cpacr_el1, x0
@@ -113,14 +106,6 @@ talos_rpi5_asm_start_line_end:
 talos_rpi5_asm_pre_rust_line:
     .ascii "TALOS: asm_pre_rust_entry\r\n"
 talos_rpi5_asm_pre_rust_line_end:
-
-.align 2
-#endif
-
-#if defined(TALOS_RPI5_SMP_LOCK_CACHE_COHERENCE_ENTRY_DISCRIMINATOR)
-talos_rpi5_smp_lock_entrydisc_asm_start_line:
-    .ascii "rpi5-smp-lock-cache-coherence: entry-discriminator asm-start\r\n"
-talos_rpi5_smp_lock_entrydisc_asm_start_line_end:
 
 .align 2
 #endif

@@ -49,14 +49,6 @@ fn report_unavailable(line: &'static str) {
 )]
 pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
     target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::KernelMain);
-    #[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
-    #[cfg(talos_rpi5_smp_lock_cache_coherence_entry_discriminator)]
-    {
-        target::rpi5::write_uart10_bytes_early_phase(
-            b"rpi5-smp-lock-cache-coherence: kernel-main-dispatch\r\n",
-        );
-        target::rpi5::wait_uart10_empty_early_phase();
-    }
 
     let services = target::services(boot_info);
     let dtb = report_boot_identity(boot_info, &services);
