@@ -27,7 +27,9 @@
             talos_rpi5_timer_preemption_diagnostic,
             talos_rpi5_diagnostic_command_channel_proof,
             talos_rpi5_psci_secondary_core_alive_proof,
-            talos_rpi5_secondary_core_workload_proof
+            talos_rpi5_secondary_core_workload_proof,
+            talos_rpi5_smp_lock_cache_coherence_proof,
+            talos_rpi5_smp_lock_cache_coherence_entry_discriminator
         )
     ),
     allow(dead_code, unused_imports, unused_variables)
@@ -152,6 +154,15 @@ fn alloc_error(layout: core::alloc::Layout) -> ! {
 pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
     #[cfg(talos_target_rpi5_bcm2712)]
     target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::RustEntry);
+    #[cfg(all(
+        talos_target_rpi5_bcm2712,
+        talos_rpi5_smp_lock_cache_coherence_entry_discriminator
+    ))]
+    {
+        target::rpi5::write_uart10_bytes_early_phase(
+            b"rpi5-smp-lock-cache-coherence: entry-discriminator rust-entry\r\n",
+        );
+    }
 
     let boot_info = BootInfo::from_aarch64_x0(dtb_pa);
 

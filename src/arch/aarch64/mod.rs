@@ -207,6 +207,99 @@ pub unsafe fn enable_el2_data_cache_from_plan(
 }
 
 #[cfg(talos_target_rpi5_bcm2712)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct El2Stage1CacheRegime {
+    pub mair: u64,
+    pub tcr: u64,
+    pub ttbr0: u64,
+    pub sctlr: u64,
+}
+
+#[cfg(talos_target_rpi5_bcm2712)]
+#[allow(dead_code)]
+pub fn current_el2_stage1_cache_regime() -> Option<El2Stage1CacheRegime> {
+    if current_el() != 2 {
+        return None;
+    }
+
+    let mair: u64;
+    let tcr: u64;
+    let ttbr0: u64;
+    let sctlr: u64;
+    unsafe {
+        asm!(
+            "mrs {mair}, MAIR_EL2",
+            "mrs {tcr}, TCR_EL2",
+            "mrs {ttbr0}, TTBR0_EL2",
+            "mrs {sctlr}, SCTLR_EL2",
+            mair = out(reg) mair,
+            tcr = out(reg) tcr,
+            ttbr0 = out(reg) ttbr0,
+            sctlr = out(reg) sctlr,
+            options(nostack, preserves_flags)
+        );
+    }
+
+    Some(El2Stage1CacheRegime {
+        mair,
+        tcr,
+        ttbr0,
+        sctlr,
+    })
+}
+
+#[cfg(talos_target_rpi5_bcm2712)]
+#[allow(dead_code)]
+pub unsafe fn install_el2_stage1_cache_regime(
+    regime: El2Stage1CacheRegime,
+) -> Option<El2Stage1CacheRegime> {
+    if current_el() != 2 {
+        return None;
+    }
+
+    let cacheable_bits = memory_map::EARLY_TRANSLATION_SCTLR_M_ENABLE
+        | memory_map::EARLY_TRANSLATION_SCTLR_I_ENABLE
+        | memory_map::EARLY_TRANSLATION_SCTLR_C_ENABLE;
+    let mut sctlr: u64;
+
+    unsafe {
+        asm!(
+            "msr MAIR_EL2, {mair}",
+            "msr TCR_EL2, {tcr}",
+            "msr TTBR0_EL2, {ttbr0}",
+            "isb",
+            "tlbi alle2",
+            "dsb sy",
+            "isb",
+            mair = in(reg) regime.mair,
+            tcr = in(reg) regime.tcr,
+            ttbr0 = in(reg) regime.ttbr0,
+            options(nostack, preserves_flags)
+        );
+
+        asm!(
+            "ic iallu",
+            "dsb sy",
+            "isb",
+            options(nostack, preserves_flags)
+        );
+        invalidate_data_unified_caches_by_set_way();
+
+        asm!("mrs {sctlr}, SCTLR_EL2", sctlr = out(reg) sctlr, options(nostack, preserves_flags));
+        sctlr |= regime.sctlr & cacheable_bits;
+        asm!(
+            "msr SCTLR_EL2, {sctlr}",
+            "dsb sy",
+            "isb",
+            sctlr = in(reg) sctlr,
+            options(nostack, preserves_flags)
+        );
+    }
+
+    current_el2_stage1_cache_regime()
+}
+
+#[cfg(talos_target_rpi5_bcm2712)]
 unsafe fn invalidate_data_unified_caches_by_set_way() {
     let clidr: u64;
     unsafe {

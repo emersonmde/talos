@@ -532,6 +532,32 @@ translation-fault recovery, accepted general collections or unconstrained
 grow-on-demand containers, or made a mutable page allocator responsible for the
 remaining frames.
 
+## Phase 6 Secondary Cacheable MMU Handoff - 2026-05-25
+
+The Pi 5 SMP lock proof now has a narrow boot-time handoff for secondaries that
+must participate in generic shared cached state. During the lock proof, the boot
+CPU publishes its active EL2 stage-1/cache regime after normal MMU,
+instruction-cache, and data-cache enablement:
+
+- MAIR_EL2, TCR_EL2, and TTBR0_EL2 from the accepted early map;
+- SCTLR_EL2 with M, I, and C required for the cacheable proof regime;
+- cache-maintained publication of that register plan before PSCI `CPU_ON`.
+
+Each Pi 5 secondary in the lock-proof path loads that plan, writes the EL2
+translation registers, invalidates EL2 translations, invalidates instruction
+and data/unified caches with barriers, enables SCTLR_EL2.M/I/C, and only then
+continues to the generic `SpinLock<T>` contention workload. If the plan is not
+available or the resulting SCTLR state is not cacheable-MMU enabled, the
+secondary parks and publishes diagnostic state rather than touching the generic
+lock.
+
+This is a diagnostic SMP proof boundary, not a new memory-management policy.
+It reuses the accepted low-memory and BCM2712 local-MMIO map and does not map
+high memory, RP1 PCIe, DMA buffers, lower-EL address spaces, or demand-fault
+regions. It also keeps cache maintenance and MMU setup outside `SpinLock<T>`;
+the lock assumes all participating cores already share compatible cacheable
+normal-memory attributes.
+
 ## Phase 3 Runtime Inventory Checkpoint - 2026-05-23
 
 This checkpoint reconciles the accepted Phase 3 runtime evidence before the

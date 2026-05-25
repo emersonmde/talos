@@ -21,10 +21,16 @@ _start:
 3:
     mov x19, x0
 
-#if defined(TALOS_RPI5_PSCI_SECONDARY_CORE_ALIVE_PROOF) || defined(TALOS_RPI5_SECONDARY_CORE_WORKLOAD_PROOF)
+#if defined(TALOS_RPI5_PSCI_SECONDARY_CORE_ALIVE_PROOF) || defined(TALOS_RPI5_SECONDARY_CORE_WORKLOAD_PROOF) || defined(TALOS_RPI5_SMP_LOCK_CACHE_COHERENCE_PROOF)
     adrp x0, talos_rpi5_asm_start_line
     add x0, x0, :lo12:talos_rpi5_asm_start_line
     mov x1, #(talos_rpi5_asm_start_line_end - talos_rpi5_asm_start_line)
+    bl talos_rpi5_early_uart_write
+#endif
+#if defined(TALOS_RPI5_SMP_LOCK_CACHE_COHERENCE_ENTRY_DISCRIMINATOR)
+    adrp x0, talos_rpi5_smp_lock_entrydisc_asm_start_line
+    add x0, x0, :lo12:talos_rpi5_smp_lock_entrydisc_asm_start_line
+    mov x1, #(talos_rpi5_smp_lock_entrydisc_asm_start_line_end - talos_rpi5_smp_lock_entrydisc_asm_start_line)
     bl talos_rpi5_early_uart_write
 #endif
 
@@ -48,7 +54,7 @@ _start:
     add x0, x0, :lo12:__stack_top
     mov sp, x0
 
-#if defined(TALOS_RPI5_PSCI_SECONDARY_CORE_ALIVE_PROOF) || defined(TALOS_RPI5_SECONDARY_CORE_WORKLOAD_PROOF)
+#if defined(TALOS_RPI5_PSCI_SECONDARY_CORE_ALIVE_PROOF) || defined(TALOS_RPI5_SECONDARY_CORE_WORKLOAD_PROOF) || defined(TALOS_RPI5_SMP_LOCK_CACHE_COHERENCE_PROOF)
     adrp x0, talos_rpi5_asm_pre_rust_line
     add x0, x0, :lo12:talos_rpi5_asm_pre_rust_line
     mov x1, #(talos_rpi5_asm_pre_rust_line_end - talos_rpi5_asm_pre_rust_line)
@@ -64,7 +70,7 @@ _start:
 
 .size _start, . - _start
 
-#if defined(TALOS_RPI5_PSCI_SECONDARY_CORE_ALIVE_PROOF) || defined(TALOS_RPI5_SECONDARY_CORE_WORKLOAD_PROOF)
+#if defined(TALOS_RPI5_PSCI_SECONDARY_CORE_ALIVE_PROOF) || defined(TALOS_RPI5_SECONDARY_CORE_WORKLOAD_PROOF) || defined(TALOS_RPI5_SMP_LOCK_CACHE_COHERENCE_PROOF)
 talos_rpi5_early_uart_write:
     mov x22, x30
     cbz x1, 2f
@@ -111,12 +117,20 @@ talos_rpi5_asm_pre_rust_line_end:
 .align 2
 #endif
 
-#if defined(TALOS_QEMU_SECONDARY_CORE_DISCRIMINATOR) || defined(TALOS_QEMU_SECONDARY_CORE_WORKLOAD_SMOKE) || defined(TALOS_QEMU_SMP_LOCK_CONTENTION_SMOKE) || defined(TALOS_RPI5_PSCI_SECONDARY_CORE_ALIVE_PROOF) || defined(TALOS_RPI5_SECONDARY_CORE_WORKLOAD_PROOF)
+#if defined(TALOS_RPI5_SMP_LOCK_CACHE_COHERENCE_ENTRY_DISCRIMINATOR)
+talos_rpi5_smp_lock_entrydisc_asm_start_line:
+    .ascii "rpi5-smp-lock-cache-coherence: entry-discriminator asm-start\r\n"
+talos_rpi5_smp_lock_entrydisc_asm_start_line_end:
+
+.align 2
+#endif
+
+#if defined(TALOS_QEMU_SECONDARY_CORE_DISCRIMINATOR) || defined(TALOS_QEMU_SECONDARY_CORE_WORKLOAD_SMOKE) || defined(TALOS_QEMU_SMP_LOCK_CONTENTION_SMOKE) || defined(TALOS_RPI5_PSCI_SECONDARY_CORE_ALIVE_PROOF) || defined(TALOS_RPI5_SECONDARY_CORE_WORKLOAD_PROOF) || defined(TALOS_RPI5_SMP_LOCK_CACHE_COHERENCE_PROOF)
 #if defined(TALOS_QEMU_SECONDARY_CORE_DISCRIMINATOR) || defined(TALOS_QEMU_SECONDARY_CORE_WORKLOAD_SMOKE) || defined(TALOS_QEMU_SMP_LOCK_CONTENTION_SMOKE)
 #define TALOS_SECONDARY_ENTRY_ASM talos_aarch64_qemu_secondary_entry
 #define TALOS_SECONDARY_ENTRY_RUST talos_qemu_secondary_entry
 #endif
-#if defined(TALOS_RPI5_PSCI_SECONDARY_CORE_ALIVE_PROOF) || defined(TALOS_RPI5_SECONDARY_CORE_WORKLOAD_PROOF)
+#if defined(TALOS_RPI5_PSCI_SECONDARY_CORE_ALIVE_PROOF) || defined(TALOS_RPI5_SECONDARY_CORE_WORKLOAD_PROOF) || defined(TALOS_RPI5_SMP_LOCK_CACHE_COHERENCE_PROOF)
 #define TALOS_SECONDARY_ENTRY_ASM talos_aarch64_rpi5_secondary_entry
 #define TALOS_SECONDARY_ENTRY_RUST talos_rpi5_secondary_entry
 #endif
@@ -126,7 +140,7 @@ talos_rpi5_asm_pre_rust_line_end:
 
 TALOS_SECONDARY_ENTRY_ASM:
     mov x19, x0
-#if defined(TALOS_RPI5_PSCI_SECONDARY_CORE_ALIVE_PROOF) || defined(TALOS_RPI5_SECONDARY_CORE_WORKLOAD_PROOF)
+#if defined(TALOS_RPI5_PSCI_SECONDARY_CORE_ALIVE_PROOF) || defined(TALOS_RPI5_SECONDARY_CORE_WORKLOAD_PROOF) || defined(TALOS_RPI5_SMP_LOCK_CACHE_COHERENCE_PROOF)
     adrp x0, talos_rpi5_secondary_entry_line
     add x0, x0, :lo12:talos_rpi5_secondary_entry_line
     mov x1, #(talos_rpi5_secondary_entry_line_end - talos_rpi5_secondary_entry_line)
@@ -143,7 +157,7 @@ TALOS_SECONDARY_ENTRY_ASM:
     add x1, x1, #4096
     mov sp, x1
 
-#if defined(TALOS_RPI5_PSCI_SECONDARY_CORE_ALIVE_PROOF) || defined(TALOS_RPI5_SECONDARY_CORE_WORKLOAD_PROOF)
+#if defined(TALOS_RPI5_PSCI_SECONDARY_CORE_ALIVE_PROOF) || defined(TALOS_RPI5_SECONDARY_CORE_WORKLOAD_PROOF) || defined(TALOS_RPI5_SMP_LOCK_CACHE_COHERENCE_PROOF)
     adrp x0, talos_rpi5_secondary_pre_rust_line
     add x0, x0, :lo12:talos_rpi5_secondary_pre_rust_line
     mov x1, #(talos_rpi5_secondary_pre_rust_line_end - talos_rpi5_secondary_pre_rust_line)
@@ -168,7 +182,7 @@ talos_secondary_core_stacks:
 talos_secondary_core_stacks_end:
 .previous
 
-#if defined(TALOS_RPI5_PSCI_SECONDARY_CORE_ALIVE_PROOF) || defined(TALOS_RPI5_SECONDARY_CORE_WORKLOAD_PROOF)
+#if defined(TALOS_RPI5_PSCI_SECONDARY_CORE_ALIVE_PROOF) || defined(TALOS_RPI5_SECONDARY_CORE_WORKLOAD_PROOF) || defined(TALOS_RPI5_SMP_LOCK_CACHE_COHERENCE_PROOF)
 talos_rpi5_secondary_entry_line:
     .ascii "TALOS: secondary_entry\r\n"
 talos_rpi5_secondary_entry_line_end:

@@ -10,13 +10,16 @@ use crate::arch::aarch64::{
 use crate::scheduler::{ContextFrame, KernelStack, SingleCoreScheduler, Task, TaskId, TaskState};
 #[cfg(any(
     talos_rpi5_psci_secondary_core_alive_proof,
-    talos_rpi5_secondary_core_workload_proof
+    talos_rpi5_secondary_core_workload_proof,
+    talos_rpi5_smp_lock_cache_coherence_proof
 ))]
 use crate::smp::{
     self, CoreLifecycle, CoreStackLayout, MAX_CORES, SECONDARY_CORE_STATES,
     SECONDARY_CORE_WORKLOAD_TARGET, SECONDARY_KERNEL_STACK_SIZE,
     pi5_logical_cpu_from_mpidr_affinity,
 };
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+use crate::smp_sync::{SpinLock, smp_full_barrier};
 use crate::{
     boot::BootInfo,
     device_tree::DeviceTree,
@@ -29,7 +32,8 @@ use core::cell::UnsafeCell;
     talos_rpi5_timer_irq_diagnostic,
     talos_rpi5_timer_preemption_diagnostic,
     talos_rpi5_psci_secondary_core_alive_proof,
-    talos_rpi5_secondary_core_workload_proof
+    talos_rpi5_secondary_core_workload_proof,
+    talos_rpi5_smp_lock_cache_coherence_proof
 ))]
 use core::sync::atomic::{AtomicU64, Ordering};
 
@@ -80,17 +84,32 @@ const TIMER_PREEMPTION_TARGET_PROGRESS: u64 = 3;
 const TIMER_PREEMPTION_TARGET_SWITCHES: u64 = 6;
 #[cfg(any(
     talos_rpi5_psci_secondary_core_alive_proof,
-    talos_rpi5_secondary_core_workload_proof
+    talos_rpi5_secondary_core_workload_proof,
+    talos_rpi5_smp_lock_cache_coherence_proof
 ))]
 const RPI5_SECONDARY_WAIT_LIMIT: usize = 200_000_000;
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+const RPI5_SMP_LOCK_CONTENTION_TARGET_PER_CORE: u64 = 64;
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+const RPI5_SMP_LOCK_ACQUIRE_SPIN_LIMIT: u64 = 1_000_000;
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+const RPI5_SMP_LOCK_WAIT_POLL_INTERVAL: usize = 20_000_000;
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+const RPI5_SCTLR_M_ENABLE: u64 = 1 << 0;
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+const RPI5_SCTLR_C_ENABLE: u64 = 1 << 2;
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+const RPI5_SCTLR_I_ENABLE: u64 = 1 << 12;
 #[cfg(any(
     talos_rpi5_psci_secondary_core_alive_proof,
-    talos_rpi5_secondary_core_workload_proof
+    talos_rpi5_secondary_core_workload_proof,
+    talos_rpi5_smp_lock_cache_coherence_proof
 ))]
 const PSCI_AFFINITY_INFO: u64 = 0x8400_0004;
 #[cfg(any(
     talos_rpi5_psci_secondary_core_alive_proof,
-    talos_rpi5_secondary_core_workload_proof
+    talos_rpi5_secondary_core_workload_proof,
+    talos_rpi5_smp_lock_cache_coherence_proof
 ))]
 const PSCI_CPU_ON: u64 = 0xc400_0003;
 
@@ -133,7 +152,8 @@ static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
 
 #[cfg(any(
     talos_rpi5_psci_secondary_core_alive_proof,
-    talos_rpi5_secondary_core_workload_proof
+    talos_rpi5_secondary_core_workload_proof,
+    talos_rpi5_smp_lock_cache_coherence_proof
 ))]
 unsafe extern "C" {
     fn talos_aarch64_rpi5_secondary_entry();
@@ -175,7 +195,8 @@ pub fn firmware_console() -> Pl011 {
 
 #[cfg(any(
     talos_rpi5_psci_secondary_core_alive_proof,
-    talos_rpi5_secondary_core_workload_proof
+    talos_rpi5_secondary_core_workload_proof,
+    talos_rpi5_smp_lock_cache_coherence_proof
 ))]
 fn secondary_stack_layout() -> CoreStackLayout {
     let base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
@@ -186,7 +207,8 @@ fn secondary_stack_layout() -> CoreStackLayout {
 
 #[cfg(any(
     talos_rpi5_psci_secondary_core_alive_proof,
-    talos_rpi5_secondary_core_workload_proof
+    talos_rpi5_secondary_core_workload_proof,
+    talos_rpi5_smp_lock_cache_coherence_proof
 ))]
 fn secondary_state_name(state: u64) -> &'static str {
     CoreLifecycle::from_raw(state).map_or("unknown", CoreLifecycle::name)
@@ -194,7 +216,8 @@ fn secondary_state_name(state: u64) -> &'static str {
 
 #[cfg(any(
     talos_rpi5_psci_secondary_core_alive_proof,
-    talos_rpi5_secondary_core_workload_proof
+    talos_rpi5_secondary_core_workload_proof,
+    talos_rpi5_smp_lock_cache_coherence_proof
 ))]
 unsafe fn psci_smc(function_id: u64, arg1: u64, arg2: u64, arg3: u64) -> i64 {
     let mut result = function_id;
@@ -230,7 +253,8 @@ unsafe fn psci_smc(function_id: u64, arg1: u64, arg2: u64, arg3: u64) -> i64 {
 
 #[cfg(any(
     talos_rpi5_psci_secondary_core_alive_proof,
-    talos_rpi5_secondary_core_workload_proof
+    talos_rpi5_secondary_core_workload_proof,
+    talos_rpi5_smp_lock_cache_coherence_proof
 ))]
 unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) -> i64 {
     unsafe { psci_smc(PSCI_CPU_ON, target_affinity, entry as u64, context as u64) }
@@ -238,7 +262,8 @@ unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) ->
 
 #[cfg(any(
     talos_rpi5_psci_secondary_core_alive_proof,
-    talos_rpi5_secondary_core_workload_proof
+    talos_rpi5_secondary_core_workload_proof,
+    talos_rpi5_smp_lock_cache_coherence_proof
 ))]
 unsafe fn psci_affinity_info_smc(target_affinity: u64, lowest_affinity_level: u64) -> i64 {
     unsafe {
@@ -253,7 +278,8 @@ unsafe fn psci_affinity_info_smc(target_affinity: u64, lowest_affinity_level: u6
 
 #[cfg(any(
     talos_rpi5_psci_secondary_core_alive_proof,
-    talos_rpi5_secondary_core_workload_proof
+    talos_rpi5_secondary_core_workload_proof,
+    talos_rpi5_smp_lock_cache_coherence_proof
 ))]
 fn psci_affinity_state_name(state: i64) -> &'static str {
     match state {
@@ -266,7 +292,8 @@ fn psci_affinity_state_name(state: i64) -> &'static str {
 
 #[cfg(any(
     talos_rpi5_psci_secondary_core_alive_proof,
-    talos_rpi5_secondary_core_workload_proof
+    talos_rpi5_secondary_core_workload_proof,
+    talos_rpi5_smp_lock_cache_coherence_proof
 ))]
 #[unsafe(no_mangle)]
 pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
@@ -285,6 +312,16 @@ pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
         }
         core_state.mark_stack_ready(stack_pointer as usize);
         core_state.mark_registered();
+        #[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+        if !enter_secondary_cacheable_mmu_handoff(logical_cpu) {
+            core_state.clean_to_poc();
+            write_uart10_bytes_early_phase(b"TALOS: secondary_cacheable_mmu_handoff_failed\r\n");
+            loop {
+                unsafe {
+                    core::arch::asm!("wfe", options(nomem, nostack, preserves_flags));
+                }
+            }
+        }
         core_state.mark_handoff_ready();
         core_state.clean_to_poc();
         write_uart10_bytes_early_phase(b"TALOS: secondary_state_published\r\n");
@@ -293,6 +330,11 @@ pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
             smp::run_controlled_secondary_workload(core_state, SECONDARY_CORE_WORKLOAD_TARGET);
             write_uart10_bytes_early_phase(b"TALOS: secondary_workload_complete\r\n");
         }
+        #[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+        {
+            run_smp_lock_contention_secondary(core_state, logical_cpu);
+            write_uart10_bytes_early_phase(b"TALOS: secondary_lock_contention_complete\r\n");
+        }
     }
 
     loop {
@@ -300,6 +342,693 @@ pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
             core::arch::asm!("wfe", options(nomem, nostack, preserves_flags));
         }
     }
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+#[derive(Clone, Copy)]
+struct SmpLockContentionState {
+    shared_counter: u64,
+    per_core_counts: [u64; MAX_CORES],
+    error_count: u64,
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+impl SmpLockContentionState {
+    const fn new() -> Self {
+        Self {
+            shared_counter: 0,
+            per_core_counts: [0; MAX_CORES],
+            error_count: 0,
+        }
+    }
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+static SMP_LOCK_CONTENTION_STATE: SpinLock<SmpLockContentionState> =
+    SpinLock::new(SmpLockContentionState::new());
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[repr(u64)]
+enum SmpLockDiagnosticPhase {
+    Idle = 0,
+    SecondaryEntered = 1,
+    BeforeLockAttempt = 2,
+    WaitingForLock = 3,
+    LockAcquired = 4,
+    LockReleased = 5,
+    IterationComplete = 6,
+    WorkloadComplete = 7,
+    LockAcquireTimeout = 8,
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+impl SmpLockDiagnosticPhase {
+    const fn from_raw(raw: u64) -> Self {
+        match raw {
+            1 => Self::SecondaryEntered,
+            2 => Self::BeforeLockAttempt,
+            3 => Self::WaitingForLock,
+            4 => Self::LockAcquired,
+            5 => Self::LockReleased,
+            6 => Self::IterationComplete,
+            7 => Self::WorkloadComplete,
+            8 => Self::LockAcquireTimeout,
+            _ => Self::Idle,
+        }
+    }
+
+    const fn raw(self) -> u64 {
+        self as u64
+    }
+
+    const fn name(self) -> &'static str {
+        match self {
+            Self::Idle => "idle",
+            Self::SecondaryEntered => "secondary-entered",
+            Self::BeforeLockAttempt => "before-lock-attempt",
+            Self::WaitingForLock => "waiting-for-lock",
+            Self::LockAcquired => "lock-acquired",
+            Self::LockReleased => "lock-released",
+            Self::IterationComplete => "iteration-complete",
+            Self::WorkloadComplete => "workload-complete",
+            Self::LockAcquireTimeout => "lock-acquire-timeout",
+        }
+    }
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+#[derive(Clone, Copy)]
+struct SmpLockDiagnosticSnapshot {
+    phase: SmpLockDiagnosticPhase,
+    progress: u64,
+    attempts: u64,
+    timeouts: u64,
+    releases: u64,
+    sctlr_el2: u64,
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+static SMP_LOCK_DIAGNOSTIC_PHASES: [AtomicU64; MAX_CORES] =
+    [const { AtomicU64::new(SmpLockDiagnosticPhase::Idle.raw()) }; MAX_CORES];
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+static SMP_LOCK_DIAGNOSTIC_PROGRESS: [AtomicU64; MAX_CORES] =
+    [const { AtomicU64::new(0) }; MAX_CORES];
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+static SMP_LOCK_DIAGNOSTIC_ATTEMPTS: [AtomicU64; MAX_CORES] =
+    [const { AtomicU64::new(0) }; MAX_CORES];
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+static SMP_LOCK_DIAGNOSTIC_TIMEOUTS: [AtomicU64; MAX_CORES] =
+    [const { AtomicU64::new(0) }; MAX_CORES];
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+static SMP_LOCK_DIAGNOSTIC_RELEASES: [AtomicU64; MAX_CORES] =
+    [const { AtomicU64::new(0) }; MAX_CORES];
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+static SMP_LOCK_DIAGNOSTIC_SCTLR_EL2: [AtomicU64; MAX_CORES] =
+    [const { AtomicU64::new(0) }; MAX_CORES];
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+static SECONDARY_CACHEABLE_MMU_HANDOFF_READY: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+static SECONDARY_CACHEABLE_MMU_HANDOFF_MAIR_EL2: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+static SECONDARY_CACHEABLE_MMU_HANDOFF_TCR_EL2: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+static SECONDARY_CACHEABLE_MMU_HANDOFF_TTBR0_EL2: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+static SECONDARY_CACHEABLE_MMU_HANDOFF_SCTLR_EL2: AtomicU64 = AtomicU64::new(0);
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+fn clean_secondary_cacheable_mmu_handoff_plan() {
+    clean_cache_line_to_poc(&SECONDARY_CACHEABLE_MMU_HANDOFF_MAIR_EL2);
+    clean_cache_line_to_poc(&SECONDARY_CACHEABLE_MMU_HANDOFF_TCR_EL2);
+    clean_cache_line_to_poc(&SECONDARY_CACHEABLE_MMU_HANDOFF_TTBR0_EL2);
+    clean_cache_line_to_poc(&SECONDARY_CACHEABLE_MMU_HANDOFF_SCTLR_EL2);
+    clean_cache_line_to_poc(&SECONDARY_CACHEABLE_MMU_HANDOFF_READY);
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+fn publish_secondary_cacheable_mmu_handoff_plan(
+    regime: crate::arch::aarch64::El2Stage1CacheRegime,
+) {
+    SECONDARY_CACHEABLE_MMU_HANDOFF_READY.store(0, Ordering::Release);
+    clean_secondary_cacheable_mmu_handoff_plan();
+    SECONDARY_CACHEABLE_MMU_HANDOFF_MAIR_EL2.store(regime.mair, Ordering::Release);
+    SECONDARY_CACHEABLE_MMU_HANDOFF_TCR_EL2.store(regime.tcr, Ordering::Release);
+    SECONDARY_CACHEABLE_MMU_HANDOFF_TTBR0_EL2.store(regime.ttbr0, Ordering::Release);
+    SECONDARY_CACHEABLE_MMU_HANDOFF_SCTLR_EL2.store(
+        regime.sctlr | RPI5_SCTLR_M_ENABLE | RPI5_SCTLR_I_ENABLE | RPI5_SCTLR_C_ENABLE,
+        Ordering::Release,
+    );
+    SECONDARY_CACHEABLE_MMU_HANDOFF_READY.store(1, Ordering::Release);
+    clean_secondary_cacheable_mmu_handoff_plan();
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+fn secondary_cacheable_mmu_handoff_plan() -> Option<crate::arch::aarch64::El2Stage1CacheRegime> {
+    invalidate_cache_line_from_poc(&SECONDARY_CACHEABLE_MMU_HANDOFF_READY);
+    if SECONDARY_CACHEABLE_MMU_HANDOFF_READY.load(Ordering::Acquire) != 1 {
+        return None;
+    }
+
+    invalidate_cache_line_from_poc(&SECONDARY_CACHEABLE_MMU_HANDOFF_MAIR_EL2);
+    invalidate_cache_line_from_poc(&SECONDARY_CACHEABLE_MMU_HANDOFF_TCR_EL2);
+    invalidate_cache_line_from_poc(&SECONDARY_CACHEABLE_MMU_HANDOFF_TTBR0_EL2);
+    invalidate_cache_line_from_poc(&SECONDARY_CACHEABLE_MMU_HANDOFF_SCTLR_EL2);
+    Some(crate::arch::aarch64::El2Stage1CacheRegime {
+        mair: SECONDARY_CACHEABLE_MMU_HANDOFF_MAIR_EL2.load(Ordering::Acquire),
+        tcr: SECONDARY_CACHEABLE_MMU_HANDOFF_TCR_EL2.load(Ordering::Acquire),
+        ttbr0: SECONDARY_CACHEABLE_MMU_HANDOFF_TTBR0_EL2.load(Ordering::Acquire),
+        sctlr: SECONDARY_CACHEABLE_MMU_HANDOFF_SCTLR_EL2.load(Ordering::Acquire),
+    })
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+fn enter_secondary_cacheable_mmu_handoff(logical_cpu: usize) -> bool {
+    let Some(plan) = secondary_cacheable_mmu_handoff_plan() else {
+        record_smp_lock_diagnostic(
+            logical_cpu,
+            SmpLockDiagnosticPhase::SecondaryEntered,
+            0,
+            0,
+            0,
+            0,
+            current_sctlr_el2(),
+        );
+        return false;
+    };
+
+    let Some(after) = (unsafe { crate::arch::aarch64::install_el2_stage1_cache_regime(plan) })
+    else {
+        record_smp_lock_diagnostic(
+            logical_cpu,
+            SmpLockDiagnosticPhase::SecondaryEntered,
+            0,
+            0,
+            0,
+            0,
+            current_sctlr_el2(),
+        );
+        return false;
+    };
+    record_smp_lock_diagnostic(
+        logical_cpu,
+        SmpLockDiagnosticPhase::SecondaryEntered,
+        0,
+        0,
+        0,
+        0,
+        after.sctlr,
+    );
+    cacheable_mmu_enabled(after.sctlr)
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+fn reset_smp_lock_contention_state() {
+    let mut state = SMP_LOCK_CONTENTION_STATE.lock();
+    *state = SmpLockContentionState::new();
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+fn reset_smp_lock_diagnostic_state() {
+    for logical_cpu in 0..MAX_CORES {
+        record_smp_lock_diagnostic(logical_cpu, SmpLockDiagnosticPhase::Idle, 0, 0, 0, 0, 0);
+    }
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+fn record_smp_lock_diagnostic(
+    logical_cpu: usize,
+    phase: SmpLockDiagnosticPhase,
+    progress: u64,
+    attempts: u64,
+    timeouts: u64,
+    releases: u64,
+    sctlr_el2: u64,
+) {
+    if logical_cpu >= MAX_CORES {
+        return;
+    }
+    SMP_LOCK_DIAGNOSTIC_PROGRESS[logical_cpu].store(progress, Ordering::Release);
+    SMP_LOCK_DIAGNOSTIC_ATTEMPTS[logical_cpu].store(attempts, Ordering::Release);
+    SMP_LOCK_DIAGNOSTIC_TIMEOUTS[logical_cpu].store(timeouts, Ordering::Release);
+    SMP_LOCK_DIAGNOSTIC_RELEASES[logical_cpu].store(releases, Ordering::Release);
+    SMP_LOCK_DIAGNOSTIC_SCTLR_EL2[logical_cpu].store(sctlr_el2, Ordering::Release);
+    SMP_LOCK_DIAGNOSTIC_PHASES[logical_cpu].store(phase.raw(), Ordering::Release);
+    clean_smp_lock_diagnostic(logical_cpu);
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+fn clean_smp_lock_diagnostic(logical_cpu: usize) {
+    clean_cache_line_to_poc(&SMP_LOCK_DIAGNOSTIC_PROGRESS[logical_cpu]);
+    clean_cache_line_to_poc(&SMP_LOCK_DIAGNOSTIC_ATTEMPTS[logical_cpu]);
+    clean_cache_line_to_poc(&SMP_LOCK_DIAGNOSTIC_TIMEOUTS[logical_cpu]);
+    clean_cache_line_to_poc(&SMP_LOCK_DIAGNOSTIC_RELEASES[logical_cpu]);
+    clean_cache_line_to_poc(&SMP_LOCK_DIAGNOSTIC_SCTLR_EL2[logical_cpu]);
+    clean_cache_line_to_poc(&SMP_LOCK_DIAGNOSTIC_PHASES[logical_cpu]);
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+fn snapshot_smp_lock_diagnostic(logical_cpu: usize) -> SmpLockDiagnosticSnapshot {
+    invalidate_cache_line_from_poc(&SMP_LOCK_DIAGNOSTIC_PROGRESS[logical_cpu]);
+    invalidate_cache_line_from_poc(&SMP_LOCK_DIAGNOSTIC_ATTEMPTS[logical_cpu]);
+    invalidate_cache_line_from_poc(&SMP_LOCK_DIAGNOSTIC_TIMEOUTS[logical_cpu]);
+    invalidate_cache_line_from_poc(&SMP_LOCK_DIAGNOSTIC_RELEASES[logical_cpu]);
+    invalidate_cache_line_from_poc(&SMP_LOCK_DIAGNOSTIC_SCTLR_EL2[logical_cpu]);
+    invalidate_cache_line_from_poc(&SMP_LOCK_DIAGNOSTIC_PHASES[logical_cpu]);
+    SmpLockDiagnosticSnapshot {
+        phase: SmpLockDiagnosticPhase::from_raw(
+            SMP_LOCK_DIAGNOSTIC_PHASES[logical_cpu].load(Ordering::Acquire),
+        ),
+        progress: SMP_LOCK_DIAGNOSTIC_PROGRESS[logical_cpu].load(Ordering::Acquire),
+        attempts: SMP_LOCK_DIAGNOSTIC_ATTEMPTS[logical_cpu].load(Ordering::Acquire),
+        timeouts: SMP_LOCK_DIAGNOSTIC_TIMEOUTS[logical_cpu].load(Ordering::Acquire),
+        releases: SMP_LOCK_DIAGNOSTIC_RELEASES[logical_cpu].load(Ordering::Acquire),
+        sctlr_el2: SMP_LOCK_DIAGNOSTIC_SCTLR_EL2[logical_cpu].load(Ordering::Acquire),
+    }
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+fn write_smp_lock_wait_observation(logical_cpu: usize, remaining: usize) {
+    SECONDARY_CORE_STATES[logical_cpu].invalidate_from_poc();
+    let report = SECONDARY_CORE_STATES[logical_cpu].snapshot(logical_cpu);
+    let diagnostic = snapshot_smp_lock_diagnostic(logical_cpu);
+    crate::println!(
+        "rpi5-smp-lock-cache-coherence: wait logical={} remaining={} state={} progress={} diag-phase={} diag-progress={} diag-attempts={} diag-timeouts={} diag-releases={} diag-sctlr-el2={:#018x} diag-cacheable-mmu={}",
+        logical_cpu,
+        remaining,
+        secondary_state_name(report.lifecycle.raw()),
+        report.workload_progress,
+        diagnostic.phase.name(),
+        diagnostic.progress,
+        diagnostic.attempts,
+        diagnostic.timeouts,
+        diagnostic.releases,
+        diagnostic.sctlr_el2,
+        cacheable_mmu_enabled(diagnostic.sctlr_el2)
+    );
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+fn current_sctlr_el2() -> u64 {
+    let sctlr: u64;
+    unsafe {
+        core::arch::asm!("mrs {sctlr}, SCTLR_EL2", sctlr = out(reg) sctlr, options(nostack, preserves_flags));
+    }
+    sctlr
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+fn cacheable_mmu_enabled(sctlr: u64) -> bool {
+    (sctlr & (RPI5_SCTLR_M_ENABLE | RPI5_SCTLR_C_ENABLE))
+        == (RPI5_SCTLR_M_ENABLE | RPI5_SCTLR_C_ENABLE)
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+fn clean_cache_line_to_poc<T>(value: &T) {
+    unsafe {
+        core::arch::asm!(
+            "dc cvac, {addr}",
+            "dsb sy",
+            addr = in(reg) value as *const T as usize,
+            options(nostack, preserves_flags)
+        );
+    }
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+fn invalidate_cache_line_from_poc<T>(value: &T) {
+    unsafe {
+        core::arch::asm!(
+            "dc ivac, {addr}",
+            "dsb sy",
+            addr = in(reg) value as *const T as usize,
+            options(nostack, preserves_flags)
+        );
+    }
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+fn run_smp_lock_contention_secondary(core_state: &smp::PerCoreState, logical_cpu: usize) {
+    core_state.mark_workload_running();
+    core_state.clean_to_poc();
+    let sctlr_el2 = current_sctlr_el2();
+    let mut attempts = 0;
+    let mut timeouts = 0;
+    let mut releases = 0;
+    record_smp_lock_diagnostic(
+        logical_cpu,
+        SmpLockDiagnosticPhase::SecondaryEntered,
+        0,
+        attempts,
+        timeouts,
+        releases,
+        sctlr_el2,
+    );
+
+    let mut progress = 0;
+    while progress < RPI5_SMP_LOCK_CONTENTION_TARGET_PER_CORE {
+        record_smp_lock_diagnostic(
+            logical_cpu,
+            SmpLockDiagnosticPhase::BeforeLockAttempt,
+            progress,
+            attempts,
+            timeouts,
+            releases,
+            sctlr_el2,
+        );
+        let mut waited = 0;
+        let expected_after = {
+            let mut state = loop {
+                attempts += 1;
+                if let Some(state) = SMP_LOCK_CONTENTION_STATE.try_lock() {
+                    break state;
+                }
+                waited += 1;
+                if waited >= RPI5_SMP_LOCK_ACQUIRE_SPIN_LIMIT {
+                    timeouts += 1;
+                    record_smp_lock_diagnostic(
+                        logical_cpu,
+                        SmpLockDiagnosticPhase::LockAcquireTimeout,
+                        progress,
+                        attempts,
+                        timeouts,
+                        releases,
+                        sctlr_el2,
+                    );
+                    core_state.record_workload_progress(progress);
+                    core_state.mark_workload_complete(progress);
+                    core_state.clean_to_poc();
+                    return;
+                }
+                if waited & 0xffff == 0 {
+                    record_smp_lock_diagnostic(
+                        logical_cpu,
+                        SmpLockDiagnosticPhase::WaitingForLock,
+                        progress,
+                        attempts,
+                        timeouts,
+                        releases,
+                        sctlr_el2,
+                    );
+                }
+                core::hint::spin_loop();
+            };
+            record_smp_lock_diagnostic(
+                logical_cpu,
+                SmpLockDiagnosticPhase::LockAcquired,
+                progress,
+                attempts,
+                timeouts,
+                releases,
+                sctlr_el2,
+            );
+            let before = state.shared_counter;
+            state.shared_counter = before + 1;
+            state.per_core_counts[logical_cpu] += 1;
+            if state.shared_counter != before + 1 {
+                state.error_count += 1;
+            }
+            state.per_core_counts[logical_cpu]
+        };
+        releases += 1;
+        record_smp_lock_diagnostic(
+            logical_cpu,
+            SmpLockDiagnosticPhase::LockReleased,
+            progress,
+            attempts,
+            timeouts,
+            releases,
+            sctlr_el2,
+        );
+        progress += 1;
+        if expected_after != progress {
+            let mut state = SMP_LOCK_CONTENTION_STATE.lock();
+            state.error_count += 1;
+        }
+        core_state.record_workload_progress(progress);
+        record_smp_lock_diagnostic(
+            logical_cpu,
+            SmpLockDiagnosticPhase::IterationComplete,
+            progress,
+            attempts,
+            timeouts,
+            releases,
+            sctlr_el2,
+        );
+        if progress == RPI5_SMP_LOCK_CONTENTION_TARGET_PER_CORE || progress & 0xf == 0 {
+            core_state.clean_to_poc();
+        }
+        smp_full_barrier();
+        core::hint::spin_loop();
+    }
+
+    core_state.mark_workload_complete(progress);
+    core_state.clean_to_poc();
+    record_smp_lock_diagnostic(
+        logical_cpu,
+        SmpLockDiagnosticPhase::WorkloadComplete,
+        progress,
+        attempts,
+        timeouts,
+        releases,
+        sctlr_el2,
+    );
+}
+
+#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+pub fn run_smp_lock_cache_coherence_proof() -> bool {
+    if cfg!(talos_rpi5_smp_lock_cache_coherence_entry_discriminator) {
+        write_uart10_bytes_early_phase(
+            b"rpi5-smp-lock-cache-coherence: entry-discriminator start\r\n",
+        );
+        write_uart10_bytes_early_phase(
+            b"rpi5-smp-lock-cache-coherence: entry-discriminator PASS\r\n",
+        );
+        return true;
+    }
+
+    let boot_mpidr = crate::arch::aarch64::mpidr_el1();
+    let boot_affinity = crate::arch::aarch64::mpidr_affinity(boot_mpidr);
+    let boot_logical = pi5_logical_cpu_from_mpidr_affinity(boot_affinity);
+    let boot_cache_regime = crate::arch::aarch64::current_el2_stage1_cache_regime();
+    let boot_sctlr_el2 = boot_cache_regime.map_or_else(current_sctlr_el2, |regime| regime.sctlr);
+    let entry = talos_aarch64_rpi5_secondary_entry as *const () as usize;
+    let stack_layout = secondary_stack_layout();
+    let stack_base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
+    let stack_end = core::ptr::addr_of!(talos_secondary_core_stacks_end) as usize;
+    let expected_total = RPI5_SMP_LOCK_CONTENTION_TARGET_PER_CORE * (MAX_CORES as u64 - 1);
+
+    crate::println!(
+        "rpi5-smp-lock-cache-coherence: start conduit=smc cores={} target-per-core={} expected-total={} boot-mpidr={:#018x} boot-affinity={:#x} boot-logical={:?} boot-sctlr-el2={:#018x} boot-cacheable-mmu={} entry={:#018x} stack-range=[{:#018x},{:#018x}) cache-policy=generic-lock-no-cache-maintenance acquire-spin-limit={}",
+        MAX_CORES,
+        RPI5_SMP_LOCK_CONTENTION_TARGET_PER_CORE,
+        expected_total,
+        boot_mpidr,
+        boot_affinity,
+        boot_logical,
+        boot_sctlr_el2,
+        cacheable_mmu_enabled(boot_sctlr_el2),
+        entry,
+        stack_base,
+        stack_end,
+        RPI5_SMP_LOCK_ACQUIRE_SPIN_LIMIT
+    );
+    wait_uart10_empty_early_phase();
+
+    smp::reset_secondary_core_states();
+    reset_smp_lock_contention_state();
+    reset_smp_lock_diagnostic_state();
+    if let Some(regime) = boot_cache_regime {
+        publish_secondary_cacheable_mmu_handoff_plan(regime);
+        crate::println!(
+            "rpi5-smp-lock-cache-coherence: secondary-cacheable-mmu-handoff-plan mair-el2={:#018x} tcr-el2={:#018x} ttbr0-el2={:#018x} sctlr-el2={:#018x} cacheable-mmu={}",
+            regime.mair,
+            regime.tcr,
+            regime.ttbr0,
+            regime.sctlr,
+            cacheable_mmu_enabled(regime.sctlr)
+        );
+    } else {
+        SECONDARY_CACHEABLE_MMU_HANDOFF_READY.store(0, Ordering::Release);
+        clean_secondary_cacheable_mmu_handoff_plan();
+        crate::println!(
+            "rpi5-smp-lock-cache-coherence: secondary-cacheable-mmu-handoff-plan unavailable"
+        );
+    }
+    wait_uart10_empty_early_phase();
+
+    let mut cpu_on_ok = true;
+    for logical_cpu in 1..MAX_CORES {
+        let target_affinity = (logical_cpu as u64) << 8;
+        let result = unsafe { psci_cpu_on_smc(target_affinity, entry, logical_cpu) };
+        crate::println!(
+            "rpi5-smp-lock-cache-coherence: cpu-on logical={} target-affinity={:#x} result={}",
+            logical_cpu,
+            target_affinity,
+            result
+        );
+        cpu_on_ok &= result == 0;
+        let affinity_after = unsafe { psci_affinity_info_smc(target_affinity, 0) };
+        crate::println!(
+            "rpi5-smp-lock-cache-coherence: affinity-after logical={} target-affinity={:#x} level=0 state={} raw={}",
+            logical_cpu,
+            target_affinity,
+            psci_affinity_state_name(affinity_after),
+            affinity_after
+        );
+        wait_uart10_empty_early_phase();
+    }
+
+    let mut remaining = RPI5_SECONDARY_WAIT_LIMIT;
+    while remaining > 0 {
+        let all_complete = (1..MAX_CORES).all(|logical_cpu| {
+            SECONDARY_CORE_STATES[logical_cpu].invalidate_from_poc();
+            SECONDARY_CORE_STATES[logical_cpu]
+                .snapshot(logical_cpu)
+                .lifecycle
+                >= CoreLifecycle::WorkloadComplete
+        });
+        if all_complete {
+            break;
+        }
+        if remaining == RPI5_SECONDARY_WAIT_LIMIT
+            || remaining % RPI5_SMP_LOCK_WAIT_POLL_INTERVAL == 0
+        {
+            for logical_cpu in 1..MAX_CORES {
+                write_smp_lock_wait_observation(logical_cpu, remaining);
+            }
+            wait_uart10_empty_early_phase();
+        }
+        core::hint::spin_loop();
+        remaining -= 1;
+    }
+
+    let final_state = SMP_LOCK_CONTENTION_STATE.try_lock().map(|state| *state);
+    let lock_available = final_state.is_some();
+    let final_state = final_state.unwrap_or_else(SmpLockContentionState::new);
+    let mut participants = 0;
+    let mut diagnostic_participants = 0;
+    let mut any_pre_lock_stall = false;
+    let mut any_lock_acquire_timeout = false;
+    let mut any_lock_held_stall = !lock_available;
+    let mut all_diagnostic_progress_complete = true;
+    let mut any_mixed_cache_mmu = false;
+    let mut reports_ok = cpu_on_ok
+        && boot_logical == Some(0)
+        && lock_available
+        && final_state.shared_counter == expected_total
+        && final_state.error_count == 0;
+
+    for logical_cpu in 1..MAX_CORES {
+        SECONDARY_CORE_STATES[logical_cpu].invalidate_from_poc();
+        let report = SECONDARY_CORE_STATES[logical_cpu].snapshot(logical_cpu);
+        let diagnostic = snapshot_smp_lock_diagnostic(logical_cpu);
+        let logical_from_mpidr = pi5_logical_cpu_from_mpidr_affinity(report.affinity);
+        let stack_slot = stack_layout
+            .slot(logical_cpu)
+            .expect("stack slot for possible Pi 5 core");
+        let stack_owned = stack_slot.contains_stack_pointer(report.stack_pointer);
+        let locked_count = final_state.per_core_counts[logical_cpu];
+        let report_ok = report.lifecycle >= CoreLifecycle::WorkloadComplete
+            && report.context == logical_cpu
+            && logical_from_mpidr == Some(logical_cpu)
+            && stack_owned
+            && report.workload_progress == RPI5_SMP_LOCK_CONTENTION_TARGET_PER_CORE
+            && locked_count == RPI5_SMP_LOCK_CONTENTION_TARGET_PER_CORE;
+        if locked_count == RPI5_SMP_LOCK_CONTENTION_TARGET_PER_CORE {
+            participants += 1;
+        }
+        if diagnostic.progress == RPI5_SMP_LOCK_CONTENTION_TARGET_PER_CORE {
+            diagnostic_participants += 1;
+        }
+        any_pre_lock_stall |= report.lifecycle >= CoreLifecycle::WorkloadRunning
+            && diagnostic.phase < SmpLockDiagnosticPhase::BeforeLockAttempt;
+        any_lock_acquire_timeout |= diagnostic.timeouts > 0
+            || diagnostic.phase == SmpLockDiagnosticPhase::LockAcquireTimeout;
+        any_lock_held_stall &= diagnostic.phase == SmpLockDiagnosticPhase::LockAcquired;
+        all_diagnostic_progress_complete &= diagnostic.progress
+            == RPI5_SMP_LOCK_CONTENTION_TARGET_PER_CORE
+            && diagnostic.releases == RPI5_SMP_LOCK_CONTENTION_TARGET_PER_CORE;
+        any_mixed_cache_mmu |=
+            cacheable_mmu_enabled(boot_sctlr_el2) && !cacheable_mmu_enabled(diagnostic.sctlr_el2);
+        reports_ok &= report_ok;
+
+        crate::println!(
+            "rpi5-smp-lock-cache-coherence: report logical={} state={} context={} mpidr={:#018x} affinity={:#x} mapped={:?} sp={:#018x} stack=[{:#018x},{:#018x}) lock-count={} progress={} target={} diag-phase={} diag-progress={} diag-attempts={} diag-timeouts={} diag-releases={} diag-sctlr-el2={:#018x} diag-cacheable-mmu={} ok={}",
+            logical_cpu,
+            secondary_state_name(report.lifecycle.raw()),
+            report.context,
+            report.mpidr,
+            report.affinity,
+            logical_from_mpidr,
+            report.stack_pointer,
+            stack_slot.bottom,
+            stack_slot.top,
+            locked_count,
+            report.workload_progress,
+            RPI5_SMP_LOCK_CONTENTION_TARGET_PER_CORE,
+            diagnostic.phase.name(),
+            diagnostic.progress,
+            diagnostic.attempts,
+            diagnostic.timeouts,
+            diagnostic.releases,
+            diagnostic.sctlr_el2,
+            cacheable_mmu_enabled(diagnostic.sctlr_el2),
+            report_ok
+        );
+        wait_uart10_empty_early_phase();
+    }
+
+    let generic_state_visible = lock_available
+        && final_state.shared_counter == expected_total
+        && final_state.per_core_counts[1..]
+            .iter()
+            .all(|count| *count == RPI5_SMP_LOCK_CONTENTION_TARGET_PER_CORE);
+    let non_visible_progress = all_diagnostic_progress_complete && !generic_state_visible;
+    let classification = if reports_ok {
+        "pi5-smp-lock-cache-coherence-complete"
+    } else if any_mixed_cache_mmu {
+        "pi5-smp-lock-cache-coherence-invalid-mixed-cache-mmu-regime"
+    } else if any_pre_lock_stall {
+        "pi5-smp-lock-cache-coherence-pre-lock-stall"
+    } else if any_lock_held_stall {
+        "pi5-smp-lock-cache-coherence-lock-held-stall"
+    } else if non_visible_progress {
+        "pi5-smp-lock-cache-coherence-non-visible-progress"
+    } else if any_lock_acquire_timeout {
+        "pi5-smp-lock-cache-coherence-lock-acquire-timeout"
+    } else if !lock_available {
+        "pi5-smp-lock-cache-coherence-lock-still-held"
+    } else if !cpu_on_ok {
+        "pi5-psci-smc-cpu-on-failed"
+    } else if boot_logical != Some(0) {
+        "pi5-psci-boot-core-identity-mismatch"
+    } else {
+        "pi5-smp-lock-cache-coherence-invariant-failed"
+    };
+    crate::println!(
+        "rpi5-smp-lock-cache-coherence: final counter={} expected={} participants={} diag-participants={} errors={} lock-available={} generic-state-visible={} mixed-cache-mmu={} non-visible-progress={} wait-remaining={} classification={}",
+        final_state.shared_counter,
+        expected_total,
+        participants,
+        diagnostic_participants,
+        final_state.error_count,
+        lock_available,
+        generic_state_visible,
+        any_mixed_cache_mmu,
+        non_visible_progress,
+        remaining,
+        classification
+    );
+
+    if reports_ok {
+        crate::println!("rpi5-smp-lock-cache-coherence: PASS");
+    } else {
+        crate::println!("rpi5-smp-lock-cache-coherence: FAIL");
+    }
+    wait_uart10_empty_early_phase();
+
+    reports_ok
 }
 
 #[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
@@ -1585,7 +2314,8 @@ pub(crate) fn write_uart10_byte_early_phase(byte: u8) {
     talos_target_rpi5_bcm2712,
     any(
         talos_rpi5_psci_secondary_core_alive_proof,
-        talos_rpi5_secondary_core_workload_proof
+        talos_rpi5_secondary_core_workload_proof,
+        talos_rpi5_smp_lock_cache_coherence_proof
     )
 ))]
 pub(crate) fn write_uart10_bytes_early_phase(bytes: &[u8]) {
