@@ -278,6 +278,40 @@ register bank, then acknowledge and EOI the active interrupt in the IRQ handler.
 Do not add MSI, SPI target routing, cascaded interrupt controllers, UART
 interrupts, or RP1 interrupt routing in the first timer task.
 
+## GICv2 SGI and IPI Readiness
+
+The Phase 6.3 cross-core wakeup/IPI source inventory accepts only the source
+contract for software-generated interrupts; it does not implement SGI delivery.
+
+Current target facts:
+
+- QEMU virt uses GICv2 with distributor base 0x0800_0000 and CPU interface
+  base 0x0801_0000.
+- Pi 5 uses GIC-400/GICv2 with distributor base 0x10_7fff_9000 and CPU
+  interface base 0x10_7fff_a000.
+- src/arch/aarch64/gicv2.rs currently exposes PPI/SPI enable, acknowledge,
+  EOI, enable/pending/active inspection, and highest-pending reads. It does
+  not yet expose SGI generation.
+
+GICv2 SGIs occupy INTIDs 0 through 15. A future minimal wrapper should add only
+the GICD_SGIR offset 0xf00 surface needed by a diagnostic. The SGIR write must
+record the selected SGI ID, target-list filter, and CPU target-list bits. The
+receiver must enable the selected SGI in the PPI/SGI bank, acknowledge it
+through GICC_IAR, classify the observed INTID as the diagnostic SGI, write the
+exact IAR value to GICC_EOIR, and publish bounded per-core counters after the
+handler returns.
+
+The first proof is QEMU-only: start secondary cores through the accepted PSCI
+path, send one diagnostic SGI from CPU 0 to each secondary logical CPU, and
+report MPIDR/logical CPU identity, target-list bit, observed INTID,
+acknowledgement/EOI, counts, errors, and PASS/FAIL. A later serialized Pi 5
+proof is required before SGIs are accepted for physical scheduler wakeups.
+
+IPI context has the same hot-path limits as the timer IRQ path: acknowledge,
+classify, record bounded state, EOI, and return. It must not allocate, format,
+print, poll UART input, dispatch diagnostic commands, block, sleep, walk
+scheduler queues, migrate tasks, or cross the context-switch boundary.
+
 ## Minimal Generic-Timer Checklist
 
 Linux's ARM architected timer driver uses the same basic shape Talos needs for

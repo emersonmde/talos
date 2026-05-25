@@ -229,6 +229,17 @@ Completed:
   shared run queues, cross-core wakeups, IPIs, userspace, descriptors,
   filesystem, networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and
   DMA/cache-coherent driver policy remain deferred.
+- Phase 6.3 scheduler migration readiness, per-core scheduler state, and QEMU
+  per-core scheduler ownership evidence are accepted. The scheduler now has a
+  CPU-local ownership data boundary and QEMU substitute evidence that logical
+  CPUs 0 through 3 can publish distinct local scheduler ownership snapshots
+  while secondary production dispatch, shared run queues, task migration,
+  cross-core wakeups, and IPIs remain deferred.
+- Phase 6.3 cross-core wakeup/IPI source inventory is accepted. The selected
+  path is raw SGI delivery first: a QEMU-only SGI/IPI smoke should prove
+  target-list mapping, acknowledgement/EOI, and per-core counters before any
+  scheduler wakeup implementation; a later serialized Pi 5 proof is required
+  before SGIs are accepted for physical scheduler wakeups.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -236,15 +247,14 @@ Completed:
 
 Blocked or pending:
 
-- The next explicit worker task should be supervisor-planned from the accepted
-  Phase 6.2 closeout. The recommended next bounded Phase 6 slice is a scheduler
-  migration readiness source inventory covering shared scheduler state,
-  run-queue ownership, lock placement, cross-core wakeup/IPI requirements, and
-  per-core timer/preemption interactions before implementation. Multi-core
-  scheduler migration, shared run queues, cross-core wakeups, userspace,
-  descriptors, filesystem, networking, SSH, shell behavior, UART interrupts,
-  RP1/PCIe, and DMA/cache-coherent driver policy remain deferred until an
-  explicit durable task is queued.
+- The next explicit worker task should stay within Phase 6.3 and prove QEMU
+  SGI/IPI delivery before any scheduler remote-wakeup implementation. The
+  recommended bounded slice is
+  `phase6-qemu-cross-core-ipi-delivery-smoke-20260525`. Multi-core scheduler
+  migration, shared run queues, task migration, production remote wakeups,
+  userspace, descriptors, filesystem, networking, SSH, shell behavior, UART
+  interrupts, RP1/PCIe, and DMA/cache-coherent driver policy remain deferred
+  until an explicit durable task is queued.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.

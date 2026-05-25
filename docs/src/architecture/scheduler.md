@@ -430,3 +430,36 @@ CPUs 0 through 3, keeps secondary roles deferred from production dispatch, and
 exercises local runnable/progress accounting without shared run queues,
 migration, IPIs, or cross-core wakeups. Diagnostic output is emitted after the
 bounded local work and outside hot lock/IRQ paths.
+
+## Phase 6.3 Cross-Core Wakeup and IPI Readiness
+
+The cross-core wakeup/IPI source inventory accepts a raw signal-delivery plan,
+not scheduler migration. The first implementation must prove SGI delivery
+before any scheduler task is remotely enqueued or migrated.
+
+The scheduler-facing wakeup contract remains:
+
+- wakeups target scheduler tasks, not POSIX processes;
+- a local wake may eventually enqueue onto the current CPU's local runnable
+  queue under that CPU's local scheduler rules;
+- a remote wake may only publish a bounded wake request and send an IPI after a
+  later task accepts the remote wake-list or remote-enqueue ownership model;
+- an IPI handler may acknowledge/classify the SGI, record bounded per-core
+  wake-pending evidence, EOI, and return;
+- remote wake handling must not mutate another CPU's local runnable queue
+  directly until a separate task names the shared lock, memory ordering, and
+  validation evidence.
+
+If later shared scheduler wake state is introduced, the lock-ordering rule is
+local IRQ mask first, then SMP lock acquisition; release the SMP lock before
+restoring local IRQ state. Scheduler locks must not be held across
+`talos_aarch64_context_switch`, and neither IPI context nor scheduler-locked
+sections may allocate, format, print, poll UART input, dispatch diagnostic
+commands, block, sleep, migrate tasks, or run arbitrary callbacks.
+
+The selected proof sequence is split: first a QEMU SGI/IPI delivery smoke, then
+a serialized Pi 5 hardware proof before any production scheduler wakeup uses
+SGIs on hardware. Shared run queues, global task lookup, task migration,
+load balancing, work stealing, sleep/wakeup queues, userspace, descriptors,
+filesystem, networking, SSH, shell behavior, RP1/PCIe, UART interrupt
+ownership, and DMA policy remain deferred.
