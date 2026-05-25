@@ -44,6 +44,7 @@
 - [Phase 6 Remote Wakeup Scheduler Integration Closeout](project/phase6-remote-wakeup-scheduler-integration-closeout.md)
 - [Phase 6 Production Secondary Dispatch Closeout](project/phase6-production-secondary-dispatch-closeout-checkpoint.md)
 - [Phase 6 Shared Scheduler Metadata Source Inventory](project/phase6-shared-scheduler-metadata-source-inventory.md)
+- [Phase 6 Shared Scheduler Metadata Closeout](project/phase6-shared-scheduler-metadata-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

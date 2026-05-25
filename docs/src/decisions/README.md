@@ -12,6 +12,40 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-25 - Phase 6.3 Shared Scheduler Metadata Closeout Accepted
+
+- Status: accepted as the closeout checkpoint for the bounded shared scheduler
+  metadata slice. No Rust implementation, boot image, hardware publish/test,
+  shared run queue, remote enqueue, task migration, load balancing,
+  multi-core preemption, Phase 7, filesystem, networking, SSH, shell,
+  RP1/PCIe, UART interrupt ownership, or DMA behavior was added by the
+  checkpoint.
+- Context: The source inventory, metadata core, QEMU shared metadata smoke,
+  and serialized Pi 5 shared metadata proof now all agree that logical CPUs 0
+  through 3 can publish/query an owner-published metadata table while
+  preserving CPU-local runnable queue ownership.
+- Decision: Accept
+  phase6-shared-scheduler-metadata-closeout-checkpoint-20260525. Retain the
+  focused shared metadata QEMU and Pi 5 scripts as named validation gates.
+  The next bounded task should be
+  talos-evidence-retention-policy-and-bloat-audit-20260525 before broader
+  scheduler productionization.
+- Evidence level: static inspection, accepted task/evidence review, scheduler
+  architecture review, roadmap update, decision-log update, mdBook
+  validation, and whitespace inspection.
+- Validation: git status --short before edits was clean, git diff --check
+  passed after edits, and mdbook build passed. Rust fmt/tests and hardware
+  runs were not required because this checkpoint changed only Markdown
+  documentation and durable task state.
+- Rationale: The checkpoint prevents the accepted metadata invariant from
+  being treated as permission for shared dispatch. The next risk is evidence
+  retention and diagnostic surface growth, not a lack of metadata proof.
+- Risks: The metadata table is not a shared scheduler topology. Shared run
+  queues, remote enqueue, migration, load balancing, work stealing,
+  multi-core preemption, userspace, descriptors, filesystem, networking, SSH,
+  shell behavior, RP1/PCIe, UART interrupt ownership, and DMA/cache policy
+  remain deferred.
+
 ## 2026-05-25 - Pi 5 Shared Scheduler Metadata Proof Accepted
 
 - Status: accepted as the physical Pi 5 hardware proof for the first shared
