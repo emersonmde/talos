@@ -1,0 +1,24 @@
+TALOS: asm_start
+TALOS: rust_entry
+TALOS: kernel_main
+rpi5-production-secondary-dispatch: start conduit=smc cores=4 target=3 boot-mpidr=0x0000000081000000 boot-affinity=0x0 boot-logical=Some(0) boot-sctlr-el2=0x0000000030c51835 boot-cacheable-mmu=true entry=0x0000000000200144 stack-range=[0x000000000021a000,0x000000000021e000)
+rpi5-production-secondary-dispatch: secondary-cacheable-mmu-handoff-plan mair-el2=0x00000000000004ff tcr-el2=0x0000000000053510 ttbr0-el2=0x000000002f000000 sctlr-el2=0x0000000030c51835 cacheable-mmu=true
+rpi5-production-secondary-dispatch: cpu-on logical=1TALOS: secondary_pre_rust_entry target-affinity=0xTALOS: secondary_rust_entry
+rpi5-production-secondary-dispatch: cpu-on logical=TALOS: secondary_state_publis2TALOS: secondary_production_dis target-affinity=0xTALOS: secondary_pre_rust_entr200 result=0
+rpi5-production-secondary-dispatch: cpu-on logical=3 target-affinityT=ALOS: secondarTALOS: se0xTALOS: secondary_production_di300 result=TALOS: secondary_rust_en0
+rpi5-production-secondary-dispatch: report logical=2 state=workload-complete context=2 mpidr=0x0000000081000200 affinity=0x200 mapped=Some(2) sp=0x000000000021cdc0 stack=[0x000000000021c000,0x000000000021d000) owner=2 role=secondary-production-diagnostic production=true current=303 queue-len=0 front=0 progress=3 transitions=6 production-dispatches=3 context-switches=3 cross-owner-rejected=true cross-owner-dispatch-rejected=true lock-progress=3 errors=0 ok=true
+rpi5-production-secondary-dispatch: report logical=3 state=workload-complete context=3 mpidr=0x0000000081000300 affinity=0x300 mapped=Some(3) sp=0x000000000021ddc0 stack=[0x000000000021d000,0x000000000021e000) owner=3 role=secondary-production-diagnostic production=true current=403 queue-len=0 front=0 progress=3 transitions=6 production-dispatches=3 context-switches=3 cross-owner-rejected=true cross-owner-dispatch-rejected=true lock-progress=3 errors=0 ok=true
+rpi5-production-secondary-dispatch: final participants=3 expected=3 errors=0 lock-available=true wait-remaining=199996917 classification=pi5-production-secondary-dispatch-complete
+rpi5-production-secondary-dispatch: PASS
+TALOS: asm_start
+TALOS: rust_entry
+TALOS: kernel_main
+rpi5-production-secondary-dispatch: start conduit=smc cores=4 target=3 boot-mpidr=0x0000000081000000 boot-affinity=0x0 boot-logical=Some(0) boot-sctlr-el2=0x0000000030c51835 boot-cacheable-mmu=true entry=0x0000000000200144 stack-range=[0x000000000021a000,0x000000000021e000)
+rpi5-production-secondary-dispatch: secondary-cacheable-mmu-handoff-plan mair-el2=0x00000000000004ff tcr-el2=0x0000000000053510 ttbr0-el2=0x000000002f000000 sctlr-el2=0x0000000030c51835 cacheable-mmu=true
+rpi5-production-secondary-dispatch: cpu-on logical=1TALOS: secondary_pre_rust_entry target-affinity=0xTALOS: secondary_rust_entry
+rpi5-production-secondary-dispatch: cpu-on logical=TALOS: secondary_state_publis2TALOS: secondary_production_dis target-affinity=0xTALOS: secondary_pre_rust_entr200 result=0
+rpi5-production-secondary-dispatch: cpu-on logical=3 target-affinityT=ALOS: secondarTALOS: se0xTALOS: secondary_production_di300 result=TALOS: secondary_rust_en0
+rpi5-production-secondary-dispatch: report logical=2 state=workload-complete context=2 mpidr=0x0000000081000200 affinity=0x200 mapped=Some(2) sp=0x000000000021cdc0 stack=[0x000000000021c000,0x000000000021d000) owner=2 role=secondary-production-diagnostic production=true current=303 queue-len=0 front=0 progress=3 transitions=6 production-dispatches=3 context-switches=3 cross-owner-rejected=true cross-owner-dispatch-rejected=true lock-progress=3 errors=0 ok=true
+rpi5-production-secondary-dispatch: report logical=3 state=workload-complete context=3 mpidr=0x0000000081000300 affinity=0x300 mapped=Some(3) sp=0x000000000021ddc0 stack=[0x000000000021d000,0x000000000021e000) owner=3 role=secondary-production-diagnostic production=true current=403 queue-len=0 front=0 progress=3 transitions=6 production-dispatches=3 context-switches=3 cross-owner-rejected=true cross-owner-dispatch-rejected=true lock-progress=3 errors=0 ok=true
+rpi5-production-secondary-dispatch: final participants=3 expected=3 errors=0 lock-available=true wait-remaining=199996917 classification=pi5-production-secondary-dispatch-complete
+rpi5-production-secondary-dispatch: PASS

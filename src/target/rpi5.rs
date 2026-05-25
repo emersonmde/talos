@@ -1,3 +1,5 @@
+#[cfg(talos_rpi5_production_secondary_dispatch_proof)]
+use crate::arch::aarch64;
 #[cfg(any(
     talos_rpi5_timer_irq_diagnostic,
     talos_rpi5_timer_preemption_diagnostic
@@ -17,14 +19,20 @@ use crate::arch::aarch64::{
 use crate::scheduler::TargetWakeConsumptionError;
 #[cfg(any(
     talos_rpi5_timer_preemption_diagnostic,
-    talos_rpi5_remote_wake_to_local_runnable_proof
+    talos_rpi5_remote_wake_to_local_runnable_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 use crate::scheduler::{ContextFrame, KernelStack, Task, TaskState};
-#[cfg(talos_rpi5_remote_wakeup_request_proof)]
+#[cfg(any(
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
+))]
 use crate::scheduler::{
-    LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError, RemoteWakePublishOutcome,
-    RemoteWakeQueue, TaskId,
+    LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError, ProductionDispatchError,
+    SchedulerCoreRole, TaskId,
 };
+#[cfg(talos_rpi5_remote_wakeup_request_proof)]
+use crate::scheduler::{RemoteWakePublishOutcome, RemoteWakeQueue};
 #[cfg(talos_rpi5_timer_preemption_diagnostic)]
 use crate::scheduler::{SingleCoreScheduler, TaskId};
 #[cfg(talos_rpi5_secondary_core_workload_proof)]
@@ -34,7 +42,8 @@ use crate::smp::SECONDARY_CORE_WORKLOAD_TARGET;
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 use crate::smp::{
     self, CoreLifecycle, CoreStackLayout, MAX_CORES, SECONDARY_CORE_STATES,
@@ -42,7 +51,8 @@ use crate::smp::{
 };
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 use crate::smp_sync::{SpinLock, smp_full_barrier};
 use crate::{
@@ -60,7 +70,8 @@ use core::cell::UnsafeCell;
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 use core::sync::atomic::{AtomicU64, Ordering};
 
@@ -118,9 +129,12 @@ const TIMER_PREEMPTION_TARGET_SWITCHES: u64 = 6;
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 const RPI5_SECONDARY_WAIT_LIMIT: usize = 200_000_000;
+#[cfg(talos_rpi5_production_secondary_dispatch_proof)]
+const PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET: u64 = 3;
 #[cfg(any(
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof
@@ -147,19 +161,22 @@ const RPI5_SMP_LOCK_WAIT_POLL_INTERVAL: usize = 20_000_000;
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 const RPI5_SCTLR_M_ENABLE: u64 = 1 << 0;
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 const RPI5_SCTLR_C_ENABLE: u64 = 1 << 2;
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 const RPI5_SCTLR_I_ENABLE: u64 = 1 << 12;
 #[cfg(any(
@@ -167,7 +184,8 @@ const RPI5_SCTLR_I_ENABLE: u64 = 1 << 12;
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 const PSCI_AFFINITY_INFO: u64 = 0x8400_0004;
 #[cfg(any(
@@ -175,7 +193,8 @@ const PSCI_AFFINITY_INFO: u64 = 0x8400_0004;
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 const PSCI_CPU_ON: u64 = 0xc400_0003;
 
@@ -229,7 +248,8 @@ static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 unsafe extern "C" {
     fn talos_aarch64_rpi5_secondary_entry();
@@ -274,7 +294,8 @@ pub fn firmware_console() -> Pl011 {
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 fn secondary_stack_layout() -> CoreStackLayout {
     let base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
@@ -288,7 +309,8 @@ fn secondary_stack_layout() -> CoreStackLayout {
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 fn secondary_state_name(state: u64) -> &'static str {
     CoreLifecycle::from_raw(state).map_or("unknown", CoreLifecycle::name)
@@ -299,7 +321,8 @@ fn secondary_state_name(state: u64) -> &'static str {
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 unsafe fn psci_smc(function_id: u64, arg1: u64, arg2: u64, arg3: u64) -> i64 {
     let mut result = function_id;
@@ -338,7 +361,8 @@ unsafe fn psci_smc(function_id: u64, arg1: u64, arg2: u64, arg3: u64) -> i64 {
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) -> i64 {
     unsafe { psci_smc(PSCI_CPU_ON, target_affinity, entry as u64, context as u64) }
@@ -349,7 +373,8 @@ unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) ->
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 unsafe fn psci_affinity_info_smc(target_affinity: u64, lowest_affinity_level: u64) -> i64 {
     unsafe {
@@ -367,7 +392,8 @@ unsafe fn psci_affinity_info_smc(target_affinity: u64, lowest_affinity_level: u6
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 fn psci_affinity_state_name(state: i64) -> &'static str {
     match state {
@@ -383,7 +409,8 @@ fn psci_affinity_state_name(state: i64) -> &'static str {
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 #[unsafe(no_mangle)]
 pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
@@ -405,7 +432,8 @@ pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
         #[cfg(any(
             talos_rpi5_smp_lock_cache_coherence_proof,
             talos_rpi5_cross_core_ipi_delivery_proof,
-            talos_rpi5_remote_wakeup_request_proof
+            talos_rpi5_remote_wakeup_request_proof,
+            talos_rpi5_production_secondary_dispatch_proof
         ))]
         if !enter_secondary_cacheable_mmu_handoff(logical_cpu) {
             core_state.clean_to_poc();
@@ -419,7 +447,8 @@ pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
         #[cfg(any(
             talos_rpi5_smp_lock_cache_coherence_proof,
             talos_rpi5_cross_core_ipi_delivery_proof,
-            talos_rpi5_remote_wakeup_request_proof
+            talos_rpi5_remote_wakeup_request_proof,
+            talos_rpi5_production_secondary_dispatch_proof
         ))]
         core_state.republish_identity(context, mpidr, affinity, stack_pointer as usize);
         core_state.mark_handoff_ready();
@@ -445,6 +474,11 @@ pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
             run_remote_wakeup_request_secondary(core_state, logical_cpu);
             write_uart10_bytes_early_phase(b"TALOS: secondary_remote_wakeup_complete\r\n");
         }
+        #[cfg(talos_rpi5_production_secondary_dispatch_proof)]
+        {
+            run_production_secondary_dispatch_secondary(core_state, logical_cpu);
+            write_uart10_bytes_early_phase(b"TALOS: secondary_production_dispatch_complete\r\n");
+        }
     }
 
     loop {
@@ -452,6 +486,195 @@ pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
             core::arch::asm!("wfe", options(nomem, nostack, preserves_flags));
         }
     }
+}
+
+#[cfg(talos_rpi5_production_secondary_dispatch_proof)]
+#[derive(Clone, Copy)]
+struct ProductionSecondaryDispatchReport {
+    owner: u64,
+    role: SchedulerCoreRole,
+    production_dispatch_enabled: bool,
+    current_task: u64,
+    queue_len: u64,
+    front_task: u64,
+    progress: u64,
+    state_transitions: u64,
+    production_dispatches: u64,
+    context_switches: u64,
+    cross_owner_rejected: bool,
+    cross_owner_dispatch_rejected: bool,
+    errors: u64,
+}
+
+#[cfg(talos_rpi5_production_secondary_dispatch_proof)]
+impl ProductionSecondaryDispatchReport {
+    const fn empty() -> Self {
+        Self {
+            owner: u64::MAX,
+            role: SchedulerCoreRole::SecondaryDeferred,
+            production_dispatch_enabled: false,
+            current_task: 0,
+            queue_len: 0,
+            front_task: 0,
+            progress: 0,
+            state_transitions: 0,
+            production_dispatches: 0,
+            context_switches: 0,
+            cross_owner_rejected: false,
+            cross_owner_dispatch_rejected: false,
+            errors: 0,
+        }
+    }
+}
+
+#[cfg(talos_rpi5_production_secondary_dispatch_proof)]
+#[derive(Clone, Copy)]
+struct ProductionSecondaryDispatchState {
+    reports: [ProductionSecondaryDispatchReport; MAX_CORES],
+    lock_progress: [u64; MAX_CORES],
+}
+
+#[cfg(talos_rpi5_production_secondary_dispatch_proof)]
+impl ProductionSecondaryDispatchState {
+    const fn new() -> Self {
+        Self {
+            reports: [ProductionSecondaryDispatchReport::empty(); MAX_CORES],
+            lock_progress: [0; MAX_CORES],
+        }
+    }
+}
+
+#[cfg(talos_rpi5_production_secondary_dispatch_proof)]
+static PRODUCTION_SECONDARY_DISPATCH_STATE: SpinLock<ProductionSecondaryDispatchState> =
+    SpinLock::new(ProductionSecondaryDispatchState::new());
+
+#[cfg(talos_rpi5_production_secondary_dispatch_proof)]
+fn reset_production_secondary_dispatch_state() {
+    let mut state = unsafe { PRODUCTION_SECONDARY_DISPATCH_STATE.lock_irqsave() };
+    *state = ProductionSecondaryDispatchState::new();
+}
+
+#[cfg(talos_rpi5_production_secondary_dispatch_proof)]
+fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
+    match role {
+        SchedulerCoreRole::BootCpuProduction => "boot-production",
+        SchedulerCoreRole::SecondaryDeferred => "secondary-deferred",
+        SchedulerCoreRole::SecondaryProductionDiagnostic => "secondary-production-diagnostic",
+    }
+}
+
+#[cfg(talos_rpi5_production_secondary_dispatch_proof)]
+fn task_id(raw: u64) -> TaskId {
+    TaskId::new(raw).expect("diagnostic task IDs are nonzero")
+}
+
+#[cfg(talos_rpi5_production_secondary_dispatch_proof)]
+fn scheduler_task(logical_cpu: usize, progress: u64) -> Task {
+    let raw_task_id = (logical_cpu as u64 + 1) * 100 + progress;
+    let stack_base = 0x80_0000 + logical_cpu * 0x10000 + progress as usize * 0x1000;
+    let stack = KernelStack::new(stack_base, 0x1000).expect("diagnostic stack bounds are valid");
+    let context = ContextFrame::new(stack.limit() & !0xf, 0x40_0000 + raw_task_id as usize);
+    Task::kernel_thread(task_id(raw_task_id), stack, context)
+}
+
+#[cfg(talos_rpi5_production_secondary_dispatch_proof)]
+fn build_production_secondary_dispatch_report(
+    logical_cpu: usize,
+    scheduler: &mut PerCoreScheduler<2>,
+) -> ProductionSecondaryDispatchReport {
+    let requester = LogicalCpuId::new(logical_cpu);
+    let wrong_requester = LogicalCpuId::BOOT;
+    let mut errors = 0;
+
+    let cross_owner_rejected = matches!(
+        scheduler.local_scheduler_mut(wrong_requester),
+        Err(PerCoreSchedulerAccessError::WrongOwner { owner, requester: wrong })
+            if owner == requester && wrong == wrong_requester
+    );
+    if !cross_owner_rejected {
+        errors += 1;
+    }
+
+    let mut wrong_owner_task = scheduler_task(logical_cpu, 99);
+    let cross_owner_dispatch_rejected = matches!(
+        scheduler.dispatch_cpu_local_diagnostic_task(wrong_requester, &mut wrong_owner_task),
+        Err(ProductionDispatchError::WrongOwner { owner, requester: wrong })
+            if owner == requester && wrong == wrong_requester
+    );
+    if !cross_owner_dispatch_rejected {
+        errors += 1;
+    }
+
+    let mut progress = 0;
+    while progress < PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET {
+        let next_progress = progress + 1;
+        let mut task = scheduler_task(logical_cpu, next_progress);
+        match scheduler.local_scheduler_mut(requester) {
+            Ok(local_scheduler) => {
+                if local_scheduler.make_runnable(&mut task).is_err() {
+                    errors += 1;
+                    break;
+                }
+            }
+            Err(_) => {
+                errors += 1;
+                break;
+            }
+        }
+
+        match scheduler.dispatch_cpu_local_diagnostic_task(requester, &mut task) {
+            Ok(task_id) if task_id == task.id() && task.state() == TaskState::Running => {
+                progress = next_progress;
+            }
+            _ => {
+                errors += 1;
+                break;
+            }
+        }
+    }
+
+    let local_scheduler = scheduler.scheduler();
+    let counters = local_scheduler.counters();
+    ProductionSecondaryDispatchReport {
+        owner: scheduler.owner().raw() as u64,
+        role: scheduler.role(),
+        production_dispatch_enabled: scheduler.production_dispatch_enabled(),
+        current_task: scheduler.current_task().map_or(0, TaskId::raw),
+        queue_len: local_scheduler.runnable().len() as u64,
+        front_task: local_scheduler.runnable().front().map_or(0, TaskId::raw),
+        progress,
+        state_transitions: counters.state_transitions(),
+        production_dispatches: counters.production_dispatches(),
+        context_switches: counters.context_switches(),
+        cross_owner_rejected,
+        cross_owner_dispatch_rejected,
+        errors,
+    }
+}
+
+#[cfg(talos_rpi5_production_secondary_dispatch_proof)]
+fn publish_production_secondary_dispatch_report(
+    logical_cpu: usize,
+    report: ProductionSecondaryDispatchReport,
+) {
+    let mut state = PRODUCTION_SECONDARY_DISPATCH_STATE.lock();
+    state.reports[logical_cpu] = report;
+    state.lock_progress[logical_cpu] = report.progress;
+}
+
+#[cfg(talos_rpi5_production_secondary_dispatch_proof)]
+fn run_production_secondary_dispatch_secondary(core_state: &smp::PerCoreState, logical_cpu: usize) {
+    core_state.mark_workload_running();
+    core_state.clean_to_poc();
+
+    let mut scheduler =
+        PerCoreScheduler::<2>::production_secondary_diagnostic(LogicalCpuId::new(logical_cpu));
+    let report = build_production_secondary_dispatch_report(logical_cpu, &mut scheduler);
+    publish_production_secondary_dispatch_report(logical_cpu, report);
+    smp_full_barrier();
+
+    core_state.mark_workload_complete(report.progress);
+    core_state.clean_to_poc();
 }
 
 #[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
@@ -559,38 +782,44 @@ static SMP_LOCK_DIAGNOSTIC_SCTLR_EL2: [AtomicU64; MAX_CORES] =
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_READY: AtomicU64 = AtomicU64::new(0);
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_MAIR_EL2: AtomicU64 = AtomicU64::new(0);
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_TCR_EL2: AtomicU64 = AtomicU64::new(0);
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_TTBR0_EL2: AtomicU64 = AtomicU64::new(0);
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_SCTLR_EL2: AtomicU64 = AtomicU64::new(0);
 
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 fn clean_secondary_cacheable_mmu_handoff_plan() {
     clean_cache_line_to_poc(&SECONDARY_CACHEABLE_MMU_HANDOFF_MAIR_EL2);
@@ -603,7 +832,8 @@ fn clean_secondary_cacheable_mmu_handoff_plan() {
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 fn publish_secondary_cacheable_mmu_handoff_plan(
     regime: crate::arch::aarch64::El2Stage1CacheRegime,
@@ -624,7 +854,8 @@ fn publish_secondary_cacheable_mmu_handoff_plan(
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 fn secondary_cacheable_mmu_handoff_plan() -> Option<crate::arch::aarch64::El2Stage1CacheRegime> {
     invalidate_cache_line_from_poc(&SECONDARY_CACHEABLE_MMU_HANDOFF_READY);
@@ -647,7 +878,8 @@ fn secondary_cacheable_mmu_handoff_plan() -> Option<crate::arch::aarch64::El2Sta
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 fn enter_secondary_cacheable_mmu_handoff(logical_cpu: usize) -> bool {
     let _ = logical_cpu;
@@ -1434,7 +1666,8 @@ fn write_remote_wakeup_wait_observation(remaining: usize) {
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 fn current_sctlr_el2() -> u64 {
     let sctlr: u64;
@@ -1447,7 +1680,8 @@ fn current_sctlr_el2() -> u64 {
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 fn cacheable_mmu_enabled(sctlr: u64) -> bool {
     (sctlr & (RPI5_SCTLR_M_ENABLE | RPI5_SCTLR_C_ENABLE))
@@ -1457,7 +1691,8 @@ fn cacheable_mmu_enabled(sctlr: u64) -> bool {
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 fn clean_cache_line_to_poc<T>(value: &T) {
     unsafe {
@@ -1473,7 +1708,8 @@ fn clean_cache_line_to_poc<T>(value: &T) {
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_cross_core_ipi_delivery_proof,
-    talos_rpi5_remote_wakeup_request_proof
+    talos_rpi5_remote_wakeup_request_proof,
+    talos_rpi5_production_secondary_dispatch_proof
 ))]
 fn invalidate_cache_line_from_poc<T>(value: &T) {
     unsafe {
@@ -2445,6 +2681,198 @@ pub fn run_remote_wakeup_request_proof() -> bool {
     wait_uart10_empty_early_phase();
 
     reports_ok && errors == 0
+}
+
+#[cfg(talos_rpi5_production_secondary_dispatch_proof)]
+pub fn run_production_secondary_dispatch_proof() -> bool {
+    smp::reset_secondary_core_states();
+    reset_production_secondary_dispatch_state();
+
+    let boot_mpidr = aarch64::mpidr_el1();
+    let boot_affinity = aarch64::mpidr_affinity(boot_mpidr);
+    let boot_logical = pi5_logical_cpu_from_mpidr_affinity(boot_affinity);
+    let boot_cache_regime = crate::arch::aarch64::current_el2_stage1_cache_regime();
+    let boot_sctlr_el2 = boot_cache_regime.map_or_else(current_sctlr_el2, |regime| regime.sctlr);
+    let entry = talos_aarch64_rpi5_secondary_entry as *const () as usize;
+    let stack_layout = secondary_stack_layout();
+    let stack_base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
+    let stack_end = core::ptr::addr_of!(talos_secondary_core_stacks_end) as usize;
+
+    crate::println!(
+        "rpi5-production-secondary-dispatch: start conduit=smc cores={} target={} boot-mpidr={:#018x} boot-affinity={:#x} boot-logical={:?} boot-sctlr-el2={:#018x} boot-cacheable-mmu={} entry={:#018x} stack-range=[{:#018x},{:#018x})",
+        MAX_CORES,
+        PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET,
+        boot_mpidr,
+        boot_affinity,
+        boot_logical,
+        boot_sctlr_el2,
+        cacheable_mmu_enabled(boot_sctlr_el2),
+        entry,
+        stack_base,
+        stack_end
+    );
+    wait_uart10_empty_early_phase();
+
+    if let Some(regime) = boot_cache_regime {
+        publish_secondary_cacheable_mmu_handoff_plan(regime);
+        crate::println!(
+            "rpi5-production-secondary-dispatch: secondary-cacheable-mmu-handoff-plan mair-el2={:#018x} tcr-el2={:#018x} ttbr0-el2={:#018x} sctlr-el2={:#018x} cacheable-mmu={}",
+            regime.mair,
+            regime.tcr,
+            regime.ttbr0,
+            regime.sctlr,
+            cacheable_mmu_enabled(regime.sctlr)
+        );
+    } else {
+        SECONDARY_CACHEABLE_MMU_HANDOFF_READY.store(0, Ordering::Release);
+        clean_secondary_cacheable_mmu_handoff_plan();
+        crate::println!(
+            "rpi5-production-secondary-dispatch: secondary-cacheable-mmu-handoff-plan unavailable"
+        );
+    }
+    wait_uart10_empty_early_phase();
+
+    let mut cpu_on_ok = true;
+    for logical_cpu in 1..MAX_CORES {
+        let target_affinity = (logical_cpu as u64) << 8;
+        let result = unsafe { psci_cpu_on_smc(target_affinity, entry, logical_cpu) };
+        crate::println!(
+            "rpi5-production-secondary-dispatch: cpu-on logical={} target-affinity={:#x} result={}",
+            logical_cpu,
+            target_affinity,
+            result
+        );
+        cpu_on_ok &= result == 0;
+        let affinity_after = unsafe { psci_affinity_info_smc(target_affinity, 0) };
+        crate::println!(
+            "rpi5-production-secondary-dispatch: affinity-after logical={} target-affinity={:#x} level=0 state={} raw={}",
+            logical_cpu,
+            target_affinity,
+            psci_affinity_state_name(affinity_after),
+            affinity_after
+        );
+        wait_uart10_empty_early_phase();
+    }
+
+    let mut remaining = RPI5_SECONDARY_WAIT_LIMIT;
+    while remaining > 0 {
+        let all_complete = (1..MAX_CORES).all(|logical_cpu| {
+            SECONDARY_CORE_STATES[logical_cpu].invalidate_from_poc();
+            SECONDARY_CORE_STATES[logical_cpu]
+                .snapshot(logical_cpu)
+                .lifecycle
+                >= CoreLifecycle::WorkloadComplete
+        });
+        if all_complete {
+            break;
+        }
+        core::hint::spin_loop();
+        remaining -= 1;
+    }
+
+    let final_state = PRODUCTION_SECONDARY_DISPATCH_STATE
+        .try_lock()
+        .map(|state| *state);
+    let lock_available = final_state.is_some();
+    let final_state = final_state.unwrap_or_else(ProductionSecondaryDispatchState::new);
+    let mut participants = 0;
+    let mut errors = 0;
+    let mut reports_ok = cpu_on_ok && boot_logical == Some(0) && lock_available;
+
+    for logical_cpu in 1..MAX_CORES {
+        SECONDARY_CORE_STATES[logical_cpu].invalidate_from_poc();
+        let report = final_state.reports[logical_cpu];
+        let core_report = SECONDARY_CORE_STATES[logical_cpu].snapshot(logical_cpu);
+        let logical_from_mpidr = pi5_logical_cpu_from_mpidr_affinity(core_report.affinity);
+        let stack_slot = stack_layout
+            .slot(logical_cpu)
+            .expect("stack slot for possible Pi 5 core");
+        let stack_owned = stack_slot.contains_stack_pointer(core_report.stack_pointer);
+        let expected_current =
+            (logical_cpu as u64 + 1) * 100 + PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET;
+        let role_ok = report.role == SchedulerCoreRole::SecondaryProductionDiagnostic
+            && report.production_dispatch_enabled
+            && report.current_task == expected_current;
+        let report_ok = core_report.lifecycle >= CoreLifecycle::WorkloadComplete
+            && core_report.context == logical_cpu
+            && logical_from_mpidr == Some(logical_cpu)
+            && stack_owned
+            && report.owner == logical_cpu as u64
+            && role_ok
+            && report.queue_len == 0
+            && report.front_task == 0
+            && report.progress == PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET
+            && report.state_transitions == PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET * 2
+            && report.production_dispatches == PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET
+            && report.context_switches == PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET
+            && final_state.lock_progress[logical_cpu]
+                == PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET
+            && report.cross_owner_rejected
+            && report.cross_owner_dispatch_rejected
+            && report.errors == 0;
+        if report_ok {
+            participants += 1;
+        }
+        errors += report.errors;
+        reports_ok &= report_ok;
+
+        crate::println!(
+            "rpi5-production-secondary-dispatch: report logical={} state={} context={} mpidr={:#018x} affinity={:#x} mapped={:?} sp={:#018x} stack=[{:#018x},{:#018x}) owner={} role={} production={} current={} queue-len={} front={} progress={} transitions={} production-dispatches={} context-switches={} cross-owner-rejected={} cross-owner-dispatch-rejected={} lock-progress={} errors={} ok={}",
+            logical_cpu,
+            secondary_state_name(core_report.lifecycle.raw()),
+            core_report.context,
+            core_report.mpidr,
+            core_report.affinity,
+            logical_from_mpidr,
+            core_report.stack_pointer,
+            stack_slot.bottom,
+            stack_slot.top,
+            report.owner,
+            scheduler_role_name(report.role),
+            report.production_dispatch_enabled,
+            report.current_task,
+            report.queue_len,
+            report.front_task,
+            report.progress,
+            report.state_transitions,
+            report.production_dispatches,
+            report.context_switches,
+            report.cross_owner_rejected,
+            report.cross_owner_dispatch_rejected,
+            final_state.lock_progress[logical_cpu],
+            report.errors,
+            report_ok
+        );
+        wait_uart10_empty_early_phase();
+    }
+
+    let classification = if reports_ok {
+        "pi5-production-secondary-dispatch-complete"
+    } else if !lock_available {
+        "pi5-production-secondary-dispatch-lock-still-held"
+    } else if cpu_on_ok {
+        "pi5-production-secondary-dispatch-invariant-failed"
+    } else {
+        "pi5-psci-smc-cpu-on-failed"
+    };
+    crate::println!(
+        "rpi5-production-secondary-dispatch: final participants={} expected={} errors={} lock-available={} wait-remaining={} classification={}",
+        participants,
+        MAX_CORES - 1,
+        errors,
+        lock_available,
+        remaining,
+        classification
+    );
+
+    if reports_ok {
+        crate::println!("rpi5-production-secondary-dispatch: PASS");
+    } else {
+        crate::println!("rpi5-production-secondary-dispatch: FAIL");
+    }
+    wait_uart10_empty_early_phase();
+
+    reports_ok
 }
 
 #[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
@@ -3761,7 +4189,8 @@ pub(crate) fn write_uart10_byte_early_phase(byte: u8) {
         talos_rpi5_secondary_core_workload_proof,
         talos_rpi5_smp_lock_cache_coherence_proof,
         talos_rpi5_cross_core_ipi_delivery_proof,
-        talos_rpi5_remote_wakeup_request_proof
+        talos_rpi5_remote_wakeup_request_proof,
+        talos_rpi5_production_secondary_dispatch_proof
     )
 ))]
 pub(crate) fn write_uart10_bytes_early_phase(bytes: &[u8]) {
