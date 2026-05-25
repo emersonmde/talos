@@ -39,6 +39,7 @@ fn main() {
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_SECONDARY_CORE_DISCRIMINATOR");
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_SECONDARY_CORE_WORKLOAD_SMOKE");
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_SMP_LOCK_CONTENTION_SMOKE");
+    println!("cargo:rerun-if-env-changed=TALOS_QEMU_PER_CORE_SCHEDULER_OWNERSHIP_SMOKE");
 
     let target = env::var("TARGET").expect("TARGET is set by Cargo");
     println!("cargo:rustc-check-cfg=cfg(talos_target_qemu_virt)");
@@ -75,6 +76,7 @@ fn main() {
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_secondary_core_discriminator)");
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_secondary_core_workload_smoke)");
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_smp_lock_contention_smoke)");
+    println!("cargo:rustc-check-cfg=cfg(talos_qemu_per_core_scheduler_ownership_smoke)");
     if target.contains("rpi5") || target.contains("bcm2712") {
         println!("cargo:rustc-cfg=talos_target_rpi5_bcm2712");
     } else {
@@ -212,6 +214,10 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
     if env::var_os("TALOS_QEMU_SMP_LOCK_CONTENTION_SMOKE").is_some() {
         command.arg("-DTALOS_QEMU_SMP_LOCK_CONTENTION_SMOKE");
         println!("cargo:rustc-cfg=talos_qemu_smp_lock_contention_smoke");
+    }
+    if env::var_os("TALOS_QEMU_PER_CORE_SCHEDULER_OWNERSHIP_SMOKE").is_some() {
+        command.arg("-DTALOS_QEMU_PER_CORE_SCHEDULER_OWNERSHIP_SMOKE");
+        println!("cargo:rustc-cfg=talos_qemu_per_core_scheduler_ownership_smoke");
     }
 
     let status = command

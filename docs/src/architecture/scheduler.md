@@ -421,3 +421,12 @@ existing cooperative and timer-preemption diagnostics remain boot-CPU evidence.
 Purely CPU-local queues still do not take `SpinLock<T>`; future shared
 scheduler structures must name their lock, IRQ-mask ordering, and validation
 evidence before implementation.
+
+The QEMU substitute diagnostic behind
+`TALOS_QEMU_PER_CORE_SCHEDULER_OWNERSHIP_SMOKE` starts four QEMU virt CPUs
+through the accepted PSCI path and has each logical core publish a bounded
+per-core scheduler ownership report. It proves distinct owner IDs for logical
+CPUs 0 through 3, keeps secondary roles deferred from production dispatch, and
+exercises local runnable/progress accounting without shared run queues,
+migration, IPIs, or cross-core wakeups. Diagnostic output is emitted after the
+bounded local work and outside hot lock/IRQ paths.

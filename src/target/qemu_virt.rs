@@ -11,27 +11,36 @@ use core::sync::atomic::{AtomicU64, Ordering};
 #[cfg(any(
     talos_qemu_context_switch_smoke,
     talos_qemu_scheduler_yield_smoke,
-    talos_qemu_timer_preemption_smoke
+    talos_qemu_timer_preemption_smoke,
+    talos_qemu_per_core_scheduler_ownership_smoke
 ))]
-use crate::scheduler::ContextFrame;
-#[cfg(any(talos_qemu_scheduler_yield_smoke, talos_qemu_timer_preemption_smoke))]
-use crate::scheduler::{KernelStack, SingleCoreScheduler, Task, TaskId, TaskState};
+use crate::scheduler::{ContextFrame, KernelStack, SingleCoreScheduler, Task, TaskId, TaskState};
+#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+use crate::scheduler::{
+    LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError, SchedulerCoreRole,
+};
 #[cfg(not(any(
     talos_qemu_secondary_core_discriminator,
     talos_qemu_secondary_core_workload_smoke,
-    talos_qemu_smp_lock_contention_smoke
+    talos_qemu_smp_lock_contention_smoke,
+    talos_qemu_per_core_scheduler_ownership_smoke
 )))]
 use crate::smp::MAX_CORES;
+#[cfg(talos_qemu_secondary_core_workload_smoke)]
+use crate::smp::SECONDARY_CORE_WORKLOAD_TARGET;
 #[cfg(any(
     talos_qemu_secondary_core_discriminator,
     talos_qemu_secondary_core_workload_smoke,
-    talos_qemu_smp_lock_contention_smoke
+    talos_qemu_smp_lock_contention_smoke,
+    talos_qemu_per_core_scheduler_ownership_smoke
 ))]
 use crate::smp::{
     self, CoreLifecycle, CoreStackLayout, MAX_CORES, SECONDARY_CORE_STATES,
-    SECONDARY_CORE_WORKLOAD_TARGET, SECONDARY_KERNEL_STACK_SIZE,
+    SECONDARY_KERNEL_STACK_SIZE,
 };
 #[cfg(talos_qemu_smp_lock_contention_smoke)]
+use crate::smp_sync::{SpinLock, smp_full_barrier};
+#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
 use crate::smp_sync::{SpinLock, smp_full_barrier};
 use crate::{
     arch::aarch64::{
@@ -53,11 +62,14 @@ const TIMER_IRQ_WAIT_LIMIT: usize = 1_000_000;
 #[cfg(any(
     talos_qemu_secondary_core_discriminator,
     talos_qemu_secondary_core_workload_smoke,
-    talos_qemu_smp_lock_contention_smoke
+    talos_qemu_smp_lock_contention_smoke,
+    talos_qemu_per_core_scheduler_ownership_smoke
 ))]
 const QEMU_SECONDARY_WAIT_LIMIT: usize = 10_000_000;
 #[cfg(talos_qemu_smp_lock_contention_smoke)]
 const SMP_LOCK_CONTENTION_TARGET_PER_CORE: u64 = 64;
+#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+const PER_CORE_SCHEDULER_PROGRESS_TARGET: u64 = 4;
 #[cfg(any(
     talos_qemu_context_switch_smoke,
     talos_qemu_scheduler_yield_smoke,
@@ -89,7 +101,8 @@ static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
 #[cfg(any(
     talos_qemu_secondary_core_discriminator,
     talos_qemu_secondary_core_workload_smoke,
-    talos_qemu_smp_lock_contention_smoke
+    talos_qemu_smp_lock_contention_smoke,
+    talos_qemu_per_core_scheduler_ownership_smoke
 ))]
 unsafe extern "C" {
     fn talos_aarch64_qemu_secondary_entry();
@@ -458,7 +471,8 @@ pub const fn qemu_logical_cpu_from_mpidr_affinity(affinity: u64) -> Option<usize
 #[cfg(any(
     talos_qemu_secondary_core_discriminator,
     talos_qemu_secondary_core_workload_smoke,
-    talos_qemu_smp_lock_contention_smoke
+    talos_qemu_smp_lock_contention_smoke,
+    talos_qemu_per_core_scheduler_ownership_smoke
 ))]
 fn secondary_stack_layout() -> CoreStackLayout {
     let base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
@@ -470,7 +484,8 @@ fn secondary_stack_layout() -> CoreStackLayout {
 #[cfg(any(
     talos_qemu_secondary_core_discriminator,
     talos_qemu_secondary_core_workload_smoke,
-    talos_qemu_smp_lock_contention_smoke
+    talos_qemu_smp_lock_contention_smoke,
+    talos_qemu_per_core_scheduler_ownership_smoke
 ))]
 fn secondary_state_name(state: u64) -> &'static str {
     CoreLifecycle::from_raw(state).map_or("unknown", CoreLifecycle::name)
@@ -479,7 +494,8 @@ fn secondary_state_name(state: u64) -> &'static str {
 #[cfg(any(
     talos_qemu_secondary_core_discriminator,
     talos_qemu_secondary_core_workload_smoke,
-    talos_qemu_smp_lock_contention_smoke
+    talos_qemu_smp_lock_contention_smoke,
+    talos_qemu_per_core_scheduler_ownership_smoke
 ))]
 unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) -> i64 {
     let mut function_id = 0xc400_0003u64;
@@ -528,7 +544,8 @@ pub fn services(boot_info: &BootInfo) -> TargetServices {
 #[cfg(any(
     talos_qemu_secondary_core_discriminator,
     talos_qemu_secondary_core_workload_smoke,
-    talos_qemu_smp_lock_contention_smoke
+    talos_qemu_smp_lock_contention_smoke,
+    talos_qemu_per_core_scheduler_ownership_smoke
 ))]
 #[unsafe(no_mangle)]
 pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
@@ -550,6 +567,8 @@ pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
         smp::run_controlled_secondary_workload(core_state, SECONDARY_CORE_WORKLOAD_TARGET);
         #[cfg(talos_qemu_smp_lock_contention_smoke)]
         run_smp_lock_contention_secondary(core_state, logical_cpu);
+        #[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+        run_per_core_scheduler_ownership_secondary(core_state, logical_cpu);
     }
 
     loop {
@@ -557,6 +576,208 @@ pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
             core::arch::asm!("wfe", options(nomem, nostack, preserves_flags));
         }
     }
+}
+
+#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+#[derive(Clone, Copy)]
+struct PerCoreSchedulerReport {
+    owner: u64,
+    role: SchedulerCoreRole,
+    production_dispatch_enabled: bool,
+    current_task: u64,
+    queue_len: u64,
+    front_task: u64,
+    progress: u64,
+    state_transitions: u64,
+    dispatch_deferred: bool,
+    errors: u64,
+}
+
+#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+impl PerCoreSchedulerReport {
+    const fn empty() -> Self {
+        Self {
+            owner: u64::MAX,
+            role: SchedulerCoreRole::SecondaryDeferred,
+            production_dispatch_enabled: false,
+            current_task: 0,
+            queue_len: 0,
+            front_task: 0,
+            progress: 0,
+            state_transitions: 0,
+            dispatch_deferred: false,
+            errors: 0,
+        }
+    }
+}
+
+#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+#[derive(Clone, Copy)]
+struct PerCoreSchedulerOwnershipState {
+    reports: [PerCoreSchedulerReport; MAX_CORES],
+    lock_progress: [u64; MAX_CORES],
+}
+
+#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+impl PerCoreSchedulerOwnershipState {
+    const fn new() -> Self {
+        Self {
+            reports: [PerCoreSchedulerReport::empty(); MAX_CORES],
+            lock_progress: [0; MAX_CORES],
+        }
+    }
+}
+
+#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+static PER_CORE_SCHEDULER_OWNERSHIP_STATE: SpinLock<PerCoreSchedulerOwnershipState> =
+    SpinLock::new(PerCoreSchedulerOwnershipState::new());
+
+#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+fn reset_per_core_scheduler_ownership_state() {
+    let mut state = unsafe { PER_CORE_SCHEDULER_OWNERSHIP_STATE.lock_irqsave() };
+    *state = PerCoreSchedulerOwnershipState::new();
+}
+
+#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
+    match role {
+        SchedulerCoreRole::BootCpuProduction => "boot-production",
+        SchedulerCoreRole::SecondaryDeferred => "secondary-deferred",
+    }
+}
+
+#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+fn task_id(raw: u64) -> TaskId {
+    TaskId::new(raw).expect("diagnostic task IDs are nonzero")
+}
+
+#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+fn scheduler_task(logical_cpu: usize, progress: u64) -> Task {
+    let raw_task_id = (logical_cpu as u64 + 1) * 100 + progress;
+    let stack_base = 0x8000_0000 + logical_cpu * 0x10000 + progress as usize * 0x1000;
+    let stack = KernelStack::new(stack_base, 0x1000).expect("diagnostic stack bounds are valid");
+    let context = ContextFrame::new(stack.limit() & !0xf, 0x4000_0000 + raw_task_id as usize);
+    Task::kernel_thread(task_id(raw_task_id), stack, context)
+}
+
+#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+fn build_per_core_scheduler_report(
+    logical_cpu: usize,
+    scheduler: &mut PerCoreScheduler<2>,
+) -> PerCoreSchedulerReport {
+    let requester = LogicalCpuId::new(logical_cpu);
+    let mut errors = 0;
+    let dispatch_deferred = match scheduler.production_scheduler_mut(requester) {
+        Ok(_) => {
+            errors += 1;
+            false
+        }
+        Err(PerCoreSchedulerAccessError::ProductionDispatchDeferred { owner }) => {
+            if owner != requester {
+                errors += 1;
+            }
+            true
+        }
+        Err(_) => {
+            errors += 1;
+            false
+        }
+    };
+
+    let mut progress = 0;
+    if let Ok(local_scheduler) = scheduler.local_scheduler_mut(requester) {
+        while progress < PER_CORE_SCHEDULER_PROGRESS_TARGET {
+            progress += 1;
+            let mut task = scheduler_task(logical_cpu, progress);
+            if local_scheduler.make_runnable(&mut task).is_err() {
+                errors += 1;
+                break;
+            }
+            if local_scheduler.pick_next() != Some(task.id()) {
+                errors += 1;
+                break;
+            }
+        }
+    } else {
+        errors += 1;
+    }
+
+    let local_scheduler = scheduler.scheduler();
+    PerCoreSchedulerReport {
+        owner: scheduler.owner().raw() as u64,
+        role: scheduler.role(),
+        production_dispatch_enabled: scheduler.production_dispatch_enabled(),
+        current_task: scheduler.current_task().map_or(0, TaskId::raw),
+        queue_len: local_scheduler.runnable().len() as u64,
+        front_task: local_scheduler.runnable().front().map_or(0, TaskId::raw),
+        progress,
+        state_transitions: local_scheduler.counters().state_transitions(),
+        dispatch_deferred,
+        errors,
+    }
+}
+
+#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+fn build_boot_scheduler_report() -> PerCoreSchedulerReport {
+    let mut scheduler = PerCoreScheduler::<2>::boot_cpu();
+    let requester = LogicalCpuId::BOOT;
+    let mut errors = 0;
+    if scheduler.set_current_task(requester, task_id(1)).is_err() {
+        errors += 1;
+    }
+
+    let mut progress = 0;
+    if let Ok(local_scheduler) = scheduler.production_scheduler_mut(requester) {
+        while progress < PER_CORE_SCHEDULER_PROGRESS_TARGET {
+            progress += 1;
+            let mut task = scheduler_task(0, progress);
+            if local_scheduler.make_runnable(&mut task).is_err() {
+                errors += 1;
+                break;
+            }
+            if local_scheduler.pick_next() != Some(task.id()) {
+                errors += 1;
+                break;
+            }
+        }
+    } else {
+        errors += 1;
+    }
+
+    let local_scheduler = scheduler.scheduler();
+    PerCoreSchedulerReport {
+        owner: scheduler.owner().raw() as u64,
+        role: scheduler.role(),
+        production_dispatch_enabled: scheduler.production_dispatch_enabled(),
+        current_task: scheduler.current_task().map_or(0, TaskId::raw),
+        queue_len: local_scheduler.runnable().len() as u64,
+        front_task: local_scheduler.runnable().front().map_or(0, TaskId::raw),
+        progress,
+        state_transitions: local_scheduler.counters().state_transitions(),
+        dispatch_deferred: false,
+        errors,
+    }
+}
+
+#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+fn publish_per_core_scheduler_report(logical_cpu: usize, report: PerCoreSchedulerReport) {
+    let mut state = PER_CORE_SCHEDULER_OWNERSHIP_STATE.lock();
+    state.reports[logical_cpu] = report;
+    state.lock_progress[logical_cpu] = report.progress;
+}
+
+#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+fn run_per_core_scheduler_ownership_secondary(core_state: &smp::PerCoreState, logical_cpu: usize) {
+    core_state.mark_workload_running();
+    core_state.clean_to_poc();
+
+    let mut scheduler = PerCoreScheduler::<2>::deferred_secondary(LogicalCpuId::new(logical_cpu));
+    let report = build_per_core_scheduler_report(logical_cpu, &mut scheduler);
+    publish_per_core_scheduler_report(logical_cpu, report);
+    smp_full_barrier();
+
+    core_state.mark_workload_complete(report.progress);
+    core_state.clean_to_poc();
 }
 
 #[cfg(talos_qemu_smp_lock_contention_smoke)]
@@ -958,6 +1179,169 @@ pub fn run_smp_lock_contention_smoke() -> bool {
     }
 
     reports_ok
+}
+
+#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+pub fn run_per_core_scheduler_ownership_smoke() -> bool {
+    smp::reset_secondary_core_states();
+    reset_per_core_scheduler_ownership_state();
+
+    let boot_mpidr = aarch64::mpidr_el1();
+    let boot_affinity = aarch64::mpidr_affinity(boot_mpidr);
+    let boot_logical = qemu_logical_cpu_from_mpidr_affinity(boot_affinity);
+    let entry = talos_aarch64_qemu_secondary_entry as *const () as usize;
+    let stack_layout = secondary_stack_layout();
+    let stack_base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
+    let stack_end = core::ptr::addr_of!(talos_secondary_core_stacks_end) as usize;
+
+    crate::println!(
+        "qemu-per-core-scheduler-ownership: start conduit=smc cores={} target={} boot-mpidr={:#018x} boot-affinity={:#x} boot-logical={:?} entry={:#018x} stack-range=[{:#018x},{:#018x})",
+        MAX_CORES,
+        PER_CORE_SCHEDULER_PROGRESS_TARGET,
+        boot_mpidr,
+        boot_affinity,
+        boot_logical,
+        entry,
+        stack_base,
+        stack_end
+    );
+
+    let irq_mask_probe = run_single_core_irq_mask_probe();
+    publish_per_core_scheduler_report(0, build_boot_scheduler_report());
+
+    let mut cpu_on_ok = true;
+    for logical_cpu in 1..MAX_CORES {
+        let target_affinity = logical_cpu as u64;
+        let result = unsafe { psci_cpu_on_smc(target_affinity, entry, logical_cpu) };
+        crate::println!(
+            "qemu-per-core-scheduler-ownership: cpu-on logical={} target-affinity={:#x} result={}",
+            logical_cpu,
+            target_affinity,
+            result
+        );
+        cpu_on_ok &= result == 0;
+    }
+
+    let mut remaining = QEMU_SECONDARY_WAIT_LIMIT;
+    while remaining > 0 {
+        let all_complete = (1..MAX_CORES).all(|logical_cpu| {
+            SECONDARY_CORE_STATES[logical_cpu]
+                .snapshot(logical_cpu)
+                .lifecycle
+                >= CoreLifecycle::WorkloadComplete
+        });
+        if all_complete {
+            break;
+        }
+        core::hint::spin_loop();
+        remaining -= 1;
+    }
+
+    let final_state = PER_CORE_SCHEDULER_OWNERSHIP_STATE
+        .try_lock()
+        .map(|state| *state);
+    let lock_available = final_state.is_some();
+    let final_state = final_state.unwrap_or_else(PerCoreSchedulerOwnershipState::new);
+    let mut participants = 0;
+    let mut errors = 0;
+    let mut reports_ok = cpu_on_ok && boot_logical == Some(0) && lock_available;
+
+    for logical_cpu in 0..MAX_CORES {
+        let report = final_state.reports[logical_cpu];
+        let (lifecycle, context, mapped, stack_owned) = if logical_cpu == 0 {
+            (CoreLifecycle::WorkloadComplete, 0, boot_logical, true)
+        } else {
+            let core_report = SECONDARY_CORE_STATES[logical_cpu].snapshot(logical_cpu);
+            let logical_from_mpidr = qemu_logical_cpu_from_mpidr_affinity(core_report.affinity);
+            let stack_slot = stack_layout
+                .slot(logical_cpu)
+                .expect("stack slot for possible QEMU core");
+            (
+                core_report.lifecycle,
+                core_report.context,
+                logical_from_mpidr,
+                stack_slot.contains_stack_pointer(core_report.stack_pointer),
+            )
+        };
+
+        let role_ok = if logical_cpu == 0 {
+            report.role == SchedulerCoreRole::BootCpuProduction
+                && report.production_dispatch_enabled
+                && !report.dispatch_deferred
+                && report.current_task == 1
+        } else {
+            report.role == SchedulerCoreRole::SecondaryDeferred
+                && !report.production_dispatch_enabled
+                && report.dispatch_deferred
+                && report.current_task == 0
+        };
+        let report_ok = lifecycle >= CoreLifecycle::WorkloadComplete
+            && context == logical_cpu
+            && mapped == Some(logical_cpu)
+            && stack_owned
+            && report.owner == logical_cpu as u64
+            && role_ok
+            && report.queue_len == 0
+            && report.front_task == 0
+            && report.progress == PER_CORE_SCHEDULER_PROGRESS_TARGET
+            && report.state_transitions == PER_CORE_SCHEDULER_PROGRESS_TARGET
+            && final_state.lock_progress[logical_cpu] == PER_CORE_SCHEDULER_PROGRESS_TARGET
+            && report.errors == 0;
+        if report_ok {
+            participants += 1;
+        }
+        errors += report.errors;
+        reports_ok &= report_ok;
+
+        crate::println!(
+            "qemu-per-core-scheduler-ownership: report logical={} state={} context={} mapped={:?} owner={} role={} production={} current={} queue-len={} front={} progress={} transitions={} dispatch-deferred={} lock-progress={} irq-ok={} errors={} ok={}",
+            logical_cpu,
+            secondary_state_name(lifecycle.raw()),
+            context,
+            mapped,
+            report.owner,
+            scheduler_role_name(report.role),
+            report.production_dispatch_enabled,
+            report.current_task,
+            report.queue_len,
+            report.front_task,
+            report.progress,
+            report.state_transitions,
+            report.dispatch_deferred,
+            final_state.lock_progress[logical_cpu],
+            irq_mask_probe.passed(),
+            report.errors,
+            report_ok
+        );
+    }
+
+    let classification = if reports_ok && irq_mask_probe.passed() {
+        "qemu-per-core-scheduler-ownership-complete"
+    } else if !lock_available {
+        "qemu-per-core-scheduler-ownership-lock-still-held"
+    } else if cpu_on_ok {
+        "qemu-per-core-scheduler-ownership-invariant-failed"
+    } else {
+        "qemu-psci-smc-cpu-on-failed"
+    };
+    crate::println!(
+        "qemu-per-core-scheduler-ownership: final participants={} expected={} errors={} lock-available={} irq-ok={} wait-remaining={} classification={}",
+        participants,
+        MAX_CORES,
+        errors,
+        lock_available,
+        irq_mask_probe.passed(),
+        remaining,
+        classification
+    );
+
+    if reports_ok && irq_mask_probe.passed() {
+        crate::println!("qemu-per-core-scheduler-ownership: PASS");
+    } else {
+        crate::println!("qemu-per-core-scheduler-ownership: FAIL");
+    }
+
+    reports_ok && irq_mask_probe.passed()
 }
 
 #[cfg(talos_qemu_polling_tty_rx_diagnostic)]
