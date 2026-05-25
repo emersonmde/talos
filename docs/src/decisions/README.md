@@ -12,6 +12,53 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-25 - Pi 5 Shared Scheduler Metadata Proof Accepted
+
+- Status: accepted as the physical Pi 5 hardware proof for the first shared
+  scheduler metadata invariant. This does not accept shared run queues, remote
+  enqueue queues, task migration, load balancing, multi-core preemption, Phase
+  7, filesystem, networking, SSH, shell behavior, RP1/PCIe, UART interrupt
+  ownership, or DMA behavior.
+- Context: QEMU had already proven the owner-published shared scheduler
+  metadata table for logical CPUs 0 through 3. Before that invariant could be
+  treated as physical evidence, Pi 5 needed a serialized hardware run using
+  the accepted secondary cacheable-MMU handoff and cursor-valid serial/TFTP
+  evidence.
+- Decision: Accept
+  `tasks/2026-05-25-phase6-pi5-shared-scheduler-metadata-proof.md` and
+  evidence in
+  `tasks/evidence/2026-05-25-pi5-shared-scheduler-metadata-proof/local1/` as
+  the hardware proof that logical CPUs 0, 1, 2, and 3 can publish/query the
+  bounded shared scheduler metadata table while preserving CPU-local scheduler
+  ownership.
+- Evidence level: serialized Pi 5 hardware run under `hardwareTestLock`, with
+  archive digest
+  `7ec358f5809aee223364948fa20ba9b4e73f8fd76a1ac0238081926568f74bf0`,
+  kernel digest
+  `232cab18a49eb75ddc1969438d45ab1874359492028dfea81522f22507d24382`,
+  TFTP fetch evidence for `da591740/kernel_2712.img` at 99,136 bytes,
+  cursor-valid serial output, and restore evidence. Serial output shows task
+  IDs 101/201/301/401, owner-task lookup and boot-task lookup success,
+  cross-owner scheduler and metadata mutation rejected, local queues
+  preserved, `final-metadata-len=4`, `errors=0`,
+  `classification=pi5-shared-scheduler-metadata-complete`, and PASS.
+- Validation: `cargo fmt --all -- --check`, `cargo -Zjson-target-spec test`,
+  `scripts/qemu-smoke.sh`, `scripts/qemu-shared-scheduler-metadata-smoke.sh`,
+  `scripts/qemu-production-secondary-dispatch-smoke.sh`,
+  `scripts/qemu-remote-wake-to-local-runnable-smoke.sh`,
+  `scripts/rpi5-shared-scheduler-metadata-image.sh`,
+  `scripts/rpi5-shared-scheduler-metadata-boot-tree.sh`,
+  `scripts/rpi5-archive-review.sh`, serialized hardware run/restore, and
+  `git diff --check` passed.
+- Consequences: The shared metadata invariant is accepted on physical Pi 5
+  cores and can be reconciled by a closeout checkpoint. Any shared run queue,
+  remote enqueue queue, task migration, load balancing, or multi-core
+  preemption work still requires a later supervisor-planned task.
+- Alternatives considered: Treat QEMU shared metadata evidence as sufficient,
+  or fold shared metadata proof into a broader migration task. QEMU alone would
+  skip the physical cache/coherency and secondary entry path; a broader task
+  would blur the owner-only metadata boundary with deferred scheduler movement.
+
 ## 2026-05-25 - Phase 6.3 Target-Owned Wake Consumption Contract Accepted
 
 - Status: accepted as the scheduler ownership contract for converting consumed

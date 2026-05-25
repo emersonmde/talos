@@ -718,3 +718,13 @@ CPU-capacity boundary, and generation-qualified lookups reject stale snapshots.
 This is enough to name CPU-local diagnostic tasks across cores for later
 proofs, but it is not shared dispatch, remote enqueue, task migration, load
 balancing, or multi-core preemption.
+
+The shared scheduler metadata invariant is now accepted at both QEMU substitute
+and serialized Pi 5 hardware evidence levels. The QEMU smoke and Pi 5 proof
+both show logical CPUs 0 through 3 publishing task IDs 101, 201, 301, and 401,
+owner-task lookup and boot-task lookup succeeding, cross-owner local scheduler
+mutation and cross-owner metadata publication rejected, local runnable queues
+preserved, final-metadata-len=4, errors=0, and PASS classification. This
+proves the bounded owner-published metadata table across physical cores, not a
+shared run queue, remote enqueue queue, task migration, load balancing, or
+multi-core preemption.

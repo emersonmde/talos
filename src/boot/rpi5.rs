@@ -85,6 +85,9 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
     #[cfg(talos_rpi5_production_secondary_dispatch_proof)]
     target::rpi5::run_production_secondary_dispatch_proof();
 
+    #[cfg(talos_rpi5_shared_scheduler_metadata_proof)]
+    target::rpi5::run_shared_scheduler_metadata_proof();
+
     #[cfg(talos_rpi5_uart10_polling_rx_diagnostic)]
     target::rpi5::run_uart10_polling_tty_rx_diagnostic();
 
