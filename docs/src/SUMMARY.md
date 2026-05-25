@@ -35,6 +35,7 @@
 - [Phase 6 SMP-Safe Primitives Source Inventory](project/phase6-smp-safe-primitives-source-inventory.md)
 - [Phase 6 Secondary Cacheable MMU Handoff Source Inventory](project/phase6-secondary-cacheable-mmu-handoff-source-inventory.md)
 - [Phase 6 SMP-Safe Primitives Closeout Checkpoint](project/phase6-smp-safe-primitives-closeout-checkpoint.md)
+- [Phase 6 Scheduler Migration Readiness Source Inventory](project/phase6-scheduler-migration-readiness-source-inventory.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

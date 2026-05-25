@@ -375,3 +375,28 @@ accepts `SpinLock<T>` as a primitive, not the scheduler's data structures:
 the scheduler still needs a separate source inventory for shared run-queue
 ownership, lock placement, cross-core wakeups/IPIs, and per-core
 timer/preemption interactions before any multi-core scheduling implementation.
+
+## Phase 6.3 Scheduler Migration Readiness
+
+The first Milestone 6.3 migration boundary is documented in
+`docs/src/project/phase6-scheduler-migration-readiness-source-inventory.md`.
+The selected first slice is CPU-local scheduler ownership: keep each runnable
+queue owned by one logical CPU, introduce an explicit per-core scheduler state
+wrapper, and leave CPU 0 as the only production scheduler owner until a later
+task accepts secondary scheduler participation.
+
+This boundary deliberately does not add shared run queues, migration, IPIs,
+cross-core wakeups, or secondary-core production scheduling. Local timer
+preemption may mutate only the current CPU's local scheduler state, under the
+existing short local IRQ-mask boundary and outside the IRQ hot path. A purely
+CPU-local run queue should not take an SMP lock in this first slice; the
+accepted `SpinLock<T>` is reserved for later shared scheduler metadata,
+cross-core wake lists, migration queues, or global task state that a future
+task names and proves explicitly.
+
+The lock-ordering rule for later shared scheduler state is local IRQ mask
+first, then SMP lock acquisition; release the SMP lock before restoring local
+IRQ state. Scheduler locks must not be held across
+`talos_aarch64_context_switch`, and code must not allocate, format, print,
+poll UART input, dispatch diagnostic commands, block, sleep, or run arbitrary
+callbacks while holding scheduler locks.
