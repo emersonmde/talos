@@ -3,8 +3,10 @@
 //! This module owns the first boot-CPU scheduler shape plus the Phase 6.3
 //! CPU-local ownership wrapper. Task identifiers remain scheduler-local,
 //! runnable queues are still owned by exactly one logical CPU, and the wrapper
-//! does not add migration, shared queues, IPIs, or secondary-core production
-//! dispatch.
+//! does not add migration, shared queues, or secondary-core production
+//! dispatch. The remote wake-request queue is a bounded signal mailbox only:
+//! it records target-owned wake intent without mutating another CPU's local
+//! runnable queue.
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct LogicalCpuId(usize);
@@ -256,6 +258,160 @@ pub enum PerCoreSchedulerAccessError {
     ProductionDispatchDeferred {
         owner: LogicalCpuId,
     },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum RemoteWakeRequestError {
+    Full,
+    SelfTarget {
+        target: LogicalCpuId,
+    },
+    WrongTarget {
+        owner: LogicalCpuId,
+        target: LogicalCpuId,
+    },
+    WrongOwner {
+        owner: LogicalCpuId,
+        requester: LogicalCpuId,
+    },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum RemoteWakePublishOutcome {
+    Inserted,
+    Duplicate,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct RemoteWakeRequest {
+    requester: LogicalCpuId,
+    target: LogicalCpuId,
+    task_id: TaskId,
+}
+
+impl RemoteWakeRequest {
+    pub const fn requester(self) -> LogicalCpuId {
+        self.requester
+    }
+
+    pub const fn target(self) -> LogicalCpuId {
+        self.target
+    }
+
+    pub const fn task_id(self) -> TaskId {
+        self.task_id
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct RemoteWakeQueue<const CAPACITY: usize> {
+    owner: LogicalCpuId,
+    entries: [Option<RemoteWakeRequest>; CAPACITY],
+    len: usize,
+    duplicate_count: u64,
+}
+
+impl<const CAPACITY: usize> RemoteWakeQueue<CAPACITY> {
+    pub const fn new(owner: LogicalCpuId) -> Self {
+        Self {
+            owner,
+            entries: [None; CAPACITY],
+            len: 0,
+            duplicate_count: 0,
+        }
+    }
+
+    pub const fn owner(&self) -> LogicalCpuId {
+        self.owner
+    }
+
+    pub const fn len(&self) -> usize {
+        self.len
+    }
+
+    pub const fn duplicate_count(&self) -> u64 {
+        self.duplicate_count
+    }
+
+    pub const fn is_empty(&self) -> bool {
+        self.len == 0
+    }
+
+    pub const fn is_full(&self) -> bool {
+        self.len == CAPACITY
+    }
+
+    pub fn publish(
+        &mut self,
+        requester: LogicalCpuId,
+        target: LogicalCpuId,
+        task_id: TaskId,
+    ) -> Result<RemoteWakePublishOutcome, RemoteWakeRequestError> {
+        if target != self.owner {
+            return Err(RemoteWakeRequestError::WrongTarget {
+                owner: self.owner,
+                target,
+            });
+        }
+        if requester == self.owner {
+            return Err(RemoteWakeRequestError::SelfTarget { target });
+        }
+        if self.contains(task_id) {
+            self.duplicate_count += 1;
+            return Ok(RemoteWakePublishOutcome::Duplicate);
+        }
+        if self.is_full() {
+            return Err(RemoteWakeRequestError::Full);
+        }
+
+        self.entries[self.len] = Some(RemoteWakeRequest {
+            requester,
+            target,
+            task_id,
+        });
+        self.len += 1;
+        Ok(RemoteWakePublishOutcome::Inserted)
+    }
+
+    pub fn consume_next(
+        &mut self,
+        requester: LogicalCpuId,
+    ) -> Result<Option<RemoteWakeRequest>, RemoteWakeRequestError> {
+        if requester != self.owner {
+            return Err(RemoteWakeRequestError::WrongOwner {
+                owner: self.owner,
+                requester,
+            });
+        }
+        if self.is_empty() {
+            return Ok(None);
+        }
+
+        let request = self.entries[0].take();
+        let mut index = 1;
+        while index < self.len {
+            self.entries[index - 1] = self.entries[index].take();
+            index += 1;
+        }
+        self.len -= 1;
+        if self.len < CAPACITY {
+            self.entries[self.len] = None;
+        }
+        Ok(request)
+    }
+
+    pub fn contains(&self, task_id: TaskId) -> bool {
+        let mut index = 0;
+        while index < self.len {
+            if let Some(request) = self.entries[index]
+                && request.task_id == task_id
+            {
+                return true;
+            }
+            index += 1;
+        }
+        false
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -584,8 +740,9 @@ mod tests {
 
     use super::{
         ContextFrame, KernelStack, LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError,
-        ProcessOwnerId, RunnableQueue, RunnableQueueError, SchedulerCoreRole, SingleCoreScheduler,
-        Task, TaskId, TaskState, TimerPreemptError, VoluntaryYieldError,
+        ProcessOwnerId, RemoteWakePublishOutcome, RemoteWakeQueue, RemoteWakeRequestError,
+        RunnableQueue, RunnableQueueError, SchedulerCoreRole, SingleCoreScheduler, Task, TaskId,
+        TaskState, TimerPreemptError, VoluntaryYieldError,
     };
 
     fn task_id(raw: u64) -> TaskId {
@@ -868,6 +1025,82 @@ mod tests {
         assert_eq!(scheduler.runnable().front(), Some(task_id(1)));
         assert_eq!(scheduler.counters().timer_preemptions(), 1);
         assert_eq!(scheduler.counters().context_switches(), 1);
+    }
+
+    #[test_case]
+    fn remote_wake_queue_coalesces_duplicate_task_requests() {
+        let mut queue = RemoteWakeQueue::<2>::new(LogicalCpuId::new(1));
+        let requester = LogicalCpuId::BOOT;
+        let target = LogicalCpuId::new(1);
+        let task = task_id(7);
+
+        assert_eq!(
+            queue.publish(requester, target, task),
+            Ok(RemoteWakePublishOutcome::Inserted)
+        );
+        assert_eq!(
+            queue.publish(requester, target, task),
+            Ok(RemoteWakePublishOutcome::Duplicate)
+        );
+
+        assert_eq!(queue.owner(), target);
+        assert_eq!(queue.len(), 1);
+        assert_eq!(queue.duplicate_count(), 1);
+        let request = queue
+            .consume_next(target)
+            .expect("target owner can consume")
+            .expect("request is pending");
+        assert_eq!(request.requester(), requester);
+        assert_eq!(request.target(), target);
+        assert_eq!(request.task_id(), task);
+        assert!(queue.is_empty());
+    }
+
+    #[test_case]
+    fn remote_wake_queue_rejects_self_and_wrong_target_publication() {
+        let mut queue = RemoteWakeQueue::<2>::new(LogicalCpuId::new(1));
+
+        assert_eq!(
+            queue.publish(LogicalCpuId::new(1), LogicalCpuId::new(1), task_id(1)),
+            Err(RemoteWakeRequestError::SelfTarget {
+                target: LogicalCpuId::new(1)
+            })
+        );
+        assert_eq!(
+            queue.publish(LogicalCpuId::BOOT, LogicalCpuId::new(2), task_id(1)),
+            Err(RemoteWakeRequestError::WrongTarget {
+                owner: LogicalCpuId::new(1),
+                target: LogicalCpuId::new(2)
+            })
+        );
+    }
+
+    #[test_case]
+    fn remote_wake_queue_rejects_overflow_and_cross_owner_consumption() {
+        let mut queue = RemoteWakeQueue::<1>::new(LogicalCpuId::new(2));
+
+        queue
+            .publish(LogicalCpuId::BOOT, LogicalCpuId::new(2), task_id(1))
+            .expect("first request fits");
+
+        assert_eq!(
+            queue.publish(LogicalCpuId::BOOT, LogicalCpuId::new(2), task_id(2)),
+            Err(RemoteWakeRequestError::Full)
+        );
+        assert_eq!(
+            queue.consume_next(LogicalCpuId::new(1)),
+            Err(RemoteWakeRequestError::WrongOwner {
+                owner: LogicalCpuId::new(2),
+                requester: LogicalCpuId::new(1)
+            })
+        );
+        assert_eq!(
+            queue
+                .consume_next(LogicalCpuId::new(2))
+                .expect("target owner can consume")
+                .map(|request| request.task_id()),
+            Some(task_id(1))
+        );
     }
 
     #[test_case]

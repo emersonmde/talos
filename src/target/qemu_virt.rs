@@ -12,19 +12,26 @@ use core::sync::atomic::{AtomicU64, Ordering};
     talos_qemu_context_switch_smoke,
     talos_qemu_scheduler_yield_smoke,
     talos_qemu_timer_preemption_smoke,
-    talos_qemu_per_core_scheduler_ownership_smoke
+    talos_qemu_per_core_scheduler_ownership_smoke,
+    talos_qemu_remote_wakeup_request_smoke
 ))]
 use crate::scheduler::{ContextFrame, KernelStack, SingleCoreScheduler, Task, TaskId, TaskState};
-#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+#[cfg(any(
+    talos_qemu_per_core_scheduler_ownership_smoke,
+    talos_qemu_remote_wakeup_request_smoke
+))]
 use crate::scheduler::{
     LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError, SchedulerCoreRole,
 };
+#[cfg(talos_qemu_remote_wakeup_request_smoke)]
+use crate::scheduler::{RemoteWakePublishOutcome, RemoteWakeQueue};
 #[cfg(not(any(
     talos_qemu_secondary_core_discriminator,
     talos_qemu_secondary_core_workload_smoke,
     talos_qemu_smp_lock_contention_smoke,
     talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_cross_core_ipi_delivery_smoke
+    talos_qemu_cross_core_ipi_delivery_smoke,
+    talos_qemu_remote_wakeup_request_smoke
 )))]
 use crate::smp::MAX_CORES;
 #[cfg(talos_qemu_secondary_core_workload_smoke)]
@@ -34,7 +41,8 @@ use crate::smp::SECONDARY_CORE_WORKLOAD_TARGET;
     talos_qemu_secondary_core_workload_smoke,
     talos_qemu_smp_lock_contention_smoke,
     talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_cross_core_ipi_delivery_smoke
+    talos_qemu_cross_core_ipi_delivery_smoke,
+    talos_qemu_remote_wakeup_request_smoke
 ))]
 use crate::smp::{
     self, CoreLifecycle, CoreStackLayout, MAX_CORES, SECONDARY_CORE_STATES,
@@ -42,7 +50,10 @@ use crate::smp::{
 };
 #[cfg(talos_qemu_smp_lock_contention_smoke)]
 use crate::smp_sync::{SpinLock, smp_full_barrier};
-#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+#[cfg(any(
+    talos_qemu_per_core_scheduler_ownership_smoke,
+    talos_qemu_remote_wakeup_request_smoke
+))]
 use crate::smp_sync::{SpinLock, smp_full_barrier};
 use crate::{
     arch::aarch64::{
@@ -66,11 +77,17 @@ const TIMER_IRQ_WAIT_LIMIT: usize = 1_000_000;
     talos_qemu_secondary_core_workload_smoke,
     talos_qemu_smp_lock_contention_smoke,
     talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_cross_core_ipi_delivery_smoke
+    talos_qemu_cross_core_ipi_delivery_smoke,
+    talos_qemu_remote_wakeup_request_smoke
 ))]
 const QEMU_SECONDARY_WAIT_LIMIT: usize = 10_000_000;
-#[cfg(talos_qemu_cross_core_ipi_delivery_smoke)]
+#[cfg(any(
+    talos_qemu_cross_core_ipi_delivery_smoke,
+    talos_qemu_remote_wakeup_request_smoke
+))]
 const QEMU_CROSS_CORE_IPI_SGI_INTID: u32 = 1;
+#[cfg(talos_qemu_remote_wakeup_request_smoke)]
+const REMOTE_WAKE_QUEUE_CAPACITY: usize = 4;
 #[cfg(talos_qemu_smp_lock_contention_smoke)]
 const SMP_LOCK_CONTENTION_TARGET_PER_CORE: u64 = 64;
 #[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
@@ -108,7 +125,8 @@ static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
     talos_qemu_secondary_core_workload_smoke,
     talos_qemu_smp_lock_contention_smoke,
     talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_cross_core_ipi_delivery_smoke
+    talos_qemu_cross_core_ipi_delivery_smoke,
+    talos_qemu_remote_wakeup_request_smoke
 ))]
 unsafe extern "C" {
     fn talos_aarch64_qemu_secondary_entry();
@@ -479,7 +497,8 @@ pub const fn qemu_logical_cpu_from_mpidr_affinity(affinity: u64) -> Option<usize
     talos_qemu_secondary_core_workload_smoke,
     talos_qemu_smp_lock_contention_smoke,
     talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_cross_core_ipi_delivery_smoke
+    talos_qemu_cross_core_ipi_delivery_smoke,
+    talos_qemu_remote_wakeup_request_smoke
 ))]
 fn secondary_stack_layout() -> CoreStackLayout {
     let base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
@@ -493,7 +512,8 @@ fn secondary_stack_layout() -> CoreStackLayout {
     talos_qemu_secondary_core_workload_smoke,
     talos_qemu_smp_lock_contention_smoke,
     talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_cross_core_ipi_delivery_smoke
+    talos_qemu_cross_core_ipi_delivery_smoke,
+    talos_qemu_remote_wakeup_request_smoke
 ))]
 fn secondary_state_name(state: u64) -> &'static str {
     CoreLifecycle::from_raw(state).map_or("unknown", CoreLifecycle::name)
@@ -504,7 +524,8 @@ fn secondary_state_name(state: u64) -> &'static str {
     talos_qemu_secondary_core_workload_smoke,
     talos_qemu_smp_lock_contention_smoke,
     talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_cross_core_ipi_delivery_smoke
+    talos_qemu_cross_core_ipi_delivery_smoke,
+    talos_qemu_remote_wakeup_request_smoke
 ))]
 unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) -> i64 {
     let mut function_id = 0xc400_0003u64;
@@ -555,7 +576,8 @@ pub fn services(boot_info: &BootInfo) -> TargetServices {
     talos_qemu_secondary_core_workload_smoke,
     talos_qemu_smp_lock_contention_smoke,
     talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_cross_core_ipi_delivery_smoke
+    talos_qemu_cross_core_ipi_delivery_smoke,
+    talos_qemu_remote_wakeup_request_smoke
 ))]
 #[unsafe(no_mangle)]
 pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
@@ -581,6 +603,8 @@ pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
         run_per_core_scheduler_ownership_secondary(core_state, logical_cpu);
         #[cfg(talos_qemu_cross_core_ipi_delivery_smoke)]
         run_cross_core_ipi_delivery_secondary(core_state, logical_cpu);
+        #[cfg(talos_qemu_remote_wakeup_request_smoke)]
+        run_remote_wakeup_request_secondary(core_state, logical_cpu);
     }
 
     loop {
@@ -880,7 +904,10 @@ impl CrossCoreIpiDeliveryState {
 #[cfg(talos_qemu_cross_core_ipi_delivery_smoke)]
 static CROSS_CORE_IPI_DELIVERY_STATE: CrossCoreIpiDeliveryState = CrossCoreIpiDeliveryState::new();
 
-#[cfg(talos_qemu_cross_core_ipi_delivery_smoke)]
+#[cfg(any(
+    talos_qemu_cross_core_ipi_delivery_smoke,
+    talos_qemu_remote_wakeup_request_smoke
+))]
 fn current_qemu_logical_cpu() -> Option<usize> {
     qemu_logical_cpu_from_mpidr_affinity(aarch64::mpidr_affinity(aarch64::mpidr_el1()))
 }
@@ -915,6 +942,241 @@ fn run_cross_core_ipi_delivery_secondary(core_state: &smp::PerCoreState, logical
     }
     CROSS_CORE_IPI_DELIVERY_STATE.mark_complete(logical_cpu);
     core_state.mark_workload_complete(CROSS_CORE_IPI_DELIVERY_STATE.receive_count(logical_cpu));
+    core_state.clean_to_poc();
+}
+
+#[cfg(talos_qemu_remote_wakeup_request_smoke)]
+struct RemoteWakeRequestSmokeState {
+    ready_mask: AtomicU64,
+    complete_mask: AtomicU64,
+    sent_values: [AtomicU64; MAX_CORES],
+    target_bits: [AtomicU64; MAX_CORES],
+    receive_counts: [AtomicU64; MAX_CORES],
+    eoi_counts: [AtomicU64; MAX_CORES],
+    pending_counts: [AtomicU64; MAX_CORES],
+    consumed_task_ids: [AtomicU64; MAX_CORES],
+    duplicate_counts: [AtomicU64; MAX_CORES],
+    queue_lens_after: [AtomicU64; MAX_CORES],
+    cross_owner_rejections: [AtomicU64; MAX_CORES],
+    production_deferrals: [AtomicU64; MAX_CORES],
+    last_vectors: [AtomicU64; MAX_CORES],
+    last_iars: [AtomicU64; MAX_CORES],
+    last_intids: [AtomicU64; MAX_CORES],
+    errors: AtomicU64,
+}
+
+#[cfg(talos_qemu_remote_wakeup_request_smoke)]
+impl RemoteWakeRequestSmokeState {
+    const fn new() -> Self {
+        Self {
+            ready_mask: AtomicU64::new(0),
+            complete_mask: AtomicU64::new(0),
+            sent_values: [const { AtomicU64::new(0) }; MAX_CORES],
+            target_bits: [const { AtomicU64::new(0) }; MAX_CORES],
+            receive_counts: [const { AtomicU64::new(0) }; MAX_CORES],
+            eoi_counts: [const { AtomicU64::new(0) }; MAX_CORES],
+            pending_counts: [const { AtomicU64::new(0) }; MAX_CORES],
+            consumed_task_ids: [const { AtomicU64::new(0) }; MAX_CORES],
+            duplicate_counts: [const { AtomicU64::new(0) }; MAX_CORES],
+            queue_lens_after: [const { AtomicU64::new(0) }; MAX_CORES],
+            cross_owner_rejections: [const { AtomicU64::new(0) }; MAX_CORES],
+            production_deferrals: [const { AtomicU64::new(0) }; MAX_CORES],
+            last_vectors: [const { AtomicU64::new(0) }; MAX_CORES],
+            last_iars: [const { AtomicU64::new(0) }; MAX_CORES],
+            last_intids: [const { AtomicU64::new(0) }; MAX_CORES],
+            errors: AtomicU64::new(0),
+        }
+    }
+
+    fn reset(&self) {
+        self.ready_mask.store(0, Ordering::Release);
+        self.complete_mask.store(0, Ordering::Release);
+        self.errors.store(0, Ordering::Release);
+        for logical_cpu in 0..MAX_CORES {
+            self.sent_values[logical_cpu].store(0, Ordering::Release);
+            self.target_bits[logical_cpu].store(0, Ordering::Release);
+            self.receive_counts[logical_cpu].store(0, Ordering::Release);
+            self.eoi_counts[logical_cpu].store(0, Ordering::Release);
+            self.pending_counts[logical_cpu].store(0, Ordering::Release);
+            self.consumed_task_ids[logical_cpu].store(0, Ordering::Release);
+            self.duplicate_counts[logical_cpu].store(0, Ordering::Release);
+            self.queue_lens_after[logical_cpu].store(0, Ordering::Release);
+            self.cross_owner_rejections[logical_cpu].store(0, Ordering::Release);
+            self.production_deferrals[logical_cpu].store(0, Ordering::Release);
+            self.last_vectors[logical_cpu].store(0, Ordering::Release);
+            self.last_iars[logical_cpu].store(0, Ordering::Release);
+            self.last_intids[logical_cpu].store(0, Ordering::Release);
+        }
+    }
+
+    fn mark_ready(&self, logical_cpu: usize) {
+        self.ready_mask
+            .fetch_or(1u64 << logical_cpu, Ordering::AcqRel);
+    }
+
+    fn mark_complete(&self, logical_cpu: usize) {
+        self.complete_mask
+            .fetch_or(1u64 << logical_cpu, Ordering::AcqRel);
+    }
+
+    fn record_send(&self, logical_cpu: usize, target_bit: u8, sgir_value: u32) {
+        self.target_bits[logical_cpu].store(target_bit as u64, Ordering::Release);
+        self.sent_values[logical_cpu].store(sgir_value as u64, Ordering::Release);
+    }
+
+    fn record_receive(&self, logical_cpu: Option<usize>, vector: u64, iar: u32, intid: u32) {
+        if let Some(logical_cpu) = logical_cpu.filter(|cpu| *cpu < MAX_CORES) {
+            self.last_vectors[logical_cpu].store(vector, Ordering::Release);
+            self.last_iars[logical_cpu].store(iar as u64, Ordering::Release);
+            self.last_intids[logical_cpu].store(intid as u64, Ordering::Release);
+            self.receive_counts[logical_cpu].fetch_add(1, Ordering::AcqRel);
+            self.pending_counts[logical_cpu].fetch_add(1, Ordering::AcqRel);
+        } else {
+            self.errors.fetch_add(1, Ordering::AcqRel);
+        }
+    }
+
+    fn record_eoi(&self, logical_cpu: Option<usize>) {
+        if let Some(logical_cpu) = logical_cpu.filter(|cpu| *cpu < MAX_CORES) {
+            self.eoi_counts[logical_cpu].fetch_add(1, Ordering::AcqRel);
+        } else {
+            self.errors.fetch_add(1, Ordering::AcqRel);
+        }
+    }
+
+    fn receive_count(&self, logical_cpu: usize) -> u64 {
+        self.receive_counts[logical_cpu].load(Ordering::Acquire)
+    }
+}
+
+#[cfg(talos_qemu_remote_wakeup_request_smoke)]
+static REMOTE_WAKE_REQUEST_SMOKE_STATE: RemoteWakeRequestSmokeState =
+    RemoteWakeRequestSmokeState::new();
+
+#[cfg(talos_qemu_remote_wakeup_request_smoke)]
+static REMOTE_WAKE_QUEUES: [SpinLock<RemoteWakeQueue<REMOTE_WAKE_QUEUE_CAPACITY>>; MAX_CORES] = [
+    SpinLock::new(RemoteWakeQueue::new(LogicalCpuId::new(0))),
+    SpinLock::new(RemoteWakeQueue::new(LogicalCpuId::new(1))),
+    SpinLock::new(RemoteWakeQueue::new(LogicalCpuId::new(2))),
+    SpinLock::new(RemoteWakeQueue::new(LogicalCpuId::new(3))),
+];
+
+#[cfg(talos_qemu_remote_wakeup_request_smoke)]
+fn reset_remote_wakeup_request_state() {
+    REMOTE_WAKE_REQUEST_SMOKE_STATE.reset();
+    for logical_cpu in 0..MAX_CORES {
+        let mut queue = unsafe { REMOTE_WAKE_QUEUES[logical_cpu].lock_irqsave() };
+        *queue = RemoteWakeQueue::new(LogicalCpuId::new(logical_cpu));
+    }
+}
+
+#[cfg(talos_qemu_remote_wakeup_request_smoke)]
+fn publish_remote_wake_request(target: usize, task_id: TaskId) -> bool {
+    let target_cpu = LogicalCpuId::new(target);
+    let result = {
+        let mut queue = unsafe { REMOTE_WAKE_QUEUES[target].lock_irqsave() };
+        queue.publish(LogicalCpuId::BOOT, target_cpu, task_id)
+    };
+    smp_full_barrier();
+
+    match result {
+        Ok(RemoteWakePublishOutcome::Inserted) => {
+            crate::println!(
+                "qemu-remote-wakeup-request: publish requester=0 target={} task={} outcome=inserted",
+                target,
+                task_id.raw()
+            );
+            true
+        }
+        Ok(RemoteWakePublishOutcome::Duplicate) => {
+            crate::println!(
+                "qemu-remote-wakeup-request: publish requester=0 target={} task={} outcome=duplicate",
+                target,
+                task_id.raw()
+            );
+            true
+        }
+        Err(error) => {
+            REMOTE_WAKE_REQUEST_SMOKE_STATE
+                .errors
+                .fetch_add(1, Ordering::AcqRel);
+            crate::println!(
+                "qemu-remote-wakeup-request: publish requester=0 target={} task={} outcome=error {:?}",
+                target,
+                task_id.raw(),
+                error
+            );
+            false
+        }
+    }
+}
+
+#[cfg(talos_qemu_remote_wakeup_request_smoke)]
+fn run_remote_wakeup_request_secondary(core_state: &smp::PerCoreState, logical_cpu: usize) {
+    core_state.mark_workload_running();
+    core_state.clean_to_poc();
+
+    crate::arch::aarch64::exceptions::init();
+    unsafe {
+        aarch64::disable_irq();
+        aarch64::route_physical_irqs_to_el2();
+        let gic = GicV2::new(GICD_BASE, GICC_BASE);
+        gic.configure_sgi_priority(QEMU_CROSS_CORE_IPI_SGI_INTID, 0x80);
+        gic.enable_cpu_interface();
+        aarch64::enable_irq();
+    }
+
+    REMOTE_WAKE_REQUEST_SMOKE_STATE.mark_ready(logical_cpu);
+
+    let mut remaining = QEMU_SECONDARY_WAIT_LIMIT;
+    while REMOTE_WAKE_REQUEST_SMOKE_STATE.receive_count(logical_cpu) == 0 && remaining > 0 {
+        unsafe {
+            core::arch::asm!("wfe", options(nomem, nostack, preserves_flags));
+        }
+        remaining -= 1;
+    }
+
+    unsafe {
+        aarch64::disable_irq();
+    }
+
+    let requester = LogicalCpuId::new(logical_cpu);
+    let (consumed_task, duplicates, queue_len_after) = {
+        let mut queue = unsafe { REMOTE_WAKE_QUEUES[logical_cpu].lock_irqsave() };
+        let consumed = queue
+            .consume_next(requester)
+            .ok()
+            .flatten()
+            .map(|request| request.task_id().raw())
+            .unwrap_or(0);
+        (consumed, queue.duplicate_count(), queue.len())
+    };
+
+    REMOTE_WAKE_REQUEST_SMOKE_STATE.consumed_task_ids[logical_cpu]
+        .store(consumed_task, Ordering::Release);
+    REMOTE_WAKE_REQUEST_SMOKE_STATE.duplicate_counts[logical_cpu]
+        .store(duplicates, Ordering::Release);
+    REMOTE_WAKE_REQUEST_SMOKE_STATE.queue_lens_after[logical_cpu]
+        .store(queue_len_after as u64, Ordering::Release);
+
+    let mut scheduler = PerCoreScheduler::<2>::deferred_secondary(requester);
+    if matches!(
+        scheduler.local_scheduler_mut(LogicalCpuId::BOOT),
+        Err(PerCoreSchedulerAccessError::WrongOwner { .. })
+    ) {
+        REMOTE_WAKE_REQUEST_SMOKE_STATE.cross_owner_rejections[logical_cpu]
+            .store(1, Ordering::Release);
+    }
+    if matches!(
+        scheduler.production_scheduler_mut(requester),
+        Err(PerCoreSchedulerAccessError::ProductionDispatchDeferred { .. })
+    ) {
+        REMOTE_WAKE_REQUEST_SMOKE_STATE.production_deferrals[logical_cpu]
+            .store(1, Ordering::Release);
+    }
+
+    REMOTE_WAKE_REQUEST_SMOKE_STATE.mark_complete(logical_cpu);
+    core_state.mark_workload_complete(consumed_task);
     core_state.clean_to_poc();
 }
 
@@ -1667,6 +1929,237 @@ pub fn run_cross_core_ipi_delivery_smoke() -> bool {
     reports_ok && errors == 0
 }
 
+#[cfg(talos_qemu_remote_wakeup_request_smoke)]
+pub fn run_remote_wakeup_request_smoke() -> bool {
+    smp::reset_secondary_core_states();
+    reset_remote_wakeup_request_state();
+
+    crate::arch::aarch64::exceptions::init();
+    unsafe {
+        aarch64::disable_irq();
+        aarch64::route_physical_irqs_to_el2();
+        let gic = GicV2::new(GICD_BASE, GICC_BASE);
+        gic.configure_sgi_priority(QEMU_CROSS_CORE_IPI_SGI_INTID, 0x80);
+        gic.enable_cpu_interface();
+        gic.enable_distributor();
+    }
+
+    let boot_mpidr = aarch64::mpidr_el1();
+    let boot_affinity = aarch64::mpidr_affinity(boot_mpidr);
+    let boot_logical = qemu_logical_cpu_from_mpidr_affinity(boot_affinity);
+    let entry = talos_aarch64_qemu_secondary_entry as *const () as usize;
+    let stack_layout = secondary_stack_layout();
+    let stack_base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
+    let stack_end = core::ptr::addr_of!(talos_secondary_core_stacks_end) as usize;
+    let expected_mask = ((1u64 << MAX_CORES) - 1) & !1;
+
+    crate::println!(
+        "qemu-remote-wakeup-request: start conduit=smc cores={} sgi-intid={} queue-capacity={} expected-mask={:#x} boot-mpidr={:#018x} boot-affinity={:#x} boot-logical={:?} entry={:#018x} stack-range=[{:#018x},{:#018x})",
+        MAX_CORES,
+        QEMU_CROSS_CORE_IPI_SGI_INTID,
+        REMOTE_WAKE_QUEUE_CAPACITY,
+        expected_mask,
+        boot_mpidr,
+        boot_affinity,
+        boot_logical,
+        entry,
+        stack_base,
+        stack_end
+    );
+
+    let mut cpu_on_ok = true;
+    for logical_cpu in 1..MAX_CORES {
+        let target_affinity = logical_cpu as u64;
+        let result = unsafe { psci_cpu_on_smc(target_affinity, entry, logical_cpu) };
+        crate::println!(
+            "qemu-remote-wakeup-request: cpu-on logical={} target-affinity={:#x} result={}",
+            logical_cpu,
+            target_affinity,
+            result
+        );
+        cpu_on_ok &= result == 0;
+    }
+
+    let mut ready_remaining = QEMU_SECONDARY_WAIT_LIMIT;
+    while ready_remaining > 0
+        && (REMOTE_WAKE_REQUEST_SMOKE_STATE
+            .ready_mask
+            .load(Ordering::Acquire)
+            & expected_mask)
+            != expected_mask
+    {
+        core::hint::spin_loop();
+        ready_remaining -= 1;
+    }
+
+    let mut publish_ok = true;
+    for logical_cpu in 1..MAX_CORES {
+        let task_id = TaskId::new(200 + logical_cpu as u64).expect("diagnostic task ID is nonzero");
+        publish_ok &= publish_remote_wake_request(logical_cpu, task_id);
+        if logical_cpu == 1 {
+            publish_ok &= publish_remote_wake_request(logical_cpu, task_id);
+        }
+    }
+
+    let gic = GicV2::new(GICD_BASE, GICC_BASE);
+    for logical_cpu in 1..MAX_CORES {
+        let target_bit = 1u8 << logical_cpu;
+        let sgir_value =
+            unsafe { gic.send_sgi_to_target_list(QEMU_CROSS_CORE_IPI_SGI_INTID, target_bit) };
+        REMOTE_WAKE_REQUEST_SMOKE_STATE.record_send(logical_cpu, target_bit, sgir_value);
+        crate::println!(
+            "qemu-remote-wakeup-request: send sender=0 target-logical={} target-list-bit={:#04x} sgi-intid={} sgir={:#010x}",
+            logical_cpu,
+            target_bit,
+            QEMU_CROSS_CORE_IPI_SGI_INTID,
+            sgir_value
+        );
+    }
+
+    let mut complete_remaining = QEMU_SECONDARY_WAIT_LIMIT;
+    while complete_remaining > 0
+        && (REMOTE_WAKE_REQUEST_SMOKE_STATE
+            .complete_mask
+            .load(Ordering::Acquire)
+            & expected_mask)
+            != expected_mask
+    {
+        core::hint::spin_loop();
+        complete_remaining -= 1;
+    }
+
+    unsafe {
+        aarch64::disable_irq();
+    }
+
+    let ready_mask = REMOTE_WAKE_REQUEST_SMOKE_STATE
+        .ready_mask
+        .load(Ordering::Acquire);
+    let complete_mask = REMOTE_WAKE_REQUEST_SMOKE_STATE
+        .complete_mask
+        .load(Ordering::Acquire);
+    let mut participants = 0;
+    let mut reports_ok = cpu_on_ok
+        && publish_ok
+        && boot_logical == Some(0)
+        && (ready_mask & expected_mask) == expected_mask;
+
+    for logical_cpu in 1..MAX_CORES {
+        let core_report = SECONDARY_CORE_STATES[logical_cpu].snapshot(logical_cpu);
+        let logical_from_mpidr = qemu_logical_cpu_from_mpidr_affinity(core_report.affinity);
+        let stack_slot = stack_layout
+            .slot(logical_cpu)
+            .expect("stack slot for possible QEMU core");
+        let stack_owned = stack_slot.contains_stack_pointer(core_report.stack_pointer);
+        let expected_task = 200 + logical_cpu as u64;
+        let target_bit =
+            REMOTE_WAKE_REQUEST_SMOKE_STATE.target_bits[logical_cpu].load(Ordering::Acquire);
+        let sgir_value =
+            REMOTE_WAKE_REQUEST_SMOKE_STATE.sent_values[logical_cpu].load(Ordering::Acquire);
+        let receive_count =
+            REMOTE_WAKE_REQUEST_SMOKE_STATE.receive_counts[logical_cpu].load(Ordering::Acquire);
+        let eoi_count =
+            REMOTE_WAKE_REQUEST_SMOKE_STATE.eoi_counts[logical_cpu].load(Ordering::Acquire);
+        let pending_count =
+            REMOTE_WAKE_REQUEST_SMOKE_STATE.pending_counts[logical_cpu].load(Ordering::Acquire);
+        let consumed_task =
+            REMOTE_WAKE_REQUEST_SMOKE_STATE.consumed_task_ids[logical_cpu].load(Ordering::Acquire);
+        let duplicate_count =
+            REMOTE_WAKE_REQUEST_SMOKE_STATE.duplicate_counts[logical_cpu].load(Ordering::Acquire);
+        let queue_len_after =
+            REMOTE_WAKE_REQUEST_SMOKE_STATE.queue_lens_after[logical_cpu].load(Ordering::Acquire);
+        let cross_owner_rejected = REMOTE_WAKE_REQUEST_SMOKE_STATE.cross_owner_rejections
+            [logical_cpu]
+            .load(Ordering::Acquire)
+            == 1;
+        let production_deferred = REMOTE_WAKE_REQUEST_SMOKE_STATE.production_deferrals[logical_cpu]
+            .load(Ordering::Acquire)
+            == 1;
+        let last_vector =
+            REMOTE_WAKE_REQUEST_SMOKE_STATE.last_vectors[logical_cpu].load(Ordering::Acquire);
+        let last_iar =
+            REMOTE_WAKE_REQUEST_SMOKE_STATE.last_iars[logical_cpu].load(Ordering::Acquire);
+        let last_intid =
+            REMOTE_WAKE_REQUEST_SMOKE_STATE.last_intids[logical_cpu].load(Ordering::Acquire);
+        let report_ok = core_report.lifecycle >= CoreLifecycle::WorkloadComplete
+            && core_report.context == logical_cpu
+            && logical_from_mpidr == Some(logical_cpu)
+            && stack_owned
+            && target_bit == (1u64 << logical_cpu)
+            && receive_count == 1
+            && eoi_count == 1
+            && pending_count == 1
+            && last_intid == QEMU_CROSS_CORE_IPI_SGI_INTID as u64
+            && consumed_task == expected_task
+            && queue_len_after == 0
+            && cross_owner_rejected
+            && production_deferred
+            && (logical_cpu != 1 || duplicate_count == 1)
+            && (logical_cpu == 1 || duplicate_count == 0);
+        if report_ok {
+            participants += 1;
+        }
+        reports_ok &= report_ok;
+
+        crate::println!(
+            "qemu-remote-wakeup-request: report sender=0 receiver={} state={} context={} mapped={:?} target-list-bit={:#04x} sgir={:#010x} vector={} iar={:#010x} intid={} receive-count={} eoi-count={} pending-count={} consumed-task={} duplicate-count={} queue-len-after={} cross-owner-rejected={} production-deferred={} errors={} ok={}",
+            logical_cpu,
+            secondary_state_name(core_report.lifecycle.raw()),
+            core_report.context,
+            logical_from_mpidr,
+            target_bit,
+            sgir_value,
+            last_vector,
+            last_iar,
+            last_intid,
+            receive_count,
+            eoi_count,
+            pending_count,
+            consumed_task,
+            duplicate_count,
+            queue_len_after,
+            cross_owner_rejected,
+            production_deferred,
+            REMOTE_WAKE_REQUEST_SMOKE_STATE
+                .errors
+                .load(Ordering::Acquire),
+            report_ok
+        );
+    }
+
+    let errors = REMOTE_WAKE_REQUEST_SMOKE_STATE
+        .errors
+        .load(Ordering::Acquire);
+    let classification = if reports_ok && errors == 0 {
+        "qemu-remote-wakeup-request-complete"
+    } else if (ready_mask & expected_mask) != expected_mask {
+        "qemu-remote-wakeup-request-secondaries-not-ready"
+    } else if cpu_on_ok {
+        "qemu-remote-wakeup-request-invariant-failed"
+    } else {
+        "qemu-psci-smc-cpu-on-failed"
+    };
+    crate::println!(
+        "qemu-remote-wakeup-request: final participants={} expected={} errors={} ready-mask={:#x} complete-mask={:#x} ready-wait-remaining={} complete-wait-remaining={} classification={}",
+        participants,
+        MAX_CORES - 1,
+        errors,
+        ready_mask,
+        complete_mask,
+        ready_remaining,
+        complete_remaining,
+        classification
+    );
+
+    if reports_ok && errors == 0 {
+        crate::println!("qemu-remote-wakeup-request: PASS");
+    } else {
+        crate::println!("qemu-remote-wakeup-request: FAIL");
+    }
+
+    reports_ok && errors == 0
+}
+
 #[cfg(talos_qemu_polling_tty_rx_diagnostic)]
 pub fn run_polling_tty_rx_diagnostic() -> bool {
     crate::println!(
@@ -1890,6 +2383,17 @@ pub fn handle_irq(vector: u64) -> bool {
             gic.end_interrupt(iar);
         }
         CROSS_CORE_IPI_DELIVERY_STATE.record_eoi(logical_cpu);
+        return true;
+    }
+
+    #[cfg(talos_qemu_remote_wakeup_request_smoke)]
+    if intid == QEMU_CROSS_CORE_IPI_SGI_INTID {
+        let logical_cpu = current_qemu_logical_cpu();
+        REMOTE_WAKE_REQUEST_SMOKE_STATE.record_receive(logical_cpu, vector, iar, intid);
+        unsafe {
+            gic.end_interrupt(iar);
+        }
+        REMOTE_WAKE_REQUEST_SMOKE_STATE.record_eoi(logical_cpu);
         return true;
     }
 

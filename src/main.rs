@@ -44,7 +44,8 @@
             talos_qemu_secondary_core_workload_smoke,
             talos_qemu_smp_lock_contention_smoke,
             talos_qemu_per_core_scheduler_ownership_smoke,
-            talos_qemu_cross_core_ipi_delivery_smoke
+            talos_qemu_cross_core_ipi_delivery_smoke,
+            talos_qemu_remote_wakeup_request_smoke
         )
     ),
     allow(dead_code, unused_imports, unused_variables, unreachable_code)
@@ -254,6 +255,14 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
+            #[cfg(talos_qemu_remote_wakeup_request_smoke)]
+            {
+                if target::qemu_virt::run_remote_wakeup_request_smoke() {
+                    target::qemu::exit_success();
+                }
+                target::qemu::exit_failure();
+            }
+
             #[cfg(talos_qemu_secondary_core_workload_smoke)]
             {
                 if target::qemu_virt::run_secondary_core_workload_smoke() {
@@ -327,7 +336,8 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_qemu_secondary_core_workload_smoke,
                 talos_qemu_smp_lock_contention_smoke,
                 talos_qemu_per_core_scheduler_ownership_smoke,
-                talos_qemu_cross_core_ipi_delivery_smoke
+                talos_qemu_cross_core_ipi_delivery_smoke,
+                talos_qemu_remote_wakeup_request_smoke
             )))]
             if target::qemu_virt::run_el2_timer_irq_smoke() {
                 target::qemu::exit_success();
@@ -341,7 +351,8 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_qemu_secondary_core_workload_smoke,
                 talos_qemu_smp_lock_contention_smoke,
                 talos_qemu_per_core_scheduler_ownership_smoke,
-                talos_qemu_cross_core_ipi_delivery_smoke
+                talos_qemu_cross_core_ipi_delivery_smoke,
+                talos_qemu_remote_wakeup_request_smoke
             )))]
             target::qemu::exit_failure();
         }

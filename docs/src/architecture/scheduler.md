@@ -512,3 +512,16 @@ The next bounded implementation proof is
 publication, IPI signaling, target-owned observation/consumption, duplicate
 semantics, and preserved local scheduler ownership under QEMU before any Pi 5
 scheduler-facing wakeup proof is planned.
+
+The QEMU remote wake-request smoke is now accepted as the first
+scheduler-facing IPI proof. `RemoteWakeQueue` is a bounded target-owned request
+list over scheduler-local `TaskId` values: remote publication may insert or
+coalesce a request, but target-owned consumption happens after IPI context and
+does not mutate a remote `RunnableQueue`. The QEMU diagnostic proves CPU 0 can
+publish requests for logical CPUs 1, 2, and 3, coalesce a duplicate CPU 1 wake,
+signal each target with SGI INTID 1, and let each target observe, EOI, and
+consume its own request with zero errors. Cross-owner local queue mutation and
+secondary production dispatch remain rejected. This remains QEMU substitute
+evidence only; Pi 5 scheduler-facing wakeups, shared run queues, task
+migration, and production secondary scheduler dispatch still require separate
+planning.
