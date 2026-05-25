@@ -214,6 +214,12 @@ Completed:
   `participants=3`, `errors=0`, and
   `qemu-smp-lock-contention-complete`. This is QEMU/substitute evidence only;
   Pi 5 cache/coherence proof remains a separate hardware-locked task.
+- Phase 6.2 Pi 5 SMP lock proof is blocked by decisive mixed cache/MMU
+  evidence, not accepted as a physical lock proof. The boot CPU reaches the
+  proof with cacheable EL2 stage-1 enabled while secondaries reach the proof
+  before first lock attempt with data cache disabled. The secondary cacheable
+  MMU handoff source inventory is accepted as the next required boundary before
+  any resumed Pi 5 shared-lock proof.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -222,11 +228,13 @@ Completed:
 Blocked or pending:
 
 - The next explicit worker task is the supervisor-queued
-  `phase6-pi5-smp-lock-cache-coherence-proof-20260524` serialized Pi 5
-  hardware proof for the accepted primitive core. Multi-core scheduler
-  migration, shared run queues, cross-core wakeups, userspace, descriptors,
-  filesystem, networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and
-  DMA/cache-coherent driver policy remain deferred.
+  `phase6-secondary-cacheable-mmu-handoff-core-20260524` implementation slice.
+  It must bring secondary cores into the accepted cacheable EL2 stage-1 regime,
+  or a documented narrower equivalent, before the blocked
+  `phase6-pi5-smp-lock-cache-coherence-proof-20260524` hardware proof resumes.
+  Multi-core scheduler migration, shared run queues, cross-core wakeups,
+  userspace, descriptors, filesystem, networking, SSH, shell behavior, UART
+  interrupts, RP1/PCIe, and DMA/cache-coherent driver policy remain deferred.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
