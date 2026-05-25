@@ -457,9 +457,12 @@ restoring local IRQ state. Scheduler locks must not be held across
 sections may allocate, format, print, poll UART input, dispatch diagnostic
 commands, block, sleep, migrate tasks, or run arbitrary callbacks.
 
-The selected proof sequence is split: first a QEMU SGI/IPI delivery smoke, then
-a serialized Pi 5 hardware proof before any production scheduler wakeup uses
-SGIs on hardware. Shared run queues, global task lookup, task migration,
-load balancing, work stealing, sleep/wakeup queues, userspace, descriptors,
+The QEMU SGI/IPI delivery smoke is accepted as raw signal delivery only. It
+uses SGI INTID 1, maps logical CPUs 1, 2, and 3 to GICD_SGIR target-list bits
+0x02, 0x04, and 0x08, and proves each secondary receives and EOIs exactly one
+diagnostic SGI. The next proof in the split sequence is a serialized Pi 5 raw
+SGI/IPI hardware proof before any production scheduler wakeup uses SGIs on
+hardware. Shared run queues, global task lookup, task migration, load
+balancing, work stealing, sleep/wakeup queues, userspace, descriptors,
 filesystem, networking, SSH, shell behavior, RP1/PCIe, UART interrupt
 ownership, and DMA policy remain deferred.

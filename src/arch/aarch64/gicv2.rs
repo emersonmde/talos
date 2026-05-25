@@ -4,6 +4,8 @@ const GICD_ICENABLER: usize = 0x180;
 const GICD_ISPENDR: usize = 0x200;
 const GICD_ISACTIVER: usize = 0x300;
 const GICD_IPRIORITYR: usize = 0x400;
+#[allow(dead_code)]
+const GICD_SGIR: usize = 0xf00;
 
 const GICC_CTLR: usize = 0x00;
 const GICC_PMR: usize = 0x04;
@@ -12,6 +14,7 @@ const GICC_EOIR: usize = 0x10;
 const GICC_HPPIR: usize = 0x18;
 
 pub const SPURIOUS_INTID: u32 = 1023;
+pub const SGI_INTID_MASK: u32 = 0x0f;
 
 #[derive(Clone, Copy)]
 pub struct GicV2 {
@@ -36,11 +39,42 @@ impl GicV2 {
             self.write_distributor(GICD_ICENABLER + bank, bit);
             self.write_priority(intid, 0x80);
             self.write_distributor(GICD_ISENABLER + bank, bit);
-            self.write_cpu_interface(GICC_PMR, 0xff);
-            self.write_cpu_interface(GICC_CTLR, 0x3);
+            self.enable_cpu_interface();
+            self.enable_distributor();
+        }
+    }
+
+    pub unsafe fn enable_distributor(self) {
+        unsafe {
             self.write_distributor(GICD_CTLR, 0x3);
             core::arch::asm!("dsb sy", "isb", options(nostack, preserves_flags));
         }
+    }
+
+    pub unsafe fn enable_cpu_interface(self) {
+        unsafe {
+            self.write_cpu_interface(GICC_PMR, 0xff);
+            self.write_cpu_interface(GICC_CTLR, 0x3);
+            core::arch::asm!("dsb sy", "isb", options(nostack, preserves_flags));
+        }
+    }
+
+    #[allow(dead_code)]
+    pub unsafe fn configure_sgi_priority(self, intid: u32, priority: u8) {
+        assert!(intid <= SGI_INTID_MASK);
+        unsafe {
+            self.write_priority(intid, priority);
+        }
+    }
+
+    #[allow(dead_code)]
+    pub unsafe fn send_sgi_to_target_list(self, intid: u32, target_list_bits: u8) -> u32 {
+        let value = sgi_target_list_value(intid, target_list_bits);
+        unsafe {
+            self.write_distributor(GICD_SGIR, value);
+            core::arch::asm!("dsb sy", "isb", options(nostack, preserves_flags));
+        }
+        value
     }
 
     pub unsafe fn acknowledge(self) -> u32 {
@@ -104,12 +138,23 @@ impl GicV2 {
     }
 }
 
+pub const fn sgi_target_list_value(intid: u32, target_list_bits: u8) -> u32 {
+    (intid & SGI_INTID_MASK) | ((target_list_bits as u32) << 16)
+}
+
 #[cfg(test)]
 mod tests {
-    use super::SPURIOUS_INTID;
+    use super::{SGI_INTID_MASK, SPURIOUS_INTID, sgi_target_list_value};
 
     #[test_case]
     fn spurious_intid_matches_gicv2_architecture() {
         assert_eq!(SPURIOUS_INTID, 1023);
+    }
+
+    #[test_case]
+    fn sgi_target_list_value_encodes_intid_and_targets() {
+        assert_eq!(SGI_INTID_MASK, 0x0f);
+        assert_eq!(sgi_target_list_value(1, 0b0000_1110), 0x000e_0001);
+        assert_eq!(sgi_target_list_value(0x21, 0b0000_0010), 0x0002_0001);
     }
 }
