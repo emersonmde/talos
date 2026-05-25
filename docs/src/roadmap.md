@@ -222,6 +222,13 @@ Completed:
   `counter=192 expected=192 participants=3 errors=0`,
   `mixed-cache-mmu=false`,
   `classification=pi5-smp-lock-cache-coherence-complete`, and `PASS`.
+- The Phase 6.2 SMP-safe primitives closeout checkpoint is accepted. Milestone
+  6.2 now has reconciled source inventory, generic `SpinLock<T>` and barrier
+  implementation, QEMU SMP lock contention evidence, serialized Pi 5 physical
+  cache/coherence proof, and proof-scaffolding cleanup. Scheduler migration,
+  shared run queues, cross-core wakeups, IPIs, userspace, descriptors,
+  filesystem, networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and
+  DMA/cache-coherent driver policy remain deferred.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -229,12 +236,15 @@ Completed:
 
 Blocked or pending:
 
-- The next explicit worker task is the supervisor-queued
-  `phase6-smp-lock-proof-scaffolding-quarantine-20260525` cleanup slice before
-  the Phase 6.2 closeout checkpoint. Multi-core scheduler migration, shared
-  run queues, cross-core wakeups, userspace, descriptors, filesystem,
-  networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and
-  DMA/cache-coherent driver policy remain deferred.
+- The next explicit worker task should be supervisor-planned from the accepted
+  Phase 6.2 closeout. The recommended next bounded Phase 6 slice is a scheduler
+  migration readiness source inventory covering shared scheduler state,
+  run-queue ownership, lock placement, cross-core wakeup/IPI requirements, and
+  per-core timer/preemption interactions before implementation. Multi-core
+  scheduler migration, shared run queues, cross-core wakeups, userspace,
+  descriptors, filesystem, networking, SSH, shell behavior, UART interrupts,
+  RP1/PCIe, and DMA/cache-coherent driver policy remain deferred until an
+  explicit durable task is queued.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.

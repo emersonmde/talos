@@ -12,6 +12,53 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-25 - Pi 5 SMP Lock Cache/Coherence Proof Accepted
+
+- Status: accepted as the physical Pi 5 hardware proof for the first Milestone
+  6.2 SMP-safe primitive. This does not accept scheduler migration, shared run
+  queues, cross-core wakeups, IPIs, userspace, descriptors, filesystem,
+  networking, SSH, shell behavior, UART interrupts, RP1/PCIe, or DMA policy.
+- Context: The initial lock proof found real staging/capture and mixed
+  cache/MMU issues. A separate handoff task proved that secondary cores can
+  install the same cacheable EL2 stage-1 regime as the boot CPU before generic
+  lock access. A report-invariant correction then ensured final per-core
+  identity and diagnostic state are reset, republished, and visible after the
+  handoff.
+- Decision: Accept
+  `tasks/2026-05-25-phase6-pi5-smp-lock-cache-coherence-final-proof.md` and
+  evidence in
+  `tasks/evidence/2026-05-25-pi5-smp-lock-cache-coherence-final-proof/` as
+  the hardware proof that `SpinLock<T>` can serialize bounded shared access
+  across the boot CPU and secondary cores 1, 2, and 3 on Pi 5 after the
+  accepted cacheable-MMU handoff.
+- Evidence level: serialized Pi 5 hardware run under `hardwareTestLock`,
+  with archive digest
+  `73041969803f1153a4277d0f56700df08022451a486cd7088ceabe654e953910`,
+  kernel digest
+  `e28596b5f259775c4c239c3e18b57e3d61d24ff453aa3c762c879e38075f7278`,
+  TFTP fetch evidence, cursor-valid serial output, and restore evidence. The
+  final invariant reports `counter=192 expected=192 participants=3`,
+  `diag-participants=3`, `errors=0`, `mixed-cache-mmu=false`,
+  `classification=pi5-smp-lock-cache-coherence-complete`, and
+  `rpi5-smp-lock-cache-coherence: PASS`.
+- Validation: `cargo fmt --all -- --check`, `cargo -Zjson-target-spec test`,
+  `scripts/qemu-smoke.sh`, `scripts/qemu-smp-lock-contention-smoke.sh`,
+  `scripts/rpi5-smp-lock-cache-coherence-image.sh`,
+  `scripts/rpi5-archive-review.sh`, and `git diff --check` passed.
+  `mdbook` was unavailable, so mdBook build was not run.
+- Consequences: The generic lock has Pi 5 physical proof and Milestone 6.2 may
+  close after proof scaffolding is quarantined. Cache maintenance remains
+  separate from the generic lock API. Scheduler migration and cross-core wakeup
+  work require a later supervisor-planned source inventory before
+  implementation.
+- Alternatives considered: Accept the earlier handoff run as the full lock
+  proof, keep iterating on entry-discriminator scaffolding, or add cache
+  maintenance inside `SpinLock<T>`. The first overstated evidence because the
+  report invariant still failed; the second chased temporary observability
+  scaffolding after the real blockers were understood; the third would conflate
+  mutual exclusion with cache/coherency policy needed later for DMA and mixed
+  memory attributes.
+
 ## 2026-05-25 - Pi 5 Secondary Cacheable-MMU Handoff Accepted
 
 - Status: accepted as the hardware proof for the secondary cacheable EL2 stage-1 handoff gate. The Pi 5 SMP lock/cache-coherence proof is not accepted by this decision.

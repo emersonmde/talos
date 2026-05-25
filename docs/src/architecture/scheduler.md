@@ -368,3 +368,10 @@ The primitive also keeps cache maintenance out of the generic lock. Early
 boot-time secondary-core state that needs explicit clean/invalidate operations
 must keep using a named cache-sharing boundary rather than assuming the lock
 solves non-coherent publication.
+
+Milestone 6.2 is closed with both QEMU substitute evidence and serialized Pi 5
+hardware proof for the generic lock/cache-coherence diagnostic. That proof
+accepts `SpinLock<T>` as a primitive, not the scheduler's data structures:
+the scheduler still needs a separate source inventory for shared run-queue
+ownership, lock placement, cross-core wakeups/IPIs, and per-core
+timer/preemption interactions before any multi-core scheduling implementation.
