@@ -1,0 +1,2 @@
+21f4e80cef35b40d13792fdac4f7a0fa6cce463af0d3eb3c825d9d6c87653d90  target/talos-rpi5-secondary-cacheable-mmu-handoff-proof-boot.tar.gz
+acc334beb5bc82555d6d4c3309d3e24b0b669593768cb9d01e479bc40e350e40  target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-smp-lock-cache-coherence.img

@@ -12,6 +12,16 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-25 - Pi 5 Secondary Cacheable-MMU Handoff Accepted
+
+- Status: accepted as the hardware proof for the secondary cacheable EL2 stage-1 handoff gate. The Pi 5 SMP lock/cache-coherence proof is not accepted by this decision.
+- Context: The prior Pi 5 lock proof was blocked because secondaries entered the shared lock diagnostic with cacheable MMU disabled while the boot CPU was cacheable/MMU-enabled. The implementation task added a narrow handoff that publishes MAIR_EL2, TCR_EL2, TTBR0_EL2, and SCTLR_EL2 from the boot CPU and makes each secondary install the same cacheable stage-1 regime before generic lock access.
+- Decision: Accept `tasks/2026-05-25-phase6-secondary-cacheable-mmu-handoff-pi5-proof.md` and evidence in `tasks/evidence/2026-05-25-pi5-secondary-cacheable-mmu-handoff-proof/` as the hardware proof that secondaries can join the cacheable EL2 stage-1 regime before shared lock state is used. The original lock proof must resume as a separate bounded task because the same run ended with `pi5-smp-lock-cache-coherence-invariant-failed` after the handoff passed.
+- Evidence level: serialized Pi 5 hardware run under `hardwareTestLock`, with archive digest `21f4e80cef35b40d13792fdac4f7a0fa6cce463af0d3eb3c825d9d6c87653d90`, kernel digest `acc334beb5bc82555d6d4c3309d3e24b0b669593768cb9d01e479bc40e350e40`, TFTP event evidence, serial output, and restore evidence. Serial output shows logical cores 1, 2, and 3 reporting `diag-sctlr-el2=0x0000000030c51835` and `diag-cacheable-mmu=true`.
+- Validation: `cargo fmt --all -- --check`, `cargo -Zjson-target-spec test`, `scripts/qemu-smoke.sh`, `scripts/qemu-smp-lock-contention-smoke.sh`, `scripts/rpi5-archive-review.sh`, and `git diff --check` passed. `mdbook` was unavailable, so mdBook build was not run.
+- Consequences: The mixed cache/MMU blocker is closed for the handoff gate. The lock proof remains unaccepted and should resume with a narrower discriminator for the final per-core identity/report invariant rather than reopening the cache/MMU question.
+- Alternatives considered: Treat the full lock proof as accepted because the final shared counter reached 192/192, or keep the handoff task open until the entire lock proof passes. The first would overstate the evidence because logical cores 1 and 2 had zeroed final identity fields; the second would conflate the handoff proof with a later lock diagnostic invariant.
+
 ## 2026-05-24 - Phase 4 Closeout Accepted
 
 - Status: accepted as the checkpoint closing Phase 4 interrupts, timers, and

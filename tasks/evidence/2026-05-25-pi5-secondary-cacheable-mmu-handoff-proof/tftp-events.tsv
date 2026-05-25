@@ -1,0 +1,13 @@
+da591740/config.txt	served	118	10.42.1.4	May 25 01:31:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4
+da591740/config.txt	served	118	10.42.1.4	May 25 01:31:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4
+da591740/pieeprom.sig	not_found	null	10.42.1.4	May 25 01:31:54 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4
+da591740//config.txt	served	118	10.42.1.4	May 25 01:31:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4
+da591740//config.txt	served	118	10.42.1.4	May 25 01:31:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4
+da591740/kernel_2712.img	served	82045	10.42.1.4	May 25 01:31:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+da591740/bcm2712-rpi-5-b.dtb	served	78679	10.42.1.4	May 25 01:31:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4
+da591740//overlays/overlay_map.dtb	served	5971	10.42.1.4	May 25 01:31:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4
+da591740//overlays/bcm2712d0.dtbo	served	1363	10.42.1.4	May 25 01:31:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4
+da591740//config.txt	served	118	10.42.1.4	May 25 01:31:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4
+da591740//cmdline.txt	served	81	10.42.1.4	May 25 01:31:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4
+da591740/armstub8-2712.bin	not_found	null	10.42.1.4	May 25 01:31:55 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4
+da591740/kernel_2712.img	served	82045	10.42.1.4	May 25 01:31:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
