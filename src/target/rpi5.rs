@@ -322,6 +322,8 @@ pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
                 }
             }
         }
+        #[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+        core_state.republish_identity(context, mpidr, affinity, stack_pointer as usize);
         core_state.mark_handoff_ready();
         core_state.clean_to_poc();
         write_uart10_bytes_early_phase(b"TALOS: secondary_state_published\r\n");

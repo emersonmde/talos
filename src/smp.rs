@@ -117,6 +117,20 @@ impl PerCoreState {
             .store(CoreLifecycle::Registered.raw(), Ordering::Release);
     }
 
+    pub fn republish_identity(
+        &self,
+        context: usize,
+        mpidr: u64,
+        affinity: u64,
+        stack_pointer: usize,
+    ) {
+        self.context.store(context as u64, Ordering::Release);
+        self.mpidr.store(mpidr, Ordering::Release);
+        self.affinity.store(affinity, Ordering::Release);
+        self.stack_pointer
+            .store(stack_pointer as u64, Ordering::Release);
+    }
+
     pub fn mark_handoff_ready(&self) {
         self.lifecycle
             .store(CoreLifecycle::HandoffReady.raw(), Ordering::Release);
@@ -377,6 +391,26 @@ mod tests {
         assert_eq!(progress, 8);
         assert_eq!(snapshot.lifecycle, CoreLifecycle::WorkloadComplete);
         assert_eq!(snapshot.workload_progress, 8);
+    }
+
+    #[test_case]
+    fn republish_identity_refreshes_identity_without_resetting_progress() {
+        reset_secondary_core_states();
+        let state = &SECONDARY_CORE_STATES[3];
+        state.enter(0, 0, 0);
+        state.mark_workload_running();
+        state.record_workload_progress(7);
+
+        state.republish_identity(3, 0x8100_0300, 0x300, 0x21c_f50);
+        let snapshot = state.snapshot(3);
+
+        assert_eq!(snapshot.logical_cpu, 3);
+        assert_eq!(snapshot.context, 3);
+        assert_eq!(snapshot.mpidr, 0x8100_0300);
+        assert_eq!(snapshot.affinity, 0x300);
+        assert_eq!(snapshot.stack_pointer, 0x21c_f50);
+        assert_eq!(snapshot.lifecycle, CoreLifecycle::WorkloadRunning);
+        assert_eq!(snapshot.workload_progress, 7);
     }
 
     #[test_case]
