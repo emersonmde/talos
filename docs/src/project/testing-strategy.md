@@ -68,6 +68,9 @@ The physical lab is the source of truth for the talos-rpi5-bcm2712 target.
 - Do not write ignored tests for hardware that QEMU cannot run. Prefer pure tests plus physical diagnostics.
 - Every hardware milestone needs a diagnostic command or serial-observable result.
 - Every boot attempt that changes direction should record the archive digest, power-cycle time, serial result, and classification.
+- Keep accepted evidence reviewable through task records and summaries. Raw lab
+  captures belong in Git only when compact, decisive, or retained by an explicit
+  evidence policy; see [Evidence Retention Policy](evidence-retention-policy.md).
 - Only one physical Pi 5 test may run at a time. The lab board is a shared serial hardware resource, so hardware runs must use a durable test lock or queue.
 - Code must pass review before it is sent to the physical Pi 5. Hardware time should be spent on plausible candidates, not unreviewed work.
 - Hardware results must be reviewed after the run. Serial logs, boot classification, and lab-controller metadata are part of the task evidence, and the implementation may need another coding iteration before acceptance.
