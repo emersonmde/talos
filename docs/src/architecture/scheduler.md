@@ -672,3 +672,31 @@ secondary dispatch smoke and serialized Pi 5 proof show logical CPUs 1, 2, and
 dispatching three CPU-local diagnostic tasks each, publishing current-task and
 counter snapshots, and rejecting cross-owner local queue and production
 dispatch attempts.
+
+## Phase 6.3 Shared Scheduler Metadata Contract
+
+The shared scheduler metadata source inventory is accepted as a contract only.
+The first metadata slice may name scheduler tasks across cores, but it must not
+turn the scheduler into a shared run-queue topology. The minimal record is a
+TaskId, owning LogicalCpuId, TaskState, optional ProcessOwnerId, kernel-stack
+bounds, owner-local current/runnable membership, and a generation or counter
+field sufficient to reject stale diagnostic snapshots.
+
+Ownership remains CPU-local. The owning CPU is the only writer for its Task,
+PerCoreScheduler, current_task, RunnableQueue, and target-owned remote wake
+consumption state. A remote CPU may inspect metadata or publish a bounded wake
+request, but it must not mutate another CPU's local scheduler state, force a
+remote enqueue, steal work, migrate a task, or dispatch a remote runnable task.
+
+IPI and timer IRQ context remain bounded observation paths. They may
+acknowledge, classify, record bounded state, EOI, and return; they must not
+allocate, format, print, poll UART input, dispatch diagnostic commands, walk
+unbounded metadata, mutate runnable queues, migrate tasks, or cross
+talos_aarch64_context_switch.
+
+The first implementation task should add only local-owner metadata types and
+APIs for task identity/owner/state snapshots. Shared run queues, global task
+lookup with mutation authority, remote enqueue queues, task migration, load
+balancing, work stealing, multi-core preemption, Phase 7, filesystem,
+networking, SSH, shell behavior, RP1/PCIe, UART interrupt ownership, and
+DMA/cache-coherent driver policy remain deferred.

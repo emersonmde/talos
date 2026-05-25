@@ -2402,3 +2402,38 @@ ADR template:
 - Validation: git status --short before edits was clean, git diff --check passed after edits, and mdbook build passed. Rust fmt/tests and hardware runs were not required because this checkpoint changed only Markdown documentation and durable task state.
 - Rationale: Closing this slice prevents a proven CPU-local diagnostic dispatch path from being treated as permission for shared scheduler topology. The next useful boundary is the metadata contract needed before any future shared run queue or task migration work.
 - Risks: The accepted capability remains diagnostic and CPU-local. There is no global task registry, shared run queue, migration policy, load balancer, work stealing, remote enqueue authority, or multi-core preemption policy. Userspace, descriptors, filesystem, networking, SSH, shell behavior, RP1/PCIe, UART interrupt ownership, and DMA/cache policy remain deferred.
+
+## 2026-05-25 - Phase 6.3 Shared Scheduler Metadata Source Inventory Accepted
+
+- Status: accepted as the documentation/source-inventory and ownership contract
+  for the first shared scheduler metadata slice. No Rust implementation, boot
+  image, hardware publish/test, shared run queue, remote enqueue, task
+  migration, load balancing, multi-core preemption, Phase 7, filesystem,
+  networking, SSH, shell, RP1/PCIe, UART interrupt ownership, or DMA behavior
+  was added.
+- Context: Production secondary dispatch is accepted only for explicitly seeded
+  CPU-local diagnostic kernel threads. Before any future shared scheduler
+  topology, Talos needs a metadata boundary that can name a task across cores
+  without allowing remote CPUs to mutate target-local scheduler state.
+- Decision: Accept phase6-shared-scheduler-metadata-source-inventory-20260525.
+  The first implementation should add only metadata types and local-owner APIs
+  for task ID, owning CPU, task state, optional process owner, stack bounds,
+  current/runnable membership, and stale snapshot rejection. The next bounded
+  task should be phase6-shared-scheduler-metadata-core-20260525.
+- Evidence level: static inspection, static source review of scheduler/SMP/QEMU
+  and Pi 5 target paths, accepted Phase 6.3 task/evidence review,
+  architecture documentation update, roadmap update, decision-log update,
+  mdBook validation, and whitespace inspection.
+- Validation: git status --short before edits showed a clean Talos repo, git
+  diff --check passed after edits, and mdbook build passed. Rust fmt/tests and
+  hardware runs were not required because this task changed only Markdown
+  documentation and durable task state.
+- Rationale: The metadata contract lets later code identify task ownership
+  across CPUs while preserving the accepted CPU-local runnable queue and
+  target-owned wake-consumption rules. It keeps IPI and timer context as
+  bounded observation paths, not scheduler mutation paths.
+- Risks: This contract is not an implementation. Shared run queues, global task
+  lookup with mutation authority, remote enqueue, task migration, load
+  balancing, work stealing, multi-core preemption, userspace, descriptors,
+  filesystem, networking, SSH, shell behavior, RP1/PCIe, UART interrupt
+  ownership, and DMA/cache policy remain deferred.

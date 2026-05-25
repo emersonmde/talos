@@ -312,6 +312,14 @@ Completed:
   metadata source inventory and contract, not shared run queue implementation,
   task migration, multi-core preemption, Phase 7, filesystem, networking, SSH,
   or shell work.
+- Phase 6.3 shared scheduler metadata source inventory and contract is
+  accepted. The next bounded implementation task should add only local-owner
+  metadata types and APIs for scheduler task identity, owning CPU, task state,
+  optional process owner, stack bounds, current/runnable membership, and stale
+  snapshot rejection. It must preserve CPU-local runnable queue ownership and
+  does not authorize shared run queues, remote enqueue, migration, load
+  balancing, multi-core preemption, Phase 7, filesystem, networking, SSH, or
+  shell work.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -320,7 +328,7 @@ Completed:
 Blocked or pending:
 
 - The next explicit worker task should stay within Phase 6.3 and, if queued,
-  inventory the shared scheduler metadata boundary before any shared run queue
+  implement only the shared scheduler metadata core before any shared run queue
   implementation, migration, load balancing, multi-core preemption, userspace,
   descriptors, filesystem, networking, SSH, shell behavior, UART interrupts,
   RP1/PCIe, or DMA/cache-coherent driver policy starts.
@@ -622,7 +630,7 @@ scheduler-migration slice, raw QEMU/Pi 5 SGI delivery, remote wake-request
 publication/consumption evidence, the target-owned wake-consumption contract,
 QEMU and Pi 5 blocked-to-runnable target-owned wake proofs, and the remote
 wakeup scheduler-integration closeout, plus the production secondary dispatch
-closeout checkpoint. See
+closeout checkpoint and shared scheduler metadata source inventory. See
 [Phase 6 Secondary-Core Bring-Up Closeout Checkpoint](project/phase6-secondary-core-bringup-closeout-checkpoint.md)
 and
 [Phase 6 Secondary-Core Bring-Up Source Inventory](project/phase6-secondary-core-bringup-source-inventory.md),
@@ -633,7 +641,9 @@ and
 and
 [Phase 6 Remote Wakeup Scheduler Integration Closeout](project/phase6-remote-wakeup-scheduler-integration-closeout.md),
 and
-[Phase 6 Production Secondary Dispatch Closeout](project/phase6-production-secondary-dispatch-closeout-checkpoint.md).
+[Phase 6 Production Secondary Dispatch Closeout](project/phase6-production-secondary-dispatch-closeout-checkpoint.md),
+and
+[Phase 6 Shared Scheduler Metadata Source Inventory](project/phase6-shared-scheduler-metadata-source-inventory.md).
 
 Milestone 6.1: Secondary Core Bring-Up
 
