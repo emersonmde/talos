@@ -291,6 +291,12 @@ Completed:
   runnable transitions. Shared run queues, global task lookup, remote enqueue,
   task migration, load balancing, work stealing, multi-core preemption, Phase
   7, filesystem, networking, SSH, and shell work remain deferred.
+- Phase 6.3 QEMU production secondary dispatch evidence is accepted. Under
+  QEMU virt, logical CPUs 1, 2, and 3 enter the explicit
+  `SecondaryProductionDiagnostic` role, dispatch bounded CPU-local diagnostic
+  tasks, publish stable local ownership/current-task/counter snapshots, and
+  reject cross-owner local scheduler mutation. This is substitute evidence only;
+  Pi 5 production secondary dispatch remains the next hardware proof.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -299,10 +305,10 @@ Completed:
 Blocked or pending:
 
 - The next explicit worker task should stay within Phase 6.3 and, if queued,
-  implement only the production secondary dispatch core slice for CPU-local
-  diagnostic kernel threads. It should not start shared scheduler metadata,
-  migration, load balancing, multi-core preemption, userspace, descriptors,
-  filesystem, networking, SSH, shell behavior, UART interrupts, RP1/PCIe, or
+  carry the accepted QEMU production secondary dispatch slice to serialized Pi
+  5 hardware proof. It should not start shared scheduler metadata, migration,
+  load balancing, multi-core preemption, userspace, descriptors, filesystem,
+  networking, SSH, shell behavior, UART interrupts, RP1/PCIe, or
   DMA/cache-coherent driver policy until an explicit durable task is queued.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,

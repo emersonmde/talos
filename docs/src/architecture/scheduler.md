@@ -407,8 +407,9 @@ callbacks while holding scheduler locks.
 boundary:
 
 - `LogicalCpuId` records the logical CPU that owns a local scheduler state.
-- `SchedulerCoreRole` separates `BootCpuProduction` from
-  `SecondaryDeferred`; only the boot-CPU role can enter production dispatch in
+- `SchedulerCoreRole` separates `BootCpuProduction`,
+  `SecondaryProductionDiagnostic`, and `SecondaryDeferred`. Only the boot CPU
+  and the explicit secondary diagnostic role can enter production dispatch in
   this slice.
 - `PerCoreScheduler` wraps a local `SingleCoreScheduler`, its owning logical
   CPU, role, and current-task slot. `local_scheduler_mut()` rejects callers
@@ -430,6 +431,15 @@ CPUs 0 through 3, keeps secondary roles deferred from production dispatch, and
 exercises local runnable/progress accounting without shared run queues,
 migration, IPIs, or cross-core wakeups. Diagnostic output is emitted after the
 bounded local work and outside hot lock/IRQ paths.
+
+The QEMU substitute diagnostic behind
+`TALOS_QEMU_PRODUCTION_SECONDARY_DISPATCH_SMOKE` extends that evidence to the
+first production secondary-dispatch slice. Logical CPUs 1, 2, and 3 use
+`SecondaryProductionDiagnostic` to seed only CPU-local diagnostic tasks,
+dispatch three bounded local tasks each, publish stable current-task and
+dispatch counters, and reject cross-owner local queue/dispatch attempts. This
+does not add shared run queues, global task lookup, task migration, load
+balancing, secondary timer preemption, or a Pi 5 hardware claim.
 
 ## Phase 6.3 Cross-Core Wakeup and IPI Readiness
 

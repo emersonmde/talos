@@ -15,15 +15,18 @@ use crate::scheduler::TargetWakeConsumptionError;
     talos_qemu_scheduler_yield_smoke,
     talos_qemu_timer_preemption_smoke,
     talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_remote_wakeup_request_smoke
+    talos_qemu_remote_wakeup_request_smoke,
+    talos_qemu_production_secondary_dispatch_smoke
 ))]
 use crate::scheduler::{ContextFrame, KernelStack, SingleCoreScheduler, Task, TaskId, TaskState};
 #[cfg(any(
     talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_remote_wakeup_request_smoke
+    talos_qemu_remote_wakeup_request_smoke,
+    talos_qemu_production_secondary_dispatch_smoke
 ))]
 use crate::scheduler::{
-    LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError, SchedulerCoreRole,
+    LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError, ProductionDispatchError,
+    SchedulerCoreRole,
 };
 #[cfg(talos_qemu_remote_wakeup_request_smoke)]
 use crate::scheduler::{RemoteWakePublishOutcome, RemoteWakeQueue};
@@ -33,7 +36,8 @@ use crate::scheduler::{RemoteWakePublishOutcome, RemoteWakeQueue};
     talos_qemu_smp_lock_contention_smoke,
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_cross_core_ipi_delivery_smoke,
-    talos_qemu_remote_wakeup_request_smoke
+    talos_qemu_remote_wakeup_request_smoke,
+    talos_qemu_production_secondary_dispatch_smoke
 )))]
 use crate::smp::MAX_CORES;
 #[cfg(talos_qemu_secondary_core_workload_smoke)]
@@ -44,7 +48,8 @@ use crate::smp::SECONDARY_CORE_WORKLOAD_TARGET;
     talos_qemu_smp_lock_contention_smoke,
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_cross_core_ipi_delivery_smoke,
-    talos_qemu_remote_wakeup_request_smoke
+    talos_qemu_remote_wakeup_request_smoke,
+    talos_qemu_production_secondary_dispatch_smoke
 ))]
 use crate::smp::{
     self, CoreLifecycle, CoreStackLayout, MAX_CORES, SECONDARY_CORE_STATES,
@@ -54,7 +59,8 @@ use crate::smp::{
 use crate::smp_sync::{SpinLock, smp_full_barrier};
 #[cfg(any(
     talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_remote_wakeup_request_smoke
+    talos_qemu_remote_wakeup_request_smoke,
+    talos_qemu_production_secondary_dispatch_smoke
 ))]
 use crate::smp_sync::{SpinLock, smp_full_barrier};
 use crate::{
@@ -80,7 +86,8 @@ const TIMER_IRQ_WAIT_LIMIT: usize = 1_000_000;
     talos_qemu_smp_lock_contention_smoke,
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_cross_core_ipi_delivery_smoke,
-    talos_qemu_remote_wakeup_request_smoke
+    talos_qemu_remote_wakeup_request_smoke,
+    talos_qemu_production_secondary_dispatch_smoke
 ))]
 const QEMU_SECONDARY_WAIT_LIMIT: usize = 10_000_000;
 #[cfg(any(
@@ -94,6 +101,8 @@ const REMOTE_WAKE_QUEUE_CAPACITY: usize = 4;
 const SMP_LOCK_CONTENTION_TARGET_PER_CORE: u64 = 64;
 #[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
 const PER_CORE_SCHEDULER_PROGRESS_TARGET: u64 = 4;
+#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+const PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET: u64 = 3;
 #[cfg(any(
     talos_qemu_context_switch_smoke,
     talos_qemu_scheduler_yield_smoke,
@@ -128,7 +137,8 @@ static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
     talos_qemu_smp_lock_contention_smoke,
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_cross_core_ipi_delivery_smoke,
-    talos_qemu_remote_wakeup_request_smoke
+    talos_qemu_remote_wakeup_request_smoke,
+    talos_qemu_production_secondary_dispatch_smoke
 ))]
 unsafe extern "C" {
     fn talos_aarch64_qemu_secondary_entry();
@@ -500,7 +510,8 @@ pub const fn qemu_logical_cpu_from_mpidr_affinity(affinity: u64) -> Option<usize
     talos_qemu_smp_lock_contention_smoke,
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_cross_core_ipi_delivery_smoke,
-    talos_qemu_remote_wakeup_request_smoke
+    talos_qemu_remote_wakeup_request_smoke,
+    talos_qemu_production_secondary_dispatch_smoke
 ))]
 fn secondary_stack_layout() -> CoreStackLayout {
     let base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
@@ -515,7 +526,8 @@ fn secondary_stack_layout() -> CoreStackLayout {
     talos_qemu_smp_lock_contention_smoke,
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_cross_core_ipi_delivery_smoke,
-    talos_qemu_remote_wakeup_request_smoke
+    talos_qemu_remote_wakeup_request_smoke,
+    talos_qemu_production_secondary_dispatch_smoke
 ))]
 fn secondary_state_name(state: u64) -> &'static str {
     CoreLifecycle::from_raw(state).map_or("unknown", CoreLifecycle::name)
@@ -527,7 +539,8 @@ fn secondary_state_name(state: u64) -> &'static str {
     talos_qemu_smp_lock_contention_smoke,
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_cross_core_ipi_delivery_smoke,
-    talos_qemu_remote_wakeup_request_smoke
+    talos_qemu_remote_wakeup_request_smoke,
+    talos_qemu_production_secondary_dispatch_smoke
 ))]
 unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) -> i64 {
     let mut function_id = 0xc400_0003u64;
@@ -579,7 +592,8 @@ pub fn services(boot_info: &BootInfo) -> TargetServices {
     talos_qemu_smp_lock_contention_smoke,
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_cross_core_ipi_delivery_smoke,
-    talos_qemu_remote_wakeup_request_smoke
+    talos_qemu_remote_wakeup_request_smoke,
+    talos_qemu_production_secondary_dispatch_smoke
 ))]
 #[unsafe(no_mangle)]
 pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
@@ -607,6 +621,8 @@ pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
         run_cross_core_ipi_delivery_secondary(core_state, logical_cpu);
         #[cfg(talos_qemu_remote_wakeup_request_smoke)]
         run_remote_wakeup_request_secondary(core_state, logical_cpu);
+        #[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+        run_production_secondary_dispatch_secondary(core_state, logical_cpu);
     }
 
     loop {
@@ -676,7 +692,10 @@ fn reset_per_core_scheduler_ownership_state() {
     *state = PerCoreSchedulerOwnershipState::new();
 }
 
-#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+#[cfg(any(
+    talos_qemu_per_core_scheduler_ownership_smoke,
+    talos_qemu_production_secondary_dispatch_smoke
+))]
 fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
     match role {
         SchedulerCoreRole::BootCpuProduction => "boot-production",
@@ -685,12 +704,18 @@ fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
     }
 }
 
-#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+#[cfg(any(
+    talos_qemu_per_core_scheduler_ownership_smoke,
+    talos_qemu_production_secondary_dispatch_smoke
+))]
 fn task_id(raw: u64) -> TaskId {
     TaskId::new(raw).expect("diagnostic task IDs are nonzero")
 }
 
-#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+#[cfg(any(
+    talos_qemu_per_core_scheduler_ownership_smoke,
+    talos_qemu_production_secondary_dispatch_smoke
+))]
 fn scheduler_task(logical_cpu: usize, progress: u64) -> Task {
     let raw_task_id = (logical_cpu as u64 + 1) * 100 + progress;
     let stack_base = 0x8000_0000 + logical_cpu * 0x10000 + progress as usize * 0x1000;
@@ -813,6 +838,178 @@ fn run_per_core_scheduler_ownership_secondary(core_state: &smp::PerCoreState, lo
     let mut scheduler = PerCoreScheduler::<2>::deferred_secondary(LogicalCpuId::new(logical_cpu));
     let report = build_per_core_scheduler_report(logical_cpu, &mut scheduler);
     publish_per_core_scheduler_report(logical_cpu, report);
+    smp_full_barrier();
+
+    core_state.mark_workload_complete(report.progress);
+    core_state.clean_to_poc();
+}
+
+#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+#[derive(Clone, Copy)]
+struct ProductionSecondaryDispatchReport {
+    owner: u64,
+    role: SchedulerCoreRole,
+    production_dispatch_enabled: bool,
+    current_task: u64,
+    queue_len: u64,
+    front_task: u64,
+    progress: u64,
+    state_transitions: u64,
+    production_dispatches: u64,
+    context_switches: u64,
+    cross_owner_rejected: bool,
+    cross_owner_dispatch_rejected: bool,
+    errors: u64,
+}
+
+#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+impl ProductionSecondaryDispatchReport {
+    const fn empty() -> Self {
+        Self {
+            owner: u64::MAX,
+            role: SchedulerCoreRole::SecondaryDeferred,
+            production_dispatch_enabled: false,
+            current_task: 0,
+            queue_len: 0,
+            front_task: 0,
+            progress: 0,
+            state_transitions: 0,
+            production_dispatches: 0,
+            context_switches: 0,
+            cross_owner_rejected: false,
+            cross_owner_dispatch_rejected: false,
+            errors: 0,
+        }
+    }
+}
+
+#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+#[derive(Clone, Copy)]
+struct ProductionSecondaryDispatchState {
+    reports: [ProductionSecondaryDispatchReport; MAX_CORES],
+    lock_progress: [u64; MAX_CORES],
+}
+
+#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+impl ProductionSecondaryDispatchState {
+    const fn new() -> Self {
+        Self {
+            reports: [ProductionSecondaryDispatchReport::empty(); MAX_CORES],
+            lock_progress: [0; MAX_CORES],
+        }
+    }
+}
+
+#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+static PRODUCTION_SECONDARY_DISPATCH_STATE: SpinLock<ProductionSecondaryDispatchState> =
+    SpinLock::new(ProductionSecondaryDispatchState::new());
+
+#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+fn reset_production_secondary_dispatch_state() {
+    let mut state = unsafe { PRODUCTION_SECONDARY_DISPATCH_STATE.lock_irqsave() };
+    *state = ProductionSecondaryDispatchState::new();
+}
+
+#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+fn build_production_secondary_dispatch_report(
+    logical_cpu: usize,
+    scheduler: &mut PerCoreScheduler<2>,
+) -> ProductionSecondaryDispatchReport {
+    let requester = LogicalCpuId::new(logical_cpu);
+    let wrong_requester = LogicalCpuId::BOOT;
+    let mut errors = 0;
+
+    let cross_owner_rejected = match scheduler.local_scheduler_mut(wrong_requester) {
+        Err(PerCoreSchedulerAccessError::WrongOwner {
+            owner,
+            requester: wrong,
+        }) => owner == requester && wrong == wrong_requester,
+        _ => false,
+    };
+    if !cross_owner_rejected {
+        errors += 1;
+    }
+
+    let mut wrong_owner_task = scheduler_task(logical_cpu, 99);
+    let cross_owner_dispatch_rejected = match scheduler
+        .dispatch_cpu_local_diagnostic_task(wrong_requester, &mut wrong_owner_task)
+    {
+        Err(ProductionDispatchError::WrongOwner {
+            owner,
+            requester: wrong,
+        }) => owner == requester && wrong == wrong_requester,
+        _ => false,
+    };
+    if !cross_owner_dispatch_rejected {
+        errors += 1;
+    }
+
+    let mut progress = 0;
+    while progress < PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET {
+        let next_progress = progress + 1;
+        let mut task = scheduler_task(logical_cpu, next_progress);
+        match scheduler.local_scheduler_mut(requester) {
+            Ok(local_scheduler) => {
+                if local_scheduler.make_runnable(&mut task).is_err() {
+                    errors += 1;
+                    break;
+                }
+            }
+            Err(_) => {
+                errors += 1;
+                break;
+            }
+        }
+
+        match scheduler.dispatch_cpu_local_diagnostic_task(requester, &mut task) {
+            Ok(task_id) if task_id == task.id() && task.state() == TaskState::Running => {
+                progress = next_progress;
+            }
+            _ => {
+                errors += 1;
+                break;
+            }
+        }
+    }
+
+    let local_scheduler = scheduler.scheduler();
+    let counters = local_scheduler.counters();
+    ProductionSecondaryDispatchReport {
+        owner: scheduler.owner().raw() as u64,
+        role: scheduler.role(),
+        production_dispatch_enabled: scheduler.production_dispatch_enabled(),
+        current_task: scheduler.current_task().map_or(0, TaskId::raw),
+        queue_len: local_scheduler.runnable().len() as u64,
+        front_task: local_scheduler.runnable().front().map_or(0, TaskId::raw),
+        progress,
+        state_transitions: counters.state_transitions(),
+        production_dispatches: counters.production_dispatches(),
+        context_switches: counters.context_switches(),
+        cross_owner_rejected,
+        cross_owner_dispatch_rejected,
+        errors,
+    }
+}
+
+#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+fn publish_production_secondary_dispatch_report(
+    logical_cpu: usize,
+    report: ProductionSecondaryDispatchReport,
+) {
+    let mut state = PRODUCTION_SECONDARY_DISPATCH_STATE.lock();
+    state.reports[logical_cpu] = report;
+    state.lock_progress[logical_cpu] = report.progress;
+}
+
+#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+fn run_production_secondary_dispatch_secondary(core_state: &smp::PerCoreState, logical_cpu: usize) {
+    core_state.mark_workload_running();
+    core_state.clean_to_poc();
+
+    let mut scheduler =
+        PerCoreScheduler::<2>::production_secondary_diagnostic(LogicalCpuId::new(logical_cpu));
+    let report = build_production_secondary_dispatch_report(logical_cpu, &mut scheduler);
+    publish_production_secondary_dispatch_report(logical_cpu, report);
     smp_full_barrier();
 
     core_state.mark_workload_complete(report.progress);
@@ -1832,6 +2029,156 @@ pub fn run_per_core_scheduler_ownership_smoke() -> bool {
     }
 
     reports_ok && irq_mask_probe.passed()
+}
+
+#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+pub fn run_production_secondary_dispatch_smoke() -> bool {
+    smp::reset_secondary_core_states();
+    reset_production_secondary_dispatch_state();
+
+    let boot_mpidr = aarch64::mpidr_el1();
+    let boot_affinity = aarch64::mpidr_affinity(boot_mpidr);
+    let boot_logical = qemu_logical_cpu_from_mpidr_affinity(boot_affinity);
+    let entry = talos_aarch64_qemu_secondary_entry as *const () as usize;
+    let stack_layout = secondary_stack_layout();
+    let stack_base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
+    let stack_end = core::ptr::addr_of!(talos_secondary_core_stacks_end) as usize;
+
+    crate::println!(
+        "qemu-production-secondary-dispatch: start conduit=smc cores={} target={} boot-mpidr={:#018x} boot-affinity={:#x} boot-logical={:?} entry={:#018x} stack-range=[{:#018x},{:#018x})",
+        MAX_CORES,
+        PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET,
+        boot_mpidr,
+        boot_affinity,
+        boot_logical,
+        entry,
+        stack_base,
+        stack_end
+    );
+
+    let mut cpu_on_ok = true;
+    for logical_cpu in 1..MAX_CORES {
+        let target_affinity = logical_cpu as u64;
+        let result = unsafe { psci_cpu_on_smc(target_affinity, entry, logical_cpu) };
+        crate::println!(
+            "qemu-production-secondary-dispatch: cpu-on logical={} target-affinity={:#x} result={}",
+            logical_cpu,
+            target_affinity,
+            result
+        );
+        cpu_on_ok &= result == 0;
+    }
+
+    let mut remaining = QEMU_SECONDARY_WAIT_LIMIT;
+    while remaining > 0 {
+        let all_complete = (1..MAX_CORES).all(|logical_cpu| {
+            SECONDARY_CORE_STATES[logical_cpu]
+                .snapshot(logical_cpu)
+                .lifecycle
+                >= CoreLifecycle::WorkloadComplete
+        });
+        if all_complete {
+            break;
+        }
+        core::hint::spin_loop();
+        remaining -= 1;
+    }
+
+    let final_state = PRODUCTION_SECONDARY_DISPATCH_STATE
+        .try_lock()
+        .map(|state| *state);
+    let lock_available = final_state.is_some();
+    let final_state = final_state.unwrap_or_else(ProductionSecondaryDispatchState::new);
+    let mut participants = 0;
+    let mut errors = 0;
+    let mut reports_ok = cpu_on_ok && boot_logical == Some(0) && lock_available;
+
+    for logical_cpu in 1..MAX_CORES {
+        let report = final_state.reports[logical_cpu];
+        let core_report = SECONDARY_CORE_STATES[logical_cpu].snapshot(logical_cpu);
+        let logical_from_mpidr = qemu_logical_cpu_from_mpidr_affinity(core_report.affinity);
+        let stack_slot = stack_layout
+            .slot(logical_cpu)
+            .expect("stack slot for possible QEMU core");
+        let stack_owned = stack_slot.contains_stack_pointer(core_report.stack_pointer);
+        let expected_current =
+            (logical_cpu as u64 + 1) * 100 + PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET;
+        let role_ok = report.role == SchedulerCoreRole::SecondaryProductionDiagnostic
+            && report.production_dispatch_enabled
+            && report.current_task == expected_current;
+        let report_ok = core_report.lifecycle >= CoreLifecycle::WorkloadComplete
+            && core_report.context == logical_cpu
+            && logical_from_mpidr == Some(logical_cpu)
+            && stack_owned
+            && report.owner == logical_cpu as u64
+            && role_ok
+            && report.queue_len == 0
+            && report.front_task == 0
+            && report.progress == PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET
+            && report.state_transitions == PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET * 2
+            && report.production_dispatches == PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET
+            && report.context_switches == PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET
+            && final_state.lock_progress[logical_cpu]
+                == PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET
+            && report.cross_owner_rejected
+            && report.cross_owner_dispatch_rejected
+            && report.errors == 0;
+        if report_ok {
+            participants += 1;
+        }
+        errors += report.errors;
+        reports_ok &= report_ok;
+
+        crate::println!(
+            "qemu-production-secondary-dispatch: report logical={} state={} context={} mapped={:?} owner={} role={} production={} current={} queue-len={} front={} progress={} transitions={} production-dispatches={} context-switches={} cross-owner-rejected={} cross-owner-dispatch-rejected={} lock-progress={} errors={} ok={}",
+            logical_cpu,
+            secondary_state_name(core_report.lifecycle.raw()),
+            core_report.context,
+            logical_from_mpidr,
+            report.owner,
+            scheduler_role_name(report.role),
+            report.production_dispatch_enabled,
+            report.current_task,
+            report.queue_len,
+            report.front_task,
+            report.progress,
+            report.state_transitions,
+            report.production_dispatches,
+            report.context_switches,
+            report.cross_owner_rejected,
+            report.cross_owner_dispatch_rejected,
+            final_state.lock_progress[logical_cpu],
+            report.errors,
+            report_ok
+        );
+    }
+
+    let classification = if reports_ok {
+        "qemu-production-secondary-dispatch-complete"
+    } else if !lock_available {
+        "qemu-production-secondary-dispatch-lock-still-held"
+    } else if cpu_on_ok {
+        "qemu-production-secondary-dispatch-invariant-failed"
+    } else {
+        "qemu-psci-smc-cpu-on-failed"
+    };
+    crate::println!(
+        "qemu-production-secondary-dispatch: final participants={} expected={} errors={} lock-available={} wait-remaining={} classification={}",
+        participants,
+        MAX_CORES - 1,
+        errors,
+        lock_available,
+        remaining,
+        classification
+    );
+
+    if reports_ok {
+        crate::println!("qemu-production-secondary-dispatch: PASS");
+    } else {
+        crate::println!("qemu-production-secondary-dispatch: FAIL");
+    }
+
+    reports_ok
 }
 
 #[cfg(talos_qemu_cross_core_ipi_delivery_smoke)]
