@@ -507,21 +507,16 @@ implementation may count the duplicate for evidence. Queue-full, invalid
 target CPU, invalid task ID, and self-targeted remote requests must be explicit
 outcomes rather than silent scheduler mutations.
 
-The QEMU remote wake-request smoke is now accepted as the first
-scheduler-facing IPI proof. `RemoteWakeQueue` is a bounded target-owned request
-list over scheduler-local `TaskId` values: remote publication may insert or
-coalesce a request, but target-owned consumption happens after IPI context and
-does not mutate a remote `RunnableQueue`. The QEMU diagnostic proves CPU 0 can
-publish requests for logical CPUs 1, 2, and 3, coalesce a duplicate CPU 1 wake,
-signal each target with SGI INTID 1, and let each target observe, EOI, and
-consume its own request with zero errors. Cross-owner local queue mutation and
-secondary production dispatch remain rejected. This remains QEMU substitute
-evidence only.
-
-The next bounded proof may carry the accepted model to Pi 5 hardware under
-hardwareTestLock. It must tie candidate fetch, SGI INTID 1 signaling,
-target-side IPI observation/EOI, target-owned request consumption, duplicate
-coalescing, and cross-owner runnable-queue mutation rejection to one
-cursor-valid run. Shared run queues, task migration, production secondary
-scheduler dispatch, multi-core preemption, Phase 7, filesystem, networking,
-SSH, shell behavior, RP1/PCIe, and DMA behavior remain deferred.
+The QEMU remote wake-request smoke and the serialized Pi 5 proof are now
+accepted as scheduler-facing IPI evidence. `RemoteWakeQueue` is a bounded
+target-owned request list over scheduler-local `TaskId` values: remote
+publication may insert or coalesce a request, but target-owned consumption
+happens after IPI context and does not mutate a remote `RunnableQueue`. The
+diagnostics prove CPU 0 can publish requests for logical CPUs 1, 2, and 3,
+coalesce a duplicate CPU 1 wake, signal each target with SGI INTID 1, and let
+each target observe, EOI, and consume its own request with zero errors.
+Cross-owner local queue mutation and secondary production dispatch remain
+rejected. Shared run queues, local runnable transitions from remote requests,
+task migration, production secondary scheduler dispatch, multi-core
+preemption, Phase 7, filesystem, networking, SSH, shell behavior, RP1/PCIe,
+and DMA behavior remain deferred.

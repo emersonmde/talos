@@ -178,7 +178,8 @@ impl PerCoreState {
         talos_rpi5_psci_secondary_core_alive_proof,
         talos_rpi5_secondary_core_workload_proof,
         talos_rpi5_smp_lock_cache_coherence_proof,
-        talos_rpi5_cross_core_ipi_delivery_proof
+        talos_rpi5_cross_core_ipi_delivery_proof,
+        talos_rpi5_remote_wakeup_request_proof
     ))]
     pub fn invalidate_from_poc(&self) {
         invalidate_cache_line_from_poc(&self.lifecycle);
@@ -240,7 +241,8 @@ fn clean_cache_line_to_poc<T>(_value: &T) {}
         talos_rpi5_psci_secondary_core_alive_proof,
         talos_rpi5_secondary_core_workload_proof,
         talos_rpi5_smp_lock_cache_coherence_proof,
-        talos_rpi5_cross_core_ipi_delivery_proof
+        talos_rpi5_cross_core_ipi_delivery_proof,
+        talos_rpi5_remote_wakeup_request_proof
     )
 ))]
 fn invalidate_cache_line_from_poc<T>(value: &T) {
@@ -260,7 +262,8 @@ fn invalidate_cache_line_from_poc<T>(value: &T) {
         talos_rpi5_psci_secondary_core_alive_proof,
         talos_rpi5_secondary_core_workload_proof,
         talos_rpi5_smp_lock_cache_coherence_proof,
-        talos_rpi5_cross_core_ipi_delivery_proof
+        talos_rpi5_cross_core_ipi_delivery_proof,
+        talos_rpi5_remote_wakeup_request_proof
     )
 ))]
 fn invalidate_cache_line_from_poc<T>(_value: &T) {}

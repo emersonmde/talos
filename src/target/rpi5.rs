@@ -6,7 +6,8 @@ use crate::arch::aarch64::generic_timer;
 #[cfg(any(
     talos_rpi5_timer_irq_diagnostic,
     talos_rpi5_timer_preemption_diagnostic,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 use crate::arch::aarch64::{
     self,
@@ -14,18 +15,28 @@ use crate::arch::aarch64::{
 };
 #[cfg(talos_rpi5_timer_preemption_diagnostic)]
 use crate::scheduler::{ContextFrame, KernelStack, SingleCoreScheduler, Task, TaskId, TaskState};
+#[cfg(talos_rpi5_remote_wakeup_request_proof)]
+use crate::scheduler::{
+    LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError, RemoteWakePublishOutcome,
+    RemoteWakeQueue, TaskId,
+};
+#[cfg(talos_rpi5_secondary_core_workload_proof)]
+use crate::smp::SECONDARY_CORE_WORKLOAD_TARGET;
 #[cfg(any(
     talos_rpi5_psci_secondary_core_alive_proof,
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 use crate::smp::{
     self, CoreLifecycle, CoreStackLayout, MAX_CORES, SECONDARY_CORE_STATES,
-    SECONDARY_CORE_WORKLOAD_TARGET, SECONDARY_KERNEL_STACK_SIZE,
-    pi5_logical_cpu_from_mpidr_affinity,
+    SECONDARY_KERNEL_STACK_SIZE, pi5_logical_cpu_from_mpidr_affinity,
 };
-#[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+#[cfg(any(
+    talos_rpi5_smp_lock_cache_coherence_proof,
+    talos_rpi5_remote_wakeup_request_proof
+))]
 use crate::smp_sync::{SpinLock, smp_full_barrier};
 use crate::{
     boot::BootInfo,
@@ -41,7 +52,8 @@ use core::cell::UnsafeCell;
     talos_rpi5_psci_secondary_core_alive_proof,
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 use core::sync::atomic::{AtomicU64, Ordering};
 
@@ -63,13 +75,15 @@ pub const RP1_UART0_GPIO15_CTRL: usize = 0x1f_000d_007c;
 #[cfg(any(
     talos_rpi5_timer_irq_diagnostic,
     talos_rpi5_timer_preemption_diagnostic,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 const GICD_BASE: usize = 0x10_7fff_9000;
 #[cfg(any(
     talos_rpi5_timer_irq_diagnostic,
     talos_rpi5_timer_preemption_diagnostic,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 const GICC_BASE: usize = 0x10_7fff_a000;
 #[cfg(any(
@@ -96,15 +110,27 @@ const TIMER_PREEMPTION_TARGET_SWITCHES: u64 = 6;
     talos_rpi5_psci_secondary_core_alive_proof,
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 const RPI5_SECONDARY_WAIT_LIMIT: usize = 200_000_000;
-#[cfg(talos_rpi5_cross_core_ipi_delivery_proof)]
+#[cfg(any(
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
+))]
 const RPI5_CROSS_CORE_IPI_SGI_INTID: u32 = 1;
-#[cfg(talos_rpi5_cross_core_ipi_delivery_proof)]
+#[cfg(any(
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
+))]
 const RPI5_CROSS_CORE_IPI_WAIT_POLL_INTERVAL: usize = 20_000_000;
-#[cfg(talos_rpi5_cross_core_ipi_delivery_proof)]
+#[cfg(any(
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
+))]
 const RPI5_CROSS_CORE_IPI_CPU_INTERFACE_POLL_INTERVAL: usize = 1024;
+#[cfg(talos_rpi5_remote_wakeup_request_proof)]
+const REMOTE_WAKE_QUEUE_CAPACITY: usize = 4;
 #[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
 const RPI5_SMP_LOCK_CONTENTION_TARGET_PER_CORE: u64 = 64;
 #[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
@@ -113,31 +139,36 @@ const RPI5_SMP_LOCK_ACQUIRE_SPIN_LIMIT: u64 = 1_000_000;
 const RPI5_SMP_LOCK_WAIT_POLL_INTERVAL: usize = 20_000_000;
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 const RPI5_SCTLR_M_ENABLE: u64 = 1 << 0;
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 const RPI5_SCTLR_C_ENABLE: u64 = 1 << 2;
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 const RPI5_SCTLR_I_ENABLE: u64 = 1 << 12;
 #[cfg(any(
     talos_rpi5_psci_secondary_core_alive_proof,
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 const PSCI_AFFINITY_INFO: u64 = 0x8400_0004;
 #[cfg(any(
     talos_rpi5_psci_secondary_core_alive_proof,
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 const PSCI_CPU_ON: u64 = 0xc400_0003;
 
@@ -158,25 +189,29 @@ const MMIO_REGIONS: &[MmioRegion] = &[
 #[cfg(any(
     talos_rpi5_timer_irq_diagnostic,
     talos_rpi5_timer_preemption_diagnostic,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 static LAST_IRQ_VECTOR: AtomicU64 = AtomicU64::new(0);
 #[cfg(any(
     talos_rpi5_timer_irq_diagnostic,
     talos_rpi5_timer_preemption_diagnostic,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 static LAST_IAR: AtomicU64 = AtomicU64::new(0);
 #[cfg(any(
     talos_rpi5_timer_irq_diagnostic,
     talos_rpi5_timer_preemption_diagnostic,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 static LAST_INTID: AtomicU64 = AtomicU64::new(0);
 #[cfg(any(
     talos_rpi5_timer_irq_diagnostic,
     talos_rpi5_timer_preemption_diagnostic,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 static UNEXPECTED_GIC_IRQ_COUNT: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_rpi5_timer_preemption_diagnostic)]
@@ -186,7 +221,8 @@ static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
     talos_rpi5_psci_secondary_core_alive_proof,
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 unsafe extern "C" {
     fn talos_aarch64_rpi5_secondary_entry();
@@ -230,7 +266,8 @@ pub fn firmware_console() -> Pl011 {
     talos_rpi5_psci_secondary_core_alive_proof,
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 fn secondary_stack_layout() -> CoreStackLayout {
     let base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
@@ -243,7 +280,8 @@ fn secondary_stack_layout() -> CoreStackLayout {
     talos_rpi5_psci_secondary_core_alive_proof,
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 fn secondary_state_name(state: u64) -> &'static str {
     CoreLifecycle::from_raw(state).map_or("unknown", CoreLifecycle::name)
@@ -253,7 +291,8 @@ fn secondary_state_name(state: u64) -> &'static str {
     talos_rpi5_psci_secondary_core_alive_proof,
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 unsafe fn psci_smc(function_id: u64, arg1: u64, arg2: u64, arg3: u64) -> i64 {
     let mut result = function_id;
@@ -291,7 +330,8 @@ unsafe fn psci_smc(function_id: u64, arg1: u64, arg2: u64, arg3: u64) -> i64 {
     talos_rpi5_psci_secondary_core_alive_proof,
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) -> i64 {
     unsafe { psci_smc(PSCI_CPU_ON, target_affinity, entry as u64, context as u64) }
@@ -301,7 +341,8 @@ unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) ->
     talos_rpi5_psci_secondary_core_alive_proof,
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 unsafe fn psci_affinity_info_smc(target_affinity: u64, lowest_affinity_level: u64) -> i64 {
     unsafe {
@@ -318,7 +359,8 @@ unsafe fn psci_affinity_info_smc(target_affinity: u64, lowest_affinity_level: u6
     talos_rpi5_psci_secondary_core_alive_proof,
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 fn psci_affinity_state_name(state: i64) -> &'static str {
     match state {
@@ -333,7 +375,8 @@ fn psci_affinity_state_name(state: i64) -> &'static str {
     talos_rpi5_psci_secondary_core_alive_proof,
     talos_rpi5_secondary_core_workload_proof,
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 #[unsafe(no_mangle)]
 pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
@@ -354,7 +397,8 @@ pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
         core_state.mark_registered();
         #[cfg(any(
             talos_rpi5_smp_lock_cache_coherence_proof,
-            talos_rpi5_cross_core_ipi_delivery_proof
+            talos_rpi5_cross_core_ipi_delivery_proof,
+            talos_rpi5_remote_wakeup_request_proof
         ))]
         if !enter_secondary_cacheable_mmu_handoff(logical_cpu) {
             core_state.clean_to_poc();
@@ -367,7 +411,8 @@ pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
         }
         #[cfg(any(
             talos_rpi5_smp_lock_cache_coherence_proof,
-            talos_rpi5_cross_core_ipi_delivery_proof
+            talos_rpi5_cross_core_ipi_delivery_proof,
+            talos_rpi5_remote_wakeup_request_proof
         ))]
         core_state.republish_identity(context, mpidr, affinity, stack_pointer as usize);
         core_state.mark_handoff_ready();
@@ -387,6 +432,11 @@ pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
         {
             run_cross_core_ipi_delivery_secondary(core_state, logical_cpu);
             write_uart10_bytes_early_phase(b"TALOS: secondary_ipi_delivery_complete\r\n");
+        }
+        #[cfg(talos_rpi5_remote_wakeup_request_proof)]
+        {
+            run_remote_wakeup_request_secondary(core_state, logical_cpu);
+            write_uart10_bytes_early_phase(b"TALOS: secondary_remote_wakeup_complete\r\n");
         }
     }
 
@@ -501,33 +551,39 @@ static SMP_LOCK_DIAGNOSTIC_SCTLR_EL2: [AtomicU64; MAX_CORES] =
     [const { AtomicU64::new(0) }; MAX_CORES];
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_READY: AtomicU64 = AtomicU64::new(0);
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_MAIR_EL2: AtomicU64 = AtomicU64::new(0);
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_TCR_EL2: AtomicU64 = AtomicU64::new(0);
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_TTBR0_EL2: AtomicU64 = AtomicU64::new(0);
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_SCTLR_EL2: AtomicU64 = AtomicU64::new(0);
 
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 fn clean_secondary_cacheable_mmu_handoff_plan() {
     clean_cache_line_to_poc(&SECONDARY_CACHEABLE_MMU_HANDOFF_MAIR_EL2);
@@ -539,7 +595,8 @@ fn clean_secondary_cacheable_mmu_handoff_plan() {
 
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 fn publish_secondary_cacheable_mmu_handoff_plan(
     regime: crate::arch::aarch64::El2Stage1CacheRegime,
@@ -559,7 +616,8 @@ fn publish_secondary_cacheable_mmu_handoff_plan(
 
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 fn secondary_cacheable_mmu_handoff_plan() -> Option<crate::arch::aarch64::El2Stage1CacheRegime> {
     invalidate_cache_line_from_poc(&SECONDARY_CACHEABLE_MMU_HANDOFF_READY);
@@ -581,9 +639,11 @@ fn secondary_cacheable_mmu_handoff_plan() -> Option<crate::arch::aarch64::El2Sta
 
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 fn enter_secondary_cacheable_mmu_handoff(logical_cpu: usize) -> bool {
+    let _ = logical_cpu;
     let Some(plan) = secondary_cacheable_mmu_handoff_plan() else {
         #[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
         record_smp_lock_diagnostic(
@@ -844,12 +904,18 @@ impl CrossCoreIpiDeliveryState {
 #[cfg(talos_rpi5_cross_core_ipi_delivery_proof)]
 static CROSS_CORE_IPI_DELIVERY_STATE: CrossCoreIpiDeliveryState = CrossCoreIpiDeliveryState::new();
 
-#[cfg(talos_rpi5_cross_core_ipi_delivery_proof)]
+#[cfg(any(
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
+))]
 fn current_pi5_logical_cpu() -> Option<usize> {
     pi5_logical_cpu_from_mpidr_affinity(aarch64::mpidr_affinity(aarch64::mpidr_el1()))
 }
 
-#[cfg(talos_rpi5_cross_core_ipi_delivery_proof)]
+#[cfg(any(
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
+))]
 fn current_hcr_el2() -> u64 {
     let value: u64;
     unsafe {
@@ -937,9 +1003,331 @@ fn write_cross_core_ipi_wait_observation(remaining: usize) {
     wait_uart10_empty_early_phase();
 }
 
+#[cfg(talos_rpi5_remote_wakeup_request_proof)]
+struct RemoteWakeRequestProofState {
+    ready_mask: AtomicU64,
+    complete_mask: AtomicU64,
+    sent_values: [AtomicU64; MAX_CORES],
+    target_bits: [AtomicU64; MAX_CORES],
+    receive_counts: [AtomicU64; MAX_CORES],
+    eoi_counts: [AtomicU64; MAX_CORES],
+    pending_counts: [AtomicU64; MAX_CORES],
+    consumed_task_ids: [AtomicU64; MAX_CORES],
+    duplicate_counts: [AtomicU64; MAX_CORES],
+    queue_lens_after: [AtomicU64; MAX_CORES],
+    cross_owner_rejections: [AtomicU64; MAX_CORES],
+    production_deferrals: [AtomicU64; MAX_CORES],
+    last_vectors: [AtomicU64; MAX_CORES],
+    last_iars: [AtomicU64; MAX_CORES],
+    last_intids: [AtomicU64; MAX_CORES],
+    polled_hppirs: [AtomicU64; MAX_CORES],
+    polled_iars: [AtomicU64; MAX_CORES],
+    polled_intids: [AtomicU64; MAX_CORES],
+    polled_daifs: [AtomicU64; MAX_CORES],
+    polled_hcrs: [AtomicU64; MAX_CORES],
+    poll_counts: [AtomicU64; MAX_CORES],
+    errors: AtomicU64,
+}
+
+#[cfg(talos_rpi5_remote_wakeup_request_proof)]
+impl RemoteWakeRequestProofState {
+    const fn new() -> Self {
+        Self {
+            ready_mask: AtomicU64::new(0),
+            complete_mask: AtomicU64::new(0),
+            sent_values: [const { AtomicU64::new(0) }; MAX_CORES],
+            target_bits: [const { AtomicU64::new(0) }; MAX_CORES],
+            receive_counts: [const { AtomicU64::new(0) }; MAX_CORES],
+            eoi_counts: [const { AtomicU64::new(0) }; MAX_CORES],
+            pending_counts: [const { AtomicU64::new(0) }; MAX_CORES],
+            consumed_task_ids: [const { AtomicU64::new(0) }; MAX_CORES],
+            duplicate_counts: [const { AtomicU64::new(0) }; MAX_CORES],
+            queue_lens_after: [const { AtomicU64::new(0) }; MAX_CORES],
+            cross_owner_rejections: [const { AtomicU64::new(0) }; MAX_CORES],
+            production_deferrals: [const { AtomicU64::new(0) }; MAX_CORES],
+            last_vectors: [const { AtomicU64::new(0) }; MAX_CORES],
+            last_iars: [const { AtomicU64::new(0) }; MAX_CORES],
+            last_intids: [const { AtomicU64::new(0) }; MAX_CORES],
+            polled_hppirs: [const { AtomicU64::new(0) }; MAX_CORES],
+            polled_iars: [const { AtomicU64::new(0) }; MAX_CORES],
+            polled_intids: [const { AtomicU64::new(0) }; MAX_CORES],
+            polled_daifs: [const { AtomicU64::new(0) }; MAX_CORES],
+            polled_hcrs: [const { AtomicU64::new(0) }; MAX_CORES],
+            poll_counts: [const { AtomicU64::new(0) }; MAX_CORES],
+            errors: AtomicU64::new(0),
+        }
+    }
+
+    fn reset(&self) {
+        self.ready_mask.store(0, Ordering::Release);
+        self.complete_mask.store(0, Ordering::Release);
+        self.errors.store(0, Ordering::Release);
+        for logical_cpu in 0..MAX_CORES {
+            self.sent_values[logical_cpu].store(0, Ordering::Release);
+            self.target_bits[logical_cpu].store(0, Ordering::Release);
+            self.receive_counts[logical_cpu].store(0, Ordering::Release);
+            self.eoi_counts[logical_cpu].store(0, Ordering::Release);
+            self.pending_counts[logical_cpu].store(0, Ordering::Release);
+            self.consumed_task_ids[logical_cpu].store(0, Ordering::Release);
+            self.duplicate_counts[logical_cpu].store(0, Ordering::Release);
+            self.queue_lens_after[logical_cpu].store(0, Ordering::Release);
+            self.cross_owner_rejections[logical_cpu].store(0, Ordering::Release);
+            self.production_deferrals[logical_cpu].store(0, Ordering::Release);
+            self.last_vectors[logical_cpu].store(0, Ordering::Release);
+            self.last_iars[logical_cpu].store(0, Ordering::Release);
+            self.last_intids[logical_cpu].store(0, Ordering::Release);
+            self.polled_hppirs[logical_cpu].store(0, Ordering::Release);
+            self.polled_iars[logical_cpu].store(0, Ordering::Release);
+            self.polled_intids[logical_cpu].store(0, Ordering::Release);
+            self.polled_daifs[logical_cpu].store(0, Ordering::Release);
+            self.polled_hcrs[logical_cpu].store(0, Ordering::Release);
+            self.poll_counts[logical_cpu].store(0, Ordering::Release);
+        }
+    }
+
+    fn mark_ready(&self, logical_cpu: usize) {
+        self.ready_mask
+            .fetch_or(1u64 << logical_cpu, Ordering::AcqRel);
+    }
+
+    fn mark_complete(&self, logical_cpu: usize) {
+        self.complete_mask
+            .fetch_or(1u64 << logical_cpu, Ordering::AcqRel);
+    }
+
+    fn record_send(&self, logical_cpu: usize, target_bit: u8, sgir_value: u32) {
+        self.target_bits[logical_cpu].store(target_bit as u64, Ordering::Release);
+        self.sent_values[logical_cpu].store(sgir_value as u64, Ordering::Release);
+    }
+
+    fn record_receive(&self, logical_cpu: Option<usize>, vector: u64, iar: u32, intid: u32) {
+        if let Some(logical_cpu) = logical_cpu.filter(|cpu| *cpu < MAX_CORES) {
+            self.last_vectors[logical_cpu].store(vector, Ordering::Release);
+            self.last_iars[logical_cpu].store(iar as u64, Ordering::Release);
+            self.last_intids[logical_cpu].store(intid as u64, Ordering::Release);
+            self.receive_counts[logical_cpu].fetch_add(1, Ordering::AcqRel);
+            self.pending_counts[logical_cpu].fetch_add(1, Ordering::AcqRel);
+        } else {
+            self.errors.fetch_add(1, Ordering::AcqRel);
+        }
+    }
+
+    fn record_eoi(&self, logical_cpu: Option<usize>) {
+        if let Some(logical_cpu) = logical_cpu.filter(|cpu| *cpu < MAX_CORES) {
+            self.eoi_counts[logical_cpu].fetch_add(1, Ordering::AcqRel);
+        } else {
+            self.errors.fetch_add(1, Ordering::AcqRel);
+        }
+    }
+
+    fn receive_count(&self, logical_cpu: usize) -> u64 {
+        self.receive_counts[logical_cpu].load(Ordering::Acquire)
+    }
+
+    fn record_cpu_interface_poll(
+        &self,
+        logical_cpu: usize,
+        hppir: u32,
+        iar: u32,
+        daif: u64,
+        hcr: u64,
+    ) {
+        if logical_cpu < MAX_CORES {
+            self.polled_hppirs[logical_cpu].store(hppir as u64, Ordering::Release);
+            self.polled_iars[logical_cpu].store(iar as u64, Ordering::Release);
+            self.polled_intids[logical_cpu].store((iar & 0x03ff) as u64, Ordering::Release);
+            self.polled_daifs[logical_cpu].store(daif, Ordering::Release);
+            self.polled_hcrs[logical_cpu].store(hcr, Ordering::Release);
+            self.poll_counts[logical_cpu].fetch_add(1, Ordering::AcqRel);
+        } else {
+            self.errors.fetch_add(1, Ordering::AcqRel);
+        }
+    }
+}
+
+#[cfg(talos_rpi5_remote_wakeup_request_proof)]
+static REMOTE_WAKE_REQUEST_PROOF_STATE: RemoteWakeRequestProofState =
+    RemoteWakeRequestProofState::new();
+
+#[cfg(talos_rpi5_remote_wakeup_request_proof)]
+static REMOTE_WAKE_QUEUES: [SpinLock<RemoteWakeQueue<REMOTE_WAKE_QUEUE_CAPACITY>>; MAX_CORES] = [
+    SpinLock::new(RemoteWakeQueue::new(LogicalCpuId::new(0))),
+    SpinLock::new(RemoteWakeQueue::new(LogicalCpuId::new(1))),
+    SpinLock::new(RemoteWakeQueue::new(LogicalCpuId::new(2))),
+    SpinLock::new(RemoteWakeQueue::new(LogicalCpuId::new(3))),
+];
+
+#[cfg(talos_rpi5_remote_wakeup_request_proof)]
+fn reset_remote_wakeup_request_state() {
+    REMOTE_WAKE_REQUEST_PROOF_STATE.reset();
+    for logical_cpu in 0..MAX_CORES {
+        let mut queue = unsafe { REMOTE_WAKE_QUEUES[logical_cpu].lock_irqsave() };
+        *queue = RemoteWakeQueue::new(LogicalCpuId::new(logical_cpu));
+    }
+}
+
+#[cfg(talos_rpi5_remote_wakeup_request_proof)]
+fn publish_remote_wake_request(target: usize, task_id: TaskId) -> bool {
+    let target_cpu = LogicalCpuId::new(target);
+    let result = {
+        let mut queue = unsafe { REMOTE_WAKE_QUEUES[target].lock_irqsave() };
+        queue.publish(LogicalCpuId::BOOT, target_cpu, task_id)
+    };
+    smp_full_barrier();
+
+    match result {
+        Ok(RemoteWakePublishOutcome::Inserted) => {
+            crate::println!(
+                "rpi5-remote-wakeup-request: publish requester=0 target={} task={} outcome=inserted",
+                target,
+                task_id.raw()
+            );
+            true
+        }
+        Ok(RemoteWakePublishOutcome::Duplicate) => {
+            crate::println!(
+                "rpi5-remote-wakeup-request: publish requester=0 target={} task={} outcome=duplicate",
+                target,
+                task_id.raw()
+            );
+            true
+        }
+        Err(error) => {
+            REMOTE_WAKE_REQUEST_PROOF_STATE
+                .errors
+                .fetch_add(1, Ordering::AcqRel);
+            crate::println!(
+                "rpi5-remote-wakeup-request: publish requester=0 target={} task={} outcome=error {:?}",
+                target,
+                task_id.raw(),
+                error
+            );
+            false
+        }
+    }
+}
+
+#[cfg(talos_rpi5_remote_wakeup_request_proof)]
+fn poll_remote_wakeup_cpu_interface(logical_cpu: usize) -> bool {
+    let gic = GicV2::new(GICD_BASE, GICC_BASE);
+    let hppir = unsafe { gic.highest_pending() };
+    let iar = unsafe { gic.acknowledge() };
+    let intid = iar & 0x03ff;
+    REMOTE_WAKE_REQUEST_PROOF_STATE.record_cpu_interface_poll(
+        logical_cpu,
+        hppir,
+        iar,
+        aarch64::daif(),
+        current_hcr_el2(),
+    );
+    if intid == RPI5_CROSS_CORE_IPI_SGI_INTID {
+        REMOTE_WAKE_REQUEST_PROOF_STATE.record_receive(Some(logical_cpu), 0, iar, intid);
+        unsafe {
+            gic.end_interrupt(iar);
+        }
+        REMOTE_WAKE_REQUEST_PROOF_STATE.record_eoi(Some(logical_cpu));
+        true
+    } else {
+        false
+    }
+}
+
+#[cfg(talos_rpi5_remote_wakeup_request_proof)]
+fn run_remote_wakeup_request_secondary(core_state: &smp::PerCoreState, logical_cpu: usize) {
+    core_state.mark_workload_running();
+    core_state.clean_to_poc();
+
+    crate::arch::aarch64::exceptions::init();
+    unsafe {
+        aarch64::disable_irq();
+        aarch64::route_physical_irqs_to_el2();
+        let gic = GicV2::new(GICD_BASE, GICC_BASE);
+        gic.configure_sgi_or_ppi_group1(RPI5_CROSS_CORE_IPI_SGI_INTID, 0x80);
+        gic.enable_cpu_interface();
+        aarch64::enable_irq();
+    }
+
+    REMOTE_WAKE_REQUEST_PROOF_STATE.mark_ready(logical_cpu);
+
+    let mut remaining = RPI5_SECONDARY_WAIT_LIMIT;
+    let mut poll_remaining = RPI5_CROSS_CORE_IPI_CPU_INTERFACE_POLL_INTERVAL;
+    while REMOTE_WAKE_REQUEST_PROOF_STATE.receive_count(logical_cpu) == 0 && remaining > 0 {
+        core::hint::spin_loop();
+        poll_remaining -= 1;
+        if poll_remaining == 0 {
+            if poll_remote_wakeup_cpu_interface(logical_cpu) {
+                break;
+            }
+            poll_remaining = RPI5_CROSS_CORE_IPI_CPU_INTERFACE_POLL_INTERVAL;
+        }
+        remaining -= 1;
+    }
+
+    unsafe {
+        aarch64::disable_irq();
+    }
+
+    let requester = LogicalCpuId::new(logical_cpu);
+    let (consumed_task, duplicates, queue_len_after) = {
+        let mut queue = unsafe { REMOTE_WAKE_QUEUES[logical_cpu].lock_irqsave() };
+        let consumed = queue
+            .consume_next(requester)
+            .ok()
+            .flatten()
+            .map(|request| request.task_id().raw())
+            .unwrap_or(0);
+        (consumed, queue.duplicate_count(), queue.len())
+    };
+
+    REMOTE_WAKE_REQUEST_PROOF_STATE.consumed_task_ids[logical_cpu]
+        .store(consumed_task, Ordering::Release);
+    REMOTE_WAKE_REQUEST_PROOF_STATE.duplicate_counts[logical_cpu]
+        .store(duplicates, Ordering::Release);
+    REMOTE_WAKE_REQUEST_PROOF_STATE.queue_lens_after[logical_cpu]
+        .store(queue_len_after as u64, Ordering::Release);
+
+    let mut scheduler = PerCoreScheduler::<2>::deferred_secondary(requester);
+    if matches!(
+        scheduler.local_scheduler_mut(LogicalCpuId::BOOT),
+        Err(PerCoreSchedulerAccessError::WrongOwner { .. })
+    ) {
+        REMOTE_WAKE_REQUEST_PROOF_STATE.cross_owner_rejections[logical_cpu]
+            .store(1, Ordering::Release);
+    }
+    if matches!(
+        scheduler.production_scheduler_mut(requester),
+        Err(PerCoreSchedulerAccessError::ProductionDispatchDeferred { .. })
+    ) {
+        REMOTE_WAKE_REQUEST_PROOF_STATE.production_deferrals[logical_cpu]
+            .store(1, Ordering::Release);
+    }
+
+    REMOTE_WAKE_REQUEST_PROOF_STATE.mark_complete(logical_cpu);
+    core_state.mark_workload_complete(consumed_task);
+    core_state.clean_to_poc();
+}
+
+#[cfg(talos_rpi5_remote_wakeup_request_proof)]
+fn write_remote_wakeup_wait_observation(remaining: usize) {
+    let ready_mask = REMOTE_WAKE_REQUEST_PROOF_STATE
+        .ready_mask
+        .load(Ordering::Acquire);
+    let complete_mask = REMOTE_WAKE_REQUEST_PROOF_STATE
+        .complete_mask
+        .load(Ordering::Acquire);
+    crate::println!(
+        "rpi5-remote-wakeup-request: wait remaining={} ready-mask={:#x} complete-mask={:#x}",
+        remaining,
+        ready_mask,
+        complete_mask
+    );
+    wait_uart10_empty_early_phase();
+}
+
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 fn current_sctlr_el2() -> u64 {
     let sctlr: u64;
@@ -951,7 +1339,8 @@ fn current_sctlr_el2() -> u64 {
 
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 fn cacheable_mmu_enabled(sctlr: u64) -> bool {
     (sctlr & (RPI5_SCTLR_M_ENABLE | RPI5_SCTLR_C_ENABLE))
@@ -960,7 +1349,8 @@ fn cacheable_mmu_enabled(sctlr: u64) -> bool {
 
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 fn clean_cache_line_to_poc<T>(value: &T) {
     unsafe {
@@ -975,7 +1365,8 @@ fn clean_cache_line_to_poc<T>(value: &T) {
 
 #[cfg(any(
     talos_rpi5_smp_lock_cache_coherence_proof,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 fn invalidate_cache_line_from_poc<T>(value: &T) {
     unsafe {
@@ -1600,6 +1991,316 @@ pub fn run_cross_core_ipi_delivery_proof() -> bool {
     reports_ok && errors == 0
 }
 
+#[cfg(talos_rpi5_remote_wakeup_request_proof)]
+pub fn run_remote_wakeup_request_proof() -> bool {
+    smp::reset_secondary_core_states();
+    reset_remote_wakeup_request_state();
+
+    crate::arch::aarch64::exceptions::init();
+    unsafe {
+        aarch64::disable_irq();
+        aarch64::route_physical_irqs_to_el2();
+        let gic = GicV2::new(GICD_BASE, GICC_BASE);
+        gic.configure_sgi_or_ppi_group1(RPI5_CROSS_CORE_IPI_SGI_INTID, 0x80);
+        gic.enable_cpu_interface();
+        gic.enable_distributor();
+    }
+
+    let boot_mpidr = aarch64::mpidr_el1();
+    let boot_affinity = aarch64::mpidr_affinity(boot_mpidr);
+    let boot_logical = pi5_logical_cpu_from_mpidr_affinity(boot_affinity);
+    let boot_cache_regime = crate::arch::aarch64::current_el2_stage1_cache_regime();
+    let boot_sctlr_el2 = boot_cache_regime.map_or_else(current_sctlr_el2, |regime| regime.sctlr);
+    let entry = talos_aarch64_rpi5_secondary_entry as *const () as usize;
+    let stack_layout = secondary_stack_layout();
+    let stack_base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
+    let stack_end = core::ptr::addr_of!(talos_secondary_core_stacks_end) as usize;
+    let expected_mask = ((1u64 << MAX_CORES) - 1) & !1;
+
+    crate::println!(
+        "rpi5-remote-wakeup-request: start conduit=smc cores={} sgi-intid={} queue-capacity={} expected-mask={:#x} cpuif-poll=active-spin poll-interval={} boot-mpidr={:#018x} boot-affinity={:#x} boot-logical={:?} boot-sctlr-el2={:#018x} boot-cacheable-mmu={} entry={:#018x} stack-range=[{:#018x},{:#018x})",
+        MAX_CORES,
+        RPI5_CROSS_CORE_IPI_SGI_INTID,
+        REMOTE_WAKE_QUEUE_CAPACITY,
+        expected_mask,
+        RPI5_CROSS_CORE_IPI_CPU_INTERFACE_POLL_INTERVAL,
+        boot_mpidr,
+        boot_affinity,
+        boot_logical,
+        boot_sctlr_el2,
+        cacheable_mmu_enabled(boot_sctlr_el2),
+        entry,
+        stack_base,
+        stack_end
+    );
+    wait_uart10_empty_early_phase();
+
+    if let Some(regime) = boot_cache_regime {
+        publish_secondary_cacheable_mmu_handoff_plan(regime);
+        crate::println!(
+            "rpi5-remote-wakeup-request: secondary-cacheable-mmu-handoff-plan mair-el2={:#018x} tcr-el2={:#018x} ttbr0-el2={:#018x} sctlr-el2={:#018x} cacheable-mmu={}",
+            regime.mair,
+            regime.tcr,
+            regime.ttbr0,
+            regime.sctlr,
+            cacheable_mmu_enabled(regime.sctlr)
+        );
+    } else {
+        SECONDARY_CACHEABLE_MMU_HANDOFF_READY.store(0, Ordering::Release);
+        clean_secondary_cacheable_mmu_handoff_plan();
+        crate::println!(
+            "rpi5-remote-wakeup-request: secondary-cacheable-mmu-handoff-plan unavailable"
+        );
+    }
+    wait_uart10_empty_early_phase();
+
+    let mut cpu_on_ok = true;
+    for logical_cpu in 1..MAX_CORES {
+        let target_affinity = (logical_cpu as u64) << 8;
+        let result = unsafe { psci_cpu_on_smc(target_affinity, entry, logical_cpu) };
+        crate::println!(
+            "rpi5-remote-wakeup-request: cpu-on logical={} target-affinity={:#x} result={}",
+            logical_cpu,
+            target_affinity,
+            result
+        );
+        cpu_on_ok &= result == 0;
+        let affinity_after = unsafe { psci_affinity_info_smc(target_affinity, 0) };
+        crate::println!(
+            "rpi5-remote-wakeup-request: affinity-after logical={} target-affinity={:#x} level=0 state={} raw={}",
+            logical_cpu,
+            target_affinity,
+            psci_affinity_state_name(affinity_after),
+            affinity_after
+        );
+        wait_uart10_empty_early_phase();
+    }
+
+    let mut ready_remaining = RPI5_SECONDARY_WAIT_LIMIT;
+    while ready_remaining > 0
+        && (REMOTE_WAKE_REQUEST_PROOF_STATE
+            .ready_mask
+            .load(Ordering::Acquire)
+            & expected_mask)
+            != expected_mask
+    {
+        if ready_remaining == RPI5_SECONDARY_WAIT_LIMIT
+            || ready_remaining % RPI5_CROSS_CORE_IPI_WAIT_POLL_INTERVAL == 0
+        {
+            write_remote_wakeup_wait_observation(ready_remaining);
+        }
+        core::hint::spin_loop();
+        ready_remaining -= 1;
+    }
+
+    let mut publish_ok = true;
+    for logical_cpu in 1..MAX_CORES {
+        let task_id = TaskId::new(200 + logical_cpu as u64).expect("diagnostic task ID is nonzero");
+        publish_ok &= publish_remote_wake_request(logical_cpu, task_id);
+        if logical_cpu == 1 {
+            publish_ok &= publish_remote_wake_request(logical_cpu, task_id);
+        }
+        wait_uart10_empty_early_phase();
+    }
+
+    let gic = GicV2::new(GICD_BASE, GICC_BASE);
+    for logical_cpu in 1..MAX_CORES {
+        let target_bit = 1u8 << logical_cpu;
+        let sgir_value =
+            unsafe { gic.send_sgi_to_target_list(RPI5_CROSS_CORE_IPI_SGI_INTID, target_bit) };
+        REMOTE_WAKE_REQUEST_PROOF_STATE.record_send(logical_cpu, target_bit, sgir_value);
+        crate::println!(
+            "rpi5-remote-wakeup-request: send sender=0 target-logical={} target-list-bit={:#04x} sgi-intid={} sgir={:#010x}",
+            logical_cpu,
+            target_bit,
+            RPI5_CROSS_CORE_IPI_SGI_INTID,
+            sgir_value
+        );
+        wait_uart10_empty_early_phase();
+    }
+
+    let mut complete_remaining = RPI5_SECONDARY_WAIT_LIMIT;
+    while complete_remaining > 0
+        && (REMOTE_WAKE_REQUEST_PROOF_STATE
+            .complete_mask
+            .load(Ordering::Acquire)
+            & expected_mask)
+            != expected_mask
+    {
+        if complete_remaining == RPI5_SECONDARY_WAIT_LIMIT
+            || complete_remaining % RPI5_CROSS_CORE_IPI_WAIT_POLL_INTERVAL == 0
+        {
+            write_remote_wakeup_wait_observation(complete_remaining);
+        }
+        core::hint::spin_loop();
+        complete_remaining -= 1;
+    }
+
+    unsafe {
+        aarch64::disable_irq();
+    }
+
+    let ready_mask = REMOTE_WAKE_REQUEST_PROOF_STATE
+        .ready_mask
+        .load(Ordering::Acquire);
+    let complete_mask = REMOTE_WAKE_REQUEST_PROOF_STATE
+        .complete_mask
+        .load(Ordering::Acquire);
+    let mut participants = 0;
+    let mut reports_ok = cpu_on_ok
+        && publish_ok
+        && boot_logical == Some(0)
+        && (ready_mask & expected_mask) == expected_mask;
+
+    for logical_cpu in 1..MAX_CORES {
+        SECONDARY_CORE_STATES[logical_cpu].invalidate_from_poc();
+        let core_report = SECONDARY_CORE_STATES[logical_cpu].snapshot(logical_cpu);
+        let logical_from_mpidr = pi5_logical_cpu_from_mpidr_affinity(core_report.affinity);
+        let stack_slot = stack_layout
+            .slot(logical_cpu)
+            .expect("stack slot for possible Pi 5 core");
+        let stack_owned = stack_slot.contains_stack_pointer(core_report.stack_pointer);
+        let expected_task = 200 + logical_cpu as u64;
+        let target_bit =
+            REMOTE_WAKE_REQUEST_PROOF_STATE.target_bits[logical_cpu].load(Ordering::Acquire);
+        let sgir_value =
+            REMOTE_WAKE_REQUEST_PROOF_STATE.sent_values[logical_cpu].load(Ordering::Acquire);
+        let receive_count =
+            REMOTE_WAKE_REQUEST_PROOF_STATE.receive_counts[logical_cpu].load(Ordering::Acquire);
+        let eoi_count =
+            REMOTE_WAKE_REQUEST_PROOF_STATE.eoi_counts[logical_cpu].load(Ordering::Acquire);
+        let pending_count =
+            REMOTE_WAKE_REQUEST_PROOF_STATE.pending_counts[logical_cpu].load(Ordering::Acquire);
+        let consumed_task =
+            REMOTE_WAKE_REQUEST_PROOF_STATE.consumed_task_ids[logical_cpu].load(Ordering::Acquire);
+        let duplicate_count =
+            REMOTE_WAKE_REQUEST_PROOF_STATE.duplicate_counts[logical_cpu].load(Ordering::Acquire);
+        let queue_len_after =
+            REMOTE_WAKE_REQUEST_PROOF_STATE.queue_lens_after[logical_cpu].load(Ordering::Acquire);
+        let cross_owner_rejected = REMOTE_WAKE_REQUEST_PROOF_STATE.cross_owner_rejections
+            [logical_cpu]
+            .load(Ordering::Acquire)
+            == 1;
+        let production_deferred = REMOTE_WAKE_REQUEST_PROOF_STATE.production_deferrals[logical_cpu]
+            .load(Ordering::Acquire)
+            == 1;
+        let last_vector =
+            REMOTE_WAKE_REQUEST_PROOF_STATE.last_vectors[logical_cpu].load(Ordering::Acquire);
+        let last_iar =
+            REMOTE_WAKE_REQUEST_PROOF_STATE.last_iars[logical_cpu].load(Ordering::Acquire);
+        let last_intid =
+            REMOTE_WAKE_REQUEST_PROOF_STATE.last_intids[logical_cpu].load(Ordering::Acquire);
+        let polled_hppir =
+            REMOTE_WAKE_REQUEST_PROOF_STATE.polled_hppirs[logical_cpu].load(Ordering::Acquire);
+        let polled_iar =
+            REMOTE_WAKE_REQUEST_PROOF_STATE.polled_iars[logical_cpu].load(Ordering::Acquire);
+        let polled_intid =
+            REMOTE_WAKE_REQUEST_PROOF_STATE.polled_intids[logical_cpu].load(Ordering::Acquire);
+        let polled_daif =
+            REMOTE_WAKE_REQUEST_PROOF_STATE.polled_daifs[logical_cpu].load(Ordering::Acquire);
+        let polled_hcr =
+            REMOTE_WAKE_REQUEST_PROOF_STATE.polled_hcrs[logical_cpu].load(Ordering::Acquire);
+        let poll_count =
+            REMOTE_WAKE_REQUEST_PROOF_STATE.poll_counts[logical_cpu].load(Ordering::Acquire);
+        let report_ok = core_report.lifecycle >= CoreLifecycle::WorkloadComplete
+            && core_report.context == logical_cpu
+            && logical_from_mpidr == Some(logical_cpu)
+            && stack_owned
+            && target_bit == (1u64 << logical_cpu)
+            && receive_count == 1
+            && eoi_count == 1
+            && pending_count == 1
+            && last_intid == RPI5_CROSS_CORE_IPI_SGI_INTID as u64
+            && consumed_task == expected_task
+            && queue_len_after == 0
+            && cross_owner_rejected
+            && production_deferred
+            && (logical_cpu != 1 || duplicate_count == 1)
+            && (logical_cpu == 1 || duplicate_count == 0);
+        let poll_observed_sgi = polled_intid == RPI5_CROSS_CORE_IPI_SGI_INTID as u64;
+        if report_ok {
+            participants += 1;
+        }
+        reports_ok &= report_ok;
+
+        crate::println!(
+            "rpi5-remote-wakeup-request: report sender=0 receiver={} state={} context={} mpidr={:#018x} affinity={:#x} mapped={:?} sp={:#018x} stack=[{:#018x},{:#018x}) target-list-bit={:#04x} sgir={:#010x} vector={} iar={:#010x} intid={} receive-count={} eoi-count={} pending-count={} consumed-task={} duplicate-count={} queue-len-after={} cross-owner-rejected={} production-deferred={} poll-count={} poll-hppir={:#010x} poll-iar={:#010x} poll-intid={} poll-daif={:#x} poll-hcr={:#018x} poll-observed-sgi={} errors={} ok={}",
+            logical_cpu,
+            secondary_state_name(core_report.lifecycle.raw()),
+            core_report.context,
+            core_report.mpidr,
+            core_report.affinity,
+            logical_from_mpidr,
+            core_report.stack_pointer,
+            stack_slot.bottom,
+            stack_slot.top,
+            target_bit,
+            sgir_value,
+            last_vector,
+            last_iar,
+            last_intid,
+            receive_count,
+            eoi_count,
+            pending_count,
+            consumed_task,
+            duplicate_count,
+            queue_len_after,
+            cross_owner_rejected,
+            production_deferred,
+            poll_count,
+            polled_hppir,
+            polled_iar,
+            polled_intid,
+            polled_daif,
+            polled_hcr,
+            poll_observed_sgi,
+            REMOTE_WAKE_REQUEST_PROOF_STATE
+                .errors
+                .load(Ordering::Acquire),
+            report_ok
+        );
+        wait_uart10_empty_early_phase();
+    }
+
+    let errors = REMOTE_WAKE_REQUEST_PROOF_STATE
+        .errors
+        .load(Ordering::Acquire);
+    let classification = if reports_ok && errors == 0 {
+        "pi5-remote-wakeup-request-complete"
+    } else if (ready_mask & expected_mask) != expected_mask {
+        "pi5-remote-wakeup-request-secondaries-not-ready"
+    } else if (1..MAX_CORES).all(|logical_cpu| {
+        REMOTE_WAKE_REQUEST_PROOF_STATE.polled_intids[logical_cpu].load(Ordering::Acquire)
+            == RPI5_CROSS_CORE_IPI_SGI_INTID as u64
+    }) {
+        "pi5-remote-wakeup-request-pending-polled-not-vectored"
+    } else if cpu_on_ok {
+        "pi5-remote-wakeup-request-invariant-failed"
+    } else {
+        "pi5-psci-smc-cpu-on-failed"
+    };
+    crate::println!(
+        "rpi5-remote-wakeup-request: final participants={} expected={} errors={} ready-mask={:#x} complete-mask={:#x} ready-wait-remaining={} complete-wait-remaining={} classification={}",
+        participants,
+        MAX_CORES - 1,
+        errors,
+        ready_mask,
+        complete_mask,
+        ready_remaining,
+        complete_remaining,
+        classification
+    );
+
+    if reports_ok && errors == 0 {
+        crate::println!("rpi5-remote-wakeup-request: PASS");
+    } else {
+        crate::println!("rpi5-remote-wakeup-request: FAIL");
+    }
+    wait_uart10_empty_early_phase();
+
+    reports_ok && errors == 0
+}
+
 #[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
 pub fn run_psci_secondary_core_alive_proof() -> bool {
     smp::reset_secondary_core_states();
@@ -2217,7 +2918,8 @@ pub fn timer_irq_snapshot() -> TimerIrqSnapshot {
 #[cfg(any(
     talos_rpi5_timer_irq_diagnostic,
     talos_rpi5_timer_preemption_diagnostic,
-    talos_rpi5_cross_core_ipi_delivery_proof
+    talos_rpi5_cross_core_ipi_delivery_proof,
+    talos_rpi5_remote_wakeup_request_proof
 ))]
 pub fn handle_irq(vector: u64) -> bool {
     let gic = GicV2::new(GICD_BASE, GICC_BASE);
@@ -2236,6 +2938,17 @@ pub fn handle_irq(vector: u64) -> bool {
             gic.end_interrupt(iar);
         }
         CROSS_CORE_IPI_DELIVERY_STATE.record_eoi(logical_cpu);
+        return true;
+    }
+
+    #[cfg(talos_rpi5_remote_wakeup_request_proof)]
+    if intid == RPI5_CROSS_CORE_IPI_SGI_INTID {
+        let logical_cpu = current_pi5_logical_cpu();
+        REMOTE_WAKE_REQUEST_PROOF_STATE.record_receive(logical_cpu, vector, iar, intid);
+        unsafe {
+            gic.end_interrupt(iar);
+        }
+        REMOTE_WAKE_REQUEST_PROOF_STATE.record_eoi(logical_cpu);
         return true;
     }
 
@@ -2901,7 +3614,8 @@ pub(crate) fn write_uart10_byte_early_phase(byte: u8) {
         talos_rpi5_psci_secondary_core_alive_proof,
         talos_rpi5_secondary_core_workload_proof,
         talos_rpi5_smp_lock_cache_coherence_proof,
-        talos_rpi5_cross_core_ipi_delivery_proof
+        talos_rpi5_cross_core_ipi_delivery_proof,
+        talos_rpi5_remote_wakeup_request_proof
     )
 ))]
 pub(crate) fn write_uart10_bytes_early_phase(bytes: &[u8]) {

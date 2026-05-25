@@ -190,7 +190,8 @@ pub extern "C" fn rust_irq_handler(
         any(
             talos_rpi5_timer_irq_diagnostic,
             talos_rpi5_timer_preemption_diagnostic,
-            talos_rpi5_cross_core_ipi_delivery_proof
+            talos_rpi5_cross_core_ipi_delivery_proof,
+            talos_rpi5_remote_wakeup_request_proof
         ),
         not(test)
     ))]

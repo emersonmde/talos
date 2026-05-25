@@ -254,6 +254,13 @@ Completed:
   coalescing, SGI signaling, target-owned observation/EOI/consumption, and
   cross-owner mutation rejection for logical CPUs 1, 2, and 3. This is
   scheduler-facing substitute evidence, not a Pi 5 scheduler wakeup claim.
+- Phase 6.3 Pi 5 remote wake-request evidence is accepted. The serialized
+  hardware proof shows CPU 0 publishing bounded requests for logical CPUs 1, 2,
+  and 3, duplicate coalescing for target 1, SGI INTID 1 delivery/EOI,
+  target-owned request consumption, drained queues, rejected cross-owner local
+  scheduler mutation, and deferred secondary production dispatch. This proves
+  request publication/signaling/consumption only; local runnable transitions
+  from remote requests remain deferred.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -261,13 +268,14 @@ Completed:
 
 Blocked or pending:
 
-- The next explicit worker task should stay within Phase 6.3 and carry the
-  accepted remote wake-request model to a serialized Pi 5 scheduler-facing
-  proof before any broader scheduler migration. The recommended bounded slice
-  is `phase6-pi5-remote-wakeup-request-proof-20260525`. Multi-core scheduler
-  migration, shared run queues, task migration, production secondary scheduler
-  dispatch, multi-core preemption, userspace, descriptors, filesystem,
-  networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and
+- The next explicit worker task should stay within Phase 6.3 and define the
+  target-owned path from consumed remote wake requests to local scheduler wake
+  action before any implementation mutates runnable state from cross-core
+  signals. The recommended bounded slice is
+  `phase6-target-owned-wake-consumption-contract-20260525`. Multi-core
+  scheduler migration, shared run queues, task migration, production secondary
+  scheduler dispatch, multi-core preemption, userspace, descriptors,
+  filesystem, networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and
   DMA/cache-coherent driver policy remain deferred until an explicit durable
   task is queued.
 - The roadmap order below now prioritizes a local Unix-like OS before network
