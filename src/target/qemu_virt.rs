@@ -16,17 +16,20 @@ use crate::scheduler::TargetWakeConsumptionError;
     talos_qemu_timer_preemption_smoke,
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke
+    talos_qemu_production_secondary_dispatch_smoke,
+    talos_qemu_shared_scheduler_metadata_smoke
 ))]
 use crate::scheduler::{ContextFrame, KernelStack, SingleCoreScheduler, Task, TaskId, TaskState};
 #[cfg(any(
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke
+    talos_qemu_production_secondary_dispatch_smoke,
+    talos_qemu_shared_scheduler_metadata_smoke
 ))]
 use crate::scheduler::{
     LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError, ProductionDispatchError,
-    SchedulerCoreRole,
+    SchedulerCoreRole, SharedSchedulerMetadata, SharedSchedulerMetadataError,
+    SharedSchedulerMetadataLock,
 };
 #[cfg(talos_qemu_remote_wakeup_request_smoke)]
 use crate::scheduler::{RemoteWakePublishOutcome, RemoteWakeQueue};
@@ -37,7 +40,8 @@ use crate::scheduler::{RemoteWakePublishOutcome, RemoteWakeQueue};
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_cross_core_ipi_delivery_smoke,
     talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke
+    talos_qemu_production_secondary_dispatch_smoke,
+    talos_qemu_shared_scheduler_metadata_smoke
 )))]
 use crate::smp::MAX_CORES;
 #[cfg(talos_qemu_secondary_core_workload_smoke)]
@@ -49,7 +53,8 @@ use crate::smp::SECONDARY_CORE_WORKLOAD_TARGET;
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_cross_core_ipi_delivery_smoke,
     talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke
+    talos_qemu_production_secondary_dispatch_smoke,
+    talos_qemu_shared_scheduler_metadata_smoke
 ))]
 use crate::smp::{
     self, CoreLifecycle, CoreStackLayout, MAX_CORES, SECONDARY_CORE_STATES,
@@ -60,7 +65,8 @@ use crate::smp_sync::{SpinLock, smp_full_barrier};
 #[cfg(any(
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke
+    talos_qemu_production_secondary_dispatch_smoke,
+    talos_qemu_shared_scheduler_metadata_smoke
 ))]
 use crate::smp_sync::{SpinLock, smp_full_barrier};
 use crate::{
@@ -87,7 +93,8 @@ const TIMER_IRQ_WAIT_LIMIT: usize = 1_000_000;
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_cross_core_ipi_delivery_smoke,
     talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke
+    talos_qemu_production_secondary_dispatch_smoke,
+    talos_qemu_shared_scheduler_metadata_smoke
 ))]
 const QEMU_SECONDARY_WAIT_LIMIT: usize = 10_000_000;
 #[cfg(any(
@@ -103,6 +110,10 @@ const SMP_LOCK_CONTENTION_TARGET_PER_CORE: u64 = 64;
 const PER_CORE_SCHEDULER_PROGRESS_TARGET: u64 = 4;
 #[cfg(talos_qemu_production_secondary_dispatch_smoke)]
 const PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET: u64 = 3;
+#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+const SHARED_SCHEDULER_METADATA_TASK_CAPACITY: usize = MAX_CORES;
+#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+const SHARED_SCHEDULER_METADATA_WAIT_LIMIT: usize = 100_000_000;
 #[cfg(any(
     talos_qemu_context_switch_smoke,
     talos_qemu_scheduler_yield_smoke,
@@ -138,7 +149,8 @@ static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_cross_core_ipi_delivery_smoke,
     talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke
+    talos_qemu_production_secondary_dispatch_smoke,
+    talos_qemu_shared_scheduler_metadata_smoke
 ))]
 unsafe extern "C" {
     fn talos_aarch64_qemu_secondary_entry();
@@ -511,7 +523,8 @@ pub const fn qemu_logical_cpu_from_mpidr_affinity(affinity: u64) -> Option<usize
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_cross_core_ipi_delivery_smoke,
     talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke
+    talos_qemu_production_secondary_dispatch_smoke,
+    talos_qemu_shared_scheduler_metadata_smoke
 ))]
 fn secondary_stack_layout() -> CoreStackLayout {
     let base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
@@ -527,7 +540,8 @@ fn secondary_stack_layout() -> CoreStackLayout {
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_cross_core_ipi_delivery_smoke,
     talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke
+    talos_qemu_production_secondary_dispatch_smoke,
+    talos_qemu_shared_scheduler_metadata_smoke
 ))]
 fn secondary_state_name(state: u64) -> &'static str {
     CoreLifecycle::from_raw(state).map_or("unknown", CoreLifecycle::name)
@@ -540,7 +554,8 @@ fn secondary_state_name(state: u64) -> &'static str {
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_cross_core_ipi_delivery_smoke,
     talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke
+    talos_qemu_production_secondary_dispatch_smoke,
+    talos_qemu_shared_scheduler_metadata_smoke
 ))]
 unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) -> i64 {
     let mut function_id = 0xc400_0003u64;
@@ -593,7 +608,8 @@ pub fn services(boot_info: &BootInfo) -> TargetServices {
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_cross_core_ipi_delivery_smoke,
     talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke
+    talos_qemu_production_secondary_dispatch_smoke,
+    talos_qemu_shared_scheduler_metadata_smoke
 ))]
 #[unsafe(no_mangle)]
 pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
@@ -623,6 +639,8 @@ pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
         run_remote_wakeup_request_secondary(core_state, logical_cpu);
         #[cfg(talos_qemu_production_secondary_dispatch_smoke)]
         run_production_secondary_dispatch_secondary(core_state, logical_cpu);
+        #[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+        run_shared_scheduler_metadata_secondary(core_state, logical_cpu);
     }
 
     loop {
@@ -694,7 +712,8 @@ fn reset_per_core_scheduler_ownership_state() {
 
 #[cfg(any(
     talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_production_secondary_dispatch_smoke
+    talos_qemu_production_secondary_dispatch_smoke,
+    talos_qemu_shared_scheduler_metadata_smoke
 ))]
 fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
     match role {
@@ -706,7 +725,8 @@ fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
 
 #[cfg(any(
     talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_production_secondary_dispatch_smoke
+    talos_qemu_production_secondary_dispatch_smoke,
+    talos_qemu_shared_scheduler_metadata_smoke
 ))]
 fn task_id(raw: u64) -> TaskId {
     TaskId::new(raw).expect("diagnostic task IDs are nonzero")
@@ -714,7 +734,8 @@ fn task_id(raw: u64) -> TaskId {
 
 #[cfg(any(
     talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_production_secondary_dispatch_smoke
+    talos_qemu_production_secondary_dispatch_smoke,
+    talos_qemu_shared_scheduler_metadata_smoke
 ))]
 fn scheduler_task(logical_cpu: usize, progress: u64) -> Task {
     let raw_task_id = (logical_cpu as u64 + 1) * 100 + progress;
@@ -1014,6 +1035,262 @@ fn run_production_secondary_dispatch_secondary(core_state: &smp::PerCoreState, l
 
     core_state.mark_workload_complete(report.progress);
     core_state.clean_to_poc();
+}
+
+#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+#[derive(Clone, Copy)]
+struct SharedSchedulerMetadataReport {
+    owner: u64,
+    role: SchedulerCoreRole,
+    production_dispatch_enabled: bool,
+    task_id: u64,
+    task_state: u64,
+    current_task: u64,
+    queue_len: u64,
+    front_task: u64,
+    metadata_len: u64,
+    metadata_generation: u64,
+    lookup_owner: u64,
+    lookup_task: u64,
+    lookup_generation: u64,
+    boot_lookup_owner: u64,
+    boot_lookup_task: u64,
+    boot_lookup_generation: u64,
+    cross_owner_rejected: bool,
+    metadata_cross_owner_rejected: bool,
+    local_queue_preserved: bool,
+    errors: u64,
+}
+
+#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+impl SharedSchedulerMetadataReport {
+    const fn empty() -> Self {
+        Self {
+            owner: u64::MAX,
+            role: SchedulerCoreRole::SecondaryDeferred,
+            production_dispatch_enabled: false,
+            task_id: 0,
+            task_state: 0,
+            current_task: 0,
+            queue_len: 0,
+            front_task: 0,
+            metadata_len: 0,
+            metadata_generation: 0,
+            lookup_owner: u64::MAX,
+            lookup_task: 0,
+            lookup_generation: 0,
+            boot_lookup_owner: u64::MAX,
+            boot_lookup_task: 0,
+            boot_lookup_generation: 0,
+            cross_owner_rejected: false,
+            metadata_cross_owner_rejected: false,
+            local_queue_preserved: false,
+            errors: 0,
+        }
+    }
+}
+
+#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+#[derive(Clone, Copy)]
+struct SharedSchedulerMetadataSmokeState {
+    reports: [SharedSchedulerMetadataReport; MAX_CORES],
+    lock_progress: [u64; MAX_CORES],
+}
+
+#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+impl SharedSchedulerMetadataSmokeState {
+    const fn new() -> Self {
+        Self {
+            reports: [SharedSchedulerMetadataReport::empty(); MAX_CORES],
+            lock_progress: [0; MAX_CORES],
+        }
+    }
+}
+
+#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+static SHARED_SCHEDULER_METADATA_SMOKE_STATE: SpinLock<SharedSchedulerMetadataSmokeState> =
+    SpinLock::new(SharedSchedulerMetadataSmokeState::new());
+
+#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+static SHARED_SCHEDULER_METADATA_SMOKE_TABLE: SharedSchedulerMetadataLock<
+    SHARED_SCHEDULER_METADATA_TASK_CAPACITY,
+    MAX_CORES,
+> = SpinLock::new(SharedSchedulerMetadata::new());
+
+#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+fn reset_shared_scheduler_metadata_smoke_state() {
+    let mut state = unsafe { SHARED_SCHEDULER_METADATA_SMOKE_STATE.lock_irqsave() };
+    *state = SharedSchedulerMetadataSmokeState::new();
+    let mut metadata = unsafe { SHARED_SCHEDULER_METADATA_SMOKE_TABLE.lock_irqsave() };
+    *metadata = SharedSchedulerMetadata::new();
+}
+
+#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+fn build_shared_scheduler_metadata_report(
+    logical_cpu: usize,
+    scheduler: &mut PerCoreScheduler<2>,
+) -> SharedSchedulerMetadataReport {
+    let requester = LogicalCpuId::new(logical_cpu);
+    let wrong_requester = if logical_cpu == 0 {
+        LogicalCpuId::new(1)
+    } else {
+        LogicalCpuId::BOOT
+    };
+    let mut task = scheduler_task(logical_cpu, 1);
+    let mut errors = 0;
+
+    match scheduler.local_scheduler_mut(requester) {
+        Ok(local_scheduler) => {
+            if local_scheduler.make_runnable(&mut task).is_err() {
+                errors += 1;
+            }
+        }
+        Err(_) => errors += 1,
+    }
+
+    if scheduler.dispatch_cpu_local_diagnostic_task(requester, &mut task) != Ok(task.id()) {
+        errors += 1;
+    }
+
+    let queue_len_before_cross_owner = scheduler.scheduler().runnable().len();
+    let cross_owner_rejected = match scheduler.local_scheduler_mut(wrong_requester) {
+        Err(PerCoreSchedulerAccessError::WrongOwner { owner, requester }) => {
+            owner == scheduler.owner() && requester == wrong_requester
+        }
+        _ => false,
+    };
+    if !cross_owner_rejected {
+        errors += 1;
+    }
+    let local_queue_preserved =
+        scheduler.scheduler().runnable().len() == queue_len_before_cross_owner;
+    if !local_queue_preserved {
+        errors += 1;
+    }
+
+    let (
+        metadata_cross_owner_rejected,
+        metadata_len,
+        metadata_generation,
+        lookup_owner,
+        lookup_task,
+        lookup_generation,
+        boot_lookup_owner,
+        boot_lookup_task,
+        boot_lookup_generation,
+    ) = {
+        let mut metadata = unsafe { SHARED_SCHEDULER_METADATA_SMOKE_TABLE.lock_irqsave() };
+        if metadata
+            .register_local_task(requester, scheduler, &task)
+            .is_err()
+        {
+            errors += 1;
+        }
+
+        let own_lookup = metadata.lookup_task(task.id());
+        let boot_lookup = metadata.lookup_task(task_id(101));
+        let metadata_cross_owner_rejected =
+            match metadata.register_local_task(wrong_requester, scheduler, &task) {
+                Err(SharedSchedulerMetadataError::WrongOwner { owner, requester }) => {
+                    owner == scheduler.owner() && requester == wrong_requester
+                }
+                _ => false,
+            };
+        if !metadata_cross_owner_rejected {
+            errors += 1;
+        }
+
+        let (lookup_owner, lookup_task, lookup_generation) = match own_lookup {
+            Ok(snapshot) => (
+                snapshot.owner().raw() as u64,
+                snapshot.task_id().raw(),
+                snapshot.generation(),
+            ),
+            Err(_) => {
+                errors += 1;
+                (u64::MAX, 0, 0)
+            }
+        };
+        let (boot_lookup_owner, boot_lookup_task, boot_lookup_generation) = match boot_lookup {
+            Ok(snapshot) => (
+                snapshot.owner().raw() as u64,
+                snapshot.task_id().raw(),
+                snapshot.generation(),
+            ),
+            Err(_) => {
+                errors += 1;
+                (u64::MAX, 0, 0)
+            }
+        };
+
+        (
+            metadata_cross_owner_rejected,
+            metadata.len() as u64,
+            metadata.generation(),
+            lookup_owner,
+            lookup_task,
+            lookup_generation,
+            boot_lookup_owner,
+            boot_lookup_task,
+            boot_lookup_generation,
+        )
+    };
+
+    let local_scheduler = scheduler.scheduler();
+    SharedSchedulerMetadataReport {
+        owner: scheduler.owner().raw() as u64,
+        role: scheduler.role(),
+        production_dispatch_enabled: scheduler.production_dispatch_enabled(),
+        task_id: task.id().raw(),
+        task_state: task_state_code(task.state()),
+        current_task: scheduler.current_task().map_or(0, TaskId::raw),
+        queue_len: local_scheduler.runnable().len() as u64,
+        front_task: local_scheduler.runnable().front().map_or(0, TaskId::raw),
+        metadata_len,
+        metadata_generation,
+        lookup_owner,
+        lookup_task,
+        lookup_generation,
+        boot_lookup_owner,
+        boot_lookup_task,
+        boot_lookup_generation,
+        cross_owner_rejected,
+        metadata_cross_owner_rejected,
+        local_queue_preserved,
+        errors,
+    }
+}
+
+#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+fn publish_shared_scheduler_metadata_report(
+    logical_cpu: usize,
+    report: SharedSchedulerMetadataReport,
+) {
+    let mut state = SHARED_SCHEDULER_METADATA_SMOKE_STATE.lock();
+    state.reports[logical_cpu] = report;
+    state.lock_progress[logical_cpu] = u64::from(report.errors == 0);
+}
+
+#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+fn run_shared_scheduler_metadata_secondary(core_state: &smp::PerCoreState, logical_cpu: usize) {
+    core_state.mark_workload_running();
+    core_state.clean_to_poc();
+
+    let mut scheduler =
+        PerCoreScheduler::<2>::production_secondary_diagnostic(LogicalCpuId::new(logical_cpu));
+    let report = build_shared_scheduler_metadata_report(logical_cpu, &mut scheduler);
+    publish_shared_scheduler_metadata_report(logical_cpu, report);
+    smp_full_barrier();
+
+    core_state.mark_workload_complete(report.lock_progress());
+    core_state.clean_to_poc();
+}
+
+#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+impl SharedSchedulerMetadataReport {
+    const fn lock_progress(self) -> u64 {
+        if self.errors == 0 { 1 } else { 0 }
+    }
 }
 
 #[cfg(talos_qemu_cross_core_ipi_delivery_smoke)]
@@ -1326,7 +1603,10 @@ fn publish_remote_wake_request(target: usize, task_id: TaskId) -> bool {
     }
 }
 
-#[cfg(talos_qemu_remote_wake_to_local_runnable_smoke)]
+#[cfg(any(
+    talos_qemu_remote_wake_to_local_runnable_smoke,
+    talos_qemu_shared_scheduler_metadata_smoke
+))]
 fn task_state_code(state: TaskState) -> u64 {
     match state {
         TaskState::Running => 1,
@@ -1335,7 +1615,10 @@ fn task_state_code(state: TaskState) -> u64 {
     }
 }
 
-#[cfg(talos_qemu_remote_wake_to_local_runnable_smoke)]
+#[cfg(any(
+    talos_qemu_remote_wake_to_local_runnable_smoke,
+    talos_qemu_shared_scheduler_metadata_smoke
+))]
 fn task_state_name(code: u64) -> &'static str {
     match code {
         1 => "running",
@@ -2176,6 +2459,196 @@ pub fn run_production_secondary_dispatch_smoke() -> bool {
         crate::println!("qemu-production-secondary-dispatch: PASS");
     } else {
         crate::println!("qemu-production-secondary-dispatch: FAIL");
+    }
+
+    reports_ok
+}
+
+#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+pub fn run_shared_scheduler_metadata_smoke() -> bool {
+    smp::reset_secondary_core_states();
+    reset_shared_scheduler_metadata_smoke_state();
+
+    let boot_mpidr = aarch64::mpidr_el1();
+    let boot_affinity = aarch64::mpidr_affinity(boot_mpidr);
+    let boot_logical = qemu_logical_cpu_from_mpidr_affinity(boot_affinity);
+    let entry = talos_aarch64_qemu_secondary_entry as *const () as usize;
+    let stack_layout = secondary_stack_layout();
+    let stack_base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
+    let stack_end = core::ptr::addr_of!(talos_secondary_core_stacks_end) as usize;
+
+    crate::println!(
+        "qemu-shared-scheduler-metadata: start conduit=smc cores={} task-capacity={} boot-mpidr={:#018x} boot-affinity={:#x} boot-logical={:?} entry={:#018x} stack-range=[{:#018x},{:#018x})",
+        MAX_CORES,
+        SHARED_SCHEDULER_METADATA_TASK_CAPACITY,
+        boot_mpidr,
+        boot_affinity,
+        boot_logical,
+        entry,
+        stack_base,
+        stack_end
+    );
+
+    let mut boot_scheduler = PerCoreScheduler::<2>::boot_cpu();
+    let boot_report = build_shared_scheduler_metadata_report(0, &mut boot_scheduler);
+    publish_shared_scheduler_metadata_report(0, boot_report);
+
+    let mut cpu_on_ok = true;
+    for logical_cpu in 1..MAX_CORES {
+        let target_affinity = logical_cpu as u64;
+        let result = unsafe { psci_cpu_on_smc(target_affinity, entry, logical_cpu) };
+        crate::println!(
+            "qemu-shared-scheduler-metadata: cpu-on logical={} target-affinity={:#x} result={}",
+            logical_cpu,
+            target_affinity,
+            result
+        );
+        cpu_on_ok &= result == 0;
+    }
+
+    let mut remaining = SHARED_SCHEDULER_METADATA_WAIT_LIMIT;
+    while remaining > 0 {
+        let all_complete = (1..MAX_CORES).all(|logical_cpu| {
+            SECONDARY_CORE_STATES[logical_cpu]
+                .snapshot(logical_cpu)
+                .lifecycle
+                >= CoreLifecycle::WorkloadComplete
+        });
+        if all_complete {
+            break;
+        }
+        core::hint::spin_loop();
+        remaining -= 1;
+    }
+
+    let final_state = SHARED_SCHEDULER_METADATA_SMOKE_STATE
+        .try_lock()
+        .map(|state| *state);
+    let state_lock_available = final_state.is_some();
+    let final_state = final_state.unwrap_or_else(SharedSchedulerMetadataSmokeState::new);
+    let final_metadata = SHARED_SCHEDULER_METADATA_SMOKE_TABLE
+        .try_lock()
+        .map(|metadata| (metadata.len(), metadata.generation()));
+    let metadata_lock_available = final_metadata.is_some();
+    let (final_metadata_len, final_metadata_generation) = final_metadata.unwrap_or((0, 0));
+
+    let mut participants = 0;
+    let mut errors = 0;
+    let mut reports_ok = cpu_on_ok
+        && boot_logical == Some(0)
+        && state_lock_available
+        && metadata_lock_available
+        && final_metadata_len == MAX_CORES;
+
+    for logical_cpu in 0..MAX_CORES {
+        let report = final_state.reports[logical_cpu];
+        let (lifecycle, context, mapped, stack_owned) = if logical_cpu == 0 {
+            (CoreLifecycle::WorkloadComplete, 0, boot_logical, true)
+        } else {
+            let core_report = SECONDARY_CORE_STATES[logical_cpu].snapshot(logical_cpu);
+            let logical_from_mpidr = qemu_logical_cpu_from_mpidr_affinity(core_report.affinity);
+            let stack_slot = stack_layout
+                .slot(logical_cpu)
+                .expect("stack slot for possible QEMU core");
+            (
+                core_report.lifecycle,
+                core_report.context,
+                logical_from_mpidr,
+                stack_slot.contains_stack_pointer(core_report.stack_pointer),
+            )
+        };
+        let expected_task = (logical_cpu as u64 + 1) * 100 + 1;
+        let expected_role = if logical_cpu == 0 {
+            SchedulerCoreRole::BootCpuProduction
+        } else {
+            SchedulerCoreRole::SecondaryProductionDiagnostic
+        };
+        let report_ok = lifecycle >= CoreLifecycle::WorkloadComplete
+            && context == logical_cpu
+            && mapped == Some(logical_cpu)
+            && stack_owned
+            && report.owner == logical_cpu as u64
+            && report.role == expected_role
+            && report.production_dispatch_enabled
+            && report.task_id == expected_task
+            && report.task_state == task_state_code(TaskState::Running)
+            && report.current_task == expected_task
+            && report.queue_len == 0
+            && report.front_task == 0
+            && report.lookup_owner == logical_cpu as u64
+            && report.lookup_task == expected_task
+            && report.lookup_generation > 0
+            && report.boot_lookup_owner == 0
+            && report.boot_lookup_task == 101
+            && report.boot_lookup_generation > 0
+            && report.cross_owner_rejected
+            && report.metadata_cross_owner_rejected
+            && report.local_queue_preserved
+            && final_state.lock_progress[logical_cpu] == 1
+            && report.errors == 0;
+        if report_ok {
+            participants += 1;
+        }
+        errors += report.errors;
+        reports_ok &= report_ok;
+
+        crate::println!(
+            "qemu-shared-scheduler-metadata: report logical={} state={} context={} mapped={:?} owner={} role={} production={} task={} task-state={} current={} queue-len={} front={} metadata-len={} metadata-generation={} lookup-owner={} lookup-task={} lookup-generation={} boot-lookup-owner={} boot-lookup-task={} boot-lookup-generation={} cross-owner-rejected={} metadata-cross-owner-rejected={} local-queue-preserved={} lock-progress={} errors={} ok={}",
+            logical_cpu,
+            secondary_state_name(lifecycle.raw()),
+            context,
+            mapped,
+            report.owner,
+            scheduler_role_name(report.role),
+            report.production_dispatch_enabled,
+            report.task_id,
+            task_state_name(report.task_state),
+            report.current_task,
+            report.queue_len,
+            report.front_task,
+            report.metadata_len,
+            report.metadata_generation,
+            report.lookup_owner,
+            report.lookup_task,
+            report.lookup_generation,
+            report.boot_lookup_owner,
+            report.boot_lookup_task,
+            report.boot_lookup_generation,
+            report.cross_owner_rejected,
+            report.metadata_cross_owner_rejected,
+            report.local_queue_preserved,
+            final_state.lock_progress[logical_cpu],
+            report.errors,
+            report_ok
+        );
+    }
+
+    let classification = if reports_ok {
+        "qemu-shared-scheduler-metadata-complete"
+    } else if !state_lock_available || !metadata_lock_available {
+        "qemu-shared-scheduler-metadata-lock-still-held"
+    } else if cpu_on_ok {
+        "qemu-shared-scheduler-metadata-invariant-failed"
+    } else {
+        "qemu-psci-smc-cpu-on-failed"
+    };
+    crate::println!(
+        "qemu-shared-scheduler-metadata: final participants={} expected={} errors={} state-lock-available={} metadata-lock-available={} final-metadata-len={} final-metadata-generation={} wait-remaining={} classification={}",
+        participants,
+        MAX_CORES,
+        errors,
+        state_lock_available,
+        metadata_lock_available,
+        final_metadata_len,
+        final_metadata_generation,
+        remaining,
+        classification
+    );
+
+    if reports_ok {
+        crate::println!("qemu-shared-scheduler-metadata: PASS");
+    } else {
+        crate::println!("qemu-shared-scheduler-metadata: FAIL");
     }
 
     reports_ok

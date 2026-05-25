@@ -328,6 +328,13 @@ Completed:
   enqueue, migration, load balancing, multi-core preemption, Phase 7,
   filesystem, networking, SSH, shell work, RP1/PCIe, UART interrupt ownership,
   or DMA/cache-coherent driver policy.
+- Phase 6.3 QEMU shared scheduler metadata evidence is accepted. Under QEMU
+  SMP, logical CPUs 0 through 3 publish/query the owner-only metadata table,
+  prove boot-task and owner-task lookup, reject cross-owner scheduler and
+  metadata mutation, preserve target-owned local runnable queues, and report
+  classification=qemu-shared-scheduler-metadata-complete. Serialized Pi 5
+  proof remains required before treating the invariant as physical hardware
+  evidence.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -336,11 +343,11 @@ Completed:
 Blocked or pending:
 
 - The next explicit worker task should stay within Phase 6.3 and, if queued,
-  prove the shared scheduler metadata core under QEMU before any Pi 5 hardware
-  proof, shared run queue implementation, migration, load balancing,
-  multi-core preemption, userspace, descriptors, filesystem, networking, SSH,
-  shell behavior, UART interrupts, RP1/PCIe, or DMA/cache-coherent driver
-  policy starts.
+  carry the accepted shared scheduler metadata invariant to serialized Pi 5
+  hardware proof before any shared run queue implementation, migration, load
+  balancing, multi-core preemption, userspace, descriptors, filesystem,
+  networking, SSH, shell behavior, UART interrupts, RP1/PCIe, or
+  DMA/cache-coherent driver policy starts.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.

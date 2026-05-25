@@ -2473,3 +2473,40 @@ ADR template:
   preemption, userspace, descriptors, filesystem, networking, SSH, shell
   behavior, RP1/PCIe, UART interrupt ownership, and DMA/cache policy remain
   deferred.
+
+## 2026-05-25 - Phase 6.3 QEMU Shared Scheduler Metadata Evidence Accepted
+
+- Status: accepted as QEMU substitute evidence for the first shared scheduler
+  metadata invariant. No Pi 5 hardware claim, shared run queue, remote enqueue,
+  task migration, load balancing, multi-core preemption, Phase 7, filesystem,
+  networking, SSH, shell, RP1/PCIe, UART interrupt ownership, or DMA behavior
+  was added.
+- Context: The shared scheduler metadata core had static, unit-test, and
+  retained QEMU-smoke evidence, but still needed a focused SMP transcript
+  proving all QEMU logical CPUs could publish/query the table through the
+  accepted lock boundary.
+- Decision: Accept phase6-qemu-shared-scheduler-metadata-smoke-20260525. The
+  focused QEMU diagnostic starts logical CPUs 0 through 3, publishes owner
+  metadata for task IDs 101, 201, 301, and 401, proves owner-task and boot-task
+  lookup, rejects cross-owner local scheduler mutation, rejects cross-owner
+  metadata publication, preserves target-owned local runnable queues, and
+  reports classification=qemu-shared-scheduler-metadata-complete.
+- Evidence level: QEMU/substitute transcript, fmt/lint/typecheck, no_std unit
+  tests, retained QEMU substitute gates, mdBook validation, and whitespace
+  inspection.
+- Validation: scripts/qemu-shared-scheduler-metadata-smoke.sh passed with
+  target/qemu-shared-scheduler-metadata-smoke.log; full acceptance validation
+  also includes cargo fmt --all -- --check, cargo -Zjson-target-spec test,
+  scripts/qemu-smoke.sh, scripts/qemu-production-secondary-dispatch-smoke.sh,
+  scripts/qemu-remote-wake-to-local-runnable-smoke.sh, git diff --check, and
+  mdbook build.
+- Rationale: This proves the metadata table under QEMU SMP while keeping
+  ownership read-oriented and separate from local runnable queue mutation. It
+  creates substitute evidence for the next serialized Pi 5 proof without
+  broadening scheduler topology.
+- Risks: QEMU evidence is not physical Pi 5 evidence. Serialized Pi 5 shared
+  scheduler metadata proof remains required before checkpoint work. Shared run
+  queues, global mutable task lookup, migration, load balancing, work stealing,
+  remote enqueue, multi-core preemption, userspace, descriptors, filesystem,
+  networking, SSH, shell behavior, RP1/PCIe, UART interrupt ownership, and
+  DMA/cache policy remain deferred.
