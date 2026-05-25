@@ -309,13 +309,27 @@ through the accepted PSCI path, sends one diagnostic SGI from CPU 0 to each
 secondary logical CPU, and reports MPIDR/logical CPU identity, target-list bit,
 observed INTID, acknowledgement/EOI, counts, errors, and PASS/FAIL. The
 accepted transcript is `target/qemu-cross-core-ipi-delivery-smoke.log` with
-classification `qemu-cross-core-ipi-delivery-complete`. A later serialized Pi 5
-proof is required before SGIs are accepted for physical scheduler wakeups.
+classification `qemu-cross-core-ipi-delivery-complete`.
+
+The serialized Pi 5 proof is also accepted as raw interrupt-delivery evidence.
+The accepted hardware run is captured under
+`tasks/evidence/2026-05-25-pi5-cross-core-ipi-delivery-proof/irqdispatch1/`:
+the Pi fetched the 97,016-byte candidate kernel, the cursor-valid serial
+transcript reported `cpuif-poll=active-spin`, SGIR 0x01000001, receivers 1,
+2, and 3 each reported `receive-count=1 eoi-count=1 intid=1`, and the final
+classification was `pi5-cross-core-ipi-delivery-complete` with `PASS`. This
+proves raw SGI delivery on the physical GIC-400 path, not scheduler wakeup
+ownership.
 
 IPI context has the same hot-path limits as the timer IRQ path: acknowledge,
 classify, record bounded state, EOI, and return. It must not allocate, format,
 print, poll UART input, dispatch diagnostic commands, block, sleep, walk
 scheduler queues, migrate tasks, or cross the context-switch boundary.
+
+The first scheduler-facing use of SGIs is a bounded remote wake-request signal.
+The IPI handler may record wake-pending evidence only; target-owned request
+drain and any local scheduler mutation must happen after IRQ return under the
+remote wake-request ownership rules in the scheduler architecture note.
 
 ## Minimal Generic-Timer Checklist
 

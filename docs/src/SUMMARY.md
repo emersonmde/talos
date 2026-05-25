@@ -38,6 +38,7 @@
 - [Phase 6 Scheduler Migration Readiness Source Inventory](project/phase6-scheduler-migration-readiness-source-inventory.md)
 - [Phase 6 Cross-Core Wakeup and IPI Source Inventory](project/phase6-cross-core-wakeup-ipi-source-inventory.md)
 - [Phase 6 Scheduler Migration Slice Checkpoint](project/phase6-scheduler-migration-slice-checkpoint.md)
+- [Phase 6 Remote Wakeup Ownership Source Inventory](project/phase6-remote-wakeup-ownership-source-inventory.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

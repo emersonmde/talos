@@ -466,3 +466,49 @@ hardware. Shared run queues, global task lookup, task migration, load
 balancing, work stealing, sleep/wakeup queues, userspace, descriptors,
 filesystem, networking, SSH, shell behavior, RP1/PCIe, UART interrupt
 ownership, and DMA policy remain deferred.
+
+The Pi 5 raw SGI/IPI hardware proof is now accepted as interrupt-delivery
+evidence. It proves that SGI INTID 1 can be delivered and EOI'd by logical
+CPUs 1, 2, and 3 on the physical GIC-400 path after the Pi 5 IRQ dispatcher
+includes the cross-core IPI proof handler. It still does not authorize direct
+remote enqueue, shared run queues, production secondary scheduler dispatch, or
+task migration.
+
+## Phase 6.3 Remote Wake-Request Ownership
+
+The remote wakeup ownership inventory selects a bounded per-target remote
+wake-request list as the first scheduler-facing IPI model. A remote sender may
+publish a request for a scheduler `TaskId` into the target CPU's wake-request
+list and then signal the target with SGI INTID 1. The target CPU owns request
+consumption and any future local scheduler effect.
+
+This is intentionally not direct remote enqueue. Another CPU must not mutate a
+target's `RunnableQueue` or `current_task` slot from the outside. CPU 0 remains
+the only production scheduler owner in this slice; QEMU remote-wakeup evidence
+may use secondary CPUs as diagnostic owners for request-consumption counters,
+not as production dispatch owners.
+
+The publication path must mask local IRQs, acquire the target wake-request
+lock, insert or coalesce the bounded request, release the lock, restore the
+saved IRQ state, publish the request before signaling when a barrier is needed,
+and only then send the SGI. The target drain path runs outside IPI context,
+masks local IRQs, acquires its own wake-request lock, drains or snapshots
+bounded requests, releases the lock, and restores local IRQ state.
+
+IPI context remains a hot path: acknowledge, classify, record bounded
+wake-pending evidence, EOI, and return. It must not take scheduler locks, walk
+runnable queues, allocate, format, print, poll UART input, dispatch diagnostic
+commands, block, sleep, migrate tasks, or cross
+`talos_aarch64_context_switch`.
+
+Duplicate pending wakes for the same target `TaskId` are coalesced: the first
+request remains pending, the duplicate does not consume another slot, and the
+implementation may count the duplicate for evidence. Queue-full, invalid
+target CPU, invalid task ID, and self-targeted remote requests must be explicit
+outcomes rather than silent scheduler mutations.
+
+The next bounded implementation proof is
+`phase6-qemu-remote-wakeup-request-smoke-20260525`. It should prove request
+publication, IPI signaling, target-owned observation/consumption, duplicate
+semantics, and preserved local scheduler ownership under QEMU before any Pi 5
+scheduler-facing wakeup proof is planned.

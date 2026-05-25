@@ -236,10 +236,19 @@ Completed:
   while secondary production dispatch, shared run queues, task migration,
   cross-core wakeups, and IPIs remain deferred.
 - Phase 6.3 cross-core wakeup/IPI source inventory is accepted. The selected
-  path is raw SGI delivery first: a QEMU-only SGI/IPI smoke should prove
-  target-list mapping, acknowledgement/EOI, and per-core counters before any
-  scheduler wakeup implementation; a later serialized Pi 5 proof is required
-  before SGIs are accepted for physical scheduler wakeups.
+  path was raw SGI delivery first: a QEMU-only SGI/IPI smoke for target-list
+  mapping, acknowledgement/EOI, and per-core counters before any scheduler
+  wakeup implementation, followed by a serialized Pi 5 proof before SGIs are
+  accepted for physical scheduler wakeups.
+- Phase 6.3 raw SGI delivery is accepted on both QEMU and Pi 5. The QEMU proof
+  shows SGI INTID 1 target-list delivery to logical CPUs 1, 2, and 3; the
+  serialized Pi 5 proof shows the physical GIC-400 path delivering and EOI'ing
+  SGI INTID 1 on logical CPUs 1, 2, and 3. These are raw interrupt-delivery
+  proofs, not scheduler wakeup or remote enqueue implementations.
+- Phase 6.3 remote wakeup ownership source inventory is accepted. The selected
+  first model is a bounded per-target remote wake-request list: a remote sender
+  may publish a bounded request and signal with SGI INTID 1, while the target
+  CPU owns request consumption and any later local scheduler effect.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -247,10 +256,10 @@ Completed:
 
 Blocked or pending:
 
-- The next explicit worker task should stay within Phase 6.3 and prove QEMU
-  SGI/IPI delivery before any scheduler remote-wakeup implementation. The
-  recommended bounded slice is
-  `phase6-qemu-cross-core-ipi-delivery-smoke-20260525`. Multi-core scheduler
+- The next explicit worker task should stay within Phase 6.3 and prove the
+  accepted remote wake-request model under QEMU before any Pi 5
+  scheduler-facing wakeup proof. The recommended bounded slice is
+  `phase6-qemu-remote-wakeup-request-smoke-20260525`. Multi-core scheduler
   migration, shared run queues, task migration, production remote wakeups,
   userspace, descriptors, filesystem, networking, SSH, shell behavior, UART
   interrupts, RP1/PCIe, and DMA/cache-coherent driver policy remain deferred
