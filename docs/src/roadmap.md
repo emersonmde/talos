@@ -212,14 +212,16 @@ Completed:
   trampoline path; each core contends on the shared `SpinLock<T>` for 64
   iterations, and the transcript reports `counter=192 expected=192`,
   `participants=3`, `errors=0`, and
-  `qemu-smp-lock-contention-complete`. This is QEMU/substitute evidence only;
-  Pi 5 cache/coherence proof remains a separate hardware-locked task.
-- Phase 6.2 Pi 5 SMP lock proof is blocked by decisive mixed cache/MMU
-  evidence, not accepted as a physical lock proof. The boot CPU reaches the
-  proof with cacheable EL2 stage-1 enabled while secondaries reach the proof
-  before first lock attempt with data cache disabled. The secondary cacheable
-  MMU handoff source inventory is accepted as the next required boundary before
-  any resumed Pi 5 shared-lock proof.
+  `qemu-smp-lock-contention-complete`. This remains QEMU/substitute evidence;
+  the separate hardware-locked Pi 5 proof below closes the physical
+  cache/coherence claim.
+- Phase 6.2 Pi 5 SMP lock cache/coherence proof is accepted. Serialized Pi 5
+  hardware evidence shows the boot CPU and logical cores 1, 2, and 3 in the
+  accepted cacheable-MMU regime before generic lock access; each secondary
+  reports stable identity and `ok=true`; the final invariant reports
+  `counter=192 expected=192 participants=3 errors=0`,
+  `mixed-cache-mmu=false`,
+  `classification=pi5-smp-lock-cache-coherence-complete`, and `PASS`.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -228,13 +230,11 @@ Completed:
 Blocked or pending:
 
 - The next explicit worker task is the supervisor-queued
-  `phase6-secondary-cacheable-mmu-handoff-core-20260524` implementation slice.
-  It must bring secondary cores into the accepted cacheable EL2 stage-1 regime,
-  or a documented narrower equivalent, before the blocked
-  `phase6-pi5-smp-lock-cache-coherence-proof-20260524` hardware proof resumes.
-  Multi-core scheduler migration, shared run queues, cross-core wakeups,
-  userspace, descriptors, filesystem, networking, SSH, shell behavior, UART
-  interrupts, RP1/PCIe, and DMA/cache-coherent driver policy remain deferred.
+  `phase6-smp-lock-proof-scaffolding-quarantine-20260525` cleanup slice before
+  the Phase 6.2 closeout checkpoint. Multi-core scheduler migration, shared
+  run queues, cross-core wakeups, userspace, descriptors, filesystem,
+  networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and
+  DMA/cache-coherent driver policy remain deferred.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
@@ -527,7 +527,8 @@ Goal: use all Pi 5 CPU cores with correct synchronization and preemptive schedul
 
 Status: Milestone 6.1 is accepted through the secondary-core bring-up closeout
 checkpoint. Milestone 6.2 has an accepted SMP-safe primitive source inventory,
-contract, and first spinlock/barrier core. See
+contract, first spinlock/barrier core, QEMU SMP contention smoke, and physical
+Pi 5 lock cache/coherence proof. See
 [Phase 6 Secondary-Core Bring-Up Closeout Checkpoint](project/phase6-secondary-core-bringup-closeout-checkpoint.md)
 and
 [Phase 6 Secondary-Core Bring-Up Source Inventory](project/phase6-secondary-core-bringup-source-inventory.md),

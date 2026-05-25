@@ -2,7 +2,8 @@
 
 Task: `phase6-pi5-smp-lock-cache-coherence-proof-20260524`
 
-Status: in progress.
+Status: accepted through
+`phase6-pi5-smp-lock-cache-coherence-final-proof-20260525`.
 
 ## Scope
 
@@ -94,6 +95,25 @@ Entry-discriminator iteration:
 
 Current discriminator classification:
 `pi5-smp-lock-entry-discriminator-candidate-fetched-no-dispatch-serial`.
+
+Final proof follow-up:
+
+- The supervisor-planned final proof task
+  `phase6-pi5-smp-lock-cache-coherence-final-proof-20260525` accepted the
+  physical Pi 5 lock/cache-coherence proof after the secondary cacheable-MMU
+  handoff and report-invariant correction.
+- Evidence:
+  `tasks/evidence/2026-05-25-pi5-smp-lock-cache-coherence-final-proof/`.
+- Archive SHA256:
+  `73041969803f1153a4277d0f56700df08022451a486cd7088ceabe654e953910`.
+- Kernel SHA256:
+  `e28596b5f259775c4c239c3e18b57e3d61d24ff453aa3c762c879e38075f7278`.
+- Serialized Pi 5 serial output reports boot CPU and logical cores 1, 2, and 3
+  in the accepted cacheable-MMU regime, per-core `ok=true` reports, final
+  `counter=192 expected=192 participants=3 errors=0`,
+  `mixed-cache-mmu=false`,
+  `classification=pi5-smp-lock-cache-coherence-complete`, and `PASS`.
+- The pre-run boot snapshot was restored after the hardware run.
 
 Early-entry discriminator rerun:
 

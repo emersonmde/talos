@@ -1,0 +1,2 @@
+73041969803f1153a4277d0f56700df08022451a486cd7088ceabe654e953910  target/talos-rpi5-smp-lock-cache-coherence-boot.tar.gz
+e28596b5f259775c4c239c3e18b57e3d61d24ff453aa3c762c879e38075f7278  target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-smp-lock-cache-coherence.img
