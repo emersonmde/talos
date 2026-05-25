@@ -12,6 +12,49 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-25 - Phase 6.3 Target-Owned Wake Consumption Contract Accepted
+
+- Status: accepted as the scheduler ownership contract for converting consumed
+  remote wake requests into local scheduler wake actions. No Rust
+  implementation, boot image, hardware publish/test, shared run queue, task
+  migration, production secondary scheduler dispatch, multi-core preemption,
+  Phase 7, filesystem, networking, SSH, shell, RP1/PCIe, UART interrupt, or
+  DMA behavior was added.
+- Context: QEMU and Pi 5 both prove the bounded remote wake-request model:
+  CPU 0 can publish requests, signal with SGI INTID 1, and targets can observe,
+  EOI, consume, drain, and reject cross-owner queue mutation. That evidence
+  deliberately stops before a consumed request mutates local runnable state.
+- Decision: Accept
+  `docs/src/project/phase6-target-owned-wake-consumption-contract.md`. A
+  remote sender may not mutate another CPU's `RunnableQueue` directly. After
+  IPI acknowledgement/EOI, only the target CPU may consume its owned wake
+  requests outside IPI context and transition one of its own blocked local
+  tasks to runnable under local scheduler rules.
+- Evidence level: static source inspection of scheduler, `RemoteWakeQueue`,
+  per-core ownership, spinlock/IRQ masking, GICv2 SGI paths, accepted QEMU/Pi
+  5 remote wake-request records, architecture docs, roadmap, and decision log.
+- Validation: `git status --short` was clean before edits,
+  `git diff --check` passed after edits, and `mdbook` was unavailable in
+  the container. Rust fmt/tests and hardware runs were not required because
+  this task changed only Markdown documentation and durable task state.
+- Rationale: Keeping the local runnable transition target-owned preserves the
+  accepted CPU-local scheduler topology while giving the next worker task a
+  precise QEMU-only proof boundary: blocked-to-runnable local wake consumption,
+  duplicate coalescing, cross-owner rejection, drained queues, and no
+  production secondary dispatch.
+- Risks: The contract is not yet implemented. Shared run queues, global task
+  lookup, remote enqueue queues, task migration, load balancing, work
+  stealing, production secondary scheduler dispatch, multi-core preemption,
+  userspace, descriptors, filesystem, networking, SSH, shell behavior,
+  RP1/PCIe, UART interrupt ownership, and DMA/cache-coherent driver policy
+  remain deferred.
+- Alternatives considered: Allow the remote sender to enqueue directly onto
+  the target run queue, wake tasks from IPI context, or skip the contract and
+  implement the runnable transition immediately. Direct enqueue violates
+  CPU-local ownership; IPI-context wakeups would mix interrupt hot-path work
+  with scheduler mutation; skipping the contract would make the next proof's
+  acceptance criteria ambiguous.
+
 ## 2026-05-25 - Pi 5 SMP Lock Cache/Coherence Proof Accepted
 
 - Status: accepted as the physical Pi 5 hardware proof for the first Milestone

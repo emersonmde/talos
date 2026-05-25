@@ -520,3 +520,55 @@ rejected. Shared run queues, local runnable transitions from remote requests,
 task migration, production secondary scheduler dispatch, multi-core
 preemption, Phase 7, filesystem, networking, SSH, shell behavior, RP1/PCIe,
 and DMA behavior remain deferred.
+
+## Phase 6.3 Target-Owned Wake Consumption
+
+The next accepted boundary converts a consumed remote wake request into a local
+wake action without breaking CPU-local scheduler ownership. The rule is
+target-owned throughout: a remote CPU may only publish or coalesce a bounded
+request and signal the target; only the target CPU may consume that request and
+mutate its own local scheduler state.
+
+The local wake action runs outside IPI context. IPI context remains limited to
+acknowledge, classify, record bounded wake-pending state, EOI, and return. A
+target drain/wake service may then run from normal kernel control flow on the
+target CPU. That service first drains or snapshots its owned
+`RemoteWakeQueue`, then applies local scheduler wake rules to target-owned
+task state. It must not hold the wake-request lock while walking or mutating a
+local scheduler queue.
+
+The first local wake precondition is intentionally narrow: the request names a
+scheduler-local `TaskId` that the target CPU's local diagnostic task table
+already owns, and that task is `Blocked`. The only accepted transition is
+`Blocked -> Runnable` on the target's local scheduler. A request for a
+running, already-runnable, unknown, wrong-owner, or nonlocal task must be an
+explicit diagnostic outcome and must not enqueue anything. Duplicate pending
+remote requests for the same task remain coalesced by `RemoteWakeQueue`; once
+one request is consumed, the local wake service must still reject duplicate
+local enqueue of a task that is no longer blocked.
+
+Lock and context ordering for the first implementation is:
+
+- sender side: mask local IRQs, acquire the target wake-request lock, publish
+  or coalesce the bounded request, release the lock, restore local IRQ state,
+  publish a barrier if needed, then send SGI INTID 1;
+- target IPI side: acknowledge/classify/record/EOI only;
+- target drain side: outside IPI context, mask local IRQs, acquire the owned
+  wake-request lock, drain or snapshot bounded requests, release the lock,
+  restore local IRQ state, then enter the target-owned local scheduler mutation
+  boundary for any `Blocked -> Runnable` transition;
+- no scheduler lock is held across `talos_aarch64_context_switch`, printing,
+  UART polling, diagnostic command dispatch, allocation, blocking, sleeping,
+  migration, or arbitrary callbacks.
+
+The first implementation proof should be QEMU-only. It should show CPU 0
+publishing remote requests for diagnostic tasks owned by logical CPUs 1, 2,
+and 3; target CPUs observing and EOI'ing SGI INTID 1; each target draining one
+request outside IPI context; each target changing exactly one blocked local
+task to runnable; duplicate coalescing and duplicate-local-enqueue rejection;
+cross-owner scheduler mutation rejection; queue length zero after drain; and
+no production secondary dispatch. Pi 5 hardware proof, shared run queues,
+global task lookup, task migration, load balancing, production secondary
+scheduler dispatch, multi-core preemption, Phase 7, filesystem, networking,
+SSH, shell behavior, RP1/PCIe, UART interrupt ownership, and DMA policy remain
+deferred.
