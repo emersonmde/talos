@@ -604,3 +604,44 @@ diagnostic dispatch and run production scheduler work while preserving the
 existing IPI, wake-drain, context-switch, timer/preemption, console/output, and
 failure-diagnostic boundaries. It should not implement production secondary
 dispatch.
+
+## Phase 6.3 Production Secondary Dispatch Contract
+
+The production secondary scheduler dispatch source inventory is accepted as a
+contract only. The first acceptable implementation slice may enable secondary
+CPUs to dispatch explicitly seeded CPU-local diagnostic kernel threads from
+normal secondary control flow. Each participating logical CPU owns its local
+PerCoreScheduler, local current-task slot, local runnable queue, diagnostic
+task state, and dispatch counters.
+
+This is still a CPU-local topology. A remote CPU may publish or coalesce a
+bounded wake request and signal with SGI INTID 1, but only the target CPU may
+drain its own request queue and mutate its own local scheduler state. The IPI
+handler remains limited to acknowledge/classify/record/EOI and must not run a
+dispatch loop, walk runnable queues, format output, allocate, poll UART input,
+dispatch diagnostic commands, block, sleep, migrate tasks, or cross
+talos_aarch64_context_switch.
+
+Secondary production dispatch may start only after the accepted secondary-core
+bring-up, stack ownership, cacheable-MMU handoff, raw SGI delivery, and
+target-owned remote wake evidence remain intact. The boot CPU keeps its
+existing production scheduler behavior. Secondary dispatch must stay behind an
+explicit validation flag or diagnostic entry path until both the focused QEMU
+smoke and serialized Pi 5 proof accept it.
+
+Local timer/preemption state remains CPU-local in this slice. A timer IRQ may
+record local state according to the accepted preemption-entry policy, but this
+contract does not accept switching directly from asynchronous exception
+context or multi-core preemption. No scheduler lock may be held across
+talos_aarch64_context_switch, printing, UART polling, diagnostic command
+dispatch, allocation, blocking, sleeping, migration, or arbitrary callbacks.
+
+The next bounded implementation task is
+phase6-production-secondary-dispatch-core-20260525: add only the smallest
+secondary dispatch path for CPU-local diagnostic kernel threads, per-core
+current-task reporting, local runnable transitions, bounded dispatch counters,
+and rejection of cross-owner local queue mutation. Shared run queues, global
+task lookup, remote enqueue queues, task migration, load balancing, work
+stealing, multi-core preemption, lower-EL/userspace, descriptors, filesystem,
+networking, SSH, shell behavior, RP1/PCIe, UART interrupt ownership, and
+DMA/cache driver policy remain deferred.
