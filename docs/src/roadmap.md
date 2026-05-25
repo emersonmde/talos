@@ -13,10 +13,21 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos has moved past first-light and Phase 3 memory/runtime closeout into
-source-backed Phase 4 interrupt and timer planning.
+Talos is currently in Phase 6.3, after accepting bounded SMP scheduler slices
+for secondary-core dispatch, cross-core IPIs, remote wake requests, target-owned
+wake consumption, and owner-published shared scheduler metadata on both QEMU
+substitute and serialized Pi 5 hardware. These proofs are still diagnostic
+validation gates, not a general multi-core runtime: shared run queues, remote
+enqueue, task migration, load balancing, multi-core preemption, userspace,
+filesystem, networking, SSH, and shell behavior remain deferred.
 
-Completed:
+The immediate frontier is repo-health and productionization planning around the
+accepted Phase 6.3 boundary. Evidence-retention and diagnostic-surface audits
+are accepted; the next supervisor-planned implementation work should start from
+the queued productionization boundary inventory, not from broad scheduler
+migration or later roadmap phases.
+
+Accepted status and historical completed facts:
 
 - Talos project directory created separately from Daedalus.
 - mdBook documentation skeleton created.
@@ -351,6 +362,14 @@ Completed:
   broader scheduler productionization; shared run queues, task migration,
   load balancing, multi-core preemption, Phase 7, filesystem, networking, SSH,
   and shell work remain deferred.
+- The evidence-retention policy and bloat audit is accepted. Task records and
+  compact evidence summaries are the durable source of truth; large raw lab
+  captures should move out of Git only through explicit cleanup with preserved
+  classifications, digests, and artifact identity.
+- The diagnostic-surface retirement audit is accepted. Current QEMU and Pi 5
+  Phase 6.3 proof scripts are named retained gates, while older one-off
+  diagnostic paths are queued for bounded retirement only after replacement or
+  summary coverage is explicit.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -358,11 +377,15 @@ Completed:
 
 Blocked or pending:
 
-- The next explicit worker task should audit Phase 6.3 evidence retention and
-  repository bloat before any shared run queue implementation, migration,
-  load balancing, multi-core preemption, userspace, descriptors, filesystem,
-  networking, SSH, shell behavior, UART interrupts, RP1/PCIe, or
-  DMA/cache-coherent driver policy starts.
+- The next explicit planning target is the productionization boundary
+  inventory. It should choose a bounded Phase 6.3 productionization or cleanup
+  task before any shared run queue implementation, migration, load balancing,
+  multi-core preemption, userspace, descriptors, filesystem, networking, SSH,
+  shell behavior, UART interrupts, RP1/PCIe, or DMA/cache-coherent driver
+  policy starts.
+- Large raw accepted evidence remains in Git until external artifact storage or
+  an explicit no-delete manifest-only cleanup is approved. Do not delete
+  tracked accepted evidence during unrelated feature work.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
@@ -677,6 +700,11 @@ and
 [Phase 6 Shared Scheduler Metadata Source Inventory](project/phase6-shared-scheduler-metadata-source-inventory.md),
 and
 [Phase 6 Shared Scheduler Metadata Closeout](project/phase6-shared-scheduler-metadata-closeout-checkpoint.md).
+Before broader Phase 6.3 productionization, the accepted
+[Evidence Retention Policy](project/evidence-retention-policy.md) and
+[Diagnostic Surface Policy](project/diagnostic-surface-policy.md) govern which
+raw artifacts and proof-only scripts remain retained gates versus cleanup
+candidates.
 
 Milestone 6.1: Secondary Core Bring-Up
 
