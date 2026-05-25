@@ -13,13 +13,20 @@ use crate::arch::aarch64::{
     self,
     gicv2::{GicV2, SPURIOUS_INTID},
 };
-#[cfg(talos_rpi5_timer_preemption_diagnostic)]
-use crate::scheduler::{ContextFrame, KernelStack, SingleCoreScheduler, Task, TaskId, TaskState};
+#[cfg(talos_rpi5_remote_wake_to_local_runnable_proof)]
+use crate::scheduler::TargetWakeConsumptionError;
+#[cfg(any(
+    talos_rpi5_timer_preemption_diagnostic,
+    talos_rpi5_remote_wake_to_local_runnable_proof
+))]
+use crate::scheduler::{ContextFrame, KernelStack, Task, TaskState};
 #[cfg(talos_rpi5_remote_wakeup_request_proof)]
 use crate::scheduler::{
     LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError, RemoteWakePublishOutcome,
     RemoteWakeQueue, TaskId,
 };
+#[cfg(talos_rpi5_timer_preemption_diagnostic)]
+use crate::scheduler::{SingleCoreScheduler, TaskId};
 #[cfg(talos_rpi5_secondary_core_workload_proof)]
 use crate::smp::SECONDARY_CORE_WORKLOAD_TARGET;
 #[cfg(any(
@@ -1026,6 +1033,16 @@ struct RemoteWakeRequestProofState {
     polled_daifs: [AtomicU64; MAX_CORES],
     polled_hcrs: [AtomicU64; MAX_CORES],
     poll_counts: [AtomicU64; MAX_CORES],
+    #[cfg(talos_rpi5_remote_wake_to_local_runnable_proof)]
+    local_wake_task_ids: [AtomicU64; MAX_CORES],
+    #[cfg(talos_rpi5_remote_wake_to_local_runnable_proof)]
+    local_runnable_lens: [AtomicU64; MAX_CORES],
+    #[cfg(talos_rpi5_remote_wake_to_local_runnable_proof)]
+    local_state_before: [AtomicU64; MAX_CORES],
+    #[cfg(talos_rpi5_remote_wake_to_local_runnable_proof)]
+    local_state_after: [AtomicU64; MAX_CORES],
+    #[cfg(talos_rpi5_remote_wake_to_local_runnable_proof)]
+    duplicate_local_rejections: [AtomicU64; MAX_CORES],
     errors: AtomicU64,
 }
 
@@ -1054,6 +1071,16 @@ impl RemoteWakeRequestProofState {
             polled_daifs: [const { AtomicU64::new(0) }; MAX_CORES],
             polled_hcrs: [const { AtomicU64::new(0) }; MAX_CORES],
             poll_counts: [const { AtomicU64::new(0) }; MAX_CORES],
+            #[cfg(talos_rpi5_remote_wake_to_local_runnable_proof)]
+            local_wake_task_ids: [const { AtomicU64::new(0) }; MAX_CORES],
+            #[cfg(talos_rpi5_remote_wake_to_local_runnable_proof)]
+            local_runnable_lens: [const { AtomicU64::new(0) }; MAX_CORES],
+            #[cfg(talos_rpi5_remote_wake_to_local_runnable_proof)]
+            local_state_before: [const { AtomicU64::new(0) }; MAX_CORES],
+            #[cfg(talos_rpi5_remote_wake_to_local_runnable_proof)]
+            local_state_after: [const { AtomicU64::new(0) }; MAX_CORES],
+            #[cfg(talos_rpi5_remote_wake_to_local_runnable_proof)]
+            duplicate_local_rejections: [const { AtomicU64::new(0) }; MAX_CORES],
             errors: AtomicU64::new(0),
         }
     }
@@ -1082,6 +1109,14 @@ impl RemoteWakeRequestProofState {
             self.polled_daifs[logical_cpu].store(0, Ordering::Release);
             self.polled_hcrs[logical_cpu].store(0, Ordering::Release);
             self.poll_counts[logical_cpu].store(0, Ordering::Release);
+            #[cfg(talos_rpi5_remote_wake_to_local_runnable_proof)]
+            {
+                self.local_wake_task_ids[logical_cpu].store(0, Ordering::Release);
+                self.local_runnable_lens[logical_cpu].store(0, Ordering::Release);
+                self.local_state_before[logical_cpu].store(0, Ordering::Release);
+                self.local_state_after[logical_cpu].store(0, Ordering::Release);
+                self.duplicate_local_rejections[logical_cpu].store(0, Ordering::Release);
+            }
         }
     }
 
@@ -1207,6 +1242,25 @@ fn publish_remote_wake_request(target: usize, task_id: TaskId) -> bool {
     }
 }
 
+#[cfg(talos_rpi5_remote_wake_to_local_runnable_proof)]
+fn task_state_code(state: TaskState) -> u64 {
+    match state {
+        TaskState::Running => 1,
+        TaskState::Runnable => 2,
+        TaskState::Blocked => 3,
+    }
+}
+
+#[cfg(talos_rpi5_remote_wake_to_local_runnable_proof)]
+fn task_state_name(code: u64) -> &'static str {
+    match code {
+        1 => "running",
+        2 => "runnable",
+        3 => "blocked",
+        _ => "unknown",
+    }
+}
+
 #[cfg(talos_rpi5_remote_wakeup_request_proof)]
 fn poll_remote_wakeup_cpu_interface(logical_cpu: usize) -> bool {
     let gic = GicV2::new(GICD_BASE, GICC_BASE);
@@ -1268,16 +1322,14 @@ fn run_remote_wakeup_request_secondary(core_state: &smp::PerCoreState, logical_c
     }
 
     let requester = LogicalCpuId::new(logical_cpu);
-    let (consumed_task, duplicates, queue_len_after) = {
+    let (consumed_request, duplicates, queue_len_after) = {
         let mut queue = unsafe { REMOTE_WAKE_QUEUES[logical_cpu].lock_irqsave() };
-        let consumed = queue
-            .consume_next(requester)
-            .ok()
-            .flatten()
-            .map(|request| request.task_id().raw())
-            .unwrap_or(0);
+        let consumed = queue.consume_next(requester).ok().flatten();
         (consumed, queue.duplicate_count(), queue.len())
     };
+    let consumed_task = consumed_request
+        .map(|request| request.task_id().raw())
+        .unwrap_or(0);
 
     REMOTE_WAKE_REQUEST_PROOF_STATE.consumed_task_ids[logical_cpu]
         .store(consumed_task, Ordering::Release);
@@ -1300,6 +1352,61 @@ fn run_remote_wakeup_request_secondary(core_state: &smp::PerCoreState, logical_c
     ) {
         REMOTE_WAKE_REQUEST_PROOF_STATE.production_deferrals[logical_cpu]
             .store(1, Ordering::Release);
+    }
+
+    #[cfg(talos_rpi5_remote_wake_to_local_runnable_proof)]
+    {
+        let local_task_id =
+            TaskId::new(200 + logical_cpu as u64).expect("diagnostic task ID is nonzero");
+        let stack_base = 0x80_0000 + logical_cpu * 0x1000;
+        let mut task = Task::kernel_thread(
+            local_task_id,
+            KernelStack::new(stack_base, 0x1000).expect("diagnostic stack is valid"),
+            ContextFrame::new(stack_base + 0xff0, 0x40_0000),
+        );
+        task.set_state(TaskState::Blocked);
+        REMOTE_WAKE_REQUEST_PROOF_STATE.local_state_before[logical_cpu]
+            .store(task_state_code(task.state()), Ordering::Release);
+
+        let wake_result = consumed_request
+            .map(|request| {
+                scheduler.wake_blocked_local_task_from_remote_request(requester, request, &mut task)
+            })
+            .unwrap_or(Err(TargetWakeConsumptionError::TaskMismatch {
+                requested: local_task_id,
+                local: local_task_id,
+            }));
+        if let Ok(woken_task) = wake_result {
+            REMOTE_WAKE_REQUEST_PROOF_STATE.local_wake_task_ids[logical_cpu]
+                .store(woken_task.raw(), Ordering::Release);
+        } else {
+            REMOTE_WAKE_REQUEST_PROOF_STATE
+                .errors
+                .fetch_add(1, Ordering::AcqRel);
+        }
+
+        let duplicate_rejected = consumed_request
+            .map(|request| {
+                scheduler
+                    .wake_blocked_local_task_from_remote_request(requester, request, &mut task)
+                    .is_err()
+            })
+            .unwrap_or(false);
+        if duplicate_rejected {
+            REMOTE_WAKE_REQUEST_PROOF_STATE.duplicate_local_rejections[logical_cpu]
+                .store(1, Ordering::Release);
+        } else {
+            REMOTE_WAKE_REQUEST_PROOF_STATE
+                .errors
+                .fetch_add(1, Ordering::AcqRel);
+        }
+
+        REMOTE_WAKE_REQUEST_PROOF_STATE.local_state_after[logical_cpu]
+            .store(task_state_code(task.state()), Ordering::Release);
+        REMOTE_WAKE_REQUEST_PROOF_STATE.local_runnable_lens[logical_cpu].store(
+            scheduler.scheduler().runnable().len() as u64,
+            Ordering::Release,
+        );
     }
 
     REMOTE_WAKE_REQUEST_PROOF_STATE.mark_complete(logical_cpu);
@@ -2217,6 +2324,41 @@ pub fn run_remote_wakeup_request_proof() -> bool {
             && production_deferred
             && (logical_cpu != 1 || duplicate_count == 1)
             && (logical_cpu == 1 || duplicate_count == 0);
+        #[cfg(talos_rpi5_remote_wake_to_local_runnable_proof)]
+        let report_ok = {
+            let mut report_ok = report_ok;
+            let local_wake_task = REMOTE_WAKE_REQUEST_PROOF_STATE.local_wake_task_ids[logical_cpu]
+                .load(Ordering::Acquire);
+            let local_runnable_len = REMOTE_WAKE_REQUEST_PROOF_STATE.local_runnable_lens
+                [logical_cpu]
+                .load(Ordering::Acquire);
+            let local_state_before = REMOTE_WAKE_REQUEST_PROOF_STATE.local_state_before
+                [logical_cpu]
+                .load(Ordering::Acquire);
+            let local_state_after = REMOTE_WAKE_REQUEST_PROOF_STATE.local_state_after[logical_cpu]
+                .load(Ordering::Acquire);
+            let duplicate_local_rejected = REMOTE_WAKE_REQUEST_PROOF_STATE
+                .duplicate_local_rejections[logical_cpu]
+                .load(Ordering::Acquire)
+                == 1;
+            report_ok &= local_wake_task == expected_task
+                && local_runnable_len == 1
+                && task_state_name(local_state_before) == "blocked"
+                && task_state_name(local_state_after) == "runnable"
+                && duplicate_local_rejected;
+            crate::println!(
+                "rpi5-remote-wake-to-local-runnable: local receiver={} state-before={} state-after={} woke-task={} local-runnable-len={} duplicate-local-rejected={} ok={}",
+                logical_cpu,
+                task_state_name(local_state_before),
+                task_state_name(local_state_after),
+                local_wake_task,
+                local_runnable_len,
+                duplicate_local_rejected,
+                report_ok
+            );
+            wait_uart10_empty_early_phase();
+            report_ok
+        };
         let poll_observed_sgi = polled_intid == RPI5_CROSS_CORE_IPI_SGI_INTID as u64;
         if report_ok {
             participants += 1;
@@ -2266,7 +2408,11 @@ pub fn run_remote_wakeup_request_proof() -> bool {
         .errors
         .load(Ordering::Acquire);
     let classification = if reports_ok && errors == 0 {
-        "pi5-remote-wakeup-request-complete"
+        if cfg!(talos_rpi5_remote_wake_to_local_runnable_proof) {
+            "pi5-remote-wake-to-local-runnable-complete"
+        } else {
+            "pi5-remote-wakeup-request-complete"
+        }
     } else if (ready_mask & expected_mask) != expected_mask {
         "pi5-remote-wakeup-request-secondaries-not-ready"
     } else if (1..MAX_CORES).all(|logical_cpu| {

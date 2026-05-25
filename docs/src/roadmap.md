@@ -270,6 +270,13 @@ Completed:
   1, 2, and 3 after request drain, duplicate coalescing, duplicate-local
   enqueue rejection, cross-owner rejection, drained queues, SGI INTID 1
   observation/EOI, and no production secondary dispatch.
+- Phase 6.3 Pi 5 remote-wake-to-local-runnable evidence is accepted. The
+  serialized hardware proof carries the QEMU target-owned wake-consumption
+  invariant to physical Pi 5: after bounded request drain, logical CPUs 1, 2,
+  and 3 each transition only their own diagnostic blocked task to runnable,
+  reject duplicate local enqueue, preserve SGI INTID 1 observation/EOI,
+  preserve duplicate request coalescing and cross-owner rejection, and leave
+  production secondary dispatch deferred.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -278,12 +285,11 @@ Completed:
 Blocked or pending:
 
 - The next explicit worker task should stay within Phase 6.3 and, if queued,
-  run the serialized Pi 5 remote-wake-to-local-runnable proof. It should not
-  start broader scheduler migration, shared run queues, task migration,
-  production secondary scheduler dispatch, multi-core preemption, userspace,
-  descriptors, filesystem, networking, SSH, shell behavior, UART interrupts,
-  RP1/PCIe, or DMA/cache-coherent driver policy until an explicit durable
-  task is queued.
+  close out the remote wakeup scheduler-integration slice. It should not start
+  broader scheduler migration, shared run queues, task migration, production
+  secondary scheduler dispatch, multi-core preemption, userspace, descriptors,
+  filesystem, networking, SSH, shell behavior, UART interrupts, RP1/PCIe, or
+  DMA/cache-coherent driver policy until an explicit durable task is queued.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
