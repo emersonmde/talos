@@ -635,9 +635,9 @@ talos_aarch64_context_switch.
 Secondary production dispatch may start only after the accepted secondary-core
 bring-up, stack ownership, cacheable-MMU handoff, raw SGI delivery, and
 target-owned remote wake evidence remain intact. The boot CPU keeps its
-existing production scheduler behavior. Secondary dispatch must stay behind an
-explicit validation flag or diagnostic entry path until both the focused QEMU
-smoke and serialized Pi 5 proof accept it.
+existing production scheduler behavior. The accepted QEMU and Pi 5 proof
+surfaces keep secondary dispatch behind explicit diagnostic validation flags;
+normal boot behavior is not yet a shared multi-core scheduler topology.
 
 Local timer/preemption state remains CPU-local in this slice. A timer IRQ may
 record local state according to the accepted preemption-entry policy, but this
@@ -646,18 +646,14 @@ context or multi-core preemption. No scheduler lock may be held across
 talos_aarch64_context_switch, printing, UART polling, diagnostic command
 dispatch, allocation, blocking, sleeping, migration, or arbitrary callbacks.
 
-The next bounded implementation task is
-phase6-production-secondary-dispatch-core-20260525: add only the smallest
-secondary dispatch path for CPU-local diagnostic kernel threads, per-core
-current-task reporting, local runnable transitions, bounded dispatch counters,
-and rejection of cross-owner local queue mutation. Shared run queues, global
-task lookup, remote enqueue queues, task migration, load balancing, work
-stealing, multi-core preemption, lower-EL/userspace, descriptors, filesystem,
-networking, SSH, shell behavior, RP1/PCIe, UART interrupt ownership, and
-DMA/cache driver policy remain deferred.
+The production secondary dispatch core is accepted at QEMU substitute and
+serialized Pi 5 hardware evidence levels for CPU-local diagnostic kernel
+threads. Shared run queues, global task lookup, remote enqueue queues, task
+migration, load balancing, work stealing, multi-core preemption,
+lower-EL/userspace, descriptors, filesystem, networking, SSH, shell behavior,
+RP1/PCIe, UART interrupt ownership, and DMA/cache driver policy remain
+deferred.
 
-The production secondary dispatch core is now implemented at the scheduler
-data-structure boundary, not yet accepted as QEMU or Pi 5 behavior.
 `SchedulerCoreRole::SecondaryProductionDiagnostic` is the only secondary role
 that may pass the production-dispatch gate; `SecondaryDeferred` still rejects
 production dispatch. `PerCoreScheduler::dispatch_cpu_local_diagnostic_task()`
@@ -670,7 +666,9 @@ that leave local scheduler state intact.
 
 This accepted core does not add any remote mutation path. Remote wake requests
 remain bounded signals only, and target-owned wake consumption remains the only
-path from remote request to local runnable state. The focused QEMU production
-secondary dispatch smoke must still prove that the new diagnostic role is
-entered from secondary normal control flow before any serialized Pi 5 hardware
-claim is made.
+path from remote request to local runnable state. The accepted QEMU production
+secondary dispatch smoke and serialized Pi 5 proof show logical CPUs 1, 2, and
+3 entering the diagnostic production role from secondary normal control flow,
+dispatching three CPU-local diagnostic tasks each, publishing current-task and
+counter snapshots, and rejecting cross-owner local queue and production
+dispatch attempts.
