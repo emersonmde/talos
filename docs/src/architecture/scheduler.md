@@ -645,3 +645,22 @@ task lookup, remote enqueue queues, task migration, load balancing, work
 stealing, multi-core preemption, lower-EL/userspace, descriptors, filesystem,
 networking, SSH, shell behavior, RP1/PCIe, UART interrupt ownership, and
 DMA/cache driver policy remain deferred.
+
+The production secondary dispatch core is now implemented at the scheduler
+data-structure boundary, not yet accepted as QEMU or Pi 5 behavior.
+`SchedulerCoreRole::SecondaryProductionDiagnostic` is the only secondary role
+that may pass the production-dispatch gate; `SecondaryDeferred` still rejects
+production dispatch. `PerCoreScheduler::dispatch_cpu_local_diagnostic_task()`
+requires the requesting logical CPU to own the scheduler, requires the selected
+task to be the front of that CPU's local runnable queue, requires that task to
+still be `Runnable`, then records it as the per-core current task and increments
+the local production-dispatch counter. Wrong-owner, deferred-role,
+empty-queue, mismatched-task, and non-runnable-task cases are explicit errors
+that leave local scheduler state intact.
+
+This accepted core does not add any remote mutation path. Remote wake requests
+remain bounded signals only, and target-owned wake consumption remains the only
+path from remote request to local runnable state. The focused QEMU production
+secondary dispatch smoke must still prove that the new diagnostic role is
+entered from secondary normal control flow before any serialized Pi 5 hardware
+claim is made.

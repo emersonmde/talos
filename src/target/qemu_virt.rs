@@ -681,6 +681,7 @@ fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
     match role {
         SchedulerCoreRole::BootCpuProduction => "boot-production",
         SchedulerCoreRole::SecondaryDeferred => "secondary-deferred",
+        SchedulerCoreRole::SecondaryProductionDiagnostic => "secondary-production-diagnostic",
     }
 }
 

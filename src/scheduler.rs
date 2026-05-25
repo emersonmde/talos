@@ -2,9 +2,10 @@
 //!
 //! This module owns the first boot-CPU scheduler shape plus the Phase 6.3
 //! CPU-local ownership wrapper. Task identifiers remain scheduler-local,
-//! runnable queues are still owned by exactly one logical CPU, and the wrapper
-//! does not add migration, shared queues, or secondary-core production
-//! dispatch. The remote wake-request queue is a bounded signal mailbox only:
+//! runnable queues are still owned by exactly one logical CPU, and secondary
+//! production dispatch is limited to an explicit diagnostic role. The wrapper
+//! does not add migration or shared queues. The remote wake-request queue is a
+//! bounded signal mailbox only:
 //! it records target-owned wake intent without mutating another CPU's local
 //! runnable queue.
 
@@ -238,14 +239,38 @@ pub enum TimerPreemptError {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum ProductionDispatchError {
+    WrongOwner {
+        owner: LogicalCpuId,
+        requester: LogicalCpuId,
+    },
+    ProductionDispatchDeferred {
+        owner: LogicalCpuId,
+    },
+    NoRunnableTask,
+    SelectedTaskMismatch {
+        queued: TaskId,
+        provided: TaskId,
+    },
+    TaskNotRunnable {
+        task_id: TaskId,
+        state: TaskState,
+    },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum SchedulerCoreRole {
     BootCpuProduction,
     SecondaryDeferred,
+    SecondaryProductionDiagnostic,
 }
 
 impl SchedulerCoreRole {
     pub const fn production_dispatch_enabled(self) -> bool {
-        matches!(self, Self::BootCpuProduction)
+        matches!(
+            self,
+            Self::BootCpuProduction | Self::SecondaryProductionDiagnostic
+        )
     }
 }
 
@@ -537,6 +562,7 @@ pub struct SchedulerCounters {
     voluntary_yields: u64,
     timer_preemptions: u64,
     context_switches: u64,
+    production_dispatches: u64,
 }
 
 impl SchedulerCounters {
@@ -555,6 +581,10 @@ impl SchedulerCounters {
     pub const fn context_switches(self) -> u64 {
         self.context_switches
     }
+
+    pub const fn production_dispatches(self) -> u64 {
+        self.production_dispatches
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -572,6 +602,7 @@ impl<const RUNNABLE_CAPACITY: usize> SingleCoreScheduler<RUNNABLE_CAPACITY> {
                 voluntary_yields: 0,
                 timer_preemptions: 0,
                 context_switches: 0,
+                production_dispatches: 0,
             },
         }
     }
@@ -592,6 +623,38 @@ impl<const RUNNABLE_CAPACITY: usize> SingleCoreScheduler<RUNNABLE_CAPACITY> {
 
     pub fn pick_next(&mut self) -> Option<TaskId> {
         self.runnable.dequeue()
+    }
+
+    pub fn dispatch_next_production_task(
+        &mut self,
+        next_task: &mut Task,
+    ) -> Result<TaskId, ProductionDispatchError> {
+        let queued = self
+            .runnable
+            .front()
+            .ok_or(ProductionDispatchError::NoRunnableTask)?;
+        if queued != next_task.id() {
+            return Err(ProductionDispatchError::SelectedTaskMismatch {
+                queued,
+                provided: next_task.id(),
+            });
+        }
+        if next_task.state() != TaskState::Runnable {
+            return Err(ProductionDispatchError::TaskNotRunnable {
+                task_id: next_task.id(),
+                state: next_task.state(),
+            });
+        }
+
+        let task_id = self
+            .runnable
+            .dequeue()
+            .expect("front task is present after preflight");
+        next_task.set_state(TaskState::Running);
+        self.counters.state_transitions += 1;
+        self.counters.context_switches += 1;
+        self.counters.production_dispatches += 1;
+        Ok(task_id)
     }
 
     pub fn voluntary_yield(&mut self, current: &mut Task) -> Result<TaskId, VoluntaryYieldError> {
@@ -679,6 +742,10 @@ impl<const RUNNABLE_CAPACITY: usize> PerCoreScheduler<RUNNABLE_CAPACITY> {
         Self::new(owner, SchedulerCoreRole::SecondaryDeferred)
     }
 
+    pub const fn production_secondary_diagnostic(owner: LogicalCpuId) -> Self {
+        Self::new(owner, SchedulerCoreRole::SecondaryProductionDiagnostic)
+    }
+
     pub const fn owner(&self) -> LogicalCpuId {
         self.owner
     }
@@ -731,6 +798,19 @@ impl<const RUNNABLE_CAPACITY: usize> PerCoreScheduler<RUNNABLE_CAPACITY> {
     ) -> Result<Option<TaskId>, PerCoreSchedulerAccessError> {
         self.ensure_production_owner(requester)?;
         Ok(self.current_task.take())
+    }
+
+    pub fn dispatch_cpu_local_diagnostic_task(
+        &mut self,
+        requester: LogicalCpuId,
+        task: &mut Task,
+    ) -> Result<TaskId, ProductionDispatchError> {
+        self.ensure_production_owner(requester)
+            .map_err(ProductionDispatchError::from)?;
+
+        let task_id = self.scheduler.dispatch_next_production_task(task)?;
+        self.current_task = Some(task_id);
+        Ok(task_id)
     }
 
     pub fn wake_blocked_local_task_from_remote_request(
@@ -804,16 +884,29 @@ impl<const RUNNABLE_CAPACITY: usize> PerCoreScheduler<RUNNABLE_CAPACITY> {
     }
 }
 
+impl From<PerCoreSchedulerAccessError> for ProductionDispatchError {
+    fn from(error: PerCoreSchedulerAccessError) -> Self {
+        match error {
+            PerCoreSchedulerAccessError::WrongOwner { owner, requester } => {
+                Self::WrongOwner { owner, requester }
+            }
+            PerCoreSchedulerAccessError::ProductionDispatchDeferred { owner } => {
+                Self::ProductionDispatchDeferred { owner }
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use core::mem::{offset_of, size_of};
 
     use super::{
         ContextFrame, KernelStack, LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError,
-        ProcessOwnerId, RemoteWakePublishOutcome, RemoteWakeQueue, RemoteWakeRequest,
-        RemoteWakeRequestError, RunnableQueue, RunnableQueueError, SchedulerCoreRole,
-        SingleCoreScheduler, TargetWakeConsumptionError, Task, TaskId, TaskState,
-        TimerPreemptError, VoluntaryYieldError,
+        ProcessOwnerId, ProductionDispatchError, RemoteWakePublishOutcome, RemoteWakeQueue,
+        RemoteWakeRequest, RemoteWakeRequestError, RunnableQueue, RunnableQueueError,
+        SchedulerCoreRole, SingleCoreScheduler, TargetWakeConsumptionError, Task, TaskId,
+        TaskState, TimerPreemptError, VoluntaryYieldError,
     };
 
     fn task_id(raw: u64) -> TaskId {
@@ -1069,6 +1162,92 @@ mod tests {
                 owner: LogicalCpuId::new(1)
             })
         );
+    }
+
+    #[test_case]
+    fn production_secondary_diagnostic_dispatches_only_local_runnable_task() {
+        let owner = LogicalCpuId::new(2);
+        let mut per_core = PerCoreScheduler::<2>::production_secondary_diagnostic(owner);
+        let mut task = Task::kernel_thread(task_id(202), kernel_stack(), context());
+
+        assert_eq!(per_core.owner(), owner);
+        assert_eq!(
+            per_core.role(),
+            SchedulerCoreRole::SecondaryProductionDiagnostic
+        );
+        assert!(per_core.production_dispatch_enabled());
+
+        per_core
+            .local_scheduler_mut(owner)
+            .expect("owner seeds local diagnostic task")
+            .make_runnable(&mut task)
+            .expect("local queue has capacity");
+        let dispatched = per_core
+            .dispatch_cpu_local_diagnostic_task(owner, &mut task)
+            .expect("owner dispatches local diagnostic task");
+
+        assert_eq!(dispatched, task_id(202));
+        assert_eq!(per_core.current_task(), Some(task_id(202)));
+        assert_eq!(task.state(), TaskState::Running);
+        assert_eq!(per_core.scheduler().runnable().len(), 0);
+        assert_eq!(per_core.scheduler().counters().production_dispatches(), 1);
+        assert_eq!(per_core.scheduler().counters().context_switches(), 1);
+    }
+
+    #[test_case]
+    fn production_secondary_diagnostic_rejects_cross_owner_dispatch() {
+        let owner = LogicalCpuId::new(1);
+        let requester = LogicalCpuId::new(3);
+        let mut per_core = PerCoreScheduler::<2>::production_secondary_diagnostic(owner);
+        let mut task = Task::kernel_thread(task_id(101), kernel_stack(), context());
+
+        per_core
+            .local_scheduler_mut(owner)
+            .expect("owner seeds local diagnostic task")
+            .make_runnable(&mut task)
+            .expect("local queue has capacity");
+
+        assert_eq!(
+            per_core.dispatch_cpu_local_diagnostic_task(requester, &mut task),
+            Err(ProductionDispatchError::WrongOwner { owner, requester })
+        );
+        assert_eq!(task.state(), TaskState::Runnable);
+        assert_eq!(per_core.current_task(), None);
+        assert_eq!(per_core.scheduler().runnable().front(), Some(task_id(101)));
+    }
+
+    #[test_case]
+    fn production_secondary_diagnostic_rejects_mismatched_or_nonrunnable_task() {
+        let owner = LogicalCpuId::new(3);
+        let mut per_core = PerCoreScheduler::<2>::production_secondary_diagnostic(owner);
+        let mut queued = Task::kernel_thread(task_id(301), kernel_stack(), context());
+        let mut other = Task::kernel_thread(task_id(302), kernel_stack(), context());
+
+        per_core
+            .local_scheduler_mut(owner)
+            .expect("owner seeds local diagnostic task")
+            .make_runnable(&mut queued)
+            .expect("local queue has capacity");
+
+        assert_eq!(
+            per_core.dispatch_cpu_local_diagnostic_task(owner, &mut other),
+            Err(ProductionDispatchError::SelectedTaskMismatch {
+                queued: task_id(301),
+                provided: task_id(302)
+            })
+        );
+        assert_eq!(per_core.scheduler().runnable().front(), Some(task_id(301)));
+
+        queued.set_state(TaskState::Blocked);
+        assert_eq!(
+            per_core.dispatch_cpu_local_diagnostic_task(owner, &mut queued),
+            Err(ProductionDispatchError::TaskNotRunnable {
+                task_id: task_id(301),
+                state: TaskState::Blocked
+            })
+        );
+        assert_eq!(per_core.current_task(), None);
+        assert_eq!(per_core.scheduler().runnable().front(), Some(task_id(301)));
     }
 
     #[test_case]
