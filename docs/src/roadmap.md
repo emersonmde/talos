@@ -265,9 +265,11 @@ Completed:
   may not mutate another CPU's runnable queue; after a target consumes a
   remote request outside IPI context, only that target may transition one of
   its own blocked local tasks to runnable under local scheduler rules. The
-  next bounded implementation should be QEMU-only and prove
-  blocked-to-runnable wake consumption, duplicate coalescing, cross-owner
-  rejection, drained queues, and no production secondary dispatch.
+  QEMU target-owned wake-consumption proof is also accepted. It proves
+  blocked-to-runnable local transitions for diagnostic tasks on logical CPUs
+  1, 2, and 3 after request drain, duplicate coalescing, duplicate-local
+  enqueue rejection, cross-owner rejection, drained queues, SGI INTID 1
+  observation/EOI, and no production secondary dispatch.
 - The senior-review maintainability remediation checkpoint is accepted: stale
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
@@ -275,13 +277,13 @@ Completed:
 
 Blocked or pending:
 
-- The next explicit worker task should stay within Phase 6.3 and implement a
-  QEMU-only target-owned wake-consumption proof. It should not start Pi 5
-  hardware proof, broader scheduler migration, shared run queues, task
-  migration, production secondary scheduler dispatch, multi-core preemption,
-  userspace, descriptors, filesystem, networking, SSH, shell behavior, UART
-  interrupts, RP1/PCIe, or DMA/cache-coherent driver policy until an explicit
-  durable task is queued.
+- The next explicit worker task should stay within Phase 6.3 and, if queued,
+  run the serialized Pi 5 remote-wake-to-local-runnable proof. It should not
+  start broader scheduler migration, shared run queues, task migration,
+  production secondary scheduler dispatch, multi-core preemption, userspace,
+  descriptors, filesystem, networking, SSH, shell behavior, UART interrupts,
+  RP1/PCIe, or DMA/cache-coherent driver policy until an explicit durable
+  task is queued.
 - The roadmap order below now prioritizes a local Unix-like OS before network
   shell access. Ethernet and SSH should reuse the local process, stdio, TTY,
   filesystem, and syscall mechanisms rather than define them.
@@ -577,8 +579,8 @@ checkpoint. Milestone 6.2 has an accepted SMP-safe primitive source inventory,
 contract, first spinlock/barrier core, QEMU SMP contention smoke, and physical
 Pi 5 lock cache/coherence proof. Milestone 6.3 has accepted the first
 scheduler-migration slice, raw QEMU/Pi 5 SGI delivery, remote wake-request
-publication/consumption evidence, and the target-owned wake-consumption
-contract. See
+publication/consumption evidence, the target-owned wake-consumption contract,
+and a QEMU blocked-to-runnable target-owned wake proof. See
 [Phase 6 Secondary-Core Bring-Up Closeout Checkpoint](project/phase6-secondary-core-bringup-closeout-checkpoint.md)
 and
 [Phase 6 Secondary-Core Bring-Up Source Inventory](project/phase6-secondary-core-bringup-source-inventory.md),

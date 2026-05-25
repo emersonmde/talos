@@ -561,14 +561,24 @@ Lock and context ordering for the first implementation is:
   UART polling, diagnostic command dispatch, allocation, blocking, sleeping,
   migration, or arbitrary callbacks.
 
-The first implementation proof should be QEMU-only. It should show CPU 0
-publishing remote requests for diagnostic tasks owned by logical CPUs 1, 2,
-and 3; target CPUs observing and EOI'ing SGI INTID 1; each target draining one
-request outside IPI context; each target changing exactly one blocked local
-task to runnable; duplicate coalescing and duplicate-local-enqueue rejection;
-cross-owner scheduler mutation rejection; queue length zero after drain; and
-no production secondary dispatch. Pi 5 hardware proof, shared run queues,
-global task lookup, task migration, load balancing, production secondary
-scheduler dispatch, multi-core preemption, Phase 7, filesystem, networking,
-SSH, shell behavior, RP1/PCIe, UART interrupt ownership, and DMA policy remain
-deferred.
+The QEMU implementation proof is now accepted. `PerCoreScheduler` exposes the
+target-owned
+`wake_blocked_local_task_from_remote_request()` boundary: after a target has
+drained its owned `RemoteWakeQueue` outside IPI context, the target may use
+that consumed request to transition exactly one matching local `Blocked` task
+to `Runnable`. The method rejects wrong-owner callers, wrong-target requests,
+task-ID mismatches, non-blocked tasks, duplicate local runnable entries, and
+full local queues without enabling production secondary dispatch.
+
+`scripts/qemu-remote-wake-to-local-runnable-smoke.sh` extends the accepted
+remote wake-request diagnostic. It proves CPU 0 publication, duplicate
+coalescing, SGI INTID 1 observation/EOI, target-owned request consumption,
+zero queue length after drain, one local blocked-to-runnable transition on
+each target scheduler, duplicate-local-enqueue rejection, cross-owner
+scheduler mutation rejection, and deferred production dispatch for logical
+CPUs 1, 2, and 3.
+
+Pi 5 hardware proof, shared run queues, global task lookup, task migration,
+load balancing, production secondary scheduler dispatch, multi-core
+preemption, Phase 7, filesystem, networking, SSH, shell behavior, RP1/PCIe,
+UART interrupt ownership, and DMA policy remain deferred.

@@ -8,6 +8,8 @@
 use core::cell::UnsafeCell;
 use core::sync::atomic::{AtomicU64, Ordering};
 
+#[cfg(talos_qemu_remote_wake_to_local_runnable_smoke)]
+use crate::scheduler::TargetWakeConsumptionError;
 #[cfg(any(
     talos_qemu_context_switch_smoke,
     talos_qemu_scheduler_yield_smoke,
@@ -959,6 +961,11 @@ struct RemoteWakeRequestSmokeState {
     queue_lens_after: [AtomicU64; MAX_CORES],
     cross_owner_rejections: [AtomicU64; MAX_CORES],
     production_deferrals: [AtomicU64; MAX_CORES],
+    local_wake_task_ids: [AtomicU64; MAX_CORES],
+    local_runnable_lens: [AtomicU64; MAX_CORES],
+    local_state_before: [AtomicU64; MAX_CORES],
+    local_state_after: [AtomicU64; MAX_CORES],
+    duplicate_local_rejections: [AtomicU64; MAX_CORES],
     last_vectors: [AtomicU64; MAX_CORES],
     last_iars: [AtomicU64; MAX_CORES],
     last_intids: [AtomicU64; MAX_CORES],
@@ -981,6 +988,11 @@ impl RemoteWakeRequestSmokeState {
             queue_lens_after: [const { AtomicU64::new(0) }; MAX_CORES],
             cross_owner_rejections: [const { AtomicU64::new(0) }; MAX_CORES],
             production_deferrals: [const { AtomicU64::new(0) }; MAX_CORES],
+            local_wake_task_ids: [const { AtomicU64::new(0) }; MAX_CORES],
+            local_runnable_lens: [const { AtomicU64::new(0) }; MAX_CORES],
+            local_state_before: [const { AtomicU64::new(0) }; MAX_CORES],
+            local_state_after: [const { AtomicU64::new(0) }; MAX_CORES],
+            duplicate_local_rejections: [const { AtomicU64::new(0) }; MAX_CORES],
             last_vectors: [const { AtomicU64::new(0) }; MAX_CORES],
             last_iars: [const { AtomicU64::new(0) }; MAX_CORES],
             last_intids: [const { AtomicU64::new(0) }; MAX_CORES],
@@ -1003,6 +1015,11 @@ impl RemoteWakeRequestSmokeState {
             self.queue_lens_after[logical_cpu].store(0, Ordering::Release);
             self.cross_owner_rejections[logical_cpu].store(0, Ordering::Release);
             self.production_deferrals[logical_cpu].store(0, Ordering::Release);
+            self.local_wake_task_ids[logical_cpu].store(0, Ordering::Release);
+            self.local_runnable_lens[logical_cpu].store(0, Ordering::Release);
+            self.local_state_before[logical_cpu].store(0, Ordering::Release);
+            self.local_state_after[logical_cpu].store(0, Ordering::Release);
+            self.duplicate_local_rejections[logical_cpu].store(0, Ordering::Release);
             self.last_vectors[logical_cpu].store(0, Ordering::Release);
             self.last_iars[logical_cpu].store(0, Ordering::Release);
             self.last_intids[logical_cpu].store(0, Ordering::Release);
@@ -1111,6 +1128,25 @@ fn publish_remote_wake_request(target: usize, task_id: TaskId) -> bool {
     }
 }
 
+#[cfg(talos_qemu_remote_wake_to_local_runnable_smoke)]
+fn task_state_code(state: TaskState) -> u64 {
+    match state {
+        TaskState::Running => 1,
+        TaskState::Runnable => 2,
+        TaskState::Blocked => 3,
+    }
+}
+
+#[cfg(talos_qemu_remote_wake_to_local_runnable_smoke)]
+fn task_state_name(code: u64) -> &'static str {
+    match code {
+        1 => "running",
+        2 => "runnable",
+        3 => "blocked",
+        _ => "unknown",
+    }
+}
+
 #[cfg(talos_qemu_remote_wakeup_request_smoke)]
 fn run_remote_wakeup_request_secondary(core_state: &smp::PerCoreState, logical_cpu: usize) {
     core_state.mark_workload_running();
@@ -1141,16 +1177,14 @@ fn run_remote_wakeup_request_secondary(core_state: &smp::PerCoreState, logical_c
     }
 
     let requester = LogicalCpuId::new(logical_cpu);
-    let (consumed_task, duplicates, queue_len_after) = {
+    let (consumed_request, duplicates, queue_len_after) = {
         let mut queue = unsafe { REMOTE_WAKE_QUEUES[logical_cpu].lock_irqsave() };
-        let consumed = queue
-            .consume_next(requester)
-            .ok()
-            .flatten()
-            .map(|request| request.task_id().raw())
-            .unwrap_or(0);
+        let consumed = queue.consume_next(requester).ok().flatten();
         (consumed, queue.duplicate_count(), queue.len())
     };
+    let consumed_task = consumed_request
+        .map(|request| request.task_id().raw())
+        .unwrap_or(0);
 
     REMOTE_WAKE_REQUEST_SMOKE_STATE.consumed_task_ids[logical_cpu]
         .store(consumed_task, Ordering::Release);
@@ -1173,6 +1207,61 @@ fn run_remote_wakeup_request_secondary(core_state: &smp::PerCoreState, logical_c
     ) {
         REMOTE_WAKE_REQUEST_SMOKE_STATE.production_deferrals[logical_cpu]
             .store(1, Ordering::Release);
+    }
+
+    #[cfg(talos_qemu_remote_wake_to_local_runnable_smoke)]
+    {
+        let local_task_id =
+            TaskId::new(200 + logical_cpu as u64).expect("diagnostic task ID is nonzero");
+        let stack_base = 0x80_0000 + logical_cpu * 0x1000;
+        let mut task = Task::kernel_thread(
+            local_task_id,
+            KernelStack::new(stack_base, 0x1000).expect("diagnostic stack is valid"),
+            ContextFrame::new(stack_base + 0xff0, 0x40_0000),
+        );
+        task.set_state(TaskState::Blocked);
+        REMOTE_WAKE_REQUEST_SMOKE_STATE.local_state_before[logical_cpu]
+            .store(task_state_code(task.state()), Ordering::Release);
+
+        let wake_result = consumed_request
+            .map(|request| {
+                scheduler.wake_blocked_local_task_from_remote_request(requester, request, &mut task)
+            })
+            .unwrap_or(Err(TargetWakeConsumptionError::TaskMismatch {
+                requested: local_task_id,
+                local: local_task_id,
+            }));
+        if let Ok(woken_task) = wake_result {
+            REMOTE_WAKE_REQUEST_SMOKE_STATE.local_wake_task_ids[logical_cpu]
+                .store(woken_task.raw(), Ordering::Release);
+        } else {
+            REMOTE_WAKE_REQUEST_SMOKE_STATE
+                .errors
+                .fetch_add(1, Ordering::AcqRel);
+        }
+
+        let duplicate_rejected = consumed_request
+            .map(|request| {
+                scheduler
+                    .wake_blocked_local_task_from_remote_request(requester, request, &mut task)
+                    .is_err()
+            })
+            .unwrap_or(false);
+        if duplicate_rejected {
+            REMOTE_WAKE_REQUEST_SMOKE_STATE.duplicate_local_rejections[logical_cpu]
+                .store(1, Ordering::Release);
+        } else {
+            REMOTE_WAKE_REQUEST_SMOKE_STATE
+                .errors
+                .fetch_add(1, Ordering::AcqRel);
+        }
+
+        REMOTE_WAKE_REQUEST_SMOKE_STATE.local_state_after[logical_cpu]
+            .store(task_state_code(task.state()), Ordering::Release);
+        REMOTE_WAKE_REQUEST_SMOKE_STATE.local_runnable_lens[logical_cpu].store(
+            scheduler.scheduler().runnable().len() as u64,
+            Ordering::Release,
+        );
     }
 
     REMOTE_WAKE_REQUEST_SMOKE_STATE.mark_complete(logical_cpu);
@@ -2096,6 +2185,40 @@ pub fn run_remote_wakeup_request_smoke() -> bool {
             && production_deferred
             && (logical_cpu != 1 || duplicate_count == 1)
             && (logical_cpu == 1 || duplicate_count == 0);
+        #[cfg(talos_qemu_remote_wake_to_local_runnable_smoke)]
+        let report_ok = {
+            let mut report_ok = report_ok;
+            let local_wake_task = REMOTE_WAKE_REQUEST_SMOKE_STATE.local_wake_task_ids[logical_cpu]
+                .load(Ordering::Acquire);
+            let local_runnable_len = REMOTE_WAKE_REQUEST_SMOKE_STATE.local_runnable_lens
+                [logical_cpu]
+                .load(Ordering::Acquire);
+            let local_state_before = REMOTE_WAKE_REQUEST_SMOKE_STATE.local_state_before
+                [logical_cpu]
+                .load(Ordering::Acquire);
+            let local_state_after = REMOTE_WAKE_REQUEST_SMOKE_STATE.local_state_after[logical_cpu]
+                .load(Ordering::Acquire);
+            let duplicate_local_rejected = REMOTE_WAKE_REQUEST_SMOKE_STATE
+                .duplicate_local_rejections[logical_cpu]
+                .load(Ordering::Acquire)
+                == 1;
+            report_ok &= local_wake_task == expected_task
+                && local_runnable_len == 1
+                && task_state_name(local_state_before) == "blocked"
+                && task_state_name(local_state_after) == "runnable"
+                && duplicate_local_rejected;
+            crate::println!(
+                "qemu-remote-wake-to-local-runnable: local receiver={} state-before={} state-after={} woke-task={} local-runnable-len={} duplicate-local-rejected={} ok={}",
+                logical_cpu,
+                task_state_name(local_state_before),
+                task_state_name(local_state_after),
+                local_wake_task,
+                local_runnable_len,
+                duplicate_local_rejected,
+                report_ok
+            );
+            report_ok
+        };
         if report_ok {
             participants += 1;
         }
@@ -2131,7 +2254,11 @@ pub fn run_remote_wakeup_request_smoke() -> bool {
         .errors
         .load(Ordering::Acquire);
     let classification = if reports_ok && errors == 0 {
-        "qemu-remote-wakeup-request-complete"
+        if cfg!(talos_qemu_remote_wake_to_local_runnable_smoke) {
+            "qemu-remote-wake-to-local-runnable-complete"
+        } else {
+            "qemu-remote-wakeup-request-complete"
+        }
     } else if (ready_mask & expected_mask) != expected_mask {
         "qemu-remote-wakeup-request-secondaries-not-ready"
     } else if cpu_on_ok {

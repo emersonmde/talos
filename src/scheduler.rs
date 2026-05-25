@@ -283,6 +283,32 @@ pub enum RemoteWakePublishOutcome {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum TargetWakeConsumptionError {
+    WrongOwner {
+        owner: LogicalCpuId,
+        requester: LogicalCpuId,
+    },
+    WrongTarget {
+        owner: LogicalCpuId,
+        target: LogicalCpuId,
+    },
+    TaskMismatch {
+        requested: TaskId,
+        local: TaskId,
+    },
+    TaskNotBlocked {
+        task_id: TaskId,
+        state: TaskState,
+    },
+    DuplicateLocalRunnable {
+        task_id: TaskId,
+    },
+    RunnableQueueFull {
+        task_id: TaskId,
+    },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct RemoteWakeRequest {
     requester: LogicalCpuId,
     target: LogicalCpuId,
@@ -707,6 +733,50 @@ impl<const RUNNABLE_CAPACITY: usize> PerCoreScheduler<RUNNABLE_CAPACITY> {
         Ok(self.current_task.take())
     }
 
+    pub fn wake_blocked_local_task_from_remote_request(
+        &mut self,
+        requester: LogicalCpuId,
+        request: RemoteWakeRequest,
+        task: &mut Task,
+    ) -> Result<TaskId, TargetWakeConsumptionError> {
+        self.ensure_local_owner(requester)
+            .map_err(|error| match error {
+                PerCoreSchedulerAccessError::WrongOwner { owner, requester } => {
+                    TargetWakeConsumptionError::WrongOwner { owner, requester }
+                }
+                PerCoreSchedulerAccessError::ProductionDispatchDeferred { owner } => {
+                    TargetWakeConsumptionError::WrongOwner { owner, requester }
+                }
+            })?;
+        if request.target() != self.owner {
+            return Err(TargetWakeConsumptionError::WrongTarget {
+                owner: self.owner,
+                target: request.target(),
+            });
+        }
+        if request.task_id() != task.id() {
+            return Err(TargetWakeConsumptionError::TaskMismatch {
+                requested: request.task_id(),
+                local: task.id(),
+            });
+        }
+        if self.scheduler.runnable().contains(task.id()) {
+            return Err(TargetWakeConsumptionError::DuplicateLocalRunnable { task_id: task.id() });
+        }
+        if task.state() != TaskState::Blocked {
+            return Err(TargetWakeConsumptionError::TaskNotBlocked {
+                task_id: task.id(),
+                state: task.state(),
+            });
+        }
+
+        let task_id = task.id();
+        self.scheduler
+            .make_runnable(task)
+            .map_err(|_| TargetWakeConsumptionError::RunnableQueueFull { task_id })?;
+        Ok(task_id)
+    }
+
     fn ensure_local_owner(
         &self,
         requester: LogicalCpuId,
@@ -740,9 +810,10 @@ mod tests {
 
     use super::{
         ContextFrame, KernelStack, LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError,
-        ProcessOwnerId, RemoteWakePublishOutcome, RemoteWakeQueue, RemoteWakeRequestError,
-        RunnableQueue, RunnableQueueError, SchedulerCoreRole, SingleCoreScheduler, Task, TaskId,
-        TaskState, TimerPreemptError, VoluntaryYieldError,
+        ProcessOwnerId, RemoteWakePublishOutcome, RemoteWakeQueue, RemoteWakeRequest,
+        RemoteWakeRequestError, RunnableQueue, RunnableQueueError, SchedulerCoreRole,
+        SingleCoreScheduler, TargetWakeConsumptionError, Task, TaskId, TaskState,
+        TimerPreemptError, VoluntaryYieldError,
     };
 
     fn task_id(raw: u64) -> TaskId {
@@ -1101,6 +1172,103 @@ mod tests {
                 .map(|request| request.task_id()),
             Some(task_id(1))
         );
+    }
+
+    #[test_case]
+    fn target_owned_wake_consumption_makes_only_local_blocked_task_runnable() {
+        let target = LogicalCpuId::new(2);
+        let mut queue = RemoteWakeQueue::<2>::new(target);
+        let mut scheduler = PerCoreScheduler::<2>::deferred_secondary(target);
+        let mut task = Task::kernel_thread(task_id(9), kernel_stack(), context());
+        task.set_state(TaskState::Blocked);
+
+        queue
+            .publish(LogicalCpuId::BOOT, target, task_id(9))
+            .expect("request publication succeeds");
+        let request = queue
+            .consume_next(target)
+            .expect("target owns queue")
+            .expect("request is pending");
+        assert_eq!(queue.len(), 0);
+
+        assert_eq!(
+            scheduler.wake_blocked_local_task_from_remote_request(target, request, &mut task),
+            Ok(task_id(9))
+        );
+        assert_eq!(task.state(), TaskState::Runnable);
+        assert_eq!(scheduler.scheduler().runnable().front(), Some(task_id(9)));
+        assert_eq!(scheduler.scheduler().counters().state_transitions(), 1);
+    }
+
+    #[test_case]
+    fn target_owned_wake_consumption_rejects_cross_owner_and_nonlocal_tasks() {
+        let target = LogicalCpuId::new(1);
+        let mut scheduler = PerCoreScheduler::<2>::deferred_secondary(target);
+        let mut task = Task::kernel_thread(task_id(10), kernel_stack(), context());
+        task.set_state(TaskState::Blocked);
+        let request = RemoteWakeRequest {
+            requester: LogicalCpuId::BOOT,
+            target,
+            task_id: task_id(10),
+        };
+
+        assert_eq!(
+            scheduler.wake_blocked_local_task_from_remote_request(
+                LogicalCpuId::new(2),
+                request,
+                &mut task
+            ),
+            Err(TargetWakeConsumptionError::WrongOwner {
+                owner: target,
+                requester: LogicalCpuId::new(2)
+            })
+        );
+        assert_eq!(task.state(), TaskState::Blocked);
+        assert_eq!(scheduler.scheduler().runnable().len(), 0);
+
+        let wrong_task_request = RemoteWakeRequest {
+            requester: LogicalCpuId::BOOT,
+            target,
+            task_id: task_id(11),
+        };
+        assert_eq!(
+            scheduler.wake_blocked_local_task_from_remote_request(
+                target,
+                wrong_task_request,
+                &mut task
+            ),
+            Err(TargetWakeConsumptionError::TaskMismatch {
+                requested: task_id(11),
+                local: task_id(10)
+            })
+        );
+        assert_eq!(task.state(), TaskState::Blocked);
+        assert_eq!(scheduler.scheduler().runnable().len(), 0);
+    }
+
+    #[test_case]
+    fn target_owned_wake_consumption_rejects_duplicate_local_enqueue() {
+        let target = LogicalCpuId::new(3);
+        let mut scheduler = PerCoreScheduler::<2>::deferred_secondary(target);
+        let mut task = Task::kernel_thread(task_id(12), kernel_stack(), context());
+        task.set_state(TaskState::Blocked);
+        let request = RemoteWakeRequest {
+            requester: LogicalCpuId::BOOT,
+            target,
+            task_id: task_id(12),
+        };
+
+        scheduler
+            .wake_blocked_local_task_from_remote_request(target, request, &mut task)
+            .expect("first target-owned wake succeeds");
+        assert_eq!(
+            scheduler.wake_blocked_local_task_from_remote_request(target, request, &mut task),
+            Err(TargetWakeConsumptionError::DuplicateLocalRunnable {
+                task_id: task_id(12)
+            })
+        );
+        assert_eq!(task.state(), TaskState::Runnable);
+        assert_eq!(scheduler.scheduler().runnable().len(), 1);
     }
 
     #[test_case]
