@@ -28,7 +28,7 @@ Accepted SMP and secondary-core state:
 - src/smp.rs owns PSCI secondary-core startup, MPIDR/logical identity,
   secondary stack ownership, lifecycle publication, and diagnostic-only
   workloads. It is not a scheduler wakeup or IPI layer.
-- src/smp_sync.rs owns the accepted SpinLock<T>, SpinLockGuard, AArch64
+- src/smp_sync.rs owns the accepted `SpinLock<T>`, SpinLockGuard, AArch64
   lock_irqsave() composition, and smp_full_barrier(). The accepted
   lock-ordering rule remains local IRQ mask first, then SMP lock acquisition;
   release the SMP lock before restoring local IRQ state.

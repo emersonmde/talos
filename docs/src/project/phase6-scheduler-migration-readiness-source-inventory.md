@@ -25,7 +25,7 @@ Scheduler data model:
   address spaces, descriptor tables, EL0 state, filesystem state, networking
   state, or console ownership policy.
 - Current QEMU and Pi 5 timer-preemption diagnostics instantiate a local
-  SingleCoreScheduler<2> inside diagnostic-only smoke state. Those smokes
+  `SingleCoreScheduler<2>` inside diagnostic-only smoke state. Those smokes
   prove the Phase 4 single-core dispatch contract; they are not production
   multi-core scheduler participation.
 
@@ -37,8 +37,8 @@ Per-core and SMP state:
   ownership boundary.
 - src/smp.rs uses acquire/release atomics and explicit cache maintenance for
   boot-time diagnostic publication where Pi 5 evidence required it. Those
-  helpers remain separate from the generic scheduler and from SpinLock<T>.
-- src/smp_sync.rs owns the accepted SpinLock<T>, SpinLockGuard, AArch64
+  helpers remain separate from the generic scheduler and from `SpinLock<T>`.
+- src/smp_sync.rs owns the accepted `SpinLock<T>`, SpinLockGuard, AArch64
   lock_irqsave() composition, and smp_full_barrier(). The primitive has QEMU
   contention evidence and Pi 5 physical cache/coherence proof, but no
   scheduler data structure is wired to it yet.
@@ -93,7 +93,7 @@ The selected shape is:
   state when the mutation can race local timer/preemption handling;
 - do not take an SMP lock for a purely CPU-local runnable queue in this first
   slice;
-- reserve SpinLock<T> for later shared scheduler metadata, global task tables,
+- reserve `SpinLock<T>` for later shared scheduler metadata, global task tables,
   cross-core wake lists, or migration queues that are explicitly planned and
   proven.
 
