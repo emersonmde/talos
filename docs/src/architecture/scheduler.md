@@ -891,3 +891,40 @@ preemption, a general non-diagnostic secondary runtime role, Phase 7,
 filesystem, networking, SSH, shell behavior, RP1/PCIe, UART interrupt
 ownership, or DMA/cache-driver behavior. The next bounded implementation may
 add only the shared run-queue core and tests if it stays inside this contract.
+
+## Phase 6.3 Shared Run-Queue Core
+
+The first target-independent shared run-queue core now lives in
+`src/scheduler.rs`. It adds `SharedRunQueue`, `SharedRunQueueEntry`,
+`MigrationState`, `SharedRunQueueError`, and `SharedRunQueueLock` as the
+bounded owner-transfer surface between existing `PerCoreScheduler` owners.
+The implementation does not choose targets, balance load, steal work, send
+IPIs, dispatch from interrupt context, or add a general secondary runtime
+role.
+
+`SharedRunQueue::publish_migration` is the source-owner handoff boundary. It
+requires a requester that matches the source scheduler owner, a valid
+destination CPU, a fresh owner-published metadata generation, a runnable task
+that is present on the source-local queue, and available shared-queue capacity.
+On success it removes the task from the source-local `RunnableQueue`, records
+the explicit `MigrationReserved -> SharedQueued` transition in the returned
+report, and leaves metadata source-owned until the destination consumes the
+entry.
+
+`SharedRunQueue::consume_for_destination` is the destination-owner boundary.
+It requires a requester that matches the destination owner, an accepted
+production-capable scheduler role, matching task identity, fresh source
+metadata, no duplicate destination-local runnable membership, and available
+destination-local queue capacity. On success it enqueues the task into the
+destination-local `RunnableQueue`, updates shared scheduler metadata to the
+destination owner, removes the shared entry, and reports the
+`DestinationEnqueued` transition.
+
+The core reports deterministic errors for invalid CPU IDs, wrong source or
+destination owners, source/destination owner equality, unknown task metadata,
+stale metadata generations, metadata owner mismatch, duplicate shared entries,
+duplicate destination-local runnable membership, full shared or local queues,
+source tasks that are not queued, running-task migration deferral,
+blocked-task migration rejection, deferred secondary roles, and task mismatch.
+These are unit-tested target-independent invariants; QEMU and Pi 5 proof
+surfaces remain separate scheduler-validation tasks.

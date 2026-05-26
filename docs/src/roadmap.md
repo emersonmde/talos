@@ -35,10 +35,12 @@ timer-preemption handling, CPU-local dispatch, and owner metadata refresh for
 one owning logical CPU; the accepted secondary loop now proves that a physical
 secondary may run one owner-local service cycle after accepted handoff state.
 The accepted shared run-queue/migration contract now defines ownership, lock
-ordering, memory-order, state-transition, and diagnostic boundaries. The next
-bounded implementation may be a shared run-queue core, but load balancing,
-multi-core preemption, Phase 7, filesystem, networking, SSH, and shell work
-remain deferred.
+ordering, memory-order, state-transition, and diagnostic boundaries, and the
+target-independent shared run-queue core is accepted. The core provides a
+bounded source-owner publish and destination-owner consume path with explicit
+migration states and deterministic errors, but load balancing, multi-core
+preemption, Phase 7, filesystem, networking, SSH, and shell work remain
+deferred.
 
 Accepted status and historical completed facts:
 
@@ -405,14 +407,21 @@ Accepted status and historical completed facts:
   rules, specifies owner-local/reserved/shared-queued/destination-enqueued/
   rejected migration states, and keeps load balancing and multi-core
   preemption deferred.
+- The Phase 6.3 shared run-queue core is accepted. It adds the
+  target-independent `SharedRunQueue` owner-transfer surface, source-owner
+  publication, destination-owner consumption, metadata owner transfer, local
+  runnable queue removal, deterministic failure reporting, and unit-tested
+  migration states. QEMU and Pi 5 proof tasks remain separate; the core does
+  not add target selection, load balancing, work stealing, multi-core
+  preemption, userspace, filesystem, networking, SSH, or shell behavior.
 
 Blocked or pending:
 
-- The next explicit implementation target may be a bounded Phase 6.3 shared
-  run-queue core that stays within the accepted contract. Load balancing,
-  work stealing, multi-core preemption, userspace, descriptors, filesystem,
-  networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and
-  DMA/cache-coherent driver policy remain deferred.
+- The next explicit validation target may be a bounded Phase 6.3 QEMU shared
+  run-queue/migration smoke that exercises the accepted core without bypassing
+  it. Load balancing, work stealing, multi-core preemption, userspace,
+  descriptors, filesystem, networking, SSH, shell behavior, UART interrupts,
+  RP1/PCIe, and DMA/cache-coherent driver policy remain deferred.
 - Large raw accepted evidence remains in Git until external artifact storage or
   an explicit no-delete manifest-only cleanup is approved. Do not delete
   tracked accepted evidence during unrelated feature work.

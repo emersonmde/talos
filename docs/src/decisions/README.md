@@ -12,6 +12,41 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-26 - Shared Run-Queue Core Accepted
+
+- Status: accepted as the first Phase 6.3 target-independent shared
+  run-queue/migration implementation core. No boot image, new diagnostic
+  scenario, Pi 5 hardware claim, load balancing, work stealing, multi-core
+  timer preemption, Phase 7, filesystem, networking, SSH, shell, RP1/PCIe,
+  UART interrupt ownership, or DMA behavior was added.
+- Context: The accepted shared run-queue/migration contract required a
+  bounded owner-transfer surface that keeps local runnable queues CPU-owned,
+  separates remote wake from remote enqueue/migration, uses the accepted SMP
+  lock boundary, and reports deterministic failure outcomes before any QEMU
+  or physical proof tasks.
+- Decision: Add `SharedRunQueue`, `SharedRunQueueEntry`, `MigrationState`,
+  `SharedRunQueueError`, and `SharedRunQueueLock` in `src/scheduler.rs`.
+  `publish_migration` removes a runnable task from the source-local queue and
+  publishes a complete shared handoff after fresh metadata checks;
+  `consume_for_destination` lets an accepted production-capable destination
+  owner enqueue the task locally and transfer metadata ownership.
+- Evidence level: unit tests and static inspection of the target-independent
+  scheduler core, plus QEMU/substitute preservation gates.
+- Validation: `cargo fmt --all -- --check` passed,
+  `cargo -Zjson-target-spec test` passed with 142 no_std tests,
+  `scripts/qemu-smoke.sh` passed, the focused existing Phase 6 gate
+  `scripts/qemu-secondary-scheduler-service-loop-smoke.sh` passed,
+  `git diff --check` passed, and `mdbook build` passed.
+- Consequences: The next bounded task may add a focused QEMU shared
+  run-queue/migration smoke that proves the implemented core without a bypass.
+  Pi 5 proof, load balancing, work stealing, multi-core preemption, Phase 7,
+  filesystem, networking, SSH, shell behavior, RP1/PCIe, UART interrupt
+  ownership, and DMA/cache-driver policy remain deferred.
+- Alternatives considered: Reuse `RemoteWakeQueue`, make metadata the
+  ownership-transfer authority, or implement load-balancing policy at the same
+  time. Reusing remote wake would blur wake and migration semantics; metadata
+  is observational; policy work would exceed the accepted core task.
+
 ## 2026-05-26 - Shared Run-Queue and Migration Contract Accepted
 
 - Status: accepted as a Phase 6.3 scheduler-topology contract. No Rust

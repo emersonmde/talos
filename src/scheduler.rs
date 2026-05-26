@@ -3,9 +3,11 @@
 //! This module owns the first boot-CPU scheduler shape plus the Phase 6.3
 //! CPU-local ownership wrapper. Task identifiers remain scheduler-local,
 //! runnable queues are still owned by exactly one logical CPU, and secondary
-//! production dispatch is limited to an explicit diagnostic role. The wrapper
-//! does not add migration or shared queues. The remote wake-request queue is a
-//! bounded signal mailbox only:
+//! production dispatch is limited to an explicit diagnostic role. The first
+//! shared run queue is a bounded owner-transfer surface only: it removes a
+//! runnable task from its source-local queue, publishes a complete handoff
+//! entry, and lets the destination owner consume that entry into its own local
+//! queue. The remote wake-request queue remains a bounded signal mailbox only:
 //! it records target-owned wake intent without mutating another CPU's local
 //! runnable queue.
 
@@ -334,6 +336,155 @@ pub enum TargetWakeConsumptionError {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum MigrationState {
+    OwnerLocal,
+    MigrationReserved,
+    SharedQueued,
+    DestinationEnqueued,
+    MigrationRejected,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum SharedRunQueueError {
+    InvalidSourceOwner {
+        source_owner: LogicalCpuId,
+        cpu_capacity: usize,
+    },
+    InvalidDestinationOwner {
+        destination_owner: LogicalCpuId,
+        cpu_capacity: usize,
+    },
+    SameOwner {
+        owner: LogicalCpuId,
+    },
+    WrongSourceOwner {
+        owner: LogicalCpuId,
+        requester: LogicalCpuId,
+    },
+    WrongDestinationOwner {
+        owner: LogicalCpuId,
+        requester: LogicalCpuId,
+    },
+    MetadataOwnerMismatch {
+        task_id: TaskId,
+        metadata_owner: LogicalCpuId,
+        expected_owner: LogicalCpuId,
+    },
+    UnknownTask {
+        task_id: TaskId,
+    },
+    StaleMetadataGeneration {
+        task_id: TaskId,
+        expected_generation: u64,
+        actual_generation: u64,
+    },
+    DuplicateLocalRunnable {
+        task_id: TaskId,
+        owner: LogicalCpuId,
+    },
+    DuplicateSharedQueued {
+        task_id: TaskId,
+    },
+    Full,
+    SourceTaskNotQueued {
+        task_id: TaskId,
+        owner: LogicalCpuId,
+    },
+    SourceTaskNotRunnable {
+        task_id: TaskId,
+        state: TaskState,
+    },
+    RunningTaskMigrationDeferred {
+        task_id: TaskId,
+    },
+    BlockedTaskMigrationUnsupported {
+        task_id: TaskId,
+    },
+    DestinationLocalQueueFull {
+        task_id: TaskId,
+    },
+    DeferredSecondaryRole {
+        owner: LogicalCpuId,
+    },
+    TaskMismatch {
+        queued: TaskId,
+        provided: TaskId,
+    },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct SharedRunQueueEntry {
+    task_id: TaskId,
+    source_owner: LogicalCpuId,
+    destination_owner: LogicalCpuId,
+    metadata_generation: u64,
+    state: MigrationState,
+}
+
+impl SharedRunQueueEntry {
+    pub const fn task_id(self) -> TaskId {
+        self.task_id
+    }
+
+    pub const fn source_owner(self) -> LogicalCpuId {
+        self.source_owner
+    }
+
+    pub const fn destination_owner(self) -> LogicalCpuId {
+        self.destination_owner
+    }
+
+    pub const fn metadata_generation(self) -> u64 {
+        self.metadata_generation
+    }
+
+    pub const fn state(self) -> MigrationState {
+        self.state
+    }
+
+    const fn with_state(self, state: MigrationState) -> Self {
+        Self { state, ..self }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct SharedRunQueuePublishReport {
+    reserved: SharedRunQueueEntry,
+    queued: SharedRunQueueEntry,
+}
+
+impl SharedRunQueuePublishReport {
+    pub const fn reserved(self) -> SharedRunQueueEntry {
+        self.reserved
+    }
+
+    pub const fn queued(self) -> SharedRunQueueEntry {
+        self.queued
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct SharedRunQueueConsumeReport {
+    queued: SharedRunQueueEntry,
+    destination_enqueued: SharedRunQueueEntry,
+    metadata: SchedulerTaskSnapshot,
+}
+
+impl SharedRunQueueConsumeReport {
+    pub const fn queued(self) -> SharedRunQueueEntry {
+        self.queued
+    }
+
+    pub const fn destination_enqueued(self) -> SharedRunQueueEntry {
+        self.destination_enqueued
+    }
+
+    pub const fn metadata(self) -> SchedulerTaskSnapshot {
+        self.metadata
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct RemoteWakeRequest {
     requester: LogicalCpuId,
     target: LogicalCpuId,
@@ -466,6 +617,362 @@ impl<const CAPACITY: usize> RemoteWakeQueue<CAPACITY> {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
+pub struct SharedRunQueue<const CAPACITY: usize, const CPU_CAPACITY: usize> {
+    entries: [Option<SharedRunQueueEntry>; CAPACITY],
+    len: usize,
+    rejected_count: u64,
+}
+
+/// SMP-protected shared run-queue boundary.
+///
+/// Callers must use the accepted local-IRQ-save then SMP-lock ordering before
+/// mutating this queue on AArch64. The queue itself stays target-independent
+/// and does not mask IRQs internally.
+pub type SharedRunQueueLock<const CAPACITY: usize, const CPU_CAPACITY: usize> =
+    crate::smp_sync::SpinLock<SharedRunQueue<CAPACITY, CPU_CAPACITY>>;
+
+impl<const CAPACITY: usize, const CPU_CAPACITY: usize> SharedRunQueue<CAPACITY, CPU_CAPACITY> {
+    pub const fn new() -> Self {
+        Self {
+            entries: [None; CAPACITY],
+            len: 0,
+            rejected_count: 0,
+        }
+    }
+
+    pub const fn len(&self) -> usize {
+        self.len
+    }
+
+    pub const fn capacity(&self) -> usize {
+        CAPACITY
+    }
+
+    pub const fn rejected_count(&self) -> u64 {
+        self.rejected_count
+    }
+
+    pub const fn is_empty(&self) -> bool {
+        self.len == 0
+    }
+
+    pub const fn is_full(&self) -> bool {
+        self.len == CAPACITY
+    }
+
+    pub fn publish_migration<const RUNNABLE_CAPACITY: usize, const TASK_CAPACITY: usize>(
+        &mut self,
+        requester: LogicalCpuId,
+        source_scheduler: &mut PerCoreScheduler<RUNNABLE_CAPACITY>,
+        destination_owner: LogicalCpuId,
+        metadata: &SharedSchedulerMetadata<TASK_CAPACITY, CPU_CAPACITY>,
+        task: &Task,
+        expected_generation: u64,
+    ) -> Result<SharedRunQueuePublishReport, SharedRunQueueError> {
+        let source_owner = source_scheduler.owner();
+        self.ensure_valid_source(source_owner)?;
+        self.ensure_valid_destination(destination_owner)?;
+        if source_owner == destination_owner {
+            return self.reject(SharedRunQueueError::SameOwner {
+                owner: source_owner,
+            });
+        }
+        if requester != source_owner {
+            return self.reject(SharedRunQueueError::WrongSourceOwner {
+                owner: source_owner,
+                requester,
+            });
+        }
+        self.ensure_task_is_migratable_from_source(source_scheduler, task)?;
+        self.ensure_metadata_matches_source(
+            metadata,
+            source_owner,
+            task.id(),
+            expected_generation,
+        )?;
+        if self.contains(task.id()) {
+            return self.reject(SharedRunQueueError::DuplicateSharedQueued { task_id: task.id() });
+        }
+        if self.is_full() {
+            return self.reject(SharedRunQueueError::Full);
+        }
+
+        if !source_scheduler.scheduler.runnable.remove(task.id()) {
+            return self.reject(SharedRunQueueError::SourceTaskNotQueued {
+                task_id: task.id(),
+                owner: source_owner,
+            });
+        }
+
+        let reserved = SharedRunQueueEntry {
+            task_id: task.id(),
+            source_owner,
+            destination_owner,
+            metadata_generation: expected_generation,
+            state: MigrationState::MigrationReserved,
+        };
+        let queued = reserved.with_state(MigrationState::SharedQueued);
+        self.entries[self.len] = Some(queued);
+        self.len += 1;
+        Ok(SharedRunQueuePublishReport { reserved, queued })
+    }
+
+    pub fn consume_for_destination<const RUNNABLE_CAPACITY: usize, const TASK_CAPACITY: usize>(
+        &mut self,
+        requester: LogicalCpuId,
+        destination_scheduler: &mut PerCoreScheduler<RUNNABLE_CAPACITY>,
+        metadata: &mut SharedSchedulerMetadata<TASK_CAPACITY, CPU_CAPACITY>,
+        task: &mut Task,
+    ) -> Result<Option<SharedRunQueueConsumeReport>, SharedRunQueueError> {
+        let destination_owner = destination_scheduler.owner();
+        self.ensure_valid_destination(destination_owner)?;
+        if requester != destination_owner {
+            return self.reject(SharedRunQueueError::WrongDestinationOwner {
+                owner: destination_owner,
+                requester,
+            });
+        }
+        if !destination_scheduler.production_dispatch_enabled() {
+            return self.reject(SharedRunQueueError::DeferredSecondaryRole {
+                owner: destination_owner,
+            });
+        }
+        let Some(index) = self.find_destination_index(destination_owner) else {
+            return Ok(None);
+        };
+        let queued = self.entries[index].expect("destination index points at a queued entry");
+        if queued.task_id != task.id() {
+            return self.reject(SharedRunQueueError::TaskMismatch {
+                queued: queued.task_id,
+                provided: task.id(),
+            });
+        }
+        if task.state() == TaskState::Running {
+            return self
+                .reject(SharedRunQueueError::RunningTaskMigrationDeferred { task_id: task.id() });
+        }
+        if task.state() == TaskState::Blocked {
+            return self.reject(SharedRunQueueError::BlockedTaskMigrationUnsupported {
+                task_id: task.id(),
+            });
+        }
+        if task.state() != TaskState::Runnable {
+            return self.reject(SharedRunQueueError::SourceTaskNotRunnable {
+                task_id: task.id(),
+                state: task.state(),
+            });
+        }
+        self.ensure_metadata_matches_source(
+            metadata,
+            queued.source_owner,
+            queued.task_id,
+            queued.metadata_generation,
+        )?;
+        if destination_scheduler.scheduler.runnable.contains(task.id()) {
+            return self.reject(SharedRunQueueError::DuplicateLocalRunnable {
+                task_id: task.id(),
+                owner: destination_owner,
+            });
+        }
+        if destination_scheduler.scheduler.runnable.is_full() {
+            return self
+                .reject(SharedRunQueueError::DestinationLocalQueueFull { task_id: task.id() });
+        }
+
+        destination_scheduler
+            .production_scheduler_mut(requester)
+            .map_err(|error| match error {
+                PerCoreSchedulerAccessError::WrongOwner { owner, requester } => {
+                    SharedRunQueueError::WrongDestinationOwner { owner, requester }
+                }
+                PerCoreSchedulerAccessError::ProductionDispatchDeferred { owner } => {
+                    SharedRunQueueError::DeferredSecondaryRole { owner }
+                }
+            })?
+            .make_runnable(task)
+            .map_err(|_| SharedRunQueueError::DestinationLocalQueueFull { task_id: task.id() })?;
+
+        let metadata_snapshot = metadata.refresh_migrated_task(
+            requester,
+            destination_scheduler,
+            task,
+            queued.source_owner,
+            queued.metadata_generation,
+        )?;
+        self.remove_index(index);
+        let destination_enqueued = queued.with_state(MigrationState::DestinationEnqueued);
+        Ok(Some(SharedRunQueueConsumeReport {
+            queued,
+            destination_enqueued,
+            metadata: metadata_snapshot,
+        }))
+    }
+
+    pub fn contains(&self, task_id: TaskId) -> bool {
+        let mut index = 0;
+        while index < self.len {
+            if let Some(entry) = self.entries[index]
+                && entry.task_id == task_id
+            {
+                return true;
+            }
+            index += 1;
+        }
+        false
+    }
+
+    pub fn front(&self) -> Option<SharedRunQueueEntry> {
+        if self.is_empty() {
+            None
+        } else {
+            self.entries[0]
+        }
+    }
+
+    fn reject<T>(&mut self, error: SharedRunQueueError) -> Result<T, SharedRunQueueError> {
+        self.rejected_count += 1;
+        Err(error)
+    }
+
+    fn ensure_valid_source(
+        &mut self,
+        source_owner: LogicalCpuId,
+    ) -> Result<(), SharedRunQueueError> {
+        if source_owner.raw() < CPU_CAPACITY {
+            Ok(())
+        } else {
+            self.reject(SharedRunQueueError::InvalidSourceOwner {
+                source_owner,
+                cpu_capacity: CPU_CAPACITY,
+            })
+        }
+    }
+
+    fn ensure_valid_destination(
+        &mut self,
+        destination_owner: LogicalCpuId,
+    ) -> Result<(), SharedRunQueueError> {
+        if destination_owner.raw() < CPU_CAPACITY {
+            Ok(())
+        } else {
+            self.reject(SharedRunQueueError::InvalidDestinationOwner {
+                destination_owner,
+                cpu_capacity: CPU_CAPACITY,
+            })
+        }
+    }
+
+    fn ensure_task_is_migratable_from_source<const RUNNABLE_CAPACITY: usize>(
+        &mut self,
+        source_scheduler: &PerCoreScheduler<RUNNABLE_CAPACITY>,
+        task: &Task,
+    ) -> Result<(), SharedRunQueueError> {
+        if source_scheduler.current_task() == Some(task.id()) || task.state() == TaskState::Running
+        {
+            return self
+                .reject(SharedRunQueueError::RunningTaskMigrationDeferred { task_id: task.id() });
+        }
+        if task.state() == TaskState::Blocked {
+            return self.reject(SharedRunQueueError::BlockedTaskMigrationUnsupported {
+                task_id: task.id(),
+            });
+        }
+        if task.state() != TaskState::Runnable {
+            return self.reject(SharedRunQueueError::SourceTaskNotRunnable {
+                task_id: task.id(),
+                state: task.state(),
+            });
+        }
+        if !source_scheduler.scheduler.runnable.contains(task.id()) {
+            return self.reject(SharedRunQueueError::SourceTaskNotQueued {
+                task_id: task.id(),
+                owner: source_scheduler.owner(),
+            });
+        }
+        Ok(())
+    }
+
+    fn ensure_metadata_matches_source<const TASK_CAPACITY: usize>(
+        &mut self,
+        metadata: &SharedSchedulerMetadata<TASK_CAPACITY, CPU_CAPACITY>,
+        source_owner: LogicalCpuId,
+        task_id: TaskId,
+        expected_generation: u64,
+    ) -> Result<(), SharedRunQueueError> {
+        let snapshot = metadata.find_task(task_id).ok_or_else(|| {
+            self.rejected_count += 1;
+            SharedRunQueueError::UnknownTask { task_id }
+        })?;
+        if snapshot.generation() != expected_generation {
+            return self.reject(SharedRunQueueError::StaleMetadataGeneration {
+                task_id,
+                expected_generation,
+                actual_generation: snapshot.generation(),
+            });
+        }
+        if snapshot.owner() != source_owner {
+            return self.reject(SharedRunQueueError::MetadataOwnerMismatch {
+                task_id,
+                metadata_owner: snapshot.owner(),
+                expected_owner: source_owner,
+            });
+        }
+        if snapshot.state() == TaskState::Running || snapshot.current_on_owner() {
+            return self.reject(SharedRunQueueError::RunningTaskMigrationDeferred { task_id });
+        }
+        if snapshot.state() == TaskState::Blocked {
+            return self.reject(SharedRunQueueError::BlockedTaskMigrationUnsupported { task_id });
+        }
+        if snapshot.state() != TaskState::Runnable {
+            return self.reject(SharedRunQueueError::SourceTaskNotRunnable {
+                task_id,
+                state: snapshot.state(),
+            });
+        }
+        if !snapshot.runnable_on_owner() {
+            return self.reject(SharedRunQueueError::SourceTaskNotQueued {
+                task_id,
+                owner: source_owner,
+            });
+        }
+        Ok(())
+    }
+
+    fn find_destination_index(&self, destination_owner: LogicalCpuId) -> Option<usize> {
+        let mut index = 0;
+        while index < self.len {
+            if let Some(entry) = self.entries[index]
+                && entry.destination_owner == destination_owner
+            {
+                return Some(index);
+            }
+            index += 1;
+        }
+        None
+    }
+
+    fn remove_index(&mut self, index: usize) {
+        let mut cursor = index + 1;
+        while cursor < self.len {
+            self.entries[cursor - 1] = self.entries[cursor].take();
+            cursor += 1;
+        }
+        self.len -= 1;
+        if self.len < CAPACITY {
+            self.entries[self.len] = None;
+        }
+    }
+}
+
+impl<const CAPACITY: usize, const CPU_CAPACITY: usize> Default
+    for SharedRunQueue<CAPACITY, CPU_CAPACITY>
+{
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct RunnableQueue<const CAPACITY: usize> {
     entries: [Option<TaskId>; CAPACITY],
     head: usize,
@@ -520,6 +1027,33 @@ impl<const CAPACITY: usize> RunnableQueue<CAPACITY> {
             self.head = 0;
         }
         task_id
+    }
+
+    pub fn remove(&mut self, task_id: TaskId) -> bool {
+        let mut found = false;
+        let mut offset = 0;
+        while offset < self.len {
+            let index = self.index_from_head(offset);
+            if !found && self.entries[index] == Some(task_id) {
+                found = true;
+            }
+            if found && offset + 1 < self.len {
+                let next = self.index_from_head(offset + 1);
+                self.entries[index] = self.entries[next].take();
+            }
+            offset += 1;
+        }
+
+        if found {
+            self.len -= 1;
+            if self.len == 0 {
+                self.head = 0;
+            } else {
+                let tail = self.index_from_head(self.len);
+                self.entries[tail] = None;
+            }
+        }
+        found
     }
 
     pub fn front(&self) -> Option<TaskId> {
@@ -1273,6 +1807,53 @@ impl<const TASK_CAPACITY: usize, const CPU_CAPACITY: usize>
         Ok(snapshot)
     }
 
+    fn refresh_migrated_task<const RUNNABLE_CAPACITY: usize>(
+        &mut self,
+        requester: LogicalCpuId,
+        destination_scheduler: &PerCoreScheduler<RUNNABLE_CAPACITY>,
+        task: &Task,
+        source_owner: LogicalCpuId,
+        expected_generation: u64,
+    ) -> Result<SchedulerTaskSnapshot, SharedRunQueueError> {
+        let destination_owner = destination_scheduler.owner();
+        if destination_owner.raw() >= CPU_CAPACITY {
+            return Err(SharedRunQueueError::InvalidDestinationOwner {
+                destination_owner,
+                cpu_capacity: CPU_CAPACITY,
+            });
+        }
+        if requester != destination_owner {
+            return Err(SharedRunQueueError::WrongDestinationOwner {
+                owner: destination_owner,
+                requester,
+            });
+        }
+
+        let index = self
+            .find_task_index(task.id())
+            .ok_or(SharedRunQueueError::UnknownTask { task_id: task.id() })?;
+        let existing = self.entries[index].expect("find_task_index returns a populated slot");
+        if existing.owner != source_owner {
+            return Err(SharedRunQueueError::MetadataOwnerMismatch {
+                task_id: task.id(),
+                metadata_owner: existing.owner,
+                expected_owner: source_owner,
+            });
+        }
+        if existing.generation != expected_generation {
+            return Err(SharedRunQueueError::StaleMetadataGeneration {
+                task_id: task.id(),
+                expected_generation,
+                actual_generation: existing.generation,
+            });
+        }
+
+        let generation = self.advance_generation();
+        let snapshot = Self::snapshot_from_local_scheduler(destination_scheduler, task, generation);
+        self.entries[index] = Some(snapshot);
+        Ok(snapshot)
+    }
+
     pub fn lookup_task(
         &self,
         task_id: TaskId,
@@ -1392,7 +1973,8 @@ mod tests {
         LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError, ProcessOwnerId,
         ProductionDispatchError, RemoteWakePublishOutcome, RemoteWakeQueue, RemoteWakeRequest,
         RemoteWakeRequestError, RunnableQueue, RunnableQueueError, SchedulerCoreRole,
-        SecondarySchedulerServiceLoop, SecondarySchedulerServiceLoopError, SharedSchedulerMetadata,
+        SecondarySchedulerServiceLoop, SecondarySchedulerServiceLoopError, SharedRunQueue,
+        SharedRunQueueError, SharedRunQueueLock, SharedSchedulerMetadata,
         SharedSchedulerMetadataError, SharedSchedulerMetadataLock, SingleCoreScheduler,
         TargetWakeConsumptionError, Task, TaskId, TaskState, TimerPreemptError,
         VoluntaryYieldError,
@@ -1499,6 +2081,40 @@ mod tests {
         assert_eq!(queue.dequeue(), Some(task_id(2)));
         assert_eq!(queue.dequeue(), Some(task_id(3)));
         assert_eq!(queue.dequeue(), None);
+    }
+
+    #[test_case]
+    fn runnable_queue_removes_middle_and_preserves_fifo_order() {
+        let mut queue = RunnableQueue::<4>::new();
+
+        queue.enqueue(task_id(1)).expect("enqueue task 1");
+        queue.enqueue(task_id(2)).expect("enqueue task 2");
+        queue.enqueue(task_id(3)).expect("enqueue task 3");
+
+        assert!(queue.remove(task_id(2)));
+        assert!(!queue.contains(task_id(2)));
+        assert_eq!(queue.len(), 2);
+        assert_eq!(queue.dequeue(), Some(task_id(1)));
+        assert_eq!(queue.dequeue(), Some(task_id(3)));
+        assert_eq!(queue.dequeue(), None);
+        assert!(!queue.remove(task_id(2)));
+    }
+
+    #[test_case]
+    fn runnable_queue_removes_wrapped_entry_and_keeps_tail_reusable() {
+        let mut queue = RunnableQueue::<3>::new();
+
+        queue.enqueue(task_id(1)).expect("enqueue task 1");
+        queue.enqueue(task_id(2)).expect("enqueue task 2");
+        queue.enqueue(task_id(3)).expect("enqueue task 3");
+        assert_eq!(queue.dequeue(), Some(task_id(1)));
+        queue.enqueue(task_id(4)).expect("enqueue wrapped task");
+
+        assert!(queue.remove(task_id(3)));
+        assert_eq!(queue.dequeue(), Some(task_id(2)));
+        assert_eq!(queue.dequeue(), Some(task_id(4)));
+        queue.enqueue(task_id(5)).expect("tail slot reusable");
+        assert_eq!(queue.dequeue(), Some(task_id(5)));
     }
 
     #[test_case]
@@ -2085,6 +2701,349 @@ mod tests {
             assert!(metadata.is_empty());
             assert_eq!(metadata.capacity(), 2);
             assert_eq!(metadata.generation(), 0);
+        }
+
+        assert!(!lock.is_locked());
+    }
+
+    #[test_case]
+    fn shared_run_queue_publishes_migration_without_cross_owner_local_enqueue() {
+        let source = LogicalCpuId::BOOT;
+        let destination = LogicalCpuId::new(1);
+        let mut source_scheduler = PerCoreScheduler::<2>::boot_cpu();
+        let mut metadata = SharedSchedulerMetadata::<2, 4>::new();
+        let mut shared = SharedRunQueue::<2, 4>::new();
+        let mut task = Task::kernel_thread(task_id(70), kernel_stack(), context());
+
+        source_scheduler
+            .local_scheduler_mut(source)
+            .expect("source owner mutates local scheduler")
+            .make_runnable(&mut task)
+            .expect("source local queue has capacity");
+        let snapshot = metadata
+            .register_local_task(source, &source_scheduler, &task)
+            .expect("source publishes task metadata");
+
+        let report = shared
+            .publish_migration(
+                source,
+                &mut source_scheduler,
+                destination,
+                &metadata,
+                &task,
+                snapshot.generation(),
+            )
+            .expect("source publishes shared handoff");
+
+        assert_eq!(
+            super::MigrationState::OwnerLocal,
+            super::MigrationState::OwnerLocal
+        );
+        assert_eq!(
+            super::MigrationState::MigrationRejected,
+            super::MigrationState::MigrationRejected
+        );
+        assert_eq!(report.queued().task_id(), task.id());
+        assert_eq!(report.queued().source_owner(), source);
+        assert_eq!(report.queued().destination_owner(), destination);
+        assert_eq!(report.queued().metadata_generation(), snapshot.generation());
+        assert_eq!(
+            report.reserved().state(),
+            super::MigrationState::MigrationReserved
+        );
+        assert_eq!(report.queued().state(), super::MigrationState::SharedQueued);
+        assert_eq!(shared.front(), Some(report.queued()));
+        assert_eq!(shared.len(), 1);
+        assert!(!source_scheduler.scheduler().runnable().contains(task.id()));
+        assert_eq!(source_scheduler.scheduler().runnable().len(), 0);
+        assert_eq!(
+            metadata
+                .lookup_task(task.id())
+                .expect("metadata remains source-owned until destination consumes")
+                .owner(),
+            source
+        );
+    }
+
+    #[test_case]
+    fn shared_run_queue_destination_consumes_and_updates_metadata_owner() {
+        let source = LogicalCpuId::BOOT;
+        let destination = LogicalCpuId::new(1);
+        let mut source_scheduler = PerCoreScheduler::<2>::boot_cpu();
+        let mut destination_scheduler =
+            PerCoreScheduler::<2>::production_secondary_diagnostic(destination);
+        let mut metadata = SharedSchedulerMetadata::<2, 4>::new();
+        let mut shared = SharedRunQueue::<2, 4>::new();
+        let mut task = Task::kernel_thread(task_id(71), kernel_stack(), context());
+
+        source_scheduler
+            .local_scheduler_mut(source)
+            .expect("source owner mutates local scheduler")
+            .make_runnable(&mut task)
+            .expect("source local queue has capacity");
+        let snapshot = metadata
+            .register_local_task(source, &source_scheduler, &task)
+            .expect("source publishes task metadata");
+        let queued = shared
+            .publish_migration(
+                source,
+                &mut source_scheduler,
+                destination,
+                &metadata,
+                &task,
+                snapshot.generation(),
+            )
+            .expect("source publishes shared handoff")
+            .queued();
+
+        let report = shared
+            .consume_for_destination(
+                destination,
+                &mut destination_scheduler,
+                &mut metadata,
+                &mut task,
+            )
+            .expect("destination consume returns result")
+            .expect("handoff is pending for destination");
+
+        assert_eq!(report.queued(), queued);
+        assert_eq!(
+            report.destination_enqueued().state(),
+            super::MigrationState::DestinationEnqueued
+        );
+        assert!(shared.is_empty());
+        assert!(
+            destination_scheduler
+                .scheduler()
+                .runnable()
+                .contains(task.id())
+        );
+        assert_eq!(
+            destination_scheduler.scheduler().runnable().front(),
+            Some(task.id())
+        );
+        assert_eq!(report.metadata().owner(), destination);
+        assert_eq!(report.metadata().state(), TaskState::Runnable);
+        assert!(report.metadata().runnable_on_owner());
+        assert_eq!(
+            metadata.lookup_task_at_generation(task.id(), snapshot.generation()),
+            Err(SharedSchedulerMetadataError::StaleSnapshot {
+                task_id: task.id(),
+                expected_generation: snapshot.generation(),
+                actual_generation: report.metadata().generation()
+            })
+        );
+    }
+
+    #[test_case]
+    fn shared_run_queue_rejects_stale_generation_without_source_queue_mutation() {
+        let source = LogicalCpuId::BOOT;
+        let destination = LogicalCpuId::new(1);
+        let mut source_scheduler = PerCoreScheduler::<2>::boot_cpu();
+        let mut metadata = SharedSchedulerMetadata::<2, 4>::new();
+        let mut shared = SharedRunQueue::<2, 4>::new();
+        let mut task = Task::kernel_thread(task_id(72), kernel_stack(), context());
+
+        source_scheduler
+            .local_scheduler_mut(source)
+            .expect("source owner mutates local scheduler")
+            .make_runnable(&mut task)
+            .expect("source local queue has capacity");
+        let snapshot = metadata
+            .register_local_task(source, &source_scheduler, &task)
+            .expect("source publishes task metadata");
+
+        assert_eq!(
+            shared.publish_migration(
+                source,
+                &mut source_scheduler,
+                destination,
+                &metadata,
+                &task,
+                snapshot.generation() + 1,
+            ),
+            Err(SharedRunQueueError::StaleMetadataGeneration {
+                task_id: task.id(),
+                expected_generation: snapshot.generation() + 1,
+                actual_generation: snapshot.generation()
+            })
+        );
+        assert_eq!(shared.rejected_count(), 1);
+        assert!(source_scheduler.scheduler().runnable().contains(task.id()));
+        assert!(shared.is_empty());
+    }
+
+    #[test_case]
+    fn shared_run_queue_rejects_running_blocked_duplicate_and_full_cases() {
+        let source = LogicalCpuId::BOOT;
+        let destination = LogicalCpuId::new(1);
+        let mut shared = SharedRunQueue::<1, 4>::new();
+
+        let mut running_scheduler = PerCoreScheduler::<2>::boot_cpu();
+        let running = Task::kernel_thread(task_id(73), kernel_stack(), context());
+        running_scheduler
+            .set_current_task(source, running.id())
+            .expect("boot CPU records current task");
+        let mut metadata = SharedSchedulerMetadata::<4, 4>::new();
+        metadata
+            .register_local_task(source, &running_scheduler, &running)
+            .expect("running task metadata");
+        assert_eq!(
+            shared.publish_migration(
+                source,
+                &mut running_scheduler,
+                destination,
+                &metadata,
+                &running,
+                1
+            ),
+            Err(SharedRunQueueError::RunningTaskMigrationDeferred {
+                task_id: running.id()
+            })
+        );
+
+        let mut blocked_scheduler = PerCoreScheduler::<2>::boot_cpu();
+        let mut blocked = Task::kernel_thread(task_id(74), kernel_stack(), context());
+        blocked.set_state(TaskState::Blocked);
+        let mut blocked_metadata = SharedSchedulerMetadata::<4, 4>::new();
+        blocked_metadata
+            .register_local_task(source, &blocked_scheduler, &blocked)
+            .expect("blocked task metadata");
+        assert_eq!(
+            shared.publish_migration(
+                source,
+                &mut blocked_scheduler,
+                destination,
+                &blocked_metadata,
+                &blocked,
+                1,
+            ),
+            Err(SharedRunQueueError::BlockedTaskMigrationUnsupported {
+                task_id: blocked.id()
+            })
+        );
+
+        let mut first_scheduler = PerCoreScheduler::<2>::boot_cpu();
+        let mut first_metadata = SharedSchedulerMetadata::<4, 4>::new();
+        let mut first = Task::kernel_thread(task_id(75), kernel_stack(), context());
+        first_scheduler
+            .local_scheduler_mut(source)
+            .expect("source owner mutates local scheduler")
+            .make_runnable(&mut first)
+            .expect("source local queue has capacity");
+        first_metadata
+            .register_local_task(source, &first_scheduler, &first)
+            .expect("first task metadata");
+        shared
+            .publish_migration(
+                source,
+                &mut first_scheduler,
+                destination,
+                &first_metadata,
+                &first,
+                1,
+            )
+            .expect("first handoff fills shared queue");
+
+        let mut second_scheduler = PerCoreScheduler::<2>::boot_cpu();
+        let mut second_metadata = SharedSchedulerMetadata::<4, 4>::new();
+        let mut second = Task::kernel_thread(task_id(76), kernel_stack(), context());
+        second_scheduler
+            .local_scheduler_mut(source)
+            .expect("source owner mutates local scheduler")
+            .make_runnable(&mut second)
+            .expect("source local queue has capacity");
+        second_metadata
+            .register_local_task(source, &second_scheduler, &second)
+            .expect("second task metadata");
+        assert_eq!(
+            shared.publish_migration(
+                source,
+                &mut second_scheduler,
+                LogicalCpuId::new(2),
+                &second_metadata,
+                &second,
+                1,
+            ),
+            Err(SharedRunQueueError::Full)
+        );
+        assert!(
+            second_scheduler
+                .scheduler()
+                .runnable()
+                .contains(second.id())
+        );
+    }
+
+    #[test_case]
+    fn shared_run_queue_rejects_deferred_destination_and_duplicate_local_enqueue() {
+        let source = LogicalCpuId::BOOT;
+        let destination = LogicalCpuId::new(1);
+        let mut source_scheduler = PerCoreScheduler::<2>::boot_cpu();
+        let mut deferred_destination = PerCoreScheduler::<2>::deferred_secondary(destination);
+        let mut metadata = SharedSchedulerMetadata::<2, 4>::new();
+        let mut shared = SharedRunQueue::<2, 4>::new();
+        let mut task = Task::kernel_thread(task_id(77), kernel_stack(), context());
+
+        source_scheduler
+            .local_scheduler_mut(source)
+            .expect("source owner mutates local scheduler")
+            .make_runnable(&mut task)
+            .expect("source local queue has capacity");
+        let snapshot = metadata
+            .register_local_task(source, &source_scheduler, &task)
+            .expect("source publishes task metadata");
+        shared
+            .publish_migration(
+                source,
+                &mut source_scheduler,
+                destination,
+                &metadata,
+                &task,
+                snapshot.generation(),
+            )
+            .expect("source publishes shared handoff");
+
+        assert_eq!(
+            shared.consume_for_destination(
+                destination,
+                &mut deferred_destination,
+                &mut metadata,
+                &mut task,
+            ),
+            Err(SharedRunQueueError::DeferredSecondaryRole { owner: destination })
+        );
+        assert!(shared.contains(task.id()));
+
+        let mut production_destination =
+            PerCoreScheduler::<2>::production_secondary_diagnostic(destination);
+        production_destination
+            .local_scheduler_mut(destination)
+            .expect("destination owner mutates local scheduler")
+            .make_runnable(&mut task)
+            .expect("destination local queue has capacity");
+        assert_eq!(
+            shared.consume_for_destination(
+                destination,
+                &mut production_destination,
+                &mut metadata,
+                &mut task,
+            ),
+            Err(SharedRunQueueError::DuplicateLocalRunnable {
+                task_id: task.id(),
+                owner: destination
+            })
+        );
+    }
+
+    #[test_case]
+    fn shared_run_queue_lock_wraps_only_shared_handoff_queue() {
+        let lock = SharedRunQueueLock::<2, 4>::new(SharedRunQueue::new());
+
+        {
+            let queue = lock.lock();
+            assert!(queue.is_empty());
+            assert_eq!(queue.capacity(), 2);
         }
 
         assert!(!lock.is_locked());
