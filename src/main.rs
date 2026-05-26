@@ -47,7 +47,8 @@
             talos_qemu_cross_core_ipi_delivery_smoke,
             talos_qemu_remote_wakeup_request_smoke,
             talos_qemu_production_secondary_dispatch_smoke,
-            talos_qemu_shared_scheduler_metadata_smoke
+            talos_qemu_shared_scheduler_metadata_smoke,
+            talos_qemu_secondary_scheduler_service_loop_smoke
         )
     ),
     allow(dead_code, unused_imports, unused_variables, unreachable_code)
@@ -281,6 +282,14 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
+            #[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+            {
+                if target::qemu_virt::run_secondary_scheduler_service_loop_smoke() {
+                    target::qemu::exit_success();
+                }
+                target::qemu::exit_failure();
+            }
+
             #[cfg(talos_qemu_secondary_core_workload_smoke)]
             {
                 if target::qemu_virt::run_secondary_core_workload_smoke() {
@@ -357,7 +366,8 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_qemu_cross_core_ipi_delivery_smoke,
                 talos_qemu_remote_wakeup_request_smoke,
                 talos_qemu_production_secondary_dispatch_smoke,
-                talos_qemu_shared_scheduler_metadata_smoke
+                talos_qemu_shared_scheduler_metadata_smoke,
+                talos_qemu_secondary_scheduler_service_loop_smoke
             )))]
             if target::qemu_virt::run_el2_timer_irq_smoke() {
                 target::qemu::exit_success();
@@ -374,7 +384,8 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_qemu_cross_core_ipi_delivery_smoke,
                 talos_qemu_remote_wakeup_request_smoke,
                 talos_qemu_production_secondary_dispatch_smoke,
-                talos_qemu_shared_scheduler_metadata_smoke
+                talos_qemu_shared_scheduler_metadata_smoke,
+                talos_qemu_secondary_scheduler_service_loop_smoke
             )))]
             target::qemu::exit_failure();
         }

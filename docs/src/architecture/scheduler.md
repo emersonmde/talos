@@ -826,3 +826,13 @@ whether the cycle observed remote wake state, pending timer-preemption state,
 dispatch intent, and actual local work. The adapter does not create a target
 idle primitive, shared scheduler topology, remote enqueue queue, migration,
 load balancing, work stealing, or multi-core preemption policy.
+
+The retained QEMU substitute gate is
+scripts/qemu-secondary-scheduler-service-loop-smoke.sh. It starts secondary
+cores through the accepted PSCI/QEMU path and runs one service-loop cycle per
+secondary with owner-local metadata, remote wake drain, local diagnostic
+dispatch, no-work refresh, cross-owner rejection, deferred-role rejection, and
+explicit no shared-queue or migration behavior. The gate uses an optimized
+QEMU build because the current 4 KiB diagnostic secondary stacks are too small
+for the debug build of this proof workload; this is a gate property, not a
+runtime stack-size claim.

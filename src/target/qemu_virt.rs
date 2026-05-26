@@ -17,14 +17,16 @@ use crate::scheduler::TargetWakeConsumptionError;
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_remote_wakeup_request_smoke,
     talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke
+    talos_qemu_shared_scheduler_metadata_smoke,
+    talos_qemu_secondary_scheduler_service_loop_smoke
 ))]
 use crate::scheduler::{ContextFrame, KernelStack, SingleCoreScheduler, Task, TaskId, TaskState};
 #[cfg(any(
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_remote_wakeup_request_smoke,
     talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke
+    talos_qemu_shared_scheduler_metadata_smoke,
+    talos_qemu_secondary_scheduler_service_loop_smoke
 ))]
 use crate::scheduler::{
     LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError, ProductionDispatchError,
@@ -33,6 +35,10 @@ use crate::scheduler::{
 };
 #[cfg(talos_qemu_remote_wakeup_request_smoke)]
 use crate::scheduler::{RemoteWakePublishOutcome, RemoteWakeQueue};
+#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+use crate::scheduler::{
+    RemoteWakeQueue, SecondarySchedulerServiceLoop, SecondarySchedulerServiceLoopError,
+};
 #[cfg(not(any(
     talos_qemu_secondary_core_discriminator,
     talos_qemu_secondary_core_workload_smoke,
@@ -41,7 +47,8 @@ use crate::scheduler::{RemoteWakePublishOutcome, RemoteWakeQueue};
     talos_qemu_cross_core_ipi_delivery_smoke,
     talos_qemu_remote_wakeup_request_smoke,
     talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke
+    talos_qemu_shared_scheduler_metadata_smoke,
+    talos_qemu_secondary_scheduler_service_loop_smoke
 )))]
 use crate::smp::MAX_CORES;
 #[cfg(talos_qemu_secondary_core_workload_smoke)]
@@ -54,7 +61,8 @@ use crate::smp::SECONDARY_CORE_WORKLOAD_TARGET;
     talos_qemu_cross_core_ipi_delivery_smoke,
     talos_qemu_remote_wakeup_request_smoke,
     talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke
+    talos_qemu_shared_scheduler_metadata_smoke,
+    talos_qemu_secondary_scheduler_service_loop_smoke
 ))]
 use crate::smp::{
     self, CoreLifecycle, CoreStackLayout, MAX_CORES, SECONDARY_CORE_STATES,
@@ -66,7 +74,8 @@ use crate::smp_sync::{SpinLock, smp_full_barrier};
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_remote_wakeup_request_smoke,
     talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke
+    talos_qemu_shared_scheduler_metadata_smoke,
+    talos_qemu_secondary_scheduler_service_loop_smoke
 ))]
 use crate::smp_sync::{SpinLock, smp_full_barrier};
 use crate::{
@@ -94,7 +103,8 @@ const TIMER_IRQ_WAIT_LIMIT: usize = 1_000_000;
     talos_qemu_cross_core_ipi_delivery_smoke,
     talos_qemu_remote_wakeup_request_smoke,
     talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke
+    talos_qemu_shared_scheduler_metadata_smoke,
+    talos_qemu_secondary_scheduler_service_loop_smoke
 ))]
 const QEMU_SECONDARY_WAIT_LIMIT: usize = 10_000_000;
 #[cfg(any(
@@ -114,6 +124,10 @@ const PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET: u64 = 3;
 const SHARED_SCHEDULER_METADATA_TASK_CAPACITY: usize = MAX_CORES;
 #[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
 const SHARED_SCHEDULER_METADATA_WAIT_LIMIT: usize = 100_000_000;
+#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+const SECONDARY_SCHEDULER_SERVICE_LOOP_TASK_CAPACITY: usize = 1;
+#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+const SECONDARY_SCHEDULER_SERVICE_LOOP_WAIT_LIMIT: usize = 100_000_000;
 #[cfg(any(
     talos_qemu_context_switch_smoke,
     talos_qemu_scheduler_yield_smoke,
@@ -150,7 +164,8 @@ static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
     talos_qemu_cross_core_ipi_delivery_smoke,
     talos_qemu_remote_wakeup_request_smoke,
     talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke
+    talos_qemu_shared_scheduler_metadata_smoke,
+    talos_qemu_secondary_scheduler_service_loop_smoke
 ))]
 unsafe extern "C" {
     fn talos_aarch64_qemu_secondary_entry();
@@ -524,7 +539,8 @@ pub const fn qemu_logical_cpu_from_mpidr_affinity(affinity: u64) -> Option<usize
     talos_qemu_cross_core_ipi_delivery_smoke,
     talos_qemu_remote_wakeup_request_smoke,
     talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke
+    talos_qemu_shared_scheduler_metadata_smoke,
+    talos_qemu_secondary_scheduler_service_loop_smoke
 ))]
 fn secondary_stack_layout() -> CoreStackLayout {
     let base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
@@ -541,7 +557,8 @@ fn secondary_stack_layout() -> CoreStackLayout {
     talos_qemu_cross_core_ipi_delivery_smoke,
     talos_qemu_remote_wakeup_request_smoke,
     talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke
+    talos_qemu_shared_scheduler_metadata_smoke,
+    talos_qemu_secondary_scheduler_service_loop_smoke
 ))]
 fn secondary_state_name(state: u64) -> &'static str {
     CoreLifecycle::from_raw(state).map_or("unknown", CoreLifecycle::name)
@@ -555,7 +572,8 @@ fn secondary_state_name(state: u64) -> &'static str {
     talos_qemu_cross_core_ipi_delivery_smoke,
     talos_qemu_remote_wakeup_request_smoke,
     talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke
+    talos_qemu_shared_scheduler_metadata_smoke,
+    talos_qemu_secondary_scheduler_service_loop_smoke
 ))]
 unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) -> i64 {
     let mut function_id = 0xc400_0003u64;
@@ -609,7 +627,8 @@ pub fn services(boot_info: &BootInfo) -> TargetServices {
     talos_qemu_cross_core_ipi_delivery_smoke,
     talos_qemu_remote_wakeup_request_smoke,
     talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke
+    talos_qemu_shared_scheduler_metadata_smoke,
+    talos_qemu_secondary_scheduler_service_loop_smoke
 ))]
 #[unsafe(no_mangle)]
 pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
@@ -641,6 +660,8 @@ pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
         run_production_secondary_dispatch_secondary(core_state, logical_cpu);
         #[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
         run_shared_scheduler_metadata_secondary(core_state, logical_cpu);
+        #[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+        run_secondary_scheduler_service_loop_secondary(core_state, logical_cpu);
     }
 
     loop {
@@ -713,7 +734,8 @@ fn reset_per_core_scheduler_ownership_state() {
 #[cfg(any(
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke
+    talos_qemu_shared_scheduler_metadata_smoke,
+    talos_qemu_secondary_scheduler_service_loop_smoke
 ))]
 fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
     match role {
@@ -726,7 +748,8 @@ fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
 #[cfg(any(
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke
+    talos_qemu_shared_scheduler_metadata_smoke,
+    talos_qemu_secondary_scheduler_service_loop_smoke
 ))]
 fn task_id(raw: u64) -> TaskId {
     TaskId::new(raw).expect("diagnostic task IDs are nonzero")
@@ -735,7 +758,8 @@ fn task_id(raw: u64) -> TaskId {
 #[cfg(any(
     talos_qemu_per_core_scheduler_ownership_smoke,
     talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke
+    talos_qemu_shared_scheduler_metadata_smoke,
+    talos_qemu_secondary_scheduler_service_loop_smoke
 ))]
 fn scheduler_task(logical_cpu: usize, progress: u64) -> Task {
     let raw_task_id = (logical_cpu as u64 + 1) * 100 + progress;
@@ -1286,6 +1310,411 @@ fn run_shared_scheduler_metadata_secondary(core_state: &smp::PerCoreState, logic
     core_state.clean_to_poc();
 }
 
+#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+#[derive(Clone, Copy)]
+struct SecondarySchedulerServiceLoopReportLine {
+    owner: u64,
+    role: SchedulerCoreRole,
+    task_id: u64,
+    task_state: u64,
+    current_task: u64,
+    queue_len: u64,
+    front_task: u64,
+    remote_wake_task: u64,
+    dispatch_task: u64,
+    no_work_did_work: bool,
+    metadata_generation: u64,
+    metadata_len: u64,
+    observed_remote_wake: bool,
+    pending_timer_preemption: bool,
+    dispatch_requested: bool,
+    cross_owner_rejected: bool,
+    deferred_role_rejected: bool,
+    local_queue_preserved: bool,
+    errors: u64,
+}
+
+#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+impl SecondarySchedulerServiceLoopReportLine {
+    const fn empty() -> Self {
+        Self {
+            owner: u64::MAX,
+            role: SchedulerCoreRole::SecondaryDeferred,
+            task_id: 0,
+            task_state: 0,
+            current_task: 0,
+            queue_len: 0,
+            front_task: 0,
+            remote_wake_task: 0,
+            dispatch_task: 0,
+            no_work_did_work: true,
+            metadata_generation: 0,
+            metadata_len: 0,
+            observed_remote_wake: false,
+            pending_timer_preemption: true,
+            dispatch_requested: false,
+            cross_owner_rejected: false,
+            deferred_role_rejected: false,
+            local_queue_preserved: false,
+            errors: 0,
+        }
+    }
+
+    const fn progress(self) -> u64 {
+        if self.errors == 0 && self.remote_wake_task != 0 && self.dispatch_task != 0 {
+            1
+        } else {
+            0
+        }
+    }
+}
+
+#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+struct SecondarySchedulerServiceLoopState {
+    owner: [AtomicU64; MAX_CORES],
+    role: [AtomicU64; MAX_CORES],
+    task_id: [AtomicU64; MAX_CORES],
+    task_state: [AtomicU64; MAX_CORES],
+    current_task: [AtomicU64; MAX_CORES],
+    queue_len: [AtomicU64; MAX_CORES],
+    front_task: [AtomicU64; MAX_CORES],
+    remote_wake_task: [AtomicU64; MAX_CORES],
+    dispatch_task: [AtomicU64; MAX_CORES],
+    no_work_did_work: [AtomicU64; MAX_CORES],
+    metadata_generation: [AtomicU64; MAX_CORES],
+    metadata_len: [AtomicU64; MAX_CORES],
+    observed_remote_wake: [AtomicU64; MAX_CORES],
+    pending_timer_preemption: [AtomicU64; MAX_CORES],
+    dispatch_requested: [AtomicU64; MAX_CORES],
+    cross_owner_rejected: [AtomicU64; MAX_CORES],
+    deferred_role_rejected: [AtomicU64; MAX_CORES],
+    local_queue_preserved: [AtomicU64; MAX_CORES],
+    errors: [AtomicU64; MAX_CORES],
+    progress: [AtomicU64; MAX_CORES],
+}
+
+#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+impl SecondarySchedulerServiceLoopState {
+    const fn new() -> Self {
+        Self {
+            owner: [const { AtomicU64::new(u64::MAX) }; MAX_CORES],
+            role: [const { AtomicU64::new(2) }; MAX_CORES],
+            task_id: [const { AtomicU64::new(0) }; MAX_CORES],
+            task_state: [const { AtomicU64::new(0) }; MAX_CORES],
+            current_task: [const { AtomicU64::new(0) }; MAX_CORES],
+            queue_len: [const { AtomicU64::new(0) }; MAX_CORES],
+            front_task: [const { AtomicU64::new(0) }; MAX_CORES],
+            remote_wake_task: [const { AtomicU64::new(0) }; MAX_CORES],
+            dispatch_task: [const { AtomicU64::new(0) }; MAX_CORES],
+            no_work_did_work: [const { AtomicU64::new(1) }; MAX_CORES],
+            metadata_generation: [const { AtomicU64::new(0) }; MAX_CORES],
+            metadata_len: [const { AtomicU64::new(0) }; MAX_CORES],
+            observed_remote_wake: [const { AtomicU64::new(0) }; MAX_CORES],
+            pending_timer_preemption: [const { AtomicU64::new(1) }; MAX_CORES],
+            dispatch_requested: [const { AtomicU64::new(0) }; MAX_CORES],
+            cross_owner_rejected: [const { AtomicU64::new(0) }; MAX_CORES],
+            deferred_role_rejected: [const { AtomicU64::new(0) }; MAX_CORES],
+            local_queue_preserved: [const { AtomicU64::new(0) }; MAX_CORES],
+            errors: [const { AtomicU64::new(0) }; MAX_CORES],
+            progress: [const { AtomicU64::new(0) }; MAX_CORES],
+        }
+    }
+
+    fn reset(&self) {
+        for logical_cpu in 0..MAX_CORES {
+            self.owner[logical_cpu].store(u64::MAX, Ordering::Release);
+            self.role[logical_cpu].store(2, Ordering::Release);
+            self.task_id[logical_cpu].store(0, Ordering::Release);
+            self.task_state[logical_cpu].store(0, Ordering::Release);
+            self.current_task[logical_cpu].store(0, Ordering::Release);
+            self.queue_len[logical_cpu].store(0, Ordering::Release);
+            self.front_task[logical_cpu].store(0, Ordering::Release);
+            self.remote_wake_task[logical_cpu].store(0, Ordering::Release);
+            self.dispatch_task[logical_cpu].store(0, Ordering::Release);
+            self.no_work_did_work[logical_cpu].store(1, Ordering::Release);
+            self.metadata_generation[logical_cpu].store(0, Ordering::Release);
+            self.metadata_len[logical_cpu].store(0, Ordering::Release);
+            self.observed_remote_wake[logical_cpu].store(0, Ordering::Release);
+            self.pending_timer_preemption[logical_cpu].store(1, Ordering::Release);
+            self.dispatch_requested[logical_cpu].store(0, Ordering::Release);
+            self.cross_owner_rejected[logical_cpu].store(0, Ordering::Release);
+            self.deferred_role_rejected[logical_cpu].store(0, Ordering::Release);
+            self.local_queue_preserved[logical_cpu].store(0, Ordering::Release);
+            self.errors[logical_cpu].store(0, Ordering::Release);
+            self.progress[logical_cpu].store(0, Ordering::Release);
+        }
+    }
+}
+
+#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+static SECONDARY_SCHEDULER_SERVICE_LOOP_STATE: SecondarySchedulerServiceLoopState =
+    SecondarySchedulerServiceLoopState::new();
+
+#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+fn reset_secondary_scheduler_service_loop_state() {
+    SECONDARY_SCHEDULER_SERVICE_LOOP_STATE.reset();
+}
+
+#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+fn build_secondary_scheduler_service_loop_report(
+    logical_cpu: usize,
+) -> SecondarySchedulerServiceLoopReportLine {
+    let owner = LogicalCpuId::new(logical_cpu);
+    let mut scheduler = PerCoreScheduler::<2>::production_secondary_diagnostic(owner);
+    let mut remote_wakes = RemoteWakeQueue::<2>::new(owner);
+    let mut metadata =
+        SharedSchedulerMetadata::<SECONDARY_SCHEDULER_SERVICE_LOOP_TASK_CAPACITY, MAX_CORES>::new();
+    let mut task = scheduler_task(logical_cpu, 1);
+    task.set_state(TaskState::Blocked);
+
+    let mut errors = 0;
+    let mut metadata_generation = 0;
+
+    if metadata
+        .register_local_task(owner, &scheduler, &task)
+        .is_err()
+    {
+        errors += 1;
+    }
+
+    if remote_wakes
+        .publish(LogicalCpuId::BOOT, owner, task.id())
+        .is_err()
+    {
+        errors += 1;
+    }
+
+    let cross_owner_rejected = matches!(
+        SecondarySchedulerServiceLoop::run_once(
+            LogicalCpuId::BOOT,
+            &mut scheduler,
+            &mut remote_wakes,
+            &mut metadata,
+            &mut task,
+            None,
+            false,
+            false,
+        ),
+        Err(SecondarySchedulerServiceLoopError::WrongOwner { .. })
+    );
+    if !cross_owner_rejected {
+        errors += 1;
+    }
+
+    let mut deferred = PerCoreScheduler::<2>::deferred_secondary(owner);
+    let deferred_role_rejected = matches!(
+        SecondarySchedulerServiceLoop::run_once(
+            owner,
+            &mut deferred,
+            &mut remote_wakes,
+            &mut metadata,
+            &mut task,
+            None,
+            false,
+            false,
+        ),
+        Err(SecondarySchedulerServiceLoopError::ProductionDispatchDeferred { .. })
+    );
+    if !deferred_role_rejected {
+        errors += 1;
+    }
+
+    let first_cycle = SecondarySchedulerServiceLoop::run_once(
+        owner,
+        &mut scheduler,
+        &mut remote_wakes,
+        &mut metadata,
+        &mut task,
+        None,
+        false,
+        true,
+    );
+
+    let (
+        remote_wake_task,
+        dispatch_task,
+        observed_remote_wake,
+        pending_timer_preemption,
+        dispatch_requested,
+    ) = match first_cycle {
+        Ok(report) => (
+            report.cycle().remote_wake().map_or(0, TaskId::raw),
+            report.cycle().dispatch().map_or(0, TaskId::raw),
+            report.observed_remote_wake(),
+            report.pending_timer_preemption(),
+            report.dispatch_requested(),
+        ),
+        Err(_) => {
+            errors += 1;
+            (0, 0, false, true, false)
+        }
+    };
+
+    let no_work_did_work = match SecondarySchedulerServiceLoop::run_once(
+        owner,
+        &mut scheduler,
+        &mut remote_wakes,
+        &mut metadata,
+        &mut task,
+        None,
+        false,
+        false,
+    ) {
+        Ok(report) => {
+            metadata_generation = report.cycle().metadata().generation();
+            report.did_work()
+        }
+        Err(_) => {
+            errors += 1;
+            true
+        }
+    };
+
+    let metadata_len = metadata.len() as u64;
+
+    let queue_len = scheduler.scheduler().runnable().len() as u64;
+    let front_task = scheduler
+        .scheduler()
+        .runnable()
+        .front()
+        .map_or(0, TaskId::raw);
+    let current_task = scheduler.current_task().map_or(0, TaskId::raw);
+    let local_queue_preserved = queue_len == 0
+        && front_task == 0
+        && current_task == task.id().raw()
+        && remote_wakes.is_empty()
+        && task.state() == TaskState::Running;
+
+    if !local_queue_preserved {
+        errors += 1;
+    }
+
+    SecondarySchedulerServiceLoopReportLine {
+        owner: scheduler.owner().raw() as u64,
+        role: scheduler.role(),
+        task_id: task.id().raw(),
+        task_state: task_state_code(task.state()),
+        current_task,
+        queue_len,
+        front_task,
+        remote_wake_task,
+        dispatch_task,
+        no_work_did_work,
+        metadata_generation,
+        metadata_len,
+        observed_remote_wake,
+        pending_timer_preemption,
+        dispatch_requested,
+        cross_owner_rejected,
+        deferred_role_rejected,
+        local_queue_preserved,
+        errors,
+    }
+}
+
+#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+fn publish_secondary_scheduler_service_loop_report(
+    logical_cpu: usize,
+    report: SecondarySchedulerServiceLoopReportLine,
+) {
+    let state = &SECONDARY_SCHEDULER_SERVICE_LOOP_STATE;
+    state.owner[logical_cpu].store(report.owner, Ordering::Release);
+    state.role[logical_cpu].store(scheduler_role_code(report.role), Ordering::Release);
+    state.task_id[logical_cpu].store(report.task_id, Ordering::Release);
+    state.task_state[logical_cpu].store(report.task_state, Ordering::Release);
+    state.current_task[logical_cpu].store(report.current_task, Ordering::Release);
+    state.queue_len[logical_cpu].store(report.queue_len, Ordering::Release);
+    state.front_task[logical_cpu].store(report.front_task, Ordering::Release);
+    state.remote_wake_task[logical_cpu].store(report.remote_wake_task, Ordering::Release);
+    state.dispatch_task[logical_cpu].store(report.dispatch_task, Ordering::Release);
+    state.no_work_did_work[logical_cpu]
+        .store(u64::from(report.no_work_did_work), Ordering::Release);
+    state.metadata_generation[logical_cpu].store(report.metadata_generation, Ordering::Release);
+    state.metadata_len[logical_cpu].store(report.metadata_len, Ordering::Release);
+    state.observed_remote_wake[logical_cpu]
+        .store(u64::from(report.observed_remote_wake), Ordering::Release);
+    state.pending_timer_preemption[logical_cpu].store(
+        u64::from(report.pending_timer_preemption),
+        Ordering::Release,
+    );
+    state.dispatch_requested[logical_cpu]
+        .store(u64::from(report.dispatch_requested), Ordering::Release);
+    state.cross_owner_rejected[logical_cpu]
+        .store(u64::from(report.cross_owner_rejected), Ordering::Release);
+    state.deferred_role_rejected[logical_cpu]
+        .store(u64::from(report.deferred_role_rejected), Ordering::Release);
+    state.local_queue_preserved[logical_cpu]
+        .store(u64::from(report.local_queue_preserved), Ordering::Release);
+    state.errors[logical_cpu].store(report.errors, Ordering::Release);
+    state.progress[logical_cpu].store(report.progress(), Ordering::Release);
+}
+
+#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+fn scheduler_role_code(role: SchedulerCoreRole) -> u64 {
+    match role {
+        SchedulerCoreRole::BootCpuProduction => 1,
+        SchedulerCoreRole::SecondaryDeferred => 2,
+        SchedulerCoreRole::SecondaryProductionDiagnostic => 3,
+    }
+}
+
+#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+fn scheduler_role_from_code(code: u64) -> SchedulerCoreRole {
+    match code {
+        1 => SchedulerCoreRole::BootCpuProduction,
+        3 => SchedulerCoreRole::SecondaryProductionDiagnostic,
+        _ => SchedulerCoreRole::SecondaryDeferred,
+    }
+}
+
+#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+fn load_secondary_scheduler_service_loop_report(
+    logical_cpu: usize,
+) -> SecondarySchedulerServiceLoopReportLine {
+    let state = &SECONDARY_SCHEDULER_SERVICE_LOOP_STATE;
+    SecondarySchedulerServiceLoopReportLine {
+        owner: state.owner[logical_cpu].load(Ordering::Acquire),
+        role: scheduler_role_from_code(state.role[logical_cpu].load(Ordering::Acquire)),
+        task_id: state.task_id[logical_cpu].load(Ordering::Acquire),
+        task_state: state.task_state[logical_cpu].load(Ordering::Acquire),
+        current_task: state.current_task[logical_cpu].load(Ordering::Acquire),
+        queue_len: state.queue_len[logical_cpu].load(Ordering::Acquire),
+        front_task: state.front_task[logical_cpu].load(Ordering::Acquire),
+        remote_wake_task: state.remote_wake_task[logical_cpu].load(Ordering::Acquire),
+        dispatch_task: state.dispatch_task[logical_cpu].load(Ordering::Acquire),
+        no_work_did_work: state.no_work_did_work[logical_cpu].load(Ordering::Acquire) != 0,
+        metadata_generation: state.metadata_generation[logical_cpu].load(Ordering::Acquire),
+        metadata_len: state.metadata_len[logical_cpu].load(Ordering::Acquire),
+        observed_remote_wake: state.observed_remote_wake[logical_cpu].load(Ordering::Acquire) != 0,
+        pending_timer_preemption: state.pending_timer_preemption[logical_cpu]
+            .load(Ordering::Acquire)
+            != 0,
+        dispatch_requested: state.dispatch_requested[logical_cpu].load(Ordering::Acquire) != 0,
+        cross_owner_rejected: state.cross_owner_rejected[logical_cpu].load(Ordering::Acquire) != 0,
+        deferred_role_rejected: state.deferred_role_rejected[logical_cpu].load(Ordering::Acquire)
+            != 0,
+        local_queue_preserved: state.local_queue_preserved[logical_cpu].load(Ordering::Acquire)
+            != 0,
+        errors: state.errors[logical_cpu].load(Ordering::Acquire),
+    }
+}
+
+#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+fn run_secondary_scheduler_service_loop_secondary(
+    core_state: &smp::PerCoreState,
+    logical_cpu: usize,
+) {
+    core_state.mark_workload_running();
+    core_state.clean_to_poc();
+
+    let report = build_secondary_scheduler_service_loop_report(logical_cpu);
+    publish_secondary_scheduler_service_loop_report(logical_cpu, report);
+    smp_full_barrier();
+
+    core_state.mark_workload_complete(report.progress());
+    core_state.clean_to_poc();
+}
+
 #[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
 impl SharedSchedulerMetadataReport {
     const fn lock_progress(self) -> u64 {
@@ -1605,7 +2034,8 @@ fn publish_remote_wake_request(target: usize, task_id: TaskId) -> bool {
 
 #[cfg(any(
     talos_qemu_remote_wake_to_local_runnable_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke
+    talos_qemu_shared_scheduler_metadata_smoke,
+    talos_qemu_secondary_scheduler_service_loop_smoke
 ))]
 fn task_state_code(state: TaskState) -> u64 {
     match state {
@@ -1617,7 +2047,8 @@ fn task_state_code(state: TaskState) -> u64 {
 
 #[cfg(any(
     talos_qemu_remote_wake_to_local_runnable_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke
+    talos_qemu_shared_scheduler_metadata_smoke,
+    talos_qemu_secondary_scheduler_service_loop_smoke
 ))]
 fn task_state_name(code: u64) -> &'static str {
     match code {
@@ -2649,6 +3080,176 @@ pub fn run_shared_scheduler_metadata_smoke() -> bool {
         crate::println!("qemu-shared-scheduler-metadata: PASS");
     } else {
         crate::println!("qemu-shared-scheduler-metadata: FAIL");
+    }
+
+    reports_ok
+}
+
+#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+pub fn run_secondary_scheduler_service_loop_smoke() -> bool {
+    smp::reset_secondary_core_states();
+    reset_secondary_scheduler_service_loop_state();
+
+    let boot_mpidr = aarch64::mpidr_el1();
+    let boot_affinity = aarch64::mpidr_affinity(boot_mpidr);
+    let boot_logical = qemu_logical_cpu_from_mpidr_affinity(boot_affinity);
+    let entry = talos_aarch64_qemu_secondary_entry as *const () as usize;
+    let stack_layout = secondary_stack_layout();
+    let stack_base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
+    let stack_end = core::ptr::addr_of!(talos_secondary_core_stacks_end) as usize;
+
+    crate::println!(
+        "qemu-secondary-scheduler-service-loop: start conduit=smc cores={} task-capacity={} boot-mpidr={:#018x} boot-affinity={:#x} boot-logical={:?} entry={:#018x} stack-range=[{:#018x},{:#018x})",
+        MAX_CORES,
+        SECONDARY_SCHEDULER_SERVICE_LOOP_TASK_CAPACITY,
+        boot_mpidr,
+        boot_affinity,
+        boot_logical,
+        entry,
+        stack_base,
+        stack_end
+    );
+
+    let mut cpu_on_ok = true;
+    for logical_cpu in 1..MAX_CORES {
+        let target_affinity = logical_cpu as u64;
+        let result = unsafe { psci_cpu_on_smc(target_affinity, entry, logical_cpu) };
+        crate::println!(
+            "qemu-secondary-scheduler-service-loop: cpu-on logical={} target-affinity={:#x} result={}",
+            logical_cpu,
+            target_affinity,
+            result
+        );
+        cpu_on_ok &= result == 0;
+    }
+
+    let mut remaining = SECONDARY_SCHEDULER_SERVICE_LOOP_WAIT_LIMIT;
+    while remaining > 0 {
+        let all_complete = (1..MAX_CORES).all(|logical_cpu| {
+            SECONDARY_CORE_STATES[logical_cpu]
+                .snapshot(logical_cpu)
+                .lifecycle
+                >= CoreLifecycle::WorkloadComplete
+        });
+        if all_complete {
+            break;
+        }
+        core::hint::spin_loop();
+        remaining -= 1;
+    }
+
+    let state_lock_available = true;
+    let metadata_lock_available = true;
+    let mut final_metadata_len = 0;
+    let mut final_metadata_generation = 0;
+    for logical_cpu in 1..MAX_CORES {
+        let report = load_secondary_scheduler_service_loop_report(logical_cpu);
+        final_metadata_len += report.metadata_len;
+        final_metadata_generation += report.metadata_generation;
+    }
+
+    let mut participants = 0;
+    let mut errors = 0;
+    let mut reports_ok = cpu_on_ok
+        && boot_logical == Some(0)
+        && state_lock_available
+        && final_metadata_len == (MAX_CORES - 1) as u64;
+
+    for logical_cpu in 1..MAX_CORES {
+        let report = load_secondary_scheduler_service_loop_report(logical_cpu);
+        let core_report = SECONDARY_CORE_STATES[logical_cpu].snapshot(logical_cpu);
+        let logical_from_mpidr = qemu_logical_cpu_from_mpidr_affinity(core_report.affinity);
+        let stack_slot = stack_layout
+            .slot(logical_cpu)
+            .expect("stack slot for possible QEMU core");
+        let stack_owned = stack_slot.contains_stack_pointer(core_report.stack_pointer);
+        let expected_task = (logical_cpu as u64 + 1) * 100 + 1;
+        let report_ok = core_report.lifecycle >= CoreLifecycle::WorkloadComplete
+            && core_report.context == logical_cpu
+            && logical_from_mpidr == Some(logical_cpu)
+            && stack_owned
+            && report.owner == logical_cpu as u64
+            && report.role == SchedulerCoreRole::SecondaryProductionDiagnostic
+            && report.task_id == expected_task
+            && report.task_state == task_state_code(TaskState::Running)
+            && report.current_task == expected_task
+            && report.queue_len == 0
+            && report.front_task == 0
+            && report.remote_wake_task == expected_task
+            && report.dispatch_task == expected_task
+            && !report.no_work_did_work
+            && report.metadata_generation > 0
+            && report.observed_remote_wake
+            && !report.pending_timer_preemption
+            && report.dispatch_requested
+            && report.cross_owner_rejected
+            && report.deferred_role_rejected
+            && report.local_queue_preserved
+            && SECONDARY_SCHEDULER_SERVICE_LOOP_STATE.progress[logical_cpu].load(Ordering::Acquire)
+                == 1
+            && report.errors == 0;
+        if report_ok {
+            participants += 1;
+        }
+        errors += report.errors;
+        reports_ok &= report_ok;
+
+        crate::println!(
+            "qemu-secondary-scheduler-service-loop: report logical={} state={} context={} mapped={:?} owner={} role={} task={} task-state={} current={} queue-len={} front={} remote-wake={} dispatch={} no-work-did-work={} metadata-len={} metadata-generation={} observed-remote-wake={} pending-timer-preemption={} dispatch-requested={} cross-owner-rejected={} deferred-role-rejected={} local-queue-preserved={} lock-progress={} errors={} ok={}",
+            logical_cpu,
+            secondary_state_name(core_report.lifecycle.raw()),
+            core_report.context,
+            logical_from_mpidr,
+            report.owner,
+            scheduler_role_name(report.role),
+            report.task_id,
+            task_state_name(report.task_state),
+            report.current_task,
+            report.queue_len,
+            report.front_task,
+            report.remote_wake_task,
+            report.dispatch_task,
+            report.no_work_did_work,
+            report.metadata_len,
+            report.metadata_generation,
+            report.observed_remote_wake,
+            report.pending_timer_preemption,
+            report.dispatch_requested,
+            report.cross_owner_rejected,
+            report.deferred_role_rejected,
+            report.local_queue_preserved,
+            SECONDARY_SCHEDULER_SERVICE_LOOP_STATE.progress[logical_cpu].load(Ordering::Acquire),
+            report.errors,
+            report_ok
+        );
+    }
+
+    let classification = if reports_ok {
+        "qemu-secondary-scheduler-service-loop-complete"
+    } else if !state_lock_available || !metadata_lock_available {
+        "qemu-secondary-scheduler-service-loop-lock-still-held"
+    } else if cpu_on_ok {
+        "qemu-secondary-scheduler-service-loop-invariant-failed"
+    } else {
+        "qemu-psci-smc-cpu-on-failed"
+    };
+    crate::println!(
+        "qemu-secondary-scheduler-service-loop: final participants={} expected={} errors={} state-lock-available={} metadata-lock-available={} final-metadata-len={} final-metadata-generation={} wait-remaining={} classification={}",
+        participants,
+        MAX_CORES - 1,
+        errors,
+        state_lock_available,
+        metadata_lock_available,
+        final_metadata_len,
+        final_metadata_generation,
+        remaining,
+        classification
+    );
+
+    if reports_ok {
+        crate::println!("qemu-secondary-scheduler-service-loop: PASS");
+    } else {
+        crate::println!("qemu-secondary-scheduler-service-loop: FAIL");
     }
 
     reports_ok

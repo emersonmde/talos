@@ -50,6 +50,7 @@ fn main() {
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_REMOTE_WAKE_TO_LOCAL_RUNNABLE_SMOKE");
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_PRODUCTION_SECONDARY_DISPATCH_SMOKE");
     println!("cargo:rerun-if-env-changed=TALOS_QEMU_SHARED_SCHEDULER_METADATA_SMOKE");
+    println!("cargo:rerun-if-env-changed=TALOS_QEMU_SECONDARY_SCHEDULER_SERVICE_LOOP_SMOKE");
 
     let target = env::var("TARGET").expect("TARGET is set by Cargo");
     println!("cargo:rustc-check-cfg=cfg(talos_target_qemu_virt)");
@@ -97,6 +98,7 @@ fn main() {
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_remote_wake_to_local_runnable_smoke)");
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_production_secondary_dispatch_smoke)");
     println!("cargo:rustc-check-cfg=cfg(talos_qemu_shared_scheduler_metadata_smoke)");
+    println!("cargo:rustc-check-cfg=cfg(talos_qemu_secondary_scheduler_service_loop_smoke)");
     if target.contains("rpi5") || target.contains("bcm2712") {
         println!("cargo:rustc-cfg=talos_target_rpi5_bcm2712");
     } else {
@@ -276,6 +278,10 @@ fn assemble_aarch64(source: &str, output: &PathBuf, target: &str) {
     if env::var_os("TALOS_QEMU_SHARED_SCHEDULER_METADATA_SMOKE").is_some() {
         command.arg("-DTALOS_QEMU_SHARED_SCHEDULER_METADATA_SMOKE");
         println!("cargo:rustc-cfg=talos_qemu_shared_scheduler_metadata_smoke");
+    }
+    if env::var_os("TALOS_QEMU_SECONDARY_SCHEDULER_SERVICE_LOOP_SMOKE").is_some() {
+        command.arg("-DTALOS_QEMU_SECONDARY_SCHEDULER_SERVICE_LOOP_SMOKE");
+        println!("cargo:rustc-cfg=talos_qemu_secondary_scheduler_service_loop_smoke");
     }
 
     let status = command
