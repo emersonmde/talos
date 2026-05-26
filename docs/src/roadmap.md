@@ -22,16 +22,20 @@ enqueue, task migration, load balancing, multi-core preemption, userspace,
 filesystem, networking, SSH, and shell behavior remain deferred.
 
 The immediate frontier is Phase 6.3 productionization after the accepted
-CPU-local scheduler service closeout. Evidence-retention, diagnostic-surface,
-roadmap-refresh, productionization-boundary, CPU-local scheduler service
-boundary, CPU-local scheduler service core, and CPU-local scheduler service
-closeout tasks are accepted. The service core sequences target-owned remote
-wake drains, local runnable transitions, pending timer-preemption handling,
-CPU-local dispatch, and owner metadata refresh for one owning logical CPU. The
-next bounded productionization task should inventory the secondary scheduler
-service loop. Broad shared run queues, remote enqueue, migration, load
-balancing, multi-core preemption, Phase 7, filesystem, networking, SSH, and
-shell work remain deferred until a supervisor plans a later bounded task.
+CPU-local scheduler service closeout and secondary scheduler service-loop
+source inventory. Evidence-retention, diagnostic-surface, roadmap-refresh,
+productionization-boundary, CPU-local scheduler service boundary,
+CPU-local scheduler service core, CPU-local scheduler service closeout, and
+secondary scheduler service-loop source inventory tasks are accepted. The
+service core sequences target-owned remote wake drains, local runnable
+transitions, pending timer-preemption handling, CPU-local dispatch, and owner
+metadata refresh for one owning logical CPU. The accepted service-loop
+inventory defines how a secondary owner may run that service from normal
+control flow after accepted handoff state. The next bounded productionization
+task should implement the minimal secondary scheduler service-loop core. Broad
+shared run queues, remote enqueue, migration, load balancing, multi-core
+preemption, Phase 7, filesystem, networking, SSH, and shell work remain
+deferred until a supervisor plans a later bounded task.
 
 Accepted status and historical completed facts:
 
@@ -709,7 +713,9 @@ and
 and
 [Phase 6 CPU-Local Scheduler Service Boundary Source Inventory](project/phase6-cpu-local-scheduler-service-boundary-source-inventory.md),
 and
-[Phase 6 CPU-Local Scheduler Service Closeout](project/phase6-cpu-local-scheduler-service-closeout-checkpoint.md).
+[Phase 6 CPU-Local Scheduler Service Closeout](project/phase6-cpu-local-scheduler-service-closeout-checkpoint.md),
+and
+[Phase 6 Secondary Scheduler Service Loop Source Inventory](project/phase6-secondary-scheduler-service-loop-source-inventory.md).
 The target-independent CPU-local scheduler service core is accepted in
 `tasks/2026-05-26-phase6-cpu-local-scheduler-service-core.md`.
 Before broader Phase 6.3 productionization, the accepted

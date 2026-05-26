@@ -12,6 +12,48 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-26 - Secondary Scheduler Service Loop Source Inventory Accepted
+
+- Status: accepted as a Phase 6.3 documentation/source-inventory contract. No
+  Rust implementation, boot image, hardware run, shared run queue, remote
+  enqueue, task migration, load balancing, multi-core preemption, Phase 7,
+  filesystem, networking, SSH, shell, RP1/PCIe, UART interrupt ownership, or
+  DMA behavior was added.
+- Context: The accepted `CpuLocalSchedulerService` core can sequence one
+  owning CPU's remote wake drain, local runnable transition,
+  timer-preemption request, CPU-local dispatch, and metadata refresh. Before
+  implementing the next productionization slice, Talos needs a source-backed
+  contract for how secondary CPUs enter a normal service loop from accepted
+  handoff state without turning diagnostics into shared scheduler topology.
+- Decision: Accept
+  docs/src/project/phase6-secondary-scheduler-service-loop-source-inventory.md.
+  The secondary service-loop boundary starts after logical CPU identity, stack
+  state, and normal control flow are established. Each loop iteration remains
+  owner-local, calls the accepted CPU-local scheduler service from normal
+  control flow, keeps IPI/timer paths as bounded recorders, dispatches only
+  through the owner `PerCoreScheduler`, and preserves
+  `SecondaryProductionDiagnostic` as the only accepted secondary production
+  role. The next bounded task should be
+  phase6-secondary-scheduler-service-loop-core-20260526.
+- Evidence level: static inspection, static source/doc review of SMP,
+  scheduler, SMP sync, retained QEMU/Pi 5 proof scripts, roadmap, decision
+  log, and accepted CPU-local service records, plus mdBook validation and
+  whitespace inspection.
+- Validation: git status --short was clean before edits, git diff --check
+  passed, and mdbook build passed. Rust fmt/tests and hardware runs were not
+  required because this task changed only Markdown documentation and durable
+  task state.
+- Consequences: Talos has a bounded implementation target for a secondary
+  owner-local service loop. Shared run queues, remote enqueue queues,
+  migration, load balancing, work stealing, multi-core preemption, Phase 7,
+  filesystem, networking, SSH, shell behavior, RP1/PCIe, UART interrupt
+  ownership, and DMA/cache-driver policy remain deferred.
+- Alternatives considered: Implement the loop directly from the closeout,
+  rename `SecondaryProductionDiagnostic` into a general runtime role, or skip
+  to shared topology. A source inventory keeps the next implementation narrow;
+  renaming the role would overstate the accepted evidence; shared topology
+  remains out of scope.
+
 ## 2026-05-26 - CPU-Local Scheduler Service Core Accepted
 
 - Status: accepted as a target-independent Phase 6.3 implementation slice.

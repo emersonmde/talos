@@ -774,3 +774,45 @@ timer, and metadata error boundaries.
 
 This implementation does not create shared scheduler topology or broaden the
 secondary diagnostic dispatch role into general multi-core scheduling.
+
+## Phase 6.3 Secondary Scheduler Service Loop Boundary
+
+The secondary scheduler service-loop source inventory is accepted as the next
+CPU-local productionization contract after the CPU-local scheduler service
+closeout. It defines where an already-started secondary CPU may run the
+accepted `CpuLocalSchedulerService` from normal kernel control flow without
+creating shared run queues, remote enqueue queues, task migration, load
+balancing, work stealing, or multi-core preemption.
+
+The loop entry precondition is the accepted secondary handoff state:
+`src/smp.rs` has established logical CPU identity, stack ownership,
+`CoreLifecycle::HandoffReady`, and normal Rust control flow. Pi 5 proof paths
+also rely on the accepted secondary cacheable-MMU handoff before physical
+scheduler claims. The service loop does not own secondary bring-up itself.
+
+One secondary loop iteration is owner-local:
+
+1. identify the requester as the owning `LogicalCpuId`;
+2. observe bounded pending work recorded by IPI or timer paths;
+3. call `CpuLocalSchedulerService::run_cycle` on that CPU's local scheduler,
+   target-owned remote wake queue, local task state, and metadata table;
+4. dispatch only through the owner `PerCoreScheduler` and the accepted
+   `SecondaryProductionDiagnostic` role;
+5. refresh owner-published metadata after local mutations;
+6. return to the loop or an explicit idle/no-work point without holding
+   scheduler locks across context switch, printing, UART polling, diagnostic
+   command dispatch, allocation, blocking, sleeping, migration, or arbitrary
+   callbacks.
+
+IPI context remains limited to acknowledge, classify, record bounded pending
+state, EOI, and return. Timer IRQ context remains limited to recording a local
+preemption request. Scheduler mutation, remote wake drain, dispatch, and
+metadata refresh belong in the normal secondary service loop, not in interrupt
+context.
+
+The existing QEMU and Pi 5 secondary workload, remote wake, production
+secondary dispatch, and shared metadata scripts remain diagnostic proof entry
+points. The service-loop boundary names the productionization owner for those
+accepted behaviors but deliberately keeps `SecondaryProductionDiagnostic` as
+the only accepted secondary production role until a later task defines a
+general non-diagnostic runtime role.
