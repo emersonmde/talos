@@ -21,16 +21,17 @@ validation gates, not a general multi-core runtime: shared run queues, remote
 enqueue, task migration, load balancing, multi-core preemption, userspace,
 filesystem, networking, SSH, and shell behavior remain deferred.
 
-The immediate frontier is Phase 6.3 productionization of the accepted
-CPU-local scheduler boundary. Evidence-retention, diagnostic-surface,
+The immediate frontier is Phase 6.3 productionization after the accepted
+CPU-local scheduler service closeout. Evidence-retention, diagnostic-surface,
 roadmap-refresh, productionization-boundary, CPU-local scheduler service
-boundary, and CPU-local scheduler service core tasks are accepted. The service
-core sequences target-owned remote wake drains, local runnable transitions,
-pending timer-preemption handling, CPU-local dispatch, and owner metadata
-refresh for one owning logical CPU. Broad shared run queues, remote enqueue,
-migration, load balancing, multi-core preemption, Phase 7, filesystem,
-networking, SSH, and shell work remain deferred until a supervisor plans the
-next bounded Phase 6.3 productionization task.
+boundary, CPU-local scheduler service core, and CPU-local scheduler service
+closeout tasks are accepted. The service core sequences target-owned remote
+wake drains, local runnable transitions, pending timer-preemption handling,
+CPU-local dispatch, and owner metadata refresh for one owning logical CPU. The
+next bounded productionization task should inventory the secondary scheduler
+service loop. Broad shared run queues, remote enqueue, migration, load
+balancing, multi-core preemption, Phase 7, filesystem, networking, SSH, and
+shell work remain deferred until a supervisor plans a later bounded task.
 
 Accepted status and historical completed facts:
 
@@ -706,7 +707,9 @@ and
 and
 [Phase 6 Shared Scheduler Metadata Closeout](project/phase6-shared-scheduler-metadata-closeout-checkpoint.md),
 and
-[Phase 6 CPU-Local Scheduler Service Boundary Source Inventory](project/phase6-cpu-local-scheduler-service-boundary-source-inventory.md).
+[Phase 6 CPU-Local Scheduler Service Boundary Source Inventory](project/phase6-cpu-local-scheduler-service-boundary-source-inventory.md),
+and
+[Phase 6 CPU-Local Scheduler Service Closeout](project/phase6-cpu-local-scheduler-service-closeout-checkpoint.md).
 The target-independent CPU-local scheduler service core is accepted in
 `tasks/2026-05-26-phase6-cpu-local-scheduler-service-core.md`.
 Before broader Phase 6.3 productionization, the accepted

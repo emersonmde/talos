@@ -48,6 +48,43 @@ ADR template:
   proof-specific entry points would repeat old diagnostic-surface drift, and
   shared topology remains out of scope until separately planned.
 
+## 2026-05-26 - CPU-Local Scheduler Service Closeout Accepted
+
+- Status: accepted as the Phase 6.3 CPU-local scheduler service closeout
+  checkpoint. No Rust implementation, boot image, hardware run, shared run
+  queue, remote enqueue, task migration, load balancing, multi-core
+  preemption, Phase 7, filesystem, networking, SSH, shell, RP1/PCIe, UART
+  interrupt ownership, or DMA behavior was added.
+- Context: The accepted CPU-local scheduler service boundary and
+  `CpuLocalSchedulerService` core now agree on one normal-control-flow order:
+  drain target-owned remote wakes, convert matching local blocked tasks to
+  runnable state, handle pending timer-preemption requests, dispatch through
+  the owner scheduler, and refresh owner-published metadata after local
+  mutations.
+- Decision: Accept
+  docs/src/project/phase6-cpu-local-scheduler-service-closeout-checkpoint.md
+  and tasks/2026-05-26-phase6-cpu-local-scheduler-service-closeout-checkpoint.md.
+  The next bounded task should be
+  phase6-secondary-scheduler-service-loop-source-inventory-20260526.
+- Evidence level: static reconciliation of scheduler architecture docs,
+  CPU-local service boundary inventory, accepted service-core task record,
+  roadmap, decision log, and `CpuLocalSchedulerService` implementation/tests,
+  plus mdBook validation and whitespace inspection.
+- Validation: git status --short was clean before edits, git diff --check
+  passed, and mdbook build passed. Rust fmt/tests, QEMU smoke reruns, and
+  hardware runs were not required because this checkpoint changed only
+  Markdown documentation and durable task state.
+- Consequences: Secondary scheduler service-loop productionization may be
+  planned as the next bounded Phase 6.3 slice. Shared run queues, remote
+  enqueue queues, migration, load balancing, work stealing, multi-core
+  preemption, Phase 7, filesystem, networking, SSH, shell behavior, RP1/PCIe,
+  UART interrupt ownership, and DMA/cache-driver policy remain deferred.
+- Alternatives considered: Start secondary service-loop implementation
+  immediately, skip to shared scheduler topology, or rerun QEMU/Pi 5 proof
+  gates. A closeout checkpoint is the bounded reconciliation requested by the
+  supervisor; shared topology remains premature, and no new physical claim is
+  made by this documentation-only task.
+
 ## 2026-05-26 - Productionization Boundary Inventory Accepted
 
 - Status: accepted as a source-backed repo-health and productionization
