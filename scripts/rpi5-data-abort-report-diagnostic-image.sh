@@ -20,5 +20,5 @@ fi
 fresh_label="$(printf '%s\r\n' "$label")"
 
 env \
-    TALOS_RPI5_DATA_ABORT_REPORT_DIAGNOSTIC=1 \
+    TALOS_BOOT_SCENARIO=rpi5_data_abort_report \
     ./scripts/rpi5-image.sh

@@ -1,8 +1,7 @@
 #!/bin/sh
 set -eu
 
-TALOS_RPI5_REMOTE_WAKEUP_REQUEST_PROOF=1 \
-TALOS_RPI5_REMOTE_WAKE_TO_LOCAL_RUNNABLE_PROOF=1 \
+TALOS_BOOT_SCENARIO=rpi5_remote_wake_to_local_runnable \
     ./scripts/rpi5-image.sh "$@" >/dev/null
 
 img_file="target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-remote-wake-to-local-runnable.img"

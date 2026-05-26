@@ -175,14 +175,14 @@ impl PerCoreState {
     }
 
     #[cfg(any(
-        talos_rpi5_psci_secondary_core_alive_proof,
-        talos_rpi5_secondary_core_workload_proof,
-        talos_rpi5_smp_lock_cache_coherence_proof,
-        talos_rpi5_cross_core_ipi_delivery_proof,
-        talos_rpi5_remote_wakeup_request_proof,
-        talos_rpi5_production_secondary_dispatch_proof,
-        talos_rpi5_shared_scheduler_metadata_proof,
-        talos_rpi5_secondary_scheduler_service_loop_proof
+        talos_boot_scenario = "rpi5_psci_secondary_core_alive",
+        talos_boot_scenario = "rpi5_secondary_core_workload",
+        talos_boot_scenario = "rpi5_smp_lock_cache_coherence",
+        talos_boot_scenario = "rpi5_cross_core_ipi_delivery",
+        talos_boot_scenario = "rpi5_remote_wakeup_request",
+        talos_boot_scenario = "rpi5_production_secondary_dispatch",
+        talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+        talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
     ))]
     pub fn invalidate_from_poc(&self) {
         invalidate_cache_line_from_poc(&self.lifecycle);
@@ -241,14 +241,14 @@ fn clean_cache_line_to_poc<T>(_value: &T) {}
 #[cfg(all(
     target_arch = "aarch64",
     any(
-        talos_rpi5_psci_secondary_core_alive_proof,
-        talos_rpi5_secondary_core_workload_proof,
-        talos_rpi5_smp_lock_cache_coherence_proof,
-        talos_rpi5_cross_core_ipi_delivery_proof,
-        talos_rpi5_remote_wakeup_request_proof,
-        talos_rpi5_production_secondary_dispatch_proof,
-        talos_rpi5_shared_scheduler_metadata_proof,
-        talos_rpi5_secondary_scheduler_service_loop_proof
+        talos_boot_scenario = "rpi5_psci_secondary_core_alive",
+        talos_boot_scenario = "rpi5_secondary_core_workload",
+        talos_boot_scenario = "rpi5_smp_lock_cache_coherence",
+        talos_boot_scenario = "rpi5_cross_core_ipi_delivery",
+        talos_boot_scenario = "rpi5_remote_wakeup_request",
+        talos_boot_scenario = "rpi5_production_secondary_dispatch",
+        talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+        talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
     )
 ))]
 fn invalidate_cache_line_from_poc<T>(value: &T) {
@@ -265,14 +265,14 @@ fn invalidate_cache_line_from_poc<T>(value: &T) {
 #[cfg(all(
     not(target_arch = "aarch64"),
     any(
-        talos_rpi5_psci_secondary_core_alive_proof,
-        talos_rpi5_secondary_core_workload_proof,
-        talos_rpi5_smp_lock_cache_coherence_proof,
-        talos_rpi5_cross_core_ipi_delivery_proof,
-        talos_rpi5_remote_wakeup_request_proof,
-        talos_rpi5_production_secondary_dispatch_proof,
-        talos_rpi5_shared_scheduler_metadata_proof,
-        talos_rpi5_secondary_scheduler_service_loop_proof
+        talos_boot_scenario = "rpi5_psci_secondary_core_alive",
+        talos_boot_scenario = "rpi5_secondary_core_workload",
+        talos_boot_scenario = "rpi5_smp_lock_cache_coherence",
+        talos_boot_scenario = "rpi5_cross_core_ipi_delivery",
+        talos_boot_scenario = "rpi5_remote_wakeup_request",
+        talos_boot_scenario = "rpi5_production_secondary_dispatch",
+        talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+        talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
     )
 ))]
 fn invalidate_cache_line_from_poc<T>(_value: &T) {}

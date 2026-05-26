@@ -11,5 +11,5 @@ for name in $(env | sed -n 's/^\(TALOS_RPI5_[A-Za-z0-9_]*\)=.*/\1/p'); do
 done
 
 env \
-    TALOS_RPI5_TRANSLATION_FAULT_DIAGNOSTIC=1 \
+    TALOS_BOOT_SCENARIO=rpi5_translation_fault \
     ./scripts/rpi5-image.sh

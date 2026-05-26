@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-TALOS_RPI5_SECONDARY_SCHEDULER_SERVICE_LOOP_PROOF=1 \
+TALOS_BOOT_SCENARIO=rpi5_secondary_scheduler_service_loop \
     ./scripts/rpi5-image.sh "$@" >/dev/null
 
 img_file="target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-secondary-scheduler-service-loop.img"

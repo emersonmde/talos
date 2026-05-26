@@ -1,8 +1,7 @@
 #!/bin/sh
 set -eu
 
-TALOS_QEMU_REMOTE_WAKEUP_REQUEST_SMOKE=1 \
-TALOS_QEMU_REMOTE_WAKE_TO_LOCAL_RUNNABLE_SMOKE=1 \
+TALOS_BOOT_SCENARIO=qemu_remote_wake_to_local_runnable \
     cargo -Zjson-target-spec build "$@"
 
 ELF_FILE="target/aarch64-talos-virt/debug/talos"

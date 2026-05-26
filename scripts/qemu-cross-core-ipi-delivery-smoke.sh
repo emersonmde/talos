@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-TALOS_QEMU_CROSS_CORE_IPI_DELIVERY_SMOKE=1 cargo -Zjson-target-spec build "$@"
+TALOS_BOOT_SCENARIO=qemu_cross_core_ipi_delivery cargo -Zjson-target-spec build "$@"
 
 ELF_FILE="target/aarch64-talos-virt/debug/talos"
 IMG_FILE="$ELF_FILE.img"

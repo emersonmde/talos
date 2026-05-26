@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-TALOS_QEMU_PRODUCTION_SECONDARY_DISPATCH_SMOKE=1 cargo -Zjson-target-spec build "$@"
+TALOS_BOOT_SCENARIO=qemu_production_secondary_dispatch cargo -Zjson-target-spec build "$@"
 
 ELF_FILE="target/aarch64-talos-virt/debug/talos"
 IMG_FILE="$ELF_FILE.img"

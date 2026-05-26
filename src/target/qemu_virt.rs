@@ -1,81 +1,81 @@
 #![cfg_attr(any(test, talos_target_rpi5_bcm2712), allow(dead_code))]
 
 #[cfg(any(
-    talos_qemu_context_switch_smoke,
-    talos_qemu_scheduler_yield_smoke,
-    talos_qemu_timer_preemption_smoke
+    talos_boot_scenario = "qemu_context_switch",
+    talos_boot_scenario = "qemu_scheduler_yield",
+    talos_boot_scenario = "qemu_timer_preemption"
 ))]
 use core::cell::UnsafeCell;
 use core::sync::atomic::{AtomicU64, Ordering};
 
-#[cfg(talos_qemu_remote_wake_to_local_runnable_smoke)]
+#[cfg(talos_boot_scenario = "qemu_remote_wake_to_local_runnable")]
 use crate::scheduler::TargetWakeConsumptionError;
 #[cfg(any(
-    talos_qemu_context_switch_smoke,
-    talos_qemu_scheduler_yield_smoke,
-    talos_qemu_timer_preemption_smoke,
-    talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke,
-    talos_qemu_secondary_scheduler_service_loop_smoke
+    talos_boot_scenario = "qemu_context_switch",
+    talos_boot_scenario = "qemu_scheduler_yield",
+    talos_boot_scenario = "qemu_timer_preemption",
+    talos_boot_scenario = "qemu_per_core_scheduler_ownership",
+    talos_boot_scenario = "qemu_remote_wakeup_request",
+    talos_boot_scenario = "qemu_production_secondary_dispatch",
+    talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 use crate::scheduler::{ContextFrame, KernelStack, SingleCoreScheduler, Task, TaskId, TaskState};
 #[cfg(any(
-    talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke,
-    talos_qemu_secondary_scheduler_service_loop_smoke
+    talos_boot_scenario = "qemu_per_core_scheduler_ownership",
+    talos_boot_scenario = "qemu_remote_wakeup_request",
+    talos_boot_scenario = "qemu_production_secondary_dispatch",
+    talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 use crate::scheduler::{
     LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError, ProductionDispatchError,
     SchedulerCoreRole, SharedSchedulerMetadata, SharedSchedulerMetadataError,
     SharedSchedulerMetadataLock,
 };
-#[cfg(talos_qemu_remote_wakeup_request_smoke)]
+#[cfg(talos_boot_scenario = "qemu_remote_wakeup_request")]
 use crate::scheduler::{RemoteWakePublishOutcome, RemoteWakeQueue};
-#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+#[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
 use crate::scheduler::{
     RemoteWakeQueue, SecondarySchedulerServiceLoop, SecondarySchedulerServiceLoopError,
 };
 #[cfg(not(any(
-    talos_qemu_secondary_core_discriminator,
-    talos_qemu_secondary_core_workload_smoke,
-    talos_qemu_smp_lock_contention_smoke,
-    talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_cross_core_ipi_delivery_smoke,
-    talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke,
-    talos_qemu_secondary_scheduler_service_loop_smoke
+    talos_boot_scenario = "qemu_secondary_core_discriminator",
+    talos_boot_scenario = "qemu_secondary_core_workload",
+    talos_boot_scenario = "qemu_smp_lock_contention",
+    talos_boot_scenario = "qemu_per_core_scheduler_ownership",
+    talos_boot_scenario = "qemu_cross_core_ipi_delivery",
+    talos_boot_scenario = "qemu_remote_wakeup_request",
+    talos_boot_scenario = "qemu_production_secondary_dispatch",
+    talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 )))]
 use crate::smp::MAX_CORES;
-#[cfg(talos_qemu_secondary_core_workload_smoke)]
+#[cfg(talos_boot_scenario = "qemu_secondary_core_workload")]
 use crate::smp::SECONDARY_CORE_WORKLOAD_TARGET;
 #[cfg(any(
-    talos_qemu_secondary_core_discriminator,
-    talos_qemu_secondary_core_workload_smoke,
-    talos_qemu_smp_lock_contention_smoke,
-    talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_cross_core_ipi_delivery_smoke,
-    talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke,
-    talos_qemu_secondary_scheduler_service_loop_smoke
+    talos_boot_scenario = "qemu_secondary_core_discriminator",
+    talos_boot_scenario = "qemu_secondary_core_workload",
+    talos_boot_scenario = "qemu_smp_lock_contention",
+    talos_boot_scenario = "qemu_per_core_scheduler_ownership",
+    talos_boot_scenario = "qemu_cross_core_ipi_delivery",
+    talos_boot_scenario = "qemu_remote_wakeup_request",
+    talos_boot_scenario = "qemu_production_secondary_dispatch",
+    talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 use crate::smp::{
     self, CoreLifecycle, CoreStackLayout, MAX_CORES, SECONDARY_CORE_STATES,
     SECONDARY_KERNEL_STACK_SIZE,
 };
-#[cfg(talos_qemu_smp_lock_contention_smoke)]
+#[cfg(talos_boot_scenario = "qemu_smp_lock_contention")]
 use crate::smp_sync::{SpinLock, smp_full_barrier};
 #[cfg(any(
-    talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke,
-    talos_qemu_secondary_scheduler_service_loop_smoke
+    talos_boot_scenario = "qemu_per_core_scheduler_ownership",
+    talos_boot_scenario = "qemu_remote_wakeup_request",
+    talos_boot_scenario = "qemu_production_secondary_dispatch",
+    talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 use crate::smp_sync::{SpinLock, smp_full_barrier};
 use crate::{
@@ -96,51 +96,51 @@ const GICC_BASE: usize = 0x0801_0000;
 const EL2_PHYSICAL_TIMER_INTID: u32 = 26;
 const TIMER_IRQ_WAIT_LIMIT: usize = 1_000_000;
 #[cfg(any(
-    talos_qemu_secondary_core_discriminator,
-    talos_qemu_secondary_core_workload_smoke,
-    talos_qemu_smp_lock_contention_smoke,
-    talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_cross_core_ipi_delivery_smoke,
-    talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke,
-    talos_qemu_secondary_scheduler_service_loop_smoke
+    talos_boot_scenario = "qemu_secondary_core_discriminator",
+    talos_boot_scenario = "qemu_secondary_core_workload",
+    talos_boot_scenario = "qemu_smp_lock_contention",
+    talos_boot_scenario = "qemu_per_core_scheduler_ownership",
+    talos_boot_scenario = "qemu_cross_core_ipi_delivery",
+    talos_boot_scenario = "qemu_remote_wakeup_request",
+    talos_boot_scenario = "qemu_production_secondary_dispatch",
+    talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 const QEMU_SECONDARY_WAIT_LIMIT: usize = 10_000_000;
 #[cfg(any(
-    talos_qemu_cross_core_ipi_delivery_smoke,
-    talos_qemu_remote_wakeup_request_smoke
+    talos_boot_scenario = "qemu_cross_core_ipi_delivery",
+    talos_boot_scenario = "qemu_remote_wakeup_request"
 ))]
 const QEMU_CROSS_CORE_IPI_SGI_INTID: u32 = 1;
-#[cfg(talos_qemu_remote_wakeup_request_smoke)]
+#[cfg(talos_boot_scenario = "qemu_remote_wakeup_request")]
 const REMOTE_WAKE_QUEUE_CAPACITY: usize = 4;
-#[cfg(talos_qemu_smp_lock_contention_smoke)]
+#[cfg(talos_boot_scenario = "qemu_smp_lock_contention")]
 const SMP_LOCK_CONTENTION_TARGET_PER_CORE: u64 = 64;
-#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+#[cfg(talos_boot_scenario = "qemu_per_core_scheduler_ownership")]
 const PER_CORE_SCHEDULER_PROGRESS_TARGET: u64 = 4;
-#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+#[cfg(talos_boot_scenario = "qemu_production_secondary_dispatch")]
 const PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET: u64 = 3;
-#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+#[cfg(talos_boot_scenario = "qemu_shared_scheduler_metadata")]
 const SHARED_SCHEDULER_METADATA_TASK_CAPACITY: usize = MAX_CORES;
-#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+#[cfg(talos_boot_scenario = "qemu_shared_scheduler_metadata")]
 const SHARED_SCHEDULER_METADATA_WAIT_LIMIT: usize = 100_000_000;
-#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+#[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
 const SECONDARY_SCHEDULER_SERVICE_LOOP_TASK_CAPACITY: usize = 1;
-#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+#[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
 const SECONDARY_SCHEDULER_SERVICE_LOOP_WAIT_LIMIT: usize = 100_000_000;
 #[cfg(any(
-    talos_qemu_context_switch_smoke,
-    talos_qemu_scheduler_yield_smoke,
-    talos_qemu_timer_preemption_smoke
+    talos_boot_scenario = "qemu_context_switch",
+    talos_boot_scenario = "qemu_scheduler_yield",
+    talos_boot_scenario = "qemu_timer_preemption"
 ))]
 const CONTEXT_SWITCH_STACK_SIZE: usize = 4096;
-#[cfg(talos_qemu_context_switch_smoke)]
+#[cfg(talos_boot_scenario = "qemu_context_switch")]
 const CONTEXT_SWITCH_TARGET_PROGRESS: u64 = 2;
-#[cfg(talos_qemu_scheduler_yield_smoke)]
+#[cfg(talos_boot_scenario = "qemu_scheduler_yield")]
 const SCHEDULER_YIELD_TARGET_PROGRESS: u64 = 3;
-#[cfg(talos_qemu_timer_preemption_smoke)]
+#[cfg(talos_boot_scenario = "qemu_timer_preemption")]
 const TIMER_PREEMPTION_TARGET_PROGRESS: u64 = 3;
-#[cfg(talos_qemu_timer_preemption_smoke)]
+#[cfg(talos_boot_scenario = "qemu_timer_preemption")]
 const TIMER_PREEMPTION_TARGET_SWITCHES: u64 = 6;
 
 const MMIO_REGIONS: &[MmioRegion] = &[
@@ -153,19 +153,19 @@ static LAST_IRQ_VECTOR: AtomicU64 = AtomicU64::new(0);
 static LAST_IAR: AtomicU64 = AtomicU64::new(0);
 static LAST_INTID: AtomicU64 = AtomicU64::new(0);
 static UNEXPECTED_GIC_IRQ_COUNT: AtomicU64 = AtomicU64::new(0);
-#[cfg(talos_qemu_timer_preemption_smoke)]
+#[cfg(talos_boot_scenario = "qemu_timer_preemption")]
 static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
 
 #[cfg(any(
-    talos_qemu_secondary_core_discriminator,
-    talos_qemu_secondary_core_workload_smoke,
-    talos_qemu_smp_lock_contention_smoke,
-    talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_cross_core_ipi_delivery_smoke,
-    talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke,
-    talos_qemu_secondary_scheduler_service_loop_smoke
+    talos_boot_scenario = "qemu_secondary_core_discriminator",
+    talos_boot_scenario = "qemu_secondary_core_workload",
+    talos_boot_scenario = "qemu_smp_lock_contention",
+    talos_boot_scenario = "qemu_per_core_scheduler_ownership",
+    talos_boot_scenario = "qemu_cross_core_ipi_delivery",
+    talos_boot_scenario = "qemu_remote_wakeup_request",
+    talos_boot_scenario = "qemu_production_secondary_dispatch",
+    talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 unsafe extern "C" {
     fn talos_aarch64_qemu_secondary_entry();
@@ -174,17 +174,17 @@ unsafe extern "C" {
 }
 
 #[cfg(any(
-    talos_qemu_context_switch_smoke,
-    talos_qemu_scheduler_yield_smoke,
-    talos_qemu_timer_preemption_smoke
+    talos_boot_scenario = "qemu_context_switch",
+    talos_boot_scenario = "qemu_scheduler_yield",
+    talos_boot_scenario = "qemu_timer_preemption"
 ))]
 #[repr(align(16))]
 struct KernelThreadStack([u8; CONTEXT_SWITCH_STACK_SIZE]);
 
 #[cfg(any(
-    talos_qemu_context_switch_smoke,
-    talos_qemu_scheduler_yield_smoke,
-    talos_qemu_timer_preemption_smoke
+    talos_boot_scenario = "qemu_context_switch",
+    talos_boot_scenario = "qemu_scheduler_yield",
+    talos_boot_scenario = "qemu_timer_preemption"
 ))]
 impl KernelThreadStack {
     const fn new() -> Self {
@@ -196,7 +196,7 @@ impl KernelThreadStack {
     }
 }
 
-#[cfg(talos_qemu_context_switch_smoke)]
+#[cfg(talos_boot_scenario = "qemu_context_switch")]
 struct ContextSwitchSmokeState {
     main_context: ContextFrame,
     worker_contexts: [ContextFrame; 2],
@@ -207,7 +207,7 @@ struct ContextSwitchSmokeState {
     runnable_task: u64,
 }
 
-#[cfg(talos_qemu_context_switch_smoke)]
+#[cfg(talos_boot_scenario = "qemu_context_switch")]
 impl ContextSwitchSmokeState {
     const fn new() -> Self {
         Self {
@@ -246,13 +246,13 @@ impl ContextSwitchSmokeState {
     }
 }
 
-#[cfg(talos_qemu_context_switch_smoke)]
+#[cfg(talos_boot_scenario = "qemu_context_switch")]
 struct ContextSwitchSmokeCell(UnsafeCell<ContextSwitchSmokeState>);
 
-#[cfg(talos_qemu_context_switch_smoke)]
+#[cfg(talos_boot_scenario = "qemu_context_switch")]
 unsafe impl Sync for ContextSwitchSmokeCell {}
 
-#[cfg(talos_qemu_context_switch_smoke)]
+#[cfg(talos_boot_scenario = "qemu_context_switch")]
 impl ContextSwitchSmokeCell {
     const fn new() -> Self {
         Self(UnsafeCell::new(ContextSwitchSmokeState::new()))
@@ -263,10 +263,10 @@ impl ContextSwitchSmokeCell {
     }
 }
 
-#[cfg(talos_qemu_context_switch_smoke)]
+#[cfg(talos_boot_scenario = "qemu_context_switch")]
 static CONTEXT_SWITCH_SMOKE: ContextSwitchSmokeCell = ContextSwitchSmokeCell::new();
 
-#[cfg(talos_qemu_scheduler_yield_smoke)]
+#[cfg(talos_boot_scenario = "qemu_scheduler_yield")]
 struct SchedulerYieldSmokeState {
     main_context: ContextFrame,
     worker_contexts: [ContextFrame; 2],
@@ -279,7 +279,7 @@ struct SchedulerYieldSmokeState {
     yielded_task: u64,
 }
 
-#[cfg(talos_qemu_scheduler_yield_smoke)]
+#[cfg(talos_boot_scenario = "qemu_scheduler_yield")]
 impl SchedulerYieldSmokeState {
     const fn new() -> Self {
         Self {
@@ -366,13 +366,13 @@ impl SchedulerYieldSmokeState {
     }
 }
 
-#[cfg(talos_qemu_scheduler_yield_smoke)]
+#[cfg(talos_boot_scenario = "qemu_scheduler_yield")]
 struct SchedulerYieldSmokeCell(UnsafeCell<SchedulerYieldSmokeState>);
 
-#[cfg(talos_qemu_scheduler_yield_smoke)]
+#[cfg(talos_boot_scenario = "qemu_scheduler_yield")]
 unsafe impl Sync for SchedulerYieldSmokeCell {}
 
-#[cfg(talos_qemu_scheduler_yield_smoke)]
+#[cfg(talos_boot_scenario = "qemu_scheduler_yield")]
 impl SchedulerYieldSmokeCell {
     const fn new() -> Self {
         Self(UnsafeCell::new(SchedulerYieldSmokeState::new()))
@@ -383,10 +383,10 @@ impl SchedulerYieldSmokeCell {
     }
 }
 
-#[cfg(talos_qemu_scheduler_yield_smoke)]
+#[cfg(talos_boot_scenario = "qemu_scheduler_yield")]
 static SCHEDULER_YIELD_SMOKE: SchedulerYieldSmokeCell = SchedulerYieldSmokeCell::new();
 
-#[cfg(talos_qemu_timer_preemption_smoke)]
+#[cfg(talos_boot_scenario = "qemu_timer_preemption")]
 struct TimerPreemptionSmokeState {
     main_context: ContextFrame,
     worker_contexts: [ContextFrame; 2],
@@ -400,7 +400,7 @@ struct TimerPreemptionSmokeState {
     preempted_task: u64,
 }
 
-#[cfg(talos_qemu_timer_preemption_smoke)]
+#[cfg(talos_boot_scenario = "qemu_timer_preemption")]
 impl TimerPreemptionSmokeState {
     const fn new() -> Self {
         Self {
@@ -492,13 +492,13 @@ impl TimerPreemptionSmokeState {
     }
 }
 
-#[cfg(talos_qemu_timer_preemption_smoke)]
+#[cfg(talos_boot_scenario = "qemu_timer_preemption")]
 struct TimerPreemptionSmokeCell(UnsafeCell<TimerPreemptionSmokeState>);
 
-#[cfg(talos_qemu_timer_preemption_smoke)]
+#[cfg(talos_boot_scenario = "qemu_timer_preemption")]
 unsafe impl Sync for TimerPreemptionSmokeCell {}
 
-#[cfg(talos_qemu_timer_preemption_smoke)]
+#[cfg(talos_boot_scenario = "qemu_timer_preemption")]
 impl TimerPreemptionSmokeCell {
     const fn new() -> Self {
         Self(UnsafeCell::new(TimerPreemptionSmokeState::new()))
@@ -509,7 +509,7 @@ impl TimerPreemptionSmokeCell {
     }
 }
 
-#[cfg(talos_qemu_timer_preemption_smoke)]
+#[cfg(talos_boot_scenario = "qemu_timer_preemption")]
 static TIMER_PREEMPTION_SMOKE: TimerPreemptionSmokeCell = TimerPreemptionSmokeCell::new();
 
 #[derive(Clone, Copy)]
@@ -532,15 +532,15 @@ pub const fn qemu_logical_cpu_from_mpidr_affinity(affinity: u64) -> Option<usize
 }
 
 #[cfg(any(
-    talos_qemu_secondary_core_discriminator,
-    talos_qemu_secondary_core_workload_smoke,
-    talos_qemu_smp_lock_contention_smoke,
-    talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_cross_core_ipi_delivery_smoke,
-    talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke,
-    talos_qemu_secondary_scheduler_service_loop_smoke
+    talos_boot_scenario = "qemu_secondary_core_discriminator",
+    talos_boot_scenario = "qemu_secondary_core_workload",
+    talos_boot_scenario = "qemu_smp_lock_contention",
+    talos_boot_scenario = "qemu_per_core_scheduler_ownership",
+    talos_boot_scenario = "qemu_cross_core_ipi_delivery",
+    talos_boot_scenario = "qemu_remote_wakeup_request",
+    talos_boot_scenario = "qemu_production_secondary_dispatch",
+    talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 fn secondary_stack_layout() -> CoreStackLayout {
     let base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
@@ -550,30 +550,30 @@ fn secondary_stack_layout() -> CoreStackLayout {
 }
 
 #[cfg(any(
-    talos_qemu_secondary_core_discriminator,
-    talos_qemu_secondary_core_workload_smoke,
-    talos_qemu_smp_lock_contention_smoke,
-    talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_cross_core_ipi_delivery_smoke,
-    talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke,
-    talos_qemu_secondary_scheduler_service_loop_smoke
+    talos_boot_scenario = "qemu_secondary_core_discriminator",
+    talos_boot_scenario = "qemu_secondary_core_workload",
+    talos_boot_scenario = "qemu_smp_lock_contention",
+    talos_boot_scenario = "qemu_per_core_scheduler_ownership",
+    talos_boot_scenario = "qemu_cross_core_ipi_delivery",
+    talos_boot_scenario = "qemu_remote_wakeup_request",
+    talos_boot_scenario = "qemu_production_secondary_dispatch",
+    talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 fn secondary_state_name(state: u64) -> &'static str {
     CoreLifecycle::from_raw(state).map_or("unknown", CoreLifecycle::name)
 }
 
 #[cfg(any(
-    talos_qemu_secondary_core_discriminator,
-    talos_qemu_secondary_core_workload_smoke,
-    talos_qemu_smp_lock_contention_smoke,
-    talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_cross_core_ipi_delivery_smoke,
-    talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke,
-    talos_qemu_secondary_scheduler_service_loop_smoke
+    talos_boot_scenario = "qemu_secondary_core_discriminator",
+    talos_boot_scenario = "qemu_secondary_core_workload",
+    talos_boot_scenario = "qemu_smp_lock_contention",
+    talos_boot_scenario = "qemu_per_core_scheduler_ownership",
+    talos_boot_scenario = "qemu_cross_core_ipi_delivery",
+    talos_boot_scenario = "qemu_remote_wakeup_request",
+    talos_boot_scenario = "qemu_production_secondary_dispatch",
+    talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) -> i64 {
     let mut function_id = 0xc400_0003u64;
@@ -620,15 +620,15 @@ pub fn services(boot_info: &BootInfo) -> TargetServices {
 }
 
 #[cfg(any(
-    talos_qemu_secondary_core_discriminator,
-    talos_qemu_secondary_core_workload_smoke,
-    talos_qemu_smp_lock_contention_smoke,
-    talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_cross_core_ipi_delivery_smoke,
-    talos_qemu_remote_wakeup_request_smoke,
-    talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke,
-    talos_qemu_secondary_scheduler_service_loop_smoke
+    talos_boot_scenario = "qemu_secondary_core_discriminator",
+    talos_boot_scenario = "qemu_secondary_core_workload",
+    talos_boot_scenario = "qemu_smp_lock_contention",
+    talos_boot_scenario = "qemu_per_core_scheduler_ownership",
+    talos_boot_scenario = "qemu_cross_core_ipi_delivery",
+    talos_boot_scenario = "qemu_remote_wakeup_request",
+    talos_boot_scenario = "qemu_production_secondary_dispatch",
+    talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 #[unsafe(no_mangle)]
 pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
@@ -646,21 +646,21 @@ pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
         core_state.mark_stack_ready(stack_pointer as usize);
         core_state.mark_registered();
         core_state.mark_handoff_ready();
-        #[cfg(talos_qemu_secondary_core_workload_smoke)]
+        #[cfg(talos_boot_scenario = "qemu_secondary_core_workload")]
         smp::run_controlled_secondary_workload(core_state, SECONDARY_CORE_WORKLOAD_TARGET);
-        #[cfg(talos_qemu_smp_lock_contention_smoke)]
+        #[cfg(talos_boot_scenario = "qemu_smp_lock_contention")]
         run_smp_lock_contention_secondary(core_state, logical_cpu);
-        #[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+        #[cfg(talos_boot_scenario = "qemu_per_core_scheduler_ownership")]
         run_per_core_scheduler_ownership_secondary(core_state, logical_cpu);
-        #[cfg(talos_qemu_cross_core_ipi_delivery_smoke)]
+        #[cfg(talos_boot_scenario = "qemu_cross_core_ipi_delivery")]
         run_cross_core_ipi_delivery_secondary(core_state, logical_cpu);
-        #[cfg(talos_qemu_remote_wakeup_request_smoke)]
+        #[cfg(talos_boot_scenario = "qemu_remote_wakeup_request")]
         run_remote_wakeup_request_secondary(core_state, logical_cpu);
-        #[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+        #[cfg(talos_boot_scenario = "qemu_production_secondary_dispatch")]
         run_production_secondary_dispatch_secondary(core_state, logical_cpu);
-        #[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+        #[cfg(talos_boot_scenario = "qemu_shared_scheduler_metadata")]
         run_shared_scheduler_metadata_secondary(core_state, logical_cpu);
-        #[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+        #[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
         run_secondary_scheduler_service_loop_secondary(core_state, logical_cpu);
     }
 
@@ -671,7 +671,7 @@ pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
     }
 }
 
-#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+#[cfg(talos_boot_scenario = "qemu_per_core_scheduler_ownership")]
 #[derive(Clone, Copy)]
 struct PerCoreSchedulerReport {
     owner: u64,
@@ -686,7 +686,7 @@ struct PerCoreSchedulerReport {
     errors: u64,
 }
 
-#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+#[cfg(talos_boot_scenario = "qemu_per_core_scheduler_ownership")]
 impl PerCoreSchedulerReport {
     const fn empty() -> Self {
         Self {
@@ -704,14 +704,14 @@ impl PerCoreSchedulerReport {
     }
 }
 
-#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+#[cfg(talos_boot_scenario = "qemu_per_core_scheduler_ownership")]
 #[derive(Clone, Copy)]
 struct PerCoreSchedulerOwnershipState {
     reports: [PerCoreSchedulerReport; MAX_CORES],
     lock_progress: [u64; MAX_CORES],
 }
 
-#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+#[cfg(talos_boot_scenario = "qemu_per_core_scheduler_ownership")]
 impl PerCoreSchedulerOwnershipState {
     const fn new() -> Self {
         Self {
@@ -721,21 +721,21 @@ impl PerCoreSchedulerOwnershipState {
     }
 }
 
-#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+#[cfg(talos_boot_scenario = "qemu_per_core_scheduler_ownership")]
 static PER_CORE_SCHEDULER_OWNERSHIP_STATE: SpinLock<PerCoreSchedulerOwnershipState> =
     SpinLock::new(PerCoreSchedulerOwnershipState::new());
 
-#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+#[cfg(talos_boot_scenario = "qemu_per_core_scheduler_ownership")]
 fn reset_per_core_scheduler_ownership_state() {
     let mut state = unsafe { PER_CORE_SCHEDULER_OWNERSHIP_STATE.lock_irqsave() };
     *state = PerCoreSchedulerOwnershipState::new();
 }
 
 #[cfg(any(
-    talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke,
-    talos_qemu_secondary_scheduler_service_loop_smoke
+    talos_boot_scenario = "qemu_per_core_scheduler_ownership",
+    talos_boot_scenario = "qemu_production_secondary_dispatch",
+    talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
     match role {
@@ -746,20 +746,20 @@ fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
 }
 
 #[cfg(any(
-    talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke,
-    talos_qemu_secondary_scheduler_service_loop_smoke
+    talos_boot_scenario = "qemu_per_core_scheduler_ownership",
+    talos_boot_scenario = "qemu_production_secondary_dispatch",
+    talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 fn task_id(raw: u64) -> TaskId {
     TaskId::new(raw).expect("diagnostic task IDs are nonzero")
 }
 
 #[cfg(any(
-    talos_qemu_per_core_scheduler_ownership_smoke,
-    talos_qemu_production_secondary_dispatch_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke,
-    talos_qemu_secondary_scheduler_service_loop_smoke
+    talos_boot_scenario = "qemu_per_core_scheduler_ownership",
+    talos_boot_scenario = "qemu_production_secondary_dispatch",
+    talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 fn scheduler_task(logical_cpu: usize, progress: u64) -> Task {
     let raw_task_id = (logical_cpu as u64 + 1) * 100 + progress;
@@ -769,7 +769,7 @@ fn scheduler_task(logical_cpu: usize, progress: u64) -> Task {
     Task::kernel_thread(task_id(raw_task_id), stack, context)
 }
 
-#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+#[cfg(talos_boot_scenario = "qemu_per_core_scheduler_ownership")]
 fn build_per_core_scheduler_report(
     logical_cpu: usize,
     scheduler: &mut PerCoreScheduler<2>,
@@ -826,7 +826,7 @@ fn build_per_core_scheduler_report(
     }
 }
 
-#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+#[cfg(talos_boot_scenario = "qemu_per_core_scheduler_ownership")]
 fn build_boot_scheduler_report() -> PerCoreSchedulerReport {
     let mut scheduler = PerCoreScheduler::<2>::boot_cpu();
     let requester = LogicalCpuId::BOOT;
@@ -868,14 +868,14 @@ fn build_boot_scheduler_report() -> PerCoreSchedulerReport {
     }
 }
 
-#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+#[cfg(talos_boot_scenario = "qemu_per_core_scheduler_ownership")]
 fn publish_per_core_scheduler_report(logical_cpu: usize, report: PerCoreSchedulerReport) {
     let mut state = PER_CORE_SCHEDULER_OWNERSHIP_STATE.lock();
     state.reports[logical_cpu] = report;
     state.lock_progress[logical_cpu] = report.progress;
 }
 
-#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+#[cfg(talos_boot_scenario = "qemu_per_core_scheduler_ownership")]
 fn run_per_core_scheduler_ownership_secondary(core_state: &smp::PerCoreState, logical_cpu: usize) {
     core_state.mark_workload_running();
     core_state.clean_to_poc();
@@ -889,7 +889,7 @@ fn run_per_core_scheduler_ownership_secondary(core_state: &smp::PerCoreState, lo
     core_state.clean_to_poc();
 }
 
-#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+#[cfg(talos_boot_scenario = "qemu_production_secondary_dispatch")]
 #[derive(Clone, Copy)]
 struct ProductionSecondaryDispatchReport {
     owner: u64,
@@ -907,7 +907,7 @@ struct ProductionSecondaryDispatchReport {
     errors: u64,
 }
 
-#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+#[cfg(talos_boot_scenario = "qemu_production_secondary_dispatch")]
 impl ProductionSecondaryDispatchReport {
     const fn empty() -> Self {
         Self {
@@ -928,14 +928,14 @@ impl ProductionSecondaryDispatchReport {
     }
 }
 
-#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+#[cfg(talos_boot_scenario = "qemu_production_secondary_dispatch")]
 #[derive(Clone, Copy)]
 struct ProductionSecondaryDispatchState {
     reports: [ProductionSecondaryDispatchReport; MAX_CORES],
     lock_progress: [u64; MAX_CORES],
 }
 
-#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+#[cfg(talos_boot_scenario = "qemu_production_secondary_dispatch")]
 impl ProductionSecondaryDispatchState {
     const fn new() -> Self {
         Self {
@@ -945,17 +945,17 @@ impl ProductionSecondaryDispatchState {
     }
 }
 
-#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+#[cfg(talos_boot_scenario = "qemu_production_secondary_dispatch")]
 static PRODUCTION_SECONDARY_DISPATCH_STATE: SpinLock<ProductionSecondaryDispatchState> =
     SpinLock::new(ProductionSecondaryDispatchState::new());
 
-#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+#[cfg(talos_boot_scenario = "qemu_production_secondary_dispatch")]
 fn reset_production_secondary_dispatch_state() {
     let mut state = unsafe { PRODUCTION_SECONDARY_DISPATCH_STATE.lock_irqsave() };
     *state = ProductionSecondaryDispatchState::new();
 }
 
-#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+#[cfg(talos_boot_scenario = "qemu_production_secondary_dispatch")]
 fn build_production_secondary_dispatch_report(
     logical_cpu: usize,
     scheduler: &mut PerCoreScheduler<2>,
@@ -1036,7 +1036,7 @@ fn build_production_secondary_dispatch_report(
     }
 }
 
-#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+#[cfg(talos_boot_scenario = "qemu_production_secondary_dispatch")]
 fn publish_production_secondary_dispatch_report(
     logical_cpu: usize,
     report: ProductionSecondaryDispatchReport,
@@ -1046,7 +1046,7 @@ fn publish_production_secondary_dispatch_report(
     state.lock_progress[logical_cpu] = report.progress;
 }
 
-#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+#[cfg(talos_boot_scenario = "qemu_production_secondary_dispatch")]
 fn run_production_secondary_dispatch_secondary(core_state: &smp::PerCoreState, logical_cpu: usize) {
     core_state.mark_workload_running();
     core_state.clean_to_poc();
@@ -1061,7 +1061,7 @@ fn run_production_secondary_dispatch_secondary(core_state: &smp::PerCoreState, l
     core_state.clean_to_poc();
 }
 
-#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+#[cfg(talos_boot_scenario = "qemu_shared_scheduler_metadata")]
 #[derive(Clone, Copy)]
 struct SharedSchedulerMetadataReport {
     owner: u64,
@@ -1086,7 +1086,7 @@ struct SharedSchedulerMetadataReport {
     errors: u64,
 }
 
-#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+#[cfg(talos_boot_scenario = "qemu_shared_scheduler_metadata")]
 impl SharedSchedulerMetadataReport {
     const fn empty() -> Self {
         Self {
@@ -1114,14 +1114,14 @@ impl SharedSchedulerMetadataReport {
     }
 }
 
-#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+#[cfg(talos_boot_scenario = "qemu_shared_scheduler_metadata")]
 #[derive(Clone, Copy)]
 struct SharedSchedulerMetadataSmokeState {
     reports: [SharedSchedulerMetadataReport; MAX_CORES],
     lock_progress: [u64; MAX_CORES],
 }
 
-#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+#[cfg(talos_boot_scenario = "qemu_shared_scheduler_metadata")]
 impl SharedSchedulerMetadataSmokeState {
     const fn new() -> Self {
         Self {
@@ -1131,17 +1131,17 @@ impl SharedSchedulerMetadataSmokeState {
     }
 }
 
-#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+#[cfg(talos_boot_scenario = "qemu_shared_scheduler_metadata")]
 static SHARED_SCHEDULER_METADATA_SMOKE_STATE: SpinLock<SharedSchedulerMetadataSmokeState> =
     SpinLock::new(SharedSchedulerMetadataSmokeState::new());
 
-#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+#[cfg(talos_boot_scenario = "qemu_shared_scheduler_metadata")]
 static SHARED_SCHEDULER_METADATA_SMOKE_TABLE: SharedSchedulerMetadataLock<
     SHARED_SCHEDULER_METADATA_TASK_CAPACITY,
     MAX_CORES,
 > = SpinLock::new(SharedSchedulerMetadata::new());
 
-#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+#[cfg(talos_boot_scenario = "qemu_shared_scheduler_metadata")]
 fn reset_shared_scheduler_metadata_smoke_state() {
     let mut state = unsafe { SHARED_SCHEDULER_METADATA_SMOKE_STATE.lock_irqsave() };
     *state = SharedSchedulerMetadataSmokeState::new();
@@ -1149,7 +1149,7 @@ fn reset_shared_scheduler_metadata_smoke_state() {
     *metadata = SharedSchedulerMetadata::new();
 }
 
-#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+#[cfg(talos_boot_scenario = "qemu_shared_scheduler_metadata")]
 fn build_shared_scheduler_metadata_report(
     logical_cpu: usize,
     scheduler: &mut PerCoreScheduler<2>,
@@ -1285,7 +1285,7 @@ fn build_shared_scheduler_metadata_report(
     }
 }
 
-#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+#[cfg(talos_boot_scenario = "qemu_shared_scheduler_metadata")]
 fn publish_shared_scheduler_metadata_report(
     logical_cpu: usize,
     report: SharedSchedulerMetadataReport,
@@ -1295,7 +1295,7 @@ fn publish_shared_scheduler_metadata_report(
     state.lock_progress[logical_cpu] = u64::from(report.errors == 0);
 }
 
-#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+#[cfg(talos_boot_scenario = "qemu_shared_scheduler_metadata")]
 fn run_shared_scheduler_metadata_secondary(core_state: &smp::PerCoreState, logical_cpu: usize) {
     core_state.mark_workload_running();
     core_state.clean_to_poc();
@@ -1310,7 +1310,7 @@ fn run_shared_scheduler_metadata_secondary(core_state: &smp::PerCoreState, logic
     core_state.clean_to_poc();
 }
 
-#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+#[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
 #[derive(Clone, Copy)]
 struct SecondarySchedulerServiceLoopReportLine {
     owner: u64,
@@ -1334,7 +1334,7 @@ struct SecondarySchedulerServiceLoopReportLine {
     errors: u64,
 }
 
-#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+#[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
 impl SecondarySchedulerServiceLoopReportLine {
     const fn empty() -> Self {
         Self {
@@ -1369,7 +1369,7 @@ impl SecondarySchedulerServiceLoopReportLine {
     }
 }
 
-#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+#[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
 struct SecondarySchedulerServiceLoopState {
     owner: [AtomicU64; MAX_CORES],
     role: [AtomicU64; MAX_CORES],
@@ -1393,7 +1393,7 @@ struct SecondarySchedulerServiceLoopState {
     progress: [AtomicU64; MAX_CORES],
 }
 
-#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+#[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
 impl SecondarySchedulerServiceLoopState {
     const fn new() -> Self {
         Self {
@@ -1446,16 +1446,16 @@ impl SecondarySchedulerServiceLoopState {
     }
 }
 
-#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+#[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
 static SECONDARY_SCHEDULER_SERVICE_LOOP_STATE: SecondarySchedulerServiceLoopState =
     SecondarySchedulerServiceLoopState::new();
 
-#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+#[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
 fn reset_secondary_scheduler_service_loop_state() {
     SECONDARY_SCHEDULER_SERVICE_LOOP_STATE.reset();
 }
 
-#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+#[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
 fn build_secondary_scheduler_service_loop_report(
     logical_cpu: usize,
 ) -> SecondarySchedulerServiceLoopReportLine {
@@ -1612,7 +1612,7 @@ fn build_secondary_scheduler_service_loop_report(
     }
 }
 
-#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+#[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
 fn publish_secondary_scheduler_service_loop_report(
     logical_cpu: usize,
     report: SecondarySchedulerServiceLoopReportLine,
@@ -1649,7 +1649,7 @@ fn publish_secondary_scheduler_service_loop_report(
     state.progress[logical_cpu].store(report.progress(), Ordering::Release);
 }
 
-#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+#[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
 fn scheduler_role_code(role: SchedulerCoreRole) -> u64 {
     match role {
         SchedulerCoreRole::BootCpuProduction => 1,
@@ -1658,7 +1658,7 @@ fn scheduler_role_code(role: SchedulerCoreRole) -> u64 {
     }
 }
 
-#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+#[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
 fn scheduler_role_from_code(code: u64) -> SchedulerCoreRole {
     match code {
         1 => SchedulerCoreRole::BootCpuProduction,
@@ -1667,7 +1667,7 @@ fn scheduler_role_from_code(code: u64) -> SchedulerCoreRole {
     }
 }
 
-#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+#[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
 fn load_secondary_scheduler_service_loop_report(
     logical_cpu: usize,
 ) -> SecondarySchedulerServiceLoopReportLine {
@@ -1699,7 +1699,7 @@ fn load_secondary_scheduler_service_loop_report(
     }
 }
 
-#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+#[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
 fn run_secondary_scheduler_service_loop_secondary(
     core_state: &smp::PerCoreState,
     logical_cpu: usize,
@@ -1715,14 +1715,14 @@ fn run_secondary_scheduler_service_loop_secondary(
     core_state.clean_to_poc();
 }
 
-#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+#[cfg(talos_boot_scenario = "qemu_shared_scheduler_metadata")]
 impl SharedSchedulerMetadataReport {
     const fn lock_progress(self) -> u64 {
         if self.errors == 0 { 1 } else { 0 }
     }
 }
 
-#[cfg(talos_qemu_cross_core_ipi_delivery_smoke)]
+#[cfg(talos_boot_scenario = "qemu_cross_core_ipi_delivery")]
 struct CrossCoreIpiDeliveryState {
     ready_mask: AtomicU64,
     complete_mask: AtomicU64,
@@ -1736,7 +1736,7 @@ struct CrossCoreIpiDeliveryState {
     errors: AtomicU64,
 }
 
-#[cfg(talos_qemu_cross_core_ipi_delivery_smoke)]
+#[cfg(talos_boot_scenario = "qemu_cross_core_ipi_delivery")]
 impl CrossCoreIpiDeliveryState {
     const fn new() -> Self {
         Self {
@@ -1807,18 +1807,18 @@ impl CrossCoreIpiDeliveryState {
     }
 }
 
-#[cfg(talos_qemu_cross_core_ipi_delivery_smoke)]
+#[cfg(talos_boot_scenario = "qemu_cross_core_ipi_delivery")]
 static CROSS_CORE_IPI_DELIVERY_STATE: CrossCoreIpiDeliveryState = CrossCoreIpiDeliveryState::new();
 
 #[cfg(any(
-    talos_qemu_cross_core_ipi_delivery_smoke,
-    talos_qemu_remote_wakeup_request_smoke
+    talos_boot_scenario = "qemu_cross_core_ipi_delivery",
+    talos_boot_scenario = "qemu_remote_wakeup_request"
 ))]
 fn current_qemu_logical_cpu() -> Option<usize> {
     qemu_logical_cpu_from_mpidr_affinity(aarch64::mpidr_affinity(aarch64::mpidr_el1()))
 }
 
-#[cfg(talos_qemu_cross_core_ipi_delivery_smoke)]
+#[cfg(talos_boot_scenario = "qemu_cross_core_ipi_delivery")]
 fn run_cross_core_ipi_delivery_secondary(core_state: &smp::PerCoreState, logical_cpu: usize) {
     core_state.mark_workload_running();
     core_state.clean_to_poc();
@@ -1851,7 +1851,7 @@ fn run_cross_core_ipi_delivery_secondary(core_state: &smp::PerCoreState, logical
     core_state.clean_to_poc();
 }
 
-#[cfg(talos_qemu_remote_wakeup_request_smoke)]
+#[cfg(talos_boot_scenario = "qemu_remote_wakeup_request")]
 struct RemoteWakeRequestSmokeState {
     ready_mask: AtomicU64,
     complete_mask: AtomicU64,
@@ -1876,7 +1876,7 @@ struct RemoteWakeRequestSmokeState {
     errors: AtomicU64,
 }
 
-#[cfg(talos_qemu_remote_wakeup_request_smoke)]
+#[cfg(talos_boot_scenario = "qemu_remote_wakeup_request")]
 impl RemoteWakeRequestSmokeState {
     const fn new() -> Self {
         Self {
@@ -1970,11 +1970,11 @@ impl RemoteWakeRequestSmokeState {
     }
 }
 
-#[cfg(talos_qemu_remote_wakeup_request_smoke)]
+#[cfg(talos_boot_scenario = "qemu_remote_wakeup_request")]
 static REMOTE_WAKE_REQUEST_SMOKE_STATE: RemoteWakeRequestSmokeState =
     RemoteWakeRequestSmokeState::new();
 
-#[cfg(talos_qemu_remote_wakeup_request_smoke)]
+#[cfg(talos_boot_scenario = "qemu_remote_wakeup_request")]
 static REMOTE_WAKE_QUEUES: [SpinLock<RemoteWakeQueue<REMOTE_WAKE_QUEUE_CAPACITY>>; MAX_CORES] = [
     SpinLock::new(RemoteWakeQueue::new(LogicalCpuId::new(0))),
     SpinLock::new(RemoteWakeQueue::new(LogicalCpuId::new(1))),
@@ -1982,7 +1982,7 @@ static REMOTE_WAKE_QUEUES: [SpinLock<RemoteWakeQueue<REMOTE_WAKE_QUEUE_CAPACITY>
     SpinLock::new(RemoteWakeQueue::new(LogicalCpuId::new(3))),
 ];
 
-#[cfg(talos_qemu_remote_wakeup_request_smoke)]
+#[cfg(talos_boot_scenario = "qemu_remote_wakeup_request")]
 fn reset_remote_wakeup_request_state() {
     REMOTE_WAKE_REQUEST_SMOKE_STATE.reset();
     for logical_cpu in 0..MAX_CORES {
@@ -1991,7 +1991,7 @@ fn reset_remote_wakeup_request_state() {
     }
 }
 
-#[cfg(talos_qemu_remote_wakeup_request_smoke)]
+#[cfg(talos_boot_scenario = "qemu_remote_wakeup_request")]
 fn publish_remote_wake_request(target: usize, task_id: TaskId) -> bool {
     let target_cpu = LogicalCpuId::new(target);
     let result = {
@@ -2033,9 +2033,9 @@ fn publish_remote_wake_request(target: usize, task_id: TaskId) -> bool {
 }
 
 #[cfg(any(
-    talos_qemu_remote_wake_to_local_runnable_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke,
-    talos_qemu_secondary_scheduler_service_loop_smoke
+    talos_boot_scenario = "qemu_remote_wake_to_local_runnable",
+    talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 fn task_state_code(state: TaskState) -> u64 {
     match state {
@@ -2046,9 +2046,9 @@ fn task_state_code(state: TaskState) -> u64 {
 }
 
 #[cfg(any(
-    talos_qemu_remote_wake_to_local_runnable_smoke,
-    talos_qemu_shared_scheduler_metadata_smoke,
-    talos_qemu_secondary_scheduler_service_loop_smoke
+    talos_boot_scenario = "qemu_remote_wake_to_local_runnable",
+    talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 fn task_state_name(code: u64) -> &'static str {
     match code {
@@ -2059,7 +2059,7 @@ fn task_state_name(code: u64) -> &'static str {
     }
 }
 
-#[cfg(talos_qemu_remote_wakeup_request_smoke)]
+#[cfg(talos_boot_scenario = "qemu_remote_wakeup_request")]
 fn run_remote_wakeup_request_secondary(core_state: &smp::PerCoreState, logical_cpu: usize) {
     core_state.mark_workload_running();
     core_state.clean_to_poc();
@@ -2121,7 +2121,7 @@ fn run_remote_wakeup_request_secondary(core_state: &smp::PerCoreState, logical_c
             .store(1, Ordering::Release);
     }
 
-    #[cfg(talos_qemu_remote_wake_to_local_runnable_smoke)]
+    #[cfg(talos_boot_scenario = "qemu_remote_wake_to_local_runnable")]
     {
         let local_task_id =
             TaskId::new(200 + logical_cpu as u64).expect("diagnostic task ID is nonzero");
@@ -2181,7 +2181,7 @@ fn run_remote_wakeup_request_secondary(core_state: &smp::PerCoreState, logical_c
     core_state.clean_to_poc();
 }
 
-#[cfg(talos_qemu_smp_lock_contention_smoke)]
+#[cfg(talos_boot_scenario = "qemu_smp_lock_contention")]
 #[derive(Clone, Copy)]
 struct SmpLockContentionState {
     shared_counter: u64,
@@ -2189,7 +2189,7 @@ struct SmpLockContentionState {
     error_count: u64,
 }
 
-#[cfg(talos_qemu_smp_lock_contention_smoke)]
+#[cfg(talos_boot_scenario = "qemu_smp_lock_contention")]
 impl SmpLockContentionState {
     const fn new() -> Self {
         Self {
@@ -2200,17 +2200,17 @@ impl SmpLockContentionState {
     }
 }
 
-#[cfg(talos_qemu_smp_lock_contention_smoke)]
+#[cfg(talos_boot_scenario = "qemu_smp_lock_contention")]
 static SMP_LOCK_CONTENTION_STATE: SpinLock<SmpLockContentionState> =
     SpinLock::new(SmpLockContentionState::new());
 
-#[cfg(talos_qemu_smp_lock_contention_smoke)]
+#[cfg(talos_boot_scenario = "qemu_smp_lock_contention")]
 fn reset_smp_lock_contention_state() {
     let mut state = SMP_LOCK_CONTENTION_STATE.lock();
     *state = SmpLockContentionState::new();
 }
 
-#[cfg(talos_qemu_smp_lock_contention_smoke)]
+#[cfg(talos_boot_scenario = "qemu_smp_lock_contention")]
 fn run_smp_lock_contention_secondary(core_state: &smp::PerCoreState, logical_cpu: usize) {
     core_state.mark_workload_running();
     core_state.clean_to_poc();
@@ -2244,7 +2244,7 @@ fn run_smp_lock_contention_secondary(core_state: &smp::PerCoreState, logical_cpu
     core_state.clean_to_poc();
 }
 
-#[cfg(talos_qemu_secondary_core_discriminator)]
+#[cfg(talos_boot_scenario = "qemu_secondary_core_discriminator")]
 pub fn run_secondary_core_discriminator() -> bool {
     smp::reset_secondary_core_states();
 
@@ -2345,7 +2345,7 @@ pub fn run_secondary_core_discriminator() -> bool {
     reports_ok
 }
 
-#[cfg(talos_qemu_secondary_core_workload_smoke)]
+#[cfg(talos_boot_scenario = "qemu_secondary_core_workload")]
 pub fn run_secondary_core_workload_smoke() -> bool {
     smp::reset_secondary_core_states();
 
@@ -2451,7 +2451,7 @@ pub fn run_secondary_core_workload_smoke() -> bool {
     reports_ok
 }
 
-#[cfg(talos_qemu_smp_lock_contention_smoke)]
+#[cfg(talos_boot_scenario = "qemu_smp_lock_contention")]
 pub fn run_smp_lock_contention_smoke() -> bool {
     smp::reset_secondary_core_states();
     reset_smp_lock_contention_state();
@@ -2582,7 +2582,7 @@ pub fn run_smp_lock_contention_smoke() -> bool {
     reports_ok
 }
 
-#[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+#[cfg(talos_boot_scenario = "qemu_per_core_scheduler_ownership")]
 pub fn run_per_core_scheduler_ownership_smoke() -> bool {
     smp::reset_secondary_core_states();
     reset_per_core_scheduler_ownership_state();
@@ -2745,7 +2745,7 @@ pub fn run_per_core_scheduler_ownership_smoke() -> bool {
     reports_ok && irq_mask_probe.passed()
 }
 
-#[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+#[cfg(talos_boot_scenario = "qemu_production_secondary_dispatch")]
 pub fn run_production_secondary_dispatch_smoke() -> bool {
     smp::reset_secondary_core_states();
     reset_production_secondary_dispatch_state();
@@ -2895,7 +2895,7 @@ pub fn run_production_secondary_dispatch_smoke() -> bool {
     reports_ok
 }
 
-#[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+#[cfg(talos_boot_scenario = "qemu_shared_scheduler_metadata")]
 pub fn run_shared_scheduler_metadata_smoke() -> bool {
     smp::reset_secondary_core_states();
     reset_shared_scheduler_metadata_smoke_state();
@@ -3085,7 +3085,7 @@ pub fn run_shared_scheduler_metadata_smoke() -> bool {
     reports_ok
 }
 
-#[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+#[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
 pub fn run_secondary_scheduler_service_loop_smoke() -> bool {
     smp::reset_secondary_core_states();
     reset_secondary_scheduler_service_loop_state();
@@ -3255,7 +3255,7 @@ pub fn run_secondary_scheduler_service_loop_smoke() -> bool {
     reports_ok
 }
 
-#[cfg(talos_qemu_cross_core_ipi_delivery_smoke)]
+#[cfg(talos_boot_scenario = "qemu_cross_core_ipi_delivery")]
 pub fn run_cross_core_ipi_delivery_smoke() -> bool {
     smp::reset_secondary_core_states();
     CROSS_CORE_IPI_DELIVERY_STATE.reset();
@@ -3440,7 +3440,7 @@ pub fn run_cross_core_ipi_delivery_smoke() -> bool {
     reports_ok && errors == 0
 }
 
-#[cfg(talos_qemu_remote_wakeup_request_smoke)]
+#[cfg(talos_boot_scenario = "qemu_remote_wakeup_request")]
 pub fn run_remote_wakeup_request_smoke() -> bool {
     smp::reset_secondary_core_states();
     reset_remote_wakeup_request_state();
@@ -3607,7 +3607,7 @@ pub fn run_remote_wakeup_request_smoke() -> bool {
             && production_deferred
             && (logical_cpu != 1 || duplicate_count == 1)
             && (logical_cpu == 1 || duplicate_count == 0);
-        #[cfg(talos_qemu_remote_wake_to_local_runnable_smoke)]
+        #[cfg(talos_boot_scenario = "qemu_remote_wake_to_local_runnable")]
         let report_ok = {
             let mut report_ok = report_ok;
             let local_wake_task = REMOTE_WAKE_REQUEST_SMOKE_STATE.local_wake_task_ids[logical_cpu]
@@ -3676,7 +3676,7 @@ pub fn run_remote_wakeup_request_smoke() -> bool {
         .errors
         .load(Ordering::Acquire);
     let classification = if reports_ok && errors == 0 {
-        if cfg!(talos_qemu_remote_wake_to_local_runnable_smoke) {
+        if cfg!(talos_boot_scenario = "qemu_remote_wake_to_local_runnable") {
             "qemu-remote-wake-to-local-runnable-complete"
         } else {
             "qemu-remote-wakeup-request-complete"
@@ -3709,7 +3709,7 @@ pub fn run_remote_wakeup_request_smoke() -> bool {
     reports_ok && errors == 0
 }
 
-#[cfg(talos_qemu_polling_tty_rx_diagnostic)]
+#[cfg(talos_boot_scenario = "qemu_polling_tty_rx")]
 pub fn run_polling_tty_rx_diagnostic() -> bool {
     crate::println!(
         "qemu-tty-rx-diagnostic: ready capacity={} wait-limit={} backend=runtime-console0/qemu-virt-pl011",
@@ -3750,7 +3750,7 @@ pub fn run_polling_tty_rx_diagnostic() -> bool {
     }
 }
 
-#[cfg(talos_qemu_diagnostic_command_channel_smoke)]
+#[cfg(talos_boot_scenario = "qemu_diagnostic_command_channel")]
 pub fn run_diagnostic_command_channel_smoke() -> bool {
     crate::println!(
         "qemu-diagnostic-command-channel-smoke: start command-count=4 backend=runtime-console0/qemu-virt-pl011 input=tty-canonical-lite"
@@ -3829,7 +3829,7 @@ pub fn run_diagnostic_command_channel_smoke() -> bool {
     passed
 }
 
-#[cfg(talos_qemu_diagnostic_command_channel_smoke)]
+#[cfg(talos_boot_scenario = "qemu_diagnostic_command_channel")]
 fn diagnostic_dispatch_status_name(
     status: crate::diagnostic_command::DiagnosticDispatchStatus,
 ) -> &'static str {
@@ -3843,7 +3843,7 @@ fn diagnostic_dispatch_status_name(
     }
 }
 
-#[cfg(talos_qemu_diagnostic_command_channel_smoke)]
+#[cfg(talos_boot_scenario = "qemu_diagnostic_command_channel")]
 fn expected_diagnostic_dispatch(
     command_index: usize,
     line: &[u8],
@@ -3862,8 +3862,8 @@ fn expected_diagnostic_dispatch(
 }
 
 #[cfg(any(
-    talos_qemu_polling_tty_rx_diagnostic,
-    talos_qemu_diagnostic_command_channel_smoke
+    talos_boot_scenario = "qemu_polling_tty_rx",
+    talos_boot_scenario = "qemu_diagnostic_command_channel"
 ))]
 fn print_hex_bytes(bytes: &[u8]) {
     for (index, byte) in bytes.iter().enumerate() {
@@ -3874,7 +3874,7 @@ fn print_hex_bytes(bytes: &[u8]) {
     }
 }
 
-#[cfg(talos_qemu_polling_tty_rx_diagnostic)]
+#[cfg(talos_boot_scenario = "qemu_polling_tty_rx")]
 fn print_control_events(events: &[Option<crate::tty::TtyControlEvent>]) {
     if events.is_empty() {
         crate::print!("none");
@@ -3924,7 +3924,7 @@ pub fn handle_irq(vector: u64) -> bool {
     LAST_IAR.store(iar as u64, Ordering::Relaxed);
     LAST_INTID.store(intid as u64, Ordering::Relaxed);
 
-    #[cfg(talos_qemu_cross_core_ipi_delivery_smoke)]
+    #[cfg(talos_boot_scenario = "qemu_cross_core_ipi_delivery")]
     if intid == QEMU_CROSS_CORE_IPI_SGI_INTID {
         let logical_cpu = current_qemu_logical_cpu();
         CROSS_CORE_IPI_DELIVERY_STATE.record_receive(logical_cpu, vector, iar, intid);
@@ -3935,7 +3935,7 @@ pub fn handle_irq(vector: u64) -> bool {
         return true;
     }
 
-    #[cfg(talos_qemu_remote_wakeup_request_smoke)]
+    #[cfg(talos_boot_scenario = "qemu_remote_wakeup_request")]
     if intid == QEMU_CROSS_CORE_IPI_SGI_INTID {
         let logical_cpu = current_qemu_logical_cpu();
         REMOTE_WAKE_REQUEST_SMOKE_STATE.record_receive(logical_cpu, vector, iar, intid);
@@ -3948,7 +3948,7 @@ pub fn handle_irq(vector: u64) -> bool {
 
     if intid == EL2_PHYSICAL_TIMER_INTID {
         unsafe { generic_timer::record_el2_physical_tick_and_rearm() };
-        #[cfg(talos_qemu_timer_preemption_smoke)]
+        #[cfg(talos_boot_scenario = "qemu_timer_preemption")]
         TIMER_PREEMPTION_REQUESTS.fetch_add(1, Ordering::Relaxed);
         unsafe {
             gic.end_interrupt(iar);
@@ -3965,7 +3965,7 @@ pub fn handle_irq(vector: u64) -> bool {
     true
 }
 
-#[cfg(talos_qemu_timer_preemption_smoke)]
+#[cfg(talos_boot_scenario = "qemu_timer_preemption")]
 extern "C" fn qemu_timer_preemption_thread(raw_task_index: usize) -> ! {
     let task_index = raw_task_index & 1;
     loop {
@@ -4005,7 +4005,7 @@ extern "C" fn qemu_timer_preemption_thread(raw_task_index: usize) -> ! {
     }
 }
 
-#[cfg(talos_qemu_timer_preemption_smoke)]
+#[cfg(talos_boot_scenario = "qemu_timer_preemption")]
 pub fn run_el2_timer_preemption_smoke() -> bool {
     let _keep_timer_smoke_reachable: fn() -> bool = run_el2_timer_irq_smoke;
 
@@ -4147,7 +4147,7 @@ pub fn run_el2_timer_preemption_smoke() -> bool {
     passed
 }
 
-#[cfg(talos_qemu_scheduler_yield_smoke)]
+#[cfg(talos_boot_scenario = "qemu_scheduler_yield")]
 extern "C" fn qemu_scheduler_yield_thread(raw_task_index: usize) -> ! {
     let task_index = raw_task_index & 1;
     loop {
@@ -4182,7 +4182,7 @@ extern "C" fn qemu_scheduler_yield_thread(raw_task_index: usize) -> ! {
     }
 }
 
-#[cfg(talos_qemu_scheduler_yield_smoke)]
+#[cfg(talos_boot_scenario = "qemu_scheduler_yield")]
 pub fn run_el2_scheduler_yield_smoke() -> bool {
     let _keep_timer_smoke_reachable: fn() -> bool = run_el2_timer_irq_smoke;
 
@@ -4270,7 +4270,7 @@ pub fn run_el2_scheduler_yield_smoke() -> bool {
     passed
 }
 
-#[cfg(talos_qemu_context_switch_smoke)]
+#[cfg(talos_boot_scenario = "qemu_context_switch")]
 extern "C" fn qemu_context_switch_thread(raw_task_index: usize) -> ! {
     let task_index = raw_task_index & 1;
     loop {
@@ -4299,7 +4299,7 @@ extern "C" fn qemu_context_switch_thread(raw_task_index: usize) -> ! {
     }
 }
 
-#[cfg(talos_qemu_context_switch_smoke)]
+#[cfg(talos_boot_scenario = "qemu_context_switch")]
 pub fn run_el2_context_switch_smoke() -> bool {
     let _keep_timer_smoke_reachable: fn() -> bool = run_el2_timer_irq_smoke;
 

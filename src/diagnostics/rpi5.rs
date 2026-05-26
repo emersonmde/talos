@@ -3,7 +3,10 @@ use crate::boot::rpi5_reports::write_rpi5_bool;
 #[allow(unused_imports)]
 use crate::{KERNEL_GLOBAL_ALLOCATOR, PANIC_IN_PROGRESS, arch, memory_map, println, target};
 
-#[cfg(all(talos_target_rpi5_bcm2712, talos_rpi5_exception_return_diagnostic))]
+#[cfg(all(
+    talos_target_rpi5_bcm2712,
+    talos_boot_scenario = "rpi5_exception_return"
+))]
 unsafe extern "C" {
     fn rpi5_brk_register_preserve_probe(after_x9: *mut u64, after_x19: *mut u64) -> u64;
 }
@@ -11,67 +14,67 @@ unsafe extern "C" {
 pub(crate) fn run_allocator_diagnostic_or_smoke(
     _allocator_plan: memory_map::EarlyBootstrapAllocatorPlan,
 ) {
-    #[cfg(talos_rpi5_alloc_oom_diagnostic)]
+    #[cfg(talos_boot_scenario = "rpi5_alloc_oom")]
     rpi5_alloc_oom_diagnostic();
     #[cfg(all(
-        not(talos_rpi5_alloc_oom_diagnostic),
-        talos_rpi5_realloc_growth_diagnostic
+        not(talos_boot_scenario = "rpi5_alloc_oom"),
+        talos_boot_scenario = "rpi5_realloc_growth"
     ))]
     rpi5_realloc_growth_diagnostic();
     #[cfg(all(
-        not(talos_rpi5_alloc_oom_diagnostic),
-        not(talos_rpi5_realloc_growth_diagnostic),
-        talos_rpi5_vec_growth_diagnostic
+        not(talos_boot_scenario = "rpi5_alloc_oom"),
+        not(talos_boot_scenario = "rpi5_realloc_growth"),
+        talos_boot_scenario = "rpi5_vec_growth"
     ))]
     rpi5_vec_growth_diagnostic();
     #[cfg(all(
-        not(talos_rpi5_alloc_oom_diagnostic),
-        not(talos_rpi5_realloc_growth_diagnostic),
-        not(talos_rpi5_vec_growth_diagnostic),
-        talos_rpi5_string_growth_diagnostic
+        not(talos_boot_scenario = "rpi5_alloc_oom"),
+        not(talos_boot_scenario = "rpi5_realloc_growth"),
+        not(talos_boot_scenario = "rpi5_vec_growth"),
+        talos_boot_scenario = "rpi5_string_growth"
     ))]
     rpi5_string_growth_diagnostic();
     #[cfg(all(
-        not(talos_rpi5_alloc_oom_diagnostic),
-        not(talos_rpi5_realloc_growth_diagnostic),
-        not(talos_rpi5_vec_growth_diagnostic),
-        not(talos_rpi5_string_growth_diagnostic),
-        talos_rpi5_alloc_format_diagnostic
+        not(talos_boot_scenario = "rpi5_alloc_oom"),
+        not(talos_boot_scenario = "rpi5_realloc_growth"),
+        not(talos_boot_scenario = "rpi5_vec_growth"),
+        not(talos_boot_scenario = "rpi5_string_growth"),
+        talos_boot_scenario = "rpi5_alloc_format"
     ))]
     rpi5_alloc_format_diagnostic();
     #[cfg(all(
-        not(talos_rpi5_alloc_oom_diagnostic),
-        not(talos_rpi5_realloc_growth_diagnostic),
-        not(talos_rpi5_vec_growth_diagnostic),
-        not(talos_rpi5_string_growth_diagnostic),
-        not(talos_rpi5_alloc_format_diagnostic),
-        talos_rpi5_page_frame_reuse_diagnostic
+        not(talos_boot_scenario = "rpi5_alloc_oom"),
+        not(talos_boot_scenario = "rpi5_realloc_growth"),
+        not(talos_boot_scenario = "rpi5_vec_growth"),
+        not(talos_boot_scenario = "rpi5_string_growth"),
+        not(talos_boot_scenario = "rpi5_alloc_format"),
+        talos_boot_scenario = "rpi5_page_frame_reuse"
     ))]
     rpi5_page_frame_reuse_diagnostic(_allocator_plan);
     #[cfg(all(
-        not(talos_rpi5_alloc_oom_diagnostic),
-        not(talos_rpi5_realloc_growth_diagnostic),
-        not(talos_rpi5_vec_growth_diagnostic),
-        not(talos_rpi5_string_growth_diagnostic),
-        not(talos_rpi5_alloc_format_diagnostic),
-        not(talos_rpi5_page_frame_reuse_diagnostic),
-        talos_rpi5_heap_expansion_policy_diagnostic
+        not(talos_boot_scenario = "rpi5_alloc_oom"),
+        not(talos_boot_scenario = "rpi5_realloc_growth"),
+        not(talos_boot_scenario = "rpi5_vec_growth"),
+        not(talos_boot_scenario = "rpi5_string_growth"),
+        not(talos_boot_scenario = "rpi5_alloc_format"),
+        not(talos_boot_scenario = "rpi5_page_frame_reuse"),
+        talos_boot_scenario = "rpi5_heap_expansion_policy"
     ))]
     rpi5_heap_expansion_policy_diagnostic(_allocator_plan);
     #[cfg(not(any(
-        talos_rpi5_alloc_oom_diagnostic,
-        talos_rpi5_realloc_growth_diagnostic,
-        talos_rpi5_vec_growth_diagnostic,
-        talos_rpi5_string_growth_diagnostic,
-        talos_rpi5_alloc_format_diagnostic,
-        talos_rpi5_page_frame_reuse_diagnostic,
-        talos_rpi5_heap_expansion_policy_diagnostic
+        talos_boot_scenario = "rpi5_alloc_oom",
+        talos_boot_scenario = "rpi5_realloc_growth",
+        talos_boot_scenario = "rpi5_vec_growth",
+        talos_boot_scenario = "rpi5_string_growth",
+        talos_boot_scenario = "rpi5_alloc_format",
+        talos_boot_scenario = "rpi5_page_frame_reuse",
+        talos_boot_scenario = "rpi5_heap_expansion_policy"
     )))]
     rpi5_bootstrap_alloc_smoke();
 }
 
 pub(crate) unsafe fn run_exception_fault_panic_diagnostics() {
-    #[cfg(talos_rpi5_undefined_instruction_report_diagnostic)]
+    #[cfg(talos_boot_scenario = "rpi5_undefined_instruction_report")]
     unsafe {
         target::console::write_static("TALOS: before undefined instruction\n");
         target::rpi5::wait_uart10_empty_early_phase();
@@ -84,7 +87,7 @@ pub(crate) unsafe fn run_exception_fault_panic_diagnostics() {
         core::arch::asm!("udf #0", options(nomem, nostack, preserves_flags));
     }
 
-    #[cfg(talos_rpi5_data_abort_report_diagnostic)]
+    #[cfg(talos_boot_scenario = "rpi5_data_abort_report")]
     unsafe {
         let probe = [0u64; 2];
         let unaligned_addr = core::ptr::addr_of!(probe) as usize + 1;
@@ -112,7 +115,7 @@ pub(crate) unsafe fn run_exception_fault_panic_diagnostics() {
         target::rpi5::wait_uart10_empty_early_phase();
     }
 
-    #[cfg(talos_rpi5_current_sp0_sync_diagnostic)]
+    #[cfg(talos_boot_scenario = "rpi5_current_sp0_sync")]
     unsafe {
         let mut sp0_stack = [0u64; 128];
         let sp0_top = sp0_stack.as_mut_ptr().add(sp0_stack.len()) as usize;
@@ -138,7 +141,7 @@ pub(crate) unsafe fn run_exception_fault_panic_diagnostics() {
         );
     }
 
-    #[cfg(talos_rpi5_exception_report_diagnostic)]
+    #[cfg(talos_boot_scenario = "rpi5_exception_report")]
     unsafe {
         target::console::write_static("TALOS: before BRK vbar=");
         target::console::write_hex_u64(arch::aarch64::current_vbar());
@@ -148,14 +151,14 @@ pub(crate) unsafe fn run_exception_fault_panic_diagnostics() {
         core::arch::asm!("brk #0", options(nomem, nostack, preserves_flags));
     }
 
-    #[cfg(talos_rpi5_normal_exception_report_diagnostic)]
+    #[cfg(talos_boot_scenario = "rpi5_normal_exception_report")]
     unsafe {
         println!(
             "TALOS: before normal BRK vbar={:#x} el={}",
             arch::aarch64::current_vbar(),
             arch::aarch64::current_el() as usize
         );
-        #[cfg(talos_rpi5_exception_return_diagnostic)]
+        #[cfg(talos_boot_scenario = "rpi5_exception_return")]
         {
             let mut after_x9 = 0;
             let mut after_x19 = 0;
@@ -174,18 +177,18 @@ pub(crate) unsafe fn run_exception_fault_panic_diagnostics() {
                 arch::aarch64::halt()
             }
         }
-        #[cfg(not(talos_rpi5_exception_return_diagnostic))]
+        #[cfg(not(talos_boot_scenario = "rpi5_exception_return"))]
         core::arch::asm!("brk #0", options(nomem, nostack, preserves_flags));
     }
 
-    #[cfg(talos_rpi5_exception_return_diagnostic)]
+    #[cfg(talos_boot_scenario = "rpi5_exception_return")]
     {
         println!("TALOS: after normal BRK resume");
         target::rpi5::wait_uart10_empty_early_phase();
         arch::aarch64::halt()
     }
 
-    #[cfg(talos_rpi5_nested_panic_diagnostic)]
+    #[cfg(talos_boot_scenario = "rpi5_nested_panic")]
     {
         target::console::write_static("TALOS: nested panic diagnostic prearm\n");
         target::rpi5::wait_uart10_empty_early_phase();
@@ -195,8 +198,8 @@ pub(crate) unsafe fn run_exception_fault_panic_diagnostics() {
     }
 
     #[cfg(any(
-        talos_rpi5_panic_report_diagnostic,
-        talos_rpi5_full_panic_info_diagnostic
+        talos_boot_scenario = "rpi5_panic_report",
+        talos_boot_scenario = "rpi5_full_panic_info"
     ))]
     panic!("talos diagnostic panic");
 }
@@ -204,7 +207,7 @@ pub(crate) unsafe fn run_exception_fault_panic_diagnostics() {
 #[cfg(all(
     not(test),
     talos_target_rpi5_bcm2712,
-    talos_rpi5_translation_fault_diagnostic
+    talos_boot_scenario = "rpi5_translation_fault"
 ))]
 #[inline(never)]
 pub(crate) unsafe fn rpi5_translation_fault_diagnostic() -> ! {
@@ -235,7 +238,7 @@ pub(crate) unsafe fn rpi5_translation_fault_diagnostic() -> ! {
 }
 
 #[cfg(all(not(test), talos_target_rpi5_bcm2712))]
-#[cfg_attr(not(talos_rpi5_alloc_oom_diagnostic), allow(dead_code))]
+#[cfg_attr(not(talos_boot_scenario = "rpi5_alloc_oom"), allow(dead_code))]
 fn rpi5_alloc_oom_diagnostic() -> ! {
     if let Some(state) = KERNEL_GLOBAL_ALLOCATOR.state() {
         let requested_capacity = state.remaining_bytes + 8;
@@ -258,7 +261,7 @@ fn rpi5_alloc_oom_diagnostic() -> ! {
 }
 
 #[cfg(all(not(test), talos_target_rpi5_bcm2712))]
-#[cfg_attr(not(talos_rpi5_realloc_growth_diagnostic), allow(dead_code))]
+#[cfg_attr(not(talos_boot_scenario = "rpi5_realloc_growth"), allow(dead_code))]
 fn rpi5_realloc_growth_diagnostic() -> ! {
     let old_layout = unsafe { core::alloc::Layout::from_size_align_unchecked(2, 1) };
     let old_ptr = unsafe { core::alloc::GlobalAlloc::alloc(&KERNEL_GLOBAL_ALLOCATOR, old_layout) };
@@ -343,7 +346,11 @@ fn rpi5_realloc_growth_diagnostic() -> ! {
     }
 }
 
-#[cfg(all(not(test), talos_target_rpi5_bcm2712, talos_rpi5_vec_growth_diagnostic))]
+#[cfg(all(
+    not(test),
+    talos_target_rpi5_bcm2712,
+    talos_boot_scenario = "rpi5_vec_growth"
+))]
 fn rpi5_vec_growth_diagnostic() -> ! {
     target::console::write_static("talos: vec grow start\n");
     target::rpi5::wait_uart10_empty_early_phase();
@@ -427,7 +434,7 @@ fn rpi5_vec_growth_diagnostic() -> ! {
 #[cfg(all(
     not(test),
     talos_target_rpi5_bcm2712,
-    talos_rpi5_string_growth_diagnostic
+    talos_boot_scenario = "rpi5_string_growth"
 ))]
 fn rpi5_string_growth_diagnostic() -> ! {
     target::console::write_static("talos: string grow start\n");
@@ -516,7 +523,7 @@ fn rpi5_string_growth_diagnostic() -> ! {
 #[cfg(all(
     not(test),
     talos_target_rpi5_bcm2712,
-    talos_rpi5_alloc_format_diagnostic
+    talos_boot_scenario = "rpi5_alloc_format"
 ))]
 fn rpi5_alloc_format_diagnostic() -> ! {
     target::console::write_static("talos: alloc format start\n");
@@ -589,7 +596,7 @@ fn rpi5_alloc_format_diagnostic() -> ! {
 #[cfg(all(
     not(test),
     talos_target_rpi5_bcm2712,
-    talos_rpi5_page_frame_reuse_diagnostic
+    talos_boot_scenario = "rpi5_page_frame_reuse"
 ))]
 fn rpi5_page_frame_reuse_diagnostic(allocator_plan: memory_map::EarlyBootstrapAllocatorPlan) -> ! {
     let owned = memory_map::EarlyPageFrameSpan {
@@ -667,7 +674,7 @@ fn rpi5_page_frame_reuse_diagnostic(allocator_plan: memory_map::EarlyBootstrapAl
 #[cfg(all(
     not(test),
     talos_target_rpi5_bcm2712,
-    talos_rpi5_heap_expansion_policy_diagnostic
+    talos_boot_scenario = "rpi5_heap_expansion_policy"
 ))]
 fn rpi5_heap_expansion_policy_diagnostic(
     allocator_plan: memory_map::EarlyBootstrapAllocatorPlan,
@@ -735,13 +742,13 @@ fn rpi5_heap_expansion_policy_diagnostic(
 #[cfg(all(not(test), talos_target_rpi5_bcm2712))]
 #[cfg_attr(
     any(
-        talos_rpi5_alloc_oom_diagnostic,
-        talos_rpi5_realloc_growth_diagnostic,
-        talos_rpi5_vec_growth_diagnostic,
-        talos_rpi5_string_growth_diagnostic,
-        talos_rpi5_alloc_format_diagnostic,
-        talos_rpi5_page_frame_reuse_diagnostic,
-        talos_rpi5_heap_expansion_policy_diagnostic
+        talos_boot_scenario = "rpi5_alloc_oom",
+        talos_boot_scenario = "rpi5_realloc_growth",
+        talos_boot_scenario = "rpi5_vec_growth",
+        talos_boot_scenario = "rpi5_string_growth",
+        talos_boot_scenario = "rpi5_alloc_format",
+        talos_boot_scenario = "rpi5_page_frame_reuse",
+        talos_boot_scenario = "rpi5_heap_expansion_policy"
     ),
     allow(dead_code)
 )]

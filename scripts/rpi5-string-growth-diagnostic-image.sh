@@ -2,15 +2,15 @@
 set -eu
 
 for name in $(env | sed -n 's/^\(TALOS_RPI5_[A-Za-z0-9_]*\)=.*/\1/p'); do
-    if [ "$name" = "TALOS_RPI5_STRING_GROWTH_DIAGNOSTIC_PAD_SIZE" ]; then
+    if [ "$name" = "TALOS_RPI5_STRING_GROWTH_PAD_SIZE" ]; then
         continue
     fi
     unset "$name"
 done
 
-base_img="$(env TALOS_RPI5_STRING_GROWTH_DIAGNOSTIC=1 ./scripts/rpi5-image.sh)"
+base_img="$(env TALOS_BOOT_SCENARIO=rpi5_string_growth ./scripts/rpi5-image.sh)"
 img_file="target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-string-growth-diagnostic.img"
-target_size="${TALOS_RPI5_STRING_GROWTH_DIAGNOSTIC_PAD_SIZE:-}"
+target_size="${TALOS_RPI5_STRING_GROWTH_PAD_SIZE:-}"
 
 mkdir -p "$(dirname "$img_file")"
 cp "$base_img" "$img_file"

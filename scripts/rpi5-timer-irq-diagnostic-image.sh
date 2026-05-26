@@ -1,4 +1,4 @@
 #!/bin/sh
 set -eu
 
-TALOS_RPI5_TIMER_IRQ_DIAGNOSTIC=1 ./scripts/rpi5-image.sh "$@"
+TALOS_BOOT_SCENARIO=rpi5_timer_irq ./scripts/rpi5-image.sh "$@"

@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-TALOS_QEMU_SECONDARY_SCHEDULER_SERVICE_LOOP_SMOKE=1 cargo -Zjson-target-spec build --release "$@"
+TALOS_BOOT_SCENARIO=qemu_secondary_scheduler_service_loop cargo -Zjson-target-spec build --release "$@"
 
 ELF_FILE="target/aarch64-talos-virt/release/talos"
 IMG_FILE="$ELF_FILE.img"

@@ -8,29 +8,29 @@
     all(
         talos_target_rpi5_bcm2712,
         any(
-            talos_rpi5_exception_report_diagnostic,
-            talos_rpi5_normal_exception_report_diagnostic,
-            talos_rpi5_undefined_instruction_report_diagnostic,
-            talos_rpi5_data_abort_report_diagnostic,
-            talos_rpi5_translation_fault_diagnostic,
-            talos_rpi5_current_sp0_sync_diagnostic,
-            talos_rpi5_exception_return_diagnostic,
-            talos_rpi5_panic_report_diagnostic,
-            talos_rpi5_full_panic_info_diagnostic,
-            talos_rpi5_nested_panic_diagnostic,
-            talos_rpi5_alloc_oom_diagnostic,
-            talos_rpi5_realloc_growth_diagnostic,
-            talos_rpi5_vec_growth_diagnostic,
-            talos_rpi5_string_growth_diagnostic,
-            talos_rpi5_alloc_format_diagnostic,
-            talos_rpi5_page_frame_reuse_diagnostic,
-            talos_rpi5_timer_preemption_diagnostic,
-            talos_rpi5_diagnostic_command_channel_proof,
-            talos_rpi5_psci_secondary_core_alive_proof,
-            talos_rpi5_secondary_core_workload_proof,
-            talos_rpi5_smp_lock_cache_coherence_proof,
-            talos_rpi5_cross_core_ipi_delivery_proof,
-            talos_rpi5_secondary_scheduler_service_loop_proof
+            talos_boot_scenario = "rpi5_exception_report",
+            talos_boot_scenario = "rpi5_normal_exception_report",
+            talos_boot_scenario = "rpi5_undefined_instruction_report",
+            talos_boot_scenario = "rpi5_data_abort_report",
+            talos_boot_scenario = "rpi5_translation_fault",
+            talos_boot_scenario = "rpi5_current_sp0_sync",
+            talos_boot_scenario = "rpi5_exception_return",
+            talos_boot_scenario = "rpi5_panic_report",
+            talos_boot_scenario = "rpi5_full_panic_info",
+            talos_boot_scenario = "rpi5_nested_panic",
+            talos_boot_scenario = "rpi5_alloc_oom",
+            talos_boot_scenario = "rpi5_realloc_growth",
+            talos_boot_scenario = "rpi5_vec_growth",
+            talos_boot_scenario = "rpi5_string_growth",
+            talos_boot_scenario = "rpi5_alloc_format",
+            talos_boot_scenario = "rpi5_page_frame_reuse",
+            talos_boot_scenario = "rpi5_timer_preemption",
+            talos_boot_scenario = "rpi5_diagnostic_command_channel",
+            talos_boot_scenario = "rpi5_psci_secondary_core_alive",
+            talos_boot_scenario = "rpi5_secondary_core_workload",
+            talos_boot_scenario = "rpi5_smp_lock_cache_coherence",
+            talos_boot_scenario = "rpi5_cross_core_ipi_delivery",
+            talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
         )
     ),
     allow(dead_code, unused_imports, unused_variables)
@@ -39,17 +39,17 @@
     all(
         not(test),
         any(
-            talos_qemu_polling_tty_rx_diagnostic,
-            talos_qemu_diagnostic_command_channel_smoke,
-            talos_qemu_secondary_core_discriminator,
-            talos_qemu_secondary_core_workload_smoke,
-            talos_qemu_smp_lock_contention_smoke,
-            talos_qemu_per_core_scheduler_ownership_smoke,
-            talos_qemu_cross_core_ipi_delivery_smoke,
-            talos_qemu_remote_wakeup_request_smoke,
-            talos_qemu_production_secondary_dispatch_smoke,
-            talos_qemu_shared_scheduler_metadata_smoke,
-            talos_qemu_secondary_scheduler_service_loop_smoke
+            talos_boot_scenario = "qemu_polling_tty_rx",
+            talos_boot_scenario = "qemu_diagnostic_command_channel",
+            talos_boot_scenario = "qemu_secondary_core_discriminator",
+            talos_boot_scenario = "qemu_secondary_core_workload",
+            talos_boot_scenario = "qemu_smp_lock_contention",
+            talos_boot_scenario = "qemu_per_core_scheduler_ownership",
+            talos_boot_scenario = "qemu_cross_core_ipi_delivery",
+            talos_boot_scenario = "qemu_remote_wakeup_request",
+            talos_boot_scenario = "qemu_production_secondary_dispatch",
+            talos_boot_scenario = "qemu_shared_scheduler_metadata",
+            talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
         )
     ),
     allow(dead_code, unused_imports, unused_variables, unreachable_code)
@@ -69,8 +69,8 @@ mod device_tree;
     all(
         not(test),
         not(any(
-            talos_qemu_diagnostic_command_channel_smoke,
-            talos_rpi5_diagnostic_command_channel_proof
+            talos_boot_scenario = "qemu_diagnostic_command_channel",
+            talos_boot_scenario = "rpi5_diagnostic_command_channel"
         ))
     ),
     allow(dead_code)
@@ -94,9 +94,9 @@ mod scheduler;
 mod target;
 #[cfg_attr(
     not(any(
-        talos_qemu_polling_tty_rx_diagnostic,
-        talos_qemu_diagnostic_command_channel_smoke,
-        talos_rpi5_diagnostic_command_channel_proof
+        talos_boot_scenario = "qemu_polling_tty_rx",
+        talos_boot_scenario = "qemu_diagnostic_command_channel",
+        talos_boot_scenario = "rpi5_diagnostic_command_channel"
     )),
     allow(dead_code)
 )]
@@ -122,7 +122,7 @@ impl PanicInProgress {
         Self(core::cell::UnsafeCell::new(false))
     }
 
-    #[cfg(talos_rpi5_nested_panic_diagnostic)]
+    #[cfg(talos_boot_scenario = "rpi5_nested_panic")]
     pub(crate) fn prearm(&self) {
         unsafe {
             core::ptr::write_volatile(self.0.get(), true);
@@ -188,19 +188,31 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
 
 #[cfg_attr(
     any(
-        all(talos_target_rpi5_bcm2712, talos_rpi5_panic_report_diagnostic),
-        all(talos_target_rpi5_bcm2712, talos_rpi5_full_panic_info_diagnostic),
+        all(talos_target_rpi5_bcm2712, talos_boot_scenario = "rpi5_panic_report"),
         all(
             talos_target_rpi5_bcm2712,
-            talos_rpi5_normal_exception_report_diagnostic
+            talos_boot_scenario = "rpi5_full_panic_info"
         ),
         all(
             talos_target_rpi5_bcm2712,
-            talos_rpi5_undefined_instruction_report_diagnostic
+            talos_boot_scenario = "rpi5_normal_exception_report"
         ),
-        all(talos_target_rpi5_bcm2712, talos_rpi5_data_abort_report_diagnostic),
-        all(talos_target_rpi5_bcm2712, talos_rpi5_translation_fault_diagnostic),
-        all(talos_target_rpi5_bcm2712, talos_rpi5_current_sp0_sync_diagnostic),
+        all(
+            talos_target_rpi5_bcm2712,
+            talos_boot_scenario = "rpi5_undefined_instruction_report"
+        ),
+        all(
+            talos_target_rpi5_bcm2712,
+            talos_boot_scenario = "rpi5_data_abort_report"
+        ),
+        all(
+            talos_target_rpi5_bcm2712,
+            talos_boot_scenario = "rpi5_translation_fault"
+        ),
+        all(
+            talos_target_rpi5_bcm2712,
+            talos_boot_scenario = "rpi5_current_sp0_sync"
+        ),
     ),
     allow(unreachable_code, unused_variables)
 )]
@@ -235,7 +247,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
         );
         println!("mmio-regions: {}", services.mmio_map.regions().len());
         if boot_info.target == target::TargetKind::QemuVirt && boot_info.exception_level == 2 {
-            #[cfg(talos_qemu_smp_lock_contention_smoke)]
+            #[cfg(talos_boot_scenario = "qemu_smp_lock_contention")]
             {
                 if target::qemu_virt::run_smp_lock_contention_smoke() {
                     target::qemu::exit_success();
@@ -243,7 +255,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
-            #[cfg(talos_qemu_per_core_scheduler_ownership_smoke)]
+            #[cfg(talos_boot_scenario = "qemu_per_core_scheduler_ownership")]
             {
                 if target::qemu_virt::run_per_core_scheduler_ownership_smoke() {
                     target::qemu::exit_success();
@@ -251,7 +263,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
-            #[cfg(talos_qemu_cross_core_ipi_delivery_smoke)]
+            #[cfg(talos_boot_scenario = "qemu_cross_core_ipi_delivery")]
             {
                 if target::qemu_virt::run_cross_core_ipi_delivery_smoke() {
                     target::qemu::exit_success();
@@ -259,7 +271,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
-            #[cfg(talos_qemu_remote_wakeup_request_smoke)]
+            #[cfg(talos_boot_scenario = "qemu_remote_wakeup_request")]
             {
                 if target::qemu_virt::run_remote_wakeup_request_smoke() {
                     target::qemu::exit_success();
@@ -267,7 +279,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
-            #[cfg(talos_qemu_production_secondary_dispatch_smoke)]
+            #[cfg(talos_boot_scenario = "qemu_production_secondary_dispatch")]
             {
                 if target::qemu_virt::run_production_secondary_dispatch_smoke() {
                     target::qemu::exit_success();
@@ -275,7 +287,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
-            #[cfg(talos_qemu_shared_scheduler_metadata_smoke)]
+            #[cfg(talos_boot_scenario = "qemu_shared_scheduler_metadata")]
             {
                 if target::qemu_virt::run_shared_scheduler_metadata_smoke() {
                     target::qemu::exit_success();
@@ -283,7 +295,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
-            #[cfg(talos_qemu_secondary_scheduler_service_loop_smoke)]
+            #[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
             {
                 if target::qemu_virt::run_secondary_scheduler_service_loop_smoke() {
                     target::qemu::exit_success();
@@ -291,7 +303,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
-            #[cfg(talos_qemu_secondary_core_workload_smoke)]
+            #[cfg(talos_boot_scenario = "qemu_secondary_core_workload")]
             {
                 if target::qemu_virt::run_secondary_core_workload_smoke() {
                     target::qemu::exit_success();
@@ -299,7 +311,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
-            #[cfg(talos_qemu_secondary_core_discriminator)]
+            #[cfg(talos_boot_scenario = "qemu_secondary_core_discriminator")]
             {
                 if target::qemu_virt::run_secondary_core_discriminator() {
                     target::qemu::exit_success();
@@ -307,7 +319,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
-            #[cfg(talos_qemu_diagnostic_command_channel_smoke)]
+            #[cfg(talos_boot_scenario = "qemu_diagnostic_command_channel")]
             {
                 if target::qemu_virt::run_diagnostic_command_channel_smoke() {
                     target::qemu::exit_success();
@@ -315,7 +327,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
-            #[cfg(talos_qemu_polling_tty_rx_diagnostic)]
+            #[cfg(talos_boot_scenario = "qemu_polling_tty_rx")]
             {
                 if target::qemu_virt::run_polling_tty_rx_diagnostic() {
                     target::qemu::exit_success();
@@ -323,7 +335,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
-            #[cfg(talos_qemu_timer_preemption_smoke)]
+            #[cfg(talos_boot_scenario = "qemu_timer_preemption")]
             {
                 if target::qemu_virt::run_el2_timer_preemption_smoke() {
                     target::qemu::exit_success();
@@ -332,8 +344,8 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
             }
 
             #[cfg(all(
-                not(talos_qemu_timer_preemption_smoke),
-                talos_qemu_scheduler_yield_smoke
+                not(talos_boot_scenario = "qemu_timer_preemption"),
+                talos_boot_scenario = "qemu_scheduler_yield"
             ))]
             {
                 if target::qemu_virt::run_el2_scheduler_yield_smoke() {
@@ -343,9 +355,9 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
             }
 
             #[cfg(all(
-                not(talos_qemu_timer_preemption_smoke),
-                not(talos_qemu_scheduler_yield_smoke),
-                talos_qemu_context_switch_smoke
+                not(talos_boot_scenario = "qemu_timer_preemption"),
+                not(talos_boot_scenario = "qemu_scheduler_yield"),
+                talos_boot_scenario = "qemu_context_switch"
             ))]
             {
                 if target::qemu_virt::run_el2_context_switch_smoke() {
@@ -355,38 +367,38 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
             }
 
             #[cfg(not(any(
-                talos_qemu_diagnostic_command_channel_smoke,
-                talos_qemu_polling_tty_rx_diagnostic,
-                talos_qemu_timer_preemption_smoke,
-                talos_qemu_scheduler_yield_smoke,
-                talos_qemu_context_switch_smoke,
-                talos_qemu_secondary_core_discriminator,
-                talos_qemu_secondary_core_workload_smoke,
-                talos_qemu_smp_lock_contention_smoke,
-                talos_qemu_per_core_scheduler_ownership_smoke,
-                talos_qemu_cross_core_ipi_delivery_smoke,
-                talos_qemu_remote_wakeup_request_smoke,
-                talos_qemu_production_secondary_dispatch_smoke,
-                talos_qemu_shared_scheduler_metadata_smoke,
-                talos_qemu_secondary_scheduler_service_loop_smoke
+                talos_boot_scenario = "qemu_diagnostic_command_channel",
+                talos_boot_scenario = "qemu_polling_tty_rx",
+                talos_boot_scenario = "qemu_timer_preemption",
+                talos_boot_scenario = "qemu_scheduler_yield",
+                talos_boot_scenario = "qemu_context_switch",
+                talos_boot_scenario = "qemu_secondary_core_discriminator",
+                talos_boot_scenario = "qemu_secondary_core_workload",
+                talos_boot_scenario = "qemu_smp_lock_contention",
+                talos_boot_scenario = "qemu_per_core_scheduler_ownership",
+                talos_boot_scenario = "qemu_cross_core_ipi_delivery",
+                talos_boot_scenario = "qemu_remote_wakeup_request",
+                talos_boot_scenario = "qemu_production_secondary_dispatch",
+                talos_boot_scenario = "qemu_shared_scheduler_metadata",
+                talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
             )))]
             if target::qemu_virt::run_el2_timer_irq_smoke() {
                 target::qemu::exit_success();
             }
             #[cfg(not(any(
-                talos_qemu_diagnostic_command_channel_smoke,
-                talos_qemu_timer_preemption_smoke,
-                talos_qemu_scheduler_yield_smoke,
-                talos_qemu_context_switch_smoke,
-                talos_qemu_secondary_core_discriminator,
-                talos_qemu_secondary_core_workload_smoke,
-                talos_qemu_smp_lock_contention_smoke,
-                talos_qemu_per_core_scheduler_ownership_smoke,
-                talos_qemu_cross_core_ipi_delivery_smoke,
-                talos_qemu_remote_wakeup_request_smoke,
-                talos_qemu_production_secondary_dispatch_smoke,
-                talos_qemu_shared_scheduler_metadata_smoke,
-                talos_qemu_secondary_scheduler_service_loop_smoke
+                talos_boot_scenario = "qemu_diagnostic_command_channel",
+                talos_boot_scenario = "qemu_timer_preemption",
+                talos_boot_scenario = "qemu_scheduler_yield",
+                talos_boot_scenario = "qemu_context_switch",
+                talos_boot_scenario = "qemu_secondary_core_discriminator",
+                talos_boot_scenario = "qemu_secondary_core_workload",
+                talos_boot_scenario = "qemu_smp_lock_contention",
+                talos_boot_scenario = "qemu_per_core_scheduler_ownership",
+                talos_boot_scenario = "qemu_cross_core_ipi_delivery",
+                talos_boot_scenario = "qemu_remote_wakeup_request",
+                talos_boot_scenario = "qemu_production_secondary_dispatch",
+                talos_boot_scenario = "qemu_shared_scheduler_metadata",
+                talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
             )))]
             target::qemu::exit_failure();
         }
@@ -401,7 +413,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
 
 #[panic_handler]
 #[cfg_attr(
-    all(talos_target_rpi5_bcm2712, talos_rpi5_nested_panic_diagnostic),
+    all(talos_target_rpi5_bcm2712, talos_boot_scenario = "rpi5_nested_panic"),
     allow(unreachable_code, unused_variables)
 )]
 fn panic(info: &PanicInfo<'_>) -> ! {

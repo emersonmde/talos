@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-TALOS_QEMU_CONTEXT_SWITCH_SMOKE=1 cargo -Zjson-target-spec build "$@"
+TALOS_BOOT_SCENARIO=qemu_context_switch cargo -Zjson-target-spec build "$@"
 
 ELF_FILE="target/aarch64-talos-virt/debug/talos"
 IMG_FILE="$ELF_FILE.img"

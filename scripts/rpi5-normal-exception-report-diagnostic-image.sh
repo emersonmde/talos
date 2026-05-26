@@ -2,7 +2,5 @@
 set -eu
 
 env \
-    -u TALOS_RPI5_EXCEPTION_REPORT_DIAGNOSTIC \
-    -u TALOS_RPI5_PANIC_REPORT_DIAGNOSTIC \
-    TALOS_RPI5_NORMAL_EXCEPTION_REPORT_DIAGNOSTIC=1 \
+    TALOS_BOOT_SCENARIO=rpi5_normal_exception_report \
     ./scripts/rpi5-image.sh

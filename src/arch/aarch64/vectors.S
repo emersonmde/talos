@@ -3,7 +3,7 @@
 .global __exception_vectors
 .type __exception_vectors, %function
 
-#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_REPORT_DIAGNOSTIC)
+#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_REPORT_SCENARIO)
 .macro rpi5_uart10_wait_tx_ready
     mov x17, #0x10000
 .Lwait_ready_loop\@:
@@ -114,13 +114,13 @@
 .endm
 #endif
 
-#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_REPORT_DIAGNOSTIC)
+#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_REPORT_SCENARIO)
 .macro vector_entry kind
     .balign 128
     mov x3, #\kind
     b __exception_entry
 .endm
-#elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_RETURN_DIAGNOSTIC)
+#elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_RETURN_SCENARIO)
 .macro vector_entry kind
     .balign 128
     sub sp, sp, #32
@@ -162,7 +162,7 @@ __exception_vectors:
 
 .section .text.exceptions, "ax"
 .balign 4
-#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_RETURN_DIAGNOSTIC)
+#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_RETURN_SCENARIO)
 .global rpi5_brk_register_preserve_probe
 .type rpi5_brk_register_preserve_probe, %function
 rpi5_brk_register_preserve_probe:
@@ -277,7 +277,7 @@ __exception_entry_return:
 .size __exception_entry_return, . - __exception_entry_return
 #endif
 
-#if !defined(TALOS_RPI5_EXCEPTION_REPORT_DIAGNOSTIC) && !defined(TALOS_RPI5_EXCEPTION_RETURN_DIAGNOSTIC)
+#if !defined(TALOS_RPI5_EXCEPTION_REPORT_SCENARIO) && !defined(TALOS_RPI5_EXCEPTION_RETURN_SCENARIO)
 .type __exception_entry_frame, %function
 __exception_entry_frame:
     sub sp, sp, #272
@@ -398,7 +398,7 @@ __exception_entry_frame:
 
 .type __exception_entry, %function
 __exception_entry:
-#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_REPORT_DIAGNOSTIC)
+#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_REPORT_SCENARIO)
     rpi5_exception_vector_marker
 #endif
     mrs x4, CurrentEL
@@ -410,10 +410,10 @@ __exception_entry:
     mrs x0, ESR_EL1
     mrs x1, ELR_EL1
     mrs x2, FAR_EL1
-#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_REPORT_DIAGNOSTIC)
+#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_REPORT_SCENARIO)
     rpi5_exception_asm_report
     bl rust_exception_handler
-#elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_RETURN_DIAGNOSTIC)
+#elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_RETURN_SCENARIO)
     mrs x4, SPSR_EL1
     mov x5, xzr
     mov x6, xzr
@@ -429,10 +429,10 @@ __exception_entry:
     mrs x0, ESR_EL2
     mrs x1, ELR_EL2
     mrs x2, FAR_EL2
-#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_REPORT_DIAGNOSTIC)
+#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_REPORT_SCENARIO)
     rpi5_exception_asm_report
     bl rust_exception_handler
-#elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_RETURN_DIAGNOSTIC)
+#elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_RETURN_SCENARIO)
     mrs x4, SPSR_EL2
     mov x5, xzr
     mov x6, xzr
@@ -448,10 +448,10 @@ __exception_entry:
     mrs x0, ESR_EL3
     mrs x1, ELR_EL3
     mrs x2, FAR_EL3
-#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_REPORT_DIAGNOSTIC)
+#if defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_REPORT_SCENARIO)
     rpi5_exception_asm_report
     bl rust_exception_handler
-#elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_RETURN_DIAGNOSTIC)
+#elif defined(TALOS_TARGET_RPI5_BCM2712) && defined(TALOS_RPI5_EXCEPTION_RETURN_SCENARIO)
     mrs x4, SPSR_EL3
     mov x5, xzr
     mov x6, xzr

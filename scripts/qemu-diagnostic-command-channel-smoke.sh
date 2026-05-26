@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-TALOS_QEMU_DIAGNOSTIC_COMMAND_CHANNEL_SMOKE=1 cargo -Zjson-target-spec build "$@"
+TALOS_BOOT_SCENARIO=qemu_diagnostic_command_channel cargo -Zjson-target-spec build "$@"
 
 ELF_FILE="target/aarch64-talos-virt/debug/talos"
 IMG_FILE="$ELF_FILE.diagnostic-command-channel.img"
 LOG_FILE="target/qemu-diagnostic-command-channel-smoke.log"
 QEMU_LOG_FILE="target/qemu-diagnostic-command-channel-smoke.qemu.log"
-PORT="${TALOS_QEMU_DIAGNOSTIC_COMMAND_CHANNEL_PORT:-54323}"
+PORT="${TALOS_QEMU_COMMAND_CHANNEL_PORT:-54323}"
 
 script_dir="$(CDPATH= cd "$(dirname "$0")" && pwd)"
 . "$script_dir/objcopy-tool.sh"

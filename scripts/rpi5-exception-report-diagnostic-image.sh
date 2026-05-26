@@ -2,5 +2,5 @@
 set -eu
 
 env \
-    TALOS_RPI5_EXCEPTION_REPORT_DIAGNOSTIC=1 \
+    TALOS_BOOT_SCENARIO=rpi5_exception_report \
     ./scripts/rpi5-image.sh

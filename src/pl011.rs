@@ -92,9 +92,9 @@ impl Pl011 {
     #[cfg_attr(
         not(any(
             test,
-            talos_qemu_polling_tty_rx_diagnostic,
-            talos_rpi5_uart10_polling_rx_diagnostic,
-            talos_rpi5_diagnostic_command_channel_proof
+            talos_boot_scenario = "qemu_polling_tty_rx",
+            talos_boot_scenario = "rpi5_uart10_polling_rx",
+            talos_boot_scenario = "rpi5_diagnostic_command_channel"
         )),
         allow(dead_code)
     )]

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-TALOS_QEMU_POLLING_TTY_RX_DIAGNOSTIC=1 cargo -Zjson-target-spec build "$@"
+TALOS_BOOT_SCENARIO=qemu_polling_tty_rx cargo -Zjson-target-spec build "$@"
 
 ELF_FILE="target/aarch64-talos-virt/debug/talos"
 IMG_FILE="$ELF_FILE.tty-rx.img"

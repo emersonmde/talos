@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-TALOS_QEMU_SMP_LOCK_CONTENTION_SMOKE=1 cargo -Zjson-target-spec build "$@"
+TALOS_BOOT_SCENARIO=qemu_smp_lock_contention cargo -Zjson-target-spec build "$@"
 
 ELF_FILE="target/aarch64-talos-virt/debug/talos"
 IMG_FILE="$ELF_FILE.img"

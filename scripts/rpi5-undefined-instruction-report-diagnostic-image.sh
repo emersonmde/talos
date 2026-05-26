@@ -20,5 +20,5 @@ fi
 fresh_label="$(printf '%s\r\n' "$label")"
 
 env \
-    TALOS_RPI5_UNDEFINED_INSTRUCTION_REPORT_DIAGNOSTIC=1 \
+    TALOS_BOOT_SCENARIO=rpi5_undefined_instruction_report \
     ./scripts/rpi5-image.sh

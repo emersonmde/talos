@@ -24,9 +24,9 @@ struct Rpi5MemoryPhase {
 #[inline(always)]
 fn suppress_growth_diagnostic_boot_reports() -> bool {
     cfg!(any(
-        talos_rpi5_vec_growth_diagnostic,
-        talos_rpi5_string_growth_diagnostic,
-        talos_rpi5_alloc_format_diagnostic
+        talos_boot_scenario = "rpi5_vec_growth",
+        talos_boot_scenario = "rpi5_string_growth",
+        talos_boot_scenario = "rpi5_alloc_format"
     ))
 }
 
@@ -37,13 +37,13 @@ fn report_unavailable(line: &'static str) {
 
 #[cfg_attr(
     any(
-        talos_rpi5_panic_report_diagnostic,
-        talos_rpi5_full_panic_info_diagnostic,
-        talos_rpi5_normal_exception_report_diagnostic,
-        talos_rpi5_undefined_instruction_report_diagnostic,
-        talos_rpi5_data_abort_report_diagnostic,
-        talos_rpi5_translation_fault_diagnostic,
-        talos_rpi5_current_sp0_sync_diagnostic,
+        talos_boot_scenario = "rpi5_panic_report",
+        talos_boot_scenario = "rpi5_full_panic_info",
+        talos_boot_scenario = "rpi5_normal_exception_report",
+        talos_boot_scenario = "rpi5_undefined_instruction_report",
+        talos_boot_scenario = "rpi5_data_abort_report",
+        talos_boot_scenario = "rpi5_translation_fault",
+        talos_boot_scenario = "rpi5_current_sp0_sync",
     ),
     allow(unreachable_code, unused_variables)
 )]
@@ -67,42 +67,42 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
 
     report_dtb_memory_banks(dtb.memory_banks);
 
-    #[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
+    #[cfg(talos_boot_scenario = "rpi5_psci_secondary_core_alive")]
     target::rpi5::run_psci_secondary_core_alive_proof();
 
-    #[cfg(talos_rpi5_secondary_core_workload_proof)]
+    #[cfg(talos_boot_scenario = "rpi5_secondary_core_workload")]
     target::rpi5::run_secondary_core_workload_proof();
 
-    #[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
+    #[cfg(talos_boot_scenario = "rpi5_smp_lock_cache_coherence")]
     target::rpi5::run_smp_lock_cache_coherence_proof();
 
-    #[cfg(talos_rpi5_cross_core_ipi_delivery_proof)]
+    #[cfg(talos_boot_scenario = "rpi5_cross_core_ipi_delivery")]
     target::rpi5::run_cross_core_ipi_delivery_proof();
 
-    #[cfg(talos_rpi5_remote_wakeup_request_proof)]
+    #[cfg(talos_boot_scenario = "rpi5_remote_wakeup_request")]
     target::rpi5::run_remote_wakeup_request_proof();
 
-    #[cfg(talos_rpi5_production_secondary_dispatch_proof)]
+    #[cfg(talos_boot_scenario = "rpi5_production_secondary_dispatch")]
     target::rpi5::run_production_secondary_dispatch_proof();
 
-    #[cfg(talos_rpi5_shared_scheduler_metadata_proof)]
+    #[cfg(talos_boot_scenario = "rpi5_shared_scheduler_metadata")]
     target::rpi5::run_shared_scheduler_metadata_proof();
 
-    #[cfg(talos_rpi5_secondary_scheduler_service_loop_proof)]
+    #[cfg(talos_boot_scenario = "rpi5_secondary_scheduler_service_loop")]
     target::rpi5::run_secondary_scheduler_service_loop_proof();
 
-    #[cfg(talos_rpi5_uart10_polling_rx_diagnostic)]
+    #[cfg(talos_boot_scenario = "rpi5_uart10_polling_rx")]
     target::rpi5::run_uart10_polling_tty_rx_diagnostic();
 
-    #[cfg(talos_rpi5_diagnostic_command_channel_proof)]
+    #[cfg(talos_boot_scenario = "rpi5_diagnostic_command_channel")]
     target::rpi5::run_diagnostic_command_channel_proof();
 
-    #[cfg(talos_rpi5_timer_preemption_diagnostic)]
+    #[cfg(talos_boot_scenario = "rpi5_timer_preemption")]
     target::rpi5::run_el2_timer_preemption_smoke();
 
     #[cfg(all(
-        talos_rpi5_timer_irq_diagnostic,
-        not(talos_rpi5_timer_preemption_diagnostic)
+        talos_boot_scenario = "rpi5_timer_irq",
+        not(talos_boot_scenario = "rpi5_timer_preemption")
     ))]
     target::rpi5::run_el2_timer_irq_smoke();
 
@@ -187,7 +187,7 @@ fn report_boot_identity(boot_info: &BootInfo, services: &TargetServices) -> Rpi5
 }
 
 fn report_chosen_bootargs(services: &TargetServices) {
-    #[cfg(not(talos_rpi5_translation_fault_diagnostic))]
+    #[cfg(not(talos_boot_scenario = "rpi5_translation_fault"))]
     {
         if let Some(chosen_bootargs) = unsafe { services.device_tree.chosen_bootargs() } {
             write_rpi5_chosen_bootargs_line(chosen_bootargs);
@@ -195,7 +195,7 @@ fn report_chosen_bootargs(services: &TargetServices) {
             println!("talos: dtb chosen bootargs: unavailable");
         }
     }
-    #[cfg(talos_rpi5_translation_fault_diagnostic)]
+    #[cfg(talos_boot_scenario = "rpi5_translation_fault")]
     target::console::write_static(
         "talos: dtb chosen bootargs: skipped=translation-fault-diagnostic\n",
     );
@@ -203,15 +203,15 @@ fn report_chosen_bootargs(services: &TargetServices) {
 
 fn scan_dtb_reservations(services: &TargetServices) -> Option<FdtMemoryReservations> {
     target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::DtbReservationsStart);
-    #[cfg(talos_rpi5_translation_fault_diagnostic)]
+    #[cfg(talos_boot_scenario = "rpi5_translation_fault")]
     let dtb_reservations = None;
-    #[cfg(not(talos_rpi5_translation_fault_diagnostic))]
+    #[cfg(not(talos_boot_scenario = "rpi5_translation_fault"))]
     let dtb_reservations = {
         let dtb_reservations = unsafe { services.device_tree.memory_reservations() };
         #[cfg(not(any(
-            talos_rpi5_vec_growth_diagnostic,
-            talos_rpi5_string_growth_diagnostic,
-            talos_rpi5_alloc_format_diagnostic
+            talos_boot_scenario = "rpi5_vec_growth",
+            talos_boot_scenario = "rpi5_string_growth",
+            talos_boot_scenario = "rpi5_alloc_format"
         )))]
         if let Some(dtb_reservations) = dtb_reservations {
             let shown = dtb_reservations.reported_len();
@@ -241,15 +241,15 @@ fn scan_dtb_reservations(services: &TargetServices) -> Option<FdtMemoryReservati
 fn scan_reserved_memory_ranges(services: &TargetServices) -> Option<FdtReservedMemoryRanges> {
     target::console::write_static("TALOS: reserved-memory start\n");
     target::rpi5::wait_uart10_empty_early_phase();
-    #[cfg(talos_rpi5_translation_fault_diagnostic)]
+    #[cfg(talos_boot_scenario = "rpi5_translation_fault")]
     let reserved_memory_ranges = None;
-    #[cfg(not(talos_rpi5_translation_fault_diagnostic))]
+    #[cfg(not(talos_boot_scenario = "rpi5_translation_fault"))]
     let reserved_memory_ranges = unsafe { services.device_tree.reserved_memory_ranges() };
     target::console::write_static("TALOS: reserved-memory done\n");
     target::rpi5::wait_uart10_empty_early_phase();
 
     if !suppress_growth_diagnostic_boot_reports() {
-        #[cfg(not(talos_rpi5_translation_fault_diagnostic))]
+        #[cfg(not(talos_boot_scenario = "rpi5_translation_fault"))]
         if let Some(reserved_memory_ranges) = reserved_memory_ranges {
             let shown = reserved_memory_ranges.reported_len();
             write_rpi5_reserved_memory_summary_line(
@@ -431,18 +431,18 @@ fn enable_translation_and_caches(
         write_rpi5_translation_enabled_line(register_plan, sctlr);
     }
 
-    #[cfg(talos_rpi5_translation_fault_diagnostic)]
+    #[cfg(talos_boot_scenario = "rpi5_translation_fault")]
     {
         unsafe { diagnostics::rpi5::rpi5_translation_fault_diagnostic() }
     }
 
-    #[cfg(not(talos_rpi5_translation_fault_diagnostic))]
+    #[cfg(not(talos_boot_scenario = "rpi5_translation_fault"))]
     {
         enable_instruction_and_data_caches(boot_info, sctlr)
     }
 }
 
-#[cfg(not(talos_rpi5_translation_fault_diagnostic))]
+#[cfg(not(talos_boot_scenario = "rpi5_translation_fault"))]
 fn enable_instruction_and_data_caches(boot_info: &BootInfo, sctlr: u64) -> bool {
     let icache_plan = if let Some(icache_plan) =
         memory_map::early_instruction_cache_enable_plan(boot_info.exception_level, sctlr)
