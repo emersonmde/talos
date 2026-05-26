@@ -15,27 +15,27 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 Talos is currently in Phase 6.3, after accepting bounded SMP scheduler slices
 for secondary-core dispatch, cross-core IPIs, remote wake requests, target-owned
-wake consumption, and owner-published shared scheduler metadata on both QEMU
-substitute and serialized Pi 5 hardware. These proofs are still diagnostic
-validation gates, not a general multi-core runtime: shared run queues, remote
-enqueue, task migration, load balancing, multi-core preemption, userspace,
-filesystem, networking, SSH, and shell behavior remain deferred.
+wake consumption, owner-published shared scheduler metadata, and the secondary
+scheduler service loop on both QEMU substitute and serialized Pi 5 hardware.
+These proofs are still diagnostic validation gates, not a general multi-core
+runtime: shared run queues, remote enqueue, task migration, load balancing,
+multi-core preemption, userspace, filesystem, networking, SSH, and shell
+behavior remain deferred.
 
 The immediate frontier is Phase 6.3 productionization after the accepted
 CPU-local scheduler service closeout and secondary scheduler service-loop
-source inventory. Evidence-retention, diagnostic-surface, roadmap-refresh,
+implementation/proofs. Evidence-retention, diagnostic-surface, roadmap-refresh,
 productionization-boundary, CPU-local scheduler service boundary,
-CPU-local scheduler service core, CPU-local scheduler service closeout, and
-secondary scheduler service-loop source inventory tasks are accepted. The
-service core sequences target-owned remote wake drains, local runnable
-transitions, pending timer-preemption handling, CPU-local dispatch, and owner
-metadata refresh for one owning logical CPU. The accepted service-loop
-inventory defines how a secondary owner may run that service from normal
-control flow after accepted handoff state. The next bounded productionization
-task should implement the minimal secondary scheduler service-loop core. Broad
-shared run queues, remote enqueue, migration, load balancing, multi-core
-preemption, Phase 7, filesystem, networking, SSH, and shell work remain
-deferred until a supervisor plans a later bounded task.
+CPU-local scheduler service core, CPU-local scheduler service closeout,
+secondary scheduler service-loop source inventory, service-loop core, QEMU
+smoke, and Pi 5 proof tasks are accepted. The service core sequences
+target-owned remote wake drains, local runnable transitions, pending
+timer-preemption handling, CPU-local dispatch, and owner metadata refresh for
+one owning logical CPU; the accepted secondary loop now proves that a physical
+secondary may run one owner-local service cycle after accepted handoff state.
+The next bounded task should be the secondary scheduler service-loop closeout
+checkpoint before shared run queues, migration, load balancing, multi-core
+preemption, Phase 7, filesystem, networking, SSH, and shell work.
 
 Accepted status and historical completed facts:
 

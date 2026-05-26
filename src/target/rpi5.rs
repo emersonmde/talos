@@ -1,6 +1,7 @@
 #[cfg(any(
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 use crate::arch::aarch64;
 #[cfg(any(
@@ -24,12 +25,14 @@ use crate::scheduler::TargetWakeConsumptionError;
     talos_rpi5_timer_preemption_diagnostic,
     talos_rpi5_remote_wake_to_local_runnable_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 use crate::scheduler::{ContextFrame, KernelStack, Task, TaskState};
 #[cfg(any(
     talos_rpi5_remote_wakeup_request_proof,
-    talos_rpi5_production_secondary_dispatch_proof
+    talos_rpi5_production_secondary_dispatch_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 use crate::scheduler::{
     LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError, ProductionDispatchError,
@@ -42,6 +45,11 @@ use crate::scheduler::{
 };
 #[cfg(talos_rpi5_remote_wakeup_request_proof)]
 use crate::scheduler::{RemoteWakePublishOutcome, RemoteWakeQueue};
+#[cfg(talos_rpi5_secondary_scheduler_service_loop_proof)]
+use crate::scheduler::{
+    RemoteWakeQueue, SecondarySchedulerServiceLoop, SecondarySchedulerServiceLoopError,
+    SharedSchedulerMetadata,
+};
 #[cfg(talos_rpi5_timer_preemption_diagnostic)]
 use crate::scheduler::{SingleCoreScheduler, TaskId};
 #[cfg(talos_rpi5_secondary_core_workload_proof)]
@@ -53,7 +61,8 @@ use crate::smp::SECONDARY_CORE_WORKLOAD_TARGET;
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 use crate::smp::{
     self, CoreLifecycle, CoreStackLayout, MAX_CORES, SECONDARY_CORE_STATES,
@@ -63,7 +72,8 @@ use crate::smp::{
     talos_rpi5_smp_lock_cache_coherence_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 use crate::smp_sync::{SpinLock, smp_full_barrier};
 use crate::{
@@ -83,7 +93,8 @@ use core::cell::UnsafeCell;
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 use core::sync::atomic::{AtomicU64, Ordering};
 
@@ -143,13 +154,16 @@ const TIMER_PREEMPTION_TARGET_SWITCHES: u64 = 6;
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 const RPI5_SECONDARY_WAIT_LIMIT: usize = 200_000_000;
 #[cfg(talos_rpi5_production_secondary_dispatch_proof)]
 const PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET: u64 = 3;
 #[cfg(talos_rpi5_shared_scheduler_metadata_proof)]
 const SHARED_SCHEDULER_METADATA_TASK_CAPACITY: usize = MAX_CORES;
+#[cfg(talos_rpi5_secondary_scheduler_service_loop_proof)]
+const SECONDARY_SCHEDULER_SERVICE_LOOP_TASK_CAPACITY: usize = 1;
 #[cfg(any(
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof
@@ -178,7 +192,8 @@ const RPI5_SMP_LOCK_WAIT_POLL_INTERVAL: usize = 20_000_000;
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 const RPI5_SCTLR_M_ENABLE: u64 = 1 << 0;
 #[cfg(any(
@@ -186,7 +201,8 @@ const RPI5_SCTLR_M_ENABLE: u64 = 1 << 0;
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 const RPI5_SCTLR_C_ENABLE: u64 = 1 << 2;
 #[cfg(any(
@@ -194,7 +210,8 @@ const RPI5_SCTLR_C_ENABLE: u64 = 1 << 2;
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 const RPI5_SCTLR_I_ENABLE: u64 = 1 << 12;
 #[cfg(any(
@@ -204,7 +221,8 @@ const RPI5_SCTLR_I_ENABLE: u64 = 1 << 12;
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 const PSCI_AFFINITY_INFO: u64 = 0x8400_0004;
 #[cfg(any(
@@ -214,7 +232,8 @@ const PSCI_AFFINITY_INFO: u64 = 0x8400_0004;
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 const PSCI_CPU_ON: u64 = 0xc400_0003;
 
@@ -270,7 +289,8 @@ static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 unsafe extern "C" {
     fn talos_aarch64_rpi5_secondary_entry();
@@ -317,7 +337,8 @@ pub fn firmware_console() -> Pl011 {
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 fn secondary_stack_layout() -> CoreStackLayout {
     let base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
@@ -333,7 +354,8 @@ fn secondary_stack_layout() -> CoreStackLayout {
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 fn secondary_state_name(state: u64) -> &'static str {
     CoreLifecycle::from_raw(state).map_or("unknown", CoreLifecycle::name)
@@ -346,7 +368,8 @@ fn secondary_state_name(state: u64) -> &'static str {
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 unsafe fn psci_smc(function_id: u64, arg1: u64, arg2: u64, arg3: u64) -> i64 {
     let mut result = function_id;
@@ -387,7 +410,8 @@ unsafe fn psci_smc(function_id: u64, arg1: u64, arg2: u64, arg3: u64) -> i64 {
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) -> i64 {
     unsafe { psci_smc(PSCI_CPU_ON, target_affinity, entry as u64, context as u64) }
@@ -400,7 +424,8 @@ unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) ->
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 unsafe fn psci_affinity_info_smc(target_affinity: u64, lowest_affinity_level: u64) -> i64 {
     unsafe {
@@ -420,7 +445,8 @@ unsafe fn psci_affinity_info_smc(target_affinity: u64, lowest_affinity_level: u6
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 fn psci_affinity_state_name(state: i64) -> &'static str {
     match state {
@@ -438,7 +464,8 @@ fn psci_affinity_state_name(state: i64) -> &'static str {
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 #[unsafe(no_mangle)]
 pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
@@ -462,7 +489,8 @@ pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
             talos_rpi5_cross_core_ipi_delivery_proof,
             talos_rpi5_remote_wakeup_request_proof,
             talos_rpi5_production_secondary_dispatch_proof,
-            talos_rpi5_shared_scheduler_metadata_proof
+            talos_rpi5_shared_scheduler_metadata_proof,
+            talos_rpi5_secondary_scheduler_service_loop_proof
         ))]
         if !enter_secondary_cacheable_mmu_handoff(logical_cpu) {
             core_state.clean_to_poc();
@@ -478,7 +506,8 @@ pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
             talos_rpi5_cross_core_ipi_delivery_proof,
             talos_rpi5_remote_wakeup_request_proof,
             talos_rpi5_production_secondary_dispatch_proof,
-            talos_rpi5_shared_scheduler_metadata_proof
+            talos_rpi5_shared_scheduler_metadata_proof,
+            talos_rpi5_secondary_scheduler_service_loop_proof
         ))]
         core_state.republish_identity(context, mpidr, affinity, stack_pointer as usize);
         core_state.mark_handoff_ready();
@@ -513,6 +542,11 @@ pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
         {
             run_shared_scheduler_metadata_secondary(core_state, logical_cpu);
             write_uart10_bytes_early_phase(b"TALOS: secondary_shared_metadata_complete\r\n");
+        }
+        #[cfg(talos_rpi5_secondary_scheduler_service_loop_proof)]
+        {
+            run_secondary_scheduler_service_loop_secondary(core_state, logical_cpu);
+            write_uart10_bytes_early_phase(b"TALOS: secondary_scheduler_service_loop_complete\r\n");
         }
     }
 
@@ -591,7 +625,8 @@ fn reset_production_secondary_dispatch_state() {
 
 #[cfg(any(
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
     match role {
@@ -603,7 +638,8 @@ fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
 
 #[cfg(any(
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 fn task_id(raw: u64) -> TaskId {
     TaskId::new(raw).expect("diagnostic task IDs are nonzero")
@@ -611,7 +647,8 @@ fn task_id(raw: u64) -> TaskId {
 
 #[cfg(any(
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 fn scheduler_task(logical_cpu: usize, progress: u64) -> Task {
     let raw_task_id = (logical_cpu as u64 + 1) * 100 + progress;
@@ -974,6 +1011,274 @@ fn run_shared_scheduler_metadata_secondary(core_state: &smp::PerCoreState, logic
     core_state.clean_to_poc();
 }
 
+#[cfg(talos_rpi5_secondary_scheduler_service_loop_proof)]
+#[derive(Clone, Copy)]
+struct SecondarySchedulerServiceLoopReport {
+    owner: u64,
+    role: SchedulerCoreRole,
+    task_id: u64,
+    task_state: u64,
+    current_task: u64,
+    queue_len: u64,
+    front_task: u64,
+    remote_wake_task: u64,
+    dispatch_task: u64,
+    no_work_did_work: bool,
+    metadata_generation: u64,
+    metadata_len: u64,
+    observed_remote_wake: bool,
+    pending_timer_preemption: bool,
+    dispatch_requested: bool,
+    cross_owner_rejected: bool,
+    deferred_role_rejected: bool,
+    local_queue_preserved: bool,
+    errors: u64,
+}
+
+#[cfg(talos_rpi5_secondary_scheduler_service_loop_proof)]
+impl SecondarySchedulerServiceLoopReport {
+    const fn empty() -> Self {
+        Self {
+            owner: u64::MAX,
+            role: SchedulerCoreRole::SecondaryDeferred,
+            task_id: 0,
+            task_state: 0,
+            current_task: 0,
+            queue_len: 0,
+            front_task: 0,
+            remote_wake_task: 0,
+            dispatch_task: 0,
+            no_work_did_work: true,
+            metadata_generation: 0,
+            metadata_len: 0,
+            observed_remote_wake: false,
+            pending_timer_preemption: true,
+            dispatch_requested: false,
+            cross_owner_rejected: false,
+            deferred_role_rejected: false,
+            local_queue_preserved: false,
+            errors: 0,
+        }
+    }
+
+    const fn progress(self) -> u64 {
+        if self.errors == 0 && self.remote_wake_task != 0 && self.dispatch_task != 0 {
+            1
+        } else {
+            0
+        }
+    }
+}
+
+#[cfg(talos_rpi5_secondary_scheduler_service_loop_proof)]
+#[derive(Clone, Copy)]
+struct SecondarySchedulerServiceLoopState {
+    reports: [SecondarySchedulerServiceLoopReport; MAX_CORES],
+    lock_progress: [u64; MAX_CORES],
+}
+
+#[cfg(talos_rpi5_secondary_scheduler_service_loop_proof)]
+impl SecondarySchedulerServiceLoopState {
+    const fn new() -> Self {
+        Self {
+            reports: [SecondarySchedulerServiceLoopReport::empty(); MAX_CORES],
+            lock_progress: [0; MAX_CORES],
+        }
+    }
+}
+
+#[cfg(talos_rpi5_secondary_scheduler_service_loop_proof)]
+static SECONDARY_SCHEDULER_SERVICE_LOOP_STATE: SpinLock<SecondarySchedulerServiceLoopState> =
+    SpinLock::new(SecondarySchedulerServiceLoopState::new());
+
+#[cfg(talos_rpi5_secondary_scheduler_service_loop_proof)]
+fn reset_secondary_scheduler_service_loop_state() {
+    let mut state = unsafe { SECONDARY_SCHEDULER_SERVICE_LOOP_STATE.lock_irqsave() };
+    *state = SecondarySchedulerServiceLoopState::new();
+}
+
+#[cfg(talos_rpi5_secondary_scheduler_service_loop_proof)]
+fn build_secondary_scheduler_service_loop_report(
+    logical_cpu: usize,
+) -> SecondarySchedulerServiceLoopReport {
+    let owner = LogicalCpuId::new(logical_cpu);
+    let mut scheduler = PerCoreScheduler::<2>::production_secondary_diagnostic(owner);
+    let mut remote_wakes = RemoteWakeQueue::<2>::new(owner);
+    let mut metadata =
+        SharedSchedulerMetadata::<SECONDARY_SCHEDULER_SERVICE_LOOP_TASK_CAPACITY, MAX_CORES>::new();
+    let mut task = scheduler_task(logical_cpu, 1);
+    task.set_state(TaskState::Blocked);
+
+    let mut errors = 0;
+    let mut metadata_generation = 0;
+
+    if metadata
+        .register_local_task(owner, &scheduler, &task)
+        .is_err()
+    {
+        errors += 1;
+    }
+
+    if remote_wakes
+        .publish(LogicalCpuId::BOOT, owner, task.id())
+        .is_err()
+    {
+        errors += 1;
+    }
+
+    let cross_owner_rejected = matches!(
+        SecondarySchedulerServiceLoop::run_once(
+            LogicalCpuId::BOOT,
+            &mut scheduler,
+            &mut remote_wakes,
+            &mut metadata,
+            &mut task,
+            None,
+            false,
+            false,
+        ),
+        Err(SecondarySchedulerServiceLoopError::WrongOwner { .. })
+    );
+    if !cross_owner_rejected {
+        errors += 1;
+    }
+
+    let mut deferred = PerCoreScheduler::<2>::deferred_secondary(owner);
+    let deferred_role_rejected = matches!(
+        SecondarySchedulerServiceLoop::run_once(
+            owner,
+            &mut deferred,
+            &mut remote_wakes,
+            &mut metadata,
+            &mut task,
+            None,
+            false,
+            false,
+        ),
+        Err(SecondarySchedulerServiceLoopError::ProductionDispatchDeferred { .. })
+    );
+    if !deferred_role_rejected {
+        errors += 1;
+    }
+
+    let first_cycle = SecondarySchedulerServiceLoop::run_once(
+        owner,
+        &mut scheduler,
+        &mut remote_wakes,
+        &mut metadata,
+        &mut task,
+        None,
+        false,
+        true,
+    );
+
+    let (
+        remote_wake_task,
+        dispatch_task,
+        observed_remote_wake,
+        pending_timer_preemption,
+        dispatch_requested,
+    ) = match first_cycle {
+        Ok(report) => (
+            report.cycle().remote_wake().map_or(0, TaskId::raw),
+            report.cycle().dispatch().map_or(0, TaskId::raw),
+            report.observed_remote_wake(),
+            report.pending_timer_preemption(),
+            report.dispatch_requested(),
+        ),
+        Err(_) => {
+            errors += 1;
+            (0, 0, false, true, false)
+        }
+    };
+
+    let no_work_did_work = match SecondarySchedulerServiceLoop::run_once(
+        owner,
+        &mut scheduler,
+        &mut remote_wakes,
+        &mut metadata,
+        &mut task,
+        None,
+        false,
+        false,
+    ) {
+        Ok(report) => {
+            metadata_generation = report.cycle().metadata().generation();
+            report.did_work()
+        }
+        Err(_) => {
+            errors += 1;
+            true
+        }
+    };
+
+    let metadata_len = metadata.len() as u64;
+    let queue_len = scheduler.scheduler().runnable().len() as u64;
+    let front_task = scheduler
+        .scheduler()
+        .runnable()
+        .front()
+        .map_or(0, TaskId::raw);
+    let current_task = scheduler.current_task().map_or(0, TaskId::raw);
+    let local_queue_preserved = queue_len == 0
+        && front_task == 0
+        && current_task == task.id().raw()
+        && remote_wakes.is_empty()
+        && task.state() == TaskState::Running;
+
+    if !local_queue_preserved {
+        errors += 1;
+    }
+
+    SecondarySchedulerServiceLoopReport {
+        owner: scheduler.owner().raw() as u64,
+        role: scheduler.role(),
+        task_id: task.id().raw(),
+        task_state: task_state_code(task.state()),
+        current_task,
+        queue_len,
+        front_task,
+        remote_wake_task,
+        dispatch_task,
+        no_work_did_work,
+        metadata_generation,
+        metadata_len,
+        observed_remote_wake,
+        pending_timer_preemption,
+        dispatch_requested,
+        cross_owner_rejected,
+        deferred_role_rejected,
+        local_queue_preserved,
+        errors,
+    }
+}
+
+#[cfg(talos_rpi5_secondary_scheduler_service_loop_proof)]
+fn publish_secondary_scheduler_service_loop_report(
+    logical_cpu: usize,
+    report: SecondarySchedulerServiceLoopReport,
+) {
+    let mut state = SECONDARY_SCHEDULER_SERVICE_LOOP_STATE.lock();
+    state.reports[logical_cpu] = report;
+    state.lock_progress[logical_cpu] = report.progress();
+}
+
+#[cfg(talos_rpi5_secondary_scheduler_service_loop_proof)]
+fn run_secondary_scheduler_service_loop_secondary(
+    core_state: &smp::PerCoreState,
+    logical_cpu: usize,
+) {
+    core_state.mark_workload_running();
+    core_state.clean_to_poc();
+
+    let report = build_secondary_scheduler_service_loop_report(logical_cpu);
+    publish_secondary_scheduler_service_loop_report(logical_cpu, report);
+    smp_full_barrier();
+
+    core_state.mark_workload_complete(report.progress());
+    core_state.clean_to_poc();
+}
+
 #[cfg(talos_rpi5_smp_lock_cache_coherence_proof)]
 #[derive(Clone, Copy)]
 struct SmpLockContentionState {
@@ -1081,7 +1386,8 @@ static SMP_LOCK_DIAGNOSTIC_SCTLR_EL2: [AtomicU64; MAX_CORES] =
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_READY: AtomicU64 = AtomicU64::new(0);
 #[cfg(any(
@@ -1089,7 +1395,8 @@ static SECONDARY_CACHEABLE_MMU_HANDOFF_READY: AtomicU64 = AtomicU64::new(0);
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_MAIR_EL2: AtomicU64 = AtomicU64::new(0);
 #[cfg(any(
@@ -1097,7 +1404,8 @@ static SECONDARY_CACHEABLE_MMU_HANDOFF_MAIR_EL2: AtomicU64 = AtomicU64::new(0);
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_TCR_EL2: AtomicU64 = AtomicU64::new(0);
 #[cfg(any(
@@ -1105,7 +1413,8 @@ static SECONDARY_CACHEABLE_MMU_HANDOFF_TCR_EL2: AtomicU64 = AtomicU64::new(0);
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_TTBR0_EL2: AtomicU64 = AtomicU64::new(0);
 #[cfg(any(
@@ -1113,7 +1422,8 @@ static SECONDARY_CACHEABLE_MMU_HANDOFF_TTBR0_EL2: AtomicU64 = AtomicU64::new(0);
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_SCTLR_EL2: AtomicU64 = AtomicU64::new(0);
 
@@ -1122,7 +1432,8 @@ static SECONDARY_CACHEABLE_MMU_HANDOFF_SCTLR_EL2: AtomicU64 = AtomicU64::new(0);
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 fn clean_secondary_cacheable_mmu_handoff_plan() {
     clean_cache_line_to_poc(&SECONDARY_CACHEABLE_MMU_HANDOFF_MAIR_EL2);
@@ -1137,7 +1448,8 @@ fn clean_secondary_cacheable_mmu_handoff_plan() {
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 fn publish_secondary_cacheable_mmu_handoff_plan(
     regime: crate::arch::aarch64::El2Stage1CacheRegime,
@@ -1160,7 +1472,8 @@ fn publish_secondary_cacheable_mmu_handoff_plan(
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 fn secondary_cacheable_mmu_handoff_plan() -> Option<crate::arch::aarch64::El2Stage1CacheRegime> {
     invalidate_cache_line_from_poc(&SECONDARY_CACHEABLE_MMU_HANDOFF_READY);
@@ -1185,7 +1498,8 @@ fn secondary_cacheable_mmu_handoff_plan() -> Option<crate::arch::aarch64::El2Sta
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 fn enter_secondary_cacheable_mmu_handoff(logical_cpu: usize) -> bool {
     let _ = logical_cpu;
@@ -1782,7 +2096,8 @@ fn publish_remote_wake_request(target: usize, task_id: TaskId) -> bool {
 
 #[cfg(any(
     talos_rpi5_remote_wake_to_local_runnable_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 fn task_state_code(state: TaskState) -> u64 {
     match state {
@@ -1794,7 +2109,8 @@ fn task_state_code(state: TaskState) -> u64 {
 
 #[cfg(any(
     talos_rpi5_remote_wake_to_local_runnable_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 fn task_state_name(code: u64) -> &'static str {
     match code {
@@ -1980,7 +2296,8 @@ fn write_remote_wakeup_wait_observation(remaining: usize) {
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 fn current_sctlr_el2() -> u64 {
     let sctlr: u64;
@@ -1995,7 +2312,8 @@ fn current_sctlr_el2() -> u64 {
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 fn cacheable_mmu_enabled(sctlr: u64) -> bool {
     (sctlr & (RPI5_SCTLR_M_ENABLE | RPI5_SCTLR_C_ENABLE))
@@ -2007,7 +2325,8 @@ fn cacheable_mmu_enabled(sctlr: u64) -> bool {
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 fn clean_cache_line_to_poc<T>(value: &T) {
     unsafe {
@@ -2025,7 +2344,8 @@ fn clean_cache_line_to_poc<T>(value: &T) {
     talos_rpi5_cross_core_ipi_delivery_proof,
     talos_rpi5_remote_wakeup_request_proof,
     talos_rpi5_production_secondary_dispatch_proof,
-    talos_rpi5_shared_scheduler_metadata_proof
+    talos_rpi5_shared_scheduler_metadata_proof,
+    talos_rpi5_secondary_scheduler_service_loop_proof
 ))]
 fn invalidate_cache_line_from_poc<T>(value: &T) {
     unsafe {
@@ -3433,6 +3753,221 @@ pub fn run_shared_scheduler_metadata_proof() -> bool {
     reports_ok
 }
 
+#[cfg(talos_rpi5_secondary_scheduler_service_loop_proof)]
+pub fn run_secondary_scheduler_service_loop_proof() -> bool {
+    smp::reset_secondary_core_states();
+    reset_secondary_scheduler_service_loop_state();
+
+    let boot_mpidr = aarch64::mpidr_el1();
+    let boot_affinity = aarch64::mpidr_affinity(boot_mpidr);
+    let boot_logical = pi5_logical_cpu_from_mpidr_affinity(boot_affinity);
+    let boot_cache_regime = crate::arch::aarch64::current_el2_stage1_cache_regime();
+    let boot_sctlr_el2 = boot_cache_regime.map_or_else(current_sctlr_el2, |regime| regime.sctlr);
+    let entry = talos_aarch64_rpi5_secondary_entry as *const () as usize;
+    let stack_layout = secondary_stack_layout();
+    let stack_base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
+    let stack_end = core::ptr::addr_of!(talos_secondary_core_stacks_end) as usize;
+
+    crate::println!(
+        "rpi5-secondary-scheduler-service-loop: start conduit=smc cores={} task-capacity={} boot-mpidr={:#018x} boot-affinity={:#x} boot-logical={:?} boot-sctlr-el2={:#018x} boot-cacheable-mmu={} entry={:#018x} stack-range=[{:#018x},{:#018x})",
+        MAX_CORES,
+        SECONDARY_SCHEDULER_SERVICE_LOOP_TASK_CAPACITY,
+        boot_mpidr,
+        boot_affinity,
+        boot_logical,
+        boot_sctlr_el2,
+        cacheable_mmu_enabled(boot_sctlr_el2),
+        entry,
+        stack_base,
+        stack_end
+    );
+    wait_uart10_empty_early_phase();
+
+    if let Some(regime) = boot_cache_regime {
+        publish_secondary_cacheable_mmu_handoff_plan(regime);
+        crate::println!(
+            "rpi5-secondary-scheduler-service-loop: secondary-cacheable-mmu-handoff-plan mair-el2={:#018x} tcr-el2={:#018x} ttbr0-el2={:#018x} sctlr-el2={:#018x} cacheable-mmu={}",
+            regime.mair,
+            regime.tcr,
+            regime.ttbr0,
+            regime.sctlr,
+            cacheable_mmu_enabled(regime.sctlr)
+        );
+    } else {
+        SECONDARY_CACHEABLE_MMU_HANDOFF_READY.store(0, Ordering::Release);
+        clean_secondary_cacheable_mmu_handoff_plan();
+        crate::println!(
+            "rpi5-secondary-scheduler-service-loop: secondary-cacheable-mmu-handoff-plan unavailable"
+        );
+    }
+    wait_uart10_empty_early_phase();
+
+    let mut cpu_on_ok = true;
+    for logical_cpu in 1..MAX_CORES {
+        let target_affinity = (logical_cpu as u64) << 8;
+        let result = unsafe { psci_cpu_on_smc(target_affinity, entry, logical_cpu) };
+        crate::println!(
+            "rpi5-secondary-scheduler-service-loop: cpu-on logical={} target-affinity={:#x} result={}",
+            logical_cpu,
+            target_affinity,
+            result
+        );
+        cpu_on_ok &= result == 0;
+        let affinity_after = unsafe { psci_affinity_info_smc(target_affinity, 0) };
+        crate::println!(
+            "rpi5-secondary-scheduler-service-loop: affinity-after logical={} target-affinity={:#x} level=0 state={} raw={}",
+            logical_cpu,
+            target_affinity,
+            psci_affinity_state_name(affinity_after),
+            affinity_after
+        );
+        wait_uart10_empty_early_phase();
+    }
+
+    let mut remaining = RPI5_SECONDARY_WAIT_LIMIT;
+    while remaining > 0 {
+        let all_complete = (1..MAX_CORES).all(|logical_cpu| {
+            SECONDARY_CORE_STATES[logical_cpu].invalidate_from_poc();
+            SECONDARY_CORE_STATES[logical_cpu]
+                .snapshot(logical_cpu)
+                .lifecycle
+                >= CoreLifecycle::WorkloadComplete
+        });
+        if all_complete {
+            break;
+        }
+        core::hint::spin_loop();
+        remaining -= 1;
+    }
+
+    let final_state = SECONDARY_SCHEDULER_SERVICE_LOOP_STATE
+        .try_lock()
+        .map(|state| *state);
+    let state_lock_available = final_state.is_some();
+    let final_state = final_state.unwrap_or_else(SecondarySchedulerServiceLoopState::new);
+    let metadata_lock_available = true;
+    let mut final_metadata_len = 0;
+    let mut final_metadata_generation = 0;
+    for logical_cpu in 1..MAX_CORES {
+        let report = final_state.reports[logical_cpu];
+        final_metadata_len += report.metadata_len;
+        final_metadata_generation += report.metadata_generation;
+    }
+
+    let mut participants = 0;
+    let mut errors = 0;
+    let mut reports_ok = cpu_on_ok
+        && boot_logical == Some(0)
+        && state_lock_available
+        && final_metadata_len == (MAX_CORES - 1) as u64;
+
+    for logical_cpu in 1..MAX_CORES {
+        SECONDARY_CORE_STATES[logical_cpu].invalidate_from_poc();
+        let report = final_state.reports[logical_cpu];
+        let core_report = SECONDARY_CORE_STATES[logical_cpu].snapshot(logical_cpu);
+        let logical_from_mpidr = pi5_logical_cpu_from_mpidr_affinity(core_report.affinity);
+        let stack_slot = stack_layout
+            .slot(logical_cpu)
+            .expect("stack slot for possible Pi 5 core");
+        let stack_owned = stack_slot.contains_stack_pointer(core_report.stack_pointer);
+        let expected_task = (logical_cpu as u64 + 1) * 100 + 1;
+        let report_ok = core_report.lifecycle >= CoreLifecycle::WorkloadComplete
+            && core_report.context == logical_cpu
+            && logical_from_mpidr == Some(logical_cpu)
+            && stack_owned
+            && report.owner == logical_cpu as u64
+            && report.role == SchedulerCoreRole::SecondaryProductionDiagnostic
+            && report.task_id == expected_task
+            && report.task_state == task_state_code(TaskState::Running)
+            && report.current_task == expected_task
+            && report.queue_len == 0
+            && report.front_task == 0
+            && report.remote_wake_task == expected_task
+            && report.dispatch_task == expected_task
+            && !report.no_work_did_work
+            && report.metadata_generation > 0
+            && report.observed_remote_wake
+            && !report.pending_timer_preemption
+            && report.dispatch_requested
+            && report.cross_owner_rejected
+            && report.deferred_role_rejected
+            && report.local_queue_preserved
+            && final_state.lock_progress[logical_cpu] == 1
+            && report.errors == 0;
+        if report_ok {
+            participants += 1;
+        }
+        errors += report.errors;
+        reports_ok &= report_ok;
+
+        crate::println!(
+            "rpi5-secondary-scheduler-service-loop: report logical={} state={} context={} mpidr={:#018x} affinity={:#x} mapped={:?} sp={:#018x} stack=[{:#018x},{:#018x}) owner={} role={} task={} task-state={} current={} queue-len={} front={} remote-wake={} dispatch={} no-work-did-work={} metadata-len={} metadata-generation={} observed-remote-wake={} pending-timer-preemption={} dispatch-requested={} cross-owner-rejected={} deferred-role-rejected={} local-queue-preserved={} lock-progress={} errors={} ok={}",
+            logical_cpu,
+            secondary_state_name(core_report.lifecycle.raw()),
+            core_report.context,
+            core_report.mpidr,
+            core_report.affinity,
+            logical_from_mpidr,
+            core_report.stack_pointer,
+            stack_slot.bottom,
+            stack_slot.top,
+            report.owner,
+            scheduler_role_name(report.role),
+            report.task_id,
+            task_state_name(report.task_state),
+            report.current_task,
+            report.queue_len,
+            report.front_task,
+            report.remote_wake_task,
+            report.dispatch_task,
+            report.no_work_did_work,
+            report.metadata_len,
+            report.metadata_generation,
+            report.observed_remote_wake,
+            report.pending_timer_preemption,
+            report.dispatch_requested,
+            report.cross_owner_rejected,
+            report.deferred_role_rejected,
+            report.local_queue_preserved,
+            final_state.lock_progress[logical_cpu],
+            report.errors,
+            report_ok
+        );
+        wait_uart10_empty_early_phase();
+    }
+
+    let classification = if reports_ok {
+        "pi5-secondary-scheduler-service-loop-complete"
+    } else if !state_lock_available || !metadata_lock_available {
+        "pi5-secondary-scheduler-service-loop-lock-still-held"
+    } else if cpu_on_ok {
+        "pi5-secondary-scheduler-service-loop-invariant-failed"
+    } else {
+        "pi5-psci-smc-cpu-on-failed"
+    };
+    crate::println!(
+        "rpi5-secondary-scheduler-service-loop: final participants={} expected={} errors={} state-lock-available={} metadata-lock-available={} final-metadata-len={} final-metadata-generation={} wait-remaining={} classification={}",
+        participants,
+        MAX_CORES - 1,
+        errors,
+        state_lock_available,
+        metadata_lock_available,
+        final_metadata_len,
+        final_metadata_generation,
+        remaining,
+        classification
+    );
+
+    if reports_ok {
+        crate::println!("rpi5-secondary-scheduler-service-loop: PASS");
+    } else {
+        crate::println!("rpi5-secondary-scheduler-service-loop: FAIL");
+    }
+    wait_uart10_empty_early_phase();
+
+    reports_ok
+}
+
 #[cfg(talos_rpi5_psci_secondary_core_alive_proof)]
 pub fn run_psci_secondary_core_alive_proof() -> bool {
     smp::reset_secondary_core_states();
@@ -4749,7 +5284,8 @@ pub(crate) fn write_uart10_byte_early_phase(byte: u8) {
         talos_rpi5_cross_core_ipi_delivery_proof,
         talos_rpi5_remote_wakeup_request_proof,
         talos_rpi5_production_secondary_dispatch_proof,
-        talos_rpi5_shared_scheduler_metadata_proof
+        talos_rpi5_shared_scheduler_metadata_proof,
+        talos_rpi5_secondary_scheduler_service_loop_proof
     )
 ))]
 pub(crate) fn write_uart10_bytes_early_phase(bytes: &[u8]) {

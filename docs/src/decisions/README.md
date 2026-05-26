@@ -2788,3 +2788,40 @@ ADR template:
   remote enqueue, multi-core preemption, userspace, descriptors, filesystem,
   networking, SSH, shell behavior, RP1/PCIe, UART interrupt ownership, and
   DMA/cache policy remain deferred.
+
+## 2026-05-26 - Phase 6.3 Pi 5 Secondary Scheduler Service Loop Evidence Accepted
+
+- Status: accepted as serialized Pi 5 hardware evidence for the secondary
+  scheduler service-loop invariant. No shared run queue, remote enqueue, task
+  migration, load balancing, work stealing, remote reschedule, multi-core
+  preemption, Phase 7, filesystem, networking, SSH, shell, RP1/PCIe, UART
+  interrupt ownership, or DMA behavior was added.
+- Context: The QEMU substitute proof was accepted at f6eefd2, but the
+  secondary service loop still needed physical evidence after the accepted Pi 5
+  secondary cacheable-MMU handoff.
+- Decision: Accept phase6-pi5-secondary-scheduler-service-loop-proof-20260526.
+  The focused Pi 5 proof starts logical CPUs 1, 2, and 3, runs one owner-local
+  service-loop cycle per secondary, drains target-owned remote wake state,
+  dispatches the local diagnostic task, refreshes owner metadata, rejects
+  cross-owner and deferred-role use, preserves local queues, and reports
+  classification=pi5-secondary-scheduler-service-loop-complete.
+- Evidence level: serial hardware boot/output, lab-controller API, TFTP fetch
+  proof, image/archive inspection, fmt/lint/typecheck, no_std unit tests, QEMU
+  substitute gates, mdBook validation, and whitespace inspection.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec test
+  passed with 134 no_std tests; scripts/qemu-smoke.sh and
+  scripts/qemu-secondary-scheduler-service-loop-smoke.sh passed;
+  scripts/rpi5-archive-review.sh
+  target/talos-rpi5-secondary-scheduler-service-loop-boot.tar.gz passed; the
+  serialized Pi 5 run fetched a 102,824-byte da591740/kernel_2712.img and
+  reported PASS before the pre-run snapshot was restored.
+- Rationale: Physical Pi 5 evidence closes the service-loop proof gap without
+  changing the accepted CPU-local topology. The proof remains a diagnostic
+  validation surface until a later task defines a non-diagnostic secondary
+  runtime role.
+- Risks: The proof covers one bounded owner-local service cycle per secondary,
+  not a continuously scheduled multi-core runtime. Shared run queues, global
+  mutable task lookup, migration, load balancing, work stealing, remote enqueue,
+  multi-core preemption, userspace, descriptors, filesystem, networking, SSH,
+  shell behavior, RP1/PCIe, UART interrupt ownership, and DMA/cache policy
+  remain deferred.

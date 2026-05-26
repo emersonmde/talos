@@ -836,3 +836,14 @@ explicit no shared-queue or migration behavior. The gate uses an optimized
 QEMU build because the current 4 KiB diagnostic secondary stacks are too small
 for the debug build of this proof workload; this is a gate property, not a
 runtime stack-size claim.
+
+The retained serialized Pi 5 gate is
+scripts/rpi5-secondary-scheduler-service-loop-boot-tree.sh with
+TALOS_RPI5_SECONDARY_SCHEDULER_SERVICE_LOOP_PROOF. It uses the accepted
+secondary cacheable-MMU handoff before running the same owner-local
+service-loop invariant on physical logical CPUs 1, 2, and 3. Accepted lab
+evidence reports remote wake drain, local dispatch, no-work metadata refresh,
+cross-owner rejection, deferred-role rejection, local-queue preservation,
+classification=pi5-secondary-scheduler-service-loop-complete, and PASS. This
+remains a diagnostic proof surface, not a general secondary scheduler role or
+shared scheduler topology.
