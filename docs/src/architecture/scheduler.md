@@ -763,7 +763,14 @@ The accepted order is:
    UART polling, diagnostic command dispatch, allocation, blocking, sleeping,
    migration, or arbitrary callbacks.
 
-The next implementation should be a target-independent CPU-local scheduler
-service adapter and QEMU-only smoke for this order. That implementation should
-not create shared scheduler topology or broaden the secondary diagnostic
-dispatch role into general multi-core scheduling.
+The target-independent implementation is `CpuLocalSchedulerService` in
+`src/scheduler.rs`. Its `run_cycle` entry point consumes one target-owned
+remote wake request, applies the matching local wake transition, handles an
+optional pending timer-preemption request, dispatches through the owner
+`PerCoreScheduler` when timer preemption did not already select the next task,
+and refreshes owner-published metadata after the local mutations. The accepted
+unit/QEMU evidence covers service order and explicit remote-wake, dispatch,
+timer, and metadata error boundaries.
+
+This implementation does not create shared scheduler topology or broaden the
+secondary diagnostic dispatch role into general multi-core scheduling.

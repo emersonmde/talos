@@ -23,14 +23,14 @@ filesystem, networking, SSH, and shell behavior remain deferred.
 
 The immediate frontier is Phase 6.3 productionization of the accepted
 CPU-local scheduler boundary. Evidence-retention, diagnostic-surface,
-roadmap-refresh, productionization-boundary, and CPU-local scheduler service
-boundary inventories are accepted. The next recommended bounded task is a
-target-independent CPU-local scheduler service core that sequences target-owned
-remote wake drains, local runnable transitions, pending timer-preemption
-handling, CPU-local dispatch, and owner metadata refresh. Broad shared run
-queues, remote enqueue, migration, load balancing, multi-core preemption,
-Phase 7, filesystem, networking, SSH, and shell work remain deferred until
-that service core is accepted.
+roadmap-refresh, productionization-boundary, CPU-local scheduler service
+boundary, and CPU-local scheduler service core tasks are accepted. The service
+core sequences target-owned remote wake drains, local runnable transitions,
+pending timer-preemption handling, CPU-local dispatch, and owner metadata
+refresh for one owning logical CPU. Broad shared run queues, remote enqueue,
+migration, load balancing, multi-core preemption, Phase 7, filesystem,
+networking, SSH, and shell work remain deferred until a supervisor plans the
+next bounded Phase 6.3 productionization task.
 
 Accepted status and historical completed facts:
 
@@ -382,12 +382,12 @@ Accepted status and historical completed facts:
 
 Blocked or pending:
 
-- The next explicit planning target is the productionization boundary
-  inventory. It should choose a bounded Phase 6.3 productionization or cleanup
-  task before any shared run queue implementation, migration, load balancing,
-  multi-core preemption, userspace, descriptors, filesystem, networking, SSH,
-  shell behavior, UART interrupts, RP1/PCIe, or DMA/cache-coherent driver
-  policy starts.
+- The next explicit planning target is a bounded Phase 6.3 productionization
+  or cleanup task after the CPU-local scheduler service core. Planning must
+  remain before any shared run queue implementation, migration, load
+  balancing, multi-core preemption, userspace, descriptors, filesystem,
+  networking, SSH, shell behavior, UART interrupts, RP1/PCIe, or
+  DMA/cache-coherent driver policy starts.
 - Large raw accepted evidence remains in Git until external artifact storage or
   an explicit no-delete manifest-only cleanup is approved. Do not delete
   tracked accepted evidence during unrelated feature work.
@@ -707,6 +707,8 @@ and
 [Phase 6 Shared Scheduler Metadata Closeout](project/phase6-shared-scheduler-metadata-closeout-checkpoint.md),
 and
 [Phase 6 CPU-Local Scheduler Service Boundary Source Inventory](project/phase6-cpu-local-scheduler-service-boundary-source-inventory.md).
+The target-independent CPU-local scheduler service core is accepted in
+`tasks/2026-05-26-phase6-cpu-local-scheduler-service-core.md`.
 Before broader Phase 6.3 productionization, the accepted
 [Evidence Retention Policy](project/evidence-retention-policy.md) and
 [Diagnostic Surface Policy](project/diagnostic-surface-policy.md) govern which

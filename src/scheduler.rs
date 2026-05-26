@@ -956,6 +956,122 @@ pub enum SharedSchedulerMetadataError {
     },
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum CpuLocalSchedulerServiceError {
+    RemoteWakeQueue(RemoteWakeRequestError),
+    RemoteWake(TargetWakeConsumptionError),
+    MissingCurrentTaskForTimerPreemption,
+    TimerPreempt(TimerPreemptError),
+    ProductionDispatch(ProductionDispatchError),
+    Metadata(SharedSchedulerMetadataError),
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct CpuLocalSchedulerServiceReport {
+    remote_wake: Option<TaskId>,
+    timer_preemption: Option<TaskId>,
+    dispatch: Option<TaskId>,
+    metadata: SchedulerTaskSnapshot,
+}
+
+impl CpuLocalSchedulerServiceReport {
+    pub const fn remote_wake(self) -> Option<TaskId> {
+        self.remote_wake
+    }
+
+    pub const fn timer_preemption(self) -> Option<TaskId> {
+        self.timer_preemption
+    }
+
+    pub const fn dispatch(self) -> Option<TaskId> {
+        self.dispatch
+    }
+
+    pub const fn metadata(self) -> SchedulerTaskSnapshot {
+        self.metadata
+    }
+}
+
+pub struct CpuLocalSchedulerService;
+
+impl CpuLocalSchedulerService {
+    pub fn run_cycle<
+        const RUNNABLE_CAPACITY: usize,
+        const REMOTE_WAKE_CAPACITY: usize,
+        const TASK_CAPACITY: usize,
+        const CPU_CAPACITY: usize,
+    >(
+        requester: LogicalCpuId,
+        scheduler: &mut PerCoreScheduler<RUNNABLE_CAPACITY>,
+        remote_wake_queue: &mut RemoteWakeQueue<REMOTE_WAKE_CAPACITY>,
+        metadata: &mut SharedSchedulerMetadata<TASK_CAPACITY, CPU_CAPACITY>,
+        local_task: &mut Task,
+        current_task_for_timer_preemption: Option<&mut Task>,
+        pending_timer_preemption: bool,
+        dispatch_local_task: bool,
+    ) -> Result<CpuLocalSchedulerServiceReport, CpuLocalSchedulerServiceError> {
+        let remote_wake = match remote_wake_queue
+            .consume_next(requester)
+            .map_err(CpuLocalSchedulerServiceError::RemoteWakeQueue)?
+        {
+            Some(request) => Some(
+                scheduler
+                    .wake_blocked_local_task_from_remote_request(requester, request, local_task)
+                    .map_err(CpuLocalSchedulerServiceError::RemoteWake)?,
+            ),
+            None => None,
+        };
+
+        let timer_preemption = if pending_timer_preemption {
+            let current_task = current_task_for_timer_preemption
+                .ok_or(CpuLocalSchedulerServiceError::MissingCurrentTaskForTimerPreemption)?;
+            let next_task_id = scheduler
+                .production_scheduler_mut(requester)
+                .map_err(|error| {
+                    CpuLocalSchedulerServiceError::ProductionDispatch(
+                        ProductionDispatchError::from(error),
+                    )
+                })?
+                .timer_preempt(current_task)
+                .map_err(CpuLocalSchedulerServiceError::TimerPreempt)?;
+            if local_task.id() == next_task_id {
+                local_task.set_state(TaskState::Running);
+            }
+            scheduler
+                .set_current_task(requester, next_task_id)
+                .map_err(|error| {
+                    CpuLocalSchedulerServiceError::ProductionDispatch(
+                        ProductionDispatchError::from(error),
+                    )
+                })?;
+            Some(next_task_id)
+        } else {
+            None
+        };
+
+        let dispatch = if dispatch_local_task && timer_preemption.is_none() {
+            Some(
+                scheduler
+                    .dispatch_cpu_local_diagnostic_task(requester, local_task)
+                    .map_err(CpuLocalSchedulerServiceError::ProductionDispatch)?,
+            )
+        } else {
+            None
+        };
+
+        let metadata = metadata
+            .refresh_local_task(requester, scheduler, local_task)
+            .map_err(CpuLocalSchedulerServiceError::Metadata)?;
+
+        Ok(CpuLocalSchedulerServiceReport {
+            remote_wake,
+            timer_preemption,
+            dispatch,
+            metadata,
+        })
+    }
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SharedSchedulerMetadata<const TASK_CAPACITY: usize, const CPU_CAPACITY: usize> {
     entries: [Option<SchedulerTaskSnapshot>; TASK_CAPACITY],
@@ -1166,12 +1282,13 @@ mod tests {
     use core::mem::{offset_of, size_of};
 
     use super::{
-        ContextFrame, KernelStack, LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError,
-        ProcessOwnerId, ProductionDispatchError, RemoteWakePublishOutcome, RemoteWakeQueue,
-        RemoteWakeRequest, RemoteWakeRequestError, RunnableQueue, RunnableQueueError,
-        SchedulerCoreRole, SharedSchedulerMetadata, SharedSchedulerMetadataError,
-        SharedSchedulerMetadataLock, SingleCoreScheduler, TargetWakeConsumptionError, Task, TaskId,
-        TaskState, TimerPreemptError, VoluntaryYieldError,
+        ContextFrame, CpuLocalSchedulerService, CpuLocalSchedulerServiceError, KernelStack,
+        LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError, ProcessOwnerId,
+        ProductionDispatchError, RemoteWakePublishOutcome, RemoteWakeQueue, RemoteWakeRequest,
+        RemoteWakeRequestError, RunnableQueue, RunnableQueueError, SchedulerCoreRole,
+        SharedSchedulerMetadata, SharedSchedulerMetadataError, SharedSchedulerMetadataLock,
+        SingleCoreScheduler, TargetWakeConsumptionError, Task, TaskId, TaskState,
+        TimerPreemptError, VoluntaryYieldError,
     };
 
     fn task_id(raw: u64) -> TaskId {
@@ -1864,6 +1981,199 @@ mod tests {
         }
 
         assert!(!lock.is_locked());
+    }
+
+    #[test_case]
+    fn cpu_local_scheduler_service_drains_wakes_dispatches_and_refreshes_metadata() {
+        let owner = LogicalCpuId::new(2);
+        let requester = LogicalCpuId::BOOT;
+        let mut scheduler = PerCoreScheduler::<2>::production_secondary_diagnostic(owner);
+        let mut remote_wakes = RemoteWakeQueue::<2>::new(owner);
+        let mut metadata = SharedSchedulerMetadata::<2, 4>::new();
+        let mut task = Task::kernel_thread(task_id(88), kernel_stack(), context());
+        task.set_state(TaskState::Blocked);
+
+        metadata
+            .register_local_task(owner, &scheduler, &task)
+            .expect("task starts in shared metadata");
+        remote_wakes
+            .publish(requester, owner, task.id())
+            .expect("remote wake publication succeeds");
+
+        let report = CpuLocalSchedulerService::run_cycle(
+            owner,
+            &mut scheduler,
+            &mut remote_wakes,
+            &mut metadata,
+            &mut task,
+            None,
+            false,
+            true,
+        )
+        .expect("service cycle completes");
+
+        assert_eq!(report.remote_wake(), Some(task.id()));
+        assert_eq!(report.timer_preemption(), None);
+        assert_eq!(report.dispatch(), Some(task.id()));
+        assert!(remote_wakes.is_empty());
+        assert_eq!(task.state(), TaskState::Running);
+        assert_eq!(scheduler.current_task(), Some(task.id()));
+        assert_eq!(scheduler.scheduler().runnable().len(), 0);
+        assert_eq!(scheduler.scheduler().counters().state_transitions(), 2);
+        assert_eq!(scheduler.scheduler().counters().production_dispatches(), 1);
+        assert_eq!(report.metadata().state(), TaskState::Running);
+        assert!(report.metadata().current_on_owner());
+        assert!(!report.metadata().runnable_on_owner());
+    }
+
+    #[test_case]
+    fn cpu_local_scheduler_service_handles_timer_preemption_before_metadata_refresh() {
+        let owner = LogicalCpuId::BOOT;
+        let requester = LogicalCpuId::new(1);
+        let mut scheduler = PerCoreScheduler::<2>::boot_cpu();
+        let mut remote_wakes = RemoteWakeQueue::<2>::new(owner);
+        let mut metadata = SharedSchedulerMetadata::<2, 4>::new();
+        let mut current = Task::kernel_thread(task_id(1), kernel_stack(), context());
+        let mut next = Task::kernel_thread(task_id(2), kernel_stack(), context());
+        current.set_state(TaskState::Running);
+        next.set_state(TaskState::Blocked);
+
+        scheduler
+            .set_current_task(owner, current.id())
+            .expect("boot CPU owns current task");
+        metadata
+            .register_local_task(owner, &scheduler, &next)
+            .expect("next task starts in shared metadata");
+        remote_wakes
+            .publish(requester, owner, next.id())
+            .expect("remote wake publication succeeds");
+
+        let report = CpuLocalSchedulerService::run_cycle(
+            owner,
+            &mut scheduler,
+            &mut remote_wakes,
+            &mut metadata,
+            &mut next,
+            Some(&mut current),
+            true,
+            true,
+        )
+        .expect("timer service cycle completes");
+
+        assert_eq!(report.remote_wake(), Some(next.id()));
+        assert_eq!(report.timer_preemption(), Some(next.id()));
+        assert_eq!(report.dispatch(), None);
+        assert_eq!(current.state(), TaskState::Runnable);
+        assert_eq!(next.state(), TaskState::Running);
+        assert_eq!(scheduler.current_task(), Some(next.id()));
+        assert_eq!(scheduler.scheduler().runnable().front(), Some(current.id()));
+        assert_eq!(scheduler.scheduler().counters().timer_preemptions(), 1);
+        assert_eq!(report.metadata().state(), TaskState::Running);
+        assert!(report.metadata().current_on_owner());
+        assert!(!report.metadata().runnable_on_owner());
+    }
+
+    #[test_case]
+    fn cpu_local_scheduler_service_preserves_explicit_error_boundaries() {
+        let owner = LogicalCpuId::new(1);
+        let mut deferred = PerCoreScheduler::<1>::deferred_secondary(owner);
+        let mut remote_wakes = RemoteWakeQueue::<1>::new(owner);
+        let mut metadata = SharedSchedulerMetadata::<1, 4>::new();
+        let mut task = Task::kernel_thread(task_id(40), kernel_stack(), context());
+
+        metadata
+            .register_local_task(owner, &deferred, &task)
+            .expect("task starts in shared metadata");
+        assert_eq!(
+            CpuLocalSchedulerService::run_cycle(
+                owner,
+                &mut deferred,
+                &mut remote_wakes,
+                &mut metadata,
+                &mut task,
+                None,
+                false,
+                true,
+            ),
+            Err(CpuLocalSchedulerServiceError::ProductionDispatch(
+                ProductionDispatchError::ProductionDispatchDeferred { owner }
+            ))
+        );
+
+        let mut scheduler = PerCoreScheduler::<1>::production_secondary_diagnostic(owner);
+        let mut metadata = SharedSchedulerMetadata::<1, 4>::new();
+        assert_eq!(
+            CpuLocalSchedulerService::run_cycle(
+                owner,
+                &mut scheduler,
+                &mut remote_wakes,
+                &mut metadata,
+                &mut task,
+                None,
+                false,
+                false,
+            ),
+            Err(CpuLocalSchedulerServiceError::Metadata(
+                SharedSchedulerMetadataError::UnknownTask { task_id: task.id() }
+            ))
+        );
+
+        let mut duplicate_scheduler = PerCoreScheduler::<1>::deferred_secondary(owner);
+        let mut duplicate_metadata = SharedSchedulerMetadata::<1, 4>::new();
+        let mut duplicate_task = Task::kernel_thread(task_id(41), kernel_stack(), context());
+        duplicate_task.set_state(TaskState::Blocked);
+        duplicate_scheduler
+            .local_scheduler_mut(owner)
+            .expect("owner mutates local queue")
+            .make_runnable(&mut duplicate_task)
+            .expect("local queue accepts duplicate setup task");
+        duplicate_metadata
+            .register_local_task(owner, &duplicate_scheduler, &duplicate_task)
+            .expect("duplicate task starts in metadata");
+        remote_wakes
+            .publish(LogicalCpuId::BOOT, owner, duplicate_task.id())
+            .expect("remote wake publication succeeds");
+        assert_eq!(
+            CpuLocalSchedulerService::run_cycle(
+                owner,
+                &mut duplicate_scheduler,
+                &mut remote_wakes,
+                &mut duplicate_metadata,
+                &mut duplicate_task,
+                None,
+                false,
+                false,
+            ),
+            Err(CpuLocalSchedulerServiceError::RemoteWake(
+                TargetWakeConsumptionError::DuplicateLocalRunnable {
+                    task_id: duplicate_task.id()
+                }
+            ))
+        );
+
+        let mut no_runnable_scheduler =
+            PerCoreScheduler::<1>::production_secondary_diagnostic(owner);
+        let mut no_runnable_metadata = SharedSchedulerMetadata::<1, 4>::new();
+        let mut no_runnable_task = Task::kernel_thread(task_id(42), kernel_stack(), context());
+        no_runnable_metadata
+            .register_local_task(owner, &no_runnable_scheduler, &no_runnable_task)
+            .expect("no-runnable task starts in metadata");
+        let mut empty_wakes = RemoteWakeQueue::<1>::new(owner);
+        assert_eq!(
+            CpuLocalSchedulerService::run_cycle(
+                owner,
+                &mut no_runnable_scheduler,
+                &mut empty_wakes,
+                &mut no_runnable_metadata,
+                &mut no_runnable_task,
+                None,
+                false,
+                true,
+            ),
+            Err(CpuLocalSchedulerServiceError::ProductionDispatch(
+                ProductionDispatchError::NoRunnableTask
+            ))
+        );
     }
 
     #[test_case]

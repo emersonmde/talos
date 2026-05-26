@@ -12,6 +12,42 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-26 - CPU-Local Scheduler Service Core Accepted
+
+- Status: accepted as a target-independent Phase 6.3 implementation slice.
+  The change adds Rust scheduler service code, focused tests, architecture and
+  roadmap updates, and a task record. No shared run queue, remote enqueue, task
+  migration, load balancing, multi-core preemption, Phase 7, filesystem,
+  networking, SSH, shell, RP1/PCIe, UART interrupt ownership, DMA behavior,
+  boot image, or Pi 5 hardware claim was added.
+- Context: The accepted CPU-local scheduler service boundary required one
+  normal-control-flow adapter to sequence already accepted diagnostic slices:
+  target-owned remote wake drains, local blocked-to-runnable transitions,
+  pending timer-preemption handling, CPU-local dispatch, and owner metadata
+  refresh.
+- Decision: Accept `CpuLocalSchedulerService::run_cycle` in `src/scheduler.rs`.
+  The service consumes one target-owned remote wake request, applies the
+  matching local wake transition, handles optional pending timer preemption,
+  dispatches through the owner `PerCoreScheduler` when timer preemption did not
+  already select the next task, and refreshes owner-published metadata after
+  local mutations.
+- Evidence level: static inspection, unit/QEMU tests, QEMU/substitute smoke,
+  architecture documentation update, roadmap update, decision-log update,
+  task record, whitespace inspection, and mdBook validation.
+- Validation: `cargo fmt --all -- --check`, `cargo -Zjson-target-spec test`
+  with the documented QEMU 9.2.0 path, `scripts/qemu-smoke.sh`,
+  `git diff --check`, `git diff --cached --check`, and `mdbook build` passed.
+- Consequences: The service core is still CPU-local and target-independent.
+  It preserves explicit wrong-owner, wrong-target, duplicate-runnable,
+  non-blocked task, no-runnable, deferred secondary-role, unknown metadata, and
+  stale metadata outcomes without granting remote scheduler mutation or shared
+  topology.
+- Alternatives considered: Leave the accepted order as documentation only,
+  create a proof-specific QEMU entry point instead of a reusable core, or start
+  shared run queues. A reusable core is the narrowest implementation boundary;
+  proof-specific entry points would repeat old diagnostic-surface drift, and
+  shared topology remains out of scope until separately planned.
+
 ## 2026-05-26 - Productionization Boundary Inventory Accepted
 
 - Status: accepted as a source-backed repo-health and productionization
