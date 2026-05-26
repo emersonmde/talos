@@ -728,3 +728,42 @@ preserved, final-metadata-len=4, errors=0, and PASS classification. This
 proves the bounded owner-published metadata table across physical cores, not a
 shared run queue, remote enqueue queue, task migration, load balancing, or
 multi-core preemption.
+
+## Phase 6.3 CPU-Local Scheduler Service Boundary
+
+The CPU-local scheduler service boundary is accepted as the next
+productionization contract after the shared metadata closeout. It orders the
+accepted diagnostic slices into one normal-control-flow service, but it does
+not add shared run queues, remote enqueue queues, task migration, load
+balancing, work stealing, multi-core preemption, Phase 7, filesystem,
+networking, SSH, shell behavior, RP1/PCIe, UART interrupt ownership, or
+DMA/cache-driver policy.
+
+The service must run on the owning logical CPU and mutate only that CPU's
+PerCoreScheduler, local task table, target-owned RemoteWakeQueue, and
+owner-published scheduler metadata. IPI context remains limited to bounded
+acknowledge/classify/record/EOI work; timer IRQ context may record local
+preemption state, but scheduler switching still happens outside asynchronous
+exception context.
+
+The accepted order is:
+
+1. establish the requester as the current logical CPU and enter from normal
+   kernel control flow;
+2. drain target-owned remote wake requests outside IPI context;
+3. convert matching local blocked tasks to local runnable state through local
+   scheduler rules;
+4. handle pending local timer-preemption requests after the wake drain so a
+   just-woken local task can participate in dispatch;
+5. enter CPU-local dispatch only through the owner scheduler, with secondary
+   CPUs still limited to SecondaryProductionDiagnostic;
+6. refresh owner-published scheduler metadata after local state, current-task,
+   runnable-queue, or dispatch-counter mutations;
+7. return without holding scheduler locks across context switch, printing,
+   UART polling, diagnostic command dispatch, allocation, blocking, sleeping,
+   migration, or arbitrary callbacks.
+
+The next implementation should be a target-independent CPU-local scheduler
+service adapter and QEMU-only smoke for this order. That implementation should
+not create shared scheduler topology or broaden the secondary diagnostic
+dispatch role into general multi-core scheduling.

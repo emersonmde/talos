@@ -54,6 +54,46 @@ ADR template:
   and scheduler-blocking TTY semantics; evidence cleanup can proceed separately
   without blocking the next scheduler boundary.
 
+## 2026-05-26 - CPU-Local Scheduler Service Boundary Accepted
+
+- Status: accepted as a Phase 6.3 source inventory and contract. No Rust
+  implementation, boot image, hardware run, shared run queue, remote enqueue,
+  task migration, load balancing, multi-core preemption, Phase 7, filesystem,
+  networking, SSH, shell, RP1/PCIe, UART interrupt ownership, or DMA behavior
+  was added.
+- Context: Phase 6.3 has accepted separate diagnostic slices for local
+  timer-preemption dispatch, target-owned remote wake drains, local
+  blocked-to-runnable transitions, production secondary diagnostic dispatch,
+  and owner-published shared metadata. Those slices need one CPU-local service
+  order before broader shared scheduler topology work can start.
+- Decision: Accept
+  docs/src/project/phase6-cpu-local-scheduler-service-boundary-source-inventory.md.
+  The CPU-local service drains target-owned remote wakes outside IPI context,
+  converts matching local blocked tasks to runnable, handles pending local
+  timer-preemption requests, dispatches only through the owner scheduler, then
+  refreshes owner-published metadata after local state mutations. Remote wake
+  drains intentionally precede timer-preemption dispatch so newly runnable
+  local tasks can participate in the preemption decision.
+- Evidence level: static source/doc review of scheduler, SMP sync, IPI/wakeup,
+  shared metadata, roadmap, decisions, accepted closeouts, and accepted task
+  records, plus mdBook validation and whitespace inspection.
+- Validation: git status --short was clean before edits, git diff --check
+  passed, and mdbook build passed. Rust fmt/tests and hardware runs were not
+  required because the task changed only Markdown documentation and durable
+  task state.
+- Consequences: The next bounded task should implement a target-independent
+  CPU-local scheduler service core and QEMU-only smoke for this order. Shared
+  run queues, remote enqueue, migration, load balancing, work stealing,
+  multi-core preemption, Phase 7, filesystem, networking, SSH, shell behavior,
+  RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
+  deferred.
+- Alternatives considered: Handle timer-preemption dispatch before draining
+  remote wakes, jump directly to shared run queues or migration, or treat the
+  existing proof-only entry points as a runtime service. Dispatching before the
+  wake drain can miss a just-delivered runnable task; shared topology would
+  skip the CPU-local production boundary; proof entry points do not provide a
+  stable normal-control-flow runtime service.
+
 ## 2026-05-25 - Phase 6.3 Shared Scheduler Metadata Closeout Accepted
 
 - Status: accepted as the closeout checkpoint for the bounded shared scheduler

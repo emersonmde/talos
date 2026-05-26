@@ -21,16 +21,16 @@ validation gates, not a general multi-core runtime: shared run queues, remote
 enqueue, task migration, load balancing, multi-core preemption, userspace,
 filesystem, networking, SSH, and shell behavior remain deferred.
 
-The immediate frontier is Phase 6.3 productionization planning around the
-accepted CPU-local scheduler boundary. Evidence-retention, diagnostic-surface,
-roadmap-refresh, and productionization-boundary inventories are accepted. The
-next recommended bounded task is a source inventory and contract for a
-CPU-local scheduler service boundary that orders timer-preemption requests,
-target-owned remote wake drains, local runnable transitions, production
-secondary dispatch entry, and owner metadata refresh. Broad shared run queues,
-remote enqueue, migration, load balancing, multi-core preemption, Phase 7,
-filesystem, networking, SSH, and shell work remain deferred until that boundary
-is explicitly planned and accepted.
+The immediate frontier is Phase 6.3 productionization of the accepted
+CPU-local scheduler boundary. Evidence-retention, diagnostic-surface,
+roadmap-refresh, productionization-boundary, and CPU-local scheduler service
+boundary inventories are accepted. The next recommended bounded task is a
+target-independent CPU-local scheduler service core that sequences target-owned
+remote wake drains, local runnable transitions, pending timer-preemption
+handling, CPU-local dispatch, and owner metadata refresh. Broad shared run
+queues, remote enqueue, migration, load balancing, multi-core preemption,
+Phase 7, filesystem, networking, SSH, and shell work remain deferred until
+that service core is accepted.
 
 Accepted status and historical completed facts:
 
@@ -704,7 +704,9 @@ and
 and
 [Phase 6 Shared Scheduler Metadata Source Inventory](project/phase6-shared-scheduler-metadata-source-inventory.md),
 and
-[Phase 6 Shared Scheduler Metadata Closeout](project/phase6-shared-scheduler-metadata-closeout-checkpoint.md).
+[Phase 6 Shared Scheduler Metadata Closeout](project/phase6-shared-scheduler-metadata-closeout-checkpoint.md),
+and
+[Phase 6 CPU-Local Scheduler Service Boundary Source Inventory](project/phase6-cpu-local-scheduler-service-boundary-source-inventory.md).
 Before broader Phase 6.3 productionization, the accepted
 [Evidence Retention Policy](project/evidence-retention-policy.md) and
 [Diagnostic Surface Policy](project/diagnostic-surface-policy.md) govern which
