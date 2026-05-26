@@ -12,6 +12,42 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-26 - Shared Run-Queue and Migration Contract Accepted
+
+- Status: accepted as a Phase 6.3 scheduler-topology contract. No Rust
+  implementation, boot image, QEMU claim, Pi 5 hardware claim, load balancing,
+  work stealing, multi-core timer preemption, Phase 7, filesystem, networking,
+  SSH, shell, RP1/PCIe, UART interrupt ownership, or DMA behavior was added.
+- Context: The accepted source inventory showed owner-local runnable queues,
+  target-owned remote wake mailboxes, owner-published metadata, accepted SMP
+  locks, and diagnostic proof routing, but no accepted shared run queue or
+  ownership-transfer contract.
+- Decision: Accept
+  docs/src/project/phase6-shared-runqueue-migration-contract.md and the
+  corresponding scheduler architecture update. The first shared topology must
+  keep task mutation single-owner, separate remote wake from remote enqueue,
+  use local-IRQ-then-SMP-lock ordering, publish complete shared entries through
+  acquire/release lock boundaries, and report deterministic migration failure
+  outcomes.
+- Evidence level: static review against the accepted source inventory,
+  scheduler architecture, src/scheduler.rs, src/smp_sync.rs, roadmap, and
+  decision log.
+- Validation: git status --short was clean before edits, git diff --check
+  passed, and mdbook build passed. Rust fmt/tests, QEMU reruns, and hardware
+  runs were not required because this task changed only Markdown documentation
+  and durable task state.
+- Consequences: The next bounded implementation may add a shared run-queue
+  core only if it stays inside this contract. Load balancing, work stealing,
+  migration of running tasks, multi-core preemption, Phase 7, filesystem,
+  networking, SSH, shell behavior, RP1/PCIe, UART interrupt ownership, and
+  DMA/cache-driver policy remain deferred.
+- Alternatives considered: Start implementation directly from the source
+  inventory, reuse RemoteWakeQueue as a migration queue, or make metadata the
+  mutation authority. Direct implementation would leave lock and rollback
+  rules ambiguous; reusing remote wake would blur wake versus enqueue
+  semantics; metadata is observational and should not become hidden scheduler
+  authority.
+
 ## 2026-05-26 - Shared Run-Queue and Migration Source Inventory Accepted
 
 - Status: accepted as a Phase 6.3 source inventory. No Rust implementation,

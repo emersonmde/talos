@@ -847,3 +847,47 @@ cross-owner rejection, deferred-role rejection, local-queue preservation,
 classification=pi5-secondary-scheduler-service-loop-complete, and PASS. This
 remains a diagnostic proof surface, not a general secondary scheduler role or
 shared scheduler topology.
+
+## Phase 6.3 Shared Run-Queue And Migration Contract
+
+The shared run-queue and migration contract is accepted in
+docs/src/project/phase6-shared-runqueue-migration-contract.md. It is the
+implementation boundary that follows the accepted source inventory before any
+shared scheduler topology code may start.
+
+The contract keeps task mutation single-owner at every instant. A task has one
+owning PerCoreScheduler; a remote CPU may publish enqueue or migration intent
+only through an accepted shared structure, and the destination owner consumes
+that handoff from normal scheduler control flow before installing the task into
+its local RunnableQueue. Remote wake remains separate: RemoteWakeQueue still
+carries requests for already target-owned blocked tasks, not arbitrary remote
+enqueue or migration work.
+
+The first shared scheduler lock order is local IRQ save/mask, then SMP
+scheduler lock acquisition, then SMP lock release, then local IRQ restore. The
+accepted SpinLock lock_irqsave shape is the model for this ordering. No
+scheduler lock may be held across context switch, printing, UART polling,
+diagnostic command dispatch, allocation, blocking, sleeping, IPI send loops,
+timer reprogramming loops, migration callbacks, or hardware lab waits.
+
+Acquire/release ordering on the shared scheduler lock is the primary
+publication boundary for shared run-queue or migration entries. Producers must
+publish complete entries before releasing the lock; consumers must acquire the
+same lock before removing entries. smp_full_barrier is reserved for named
+handoff points that need an explicit full-system ordering edge outside the
+ordinary lock pair.
+
+The accepted migration states are owner-local, migration-reserved,
+shared-queued, destination-enqueued, and migration-rejected. A task must never
+be on two local runnable queues, and running-task migration remains deferred
+until multi-core preemption and asynchronous context capture are separately
+accepted. Failure reporting must distinguish stale generation, duplicate
+membership, unknown task, wrong owner, invalid CPU, full shared queue, full
+destination queue, unsupported task state, and deferred secondary role.
+
+This contract does not accept load balancing, work stealing, fairness or
+affinity policy, migration of currently running tasks, multi-core timer
+preemption, a general non-diagnostic secondary runtime role, Phase 7,
+filesystem, networking, SSH, shell behavior, RP1/PCIe, UART interrupt
+ownership, or DMA/cache-driver behavior. The next bounded implementation may
+add only the shared run-queue core and tests if it stays inside this contract.

@@ -52,6 +52,7 @@
 - [Phase 6 Secondary Scheduler Service Loop Source Inventory](project/phase6-secondary-scheduler-service-loop-source-inventory.md)
 - [Phase 6 Secondary Scheduler Service Loop Closeout](project/phase6-secondary-scheduler-service-loop-closeout-checkpoint.md)
 - [Phase 6 Shared Run-Queue and Migration Source Inventory](project/phase6-shared-runqueue-migration-source-inventory.md)
+- [Phase 6 Shared Run-Queue and Migration Contract](project/phase6-shared-runqueue-migration-contract.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

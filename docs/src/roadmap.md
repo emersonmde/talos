@@ -29,14 +29,16 @@ productionization-boundary, CPU-local scheduler service boundary,
 CPU-local scheduler service core, CPU-local scheduler service closeout,
 secondary scheduler service-loop source inventory, service-loop core, QEMU
 smoke, Pi 5 proof, service-loop closeout, and shared run-queue/migration source
-inventory tasks are accepted. The service core sequences
+inventory and contract tasks are accepted. The service core sequences
 target-owned remote wake drains, local runnable transitions, pending
 timer-preemption handling, CPU-local dispatch, and owner metadata refresh for
 one owning logical CPU; the accepted secondary loop now proves that a physical
 secondary may run one owner-local service cycle after accepted handoff state.
-The next bounded task should be a shared run-queue and migration contract
-before any shared topology implementation, load balancing,
-multi-core preemption, Phase 7, filesystem, networking, SSH, and shell work.
+The accepted shared run-queue/migration contract now defines ownership, lock
+ordering, memory-order, state-transition, and diagnostic boundaries. The next
+bounded implementation may be a shared run-queue core, but load balancing,
+multi-core preemption, Phase 7, filesystem, networking, SSH, and shell work
+remain deferred.
 
 Accepted status and historical completed facts:
 
@@ -397,15 +399,20 @@ Accepted status and historical completed facts:
   boundary, owner-published metadata model, SMP lock boundary, proof-routing
   surfaces, and migration blockers. The next bounded task should be the shared
   run-queue/migration contract before any implementation.
+- The Phase 6.3 shared run-queue and migration contract is accepted. It keeps
+  task mutation single-owner, separates remote wake from remote enqueue,
+  defines local-IRQ-then-SMP-lock ordering, names acquire/release publication
+  rules, specifies owner-local/reserved/shared-queued/destination-enqueued/
+  rejected migration states, and keeps load balancing and multi-core
+  preemption deferred.
 
 Blocked or pending:
 
-- The next explicit planning target is a bounded Phase 6.3 shared run-queue
-  and migration contract. Planning must remain before any shared run queue
-  implementation, migration implementation, load balancing,
-  multi-core preemption, userspace, descriptors, filesystem, networking, SSH,
-  shell behavior, UART interrupts, RP1/PCIe, or DMA/cache-coherent driver
-  policy starts.
+- The next explicit implementation target may be a bounded Phase 6.3 shared
+  run-queue core that stays within the accepted contract. Load balancing,
+  work stealing, multi-core preemption, userspace, descriptors, filesystem,
+  networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and
+  DMA/cache-coherent driver policy remain deferred.
 - Large raw accepted evidence remains in Git until external artifact storage or
   an explicit no-delete manifest-only cleanup is approved. Do not delete
   tracked accepted evidence during unrelated feature work.
@@ -732,7 +739,9 @@ and
 and
 [Phase 6 Secondary Scheduler Service Loop Closeout](project/phase6-secondary-scheduler-service-loop-closeout-checkpoint.md),
 and
-[Phase 6 Shared Run-Queue and Migration Source Inventory](project/phase6-shared-runqueue-migration-source-inventory.md).
+[Phase 6 Shared Run-Queue and Migration Source Inventory](project/phase6-shared-runqueue-migration-source-inventory.md),
+and
+[Phase 6 Shared Run-Queue and Migration Contract](project/phase6-shared-runqueue-migration-contract.md).
 The target-independent CPU-local scheduler service core is accepted in
 `tasks/2026-05-26-phase6-cpu-local-scheduler-service-core.md`.
 The target-independent secondary scheduler service-loop core is accepted in
