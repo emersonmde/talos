@@ -24,18 +24,18 @@ behavior remain deferred.
 
 The immediate frontier is Phase 6.3 productionization after the accepted
 CPU-local scheduler service closeout and secondary scheduler service-loop
-implementation/proofs. Evidence-retention, diagnostic-surface, roadmap-refresh,
+closeout checkpoint. Evidence-retention, diagnostic-surface, roadmap-refresh,
 productionization-boundary, CPU-local scheduler service boundary,
 CPU-local scheduler service core, CPU-local scheduler service closeout,
 secondary scheduler service-loop source inventory, service-loop core, QEMU
-smoke, and Pi 5 proof tasks are accepted. The service core sequences
+smoke, Pi 5 proof, and service-loop closeout tasks are accepted. The service core sequences
 target-owned remote wake drains, local runnable transitions, pending
 timer-preemption handling, CPU-local dispatch, and owner metadata refresh for
 one owning logical CPU; the accepted secondary loop now proves that a physical
 secondary may run one owner-local service cycle after accepted handoff state.
-The next bounded task should be the secondary scheduler service-loop closeout
-checkpoint before shared run queues, migration, load balancing, multi-core
-preemption, Phase 7, filesystem, networking, SSH, and shell work.
+The next bounded task should be a shared run-queue and migration source
+inventory before any shared topology implementation, load balancing,
+multi-core preemption, Phase 7, filesystem, networking, SSH, and shell work.
 
 Accepted status and historical completed facts:
 
@@ -384,15 +384,22 @@ Accepted status and historical completed facts:
   Pi 5 probe/proof surfaces were removed, validation hygiene was restored, the
   Pi 5 boot pipeline is split into named phases, and cross-module tests now
   live in owning modules.
+- The Phase 6.3 secondary scheduler service-loop closeout checkpoint is
+  accepted. It reconciles the source inventory, core implementation, QEMU
+  substitute smoke, and serialized Pi 5 hardware proof for one owner-local
+  secondary service cycle. The next bounded task should inventory shared
+  run-queue and migration requirements before any shared topology
+  implementation; load balancing, multi-core preemption, Phase 7, filesystem,
+  networking, SSH, and shell work remain deferred.
 
 Blocked or pending:
 
-- The next explicit planning target is a bounded Phase 6.3 productionization
-  or cleanup task after the CPU-local scheduler service core. Planning must
-  remain before any shared run queue implementation, migration, load
-  balancing, multi-core preemption, userspace, descriptors, filesystem,
-  networking, SSH, shell behavior, UART interrupts, RP1/PCIe, or
-  DMA/cache-coherent driver policy starts.
+- The next explicit planning target is a bounded Phase 6.3 shared run-queue
+  and migration source inventory. Planning must remain before any shared run
+  queue implementation, migration implementation, load balancing,
+  multi-core preemption, userspace, descriptors, filesystem, networking, SSH,
+  shell behavior, UART interrupts, RP1/PCIe, or DMA/cache-coherent driver
+  policy starts.
 - Large raw accepted evidence remains in Git until external artifact storage or
   an explicit no-delete manifest-only cleanup is approved. Do not delete
   tracked accepted evidence during unrelated feature work.
@@ -715,9 +722,15 @@ and
 and
 [Phase 6 CPU-Local Scheduler Service Closeout](project/phase6-cpu-local-scheduler-service-closeout-checkpoint.md),
 and
-[Phase 6 Secondary Scheduler Service Loop Source Inventory](project/phase6-secondary-scheduler-service-loop-source-inventory.md).
+[Phase 6 Secondary Scheduler Service Loop Source Inventory](project/phase6-secondary-scheduler-service-loop-source-inventory.md),
+and
+[Phase 6 Secondary Scheduler Service Loop Closeout](project/phase6-secondary-scheduler-service-loop-closeout-checkpoint.md).
 The target-independent CPU-local scheduler service core is accepted in
 `tasks/2026-05-26-phase6-cpu-local-scheduler-service-core.md`.
+The target-independent secondary scheduler service-loop core is accepted in
+`tasks/2026-05-26-phase6-secondary-scheduler-service-loop-core.md`, with
+QEMU substitute and serialized Pi 5 proof records retained as diagnostic
+gates.
 Before broader Phase 6.3 productionization, the accepted
 [Evidence Retention Policy](project/evidence-retention-policy.md) and
 [Diagnostic Surface Policy](project/diagnostic-surface-policy.md) govern which

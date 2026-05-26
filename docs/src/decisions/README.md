@@ -12,6 +12,45 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-26 - Secondary Scheduler Service Loop Closeout Accepted
+
+- Status: accepted as the Phase 6.3 secondary scheduler service-loop closeout
+  checkpoint. No Rust implementation, boot image, hardware run, shared run
+  queue, remote enqueue, task migration, load balancing, multi-core
+  preemption, Phase 7, filesystem, networking, SSH, shell, RP1/PCIe, UART
+  interrupt ownership, or DMA behavior was added by the checkpoint.
+- Context: The secondary scheduler service-loop source inventory,
+  SecondarySchedulerServiceLoop implementation, QEMU substitute smoke, and
+  serialized Pi 5 proof are accepted. They prove one owner-local secondary
+  service cycle after accepted handoff state while preserving interrupt
+  hot-path separation and diagnostic-surface boundaries.
+- Decision: Accept
+  docs/src/project/phase6-secondary-scheduler-service-loop-closeout-checkpoint.md
+  and tasks/2026-05-26-phase6-secondary-scheduler-service-loop-closeout-checkpoint.md.
+  The next bounded task should be
+  phase6-shared-runqueue-migration-source-inventory-20260526, a source
+  inventory only, before any shared topology implementation.
+- Evidence level: static reconciliation of accepted service-loop source
+  inventory, core, QEMU smoke, Pi 5 proof records/evidence, scheduler
+  architecture docs, roadmap, and decision log, plus mdBook validation and
+  whitespace inspection.
+- Validation: git status --short was clean before edits, git diff --check
+  passed, and mdbook build passed. Rust fmt/tests, QEMU smoke reruns, and
+  hardware runs were not required because this checkpoint changed only
+  Markdown documentation and durable task state.
+- Consequences: Talos has closed the secondary service-loop productionization
+  slice and may plan shared run-queue/migration source inventory next. Shared
+  run queue implementation, task migration implementation, load balancing,
+  multi-core preemption, Phase 7, filesystem, networking, SSH, shell behavior,
+  RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
+  deferred.
+- Alternatives considered: Start shared topology implementation immediately,
+  add more CPU-local service productionization, or prioritize queued cleanup.
+  A source inventory is the next conservative boundary because it can reconcile
+  CPU-local queues, remote wake ownership, metadata, secondary service-loop
+  entry, and IPI/timer recording before implementation. Existing cleanup
+  follow-ups remain queued or blocked under their own policy.
+
 ## 2026-05-26 - Secondary Scheduler Service Loop Source Inventory Accepted
 
 - Status: accepted as a Phase 6.3 documentation/source-inventory contract. No

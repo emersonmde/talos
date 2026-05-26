@@ -50,6 +50,7 @@
 - [Phase 6 CPU-Local Scheduler Service Boundary Source Inventory](project/phase6-cpu-local-scheduler-service-boundary-source-inventory.md)
 - [Phase 6 CPU-Local Scheduler Service Closeout](project/phase6-cpu-local-scheduler-service-closeout-checkpoint.md)
 - [Phase 6 Secondary Scheduler Service Loop Source Inventory](project/phase6-secondary-scheduler-service-loop-source-inventory.md)
+- [Phase 6 Secondary Scheduler Service Loop Closeout](project/phase6-secondary-scheduler-service-loop-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture
