@@ -28,13 +28,14 @@ closeout checkpoint. Evidence-retention, diagnostic-surface, roadmap-refresh,
 productionization-boundary, CPU-local scheduler service boundary,
 CPU-local scheduler service core, CPU-local scheduler service closeout,
 secondary scheduler service-loop source inventory, service-loop core, QEMU
-smoke, Pi 5 proof, and service-loop closeout tasks are accepted. The service core sequences
+smoke, Pi 5 proof, service-loop closeout, and shared run-queue/migration source
+inventory tasks are accepted. The service core sequences
 target-owned remote wake drains, local runnable transitions, pending
 timer-preemption handling, CPU-local dispatch, and owner metadata refresh for
 one owning logical CPU; the accepted secondary loop now proves that a physical
 secondary may run one owner-local service cycle after accepted handoff state.
-The next bounded task should be a shared run-queue and migration source
-inventory before any shared topology implementation, load balancing,
+The next bounded task should be a shared run-queue and migration contract
+before any shared topology implementation, load balancing,
 multi-core preemption, Phase 7, filesystem, networking, SSH, and shell work.
 
 Accepted status and historical completed facts:
@@ -391,12 +392,17 @@ Accepted status and historical completed facts:
   run-queue and migration requirements before any shared topology
   implementation; load balancing, multi-core preemption, Phase 7, filesystem,
   networking, SSH, and shell work remain deferred.
+- The Phase 6.3 shared run-queue and migration source inventory is accepted.
+  It names the owner-local runnable queue assumptions, target-owned remote wake
+  boundary, owner-published metadata model, SMP lock boundary, proof-routing
+  surfaces, and migration blockers. The next bounded task should be the shared
+  run-queue/migration contract before any implementation.
 
 Blocked or pending:
 
 - The next explicit planning target is a bounded Phase 6.3 shared run-queue
-  and migration source inventory. Planning must remain before any shared run
-  queue implementation, migration implementation, load balancing,
+  and migration contract. Planning must remain before any shared run queue
+  implementation, migration implementation, load balancing,
   multi-core preemption, userspace, descriptors, filesystem, networking, SSH,
   shell behavior, UART interrupts, RP1/PCIe, or DMA/cache-coherent driver
   policy starts.
@@ -724,7 +730,9 @@ and
 and
 [Phase 6 Secondary Scheduler Service Loop Source Inventory](project/phase6-secondary-scheduler-service-loop-source-inventory.md),
 and
-[Phase 6 Secondary Scheduler Service Loop Closeout](project/phase6-secondary-scheduler-service-loop-closeout-checkpoint.md).
+[Phase 6 Secondary Scheduler Service Loop Closeout](project/phase6-secondary-scheduler-service-loop-closeout-checkpoint.md),
+and
+[Phase 6 Shared Run-Queue and Migration Source Inventory](project/phase6-shared-runqueue-migration-source-inventory.md).
 The target-independent CPU-local scheduler service core is accepted in
 `tasks/2026-05-26-phase6-cpu-local-scheduler-service-core.md`.
 The target-independent secondary scheduler service-loop core is accepted in

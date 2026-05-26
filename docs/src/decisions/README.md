@@ -12,6 +12,44 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-26 - Shared Run-Queue and Migration Source Inventory Accepted
+
+- Status: accepted as a Phase 6.3 source inventory. No Rust implementation,
+  boot image, hardware run, shared run queue, remote enqueue, task migration,
+  load balancing, multi-core preemption, Phase 7, filesystem, networking,
+  SSH, shell, RP1/PCIe, UART interrupt ownership, or DMA behavior was added.
+- Context: The secondary scheduler service-loop closeout is accepted. Talos
+  has owner-local runnable queues, target-owned remote wake mailboxes,
+  CPU-local service sequencing, owner-published metadata, accepted SMP lock
+  primitives, and retained QEMU/Pi 5 diagnostic gates, but no shared scheduler
+  topology.
+- Decision: Accept
+  docs/src/project/phase6-shared-runqueue-migration-source-inventory.md and
+  tasks/2026-05-26-phase6-shared-runqueue-migration-source-inventory.md. The
+  next bounded task should be
+  phase6-shared-runqueue-migration-contract-20260526 before any shared
+  topology implementation.
+- Evidence level: static source/doc inventory across scheduler, SMP, SMP sync,
+  target proof routing, retained scripts, accepted task records, accepted
+  evidence summaries, roadmap, and decision log.
+- Validation: git status --short was clean before edits, git diff --check
+  passed, and mdbook build passed. Rust fmt/tests, QEMU reruns, and hardware
+  runs were not required because this task changed only Markdown documentation
+  and durable task state.
+- Consequences: The next design boundary is contract-first: global task
+  registry authority, shared run-queue structure, migration state machine,
+  remote enqueue/reschedule semantics, lock ordering, load-balancing inputs,
+  secondary production role, and validation strategy must be written down
+  before implementation. Shared run queue implementation, migration
+  implementation, load balancing, multi-core preemption, Phase 7, filesystem,
+  networking, SSH, shell behavior, RP1/PCIe, UART interrupt ownership, and
+  DMA/cache-driver policy remain deferred.
+- Alternatives considered: Start shared run-queue implementation immediately,
+  extend diagnostic service-loop proofs, or run cleanup first. The inventory
+  showed implementation would be premature without a contract for ownership
+  transfer, lock ordering, and remote enqueue semantics. Cleanup remains
+  queued or blocked under separate policy.
+
 ## 2026-05-26 - Secondary Scheduler Service Loop Closeout Accepted
 
 - Status: accepted as the Phase 6.3 secondary scheduler service-loop closeout
