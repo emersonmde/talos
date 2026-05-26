@@ -816,3 +816,13 @@ points. The service-loop boundary names the productionization owner for those
 accepted behaviors but deliberately keeps `SecondaryProductionDiagnostic` as
 the only accepted secondary production role until a later task defines a
 general non-diagnostic runtime role.
+
+The target-independent implementation is `SecondarySchedulerServiceLoop` in
+`src/scheduler.rs`. Its `run_once` entry point is a normal-control-flow
+secondary adapter around `CpuLocalSchedulerService::run_cycle`: it rejects
+boot-CPU use, cross-owner requests, and deferred secondary roles before
+consuming target-owned wake state, then runs one owner-local cycle and reports
+whether the cycle observed remote wake state, pending timer-preemption state,
+dispatch intent, and actual local work. The adapter does not create a target
+idle primitive, shared scheduler topology, remote enqueue queue, migration,
+load balancing, work stealing, or multi-core preemption policy.

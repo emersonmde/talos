@@ -967,6 +967,21 @@ pub enum CpuLocalSchedulerServiceError {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum SecondarySchedulerServiceLoopError {
+    BootCpuNotSecondary {
+        owner: LogicalCpuId,
+    },
+    WrongOwner {
+        owner: LogicalCpuId,
+        requester: LogicalCpuId,
+    },
+    ProductionDispatchDeferred {
+        owner: LogicalCpuId,
+    },
+    CpuLocal(CpuLocalSchedulerServiceError),
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct CpuLocalSchedulerServiceReport {
     remote_wake: Option<TaskId>,
     timer_preemption: Option<TaskId>,
@@ -989,6 +1004,38 @@ impl CpuLocalSchedulerServiceReport {
 
     pub const fn metadata(self) -> SchedulerTaskSnapshot {
         self.metadata
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct SecondarySchedulerServiceLoopReport {
+    cycle: CpuLocalSchedulerServiceReport,
+    observed_remote_wake: bool,
+    pending_timer_preemption: bool,
+    dispatch_requested: bool,
+}
+
+impl SecondarySchedulerServiceLoopReport {
+    pub const fn cycle(self) -> CpuLocalSchedulerServiceReport {
+        self.cycle
+    }
+
+    pub const fn observed_remote_wake(self) -> bool {
+        self.observed_remote_wake
+    }
+
+    pub const fn pending_timer_preemption(self) -> bool {
+        self.pending_timer_preemption
+    }
+
+    pub const fn dispatch_requested(self) -> bool {
+        self.dispatch_requested
+    }
+
+    pub const fn did_work(self) -> bool {
+        self.cycle.remote_wake().is_some()
+            || self.cycle.timer_preemption().is_some()
+            || self.cycle.dispatch().is_some()
     }
 }
 
@@ -1069,6 +1116,65 @@ impl CpuLocalSchedulerService {
             dispatch,
             metadata,
         })
+    }
+}
+
+pub struct SecondarySchedulerServiceLoop;
+
+impl SecondarySchedulerServiceLoop {
+    pub fn run_once<
+        const RUNNABLE_CAPACITY: usize,
+        const REMOTE_WAKE_CAPACITY: usize,
+        const TASK_CAPACITY: usize,
+        const CPU_CAPACITY: usize,
+    >(
+        requester: LogicalCpuId,
+        scheduler: &mut PerCoreScheduler<RUNNABLE_CAPACITY>,
+        remote_wake_queue: &mut RemoteWakeQueue<REMOTE_WAKE_CAPACITY>,
+        metadata: &mut SharedSchedulerMetadata<TASK_CAPACITY, CPU_CAPACITY>,
+        local_task: &mut Task,
+        current_task_for_timer_preemption: Option<&mut Task>,
+        pending_timer_preemption: bool,
+        dispatch_local_task: bool,
+    ) -> Result<SecondarySchedulerServiceLoopReport, SecondarySchedulerServiceLoopError> {
+        Self::ensure_secondary_owner(requester, scheduler)?;
+
+        let observed_remote_wake = !remote_wake_queue.is_empty();
+        let cycle = CpuLocalSchedulerService::run_cycle(
+            requester,
+            scheduler,
+            remote_wake_queue,
+            metadata,
+            local_task,
+            current_task_for_timer_preemption,
+            pending_timer_preemption,
+            dispatch_local_task,
+        )
+        .map_err(SecondarySchedulerServiceLoopError::CpuLocal)?;
+
+        Ok(SecondarySchedulerServiceLoopReport {
+            cycle,
+            observed_remote_wake,
+            pending_timer_preemption,
+            dispatch_requested: dispatch_local_task,
+        })
+    }
+
+    fn ensure_secondary_owner<const RUNNABLE_CAPACITY: usize>(
+        requester: LogicalCpuId,
+        scheduler: &PerCoreScheduler<RUNNABLE_CAPACITY>,
+    ) -> Result<(), SecondarySchedulerServiceLoopError> {
+        let owner = scheduler.owner();
+        if requester != owner {
+            return Err(SecondarySchedulerServiceLoopError::WrongOwner { owner, requester });
+        }
+        if owner == LogicalCpuId::BOOT {
+            return Err(SecondarySchedulerServiceLoopError::BootCpuNotSecondary { owner });
+        }
+        if scheduler.role() != SchedulerCoreRole::SecondaryProductionDiagnostic {
+            return Err(SecondarySchedulerServiceLoopError::ProductionDispatchDeferred { owner });
+        }
+        Ok(())
     }
 }
 
@@ -1286,9 +1392,10 @@ mod tests {
         LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError, ProcessOwnerId,
         ProductionDispatchError, RemoteWakePublishOutcome, RemoteWakeQueue, RemoteWakeRequest,
         RemoteWakeRequestError, RunnableQueue, RunnableQueueError, SchedulerCoreRole,
-        SharedSchedulerMetadata, SharedSchedulerMetadataError, SharedSchedulerMetadataLock,
-        SingleCoreScheduler, TargetWakeConsumptionError, Task, TaskId, TaskState,
-        TimerPreemptError, VoluntaryYieldError,
+        SecondarySchedulerServiceLoop, SecondarySchedulerServiceLoopError, SharedSchedulerMetadata,
+        SharedSchedulerMetadataError, SharedSchedulerMetadataLock, SingleCoreScheduler,
+        TargetWakeConsumptionError, Task, TaskId, TaskState, TimerPreemptError,
+        VoluntaryYieldError,
     };
 
     fn task_id(raw: u64) -> TaskId {
@@ -2174,6 +2281,213 @@ mod tests {
                 ProductionDispatchError::NoRunnableTask
             ))
         );
+    }
+
+    #[test_case]
+    fn secondary_scheduler_service_loop_rejects_wrong_owner_before_consuming_wake() {
+        let owner = LogicalCpuId::new(1);
+        let requester = LogicalCpuId::new(2);
+        let mut scheduler = PerCoreScheduler::<1>::production_secondary_diagnostic(owner);
+        let mut remote_wakes = RemoteWakeQueue::<1>::new(owner);
+        let mut metadata = SharedSchedulerMetadata::<1, 4>::new();
+        let mut task = Task::kernel_thread(task_id(50), kernel_stack(), context());
+        task.set_state(TaskState::Blocked);
+        metadata
+            .register_local_task(owner, &scheduler, &task)
+            .expect("task starts in metadata");
+        remote_wakes
+            .publish(LogicalCpuId::BOOT, owner, task.id())
+            .expect("remote wake publication succeeds");
+
+        assert_eq!(
+            SecondarySchedulerServiceLoop::run_once(
+                requester,
+                &mut scheduler,
+                &mut remote_wakes,
+                &mut metadata,
+                &mut task,
+                None,
+                false,
+                false,
+            ),
+            Err(SecondarySchedulerServiceLoopError::WrongOwner { owner, requester })
+        );
+        assert_eq!(remote_wakes.len(), 1);
+        assert_eq!(task.state(), TaskState::Blocked);
+    }
+
+    #[test_case]
+    fn secondary_scheduler_service_loop_rejects_deferred_secondary_role() {
+        let owner = LogicalCpuId::new(1);
+        let mut scheduler = PerCoreScheduler::<1>::deferred_secondary(owner);
+        let mut remote_wakes = RemoteWakeQueue::<1>::new(owner);
+        let mut metadata = SharedSchedulerMetadata::<1, 4>::new();
+        let mut task = Task::kernel_thread(task_id(51), kernel_stack(), context());
+        metadata
+            .register_local_task(owner, &scheduler, &task)
+            .expect("task starts in metadata");
+
+        assert_eq!(
+            SecondarySchedulerServiceLoop::run_once(
+                owner,
+                &mut scheduler,
+                &mut remote_wakes,
+                &mut metadata,
+                &mut task,
+                None,
+                false,
+                false,
+            ),
+            Err(SecondarySchedulerServiceLoopError::ProductionDispatchDeferred { owner })
+        );
+    }
+
+    #[test_case]
+    fn secondary_scheduler_service_loop_reports_no_work_after_metadata_refresh() {
+        let owner = LogicalCpuId::new(1);
+        let mut scheduler = PerCoreScheduler::<1>::production_secondary_diagnostic(owner);
+        let mut remote_wakes = RemoteWakeQueue::<1>::new(owner);
+        let mut metadata = SharedSchedulerMetadata::<1, 4>::new();
+        let mut task = Task::kernel_thread(task_id(52), kernel_stack(), context());
+        metadata
+            .register_local_task(owner, &scheduler, &task)
+            .expect("task starts in metadata");
+
+        let report = SecondarySchedulerServiceLoop::run_once(
+            owner,
+            &mut scheduler,
+            &mut remote_wakes,
+            &mut metadata,
+            &mut task,
+            None,
+            false,
+            false,
+        )
+        .expect("idle service loop cycle refreshes metadata");
+
+        assert!(!report.observed_remote_wake());
+        assert!(!report.pending_timer_preemption());
+        assert!(!report.dispatch_requested());
+        assert!(!report.did_work());
+        assert_eq!(report.cycle().metadata().task_id(), task.id());
+        assert_eq!(report.cycle().metadata().generation(), 2);
+    }
+
+    #[test_case]
+    fn secondary_scheduler_service_loop_consumes_remote_wake_without_dispatch() {
+        let owner = LogicalCpuId::new(1);
+        let mut scheduler = PerCoreScheduler::<2>::production_secondary_diagnostic(owner);
+        let mut remote_wakes = RemoteWakeQueue::<1>::new(owner);
+        let mut metadata = SharedSchedulerMetadata::<1, 4>::new();
+        let mut task = Task::kernel_thread(task_id(53), kernel_stack(), context());
+        task.set_state(TaskState::Blocked);
+        metadata
+            .register_local_task(owner, &scheduler, &task)
+            .expect("task starts in metadata");
+        remote_wakes
+            .publish(LogicalCpuId::BOOT, owner, task.id())
+            .expect("remote wake publication succeeds");
+
+        let report = SecondarySchedulerServiceLoop::run_once(
+            owner,
+            &mut scheduler,
+            &mut remote_wakes,
+            &mut metadata,
+            &mut task,
+            None,
+            false,
+            false,
+        )
+        .expect("remote wake service loop cycle completes");
+
+        assert!(report.observed_remote_wake());
+        assert!(report.did_work());
+        assert_eq!(report.cycle().remote_wake(), Some(task.id()));
+        assert_eq!(report.cycle().dispatch(), None);
+        assert_eq!(task.state(), TaskState::Runnable);
+        assert!(scheduler.scheduler().runnable().contains(task.id()));
+        assert!(report.cycle().metadata().runnable_on_owner());
+        assert!(remote_wakes.is_empty());
+    }
+
+    #[test_case]
+    fn secondary_scheduler_service_loop_dispatches_local_runnable_task() {
+        let owner = LogicalCpuId::new(2);
+        let mut scheduler = PerCoreScheduler::<1>::production_secondary_diagnostic(owner);
+        let mut remote_wakes = RemoteWakeQueue::<1>::new(owner);
+        let mut metadata = SharedSchedulerMetadata::<1, 4>::new();
+        let mut task = Task::kernel_thread(task_id(54), kernel_stack(), context());
+        scheduler
+            .local_scheduler_mut(owner)
+            .expect("owner mutates local scheduler")
+            .make_runnable(&mut task)
+            .expect("local queue accepts task");
+        metadata
+            .register_local_task(owner, &scheduler, &task)
+            .expect("task starts in metadata");
+
+        let report = SecondarySchedulerServiceLoop::run_once(
+            owner,
+            &mut scheduler,
+            &mut remote_wakes,
+            &mut metadata,
+            &mut task,
+            None,
+            false,
+            true,
+        )
+        .expect("dispatch service loop cycle completes");
+
+        assert!(report.dispatch_requested());
+        assert!(report.did_work());
+        assert_eq!(report.cycle().dispatch(), Some(task.id()));
+        assert_eq!(task.state(), TaskState::Running);
+        assert_eq!(scheduler.current_task(), Some(task.id()));
+        assert!(report.cycle().metadata().current_on_owner());
+    }
+
+    #[test_case]
+    fn secondary_scheduler_service_loop_handles_timer_preemption_before_dispatch() {
+        let owner = LogicalCpuId::new(3);
+        let mut scheduler = PerCoreScheduler::<2>::production_secondary_diagnostic(owner);
+        let mut remote_wakes = RemoteWakeQueue::<1>::new(owner);
+        let mut metadata = SharedSchedulerMetadata::<1, 4>::new();
+        let mut current = Task::kernel_thread(task_id(55), kernel_stack(), context());
+        let mut next = Task::kernel_thread(task_id(56), kernel_stack(), context());
+        current.set_state(TaskState::Running);
+        next.set_state(TaskState::Blocked);
+        scheduler
+            .set_current_task(owner, current.id())
+            .expect("owner sets current task");
+        metadata
+            .register_local_task(owner, &scheduler, &next)
+            .expect("next task starts in metadata");
+        remote_wakes
+            .publish(LogicalCpuId::BOOT, owner, next.id())
+            .expect("remote wake publication succeeds");
+
+        let report = SecondarySchedulerServiceLoop::run_once(
+            owner,
+            &mut scheduler,
+            &mut remote_wakes,
+            &mut metadata,
+            &mut next,
+            Some(&mut current),
+            true,
+            true,
+        )
+        .expect("timer-preemption service loop cycle completes");
+
+        assert!(report.pending_timer_preemption());
+        assert!(report.did_work());
+        assert_eq!(report.cycle().remote_wake(), Some(next.id()));
+        assert_eq!(report.cycle().timer_preemption(), Some(next.id()));
+        assert_eq!(report.cycle().dispatch(), None);
+        assert_eq!(current.state(), TaskState::Runnable);
+        assert_eq!(next.state(), TaskState::Running);
+        assert_eq!(scheduler.current_task(), Some(next.id()));
+        assert_eq!(scheduler.scheduler().runnable().front(), Some(current.id()));
+        assert!(report.cycle().metadata().current_on_owner());
     }
 
     #[test_case]
