@@ -21,11 +21,16 @@ validation gates, not a general multi-core runtime: shared run queues, remote
 enqueue, task migration, load balancing, multi-core preemption, userspace,
 filesystem, networking, SSH, and shell behavior remain deferred.
 
-The immediate frontier is repo-health and productionization planning around the
-accepted Phase 6.3 boundary. Evidence-retention and diagnostic-surface audits
-are accepted; the next supervisor-planned implementation work should start from
-the queued productionization boundary inventory, not from broad scheduler
-migration or later roadmap phases.
+The immediate frontier is Phase 6.3 productionization planning around the
+accepted CPU-local scheduler boundary. Evidence-retention, diagnostic-surface,
+roadmap-refresh, and productionization-boundary inventories are accepted. The
+next recommended bounded task is a source inventory and contract for a
+CPU-local scheduler service boundary that orders timer-preemption requests,
+target-owned remote wake drains, local runnable transitions, production
+secondary dispatch entry, and owner metadata refresh. Broad shared run queues,
+remote enqueue, migration, load balancing, multi-core preemption, Phase 7,
+filesystem, networking, SSH, and shell work remain deferred until that boundary
+is explicitly planned and accepted.
 
 Accepted status and historical completed facts:
 

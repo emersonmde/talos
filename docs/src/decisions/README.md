@@ -12,6 +12,48 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-26 - Productionization Boundary Inventory Accepted
+
+- Status: accepted as a source-backed repo-health and productionization
+  planning checkpoint. No Rust implementation, boot image, hardware run, shared
+  run queue, migration, load balancing, multi-core preemption, Phase 7,
+  filesystem, networking, SSH, shell, RP1/PCIe, UART interrupt ownership, or
+  DMA behavior was added.
+- Context: Phase 6.3 now has accepted diagnostic evidence for secondary
+  production dispatch, raw SGI/IPI delivery, remote wake requests,
+  target-owned local runnable transitions, and shared scheduler metadata on
+  QEMU and Pi 5. The roadmap also has accepted evidence-retention and
+  diagnostic-surface audits, so the remaining question is which production
+  boundary should come next without overstating diagnostic slices as a general
+  OS runtime.
+- Decision: Accept
+  `tasks/2026-05-25-talos-productionization-boundary-inventory.md`. The next
+  recommended task is
+  `phase6-cpu-local-scheduler-service-boundary-source-inventory-20260526`, a
+  documentation/source-inventory contract for ordering timer-preemption request
+  handling, target-owned remote wake drains, local runnable transitions,
+  production secondary dispatch entry, and owner metadata refresh.
+- Evidence level: static source/doc review of scheduler, SMP sync, wakeup/IPI,
+  console/TTY, diagnostic command-channel, roadmap, diagnostic-surface,
+  evidence-retention, closeout, decision, and task records, plus mdBook
+  validation and whitespace inspection.
+- Validation: git status --short was clean before edits, git diff --check
+  passed, and mdbook build passed. Rust fmt/tests and hardware runs were not
+  required because the task changed only Markdown documentation and durable task
+  state.
+- Consequences: Shared run queues, remote enqueue queues, task migration, load
+  balancing, work stealing, multi-core preemption, Phase 7, filesystem,
+  networking, SSH, shell behavior, RP1/PCIe, UART interrupt ownership, and
+  DMA/cache-driver policy remain deferred. Existing evidence and diagnostic
+  cleanup follow-ups remain separately queued or blocked by their own policy.
+- Alternatives considered: Jump directly to shared run-queue or task migration
+  inventory, productize the diagnostic command channel into a shell-like
+  surface, or prioritize evidence/archive cleanup before scheduler
+  productionization. Shared queues and migration would skip the missing
+  CPU-local service ordering; command productization belongs after descriptor
+  and scheduler-blocking TTY semantics; evidence cleanup can proceed separately
+  without blocking the next scheduler boundary.
+
 ## 2026-05-25 - Phase 6.3 Shared Scheduler Metadata Closeout Accepted
 
 - Status: accepted as the closeout checkpoint for the bounded shared scheduler
