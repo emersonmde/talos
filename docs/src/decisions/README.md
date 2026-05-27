@@ -3347,3 +3347,36 @@ ADR template:
   QEMU substitute proof, Pi 5 hardware proof, non-diagnostic secondary runtime,
   running-task migration, work stealing, and general remote reschedule. The
   next bounded task should be phase6-multicore-preemption-core-20260527.
+
+## 2026-05-27 - Obsolete Diagnostic Bloat Removal Accepted
+
+- Status: accepted as repository-health cleanup before the Phase 6.3
+  multi-core preemption core. No scheduler feature, hardware proof, Phase 7,
+  filesystem, networking, SSH, shell, RP1/PCIe, UART interrupt ownership, or
+  DMA behavior was added.
+- Context: The full obsolete-bloat inventory classified the historical QEMU
+  secondary-core discriminator and old Pi 5 allocator, exception, panic, and
+  translation-fault proof paths as remove-now. Accepted evidence summaries
+  already preserve their classifications and artifact facts.
+- Decision: Accept talos-obsolete-bloat-removal-sweep-20260527. Delete 20
+  obsolete scripts, remove 18 boot-scenario registry entries, remove the
+  QEMU discriminator dispatch/function, and simplify the Pi 5 boot,
+  diagnostics, exception, and vector paths back to retained active behavior.
+- Evidence level: static inspection, fmt/lint/typecheck, no_std unit tests,
+  QEMU/substitute regression gates, documentation build, and whitespace
+  inspection. Hardware was not required because no physical claim changed.
+- Validation: cargo fmt --all -- --check, cargo -Zjson-target-spec test with
+  147 no_std tests, scripts/qemu-smoke.sh,
+  scripts/qemu-timer-preemption-smoke.sh,
+  scripts/qemu-secondary-scheduler-service-loop-smoke.sh,
+  scripts/qemu-shared-runqueue-migration-smoke.sh,
+  scripts/qemu-load-balancing-smoke.sh, stale-reference rg checks over
+  build.rs/src/scripts, git diff --check, and mdbook build passed.
+- Rationale: Removing stale proof-only paths before multi-core preemption
+  reduces cfg routing and boot-scenario ambiguity without weakening accepted
+  evidence. Current Phase 4/5 Pi 5 proof scripts and Phase 6 QEMU/Pi 5
+  scheduler gates remain retained until replaced by a named later task.
+- Risks: Historical task and decision records still mention retired paths as
+  accepted evidence; those records are intentionally preserved. Future cleanup
+  should continue to distinguish executable/current validation surfaces from
+  historical evidence summaries.

@@ -206,46 +206,7 @@ pub extern "C" fn rust_irq_handler(
 }
 
 #[unsafe(no_mangle)]
-#[cfg(all(
-    talos_target_rpi5_bcm2712,
-    talos_boot_scenario = "rpi5_exception_return"
-))]
-pub extern "C" fn rust_exception_handler(
-    esr: u64,
-    elr: u64,
-    far: u64,
-    vector: u64,
-    spsr: u64,
-    saved_frame: *const ExceptionFrame,
-) -> u64 {
-    let vector = ExceptionVector::from(vector);
-
-    println!();
-    println!("talos exception: {}", vector.name());
-    println!(
-        "exception-info: esr={:#018x} elr={:#018x} far={:#018x}",
-        esr, elr, far
-    );
-    write_exception_class(esr);
-    write_exception_context(spsr, saved_frame);
-    println!("talos exception: resume elr={:#018x}", elr.wrapping_add(4));
-
-    if (esr >> 26) != 0x3c {
-        println!("talos exception: resume rejected");
-        crate::target::rpi5::wait_uart10_empty_early_phase();
-        crate::arch::aarch64::halt()
-    }
-
-    crate::target::rpi5::wait_uart10_empty_early_phase();
-    elr.wrapping_add(4)
-}
-
-#[unsafe(no_mangle)]
-#[cfg(all(
-    talos_target_rpi5_bcm2712,
-    not(talos_boot_scenario = "rpi5_exception_report"),
-    not(talos_boot_scenario = "rpi5_exception_return")
-))]
+#[cfg(talos_target_rpi5_bcm2712)]
 pub extern "C" fn rust_exception_handler(
     esr: u64,
     elr: u64,
@@ -269,10 +230,7 @@ pub extern "C" fn rust_exception_handler(
     crate::arch::aarch64::halt()
 }
 
-#[cfg(all(
-    talos_target_rpi5_bcm2712,
-    not(talos_boot_scenario = "rpi5_exception_report")
-))]
+#[cfg(talos_target_rpi5_bcm2712)]
 fn write_exception_class(esr: u64) {
     crate::target::console::write_static("exception-class: ");
     crate::target::console::write_static(exception_class_name(esr));
@@ -281,18 +239,12 @@ fn write_exception_class(esr: u64) {
     crate::target::console::write_static("\n");
 }
 
-#[cfg(all(
-    talos_target_rpi5_bcm2712,
-    not(talos_boot_scenario = "rpi5_exception_report")
-))]
+#[cfg(talos_target_rpi5_bcm2712)]
 fn exception_class(esr: u64) -> u64 {
     (esr >> 26) & 0x3f
 }
 
-#[cfg(all(
-    talos_target_rpi5_bcm2712,
-    not(talos_boot_scenario = "rpi5_exception_report")
-))]
+#[cfg(talos_target_rpi5_bcm2712)]
 fn exception_class_name(esr: u64) -> &'static str {
     let ec = exception_class(esr);
     if ec == 0x00 {
@@ -314,10 +266,7 @@ fn exception_class_name(esr: u64) -> &'static str {
     }
 }
 
-#[cfg(all(
-    talos_target_rpi5_bcm2712,
-    not(talos_boot_scenario = "rpi5_exception_report")
-))]
+#[cfg(talos_target_rpi5_bcm2712)]
 fn write_exception_context(spsr: u64, saved_frame: *const ExceptionFrame) {
     crate::target::console::write_static("exception-status: spsr=");
     crate::target::console::write_hex_u64(spsr);
@@ -343,10 +292,7 @@ fn write_exception_context(spsr: u64, saved_frame: *const ExceptionFrame) {
     );
 }
 
-#[cfg(all(
-    talos_target_rpi5_bcm2712,
-    not(talos_boot_scenario = "rpi5_exception_report")
-))]
+#[cfg(talos_target_rpi5_bcm2712)]
 fn write_saved_register_line(prefix: &str, frame: &ExceptionFrame, start: usize, end: usize) {
     crate::target::console::write_static(prefix);
     let mut index = start;
@@ -358,17 +304,6 @@ fn write_saved_register_line(prefix: &str, frame: &ExceptionFrame, start: usize,
         index += 1;
     }
     crate::target::console::write_static("\n");
-}
-
-#[unsafe(no_mangle)]
-#[cfg(all(
-    talos_target_rpi5_bcm2712,
-    talos_boot_scenario = "rpi5_exception_report"
-))]
-pub extern "C" fn rust_exception_handler(esr: u64, elr: u64, far: u64, vector: u64) -> ! {
-    write_rpi5_exception_report(esr, elr, far, vector);
-    crate::target::rpi5::wait_uart10_empty_early_phase();
-    rpi5_system_reset();
 }
 
 #[unsafe(no_mangle)]
@@ -391,39 +326,6 @@ pub extern "C" fn rust_exception_handler(
     );
 
     crate::arch::aarch64::halt()
-}
-
-#[cfg(all(
-    talos_target_rpi5_bcm2712,
-    talos_boot_scenario = "rpi5_exception_report"
-))]
-fn write_rpi5_exception_report(esr: u64, elr: u64, far: u64, vector: u64) {
-    crate::target::console::write_static("TALOS: rust-exception vector=");
-    crate::target::console::write_hex_u64(vector);
-    crate::target::console::write_static(" esr=");
-    crate::target::console::write_hex_u64(esr);
-    crate::target::console::write_static(" elr=");
-    crate::target::console::write_hex_u64(elr);
-    crate::target::console::write_static(" far=");
-    crate::target::console::write_hex_u64(far);
-    crate::target::console::write_static("\n");
-}
-
-#[cfg(all(
-    talos_target_rpi5_bcm2712,
-    talos_boot_scenario = "rpi5_exception_report"
-))]
-fn rpi5_system_reset() -> ! {
-    unsafe {
-        core::arch::asm!(
-            "ldr x0, =0x84000009",
-            "smc #0",
-            "1:",
-            "wfe",
-            "b 1b",
-            options(noreturn)
-        );
-    }
 }
 
 #[cfg(test)]

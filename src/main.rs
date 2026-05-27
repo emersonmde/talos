@@ -8,22 +8,6 @@
     all(
         talos_target_rpi5_bcm2712,
         any(
-            talos_boot_scenario = "rpi5_exception_report",
-            talos_boot_scenario = "rpi5_normal_exception_report",
-            talos_boot_scenario = "rpi5_undefined_instruction_report",
-            talos_boot_scenario = "rpi5_data_abort_report",
-            talos_boot_scenario = "rpi5_translation_fault",
-            talos_boot_scenario = "rpi5_current_sp0_sync",
-            talos_boot_scenario = "rpi5_exception_return",
-            talos_boot_scenario = "rpi5_panic_report",
-            talos_boot_scenario = "rpi5_full_panic_info",
-            talos_boot_scenario = "rpi5_nested_panic",
-            talos_boot_scenario = "rpi5_alloc_oom",
-            talos_boot_scenario = "rpi5_realloc_growth",
-            talos_boot_scenario = "rpi5_vec_growth",
-            talos_boot_scenario = "rpi5_string_growth",
-            talos_boot_scenario = "rpi5_alloc_format",
-            talos_boot_scenario = "rpi5_page_frame_reuse",
             talos_boot_scenario = "rpi5_timer_preemption",
             talos_boot_scenario = "rpi5_diagnostic_command_channel",
             talos_boot_scenario = "rpi5_psci_secondary_core_alive",
@@ -43,7 +27,6 @@
         any(
             talos_boot_scenario = "qemu_polling_tty_rx",
             talos_boot_scenario = "qemu_diagnostic_command_channel",
-            talos_boot_scenario = "qemu_secondary_core_discriminator",
             talos_boot_scenario = "qemu_secondary_core_workload",
             talos_boot_scenario = "qemu_smp_lock_contention",
             talos_boot_scenario = "qemu_per_core_scheduler_ownership",
@@ -126,13 +109,6 @@ impl PanicInProgress {
         Self(core::cell::UnsafeCell::new(false))
     }
 
-    #[cfg(talos_boot_scenario = "rpi5_nested_panic")]
-    pub(crate) fn prearm(&self) {
-        unsafe {
-            core::ptr::write_volatile(self.0.get(), true);
-        }
-    }
-
     fn enter(&self) -> bool {
         unsafe {
             let was_in_progress = core::ptr::read_volatile(self.0.get());
@@ -190,36 +166,6 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
     kernel_main(&boot_info)
 }
 
-#[cfg_attr(
-    any(
-        all(talos_target_rpi5_bcm2712, talos_boot_scenario = "rpi5_panic_report"),
-        all(
-            talos_target_rpi5_bcm2712,
-            talos_boot_scenario = "rpi5_full_panic_info"
-        ),
-        all(
-            talos_target_rpi5_bcm2712,
-            talos_boot_scenario = "rpi5_normal_exception_report"
-        ),
-        all(
-            talos_target_rpi5_bcm2712,
-            talos_boot_scenario = "rpi5_undefined_instruction_report"
-        ),
-        all(
-            talos_target_rpi5_bcm2712,
-            talos_boot_scenario = "rpi5_data_abort_report"
-        ),
-        all(
-            talos_target_rpi5_bcm2712,
-            talos_boot_scenario = "rpi5_translation_fault"
-        ),
-        all(
-            talos_target_rpi5_bcm2712,
-            talos_boot_scenario = "rpi5_current_sp0_sync"
-        ),
-    ),
-    allow(unreachable_code, unused_variables)
-)]
 #[cfg(not(test))]
 fn kernel_main(boot_info: &BootInfo) -> ! {
     #[cfg(talos_target_rpi5_bcm2712)]
@@ -331,14 +277,6 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
-            #[cfg(talos_boot_scenario = "qemu_secondary_core_discriminator")]
-            {
-                if target::qemu_virt::run_secondary_core_discriminator() {
-                    target::qemu::exit_success();
-                }
-                target::qemu::exit_failure();
-            }
-
             #[cfg(talos_boot_scenario = "qemu_diagnostic_command_channel")]
             {
                 if target::qemu_virt::run_diagnostic_command_channel_smoke() {
@@ -392,7 +330,6 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_boot_scenario = "qemu_timer_preemption",
                 talos_boot_scenario = "qemu_scheduler_yield",
                 talos_boot_scenario = "qemu_context_switch",
-                talos_boot_scenario = "qemu_secondary_core_discriminator",
                 talos_boot_scenario = "qemu_secondary_core_workload",
                 talos_boot_scenario = "qemu_smp_lock_contention",
                 talos_boot_scenario = "qemu_per_core_scheduler_ownership",
@@ -412,7 +349,6 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_boot_scenario = "qemu_timer_preemption",
                 talos_boot_scenario = "qemu_scheduler_yield",
                 talos_boot_scenario = "qemu_context_switch",
-                talos_boot_scenario = "qemu_secondary_core_discriminator",
                 talos_boot_scenario = "qemu_secondary_core_workload",
                 talos_boot_scenario = "qemu_smp_lock_contention",
                 talos_boot_scenario = "qemu_per_core_scheduler_ownership",
@@ -436,10 +372,6 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
 }
 
 #[panic_handler]
-#[cfg_attr(
-    all(talos_target_rpi5_bcm2712, talos_boot_scenario = "rpi5_nested_panic"),
-    allow(unreachable_code, unused_variables)
-)]
 fn panic(info: &PanicInfo<'_>) -> ! {
     #[cfg(talos_target_rpi5_bcm2712)]
     {

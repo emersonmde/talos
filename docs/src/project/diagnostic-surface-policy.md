@@ -7,11 +7,11 @@ ordinary product behavior or tests, or be retired by an explicit cleanup task.
 
 ## Current Inventory
 
-The 2026-05-25 audit inspected Rust cfg paths, boot roles, scripts, project
-docs, and accepted task records. The current surface is:
+The 2026-05-27 removal sweep retired obsolete proof-only paths identified by
+the full inventory. The current surface is:
 
-- 74 scripts total.
-- 20 QEMU scripts under scripts/qemu-*.sh, including the shared QEMU runner.
+- 54 scripts total.
+- 19 QEMU scripts under scripts/qemu-*.sh, including the shared QEMU runner.
 - 10 shared proof infrastructure scripts: objcopy, QEMU runner, Pi 5 boot
   image/tree helpers, TFTP cursor/delta helpers, archive review, and format
   guard checks.
@@ -19,19 +19,17 @@ docs, and accepted task records. The current surface is:
   SMP locks, cross-core IPI, remote wake, production secondary dispatch,
   secondary scheduler service loop, shared scheduler metadata, shared
   run-queue migration, and load balancing.
-- 19 old Pi 5 diagnostic image/tree scripts for allocator, exception, panic,
-  and translation-fault proof paths.
 - 4 older Phase 4/5 Pi 5 proof scripts for timer IRQ, timer preemption,
   UART10 polling RX, and diagnostic-command-channel behavior.
-- 49 named boot scenarios in build.rs.
+- 31 named boot scenarios in build.rs.
 - Rust cfg-gated QEMU diagnostics in src/target/qemu_virt.rs and dispatch
   routing in src/main.rs.
 - Rust cfg-gated Pi 5 proof and diagnostic paths in src/target/rpi5.rs,
   src/boot/rpi5.rs, and src/diagnostics/rpi5.rs.
 
-The 2026-05-27 full inventory classifies surfaces as keep-active,
-promote-to-real-test-or-feature, remove-now, or defer-with-owner-and-expiry in
-tasks/2026-05-27-talos-obsolete-bloat-full-inventory.md.
+The full inventory and removal sweep are recorded in
+tasks/2026-05-27-talos-obsolete-bloat-full-inventory.md and
+tasks/2026-05-27-talos-obsolete-bloat-removal-sweep.md.
 
 ## Retained Gates
 
@@ -76,17 +74,15 @@ task summary, classification, and artifact digests.
 Some diagnostics are still useful, but should not keep growing as proof-only
 surface:
 
-- QEMU secondary-core discriminator paths are remove-now cleanup surfaces after
-  the accepted secondary-core, scheduler service-loop, migration, and
-  load-balancing checkpoints.
 - Pi 5 timer, UART, and diagnostic-command proof scripts are retained as
   Phase 4/5 hardware reproducibility gates until a later console/timer
   checkpoint promotes equivalent always-on diagnostics or names replacements.
-- Allocator, string, vec, realloc, exception, panic, and translation-fault
-  Pi 5 diagnostic image scripts are remove-now cleanup surfaces for the
-  bounded obsolete-bloat removal sweep. Preserve accepted summaries,
-  classification strings, and artifact digests in task records, but delete the
-  proof-only scripts, boot scenarios, and cfg-gated production source paths.
+- The historical QEMU secondary-core discriminator and the old Pi 5 allocator,
+  string, vec, realloc, exception, panic, and translation-fault diagnostic
+  image/tree paths are retired. Accepted summaries, classification strings,
+  and artifact digests remain in task records, but the proof-only scripts,
+  boot scenarios, assembly branches, and cfg-gated production source paths are
+  deleted.
 
 ## Retirement Rule
 

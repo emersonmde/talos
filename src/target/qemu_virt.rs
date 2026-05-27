@@ -44,7 +44,6 @@ use crate::scheduler::{
     RemoteWakeQueue, SecondarySchedulerServiceLoop, SecondarySchedulerServiceLoopError,
 };
 #[cfg(not(any(
-    talos_boot_scenario = "qemu_secondary_core_discriminator",
     talos_boot_scenario = "qemu_secondary_core_workload",
     talos_boot_scenario = "qemu_smp_lock_contention",
     talos_boot_scenario = "qemu_per_core_scheduler_ownership",
@@ -58,7 +57,6 @@ use crate::smp::MAX_CORES;
 #[cfg(talos_boot_scenario = "qemu_secondary_core_workload")]
 use crate::smp::SECONDARY_CORE_WORKLOAD_TARGET;
 #[cfg(any(
-    talos_boot_scenario = "qemu_secondary_core_discriminator",
     talos_boot_scenario = "qemu_secondary_core_workload",
     talos_boot_scenario = "qemu_smp_lock_contention",
     talos_boot_scenario = "qemu_per_core_scheduler_ownership",
@@ -100,7 +98,6 @@ const GICC_BASE: usize = 0x0801_0000;
 const EL2_PHYSICAL_TIMER_INTID: u32 = 26;
 const TIMER_IRQ_WAIT_LIMIT: usize = 1_000_000;
 #[cfg(any(
-    talos_boot_scenario = "qemu_secondary_core_discriminator",
     talos_boot_scenario = "qemu_secondary_core_workload",
     talos_boot_scenario = "qemu_smp_lock_contention",
     talos_boot_scenario = "qemu_per_core_scheduler_ownership",
@@ -169,7 +166,6 @@ static UNEXPECTED_GIC_IRQ_COUNT: AtomicU64 = AtomicU64::new(0);
 static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
 
 #[cfg(any(
-    talos_boot_scenario = "qemu_secondary_core_discriminator",
     talos_boot_scenario = "qemu_secondary_core_workload",
     talos_boot_scenario = "qemu_smp_lock_contention",
     talos_boot_scenario = "qemu_per_core_scheduler_ownership",
@@ -544,7 +540,6 @@ pub const fn qemu_logical_cpu_from_mpidr_affinity(affinity: u64) -> Option<usize
 }
 
 #[cfg(any(
-    talos_boot_scenario = "qemu_secondary_core_discriminator",
     talos_boot_scenario = "qemu_secondary_core_workload",
     talos_boot_scenario = "qemu_smp_lock_contention",
     talos_boot_scenario = "qemu_per_core_scheduler_ownership",
@@ -562,7 +557,6 @@ fn secondary_stack_layout() -> CoreStackLayout {
 }
 
 #[cfg(any(
-    talos_boot_scenario = "qemu_secondary_core_discriminator",
     talos_boot_scenario = "qemu_secondary_core_workload",
     talos_boot_scenario = "qemu_smp_lock_contention",
     talos_boot_scenario = "qemu_per_core_scheduler_ownership",
@@ -577,7 +571,6 @@ fn secondary_state_name(state: u64) -> &'static str {
 }
 
 #[cfg(any(
-    talos_boot_scenario = "qemu_secondary_core_discriminator",
     talos_boot_scenario = "qemu_secondary_core_workload",
     talos_boot_scenario = "qemu_smp_lock_contention",
     talos_boot_scenario = "qemu_per_core_scheduler_ownership",
@@ -632,7 +625,6 @@ pub fn services(boot_info: &BootInfo) -> TargetServices {
 }
 
 #[cfg(any(
-    talos_boot_scenario = "qemu_secondary_core_discriminator",
     talos_boot_scenario = "qemu_secondary_core_workload",
     talos_boot_scenario = "qemu_smp_lock_contention",
     talos_boot_scenario = "qemu_per_core_scheduler_ownership",
@@ -2264,107 +2256,6 @@ fn run_smp_lock_contention_secondary(core_state: &smp::PerCoreState, logical_cpu
 
     core_state.mark_workload_complete(progress);
     core_state.clean_to_poc();
-}
-
-#[cfg(talos_boot_scenario = "qemu_secondary_core_discriminator")]
-pub fn run_secondary_core_discriminator() -> bool {
-    smp::reset_secondary_core_states();
-
-    let boot_mpidr = aarch64::mpidr_el1();
-    let boot_affinity = aarch64::mpidr_affinity(boot_mpidr);
-    let boot_logical = qemu_logical_cpu_from_mpidr_affinity(boot_affinity);
-    let entry = talos_aarch64_qemu_secondary_entry as *const () as usize;
-    let stack_layout = secondary_stack_layout();
-    let stack_base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
-    let stack_end = core::ptr::addr_of!(talos_secondary_core_stacks_end) as usize;
-
-    crate::println!(
-        "qemu-secondary-core-discriminator: start conduit=smc cores={} boot-mpidr={:#018x} boot-affinity={:#x} boot-logical={:?} entry={:#018x} stack-range=[{:#018x},{:#018x})",
-        MAX_CORES,
-        boot_mpidr,
-        boot_affinity,
-        boot_logical,
-        entry,
-        stack_base,
-        stack_end
-    );
-
-    let mut cpu_on_ok = true;
-    for logical_cpu in 1..MAX_CORES {
-        let target_affinity = logical_cpu as u64;
-        let result = unsafe { psci_cpu_on_smc(target_affinity, entry, logical_cpu) };
-        crate::println!(
-            "qemu-secondary-core-discriminator: cpu-on logical={} target-affinity={:#x} result={}",
-            logical_cpu,
-            target_affinity,
-            result
-        );
-        cpu_on_ok &= result == 0;
-    }
-
-    let mut remaining = QEMU_SECONDARY_WAIT_LIMIT;
-    while remaining > 0 {
-        let all_ready = (1..MAX_CORES).all(|logical_cpu| {
-            SECONDARY_CORE_STATES[logical_cpu]
-                .snapshot(logical_cpu)
-                .lifecycle
-                >= CoreLifecycle::HandoffReady
-        });
-        if all_ready {
-            break;
-        }
-        core::hint::spin_loop();
-        remaining -= 1;
-    }
-
-    let mut reports_ok = cpu_on_ok && boot_logical == Some(0);
-    for logical_cpu in 1..MAX_CORES {
-        let report = SECONDARY_CORE_STATES[logical_cpu].snapshot(logical_cpu);
-        let logical_from_mpidr = qemu_logical_cpu_from_mpidr_affinity(report.affinity);
-        let stack_slot = stack_layout
-            .slot(logical_cpu)
-            .expect("stack slot for possible QEMU core");
-        let stack_owned = stack_slot.contains_stack_pointer(report.stack_pointer);
-        let report_ok = report.lifecycle >= CoreLifecycle::HandoffReady
-            && report.context == logical_cpu
-            && logical_from_mpidr == Some(logical_cpu)
-            && stack_owned;
-        reports_ok &= report_ok;
-
-        crate::println!(
-            "qemu-secondary-core-discriminator: report logical={} state={} context={} mpidr={:#018x} affinity={:#x} mapped={:?} sp={:#018x} stack=[{:#018x},{:#018x}) ok={}",
-            logical_cpu,
-            secondary_state_name(report.lifecycle.raw()),
-            report.context,
-            report.mpidr,
-            report.affinity,
-            logical_from_mpidr,
-            report.stack_pointer,
-            stack_slot.bottom,
-            stack_slot.top,
-            report_ok
-        );
-    }
-
-    crate::println!(
-        "qemu-secondary-core-discriminator: wait-remaining={} classification={}",
-        remaining,
-        if reports_ok {
-            "qemu-psci-smc-secondary-cores-alive"
-        } else if cpu_on_ok {
-            "qemu-psci-smc-started-but-report-incomplete"
-        } else {
-            "qemu-psci-smc-cpu-on-failed"
-        }
-    );
-
-    if reports_ok {
-        crate::println!("qemu-secondary-core-discriminator: PASS");
-    } else {
-        crate::println!("qemu-secondary-core-discriminator: FAIL");
-    }
-
-    reports_ok
 }
 
 #[cfg(talos_boot_scenario = "qemu_secondary_core_workload")]

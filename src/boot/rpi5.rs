@@ -21,32 +21,11 @@ struct Rpi5MemoryPhase {
     layout: Option<memory_map::EarlyTranslationTableLayout>,
 }
 
-#[inline(always)]
-fn suppress_growth_diagnostic_boot_reports() -> bool {
-    cfg!(any(
-        talos_boot_scenario = "rpi5_vec_growth",
-        talos_boot_scenario = "rpi5_string_growth",
-        talos_boot_scenario = "rpi5_alloc_format"
-    ))
-}
-
 fn report_unavailable(line: &'static str) {
     target::console::write_static(line);
     target::rpi5::wait_uart10_empty_early_phase();
 }
 
-#[cfg_attr(
-    any(
-        talos_boot_scenario = "rpi5_panic_report",
-        talos_boot_scenario = "rpi5_full_panic_info",
-        talos_boot_scenario = "rpi5_normal_exception_report",
-        talos_boot_scenario = "rpi5_undefined_instruction_report",
-        talos_boot_scenario = "rpi5_data_abort_report",
-        talos_boot_scenario = "rpi5_translation_fault",
-        talos_boot_scenario = "rpi5_current_sp0_sync",
-    ),
-    allow(unreachable_code, unused_variables)
-)]
 pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
     target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::KernelMain);
 
@@ -193,53 +172,35 @@ fn report_boot_identity(boot_info: &BootInfo, services: &TargetServices) -> Rpi5
 }
 
 fn report_chosen_bootargs(services: &TargetServices) {
-    #[cfg(not(talos_boot_scenario = "rpi5_translation_fault"))]
-    {
-        if let Some(chosen_bootargs) = unsafe { services.device_tree.chosen_bootargs() } {
-            write_rpi5_chosen_bootargs_line(chosen_bootargs);
-        } else {
-            println!("talos: dtb chosen bootargs: unavailable");
-        }
+    if let Some(chosen_bootargs) = unsafe { services.device_tree.chosen_bootargs() } {
+        write_rpi5_chosen_bootargs_line(chosen_bootargs);
+    } else {
+        println!("talos: dtb chosen bootargs: unavailable");
     }
-    #[cfg(talos_boot_scenario = "rpi5_translation_fault")]
-    target::console::write_static(
-        "talos: dtb chosen bootargs: skipped=translation-fault-diagnostic\n",
-    );
 }
 
 fn scan_dtb_reservations(services: &TargetServices) -> Option<FdtMemoryReservations> {
     target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::DtbReservationsStart);
-    #[cfg(talos_boot_scenario = "rpi5_translation_fault")]
-    let dtb_reservations = None;
-    #[cfg(not(talos_boot_scenario = "rpi5_translation_fault"))]
-    let dtb_reservations = {
-        let dtb_reservations = unsafe { services.device_tree.memory_reservations() };
-        #[cfg(not(any(
-            talos_boot_scenario = "rpi5_vec_growth",
-            talos_boot_scenario = "rpi5_string_growth",
-            talos_boot_scenario = "rpi5_alloc_format"
-        )))]
-        if let Some(dtb_reservations) = dtb_reservations {
-            let shown = dtb_reservations.reported_len();
-            write_rpi5_dtb_reserved_summary_line(
-                dtb_reservations.count,
-                shown,
-                dtb_reservations.truncated,
-            );
+    let dtb_reservations = unsafe { services.device_tree.memory_reservations() };
+    if let Some(dtb_reservations) = dtb_reservations {
+        let shown = dtb_reservations.reported_len();
+        write_rpi5_dtb_reserved_summary_line(
+            dtb_reservations.count,
+            shown,
+            dtb_reservations.truncated,
+        );
 
-            let mut index = 0usize;
-            while index < shown {
-                if let Some(entry) = dtb_reservations.entries[index] {
-                    write_rpi5_dtb_reserved_entry_line(index, entry.address, entry.size);
-                }
-                index += 1;
+        let mut index = 0usize;
+        while index < shown {
+            if let Some(entry) = dtb_reservations.entries[index] {
+                write_rpi5_dtb_reserved_entry_line(index, entry.address, entry.size);
             }
-        } else {
-            target::console::write_static("talos: dtb reserved: unavailable\n");
-            target::rpi5::wait_uart10_empty_early_phase();
+            index += 1;
         }
-        dtb_reservations
-    };
+    } else {
+        target::console::write_static("talos: dtb reserved: unavailable\n");
+        target::rpi5::wait_uart10_empty_early_phase();
+    }
     target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::DtbReservationsDone);
     dtb_reservations
 }
@@ -247,42 +208,36 @@ fn scan_dtb_reservations(services: &TargetServices) -> Option<FdtMemoryReservati
 fn scan_reserved_memory_ranges(services: &TargetServices) -> Option<FdtReservedMemoryRanges> {
     target::console::write_static("TALOS: reserved-memory start\n");
     target::rpi5::wait_uart10_empty_early_phase();
-    #[cfg(talos_boot_scenario = "rpi5_translation_fault")]
-    let reserved_memory_ranges = None;
-    #[cfg(not(talos_boot_scenario = "rpi5_translation_fault"))]
     let reserved_memory_ranges = unsafe { services.device_tree.reserved_memory_ranges() };
     target::console::write_static("TALOS: reserved-memory done\n");
     target::rpi5::wait_uart10_empty_early_phase();
 
-    if !suppress_growth_diagnostic_boot_reports() {
-        #[cfg(not(talos_boot_scenario = "rpi5_translation_fault"))]
-        if let Some(reserved_memory_ranges) = reserved_memory_ranges {
-            let shown = reserved_memory_ranges.reported_len();
-            write_rpi5_reserved_memory_summary_line(
-                reserved_memory_ranges.address_cells as usize,
-                reserved_memory_ranges.size_cells as usize,
-                reserved_memory_ranges.node_count,
-                reserved_memory_ranges.range_count,
-                shown,
-                reserved_memory_ranges.truncated,
-            );
+    if let Some(reserved_memory_ranges) = reserved_memory_ranges {
+        let shown = reserved_memory_ranges.reported_len();
+        write_rpi5_reserved_memory_summary_line(
+            reserved_memory_ranges.address_cells as usize,
+            reserved_memory_ranges.size_cells as usize,
+            reserved_memory_ranges.node_count,
+            reserved_memory_ranges.range_count,
+            shown,
+            reserved_memory_ranges.truncated,
+        );
 
-            let mut index = 0usize;
-            while index < shown {
-                if let Some(entry) = reserved_memory_ranges.entries[index] {
-                    write_rpi5_reserved_memory_entry_line(
-                        index,
-                        entry.address,
-                        entry.size,
-                        entry.no_map,
-                        entry.reusable,
-                    );
-                }
-                index += 1;
+        let mut index = 0usize;
+        while index < shown {
+            if let Some(entry) = reserved_memory_ranges.entries[index] {
+                write_rpi5_reserved_memory_entry_line(
+                    index,
+                    entry.address,
+                    entry.size,
+                    entry.no_map,
+                    entry.reusable,
+                );
             }
-        } else {
-            report_unavailable("talos: reserved-memory: unavailable\n");
+            index += 1;
         }
+    } else {
+        report_unavailable("talos: reserved-memory: unavailable\n");
     }
     reserved_memory_ranges
 }
@@ -320,11 +275,11 @@ fn plan_boot_memory(dtb: &Rpi5DtbPhase) -> Option<Rpi5MemoryPhase> {
     };
 
     let kernel_layout = rpi5_kernel_layout();
-    if !suppress_growth_diagnostic_boot_reports() {
+    {
         write_rpi5_memory_layout_kernel_line(kernel_layout);
     }
 
-    if !suppress_growth_diagnostic_boot_reports() {
+    {
         if let Some(dtb_blob) = dtb.blob {
             write_rpi5_memory_layout_dtb_line(dtb_blob);
         } else {
@@ -344,7 +299,7 @@ fn plan_boot_memory(dtb: &Rpi5DtbPhase) -> Option<Rpi5MemoryPhase> {
         report_unavailable("talos: memory usable: unavailable\n");
         return None;
     };
-    if !suppress_growth_diagnostic_boot_reports() {
+    {
         write_rpi5_memory_usable_candidate_line(candidate);
     }
 
@@ -354,7 +309,7 @@ fn plan_boot_memory(dtb: &Rpi5DtbPhase) -> Option<Rpi5MemoryPhase> {
         report_unavailable("talos: page frames seed: unavailable\n");
         return None;
     };
-    if !suppress_growth_diagnostic_boot_reports() {
+    {
         write_rpi5_page_frame_seed_line(seed);
     }
 
@@ -367,7 +322,7 @@ fn plan_boot_memory(dtb: &Rpi5DtbPhase) -> Option<Rpi5MemoryPhase> {
         report_unavailable("talos: bootstrap reserve: unavailable\n");
         return None;
     };
-    if !suppress_growth_diagnostic_boot_reports() {
+    {
         write_rpi5_bootstrap_page_reservation_early_line(reservation);
     }
 
@@ -382,7 +337,7 @@ fn plan_boot_memory(dtb: &Rpi5DtbPhase) -> Option<Rpi5MemoryPhase> {
             layout: None,
         });
     };
-    if !suppress_growth_diagnostic_boot_reports() {
+    {
         write_rpi5_translation_table_layout_line(layout);
         write_rpi5_translation_table_slots_line(layout);
     }
@@ -407,7 +362,7 @@ fn enable_translation_and_caches(
         report_unavailable("talos: translation table population: unavailable\n");
         return false;
     };
-    if !suppress_growth_diagnostic_boot_reports() {
+    {
         write_rpi5_translation_table_population_line(population);
         write_rpi5_translation_table_policy_line(population);
     }
@@ -420,7 +375,7 @@ fn enable_translation_and_caches(
         report_unavailable("talos: translation control plan: unavailable\n");
         return false;
     };
-    if !suppress_growth_diagnostic_boot_reports() {
+    {
         write_rpi5_translation_register_plan_line(register_plan);
     }
 
@@ -433,22 +388,13 @@ fn enable_translation_and_caches(
             return false;
         };
     target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::MmuEnableDone);
-    if !suppress_growth_diagnostic_boot_reports() {
+    {
         write_rpi5_translation_enabled_line(register_plan, sctlr);
     }
 
-    #[cfg(talos_boot_scenario = "rpi5_translation_fault")]
-    {
-        unsafe { diagnostics::rpi5::rpi5_translation_fault_diagnostic() }
-    }
-
-    #[cfg(not(talos_boot_scenario = "rpi5_translation_fault"))]
-    {
-        enable_instruction_and_data_caches(boot_info, sctlr)
-    }
+    enable_instruction_and_data_caches(boot_info, sctlr)
 }
 
-#[cfg(not(talos_boot_scenario = "rpi5_translation_fault"))]
 fn enable_instruction_and_data_caches(boot_info: &BootInfo, sctlr: u64) -> bool {
     let icache_plan = if let Some(icache_plan) =
         memory_map::early_instruction_cache_enable_plan(boot_info.exception_level, sctlr)
@@ -458,7 +404,7 @@ fn enable_instruction_and_data_caches(boot_info: &BootInfo, sctlr: u64) -> bool 
         report_unavailable("talos: instruction cache plan: unavailable\n");
         return false;
     };
-    if !suppress_growth_diagnostic_boot_reports() {
+    {
         write_rpi5_instruction_cache_plan_line(icache_plan);
     }
 
@@ -472,7 +418,7 @@ fn enable_instruction_and_data_caches(boot_info: &BootInfo, sctlr: u64) -> bool 
         return false;
     };
     target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::IcacheEnableDone);
-    if !suppress_growth_diagnostic_boot_reports() {
+    {
         write_rpi5_instruction_cache_enabled_line(icache_plan, icache_sctlr);
     }
 
@@ -484,7 +430,7 @@ fn enable_instruction_and_data_caches(boot_info: &BootInfo, sctlr: u64) -> bool 
         report_unavailable("talos: data cache plan: unavailable\n");
         return false;
     };
-    if !suppress_growth_diagnostic_boot_reports() {
+    {
         write_rpi5_data_cache_plan_line(dcache_plan);
     }
 
@@ -500,7 +446,7 @@ fn enable_instruction_and_data_caches(boot_info: &BootInfo, sctlr: u64) -> bool 
     };
     target::console::write_static("TALOS: dcache enable done\n");
     target::rpi5::wait_uart10_empty_early_phase();
-    if !suppress_growth_diagnostic_boot_reports() {
+    {
         write_rpi5_data_cache_enabled_line(dcache_plan, dcache_sctlr);
     }
 
@@ -515,7 +461,7 @@ fn init_bootstrap_allocator(seed: memory_map::EarlyPageFrameSeed) {
             report_unavailable("talos: bootstrap allocator plan: unavailable\n");
             return;
         };
-    if !suppress_growth_diagnostic_boot_reports() {
+    {
         write_rpi5_bootstrap_allocator_plan_line(allocator_plan);
     }
 
@@ -528,10 +474,6 @@ fn init_bootstrap_allocator(seed: memory_map::EarlyPageFrameSeed) {
 }
 
 fn report_post_allocator_memory(memory_phase: Rpi5MemoryPhase) {
-    if suppress_growth_diagnostic_boot_reports() {
-        return;
-    }
-
     write_rpi5_translation_table_layout_post_allocator_line(memory_phase.reservation);
     write_rpi5_translation_table_slots_post_allocator_line(memory_phase.reservation);
     write_rpi5_translation_table_population_post_allocator_line(memory_phase.reservation);
@@ -549,10 +491,6 @@ fn report_post_allocator_memory(memory_phase: Rpi5MemoryPhase) {
 }
 
 fn report_dtb_memory_banks(memory_banks: Option<FdtMemoryBanks>) {
-    if suppress_growth_diagnostic_boot_reports() {
-        return;
-    }
-
     let memory_banks = if let Some(memory_banks) = memory_banks {
         memory_banks
     } else {

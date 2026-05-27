@@ -13,91 +13,6 @@ const RPI5_SMP_ASM: &str = "TALOS_RPI5_SMP_BOOT_SCENARIO";
 
 const BOOT_SCENARIOS: &[BootScenario] = &[
     BootScenario {
-        value: "rpi5_exception_report",
-        implied_values: &[],
-        asm_defines: &["TALOS_RPI5_EXCEPTION_REPORT_SCENARIO"],
-    },
-    BootScenario {
-        value: "rpi5_normal_exception_report",
-        implied_values: &[],
-        asm_defines: &[],
-    },
-    BootScenario {
-        value: "rpi5_undefined_instruction_report",
-        implied_values: &[],
-        asm_defines: &[],
-    },
-    BootScenario {
-        value: "rpi5_data_abort_report",
-        implied_values: &[],
-        asm_defines: &[],
-    },
-    BootScenario {
-        value: "rpi5_translation_fault",
-        implied_values: &[],
-        asm_defines: &[],
-    },
-    BootScenario {
-        value: "rpi5_current_sp0_sync",
-        implied_values: &[],
-        asm_defines: &[],
-    },
-    BootScenario {
-        value: "rpi5_exception_return",
-        implied_values: &["rpi5_normal_exception_report"],
-        asm_defines: &["TALOS_RPI5_EXCEPTION_RETURN_SCENARIO"],
-    },
-    BootScenario {
-        value: "rpi5_panic_report",
-        implied_values: &[],
-        asm_defines: &[],
-    },
-    BootScenario {
-        value: "rpi5_full_panic_info",
-        implied_values: &[],
-        asm_defines: &[],
-    },
-    BootScenario {
-        value: "rpi5_nested_panic",
-        implied_values: &["rpi5_panic_report"],
-        asm_defines: &[],
-    },
-    BootScenario {
-        value: "rpi5_alloc_oom",
-        implied_values: &[],
-        asm_defines: &[],
-    },
-    BootScenario {
-        value: "rpi5_realloc_growth",
-        implied_values: &[],
-        asm_defines: &[],
-    },
-    BootScenario {
-        value: "rpi5_vec_growth",
-        implied_values: &[],
-        asm_defines: &[],
-    },
-    BootScenario {
-        value: "rpi5_string_growth",
-        implied_values: &[],
-        asm_defines: &[],
-    },
-    BootScenario {
-        value: "rpi5_alloc_format",
-        implied_values: &[],
-        asm_defines: &[],
-    },
-    BootScenario {
-        value: "rpi5_page_frame_reuse",
-        implied_values: &[],
-        asm_defines: &[],
-    },
-    BootScenario {
-        value: "rpi5_heap_expansion_policy",
-        implied_values: &[],
-        asm_defines: &[],
-    },
-    BootScenario {
         value: "rpi5_timer_irq",
         implied_values: &[],
         asm_defines: &[],
@@ -196,11 +111,6 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         value: "qemu_diagnostic_command_channel",
         implied_values: &[],
         asm_defines: &[],
-    },
-    BootScenario {
-        value: "qemu_secondary_core_discriminator",
-        implied_values: &[],
-        asm_defines: &[QEMU_SMP_ASM],
     },
     BootScenario {
         value: "qemu_secondary_core_workload",
