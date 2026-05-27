@@ -2,6 +2,7 @@
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_load_balancing_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 use crate::arch::aarch64;
@@ -28,9 +29,15 @@ use crate::scheduler::TargetWakeConsumptionError;
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_load_balancing_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 use crate::scheduler::{ContextFrame, KernelStack, Task, TaskState};
+#[cfg(talos_boot_scenario = "rpi5_load_balancing_proof")]
+use crate::scheduler::{
+    LoadBalancingPolicy, LogicalCpuId, MigrationState, PerCoreScheduler, SharedRunQueue,
+    SharedSchedulerMetadata, TaskId,
+};
 #[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
 use crate::scheduler::{
     LogicalCpuId, MigrationState, PerCoreScheduler, SchedulerCoreRole, SharedRunQueue,
@@ -70,6 +77,7 @@ use crate::smp::SECONDARY_CORE_WORKLOAD_TARGET;
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_load_balancing_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 use crate::smp::{
@@ -177,6 +185,10 @@ const SHARED_SCHEDULER_METADATA_TASK_CAPACITY: usize = MAX_CORES;
 const SHARED_RUNQUEUE_MIGRATION_TASK_CAPACITY: usize = 1;
 #[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
 const SHARED_RUNQUEUE_MIGRATION_QUEUE_CAPACITY: usize = 1;
+#[cfg(talos_boot_scenario = "rpi5_load_balancing_proof")]
+const LOAD_BALANCING_PROOF_TASK_CAPACITY: usize = 1;
+#[cfg(talos_boot_scenario = "rpi5_load_balancing_proof")]
+const LOAD_BALANCING_PROOF_QUEUE_CAPACITY: usize = 1;
 #[cfg(talos_boot_scenario = "rpi5_secondary_scheduler_service_loop")]
 const SECONDARY_SCHEDULER_SERVICE_LOOP_TASK_CAPACITY: usize = 1;
 #[cfg(any(
@@ -676,6 +688,7 @@ fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_load_balancing_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn task_id(raw: u64) -> TaskId {
@@ -686,6 +699,7 @@ fn task_id(raw: u64) -> TaskId {
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_load_balancing_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn scheduler_task(logical_cpu: usize, progress: u64) -> Task {
@@ -1139,7 +1153,10 @@ fn reset_shared_runqueue_migration_state() {
     *state = SharedRunQueueMigrationState::new();
 }
 
-#[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
+#[cfg(any(
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_load_balancing_proof"
+))]
 fn migration_state_name(state: MigrationState) -> &'static str {
     match state {
         MigrationState::OwnerLocal => "owner-local",
@@ -1316,6 +1333,194 @@ fn run_shared_runqueue_migration_secondary(core_state: &smp::PerCoreState, logic
 
     core_state.mark_workload_complete(report.lock_progress());
     core_state.clean_to_poc();
+}
+
+#[cfg(talos_boot_scenario = "rpi5_load_balancing_proof")]
+#[derive(Clone, Copy)]
+struct LoadBalancingProofReport {
+    source_owner: u64,
+    destination_owner: u64,
+    task_id: u64,
+    task_state: u64,
+    registered_generation: u64,
+    plan_generation: u64,
+    publish_reserved_state: MigrationState,
+    publish_queued_state: MigrationState,
+    consume_queued_state: MigrationState,
+    consume_destination_state: MigrationState,
+    source_queue_before: u64,
+    source_queue_after_publish: u64,
+    shared_len_after_publish: u64,
+    shared_len_after_consume: u64,
+    destination_queue_len: u64,
+    destination_front: u64,
+    metadata_owner_after_consume: u64,
+    metadata_generation_after_consume: u64,
+    selected_front: bool,
+    source_removed: bool,
+    destination_enqueued: bool,
+    metadata_migrated: bool,
+    errors: u64,
+}
+
+#[cfg(talos_boot_scenario = "rpi5_load_balancing_proof")]
+fn build_load_balancing_proof_report() -> LoadBalancingProofReport {
+    let source_owner = LogicalCpuId::BOOT;
+    let destination_owner = LogicalCpuId::new(1);
+    let mut source_scheduler = PerCoreScheduler::<2>::boot_cpu();
+    let mut destination_scheduler =
+        PerCoreScheduler::<2>::production_secondary_diagnostic(destination_owner);
+    let mut metadata =
+        SharedSchedulerMetadata::<LOAD_BALANCING_PROOF_TASK_CAPACITY, MAX_CORES>::new();
+    let mut shared = SharedRunQueue::<LOAD_BALANCING_PROOF_QUEUE_CAPACITY, MAX_CORES>::new();
+    let mut task = scheduler_task(0, 9);
+    let mut errors = 0;
+
+    match source_scheduler.local_scheduler_mut(source_owner) {
+        Ok(scheduler) => {
+            if scheduler.make_runnable(&mut task).is_err() {
+                errors += 1;
+            }
+        }
+        Err(_) => errors += 1,
+    }
+    let source_queue_before = source_scheduler.scheduler().runnable().len() as u64;
+
+    let registered_generation =
+        match metadata.register_local_task(source_owner, &source_scheduler, &task) {
+            Ok(snapshot) => snapshot.generation(),
+            Err(_) => {
+                errors += 1;
+                0
+            }
+        };
+
+    let plan = LoadBalancingPolicy::plan_front_runnable(
+        source_owner,
+        &source_scheduler,
+        &destination_scheduler,
+        &metadata,
+        &shared,
+    );
+    let (plan_task, plan_generation) = match plan {
+        Ok(plan) => (plan.task_id().raw(), plan.metadata_generation()),
+        Err(_) => {
+            errors += 1;
+            (0, 0)
+        }
+    };
+
+    let publish_report = LoadBalancingPolicy::publish_front_runnable(
+        source_owner,
+        &mut source_scheduler,
+        &destination_scheduler,
+        &metadata,
+        &mut shared,
+        &task,
+    );
+    let (publish_reserved_state, publish_queued_state) = match publish_report {
+        Ok(report) => (
+            report.migration().reserved().state(),
+            report.migration().queued().state(),
+        ),
+        Err(_) => {
+            errors += 1;
+            (
+                MigrationState::MigrationRejected,
+                MigrationState::MigrationRejected,
+            )
+        }
+    };
+
+    let source_queue_after_publish = source_scheduler.scheduler().runnable().len() as u64;
+    let source_removed = source_queue_before == 1
+        && source_queue_after_publish == 0
+        && !source_scheduler.scheduler().runnable().contains(task.id());
+    if !source_removed {
+        errors += 1;
+    }
+
+    let shared_len_after_publish = shared.len() as u64;
+    let consume_report = shared.consume_for_destination(
+        destination_owner,
+        &mut destination_scheduler,
+        &mut metadata,
+        &mut task,
+    );
+    let (consume_queued_state, consume_destination_state) = match consume_report {
+        Ok(Some(report)) => (
+            report.queued().state(),
+            report.destination_enqueued().state(),
+        ),
+        _ => {
+            errors += 1;
+            (
+                MigrationState::MigrationRejected,
+                MigrationState::MigrationRejected,
+            )
+        }
+    };
+
+    let shared_len_after_consume = shared.len() as u64;
+    let destination_queue_len = destination_scheduler.scheduler().runnable().len() as u64;
+    let destination_front = destination_scheduler
+        .scheduler()
+        .runnable()
+        .front()
+        .map_or(0, TaskId::raw);
+    let final_metadata = metadata.lookup_task(task.id());
+    let (metadata_owner_after_consume, metadata_generation_after_consume) = match final_metadata {
+        Ok(snapshot) => (snapshot.owner().raw() as u64, snapshot.generation()),
+        Err(_) => {
+            errors += 1;
+            (u64::MAX, 0)
+        }
+    };
+
+    let selected_front = plan_task == task.id().raw() && plan_generation == registered_generation;
+    if !selected_front {
+        errors += 1;
+    }
+
+    let destination_enqueued = destination_queue_len == 1
+        && destination_front == task.id().raw()
+        && task.state() == TaskState::Runnable
+        && shared_len_after_consume == 0;
+    if !destination_enqueued {
+        errors += 1;
+    }
+
+    let metadata_migrated = metadata_owner_after_consume == destination_owner.raw() as u64
+        && metadata_generation_after_consume > registered_generation;
+    if !metadata_migrated {
+        errors += 1;
+    }
+
+    LoadBalancingProofReport {
+        source_owner: source_owner.raw() as u64,
+        destination_owner: destination_owner.raw() as u64,
+        task_id: task.id().raw(),
+        task_state: task_state_code(task.state()),
+        registered_generation,
+        plan_generation,
+        publish_reserved_state,
+        publish_queued_state,
+        consume_queued_state,
+        consume_destination_state,
+        source_queue_before,
+        source_queue_after_publish,
+        shared_len_after_publish,
+        shared_len_after_consume,
+        destination_queue_len,
+        destination_front,
+        metadata_owner_after_consume,
+        metadata_generation_after_consume,
+        selected_front,
+        source_removed,
+        destination_enqueued,
+        metadata_migrated,
+        errors,
+    }
 }
 
 #[cfg(talos_boot_scenario = "rpi5_secondary_scheduler_service_loop")]
@@ -2414,6 +2619,7 @@ fn publish_remote_wake_request(target: usize, task_id: TaskId) -> bool {
     talos_boot_scenario = "rpi5_remote_wake_to_local_runnable",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_load_balancing_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn task_state_code(state: TaskState) -> u64 {
@@ -2428,6 +2634,7 @@ fn task_state_code(state: TaskState) -> u64 {
     talos_boot_scenario = "rpi5_remote_wake_to_local_runnable",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_load_balancing_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn task_state_name(code: u64) -> &'static str {
@@ -4270,6 +4477,88 @@ pub fn run_shared_runqueue_migration_proof() -> bool {
     wait_uart10_empty_early_phase();
 
     reports_ok
+}
+
+#[cfg(talos_boot_scenario = "rpi5_load_balancing_proof")]
+pub fn run_load_balancing_proof() -> bool {
+    let boot_mpidr = aarch64::mpidr_el1();
+    let boot_affinity = aarch64::mpidr_affinity(boot_mpidr);
+    let boot_logical = pi5_logical_cpu_from_mpidr_affinity(boot_affinity);
+    crate::println!(
+        "rpi5-load-balancing: start task-capacity={} queue-capacity={} boot-mpidr={:#018x} boot-affinity={:#x} boot-logical={:?}",
+        LOAD_BALANCING_PROOF_TASK_CAPACITY,
+        LOAD_BALANCING_PROOF_QUEUE_CAPACITY,
+        boot_mpidr,
+        boot_affinity,
+        boot_logical,
+    );
+    wait_uart10_empty_early_phase();
+
+    let report = build_load_balancing_proof_report();
+    let report_ok = boot_logical == Some(0)
+        && report.source_owner == 0
+        && report.destination_owner == 1
+        && report.task_id == 109
+        && report.task_state == task_state_code(TaskState::Runnable)
+        && report.registered_generation > 0
+        && report.plan_generation == report.registered_generation
+        && report.publish_reserved_state == MigrationState::MigrationReserved
+        && report.publish_queued_state == MigrationState::SharedQueued
+        && report.consume_queued_state == MigrationState::SharedQueued
+        && report.consume_destination_state == MigrationState::DestinationEnqueued
+        && report.selected_front
+        && report.source_removed
+        && report.destination_enqueued
+        && report.metadata_migrated
+        && report.errors == 0;
+
+    crate::println!(
+        "rpi5-load-balancing: report source-owner={} destination-owner={} task={} task-state={} registered-generation={} plan-generation={} publish-reserved-state={} publish-queued-state={} consume-queued-state={} consume-destination-state={} source-queue-before={} source-queue-after-publish={} shared-len-after-publish={} shared-len-after-consume={} destination-queue-len={} destination-front={} metadata-owner-after-consume={} metadata-generation-after-consume={} selected-front={} source-removed={} destination-enqueued={} metadata-migrated={} errors={} ok={}",
+        report.source_owner,
+        report.destination_owner,
+        report.task_id,
+        task_state_name(report.task_state),
+        report.registered_generation,
+        report.plan_generation,
+        migration_state_name(report.publish_reserved_state),
+        migration_state_name(report.publish_queued_state),
+        migration_state_name(report.consume_queued_state),
+        migration_state_name(report.consume_destination_state),
+        report.source_queue_before,
+        report.source_queue_after_publish,
+        report.shared_len_after_publish,
+        report.shared_len_after_consume,
+        report.destination_queue_len,
+        report.destination_front,
+        report.metadata_owner_after_consume,
+        report.metadata_generation_after_consume,
+        report.selected_front,
+        report.source_removed,
+        report.destination_enqueued,
+        report.metadata_migrated,
+        report.errors,
+        report_ok
+    );
+
+    let classification = if report_ok {
+        "pi5-load-balancing-complete"
+    } else {
+        "pi5-load-balancing-invariant-failed"
+    };
+    crate::println!(
+        "rpi5-load-balancing: final participants=1 expected=1 errors={} classification={}",
+        report.errors,
+        classification
+    );
+
+    if report_ok {
+        crate::println!("rpi5-load-balancing: PASS");
+    } else {
+        crate::println!("rpi5-load-balancing: FAIL");
+    }
+    wait_uart10_empty_early_phase();
+
+    report_ok
 }
 
 #[cfg(talos_boot_scenario = "rpi5_secondary_scheduler_service_loop")]

@@ -50,8 +50,10 @@ SharedRunQueue with deterministic unit-tested rejection paths. QEMU
 load-balancing proof is accepted with
 classification=qemu-load-balancing-smoke-complete, proving deterministic
 front-runnable selection, source-local removal, shared handoff,
-destination-local enqueue, metadata refresh, and PASS. Pi 5 proof,
-multi-core preemption, Phase 7, filesystem, networking, SSH, and shell work
+destination-local enqueue, metadata refresh, and PASS. Serialized Pi 5
+load-balancing proof is accepted with
+classification=pi5-load-balancing-complete for the same named invariant.
+Multi-core preemption, Phase 7, filesystem, networking, SSH, and shell work
 remain deferred.
 
 Accepted status and historical completed facts:
@@ -462,15 +464,20 @@ Accepted status and historical completed facts:
   `scripts/qemu-load-balancing-smoke.sh`, proves the accepted
   `LoadBalancingPolicy` path over `SharedRunQueue`, and reports
   classification=qemu-load-balancing-smoke-complete.
+- The Phase 6.3 Pi 5 load-balancing proof is accepted. It adds the
+  `rpi5_load_balancing_proof` boot scenario,
+  `scripts/rpi5-load-balancing-image.sh`, and
+  `scripts/rpi5-load-balancing-boot-tree.sh`, proves the same deterministic
+  `LoadBalancingPolicy` path on serialized Pi 5 hardware, and reports
+  classification=pi5-load-balancing-complete.
 
 Blocked or pending:
 
-- The next explicit validation target should be a serialized Pi 5
-  load-balancing proof after supervisor ready-marking and hardware lock
-  availability, or an explicit physical defer decision before closeout. Work
-  stealing, running-task migration, remote reschedule, multi-core preemption,
-  userspace, descriptors, filesystem, networking, SSH, shell behavior, UART
-  interrupts, RP1/PCIe, and DMA/cache-coherent driver policy remain deferred.
+- The next explicit validation target should be the load-balancing closeout
+  checkpoint after supervisor ready-marking. Work stealing, running-task
+  migration, remote reschedule, multi-core preemption, userspace, descriptors,
+  filesystem, networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and
+  DMA/cache-coherent driver policy remain deferred.
 - Large raw accepted evidence remains in Git until external artifact storage or
   an explicit no-delete manifest-only cleanup is approved. Do not delete
   tracked accepted evidence during unrelated feature work.
@@ -820,9 +827,10 @@ diagnostics, and deferred work. The load-balancing source inventory and policy
 contract are accepted, and the target-independent load-balancing core is
 accepted in `tasks/2026-05-27-phase6-load-balancing-core.md`. The QEMU
 substitute proof is accepted in
-`tasks/2026-05-27-phase6-qemu-load-balancing-smoke.md`. The next bounded
-Phase 6.3 recommendation is a serialized Pi 5 load-balancing proof, or an
-explicit physical defer decision before closeout.
+`tasks/2026-05-27-phase6-qemu-load-balancing-smoke.md`, and the serialized
+Pi 5 proof is accepted in
+`tasks/2026-05-27-phase6-pi5-load-balancing-proof.md`. The next bounded
+Phase 6.3 recommendation is a load-balancing closeout checkpoint.
 Before broader Phase 6.3 productionization, the accepted
 [Evidence Retention Policy](project/evidence-retention-policy.md) and
 [Diagnostic Surface Policy](project/diagnostic-surface-policy.md) govern which

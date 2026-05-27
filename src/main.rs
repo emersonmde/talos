@@ -32,6 +32,7 @@
             talos_boot_scenario = "rpi5_cross_core_ipi_delivery",
             talos_boot_scenario = "rpi5_secondary_scheduler_service_loop",
             talos_boot_scenario = "rpi5_shared_runqueue_migration",
+            talos_boot_scenario = "rpi5_load_balancing_proof",
         )
     ),
     allow(dead_code, unused_imports, unused_variables)

@@ -12,6 +12,41 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-27 - Phase 6.3 Pi 5 Load-Balancing Evidence Accepted
+
+- Status: accepted as serialized physical Pi 5 evidence for the accepted
+  load-balancing core. No autonomous work stealing, running-task migration,
+  remote reschedule, multi-core preemption, Phase 7, filesystem, networking,
+  SSH, shell, RP1/PCIe, UART interrupt ownership, or DMA behavior was added.
+- Context: The target-independent LoadBalancingPolicy core and QEMU substitute
+  proof were accepted, but physical acceptance required hardwareTestLock
+  serialization, candidate identity, TFTP fetch evidence, cursor-valid serial
+  output, classification, and restore proof.
+- Decision: Accept phase6-pi5-load-balancing-proof-20260527. The focused Pi 5
+  diagnostic adds rpi5_load_balancing_proof and exercises
+  LoadBalancingPolicy::plan_front_runnable,
+  LoadBalancingPolicy::publish_front_runnable, and
+  SharedRunQueue::consume_for_destination on the physical Pi 5 boot path.
+- Evidence level: serialized Pi 5 hardware boot/output, TFTP fetch evidence,
+  archive/kernel digest inspection, QEMU/substitute preservation gates,
+  fmt/lint/typecheck, no_std unit tests, mdBook validation, and whitespace
+  inspection.
+- Validation: local1 used archive SHA256
+  e7d4c80740bac203e9516e68baef29e9d197a8e760d233301cb209605a38d119 and
+  kernel SHA256
+  ceb75685864c32ed3d5a028c877d6a1d911892d4cbf14b36536d266206d7fecd;
+  cursor-valid serial reached classification=pi5-load-balancing-complete and
+  PASS; restore returned ok=true with restore-exit.txt equal to 0. Full
+  acceptance validation also includes cargo fmt --all -- --check,
+  cargo -Zjson-target-spec test, scripts/qemu-shared-runqueue-migration-smoke.sh,
+  scripts/qemu-load-balancing-smoke.sh, git diff --check, and mdbook build.
+- Risks: This is a bounded diagnostic proof of the deterministic
+  load-balancing policy path. It does not accept autonomous balancing loops,
+  work stealing, running-task migration, remote scheduler execution in IPI
+  context, multi-core timer preemption, userspace, descriptors, filesystem,
+  networking, SSH, shell behavior, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache policy.
+
 ## 2026-05-27 - Phase 6.3 QEMU Load-Balancing Smoke Accepted
 
 - Status: accepted as QEMU substitute evidence for the target-independent

@@ -1081,3 +1081,27 @@ does not claim Pi 5 behavior, autonomous work stealing, running-task
 migration, remote scheduler execution in IPI context, multi-core timer
 preemption, userspace, filesystem, networking, SSH, shell behavior, RP1/PCIe,
 UART interrupt ownership, or DMA/cache-driver policy.
+
+## Phase 6.3 Pi 5 Load-Balancing Proof
+
+The retained Pi 5 load-balancing proof is staged by
+scripts/rpi5-load-balancing-boot-tree.sh and built with the
+rpi5_load_balancing_proof boot scenario. It carries the accepted QEMU
+invariant to serialized physical Pi 5 evidence without adding autonomous
+balancing loops or a production secondary runtime.
+
+The diagnostic runs on the boot CPU and creates the same source owner 0,
+destination owner 1, runnable task, shared scheduler metadata, and bounded
+shared run queue used by the QEMU smoke. It proves
+LoadBalancingPolicy::plan_front_runnable selects task 109 with the current
+metadata generation, LoadBalancingPolicy::publish_front_runnable removes the
+task from the source queue and publishes the shared handoff, and
+SharedRunQueue::consume_for_destination enqueues the task for destination
+owner 1 while refreshing metadata owner/generation.
+
+Passing output includes classification=pi5-load-balancing-complete and
+rpi5-load-balancing: PASS. This is a bounded hardware diagnostic proof only.
+It does not accept autonomous work stealing, running-task migration, remote
+reschedule, multi-core timer preemption, userspace, filesystem, networking,
+SSH, shell behavior, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver
+policy.
