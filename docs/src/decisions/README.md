@@ -12,6 +12,47 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-27 - Phase 6.3 Load-Balancing Core Accepted
+
+- Status: accepted as a target-independent Rust scheduler policy core with
+  unit-test evidence. No QEMU run, Pi 5 hardware run, autonomous work
+  stealing, running-task migration, interrupt-driven remote reschedule,
+  multi-core preemption, Phase 7, filesystem, networking, SSH, shell, RP1/PCIe,
+  UART interrupt ownership, or DMA behavior was added.
+- Context: The accepted load-balancing policy contract permits only a
+  conservative source-owner policy that selects one locally runnable,
+  non-current task and one eligible destination, then uses the accepted
+  SharedRunQueue owner-transfer path. The existing scheduler already has
+  owner-local runnable queues, owner-published metadata generations, CPU
+  roles, and SharedRunQueue capacity/backpressure checks.
+- Decision: Accept phase6-load-balancing-core-20260527. The core adds
+  `LoadBalancingPolicy`, `LoadBalancingPlan`,
+  `LoadBalancingPublishReport`, and `LoadBalancingPolicyError` in
+  `src/scheduler.rs`. Planning chooses the source-local front runnable task,
+  rejects invalid or deferred destinations, records the metadata generation,
+  and checks destination/shared queue backpressure. Publication calls
+  `SharedRunQueue::publish_migration` and relies on that accepted mechanism
+  for stale-generation rejection and source-local removal.
+- Evidence level: static inspection, fmt/lint, unit tests, QEMU substitute
+  smoke/regression gates, whitespace inspection, and documentation build.
+  Hardware was not required because this task makes no physical claim.
+- Validation: `cargo fmt --all -- --check`, `cargo -Zjson-target-spec test`,
+  `scripts/qemu-smoke.sh`,
+  `scripts/qemu-secondary-scheduler-service-loop-smoke.sh`,
+  `scripts/qemu-shared-runqueue-migration-smoke.sh`, `git diff --check`,
+  and `mdbook build` passed.
+- Consequences: The next bounded task may be a focused QEMU load-balancing
+  smoke that proves the policy selecting a destination and publishing through
+  SharedRunQueue. Pi 5 proof, autonomous work stealing, running-task
+  migration, interrupt-driven remote reschedule, multi-core preemption, Phase
+  7, filesystem, networking, SSH, shell behavior, RP1/PCIe, UART interrupt
+  ownership, and DMA/cache-driver policy remain deferred.
+- Alternatives considered: Implement destination consumption or proof routing
+  in the same task, add fairness/affinity metadata first, or add remote
+  reschedule. Combining proof routing would blur the dependency-gated QEMU/Pi
+  5 tasks; fairness/affinity still lacks accepted data structures; remote
+  reschedule is optional and unnecessary for the polling-first policy core.
+
 ## 2026-05-27 - Phase 6.3 Load-Balancing Policy Contract Accepted
 
 - Status: accepted as documentation/policy contract before load-balancing

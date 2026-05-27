@@ -30,8 +30,8 @@ CPU-local scheduler service core, CPU-local scheduler service closeout,
 secondary scheduler service-loop source inventory, service-loop core, QEMU
 smoke, Pi 5 proof, service-loop closeout, shared run-queue/migration source
 inventory, contract, core, QEMU proof, Pi 5 proof, closeout,
-load-balancing source inventory, and load-balancing policy contract tasks are
-accepted. The accepted shared
+load-balancing source inventory, load-balancing policy contract, and
+load-balancing core tasks are accepted. The accepted shared
 run-queue/migration slice provides a bounded source-owner publish and
 destination-owner consume path with explicit migration states and deterministic
 errors; QEMU reports
@@ -44,9 +44,11 @@ failure modes, and the split between target selection, fairness/affinity,
 remote reschedule notification, and the existing migration mechanism. The
 accepted load-balancing policy contract keeps the first policy deterministic,
 runnable-only, SharedRunQueue-backed, and polling-only unless a later task
-adds remote reschedule notification. Load-balancing implementation,
-multi-core preemption, Phase 7, filesystem, networking, SSH, and shell work
-remain deferred.
+adds remote reschedule notification. The accepted load-balancing core adds
+target-independent front-runnable selection and publication through
+SharedRunQueue with deterministic unit-tested rejection paths. QEMU
+load-balancing proof, Pi 5 proof, multi-core preemption, Phase 7, filesystem,
+networking, SSH, and shell work remain deferred.
 
 Accepted status and historical completed facts:
 
@@ -443,12 +445,20 @@ Accepted status and historical completed facts:
   SharedRunQueue as the only owner-transfer mechanism, keeps remote reschedule
   polling-only for the first implementation, and defers fairness, affinity,
   work stealing, running-task migration, and multi-core preemption.
+- The Phase 6.3 load-balancing core is accepted. It adds
+  `LoadBalancingPolicy`, `LoadBalancingPlan`, and deterministic policy
+  errors for front-runnable source selection, destination role/capacity
+  checks, shared queue backpressure, stale generation rejection through
+  `SharedRunQueue::publish_migration`, and single-owner queue membership. It
+  does not add QEMU or Pi 5 proof claims, work stealing, running-task
+  migration, remote scheduler execution in IPI context, multi-core preemption,
+  Phase 7, filesystem, networking, SSH, or shell behavior.
 
 Blocked or pending:
 
-- The next explicit validation target should be the target-independent
-  load-balancing core after supervisor ready-marking. Work stealing,
-  running-task migration, remote reschedule, multi-core preemption,
+- The next explicit validation target should be a focused QEMU
+  load-balancing smoke after supervisor ready-marking. Pi 5 proof, work
+  stealing, running-task migration, remote reschedule, multi-core preemption,
   userspace, descriptors, filesystem, networking, SSH, shell behavior, UART
   interrupts, RP1/PCIe, and DMA/cache-coherent driver policy remain deferred.
 - Large raw accepted evidence remains in Git until external artifact storage or
@@ -797,10 +807,11 @@ serialized Pi 5 proof accepted in
 The shared run-queue/migration closeout reconciles source inventory, contract,
 core implementation, QEMU substitute proof, Pi 5 hardware proof, retained
 diagnostics, and deferred work. The load-balancing source inventory and policy
-contract are now accepted. The next bounded Phase 6.3 recommendation is a
-target-independent load-balancing core inside the accepted contract before
-work stealing, multi-core preemption, Phase 7, filesystem, networking, SSH, or
-shell work.
+contract are accepted, and the target-independent load-balancing core is
+accepted in `tasks/2026-05-27-phase6-load-balancing-core.md`. The next
+bounded Phase 6.3 recommendation is a focused QEMU load-balancing smoke before
+Pi 5 proof, work stealing, multi-core preemption, Phase 7, filesystem,
+networking, SSH, or shell work.
 Before broader Phase 6.3 productionization, the accepted
 [Evidence Retention Policy](project/evidence-retention-policy.md) and
 [Diagnostic Surface Policy](project/diagnostic-surface-policy.md) govern which

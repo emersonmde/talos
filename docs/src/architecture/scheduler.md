@@ -1028,3 +1028,31 @@ is not required by the contract. If a later task adds it, an IPI or similar
 signal may only record that normal scheduler control flow should run soon; it
 must not execute scheduler work, consume SharedRunQueue entries, print
 diagnostics, or hold scheduler topology locks in interrupt context.
+
+## Phase 6.3 Load-Balancing Core
+
+The first target-independent load-balancing core now lives in
+`src/scheduler.rs`. It adds `LoadBalancingPolicy`, `LoadBalancingPlan`,
+`LoadBalancingPublishReport`, and `LoadBalancingPolicyError` as a policy layer
+above the accepted `SharedRunQueue` mechanism.
+
+The policy is deliberately conservative. A source owner may plan only the
+front task from its local runnable queue. The selected task must have
+owner-published metadata that still says it is runnable, source-owned,
+current-task-free, and locally queued. The destination must be a valid
+production-capable scheduler owner with local queue capacity. The shared run
+queue must have capacity and must not already contain the selected task.
+
+Planning records the metadata generation in `LoadBalancingPlan`, but planning
+does not move ownership. Publication must call `SharedRunQueue::publish_migration`
+with that recorded generation. Stale metadata, source/destination mismatch,
+running or blocked tasks, duplicate shared entries, full queues, and invalid
+roles therefore remain deterministic rejection paths, and the source task stays
+single-owner unless the accepted shared owner-transfer mechanism removes it
+from the source-local queue.
+
+This core is a static/unit-testable policy primitive only. It does not add
+QEMU or Pi 5 proof claims, autonomous work stealing, running-task migration,
+remote scheduler execution in IPI context, multi-core timer preemption,
+userspace, filesystem, networking, SSH, shell behavior, RP1/PCIe, UART
+interrupt ownership, or DMA/cache-driver policy.

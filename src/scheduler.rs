@@ -485,6 +485,318 @@ impl SharedRunQueueConsumeReport {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LoadBalancingPlan {
+    task_id: TaskId,
+    source_owner: LogicalCpuId,
+    destination_owner: LogicalCpuId,
+    metadata_generation: u64,
+}
+
+impl LoadBalancingPlan {
+    pub const fn task_id(self) -> TaskId {
+        self.task_id
+    }
+
+    pub const fn source_owner(self) -> LogicalCpuId {
+        self.source_owner
+    }
+
+    pub const fn destination_owner(self) -> LogicalCpuId {
+        self.destination_owner
+    }
+
+    pub const fn metadata_generation(self) -> u64 {
+        self.metadata_generation
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LoadBalancingPublishReport {
+    plan: LoadBalancingPlan,
+    migration: SharedRunQueuePublishReport,
+}
+
+impl LoadBalancingPublishReport {
+    pub const fn plan(self) -> LoadBalancingPlan {
+        self.plan
+    }
+
+    pub const fn migration(self) -> SharedRunQueuePublishReport {
+        self.migration
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum LoadBalancingPolicyError {
+    InvalidSourceOwner {
+        source_owner: LogicalCpuId,
+        cpu_capacity: usize,
+    },
+    InvalidDestinationOwner {
+        destination_owner: LogicalCpuId,
+        cpu_capacity: usize,
+    },
+    SameOwner {
+        owner: LogicalCpuId,
+    },
+    WrongSourceOwner {
+        owner: LogicalCpuId,
+        requester: LogicalCpuId,
+    },
+    DestinationRoleIneligible {
+        owner: LogicalCpuId,
+        role: SchedulerCoreRole,
+    },
+    NoSourceCandidate {
+        source_owner: LogicalCpuId,
+    },
+    SourceCandidateMismatch {
+        selected: TaskId,
+        provided: TaskId,
+    },
+    SourceCandidateUnknown {
+        task_id: TaskId,
+    },
+    SourceCandidateOwnerMismatch {
+        task_id: TaskId,
+        metadata_owner: LogicalCpuId,
+        expected_owner: LogicalCpuId,
+    },
+    SourceCandidateRunning {
+        task_id: TaskId,
+    },
+    SourceCandidateBlocked {
+        task_id: TaskId,
+    },
+    SourceCandidateNotRunnable {
+        task_id: TaskId,
+        state: TaskState,
+    },
+    SourceCandidateNotQueued {
+        task_id: TaskId,
+        owner: LogicalCpuId,
+    },
+    DestinationLocalQueueFull {
+        destination_owner: LogicalCpuId,
+        task_id: TaskId,
+    },
+    SharedRunQueueFull,
+    DuplicateSharedQueued {
+        task_id: TaskId,
+    },
+    MigrationRejected(SharedRunQueueError),
+}
+
+pub struct LoadBalancingPolicy;
+
+impl LoadBalancingPolicy {
+    pub fn plan_front_runnable<
+        const SOURCE_RUNNABLE_CAPACITY: usize,
+        const DESTINATION_RUNNABLE_CAPACITY: usize,
+        const TASK_CAPACITY: usize,
+        const SHARED_CAPACITY: usize,
+        const CPU_CAPACITY: usize,
+    >(
+        requester: LogicalCpuId,
+        source_scheduler: &PerCoreScheduler<SOURCE_RUNNABLE_CAPACITY>,
+        destination_scheduler: &PerCoreScheduler<DESTINATION_RUNNABLE_CAPACITY>,
+        metadata: &SharedSchedulerMetadata<TASK_CAPACITY, CPU_CAPACITY>,
+        shared_queue: &SharedRunQueue<SHARED_CAPACITY, CPU_CAPACITY>,
+    ) -> Result<LoadBalancingPlan, LoadBalancingPolicyError> {
+        let source_owner = source_scheduler.owner();
+        let destination_owner = destination_scheduler.owner();
+        Self::ensure_valid_source::<CPU_CAPACITY>(source_owner)?;
+        Self::ensure_valid_destination::<CPU_CAPACITY>(destination_owner)?;
+        if source_owner == destination_owner {
+            return Err(LoadBalancingPolicyError::SameOwner {
+                owner: source_owner,
+            });
+        }
+        if requester != source_owner {
+            return Err(LoadBalancingPolicyError::WrongSourceOwner {
+                owner: source_owner,
+                requester,
+            });
+        }
+        if !destination_scheduler.production_dispatch_enabled() {
+            return Err(LoadBalancingPolicyError::DestinationRoleIneligible {
+                owner: destination_owner,
+                role: destination_scheduler.role(),
+            });
+        }
+
+        let candidate = source_scheduler
+            .scheduler()
+            .runnable()
+            .front()
+            .ok_or(LoadBalancingPolicyError::NoSourceCandidate { source_owner })?;
+        if source_scheduler.current_task() == Some(candidate) {
+            return Err(LoadBalancingPolicyError::SourceCandidateRunning { task_id: candidate });
+        }
+        let snapshot = metadata
+            .lookup_task(candidate)
+            .map_err(|_| LoadBalancingPolicyError::SourceCandidateUnknown { task_id: candidate })?;
+        Self::ensure_snapshot_matches_source(snapshot, source_owner)?;
+        if destination_scheduler.scheduler().runnable().is_full() {
+            return Err(LoadBalancingPolicyError::DestinationLocalQueueFull {
+                destination_owner,
+                task_id: candidate,
+            });
+        }
+        if shared_queue.contains(candidate) {
+            return Err(LoadBalancingPolicyError::DuplicateSharedQueued { task_id: candidate });
+        }
+        if shared_queue.is_full() {
+            return Err(LoadBalancingPolicyError::SharedRunQueueFull);
+        }
+
+        Ok(LoadBalancingPlan {
+            task_id: candidate,
+            source_owner,
+            destination_owner,
+            metadata_generation: snapshot.generation(),
+        })
+    }
+
+    pub fn publish_plan<
+        const SOURCE_RUNNABLE_CAPACITY: usize,
+        const TASK_CAPACITY: usize,
+        const SHARED_CAPACITY: usize,
+        const CPU_CAPACITY: usize,
+    >(
+        requester: LogicalCpuId,
+        source_scheduler: &mut PerCoreScheduler<SOURCE_RUNNABLE_CAPACITY>,
+        metadata: &SharedSchedulerMetadata<TASK_CAPACITY, CPU_CAPACITY>,
+        shared_queue: &mut SharedRunQueue<SHARED_CAPACITY, CPU_CAPACITY>,
+        task: &Task,
+        plan: LoadBalancingPlan,
+    ) -> Result<LoadBalancingPublishReport, LoadBalancingPolicyError> {
+        Self::ensure_valid_source::<CPU_CAPACITY>(plan.source_owner)?;
+        Self::ensure_valid_destination::<CPU_CAPACITY>(plan.destination_owner)?;
+        if requester != plan.source_owner {
+            return Err(LoadBalancingPolicyError::WrongSourceOwner {
+                owner: plan.source_owner,
+                requester,
+            });
+        }
+        if source_scheduler.owner() != plan.source_owner {
+            return Err(LoadBalancingPolicyError::WrongSourceOwner {
+                owner: source_scheduler.owner(),
+                requester: plan.source_owner,
+            });
+        }
+        if task.id() != plan.task_id {
+            return Err(LoadBalancingPolicyError::SourceCandidateMismatch {
+                selected: plan.task_id,
+                provided: task.id(),
+            });
+        }
+
+        let migration = shared_queue
+            .publish_migration(
+                requester,
+                source_scheduler,
+                plan.destination_owner,
+                metadata,
+                task,
+                plan.metadata_generation,
+            )
+            .map_err(LoadBalancingPolicyError::MigrationRejected)?;
+        Ok(LoadBalancingPublishReport { plan, migration })
+    }
+
+    pub fn publish_front_runnable<
+        const SOURCE_RUNNABLE_CAPACITY: usize,
+        const DESTINATION_RUNNABLE_CAPACITY: usize,
+        const TASK_CAPACITY: usize,
+        const SHARED_CAPACITY: usize,
+        const CPU_CAPACITY: usize,
+    >(
+        requester: LogicalCpuId,
+        source_scheduler: &mut PerCoreScheduler<SOURCE_RUNNABLE_CAPACITY>,
+        destination_scheduler: &PerCoreScheduler<DESTINATION_RUNNABLE_CAPACITY>,
+        metadata: &SharedSchedulerMetadata<TASK_CAPACITY, CPU_CAPACITY>,
+        shared_queue: &mut SharedRunQueue<SHARED_CAPACITY, CPU_CAPACITY>,
+        task: &Task,
+    ) -> Result<LoadBalancingPublishReport, LoadBalancingPolicyError> {
+        let plan = Self::plan_front_runnable(
+            requester,
+            source_scheduler,
+            destination_scheduler,
+            metadata,
+            shared_queue,
+        )?;
+        Self::publish_plan(
+            requester,
+            source_scheduler,
+            metadata,
+            shared_queue,
+            task,
+            plan,
+        )
+    }
+
+    fn ensure_valid_source<const CPU_CAPACITY: usize>(
+        source_owner: LogicalCpuId,
+    ) -> Result<(), LoadBalancingPolicyError> {
+        if source_owner.raw() < CPU_CAPACITY {
+            Ok(())
+        } else {
+            Err(LoadBalancingPolicyError::InvalidSourceOwner {
+                source_owner,
+                cpu_capacity: CPU_CAPACITY,
+            })
+        }
+    }
+
+    fn ensure_valid_destination<const CPU_CAPACITY: usize>(
+        destination_owner: LogicalCpuId,
+    ) -> Result<(), LoadBalancingPolicyError> {
+        if destination_owner.raw() < CPU_CAPACITY {
+            Ok(())
+        } else {
+            Err(LoadBalancingPolicyError::InvalidDestinationOwner {
+                destination_owner,
+                cpu_capacity: CPU_CAPACITY,
+            })
+        }
+    }
+
+    fn ensure_snapshot_matches_source(
+        snapshot: SchedulerTaskSnapshot,
+        source_owner: LogicalCpuId,
+    ) -> Result<(), LoadBalancingPolicyError> {
+        let task_id = snapshot.task_id();
+        if snapshot.owner() != source_owner {
+            return Err(LoadBalancingPolicyError::SourceCandidateOwnerMismatch {
+                task_id,
+                metadata_owner: snapshot.owner(),
+                expected_owner: source_owner,
+            });
+        }
+        if snapshot.state() == TaskState::Running || snapshot.current_on_owner() {
+            return Err(LoadBalancingPolicyError::SourceCandidateRunning { task_id });
+        }
+        if snapshot.state() == TaskState::Blocked {
+            return Err(LoadBalancingPolicyError::SourceCandidateBlocked { task_id });
+        }
+        if snapshot.state() != TaskState::Runnable {
+            return Err(LoadBalancingPolicyError::SourceCandidateNotRunnable {
+                task_id,
+                state: snapshot.state(),
+            });
+        }
+        if !snapshot.runnable_on_owner() {
+            return Err(LoadBalancingPolicyError::SourceCandidateNotQueued {
+                task_id,
+                owner: source_owner,
+            });
+        }
+        Ok(())
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct RemoteWakeRequest {
     requester: LogicalCpuId,
     target: LogicalCpuId,
@@ -1970,14 +2282,14 @@ mod tests {
 
     use super::{
         ContextFrame, CpuLocalSchedulerService, CpuLocalSchedulerServiceError, KernelStack,
-        LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError, ProcessOwnerId,
-        ProductionDispatchError, RemoteWakePublishOutcome, RemoteWakeQueue, RemoteWakeRequest,
-        RemoteWakeRequestError, RunnableQueue, RunnableQueueError, SchedulerCoreRole,
-        SecondarySchedulerServiceLoop, SecondarySchedulerServiceLoopError, SharedRunQueue,
-        SharedRunQueueError, SharedRunQueueLock, SharedSchedulerMetadata,
-        SharedSchedulerMetadataError, SharedSchedulerMetadataLock, SingleCoreScheduler,
-        TargetWakeConsumptionError, Task, TaskId, TaskState, TimerPreemptError,
-        VoluntaryYieldError,
+        LoadBalancingPolicy, LoadBalancingPolicyError, LogicalCpuId, PerCoreScheduler,
+        PerCoreSchedulerAccessError, ProcessOwnerId, ProductionDispatchError,
+        RemoteWakePublishOutcome, RemoteWakeQueue, RemoteWakeRequest, RemoteWakeRequestError,
+        RunnableQueue, RunnableQueueError, SchedulerCoreRole, SecondarySchedulerServiceLoop,
+        SecondarySchedulerServiceLoopError, SharedRunQueue, SharedRunQueueError,
+        SharedRunQueueLock, SharedSchedulerMetadata, SharedSchedulerMetadataError,
+        SharedSchedulerMetadataLock, SingleCoreScheduler, TargetWakeConsumptionError, Task, TaskId,
+        TaskState, TimerPreemptError, VoluntaryYieldError,
     };
 
     fn task_id(raw: u64) -> TaskId {
@@ -3047,6 +3359,276 @@ mod tests {
         }
 
         assert!(!lock.is_locked());
+    }
+
+    #[test_case]
+    fn load_balancing_policy_selects_front_candidate_and_publishes_shared_handoff() {
+        let source = LogicalCpuId::BOOT;
+        let destination = LogicalCpuId::new(1);
+        let mut source_scheduler = PerCoreScheduler::<2>::boot_cpu();
+        let destination_scheduler =
+            PerCoreScheduler::<2>::production_secondary_diagnostic(destination);
+        let mut metadata = SharedSchedulerMetadata::<2, 4>::new();
+        let mut shared = SharedRunQueue::<2, 4>::new();
+        let mut first = Task::kernel_thread(task_id(90), kernel_stack(), context());
+        let mut second = Task::kernel_thread(task_id(91), kernel_stack(), context());
+
+        source_scheduler
+            .local_scheduler_mut(source)
+            .expect("source owner mutates local scheduler")
+            .make_runnable(&mut first)
+            .expect("source local queue has capacity");
+        source_scheduler
+            .local_scheduler_mut(source)
+            .expect("source owner mutates local scheduler")
+            .make_runnable(&mut second)
+            .expect("source local queue has capacity");
+        let snapshot = metadata
+            .register_local_task(source, &source_scheduler, &first)
+            .expect("source publishes first task metadata");
+        metadata
+            .register_local_task(source, &source_scheduler, &second)
+            .expect("source publishes second task metadata");
+
+        let report = LoadBalancingPolicy::publish_front_runnable(
+            source,
+            &mut source_scheduler,
+            &destination_scheduler,
+            &metadata,
+            &mut shared,
+            &first,
+        )
+        .expect("policy publishes front candidate through shared queue");
+
+        assert_eq!(report.plan().task_id(), first.id());
+        assert_eq!(report.plan().source_owner(), source);
+        assert_eq!(report.plan().destination_owner(), destination);
+        assert_eq!(report.plan().metadata_generation(), snapshot.generation());
+        assert_eq!(report.migration().queued().task_id(), first.id());
+        assert!(shared.contains(first.id()));
+        assert!(!source_scheduler.scheduler().runnable().contains(first.id()));
+        assert!(
+            source_scheduler
+                .scheduler()
+                .runnable()
+                .contains(second.id())
+        );
+        assert!(
+            !destination_scheduler
+                .scheduler()
+                .runnable()
+                .contains(first.id())
+        );
+        assert_eq!(
+            metadata
+                .lookup_task(first.id())
+                .expect("metadata remains source-owned until destination consumes")
+                .owner(),
+            source
+        );
+    }
+
+    #[test_case]
+    fn load_balancing_policy_rejects_stale_plan_without_source_queue_mutation() {
+        let source = LogicalCpuId::BOOT;
+        let destination = LogicalCpuId::new(1);
+        let mut source_scheduler = PerCoreScheduler::<2>::boot_cpu();
+        let destination_scheduler =
+            PerCoreScheduler::<2>::production_secondary_diagnostic(destination);
+        let mut metadata = SharedSchedulerMetadata::<2, 4>::new();
+        let mut shared = SharedRunQueue::<2, 4>::new();
+        let mut task = Task::kernel_thread(task_id(92), kernel_stack(), context());
+
+        source_scheduler
+            .local_scheduler_mut(source)
+            .expect("source owner mutates local scheduler")
+            .make_runnable(&mut task)
+            .expect("source local queue has capacity");
+        let first_snapshot = metadata
+            .register_local_task(source, &source_scheduler, &task)
+            .expect("source publishes task metadata");
+        let plan = LoadBalancingPolicy::plan_front_runnable(
+            source,
+            &source_scheduler,
+            &destination_scheduler,
+            &metadata,
+            &shared,
+        )
+        .expect("policy records initial generation");
+        let refreshed = metadata
+            .refresh_local_task(source, &source_scheduler, &task)
+            .expect("source refresh makes plan stale");
+
+        assert_eq!(
+            LoadBalancingPolicy::publish_plan(
+                source,
+                &mut source_scheduler,
+                &metadata,
+                &mut shared,
+                &task,
+                plan,
+            ),
+            Err(LoadBalancingPolicyError::MigrationRejected(
+                SharedRunQueueError::StaleMetadataGeneration {
+                    task_id: task.id(),
+                    expected_generation: first_snapshot.generation(),
+                    actual_generation: refreshed.generation()
+                }
+            ))
+        );
+        assert!(source_scheduler.scheduler().runnable().contains(task.id()));
+        assert!(shared.is_empty());
+    }
+
+    #[test_case]
+    fn load_balancing_policy_rejects_destination_backpressure_before_publication() {
+        let source = LogicalCpuId::BOOT;
+        let destination = LogicalCpuId::new(1);
+        let mut source_scheduler = PerCoreScheduler::<2>::boot_cpu();
+        let mut destination_scheduler =
+            PerCoreScheduler::<1>::production_secondary_diagnostic(destination);
+        let mut metadata = SharedSchedulerMetadata::<2, 4>::new();
+        let shared = SharedRunQueue::<2, 4>::new();
+        let mut task = Task::kernel_thread(task_id(93), kernel_stack(), context());
+        let mut destination_task = Task::kernel_thread(task_id(94), kernel_stack(), context());
+
+        source_scheduler
+            .local_scheduler_mut(source)
+            .expect("source owner mutates local scheduler")
+            .make_runnable(&mut task)
+            .expect("source local queue has capacity");
+        metadata
+            .register_local_task(source, &source_scheduler, &task)
+            .expect("source publishes task metadata");
+        destination_scheduler
+            .local_scheduler_mut(destination)
+            .expect("destination owner mutates local scheduler")
+            .make_runnable(&mut destination_task)
+            .expect("destination local queue is now full");
+
+        assert_eq!(
+            LoadBalancingPolicy::plan_front_runnable(
+                source,
+                &source_scheduler,
+                &destination_scheduler,
+                &metadata,
+                &shared,
+            ),
+            Err(LoadBalancingPolicyError::DestinationLocalQueueFull {
+                destination_owner: destination,
+                task_id: task.id()
+            })
+        );
+        assert!(source_scheduler.scheduler().runnable().contains(task.id()));
+        assert!(shared.is_empty());
+    }
+
+    #[test_case]
+    fn load_balancing_policy_rejects_invalid_destination_role_and_cpu_id() {
+        let source = LogicalCpuId::BOOT;
+        let deferred_destination = LogicalCpuId::new(1);
+        let invalid_destination = LogicalCpuId::new(4);
+        let mut source_scheduler = PerCoreScheduler::<2>::boot_cpu();
+        let deferred_scheduler = PerCoreScheduler::<2>::deferred_secondary(deferred_destination);
+        let invalid_scheduler =
+            PerCoreScheduler::<2>::production_secondary_diagnostic(invalid_destination);
+        let mut metadata = SharedSchedulerMetadata::<2, 4>::new();
+        let shared = SharedRunQueue::<2, 4>::new();
+        let mut task = Task::kernel_thread(task_id(95), kernel_stack(), context());
+
+        source_scheduler
+            .local_scheduler_mut(source)
+            .expect("source owner mutates local scheduler")
+            .make_runnable(&mut task)
+            .expect("source local queue has capacity");
+        metadata
+            .register_local_task(source, &source_scheduler, &task)
+            .expect("source publishes task metadata");
+
+        assert_eq!(
+            LoadBalancingPolicy::plan_front_runnable(
+                source,
+                &source_scheduler,
+                &deferred_scheduler,
+                &metadata,
+                &shared,
+            ),
+            Err(LoadBalancingPolicyError::DestinationRoleIneligible {
+                owner: deferred_destination,
+                role: SchedulerCoreRole::SecondaryDeferred
+            })
+        );
+        assert_eq!(
+            LoadBalancingPolicy::plan_front_runnable(
+                source,
+                &source_scheduler,
+                &invalid_scheduler,
+                &metadata,
+                &shared,
+            ),
+            Err(LoadBalancingPolicyError::InvalidDestinationOwner {
+                destination_owner: invalid_destination,
+                cpu_capacity: 4
+            })
+        );
+    }
+
+    #[test_case]
+    fn load_balancing_policy_rejects_shared_backpressure_and_preserves_single_owner_queue() {
+        let source = LogicalCpuId::BOOT;
+        let destination = LogicalCpuId::new(1);
+        let mut source_scheduler = PerCoreScheduler::<2>::boot_cpu();
+        let destination_scheduler =
+            PerCoreScheduler::<2>::production_secondary_diagnostic(destination);
+        let mut metadata = SharedSchedulerMetadata::<2, 4>::new();
+        let mut shared = SharedRunQueue::<1, 4>::new();
+        let mut first = Task::kernel_thread(task_id(96), kernel_stack(), context());
+        let mut second = Task::kernel_thread(task_id(97), kernel_stack(), context());
+
+        source_scheduler
+            .local_scheduler_mut(source)
+            .expect("source owner mutates local scheduler")
+            .make_runnable(&mut first)
+            .expect("source local queue has capacity");
+        source_scheduler
+            .local_scheduler_mut(source)
+            .expect("source owner mutates local scheduler")
+            .make_runnable(&mut second)
+            .expect("source local queue has capacity");
+        metadata
+            .register_local_task(source, &source_scheduler, &first)
+            .expect("source publishes first task metadata");
+        metadata
+            .register_local_task(source, &source_scheduler, &second)
+            .expect("source publishes second task metadata");
+        LoadBalancingPolicy::publish_front_runnable(
+            source,
+            &mut source_scheduler,
+            &destination_scheduler,
+            &metadata,
+            &mut shared,
+            &first,
+        )
+        .expect("first load-balancing handoff fills shared queue");
+
+        assert_eq!(
+            LoadBalancingPolicy::plan_front_runnable(
+                source,
+                &source_scheduler,
+                &destination_scheduler,
+                &metadata,
+                &shared,
+            ),
+            Err(LoadBalancingPolicyError::SharedRunQueueFull)
+        );
+        assert!(
+            source_scheduler
+                .scheduler()
+                .runnable()
+                .contains(second.id())
+        );
+        assert!(!source_scheduler.scheduler().runnable().contains(first.id()));
+        assert!(shared.contains(first.id()));
     }
 
     #[test_case]
