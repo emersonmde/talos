@@ -1105,3 +1105,26 @@ It does not accept autonomous work stealing, running-task migration, remote
 reschedule, multi-core timer preemption, userspace, filesystem, networking,
 SSH, shell behavior, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver
 policy.
+
+## Phase 6.3 Load-Balancing Closeout
+
+The load-balancing closeout is accepted in
+docs/src/project/phase6-load-balancing-closeout-checkpoint.md. It reconciles
+the source inventory, policy contract, target-independent core, QEMU
+substitute proof, serialized Pi 5 proof, retained gates, and remaining
+deferrals.
+
+The accepted boundary is a deterministic policy primitive over already
+accepted scheduler surfaces: a source owner can select one source-local front
+runnable task, publish the handoff through SharedRunQueue, and a destination
+owner can consume it locally. The retained proof gates are
+scripts/qemu-shared-runqueue-migration-smoke.sh,
+scripts/qemu-load-balancing-smoke.sh, and the Pi 5 load-balancing image and
+boot-tree scripts for explicit future hardware reproduction.
+
+This closeout does not accept an autonomous balancing loop, work stealing,
+running-task migration, interrupt-driven remote reschedule, multi-core timer
+preemption, Phase 7, filesystem, networking, SSH, shell behavior, RP1/PCIe,
+UART interrupt ownership, or DMA/cache-driver policy. The next bounded
+scheduler task should be a multi-core preemption source inventory before any
+preemption implementation starts.

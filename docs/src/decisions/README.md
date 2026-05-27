@@ -12,6 +12,36 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-27 - Phase 6.3 Load-Balancing Closeout Accepted
+
+- Status: accepted as the checkpoint for the Phase 6.3 load-balancing slice.
+  No Rust implementation, boot image, QEMU run, hardware run, autonomous work
+  stealing, running-task migration, remote reschedule, multi-core preemption,
+  Phase 7, filesystem, networking, SSH, shell, RP1/PCIe, UART interrupt
+  ownership, or DMA behavior was added.
+- Context: Talos had accepted the load-balancing source inventory, policy
+  contract, target-independent core, QEMU substitute proof, and serialized
+  Pi 5 proof. A closeout checkpoint was required before broader scheduler
+  topology or later-phase work.
+- Decision: Accept phase6-load-balancing-closeout-checkpoint-20260527. The
+  accepted boundary is a deterministic policy primitive: select one
+  source-local front runnable task, publish through SharedRunQueue, consume on
+  the destination owner, and refresh metadata. The retained gates are the
+  scheduler unit tests, shared run-queue migration QEMU smoke,
+  qemu-load-balancing smoke, and Pi 5 load-balancing reproduction scripts for
+  explicit future hardware tasks.
+- Evidence level: static inspection of accepted task/evidence records,
+  documentation build, and whitespace inspection. Hardware was not required
+  because this checkpoint makes no new physical claim.
+- Validation: `git diff --check` and `mdbook build` passed.
+- Consequences: The next bounded recommendation is
+  phase6-multicore-preemption-source-inventory-20260527, a documentation and
+  source-inventory task before any multi-core preemption implementation.
+  Autonomous balancing loops, work stealing, running-task migration, remote
+  reschedule, multi-core timer preemption, Phase 7, filesystem, networking,
+  SSH, shell behavior, RP1/PCIe, UART interrupt ownership, and DMA/cache
+  policy remain deferred.
+
 ## 2026-05-27 - Phase 6.3 Pi 5 Load-Balancing Evidence Accepted
 
 - Status: accepted as serialized physical Pi 5 evidence for the accepted

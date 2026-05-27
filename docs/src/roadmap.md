@@ -30,8 +30,9 @@ CPU-local scheduler service core, CPU-local scheduler service closeout,
 secondary scheduler service-loop source inventory, service-loop core, QEMU
 smoke, Pi 5 proof, service-loop closeout, shared run-queue/migration source
 inventory, contract, core, QEMU proof, Pi 5 proof, closeout,
-load-balancing source inventory, load-balancing policy contract, and
-load-balancing core tasks are accepted. The accepted shared
+load-balancing source inventory, load-balancing policy contract,
+load-balancing core, QEMU load-balancing proof, Pi 5 load-balancing proof,
+and load-balancing closeout tasks are accepted. The accepted shared
 run-queue/migration slice provides a bounded source-owner publish and
 destination-owner consume path with explicit migration states and deterministic
 errors; QEMU reports
@@ -53,8 +54,10 @@ front-runnable selection, source-local removal, shared handoff,
 destination-local enqueue, metadata refresh, and PASS. Serialized Pi 5
 load-balancing proof is accepted with
 classification=pi5-load-balancing-complete for the same named invariant.
-Multi-core preemption, Phase 7, filesystem, networking, SSH, and shell work
-remain deferred.
+The accepted load-balancing closeout preserves those retained gates and
+recommends multi-core preemption source inventory as the next bounded
+Phase 6.3 task. Multi-core preemption implementation, Phase 7, filesystem,
+networking, SSH, and shell work remain deferred.
 
 Accepted status and historical completed facts:
 
@@ -470,13 +473,19 @@ Accepted status and historical completed facts:
   `scripts/rpi5-load-balancing-boot-tree.sh`, proves the same deterministic
   `LoadBalancingPolicy` path on serialized Pi 5 hardware, and reports
   classification=pi5-load-balancing-complete.
+- The Phase 6.3 load-balancing closeout checkpoint is accepted. It reconciles
+  the source inventory, policy contract, target-independent core, QEMU
+  substitute proof, serialized Pi 5 proof, retained gates, and remaining
+  deferrals. The next bounded recommendation is
+  `phase6-multicore-preemption-source-inventory-20260527`, a documentation
+  and source-inventory task before any multi-core preemption implementation.
 
 Blocked or pending:
 
-- The next explicit validation target should be the load-balancing closeout
-  checkpoint after supervisor ready-marking. Work stealing, running-task
-  migration, remote reschedule, multi-core preemption, userspace, descriptors,
-  filesystem, networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and
+- The next explicit supervisor-planned task should be multi-core preemption
+  source inventory. Work stealing, running-task migration, remote reschedule,
+  multi-core preemption implementation, userspace, descriptors, filesystem,
+  networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and
   DMA/cache-coherent driver policy remain deferred.
 - Large raw accepted evidence remains in Git until external artifact storage or
   an explicit no-delete manifest-only cleanup is approved. Do not delete
@@ -829,8 +838,10 @@ accepted in `tasks/2026-05-27-phase6-load-balancing-core.md`. The QEMU
 substitute proof is accepted in
 `tasks/2026-05-27-phase6-qemu-load-balancing-smoke.md`, and the serialized
 Pi 5 proof is accepted in
-`tasks/2026-05-27-phase6-pi5-load-balancing-proof.md`. The next bounded
-Phase 6.3 recommendation is a load-balancing closeout checkpoint.
+`tasks/2026-05-27-phase6-pi5-load-balancing-proof.md`. The load-balancing
+closeout is accepted in
+`docs/src/project/phase6-load-balancing-closeout-checkpoint.md`; its next
+bounded Phase 6.3 recommendation is multi-core preemption source inventory.
 Before broader Phase 6.3 productionization, the accepted
 [Evidence Retention Policy](project/evidence-retention-policy.md) and
 [Diagnostic Surface Policy](project/diagnostic-surface-policy.md) govern which
