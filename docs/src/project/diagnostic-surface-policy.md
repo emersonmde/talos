@@ -10,18 +10,28 @@ ordinary product behavior or tests, or be retired by an explicit cleanup task.
 The 2026-05-25 audit inspected Rust cfg paths, boot roles, scripts, project
 docs, and accepted task records. The current surface is:
 
-- 17 QEMU scripts under scripts/qemu-*.sh.
-- 7 shared Pi 5 lab infrastructure scripts: boot image/tree helpers, TFTP
-  cursor/delta helpers, and archive review.
-- 16 Phase 6 Pi 5 proof image or boot-tree scripts for secondary bring-up,
-  SMP locks, cross-core IPI, remote wake, production secondary dispatch, and
-  shared scheduler metadata.
-- 24 older Pi 5 diagnostic image/tree scripts for allocator, exception,
-  panic, translation-fault, timer, UART, and diagnostic-command proof paths.
+- 74 scripts total.
+- 20 QEMU scripts under scripts/qemu-*.sh, including the shared QEMU runner.
+- 10 shared proof infrastructure scripts: objcopy, QEMU runner, Pi 5 boot
+  image/tree helpers, TFTP cursor/delta helpers, archive review, and format
+  guard checks.
+- 22 Phase 6 Pi 5 proof image or boot-tree scripts for secondary bring-up,
+  SMP locks, cross-core IPI, remote wake, production secondary dispatch,
+  secondary scheduler service loop, shared scheduler metadata, shared
+  run-queue migration, and load balancing.
+- 19 old Pi 5 diagnostic image/tree scripts for allocator, exception, panic,
+  and translation-fault proof paths.
+- 4 older Phase 4/5 Pi 5 proof scripts for timer IRQ, timer preemption,
+  UART10 polling RX, and diagnostic-command-channel behavior.
+- 49 named boot scenarios in build.rs.
 - Rust cfg-gated QEMU diagnostics in src/target/qemu_virt.rs and dispatch
   routing in src/main.rs.
 - Rust cfg-gated Pi 5 proof and diagnostic paths in src/target/rpi5.rs,
   src/boot/rpi5.rs, and src/diagnostics/rpi5.rs.
+
+The 2026-05-27 full inventory classifies surfaces as keep-active,
+promote-to-real-test-or-feature, remove-now, or defer-with-owner-and-expiry in
+tasks/2026-05-27-talos-obsolete-bloat-full-inventory.md.
 
 ## Retained Gates
 
@@ -41,36 +51,42 @@ Retain these as named validation gates until a later checkpoint replaces them:
   scripts/qemu-remote-wakeup-request-smoke.sh,
   scripts/qemu-remote-wake-to-local-runnable-smoke.sh,
   scripts/qemu-production-secondary-dispatch-smoke.sh, and
-  scripts/qemu-shared-scheduler-metadata-smoke.sh for accepted Phase 6.2 and
-  Phase 6.3 SMP/scheduler invariants.
+  scripts/qemu-shared-scheduler-metadata-smoke.sh for accepted Phase 6.2 SMP
+  and scheduler invariants.
+- scripts/qemu-secondary-core-workload-smoke.sh,
+  scripts/qemu-secondary-scheduler-service-loop-smoke.sh,
+  scripts/qemu-shared-runqueue-migration-smoke.sh, and
+  scripts/qemu-load-balancing-smoke.sh for accepted Phase 6.3 scheduler
+  service-loop, migration, and load-balancing invariants.
 - scripts/rpi5-archive-review.sh, scripts/rpi5-tftp-cursor.sh,
   scripts/rpi5-wait-tftp-delta.sh, and the generic Pi 5 image/boot-tree
   helpers for hardware proof reproducibility.
 - Phase 6 Pi 5 proof scripts for secondary-core bring-up, SMP lock
   cache/coherence, cross-core IPI, remote wake, production secondary dispatch,
-  and shared scheduler metadata while those hardware claims are the latest
-  accepted evidence for their boundary.
+  secondary scheduler service loop, shared scheduler metadata, shared
+  run-queue migration, and load balancing while those hardware claims are the
+  latest accepted evidence for their boundary.
 
 These gates must not be deleted by opportunistic cleanup. If a future task
 replaces one, that task must name the replacement gate and preserve the accepted
 task summary, classification, and artifact digests.
 
-## Promote Or Quarantine
+## Promote, Remove, Or Defer
 
 Some diagnostics are still useful, but should not keep growing as proof-only
 surface:
 
-- QEMU secondary-core discriminator paths are retained only as historical
-  bring-up discriminators. Queue removal after the Phase 6 secondary-core and
-  scheduler migration checkpoints no longer rely on them.
+- QEMU secondary-core discriminator paths are remove-now cleanup surfaces after
+  the accepted secondary-core, scheduler service-loop, migration, and
+  load-balancing checkpoints.
 - Pi 5 timer, UART, and diagnostic-command proof scripts are retained as
   Phase 4/5 hardware reproducibility gates until a later console/timer
   checkpoint promotes equivalent always-on diagnostics or names replacements.
 - Allocator, string, vec, realloc, exception, panic, and translation-fault
-  Pi 5 diagnostic image scripts should be grouped into a bounded legacy
-  runtime/exception diagnostic retirement task. Delete them only after their
-  accepted task records have summary coverage and no active roadmap gate names
-  the script directly.
+  Pi 5 diagnostic image scripts are remove-now cleanup surfaces for the
+  bounded obsolete-bloat removal sweep. Preserve accepted summaries,
+  classification strings, and artifact digests in task records, but delete the
+  proof-only scripts, boot scenarios, and cfg-gated production source paths.
 
 ## Retirement Rule
 
