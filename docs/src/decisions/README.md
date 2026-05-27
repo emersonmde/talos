@@ -12,6 +12,42 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-27 - Phase 6.3 Load-Balancing Policy Contract Accepted
+
+- Status: accepted as documentation/policy contract before load-balancing
+  implementation. No Rust implementation, QEMU run, Pi 5 hardware run,
+  load-balancer, work stealing, running-task migration, remote reschedule,
+  multi-core preemption, Phase 7, filesystem, networking, SSH, shell, RP1/PCIe,
+  UART interrupt ownership, or DMA behavior was added.
+- Context: The accepted load-balancing source inventory identified usable
+  scheduler metadata, owner-local runnable pressure, CPU roles,
+  SharedRunQueue capacity, wake/timer context, and stale/invalid input failure
+  modes. It also showed missing affinity, fairness, production secondary
+  idle/wake, remote-reschedule, and multi-core-preemption policy.
+- Decision: Accept phase6-load-balancing-policy-contract-20260527. The
+  contract permits a conservative deterministic policy to choose one
+  source-owned runnable, non-current task and one eligible destination CPU,
+  then use the accepted SharedRunQueue owner-transfer mechanism. It keeps
+  RemoteWakeQueue separate, makes remote reschedule optional and polling-only
+  for the first implementation, and requires deterministic defer/reject
+  outcomes for stale metadata, full queues, invalid roles, duplicates, running
+  tasks, blocked tasks, and unsupported cross-core trigger paths.
+- Evidence level: static inspection, documentation build, and whitespace
+  inspection. Hardware was not required because no physical claim changed.
+- Validation: git status --short was clean before edits; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next bounded Phase 6.3 task may implement
+  phase6-load-balancing-core-20260527 inside this contract. Work stealing,
+  running-task migration, interrupt-driven remote reschedule, multi-core
+  preemption, Phase 7, filesystem, networking, SSH, shell behavior, RP1/PCIe,
+  UART interrupt ownership, and DMA/cache-driver policy remain deferred.
+- Alternatives considered: Implement load balancing directly from the source
+  inventory, design full fairness/affinity first, or add interrupt-driven
+  remote reschedule before policy. Direct implementation would blur policy and
+  mechanism; full fairness/affinity lacks data structures; remote reschedule
+  is unnecessary for the first owner-local polling implementation and risks
+  running scheduler work in IPI context.
+
 ## 2026-05-27 - Shared Run-Queue Migration Closeout Accepted
 
 - Status: accepted as the Phase 6.3 shared run-queue/migration closeout

@@ -991,10 +991,40 @@ core: source-owner publish, destination-owner consume, deterministic migration
 states, deterministic error reporting, and metadata owner transfer. The QEMU
 and Pi 5 proof scripts remain retained diagnostic gates.
 
-The next bounded scheduler-topology task should be a load-balancing source
-inventory. That inventory must stay policy-oriented until it has reconciled
-metadata freshness, per-core runnable state, shared queue capacity, candidate
-target-selection inputs, fairness and affinity constraints, remote reschedule
-needs, retained diagnostics, and the boundary between policy and the accepted
-SharedRunQueue core. Implementation of load balancing, work stealing,
-multi-core preemption, and later roadmap phases remains deferred.
+The load-balancing source inventory and policy contract are now accepted in
+docs/src/project/phase6-load-balancing-source-inventory.md and
+docs/src/project/phase6-load-balancing-policy-contract.md. Implementation of
+load balancing, work stealing, multi-core preemption, and later roadmap phases
+remains deferred until a bounded implementation task starts from that
+contract.
+
+## Phase 6.3 Load-Balancing Policy Contract
+
+The accepted load-balancing policy boundary is deliberately smaller than a
+general multi-core scheduler. A later implementation may choose one
+source-owned runnable, non-current task and one eligible production-capable
+destination CPU, then call the accepted SharedRunQueue owner-transfer
+mechanism. It may not directly mutate another CPU's local RunnableQueue,
+current task, saved context, counters, or owner-published metadata.
+
+Accepted policy inputs are limited to current scheduler surfaces:
+LogicalCpuId, SchedulerCoreRole, owner-local RunnableQueue pressure,
+PerCoreScheduler current-task state, SharedSchedulerMetadata owner/state and
+generation snapshots, SharedRunQueue capacity/backpressure, and wake/timer
+state only as non-migration context. Per-task affinity, priority, queue age,
+virtual runtime, CPU load averages, and cache-locality policy remain
+unimplemented and unavailable to the first policy.
+
+Every policy decision is provisional. SharedRunQueue::publish_migration must
+re-check metadata generation, ownership, source-local runnable membership, and
+queue capacity before source-local removal. Destination consumption remains an
+owner-local scheduler action. Stale metadata, invalid CPU roles, full queues,
+duplicates, running or blocked candidates, and remote-wake or timer/preemption
+confusion produce deterministic deferral or rejection while preserving
+single-owner task state.
+
+The first load-balancing implementation may be polling-only. Remote reschedule
+is not required by the contract. If a later task adds it, an IPI or similar
+signal may only record that normal scheduler control flow should run soon; it
+must not execute scheduler work, consume SharedRunQueue entries, print
+diagnostics, or hold scheduler topology locks in interrupt context.

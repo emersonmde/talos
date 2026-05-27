@@ -29,8 +29,9 @@ productionization-boundary, CPU-local scheduler service boundary,
 CPU-local scheduler service core, CPU-local scheduler service closeout,
 secondary scheduler service-loop source inventory, service-loop core, QEMU
 smoke, Pi 5 proof, service-loop closeout, shared run-queue/migration source
-inventory, contract, core, QEMU proof, Pi 5 proof, closeout, and
-load-balancing source inventory tasks are accepted. The accepted shared
+inventory, contract, core, QEMU proof, Pi 5 proof, closeout,
+load-balancing source inventory, and load-balancing policy contract tasks are
+accepted. The accepted shared
 run-queue/migration slice provides a bounded source-owner publish and
 destination-owner consume path with explicit migration states and deterministic
 errors; QEMU reports
@@ -40,9 +41,12 @@ invariant with
 classification=pi5-shared-runqueue-migration-complete. The accepted
 load-balancing source inventory identifies policy inputs, freshness checks,
 failure modes, and the split between target selection, fairness/affinity,
-remote reschedule notification, and the existing migration mechanism. Load
-balancing implementation, multi-core preemption, Phase 7, filesystem,
-networking, SSH, and shell work remain deferred.
+remote reschedule notification, and the existing migration mechanism. The
+accepted load-balancing policy contract keeps the first policy deterministic,
+runnable-only, SharedRunQueue-backed, and polling-only unless a later task
+adds remote reschedule notification. Load-balancing implementation,
+multi-core preemption, Phase 7, filesystem, networking, SSH, and shell work
+remain deferred.
 
 Accepted status and historical completed facts:
 
@@ -434,12 +438,17 @@ Accepted status and historical completed facts:
   failure modes; and separates target selection, fairness/affinity, remote
   reschedule notification, and the accepted shared run-queue migration
   mechanism before any implementation.
+- The Phase 6.3 load-balancing policy contract is accepted. It defines a
+  conservative deterministic policy boundary over accepted inputs, preserves
+  SharedRunQueue as the only owner-transfer mechanism, keeps remote reschedule
+  polling-only for the first implementation, and defers fairness, affinity,
+  work stealing, running-task migration, and multi-core preemption.
 
 Blocked or pending:
 
-- The next explicit validation target should be the load-balancing contract
-  after supervisor ready-marking. Load balancing implementation, work
-  stealing, running-task migration, remote reschedule, multi-core preemption,
+- The next explicit validation target should be the target-independent
+  load-balancing core after supervisor ready-marking. Work stealing,
+  running-task migration, remote reschedule, multi-core preemption,
   userspace, descriptors, filesystem, networking, SSH, shell behavior, UART
   interrupts, RP1/PCIe, and DMA/cache-coherent driver policy remain deferred.
 - Large raw accepted evidence remains in Git until external artifact storage or
@@ -787,8 +796,9 @@ serialized Pi 5 proof accepted in
 `tasks/2026-05-26-phase6-pi5-shared-runqueue-migration-proof.md`.
 The shared run-queue/migration closeout reconciles source inventory, contract,
 core implementation, QEMU substitute proof, Pi 5 hardware proof, retained
-diagnostics, and deferred work. The next bounded Phase 6.3 recommendation is a
-load-balancing source inventory before any load-balancing implementation,
+diagnostics, and deferred work. The load-balancing source inventory and policy
+contract are now accepted. The next bounded Phase 6.3 recommendation is a
+target-independent load-balancing core inside the accepted contract before
 work stealing, multi-core preemption, Phase 7, filesystem, networking, SSH, or
 shell work.
 Before broader Phase 6.3 productionization, the accepted
