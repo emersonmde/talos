@@ -58,6 +58,7 @@
 - [Phase 6 Load-Balancing Policy Contract](project/phase6-load-balancing-policy-contract.md)
 - [Phase 6 Load-Balancing Closeout Checkpoint](project/phase6-load-balancing-closeout-checkpoint.md)
 - [Phase 6 Multi-Core Preemption Source Inventory](project/phase6-multicore-preemption-source-inventory.md)
+- [Phase 6 Multi-Core Preemption Contract](project/phase6-multicore-preemption-contract.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

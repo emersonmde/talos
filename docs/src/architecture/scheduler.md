@@ -1128,3 +1128,42 @@ preemption, Phase 7, filesystem, networking, SSH, shell behavior, RP1/PCIe,
 UART interrupt ownership, or DMA/cache-driver policy. The next bounded
 scheduler task should be a multi-core preemption source inventory before any
 preemption implementation starts.
+
+## Phase 6.3 Multi-Core Preemption Contract
+
+The multi-core preemption source inventory and contract are accepted in
+docs/src/project/phase6-multicore-preemption-source-inventory.md and
+docs/src/project/phase6-multicore-preemption-contract.md. The accepted
+invariant is deliberately owner-local: timer and IPI paths may record bounded
+state, but scheduler mutation runs only from normal control flow on the owning
+CPU after interrupt return.
+
+A local timer IRQ may acknowledge/classify the interrupt, record a pending
+preemption request for its own LogicalCpuId, reprogram the timer, and EOI.
+IRQ and IPI context must not call scheduler dispatch, switch the current task,
+consume SharedRunQueue entries, publish load-balancing migrations, print
+diagnostics, or hold scheduler topology locks for unbounded work.
+
+Current-task authority remains inside each PerCoreScheduler owner. Shared
+scheduler metadata is advisory and owner-published; SharedRunQueue and
+LoadBalancingPolicy continue to move only runnable, non-current tasks through
+the accepted owner-transfer path. Running-task migration and remote switching
+of another CPU's current task remain rejected.
+
+The first implementation may add only the target-independent or narrowly
+target-abstracted state required to let each owner service its own local
+preemption request. It must preserve the lock order of local IRQ save/mask
+before SMP scheduler lock acquisition, deterministic stale metadata and
+wrong-owner failures, and explicit defer behavior for nested or
+preemption-disabled sections. Remote reschedule remains deferred or
+notification-only; it is not required for the first core.
+
+The retained proof plan is implementation first, then QEMU, then serialized Pi
+5 hardware. QEMU must show multiple logical CPUs record and service their own
+local preemption requests through owner-local normal control flow. Pi 5 proof
+must use hardwareTestLock and record candidate identity, TFTP evidence, fresh
+serial output, participant counts, classification/PASS, and restore proof. The
+contract does not accept direct IRQ/IPI-context scheduling, autonomous work
+stealing, running-task migration, general remote reschedule, Phase 7,
+filesystem, networking, SSH, shell behavior, RP1/PCIe, UART interrupt
+ownership, or DMA/cache-driver policy.

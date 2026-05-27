@@ -59,8 +59,14 @@ recommends multi-core preemption source inventory as the next bounded
 Phase 6.3 task. The accepted multi-core preemption source inventory maps the
 timer IRQ, owner-local scheduler service, secondary service-loop, IPI/wake,
 metadata, SharedRunQueue, and load-balancing boundaries that the next contract
-must preserve. Multi-core preemption implementation, Phase 7, filesystem,
-networking, SSH, and shell work remain deferred.
+must preserve. The accepted multi-core preemption contract keeps timer/IPI
+paths as bounded recorders and requires owner-local normal control flow to
+perform scheduler mutation after interrupt return; it names deterministic
+defer/reject outcomes for stale metadata, wrong-owner access,
+nested/preemption-disabled sections, pending remote wake, and full queues.
+Multi-core preemption implementation, direct IRQ/IPI-context scheduling,
+running-task migration, Phase 7, filesystem, networking, SSH, and shell work
+remain deferred until the next bounded implementation and proof tasks.
 
 Accepted status and historical completed facts:
 

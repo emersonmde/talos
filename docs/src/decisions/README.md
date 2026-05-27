@@ -3317,3 +3317,33 @@ ADR template:
   production secondary idle/wake behavior, remote reschedule semantics, and
   multi-core preemption. The next bounded task should be
   phase6-load-balancing-contract-20260527 before implementation.
+
+## 2026-05-27 - Phase 6.3 Multi-Core Preemption Contract Accepted
+
+- Status: accepted as documentation/architecture contract before multi-core
+  preemption implementation. No Rust implementation, QEMU run, Pi 5 hardware
+  run, direct IRQ/IPI-context scheduling, running-task migration, work
+  stealing, general remote reschedule, Phase 7, filesystem, networking, SSH,
+  shell, RP1/PCIe, UART interrupt ownership, or DMA behavior was added.
+- Context: The accepted source inventory mapped timer IRQ recording,
+  owner-local scheduler service, secondary service-loop dispatch, IPI/wake,
+  metadata, SharedRunQueue, and load-balancing boundaries. A contract was
+  needed before code could add multi-core preemption state.
+- Decision: Accept phase6-multicore-preemption-contract-20260527. The first
+  allowed invariant is that timer/IPI paths record bounded state only, while
+  owner-local normal control flow performs scheduler mutation after interrupt
+  return. Current-task authority remains per PerCoreScheduler owner; shared
+  metadata remains advisory and owner-published; SharedRunQueue and
+  LoadBalancingPolicy continue to move only runnable non-current tasks.
+- Evidence level: static inspection, documentation build, and whitespace
+  inspection. Hardware was not required because no physical claim changed.
+- Validation: git status --short was clean before edits; git diff --check
+  passed; mdbook build passed.
+- Rationale: Multi-core preemption touches timer, scheduler, SMP lock, IPI,
+  wake, metadata, and migration boundaries. Contracting the owner-local model
+  first prevents a QEMU or Pi 5 proof from becoming a marker-only shortcut or
+  an accidental remote scheduler authority.
+- Risks: Talos still lacks the target-independent multi-core preemption core,
+  QEMU substitute proof, Pi 5 hardware proof, non-diagnostic secondary runtime,
+  running-task migration, work stealing, and general remote reschedule. The
+  next bounded task should be phase6-multicore-preemption-core-20260527.
