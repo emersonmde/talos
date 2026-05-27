@@ -54,6 +54,7 @@
 - [Phase 6 Shared Run-Queue and Migration Source Inventory](project/phase6-shared-runqueue-migration-source-inventory.md)
 - [Phase 6 Shared Run-Queue and Migration Contract](project/phase6-shared-runqueue-migration-contract.md)
 - [Phase 6 Shared Run-Queue Migration Closeout Checkpoint](project/phase6-shared-runqueue-migration-closeout-checkpoint.md)
+- [Phase 6 Load-Balancing Source Inventory](project/phase6-load-balancing-source-inventory.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

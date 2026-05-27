@@ -3078,3 +3078,32 @@ ADR template:
   does not accept load-balancing policy, work stealing, running-task migration,
   multi-core timer preemption, userspace, descriptors, filesystem, networking,
   SSH, shell behavior, RP1/PCIe, UART interrupt ownership, or DMA/cache policy.
+
+## 2026-05-27 - Phase 6.3 Load-Balancing Source Inventory Accepted
+
+- Status: accepted as documentation/source inventory before load-balancing
+  policy design. No Rust implementation, QEMU run, Pi 5 hardware run,
+  load-balancer, work stealing, running-task migration, remote reschedule,
+  multi-core preemption, Phase 7, filesystem, networking, SSH, shell, RP1/PCIe,
+  UART interrupt ownership, or DMA behavior was added.
+- Context: The shared run-queue/migration closeout accepted the owner-transfer
+  mechanism and QEMU/Pi 5 proof evidence, but explicitly deferred destination
+  selection, fairness/affinity, remote reschedule, and production secondary
+  runtime policy.
+- Decision: Accept phase6-load-balancing-source-inventory-20260527. The
+  inventory names the current scheduler, metadata, wake, timer, SMP, and
+  diagnostic surfaces; lists accepted policy inputs and stale/invalid input
+  failure modes; and separates target selection, fairness/affinity,
+  remote-reschedule notification, and migration mechanism boundaries.
+- Evidence level: static inspection, documentation build, and whitespace
+  inspection. Hardware was not required because no physical claim changed.
+- Validation: git status --short was clean before edits; git diff --check
+  passed; mdbook build passed.
+- Rationale: A contract-first step is needed because the accepted shared
+  run-queue core can move a runnable task after a destination is chosen, but it
+  intentionally does not decide which CPU should receive work, when balancing
+  should run, or how stale observations should be handled.
+- Risks: Talos still lacks per-task affinity, priority/fairness accounting,
+  production secondary idle/wake behavior, remote reschedule semantics, and
+  multi-core preemption. The next bounded task should be
+  phase6-load-balancing-contract-20260527 before implementation.

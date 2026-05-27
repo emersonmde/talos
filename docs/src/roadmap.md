@@ -28,25 +28,21 @@ closeout checkpoint. Evidence-retention, diagnostic-surface, roadmap-refresh,
 productionization-boundary, CPU-local scheduler service boundary,
 CPU-local scheduler service core, CPU-local scheduler service closeout,
 secondary scheduler service-loop source inventory, service-loop core, QEMU
-smoke, Pi 5 proof, service-loop closeout, and shared run-queue/migration source
-inventory and contract tasks are accepted. The service core sequences
-target-owned remote wake drains, local runnable transitions, pending
-timer-preemption handling, CPU-local dispatch, and owner metadata refresh for
-one owning logical CPU; the accepted secondary loop now proves that a physical
-secondary may run one owner-local service cycle after accepted handoff state.
-The accepted shared run-queue/migration contract now defines ownership, lock
-ordering, memory-order, state-transition, and diagnostic boundaries, and the
-target-independent shared run-queue core plus QEMU substitute proof are
-accepted. The core provides a bounded source-owner publish and
+smoke, Pi 5 proof, service-loop closeout, shared run-queue/migration source
+inventory, contract, core, QEMU proof, Pi 5 proof, closeout, and
+load-balancing source inventory tasks are accepted. The accepted shared
+run-queue/migration slice provides a bounded source-owner publish and
 destination-owner consume path with explicit migration states and deterministic
-errors; the QEMU proof reports
-classification=qemu-shared-runqueue-migration-complete. The serialized Pi 5
-proof is accepted with cursor-valid TFTP, serial classification, and restore
-evidence; it reports all four physical-core participants completing the named
+errors; QEMU reports
+classification=qemu-shared-runqueue-migration-complete, and serialized Pi 5
+hardware reports all four physical-core participants completing the named
 invariant with
-classification=pi5-shared-runqueue-migration-complete. Load balancing,
-multi-core preemption, Phase 7, filesystem, networking, SSH, and shell work
-remain deferred.
+classification=pi5-shared-runqueue-migration-complete. The accepted
+load-balancing source inventory identifies policy inputs, freshness checks,
+failure modes, and the split between target selection, fairness/affinity,
+remote reschedule notification, and the existing migration mechanism. Load
+balancing implementation, multi-core preemption, Phase 7, filesystem,
+networking, SSH, and shell work remain deferred.
 
 Accepted status and historical completed facts:
 
@@ -432,14 +428,20 @@ Accepted status and historical completed facts:
   classification, PASS output, and restore evidence, and reports
   participants=4 expected=4 with
   classification=pi5-shared-runqueue-migration-complete.
+- The Phase 6.3 load-balancing source inventory is accepted. It records the
+  scheduler, metadata, run-queue, wake, timer, SMP, and diagnostic surfaces
+  available before policy design; names policy inputs and stale/invalid input
+  failure modes; and separates target selection, fairness/affinity, remote
+  reschedule notification, and the accepted shared run-queue migration
+  mechanism before any implementation.
 
 Blocked or pending:
 
-- The next explicit validation target should be the shared
-  run-queue/migration closeout checkpoint after supervisor ready-marking.
-  Load balancing, work stealing, multi-core preemption, userspace,
-  descriptors, filesystem, networking, SSH, shell behavior, UART interrupts,
-  RP1/PCIe, and DMA/cache-coherent driver policy remain deferred.
+- The next explicit validation target should be the load-balancing contract
+  after supervisor ready-marking. Load balancing implementation, work
+  stealing, running-task migration, remote reschedule, multi-core preemption,
+  userspace, descriptors, filesystem, networking, SSH, shell behavior, UART
+  interrupts, RP1/PCIe, and DMA/cache-coherent driver policy remain deferred.
 - Large raw accepted evidence remains in Git until external artifact storage or
   an explicit no-delete manifest-only cleanup is approved. Do not delete
   tracked accepted evidence during unrelated feature work.
