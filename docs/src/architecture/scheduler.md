@@ -953,3 +953,48 @@ selection, load balancing, work stealing, running-task migration, multi-core
 timer preemption, a general secondary runtime role, Phase 7, filesystem,
 networking, SSH, shell behavior, RP1/PCIe, UART interrupt ownership, or
 DMA/cache-driver behavior.
+
+## Phase 6.3 Pi 5 Shared Run-Queue Migration Proof
+
+The serialized Pi 5 proof lives behind
+TALOS_RPI5_SHARED_RUNQUEUE_MIGRATION_PROOF and the focused
+scripts/rpi5-shared-runqueue-migration-image.sh plus
+scripts/rpi5-shared-runqueue-migration-boot-tree.sh staging helpers. It is a
+diagnostic validation surface for the accepted SharedRunQueue core, not a
+general multi-core scheduler role.
+
+The accepted local1 evidence used archive SHA256
+4d5c8e2666d64ddcc5df7b49c8d3a541b01634800917616cbdb88404a54630d5, kernel
+SHA256 98a9cb87bcb89c38b19a097a05695a136aaf6b0eb911ec03c3b0c17eeab6a394, and
+kernel size 102,952 bytes. TFTP evidence tied the boot to
+da591740/kernel_2712.img fetched from 10.42.1.4 at 102,952 bytes before
+restore. Cursor-valid serial reported all four physical-core participants
+completing the implemented shared run-queue/migration invariant with
+participants=4, expected=4, errors=0, lock-available=true,
+classification=pi5-shared-runqueue-migration-complete, and PASS.
+
+The proof does not accept target selection, load balancing, work stealing,
+remote reschedule, running-task migration, multi-core timer preemption, a
+general secondary runtime role, Phase 7, filesystem, networking, SSH, shell
+behavior, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver behavior.
+
+## Phase 6.3 Shared Run-Queue Migration Closeout
+
+The shared run-queue/migration closeout is accepted in
+docs/src/project/phase6-shared-runqueue-migration-closeout-checkpoint.md. It
+reconciles the source inventory, contract, cfg-routing precursor, core
+implementation, QEMU substitute proof, Pi 5 hardware proof, retained
+diagnostics, and remaining risks.
+
+The accepted productized boundary is the target-independent owner-transfer
+core: source-owner publish, destination-owner consume, deterministic migration
+states, deterministic error reporting, and metadata owner transfer. The QEMU
+and Pi 5 proof scripts remain retained diagnostic gates.
+
+The next bounded scheduler-topology task should be a load-balancing source
+inventory. That inventory must stay policy-oriented until it has reconciled
+metadata freshness, per-core runnable state, shared queue capacity, candidate
+target-selection inputs, fairness and affinity constraints, remote reschedule
+needs, retained diagnostics, and the boundary between policy and the accepted
+SharedRunQueue core. Implementation of load balancing, work stealing,
+multi-core preemption, and later roadmap phases remains deferred.

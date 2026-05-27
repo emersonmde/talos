@@ -12,6 +12,44 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-27 - Shared Run-Queue Migration Closeout Accepted
+
+- Status: accepted as the Phase 6.3 shared run-queue/migration closeout
+  checkpoint. No Rust implementation, boot image, QEMU run, Pi 5 hardware run,
+  load balancing, work stealing, multi-core timer preemption, Phase 7,
+  filesystem, networking, SSH, shell, RP1/PCIe, UART interrupt ownership, or
+  DMA behavior was added by the checkpoint.
+- Context: The shared run-queue/migration source inventory, contract,
+  target-independent core, QEMU substitute proof, and serialized Pi 5 proof are
+  accepted. The Pi 5 proof reported all four physical-core participants
+  completing the implemented owner-transfer invariant with
+  classification=pi5-shared-runqueue-migration-complete and PASS.
+- Decision: Accept
+  docs/src/project/phase6-shared-runqueue-migration-closeout-checkpoint.md and
+  tasks/2026-05-26-phase6-shared-runqueue-migration-closeout-checkpoint.md.
+  The next bounded Phase 6.3 task should be
+  phase6-load-balancing-source-inventory-20260527 before any load-balancing
+  implementation.
+- Evidence level: static review of accepted task records, QEMU substitute
+  evidence, serialized Pi 5 evidence summary, scheduler architecture docs,
+  roadmap, and decision log.
+- Validation: git status --short was clean before edits, git diff --check
+  passed, and mdbook build passed. Rust fmt/tests, QEMU reruns, and hardware
+  runs were not required because this checkpoint changed only Markdown
+  documentation and durable task state.
+- Consequences: Talos now has accepted QEMU and physical Pi 5 evidence for the
+  named shared run-queue/migration invariant, but only as a bounded
+  owner-transfer mechanism. Load balancing, work stealing, target selection,
+  running-task migration, remote reschedule, multi-core preemption, Phase 7,
+  filesystem, networking, SSH, shell behavior, RP1/PCIe, UART interrupt
+  ownership, and DMA/cache-driver policy remain deferred.
+- Alternatives considered: Start load-balancing implementation directly,
+  choose multi-core preemption inventory next, or spend the next task on
+  diagnostic cleanup. Direct implementation would skip the policy inventory
+  needed to use SharedRunQueue safely; multi-core preemption still depends on
+  target-selection and runnable-placement policy; cleanup can remain bounded
+  under the diagnostic-surface policy unless it blocks the next inventory.
+
 ## 2026-05-26 - Shared Run-Queue Core Accepted
 
 - Status: accepted as the first Phase 6.3 target-independent shared

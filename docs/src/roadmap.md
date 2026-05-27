@@ -768,7 +768,9 @@ and
 and
 [Phase 6 Shared Run-Queue and Migration Source Inventory](project/phase6-shared-runqueue-migration-source-inventory.md),
 and
-[Phase 6 Shared Run-Queue and Migration Contract](project/phase6-shared-runqueue-migration-contract.md).
+[Phase 6 Shared Run-Queue and Migration Contract](project/phase6-shared-runqueue-migration-contract.md),
+and
+[Phase 6 Shared Run-Queue Migration Closeout Checkpoint](project/phase6-shared-runqueue-migration-closeout-checkpoint.md).
 The target-independent CPU-local scheduler service core is accepted in
 `tasks/2026-05-26-phase6-cpu-local-scheduler-service-core.md`.
 The target-independent secondary scheduler service-loop core is accepted in
@@ -778,7 +780,15 @@ gates.
 The target-independent shared run-queue core is accepted in
 `tasks/2026-05-26-phase6-shared-runqueue-core.md`, with QEMU substitute proof
 accepted in
-`tasks/2026-05-26-phase6-qemu-shared-runqueue-migration-smoke.md`.
+`tasks/2026-05-26-phase6-qemu-shared-runqueue-migration-smoke.md` and
+serialized Pi 5 proof accepted in
+`tasks/2026-05-26-phase6-pi5-shared-runqueue-migration-proof.md`.
+The shared run-queue/migration closeout reconciles source inventory, contract,
+core implementation, QEMU substitute proof, Pi 5 hardware proof, retained
+diagnostics, and deferred work. The next bounded Phase 6.3 recommendation is a
+load-balancing source inventory before any load-balancing implementation,
+work stealing, multi-core preemption, Phase 7, filesystem, networking, SSH, or
+shell work.
 Before broader Phase 6.3 productionization, the accepted
 [Evidence Retention Policy](project/evidence-retention-policy.md) and
 [Diagnostic Surface Policy](project/diagnostic-surface-policy.md) govern which
