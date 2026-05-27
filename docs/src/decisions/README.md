@@ -12,6 +12,45 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-27 - Phase 6.3 QEMU Load-Balancing Smoke Accepted
+
+- Status: accepted as QEMU substitute evidence for the target-independent
+  load-balancing core. No Pi 5 hardware claim, work stealing, running-task
+  migration, interrupt-driven remote reschedule, multi-core preemption, Phase
+  7, filesystem, networking, SSH, shell, RP1/PCIe, UART interrupt ownership,
+  or DMA behavior was added.
+- Context: The accepted load-balancing core provides deterministic
+  front-runnable selection and publication through `SharedRunQueue`, but it
+  still needed a dependency-gated QEMU proof showing the implemented policy
+  path rather than the lower-level migration API alone.
+- Decision: Accept phase6-qemu-load-balancing-smoke-20260527. The
+  `qemu_load_balancing_smoke` boot scenario and
+  `scripts/qemu-load-balancing-smoke.sh` prove
+  `LoadBalancingPolicy::plan_front_runnable`,
+  `LoadBalancingPolicy::publish_front_runnable`, and
+  `SharedRunQueue::consume_for_destination` as one deterministic handoff:
+  source owner 0 selects task 109 for destination owner 1, removes it from the
+  source queue, publishes it through the shared queue, destination owner 1
+  enqueues it locally, and metadata owner/generation refresh.
+- Evidence level: static inspection, QEMU substitute transcript, fmt/lint,
+  unit tests, preserved QEMU smoke/regression gates, whitespace inspection,
+  and documentation build. Hardware was not required because this task makes
+  no physical claim.
+- Validation: `scripts/qemu-load-balancing-smoke.sh`,
+  `cargo fmt --all -- --check`, `cargo -Zjson-target-spec test`,
+  `scripts/qemu-smoke.sh`, `scripts/qemu-shared-runqueue-migration-smoke.sh`,
+  `scripts/qemu-secondary-scheduler-service-loop-smoke.sh`,
+  `git diff --check`, and `mdbook build` passed.
+- Consequences: The next bounded task may be the serialized Pi 5
+  load-balancing proof after supervisor ready-marking and hardware lock
+  availability. Physical behavior remains unclaimed until that task is
+  accepted or explicitly deferred.
+- Alternatives considered: Reuse only the existing shared run-queue migration
+  smoke, combine QEMU and Pi 5 proof in one task, or add work-stealing loops.
+  The existing migration smoke bypasses the policy selection API; combining
+  QEMU and hardware proof would blur the dependency gate; work stealing is a
+  later policy layer and unnecessary for the first proof.
+
 ## 2026-05-27 - Phase 6.3 Load-Balancing Core Accepted
 
 - Status: accepted as a target-independent Rust scheduler policy core with

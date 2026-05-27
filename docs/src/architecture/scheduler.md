@@ -1056,3 +1056,28 @@ QEMU or Pi 5 proof claims, autonomous work stealing, running-task migration,
 remote scheduler execution in IPI context, multi-core timer preemption,
 userspace, filesystem, networking, SSH, shell behavior, RP1/PCIe, UART
 interrupt ownership, or DMA/cache-driver policy.
+
+## Phase 6.3 QEMU Load-Balancing Smoke
+
+The retained QEMU load-balancing proof is
+`scripts/qemu-load-balancing-smoke.sh`. It builds the
+`qemu_load_balancing_smoke` boot scenario and exercises the accepted
+`LoadBalancingPolicy` core above `SharedRunQueue`.
+
+The diagnostic creates source owner 0, destination owner 1, one runnable task,
+shared scheduler metadata, and a bounded shared run queue. It proves
+`LoadBalancingPolicy::plan_front_runnable` selects the source-local front
+runnable task with the current metadata generation, then
+`LoadBalancingPolicy::publish_front_runnable` removes the task from the source
+queue and publishes a `MigrationReserved -> SharedQueued` handoff through the
+accepted shared queue. The destination then consumes the entry through
+`SharedRunQueue::consume_for_destination`, enqueues task 109 locally, and
+refreshes metadata owner/generation.
+
+Passing output includes
+`classification=qemu-load-balancing-smoke-complete` and
+`qemu-load-balancing-smoke: PASS`. This is QEMU substitute evidence only. It
+does not claim Pi 5 behavior, autonomous work stealing, running-task
+migration, remote scheduler execution in IPI context, multi-core timer
+preemption, userspace, filesystem, networking, SSH, shell behavior, RP1/PCIe,
+UART interrupt ownership, or DMA/cache-driver policy.

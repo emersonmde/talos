@@ -47,8 +47,12 @@ runnable-only, SharedRunQueue-backed, and polling-only unless a later task
 adds remote reschedule notification. The accepted load-balancing core adds
 target-independent front-runnable selection and publication through
 SharedRunQueue with deterministic unit-tested rejection paths. QEMU
-load-balancing proof, Pi 5 proof, multi-core preemption, Phase 7, filesystem,
-networking, SSH, and shell work remain deferred.
+load-balancing proof is accepted with
+classification=qemu-load-balancing-smoke-complete, proving deterministic
+front-runnable selection, source-local removal, shared handoff,
+destination-local enqueue, metadata refresh, and PASS. Pi 5 proof,
+multi-core preemption, Phase 7, filesystem, networking, SSH, and shell work
+remain deferred.
 
 Accepted status and historical completed facts:
 
@@ -453,11 +457,17 @@ Accepted status and historical completed facts:
   does not add QEMU or Pi 5 proof claims, work stealing, running-task
   migration, remote scheduler execution in IPI context, multi-core preemption,
   Phase 7, filesystem, networking, SSH, or shell behavior.
+- The Phase 6.3 QEMU load-balancing smoke is accepted. It adds the
+  `qemu_load_balancing_smoke` boot scenario and
+  `scripts/qemu-load-balancing-smoke.sh`, proves the accepted
+  `LoadBalancingPolicy` path over `SharedRunQueue`, and reports
+  classification=qemu-load-balancing-smoke-complete.
 
 Blocked or pending:
 
-- The next explicit validation target should be a focused QEMU
-  load-balancing smoke after supervisor ready-marking. Pi 5 proof, work
+- The next explicit validation target should be a serialized Pi 5
+  load-balancing proof after supervisor ready-marking and hardware lock
+  availability, or an explicit physical defer decision before closeout. Work
   stealing, running-task migration, remote reschedule, multi-core preemption,
   userspace, descriptors, filesystem, networking, SSH, shell behavior, UART
   interrupts, RP1/PCIe, and DMA/cache-coherent driver policy remain deferred.
@@ -808,10 +818,11 @@ The shared run-queue/migration closeout reconciles source inventory, contract,
 core implementation, QEMU substitute proof, Pi 5 hardware proof, retained
 diagnostics, and deferred work. The load-balancing source inventory and policy
 contract are accepted, and the target-independent load-balancing core is
-accepted in `tasks/2026-05-27-phase6-load-balancing-core.md`. The next
-bounded Phase 6.3 recommendation is a focused QEMU load-balancing smoke before
-Pi 5 proof, work stealing, multi-core preemption, Phase 7, filesystem,
-networking, SSH, or shell work.
+accepted in `tasks/2026-05-27-phase6-load-balancing-core.md`. The QEMU
+substitute proof is accepted in
+`tasks/2026-05-27-phase6-qemu-load-balancing-smoke.md`. The next bounded
+Phase 6.3 recommendation is a serialized Pi 5 load-balancing proof, or an
+explicit physical defer decision before closeout.
 Before broader Phase 6.3 productionization, the accepted
 [Evidence Retention Policy](project/evidence-retention-policy.md) and
 [Diagnostic Surface Policy](project/diagnostic-surface-policy.md) govern which

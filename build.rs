@@ -243,6 +243,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "qemu_load_balancing_smoke",
+        implied_values: &[],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "qemu_secondary_scheduler_service_loop",
         implied_values: &[],
         asm_defines: &[QEMU_SMP_ASM],
