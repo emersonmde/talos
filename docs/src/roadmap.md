@@ -40,7 +40,11 @@ target-independent shared run-queue core plus QEMU substitute proof are
 accepted. The core provides a bounded source-owner publish and
 destination-owner consume path with explicit migration states and deterministic
 errors; the QEMU proof reports
-classification=qemu-shared-runqueue-migration-complete. Load balancing,
+classification=qemu-shared-runqueue-migration-complete. The serialized Pi 5
+proof is accepted with cursor-valid TFTP, serial classification, and restore
+evidence; it reports all four physical-core participants completing the named
+invariant with
+classification=pi5-shared-runqueue-migration-complete. Load balancing,
 multi-core preemption, Phase 7, filesystem, networking, SSH, and shell work
 remain deferred.
 
@@ -422,14 +426,20 @@ Accepted status and historical completed facts:
   `SharedRunQueue` publish/consume APIs, with source queue removal,
   destination-local enqueue, shared queue drain, metadata owner transfer, and
   classification=qemu-shared-runqueue-migration-complete.
+- The Phase 6.3 Pi 5 shared run-queue/migration proof is accepted. It adds the
+  `rpi5_shared_runqueue_migration` diagnostic and focused Pi 5 image/boot-tree
+  scripts, records archive/kernel digests, TFTP identity, cursor-valid serial,
+  classification, PASS output, and restore evidence, and reports
+  participants=4 expected=4 with
+  classification=pi5-shared-runqueue-migration-complete.
 
 Blocked or pending:
 
-- The next explicit validation target may be a bounded serialized Pi 5 shared
-  run-queue/migration proof after supervisor ready-marking and hardware lock
-  availability. Load balancing, work stealing, multi-core preemption,
-  userspace, descriptors, filesystem, networking, SSH, shell behavior, UART
-  interrupts, RP1/PCIe, and DMA/cache-coherent driver policy remain deferred.
+- The next explicit validation target should be the shared
+  run-queue/migration closeout checkpoint after supervisor ready-marking.
+  Load balancing, work stealing, multi-core preemption, userspace,
+  descriptors, filesystem, networking, SSH, shell behavior, UART interrupts,
+  RP1/PCIe, and DMA/cache-coherent driver policy remain deferred.
 - Large raw accepted evidence remains in Git until external artifact storage or
   an explicit no-delete manifest-only cleanup is approved. Do not delete
   tracked accepted evidence during unrelated feature work.

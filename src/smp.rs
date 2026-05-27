@@ -182,6 +182,7 @@ impl PerCoreState {
         talos_boot_scenario = "rpi5_remote_wakeup_request",
         talos_boot_scenario = "rpi5_production_secondary_dispatch",
         talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+        talos_boot_scenario = "rpi5_shared_runqueue_migration",
         talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
     ))]
     pub fn invalidate_from_poc(&self) {
@@ -248,6 +249,7 @@ fn clean_cache_line_to_poc<T>(_value: &T) {}
         talos_boot_scenario = "rpi5_remote_wakeup_request",
         talos_boot_scenario = "rpi5_production_secondary_dispatch",
         talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+        talos_boot_scenario = "rpi5_shared_runqueue_migration",
         talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
     )
 ))]
@@ -272,6 +274,7 @@ fn invalidate_cache_line_from_poc<T>(value: &T) {
         talos_boot_scenario = "rpi5_remote_wakeup_request",
         talos_boot_scenario = "rpi5_production_secondary_dispatch",
         talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+        talos_boot_scenario = "rpi5_shared_runqueue_migration",
         talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
     )
 ))]

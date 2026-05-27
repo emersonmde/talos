@@ -158,6 +158,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[RPI5_SMP_ASM],
     },
     BootScenario {
+        value: "rpi5_shared_runqueue_migration",
+        implied_values: &[],
+        asm_defines: &[RPI5_SMP_ASM],
+    },
+    BootScenario {
         value: "rpi5_secondary_scheduler_service_loop",
         implied_values: &[],
         asm_defines: &[RPI5_SMP_ASM],

@@ -3008,3 +3008,35 @@ ADR template:
   multi-core preemption, userspace, descriptors, filesystem, networking, SSH,
   shell behavior, RP1/PCIe, UART interrupt ownership, and DMA/cache policy
   remain deferred.
+
+## 2026-05-27 - Phase 6.3 Pi 5 Shared Run-Queue Migration Evidence Accepted
+
+- Status: accepted as serialized physical Pi 5 evidence for the shared
+  run-queue/migration core. No load balancing, work stealing, multi-core
+  preemption, Phase 7, filesystem, networking, SSH, shell, RP1/PCIe, UART
+  interrupt ownership, or DMA behavior was added.
+- Context: The target-independent core and QEMU substitute proof were accepted,
+  but physical acceptance required hardwareTestLock serialization, candidate
+  identity, TFTP fetch evidence, cursor-valid serial output, classification,
+  and restore proof.
+- Decision: Accept phase6-pi5-shared-runqueue-migration-proof-20260526. The
+  focused Pi 5 diagnostic adds `rpi5_shared_runqueue_migration` and exercises
+  the implemented `SharedRunQueue::publish_migration` and
+  `SharedRunQueue::consume_for_destination` invariant on physical cores. The
+  proof reports participants=4 expected=4, errors=0, lock-available=true, and
+  classification=pi5-shared-runqueue-migration-complete.
+- Evidence level: serialized Pi 5 hardware boot/output, TFTP fetch evidence,
+  archive/kernel digest inspection, QEMU/substitute preservation gates,
+  fmt/lint/typecheck, no_std unit tests, mdBook validation, and whitespace
+  inspection.
+- Validation: local1 served da591740/kernel_2712.img from 10.42.1.4 with
+  bytes=102952 before restore; serial reached
+  classification=pi5-shared-runqueue-migration-complete and PASS; restore
+  returned ok=true with restore-exit.txt equal to 0. Full acceptance validation
+  also includes cargo fmt --all -- --check, cargo -Zjson-target-spec test,
+  scripts/qemu-smoke.sh, scripts/qemu-shared-runqueue-migration-smoke.sh,
+  scripts/rpi5-archive-review.sh, git diff --check, and mdbook build.
+- Risks: This is a bounded diagnostic proof of explicit migration handoff. It
+  does not accept load-balancing policy, work stealing, running-task migration,
+  multi-core timer preemption, userspace, descriptors, filesystem, networking,
+  SSH, shell behavior, RP1/PCIe, UART interrupt ownership, or DMA/cache policy.

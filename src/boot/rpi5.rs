@@ -88,6 +88,9 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
     #[cfg(talos_boot_scenario = "rpi5_shared_scheduler_metadata")]
     target::rpi5::run_shared_scheduler_metadata_proof();
 
+    #[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
+    target::rpi5::run_shared_runqueue_migration_proof();
+
     #[cfg(talos_boot_scenario = "rpi5_secondary_scheduler_service_loop")]
     target::rpi5::run_secondary_scheduler_service_loop_proof();
 

@@ -1,6 +1,7 @@
 #[cfg(any(
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 use crate::arch::aarch64;
@@ -26,9 +27,15 @@ use crate::scheduler::TargetWakeConsumptionError;
     talos_boot_scenario = "rpi5_remote_wake_to_local_runnable",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 use crate::scheduler::{ContextFrame, KernelStack, Task, TaskState};
+#[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
+use crate::scheduler::{
+    LogicalCpuId, MigrationState, PerCoreScheduler, SchedulerCoreRole, SharedRunQueue,
+    SharedSchedulerMetadata, TaskId,
+};
 #[cfg(any(
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
@@ -62,6 +69,7 @@ use crate::smp::SECONDARY_CORE_WORKLOAD_TARGET;
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 use crate::smp::{
@@ -73,6 +81,7 @@ use crate::smp::{
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 use crate::smp_sync::{SpinLock, smp_full_barrier};
@@ -94,6 +103,7 @@ use core::cell::UnsafeCell;
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 use core::sync::atomic::{AtomicU64, Ordering};
@@ -155,6 +165,7 @@ const TIMER_PREEMPTION_TARGET_SWITCHES: u64 = 6;
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 const RPI5_SECONDARY_WAIT_LIMIT: usize = 200_000_000;
@@ -162,6 +173,10 @@ const RPI5_SECONDARY_WAIT_LIMIT: usize = 200_000_000;
 const PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET: u64 = 3;
 #[cfg(talos_boot_scenario = "rpi5_shared_scheduler_metadata")]
 const SHARED_SCHEDULER_METADATA_TASK_CAPACITY: usize = MAX_CORES;
+#[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
+const SHARED_RUNQUEUE_MIGRATION_TASK_CAPACITY: usize = 1;
+#[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
+const SHARED_RUNQUEUE_MIGRATION_QUEUE_CAPACITY: usize = 1;
 #[cfg(talos_boot_scenario = "rpi5_secondary_scheduler_service_loop")]
 const SECONDARY_SCHEDULER_SERVICE_LOOP_TASK_CAPACITY: usize = 1;
 #[cfg(any(
@@ -193,6 +208,7 @@ const RPI5_SMP_LOCK_WAIT_POLL_INTERVAL: usize = 20_000_000;
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 const RPI5_SCTLR_M_ENABLE: u64 = 1 << 0;
@@ -202,6 +218,7 @@ const RPI5_SCTLR_M_ENABLE: u64 = 1 << 0;
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 const RPI5_SCTLR_C_ENABLE: u64 = 1 << 2;
@@ -211,6 +228,7 @@ const RPI5_SCTLR_C_ENABLE: u64 = 1 << 2;
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 const RPI5_SCTLR_I_ENABLE: u64 = 1 << 12;
@@ -222,6 +240,7 @@ const RPI5_SCTLR_I_ENABLE: u64 = 1 << 12;
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 const PSCI_AFFINITY_INFO: u64 = 0x8400_0004;
@@ -233,6 +252,7 @@ const PSCI_AFFINITY_INFO: u64 = 0x8400_0004;
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 const PSCI_CPU_ON: u64 = 0xc400_0003;
@@ -290,6 +310,7 @@ static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 unsafe extern "C" {
@@ -338,6 +359,7 @@ pub fn firmware_console() -> Pl011 {
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn secondary_stack_layout() -> CoreStackLayout {
@@ -355,6 +377,7 @@ fn secondary_stack_layout() -> CoreStackLayout {
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn secondary_state_name(state: u64) -> &'static str {
@@ -369,6 +392,7 @@ fn secondary_state_name(state: u64) -> &'static str {
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 unsafe fn psci_smc(function_id: u64, arg1: u64, arg2: u64, arg3: u64) -> i64 {
@@ -411,6 +435,7 @@ unsafe fn psci_smc(function_id: u64, arg1: u64, arg2: u64, arg3: u64) -> i64 {
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) -> i64 {
@@ -425,6 +450,7 @@ unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) ->
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 unsafe fn psci_affinity_info_smc(target_affinity: u64, lowest_affinity_level: u64) -> i64 {
@@ -446,6 +472,7 @@ unsafe fn psci_affinity_info_smc(target_affinity: u64, lowest_affinity_level: u6
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn psci_affinity_state_name(state: i64) -> &'static str {
@@ -465,6 +492,7 @@ fn psci_affinity_state_name(state: i64) -> &'static str {
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 #[unsafe(no_mangle)]
@@ -490,6 +518,7 @@ pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
             talos_boot_scenario = "rpi5_remote_wakeup_request",
             talos_boot_scenario = "rpi5_production_secondary_dispatch",
             talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+            talos_boot_scenario = "rpi5_shared_runqueue_migration",
             talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
         ))]
         if !enter_secondary_cacheable_mmu_handoff(logical_cpu) {
@@ -507,6 +536,7 @@ pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
             talos_boot_scenario = "rpi5_remote_wakeup_request",
             talos_boot_scenario = "rpi5_production_secondary_dispatch",
             talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+            talos_boot_scenario = "rpi5_shared_runqueue_migration",
             talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
         ))]
         core_state.republish_identity(context, mpidr, affinity, stack_pointer as usize);
@@ -542,6 +572,11 @@ pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
         {
             run_shared_scheduler_metadata_secondary(core_state, logical_cpu);
             write_uart10_bytes_early_phase(b"TALOS: secondary_shared_metadata_complete\r\n");
+        }
+        #[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
+        {
+            run_shared_runqueue_migration_secondary(core_state, logical_cpu);
+            write_uart10_bytes_early_phase(b"TALOS: secondary_shared_runqueue_complete\r\n");
         }
         #[cfg(talos_boot_scenario = "rpi5_secondary_scheduler_service_loop")]
         {
@@ -626,6 +661,7 @@ fn reset_production_secondary_dispatch_state() {
 #[cfg(any(
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
@@ -639,6 +675,7 @@ fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
 #[cfg(any(
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn task_id(raw: u64) -> TaskId {
@@ -648,6 +685,7 @@ fn task_id(raw: u64) -> TaskId {
 #[cfg(any(
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn scheduler_task(logical_cpu: usize, progress: u64) -> Task {
@@ -1005,6 +1043,275 @@ fn run_shared_scheduler_metadata_secondary(core_state: &smp::PerCoreState, logic
         PerCoreScheduler::<2>::production_secondary_diagnostic(LogicalCpuId::new(logical_cpu));
     let report = build_shared_scheduler_metadata_report(logical_cpu, &mut scheduler);
     publish_shared_scheduler_metadata_report(logical_cpu, report);
+    smp_full_barrier();
+
+    core_state.mark_workload_complete(report.lock_progress());
+    core_state.clean_to_poc();
+}
+
+#[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
+#[derive(Clone, Copy)]
+struct SharedRunQueueMigrationReport {
+    source_owner: u64,
+    source_role: SchedulerCoreRole,
+    destination_owner: u64,
+    destination_role: SchedulerCoreRole,
+    task_id: u64,
+    task_state: u64,
+    registered_generation: u64,
+    publish_reserved_state: MigrationState,
+    publish_queued_state: MigrationState,
+    consume_queued_state: MigrationState,
+    consume_destination_state: MigrationState,
+    source_queue_before: u64,
+    source_queue_after_publish: u64,
+    shared_len_after_publish: u64,
+    shared_len_after_consume: u64,
+    destination_queue_len: u64,
+    destination_front: u64,
+    metadata_owner_after_consume: u64,
+    metadata_generation_after_consume: u64,
+    source_removed: bool,
+    destination_enqueued: bool,
+    metadata_migrated: bool,
+    errors: u64,
+}
+
+#[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
+impl SharedRunQueueMigrationReport {
+    const fn empty() -> Self {
+        Self {
+            source_owner: u64::MAX,
+            source_role: SchedulerCoreRole::SecondaryDeferred,
+            destination_owner: u64::MAX,
+            destination_role: SchedulerCoreRole::SecondaryDeferred,
+            task_id: 0,
+            task_state: 0,
+            registered_generation: 0,
+            publish_reserved_state: MigrationState::MigrationRejected,
+            publish_queued_state: MigrationState::MigrationRejected,
+            consume_queued_state: MigrationState::MigrationRejected,
+            consume_destination_state: MigrationState::MigrationRejected,
+            source_queue_before: 0,
+            source_queue_after_publish: 0,
+            shared_len_after_publish: 0,
+            shared_len_after_consume: 0,
+            destination_queue_len: 0,
+            destination_front: 0,
+            metadata_owner_after_consume: u64::MAX,
+            metadata_generation_after_consume: 0,
+            source_removed: false,
+            destination_enqueued: false,
+            metadata_migrated: false,
+            errors: 0,
+        }
+    }
+
+    const fn lock_progress(self) -> u64 {
+        if self.errors == 0 { 1 } else { 0 }
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
+#[derive(Clone, Copy)]
+struct SharedRunQueueMigrationState {
+    reports: [SharedRunQueueMigrationReport; MAX_CORES],
+    lock_progress: [u64; MAX_CORES],
+}
+
+#[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
+impl SharedRunQueueMigrationState {
+    const fn new() -> Self {
+        Self {
+            reports: [SharedRunQueueMigrationReport::empty(); MAX_CORES],
+            lock_progress: [0; MAX_CORES],
+        }
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
+static SHARED_RUNQUEUE_MIGRATION_STATE: SpinLock<SharedRunQueueMigrationState> =
+    SpinLock::new(SharedRunQueueMigrationState::new());
+
+#[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
+fn reset_shared_runqueue_migration_state() {
+    let mut state = unsafe { SHARED_RUNQUEUE_MIGRATION_STATE.lock_irqsave() };
+    *state = SharedRunQueueMigrationState::new();
+}
+
+#[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
+fn migration_state_name(state: MigrationState) -> &'static str {
+    match state {
+        MigrationState::OwnerLocal => "owner-local",
+        MigrationState::MigrationReserved => "migration-reserved",
+        MigrationState::SharedQueued => "shared-queued",
+        MigrationState::DestinationEnqueued => "destination-enqueued",
+        MigrationState::MigrationRejected => "migration-rejected",
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
+fn diagnostic_scheduler_for(owner: LogicalCpuId) -> PerCoreScheduler<2> {
+    if owner == LogicalCpuId::BOOT {
+        PerCoreScheduler::<2>::boot_cpu()
+    } else {
+        PerCoreScheduler::<2>::production_secondary_diagnostic(owner)
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
+fn build_shared_runqueue_migration_report(logical_cpu: usize) -> SharedRunQueueMigrationReport {
+    let source_owner = LogicalCpuId::new(logical_cpu);
+    let destination_owner = LogicalCpuId::new((logical_cpu + 1) % MAX_CORES);
+    let mut source_scheduler = diagnostic_scheduler_for(source_owner);
+    let mut destination_scheduler = diagnostic_scheduler_for(destination_owner);
+    let mut metadata =
+        SharedSchedulerMetadata::<SHARED_RUNQUEUE_MIGRATION_TASK_CAPACITY, MAX_CORES>::new();
+    let mut shared = SharedRunQueue::<SHARED_RUNQUEUE_MIGRATION_QUEUE_CAPACITY, MAX_CORES>::new();
+    let mut task = scheduler_task(logical_cpu, 7);
+    let mut errors = 0;
+
+    match source_scheduler.local_scheduler_mut(source_owner) {
+        Ok(scheduler) => {
+            if scheduler.make_runnable(&mut task).is_err() {
+                errors += 1;
+            }
+        }
+        Err(_) => errors += 1,
+    }
+    let source_queue_before = source_scheduler.scheduler().runnable().len() as u64;
+
+    let registered_generation =
+        match metadata.register_local_task(source_owner, &source_scheduler, &task) {
+            Ok(snapshot) => snapshot.generation(),
+            Err(_) => {
+                errors += 1;
+                0
+            }
+        };
+
+    let publish_report = shared.publish_migration(
+        source_owner,
+        &mut source_scheduler,
+        destination_owner,
+        &metadata,
+        &task,
+        registered_generation,
+    );
+    let (publish_reserved_state, publish_queued_state) = match publish_report {
+        Ok(report) => (report.reserved().state(), report.queued().state()),
+        Err(_) => {
+            errors += 1;
+            (
+                MigrationState::MigrationRejected,
+                MigrationState::MigrationRejected,
+            )
+        }
+    };
+
+    let source_queue_after_publish = source_scheduler.scheduler().runnable().len() as u64;
+    let source_removed = source_queue_before == 1
+        && source_queue_after_publish == 0
+        && !source_scheduler.scheduler().runnable().contains(task.id());
+    if !source_removed {
+        errors += 1;
+    }
+
+    let shared_len_after_publish = shared.len() as u64;
+    let consume_report = shared.consume_for_destination(
+        destination_owner,
+        &mut destination_scheduler,
+        &mut metadata,
+        &mut task,
+    );
+    let (consume_queued_state, consume_destination_state) = match consume_report {
+        Ok(Some(report)) => (
+            report.queued().state(),
+            report.destination_enqueued().state(),
+        ),
+        _ => {
+            errors += 1;
+            (
+                MigrationState::MigrationRejected,
+                MigrationState::MigrationRejected,
+            )
+        }
+    };
+
+    let shared_len_after_consume = shared.len() as u64;
+    let destination_queue_len = destination_scheduler.scheduler().runnable().len() as u64;
+    let destination_front = destination_scheduler
+        .scheduler()
+        .runnable()
+        .front()
+        .map_or(0, TaskId::raw);
+    let final_metadata = metadata.lookup_task(task.id());
+    let (metadata_owner_after_consume, metadata_generation_after_consume) = match final_metadata {
+        Ok(snapshot) => (snapshot.owner().raw() as u64, snapshot.generation()),
+        Err(_) => {
+            errors += 1;
+            (u64::MAX, 0)
+        }
+    };
+
+    let destination_enqueued = destination_queue_len == 1
+        && destination_front == task.id().raw()
+        && task.state() == TaskState::Runnable
+        && shared_len_after_consume == 0;
+    if !destination_enqueued {
+        errors += 1;
+    }
+
+    let metadata_migrated = metadata_owner_after_consume == destination_owner.raw() as u64
+        && metadata_generation_after_consume > registered_generation;
+    if !metadata_migrated {
+        errors += 1;
+    }
+
+    SharedRunQueueMigrationReport {
+        source_owner: source_owner.raw() as u64,
+        source_role: source_scheduler.role(),
+        destination_owner: destination_owner.raw() as u64,
+        destination_role: destination_scheduler.role(),
+        task_id: task.id().raw(),
+        task_state: task_state_code(task.state()),
+        registered_generation,
+        publish_reserved_state,
+        publish_queued_state,
+        consume_queued_state,
+        consume_destination_state,
+        source_queue_before,
+        source_queue_after_publish,
+        shared_len_after_publish,
+        shared_len_after_consume,
+        destination_queue_len,
+        destination_front,
+        metadata_owner_after_consume,
+        metadata_generation_after_consume,
+        source_removed,
+        destination_enqueued,
+        metadata_migrated,
+        errors,
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
+fn publish_shared_runqueue_migration_report(
+    logical_cpu: usize,
+    report: SharedRunQueueMigrationReport,
+) {
+    let mut state = SHARED_RUNQUEUE_MIGRATION_STATE.lock();
+    state.reports[logical_cpu] = report;
+    state.lock_progress[logical_cpu] = report.lock_progress();
+}
+
+#[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
+fn run_shared_runqueue_migration_secondary(core_state: &smp::PerCoreState, logical_cpu: usize) {
+    core_state.mark_workload_running();
+    core_state.clean_to_poc();
+
+    let report = build_shared_runqueue_migration_report(logical_cpu);
+    publish_shared_runqueue_migration_report(logical_cpu, report);
     smp_full_barrier();
 
     core_state.mark_workload_complete(report.lock_progress());
@@ -1387,6 +1694,7 @@ static SMP_LOCK_DIAGNOSTIC_SCTLR_EL2: [AtomicU64; MAX_CORES] =
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_READY: AtomicU64 = AtomicU64::new(0);
@@ -1396,6 +1704,7 @@ static SECONDARY_CACHEABLE_MMU_HANDOFF_READY: AtomicU64 = AtomicU64::new(0);
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_MAIR_EL2: AtomicU64 = AtomicU64::new(0);
@@ -1405,6 +1714,7 @@ static SECONDARY_CACHEABLE_MMU_HANDOFF_MAIR_EL2: AtomicU64 = AtomicU64::new(0);
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_TCR_EL2: AtomicU64 = AtomicU64::new(0);
@@ -1414,6 +1724,7 @@ static SECONDARY_CACHEABLE_MMU_HANDOFF_TCR_EL2: AtomicU64 = AtomicU64::new(0);
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_TTBR0_EL2: AtomicU64 = AtomicU64::new(0);
@@ -1423,6 +1734,7 @@ static SECONDARY_CACHEABLE_MMU_HANDOFF_TTBR0_EL2: AtomicU64 = AtomicU64::new(0);
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_SCTLR_EL2: AtomicU64 = AtomicU64::new(0);
@@ -1433,6 +1745,7 @@ static SECONDARY_CACHEABLE_MMU_HANDOFF_SCTLR_EL2: AtomicU64 = AtomicU64::new(0);
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn clean_secondary_cacheable_mmu_handoff_plan() {
@@ -1449,6 +1762,7 @@ fn clean_secondary_cacheable_mmu_handoff_plan() {
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn publish_secondary_cacheable_mmu_handoff_plan(
@@ -1473,6 +1787,7 @@ fn publish_secondary_cacheable_mmu_handoff_plan(
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn secondary_cacheable_mmu_handoff_plan() -> Option<crate::arch::aarch64::El2Stage1CacheRegime> {
@@ -1499,6 +1814,7 @@ fn secondary_cacheable_mmu_handoff_plan() -> Option<crate::arch::aarch64::El2Sta
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn enter_secondary_cacheable_mmu_handoff(logical_cpu: usize) -> bool {
@@ -2097,6 +2413,7 @@ fn publish_remote_wake_request(target: usize, task_id: TaskId) -> bool {
 #[cfg(any(
     talos_boot_scenario = "rpi5_remote_wake_to_local_runnable",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn task_state_code(state: TaskState) -> u64 {
@@ -2110,6 +2427,7 @@ fn task_state_code(state: TaskState) -> u64 {
 #[cfg(any(
     talos_boot_scenario = "rpi5_remote_wake_to_local_runnable",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn task_state_name(code: u64) -> &'static str {
@@ -2297,6 +2615,7 @@ fn write_remote_wakeup_wait_observation(remaining: usize) {
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn current_sctlr_el2() -> u64 {
@@ -2313,6 +2632,7 @@ fn current_sctlr_el2() -> u64 {
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn cacheable_mmu_enabled(sctlr: u64) -> bool {
@@ -2326,6 +2646,7 @@ fn cacheable_mmu_enabled(sctlr: u64) -> bool {
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn clean_cache_line_to_poc<T>(value: &T) {
@@ -2345,6 +2666,7 @@ fn clean_cache_line_to_poc<T>(value: &T) {
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+    talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn invalidate_cache_line_from_poc<T>(value: &T) {
@@ -3747,6 +4069,203 @@ pub fn run_shared_scheduler_metadata_proof() -> bool {
         crate::println!("rpi5-shared-scheduler-metadata: PASS");
     } else {
         crate::println!("rpi5-shared-scheduler-metadata: FAIL");
+    }
+    wait_uart10_empty_early_phase();
+
+    reports_ok
+}
+
+#[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
+pub fn run_shared_runqueue_migration_proof() -> bool {
+    smp::reset_secondary_core_states();
+    reset_shared_runqueue_migration_state();
+
+    let boot_mpidr = aarch64::mpidr_el1();
+    let boot_affinity = aarch64::mpidr_affinity(boot_mpidr);
+    let boot_logical = pi5_logical_cpu_from_mpidr_affinity(boot_affinity);
+    let boot_cache_regime = crate::arch::aarch64::current_el2_stage1_cache_regime();
+    let boot_sctlr_el2 = boot_cache_regime.map_or_else(current_sctlr_el2, |regime| regime.sctlr);
+    let entry = talos_aarch64_rpi5_secondary_entry as *const () as usize;
+    let stack_base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
+    let stack_end = core::ptr::addr_of!(talos_secondary_core_stacks_end) as usize;
+
+    crate::println!(
+        "rpi5-shared-runqueue-migration: start conduit=smc cores={} task-capacity={} queue-capacity={} boot-mpidr={:#018x} boot-affinity={:#x} boot-logical={:?} boot-sctlr-el2={:#018x} boot-cacheable-mmu={} entry={:#018x} stack-range=[{:#018x},{:#018x})",
+        MAX_CORES,
+        SHARED_RUNQUEUE_MIGRATION_TASK_CAPACITY,
+        SHARED_RUNQUEUE_MIGRATION_QUEUE_CAPACITY,
+        boot_mpidr,
+        boot_affinity,
+        boot_logical,
+        boot_sctlr_el2,
+        cacheable_mmu_enabled(boot_sctlr_el2),
+        entry,
+        stack_base,
+        stack_end
+    );
+    wait_uart10_empty_early_phase();
+
+    if let Some(regime) = boot_cache_regime {
+        publish_secondary_cacheable_mmu_handoff_plan(regime);
+        crate::println!(
+            "rpi5-shared-runqueue-migration: secondary-cacheable-mmu-handoff-plan mair-el2={:#018x} tcr-el2={:#018x} ttbr0-el2={:#018x} sctlr-el2={:#018x} cacheable-mmu={}",
+            regime.mair,
+            regime.tcr,
+            regime.ttbr0,
+            regime.sctlr,
+            cacheable_mmu_enabled(regime.sctlr)
+        );
+    } else {
+        SECONDARY_CACHEABLE_MMU_HANDOFF_READY.store(0, Ordering::Release);
+        clean_secondary_cacheable_mmu_handoff_plan();
+        crate::println!(
+            "rpi5-shared-runqueue-migration: secondary-cacheable-mmu-handoff-plan unavailable"
+        );
+    }
+    wait_uart10_empty_early_phase();
+
+    let boot_report = build_shared_runqueue_migration_report(0);
+    publish_shared_runqueue_migration_report(0, boot_report);
+
+    let mut cpu_on_ok = true;
+    for logical_cpu in 1..MAX_CORES {
+        let target_affinity = (logical_cpu as u64) << 8;
+        let result = unsafe { psci_cpu_on_smc(target_affinity, entry, logical_cpu) };
+        crate::println!(
+            "rpi5-shared-runqueue-migration: cpu-on logical={} target-affinity={:#x} result={}",
+            logical_cpu,
+            target_affinity,
+            result
+        );
+        cpu_on_ok &= result == 0;
+        let affinity_after = unsafe { psci_affinity_info_smc(target_affinity, 0) };
+        crate::println!(
+            "rpi5-shared-runqueue-migration: affinity-after logical={} target-affinity={:#x} level=0 state={} raw={}",
+            logical_cpu,
+            target_affinity,
+            psci_affinity_state_name(affinity_after),
+            affinity_after
+        );
+        wait_uart10_empty_early_phase();
+    }
+
+    let mut remaining = RPI5_SECONDARY_WAIT_LIMIT;
+    while remaining > 0 {
+        let all_complete = (1..MAX_CORES).all(|logical_cpu| {
+            SECONDARY_CORE_STATES[logical_cpu].invalidate_from_poc();
+            SECONDARY_CORE_STATES[logical_cpu]
+                .snapshot(logical_cpu)
+                .lifecycle
+                >= CoreLifecycle::WorkloadComplete
+        });
+        if all_complete {
+            break;
+        }
+        core::hint::spin_loop();
+        remaining -= 1;
+    }
+
+    let final_state = SHARED_RUNQUEUE_MIGRATION_STATE
+        .try_lock()
+        .map(|state| *state);
+    let state_lock_available = final_state.is_some();
+    let final_state = final_state.unwrap_or_else(SharedRunQueueMigrationState::new);
+
+    let mut participants = 0;
+    let mut errors = 0;
+    let mut reports_ok = cpu_on_ok && boot_logical == Some(0) && state_lock_available;
+
+    for logical_cpu in 0..MAX_CORES {
+        let report = final_state.reports[logical_cpu];
+        let expected_destination = ((logical_cpu + 1) % MAX_CORES) as u64;
+        let expected_task = (logical_cpu as u64 + 1) * 100 + 7;
+        let expected_source_role = if logical_cpu == 0 {
+            SchedulerCoreRole::BootCpuProduction
+        } else {
+            SchedulerCoreRole::SecondaryProductionDiagnostic
+        };
+        let expected_destination_role = if expected_destination == 0 {
+            SchedulerCoreRole::BootCpuProduction
+        } else {
+            SchedulerCoreRole::SecondaryProductionDiagnostic
+        };
+        let report_ok = report.source_owner == logical_cpu as u64
+            && report.source_role == expected_source_role
+            && report.destination_owner == expected_destination
+            && report.destination_role == expected_destination_role
+            && report.task_id == expected_task
+            && report.task_state == task_state_code(TaskState::Runnable)
+            && report.registered_generation > 0
+            && report.publish_reserved_state == MigrationState::MigrationReserved
+            && report.publish_queued_state == MigrationState::SharedQueued
+            && report.consume_queued_state == MigrationState::SharedQueued
+            && report.consume_destination_state == MigrationState::DestinationEnqueued
+            && report.source_removed
+            && report.destination_enqueued
+            && report.metadata_migrated
+            && report.errors == 0;
+        if report.source_owner != u64::MAX {
+            participants += 1;
+        }
+        if !report_ok {
+            errors += 1;
+        }
+        reports_ok &= report_ok;
+
+        crate::println!(
+            "rpi5-shared-runqueue-migration: report logical={} source-owner={} source-role={} destination-owner={} destination-role={} task={} task-state={} registered-generation={} publish-reserved-state={} publish-queued-state={} consume-queued-state={} consume-destination-state={} source-queue-before={} source-queue-after-publish={} shared-len-after-publish={} shared-len-after-consume={} destination-queue-len={} destination-front={} metadata-owner-after-consume={} metadata-generation-after-consume={} source-removed={} destination-enqueued={} metadata-migrated={} errors={} ok={}",
+            logical_cpu,
+            report.source_owner,
+            scheduler_role_name(report.source_role),
+            report.destination_owner,
+            scheduler_role_name(report.destination_role),
+            report.task_id,
+            task_state_name(report.task_state),
+            report.registered_generation,
+            migration_state_name(report.publish_reserved_state),
+            migration_state_name(report.publish_queued_state),
+            migration_state_name(report.consume_queued_state),
+            migration_state_name(report.consume_destination_state),
+            report.source_queue_before,
+            report.source_queue_after_publish,
+            report.shared_len_after_publish,
+            report.shared_len_after_consume,
+            report.destination_queue_len,
+            report.destination_front,
+            report.metadata_owner_after_consume,
+            report.metadata_generation_after_consume,
+            report.source_removed,
+            report.destination_enqueued,
+            report.metadata_migrated,
+            report.errors,
+            report_ok
+        );
+        wait_uart10_empty_early_phase();
+    }
+
+    let classification = if reports_ok {
+        "pi5-shared-runqueue-migration-complete"
+    } else if !state_lock_available {
+        "pi5-shared-runqueue-migration-lock-still-held"
+    } else if cpu_on_ok {
+        "pi5-shared-runqueue-migration-invariant-failed"
+    } else {
+        "pi5-psci-smc-cpu-on-failed"
+    };
+    crate::println!(
+        "rpi5-shared-runqueue-migration: final participants={} expected={} errors={} lock-available={} wait-remaining={} classification={}",
+        participants,
+        MAX_CORES,
+        errors,
+        state_lock_available,
+        remaining,
+        classification
+    );
+
+    if reports_ok {
+        crate::println!("rpi5-shared-runqueue-migration: PASS");
+    } else {
+        crate::println!("rpi5-shared-runqueue-migration: FAIL");
     }
     wait_uart10_empty_early_phase();
 
@@ -5285,6 +5804,7 @@ pub(crate) fn write_uart10_byte_early_phase(byte: u8) {
         talos_boot_scenario = "rpi5_remote_wakeup_request",
         talos_boot_scenario = "rpi5_production_secondary_dispatch",
         talos_boot_scenario = "rpi5_shared_scheduler_metadata",
+        talos_boot_scenario = "rpi5_shared_runqueue_migration",
         talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
     )
 ))]
