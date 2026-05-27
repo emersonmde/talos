@@ -928,3 +928,28 @@ source tasks that are not queued, running-task migration deferral,
 blocked-task migration rejection, deferred secondary roles, and task mismatch.
 These are unit-tested target-independent invariants; QEMU and Pi 5 proof
 surfaces remain separate scheduler-validation tasks.
+
+## Phase 6.3 QEMU Shared Run-Queue Migration Proof
+
+The QEMU substitute proof lives behind `qemu_shared_runqueue_migration` and
+`scripts/qemu-shared-runqueue-migration-smoke.sh`. It is deliberately narrower
+than the SMP metadata and service-loop diagnostics: it runs on the QEMU boot
+CPU as a deterministic substitute for the target-independent shared
+run-queue/migration core.
+
+The diagnostic constructs a source `PerCoreScheduler`, a destination
+production-diagnostic `PerCoreScheduler`, one shared metadata table, one
+`SharedRunQueue`, and task 107. It then publishes the task from source owner 0
+to destination owner 1 through `SharedRunQueue::publish_migration`, proving
+that the source-local runnable queue loses the task and the shared queue holds
+the `SharedQueued` entry. It consumes the entry through
+`SharedRunQueue::consume_for_destination`, proving destination-local enqueue,
+shared queue removal, and metadata owner transfer to owner 1.
+
+The accepted transcript reports
+classification=qemu-shared-runqueue-migration-complete and PASS. This is QEMU
+substitute evidence only; it does not claim physical Pi 5 behavior, target
+selection, load balancing, work stealing, running-task migration, multi-core
+timer preemption, a general secondary runtime role, Phase 7, filesystem,
+networking, SSH, shell behavior, RP1/PCIe, UART interrupt ownership, or
+DMA/cache-driver behavior.

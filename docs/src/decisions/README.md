@@ -2973,3 +2973,38 @@ ADR template:
   multi-core preemption, userspace, descriptors, filesystem, networking, SSH,
   shell behavior, RP1/PCIe, UART interrupt ownership, and DMA/cache policy
   remain deferred.
+
+## 2026-05-26 - Phase 6.3 QEMU Shared Run-Queue Migration Evidence Accepted
+
+- Status: accepted as QEMU substitute evidence for the shared
+  run-queue/migration core. No Pi 5 hardware claim, load balancing, work
+  stealing, multi-core preemption, Phase 7, filesystem, networking, SSH,
+  shell, RP1/PCIe, UART interrupt ownership, or DMA behavior was added.
+- Context: The target-independent shared run-queue core was accepted at
+  4e69f9d with unit coverage, but still needed a focused QEMU transcript
+  proving the source-owner publish and destination-owner consume sequence
+  through the implemented core rather than a bypass.
+- Decision: Accept phase6-qemu-shared-runqueue-migration-smoke-20260526. The
+  focused QEMU diagnostic adds `qemu_shared_runqueue_migration`, publishes task
+  107 from source owner 0 to destination owner 1 through
+  `SharedRunQueue::publish_migration`, consumes it through
+  `SharedRunQueue::consume_for_destination`, proves source-local queue removal,
+  shared queue drain, destination-local enqueue, metadata owner transfer, and
+  reports classification=qemu-shared-runqueue-migration-complete.
+- Evidence level: QEMU/substitute transcript, fmt/lint/typecheck, no_std unit
+  tests, retained QEMU substitute smoke, mdBook validation, and whitespace
+  inspection.
+- Validation: scripts/qemu-shared-runqueue-migration-smoke.sh passed with
+  target/qemu-shared-runqueue-migration-smoke.log; full acceptance validation
+  also includes cargo fmt --all -- --check, cargo -Zjson-target-spec test,
+  scripts/qemu-smoke.sh, git diff --check, and mdbook build.
+- Rationale: The diagnostic proves the accepted owner-transfer invariant
+  without adding secondary-core orchestration that the target-independent core
+  does not need. Keeping it as a named boot scenario and script makes the
+  proof reusable as a retained Phase 6.3 regression gate.
+- Risks: QEMU evidence is not physical Pi 5 evidence. Serialized Pi 5
+  shared run-queue/migration proof remains required before physical acceptance.
+  Target selection, load balancing, work stealing, running-task migration,
+  multi-core preemption, userspace, descriptors, filesystem, networking, SSH,
+  shell behavior, RP1/PCIe, UART interrupt ownership, and DMA/cache policy
+  remain deferred.

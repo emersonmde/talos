@@ -233,6 +233,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[QEMU_SMP_ASM],
     },
     BootScenario {
+        value: "qemu_shared_runqueue_migration",
+        implied_values: &[],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "qemu_secondary_scheduler_service_loop",
         implied_values: &[],
         asm_defines: &[QEMU_SMP_ASM],

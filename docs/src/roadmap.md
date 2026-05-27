@@ -36,11 +36,13 @@ one owning logical CPU; the accepted secondary loop now proves that a physical
 secondary may run one owner-local service cycle after accepted handoff state.
 The accepted shared run-queue/migration contract now defines ownership, lock
 ordering, memory-order, state-transition, and diagnostic boundaries, and the
-target-independent shared run-queue core is accepted. The core provides a
-bounded source-owner publish and destination-owner consume path with explicit
-migration states and deterministic errors, but load balancing, multi-core
-preemption, Phase 7, filesystem, networking, SSH, and shell work remain
-deferred.
+target-independent shared run-queue core plus QEMU substitute proof are
+accepted. The core provides a bounded source-owner publish and
+destination-owner consume path with explicit migration states and deterministic
+errors; the QEMU proof reports
+classification=qemu-shared-runqueue-migration-complete. Load balancing,
+multi-core preemption, Phase 7, filesystem, networking, SSH, and shell work
+remain deferred.
 
 Accepted status and historical completed facts:
 
@@ -414,14 +416,20 @@ Accepted status and historical completed facts:
   migration states. QEMU and Pi 5 proof tasks remain separate; the core does
   not add target selection, load balancing, work stealing, multi-core
   preemption, userspace, filesystem, networking, SSH, or shell behavior.
+- The Phase 6.3 QEMU shared run-queue/migration smoke is accepted. It adds the
+  `qemu_shared_runqueue_migration` diagnostic and proves task 107 moving from
+  source owner 0 to destination owner 1 through the implemented
+  `SharedRunQueue` publish/consume APIs, with source queue removal,
+  destination-local enqueue, shared queue drain, metadata owner transfer, and
+  classification=qemu-shared-runqueue-migration-complete.
 
 Blocked or pending:
 
-- The next explicit validation target may be a bounded Phase 6.3 QEMU shared
-  run-queue/migration smoke that exercises the accepted core without bypassing
-  it. Load balancing, work stealing, multi-core preemption, userspace,
-  descriptors, filesystem, networking, SSH, shell behavior, UART interrupts,
-  RP1/PCIe, and DMA/cache-coherent driver policy remain deferred.
+- The next explicit validation target may be a bounded serialized Pi 5 shared
+  run-queue/migration proof after supervisor ready-marking and hardware lock
+  availability. Load balancing, work stealing, multi-core preemption,
+  userspace, descriptors, filesystem, networking, SSH, shell behavior, UART
+  interrupts, RP1/PCIe, and DMA/cache-coherent driver policy remain deferred.
 - Large raw accepted evidence remains in Git until external artifact storage or
   an explicit no-delete manifest-only cleanup is approved. Do not delete
   tracked accepted evidence during unrelated feature work.
@@ -757,6 +765,10 @@ The target-independent secondary scheduler service-loop core is accepted in
 `tasks/2026-05-26-phase6-secondary-scheduler-service-loop-core.md`, with
 QEMU substitute and serialized Pi 5 proof records retained as diagnostic
 gates.
+The target-independent shared run-queue core is accepted in
+`tasks/2026-05-26-phase6-shared-runqueue-core.md`, with QEMU substitute proof
+accepted in
+`tasks/2026-05-26-phase6-qemu-shared-runqueue-migration-smoke.md`.
 Before broader Phase 6.3 productionization, the accepted
 [Evidence Retention Policy](project/evidence-retention-policy.md) and
 [Diagnostic Surface Policy](project/diagnostic-surface-policy.md) govern which

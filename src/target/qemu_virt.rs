@@ -18,6 +18,7 @@ use crate::scheduler::TargetWakeConsumptionError;
     talos_boot_scenario = "qemu_remote_wakeup_request",
     talos_boot_scenario = "qemu_production_secondary_dispatch",
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_shared_runqueue_migration",
     talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 use crate::scheduler::{ContextFrame, KernelStack, SingleCoreScheduler, Task, TaskId, TaskState};
@@ -26,12 +27,13 @@ use crate::scheduler::{ContextFrame, KernelStack, SingleCoreScheduler, Task, Tas
     talos_boot_scenario = "qemu_remote_wakeup_request",
     talos_boot_scenario = "qemu_production_secondary_dispatch",
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_shared_runqueue_migration",
     talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 use crate::scheduler::{
-    LogicalCpuId, PerCoreScheduler, PerCoreSchedulerAccessError, ProductionDispatchError,
-    SchedulerCoreRole, SharedSchedulerMetadata, SharedSchedulerMetadataError,
-    SharedSchedulerMetadataLock,
+    LogicalCpuId, MigrationState, PerCoreScheduler, PerCoreSchedulerAccessError,
+    ProductionDispatchError, SchedulerCoreRole, SharedRunQueue, SharedSchedulerMetadata,
+    SharedSchedulerMetadataError, SharedSchedulerMetadataLock,
 };
 #[cfg(talos_boot_scenario = "qemu_remote_wakeup_request")]
 use crate::scheduler::{RemoteWakePublishOutcome, RemoteWakeQueue};
@@ -124,6 +126,10 @@ const PRODUCTION_SECONDARY_DISPATCH_PROGRESS_TARGET: u64 = 3;
 const SHARED_SCHEDULER_METADATA_TASK_CAPACITY: usize = MAX_CORES;
 #[cfg(talos_boot_scenario = "qemu_shared_scheduler_metadata")]
 const SHARED_SCHEDULER_METADATA_WAIT_LIMIT: usize = 100_000_000;
+#[cfg(talos_boot_scenario = "qemu_shared_runqueue_migration")]
+const SHARED_RUNQUEUE_MIGRATION_TASK_CAPACITY: usize = 1;
+#[cfg(talos_boot_scenario = "qemu_shared_runqueue_migration")]
+const SHARED_RUNQUEUE_MIGRATION_QUEUE_CAPACITY: usize = 1;
 #[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
 const SECONDARY_SCHEDULER_SERVICE_LOOP_TASK_CAPACITY: usize = 1;
 #[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
@@ -735,6 +741,7 @@ fn reset_per_core_scheduler_ownership_state() {
     talos_boot_scenario = "qemu_per_core_scheduler_ownership",
     talos_boot_scenario = "qemu_production_secondary_dispatch",
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_shared_runqueue_migration",
     talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
@@ -749,6 +756,7 @@ fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
     talos_boot_scenario = "qemu_per_core_scheduler_ownership",
     talos_boot_scenario = "qemu_production_secondary_dispatch",
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_shared_runqueue_migration",
     talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 fn task_id(raw: u64) -> TaskId {
@@ -759,6 +767,7 @@ fn task_id(raw: u64) -> TaskId {
     talos_boot_scenario = "qemu_per_core_scheduler_ownership",
     talos_boot_scenario = "qemu_production_secondary_dispatch",
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_shared_runqueue_migration",
     talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 fn scheduler_task(logical_cpu: usize, progress: u64) -> Task {
@@ -2035,6 +2044,7 @@ fn publish_remote_wake_request(target: usize, task_id: TaskId) -> bool {
 #[cfg(any(
     talos_boot_scenario = "qemu_remote_wake_to_local_runnable",
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_shared_runqueue_migration",
     talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 fn task_state_code(state: TaskState) -> u64 {
@@ -2048,6 +2058,7 @@ fn task_state_code(state: TaskState) -> u64 {
 #[cfg(any(
     talos_boot_scenario = "qemu_remote_wake_to_local_runnable",
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
+    talos_boot_scenario = "qemu_shared_runqueue_migration",
     talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
 ))]
 fn task_state_name(code: u64) -> &'static str {
@@ -3083,6 +3094,254 @@ pub fn run_shared_scheduler_metadata_smoke() -> bool {
     }
 
     reports_ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_shared_runqueue_migration")]
+#[derive(Clone, Copy)]
+struct SharedRunQueueMigrationReport {
+    source_owner: u64,
+    destination_owner: u64,
+    task_id: u64,
+    task_state: u64,
+    registered_generation: u64,
+    publish_reserved_state: MigrationState,
+    publish_queued_state: MigrationState,
+    consume_queued_state: MigrationState,
+    consume_destination_state: MigrationState,
+    source_queue_before: u64,
+    source_queue_after_publish: u64,
+    shared_len_after_publish: u64,
+    shared_len_after_consume: u64,
+    destination_queue_len: u64,
+    destination_front: u64,
+    metadata_owner_after_consume: u64,
+    metadata_generation_after_consume: u64,
+    source_removed: bool,
+    destination_enqueued: bool,
+    metadata_migrated: bool,
+    errors: u64,
+}
+
+#[cfg(talos_boot_scenario = "qemu_shared_runqueue_migration")]
+fn migration_state_name(state: MigrationState) -> &'static str {
+    match state {
+        MigrationState::OwnerLocal => "owner-local",
+        MigrationState::MigrationReserved => "migration-reserved",
+        MigrationState::SharedQueued => "shared-queued",
+        MigrationState::DestinationEnqueued => "destination-enqueued",
+        MigrationState::MigrationRejected => "migration-rejected",
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_shared_runqueue_migration")]
+fn build_shared_runqueue_migration_report() -> SharedRunQueueMigrationReport {
+    let source_owner = LogicalCpuId::BOOT;
+    let destination_owner = LogicalCpuId::new(1);
+    let mut source_scheduler = PerCoreScheduler::<2>::boot_cpu();
+    let mut destination_scheduler =
+        PerCoreScheduler::<2>::production_secondary_diagnostic(destination_owner);
+    let mut metadata =
+        SharedSchedulerMetadata::<SHARED_RUNQUEUE_MIGRATION_TASK_CAPACITY, MAX_CORES>::new();
+    let mut shared = SharedRunQueue::<SHARED_RUNQUEUE_MIGRATION_QUEUE_CAPACITY, MAX_CORES>::new();
+    let mut task = scheduler_task(0, 7);
+    let mut errors = 0;
+
+    match source_scheduler.local_scheduler_mut(source_owner) {
+        Ok(scheduler) => {
+            if scheduler.make_runnable(&mut task).is_err() {
+                errors += 1;
+            }
+        }
+        Err(_) => errors += 1,
+    }
+    let source_queue_before = source_scheduler.scheduler().runnable().len() as u64;
+
+    let registered_generation =
+        match metadata.register_local_task(source_owner, &source_scheduler, &task) {
+            Ok(snapshot) => snapshot.generation(),
+            Err(_) => {
+                errors += 1;
+                0
+            }
+        };
+
+    let publish_report = shared.publish_migration(
+        source_owner,
+        &mut source_scheduler,
+        destination_owner,
+        &metadata,
+        &task,
+        registered_generation,
+    );
+    let (publish_reserved_state, publish_queued_state) = match publish_report {
+        Ok(report) => (report.reserved().state(), report.queued().state()),
+        Err(_) => {
+            errors += 1;
+            (
+                MigrationState::MigrationRejected,
+                MigrationState::MigrationRejected,
+            )
+        }
+    };
+
+    let source_queue_after_publish = source_scheduler.scheduler().runnable().len() as u64;
+    let source_removed = source_queue_before == 1
+        && source_queue_after_publish == 0
+        && !source_scheduler.scheduler().runnable().contains(task.id());
+    if !source_removed {
+        errors += 1;
+    }
+
+    let shared_len_after_publish = shared.len() as u64;
+    let consume_report = shared.consume_for_destination(
+        destination_owner,
+        &mut destination_scheduler,
+        &mut metadata,
+        &mut task,
+    );
+    let (consume_queued_state, consume_destination_state) = match consume_report {
+        Ok(Some(report)) => (
+            report.queued().state(),
+            report.destination_enqueued().state(),
+        ),
+        _ => {
+            errors += 1;
+            (
+                MigrationState::MigrationRejected,
+                MigrationState::MigrationRejected,
+            )
+        }
+    };
+
+    let shared_len_after_consume = shared.len() as u64;
+    let destination_queue_len = destination_scheduler.scheduler().runnable().len() as u64;
+    let destination_front = destination_scheduler
+        .scheduler()
+        .runnable()
+        .front()
+        .map_or(0, TaskId::raw);
+    let final_metadata = metadata.lookup_task(task.id());
+    let (metadata_owner_after_consume, metadata_generation_after_consume) = match final_metadata {
+        Ok(snapshot) => (snapshot.owner().raw() as u64, snapshot.generation()),
+        Err(_) => {
+            errors += 1;
+            (u64::MAX, 0)
+        }
+    };
+
+    let destination_enqueued = destination_queue_len == 1
+        && destination_front == task.id().raw()
+        && task.state() == TaskState::Runnable
+        && shared_len_after_consume == 0;
+    if !destination_enqueued {
+        errors += 1;
+    }
+
+    let metadata_migrated = metadata_owner_after_consume == destination_owner.raw() as u64
+        && metadata_generation_after_consume > registered_generation;
+    if !metadata_migrated {
+        errors += 1;
+    }
+
+    SharedRunQueueMigrationReport {
+        source_owner: source_owner.raw() as u64,
+        destination_owner: destination_owner.raw() as u64,
+        task_id: task.id().raw(),
+        task_state: task_state_code(task.state()),
+        registered_generation,
+        publish_reserved_state,
+        publish_queued_state,
+        consume_queued_state,
+        consume_destination_state,
+        source_queue_before,
+        source_queue_after_publish,
+        shared_len_after_publish,
+        shared_len_after_consume,
+        destination_queue_len,
+        destination_front,
+        metadata_owner_after_consume,
+        metadata_generation_after_consume,
+        source_removed,
+        destination_enqueued,
+        metadata_migrated,
+        errors,
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_shared_runqueue_migration")]
+pub fn run_shared_runqueue_migration_smoke() -> bool {
+    let boot_mpidr = aarch64::mpidr_el1();
+    let boot_affinity = aarch64::mpidr_affinity(boot_mpidr);
+    let boot_logical = qemu_logical_cpu_from_mpidr_affinity(boot_affinity);
+    crate::println!(
+        "qemu-shared-runqueue-migration: start task-capacity={} queue-capacity={} boot-mpidr={:#018x} boot-affinity={:#x} boot-logical={:?}",
+        SHARED_RUNQUEUE_MIGRATION_TASK_CAPACITY,
+        SHARED_RUNQUEUE_MIGRATION_QUEUE_CAPACITY,
+        boot_mpidr,
+        boot_affinity,
+        boot_logical,
+    );
+
+    let report = build_shared_runqueue_migration_report();
+    let report_ok = boot_logical == Some(0)
+        && report.source_owner == 0
+        && report.destination_owner == 1
+        && report.task_id == 107
+        && report.task_state == task_state_code(TaskState::Runnable)
+        && report.registered_generation > 0
+        && report.publish_reserved_state == MigrationState::MigrationReserved
+        && report.publish_queued_state == MigrationState::SharedQueued
+        && report.consume_queued_state == MigrationState::SharedQueued
+        && report.consume_destination_state == MigrationState::DestinationEnqueued
+        && report.source_removed
+        && report.destination_enqueued
+        && report.metadata_migrated
+        && report.errors == 0;
+
+    crate::println!(
+        "qemu-shared-runqueue-migration: report source-owner={} destination-owner={} task={} task-state={} registered-generation={} publish-reserved-state={} publish-queued-state={} consume-queued-state={} consume-destination-state={} source-queue-before={} source-queue-after-publish={} shared-len-after-publish={} shared-len-after-consume={} destination-queue-len={} destination-front={} metadata-owner-after-consume={} metadata-generation-after-consume={} source-removed={} destination-enqueued={} metadata-migrated={} errors={} ok={}",
+        report.source_owner,
+        report.destination_owner,
+        report.task_id,
+        task_state_name(report.task_state),
+        report.registered_generation,
+        migration_state_name(report.publish_reserved_state),
+        migration_state_name(report.publish_queued_state),
+        migration_state_name(report.consume_queued_state),
+        migration_state_name(report.consume_destination_state),
+        report.source_queue_before,
+        report.source_queue_after_publish,
+        report.shared_len_after_publish,
+        report.shared_len_after_consume,
+        report.destination_queue_len,
+        report.destination_front,
+        report.metadata_owner_after_consume,
+        report.metadata_generation_after_consume,
+        report.source_removed,
+        report.destination_enqueued,
+        report.metadata_migrated,
+        report.errors,
+        report_ok
+    );
+
+    let classification = if report_ok {
+        "qemu-shared-runqueue-migration-complete"
+    } else {
+        "qemu-shared-runqueue-migration-invariant-failed"
+    };
+    crate::println!(
+        "qemu-shared-runqueue-migration: final participants=1 expected=1 errors={} classification={}",
+        report.errors,
+        classification
+    );
+
+    if report_ok {
+        crate::println!("qemu-shared-runqueue-migration: PASS");
+    } else {
+        crate::println!("qemu-shared-runqueue-migration: FAIL");
+    }
+
+    report_ok
 }
 
 #[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]

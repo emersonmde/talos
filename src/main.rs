@@ -49,6 +49,7 @@
             talos_boot_scenario = "qemu_remote_wakeup_request",
             talos_boot_scenario = "qemu_production_secondary_dispatch",
             talos_boot_scenario = "qemu_shared_scheduler_metadata",
+            talos_boot_scenario = "qemu_shared_runqueue_migration",
             talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
         )
     ),
@@ -295,6 +296,14 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
+            #[cfg(talos_boot_scenario = "qemu_shared_runqueue_migration")]
+            {
+                if target::qemu_virt::run_shared_runqueue_migration_smoke() {
+                    target::qemu::exit_success();
+                }
+                target::qemu::exit_failure();
+            }
+
             #[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
             {
                 if target::qemu_virt::run_secondary_scheduler_service_loop_smoke() {
@@ -380,6 +389,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_boot_scenario = "qemu_remote_wakeup_request",
                 talos_boot_scenario = "qemu_production_secondary_dispatch",
                 talos_boot_scenario = "qemu_shared_scheduler_metadata",
+                talos_boot_scenario = "qemu_shared_runqueue_migration",
                 talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
             )))]
             if target::qemu_virt::run_el2_timer_irq_smoke() {
@@ -398,6 +408,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_boot_scenario = "qemu_remote_wakeup_request",
                 talos_boot_scenario = "qemu_production_secondary_dispatch",
                 talos_boot_scenario = "qemu_shared_scheduler_metadata",
+                talos_boot_scenario = "qemu_shared_runqueue_migration",
                 talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
             )))]
             target::qemu::exit_failure();
