@@ -12,6 +12,35 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-27 - Phase 6.3 Multi-Core Preemption Source Inventory Accepted
+
+- Status: accepted as documentation/source inventory before any multi-core
+  preemption contract or implementation. No Rust behavior change, boot image,
+  QEMU run, hardware run, remote reschedule implementation, work stealing,
+  running-task migration, Phase 7, filesystem, networking, SSH, shell,
+  RP1/PCIe, UART interrupt ownership, or DMA behavior was added.
+- Context: The accepted load-balancing closeout made multi-core preemption
+  source inventory the next bounded Phase 6.3 task. The existing timer,
+  scheduler, secondary service-loop, IPI/wake, metadata, SharedRunQueue, and
+  load-balancing surfaces needed one source-backed reconciliation before the
+  contract.
+- Decision: Accept phase6-multicore-preemption-source-inventory-20260527. The
+  current model remains CPU-local: timer/IPI handlers record bounded state,
+  while owner-local normal control flow mutates scheduler queues and current
+  tasks. Cross-core mechanisms remain notification, target-owned wake,
+  owner-published metadata, or explicit SharedRunQueue owner-transfer
+  surfaces, not remote scheduler execution.
+- Evidence level: static inspection, documentation build, and whitespace
+  inspection. Hardware was not required because no physical claim changed.
+- Validation: git status --short was clean before edits; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next bounded task should be
+  phase6-multicore-preemption-contract-20260527. That contract must define
+  current-task authority, preemption-disable behavior, IRQ/IPI context
+  boundaries, lock ordering, stale metadata outcomes, remote-reschedule
+  deferral or notification-only behavior, and proof obligations before any
+  implementation starts.
+
 ## 2026-05-27 - Phase 6.3 Load-Balancing Closeout Accepted
 
 - Status: accepted as the checkpoint for the Phase 6.3 load-balancing slice.

@@ -56,7 +56,10 @@ load-balancing proof is accepted with
 classification=pi5-load-balancing-complete for the same named invariant.
 The accepted load-balancing closeout preserves those retained gates and
 recommends multi-core preemption source inventory as the next bounded
-Phase 6.3 task. Multi-core preemption implementation, Phase 7, filesystem,
+Phase 6.3 task. The accepted multi-core preemption source inventory maps the
+timer IRQ, owner-local scheduler service, secondary service-loop, IPI/wake,
+metadata, SharedRunQueue, and load-balancing boundaries that the next contract
+must preserve. Multi-core preemption implementation, Phase 7, filesystem,
 networking, SSH, and shell work remain deferred.
 
 Accepted status and historical completed facts:
@@ -479,13 +482,18 @@ Accepted status and historical completed facts:
   deferrals. The next bounded recommendation is
   `phase6-multicore-preemption-source-inventory-20260527`, a documentation
   and source-inventory task before any multi-core preemption implementation.
+- The Phase 6.3 multi-core preemption source inventory is accepted. It maps
+  the accepted timer IRQ, scheduler, CPU-local service, secondary
+  service-loop, IPI/wake, metadata, SharedRunQueue, and load-balancing
+  boundaries; names CPU-local versus cross-core assumptions; and recommends
+  `phase6-multicore-preemption-contract-20260527` before implementation.
 
 Blocked or pending:
 
-- The next explicit supervisor-planned task should be multi-core preemption
-  source inventory. Work stealing, running-task migration, remote reschedule,
-  multi-core preemption implementation, userspace, descriptors, filesystem,
-  networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and
+- The next explicit supervisor-planned task should be the multi-core
+  preemption contract. Work stealing, running-task migration, remote
+  reschedule, multi-core preemption implementation, userspace, descriptors,
+  filesystem, networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and
   DMA/cache-coherent driver policy remain deferred.
 - Large raw accepted evidence remains in Git until external artifact storage or
   an explicit no-delete manifest-only cleanup is approved. Do not delete
@@ -842,6 +850,9 @@ Pi 5 proof is accepted in
 closeout is accepted in
 `docs/src/project/phase6-load-balancing-closeout-checkpoint.md`; its next
 bounded Phase 6.3 recommendation is multi-core preemption source inventory.
+The multi-core preemption source inventory is accepted in
+`docs/src/project/phase6-multicore-preemption-source-inventory.md`; its next
+bounded recommendation is a contract task before implementation.
 Before broader Phase 6.3 productionization, the accepted
 [Evidence Retention Policy](project/evidence-retention-policy.md) and
 [Diagnostic Surface Policy](project/diagnostic-surface-policy.md) govern which
