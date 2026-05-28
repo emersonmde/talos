@@ -1354,8 +1354,23 @@ not clear pending preemption or mutate another owner's scheduler.
 The retained implementation gates are fmt, no_std tests, the base QEMU smoke,
 QEMU timer-preemption, secondary service-loop, shared-runqueue, load-balancing,
 and multi-core-preemption smokes, plus whitespace inspection and docs build if
-docs change. Later QEMU proof must exercise the production timer IRQ recording
-path and owner-local post-IRQ service point. Later Pi 5 proof remains
+docs change.
+
+The first production timer/preemption core is accepted in
+tasks/2026-05-28-phase6-production-timer-preemption-core.md. It adds
+`ProductionSchedulerRuntime` as the durable per-CPU runtime boundary for the
+local scheduler, local preemption state, target-owned remote-wake queue, and
+role/capability. Normal QEMU and Pi 5 timer IRQ handlers now record bounded
+local production preemption state after the generic timer rearm helper and
+before EOI, while leaving scheduler queues, current tasks, remote wake
+consumption, shared run queues, and metadata untouched in IRQ context.
+
+The target-independent owner-local service adapter is available through
+`ProductionSchedulerRuntime::service_pending_preemption`, which delegates to
+`CpuLocalSchedulerService::run_preemption_cycle` and preserves the accepted
+remote-wake, timer-preemption, optional-dispatch, metadata-refresh order. The
+next QEMU proof must exercise the production timer IRQ recording path and
+owner-local post-IRQ service point together. Later Pi 5 proof remains
 serialized under hardwareTestLock and must record candidate identity, TFTP,
 fresh serial, classification/PASS or blocker classification, and restore
-evidence. No physical claim is made by this contract.
+evidence. No physical claim is made by this core task.

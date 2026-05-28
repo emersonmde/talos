@@ -2614,11 +2614,15 @@ impl CrossCoreIpiDeliveryState {
 static CROSS_CORE_IPI_DELIVERY_STATE: CrossCoreIpiDeliveryState = CrossCoreIpiDeliveryState::new();
 
 #[cfg(any(
+    talos_boot_scenario = "rpi5_timer_irq",
+    talos_boot_scenario = "rpi5_timer_preemption",
     talos_boot_scenario = "rpi5_cross_core_ipi_delivery",
     talos_boot_scenario = "rpi5_remote_wakeup_request"
 ))]
 fn current_pi5_logical_cpu() -> Option<usize> {
-    pi5_logical_cpu_from_mpidr_affinity(aarch64::mpidr_affinity(aarch64::mpidr_el1()))
+    crate::smp::pi5_logical_cpu_from_mpidr_affinity(crate::arch::aarch64::mpidr_affinity(
+        crate::arch::aarch64::mpidr_el1(),
+    ))
 }
 
 #[cfg(any(
@@ -5932,6 +5936,103 @@ static TIMER_PREEMPTION_SMOKE: TimerPreemptionSmokeCell = TimerPreemptionSmokeCe
     talos_boot_scenario = "rpi5_timer_irq",
     talos_boot_scenario = "rpi5_timer_preemption"
 ))]
+const PRODUCTION_TIMER_PREEMPTION_RUNNABLE_CAPACITY: usize = 2;
+#[cfg(any(
+    talos_boot_scenario = "rpi5_timer_irq",
+    talos_boot_scenario = "rpi5_timer_preemption"
+))]
+const PRODUCTION_TIMER_PREEMPTION_REMOTE_WAKE_CAPACITY: usize = 1;
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_timer_irq",
+    talos_boot_scenario = "rpi5_timer_preemption"
+))]
+struct ProductionSchedulerRuntimeCell(
+    core::cell::UnsafeCell<
+        crate::scheduler::ProductionSchedulerRuntime<
+            PRODUCTION_TIMER_PREEMPTION_RUNNABLE_CAPACITY,
+            PRODUCTION_TIMER_PREEMPTION_REMOTE_WAKE_CAPACITY,
+        >,
+    >,
+);
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_timer_irq",
+    talos_boot_scenario = "rpi5_timer_preemption"
+))]
+unsafe impl Sync for ProductionSchedulerRuntimeCell {}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_timer_irq",
+    talos_boot_scenario = "rpi5_timer_preemption"
+))]
+impl ProductionSchedulerRuntimeCell {
+    const fn new(
+        runtime: crate::scheduler::ProductionSchedulerRuntime<
+            PRODUCTION_TIMER_PREEMPTION_RUNNABLE_CAPACITY,
+            PRODUCTION_TIMER_PREEMPTION_REMOTE_WAKE_CAPACITY,
+        >,
+    ) -> Self {
+        Self(core::cell::UnsafeCell::new(runtime))
+    }
+
+    unsafe fn get(
+        &self,
+    ) -> *mut crate::scheduler::ProductionSchedulerRuntime<
+        PRODUCTION_TIMER_PREEMPTION_RUNNABLE_CAPACITY,
+        PRODUCTION_TIMER_PREEMPTION_REMOTE_WAKE_CAPACITY,
+    > {
+        self.0.get()
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_timer_irq",
+    talos_boot_scenario = "rpi5_timer_preemption"
+))]
+static PRODUCTION_SCHEDULER_RUNTIMES: [ProductionSchedulerRuntimeCell; crate::smp::MAX_CORES] = [
+    ProductionSchedulerRuntimeCell::new(crate::scheduler::ProductionSchedulerRuntime::boot_cpu()),
+    ProductionSchedulerRuntimeCell::new(
+        crate::scheduler::ProductionSchedulerRuntime::deferred_secondary(
+            crate::scheduler::LogicalCpuId::new(1),
+        ),
+    ),
+    ProductionSchedulerRuntimeCell::new(
+        crate::scheduler::ProductionSchedulerRuntime::deferred_secondary(
+            crate::scheduler::LogicalCpuId::new(2),
+        ),
+    ),
+    ProductionSchedulerRuntimeCell::new(
+        crate::scheduler::ProductionSchedulerRuntime::deferred_secondary(
+            crate::scheduler::LogicalCpuId::new(3),
+        ),
+    ),
+];
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_timer_irq",
+    talos_boot_scenario = "rpi5_timer_preemption"
+))]
+static PRODUCTION_TIMER_PREEMPTION_RECORD_MISSES: AtomicU64 = AtomicU64::new(0);
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_timer_irq",
+    talos_boot_scenario = "rpi5_timer_preemption"
+))]
+fn record_production_timer_preemption_irq(logical_cpu: Option<usize>) {
+    let Some(logical_cpu) = logical_cpu.filter(|cpu| *cpu < crate::smp::MAX_CORES) else {
+        PRODUCTION_TIMER_PREEMPTION_RECORD_MISSES.fetch_add(1, Ordering::Relaxed);
+        return;
+    };
+
+    let runtime = unsafe { &mut *PRODUCTION_SCHEDULER_RUNTIMES[logical_cpu].get() };
+    let _ = runtime.record_timer_irq::<{ crate::smp::MAX_CORES }>(Some(logical_cpu));
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_timer_irq",
+    talos_boot_scenario = "rpi5_timer_preemption"
+))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct TimerIrqSnapshot {
     pub timer_count: u64,
@@ -5998,6 +6099,7 @@ pub fn handle_irq(vector: u64) -> bool {
     ))]
     if intid == EL2_PHYSICAL_TIMER_INTID {
         unsafe { generic_timer::record_el2_physical_tick_and_rearm() };
+        record_production_timer_preemption_irq(current_pi5_logical_cpu());
         #[cfg(talos_boot_scenario = "rpi5_timer_preemption")]
         TIMER_PREEMPTION_REQUESTS.fetch_add(1, Ordering::Relaxed);
         unsafe {

@@ -535,6 +535,71 @@ impl TimerPreemptionSmokeCell {
 #[cfg(talos_boot_scenario = "qemu_timer_preemption")]
 static TIMER_PREEMPTION_SMOKE: TimerPreemptionSmokeCell = TimerPreemptionSmokeCell::new();
 
+const PRODUCTION_TIMER_PREEMPTION_RUNNABLE_CAPACITY: usize = 2;
+const PRODUCTION_TIMER_PREEMPTION_REMOTE_WAKE_CAPACITY: usize = 1;
+
+struct ProductionSchedulerRuntimeCell(
+    core::cell::UnsafeCell<
+        crate::scheduler::ProductionSchedulerRuntime<
+            PRODUCTION_TIMER_PREEMPTION_RUNNABLE_CAPACITY,
+            PRODUCTION_TIMER_PREEMPTION_REMOTE_WAKE_CAPACITY,
+        >,
+    >,
+);
+
+unsafe impl Sync for ProductionSchedulerRuntimeCell {}
+
+impl ProductionSchedulerRuntimeCell {
+    const fn new(
+        runtime: crate::scheduler::ProductionSchedulerRuntime<
+            PRODUCTION_TIMER_PREEMPTION_RUNNABLE_CAPACITY,
+            PRODUCTION_TIMER_PREEMPTION_REMOTE_WAKE_CAPACITY,
+        >,
+    ) -> Self {
+        Self(core::cell::UnsafeCell::new(runtime))
+    }
+
+    unsafe fn get(
+        &self,
+    ) -> *mut crate::scheduler::ProductionSchedulerRuntime<
+        PRODUCTION_TIMER_PREEMPTION_RUNNABLE_CAPACITY,
+        PRODUCTION_TIMER_PREEMPTION_REMOTE_WAKE_CAPACITY,
+    > {
+        self.0.get()
+    }
+}
+
+static PRODUCTION_SCHEDULER_RUNTIMES: [ProductionSchedulerRuntimeCell; MAX_CORES] = [
+    ProductionSchedulerRuntimeCell::new(crate::scheduler::ProductionSchedulerRuntime::boot_cpu()),
+    ProductionSchedulerRuntimeCell::new(
+        crate::scheduler::ProductionSchedulerRuntime::deferred_secondary(
+            crate::scheduler::LogicalCpuId::new(1),
+        ),
+    ),
+    ProductionSchedulerRuntimeCell::new(
+        crate::scheduler::ProductionSchedulerRuntime::deferred_secondary(
+            crate::scheduler::LogicalCpuId::new(2),
+        ),
+    ),
+    ProductionSchedulerRuntimeCell::new(
+        crate::scheduler::ProductionSchedulerRuntime::deferred_secondary(
+            crate::scheduler::LogicalCpuId::new(3),
+        ),
+    ),
+];
+
+static PRODUCTION_TIMER_PREEMPTION_RECORD_MISSES: AtomicU64 = AtomicU64::new(0);
+
+fn record_production_timer_preemption_irq(logical_cpu: Option<usize>) {
+    let Some(logical_cpu) = logical_cpu.filter(|cpu| *cpu < MAX_CORES) else {
+        PRODUCTION_TIMER_PREEMPTION_RECORD_MISSES.fetch_add(1, Ordering::Relaxed);
+        return;
+    };
+
+    let runtime = unsafe { &mut *PRODUCTION_SCHEDULER_RUNTIMES[logical_cpu].get() };
+    let _ = runtime.record_timer_irq::<MAX_CORES>(Some(logical_cpu));
+}
+
 #[derive(Clone, Copy)]
 struct SingleCoreIrqMaskProbe {
     nested_start_masked: bool,
@@ -2133,10 +2198,6 @@ impl CrossCoreIpiDeliveryState {
 #[cfg(talos_boot_scenario = "qemu_cross_core_ipi_delivery")]
 static CROSS_CORE_IPI_DELIVERY_STATE: CrossCoreIpiDeliveryState = CrossCoreIpiDeliveryState::new();
 
-#[cfg(any(
-    talos_boot_scenario = "qemu_cross_core_ipi_delivery",
-    talos_boot_scenario = "qemu_remote_wakeup_request"
-))]
 fn current_qemu_logical_cpu() -> Option<usize> {
     qemu_logical_cpu_from_mpidr_affinity(aarch64::mpidr_affinity(aarch64::mpidr_el1()))
 }
@@ -4879,6 +4940,7 @@ pub fn handle_irq(vector: u64) -> bool {
 
     if intid == EL2_PHYSICAL_TIMER_INTID {
         unsafe { generic_timer::record_el2_physical_tick_and_rearm() };
+        record_production_timer_preemption_irq(current_qemu_logical_cpu());
         #[cfg(talos_boot_scenario = "qemu_timer_preemption")]
         TIMER_PREEMPTION_REQUESTS.fetch_add(1, Ordering::Relaxed);
         unsafe {

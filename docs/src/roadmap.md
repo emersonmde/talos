@@ -906,10 +906,12 @@ docs/src/project/phase6-multicore-preemption-closeout-checkpoint.md. The
 production scheduler runtime source inventory is accepted in
 `docs/src/project/phase6-production-scheduler-runtime-source-inventory.md`,
 and the production timer/preemption contract is accepted in
-`docs/src/project/phase6-production-timer-preemption-contract.md`. The next
-bounded implementation task is the production timer/preemption core; Phase 7
+`docs/src/project/phase6-production-timer-preemption-contract.md`. The first
+production timer/preemption core is accepted in
+`tasks/2026-05-28-phase6-production-timer-preemption-core.md`; the next
+bounded task is the focused QEMU production timer/preemption smoke. Phase 7
 or later subsystem work remains blocked until this production scheduler
-runtime slice is implemented, proved or explicitly deferred, and closed out.
+runtime slice is proved or explicitly deferred and closed out.
 Before broader Phase 6.3 productionization, the accepted
 [Evidence Retention Policy](project/evidence-retention-policy.md) and
 [Diagnostic Surface Policy](project/diagnostic-surface-policy.md) govern which

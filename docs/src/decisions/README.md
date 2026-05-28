@@ -3625,3 +3625,40 @@ ADR template:
   surface. Focused QEMU and serialized Pi 5 proof remain separate later tasks;
   Phase 7 remains blocked until the production scheduler runtime slice is
   accepted or explicitly deferred and closed out.
+
+## 2026-05-28 - Production Timer/Preemption Core Accepted
+
+- Status: accepted as the first bounded Phase 6.3 production scheduler runtime
+  implementation. No new QEMU production proof, Pi 5 hardware claim, direct
+  IRQ/IPI-context scheduling, remote current-task switching, running-task
+  migration, autonomous work stealing, Phase 7, filesystem, networking, SSH,
+  shell, RP1/PCIe, UART interrupt ownership, or DMA/cache behavior was added.
+- Context: The accepted contract allowed only the normal QEMU and Pi 5 timer
+  IRQ recording paths, a minimal durable per-CPU runtime boundary, and
+  owner-local post-IRQ service through the accepted scheduler service order.
+- Decision: Accept phase6-production-timer-preemption-core-20260528.
+  `ProductionSchedulerRuntime` now holds the local scheduler, local
+  preemption state, target-owned remote-wake queue, and role/capability. QEMU
+  and Pi 5 timer IRQ handlers record bounded local production preemption state
+  after the generic timer rearm helper and before EOI.
+- Rationale: IRQ context remains record-only. Production scheduler mutation is
+  still delegated to owner-local normal control flow through
+  `ProductionSchedulerRuntime::service_pending_preemption` and
+  `CpuLocalSchedulerService::run_preemption_cycle`, preserving remote wake
+  before timer preemption, optional dispatch only when timer preemption did
+  not run, and metadata refresh last.
+- Evidence level: static inspection, fmt/lint/typecheck, no_std unit tests,
+  retained QEMU substitute gates, whitespace inspection, and documentation
+  build. No hardware evidence was claimed.
+- Validation: cargo fmt --all -- --check, cargo -Zjson-target-spec test,
+  scripts/qemu-smoke.sh, scripts/qemu-timer-preemption-smoke.sh,
+  scripts/qemu-secondary-scheduler-service-loop-smoke.sh,
+  scripts/qemu-shared-runqueue-migration-smoke.sh,
+  scripts/qemu-load-balancing-smoke.sh,
+  scripts/qemu-multicore-preemption-smoke.sh, git diff --check, and mdbook
+  build passed.
+- Consequences: The next bounded task may be the focused QEMU production
+  timer/preemption smoke. Serialized Pi 5 production proof and the production
+  scheduler runtime closeout remain separate later tasks; Phase 7 remains
+  blocked until this production runtime slice is proved or explicitly deferred
+  and closed out.

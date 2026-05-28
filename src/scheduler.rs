@@ -1994,6 +1994,177 @@ pub enum CpuLocalSchedulerServiceError {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum ProductionTimerPreemptionRecordError {
+    MissingLogicalCpu,
+    InvalidLogicalCpu {
+        logical_cpu: usize,
+        cpu_capacity: usize,
+    },
+    WrongOwner {
+        owner: LogicalCpuId,
+        requester: LogicalCpuId,
+    },
+    ProductionDispatchDeferred {
+        owner: LogicalCpuId,
+    },
+    PreemptionState(PerCorePreemptionStateError),
+}
+
+impl From<PerCorePreemptionStateError> for ProductionTimerPreemptionRecordError {
+    fn from(error: PerCorePreemptionStateError) -> Self {
+        match error {
+            PerCorePreemptionStateError::WrongOwner { owner, requester } => {
+                Self::WrongOwner { owner, requester }
+            }
+            error => Self::PreemptionState(error),
+        }
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct ProductionSchedulerRuntime<
+    const RUNNABLE_CAPACITY: usize,
+    const REMOTE_WAKE_CAPACITY: usize,
+> {
+    scheduler: PerCoreScheduler<RUNNABLE_CAPACITY>,
+    preemption_state: PerCorePreemptionState,
+    remote_wake_queue: RemoteWakeQueue<REMOTE_WAKE_CAPACITY>,
+    timer_record_rejections: u64,
+}
+
+impl<const RUNNABLE_CAPACITY: usize, const REMOTE_WAKE_CAPACITY: usize>
+    ProductionSchedulerRuntime<RUNNABLE_CAPACITY, REMOTE_WAKE_CAPACITY>
+{
+    pub const fn new(owner: LogicalCpuId, role: SchedulerCoreRole) -> Self {
+        Self {
+            scheduler: PerCoreScheduler::new(owner, role),
+            preemption_state: PerCorePreemptionState::new(owner),
+            remote_wake_queue: RemoteWakeQueue::new(owner),
+            timer_record_rejections: 0,
+        }
+    }
+
+    pub const fn boot_cpu() -> Self {
+        Self::new(LogicalCpuId::BOOT, SchedulerCoreRole::BootCpuProduction)
+    }
+
+    pub const fn deferred_secondary(owner: LogicalCpuId) -> Self {
+        Self::new(owner, SchedulerCoreRole::SecondaryDeferred)
+    }
+
+    pub const fn production_secondary_diagnostic(owner: LogicalCpuId) -> Self {
+        Self::new(owner, SchedulerCoreRole::SecondaryProductionDiagnostic)
+    }
+
+    pub const fn owner(&self) -> LogicalCpuId {
+        self.scheduler.owner()
+    }
+
+    pub const fn role(&self) -> SchedulerCoreRole {
+        self.scheduler.role()
+    }
+
+    pub const fn scheduler(&self) -> &PerCoreScheduler<RUNNABLE_CAPACITY> {
+        &self.scheduler
+    }
+
+    pub const fn preemption_state(&self) -> &PerCorePreemptionState {
+        &self.preemption_state
+    }
+
+    pub const fn remote_wake_queue(&self) -> &RemoteWakeQueue<REMOTE_WAKE_CAPACITY> {
+        &self.remote_wake_queue
+    }
+
+    pub const fn timer_record_rejections(&self) -> u64 {
+        self.timer_record_rejections
+    }
+
+    pub fn scheduler_mut(
+        &mut self,
+        requester: LogicalCpuId,
+    ) -> Result<&mut PerCoreScheduler<RUNNABLE_CAPACITY>, PerCoreSchedulerAccessError> {
+        self.scheduler.ensure_local_owner(requester)?;
+        Ok(&mut self.scheduler)
+    }
+
+    pub fn remote_wake_queue_mut(
+        &mut self,
+        requester: LogicalCpuId,
+    ) -> Result<&mut RemoteWakeQueue<REMOTE_WAKE_CAPACITY>, RemoteWakeRequestError> {
+        if requester != self.remote_wake_queue.owner() {
+            Err(RemoteWakeRequestError::WrongOwner {
+                owner: self.remote_wake_queue.owner(),
+                requester,
+            })
+        } else {
+            Ok(&mut self.remote_wake_queue)
+        }
+    }
+
+    pub fn record_timer_irq<const CPU_CAPACITY: usize>(
+        &mut self,
+        logical_cpu: Option<usize>,
+    ) -> Result<PreemptionRecordOutcome, ProductionTimerPreemptionRecordError> {
+        let logical_cpu = logical_cpu.ok_or_else(|| {
+            self.timer_record_rejections += 1;
+            ProductionTimerPreemptionRecordError::MissingLogicalCpu
+        })?;
+        if logical_cpu >= CPU_CAPACITY {
+            self.timer_record_rejections += 1;
+            return Err(ProductionTimerPreemptionRecordError::InvalidLogicalCpu {
+                logical_cpu,
+                cpu_capacity: CPU_CAPACITY,
+            });
+        }
+
+        let requester = LogicalCpuId::new(logical_cpu);
+        if requester != self.owner() {
+            self.timer_record_rejections += 1;
+            return Err(ProductionTimerPreemptionRecordError::WrongOwner {
+                owner: self.owner(),
+                requester,
+            });
+        }
+        if !self.scheduler.production_dispatch_enabled() {
+            self.timer_record_rejections += 1;
+            return Err(
+                ProductionTimerPreemptionRecordError::ProductionDispatchDeferred {
+                    owner: self.owner(),
+                },
+            );
+        }
+
+        self.preemption_state
+            .record_local_timer_irq(requester)
+            .map_err(|error| {
+                self.timer_record_rejections += 1;
+                ProductionTimerPreemptionRecordError::from(error)
+            })
+    }
+
+    pub fn service_pending_preemption<const TASK_CAPACITY: usize, const CPU_CAPACITY: usize>(
+        &mut self,
+        requester: LogicalCpuId,
+        metadata: &mut SharedSchedulerMetadata<TASK_CAPACITY, CPU_CAPACITY>,
+        local_task: &mut Task,
+        current_task_for_timer_preemption: Option<&mut Task>,
+        dispatch_local_task: bool,
+    ) -> Result<CpuLocalSchedulerServiceReport, CpuLocalSchedulerServiceError> {
+        CpuLocalSchedulerService::run_preemption_cycle(
+            requester,
+            &mut self.scheduler,
+            &mut self.preemption_state,
+            &mut self.remote_wake_queue,
+            metadata,
+            local_task,
+            current_task_for_timer_preemption,
+            dispatch_local_task,
+        )
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum SecondarySchedulerServiceLoopError {
     BootCpuNotSecondary {
         owner: LogicalCpuId,
@@ -2521,7 +2692,8 @@ mod tests {
         ContextFrame, CpuLocalSchedulerService, CpuLocalSchedulerServiceError, KernelStack,
         LoadBalancingPolicy, LoadBalancingPolicyError, LogicalCpuId, PerCorePreemptionState,
         PerCorePreemptionStateError, PerCoreScheduler, PerCoreSchedulerAccessError,
-        PreemptionRecordOutcome, ProcessOwnerId, ProductionDispatchError, RemoteWakePublishOutcome,
+        PreemptionRecordOutcome, ProcessOwnerId, ProductionDispatchError,
+        ProductionSchedulerRuntime, ProductionTimerPreemptionRecordError, RemoteWakePublishOutcome,
         RemoteWakeQueue, RemoteWakeRequest, RemoteWakeRequestError, RunnableQueue,
         RunnableQueueError, SchedulerCoreRole, SecondarySchedulerServiceLoop,
         SecondarySchedulerServiceLoopError, SharedRunQueue, SharedRunQueueError,
@@ -4232,6 +4404,121 @@ mod tests {
         assert_eq!(preemption.counters().serviced_requests(), 0);
         assert_eq!(current.state(), TaskState::Running);
         assert_eq!(scheduler.current_task(), Some(current.id()));
+    }
+
+    #[test_case]
+    fn production_scheduler_runtime_records_timer_irq_without_scheduler_mutation() {
+        let owner = LogicalCpuId::BOOT;
+        let mut runtime = ProductionSchedulerRuntime::<2, 1>::boot_cpu();
+
+        assert_eq!(
+            runtime.record_timer_irq::<4>(Some(owner.raw())),
+            Ok(PreemptionRecordOutcome::Inserted)
+        );
+        assert_eq!(
+            runtime.record_timer_irq::<4>(Some(owner.raw())),
+            Ok(PreemptionRecordOutcome::Coalesced)
+        );
+
+        assert!(runtime.preemption_state().pending_timer_request());
+        assert_eq!(runtime.preemption_state().counters().recorded_requests(), 1);
+        assert_eq!(
+            runtime.preemption_state().counters().coalesced_requests(),
+            1
+        );
+        assert_eq!(runtime.scheduler().current_task(), None);
+        assert_eq!(runtime.scheduler().scheduler().runnable().len(), 0);
+        assert_eq!(runtime.remote_wake_queue().len(), 0);
+        assert_eq!(runtime.timer_record_rejections(), 0);
+    }
+
+    #[test_case]
+    fn production_scheduler_runtime_rejects_unowned_or_deferred_timer_irq_recording() {
+        let owner = LogicalCpuId::new(1);
+        let mut runtime = ProductionSchedulerRuntime::<1, 1>::deferred_secondary(owner);
+        let diagnostic_runtime =
+            ProductionSchedulerRuntime::<1, 1>::production_secondary_diagnostic(owner);
+
+        assert_eq!(
+            diagnostic_runtime.role(),
+            SchedulerCoreRole::SecondaryProductionDiagnostic
+        );
+
+        assert_eq!(
+            runtime.record_timer_irq::<4>(None),
+            Err(ProductionTimerPreemptionRecordError::MissingLogicalCpu)
+        );
+        assert_eq!(
+            runtime.record_timer_irq::<4>(Some(4)),
+            Err(ProductionTimerPreemptionRecordError::InvalidLogicalCpu {
+                logical_cpu: 4,
+                cpu_capacity: 4
+            })
+        );
+        assert_eq!(
+            runtime.record_timer_irq::<4>(Some(LogicalCpuId::BOOT.raw())),
+            Err(ProductionTimerPreemptionRecordError::WrongOwner {
+                owner,
+                requester: LogicalCpuId::BOOT
+            })
+        );
+        assert_eq!(
+            runtime.record_timer_irq::<4>(Some(owner.raw())),
+            Err(ProductionTimerPreemptionRecordError::ProductionDispatchDeferred { owner })
+        );
+
+        assert!(!runtime.preemption_state().pending_timer_request());
+        assert_eq!(runtime.timer_record_rejections(), 4);
+        assert_eq!(runtime.scheduler().scheduler().runnable().len(), 0);
+        assert_eq!(runtime.remote_wake_queue().len(), 0);
+    }
+
+    #[test_case]
+    fn production_scheduler_runtime_services_pending_preemption_owner_locally() {
+        let owner = LogicalCpuId::BOOT;
+        let requester = LogicalCpuId::new(1);
+        let mut runtime = ProductionSchedulerRuntime::<2, 1>::boot_cpu();
+        let mut metadata = SharedSchedulerMetadata::<2, 4>::new();
+        let mut current = Task::kernel_thread(task_id(71), kernel_stack(), context());
+        let mut next = Task::kernel_thread(task_id(72), kernel_stack(), context());
+        current.set_state(TaskState::Running);
+        next.set_state(TaskState::Blocked);
+
+        runtime
+            .scheduler_mut(owner)
+            .expect("owner accesses scheduler")
+            .set_current_task(owner, current.id())
+            .expect("owner sets current task");
+        metadata
+            .register_local_task(owner, runtime.scheduler(), &next)
+            .expect("next task starts in metadata");
+        runtime
+            .remote_wake_queue_mut(owner)
+            .expect("owner accesses remote wake queue")
+            .publish(requester, owner, next.id())
+            .expect("remote wake publication succeeds");
+        runtime
+            .record_timer_irq::<4>(Some(owner.raw()))
+            .expect("timer IRQ records bounded local state");
+
+        let report = runtime
+            .service_pending_preemption(owner, &mut metadata, &mut next, Some(&mut current), true)
+            .expect("owner-local production service completes");
+
+        assert_eq!(report.remote_wake(), Some(next.id()));
+        assert_eq!(report.timer_preemption(), Some(next.id()));
+        assert_eq!(report.dispatch(), None);
+        assert!(!runtime.preemption_state().pending_timer_request());
+        assert_eq!(runtime.preemption_state().counters().serviced_requests(), 1);
+        assert_eq!(current.state(), TaskState::Runnable);
+        assert_eq!(next.state(), TaskState::Running);
+        assert_eq!(runtime.scheduler().current_task(), Some(next.id()));
+        assert_eq!(
+            runtime.scheduler().scheduler().runnable().front(),
+            Some(current.id())
+        );
+        assert_eq!(runtime.remote_wake_queue().len(), 0);
+        assert!(report.metadata().current_on_owner());
     }
 
     #[test_case]
