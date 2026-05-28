@@ -113,6 +113,25 @@ permission validation; EL0 entry, trap-return assembly, translation-register
 changes, syscall ABI, VFS/filesystem work, program loading, descriptor I/O,
 shell behavior, QEMU proof, and Pi 5 proof remain separate explicit tasks.
 
+## Phase 7.2 QEMU EL0 Trap Smoke Plan
+
+The accepted QEMU EL0 trap smoke plan defines the first lower-EL proof as a
+QEMU-only built-in payload. The planned payload maps fixed UserText,
+UserStack, and UserGuard ranges inside the accepted user range, validates the
+user ELR/SP/SPSR/mappings before ERET, executes only diagnostic SVC marker
+0x7a10, and traps back through the lower-AArch64 synchronous vector.
+
+The required QEMU evidence is a retained serial log with saved-state field
+names and the exact final lines:
+qemu-el0-trap-smoke: final participants=1 expected=1 errors=0 classification=qemu-el0-trap-smoke-complete
+and qemu-el0-trap-smoke: PASS. This evidence remains QEMU/substitute only and
+does not acquire the Pi 5 hardware lock or claim physical lower-EL behavior.
+
+The plan permits only the bounded implementation owners needed for the QEMU
+boot scenario, lower-EL vector/trap capture, fixed payload mapping, target QEMU
+harness output, and script gate. General syscall ABI, process loading,
+descriptor I/O, filesystem, shell, networking, and Pi 5 proof remain deferred.
+
 Until implementation and proof work exists, Phase 4 interrupt/timer/preemption
 tasks may rely on the current EL2 kernel map only for kernel execution. They
 must not assume process isolation, lower-EL recovery, or user memory

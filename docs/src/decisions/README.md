@@ -3971,3 +3971,34 @@ ADR template:
   kinds, and deterministic PosixError results. Runtime console/TTY descriptor
   I/O integration, syscall ABI, EL0, VFS/filesystem, pipe, socket, shell,
   networking, SSH, and hardware claims remain blocked.
+
+## 2026-05-28 - Phase 7 QEMU EL0 Trap Smoke Plan Accepted
+
+- Status: accepted as a documentation-only Phase 7.2 plan for the first
+  QEMU-only EL0 trap smoke. No Rust implementation, assembly implementation,
+  boot scenario, QEMU run, Pi 5 hardware run, archive publishing,
+  hardware-lock acquisition, syscall ABI, process loading, VFS/filesystem,
+  descriptor I/O, shell behavior, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache behavior was added.
+- Context: The Phase 7.2 EL0 trap/address-space contract and
+  target-independent user-memory permission core are accepted. Before lower-EL
+  assembly or translation-table work starts, the first QEMU proof needs fixed
+  output, source ownership, and evidence-retention rules.
+- Decision: Accept phase7-qemu-el0-trap-smoke-plan-20260528. The next QEMU
+  proof boundary is one qemu_el0_trap_smoke boot scenario with a built-in
+  user payload mapped inside fixed UserText/UserStack/UserGuard ranges. The
+  payload may execute only diagnostic SVC marker 0x7a10, which is not a
+  syscall ABI. The required final lines are
+  qemu-el0-trap-smoke: final participants=1 expected=1 errors=0 classification=qemu-el0-trap-smoke-complete
+  and qemu-el0-trap-smoke: PASS, plus a saved-state line with vector, ESR,
+  FAR, ELR, SP, SPSR, and marker fields.
+- Evidence level: static documentation inspection, documentation build, and
+  whitespace inspection. No QEMU or Pi 5 hardware evidence was claimed.
+- Validation: git status --short was clean before edits; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-qemu-el0-trap-smoke-core-20260528, bounded to the QEMU boot
+  scenario, built-in payload mapping, validated ERET handoff, lower-EL trap
+  capture, script gate, and retained QEMU evidence. Pi 5 proof, general
+  syscall ABI, process loading, filesystem behavior, shell behavior,
+  networking, and SSH remain blocked.

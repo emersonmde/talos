@@ -13,17 +13,20 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.2 target-independent user-memory permission frontier,
+Talos is at the Phase 7.2 QEMU EL0 trap smoke planning frontier,
 after accepting the Phase 6.3 production scheduler runtime closeout, the full
 Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
-inventory, and the Phase 7.2 EL0 trap/address-space contract. The accepted
-Phase 7.2 contract defines the first user/kernel virtual-address split
-vocabulary, lower-EL trap/return invariants, user fault classes,
-copy-in/copy-out preconditions, evidence levels, and blocked surfaces before
-any lower-EL implementation starts. EL0 entry, trap-return assembly,
-translation-register changes, SVC/syscall ABI, VFS, filesystem, program
-loading, descriptor I/O, networking, SSH, and shell work remain blocked until
-later explicit bounded tasks accept their contracts and gates.
+inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
+target-independent user-memory permission core. The accepted Phase 7.2 contract
+defines the first user/kernel virtual-address split vocabulary, lower-EL
+trap/return invariants, user fault classes, copy-in/copy-out preconditions,
+evidence levels, and blocked surfaces. The accepted QEMU EL0 trap smoke plan
+now defines the next lower-EL proof boundary: one QEMU-only built-in user
+payload, a diagnostic SVC marker trap back to the kernel, saved-state output,
+and PASS/classification evidence. Pi 5 lower-EL proof, general SVC/syscall ABI,
+VFS, filesystem, program loading, descriptor I/O, networking, SSH, and shell
+work remain blocked until later explicit bounded tasks accept their contracts
+and gates.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -124,8 +127,14 @@ before a lower-EL contract. The accepted Phase 7.2 EL0 trap/address-space
 contract defines the canonical user range below 0x0000_8000_0000_0000, null
 guard, user text/data/heap/stack/guard vocabulary, kernel-only mapping policy,
 validated user trap-return frame requirements, user fault classes, and
-copy-in/copy-out preconditions. The next implementation boundary is
-target-independent user range and permission validation only.
+copy-in/copy-out preconditions. The accepted user-memory permission core adds
+target-independent user range, mapping permission, and access validation with
+unit coverage for null, wraparound, kernel-range, guard, unmapped, permission,
+and length-limit cases. The accepted QEMU EL0 trap smoke plan fixes the first
+QEMU-only lower-EL proof invariant and expected output:
+classification=qemu-el0-trap-smoke-complete and qemu-el0-trap-smoke: PASS
+after a built-in EL0 payload executes diagnostic SVC marker 0x7a10 and the
+kernel reports saved user state.
 The obsolete-bloat inventory and removal sweep are accepted before the
 multi-core preemption core: historical QEMU secondary-core discriminator paths
 and old Pi 5 allocator, exception, panic, and translation-fault proof-only
