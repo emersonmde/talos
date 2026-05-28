@@ -1,9 +1,9 @@
 //! Target-independent POSIX baseline primitives.
 //!
-//! This module owns only the Phase 7.1 target-independent POSIX contract
-//! surface. It does not perform VFS lookup, syscall ABI translation, process
-//! current-working-directory storage, runtime console integration, or target
-//! I/O.
+//! This module owns only the target-independent POSIX contract surface. It
+//! does not perform VFS lookup, syscall ABI translation, process
+//! current-working-directory storage, EL0 entry, translation-table switching,
+//! runtime console integration, or target I/O.
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum PosixError {
@@ -66,6 +66,161 @@ impl PosixError {
             Self::NotSupported => "ENOTSUP",
         }
     }
+}
+
+pub(crate) const USER_ADDRESS_SPACE_END: u64 = 0x0000_8000_0000_0000;
+pub(crate) const USER_NULL_GUARD_END: u64 = 0x0000_0000_0001_0000;
+pub(crate) const DEFAULT_USER_COPY_LIMIT: usize = 1024 * 1024;
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum UserAccessKind {
+    Read,
+    Write,
+    Execute,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct UserMappingPermissions {
+    bits: u8,
+}
+
+impl UserMappingPermissions {
+    pub(crate) const NONE: Self = Self { bits: 0 };
+    pub(crate) const READ: Self = Self { bits: 1 << 0 };
+    pub(crate) const WRITE: Self = Self { bits: 1 << 1 };
+    pub(crate) const EXECUTE: Self = Self { bits: 1 << 2 };
+    pub(crate) const USER_TEXT: Self = Self {
+        bits: Self::READ.bits | Self::EXECUTE.bits,
+    };
+    pub(crate) const USER_DATA: Self = Self {
+        bits: Self::READ.bits | Self::WRITE.bits,
+    };
+
+    pub(crate) const fn contains(self, permissions: Self) -> bool {
+        self.bits & permissions.bits == permissions.bits
+    }
+
+    pub(crate) const fn allows(self, access: UserAccessKind) -> bool {
+        match access {
+            UserAccessKind::Read => self.contains(Self::READ),
+            UserAccessKind::Write => self.contains(Self::WRITE),
+            UserAccessKind::Execute => self.contains(Self::EXECUTE),
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct UserRange {
+    start: u64,
+    len: usize,
+    end: u64,
+}
+
+impl UserRange {
+    pub(crate) fn new(start: u64, len: usize, max_len: usize) -> Result<Self, PosixError> {
+        if len > max_len || !is_non_guard_user_address(start) {
+            return Err(PosixError::Fault);
+        }
+
+        let end = start.checked_add(len as u64).ok_or(PosixError::Fault)?;
+        if end > USER_ADDRESS_SPACE_END {
+            return Err(PosixError::Fault);
+        }
+
+        Ok(Self { start, len, end })
+    }
+
+    pub(crate) const fn start(self) -> u64 {
+        self.start
+    }
+
+    pub(crate) const fn len(self) -> usize {
+        self.len
+    }
+
+    pub(crate) const fn end(self) -> u64 {
+        self.end
+    }
+
+    pub(crate) const fn is_empty(self) -> bool {
+        self.len == 0
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct UserMapping {
+    range: UserRange,
+    permissions: UserMappingPermissions,
+}
+
+impl UserMapping {
+    pub(crate) fn new(
+        start: u64,
+        len: usize,
+        permissions: UserMappingPermissions,
+    ) -> Result<Self, PosixError> {
+        if len == 0 {
+            return Err(PosixError::Fault);
+        }
+        Ok(Self {
+            range: UserRange::new(start, len, usize::MAX)?,
+            permissions,
+        })
+    }
+
+    pub(crate) const fn start(self) -> u64 {
+        self.range.start()
+    }
+
+    pub(crate) const fn end(self) -> u64 {
+        self.range.end()
+    }
+
+    pub(crate) const fn permissions(self) -> UserMappingPermissions {
+        self.permissions
+    }
+
+    const fn contains_address(self, address: u64) -> bool {
+        self.start() <= address && address < self.end()
+    }
+}
+
+pub(crate) fn validate_user_memory_access(
+    mappings: &[UserMapping],
+    start: u64,
+    len: usize,
+    access: UserAccessKind,
+    max_len: usize,
+) -> Result<UserRange, PosixError> {
+    let range = UserRange::new(start, len, max_len)?;
+    if range.is_empty() {
+        return Ok(range);
+    }
+
+    let mut cursor = range.start();
+    while cursor < range.end() {
+        let mut next = None;
+        let mut index = 0;
+        while index < mappings.len() {
+            let mapping = mappings[index];
+            if mapping.contains_address(cursor) && mapping.permissions().allows(access) {
+                next = Some(core::cmp::min(mapping.end(), range.end()));
+                break;
+            }
+            index += 1;
+        }
+
+        match next {
+            Some(next_cursor) if next_cursor > cursor => cursor = next_cursor,
+            _ => return Err(PosixError::Fault),
+        }
+    }
+
+    Ok(range)
+}
+
+const fn is_non_guard_user_address(address: u64) -> bool {
+    USER_NULL_GUARD_END <= address && address < USER_ADDRESS_SPACE_END
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -506,6 +661,10 @@ mod tests {
         )
     }
 
+    fn user_mapping(start: u64, len: usize, permissions: UserMappingPermissions) -> UserMapping {
+        UserMapping::new(start, len, permissions).expect("user mapping")
+    }
+
     fn assert_components(path: &NormalizedPath<'_, 4>, expected: &[&[u8]]) {
         assert_eq!(path.component_count(), expected.len());
         let components = path.components();
@@ -728,6 +887,172 @@ mod tests {
         assert_eq!(
             file.unsupported_kind_operation(),
             Err(PosixError::NotSupported)
+        );
+    }
+
+    #[test_case]
+    fn user_range_rejects_null_guard_and_kernel_addresses_as_efault() {
+        assert_eq!(
+            UserRange::new(0, 1, DEFAULT_USER_COPY_LIMIT),
+            Err(PosixError::Fault)
+        );
+        assert_eq!(
+            UserRange::new(USER_NULL_GUARD_END - 1, 1, DEFAULT_USER_COPY_LIMIT),
+            Err(PosixError::Fault)
+        );
+        assert_eq!(
+            UserRange::new(USER_ADDRESS_SPACE_END, 0, DEFAULT_USER_COPY_LIMIT),
+            Err(PosixError::Fault)
+        );
+        assert_eq!(
+            UserRange::new(USER_ADDRESS_SPACE_END, 1, DEFAULT_USER_COPY_LIMIT),
+            Err(PosixError::Fault)
+        );
+    }
+
+    #[test_case]
+    fn user_range_rejects_wraparound_and_length_limit_as_efault() {
+        assert_eq!(
+            UserRange::new(u64::MAX - 4, 8, DEFAULT_USER_COPY_LIMIT),
+            Err(PosixError::Fault)
+        );
+        assert_eq!(
+            UserRange::new(
+                USER_NULL_GUARD_END,
+                DEFAULT_USER_COPY_LIMIT + 1,
+                DEFAULT_USER_COPY_LIMIT
+            ),
+            Err(PosixError::Fault)
+        );
+    }
+
+    #[test_case]
+    fn user_mapping_rejects_zero_length_and_null_guard_overlap() {
+        assert_eq!(
+            UserMapping::new(USER_NULL_GUARD_END, 0, UserMappingPermissions::USER_DATA),
+            Err(PosixError::Fault)
+        );
+        assert_eq!(
+            UserMapping::new(
+                USER_NULL_GUARD_END - 0x1000,
+                0x2000,
+                UserMappingPermissions::USER_DATA
+            ),
+            Err(PosixError::Fault)
+        );
+    }
+
+    #[test_case]
+    fn user_access_accepts_contiguous_readable_ranges() {
+        let mappings = [
+            user_mapping(
+                USER_NULL_GUARD_END,
+                0x1000,
+                UserMappingPermissions::USER_TEXT,
+            ),
+            user_mapping(
+                USER_NULL_GUARD_END + 0x1000,
+                0x2000,
+                UserMappingPermissions::USER_DATA,
+            ),
+        ];
+
+        let range = validate_user_memory_access(
+            &mappings,
+            USER_NULL_GUARD_END + 0x800,
+            0x1800,
+            UserAccessKind::Read,
+            DEFAULT_USER_COPY_LIMIT,
+        )
+        .expect("readable range");
+
+        assert_eq!(range.start(), USER_NULL_GUARD_END + 0x800);
+        assert_eq!(range.len(), 0x1800);
+        assert_eq!(range.end(), USER_NULL_GUARD_END + 0x2000);
+    }
+
+    #[test_case]
+    fn user_access_requires_matching_read_write_and_execute_permissions() {
+        let mappings = [
+            user_mapping(
+                USER_NULL_GUARD_END,
+                0x1000,
+                UserMappingPermissions::USER_TEXT,
+            ),
+            user_mapping(
+                USER_NULL_GUARD_END + 0x1000,
+                0x1000,
+                UserMappingPermissions::USER_DATA,
+            ),
+        ];
+
+        assert_eq!(
+            validate_user_memory_access(
+                &mappings,
+                USER_NULL_GUARD_END,
+                0x100,
+                UserAccessKind::Execute,
+                DEFAULT_USER_COPY_LIMIT
+            )
+            .map(|range| range.len()),
+            Ok(0x100)
+        );
+        assert_eq!(
+            validate_user_memory_access(
+                &mappings,
+                USER_NULL_GUARD_END,
+                0x100,
+                UserAccessKind::Write,
+                DEFAULT_USER_COPY_LIMIT
+            ),
+            Err(PosixError::Fault)
+        );
+        assert_eq!(
+            validate_user_memory_access(
+                &mappings,
+                USER_NULL_GUARD_END + 0x1000,
+                0x100,
+                UserAccessKind::Execute,
+                DEFAULT_USER_COPY_LIMIT
+            ),
+            Err(PosixError::Fault)
+        );
+    }
+
+    #[test_case]
+    fn user_access_rejects_unmapped_and_guard_gaps_as_efault() {
+        let mappings = [
+            user_mapping(
+                USER_NULL_GUARD_END,
+                0x1000,
+                UserMappingPermissions::USER_DATA,
+            ),
+            user_mapping(
+                USER_NULL_GUARD_END + 0x2000,
+                0x1000,
+                UserMappingPermissions::NONE,
+            ),
+        ];
+
+        assert_eq!(
+            validate_user_memory_access(
+                &mappings,
+                USER_NULL_GUARD_END + 0x800,
+                0x1000,
+                UserAccessKind::Read,
+                DEFAULT_USER_COPY_LIMIT
+            ),
+            Err(PosixError::Fault)
+        );
+        assert_eq!(
+            validate_user_memory_access(
+                &mappings,
+                USER_NULL_GUARD_END + 0x2000,
+                0x100,
+                UserAccessKind::Read,
+                DEFAULT_USER_COPY_LIMIT
+            ),
+            Err(PosixError::Fault)
         );
     }
 
