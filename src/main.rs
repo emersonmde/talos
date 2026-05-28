@@ -72,6 +72,8 @@ mod early_format;
 mod memory_map;
 mod mmio;
 mod pl011;
+#[cfg_attr(not(test), allow(dead_code))]
+mod posix;
 mod runtime_console;
 // Phase 6.1 accepts per-core ownership before boot-time hardware use.
 #[cfg_attr(not(test), allow(dead_code))]
