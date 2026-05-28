@@ -1315,3 +1315,47 @@ smokes, and the QEMU multi-core preemption smoke. The Pi 5 proof scripts
 remain reproduction surfaces for explicit later hardware tasks only. The next
 bounded task is the production timer/preemption contract; production
 implementation remains deferred until that contract is accepted.
+
+## Phase 6.3 Production Timer/Preemption Contract
+
+The production timer/preemption contract is accepted in
+docs/src/project/phase6-production-timer-preemption-contract.md. It defines the
+first production runtime boundary for carrying the accepted owner-local
+preemption primitive into normal timer and post-IRQ paths without accepting a
+broad scheduler redesign.
+
+The implementation boundary is narrow. The only production entry points it may
+touch are `src/target/qemu_virt.rs::handle_irq`,
+`src/target/rpi5.rs::handle_irq`,
+`src/arch/aarch64/generic_timer.rs::record_el2_physical_tick_and_rearm` as a
+timer tick/rearm helper, one owner-local primary post-IRQ service point, one
+owner-local secondary service point if the role is already production-capable,
+and the minimal durable per-CPU runtime state boundary for local scheduler,
+preemption state, remote-wake queue, metadata access, current-task source, and
+role/capability.
+
+The accepted invariant remains record-only in IRQ/IPI context and
+owner-local in scheduler mutation. Timer handlers may map the current logical
+CPU to its local `PerCorePreemptionState` and call
+`record_local_timer_irq`; they must still rearm and EOI through the target
+interrupt path and must not inspect queues, choose tasks, refresh metadata,
+consume remote wake requests, publish or consume shared-runqueue entries,
+dispatch, print, allocate, block, or take unbounded scheduler locks.
+
+Owner-local normal control flow is the only place that may service pending
+timer preemption through `CpuLocalSchedulerService::run_preemption_cycle`.
+The service order remains remote wake consumption first, local timer
+preemption second, optional local dispatch only when timer preemption did not
+run, and owner-published metadata refresh last. Disabled preemption, stale
+metadata, wrong owner, missing current task, current-task mismatch, and
+non-production-capable roles are deterministic defer/reject cases that must
+not clear pending preemption or mutate another owner's scheduler.
+
+The retained implementation gates are fmt, no_std tests, the base QEMU smoke,
+QEMU timer-preemption, secondary service-loop, shared-runqueue, load-balancing,
+and multi-core-preemption smokes, plus whitespace inspection and docs build if
+docs change. Later QEMU proof must exercise the production timer IRQ recording
+path and owner-local post-IRQ service point. Later Pi 5 proof remains
+serialized under hardwareTestLock and must record candidate identity, TFTP,
+fresh serial, classification/PASS or blocker classification, and restore
+evidence. No physical claim is made by this contract.

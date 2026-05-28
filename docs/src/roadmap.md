@@ -902,9 +902,14 @@ The multi-core preemption source inventory is accepted in
 contract, target-independent core, QEMU substitute proof, and serialized Pi 5
 proof are accepted in the corresponding Phase 6.3 task records. The bounded
 multi-core preemption closeout checkpoint is accepted in
-docs/src/project/phase6-multicore-preemption-closeout-checkpoint.md. No next
-scheduler or phase-transition task is accepted yet; the supervisor should plan
-one explicitly before any Phase 7 or later subsystem work.
+docs/src/project/phase6-multicore-preemption-closeout-checkpoint.md. The
+production scheduler runtime source inventory is accepted in
+`docs/src/project/phase6-production-scheduler-runtime-source-inventory.md`,
+and the production timer/preemption contract is accepted in
+`docs/src/project/phase6-production-timer-preemption-contract.md`. The next
+bounded implementation task is the production timer/preemption core; Phase 7
+or later subsystem work remains blocked until this production scheduler
+runtime slice is implemented, proved or explicitly deferred, and closed out.
 Before broader Phase 6.3 productionization, the accepted
 [Evidence Retention Policy](project/evidence-retention-policy.md) and
 [Diagnostic Surface Policy](project/diagnostic-surface-policy.md) govern which

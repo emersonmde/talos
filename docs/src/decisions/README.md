@@ -3586,3 +3586,42 @@ ADR template:
   core, QEMU substitute proof, and serialized Pi 5 proof evidence. The next
   bounded task should be the multi-core preemption closeout checkpoint before
   any Phase 7 or later subsystem work.
+
+## 2026-05-28 - Production Timer/Preemption Contract Accepted
+
+- Status: accepted as a documentation-only Phase 6.3 production scheduler
+  runtime contract. No Rust implementation, QEMU proof, Pi 5 hardware claim,
+  direct IRQ/IPI-context scheduling, remote current-task switching,
+  running-task migration, autonomous work stealing, Phase 7, filesystem,
+  networking, SSH, shell, RP1/PCIe, UART interrupt ownership, or DMA/cache
+  behavior was added.
+- Context: The accepted production scheduler runtime source inventory showed
+  that existing multi-core preemption proofs construct scenario-local
+  scheduler state and call the preemption primitive directly from diagnostic
+  flow. Normal QEMU and Pi 5 timer handlers still rearm/EOI without recording
+  into durable production preemption state.
+- Decision: Accept
+  phase6-production-timer-preemption-contract-20260528. The next
+  implementation may touch only the normal QEMU and Pi 5 timer IRQ recording
+  paths, the generic timer tick/rearm helper as a non-mutating signal source,
+  owner-local primary and secondary post-IRQ service points, and minimal
+  durable per-CPU runtime state for local scheduler/preemption/wake/metadata
+  access, current-task source, and role/capability.
+- Rationale: The contract preserves the accepted invariant: IRQ/IPI context is
+  record-only, and all scheduler mutation happens in owner-local normal
+  control flow through CpuLocalSchedulerService. Remote wake is consumed before
+  timer preemption, optional local dispatch happens only when timer preemption
+  did not run, and metadata refresh happens after local mutation.
+- Deterministic outcomes: disabled preemption, stale metadata, wrong owner,
+  missing current task, current-task mismatch, non-production-capable roles,
+  and no runnable peer are defer/reject cases that must not grant remote
+  current-task authority or mutate another owner's scheduler.
+- Evidence level: static inspection, documentation update, whitespace
+  inspection, and documentation build. Rust fmt/tests, QEMU, and Pi 5 hardware
+  were not required because this task changes only Markdown documentation and
+  durable worker state.
+- Consequences: The next bounded task may implement
+  phase6-production-timer-preemption-core-20260528 within the named contract
+  surface. Focused QEMU and serialized Pi 5 proof remain separate later tasks;
+  Phase 7 remains blocked until the production scheduler runtime slice is
+  accepted or explicitly deferred and closed out.
