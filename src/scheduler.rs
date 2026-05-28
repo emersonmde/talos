@@ -241,6 +241,182 @@ pub enum TimerPreemptError {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum PreemptionRecordOutcome {
+    Inserted,
+    Coalesced,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum PerCorePreemptionStateError {
+    WrongOwner {
+        owner: LogicalCpuId,
+        requester: LogicalCpuId,
+    },
+    OwnerMismatch {
+        state_owner: LogicalCpuId,
+        scheduler_owner: LogicalCpuId,
+    },
+    ServiceDeferred {
+        owner: LogicalCpuId,
+        disable_depth: u8,
+    },
+    DisableDepthOverflow {
+        owner: LogicalCpuId,
+    },
+    DisableDepthUnderflow {
+        owner: LogicalCpuId,
+    },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct PerCorePreemptionCounters {
+    recorded_requests: u64,
+    coalesced_requests: u64,
+    serviced_requests: u64,
+    deferred_while_disabled: u64,
+}
+
+impl PerCorePreemptionCounters {
+    pub const fn recorded_requests(self) -> u64 {
+        self.recorded_requests
+    }
+
+    pub const fn coalesced_requests(self) -> u64 {
+        self.coalesced_requests
+    }
+
+    pub const fn serviced_requests(self) -> u64 {
+        self.serviced_requests
+    }
+
+    pub const fn deferred_while_disabled(self) -> u64 {
+        self.deferred_while_disabled
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct PerCorePreemptionState {
+    owner: LogicalCpuId,
+    pending_timer_request: bool,
+    disable_depth: u8,
+    counters: PerCorePreemptionCounters,
+}
+
+impl PerCorePreemptionState {
+    pub const fn new(owner: LogicalCpuId) -> Self {
+        Self {
+            owner,
+            pending_timer_request: false,
+            disable_depth: 0,
+            counters: PerCorePreemptionCounters {
+                recorded_requests: 0,
+                coalesced_requests: 0,
+                serviced_requests: 0,
+                deferred_while_disabled: 0,
+            },
+        }
+    }
+
+    pub const fn owner(&self) -> LogicalCpuId {
+        self.owner
+    }
+
+    pub const fn pending_timer_request(&self) -> bool {
+        self.pending_timer_request
+    }
+
+    pub const fn disable_depth(&self) -> u8 {
+        self.disable_depth
+    }
+
+    pub const fn counters(&self) -> PerCorePreemptionCounters {
+        self.counters
+    }
+
+    /// Bounded timer-IRQ side recording hook.
+    ///
+    /// This method deliberately records only local pending state. It does not
+    /// inspect runnable queues, choose a next task, refresh metadata, or mutate
+    /// scheduler-owned current-task state.
+    pub fn record_local_timer_irq(
+        &mut self,
+        requester: LogicalCpuId,
+    ) -> Result<PreemptionRecordOutcome, PerCorePreemptionStateError> {
+        self.ensure_owner(requester)?;
+        if self.pending_timer_request {
+            self.counters.coalesced_requests += 1;
+            Ok(PreemptionRecordOutcome::Coalesced)
+        } else {
+            self.pending_timer_request = true;
+            self.counters.recorded_requests += 1;
+            Ok(PreemptionRecordOutcome::Inserted)
+        }
+    }
+
+    pub fn enter_preemption_disabled(
+        &mut self,
+        requester: LogicalCpuId,
+    ) -> Result<u8, PerCorePreemptionStateError> {
+        self.ensure_owner(requester)?;
+        self.disable_depth = self
+            .disable_depth
+            .checked_add(1)
+            .ok_or(PerCorePreemptionStateError::DisableDepthOverflow { owner: self.owner })?;
+        Ok(self.disable_depth)
+    }
+
+    pub fn exit_preemption_disabled(
+        &mut self,
+        requester: LogicalCpuId,
+    ) -> Result<u8, PerCorePreemptionStateError> {
+        self.ensure_owner(requester)?;
+        self.disable_depth = self
+            .disable_depth
+            .checked_sub(1)
+            .ok_or(PerCorePreemptionStateError::DisableDepthUnderflow { owner: self.owner })?;
+        Ok(self.disable_depth)
+    }
+
+    fn prepare_owner_local_service(
+        &mut self,
+        requester: LogicalCpuId,
+        scheduler_owner: LogicalCpuId,
+    ) -> Result<bool, PerCorePreemptionStateError> {
+        self.ensure_owner(requester)?;
+        if scheduler_owner != self.owner {
+            return Err(PerCorePreemptionStateError::OwnerMismatch {
+                state_owner: self.owner,
+                scheduler_owner,
+            });
+        }
+        if self.pending_timer_request && self.disable_depth != 0 {
+            self.counters.deferred_while_disabled += 1;
+            return Err(PerCorePreemptionStateError::ServiceDeferred {
+                owner: self.owner,
+                disable_depth: self.disable_depth,
+            });
+        }
+        Ok(self.pending_timer_request)
+    }
+
+    fn complete_owner_local_service(&mut self) {
+        self.pending_timer_request = false;
+        self.counters.serviced_requests += 1;
+    }
+
+    fn ensure_owner(&self, requester: LogicalCpuId) -> Result<(), PerCorePreemptionStateError> {
+        if requester == self.owner {
+            Ok(())
+        } else {
+            Err(PerCorePreemptionStateError::WrongOwner {
+                owner: self.owner,
+                requester,
+            })
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum ProductionDispatchError {
     WrongOwner {
         owner: LogicalCpuId,
@@ -1806,7 +1982,12 @@ pub enum SharedSchedulerMetadataError {
 pub enum CpuLocalSchedulerServiceError {
     RemoteWakeQueue(RemoteWakeRequestError),
     RemoteWake(TargetWakeConsumptionError),
+    PreemptionState(PerCorePreemptionStateError),
     MissingCurrentTaskForTimerPreemption,
+    CurrentTaskMismatch {
+        current_task: Option<TaskId>,
+        provided: TaskId,
+    },
     TimerPreempt(TimerPreemptError),
     ProductionDispatch(ProductionDispatchError),
     Metadata(SharedSchedulerMetadataError),
@@ -1888,6 +2069,62 @@ impl SecondarySchedulerServiceLoopReport {
 pub struct CpuLocalSchedulerService;
 
 impl CpuLocalSchedulerService {
+    pub fn run_preemption_cycle<
+        const RUNNABLE_CAPACITY: usize,
+        const REMOTE_WAKE_CAPACITY: usize,
+        const TASK_CAPACITY: usize,
+        const CPU_CAPACITY: usize,
+    >(
+        requester: LogicalCpuId,
+        scheduler: &mut PerCoreScheduler<RUNNABLE_CAPACITY>,
+        preemption_state: &mut PerCorePreemptionState,
+        remote_wake_queue: &mut RemoteWakeQueue<REMOTE_WAKE_CAPACITY>,
+        metadata: &mut SharedSchedulerMetadata<TASK_CAPACITY, CPU_CAPACITY>,
+        local_task: &mut Task,
+        current_task_for_timer_preemption: Option<&mut Task>,
+        dispatch_local_task: bool,
+    ) -> Result<CpuLocalSchedulerServiceReport, CpuLocalSchedulerServiceError> {
+        let pending_timer_preemption = preemption_state
+            .prepare_owner_local_service(requester, scheduler.owner())
+            .map_err(CpuLocalSchedulerServiceError::PreemptionState)?;
+
+        if pending_timer_preemption {
+            scheduler
+                .ensure_production_owner(requester)
+                .map_err(|error| {
+                    CpuLocalSchedulerServiceError::ProductionDispatch(
+                        ProductionDispatchError::from(error),
+                    )
+                })?;
+            let current_task = current_task_for_timer_preemption
+                .as_deref()
+                .ok_or(CpuLocalSchedulerServiceError::MissingCurrentTaskForTimerPreemption)?;
+            if scheduler.current_task() != Some(current_task.id()) {
+                return Err(CpuLocalSchedulerServiceError::CurrentTaskMismatch {
+                    current_task: scheduler.current_task(),
+                    provided: current_task.id(),
+                });
+            }
+        }
+
+        let report = Self::run_cycle(
+            requester,
+            scheduler,
+            remote_wake_queue,
+            metadata,
+            local_task,
+            current_task_for_timer_preemption,
+            pending_timer_preemption,
+            dispatch_local_task,
+        )?;
+
+        if report.timer_preemption().is_some() {
+            preemption_state.complete_owner_local_service();
+        }
+
+        Ok(report)
+    }
+
     pub fn run_cycle<
         const RUNNABLE_CAPACITY: usize,
         const REMOTE_WAKE_CAPACITY: usize,
@@ -2282,10 +2519,11 @@ mod tests {
 
     use super::{
         ContextFrame, CpuLocalSchedulerService, CpuLocalSchedulerServiceError, KernelStack,
-        LoadBalancingPolicy, LoadBalancingPolicyError, LogicalCpuId, PerCoreScheduler,
-        PerCoreSchedulerAccessError, ProcessOwnerId, ProductionDispatchError,
-        RemoteWakePublishOutcome, RemoteWakeQueue, RemoteWakeRequest, RemoteWakeRequestError,
-        RunnableQueue, RunnableQueueError, SchedulerCoreRole, SecondarySchedulerServiceLoop,
+        LoadBalancingPolicy, LoadBalancingPolicyError, LogicalCpuId, PerCorePreemptionState,
+        PerCorePreemptionStateError, PerCoreScheduler, PerCoreSchedulerAccessError,
+        PreemptionRecordOutcome, ProcessOwnerId, ProductionDispatchError, RemoteWakePublishOutcome,
+        RemoteWakeQueue, RemoteWakeRequest, RemoteWakeRequestError, RunnableQueue,
+        RunnableQueueError, SchedulerCoreRole, SecondarySchedulerServiceLoop,
         SecondarySchedulerServiceLoopError, SharedRunQueue, SharedRunQueueError,
         SharedRunQueueLock, SharedSchedulerMetadata, SharedSchedulerMetadataError,
         SharedSchedulerMetadataLock, SingleCoreScheduler, TargetWakeConsumptionError, Task, TaskId,
@@ -3719,6 +3957,281 @@ mod tests {
         assert_eq!(report.metadata().state(), TaskState::Running);
         assert!(report.metadata().current_on_owner());
         assert!(!report.metadata().runnable_on_owner());
+    }
+
+    #[test_case]
+    fn per_core_preemption_state_records_only_local_timer_requests() {
+        let owner = LogicalCpuId::new(2);
+        let other = LogicalCpuId::new(3);
+        let mut state = PerCorePreemptionState::new(owner);
+
+        assert_eq!(state.owner(), owner);
+        assert!(!state.pending_timer_request());
+        assert_eq!(
+            state.record_local_timer_irq(other),
+            Err(PerCorePreemptionStateError::WrongOwner {
+                owner,
+                requester: other
+            })
+        );
+        assert_eq!(
+            state.record_local_timer_irq(owner),
+            Ok(PreemptionRecordOutcome::Inserted)
+        );
+        assert_eq!(
+            state.record_local_timer_irq(owner),
+            Ok(PreemptionRecordOutcome::Coalesced)
+        );
+
+        assert!(state.pending_timer_request());
+        assert_eq!(state.counters().recorded_requests(), 1);
+        assert_eq!(state.counters().coalesced_requests(), 1);
+        assert_eq!(state.counters().serviced_requests(), 0);
+    }
+
+    #[test_case]
+    fn preemption_state_defers_service_while_disabled_and_balances_nested_sections() {
+        let owner = LogicalCpuId::BOOT;
+        let mut scheduler = PerCoreScheduler::<1>::boot_cpu();
+        let mut preemption = PerCorePreemptionState::new(owner);
+        let mut remote_wakes = RemoteWakeQueue::<1>::new(owner);
+        let mut metadata = SharedSchedulerMetadata::<1, 4>::new();
+        let mut current = Task::kernel_thread(task_id(60), kernel_stack(), context());
+        let mut local_task = Task::kernel_thread(task_id(61), kernel_stack(), context());
+        current.set_state(TaskState::Running);
+
+        scheduler
+            .set_current_task(owner, current.id())
+            .expect("owner sets current task");
+        metadata
+            .register_local_task(owner, &scheduler, &local_task)
+            .expect("local task starts in metadata");
+        preemption
+            .record_local_timer_irq(owner)
+            .expect("timer IRQ records local request");
+        assert_eq!(preemption.enter_preemption_disabled(owner), Ok(1));
+        assert_eq!(preemption.enter_preemption_disabled(owner), Ok(2));
+        assert_eq!(preemption.disable_depth(), 2);
+
+        assert_eq!(
+            CpuLocalSchedulerService::run_preemption_cycle(
+                owner,
+                &mut scheduler,
+                &mut preemption,
+                &mut remote_wakes,
+                &mut metadata,
+                &mut local_task,
+                Some(&mut current),
+                false,
+            ),
+            Err(CpuLocalSchedulerServiceError::PreemptionState(
+                PerCorePreemptionStateError::ServiceDeferred {
+                    owner,
+                    disable_depth: 2
+                }
+            ))
+        );
+        assert!(preemption.pending_timer_request());
+        assert_eq!(preemption.counters().deferred_while_disabled(), 1);
+        assert_eq!(current.state(), TaskState::Running);
+        assert_eq!(scheduler.current_task(), Some(current.id()));
+
+        assert_eq!(preemption.exit_preemption_disabled(owner), Ok(1));
+        assert_eq!(preemption.exit_preemption_disabled(owner), Ok(0));
+        assert_eq!(preemption.disable_depth(), 0);
+        assert_eq!(
+            preemption.exit_preemption_disabled(owner),
+            Err(PerCorePreemptionStateError::DisableDepthUnderflow { owner })
+        );
+    }
+
+    #[test_case]
+    fn cpu_local_preemption_cycle_services_owner_local_pending_request() {
+        let owner = LogicalCpuId::new(1);
+        let requester = LogicalCpuId::BOOT;
+        let mut scheduler = PerCoreScheduler::<2>::production_secondary_diagnostic(owner);
+        let mut preemption = PerCorePreemptionState::new(owner);
+        let mut remote_wakes = RemoteWakeQueue::<2>::new(owner);
+        let mut metadata = SharedSchedulerMetadata::<2, 4>::new();
+        let mut current = Task::kernel_thread(task_id(62), kernel_stack(), context());
+        let mut next = Task::kernel_thread(task_id(63), kernel_stack(), context());
+        current.set_state(TaskState::Running);
+        next.set_state(TaskState::Blocked);
+
+        scheduler
+            .set_current_task(owner, current.id())
+            .expect("owner sets current task");
+        metadata
+            .register_local_task(owner, &scheduler, &next)
+            .expect("next task starts in metadata");
+        remote_wakes
+            .publish(requester, owner, next.id())
+            .expect("remote wake publication succeeds");
+        preemption
+            .record_local_timer_irq(owner)
+            .expect("local timer IRQ records bounded request");
+
+        let report = CpuLocalSchedulerService::run_preemption_cycle(
+            owner,
+            &mut scheduler,
+            &mut preemption,
+            &mut remote_wakes,
+            &mut metadata,
+            &mut next,
+            Some(&mut current),
+            true,
+        )
+        .expect("owner-local preemption cycle completes");
+
+        assert_eq!(report.remote_wake(), Some(next.id()));
+        assert_eq!(report.timer_preemption(), Some(next.id()));
+        assert_eq!(report.dispatch(), None);
+        assert!(!preemption.pending_timer_request());
+        assert_eq!(preemption.counters().serviced_requests(), 1);
+        assert_eq!(current.state(), TaskState::Runnable);
+        assert_eq!(next.state(), TaskState::Running);
+        assert_eq!(scheduler.current_task(), Some(next.id()));
+        assert_eq!(scheduler.scheduler().runnable().front(), Some(current.id()));
+        assert!(report.metadata().current_on_owner());
+        assert!(!report.metadata().runnable_on_owner());
+    }
+
+    #[test_case]
+    fn cpu_local_preemption_cycle_rejects_wrong_owner_before_queue_mutation() {
+        let owner = LogicalCpuId::new(1);
+        let requester = LogicalCpuId::new(2);
+        let mut scheduler = PerCoreScheduler::<1>::production_secondary_diagnostic(owner);
+        let mut preemption = PerCorePreemptionState::new(owner);
+        let mut remote_wakes = RemoteWakeQueue::<1>::new(owner);
+        let mut metadata = SharedSchedulerMetadata::<1, 4>::new();
+        let mut current = Task::kernel_thread(task_id(64), kernel_stack(), context());
+        let mut local_task = Task::kernel_thread(task_id(65), kernel_stack(), context());
+        current.set_state(TaskState::Running);
+        local_task.set_state(TaskState::Blocked);
+
+        scheduler
+            .set_current_task(owner, current.id())
+            .expect("owner sets current task");
+        metadata
+            .register_local_task(owner, &scheduler, &local_task)
+            .expect("local task starts in metadata");
+        remote_wakes
+            .publish(LogicalCpuId::BOOT, owner, local_task.id())
+            .expect("remote wake publication succeeds");
+        preemption
+            .record_local_timer_irq(owner)
+            .expect("local timer IRQ records request");
+
+        assert_eq!(
+            CpuLocalSchedulerService::run_preemption_cycle(
+                requester,
+                &mut scheduler,
+                &mut preemption,
+                &mut remote_wakes,
+                &mut metadata,
+                &mut local_task,
+                Some(&mut current),
+                true,
+            ),
+            Err(CpuLocalSchedulerServiceError::PreemptionState(
+                PerCorePreemptionStateError::WrongOwner { owner, requester }
+            ))
+        );
+        assert_eq!(remote_wakes.len(), 1);
+        assert_eq!(local_task.state(), TaskState::Blocked);
+        assert_eq!(current.state(), TaskState::Running);
+        assert!(preemption.pending_timer_request());
+    }
+
+    #[test_case]
+    fn cpu_local_preemption_cycle_rejects_mismatched_current_task_before_service() {
+        let owner = LogicalCpuId::BOOT;
+        let mut scheduler = PerCoreScheduler::<1>::boot_cpu();
+        let mut preemption = PerCorePreemptionState::new(owner);
+        let mut remote_wakes = RemoteWakeQueue::<1>::new(owner);
+        let mut metadata = SharedSchedulerMetadata::<1, 4>::new();
+        let mut current = Task::kernel_thread(task_id(66), kernel_stack(), context());
+        let mut provided = Task::kernel_thread(task_id(67), kernel_stack(), context());
+        let mut local_task = Task::kernel_thread(task_id(68), kernel_stack(), context());
+        current.set_state(TaskState::Running);
+        provided.set_state(TaskState::Running);
+        local_task.set_state(TaskState::Blocked);
+
+        scheduler
+            .set_current_task(owner, current.id())
+            .expect("owner sets current task");
+        metadata
+            .register_local_task(owner, &scheduler, &local_task)
+            .expect("local task starts in metadata");
+        remote_wakes
+            .publish(LogicalCpuId::new(1), owner, local_task.id())
+            .expect("remote wake publication succeeds");
+        preemption
+            .record_local_timer_irq(owner)
+            .expect("local timer IRQ records request");
+
+        assert_eq!(
+            CpuLocalSchedulerService::run_preemption_cycle(
+                owner,
+                &mut scheduler,
+                &mut preemption,
+                &mut remote_wakes,
+                &mut metadata,
+                &mut local_task,
+                Some(&mut provided),
+                true,
+            ),
+            Err(CpuLocalSchedulerServiceError::CurrentTaskMismatch {
+                current_task: Some(current.id()),
+                provided: provided.id()
+            })
+        );
+        assert_eq!(remote_wakes.len(), 1);
+        assert_eq!(local_task.state(), TaskState::Blocked);
+        assert!(preemption.pending_timer_request());
+        assert_eq!(preemption.counters().serviced_requests(), 0);
+    }
+
+    #[test_case]
+    fn cpu_local_preemption_cycle_keeps_pending_request_after_no_runnable_error() {
+        let owner = LogicalCpuId::BOOT;
+        let mut scheduler = PerCoreScheduler::<1>::boot_cpu();
+        let mut preemption = PerCorePreemptionState::new(owner);
+        let mut remote_wakes = RemoteWakeQueue::<1>::new(owner);
+        let mut metadata = SharedSchedulerMetadata::<1, 4>::new();
+        let mut current = Task::kernel_thread(task_id(69), kernel_stack(), context());
+        let mut local_task = Task::kernel_thread(task_id(70), kernel_stack(), context());
+        current.set_state(TaskState::Running);
+
+        scheduler
+            .set_current_task(owner, current.id())
+            .expect("owner sets current task");
+        metadata
+            .register_local_task(owner, &scheduler, &local_task)
+            .expect("local task starts in metadata");
+        preemption
+            .record_local_timer_irq(owner)
+            .expect("local timer IRQ records request");
+
+        assert_eq!(
+            CpuLocalSchedulerService::run_preemption_cycle(
+                owner,
+                &mut scheduler,
+                &mut preemption,
+                &mut remote_wakes,
+                &mut metadata,
+                &mut local_task,
+                Some(&mut current),
+                false,
+            ),
+            Err(CpuLocalSchedulerServiceError::TimerPreempt(
+                TimerPreemptError::NoRunnableTask
+            ))
+        );
+        assert!(preemption.pending_timer_request());
+        assert_eq!(preemption.counters().serviced_requests(), 0);
+        assert_eq!(current.state(), TaskState::Running);
+        assert_eq!(scheduler.current_task(), Some(current.id()));
     }
 
     #[test_case]

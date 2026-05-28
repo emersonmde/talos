@@ -64,14 +64,19 @@ paths as bounded recorders and requires owner-local normal control flow to
 perform scheduler mutation after interrupt return; it names deterministic
 defer/reject outcomes for stale metadata, wrong-owner access,
 nested/preemption-disabled sections, pending remote wake, and full queues.
+The accepted multi-core preemption core adds target-independent per-owner
+pending timer-preemption state, duplicate request coalescing, explicit nested
+preemption-disable defer behavior, and an owner-local service entry that
+preflights owner/current-task authority before draining wake queues or
+mutating scheduler state. It is a unit-tested core only; QEMU proof, Pi 5
+proof, and closeout remain separate queued tasks.
 The obsolete-bloat inventory and removal sweep are accepted before the
 multi-core preemption core: historical QEMU secondary-core discriminator paths
 and old Pi 5 allocator, exception, panic, and translation-fault proof-only
 scripts/cfg/source paths are retired while accepted evidence summaries remain
-in task records. Multi-core preemption implementation, direct IRQ/IPI-context
-scheduling, running-task migration, Phase 7, filesystem, networking, SSH, and
-shell work remain deferred until the next bounded implementation and proof
-tasks.
+in task records. Direct IRQ/IPI-context scheduling, running-task migration,
+Phase 7, filesystem, networking, SSH, and shell work remain deferred until the
+next bounded proof and closeout tasks.
 
 Accepted status and historical completed facts:
 

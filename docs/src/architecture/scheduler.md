@@ -1167,3 +1167,41 @@ contract does not accept direct IRQ/IPI-context scheduling, autonomous work
 stealing, running-task migration, general remote reschedule, Phase 7,
 filesystem, networking, SSH, shell behavior, RP1/PCIe, UART interrupt
 ownership, or DMA/cache-driver policy.
+
+## Phase 6.3 Multi-Core Preemption Core
+
+The first target-independent multi-core preemption core lives in
+`src/scheduler.rs`. It adds `PerCorePreemptionState` as the bounded per-owner
+state that a future local timer IRQ may update before owner-local normal
+control flow services the request.
+
+`PerCorePreemptionState::record_local_timer_irq` records only local pending
+state for the owning `LogicalCpuId`. It coalesces duplicate timer requests and
+updates counters, but it does not inspect runnable queues, choose a next task,
+refresh metadata, mutate `PerCoreScheduler`, or touch another CPU's scheduler
+state.
+
+`CpuLocalSchedulerService::run_preemption_cycle` is the owner-local service
+entry for that state. Before draining wake queues or mutating scheduler state,
+it verifies that the requester owns both the preemption state and
+`PerCoreScheduler`, that the owner has a production-capable role, and that the
+provided current task matches the scheduler's current-task slot. When those
+checks pass, the service cycle preserves the accepted order: target-owned
+remote wake consumption, local timer preemption through
+`SingleCoreScheduler::timer_preempt`, optional local dispatch only when no
+timer preemption was serviced, and finally owner-published metadata refresh.
+
+The core also adds an explicit nested preemption-disable counter. A timer
+request recorded while disabled remains pending and service returns a
+deterministic defer result until the owner balances the nested section.
+Wrong-owner recording/service, state/scheduler owner mismatch, current-task
+mismatch, underflow/overflow, no runnable peer, missing current task, and
+deferred secondary roles are deterministic errors that leave the pending
+request and owner-local queue state intact.
+
+This implementation is unit-testable core behavior only. It does not add a new
+QEMU boot scenario, Pi 5 hardware proof, direct IRQ/IPI-context scheduling,
+remote current-task switching, running-task migration, autonomous work
+stealing, general remote reschedule, Phase 7, filesystem, networking, SSH,
+shell behavior, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver
+policy.

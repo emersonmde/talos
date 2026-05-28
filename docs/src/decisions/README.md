@@ -3406,3 +3406,40 @@ ADR template:
   generation rather than the old volatile byte. The change removes a real SMP
   data race while avoiding the retired byte-atomic shape, but a later
   post-review Pi 5 hardware validation remains queued before review pass 2.
+
+## 2026-05-28 - Multi-Core Preemption Core Accepted
+
+- Status: accepted as the target-independent Phase 6.3 multi-core preemption
+  core. No QEMU boot scenario, Pi 5 hardware proof, Phase 7, filesystem,
+  networking, SSH, shell, RP1/PCIe, UART interrupt ownership, or DMA/cache
+  behavior was added.
+- Context: The accepted contract permits timer/IPI paths to record bounded
+  state while owner-local normal control flow performs scheduler mutation
+  after interrupt return. The core needed explicit pending-state, owner,
+  current-task, and preemption-disabled behavior before proof routing could be
+  added safely.
+- Decision: Accept phase6-multicore-preemption-core-20260527.
+  PerCorePreemptionState records local pending timer requests, coalesces
+  duplicate requests, tracks nested preemption-disable depth, and exposes
+  deterministic defer/error outcomes. CpuLocalSchedulerService now has an
+  owner-local preemption-cycle entry that preflights owner/current-task
+  authority before wake draining, timer preemption, optional dispatch, and
+  metadata refresh.
+- Evidence level: static inspection, fmt/lint/typecheck, no_std unit tests,
+  QEMU/substitute regression gates, documentation build, and whitespace
+  inspection. Hardware was not required because this task makes no physical
+  claim.
+- Validation: cargo fmt --all -- --check, cargo -Zjson-target-spec test with
+  153 no_std tests, scripts/qemu-smoke.sh,
+  scripts/qemu-timer-preemption-smoke.sh,
+  scripts/qemu-secondary-scheduler-service-loop-smoke.sh,
+  scripts/qemu-load-balancing-smoke.sh, git diff --check, and mdbook build
+  passed.
+- Rationale: The core keeps IRQ-side behavior to bounded local recording and
+  leaves all scheduler mutation in owner-local normal control flow. Failed
+  service attempts keep pending requests and single-owner queue state intact,
+  which lets later QEMU/Pi 5 proof tasks exercise the invariant without
+  introducing remote current-task authority.
+- Risks: QEMU and Pi 5 multi-core preemption proofs are still queued. The core
+  does not yet wire real timer IRQ recorders into this state or add a
+  non-diagnostic secondary runtime role.
