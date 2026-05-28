@@ -87,4 +87,7 @@ processes are implemented. The descriptor portion is narrowed by the accepted
 [Phase 7 Descriptor Table Contract](phase7-descriptor-table-contract.md),
 which fixes process-local descriptor table entries, dup/close behavior,
 reserved stdio handles, and deterministic descriptor error cases before the
-target-independent table core is implemented.
+target-independent table core is implemented. The accepted Phase 7.1
+descriptor-table core now implements those target-independent table semantics
+without runtime console/TTY I/O, syscall ABI, EL0, VFS, filesystem, pipes,
+sockets, shell behavior, networking, SSH, or hardware claims.

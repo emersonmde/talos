@@ -47,8 +47,10 @@ kernel bring-up and intentionally too broad for userspace isolation.
 
 ## Minimum Prerequisites Before EL0 Work
 
-Before Phase 7 can accept EL0 or syscall work, Talos needs explicit design and
-validation for:
+The Phase 7.1 POSIX baseline now accepts target-independent errno/path and
+descriptor-table cores. That does not reduce the lower-EL gate. Before Talos
+can accept EL0 or syscall work, it still needs explicit design and validation
+for:
 
 - the address-space shape: kernel half, user range, guard gaps, and whether the
   kernel remains globally mapped while a user task runs;

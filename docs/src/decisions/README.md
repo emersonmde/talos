@@ -12,6 +12,39 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-28 - Phase 7.1 POSIX Baseline Closeout Accepted
+
+- Status: accepted as the Phase 7.1 POSIX baseline closeout checkpoint. No new
+  runtime behavior, boot scenario, QEMU run, Pi 5 hardware run, EL0 entry,
+  SVC/syscall ABI, VFS, filesystem, program loader, descriptor I/O,
+  networking, SSH, shell, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added by the checkpoint.
+- Context: Talos had accepted the Phase 7 POSIX contract source inventory, the
+  POSIX contract baseline, the target-independent path/error model core, the
+  descriptor-table contract, and the target-independent descriptor-table core.
+  A closeout checkpoint was required before any lower-EL, syscall, VFS,
+  filesystem, loader, descriptor I/O, or shell task could be planned.
+- Decision: Accept phase7-posix-baseline-closeout-checkpoint-20260528. The
+  accepted Phase 7.1 boundary is target-independent: errno/path primitives and
+  descriptor-table data-model semantics are tested, while runtime I/O,
+  process tables, EL0, syscall ABI, VFS/filesystem, program loading, shell,
+  networking, and hardware claims remain deferred.
+- Evidence level: static inspection, documentation build, whitespace
+  inspection, and target-independent no_std unit tests. No QEMU or Pi 5
+  hardware evidence was claimed.
+- Validation: git status --short was clean before edits; git diff --check,
+  mdbook build, and cargo -Zjson-target-spec test passed.
+- Consequences: The next recommended supervisor-planned task is a Phase 7.2
+  EL0 trap path and user address-space source inventory. It should reconcile
+  lower-EL readiness, exception-vector constraints, memory permissions,
+  task/process separation, PosixError return vocabulary, and descriptor-table
+  ownership before implementation.
+- Risks: PID allocation, process tables, lower-EL execution, SVC/syscalls,
+  copy-in/copy-out, descriptor I/O, VFS/filesystem, program loading,
+  scheduler blocking I/O, filesystem-backed commands, local shell, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
+  deferred.
+
 ## 2026-05-28 - Phase 7.1 POSIX Contract Baseline Accepted
 
 - Status: accepted as the documentation-only Phase 7.1 POSIX baseline

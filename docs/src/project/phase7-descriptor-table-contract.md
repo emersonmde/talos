@@ -2,10 +2,11 @@
 
 Status: accepted as the documentation-only Phase 7.1 descriptor-table
 contract. This document narrows the descriptor portion of the accepted
-[Phase 7 POSIX Contract Baseline](phase7-posix-contract-baseline.md) before
-any descriptor-table implementation, syscall ABI, EL0, VFS, filesystem, pipe,
-socket, shell, networking, SSH, RP1/PCIe, UART interrupt ownership, or
-DMA/cache-driver policy work.
+[Phase 7 POSIX Contract Baseline](phase7-posix-contract-baseline.md). The
+first target-independent descriptor-table core has been accepted under this
+contract, but syscall ABI, EL0, descriptor I/O integration, VFS, filesystem,
+pipe, socket, shell, networking, SSH, RP1/PCIe, UART interrupt ownership, and
+DMA/cache-driver policy work remain deferred.
 
 The contract binds future stdin, stdout, and stderr descriptors to the
 accepted runtime-console and TTY direction without turning kernel diagnostic
@@ -141,18 +142,19 @@ descriptor or syscall boundary. For fd 0, descriptor read integration should
 later translate TTY input outcomes through descriptor-owned readiness and
 blocking policy. This contract accepts neither integration yet.
 
-## Next Implementation Boundary
+## Accepted Implementation Boundary
 
-The next bounded task may implement `phase7-descriptor-table-core-20260528`
-as a target-independent data model with unit tests. Its scope should be
-limited to descriptor table allocation, lookup, close, dup, stdio inheritance,
-reserved object kind tagging, access-mode checks, and deterministic
-PosixError results for the edge cases named above.
+The bounded task `phase7-descriptor-table-core-20260528` is accepted as a
+target-independent data model with unit tests. Its scope is limited to
+descriptor table allocation, exact-slot allocation, lookup, close, dup, stdio
+inheritance, reserved object kind tagging, access-mode checks, TTY-only checks,
+and deterministic PosixError results for the edge cases named above.
 
-That task must not add runtime console or TTY I/O integration, syscall ABI,
+Later tasks must not infer runtime console or TTY I/O integration, syscall ABI,
 EL0, VFS lookup, filesystem objects, pipes, sockets, shell behavior,
 networking, SSH, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy,
-QEMU boot claims, or Pi 5 hardware claims.
+QEMU boot claims, or Pi 5 hardware claims from this target-independent table
+core.
 
 ## Validation
 

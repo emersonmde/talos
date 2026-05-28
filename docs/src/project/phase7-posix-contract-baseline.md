@@ -5,11 +5,13 @@ contract. This document defines Talos vocabulary and invariants for errno,
 paths, process lifetime, descriptors, stdio inheritance, and early loader
 shape before implementation tasks add target-independent cores. The descriptor
 portion is narrowed by the accepted
-[Phase 7 Descriptor Table Contract](phase7-descriptor-table-contract.md). It
-does not add Rust implementation, boot scenarios, QEMU runs, Pi 5 hardware
-runs, EL0 entry, SVC/syscall ABI, descriptor tables, VFS, filesystem objects,
-program loading, networking, SSH, shell behavior, RP1/PCIe, UART interrupt
-ownership, or DMA/cache-driver policy.
+[Phase 7 Descriptor Table Contract](phase7-descriptor-table-contract.md). The
+accepted Phase 7.1 path/error model and descriptor-table core now implement the
+first target-independent test seams under this contract. This baseline itself
+does not add boot scenarios, QEMU runs, Pi 5 hardware runs, EL0 entry,
+SVC/syscall ABI, VFS, filesystem objects, program loading, networking, SSH,
+shell behavior, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver
+policy.
 
 This baseline expands the early POSIX shape note and follows the accepted
 Phase 7 POSIX contract source inventory. Its purpose is to stop convenient
@@ -203,10 +205,11 @@ created:
 - fd 2, stderr, is a separate writable descriptor identity that may initially
   share the same console object as stdout.
 
-Until descriptor tables exist, kernel diagnostics may keep calling runtime
-console, TTY, and diagnostic-command code directly. Those calls are not POSIX
-read, write, isatty, readiness polling, EOF, partial I/O, or nonblocking
-behavior.
+The first target-independent descriptor table core exists for table semantics
+only. Kernel diagnostics may keep calling runtime console, TTY, and
+diagnostic-command code directly until a later descriptor I/O integration task
+exists. Those calls are not POSIX read, write, isatty, readiness polling, EOF,
+partial I/O, or nonblocking behavior.
 
 ## Early Loader, Arguments, And Environment
 
@@ -239,11 +242,13 @@ policy are accepted.
 Contractual now:
 
 - errno-style names and translation boundary vocabulary;
-- target-independent lexical path normalization semantics and edge cases;
+- target-independent lexical path normalization semantics, implementation, and
+  edge-case tests;
 - process, PID, parent/child, spawn, exec, exit, wait, zombie, and reaped
   vocabulary;
-- process-local descriptor entry vocabulary and deterministic descriptor-table
-  edge cases;
+- process-local descriptor entry vocabulary plus target-independent
+  descriptor-table allocation, lookup, close, dup, inherited stdio, reserved
+  object kind, access-check, and deterministic error tests;
 - stdio inheritance shape through descriptor-owned handles;
 - early loader, argv, and envp vocabulary;
 - the diagnostic command channel remains outside shell, syscall, loader, VFS,
@@ -251,13 +256,14 @@ Contractual now:
 
 Deferred:
 
-- Rust implementation except explicit later target-independent tasks;
+- Rust implementation beyond the accepted target-independent path/error and
+  descriptor-table cores;
 - PID allocator, process table, parent/child storage, exit status storage, wait
   queues, signals, process groups, sessions, credentials, and controlling TTY;
 - process address spaces, user stacks, EL0 entry, lower-EL vector routing,
   SVC/syscall ABI, user pointer validation, and copy-in/copy-out;
-- descriptor table implementation, VFS lookup, filesystem objects, program
-  loading, pipes, sockets, readiness polling, blocking I/O, and partial I/O;
+- descriptor I/O integration, VFS lookup, filesystem objects, program loading,
+  pipes, sockets, readiness polling, blocking I/O, and partial I/O;
 - filesystem-backed commands, local shell, networking, SSH, RP1/PCIe, UART
   interrupt ownership, and DMA/cache-driver policy.
 
@@ -276,22 +282,18 @@ invalid flags, and unsupported operations. These are table semantics only; they
 must not call runtime console, TTY polling, VFS, syscall, EL0, QEMU, or Pi 5
 hardware paths.
 
-Milestone 7.1 is not complete until those target-independent tests for path
-normalization and descriptor-table edge cases are accepted.
+Milestone 7.1 required those target-independent tests for path normalization
+and descriptor-table edge cases; they are now accepted and reconciled by the
+Phase 7.1 closeout checkpoint.
 
 ## Next Implementation Slice
 
-The next implementation slice is phase7-path-error-model-core-20260528: add
-the no_std-compatible target-independent path normalization and POSIX error
-mapping core under this contract. A descriptor-table contract may proceed as a
-separate documentation task after this baseline, but descriptor-table Rust
-implementation remains blocked until its own accepted contract and dependency
-gates are satisfied.
-
-No task may use this baseline to start EL0 entry, SVC/syscall ABI,
-descriptor-table implementation, VFS, filesystem, program loading, networking,
-SSH, shell behavior, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver
-policy without a later explicit task.
+The accepted next implementation slices were
+phase7-path-error-model-core-20260528 and
+phase7-descriptor-table-core-20260528. No task may use this baseline to start
+EL0 entry, SVC/syscall ABI, descriptor I/O integration, VFS, filesystem,
+program loading, networking, SSH, shell behavior, RP1/PCIe, UART interrupt
+ownership, or DMA/cache-driver policy without a later explicit task.
 
 ## Validation
 

@@ -66,6 +66,7 @@
 - [Phase 7 POSIX Contract Source Inventory](project/phase7-posix-contract-source-inventory.md)
 - [Phase 7 POSIX Contract Baseline](project/phase7-posix-contract-baseline.md)
 - [Phase 7 Descriptor Table Contract](project/phase7-descriptor-table-contract.md)
+- [Phase 7 POSIX Baseline Closeout Checkpoint](project/phase7-posix-baseline-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

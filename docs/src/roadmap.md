@@ -13,14 +13,15 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is currently in Phase 7.1, after accepting the Phase 6.3 production
-scheduler runtime closeout, the first Phase 7 POSIX contract source inventory,
-the documentation-only Phase 7 POSIX contract baseline, the target-independent
-path/error model core, and the documentation-only descriptor-table contract.
-The active frontier is still target-independent: descriptor-table allocation,
-close, dup, inherited stdio, reserved object kinds, and deterministic
-descriptor errors must be implemented and tested before EL0, SVC/syscall ABI,
-VFS, filesystem, program loading, networking, SSH, or shell work starts.
+Talos is at the Phase 7.1 POSIX baseline closeout frontier, after accepting the
+Phase 6.3 production scheduler runtime closeout, the Phase 7 POSIX contract
+source inventory, the documentation-only Phase 7 POSIX contract baseline, the
+target-independent path/error model core, the documentation-only
+descriptor-table contract, and the target-independent descriptor-table core.
+The Phase 7.1 target-independent path/error and descriptor-table test seams are
+accepted. EL0, SVC/syscall ABI, VFS, filesystem, program loading, networking,
+SSH, and shell work remain blocked until the supervisor plans the next explicit
+bounded task.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -105,7 +106,14 @@ accepted Phase 7 path/error model core implements the first no_std lexical path
 normalizer and PosixError vocabulary. The accepted descriptor-table contract
 keeps descriptors process-local, separates descriptor entries from underlying
 kernel objects, fixes close/dup and inherited stdio edge cases, and blocks
-runtime console/TTY I/O integration until a later explicit task.
+runtime console/TTY I/O integration until a later explicit task. The accepted
+descriptor-table core adds the first fixed-capacity process-local descriptor
+table data model with inherited stdio entries, allocation, exact-slot
+allocation, lookup, close, dup, access checks, reserved object kinds, and
+deterministic PosixError results, all covered by target-independent no_std unit
+tests. The accepted Phase 7.1 closeout checkpoint reconciles this evidence and
+keeps EL0, syscall, VFS, filesystem, program-loader, descriptor I/O,
+networking, SSH, and shell work deferred for supervisor-planned tasks.
 The obsolete-bloat inventory and removal sweep are accepted before the
 multi-core preemption core: historical QEMU secondary-core discriminator paths
 and old Pi 5 allocator, exception, panic, and translation-fault proof-only
@@ -1013,6 +1021,15 @@ Accepted progress:
   table errors for the next core implementation. Runtime console/TTY
   descriptor I/O integration, EL0, SVC/syscall ABI, VFS, filesystem, program
   loading, networking, SSH, and shell work remain blocked.
+- Phase 7 descriptor-table core is accepted. It adds the first fixed-capacity
+  process-local descriptor table model, inherited stdio entries, allocation,
+  lookup, close, dup, access checks, reserved object kind tags, and
+  deterministic PosixError results with target-independent no_std unit tests.
+- Phase 7.1 POSIX baseline closeout is accepted. It reconciles the accepted
+  contract, path/error, and descriptor-table evidence, preserves the retained
+  gates, and recommends a supervisor-planned Phase 7.2 source inventory before
+  any EL0 trap path, user address-space, syscall, VFS, filesystem, program
+  loader, descriptor I/O, networking, SSH, or shell implementation.
 
 Milestone 7.2: EL0 Trap Path and User Address Spaces
 
