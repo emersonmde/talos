@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "bWUtZGVzdGluYXRpb24tc3RhdGU9ZGVzdGluYXRpb24tZW5xdWV1ZWQgc291cmNlLXF1ZXVlLWJlZm9yZT0xIHNvdXJjZS1xdWV1ZS1hZnRlci1wdWJsaXNoPTAgc2hhcmVkLWxlbi1hZnRlci1wdWJsaXNoPTEgc2hhcmVkLWxlbi1hZnRlci1jb25zdW1lPTAgZGVzdGluYXRpb24tcXVldWUtbGVuPTEgZGVzdGluYXRpb24tZnJvbnQ9MTA5IG1ldGFkYXRhLW93bmVyLWFmdGVyLWNvbnN1bWU9MSBtZXRhZGF0YS1nZW5lcmF0aW9uLWFmdGVyLWNvbnN1bWU9MiBzZWxlY3RlZC1mcm9udD10cnVlIHNvdXJjZS1yZW1vdmVkPXRydWUgZGVzdGluYXRpb24tZW5xdWV1ZWQ9dHJ1ZSBtZXRhZGF0YS1taWdyYXRlZD10cnVlIGVycm9ycz0wIG9rPXRydWUNCnJwaTUtbG9hZC1iYWxhbmNpbmc6IGZpbmFsIHBhcnRpY2lwYW50cz0xIGV4cGVjdGVkPTEgZXJyb3JzPTAgY2xhc3NpZmljYXRpb249cGk1LWxvYWQtYmFsYW5jaW5nLWNvbXBsZXRlDQpycGk1LWxvYWQtYmFsYW5jaW5nOiBQQVNTDQo=",
+  "bytes": 500,
+  "cursor": 2242164,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "me-destination-state=destination-enqueued source-queue-before=1 source-queue-after-publish=0 shared-len-after-publish=1 shared-len-after-consume=0 destination-queue-len=1 destination-front=109 metadata-owner-after-consume=1 metadata-generation-after-consume=2 selected-front=true source-removed=true destination-enqueued=true metadata-migrated=true errors=0 ok=true\r\nrpi5-load-balancing: final participants=1 expected=1 errors=0 classification=pi5-load-balancing-complete\r\nrpi5-load-balancing: PASS\r\n"
+}

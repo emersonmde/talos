@@ -1,0 +1,4 @@
+2b7b69b5fc9f8aab4b6c311cb2c4be392542a882
+Accept senior engineer review pass 2
+
+tasks/2026-05-27-talos-senior-engineer-repo-review-fix-pass-2.md

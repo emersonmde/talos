@@ -1,0 +1,2 @@
+?? tasks/2026-05-27-talos-post-review-final-pi5-hardware-remediation.md
+?? tasks/evidence/2026-05-27-post-review-final-pi5-hardware-remediation/

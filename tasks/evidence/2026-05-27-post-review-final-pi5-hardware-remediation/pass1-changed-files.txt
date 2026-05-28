@@ -1,0 +1,10 @@
+2b3f3f1ae2cb10734e725f1684b1a397a215c50f
+Accept senior engineer review pass 1
+
+docs/src/architecture/early-serial.md
+docs/src/architecture/exceptions.md
+docs/src/architecture/lower-el-userspace.md
+docs/src/architecture/memory.md
+docs/src/decisions/README.md
+src/main.rs
+tasks/2026-05-27-talos-senior-engineer-repo-review-fix-pass-1.md
