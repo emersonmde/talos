@@ -84,14 +84,39 @@ for:
 - and tests or hardware evidence for bad user pointers, bad instruction fetches,
   bad stack accesses, and successful trap return.
 
-The next bounded contract should define the first address-space invariants,
+The accepted follow-up contract defines the first address-space invariants,
 lower-EL trap/return invariants, user-fault classes, copy-in/copy-out
 preconditions, and evidence levels before Rust or assembly implementation
 changes.
 
-Until that work exists, Phase 4 interrupt/timer/preemption tasks may rely on the
-current EL2 kernel map only for kernel execution. They must not assume process
-isolation, lower-EL recovery, or user memory validation.
+## Phase 7.2 Trap And Address-Space Contract
+
+The Phase 7.2 EL0 trap and address-space contract is accepted as
+documentation only. It defines a 48-bit vocabulary with a canonical user range
+below 0x0000_8000_0000_0000, a null guard at
+0x0000_0000_0000_0000..0x0000_0000_0001_0000, user text/data/heap/stack/guard
+mapping names, and kernel mappings that may be present while a user task runs
+only if they deny EL0 read, write, and execute access.
+
+The contract also requires validated user ELR, user stack pointer, SPSR, and
+general-register frame state before any ERET to lower EL. User trap frames
+must be able to record x0 through x30, user SP, ELR, SPSR, ESR, FAR, vector
+class, and available task/process-owner identity. Current same-EL diagnostics
+remain useful source material, not accepted lower-EL recovery.
+
+User fault classes are now named for instruction abort, read data abort, write
+data abort, stack fault, bad trap-return state, and unsupported lower-EL
+synchronous traps. Invalid userspace pointers at a POSIX-facing copy boundary
+map to PosixError::Fault / EFAULT when no side effect has been committed. The
+first implementation remains limited to target-independent range and
+permission validation; EL0 entry, trap-return assembly, translation-register
+changes, syscall ABI, VFS/filesystem work, program loading, descriptor I/O,
+shell behavior, QEMU proof, and Pi 5 proof remain separate explicit tasks.
+
+Until implementation and proof work exists, Phase 4 interrupt/timer/preemption
+tasks may rely on the current EL2 kernel map only for kernel execution. They
+must not assume process isolation, lower-EL recovery, or user memory
+validation.
 
 ## Validation Boundary
 

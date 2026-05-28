@@ -13,15 +13,17 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.2 EL0 trap path and user address-space source
-inventory frontier, after accepting the Phase 6.3 production scheduler runtime
-closeout and the full Phase 7.1 POSIX baseline slice. The accepted Phase 7.2
-inventory maps exception-vector, same-EL ERET, EL2 translation,
-page-frame-ownership, scheduler task/process, PosixError, descriptor-table,
-and retained validation surfaces before any lower-EL implementation starts.
-EL0 implementation, SVC/syscall ABI, VFS, filesystem, program loading,
-networking, SSH, and shell work remain blocked until later explicit bounded
-tasks accept their contracts and gates.
+Talos is at the Phase 7.2 target-independent user-memory permission frontier,
+after accepting the Phase 6.3 production scheduler runtime closeout, the full
+Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
+inventory, and the Phase 7.2 EL0 trap/address-space contract. The accepted
+Phase 7.2 contract defines the first user/kernel virtual-address split
+vocabulary, lower-EL trap/return invariants, user fault classes,
+copy-in/copy-out preconditions, evidence levels, and blocked surfaces before
+any lower-EL implementation starts. EL0 entry, trap-return assembly,
+translation-register changes, SVC/syscall ABI, VFS, filesystem, program
+loading, descriptor I/O, networking, SSH, and shell work remain blocked until
+later explicit bounded tasks accept their contracts and gates.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -118,7 +120,12 @@ The accepted Phase 7.2 EL0/address-space source inventory maps exception
 vectors and saved frames, same-EL ERET diagnostics, the broad EL2 identity map,
 page-frame ownership, scheduler task/process separation, PosixError/EFAULT
 vocabulary, descriptor-table ownership, retained gates, and implementation gaps
-before a lower-EL contract.
+before a lower-EL contract. The accepted Phase 7.2 EL0 trap/address-space
+contract defines the canonical user range below 0x0000_8000_0000_0000, null
+guard, user text/data/heap/stack/guard vocabulary, kernel-only mapping policy,
+validated user trap-return frame requirements, user fault classes, and
+copy-in/copy-out preconditions. The next implementation boundary is
+target-independent user range and permission validation only.
 The obsolete-bloat inventory and removal sweep are accepted before the
 multi-core preemption core: historical QEMU secondary-core discriminator paths
 and old Pi 5 allocator, exception, panic, and translation-fault proof-only
@@ -1056,6 +1063,12 @@ Accepted progress:
   separation, POSIX error vocabulary, descriptor-table ownership, retained
   gates, diagnostic-only surfaces, and implementation gaps that constrain the
   first EL0 trap-return and user address-space contract.
+- Phase 7 EL0 trap and address-space contract is accepted. It defines the
+  first canonical user range and null guard, user text/data/heap/stack/guard
+  vocabulary, kernel-only mapping policy while a user task runs, validated
+  user trap-return frame requirements, user fault classes, copy-in/copy-out
+  preconditions, evidence levels, and blocked surfaces. The next implementation
+  task remains target-independent user range and permission validation only.
 
 Milestone 7.3: Syscall ABI
 

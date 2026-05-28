@@ -45,6 +45,38 @@ ADR template:
   networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
   policy remain deferred.
 
+## 2026-05-28 - Phase 7.2 EL0 Trap and Address-Space Contract Accepted
+
+- Status: accepted as the documentation-only Phase 7.2 EL0 trap-return and
+  user address-space contract. No Rust behavior, assembly behavior, boot
+  scenario, QEMU run, Pi 5 hardware run, archive publishing, hardware-lock
+  use, EL0 entry, SVC/syscall numeric ABI, VFS, filesystem, program loader,
+  descriptor I/O, networking, SSH, shell, RP1/PCIe, UART interrupt ownership,
+  or DMA/cache-driver policy was added.
+- Context: The accepted Phase 7.2 source inventory named the exception,
+  memory, scheduler, POSIX, descriptor, and validation surfaces that constrain
+  lower-EL work. A contract was needed before implementation could add even
+  target-independent user-memory validation primitives.
+- Decision: Accept phase7-el0-trap-address-space-contract-20260528. The
+  contract defines the first canonical user range below
+  0x0000_8000_0000_0000, null guard, user text/data/heap/stack/guard
+  vocabulary, kernel-only mapping policy while a user task runs, lower-EL
+  trap/return frame requirements, user fault classes, copy-in/copy-out
+  preconditions, evidence levels, and blocked surfaces.
+- Evidence level: static inspection, documentation build, and whitespace
+  inspection. No QEMU or Pi 5 hardware evidence was claimed.
+- Validation: git status --short was clean before edits; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next bounded implementation task should be
+  phase7-user-memory-permission-core-20260528. It may implement only
+  target-independent user virtual range, mapping permission, access kind, and
+  copy-boundary validation primitives matching the contract.
+- Risks: EL0 entry, trap-return assembly, TTBR/TCR/SCTLR changes, actual page
+  table switching, syscall ABI, process tables, VFS/filesystem, descriptor
+  I/O, program loading, shell, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, DMA/cache-driver policy, QEMU proof, and Pi 5 hardware proof
+  remain deferred.
+
 ## 2026-05-28 - Phase 7.1 POSIX Baseline Closeout Accepted
 
 - Status: accepted as the Phase 7.1 POSIX baseline closeout checkpoint. No new
