@@ -20,9 +20,14 @@ use crate::scheduler::TargetWakeConsumptionError;
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
     talos_boot_scenario = "qemu_shared_runqueue_migration",
     talos_boot_scenario = "qemu_load_balancing_smoke",
-    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop",
+    talos_boot_scenario = "qemu_multicore_preemption_smoke"
 ))]
 use crate::scheduler::{ContextFrame, KernelStack, SingleCoreScheduler, Task, TaskId, TaskState};
+#[cfg(talos_boot_scenario = "qemu_multicore_preemption_smoke")]
+use crate::scheduler::{
+    CpuLocalSchedulerService, PerCorePreemptionState, PreemptionRecordOutcome, RemoteWakeQueue,
+};
 #[cfg(any(
     talos_boot_scenario = "qemu_per_core_scheduler_ownership",
     talos_boot_scenario = "qemu_remote_wakeup_request",
@@ -30,7 +35,8 @@ use crate::scheduler::{ContextFrame, KernelStack, SingleCoreScheduler, Task, Tas
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
     talos_boot_scenario = "qemu_shared_runqueue_migration",
     talos_boot_scenario = "qemu_load_balancing_smoke",
-    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop",
+    talos_boot_scenario = "qemu_multicore_preemption_smoke"
 ))]
 use crate::scheduler::{
     LoadBalancingPolicy, LogicalCpuId, MigrationState, PerCoreScheduler,
@@ -51,7 +57,8 @@ use crate::scheduler::{
     talos_boot_scenario = "qemu_remote_wakeup_request",
     talos_boot_scenario = "qemu_production_secondary_dispatch",
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
-    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop",
+    talos_boot_scenario = "qemu_multicore_preemption_smoke"
 )))]
 use crate::smp::MAX_CORES;
 #[cfg(talos_boot_scenario = "qemu_secondary_core_workload")]
@@ -64,7 +71,8 @@ use crate::smp::SECONDARY_CORE_WORKLOAD_TARGET;
     talos_boot_scenario = "qemu_remote_wakeup_request",
     talos_boot_scenario = "qemu_production_secondary_dispatch",
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
-    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop",
+    talos_boot_scenario = "qemu_multicore_preemption_smoke"
 ))]
 use crate::smp::{
     self, CoreLifecycle, CoreStackLayout, MAX_CORES, SECONDARY_CORE_STATES,
@@ -77,7 +85,8 @@ use crate::smp_sync::{SpinLock, smp_full_barrier};
     talos_boot_scenario = "qemu_remote_wakeup_request",
     talos_boot_scenario = "qemu_production_secondary_dispatch",
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
-    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop",
+    talos_boot_scenario = "qemu_multicore_preemption_smoke"
 ))]
 use crate::smp_sync::{SpinLock, smp_full_barrier};
 use crate::{
@@ -105,7 +114,8 @@ const TIMER_IRQ_WAIT_LIMIT: usize = 1_000_000;
     talos_boot_scenario = "qemu_remote_wakeup_request",
     talos_boot_scenario = "qemu_production_secondary_dispatch",
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
-    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop",
+    talos_boot_scenario = "qemu_multicore_preemption_smoke"
 ))]
 const QEMU_SECONDARY_WAIT_LIMIT: usize = 10_000_000;
 #[cfg(any(
@@ -137,6 +147,10 @@ const LOAD_BALANCING_SMOKE_QUEUE_CAPACITY: usize = 1;
 const SECONDARY_SCHEDULER_SERVICE_LOOP_TASK_CAPACITY: usize = 1;
 #[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
 const SECONDARY_SCHEDULER_SERVICE_LOOP_WAIT_LIMIT: usize = 100_000_000;
+#[cfg(talos_boot_scenario = "qemu_multicore_preemption_smoke")]
+const MULTICORE_PREEMPTION_SMOKE_TASK_CAPACITY: usize = 2;
+#[cfg(talos_boot_scenario = "qemu_multicore_preemption_smoke")]
+const MULTICORE_PREEMPTION_SMOKE_WAIT_LIMIT: usize = 100_000_000;
 #[cfg(any(
     talos_boot_scenario = "qemu_context_switch",
     talos_boot_scenario = "qemu_scheduler_yield",
@@ -173,7 +187,8 @@ static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
     talos_boot_scenario = "qemu_remote_wakeup_request",
     talos_boot_scenario = "qemu_production_secondary_dispatch",
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
-    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop",
+    talos_boot_scenario = "qemu_multicore_preemption_smoke"
 ))]
 unsafe extern "C" {
     fn talos_aarch64_qemu_secondary_entry();
@@ -547,7 +562,8 @@ pub const fn qemu_logical_cpu_from_mpidr_affinity(affinity: u64) -> Option<usize
     talos_boot_scenario = "qemu_remote_wakeup_request",
     talos_boot_scenario = "qemu_production_secondary_dispatch",
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
-    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop",
+    talos_boot_scenario = "qemu_multicore_preemption_smoke"
 ))]
 fn secondary_stack_layout() -> CoreStackLayout {
     let base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
@@ -564,7 +580,8 @@ fn secondary_stack_layout() -> CoreStackLayout {
     talos_boot_scenario = "qemu_remote_wakeup_request",
     talos_boot_scenario = "qemu_production_secondary_dispatch",
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
-    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop",
+    talos_boot_scenario = "qemu_multicore_preemption_smoke"
 ))]
 fn secondary_state_name(state: u64) -> &'static str {
     CoreLifecycle::from_raw(state).map_or("unknown", CoreLifecycle::name)
@@ -578,7 +595,8 @@ fn secondary_state_name(state: u64) -> &'static str {
     talos_boot_scenario = "qemu_remote_wakeup_request",
     talos_boot_scenario = "qemu_production_secondary_dispatch",
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
-    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop",
+    talos_boot_scenario = "qemu_multicore_preemption_smoke"
 ))]
 unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) -> i64 {
     let mut function_id = 0xc400_0003u64;
@@ -632,7 +650,8 @@ pub fn services(boot_info: &BootInfo) -> TargetServices {
     talos_boot_scenario = "qemu_remote_wakeup_request",
     talos_boot_scenario = "qemu_production_secondary_dispatch",
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
-    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop",
+    talos_boot_scenario = "qemu_multicore_preemption_smoke"
 ))]
 #[unsafe(no_mangle)]
 pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
@@ -666,6 +685,8 @@ pub extern "C" fn talos_qemu_secondary_entry(context: usize) -> ! {
         run_shared_scheduler_metadata_secondary(core_state, logical_cpu);
         #[cfg(talos_boot_scenario = "qemu_secondary_scheduler_service_loop")]
         run_secondary_scheduler_service_loop_secondary(core_state, logical_cpu);
+        #[cfg(talos_boot_scenario = "qemu_multicore_preemption_smoke")]
+        run_multicore_preemption_secondary(core_state, logical_cpu);
     }
 
     loop {
@@ -741,7 +762,8 @@ fn reset_per_core_scheduler_ownership_state() {
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
     talos_boot_scenario = "qemu_shared_runqueue_migration",
     talos_boot_scenario = "qemu_load_balancing_smoke",
-    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop",
+    talos_boot_scenario = "qemu_multicore_preemption_smoke"
 ))]
 fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
     match role {
@@ -757,7 +779,8 @@ fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
     talos_boot_scenario = "qemu_shared_runqueue_migration",
     talos_boot_scenario = "qemu_load_balancing_smoke",
-    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop",
+    talos_boot_scenario = "qemu_multicore_preemption_smoke"
 ))]
 fn task_id(raw: u64) -> TaskId {
     TaskId::new(raw).expect("diagnostic task IDs are nonzero")
@@ -769,7 +792,8 @@ fn task_id(raw: u64) -> TaskId {
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
     talos_boot_scenario = "qemu_shared_runqueue_migration",
     talos_boot_scenario = "qemu_load_balancing_smoke",
-    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop",
+    talos_boot_scenario = "qemu_multicore_preemption_smoke"
 ))]
 fn scheduler_task(logical_cpu: usize, progress: u64) -> Task {
     let raw_task_id = (logical_cpu as u64 + 1) * 100 + progress;
@@ -1725,6 +1749,295 @@ fn run_secondary_scheduler_service_loop_secondary(
     core_state.clean_to_poc();
 }
 
+#[cfg(talos_boot_scenario = "qemu_multicore_preemption_smoke")]
+#[derive(Clone, Copy)]
+struct MultiCorePreemptionSmokeReport {
+    owner: u64,
+    role: SchedulerCoreRole,
+    current_before_record: u64,
+    next_task: u64,
+    queue_len_before_record: u64,
+    metadata_generation_before_record: u64,
+    record_inserted: bool,
+    duplicate_coalesced: bool,
+    cross_owner_rejected: bool,
+    current_after_record: u64,
+    queue_len_after_record: u64,
+    metadata_generation_after_record: u64,
+    scheduler_mutated_during_record: bool,
+    pending_after_record: bool,
+    service_timer_preemption: u64,
+    current_after_service: u64,
+    queue_len_after_service: u64,
+    front_after_service: u64,
+    previous_task_state: u64,
+    selected_task_state: u64,
+    pending_after_service: bool,
+    recorded_requests: u64,
+    coalesced_requests: u64,
+    serviced_requests: u64,
+    metadata_owner_after_service: u64,
+    metadata_task_after_service: u64,
+    metadata_generation_after_service: u64,
+    errors: u64,
+}
+
+#[cfg(talos_boot_scenario = "qemu_multicore_preemption_smoke")]
+impl MultiCorePreemptionSmokeReport {
+    const fn empty() -> Self {
+        Self {
+            owner: u64::MAX,
+            role: SchedulerCoreRole::SecondaryDeferred,
+            current_before_record: 0,
+            next_task: 0,
+            queue_len_before_record: 0,
+            metadata_generation_before_record: 0,
+            record_inserted: false,
+            duplicate_coalesced: false,
+            cross_owner_rejected: false,
+            current_after_record: 0,
+            queue_len_after_record: 0,
+            metadata_generation_after_record: 0,
+            scheduler_mutated_during_record: true,
+            pending_after_record: false,
+            service_timer_preemption: 0,
+            current_after_service: 0,
+            queue_len_after_service: 0,
+            front_after_service: 0,
+            previous_task_state: 0,
+            selected_task_state: 0,
+            pending_after_service: true,
+            recorded_requests: 0,
+            coalesced_requests: 0,
+            serviced_requests: 0,
+            metadata_owner_after_service: u64::MAX,
+            metadata_task_after_service: 0,
+            metadata_generation_after_service: 0,
+            errors: 0,
+        }
+    }
+
+    const fn progress(self) -> u64 {
+        if self.errors == 0
+            && self.record_inserted
+            && self.duplicate_coalesced
+            && self.cross_owner_rejected
+            && !self.scheduler_mutated_during_record
+            && self.pending_after_record
+            && !self.pending_after_service
+            && self.serviced_requests == 1
+        {
+            1
+        } else {
+            0
+        }
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_multicore_preemption_smoke")]
+#[derive(Clone, Copy)]
+struct MultiCorePreemptionSmokeState {
+    reports: [MultiCorePreemptionSmokeReport; MAX_CORES],
+    lock_progress: [u64; MAX_CORES],
+}
+
+#[cfg(talos_boot_scenario = "qemu_multicore_preemption_smoke")]
+impl MultiCorePreemptionSmokeState {
+    const fn new() -> Self {
+        Self {
+            reports: [MultiCorePreemptionSmokeReport::empty(); MAX_CORES],
+            lock_progress: [0; MAX_CORES],
+        }
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_multicore_preemption_smoke")]
+static MULTICORE_PREEMPTION_SMOKE_STATE: SpinLock<MultiCorePreemptionSmokeState> =
+    SpinLock::new(MultiCorePreemptionSmokeState::new());
+
+#[cfg(talos_boot_scenario = "qemu_multicore_preemption_smoke")]
+fn reset_multicore_preemption_smoke_state() {
+    let mut state = unsafe { MULTICORE_PREEMPTION_SMOKE_STATE.lock_irqsave() };
+    *state = MultiCorePreemptionSmokeState::new();
+}
+
+#[cfg(talos_boot_scenario = "qemu_multicore_preemption_smoke")]
+fn build_multicore_preemption_smoke_report(logical_cpu: usize) -> MultiCorePreemptionSmokeReport {
+    let owner = LogicalCpuId::new(logical_cpu);
+    let mut scheduler = PerCoreScheduler::<2>::production_secondary_diagnostic(owner);
+    let mut preemption = PerCorePreemptionState::new(owner);
+    let mut remote_wakes = RemoteWakeQueue::<1>::new(owner);
+    let mut metadata =
+        SharedSchedulerMetadata::<MULTICORE_PREEMPTION_SMOKE_TASK_CAPACITY, MAX_CORES>::new();
+    let mut current = scheduler_task(logical_cpu, 1);
+    let mut next = scheduler_task(logical_cpu, 2);
+    current.set_state(TaskState::Running);
+
+    let mut errors = 0;
+    if scheduler.set_current_task(owner, current.id()).is_err() {
+        errors += 1;
+    }
+    match scheduler.local_scheduler_mut(owner) {
+        Ok(local_scheduler) => {
+            if local_scheduler.make_runnable(&mut next).is_err() {
+                errors += 1;
+            }
+        }
+        Err(_) => errors += 1,
+    }
+    if metadata
+        .register_local_task(owner, &scheduler, &current)
+        .is_err()
+    {
+        errors += 1;
+    }
+    if metadata
+        .register_local_task(owner, &scheduler, &next)
+        .is_err()
+    {
+        errors += 1;
+    }
+
+    let current_before_record = scheduler.current_task().map_or(0, TaskId::raw);
+    let queue_len_before_record = scheduler.scheduler().runnable().len() as u64;
+    let metadata_generation_before_record = metadata.generation();
+    let record_inserted =
+        preemption.record_local_timer_irq(owner) == Ok(PreemptionRecordOutcome::Inserted);
+    if !record_inserted {
+        errors += 1;
+    }
+    let duplicate_coalesced =
+        preemption.record_local_timer_irq(owner) == Ok(PreemptionRecordOutcome::Coalesced);
+    if !duplicate_coalesced {
+        errors += 1;
+    }
+    let cross_owner_rejected = preemption
+        .record_local_timer_irq(LogicalCpuId::BOOT)
+        .is_err();
+    if !cross_owner_rejected {
+        errors += 1;
+    }
+
+    let current_after_record = scheduler.current_task().map_or(0, TaskId::raw);
+    let queue_len_after_record = scheduler.scheduler().runnable().len() as u64;
+    let metadata_generation_after_record = metadata.generation();
+    let scheduler_mutated_during_record = current_after_record != current_before_record
+        || queue_len_after_record != queue_len_before_record
+        || metadata_generation_after_record != metadata_generation_before_record
+        || current.state() != TaskState::Running
+        || next.state() != TaskState::Runnable;
+    if scheduler_mutated_during_record {
+        errors += 1;
+    }
+    let pending_after_record = preemption.pending_timer_request();
+    if !pending_after_record {
+        errors += 1;
+    }
+
+    let service_report = CpuLocalSchedulerService::run_preemption_cycle(
+        owner,
+        &mut scheduler,
+        &mut preemption,
+        &mut remote_wakes,
+        &mut metadata,
+        &mut next,
+        Some(&mut current),
+        false,
+    );
+    let service_timer_preemption = match service_report {
+        Ok(report) => report.timer_preemption().map_or(0, TaskId::raw),
+        Err(_) => {
+            errors += 1;
+            0
+        }
+    };
+
+    let current_after_service = scheduler.current_task().map_or(0, TaskId::raw);
+    let queue_len_after_service = scheduler.scheduler().runnable().len() as u64;
+    let front_after_service = scheduler
+        .scheduler()
+        .runnable()
+        .front()
+        .map_or(0, TaskId::raw);
+    let final_metadata = metadata.lookup_task(next.id());
+    let (
+        metadata_owner_after_service,
+        metadata_task_after_service,
+        metadata_generation_after_service,
+    ) = match final_metadata {
+        Ok(snapshot) => (
+            snapshot.owner().raw() as u64,
+            snapshot.task_id().raw(),
+            snapshot.generation(),
+        ),
+        Err(_) => {
+            errors += 1;
+            (u64::MAX, 0, 0)
+        }
+    };
+    let counters = preemption.counters();
+
+    MultiCorePreemptionSmokeReport {
+        owner: scheduler.owner().raw() as u64,
+        role: scheduler.role(),
+        current_before_record,
+        next_task: next.id().raw(),
+        queue_len_before_record,
+        metadata_generation_before_record,
+        record_inserted,
+        duplicate_coalesced,
+        cross_owner_rejected,
+        current_after_record,
+        queue_len_after_record,
+        metadata_generation_after_record,
+        scheduler_mutated_during_record,
+        pending_after_record,
+        service_timer_preemption,
+        current_after_service,
+        queue_len_after_service,
+        front_after_service,
+        previous_task_state: task_state_code(current.state()),
+        selected_task_state: task_state_code(next.state()),
+        pending_after_service: preemption.pending_timer_request(),
+        recorded_requests: counters.recorded_requests(),
+        coalesced_requests: counters.coalesced_requests(),
+        serviced_requests: counters.serviced_requests(),
+        metadata_owner_after_service,
+        metadata_task_after_service,
+        metadata_generation_after_service,
+        errors,
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_multicore_preemption_smoke")]
+fn publish_multicore_preemption_smoke_report(
+    logical_cpu: usize,
+    report: MultiCorePreemptionSmokeReport,
+) {
+    let mut state = MULTICORE_PREEMPTION_SMOKE_STATE.lock();
+    state.reports[logical_cpu] = report;
+    state.lock_progress[logical_cpu] = report.progress();
+}
+
+#[cfg(talos_boot_scenario = "qemu_multicore_preemption_smoke")]
+fn load_multicore_preemption_smoke_report(logical_cpu: usize) -> MultiCorePreemptionSmokeReport {
+    let state = MULTICORE_PREEMPTION_SMOKE_STATE.lock();
+    state.reports[logical_cpu]
+}
+
+#[cfg(talos_boot_scenario = "qemu_multicore_preemption_smoke")]
+fn run_multicore_preemption_secondary(core_state: &smp::PerCoreState, logical_cpu: usize) {
+    core_state.mark_workload_running();
+    core_state.clean_to_poc();
+
+    let report = build_multicore_preemption_smoke_report(logical_cpu);
+    publish_multicore_preemption_smoke_report(logical_cpu, report);
+    smp_full_barrier();
+
+    core_state.mark_workload_complete(report.progress());
+    core_state.clean_to_poc();
+}
+
 #[cfg(talos_boot_scenario = "qemu_shared_scheduler_metadata")]
 impl SharedSchedulerMetadataReport {
     const fn lock_progress(self) -> u64 {
@@ -2047,7 +2360,8 @@ fn publish_remote_wake_request(target: usize, task_id: TaskId) -> bool {
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
     talos_boot_scenario = "qemu_shared_runqueue_migration",
     talos_boot_scenario = "qemu_load_balancing_smoke",
-    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop",
+    talos_boot_scenario = "qemu_multicore_preemption_smoke"
 ))]
 fn task_state_code(state: TaskState) -> u64 {
     match state {
@@ -2062,7 +2376,8 @@ fn task_state_code(state: TaskState) -> u64 {
     talos_boot_scenario = "qemu_shared_scheduler_metadata",
     talos_boot_scenario = "qemu_shared_runqueue_migration",
     talos_boot_scenario = "qemu_load_balancing_smoke",
-    talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
+    talos_boot_scenario = "qemu_secondary_scheduler_service_loop",
+    talos_boot_scenario = "qemu_multicore_preemption_smoke"
 ))]
 fn task_state_name(code: u64) -> &'static str {
     match code {
@@ -3682,6 +3997,190 @@ pub fn run_secondary_scheduler_service_loop_smoke() -> bool {
         crate::println!("qemu-secondary-scheduler-service-loop: PASS");
     } else {
         crate::println!("qemu-secondary-scheduler-service-loop: FAIL");
+    }
+
+    reports_ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_multicore_preemption_smoke")]
+pub fn run_multicore_preemption_smoke() -> bool {
+    smp::reset_secondary_core_states();
+    reset_multicore_preemption_smoke_state();
+
+    let boot_mpidr = aarch64::mpidr_el1();
+    let boot_affinity = aarch64::mpidr_affinity(boot_mpidr);
+    let boot_logical = qemu_logical_cpu_from_mpidr_affinity(boot_affinity);
+    let entry = talos_aarch64_qemu_secondary_entry as *const () as usize;
+    let stack_layout = secondary_stack_layout();
+    let stack_base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
+    let stack_end = core::ptr::addr_of!(talos_secondary_core_stacks_end) as usize;
+
+    crate::println!(
+        "qemu-multicore-preemption-smoke: start conduit=smc cores={} task-capacity={} boot-mpidr={:#018x} boot-affinity={:#x} boot-logical={:?} entry={:#018x} stack-range=[{:#018x},{:#018x})",
+        MAX_CORES,
+        MULTICORE_PREEMPTION_SMOKE_TASK_CAPACITY,
+        boot_mpidr,
+        boot_affinity,
+        boot_logical,
+        entry,
+        stack_base,
+        stack_end
+    );
+
+    let mut cpu_on_ok = true;
+    for logical_cpu in 1..MAX_CORES {
+        let target_affinity = logical_cpu as u64;
+        let result = unsafe { psci_cpu_on_smc(target_affinity, entry, logical_cpu) };
+        crate::println!(
+            "qemu-multicore-preemption-smoke: cpu-on logical={} target-affinity={:#x} result={}",
+            logical_cpu,
+            target_affinity,
+            result
+        );
+        cpu_on_ok &= result == 0;
+    }
+
+    let mut remaining = MULTICORE_PREEMPTION_SMOKE_WAIT_LIMIT;
+    while remaining > 0 {
+        let all_complete = (1..MAX_CORES).all(|logical_cpu| {
+            SECONDARY_CORE_STATES[logical_cpu]
+                .snapshot(logical_cpu)
+                .lifecycle
+                >= CoreLifecycle::WorkloadComplete
+        });
+        if all_complete {
+            break;
+        }
+        core::hint::spin_loop();
+        remaining -= 1;
+    }
+
+    let state_lock_available = true;
+    let metadata_lock_available = true;
+    let mut participants = 0;
+    let mut errors = 0;
+    let mut reports_ok = cpu_on_ok && boot_logical == Some(0) && state_lock_available;
+
+    for logical_cpu in 1..MAX_CORES {
+        let report = load_multicore_preemption_smoke_report(logical_cpu);
+        let core_report = SECONDARY_CORE_STATES[logical_cpu].snapshot(logical_cpu);
+        let logical_from_mpidr = qemu_logical_cpu_from_mpidr_affinity(core_report.affinity);
+        let stack_slot = stack_layout
+            .slot(logical_cpu)
+            .expect("stack slot for possible QEMU core");
+        let stack_owned = stack_slot.contains_stack_pointer(core_report.stack_pointer);
+        let expected_current = (logical_cpu as u64 + 1) * 100 + 1;
+        let expected_next = (logical_cpu as u64 + 1) * 100 + 2;
+        let report_ok = core_report.lifecycle >= CoreLifecycle::WorkloadComplete
+            && core_report.context == logical_cpu
+            && logical_from_mpidr == Some(logical_cpu)
+            && stack_owned
+            && report.owner == logical_cpu as u64
+            && report.role == SchedulerCoreRole::SecondaryProductionDiagnostic
+            && report.current_before_record == expected_current
+            && report.next_task == expected_next
+            && report.queue_len_before_record == 1
+            && report.metadata_generation_before_record > 0
+            && report.record_inserted
+            && report.duplicate_coalesced
+            && report.cross_owner_rejected
+            && report.current_after_record == expected_current
+            && report.queue_len_after_record == 1
+            && report.metadata_generation_after_record == report.metadata_generation_before_record
+            && !report.scheduler_mutated_during_record
+            && report.pending_after_record
+            && report.service_timer_preemption == expected_next
+            && report.current_after_service == expected_next
+            && report.queue_len_after_service == 1
+            && report.front_after_service == expected_current
+            && report.previous_task_state == task_state_code(TaskState::Runnable)
+            && report.selected_task_state == task_state_code(TaskState::Running)
+            && !report.pending_after_service
+            && report.recorded_requests == 1
+            && report.coalesced_requests == 1
+            && report.serviced_requests == 1
+            && report.metadata_owner_after_service == logical_cpu as u64
+            && report.metadata_task_after_service == expected_next
+            && report.metadata_generation_after_service > report.metadata_generation_after_record
+            && report.errors == 0
+            && report.progress() == 1;
+        if report_ok {
+            participants += 1;
+        }
+        errors += report.errors;
+        reports_ok &= report_ok;
+
+        crate::println!(
+            "qemu-multicore-preemption-smoke: report logical={} state={} context={} mapped={:?} owner={} role={} current-before-record={} next={} queue-len-before-record={} metadata-generation-before-record={} record-outcome={} duplicate-outcome={} cross-owner-rejected={} current-after-record={} queue-len-after-record={} metadata-generation-after-record={} irq-record-scheduler-mutated={} pending-after-record={} service-timer-preemption={} current-after-service={} queue-len-after-service={} front-after-service={} previous-task-state={} selected-task-state={} pending-after-service={} recorded={} coalesced={} serviced={} metadata-owner-after-service={} metadata-task-after-service={} metadata-generation-after-service={} lock-progress={} errors={} ok={}",
+            logical_cpu,
+            secondary_state_name(core_report.lifecycle.raw()),
+            core_report.context,
+            logical_from_mpidr,
+            report.owner,
+            scheduler_role_name(report.role),
+            report.current_before_record,
+            report.next_task,
+            report.queue_len_before_record,
+            report.metadata_generation_before_record,
+            if report.record_inserted {
+                "inserted"
+            } else {
+                "error"
+            },
+            if report.duplicate_coalesced {
+                "coalesced"
+            } else {
+                "error"
+            },
+            report.cross_owner_rejected,
+            report.current_after_record,
+            report.queue_len_after_record,
+            report.metadata_generation_after_record,
+            report.scheduler_mutated_during_record,
+            report.pending_after_record,
+            report.service_timer_preemption,
+            report.current_after_service,
+            report.queue_len_after_service,
+            report.front_after_service,
+            task_state_name(report.previous_task_state),
+            task_state_name(report.selected_task_state),
+            report.pending_after_service,
+            report.recorded_requests,
+            report.coalesced_requests,
+            report.serviced_requests,
+            report.metadata_owner_after_service,
+            report.metadata_task_after_service,
+            report.metadata_generation_after_service,
+            report.progress(),
+            report.errors,
+            report_ok
+        );
+    }
+
+    let classification = if reports_ok {
+        "qemu-multicore-preemption-smoke-complete"
+    } else if !state_lock_available || !metadata_lock_available {
+        "qemu-multicore-preemption-smoke-lock-still-held"
+    } else if cpu_on_ok {
+        "qemu-multicore-preemption-smoke-invariant-failed"
+    } else {
+        "qemu-psci-smc-cpu-on-failed"
+    };
+    crate::println!(
+        "qemu-multicore-preemption-smoke: final participants={} expected={} errors={} state-lock-available={} metadata-lock-available={} wait-remaining={} classification={}",
+        participants,
+        MAX_CORES - 1,
+        errors,
+        state_lock_available,
+        metadata_lock_available,
+        remaining,
+        classification
+    );
+
+    if reports_ok {
+        crate::println!("qemu-multicore-preemption-smoke: PASS");
+    } else {
+        crate::println!("qemu-multicore-preemption-smoke: FAIL");
     }
 
     reports_ok

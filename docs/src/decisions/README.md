@@ -3443,3 +3443,38 @@ ADR template:
 - Risks: QEMU and Pi 5 multi-core preemption proofs are still queued. The core
   does not yet wire real timer IRQ recorders into this state or add a
   non-diagnostic secondary runtime role.
+
+## 2026-05-28 - QEMU Multi-Core Preemption Smoke Accepted
+
+- Status: accepted as QEMU substitute evidence for the Phase 6.3 multi-core
+  preemption core. No Pi 5 hardware claim, direct IRQ/IPI-context scheduling,
+  remote current-task switching, running-task migration, autonomous work
+  stealing, Phase 7, filesystem, networking, SSH, shell, RP1/PCIe, UART
+  interrupt ownership, or DMA/cache behavior was added.
+- Context: The accepted core added PerCorePreemptionState and
+  CpuLocalSchedulerService::run_preemption_cycle, but proof routing still
+  needed to show multiple owners recording bounded local timer-preemption state
+  and servicing it only from owner-local normal control flow.
+- Decision: Accept phase6-qemu-multicore-preemption-smoke-20260527. The
+  qemu_multicore_preemption_smoke boot scenario and
+  scripts/qemu-multicore-preemption-smoke.sh start logical CPUs 1, 2, and 3
+  through the QEMU SMP path. Each owner records a local pending request,
+  coalesces a duplicate local record, rejects cross-owner recording, proves the
+  record-only step leaves current task, runnable queue, task states, and
+  metadata unchanged, then services the request through
+  CpuLocalSchedulerService::run_preemption_cycle.
+- Evidence level: static inspection, QEMU substitute transcript, fmt/lint,
+  no_std unit tests, preserved QEMU smoke/regression gates, whitespace
+  inspection, and documentation build. Hardware was not required because this
+  task makes no physical claim.
+- Validation: scripts/qemu-multicore-preemption-smoke.sh,
+  cargo fmt --all -- --check, cargo -Zjson-target-spec test,
+  scripts/qemu-smoke.sh, scripts/qemu-timer-preemption-smoke.sh,
+  scripts/qemu-secondary-scheduler-service-loop-smoke.sh,
+  scripts/qemu-shared-runqueue-migration-smoke.sh,
+  scripts/qemu-load-balancing-smoke.sh, git diff --check, and mdbook build
+  passed.
+- Consequences: The next bounded task may be the serialized Pi 5 multi-core
+  preemption proof after supervisor ready-marking and hardware lock
+  availability. Physical behavior remains unclaimed until that task is accepted
+  or explicitly deferred.

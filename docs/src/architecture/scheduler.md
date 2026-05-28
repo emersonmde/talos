@@ -1205,3 +1205,26 @@ remote current-task switching, running-task migration, autonomous work
 stealing, general remote reschedule, Phase 7, filesystem, networking, SSH,
 shell behavior, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver
 policy.
+
+## Phase 6.3 QEMU Multi-Core Preemption Proof
+
+The retained QEMU proof surface is qemu_multicore_preemption_smoke, run by
+scripts/qemu-multicore-preemption-smoke.sh. It starts logical CPUs 1, 2, and 3
+through the accepted QEMU SMP path and keeps the proof at the accepted
+diagnostic scheduler boundary.
+
+Each participating owner records a local timer-preemption request through
+PerCorePreemptionState::record_local_timer_irq, coalesces a duplicate local
+record, and rejects a cross-owner record attempt. The diagnostic compares the
+owner's current task, runnable queue length, task states, and metadata
+generation before and after the record-only step; accepted PASS output requires
+irq-record-scheduler-mutated=false, proving the IRQ/IPI-side hook did not
+execute scheduler mutation.
+
+After the record-only step, each owner services its own pending request through
+CpuLocalSchedulerService::run_preemption_cycle from normal owner-local control
+flow. PASS requires the current task to return to runnable, the selected local
+runnable task to become running, the pending request to clear only after
+service, and owner-published metadata to refresh for that same logical CPU.
+This is QEMU substitute evidence only; Pi 5 hardware proof remains separate and
+serialized behind hardwareTestLock.

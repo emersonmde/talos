@@ -167,6 +167,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         implied_values: &[],
         asm_defines: &[QEMU_SMP_ASM],
     },
+    BootScenario {
+        value: "qemu_multicore_preemption_smoke",
+        implied_values: &[],
+        asm_defines: &[QEMU_SMP_ASM],
+    },
 ];
 
 fn main() {

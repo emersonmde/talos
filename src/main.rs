@@ -36,7 +36,8 @@
             talos_boot_scenario = "qemu_shared_scheduler_metadata",
             talos_boot_scenario = "qemu_shared_runqueue_migration",
             talos_boot_scenario = "qemu_load_balancing_smoke",
-            talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
+            talos_boot_scenario = "qemu_secondary_scheduler_service_loop",
+            talos_boot_scenario = "qemu_multicore_preemption_smoke"
         )
     ),
     allow(dead_code, unused_imports, unused_variables, unreachable_code)
@@ -264,6 +265,14 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
+            #[cfg(talos_boot_scenario = "qemu_multicore_preemption_smoke")]
+            {
+                if target::qemu_virt::run_multicore_preemption_smoke() {
+                    target::qemu::exit_success();
+                }
+                target::qemu::exit_failure();
+            }
+
             #[cfg(talos_boot_scenario = "qemu_secondary_core_workload")]
             {
                 if target::qemu_virt::run_secondary_core_workload_smoke() {
@@ -334,7 +343,8 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_boot_scenario = "qemu_shared_scheduler_metadata",
                 talos_boot_scenario = "qemu_shared_runqueue_migration",
                 talos_boot_scenario = "qemu_load_balancing_smoke",
-                talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
+                talos_boot_scenario = "qemu_secondary_scheduler_service_loop",
+                talos_boot_scenario = "qemu_multicore_preemption_smoke"
             )))]
             if target::qemu_virt::run_el2_timer_irq_smoke() {
                 target::qemu::exit_success();
@@ -353,7 +363,8 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_boot_scenario = "qemu_shared_scheduler_metadata",
                 talos_boot_scenario = "qemu_shared_runqueue_migration",
                 talos_boot_scenario = "qemu_load_balancing_smoke",
-                talos_boot_scenario = "qemu_secondary_scheduler_service_loop"
+                talos_boot_scenario = "qemu_secondary_scheduler_service_loop",
+                talos_boot_scenario = "qemu_multicore_preemption_smoke"
             )))]
             target::qemu::exit_failure();
         }

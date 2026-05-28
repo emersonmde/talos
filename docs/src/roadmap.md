@@ -68,8 +68,13 @@ The accepted multi-core preemption core adds target-independent per-owner
 pending timer-preemption state, duplicate request coalescing, explicit nested
 preemption-disable defer behavior, and an owner-local service entry that
 preflights owner/current-task authority before draining wake queues or
-mutating scheduler state. It is a unit-tested core only; QEMU proof, Pi 5
-proof, and closeout remain separate queued tasks.
+mutating scheduler state. The accepted QEMU multi-core preemption proof adds
+qemu_multicore_preemption_smoke and
+scripts/qemu-multicore-preemption-smoke.sh; logical CPUs 1, 2, and 3 each
+record only local pending timer-preemption state, prove the record step does
+not mutate scheduler state, then service the request through owner-local normal
+control flow with classification=qemu-multicore-preemption-smoke-complete. Pi
+5 proof and closeout remain separate queued tasks.
 The obsolete-bloat inventory and removal sweep are accepted before the
 multi-core preemption core: historical QEMU secondary-core discriminator paths
 and old Pi 5 allocator, exception, panic, and translation-fault proof-only
@@ -503,12 +508,18 @@ Accepted status and historical completed facts:
   service-loop, IPI/wake, metadata, SharedRunQueue, and load-balancing
   boundaries; names CPU-local versus cross-core assumptions; and recommends
   `phase6-multicore-preemption-contract-20260527` before implementation.
+- The Phase 6.3 multi-core preemption contract, target-independent core, and
+  QEMU substitute proof are accepted. The retained QEMU proof reports
+  classification=qemu-multicore-preemption-smoke-complete after logical CPUs 1,
+  2, and 3 record local pending timer-preemption state without scheduler
+  mutation and then service it through owner-local normal scheduler control
+  flow.
 
 Blocked or pending:
 
-- The next explicit supervisor-planned task should be the multi-core
-  preemption contract. Work stealing, running-task migration, remote
-  reschedule, multi-core preemption implementation, userspace, descriptors,
+- The next explicit supervisor-planned task should be the serialized Pi 5
+  multi-core preemption proof or an explicit physical defer decision. Work
+  stealing, running-task migration, remote reschedule, userspace, descriptors,
   filesystem, networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and
   DMA/cache-coherent driver policy remain deferred.
 - Large raw accepted evidence remains in Git until external artifact storage or
