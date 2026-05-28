@@ -1,8 +1,9 @@
 //! Target-independent POSIX baseline primitives.
 //!
-//! This module owns only the Phase 7.1 path/error contract surface. It does
-//! not perform VFS lookup, syscall ABI translation, process current-working-
-//! directory storage, descriptor-table work, or target I/O.
+//! This module owns only the Phase 7.1 target-independent POSIX contract
+//! surface. It does not perform VFS lookup, syscall ABI translation, process
+//! current-working-directory storage, runtime console integration, or target
+//! I/O.
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum PosixError {
@@ -95,6 +96,256 @@ impl PathLimits {
 }
 
 pub(crate) const DEFAULT_PATH_LIMITS: PathLimits = PathLimits::new(4096, 255, 64);
+
+pub(crate) const STDIN_FD: usize = 0;
+pub(crate) const STDOUT_FD: usize = 1;
+pub(crate) const STDERR_FD: usize = 2;
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct DescriptorFlags {
+    bits: u8,
+}
+
+impl DescriptorFlags {
+    pub(crate) const EMPTY: Self = Self { bits: 0 };
+    pub(crate) const CLOSE_ON_EXEC: Self = Self { bits: 1 };
+
+    const KNOWN_BITS: u8 = Self::CLOSE_ON_EXEC.bits;
+
+    pub(crate) const fn from_bits(bits: u8) -> Result<Self, PosixError> {
+        if bits & !Self::KNOWN_BITS == 0 {
+            Ok(Self { bits })
+        } else {
+            Err(PosixError::InvalidArgument)
+        }
+    }
+
+    pub(crate) const fn bits(self) -> u8 {
+        self.bits
+    }
+
+    pub(crate) const fn contains(self, flag: Self) -> bool {
+        self.bits & flag.bits == flag.bits
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum DescriptorAccess {
+    ReadOnly,
+    WriteOnly,
+    ReadWrite,
+}
+
+impl DescriptorAccess {
+    const fn allows_read(self) -> bool {
+        matches!(self, Self::ReadOnly | Self::ReadWrite)
+    }
+
+    const fn allows_write(self) -> bool {
+        matches!(self, Self::WriteOnly | Self::ReadWrite)
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum DescriptorObjectKind {
+    StdioInput,
+    StdioOutput,
+    RegularFile,
+    Directory,
+    PipeEndpoint,
+    Socket,
+    Device,
+    OtherKernelObject,
+}
+
+impl DescriptorObjectKind {
+    pub(crate) const fn name(self) -> &'static str {
+        match self {
+            Self::StdioInput => "stdio-input",
+            Self::StdioOutput => "stdio-output",
+            Self::RegularFile => "regular-file",
+            Self::Directory => "directory",
+            Self::PipeEndpoint => "pipe-endpoint",
+            Self::Socket => "socket",
+            Self::Device => "device",
+            Self::OtherKernelObject => "other-kernel-object",
+        }
+    }
+
+    const fn supports_tty_operation(self) -> bool {
+        matches!(self, Self::StdioInput | Self::StdioOutput)
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct DescriptorObject {
+    kind: DescriptorObjectKind,
+    reference: usize,
+}
+
+impl DescriptorObject {
+    pub(crate) const fn new(kind: DescriptorObjectKind, reference: usize) -> Self {
+        Self { kind, reference }
+    }
+
+    pub(crate) const fn kind(self) -> DescriptorObjectKind {
+        self.kind
+    }
+
+    pub(crate) const fn reference(self) -> usize {
+        self.reference
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct DescriptorEntry {
+    access: DescriptorAccess,
+    flags: DescriptorFlags,
+    object: DescriptorObject,
+}
+
+impl DescriptorEntry {
+    pub(crate) const fn new(
+        access: DescriptorAccess,
+        flags: DescriptorFlags,
+        object: DescriptorObject,
+    ) -> Self {
+        Self {
+            access,
+            flags,
+            object,
+        }
+    }
+
+    pub(crate) const fn access(self) -> DescriptorAccess {
+        self.access
+    }
+
+    pub(crate) const fn flags(self) -> DescriptorFlags {
+        self.flags
+    }
+
+    pub(crate) const fn object(self) -> DescriptorObject {
+        self.object
+    }
+
+    pub(crate) fn require_readable(self) -> Result<(), PosixError> {
+        if self.access.allows_read() {
+            Ok(())
+        } else {
+            Err(PosixError::BadDescriptor)
+        }
+    }
+
+    pub(crate) fn require_writable(self) -> Result<(), PosixError> {
+        if self.access.allows_write() {
+            Ok(())
+        } else {
+            Err(PosixError::BadDescriptor)
+        }
+    }
+
+    pub(crate) fn require_tty(self) -> Result<(), PosixError> {
+        if self.object.kind().supports_tty_operation() {
+            Ok(())
+        } else {
+            Err(PosixError::NotTty)
+        }
+    }
+
+    pub(crate) const fn unsupported_operation(self) -> Result<(), PosixError> {
+        Err(PosixError::NotImplemented)
+    }
+
+    pub(crate) const fn unsupported_kind_operation(self) -> Result<(), PosixError> {
+        Err(PosixError::NotSupported)
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct DescriptorTable<const CAPACITY: usize> {
+    entries: [Option<DescriptorEntry>; CAPACITY],
+}
+
+impl<const CAPACITY: usize> DescriptorTable<CAPACITY> {
+    pub(crate) const fn new_empty() -> Self {
+        Self {
+            entries: [None; CAPACITY],
+        }
+    }
+
+    pub(crate) fn with_inherited_stdio() -> Result<Self, PosixError> {
+        let mut table = Self::new_empty();
+        if CAPACITY <= STDERR_FD {
+            return Err(PosixError::TooManyOpenFiles);
+        }
+
+        table.entries[STDIN_FD] = Some(DescriptorEntry::new(
+            DescriptorAccess::ReadOnly,
+            DescriptorFlags::EMPTY,
+            DescriptorObject::new(DescriptorObjectKind::StdioInput, STDIN_FD),
+        ));
+        table.entries[STDOUT_FD] = Some(DescriptorEntry::new(
+            DescriptorAccess::WriteOnly,
+            DescriptorFlags::EMPTY,
+            DescriptorObject::new(DescriptorObjectKind::StdioOutput, STDOUT_FD),
+        ));
+        table.entries[STDERR_FD] = Some(DescriptorEntry::new(
+            DescriptorAccess::WriteOnly,
+            DescriptorFlags::EMPTY,
+            DescriptorObject::new(DescriptorObjectKind::StdioOutput, STDERR_FD),
+        ));
+        Ok(table)
+    }
+
+    pub(crate) fn get(&self, descriptor: usize) -> Result<DescriptorEntry, PosixError> {
+        self.entries
+            .get(descriptor)
+            .and_then(|entry| *entry)
+            .ok_or(PosixError::BadDescriptor)
+    }
+
+    pub(crate) fn allocate(&mut self, entry: DescriptorEntry) -> Result<usize, PosixError> {
+        let mut descriptor = 0;
+        while descriptor < CAPACITY {
+            if self.entries[descriptor].is_none() {
+                self.entries[descriptor] = Some(entry);
+                return Ok(descriptor);
+            }
+            descriptor += 1;
+        }
+        Err(PosixError::TooManyOpenFiles)
+    }
+
+    pub(crate) fn allocate_at(
+        &mut self,
+        descriptor: usize,
+        entry: DescriptorEntry,
+    ) -> Result<usize, PosixError> {
+        if descriptor >= CAPACITY {
+            return Err(PosixError::InvalidArgument);
+        }
+        if self.entries[descriptor].is_some() {
+            return Err(PosixError::InvalidArgument);
+        }
+        self.entries[descriptor] = Some(entry);
+        Ok(descriptor)
+    }
+
+    pub(crate) fn close(&mut self, descriptor: usize) -> Result<DescriptorEntry, PosixError> {
+        if descriptor >= CAPACITY {
+            return Err(PosixError::BadDescriptor);
+        }
+        self.entries[descriptor]
+            .take()
+            .ok_or(PosixError::BadDescriptor)
+    }
+
+    pub(crate) fn dup(&mut self, descriptor: usize) -> Result<usize, PosixError> {
+        let entry = self.get(descriptor)?;
+        self.allocate(entry)
+    }
+}
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct PathComponent<'a> {
@@ -247,6 +498,14 @@ mod tests {
         normalize_path(path, TEST_LIMITS)
     }
 
+    fn regular_file(reference: usize) -> DescriptorEntry {
+        DescriptorEntry::new(
+            DescriptorAccess::ReadWrite,
+            DescriptorFlags::EMPTY,
+            DescriptorObject::new(DescriptorObjectKind::RegularFile, reference),
+        )
+    }
+
     fn assert_components(path: &NormalizedPath<'_, 4>, expected: &[&[u8]]) {
         assert_eq!(path.component_count(), expected.len());
         let components = path.components();
@@ -294,6 +553,182 @@ mod tests {
             assert_eq!(error.name(), name);
             index += 1;
         }
+    }
+
+    #[test_case]
+    fn descriptor_flags_accept_known_bits_and_reject_unknown_bits() {
+        let flags =
+            DescriptorFlags::from_bits(DescriptorFlags::CLOSE_ON_EXEC.bits()).expect("known flag");
+
+        assert!(flags.contains(DescriptorFlags::CLOSE_ON_EXEC));
+        assert_eq!(flags.bits(), 1);
+        assert_eq!(
+            DescriptorFlags::from_bits(0b10),
+            Err(PosixError::InvalidArgument)
+        );
+    }
+
+    #[test_case]
+    fn descriptor_object_kind_names_cover_reserved_future_kinds() {
+        let kinds = [
+            (DescriptorObjectKind::StdioInput, "stdio-input"),
+            (DescriptorObjectKind::StdioOutput, "stdio-output"),
+            (DescriptorObjectKind::RegularFile, "regular-file"),
+            (DescriptorObjectKind::Directory, "directory"),
+            (DescriptorObjectKind::PipeEndpoint, "pipe-endpoint"),
+            (DescriptorObjectKind::Socket, "socket"),
+            (DescriptorObjectKind::Device, "device"),
+            (
+                DescriptorObjectKind::OtherKernelObject,
+                "other-kernel-object",
+            ),
+        ];
+
+        let mut index = 0;
+        while index < kinds.len() {
+            let (kind, name) = kinds[index];
+            assert_eq!(kind.name(), name);
+            index += 1;
+        }
+    }
+
+    #[test_case]
+    fn inherited_stdio_populates_process_local_reserved_descriptors() {
+        let table = DescriptorTable::<4>::with_inherited_stdio().expect("stdio table");
+        let stdin = table.get(STDIN_FD).expect("stdin");
+        let stdout = table.get(STDOUT_FD).expect("stdout");
+        let stderr = table.get(STDERR_FD).expect("stderr");
+
+        assert_eq!(stdin.access(), DescriptorAccess::ReadOnly);
+        assert_eq!(stdin.flags(), DescriptorFlags::EMPTY);
+        assert_eq!(stdin.object().kind(), DescriptorObjectKind::StdioInput);
+        assert_eq!(stdin.object().reference(), STDIN_FD);
+        assert_eq!(stdout.access(), DescriptorAccess::WriteOnly);
+        assert_eq!(stdout.object().kind(), DescriptorObjectKind::StdioOutput);
+        assert_eq!(stderr.access(), DescriptorAccess::WriteOnly);
+        assert_eq!(stderr.object().kind(), DescriptorObjectKind::StdioOutput);
+        assert_ne!(stdout.object().reference(), stderr.object().reference());
+        assert_eq!(stdin.require_readable(), Ok(()));
+        assert_eq!(stdout.require_writable(), Ok(()));
+        assert_eq!(stderr.require_tty(), Ok(()));
+    }
+
+    #[test_case]
+    fn inherited_stdio_requires_room_for_descriptors_zero_one_and_two() {
+        assert_eq!(
+            DescriptorTable::<2>::with_inherited_stdio(),
+            Err(PosixError::TooManyOpenFiles)
+        );
+    }
+
+    #[test_case]
+    fn descriptor_allocate_uses_lowest_available_slot() {
+        let mut table = DescriptorTable::<4>::with_inherited_stdio().expect("stdio table");
+
+        table.close(STDOUT_FD).expect("close stdout");
+
+        assert_eq!(table.allocate(regular_file(10)), Ok(STDOUT_FD));
+        assert_eq!(
+            table
+                .get(STDOUT_FD)
+                .expect("allocated")
+                .object()
+                .reference(),
+            10
+        );
+    }
+
+    #[test_case]
+    fn descriptor_allocate_at_rejects_invalid_or_occupied_target() {
+        let mut table = DescriptorTable::<3>::with_inherited_stdio().expect("stdio table");
+
+        assert_eq!(
+            table.allocate_at(3, regular_file(10)),
+            Err(PosixError::InvalidArgument)
+        );
+        assert_eq!(
+            table.allocate_at(STDIN_FD, regular_file(10)),
+            Err(PosixError::InvalidArgument)
+        );
+    }
+
+    #[test_case]
+    fn descriptor_get_close_and_double_close_use_ebadf() {
+        let mut table = DescriptorTable::<4>::with_inherited_stdio().expect("stdio table");
+
+        assert_eq!(table.get(4), Err(PosixError::BadDescriptor));
+        assert_eq!(
+            table
+                .close(STDERR_FD)
+                .expect("close stderr")
+                .object()
+                .reference(),
+            STDERR_FD
+        );
+        assert_eq!(table.get(STDERR_FD), Err(PosixError::BadDescriptor));
+        assert_eq!(table.close(STDERR_FD), Err(PosixError::BadDescriptor));
+    }
+
+    #[test_case]
+    fn descriptor_dup_preserves_object_reference_and_separate_lifetime() {
+        let mut table = DescriptorTable::<4>::with_inherited_stdio().expect("stdio table");
+
+        let duplicate = table.dup(STDOUT_FD).expect("dup stdout");
+
+        assert_eq!(duplicate, 3);
+        assert_eq!(
+            table.get(duplicate).expect("duplicate").object(),
+            table.get(STDOUT_FD).expect("stdout").object()
+        );
+        table.close(STDOUT_FD).expect("close original");
+        assert_eq!(
+            table
+                .get(duplicate)
+                .expect("duplicate remains")
+                .object()
+                .kind(),
+            DescriptorObjectKind::StdioOutput
+        );
+        assert_eq!(table.dup(STDOUT_FD), Err(PosixError::BadDescriptor));
+    }
+
+    #[test_case]
+    fn descriptor_full_table_maps_allocate_and_dup_to_emfile() {
+        let mut table = DescriptorTable::<3>::with_inherited_stdio().expect("stdio table");
+
+        assert_eq!(
+            table.allocate(regular_file(10)),
+            Err(PosixError::TooManyOpenFiles)
+        );
+        assert_eq!(table.dup(STDOUT_FD), Err(PosixError::TooManyOpenFiles));
+    }
+
+    #[test_case]
+    fn descriptor_access_mismatch_maps_to_ebadf() {
+        let table = DescriptorTable::<3>::with_inherited_stdio().expect("stdio table");
+        let stdin = table.get(STDIN_FD).expect("stdin");
+        let stdout = table.get(STDOUT_FD).expect("stdout");
+        let read_write = regular_file(10);
+
+        assert_eq!(stdin.require_writable(), Err(PosixError::BadDescriptor));
+        assert_eq!(stdout.require_readable(), Err(PosixError::BadDescriptor));
+        assert_eq!(read_write.require_readable(), Ok(()));
+        assert_eq!(read_write.require_writable(), Ok(()));
+    }
+
+    #[test_case]
+    fn descriptor_reserved_operation_errors_are_deterministic() {
+        let file = regular_file(10);
+
+        assert_eq!(file.require_tty(), Err(PosixError::NotTty));
+        assert_eq!(
+            file.unsupported_operation(),
+            Err(PosixError::NotImplemented)
+        );
+        assert_eq!(
+            file.unsupported_kind_operation(),
+            Err(PosixError::NotSupported)
+        );
     }
 
     #[test_case]
