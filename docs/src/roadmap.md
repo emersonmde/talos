@@ -13,18 +13,17 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is currently in Phase 6.3, after accepting bounded SMP scheduler slices
-for secondary-core dispatch, cross-core IPIs, remote wake requests, target-owned
-wake consumption, owner-published shared scheduler metadata, and the secondary
-scheduler service loop on both QEMU substitute and serialized Pi 5 hardware.
-These proofs are still diagnostic validation gates, not a general multi-core
-runtime: shared run queues, remote enqueue, task migration, load balancing,
-multi-core preemption, userspace, filesystem, networking, SSH, and shell
-behavior remain deferred.
+Talos is currently in Phase 7.1, after accepting the Phase 6.3 production
+scheduler runtime closeout and the first Phase 7 POSIX contract source
+inventory. The active frontier is still contract-first: errno/error vocabulary,
+path normalization semantics, process lifetime vocabulary, descriptor
+operation vocabulary, stdio inheritance shape, and early loader/argument/
+environment shape must be documented before EL0, SVC/syscall ABI, descriptor
+tables, VFS, filesystem, program loading, networking, SSH, or shell work
+starts.
 
-The immediate frontier is Phase 6.3 productionization after the accepted
-CPU-local scheduler service closeout and secondary scheduler service-loop
-closeout checkpoint. Evidence-retention, diagnostic-surface, roadmap-refresh,
+The recently accepted Phase 6.3 scheduler frontier includes
+evidence-retention, diagnostic-surface, roadmap-refresh,
 productionization-boundary, CPU-local scheduler service boundary,
 CPU-local scheduler service core, CPU-local scheduler service closeout,
 secondary scheduler service-loop source inventory, service-loop core, QEMU
@@ -94,15 +93,17 @@ record bounded local production preemption state, and
 ProductionSchedulerRuntime services pending preemption only from owner-local
 normal control flow. The Pi 5 proof reports
 classification=pi5-production-timer-preemption-complete, participants=3,
-expected=3, errors=0, and PASS. Additional Phase 6.3 productionization and
-Phase 7 work require the next explicit supervisor-planned bounded task.
+expected=3, errors=0, and PASS. The accepted Phase 7 POSIX contract source
+inventory maps the scheduler task/process boundary, runtime-console and TTY
+stdio direction, diagnostic command limitations, lower-EL readiness limits,
+and retained validation gates that constrain the next POSIX baseline contract.
 The obsolete-bloat inventory and removal sweep are accepted before the
 multi-core preemption core: historical QEMU secondary-core discriminator paths
 and old Pi 5 allocator, exception, panic, and translation-fault proof-only
 scripts/cfg/source paths are retired while accepted evidence summaries remain
 in task records. Direct IRQ/IPI-context scheduling, running-task migration,
-non-diagnostic secondary runtime roles, Phase 7, filesystem, networking, SSH,
-and shell work remain deferred until the next explicit bounded task accepts
+non-diagnostic secondary runtime roles, EL0/syscalls, filesystem, networking,
+SSH, and shell work remain deferred until the next explicit bounded task accepts
 them.
 
 Accepted status and historical completed facts:
@@ -983,6 +984,16 @@ Acceptance criteria:
 
 - A POSIX-baseline design note exists before VFS or process code grows around convenient shortcuts.
 - Host-side tests cover path normalization and descriptor-table edge cases.
+
+Accepted progress:
+
+- Phase 7 POSIX contract source inventory is accepted. It maps the accepted
+  scheduler task/process separation, runtime-console and TTY stdio direction,
+  diagnostic command-channel limits, lower-EL readiness limits, and retained
+  Phase 4 through Phase 6 gates that constrain the first POSIX baseline
+  contract. The next bounded task is the documentation-only POSIX baseline
+  contract; EL0, SVC/syscall ABI, descriptor table implementation, VFS,
+  filesystem, program loading, networking, SSH, and shell work remain blocked.
 
 Milestone 7.2: EL0 Trap Path and User Address Spaces
 

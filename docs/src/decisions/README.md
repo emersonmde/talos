@@ -12,6 +12,39 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-28 - Phase 7.1 POSIX Contract Source Inventory Accepted
+
+- Status: accepted as documentation/source inventory before the first Phase
+  7.1 POSIX baseline contract. No Rust implementation, boot scenario, QEMU
+  run, Pi 5 hardware run, EL0 entry, SVC/syscall ABI, descriptor table, VFS,
+  filesystem, program loader, networking, SSH, shell, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache behavior was added.
+- Context: The Phase 6.3 production scheduler runtime closeout accepted the
+  first normal timer IRQ recording and owner-local service boundary. Before
+  Phase 7 implementation, the accepted scheduler, console/TTY, diagnostic
+  command, and lower-EL readiness surfaces needed one source-backed inventory
+  to prevent diagnostic shortcuts from becoming POSIX interfaces.
+- Decision: Accept phase7-posix-contract-source-inventory-20260528. The
+  accepted constraints are scheduler task/process separation, runtime-console0
+  and TTY as future descriptor-facing stdio backing surfaces, the diagnostic
+  command channel as kernel-owned and not a shell/syscall/program-loader path,
+  the EL2 identity map as not a userspace isolation contract, and the retained
+  Phase 4 through Phase 6 validation gates.
+- Evidence level: static inspection, documentation build, and whitespace
+  inspection. Hardware and QEMU reruns were not required because this task
+  changes only documentation and durable state.
+- Validation: git status --short was clean before edits; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next bounded task should be
+  phase7-posix-contract-baseline-20260528. It should define the first
+  errno/error, path, process lifetime, descriptor operation, stdio inheritance,
+  and early loader/argument/environment vocabulary before any implementation
+  task starts.
+- Risks: PID allocation, process tables, address spaces, EL0, SVC/syscalls,
+  descriptor tables, VFS/filesystem, program loading, scheduler blocking I/O,
+  filesystem-backed commands, local shell, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, and DMA/cache-driver policy remain deferred.
+
 ## 2026-05-28 - Phase 6.3 Production Scheduler Runtime Source Inventory Accepted
 
 - Status: accepted as documentation/source inventory before production

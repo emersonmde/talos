@@ -63,6 +63,7 @@
 - [Phase 6 Production Scheduler Runtime Source Inventory](project/phase6-production-scheduler-runtime-source-inventory.md)
 - [Phase 6 Production Timer/Preemption Contract](project/phase6-production-timer-preemption-contract.md)
 - [Phase 6 Production Scheduler Runtime Closeout](project/phase6-production-scheduler-runtime-closeout-checkpoint.md)
+- [Phase 7 POSIX Contract Source Inventory](project/phase7-posix-contract-source-inventory.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture
