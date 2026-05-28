@@ -3704,3 +3704,79 @@ ADR template:
   timer/preemption invariant to serialized Pi 5 hardware evidence under the
   hardwareTestLock. The production scheduler runtime closeout remains a
   separate later task.
+
+## 2026-05-28 - Pi 5 Production Timer/Preemption Proof Accepted
+
+- Status: accepted as serialized Raspberry Pi 5 hardware evidence for the
+  Phase 6.3 production timer/preemption runtime integration. No direct
+  IRQ/IPI-context scheduler mutation, remote current-task switching,
+  running-task migration, autonomous work stealing, Phase 7, filesystem,
+  networking, SSH, shell, RP1/PCIe, UART interrupt ownership, or DMA/cache
+  behavior was added.
+- Context: The focused QEMU production timer/preemption proof had accepted
+  the target-owned production timer IRQ adapter plus owner-local service path
+  as a QEMU substitute invariant. The same invariant needed serialized Pi 5
+  evidence before the production scheduler runtime slice could close out.
+- Decision: Accept
+  phase6-pi5-production-timer-preemption-proof-20260528. The new
+  `rpi5_production_timer_preemption_proof` boot scenario and retained Pi 5
+  image/boot-tree scripts carry the production timer/preemption invariant to
+  hardware. The accepted local8 multi-observe run reached logical CPU reports
+  for CPUs 1, 2, and 3, `participants=3 expected=3 errors=0`,
+  `classification=pi5-production-timer-preemption-complete`, and PASS.
+- Rationale: Earlier one-shot serial observes were inconclusive even though
+  TFTP fetched the candidate image. The required triage recorded candidate
+  identity, fresh serial cursor, TFTP delta, known-good control, padded-size
+  control, static/image comparison, and candidate reruns before the
+  multi-observe capture proved the candidate. The final evidence shows the
+  candidate, not only a control tree, reached the named proof lines.
+- Evidence level: static inspection, image/archive inspection,
+  fmt/lint/typecheck, no_std unit tests, focused QEMU substitute rerun,
+  serialized hardware boot/output, lab-controller TFTP/status records,
+  whitespace inspection, documentation build, and restore proof.
+- Validation: cargo fmt --all -- --check, cargo -Zjson-target-spec test,
+  scripts/qemu-production-timer-preemption-smoke.sh,
+  scripts/rpi5-archive-review.sh on the staged archive, serialized Pi 5
+  lab publish/power-cycle/serial observe, git diff --check, and mdbook build
+  passed. The accepted archive SHA256 is
+  739810c8480893e1878967dd0409f2705e71481453fc08038e9aacffdebcc11e and the
+  kernel SHA256 is
+  fdf8858d0740c0d7bf4fc0df884d4052d8309fd9c020ba65e5df1472198e7dfa.
+- Consequences: The production scheduler runtime closeout may reconcile the
+  accepted inventory, contract, core, QEMU proof, and Pi 5 proof. General
+  scheduler productionization and Phase 7 remain blocked until a later
+  supervisor-planned bounded task.
+
+## 2026-05-28 - Production Scheduler Runtime Closeout Accepted
+
+- Status: accepted as the Phase 6.3 production scheduler runtime closeout
+  checkpoint for the production timer/preemption slice. No Rust
+  implementation, boot image, QEMU run, hardware run, direct IRQ/IPI-context
+  scheduling, remote current-task switching, running-task migration,
+  autonomous work stealing, Phase 7, filesystem, networking, SSH, shell,
+  RP1/PCIe, UART interrupt ownership, or DMA/cache behavior was added.
+- Context: Talos had accepted the production scheduler runtime source
+  inventory, production timer/preemption contract, target-independent core,
+  focused QEMU substitute proof, and serialized Pi 5 hardware proof.
+- Decision: Accept
+  phase6-production-scheduler-runtime-closeout-checkpoint-20260528. The
+  accepted boundary is the first production timer/preemption runtime
+  integration: normal target timer IRQ handlers may record local pending
+  preemption in durable per-CPU runtime state, and owner-local normal
+  scheduler control flow may service that pending state through
+  `ProductionSchedulerRuntime::service_pending_preemption`.
+- Evidence level: static inspection of accepted task/evidence records,
+  documentation build, and whitespace inspection. Hardware was not rerun
+  because this checkpoint makes no new physical claim beyond the already
+  accepted Pi 5 proof.
+- Validation: git status --short was clean before edits; git diff --check
+  passed; mdbook build passed.
+- Consequences: Further scheduler productionization or Phase 7 work requires a
+  new supervisor-planned bounded task with explicit scope, dependencies,
+  acceptance criteria, validation gates, documentation requirements, and
+  evidence requirements.
+- Risks: Interrupt-driven remote reschedule, work stealing, autonomous
+  balancing cadence, running-task migration, remote current-task switching,
+  asynchronous context capture, non-diagnostic secondary runtime roles, Phase
+  7, filesystem, networking, SSH, shell behavior, RP1/PCIe, UART interrupt
+  ownership, and DMA/cache-driver policy remain deferred.

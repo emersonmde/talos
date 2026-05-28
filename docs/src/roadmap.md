@@ -33,7 +33,11 @@ inventory, contract, core, QEMU proof, Pi 5 proof, closeout,
 load-balancing source inventory, load-balancing policy contract,
 load-balancing core, QEMU load-balancing proof, Pi 5 load-balancing proof,
 load-balancing closeout, multi-core preemption source inventory, contract,
-core, QEMU proof, Pi 5 proof, and closeout tasks are accepted. The accepted
+core, QEMU proof, Pi 5 proof, closeout, production scheduler runtime source
+inventory, production timer/preemption contract, production timer/preemption
+core, QEMU production timer/preemption proof, Pi 5 production
+timer/preemption proof, and production scheduler runtime closeout tasks are
+accepted. The accepted
 shared
 run-queue/migration slice provides a bounded source-owner publish and
 destination-owner consume path with explicit migration states and deterministic
@@ -82,9 +86,16 @@ accepted multi-core preemption closeout preserves the retained gates and
 requires a new bounded productionization task before any further scheduler
 runtime integration or Phase 7 work. The accepted production scheduler
 runtime source inventory maps those retained diagnostic surfaces against the
-normal boot, timer, and owner-local runtime paths. The next bounded task is a
-production timer/preemption contract; implementation remains deferred until
-that contract is accepted.
+normal boot, timer, and owner-local runtime paths. The accepted production
+timer/preemption contract, core, focused QEMU proof, serialized Pi 5 proof,
+and closeout checkpoint establish the first production timer IRQ recording
+and owner-local service boundary. Normal QEMU and Pi 5 timer IRQ handlers now
+record bounded local production preemption state, and
+ProductionSchedulerRuntime services pending preemption only from owner-local
+normal control flow. The Pi 5 proof reports
+classification=pi5-production-timer-preemption-complete, participants=3,
+expected=3, errors=0, and PASS. Additional Phase 6.3 productionization and
+Phase 7 work require the next explicit supervisor-planned bounded task.
 The obsolete-bloat inventory and removal sweep are accepted before the
 multi-core preemption core: historical QEMU secondary-core discriminator paths
 and old Pi 5 allocator, exception, panic, and translation-fault proof-only
@@ -910,11 +921,13 @@ and the production timer/preemption contract is accepted in
 production timer/preemption core is accepted in
 `tasks/2026-05-28-phase6-production-timer-preemption-core.md`. The focused
 QEMU production timer/preemption smoke is accepted in
-`tasks/2026-05-28-phase6-qemu-production-timer-preemption-smoke.md`; the next
-bounded task is serialized Pi 5 production timer/preemption proof if the
-hardware lock is available. Phase 7 or later subsystem work remains blocked
-until this production scheduler runtime slice is proved or explicitly
-deferred and closed out.
+`tasks/2026-05-28-phase6-qemu-production-timer-preemption-smoke.md`, and the
+serialized Pi 5 production timer/preemption proof is accepted in
+`tasks/2026-05-28-phase6-pi5-production-timer-preemption-proof.md`. The
+production scheduler runtime closeout is accepted in
+`docs/src/project/phase6-production-scheduler-runtime-closeout-checkpoint.md`.
+Phase 7 or later subsystem work remains blocked until the supervisor creates
+the next explicit bounded task.
 Before broader Phase 6.3 productionization, the accepted
 [Evidence Retention Policy](project/evidence-retention-policy.md) and
 [Diagnostic Surface Policy](project/diagnostic-surface-policy.md) govern which

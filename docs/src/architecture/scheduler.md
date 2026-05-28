@@ -1384,3 +1384,26 @@ normal control flow. Later Pi 5 proof remains serialized under
 hardwareTestLock and must record candidate identity, TFTP, fresh serial,
 classification/PASS or blocker classification, and restore evidence. No
 physical claim is made by this QEMU task.
+
+The serialized Pi 5 production timer/preemption proof is accepted in
+tasks/2026-05-28-phase6-pi5-production-timer-preemption-proof.md. It adds the
+`rpi5_production_timer_preemption_proof` boot scenario and retained
+`scripts/rpi5-production-timer-preemption-image.sh` plus
+`scripts/rpi5-production-timer-preemption-boot-tree.sh` reproduction helpers.
+The accepted local8 multi-observe hardware run records a fresh 104,136-byte
+candidate kernel fetch, archive/kernel digests, logical CPU reports for CPUs
+1, 2, and 3, `participants=3 expected=3 errors=0`,
+`classification=pi5-production-timer-preemption-complete`, PASS, and lab
+restore proof. This carries the QEMU production timer/preemption invariant to
+serialized Pi 5 hardware.
+
+The production scheduler runtime closeout is accepted in
+docs/src/project/phase6-production-scheduler-runtime-closeout-checkpoint.md.
+The retained gates are the scheduler unit tests, base QEMU smoke, QEMU
+timer-preemption, secondary service-loop, shared-runqueue, load-balancing,
+multi-core-preemption, and production timer/preemption smokes, plus the Pi 5
+production timer/preemption reproduction scripts for explicit future hardware
+tasks. Additional scheduler productionization, general secondary runtime
+roles, remote current-task switching, running-task migration, autonomous work
+stealing, Phase 7, filesystem, networking, SSH, and shell behavior require a
+new supervisor-planned bounded task.
