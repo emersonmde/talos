@@ -1,0 +1,1 @@
+-rwxr-xr-x node/node     95064 2026-05-27 21:01 ./kernel_2712.img

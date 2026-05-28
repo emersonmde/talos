@@ -1,0 +1,8 @@
+rpi5-load-balancing: start task-capacity=1 queue-capacity=1 boot-mpidr=0x0000000081000000 boot-affinity=0x0 boot-logical=Some(0)
+rpi5-load-balancing: report source-owner=0 destination-owner=1 task=109 task-state=runnable registered-generation=1 plan-generation=1 publish-reserved-state=migration-reserved publish-queued-state=shared-queued consume-queued-state=shared-queued consume-destination-state=destination-enqueued source-queue-before=1 source-queue-after-publish=0 shared-len-after-publish=1 shared-len-after-consume=0 destination-queue-len=1 destination-front=109 metadata-owner-after-consume=1 metadata-generation-after-consume=2 selected-front=true source-removed=true destination-enqueued=true metadata-migrated=true errors=0 ok=true
+rpi5-load-balancing: final participants=1 expected=1 errors=0 classification=pi5-load-balancing-complete
+rpi5-load-balancing: PASS
+rpi5-load-balancing: start task-capacity=1 queue-capacity=1 boot-mpidr=0x0000000081000000 boot-affinity=0x0 boot-logical=Some(0)
+rpi5-load-balancing: report source-owner=0 destination-owner=1 task=109 task-state=runnable registered-generation=1 plan-generation=1 publish-reserved-state=migration-reserved publish-queued-state=shared-queued consume-queued-state=shared-queued consume-destination-state=destination-enqueued source-queue-before=1 source-queue-after-publish=0 shared-len-after-publish=1 shared-len-after-consume=0 destination-queue-len=1 destination-front=109 metadata-owner-after-consume=1 metadata-generation-after-consume=2 selected-front=true source-removed=true destination-enqueued=true metadata-migrated=true errors=0 ok=true
+rpi5-load-balancing: final participants=1 expected=1 errors=0 classification=pi5-load-balancing-complete
+rpi5-load-balancing: PASS
