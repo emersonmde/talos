@@ -79,5 +79,8 @@ Before implementing scheduler structs, check that:
 - wakeups can target tasks
 - descriptor and address-space pointers can be added without redesign
 
-This note should be replaced or expanded by the Phase 7 POSIX contract baseline before VFS, syscalls, and user processes are implemented.
-
+This note is now expanded by
+[Phase 7 POSIX Contract Baseline](phase7-posix-contract-baseline.md), which
+defines the accepted Phase 7.1 errno, path, process lifetime, descriptor,
+stdio inheritance, and early loader vocabulary before VFS, syscalls, and user
+processes are implemented.

@@ -12,6 +12,37 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-28 - Phase 7.1 POSIX Contract Baseline Accepted
+
+- Status: accepted as the documentation-only Phase 7.1 POSIX baseline
+  contract. No Rust implementation, boot scenario, QEMU run, Pi 5 hardware
+  run, EL0 entry, SVC/syscall ABI, descriptor table, VFS, filesystem, program
+  loader, networking, SSH, shell, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache behavior was added.
+- Context: The accepted Phase 7 source inventory established the scheduler
+  task/process boundary, runtime-console/TTY stdio direction, diagnostic
+  command limitations, lower-EL readiness limits, and retained gates. The next
+  contract needed stable names and edge cases before implementation tasks could
+  add path, errno, or descriptor cores.
+- Decision: Accept phase7-posix-contract-baseline-20260528. The baseline
+  defines errno-style names, lexical path normalization semantics, process
+  lifetime vocabulary, descriptor operation vocabulary, stdio inheritance
+  through descriptor-owned handles, early loader/argument/environment
+  vocabulary, and target-independent test seams.
+- Evidence level: static inspection, documentation build, and whitespace
+  inspection. Hardware and QEMU reruns were not required because this task
+  changes only documentation and durable state.
+- Validation: git status --short was clean before edits; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next bounded implementation task should be
+  phase7-path-error-model-core-20260528. Milestone 7.1 is not complete until
+  target-independent tests for path normalization and descriptor-table edge
+  cases are accepted.
+- Risks: Descriptor table implementation, VFS/filesystem, process tables, EL0,
+  SVC/syscalls, program loading, scheduler blocking I/O, filesystem-backed
+  commands, local shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
+  and DMA/cache-driver policy remain deferred.
+
 ## 2026-05-28 - Phase 7.1 POSIX Contract Source Inventory Accepted
 
 - Status: accepted as documentation/source inventory before the first Phase

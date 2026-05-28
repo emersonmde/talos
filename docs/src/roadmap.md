@@ -14,13 +14,12 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 ## Current Status
 
 Talos is currently in Phase 7.1, after accepting the Phase 6.3 production
-scheduler runtime closeout and the first Phase 7 POSIX contract source
-inventory. The active frontier is still contract-first: errno/error vocabulary,
-path normalization semantics, process lifetime vocabulary, descriptor
-operation vocabulary, stdio inheritance shape, and early loader/argument/
-environment shape must be documented before EL0, SVC/syscall ABI, descriptor
-tables, VFS, filesystem, program loading, networking, SSH, or shell work
-starts.
+scheduler runtime closeout, the first Phase 7 POSIX contract source inventory,
+and the documentation-only Phase 7 POSIX contract baseline. The active
+frontier is still target-independent: path normalization and errno mapping
+must be implemented and tested before descriptor-table implementation, EL0,
+SVC/syscall ABI, VFS, filesystem, program loading, networking, SSH, or shell
+work starts.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -96,7 +95,11 @@ classification=pi5-production-timer-preemption-complete, participants=3,
 expected=3, errors=0, and PASS. The accepted Phase 7 POSIX contract source
 inventory maps the scheduler task/process boundary, runtime-console and TTY
 stdio direction, diagnostic command limitations, lower-EL readiness limits,
-and retained validation gates that constrain the next POSIX baseline contract.
+and retained validation gates that constrain the POSIX baseline contract. The
+accepted Phase 7 POSIX contract baseline defines the first errno-style names,
+lexical path normalization semantics, process lifetime vocabulary,
+descriptor-operation vocabulary, stdio inheritance shape, early loader
+argument/environment vocabulary, and target-independent test seams.
 The obsolete-bloat inventory and removal sweep are accepted before the
 multi-core preemption core: historical QEMU secondary-core discriminator paths
 and old Pi 5 allocator, exception, panic, and translation-fault proof-only
@@ -991,9 +994,14 @@ Accepted progress:
   scheduler task/process separation, runtime-console and TTY stdio direction,
   diagnostic command-channel limits, lower-EL readiness limits, and retained
   Phase 4 through Phase 6 gates that constrain the first POSIX baseline
-  contract. The next bounded task is the documentation-only POSIX baseline
-  contract; EL0, SVC/syscall ABI, descriptor table implementation, VFS,
-  filesystem, program loading, networking, SSH, and shell work remain blocked.
+  contract.
+- Phase 7 POSIX contract baseline is accepted. It defines the first
+  errno-style names, path normalization semantics, process lifetime vocabulary,
+  descriptor operation vocabulary, stdio inheritance shape, and early
+  loader/argument/environment vocabulary. The next bounded implementation task
+  is the target-independent path/error model core. Descriptor-table
+  implementation, EL0, SVC/syscall ABI, VFS, filesystem, program loading,
+  networking, SSH, and shell work remain blocked.
 
 Milestone 7.2: EL0 Trap Path and User Address Spaces
 
