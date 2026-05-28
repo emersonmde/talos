@@ -71,6 +71,7 @@
 - [Phase 7 EL0 Trap and Address-Space Contract](project/phase7-el0-trap-address-space-contract.md)
 - [Phase 7 QEMU EL0 Trap Smoke Plan](project/phase7-qemu-el0-trap-smoke-plan.md)
 - [Phase 7 QEMU EL0 Trap Smoke Closeout Checkpoint](project/phase7-qemu-el0-trap-smoke-closeout-checkpoint.md)
+- [Phase 7 Pi 5 EL0 Trap Proof Plan](project/phase7-pi5-el0-trap-proof-plan.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

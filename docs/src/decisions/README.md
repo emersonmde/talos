@@ -4034,3 +4034,35 @@ ADR template:
   capture, script gate, and retained QEMU evidence. Pi 5 proof, general
   syscall ABI, process loading, filesystem behavior, shell behavior,
   networking, and SSH remain blocked.
+
+## 2026-05-28 - Phase 7 Pi 5 EL0 Trap Proof Plan Accepted
+
+- Status: accepted as a documentation-only Phase 7.2 plan for the serialized
+  Raspberry Pi 5 lower-EL trap proof. No Rust implementation, assembly
+  implementation, boot archive publishing, power-cycle, serial observe,
+  hardware-lock acquisition, general syscall ABI, process loading,
+  VFS/filesystem, descriptor I/O, shell behavior, networking, SSH, RP1/PCIe,
+  UART interrupt ownership, or DMA/cache behavior was added.
+- Context: The QEMU EL0 trap smoke implementation and closeout are accepted
+  with retained QEMU/substitute evidence. Before the invariant can be carried
+  to physical Pi 5 hardware, the candidate identity, lock ownership, fresh
+  serial/TFTP evidence, inconclusive-run triage, and restoration requirements
+  must be fixed.
+- Decision: Accept phase7-pi5-el0-trap-proof-plan-20260528. The future
+  hardware task must acquire hardwareTestLock, stage a focused
+  rpi5_el0_trap_proof candidate, prove fresh candidate fetch and serial
+  capture, and require saved-state output plus
+  classification=pi5-el0-trap-proof-complete and rpi5-el0-trap-proof: PASS.
+  If the first candidate run is inconclusive, no code may change until
+  candidate identity, fresh serial cursor, TFTP delta, known-good control, and
+  candidate rerun evidence are recorded.
+- Evidence level: static documentation inspection, documentation build, and
+  whitespace inspection. No Pi 5 hardware evidence was claimed.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-pi5-el0-trap-proof-20260528, gated by an unlocked hardwareTestLock.
+  It may add only the focused Pi 5 proof source/script surfaces named in the
+  plan and must preserve the blocked syscall ABI, process loading, descriptor
+  I/O, filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt, and
+  DMA/cache-driver surfaces.

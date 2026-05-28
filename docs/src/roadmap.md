@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.2 QEMU EL0 trap smoke closeout frontier,
+Talos is at the Phase 7.2 Pi 5 EL0 trap proof planning frontier,
 after accepting the Phase 6.3 production scheduler runtime closeout, the full
 Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -25,7 +25,11 @@ defined the first lower-EL proof boundary: one QEMU-only built-in user payload,
 a diagnostic SVC marker trap back to the kernel, saved-state output, and
 PASS/classification evidence. The accepted QEMU implementation now reports
 classification=qemu-el0-trap-smoke-complete and qemu-el0-trap-smoke: PASS
-from retained QEMU/substitute serial evidence. Pi 5 lower-EL proof, general
+from retained QEMU/substitute serial evidence. The accepted Pi 5 proof plan
+defines the serialized physical invariant, hardwareTestLock ownership,
+candidate identity, fresh serial cursor, TFTP delta, known-good control,
+candidate rerun, restoration, and exact rpi5-el0-trap-proof PASS/classification
+requirements before any hardware action. Pi 5 lower-EL evidence, general
 SVC/syscall ABI, VFS, filesystem, program loading, descriptor I/O, networking,
 SSH, and shell work remain blocked until later explicit bounded tasks accept
 their contracts and gates.
@@ -141,7 +145,11 @@ implements that bounded scenario, retaining serial evidence at
 tasks/evidence/2026-05-28-qemu-el0-trap-smoke-core/qemu-el0-trap-smoke.txt
 with the saved lower-AArch64 synchronous trap state, final classification, and
 PASS. This is QEMU/substitute evidence only; physical Pi 5 lower-EL behavior
-remains gated behind a serialized proof plan and hardwareTestLock.
+remains gated behind a serialized hardware run under hardwareTestLock. The
+accepted Pi 5 proof plan requires rpi5-el0-trap-proof saved-state output,
+classification=pi5-el0-trap-proof-complete, rpi5-el0-trap-proof: PASS, fresh
+candidate identity, serial cursor, TFTP delta, restoration evidence, and the
+standard inconclusive-run triage before code changes.
 The obsolete-bloat inventory and removal sweep are accepted before the
 multi-core preemption core: historical QEMU secondary-core discriminator paths
 and old Pi 5 allocator, exception, panic, and translation-fault proof-only
