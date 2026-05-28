@@ -1226,5 +1226,29 @@ CpuLocalSchedulerService::run_preemption_cycle from normal owner-local control
 flow. PASS requires the current task to return to runnable, the selected local
 runnable task to become running, the pending request to clear only after
 service, and owner-published metadata to refresh for that same logical CPU.
-This is QEMU substitute evidence only; Pi 5 hardware proof remains separate and
-serialized behind hardwareTestLock.
+This is QEMU substitute evidence. The serialized Pi 5 proof now carries the
+same invariant to physical hardware.
+
+## Phase 6.3 Pi 5 Multi-Core Preemption Proof
+
+The retained Pi 5 proof surface is rpi5_multicore_preemption_proof, staged by
+scripts/rpi5-multicore-preemption-image.sh and
+scripts/rpi5-multicore-preemption-boot-tree.sh. It uses the same PSCI
+secondary entry, per-core state, stack ownership checks, and secondary
+cacheable-MMU handoff path as the accepted secondary scheduler service-loop
+proof.
+
+The physical proof starts logical CPUs 1, 2, and 3 on Raspberry Pi 5 hardware.
+Each participant records and coalesces local timer-preemption state, rejects a
+cross-owner record, proves the record-only step did not mutate scheduler
+state, and then services the pending request through
+CpuLocalSchedulerService::run_preemption_cycle from owner-local normal control
+flow.
+
+Accepted serial evidence reports participants=3, expected=3, errors=0,
+classification=pi5-multicore-preemption-complete, and PASS. The proof remains
+diagnostic evidence only; it does not accept direct IRQ/IPI-context scheduling,
+autonomous work stealing, running-task migration, remote current-task
+switching, general remote reschedule, userspace, descriptors, filesystem,
+networking, SSH, shell behavior, RP1/PCIe, UART interrupt ownership, or
+DMA/cache-driver policy.

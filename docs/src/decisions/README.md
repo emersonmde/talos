@@ -3478,3 +3478,40 @@ ADR template:
   preemption proof after supervisor ready-marking and hardware lock
   availability. Physical behavior remains unclaimed until that task is accepted
   or explicitly deferred.
+
+## 2026-05-28 - Pi 5 Multi-Core Preemption Proof Accepted
+
+- Status: accepted as serialized Raspberry Pi 5 hardware evidence for the
+  Phase 6.3 multi-core preemption core. No direct IRQ/IPI-context scheduling,
+  remote current-task switching, running-task migration, autonomous work
+  stealing, Phase 7, filesystem, networking, SSH, shell, RP1/PCIe, UART
+  interrupt ownership, or DMA/cache behavior was added.
+- Context: The accepted QEMU proof showed the invariant with logical CPUs 1, 2,
+  and 3. The Pi 5 proof needed to carry that same owner-local record/service
+  invariant to physical hardware under hardwareTestLock, with TFTP, serial,
+  artifact identity, participant count, and restore evidence.
+- Decision: Accept phase6-pi5-multicore-preemption-proof-20260527. The
+  rpi5_multicore_preemption_proof boot scenario and
+  scripts/rpi5-multicore-preemption-image.sh /
+  scripts/rpi5-multicore-preemption-boot-tree.sh stage the retained Pi 5
+  proof. The physical run reached
+  classification=pi5-multicore-preemption-complete with participants=3,
+  expected=3, errors=0, and PASS.
+- Evidence level: static inspection, fmt/lint/typecheck, no_std unit tests,
+  focused QEMU substitute rerun, image/archive inspection, serialized Pi 5
+  hardware serial output, TFTP fetch evidence, and restore proof.
+- Validation: cargo fmt --all -- --check, cargo -Zjson-target-spec test,
+  scripts/qemu-multicore-preemption-smoke.sh,
+  scripts/rpi5-multicore-preemption-image.sh,
+  scripts/rpi5-archive-review.sh
+  target/talos-rpi5-multicore-preemption-boot.tar.gz, serialized Pi 5
+  publish/power-cycle/observe/restore, git diff --check, and mdbook build
+  passed.
+- Rationale: The only code correction after the inconclusive candidate runs was
+  to include rpi5_multicore_preemption_proof in the already accepted secondary
+  cacheable-MMU handoff guard. That matches the accepted secondary
+  service-loop proof path and avoids changing scheduler semantics.
+- Consequences: Multi-core preemption now has contract, target-independent
+  core, QEMU substitute proof, and serialized Pi 5 proof evidence. The next
+  bounded task should be the multi-core preemption closeout checkpoint before
+  any Phase 7 or later subsystem work.

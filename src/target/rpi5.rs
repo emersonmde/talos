@@ -3,6 +3,7 @@
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_load_balancing_proof",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 use crate::arch::aarch64;
@@ -30,9 +31,15 @@ use crate::scheduler::TargetWakeConsumptionError;
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_load_balancing_proof",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 use crate::scheduler::{ContextFrame, KernelStack, Task, TaskState};
+#[cfg(talos_boot_scenario = "rpi5_multicore_preemption_proof")]
+use crate::scheduler::{
+    CpuLocalSchedulerService, PerCorePreemptionState, PreemptionRecordOutcome, RemoteWakeQueue,
+    SharedSchedulerMetadata,
+};
 #[cfg(talos_boot_scenario = "rpi5_load_balancing_proof")]
 use crate::scheduler::{
     LoadBalancingPolicy, LogicalCpuId, MigrationState, PerCoreScheduler, SharedRunQueue,
@@ -46,6 +53,7 @@ use crate::scheduler::{
 #[cfg(any(
     talos_boot_scenario = "rpi5_remote_wakeup_request",
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 use crate::scheduler::{
@@ -78,6 +86,7 @@ use crate::smp::SECONDARY_CORE_WORKLOAD_TARGET;
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_load_balancing_proof",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 use crate::smp::{
@@ -90,6 +99,7 @@ use crate::smp::{
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 use crate::smp_sync::{SpinLock, smp_full_barrier};
@@ -112,6 +122,7 @@ use core::cell::UnsafeCell;
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 use core::sync::atomic::{AtomicU64, Ordering};
@@ -174,6 +185,7 @@ const TIMER_PREEMPTION_TARGET_SWITCHES: u64 = 6;
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 const RPI5_SECONDARY_WAIT_LIMIT: usize = 200_000_000;
@@ -189,6 +201,8 @@ const SHARED_RUNQUEUE_MIGRATION_QUEUE_CAPACITY: usize = 1;
 const LOAD_BALANCING_PROOF_TASK_CAPACITY: usize = 1;
 #[cfg(talos_boot_scenario = "rpi5_load_balancing_proof")]
 const LOAD_BALANCING_PROOF_QUEUE_CAPACITY: usize = 1;
+#[cfg(talos_boot_scenario = "rpi5_multicore_preemption_proof")]
+const MULTICORE_PREEMPTION_PROOF_TASK_CAPACITY: usize = 2;
 #[cfg(talos_boot_scenario = "rpi5_secondary_scheduler_service_loop")]
 const SECONDARY_SCHEDULER_SERVICE_LOOP_TASK_CAPACITY: usize = 1;
 #[cfg(any(
@@ -221,6 +235,7 @@ const RPI5_SMP_LOCK_WAIT_POLL_INTERVAL: usize = 20_000_000;
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 const RPI5_SCTLR_M_ENABLE: u64 = 1 << 0;
@@ -231,6 +246,7 @@ const RPI5_SCTLR_M_ENABLE: u64 = 1 << 0;
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 const RPI5_SCTLR_C_ENABLE: u64 = 1 << 2;
@@ -241,6 +257,7 @@ const RPI5_SCTLR_C_ENABLE: u64 = 1 << 2;
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 const RPI5_SCTLR_I_ENABLE: u64 = 1 << 12;
@@ -253,6 +270,7 @@ const RPI5_SCTLR_I_ENABLE: u64 = 1 << 12;
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 const PSCI_AFFINITY_INFO: u64 = 0x8400_0004;
@@ -265,6 +283,7 @@ const PSCI_AFFINITY_INFO: u64 = 0x8400_0004;
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 const PSCI_CPU_ON: u64 = 0xc400_0003;
@@ -323,6 +342,7 @@ static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 unsafe extern "C" {
@@ -372,6 +392,7 @@ pub fn firmware_console() -> Pl011 {
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn secondary_stack_layout() -> CoreStackLayout {
@@ -390,6 +411,7 @@ fn secondary_stack_layout() -> CoreStackLayout {
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn secondary_state_name(state: u64) -> &'static str {
@@ -405,6 +427,7 @@ fn secondary_state_name(state: u64) -> &'static str {
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 unsafe fn psci_smc(function_id: u64, arg1: u64, arg2: u64, arg3: u64) -> i64 {
@@ -448,6 +471,7 @@ unsafe fn psci_smc(function_id: u64, arg1: u64, arg2: u64, arg3: u64) -> i64 {
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) -> i64 {
@@ -463,6 +487,7 @@ unsafe fn psci_cpu_on_smc(target_affinity: u64, entry: usize, context: usize) ->
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 unsafe fn psci_affinity_info_smc(target_affinity: u64, lowest_affinity_level: u64) -> i64 {
@@ -485,6 +510,7 @@ unsafe fn psci_affinity_info_smc(target_affinity: u64, lowest_affinity_level: u6
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn psci_affinity_state_name(state: i64) -> &'static str {
@@ -505,6 +531,7 @@ fn psci_affinity_state_name(state: i64) -> &'static str {
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 #[unsafe(no_mangle)]
@@ -531,6 +558,7 @@ pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
             talos_boot_scenario = "rpi5_production_secondary_dispatch",
             talos_boot_scenario = "rpi5_shared_scheduler_metadata",
             talos_boot_scenario = "rpi5_shared_runqueue_migration",
+            talos_boot_scenario = "rpi5_multicore_preemption_proof",
             talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
         ))]
         if !enter_secondary_cacheable_mmu_handoff(logical_cpu) {
@@ -549,6 +577,7 @@ pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
             talos_boot_scenario = "rpi5_production_secondary_dispatch",
             talos_boot_scenario = "rpi5_shared_scheduler_metadata",
             talos_boot_scenario = "rpi5_shared_runqueue_migration",
+            talos_boot_scenario = "rpi5_multicore_preemption_proof",
             talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
         ))]
         core_state.republish_identity(context, mpidr, affinity, stack_pointer as usize);
@@ -589,6 +618,11 @@ pub extern "C" fn talos_rpi5_secondary_entry(context: usize) -> ! {
         {
             run_shared_runqueue_migration_secondary(core_state, logical_cpu);
             write_uart10_bytes_early_phase(b"TALOS: secondary_shared_runqueue_complete\r\n");
+        }
+        #[cfg(talos_boot_scenario = "rpi5_multicore_preemption_proof")]
+        {
+            run_multicore_preemption_secondary(core_state, logical_cpu);
+            write_uart10_bytes_early_phase(b"TALOS: secondary_multicore_preemption_complete\r\n");
         }
         #[cfg(talos_boot_scenario = "rpi5_secondary_scheduler_service_loop")]
         {
@@ -674,6 +708,7 @@ fn reset_production_secondary_dispatch_state() {
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
@@ -689,6 +724,7 @@ fn scheduler_role_name(role: SchedulerCoreRole) -> &'static str {
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_load_balancing_proof",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn task_id(raw: u64) -> TaskId {
@@ -700,6 +736,7 @@ fn task_id(raw: u64) -> TaskId {
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_load_balancing_proof",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn scheduler_task(logical_cpu: usize, progress: u64) -> Task {
@@ -1791,6 +1828,289 @@ fn run_secondary_scheduler_service_loop_secondary(
     core_state.clean_to_poc();
 }
 
+#[cfg(talos_boot_scenario = "rpi5_multicore_preemption_proof")]
+#[derive(Clone, Copy)]
+struct MultiCorePreemptionProofReport {
+    owner: u64,
+    role: SchedulerCoreRole,
+    current_before_record: u64,
+    next_task: u64,
+    queue_len_before_record: u64,
+    metadata_generation_before_record: u64,
+    record_inserted: bool,
+    duplicate_coalesced: bool,
+    cross_owner_rejected: bool,
+    current_after_record: u64,
+    queue_len_after_record: u64,
+    metadata_generation_after_record: u64,
+    scheduler_mutated_during_record: bool,
+    pending_after_record: bool,
+    service_timer_preemption: u64,
+    current_after_service: u64,
+    queue_len_after_service: u64,
+    front_after_service: u64,
+    previous_task_state: u64,
+    selected_task_state: u64,
+    pending_after_service: bool,
+    recorded_requests: u64,
+    coalesced_requests: u64,
+    serviced_requests: u64,
+    metadata_owner_after_service: u64,
+    metadata_task_after_service: u64,
+    metadata_generation_after_service: u64,
+    errors: u64,
+}
+
+#[cfg(talos_boot_scenario = "rpi5_multicore_preemption_proof")]
+impl MultiCorePreemptionProofReport {
+    const fn empty() -> Self {
+        Self {
+            owner: u64::MAX,
+            role: SchedulerCoreRole::SecondaryDeferred,
+            current_before_record: 0,
+            next_task: 0,
+            queue_len_before_record: 0,
+            metadata_generation_before_record: 0,
+            record_inserted: false,
+            duplicate_coalesced: false,
+            cross_owner_rejected: false,
+            current_after_record: 0,
+            queue_len_after_record: 0,
+            metadata_generation_after_record: 0,
+            scheduler_mutated_during_record: true,
+            pending_after_record: false,
+            service_timer_preemption: 0,
+            current_after_service: 0,
+            queue_len_after_service: 0,
+            front_after_service: 0,
+            previous_task_state: 0,
+            selected_task_state: 0,
+            pending_after_service: true,
+            recorded_requests: 0,
+            coalesced_requests: 0,
+            serviced_requests: 0,
+            metadata_owner_after_service: u64::MAX,
+            metadata_task_after_service: 0,
+            metadata_generation_after_service: 0,
+            errors: 0,
+        }
+    }
+
+    const fn progress(self) -> u64 {
+        if self.errors == 0
+            && self.record_inserted
+            && self.duplicate_coalesced
+            && self.cross_owner_rejected
+            && !self.scheduler_mutated_during_record
+            && self.pending_after_record
+            && !self.pending_after_service
+            && self.serviced_requests == 1
+        {
+            1
+        } else {
+            0
+        }
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_multicore_preemption_proof")]
+#[derive(Clone, Copy)]
+struct MultiCorePreemptionProofState {
+    reports: [MultiCorePreemptionProofReport; MAX_CORES],
+    lock_progress: [u64; MAX_CORES],
+}
+
+#[cfg(talos_boot_scenario = "rpi5_multicore_preemption_proof")]
+impl MultiCorePreemptionProofState {
+    const fn new() -> Self {
+        Self {
+            reports: [MultiCorePreemptionProofReport::empty(); MAX_CORES],
+            lock_progress: [0; MAX_CORES],
+        }
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_multicore_preemption_proof")]
+static MULTICORE_PREEMPTION_PROOF_STATE: SpinLock<MultiCorePreemptionProofState> =
+    SpinLock::new(MultiCorePreemptionProofState::new());
+
+#[cfg(talos_boot_scenario = "rpi5_multicore_preemption_proof")]
+fn reset_multicore_preemption_proof_state() {
+    let mut state = unsafe { MULTICORE_PREEMPTION_PROOF_STATE.lock_irqsave() };
+    *state = MultiCorePreemptionProofState::new();
+}
+
+#[cfg(talos_boot_scenario = "rpi5_multicore_preemption_proof")]
+fn build_multicore_preemption_proof_report(logical_cpu: usize) -> MultiCorePreemptionProofReport {
+    let owner = LogicalCpuId::new(logical_cpu);
+    let mut scheduler = PerCoreScheduler::<2>::production_secondary_diagnostic(owner);
+    let mut preemption = PerCorePreemptionState::new(owner);
+    let mut remote_wakes = RemoteWakeQueue::<1>::new(owner);
+    let mut metadata =
+        SharedSchedulerMetadata::<MULTICORE_PREEMPTION_PROOF_TASK_CAPACITY, MAX_CORES>::new();
+    let mut current = scheduler_task(logical_cpu, 1);
+    let mut next = scheduler_task(logical_cpu, 2);
+    current.set_state(TaskState::Running);
+
+    let mut errors = 0;
+    if scheduler.set_current_task(owner, current.id()).is_err() {
+        errors += 1;
+    }
+    match scheduler.local_scheduler_mut(owner) {
+        Ok(local_scheduler) => {
+            if local_scheduler.make_runnable(&mut next).is_err() {
+                errors += 1;
+            }
+        }
+        Err(_) => errors += 1,
+    }
+    if metadata
+        .register_local_task(owner, &scheduler, &current)
+        .is_err()
+    {
+        errors += 1;
+    }
+    if metadata
+        .register_local_task(owner, &scheduler, &next)
+        .is_err()
+    {
+        errors += 1;
+    }
+
+    let current_before_record = scheduler.current_task().map_or(0, TaskId::raw);
+    let queue_len_before_record = scheduler.scheduler().runnable().len() as u64;
+    let metadata_generation_before_record = metadata.generation();
+    let record_inserted =
+        preemption.record_local_timer_irq(owner) == Ok(PreemptionRecordOutcome::Inserted);
+    if !record_inserted {
+        errors += 1;
+    }
+    let duplicate_coalesced =
+        preemption.record_local_timer_irq(owner) == Ok(PreemptionRecordOutcome::Coalesced);
+    if !duplicate_coalesced {
+        errors += 1;
+    }
+    let cross_owner_rejected = preemption
+        .record_local_timer_irq(LogicalCpuId::BOOT)
+        .is_err();
+    if !cross_owner_rejected {
+        errors += 1;
+    }
+
+    let current_after_record = scheduler.current_task().map_or(0, TaskId::raw);
+    let queue_len_after_record = scheduler.scheduler().runnable().len() as u64;
+    let metadata_generation_after_record = metadata.generation();
+    let scheduler_mutated_during_record = current_after_record != current_before_record
+        || queue_len_after_record != queue_len_before_record
+        || metadata_generation_after_record != metadata_generation_before_record
+        || current.state() != TaskState::Running
+        || next.state() != TaskState::Runnable;
+    if scheduler_mutated_during_record {
+        errors += 1;
+    }
+    let pending_after_record = preemption.pending_timer_request();
+    if !pending_after_record {
+        errors += 1;
+    }
+
+    let service_report = CpuLocalSchedulerService::run_preemption_cycle(
+        owner,
+        &mut scheduler,
+        &mut preemption,
+        &mut remote_wakes,
+        &mut metadata,
+        &mut next,
+        Some(&mut current),
+        false,
+    );
+    let service_timer_preemption = match service_report {
+        Ok(report) => report.timer_preemption().map_or(0, TaskId::raw),
+        Err(_) => {
+            errors += 1;
+            0
+        }
+    };
+
+    let current_after_service = scheduler.current_task().map_or(0, TaskId::raw);
+    let queue_len_after_service = scheduler.scheduler().runnable().len() as u64;
+    let front_after_service = scheduler
+        .scheduler()
+        .runnable()
+        .front()
+        .map_or(0, TaskId::raw);
+    let final_metadata = metadata.lookup_task(next.id());
+    let (
+        metadata_owner_after_service,
+        metadata_task_after_service,
+        metadata_generation_after_service,
+    ) = match final_metadata {
+        Ok(snapshot) => (
+            snapshot.owner().raw() as u64,
+            snapshot.task_id().raw(),
+            snapshot.generation(),
+        ),
+        Err(_) => {
+            errors += 1;
+            (u64::MAX, 0, 0)
+        }
+    };
+    let counters = preemption.counters();
+
+    MultiCorePreemptionProofReport {
+        owner: scheduler.owner().raw() as u64,
+        role: scheduler.role(),
+        current_before_record,
+        next_task: next.id().raw(),
+        queue_len_before_record,
+        metadata_generation_before_record,
+        record_inserted,
+        duplicate_coalesced,
+        cross_owner_rejected,
+        current_after_record,
+        queue_len_after_record,
+        metadata_generation_after_record,
+        scheduler_mutated_during_record,
+        pending_after_record,
+        service_timer_preemption,
+        current_after_service,
+        queue_len_after_service,
+        front_after_service,
+        previous_task_state: task_state_code(current.state()),
+        selected_task_state: task_state_code(next.state()),
+        pending_after_service: preemption.pending_timer_request(),
+        recorded_requests: counters.recorded_requests(),
+        coalesced_requests: counters.coalesced_requests(),
+        serviced_requests: counters.serviced_requests(),
+        metadata_owner_after_service,
+        metadata_task_after_service,
+        metadata_generation_after_service,
+        errors,
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_multicore_preemption_proof")]
+fn publish_multicore_preemption_proof_report(
+    logical_cpu: usize,
+    report: MultiCorePreemptionProofReport,
+) {
+    let mut state = MULTICORE_PREEMPTION_PROOF_STATE.lock();
+    state.reports[logical_cpu] = report;
+    state.lock_progress[logical_cpu] = report.progress();
+}
+
+#[cfg(talos_boot_scenario = "rpi5_multicore_preemption_proof")]
+fn run_multicore_preemption_secondary(core_state: &smp::PerCoreState, logical_cpu: usize) {
+    core_state.mark_workload_running();
+    core_state.clean_to_poc();
+
+    let report = build_multicore_preemption_proof_report(logical_cpu);
+    publish_multicore_preemption_proof_report(logical_cpu, report);
+    smp_full_barrier();
+
+    core_state.mark_workload_complete(report.progress());
+    core_state.clean_to_poc();
+}
+
 #[cfg(talos_boot_scenario = "rpi5_smp_lock_cache_coherence")]
 #[derive(Clone, Copy)]
 struct SmpLockContentionState {
@@ -1900,6 +2220,7 @@ static SMP_LOCK_DIAGNOSTIC_SCTLR_EL2: [AtomicU64; MAX_CORES] =
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_READY: AtomicU64 = AtomicU64::new(0);
@@ -1910,6 +2231,7 @@ static SECONDARY_CACHEABLE_MMU_HANDOFF_READY: AtomicU64 = AtomicU64::new(0);
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_MAIR_EL2: AtomicU64 = AtomicU64::new(0);
@@ -1920,6 +2242,7 @@ static SECONDARY_CACHEABLE_MMU_HANDOFF_MAIR_EL2: AtomicU64 = AtomicU64::new(0);
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_TCR_EL2: AtomicU64 = AtomicU64::new(0);
@@ -1930,6 +2253,7 @@ static SECONDARY_CACHEABLE_MMU_HANDOFF_TCR_EL2: AtomicU64 = AtomicU64::new(0);
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_TTBR0_EL2: AtomicU64 = AtomicU64::new(0);
@@ -1940,6 +2264,7 @@ static SECONDARY_CACHEABLE_MMU_HANDOFF_TTBR0_EL2: AtomicU64 = AtomicU64::new(0);
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 static SECONDARY_CACHEABLE_MMU_HANDOFF_SCTLR_EL2: AtomicU64 = AtomicU64::new(0);
@@ -1951,6 +2276,7 @@ static SECONDARY_CACHEABLE_MMU_HANDOFF_SCTLR_EL2: AtomicU64 = AtomicU64::new(0);
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn clean_secondary_cacheable_mmu_handoff_plan() {
@@ -1968,6 +2294,7 @@ fn clean_secondary_cacheable_mmu_handoff_plan() {
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn publish_secondary_cacheable_mmu_handoff_plan(
@@ -1993,6 +2320,7 @@ fn publish_secondary_cacheable_mmu_handoff_plan(
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn secondary_cacheable_mmu_handoff_plan() -> Option<crate::arch::aarch64::El2Stage1CacheRegime> {
@@ -2020,6 +2348,7 @@ fn secondary_cacheable_mmu_handoff_plan() -> Option<crate::arch::aarch64::El2Sta
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn enter_secondary_cacheable_mmu_handoff(logical_cpu: usize) -> bool {
@@ -2620,6 +2949,7 @@ fn publish_remote_wake_request(target: usize, task_id: TaskId) -> bool {
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_load_balancing_proof",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn task_state_code(state: TaskState) -> u64 {
@@ -2635,6 +2965,7 @@ fn task_state_code(state: TaskState) -> u64 {
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
     talos_boot_scenario = "rpi5_load_balancing_proof",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn task_state_name(code: u64) -> &'static str {
@@ -2823,6 +3154,7 @@ fn write_remote_wakeup_wait_observation(remaining: usize) {
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn current_sctlr_el2() -> u64 {
@@ -2840,6 +3172,7 @@ fn current_sctlr_el2() -> u64 {
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn cacheable_mmu_enabled(sctlr: u64) -> bool {
@@ -2854,6 +3187,7 @@ fn cacheable_mmu_enabled(sctlr: u64) -> bool {
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn clean_cache_line_to_poc<T>(value: &T) {
@@ -2874,6 +3208,7 @@ fn clean_cache_line_to_poc<T>(value: &T) {
     talos_boot_scenario = "rpi5_production_secondary_dispatch",
     talos_boot_scenario = "rpi5_shared_scheduler_metadata",
     talos_boot_scenario = "rpi5_shared_runqueue_migration",
+    talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 fn invalidate_cache_line_from_poc<T>(value: &T) {
@@ -4776,6 +5111,236 @@ pub fn run_secondary_scheduler_service_loop_proof() -> bool {
     reports_ok
 }
 
+#[cfg(talos_boot_scenario = "rpi5_multicore_preemption_proof")]
+pub fn run_multicore_preemption_proof() -> bool {
+    smp::reset_secondary_core_states();
+    reset_multicore_preemption_proof_state();
+
+    let boot_mpidr = aarch64::mpidr_el1();
+    let boot_affinity = aarch64::mpidr_affinity(boot_mpidr);
+    let boot_logical = pi5_logical_cpu_from_mpidr_affinity(boot_affinity);
+    let boot_cache_regime = crate::arch::aarch64::current_el2_stage1_cache_regime();
+    let boot_sctlr_el2 = boot_cache_regime.map_or_else(current_sctlr_el2, |regime| regime.sctlr);
+    let entry = talos_aarch64_rpi5_secondary_entry as *const () as usize;
+    let stack_layout = secondary_stack_layout();
+    let stack_base = core::ptr::addr_of!(talos_secondary_core_stacks) as usize;
+    let stack_end = core::ptr::addr_of!(talos_secondary_core_stacks_end) as usize;
+
+    crate::println!(
+        "rpi5-multicore-preemption: start conduit=smc cores={} task-capacity={} boot-mpidr={:#018x} boot-affinity={:#x} boot-logical={:?} boot-sctlr-el2={:#018x} boot-cacheable-mmu={} entry={:#018x} stack-range=[{:#018x},{:#018x})",
+        MAX_CORES,
+        MULTICORE_PREEMPTION_PROOF_TASK_CAPACITY,
+        boot_mpidr,
+        boot_affinity,
+        boot_logical,
+        boot_sctlr_el2,
+        cacheable_mmu_enabled(boot_sctlr_el2),
+        entry,
+        stack_base,
+        stack_end
+    );
+    wait_uart10_empty_early_phase();
+
+    if let Some(regime) = boot_cache_regime {
+        publish_secondary_cacheable_mmu_handoff_plan(regime);
+        crate::println!(
+            "rpi5-multicore-preemption: secondary-cacheable-mmu-handoff-plan mair-el2={:#018x} tcr-el2={:#018x} ttbr0-el2={:#018x} sctlr-el2={:#018x} cacheable-mmu={}",
+            regime.mair,
+            regime.tcr,
+            regime.ttbr0,
+            regime.sctlr,
+            cacheable_mmu_enabled(regime.sctlr)
+        );
+    } else {
+        SECONDARY_CACHEABLE_MMU_HANDOFF_READY.store(0, Ordering::Release);
+        clean_secondary_cacheable_mmu_handoff_plan();
+        crate::println!(
+            "rpi5-multicore-preemption: secondary-cacheable-mmu-handoff-plan unavailable"
+        );
+    }
+    wait_uart10_empty_early_phase();
+
+    let mut cpu_on_ok = true;
+    for logical_cpu in 1..MAX_CORES {
+        let target_affinity = (logical_cpu as u64) << 8;
+        let result = unsafe { psci_cpu_on_smc(target_affinity, entry, logical_cpu) };
+        crate::println!(
+            "rpi5-multicore-preemption: cpu-on logical={} target-affinity={:#x} result={}",
+            logical_cpu,
+            target_affinity,
+            result
+        );
+        cpu_on_ok &= result == 0;
+        let affinity_after = unsafe { psci_affinity_info_smc(target_affinity, 0) };
+        crate::println!(
+            "rpi5-multicore-preemption: affinity-after logical={} target-affinity={:#x} level=0 state={} raw={}",
+            logical_cpu,
+            target_affinity,
+            psci_affinity_state_name(affinity_after),
+            affinity_after
+        );
+        wait_uart10_empty_early_phase();
+    }
+
+    let mut remaining = RPI5_SECONDARY_WAIT_LIMIT;
+    while remaining > 0 {
+        let all_complete = (1..MAX_CORES).all(|logical_cpu| {
+            SECONDARY_CORE_STATES[logical_cpu].invalidate_from_poc();
+            SECONDARY_CORE_STATES[logical_cpu]
+                .snapshot(logical_cpu)
+                .lifecycle
+                >= CoreLifecycle::WorkloadComplete
+        });
+        if all_complete {
+            break;
+        }
+        core::hint::spin_loop();
+        remaining -= 1;
+    }
+
+    let final_state = MULTICORE_PREEMPTION_PROOF_STATE
+        .try_lock()
+        .map(|state| *state);
+    let state_lock_available = final_state.is_some();
+    let final_state = final_state.unwrap_or_else(MultiCorePreemptionProofState::new);
+    let metadata_lock_available = true;
+    let mut participants = 0;
+    let mut errors = 0;
+    let mut reports_ok = cpu_on_ok && boot_logical == Some(0) && state_lock_available;
+
+    for logical_cpu in 1..MAX_CORES {
+        SECONDARY_CORE_STATES[logical_cpu].invalidate_from_poc();
+        let report = final_state.reports[logical_cpu];
+        let core_report = SECONDARY_CORE_STATES[logical_cpu].snapshot(logical_cpu);
+        let logical_from_mpidr = pi5_logical_cpu_from_mpidr_affinity(core_report.affinity);
+        let stack_slot = stack_layout
+            .slot(logical_cpu)
+            .expect("stack slot for possible Pi 5 core");
+        let stack_owned = stack_slot.contains_stack_pointer(core_report.stack_pointer);
+        let expected_current = (logical_cpu as u64 + 1) * 100 + 1;
+        let expected_next = (logical_cpu as u64 + 1) * 100 + 2;
+        let report_ok = core_report.lifecycle >= CoreLifecycle::WorkloadComplete
+            && core_report.context == logical_cpu
+            && logical_from_mpidr == Some(logical_cpu)
+            && stack_owned
+            && report.owner == logical_cpu as u64
+            && report.role == SchedulerCoreRole::SecondaryProductionDiagnostic
+            && report.current_before_record == expected_current
+            && report.next_task == expected_next
+            && report.queue_len_before_record == 1
+            && report.metadata_generation_before_record > 0
+            && report.record_inserted
+            && report.duplicate_coalesced
+            && report.cross_owner_rejected
+            && report.current_after_record == expected_current
+            && report.queue_len_after_record == 1
+            && report.metadata_generation_after_record == report.metadata_generation_before_record
+            && !report.scheduler_mutated_during_record
+            && report.pending_after_record
+            && report.service_timer_preemption == expected_next
+            && report.current_after_service == expected_next
+            && report.queue_len_after_service == 1
+            && report.front_after_service == expected_current
+            && report.previous_task_state == task_state_code(TaskState::Runnable)
+            && report.selected_task_state == task_state_code(TaskState::Running)
+            && !report.pending_after_service
+            && report.recorded_requests == 1
+            && report.coalesced_requests == 1
+            && report.serviced_requests == 1
+            && report.metadata_owner_after_service == logical_cpu as u64
+            && report.metadata_task_after_service == expected_next
+            && report.metadata_generation_after_service > report.metadata_generation_after_record
+            && report.errors == 0
+            && final_state.lock_progress[logical_cpu] == 1;
+        if report_ok {
+            participants += 1;
+        }
+        errors += report.errors;
+        reports_ok &= report_ok;
+
+        crate::println!(
+            "rpi5-multicore-preemption: report logical={} state={} context={} mpidr={:#018x} affinity={:#x} mapped={:?} sp={:#018x} stack=[{:#018x},{:#018x}) owner={} role={} current-before-record={} next={} queue-len-before-record={} metadata-generation-before-record={} record-outcome={} duplicate-outcome={} cross-owner-rejected={} current-after-record={} queue-len-after-record={} metadata-generation-after-record={} irq-record-scheduler-mutated={} pending-after-record={} service-timer-preemption={} current-after-service={} queue-len-after-service={} front-after-service={} previous-task-state={} selected-task-state={} pending-after-service={} recorded={} coalesced={} serviced={} metadata-owner-after-service={} metadata-task-after-service={} metadata-generation-after-service={} lock-progress={} errors={} ok={}",
+            logical_cpu,
+            secondary_state_name(core_report.lifecycle.raw()),
+            core_report.context,
+            core_report.mpidr,
+            core_report.affinity,
+            logical_from_mpidr,
+            core_report.stack_pointer,
+            stack_slot.bottom,
+            stack_slot.top,
+            report.owner,
+            scheduler_role_name(report.role),
+            report.current_before_record,
+            report.next_task,
+            report.queue_len_before_record,
+            report.metadata_generation_before_record,
+            if report.record_inserted {
+                "inserted"
+            } else {
+                "error"
+            },
+            if report.duplicate_coalesced {
+                "coalesced"
+            } else {
+                "error"
+            },
+            report.cross_owner_rejected,
+            report.current_after_record,
+            report.queue_len_after_record,
+            report.metadata_generation_after_record,
+            report.scheduler_mutated_during_record,
+            report.pending_after_record,
+            report.service_timer_preemption,
+            report.current_after_service,
+            report.queue_len_after_service,
+            report.front_after_service,
+            task_state_name(report.previous_task_state),
+            task_state_name(report.selected_task_state),
+            report.pending_after_service,
+            report.recorded_requests,
+            report.coalesced_requests,
+            report.serviced_requests,
+            report.metadata_owner_after_service,
+            report.metadata_task_after_service,
+            report.metadata_generation_after_service,
+            final_state.lock_progress[logical_cpu],
+            report.errors,
+            report_ok
+        );
+        wait_uart10_empty_early_phase();
+    }
+
+    let classification = if reports_ok {
+        "pi5-multicore-preemption-complete"
+    } else if !state_lock_available || !metadata_lock_available {
+        "pi5-multicore-preemption-lock-still-held"
+    } else if cpu_on_ok {
+        "pi5-multicore-preemption-invariant-failed"
+    } else {
+        "pi5-psci-smc-cpu-on-failed"
+    };
+    crate::println!(
+        "rpi5-multicore-preemption: final participants={} expected={} errors={} state-lock-available={} metadata-lock-available={} wait-remaining={} classification={}",
+        participants,
+        MAX_CORES - 1,
+        errors,
+        state_lock_available,
+        metadata_lock_available,
+        remaining,
+        classification
+    );
+
+    if reports_ok {
+        crate::println!("rpi5-multicore-preemption: PASS");
+    } else {
+        crate::println!("rpi5-multicore-preemption: FAIL");
+    }
+    wait_uart10_empty_early_phase();
+
+    reports_ok
+}
+
 #[cfg(talos_boot_scenario = "rpi5_psci_secondary_core_alive")]
 pub fn run_psci_secondary_core_alive_proof() -> bool {
     smp::reset_secondary_core_states();
@@ -6094,6 +6659,7 @@ pub(crate) fn write_uart10_byte_early_phase(byte: u8) {
         talos_boot_scenario = "rpi5_production_secondary_dispatch",
         talos_boot_scenario = "rpi5_shared_scheduler_metadata",
         talos_boot_scenario = "rpi5_shared_runqueue_migration",
+        talos_boot_scenario = "rpi5_multicore_preemption_proof",
         talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
     )
 ))]

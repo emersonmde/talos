@@ -73,6 +73,9 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
     #[cfg(talos_boot_scenario = "rpi5_load_balancing_proof")]
     target::rpi5::run_load_balancing_proof();
 
+    #[cfg(talos_boot_scenario = "rpi5_multicore_preemption_proof")]
+    target::rpi5::run_multicore_preemption_proof();
+
     #[cfg(talos_boot_scenario = "rpi5_secondary_scheduler_service_loop")]
     target::rpi5::run_secondary_scheduler_service_loop_proof();
 

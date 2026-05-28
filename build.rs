@@ -83,6 +83,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "rpi5_multicore_preemption_proof",
+        implied_values: &[],
+        asm_defines: &[RPI5_SMP_ASM],
+    },
+    BootScenario {
         value: "rpi5_secondary_scheduler_service_loop",
         implied_values: &[],
         asm_defines: &[RPI5_SMP_ASM],

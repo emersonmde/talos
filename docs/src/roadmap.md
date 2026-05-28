@@ -508,20 +508,23 @@ Accepted status and historical completed facts:
   service-loop, IPI/wake, metadata, SharedRunQueue, and load-balancing
   boundaries; names CPU-local versus cross-core assumptions; and recommends
   `phase6-multicore-preemption-contract-20260527` before implementation.
-- The Phase 6.3 multi-core preemption contract, target-independent core, and
-  QEMU substitute proof are accepted. The retained QEMU proof reports
+- The Phase 6.3 multi-core preemption contract, target-independent core, QEMU
+  substitute proof, and serialized Pi 5 hardware proof are accepted. The
+  retained QEMU proof reports
   classification=qemu-multicore-preemption-smoke-complete after logical CPUs 1,
   2, and 3 record local pending timer-preemption state without scheduler
   mutation and then service it through owner-local normal scheduler control
-  flow.
+  flow. The retained Pi 5 proof reports
+  classification=pi5-multicore-preemption-complete with participants=3 and
+  PASS for the same invariant.
 
 Blocked or pending:
 
-- The next explicit supervisor-planned task should be the serialized Pi 5
-  multi-core preemption proof or an explicit physical defer decision. Work
-  stealing, running-task migration, remote reschedule, userspace, descriptors,
-  filesystem, networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and
-  DMA/cache-coherent driver policy remain deferred.
+- The next explicit supervisor-planned task should be the multi-core
+  preemption closeout checkpoint. Work stealing, running-task migration,
+  remote reschedule, userspace, descriptors, filesystem, networking, SSH, shell
+  behavior, UART interrupts, RP1/PCIe, and DMA/cache-coherent driver policy
+  remain deferred.
 - Large raw accepted evidence remains in Git until external artifact storage or
   an explicit no-delete manifest-only cleanup is approved. Do not delete
   tracked accepted evidence during unrelated feature work.
@@ -878,8 +881,11 @@ closeout is accepted in
 `docs/src/project/phase6-load-balancing-closeout-checkpoint.md`; its next
 bounded Phase 6.3 recommendation is multi-core preemption source inventory.
 The multi-core preemption source inventory is accepted in
-`docs/src/project/phase6-multicore-preemption-source-inventory.md`; its next
-bounded recommendation is a contract task before implementation.
+`docs/src/project/phase6-multicore-preemption-source-inventory.md`; its
+contract, target-independent core, QEMU substitute proof, and serialized Pi 5
+proof are accepted in the corresponding Phase 6.3 task records. The next
+bounded recommendation is a multi-core preemption closeout checkpoint before
+any Phase 7 or later subsystem work.
 Before broader Phase 6.3 productionization, the accepted
 [Evidence Retention Policy](project/evidence-retention-policy.md) and
 [Diagnostic Surface Policy](project/diagnostic-surface-policy.md) govern which

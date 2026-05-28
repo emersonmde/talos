@@ -1,0 +1,10 @@
+28887a50d5753f1304d0259fea61ec5d4e94772e
+commit 28887a50d5753f1304d0259fea61ec5d4e94772e
+Author:     Matthew Emerson <emersonmde@protonmail.com>
+AuthorDate: Thu May 28 08:04:02 2026 -0400
+Commit:     Matthew Emerson <emersonmde@protonmail.com>
+CommitDate: Thu May 28 08:04:02 2026 -0400
+
+    Add QEMU multi-core preemption smoke
+    
+    Co-authored-by: Codex <noreply@openai.com>
