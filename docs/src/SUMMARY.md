@@ -60,6 +60,7 @@
 - [Phase 6 Multi-Core Preemption Source Inventory](project/phase6-multicore-preemption-source-inventory.md)
 - [Phase 6 Multi-Core Preemption Contract](project/phase6-multicore-preemption-contract.md)
 - [Phase 6 Multi-Core Preemption Closeout Checkpoint](project/phase6-multicore-preemption-closeout-checkpoint.md)
+- [Phase 6 Production Scheduler Runtime Source Inventory](project/phase6-production-scheduler-runtime-source-inventory.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

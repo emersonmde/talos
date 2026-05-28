@@ -12,6 +12,44 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-28 - Phase 6.3 Production Scheduler Runtime Source Inventory Accepted
+
+- Status: accepted as documentation/source inventory before production
+  timer/preemption runtime integration. No Rust behavior, boot image, QEMU
+  run, Pi 5 hardware run, direct IRQ/IPI-context scheduling, remote
+  current-task switching, running-task migration, autonomous work stealing,
+  Phase 7, filesystem, networking, SSH, shell, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache behavior was added.
+- Context: The multi-core preemption closeout accepted an owner-local
+  diagnostic primitive and required a bounded productionization task before
+  further scheduler runtime integration. The accepted proof surfaces needed to
+  be separated from normal boot, timer, and owner-local runtime entry points
+  before a contract could safely name implementation scope.
+- Decision: Accept
+  phase6-production-scheduler-runtime-source-inventory-20260528. The normal
+  timer handlers still acknowledge/classify/rearm/EOI and record only older
+  diagnostic counters under retained timer-preemption scenarios; they do not
+  yet route timer IRQs into durable `PerCorePreemptionState`. The accepted
+  multi-core preemption QEMU and Pi 5 proofs remain proof-only surfaces that
+  construct scenario-local scheduler/preemption/metadata objects and call the
+  record/service APIs directly from diagnostic flow.
+- Evidence level: static inspection, documentation build, and whitespace
+  inspection. Hardware and QEMU reruns were not required because this task
+  changes only documentation and durable state.
+- Validation: git status --short was clean before edits; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next bounded task should be
+  phase6-production-timer-preemption-contract-20260528. That contract must
+  name the normal timer IRQ recording path, owner-local post-IRQ service
+  point, current-task source of truth, per-CPU runtime objects, secondary
+  runtime limits, retained gates, and deterministic disabled/stale/wrong-owner
+  outcomes before any Rust implementation starts.
+- Risks: Production timer integration, non-diagnostic secondary runtime
+  roles, interrupt-driven remote reschedule, running-task migration, remote
+  current-task switching, work stealing, Phase 7, filesystem, networking, SSH,
+  shell behavior, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
+  policy remain deferred.
+
 ## 2026-05-28 - Phase 6.3 Multi-Core Preemption Closeout Accepted
 
 - Status: accepted as the checkpoint for the Phase 6.3 multi-core preemption

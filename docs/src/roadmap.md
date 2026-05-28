@@ -79,15 +79,20 @@ control flow with classification=qemu-multicore-preemption-smoke-complete. Pi
 5 proof reports classification=pi5-multicore-preemption-complete,
 participants=3, expected=3, errors=0, and PASS for the same invariant. The
 accepted multi-core preemption closeout preserves the retained gates and
-requires a new supervisor-planned bounded task before any further scheduler
-productionization or Phase 7 work.
+requires a new bounded productionization task before any further scheduler
+runtime integration or Phase 7 work. The accepted production scheduler
+runtime source inventory maps those retained diagnostic surfaces against the
+normal boot, timer, and owner-local runtime paths. The next bounded task is a
+production timer/preemption contract; implementation remains deferred until
+that contract is accepted.
 The obsolete-bloat inventory and removal sweep are accepted before the
 multi-core preemption core: historical QEMU secondary-core discriminator paths
 and old Pi 5 allocator, exception, panic, and translation-fault proof-only
 scripts/cfg/source paths are retired while accepted evidence summaries remain
 in task records. Direct IRQ/IPI-context scheduling, running-task migration,
-Phase 7, filesystem, networking, SSH, and shell work remain deferred until the
-next explicit supervisor-planned bounded task.
+non-diagnostic secondary runtime roles, Phase 7, filesystem, networking, SSH,
+and shell work remain deferred until the next explicit bounded task accepts
+them.
 
 Accepted status and historical completed facts:
 

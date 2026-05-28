@@ -1275,3 +1275,43 @@ autonomous work stealing, general remote reschedule, non-diagnostic secondary
 runtime roles, Phase 7, filesystem, networking, SSH, shell behavior,
 RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy. Further work
 requires a new supervisor-planned bounded task.
+
+## Phase 6.3 Production Scheduler Runtime Inventory
+
+The production scheduler runtime source inventory is accepted in
+docs/src/project/phase6-production-scheduler-runtime-source-inventory.md. It
+does not add runtime behavior; it maps the accepted diagnostic scheduler
+surfaces to the normal boot, timer, and owner-local runtime paths that a
+future production timer/preemption contract may touch.
+
+The accepted diagnostic surfaces remain useful but narrow. The multi-core
+preemption proofs construct scenario-local `PerCoreScheduler`,
+`PerCorePreemptionState`, `RemoteWakeQueue`, and metadata objects, call
+`PerCorePreemptionState::record_local_timer_irq` directly from proof code, and
+then call `CpuLocalSchedulerService::run_preemption_cycle` from owner-local
+diagnostic flow. That proves the record/service invariant but does not install
+durable per-CPU scheduler objects or route normal timer IRQs into pending
+preemption state.
+
+The normal timer path still runs through the target IRQ handlers. QEMU and Pi
+5 handlers acknowledge/classify the GIC interrupt, call the generic timer
+rearm helper for timer INTIDs, record older single-core diagnostic counters
+only under retained timer-preemption scenarios, EOI, and return. They do not
+yet map the current logical CPU to a production `PerCorePreemptionState`, and
+they do not invoke scheduler mutation in IRQ context.
+
+The production gaps are deliberately explicit: durable per-CPU storage for
+`PerCoreScheduler`, preemption state, remote-wake queues, and metadata access;
+a bounded timer IRQ recording path; a post-IRQ owner-local service point for
+primary and secondary runtime flow; current-task source-of-truth rules;
+preemption-disable critical-section ownership; and a non-diagnostic secondary
+runtime role. The next contract must preserve the accepted service order of
+target-owned remote wake consumption, local timer preemption, optional
+dispatch, and owner-published metadata refresh.
+
+Retained proof gates are the scheduler unit tests, the earlier QEMU timer and
+secondary service-loop smokes, the shared run-queue and load-balancing QEMU
+smokes, and the QEMU multi-core preemption smoke. The Pi 5 proof scripts
+remain reproduction surfaces for explicit later hardware tasks only. The next
+bounded task is the production timer/preemption contract; production
+implementation remains deferred until that contract is accepted.
