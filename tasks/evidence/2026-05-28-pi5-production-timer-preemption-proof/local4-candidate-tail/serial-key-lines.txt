@@ -1,0 +1,7 @@
+rpi5-load-balancing: final participants=1 expected=1 errors=0 classification=pi5-load-balancing-complete
+rpi5-load-balancing: final participants=1 expected=1 errors=0 classification=pi5-load-balancing-complete
+ 21.89 MESS:00:00:21.898381:0: Starting OS 21898 ms
+rpi5-load-balancing: final participants=1 expected=1 errors=0 classification=pi5-load-balancing-complete
+ 21.63 MESS:00:00:21.637646:0: Starting OS 21637 ms
+TALOS: asm_start
+rpi5-multicore-preemption: final participants=3 expected=3 errors=0 state-lock-available=true metadata-lock-available=true wait-remaining=199996688 classification=pi5-multicore-preemption-complete

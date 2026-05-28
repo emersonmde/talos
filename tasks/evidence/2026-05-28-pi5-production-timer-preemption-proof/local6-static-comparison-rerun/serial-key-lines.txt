@@ -1,0 +1,31 @@
+rpi5-load-balancing: final participants=1 expected=1 errors=0 classification=pi5-load-balancing-complete
+rpi5-load-balancing: PASS
+ 21.90 MESS:00:00:21.900948:0: Starting OS 21900 ms
+talos: boot start
+rpi5-load-balancing: final participants=1 expected=1 errors=0 classification=pi5-load-balancing-complete
+rpi5-load-balancing: PASS
+rpi5-load-balancing: final participants=1 expected=1 errors=0 classification=pi5-load-balancing-complete
+rpi5-load-balancing: PASS
+ 21.80 MESS:00:00:21.804555:0: Starting OS 21804 ms
+talos: boot start
+rpi5-load-balancing: final participants=1 expected=1 errors=0 classification=pi5-load-balancing-complete
+rpi5-load-balancing: PASS
+ 22.01 MESS:00:00:22.019070:0: Starting OS 22019 ms
+talos: boot start
+rpi5-load-balancing: final participants=1 expected=1 errors=0 classification=pi5-load-balancing-complete
+rpi5-load-balancing: PASS
+ 21.79 MESS:00:00:21.799905:0: Starting OS 21799 ms
+talos: boot start
+rpi5-load-balancing: final participants=1 expected=1 errors=0 classification=pi5-load-balancing-complete
+rpi5-load-balancing: PASS
+rpi5-load-balancing: final participants=1 expected=1 errors=0 classification=pi5-load-balancing-complete
+rpi5-load-balancing: PASS
+ 21.89 MESS:00:00:21.898381:0: Starting OS 21898 ms
+talos: boot start
+rpi5-load-balancing: final participants=1 expected=1 errors=0 classification=pi5-load-balancing-complete
+rpi5-load-balancing: PASS
+ 21.63 MESS:00:00:21.637646:0: Starting OS 21637 ms
+TALOS: asm_start
+talos: boot start
+rpi5-multicore-preemption: final participants=3 expected=3 errors=0 state-lock-available=true metadata-lock-available=true wait-remaining=199996688 classification=pi5-multicore-preemption-complete
+rpi5-multicore-preemption: PASS

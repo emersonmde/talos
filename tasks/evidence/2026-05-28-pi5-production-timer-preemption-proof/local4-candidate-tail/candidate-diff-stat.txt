@@ -1,0 +1,6 @@
+ build.rs           |   5 +
+ src/boot/rpi5.rs   |   3 +
+ src/main.rs        |   1 +
+ src/smp.rs         |   3 +
+ src/target/rpi5.rs | 659 ++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 5 files changed, 663 insertions(+), 8 deletions(-)

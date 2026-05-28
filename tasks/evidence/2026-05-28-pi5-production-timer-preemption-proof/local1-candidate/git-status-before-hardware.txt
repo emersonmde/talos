@@ -1,0 +1,8 @@
+ M build.rs
+ M src/boot/rpi5.rs
+ M src/main.rs
+ M src/smp.rs
+ M src/target/rpi5.rs
+?? scripts/rpi5-production-timer-preemption-boot-tree.sh
+?? scripts/rpi5-production-timer-preemption-image.sh
+?? tasks/evidence/2026-05-28-pi5-production-timer-preemption-proof/
