@@ -3662,3 +3662,45 @@ ADR template:
   scheduler runtime closeout remain separate later tasks; Phase 7 remains
   blocked until this production runtime slice is proved or explicitly deferred
   and closed out.
+
+## 2026-05-28 - QEMU Production Timer/Preemption Smoke Accepted
+
+- Status: accepted as a focused QEMU substitute proof for the Phase 6.3
+  production timer/preemption runtime integration. No Pi 5 hardware claim,
+  direct IRQ/IPI-context scheduler mutation, remote current-task switching,
+  running-task migration, autonomous work stealing, Phase 7, filesystem,
+  networking, SSH, shell, RP1/PCIe, UART interrupt ownership, or DMA/cache
+  behavior was added.
+- Context: The production timer/preemption core wired normal timer IRQ handlers
+  to record bounded local production preemption state, but the retained QEMU
+  proof gates still exercised either timer interrupts without production
+  scheduler service or direct diagnostic preemption primitives without the
+  production runtime boundary.
+- Decision: Accept
+  phase6-qemu-production-timer-preemption-smoke-20260528. The new
+  `qemu_production_timer_preemption_smoke` boot scenario and
+  `scripts/qemu-production-timer-preemption-smoke.sh` exercise the
+  target-owned production timer IRQ adapter and owner-local
+  `ProductionSchedulerRuntime::service_pending_preemption` together on QEMU
+  logical CPUs 1, 2, and 3.
+- Rationale: The proof distinguishes production runtime entry from direct
+  diagnostic helper calls while preserving the accepted rule that IRQ-side
+  work records only bounded state. Scheduler mutation remains in owner-local
+  normal control flow, with current-task, runnable-queue, and metadata state
+  unchanged across the record-only step.
+- Evidence level: static inspection, fmt/lint/typecheck, no_std unit tests,
+  retained QEMU substitute gates, focused QEMU production smoke transcript,
+  whitespace inspection, and documentation build. No hardware evidence was
+  claimed.
+- Validation: cargo fmt --all -- --check, cargo -Zjson-target-spec test,
+  scripts/qemu-smoke.sh, scripts/qemu-timer-preemption-smoke.sh,
+  scripts/qemu-secondary-scheduler-service-loop-smoke.sh,
+  scripts/qemu-shared-runqueue-migration-smoke.sh,
+  scripts/qemu-load-balancing-smoke.sh,
+  scripts/qemu-multicore-preemption-smoke.sh,
+  scripts/qemu-production-timer-preemption-smoke.sh, git diff --check, and
+  mdbook build passed.
+- Consequences: The next bounded task may carry the same production
+  timer/preemption invariant to serialized Pi 5 hardware evidence under the
+  hardwareTestLock. The production scheduler runtime closeout remains a
+  separate later task.

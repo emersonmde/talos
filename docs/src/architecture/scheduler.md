@@ -1368,9 +1368,19 @@ consumption, shared run queues, and metadata untouched in IRQ context.
 The target-independent owner-local service adapter is available through
 `ProductionSchedulerRuntime::service_pending_preemption`, which delegates to
 `CpuLocalSchedulerService::run_preemption_cycle` and preserves the accepted
-remote-wake, timer-preemption, optional-dispatch, metadata-refresh order. The
-next QEMU proof must exercise the production timer IRQ recording path and
-owner-local post-IRQ service point together. Later Pi 5 proof remains
-serialized under hardwareTestLock and must record candidate identity, TFTP,
-fresh serial, classification/PASS or blocker classification, and restore
-evidence. No physical claim is made by this core task.
+remote-wake, timer-preemption, optional-dispatch, metadata-refresh order.
+
+The focused QEMU production timer/preemption smoke is accepted in
+tasks/2026-05-28-phase6-qemu-production-timer-preemption-smoke.md. It adds the
+`qemu_production_timer_preemption_smoke` boot scenario and
+`scripts/qemu-production-timer-preemption-smoke.sh`. Under QEMU virt with
+three secondary logical CPUs, each production-capable owner records a pending
+timer-preemption request through the target-owned production timer IRQ adapter,
+coalesces a duplicate adapter record, rejects a wrong-owner record, proves the
+recording step did not mutate current-task, runnable-queue, or metadata state,
+then services the pending request through
+`ProductionSchedulerRuntime::service_pending_preemption` from owner-local
+normal control flow. Later Pi 5 proof remains serialized under
+hardwareTestLock and must record candidate identity, TFTP, fresh serial,
+classification/PASS or blocker classification, and restore evidence. No
+physical claim is made by this QEMU task.
