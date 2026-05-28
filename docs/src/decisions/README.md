@@ -3380,3 +3380,29 @@ ADR template:
   accepted evidence; those records are intentionally preserved. Future cleanup
   should continue to distinguish executable/current validation surfaces from
   historical evidence summaries.
+
+## 2026-05-27 - Senior Engineer Repo Review/Fix Pass 1 Accepted
+
+- Status: accepted as repository-health remediation before post-review hardware
+  validation, review pass 2, and Phase 6.3 multi-core preemption core work.
+  No scheduler feature, new hardware proof, Phase 7, filesystem, networking,
+  SSH, shell, RP1/PCIe, UART interrupt ownership, or DMA behavior was added.
+- Context: The cleanup baseline was physically validated on Pi 5. A full-repo
+  senior-engineer pass then reviewed unsafe code, SMP/scheduler boundaries,
+  boot-scenario routing, scripts, docs, tests, and evidence policy.
+- Decision: Accept talos-senior-engineer-repo-review-fix-pass-1-20260527. The
+  pass replaces the Pi 5 panic recursion guard's shared volatile
+  `UnsafeCell<bool>` with a word-sized atomic compare_exchange path, and updates
+  architecture docs that still described retired Pi 5 allocator, panic,
+  exception, and translation-fault proof-only diagnostics as active surfaces.
+- Evidence level: static inspection, fmt/lint/typecheck, no_std unit tests,
+  QEMU/substitute smoke, Pi 5 image build inspection, documentation build, and
+  whitespace inspection. Hardware was not required because this pass does not
+  claim a new physical behavior.
+- Validation: cargo fmt --all -- --check, cargo -Zjson-target-spec test with
+  147 no_std tests, scripts/qemu-smoke.sh, scripts/rpi5-image.sh,
+  git diff --check, and mdbook build passed.
+- Risks: The panic guard now depends on ordinary AArch64 word-sized atomic code
+  generation rather than the old volatile byte. The change removes a real SMP
+  data race while avoiding the retired byte-atomic shape, but a later
+  post-review Pi 5 hardware validation remains queued before review pass 2.

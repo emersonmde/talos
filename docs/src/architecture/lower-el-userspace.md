@@ -22,9 +22,10 @@ talos: translation enabled: el=0x2 sctlr=0x30c50831 ttbr0=0x2f000000 kind=el2-st
 
 This proves that the early kernel can keep running with EL2 stage-1 translation
 enabled, normal memory cacheable, and required MMIO reachable as device memory.
-It also proves the current same-EL exception path can report BRK, undefined
-instruction, data-abort, and translation-fault diagnostics with saved status and
-register state.
+Historical proof-only diagnostics also showed the same-EL exception path can
+report BRK, undefined instruction, data-abort, and translation-fault state. The
+old Pi 5 diagnostic wrappers for those proofs were retired after their accepted
+evidence was summarized.
 
 ## What The Map Does Not Prove
 

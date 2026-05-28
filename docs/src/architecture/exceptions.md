@@ -319,20 +319,20 @@ talos panic: panicked at src/main.rs:433:9:
 talos diagnostic panic
 ```
 
-That diagnostic has since been promoted into the default Pi 5 panic report:
-the ordinary `rpi5-panic-report` image now uses the same
-`println!("talos panic: {}", info)` path without requiring the
-`TALOS_RPI5_FULL_PANIC_INFO_DIAGNOSTIC` build flag. Hardware run
+That diagnostic was promoted into the default Pi 5 panic report before the
+proof-only panic image was retired. Hardware run
 `rpi5-default-panic-info-20260522T031900Z` served the 79,576-byte
 `90ca0a62a7855b5ecbc81dccd434f01a2e807ec4a79441bcb335625b763cc53b`
 kernel from `da591740/kernel_2712.img` and captured normal boot/status
 output, the static panic marker, the source location, and the diagnostic panic
-message.
+message. The active source path remains the normal panic handler
+`println!("talos panic: {}", info)`; the retired `rpi5-panic-report` wrapper
+and full-panic cfg are historical evidence only.
 
-Nested panic behavior now has a bounded Pi 5 classification path. The panic
-handler uses a tiny volatile panic-in-progress guard instead of
-`core::sync::atomic` because hardware showed early exclusive-byte atomics
-faulting before the nested marker. On the first panic, the handler records the
+Nested panic behavior has bounded Pi 5 historical evidence. The panic handler
+uses a word-sized atomic panic-in-progress guard so simultaneous panics on
+separate cores do not race through a shared `UnsafeCell<bool>`. On the first
+panic, the handler records the
 guard and prints the full `PanicInfo` line. On guarded re-entry, it avoids
 formatting and emits only:
 

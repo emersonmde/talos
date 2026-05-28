@@ -160,17 +160,16 @@ an ownership-description and non-overlap proof only: it does not implement
 free/reuse, change the global allocator, expand the heap, place mutable allocator
 metadata, claim high-memory ownership, or add DMA/cache-safe frame policy.
 
-The bounded free/reuse diagnostic is separate from the global heap. In code,
+The bounded free/reuse diagnostic was separate from the global heap. In code,
 `early_page_frame_reuse_allocator` manages an explicit tracked window inside the
 accepted `bootstrap-bump-owned` span using caller-provided metadata. The
 constructor rejects metadata that intersects the managed frames, and the focused
 tests prove allocate/free/reallocate behavior plus double-free, unaligned, and
-out-of-range rejection. The Pi 5 diagnostic flag
-`TALOS_RPI5_PAGE_FRAME_REUSE_DIAGNOSTIC` exercises a four-frame tracked window
-after the bootstrap allocator plan is known; it reports the metadata address
-range and reused frame, then halts. This does not replace
-`KERNEL_GLOBAL_ALLOCATOR`, provide heap deallocation, expand the heap, or claim
-ownership outside the accepted low identity-mapped span.
+out-of-range rejection. The old Pi 5 proof-only image for that path was retired
+by the 2026-05-27 diagnostic cleanup after its accepted evidence was captured in
+task records. This does not replace `KERNEL_GLOBAL_ALLOCATOR`, provide heap
+deallocation, expand the heap, or claim ownership outside the accepted low
+identity-mapped span.
 
 The heap expansion policy boundary now uses that same owned-span contract to
 name the only accepted frame source for early heap growth:
@@ -256,11 +255,11 @@ TALOS: mmu enable done
 talos: translation enabled: el=0x2 sctlr=0x30c50831 ttbr0=0x2f000000 kind=el2-stage1-4k-enabled
 ```
 
-Talos also has a controlled Pi 5 translation-fault diagnostic for this exact
-early EL2 map. The diagnostic minimizes unrelated DTB reporting, enables the
-same EL2 stage-1 tables, then deliberately reads from `0x80000000`, which is
-outside the current identity map. Accepted hardware output shows the post-MMU
-line followed by:
+Talos also captured a controlled Pi 5 translation-fault proof for this exact
+early EL2 map before the proof-only image was retired. That diagnostic minimized
+unrelated DTB reporting, enabled the same EL2 stage-1 tables, then deliberately
+read from `0x80000000`, which is outside the current identity map. Accepted
+hardware output showed the post-MMU line followed by:
 
 ```text
 TALOS: before translation fault va0x80000000 vbar=0x200800 el=2
@@ -381,12 +380,12 @@ the accepted boundary is still a small set of post-cache, allocator-adjacent
 runtime reports using the Daedalus-like `print!`/`println!` path with
 formatted fields.
 
-Talos also has an explicit Pi 5 allocation-failure diagnostic image gated by
-`TALOS_RPI5_ALLOC_OOM_DIAGNOSTIC`. It runs after
-`KERNEL_GLOBAL_ALLOCATOR` initialization and requests one `Vec<u8>` capacity
-larger than the remaining bump span. This is a fatal diagnostic boundary: the
-accepted hardware run proves the `alloc_error_handler` line is readable, then
-Talos spins instead of pretending that OOM is recoverable.
+Talos also captured an explicit Pi 5 allocation-failure proof before the
+proof-only image was retired. It ran after `KERNEL_GLOBAL_ALLOCATOR`
+initialization and requested one `Vec<u8>` capacity larger than the remaining
+bump span. This remains the fatal allocation boundary: the accepted hardware run
+proved the `alloc_error_handler` line is readable, then Talos spins instead of
+pretending that OOM is recoverable.
 
 ```text
 talos: alloc oom diagnostic: request=0x10bf0008 remaining=0x10bf0000 align=0x1
@@ -395,9 +394,9 @@ talos: alloc error: size=0x10bf0008 align=0x1
 
 The recoverable counterpart is `BumpAllocator::try_allocate_layout`, which
 returns a typed error instead of entering the `alloc_error_handler`. The
-cfg-gated `TALOS_RPI5_HEAP_EXPANSION_POLICY_DIAGNOSTIC` image reports the
-accepted low-tail frame source, then makes an oversized fallible request and
-requires `next` to remain unchanged:
+retired heap-expansion policy diagnostic reported the accepted low-tail frame
+source, then made an oversized fallible request and required `next` to remain
+unchanged:
 
 ```text
 talos: heap expansion policy diagnostic: source_start=0x2f010000 source_end=0x3fc00000 max_extension=0x10bf0000 source_kind=bootstrap-bump-owned-low-tail recoverable_kind=fallible-allocator-error fatal_kind=alloc-error-handler-spin request=0x10bf0008 remaining=0x10bf0000 recovered=true advanced=false ok=true
@@ -410,11 +409,11 @@ frames outside the accepted low identity-mapped span. The fatal OOM diagnostic
 above remains available as the behavior for infallible `alloc`-crate allocation
 failure.
 
-Talos also has a direct realloc growth diagnostic gated by
-`TALOS_RPI5_REALLOC_GROWTH_DIAGNOSTIC`. It allocates two bytes through the
-global allocator, grows that allocation to four bytes through
-`GlobalAlloc::realloc`, verifies the copied prefix plus newly written tail, and
-reports the no-free bump-accounting boundary:
+Talos also captured a direct realloc growth proof before the proof-only image
+was retired. It allocated two bytes through the global allocator, grew that
+allocation to four bytes through `GlobalAlloc::realloc`, verified the copied
+prefix plus newly written tail, and reported the no-free bump-accounting
+boundary:
 
 ```text
 talos: realloc grow smoke: old=0x2f010000 new=0x2f010002 size=4 sum=0x47 next=0x2f010006 used=0x6 rem=0x10befffa ex=true moved=true ok=true
@@ -424,12 +423,12 @@ This proves the current realloc growth path allocates a new region and retains
 the old region by policy. It is not a free/reuse policy, not a recoverable OOM
 policy, and not by itself an acceptance of alloc-crate container growth.
 
-Talos also has a cfg-gated `Vec<u8>` growth diagnostic under
-`TALOS_RPI5_VEC_GROWTH_DIAGNOSTIC`. It creates a vector with capacity two,
-fills those two slots, then uses `reserve_exact(2)` to force alloc-crate growth
-through the global allocator before filling and verifying four bytes. The
-accepted hardware run reports that the no-free bump allocator moved the vector
-from the original two-byte allocation to a new four-byte allocation:
+Talos also captured a `Vec<u8>` growth proof before the proof-only image was
+retired. It created a vector with capacity two, filled those two slots, then
+used `reserve_exact(2)` to force alloc-crate growth through the global
+allocator before filling and verifying four bytes. The accepted hardware run
+reported that the no-free bump allocator moved the vector from the original
+two-byte allocation to a new four-byte allocation:
 
 ```text
 talos: vec grow start
@@ -440,12 +439,12 @@ This accepts one narrow grow-on-demand `Vec` path. It does not accept
 `String` growth, collection-heavy kernel code, deallocation/reuse,
 recoverable OOM, allocator expansion, or page-frame-backed heap growth.
 
-Talos also has a cfg-gated `String` growth diagnostic under
-`TALOS_RPI5_STRING_GROWTH_DIAGNOSTIC`. It creates an ASCII string with
-capacity two, writes the first two bytes, then uses the string's backing
-`Vec<u8>` `reserve_exact(2)` path to force growth before filling and
-verifying four bytes. The accepted hardware run reports the same no-free bump
-growth boundary as the direct realloc and `Vec` growth diagnostics:
+Talos also captured an ASCII `String` growth proof before the proof-only image
+was retired. It created an ASCII string with capacity two, wrote the first two
+bytes, then used the string's backing `Vec<u8>` `reserve_exact(2)` path to
+force growth before filling and verifying four bytes. The accepted hardware run
+reported the same no-free bump growth boundary as the direct realloc and `Vec`
+growth diagnostics:
 
 ```text
 talos: string grow start
@@ -457,11 +456,11 @@ general string formatting, UTF-8 mutation policy, collection-heavy kernel code,
 deallocation/reuse, recoverable OOM, allocator expansion, or page-frame-backed
 heap growth.
 
-Talos also has a cfg-gated `alloc::format!` diagnostic under
-`TALOS_RPI5_ALLOC_FORMAT_DIAGNOSTIC`. It runs after
-`KERNEL_GLOBAL_ALLOCATOR` initialization, builds the formatted string
-`alloc::format!("{} {}", "Talos", 5usize)`, verifies the exact ASCII bytes,
-keeps the oversized direct-allocation guard, and reports allocator accounting:
+Talos also captured an `alloc::format!` proof before the proof-only image was
+retired. It ran after `KERNEL_GLOBAL_ALLOCATOR` initialization, built the
+formatted string `alloc::format!("{} {}", "Talos", 5usize)`, verified the
+exact ASCII bytes, kept the oversized direct-allocation guard, and reported
+allocator accounting:
 
 ```text
 talos: alloc format start
@@ -485,16 +484,15 @@ free/reuse or dynamic heap-growth implementation.
 Earlier broad `alloc`-crate variants using multiple containers at once were
 deferred after inconclusive hardware captures. The accepted boundary is now the
 global allocator symbol plus one `Box<[u64; 4]>` smoke, one bounded `Vec<u64>`
-capacity/fill smoke, one bounded ASCII `String` fill smoke, and one explicit
-fatal alloc-crate OOM diagnostic under the already-enabled MMU, instruction
-cache, and data cache. It also has one direct realloc growth diagnostic for the
-underlying global allocator, one cfg-gated `Vec<u8>` growth diagnostic, and one
-cfg-gated ASCII `String` growth diagnostic that use the alloc-crate reserve
-path. Talos has not accepted collection-heavy runtime allocation, UTF-8/string
-policy beyond the four-byte ASCII diagnostics, broad runtime string-formatting
-policy beyond the explicit `alloc::format!` smoke, or general free/reuse.
-Recoverable OOM is accepted only through the explicit fallible allocator API
-and heap-expansion policy diagnostic.
+capacity/fill smoke and one bounded ASCII `String` fill smoke under the
+already-enabled MMU, instruction cache, and data cache. Historical proof-only
+images also captured fatal alloc-crate OOM, direct realloc growth, `Vec<u8>`
+growth, ASCII `String` growth, and `alloc::format!`; those images were retired
+after the accepted evidence was summarized. Talos has not accepted
+collection-heavy runtime allocation, UTF-8/string policy beyond the four-byte
+ASCII diagnostics, broad runtime string-formatting policy beyond the explicit
+`alloc::format!` smoke, or general free/reuse. Recoverable OOM is accepted
+only through the explicit fallible allocator API and heap-expansion policy.
 
 During the follow-up `Vec` smoke investigation, normal dev-profile Pi 5 images
 hit a hardware handoff/output cliff between 181,176 and 181,184 bytes, and an
@@ -569,12 +567,12 @@ does not declare any new runtime behavior.
 | Firmware handoff and DTB memory discovery | Pi 5 reads the firmware DTB pointer, reports the current three /memory banks, and preserves the normal boot handoff. | Pi 5 serial/TFTP hardware. | Recent accepted DTB memory evidence through target/tmp/rpi5-dtb-memory-summary-println-20260523T1228Z-evidence; later surrounding evidence retained in target/tmp/rpi5-translation-population-post-println-readloop-20260523T1558Z-evidence; commit d3be399. | This is read-only DTB reporting, not high-memory ownership, bank balancing, or a complete physical memory manager. |
 | Low-tail usable candidate | Talos derives and reports one conservative page-aligned low-bank tail, 0x2f000000..0x3fc00000, after kernel, DTB/FDT, reserved-memory, early heap, and boot stack exclusions. | Pi 5 serial/TFTP hardware for both early formatter-free and post-allocator println copies. | target/tmp/rpi5-memory-usable-println-20260523T1256Z-evidence; later surrounding evidence in target/tmp/rpi5-translation-population-post-println-readloop-20260523T1558Z-evidence; commit d3be399. | The candidate is not a free list, not allocator ownership transfer, and not permission to allocate from high memory. |
 | Bootstrap reservation and table staging | The first 16 low-tail pages are reserved for early page-table/bootstrap work; four 4 KiB translation-table pages inside that span have fixed slots. | Pi 5 serial/TFTP hardware. | target/tmp/rpi5-bootstrap-reserve-post-println-20260523T1248Z-evidence, target/tmp/rpi5-translation-table-layout-post-literal-readloop-20260523T153123Z-evidence, target/tmp/rpi5-translation-table-slots-post-println-20260523T154311Z-evidence/summary-corrected.json; commit d3be399. | The reservation is static policy. It is not metadata placement for a mutable page allocator and does not transfer ownership of remaining frames. |
-| Page-frame ownership and bounded reuse diagnostic | Talos names the current low-tail frame partitions and can prove a small tracked-window allocate/free/reallocate cycle with metadata outside the managed frames. | Local no-std tests, QEMU substitute, normal Pi 5 image generation, and cfg-gated diagnostic image generation; no normal Pi 5 boot-output change. | Ownership tests plus `page_frame_reuse_allocator_allocates_frees_and_reuses_frame`, `page_frame_reuse_allocator_rejects_double_free_and_out_of_range_frame`, and `page_frame_reuse_allocator_requires_metadata_outside_managed_frames`; current task commit. | The global allocator remains no-free. This does not add heap deallocation, heap expansion, high-memory ownership, DMA-safe frame policy, or a complete physical memory manager. |
+| Page-frame ownership and bounded reuse diagnostic | Talos names the current low-tail frame partitions and can prove a small tracked-window allocate/free/reallocate cycle with metadata outside the managed frames. | Local no-std tests and historical Pi 5 proof evidence; the proof-only image was retired in the 2026-05-27 cleanup. | Ownership tests plus `page_frame_reuse_allocator_allocates_frees_and_reuses_frame`, `page_frame_reuse_allocator_rejects_double_free_and_out_of_range_frame`, `page_frame_reuse_allocator_requires_metadata_outside_managed_frames`, and accepted historical task evidence. | The global allocator remains no-free. This does not add heap deallocation, heap expansion, high-memory ownership, DMA-safe frame policy, or a complete physical memory manager. |
 | Translation skeleton | The accepted four-page EL2 stage-1 skeleton maps low memory and the BCM2712 local-peripheral window, reports population counts, and has a matching MAIR/TCR/TTBR/SCTLR plan. | Pi 5 serial/TFTP hardware for normal boot, plus local/QEMU gates for code paths. | target/tmp/rpi5-translation-population-post-println-readloop-20260523T1558Z-evidence; commit d3be399. | The map is intentionally narrow. It does not map RP1 PCIe, high memory, user address spaces, DMA buffers, or demand/fault recovery regions. |
 | MMU and cache bring-up | EL2 stage-1 translation, instruction cache, and data cache are enabled on the normal Pi 5 path while preserving serial output; data-cache-enabled is accepted on the ordinary println surface. | Pi 5 serial/TFTP hardware. | target/tmp/rpi5-data-cache-enabled-println-20260523T111335Z-evidence and later surrounding evidence; commit d3be399. | Cache enablement is an early-kernel execution boundary, not a DMA coherency contract or driver cache-maintenance API. |
-| Bootstrap allocator and heap policy | A no-free bump allocator owns the post-bootstrap low-tail span 0x2f010000..0x3fc00000 for early kernel allocation smoke tests. Direct kernel code now has a fallible allocation API and policy identifying that same span as the only accepted future heap-extension source. | Pi 5 serial/TFTP hardware for normal boot reports and cfg-gated fatal diagnostics; local unit tests, QEMU substitute, normal Pi 5 image generation, and cfg-gated heap-policy image generation for the recoverable boundary. | Normal reports in target/tmp/rpi5-bootstrap-allocator-plan-println-20260523T105926Z-evidence, target/tmp/rpi5-bootstrap-allocator-init-println-polled-20260523T104717Z-evidence, and later surrounding evidence; `fallible_allocation_reports_exhaustion_without_advancing`, `heap_expansion_policy_uses_allocator_owned_low_tail_and_protects_reserved_frames`, and current task commit. | The global allocator remains no-free. This does not install dynamic page-frame-backed heap growth, heap deallocation, broad collection-heavy runtime policy, or recoverable infallible `alloc`-crate allocation. |
-| Alloc-crate diagnostics | Bounded Box, Vec, String, direct realloc growth, Vec growth, String growth, alloc-backed formatting, and fatal OOM diagnostics have each been proven in narrow cfg-gated or normal paths. | Pi 5 serial/TFTP hardware for each accepted diagnostic, plus local gates. | Accepted diagnostic evidence recorded in the 2026-05-23 decision log; latest normal commit baseline d3be399. | These are small smoke boundaries. They do not accept arbitrary growth-heavy kernel allocation, UTF-8 policy, free/reuse, or recoverable infallible alloc-crate OOM. |
-| Exceptions and faults | Panic, BRK return/resume, undefined-instruction fatal reporting, ESR class labels, and a controlled translation-fault diagnostic can report useful AArch64 state. | Pi 5 serial/TFTP hardware for accepted diagnostics; QEMU remains useful for generic exception tests. | Decision-log entries from 2026-05-21 through 2026-05-23; current memory baseline commit d3be399. | Fault handling is fatal/reporting-oriented. Talos has not implemented page-fault recovery, lower-EL fault routing, or invalid-user-memory handling. |
+| Bootstrap allocator and heap policy | A no-free bump allocator owns the post-bootstrap low-tail span 0x2f010000..0x3fc00000 for early kernel allocation smoke tests. Direct kernel code now has a fallible allocation API and policy identifying that same span as the only accepted future heap-extension source. | Pi 5 serial/TFTP hardware for normal boot reports and accepted historical fatal diagnostics; local unit tests and normal Pi 5 image generation for the recoverable boundary. | Normal reports in target/tmp/rpi5-bootstrap-allocator-plan-println-20260523T105926Z-evidence, target/tmp/rpi5-bootstrap-allocator-init-println-polled-20260523T104717Z-evidence, and later surrounding evidence; `fallible_allocation_reports_exhaustion_without_advancing`, `heap_expansion_policy_uses_allocator_owned_low_tail_and_protects_reserved_frames`, and accepted historical task evidence. | The global allocator remains no-free. This does not install dynamic page-frame-backed heap growth, heap deallocation, broad collection-heavy runtime policy, or recoverable infallible `alloc`-crate allocation. |
+| Alloc-crate diagnostics | Bounded Box, Vec, String, direct realloc growth, Vec growth, String growth, alloc-backed formatting, and fatal OOM diagnostics have each been proven in narrow normal or historical proof-only paths. | Pi 5 serial/TFTP hardware for accepted historical diagnostics, plus local gates; proof-only image paths were retired in the 2026-05-27 cleanup. | Accepted diagnostic evidence recorded in the 2026-05-23 decision log and task records; latest normal memory baseline commit d3be399. | These are small smoke boundaries. They do not accept arbitrary growth-heavy kernel allocation, UTF-8 policy, free/reuse, or recoverable infallible alloc-crate OOM. |
+| Exceptions and faults | Panic, BRK return/resume, undefined-instruction fatal reporting, ESR class labels, and controlled translation-fault reporting have historical Pi 5 evidence. | Pi 5 serial/TFTP hardware for accepted historical diagnostics; proof-only image paths were retired in the 2026-05-27 cleanup; QEMU remains useful for generic exception tests. | Decision-log entries from 2026-05-21 through 2026-05-23; current memory baseline commit d3be399. | Fault handling is fatal/reporting-oriented. Talos has not implemented page-fault recovery, lower-EL fault routing, or invalid-user-memory handling. |
 
 Remaining Phase 3 implementation backlog after the high-memory/DMA/cache
 boundary:

@@ -66,11 +66,13 @@ post-allocator memory/page-frame/translation-table/DTB report tail. Their
 evidence remains in the task records and decision log; they are no longer
 active scripts or build.rs env/cfg surfaces.
 
-Current Pi 5 diagnostic wrappers are limited to active allocator, panic,
-exception/fault, and translation-fault checks plus normal image/archive/format
-gates. New bring-up probes should either become a bounded task diagnostic with
-an explicit retirement condition, a reusable validation gate, or a documented
-fact with the one-off code deleted.
+Current Pi 5 diagnostic wrappers are limited to retained Phase 4/5 timer,
+UART/TTY, diagnostic-command gates, Phase 6 SMP/scheduler proof gates, and the
+normal image/archive/format helpers. Old allocator, panic, exception/fault, and
+translation-fault proof-only wrappers were retired after their accepted evidence
+was summarized. New bring-up probes should either become a bounded task
+diagnostic with an explicit retirement condition, a reusable validation gate, or
+a documented fact with the one-off code deleted.
 
 The older bring-up narrative below is archival evidence. Its named probe flags
 and proof modes record what was run at the time; they are not current build or
@@ -732,11 +734,10 @@ talos panic: panicked at src/main.rs:433:9:
 talos diagnostic panic
 ```
 
-The accepted full `PanicInfo` output is now the default Pi 5 panic report,
+The accepted full `PanicInfo` output is now the default panic-handler output,
 not a separate output policy. Hardware run
-`rpi5-default-panic-info-20260522T031900Z` used the normal
-`rpi5-panic-report` diagnostic image without
-`TALOS_RPI5_FULL_PANIC_INFO_DIAGNOSTIC`; TFTP served the 79,576-byte
+`rpi5-default-panic-info-20260522T031900Z` used the now-retired
+`rpi5-panic-report` diagnostic image; TFTP served the 79,576-byte
 `90ca0a62a7855b5ecbc81dccd434f01a2e807ec4a79441bcb335625b763cc53b`
 kernel and serial captured the same normal boot/status output, static panic
 marker, source location, and panic message.

@@ -91,7 +91,9 @@ mod tty;
 
 use core::panic::PanicInfo;
 #[cfg(talos_target_rpi5_bcm2712)]
-pub(crate) struct PanicInProgress(core::cell::UnsafeCell<bool>);
+use core::sync::atomic::{AtomicUsize, Ordering};
+#[cfg(talos_target_rpi5_bcm2712)]
+pub(crate) struct PanicInProgress(AtomicUsize);
 
 use boot::BootInfo;
 
@@ -101,22 +103,15 @@ pub(crate) static KERNEL_GLOBAL_ALLOCATOR: allocator::BumpAllocator =
     allocator::BumpAllocator::new();
 
 #[cfg(talos_target_rpi5_bcm2712)]
-unsafe impl Sync for PanicInProgress {}
-
-#[cfg(talos_target_rpi5_bcm2712)]
 impl PanicInProgress {
     const fn new() -> Self {
-        Self(core::cell::UnsafeCell::new(false))
+        Self(AtomicUsize::new(0))
     }
 
     fn enter(&self) -> bool {
-        unsafe {
-            let was_in_progress = core::ptr::read_volatile(self.0.get());
-            if !was_in_progress {
-                core::ptr::write_volatile(self.0.get(), true);
-            }
-            was_in_progress
-        }
+        self.0
+            .compare_exchange(0, 1, Ordering::AcqRel, Ordering::Acquire)
+            .is_err()
     }
 }
 
