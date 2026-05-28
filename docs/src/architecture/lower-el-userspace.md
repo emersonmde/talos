@@ -113,29 +113,37 @@ permission validation; EL0 entry, trap-return assembly, translation-register
 changes, syscall ABI, VFS/filesystem work, program loading, descriptor I/O,
 shell behavior, QEMU proof, and Pi 5 proof remain separate explicit tasks.
 
-## Phase 7.2 QEMU EL0 Trap Smoke Plan
+## Phase 7.2 QEMU EL0 Trap Smoke Proof
 
-The accepted QEMU EL0 trap smoke plan defines the first lower-EL proof as a
-QEMU-only built-in payload. The planned payload maps fixed UserText,
+The accepted QEMU EL0 trap smoke plan defined the first lower-EL proof as a
+QEMU-only built-in payload. The accepted implementation maps fixed UserText,
 UserStack, and UserGuard ranges inside the accepted user range, validates the
 user ELR/SP/SPSR/mappings before ERET, executes only diagnostic SVC marker
 0x7a10, and traps back through the lower-AArch64 synchronous vector.
 
-The required QEMU evidence is a retained serial log with saved-state field
-names and the exact final lines:
+The retained QEMU evidence is:
+
+```text
+tasks/evidence/2026-05-28-qemu-el0-trap-smoke-core/qemu-el0-trap-smoke.txt
+```
+
+The log includes the saved-state field names and the exact final lines:
 qemu-el0-trap-smoke: final participants=1 expected=1 errors=0 classification=qemu-el0-trap-smoke-complete
-and qemu-el0-trap-smoke: PASS. This evidence remains QEMU/substitute only and
-does not acquire the Pi 5 hardware lock or claim physical lower-EL behavior.
+and qemu-el0-trap-smoke: PASS. The saved trap state reports the lower-AArch64
+synchronous vector, marker 0x7a10, ELR 0x0000000000100004 after the SVC, and
+SP 0x0000000000200000 at the top of the fixed UserStack range.
 
-The plan permits only the bounded implementation owners needed for the QEMU
-boot scenario, lower-EL vector/trap capture, fixed payload mapping, target QEMU
-harness output, and script gate. General syscall ABI, process loading,
-descriptor I/O, filesystem, shell, networking, and Pi 5 proof remain deferred.
+This evidence remains QEMU/substitute only. It does not acquire the Pi 5
+hardware lock or claim physical lower-EL behavior. General syscall ABI,
+process loading, descriptor I/O, filesystem, shell, networking, and Pi 5 proof
+remain deferred. The next lower-EL hardware step must first be a serialized Pi
+5 proof plan that names archive identity, serial cursor, TFTP delta,
+known-good control, candidate rerun, restoration, retained evidence, and
+hardwareTestLock ownership.
 
-Until implementation and proof work exists, Phase 4 interrupt/timer/preemption
-tasks may rely on the current EL2 kernel map only for kernel execution. They
-must not assume process isolation, lower-EL recovery, or user memory
-validation.
+Phase 4 interrupt/timer/preemption tasks may rely on the current EL2 kernel map
+only for kernel execution. They must not assume process isolation, physical
+lower-EL recovery, or production user memory validation.
 
 ## Validation Boundary
 

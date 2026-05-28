@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.2 QEMU EL0 trap smoke planning frontier,
+Talos is at the Phase 7.2 QEMU EL0 trap smoke closeout frontier,
 after accepting the Phase 6.3 production scheduler runtime closeout, the full
 Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -21,12 +21,14 @@ target-independent user-memory permission core. The accepted Phase 7.2 contract
 defines the first user/kernel virtual-address split vocabulary, lower-EL
 trap/return invariants, user fault classes, copy-in/copy-out preconditions,
 evidence levels, and blocked surfaces. The accepted QEMU EL0 trap smoke plan
-now defines the next lower-EL proof boundary: one QEMU-only built-in user
-payload, a diagnostic SVC marker trap back to the kernel, saved-state output,
-and PASS/classification evidence. Pi 5 lower-EL proof, general SVC/syscall ABI,
-VFS, filesystem, program loading, descriptor I/O, networking, SSH, and shell
-work remain blocked until later explicit bounded tasks accept their contracts
-and gates.
+defined the first lower-EL proof boundary: one QEMU-only built-in user payload,
+a diagnostic SVC marker trap back to the kernel, saved-state output, and
+PASS/classification evidence. The accepted QEMU implementation now reports
+classification=qemu-el0-trap-smoke-complete and qemu-el0-trap-smoke: PASS
+from retained QEMU/substitute serial evidence. Pi 5 lower-EL proof, general
+SVC/syscall ABI, VFS, filesystem, program loading, descriptor I/O, networking,
+SSH, and shell work remain blocked until later explicit bounded tasks accept
+their contracts and gates.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -134,7 +136,12 @@ and length-limit cases. The accepted QEMU EL0 trap smoke plan fixes the first
 QEMU-only lower-EL proof invariant and expected output:
 classification=qemu-el0-trap-smoke-complete and qemu-el0-trap-smoke: PASS
 after a built-in EL0 payload executes diagnostic SVC marker 0x7a10 and the
-kernel reports saved user state.
+kernel reports saved user state. The accepted QEMU EL0 trap smoke core
+implements that bounded scenario, retaining serial evidence at
+tasks/evidence/2026-05-28-qemu-el0-trap-smoke-core/qemu-el0-trap-smoke.txt
+with the saved lower-AArch64 synchronous trap state, final classification, and
+PASS. This is QEMU/substitute evidence only; physical Pi 5 lower-EL behavior
+remains gated behind a serialized proof plan and hardwareTestLock.
 The obsolete-bloat inventory and removal sweep are accepted before the
 multi-core preemption core: historical QEMU secondary-core discriminator paths
 and old Pi 5 allocator, exception, panic, and translation-fault proof-only

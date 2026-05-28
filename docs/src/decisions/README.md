@@ -12,6 +12,38 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-28 - Phase 7.2 QEMU EL0 Trap Smoke Closeout Accepted
+
+- Status: accepted as the documentation closeout for the first QEMU-only EL0
+  trap smoke proof. No Rust behavior, assembly behavior, QEMU rerun, Pi 5
+  hardware run, archive publishing, hardware-lock use, syscall ABI,
+  VFS/filesystem, program loader, descriptor I/O, networking, SSH, shell,
+  RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The accepted QEMU core implementation had retained serial evidence
+  for the planned diagnostic lower-AArch64 SVC marker path. A checkpoint was
+  required to reconcile the proof frontier and prevent QEMU/substitute evidence
+  from becoming a physical Pi 5 lower-EL claim.
+- Decision: Accept
+  phase7-qemu-el0-trap-smoke-closeout-checkpoint-20260528. The checkpoint
+  records that retained QEMU evidence contains the saved-state line,
+  classification=qemu-el0-trap-smoke-complete, and qemu-el0-trap-smoke: PASS
+  for the fixed built-in EL0 payload and marker 0x7a10.
+- Evidence level: static inspection, documentation build, whitespace
+  inspection, and previously accepted QEMU/substitute serial evidence. No Pi 5
+  hardware evidence was claimed.
+- Validation: git status --short was clean before edits; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next bounded task should be
+  phase7-pi5-el0-trap-proof-plan-20260528. It should remain documentation-only
+  and define hardwareTestLock ownership, candidate archive identity, fresh
+  serial cursor, TFTP delta, known-good control, candidate rerun rules after
+  inconclusive evidence, restoration, and retained evidence before any
+  hardware action.
+- Risks: Physical Pi 5 lower-EL behavior, general syscall ABI, process loading,
+  copy-in/copy-out implementation, descriptor I/O, VFS/filesystem, shell,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
+  policy remain deferred.
+
 ## 2026-05-28 - Phase 7.2 EL0 Address-Space Source Inventory Accepted
 
 - Status: accepted as the Phase 7.2 EL0 trap path and user address-space
