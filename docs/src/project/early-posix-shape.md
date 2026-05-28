@@ -83,4 +83,8 @@ This note is now expanded by
 [Phase 7 POSIX Contract Baseline](phase7-posix-contract-baseline.md), which
 defines the accepted Phase 7.1 errno, path, process lifetime, descriptor,
 stdio inheritance, and early loader vocabulary before VFS, syscalls, and user
-processes are implemented.
+processes are implemented. The descriptor portion is narrowed by the accepted
+[Phase 7 Descriptor Table Contract](phase7-descriptor-table-contract.md),
+which fixes process-local descriptor table entries, dup/close behavior,
+reserved stdio handles, and deterministic descriptor error cases before the
+target-independent table core is implemented.

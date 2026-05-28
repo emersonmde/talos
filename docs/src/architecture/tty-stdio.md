@@ -62,13 +62,22 @@ These names are for kernel diagnostics and future compatibility only. They are n
 
 ## Stdio Descriptor Shape
 
-stdin, stdout, and stderr should become process-local file descriptors through the descriptor model described in [Early POSIX Shape](../project/early-posix-shape.md). The TTY design should assume:
+stdin, stdout, and stderr should become process-local file descriptors through
+the descriptor model described in [Early POSIX Shape](../project/early-posix-shape.md)
+and narrowed by the accepted
+[Phase 7 Descriptor Table Contract](../project/phase7-descriptor-table-contract.md).
+The TTY design should assume:
 
 - fd 0, stdin, references the readable side of the controlling TTY only after an input source exists;
 - fd 1, stdout, references the normal writable side of the controlling TTY;
 - fd 2, stderr, references a separate writable stream identity that may initially share the same console device as stdout;
 - descriptor entries reference open file descriptions or kernel objects rather than embedding UART addresses;
 - blocking, nonblocking, close, dup, fork or spawn inheritance, and errno mapping belong to descriptor and syscall tasks.
+
+The first descriptor-table core may model fd 0, fd 1, and fd 2 as reserved
+kernel-object handles for unit tests. It must not call TTY functions, poll
+UART MMIO, write runtime-console0 bytes, or present direct diagnostic TTY calls
+as POSIX descriptor I/O.
 
 Until descriptor tables exist, kernel diagnostics may call TTY functions directly. They must not present those direct calls as POSIX read or write.
 

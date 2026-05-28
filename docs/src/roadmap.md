@@ -15,11 +15,12 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 Talos is currently in Phase 7.1, after accepting the Phase 6.3 production
 scheduler runtime closeout, the first Phase 7 POSIX contract source inventory,
-and the documentation-only Phase 7 POSIX contract baseline. The active
-frontier is still target-independent: path normalization and errno mapping
-must be implemented and tested before descriptor-table implementation, EL0,
-SVC/syscall ABI, VFS, filesystem, program loading, networking, SSH, or shell
-work starts.
+the documentation-only Phase 7 POSIX contract baseline, the target-independent
+path/error model core, and the documentation-only descriptor-table contract.
+The active frontier is still target-independent: descriptor-table allocation,
+close, dup, inherited stdio, reserved object kinds, and deterministic
+descriptor errors must be implemented and tested before EL0, SVC/syscall ABI,
+VFS, filesystem, program loading, networking, SSH, or shell work starts.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -99,7 +100,12 @@ and retained validation gates that constrain the POSIX baseline contract. The
 accepted Phase 7 POSIX contract baseline defines the first errno-style names,
 lexical path normalization semantics, process lifetime vocabulary,
 descriptor-operation vocabulary, stdio inheritance shape, early loader
-argument/environment vocabulary, and target-independent test seams.
+argument/environment vocabulary, and target-independent test seams. The
+accepted Phase 7 path/error model core implements the first no_std lexical path
+normalizer and PosixError vocabulary. The accepted descriptor-table contract
+keeps descriptors process-local, separates descriptor entries from underlying
+kernel objects, fixes close/dup and inherited stdio edge cases, and blocks
+runtime console/TTY I/O integration until a later explicit task.
 The obsolete-bloat inventory and removal sweep are accepted before the
 multi-core preemption core: historical QEMU secondary-core discriminator paths
 and old Pi 5 allocator, exception, panic, and translation-fault proof-only
@@ -998,10 +1004,15 @@ Accepted progress:
 - Phase 7 POSIX contract baseline is accepted. It defines the first
   errno-style names, path normalization semantics, process lifetime vocabulary,
   descriptor operation vocabulary, stdio inheritance shape, and early
-  loader/argument/environment vocabulary. The next bounded implementation task
-  is the target-independent path/error model core. Descriptor-table
-  implementation, EL0, SVC/syscall ABI, VFS, filesystem, program loading,
-  networking, SSH, and shell work remain blocked.
+  loader/argument/environment vocabulary.
+- Phase 7 path/error model core is accepted. It adds the target-independent
+  no_std path normalizer and PosixError vocabulary with unit tests.
+- Phase 7 descriptor-table contract is accepted. It keeps descriptor entries
+  process-local, separates entries from shared object handles, defines
+  close/dup/inherited-stdio semantics, and names deterministic descriptor
+  table errors for the next core implementation. Runtime console/TTY
+  descriptor I/O integration, EL0, SVC/syscall ABI, VFS, filesystem, program
+  loading, networking, SSH, and shell work remain blocked.
 
 Milestone 7.2: EL0 Trap Path and User Address Spaces
 

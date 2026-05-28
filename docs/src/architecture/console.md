@@ -52,7 +52,14 @@ The input side has a matching internal polling contract. `poll_default_console_i
 
 QEMU PL011 currently uses only `ByteAvailable` and `NoData`, because the accepted backend can distinguish data from RX-empty but has no recoverable error channel. Polling diagnostics own their own timeout policy around repeated `NoData`; timeout is not a console-backend result. These names are deliberately internal. Later descriptor and syscall work may map them to readiness, blocking, EOF, or errno-style behavior, but this contract does not implement POSIX `read`, `poll`, nonblocking I/O, or descriptor lifetime.
 
-The runtime console must not own POSIX process resources. Later descriptor work should attach `stdin`, `stdout`, and `stderr` handles to console objects through the descriptor layer, not by teaching the scheduler, boot code, or shell a private printing shortcut. The first `stdout` and `stderr` descriptors should point at `runtime-console0` through descriptor-owned handles; they should not call QEMU or Pi 5 target backends directly.
+The runtime console must not own POSIX process resources. The accepted
+[Phase 7 Descriptor Table Contract](../project/phase7-descriptor-table-contract.md)
+keeps `stdin`, `stdout`, and `stderr` as process-local descriptor entries that
+attach to console or TTY objects through descriptor-owned handles, not by
+teaching the scheduler, boot code, or shell a private printing shortcut. The
+first `stdout` and `stderr` descriptors should point at `runtime-console0`
+through those handles; they should not call QEMU or Pi 5 target backends
+directly.
 
 ## Input Source Inventory
 
@@ -90,6 +97,11 @@ This proves polling UART10 receive for the bounded local diagnostic path. It doe
 ## Descriptor And TTY Compatibility Constraints
 
 Descriptor writes should eventually call the same console write operation used by kernel diagnostics, translating `ConsoleWriteOutcome` through a descriptor layer once descriptor ownership, blocking behavior, and errno mapping exist. Descriptor reads should similarly translate `ConsoleInputPollOutcome` through descriptor-owned readiness and blocking policy only after those layers exist. `stdin` requires a real input source and should not be faked by output-only console work. Line editing, canonical mode, echo, signals, PTYs, and terminal window state belong to the TTY layer. Blocking writes or reads can only sleep tasks after scheduler sleep/wakeup queues exist. Internal errors should remain structured so a later syscall boundary can map them to errno-style values without exposing current kernel-console names as ABI. QEMU and Pi 5 target differences should remain behind target/runtime console backend boundaries.
+
+The first descriptor-table core is still target-independent. It may reserve
+stdio kernel-object handle kinds and test close/dup/error behavior, but it must
+not route bytes to runtime-console0 or the TTY path until a later integration
+task owns descriptor I/O semantics.
 
 The first `stdin` descriptor should attach to the input side of the selected console object only after an input source exists. Until scheduler sleep/wakeup and descriptor lifetime exist, input diagnostics should report readiness or bounded polling results directly to kernel diagnostics instead of pretending to offer POSIX `read`.
 

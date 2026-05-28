@@ -3,11 +3,13 @@
 Status: accepted as the documentation-only Phase 7.1 POSIX baseline
 contract. This document defines Talos vocabulary and invariants for errno,
 paths, process lifetime, descriptors, stdio inheritance, and early loader
-shape before implementation tasks add target-independent cores. It does not
-add Rust implementation, boot scenarios, QEMU runs, Pi 5 hardware runs, EL0
-entry, SVC/syscall ABI, descriptor tables, VFS, filesystem objects, program
-loading, networking, SSH, shell behavior, RP1/PCIe, UART interrupt ownership,
-or DMA/cache-driver policy.
+shape before implementation tasks add target-independent cores. The descriptor
+portion is narrowed by the accepted
+[Phase 7 Descriptor Table Contract](phase7-descriptor-table-contract.md). It
+does not add Rust implementation, boot scenarios, QEMU runs, Pi 5 hardware
+runs, EL0 entry, SVC/syscall ABI, descriptor tables, VFS, filesystem objects,
+program loading, networking, SSH, shell behavior, RP1/PCIe, UART interrupt
+ownership, or DMA/cache-driver policy.
 
 This baseline expands the early POSIX shape note and follows the accepted
 Phase 7 POSIX contract source inventory. Its purpose is to stop convenient
@@ -182,6 +184,13 @@ Deterministic descriptor errors for the first table core:
 - descriptor table full during allocation or dup: EMFILE;
 - invalid flags or dup target: EINVAL;
 - unimplemented operation: ENOSYS.
+
+The accepted Phase 7 descriptor-table contract further fixes the first table
+core boundary: descriptor entries are process-local table slots, dup creates a
+new descriptor number referencing the same underlying open description or
+kernel object handle, close releases one table entry without closing every
+duplicate, and inherited stdio is represented by reserved descriptor-owned
+handles rather than direct target backend calls.
 
 Descriptors 0, 1, and 2 are reserved for inherited stdio when a process is
 created:

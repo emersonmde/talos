@@ -3844,3 +3844,32 @@ ADR template:
   asynchronous context capture, non-diagnostic secondary runtime roles, Phase
   7, filesystem, networking, SSH, shell behavior, RP1/PCIe, UART interrupt
   ownership, and DMA/cache-driver policy remain deferred.
+
+## 2026-05-28 - Phase 7 Descriptor Table Contract Accepted
+
+- Status: accepted as a documentation-only Phase 7.1 descriptor-table
+  contract. No Rust implementation, descriptor table core, syscall ABI, EL0,
+  VFS/filesystem, pipe, socket, shell behavior, networking, SSH, RP1/PCIe,
+  UART interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The accepted POSIX baseline defined descriptor vocabulary and
+  stdio direction, and the accepted path/error model core provided the first
+  target-independent PosixError vocabulary. Before descriptor-table code, the
+  table needed a narrower process-local contract for entry lifetime, dup,
+  close, inherited stdio, and deterministic errors.
+- Decision: Accept
+  phase7-descriptor-table-contract-20260528. Descriptor numbers are
+  process-local table indexes; entries reference shared open descriptions or
+  reserved kernel object handles; dup creates a new descriptor number pointing
+  at the same referenced object; close releases one entry; fd 0, fd 1, and
+  fd 2 are inherited stdio descriptor entries backed later by TTY and
+  runtime-console0 handles.
+- Evidence level: static inspection, documentation build, and whitespace
+  inspection. No QEMU or Pi 5 hardware evidence was claimed.
+- Validation: git status --short was clean before edits; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next bounded implementation task may add only the
+  target-independent descriptor-table core with unit tests for invalid fd,
+  close, double close, dup, table full, inherited stdio, reserved object
+  kinds, and deterministic PosixError results. Runtime console/TTY descriptor
+  I/O integration, syscall ABI, EL0, VFS/filesystem, pipe, socket, shell,
+  networking, SSH, and hardware claims remain blocked.

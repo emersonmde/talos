@@ -65,6 +65,7 @@
 - [Phase 6 Production Scheduler Runtime Closeout](project/phase6-production-scheduler-runtime-closeout-checkpoint.md)
 - [Phase 7 POSIX Contract Source Inventory](project/phase7-posix-contract-source-inventory.md)
 - [Phase 7 POSIX Contract Baseline](project/phase7-posix-contract-baseline.md)
+- [Phase 7 Descriptor Table Contract](project/phase7-descriptor-table-contract.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture
