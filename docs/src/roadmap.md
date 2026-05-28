@@ -32,7 +32,9 @@ smoke, Pi 5 proof, service-loop closeout, shared run-queue/migration source
 inventory, contract, core, QEMU proof, Pi 5 proof, closeout,
 load-balancing source inventory, load-balancing policy contract,
 load-balancing core, QEMU load-balancing proof, Pi 5 load-balancing proof,
-and load-balancing closeout tasks are accepted. The accepted shared
+load-balancing closeout, multi-core preemption source inventory, contract,
+core, QEMU proof, Pi 5 proof, and closeout tasks are accepted. The accepted
+shared
 run-queue/migration slice provides a bounded source-owner publish and
 destination-owner consume path with explicit migration states and deterministic
 errors; QEMU reports
@@ -74,14 +76,18 @@ scripts/qemu-multicore-preemption-smoke.sh; logical CPUs 1, 2, and 3 each
 record only local pending timer-preemption state, prove the record step does
 not mutate scheduler state, then service the request through owner-local normal
 control flow with classification=qemu-multicore-preemption-smoke-complete. Pi
-5 proof and closeout remain separate queued tasks.
+5 proof reports classification=pi5-multicore-preemption-complete,
+participants=3, expected=3, errors=0, and PASS for the same invariant. The
+accepted multi-core preemption closeout preserves the retained gates and
+requires a new supervisor-planned bounded task before any further scheduler
+productionization or Phase 7 work.
 The obsolete-bloat inventory and removal sweep are accepted before the
 multi-core preemption core: historical QEMU secondary-core discriminator paths
 and old Pi 5 allocator, exception, panic, and translation-fault proof-only
 scripts/cfg/source paths are retired while accepted evidence summaries remain
 in task records. Direct IRQ/IPI-context scheduling, running-task migration,
 Phase 7, filesystem, networking, SSH, and shell work remain deferred until the
-next bounded proof and closeout tasks.
+next explicit supervisor-planned bounded task.
 
 Accepted status and historical completed facts:
 
@@ -517,14 +523,20 @@ Accepted status and historical completed facts:
   flow. The retained Pi 5 proof reports
   classification=pi5-multicore-preemption-complete with participants=3 and
   PASS for the same invariant.
+- The Phase 6.3 multi-core preemption closeout checkpoint is accepted. It
+  reconciles the accepted source inventory, contract, target-independent core,
+  QEMU substitute proof, serialized Pi 5 proof, retained gates, risks, and
+  remaining deferrals before any later scheduler productionization or phase
+  transition.
 
 Blocked or pending:
 
-- The next explicit supervisor-planned task should be the multi-core
-  preemption closeout checkpoint. Work stealing, running-task migration,
-  remote reschedule, userspace, descriptors, filesystem, networking, SSH, shell
-  behavior, UART interrupts, RP1/PCIe, and DMA/cache-coherent driver policy
-  remain deferred.
+- No next scheduler or phase-transition task is accepted yet. The supervisor
+  should plan the next explicit bounded task before any further scheduler
+  productionization or Phase 7 work proceeds. Work stealing, running-task
+  migration, remote reschedule, userspace, descriptors, filesystem,
+  networking, SSH, shell behavior, UART interrupts, RP1/PCIe, and
+  DMA/cache-coherent driver policy remain deferred.
 - Large raw accepted evidence remains in Git until external artifact storage or
   an explicit no-delete manifest-only cleanup is approved. Do not delete
   tracked accepted evidence during unrelated feature work.
@@ -883,9 +895,11 @@ bounded Phase 6.3 recommendation is multi-core preemption source inventory.
 The multi-core preemption source inventory is accepted in
 `docs/src/project/phase6-multicore-preemption-source-inventory.md`; its
 contract, target-independent core, QEMU substitute proof, and serialized Pi 5
-proof are accepted in the corresponding Phase 6.3 task records. The next
-bounded recommendation is a multi-core preemption closeout checkpoint before
-any Phase 7 or later subsystem work.
+proof are accepted in the corresponding Phase 6.3 task records. The bounded
+multi-core preemption closeout checkpoint is accepted in
+docs/src/project/phase6-multicore-preemption-closeout-checkpoint.md. No next
+scheduler or phase-transition task is accepted yet; the supervisor should plan
+one explicitly before any Phase 7 or later subsystem work.
 Before broader Phase 6.3 productionization, the accepted
 [Evidence Retention Policy](project/evidence-retention-policy.md) and
 [Diagnostic Surface Policy](project/diagnostic-surface-policy.md) govern which

@@ -1252,3 +1252,26 @@ autonomous work stealing, running-task migration, remote current-task
 switching, general remote reschedule, userspace, descriptors, filesystem,
 networking, SSH, shell behavior, RP1/PCIe, UART interrupt ownership, or
 DMA/cache-driver policy.
+
+## Phase 6.3 Multi-Core Preemption Closeout
+
+The multi-core preemption closeout is accepted in
+docs/src/project/phase6-multicore-preemption-closeout-checkpoint.md. It
+reconciles the source inventory, contract, target-independent core, QEMU
+substitute proof, serialized Pi 5 proof, retained diagnostics, and remaining
+deferrals.
+
+The accepted scheduler boundary is still diagnostic and owner-local. Timer and
+IPI paths may record bounded local state only; scheduler mutation remains in
+normal control flow on the owning CPU. The retained proof gates are the
+scheduler unit tests, the earlier timer-preemption and secondary service-loop
+QEMU gates, the shared run-queue and load-balancing QEMU gates, the focused
+QEMU multi-core preemption smoke, and the Pi 5 multi-core preemption image and
+boot-tree scripts for explicit future hardware reproduction.
+
+This closeout does not accept production timer integration, direct IRQ/IPI
+scheduler dispatch, remote current-task switching, running-task migration,
+autonomous work stealing, general remote reschedule, non-diagnostic secondary
+runtime roles, Phase 7, filesystem, networking, SSH, shell behavior,
+RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy. Further work
+requires a new supervisor-planned bounded task.

@@ -12,6 +12,39 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-28 - Phase 6.3 Multi-Core Preemption Closeout Accepted
+
+- Status: accepted as the checkpoint for the Phase 6.3 multi-core preemption
+  slice. No Rust implementation, boot image, QEMU run, hardware run, direct
+  IRQ/IPI-context scheduling, remote current-task switching, running-task
+  migration, autonomous work stealing, Phase 7, filesystem, networking, SSH,
+  shell, RP1/PCIe, UART interrupt ownership, or DMA behavior was added.
+- Context: Talos had accepted the multi-core preemption source inventory,
+  contract, target-independent core, QEMU substitute proof, and serialized Pi
+  5 proof. A closeout checkpoint was required before any later scheduler
+  productionization or phase transition.
+- Decision: Accept phase6-multicore-preemption-closeout-checkpoint-20260527.
+  The accepted boundary is diagnostic and owner-local: multiple owners can
+  record bounded local timer-preemption intent, prove record-only paths do not
+  mutate scheduler queues or current tasks, and service the request from the
+  owning CPU's normal scheduler control flow. Retained gates preserve the
+  scheduler unit tests, QEMU timer-preemption, secondary service-loop,
+  shared-runqueue, load-balancing, and multi-core preemption smokes, plus the
+  Pi 5 multi-core preemption proof scripts for explicit future hardware tasks.
+- Evidence level: static inspection of accepted task/evidence records,
+  documentation build, and whitespace inspection. Hardware was not required
+  because this checkpoint makes no new physical claim.
+- Validation: git diff --check and mdbook build passed.
+- Consequences: Further scheduler productionization or Phase 7 work requires a
+  new supervisor-planned bounded task with explicit scope, dependencies,
+  acceptance criteria, validation gates, documentation requirements, and
+  evidence requirements.
+- Risks: Production timer integration, interrupt-driven remote reschedule,
+  running-task migration, remote current-task switching, work stealing,
+  non-diagnostic secondary runtime roles, userspace, descriptors, filesystem,
+  networking, SSH, shell behavior, RP1/PCIe, UART interrupt ownership, and
+  DMA/cache-driver policy remain deferred.
+
 ## 2026-05-27 - Phase 6.3 Multi-Core Preemption Source Inventory Accepted
 
 - Status: accepted as documentation/source inventory before any multi-core
