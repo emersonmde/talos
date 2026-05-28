@@ -13,15 +13,15 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.1 POSIX baseline closeout frontier, after accepting the
-Phase 6.3 production scheduler runtime closeout, the Phase 7 POSIX contract
-source inventory, the documentation-only Phase 7 POSIX contract baseline, the
-target-independent path/error model core, the documentation-only
-descriptor-table contract, and the target-independent descriptor-table core.
-The Phase 7.1 target-independent path/error and descriptor-table test seams are
-accepted. EL0, SVC/syscall ABI, VFS, filesystem, program loading, networking,
-SSH, and shell work remain blocked until the supervisor plans the next explicit
-bounded task.
+Talos is at the Phase 7.2 EL0 trap path and user address-space source
+inventory frontier, after accepting the Phase 6.3 production scheduler runtime
+closeout and the full Phase 7.1 POSIX baseline slice. The accepted Phase 7.2
+inventory maps exception-vector, same-EL ERET, EL2 translation,
+page-frame-ownership, scheduler task/process, PosixError, descriptor-table,
+and retained validation surfaces before any lower-EL implementation starts.
+EL0 implementation, SVC/syscall ABI, VFS, filesystem, program loading,
+networking, SSH, and shell work remain blocked until later explicit bounded
+tasks accept their contracts and gates.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -114,6 +114,11 @@ deterministic PosixError results, all covered by target-independent no_std unit
 tests. The accepted Phase 7.1 closeout checkpoint reconciles this evidence and
 keeps EL0, syscall, VFS, filesystem, program-loader, descriptor I/O,
 networking, SSH, and shell work deferred for supervisor-planned tasks.
+The accepted Phase 7.2 EL0/address-space source inventory maps exception
+vectors and saved frames, same-EL ERET diagnostics, the broad EL2 identity map,
+page-frame ownership, scheduler task/process separation, PosixError/EFAULT
+vocabulary, descriptor-table ownership, retained gates, and implementation gaps
+before a lower-EL contract.
 The obsolete-bloat inventory and removal sweep are accepted before the
 multi-core preemption core: historical QEMU secondary-core discriminator paths
 and old Pi 5 allocator, exception, panic, and translation-fault proof-only
@@ -1042,6 +1047,15 @@ Acceptance criteria:
 - A simple user-mode payload runs and traps back to the kernel.
 - Invalid user memory access traps without corrupting the kernel.
 - Negative tests cover bad pointers and invalid trap state.
+
+Accepted progress:
+
+- Phase 7 EL0 address-space source inventory is accepted. It names the accepted
+  exception-vector and saved-frame surfaces, same-EL ERET diagnostic boundary,
+  EL2 translation setup, early page-frame ownership, scheduler task/process
+  separation, POSIX error vocabulary, descriptor-table ownership, retained
+  gates, diagnostic-only surfaces, and implementation gaps that constrain the
+  first EL0 trap-return and user address-space contract.
 
 Milestone 7.3: Syscall ABI
 

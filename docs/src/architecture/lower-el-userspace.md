@@ -45,6 +45,22 @@ No code should treat the accepted EL2 identity map as permission to enter EL0 or
 to run untrusted payloads. The map is intentionally broad enough for early
 kernel bring-up and intentionally too broad for userspace isolation.
 
+## Phase 7.2 Source Inventory Boundary
+
+The Phase 7.2 EL0/address-space source inventory is accepted as documentation
+only. It names the current exception-vector and saved-frame surfaces, same-EL
+`ERET` diagnostics, broad EL2 identity map, early page-frame ownership,
+scheduler task/process separation, `PosixError::Fault` / `EFAULT`
+vocabulary, descriptor-table ownership, retained gates, and implementation
+gaps that constrain the next contract.
+
+That inventory does not reduce the lower-EL gate. Current same-EL exception
+reports, current IRQ `ERET`, broad EL2 identity mappings, bootstrap
+page-frame ownership, scheduler diagnostics, runtime console, TTY, diagnostic
+commands, and descriptor-table unit tests remain diagnostic-only or
+kernel-only. They are not lower-EL, syscall, copy-in/copy-out,
+process-isolation, or userspace contracts.
+
 ## Minimum Prerequisites Before EL0 Work
 
 The Phase 7.1 POSIX baseline now accepts target-independent errno/path and
@@ -67,6 +83,11 @@ for:
   kernel state;
 - and tests or hardware evidence for bad user pointers, bad instruction fetches,
   bad stack accesses, and successful trap return.
+
+The next bounded contract should define the first address-space invariants,
+lower-EL trap/return invariants, user-fault classes, copy-in/copy-out
+preconditions, and evidence levels before Rust or assembly implementation
+changes.
 
 Until that work exists, Phase 4 interrupt/timer/preemption tasks may rely on the
 current EL2 kernel map only for kernel execution. They must not assume process

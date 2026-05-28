@@ -12,6 +12,39 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-28 - Phase 7.2 EL0 Address-Space Source Inventory Accepted
+
+- Status: accepted as the Phase 7.2 EL0 trap path and user address-space
+  source inventory. No Rust behavior, assembly behavior, boot scenario, QEMU
+  run, Pi 5 hardware run, archive publishing, hardware-lock use, EL0 entry,
+  SVC/syscall ABI, VFS, filesystem, program loader, descriptor I/O,
+  networking, SSH, shell, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: Phase 7.1 closed out target-independent POSIX path/error and
+  descriptor-table semantics. Before lower-EL implementation could start, the
+  accepted exception, memory, scheduler, POSIX, descriptor, and validation
+  surfaces needed one source-backed inventory to prevent diagnostic and
+  kernel-only paths from becoming userspace contracts.
+- Decision: Accept phase7-el0-address-space-source-inventory-20260528. The
+  accepted inventory maps exception vectors and saved frames, same-EL ERET
+  diagnostics, EL2 translation setup, page-frame ownership, scheduler
+  task/process separation, PosixError/EFAULT vocabulary, descriptor-table
+  ownership, retained gates, diagnostic-only surfaces, and Phase 7.2
+  implementation gaps.
+- Evidence level: static inspection, documentation build, and whitespace
+  inspection. No QEMU or Pi 5 hardware evidence was claimed.
+- Validation: git status --short was clean before edits; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next bounded task should be
+  phase7-el0-trap-address-space-contract-20260528. It should define
+  address-space invariants, lower-EL trap/return invariants, user fault
+  classes, copy-in/copy-out preconditions, and evidence levels before
+  implementation starts.
+- Risks: EL0 entry, user page tables, trap return, user stacks, syscall ABI,
+  copy-in/copy-out, VFS/filesystem, descriptor I/O, program loading, shell,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
+  policy remain deferred.
+
 ## 2026-05-28 - Phase 7.1 POSIX Baseline Closeout Accepted
 
 - Status: accepted as the Phase 7.1 POSIX baseline closeout checkpoint. No new
