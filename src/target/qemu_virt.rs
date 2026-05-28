@@ -94,6 +94,14 @@ use crate::smp_sync::{SpinLock, smp_full_barrier};
     talos_boot_scenario = "qemu_production_timer_preemption_smoke"
 ))]
 use crate::smp_sync::{SpinLock, smp_full_barrier};
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+use crate::{
+    arch::aarch64::exceptions::{ExceptionFrame, ExceptionVector},
+    posix::{
+        PosixError, UserAccessKind, UserMapping, UserMappingPermissions,
+        validate_user_memory_access,
+    },
+};
 use crate::{
     arch::aarch64::{
         self, generic_timer,
@@ -176,6 +184,25 @@ const TIMER_PREEMPTION_TARGET_PROGRESS: u64 = 3;
 #[cfg(talos_boot_scenario = "qemu_timer_preemption")]
 const TIMER_PREEMPTION_TARGET_SWITCHES: u64 = 6;
 
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+const EL0_TRAP_USER_TEXT_START: u64 = 0x0000_0000_0010_0000;
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+const EL0_TRAP_USER_TEXT_LEN: usize = 0x1000;
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+const EL0_TRAP_USER_STACK_START: u64 = 0x0000_0000_001f_0000;
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+const EL0_TRAP_USER_STACK_LEN: usize = 0x1_0000;
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+const EL0_TRAP_USER_GUARD_START: u64 = 0x0000_0000_001e_0000;
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+const EL0_TRAP_SVC_MARKER: u64 = 0x7a10;
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+const EL0_TRAP_EXPECTED_ESR: u64 = 0x0000_0000_5400_7a10;
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+const EL0_TRAP_SPSR_EL0T_DAIF_MASKED: u64 = 0x3c0;
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+const EL0_TRAP_SPSR_EL1H_DAIF_MASKED: u64 = 0x3c5;
+
 const MMIO_REGIONS: &[MmioRegion] = &[
     MmioRegion::new("qemu-virt-gicv2-distributor", GICD_BASE, 0x0001_0000),
     MmioRegion::new("qemu-virt-gicv2-cpu-interface", GICC_BASE, 0x0001_0000),
@@ -188,6 +215,61 @@ static LAST_INTID: AtomicU64 = AtomicU64::new(0);
 static UNEXPECTED_GIC_IRQ_COUNT: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_boot_scenario = "qemu_timer_preemption")]
 static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
+
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[repr(align(4096))]
+struct El0TrapPage([u64; 512]);
+
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+impl El0TrapPage {
+    const fn zeroed() -> Self {
+        Self([0; 512])
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[repr(align(65536))]
+struct El0TrapStack([u8; EL0_TRAP_USER_STACK_LEN]);
+
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+impl El0TrapStack {
+    const fn zeroed() -> Self {
+        Self([0; EL0_TRAP_USER_STACK_LEN])
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[repr(align(4096))]
+struct El0TrapPayload([u8; EL0_TRAP_USER_TEXT_LEN]);
+
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+impl El0TrapPayload {
+    const fn svc_marker() -> Self {
+        let mut page = [0; EL0_TRAP_USER_TEXT_LEN];
+        page[0] = 0x01;
+        page[1] = 0x42;
+        page[2] = 0x0f;
+        page[3] = 0xd4;
+        page[4] = 0x00;
+        page[5] = 0x00;
+        page[6] = 0x00;
+        page[7] = 0x14;
+        Self(page)
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+static mut EL0_TRAP_ROOT_TABLE: El0TrapPage = El0TrapPage::zeroed();
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+static mut EL0_TRAP_L1_TABLE: El0TrapPage = El0TrapPage::zeroed();
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+static mut EL0_TRAP_LOW_L2_TABLE: El0TrapPage = El0TrapPage::zeroed();
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+static mut EL0_TRAP_LOW_L3_TABLE: El0TrapPage = El0TrapPage::zeroed();
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+static mut EL0_TRAP_STACK: El0TrapStack = El0TrapStack::zeroed();
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::svc_marker();
 
 #[cfg(any(
     talos_boot_scenario = "qemu_secondary_core_workload",
@@ -2982,6 +3064,357 @@ struct SmpLockContentionState {
     shared_counter: u64,
     per_core_counts: [u64; MAX_CORES],
     error_count: u64,
+}
+
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+pub fn run_el0_trap_smoke() -> ! {
+    crate::println!(
+        "qemu-el0-trap-smoke: start user-text=[{:#018x},{:#018x}) user-stack=[{:#018x},{:#018x}) user-guard=[{:#018x},{:#018x}) marker={:#x}",
+        EL0_TRAP_USER_TEXT_START,
+        EL0_TRAP_USER_TEXT_START + EL0_TRAP_USER_TEXT_LEN as u64,
+        EL0_TRAP_USER_STACK_START,
+        EL0_TRAP_USER_STACK_START + EL0_TRAP_USER_STACK_LEN as u64,
+        EL0_TRAP_USER_GUARD_START,
+        EL0_TRAP_USER_STACK_START,
+        EL0_TRAP_SVC_MARKER
+    );
+
+    let mappings = [
+        UserMapping::new(
+            EL0_TRAP_USER_TEXT_START,
+            EL0_TRAP_USER_TEXT_LEN,
+            UserMappingPermissions::USER_TEXT,
+        )
+        .expect("fixed EL0 text mapping is a valid user mapping"),
+        UserMapping::new(
+            EL0_TRAP_USER_STACK_START,
+            EL0_TRAP_USER_STACK_LEN,
+            UserMappingPermissions::USER_DATA,
+        )
+        .expect("fixed EL0 stack mapping is a valid user mapping"),
+    ];
+    let entry = validate_user_memory_access(
+        &mappings,
+        EL0_TRAP_USER_TEXT_START,
+        4,
+        UserAccessKind::Execute,
+        EL0_TRAP_USER_TEXT_LEN,
+    )
+    .expect("EL0 entry validates inside fixed UserText")
+    .start();
+    let user_sp = EL0_TRAP_USER_STACK_START + EL0_TRAP_USER_STACK_LEN as u64;
+    validate_user_memory_access(
+        &mappings,
+        user_sp - 16,
+        16,
+        UserAccessKind::Write,
+        EL0_TRAP_USER_STACK_LEN,
+    )
+    .expect("EL0 stack top validates inside fixed UserStack");
+    let guard_result = validate_user_memory_access(
+        &mappings,
+        EL0_TRAP_USER_GUARD_START,
+        8,
+        UserAccessKind::Read,
+        EL0_TRAP_USER_TEXT_LEN,
+    );
+    let guard_blocked = matches!(guard_result, Err(PosixError::Fault));
+
+    crate::println!(
+        "qemu-el0-trap-smoke: validated elr={:#018x} sp={:#018x} spsr={:#018x} guard-blocked={}",
+        entry,
+        user_sp,
+        EL0_TRAP_SPSR_EL0T_DAIF_MASKED,
+        guard_blocked
+    );
+    if !guard_blocked {
+        crate::println!(
+            "qemu-el0-trap-smoke: final participants=0 expected=1 errors=1 classification=qemu-el0-trap-smoke-guard-open"
+        );
+        crate::target::qemu::exit_failure();
+    }
+
+    unsafe {
+        install_el0_trap_smoke_tables();
+        enable_el2_and_el0_translation();
+        crate::println!("qemu-el0-trap-smoke: translation-ready");
+        enable_el1_and_el0_translation();
+        aarch64::enter_el1_then_el0(
+            entry as usize,
+            user_sp as usize,
+            EL0_TRAP_SPSR_EL0T_DAIF_MASKED,
+            EL0_TRAP_SPSR_EL1H_DAIF_MASKED,
+        );
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+pub fn handle_el0_trap_smoke_exception(
+    esr: u64,
+    elr: u64,
+    far: u64,
+    vector: ExceptionVector,
+    spsr: u64,
+    saved_frame: *const ExceptionFrame,
+) -> ! {
+    let marker = esr & 0xffff;
+    let reported_esr = esr & !(1 << 25);
+    let user_sp = unsafe { read_sp_el0() };
+    let frame_available = !saved_frame.is_null();
+    let ok = vector == ExceptionVector::LowerAarch64Sync
+        && reported_esr == EL0_TRAP_EXPECTED_ESR
+        && marker == EL0_TRAP_SVC_MARKER
+        && EL0_TRAP_USER_TEXT_START <= elr
+        && elr < EL0_TRAP_USER_TEXT_START + EL0_TRAP_USER_TEXT_LEN as u64
+        && EL0_TRAP_USER_STACK_START <= user_sp
+        && user_sp <= EL0_TRAP_USER_STACK_START + EL0_TRAP_USER_STACK_LEN as u64;
+
+    crate::println!(
+        "qemu-el0-trap-smoke: trap vector={} esr={:#018x} far={:#018x} elr={:#018x} sp={:#018x} spsr={:#018x} marker={:#x}",
+        vector.name(),
+        reported_esr,
+        far,
+        elr,
+        user_sp,
+        spsr,
+        marker
+    );
+    crate::println!("qemu-el0-trap-smoke: raw-esr={:#018x}", esr);
+    crate::println!(
+        "qemu-el0-trap-smoke: frame available={} x0={:#018x} x1={:#018x}",
+        frame_available,
+        unsafe { saved_frame.as_ref().map(|frame| frame.reg(0)).unwrap_or(0) },
+        unsafe { saved_frame.as_ref().map(|frame| frame.reg(1)).unwrap_or(0) }
+    );
+
+    if ok {
+        crate::println!(
+            "qemu-el0-trap-smoke: final participants=1 expected=1 errors=0 classification=qemu-el0-trap-smoke-complete"
+        );
+        crate::println!("qemu-el0-trap-smoke: PASS");
+        crate::target::qemu::exit_success();
+    }
+
+    crate::println!(
+        "qemu-el0-trap-smoke: final participants=0 expected=1 errors=1 classification=qemu-el0-trap-smoke-failed"
+    );
+    crate::target::qemu::exit_failure();
+}
+
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+unsafe fn install_el0_trap_smoke_tables() {
+    const TABLE_DESC: u64 = 0b11;
+    const PAGE_DESC: u64 = 0b11;
+    const BLOCK_DESC: u64 = 0b01;
+    const ATTR_NORMAL: u64 = 0;
+    const ATTR_DEVICE: u64 = 1;
+    const ATTR_SHIFT: u64 = 2;
+    const AP_EL0_RW: u64 = 0b01 << 6;
+    const AP_EL0_RO: u64 = 0b11 << 6;
+    const AF: u64 = 1 << 10;
+    const SH_INNER: u64 = 0b11 << 8;
+    const PXN: u64 = 1 << 53;
+    const UXN: u64 = 1 << 54;
+    const ADDR_MASK_4K: u64 = 0x0000_ffff_ffff_f000;
+    const ADDR_MASK_2M: u64 = 0x0000_ffff_ffe0_0000;
+    const ADDR_MASK_1G: u64 = 0x0000_ffff_c000_0000;
+
+    let root = unsafe { core::ptr::addr_of_mut!(EL0_TRAP_ROOT_TABLE.0) };
+    let l1 = unsafe { core::ptr::addr_of_mut!(EL0_TRAP_L1_TABLE.0) };
+    let low_l2 = unsafe { core::ptr::addr_of_mut!(EL0_TRAP_LOW_L2_TABLE.0) };
+    let low_l3 = unsafe { core::ptr::addr_of_mut!(EL0_TRAP_LOW_L3_TABLE.0) };
+    let payload_pa = core::ptr::addr_of!(EL0_TRAP_PAYLOAD.0) as u64;
+    let stack_pa = unsafe { core::ptr::addr_of!(EL0_TRAP_STACK.0) as u64 };
+
+    unsafe {
+        core::ptr::write_bytes(root.cast::<u8>(), 0, 4096);
+        core::ptr::write_bytes(l1.cast::<u8>(), 0, 4096);
+        core::ptr::write_bytes(low_l2.cast::<u8>(), 0, 4096);
+        core::ptr::write_bytes(low_l3.cast::<u8>(), 0, 4096);
+
+        (*root)[0] = (l1 as u64 & ADDR_MASK_4K) | TABLE_DESC;
+        (*l1)[0] = (low_l2 as u64 & ADDR_MASK_4K) | TABLE_DESC;
+        (*l1)[1] =
+            (0x4000_0000 & ADDR_MASK_1G) | (ATTR_NORMAL << ATTR_SHIFT) | SH_INNER | AF | BLOCK_DESC;
+
+        let mut index = 1usize;
+        while index < 512 {
+            let base = (index as u64) << 21;
+            (*low_l2)[index] =
+                (base & ADDR_MASK_2M) | (ATTR_DEVICE << ATTR_SHIFT) | AF | PXN | UXN | BLOCK_DESC;
+            index += 1;
+        }
+        (*low_l2)[0] = (low_l3 as u64 & ADDR_MASK_4K) | TABLE_DESC;
+
+        (*low_l3)[(EL0_TRAP_USER_TEXT_START as usize) >> 12] = (payload_pa & ADDR_MASK_4K)
+            | (ATTR_NORMAL << ATTR_SHIFT)
+            | AP_EL0_RO
+            | SH_INNER
+            | AF
+            | PAGE_DESC;
+
+        let mut page = 0usize;
+        while page < EL0_TRAP_USER_STACK_LEN / 4096 {
+            let va = EL0_TRAP_USER_STACK_START as usize + page * 4096;
+            let pa = stack_pa + (page * 4096) as u64;
+            (*low_l3)[va >> 12] = (pa & ADDR_MASK_4K)
+                | (ATTR_NORMAL << ATTR_SHIFT)
+                | AP_EL0_RW
+                | SH_INNER
+                | AF
+                | UXN
+                | PAGE_DESC;
+            page += 1;
+        }
+    }
+
+    unsafe {
+        core::arch::asm!("dsb sy", "isb", options(nostack, preserves_flags));
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+unsafe fn enable_el2_and_el0_translation() {
+    const MAIR_NORMAL_WBWA: u64 = 0xff;
+    const MAIR_DEVICE_NGNRE: u64 = 0x04;
+    const TCR_T0SZ_SHIFT: u64 = 0;
+    const TCR_IRGN0_SHIFT: u64 = 8;
+    const TCR_ORGN0_SHIFT: u64 = 10;
+    const TCR_SH0_SHIFT: u64 = 12;
+    const TCR_TG0_4K: u64 = 0b00 << 14;
+    const TCR_PS_SHIFT: u64 = 16;
+    const TCR_CACHE_WBWA: u64 = 0b01;
+    const TCR_SH_INNER: u64 = 0b11;
+    const TCR_PS_48BIT: u64 = 0b101;
+    const SCTLR_M: u64 = 1 << 0;
+    const SCTLR_C: u64 = 1 << 2;
+    const SCTLR_I: u64 = 1 << 12;
+    const HCR_RW: u64 = 1 << 31;
+
+    let mair = MAIR_NORMAL_WBWA | (MAIR_DEVICE_NGNRE << 8);
+    let tcr = ((64 - 48) << TCR_T0SZ_SHIFT)
+        | (TCR_CACHE_WBWA << TCR_IRGN0_SHIFT)
+        | (TCR_CACHE_WBWA << TCR_ORGN0_SHIFT)
+        | (TCR_SH_INNER << TCR_SH0_SHIFT)
+        | TCR_TG0_4K
+        | (TCR_PS_48BIT << TCR_PS_SHIFT);
+    let ttbr0 = unsafe { core::ptr::addr_of!(EL0_TRAP_ROOT_TABLE.0) as u64 };
+    let hcr: u64;
+    let mut sctlr: u64;
+
+    unsafe {
+        core::arch::asm!(
+            "mrs {hcr}, HCR_EL2",
+            hcr = out(reg) hcr,
+            options(nostack, preserves_flags)
+        );
+        let hcr = hcr | HCR_RW;
+        core::arch::asm!(
+            "msr HCR_EL2, {hcr}",
+            "isb",
+            hcr = in(reg) hcr,
+            options(nostack, preserves_flags)
+        );
+        core::arch::asm!(
+            "msr MAIR_EL2, {mair}",
+            "msr TCR_EL2, {tcr}",
+            "msr TTBR0_EL2, {ttbr0}",
+            "isb",
+            "tlbi alle2",
+            "dsb sy",
+            "isb",
+            mair = in(reg) mair,
+            tcr = in(reg) tcr,
+            ttbr0 = in(reg) ttbr0,
+            options(nostack, preserves_flags)
+        );
+        core::arch::asm!(
+            "mrs {sctlr}, SCTLR_EL2",
+            sctlr = out(reg) sctlr,
+            options(nostack, preserves_flags)
+        );
+        sctlr |= SCTLR_M | SCTLR_C | SCTLR_I;
+        core::arch::asm!(
+            "msr SCTLR_EL2, {sctlr}",
+            "dsb sy",
+            "isb",
+            sctlr = in(reg) sctlr,
+            options(nostack, preserves_flags)
+        );
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+unsafe fn enable_el1_and_el0_translation() {
+    const MAIR_NORMAL_WBWA: u64 = 0xff;
+    const MAIR_DEVICE_NGNRE: u64 = 0x04;
+    const TCR_T0SZ_SHIFT: u64 = 0;
+    const TCR_IRGN0_SHIFT: u64 = 8;
+    const TCR_ORGN0_SHIFT: u64 = 10;
+    const TCR_SH0_SHIFT: u64 = 12;
+    const TCR_TG0_4K: u64 = 0b00 << 14;
+    const TCR_IPS_SHIFT: u64 = 32;
+    const TCR_CACHE_WBWA: u64 = 0b01;
+    const TCR_SH_INNER: u64 = 0b11;
+    const TCR_IPS_48BIT: u64 = 0b101;
+    const SCTLR_M: u64 = 1 << 0;
+    const SCTLR_C: u64 = 1 << 2;
+    const SCTLR_I: u64 = 1 << 12;
+
+    let mair = MAIR_NORMAL_WBWA | (MAIR_DEVICE_NGNRE << 8);
+    let tcr = ((64 - 48) << TCR_T0SZ_SHIFT)
+        | (TCR_CACHE_WBWA << TCR_IRGN0_SHIFT)
+        | (TCR_CACHE_WBWA << TCR_ORGN0_SHIFT)
+        | (TCR_SH_INNER << TCR_SH0_SHIFT)
+        | TCR_TG0_4K
+        | (TCR_IPS_48BIT << TCR_IPS_SHIFT);
+    let ttbr0 = unsafe { core::ptr::addr_of!(EL0_TRAP_ROOT_TABLE.0) as u64 };
+    let vbar = aarch64::current_vbar();
+    let mut sctlr: u64;
+
+    unsafe {
+        core::arch::asm!(
+            "msr MAIR_EL1, {mair}",
+            "msr TCR_EL1, {tcr}",
+            "msr TTBR0_EL1, {ttbr0}",
+            "msr VBAR_EL1, {vbar}",
+            "isb",
+            "tlbi vmalle1",
+            "dsb sy",
+            "isb",
+            mair = in(reg) mair,
+            tcr = in(reg) tcr,
+            ttbr0 = in(reg) ttbr0,
+            vbar = in(reg) vbar,
+            options(nostack, preserves_flags)
+        );
+        core::arch::asm!(
+            "mrs {sctlr}, SCTLR_EL1",
+            sctlr = out(reg) sctlr,
+            options(nostack, preserves_flags)
+        );
+        sctlr |= SCTLR_M | SCTLR_C | SCTLR_I;
+        core::arch::asm!(
+            "msr SCTLR_EL1, {sctlr}",
+            "dsb sy",
+            "isb",
+            sctlr = in(reg) sctlr,
+            options(nostack, preserves_flags)
+        );
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+unsafe fn read_sp_el0() -> u64 {
+    let value: u64;
+    unsafe {
+        core::arch::asm!(
+            "mrs {value}, SP_EL0",
+            value = out(reg) value,
+            options(nomem, nostack, preserves_flags)
+        );
+    }
+    value
 }
 
 #[cfg(talos_boot_scenario = "qemu_smp_lock_contention")]

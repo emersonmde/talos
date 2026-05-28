@@ -187,6 +187,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         implied_values: &[],
         asm_defines: &[QEMU_SMP_ASM],
     },
+    BootScenario {
+        value: "qemu_el0_trap_smoke",
+        implied_values: &[],
+        asm_defines: &[],
+    },
 ];
 
 fn main() {

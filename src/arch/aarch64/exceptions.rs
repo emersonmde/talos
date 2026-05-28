@@ -5,7 +5,7 @@ use core::{
 
 use crate::println;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(u64)]
 pub enum ExceptionVector {
     CurrentSp0Sync = 0,
@@ -212,7 +212,15 @@ pub extern "C" fn rust_exception_handler(
     elr: u64,
     far: u64,
     vector: u64,
+    #[cfg_attr(
+        not(talos_boot_scenario = "qemu_el0_trap_smoke"),
+        allow(unused_variables)
+    )]
     spsr: u64,
+    #[cfg_attr(
+        not(talos_boot_scenario = "qemu_el0_trap_smoke"),
+        allow(unused_variables)
+    )]
     saved_frame: *const ExceptionFrame,
 ) -> ! {
     let vector = ExceptionVector::from(vector);
@@ -313,10 +321,28 @@ pub extern "C" fn rust_exception_handler(
     elr: u64,
     far: u64,
     vector: u64,
-    _spsr: u64,
-    _saved_frame: *const ExceptionFrame,
+    #[cfg_attr(
+        not(talos_boot_scenario = "qemu_el0_trap_smoke"),
+        allow(unused_variables)
+    )]
+    spsr: u64,
+    #[cfg_attr(
+        not(talos_boot_scenario = "qemu_el0_trap_smoke"),
+        allow(unused_variables)
+    )]
+    saved_frame: *const ExceptionFrame,
 ) -> ! {
     let vector = ExceptionVector::from(vector);
+
+    #[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+    crate::target::qemu_virt::handle_el0_trap_smoke_exception(
+        esr,
+        elr,
+        far,
+        vector,
+        spsr,
+        saved_frame,
+    );
 
     println!();
     println!("talos exception: {}", vector.name());

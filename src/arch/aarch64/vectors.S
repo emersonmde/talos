@@ -187,3 +187,22 @@ talos_aarch64_kernel_thread_trampoline:
     b 1b
 
 .size talos_aarch64_kernel_thread_trampoline, . - talos_aarch64_kernel_thread_trampoline
+
+.global talos_aarch64_enter_el1_then_el0
+.type talos_aarch64_enter_el1_then_el0, %function
+talos_aarch64_enter_el1_then_el0:
+    mov x9, sp
+    msr SP_EL1, x9
+    adr x10, 1f
+    msr ELR_EL2, x10
+    msr SPSR_EL2, x3
+    isb
+    eret
+1:
+    msr SP_EL0, x1
+    msr ELR_EL1, x0
+    msr SPSR_EL1, x2
+    isb
+    eret
+
+.size talos_aarch64_enter_el1_then_el0, . - talos_aarch64_enter_el1_then_el0

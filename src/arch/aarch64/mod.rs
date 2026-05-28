@@ -11,6 +11,12 @@ pub mod gicv2;
 unsafe extern "C" {
     fn talos_aarch64_context_switch(current: *mut ContextFrame, next: *const ContextFrame);
     fn talos_aarch64_kernel_thread_trampoline();
+    fn talos_aarch64_enter_el1_then_el0(
+        entry: usize,
+        stack_pointer: usize,
+        el0_spsr: u64,
+        el2_spsr: u64,
+    ) -> !;
 }
 
 #[allow(dead_code)]
@@ -22,6 +28,18 @@ pub fn kernel_thread_trampoline_address() -> usize {
 pub unsafe fn cooperative_context_switch(current: *mut ContextFrame, next: *const ContextFrame) {
     unsafe {
         talos_aarch64_context_switch(current, next);
+    }
+}
+
+#[allow(dead_code)]
+pub unsafe fn enter_el1_then_el0(
+    entry: usize,
+    stack_pointer: usize,
+    el0_spsr: u64,
+    el2_spsr: u64,
+) -> ! {
+    unsafe {
+        talos_aarch64_enter_el1_then_el0(entry, stack_pointer, el0_spsr, el2_spsr);
     }
 }
 
