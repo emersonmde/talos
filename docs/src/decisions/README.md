@@ -4900,3 +4900,39 @@ ADR template:
   process-owned address spaces, blocking/readiness, signals, restart semantics,
   RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, physical
   descriptor-write claims, and full POSIX descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 QEMU Descriptor-Write Smoke Core Accepted
+
+- Status: accepted as the QEMU/substitute Phase 7.3 descriptor-write smoke
+  core. No Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, stdin/read, close, dup, process loading, VFS/filesystem
+  behavior, shell behavior, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache-driver policy was added.
+- Context: The accepted descriptor-write core implemented talos_write x8 = 1
+  for the fd 1/fd 2 runtime-console0 slice. The next task needed retained
+  lower-AArch64 svc #0 QEMU evidence that exercised the accepted descriptor
+  write path through the same saved-frame syscall boundary used by prior
+  scalar and pointer-copy smoke scenarios.
+- Decision: Accept phase7-qemu-descriptor-write-smoke-core-20260529. The new
+  qemu_descriptor_write_smoke scenario proves fd 1 and fd 2 success through
+  DescriptorTable::with_inherited_stdio(), copy_from_user(), and
+  runtime-console0; fd 0 and fd 99 -EBADF; guard-range -EFAULT; nonzero
+  reserved-register -EINVAL; talos_nop and unknown-syscall regressions; x8 =
+  0x7001 copy-probe quarantine; and diagnostic marker 0x7a10 quarantine.
+- Evidence level: QEMU/substitute serial evidence, unit tests, formatting,
+  documentation build, and whitespace inspection. No physical Pi 5 hardware
+  evidence was produced.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test passed; scripts/qemu-descriptor-write-smoke.sh passed with retained
+  classification=qemu-descriptor-write-smoke-complete and PASS evidence;
+  scripts/qemu-syscall-smoke.sh passed; scripts/qemu-pointer-copy-smoke.sh
+  passed; git diff --check passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-descriptor-write-closeout-checkpoint-20260529, scoped to reconciling
+  the descriptor-write contract, implementation, retained QEMU evidence,
+  regression gates, and deferred surfaces before any Pi 5 descriptor-write
+  proof planning. stdin/read, close, dup, process loading, VFS/filesystem,
+  shell, networking, SSH, live process-owned address spaces,
+  blocking/readiness, signals, restart semantics, RP1/PCIe, UART interrupt
+  ownership, DMA/cache-driver policy, physical descriptor-write claims, and
+  full POSIX descriptor claims remain blocked.

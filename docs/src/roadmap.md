@@ -217,7 +217,21 @@ close, dup, process loading, VFS/filesystem, shell, networking, SSH, live
 process-owned address spaces, blocking/readiness, signals, restart semantics,
 RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and physical
 descriptor-write claims blocked.
-
+The accepted QEMU descriptor-write smoke core adds the
+qemu_descriptor_write_smoke lower-AArch64 svc #0 scenario and retained
+QEMU/substitute evidence for talos_write x8 = 1. The evidence proves fd 1 and
+fd 2 write 18-byte UserData buffers through inherited stdio descriptors,
+copy_from_user(), and runtime-console0; fd 0 and fd 99 return -EBADF without
+additional console bytes; the guard range returns -EFAULT without console
+bytes; a nonzero reserved register returns -EINVAL without console bytes;
+talos_nop and unknown-syscall regressions remain intact; x8 = 0x7001 remains
+quarantined as -ENOSYS outside proof scenarios; and the diagnostic marker
+0x7a10 remains proof-only. This accepts only QEMU/substitute descriptor-backed
+stdout/stderr write evidence. Pi 5 descriptor-write hardware proof,
+stdin/read, close, dup, process loading, VFS/filesystem, shell, networking,
+SSH, live process-owned address spaces, blocking/readiness, signals, restart
+semantics, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and
+full POSIX descriptor claims remain blocked.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
