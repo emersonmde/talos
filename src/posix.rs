@@ -219,6 +219,89 @@ pub(crate) fn validate_user_memory_access(
     Ok(range)
 }
 
+pub(crate) fn copy_from_user(
+    mappings: &[UserMapping],
+    user_memory_start: u64,
+    user_memory: &[u8],
+    user_start: u64,
+    len: usize,
+    kernel_dst: &mut [u8],
+) -> Result<usize, PosixError> {
+    let (offset, end) = validate_user_copy_request(
+        mappings,
+        user_memory_start,
+        user_memory.len(),
+        user_start,
+        len,
+        kernel_dst.len(),
+        UserAccessKind::Read,
+    )?;
+    if len != 0 {
+        kernel_dst[..len].copy_from_slice(&user_memory[offset..end]);
+    }
+    Ok(len)
+}
+
+pub(crate) fn copy_to_user(
+    mappings: &[UserMapping],
+    user_memory_start: u64,
+    user_memory: &mut [u8],
+    user_start: u64,
+    len: usize,
+    kernel_src: &[u8],
+) -> Result<usize, PosixError> {
+    let (offset, end) = validate_user_copy_request(
+        mappings,
+        user_memory_start,
+        user_memory.len(),
+        user_start,
+        len,
+        kernel_src.len(),
+        UserAccessKind::Write,
+    )?;
+    if len != 0 {
+        user_memory[offset..end].copy_from_slice(&kernel_src[..len]);
+    }
+    Ok(len)
+}
+
+fn validate_user_copy_request(
+    mappings: &[UserMapping],
+    user_memory_start: u64,
+    user_memory_len: usize,
+    user_start: u64,
+    len: usize,
+    kernel_buffer_len: usize,
+    access: UserAccessKind,
+) -> Result<(usize, usize), PosixError> {
+    if len > DEFAULT_USER_COPY_LIMIT {
+        return Err(PosixError::Fault);
+    }
+    if kernel_buffer_len < len {
+        return Err(PosixError::InvalidArgument);
+    }
+
+    let range =
+        validate_user_memory_access(mappings, user_start, len, access, DEFAULT_USER_COPY_LIMIT)?;
+    if range.is_empty() {
+        return Ok((0, 0));
+    }
+
+    let offset = range
+        .start()
+        .checked_sub(user_memory_start)
+        .ok_or(PosixError::Fault)?;
+    let end = range
+        .end()
+        .checked_sub(user_memory_start)
+        .ok_or(PosixError::Fault)?;
+    if end > user_memory_len as u64 {
+        return Err(PosixError::Fault);
+    }
+
+    Ok((offset as usize, end as usize))
+}
+
 const fn is_non_guard_user_address(address: u64) -> bool {
     USER_NULL_GUARD_END <= address && address < USER_ADDRESS_SPACE_END
 }
@@ -1054,6 +1137,243 @@ mod tests {
             ),
             Err(PosixError::Fault)
         );
+    }
+
+    #[test_case]
+    fn copy_from_user_reads_complete_valid_range() {
+        let mappings = [user_mapping(
+            USER_NULL_GUARD_END,
+            0x100,
+            UserMappingPermissions::USER_DATA,
+        )];
+        let user_memory = [1, 2, 3, 4, 5, 6];
+        let mut kernel_dst = [0xaa; 6];
+
+        assert_eq!(
+            copy_from_user(
+                &mappings,
+                USER_NULL_GUARD_END,
+                &user_memory,
+                USER_NULL_GUARD_END + 1,
+                4,
+                &mut kernel_dst
+            ),
+            Ok(4)
+        );
+        assert_eq!(kernel_dst, [2, 3, 4, 5, 0xaa, 0xaa]);
+    }
+
+    #[test_case]
+    fn copy_to_user_writes_complete_valid_range() {
+        let mappings = [user_mapping(
+            USER_NULL_GUARD_END,
+            0x100,
+            UserMappingPermissions::USER_DATA,
+        )];
+        let mut user_memory = [0xaa; 6];
+        let kernel_src = [1, 2, 3, 4, 5, 6];
+
+        assert_eq!(
+            copy_to_user(
+                &mappings,
+                USER_NULL_GUARD_END,
+                &mut user_memory,
+                USER_NULL_GUARD_END + 2,
+                3,
+                &kernel_src
+            ),
+            Ok(3)
+        );
+        assert_eq!(user_memory, [0xaa, 0xaa, 1, 2, 3, 0xaa]);
+    }
+
+    #[test_case]
+    fn copy_user_zero_length_succeeds_for_valid_user_start() {
+        let mappings: [UserMapping; 0] = [];
+        let user_memory: [u8; 0] = [];
+        let mut kernel_dst = [0xaa; 2];
+
+        assert_eq!(
+            copy_from_user(
+                &mappings,
+                USER_NULL_GUARD_END,
+                &user_memory,
+                USER_NULL_GUARD_END,
+                0,
+                &mut kernel_dst
+            ),
+            Ok(0)
+        );
+        assert_eq!(kernel_dst, [0xaa; 2]);
+    }
+
+    #[test_case]
+    fn copy_user_rejects_invalid_user_ranges_as_efault() {
+        let mappings = [user_mapping(
+            USER_NULL_GUARD_END,
+            0x100,
+            UserMappingPermissions::USER_DATA,
+        )];
+        let user_memory = [0xaa; 0x100];
+        let mut kernel_dst = [0xbb; 8];
+
+        assert_eq!(
+            copy_from_user(
+                &mappings,
+                USER_NULL_GUARD_END,
+                &user_memory,
+                0,
+                1,
+                &mut kernel_dst
+            ),
+            Err(PosixError::Fault)
+        );
+        assert_eq!(
+            copy_from_user(
+                &mappings,
+                USER_NULL_GUARD_END,
+                &user_memory,
+                USER_ADDRESS_SPACE_END,
+                0,
+                &mut kernel_dst
+            ),
+            Err(PosixError::Fault)
+        );
+        assert_eq!(
+            copy_from_user(
+                &mappings,
+                USER_NULL_GUARD_END,
+                &user_memory,
+                u64::MAX - 1,
+                2,
+                &mut kernel_dst
+            ),
+            Err(PosixError::Fault)
+        );
+        assert_eq!(
+            copy_from_user(
+                &mappings,
+                USER_NULL_GUARD_END,
+                &user_memory,
+                USER_NULL_GUARD_END,
+                DEFAULT_USER_COPY_LIMIT + 1,
+                &mut kernel_dst
+            ),
+            Err(PosixError::Fault)
+        );
+        assert_eq!(kernel_dst, [0xbb; 8]);
+    }
+
+    #[test_case]
+    fn copy_user_rejects_unmapped_no_access_and_permission_mismatch_as_efault() {
+        let mappings = [
+            user_mapping(USER_NULL_GUARD_END, 0x10, UserMappingPermissions::USER_TEXT),
+            user_mapping(
+                USER_NULL_GUARD_END + 0x20,
+                0x10,
+                UserMappingPermissions::NONE,
+            ),
+        ];
+        let mut user_memory = [0xaa; 0x40];
+        let user_before = user_memory;
+        let mut kernel_dst = [0xbb; 0x20];
+
+        assert_eq!(
+            copy_from_user(
+                &mappings,
+                USER_NULL_GUARD_END,
+                &user_memory,
+                USER_NULL_GUARD_END + 0x8,
+                0x10,
+                &mut kernel_dst
+            ),
+            Err(PosixError::Fault)
+        );
+        assert_eq!(
+            copy_from_user(
+                &mappings,
+                USER_NULL_GUARD_END,
+                &user_memory,
+                USER_NULL_GUARD_END + 0x20,
+                1,
+                &mut kernel_dst
+            ),
+            Err(PosixError::Fault)
+        );
+        assert_eq!(
+            copy_to_user(
+                &mappings,
+                USER_NULL_GUARD_END,
+                &mut user_memory,
+                USER_NULL_GUARD_END,
+                4,
+                &[1, 2, 3, 4]
+            ),
+            Err(PosixError::Fault)
+        );
+        assert_eq!(kernel_dst, [0xbb; 0x20]);
+        assert_eq!(user_memory, user_before);
+    }
+
+    #[test_case]
+    fn copy_user_rejects_backing_storage_gaps_as_efault() {
+        let mappings = [user_mapping(
+            USER_NULL_GUARD_END,
+            0x100,
+            UserMappingPermissions::USER_DATA,
+        )];
+        let user_memory = [0xaa; 4];
+        let mut kernel_dst = [0xbb; 8];
+
+        assert_eq!(
+            copy_from_user(
+                &mappings,
+                USER_NULL_GUARD_END,
+                &user_memory,
+                USER_NULL_GUARD_END + 2,
+                4,
+                &mut kernel_dst
+            ),
+            Err(PosixError::Fault)
+        );
+        assert_eq!(kernel_dst, [0xbb; 8]);
+    }
+
+    #[test_case]
+    fn copy_user_rejects_short_kernel_buffers_as_einval_without_side_effects() {
+        let mappings = [user_mapping(
+            USER_NULL_GUARD_END,
+            0x100,
+            UserMappingPermissions::USER_DATA,
+        )];
+        let user_memory = [0xaa; 4];
+        let mut user_dst = [0xbb; 4];
+        let mut kernel_dst = [0xcc; 2];
+
+        assert_eq!(
+            copy_from_user(
+                &mappings,
+                USER_NULL_GUARD_END,
+                &user_memory,
+                USER_NULL_GUARD_END,
+                3,
+                &mut kernel_dst
+            ),
+            Err(PosixError::InvalidArgument)
+        );
+        assert_eq!(
+            copy_to_user(
+                &mappings,
+                USER_NULL_GUARD_END,
+                &mut user_dst,
+                USER_NULL_GUARD_END,
+                3,
+                &[1, 2]
+            ),
+            Err(PosixError::InvalidArgument)
+        );
+        assert_eq!(kernel_dst, [0xcc; 2]);
+        assert_eq!(user_dst, [0xbb; 4]);
     }
 
     #[test_case]
