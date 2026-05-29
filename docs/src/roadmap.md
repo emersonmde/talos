@@ -13,8 +13,8 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the accepted Phase 7.3 Pi 5 descriptor-write proof closeout
-frontier, after accepting the Phase 6.3 production scheduler runtime closeout,
+Talos is at the accepted Phase 7.3 syscall ABI/dispatch closeout frontier,
+after accepting the Phase 6.3 production scheduler runtime closeout,
 the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
 target-independent user-memory permission core. The accepted Phase 7.2 contract
@@ -279,13 +279,26 @@ accepts no new Rust or assembly behavior and performs no QEMU or Pi 5 rerun.
 It recommends the documentation-only Milestone 7.3 syscall ABI/dispatch
 closeout checkpoint before any Milestone 7.4 file-descriptor-table source
 inventory or broader descriptor work.
+The accepted Milestone 7.3 syscall ABI/dispatch closeout reconciles scalar
+syscall routing, QEMU and Pi 5 syscall proof, copy-in/copy-out helpers,
+proof-only pointer-copy evidence, descriptor-write QEMU/Pi 5 evidence,
+diagnostic-surface quarantine, hardware-lock/restore proof, residual risks, and
+blocked surfaces. Milestone 7.3 is closed for the bounded lower-AArch64 svc #0
+ABI and dispatch frontier: x8 syscall numbers, x0-through-x5 arguments, x0
+return/-errno encoding, talos_nop, unknown-syscall -ENOSYS, copy helper
+plumbing, proof-only talos_copy_probe, and talos_write fd 1/fd 2 to
+runtime-console0. Process-owned descriptors, stdin/read, close, dup, program
+loading, VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt
+ownership, DMA/cache-driver policy, and full POSIX descriptor readiness remain
+blocked.
 
-Near-term direction after the accepted Pi 5 descriptor-write proof closeout:
+Near-term direction after the accepted Phase 7.3 syscall ABI/dispatch closeout:
 
 - Move from proof-specific descriptor writes toward user-visible OS
-  capability. The next Phase 7 slices should close out Milestone 7.3, then
-  establish process-owned descriptor-table behavior and syscall paths that can
-  be exercised by a lower-EL test payload or small user program rather than by
+  capability. The next Phase 7 slice should inventory Milestone 7.4
+  file-descriptor-table owners and contract gaps, then establish
+  process-owned descriptor-table behavior and syscall paths that can be
+  exercised by a lower-EL test payload or small user program rather than by
   permanent diagnostic shortcuts.
 - Keep QEMU, host-side unit tests, and static documentation gates first. Reserve
   serialized Pi 5 runs for the smallest physical claim that cannot be proven on
@@ -1618,6 +1631,21 @@ Accepted progress:
   shell, networking, SSH, live process-owned address spaces, blocking/readiness,
   signals, restart semantics, RP1/PCIe, UART interrupt ownership,
   DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.
+- Phase 7 syscall ABI/dispatch closeout checkpoint is accepted. It reconciles
+  all accepted Milestone 7.3 tasks, commits, retained QEMU/substitute and Pi 5
+  evidence paths, validation gates, diagnostic-surface quarantine, hardware
+  lock/restore proof, and deferred surfaces. Milestone 7.3 is closed for the
+  bounded lower-AArch64 svc #0 syscall ABI and dispatch frontier: x8 syscall
+  numbers, x0-through-x5 arguments, x0 return/-errno encoding, stable
+  talos_nop and unknown-syscall returns, copy_from_user/copy_to_user helper
+  plumbing, proof-only talos_copy_probe, and talos_write fd 1/fd 2 writes to
+  runtime-console0 through proof-owned inherited stdio descriptors. It
+  recommends phase7-file-descriptor-table-source-inventory-20260529 as the
+  next documentation-only Milestone 7.4 task. stdin/read, close, dup, process
+  loading, VFS/filesystem, shell, networking, SSH, live process-owned address
+  spaces, blocking/readiness, signals, restart semantics, RP1/PCIe, UART
+  interrupt ownership, DMA/cache-driver policy, and full POSIX descriptor
+  claims remain blocked.
 
 Milestone 7.4: File Descriptor Table
 

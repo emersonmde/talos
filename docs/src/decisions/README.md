@@ -5125,3 +5125,38 @@ ADR template:
   process-owned address spaces, blocking/readiness, signals, restart semantics,
   RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and full POSIX
   descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 Syscall ABI and Dispatch Closeout Accepted
+
+- Status: accepted as the documentation-only Milestone 7.3 syscall ABI and
+  dispatch closeout. No Rust behavior, assembly behavior, QEMU rerun, Pi 5
+  hardware rerun, boot archive publication, hardware-lock acquisition,
+  Milestone 7.4 implementation, process loading, VFS/filesystem behavior,
+  shell behavior, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: Milestone 7.3 accumulated accepted scalar syscall ABI/dispatch
+  work, production trap routing, QEMU and Pi 5 scalar syscall proof,
+  copy-in/copy-out helpers, proof-only pointer-copy evidence, and
+  descriptor-write QEMU/Pi 5 evidence. The milestone needed one closeout
+  checkpoint before any Milestone 7.4 file-descriptor-table source inventory.
+- Decision: Accept
+  phase7-syscall-abi-dispatch-closeout-checkpoint-20260529. Milestone 7.3 is
+  closed for the bounded lower-AArch64 svc #0 syscall ABI and dispatch
+  frontier: x8 syscall numbers, x0-through-x5 arguments, x0 return/-errno
+  encoding, talos_nop, unknown-syscall -ENOSYS, diagnostic marker quarantine,
+  copy_from_user/copy_to_user helper plumbing, proof-only talos_copy_probe,
+  and talos_write fd 1/fd 2 writes through proof-owned inherited
+  runtime-console0 stdio descriptors.
+- Evidence level: static documentation inspection, retained QEMU/substitute
+  evidence review, retained Pi 5 serial/TFTP/restore evidence review,
+  documentation build, and whitespace inspection. No new QEMU or physical Pi 5
+  hardware evidence was produced.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-file-descriptor-table-source-inventory-20260529, scoped to
+  documentation-only Milestone 7.4 source inventory. stdin/read, close, dup,
+  process-owned descriptor tables, process-owned address spaces, process
+  loading, VFS/filesystem, shell, networking, SSH, blocking/readiness,
+  signals, restart semantics, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.
