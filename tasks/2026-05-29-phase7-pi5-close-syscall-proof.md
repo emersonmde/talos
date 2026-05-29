@@ -1,7 +1,7 @@
 # Phase 7 Pi 5 Close Syscall Proof
 
 Task: phase7-pi5-close-syscall-proof-20260529
-Status: in progress
+Status: accepted
 
 ## Scope
 
@@ -35,6 +35,8 @@ interrupt ownership, or DMA/cache-driver policy.
   dispatch, while EL2 initialization had already created the inherited-stdio
   owner. The next candidate cleans the ProcessDescriptorStore static to PoC
   before EL2-to-EL1/EL0 entry.
+- 4a8be90: recorded local18 store-state evidence and cleaned the initialized
+  ProcessDescriptorStore static to PoC before the EL2-to-EL1/EL0 proof handoff.
 
 ## Local Evidence
 
@@ -158,6 +160,18 @@ Evidence directory: tasks/evidence/2026-05-29-pi5-close-syscall-proof/.
   the pre-pi5-close-syscall-proof-local1-20260529 snapshot. This narrows the
   failure to visibility of the initialized ProcessDescriptorStore static at the
   EL1 handler boundary, before talos_close mutates the table.
+- local19-store-clean-candidate: built and published the 4a8be90
+  ProcessDescriptorStore cache-clean candidate. Post-publish status tied the
+  TFTP tree to a 114792-byte kernel_2712.img and retained TFTP logs show the
+  Pi fetched da591740/kernel_2712.img during the run. Retained serial reached
+  the lower-AArch64 close handler and proved owner-present=true for fd 1 before
+  dispatch, talos_close result=OK for close_stdout, write-after-close -EBADF,
+  reserved close -EINVAL without closing fd 2, fd 2 close success,
+  repeated/invalid close -EBADF, talos_nop success, unknown/copy-probe
+  -ENOSYS, diagnostic-marker quarantine, final participants=11 expected=11
+  errors=0 classification=pi5-close-syscall-proof-complete, and PASS. The boot
+  tree was restored by the pre-pi5-close-syscall-proof-local1-20260529
+  snapshot.
 
 ## Restore Proof
 
@@ -183,3 +197,7 @@ The discriminator completed in local18 and points to pre-dispatch owner-table
 visibility. Continue with a minimal cache-clean fix for the initialized
 ProcessDescriptorStore static, retaining the temporary traces until a passing
 physical proof proves they are no longer needed.
+
+The local19 cache-clean candidate accepted the physical proof. Promote the
+already queued closeout checkpoint next; do not start dup/read work before that
+checkpoint reconciles the QEMU/Pi 5 frontier and deferred surfaces.

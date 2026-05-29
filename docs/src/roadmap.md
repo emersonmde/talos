@@ -447,6 +447,21 @@ accept a physical close claim. The next bounded Milestone 7.4 task should be
 phase7-pi5-close-syscall-proof-20260529. Dup/read, process loading,
 VFS/filesystem, shell, networking, SSH, object finalization, and full POSIX
 descriptor readiness remain blocked.
+The serialized Pi 5 close syscall proof is now accepted. Retained local19
+hardware evidence carries the QEMU/substitute talos_close invariant to
+Raspberry Pi 5: the focused rpi5_close_syscall_proof payload closes fd 1 and
+fd 2 through the current ProcessOwnerId-backed ProcessDescriptorStore,
+proves write-after-close returns -EBADF before runtime-console0 side effects,
+preserves reserved-argument -EINVAL no-mutation, repeated/invalid close
+-EBADF, talos_nop, unknown-syscall -ENOSYS, copy-probe quarantine, diagnostic
+marker quarantine, final classification=pi5-close-syscall-proof-complete, and
+PASS. The physical fix cleans the initialized ProcessDescriptorStore static to
+PoC before the EL2-to-EL1/EL0 proof handoff; local18 showed the pre-fix EL1
+handler saw owner-present=false. This accepts only the physical talos_close
+proof. Dup/read, process loading, VFS/filesystem, shell, networking, SSH,
+object finalization, and full POSIX descriptor readiness remain blocked. The
+next bounded Milestone 7.4 task should be
+phase7-pi5-close-syscall-proof-closeout-checkpoint-20260529.
 
 Near-term direction after the accepted Phase 7.3 syscall ABI/dispatch closeout:
 

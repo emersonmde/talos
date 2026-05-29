@@ -5675,3 +5675,37 @@ ADR template:
   blocking/readiness, signals, restart semantics, object finalization,
   RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and full POSIX
   descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 Pi 5 Close Syscall Proof Accepted
+
+- Status: accepted as the serialized Raspberry Pi 5 Milestone 7.4 close
+  syscall proof. No dup/read syscall implementation, process loading,
+  VFS/filesystem behavior, shell behavior, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, object finalization, or DMA/cache-driver policy was
+  added.
+- Context: QEMU/substitute evidence had already proven talos_close through
+  ProcessDescriptorStore. Pi 5 local15/local17 showed lower-AArch64 close
+  dispatch returned -EBADF for close_stdout. The local18 discriminator proved
+  the EL1 handler saw owner-present=false before dispatch even though EL2 had
+  initialized the proof ProcessDescriptorStore.
+- Decision: Accept phase7-pi5-close-syscall-proof-20260529. The physical fix
+  cleans the initialized ProcessDescriptorStore static to PoC before entering
+  the EL1/EL0 proof path. Retained local19 serial evidence reports
+  final participants=11 expected=11 errors=0
+  classification=pi5-close-syscall-proof-complete and
+  rpi5-close-syscall-proof: PASS.
+- Evidence level: serial hardware boot/output with hardwareTestLock,
+  static archive/image inspection, QEMU/substitute close smoke, no_std unit
+  tests, fmt/lint/typecheck, documentation build, whitespace inspection, TFTP
+  fetch log, and restore proof for the prior accepted boot tree.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec test
+  passed with 231 no_std tests; scripts/qemu-close-syscall-smoke.sh passed;
+  scripts/rpi5-archive-review.sh passed for local19; git diff --check passed;
+  mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-pi5-close-syscall-proof-closeout-checkpoint-20260529, scoped to
+  reconciling the QEMU and Pi 5 close proof frontier before dup/read work.
+  Dup/read syscalls, process loading, VFS/filesystem, stdin/read object model,
+  shell, networking, SSH, blocking/readiness, signals, restart semantics,
+  object finalization, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.

@@ -1,0 +1,32 @@
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/final-serial-cursor.txt
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/observe-loops.txt
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/serial-combined.txt
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/serial-observe-65.json
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/serial-observe-65.txt
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/serial-observe-66.json
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/serial-observe-67.json
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/serial-observe-68.json
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/serial-observe-69.json
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/serial-observe-70.json
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local18-store-state-discriminator/observe-loops.txt
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local18-store-state-discriminator/serial-combined.txt
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local18-store-state-discriminator/serial-observe-22.json
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/serial-observe-70.txt
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/serial-observe-71.json
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/serial-observe-71.txt
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/serial-observe-72.json
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local18-store-state-discriminator/serial-observe-22.txt
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local18-store-state-discriminator/serial-observe-23.json
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local18-store-state-discriminator/serial-observe-23.txt
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local18-store-state-discriminator/serial-observe-24.json
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local18-store-state-discriminator/serial-observe-24.txt
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local18-store-state-discriminator/serial-observe-25.json
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local18-store-state-discriminator/serial-observe-25.txt
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local18-store-state-discriminator/serial-observe-26.json
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local18-store-state-discriminator/serial-observe-26.txt
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local18-store-state-discriminator/serial-observe-27.json
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local18-store-state-discriminator/serial-observe-27.txt
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local18-store-state-discriminator/serial-observe-28.json
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local18-store-state-discriminator/serial-observe-28.txt
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local18-store-state-discriminator/serial-observe-29.json
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local19-store-clean-candidate/
