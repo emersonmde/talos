@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 syscall ABI source inventory frontier,
+Talos is at the Phase 7.3 syscall ABI contract frontier,
 after accepting the Phase 6.3 production scheduler runtime closeout, the full
 Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -37,7 +37,8 @@ and gates. The accepted Phase 7.3 syscall ABI source inventory maps the source
 owners and gaps for SVC exception decoding, syscall number and argument
 registers, return/error convention, user-copy preconditions, descriptor-table
 interaction, and process/task ownership. The next recommended bounded task is
-the Phase 7.3 syscall ABI contract, not implementation work.
+the Phase 7.3 target-independent syscall dispatch core, not production
+exception routing, QEMU, or hardware work.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -161,7 +162,10 @@ DMA/cache-driver policy remain deferred. The accepted Phase 7.3 syscall ABI
 source inventory maps SVC exception decoding, proof-marker boundaries, syscall
 number and argument register gaps, return/error convention gaps, user-copy
 preconditions, descriptor-table interaction, and process/task ownership before
-any syscall implementation.
+any syscall implementation. The accepted Phase 7.3 syscall ABI contract fixes
+the first stable syscall boundary: lower-AArch64 svc #0, syscall number in x8,
+scalar arguments in x0 through x5, x0 as the sole return register, negative
+errno returns, talos_nop = 0, and unknown syscall = -ENOSYS.
 The obsolete-bloat inventory and removal sweep are accepted before the
 multi-core preemption core: historical QEMU secondary-core discriminator paths
 and old Pi 5 allocator, exception, panic, and translation-fault proof-only
@@ -1125,6 +1129,14 @@ Accepted progress:
   phase7-syscall-abi-contract-20260529 before any syscall implementation,
   QEMU rerun, Pi 5 hardware run, descriptor I/O, process loading, VFS,
   filesystem, shell, networking, or SSH work.
+- Phase 7 syscall ABI contract is accepted. It defines lower-AArch64 svc #0 as
+  the first stable syscall trap, keeps diagnostic SVC marker 0x7a10 out of the
+  ABI, assigns x8 as the syscall-number register, x0 through x5 as scalar
+  argument registers, x0 as the sole return register, negative x0 as -errno,
+  talos_nop = 0, unknown syscall = -ENOSYS, and a first target-independent
+  dispatch proof slice. Production exception-handler integration, QEMU syscall
+  smoke, Pi 5 hardware proof, descriptor I/O, process loading, VFS, filesystem,
+  shell, networking, and SSH remain blocked.
 
 Milestone 7.4: File Descriptor Table
 

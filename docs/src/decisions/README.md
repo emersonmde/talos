@@ -4154,3 +4154,31 @@ ADR template:
   not accept a general syscall ABI, process loader, descriptor I/O,
   filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership, or
   DMA/cache-driver policy.
+
+## 2026-05-29 - Phase 7 Syscall ABI Contract Accepted
+
+- Status: accepted as a documentation-only Phase 7.3 syscall ABI contract.
+  No Rust implementation, assembly implementation, boot scenario, QEMU run,
+  Pi 5 hardware run, archive publishing, hardware-lock acquisition, process
+  loading, descriptor I/O, VFS/filesystem, shell behavior, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, or DMA/cache behavior was added.
+- Context: The accepted lower-EL proof establishes that QEMU and Pi 5 can
+  enter lower EL, execute a diagnostic SVC marker, and trap back with saved
+  state. The accepted syscall ABI source inventory identified the missing
+  production ABI decisions before implementation.
+- Decision: Accept phase7-syscall-abi-contract-20260529. The first stable
+  syscall trap is lower-AArch64 svc #0. x8 carries the syscall number, x0
+  through x5 carry scalar arguments, x0 is the sole return register, negative
+  x0 values encode -errno, talos_nop = 0 returns 0, and unknown syscall numbers
+  return -ENOSYS from a valid trap frame. Diagnostic SVC marker 0x7a10 remains
+  proof-only and is not a syscall number.
+- Evidence level: static documentation inspection, documentation build, and
+  whitespace inspection. No QEMU or Pi 5 hardware evidence was claimed.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next bounded implementation task may add only the
+  target-independent syscall dispatch/error-conversion core and unit tests.
+  Production exception-handler integration, QEMU syscall smoke, Pi 5 hardware
+  proof, pointer-copy syscalls, descriptor I/O, process loading, VFS,
+  filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership, and
+  DMA/cache-driver policy remain blocked.
