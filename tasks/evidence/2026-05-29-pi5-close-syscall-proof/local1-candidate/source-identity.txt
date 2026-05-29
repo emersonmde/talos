@@ -1,0 +1,4 @@
+1e6fcc26611a54ec3233c6ded9ca413957b57641
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local1-candidate/archive-review.txt
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local1-candidate/boot-tree-files.txt
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local1-candidate/source-identity.txt

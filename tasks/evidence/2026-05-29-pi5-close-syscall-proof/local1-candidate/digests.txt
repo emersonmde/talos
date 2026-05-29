@@ -1,0 +1,2 @@
+09a535b902648890c7195e01b7909985040ab5fd211730d5642e3804a5c2c20e  target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-close-syscall-proof.img
+23bb27ca6a7b511a1108570e5b5d77b6a3b671e85b49338374af7453e5ebe8cc  target/talos-rpi5-close-syscall-proof-boot.tar.gz
