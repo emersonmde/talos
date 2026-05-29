@@ -12,6 +12,42 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.3 Pi 5 Syscall Proof Accepted
+
+- Status: accepted as the serialized Raspberry Pi 5 production syscall routing
+  proof for the first scalar syscall boundary. No descriptor I/O,
+  copy-in/copy-out byte helper, pointer-taking syscall, process loading,
+  VFS/filesystem, shell behavior, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache-driver policy is accepted.
+- Context: The accepted QEMU syscall smoke and Pi 5 syscall proof plan required
+  physical evidence that lower-AArch64 svc #0 reaches the production dispatch
+  core on Pi 5 and returns the accepted x0 values to lower EL.
+- Decision: Accept phase7-pi5-syscall-proof-20260529. The implementation adds
+  rpi5_syscall_proof, a focused Pi 5 recoverable exception path for lower
+  AArch64 svc #0, Pi 5 image/boot-tree helpers, and retained lab evidence.
+  The accepted physical invariant is talos_nop returning x0 = 0, unknown
+  syscall number 17 returning x0 = 0xffffffffffffffda (-ENOSYS), and diagnostic
+  marker 0x7a10 remaining proof-only and outside stable dispatch.
+- Evidence level: serialized Pi 5 hardware boot/output under hardwareTestLock,
+  static archive/image inspection, QEMU/substitute regression evidence, unit
+  tests, and restore proof. The first candidate run was inconclusive, so the
+  accepted record includes candidate identity, fresh serial and TFTP cursors,
+  a passing production-timer known-good control, and an unchanged candidate
+  rerun before acceptance. Retained evidence is in
+  tasks/evidence/2026-05-29-pi5-syscall-proof/.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec test
+  passed; scripts/qemu-syscall-smoke.sh passed; scripts/rpi5-archive-review.sh
+  target/talos-rpi5-syscall-proof-boot.tar.gz passed; serialized Pi 5 local3
+  candidate rerun reported classification=pi5-syscall-proof-complete and
+  rpi5-syscall-proof: PASS; restore returned the prior boot-tree hash; git
+  diff --check passed; mdbook build passed.
+- Consequences: Pi 5 production routing for stable svc #0 is physically
+  accepted. Descriptor I/O, copy-in/copy-out, process loading, VFS/filesystem,
+  shell, networking, SSH, RP1/PCIe, UART interrupt ownership, and
+  DMA/cache-driver policy remain blocked. The next bounded work should be the
+  planned Pi 5 syscall proof closeout checkpoint before any copy-in/copy-out or
+  descriptor syscall work.
+
 ## 2026-05-29 - Phase 7.3 Syscall Routing Closeout Accepted
 
 - Status: accepted as the documentation closeout for the first QEMU-only

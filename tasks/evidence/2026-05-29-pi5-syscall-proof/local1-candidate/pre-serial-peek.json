@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "dS1lbmFibGVkDQpycGk1LWVsMC10cmFwLXByb29mOiBiZWZvcmUtZWwwLWVyZXQNCnJwaTUtZWwwLXRyYXAtcHJvb2Y6IHRyYXAgdmVjdG9yPWxvd2VyLWFhcmNoNjQtc3luYyBlc3I9MHgwMDAwMDAwMDU0MDA3YTEwIGZhcj0weDAwMDAwMDAwMDAwMDAwMDAgZWxyPTB4MDAwMDAwMDAwMDEwMDAwNCBzcD0weDAwMDAwMDAwMDAyMDAwMDAgc3Bzcj0weDAwMDAwMDAwMDAwMDAzYzAgbWFya2VyPTB4N2ExMA0KcnBpNS1lbDAtdHJhcC1wcm9vZjogcmF3LWVzcj0weDAwMDAwMDAwNTYwMDdhMTANCnJwaTUtZWwwLXRyYXAtcHJvb2Y6IGZyYW1lIGF2YWlsYWJsZT10cnVlIHgwPTB4MDAwMDAwMDAwMDAwMDAwMCB4MT0weDAwMDAwMDAwMDAwMDAwMTgNCnJwaTUtZWwwLXRyYXAtcHJvb2Y6IGZpbmFsIHBhcnRpY2lwYW50cz0xIGV4cGVjdGVkPTEgZXJyb3JzPTAgY2xhc3NpZmljYXRpb249cGk1LWVsMC10cmFwLXByb29mLWNvbXBsZXRlDQpycGk1LWVsMC10cmFwLXByb29mOiBQQVNTDQo=",
+  "bytes": 500,
+  "cursor": 3002803,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "u-enabled\r\nrpi5-el0-trap-proof: before-el0-eret\r\nrpi5-el0-trap-proof: trap vector=lower-aarch64-sync esr=0x0000000054007a10 far=0x0000000000000000 elr=0x0000000000100004 sp=0x0000000000200000 spsr=0x00000000000003c0 marker=0x7a10\r\nrpi5-el0-trap-proof: raw-esr=0x0000000056007a10\r\nrpi5-el0-trap-proof: frame available=true x0=0x0000000000000000 x1=0x0000000000000018\r\nrpi5-el0-trap-proof: final participants=1 expected=1 errors=0 classification=pi5-el0-trap-proof-complete\r\nrpi5-el0-trap-proof: PASS\r\n"
+}

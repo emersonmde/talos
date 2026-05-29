@@ -1,0 +1,3 @@
+serial_cursor=3002803
+tftp_cursor=65536
+snapshot=pre-pi5-syscall-proof-local1-20260529

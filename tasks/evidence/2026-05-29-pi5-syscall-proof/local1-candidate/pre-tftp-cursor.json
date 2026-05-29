@@ -1,0 +1,14 @@
+{
+  "action": "tftp logs",
+  "ok": true,
+  "tftp": {
+    "cursor_end": 65536,
+    "cursor_start": 0,
+    "events": [],
+    "lines": [
+      "May 19 20:35:09 dnsmasq-tftp[1]: error 0 Early terminate received from 10."
+    ],
+    "log": "/state/tftp.log",
+    "truncated": true
+  }
+}

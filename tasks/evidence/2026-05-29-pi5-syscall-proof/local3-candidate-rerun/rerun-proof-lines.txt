@@ -1,0 +1,10 @@
+talos: boot start
+rpi5-syscall-proof: start user-text=[0x0000000000100000,0x0000000000101000) user-stack=[0x00000000001f0000,0x0000000000200000) user-guard=[0x00000000001e0000,0x00000000001f0000) stable-svc=0x0000 diagnostic-marker=0x7a10
+rpi5-syscall-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true
+rpi5-syscall-proof: syscall case=talos_nop vector=lower-aarch64-sync esr=0x0000000054000000 svc=0x0000 number=0 args=[x0=0x0000000000000000 x1=0x0000000000000000 x2=0x0000000000000000 x3=0x0000000000000000 x4=0x0000000000000000 x5=0x0000000000000000] return-x0=0x0000000000000000
+rpi5-syscall-proof: user-observed case=talos_nop x0=0x0000000000000000 ok=true
+rpi5-syscall-proof: syscall case=unknown vector=lower-aarch64-sync esr=0x0000000054000000 svc=0x0000 number=17 return-x0=0xffffffffffffffda expected=-ENOSYS
+rpi5-syscall-proof: user-observed case=unknown x0=0xffffffffffffffda ok=true
+rpi5-syscall-proof: diagnostic-marker marker=0x7a10 stable-syscall=false dispatched=false
+rpi5-syscall-proof: final participants=2 expected=2 errors=0 classification=pi5-syscall-proof-complete
+rpi5-syscall-proof: PASS

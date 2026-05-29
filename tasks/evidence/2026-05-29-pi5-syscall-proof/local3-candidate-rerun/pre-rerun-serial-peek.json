@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "dGltZXItcmVjb3JkLXJlamVjdGlvbnM9MSBpcnEtcmVjb3JkLXNjaGVkdWxlci1tdXRhdGVkPWZhbHNlIHBlbmRpbmctYWZ0ZXItcmVjb3JkPXRydWUgc2VydmljZS10aW1lci1wcmVlbXB0aW9uPTQwMiBwZW5kaW5nLWFmdGVyLXNlcnZpY2U9ZmFsc2UgcmVjb3JkZWQ9MSBjb2FsZXNjZWQ9MSBzZXJ2aWNlZD0xIG1ldGFkYXRhLWdlbmVyYXRpb24tYWZ0ZXItc2VydmljZT0zIGxvY2stcHJvZ3Jlc3M9MSBlcnJvcnM9MCBvaz10cnVlDQpycGk1LXByb2R1Y3Rpb24tdGltZXItcHJlZW1wdGlvbjogZmluYWwgcGFydGljaXBhbnRzPTMgZXhwZWN0ZWQ9MyBlcnJvcnM9MCBzdGF0ZS1sb2NrLWF2YWlsYWJsZT10cnVlIG1ldGFkYXRhLWxvY2stYXZhaWxhYmxlPXRydWUgd2FpdC1yZW1haW5pbmc9MTk5OTk3MzU0IGNsYXNzaWZpY2F0aW9uPXBpNS1wcm9kdWN0aW9uLXRpbWVyLXByZWVtcHRpb24tY29tcGxldGUNCnJwaTUtcHJvZHVjdGlvbi10aW1lci1wcmVlbXB0aW9uOiBQQVNTDQo=",
+  "bytes": 500,
+  "cursor": 3020224,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "timer-record-rejections=1 irq-record-scheduler-mutated=false pending-after-record=true service-timer-preemption=402 pending-after-service=false recorded=1 coalesced=1 serviced=1 metadata-generation-after-service=3 lock-progress=1 errors=0 ok=true\r\nrpi5-production-timer-preemption: final participants=3 expected=3 errors=0 state-lock-available=true metadata-lock-available=true wait-remaining=199997354 classification=pi5-production-timer-preemption-complete\r\nrpi5-production-timer-preemption: PASS\r\n"
+}

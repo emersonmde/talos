@@ -1,0 +1,4 @@
+fmt: cargo fmt --all -- --check passed
+unit: cargo -Zjson-target-spec test passed (198 tests)
+qemu: scripts/qemu-syscall-smoke.sh passed
+static archive/image review: scripts/rpi5-archive-review.sh target/talos-rpi5-syscall-proof-boot.tar.gz passed

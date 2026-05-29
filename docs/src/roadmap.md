@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 Pi 5 syscall proof planning frontier,
+Talos is at the Phase 7.3 Pi 5 syscall proof closeout frontier,
 after accepting the Phase 6.3 production scheduler runtime closeout, the full
 Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -70,6 +70,19 @@ restoration requirements, and exact PASS/classification lines for the later
 hardware proof. It does not acquire hardwareTestLock, publish an archive, run
 Pi 5 hardware, or unblock descriptor I/O, copy-in/copy-out, process loading,
 filesystem, shell, networking, or SSH.
+The serialized Pi 5 syscall proof is now accepted. Retained local3 physical
+serial evidence shows stable lower-AArch64 svc #0 reaching the production
+syscall dispatch core on Pi 5: talos_nop returns x0 = 0, unknown syscall number
+17 returns x0 = 0xffffffffffffffda (-ENOSYS), diagnostic marker 0x7a10 remains
+outside production dispatch, and the proof reports
+classification=pi5-syscall-proof-complete plus rpi5-syscall-proof: PASS. The
+first candidate run was inconclusive, so the accepted evidence includes the
+required same-candidate triage: candidate identity, fresh serial and TFTP
+cursors, a passing production-timer known-good control, an unchanged candidate
+rerun, and restore proof for the prior accepted boot tree. This accepts only
+physical production routing for the first scalar syscall boundary; descriptor
+I/O, copy-in/copy-out, process loading, filesystem, shell, networking, and SSH
+remain blocked.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -1212,6 +1225,18 @@ Accepted progress:
   restoration requirements, and diagnostic marker 0x7a10 quarantine. No Pi 5
   run, archive publication, descriptor I/O, copy-in/copy-out, process loading,
   filesystem, shell, networking, or SSH behavior is accepted by the plan.
+- Phase 7 Pi 5 syscall proof is accepted. It adds rpi5_syscall_proof and the
+  focused Pi 5 lower-AArch64 svc #0 recovery path, then retains serialized
+  physical evidence that talos_nop returns x0 = 0, unknown syscall number 17
+  returns x0 = -ENOSYS, diagnostic marker 0x7a10 is not dispatched as a stable
+  syscall, and the final line reports
+  classification=pi5-syscall-proof-complete with rpi5-syscall-proof: PASS.
+  The proof includes candidate identity, fresh TFTP serves of
+  da591740/kernel_2712.img at 101408 bytes, fresh serial evidence, a passing
+  production-timer known-good control after the first inconclusive run, an
+  unchanged candidate rerun, and post-restore tree-hash proof. Descriptor I/O,
+  copy-in/copy-out, process loading, VFS/filesystem, shell, networking, and SSH
+  remain blocked.
 
 Milestone 7.4: File Descriptor Table
 
