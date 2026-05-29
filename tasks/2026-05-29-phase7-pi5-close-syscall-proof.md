@@ -23,9 +23,10 @@ interrupt ownership, or DMA/cache-driver policy.
 - 993f290: added a temporary handler-entry trace for the next discriminator.
 - 772ef82: moved that temporary handler-entry trace from the descriptor-write
   proof handler to the active close syscall proof handler.
-- pending: added a temporary post-dispatch trace in the active close syscall
-  proof handler to distinguish a non-returning descriptor dispatch from
-  per-case logging/state update failure.
+- c03d690: recorded local13/local14 triage evidence and added a temporary
+  post-dispatch trace in the active close syscall proof handler to distinguish
+  a non-returning descriptor dispatch from per-case logging/state update
+  failure.
 
 ## Local Evidence
 
@@ -118,6 +119,14 @@ Evidence directory: tasks/evidence/2026-05-29-pi5-close-syscall-proof/.
   dispatch-return, per-case syscall, final classification, or PASS lines. This
   completes the post-local11 triage and narrows the next discriminator to the
   close proof dispatch path after handler entry.
+- local15-post-dispatch-candidate: committed the post-dispatch trace at
+  c03d690, rebuilt and published the 114792-byte candidate, and reran the
+  serialized Pi 5 proof. Fresh TFTP evidence shows da591740/kernel_2712.img
+  served at 114792 bytes. Retained serial again reached start, validation,
+  pre-eret, and lower-AArch64 handler-entry for close_stdout, but did not
+  produce the new dispatch-return line, per-case syscall line, final
+  classification, or PASS. This means the physical failure is now inside or
+  before returning from dispatch_process_descriptor for close_stdout.
 
 ## Restore Proof
 
@@ -127,7 +136,10 @@ status after local11/local12 named-snapshot restore matched that hash.
 
 ## Next Action
 
-The local13/local14 triage is complete and source changes are unblocked. The
-next bounded discriminator is a post-dispatch trace in the active close syscall
-proof handler; run it as a new serialized candidate and retain whether the
-handler returns from descriptor dispatch before any per-case syscall logging.
+Do not change source after the local15 inconclusive candidate until the
+inconclusive-run triage sequence is refreshed for c03d690: retain candidate
+identity, fresh serial cursor, TFTP delta, a clean known-good production-timer
+control, and an unchanged c03d690 candidate rerun. If that unchanged rerun still
+stops before dispatch-return, the next source discriminator should instrument
+inside dispatch_process_descriptor / talos_close rather than the post-dispatch
+case logging.

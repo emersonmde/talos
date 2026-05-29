@@ -1,0 +1,2 @@
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local15-post-dispatch-candidate/git-status-before-hardware.txt
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local15-post-dispatch-candidate/hardware-run-started-at.txt
