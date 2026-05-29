@@ -12,6 +12,36 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.2 EL0 Trap Proof Closeout Accepted
+
+- Status: accepted as the documentation closeout for the bounded QEMU and
+  physical Pi 5 lower-EL trap proof frontier. No Rust behavior, assembly
+  behavior, QEMU rerun, Pi 5 archive publication, hardware-lock use, serial
+  observation, syscall ABI, process loading, descriptor I/O, VFS/filesystem,
+  shell behavior, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The QEMU EL0 trap smoke core and serialized Pi 5 EL0 trap proof are
+  both accepted. The repository needed one checkpoint that reconciles their
+  retained evidence, states the exact capability proven, and prevents the
+  diagnostic SVC proof marker from becoming an implied syscall ABI.
+- Decision: Accept phase7-el0-trap-proof-closeout-checkpoint-20260529. The
+  accepted frontier proves one bounded diagnostic lower-EL path: validated
+  fixed user frame, EL0t entry, diagnostic SVC marker 0x7a10, regular
+  lower-AArch64 synchronous trap handling, saved user state, final
+  classification, and PASS on QEMU/substitute and physical Pi 5 hardware.
+- Evidence level: static documentation inspection, retained QEMU/substitute
+  serial evidence, retained serialized Pi 5 hardware boot/output evidence,
+  whitespace inspection, and documentation build.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next recommended bounded task is
+  phase7-syscall-abi-source-inventory-20260529. It should remain
+  documentation-only and map source owners and gaps before any syscall ABI or
+  dispatch implementation starts.
+- Risks: General syscall ABI, syscall dispatch, process loading, descriptor
+  I/O, VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, and DMA/cache-driver policy remain deferred.
+
 ## 2026-05-28 - Phase 7.2 QEMU EL0 Trap Smoke Closeout Accepted
 
 - Status: accepted as the documentation closeout for the first QEMU-only EL0

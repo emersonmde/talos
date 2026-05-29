@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.2 Pi 5 EL0 trap proof planning frontier,
+Talos is at the Phase 7.2 EL0 trap proof closeout frontier,
 after accepting the Phase 6.3 production scheduler runtime closeout, the full
 Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -25,14 +25,16 @@ defined the first lower-EL proof boundary: one QEMU-only built-in user payload,
 a diagnostic SVC marker trap back to the kernel, saved-state output, and
 PASS/classification evidence. The accepted QEMU implementation now reports
 classification=qemu-el0-trap-smoke-complete and qemu-el0-trap-smoke: PASS
-from retained QEMU/substitute serial evidence. The accepted Pi 5 proof plan
-defines the serialized physical invariant, hardwareTestLock ownership,
-candidate identity, fresh serial cursor, TFTP delta, known-good control,
-candidate rerun, restoration, and exact rpi5-el0-trap-proof PASS/classification
-requirements before any hardware action. Pi 5 lower-EL evidence, general
-SVC/syscall ABI, VFS, filesystem, program loading, descriptor I/O, networking,
-SSH, and shell work remain blocked until later explicit bounded tasks accept
-their contracts and gates.
+from retained QEMU/substitute serial evidence. The serialized Pi 5 proof is
+also accepted: local62 retained physical serial evidence contains the
+source-backed translation feature report, regular VBAR_EL1 handoff,
+lower-AArch64 synchronous SVC trap state,
+classification=pi5-el0-trap-proof-complete, and rpi5-el0-trap-proof: PASS.
+This accepts only the bounded lower-EL trap path. General SVC/syscall ABI,
+VFS, filesystem, program loading, descriptor I/O, networking, SSH, and shell
+work remain blocked until later explicit bounded tasks accept their contracts
+and gates. The next recommended bounded task is the Phase 7.3 syscall ABI
+source inventory, not implementation work.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
