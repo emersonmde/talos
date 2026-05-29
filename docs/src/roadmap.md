@@ -318,6 +318,16 @@ retained descriptor-table errors. It adds no live syscall routing, QEMU or
 Pi 5 proof, close/dup/read syscall behavior, process loading,
 VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
 DMA/cache-driver policy, or full POSIX descriptor claim.
+The accepted QEMU process descriptor stdio smoke plan defines the next
+QEMU/substitute proof boundary: lower-AArch64 talos_write fd 1/fd 2 must route
+through a ProcessOwnerId-backed ProcessDescriptorStore and inherited stdio
+DescriptorTable, with current-owner lookup evidence, retained fd/error
+regressions, talos_nop and unknown-syscall regressions, proof-only
+talos_copy_probe quarantine, diagnostic marker quarantine, exact
+classification/PASS lines, and retained QEMU log path. It adds no
+implementation, QEMU run, Pi 5 hardware action, or hardware-lock work and
+keeps close/dup/read, process loading, VFS/filesystem, shell, networking, SSH,
+physical proof, and full POSIX descriptor claims blocked.
 
 Near-term direction after the accepted Phase 7.3 syscall ABI/dispatch closeout:
 
@@ -1695,6 +1705,12 @@ Accepted progress:
   deterministic -EBADF/-EINVAL/-EMFILE error behavior. Live syscall routing,
   close/dup/read syscalls, process loading, VFS/filesystem, shell, networking,
   SSH, physical proof, and full POSIX descriptor claims remain blocked.
+- Phase 7 QEMU process descriptor stdio smoke plan is accepted. It defines the
+  QEMU/substitute proof that talos_write fd 1/fd 2 must use a
+  ProcessOwnerId-backed process-owned inherited stdio table rather than the
+  earlier proof-owned table, while preserving fd/error regressions,
+  copy-probe quarantine, diagnostic-marker quarantine, and blocked physical
+  claims.
 
 Milestone 7.4: File Descriptor Table
 

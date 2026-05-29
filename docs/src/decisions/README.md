@@ -12,6 +12,38 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.4 QEMU Process Descriptor Stdio Smoke Plan Accepted
+
+- Status: accepted as a documentation-only Milestone 7.4 QEMU/substitute
+  process descriptor stdio smoke plan. No Rust behavior, assembly behavior,
+  QEMU run, Pi 5 hardware run, archive publishing, hardware-lock acquisition,
+  close/dup/read syscall behavior, process loading, VFS/filesystem behavior,
+  shell behavior, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted process descriptor table core added
+  ProcessDescriptorOwner and ProcessDescriptorStore, but no lower-EL evidence
+  yet distinguishes process-owned descriptor lookup from the earlier
+  proof-owned inherited stdio table used by descriptor-write smoke tests.
+- Decision: Accept
+  phase7-qemu-process-descriptor-stdio-smoke-plan-20260529. The plan requires
+  qemu_process_descriptor_stdio_smoke to create a ProcessOwnerId-backed owner,
+  install inherited stdio, resolve the current owner through
+  ProcessDescriptorStore, and prove talos_write fd 1/fd 2 through that
+  process-owned table while preserving fd/error, scalar syscall, proof-only
+  copy-probe, and diagnostic-marker quarantine observations.
+- Evidence level: static documentation inspection, documentation build, and
+  whitespace inspection. No QEMU/substitute or physical Pi 5 evidence was
+  produced because this task changes only Markdown documentation and durable
+  worker state.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-qemu-process-descriptor-stdio-smoke-core-20260529, scoped to
+  implementing the QEMU/substitute process-owned inherited stdio proof. Pi 5
+  physical proof, stdin/read, close/dup/read syscalls, process loading,
+  VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.
+
 ## 2026-05-29 - Phase 7.4 Process Descriptor Table Core Accepted
 
 - Status: accepted as the target-independent Milestone 7.4 process descriptor
