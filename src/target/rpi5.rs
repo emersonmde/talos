@@ -8880,6 +8880,16 @@ pub fn handle_descriptor_write_proof_exception(
     ]);
     let args = arguments.values();
     let raw_number = frame.reg(8);
+    crate::println!(
+        "rpi5-close-syscall-proof: handler-entry vector={} esr={:#018x} far={:#018x} svc={:#06x} number={:#018x} x0={:#018x}",
+        vector.name(),
+        reported_esr,
+        far,
+        marker,
+        raw_number,
+        args[0]
+    );
+    wait_uart10_empty_early_phase();
     let before_len = DESCRIPTOR_WRITE_CONSOLE_LEN.load(Ordering::Relaxed) as usize;
     let descriptor_table =
         crate::posix::DescriptorTable::<4>::with_inherited_stdio().expect("stdio table");
