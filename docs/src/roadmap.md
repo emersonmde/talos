@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 Pi 5 pointer-copy proof plan
+Talos is at the Phase 7.3 Pi 5 pointer-copy proof
 frontier, after accepting the Phase 6.3 production scheduler runtime closeout,
 the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -163,6 +163,22 @@ classification=pi5-pointer-copy-proof-complete plus
 rpi5-pointer-copy-proof: PASS lines. It does not acquire hardwareTestLock,
 publish an archive, run Pi 5 hardware, or unblock descriptor I/O, process
 loading, filesystem, shell, networking, or SSH.
+The serialized Pi 5 pointer-copy proof is now accepted. Retained local3
+physical serial evidence shows stable lower-AArch64 svc #0 reaching the
+proof-only talos_copy_probe path on Pi 5: the 16-byte success case returns
+x0 = 16 and rewrites UserData from 0x2a to 0xa5, the guard-range request
+returns x0 = 0xfffffffffffffff2 (-EFAULT), unknown syscall number 17 returns
+x0 = 0xffffffffffffffda (-ENOSYS), diagnostic marker 0x7a10 remains outside
+production dispatch, and the proof reports
+classification=pi5-pointer-copy-proof-complete plus
+rpi5-pointer-copy-proof: PASS. The first candidate run was inconclusive, so
+the accepted evidence includes candidate identity, fresh serial and TFTP
+cursors, a passing production-timer known-good control, an unchanged candidate
+rerun, hardwareTestLock release, and restore proof for the prior accepted boot
+tree. This accepts only the physical proof-only pointer-copy boundary;
+descriptor I/O, process loading, filesystem, shell, networking, SSH, RP1/PCIe,
+UART interrupt ownership, DMA/cache-driver policy, and stable POSIX descriptor
+claims remain blocked.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -1388,6 +1404,14 @@ Accepted progress:
   loading, VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt
   ownership, DMA/cache-driver policy, and stable POSIX descriptor claims
   blocked.
+- Phase 7 Pi 5 pointer-copy proof is accepted. It adds the focused
+  rpi5_pointer_copy_proof scenario and scripts, then retains serialized Pi 5
+  evidence with success-copy, guard-range -EFAULT, unknown-syscall -ENOSYS,
+  diagnostic-marker quarantine, classification=pi5-pointer-copy-proof-complete,
+  and rpi5-pointer-copy-proof: PASS. The evidence includes the required
+  inconclusive-run triage and restore proof. Descriptor I/O, process loading,
+  VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, and stable POSIX descriptor claims remain blocked.
 
 Milestone 7.4: File Descriptor Table
 

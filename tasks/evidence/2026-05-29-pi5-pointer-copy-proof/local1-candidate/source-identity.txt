@@ -1,0 +1,3 @@
+source_commit=f67595b892125a8d03f5190103b6af886d3c1ffd
+git_status=1
+?? tasks/evidence/2026-05-29-pi5-pointer-copy-proof/

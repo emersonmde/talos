@@ -1,0 +1,2 @@
+99890a3520fc1351c00250551409974cba82b802a47b40b18ac683234c1fa23b  target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-pointer-copy-proof.img
+195e196bb785292847da7e98f32ef4e15b08caa7d2bdd850a1240682a1c68dd9  target/talos-rpi5-pointer-copy-proof-boot.tar.gz

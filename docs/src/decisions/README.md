@@ -4714,3 +4714,46 @@ ADR template:
   candidate identity, fresh serial/TFTP evidence, known-good control and
   unchanged rerun requirements for inconclusive runs, restoration proof, and
   blocked descriptor/process/filesystem/networking surfaces.
+
+## 2026-05-29 - Phase 7 Pi 5 Pointer-Copy Proof Accepted
+
+- Status: accepted as the serialized Phase 7.3 Raspberry Pi 5 hardware proof
+  for the proof-only pointer-copy syscall boundary. It adds the focused
+  rpi5_pointer_copy_proof boot scenario, image and boot-tree helpers, retained
+  local evidence, serialized lab evidence, and task record updates. It does
+  not add descriptor-backed read/write, close, dup, pipe, stdio, runtime
+  console/TTY integration, process loading, VFS/filesystem behavior, path
+  copying, shell behavior, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, DMA/cache-driver policy, demand paging, copy-on-write,
+  signal/restart semantics, or a stable public talos_copy_probe claim.
+- Context: The accepted QEMU/substitute pointer-copy smoke and Pi 5 proof plan
+  required one physical run that carries the proof-only talos_copy_probe
+  boundary to real lower-AArch64 svc #0 routing on the Pi 5, with candidate
+  identity, fresh TFTP/serial evidence, inconclusive-run triage, and restore
+  proof.
+- Decision: Accept phase7-pi5-pointer-copy-proof-20260529. The retained local3
+  Pi 5 serial evidence shows the success copy returning x0 = 16 and rewriting
+  the fixed UserData backing store to 0xa5, the guard-range request returning
+  x0 = 0xfffffffffffffff2 (-EFAULT), unknown syscall number 17 returning
+  x0 = 0xffffffffffffffda (-ENOSYS), diagnostic marker 0x7a10 remaining
+  quarantined, classification=pi5-pointer-copy-proof-complete, and
+  rpi5-pointer-copy-proof: PASS.
+- Evidence level: serial hardware boot/output, lab-controller TFTP and restore
+  evidence, static archive/image inspection, QEMU/substitute regression,
+  target-independent unit tests, fmt, whitespace inspection, and documentation
+  build. The first candidate run was inconclusive; no code changes followed
+  until candidate identity, fresh serial cursor, TFTP evidence, a passing
+  production-timer known-good control, and an unchanged candidate rerun were
+  recorded.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test passed; scripts/qemu-pointer-copy-smoke.sh passed;
+  scripts/qemu-syscall-smoke.sh passed; scripts/rpi5-archive-review.sh
+  target/talos-rpi5-pointer-copy-proof-boot.tar.gz passed; local3 Pi 5
+  rerun retained
+  tasks/evidence/2026-05-29-pi5-pointer-copy-proof/local3-candidate-rerun/rerun-proof-lines.txt;
+  git diff --check passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is the Pi 5 pointer-copy
+  proof closeout checkpoint. It may reconcile only the accepted QEMU and Pi 5
+  pointer-copy evidence and must keep descriptor I/O, process loading,
+  VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, and stable POSIX descriptor claims blocked.
