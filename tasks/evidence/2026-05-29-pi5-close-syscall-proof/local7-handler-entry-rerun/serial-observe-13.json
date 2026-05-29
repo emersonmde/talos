@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "OiBkY2FjaGUgZW5hYmxlIGRvbmUNCnRhbG9zOiBkYXRhIGNhY2hlIGVuYWJsZWQ6IGVsPTB4MiBzY3Rscj0weDMwYzUxODM1IGtpbmQ9ZWwyLXN0YWdlMS1kY2FjaGUtZW5hYmxlZA0KdGFsb3M6IGJvb3RzdHJhcCBhbGxvY2F0b3IgcGxhbjogc3RhcnQ9MHgyZjAxMDAwMCBlbmQ9MHgzZmMwMDAwMCBieXRlcz0weDEwYmYwMDAwIHBhZ2VzPTB4MTBiZjAgcGFnZV9zaXplPTB4MTAwMCBraW5kPWJ1bXAtbm8tZnJlZS1sb3ctdGFpbA0KdGFsb3M6IGJvb3RzdHJhcCBhbGxvY2F0b3IgaW5pdDogc3RhcnQ9MHgyZjAxMDAwMCBuZXh0PTB4MmYwMTAwMDAgZW5kPTB4M2ZjMDAwMDAgcG9saWN5PW5vLWZyZWUNCnRhbG9zOiBzdHJpbmcgc21va2U6IHB0cj0weDJmMDEwMDAwIGxlbjA4IHVzZWQ9MHg4IHJlbT0weDEwYmVmZmY4IGV4PXRyY2xvc2Utc3lzY2FsbC1wcm9vZjogdmFsaWRhdGVkIGVscj0weDAwMDAwMDAwMDAxMDAwMDAgc3A9MHgwMDAwMDAwMDAwMjAwMDAwIHVzZXItZGF0YT0weDAwMDAwMDAwMDAxMTAwMDAgdXNlci1kYXRhLWxlbj0weDAwMDAwMDAwMDAwMDEwMDAgZ3VhcmQtYmxvY2tlZD10cnVlIGRlc2NyaXB0b3Itc3RvcmU9Y3VycmVudC1vd25lciBpbmhlcml0ZWQtc3RkaW89dHJ1ZSBydW50aW1lLWNvbnNvbGU9cnVudGltZS1jb25zb2xlMA0KcnBpNS1jbG9zZS1zeXNjYWxsLXByb29mOiBwcmUtZXJldCBoY3JfZWwyPTB4MDAwMDAwMDA4MDAwMDAwMCBzY3Rscl9lbDE9MHgwMDAwMDAwMDMwZDAwODAwIHRjcl9lbDE9MHgwMDAwMDAwMjAwMDAzMDEwIHR0YnIwX2VsMT0weDAwMDAwMDAwMDAyNDEwMDAgdmJhcl9lbDE9MHgwMDAwMDAwMDAwMjAwODAwIGVscl9lbDE9MHgwMDAwMDAwMDAwMTAwMDAwIHNwc3JfZWwxPTB4MDAwMDAwMDAwMDAwMDNjMA0K",
+  "bytes": 888,
+  "cursor_end": 3123884,
+  "cursor_start": 3122996,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": ": dcache enable done\r\ntalos: data cache enabled: el=0x2 sctlr=0x30c51835 kind=el2-stage1-dcache-enabled\r\ntalos: bootstrap allocator plan: start=0x2f010000 end=0x3fc00000 bytes=0x10bf0000 pages=0x10bf0 page_size=0x1000 kind=bump-no-free-low-tail\r\ntalos: bootstrap allocator init: start=0x2f010000 next=0x2f010000 end=0x3fc00000 policy=no-free\r\ntalos: string smoke: ptr=0x2f010000 len08 used=0x8 rem=0x10befff8 ex=trclose-syscall-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 user-data=0x0000000000110000 user-data-len=0x0000000000001000 guard-blocked=true descriptor-store=current-owner inherited-stdio=true runtime-console=runtime-console0\r\nrpi5-close-syscall-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000200003010 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0\r\n",
+  "truncated": false
+}

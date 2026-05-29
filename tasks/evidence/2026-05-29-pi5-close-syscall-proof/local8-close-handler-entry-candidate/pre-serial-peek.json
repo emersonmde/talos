@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "ZD0weDggcmVtPTB4MTBiZWZmZjggZXg9dHJjbG9zZS1zeXNjYWxsLXByb29mOiB2YWxpZGF0ZWQgZWxyPTB4MDAwMDAwMDAwMDEwMDAwMCBzcD0weDAwMDAwMDAwMDAyMDAwMDAgdXNlci1kYXRhPTB4MDAwMDAwMDAwMDExMDAwMCB1c2VyLWRhdGEtbGVuPTB4MDAwMDAwMDAwMDAwMTAwMCBndWFyZC1ibG9ja2VkPXRydWUgZGVzY3JpcHRvci1zdG9yZT1jdXJyZW50LW93bmVyIGluaGVyaXRlZC1zdGRpbz10cnVlIHJ1bnRpbWUtY29uc29sZT1ydW50aW1lLWNvbnNvbGUwDQpycGk1LWNsb3NlLXN5c2NhbGwtcHJvb2Y6IHByZS1lcmV0IGhjcl9lbDI9MHgwMDAwMDAwMDgwMDAwMDAwIHNjdGxyX2VsMT0weDAwMDAwMDAwMzBkMDA4MDAgdGNyX2VsMT0weDAwMDAwMDAyMDAwMDMwMTAgdHRicjBfZWwxPTB4MDAwMDAwMDAwMDI0MTAwMCB2YmFyX2VsMT0weDAwMDAwMDAwMDAyMDA4MDAgZWxyX2VsMT0weDAwMDAwMDAwMDAxMDAwMDAgc3Bzcl9lbDE9MHgwMDAwMDAwMDAwMDAwM2MwDQo=",
+  "bytes": 500,
+  "cursor": 3123884,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "d=0x8 rem=0x10befff8 ex=trclose-syscall-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 user-data=0x0000000000110000 user-data-len=0x0000000000001000 guard-blocked=true descriptor-store=current-owner inherited-stdio=true runtime-console=runtime-console0\r\nrpi5-close-syscall-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000200003010 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0\r\n"
+}

@@ -1,0 +1,30 @@
+4
+  4.31 SD_OC: 0
+  4.12 Boot mode: NETWORK (02) order f1
+  9.10 NETWORK: 88:a2:9e:ae:c8:7f wait for link TFTP: 0.0.0.0
+ 11.97 LINK STATUS: speed: 1000 full duplex
+ 11.76 Link ready
+ 12.03 RX: 0 IP: 0 IPV4: 0 MAC: 0 UDP: 0 UDP RECV: 0 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.33 DHCP src: 60:22:32:71:62:87 10.42.1.1
+ 20.34 YI_ADDR 10.42.1.4
+ 20.36 SI_ADDR 10.42.1.3
+ 20.03 OPTIONS:-
+	op: 53 len:   1 DHCP recv OFFER (2) expect OFFER 20.04 
+	op: 54 len:   4 10.42.1.1 20.04 
+	op: 51 len:   4  20.05 
+	op: 67 len:  11  20.05 
+	op: 58 len:   4  20.05 
+	op: 59 len:   4  20.05 
+	op:  1 len:   4 255.255.255.0 20.06 
+	op: 66 len:  10 10.42.1.3 20.63 [66]: 10.42.1.3
+ 20.06 
+	op:  3 len:   4 10.42.1.1 20.06 
+ 20.69 NET 10.42.1.4 255.255.255.0 gw 0.0.0.0 tftp 10.42.1.3
+ 20.74 DHCP src: 60:22:32:71:62:87 10.42.1.1
+ 20.78 YI_ADDR 10.42.1.4
+ 20.80 SI_ADDR 10.42.1.3
+ 20.08 OPTIONS:-
+	op: 53 len:   1 DHCP recv ACK (5) expect ACK 20.08 
+	op: 54 len:   4 10.42.1.1 20.09 
+	op: 51 len:   4  20.09 
+	op: 58 len:

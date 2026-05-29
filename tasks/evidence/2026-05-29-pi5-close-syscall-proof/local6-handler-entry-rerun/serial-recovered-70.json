@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "IDIxLjU1IFBDSTEgcmVzZXQNCg==",
+  "bytes": 19,
+  "cursor_end": 3118939,
+  "cursor_start": 3118920,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": " 21.55 PCI1 reset\r\n",
+  "truncated": false
+}

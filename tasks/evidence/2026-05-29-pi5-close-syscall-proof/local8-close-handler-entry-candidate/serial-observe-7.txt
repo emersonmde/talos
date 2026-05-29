@@ -1,0 +1,19 @@
+55:13, Dec  4 2024
+TALOS: rust_entry
+TALOS: boot info parsed
+TALOS: target init
+TALOS: exceptions ready
+TALOS: kernel_main
+
+talos: boot start
+talos: board raspberry-pi-5-bcm2712
+talos: version 0.1.0
+talos: console early-uart fmt
+talos: boot coalos: dtb chosen bootargs: reboot=w coherent_pool=1M 8250.nr_uarts=1 pci=pcie_bus_safe cgroup_disable=memory numa_policy=interleave nvme.max_host_mem_size_mb=32 bcm2708_fb.fbwidth=640 bcm2708_fb.fbheight=480 bcm2708_fb.fbdepth=16 bcm2708_fb.fbswap=1 numa=fake=8 system_heap.max_order=0 iommu_dma_numa_policy=interleave smsc95xx.macaddr=88:A2:9E:AE:C8:7F vc_mem.mem_base=0x3fc00000 vc_mem.mem_size=0x40000000  console=ttyAMA10,115200 earlycon=pl011,mmio32,0x1f00030000 talos.boot=first-light
+talos: status early boot log ready
+TALOS: dtb reserved start
+talos: dtb reserved: count=0 shown=0 truncated=false
+TALOS: dtb reserved done
+TALOS: reserved-memory start
+TALOS: reserved-memory done
+talos: reserved-memory: addr_cells=2 size_cells=2 nodes=4 ranges=3 shown=3 t

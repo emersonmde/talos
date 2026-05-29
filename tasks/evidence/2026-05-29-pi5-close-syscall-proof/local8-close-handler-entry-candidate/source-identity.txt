@@ -1,0 +1,5 @@
+772ef826d8fc514c1cf76ce0622690db7be49029
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local5-handler-entry-rerun/
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local6-handler-entry-rerun/
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local7-handler-entry-rerun/
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local8-close-handler-entry-candidate/

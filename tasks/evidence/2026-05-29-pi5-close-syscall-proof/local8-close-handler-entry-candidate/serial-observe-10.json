@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "DQp0YWxvczogZHRiIG1lbW9yeVsxXTogYWRkcj0weDQwMDAwMDAwIHNpemU9MHhjMDAwMDAwMA0KdGFsb3M6IGR0YiBtZW1vcnlbMl06IGFkZHI9MHgxMDAwMDAwMDAgc2l6ZT0weDEwMDAwMDAwMA0KcnBpNS1jbG9zZS1zeXNjYWxsLXByb29mOiBzdGFydA0KcnBpNS1jbG9zZS1zeXNjYWxsLXByb29mOiB2YWxpZGF0ZWQgZWxyPTB4MDAwMDAwMDAwMDEwMDAwMCBzcD0weDAwMDAwMDAwMDAyMDAwMDAgdXNlci1kYXRhPTB4MDAwMDAwMDAwMDExMDA=",
+  "bytes": 254,
+  "cursor_end": 3131954,
+  "cursor_start": 3131700,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\r\ntalos: dtb memory[1]: addr=0x40000000 size=0xc0000000\r\ntalos: dtb memory[2]: addr=0x100000000 size=0x100000000\r\nrpi5-close-syscall-proof: start\r\nrpi5-close-syscall-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 user-data=0x00000000001100",
+  "truncated": false
+}

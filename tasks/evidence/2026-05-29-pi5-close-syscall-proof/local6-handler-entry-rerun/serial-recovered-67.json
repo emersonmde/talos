@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "IDIwLjIyIERIQ1Agc3JjOiA2MDoyMjozMjo3MTo2Mjo4NyAxMC40Mi4xLjENCiAyMC4yNA==",
+  "bytes": 52,
+  "cursor_end": 3116893,
+  "cursor_start": 3116841,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": " 20.22 DHCP src: 60:22:32:71:62:87 10.42.1.1\r\n 20.24",
+  "truncated": false
+}

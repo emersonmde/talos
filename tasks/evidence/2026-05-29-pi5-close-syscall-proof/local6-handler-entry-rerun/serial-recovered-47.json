@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "DQogIDEuMDkgUlBpOiBCT09UU1lTIHJlbGVhcw==",
+  "bytes": 28,
+  "cursor_end": 3114924,
+  "cursor_start": 3114896,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\r\n  1.09 RPi: BOOTSYS releas",
+  "truncated": false
+}

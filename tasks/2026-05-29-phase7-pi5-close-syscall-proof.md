@@ -21,6 +21,8 @@ interrupt ownership, or DMA/cache-driver policy.
   helpers.
 - e4a048b: mapped the proof UserData page for the close syscall scenario.
 - 993f290: added a temporary handler-entry trace for the next discriminator.
+- 772ef82: moved that temporary handler-entry trace from the descriptor-write
+  proof handler to the active close syscall proof handler.
 
 ## Local Evidence
 
@@ -29,6 +31,10 @@ interrupt ownership, or DMA/cache-driver policy.
 - QEMU/substitute: scripts/qemu-close-syscall-smoke.sh passed before local1.
 - image/archive inspection: scripts/rpi5-archive-review.sh passed for local1,
   local3, and local4 candidates.
+- fmt/lint: cargo fmt --all -- --check passed after the handler-entry trace
+  correction.
+- unit tests: cargo -Zjson-target-spec test passed after the handler-entry
+  trace correction, 231 tests, with the QEMU 9.2.0 tool path exported.
 
 ## Hardware Evidence
 
@@ -48,6 +54,26 @@ Evidence directory: tasks/evidence/2026-05-29-pi5-close-syscall-proof/.
 - local4-handler-entry-candidate: candidate for commit 993f290 produced only
   firmware/network-boot output in the retained window and no TFTP delta from
   the fresh cursor. The boot tree was restored.
+- local5-handler-entry-rerun: unchanged handler-entry candidate for commit
+  d17b247 published and fetched, but the serial observe request used an
+  oversized max_bytes value that the lab controller rejected. The run is
+  retained as agent-observation failure evidence, not kernel proof evidence.
+  The boot tree was restored.
+- local6-handler-entry-rerun: unchanged handler-entry candidate for commit
+  d17b247 published, but serial observe again used an invalid request body for
+  the controller limit. The run is retained as agent-observation failure
+  evidence and did not produce proof lines. The boot tree was restored.
+- local7-handler-entry-rerun: unchanged handler-entry candidate for commit
+  d17b247 published, fetched, and reached the close proof pre-eret line twice,
+  but still produced no syscall or handler-entry lines. Inspection then found
+  the temporary handler-entry trace had been inserted in the descriptor-write
+  proof handler instead of the close proof handler. The boot tree was
+  restored.
+- local8-close-handler-entry-candidate: corrected handler-entry candidate for
+  commit 772ef82 published, fetched, and retained serial evidence, but the
+  collection overlapped with the earlier long-running observe/restore shell
+  flow and captured only partial start/validated lines before restore. It is
+  not accepted; use a clean single-controller rerun of 772ef82 next.
 
 ## Restore Proof
 
@@ -59,5 +85,7 @@ status after the hardware attempts matched that hash.
 
 Continue bounded proof debugging from the retained local1/local3 evidence:
 the candidate reaches EL1 pre-eret and then reboots before any close syscall
-handler line. Reacquire hardwareTestLock only for the next serialized
-candidate/control action.
+handler line. The current corrected discriminator commit is 772ef82. Reacquire
+hardwareTestLock for one clean serialized local9 rerun of that exact commit,
+using controller-accepted serial observe requests (max_bytes 1024) and no
+overlapping observe/restore shell flow.

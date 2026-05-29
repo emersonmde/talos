@@ -1,0 +1,13 @@
+ fmt
+talos: boot core 0
+talos: boot dtb 0x2efec600
+talos: boot target talos-rpi5-bcm2712
+talos: pointer delta 0x0
+talos: boot info: dtb=0x2efec600 core=0 el=2 target=talos-rpi5-bcm2712
+talos: services: uart=firmware-preserved timer=arm-generic irq=gic-v2 mmio_regions=7 dtb=0x2efec600
+talos: dtb header: magic=0xd00dfeed size=80254 version=17 last_comp=16 struct=72496 strings=7702
+talos: dtb chosen bootargs: reboot=w coherent_pool=1M 8250.nr_uarts=1 pci=pcie_bus_safe cgroup_disable=memory numa_policy=interleave nvme.max_host_mem_size_mb=32 bcm2708_fb.fbwidth=640 bcm2708_fb.fbheight=480 bcm2708_fb.fbdepth=16 bcm2708_fb.fbswap=1 numa=fake=8 system_heap.max_order=0 iommu_dma_numa_policy=interleave smsc95xx.macaddr=88:A2:9E:AE:C8:7F vc_mem.mem_base=0x3fc00000 vc_mem.mem_size=0x40000000  console=ttyAMA10,115200 earlycon=pl011,mmio32,0x1f00030000 talos.boot=first-light
+talos: status early boot log ready
+TALOS: dtb reserved start
+talos: dtb reserved: count=0 shown=0 truncated=false
+TALOS: dtb reserved done

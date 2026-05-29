@@ -1,0 +1,4 @@
+rpi5-close-syscall-proof: start
+rpi5-close-syscall-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 user-data=0x00000000001100
+rpi5-close-syscall-proof: start
+rpi5-close-syscall-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 user-data=0x00000000001100
