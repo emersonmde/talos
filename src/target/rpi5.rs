@@ -9691,7 +9691,10 @@ unsafe fn install_el0_trap_proof_tables() {
     let payload_pa = core::ptr::addr_of!(EL0_TRAP_PAYLOAD.0) as u64;
     #[cfg(talos_boot_scenario = "rpi5_pointer_copy_proof")]
     let user_data_pa = core::ptr::addr_of!(POINTER_COPY_USER_DATA) as u64;
-    #[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+    #[cfg(any(
+        talos_boot_scenario = "rpi5_descriptor_write_proof",
+        talos_boot_scenario = "rpi5_close_syscall_proof"
+    ))]
     let user_data_pa = core::ptr::addr_of!(DESCRIPTOR_WRITE_USER_DATA) as u64;
     let stack_pa = unsafe { core::ptr::addr_of!(EL0_TRAP_STACK.0) as u64 };
 
@@ -9734,7 +9737,10 @@ unsafe fn install_el0_trap_proof_tables() {
                 | PAGE_DESC;
         }
 
-        #[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+        #[cfg(any(
+            talos_boot_scenario = "rpi5_descriptor_write_proof",
+            talos_boot_scenario = "rpi5_close_syscall_proof"
+        ))]
         {
             (*low_l3)[(DESCRIPTOR_WRITE_USER_DATA_START as usize) >> 12] = (user_data_pa
                 & ADDR_MASK_4K)
