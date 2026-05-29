@@ -309,6 +309,15 @@ process loading, close/dup/read syscalls, VFS/filesystem, stdin behavior,
 shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
 DMA/cache-driver policy, physical proof, and full POSIX descriptor claims
 blocked.
+The accepted process descriptor table core adds the first target-independent
+process-owned descriptor owner/store surface. A ProcessOwnerId can now own one
+inherited-stdio DescriptorTable in a bounded ProcessDescriptorStore, current
+owner lookup maps missing current task/owner/table state to -EBADF for
+descriptor syscalls, and focused unit tests preserve inherited stdio plus
+retained descriptor-table errors. It adds no live syscall routing, QEMU or
+Pi 5 proof, close/dup/read syscall behavior, process loading,
+VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
+DMA/cache-driver policy, or full POSIX descriptor claim.
 
 Near-term direction after the accepted Phase 7.3 syscall ABI/dispatch closeout:
 
@@ -1680,6 +1689,12 @@ Accepted progress:
   allocation, process loading, close/dup/read syscalls, VFS/filesystem, stdin
   behavior, shell, networking, SSH, physical proof, and full POSIX descriptor
   claims remain blocked.
+- Phase 7 process descriptor table core is accepted. It implements only the
+  target-independent ProcessDescriptorOwner and bounded ProcessDescriptorStore
+  for ProcessOwnerId-backed inherited stdio tables, current-owner lookup, and
+  deterministic -EBADF/-EINVAL/-EMFILE error behavior. Live syscall routing,
+  close/dup/read syscalls, process loading, VFS/filesystem, shell, networking,
+  SSH, physical proof, and full POSIX descriptor claims remain blocked.
 
 Milestone 7.4: File Descriptor Table
 

@@ -6,7 +6,10 @@
 //! or target I/O. The first descriptor-write slice owns only the
 //! target-independent stdio-to-runtime-console boundary.
 
-use crate::runtime_console::{self, ConsoleBackend};
+use crate::{
+    runtime_console::{self, ConsoleBackend},
+    scheduler::ProcessOwnerId,
+};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum PosixError {
@@ -588,6 +591,123 @@ impl<const CAPACITY: usize> DescriptorTable<CAPACITY> {
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct ProcessDescriptorOwner<const CAPACITY: usize> {
+    owner: ProcessOwnerId,
+    table: DescriptorTable<CAPACITY>,
+}
+
+impl<const CAPACITY: usize> ProcessDescriptorOwner<CAPACITY> {
+    pub(crate) fn with_inherited_stdio(owner: ProcessOwnerId) -> Result<Self, PosixError> {
+        Ok(Self {
+            owner,
+            table: DescriptorTable::with_inherited_stdio()?,
+        })
+    }
+
+    pub(crate) const fn owner(self) -> ProcessOwnerId {
+        self.owner
+    }
+
+    pub(crate) const fn descriptor_table(&self) -> &DescriptorTable<CAPACITY> {
+        &self.table
+    }
+
+    pub(crate) fn descriptor_table_mut(&mut self) -> &mut DescriptorTable<CAPACITY> {
+        &mut self.table
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct ProcessDescriptorStore<
+    const OWNER_CAPACITY: usize,
+    const DESCRIPTOR_CAPACITY: usize,
+> {
+    owners: [Option<ProcessDescriptorOwner<DESCRIPTOR_CAPACITY>>; OWNER_CAPACITY],
+}
+
+impl<const OWNER_CAPACITY: usize, const DESCRIPTOR_CAPACITY: usize>
+    ProcessDescriptorStore<OWNER_CAPACITY, DESCRIPTOR_CAPACITY>
+{
+    pub(crate) const fn new_empty() -> Self {
+        Self {
+            owners: [None; OWNER_CAPACITY],
+        }
+    }
+
+    pub(crate) fn create_owner_with_inherited_stdio(
+        &mut self,
+        owner: ProcessOwnerId,
+    ) -> Result<(), PosixError> {
+        if self.owner_index(owner).is_some() {
+            return Err(PosixError::InvalidArgument);
+        }
+
+        let owner_record = ProcessDescriptorOwner::with_inherited_stdio(owner)?;
+        let mut index = 0;
+        while index < OWNER_CAPACITY {
+            if self.owners[index].is_none() {
+                self.owners[index] = Some(owner_record);
+                return Ok(());
+            }
+            index += 1;
+        }
+
+        Err(PosixError::TooManyOpenFiles)
+    }
+
+    pub(crate) fn descriptor_table(
+        &self,
+        owner: ProcessOwnerId,
+    ) -> Result<&DescriptorTable<DESCRIPTOR_CAPACITY>, PosixError> {
+        let index = self.owner_index(owner).ok_or(PosixError::BadDescriptor)?;
+        Ok(self.owners[index]
+            .as_ref()
+            .expect("owner index only returns occupied slots")
+            .descriptor_table())
+    }
+
+    pub(crate) fn descriptor_table_mut(
+        &mut self,
+        owner: ProcessOwnerId,
+    ) -> Result<&mut DescriptorTable<DESCRIPTOR_CAPACITY>, PosixError> {
+        let index = self.owner_index(owner).ok_or(PosixError::BadDescriptor)?;
+        Ok(self.owners[index]
+            .as_mut()
+            .expect("owner index only returns occupied slots")
+            .descriptor_table_mut())
+    }
+
+    pub(crate) fn current_descriptor_table(
+        &self,
+        current_owner: Option<ProcessOwnerId>,
+    ) -> Result<&DescriptorTable<DESCRIPTOR_CAPACITY>, PosixError> {
+        let owner = current_owner.ok_or(PosixError::BadDescriptor)?;
+        self.descriptor_table(owner)
+    }
+
+    pub(crate) fn current_descriptor_table_mut(
+        &mut self,
+        current_owner: Option<ProcessOwnerId>,
+    ) -> Result<&mut DescriptorTable<DESCRIPTOR_CAPACITY>, PosixError> {
+        let owner = current_owner.ok_or(PosixError::BadDescriptor)?;
+        self.descriptor_table_mut(owner)
+    }
+
+    fn owner_index(&self, owner: ProcessOwnerId) -> Option<usize> {
+        let mut index = 0;
+        while index < OWNER_CAPACITY {
+            if let Some(record) = self.owners[index] {
+                if record.owner() == owner {
+                    return Some(index);
+                }
+            }
+            index += 1;
+        }
+        None
+    }
+}
+
 pub(crate) fn write_descriptor_to_runtime_console<const CAPACITY: usize, B>(
     table: &DescriptorTable<CAPACITY>,
     descriptor: usize,
@@ -1021,6 +1141,108 @@ mod tests {
         assert_eq!(
             file.unsupported_kind_operation(),
             Err(PosixError::NotSupported)
+        );
+    }
+
+    #[test_case]
+    fn process_descriptor_owner_initializes_inherited_stdio_for_owner() {
+        let owner = ProcessOwnerId::new(7).expect("owner id");
+        let process =
+            ProcessDescriptorOwner::<4>::with_inherited_stdio(owner).expect("process owner");
+        let table = process.descriptor_table();
+
+        assert_eq!(process.owner(), owner);
+        assert_eq!(
+            table.get(STDIN_FD).expect("stdin").object().kind(),
+            DescriptorObjectKind::StdioInput
+        );
+        assert_eq!(
+            table.get(STDOUT_FD).expect("stdout").object().kind(),
+            DescriptorObjectKind::StdioOutput
+        );
+        assert_eq!(
+            table.get(STDERR_FD).expect("stderr").object().kind(),
+            DescriptorObjectKind::StdioOutput
+        );
+    }
+
+    #[test_case]
+    fn process_descriptor_store_resolves_current_owner_table() {
+        let owner = ProcessOwnerId::new(11).expect("owner id");
+        let mut store = ProcessDescriptorStore::<2, 4>::new_empty();
+
+        store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create owner");
+        assert_eq!(
+            store
+                .current_descriptor_table(Some(owner))
+                .expect("current table")
+                .get(STDOUT_FD)
+                .expect("stdout")
+                .object()
+                .reference(),
+            STDOUT_FD
+        );
+        store
+            .current_descriptor_table_mut(Some(owner))
+            .expect("current table")
+            .close(STDOUT_FD)
+            .expect("close stdout");
+        assert_eq!(
+            store
+                .descriptor_table(owner)
+                .expect("owner table")
+                .get(STDOUT_FD),
+            Err(PosixError::BadDescriptor)
+        );
+    }
+
+    #[test_case]
+    fn process_descriptor_lookup_failures_map_to_ebadf() {
+        let owner = ProcessOwnerId::new(17).expect("owner id");
+        let missing = ProcessOwnerId::new(18).expect("missing owner id");
+        let mut store = ProcessDescriptorStore::<1, 4>::new_empty();
+
+        store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create owner");
+
+        assert_eq!(
+            store.current_descriptor_table(None),
+            Err(PosixError::BadDescriptor)
+        );
+        assert_eq!(
+            store.current_descriptor_table(Some(missing)),
+            Err(PosixError::BadDescriptor)
+        );
+        assert_eq!(
+            store.current_descriptor_table_mut(Some(missing)),
+            Err(PosixError::BadDescriptor)
+        );
+    }
+
+    #[test_case]
+    fn process_descriptor_store_preserves_owner_and_table_errors() {
+        let owner = ProcessOwnerId::new(21).expect("owner id");
+        let second = ProcessOwnerId::new(22).expect("second owner id");
+        let mut store = ProcessDescriptorStore::<1, 4>::new_empty();
+
+        store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create owner");
+
+        assert_eq!(
+            store.create_owner_with_inherited_stdio(owner),
+            Err(PosixError::InvalidArgument)
+        );
+        assert_eq!(
+            store.create_owner_with_inherited_stdio(second),
+            Err(PosixError::TooManyOpenFiles)
+        );
+        assert_eq!(
+            ProcessDescriptorOwner::<2>::with_inherited_stdio(owner),
+            Err(PosixError::TooManyOpenFiles)
         );
     }
 

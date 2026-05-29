@@ -12,6 +12,36 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.4 Process Descriptor Table Core Accepted
+
+- Status: accepted as the target-independent Milestone 7.4 process descriptor
+  table core. No QEMU run, Pi 5 hardware run, archive publishing,
+  hardware-lock acquisition, live syscall routing through the process-owned
+  table, close/dup/read syscall behavior, process loading, VFS/filesystem
+  behavior, shell behavior, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache-driver policy was added.
+- Context: The accepted process descriptor table contract required a minimal
+  ProcessOwnerId-backed owner/attachment/lookup boundary before the later
+  QEMU/substitute proof can distinguish process-owned descriptor lookup from
+  the earlier proof-owned inherited stdio table.
+- Decision: Accept phase7-process-descriptor-table-core-20260529. The core
+  adds ProcessDescriptorOwner and a bounded ProcessDescriptorStore in
+  target-independent POSIX code. A process owner can hold one inherited-stdio
+  DescriptorTable, current-owner lookup returns immutable or mutable table
+  borrows, and missing current owner/unknown owner lookup maps to -EBADF.
+- Evidence level: fmt/lint, unit tests, static inspection, documentation
+  build, and whitespace inspection. No QEMU/substitute or physical Pi 5
+  evidence was produced because this task is target-independent core code.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test passed with 222 no_std tests; git diff --check passed; mdbook build
+  passed.
+- Consequences: The next mechanically derivable task is
+  phase7-qemu-process-descriptor-stdio-smoke-plan-20260529, scoped to planning
+  the QEMU/substitute proof for talos_write fd 1/fd 2 through a process-owned
+  inherited stdio table. Live syscall routing, close/dup/read syscalls,
+  process loading, VFS/filesystem, shell, networking, SSH, physical proof, and
+  full POSIX descriptor claims remain blocked.
+
 ## 2026-05-29 - Phase 7.4 Process Descriptor Table Contract Accepted
 
 - Status: accepted as a documentation-only Milestone 7.4 process descriptor
