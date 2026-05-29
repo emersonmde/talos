@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 syscall ABI contract frontier,
+Talos is at the Phase 7.3 target-independent syscall dispatch core frontier,
 after accepting the Phase 6.3 production scheduler runtime closeout, the full
 Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -36,9 +36,13 @@ work remain blocked until later explicit bounded tasks accept their contracts
 and gates. The accepted Phase 7.3 syscall ABI source inventory maps the source
 owners and gaps for SVC exception decoding, syscall number and argument
 registers, return/error convention, user-copy preconditions, descriptor-table
-interaction, and process/task ownership. The next recommended bounded task is
-the Phase 7.3 target-independent syscall dispatch core, not production
-exception routing, QEMU, or hardware work.
+interaction, and process/task ownership. The accepted Phase 7.3 syscall ABI
+contract fixes lower-AArch64 svc #0, x8 syscall numbers, x0 through x5 scalar
+arguments, x0 negative errno returns, talos_nop = 0, and unknown syscall =
+-ENOSYS. The accepted target-independent syscall dispatch core implements that
+bounded vocabulary and unit-tested return/error encoding without production
+exception routing, QEMU, or hardware work. The next implementation step
+requires explicit supervisor planning.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -1137,6 +1141,13 @@ Accepted progress:
   dispatch proof slice. Production exception-handler integration, QEMU syscall
   smoke, Pi 5 hardware proof, descriptor I/O, process loading, VFS, filesystem,
   shell, networking, and SSH remain blocked.
+- Phase 7 syscall dispatch core is accepted. It adds a target-independent
+  syscall module with stable svc #0 vocabulary, diagnostic marker quarantine,
+  talos_nop dispatch, unknown-syscall -ENOSYS handling, scalar x0-through-x5
+  argument preservation in the pure dispatch layer, and errno encoding for the
+  accepted subset. Production exception-handler integration, QEMU syscall
+  smoke, Pi 5 hardware proof, pointer-copy syscalls, descriptor I/O, process
+  loading, VFS, filesystem, shell, networking, and SSH remain blocked.
 
 Milestone 7.4: File Descriptor Table
 

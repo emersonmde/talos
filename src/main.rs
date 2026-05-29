@@ -86,6 +86,8 @@ mod smp_sync;
 // Phase 4.3 accepts scheduler data structures before wiring boot-time use.
 #[cfg_attr(not(test), allow(dead_code))]
 mod scheduler;
+#[cfg_attr(not(test), allow(dead_code))]
+mod syscall;
 mod target;
 #[cfg_attr(
     not(any(

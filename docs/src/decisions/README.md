@@ -12,6 +12,39 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.3 Syscall Dispatch Core Accepted
+
+- Status: accepted as the first target-independent syscall dispatch core. No
+  assembly behavior, production exception routing, boot scenario, QEMU run,
+  Pi 5 hardware run, archive publishing, hardware-lock acquisition, process
+  loading, descriptor I/O, VFS/filesystem, shell behavior, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, or DMA/cache behavior was added.
+- Context: The accepted syscall ABI contract fixed lower-AArch64 svc #0, x8 as
+  the syscall-number register, x0 through x5 as scalar arguments, x0 as the
+  sole return register, negative errno returns, talos_nop = 0, unknown syscall
+  = -ENOSYS, and diagnostic marker 0x7a10 as proof-only vocabulary.
+- Decision: Accept phase7-syscall-dispatch-core-20260529. The new
+  target-independent syscall module owns the stable SVC immediate constant,
+  diagnostic marker quarantine constant, talos_nop syscall number, scalar
+  argument view, return/error encoder, accepted errno subset, and pure dispatch
+  function for talos_nop success and unknown-syscall -ENOSYS.
+- Evidence level: static source inspection, target-independent unit tests,
+  formatting, whitespace inspection, and documentation build. No QEMU or Pi 5
+  hardware evidence was claimed.
+- Validation: git status --short before edits was clean;
+  cargo fmt --all -- --check passed; cargo -Zjson-target-spec test passed;
+  git diff --check passed; mdbook build passed.
+- Consequences: Talos has a unit-tested dispatch vocabulary but no production
+  syscall trap integration. Production exception-handler routing, QEMU syscall
+  smoke, Pi 5 hardware proof, pointer-copy syscalls, descriptor I/O, process
+  loading, VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, and DMA/cache-driver policy remain blocked until later explicit
+  tasks.
+- Risks: The core intentionally falls back to -ENOSYS for PosixError values
+  outside the accepted errno subset, and it does not yet decide process-fatal
+  trap policy, per-thread errno, restart semantics, or user-buffer copy
+  behavior.
+
 ## 2026-05-29 - Phase 7.3 Syscall ABI Source Inventory Accepted
 
 - Status: accepted as the documentation-only source inventory before syscall
