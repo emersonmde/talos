@@ -4936,3 +4936,37 @@ ADR template:
   blocking/readiness, signals, restart semantics, RP1/PCIe, UART interrupt
   ownership, DMA/cache-driver policy, physical descriptor-write claims, and
   full POSIX descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 Descriptor-Write Closeout Checkpoint Accepted
+
+- Status: accepted as the documentation-only Phase 7.3 closeout for the first
+  QEMU/substitute descriptor-write syscall smoke. No Rust behavior, assembly
+  behavior, QEMU rerun, Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, stdin/read, close, dup, process loading,
+  VFS/filesystem behavior, shell behavior, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The accepted descriptor-write core and QEMU smoke proved fd 1/fd 2
+  runtime-console0 writes through talos_write x8 = 1. The milestone needed one
+  checkpoint to name exactly what QEMU evidence accepts before any Pi 5
+  descriptor-write proof planning.
+- Decision: Accept phase7-descriptor-write-closeout-checkpoint-20260529. The
+  accepted frontier is QEMU/substitute evidence only: fd 1/fd 2 success through
+  DescriptorTable::with_inherited_stdio(), copy_from_user(), and
+  runtime-console0; fd 0/fd 99 -EBADF; guard-range -EFAULT; nonzero reserved
+  x3 -EINVAL; scalar syscall and unknown-syscall regressions; x8 = 0x7001
+  copy-probe quarantine; and diagnostic marker 0x7a10 quarantine.
+- Evidence level: static documentation inspection, retained QEMU/substitute
+  evidence review, documentation build, and whitespace inspection. No new QEMU
+  or physical Pi 5 hardware evidence was produced.
+- Validation: git status --short before edits showed a pre-existing
+  docs/src/roadmap.md working-tree edit that was preserved; retained
+  tasks/evidence/2026-05-29-qemu-descriptor-write-smoke-core/qemu-descriptor-write-smoke.log
+  evidence was reviewed; git diff --check passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-pi5-descriptor-write-proof-plan-20260529, scoped to planning the
+  serialized physical descriptor-write proof before any hardware action.
+  stdin/read, close, dup, process loading, VFS/filesystem, shell, networking,
+  SSH, live process-owned address spaces, blocking/readiness, signals, restart
+  semantics, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy,
+  physical descriptor-write claims, and full POSIX descriptor claims remain
+  blocked.

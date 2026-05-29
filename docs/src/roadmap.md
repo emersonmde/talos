@@ -232,6 +232,16 @@ stdin/read, close, dup, process loading, VFS/filesystem, shell, networking,
 SSH, live process-owned address spaces, blocking/readiness, signals, restart
 semantics, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and
 full POSIX descriptor claims remain blocked.
+The accepted descriptor-write closeout checkpoint reconciles the source
+inventory, talos_write contract, smoke plan, descriptor-write core,
+retained QEMU evidence, scalar/pointer-copy regression gates, residual risks,
+and deferred surfaces. It recommends a documentation-only
+phase7-pi5-descriptor-write-proof-plan-20260529 before any serialized Pi 5
+descriptor-write hardware action, and keeps stdin/read, close, dup, process
+loading, VFS/filesystem, shell, networking, SSH, live process-owned address
+spaces, blocking/readiness, signals, restart semantics, RP1/PCIe, UART
+interrupt ownership, DMA/cache-driver policy, physical descriptor-write claims,
+and full POSIX descriptor claims blocked.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -1495,6 +1505,19 @@ Accepted progress:
   signals, restart semantics, RP1/PCIe, UART interrupt ownership,
   DMA/cache-driver policy, physical descriptor-write claims, and full POSIX
   descriptor claims blocked.
+- Phase 7 descriptor-write closeout checkpoint is accepted. It reconciles the
+  descriptor source inventory, talos_write contract, QEMU descriptor-write
+  smoke plan, descriptor-write core, retained
+  tasks/evidence/2026-05-29-qemu-descriptor-write-smoke-core/qemu-descriptor-write-smoke.log
+  evidence, scalar and pointer-copy regression gates, residual risks, and
+  deferred surfaces. It recommends
+  phase7-pi5-descriptor-write-proof-plan-20260529 as the next bounded
+  documentation-only planning task before any Pi 5 descriptor-write hardware
+  action. stdin/read, close, dup, process loading, VFS/filesystem, shell,
+  networking, SSH, live process-owned address spaces, blocking/readiness,
+  signals, restart semantics, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, physical descriptor-write claims, and full POSIX
+  descriptor claims remain blocked.
 
 Milestone 7.4: File Descriptor Table
 

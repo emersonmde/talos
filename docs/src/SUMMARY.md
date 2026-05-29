@@ -92,6 +92,7 @@
 - [Phase 7 Descriptor Syscall Source Inventory](project/phase7-descriptor-syscall-source-inventory.md)
 - [Phase 7 Descriptor Syscall Contract](project/phase7-descriptor-syscall-contract.md)
 - [Phase 7 QEMU Descriptor-Write Smoke Plan](project/phase7-qemu-descriptor-write-smoke-plan.md)
+- [Phase 7 Descriptor-Write Closeout Checkpoint](project/phase7-descriptor-write-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture
