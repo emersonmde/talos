@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 target-independent syscall dispatch core frontier,
+Talos is at the Phase 7.3 syscall trap-routing source inventory frontier,
 after accepting the Phase 6.3 production scheduler runtime closeout, the full
 Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -41,8 +41,12 @@ contract fixes lower-AArch64 svc #0, x8 syscall numbers, x0 through x5 scalar
 arguments, x0 negative errno returns, talos_nop = 0, and unknown syscall =
 -ENOSYS. The accepted target-independent syscall dispatch core implements that
 bounded vocabulary and unit-tested return/error encoding without production
-exception routing, QEMU, or hardware work. The next implementation step
-requires explicit supervisor planning.
+exception routing, QEMU, or hardware work. The accepted syscall trap-routing
+source inventory maps production lower-AArch64 SVC detection, svc immediate
+validation, x8 syscall-number extraction, x0-through-x5 argument capture, x0
+return mutation, ELR/SPSR handling, diagnostic marker quarantine, and
+non-syscall fallback. The next bounded task is the syscall trap-routing
+contract before implementation.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -169,7 +173,12 @@ preconditions, descriptor-table interaction, and process/task ownership before
 any syscall implementation. The accepted Phase 7.3 syscall ABI contract fixes
 the first stable syscall boundary: lower-AArch64 svc #0, syscall number in x8,
 scalar arguments in x0 through x5, x0 as the sole return register, negative
-errno returns, talos_nop = 0, and unknown syscall = -ENOSYS.
+errno returns, talos_nop = 0, and unknown syscall = -ENOSYS. The accepted
+Phase 7.3 target-independent syscall dispatch core implements the pure
+dispatch vocabulary and return/error encoding, and the accepted trap-routing
+source inventory maps the production exception-routing boundary for lower-EL
+SVC detection, argument capture, return mutation, ELR/SPSR handling,
+diagnostic marker quarantine, and non-syscall fallback.
 The obsolete-bloat inventory and removal sweep are accepted before the
 multi-core preemption core: historical QEMU secondary-core discriminator paths
 and old Pi 5 allocator, exception, panic, and translation-fault proof-only
@@ -1148,6 +1157,15 @@ Accepted progress:
   accepted subset. Production exception-handler integration, QEMU syscall
   smoke, Pi 5 hardware proof, pointer-copy syscalls, descriptor I/O, process
   loading, VFS, filesystem, shell, networking, and SSH remain blocked.
+- Phase 7 syscall trap-routing source inventory is accepted. It maps exact
+  source owners and gaps for lower-AArch64 SVC detection, svc immediate
+  validation, x8 syscall-number extraction, x0-through-x5 argument capture,
+  x0 return mutation, ELR/SPSR handling, diagnostic marker 0x7a10 quarantine,
+  and non-syscall fallback. It recommends
+  phase7-syscall-trap-routing-contract-20260529 before production exception
+  routing, QEMU syscall smoke, Pi 5 hardware proof, descriptor I/O,
+  copy-in/copy-out, process loading, VFS, filesystem, shell, networking, or
+  SSH work.
 
 Milestone 7.4: File Descriptor Table
 
