@@ -360,6 +360,14 @@ documentation-only phase7-descriptor-lifetime-close-contract-20260529 as the
 next bounded Milestone 7.4 task. Close/dup/read syscalls, process loading,
 VFS/filesystem, shell, networking, SSH, Pi 5 physical close/dup/read claims,
 and full POSIX descriptor readiness remain blocked.
+The accepted descriptor lifetime and close contract defines table-local slot
+removal, process-owned mutable lookup through ProcessDescriptorStore, EBADF
+error cases, dup/reuse interaction, and open-file-description reference-count
+vocabulary. It recommends phase7-descriptor-close-core-20260529 as the next
+target-independent Milestone 7.4 implementation task. Close/dup/read syscalls,
+process loading, VFS/filesystem, shell, networking, SSH, Pi 5 physical
+close/dup/read claims, object finalization, and full POSIX descriptor
+readiness remain blocked.
 
 Near-term direction after the accepted Phase 7.3 syscall ABI/dispatch closeout:
 
@@ -1769,6 +1777,14 @@ Accepted progress:
   documentation-only Milestone 7.4 task. Close/dup/read syscalls, process
   loading, VFS/filesystem, shell, networking, SSH, physical close/dup/read
   proof, and full POSIX descriptor readiness remain blocked.
+- Phase 7 descriptor lifetime and close contract is accepted. It defines the
+  supported table-local close rule, process-owned close lookup through
+  ProcessDescriptorStore, EBADF cases, dup/reuse interaction, and deferred
+  open-file-description finalization. It recommends
+  phase7-descriptor-close-core-20260529 as the next target-independent
+  Milestone 7.4 task. Close/dup/read syscalls, process loading,
+  VFS/filesystem, shell, networking, SSH, physical close/dup/read proof,
+  object finalization, and full POSIX descriptor readiness remain blocked.
 
 Milestone 7.4: File Descriptor Table
 

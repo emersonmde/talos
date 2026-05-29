@@ -101,6 +101,7 @@
 - [Phase 7 QEMU Process Descriptor Stdio Smoke Plan](project/phase7-qemu-process-descriptor-stdio-smoke-plan.md)
 - [Phase 7 Process Descriptor Table Closeout Checkpoint](project/phase7-process-descriptor-table-closeout-checkpoint.md)
 - [Phase 7 Descriptor Lifetime And Close Source Inventory](project/phase7-descriptor-lifetime-close-source-inventory.md)
+- [Phase 7 Descriptor Lifetime And Close Contract](project/phase7-descriptor-lifetime-close-contract.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

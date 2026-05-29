@@ -12,6 +12,36 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.4 Descriptor Lifetime And Close Contract Accepted
+
+- Status: accepted as a documentation-only Milestone 7.4 descriptor lifetime
+  and close-semantics contract. No Rust behavior, assembly behavior, QEMU run,
+  Pi 5 hardware run, archive publishing, hardware-lock acquisition,
+  close/dup/read syscall surface, process loading, VFS/filesystem behavior,
+  shell behavior, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted descriptor lifetime and close source inventory mapped
+  table-local close/dup primitives, process-owned mutable lookup, retained
+  evidence, missing tests, and open-file-description gaps, then recommended a
+  contract before any close/dup/read syscall work.
+- Decision: Accept
+  phase7-descriptor-lifetime-close-contract-20260529. The contract defines
+  table-local descriptor slot removal, process-owned close lookup through
+  ProcessDescriptorStore, EBADF error cases, dup/reuse interaction, and
+  open-file-description reference-count vocabulary while keeping object
+  finalization and syscall ABI work blocked.
+- Evidence level: static source and documentation inspection. No Rust gate,
+  QEMU/substitute run, or physical Pi 5 evidence was required because this
+  task changes only Markdown documentation and durable worker state.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-descriptor-close-core-20260529, scoped to a target-independent
+  process-owned close helper and focused unit tests. Close/dup/read syscalls,
+  process loading, VFS/filesystem, shell, networking, SSH, Pi 5 physical
+  close/dup/read claims, object finalization, and full POSIX descriptor
+  readiness remain blocked.
+
 ## 2026-05-29 - Phase 7.4 Descriptor Lifetime And Close Source Inventory Accepted
 
 - Status: accepted as a documentation-only Milestone 7.4 descriptor lifetime
