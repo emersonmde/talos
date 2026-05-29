@@ -4757,3 +4757,40 @@ ADR template:
   pointer-copy evidence and must keep descriptor I/O, process loading,
   VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
   DMA/cache-driver policy, and stable POSIX descriptor claims blocked.
+
+## 2026-05-29 - Phase 7 Pi 5 Pointer-Copy Proof Closeout Checkpoint Accepted
+
+- Status: accepted as the documentation-only Phase 7.3 closeout for the
+  serialized Pi 5 pointer-copy syscall proof. No Rust behavior, assembly
+  behavior, QEMU rerun, Pi 5 hardware run, boot archive publishing,
+  hardware-lock acquisition, descriptor I/O, runtime console or TTY
+  integration, process loading, VFS/filesystem, shell behavior, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, demand
+  paging, copy-on-write, signal/restart semantics, lower-EL fault-table
+  recovery, or stable public talos_copy_probe claim was added.
+- Context: The accepted QEMU/substitute pointer-copy smoke and serialized Pi 5
+  proof needed one checkpoint that names the exact accepted physical
+  proof-only capability, retained evidence, hardware-lock restoration,
+  residual risks, and deferred surfaces before descriptor syscall planning.
+- Decision: Accept
+  phase7-pi5-pointer-copy-proof-closeout-checkpoint-20260529. The accepted
+  frontier is physical Pi 5 evidence that the focused rpi5_pointer_copy_proof
+  scenario routes lower-AArch64 svc #0 with proof-only x8 = 0x7001 through
+  production syscall dispatch, returns x0 = 16 for the 16-byte 0x2a-to-0xa5
+  success case, returns -EFAULT for the guard-range case, preserves
+  unknown-syscall -ENOSYS behavior, and keeps diagnostic marker 0x7a10 outside
+  syscall dispatch.
+- Evidence level: static documentation inspection, retained QEMU/substitute
+  evidence review, retained serial hardware boot/output review, retained
+  lab-controller TFTP/restore evidence review, documentation build, and
+  whitespace inspection. No new Pi 5 hardware evidence was produced by this
+  closeout.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-descriptor-syscall-source-inventory-20260529. It should remain
+  documentation-only and inventory descriptor table, syscall dispatch, copy
+  helper, runtime console/TTY, return/error, and ownership boundaries before
+  any descriptor syscall contract or implementation. Process loading,
+  VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, and stable POSIX descriptor claims remain blocked.

@@ -179,6 +179,13 @@ tree. This accepts only the physical proof-only pointer-copy boundary;
 descriptor I/O, process loading, filesystem, shell, networking, SSH, RP1/PCIe,
 UART interrupt ownership, DMA/cache-driver policy, and stable POSIX descriptor
 claims remain blocked.
+The accepted Pi 5 pointer-copy proof closeout reconciles the accepted
+QEMU/substitute pointer-copy evidence, Pi 5 hardware proof evidence,
+hardware-lock timeline, restore proof, proof-only status, residual risks, and
+deferred surfaces. It accepts no new Rust or assembly behavior and performs no
+QEMU or Pi 5 rerun. It recommends the documentation-only descriptor syscall
+source inventory as the next bounded task before any descriptor syscall
+contract or implementation.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -1412,6 +1419,13 @@ Accepted progress:
   inconclusive-run triage and restore proof. Descriptor I/O, process loading,
   VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
   DMA/cache-driver policy, and stable POSIX descriptor claims remain blocked.
+- Phase 7 Pi 5 pointer-copy proof closeout checkpoint is accepted. It
+  reconciles the pointer-taking contract, QEMU/substitute pointer-copy smoke,
+  Pi 5 physical proof, hardware-lock timeline, restore proof, proof-only
+  talos_copy_probe status, retained evidence paths, and blocked surfaces. It
+  recommends phase7-descriptor-syscall-source-inventory-20260529 as the next
+  bounded documentation-only task before descriptor syscall contracts or
+  implementations.
 
 Milestone 7.4: File Descriptor Table
 
