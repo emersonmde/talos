@@ -4355,3 +4355,38 @@ ADR template:
   proof, pointer-copy syscalls, descriptor I/O, process loading, VFS,
   filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership, and
   DMA/cache-driver policy remain blocked.
+
+## 2026-05-29 - Phase 7 Pi 5 Syscall Proof Plan Accepted
+
+- Status: accepted as a documentation-only Phase 7.3 plan for the serialized
+  Raspberry Pi 5 production syscall routing proof. No Rust implementation,
+  assembly implementation, boot archive publishing, power-cycle, serial
+  observe, hardware-lock acquisition, descriptor I/O, byte copy-in/copy-out,
+  process loading, VFS/filesystem, shell behavior, networking, SSH, RP1/PCIe,
+  UART interrupt ownership, or DMA/cache behavior was added.
+- Context: The accepted QEMU syscall smoke core proves lower-AArch64 svc #0
+  routing through the production exception path and target-independent syscall
+  dispatch core only at QEMU/substitute evidence level. Before carrying that
+  invariant to physical Pi 5 hardware, the candidate identity, lock ownership,
+  fresh serial/TFTP evidence, diagnostic marker quarantine, inconclusive-run
+  triage, restoration requirements, and expected PASS/classification lines
+  must be fixed.
+- Decision: Accept phase7-pi5-syscall-proof-plan-20260529. The future hardware
+  task must acquire hardwareTestLock, stage a focused rpi5_syscall_proof
+  candidate, prove fresh candidate fetch and serial capture, observe stable
+  svc #0 talos_nop returning x0 = 0 and unknown syscall number 17 returning
+  x0 = -ENOSYS in lower EL, keep diagnostic marker 0x7a10 proof-only, and
+  require classification=pi5-syscall-proof-complete plus
+  rpi5-syscall-proof: PASS. If any candidate run is inconclusive, no code may
+  change until candidate identity, fresh serial cursor, TFTP delta, known-good
+  control, and unchanged candidate rerun evidence are recorded.
+- Evidence level: static documentation inspection, documentation build, and
+  whitespace inspection. No Pi 5 hardware evidence was claimed.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-pi5-syscall-proof-20260529, gated by an unlocked hardwareTestLock and
+  this accepted plan. It may add only the focused Pi 5 proof source/script
+  surfaces named in the plan and must preserve the blocked descriptor I/O,
+  copy-in/copy-out, process loading, filesystem, shell, networking, SSH,
+  RP1/PCIe, UART interrupt, and DMA/cache-driver surfaces.

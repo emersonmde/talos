@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 syscall routing closeout frontier,
+Talos is at the Phase 7.3 Pi 5 syscall proof planning frontier,
 after accepting the Phase 6.3 production scheduler runtime closeout, the full
 Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -60,9 +60,16 @@ does not prove Pi 5 production syscall routing or unblock descriptor I/O,
 copy-in/copy-out, process loading, filesystem, shell, networking, or SSH. The
 accepted Phase 7.3 syscall routing closeout checkpoint reconciles those commits
 and retained logs, closes out only the QEMU/substitute production syscall
-routing frontier, and recommends supervisor planning for a documentation-only
-Pi 5 syscall proof plan before any serialized hardware action or before
-choosing copy-in/copy-out or descriptor syscall work.
+routing frontier, and recommends a documentation-only Pi 5 syscall proof plan
+before any serialized hardware action or before choosing copy-in/copy-out or
+descriptor syscall work. The accepted Pi 5 syscall proof plan defines the
+physical invariant for stable svc #0 talos_nop and unknown-syscall return
+observations, diagnostic marker 0x7a10 quarantine, hardwareTestLock ownership,
+fresh serial/TFTP evidence, candidate identity, inconclusive-run triage,
+restoration requirements, and exact PASS/classification lines for the later
+hardware proof. It does not acquire hardwareTestLock, publish an archive, run
+Pi 5 hardware, or unblock descriptor I/O, copy-in/copy-out, process loading,
+filesystem, shell, networking, or SSH.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -1193,6 +1200,18 @@ Accepted progress:
   QEMU/substitute PASS evidence. Pi 5 production syscall proof, descriptor I/O,
   copy-in/copy-out, process loading, VFS, filesystem, shell, networking, and SSH
   remain blocked.
+- Phase 7 syscall routing closeout checkpoint is accepted. It reconciles the
+  syscall ABI contract, dispatch core, trap-routing contract, QEMU smoke
+  implementation, retained QEMU evidence, diagnostic-marker quarantine, and
+  deferred surfaces before any physical syscall proof or pointer/descriptor
+  syscall work.
+- Phase 7 Pi 5 syscall proof plan is accepted. It defines the later serialized
+  rpi5_syscall_proof invariant, exact physical PASS/classification and
+  syscall-observation lines, hardwareTestLock acquisition/release rules,
+  candidate identity, fresh serial/TFTP evidence, inconclusive-run triage,
+  restoration requirements, and diagnostic marker 0x7a10 quarantine. No Pi 5
+  run, archive publication, descriptor I/O, copy-in/copy-out, process loading,
+  filesystem, shell, networking, or SSH behavior is accepted by the plan.
 
 Milestone 7.4: File Descriptor Table
 
