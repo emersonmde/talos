@@ -12,6 +12,34 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.4 Process Descriptor Table Contract Accepted
+
+- Status: accepted as a documentation-only Milestone 7.4 process descriptor
+  table contract. No Rust behavior, assembly behavior, QEMU run, Pi 5 hardware
+  run, archive publishing, hardware-lock acquisition, process loading,
+  VFS/filesystem behavior, shell behavior, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The accepted file descriptor table source inventory identified the
+  first Milestone 7.4 gap as the move from proof-owned inherited stdio
+  descriptor tables to a process-owned descriptor table boundary.
+- Decision: Accept
+  phase7-process-descriptor-table-contract-20260529. The contract defines a
+  ProcessOwnerId-backed descriptor-table owner, inherited fd 0/fd 1/fd 2
+  installation, current-process descriptor-table lookup, deterministic
+  descriptor error behavior, retained runtime-console0 stdio backing, and the
+  next target-independent implementation task.
+- Evidence level: static source and documentation inspection. No Rust gate,
+  QEMU run, or Pi 5 hardware action was required because this task changes only
+  Markdown documentation and durable worker state.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next bounded task should be
+  phase7-process-descriptor-table-core-20260529, scoped to target-independent
+  owner/attachment/lookup code and focused unit tests. PID allocation,
+  process loading, close/dup/read syscalls, VFS/filesystem, stdin behavior,
+  shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.
+
 ## 2026-05-29 - Phase 7.4 File Descriptor Table Source Inventory Accepted
 
 - Status: accepted as a documentation-only Milestone 7.4 file descriptor table

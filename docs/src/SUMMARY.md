@@ -97,6 +97,7 @@
 - [Phase 7 Pi 5 Descriptor-Write Proof Closeout Checkpoint](project/phase7-pi5-descriptor-write-proof-closeout-checkpoint.md)
 - [Phase 7 Syscall ABI and Dispatch Closeout Checkpoint](project/phase7-syscall-abi-dispatch-closeout-checkpoint.md)
 - [Phase 7 File Descriptor Table Source Inventory](project/phase7-file-descriptor-table-source-inventory.md)
+- [Phase 7 Process Descriptor Table Contract](project/phase7-process-descriptor-table-contract.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

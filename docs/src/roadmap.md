@@ -299,6 +299,16 @@ phase7-process-descriptor-table-contract-20260529 as the next bounded task and
 keeps stdin/read, close/dup syscalls, VFS/filesystem, path copying, process
 loading, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
 DMA/cache-driver policy, and full POSIX descriptor claims blocked.
+The accepted process descriptor table contract defines the first
+process-owned descriptor table boundary: a ProcessOwnerId-backed owner record,
+inherited fd 0/fd 1/fd 2 installation, runtime-console0-backed stdout/stderr
+identity, current-process descriptor-table lookup, and deterministic retained
+descriptor errors. It recommends phase7-process-descriptor-table-core-20260529
+as the next target-independent implementation task and keeps PID allocation,
+process loading, close/dup/read syscalls, VFS/filesystem, stdin behavior,
+shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
+DMA/cache-driver policy, physical proof, and full POSIX descriptor claims
+blocked.
 
 Near-term direction after the accepted Phase 7.3 syscall ABI/dispatch closeout:
 
@@ -1662,6 +1672,14 @@ Accepted progress:
   phase7-process-descriptor-table-contract-20260529 as the next bounded
   documentation-only Milestone 7.4 task and does not add implementation, QEMU,
   Pi 5 hardware, or hardware-lock work.
+- Phase 7 process descriptor table contract is accepted. It defines a
+  ProcessOwnerId-backed descriptor-table owner, inherited stdio installation,
+  runtime-console0 stdout/stderr backing, current-owner descriptor-table
+  lookup, retained descriptor error behavior, and the next bounded
+  phase7-process-descriptor-table-core-20260529 implementation task. PID
+  allocation, process loading, close/dup/read syscalls, VFS/filesystem, stdin
+  behavior, shell, networking, SSH, physical proof, and full POSIX descriptor
+  claims remain blocked.
 
 Milestone 7.4: File Descriptor Table
 
