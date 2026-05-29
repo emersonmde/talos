@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 pointer-taking syscall contract
+Talos is at the Phase 7.3 QEMU pointer-copy smoke core
 frontier, after accepting the Phase 6.3 production scheduler runtime closeout,
 the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -131,6 +131,22 @@ uses a fixed QEMU substitute UserData mapping/backing store at
 phase7-qemu-pointer-copy-smoke-plan-20260529 task; descriptor I/O, process
 loading, VFS/filesystem, shell, networking, SSH, and Pi 5 pointer-copy
 hardware proof remain blocked.
+The accepted QEMU pointer-copy smoke plan defines the
+qemu_pointer_copy_smoke QEMU/substitute invariant for proof-only
+talos_copy_probe: fixed UserData backing storage, a 16-byte success case that
+copies 0x2a bytes in and writes 0xa5 bytes back, a guard-range EFAULT case,
+an unknown-syscall -ENOSYS regression, and diagnostic marker quarantine. The
+accepted QEMU pointer-copy smoke core implements that boundary with
+TALOS_BOOT_SCENARIO=qemu_pointer_copy_smoke, routes x8 = 0x7001 only in that
+scenario, invokes the accepted copy_from_user and copy_to_user helpers, keeps
+x8 = 0x7001 as -ENOSYS outside the proof scenario, and retains QEMU/substitute
+serial evidence at
+tasks/evidence/2026-05-29-qemu-pointer-copy-smoke-core/qemu-pointer-copy-smoke.log
+with classification=qemu-pointer-copy-smoke-complete and
+qemu-pointer-copy-smoke: PASS. This accepts only QEMU/substitute pointer-copy
+through lower-EL syscall routing; descriptor I/O, process loading,
+VFS/filesystem, shell, networking, SSH, and Pi 5 pointer-copy hardware proof
+remain blocked.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -1330,6 +1346,14 @@ Accepted progress:
   implementation task and keeps descriptor I/O, process loading,
   VFS/filesystem, shell, networking, SSH, and Pi 5 pointer-copy hardware proof
   blocked.
+- Phase 7 QEMU pointer-copy smoke core is accepted. It adds
+  qemu_pointer_copy_smoke, a proof-only talos_copy_probe route for x8 = 0x7001
+  scoped to that scenario, explicit substitute UserData backing storage,
+  copy_from_user/copy_to_user helper invocation, success and guard EFAULT
+  observations, an unknown-syscall -ENOSYS regression, diagnostic marker
+  quarantine, and retained QEMU/substitute PASS evidence. Descriptor I/O,
+  process loading, VFS/filesystem, shell, networking, SSH, and Pi 5
+  pointer-copy hardware proof remain blocked.
 
 Milestone 7.4: File Descriptor Table
 

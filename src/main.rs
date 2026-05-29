@@ -44,7 +44,8 @@
             talos_boot_scenario = "qemu_multicore_preemption_smoke",
             talos_boot_scenario = "qemu_production_timer_preemption_smoke",
             talos_boot_scenario = "qemu_el0_trap_smoke",
-            talos_boot_scenario = "qemu_syscall_smoke"
+            talos_boot_scenario = "qemu_syscall_smoke",
+            talos_boot_scenario = "qemu_pointer_copy_smoke"
         )
     ),
     allow(dead_code, unused_imports, unused_variables, unreachable_code)
@@ -302,6 +303,11 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu_virt::run_syscall_smoke();
             }
 
+            #[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+            {
+                target::qemu_virt::run_pointer_copy_smoke();
+            }
+
             #[cfg(talos_boot_scenario = "qemu_secondary_core_workload")]
             {
                 if target::qemu_virt::run_secondary_core_workload_smoke() {
@@ -376,7 +382,8 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_boot_scenario = "qemu_multicore_preemption_smoke",
                 talos_boot_scenario = "qemu_production_timer_preemption_smoke",
                 talos_boot_scenario = "qemu_el0_trap_smoke",
-                talos_boot_scenario = "qemu_syscall_smoke"
+                talos_boot_scenario = "qemu_syscall_smoke",
+                talos_boot_scenario = "qemu_pointer_copy_smoke"
             )))]
             if target::qemu_virt::run_el2_timer_irq_smoke() {
                 target::qemu::exit_success();
@@ -399,7 +406,8 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_boot_scenario = "qemu_multicore_preemption_smoke",
                 talos_boot_scenario = "qemu_production_timer_preemption_smoke",
                 talos_boot_scenario = "qemu_el0_trap_smoke",
-                talos_boot_scenario = "qemu_syscall_smoke"
+                talos_boot_scenario = "qemu_syscall_smoke",
+                talos_boot_scenario = "qemu_pointer_copy_smoke"
             )))]
             target::qemu::exit_failure();
         }

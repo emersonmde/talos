@@ -9,6 +9,10 @@ use crate::posix::PosixError;
 pub(crate) const STABLE_SVC_IMMEDIATE: u16 = 0;
 pub(crate) const DIAGNOSTIC_EL0_TRAP_SVC_IMMEDIATE: u16 = 0x7a10;
 pub(crate) const TALOS_NOP_SYSCALL: u64 = 0;
+#[cfg(any(test, talos_boot_scenario = "qemu_pointer_copy_smoke"))]
+pub(crate) const TALOS_COPY_PROBE_SYSCALL: u64 = 0x7001;
+#[cfg(any(test, talos_boot_scenario = "qemu_pointer_copy_smoke"))]
+pub(crate) const TALOS_COPY_PROBE_MAX_LEN: usize = 32;
 pub(crate) const MAX_SCALAR_ARGUMENTS: usize = 6;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -147,6 +151,58 @@ pub(crate) const fn dispatch(
     }
 }
 
+#[cfg(any(test, talos_boot_scenario = "qemu_pointer_copy_smoke"))]
+pub(crate) fn dispatch_copy_probe(
+    arguments: SyscallArguments,
+    mappings: &[crate::posix::UserMapping],
+    user_memory_start: u64,
+    user_memory: &mut [u8],
+) -> SyscallReturn {
+    let [
+        user_start,
+        len,
+        expected,
+        replacement,
+        scratch_selector,
+        flags,
+    ] = arguments.values();
+    if scratch_selector != 0 || flags != 0 || len as usize > TALOS_COPY_PROBE_MAX_LEN {
+        return SyscallReturn::error(PosixError::InvalidArgument);
+    }
+
+    let len = len as usize;
+    let mut scratch = [0u8; TALOS_COPY_PROBE_MAX_LEN];
+    let copied = match crate::posix::copy_from_user(
+        mappings,
+        user_memory_start,
+        user_memory,
+        user_start,
+        len,
+        &mut scratch,
+    ) {
+        Ok(copied) => copied,
+        Err(error) => return SyscallReturn::error(error),
+    };
+
+    let expected = expected as u8;
+    if scratch[..copied].iter().any(|byte| *byte != expected) {
+        return SyscallReturn::error(PosixError::InvalidArgument);
+    }
+
+    scratch[..copied].fill(replacement as u8);
+    match crate::posix::copy_to_user(
+        mappings,
+        user_memory_start,
+        user_memory,
+        user_start,
+        copied,
+        &scratch,
+    ) {
+        Ok(written) => SyscallReturn::success(written as u64),
+        Err(error) => SyscallReturn::error(error),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -177,6 +233,60 @@ mod tests {
         assert_eq!(result.number(), SyscallNumber::Unknown(17));
         assert_eq!(result.number().raw(), 17);
         assert_eq!(result.return_value().x0(), (ENOSYS as u64).wrapping_neg());
+    }
+
+    #[test_case]
+    fn copy_probe_number_is_unknown_outside_proof_dispatch() {
+        let result = dispatch(TALOS_COPY_PROBE_SYSCALL, SyscallArguments::empty());
+
+        assert_eq!(
+            result.number(),
+            SyscallNumber::Unknown(TALOS_COPY_PROBE_SYSCALL)
+        );
+        assert_eq!(result.return_value().x0(), (ENOSYS as u64).wrapping_neg());
+    }
+
+    #[test_case]
+    fn copy_probe_dispatch_uses_explicit_mapping_and_backing_storage() {
+        let mapping = crate::posix::UserMapping::new(
+            0x0000_0000_0011_0000,
+            0x1000,
+            crate::posix::UserMappingPermissions::USER_DATA,
+        )
+        .expect("fixed user data mapping is valid");
+        let mut user_memory = [0x2au8; 0x1000];
+        let arguments = SyscallArguments::new([0x0000_0000_0011_0000, 16, 0x2a, 0xa5, 0, 0]);
+
+        let result = dispatch_copy_probe(
+            arguments,
+            &[mapping],
+            0x0000_0000_0011_0000,
+            &mut user_memory,
+        );
+
+        assert_eq!(result.x0(), 16);
+        assert_eq!(&user_memory[..16], &[0xa5; 16]);
+    }
+
+    #[test_case]
+    fn copy_probe_dispatch_reports_fault_for_unmapped_user_range() {
+        let mapping = crate::posix::UserMapping::new(
+            0x0000_0000_0011_0000,
+            0x1000,
+            crate::posix::UserMappingPermissions::USER_DATA,
+        )
+        .expect("fixed user data mapping is valid");
+        let mut user_memory = [0x2au8; 0x1000];
+        let arguments = SyscallArguments::new([0x0000_0000_001e_0000, 16, 0x2a, 0xa5, 0, 0]);
+
+        let result = dispatch_copy_probe(
+            arguments,
+            &[mapping],
+            0x0000_0000_0011_0000,
+            &mut user_memory,
+        );
+
+        assert_eq!(result.x0(), (EFAULT as u64).wrapping_neg());
     }
 
     #[test_case]

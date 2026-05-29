@@ -1,0 +1,18 @@
+
+Talos 0.1.0 booting on talos-aarch64-virt
+boot-info: dtb_pa=0x0000000048000000 core=0 el=2 target=talos-aarch64-virt
+target-services: uart=pl011 timer=arm-generic irq=gic-v2 dtb=Some(
+    0x0000000048000000,
+)
+mmio-regions: 3
+qemu-pointer-copy-smoke: start
+qemu-pointer-copy-smoke: validated elr=0x0000000000100000 sp=0x0000000000200000 user-data=0x0000000000110000 user-data-len=0x0000000000001000 guard-blocked=true
+qemu-pointer-copy-smoke: syscall case=copy_probe_success vector=lower-aarch64-sync esr=0x0000000054000000 svc=0x0000 number=0x0000000000007001 args=[x0=0x0000000000110000 x1=0x0000000000000010 x2=0x000000000000002a x3=0x00000000000000a5 x4=0x0000000000000000 x5=0x0000000000000000] return-x0=0x0000000000000010
+qemu-pointer-copy-smoke: user-observed case=copy_probe_success x0=0x0000000000000010 data=0xa5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5 ok=true
+qemu-pointer-copy-smoke: syscall case=copy_probe_efault vector=lower-aarch64-sync esr=0x0000000054000000 svc=0x0000 number=0x0000000000007001 args=[x0=0x00000000001e0000 x1=0x0000000000000010 x2=0x000000000000002a x3=0x00000000000000a5 x4=0x0000000000000000 x5=0x0000000000000000] return-x0=0xfffffffffffffff2 expected=-EFAULT
+qemu-pointer-copy-smoke: user-observed case=copy_probe_efault x0=0xfffffffffffffff2 ok=true
+qemu-pointer-copy-smoke: syscall case=unknown vector=lower-aarch64-sync esr=0x0000000054000000 svc=0x0000 number=17 return-x0=0xffffffffffffffda expected=-ENOSYS
+qemu-pointer-copy-smoke: user-observed case=unknown x0=0xffffffffffffffda ok=true
+qemu-pointer-copy-smoke: diagnostic-marker marker=0x7a10 stable-syscall=false dispatched=false
+qemu-pointer-copy-smoke: final participants=3 expected=3 errors=0 classification=qemu-pointer-copy-smoke-complete
+qemu-pointer-copy-smoke: PASS

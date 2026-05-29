@@ -4612,3 +4612,35 @@ ADR template:
   descriptor I/O, process loading, VFS/filesystem, shell, networking, SSH,
   Pi 5 pointer-copy hardware proof, RP1/PCIe, UART interrupt, and
   DMA/cache-driver surfaces.
+
+## 2026-05-29 - Phase 7 QEMU Pointer-Copy Smoke Core Accepted
+
+- Status: accepted as the Phase 7.3 QEMU/substitute implementation of the
+  proof-only pointer-copy syscall smoke. No Pi 5 hardware run, boot archive
+  publishing, hardware-lock acquisition, descriptor I/O, process loading,
+  VFS/filesystem, shell behavior, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache behavior was added.
+- Context: The accepted pointer-taking syscall contract and QEMU smoke plan
+  fixed the proof-only talos_copy_probe syscall number, register contract,
+  substitute UserData mapping, exact success/EFAULT/unknown observations, and
+  diagnostic marker quarantine before implementation.
+- Decision: Accept phase7-qemu-pointer-copy-smoke-core-20260529. The new
+  qemu_pointer_copy_smoke scenario routes stable svc #0 with x8 = 0x7001 only
+  in that proof scenario, invokes the accepted copy_from_user and copy_to_user
+  helpers against explicit QEMU substitute mappings and backing storage, proves
+  a 16-byte success case that writes 0xa5 bytes back, proves a guard-range
+  -EFAULT case, preserves the unknown-syscall -ENOSYS regression, and keeps
+  diagnostic marker 0x7a10 outside syscall dispatch.
+- Evidence level: QEMU/substitute serial boot/output plus target-independent
+  unit tests and static inspection. No Pi 5 hardware evidence was claimed.
+- Validation: git status --short before edits was clean; cargo fmt --all --
+  --check passed; cargo -Zjson-target-spec test passed;
+  scripts/qemu-pointer-copy-smoke.sh passed and retained
+  tasks/evidence/2026-05-29-qemu-pointer-copy-smoke-core/qemu-pointer-copy-smoke.log;
+  scripts/qemu-syscall-smoke.sh passed; scripts/qemu-el0-trap-smoke.sh passed;
+  git diff --check passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is the pointer-copy
+  closeout checkpoint. It may reconcile only the accepted QEMU/substitute
+  pointer-copy evidence and must keep descriptor I/O, process loading,
+  VFS/filesystem, shell, networking, SSH, Pi 5 pointer-copy hardware proof,
+  RP1/PCIe, UART interrupt, and DMA/cache-driver surfaces blocked.

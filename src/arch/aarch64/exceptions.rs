@@ -402,7 +402,8 @@ fn write_saved_register_line(prefix: &str, frame: &ExceptionFrame, start: usize,
 #[unsafe(no_mangle)]
 #[cfg(all(
     not(talos_target_rpi5_bcm2712),
-    not(talos_boot_scenario = "qemu_syscall_smoke")
+    not(talos_boot_scenario = "qemu_syscall_smoke"),
+    not(talos_boot_scenario = "qemu_pointer_copy_smoke")
 ))]
 pub extern "C" fn rust_exception_handler(
     esr: u64,
@@ -445,7 +446,10 @@ pub extern "C" fn rust_exception_handler(
 #[unsafe(no_mangle)]
 #[cfg(all(
     not(talos_target_rpi5_bcm2712),
-    talos_boot_scenario = "qemu_syscall_smoke"
+    any(
+        talos_boot_scenario = "qemu_syscall_smoke",
+        talos_boot_scenario = "qemu_pointer_copy_smoke"
+    )
 ))]
 pub extern "C" fn rust_exception_handler(
     esr: u64,
@@ -457,6 +461,19 @@ pub extern "C" fn rust_exception_handler(
 ) -> u64 {
     let vector = ExceptionVector::from(vector);
 
+    #[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+    if crate::target::qemu_virt::handle_pointer_copy_smoke_exception(
+        esr,
+        elr,
+        far,
+        vector,
+        spsr,
+        saved_frame,
+    ) {
+        return 1;
+    }
+
+    #[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
     if crate::target::qemu_virt::handle_syscall_smoke_exception(
         esr,
         elr,

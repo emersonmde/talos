@@ -94,11 +94,15 @@ use crate::smp_sync::{SpinLock, smp_full_barrier};
     talos_boot_scenario = "qemu_production_timer_preemption_smoke"
 ))]
 use crate::smp_sync::{SpinLock, smp_full_barrier};
-#[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
+))]
 use crate::syscall::{self, SyscallNumber};
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 use crate::{
     arch::aarch64::exceptions::{ExceptionFrame, ExceptionVector},
@@ -191,52 +195,82 @@ const TIMER_PREEMPTION_TARGET_SWITCHES: u64 = 6;
 
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 const EL0_TRAP_USER_TEXT_START: u64 = 0x0000_0000_0010_0000;
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 const EL0_TRAP_USER_TEXT_LEN: usize = 0x1000;
+#[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+const POINTER_COPY_USER_DATA_START: u64 = 0x0000_0000_0011_0000;
+#[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+const POINTER_COPY_USER_DATA_LEN: usize = 0x1000;
+#[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+const POINTER_COPY_USER_DATA_INIT: u8 = 0x2a;
+#[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+const POINTER_COPY_USER_DATA_REPLACEMENT: u8 = 0xa5;
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 const EL0_TRAP_USER_STACK_START: u64 = 0x0000_0000_001f_0000;
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 const EL0_TRAP_USER_STACK_LEN: usize = 0x1_0000;
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 const EL0_TRAP_USER_GUARD_START: u64 = 0x0000_0000_001e_0000;
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 const EL0_TRAP_SVC_MARKER: u64 = 0x7a10;
 #[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
 const EL0_TRAP_EXPECTED_ESR: u64 = 0x0000_0000_5400_7a10;
-#[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
+))]
 const SYSCALL_SMOKE_EXPECTED_SVC_ESR: u64 = 0x0000_0000_5400_0000;
-#[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
+))]
 const SYSCALL_SMOKE_EXPECTED_MARKER_ESR: u64 = 0x0000_0000_5400_7a10;
-#[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
+))]
 const SYSCALL_SMOKE_UNKNOWN_NUMBER: u64 = 17;
-#[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
+))]
 const SYSCALL_SMOKE_EXPECTED_ENOSYS_X0: u64 = (syscall::ENOSYS as u64).wrapping_neg();
+#[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+const POINTER_COPY_EXPECTED_EFAULT_X0: u64 = (syscall::EFAULT as u64).wrapping_neg();
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 const EL0_TRAP_SPSR_EL0T_DAIF_MASKED: u64 = 0x3c0;
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 const EL0_TRAP_SPSR_EL1H_DAIF_MASKED: u64 = 0x3c5;
 
@@ -255,14 +289,16 @@ static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
 
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 #[repr(align(4096))]
 struct El0TrapPage([u64; 512]);
 
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 impl El0TrapPage {
     const fn zeroed() -> Self {
@@ -272,14 +308,16 @@ impl El0TrapPage {
 
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 #[repr(align(65536))]
 struct El0TrapStack([u8; EL0_TRAP_USER_STACK_LEN]);
 
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 impl El0TrapStack {
     const fn zeroed() -> Self {
@@ -289,7 +327,8 @@ impl El0TrapStack {
 
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 #[repr(align(4096))]
 struct El0TrapPayload([u8; EL0_TRAP_USER_TEXT_LEN]);
@@ -366,35 +405,133 @@ impl El0TrapPayload {
     }
 }
 
+#[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+impl El0TrapPayload {
+    const fn pointer_copy_smoke() -> Self {
+        let mut page = [0; EL0_TRAP_USER_TEXT_LEN];
+        page[0] = 0x20;
+        page[1] = 0x02;
+        page[2] = 0xa0;
+        page[3] = 0xd2;
+        page[4] = 0x01;
+        page[5] = 0x02;
+        page[6] = 0x80;
+        page[7] = 0xd2;
+        page[8] = 0x42;
+        page[9] = 0x05;
+        page[10] = 0x80;
+        page[11] = 0xd2;
+        page[12] = 0xa3;
+        page[13] = 0x14;
+        page[14] = 0x80;
+        page[15] = 0xd2;
+        page[16] = 0x04;
+        page[17] = 0x00;
+        page[18] = 0x80;
+        page[19] = 0xd2;
+        page[20] = 0x05;
+        page[21] = 0x00;
+        page[22] = 0x80;
+        page[23] = 0xd2;
+        page[24] = 0x28;
+        page[25] = 0x00;
+        page[26] = 0x8e;
+        page[27] = 0xd2;
+        page[28] = 0x01;
+        page[29] = 0x00;
+        page[30] = 0x00;
+        page[31] = 0xd4;
+        page[32] = 0xc0;
+        page[33] = 0x03;
+        page[34] = 0xa0;
+        page[35] = 0xd2;
+        page[36] = 0x01;
+        page[37] = 0x02;
+        page[38] = 0x80;
+        page[39] = 0xd2;
+        page[40] = 0x42;
+        page[41] = 0x05;
+        page[42] = 0x80;
+        page[43] = 0xd2;
+        page[44] = 0xa3;
+        page[45] = 0x14;
+        page[46] = 0x80;
+        page[47] = 0xd2;
+        page[48] = 0x04;
+        page[49] = 0x00;
+        page[50] = 0x80;
+        page[51] = 0xd2;
+        page[52] = 0x05;
+        page[53] = 0x00;
+        page[54] = 0x80;
+        page[55] = 0xd2;
+        page[56] = 0x28;
+        page[57] = 0x00;
+        page[58] = 0x8e;
+        page[59] = 0xd2;
+        page[60] = 0x01;
+        page[61] = 0x00;
+        page[62] = 0x00;
+        page[63] = 0xd4;
+        page[64] = 0x28;
+        page[65] = 0x02;
+        page[66] = 0x80;
+        page[67] = 0xd2;
+        page[68] = 0x01;
+        page[69] = 0x00;
+        page[70] = 0x00;
+        page[71] = 0xd4;
+        page[72] = 0x01;
+        page[73] = 0x42;
+        page[74] = 0x0f;
+        page[75] = 0xd4;
+        page[76] = 0x00;
+        page[77] = 0x00;
+        page[78] = 0x00;
+        page[79] = 0x14;
+        Self(page)
+    }
+}
+
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 static mut EL0_TRAP_ROOT_TABLE: El0TrapPage = El0TrapPage::zeroed();
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 static mut EL0_TRAP_L1_TABLE: El0TrapPage = El0TrapPage::zeroed();
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 static mut EL0_TRAP_LOW_L2_TABLE: El0TrapPage = El0TrapPage::zeroed();
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 static mut EL0_TRAP_LOW_L3_TABLE: El0TrapPage = El0TrapPage::zeroed();
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 static mut EL0_TRAP_STACK: El0TrapStack = El0TrapStack::zeroed();
 #[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
 static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::svc_marker();
 #[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
 static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::syscall_smoke();
+#[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::pointer_copy_smoke();
+#[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+static mut POINTER_COPY_USER_DATA: [u8; POINTER_COPY_USER_DATA_LEN] =
+    [0; POINTER_COPY_USER_DATA_LEN];
 #[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
 static SYSCALL_SMOKE_TALOS_NOP_DISPATCHED: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
@@ -405,6 +542,20 @@ static SYSCALL_SMOKE_UNKNOWN_DISPATCHED: AtomicU64 = AtomicU64::new(0);
 static SYSCALL_SMOKE_UNKNOWN_OBSERVED: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
 static SYSCALL_SMOKE_ERRORS: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+static POINTER_COPY_SUCCESS_DISPATCHED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+static POINTER_COPY_SUCCESS_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+static POINTER_COPY_EFAULT_DISPATCHED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+static POINTER_COPY_EFAULT_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+static POINTER_COPY_UNKNOWN_DISPATCHED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+static POINTER_COPY_UNKNOWN_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+static POINTER_COPY_ERRORS: AtomicU64 = AtomicU64::new(0);
 
 #[cfg(any(
     talos_boot_scenario = "qemu_secondary_core_workload",
@@ -3365,6 +3516,98 @@ pub fn run_syscall_smoke() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+pub fn run_pointer_copy_smoke() -> ! {
+    crate::println!("qemu-pointer-copy-smoke: start");
+
+    let mappings = [
+        UserMapping::new(
+            EL0_TRAP_USER_TEXT_START,
+            EL0_TRAP_USER_TEXT_LEN,
+            UserMappingPermissions::USER_TEXT,
+        )
+        .expect("fixed pointer-copy smoke text mapping is a valid user mapping"),
+        UserMapping::new(
+            POINTER_COPY_USER_DATA_START,
+            POINTER_COPY_USER_DATA_LEN,
+            UserMappingPermissions::USER_DATA,
+        )
+        .expect("fixed pointer-copy smoke data mapping is a valid user mapping"),
+        UserMapping::new(
+            EL0_TRAP_USER_STACK_START,
+            EL0_TRAP_USER_STACK_LEN,
+            UserMappingPermissions::USER_DATA,
+        )
+        .expect("fixed pointer-copy smoke stack mapping is a valid user mapping"),
+    ];
+    let entry = validate_user_memory_access(
+        &mappings,
+        EL0_TRAP_USER_TEXT_START,
+        4,
+        UserAccessKind::Execute,
+        EL0_TRAP_USER_TEXT_LEN,
+    )
+    .expect("pointer-copy smoke entry validates inside fixed UserText")
+    .start();
+    validate_user_memory_access(
+        &mappings,
+        POINTER_COPY_USER_DATA_START,
+        POINTER_COPY_USER_DATA_LEN,
+        UserAccessKind::Write,
+        POINTER_COPY_USER_DATA_LEN,
+    )
+    .expect("pointer-copy smoke data validates inside fixed UserData");
+    let user_sp = EL0_TRAP_USER_STACK_START + EL0_TRAP_USER_STACK_LEN as u64;
+    validate_user_memory_access(
+        &mappings,
+        user_sp - 16,
+        16,
+        UserAccessKind::Write,
+        EL0_TRAP_USER_STACK_LEN,
+    )
+    .expect("pointer-copy smoke stack top validates inside fixed UserStack");
+    let guard_result = validate_user_memory_access(
+        &mappings,
+        EL0_TRAP_USER_GUARD_START,
+        16,
+        UserAccessKind::Read,
+        EL0_TRAP_USER_TEXT_LEN,
+    );
+    let guard_blocked = matches!(guard_result, Err(PosixError::Fault));
+
+    crate::println!(
+        "qemu-pointer-copy-smoke: validated elr={:#018x} sp={:#018x} user-data={:#018x} user-data-len={:#018x} guard-blocked={}",
+        entry,
+        user_sp,
+        POINTER_COPY_USER_DATA_START,
+        POINTER_COPY_USER_DATA_LEN as u64,
+        guard_blocked
+    );
+    if !guard_blocked {
+        crate::println!(
+            "qemu-pointer-copy-smoke: final participants=0 expected=3 errors=1 classification=qemu-pointer-copy-smoke-guard-open"
+        );
+        crate::target::qemu::exit_failure();
+    }
+
+    unsafe {
+        core::ptr::write_bytes(
+            core::ptr::addr_of_mut!(POINTER_COPY_USER_DATA).cast::<u8>(),
+            POINTER_COPY_USER_DATA_INIT,
+            POINTER_COPY_USER_DATA_LEN,
+        );
+        install_el0_trap_smoke_tables();
+        enable_el2_and_el0_translation();
+        enable_el1_and_el0_translation();
+        aarch64::enter_el1_then_el0(
+            entry as usize,
+            user_sp as usize,
+            EL0_TRAP_SPSR_EL0T_DAIF_MASKED,
+            EL0_TRAP_SPSR_EL1H_DAIF_MASKED,
+        );
+    }
+}
+
 #[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
 pub fn handle_syscall_smoke_exception(
     esr: u64,
@@ -3471,6 +3714,195 @@ pub fn handle_syscall_smoke_exception(
     true
 }
 
+#[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+pub fn handle_pointer_copy_smoke_exception(
+    esr: u64,
+    _elr: u64,
+    far: u64,
+    vector: ExceptionVector,
+    _spsr: u64,
+    saved_frame: *mut ExceptionFrame,
+) -> bool {
+    let marker = crate::arch::aarch64::exceptions::svc_immediate(esr);
+    let reported_esr = esr & !(1 << 25);
+    let Some(frame) = (unsafe { saved_frame.as_mut() }) else {
+        POINTER_COPY_ERRORS.fetch_add(1, Ordering::Relaxed);
+        return false;
+    };
+
+    if marker == syscall::DIAGNOSTIC_EL0_TRAP_SVC_IMMEDIATE {
+        let unknown_x0 = frame.reg(0);
+        let unknown_ok = unknown_x0 == SYSCALL_SMOKE_EXPECTED_ENOSYS_X0
+            && POINTER_COPY_UNKNOWN_DISPATCHED.load(Ordering::Relaxed) == 1;
+        POINTER_COPY_UNKNOWN_OBSERVED.store(u64::from(unknown_ok), Ordering::Relaxed);
+        if !unknown_ok {
+            POINTER_COPY_ERRORS.fetch_add(1, Ordering::Relaxed);
+        }
+        crate::println!(
+            "qemu-pointer-copy-smoke: user-observed case=unknown x0={:#018x} ok={}",
+            unknown_x0,
+            unknown_ok
+        );
+        let stable = syscall::is_stable_syscall_svc_immediate(marker);
+        crate::println!(
+            "qemu-pointer-copy-smoke: diagnostic-marker marker=0x7a10 stable-syscall={} dispatched=false",
+            stable
+        );
+        finish_pointer_copy_smoke(reported_esr == SYSCALL_SMOKE_EXPECTED_MARKER_ESR && far == 0);
+    }
+
+    if reported_esr != SYSCALL_SMOKE_EXPECTED_SVC_ESR {
+        POINTER_COPY_ERRORS.fetch_add(1, Ordering::Relaxed);
+        return false;
+    }
+
+    let raw_number = frame.reg(8);
+    if raw_number == syscall::TALOS_COPY_PROBE_SYSCALL {
+        let arguments = syscall::SyscallArguments::new([
+            frame.reg(0),
+            frame.reg(1),
+            frame.reg(2),
+            frame.reg(3),
+            frame.reg(4),
+            frame.reg(5),
+        ]);
+        let args = arguments.values();
+        let mapping = UserMapping::new(
+            POINTER_COPY_USER_DATA_START,
+            POINTER_COPY_USER_DATA_LEN,
+            UserMappingPermissions::USER_DATA,
+        )
+        .expect("fixed pointer-copy smoke data mapping is a valid user mapping");
+        let result = syscall::dispatch_copy_probe(
+            arguments,
+            &[mapping],
+            POINTER_COPY_USER_DATA_START,
+            unsafe { &mut *core::ptr::addr_of_mut!(POINTER_COPY_USER_DATA) },
+        );
+        let return_x0 = result.x0();
+        frame.set_reg(0, return_x0);
+
+        if args[0] == POINTER_COPY_USER_DATA_START {
+            let data_ok = pointer_copy_user_data_replaced();
+            let return_ok = return_x0 == 16 && data_ok;
+            if !return_ok {
+                POINTER_COPY_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            POINTER_COPY_SUCCESS_DISPATCHED.store(u64::from(return_ok), Ordering::Relaxed);
+            POINTER_COPY_SUCCESS_OBSERVED.store(u64::from(return_ok), Ordering::Relaxed);
+            crate::println!(
+                "qemu-pointer-copy-smoke: syscall case=copy_probe_success vector={} esr={:#018x} svc=0x0000 number={:#018x} args=[x0={:#018x} x1={:#018x} x2={:#018x} x3={:#018x} x4={:#018x} x5={:#018x}] return-x0={:#018x}",
+                vector.name(),
+                reported_esr,
+                raw_number,
+                args[0],
+                args[1],
+                args[2],
+                args[3],
+                args[4],
+                args[5],
+                return_x0
+            );
+            crate::println!(
+                "qemu-pointer-copy-smoke: user-observed case=copy_probe_success x0={:#018x} data=0xa5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5 ok={}",
+                return_x0,
+                return_ok
+            );
+        } else {
+            let return_ok = return_x0 == POINTER_COPY_EXPECTED_EFAULT_X0;
+            if !return_ok {
+                POINTER_COPY_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            POINTER_COPY_EFAULT_DISPATCHED.store(u64::from(return_ok), Ordering::Relaxed);
+            POINTER_COPY_EFAULT_OBSERVED.store(u64::from(return_ok), Ordering::Relaxed);
+            crate::println!(
+                "qemu-pointer-copy-smoke: syscall case=copy_probe_efault vector={} esr={:#018x} svc=0x0000 number={:#018x} args=[x0={:#018x} x1={:#018x} x2={:#018x} x3={:#018x} x4={:#018x} x5={:#018x}] return-x0={:#018x} expected=-EFAULT",
+                vector.name(),
+                reported_esr,
+                raw_number,
+                args[0],
+                args[1],
+                args[2],
+                args[3],
+                args[4],
+                args[5],
+                return_x0
+            );
+            crate::println!(
+                "qemu-pointer-copy-smoke: user-observed case=copy_probe_efault x0={:#018x} ok={}",
+                return_x0,
+                return_ok
+            );
+        }
+
+        return true;
+    }
+
+    let Some(routed) =
+        crate::arch::aarch64::exceptions::try_route_lower_aarch64_syscall(vector, esr, saved_frame)
+    else {
+        POINTER_COPY_ERRORS.fetch_add(1, Ordering::Relaxed);
+        return false;
+    };
+
+    let return_ok = routed.raw_number == SYSCALL_SMOKE_UNKNOWN_NUMBER
+        && matches!(
+            SyscallNumber::from_raw(routed.raw_number),
+            SyscallNumber::Unknown(_)
+        )
+        && routed.return_x0 == SYSCALL_SMOKE_EXPECTED_ENOSYS_X0;
+    if !return_ok {
+        POINTER_COPY_ERRORS.fetch_add(1, Ordering::Relaxed);
+    }
+    POINTER_COPY_UNKNOWN_DISPATCHED.store(u64::from(return_ok), Ordering::Relaxed);
+    crate::println!(
+        "qemu-pointer-copy-smoke: syscall case=unknown vector={} esr={:#018x} svc=0x0000 number={} return-x0={:#018x} expected=-ENOSYS",
+        vector.name(),
+        reported_esr,
+        routed.raw_number,
+        routed.return_x0
+    );
+
+    true
+}
+
+#[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+fn pointer_copy_user_data_replaced() -> bool {
+    let data = unsafe { &*core::ptr::addr_of!(POINTER_COPY_USER_DATA) };
+    data[..16]
+        .iter()
+        .all(|byte| *byte == POINTER_COPY_USER_DATA_REPLACEMENT)
+}
+
+#[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+fn finish_pointer_copy_smoke(marker_ok: bool) -> ! {
+    if !marker_ok {
+        POINTER_COPY_ERRORS.fetch_add(1, Ordering::Relaxed);
+    }
+    let participants = POINTER_COPY_SUCCESS_OBSERVED.load(Ordering::Relaxed)
+        + POINTER_COPY_EFAULT_OBSERVED.load(Ordering::Relaxed)
+        + POINTER_COPY_UNKNOWN_OBSERVED.load(Ordering::Relaxed);
+    let errors = POINTER_COPY_ERRORS.load(Ordering::Relaxed);
+    let complete = participants == 3 && errors == 0;
+    let classification = if complete {
+        "qemu-pointer-copy-smoke-complete"
+    } else {
+        "qemu-pointer-copy-smoke-failed"
+    };
+
+    crate::println!(
+        "qemu-pointer-copy-smoke: final participants={} expected=3 errors={} classification={}",
+        participants,
+        errors,
+        classification
+    );
+    if complete {
+        crate::println!("qemu-pointer-copy-smoke: PASS");
+        crate::target::qemu::exit_success();
+    }
+    crate::target::qemu::exit_failure();
+}
+
 #[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
 fn finish_syscall_smoke(marker_ok: bool) -> ! {
     if !marker_ok {
@@ -3554,7 +3986,8 @@ pub fn handle_el0_trap_smoke_exception(
 
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 unsafe fn install_el0_trap_smoke_tables() {
     const TABLE_DESC: u64 = 0b11;
@@ -3578,6 +4011,8 @@ unsafe fn install_el0_trap_smoke_tables() {
     let low_l2 = unsafe { core::ptr::addr_of_mut!(EL0_TRAP_LOW_L2_TABLE.0) };
     let low_l3 = unsafe { core::ptr::addr_of_mut!(EL0_TRAP_LOW_L3_TABLE.0) };
     let payload_pa = core::ptr::addr_of!(EL0_TRAP_PAYLOAD.0) as u64;
+    #[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+    let user_data_pa = core::ptr::addr_of!(POINTER_COPY_USER_DATA) as u64;
     let stack_pa = unsafe { core::ptr::addr_of!(EL0_TRAP_STACK.0) as u64 };
 
     unsafe {
@@ -3607,6 +4042,18 @@ unsafe fn install_el0_trap_smoke_tables() {
             | AF
             | PAGE_DESC;
 
+        #[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
+        {
+            (*low_l3)[(POINTER_COPY_USER_DATA_START as usize) >> 12] = (user_data_pa
+                & ADDR_MASK_4K)
+                | (ATTR_NORMAL << ATTR_SHIFT)
+                | AP_EL0_RW
+                | SH_INNER
+                | AF
+                | UXN
+                | PAGE_DESC;
+        }
+
         let mut page = 0usize;
         while page < EL0_TRAP_USER_STACK_LEN / 4096 {
             let va = EL0_TRAP_USER_STACK_START as usize + page * 4096;
@@ -3629,7 +4076,8 @@ unsafe fn install_el0_trap_smoke_tables() {
 
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 unsafe fn enable_el2_and_el0_translation() {
     const MAIR_NORMAL_WBWA: u64 = 0xff;
@@ -3703,7 +4151,8 @@ unsafe fn enable_el2_and_el0_translation() {
 
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
-    talos_boot_scenario = "qemu_syscall_smoke"
+    talos_boot_scenario = "qemu_syscall_smoke",
+    talos_boot_scenario = "qemu_pointer_copy_smoke"
 ))]
 unsafe fn enable_el1_and_el0_translation() {
     const MAIR_NORMAL_WBWA: u64 = 0xff;
