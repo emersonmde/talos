@@ -1,1 +1,1 @@
-not-accepted
+not-accepted: candidate reached dispatch-return for close_stdout with return-x0=0xfffffffffffffff7 (-EBADF), then produced no per-case close_stdout line, final classification, or PASS.

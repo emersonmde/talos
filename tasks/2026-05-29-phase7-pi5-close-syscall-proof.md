@@ -123,10 +123,12 @@ Evidence directory: tasks/evidence/2026-05-29-pi5-close-syscall-proof/.
   c03d690, rebuilt and published the 114792-byte candidate, and reran the
   serialized Pi 5 proof. Fresh TFTP evidence shows da591740/kernel_2712.img
   served at 114792 bytes. Retained serial again reached start, validation,
-  pre-eret, and lower-AArch64 handler-entry for close_stdout, but did not
-  produce the new dispatch-return line, per-case syscall line, final
-  classification, or PASS. This means the physical failure is now inside or
-  before returning from dispatch_process_descriptor for close_stdout.
+  pre-eret, lower-AArch64 handler-entry for close_stdout, and the new
+  dispatch-return line. The dispatch returned x0=0xfffffffffffffff7 (-EBADF)
+  for close_stdout instead of 0, then produced no per-case syscall line, final
+  classification, or PASS. This moves the physical failure from exception
+  routing into the process-descriptor dispatch/store state used by
+  close_stdout.
 
 ## Restore Proof
 
@@ -140,6 +142,6 @@ Do not change source after the local15 inconclusive candidate until the
 inconclusive-run triage sequence is refreshed for c03d690: retain candidate
 identity, fresh serial cursor, TFTP delta, a clean known-good production-timer
 control, and an unchanged c03d690 candidate rerun. If that unchanged rerun still
-stops before dispatch-return, the next source discriminator should instrument
-inside dispatch_process_descriptor / talos_close rather than the post-dispatch
-case logging.
+returns -EBADF for close_stdout, the next source discriminator should
+instrument the physical ProcessDescriptorStore/current-owner table state before
+dispatch_process_descriptor and inside talos_close.
