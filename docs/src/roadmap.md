@@ -291,6 +291,14 @@ runtime-console0. Process-owned descriptors, stdin/read, close, dup, program
 loading, VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt
 ownership, DMA/cache-driver policy, and full POSIX descriptor readiness remain
 blocked.
+The accepted Milestone 7.4 file descriptor table source inventory maps the
+source owners, accepted contracts, retained evidence, and missing contract
+boundaries for moving from proof-owned inherited stdio descriptors to
+process-owned descriptor tables. It recommends a documentation-only
+phase7-process-descriptor-table-contract-20260529 as the next bounded task and
+keeps stdin/read, close/dup syscalls, VFS/filesystem, path copying, process
+loading, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
+DMA/cache-driver policy, and full POSIX descriptor claims blocked.
 
 Near-term direction after the accepted Phase 7.3 syscall ABI/dispatch closeout:
 
@@ -1646,6 +1654,14 @@ Accepted progress:
   spaces, blocking/readiness, signals, restart semantics, RP1/PCIe, UART
   interrupt ownership, DMA/cache-driver policy, and full POSIX descriptor
   claims remain blocked.
+- Phase 7 file descriptor table source inventory is accepted. It maps accepted
+  descriptor table data-model owners, talos_write syscall dispatch, copy helper
+  and user-memory boundaries, runtime-console/TTY stdio backing,
+  scheduler/task process-owner vocabulary, deferred VFS/filesystem/device
+  surfaces, and retained QEMU/Pi 5 descriptor-write evidence. It recommends
+  phase7-process-descriptor-table-contract-20260529 as the next bounded
+  documentation-only Milestone 7.4 task and does not add implementation, QEMU,
+  Pi 5 hardware, or hardware-lock work.
 
 Milestone 7.4: File Descriptor Table
 

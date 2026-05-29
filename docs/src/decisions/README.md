@@ -12,6 +12,34 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.4 File Descriptor Table Source Inventory Accepted
+
+- Status: accepted as a documentation-only Milestone 7.4 file descriptor table
+  source inventory. No Rust behavior, assembly behavior, QEMU run, Pi 5
+  hardware run, archive publishing, hardware-lock acquisition, process loading,
+  VFS/filesystem behavior, shell behavior, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The accepted Milestone 7.3 syscall ABI/dispatch closeout closed the
+  bounded lower-AArch64 svc #0 frontier, including talos_write fd 1/fd 2
+  through proof-owned inherited stdio descriptors, and recommended a
+  Milestone 7.4 source inventory before process-owned descriptor work.
+- Decision: Accept
+  phase7-file-descriptor-table-source-inventory-20260529. The inventory maps
+  descriptor table data-model owners, syscall dispatch and talos_write owners,
+  copy helper and user-memory boundaries, runtime-console/TTY stdio backing,
+  scheduler process-owner vocabulary, reserved VFS/filesystem/device object
+  kinds, retained evidence anchors, and missing contracts.
+- Evidence level: static source and documentation inspection. No Rust gate,
+  QEMU run, or Pi 5 hardware action was required because this task changes only
+  Markdown documentation and durable worker state.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next bounded task should be
+  phase7-process-descriptor-table-contract-20260529, documentation-only under
+  Milestone 7.4. Stdin/read, close/dup syscalls, VFS/filesystem, path copying,
+  process loading, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.
+
 ## 2026-05-29 - Phase 7.3 Pi 5 Descriptor-Write Proof Accepted
 
 - Status: accepted as the serialized Raspberry Pi 5 descriptor-write proof for
