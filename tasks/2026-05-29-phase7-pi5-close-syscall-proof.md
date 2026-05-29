@@ -23,6 +23,9 @@ interrupt ownership, or DMA/cache-driver policy.
 - 993f290: added a temporary handler-entry trace for the next discriminator.
 - 772ef82: moved that temporary handler-entry trace from the descriptor-write
   proof handler to the active close syscall proof handler.
+- pending: added a temporary post-dispatch trace in the active close syscall
+  proof handler to distinguish a non-returning descriptor dispatch from
+  per-case logging/state update failure.
 
 ## Local Evidence
 
@@ -35,6 +38,11 @@ interrupt ownership, or DMA/cache-driver policy.
   correction.
 - unit tests: cargo -Zjson-target-spec test passed after the handler-entry
   trace correction, 231 tests, with the QEMU 9.2.0 tool path exported.
+- fmt/lint: cargo fmt --all -- --check passed after the post-dispatch trace.
+- unit tests: cargo -Zjson-target-spec test passed after the post-dispatch
+  trace.
+- QEMU/substitute: scripts/qemu-close-syscall-smoke.sh passed after the
+  post-dispatch trace.
 
 ## Hardware Evidence
 
@@ -97,6 +105,19 @@ Evidence directory: tasks/evidence/2026-05-29-pi5-close-syscall-proof/.
   production-timer final-classification line, but the retained capture missed
   the complete classification suffix and PASS line. Treat this as an
   inconclusive control, not an accepted control proof.
+- local13-known-good-control: with the pre-run snapshot restored, power-cycled
+  the accepted 104136-byte production-timer control tree. Fresh TFTP evidence
+  shows da591740/kernel_2712.img served at 104136 bytes, and retained serial
+  captured the complete production-timer final classification and PASS lines.
+  This is the accepted known-good control for the local11/local14 triage.
+- local14-unchanged-candidate-rerun: rebuilt and published the unchanged
+  corrected 772ef82-equivalent 114792-byte close proof candidate. Fresh TFTP
+  evidence shows da591740/kernel_2712.img served at 114792 bytes. Retained
+  serial reached rpi5-close-syscall-proof start, validation, pre-eret, and the
+  lower-AArch64 handler-entry line for close_stdout, but did not produce the
+  dispatch-return, per-case syscall, final classification, or PASS lines. This
+  completes the post-local11 triage and narrows the next discriminator to the
+  close proof dispatch path after handler entry.
 
 ## Restore Proof
 
@@ -106,9 +127,7 @@ status after local11/local12 named-snapshot restore matched that hash.
 
 ## Next Action
 
-Do not change source after the local11 inconclusive candidate run until the
-triage sequence is complete. Reacquire hardwareTestLock for a clean known-good
-control rerun that captures the complete production-timer classification and
-PASS lines, then rerun the unchanged corrected 772ef82-equivalent candidate
-only after that control is accepted. Keep using a named snapshot restore to
-avoid rollback toggling between candidate and control trees.
+The local13/local14 triage is complete and source changes are unblocked. The
+next bounded discriminator is a post-dispatch trace in the active close syscall
+proof handler; run it as a new serialized candidate and retain whether the
+handler returns from descriptor dispatch before any per-case syscall logging.

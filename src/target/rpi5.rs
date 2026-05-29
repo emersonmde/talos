@@ -9159,6 +9159,12 @@ pub fn handle_close_syscall_proof_exception(
         )
     };
     let return_x0 = result.return_value().x0();
+    crate::println!(
+        "rpi5-close-syscall-proof: dispatch-return number={:#018x} return-x0={:#018x}",
+        raw_number,
+        return_x0
+    );
+    wait_uart10_empty_early_phase();
     frame.set_reg(0, return_x0);
     let after_len = DESCRIPTOR_WRITE_CONSOLE_LEN.load(Ordering::Relaxed) as usize;
 

@@ -1,0 +1,29 @@
+lr_before=0x30c50831 sctlr_set=0x1000 kind=el2-stage1-icache-enabled
+TALOS: icache enable start
+TALOS: icache enable done
+talos: instruction cache enabled: el=0x2 sctlr=0x30c51831 kind=el2-stage1-icache-enabled
+talos: dt_entries=0x1 l1_entries=0x2 low_l2_blocks=0x200 mmio_l2_blocks=0x20 block_size=0x200000 kind=stage1-4k-no-enable phase=post-allocator
+talos: memory usable: bank=0 start=0x2f000000 end=0x3fc00000 size=0x10c00000 align=0x1000 policy=low-tail
+talos: page frames seed: start=0x2f000000 end=0x3fc00000 pages=0x10c00 page_size=0x1000 source=memory-usable phase=post-allocator
+talos: bootstrap reserve: start=0x2f000000 end=0x2f010000 pages=0x10 page_size=0x1000 reason=bootstrap-page-tables
+talos: page frames remaining: start=0x2f010000 end=0x3fc00000 pages=0x10bf0 page_size=0x1000 source=bootstrap-reserve
+talos: dtb memory: address_cells=2 size_cells=2 count=3 shown=3 truncated=false
+talos: dtb memory[0]: addr=0x0 size=0x3fc00000
+talos: dtb memory[1]: addr=0x40000000 size=0xc0000000
+talos: dtb memory[2]: addr=0x100000000 size=0x100000000
+rpi5-production-timer-preemption: start conduit=smc cores=4 task-capacity=2 entry-path=production-timer-irq-adapter boot-logical=Some(0) cacheable-mmu=true
+rpi5-production-timer-preemption: secondary-cacheable-mmu-handoff-plan mair-el2=0x00000000000004ff tcr-el2=0x0000000000053510 ttbr0-el2=0x000000002f000000 sctlr-el2=0x0000000030c51835 cacheable-mmu=true
+rpi5-production-timer-preemption: cpu-on logical=1TALOS: secondary_pre_rust_entry target-affinity=0x100TALOS: secondary_rust_entry
+ result=0
+rpi5-production-timer-preemption: affinity-after logical=1 target-affinity=0x100 level=0 state=on raw=0
+rpi5-production-timer-preemption: cpu-on logical=TALOS: secondary_state_pub2TALOS: secondary_production_tim target-affinTity=ALOS: secondar0x200TALOS: secondary_rust_entry
+ result=0
+rpi5-production-timer-preemption: affinity-after logical=2 target-affinity=0x200 level=0 state=on raw=0
+rpi5-production-timer-preemption: cpu-on logical=TALOS: secondary_state_pub3TTALOSA: secondLary_prodOuction target-affinity=TALOS: secondar0x300 result=0
+rpi5-production-timer-preemption: affinity-after logical=3 target-affinity=0x300 level=0 state=on raw=0
+TALOS: secondary_state_publishedTALOS: secondary_productionr_pti5-production-timer-preemption: report logical=1 state=workload-complete mapped=Some(1) owner=1 role=secondary-production-diagnostic entry-path=production-timer-irq-adapter record-outcome=inserted duplicate-outcome=coalesced cross-owner-rejected=true record-misses=0 timer-record-rejections=1 irq-record-scheduler-mutated=false pending-after-record=true service-timer-preemption=202 pending-after-service=false recorded=1 coalesced=1 serviced=1 metadata-generation-after-service=3 lock-progress=1 errors=0 ok=true
+rpi5-production-timer-preemption: report logical=2 state=workload-complete mapped=Some(2) owner=2 role=secondary-production-diagnostic entry-path=production-timer-irq-adapter record-outcome=inserted duplicate-outcome=coalesced cross-owner-rejected=true record-misses=0 timer-record-rejections=1 irq-record-scheduler-mutated=false pending-after-record=true service-timer-preemption=302 pending-after-service=false recorded=1 coalesced=1 serviced=1 metadata-generation-after-service=3 lock-progress=1 errors=0 ok=true
+rpi5-production-timer-preemption: report logical=3 state=workload-complete mapped=Some(3) owner=3 role=secondary-production-diagnostic entry-path=production-timer-irq-adapter record-outcome=inserted duplicate-outcome=coalesced cross-owner-rejected=true record-misses=0 timer-record-rejections=1 irq-record-scheduler-mutated=false pending-after-record=true service-timer-preemption=402 pending-after-service=false recorded=1 coalesced=1 serviced=1 metadata-generation-after-service=3 lock-progress=1 errors=0 ok=true
+rpi5-production-timer-preemption: final participants=3 expected=3 errors=0 state-lock-available=true metadata-lock-available=true wait-remaining=199997427 classification=pi5-production-timer-preemption-complete
+rpi5-production-timer-preemption: PASS
+

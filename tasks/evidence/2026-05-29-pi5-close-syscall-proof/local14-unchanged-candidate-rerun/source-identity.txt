@@ -1,0 +1,3 @@
+candidate_source_commit=772ef826d8fc514c1cf76ce0622690db7be49029
+current_head=16b54a9611f762f58bc6af4e67b3008877f86744
+source_equivalence=HEAD differs from 772ef82 only outside build.rs/src/scripts/Cargo paths
