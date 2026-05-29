@@ -77,6 +77,7 @@
 - [Phase 7 Syscall ABI Contract](project/phase7-syscall-abi-contract.md)
 - [Phase 7 Syscall Trap-Routing Source Inventory](project/phase7-syscall-trap-routing-source-inventory.md)
 - [Phase 7 Syscall Trap-Routing Contract](project/phase7-syscall-trap-routing-contract.md)
+- [Phase 7 QEMU Syscall Smoke Plan](project/phase7-qemu-syscall-smoke-plan.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

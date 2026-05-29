@@ -12,6 +12,31 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.3 QEMU Syscall Smoke Plan Accepted
+
+- Status: accepted as a documentation-only QEMU production syscall smoke plan.
+  No Rust behavior, assembly behavior, boot scenario, QEMU run, Pi 5 hardware
+  run, archive publishing, hardware-lock acquisition, descriptor I/O,
+  copy-in/copy-out, process loading, VFS/filesystem, shell behavior,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache behavior
+  was added.
+- Context: The accepted production syscall trap-routing contract requires a
+  QEMU-only smoke before Talos claims runtime syscall routing behavior.
+- Decision: Accept phase7-qemu-syscall-smoke-plan-20260529. The plan defines
+  qemu_syscall_smoke, stable svc #0 talos_nop with x8 = 0 and x0 = 0 after
+  return, unknown syscall x8 = 17 with x0 = 0xffffffffffffffda after return,
+  diagnostic marker 0x7a10 as proof-only completion vocabulary, and exact
+  qemu-syscall-smoke classification/PASS lines.
+- Evidence level: static documentation inspection, documentation build, and
+  whitespace inspection. No QEMU or Pi 5 hardware evidence was claimed.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next bounded task is
+  phase7-qemu-syscall-smoke-core-20260529. Pi 5 syscall hardware proof,
+  descriptor I/O, copy-in/copy-out, process loading, VFS/filesystem, shell,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
+  policy remain blocked.
+
 ## 2026-05-29 - Phase 7.3 Syscall Trap-Routing Contract Accepted
 
 - Status: accepted as a documentation-only production syscall trap-routing

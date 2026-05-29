@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 syscall trap-routing contract frontier,
+Talos is at the Phase 7.3 QEMU syscall smoke plan frontier,
 after accepting the Phase 6.3 production scheduler runtime closeout, the full
 Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -45,10 +45,14 @@ exception routing, QEMU, or hardware work. The accepted syscall trap-routing
 source inventory maps production lower-AArch64 SVC detection, svc immediate
 validation, x8 syscall-number extraction, x0-through-x5 argument capture, x0
 return mutation, ELR/SPSR handling, diagnostic marker quarantine, and
-non-syscall fallback. The accepted syscall trap-routing contract now fixes the
+non-syscall fallback. The accepted syscall trap-routing contract fixes the
 production routing preconditions, frame mutation rules, failure classes,
 diagnostic marker quarantine, and mandatory QEMU syscall smoke boundary. The
-next bounded task is the QEMU syscall smoke plan before implementation.
+accepted QEMU syscall smoke plan now defines the qemu_syscall_smoke invariant,
+stable svc #0 talos_nop and unknown-syscall return observations, exact
+classification/PASS lines, retained QEMU/substitute evidence, and diagnostic
+marker quarantine requirements before implementation. The next bounded task is
+the QEMU syscall smoke core implementation.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
