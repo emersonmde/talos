@@ -1,0 +1,3 @@
+candidate_source_commit=eb2af124891fe5b8492eff5859e5260fe94baeb6
+instrumentation_commit=eb2af124891fe5b8492eff5859e5260fe94baeb6
+archive=target/talos-rpi5-close-syscall-proof-local18-boot.tar.gz

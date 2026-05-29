@@ -8427,6 +8427,10 @@ pub fn run_close_syscall_proof() -> ! {
         (*core::ptr::addr_of_mut!(PROCESS_DESCRIPTOR_STDIO_STORE))
             .create_owner_with_inherited_stdio(current_owner)
             .expect("process-owned inherited stdio table");
+        clean_cache_range_to_poc(
+            core::ptr::addr_of!(PROCESS_DESCRIPTOR_STDIO_STORE) as usize,
+            core::mem::size_of::<crate::posix::ProcessDescriptorStore<1, 4>>(),
+        );
     }
     let store = unsafe { &*core::ptr::addr_of!(PROCESS_DESCRIPTOR_STDIO_STORE) };
     let descriptor_table = store

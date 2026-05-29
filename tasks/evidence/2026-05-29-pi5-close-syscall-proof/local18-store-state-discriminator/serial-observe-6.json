@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "IDExLjk2IExJTksgU1RBVFVTOiBzcGVlZDogMTAwMCBmdWxsIGR1cGxleA0KIDExLjYzIExpbmsgcmVhZHkNCiAxMi4wMSBSWDogMCBJUDogMCBJUFY0OiAwIE1BQzogMCBVRFA6IDAgVURQIFJFQ1Y6IDAgSVBfQ1NVTV9FUlI6IDAgVURQX0NTVU1fRVJSOiAwDQo=",
+  "bytes": 149,
+  "cursor_end": 3214039,
+  "cursor_start": 3213890,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": " 11.96 LINK STATUS: speed: 1000 full duplex\r\n 11.63 Link ready\r\n 12.01 RX: 0 IP: 0 IPV4: 0 MAC: 0 UDP: 0 UDP RECV: 0 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n",
+  "truncated": false
+}

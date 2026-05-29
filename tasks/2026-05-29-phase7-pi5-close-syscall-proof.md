@@ -31,6 +31,10 @@ interrupt ownership, or DMA/cache-driver policy.
   unchanged c03d690 candidate, added a temporary ProcessDescriptorStore and
   talos_close state trace around dispatch and close to distinguish missing
   current-owner state from descriptor-table close behavior.
+- pending: local18 showed the EL1 close handler sees owner-present=false before
+  dispatch, while EL2 initialization had already created the inherited-stdio
+  owner. The next candidate cleans the ProcessDescriptorStore static to PoC
+  before EL2-to-EL1/EL0 entry.
 
 ## Local Evidence
 
@@ -145,6 +149,15 @@ Evidence directory: tasks/evidence/2026-05-29-pi5-close-syscall-proof/.
   0xfffffffffffffff7 (-EBADF) for close_stdout. No per-case syscall, final
   classification, or PASS line appeared. The boot tree was restored by the
   pre-pi5-close-syscall-proof-local1-20260529 snapshot.
+- local18-store-state-discriminator: built and published the eb2af12
+  descriptor-store/talos_close trace candidate. Fresh TFTP evidence shows
+  da591740/kernel_2712.img served at 114792 bytes. Retained serial reached the
+  lower-AArch64 close handler and printed store-before-dispatch owner=1
+  owner-present=false table-error=EBADF, followed by talos-close-entry/result
+  owner-present=false and dispatch-return -EBADF. The boot tree was restored by
+  the pre-pi5-close-syscall-proof-local1-20260529 snapshot. This narrows the
+  failure to visibility of the initialized ProcessDescriptorStore static at the
+  EL1 handler boundary, before talos_close mutates the table.
 
 ## Restore Proof
 
@@ -165,3 +178,8 @@ dispatch_process_descriptor and inside talos_close.
 That triage is now refreshed by local16/local17. Continue with the bounded
 ProcessDescriptorStore/talos_close state discriminator and do not mark the proof
 accepted unless the required close syscall PASS/final lines are retained.
+
+The discriminator completed in local18 and points to pre-dispatch owner-table
+visibility. Continue with a minimal cache-clean fix for the initialized
+ProcessDescriptorStore static, retaining the temporary traces until a passing
+physical proof proves they are no longer needed.

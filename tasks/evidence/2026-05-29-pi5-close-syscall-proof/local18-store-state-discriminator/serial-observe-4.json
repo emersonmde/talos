@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "ICA0LjA5IFBDSTIgaW5pdA0KICA0LjA5IFBDSTIgcmVzZXQNCiAgNC4zMyBTRF9P",
+  "bytes": 48,
+  "cursor_end": 3213068,
+  "cursor_start": 3213020,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "  4.09 PCI2 init\r\n  4.09 PCI2 reset\r\n  4.33 SD_O",
+  "truncated": false
+}

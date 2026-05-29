@@ -1,0 +1,2 @@
+c631dea5114a384434c9d97084d75369012641db64ad63d2ed6cd38c1321d33c  target/talos-rpi5-close-syscall-proof-local18-boot.tar.gz
+6f430a2225f9bf43c2e74ccb5b57feacf92866e37858e2b7b8c0bea5ce156787  target/rpi5-close-syscall-proof-boot-tree-local18/kernel_2712.img

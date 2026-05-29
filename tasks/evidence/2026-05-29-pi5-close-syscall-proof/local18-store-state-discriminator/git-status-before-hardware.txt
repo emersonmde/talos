@@ -1,0 +1,14 @@
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/classification.txt
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/observe-loops.txt
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/post-snapshot-restore-status.json
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/pre-restore-status.json
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/proof-lines.txt
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/run-finished-at.txt
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/serial-combined.txt
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/serial-observe-37.json
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/serial-observe-45.json
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/serial-observe-70.json
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/snapshot-restore-pre-pi5-close.json
+ M tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/tftp-delta-before-restore.json
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/serial-observe-70.txt
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local18-store-state-discriminator/
