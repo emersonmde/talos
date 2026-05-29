@@ -5770,3 +5770,36 @@ ADR template:
   networking, SSH, dup2/fcntl, object finalization, broader cache/DMA policy,
   RP1/PCIe, UART interrupt ownership, and full POSIX descriptor claims remain
   blocked.
+
+## 2026-05-29 - Phase 7 Dup Syscall Core Accepted
+
+- Status: accepted as the target-independent Milestone 7.4 dup syscall core.
+  No QEMU dup smoke implementation, Pi 5 hardware run, boot archive
+  publication, hardware-lock acquisition, read syscall behavior, process
+  loading, VFS/filesystem behavior, shell behavior, networking, SSH, RP1/PCIe,
+  UART interrupt ownership, object finalization, or DMA/cache-driver policy was
+  added.
+- Context: The accepted dup syscall contract had fixed talos_dup as syscall
+  number 3 and required current-owner descriptor-table lookup, lowest-free-slot
+  allocation, deterministic EBADF/EMFILE/EINVAL errors, and no-mutation
+  reserved-argument behavior.
+- Decision: Accept phase7-dup-syscall-core-20260529. The implementation adds
+  `SyscallNumber::TalosDup`, `ProcessDescriptorStore::dup_current_descriptor()`,
+  `dispatch_talos_dup()` through `dispatch_process_descriptor()`, and EMFILE
+  return encoding. Descriptor-write dispatch now writes through any copied
+  writable StdioOutput descriptor entry, allowing duplicated stdout/stderr
+  descriptors to remain usable after closing the source while leaving stdin/read
+  behavior blocked.
+- Evidence level: fmt/lint/typecheck, no_std unit tests, QEMU/substitute
+  regressions, static documentation/source inspection, documentation build, and
+  whitespace inspection. No Pi 5 hardware evidence was produced.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec test
+  passed with 239 no_std tests; scripts/qemu-syscall-smoke.sh passed;
+  scripts/qemu-descriptor-write-smoke.sh passed; scripts/qemu-close-syscall-smoke.sh
+  passed; git diff --check passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-qemu-dup-syscall-smoke-plan-20260529, scoped to a documentation-only
+  QEMU dup smoke plan. Pi 5 physical dup proof, read syscall behavior,
+  stdin/read object model, process loading, VFS/filesystem, shell, networking,
+  SSH, dup2/fcntl, object finalization, broader cache/DMA policy, RP1/PCIe,
+  UART interrupt ownership, and full POSIX descriptor claims remain blocked.

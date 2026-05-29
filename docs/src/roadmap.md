@@ -484,6 +484,23 @@ implementation task. Read syscall behavior, stdin/read object policy, QEMU/Pi
 5 dup/read proof, process loading, VFS/filesystem, shell, networking, SSH,
 dup2/fcntl, object finalization, broader cache/DMA policy, and full POSIX
 descriptor readiness remain blocked.
+The accepted dup syscall core adds stable syscall number 3 for talos_dup and
+routes it through dispatch_process_descriptor() and
+ProcessDescriptorStore::dup_current_descriptor(). It validates reserved-zero x1
+through x5, duplicates occupied source descriptors into the lowest free slot,
+returns -EBADF for invalid, empty, closed, missing-owner, or unknown-owner
+sources, returns -EMFILE for full tables, and returns -EINVAL for reserved
+argument violations without mutation. Descriptor writes now rely on the copied
+DescriptorEntry access and StdioOutput object kind, so duplicated stdout/stderr
+descriptors can remain writable after the source is closed while stdin/read
+behavior stays blocked. Focused no_std tests prove stdout/stderr/stdin
+duplication cases, duplicate/source independence across close, no-mutation
+reserved failures, full-table EMFILE, and existing nop/write/close/unknown
+regressions. QEMU dup smoke, Pi 5 physical dup proof, read/stdin behavior,
+process loading, VFS/filesystem, shell, networking, SSH, object finalization,
+dup2/fcntl, and full POSIX descriptor readiness remain blocked. The next
+bounded Milestone 7.4 task should be
+phase7-qemu-dup-syscall-smoke-plan-20260529.
 
 Near-term direction after the accepted Pi 5 close syscall proof closeout:
 
@@ -496,8 +513,9 @@ Near-term direction after the accepted Pi 5 close syscall proof closeout:
 - Keep QEMU, host-side unit tests, and static documentation gates first. Reserve
   serialized Pi 5 runs for the smallest physical claim that cannot be proven on
   the QEMU/substitute path.
-- Preserve the deferred-surface boundary: read/dup syscall expansion,
-  process loading, descriptor I/O beyond the accepted close proof,
+- Preserve the deferred-surface boundary: read syscall expansion, QEMU/Pi 5
+  dup proof beyond the accepted target-independent core, process loading,
+  descriptor I/O beyond the accepted close and dup core frontiers,
   VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
   and DMA/cache-driver policy remain out of scope until explicit tasks accept
   their contracts and gates.

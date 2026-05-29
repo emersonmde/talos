@@ -703,6 +703,15 @@ impl<const OWNER_CAPACITY: usize, const DESCRIPTOR_CAPACITY: usize>
             .close(descriptor)
     }
 
+    pub(crate) fn dup_current_descriptor(
+        &mut self,
+        current_owner: Option<ProcessOwnerId>,
+        descriptor: usize,
+    ) -> Result<usize, PosixError> {
+        self.current_descriptor_table_mut(current_owner)?
+            .dup(descriptor)
+    }
+
     fn owner_index(&self, owner: ProcessOwnerId) -> Option<usize> {
         let mut index = 0;
         while index < OWNER_CAPACITY {
@@ -734,9 +743,6 @@ where
     let entry = table.get(descriptor)?;
     entry.require_writable()?;
 
-    if descriptor != STDOUT_FD && descriptor != STDERR_FD {
-        return Err(PosixError::BadDescriptor);
-    }
     if entry.object().kind() != DescriptorObjectKind::StdioOutput {
         return Err(PosixError::NotSupported);
     }
@@ -1397,6 +1403,91 @@ mod tests {
                 .object()
                 .reference(),
             99
+        );
+    }
+
+    #[test_case]
+    fn process_descriptor_store_dups_current_owner_descriptors() {
+        let owner = ProcessOwnerId::new(28).expect("owner id");
+        let mut store = ProcessDescriptorStore::<1, 5>::new_empty();
+
+        store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create owner");
+        let stdout_duplicate = store
+            .dup_current_descriptor(Some(owner), STDOUT_FD)
+            .expect("dup stdout");
+        let stderr_duplicate = store
+            .dup_current_descriptor(Some(owner), STDERR_FD)
+            .expect("dup stderr");
+
+        assert_eq!(stdout_duplicate, 3);
+        assert_eq!(stderr_duplicate, 4);
+        assert_eq!(
+            store
+                .current_descriptor_table(Some(owner))
+                .expect("current table")
+                .get(stdout_duplicate)
+                .expect("stdout duplicate")
+                .object(),
+            store
+                .current_descriptor_table(Some(owner))
+                .expect("current table")
+                .get(STDOUT_FD)
+                .expect("stdout")
+                .object()
+        );
+        store
+            .close_current_descriptor(Some(owner), STDOUT_FD)
+            .expect("close stdout");
+        assert_eq!(
+            store
+                .current_descriptor_table(Some(owner))
+                .expect("current table")
+                .get(stdout_duplicate)
+                .expect("duplicate remains")
+                .object()
+                .reference(),
+            STDOUT_FD
+        );
+    }
+
+    #[test_case]
+    fn process_descriptor_dup_failures_map_to_ebadf_or_emfile() {
+        let owner = ProcessOwnerId::new(29).expect("owner id");
+        let missing = ProcessOwnerId::new(30).expect("missing owner id");
+        let mut full_store = ProcessDescriptorStore::<1, 3>::new_empty();
+        let mut store = ProcessDescriptorStore::<1, 4>::new_empty();
+
+        full_store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create owner");
+        store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create owner");
+
+        assert_eq!(
+            store.dup_current_descriptor(None, STDOUT_FD),
+            Err(PosixError::BadDescriptor)
+        );
+        assert_eq!(
+            store.dup_current_descriptor(Some(missing), STDOUT_FD),
+            Err(PosixError::BadDescriptor)
+        );
+        assert_eq!(
+            store.dup_current_descriptor(Some(owner), 4),
+            Err(PosixError::BadDescriptor)
+        );
+        store
+            .close_current_descriptor(Some(owner), STDOUT_FD)
+            .expect("close stdout");
+        assert_eq!(
+            store.dup_current_descriptor(Some(owner), STDOUT_FD),
+            Err(PosixError::BadDescriptor)
+        );
+        assert_eq!(
+            full_store.dup_current_descriptor(Some(owner), STDOUT_FD),
+            Err(PosixError::TooManyOpenFiles)
         );
     }
 

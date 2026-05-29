@@ -4299,7 +4299,7 @@ pub fn handle_syscall_smoke_exception(
                 routed.return_x0
             );
         }
-        SyscallNumber::TalosWrite | SyscallNumber::TalosClose => {
+        SyscallNumber::TalosWrite | SyscallNumber::TalosClose | SyscallNumber::TalosDup => {
             SYSCALL_SMOKE_ERRORS.fetch_add(1, Ordering::Relaxed);
             crate::println!(
                 "qemu-syscall-smoke: syscall case=unexpected_context_syscall vector={} esr={:#018x} svc=0x0000 number={} return-x0={:#018x}",
