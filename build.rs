@@ -121,6 +121,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[RPI5_SYSCALL_PROOF_ASM],
     },
     BootScenario {
+        value: "rpi5_dup_syscall_proof",
+        implied_values: &["rpi5_syscall_proof"],
+        asm_defines: &[RPI5_SYSCALL_PROOF_ASM],
+    },
+    BootScenario {
         value: "rpi5_secondary_scheduler_service_loop",
         implied_values: &[],
         asm_defines: &[RPI5_SMP_ASM],

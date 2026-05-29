@@ -86,7 +86,8 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
         talos_boot_scenario = "rpi5_syscall_proof",
         not(talos_boot_scenario = "rpi5_pointer_copy_proof"),
         not(talos_boot_scenario = "rpi5_descriptor_write_proof"),
-        not(talos_boot_scenario = "rpi5_close_syscall_proof")
+        not(talos_boot_scenario = "rpi5_close_syscall_proof"),
+        not(talos_boot_scenario = "rpi5_dup_syscall_proof")
     ))]
     target::rpi5::run_syscall_proof();
 
@@ -98,6 +99,9 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
 
     #[cfg(talos_boot_scenario = "rpi5_close_syscall_proof")]
     target::rpi5::run_close_syscall_proof();
+
+    #[cfg(talos_boot_scenario = "rpi5_dup_syscall_proof")]
+    target::rpi5::run_dup_syscall_proof();
 
     #[cfg(talos_boot_scenario = "rpi5_secondary_scheduler_service_loop")]
     target::rpi5::run_secondary_scheduler_service_loop_proof();
