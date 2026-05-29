@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "aW1lLWNvbnNvbGUgY2FzZT13cml0ZV9kdXBsaWNhdGVfYWZ0ZXJfc291cmNlX2Nsb3NlIGRldmljZT1ydW50aW1lLWNvbnNvbGUwIGJ5dGVzPTE5IGhleD03NDYxNmM2ZjczMmQ2NDc1NzAyZDZlNjU3NzJkNzI3MDY5MzUwYSBvaz10cnVlDQpycGk1LWR1cC1zeXNjYWxsLXByb29mOiBzeXNjYWxsIGNhc2U9Y2xvc2Vfc3Rkb3V0X2R1cGxpY2F0ZSB2ZWN0b3I9bG93ZXItYWFyY2g2NC1zeW5jIGVzcj0weDAwMDAwMDAwNTQwMDAwMDAgc3ZjPTB4MDAwMCBudW1iZXI9MiBhcmdzPVt4MD0weDAwMDAwMDAwMDAwMDAwMDMgeDE9MHgwMDAwMDAwMDAwMDAwMDAwIHgyPTB4MDAwMDAwMDAwMDAwMDAwMCB4Mz0weDAwMDAwMDAwMDAwMDAwMDAgeDQ9MHgwMDAwMDAwMDAwMDAwMDAwIHg1PTB4MDAwMDAwMDAwMDAwMDAwMF0gZGVzY3JpcHRvci1vd25lcj0weDAwMDAwMDAwMDAwMDAwMDEgcmV0dXJuLXgwPTB4MDAwMDAwMDAwMDAwMDAwMA0KcnBpNS1kdXAtc3lzY2FsbC1wcm9vZjogc3lzAAo=",
+  "bytes": 500,
+  "cursor": 3278969,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "ime-console case=write_duplicate_after_source_close device=runtime-console0 bytes=19 hex=74616c6f732d6475702d6e65772d727069350a ok=true\r\nrpi5-dup-syscall-proof: syscall case=close_stdout_duplicate vector=lower-aarch64-sync esr=0x0000000054000000 svc=0x0000 number=2 args=[x0=0x0000000000000003 x1=0x0000000000000000 x2=0x0000000000000000 x3=0x0000000000000000 x4=0x0000000000000000 x5=0x0000000000000000] descriptor-owner=0x0000000000000001 return-x0=0x0000000000000000\r\nrpi5-dup-syscall-proof: sys\u0000\n"
+}

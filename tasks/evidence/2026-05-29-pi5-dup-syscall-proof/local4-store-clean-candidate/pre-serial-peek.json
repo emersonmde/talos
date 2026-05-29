@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "cy1vd25lZC1pbmhlcml0ZWQtc3RkaW8gZGVzY3JpcHRvci1jYXBhY2l0eT00IHJ1bnRpbWUtY29uc29sZT1ydW50aW1lLWNvbnNvbGUwDQpycGk1LWR1cC1zeXNjYWxsLXByb29mOiBjdXJyZW50LWRlc2NyaXB0b3ItdGFibGUgbG9va3VwPXByb2Nlc3Mtb3duZWQgb3duZXI9MHgwMDAwMDAwMDAwMDAwMDAxIHJlc29sdmVkPXRydWUgc3RkaW89aW5oZXJpdGVkIHJ1bnRpbWUtY29uc29sZT1ydW50aW1lLWNvbnNvbGUwDQpycGk1LWR1cC1zeXNjYWxsLXByb29mOiBwcmUtZXJldCBoY3JfZWwyPTB4MDAwMDAwMDA4MDAwMDAwMCBzY3Rscl9lbDE9MHgwMDAwMDAwMDMwZDAwODAwIHRjcl9lbDE9MHgwMDAwMDAwMjAwMDAzMDEwIHR0YnIwX2VsMT0weDAwMDAwMDAwMDAyNDEwMDAgdmJhcl9lbDE9MHgwMDAwMDAwMDAwMjAwODAwIGVscl9lbDE9MHgwMDAwMDAwMDAwMTAwMDAwIHNwc3JfZWwxPTB4MDAwMDAwMDAwMDAwMDNjMA0KDQpUQUxPUzogcGFuaWMgaGFuZGxlciBlbnRlcmVkDQo=",
+  "bytes": 500,
+  "cursor": 3266080,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "s-owned-inherited-stdio descriptor-capacity=4 runtime-console=runtime-console0\r\nrpi5-dup-syscall-proof: current-descriptor-table lookup=process-owned owner=0x0000000000000001 resolved=true stdio=inherited runtime-console=runtime-console0\r\nrpi5-dup-syscall-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000200003010 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0\r\n\r\nTALOS: panic handler entered\r\n"
+}

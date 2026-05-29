@@ -538,14 +538,28 @@ phase7-pi5-dup-syscall-proof-plan-20260529 before any serialized physical dup
 proof. Pi 5 physical dup proof, read/stdin behavior, process loading,
 VFS/filesystem, shell, networking, SSH, object finalization, dup2/fcntl, and
 full POSIX descriptor readiness remain blocked.
+The accepted Pi 5 dup syscall proof plan defined the serialized physical
+rpi5_dup_syscall_proof invariant, including hardwareTestLock ownership,
+candidate identity, fresh serial/TFTP evidence, inconclusive-run triage,
+restore proof, exact dup/write/close/error/quarantine/PASS lines, and blocked
+deferred surfaces. The serialized Pi 5 dup syscall proof is now accepted.
+Retained local8 physical evidence proves fd 1 duplicates to fd 3,
+full-table -EMFILE, reserved-register -EINVAL, writes through source and
+duplicate stdout descriptors, close(fd 1) preserving fd 3, duplicate close,
+closed-descriptor -EBADF, scalar and unknown-syscall regressions, copy-probe
+quarantine, final
+classification=pi5-dup-syscall-proof-complete, and PASS. Retained local7
+production-timer control evidence proves lab health after the earlier
+inconclusive candidate/control runs. Read/stdin behavior, process loading,
+VFS/filesystem, shell, networking, SSH, object finalization, dup2/fcntl, and
+full POSIX descriptor readiness remain blocked.
 
-Near-term direction after the accepted QEMU dup syscall closeout:
+Near-term direction after the accepted Pi 5 dup syscall proof:
 
-- Translate the accepted QEMU/substitute dup invariant into a bounded Pi 5
-  proof plan before any hardware action. That plan should define lock
-  ownership, candidate identity, fresh serial/TFTP evidence, inconclusive-run
-  triage, restore proof, exact dup/write/close/error/PASS lines, and blocked
-  read/process/VFS/shell/network surfaces.
+- Close out the Pi 5 dup syscall proof before starting read/stdin or broader
+  descriptor work. The checkpoint should reconcile accepted QEMU and Pi 5 dup
+  evidence, inconclusive-run triage, restore proof, residual risks, and
+  deferred surfaces.
 - Keep QEMU, host-side unit tests, and static documentation gates first. Reserve
   serialized Pi 5 runs for the smallest physical claim that cannot be proven on
   the QEMU/substitute path.
@@ -2032,6 +2046,20 @@ Accepted progress:
   should be phase7-pi5-dup-syscall-proof-20260529. Read/stdin behavior,
   process loading, VFS/filesystem, shell, networking, SSH, object finalization,
   dup2/fcntl, and full POSIX descriptor readiness remain blocked.
+- Phase 7 Pi 5 dup syscall proof is accepted. Retained local8 physical serial
+  evidence proves current-owner lookup, fd 1 dup to fd 3, full-table -EMFILE,
+  reserved-register -EINVAL, source and duplicate stdout writes, close(fd 1)
+  preserving fd 3, duplicate close, closed-descriptor -EBADF, talos_nop,
+  unknown-syscall -ENOSYS, copy-probe quarantine,
+  classification=pi5-dup-syscall-proof-complete, and PASS. local7 is the
+  accepted known-good production-timer control after earlier inconclusive
+  local4/local5/local6 evidence. The boot tree was restored to the
+  pre-pi5-dup-syscall-proof-local1-20260529 snapshot. The next bounded
+  Milestone 7.4 task should be
+  phase7-pi5-dup-syscall-proof-closeout-checkpoint-20260529. Read/stdin
+  behavior, process loading, VFS/filesystem, shell, networking, SSH, object
+  finalization, dup2/fcntl, and full POSIX descriptor readiness remain
+  blocked.
 
 Milestone 7.4: File Descriptor Table
 

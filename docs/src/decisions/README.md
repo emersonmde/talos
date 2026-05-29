@@ -5945,3 +5945,44 @@ ADR template:
   model, process loading, VFS/filesystem, shell, networking, SSH, dup2/fcntl,
   object finalization, broader cache/DMA policy, RP1/PCIe, UART interrupt
   ownership, and full POSIX descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 Pi 5 Dup Syscall Proof Accepted
+
+- Status: accepted as the serialized Raspberry Pi 5 Milestone 7.4 dup syscall
+  proof. No read syscall behavior, process loading, VFS/filesystem behavior,
+  shell behavior, networking, SSH, RP1/PCIe, UART interrupt ownership,
+  object finalization, dup2/fcntl, DMA/cache-driver policy, or full POSIX
+  descriptor readiness was added.
+- Context: The accepted QEMU dup syscall smoke and proof plan required a
+  physical Pi 5 run that tied candidate source/archive/kernel identity to fresh
+  serial and TFTP evidence, proved the dup/write/close/error/quarantine
+  invariant, retained an accepted known-good control after inconclusive runs,
+  and restored the prior accepted boot tree.
+- Decision: Accept phase7-pi5-dup-syscall-proof-20260529. local8 retained
+  physical serial evidence for the unchanged 2d8e5f9 candidate proving fd 1
+  duplicates to fd 3, table-full -EMFILE, reserved-register -EINVAL, writes
+  through source and duplicate stdout descriptors, close(fd 1) preserving fd 3,
+  duplicate close, closed-descriptor -EBADF, talos_nop, unknown-syscall
+  -ENOSYS, copy-probe quarantine, final
+  classification=pi5-dup-syscall-proof-complete, and PASS. local7 retained the
+  accepted production-timer control after local4/local5/local6 inconclusive
+  evidence.
+- Evidence level: serialized Pi 5 hardware boot/output, lab-controller TFTP
+  evidence, static archive/image inspection, restore proof, fmt/lint/typecheck,
+  no_std unit tests, QEMU/substitute dup smoke, QEMU/substitute
+  descriptor-write and close regressions, documentation build, and whitespace
+  inspection.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec test
+  passed; scripts/qemu-dup-syscall-smoke.sh passed;
+  scripts/qemu-descriptor-write-smoke.sh passed;
+  scripts/qemu-close-syscall-smoke.sh passed; scripts/rpi5-archive-review.sh
+  passed for local8; local7 production-timer control passed on Pi 5; local8
+  dup syscall proof passed on Pi 5; git diff --check passed; mdbook build
+  passed.
+- Consequences: The next mechanically derivable task is
+  phase7-pi5-dup-syscall-proof-closeout-checkpoint-20260529, scoped to closing
+  out the QEMU/Pi 5 dup frontier before any read/stdin or broader descriptor
+  work. Read syscall behavior, stdin/read object model, process loading,
+  VFS/filesystem, shell, networking, SSH, dup2/fcntl, object finalization,
+  broader cache/DMA policy, RP1/PCIe, UART interrupt ownership, and full POSIX
+  descriptor claims remain blocked.

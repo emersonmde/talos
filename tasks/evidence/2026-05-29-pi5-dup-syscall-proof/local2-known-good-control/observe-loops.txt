@@ -1,0 +1,11 @@
+1 cursor=3244932 bytes=648
+2 cursor=3244992 bytes=60
+3 cursor=3245015 bytes=23
+4 cursor=3245208 bytes=193
+5 cursor=3246017 bytes=809
+6 cursor=3246080 bytes=63
+7 cursor=3246229 bytes=149
+8 cursor=3246229 bytes=0
+9 cursor=3248973 bytes=2744
+10 cursor=3253069 bytes=4096
+11 cursor=3256404 bytes=3335

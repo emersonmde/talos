@@ -1,0 +1,2 @@
+9d87d71c3c507b8fcc783b4377ceeb89971378730aaccab072f7bdfff2a885c9  target/talos-rpi5-production-timer-preemption-local5-boot.tar.gz
+c80c272fade2120e3b8ffd2452466d340707a14dd55f3c2397aa659c687aa1cc  target/rpi5-production-timer-preemption-boot-tree-local5/kernel_2712.img
