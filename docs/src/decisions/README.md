@@ -5740,3 +5740,33 @@ ADR template:
   stdin/read object model, shell, networking, SSH, blocking/readiness, signals,
   restart semantics, object finalization, broader cache/DMA policy, RP1/PCIe,
   UART interrupt ownership, and full POSIX descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 Dup Syscall Contract Accepted
+
+- Status: accepted as the documentation-only Milestone 7.4 dup syscall
+  contract. No Rust behavior, assembly behavior, QEMU run, Pi 5 hardware run,
+  boot archive publication, hardware-lock acquisition, read syscall contract,
+  process loading, VFS/filesystem behavior, shell behavior, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, object finalization, or DMA/cache-driver
+  policy was added.
+- Context: The accepted Pi 5 close syscall proof closeout had made the
+  physical talos_close frontier explicit and selected dup as the next bounded
+  descriptor syscall contract before read/stdin work.
+- Decision: Accept phase7-dup-syscall-contract-20260529. The contract defines
+  talos_dup as syscall number 3, copies an occupied source descriptor in the
+  current ProcessOwnerId-backed descriptor table into the lowest free slot,
+  returns the new descriptor number, maps invalid/empty/closed or missing-owner
+  sources to -EBADF, maps full tables to -EMFILE, and maps nonzero reserved
+  x1 through x5 arguments to -EINVAL without mutation.
+- Evidence level: static documentation and source inspection, documentation
+  build, and whitespace inspection. No Rust tests, QEMU run, or physical Pi 5
+  hardware evidence was produced.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-dup-syscall-core-20260529, scoped to target-independent dup syscall
+  dispatch and focused unit tests. Read syscall behavior, stdin/read object
+  model, QEMU/Pi 5 dup/read proof, process loading, VFS/filesystem, shell,
+  networking, SSH, dup2/fcntl, object finalization, broader cache/DMA policy,
+  RP1/PCIe, UART interrupt ownership, and full POSIX descriptor claims remain
+  blocked.

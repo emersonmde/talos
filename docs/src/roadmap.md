@@ -471,6 +471,19 @@ VFS/filesystem, stdin/read object policy, shell, networking, SSH, object
 finalization, broader cache/DMA policy, and full POSIX descriptor readiness
 remain blocked. The next bounded Milestone 7.4 task should be the already
 queued documentation-only phase7-dup-syscall-contract-20260529.
+The accepted dup syscall contract defines talos_dup as stable syscall number 3
+on svc #0 with x0 as the source descriptor and x1 through x5 reserved zero. It
+duplicates an occupied descriptor in the current ProcessOwnerId-backed
+ProcessDescriptorStore into the lowest free slot, returns the new descriptor
+number, maps invalid/empty/closed or missing-owner sources to -EBADF, maps a
+full table to -EMFILE, and maps reserved arguments to -EINVAL without
+mutation. The contract preserves talos_nop, talos_write, talos_close,
+unknown-syscall, and proof-only copy-probe behavior, and recommends
+phase7-dup-syscall-core-20260529 as the next bounded target-independent
+implementation task. Read syscall behavior, stdin/read object policy, QEMU/Pi
+5 dup/read proof, process loading, VFS/filesystem, shell, networking, SSH,
+dup2/fcntl, object finalization, broader cache/DMA policy, and full POSIX
+descriptor readiness remain blocked.
 
 Near-term direction after the accepted Pi 5 close syscall proof closeout:
 
