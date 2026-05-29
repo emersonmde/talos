@@ -12,6 +12,36 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.3 Copy-In/Copy-Out Helper Contract Accepted
+
+- Status: accepted as a documentation-only Phase 7.3 copy-in/copy-out helper
+  contract. No Rust behavior, assembly behavior, QEMU run, Pi 5 hardware run,
+  archive publishing, hardware-lock acquisition, descriptor I/O,
+  pointer-taking syscall, process loading, VFS/filesystem, shell behavior,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver
+  policy was added.
+- Context: The accepted Pi 5 syscall proof closeout recommended defining the
+  copy-in/copy-out helper boundary before any pointer-taking syscall or
+  descriptor I/O implementation. The accepted user-memory permission core
+  already provides UserRange, mapping permissions, access kinds,
+  DEFAULT_USER_COPY_LIMIT, and PosixError::Fault vocabulary.
+- Decision: Accept phase7-copyin-copyout-helper-contract-20260529. The helper
+  contract requires whole-range validation before byte movement, maps invalid
+  user ranges and permission failures to EFAULT, keeps the first helper
+  all-or-nothing with no short-copy success, and distinguishes recoverable
+  helper validation faults from future process-fatal lower-EL aborts.
+- Evidence level: static documentation inspection. No QEMU or Pi 5 rerun was
+  required because this task changes only documentation and durable worker
+  state.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next bounded implementation should be
+  phase7-copyin-copyout-helper-core-20260529, limited to target-independent
+  helper code and unit tests. Pointer-taking syscalls, descriptor I/O, process
+  loading, VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, and DMA/cache-driver policy remain blocked until explicit later
+  tasks.
+
 ## 2026-05-29 - Phase 7.3 Pi 5 Syscall Proof Closeout Accepted
 
 - Status: accepted as the documentation closeout for the first serialized

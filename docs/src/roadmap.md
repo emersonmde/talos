@@ -13,9 +13,9 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 copy-in/copy-out helper contract frontier,
-after accepting the Phase 6.3 production scheduler runtime closeout, the full
-Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
+Talos is at the Phase 7.3 copy-in/copy-out helper implementation planning
+frontier, after accepting the Phase 6.3 production scheduler runtime closeout,
+the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
 target-independent user-memory permission core. The accepted Phase 7.2 contract
 defines the first user/kernel virtual-address split vocabulary, lower-EL
@@ -90,6 +90,12 @@ accepts no new Rust or assembly behavior and performs no QEMU or Pi 5 rerun.
 It recommends the documentation-only copy-in/copy-out helper contract as the
 next bounded task before any pointer-taking syscall or descriptor I/O
 implementation.
+The accepted copy-in/copy-out helper contract defines target-independent
+helper inputs, outputs, validation order, EFAULT mapping, all-or-nothing
+partial-copy policy, recoverable versus process-fatal fault boundaries, and
+unit-testable cases. It names phase7-copyin-copyout-helper-core-20260529 as
+the next bounded implementation task and requires supervisor planning before
+promotion because the current durable queue names only the contract task.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -1250,6 +1256,15 @@ Accepted progress:
   surfaces. It recommends phase7-copyin-copyout-helper-contract-20260529 as the
   next bounded documentation-only task before pointer-taking syscall or
   descriptor I/O implementation.
+- Phase 7 copy-in/copy-out helper contract is accepted. It defines the first
+  target-independent helper boundary: whole-range validation before byte
+  movement, copy-in read access, copy-out write access, deterministic EFAULT
+  mapping for null/kernel-range/unmapped/permission/wraparound failures,
+  all-or-nothing copy behavior, and a split between recoverable syscall helper
+  failures and future process-fatal lower-EL abort classifications. It names
+  phase7-copyin-copyout-helper-core-20260529 as the next bounded implementation
+  task, pending supervisor planning. Pointer-taking syscalls, descriptor I/O,
+  process loading, VFS/filesystem, shell, networking, and SSH remain blocked.
 
 Milestone 7.4: File Descriptor Table
 
