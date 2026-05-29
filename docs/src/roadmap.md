@@ -1851,6 +1851,15 @@ Accepted progress:
   networking, SSH, object finalization, and full POSIX descriptor readiness
   remain blocked. The next bounded Milestone 7.4 task should be
   phase7-qemu-close-syscall-smoke-plan-20260529.
+- Phase 7 QEMU close syscall smoke plan is accepted. It defines the later
+  qemu_close_syscall_smoke QEMU/substitute invariant for talos_close on fd 1
+  and fd 2 through the current ProcessOwnerId-backed descriptor table,
+  closed-descriptor talos_write -EBADF behavior, unaffected descriptor
+  behavior, scalar syscall regressions, and proof-only diagnostic quarantine.
+  The next bounded Milestone 7.4 task should be
+  phase7-qemu-close-syscall-smoke-core-20260529. Pi 5 physical close proof,
+  dup/read syscalls, process loading, VFS/filesystem, shell, networking, SSH,
+  object finalization, and full POSIX descriptor readiness remain blocked.
 
 Milestone 7.4: File Descriptor Table
 

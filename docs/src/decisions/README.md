@@ -5545,3 +5545,37 @@ ADR template:
   signals, restart semantics, object finalization, RP1/PCIe, UART interrupt
   ownership, DMA/cache-driver policy, and full POSIX descriptor claims remain
   blocked.
+
+## 2026-05-29 - Phase 7 QEMU Close Syscall Smoke Plan Accepted
+
+- Status: accepted as the documentation-only Milestone 7.4 QEMU/substitute
+  close syscall smoke plan. No Rust behavior, assembly behavior, QEMU run,
+  Pi 5 hardware run, boot archive publication, hardware-lock acquisition,
+  dup/read syscall implementation, process loading, VFS/filesystem behavior,
+  shell behavior, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted close syscall core added talos_close x8 = 2 and
+  routes current-owner close through
+  ProcessDescriptorStore::close_current_descriptor(), but lower-AArch64 QEMU
+  evidence for close and later write behavior on closed descriptors remains
+  unproven.
+- Decision: Accept phase7-qemu-close-syscall-smoke-plan-20260529. The next
+  smoke must build qemu_close_syscall_smoke, create one ProcessOwnerId-backed
+  inherited stdio table, close fd 1 and fd 2 through the current-owner
+  ProcessDescriptorStore lookup, prove later talos_write on the closed
+  descriptors returns -EBADF before runtime-console0 side effects, prove fd 2
+  remains usable after fd 1 closes and after a failed reserved close attempt,
+  and preserve talos_nop, unknown-syscall, talos_copy_probe quarantine, and
+  diagnostic-marker quarantine observations.
+- Evidence level: static documentation inspection, documentation build, and
+  whitespace inspection. No Rust tests, QEMU run, or physical Pi 5 hardware
+  evidence was produced.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-qemu-close-syscall-smoke-core-20260529, scoped to implementing and
+  retaining the QEMU/substitute close syscall smoke. Pi 5 physical close
+  proof, dup/read syscalls, process loading, VFS/filesystem, stdin/read object
+  model, shell, networking, SSH, blocking/readiness, signals, restart
+  semantics, object finalization, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.
