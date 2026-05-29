@@ -12,6 +12,49 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.3 Pi 5 Descriptor-Write Proof Accepted
+
+- Status: accepted as the serialized Raspberry Pi 5 descriptor-write proof for
+  the first stable talos_write boundary. No stdin/read, close, dup, pipe,
+  process loading, VFS/filesystem behavior, shell, networking, SSH, RP1/PCIe,
+  UART interrupt ownership, DMA/cache-driver policy, or full POSIX descriptor
+  claim is accepted.
+- Context: The accepted QEMU descriptor-write smoke and Pi 5 descriptor-write
+  proof plan required physical evidence that lower-AArch64 svc #0 reaches the
+  descriptor-write dispatch path on Pi 5 and can write fd 1/fd 2 UserData
+  bytes through inherited stdio descriptors and runtime-console0.
+- Decision: Accept phase7-pi5-descriptor-write-proof-20260529. The
+  implementation adds rpi5_descriptor_write_proof, focused Pi 5 exception
+  routing for that scenario, image/boot-tree helpers, and retained lab
+  evidence. The accepted physical invariant includes fd 1 stdout and fd 2
+  stderr writes, fd0/fd99 -EBADF, guard -EFAULT, reserved-register -EINVAL,
+  talos_nop, unknown syscall -ENOSYS, x8 = 0x7001 quarantine, diagnostic
+  marker quarantine, classification=pi5-descriptor-write-proof-complete, and
+  rpi5-descriptor-write-proof: PASS.
+- Evidence level: serialized Pi 5 hardware boot/output under hardwareTestLock,
+  static archive/image inspection, QEMU/substitute regression evidence, unit
+  tests, and restore proof. The first candidate run was inconclusive, so the
+  accepted record includes candidate identity, fresh serial and TFTP cursors,
+  a passing production-timer known-good control, and an unchanged candidate
+  rerun before acceptance. Retained evidence is in
+  tasks/evidence/2026-05-29-pi5-descriptor-write-proof/.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec test
+  passed; scripts/qemu-syscall-smoke.sh, scripts/qemu-pointer-copy-smoke.sh,
+  and scripts/qemu-descriptor-write-smoke.sh passed;
+  scripts/rpi5-archive-review.sh
+  target/talos-rpi5-descriptor-write-proof-boot.tar.gz passed; serialized Pi 5
+  local3 candidate rerun reported
+  classification=pi5-descriptor-write-proof-complete and
+  rpi5-descriptor-write-proof: PASS; restore returned the prior boot-tree hash;
+  git diff --check passed; mdbook build passed.
+- Consequences: Pi 5 descriptor-backed stdout/stderr write through
+  copy_from_user(), inherited stdio descriptors, and runtime-console0 is
+  physically accepted for this proof boundary. Stdin/read, close, dup,
+  process-owned descriptor tables, process loading, VFS/filesystem, shell,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
+  policy remain blocked. The next bounded work should be the Pi 5
+  descriptor-write proof closeout checkpoint.
+
 ## 2026-05-29 - Phase 7.3 Pointer-Taking Syscall Source Inventory Accepted
 
 - Status: accepted as a documentation-only Phase 7.3 pointer-taking syscall

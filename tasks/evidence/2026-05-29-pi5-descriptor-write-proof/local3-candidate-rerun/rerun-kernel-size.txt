@@ -1,0 +1,2 @@
+target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-descriptor-write-proof.img 108136 bytes
+target/rpi5-descriptor-write-proof-boot-tree/kernel_2712.img 108136 bytes

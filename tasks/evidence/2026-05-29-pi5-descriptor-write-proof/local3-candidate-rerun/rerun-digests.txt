@@ -1,0 +1,4 @@
+f791c78e85dc72fe2c3db01b84f823e97bea1275faac0669ce0647bc402365f7  target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-descriptor-write-proof.img
+f791c78e85dc72fe2c3db01b84f823e97bea1275faac0669ce0647bc402365f7  target/rpi5-descriptor-write-proof-boot-tree/kernel_2712.img
+f791c78e85dc72fe2c3db01b84f823e97bea1275faac0669ce0647bc402365f7  target/rpi5-descriptor-write-proof-boot-tree/da591740/kernel_2712.img
+1152cf838d6e4c7d36f1276b627c37275964600ac9e6d5090641408e4806ea6f  target/talos-rpi5-descriptor-write-proof-boot.tar.gz

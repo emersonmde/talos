@@ -1,0 +1,4 @@
+implementation_commit=83b17d5695c3bd69ae39cd3cc1e74bf7d5fcd168
+git_status_short:
+ M docs/src/roadmap.md
+?? tasks/evidence/2026-05-29-pi5-descriptor-write-proof/

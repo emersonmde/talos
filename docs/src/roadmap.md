@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 Pi 5 descriptor-write proof plan
+Talos is at the accepted Phase 7.3 Pi 5 descriptor-write proof
 frontier, after accepting the Phase 6.3 production scheduler runtime closeout,
 the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -254,6 +254,43 @@ classification=pi5-descriptor-write-proof-complete plus
 rpi5-descriptor-write-proof: PASS. It does not acquire hardwareTestLock,
 publish an archive, run Pi 5 hardware, or unblock stdin/read, close, dup,
 process loading, filesystem, shell, networking, or SSH.
+The serialized Pi 5 descriptor-write proof is now accepted. Retained local3
+physical serial evidence shows stable lower-AArch64 svc #0 reaching the
+descriptor-write dispatch path on Pi 5: fd 1 stdout and fd 2 stderr write
+18-byte UserData buffers through copy_from_user(), inherited stdio
+descriptors, and runtime-console0; fd 0 and fd 99 return -EBADF without extra
+console bytes; the guard range returns -EFAULT; a nonzero reserved register
+returns -EINVAL; talos_nop and unknown-syscall regressions remain intact; x8 =
+0x7001 remains quarantined as -ENOSYS; diagnostic marker 0x7a10 remains
+proof-only; and the proof reports
+classification=pi5-descriptor-write-proof-complete plus
+rpi5-descriptor-write-proof: PASS. The first candidate run was inconclusive,
+so the accepted evidence includes candidate identity, fresh serial and TFTP
+cursors, a passing production-timer known-good control, an unchanged candidate
+rerun, hardwareTestLock release, and restore proof for the prior accepted boot
+tree. This accepts only the physical descriptor-backed stdout/stderr write
+boundary; stdin/read, close, dup, process loading, filesystem, shell,
+networking, SSH, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy,
+and full POSIX descriptor claims remain blocked.
+
+Near-term direction after the accepted Pi 5 descriptor-write proof:
+
+- Move from proof-specific descriptor writes toward user-visible OS
+  capability. The next Phase 7 slices should close out Milestone 7.3, then
+  establish process-owned descriptor-table behavior and syscall paths that can
+  be exercised by a lower-EL test payload or small user program rather than by
+  permanent diagnostic shortcuts.
+- Keep QEMU, host-side unit tests, and static documentation gates first. Reserve
+  serialized Pi 5 runs for the smallest physical claim that cannot be proven on
+  the QEMU/substitute path.
+- Preserve the deferred-surface boundary: general syscall ABI expansion,
+  process loading, descriptor I/O beyond the accepted contract,
+  VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
+  and DMA/cache-driver policy remain out of scope until explicit tasks accept
+  their contracts and gates.
+- Treat the roadmap target as a usable local operating system: TTY, shell,
+  separate user programs, and interaction/program-based tests that exercise new
+  kernel features through the normal kernel/userspace boundary.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -859,6 +896,12 @@ Blocked or pending:
 - Use Rust for kernel code, with small AArch64 assembly stubs where the hardware requires it.
 - Use established Rust kernel development practices where they fit: pinned nightly toolchain, explicit custom targets, no_std, build-std, small unsafe boundaries, narrow target abstractions, and QEMU-backed smoke tests for generic architecture work.
 - Keep POSIX direction visible from the start: processes, file descriptors, pipes, paths, sockets, exit/wait, and exec-style program loading should shape interfaces even before compatibility is complete.
+- Keep kernel, libraries, and programs as separate product areas. Kernel code
+  owns scheduling, memory, drivers, syscalls, VFS, and process isolation;
+  libraries own userspace ABI wrappers and reusable runtime support; programs
+  own shell, utilities, and interaction-based tests. Use OSDev Wiki examples as
+  reference material when shaping these boundaries, but fit the result to the
+  Talos Rust/no_std and Pi 5 constraints.
 - Prefer local OS capability before remote access: serial/local TTY, stdio,
   user processes, ramfs/initramfs, VFS, libc, and a local shell come before
   Ethernet and SSH on the critical path.
@@ -1540,6 +1583,22 @@ Accepted progress:
   phase7-pi5-descriptor-write-proof-20260529 as the next bounded hardware
   task and keeps stdin/read, close, dup, process loading, VFS/filesystem,
   shell, networking, SSH, live process-owned address spaces, blocking/readiness,
+  signals, restart semantics, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, and full POSIX descriptor claims blocked.
+- Phase 7 Pi 5 descriptor-write proof is accepted. It adds the focused
+  rpi5_descriptor_write_proof scenario, Pi 5 descriptor-write lower-AArch64
+  svc #0 handling, image/boot-tree helpers, retained local evidence, and
+  retained lab evidence. The accepted local3 rerun includes fd 1 stdout and fd
+  2 stderr runtime-console0 writes, fd0/fd99 -EBADF, guard -EFAULT, reserved
+  x3 -EINVAL, talos_nop, unknown syscall -ENOSYS, copy-probe quarantine,
+  diagnostic-marker quarantine, classification=pi5-descriptor-write-proof-complete,
+  and rpi5-descriptor-write-proof: PASS. The first candidate run was
+  inconclusive, so the retained evidence records candidate identity, fresh
+  serial/TFTP cursors, a passing production-timer known-good control, an
+  unchanged candidate rerun, and restore proof. It recommends
+  phase7-pi5-descriptor-write-proof-closeout-checkpoint-20260529 next and
+  keeps stdin/read, close, dup, process loading, VFS/filesystem, shell,
+  networking, SSH, live process-owned address spaces, blocking/readiness,
   signals, restart semantics, RP1/PCIe, UART interrupt ownership,
   DMA/cache-driver policy, and full POSIX descriptor claims blocked.
 
