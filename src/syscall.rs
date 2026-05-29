@@ -9,9 +9,17 @@ use crate::posix::PosixError;
 pub(crate) const STABLE_SVC_IMMEDIATE: u16 = 0;
 pub(crate) const DIAGNOSTIC_EL0_TRAP_SVC_IMMEDIATE: u16 = 0x7a10;
 pub(crate) const TALOS_NOP_SYSCALL: u64 = 0;
-#[cfg(any(test, talos_boot_scenario = "qemu_pointer_copy_smoke"))]
+#[cfg(any(
+    test,
+    talos_boot_scenario = "qemu_pointer_copy_smoke",
+    talos_boot_scenario = "rpi5_pointer_copy_proof"
+))]
 pub(crate) const TALOS_COPY_PROBE_SYSCALL: u64 = 0x7001;
-#[cfg(any(test, talos_boot_scenario = "qemu_pointer_copy_smoke"))]
+#[cfg(any(
+    test,
+    talos_boot_scenario = "qemu_pointer_copy_smoke",
+    talos_boot_scenario = "rpi5_pointer_copy_proof"
+))]
 pub(crate) const TALOS_COPY_PROBE_MAX_LEN: usize = 32;
 pub(crate) const MAX_SCALAR_ARGUMENTS: usize = 6;
 
@@ -151,7 +159,11 @@ pub(crate) const fn dispatch(
     }
 }
 
-#[cfg(any(test, talos_boot_scenario = "qemu_pointer_copy_smoke"))]
+#[cfg(any(
+    test,
+    talos_boot_scenario = "qemu_pointer_copy_smoke",
+    talos_boot_scenario = "rpi5_pointer_copy_proof"
+))]
 pub(crate) fn dispatch_copy_probe(
     arguments: SyscallArguments,
     mappings: &[crate::posix::UserMapping],

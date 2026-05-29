@@ -262,7 +262,8 @@ pub extern "C" fn rust_irq_handler(
 #[unsafe(no_mangle)]
 #[cfg(all(
     talos_target_rpi5_bcm2712,
-    not(talos_boot_scenario = "rpi5_syscall_proof")
+    not(talos_boot_scenario = "rpi5_syscall_proof"),
+    not(talos_boot_scenario = "rpi5_pointer_copy_proof")
 ))]
 pub extern "C" fn rust_exception_handler(
     esr: u64,
@@ -299,7 +300,13 @@ pub extern "C" fn rust_exception_handler(
 }
 
 #[unsafe(no_mangle)]
-#[cfg(all(talos_target_rpi5_bcm2712, talos_boot_scenario = "rpi5_syscall_proof"))]
+#[cfg(all(
+    talos_target_rpi5_bcm2712,
+    any(
+        talos_boot_scenario = "rpi5_syscall_proof",
+        talos_boot_scenario = "rpi5_pointer_copy_proof"
+    )
+))]
 pub extern "C" fn rust_exception_handler(
     esr: u64,
     elr: u64,
@@ -310,6 +317,22 @@ pub extern "C" fn rust_exception_handler(
 ) -> u64 {
     let vector = ExceptionVector::from(vector);
 
+    #[cfg(talos_boot_scenario = "rpi5_pointer_copy_proof")]
+    if crate::target::rpi5::handle_pointer_copy_proof_exception(
+        esr,
+        elr,
+        far,
+        vector,
+        spsr,
+        saved_frame,
+    ) {
+        return 1;
+    }
+
+    #[cfg(all(
+        talos_boot_scenario = "rpi5_syscall_proof",
+        not(talos_boot_scenario = "rpi5_pointer_copy_proof")
+    ))]
     if crate::target::rpi5::handle_syscall_proof_exception(esr, elr, far, vector, spsr, saved_frame)
     {
         return 1;
