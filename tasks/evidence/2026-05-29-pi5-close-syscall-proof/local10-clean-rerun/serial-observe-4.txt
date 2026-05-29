@@ -1,0 +1,8 @@
+  3.40 OTP boardrev d04171 bootrom a a
+  3.40 Customer key hash 0000000000000000000000000000000000000000000000000000000000000000
+  3.41 VC-JTAG unlocked
+  3.43 RP1_BOOT chip ID: 0x20001927
+
+  4.31 SD_OC: 0
+  4.13 Boot mode: NETWORK (02) order f1
+

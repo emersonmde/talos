@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "IDExLjk5IFJYOiAwIElQOiAwIElQVjQ6IDAgTUFDOiAwIFVEUDogMCBVRFAgUkVDVjogMCBJUF9DU1VNX0VSUjogMCBVRFBfQ1NVTV9FUlI6IDANCg==",
+  "bytes": 85,
+  "cursor_end": 3135831,
+  "cursor_start": 3135746,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": " 11.99 RX: 0 IP: 0 IPV4: 0 MAC: 0 UDP: 0 UDP RECV: 0 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n",
+  "truncated": false
+}

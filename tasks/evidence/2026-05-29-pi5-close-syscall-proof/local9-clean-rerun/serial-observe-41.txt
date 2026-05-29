@@ -1,0 +1,3 @@
+ 11.93 LINK STATUS: speed: 1000 full duplex
+ 11.39 Link ready
+

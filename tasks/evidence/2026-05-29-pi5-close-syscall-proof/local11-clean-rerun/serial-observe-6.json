@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "ICA5LjE1IE5FVFdPUks6IDg4OmEyOjllOmFlOmM4OjdmIHdhaXQgZm9yIGxpbmsgVEZUUDogMC4wLjAuMA0K",
+  "bytes": 63,
+  "cursor_end": 3139700,
+  "cursor_start": 3139637,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "  9.15 NETWORK: 88:a2:9e:ae:c8:7f wait for link TFTP: 0.0.0.0\r\n",
+  "truncated": false
+}

@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "ICAzLjQwIE9UUCBib2FyZHJldiBkMDQxNzEgYm9vdHJvbSBhIGENCiAgMy40MCBDdXN0b21lciBrZXkgaGFzaCAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwDQogIDMuNDEgVkMtSlRBRyB1bmxvY2tlZA0KICAzLjQzIFJQMV9CT09UIGNoaXAgSUQ6IDB4MjAwMDE5MjcNCgogIDQuMzEgU0RfT0M6IDANCiAgNC4xMyBCb290IG1vZGU6IE5FVFdPUksgKDAyKSBvcmRlciBmMQ0K",
+  "bytes": 252,
+  "cursor_end": 3135619,
+  "cursor_start": 3135367,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "  3.40 OTP boardrev d04171 bootrom a a\r\n  3.40 Customer key hash 0000000000000000000000000000000000000000000000000000000000000000\r\n  3.41 VC-JTAG unlocked\r\n  3.43 RP1_BOOT chip ID: 0x20001927\r\n\n  4.31 SD_OC: 0\r\n  4.13 Boot mode: NETWORK (02) order f1\r\n",
+  "truncated": false
+}

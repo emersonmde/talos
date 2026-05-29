@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "MS4xMyB1U0Qgdm9sdGFnZSAzLjNWDQogIDEuMTQgU0RSQU1fQ09ORklHOiAxNA0KICAxLjE0IEluaXRpYWxpc2luZyBTRFJBTSByYW5rIDIgdG90YWwtc2l6ZTogNjQgR2JpdCA0MjY3ICgweDE0IDB4MTQpDQogIDEuMTQgRERSIDQyNjcgMSAwIDY0IDE1MiBCTDoxDQogIDIuOTggUlAxIEZXOiBsb2FkIDENCiAgMy40MCBPVFAgYm9hcmRyZXYgZDA0MTcxIGJvb3Ryb20gYSBhDQogIDMuNDAgQ3VzdG9tZXIga2V5IGhhc2ggMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMA0KICAzLjQxIFZDLUpUQUcgdW5sb2NrZWQNCiAgMy40MyBSUDFfQk9PVCBjaGlwIElEOiAweDIwMDAxOTI3DQo=",
+  "bytes": 368,
+  "cursor_end": 3135560,
+  "cursor_start": 3135192,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "1.13 uSD voltage 3.3V\r\n  1.14 SDRAM_CONFIG: 14\r\n  1.14 Initialising SDRAM rank 2 total-size: 64 Gbit 4267 (0x14 0x14)\r\n  1.14 DDR 4267 1 0 64 152 BL:1\r\n  2.98 RP1 FW: load 1\r\n  3.40 OTP boardrev d04171 bootrom a a\r\n  3.40 Customer key hash 0000000000000000000000000000000000000000000000000000000000000000\r\n  3.41 VC-JTAG unlocked\r\n  3.43 RP1_BOOT chip ID: 0x20001927\r\n",
+  "truncated": false
+}

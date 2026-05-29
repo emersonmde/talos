@@ -1,0 +1,4 @@
+
+  4.31 SD_OC: 0
+  4.13 Boot mode: NETWORK (02) order f1
+

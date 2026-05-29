@@ -1,0 +1,4 @@
+ 11.93 LINK STATUS: speed: 1000 full duplex
+ 11.38 Link ready
+ 11.99 RX: 0 IP: 0 IPV4: 0 MAC: 0 UDP: 0 UDP RECV: 0 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+

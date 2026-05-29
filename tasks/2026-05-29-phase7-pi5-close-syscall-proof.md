@@ -74,18 +74,41 @@ Evidence directory: tasks/evidence/2026-05-29-pi5-close-syscall-proof/.
   collection overlapped with the earlier long-running observe/restore shell
   flow and captured only partial start/validated lines before restore. It is
   not accepted; use a clean single-controller rerun of 772ef82 next.
+- local9-clean-rerun: attempted the corrected 772ef82 archive with
+  controller-accepted serial observe requests. The earlier local9 shell flow
+  was still running while follow-up inspection started, so its restore and
+  observe windows overlapped later work. Retained TFTP evidence does show the
+  114792-byte candidate kernel was served, but the serial evidence is mixed
+  with restored production-timer output and is not accepted.
+- local10-clean-rerun: attempted another rerun before the local9 shell session
+  had fully exited. Its retained serial and TFTP evidence are contaminated by
+  the overlapping local9 restore path; it is retained only as agent-flow
+  failure evidence and is not accepted. The lab was restored by named snapshot
+  afterward.
+- local11-clean-rerun: ran after all previous shell sessions had exited, using
+  the corrected 772ef82-equivalent source and the same 114792-byte archive.
+  Fresh TFTP evidence shows da591740/kernel_2712.img served at 114792 bytes,
+  but serial retained only firmware/network-boot output plus NUL padding and
+  no TALOS, close-proof, handler-entry, syscall, classification, or PASS lines.
+  The lab was restored by named snapshot to the pre-run tree hash.
+- local12-known-good-control: with the pre-run snapshot restored, power-cycled
+  the accepted 104136-byte production-timer control tree. Fresh TFTP evidence
+  shows the 104136-byte kernel was served, and serial reached a partial
+  production-timer final-classification line, but the retained capture missed
+  the complete classification suffix and PASS line. Treat this as an
+  inconclusive control, not an accepted control proof.
 
 ## Restore Proof
 
 The pre-run boot tree hash was
 a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. Post-restore
-status after the hardware attempts matched that hash.
+status after local11/local12 named-snapshot restore matched that hash.
 
 ## Next Action
 
-Continue bounded proof debugging from the retained local1/local3 evidence:
-the candidate reaches EL1 pre-eret and then reboots before any close syscall
-handler line. The current corrected discriminator commit is 772ef82. Reacquire
-hardwareTestLock for one clean serialized local9 rerun of that exact commit,
-using controller-accepted serial observe requests (max_bytes 1024) and no
-overlapping observe/restore shell flow.
+Do not change source after the local11 inconclusive candidate run until the
+triage sequence is complete. Reacquire hardwareTestLock for a clean known-good
+control rerun that captures the complete production-timer classification and
+PASS lines, then rerun the unchanged corrected 772ef82-equivalent candidate
+only after that control is accepted. Keep using a named snapshot restore to
+avoid rollback toggling between candidate and control trees.
