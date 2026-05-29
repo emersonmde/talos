@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 copy-in/copy-out helper closeout
+Talos is at the Phase 7.3 pointer-taking syscall source inventory
 frontier, after accepting the Phase 6.3 production scheduler runtime closeout,
 the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -109,7 +109,16 @@ copy-in/copy-out helper closeout reconciles this target-independent byte-copy
 frontier and recommends phase7-pointer-taking-syscall-source-inventory-20260529
 as the next bounded planning task. Pointer-taking syscalls, descriptor I/O,
 process loading, filesystem, shell, networking, and SSH remain blocked until
-later explicit tasks accept their contracts and gates.
+later explicit tasks accept their contracts and gates. The accepted
+pointer-taking syscall source inventory maps source owners and gaps for frame
+argument extraction, syscall-number allocation, user-memory mapping
+provenance, copy helper invocation, return/error encoding, QEMU smoke
+ownership, and diagnostic-surface quarantine. It recommends supervisor planning
+for phase7-pointer-taking-syscall-contract-20260529 before any implementation
+or QEMU pointer-copy smoke plan; phase7-qemu-pointer-copy-smoke-plan-20260529
+remains dependency-blocked until that contract is accepted. Descriptor I/O,
+process loading, VFS/filesystem, shell, networking, SSH, and Pi 5 pointer-copy
+hardware proof remain blocked.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -1279,6 +1288,15 @@ Accepted progress:
   phase7-copyin-copyout-helper-core-20260529 as the next bounded implementation
   task, pending supervisor planning. Pointer-taking syscalls, descriptor I/O,
   process loading, VFS/filesystem, shell, networking, and SSH remain blocked.
+- Phase 7 pointer-taking syscall source inventory is accepted. It maps source
+  owners and gaps for lower-AArch64 frame argument extraction, x8 syscall
+  number ownership, user-memory mapping provenance, copy_from_user/copy_to_user
+  invocation, x0 return/error encoding, QEMU smoke ownership, and proof-only
+  diagnostic-surface quarantine. It recommends supervisor planning for
+  phase7-pointer-taking-syscall-contract-20260529 before any implementation or
+  QEMU pointer-copy smoke plan. Descriptor I/O, process loading,
+  VFS/filesystem, shell, networking, SSH, and Pi 5 pointer-copy hardware proof
+  remain blocked.
 
 Milestone 7.4: File Descriptor Table
 

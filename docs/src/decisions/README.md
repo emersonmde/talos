@@ -12,6 +12,37 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.3 Pointer-Taking Syscall Source Inventory Accepted
+
+- Status: accepted as a documentation-only Phase 7.3 pointer-taking syscall
+  source inventory. No Rust behavior, assembly behavior, QEMU run, Pi 5
+  hardware run, archive publishing, hardware-lock acquisition, descriptor I/O,
+  runtime console or TTY integration, process loading, VFS/filesystem, shell
+  behavior, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted copy-in/copy-out helper closeout recommended a bounded
+  source inventory before any lower-EL syscall passes user pointers to the
+  helper boundary. Existing scalar syscall routing proves x8 number extraction
+  and x0 return mutation, while the accepted helper core proves
+  target-independent byte-copy validation below syscall routing.
+- Decision: Accept
+  phase7-pointer-taking-syscall-source-inventory-20260529. The inventory maps
+  ownership and gaps for frame argument extraction, syscall-number allocation,
+  user mapping/backing-storage provenance, copy helper invocation,
+  return/error encoding, QEMU smoke ownership, and diagnostic-surface
+  quarantine.
+- Evidence level: static source and documentation inspection. No Rust gate,
+  QEMU run, or Pi 5 hardware action was required because this task changes only
+  documentation and durable worker state.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: Supervisor planning should create
+  phase7-pointer-taking-syscall-contract-20260529 before any implementation or
+  QEMU pointer-copy smoke plan. phase7-qemu-pointer-copy-smoke-plan-20260529
+  remains dependency-blocked until that contract is accepted. Descriptor I/O,
+  process loading, VFS/filesystem, shell, networking, SSH, and Pi 5
+  pointer-copy hardware proof remain blocked.
+
 ## 2026-05-29 - Phase 7.3 Copy-In/Copy-Out Helper Contract Accepted
 
 - Status: accepted as a documentation-only Phase 7.3 copy-in/copy-out helper
