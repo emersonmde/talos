@@ -425,6 +425,16 @@ diagnostic-marker quarantine. Dup/read, Pi 5 physical close/dup/read proof,
 process loading, VFS/filesystem, shell, networking, SSH, object finalization,
 and full POSIX descriptor readiness remain blocked. The next bounded Milestone
 7.4 task should be phase7-close-syscall-closeout-checkpoint-20260529.
+The accepted close syscall closeout reconciles the accepted source inventory,
+contract, target-independent core, QEMU close smoke plan, retained
+QEMU/substitute close evidence, validation gates, and deferred surfaces. It
+accepts only the current ProcessOwnerId-backed talos_close QEMU/substitute
+frontier and does not add Rust behavior, QEMU rerun, Pi 5 hardware run, or
+hardwareTestLock activity. Pi 5 physical close proof, dup/read syscalls,
+process loading, VFS/filesystem, shell, networking, SSH, object finalization,
+and full POSIX descriptor readiness remain blocked. The next bounded Milestone
+7.4 task should be a documentation-only Pi 5 close syscall proof plan before
+any serialized hardware action.
 
 Near-term direction after the accepted Phase 7.3 syscall ABI/dispatch closeout:
 
@@ -1876,6 +1886,15 @@ Accepted progress:
   talos_nop/unknown/copy-probe/diagnostic quarantine regressions. The next
   bounded Milestone 7.4 task should be
   phase7-close-syscall-closeout-checkpoint-20260529. Pi 5 physical close proof,
+  dup/read syscalls, process loading, VFS/filesystem, shell, networking, SSH,
+  object finalization, and full POSIX descriptor readiness remain blocked.
+- Phase 7 close syscall closeout is accepted. It reconciles the accepted close
+  syscall source inventory, contract, target-independent core, QEMU smoke plan,
+  retained QEMU/substitute close smoke evidence, validation gates, and deferred
+  surfaces. The accepted capability remains stable talos_close x8 = 2 through
+  the current ProcessOwnerId-backed ProcessDescriptorStore at QEMU/substitute
+  evidence level. The next bounded Milestone 7.4 task should be a
+  documentation-only Pi 5 close syscall proof plan. Pi 5 physical close proof,
   dup/read syscalls, process loading, VFS/filesystem, shell, networking, SSH,
   object finalization, and full POSIX descriptor readiness remain blocked.
 

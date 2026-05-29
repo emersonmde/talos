@@ -12,6 +12,36 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.4 Close Syscall Closeout Accepted
+
+- Status: accepted as the documentation-only Milestone 7.4 close syscall
+  closeout checkpoint. No Rust behavior, assembly behavior, QEMU rerun,
+  Pi 5 hardware run, archive publishing, hardware-lock acquisition, dup/read
+  syscall behavior, process loading, VFS/filesystem behavior, shell behavior,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, DMA/cache-driver
+  policy, object finalization, or full POSIX descriptor readiness was added.
+- Context: The accepted close/dup/read syscall source inventory, close syscall
+  contract, target-independent close syscall core, and QEMU close syscall
+  smoke established a stable talos_close x8 = 2 path through the current
+  ProcessOwnerId-backed ProcessDescriptorStore with retained
+  QEMU/substitute serial evidence.
+- Decision: Accept
+  phase7-close-syscall-closeout-checkpoint-20260529. The closeout reconciles
+  accepted task ids, commits, evidence paths, validation gates, the exact
+  QEMU/substitute close capability, deferred surfaces, and the next bounded
+  direction.
+- Evidence level: static evidence and documentation inspection. The accepted
+  lower-EL close path remains QEMU/substitute serial evidence at
+  tasks/evidence/2026-05-29-qemu-close-syscall-smoke-core/qemu-close-syscall-smoke.log.
+  The target-independent close core also has fmt/unit-test/static evidence.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next bounded Milestone 7.4 task should be a
+  documentation-only Pi 5 close syscall proof plan before any serialized
+  hardware action. Pi 5 physical close proof, dup/read syscalls, process
+  loading, VFS/filesystem, shell, networking, SSH, object finalization,
+  hardware surfaces, and full POSIX descriptor readiness remain blocked.
+
 ## 2026-05-29 - Phase 7.4 Descriptor Close Core Closeout Accepted
 
 - Status: accepted as the documentation-only Milestone 7.4 descriptor close

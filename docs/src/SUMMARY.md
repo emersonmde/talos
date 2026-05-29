@@ -106,6 +106,7 @@
 - [Phase 7 Close, Dup, And Read Syscall Source Inventory](project/phase7-close-dup-read-syscall-source-inventory.md)
 - [Phase 7 Close Syscall Contract](project/phase7-close-syscall-contract.md)
 - [Phase 7 QEMU Close Syscall Smoke Plan](project/phase7-qemu-close-syscall-smoke-plan.md)
+- [Phase 7 Close Syscall Closeout Checkpoint](project/phase7-close-syscall-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture
