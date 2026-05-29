@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 QEMU syscall smoke core frontier,
+Talos is at the Phase 7.3 syscall routing closeout frontier,
 after accepting the Phase 6.3 production scheduler runtime closeout, the full
 Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -57,7 +57,12 @@ saved x0 through the target-independent dispatch core, preserves the diagnostic
 qemu-el0-trap-smoke proof, and retains QEMU/substitute serial evidence with
 classification=qemu-syscall-smoke-complete and qemu-syscall-smoke: PASS. This
 does not prove Pi 5 production syscall routing or unblock descriptor I/O,
-copy-in/copy-out, process loading, filesystem, shell, networking, or SSH.
+copy-in/copy-out, process loading, filesystem, shell, networking, or SSH. The
+accepted Phase 7.3 syscall routing closeout checkpoint reconciles those commits
+and retained logs, closes out only the QEMU/substitute production syscall
+routing frontier, and recommends supervisor planning for a documentation-only
+Pi 5 syscall proof plan before any serialized hardware action or before
+choosing copy-in/copy-out or descriptor syscall work.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,

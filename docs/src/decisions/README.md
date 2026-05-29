@@ -12,6 +12,35 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.3 Syscall Routing Closeout Accepted
+
+- Status: accepted as the documentation closeout for the first QEMU-only
+  production syscall routing frontier. No Rust behavior, assembly behavior,
+  QEMU rerun, Pi 5 hardware run, archive publishing, hardware-lock
+  acquisition, descriptor I/O, copy-in/copy-out, process loading,
+  VFS/filesystem, shell behavior, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache-driver policy was added.
+- Context: The accepted syscall ABI contract, target-independent dispatch
+  core, production trap-routing contract, QEMU syscall smoke plan, and QEMU
+  syscall smoke core together needed one checkpoint that states the exact
+  proven capability and keeps deferred POSIX and hardware surfaces blocked.
+- Decision: Accept
+  phase7-syscall-routing-closeout-checkpoint-20260529. The accepted frontier
+  is QEMU/substitute production syscall routing for lower-AArch64 svc #0:
+  talos_nop returns x0 = 0, unknown syscall number 17 returns
+  x0 = 0xffffffffffffffda, and diagnostic marker 0x7a10 remains proof-only.
+- Evidence level: static documentation inspection and retained QEMU/substitute
+  evidence review. Retained logs are in
+  tasks/evidence/2026-05-29-qemu-syscall-smoke-core/.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: QEMU-only production syscall routing is closed out. Pi 5
+  production syscall proof, descriptor I/O, copy-in/copy-out, process loading,
+  VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
+  and DMA/cache-driver policy remain blocked. The checkpoint recommends
+  supervisor planning for a documentation-only Pi 5 syscall proof plan before
+  any serialized hardware action.
+
 ## 2026-05-29 - Phase 7.3 QEMU Syscall Smoke Core Accepted
 
 - Status: accepted as the first QEMU-only production syscall routing smoke. No
