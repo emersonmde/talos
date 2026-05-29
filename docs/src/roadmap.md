@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 pointer-taking syscall source inventory
+Talos is at the Phase 7.3 pointer-taking syscall contract
 frontier, after accepting the Phase 6.3 production scheduler runtime closeout,
 the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -118,6 +118,18 @@ for phase7-pointer-taking-syscall-contract-20260529 before any implementation
 or QEMU pointer-copy smoke plan; phase7-qemu-pointer-copy-smoke-plan-20260529
 remains dependency-blocked until that contract is accepted. Descriptor I/O,
 process loading, VFS/filesystem, shell, networking, SSH, and Pi 5 pointer-copy
+hardware proof remain blocked.
+The accepted pointer-taking syscall contract fixes the first lower-EL
+pointer-copy boundary as proof-only and QEMU/substitute scoped:
+talos_copy_probe uses stable svc #0 with x8 = 0x7001 only in the later
+qemu_pointer_copy_smoke scenario, assigns x0 as user pointer, x1 as length,
+x2 as expected byte, x3 as replacement byte, and x4/x5 as reserved zeros, and
+defines success, zero-length, -EFAULT, -EINVAL, and -ENOSYS observations. It
+uses a fixed QEMU substitute UserData mapping/backing store at
+0x0000_0000_0011_0000..0x0000_0000_0011_1000 and keeps diagnostic marker
+0x7a10 proof-only. It unblocks only the documentation-only
+phase7-qemu-pointer-copy-smoke-plan-20260529 task; descriptor I/O, process
+loading, VFS/filesystem, shell, networking, SSH, and Pi 5 pointer-copy
 hardware proof remain blocked.
 
 The recently accepted Phase 6.3 scheduler frontier includes
@@ -1297,6 +1309,17 @@ Accepted progress:
   QEMU pointer-copy smoke plan. Descriptor I/O, process loading,
   VFS/filesystem, shell, networking, SSH, and Pi 5 pointer-copy hardware proof
   remain blocked.
+- Phase 7 pointer-taking syscall contract is accepted. It defines the first
+  pointer-taking syscall as proof-only talos_copy_probe, routed through stable
+  svc #0 with x8 = 0x7001 only in the later QEMU/substitute smoke scenario.
+  x0 is the user pointer, x1 is a 0-through-32 byte length, x2 is the expected
+  byte, x3 is the replacement byte, and x4/x5 are reserved zeros. Success
+  copies in, validates the byte pattern, copies out, and returns the copied
+  length; user-boundary failures return -EFAULT, malformed proof setup returns
+  -EINVAL, and x8 = 0x7001 outside the proof scenario remains -ENOSYS. The
+  contract names the fixed QEMU substitute UserData mapping and keeps
+  descriptor I/O, process loading, VFS/filesystem, shell, networking, SSH, and
+  Pi 5 pointer-copy hardware proof blocked.
 
 Milestone 7.4: File Descriptor Table
 

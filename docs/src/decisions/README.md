@@ -4553,3 +4553,32 @@ ADR template:
   surfaces named in the plan and must preserve the blocked descriptor I/O,
   copy-in/copy-out, process loading, filesystem, shell, networking, SSH,
   RP1/PCIe, UART interrupt, and DMA/cache-driver surfaces.
+
+## 2026-05-29 - Phase 7 Pointer-Taking Syscall Contract Accepted
+
+- Status: accepted as a documentation-only Phase 7.3 pointer-taking syscall
+  contract. No Rust implementation, assembly implementation, boot scenario,
+  QEMU run, Pi 5 hardware run, archive publishing, hardware-lock acquisition,
+  descriptor I/O, process loading, VFS/filesystem, shell behavior, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache behavior was added.
+- Context: The accepted pointer-taking syscall source inventory identified the
+  missing decisions before a lower-EL syscall could carry a user pointer into
+  the accepted copy_from_user and copy_to_user helpers.
+- Decision: Accept phase7-pointer-taking-syscall-contract-20260529. The first
+  pointer-taking boundary is proof-only talos_copy_probe, using stable svc #0
+  with syscall number x8 = 0x7001 only in the later QEMU/substitute smoke
+  scenario. x0 carries the user pointer, x1 carries a 0-through-32 byte length,
+  x2 carries the expected byte value, x3 carries the replacement byte value,
+  and x4/x5 are reserved zeros. Success returns the copied length, user
+  boundary failures return -EFAULT, malformed proof setup returns -EINVAL, and
+  x8 = 0x7001 outside the proof scenario remains -ENOSYS.
+- Evidence level: static documentation inspection, documentation build, and
+  whitespace inspection. No QEMU or Pi 5 hardware evidence was claimed.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-qemu-pointer-copy-smoke-plan-20260529. It may plan only the
+  QEMU/substitute proof for talos_copy_probe and must preserve the blocked
+  descriptor I/O, process loading, VFS/filesystem, shell, networking, SSH,
+  Pi 5 pointer-copy hardware proof, RP1/PCIe, UART interrupt, and
+  DMA/cache-driver surfaces.
