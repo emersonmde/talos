@@ -5803,3 +5803,37 @@ ADR template:
   stdin/read object model, process loading, VFS/filesystem, shell, networking,
   SSH, dup2/fcntl, object finalization, broader cache/DMA policy, RP1/PCIe,
   UART interrupt ownership, and full POSIX descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 QEMU Dup Syscall Smoke Plan Accepted
+
+- Status: accepted as the documentation-only Milestone 7.4 QEMU/substitute dup
+  syscall smoke plan. No Rust behavior, assembly behavior, QEMU execution, Pi 5
+  hardware run, boot archive publication, hardware-lock acquisition, read
+  behavior, process loading, VFS/filesystem behavior, shell behavior,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, object finalization, or
+  DMA/cache-driver policy was added.
+- Context: The accepted dup syscall core added stable syscall number 3,
+  current-owner ProcessDescriptorStore lookup, lowest-free-slot allocation,
+  EMFILE return encoding, and descriptor-write through copied stdout/stderr
+  descriptor entries. A QEMU/substitute smoke is required before lower-AArch64
+  runtime evidence can be claimed.
+- Decision: Accept phase7-qemu-dup-syscall-smoke-plan-20260529. The next
+  implementation must add qemu_dup_syscall_smoke with a four-slot
+  ProcessOwnerId-backed inherited stdio table, talos_dup(fd 1) returning fd 3,
+  table-full -EMFILE, reserved-register -EINVAL without mutation, writes
+  through source and duplicate descriptors, close-one-descriptor preservation,
+  closed-descriptor -EBADF, talos_nop, unknown-syscall -ENOSYS, proof-only
+  copy-probe quarantine, diagnostic-marker quarantine, and
+  classification=qemu-dup-syscall-smoke-complete plus PASS output.
+- Evidence level: static documentation inspection, documentation build, and
+  whitespace inspection. No Rust tests, QEMU run, or physical Pi 5 hardware
+  evidence was produced.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-qemu-dup-syscall-smoke-core-20260529, scoped to implementing and
+  retaining the QEMU/substitute dup syscall smoke. Pi 5 physical dup proof,
+  read syscall behavior, stdin/read object model, process loading,
+  VFS/filesystem, shell, networking, SSH, dup2/fcntl, object finalization,
+  broader cache/DMA policy, RP1/PCIe, UART interrupt ownership, and full POSIX
+  descriptor claims remain blocked.

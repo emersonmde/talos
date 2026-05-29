@@ -501,6 +501,19 @@ process loading, VFS/filesystem, shell, networking, SSH, object finalization,
 dup2/fcntl, and full POSIX descriptor readiness remain blocked. The next
 bounded Milestone 7.4 task should be
 phase7-qemu-dup-syscall-smoke-plan-20260529.
+The accepted QEMU dup syscall smoke plan defines the bounded
+qemu_dup_syscall_smoke substitute proof before lower-EL runtime evidence is
+claimed. It requires a ProcessOwnerId-backed four-slot inherited stdio table,
+current-owner lookup through ProcessDescriptorStore, talos_dup(fd 1) returning
+fd 3, deterministic -EMFILE and -EINVAL cases, writes through source and
+duplicate stdout descriptors, close-one-descriptor preservation, closed
+descriptor -EBADF, talos_nop, unknown-syscall -ENOSYS, copy-probe quarantine,
+diagnostic-marker quarantine, final
+classification=qemu-dup-syscall-smoke-complete, and PASS. It does not run QEMU
+or hardware. Pi 5 physical dup proof, read/stdin behavior, process loading,
+VFS/filesystem, shell, networking, SSH, object finalization, and full POSIX
+descriptor readiness remain blocked. The next bounded Milestone 7.4 task
+should be phase7-qemu-dup-syscall-smoke-core-20260529.
 
 Near-term direction after the accepted Pi 5 close syscall proof closeout:
 
