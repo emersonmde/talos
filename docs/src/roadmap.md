@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 QEMU descriptor-write smoke plan
+Talos is at the Phase 7.3 Pi 5 descriptor-write proof plan
 frontier, after accepting the Phase 6.3 production scheduler runtime closeout,
 the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -242,6 +242,18 @@ loading, VFS/filesystem, shell, networking, SSH, live process-owned address
 spaces, blocking/readiness, signals, restart semantics, RP1/PCIe, UART
 interrupt ownership, DMA/cache-driver policy, physical descriptor-write claims,
 and full POSIX descriptor claims blocked.
+The accepted Pi 5 descriptor-write proof plan defines the physical invariant
+for talos_write fd 1/fd 2 on serialized Raspberry Pi 5 hardware: stable svc #0
+with x8 = 1 must write the stdout and stderr buffers through copy_from_user(),
+inherited stdio descriptors, and runtime-console0; fd 0 and fd 99 must return
+-EBADF; guard-range writes must return -EFAULT; nonzero reserved registers
+must return -EINVAL; talos_nop and unknown-syscall regressions must remain
+intact; talos_copy_probe x8 = 0x7001 and diagnostic marker 0x7a10 must remain
+quarantined; and the proof must report
+classification=pi5-descriptor-write-proof-complete plus
+rpi5-descriptor-write-proof: PASS. It does not acquire hardwareTestLock,
+publish an archive, run Pi 5 hardware, or unblock stdin/read, close, dup,
+process loading, filesystem, shell, networking, or SSH.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -1518,6 +1530,18 @@ Accepted progress:
   signals, restart semantics, RP1/PCIe, UART interrupt ownership,
   DMA/cache-driver policy, physical descriptor-write claims, and full POSIX
   descriptor claims remain blocked.
+- Phase 7 Pi 5 descriptor-write proof plan is accepted. It defines the
+  serialized physical proof invariant for talos_write fd 1/fd 2 through
+  copy_from_user(), inherited stdio descriptors, and runtime-console0; fd and
+  pointer errno cases; talos_nop and unknown-syscall regressions;
+  talos_copy_probe and diagnostic-marker quarantine; hardwareTestLock
+  ownership; candidate identity; fresh serial/TFTP evidence; restoration; and
+  inconclusive-run triage. It names
+  phase7-pi5-descriptor-write-proof-20260529 as the next bounded hardware
+  task and keeps stdin/read, close, dup, process loading, VFS/filesystem,
+  shell, networking, SSH, live process-owned address spaces, blocking/readiness,
+  signals, restart semantics, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, and full POSIX descriptor claims blocked.
 
 Milestone 7.4: File Descriptor Table
 

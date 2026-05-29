@@ -4970,3 +4970,38 @@ ADR template:
   semantics, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy,
   physical descriptor-write claims, and full POSIX descriptor claims remain
   blocked.
+
+## 2026-05-29 - Phase 7 Pi 5 Descriptor-Write Proof Plan Accepted
+
+- Status: accepted as the documentation-only Phase 7.3 plan for carrying the
+  QEMU/substitute descriptor-write invariant to serialized Raspberry Pi 5
+  hardware. No Rust behavior, assembly behavior, QEMU rerun, Pi 5 hardware
+  run, boot archive publication, hardware-lock acquisition, stdin/read, close,
+  dup, process loading, VFS/filesystem behavior, shell behavior, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy was
+  added.
+- Context: The accepted descriptor-write closeout left the first physical
+  descriptor-write claim blocked. The next step needed a hardware plan before
+  any archive publication, serial observation, or power action.
+- Decision: Accept phase7-pi5-descriptor-write-proof-plan-20260529. The plan
+  defines one physical invariant: talos_write x8 = 1 must route through stable
+  lower-AArch64 svc #0 on Pi 5, prove fd 1/fd 2 runtime-console0 output,
+  preserve fd 0/fd 99 -EBADF, guard-range -EFAULT, reserved-register -EINVAL,
+  talos_nop, unknown-syscall, proof-only talos_copy_probe quarantine, and
+  diagnostic marker 0x7a10 quarantine, then report
+  classification=pi5-descriptor-write-proof-complete and
+  rpi5-descriptor-write-proof: PASS.
+- Evidence level: static documentation inspection, retained QEMU/substitute
+  evidence reference, documentation build, and whitespace inspection. No new
+  QEMU or physical Pi 5 hardware evidence was produced.
+- Validation: git status --short before edits showed a pre-existing
+  docs/src/roadmap.md working-tree edit that was preserved; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-pi5-descriptor-write-proof-20260529, scoped to implementing and
+  running exactly the serialized physical descriptor-write proof under
+  hardwareTestLock. stdin/read, close, dup, process loading, VFS/filesystem,
+  shell, networking, SSH, live process-owned address spaces,
+  blocking/readiness, signals, restart semantics, RP1/PCIe, UART interrupt
+  ownership, DMA/cache-driver policy, and full POSIX descriptor claims remain
+  blocked.
