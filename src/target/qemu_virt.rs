@@ -569,6 +569,48 @@ impl El0TrapPayload {
     }
 }
 
+#[cfg(talos_boot_scenario = "qemu_close_syscall_smoke")]
+impl El0TrapPayload {
+    const fn close_syscall_smoke() -> Self {
+        let mut page = [0; EL0_TRAP_USER_TEXT_LEN];
+        let bytes = [
+            0x20, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x80, 0xd2, 0x02, 0x00, 0x80, 0xd2, 0x03, 0x00,
+            0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2, 0x05, 0x00, 0x80, 0xd2, 0x48, 0x00, 0x80, 0xd2,
+            0x01, 0x00, 0x00, 0xd4, 0x20, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x80, 0xd2, 0x21, 0x02,
+            0xa0, 0xf2, 0x42, 0x02, 0x80, 0xd2, 0x03, 0x00, 0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2,
+            0x05, 0x00, 0x80, 0xd2, 0x28, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x00, 0xd4, 0x40, 0x00,
+            0x80, 0xd2, 0x21, 0x00, 0x80, 0xd2, 0x02, 0x00, 0x80, 0xd2, 0x03, 0x00, 0x80, 0xd2,
+            0x04, 0x00, 0x80, 0xd2, 0x05, 0x00, 0x80, 0xd2, 0x48, 0x00, 0x80, 0xd2, 0x01, 0x00,
+            0x00, 0xd4, 0x40, 0x00, 0x80, 0xd2, 0x01, 0x08, 0x80, 0xd2, 0x21, 0x02, 0xa0, 0xf2,
+            0x42, 0x02, 0x80, 0xd2, 0x03, 0x00, 0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2, 0x05, 0x00,
+            0x80, 0xd2, 0x28, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x00, 0xd4, 0x40, 0x00, 0x80, 0xd2,
+            0x01, 0x00, 0x80, 0xd2, 0x02, 0x00, 0x80, 0xd2, 0x03, 0x00, 0x80, 0xd2, 0x04, 0x00,
+            0x80, 0xd2, 0x05, 0x00, 0x80, 0xd2, 0x48, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x00, 0xd4,
+            0x40, 0x00, 0x80, 0xd2, 0x01, 0x08, 0x80, 0xd2, 0x21, 0x02, 0xa0, 0xf2, 0x42, 0x02,
+            0x80, 0xd2, 0x03, 0x00, 0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2, 0x05, 0x00, 0x80, 0xd2,
+            0x28, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x00, 0xd4, 0x20, 0x00, 0x80, 0xd2, 0x01, 0x00,
+            0x80, 0xd2, 0x02, 0x00, 0x80, 0xd2, 0x03, 0x00, 0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2,
+            0x05, 0x00, 0x80, 0xd2, 0x48, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x00, 0xd4, 0x60, 0x0c,
+            0x80, 0xd2, 0x01, 0x00, 0x80, 0xd2, 0x02, 0x00, 0x80, 0xd2, 0x03, 0x00, 0x80, 0xd2,
+            0x04, 0x00, 0x80, 0xd2, 0x05, 0x00, 0x80, 0xd2, 0x48, 0x00, 0x80, 0xd2, 0x01, 0x00,
+            0x00, 0xd4, 0x00, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x80, 0xd2, 0x02, 0x00, 0x80, 0xd2,
+            0x03, 0x00, 0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2, 0x05, 0x00, 0x80, 0xd2, 0x08, 0x00,
+            0x80, 0xd2, 0x01, 0x00, 0x00, 0xd4, 0x00, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x80, 0xd2,
+            0x02, 0x00, 0x80, 0xd2, 0x03, 0x00, 0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2, 0x05, 0x00,
+            0x80, 0xd2, 0x28, 0x02, 0x80, 0xd2, 0x01, 0x00, 0x00, 0xd4, 0x00, 0x00, 0x80, 0xd2,
+            0x20, 0x02, 0xa0, 0xf2, 0x01, 0x02, 0x80, 0xd2, 0x42, 0x05, 0x80, 0xd2, 0xa3, 0x14,
+            0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2, 0x05, 0x00, 0x80, 0xd2, 0x28, 0x00, 0x8e, 0xd2,
+            0x01, 0x00, 0x00, 0xd4, 0x01, 0x42, 0x0f, 0xd4, 0x00, 0x00, 0x00, 0x14,
+        ];
+        let mut index = 0;
+        while index < bytes.len() {
+            page[index] = bytes[index];
+            index += 1;
+        }
+        Self(page)
+    }
+}
+
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
     talos_boot_scenario = "qemu_syscall_smoke",
@@ -610,8 +652,16 @@ static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::svc_marker();
 static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::syscall_smoke();
 #[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
 static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::pointer_copy_smoke();
-#[cfg(talos_boot_scenario = "qemu_descriptor_write_smoke")]
+#[cfg(all(
+    talos_boot_scenario = "qemu_descriptor_write_smoke",
+    not(talos_boot_scenario = "qemu_process_descriptor_stdio_smoke"),
+    not(talos_boot_scenario = "qemu_close_syscall_smoke")
+))]
 static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::descriptor_write_smoke();
+#[cfg(talos_boot_scenario = "qemu_process_descriptor_stdio_smoke")]
+static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::descriptor_write_smoke();
+#[cfg(talos_boot_scenario = "qemu_close_syscall_smoke")]
+static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::close_syscall_smoke();
 #[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
 static mut POINTER_COPY_USER_DATA: [u8; POINTER_COPY_USER_DATA_LEN] =
     [0; POINTER_COPY_USER_DATA_LEN];
@@ -622,10 +672,16 @@ static mut DESCRIPTOR_WRITE_USER_DATA: [u8; DESCRIPTOR_WRITE_USER_DATA_LEN] =
 static mut DESCRIPTOR_WRITE_CONSOLE_CAPTURE: [u8; 64] = [0; 64];
 #[cfg(talos_boot_scenario = "qemu_descriptor_write_smoke")]
 static DESCRIPTOR_WRITE_CONSOLE_LEN: AtomicU64 = AtomicU64::new(0);
-#[cfg(talos_boot_scenario = "qemu_process_descriptor_stdio_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_process_descriptor_stdio_smoke",
+    talos_boot_scenario = "qemu_close_syscall_smoke"
+))]
 static mut PROCESS_DESCRIPTOR_STDIO_STORE: crate::posix::ProcessDescriptorStore<1, 4> =
     crate::posix::ProcessDescriptorStore::new_empty();
-#[cfg(talos_boot_scenario = "qemu_process_descriptor_stdio_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_process_descriptor_stdio_smoke",
+    talos_boot_scenario = "qemu_close_syscall_smoke"
+))]
 const PROCESS_DESCRIPTOR_STDIO_OWNER_RAW: u64 = 1;
 #[cfg(talos_boot_scenario = "qemu_descriptor_write_smoke")]
 static DESCRIPTOR_WRITE_STDOUT_OBSERVED: AtomicU64 = AtomicU64::new(0);
@@ -647,6 +703,28 @@ static DESCRIPTOR_WRITE_UNKNOWN_OBSERVED: AtomicU64 = AtomicU64::new(0);
 static DESCRIPTOR_WRITE_COPY_PROBE_OBSERVED: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_boot_scenario = "qemu_descriptor_write_smoke")]
 static DESCRIPTOR_WRITE_ERRORS: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_close_syscall_smoke")]
+static CLOSE_SYSCALL_CLOSE_STDOUT_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_close_syscall_smoke")]
+static CLOSE_SYSCALL_WRITE_CLOSED_STDOUT_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_close_syscall_smoke")]
+static CLOSE_SYSCALL_CLOSE_STDERR_RESERVED_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_close_syscall_smoke")]
+static CLOSE_SYSCALL_WRITE_STDERR_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_close_syscall_smoke")]
+static CLOSE_SYSCALL_CLOSE_STDERR_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_close_syscall_smoke")]
+static CLOSE_SYSCALL_WRITE_CLOSED_STDERR_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_close_syscall_smoke")]
+static CLOSE_SYSCALL_CLOSE_STDOUT_AGAIN_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_close_syscall_smoke")]
+static CLOSE_SYSCALL_CLOSE_BADFD_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_close_syscall_smoke")]
+static CLOSE_SYSCALL_TALOS_NOP_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_close_syscall_smoke")]
+static CLOSE_SYSCALL_UNKNOWN_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_close_syscall_smoke")]
+static CLOSE_SYSCALL_COPY_PROBE_OBSERVED: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
 static SYSCALL_SMOKE_TALOS_NOP_DISPATCHED: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
@@ -3977,6 +4055,149 @@ pub fn run_process_descriptor_stdio_smoke() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "qemu_close_syscall_smoke")]
+pub fn run_close_syscall_smoke() -> ! {
+    crate::println!("qemu-close-syscall-smoke: start");
+
+    let current_owner = crate::scheduler::ProcessOwnerId::new(PROCESS_DESCRIPTOR_STDIO_OWNER_RAW)
+        .expect("close syscall smoke owner id is nonzero");
+    unsafe {
+        *core::ptr::addr_of_mut!(PROCESS_DESCRIPTOR_STDIO_STORE) =
+            crate::posix::ProcessDescriptorStore::new_empty();
+        (*core::ptr::addr_of_mut!(PROCESS_DESCRIPTOR_STDIO_STORE))
+            .create_owner_with_inherited_stdio(current_owner)
+            .expect("process-owned inherited stdio table");
+    }
+    let store = unsafe { &*core::ptr::addr_of!(PROCESS_DESCRIPTOR_STDIO_STORE) };
+    let descriptor_table = store
+        .current_descriptor_table(Some(current_owner))
+        .expect("current process owner resolves descriptor table");
+    descriptor_table
+        .get(crate::posix::STDOUT_FD)
+        .expect("process-owned stdout descriptor exists");
+    descriptor_table
+        .get(crate::posix::STDERR_FD)
+        .expect("process-owned stderr descriptor exists");
+
+    let mappings = [
+        UserMapping::new(
+            EL0_TRAP_USER_TEXT_START,
+            EL0_TRAP_USER_TEXT_LEN,
+            UserMappingPermissions::USER_TEXT,
+        )
+        .expect("fixed close syscall smoke text mapping is a valid user mapping"),
+        UserMapping::new(
+            DESCRIPTOR_WRITE_USER_DATA_START,
+            DESCRIPTOR_WRITE_USER_DATA_LEN,
+            UserMappingPermissions::USER_DATA,
+        )
+        .expect("fixed close syscall smoke data mapping is a valid user mapping"),
+        UserMapping::new(
+            EL0_TRAP_USER_STACK_START,
+            EL0_TRAP_USER_STACK_LEN,
+            UserMappingPermissions::USER_DATA,
+        )
+        .expect("fixed close syscall smoke stack mapping is a valid user mapping"),
+    ];
+    let entry = validate_user_memory_access(
+        &mappings,
+        EL0_TRAP_USER_TEXT_START,
+        4,
+        UserAccessKind::Execute,
+        EL0_TRAP_USER_TEXT_LEN,
+    )
+    .expect("close syscall smoke entry validates inside fixed UserText")
+    .start();
+    validate_user_memory_access(
+        &mappings,
+        DESCRIPTOR_WRITE_USER_DATA_START,
+        DESCRIPTOR_WRITE_USER_DATA_LEN,
+        UserAccessKind::Write,
+        DESCRIPTOR_WRITE_USER_DATA_LEN,
+    )
+    .expect("close syscall smoke data validates inside fixed UserData");
+    let user_sp = EL0_TRAP_USER_STACK_START + EL0_TRAP_USER_STACK_LEN as u64;
+    validate_user_memory_access(
+        &mappings,
+        user_sp - 16,
+        16,
+        UserAccessKind::Write,
+        EL0_TRAP_USER_STACK_LEN,
+    )
+    .expect("close syscall smoke stack top validates inside fixed UserStack");
+    let guard_result = validate_user_memory_access(
+        &mappings,
+        EL0_TRAP_USER_GUARD_START,
+        16,
+        UserAccessKind::Read,
+        EL0_TRAP_USER_TEXT_LEN,
+    );
+    let guard_blocked = matches!(guard_result, Err(PosixError::Fault));
+
+    crate::println!(
+        "qemu-close-syscall-smoke: validated elr={:#018x} sp={:#018x} user-data={:#018x} user-data-len={:#018x} guard-blocked={} process-owner={:#018x} current-owner={:#018x} descriptor-table=process-owned-inherited-stdio runtime-console=runtime-console0",
+        entry,
+        user_sp,
+        DESCRIPTOR_WRITE_USER_DATA_START,
+        DESCRIPTOR_WRITE_USER_DATA_LEN as u64,
+        guard_blocked,
+        current_owner.raw(),
+        current_owner.raw()
+    );
+    crate::println!(
+        "qemu-close-syscall-smoke: current-descriptor-table lookup=process-owned owner={:#018x} resolved=true stdio=inherited runtime-console=runtime-console0",
+        current_owner.raw()
+    );
+    if !guard_blocked {
+        crate::println!(
+            "qemu-close-syscall-smoke: final participants=0 expected=11 errors=1 classification=qemu-close-syscall-smoke-guard-open"
+        );
+        crate::target::qemu::exit_failure();
+    }
+
+    unsafe {
+        core::ptr::write_bytes(
+            core::ptr::addr_of_mut!(DESCRIPTOR_WRITE_USER_DATA).cast::<u8>(),
+            0,
+            DESCRIPTOR_WRITE_USER_DATA_LEN,
+        );
+        let data = &mut *core::ptr::addr_of_mut!(DESCRIPTOR_WRITE_USER_DATA);
+        data[DESCRIPTOR_WRITE_STDOUT_OFFSET
+            ..DESCRIPTOR_WRITE_STDOUT_OFFSET + DESCRIPTOR_WRITE_STDOUT.len()]
+            .copy_from_slice(DESCRIPTOR_WRITE_STDOUT);
+        data[DESCRIPTOR_WRITE_STDERR_OFFSET
+            ..DESCRIPTOR_WRITE_STDERR_OFFSET + DESCRIPTOR_WRITE_STDERR.len()]
+            .copy_from_slice(DESCRIPTOR_WRITE_STDERR);
+        core::ptr::write_bytes(
+            core::ptr::addr_of_mut!(DESCRIPTOR_WRITE_CONSOLE_CAPTURE).cast::<u8>(),
+            0,
+            64,
+        );
+        DESCRIPTOR_WRITE_CONSOLE_LEN.store(0, Ordering::Relaxed);
+        DESCRIPTOR_WRITE_ERRORS.store(0, Ordering::Relaxed);
+        CLOSE_SYSCALL_CLOSE_STDOUT_OBSERVED.store(0, Ordering::Relaxed);
+        CLOSE_SYSCALL_WRITE_CLOSED_STDOUT_OBSERVED.store(0, Ordering::Relaxed);
+        CLOSE_SYSCALL_CLOSE_STDERR_RESERVED_OBSERVED.store(0, Ordering::Relaxed);
+        CLOSE_SYSCALL_WRITE_STDERR_OBSERVED.store(0, Ordering::Relaxed);
+        CLOSE_SYSCALL_CLOSE_STDERR_OBSERVED.store(0, Ordering::Relaxed);
+        CLOSE_SYSCALL_WRITE_CLOSED_STDERR_OBSERVED.store(0, Ordering::Relaxed);
+        CLOSE_SYSCALL_CLOSE_STDOUT_AGAIN_OBSERVED.store(0, Ordering::Relaxed);
+        CLOSE_SYSCALL_CLOSE_BADFD_OBSERVED.store(0, Ordering::Relaxed);
+        CLOSE_SYSCALL_TALOS_NOP_OBSERVED.store(0, Ordering::Relaxed);
+        CLOSE_SYSCALL_UNKNOWN_OBSERVED.store(0, Ordering::Relaxed);
+        CLOSE_SYSCALL_COPY_PROBE_OBSERVED.store(0, Ordering::Relaxed);
+        install_el0_trap_smoke_tables();
+        enable_el2_and_el0_translation();
+        enable_el1_and_el0_translation();
+        aarch64::enter_el1_then_el0(
+            entry as usize,
+            user_sp as usize,
+            EL0_TRAP_SPSR_EL0T_DAIF_MASKED,
+            EL0_TRAP_SPSR_EL1H_DAIF_MASKED,
+        );
+    }
+}
+
 #[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
 pub fn handle_syscall_smoke_exception(
     esr: u64,
@@ -4768,6 +4989,313 @@ pub fn handle_process_descriptor_stdio_smoke_exception(
     true
 }
 
+#[cfg(talos_boot_scenario = "qemu_close_syscall_smoke")]
+pub fn handle_close_syscall_smoke_exception(
+    esr: u64,
+    _elr: u64,
+    far: u64,
+    vector: ExceptionVector,
+    _spsr: u64,
+    saved_frame: *mut ExceptionFrame,
+) -> bool {
+    let marker = crate::arch::aarch64::exceptions::svc_immediate(esr);
+    let reported_esr = esr & !(1 << 25);
+    let Some(frame) = (unsafe { saved_frame.as_mut() }) else {
+        DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+        return false;
+    };
+
+    if marker == syscall::DIAGNOSTIC_EL0_TRAP_SVC_IMMEDIATE {
+        let stable = syscall::is_stable_syscall_svc_immediate(marker);
+        crate::println!(
+            "qemu-close-syscall-smoke: diagnostic-marker marker=0x7a10 stable-syscall={} dispatched=false",
+            stable
+        );
+        finish_close_syscall_smoke(reported_esr == SYSCALL_SMOKE_EXPECTED_MARKER_ESR && far == 0);
+    }
+
+    if reported_esr != SYSCALL_SMOKE_EXPECTED_SVC_ESR {
+        DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+        return false;
+    }
+
+    let current_owner = crate::scheduler::ProcessOwnerId::new(PROCESS_DESCRIPTOR_STDIO_OWNER_RAW)
+        .expect("close syscall smoke owner id is nonzero");
+    let arguments = syscall::SyscallArguments::new([
+        frame.reg(0),
+        frame.reg(1),
+        frame.reg(2),
+        frame.reg(3),
+        frame.reg(4),
+        frame.reg(5),
+    ]);
+    let args = arguments.values();
+    let raw_number = frame.reg(8);
+    let before_len = DESCRIPTOR_WRITE_CONSOLE_LEN.load(Ordering::Relaxed) as usize;
+    let mappings = [UserMapping::new(
+        DESCRIPTOR_WRITE_USER_DATA_START,
+        DESCRIPTOR_WRITE_USER_DATA_LEN,
+        UserMappingPermissions::USER_DATA,
+    )
+    .expect("fixed close syscall smoke data mapping is valid")];
+    let mut scratch = [0u8; 64];
+    let mut console = DescriptorWriteCaptureConsole;
+    let result = {
+        let store = unsafe { &mut *core::ptr::addr_of_mut!(PROCESS_DESCRIPTOR_STDIO_STORE) };
+        syscall::dispatch_process_descriptor(
+            raw_number,
+            arguments,
+            Some(current_owner),
+            store,
+            &mappings,
+            DESCRIPTOR_WRITE_USER_DATA_START,
+            unsafe { &*core::ptr::addr_of!(DESCRIPTOR_WRITE_USER_DATA) },
+            &mut scratch,
+            &mut console,
+        )
+    };
+    let return_x0 = result.return_value().x0();
+    frame.set_reg(0, return_x0);
+    let after_len = DESCRIPTOR_WRITE_CONSOLE_LEN.load(Ordering::Relaxed) as usize;
+
+    let store = unsafe { &*core::ptr::addr_of!(PROCESS_DESCRIPTOR_STDIO_STORE) };
+    let stdout_closed = store
+        .current_descriptor_table(Some(current_owner))
+        .map(|table| table.get(crate::posix::STDOUT_FD).is_err())
+        .unwrap_or(false);
+    let stderr_open = store
+        .current_descriptor_table(Some(current_owner))
+        .map(|table| table.get(crate::posix::STDERR_FD).is_ok())
+        .unwrap_or(false);
+    let stderr_closed = store
+        .current_descriptor_table(Some(current_owner))
+        .map(|table| table.get(crate::posix::STDERR_FD).is_err())
+        .unwrap_or(false);
+
+    match raw_number {
+        syscall::TALOS_CLOSE_SYSCALL
+            if args[0] == 1
+                && args[1] == 0
+                && args[2] == 0
+                && args[3] == 0
+                && args[4] == 0
+                && args[5] == 0
+                && CLOSE_SYSCALL_CLOSE_STDOUT_OBSERVED.load(Ordering::Relaxed) == 0 =>
+        {
+            let ok = return_x0 == 0 && after_len == before_len && stdout_closed && stderr_open;
+            CLOSE_SYSCALL_CLOSE_STDOUT_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-close-syscall-smoke: syscall case=close_stdout vector={} esr={:#018x} svc=0x0000 number=2 args=[x0={:#018x} x1={:#018x} x2={:#018x} x3={:#018x} x4={:#018x} x5={:#018x}] descriptor-owner={:#018x} return-x0={:#018x}",
+                vector.name(),
+                reported_esr,
+                args[0],
+                args[1],
+                args[2],
+                args[3],
+                args[4],
+                args[5],
+                current_owner.raw(),
+                return_x0
+            );
+        }
+        syscall::TALOS_WRITE_SYSCALL if args[0] == 1 => {
+            let ok = return_x0 == DESCRIPTOR_WRITE_EXPECTED_EBADF_X0 && after_len == before_len;
+            CLOSE_SYSCALL_WRITE_CLOSED_STDOUT_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-close-syscall-smoke: syscall case=write_closed_stdout vector={} esr={:#018x} svc=0x0000 number=1 return-x0={:#018x} expected=-EBADF console-unchanged={}",
+                vector.name(),
+                reported_esr,
+                return_x0,
+                after_len == before_len
+            );
+        }
+        syscall::TALOS_CLOSE_SYSCALL if args[0] == 2 && args[1] != 0 => {
+            let table_unchanged = stderr_open;
+            let ok = return_x0 == DESCRIPTOR_WRITE_EXPECTED_EINVAL_X0
+                && after_len == before_len
+                && table_unchanged;
+            CLOSE_SYSCALL_CLOSE_STDERR_RESERVED_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-close-syscall-smoke: syscall case=close_stderr_reserved vector={} esr={:#018x} svc=0x0000 number=2 return-x0={:#018x} expected=-EINVAL descriptor={:#018x} table-unchanged={}",
+                vector.name(),
+                reported_esr,
+                return_x0,
+                args[0],
+                table_unchanged
+            );
+        }
+        syscall::TALOS_WRITE_SYSCALL
+            if args[0] == 2 && CLOSE_SYSCALL_CLOSE_STDERR_OBSERVED.load(Ordering::Relaxed) == 0 =>
+        {
+            let console_ok = return_x0 == 18
+                && after_len == before_len + DESCRIPTOR_WRITE_STDERR.len()
+                && descriptor_write_console_matches(before_len, DESCRIPTOR_WRITE_STDERR);
+            CLOSE_SYSCALL_WRITE_STDERR_OBSERVED.store(u64::from(console_ok), Ordering::Relaxed);
+            if !console_ok {
+                DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-close-syscall-smoke: syscall case=write_stderr_after_stdout_close vector={} esr={:#018x} svc=0x0000 number=1 args=[x0={:#018x} x1={:#018x} x2={:#018x} x3={:#018x} x4={:#018x} x5={:#018x}] descriptor-owner={:#018x} return-x0={:#018x}",
+                vector.name(),
+                reported_esr,
+                args[0],
+                args[1],
+                args[2],
+                args[3],
+                args[4],
+                args[5],
+                current_owner.raw(),
+                return_x0
+            );
+            crate::println!(
+                "qemu-close-syscall-smoke: runtime-console case=write_stderr_after_stdout_close device=runtime-console0 bytes=18 hex=74616c6f732d7374646572722d71656d750a ok={}",
+                console_ok
+            );
+            crate::println!(
+                "qemu-close-syscall-smoke: user-observed case=write_stderr_after_stdout_close x0={:#018x} ok={}",
+                return_x0,
+                console_ok
+            );
+        }
+        syscall::TALOS_CLOSE_SYSCALL
+            if args[0] == 2
+                && args[1] == 0
+                && args[2] == 0
+                && args[3] == 0
+                && args[4] == 0
+                && args[5] == 0 =>
+        {
+            let ok = return_x0 == 0 && after_len == before_len && stderr_closed;
+            CLOSE_SYSCALL_CLOSE_STDERR_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-close-syscall-smoke: syscall case=close_stderr vector={} esr={:#018x} svc=0x0000 number=2 args=[x0={:#018x} x1={:#018x} x2={:#018x} x3={:#018x} x4={:#018x} x5={:#018x}] descriptor-owner={:#018x} return-x0={:#018x}",
+                vector.name(),
+                reported_esr,
+                args[0],
+                args[1],
+                args[2],
+                args[3],
+                args[4],
+                args[5],
+                current_owner.raw(),
+                return_x0
+            );
+        }
+        syscall::TALOS_WRITE_SYSCALL if args[0] == 2 => {
+            let ok = return_x0 == DESCRIPTOR_WRITE_EXPECTED_EBADF_X0 && after_len == before_len;
+            CLOSE_SYSCALL_WRITE_CLOSED_STDERR_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-close-syscall-smoke: syscall case=write_closed_stderr vector={} esr={:#018x} svc=0x0000 number=1 return-x0={:#018x} expected=-EBADF console-unchanged={}",
+                vector.name(),
+                reported_esr,
+                return_x0,
+                after_len == before_len
+            );
+        }
+        syscall::TALOS_CLOSE_SYSCALL if args[0] == 1 => {
+            let table_unchanged = stdout_closed && stderr_closed;
+            let ok = return_x0 == DESCRIPTOR_WRITE_EXPECTED_EBADF_X0
+                && after_len == before_len
+                && table_unchanged;
+            CLOSE_SYSCALL_CLOSE_STDOUT_AGAIN_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-close-syscall-smoke: syscall case=close_stdout_again vector={} esr={:#018x} svc=0x0000 number=2 return-x0={:#018x} expected=-EBADF table-unchanged={}",
+                vector.name(),
+                reported_esr,
+                return_x0,
+                table_unchanged
+            );
+        }
+        syscall::TALOS_CLOSE_SYSCALL if args[0] == 99 => {
+            let table_unchanged = stdout_closed && stderr_closed;
+            let ok = return_x0 == DESCRIPTOR_WRITE_EXPECTED_EBADF_X0
+                && after_len == before_len
+                && table_unchanged;
+            CLOSE_SYSCALL_CLOSE_BADFD_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-close-syscall-smoke: syscall case=close_badfd vector={} esr={:#018x} svc=0x0000 number=2 return-x0={:#018x} expected=-EBADF table-unchanged={}",
+                vector.name(),
+                reported_esr,
+                return_x0,
+                table_unchanged
+            );
+        }
+        syscall::TALOS_NOP_SYSCALL => {
+            let ok = return_x0 == 0 && after_len == before_len;
+            CLOSE_SYSCALL_TALOS_NOP_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-close-syscall-smoke: syscall case=talos_nop vector={} esr={:#018x} svc=0x0000 number=0 return-x0={:#018x}",
+                vector.name(),
+                reported_esr,
+                return_x0
+            );
+        }
+        SYSCALL_SMOKE_UNKNOWN_NUMBER => {
+            let ok = return_x0 == SYSCALL_SMOKE_EXPECTED_ENOSYS_X0 && after_len == before_len;
+            CLOSE_SYSCALL_UNKNOWN_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-close-syscall-smoke: syscall case=unknown vector={} esr={:#018x} svc=0x0000 number=17 return-x0={:#018x} expected=-ENOSYS",
+                vector.name(),
+                reported_esr,
+                return_x0
+            );
+        }
+        DESCRIPTOR_WRITE_COPY_PROBE_NUMBER => {
+            let ok = return_x0 == SYSCALL_SMOKE_EXPECTED_ENOSYS_X0 && after_len == before_len;
+            CLOSE_SYSCALL_COPY_PROBE_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-close-syscall-smoke: syscall case=copy_probe_quarantine vector={} esr={:#018x} svc=0x0000 number={:#018x} return-x0={:#018x} expected=-ENOSYS dispatched=false",
+                vector.name(),
+                reported_esr,
+                raw_number,
+                return_x0
+            );
+        }
+        _ => {
+            DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            crate::println!(
+                "qemu-close-syscall-smoke: syscall case=unexpected vector={} esr={:#018x} svc=0x0000 number={:#018x} return-x0={:#018x}",
+                vector.name(),
+                reported_esr,
+                raw_number,
+                return_x0
+            );
+        }
+    }
+
+    true
+}
+
 #[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
 fn pointer_copy_user_data_replaced() -> bool {
     let data = unsafe { &*core::ptr::addr_of!(POINTER_COPY_USER_DATA) };
@@ -4856,6 +5384,43 @@ fn finish_process_descriptor_stdio_smoke(marker_ok: bool) -> ! {
     );
     if complete {
         crate::println!("qemu-process-descriptor-stdio-smoke: PASS");
+        crate::target::qemu::exit_success();
+    }
+    crate::target::qemu::exit_failure();
+}
+
+#[cfg(talos_boot_scenario = "qemu_close_syscall_smoke")]
+fn finish_close_syscall_smoke(marker_ok: bool) -> ! {
+    if !marker_ok {
+        DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+    }
+    let participants = CLOSE_SYSCALL_CLOSE_STDOUT_OBSERVED.load(Ordering::Relaxed)
+        + CLOSE_SYSCALL_WRITE_CLOSED_STDOUT_OBSERVED.load(Ordering::Relaxed)
+        + CLOSE_SYSCALL_CLOSE_STDERR_RESERVED_OBSERVED.load(Ordering::Relaxed)
+        + CLOSE_SYSCALL_WRITE_STDERR_OBSERVED.load(Ordering::Relaxed)
+        + CLOSE_SYSCALL_CLOSE_STDERR_OBSERVED.load(Ordering::Relaxed)
+        + CLOSE_SYSCALL_WRITE_CLOSED_STDERR_OBSERVED.load(Ordering::Relaxed)
+        + CLOSE_SYSCALL_CLOSE_STDOUT_AGAIN_OBSERVED.load(Ordering::Relaxed)
+        + CLOSE_SYSCALL_CLOSE_BADFD_OBSERVED.load(Ordering::Relaxed)
+        + CLOSE_SYSCALL_TALOS_NOP_OBSERVED.load(Ordering::Relaxed)
+        + CLOSE_SYSCALL_UNKNOWN_OBSERVED.load(Ordering::Relaxed)
+        + CLOSE_SYSCALL_COPY_PROBE_OBSERVED.load(Ordering::Relaxed);
+    let errors = DESCRIPTOR_WRITE_ERRORS.load(Ordering::Relaxed);
+    let complete = participants == 11 && errors == 0;
+    let classification = if complete {
+        "qemu-close-syscall-smoke-complete"
+    } else {
+        "qemu-close-syscall-smoke-failed"
+    };
+
+    crate::println!(
+        "qemu-close-syscall-smoke: final participants={} expected=11 errors={} classification={}",
+        participants,
+        errors,
+        classification
+    );
+    if complete {
+        crate::println!("qemu-close-syscall-smoke: PASS");
         crate::target::qemu::exit_success();
     }
     crate::target::qemu::exit_failure();

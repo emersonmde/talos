@@ -412,11 +412,19 @@ ProcessDescriptorStore, clears occupied descriptor slots with x0 = 0, returns
 cases, and returns -EINVAL for reserved-register violations. Focused no_std
 tests prove stdout/stderr close, EBADF failures, no-mutation EINVAL, duplicate
 slot preservation, and talos_write regression after close. The QEMU syscall
-and descriptor-write smokes remain passing regressions, but the QEMU close
-syscall smoke itself remains blocked until the next plan/core tasks. Dup/read,
-Pi 5 physical close/dup/read proof, process loading, VFS/filesystem, shell,
-networking, SSH, object finalization, and full POSIX descriptor readiness
-remain blocked.
+and descriptor-write smokes remain passing regressions. The accepted QEMU close
+syscall smoke plan then fixed the lower-AArch64 QEMU/substitute invariant for
+closing fd 1 and fd 2 through the current ProcessOwnerId-backed descriptor
+table. The accepted QEMU close syscall smoke core retains that evidence:
+qemu_close_syscall_smoke closes fd 1/fd 2 through
+ProcessDescriptorStore::close_current_descriptor(), proves later talos_write on
+closed descriptors returns -EBADF without runtime-console0 side effects, proves
+fd 2 remains writable after fd 1 is closed and after a failed reserved close,
+and preserves talos_nop, unknown-syscall, copy-probe quarantine, and
+diagnostic-marker quarantine. Dup/read, Pi 5 physical close/dup/read proof,
+process loading, VFS/filesystem, shell, networking, SSH, object finalization,
+and full POSIX descriptor readiness remain blocked. The next bounded Milestone
+7.4 task should be phase7-close-syscall-closeout-checkpoint-20260529.
 
 Near-term direction after the accepted Phase 7.3 syscall ABI/dispatch closeout:
 
@@ -1858,6 +1866,16 @@ Accepted progress:
   behavior, scalar syscall regressions, and proof-only diagnostic quarantine.
   The next bounded Milestone 7.4 task should be
   phase7-qemu-close-syscall-smoke-core-20260529. Pi 5 physical close proof,
+  dup/read syscalls, process loading, VFS/filesystem, shell, networking, SSH,
+  object finalization, and full POSIX descriptor readiness remain blocked.
+- Phase 7 QEMU close syscall smoke core is accepted. It adds and retains
+  qemu_close_syscall_smoke evidence proving current-owner talos_close on fd 1
+  and fd 2, closed-descriptor talos_write -EBADF behavior without
+  runtime-console0 side effects, unaffected fd 2 writes after closing fd 1 and
+  after a failed reserved close, repeated-close/badfd EBADF behavior, and
+  talos_nop/unknown/copy-probe/diagnostic quarantine regressions. The next
+  bounded Milestone 7.4 task should be
+  phase7-close-syscall-closeout-checkpoint-20260529. Pi 5 physical close proof,
   dup/read syscalls, process loading, VFS/filesystem, shell, networking, SSH,
   object finalization, and full POSIX descriptor readiness remain blocked.
 

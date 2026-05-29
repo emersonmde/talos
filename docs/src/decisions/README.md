@@ -5579,3 +5579,39 @@ ADR template:
   model, shell, networking, SSH, blocking/readiness, signals, restart
   semantics, object finalization, RP1/PCIe, UART interrupt ownership,
   DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 QEMU Close Syscall Smoke Core Accepted
+
+- Status: accepted as the QEMU/substitute Milestone 7.4 close syscall smoke
+  core. No Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, dup/read syscall implementation, process loading,
+  VFS/filesystem behavior, shell behavior, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The accepted close syscall core routed talos_close through
+  dispatch_process_descriptor() and
+  ProcessDescriptorStore::close_current_descriptor(), but lower-AArch64 QEMU
+  evidence for closed-descriptor write behavior and unaffected descriptor
+  lifetime had not yet been retained.
+- Decision: Accept phase7-qemu-close-syscall-smoke-core-20260529. The new
+  qemu_close_syscall_smoke scenario creates one current ProcessOwnerId-backed
+  inherited stdio table, closes fd 1 and fd 2 through the current-owner store
+  lookup, proves later talos_write on closed descriptors returns -EBADF without
+  runtime-console0 side effects, proves fd 2 remains writable after fd 1 is
+  closed and after a failed reserved close, and preserves talos_nop,
+  unknown-syscall, copy-probe quarantine, and diagnostic-marker quarantine.
+- Evidence level: QEMU/substitute serial evidence, target-independent no_std
+  unit tests, QEMU/substitute descriptor-write and syscall regressions,
+  documentation build, and whitespace inspection. No physical Pi 5 close
+  evidence was produced.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec test
+  passed with 231 no_std tests; scripts/qemu-close-syscall-smoke.sh passed;
+  scripts/qemu-descriptor-write-smoke.sh passed; scripts/qemu-syscall-smoke.sh
+  passed; git diff --check passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-close-syscall-closeout-checkpoint-20260529, scoped to reconciling the
+  accepted close inventory, contract, core implementation, QEMU evidence, and
+  deferred surfaces. Pi 5 physical close proof, dup/read syscalls, process
+  loading, VFS/filesystem, stdin/read object model, shell, networking, SSH,
+  blocking/readiness, signals, restart semantics, object finalization,
+  RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and full POSIX
+  descriptor claims remain blocked.
