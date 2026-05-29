@@ -1,0 +1,3 @@
+rpi5-production-timer-preemption: start conduit=smc cores=4 task-capacity=2 entry-path=production-timer-irq-adapter boot-logical=Some(0) cacheable-mmu=true
+rpi5-production-timer-preemption: final participants=3 expected=3 errors=0 state-lock-available=true metadata-lock-available=true wait-remaining=199996916 classification=pi5-production-timer-preemption-complete
+rpi5-production-timer-preemption: PASS

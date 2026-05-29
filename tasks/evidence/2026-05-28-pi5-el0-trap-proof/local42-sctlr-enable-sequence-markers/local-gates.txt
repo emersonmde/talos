@@ -1,0 +1,6 @@
+cargo fmt --all -- --check: passed before archive staging
+cargo -Zjson-target-spec test: passed before archive staging (189 tests)
+scripts/qemu-el0-trap-smoke.sh: passed before archive staging with qemu-el0-trap-smoke PASS
+scripts/rpi5-el0-trap-proof-static-check.sh: passed before archive staging
+scripts/rpi5-archive-review.sh target/talos-rpi5-el0-trap-proof-local42-boot.tar.gz: passed
+git diff --check: passed before hardware

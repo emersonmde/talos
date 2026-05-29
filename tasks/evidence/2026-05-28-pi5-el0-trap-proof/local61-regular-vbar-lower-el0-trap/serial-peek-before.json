@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "ZC1lbDEtYXNtDQpycGk1LWVsMC10cmFwLXByb29mOiBlbnRlcmVkLWVsMSBjdXJyZW50X2VsPTB4MSBzY3Rscl9lbDE9MHgwMDAwMDAwMDMwZDAwODAwIHRjcl9lbDE9MHgwMDAwMDAwMjAwMDAzMDEwIHR0YnIwX2VsMT0weDAwMDAwMDAwMDAyNDEwMDAgdmJhcl9lbDE9MHgwMDAwMDAwMDAwMjBmMDAwIGVscl9lbDE9MHgwMDAwMDAwMDAwMTAwMDAwIHNwc3JfZWwxPTB4MDAwMDAwMDAwMDAwMDNjMCBzcD0weDAwMDAwMDAwMDAzODQ3MTANCnJwaTUtZWwwLXRyYXAtcHJvb2Y6IGVsMS1tbXUtZW5hYmxlZA0KcnBpNS1lbDAtdHJhcC1wcm9vZjogYmVmb3JlLWVsMC1lcmV0DQpycGk1LWVsMC10cmFwLXByb29mOiBlbDEtZmF1bHQtaW1tZWRpYXRlDQpycGk1LWVsMC10cmFwLXByb29mOiBlbDEtZmF1bHQtdmVjdG9yIGtpbmQ9MHgwMDAwMDAwMDAwMDAwMDA4IGVzcj0weDAwMDAwMDAwNTYwMDdhMTAgZWxyPTB4MDAwMDAwMDAwMDEwMDAwNCBmYXI9MHgwMDAwMDAwMDAwMDAwMDAwDQo=",
+  "bytes": 500,
+  "cursor": 2977795,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "d-el1-asm\r\nrpi5-el0-trap-proof: entered-el1 current_el=0x1 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000200003010 ttbr0_el1=0x0000000000241000 vbar_el1=0x000000000020f000 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0 sp=0x0000000000384710\r\nrpi5-el0-trap-proof: el1-mmu-enabled\r\nrpi5-el0-trap-proof: before-el0-eret\r\nrpi5-el0-trap-proof: el1-fault-immediate\r\nrpi5-el0-trap-proof: el1-fault-vector kind=0x0000000000000008 esr=0x0000000056007a10 elr=0x0000000000100004 far=0x0000000000000000\r\n"
+}

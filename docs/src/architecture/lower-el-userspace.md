@@ -133,13 +133,14 @@ and qemu-el0-trap-smoke: PASS. The saved trap state reports the lower-AArch64
 synchronous vector, marker 0x7a10, ELR 0x0000000000100004 after the SVC, and
 SP 0x0000000000200000 at the top of the fixed UserStack range.
 
-This evidence remains QEMU/substitute only. It does not acquire the Pi 5
-hardware lock or claim physical lower-EL behavior. General syscall ABI,
-process loading, descriptor I/O, filesystem, shell, networking, and Pi 5 proof
-remain deferred. The next lower-EL hardware step must first be a serialized Pi
-5 proof plan that names archive identity, serial cursor, TFTP delta,
-known-good control, candidate rerun, restoration, retained evidence, and
-hardwareTestLock ownership.
+The Pi 5 hardware proof is now accepted for this bounded trap path. The
+retained local62 physical run reports the Pi 5 translation feature registers,
+regular VBAR_EL1 handoff, lower-AArch64 synchronous SVC state, final
+classification=pi5-el0-trap-proof-complete, and rpi5-el0-trap-proof: PASS
+after publishing candidate archive 2b3002ab... / kernel fc8e5429... and
+restoring the accepted production-timer control tree. General syscall ABI,
+process loading, descriptor I/O, filesystem, shell, networking, and SSH remain
+deferred.
 
 Phase 4 interrupt/timer/preemption tasks may rely on the current EL2 kernel map
 only for kernel execution. They must not assume process isolation, physical

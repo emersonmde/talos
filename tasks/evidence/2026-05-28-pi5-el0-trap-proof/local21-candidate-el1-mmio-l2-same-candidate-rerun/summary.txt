@@ -1,0 +1,6 @@
+local20 control: archive 739810c8480893e1878967dd0409f2705e71481453fc08038e9aacffdebcc11e reached classification=pi5-production-timer-preemption-complete and PASS from fresh serial cursor 2464588.
+local20 TFTP cursor 3773454 retained in tasks/evidence/2026-05-28-pi5-el0-trap-proof/local20-production-timer-control-after-mmio-l2-fix/tftp-delta-before-candidate.json; byte labels are stale if inspected after later candidate/restore publishes.
+local21 unchanged candidate: archive 21ba91a9bef5e867102e40b48c6bf99628391f78f7ed8c5d9f2c52d29a7652af, kernel 35053d61480fe429027702fdd23eca6e23cb69a3ca9af0cf5f2be4d181dafea6, size 97055 from fresh serial cursor 2489411.
+local21 serial reached start, validated, pre-ERET, entered-el1-asm, and entered-el1 callback; no saved-state, classification=pi5-el0-trap-proof-complete, or PASS.
+local21 TFTP: original before-restore query was empty; post-restore stale-size query from same cursor records da591740/kernel_2712.img request events with restored 82045-byte labels. Serial firmware log independently contains TFTP_GET for da591740/config.txt and later Talos candidate output.
+restore: tree 6ead8933b3287cddaf08ddcdbda7d4c770b365658ef1d0ad80a5dd0cf323f3ef.

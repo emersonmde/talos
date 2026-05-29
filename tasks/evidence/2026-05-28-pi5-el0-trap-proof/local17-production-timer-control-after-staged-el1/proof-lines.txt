@@ -1,0 +1,2 @@
+rpi5-production-timer-preemption: final participants=3 expected=3 errors=0 state-lock-available=true metadata-lock-available=true wait-remaining=199997354 classification=pi5-production-timer-preemption-complete
+rpi5-production-timer-preemption: PASS

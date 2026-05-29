@@ -1,0 +1,135 @@
+local16b staged EL1 candidate rerun
+archive_sha=01d037334798e81a71998b97adb586a456aeeba61ce91083396ebace4b390e02
+kernel_sha=283bdac987d24a07d40d5e86aeeb99f0349895bc12a33f5ad8cb8375685767b4
+kernel_size=97055
+restored_tree=6ead8933b3287cddaf08ddcdbda7d4c770b365658ef1d0ad80a5dd0cf323f3ef
+proof_lines_begin
+rpi5-el0-trap-proof: start user-text=[0x0000000000100000,0x0000000000101000) user-stack=[0x00000000001f0000,0x0000000000200000) user-guard=[0x00000000001e0000,0x00000000001f0000) marker=0x7a10
+rpi5-el0-trap-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true
+rpi5-el0-trap-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0
+rpi5-el0-trap-proof: entered-el1-asm
+rpi5-el0-trap-proof: entered-el1 current_el=0x1 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0 sp=0x0000000000384710
+rpi5-el0-trap-proof: start user-text=[0x0000000000100000,0x0000000000101000) user-stack=[0x00000000001f0000,0x0000000000200000) user-guard=[0x00000000001e0000,0x00000000001f0000) marker=0x7a10
+rpi5-el0-trap-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true
+rpi5-el0-trap-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0
+rpi5-el0-trap-proof: entered-el1-asm
+rpi5-el0-trap-proof: entered-el1 current_el=0x1 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0 sp=0x0000000000384710
+rpi5-el0-trap-proof: start user-text=[0x0000000000100000,0x0000000000101000) user-stack=[0x00000000001f0000,0x0000000000200000) user-guard=[0x00000000001e0000,0x00000000001f0000) marker=0x7a10
+rpi5-el0-trap-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true
+rpi5-el0-trap-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0
+rpi5-el0-trap-proof: entered-el1-asm
+rpi5-el0-trap-proof: entered-el1 current_el=0x1 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0 sp=0x0000000000384710
+rpi5-el0-trap-proof: start user-text=[0x0000000000100000,0x0000000000101000) user-stack=[0x00000000001f0000,0x0000000000200000) user-guard=[0x00000000001e0000,0x00000000001f0000) marker=0x7a10
+rpi5-el0-trap-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true
+rpi5-el0-trap-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0
+rpi5-el0-trap-proof: entered-el1-asm
+rpi5-el0-trap-proof: entered-el1 current_el=0x1 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0 sp=0x0000000000384710
+rpi5-el0-trap-proof: start user-text=[0x0000000000100000,0x0000000000101000) user-stack=[0x00000000001f0000,0x0000000000200000) user-guard=[0x00000000001e0000,0x00000000001f0000) marker=0x7a10
+rpi5-el0-trap-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true
+rpi5-el0-trap-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0
+rpi5-el0-trap-proof: entered-el1-asm
+rpi5-el0-trap-proof: entered-el1 current_el=0x1 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0 sp=0x0000000000384710
+rpi5-el0-trap-proof: start user-text=[0x0000000000100000,0x0000000000101000) user-stack=[0x00000000001f0000,0x0000000000200000) user-guard=[0x00000000001e0000,0x00000000001f0000) marker=0x7a10
+rpi5-el0-trap-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true
+rpi5-el0-trap-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0
+rpi5-el0-trap-proof: entered-el1-asm
+rpi5-el0-trap-proof: entered-el1 current_el=0x1 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0 sp=0x0000000000384710
+proof_lines_end
+candidate_tftp_kernel
+served	da591740/kernel_2712.img	82045	May 19 20:35:09 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:35:09 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:35:27 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:35:28 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:35:46 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:35:46 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:36:04 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:36:05 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:36:23 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:36:23 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:36:41 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:36:42 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:37:00 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:37:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:37:19 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:37:19 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:37:37 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:37:38 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:37:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:37:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:38:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:38:15 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:38:33 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:38:34 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:38:52 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:38:52 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:39:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:39:11 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:39:29 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:39:29 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:39:47 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:39:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:40:05 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:40:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:40:24 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:40:25 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:40:42 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:40:43 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:41:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:41:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:41:20 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:41:20 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:41:38 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:41:39 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:41:57 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:41:57 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:42:15 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:42:16 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:42:47 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:42:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:43:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:43:07 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:43:24 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:43:25 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:43:43 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:43:44 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:44:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:44:02 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:44:20 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:44:20 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:44:38 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:44:39 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:44:57 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:44:58 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:45:15 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:45:16 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:45:34 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:45:35 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:45:53 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:45:53 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:46:11 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:46:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:46:30 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:46:30 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:46:48 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:46:49 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:47:07 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:47:07 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:47:25 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:47:26 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:47:44 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:47:45 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:48:02 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:48:03 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:48:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:48:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:48:40 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:48:40 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:48:58 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:48:59 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:49:17 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:49:17 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:49:35 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:49:36 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:49:53 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:49:54 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:50:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4

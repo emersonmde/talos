@@ -4066,3 +4066,31 @@ ADR template:
   plan and must preserve the blocked syscall ABI, process loading, descriptor
   I/O, filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt, and
   DMA/cache-driver surfaces.
+
+## 2026-05-29 - Phase 7 Pi 5 EL0 Trap Proof Accepted
+
+- Status: accepted as the serialized Raspberry Pi 5 hardware proof for the
+  bounded Phase 7.2 lower-EL trap path.
+- Context: Earlier Pi 5 attempts stopped at the EL1 translation-enable
+  boundary. The accepted run followed the required inconclusive-run triage,
+  added a source-backed translation feature/legal-shape report, fixed the
+  BCM2712 MMIO L2 descriptor range, and returned VBAR_EL1 to the regular
+  exception vectors before entering EL0.
+- Decision: Accept phase7-pi5-el0-trap-proof-20260528. Physical serial
+  evidence from local62 contains the expected saved lower-AArch64 synchronous
+  SVC trap state, final
+  classification=pi5-el0-trap-proof-complete, and rpi5-el0-trap-proof: PASS.
+- Evidence level: fmt/lint/typecheck, unit tests, QEMU/substitute smoke,
+  static image/archive inspection, lab-controller API, serialized Pi 5
+  hardware boot/output, repeated control/rerun evidence for prior inconclusive
+  boundaries, and restoration proof.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec test
+  passed with 189 tests; scripts/qemu-el0-trap-smoke.sh passed;
+  scripts/rpi5-el0-trap-proof-static-check.sh passed; archive review passed;
+  local62 served da591740/kernel_2712.img at 97,781 bytes and reached PASS;
+  restore reported production-timer tree hash
+  a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+- Consequences: Phase 7.2 has a physical lower-EL trap proof, but this does
+  not accept a general syscall ABI, process loader, descriptor I/O,
+  filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy.

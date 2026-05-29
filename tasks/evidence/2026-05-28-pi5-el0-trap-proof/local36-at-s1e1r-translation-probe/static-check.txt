@@ -1,0 +1,1 @@
+rpi5-el0-trap-proof-static-check: PASS elf=target/aarch64-talos-rpi5-bcm2712/debug/talos kernel_start=0x200000 stack_top=0x35e010 identity_blocks=0x1..0x1 handoff=0x20f0dc vectors=0x20e800 regular_vectors=0x200800 uart10_l1=0x41 uart10_l2=0x1e8

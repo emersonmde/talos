@@ -1,0 +1,14 @@
+{
+  "action": "tftp logs",
+  "ok": true,
+  "tftp": {
+    "cursor_end": 1048576,
+    "cursor_start": 0,
+    "events": [],
+    "lines": [
+      "May 20 22:30:17 dnsmasq-tftp[1]: sent /var/tftpboot/da591740"
+    ],
+    "log": "/state/tftp.log",
+    "truncated": true
+  }
+}

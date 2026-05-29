@@ -144,12 +144,15 @@ kernel reports saved user state. The accepted QEMU EL0 trap smoke core
 implements that bounded scenario, retaining serial evidence at
 tasks/evidence/2026-05-28-qemu-el0-trap-smoke-core/qemu-el0-trap-smoke.txt
 with the saved lower-AArch64 synchronous trap state, final classification, and
-PASS. This is QEMU/substitute evidence only; physical Pi 5 lower-EL behavior
-remains gated behind a serialized hardware run under hardwareTestLock. The
-accepted Pi 5 proof plan requires rpi5-el0-trap-proof saved-state output,
-classification=pi5-el0-trap-proof-complete, rpi5-el0-trap-proof: PASS, fresh
-candidate identity, serial cursor, TFTP delta, restoration evidence, and the
-standard inconclusive-run triage before code changes.
+PASS. The serialized Pi 5 EL0 trap proof is also accepted: retained physical
+serial evidence in
+tasks/evidence/2026-05-28-pi5-el0-trap-proof/local62-clean-final-lower-el0-trap/
+reports the Pi 5 translation feature registers, regular VBAR_EL1 handoff,
+lower-AArch64 synchronous SVC trap state, classification=pi5-el0-trap-proof-complete,
+and rpi5-el0-trap-proof: PASS. This proves the bounded lower-EL trap path on
+hardware only; general syscall ABI, process loading, descriptor I/O,
+filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership, and
+DMA/cache-driver policy remain deferred.
 The obsolete-bloat inventory and removal sweep are accepted before the
 multi-core preemption core: historical QEMU secondary-core discriminator paths
 and old Pi 5 allocator, exception, panic, and translation-fault proof-only

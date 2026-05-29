@@ -1,0 +1,9 @@
+control=739810c8480893e1878967dd0409f2705e71481453fc08038e9aacffdebcc11e  target/talos-rpi5-production-timer-preemption-boot.tar.gz
+serial_cursor=2801408
+tftp_cursor=3811282
+kernel_tftp_events=
+  da591740/kernel_2712.img bytes=104136 served
+  da591740/kernel_2712.img bytes=104136 served
+proof_lines=
+rpi5-production-timer-preemption: final participants=3 expected=3 errors=0 state-lock-available=true metadata-lock-available=true wait-remaining=199997244 classification=pi5-production-timer-preemption-complete
+rpi5-production-timer-preemption: PASS

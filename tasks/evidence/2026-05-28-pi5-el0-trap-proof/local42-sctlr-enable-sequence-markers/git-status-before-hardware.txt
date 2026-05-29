@@ -1,0 +1,12 @@
+ M build.rs
+ M src/arch/aarch64/exceptions.rs
+ M src/arch/aarch64/mod.rs
+ M src/arch/aarch64/vectors.S
+ M src/boot/rpi5.rs
+ M src/main.rs
+ M src/target/rpi5.rs
+?? scripts/rpi5-el0-trap-proof-boot-tree.sh
+?? scripts/rpi5-el0-trap-proof-image.sh
+?? scripts/rpi5-el0-trap-proof-static-check.sh
+?? tasks/2026-05-28-phase7-pi5-el0-trap-proof.md
+?? tasks/evidence/2026-05-28-pi5-el0-trap-proof/

@@ -1,0 +1,58 @@
+local19 candidate EL1 MMIO L2 fix
+archive_sha=21ba91a9bef5e867102e40b48c6bf99628391f78f7ed8c5d9f2c52d29a7652af
+kernel_sha=35053d61480fe429027702fdd23eca6e23cb69a3ca9af0cf5f2be4d181dafea6
+kernel_size=97055
+restored_tree=6ead8933b3287cddaf08ddcdbda7d4c770b365658ef1d0ad80a5dd0cf323f3ef
+proof_lines_begin
+rpi5-el0-trap-proof: start user-text=[0x0000000000100000,0x0000000000101000) user-stack=[0x00000000001f0000,0x0000000000200000) user-guard=[0x00000000001e0000,0x00000000001f0000) marker=0x7a10
+rpi5-el0-trap-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true
+rpi5-el0-trap-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0
+rpi5-el0-trap-proof: entered-el1-asm
+rpi5-el0-trap-proof: entered-el1 current_el=0x1 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0 sp=0x0000000000384710
+rpi5-el0-trap-proof: start user-text=[0x0000000000100000,0x0000000000101000) user-stack=[0x00000000001f0000,0x0000000000200000) user-guard=[0x00000000001e0000,0x00000000001f0000) marker=0x7a10
+rpi5-el0-trap-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true
+rpi5-el0-trap-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0
+rpi5-el0-trap-proof: entered-el1-asm
+rpi5-el0-trap-proof: entered-el1 current_el=0x1 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0 sp=0x0000000000384710
+rpi5-el0-trap-proof: start user-text=[0x0000000000100000,0x0000000000101000) user-stack=[0x00000000001f0000,0x0000000000200000) user-guard=[0x00000000001e0000,0x00000000001f0000) marker=0x7a10
+rpi5-el0-trap-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true
+rpi5-el0-trap-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0
+rpi5-el0-trap-proof: entered-el1-asm
+rpi5-el0-trap-proof: entered-el1 current_el=0x1 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0 sp=0x0000000000384710
+rpi5-el0-trap-proof: start user-text=[0x0000000000100000,0x0000000000101000) user-stack=[0x00000000001f0000,0x0000000000200000) user-guard=[0x00000000001e0000,0x00000000001f0000) marker=0x7a10
+rpi5-el0-trap-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true
+rpi5-el0-trap-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0
+rpi5-el0-trap-proof: entered-el1-asm
+rpi5-el0-trap-proof: entered-el1 current_el=0x1 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0 sp=0x0000000000384710
+rpi5-el0-trap-proof: start user-text=[0x0000000000100000,0x0000000000101000) user-stack=[0x00000000001f0000,0x0000000000200000) user-guard=[0x00000000001e0000,0x00000000001f0000) marker=0x7a10
+rpi5-el0-trap-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true
+rpi5-el0-trap-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0
+rpi5-el0-trap-proof: entered-el1-asm
+rpi5-el0-trap-proof: entered-el1 current_el=0x1 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0 sp=0x0000000000384710
+rpi5-el0-trap-proof: start user-text=[0x0000000000100000,0x0000000000101000) user-stack=[0x00000000001f0000,0x0000000000200000) user-guard=[0x00000000001e0000,0x00000000001f0000) marker=0x7a10
+rpi5-el0-trap-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true
+rpi5-el0-trap-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0
+rpi5-el0-trap-proof: entered-el1-asm
+rpi5-el0-trap-proof: entered-el1 current_el=0x1 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0 sp=0x0000000000384710
+proof_lines_end
+candidate_tftp_kernel
+served	da591740/kernel_2712.img	82045	May 19 20:35:09 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:35:09 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:35:27 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:35:28 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:35:46 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:35:46 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:36:04 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:36:05 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:36:23 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:36:23 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:36:41 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:36:42 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:37:00 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:37:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:37:19 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:37:19 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:37:37 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:37:38 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:37:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	82045	May 19 20:37:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4

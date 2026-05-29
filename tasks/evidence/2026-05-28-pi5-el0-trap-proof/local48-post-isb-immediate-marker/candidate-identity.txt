@@ -1,0 +1,2 @@
+635ac8d52d0810ba3290364846ed2ec38610ab6cdf41aed4855edfe93ce484e0  target/talos-rpi5-el0-trap-proof-local48-boot.tar.gz
+e495a1a2a31f8a421b1811264f7b585a3e466704a10482e3448f839569a98618  target/rpi5-el0-trap-proof-local48-boot-tree/kernel_2712.img

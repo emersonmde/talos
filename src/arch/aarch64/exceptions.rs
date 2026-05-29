@@ -225,6 +225,9 @@ pub extern "C" fn rust_exception_handler(
 ) -> ! {
     let vector = ExceptionVector::from(vector);
 
+    #[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+    crate::target::rpi5::handle_el0_trap_proof_exception(esr, elr, far, vector, spsr, saved_frame);
+
     println!();
     println!("talos exception: {}", vector.name());
     println!(

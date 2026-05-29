@@ -1,0 +1,1 @@
+78f9c60fb12cf2b9ee96a170ce3d4bbab3c87a6f5c6c61478658a291986126e8  target/rpi5-el0-trap-proof-boot-tree/kernel_2712.img

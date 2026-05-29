@@ -1,0 +1,18 @@
+candidate=8fb49cc8d28a28ac0bd59068788e6ab65b0214fcbc4778949b0b367272da7041  target/talos-rpi5-el0-trap-proof-local39-boot.tar.gz
+control=739810c8480893e1878967dd0409f2705e71481453fc08038e9aacffdebcc11e  target/talos-rpi5-production-timer-preemption-boot.tar.gz
+serial_cursor=2741140
+tftp_cursor=3804527
+kernel_tftp_events=
+  da591740/kernel_2712.img bytes=94401 served
+  da591740/kernel_2712.img bytes=94401 served
+proof_lines=
+rpi5-el0-trap-proof: start user-text=[0x0000000000100000,0x0000000000101000) user-stack=[0x00000000001f0000,0x0000000000200000) user-guard=[0x00000000001e0000,0x00000000001f0000) marker=0x7a10
+rpi5-el0-trap-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true
+rpi5-el0-trap-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x000000000021a000 vbar_el1=0x000000000020e800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0
+rpi5-el0-trap-proof: identity-entered-el1
+rpi5-el0-trap-proof: entered-el1 current_el=0x1 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x000000000021a000 vbar_el1=0x000000000020e800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0 sp=0x000000000035d710
+rpi5-el0-trap-proof: identity-at-handoff par=0x000000000020fb00
+rpi5-el0-trap-proof: identity-at-vectors par=0x000000000020eb00
+rpi5-el0-trap-proof: identity-at-stack par=0x000000000035db00
+rpi5-el0-trap-proof: identity-at-uart par=0x000000107d001b00
+rpi5-el0-trap-proof: identity-at-unmapped par=0x0000000080000b00

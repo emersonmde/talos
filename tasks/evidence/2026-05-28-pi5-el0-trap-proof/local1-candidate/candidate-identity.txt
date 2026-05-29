@@ -1,0 +1,16 @@
+head=3db77b81c10d3f572d1b6f87459443f621416b78
+short_head=3db77b8
+status_begin
+ M build.rs
+ M src/arch/aarch64/exceptions.rs
+ M src/boot/rpi5.rs
+ M src/main.rs
+ M src/target/rpi5.rs
+?? scripts/rpi5-el0-trap-proof-boot-tree.sh
+?? scripts/rpi5-el0-trap-proof-image.sh
+?? tasks/evidence/2026-05-28-pi5-el0-trap-proof/
+status_end
+archive=target/talos-rpi5-el0-trap-proof-boot.tar.gz
+df95103defbe69a6a6baa396a354033d0e0159bd153ea7f804094275bef7f435  target/talos-rpi5-el0-trap-proof-boot.tar.gz
+a4038dc126da72b1a9bfbfa32f5f0e0c76324ac34d6c47e5838ddb3631b97ab5  target/rpi5-el0-trap-proof-boot-tree/kernel_2712.img
+96664 target/rpi5-el0-trap-proof-boot-tree/kernel_2712.img

@@ -1,0 +1,6 @@
+cargo fmt --all -- --check: passed
+cargo -Zjson-target-spec test: passed; 189 tests passed
+scripts/qemu-el0-trap-smoke.sh: passed; qemu-el0-trap-smoke PASS
+scripts/rpi5-el0-trap-proof-static-check.sh: passed
+scripts/rpi5-archive-review.sh target/talos-rpi5-el0-trap-proof-local51-boot.tar.gz: passed
+git diff --check: passed

@@ -1,0 +1,6 @@
+local22 candidate: archive 927b3e55f00748bc7c12c0ccc45a88705d4e06f8b41fa8ac6ffb77522ace6e5a, kernel 275694108f70b969903b1ed2ba38c4b3fcfbebbffc6b40bcc18cb20034297658, size 97133.
+local gates: cargo test log retained, qemu-el0-trap-smoke retained, archive review retained.
+hardware: fresh serial cursor 2499237, fresh TFTP cursor 3777507.
+TFTP before restore records da591740/kernel_2712.img served at 97133 bytes.
+serial reached start, validated, pre-ERET, entered-el1-asm, and entered-el1 callback; no el1-mmu-enabled, before-el0-eret, lower-AArch64 trap, classification, or PASS.
+restore: tree 6ead8933b3287cddaf08ddcdbda7d4c770b365658ef1d0ad80a5dd0cf323f3ef.

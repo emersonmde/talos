@@ -190,19 +190,70 @@ talos_aarch64_kernel_thread_trampoline:
 
 .global talos_aarch64_enter_el1_then_el0
 .type talos_aarch64_enter_el1_then_el0, %function
+#ifdef TALOS_RPI5_EL0_TRAP_PROOF_SCENARIO
+.macro rpi5_el0_trap_proof_uart_marker marker_label
+    movz x11, #0x1000
+    movk x11, #0x7d00, lsl #16
+    movk x11, #0x10, lsl #32
+    adr x12, \marker_label
+.Lrpi5_el0_trap_proof_uart_loop\@:
+    ldrb w13, [x12], #1
+    cbz w13, .Lrpi5_el0_trap_proof_uart_done\@
+.Lrpi5_el0_trap_proof_uart_wait\@:
+    ldr w14, [x11, #0x18]
+    tbnz w14, #5, .Lrpi5_el0_trap_proof_uart_wait\@
+    str w13, [x11]
+    b .Lrpi5_el0_trap_proof_uart_loop\@
+.Lrpi5_el0_trap_proof_uart_done\@:
+.endm
+
+#endif
+
 talos_aarch64_enter_el1_then_el0:
+    mov x19, x0
+    mov x20, x1
+    mov x21, x2
+    mov x22, x3
     mov x9, sp
     msr SP_EL1, x9
     adr x10, 1f
     msr ELR_EL2, x10
-    msr SPSR_EL2, x3
+    msr SPSR_EL2, x22
     isb
     eret
 1:
-    msr SP_EL0, x1
-    msr ELR_EL1, x0
-    msr SPSR_EL1, x2
+#ifdef TALOS_RPI5_EL0_TRAP_PROOF_SCENARIO
+    rpi5_el0_trap_proof_uart_marker .Lrpi5_el0_trap_proof_entered_el1_asm
+    bl talos_rpi5_el0_trap_proof_entered_el1
+#endif
+    mrs x10, SCTLR_EL1
+    orr x10, x10, #0x1
+    movz x11, #0
+    movk x11, #0x8, lsl #16
+    bic x10, x10, x11
+    msr SCTLR_EL1, x10
+    dsb sy
     isb
+#ifdef TALOS_RPI5_EL0_TRAP_PROOF_SCENARIO
+    rpi5_el0_trap_proof_uart_marker .Lrpi5_el0_trap_proof_el1_mmu_enabled
+#endif
+    msr SP_EL0, x20
+    msr ELR_EL1, x19
+    msr SPSR_EL1, x21
+    isb
+#ifdef TALOS_RPI5_EL0_TRAP_PROOF_SCENARIO
+    rpi5_el0_trap_proof_uart_marker .Lrpi5_el0_trap_proof_before_el0_eret
+#endif
     eret
 
 .size talos_aarch64_enter_el1_then_el0, . - talos_aarch64_enter_el1_then_el0
+
+#ifdef TALOS_RPI5_EL0_TRAP_PROOF_SCENARIO
+.section .rodata.rpi5_el0_trap_proof, "a"
+.Lrpi5_el0_trap_proof_entered_el1_asm:
+    .asciz "rpi5-el0-trap-proof: entered-el1-asm\r\n"
+.Lrpi5_el0_trap_proof_el1_mmu_enabled:
+    .asciz "rpi5-el0-trap-proof: el1-mmu-enabled\r\n"
+.Lrpi5_el0_trap_proof_before_el0_eret:
+    .asciz "rpi5-el0-trap-proof: before-el0-eret\r\n"
+#endif

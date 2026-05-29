@@ -1,0 +1,36 @@
+rpi5-el0-trap-proof: start user-text=[0x0000000000100000,0x0000000000101000) user-stack=[0x00000000001f0000,0x0000000000200000) user-guard=[0x00000000001e0000,0x00000000001f0000) marker=0x7a10
+rpi5-el0-trap-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true
+rpi5-el0-trap-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000200003010 ttbr0_el1=0x0000000000241000 vbar_el1=0x000000000020f000 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0
+rpi5-el0-trap-proof: translation-id id_aa64mmfr0_el1=0x0000000000101122 id_aa64mmfr1_el1=0x0000000010212122 id_aa64mmfr2_el1=0x0000000000001011 id_aa64pfr0_el1=0x1100000010111112
+rpi5-el0-trap-proof: translation-shape mair_el1=0x0000000000000444 tcr_el1=0x0000000200003010 parange-code=0x2 parange-bits=40 ips-code=0x2 ips-fits-parange=true tg0=4k tgran4-code=0x0 tgran4-supported=true t0sz=16 va-bits=48 irgn0=nc orgn0=nc sh0=inner
+rpi5-el0-trap-proof: descriptor-shape root-l0=table l1-low=table low-l2[0]=user-l3 low-l2[1..511]=kernel-blocks user-text-page=0x100 user-stack-pages=0x1f0..0x1ff mmio-l1=0x41 mmio-l2=0x1e0..0x1ff normal-attr=0 device-attr=1 page-desc=4k block-desc=2m
+rpi5-el0-trap-proof: entered-el1-asm
+rpi5-el0-trap-proof: entered-el1 current_el=0x1 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000200003010 ttbr0_el1=0x0000000000241000 vbar_el1=0x000000000020f000 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0 sp=0x0000000000384710
+rpi5-el0-trap-proof: el1-mmu-enabled
+rpi5-el0-trap-proof: before-el0-eret
+rpi5-el0-trap-proof: el1-fault-immediate
+rpi5-el0-trap-proof: el1-fault-vector kind=0x0000000000000008 esr=0x0000000056007a10 elr=0x0000000000100004 far=0x0000000000000000
+rpi5-el0-trap-proof: start user-text=[0x0000000000100000,0x0000000000101000) user-stack=[0x00000000001f0000,0x0000000000200000) user-guard=[0x00000000001e0000,0x00000000001f0000) marker=0x7a10
+rpi5-el0-trap-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true
+rpi5-el0-trap-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000200003010 ttbr0_el1=0x0000000000241000 vbar_el1=0x000000000020f000 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0
+rpi5-el0-trap-proof: translation-id id_aa64mmfr0_el1=0x0000000000101122 id_aa64mmfr1_el1=0x0000000010212122 id_aa64mmfr2_el1=0x0000000000001011 id_aa64pfr0_el1=0x1100000010111112
+rpi5-el0-trap-proof: translation-shape mair_el1=0x0000000000000444 tcr_el1=0x0000000200003010 parange-code=0x2 parange-bits=40 ips-code=0x2 ips-fits-parange=true tg0=4k tgran4-code=0x0 tgran4-supported=true t0sz=16 va-bits=48 irgn0=nc orgn0=nc sh0=inner
+rpi5-el0-trap-proof: descriptor-shape root-l0=table l1-low=table low-l2[0]=user-l3 low-l2[1..511]=kernel-blocks user-text-page=0x100 user-stack-pages=0x1f0..0x1ff mmio-l1=0x41 mmio-l2=0x1e0..0x1ff normal-attr=0 device-attr=1 page-desc=4k block-desc=2m
+rpi5-el0-trap-proof: entered-el1-asm
+rpi5-el0-trap-proof: entered-el1 current_el=0x1 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000200003010 ttbr0_el1=0x0000000000241000 vbar_el1=0x000000000020f000 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0 sp=0x0000000000384710
+rpi5-el0-trap-proof: el1-mmu-enabled
+rpi5-el0-trap-proof: before-el0-eret
+rpi5-el0-trap-proof: el1-fault-immediate
+rpi5-el0-trap-proof: el1-fault-vector kind=0x0000000000000008 esr=0x0000000056007a10 elr=0x0000000000100004 far=0x0000000000000000
+rpi5-el0-trap-proof: start user-text=[0x0000000000100000,0x0000000000101000) user-stack=[0x00000000001f0000,0x0000000000200000) user-guard=[0x00000000001e0000,0x00000000001f0000) marker=0x7a10
+rpi5-el0-trap-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true
+rpi5-el0-trap-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000200003010 ttbr0_el1=0x0000000000241000 vbar_el1=0x000000000020f000 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0
+rpi5-el0-trap-proof: translation-id id_aa64mmfr0_el1=0x0000000000101122 id_aa64mmfr1_el1=0x0000000010212122 id_aa64mmfr2_el1=0x0000000000001011 id_aa64pfr0_el1=0x1100000010111112
+rpi5-el0-trap-proof: translation-shape mair_el1=0x0000000000000444 tcr_el1=0x0000000200003010 parange-code=0x2 parange-bits=40 ips-code=0x2 ips-fits-parange=true tg0=4k tgran4-code=0x0 tgran4-supported=true t0sz=16 va-bits=48 irgn0=nc orgn0=nc sh0=inner
+rpi5-el0-trap-proof: descriptor-shape root-l0=table l1-low=table low-l2[0]=user-l3 low-l2[1..511]=kernel-blocks user-text-page=0x100 user-stack-pages=0x1f0..0x1ff mmio-l1=0x41 mmio-l2=0x1e0..0x1ff normal-attr=0 device-attr=1 page-desc=4k block-desc=2m
+rpi5-el0-trap-proof: entered-el1-asm
+rpi5-el0-trap-proof: entered-el1 current_el=0x1 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000200003010 ttbr0_el1=0x0000000000241000 vbar_el1=0x000000000020f000 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0 sp=0x0000000000384710
+rpi5-el0-trap-proof: el1-mmu-enabled
+rpi5-el0-trap-proof: before-el0-eret
+rpi5-el0-trap-proof: el1-fault-immediate
+rpi5-el0-trap-proof: el1-fault-vector kind=0x0000000000000008 esr=0x0000000056007a10 elr=0x0000000000100004 far=0x0000000000000000

@@ -5,6 +5,7 @@
     talos_boot_scenario = "rpi5_load_balancing_proof",
     talos_boot_scenario = "rpi5_multicore_preemption_proof",
     talos_boot_scenario = "rpi5_production_timer_preemption_proof",
+    talos_boot_scenario = "rpi5_el0_trap_proof",
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 use crate::arch::aarch64;
@@ -110,6 +111,14 @@ use crate::smp::{
     talos_boot_scenario = "rpi5_secondary_scheduler_service_loop"
 ))]
 use crate::smp_sync::{SpinLock, smp_full_barrier};
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+use crate::{
+    arch::aarch64::exceptions::{ExceptionFrame, ExceptionVector},
+    posix::{
+        PosixError, UserAccessKind, UserMapping, UserMappingPermissions,
+        validate_user_memory_access,
+    },
+};
 use crate::{
     boot::BootInfo,
     device_tree::DeviceTree,
@@ -216,6 +225,74 @@ const MULTICORE_PREEMPTION_PROOF_TASK_CAPACITY: usize = 2;
 const PRODUCTION_TIMER_PREEMPTION_PROOF_TASK_CAPACITY: usize = 2;
 #[cfg(talos_boot_scenario = "rpi5_secondary_scheduler_service_loop")]
 const SECONDARY_SCHEDULER_SERVICE_LOOP_TASK_CAPACITY: usize = 1;
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+const EL0_TRAP_USER_TEXT_START: u64 = 0x0000_0000_0010_0000;
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+const EL0_TRAP_USER_TEXT_LEN: usize = 0x1000;
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+const EL0_TRAP_USER_STACK_START: u64 = 0x0000_0000_001f_0000;
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+const EL0_TRAP_USER_STACK_LEN: usize = 0x1_0000;
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+const EL0_TRAP_USER_GUARD_START: u64 = 0x0000_0000_001e_0000;
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+const EL0_TRAP_SVC_MARKER: u64 = 0x7a10;
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+const EL0_TRAP_EXPECTED_ESR: u64 = 0x0000_0000_5400_7a10;
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+const EL0_TRAP_SPSR_EL0T_DAIF_MASKED: u64 = 0x3c0;
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+const EL0_TRAP_SPSR_EL1H_DAIF_MASKED: u64 = 0x3c5;
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+const EL0_TRAP_TABLE_PAGE_SIZE: usize = 4096;
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+const EL0_TRAP_L1_BCM2712_MMIO_INDEX: usize = 0x41;
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+const EL0_TRAP_BCM2712_MMIO_START: u64 = 0x10_7c00_0000;
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+const EL0_TRAP_BCM2712_MMIO_END: u64 = 0x10_8000_0000;
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+const EL0_TRAP_TCR_T0SZ: u64 = 16;
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+const EL0_TRAP_TCR_IPS_CODE_40BIT: u64 = 0b010;
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+const EL0_TRAP_TCR_IRGN0_NONCACHEABLE: u64 = 0b00;
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+const EL0_TRAP_TCR_ORGN0_NONCACHEABLE: u64 = 0b00;
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+const EL0_TRAP_TCR_SH0_INNER: u64 = 0b11;
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+struct El0TrapPreEretRegisters {
+    hcr_el2: u64,
+    sctlr_el1: u64,
+    tcr_el1: u64,
+    ttbr0_el1: u64,
+    vbar_el1: u64,
+    elr_el1: u64,
+    spsr_el1: u64,
+}
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+struct El0TrapEl1HandoffRegisters {
+    sctlr_el1: u64,
+    tcr_el1: u64,
+    ttbr0_el1: u64,
+    vbar_el1: u64,
+    elr_el1: u64,
+    spsr_el1: u64,
+    sp: u64,
+}
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+struct El0TrapTranslationFeatureReport {
+    id_aa64mmfr0_el1: u64,
+    id_aa64mmfr1_el1: u64,
+    id_aa64mmfr2_el1: u64,
+    id_aa64pfr0_el1: u64,
+    mair_el1: u64,
+    tcr_el1: u64,
+}
 #[cfg(any(
     talos_boot_scenario = "rpi5_cross_core_ipi_delivery",
     talos_boot_scenario = "rpi5_remote_wakeup_request"
@@ -348,6 +425,68 @@ static LAST_INTID: AtomicU64 = AtomicU64::new(0);
 static UNEXPECTED_GIC_IRQ_COUNT: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_boot_scenario = "rpi5_timer_preemption")]
 static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+#[repr(align(4096))]
+struct El0TrapPage([u64; 512]);
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+impl El0TrapPage {
+    const fn zeroed() -> Self {
+        Self([0; 512])
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+#[repr(align(65536))]
+struct El0TrapStack([u8; EL0_TRAP_USER_STACK_LEN]);
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+impl El0TrapStack {
+    const fn zeroed() -> Self {
+        Self([0; EL0_TRAP_USER_STACK_LEN])
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+#[repr(align(4096))]
+struct El0TrapPayload([u8; EL0_TRAP_USER_TEXT_LEN]);
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+impl El0TrapPayload {
+    const fn svc_marker() -> Self {
+        let mut page = [0; EL0_TRAP_USER_TEXT_LEN];
+        page[0] = 0x01;
+        page[1] = 0x42;
+        page[2] = 0x0f;
+        page[3] = 0xd4;
+        page[4] = 0x00;
+        page[5] = 0x00;
+        page[6] = 0x00;
+        page[7] = 0x14;
+        Self(page)
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+static mut EL0_TRAP_ROOT_TABLE: El0TrapPage = El0TrapPage::zeroed();
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+static mut EL0_TRAP_L1_TABLE: El0TrapPage = El0TrapPage::zeroed();
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+static mut EL0_TRAP_LOW_L2_TABLE: El0TrapPage = El0TrapPage::zeroed();
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+static mut EL0_TRAP_LOW_L3_TABLE: El0TrapPage = El0TrapPage::zeroed();
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+static mut EL0_TRAP_MMIO_L2_TABLE: El0TrapPage = El0TrapPage::zeroed();
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+static mut EL0_TRAP_STACK: El0TrapStack = El0TrapStack::zeroed();
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::svc_marker();
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+unsafe extern "C" {
+    static __exception_vectors: u8;
+}
 
 #[cfg(any(
     talos_boot_scenario = "rpi5_psci_secondary_core_alive",
@@ -7346,6 +7485,563 @@ pub fn write_early_hex_u64(value: u64) {
     }
 
     wait_uart10_empty_early_phase();
+}
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+pub fn run_el0_trap_proof() -> ! {
+    crate::println!(
+        "rpi5-el0-trap-proof: start user-text=[{:#018x},{:#018x}) user-stack=[{:#018x},{:#018x}) user-guard=[{:#018x},{:#018x}) marker={:#x}",
+        EL0_TRAP_USER_TEXT_START,
+        EL0_TRAP_USER_TEXT_START + EL0_TRAP_USER_TEXT_LEN as u64,
+        EL0_TRAP_USER_STACK_START,
+        EL0_TRAP_USER_STACK_START + EL0_TRAP_USER_STACK_LEN as u64,
+        EL0_TRAP_USER_GUARD_START,
+        EL0_TRAP_USER_STACK_START,
+        EL0_TRAP_SVC_MARKER
+    );
+
+    let mappings = [
+        UserMapping::new(
+            EL0_TRAP_USER_TEXT_START,
+            EL0_TRAP_USER_TEXT_LEN,
+            UserMappingPermissions::USER_TEXT,
+        )
+        .expect("fixed EL0 text mapping is a valid user mapping"),
+        UserMapping::new(
+            EL0_TRAP_USER_STACK_START,
+            EL0_TRAP_USER_STACK_LEN,
+            UserMappingPermissions::USER_DATA,
+        )
+        .expect("fixed EL0 stack mapping is a valid user mapping"),
+    ];
+    let entry = validate_user_memory_access(
+        &mappings,
+        EL0_TRAP_USER_TEXT_START,
+        4,
+        UserAccessKind::Execute,
+        EL0_TRAP_USER_TEXT_LEN,
+    )
+    .expect("EL0 entry validates inside fixed UserText")
+    .start();
+    let user_sp = EL0_TRAP_USER_STACK_START + EL0_TRAP_USER_STACK_LEN as u64;
+    validate_user_memory_access(
+        &mappings,
+        user_sp - 16,
+        16,
+        UserAccessKind::Write,
+        EL0_TRAP_USER_STACK_LEN,
+    )
+    .expect("EL0 stack top validates inside fixed UserStack");
+    let guard_result = validate_user_memory_access(
+        &mappings,
+        EL0_TRAP_USER_GUARD_START,
+        8,
+        UserAccessKind::Read,
+        EL0_TRAP_USER_TEXT_LEN,
+    );
+    let guard_blocked = matches!(guard_result, Err(PosixError::Fault));
+
+    crate::println!(
+        "rpi5-el0-trap-proof: validated elr={:#018x} sp={:#018x} spsr={:#018x} guard-blocked={}",
+        entry,
+        user_sp,
+        EL0_TRAP_SPSR_EL0T_DAIF_MASKED,
+        guard_blocked
+    );
+    if !guard_blocked {
+        crate::println!(
+            "rpi5-el0-trap-proof: final participants=0 expected=1 errors=1 classification=pi5-el0-trap-proof-guard-open"
+        );
+        crate::println!("rpi5-el0-trap-proof: FAIL");
+        crate::arch::aarch64::halt();
+    }
+
+    unsafe {
+        install_el0_trap_proof_tables();
+        prepare_el1_and_el0_translation();
+        write_el0_trap_proof_pre_eret_registers(entry, EL0_TRAP_SPSR_EL0T_DAIF_MASKED);
+        let pre_eret = read_el0_trap_proof_pre_eret_registers();
+        crate::println!(
+            "rpi5-el0-trap-proof: pre-eret hcr_el2={:#018x} sctlr_el1={:#018x} tcr_el1={:#018x} ttbr0_el1={:#018x} vbar_el1={:#018x} elr_el1={:#018x} spsr_el1={:#018x}",
+            pre_eret.hcr_el2,
+            pre_eret.sctlr_el1,
+            pre_eret.tcr_el1,
+            pre_eret.ttbr0_el1,
+            pre_eret.vbar_el1,
+            pre_eret.elr_el1,
+            pre_eret.spsr_el1
+        );
+        report_el0_trap_proof_translation_features();
+        wait_uart10_empty_early_phase();
+        aarch64::enter_el1_then_el0(
+            entry as usize,
+            user_sp as usize,
+            EL0_TRAP_SPSR_EL0T_DAIF_MASKED,
+            EL0_TRAP_SPSR_EL1H_DAIF_MASKED,
+        );
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+pub fn handle_el0_trap_proof_exception(
+    esr: u64,
+    elr: u64,
+    far: u64,
+    vector: ExceptionVector,
+    spsr: u64,
+    saved_frame: *const ExceptionFrame,
+) -> ! {
+    let marker = esr & 0xffff;
+    let reported_esr = esr & !(1 << 25);
+    let user_sp = unsafe { read_sp_el0() };
+    let frame_available = !saved_frame.is_null();
+    let ok = vector == ExceptionVector::LowerAarch64Sync
+        && reported_esr == EL0_TRAP_EXPECTED_ESR
+        && marker == EL0_TRAP_SVC_MARKER
+        && EL0_TRAP_USER_TEXT_START <= elr
+        && elr < EL0_TRAP_USER_TEXT_START + EL0_TRAP_USER_TEXT_LEN as u64
+        && EL0_TRAP_USER_STACK_START <= user_sp
+        && user_sp <= EL0_TRAP_USER_STACK_START + EL0_TRAP_USER_STACK_LEN as u64;
+
+    crate::println!(
+        "rpi5-el0-trap-proof: trap vector={} esr={:#018x} far={:#018x} elr={:#018x} sp={:#018x} spsr={:#018x} marker={:#x}",
+        vector.name(),
+        reported_esr,
+        far,
+        elr,
+        user_sp,
+        spsr,
+        marker
+    );
+    crate::println!("rpi5-el0-trap-proof: raw-esr={:#018x}", esr);
+    crate::println!(
+        "rpi5-el0-trap-proof: frame available={} x0={:#018x} x1={:#018x}",
+        frame_available,
+        unsafe { saved_frame.as_ref().map(|frame| frame.reg(0)).unwrap_or(0) },
+        unsafe { saved_frame.as_ref().map(|frame| frame.reg(1)).unwrap_or(0) }
+    );
+
+    if ok {
+        crate::println!(
+            "rpi5-el0-trap-proof: final participants=1 expected=1 errors=0 classification=pi5-el0-trap-proof-complete"
+        );
+        crate::println!("rpi5-el0-trap-proof: PASS");
+        wait_uart10_empty_early_phase();
+        crate::arch::aarch64::halt();
+    }
+
+    crate::println!(
+        "rpi5-el0-trap-proof: final participants=0 expected=1 errors=1 classification=pi5-el0-trap-proof-failed"
+    );
+    crate::println!("rpi5-el0-trap-proof: FAIL");
+    wait_uart10_empty_early_phase();
+    crate::arch::aarch64::halt()
+}
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+#[unsafe(no_mangle)]
+pub extern "C" fn talos_rpi5_el0_trap_proof_entered_el1() {
+    let current_el = aarch64::current_el();
+    let handoff = unsafe { read_el0_trap_proof_el1_handoff_registers() };
+    crate::println!(
+        "rpi5-el0-trap-proof: entered-el1 current_el={:#x} sctlr_el1={:#018x} tcr_el1={:#018x} ttbr0_el1={:#018x} vbar_el1={:#018x} elr_el1={:#018x} spsr_el1={:#018x} sp={:#018x}",
+        current_el,
+        handoff.sctlr_el1,
+        handoff.tcr_el1,
+        handoff.ttbr0_el1,
+        handoff.vbar_el1,
+        handoff.elr_el1,
+        handoff.spsr_el1,
+        handoff.sp
+    );
+    wait_uart10_empty_early_phase();
+}
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+unsafe fn install_el0_trap_proof_tables() {
+    const TABLE_DESC: u64 = 0b11;
+    const BLOCK_DESC: u64 = 0b01;
+    const PAGE_DESC: u64 = 0b11;
+    const ATTR_NORMAL: u64 = 0;
+    const ATTR_DEVICE: u64 = 1;
+    const ATTR_SHIFT: u64 = 2;
+    const AP_EL0_RW: u64 = 0b01 << 6;
+    const AP_EL0_RO: u64 = 0b11 << 6;
+    const AF: u64 = 1 << 10;
+    const SH_INNER: u64 = 0b11 << 8;
+    const PXN: u64 = 1 << 53;
+    const UXN: u64 = 1 << 54;
+    const ADDR_MASK_4K: u64 = 0x0000_ffff_ffff_f000;
+    const ADDR_MASK_2M: u64 = 0x0000_ffff_ffe0_0000;
+
+    let root = unsafe { core::ptr::addr_of_mut!(EL0_TRAP_ROOT_TABLE.0) };
+    let l1 = unsafe { core::ptr::addr_of_mut!(EL0_TRAP_L1_TABLE.0) };
+    let low_l2 = unsafe { core::ptr::addr_of_mut!(EL0_TRAP_LOW_L2_TABLE.0) };
+    let low_l3 = unsafe { core::ptr::addr_of_mut!(EL0_TRAP_LOW_L3_TABLE.0) };
+    let mmio_l2 = unsafe { core::ptr::addr_of_mut!(EL0_TRAP_MMIO_L2_TABLE.0) };
+    let payload_pa = core::ptr::addr_of!(EL0_TRAP_PAYLOAD.0) as u64;
+    let stack_pa = unsafe { core::ptr::addr_of!(EL0_TRAP_STACK.0) as u64 };
+
+    unsafe {
+        core::ptr::write_bytes(root.cast::<u8>(), 0, EL0_TRAP_TABLE_PAGE_SIZE);
+        core::ptr::write_bytes(l1.cast::<u8>(), 0, EL0_TRAP_TABLE_PAGE_SIZE);
+        core::ptr::write_bytes(low_l2.cast::<u8>(), 0, EL0_TRAP_TABLE_PAGE_SIZE);
+        core::ptr::write_bytes(low_l3.cast::<u8>(), 0, EL0_TRAP_TABLE_PAGE_SIZE);
+        core::ptr::write_bytes(mmio_l2.cast::<u8>(), 0, EL0_TRAP_TABLE_PAGE_SIZE);
+
+        (*root)[0] = (l1 as u64 & ADDR_MASK_4K) | TABLE_DESC;
+        (*l1)[0] = (low_l2 as u64 & ADDR_MASK_4K) | TABLE_DESC;
+        (*l1)[EL0_TRAP_L1_BCM2712_MMIO_INDEX] = (mmio_l2 as u64 & ADDR_MASK_4K) | TABLE_DESC;
+
+        (*low_l2)[0] = (low_l3 as u64 & ADDR_MASK_4K) | TABLE_DESC;
+        let mut index = 1usize;
+        while index < 512 {
+            let base = (index as u64) << 21;
+            (*low_l2)[index] =
+                (base & ADDR_MASK_2M) | (ATTR_NORMAL << ATTR_SHIFT) | SH_INNER | AF | BLOCK_DESC;
+            index += 1;
+        }
+
+        (*low_l3)[(EL0_TRAP_USER_TEXT_START as usize) >> 12] = (payload_pa & ADDR_MASK_4K)
+            | (ATTR_NORMAL << ATTR_SHIFT)
+            | AP_EL0_RO
+            | SH_INNER
+            | AF
+            | PAGE_DESC;
+
+        let mut page = 0usize;
+        while page < EL0_TRAP_USER_STACK_LEN / EL0_TRAP_TABLE_PAGE_SIZE {
+            let va = EL0_TRAP_USER_STACK_START as usize + page * EL0_TRAP_TABLE_PAGE_SIZE;
+            let pa = stack_pa + (page * EL0_TRAP_TABLE_PAGE_SIZE) as u64;
+            (*low_l3)[va >> 12] = (pa & ADDR_MASK_4K)
+                | (ATTR_NORMAL << ATTR_SHIFT)
+                | AP_EL0_RW
+                | SH_INNER
+                | AF
+                | UXN
+                | PAGE_DESC;
+            page += 1;
+        }
+
+        let mmio_start_index = ((EL0_TRAP_BCM2712_MMIO_START >> 21) & 0x1ff) as usize;
+        let mmio_end_index = bcm2712_mmio_l2_end_index();
+        let mut mmio_index = mmio_start_index;
+        while mmio_index < mmio_end_index {
+            let base =
+                EL0_TRAP_BCM2712_MMIO_START + ((mmio_index - mmio_start_index) as u64 * 0x20_0000);
+            (*mmio_l2)[mmio_index] =
+                (base & ADDR_MASK_2M) | (ATTR_DEVICE << ATTR_SHIFT) | AF | PXN | UXN | BLOCK_DESC;
+            mmio_index += 1;
+        }
+    }
+
+    clean_cache_range_to_poc(root as usize, EL0_TRAP_TABLE_PAGE_SIZE);
+    clean_cache_range_to_poc(l1 as usize, EL0_TRAP_TABLE_PAGE_SIZE);
+    clean_cache_range_to_poc(low_l2 as usize, EL0_TRAP_TABLE_PAGE_SIZE);
+    clean_cache_range_to_poc(low_l3 as usize, EL0_TRAP_TABLE_PAGE_SIZE);
+    clean_cache_range_to_poc(mmio_l2 as usize, EL0_TRAP_TABLE_PAGE_SIZE);
+    unsafe {
+        core::arch::asm!("dsb sy", "isb", options(nostack, preserves_flags));
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+unsafe fn prepare_el1_and_el0_translation() {
+    const MAIR_NORMAL_NC: u64 = 0x44;
+    const MAIR_DEVICE_NGNRE: u64 = 0x04;
+    const TCR_T0SZ_SHIFT: u64 = 0;
+    const TCR_IRGN0_SHIFT: u64 = 8;
+    const TCR_ORGN0_SHIFT: u64 = 10;
+    const TCR_SH0_SHIFT: u64 = 12;
+    const TCR_TG0_4K: u64 = 0b00 << 14;
+    const TCR_IPS_SHIFT: u64 = 32;
+    const TCR_CACHE_NC: u64 = 0b00;
+    const TCR_SH_INNER: u64 = 0b11;
+    const TCR_IPS_40BIT: u64 = 0b010;
+    const SCTLR_M: u64 = 1 << 0;
+    const SCTLR_C: u64 = 1 << 2;
+    const SCTLR_I: u64 = 1 << 12;
+    const SCTLR_WXN: u64 = 1 << 19;
+    const SCTLR_RES1: u64 = (1 << 11) | (1 << 20) | (1 << 22) | (1 << 28) | (1 << 29);
+    const HCR_RW: u64 = 1 << 31;
+
+    let mair = MAIR_NORMAL_NC | (MAIR_DEVICE_NGNRE << 8);
+    let tcr = ((64 - 48) << TCR_T0SZ_SHIFT)
+        | (TCR_CACHE_NC << TCR_IRGN0_SHIFT)
+        | (TCR_CACHE_NC << TCR_ORGN0_SHIFT)
+        | (TCR_SH_INNER << TCR_SH0_SHIFT)
+        | TCR_TG0_4K
+        | (TCR_IPS_40BIT << TCR_IPS_SHIFT);
+    let ttbr0 = unsafe { core::ptr::addr_of!(EL0_TRAP_ROOT_TABLE.0) as u64 };
+    let vbar = relocate_early_linked_addr(core::ptr::addr_of!(__exception_vectors) as usize) as u64;
+    let hcr: u64;
+    let mut sctlr: u64;
+
+    unsafe {
+        core::arch::asm!(
+            "mrs {hcr}, HCR_EL2",
+            hcr = out(reg) hcr,
+            options(nostack, preserves_flags)
+        );
+        let hcr = hcr | HCR_RW;
+        core::arch::asm!(
+            "msr HCR_EL2, {hcr}",
+            "isb",
+            hcr = in(reg) hcr,
+            options(nostack, preserves_flags)
+        );
+        core::arch::asm!(
+            "msr MAIR_EL1, {mair}",
+            "msr TCR_EL1, {tcr}",
+            "msr TTBR0_EL1, {ttbr0}",
+            "msr VBAR_EL1, {vbar}",
+            "isb",
+            "tlbi vmalle1",
+            "dsb sy",
+            "isb",
+            mair = in(reg) mair,
+            tcr = in(reg) tcr,
+            ttbr0 = in(reg) ttbr0,
+            vbar = in(reg) vbar,
+            options(nostack, preserves_flags)
+        );
+        core::arch::asm!(
+            "mrs {sctlr}, SCTLR_EL1",
+            sctlr = out(reg) sctlr,
+            options(nostack, preserves_flags)
+        );
+        sctlr = (sctlr | SCTLR_RES1) & !(SCTLR_M | SCTLR_C | SCTLR_I | SCTLR_WXN);
+        core::arch::asm!(
+            "msr SCTLR_EL1, {sctlr}",
+            "dsb sy",
+            "isb",
+            sctlr = in(reg) sctlr,
+            options(nostack, preserves_flags)
+        );
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+unsafe fn write_el0_trap_proof_pre_eret_registers(entry: u64, spsr: u64) {
+    unsafe {
+        core::arch::asm!(
+            "msr ELR_EL1, {entry}",
+            "msr SPSR_EL1, {spsr}",
+            "isb",
+            entry = in(reg) entry,
+            spsr = in(reg) spsr,
+            options(nostack, preserves_flags)
+        );
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+unsafe fn read_el0_trap_proof_pre_eret_registers() -> El0TrapPreEretRegisters {
+    let hcr_el2: u64;
+    let sctlr_el1: u64;
+    let tcr_el1: u64;
+    let ttbr0_el1: u64;
+    let vbar_el1: u64;
+    let elr_el1: u64;
+    let spsr_el1: u64;
+    unsafe {
+        core::arch::asm!(
+            "mrs {hcr_el2}, HCR_EL2",
+            "mrs {sctlr_el1}, SCTLR_EL1",
+            "mrs {tcr_el1}, TCR_EL1",
+            "mrs {ttbr0_el1}, TTBR0_EL1",
+            "mrs {vbar_el1}, VBAR_EL1",
+            "mrs {elr_el1}, ELR_EL1",
+            "mrs {spsr_el1}, SPSR_EL1",
+            hcr_el2 = out(reg) hcr_el2,
+            sctlr_el1 = out(reg) sctlr_el1,
+            tcr_el1 = out(reg) tcr_el1,
+            ttbr0_el1 = out(reg) ttbr0_el1,
+            vbar_el1 = out(reg) vbar_el1,
+            elr_el1 = out(reg) elr_el1,
+            spsr_el1 = out(reg) spsr_el1,
+            options(nomem, nostack, preserves_flags)
+        );
+    }
+    El0TrapPreEretRegisters {
+        hcr_el2,
+        sctlr_el1,
+        tcr_el1,
+        ttbr0_el1,
+        vbar_el1,
+        elr_el1,
+        spsr_el1,
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+unsafe fn read_el0_trap_proof_el1_handoff_registers() -> El0TrapEl1HandoffRegisters {
+    let sctlr_el1: u64;
+    let tcr_el1: u64;
+    let ttbr0_el1: u64;
+    let vbar_el1: u64;
+    let elr_el1: u64;
+    let spsr_el1: u64;
+    let sp: u64;
+    unsafe {
+        core::arch::asm!(
+            "mrs {sctlr_el1}, SCTLR_EL1",
+            "mrs {tcr_el1}, TCR_EL1",
+            "mrs {ttbr0_el1}, TTBR0_EL1",
+            "mrs {vbar_el1}, VBAR_EL1",
+            "mrs {elr_el1}, ELR_EL1",
+            "mrs {spsr_el1}, SPSR_EL1",
+            "mov {sp}, sp",
+            sctlr_el1 = out(reg) sctlr_el1,
+            tcr_el1 = out(reg) tcr_el1,
+            ttbr0_el1 = out(reg) ttbr0_el1,
+            vbar_el1 = out(reg) vbar_el1,
+            elr_el1 = out(reg) elr_el1,
+            spsr_el1 = out(reg) spsr_el1,
+            sp = out(reg) sp,
+            options(nomem, nostack, preserves_flags)
+        );
+    }
+    El0TrapEl1HandoffRegisters {
+        sctlr_el1,
+        tcr_el1,
+        ttbr0_el1,
+        vbar_el1,
+        elr_el1,
+        spsr_el1,
+        sp,
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+fn report_el0_trap_proof_translation_features() {
+    let report = unsafe { read_el0_trap_proof_translation_feature_report() };
+    let parange_code = report.id_aa64mmfr0_el1 & 0xf;
+    let parange_bits = aa64_parange_bits(parange_code);
+    let tgran4_code = (report.id_aa64mmfr0_el1 >> 28) & 0xf;
+    let tgran4_supported = tgran4_code != 0xf;
+    let va_bits = 64 - EL0_TRAP_TCR_T0SZ;
+    let ips_fits_parange = parange_bits >= 40;
+    let mmio_l2_start = (EL0_TRAP_BCM2712_MMIO_START >> 21) & 0x1ff;
+    let mmio_l2_end = bcm2712_mmio_l2_end_index() as u64;
+    let user_stack_first_page = EL0_TRAP_USER_STACK_START >> 12;
+    let user_stack_last_page =
+        (EL0_TRAP_USER_STACK_START + EL0_TRAP_USER_STACK_LEN as u64 - 1) >> 12;
+
+    crate::println!(
+        "rpi5-el0-trap-proof: translation-id id_aa64mmfr0_el1={:#018x} id_aa64mmfr1_el1={:#018x} id_aa64mmfr2_el1={:#018x} id_aa64pfr0_el1={:#018x}",
+        report.id_aa64mmfr0_el1,
+        report.id_aa64mmfr1_el1,
+        report.id_aa64mmfr2_el1,
+        report.id_aa64pfr0_el1
+    );
+    crate::println!(
+        "rpi5-el0-trap-proof: translation-shape mair_el1={:#018x} tcr_el1={:#018x} parange-code={:#x} parange-bits={} ips-code={:#x} ips-fits-parange={} tg0=4k tgran4-code={:#x} tgran4-supported={} t0sz={} va-bits={} irgn0=nc orgn0=nc sh0=inner",
+        report.mair_el1,
+        report.tcr_el1,
+        parange_code,
+        parange_bits,
+        EL0_TRAP_TCR_IPS_CODE_40BIT,
+        ips_fits_parange,
+        tgran4_code,
+        tgran4_supported,
+        EL0_TRAP_TCR_T0SZ,
+        va_bits
+    );
+    crate::println!(
+        "rpi5-el0-trap-proof: descriptor-shape root-l0=table l1-low=table low-l2[0]=user-l3 low-l2[1..511]=kernel-blocks user-text-page={:#x} user-stack-pages={:#x}..{:#x} mmio-l1={:#x} mmio-l2={:#x}..{:#x} normal-attr=0 device-attr=1 page-desc=4k block-desc=2m",
+        EL0_TRAP_USER_TEXT_START >> 12,
+        user_stack_first_page,
+        user_stack_last_page,
+        EL0_TRAP_L1_BCM2712_MMIO_INDEX,
+        mmio_l2_start,
+        mmio_l2_end - 1
+    );
+}
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+const fn bcm2712_mmio_l2_end_index() -> usize {
+    let end = ((EL0_TRAP_BCM2712_MMIO_END >> 21) & 0x1ff) as usize;
+    if end == 0 { 512 } else { end }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+unsafe fn read_el0_trap_proof_translation_feature_report() -> El0TrapTranslationFeatureReport {
+    let id_aa64mmfr0_el1: u64;
+    let id_aa64mmfr1_el1: u64;
+    let id_aa64mmfr2_el1: u64;
+    let id_aa64pfr0_el1: u64;
+    let mair_el1: u64;
+    let tcr_el1: u64;
+    unsafe {
+        core::arch::asm!(
+            "mrs {id_aa64mmfr0_el1}, ID_AA64MMFR0_EL1",
+            "mrs {id_aa64mmfr1_el1}, ID_AA64MMFR1_EL1",
+            "mrs {id_aa64mmfr2_el1}, ID_AA64MMFR2_EL1",
+            "mrs {id_aa64pfr0_el1}, ID_AA64PFR0_EL1",
+            "mrs {mair_el1}, MAIR_EL1",
+            "mrs {tcr_el1}, TCR_EL1",
+            id_aa64mmfr0_el1 = out(reg) id_aa64mmfr0_el1,
+            id_aa64mmfr1_el1 = out(reg) id_aa64mmfr1_el1,
+            id_aa64mmfr2_el1 = out(reg) id_aa64mmfr2_el1,
+            id_aa64pfr0_el1 = out(reg) id_aa64pfr0_el1,
+            mair_el1 = out(reg) mair_el1,
+            tcr_el1 = out(reg) tcr_el1,
+            options(nomem, nostack, preserves_flags)
+        );
+    }
+    El0TrapTranslationFeatureReport {
+        id_aa64mmfr0_el1,
+        id_aa64mmfr1_el1,
+        id_aa64mmfr2_el1,
+        id_aa64pfr0_el1,
+        mair_el1,
+        tcr_el1,
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+const fn aa64_parange_bits(code: u64) -> u64 {
+    match code {
+        0 => 32,
+        1 => 36,
+        2 => 40,
+        3 => 42,
+        4 => 44,
+        5 => 48,
+        6 => 52,
+        _ => 0,
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+unsafe fn read_sp_el0() -> u64 {
+    let value: u64;
+    unsafe {
+        core::arch::asm!(
+            "mrs {value}, SP_EL0",
+            value = out(reg) value,
+            options(nomem, nostack, preserves_flags)
+        );
+    }
+    value
+}
+
+#[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
+fn clean_cache_range_to_poc(start: usize, len: usize) {
+    const CACHE_LINE_SIZE: usize = 64;
+    let mut addr = start & !(CACHE_LINE_SIZE - 1);
+    let end = (start + len + CACHE_LINE_SIZE - 1) & !(CACHE_LINE_SIZE - 1);
+    while addr < end {
+        unsafe {
+            core::arch::asm!(
+                "dc cvac, {addr}",
+                addr = in(reg) addr,
+                options(nostack, preserves_flags)
+            );
+        }
+        addr += CACHE_LINE_SIZE;
+    }
 }
 
 #[cfg(talos_target_rpi5_bcm2712)]

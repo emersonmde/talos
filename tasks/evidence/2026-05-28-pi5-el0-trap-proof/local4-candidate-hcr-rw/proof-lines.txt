@@ -1,0 +1,2 @@
+tasks/evidence/2026-05-28-pi5-el0-trap-proof/local4-candidate-hcr-rw/serial-peek-after.txt:rpi5-el0-trap-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true
+tasks/evidence/2026-05-28-pi5-el0-trap-proof/local4-candidate-hcr-rw/serial-peek-after.txt:rpi5-el0-trap-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true

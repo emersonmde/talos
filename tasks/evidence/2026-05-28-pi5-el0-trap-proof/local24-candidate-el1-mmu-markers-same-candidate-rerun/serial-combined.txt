@@ -1,0 +1,223 @@
+
+  1.09 RPi: BOOTSYS release VERSION:2226a853 DATE: 2025/12/08 TIME: 19:29:54
+  1.09 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 1097033
+  1.10 AON_RESET: 00000003 PM_RSTS 00001000
+  1.11 POWER_OFF_ON_HALT: 0 WAIT_FOR_POWER_BUTTON 0 power-on-reset 1
+  1.12 RP1_BOOT chip ID: 0x20001927
+  1.12 PCIEx1: PWR 0 DET_WAKE 0
+  1.12 part 00000000 reset_info 00000000
+  1.12 PMIC reset-event 00000000 rtc 6a18be2f alarm 00000000 enabled 0
+  1.13 uSD voltage 3.3V
+  1.14 SDRAM_CONFIG: 14
+  1.14 Initialising SDRAM rank 2 total-size: 64 Gbit 4267 (0x14 0x14)
+  1.14 DDR 4267 1 0 64 152 BL:1
+
+ 21.52 PCI1 reset
+ 21.53 set_reboot_order 0
+ 21.53 set_reboot_arg1 0
+ 21.53 USB-OTG disconnect
+ 21.57 MESS:00:00:21.579321:0: BSC_A no ACK
+ 21.58 MESS:00:00:21.580556:0: BSC_A no ACK
+ 21.58 MESS:00:00:21.584481:0: BSC_A no ACK
+ 21.60 MESS:00:00:21.608410:0: BSC_B no ACK
+ 21.60 MESS:00:00:21.609636:0: BSC_B no ACK
+ 21.61 MESS:00:00:21.613572:0: BSC_B no ACK
+ 21.63 MESS:00:00:21.637343:0: Starting OS 21637 ms
+ 21.64 MESS:00:00:21.642953:0: 00000040: -> 00000480
+ 21.64 MESS:00:00:21.644807:0: 00000030: -> 00100080
+ 21.64 MESS:00:00:21.649519:0: 00000034: -> 00100080
+ 21.65 MESS:00:00:21.654232:0: 00000038: -> 00100080
+ 21.65 MESS:00:00:21.658945:0: 0000003c: -> 00100080
+
+NOTICE:  BL31: v2.6(release):v2.6-240-gfc45bc492
+NOTICE:  BL31: Built : 12:55:13, Dec  4 2024
+TALOS: rust_entry
+TALOS: boot info parsed
+TALOS: target init
+TALOS: exceptions ready
+TALOS: kernel_main
+
+talos: boot start
+talos: board raspberry-pi-5-bcm2712
+talos: version 0.1.0
+talos: console early-uart fmt
+talos: boot core 0
+talos: boot dtb 0x2efec600
+talos: boot target talos-rpi5-bcm2712
+talos: pointer delta 0x0
+talos: boot info: dtb=0x2efec600 core=0 el=2 target=talos-rpi5-bcm2712
+talos: services: uart=firmware-preserved timer=arm-generic irq=gic-v2 mmio_regions=7 dtb=0x2efec600
+talos: dtb header: magic=0xd00dfeed size=80254 version=17 last_comp=16 struct=72496 strings=7702
+talos: dtb chosen bootargs: reboot=w coherent_pool=1M 8250.nr_uarts=1 pci=pcie_bus_safe cgroup_disable=memory numa_policy=interleave nvme.max_host_mem_size_mb=32 bcm2708_fb.fbwidth=640 bcm2708_fb.fbheight=480 bcm2708_fb.fbdepth=16 bcm2708_fb.fbswap=1 numa=fake=8 system_heap.max_order=0 iommu_dma_numa_policy=interleave smsc95xx.macaddr=88:A2:9E:AE:C8:7F vc_mem.mem_base=0x3fc00000 vc_mem.mem_size=0x40000000  console=ttyAMA10,115200 earlycon=pl011,mmio32,0x1f00030000 talos.boot=first-light
+talos: status early boot log ready
+TALOS: dtb reserved start
+talos: dtb reserved: count=0 shown=0 truncated=false
+TALOS: dtb reserved done
+TALOS: reserved-memory start
+TALOS: reserved-memory done
+talos: reserved-memory: addr_cells=2 size_cells=2 nodes=4 ranges=3 shown=3 truncated=false
+talos: reserved-memory[0]: addr=0x0 size=0x80000 no_map=true reusable=false
+talos: reserved-memory[1]: addr=0x3fd23160 size=0x3d no_map=true reusable=false
+talos: reserved-memory[2]: addr=0x0 size=0x0 no_map=true reusable=false
+TALOS: dtb memory scan start
+TALOS: dtb memory scan done
+talos: memory layout: kernel=0x200000..0x386000 heap=0x245010..0x345010 stack=0x345010..0x385010
+talos: memory layout: dtb=0x2efec600..0x2effff7e size=0x1397e
+talos: memory usable: bank=0 start=0x2f000000 end=0x3fc00000 size=0x10c00000 align=0x1000 policy=low-tail
+talos: page frames seed: start=0x2f000000 end=0x3fc00000 pages=0x10c00 page_size=0x1000 source=memory-usable
+talos: bootstrap reserve: start=0x2f000000 end=0x2f010000 pages=0x10 page_size=0x1000 reason=bootstrap-page-tables
+talos: translation tables: start=0x2f000000 end=0x2f004000 pages=0x4 page_size=0x1000 kind=layout-only
+talos: translation table slots: root=0x2f000000 l1=0x2f001000 l2_low=0x2f002000 l2_mmio=0x2f003000
+talos: translation table population: root_entries=0x1 l1_entries=0x2 low_l2_blocks=0x200 mmio_l2_blocks=0x20 block_size=0x200000 kind=stage1-4k-no-enable
+talos: translation map policy: low=0x0..0x40000000 mmio=0x107c000000..0x1080000000 root_index=0x0 low_l1_index=0x0 mmio_l1_index=0x41 normal_attr=0x0 device_attr=0x1
+talos: translation control plan: el=0x2 mair=0x4ff tcr=0x53510 ttbr0=0x2f000000 sctlr_set=0x1 va_bits=0x30 pa_bits=0x30 kind=el2-stage1-4k-no-enable
+TALOS: mmu enable start
+TALOS: mmu enable done
+talos: translation enabled: el=0x2 sctlr=0x30c50831 ttbr0=0x2f000000 kind=el2-stage1-4k-enabled
+talos: instruction cache plan: el=0x2 sctlr_before=0x30c50831 sctlr_set=0x1000 kind=el2-stage1-icache-enabled
+TALOS: icache enable start
+TALOS: icache enable done
+talos: instruction cache enabled: el=0x2 sctlr=0x30c51831 kind=el2-stage1-icache-enabled
+talos: data cache plan: el=0x2 sctlr_before=0x30c51831 sctlr_set=0x4 kind=el2-stage1-dcache-enabled
+TALOS: dcache enable start
+TALOS: dcache enable done
+talos: data cache enabled: el=0x2 sctlr=0x30c51835 kind=el2-stage1-dcache-enabled
+talos: bootstrap allocator plan: start=0x2f010000 end=0x3fc00000 bytes=0x10bf0000 pages=0x10bf0 page_size=0x1000 kind=bump-no-free-low-tail
+talos: bootstrap allocator init: start=0x2f010000 next=0x2f010000 end=0x3fc00000 policy=no-free
+talos: string smoke: ptr=0x2f010000 len=5 cap=8 sum=0x203 next=0x2f010008 used=0x8 rem=0x10befff8 ex=true stable=true ok=true
+talos: translation tables: start=0x2f000000 end=0x2f004000 pages=0x4 page_size=0x1000 kind=layout-only phase=post-allocator
+talos: translation table slots: root=0x2f000000 l1=0x2f001000 l2_low=0x2f002000 l2_mmio=0x2f003000 phase=post-allocator
+talos: translation table population: root_entries=0x1 l1_entries=0x2 low_l2_blocks=0x200 mmio_l2_blocks=0x20 block_size=0x200000 kind=stage1-4k-no-enable phase=post-allocator
+talos: memory usable: bank=0 start=0x2f000000 end=0x3fc00000 size=0x10c00000 align=0x1000 policy=low-tail
+talos: page frames seed: start=0x2f000000 end=0x3fc00000 pages=0x10c00 page_size=0x1000 source=memory-usable phase=post-allocator
+talos: bootstrap reserve: start=0x2f000000 end=0x2f010000 pages=0x10 page_size=0x1000 reason=bootstrap-page-tables
+talos: page frames remaining: start=0x2f010000 end=0x3fc00000 pages=0x10bf0 page_size=0x1000 source=bootstrap-reserve
+talos: dtb memory: address_cells=2 size_cells=2 count=3 shown=3 truncated=false
+talos: dtb memory[0]: addr=0x0 size=0x3fc00000
+talos: dtb memory[1]: addr=0x40000000 size=0xc0000000
+talos: dtb memory[2]: addr=0x100000000 size=0x100000000
+rpi5-el0-trap-proof: start user-text=[0x0000000000100000,0x0000000000101000) user-stack=[0x00000000001f0000,0x0000000000200000) user-guard=[0x00000000001e0000,0x00000000001f0000) marker=0x7a10
+rpi5-el0-trap-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true
+rpi5-el0-trap-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0
+rpi5-el0-trap-proof: entered-el1-asm
+rpi5-el0-trap-proof: entered-el1 current_el=0x1 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000500003510 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0 sp=0x0000000000384710
+
+
+
+
+
+
+
+
+
+
+  1.82 RP1 FW: load 0
+  1.83 RP1_BOOT chip ID: 0x20001927
+
+
+
+
+
+
+
+
+
+
+  2.98 RP1 FW: load 1
+
+  3.40 OTP boardrev d04171 bootrom a a
+  3.40 Customer key hash 0000000000000000000000000000000000000000000000000000000000000000
+  3.41 VC-JTAG unlocked
+  3.43 RP1_BOOT chip ID: 0x20001927
+
+
+  4.07 PCI2 init
+  4.07 PCI2 reset
+  4.11 PCIe scan 00001de4:00000001
+  4.11 RP1_CHIP_INFO 20001927
+
+  4.12 RPi: BOOTLOADER release VERSION:2226a853 DATE: 2025/12/08 TIME: 19:29:54
+  4.12 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 4129158
+  4.16 usb_pd_init status 0
+  4.23 XHCI-STOP
+  4.23 xHC0 ver: 272 HCS: 03000440 140000f1 07ff000a HCC: 0240fe6d
+  4.23 USBSTS 1
+  4.23 xHC0 ver: 272 HCS: 03000440 140000f1 07ff000a HCC: 0240fe6d
+  4.24 xHC0 ports 3 slots 64 intrs 4
+  4.25 XHCI-STOP
+  4.25 xHC1 ver: 272 HCS: 03000440 140000f1 07ff000a HCC: 0240fe6d
+  4.25 USBSTS 1
+  4.26 xHC1 ver: 272 HCS: 03000440 140000f1 07ff000a HCC: 0240fe6d
+  4.26 xHC1 ports 3 slots 64 intrs 4
+  4.31 SD_OC: 0
+  4.14 Boot mode: NETWORK (02) order f1
+
+  9.13 NETWORK: 88:a2:9e:ae:c8:7f wait for link TFTP: 0.0.0.0
+
+ 11.93 LINK STATUS: speed: 1000 full duplex
+ 11.40 Link ready
+ 11.99 RX: 0 IP: 0 IPV4: 0 MAC: 0 UDP: 0 UDP RECV: 0 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+
+
+ 19.97 DHCP src: 60:22:32:71:62:87 10.42.1.1
+ 19.99 YI_ADDR 10.42.1.4
+ 20.01 SI_ADDR 10.42.1.3
+ 20.00 OPTIONS:-
+	op: 53 len:   1 DHCP recv OFFER (2) expect OFFER 20.00 
+	op: 54 len:   4 10.42.1.1 20.01 
+	op: 51 len:   4  20.01 
+	op: 67 len:  11  20.01 
+	op: 58 len:   4  20.01 
+	op: 59 len:   4  20.02 
+	op:  1 len:   4 255.255.255.0 20.02 
+	op: 66 len:  10 10.42.1.3 20.28 [66]: 10.42.1.3
+ 20.03 
+	op:  3 len:   4 10.42.1.1 20.03 
+ 20.34 NET 10.42.1.4 255.255.255.0 gw 0.0.0.0 tftp 10.42.1.3
+ 20.39 DHCP src: 60:22:32:71:62:87 10.42.1.1
+ 20.43 YI_ADDR 10.42.1.4
+ 20.45 SI_ADDR 10.42.1.3
+ 20.04 OPTIONS:-
+	op: 53 len:   1 DHCP recv ACK (5) expect ACK 20.05 
+	op: 54 len:   4 10.42.1.1 20.05 
+	op: 51 len:   4  20.05 
+	op: 58 len:   4  20.06 
+	op: 59 len:   4  20.06 
+	op:  1 len:   4 255.255.255.0 20.06 
+	op: 15 len:  12  20.06 
+	op: 12 len:   5  20.07 
+	op: 28 len:   4 10.42.1.255 20.07 
+	op: 66 len:  10 10.42.1.3 20.77 [66]: 10.42.1.3
+ 20.07 
+	op:  6 len:   4 10.42.1.1 20.08 
+	op:  3 len:   4 10.42.1.1 20.08 
+ 20.86 ARP 10.42.1.3 84:a9:38:6a:77:63
+ 20.89 NET 10.42.1.4 255.255.255.0 gw 0.0.0.0 tftp 10.42.1.3
+ 20.09 RX: 21 IP: 0 IPV4: 5 MAC: 5 UDP: 5 UDP RECV: 2 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.10 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740/config.txt
+
+ 20.10 RX: 21 IP: 0 IPV4: 5 MAC: 5 UDP: 5 UDP RECV: 2 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.11 RX: 22 IP: 0 IPV4: 6 MAC: 6 UDP: 6 UDP RECV: 3 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.12 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740/config.txt
+
+ 20.12 RX: 22 IP: 0 IPV4: 6 MAC: 6 UDP: 6 UDP RECV: 3 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.13 TFTP: complete 118
+ 20.13 RX: 24 IP: 0 IPV4: 8 MAC: 8 UDP: 8 UDP RECV: 5 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.94 Read da591740/config.txt bytes      118 hnd 0x0
+ 20.19 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740/pieeprom.sig
+
+ 20.20 RX: 25 IP: 0 IPV4: 8 MAC: 8 UDP: 8 UDP RECV: 5 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.10 TFTP 1: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4 
+ 20.21 RX: 26 IP: 0 IPV4: 9 MAC: 9 UDP: 9 UDP RECV: 6 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.22 Read da591740/pieeprom.upd failed
+ 20.28 usb_max_current_enable default 0 max-current 3000
+ 20.33 Selecting USB low current limit
+ 20.23 MESS:00:00:20.239215:0: *** Restart logging
+ 20.24 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740//config.txt
+
+ 20.24 RX: 26 IP: 0 IPV4: 9 MAC: 9 UDP: 9 UDP RECV: 6 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.25 TFTP: complete 118
+ 20.25 RX: 28 IP: 0 IPV4: 11 MAC: 11 UDP: 11 UDP RECV: 8 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.65 Read da591740//config.txt bytes      118 hnd 0x0
+ 20.27 da591740//config.txt 0x3cf70000 8e2972a9f5c17b887d556a4e1048551e46ffe239751a9ad92f64f9222eae2ad8
+

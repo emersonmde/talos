@@ -1,0 +1,17 @@
+   Compiling talos v0.1.0 (/opt/strider/openclaw/current/workspace/projects/talos)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.62s
+
+Talos 0.1.0 booting on talos-aarch64-virt
+boot-info: dtb_pa=0x0000000048000000 core=0 el=2 target=talos-aarch64-virt
+target-services: uart=pl011 timer=arm-generic irq=gic-v2 dtb=Some(
+    0x0000000048000000,
+)
+mmio-regions: 3
+qemu-el0-trap-smoke: start user-text=[0x0000000000100000,0x0000000000101000) user-stack=[0x00000000001f0000,0x0000000000200000) user-guard=[0x00000000001e0000,0x00000000001f0000) marker=0x7a10
+qemu-el0-trap-smoke: validated elr=0x0000000000100000 sp=0x0000000000200000 spsr=0x00000000000003c0 guard-blocked=true
+qemu-el0-trap-smoke: translation-ready
+qemu-el0-trap-smoke: trap vector=lower-aarch64-sync esr=0x0000000054007a10 far=0x0000000000000000 elr=0x0000000000100004 sp=0x0000000000200000 spsr=0x00000000000003c0 marker=0x7a10
+qemu-el0-trap-smoke: raw-esr=0x0000000056007a10
+qemu-el0-trap-smoke: frame available=true x0=0x0000000000100000 x1=0x0000000000200000
+qemu-el0-trap-smoke: final participants=1 expected=1 errors=0 classification=qemu-el0-trap-smoke-complete
+qemu-el0-trap-smoke: PASS

@@ -10,6 +10,7 @@ struct BootScenario {
 
 const QEMU_SMP_ASM: &str = "TALOS_QEMU_SMP_BOOT_SCENARIO";
 const RPI5_SMP_ASM: &str = "TALOS_RPI5_SMP_BOOT_SCENARIO";
+const RPI5_EL0_TRAP_PROOF_ASM: &str = "TALOS_RPI5_EL0_TRAP_PROOF_SCENARIO";
 
 const BOOT_SCENARIOS: &[BootScenario] = &[
     BootScenario {
@@ -91,6 +92,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         value: "rpi5_production_timer_preemption_proof",
         implied_values: &[],
         asm_defines: &[RPI5_SMP_ASM],
+    },
+    BootScenario {
+        value: "rpi5_el0_trap_proof",
+        implied_values: &[],
+        asm_defines: &[RPI5_EL0_TRAP_PROOF_ASM],
     },
     BootScenario {
         value: "rpi5_secondary_scheduler_service_loop",
