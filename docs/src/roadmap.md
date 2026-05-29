@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 descriptor syscall source-inventory
+Talos is at the Phase 7.3 descriptor syscall contract
 frontier, after accepting the Phase 6.3 production scheduler runtime closeout,
 the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -195,6 +195,15 @@ by runtime-console0, while keeping stdin/read, close, dup, process loading,
 VFS/filesystem, shell, networking, SSH, live process-owned address spaces,
 blocking/readiness, signals, restart semantics, RP1/PCIe, UART interrupt
 ownership, DMA/cache-driver policy, and stable POSIX descriptor claims blocked.
+The accepted descriptor syscall contract defines the first stable
+descriptor-backed syscall slice as talos_write with x8 = 1, fd/user-pointer/
+length arguments in x0/x1/x2, reserved zero x3 through x5, copy_from_user
+validation, descriptor-table lookup and write-access checks, runtime-console0
+as the only backing object, and exact byte-count or negative-errno returns. It
+keeps stdin/read, close, dup, process loading, VFS/filesystem, shell,
+networking, SSH, live process-owned address spaces, blocking/readiness,
+signals, restart semantics, RP1/PCIe, UART interrupt ownership,
+DMA/cache-driver policy, and full POSIX descriptor claims blocked.
 
 
 The recently accepted Phase 6.3 scheduler frontier includes

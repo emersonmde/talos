@@ -4831,3 +4831,37 @@ ADR template:
   blocking/readiness, signals, restart semantics, RP1/PCIe, UART interrupt
   ownership, DMA/cache-driver policy, and stable POSIX descriptor claims remain
   blocked.
+
+## 2026-05-29 - Phase 7 Descriptor Syscall Contract Accepted
+
+- Status: accepted as the documentation-only Phase 7.3 descriptor syscall
+  contract. No Rust behavior, assembly behavior, QEMU run, Pi 5 hardware run,
+  boot archive publication, hardware-lock acquisition, process loading,
+  VFS/filesystem behavior, shell behavior, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The accepted descriptor syscall source inventory recommended a
+  bounded stdout/stderr write contract before any descriptor syscall
+  implementation. The contract needed to fix syscall number, register
+  arguments, descriptor-table behavior, user-copy rules, runtime-console0
+  backing, return/error mapping, proof-only quarantine, and deferred surfaces.
+- Decision: Accept phase7-descriptor-syscall-contract-20260529. The first
+  descriptor syscall is talos_write with x8 = 1, descriptor/user-pointer/
+  length arguments in x0/x1/x2, reserved zero x3 through x5, fd 1 and fd 2 as
+  the only accepted inherited stdio-output descriptors, copy_from_user() as
+  the complete pre-side-effect user-buffer gate, and runtime-console0 as the
+  only contracted backing object.
+- Evidence level: static documentation/source inspection, documentation build,
+  and whitespace inspection. No QEMU/substitute or Pi 5 hardware evidence was
+  produced by this contract.
+- Validation: git status --short before edits showed a pre-existing
+  docs/src/roadmap.md working-tree edit that was preserved; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next bounded task should plan or implement a QEMU
+  descriptor-write smoke/core slice proving fd 1/fd 2 success, invalid fd or
+  unsupported object failure without console side effects, -EFAULT user
+  pointer failure, reserved-register -EINVAL, and unchanged talos_nop,
+  unknown-syscall, and proof-only talos_copy_probe quarantine behavior.
+  stdin/read, close, dup, process loading, VFS/filesystem, shell, networking,
+  SSH, live process-owned address spaces, blocking/readiness, signals, restart
+  semantics, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and
+  full POSIX descriptor claims remain blocked.
