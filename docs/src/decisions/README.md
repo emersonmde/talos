@@ -42,6 +42,37 @@ ADR template:
   ownership, and DMA/cache-driver policy remain blocked until explicit later
   tasks.
 
+## 2026-05-29 - Phase 7.3 Copy-In/Copy-Out Helper Core And Closeout Accepted
+
+- Status: accepted as the target-independent Phase 7.3 copy-in/copy-out helper
+  core plus closeout checkpoint. No pointer-taking syscall, descriptor I/O,
+  runtime console or TTY integration, process loading, VFS/filesystem, shell,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, DMA/cache-driver
+  policy, QEMU scenario, Pi 5 hardware run, boot archive publication, or
+  hardware-lock use was added.
+- Context: The accepted helper contract required whole-range validation before
+  side effects, direction-specific read/write access checks, deterministic
+  EFAULT mapping for user-boundary failures, exact-length success, and
+  all-or-nothing behavior before any lower-EL pointer-taking syscall uses the
+  helper through production trap routing.
+- Decision: Accept phase7-copyin-copyout-helper-core-20260529 at commit
+  b675a6f10fbb3e91781f98bd0ae63290ee4e967c and accept the closeout
+  checkpoint. The helper API is copy_from_user and copy_to_user in
+  src/posix.rs; it stays below syscall routing and descriptor I/O, and the
+  closeout recommends phase7-pointer-taking-syscall-source-inventory-20260529
+  as the next bounded task.
+- Evidence level: static inspection, fmt/lint/typecheck, and target-independent
+  no_std unit tests. No QEMU or Pi 5 rerun was required because the accepted
+  helper core is pure target-independent POSIX/user-memory logic.
+- Validation: helper core passed cargo fmt --all -- --check,
+  cargo -Zjson-target-spec test with 205 no_std tests, and git diff --check;
+  closeout passed git diff --check and mdbook build.
+- Consequences: Talos has an accepted target-independent byte-copy helper
+  boundary for later pointer-taking syscall work. Lower-EL pointer syscall
+  routing, descriptor read/write/close/dup, process loading, filesystem, shell,
+  networking, and SSH remain blocked until later explicit tasks accept their
+  contracts and gates.
+
 ## 2026-05-29 - Phase 7.3 Pi 5 Syscall Proof Closeout Accepted
 
 - Status: accepted as the documentation closeout for the first serialized

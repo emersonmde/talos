@@ -82,6 +82,7 @@
 - [Phase 7 Pi 5 Syscall Proof Plan](project/phase7-pi5-syscall-proof-plan.md)
 - [Phase 7 Pi 5 Syscall Proof Closeout Checkpoint](project/phase7-pi5-syscall-proof-closeout-checkpoint.md)
 - [Phase 7 Copy-In/Copy-Out Helper Contract](project/phase7-copyin-copyout-helper-contract.md)
+- [Phase 7 Copy-In/Copy-Out Helper Closeout Checkpoint](project/phase7-copyin-copyout-helper-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 copy-in/copy-out helper implementation planning
+Talos is at the Phase 7.3 copy-in/copy-out helper closeout
 frontier, after accepting the Phase 6.3 production scheduler runtime closeout,
 the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -96,6 +96,20 @@ partial-copy policy, recoverable versus process-fatal fault boundaries, and
 unit-testable cases. It names phase7-copyin-copyout-helper-core-20260529 as
 the next bounded implementation task and requires supervisor planning before
 promotion because the current durable queue names only the contract task.
+The accepted copy-in/copy-out helper core adds target-independent
+copy_from_user and copy_to_user helpers in src/posix.rs. The helpers validate
+the complete user range before byte movement, use UserAccessKind::Read for
+copy-in and UserAccessKind::Write for copy-out, return the exact requested
+length on success, map user-boundary failures to EFAULT, reserve EINVAL for
+malformed kernel-side helper use, and preserve all-or-nothing behavior. Unit
+tests cover success, zero-length, null guard, kernel range, wraparound, copy
+limit, unmapped gaps, no-access mappings, permission mismatches,
+backing-storage gaps, short kernel buffers, and destination preservation. The
+copy-in/copy-out helper closeout reconciles this target-independent byte-copy
+frontier and recommends phase7-pointer-taking-syscall-source-inventory-20260529
+as the next bounded planning task. Pointer-taking syscalls, descriptor I/O,
+process loading, filesystem, shell, networking, and SSH remain blocked until
+later explicit tasks accept their contracts and gates.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
