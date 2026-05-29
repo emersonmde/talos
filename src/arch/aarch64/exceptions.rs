@@ -499,6 +499,18 @@ pub extern "C" fn rust_exception_handler(
 ) -> u64 {
     let vector = ExceptionVector::from(vector);
 
+    #[cfg(talos_boot_scenario = "qemu_process_descriptor_stdio_smoke")]
+    if crate::target::qemu_virt::handle_process_descriptor_stdio_smoke_exception(
+        esr,
+        elr,
+        far,
+        vector,
+        spsr,
+        saved_frame,
+    ) {
+        return 1;
+    }
+
     #[cfg(talos_boot_scenario = "qemu_descriptor_write_smoke")]
     if crate::target::qemu_virt::handle_descriptor_write_smoke_exception(
         esr,

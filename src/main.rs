@@ -310,7 +310,15 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu_virt::run_pointer_copy_smoke();
             }
 
-            #[cfg(talos_boot_scenario = "qemu_descriptor_write_smoke")]
+            #[cfg(talos_boot_scenario = "qemu_process_descriptor_stdio_smoke")]
+            {
+                target::qemu_virt::run_process_descriptor_stdio_smoke();
+            }
+
+            #[cfg(all(
+                talos_boot_scenario = "qemu_descriptor_write_smoke",
+                not(talos_boot_scenario = "qemu_process_descriptor_stdio_smoke")
+            ))]
             {
                 target::qemu_virt::run_descriptor_write_smoke();
             }

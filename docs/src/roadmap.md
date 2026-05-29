@@ -328,6 +328,18 @@ classification/PASS lines, and retained QEMU log path. It adds no
 implementation, QEMU run, Pi 5 hardware action, or hardware-lock work and
 keeps close/dup/read, process loading, VFS/filesystem, shell, networking, SSH,
 physical proof, and full POSIX descriptor claims blocked.
+The accepted QEMU process descriptor stdio smoke core adds the first
+lower-AArch64 QEMU/substitute evidence for process-owned descriptor-table
+lookup. The qemu_process_descriptor_stdio_smoke scenario creates
+ProcessOwnerId 1, installs inherited stdio in ProcessDescriptorStore, resolves
+the current owner through the accepted lookup API, routes talos_write fd 1/fd
+2 to runtime-console0 through that table, and retains fd/error, scalar
+syscall, copy-probe quarantine, diagnostic-marker quarantine, and PASS
+evidence at
+tasks/evidence/2026-05-29-qemu-process-descriptor-stdio-smoke-core/qemu-process-descriptor-stdio-smoke.log.
+It remains QEMU/substitute evidence only; Pi 5 physical proof, stdin/read,
+close/dup/read, process loading, VFS/filesystem, shell, networking, SSH, and
+full POSIX descriptor claims remain blocked.
 
 Near-term direction after the accepted Phase 7.3 syscall ABI/dispatch closeout:
 
@@ -1711,6 +1723,15 @@ Accepted progress:
   earlier proof-owned table, while preserving fd/error regressions,
   copy-probe quarantine, diagnostic-marker quarantine, and blocked physical
   claims.
+- Phase 7 QEMU process descriptor stdio smoke core is accepted. It proves in
+  QEMU/substitute output that lower-AArch64 talos_write fd 1/fd 2 resolves the
+  current ProcessOwnerId through ProcessDescriptorStore and writes through the
+  process-owned inherited stdio table to runtime-console0. It preserves fd 0
+  and fd 99 -EBADF, guard-range -EFAULT, reserved-register -EINVAL, talos_nop,
+  unknown-syscall -ENOSYS, copy-probe quarantine, diagnostic-marker
+  quarantine, and exact PASS/classification evidence. Pi 5 physical proof,
+  stdin/read, close/dup/read, process loading, VFS/filesystem, shell,
+  networking, SSH, and full POSIX descriptor claims remain blocked.
 
 Milestone 7.4: File Descriptor Table
 

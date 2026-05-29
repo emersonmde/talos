@@ -12,6 +12,44 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.4 QEMU Process Descriptor Stdio Smoke Core Accepted
+
+- Status: accepted as the Milestone 7.4 QEMU/substitute process-owned stdio
+  smoke core. No Pi 5 hardware run, archive publishing, hardware-lock
+  acquisition, stdin/read, close/dup/read syscall behavior, process loading,
+  VFS/filesystem behavior, shell behavior, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The accepted process descriptor table core and smoke plan required
+  lower-AArch64 evidence that talos_write fd 1/fd 2 resolves through a
+  ProcessOwnerId-backed ProcessDescriptorStore current-owner lookup rather
+  than the earlier proof-owned inherited stdio DescriptorTable.
+- Decision: Accept
+  phase7-qemu-process-descriptor-stdio-smoke-core-20260529. The new
+  qemu_process_descriptor_stdio_smoke scenario creates owner 1, installs an
+  inherited stdio table in ProcessDescriptorStore, resolves the current owner,
+  and routes talos_write fd 1/fd 2 through that process-owned table to
+  runtime-console0. The smoke also preserves fd 0/fd 99 -EBADF,
+  guard-range -EFAULT, reserved-register -EINVAL, talos_nop,
+  unknown-syscall -ENOSYS, x8=0x7001 copy-probe quarantine, diagnostic marker
+  quarantine, and exact classification/PASS observations.
+- Evidence level: QEMU/substitute serial boot/output, unit tests, formatting,
+  QEMU regression smokes, documentation build, and whitespace inspection. No
+  physical Pi 5 descriptor-table claim is accepted.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test passed with 222 no_std tests;
+  scripts/qemu-process-descriptor-stdio-smoke.sh passed with retained evidence
+  at tasks/evidence/2026-05-29-qemu-process-descriptor-stdio-smoke-core/qemu-process-descriptor-stdio-smoke.log;
+  scripts/qemu-descriptor-write-smoke.sh passed; scripts/qemu-syscall-smoke.sh
+  passed; scripts/qemu-pointer-copy-smoke.sh passed; git diff --check passed;
+  mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-process-descriptor-table-closeout-checkpoint-20260529, scoped to
+  reconciling the process-owned descriptor-table contract/core/QEMU evidence
+  and blocked surfaces. Pi 5 physical proof, stdin/read, close/dup/read
+  syscalls, process loading, VFS/filesystem, shell, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and full POSIX
+  descriptor claims remain blocked.
+
 ## 2026-05-29 - Phase 7.4 QEMU Process Descriptor Stdio Smoke Plan Accepted
 
 - Status: accepted as a documentation-only Milestone 7.4 QEMU/substitute
