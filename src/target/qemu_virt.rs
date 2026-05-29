@@ -94,7 +94,12 @@ use crate::smp_sync::{SpinLock, smp_full_barrier};
     talos_boot_scenario = "qemu_production_timer_preemption_smoke"
 ))]
 use crate::smp_sync::{SpinLock, smp_full_barrier};
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
+use crate::syscall::{self, SyscallNumber};
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 use crate::{
     arch::aarch64::exceptions::{ExceptionFrame, ExceptionVector},
     posix::{
@@ -184,23 +189,55 @@ const TIMER_PREEMPTION_TARGET_PROGRESS: u64 = 3;
 #[cfg(talos_boot_scenario = "qemu_timer_preemption")]
 const TIMER_PREEMPTION_TARGET_SWITCHES: u64 = 6;
 
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 const EL0_TRAP_USER_TEXT_START: u64 = 0x0000_0000_0010_0000;
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 const EL0_TRAP_USER_TEXT_LEN: usize = 0x1000;
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 const EL0_TRAP_USER_STACK_START: u64 = 0x0000_0000_001f_0000;
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 const EL0_TRAP_USER_STACK_LEN: usize = 0x1_0000;
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 const EL0_TRAP_USER_GUARD_START: u64 = 0x0000_0000_001e_0000;
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 const EL0_TRAP_SVC_MARKER: u64 = 0x7a10;
 #[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
 const EL0_TRAP_EXPECTED_ESR: u64 = 0x0000_0000_5400_7a10;
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
+const SYSCALL_SMOKE_EXPECTED_SVC_ESR: u64 = 0x0000_0000_5400_0000;
+#[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
+const SYSCALL_SMOKE_EXPECTED_MARKER_ESR: u64 = 0x0000_0000_5400_7a10;
+#[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
+const SYSCALL_SMOKE_UNKNOWN_NUMBER: u64 = 17;
+#[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
+const SYSCALL_SMOKE_EXPECTED_ENOSYS_X0: u64 = (syscall::ENOSYS as u64).wrapping_neg();
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 const EL0_TRAP_SPSR_EL0T_DAIF_MASKED: u64 = 0x3c0;
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 const EL0_TRAP_SPSR_EL1H_DAIF_MASKED: u64 = 0x3c5;
 
 const MMIO_REGIONS: &[MmioRegion] = &[
@@ -216,29 +253,44 @@ static UNEXPECTED_GIC_IRQ_COUNT: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_boot_scenario = "qemu_timer_preemption")]
 static TIMER_PREEMPTION_REQUESTS: AtomicU64 = AtomicU64::new(0);
 
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 #[repr(align(4096))]
 struct El0TrapPage([u64; 512]);
 
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 impl El0TrapPage {
     const fn zeroed() -> Self {
         Self([0; 512])
     }
 }
 
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 #[repr(align(65536))]
 struct El0TrapStack([u8; EL0_TRAP_USER_STACK_LEN]);
 
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 impl El0TrapStack {
     const fn zeroed() -> Self {
         Self([0; EL0_TRAP_USER_STACK_LEN])
     }
 }
 
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 #[repr(align(4096))]
 struct El0TrapPayload([u8; EL0_TRAP_USER_TEXT_LEN]);
 
@@ -258,18 +310,101 @@ impl El0TrapPayload {
     }
 }
 
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
+impl El0TrapPayload {
+    const fn syscall_smoke() -> Self {
+        let mut page = [0; EL0_TRAP_USER_TEXT_LEN];
+        page[0] = 0x00;
+        page[1] = 0x00;
+        page[2] = 0x80;
+        page[3] = 0xd2;
+        page[4] = 0x01;
+        page[5] = 0x00;
+        page[6] = 0x80;
+        page[7] = 0xd2;
+        page[8] = 0x02;
+        page[9] = 0x00;
+        page[10] = 0x80;
+        page[11] = 0xd2;
+        page[12] = 0x03;
+        page[13] = 0x00;
+        page[14] = 0x80;
+        page[15] = 0xd2;
+        page[16] = 0x04;
+        page[17] = 0x00;
+        page[18] = 0x80;
+        page[19] = 0xd2;
+        page[20] = 0x05;
+        page[21] = 0x00;
+        page[22] = 0x80;
+        page[23] = 0xd2;
+        page[24] = 0x08;
+        page[25] = 0x00;
+        page[26] = 0x80;
+        page[27] = 0xd2;
+        page[28] = 0x01;
+        page[29] = 0x00;
+        page[30] = 0x00;
+        page[31] = 0xd4;
+        page[32] = 0x28;
+        page[33] = 0x02;
+        page[34] = 0x80;
+        page[35] = 0xd2;
+        page[36] = 0x01;
+        page[37] = 0x00;
+        page[38] = 0x00;
+        page[39] = 0xd4;
+        page[40] = 0x01;
+        page[41] = 0x42;
+        page[42] = 0x0f;
+        page[43] = 0xd4;
+        page[44] = 0x00;
+        page[45] = 0x00;
+        page[46] = 0x00;
+        page[47] = 0x14;
+        Self(page)
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 static mut EL0_TRAP_ROOT_TABLE: El0TrapPage = El0TrapPage::zeroed();
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 static mut EL0_TRAP_L1_TABLE: El0TrapPage = El0TrapPage::zeroed();
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 static mut EL0_TRAP_LOW_L2_TABLE: El0TrapPage = El0TrapPage::zeroed();
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 static mut EL0_TRAP_LOW_L3_TABLE: El0TrapPage = El0TrapPage::zeroed();
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 static mut EL0_TRAP_STACK: El0TrapStack = El0TrapStack::zeroed();
 #[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
 static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::svc_marker();
+#[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
+static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::syscall_smoke();
+#[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
+static SYSCALL_SMOKE_TALOS_NOP_DISPATCHED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
+static SYSCALL_SMOKE_TALOS_NOP_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
+static SYSCALL_SMOKE_UNKNOWN_DISPATCHED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
+static SYSCALL_SMOKE_UNKNOWN_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
+static SYSCALL_SMOKE_ERRORS: AtomicU64 = AtomicU64::new(0);
 
 #[cfg(any(
     talos_boot_scenario = "qemu_secondary_core_workload",
@@ -3148,6 +3283,222 @@ pub fn run_el0_trap_smoke() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
+pub fn run_syscall_smoke() -> ! {
+    crate::println!(
+        "qemu-syscall-smoke: start user-text=[{:#018x},{:#018x}) user-stack=[{:#018x},{:#018x}) user-guard=[{:#018x},{:#018x}) stable-svc={:#06x} diagnostic-marker={:#06x}",
+        EL0_TRAP_USER_TEXT_START,
+        EL0_TRAP_USER_TEXT_START + EL0_TRAP_USER_TEXT_LEN as u64,
+        EL0_TRAP_USER_STACK_START,
+        EL0_TRAP_USER_STACK_START + EL0_TRAP_USER_STACK_LEN as u64,
+        EL0_TRAP_USER_GUARD_START,
+        EL0_TRAP_USER_STACK_START,
+        syscall::STABLE_SVC_IMMEDIATE,
+        syscall::DIAGNOSTIC_EL0_TRAP_SVC_IMMEDIATE
+    );
+
+    let mappings = [
+        UserMapping::new(
+            EL0_TRAP_USER_TEXT_START,
+            EL0_TRAP_USER_TEXT_LEN,
+            UserMappingPermissions::USER_TEXT,
+        )
+        .expect("fixed syscall smoke text mapping is a valid user mapping"),
+        UserMapping::new(
+            EL0_TRAP_USER_STACK_START,
+            EL0_TRAP_USER_STACK_LEN,
+            UserMappingPermissions::USER_DATA,
+        )
+        .expect("fixed syscall smoke stack mapping is a valid user mapping"),
+    ];
+    let entry = validate_user_memory_access(
+        &mappings,
+        EL0_TRAP_USER_TEXT_START,
+        4,
+        UserAccessKind::Execute,
+        EL0_TRAP_USER_TEXT_LEN,
+    )
+    .expect("syscall smoke entry validates inside fixed UserText")
+    .start();
+    let user_sp = EL0_TRAP_USER_STACK_START + EL0_TRAP_USER_STACK_LEN as u64;
+    validate_user_memory_access(
+        &mappings,
+        user_sp - 16,
+        16,
+        UserAccessKind::Write,
+        EL0_TRAP_USER_STACK_LEN,
+    )
+    .expect("syscall smoke stack top validates inside fixed UserStack");
+    let guard_result = validate_user_memory_access(
+        &mappings,
+        EL0_TRAP_USER_GUARD_START,
+        8,
+        UserAccessKind::Read,
+        EL0_TRAP_USER_TEXT_LEN,
+    );
+    let guard_blocked = matches!(guard_result, Err(PosixError::Fault));
+
+    crate::println!(
+        "qemu-syscall-smoke: validated elr={:#018x} sp={:#018x} spsr={:#018x} guard-blocked={}",
+        entry,
+        user_sp,
+        EL0_TRAP_SPSR_EL0T_DAIF_MASKED,
+        guard_blocked
+    );
+    if !guard_blocked {
+        crate::println!(
+            "qemu-syscall-smoke: final participants=0 expected=2 errors=1 classification=qemu-syscall-smoke-guard-open"
+        );
+        crate::target::qemu::exit_failure();
+    }
+
+    unsafe {
+        install_el0_trap_smoke_tables();
+        enable_el2_and_el0_translation();
+        enable_el1_and_el0_translation();
+        aarch64::enter_el1_then_el0(
+            entry as usize,
+            user_sp as usize,
+            EL0_TRAP_SPSR_EL0T_DAIF_MASKED,
+            EL0_TRAP_SPSR_EL1H_DAIF_MASKED,
+        );
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
+pub fn handle_syscall_smoke_exception(
+    esr: u64,
+    _elr: u64,
+    far: u64,
+    vector: ExceptionVector,
+    _spsr: u64,
+    saved_frame: *mut ExceptionFrame,
+) -> bool {
+    let marker = crate::arch::aarch64::exceptions::svc_immediate(esr);
+    let reported_esr = esr & !(1 << 25);
+    let Some(frame) = (unsafe { saved_frame.as_ref() }) else {
+        SYSCALL_SMOKE_ERRORS.fetch_add(1, Ordering::Relaxed);
+        return false;
+    };
+
+    if marker == syscall::DIAGNOSTIC_EL0_TRAP_SVC_IMMEDIATE {
+        let unknown_x0 = frame.reg(0);
+        let unknown_ok = unknown_x0 == SYSCALL_SMOKE_EXPECTED_ENOSYS_X0
+            && SYSCALL_SMOKE_UNKNOWN_DISPATCHED.load(Ordering::Relaxed) == 1;
+        SYSCALL_SMOKE_UNKNOWN_OBSERVED.store(u64::from(unknown_ok), Ordering::Relaxed);
+        if !unknown_ok {
+            SYSCALL_SMOKE_ERRORS.fetch_add(1, Ordering::Relaxed);
+        }
+        crate::println!(
+            "qemu-syscall-smoke: user-observed case=unknown x0={:#018x} ok={}",
+            unknown_x0,
+            unknown_ok
+        );
+        let stable = syscall::is_stable_syscall_svc_immediate(marker);
+        crate::println!(
+            "qemu-syscall-smoke: diagnostic-marker marker=0x7a10 stable-syscall={} dispatched=false",
+            stable
+        );
+        finish_syscall_smoke(reported_esr == SYSCALL_SMOKE_EXPECTED_MARKER_ESR && far == 0);
+    }
+
+    if reported_esr != SYSCALL_SMOKE_EXPECTED_SVC_ESR {
+        SYSCALL_SMOKE_ERRORS.fetch_add(1, Ordering::Relaxed);
+        return false;
+    }
+
+    let raw_number = frame.reg(8);
+    if raw_number == SYSCALL_SMOKE_UNKNOWN_NUMBER {
+        let talos_nop_x0 = frame.reg(0);
+        let talos_nop_ok =
+            talos_nop_x0 == 0 && SYSCALL_SMOKE_TALOS_NOP_DISPATCHED.load(Ordering::Relaxed) == 1;
+        SYSCALL_SMOKE_TALOS_NOP_OBSERVED.store(u64::from(talos_nop_ok), Ordering::Relaxed);
+        if !talos_nop_ok {
+            SYSCALL_SMOKE_ERRORS.fetch_add(1, Ordering::Relaxed);
+        }
+        crate::println!(
+            "qemu-syscall-smoke: user-observed case=talos_nop x0={:#018x} ok={}",
+            talos_nop_x0,
+            talos_nop_ok
+        );
+    }
+
+    let Some(routed) =
+        crate::arch::aarch64::exceptions::try_route_lower_aarch64_syscall(vector, esr, saved_frame)
+    else {
+        SYSCALL_SMOKE_ERRORS.fetch_add(1, Ordering::Relaxed);
+        return false;
+    };
+
+    match SyscallNumber::from_raw(routed.raw_number) {
+        SyscallNumber::TalosNop => {
+            let args = routed.arguments.values();
+            let args_ok = args == [0; syscall::MAX_SCALAR_ARGUMENTS];
+            if !args_ok || routed.return_x0 != 0 {
+                SYSCALL_SMOKE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            SYSCALL_SMOKE_TALOS_NOP_DISPATCHED.store(1, Ordering::Relaxed);
+            crate::println!(
+                "qemu-syscall-smoke: syscall case=talos_nop vector={} esr={:#018x} svc=0x0000 number={} args=[x0={:#018x} x1={:#018x} x2={:#018x} x3={:#018x} x4={:#018x} x5={:#018x}] return-x0={:#018x}",
+                vector.name(),
+                reported_esr,
+                routed.raw_number,
+                args[0],
+                args[1],
+                args[2],
+                args[3],
+                args[4],
+                args[5],
+                routed.return_x0
+            );
+        }
+        SyscallNumber::Unknown(_) => {
+            let return_ok = routed.return_x0 == SYSCALL_SMOKE_EXPECTED_ENOSYS_X0;
+            if routed.raw_number != SYSCALL_SMOKE_UNKNOWN_NUMBER || !return_ok {
+                SYSCALL_SMOKE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            SYSCALL_SMOKE_UNKNOWN_DISPATCHED.store(u64::from(return_ok), Ordering::Relaxed);
+            crate::println!(
+                "qemu-syscall-smoke: syscall case=unknown vector={} esr={:#018x} svc=0x0000 number={} return-x0={:#018x} expected=-ENOSYS",
+                vector.name(),
+                reported_esr,
+                routed.raw_number,
+                routed.return_x0
+            );
+        }
+    }
+
+    true
+}
+
+#[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
+fn finish_syscall_smoke(marker_ok: bool) -> ! {
+    if !marker_ok {
+        SYSCALL_SMOKE_ERRORS.fetch_add(1, Ordering::Relaxed);
+    }
+    let participants = SYSCALL_SMOKE_TALOS_NOP_OBSERVED.load(Ordering::Relaxed)
+        + SYSCALL_SMOKE_UNKNOWN_OBSERVED.load(Ordering::Relaxed);
+    let errors = SYSCALL_SMOKE_ERRORS.load(Ordering::Relaxed);
+    let complete = participants == 2 && errors == 0;
+    let classification = if complete {
+        "qemu-syscall-smoke-complete"
+    } else {
+        "qemu-syscall-smoke-failed"
+    };
+
+    crate::println!(
+        "qemu-syscall-smoke: final participants={} expected=2 errors={} classification={}",
+        participants,
+        errors,
+        classification
+    );
+    if complete {
+        crate::println!("qemu-syscall-smoke: PASS");
+        crate::target::qemu::exit_success();
+    }
+    crate::target::qemu::exit_failure();
+}
+
 #[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
 pub fn handle_el0_trap_smoke_exception(
     esr: u64,
@@ -3201,7 +3552,10 @@ pub fn handle_el0_trap_smoke_exception(
     crate::target::qemu::exit_failure();
 }
 
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 unsafe fn install_el0_trap_smoke_tables() {
     const TABLE_DESC: u64 = 0b11;
     const PAGE_DESC: u64 = 0b11;
@@ -3273,7 +3627,10 @@ unsafe fn install_el0_trap_smoke_tables() {
     }
 }
 
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 unsafe fn enable_el2_and_el0_translation() {
     const MAIR_NORMAL_WBWA: u64 = 0xff;
     const MAIR_DEVICE_NGNRE: u64 = 0x04;
@@ -3344,7 +3701,10 @@ unsafe fn enable_el2_and_el0_translation() {
     }
 }
 
-#[cfg(talos_boot_scenario = "qemu_el0_trap_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_el0_trap_smoke",
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
 unsafe fn enable_el1_and_el0_translation() {
     const MAIR_NORMAL_WBWA: u64 = 0xff;
     const MAIR_DEVICE_NGNRE: u64 = 0x04;

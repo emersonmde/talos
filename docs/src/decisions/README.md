@@ -12,6 +12,33 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.3 QEMU Syscall Smoke Core Accepted
+
+- Status: accepted as the first QEMU-only production syscall routing smoke. No
+  Pi 5 hardware run, archive publishing, hardware-lock acquisition, descriptor
+  I/O, copy-in/copy-out, process loading, VFS/filesystem, shell behavior,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver
+  policy was added or claimed.
+- Context: The accepted syscall trap-routing contract and QEMU syscall smoke
+  plan required retained QEMU evidence that lower-AArch64 svc #0 reaches the
+  target-independent dispatch core and returns accepted x0 values.
+- Decision: Accept phase7-qemu-syscall-smoke-core-20260529. The implementation
+  adds qemu_syscall_smoke, a bounded recoverable lower-AArch64 svc #0 route,
+  saved-frame x0 mutation, user-observed talos_nop and unknown-syscall return
+  evidence, diagnostic marker 0x7a10 quarantine, and scripts/qemu-syscall-smoke.sh.
+- Evidence level: QEMU/substitute plus unit tests and static inspection.
+  Retained logs are in
+  tasks/evidence/2026-05-29-qemu-syscall-smoke-core/.
+- Validation: git status --short before edits was clean; cargo fmt --all --
+  --check passed; cargo -Zjson-target-spec test passed;
+  scripts/qemu-el0-trap-smoke.sh passed; scripts/qemu-syscall-smoke.sh passed;
+  git diff --check passed; mdbook build passed.
+- Consequences: Talos now has QEMU evidence for the first production syscall
+  routing path, but Pi 5 syscall hardware proof, descriptor I/O,
+  copy-in/copy-out, process loading, VFS/filesystem, shell, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
+  blocked.
+
 ## 2026-05-29 - Phase 7.3 QEMU Syscall Smoke Plan Accepted
 
 - Status: accepted as a documentation-only QEMU production syscall smoke plan.

@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 QEMU syscall smoke plan frontier,
+Talos is at the Phase 7.3 QEMU syscall smoke core frontier,
 after accepting the Phase 6.3 production scheduler runtime closeout, the full
 Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -48,11 +48,16 @@ return mutation, ELR/SPSR handling, diagnostic marker quarantine, and
 non-syscall fallback. The accepted syscall trap-routing contract fixes the
 production routing preconditions, frame mutation rules, failure classes,
 diagnostic marker quarantine, and mandatory QEMU syscall smoke boundary. The
-accepted QEMU syscall smoke plan now defines the qemu_syscall_smoke invariant,
+accepted QEMU syscall smoke plan defines the qemu_syscall_smoke invariant,
 stable svc #0 talos_nop and unknown-syscall return observations, exact
 classification/PASS lines, retained QEMU/substitute evidence, and diagnostic
-marker quarantine requirements before implementation. The next bounded task is
-the QEMU syscall smoke core implementation.
+marker quarantine requirements before implementation. The accepted QEMU syscall
+smoke core adds a recoverable lower-AArch64 svc #0 routing boundary, mutates
+saved x0 through the target-independent dispatch core, preserves the diagnostic
+qemu-el0-trap-smoke proof, and retains QEMU/substitute serial evidence with
+classification=qemu-syscall-smoke-complete and qemu-syscall-smoke: PASS. This
+does not prove Pi 5 production syscall routing or unblock descriptor I/O,
+copy-in/copy-out, process loading, filesystem, shell, networking, or SSH.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -1176,6 +1181,13 @@ Accepted progress:
   routing, QEMU syscall smoke, Pi 5 hardware proof, descriptor I/O,
   copy-in/copy-out, process loading, VFS, filesystem, shell, networking, or
   SSH work.
+- Phase 7 QEMU syscall smoke core is accepted. It adds qemu_syscall_smoke,
+  routes only lower-AArch64 svc #0 through the target-independent dispatch core,
+  returns talos_nop x0 = 0 and unknown syscall x0 = -ENOSYS to the user payload,
+  quarantines diagnostic marker 0x7a10 outside production dispatch, and retains
+  QEMU/substitute PASS evidence. Pi 5 production syscall proof, descriptor I/O,
+  copy-in/copy-out, process loading, VFS, filesystem, shell, networking, and SSH
+  remain blocked.
 
 Milestone 7.4: File Descriptor Table
 

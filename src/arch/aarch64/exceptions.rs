@@ -147,6 +147,60 @@ impl ExceptionFrame {
     pub fn reg(&self, index: usize) -> u64 {
         self.regs[index]
     }
+
+    pub fn set_reg(&mut self, index: usize, value: u64) {
+        self.regs[index] = value;
+    }
+}
+
+pub(crate) const AARCH64_SVC_EXCEPTION_CLASS: u64 = 0x15;
+
+pub(crate) const fn exception_class(esr: u64) -> u64 {
+    (esr >> 26) & 0x3f
+}
+
+pub(crate) const fn svc_immediate(esr: u64) -> u16 {
+    (esr & 0xffff) as u16
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct RoutedSyscall {
+    pub raw_number: u64,
+    pub arguments: crate::syscall::SyscallArguments,
+    pub return_x0: u64,
+}
+
+pub(crate) fn try_route_lower_aarch64_syscall(
+    vector: ExceptionVector,
+    esr: u64,
+    saved_frame: *mut ExceptionFrame,
+) -> Option<RoutedSyscall> {
+    if vector != ExceptionVector::LowerAarch64Sync
+        || exception_class(esr) != AARCH64_SVC_EXCEPTION_CLASS
+        || !crate::syscall::is_stable_syscall_svc_immediate(svc_immediate(esr))
+    {
+        return None;
+    }
+
+    let frame = unsafe { saved_frame.as_mut()? };
+    let arguments = crate::syscall::SyscallArguments::new([
+        frame.reg(0),
+        frame.reg(1),
+        frame.reg(2),
+        frame.reg(3),
+        frame.reg(4),
+        frame.reg(5),
+    ]);
+    let raw_number = frame.reg(8);
+    let result = crate::syscall::dispatch(raw_number, arguments);
+    let return_x0 = result.return_value().x0();
+    frame.set_reg(0, return_x0);
+
+    Some(RoutedSyscall {
+        raw_number,
+        arguments,
+        return_x0,
+    })
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -251,11 +305,6 @@ fn write_exception_class(esr: u64) {
 }
 
 #[cfg(talos_target_rpi5_bcm2712)]
-fn exception_class(esr: u64) -> u64 {
-    (esr >> 26) & 0x3f
-}
-
-#[cfg(talos_target_rpi5_bcm2712)]
 fn exception_class_name(esr: u64) -> &'static str {
     let ec = exception_class(esr);
     if ec == 0x00 {
@@ -318,7 +367,10 @@ fn write_saved_register_line(prefix: &str, frame: &ExceptionFrame, start: usize,
 }
 
 #[unsafe(no_mangle)]
-#[cfg(not(talos_target_rpi5_bcm2712))]
+#[cfg(all(
+    not(talos_target_rpi5_bcm2712),
+    not(talos_boot_scenario = "qemu_syscall_smoke")
+))]
 pub extern "C" fn rust_exception_handler(
     esr: u64,
     elr: u64,
@@ -357,9 +409,49 @@ pub extern "C" fn rust_exception_handler(
     crate::arch::aarch64::halt()
 }
 
+#[unsafe(no_mangle)]
+#[cfg(all(
+    not(talos_target_rpi5_bcm2712),
+    talos_boot_scenario = "qemu_syscall_smoke"
+))]
+pub extern "C" fn rust_exception_handler(
+    esr: u64,
+    elr: u64,
+    far: u64,
+    vector: u64,
+    spsr: u64,
+    saved_frame: *mut ExceptionFrame,
+) -> u64 {
+    let vector = ExceptionVector::from(vector);
+
+    if crate::target::qemu_virt::handle_syscall_smoke_exception(
+        esr,
+        elr,
+        far,
+        vector,
+        spsr,
+        saved_frame,
+    ) {
+        return 1;
+    }
+
+    println!();
+    println!("talos exception: {}", vector.name());
+    println!(
+        "exception-info: esr={:#018x} elr={:#018x} far={:#018x}",
+        esr, elr, far
+    );
+
+    crate::target::qemu::exit_failure()
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{ExceptionVector, rust_irq_handler, unexpected_irq_snapshot};
+    use super::{
+        ExceptionFrame, ExceptionVector, rust_irq_handler, try_route_lower_aarch64_syscall,
+        unexpected_irq_snapshot,
+    };
+    use crate::syscall::{ENOSYS, STABLE_SVC_IMMEDIATE, TALOS_NOP_SYSCALL};
 
     #[test_case]
     fn irq_vector_classifier_names_irq_slots() {
@@ -388,5 +480,47 @@ mod tests {
         assert_eq!(after.vector, ExceptionVector::CurrentSpxIrq as u64);
         assert_eq!(after.elr, 0x1234_5678);
         assert_eq!(after.spsr, 0x2000_03c9);
+    }
+
+    #[test_case]
+    fn lower_aarch64_svc_zero_routes_through_syscall_dispatch() {
+        let mut frame = ExceptionFrame { regs: [0; 31] };
+        frame.set_reg(8, TALOS_NOP_SYSCALL);
+        let esr = (super::AARCH64_SVC_EXCEPTION_CLASS << 26) | STABLE_SVC_IMMEDIATE as u64;
+
+        let routed =
+            try_route_lower_aarch64_syscall(ExceptionVector::LowerAarch64Sync, esr, &mut frame)
+                .expect("stable lower-AArch64 svc #0 routes");
+
+        assert_eq!(routed.raw_number, TALOS_NOP_SYSCALL);
+        assert_eq!(routed.return_x0, 0);
+        assert_eq!(frame.reg(0), 0);
+    }
+
+    #[test_case]
+    fn unknown_syscall_routes_to_negative_enosys() {
+        let mut frame = ExceptionFrame { regs: [0; 31] };
+        frame.set_reg(8, 17);
+        let esr = super::AARCH64_SVC_EXCEPTION_CLASS << 26;
+
+        let routed =
+            try_route_lower_aarch64_syscall(ExceptionVector::LowerAarch64Sync, esr, &mut frame)
+                .expect("unknown stable syscall still routes");
+
+        assert_eq!(routed.raw_number, 17);
+        assert_eq!(routed.return_x0, (ENOSYS as u64).wrapping_neg());
+        assert_eq!(frame.reg(0), (ENOSYS as u64).wrapping_neg());
+    }
+
+    #[test_case]
+    fn diagnostic_marker_does_not_route_as_production_syscall() {
+        let mut frame = ExceptionFrame { regs: [0; 31] };
+        let esr = (super::AARCH64_SVC_EXCEPTION_CLASS << 26)
+            | crate::syscall::DIAGNOSTIC_EL0_TRAP_SVC_IMMEDIATE as u64;
+
+        assert!(
+            try_route_lower_aarch64_syscall(ExceptionVector::LowerAarch64Sync, esr, &mut frame)
+                .is_none()
+        );
     }
 }
