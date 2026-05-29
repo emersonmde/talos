@@ -4582,3 +4582,33 @@ ADR template:
   descriptor I/O, process loading, VFS/filesystem, shell, networking, SSH,
   Pi 5 pointer-copy hardware proof, RP1/PCIe, UART interrupt, and
   DMA/cache-driver surfaces.
+
+## 2026-05-29 - Phase 7 QEMU Pointer-Copy Smoke Plan Accepted
+
+- Status: accepted as a documentation-only Phase 7.3 QEMU pointer-copy smoke
+  plan. No Rust implementation, assembly implementation, boot scenario, QEMU
+  run, Pi 5 hardware run, archive publishing, hardware-lock acquisition,
+  descriptor I/O, process loading, VFS/filesystem, shell behavior, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache behavior was added.
+- Context: The accepted pointer-taking syscall contract fixed the proof-only
+  talos_copy_probe syscall number and register contract but left the exact
+  QEMU/substitute evidence vocabulary and implementation gates to the next
+  plan.
+- Decision: Accept phase7-qemu-pointer-copy-smoke-plan-20260529. The future
+  qemu_pointer_copy_smoke task must use fixed UserData backing storage at
+  0x0000_0000_0011_0000, prove a 16-byte success case that copies 0x2a bytes
+  in and writes 0xa5 bytes back, prove a guard-range EFAULT case returning
+  x0 = -EFAULT, retain an unknown-syscall -ENOSYS observation, and quarantine
+  diagnostic marker 0x7a10 before reporting
+  classification=qemu-pointer-copy-smoke-complete plus
+  qemu-pointer-copy-smoke: PASS.
+- Evidence level: static documentation inspection, documentation build, and
+  whitespace inspection. No QEMU or Pi 5 hardware evidence was claimed.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-qemu-pointer-copy-smoke-core-20260529. It may implement only the
+  QEMU/substitute proof for talos_copy_probe and must preserve the blocked
+  descriptor I/O, process loading, VFS/filesystem, shell, networking, SSH,
+  Pi 5 pointer-copy hardware proof, RP1/PCIe, UART interrupt, and
+  DMA/cache-driver surfaces.

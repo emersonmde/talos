@@ -85,6 +85,7 @@
 - [Phase 7 Copy-In/Copy-Out Helper Closeout Checkpoint](project/phase7-copyin-copyout-helper-closeout-checkpoint.md)
 - [Phase 7 Pointer-Taking Syscall Source Inventory](project/phase7-pointer-taking-syscall-source-inventory.md)
 - [Phase 7 Pointer-Taking Syscall Contract](project/phase7-pointer-taking-syscall-contract.md)
+- [Phase 7 QEMU Pointer-Copy Smoke Plan](project/phase7-qemu-pointer-copy-smoke-plan.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

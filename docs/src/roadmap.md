@@ -1320,6 +1320,16 @@ Accepted progress:
   contract names the fixed QEMU substitute UserData mapping and keeps
   descriptor I/O, process loading, VFS/filesystem, shell, networking, SSH, and
   Pi 5 pointer-copy hardware proof blocked.
+- Phase 7 QEMU pointer-copy smoke plan is accepted. It defines the later
+  qemu_pointer_copy_smoke QEMU/substitute invariant for proof-only
+  talos_copy_probe: UserData at 0x0000_0000_0011_0000, a 16-byte success case
+  that copies 0x2a bytes in and writes 0xa5 bytes back, a guard-range EFAULT
+  case returning -EFAULT, an unknown-syscall regression returning -ENOSYS, and
+  diagnostic marker 0x7a10 quarantine before classification/PASS. The plan
+  names phase7-qemu-pointer-copy-smoke-core-20260529 as the next bounded
+  implementation task and keeps descriptor I/O, process loading,
+  VFS/filesystem, shell, networking, SSH, and Pi 5 pointer-copy hardware proof
+  blocked.
 
 Milestone 7.4: File Descriptor Table
 
