@@ -91,6 +91,7 @@
 - [Phase 7 Pi 5 Pointer-Copy Proof Closeout Checkpoint](project/phase7-pi5-pointer-copy-proof-closeout-checkpoint.md)
 - [Phase 7 Descriptor Syscall Source Inventory](project/phase7-descriptor-syscall-source-inventory.md)
 - [Phase 7 Descriptor Syscall Contract](project/phase7-descriptor-syscall-contract.md)
+- [Phase 7 QEMU Descriptor-Write Smoke Plan](project/phase7-qemu-descriptor-write-smoke-plan.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

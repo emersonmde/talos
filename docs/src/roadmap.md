@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 descriptor syscall contract
+Talos is at the Phase 7.3 QEMU descriptor-write smoke plan
 frontier, after accepting the Phase 6.3 production scheduler runtime closeout,
 the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -204,6 +204,19 @@ keeps stdin/read, close, dup, process loading, VFS/filesystem, shell,
 networking, SSH, live process-owned address spaces, blocking/readiness,
 signals, restart semantics, RP1/PCIe, UART interrupt ownership,
 DMA/cache-driver policy, and full POSIX descriptor claims blocked.
+The accepted QEMU descriptor-write smoke plan defines the
+qemu_descriptor_write_smoke QEMU/substitute invariant for stable talos_write
+x8 = 1: fd 1/fd 2 success through inherited stdio descriptors,
+copy_from_user(), and runtime-console0, fd 0 and invalid-fd -EBADF, guard-range
+-EFAULT, reserved-register -EINVAL, talos_nop and unknown-syscall regressions,
+proof-only talos_copy_probe quarantine, and exact
+classification=qemu-descriptor-write-smoke-complete plus
+qemu-descriptor-write-smoke: PASS evidence for the later implementation. It
+does not add implementation, QEMU, or hardware evidence and keeps stdin/read,
+close, dup, process loading, VFS/filesystem, shell, networking, SSH, live
+process-owned address spaces, blocking/readiness, signals, restart semantics,
+RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and physical
+descriptor-write claims blocked.
 
 
 The recently accepted Phase 6.3 scheduler frontier includes
@@ -1456,6 +1469,18 @@ Accepted progress:
   address spaces, blocking/readiness, signals, restart semantics, RP1/PCIe,
   UART interrupt ownership, DMA/cache-driver policy, and stable POSIX
   descriptor claims remain blocked.
+- Phase 7 QEMU descriptor-write smoke plan is accepted. It defines the later
+  qemu_descriptor_write_smoke QEMU/substitute invariant for talos_write fd 1
+  and fd 2 success through inherited stdio descriptors, copy_from_user(), and
+  runtime-console0; fd 0 and invalid-fd -EBADF; guard-range -EFAULT;
+  reserved-register -EINVAL; talos_nop and unknown-syscall regressions; and
+  proof-only talos_copy_probe quarantine. It names
+  phase7-descriptor-write-core-20260529 as the next bounded implementation
+  task and keeps stdin/read, close, dup, process loading, VFS/filesystem,
+  shell, networking, SSH, live process-owned address spaces, blocking/readiness,
+  signals, restart semantics, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, physical descriptor-write claims, and full POSIX
+  descriptor claims blocked.
 
 Milestone 7.4: File Descriptor Table
 

@@ -4865,3 +4865,38 @@ ADR template:
   SSH, live process-owned address spaces, blocking/readiness, signals, restart
   semantics, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and
   full POSIX descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 QEMU Descriptor-Write Smoke Plan Accepted
+
+- Status: accepted as the documentation-only Phase 7.3 QEMU descriptor-write
+  smoke plan. No Rust behavior, assembly behavior, boot scenario, QEMU run,
+  Pi 5 hardware run, boot archive publication, hardware-lock acquisition,
+  stdin/read, close, dup, process loading, VFS/filesystem behavior, shell
+  behavior, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted descriptor syscall contract fixed talos_write x8 = 1
+  for stdout/stderr runtime-console0 descriptor writes. The next task needed a
+  bounded QEMU/substitute proof plan before any implementation, so the later
+  core can be judged against exact lower-EL syscall, descriptor-table,
+  copy_from_user, runtime-console, errno, and quarantine evidence.
+- Decision: Accept phase7-qemu-descriptor-write-smoke-plan-20260529. The
+  planned qemu_descriptor_write_smoke invariant covers fd 1 and fd 2 success
+  through DescriptorTable::with_inherited_stdio(), copy_from_user(), and
+  runtime-console0; fd 0 and invalid-fd -EBADF; guard-range -EFAULT;
+  reserved-register -EINVAL; talos_nop and unknown-syscall regressions; x8 =
+  0x7001 copy-probe quarantine; diagnostic marker 0x7a10 quarantine; and exact
+  classification/PASS lines for retained QEMU/substitute evidence.
+- Evidence level: static documentation/source inspection, documentation build,
+  and whitespace inspection. No QEMU/substitute or Pi 5 hardware evidence was
+  produced by this plan.
+- Validation: git status --short before edits showed a pre-existing
+  docs/src/roadmap.md working-tree edit that was preserved; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-descriptor-write-core-20260529, scoped to the target-independent
+  talos_write implementation for fd 1/fd 2 runtime-console0 with focused unit
+  tests and unchanged scalar syscall/proof-only copy-probe behavior. stdin/read,
+  close, dup, process loading, VFS/filesystem, shell, networking, SSH, live
+  process-owned address spaces, blocking/readiness, signals, restart semantics,
+  RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, physical
+  descriptor-write claims, and full POSIX descriptor claims remain blocked.
