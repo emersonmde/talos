@@ -379,6 +379,19 @@ close/dup/read proof, process loading, VFS/filesystem, shell, networking, SSH,
 object finalization, and full POSIX descriptor readiness remain blocked. The
 next bounded Milestone 7.4 task should be supervisor-planned as a
 documentation-only close/dup/read syscall source inventory.
+The accepted close/dup/read syscall source inventory maps the current syscall
+dispatch, lower-EL routing, copy helper, ProcessDescriptorStore, DescriptorTable,
+descriptor entry/object, runtime-console0, TTY, and stdin/read source owners.
+It separates accepted process-owned descriptor-write and target-independent
+close/dup/copy-helper evidence from unproven close, dup, and read syscalls.
+Close is the smallest next user-visible descriptor operation because the
+target-independent close helper is already accepted; dup and read still need
+additional policy around fd allocation, read byte sources, EOF,
+blocking/readiness, nonblocking behavior, signal/restart policy, and object
+lifetime. The next bounded Milestone 7.4 task should be
+phase7-close-syscall-contract-20260529. Dup/read, QEMU/Pi 5 close/dup/read
+proof, process loading, VFS/filesystem, shell, networking, SSH, object
+finalization, and full POSIX descriptor readiness remain blocked.
 
 Near-term direction after the accepted Phase 7.3 syscall ABI/dispatch closeout:
 

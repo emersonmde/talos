@@ -5440,3 +5440,38 @@ ADR template:
   loading, VFS/filesystem, shell, networking, SSH, blocking/readiness,
   signals, restart semantics, RP1/PCIe, UART interrupt ownership,
   DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 Close, Dup, And Read Syscall Source Inventory Accepted
+
+- Status: accepted as the documentation-only Milestone 7.4 close/dup/read
+  syscall source inventory. No Rust behavior, assembly behavior,
+  close/dup/read syscall contract, QEMU run, Pi 5 hardware run, boot archive
+  publication, hardware-lock acquisition, process loading, VFS/filesystem
+  behavior, shell behavior, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache-driver policy was added.
+- Context: The accepted descriptor close core closeout left a
+  target-independent `ProcessDescriptorStore::close_current_descriptor()`
+  helper but no user-visible close/dup/read syscall contract. The next slice
+  needed to map source owners and evidence gaps before choosing a syscall
+  contract.
+- Decision: Accept
+  phase7-close-dup-read-syscall-source-inventory-20260529. The inventory maps
+  syscall dispatch and return encoding, lower-EL trap routing, process
+  descriptor-store lookup and mutation, descriptor table close/dup primitives,
+  descriptor entry/object vocabulary, copy_from_user/copy_to_user helpers,
+  runtime-console0, TTY, and stdin/read ownership. It records close as the
+  smallest next syscall candidate because the target-independent close helper
+  already has unit-test evidence, while dup/read need additional policy before
+  contract or proof work.
+- Evidence level: static source and documentation inspection, documentation
+  build, and whitespace inspection. No Rust tests, QEMU run, or physical Pi 5
+  hardware evidence was produced.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-close-syscall-contract-20260529, scoped to a close-only syscall
+  contract. Dup/read syscalls, QEMU/Pi 5 close/dup/read proof, process loading,
+  VFS/filesystem, stdin/read object model, shell, networking, SSH,
+  blocking/readiness, signals, restart semantics, object finalization,
+  RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and full POSIX
+  descriptor claims remain blocked.
