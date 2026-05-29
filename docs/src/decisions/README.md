@@ -12,6 +12,41 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.4 Pi 5 Dup Syscall Proof Closeout Accepted
+
+- Status: accepted as the documentation-only Milestone 7.4 Pi 5 dup syscall
+  proof closeout checkpoint. No Rust behavior, assembly behavior, QEMU rerun,
+  Pi 5 hardware rerun, archive publishing, hardware-lock acquisition, read
+  syscall behavior, process loading, VFS/filesystem behavior, shell behavior,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, DMA/cache-driver
+  policy, object finalization, dup2/fcntl, or full POSIX descriptor readiness
+  was added.
+- Context: The accepted dup syscall contract/core and QEMU dup smoke were
+  followed by the serialized Pi 5 dup proof. The retained local8 physical log
+  proved the focused rpi5_dup_syscall_proof invariant after local7 restored
+  known-good control confirmed lab health and prior inconclusive runs were
+  triaged.
+- Decision: Accept
+  phase7-pi5-dup-syscall-proof-closeout-checkpoint-20260529. The closeout
+  records the accepted task/commit matrix, retained QEMU and Pi 5 evidence
+  paths, hardware-lock timeline, restore proof, exact accepted physical
+  capability, deferred surfaces, residual risks, and next bounded
+  recommendation.
+- Evidence level: static evidence and documentation inspection. The accepted
+  Pi 5 dup evidence remains
+  tasks/evidence/2026-05-29-pi5-dup-syscall-proof/local8-unchanged-candidate-rerun/proof-lines.txt,
+  with classification=pi5-dup-syscall-proof-complete and PASS. The accepted
+  QEMU/substitute evidence remains
+  tasks/evidence/2026-05-29-qemu-dup-syscall-smoke-core/qemu-dup-syscall-smoke.log.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next bounded Milestone 7.4 task should be a
+  supervisor-queued documentation-only read/stdin source inventory before any
+  read contract or implementation. Read/stdin behavior, process loading,
+  VFS/filesystem, shell, networking, SSH, object finalization, dup2/fcntl,
+  hardware surfaces, and full POSIX descriptor readiness remain blocked.
+
 ## 2026-05-29 - Phase 7.4 Pi 5 Close Syscall Proof Plan Accepted
 
 - Status: accepted as the documentation-only Milestone 7.4 Pi 5 close syscall

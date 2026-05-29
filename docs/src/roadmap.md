@@ -2060,6 +2060,19 @@ Accepted progress:
   behavior, process loading, VFS/filesystem, shell, networking, SSH, object
   finalization, dup2/fcntl, and full POSIX descriptor readiness remain
   blocked.
+- Phase 7 Pi 5 dup syscall proof closeout is accepted. It reconciles the dup
+  contract/core, retained QEMU/substitute smoke, serialized local8 Pi 5
+  hardware proof, local7 known-good control, hardware-lock timeline, restore
+  proof, residual risks, and deferred surfaces. The accepted frontier is a
+  focused physical talos_dup x8 = 3 proof through the current
+  ProcessOwnerId-backed ProcessDescriptorStore, including fd 1 to fd 3,
+  -EMFILE, -EINVAL, source/duplicate writes, independent close behavior,
+  -EBADF cases, scalar/unknown regressions, copy-probe quarantine, diagnostic
+  marker quarantine, classification=pi5-dup-syscall-proof-complete, and PASS.
+  The next bounded Milestone 7.4 task should be a supervisor-queued
+  documentation-only read/stdin source inventory. Read/stdin behavior, process
+  loading, VFS/filesystem, shell, networking, SSH, object finalization,
+  dup2/fcntl, and full POSIX descriptor readiness remain blocked.
 
 Milestone 7.4: File Descriptor Table
 
