@@ -5475,3 +5475,37 @@ ADR template:
   blocking/readiness, signals, restart semantics, object finalization,
   RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and full POSIX
   descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 Close Syscall Contract Accepted
+
+- Status: accepted as the documentation-only Milestone 7.4 close syscall
+  contract. No Rust behavior, assembly behavior, QEMU run, Pi 5 hardware run,
+  boot archive publication, hardware-lock acquisition, dup/read syscall
+  contract, process loading, VFS/filesystem behavior, shell behavior,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver
+  policy was added.
+- Context: The accepted close/dup/read syscall source inventory identified
+  close as the smallest next user-visible descriptor operation because the
+  target-independent ProcessDescriptorStore::close_current_descriptor()
+  helper already has unit-test evidence, while dup and read still need
+  additional policy.
+- Decision: Accept phase7-close-syscall-contract-20260529. The first close
+  syscall is talos_close with stable svc #0, x8 = 2, descriptor number in x0,
+  x1 through x5 reserved zero, x0 = 0 on success, -EBADF for missing current
+  owner, unknown owner, missing table, invalid descriptor, empty descriptor,
+  or already closed descriptor, and -EINVAL for nonzero reserved arguments.
+  Closing fd 0/fd 1/fd 2 is allowed when occupied, and fd 1/fd 2 closure must
+  make later talos_write lookup through the same process descriptor store
+  return -EBADF before any runtime-console0 side effect.
+- Evidence level: static source and documentation inspection, documentation
+  build, and whitespace inspection. No Rust tests, QEMU run, or physical Pi 5
+  hardware evidence was produced.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-close-syscall-core-20260529, scoped to target-independent close
+  syscall dispatch and focused tests. Dup/read syscalls, QEMU/Pi 5
+  close/dup/read proof, process loading, VFS/filesystem, stdin/read object
+  model, shell, networking, SSH, blocking/readiness, signals, restart
+  semantics, object finalization, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.

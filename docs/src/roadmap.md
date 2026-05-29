@@ -392,6 +392,18 @@ lifetime. The next bounded Milestone 7.4 task should be
 phase7-close-syscall-contract-20260529. Dup/read, QEMU/Pi 5 close/dup/read
 proof, process loading, VFS/filesystem, shell, networking, SSH, object
 finalization, and full POSIX descriptor readiness remain blocked.
+The accepted close syscall contract defines the first user-visible descriptor
+close boundary: stable svc #0 with x8 = 2, descriptor argument in x0,
+reserved-zero x1 through x5, x0 = 0 on success, -EBADF for missing/unknown
+owners and invalid, empty, or already closed descriptors, and -EINVAL for
+nonzero reserved arguments. The contract routes the later implementation
+through ProcessDescriptorStore::close_current_descriptor() and preserves
+talos_nop, talos_write, unknown-syscall, descriptor-write, and proof-only
+pointer-copy quarantine behavior. The next bounded Milestone 7.4 task should
+be phase7-close-syscall-core-20260529. Dup/read, QEMU/Pi 5 close/dup/read
+proof, process loading, VFS/filesystem, shell, networking, SSH,
+open-file-description finalization, and full POSIX descriptor readiness remain
+blocked.
 
 Near-term direction after the accepted Phase 7.3 syscall ABI/dispatch closeout:
 
