@@ -12,6 +12,36 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.3 Syscall ABI Source Inventory Accepted
+
+- Status: accepted as the documentation-only source inventory before syscall
+  ABI contract or implementation. No Rust behavior, assembly behavior,
+  syscall numbers, syscall dispatch, copy-in/copy-out helpers, descriptor I/O,
+  process loading, VFS/filesystem, shell behavior, networking, SSH, QEMU rerun,
+  Pi 5 hardware run, archive publication, hardware-lock use, RP1/PCIe, UART
+  interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The bounded QEMU and physical Pi 5 lower-EL trap proof is accepted.
+  Before a stable SVC/syscall ABI can be contracted, Talos needed one
+  source-backed inventory that distinguishes diagnostic proof markers from
+  future user-program ABI behavior.
+- Decision: Accept phase7-syscall-abi-source-inventory-20260529. The
+  inventory maps lower-EL synchronous exception entry, diagnostic SVC proof
+  surfaces, missing syscall number and argument-register contracts,
+  return/error constraints from PosixError, user-copy preconditions,
+  descriptor-table interaction, and process/task ownership.
+- Evidence level: static source inspection, static documentation inspection,
+  whitespace inspection, and documentation build. No QEMU or Pi 5 hardware
+  evidence was claimed by this documentation-only task.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next bounded task should be
+  phase7-syscall-abi-contract-20260529. It should define the minimal stable
+  SVC ABI before any syscall implementation starts.
+- Risks: Syscall dispatch, numeric errno values, process loading,
+  copy-in/copy-out byte movement, descriptor I/O, VFS/filesystem, shell,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
+  policy remain deferred.
+
 ## 2026-05-29 - Phase 7.2 EL0 Trap Proof Closeout Accepted
 
 - Status: accepted as the documentation closeout for the bounded QEMU and

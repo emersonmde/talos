@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.2 EL0 trap proof closeout frontier,
+Talos is at the Phase 7.3 syscall ABI source inventory frontier,
 after accepting the Phase 6.3 production scheduler runtime closeout, the full
 Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -33,8 +33,11 @@ classification=pi5-el0-trap-proof-complete, and rpi5-el0-trap-proof: PASS.
 This accepts only the bounded lower-EL trap path. General SVC/syscall ABI,
 VFS, filesystem, program loading, descriptor I/O, networking, SSH, and shell
 work remain blocked until later explicit bounded tasks accept their contracts
-and gates. The next recommended bounded task is the Phase 7.3 syscall ABI
-source inventory, not implementation work.
+and gates. The accepted Phase 7.3 syscall ABI source inventory maps the source
+owners and gaps for SVC exception decoding, syscall number and argument
+registers, return/error convention, user-copy preconditions, descriptor-table
+interaction, and process/task ownership. The next recommended bounded task is
+the Phase 7.3 syscall ABI contract, not implementation work.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -154,7 +157,11 @@ lower-AArch64 synchronous SVC trap state, classification=pi5-el0-trap-proof-comp
 and rpi5-el0-trap-proof: PASS. This proves the bounded lower-EL trap path on
 hardware only; general syscall ABI, process loading, descriptor I/O,
 filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership, and
-DMA/cache-driver policy remain deferred.
+DMA/cache-driver policy remain deferred. The accepted Phase 7.3 syscall ABI
+source inventory maps SVC exception decoding, proof-marker boundaries, syscall
+number and argument register gaps, return/error convention gaps, user-copy
+preconditions, descriptor-table interaction, and process/task ownership before
+any syscall implementation.
 The obsolete-bloat inventory and removal sweep are accepted before the
 multi-core preemption core: historical QEMU secondary-core discriminator paths
 and old Pi 5 allocator, exception, panic, and translation-fault proof-only
@@ -1107,6 +1114,17 @@ Milestone 7.3: Syscall ABI
 Acceptance criteria:
 
 - A minimal syscall test exercises return values, invalid calls, and fault handling.
+
+Accepted progress:
+
+- Phase 7 syscall ABI source inventory is accepted. It maps lower-EL
+  synchronous exception entry, diagnostic SVC proof surfaces, missing syscall
+  number and argument-register contracts, PosixError return/error constraints,
+  user-copy preconditions, descriptor-table interaction, and process/task
+  ownership. It keeps marker 0x7a10 diagnostic-only and recommends
+  phase7-syscall-abi-contract-20260529 before any syscall implementation,
+  QEMU rerun, Pi 5 hardware run, descriptor I/O, process loading, VFS,
+  filesystem, shell, networking, or SSH work.
 
 Milestone 7.4: File Descriptor Table
 
