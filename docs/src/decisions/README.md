@@ -5912,3 +5912,36 @@ ADR template:
   stdin/read object model, process loading, VFS/filesystem, shell, networking,
   SSH, dup2/fcntl, object finalization, broader cache/DMA policy, RP1/PCIe,
   UART interrupt ownership, and full POSIX descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 Pi 5 Dup Syscall Proof Plan Accepted
+
+- Status: accepted as the documentation-only Milestone 7.4 Pi 5 dup syscall
+  proof plan. No Rust behavior, assembly behavior, boot archive publication,
+  hardware-lock acquisition, power cycle, serial observe, Pi 5 hardware run,
+  read behavior, process loading, VFS/filesystem behavior, shell behavior,
+  networking, SSH, object finalization, RP1/PCIe, UART interrupt ownership,
+  dup2/fcntl, or DMA/cache-driver policy was added.
+- Context: The accepted QEMU dup syscall smoke proves talos_dup duplicates fd
+  1 to fd 3 through the current ProcessOwnerId-backed ProcessDescriptorStore,
+  handles full-table -EMFILE and reserved-register -EINVAL, writes through
+  source and duplicate descriptors, preserves fd 3 after close(fd 1), returns
+  -EBADF for closed descriptors and dup(closed fd 1), and retains scalar,
+  unknown-syscall, copy-probe, and diagnostic-marker quarantine regressions.
+- Decision: Accept phase7-pi5-dup-syscall-proof-plan-20260529. The future
+  hardware proof must build rpi5_dup_syscall_proof, acquire hardwareTestLock,
+  tie candidate source/archive/kernel identity to a fresh TFTP fetch and
+  serial cursor, prove the same dup/write/close/error/quarantine invariant on
+  Pi 5, retain classification=pi5-dup-syscall-proof-complete plus PASS, and
+  restore the prior accepted boot tree.
+- Evidence level: static documentation inspection, retained QEMU/substitute
+  evidence review, documentation build, and whitespace inspection. No Rust
+  tests, QEMU rerun, or physical Pi 5 hardware evidence was produced by this
+  plan.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The next mechanically derivable task is
+  phase7-pi5-dup-syscall-proof-20260529, scoped to the serialized physical dup
+  proof under hardwareTestLock. Read syscall behavior, stdin/read object
+  model, process loading, VFS/filesystem, shell, networking, SSH, dup2/fcntl,
+  object finalization, broader cache/DMA policy, RP1/PCIe, UART interrupt
+  ownership, and full POSIX descriptor claims remain blocked.

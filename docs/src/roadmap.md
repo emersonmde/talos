@@ -2023,6 +2023,15 @@ Accepted progress:
   read/stdin behavior, process loading, VFS/filesystem, shell, networking,
   SSH, object finalization, dup2/fcntl, and full POSIX descriptor readiness
   remain blocked.
+- Phase 7 Pi 5 dup syscall proof plan is accepted. It defines the serialized
+  rpi5_dup_syscall_proof hardware plan, including lock ownership, candidate
+  identity, fresh serial/TFTP requirements, inconclusive-run triage,
+  restoration proof, exact dup/write/close/error/quarantine/classification/PASS
+  output, and deferred surfaces. No hardware run, archive publication, or
+  physical dup claim is made by the plan. The next bounded Milestone 7.4 task
+  should be phase7-pi5-dup-syscall-proof-20260529. Read/stdin behavior,
+  process loading, VFS/filesystem, shell, networking, SSH, object finalization,
+  dup2/fcntl, and full POSIX descriptor readiness remain blocked.
 
 Milestone 7.4: File Descriptor Table
 
