@@ -351,6 +351,15 @@ process loading, VFS/filesystem, shell, networking, SSH, and full POSIX
 descriptor claims remain blocked. The next bounded Milestone 7.4 task should
 be supervisor-planned as a documentation-only descriptor lifetime and
 close-semantics source inventory before any close/dup/read syscall contract.
+The accepted descriptor lifetime and close source inventory maps
+DescriptorTable table-local close/dup primitives, DescriptorEntry/Object/Access
+vocabulary, ProcessDescriptorStore owner-table mutation, inherited stdio
+lifetime, accepted unit-test evidence, missing close/double-close/reuse/dup
+evidence, and owner teardown/reference-count gaps. It recommends the
+documentation-only phase7-descriptor-lifetime-close-contract-20260529 as the
+next bounded Milestone 7.4 task. Close/dup/read syscalls, process loading,
+VFS/filesystem, shell, networking, SSH, Pi 5 physical close/dup/read claims,
+and full POSIX descriptor readiness remain blocked.
 
 Near-term direction after the accepted Phase 7.3 syscall ABI/dispatch closeout:
 
@@ -1751,6 +1760,15 @@ Accepted progress:
   shell, networking, SSH, and full POSIX descriptor claims. The next bounded
   Milestone 7.4 task should be supervisor-planned as a documentation-only
   descriptor lifetime and close-semantics source inventory.
+- Phase 7 descriptor lifetime and close source inventory is accepted. It maps
+  src/posix.rs table-local close/dup behavior, ProcessDescriptorStore
+  owner-table mutation, inherited stdio lifetime, retained descriptor evidence,
+  missing close/double-close/reuse/dup unit evidence, and open-file-description
+  finalization gaps. It recommends
+  phase7-descriptor-lifetime-close-contract-20260529 as the next
+  documentation-only Milestone 7.4 task. Close/dup/read syscalls, process
+  loading, VFS/filesystem, shell, networking, SSH, physical close/dup/read
+  proof, and full POSIX descriptor readiness remain blocked.
 
 Milestone 7.4: File Descriptor Table
 

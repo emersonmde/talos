@@ -12,6 +12,37 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.4 Descriptor Lifetime And Close Source Inventory Accepted
+
+- Status: accepted as a documentation-only Milestone 7.4 descriptor lifetime
+  and close-semantics source inventory. No Rust behavior, assembly behavior,
+  QEMU run, Pi 5 hardware run, archive publishing, hardware-lock acquisition,
+  close/dup/read syscall contract, process loading, VFS/filesystem behavior,
+  shell behavior, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted process descriptor table closeout established
+  ProcessOwnerId-backed inherited-stdio descriptor lookup and QEMU/substitute
+  talos_write evidence, but it kept descriptor lifetime and close semantics
+  blocked before any close/dup/read syscall contract.
+- Decision: Accept
+  phase7-descriptor-lifetime-close-source-inventory-20260529. The inventory
+  maps DescriptorTable table-local close/dup primitives,
+  DescriptorEntry/Object/Access vocabulary, ProcessDescriptorStore mutable
+  owner-table lookup, inherited stdio lifetime, retained evidence, existing
+  unit tests, missing close/double-close/reuse/dup evidence, and owner
+  teardown/open-file-description reference-count gaps.
+- Evidence level: static source and documentation inspection. No Rust gate,
+  QEMU/substitute run, or physical Pi 5 evidence was required because this
+  task changes only Markdown documentation and durable worker state.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-descriptor-lifetime-close-contract-20260529, scoped to a
+  documentation-only lifetime/close contract before any implementation.
+  Close/dup/read syscalls, process loading, VFS/filesystem, shell, networking,
+  SSH, Pi 5 physical close/dup/read claims, open-file-description
+  finalization, and full POSIX descriptor readiness remain blocked.
+
 ## 2026-05-29 - Phase 7.4 QEMU Process Descriptor Stdio Smoke Core Accepted
 
 - Status: accepted as the Milestone 7.4 QEMU/substitute process-owned stdio
