@@ -13,8 +13,8 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the accepted Phase 7.3 syscall ABI/dispatch closeout frontier,
-after accepting the Phase 6.3 production scheduler runtime closeout,
+Talos is in Phase 7.4 file-descriptor-table work, after accepting the Phase
+6.3 production scheduler runtime closeout,
 the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
 target-independent user-memory permission core. The accepted Phase 7.2 contract
@@ -462,8 +462,17 @@ proof. Dup/read, process loading, VFS/filesystem, shell, networking, SSH,
 object finalization, and full POSIX descriptor readiness remain blocked. The
 next bounded Milestone 7.4 task should be
 phase7-pi5-close-syscall-proof-closeout-checkpoint-20260529.
+The accepted Pi 5 close syscall proof closeout reconciles the close syscall
+source inventory, contract, target-independent core, QEMU/substitute close
+smoke, serialized Pi 5 physical proof, hardware-lock timeline, restore proof,
+and deferred surfaces. It accepts only the physical talos_close proof for the
+focused rpi5_close_syscall_proof scenario. Dup/read, process loading,
+VFS/filesystem, stdin/read object policy, shell, networking, SSH, object
+finalization, broader cache/DMA policy, and full POSIX descriptor readiness
+remain blocked. The next bounded Milestone 7.4 task should be the already
+queued documentation-only phase7-dup-syscall-contract-20260529.
 
-Near-term direction after the accepted Phase 7.3 syscall ABI/dispatch closeout:
+Near-term direction after the accepted Pi 5 close syscall proof closeout:
 
 - Move from proof-specific descriptor writes toward user-visible OS
   capability. The next Phase 7 slice should inventory Milestone 7.4
@@ -474,8 +483,8 @@ Near-term direction after the accepted Phase 7.3 syscall ABI/dispatch closeout:
 - Keep QEMU, host-side unit tests, and static documentation gates first. Reserve
   serialized Pi 5 runs for the smallest physical claim that cannot be proven on
   the QEMU/substitute path.
-- Preserve the deferred-surface boundary: general syscall ABI expansion,
-  process loading, descriptor I/O beyond the accepted contract,
+- Preserve the deferred-surface boundary: read/dup syscall expansion,
+  process loading, descriptor I/O beyond the accepted close proof,
   VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
   and DMA/cache-driver policy remain out of scope until explicit tasks accept
   their contracts and gates.

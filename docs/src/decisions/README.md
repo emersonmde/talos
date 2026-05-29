@@ -5709,3 +5709,34 @@ ADR template:
   shell, networking, SSH, blocking/readiness, signals, restart semantics,
   object finalization, RP1/PCIe, UART interrupt ownership,
   DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 Pi 5 Close Syscall Proof Closeout Accepted
+
+- Status: accepted as the documentation-only Milestone 7.4 Pi 5 close syscall
+  proof closeout checkpoint. No Rust behavior, assembly behavior, QEMU rerun,
+  Pi 5 hardware rerun, boot archive publication, hardware-lock acquisition,
+  dup/read syscall implementation, process loading, VFS/filesystem behavior,
+  shell behavior, networking, SSH, RP1/PCIe, UART interrupt ownership, object
+  finalization, or DMA/cache-driver policy was added.
+- Context: The serialized Pi 5 close syscall proof had accepted local19
+  physical hardware evidence for talos_close after the ProcessDescriptorStore
+  static was cleaned to PoC before the EL2-to-EL1/EL0 proof handoff. A closeout
+  was required before starting dup/read work so the frontier and residual risks
+  were explicit.
+- Decision: Accept
+  phase7-pi5-close-syscall-proof-closeout-checkpoint-20260529. The checkpoint
+  reconciles accepted close source inventory, contract, core implementation,
+  QEMU/substitute close smoke, Pi 5 hardware proof, hardware-lock timeline,
+  candidate/archive identity, TFTP evidence, restore proof, deferred surfaces,
+  and the next bounded task recommendation.
+- Evidence level: static documentation and retained-evidence inspection,
+  documentation build, and whitespace inspection. No new Rust tests, QEMU run,
+  or physical Pi 5 hardware evidence was produced.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-dup-syscall-contract-20260529, scoped to a documentation-only dup
+  syscall contract. Read syscall behavior, process loading, VFS/filesystem,
+  stdin/read object model, shell, networking, SSH, blocking/readiness, signals,
+  restart semantics, object finalization, broader cache/DMA policy, RP1/PCIe,
+  UART interrupt ownership, and full POSIX descriptor claims remain blocked.
