@@ -87,6 +87,7 @@
 - [Phase 7 Pointer-Taking Syscall Contract](project/phase7-pointer-taking-syscall-contract.md)
 - [Phase 7 QEMU Pointer-Copy Smoke Plan](project/phase7-qemu-pointer-copy-smoke-plan.md)
 - [Phase 7 Pointer-Copy Closeout Checkpoint](project/phase7-pointer-copy-closeout-checkpoint.md)
+- [Phase 7 Pi 5 Pointer-Copy Proof Plan](project/phase7-pi5-pointer-copy-proof-plan.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

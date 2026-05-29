@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 pointer-copy closeout checkpoint
+Talos is at the Phase 7.3 Pi 5 pointer-copy proof plan
 frontier, after accepting the Phase 6.3 production scheduler runtime closeout,
 the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -153,6 +153,16 @@ deferred surfaces. It accepts no new Rust or assembly behavior and performs no
 QEMU or Pi 5 rerun. It recommends supervisor planning for a documentation-only
 Pi 5 pointer-copy proof plan before any serialized hardware action or before
 choosing descriptor syscall work.
+The accepted Pi 5 pointer-copy proof plan defines the physical invariant for
+proof-only talos_copy_probe on serialized Raspberry Pi 5 hardware: stable
+svc #0 with x8 = 0x7001 must prove the 16-byte 0x2a-to-0xa5 success copy,
+guard-range -EFAULT, unknown-syscall -ENOSYS, diagnostic marker quarantine,
+hardwareTestLock ownership, fresh serial/TFTP evidence, candidate identity,
+inconclusive-run triage, restoration proof, and exact
+classification=pi5-pointer-copy-proof-complete plus
+rpi5-pointer-copy-proof: PASS lines. It does not acquire hardwareTestLock,
+publish an archive, run Pi 5 hardware, or unblock descriptor I/O, process
+loading, filesystem, shell, networking, or SSH.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -1366,6 +1376,15 @@ Accepted progress:
   diagnostic regressions, proof-only status, and blocked surfaces. It
   recommends supervisor planning for a documentation-only Pi 5 pointer-copy
   proof plan before any hardware action, and keeps descriptor I/O, process
+  loading, VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, DMA/cache-driver policy, and stable POSIX descriptor claims
+  blocked.
+- Phase 7 Pi 5 pointer-copy proof plan is accepted. It translates the accepted
+  QEMU/substitute talos_copy_probe boundary into a future serialized physical
+  proof with required success-copy, guard-range EFAULT, unknown-syscall,
+  diagnostic-quarantine, classification, PASS, candidate-identity,
+  fresh-serial/TFTP, hardwareTestLock, restoration, and inconclusive-run
+  triage evidence. It does not run hardware and keeps descriptor I/O, process
   loading, VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt
   ownership, DMA/cache-driver policy, and stable POSIX descriptor claims
   blocked.

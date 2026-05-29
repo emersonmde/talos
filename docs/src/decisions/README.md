@@ -4684,3 +4684,33 @@ ADR template:
   loading, VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt
   ownership, DMA/cache-driver policy, and stable POSIX descriptor claims remain
   blocked.
+
+## 2026-05-29 - Phase 7 Pi 5 Pointer-Copy Proof Plan Accepted
+
+- Status: accepted as a documentation-only Phase 7.3 plan for the serialized
+  Pi 5 pointer-copy syscall proof. No Rust behavior, assembly behavior, boot
+  scenario, QEMU rerun, Pi 5 hardware run, boot archive publishing,
+  hardware-lock acquisition, descriptor I/O, process loading, VFS/filesystem,
+  shell behavior, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache behavior was added.
+- Context: The accepted pointer-copy closeout reconciled QEMU/substitute
+  talos_copy_probe evidence and recommended a physical plan before any
+  hardware action or descriptor syscall planning.
+- Decision: Accept phase7-pi5-pointer-copy-proof-plan-20260529. The future
+  rpi5_pointer_copy_proof task must route stable svc #0 with proof-only
+  x8 = 0x7001 through production syscall dispatch on Pi 5, prove the 16-byte
+  0x2a-to-0xa5 success copy, prove guard-range -EFAULT, preserve unknown
+  syscall -ENOSYS, quarantine diagnostic marker 0x7a10, and retain
+  classification=pi5-pointer-copy-proof-complete plus
+  rpi5-pointer-copy-proof: PASS.
+- Evidence level: static documentation inspection, retained QEMU/substitute
+  evidence reference, documentation build, and whitespace inspection. No Pi 5
+  hardware evidence was claimed.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-pi5-pointer-copy-proof-20260529, provided hardwareTestLock is
+  unlocked. It must acquire the lock before hardware action and must preserve
+  candidate identity, fresh serial/TFTP evidence, known-good control and
+  unchanged rerun requirements for inconclusive runs, restoration proof, and
+  blocked descriptor/process/filesystem/networking surfaces.
