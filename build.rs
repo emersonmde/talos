@@ -11,6 +11,7 @@ struct BootScenario {
 const QEMU_SMP_ASM: &str = "TALOS_QEMU_SMP_BOOT_SCENARIO";
 const RPI5_SMP_ASM: &str = "TALOS_RPI5_SMP_BOOT_SCENARIO";
 const RPI5_EL0_TRAP_PROOF_ASM: &str = "TALOS_RPI5_EL0_TRAP_PROOF_SCENARIO";
+const RPI5_SYSCALL_PROOF_ASM: &str = "TALOS_RPI5_SYSCALL_PROOF_SCENARIO";
 const QEMU_SYSCALL_SMOKE_ASM: &str = "TALOS_QEMU_SYSCALL_SMOKE_SCENARIO";
 
 const BOOT_SCENARIOS: &[BootScenario] = &[
@@ -98,6 +99,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         value: "rpi5_el0_trap_proof",
         implied_values: &[],
         asm_defines: &[RPI5_EL0_TRAP_PROOF_ASM],
+    },
+    BootScenario {
+        value: "rpi5_syscall_proof",
+        implied_values: &[],
+        asm_defines: &[RPI5_SYSCALL_PROOF_ASM],
     },
     BootScenario {
         value: "rpi5_secondary_scheduler_service_loop",

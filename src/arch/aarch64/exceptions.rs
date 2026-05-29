@@ -260,7 +260,10 @@ pub extern "C" fn rust_irq_handler(
 }
 
 #[unsafe(no_mangle)]
-#[cfg(talos_target_rpi5_bcm2712)]
+#[cfg(all(
+    talos_target_rpi5_bcm2712,
+    not(talos_boot_scenario = "rpi5_syscall_proof")
+))]
 pub extern "C" fn rust_exception_handler(
     esr: u64,
     elr: u64,
@@ -281,6 +284,36 @@ pub extern "C" fn rust_exception_handler(
 
     #[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
     crate::target::rpi5::handle_el0_trap_proof_exception(esr, elr, far, vector, spsr, saved_frame);
+
+    println!();
+    println!("talos exception: {}", vector.name());
+    println!(
+        "exception-info: esr={:#018x} elr={:#018x} far={:#018x}",
+        esr, elr, far
+    );
+    write_exception_class(esr);
+    write_exception_context(spsr, saved_frame);
+
+    crate::target::rpi5::wait_uart10_empty_early_phase();
+    crate::arch::aarch64::halt()
+}
+
+#[unsafe(no_mangle)]
+#[cfg(all(talos_target_rpi5_bcm2712, talos_boot_scenario = "rpi5_syscall_proof"))]
+pub extern "C" fn rust_exception_handler(
+    esr: u64,
+    elr: u64,
+    far: u64,
+    vector: u64,
+    spsr: u64,
+    saved_frame: *mut ExceptionFrame,
+) -> u64 {
+    let vector = ExceptionVector::from(vector);
+
+    if crate::target::rpi5::handle_syscall_proof_exception(esr, elr, far, vector, spsr, saved_frame)
+    {
+        return 1;
+    }
 
     println!();
     println!("talos exception: {}", vector.name());

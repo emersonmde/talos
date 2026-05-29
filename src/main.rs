@@ -20,6 +20,7 @@
             talos_boot_scenario = "rpi5_multicore_preemption_proof",
             talos_boot_scenario = "rpi5_production_timer_preemption_proof",
             talos_boot_scenario = "rpi5_el0_trap_proof",
+            talos_boot_scenario = "rpi5_syscall_proof",
         )
     ),
     allow(dead_code, unused_imports, unused_variables, unreachable_code)

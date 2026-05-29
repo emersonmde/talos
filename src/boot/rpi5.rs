@@ -82,6 +82,9 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
     #[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
     target::rpi5::run_el0_trap_proof();
 
+    #[cfg(talos_boot_scenario = "rpi5_syscall_proof")]
+    target::rpi5::run_syscall_proof();
+
     #[cfg(talos_boot_scenario = "rpi5_secondary_scheduler_service_loop")]
     target::rpi5::run_secondary_scheduler_service_loop_proof();
 

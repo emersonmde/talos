@@ -77,7 +77,7 @@ __exception_entry_frame:
     mrs x4, SPSR_EL1
     mov x5, sp
     bl rust_exception_handler
-#ifdef TALOS_QEMU_SYSCALL_SMOKE_SCENARIO
+#if defined(TALOS_QEMU_SYSCALL_SMOKE_SCENARIO) || defined(TALOS_RPI5_SYSCALL_PROOF_SCENARIO)
     cbnz x0, 8f
 #endif
     b 4f
@@ -89,7 +89,7 @@ __exception_entry_frame:
     mrs x4, SPSR_EL2
     mov x5, sp
     bl rust_exception_handler
-#ifdef TALOS_QEMU_SYSCALL_SMOKE_SCENARIO
+#if defined(TALOS_QEMU_SYSCALL_SMOKE_SCENARIO) || defined(TALOS_RPI5_SYSCALL_PROOF_SCENARIO)
     cbnz x0, 8f
 #endif
     b 4f
@@ -101,7 +101,7 @@ __exception_entry_frame:
     mrs x4, SPSR_EL3
     mov x5, sp
     bl rust_exception_handler
-#ifdef TALOS_QEMU_SYSCALL_SMOKE_SCENARIO
+#if defined(TALOS_QEMU_SYSCALL_SMOKE_SCENARIO) || defined(TALOS_RPI5_SYSCALL_PROOF_SCENARIO)
     cbnz x0, 8f
 #endif
 
