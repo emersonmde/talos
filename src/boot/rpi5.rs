@@ -84,12 +84,16 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
 
     #[cfg(all(
         talos_boot_scenario = "rpi5_syscall_proof",
-        not(talos_boot_scenario = "rpi5_pointer_copy_proof")
+        not(talos_boot_scenario = "rpi5_pointer_copy_proof"),
+        not(talos_boot_scenario = "rpi5_descriptor_write_proof")
     ))]
     target::rpi5::run_syscall_proof();
 
     #[cfg(talos_boot_scenario = "rpi5_pointer_copy_proof")]
     target::rpi5::run_pointer_copy_proof();
+
+    #[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+    target::rpi5::run_descriptor_write_proof();
 
     #[cfg(talos_boot_scenario = "rpi5_secondary_scheduler_service_loop")]
     target::rpi5::run_secondary_scheduler_service_loop_proof();

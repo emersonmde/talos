@@ -284,6 +284,26 @@ const POINTER_COPY_USER_DATA_REPLACEMENT: u8 = 0xa5;
 const POINTER_COPY_EXPECTED_ENOSYS_X0: u64 = (syscall::ENOSYS as u64).wrapping_neg();
 #[cfg(talos_boot_scenario = "rpi5_pointer_copy_proof")]
 const POINTER_COPY_EXPECTED_EFAULT_X0: u64 = (syscall::EFAULT as u64).wrapping_neg();
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+const DESCRIPTOR_WRITE_USER_DATA_START: u64 = 0x0000_0000_0011_0000;
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+const DESCRIPTOR_WRITE_USER_DATA_LEN: usize = 0x1000;
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+const DESCRIPTOR_WRITE_STDOUT_OFFSET: usize = 0x00;
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+const DESCRIPTOR_WRITE_STDERR_OFFSET: usize = 0x40;
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+const DESCRIPTOR_WRITE_STDOUT: &[u8; 18] = b"talos-stdout-rpi5\n";
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+const DESCRIPTOR_WRITE_STDERR: &[u8; 18] = b"talos-stderr-rpi5\n";
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+const DESCRIPTOR_WRITE_EXPECTED_EBADF_X0: u64 = (syscall::EBADF as u64).wrapping_neg();
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+const DESCRIPTOR_WRITE_EXPECTED_EFAULT_X0: u64 = (syscall::EFAULT as u64).wrapping_neg();
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+const DESCRIPTOR_WRITE_EXPECTED_EINVAL_X0: u64 = (syscall::EINVAL as u64).wrapping_neg();
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+const DESCRIPTOR_WRITE_COPY_PROBE_NUMBER: u64 = 0x7001;
 #[cfg(any(
     talos_boot_scenario = "rpi5_el0_trap_proof",
     talos_boot_scenario = "rpi5_syscall_proof"
@@ -711,6 +731,43 @@ impl El0TrapPayload {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+impl El0TrapPayload {
+    const fn descriptor_write_proof() -> Self {
+        let mut page = [0; EL0_TRAP_USER_TEXT_LEN];
+        let bytes = [
+            0x20, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x80, 0xd2, 0x21, 0x02, 0xa0, 0xf2, 0x42, 0x02,
+            0x80, 0xd2, 0x03, 0x00, 0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2, 0x05, 0x00, 0x80, 0xd2,
+            0x28, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x00, 0xd4, 0x40, 0x00, 0x80, 0xd2, 0x01, 0x08,
+            0x80, 0xd2, 0x21, 0x02, 0xa0, 0xf2, 0x42, 0x02, 0x80, 0xd2, 0x03, 0x00, 0x80, 0xd2,
+            0x04, 0x00, 0x80, 0xd2, 0x05, 0x00, 0x80, 0xd2, 0x28, 0x00, 0x80, 0xd2, 0x01, 0x00,
+            0x00, 0xd4, 0x00, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x80, 0xd2, 0x21, 0x02, 0xa0, 0xf2,
+            0x42, 0x02, 0x80, 0xd2, 0x03, 0x00, 0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2, 0x05, 0x00,
+            0x80, 0xd2, 0x28, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x00, 0xd4, 0x60, 0x0c, 0x80, 0xd2,
+            0x01, 0x00, 0x80, 0xd2, 0x21, 0x02, 0xa0, 0xf2, 0x42, 0x02, 0x80, 0xd2, 0x03, 0x00,
+            0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2, 0x05, 0x00, 0x80, 0xd2, 0x28, 0x00, 0x80, 0xd2,
+            0x01, 0x00, 0x00, 0xd4, 0x20, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x80, 0xd2, 0xc1, 0x03,
+            0xa0, 0xf2, 0x42, 0x02, 0x80, 0xd2, 0x03, 0x00, 0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2,
+            0x05, 0x00, 0x80, 0xd2, 0x28, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x00, 0xd4, 0x20, 0x00,
+            0x80, 0xd2, 0x01, 0x00, 0x80, 0xd2, 0x21, 0x02, 0xa0, 0xf2, 0x42, 0x02, 0x80, 0xd2,
+            0x23, 0x00, 0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2, 0x05, 0x00, 0x80, 0xd2, 0x28, 0x00,
+            0x80, 0xd2, 0x01, 0x00, 0x00, 0xd4, 0x00, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x80, 0xd2,
+            0x02, 0x00, 0x80, 0xd2, 0x03, 0x00, 0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2, 0x05, 0x00,
+            0x80, 0xd2, 0x08, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x00, 0xd4, 0x28, 0x02, 0x80, 0xd2,
+            0x01, 0x00, 0x00, 0xd4, 0x00, 0x00, 0x80, 0xd2, 0x20, 0x02, 0xa0, 0xf2, 0x01, 0x02,
+            0x80, 0xd2, 0x42, 0x05, 0x80, 0xd2, 0xa3, 0x14, 0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2,
+            0x05, 0x00, 0x80, 0xd2, 0x28, 0x00, 0x8e, 0xd2, 0x01, 0x00, 0x00, 0xd4, 0x01, 0x42,
+            0x0f, 0xd4, 0x00, 0x00, 0x00, 0x14,
+        ];
+        let mut index = 0;
+        while index < bytes.len() {
+            page[index] = bytes[index];
+            index += 1;
+        }
+        Self(page)
+    }
+}
+
 #[cfg(any(
     talos_boot_scenario = "rpi5_el0_trap_proof",
     talos_boot_scenario = "rpi5_syscall_proof"
@@ -745,14 +802,44 @@ static mut EL0_TRAP_STACK: El0TrapStack = El0TrapStack::zeroed();
 static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::svc_marker();
 #[cfg(all(
     talos_boot_scenario = "rpi5_syscall_proof",
-    not(talos_boot_scenario = "rpi5_pointer_copy_proof")
+    not(talos_boot_scenario = "rpi5_pointer_copy_proof"),
+    not(talos_boot_scenario = "rpi5_descriptor_write_proof")
 ))]
 static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::syscall_proof();
 #[cfg(talos_boot_scenario = "rpi5_pointer_copy_proof")]
 static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::pointer_copy_proof();
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::descriptor_write_proof();
 #[cfg(talos_boot_scenario = "rpi5_pointer_copy_proof")]
 static mut POINTER_COPY_USER_DATA: [u8; POINTER_COPY_USER_DATA_LEN] =
     [0; POINTER_COPY_USER_DATA_LEN];
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+static mut DESCRIPTOR_WRITE_USER_DATA: [u8; DESCRIPTOR_WRITE_USER_DATA_LEN] =
+    [0; DESCRIPTOR_WRITE_USER_DATA_LEN];
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+static mut DESCRIPTOR_WRITE_CONSOLE_CAPTURE: [u8; 64] = [0; 64];
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+static DESCRIPTOR_WRITE_CONSOLE_LEN: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+static DESCRIPTOR_WRITE_STDOUT_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+static DESCRIPTOR_WRITE_STDERR_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+static DESCRIPTOR_WRITE_FD0_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+static DESCRIPTOR_WRITE_BADFD_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+static DESCRIPTOR_WRITE_EFAULT_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+static DESCRIPTOR_WRITE_RESERVED_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+static DESCRIPTOR_WRITE_TALOS_NOP_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+static DESCRIPTOR_WRITE_UNKNOWN_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+static DESCRIPTOR_WRITE_COPY_PROBE_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+static DESCRIPTOR_WRITE_ERRORS: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_boot_scenario = "rpi5_syscall_proof")]
 static SYSCALL_PROOF_TALOS_NOP_DISPATCHED: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_boot_scenario = "rpi5_syscall_proof")]
@@ -8086,6 +8173,137 @@ pub fn run_pointer_copy_proof() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+pub fn run_descriptor_write_proof() -> ! {
+    crate::println!("rpi5-descriptor-write-proof: start");
+
+    let descriptor_table =
+        crate::posix::DescriptorTable::<4>::with_inherited_stdio().expect("stdio table");
+    let mappings = [
+        UserMapping::new(
+            EL0_TRAP_USER_TEXT_START,
+            EL0_TRAP_USER_TEXT_LEN,
+            UserMappingPermissions::USER_TEXT,
+        )
+        .expect("fixed descriptor-write proof text mapping is a valid user mapping"),
+        UserMapping::new(
+            DESCRIPTOR_WRITE_USER_DATA_START,
+            DESCRIPTOR_WRITE_USER_DATA_LEN,
+            UserMappingPermissions::USER_DATA,
+        )
+        .expect("fixed descriptor-write proof data mapping is a valid user mapping"),
+        UserMapping::new(
+            EL0_TRAP_USER_STACK_START,
+            EL0_TRAP_USER_STACK_LEN,
+            UserMappingPermissions::USER_DATA,
+        )
+        .expect("fixed descriptor-write proof stack mapping is a valid user mapping"),
+    ];
+    let entry = validate_user_memory_access(
+        &mappings,
+        EL0_TRAP_USER_TEXT_START,
+        4,
+        UserAccessKind::Execute,
+        EL0_TRAP_USER_TEXT_LEN,
+    )
+    .expect("descriptor-write proof entry validates inside fixed UserText")
+    .start();
+    validate_user_memory_access(
+        &mappings,
+        DESCRIPTOR_WRITE_USER_DATA_START,
+        DESCRIPTOR_WRITE_USER_DATA_LEN,
+        UserAccessKind::Write,
+        DESCRIPTOR_WRITE_USER_DATA_LEN,
+    )
+    .expect("descriptor-write proof data validates inside fixed UserData");
+    descriptor_table
+        .get(crate::posix::STDOUT_FD)
+        .expect("inherited stdout descriptor exists");
+    descriptor_table
+        .get(crate::posix::STDERR_FD)
+        .expect("inherited stderr descriptor exists");
+    let user_sp = EL0_TRAP_USER_STACK_START + EL0_TRAP_USER_STACK_LEN as u64;
+    validate_user_memory_access(
+        &mappings,
+        user_sp - 16,
+        16,
+        UserAccessKind::Write,
+        EL0_TRAP_USER_STACK_LEN,
+    )
+    .expect("descriptor-write proof stack top validates inside fixed UserStack");
+    let guard_result = validate_user_memory_access(
+        &mappings,
+        EL0_TRAP_USER_GUARD_START,
+        16,
+        UserAccessKind::Read,
+        EL0_TRAP_USER_TEXT_LEN,
+    );
+    let guard_blocked = matches!(guard_result, Err(PosixError::Fault));
+
+    crate::println!(
+        "rpi5-descriptor-write-proof: validated elr={:#018x} sp={:#018x} user-data={:#018x} user-data-len={:#018x} guard-blocked={} descriptor-table=inherited-stdio runtime-console=runtime-console0",
+        entry,
+        user_sp,
+        DESCRIPTOR_WRITE_USER_DATA_START,
+        DESCRIPTOR_WRITE_USER_DATA_LEN as u64,
+        guard_blocked
+    );
+    if !guard_blocked {
+        crate::println!(
+            "rpi5-descriptor-write-proof: final participants=0 expected=8 errors=1 classification=pi5-descriptor-write-proof-guard-open"
+        );
+        crate::println!("rpi5-descriptor-write-proof: FAIL");
+        wait_uart10_empty_early_phase();
+        crate::arch::aarch64::halt();
+    }
+
+    unsafe {
+        core::ptr::write_bytes(
+            core::ptr::addr_of_mut!(DESCRIPTOR_WRITE_USER_DATA).cast::<u8>(),
+            0,
+            DESCRIPTOR_WRITE_USER_DATA_LEN,
+        );
+        let data = &mut *core::ptr::addr_of_mut!(DESCRIPTOR_WRITE_USER_DATA);
+        data[DESCRIPTOR_WRITE_STDOUT_OFFSET
+            ..DESCRIPTOR_WRITE_STDOUT_OFFSET + DESCRIPTOR_WRITE_STDOUT.len()]
+            .copy_from_slice(DESCRIPTOR_WRITE_STDOUT);
+        data[DESCRIPTOR_WRITE_STDERR_OFFSET
+            ..DESCRIPTOR_WRITE_STDERR_OFFSET + DESCRIPTOR_WRITE_STDERR.len()]
+            .copy_from_slice(DESCRIPTOR_WRITE_STDERR);
+        core::ptr::write_bytes(
+            core::ptr::addr_of_mut!(DESCRIPTOR_WRITE_CONSOLE_CAPTURE).cast::<u8>(),
+            0,
+            64,
+        );
+        DESCRIPTOR_WRITE_CONSOLE_LEN.store(0, Ordering::Relaxed);
+        clean_cache_range_to_poc(
+            core::ptr::addr_of!(DESCRIPTOR_WRITE_USER_DATA) as usize,
+            DESCRIPTOR_WRITE_USER_DATA_LEN,
+        );
+        install_el0_trap_proof_tables();
+        prepare_el1_and_el0_translation();
+        write_el0_trap_proof_pre_eret_registers(entry, EL0_TRAP_SPSR_EL0T_DAIF_MASKED);
+        let pre_eret = read_el0_trap_proof_pre_eret_registers();
+        crate::println!(
+            "rpi5-descriptor-write-proof: pre-eret hcr_el2={:#018x} sctlr_el1={:#018x} tcr_el1={:#018x} ttbr0_el1={:#018x} vbar_el1={:#018x} elr_el1={:#018x} spsr_el1={:#018x}",
+            pre_eret.hcr_el2,
+            pre_eret.sctlr_el1,
+            pre_eret.tcr_el1,
+            pre_eret.ttbr0_el1,
+            pre_eret.vbar_el1,
+            pre_eret.elr_el1,
+            pre_eret.spsr_el1
+        );
+        wait_uart10_empty_early_phase();
+        aarch64::enter_el1_then_el0(
+            entry as usize,
+            user_sp as usize,
+            EL0_TRAP_SPSR_EL0T_DAIF_MASKED,
+            EL0_TRAP_SPSR_EL1H_DAIF_MASKED,
+        );
+    }
+}
+
 #[cfg(talos_boot_scenario = "rpi5_syscall_proof")]
 pub fn handle_syscall_proof_exception(
     esr: u64,
@@ -8354,12 +8572,340 @@ pub fn handle_pointer_copy_proof_exception(
     true
 }
 
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+pub fn handle_descriptor_write_proof_exception(
+    esr: u64,
+    _elr: u64,
+    far: u64,
+    vector: ExceptionVector,
+    _spsr: u64,
+    saved_frame: *mut ExceptionFrame,
+) -> bool {
+    let marker = crate::arch::aarch64::exceptions::svc_immediate(esr);
+    let reported_esr = esr & !(1 << 25);
+    let Some(frame) = (unsafe { saved_frame.as_mut() }) else {
+        DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+        return false;
+    };
+
+    if marker == syscall::DIAGNOSTIC_EL0_TRAP_SVC_IMMEDIATE {
+        let stable = syscall::is_stable_syscall_svc_immediate(marker);
+        crate::println!(
+            "rpi5-descriptor-write-proof: diagnostic-marker marker=0x7a10 stable-syscall={} dispatched=false",
+            stable
+        );
+        finish_descriptor_write_proof(
+            reported_esr == SYSCALL_PROOF_EXPECTED_MARKER_ESR && far == 0,
+        );
+    }
+
+    if reported_esr != SYSCALL_PROOF_EXPECTED_SVC_ESR {
+        DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+        return false;
+    }
+
+    let arguments = syscall::SyscallArguments::new([
+        frame.reg(0),
+        frame.reg(1),
+        frame.reg(2),
+        frame.reg(3),
+        frame.reg(4),
+        frame.reg(5),
+    ]);
+    let args = arguments.values();
+    let raw_number = frame.reg(8);
+    let before_len = DESCRIPTOR_WRITE_CONSOLE_LEN.load(Ordering::Relaxed) as usize;
+    let descriptor_table =
+        crate::posix::DescriptorTable::<4>::with_inherited_stdio().expect("stdio table");
+    let mappings = [UserMapping::new(
+        DESCRIPTOR_WRITE_USER_DATA_START,
+        DESCRIPTOR_WRITE_USER_DATA_LEN,
+        UserMappingPermissions::USER_DATA,
+    )
+    .expect("fixed descriptor-write proof data mapping is valid")];
+    let mut scratch = [0u8; 64];
+    let mut console = DescriptorWriteCaptureConsole;
+    let result = syscall::dispatch_descriptor_write(
+        raw_number,
+        arguments,
+        &descriptor_table,
+        &mappings,
+        DESCRIPTOR_WRITE_USER_DATA_START,
+        unsafe { &*core::ptr::addr_of!(DESCRIPTOR_WRITE_USER_DATA) },
+        &mut scratch,
+        &mut console,
+    );
+    let return_x0 = result.return_value().x0();
+    frame.set_reg(0, return_x0);
+    let after_len = DESCRIPTOR_WRITE_CONSOLE_LEN.load(Ordering::Relaxed) as usize;
+
+    match raw_number {
+        syscall::TALOS_WRITE_SYSCALL
+            if args[0] == 1 && args[1] == DESCRIPTOR_WRITE_USER_DATA_START && args[3] == 0 =>
+        {
+            let console_ok = return_x0 == 18
+                && after_len == before_len + DESCRIPTOR_WRITE_STDOUT.len()
+                && descriptor_write_console_matches(before_len, DESCRIPTOR_WRITE_STDOUT);
+            DESCRIPTOR_WRITE_STDOUT_OBSERVED.store(u64::from(console_ok), Ordering::Relaxed);
+            if !console_ok {
+                DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "rpi5-descriptor-write-proof: syscall case=write_stdout vector={} esr={:#018x} svc=0x0000 number=1 args=[x0={:#018x} x1={:#018x} x2={:#018x} x3={:#018x} x4={:#018x} x5={:#018x}] return-x0={:#018x}",
+                vector.name(),
+                reported_esr,
+                args[0],
+                args[1],
+                args[2],
+                args[3],
+                args[4],
+                args[5],
+                return_x0
+            );
+            crate::println!(
+                "rpi5-descriptor-write-proof: runtime-console case=write_stdout device=runtime-console0 bytes=18 hex=74616c6f732d7374646f75742d727069350a ok={}",
+                console_ok
+            );
+            crate::println!(
+                "rpi5-descriptor-write-proof: user-observed case=write_stdout x0={:#018x} ok={}",
+                return_x0,
+                console_ok
+            );
+        }
+        syscall::TALOS_WRITE_SYSCALL
+            if args[0] == 2
+                && args[1]
+                    == DESCRIPTOR_WRITE_USER_DATA_START + DESCRIPTOR_WRITE_STDERR_OFFSET as u64 =>
+        {
+            let console_ok = return_x0 == 18
+                && after_len == before_len + DESCRIPTOR_WRITE_STDERR.len()
+                && descriptor_write_console_matches(before_len, DESCRIPTOR_WRITE_STDERR);
+            DESCRIPTOR_WRITE_STDERR_OBSERVED.store(u64::from(console_ok), Ordering::Relaxed);
+            if !console_ok {
+                DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "rpi5-descriptor-write-proof: syscall case=write_stderr vector={} esr={:#018x} svc=0x0000 number=1 args=[x0={:#018x} x1={:#018x} x2={:#018x} x3={:#018x} x4={:#018x} x5={:#018x}] return-x0={:#018x}",
+                vector.name(),
+                reported_esr,
+                args[0],
+                args[1],
+                args[2],
+                args[3],
+                args[4],
+                args[5],
+                return_x0
+            );
+            crate::println!(
+                "rpi5-descriptor-write-proof: runtime-console case=write_stderr device=runtime-console0 bytes=18 hex=74616c6f732d7374646572722d727069350a ok={}",
+                console_ok
+            );
+            crate::println!(
+                "rpi5-descriptor-write-proof: user-observed case=write_stderr x0={:#018x} ok={}",
+                return_x0,
+                console_ok
+            );
+        }
+        syscall::TALOS_WRITE_SYSCALL if args[0] == 0 => {
+            let ok = return_x0 == DESCRIPTOR_WRITE_EXPECTED_EBADF_X0 && after_len == before_len;
+            DESCRIPTOR_WRITE_FD0_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "rpi5-descriptor-write-proof: syscall case=write_fd0 vector={} esr={:#018x} svc=0x0000 number=1 return-x0={:#018x} expected=-EBADF console-unchanged={}",
+                vector.name(),
+                reported_esr,
+                return_x0,
+                after_len == before_len
+            );
+        }
+        syscall::TALOS_WRITE_SYSCALL if args[0] == 99 => {
+            let ok = return_x0 == DESCRIPTOR_WRITE_EXPECTED_EBADF_X0 && after_len == before_len;
+            DESCRIPTOR_WRITE_BADFD_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "rpi5-descriptor-write-proof: syscall case=write_badfd vector={} esr={:#018x} svc=0x0000 number=1 return-x0={:#018x} expected=-EBADF console-unchanged={}",
+                vector.name(),
+                reported_esr,
+                return_x0,
+                after_len == before_len
+            );
+        }
+        syscall::TALOS_WRITE_SYSCALL if args[1] == EL0_TRAP_USER_GUARD_START => {
+            let ok = return_x0 == DESCRIPTOR_WRITE_EXPECTED_EFAULT_X0 && after_len == before_len;
+            DESCRIPTOR_WRITE_EFAULT_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "rpi5-descriptor-write-proof: syscall case=write_efault vector={} esr={:#018x} svc=0x0000 number=1 return-x0={:#018x} expected=-EFAULT console-unchanged={}",
+                vector.name(),
+                reported_esr,
+                return_x0,
+                after_len == before_len
+            );
+        }
+        syscall::TALOS_WRITE_SYSCALL if args[3] != 0 => {
+            let ok = return_x0 == DESCRIPTOR_WRITE_EXPECTED_EINVAL_X0 && after_len == before_len;
+            DESCRIPTOR_WRITE_RESERVED_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "rpi5-descriptor-write-proof: syscall case=write_reserved vector={} esr={:#018x} svc=0x0000 number=1 return-x0={:#018x} expected=-EINVAL console-unchanged={}",
+                vector.name(),
+                reported_esr,
+                return_x0,
+                after_len == before_len
+            );
+        }
+        syscall::TALOS_NOP_SYSCALL => {
+            let ok = return_x0 == 0 && after_len == before_len;
+            DESCRIPTOR_WRITE_TALOS_NOP_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "rpi5-descriptor-write-proof: syscall case=talos_nop vector={} esr={:#018x} svc=0x0000 number=0 return-x0={:#018x}",
+                vector.name(),
+                reported_esr,
+                return_x0
+            );
+        }
+        SYSCALL_PROOF_UNKNOWN_NUMBER => {
+            let ok = return_x0 == SYSCALL_PROOF_EXPECTED_ENOSYS_X0 && after_len == before_len;
+            DESCRIPTOR_WRITE_UNKNOWN_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "rpi5-descriptor-write-proof: syscall case=unknown vector={} esr={:#018x} svc=0x0000 number=17 return-x0={:#018x} expected=-ENOSYS",
+                vector.name(),
+                reported_esr,
+                return_x0
+            );
+        }
+        DESCRIPTOR_WRITE_COPY_PROBE_NUMBER => {
+            let ok = return_x0 == SYSCALL_PROOF_EXPECTED_ENOSYS_X0 && after_len == before_len;
+            DESCRIPTOR_WRITE_COPY_PROBE_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "rpi5-descriptor-write-proof: syscall case=copy_probe_quarantine vector={} esr={:#018x} svc=0x0000 number={:#018x} return-x0={:#018x} expected=-ENOSYS dispatched=false",
+                vector.name(),
+                reported_esr,
+                raw_number,
+                return_x0
+            );
+        }
+        _ => {
+            DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+            crate::println!(
+                "rpi5-descriptor-write-proof: syscall case=unexpected vector={} esr={:#018x} svc=0x0000 number={:#018x} return-x0={:#018x}",
+                vector.name(),
+                reported_esr,
+                raw_number,
+                return_x0
+            );
+        }
+    }
+
+    true
+}
+
 #[cfg(talos_boot_scenario = "rpi5_pointer_copy_proof")]
 fn pointer_copy_user_data_replaced() -> bool {
     let data = unsafe { &*core::ptr::addr_of!(POINTER_COPY_USER_DATA) };
     data[..16]
         .iter()
         .all(|byte| *byte == POINTER_COPY_USER_DATA_REPLACEMENT)
+}
+
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+fn descriptor_write_console_matches(start: usize, expected: &[u8]) -> bool {
+    let len = DESCRIPTOR_WRITE_CONSOLE_LEN.load(Ordering::Relaxed) as usize;
+    let Some(end) = start.checked_add(expected.len()) else {
+        return false;
+    };
+    if end > len || end > 64 {
+        return false;
+    }
+    let capture = unsafe { &*core::ptr::addr_of!(DESCRIPTOR_WRITE_CONSOLE_CAPTURE) };
+    &capture[start..end] == expected
+}
+
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+struct DescriptorWriteCaptureConsole;
+
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+impl crate::runtime_console::ConsoleBackend for DescriptorWriteCaptureConsole {
+    fn write_str(&mut self, s: &str) -> core::fmt::Result {
+        self.write_bytes(s.as_bytes())
+    }
+
+    fn write_bytes(&mut self, bytes: &[u8]) -> core::fmt::Result {
+        let len = DESCRIPTOR_WRITE_CONSOLE_LEN.load(Ordering::Relaxed) as usize;
+        let Some(end) = len.checked_add(bytes.len()) else {
+            return Err(core::fmt::Error);
+        };
+        if end > 64 {
+            return Err(core::fmt::Error);
+        };
+        unsafe {
+            let capture = &mut *core::ptr::addr_of_mut!(DESCRIPTOR_WRITE_CONSOLE_CAPTURE);
+            capture[len..end].copy_from_slice(bytes);
+        }
+        if let Ok(s) = core::str::from_utf8(bytes) {
+            crate::target::console::write_static(s);
+            wait_uart10_empty_early_phase();
+        } else {
+            return Err(core::fmt::Error);
+        }
+        DESCRIPTOR_WRITE_CONSOLE_LEN.store(end as u64, Ordering::Relaxed);
+        Ok(())
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+fn finish_descriptor_write_proof(marker_ok: bool) -> ! {
+    if !marker_ok {
+        DESCRIPTOR_WRITE_ERRORS.fetch_add(1, Ordering::Relaxed);
+    }
+    let invalid_descriptor_observed = DESCRIPTOR_WRITE_FD0_OBSERVED.load(Ordering::Relaxed) == 1
+        && DESCRIPTOR_WRITE_BADFD_OBSERVED.load(Ordering::Relaxed) == 1;
+    let participants = DESCRIPTOR_WRITE_STDOUT_OBSERVED.load(Ordering::Relaxed)
+        + DESCRIPTOR_WRITE_STDERR_OBSERVED.load(Ordering::Relaxed)
+        + u64::from(invalid_descriptor_observed)
+        + DESCRIPTOR_WRITE_EFAULT_OBSERVED.load(Ordering::Relaxed)
+        + DESCRIPTOR_WRITE_RESERVED_OBSERVED.load(Ordering::Relaxed)
+        + DESCRIPTOR_WRITE_TALOS_NOP_OBSERVED.load(Ordering::Relaxed)
+        + DESCRIPTOR_WRITE_UNKNOWN_OBSERVED.load(Ordering::Relaxed)
+        + DESCRIPTOR_WRITE_COPY_PROBE_OBSERVED.load(Ordering::Relaxed);
+    let errors = DESCRIPTOR_WRITE_ERRORS.load(Ordering::Relaxed);
+    let complete = participants == 8 && errors == 0;
+    let classification = if complete {
+        "pi5-descriptor-write-proof-complete"
+    } else {
+        "pi5-descriptor-write-proof-failed"
+    };
+
+    crate::println!(
+        "rpi5-descriptor-write-proof: final participants={} expected=8 errors={} classification={}",
+        participants,
+        errors,
+        classification
+    );
+    if complete {
+        crate::println!("rpi5-descriptor-write-proof: PASS");
+    } else {
+        crate::println!("rpi5-descriptor-write-proof: FAIL");
+    }
+    wait_uart10_empty_early_phase();
+    crate::arch::aarch64::halt()
 }
 
 #[cfg(talos_boot_scenario = "rpi5_pointer_copy_proof")]
@@ -8526,6 +9072,8 @@ unsafe fn install_el0_trap_proof_tables() {
     let payload_pa = core::ptr::addr_of!(EL0_TRAP_PAYLOAD.0) as u64;
     #[cfg(talos_boot_scenario = "rpi5_pointer_copy_proof")]
     let user_data_pa = core::ptr::addr_of!(POINTER_COPY_USER_DATA) as u64;
+    #[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+    let user_data_pa = core::ptr::addr_of!(DESCRIPTOR_WRITE_USER_DATA) as u64;
     let stack_pa = unsafe { core::ptr::addr_of!(EL0_TRAP_STACK.0) as u64 };
 
     unsafe {
@@ -8558,6 +9106,18 @@ unsafe fn install_el0_trap_proof_tables() {
         #[cfg(talos_boot_scenario = "rpi5_pointer_copy_proof")]
         {
             (*low_l3)[(POINTER_COPY_USER_DATA_START as usize) >> 12] = (user_data_pa
+                & ADDR_MASK_4K)
+                | (ATTR_NORMAL << ATTR_SHIFT)
+                | AP_EL0_RW
+                | SH_INNER
+                | AF
+                | UXN
+                | PAGE_DESC;
+        }
+
+        #[cfg(talos_boot_scenario = "rpi5_descriptor_write_proof")]
+        {
+            (*low_l3)[(DESCRIPTOR_WRITE_USER_DATA_START as usize) >> 12] = (user_data_pa
                 & ADDR_MASK_4K)
                 | (ATTR_NORMAL << ATTR_SHIFT)
                 | AP_EL0_RW
