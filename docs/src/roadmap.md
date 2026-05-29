@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 syscall trap-routing source inventory frontier,
+Talos is at the Phase 7.3 syscall trap-routing contract frontier,
 after accepting the Phase 6.3 production scheduler runtime closeout, the full
 Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -45,8 +45,10 @@ exception routing, QEMU, or hardware work. The accepted syscall trap-routing
 source inventory maps production lower-AArch64 SVC detection, svc immediate
 validation, x8 syscall-number extraction, x0-through-x5 argument capture, x0
 return mutation, ELR/SPSR handling, diagnostic marker quarantine, and
-non-syscall fallback. The next bounded task is the syscall trap-routing
-contract before implementation.
+non-syscall fallback. The accepted syscall trap-routing contract now fixes the
+production routing preconditions, frame mutation rules, failure classes,
+diagnostic marker quarantine, and mandatory QEMU syscall smoke boundary. The
+next bounded task is the QEMU syscall smoke plan before implementation.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -178,7 +180,11 @@ Phase 7.3 target-independent syscall dispatch core implements the pure
 dispatch vocabulary and return/error encoding, and the accepted trap-routing
 source inventory maps the production exception-routing boundary for lower-EL
 SVC detection, argument capture, return mutation, ELR/SPSR handling,
-diagnostic marker quarantine, and non-syscall fallback.
+diagnostic marker quarantine, and non-syscall fallback. The accepted
+trap-routing contract limits production routing to lower-AArch64 svc #0,
+requires x8/x0-through-x5 dispatch into the accepted core, preserves ELR/SPSR,
+keeps diagnostic 0x7a10 proof-only, and requires QEMU syscall smoke before any
+production routing claim.
 The obsolete-bloat inventory and removal sweep are accepted before the
 multi-core preemption core: historical QEMU secondary-core discriminator paths
 and old Pi 5 allocator, exception, panic, and translation-fault proof-only

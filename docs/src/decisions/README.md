@@ -12,6 +12,35 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.3 Syscall Trap-Routing Contract Accepted
+
+- Status: accepted as a documentation-only production syscall trap-routing
+  contract. No Rust behavior, assembly behavior, boot scenario, QEMU run,
+  Pi 5 hardware run, archive publishing, hardware-lock acquisition,
+  descriptor I/O, copy-in/copy-out, process loading, VFS/filesystem, shell
+  behavior, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache behavior was added.
+- Context: The accepted trap-routing source inventory identified the source
+  owners and gaps for lower-AArch64 SVC detection, svc immediate validation,
+  x8 extraction, x0-through-x5 argument capture, x0 return mutation,
+  ELR/SPSR handling, diagnostic proof quarantine, and non-syscall fallback.
+- Decision: Accept phase7-syscall-trap-routing-contract-20260529. Production
+  syscall routing is limited to LowerAarch64Sync with ESR EC 0x15 and svc #0,
+  uses x8 as the syscall number and x0 through x5 as scalar arguments, writes
+  only the dispatch return value to x0, preserves ELR/SPSR, keeps non-syscall
+  traps on the fatal exception path, and keeps diagnostic SVC marker 0x7a10
+  proof-only.
+- Evidence level: static documentation inspection, documentation build, and
+  whitespace inspection. No QEMU or Pi 5 hardware evidence was claimed.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next bounded task is
+  phase7-qemu-syscall-smoke-plan-20260529. Production routing implementation,
+  QEMU syscall smoke core, Pi 5 hardware proof, descriptor I/O,
+  copy-in/copy-out, process loading, VFS/filesystem, shell, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
+  blocked.
+
 ## 2026-05-29 - Phase 7.3 Syscall Trap-Routing Source Inventory Accepted
 
 - Status: accepted as a documentation-only production syscall trap-routing
