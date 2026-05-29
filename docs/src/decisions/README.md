@@ -5837,3 +5837,42 @@ ADR template:
   VFS/filesystem, shell, networking, SSH, dup2/fcntl, object finalization,
   broader cache/DMA policy, RP1/PCIe, UART interrupt ownership, and full POSIX
   descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 QEMU Dup Syscall Smoke Core Accepted
+
+- Status: accepted as the Milestone 7.4 QEMU/substitute dup syscall smoke
+  core. No Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, read syscall behavior, process loading, VFS/filesystem behavior,
+  shell behavior, networking, SSH, RP1/PCIe, UART interrupt ownership, object
+  finalization, or DMA/cache-driver policy was added.
+- Context: The accepted QEMU dup syscall smoke plan required lower-AArch64
+  evidence that talos_dup duplicates stdout through the current
+  ProcessOwnerId-backed ProcessDescriptorStore, writes through both source and
+  duplicate descriptors, and preserves independent descriptor lifetime across
+  close.
+- Decision: Accept phase7-qemu-dup-syscall-smoke-core-20260529. The
+  implementation registers qemu_dup_syscall_smoke, adds the focused lower-EL
+  payload and exception handler, retains
+  tasks/evidence/2026-05-29-qemu-dup-syscall-smoke-core/qemu-dup-syscall-smoke.log,
+  and gates the scenario with scripts/qemu-dup-syscall-smoke.sh. The evidence
+  proves fd 1 duplicates to fd 3, table-full -EMFILE, reserved-register
+  -EINVAL, writes through fd 1 and fd 3, close(fd 1) preserving fd 3,
+  closed-descriptor -EBADF, talos_nop, unknown-syscall -ENOSYS, copy-probe
+  quarantine, diagnostic-marker quarantine, and
+  classification=qemu-dup-syscall-smoke-complete plus PASS.
+- Evidence level: fmt/lint/typecheck, no_std unit tests, QEMU/substitute dup
+  smoke, QEMU/substitute descriptor-write and close regressions, static
+  documentation/source inspection, documentation build, and whitespace
+  inspection. No Pi 5 hardware evidence was produced.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec test
+  passed with 239 no_std tests; scripts/qemu-dup-syscall-smoke.sh passed;
+  scripts/qemu-descriptor-write-smoke.sh passed;
+  scripts/qemu-close-syscall-smoke.sh passed; git diff --check passed; mdbook
+  build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-dup-syscall-closeout-checkpoint-20260529, scoped to reconciling the
+  QEMU/substitute dup frontier before Pi 5 dup proof planning. Pi 5 physical
+  dup proof, read syscall behavior, stdin/read object model, process loading,
+  VFS/filesystem, shell, networking, SSH, dup2/fcntl, object finalization,
+  broader cache/DMA policy, RP1/PCIe, UART interrupt ownership, and full POSIX
+  descriptor claims remain blocked.

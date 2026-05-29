@@ -524,6 +524,18 @@ pub extern "C" fn rust_exception_handler(
         return 1;
     }
 
+    #[cfg(talos_boot_scenario = "qemu_dup_syscall_smoke")]
+    if crate::target::qemu_virt::handle_dup_syscall_smoke_exception(
+        esr,
+        elr,
+        far,
+        vector,
+        spsr,
+        saved_frame,
+    ) {
+        return 1;
+    }
+
     #[cfg(talos_boot_scenario = "qemu_process_descriptor_stdio_smoke")]
     if crate::target::qemu_virt::handle_process_descriptor_stdio_smoke_exception(
         esr,
