@@ -4794,3 +4794,40 @@ ADR template:
   any descriptor syscall contract or implementation. Process loading,
   VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
   DMA/cache-driver policy, and stable POSIX descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 Descriptor Syscall Source Inventory Accepted
+
+- Status: accepted as the documentation-only Phase 7.3 descriptor syscall
+  source inventory. No Rust behavior, assembly behavior, descriptor syscall
+  contract, QEMU run, Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, process loading, VFS/filesystem behavior, shell
+  behavior, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted Pi 5 pointer-copy proof closeout recommended a
+  descriptor syscall source inventory before descriptor syscall contracts or
+  implementations. The inventory needed to separate proof-only
+  talos_copy_probe evidence from future stable descriptor syscalls and name the
+  source boundaries for descriptor table, syscall frame, copy helper,
+  runtime-console/TTY, and task/process ownership.
+- Decision: Accept phase7-descriptor-syscall-source-inventory-20260529. The
+  inventory maps src/posix.rs descriptor tables and copy helpers,
+  src/syscall.rs stable svc #0 dispatch and errno encoding,
+  src/arch/aarch64/exceptions.rs lower-AArch64 saved-frame routing,
+  src/runtime_console.rs runtime-console0 outcomes, src/tty.rs TTY input
+  vocabulary, and src/scheduler.rs task/process-owner placeholders.
+- Evidence level: static source and documentation inspection, documentation
+  build, and whitespace inspection. No QEMU/substitute or Pi 5 hardware
+  evidence was produced by this inventory.
+- Validation: git status --short before edits showed a pre-existing
+  docs/src/roadmap.md working-tree edit that was preserved; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-descriptor-syscall-contract-20260529, scoped to a stdout/stderr
+  descriptor write contract using user pointer/length arguments,
+  copy_from_user, descriptor-table lookup and write-access checks,
+  runtime-console0 as the first backing object, and exact x0 byte-count or
+  negative errno returns. stdin/read, close, dup, process loading,
+  VFS/filesystem, shell, networking, SSH, live process-owned address spaces,
+  blocking/readiness, signals, restart semantics, RP1/PCIe, UART interrupt
+  ownership, DMA/cache-driver policy, and stable POSIX descriptor claims remain
+  blocked.

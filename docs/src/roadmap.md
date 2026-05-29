@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 Pi 5 pointer-copy proof
+Talos is at the Phase 7.3 descriptor syscall source-inventory
 frontier, after accepting the Phase 6.3 production scheduler runtime closeout,
 the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -186,6 +186,16 @@ deferred surfaces. It accepts no new Rust or assembly behavior and performs no
 QEMU or Pi 5 rerun. It recommends the documentation-only descriptor syscall
 source inventory as the next bounded task before any descriptor syscall
 contract or implementation.
+The accepted descriptor syscall source inventory maps the source owners and
+gaps for descriptor table operations, lower-EL syscall argument extraction,
+copy helper use, runtime-console/TTY backing, return/error encoding,
+task/process ownership, and retained QEMU evidence style. It recommends the
+next descriptor syscall contract slice as a stdout/stderr write boundary backed
+by runtime-console0, while keeping stdin/read, close, dup, process loading,
+VFS/filesystem, shell, networking, SSH, live process-owned address spaces,
+blocking/readiness, signals, restart semantics, RP1/PCIe, UART interrupt
+ownership, DMA/cache-driver policy, and stable POSIX descriptor claims blocked.
+
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -1426,6 +1436,17 @@ Accepted progress:
   recommends phase7-descriptor-syscall-source-inventory-20260529 as the next
   bounded documentation-only task before descriptor syscall contracts or
   implementations.
+- Phase 7 descriptor syscall source inventory is accepted. It maps
+  src/posix.rs descriptor tables and copy helpers, src/syscall.rs stable svc #0
+  dispatch, lower-AArch64 saved-frame argument capture, runtime-console0 and
+  TTY backing surfaces, scheduler task/process ownership gaps, and retained
+  QEMU evidence ownership. It recommends
+  phase7-descriptor-syscall-contract-20260529 as a stdout/stderr write
+  contract slice before any descriptor implementation. stdin/read, close, dup,
+  process loading, VFS/filesystem, shell, networking, SSH, live process-owned
+  address spaces, blocking/readiness, signals, restart semantics, RP1/PCIe,
+  UART interrupt ownership, DMA/cache-driver policy, and stable POSIX
+  descriptor claims remain blocked.
 
 Milestone 7.4: File Descriptor Table
 
