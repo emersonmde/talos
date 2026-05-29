@@ -9146,6 +9146,32 @@ pub fn handle_close_syscall_proof_exception(
     let mut console = DescriptorWriteCaptureConsole;
     let result = {
         let store = unsafe { &mut *core::ptr::addr_of_mut!(PROCESS_DESCRIPTOR_STDIO_STORE) };
+        match store.current_descriptor_table(Some(current_owner)) {
+            Ok(table) => {
+                crate::println!(
+                    "rpi5-close-syscall-proof: store-before-dispatch owner={:#018x} number={:#018x} fd={} fd-open={} stdout-open={} stderr-open={}",
+                    current_owner.raw(),
+                    raw_number,
+                    args[0],
+                    usize::try_from(args[0])
+                        .ok()
+                        .map(|descriptor| table.get(descriptor).is_ok())
+                        .unwrap_or(false),
+                    table.get(crate::posix::STDOUT_FD).is_ok(),
+                    table.get(crate::posix::STDERR_FD).is_ok()
+                );
+            }
+            Err(error) => {
+                crate::println!(
+                    "rpi5-close-syscall-proof: store-before-dispatch owner={:#018x} number={:#018x} fd={} owner-present=false table-error={}",
+                    current_owner.raw(),
+                    raw_number,
+                    args[0],
+                    error.name()
+                );
+            }
+        }
+        wait_uart10_empty_early_phase();
         syscall::dispatch_process_descriptor(
             raw_number,
             arguments,

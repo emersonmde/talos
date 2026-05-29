@@ -1,0 +1,5 @@
+rpi5-close-syscall-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000200003010 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0
+rpi5-close-syscall-proof: handler-entry vector=lower-aarch64-sync esr=0x0000000054000000 far=0x0000000000000000 svc
+rpi5-close-syscall-proof: start
+rpi5-close-syscall-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 user-data=0x00000=0x0000 number=0x0000000000000002 x0=0x0000000000000001
+rpi5-close-syscall-proof: dispatch-return number=0x0000000000000002 return-x0=0xfffffffffffffff7

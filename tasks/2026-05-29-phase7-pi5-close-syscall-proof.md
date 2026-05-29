@@ -27,6 +27,10 @@ interrupt ownership, or DMA/cache-driver policy.
   post-dispatch trace in the active close syscall proof handler to distinguish
   a non-returning descriptor dispatch from per-case logging/state update
   failure.
+- pending: after local17 reproduced the physical -EBADF return from the
+  unchanged c03d690 candidate, added a temporary ProcessDescriptorStore and
+  talos_close state trace around dispatch and close to distinguish missing
+  current-owner state from descriptor-table close behavior.
 
 ## Local Evidence
 
@@ -129,6 +133,18 @@ Evidence directory: tasks/evidence/2026-05-29-pi5-close-syscall-proof/.
   classification, or PASS. This moves the physical failure from exception
   routing into the process-descriptor dispatch/store state used by
   close_stdout.
+- local16-known-good-control: refreshed the post-local15 inconclusive-run
+  triage without source changes. The restored production-timer control fetched
+  the accepted 104136-byte da591740/kernel_2712.img and retained complete
+  pi5-production-timer-preemption final classification and PASS lines.
+- local17-unchanged-post-dispatch-candidate-rerun: republished the unchanged
+  c03d690-equivalent 114792-byte candidate from the retained local15 archive.
+  Fresh TFTP evidence shows da591740/kernel_2712.img served at 114792 bytes,
+  and retained serial again reached close proof start/validation/pre-eret,
+  lower-AArch64 handler entry, and dispatch-return with x0 =
+  0xfffffffffffffff7 (-EBADF) for close_stdout. No per-case syscall, final
+  classification, or PASS line appeared. The boot tree was restored by the
+  pre-pi5-close-syscall-proof-local1-20260529 snapshot.
 
 ## Restore Proof
 
@@ -145,3 +161,7 @@ control, and an unchanged c03d690 candidate rerun. If that unchanged rerun still
 returns -EBADF for close_stdout, the next source discriminator should
 instrument the physical ProcessDescriptorStore/current-owner table state before
 dispatch_process_descriptor and inside talos_close.
+
+That triage is now refreshed by local16/local17. Continue with the bounded
+ProcessDescriptorStore/talos_close state discriminator and do not mark the proof
+accepted unless the required close syscall PASS/final lines are retained.

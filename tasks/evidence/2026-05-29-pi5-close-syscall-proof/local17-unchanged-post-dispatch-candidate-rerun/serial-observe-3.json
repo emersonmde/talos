@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "ICAzLjQzIE9UUCBib2FyZHJldiBkMDQxNzEgYm9vdHJvbSBhIGENCiAgMy40MyBDdXN0b21lciBrZXkgaGFzaCAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwDQogIDMuNDMgVkMtSlRBRyB1bmxvY2tlZA0K",
+  "bytes": 156,
+  "cursor_end": 3201708,
+  "cursor_start": 3201552,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "  3.43 OTP boardrev d04171 bootrom a a\r\n  3.43 Customer key hash 0000000000000000000000000000000000000000000000000000000000000000\r\n  3.43 VC-JTAG unlocked\r\n",
+  "truncated": false
+}

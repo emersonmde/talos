@@ -1,0 +1,2 @@
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local16-known-good-control/
+?? tasks/evidence/2026-05-29-pi5-close-syscall-proof/local17-unchanged-post-dispatch-candidate-rerun/

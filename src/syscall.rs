@@ -327,7 +327,65 @@ fn dispatch_talos_close<const OWNER_CAPACITY: usize, const DESCRIPTOR_CAPACITY: 
         return SyscallReturn::error(PosixError::BadDescriptor);
     };
 
-    match descriptor_store.close_current_descriptor(current_owner, descriptor) {
+    #[cfg(talos_boot_scenario = "rpi5_close_syscall_proof")]
+    {
+        let owner_raw = current_owner.map(|owner| owner.raw()).unwrap_or(0);
+        match descriptor_store.current_descriptor_table(current_owner) {
+            Ok(table) => {
+                crate::println!(
+                    "rpi5-close-syscall-proof: talos-close-entry owner={:#018x} descriptor={} owner-present=true fd-open={} stdout-open={} stderr-open={}",
+                    owner_raw,
+                    descriptor,
+                    table.get(descriptor).is_ok(),
+                    table.get(crate::posix::STDOUT_FD).is_ok(),
+                    table.get(crate::posix::STDERR_FD).is_ok()
+                );
+            }
+            Err(error) => {
+                crate::println!(
+                    "rpi5-close-syscall-proof: talos-close-entry owner={:#018x} descriptor={} owner-present=false table-error={}",
+                    owner_raw,
+                    descriptor,
+                    error.name()
+                );
+            }
+        }
+    }
+
+    let close_result = descriptor_store.close_current_descriptor(current_owner, descriptor);
+
+    #[cfg(talos_boot_scenario = "rpi5_close_syscall_proof")]
+    {
+        let owner_raw = current_owner.map(|owner| owner.raw()).unwrap_or(0);
+        let result_name = match close_result {
+            Ok(_) => "OK",
+            Err(error) => error.name(),
+        };
+        match descriptor_store.current_descriptor_table(current_owner) {
+            Ok(table) => {
+                crate::println!(
+                    "rpi5-close-syscall-proof: talos-close-result owner={:#018x} descriptor={} result={} fd-open-after={} stdout-open-after={} stderr-open-after={}",
+                    owner_raw,
+                    descriptor,
+                    result_name,
+                    table.get(descriptor).is_ok(),
+                    table.get(crate::posix::STDOUT_FD).is_ok(),
+                    table.get(crate::posix::STDERR_FD).is_ok()
+                );
+            }
+            Err(error) => {
+                crate::println!(
+                    "rpi5-close-syscall-proof: talos-close-result owner={:#018x} descriptor={} result={} owner-present-after=false table-error-after={}",
+                    owner_raw,
+                    descriptor,
+                    result_name,
+                    error.name()
+                );
+            }
+        }
+    }
+
+    match close_result {
         Ok(_) => SyscallReturn::success(0),
         Err(error) => SyscallReturn::error(error),
     }

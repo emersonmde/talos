@@ -1,0 +1,6 @@
+  4.18 usb_pd_init status 0
+  4.25 XHCI-STOP
+  4.25 xHC0 ver: 272 HCS: 03000440 14000  4.33 SD_OC: 0
+  4.37 Boot mode: NETWORK (02) order f1
+  9.36 NETWORK: 88:a2:9e:ae:c8:7f wait for link TFTP: 0.0.0.0
+
