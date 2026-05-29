@@ -94,6 +94,7 @@
 - [Phase 7 QEMU Descriptor-Write Smoke Plan](project/phase7-qemu-descriptor-write-smoke-plan.md)
 - [Phase 7 Descriptor-Write Closeout Checkpoint](project/phase7-descriptor-write-closeout-checkpoint.md)
 - [Phase 7 Pi 5 Descriptor-Write Proof Plan](project/phase7-pi5-descriptor-write-proof-plan.md)
+- [Phase 7 Pi 5 Descriptor-Write Proof Closeout Checkpoint](project/phase7-pi5-descriptor-write-proof-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

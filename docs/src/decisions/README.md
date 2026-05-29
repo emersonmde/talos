@@ -5048,3 +5048,80 @@ ADR template:
   blocking/readiness, signals, restart semantics, RP1/PCIe, UART interrupt
   ownership, DMA/cache-driver policy, and full POSIX descriptor claims remain
   blocked.
+
+## 2026-05-29 - Phase 7 Pi 5 Descriptor-Write Proof Accepted
+
+- Status: accepted as the serialized physical Phase 7.3 Raspberry Pi 5
+  descriptor-write proof. No stdin/read, close, dup, process loading,
+  VFS/filesystem behavior, shell behavior, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, DMA/cache-driver policy, or full POSIX descriptor claim
+  was added.
+- Context: The QEMU/substitute descriptor-write smoke had proven talos_write
+  fd 1/fd 2 behavior through lower-AArch64 stable svc #0. The remaining
+  milestone question was whether the same descriptor-write boundary could run
+  on physical Pi 5 hardware with fresh TFTP/serial evidence and restored lab
+  state.
+- Decision: Accept phase7-pi5-descriptor-write-proof-20260529. The accepted
+  local3 unchanged candidate rerun proves fd 1 stdout and fd 2 stderr writes
+  through copy_from_user(), inherited stdio descriptors, and runtime-console0;
+  fd 0/fd 99 -EBADF; guard-range -EFAULT; nonzero reserved x3 -EINVAL;
+  talos_nop and unknown-syscall regressions; x8 = 0x7001 copy-probe
+  quarantine; diagnostic marker 0x7a10 quarantine; and
+  classification=pi5-descriptor-write-proof-complete plus
+  rpi5-descriptor-write-proof: PASS.
+- Evidence level: serialized Pi 5 hardware boot/output, fresh TFTP evidence,
+  image/archive inspection, known-good hardware control, unchanged candidate
+  rerun, restore proof, QEMU/substitute regressions, unit tests, formatting,
+  documentation build, and whitespace inspection.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test passed; scripts/qemu-syscall-smoke.sh passed;
+  scripts/qemu-pointer-copy-smoke.sh passed;
+  scripts/qemu-descriptor-write-smoke.sh passed;
+  scripts/rpi5-archive-review.sh passed for the focused descriptor-write proof
+  archive; local2 known-good production-timer control passed after the first
+  inconclusive candidate; local3 unchanged candidate rerun retained
+  classification/PASS evidence; post-restore tree hash matched the pre-run
+  hash; git diff --check passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-pi5-descriptor-write-proof-closeout-checkpoint-20260529, scoped to
+  reconciling the physical proof, retained evidence, hardware-lock timeline,
+  restore proof, and blocked surfaces before Milestone 7.3 closeout or any
+  Milestone 7.4 source inventory. stdin/read, close, dup, process loading,
+  VFS/filesystem, shell, networking, SSH, live process-owned address spaces,
+  blocking/readiness, signals, restart semantics, RP1/PCIe, UART interrupt
+  ownership, DMA/cache-driver policy, and full POSIX descriptor claims remain
+  blocked.
+
+## 2026-05-29 - Phase 7 Pi 5 Descriptor-Write Proof Closeout Accepted
+
+- Status: accepted as the documentation-only closeout for the serialized Phase
+  7.3 Pi 5 descriptor-write proof. No Rust behavior, assembly behavior, QEMU
+  rerun, Pi 5 hardware rerun, boot archive publication, hardware-lock
+  acquisition, stdin/read, close, dup, process loading, VFS/filesystem
+  behavior, shell behavior, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache-driver policy was added.
+- Context: The physical descriptor-write proof was accepted after one
+  inconclusive candidate, a passing known-good control, an unchanged candidate
+  rerun, and restore proof. The milestone needed one checkpoint to name the
+  exact accepted physical capability and the surfaces still blocked before
+  Milestone 7.3 closeout.
+- Decision: Accept
+  phase7-pi5-descriptor-write-proof-closeout-checkpoint-20260529. The accepted
+  frontier is physical Pi 5 descriptor-backed stdout/stderr writes for the
+  proof-owned inherited runtime-console0 stdio slice, plus fd/error cases,
+  scalar syscall regressions, copy-probe quarantine, diagnostic-marker
+  quarantine, hardware-lock release, and restore proof.
+- Evidence level: static documentation inspection, retained QEMU/substitute
+  evidence review, retained Pi 5 serial/TFTP/restore evidence review,
+  documentation build, and whitespace inspection. No new QEMU or physical Pi 5
+  hardware evidence was produced.
+- Validation: git status --short before edits was clean; retained
+  tasks/evidence/2026-05-29-pi5-descriptor-write-proof/local3-candidate-rerun/rerun-proof-lines.txt
+  evidence was reviewed; git diff --check passed; mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-syscall-abi-dispatch-closeout-checkpoint-20260529, scoped to closing
+  out Milestone 7.3 before any Milestone 7.4 source inventory. stdin/read,
+  close, dup, process loading, VFS/filesystem, shell, networking, SSH, live
+  process-owned address spaces, blocking/readiness, signals, restart semantics,
+  RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and full POSIX
+  descriptor claims remain blocked.

@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the accepted Phase 7.3 Pi 5 descriptor-write proof
+Talos is at the accepted Phase 7.3 Pi 5 descriptor-write proof closeout
 frontier, after accepting the Phase 6.3 production scheduler runtime closeout,
 the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -272,8 +272,15 @@ tree. This accepts only the physical descriptor-backed stdout/stderr write
 boundary; stdin/read, close, dup, process loading, filesystem, shell,
 networking, SSH, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy,
 and full POSIX descriptor claims remain blocked.
+The accepted Pi 5 descriptor-write proof closeout reconciles the accepted
+QEMU/substitute descriptor-write smoke, physical Pi 5 descriptor-write proof,
+hardware-lock timeline, restore proof, residual risks, and blocked surfaces. It
+accepts no new Rust or assembly behavior and performs no QEMU or Pi 5 rerun.
+It recommends the documentation-only Milestone 7.3 syscall ABI/dispatch
+closeout checkpoint before any Milestone 7.4 file-descriptor-table source
+inventory or broader descriptor work.
 
-Near-term direction after the accepted Pi 5 descriptor-write proof:
+Near-term direction after the accepted Pi 5 descriptor-write proof closeout:
 
 - Move from proof-specific descriptor writes toward user-visible OS
   capability. The next Phase 7 slices should close out Milestone 7.3, then
@@ -1601,6 +1608,16 @@ Accepted progress:
   networking, SSH, live process-owned address spaces, blocking/readiness,
   signals, restart semantics, RP1/PCIe, UART interrupt ownership,
   DMA/cache-driver policy, and full POSIX descriptor claims blocked.
+- Phase 7 Pi 5 descriptor-write proof closeout checkpoint is accepted. It
+  reconciles the descriptor syscall contract, QEMU descriptor-write smoke,
+  retained Pi 5 local3 proof evidence, hardware-lock timeline, restore proof,
+  residual risks, and blocked surfaces. It recommends
+  phase7-syscall-abi-dispatch-closeout-checkpoint-20260529 as the next
+  documentation-only Milestone 7.3 closeout task before any Milestone 7.4
+  source inventory. stdin/read, close, dup, process loading, VFS/filesystem,
+  shell, networking, SSH, live process-owned address spaces, blocking/readiness,
+  signals, restart semantics, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.
 
 Milestone 7.4: File Descriptor Table
 
