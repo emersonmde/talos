@@ -3,7 +3,10 @@
 //! This module owns only the target-independent POSIX contract surface. It
 //! does not perform VFS lookup, syscall ABI translation, process
 //! current-working-directory storage, EL0 entry, translation-table switching,
-//! runtime console integration, or target I/O.
+//! or target I/O. The first descriptor-write slice owns only the
+//! target-independent stdio-to-runtime-console boundary.
+
+use crate::runtime_console::{self, ConsoleBackend};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum PosixError {
@@ -582,6 +585,54 @@ impl<const CAPACITY: usize> DescriptorTable<CAPACITY> {
     pub(crate) fn dup(&mut self, descriptor: usize) -> Result<usize, PosixError> {
         let entry = self.get(descriptor)?;
         self.allocate(entry)
+    }
+}
+
+pub(crate) fn write_descriptor_to_runtime_console<const CAPACITY: usize, B>(
+    table: &DescriptorTable<CAPACITY>,
+    descriptor: usize,
+    mappings: &[UserMapping],
+    user_memory_start: u64,
+    user_memory: &[u8],
+    user_start: u64,
+    len: usize,
+    kernel_scratch: &mut [u8],
+    console_backend: &mut B,
+) -> Result<usize, PosixError>
+where
+    B: ConsoleBackend,
+{
+    let entry = table.get(descriptor)?;
+    entry.require_writable()?;
+
+    if descriptor != STDOUT_FD && descriptor != STDERR_FD {
+        return Err(PosixError::BadDescriptor);
+    }
+    if entry.object().kind() != DescriptorObjectKind::StdioOutput {
+        return Err(PosixError::NotSupported);
+    }
+    if len == 0 {
+        return Ok(0);
+    }
+    if len > DEFAULT_USER_COPY_LIMIT {
+        return Err(PosixError::InvalidArgument);
+    }
+    if kernel_scratch.len() < len {
+        return Err(PosixError::InvalidArgument);
+    }
+
+    let copied = copy_from_user(
+        mappings,
+        user_memory_start,
+        user_memory,
+        user_start,
+        len,
+        &mut kernel_scratch[..len],
+    )?;
+
+    match runtime_console::write_default_console_bytes(console_backend, &kernel_scratch[..copied]) {
+        Ok(result) if result.bytes_written == copied => Ok(copied),
+        Ok(_) | Err(_) => Err(PosixError::Io),
     }
 }
 

@@ -2,6 +2,13 @@ use core::fmt::{self, Write};
 
 pub trait ConsoleBackend {
     fn write_str(&mut self, s: &str) -> fmt::Result;
+
+    fn write_bytes(&mut self, bytes: &[u8]) -> fmt::Result {
+        match core::str::from_utf8(bytes) {
+            Ok(s) => self.write_str(s),
+            Err(_) => Err(fmt::Error),
+        }
+    }
 }
 
 #[cfg_attr(
@@ -126,6 +133,24 @@ where
         }
     }
 
+    pub fn write_user_bytes(&mut self, bytes: &[u8]) -> ConsoleWriteOutcome {
+        self.bytes_written = 0;
+
+        match self.backend.write_bytes(bytes) {
+            Ok(()) => {
+                self.bytes_written = bytes.len();
+                Ok(ConsoleWriteResult::complete(
+                    self.device,
+                    self.bytes_written,
+                ))
+            }
+            Err(_) => Err(ConsoleWriteError::BackendWriteFailed {
+                device: self.device,
+                bytes_accepted: self.bytes_written,
+            }),
+        }
+    }
+
     #[cfg(test)]
     pub fn into_backend(self) -> B {
         self.backend
@@ -151,6 +176,30 @@ where
     B: ConsoleBackend,
 {
     RuntimeConsole::new(backend).write_kernel_args(args)
+}
+
+struct BorrowedConsoleBackend<'a, B> {
+    backend: &'a mut B,
+}
+
+impl<B> ConsoleBackend for BorrowedConsoleBackend<'_, B>
+where
+    B: ConsoleBackend,
+{
+    fn write_str(&mut self, s: &str) -> fmt::Result {
+        self.backend.write_str(s)
+    }
+
+    fn write_bytes(&mut self, bytes: &[u8]) -> fmt::Result {
+        self.backend.write_bytes(bytes)
+    }
+}
+
+pub fn write_default_console_bytes<B>(backend: &mut B, bytes: &[u8]) -> ConsoleWriteOutcome
+where
+    B: ConsoleBackend,
+{
+    RuntimeConsole::new(BorrowedConsoleBackend { backend }).write_user_bytes(bytes)
 }
 
 #[cfg_attr(
@@ -241,6 +290,20 @@ mod tests {
             self.writes += 1;
             Ok(())
         }
+
+        fn write_bytes(&mut self, bytes: &[u8]) -> fmt::Result {
+            let Some(end) = self.len.checked_add(bytes.len()) else {
+                return Err(fmt::Error);
+            };
+            if end > self.capacity || end > self.bytes.len() {
+                return Err(fmt::Error);
+            }
+
+            self.bytes[self.len..end].copy_from_slice(bytes);
+            self.len = end;
+            self.writes += 1;
+            Ok(())
+        }
     }
 
     struct ScriptedInput {
@@ -273,6 +336,21 @@ mod tests {
         assert_eq!(backend.as_str(), "talos");
         assert_eq!(result.device, DEFAULT_RUNTIME_CONSOLE);
         assert_eq!(result.bytes_written, 5);
+        assert_eq!(backend.writes, 1);
+    }
+
+    #[test_case]
+    fn runtime_console_routes_user_bytes_to_backend() {
+        let mut console = RuntimeConsole::new(Capture::new());
+
+        let result = console.write_user_bytes(b"talos-stdout-qemu\n");
+
+        assert_eq!(
+            result,
+            Ok(ConsoleWriteResult::complete(DEFAULT_RUNTIME_CONSOLE, 18))
+        );
+        let backend = console.into_backend();
+        assert_eq!(backend.as_str(), "talos-stdout-qemu\n");
         assert_eq!(backend.writes, 1);
     }
 

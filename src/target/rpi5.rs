@@ -8187,6 +8187,16 @@ pub fn handle_syscall_proof_exception(
                 routed.return_x0
             );
         }
+        SyscallNumber::TalosWrite => {
+            SYSCALL_PROOF_ERRORS.fetch_add(1, Ordering::Relaxed);
+            crate::println!(
+                "rpi5-syscall-proof: syscall case=unexpected_talos_write vector={} esr={:#018x} svc=0x0000 number={} return-x0={:#018x}",
+                vector.name(),
+                reported_esr,
+                routed.raw_number,
+                routed.return_x0
+            );
+        }
     }
 
     true

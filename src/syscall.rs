@@ -1,14 +1,15 @@
 //! Target-independent syscall ABI dispatch primitives.
 //!
-//! This module owns only the first stable scalar syscall vocabulary and return
-//! encoding. It does not route exception vectors, enter EL0, copy user memory,
-//! mutate descriptor tables, load programs, or provide VFS/filesystem behavior.
+//! This module owns only the first stable syscall vocabulary and return
+//! encoding. It does not route exception vectors, enter EL0, load programs, or
+//! provide VFS/filesystem behavior.
 
 use crate::posix::PosixError;
 
 pub(crate) const STABLE_SVC_IMMEDIATE: u16 = 0;
 pub(crate) const DIAGNOSTIC_EL0_TRAP_SVC_IMMEDIATE: u16 = 0x7a10;
 pub(crate) const TALOS_NOP_SYSCALL: u64 = 0;
+pub(crate) const TALOS_WRITE_SYSCALL: u64 = 1;
 #[cfg(any(
     test,
     talos_boot_scenario = "qemu_pointer_copy_smoke",
@@ -26,6 +27,7 @@ pub(crate) const MAX_SCALAR_ARGUMENTS: usize = 6;
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum SyscallNumber {
     TalosNop,
+    TalosWrite,
     Unknown(u64),
 }
 
@@ -33,6 +35,7 @@ impl SyscallNumber {
     pub(crate) const fn from_raw(raw: u64) -> Self {
         match raw {
             TALOS_NOP_SYSCALL => Self::TalosNop,
+            TALOS_WRITE_SYSCALL => Self::TalosWrite,
             unknown => Self::Unknown(unknown),
         }
     }
@@ -40,6 +43,7 @@ impl SyscallNumber {
     pub(crate) const fn raw(self) -> u64 {
         match self {
             Self::TalosNop => TALOS_NOP_SYSCALL,
+            Self::TalosWrite => TALOS_WRITE_SYSCALL,
             Self::Unknown(raw) => raw,
         }
     }
@@ -123,6 +127,7 @@ impl SyscallDispatchResult {
 
 pub(crate) const EINVAL: u16 = 22;
 pub(crate) const EBADF: u16 = 9;
+pub(crate) const EIO: u16 = 5;
 pub(crate) const EFAULT: u16 = 14;
 pub(crate) const ENOSYS: u16 = 38;
 pub(crate) const ENOTSUP: u16 = 95;
@@ -131,6 +136,7 @@ pub(crate) const fn errno_number(error: PosixError) -> Option<u16> {
     match error {
         PosixError::InvalidArgument => Some(EINVAL),
         PosixError::BadDescriptor => Some(EBADF),
+        PosixError::Io => Some(EIO),
         PosixError::Fault => Some(EFAULT),
         PosixError::NotImplemented => Some(ENOSYS),
         PosixError::NotSupported => Some(ENOTSUP),
@@ -149,6 +155,7 @@ pub(crate) const fn dispatch(
     let number = SyscallNumber::from_raw(raw_number);
     let return_value = match number {
         SyscallNumber::TalosNop => SyscallReturn::success(0),
+        SyscallNumber::TalosWrite => SyscallReturn::error(PosixError::NotSupported),
         SyscallNumber::Unknown(_) => SyscallReturn::error(PosixError::NotImplemented),
     };
 
@@ -156,6 +163,86 @@ pub(crate) const fn dispatch(
         number,
         arguments,
         return_value,
+    }
+}
+
+pub(crate) fn dispatch_descriptor_write<const CAPACITY: usize, B>(
+    raw_number: u64,
+    arguments: SyscallArguments,
+    descriptor_table: &crate::posix::DescriptorTable<CAPACITY>,
+    mappings: &[crate::posix::UserMapping],
+    user_memory_start: u64,
+    user_memory: &[u8],
+    kernel_scratch: &mut [u8],
+    console_backend: &mut B,
+) -> SyscallDispatchResult
+where
+    B: crate::runtime_console::ConsoleBackend,
+{
+    let number = SyscallNumber::from_raw(raw_number);
+    let return_value = match number {
+        SyscallNumber::TalosWrite => dispatch_talos_write(
+            arguments,
+            descriptor_table,
+            mappings,
+            user_memory_start,
+            user_memory,
+            kernel_scratch,
+            console_backend,
+        ),
+        SyscallNumber::TalosNop | SyscallNumber::Unknown(_) => {
+            dispatch(raw_number, arguments).return_value()
+        }
+    };
+
+    SyscallDispatchResult {
+        number,
+        arguments,
+        return_value,
+    }
+}
+
+fn dispatch_talos_write<const CAPACITY: usize, B>(
+    arguments: SyscallArguments,
+    descriptor_table: &crate::posix::DescriptorTable<CAPACITY>,
+    mappings: &[crate::posix::UserMapping],
+    user_memory_start: u64,
+    user_memory: &[u8],
+    kernel_scratch: &mut [u8],
+    console_backend: &mut B,
+) -> SyscallReturn
+where
+    B: crate::runtime_console::ConsoleBackend,
+{
+    let [descriptor, user_start, len, reserved0, reserved1, reserved2] = arguments.values();
+    if reserved0 != 0
+        || reserved1 != 0
+        || reserved2 != 0
+        || len > crate::posix::DEFAULT_USER_COPY_LIMIT as u64
+    {
+        return SyscallReturn::error(PosixError::InvalidArgument);
+    }
+
+    let Ok(descriptor) = usize::try_from(descriptor) else {
+        return SyscallReturn::error(PosixError::BadDescriptor);
+    };
+    let Ok(len) = usize::try_from(len) else {
+        return SyscallReturn::error(PosixError::InvalidArgument);
+    };
+
+    match crate::posix::write_descriptor_to_runtime_console(
+        descriptor_table,
+        descriptor,
+        mappings,
+        user_memory_start,
+        user_memory,
+        user_start,
+        len,
+        kernel_scratch,
+        console_backend,
+    ) {
+        Ok(bytes_written) => SyscallReturn::success(bytes_written as u64),
+        Err(error) => SyscallReturn::error(error),
     }
 }
 
@@ -248,6 +335,15 @@ mod tests {
     }
 
     #[test_case]
+    fn descriptor_write_number_requires_context_in_scalar_dispatch() {
+        let result = dispatch(TALOS_WRITE_SYSCALL, SyscallArguments::empty());
+
+        assert_eq!(result.number(), SyscallNumber::TalosWrite);
+        assert_eq!(result.number().raw(), TALOS_WRITE_SYSCALL);
+        assert_eq!(result.return_value().x0(), (ENOTSUP as u64).wrapping_neg());
+    }
+
+    #[test_case]
     fn copy_probe_number_is_unknown_outside_proof_dispatch() {
         let result = dispatch(TALOS_COPY_PROBE_SYSCALL, SyscallArguments::empty());
 
@@ -317,6 +413,7 @@ mod tests {
         let accepted = [
             (PosixError::InvalidArgument, EINVAL),
             (PosixError::BadDescriptor, EBADF),
+            (PosixError::Io, EIO),
             (PosixError::Fault, EFAULT),
             (PosixError::NotImplemented, ENOSYS),
             (PosixError::NotSupported, ENOTSUP),
@@ -341,5 +438,225 @@ mod tests {
             SyscallReturn::error(PosixError::NoEntry).x0(),
             (ENOSYS as u64).wrapping_neg()
         );
+    }
+
+    struct CaptureConsole {
+        bytes: [u8; 64],
+        len: usize,
+        fail_writes: bool,
+    }
+
+    impl CaptureConsole {
+        const fn new() -> Self {
+            Self {
+                bytes: [0; 64],
+                len: 0,
+                fail_writes: false,
+            }
+        }
+
+        const fn failing() -> Self {
+            Self {
+                bytes: [0; 64],
+                len: 0,
+                fail_writes: true,
+            }
+        }
+
+        fn as_bytes(&self) -> &[u8] {
+            &self.bytes[..self.len]
+        }
+    }
+
+    impl crate::runtime_console::ConsoleBackend for CaptureConsole {
+        fn write_str(&mut self, s: &str) -> core::fmt::Result {
+            self.write_bytes(s.as_bytes())
+        }
+
+        fn write_bytes(&mut self, bytes: &[u8]) -> core::fmt::Result {
+            if self.fail_writes {
+                return Err(core::fmt::Error);
+            }
+            let Some(end) = self.len.checked_add(bytes.len()) else {
+                return Err(core::fmt::Error);
+            };
+            if end > self.bytes.len() {
+                return Err(core::fmt::Error);
+            }
+            self.bytes[self.len..end].copy_from_slice(bytes);
+            self.len = end;
+            Ok(())
+        }
+    }
+
+    fn descriptor_write_fixture() -> (
+        crate::posix::DescriptorTable<4>,
+        [crate::posix::UserMapping; 1],
+        [u8; 128],
+    ) {
+        let table =
+            crate::posix::DescriptorTable::<4>::with_inherited_stdio().expect("stdio table");
+        let mappings = [crate::posix::UserMapping::new(
+            0x0000_0000_0011_0000,
+            0x80,
+            crate::posix::UserMappingPermissions::USER_DATA,
+        )
+        .expect("user data mapping")];
+        let mut user_memory = [0u8; 128];
+        user_memory[..18].copy_from_slice(b"talos-stdout-qemu\n");
+        user_memory[0x40..0x52].copy_from_slice(b"talos-stderr-qemu\n");
+        (table, mappings, user_memory)
+    }
+
+    fn dispatch_write_case(
+        descriptor: u64,
+        user_start: u64,
+        len: u64,
+        reserved0: u64,
+        console: &mut CaptureConsole,
+    ) -> SyscallDispatchResult {
+        let (table, mappings, user_memory) = descriptor_write_fixture();
+        let mut scratch = [0u8; 64];
+        dispatch_descriptor_write(
+            TALOS_WRITE_SYSCALL,
+            SyscallArguments::new([descriptor, user_start, len, reserved0, 0, 0]),
+            &table,
+            &mappings,
+            0x0000_0000_0011_0000,
+            &user_memory,
+            &mut scratch,
+            console,
+        )
+    }
+
+    #[test_case]
+    fn talos_write_stdout_copies_user_bytes_before_runtime_console_output() {
+        let mut console = CaptureConsole::new();
+
+        let result = dispatch_write_case(1, 0x0000_0000_0011_0000, 18, 0, &mut console);
+
+        assert_eq!(result.number(), SyscallNumber::TalosWrite);
+        assert_eq!(result.return_value().x0(), 18);
+        assert_eq!(console.as_bytes(), b"talos-stdout-qemu\n");
+    }
+
+    #[test_case]
+    fn talos_write_stderr_uses_the_same_runtime_console_slice() {
+        let mut console = CaptureConsole::new();
+
+        let result = dispatch_write_case(2, 0x0000_0000_0011_0040, 18, 0, &mut console);
+
+        assert_eq!(result.return_value().x0(), 18);
+        assert_eq!(console.as_bytes(), b"talos-stderr-qemu\n");
+    }
+
+    #[test_case]
+    fn talos_write_zero_length_validates_descriptor_without_console_output() {
+        let mut console = CaptureConsole::new();
+
+        let result = dispatch_write_case(1, 0, 0, 0, &mut console);
+
+        assert_eq!(result.return_value().x0(), 0);
+        assert_eq!(console.as_bytes(), b"");
+    }
+
+    #[test_case]
+    fn talos_write_rejects_read_only_and_invalid_descriptors_without_output() {
+        let mut console = CaptureConsole::new();
+        let fd0 = dispatch_write_case(0, 0x0000_0000_0011_0000, 18, 0, &mut console);
+        let bad_fd = dispatch_write_case(99, 0x0000_0000_0011_0000, 18, 0, &mut console);
+
+        assert_eq!(fd0.return_value().x0(), (EBADF as u64).wrapping_neg());
+        assert_eq!(bad_fd.return_value().x0(), (EBADF as u64).wrapping_neg());
+        assert_eq!(console.as_bytes(), b"");
+    }
+
+    #[test_case]
+    fn talos_write_rejects_unmapped_user_ranges_without_output() {
+        let mut console = CaptureConsole::new();
+
+        let result = dispatch_write_case(1, 0x0000_0000_001e_0000, 18, 0, &mut console);
+
+        assert_eq!(result.return_value().x0(), (EFAULT as u64).wrapping_neg());
+        assert_eq!(console.as_bytes(), b"");
+    }
+
+    #[test_case]
+    fn talos_write_rejects_reserved_registers_and_oversize_lengths_as_einval() {
+        let mut console = CaptureConsole::new();
+        let reserved = dispatch_write_case(1, 0x0000_0000_0011_0000, 18, 1, &mut console);
+        let oversize = dispatch_write_case(
+            1,
+            0x0000_0000_0011_0000,
+            crate::posix::DEFAULT_USER_COPY_LIMIT as u64 + 1,
+            0,
+            &mut console,
+        );
+
+        assert_eq!(reserved.return_value().x0(), (EINVAL as u64).wrapping_neg());
+        assert_eq!(oversize.return_value().x0(), (EINVAL as u64).wrapping_neg());
+        assert_eq!(console.as_bytes(), b"");
+    }
+
+    #[test_case]
+    fn talos_write_backend_failure_is_encoded_as_eio_not_success() {
+        let mut console = CaptureConsole::failing();
+
+        let result = dispatch_write_case(1, 0x0000_0000_0011_0000, 18, 0, &mut console);
+
+        assert_eq!(result.return_value().x0(), (EIO as u64).wrapping_neg());
+        assert_eq!(console.as_bytes(), b"");
+    }
+
+    #[test_case]
+    fn descriptor_write_dispatch_preserves_scalar_syscall_regressions() {
+        let mut console = CaptureConsole::new();
+        let (table, mappings, user_memory) = descriptor_write_fixture();
+        let mut scratch = [0u8; 64];
+
+        let nop = dispatch_descriptor_write(
+            TALOS_NOP_SYSCALL,
+            SyscallArguments::empty(),
+            &table,
+            &mappings,
+            0x0000_0000_0011_0000,
+            &user_memory,
+            &mut scratch,
+            &mut console,
+        );
+        let unknown = dispatch_descriptor_write(
+            17,
+            SyscallArguments::empty(),
+            &table,
+            &mappings,
+            0x0000_0000_0011_0000,
+            &user_memory,
+            &mut scratch,
+            &mut console,
+        );
+        let copy_probe = dispatch_descriptor_write(
+            TALOS_COPY_PROBE_SYSCALL,
+            SyscallArguments::new([0x0000_0000_0011_0000, 16, 0x2a, 0xa5, 0, 0]),
+            &table,
+            &mappings,
+            0x0000_0000_0011_0000,
+            &user_memory,
+            &mut scratch,
+            &mut console,
+        );
+
+        assert_eq!(nop.number(), SyscallNumber::TalosNop);
+        assert_eq!(nop.return_value().x0(), 0);
+        assert_eq!(unknown.number(), SyscallNumber::Unknown(17));
+        assert_eq!(unknown.return_value().x0(), (ENOSYS as u64).wrapping_neg());
+        assert_eq!(
+            copy_probe.number(),
+            SyscallNumber::Unknown(TALOS_COPY_PROBE_SYSCALL)
+        );
+        assert_eq!(
+            copy_probe.return_value().x0(),
+            (ENOSYS as u64).wrapping_neg()
+        );
+        assert_eq!(console.as_bytes(), b"");
     }
 }
