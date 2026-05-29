@@ -368,6 +368,17 @@ target-independent Milestone 7.4 implementation task. Close/dup/read syscalls,
 process loading, VFS/filesystem, shell, networking, SSH, Pi 5 physical
 close/dup/read claims, object finalization, and full POSIX descriptor
 readiness remain blocked.
+The accepted descriptor close core closeout reconciles the accepted source
+inventory, contract, target-independent implementation, focused unit-test
+evidence, validation gates, and deferred surfaces for process-owned descriptor
+close semantics. It accepts only ProcessDescriptorStore::close_current_descriptor()
+applying table-local DescriptorTable::close() to the current owner, with EBADF
+for missing/unknown owners and invalid, empty, or already closed descriptors.
+Close/dup/read syscalls, lower-EL ABI, QEMU close/dup/read smoke, Pi 5 physical
+close/dup/read proof, process loading, VFS/filesystem, shell, networking, SSH,
+object finalization, and full POSIX descriptor readiness remain blocked. The
+next bounded Milestone 7.4 task should be supervisor-planned as a
+documentation-only close/dup/read syscall source inventory.
 
 Near-term direction after the accepted Phase 7.3 syscall ABI/dispatch closeout:
 
@@ -1785,6 +1796,15 @@ Accepted progress:
   Milestone 7.4 task. Close/dup/read syscalls, process loading,
   VFS/filesystem, shell, networking, SSH, physical close/dup/read proof,
   object finalization, and full POSIX descriptor readiness remain blocked.
+- Phase 7 descriptor close core closeout is accepted. It records the accepted
+  source inventory, contract, target-independent close helper implementation,
+  changed files, focused unit tests, and validation gates. It accepts only
+  ProcessDescriptorStore::close_current_descriptor() applying table-local close
+  semantics to the current owner. Close/dup/read syscalls, lower-EL ABI, QEMU
+  close/dup/read smoke, Pi 5 physical proof, process loading, VFS/filesystem,
+  shell, networking, SSH, object finalization, and full POSIX descriptor
+  readiness remain blocked. The next bounded Milestone 7.4 task should be a
+  documentation-only close/dup/read syscall source inventory.
 
 Milestone 7.4: File Descriptor Table
 

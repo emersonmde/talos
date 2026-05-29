@@ -12,6 +12,38 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.4 Descriptor Close Core Closeout Accepted
+
+- Status: accepted as the documentation-only Milestone 7.4 descriptor close
+  core closeout checkpoint. No Rust behavior, assembly behavior, QEMU run,
+  Pi 5 hardware run, archive publishing, hardware-lock acquisition,
+  close/dup/read syscall surface, process loading, VFS/filesystem behavior,
+  shell behavior, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted descriptor lifetime and close contract was followed by
+  the target-independent descriptor close core. The core added
+  ProcessDescriptorStore::close_current_descriptor() and focused no_std tests
+  for process-owned stdout/stderr close, EBADF cases, double close, descriptor
+  reuse, and dup interaction.
+- Decision: Accept
+  phase7-descriptor-close-core-closeout-checkpoint-20260529. The closeout
+  reconciles the accepted source inventory, contract, core implementation,
+  changed files, validation gates, and deferred surfaces. The accepted
+  capability remains only table-local close semantics through the current
+  ProcessOwnerId in ProcessDescriptorStore.
+- Evidence level: static documentation inspection plus retained core
+  fmt/lint/typecheck and unit-test evidence. The core task passed cargo fmt
+  --all -- --check, cargo -Zjson-target-spec test with 226 no_std tests, git
+  diff --check, and mdbook build.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next bounded Milestone 7.4 task should be supervisor
+  planned as a documentation-only close/dup/read syscall source inventory,
+  for example phase7-close-dup-read-syscall-source-inventory-20260529.
+  Close/dup/read syscalls, lower-EL ABI, QEMU close/dup/read smoke, Pi 5
+  physical proof, process loading, VFS/filesystem, shell, networking, SSH,
+  object finalization, and full POSIX descriptor readiness remain blocked.
+
 ## 2026-05-29 - Phase 7.4 Descriptor Lifetime And Close Contract Accepted
 
 - Status: accepted as a documentation-only Milestone 7.4 descriptor lifetime

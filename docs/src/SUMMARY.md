@@ -102,6 +102,7 @@
 - [Phase 7 Process Descriptor Table Closeout Checkpoint](project/phase7-process-descriptor-table-closeout-checkpoint.md)
 - [Phase 7 Descriptor Lifetime And Close Source Inventory](project/phase7-descriptor-lifetime-close-source-inventory.md)
 - [Phase 7 Descriptor Lifetime And Close Contract](project/phase7-descriptor-lifetime-close-contract.md)
+- [Phase 7 Descriptor Close Core Closeout Checkpoint](project/phase7-descriptor-close-core-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture
