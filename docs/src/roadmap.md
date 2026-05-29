@@ -435,6 +435,18 @@ process loading, VFS/filesystem, shell, networking, SSH, object finalization,
 and full POSIX descriptor readiness remain blocked. The next bounded Milestone
 7.4 task should be a documentation-only Pi 5 close syscall proof plan before
 any serialized hardware action.
+The accepted Pi 5 close syscall proof plan defines the serialized physical
+rpi5_close_syscall_proof boundary for carrying the QEMU/substitute talos_close
+invariant to hardware. It requires hardwareTestLock ownership, candidate
+archive and kernel identity, fresh serial and TFTP evidence, restoration proof,
+and exact observations for close(fd 1), close(fd 2), write-after-close -EBADF,
+reserved-argument -EINVAL no-mutation, repeated/invalid close -EBADF,
+talos_nop, unknown-syscall -ENOSYS, copy-probe quarantine, diagnostic-marker
+quarantine, final classification, and PASS. This plan does not run hardware or
+accept a physical close claim. The next bounded Milestone 7.4 task should be
+phase7-pi5-close-syscall-proof-20260529. Dup/read, process loading,
+VFS/filesystem, shell, networking, SSH, object finalization, and full POSIX
+descriptor readiness remain blocked.
 
 Near-term direction after the accepted Phase 7.3 syscall ABI/dispatch closeout:
 
@@ -1897,6 +1909,15 @@ Accepted progress:
   documentation-only Pi 5 close syscall proof plan. Pi 5 physical close proof,
   dup/read syscalls, process loading, VFS/filesystem, shell, networking, SSH,
   object finalization, and full POSIX descriptor readiness remain blocked.
+- Phase 7 Pi 5 close syscall proof plan is accepted. It defines the serialized
+  rpi5_close_syscall_proof hardware plan, including lock ownership, candidate
+  identity, fresh serial/TFTP requirements, inconclusive-run triage,
+  restoration proof, exact close/write/error/quarantine/classification/PASS
+  output, and deferred surfaces. No hardware run, archive publication, or
+  physical close claim is made by the plan. The next bounded Milestone 7.4
+  task should be phase7-pi5-close-syscall-proof-20260529. Dup/read, process
+  loading, VFS/filesystem, shell, networking, SSH, object finalization, and
+  full POSIX descriptor readiness remain blocked.
 
 Milestone 7.4: File Descriptor Table
 

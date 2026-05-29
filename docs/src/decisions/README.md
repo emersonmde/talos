@@ -12,6 +12,36 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.4 Pi 5 Close Syscall Proof Plan Accepted
+
+- Status: accepted as the documentation-only Milestone 7.4 Pi 5 close syscall
+  proof plan. No Rust behavior, assembly behavior, QEMU run, Pi 5 hardware
+  run, archive publishing, hardware-lock acquisition, dup/read syscall
+  behavior, process loading, VFS/filesystem behavior, shell behavior,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, DMA/cache-driver
+  policy, object finalization, or full POSIX descriptor readiness was added.
+- Context: The accepted close syscall closeout established stable talos_close
+  x8 = 2 through the current ProcessOwnerId-backed ProcessDescriptorStore at
+  QEMU/substitute evidence level, but no serialized physical close syscall
+  proof had been defined.
+- Decision: Accept phase7-pi5-close-syscall-proof-plan-20260529. The plan
+  defines the rpi5_close_syscall_proof physical invariant, hardwareTestLock
+  ownership, candidate archive/kernel/TFTP identity, fresh serial and TFTP
+  evidence, restoration proof, inconclusive-run triage, diagnostic/proof-only
+  quarantine, exact final classification/PASS lines, and the next hardware
+  proof task.
+- Evidence level: static documentation inspection. The accepted QEMU close
+  evidence remains
+  tasks/evidence/2026-05-29-qemu-close-syscall-smoke-core/qemu-close-syscall-smoke.log;
+  no physical Pi 5 close evidence is claimed by this plan.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The next bounded Milestone 7.4 task should be
+  phase7-pi5-close-syscall-proof-20260529, scoped to the serialized physical
+  proof. Dup/read syscalls, process loading, VFS/filesystem, shell,
+  networking, SSH, object finalization, broader hardware surfaces, and full
+  POSIX descriptor readiness remain blocked.
+
 ## 2026-05-29 - Phase 7.4 Close Syscall Closeout Accepted
 
 - Status: accepted as the documentation-only Milestone 7.4 close syscall
