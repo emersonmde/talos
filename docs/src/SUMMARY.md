@@ -80,6 +80,7 @@
 - [Phase 7 QEMU Syscall Smoke Plan](project/phase7-qemu-syscall-smoke-plan.md)
 - [Phase 7 Syscall Routing Closeout Checkpoint](project/phase7-syscall-routing-closeout-checkpoint.md)
 - [Phase 7 Pi 5 Syscall Proof Plan](project/phase7-pi5-syscall-proof-plan.md)
+- [Phase 7 Pi 5 Syscall Proof Closeout Checkpoint](project/phase7-pi5-syscall-proof-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

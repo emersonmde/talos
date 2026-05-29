@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 Pi 5 syscall proof closeout frontier,
+Talos is at the Phase 7.3 copy-in/copy-out helper contract frontier,
 after accepting the Phase 6.3 production scheduler runtime closeout, the full
 Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -83,6 +83,13 @@ rerun, and restore proof for the prior accepted boot tree. This accepts only
 physical production routing for the first scalar syscall boundary; descriptor
 I/O, copy-in/copy-out, process loading, filesystem, shell, networking, and SSH
 remain blocked.
+The accepted Pi 5 syscall proof closeout reconciles the accepted syscall ABI,
+dispatch core, production trap routing, QEMU routing evidence, Pi 5 hardware
+proof, hardware-lock timeline, restore proof, and deferred surfaces. It
+accepts no new Rust or assembly behavior and performs no QEMU or Pi 5 rerun.
+It recommends the documentation-only copy-in/copy-out helper contract as the
+next bounded task before any pointer-taking syscall or descriptor I/O
+implementation.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -1237,6 +1244,12 @@ Accepted progress:
   unchanged candidate rerun, and post-restore tree-hash proof. Descriptor I/O,
   copy-in/copy-out, process loading, VFS/filesystem, shell, networking, and SSH
   remain blocked.
+- Phase 7 Pi 5 syscall proof closeout checkpoint is accepted. It reconciles
+  the ABI, dispatch, production trap routing, QEMU syscall smoke evidence, Pi 5
+  physical proof evidence, hardware-lock timeline, restore proof, and blocked
+  surfaces. It recommends phase7-copyin-copyout-helper-contract-20260529 as the
+  next bounded documentation-only task before pointer-taking syscall or
+  descriptor I/O implementation.
 
 Milestone 7.4: File Descriptor Table
 

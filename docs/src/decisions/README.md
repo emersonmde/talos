@@ -12,6 +12,41 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-29 - Phase 7.3 Pi 5 Syscall Proof Closeout Accepted
+
+- Status: accepted as the documentation closeout for the first serialized
+  Raspberry Pi 5 production syscall routing proof. No Rust behavior, assembly
+  behavior, QEMU rerun, Pi 5 hardware rerun, archive publishing, hardware-lock
+  acquisition, descriptor I/O, copy-in/copy-out, process loading,
+  VFS/filesystem, shell behavior, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache-driver policy was added.
+- Context: The accepted syscall ABI contract, target-independent dispatch
+  core, production trap-routing contract, QEMU syscall smoke, and Pi 5 syscall
+  proof needed one checkpoint that states the exact physical capability,
+  retained evidence, hardware-lock timeline, restore proof, deferred surfaces,
+  and next bounded task.
+- Decision: Accept
+  phase7-pi5-syscall-proof-closeout-checkpoint-20260529. The accepted frontier
+  is physical Pi 5 production routing for lower-AArch64 svc #0: talos_nop
+  returns x0 = 0, unknown syscall number 17 returns
+  x0 = 0xffffffffffffffda (-ENOSYS), diagnostic marker 0x7a10 remains
+  proof-only, and the local3 rerun reports
+  classification=pi5-syscall-proof-complete plus rpi5-syscall-proof: PASS.
+- Evidence level: static documentation inspection and retained evidence review.
+  Retained QEMU logs are in
+  tasks/evidence/2026-05-29-qemu-syscall-smoke-core/. Retained Pi 5 proof,
+  TFTP, and restore evidence is in
+  tasks/evidence/2026-05-29-pi5-syscall-proof/.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed. No QEMU or Pi 5 rerun was performed by the
+  closeout checkpoint.
+- Consequences: Pi 5 production syscall routing is closed out for the first
+  scalar syscall boundary. Descriptor I/O, byte copy-in/copy-out,
+  pointer-taking syscalls, process loading, VFS/filesystem, shell, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
+  blocked. The next bounded task is
+  phase7-copyin-copyout-helper-contract-20260529.
+
 ## 2026-05-29 - Phase 7.3 Pi 5 Syscall Proof Accepted
 
 - Status: accepted as the serialized Raspberry Pi 5 production syscall routing
