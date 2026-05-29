@@ -10,6 +10,7 @@ pub(crate) const STABLE_SVC_IMMEDIATE: u16 = 0;
 pub(crate) const DIAGNOSTIC_EL0_TRAP_SVC_IMMEDIATE: u16 = 0x7a10;
 pub(crate) const TALOS_NOP_SYSCALL: u64 = 0;
 pub(crate) const TALOS_WRITE_SYSCALL: u64 = 1;
+pub(crate) const TALOS_CLOSE_SYSCALL: u64 = 2;
 #[cfg(any(
     test,
     talos_boot_scenario = "qemu_pointer_copy_smoke",
@@ -28,6 +29,7 @@ pub(crate) const MAX_SCALAR_ARGUMENTS: usize = 6;
 pub(crate) enum SyscallNumber {
     TalosNop,
     TalosWrite,
+    TalosClose,
     Unknown(u64),
 }
 
@@ -36,6 +38,7 @@ impl SyscallNumber {
         match raw {
             TALOS_NOP_SYSCALL => Self::TalosNop,
             TALOS_WRITE_SYSCALL => Self::TalosWrite,
+            TALOS_CLOSE_SYSCALL => Self::TalosClose,
             unknown => Self::Unknown(unknown),
         }
     }
@@ -44,6 +47,7 @@ impl SyscallNumber {
         match self {
             Self::TalosNop => TALOS_NOP_SYSCALL,
             Self::TalosWrite => TALOS_WRITE_SYSCALL,
+            Self::TalosClose => TALOS_CLOSE_SYSCALL,
             Self::Unknown(raw) => raw,
         }
     }
@@ -155,7 +159,9 @@ pub(crate) const fn dispatch(
     let number = SyscallNumber::from_raw(raw_number);
     let return_value = match number {
         SyscallNumber::TalosNop => SyscallReturn::success(0),
-        SyscallNumber::TalosWrite => SyscallReturn::error(PosixError::NotSupported),
+        SyscallNumber::TalosWrite | SyscallNumber::TalosClose => {
+            SyscallReturn::error(PosixError::NotSupported)
+        }
         SyscallNumber::Unknown(_) => SyscallReturn::error(PosixError::NotImplemented),
     };
 
@@ -190,6 +196,57 @@ where
             kernel_scratch,
             console_backend,
         ),
+        SyscallNumber::TalosNop | SyscallNumber::TalosClose | SyscallNumber::Unknown(_) => {
+            dispatch(raw_number, arguments).return_value()
+        }
+    };
+
+    SyscallDispatchResult {
+        number,
+        arguments,
+        return_value,
+    }
+}
+
+pub(crate) fn dispatch_process_descriptor<
+    const OWNER_CAPACITY: usize,
+    const DESCRIPTOR_CAPACITY: usize,
+    B,
+>(
+    raw_number: u64,
+    arguments: SyscallArguments,
+    current_owner: Option<crate::scheduler::ProcessOwnerId>,
+    descriptor_store: &mut crate::posix::ProcessDescriptorStore<
+        OWNER_CAPACITY,
+        DESCRIPTOR_CAPACITY,
+    >,
+    mappings: &[crate::posix::UserMapping],
+    user_memory_start: u64,
+    user_memory: &[u8],
+    kernel_scratch: &mut [u8],
+    console_backend: &mut B,
+) -> SyscallDispatchResult
+where
+    B: crate::runtime_console::ConsoleBackend,
+{
+    let number = SyscallNumber::from_raw(raw_number);
+    let return_value = match number {
+        SyscallNumber::TalosWrite => match descriptor_store.current_descriptor_table(current_owner)
+        {
+            Ok(descriptor_table) => dispatch_talos_write(
+                arguments,
+                descriptor_table,
+                mappings,
+                user_memory_start,
+                user_memory,
+                kernel_scratch,
+                console_backend,
+            ),
+            Err(error) => SyscallReturn::error(error),
+        },
+        SyscallNumber::TalosClose => {
+            dispatch_talos_close(arguments, current_owner, descriptor_store)
+        }
         SyscallNumber::TalosNop | SyscallNumber::Unknown(_) => {
             dispatch(raw_number, arguments).return_value()
         }
@@ -242,6 +299,36 @@ where
         console_backend,
     ) {
         Ok(bytes_written) => SyscallReturn::success(bytes_written as u64),
+        Err(error) => SyscallReturn::error(error),
+    }
+}
+
+fn dispatch_talos_close<const OWNER_CAPACITY: usize, const DESCRIPTOR_CAPACITY: usize>(
+    arguments: SyscallArguments,
+    current_owner: Option<crate::scheduler::ProcessOwnerId>,
+    descriptor_store: &mut crate::posix::ProcessDescriptorStore<
+        OWNER_CAPACITY,
+        DESCRIPTOR_CAPACITY,
+    >,
+) -> SyscallReturn {
+    let [
+        descriptor,
+        reserved0,
+        reserved1,
+        reserved2,
+        reserved3,
+        reserved4,
+    ] = arguments.values();
+    if reserved0 != 0 || reserved1 != 0 || reserved2 != 0 || reserved3 != 0 || reserved4 != 0 {
+        return SyscallReturn::error(PosixError::InvalidArgument);
+    }
+
+    let Ok(descriptor) = usize::try_from(descriptor) else {
+        return SyscallReturn::error(PosixError::BadDescriptor);
+    };
+
+    match descriptor_store.close_current_descriptor(current_owner, descriptor) {
+        Ok(_) => SyscallReturn::success(0),
         Err(error) => SyscallReturn::error(error),
     }
 }
@@ -340,6 +427,15 @@ mod tests {
 
         assert_eq!(result.number(), SyscallNumber::TalosWrite);
         assert_eq!(result.number().raw(), TALOS_WRITE_SYSCALL);
+        assert_eq!(result.return_value().x0(), (ENOTSUP as u64).wrapping_neg());
+    }
+
+    #[test_case]
+    fn descriptor_close_number_requires_context_in_scalar_dispatch() {
+        let result = dispatch(TALOS_CLOSE_SYSCALL, SyscallArguments::empty());
+
+        assert_eq!(result.number(), SyscallNumber::TalosClose);
+        assert_eq!(result.number().raw(), TALOS_CLOSE_SYSCALL);
         assert_eq!(result.return_value().x0(), (ENOTSUP as u64).wrapping_neg());
     }
 
@@ -508,6 +604,29 @@ mod tests {
         (table, mappings, user_memory)
     }
 
+    fn process_descriptor_fixture() -> (
+        crate::scheduler::ProcessOwnerId,
+        crate::posix::ProcessDescriptorStore<2, 4>,
+        [crate::posix::UserMapping; 1],
+        [u8; 128],
+    ) {
+        let owner = crate::scheduler::ProcessOwnerId::new(31).expect("owner id");
+        let mut store = crate::posix::ProcessDescriptorStore::<2, 4>::new_empty();
+        store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create owner");
+        let mappings = [crate::posix::UserMapping::new(
+            0x0000_0000_0011_0000,
+            0x80,
+            crate::posix::UserMappingPermissions::USER_DATA,
+        )
+        .expect("user data mapping")];
+        let mut user_memory = [0u8; 128];
+        user_memory[..18].copy_from_slice(b"talos-stdout-qemu\n");
+        user_memory[0x40..0x52].copy_from_slice(b"talos-stderr-qemu\n");
+        (owner, store, mappings, user_memory)
+    }
+
     fn dispatch_write_case(
         descriptor: u64,
         user_start: u64,
@@ -606,6 +725,215 @@ mod tests {
 
         assert_eq!(result.return_value().x0(), (EIO as u64).wrapping_neg());
         assert_eq!(console.as_bytes(), b"");
+    }
+
+    #[test_case]
+    fn talos_close_stdout_blocks_later_process_descriptor_write() {
+        let (owner, mut store, mappings, user_memory) = process_descriptor_fixture();
+        let mut scratch = [0u8; 64];
+        let mut console = CaptureConsole::new();
+
+        let close = dispatch_process_descriptor(
+            TALOS_CLOSE_SYSCALL,
+            SyscallArguments::new([1, 0, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mappings,
+            0x0000_0000_0011_0000,
+            &user_memory,
+            &mut scratch,
+            &mut console,
+        );
+        let write = dispatch_process_descriptor(
+            TALOS_WRITE_SYSCALL,
+            SyscallArguments::new([1, 0x0000_0000_0011_0000, 18, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mappings,
+            0x0000_0000_0011_0000,
+            &user_memory,
+            &mut scratch,
+            &mut console,
+        );
+
+        assert_eq!(close.number(), SyscallNumber::TalosClose);
+        assert_eq!(close.return_value().x0(), 0);
+        assert_eq!(write.number(), SyscallNumber::TalosWrite);
+        assert_eq!(write.return_value().x0(), (EBADF as u64).wrapping_neg());
+        assert_eq!(console.as_bytes(), b"");
+    }
+
+    #[test_case]
+    fn talos_close_stderr_uses_the_same_table_local_rule() {
+        let (owner, mut store, mappings, user_memory) = process_descriptor_fixture();
+        let mut scratch = [0u8; 64];
+        let mut console = CaptureConsole::new();
+
+        let close = dispatch_process_descriptor(
+            TALOS_CLOSE_SYSCALL,
+            SyscallArguments::new([2, 0, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mappings,
+            0x0000_0000_0011_0000,
+            &user_memory,
+            &mut scratch,
+            &mut console,
+        );
+
+        assert_eq!(close.return_value().x0(), 0);
+        assert_eq!(
+            store
+                .current_descriptor_table(Some(owner))
+                .expect("current table")
+                .get(crate::posix::STDERR_FD),
+            Err(PosixError::BadDescriptor)
+        );
+        assert_eq!(console.as_bytes(), b"");
+    }
+
+    #[test_case]
+    fn talos_close_failures_are_deterministic_and_do_not_mutate_on_einval() {
+        let (owner, mut store, mappings, user_memory) = process_descriptor_fixture();
+        let missing = crate::scheduler::ProcessOwnerId::new(32).expect("missing owner id");
+        let mut scratch = [0u8; 64];
+        let mut console = CaptureConsole::new();
+
+        let missing_owner = dispatch_process_descriptor(
+            TALOS_CLOSE_SYSCALL,
+            SyscallArguments::new([1, 0, 0, 0, 0, 0]),
+            Some(missing),
+            &mut store,
+            &mappings,
+            0x0000_0000_0011_0000,
+            &user_memory,
+            &mut scratch,
+            &mut console,
+        );
+        let no_owner = dispatch_process_descriptor(
+            TALOS_CLOSE_SYSCALL,
+            SyscallArguments::new([1, 0, 0, 0, 0, 0]),
+            None,
+            &mut store,
+            &mappings,
+            0x0000_0000_0011_0000,
+            &user_memory,
+            &mut scratch,
+            &mut console,
+        );
+        let invalid_descriptor = dispatch_process_descriptor(
+            TALOS_CLOSE_SYSCALL,
+            SyscallArguments::new([99, 0, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mappings,
+            0x0000_0000_0011_0000,
+            &user_memory,
+            &mut scratch,
+            &mut console,
+        );
+        let reserved = dispatch_process_descriptor(
+            TALOS_CLOSE_SYSCALL,
+            SyscallArguments::new([1, 1, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mappings,
+            0x0000_0000_0011_0000,
+            &user_memory,
+            &mut scratch,
+            &mut console,
+        );
+        let close = dispatch_process_descriptor(
+            TALOS_CLOSE_SYSCALL,
+            SyscallArguments::new([1, 0, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mappings,
+            0x0000_0000_0011_0000,
+            &user_memory,
+            &mut scratch,
+            &mut console,
+        );
+        let double_close = dispatch_process_descriptor(
+            TALOS_CLOSE_SYSCALL,
+            SyscallArguments::new([1, 0, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mappings,
+            0x0000_0000_0011_0000,
+            &user_memory,
+            &mut scratch,
+            &mut console,
+        );
+
+        assert_eq!(
+            missing_owner.return_value().x0(),
+            (EBADF as u64).wrapping_neg()
+        );
+        assert_eq!(no_owner.return_value().x0(), (EBADF as u64).wrapping_neg());
+        assert_eq!(
+            invalid_descriptor.return_value().x0(),
+            (EBADF as u64).wrapping_neg()
+        );
+        assert_eq!(reserved.return_value().x0(), (EINVAL as u64).wrapping_neg());
+        assert_eq!(close.return_value().x0(), 0);
+        assert_eq!(
+            double_close.return_value().x0(),
+            (EBADF as u64).wrapping_neg()
+        );
+        assert_eq!(console.as_bytes(), b"");
+    }
+
+    #[test_case]
+    fn talos_close_preserves_duplicate_descriptor_lifetime() {
+        let (owner, mut store, mappings, user_memory) = process_descriptor_fixture();
+        let duplicate = store
+            .current_descriptor_table_mut(Some(owner))
+            .expect("current table")
+            .dup(crate::posix::STDOUT_FD)
+            .expect("dup stdout");
+        let mut scratch = [0u8; 64];
+        let mut console = CaptureConsole::new();
+
+        let close_original = dispatch_process_descriptor(
+            TALOS_CLOSE_SYSCALL,
+            SyscallArguments::new([crate::posix::STDOUT_FD as u64, 0, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mappings,
+            0x0000_0000_0011_0000,
+            &user_memory,
+            &mut scratch,
+            &mut console,
+        );
+        let write_duplicate = dispatch_process_descriptor(
+            TALOS_WRITE_SYSCALL,
+            SyscallArguments::new([duplicate as u64, 0x0000_0000_0011_0000, 18, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mappings,
+            0x0000_0000_0011_0000,
+            &user_memory,
+            &mut scratch,
+            &mut console,
+        );
+
+        assert_eq!(close_original.return_value().x0(), 0);
+        assert_eq!(
+            write_duplicate.return_value().x0(),
+            (EBADF as u64).wrapping_neg()
+        );
+        assert_eq!(console.as_bytes(), b"");
+        assert_eq!(
+            store
+                .current_descriptor_table(Some(owner))
+                .expect("current table")
+                .get(duplicate)
+                .expect("duplicate remains")
+                .object()
+                .reference(),
+            crate::posix::STDOUT_FD
+        );
     }
 
     #[test_case]

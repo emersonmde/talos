@@ -404,6 +404,19 @@ be phase7-close-syscall-core-20260529. Dup/read, QEMU/Pi 5 close/dup/read
 proof, process loading, VFS/filesystem, shell, networking, SSH,
 open-file-description finalization, and full POSIX descriptor readiness remain
 blocked.
+The accepted close syscall core adds stable syscall number 2 for talos_close
+and a target-independent process descriptor dispatch helper. Close validates
+reserved-zero x1 through x5, resolves the current process owner through
+ProcessDescriptorStore, clears occupied descriptor slots with x0 = 0, returns
+-EBADF for missing/unknown owner or invalid/empty/already-closed descriptor
+cases, and returns -EINVAL for reserved-register violations. Focused no_std
+tests prove stdout/stderr close, EBADF failures, no-mutation EINVAL, duplicate
+slot preservation, and talos_write regression after close. The QEMU syscall
+and descriptor-write smokes remain passing regressions, but the QEMU close
+syscall smoke itself remains blocked until the next plan/core tasks. Dup/read,
+Pi 5 physical close/dup/read proof, process loading, VFS/filesystem, shell,
+networking, SSH, object finalization, and full POSIX descriptor readiness
+remain blocked.
 
 Near-term direction after the accepted Phase 7.3 syscall ABI/dispatch closeout:
 
@@ -1830,6 +1843,14 @@ Accepted progress:
   shell, networking, SSH, object finalization, and full POSIX descriptor
   readiness remain blocked. The next bounded Milestone 7.4 task should be a
   documentation-only close/dup/read syscall source inventory.
+- Phase 7 close syscall core is accepted. It adds the target-independent
+  talos_close syscall number/dispatch path and routes close through
+  ProcessDescriptorStore::close_current_descriptor() with focused no_std
+  tests. QEMU syscall and descriptor-write regression smokes still pass, but
+  QEMU/Pi 5 close proof, dup/read, process loading, VFS/filesystem, shell,
+  networking, SSH, object finalization, and full POSIX descriptor readiness
+  remain blocked. The next bounded Milestone 7.4 task should be
+  phase7-qemu-close-syscall-smoke-plan-20260529.
 
 Milestone 7.4: File Descriptor Table
 

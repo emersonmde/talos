@@ -5509,3 +5509,39 @@ ADR template:
   model, shell, networking, SSH, blocking/readiness, signals, restart
   semantics, object finalization, RP1/PCIe, UART interrupt ownership,
   DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 Close Syscall Core Accepted
+
+- Status: accepted as the target-independent Milestone 7.4 close syscall
+  core. No dup/read syscall implementation, QEMU close proof, Pi 5 hardware
+  run, boot archive publication, hardware-lock acquisition, process loading,
+  VFS/filesystem behavior, shell behavior, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The accepted close syscall contract fixed talos_close as stable svc
+  #0, x8 = 2, descriptor number in x0, reserved-zero x1 through x5, x0 = 0 on
+  success, -EBADF for missing/unknown owners and invalid, empty, or already
+  closed descriptors, and -EINVAL for reserved-register violations.
+- Decision: Accept phase7-close-syscall-core-20260529. SyscallNumber now
+  includes TalosClose, scalar dispatch keeps context-requiring write/close as
+  -ENOTSUP, and dispatch_process_descriptor() routes current-owner write and
+  close through ProcessDescriptorStore. Close validates reserved arguments
+  before mutation and applies ProcessDescriptorStore::close_current_descriptor()
+  for table-local close semantics. QEMU/Pi 5 syscall smoke/proof handlers were
+  updated only for exhaustive matching so close remains unexpected in those
+  scenarios.
+- Evidence level: formatting, target-independent no_std unit tests,
+  QEMU/substitute syscall-smoke regression, QEMU/substitute descriptor-write
+  regression, documentation build, and whitespace inspection. No QEMU close
+  smoke or physical Pi 5 close evidence was produced.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test passed with 231 no_std tests; scripts/qemu-syscall-smoke.sh passed;
+  scripts/qemu-descriptor-write-smoke.sh passed; git diff --check passed;
+  mdbook build passed.
+- Consequences: The next mechanically derivable task is
+  phase7-qemu-close-syscall-smoke-plan-20260529, scoped to a documentation-only
+  QEMU close syscall smoke plan. Dup/read syscalls, QEMU/Pi 5 close/dup/read
+  proof beyond the existing regressions, process loading, VFS/filesystem,
+  stdin/read object model, shell, networking, SSH, blocking/readiness,
+  signals, restart semantics, object finalization, RP1/PCIe, UART interrupt
+  ownership, DMA/cache-driver policy, and full POSIX descriptor claims remain
+  blocked.
