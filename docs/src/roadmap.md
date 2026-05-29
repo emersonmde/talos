@@ -529,24 +529,32 @@ process loading, VFS/filesystem, shell, networking, SSH, object finalization,
 dup2/fcntl, and full POSIX descriptor readiness remain blocked. The next
 bounded Milestone 7.4 task should be
 phase7-dup-syscall-closeout-checkpoint-20260529.
+The accepted QEMU dup syscall closeout checkpoint reconciles the dup contract,
+target-independent core, QEMU smoke plan, retained QEMU/substitute dup
+evidence, descriptor-write and close regression gates, residual risks, and
+deferred surfaces. It accepts no new Rust or assembly behavior and performs no
+QEMU or Pi 5 rerun. It recommends the already queued documentation-only
+phase7-pi5-dup-syscall-proof-plan-20260529 before any serialized physical dup
+proof. Pi 5 physical dup proof, read/stdin behavior, process loading,
+VFS/filesystem, shell, networking, SSH, object finalization, dup2/fcntl, and
+full POSIX descriptor readiness remain blocked.
 
-Near-term direction after the accepted Pi 5 close syscall proof closeout:
+Near-term direction after the accepted QEMU dup syscall closeout:
 
-- Move from proof-specific descriptor writes toward user-visible OS
-  capability. The next Phase 7 slice should inventory Milestone 7.4
-  file-descriptor-table owners and contract gaps, then establish
-  process-owned descriptor-table behavior and syscall paths that can be
-  exercised by a lower-EL test payload or small user program rather than by
-  permanent diagnostic shortcuts.
+- Translate the accepted QEMU/substitute dup invariant into a bounded Pi 5
+  proof plan before any hardware action. That plan should define lock
+  ownership, candidate identity, fresh serial/TFTP evidence, inconclusive-run
+  triage, restore proof, exact dup/write/close/error/PASS lines, and blocked
+  read/process/VFS/shell/network surfaces.
 - Keep QEMU, host-side unit tests, and static documentation gates first. Reserve
   serialized Pi 5 runs for the smallest physical claim that cannot be proven on
   the QEMU/substitute path.
 - Preserve the deferred-surface boundary: read syscall expansion, QEMU/Pi 5
-  dup proof beyond the accepted target-independent core, process loading,
-  descriptor I/O beyond the accepted close and dup core frontiers,
-  VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
-  and DMA/cache-driver policy remain out of scope until explicit tasks accept
-  their contracts and gates.
+  proof beyond the accepted QEMU dup frontier, process loading, descriptor I/O
+  beyond the accepted write/close/dup frontiers, VFS/filesystem, shell,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, object finalization,
+  dup2/fcntl, and DMA/cache-driver policy remain out of scope until explicit
+  tasks accept their contracts and gates.
 - Treat the roadmap target as a usable local operating system: TTY, shell,
   separate user programs, and interaction/program-based tests that exercise new
   kernel features through the normal kernel/userspace boundary.
@@ -2001,6 +2009,20 @@ Accepted progress:
   task should be phase7-pi5-close-syscall-proof-20260529. Dup/read, process
   loading, VFS/filesystem, shell, networking, SSH, object finalization, and
   full POSIX descriptor readiness remain blocked.
+- Phase 7 QEMU dup syscall closeout is accepted. Subsequent Milestone 7.4 work
+  has accepted the Pi 5 close proof and closeout, dup syscall contract, dup
+  syscall core, QEMU dup smoke plan, QEMU dup smoke core, and this
+  documentation-only closeout. The retained QEMU/substitute dup evidence proves
+  fd 1 duplicates to fd 3, full-table -EMFILE, reserved-register -EINVAL,
+  writes through source and duplicate stdout descriptors, close(fd 1)
+  preserving fd 3, closed-descriptor -EBADF cases, scalar regressions,
+  copy-probe quarantine, diagnostic-marker quarantine, and
+  classification=qemu-dup-syscall-smoke-complete plus PASS. The next bounded
+  Milestone 7.4 task should be
+  phase7-pi5-dup-syscall-proof-plan-20260529. Pi 5 physical dup proof,
+  read/stdin behavior, process loading, VFS/filesystem, shell, networking,
+  SSH, object finalization, dup2/fcntl, and full POSIX descriptor readiness
+  remain blocked.
 
 Milestone 7.4: File Descriptor Table
 

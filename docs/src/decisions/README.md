@@ -5876,3 +5876,39 @@ ADR template:
   VFS/filesystem, shell, networking, SSH, dup2/fcntl, object finalization,
   broader cache/DMA policy, RP1/PCIe, UART interrupt ownership, and full POSIX
   descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 Dup Syscall Closeout Checkpoint Accepted
+
+- Status: accepted as the documentation-only Milestone 7.4 QEMU/substitute dup
+  syscall closeout checkpoint. No Rust behavior, assembly behavior, QEMU rerun,
+  Pi 5 hardware run, boot archive publication, hardware-lock acquisition, read
+  behavior, process loading, VFS/filesystem behavior, shell behavior,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, object finalization,
+  dup2/fcntl, or DMA/cache-driver policy was added.
+- Context: The accepted QEMU dup syscall smoke core retained lower-AArch64
+  QEMU/substitute serial evidence for talos_dup through the current
+  ProcessOwnerId-backed ProcessDescriptorStore, including descriptor-write and
+  close regressions. A closeout checkpoint was required before Pi 5 dup proof
+  planning.
+- Decision: Accept phase7-dup-syscall-closeout-checkpoint-20260529. The
+  checkpoint reconciles the accepted dup contract, target-independent core,
+  QEMU smoke plan, retained
+  tasks/evidence/2026-05-29-qemu-dup-syscall-smoke-core/qemu-dup-syscall-smoke.log,
+  regression gates, residual risks, and deferred surfaces. It accepts only the
+  QEMU/substitute dup frontier: fd 1 duplicates to fd 3, full-table -EMFILE,
+  reserved-register -EINVAL, writes through source and duplicate descriptors,
+  close(fd 1) preserving fd 3, closed-descriptor -EBADF, talos_nop,
+  unknown-syscall -ENOSYS, copy-probe quarantine, diagnostic-marker quarantine,
+  and classification=qemu-dup-syscall-smoke-complete plus PASS.
+- Evidence level: static documentation inspection, retained QEMU/substitute
+  evidence review, documentation build, and whitespace inspection. No Rust
+  tests, QEMU rerun, or physical Pi 5 hardware evidence was produced by this
+  closeout.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The next mechanically derivable task is
+  phase7-pi5-dup-syscall-proof-plan-20260529, scoped to a documentation-only
+  Pi 5 dup proof plan. Pi 5 physical dup proof, read syscall behavior,
+  stdin/read object model, process loading, VFS/filesystem, shell, networking,
+  SSH, dup2/fcntl, object finalization, broader cache/DMA policy, RP1/PCIe,
+  UART interrupt ownership, and full POSIX descriptor claims remain blocked.

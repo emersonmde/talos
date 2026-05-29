@@ -111,6 +111,7 @@
 - [Phase 7 Pi 5 Close Syscall Proof Closeout Checkpoint](project/phase7-pi5-close-syscall-proof-closeout-checkpoint.md)
 - [Phase 7 Dup Syscall Contract](project/phase7-dup-syscall-contract.md)
 - [Phase 7 QEMU Dup Syscall Smoke Plan](project/phase7-qemu-dup-syscall-smoke-plan.md)
+- [Phase 7 Dup Syscall Closeout Checkpoint](project/phase7-dup-syscall-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture
