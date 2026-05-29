@@ -340,6 +340,17 @@ tasks/evidence/2026-05-29-qemu-process-descriptor-stdio-smoke-core/qemu-process-
 It remains QEMU/substitute evidence only; Pi 5 physical proof, stdin/read,
 close/dup/read, process loading, VFS/filesystem, shell, networking, SSH, and
 full POSIX descriptor claims remain blocked.
+The accepted process descriptor table closeout reconciles the contract,
+target-independent core, QEMU/substitute smoke plan, retained smoke evidence,
+validation gates, residual risks, and blocked surfaces for the first
+process-owned descriptor-table slice. It accepts ProcessOwnerId-backed
+inherited stdio lookup and talos_write fd 1/fd 2 routing to runtime-console0
+only at the QEMU/substitute evidence level. Pi 5 physical descriptor-table
+proof, stdin/read, close/dup/read, descriptor lifetime and close semantics,
+process loading, VFS/filesystem, shell, networking, SSH, and full POSIX
+descriptor claims remain blocked. The next bounded Milestone 7.4 task should
+be supervisor-planned as a documentation-only descriptor lifetime and
+close-semantics source inventory before any close/dup/read syscall contract.
 
 Near-term direction after the accepted Phase 7.3 syscall ABI/dispatch closeout:
 
@@ -1732,6 +1743,14 @@ Accepted progress:
   quarantine, and exact PASS/classification evidence. Pi 5 physical proof,
   stdin/read, close/dup/read, process loading, VFS/filesystem, shell,
   networking, SSH, and full POSIX descriptor claims remain blocked.
+- Phase 7 process descriptor table closeout is accepted. It closes the first
+  process-owned descriptor-table slice at the QEMU/substitute evidence level,
+  records the accepted contract/core/smoke commits and evidence path, and
+  preserves blocked Pi 5 physical proof, stdin/read, close/dup/read,
+  descriptor lifetime and close semantics, process loading, VFS/filesystem,
+  shell, networking, SSH, and full POSIX descriptor claims. The next bounded
+  Milestone 7.4 task should be supervisor-planned as a documentation-only
+  descriptor lifetime and close-semantics source inventory.
 
 Milestone 7.4: File Descriptor Table
 

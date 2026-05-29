@@ -99,6 +99,7 @@
 - [Phase 7 File Descriptor Table Source Inventory](project/phase7-file-descriptor-table-source-inventory.md)
 - [Phase 7 Process Descriptor Table Contract](project/phase7-process-descriptor-table-contract.md)
 - [Phase 7 QEMU Process Descriptor Stdio Smoke Plan](project/phase7-qemu-process-descriptor-stdio-smoke-plan.md)
+- [Phase 7 Process Descriptor Table Closeout Checkpoint](project/phase7-process-descriptor-table-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

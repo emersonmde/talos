@@ -50,6 +50,37 @@ ADR template:
   RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and full POSIX
   descriptor claims remain blocked.
 
+## 2026-05-29 - Phase 7.4 Process Descriptor Table Closeout Accepted
+
+- Status: accepted as the documentation-only Milestone 7.4 process descriptor
+  table closeout. No Rust behavior, assembly behavior, QEMU rerun, Pi 5
+  hardware run, archive publishing, hardware-lock acquisition, stdin/read,
+  close/dup/read syscall behavior, process loading, VFS/filesystem behavior,
+  shell behavior, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted process descriptor table contract, core, smoke plan,
+  and QEMU/substitute smoke core established the first ProcessOwnerId-backed
+  inherited-stdio descriptor-table path and retained QEMU evidence for
+  lower-AArch64 talos_write fd 1/fd 2 through runtime-console0.
+- Decision: Accept
+  phase7-process-descriptor-table-closeout-checkpoint-20260529. The closeout
+  records the accepted task/commit matrix, retained evidence path,
+  classification=qemu-process-descriptor-stdio-smoke-complete, PASS line,
+  validation gates, residual risks, and deferred surfaces.
+- Evidence level: static evidence and documentation inspection. No new
+  QEMU/substitute or physical Pi 5 evidence was produced because this task
+  changes only Markdown documentation and durable worker state.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: The process-owned inherited-stdio descriptor-table slice is
+  accepted only at the QEMU/substitute evidence level. Pi 5 physical
+  descriptor-table proof, stdin/read, close/dup/read, descriptor lifetime and
+  close semantics, process loading, VFS/filesystem, shell, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and full POSIX
+  descriptor claims remain blocked. The next bounded Milestone 7.4 task should
+  be supervisor-planned as a documentation-only descriptor lifetime and
+  close-semantics source inventory.
+
 ## 2026-05-29 - Phase 7.4 QEMU Process Descriptor Stdio Smoke Plan Accepted
 
 - Status: accepted as a documentation-only Milestone 7.4 QEMU/substitute
