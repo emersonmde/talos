@@ -4644,3 +4644,43 @@ ADR template:
   pointer-copy evidence and must keep descriptor I/O, process loading,
   VFS/filesystem, shell, networking, SSH, Pi 5 pointer-copy hardware proof,
   RP1/PCIe, UART interrupt, and DMA/cache-driver surfaces blocked.
+
+## 2026-05-29 - Phase 7 Pointer-Copy Closeout Checkpoint Accepted
+
+- Status: accepted as the documentation-only Phase 7.3 closeout for the first
+  QEMU/substitute pointer-copy syscall smoke. No Rust behavior, assembly
+  behavior, QEMU rerun, Pi 5 hardware run, boot archive publishing,
+  hardware-lock acquisition, descriptor I/O, runtime console or TTY
+  integration, process loading, VFS/filesystem, shell behavior, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, demand
+  paging, copy-on-write, signal/restart semantics, or lower-EL fault-table
+  recovery was added.
+- Context: The accepted pointer-taking syscall contract, QEMU pointer-copy
+  smoke plan, and QEMU pointer-copy smoke core needed one checkpoint that names
+  the exact accepted QEMU/substitute capability, retained evidence, proof-only
+  status, residual risks, and deferred surfaces before any physical proof or
+  descriptor syscall planning.
+- Decision: Accept
+  phase7-pointer-copy-closeout-checkpoint-20260529. The accepted frontier is
+  QEMU/substitute evidence that qemu_pointer_copy_smoke routes lower-AArch64
+  svc #0 with proof-only x8 = 0x7001 through the saved-frame syscall path,
+  invokes copy_from_user and copy_to_user against explicit UserData
+  mapping/backing storage, returns 16 for the 16-byte success case, returns
+  -EFAULT for the guard-range case, preserves unknown-syscall -ENOSYS behavior,
+  and keeps diagnostic marker 0x7a10 outside syscall dispatch.
+- Evidence level: static documentation inspection and retained
+  QEMU/substitute evidence review. Retained pointer-copy evidence is in
+  tasks/evidence/2026-05-29-qemu-pointer-copy-smoke-core/qemu-pointer-copy-smoke.log
+  with classification=qemu-pointer-copy-smoke-complete and
+  qemu-pointer-copy-smoke: PASS.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed.
+- Consequences: Supervisor planning is required before the next task because
+  no explicit queued follow-up exists after this closeout. The recommended
+  bounded direction is a documentation-only Pi 5 pointer-copy proof plan that
+  preserves hardwareTestLock serialization, candidate identity, fresh
+  TFTP/serial evidence, inconclusive-run triage, restoration proof, and blocked
+  descriptor/process/filesystem/networking surfaces. Descriptor I/O, process
+  loading, VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, DMA/cache-driver policy, and stable POSIX descriptor claims remain
+  blocked.

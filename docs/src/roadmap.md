@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is at the Phase 7.3 QEMU pointer-copy smoke core
+Talos is at the Phase 7.3 pointer-copy closeout checkpoint
 frontier, after accepting the Phase 6.3 production scheduler runtime closeout,
 the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -147,6 +147,12 @@ qemu-pointer-copy-smoke: PASS. This accepts only QEMU/substitute pointer-copy
 through lower-EL syscall routing; descriptor I/O, process loading,
 VFS/filesystem, shell, networking, SSH, and Pi 5 pointer-copy hardware proof
 remain blocked.
+The accepted pointer-copy closeout checkpoint reconciles the contract, smoke
+plan, core implementation, retained QEMU evidence, regression gates, and
+deferred surfaces. It accepts no new Rust or assembly behavior and performs no
+QEMU or Pi 5 rerun. It recommends supervisor planning for a documentation-only
+Pi 5 pointer-copy proof plan before any serialized hardware action or before
+choosing descriptor syscall work.
 
 The recently accepted Phase 6.3 scheduler frontier includes
 evidence-retention, diagnostic-surface, roadmap-refresh,
@@ -1354,6 +1360,15 @@ Accepted progress:
   quarantine, and retained QEMU/substitute PASS evidence. Descriptor I/O,
   process loading, VFS/filesystem, shell, networking, SSH, and Pi 5
   pointer-copy hardware proof remain blocked.
+- Phase 7 pointer-copy closeout checkpoint is accepted. It reconciles the
+  pointer-taking syscall contract, QEMU pointer-copy smoke plan, core
+  implementation, retained QEMU/substitute evidence, scalar syscall and EL0
+  diagnostic regressions, proof-only status, and blocked surfaces. It
+  recommends supervisor planning for a documentation-only Pi 5 pointer-copy
+  proof plan before any hardware action, and keeps descriptor I/O, process
+  loading, VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, DMA/cache-driver policy, and stable POSIX descriptor claims
+  blocked.
 
 Milestone 7.4: File Descriptor Table
 
