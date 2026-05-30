@@ -86,6 +86,16 @@ hardware proof, networking, SSH, RP1/PCIe, UART interrupt ownership, or
 DMA/cache-driver policy is accepted. No explicit queued follow-up task remains;
 supervisor planning is required before the worker may promote the next
 Phase 8.3 task.
+The process address-space source inventory and contract are now accepted. The
+contract selects a target-independent ProcessAddressSpace boundary with
+explicit identity, owner label, root/table lease records, user-frame leases,
+ordered mappings, copy/zero accounting, all-or-nothing rollback, idempotent
+teardown, and deterministic POSIX-shaped errors. It is not a hardware
+page-table installer and accepts no AArch64 descriptor construction,
+TTBR/TCR/ASID/TLB policy, lower-EL launch, argv/envp, scheduler handoff,
+process table/PID/wait/exit, descriptor inheritance, filesystem syscalls,
+hardware proof, networking, or SSH. The next bounded task is a
+QEMU/substitute process address-space smoke plan for this selected boundary.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -2606,6 +2616,20 @@ Milestone 8.3: Program Loader
   storage, networking, SSH, RP1/PCIe, UART interrupt ownership, and
   DMA/cache-driver policy remain blocked until later explicit tasks accept
   their gates.
+- Phase 8 process address-space contract is accepted. It selects the first
+  target-independent ProcessAddressSpace boundary: an installed address-space
+  record with explicit identity, owner label, model root/table leases,
+  user-frame leases, ordered mappings, copy/zero accounting, publication
+  state, all-or-nothing rollback, idempotent teardown, and deterministic
+  POSIX-shaped errors. It deliberately does not accept real AArch64
+  descriptor construction, TTBR0_EL1/TTBR1_EL1 switching, TCR/MAIR/SCTLR
+  policy, ASIDs, TLB invalidation, lower-EL launch, argv/envp construction,
+  scheduler handoff, process table/PID/wait/exit, descriptor inheritance,
+  filesystem syscalls, Pi 5 hardware proof, networking, or SSH. The next
+  bounded task should be
+  phase8-qemu-process-address-space-smoke-plan-20260530 to define retained
+  QEMU/substitute evidence for success, rejection, rollback, no-leak, and
+  teardown observations before implementation.
 
 Acceptance criteria:
 

@@ -136,6 +136,7 @@
 - [Phase 8 QEMU Process Install Smoke Plan](project/phase8-qemu-process-install-smoke-plan.md)
 - [Phase 8 Process Install Closeout Checkpoint](project/phase8-process-install-closeout-checkpoint.md)
 - [Phase 8 Process Address-Space Source Inventory](project/phase8-process-address-space-source-inventory.md)
+- [Phase 8 Process Address-Space Contract](project/phase8-process-address-space-contract.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

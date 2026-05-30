@@ -12,6 +12,40 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 Process Address-Space Contract Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 process
+  address-space contract. No Rust behavior, assembly behavior, QEMU
+  execution, Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, lower-EL launch, argv/envp implementation, exec/spawn/wait,
+  shell, descriptor-backed filesystem syscall, writable filesystem,
+  persistent storage, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted process address-space source inventory found a clear
+  gap between metadata-only ProcessImageInstallPlan derivation and any
+  process-owned address-space mutation, frame lease, page-table root, mapping,
+  teardown, or TTBR/TCR switching behavior.
+- Decision: Accept phase8-process-address-space-contract-20260530. The
+  contract selects a target-independent ProcessAddressSpace boundary with
+  explicit identity, owner label, model root/table leases, user-frame leases,
+  ordered mappings, copy/zero accounting, publication state, all-or-nothing
+  rollback, idempotent teardown, and deterministic POSIX-shaped errors.
+- Evidence level: static documentation/source review. Reviewed the accepted
+  process address-space source inventory, process-install contract and
+  closeout, QEMU/substitute process-install smoke plan, Phase 7 lower-EL and
+  copy contracts, process-install and loader sources, POSIX user-memory
+  helpers, scheduler process-owner placeholders, frame ownership vocabulary,
+  translation helpers, roadmap, SUMMARY, and ADR index.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next bounded task should be
+  phase8-qemu-process-address-space-smoke-plan-20260530. Real AArch64
+  descriptor construction, TTBR0_EL1/TTBR1_EL1 switching, TCR/MAIR/SCTLR
+  policy, ASIDs, TLB invalidation, lower-EL launch, argv/envp, scheduler
+  handoff, process table/PID/wait/exit, descriptor inheritance, filesystem
+  syscalls, Pi 5 hardware proof, networking, and SSH remain blocked.
+
 ## 2026-05-30 - Phase 8 Process Address-Space Source Inventory Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 process
