@@ -564,21 +564,30 @@ byte source, EOF, blocking/readiness, partial reads, nonblocking mode,
 restart/signals, copy-out failure handling, object lifetime/finalization, and
 physical proof. It accepts no read behavior and recommends the documentation-only
 phase7-read-stdin-contract-20260529 as the next bounded Milestone 7.4 task.
+The accepted read/stdin contract defines talos_read as stable syscall number 4
+with x0 fd, x1 destination pointer, x2 requested count, x3 through x5 reserved
+zero, and x0 byte-count/0 EOF or negative errno return encoding. The first
+bounded stdin source is fixed proof input shared by fd 0 and duplicates of
+fd 0, with immediate readiness, proof-buffer short reads, 0 at bounded EOF,
+copy_to_user all-or-nothing failure ordering, and no runtime-console0, TTY,
+filesystem, pipe, socket, signal, wait-queue, or hardware input claim. It
+recommends phase7-read-stdin-core-20260529 as the next bounded
+target-independent implementation task.
 
-Near-term direction after the accepted read/stdin source inventory:
+Near-term direction after the accepted read/stdin contract:
 
-- Define the read/stdin contract before any implementation or runtime proof.
-  The contract should choose the syscall number, argument/return convention,
-  reserved-register behavior, fd/error cases, copy-out failure behavior, and
-  one bounded stdin byte-source/EOF/readiness stance.
+- Implement only the target-independent talos_read/stdin core for fixed proof
+  input before any QEMU/substitute or Pi 5 runtime proof.
 - Keep QEMU, host-side unit tests, and static documentation gates first. Reserve
   serialized Pi 5 runs for the smallest physical claim that cannot be proven on
   the QEMU/substitute path.
 - Preserve the deferred-surface boundary: read implementation, QEMU/Pi 5 read
-  proof, process loading, descriptor I/O beyond the accepted write/close/dup
-  frontiers, VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt
-  ownership, object finalization, dup2/fcntl, and DMA/cache-driver policy
-  remain out of scope until explicit tasks accept their contracts and gates.
+  proof, runtime-console0/TTY/hardware stdin, process loading, descriptor I/O
+  beyond the accepted write/close/dup/read-contract frontiers, VFS/filesystem,
+  shell, networking, SSH, RP1/PCIe, UART interrupt ownership, object
+  finalization, dup2/fcntl, signals, wait queues, nonblocking I/O, and
+  DMA/cache-driver policy remain out of scope until explicit tasks accept
+  their contracts and gates.
 - Treat the roadmap target as a usable local operating system: TTY, shell,
   separate user programs, and interaction/program-based tests that exercise new
   kernel features through the normal kernel/userspace boundary.

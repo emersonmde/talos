@@ -6051,3 +6051,36 @@ ADR template:
   loading, VFS/filesystem, shell, networking, SSH, object finalization,
   RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and full POSIX
   descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 Read And Stdin Contract Accepted
+
+- Status: accepted as the documentation-only Milestone 7.4 read/stdin
+  contract. No Rust behavior, assembly behavior, read implementation, QEMU
+  run, Pi 5 hardware run, boot archive publication, hardware-lock acquisition,
+  process loading, VFS/filesystem behavior, shell behavior, networking, SSH,
+  object finalization, RP1/PCIe, UART interrupt ownership, DMA/cache-driver
+  policy, or full POSIX descriptor readiness was added.
+- Context: The accepted read/stdin source inventory identified the syscall
+  dispatch, copy_to_user, ProcessDescriptorStore, inherited fd 0,
+  runtime-console0, TTY/stdin, and retained write/close/dup owners, but left
+  byte source, EOF/readiness, copy-out failure ordering, object lifetime, and
+  runtime proof unresolved.
+- Decision: Accept phase7-read-stdin-contract-20260529. talos_read is the
+  first bounded stdin syscall contract with x8 = 4, x0 fd, x1 destination
+  pointer, x2 requested count, x3 through x5 reserved zero, and x0 bytes
+  copied, 0 bounded EOF, or negative errno. The first stdin source is fixed
+  proof input, not runtime-console0, TTY, filesystem, pipe, socket, or hardware
+  input. Reads from fd 0 or duplicates of fd 0 consume that proof input only
+  after a successful all-or-nothing copy_to_user.
+- Evidence level: static documentation/source inspection, retained evidence
+  review, documentation build, whitespace inspection, and staged whitespace
+  inspection. No Rust tests, QEMU run, or physical Pi 5 hardware evidence was
+  produced by this documentation-only contract.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The next mechanically derivable task is
+  phase7-read-stdin-core-20260529, scoped to target-independent talos_read
+  implementation and focused tests. QEMU/Pi 5 read proof,
+  runtime-console0/TTY/hardware stdin, process loading, VFS/filesystem, shell,
+  networking, SSH, object finalization, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.
