@@ -152,7 +152,17 @@ immutable /bin/init. No executable user process, initial stack, TTBR
 activation, lower-EL ERET, process lifecycle, shell, filesystem syscall,
 hardware, networking, or SSH capability is accepted. No explicit queued
 follow-up task remains; supervisor planning is required before the worker may
-promote the next Phase 8.3 task.
+promote the next Phase 8.3 task. Supervisor planning has selected the next
+bounded Phase 8.3 slice: initial user stack construction below live launch.
+The initial user stack source inventory is now accepted. It maps POSIX
+user-range/copy vocabulary, loader/install/address-space/materialization
+lease owners, InitialProcessLaunchPlan blocked stack state, lower-EL
+saved-frame vocabulary, scheduler placeholders, and QEMU/Pi 5 proof-local
+stack fixtures. It recommends
+phase8-initial-user-stack-contract-20260530 as the next bounded
+documentation-only task. Stack implementation, argv/envp/auxv/TLS setup,
+TTBR activation, lower-EL ERET, scheduler publication, process lifecycle,
+filesystem syscalls, Pi 5 hardware proof, networking, and SSH remain blocked.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -2853,6 +2863,28 @@ Milestone 8.3: Program Loader
   runnable lower-EL process launch, initial user stack, argv/envp, process
   lifecycle, scheduler publication, shell, filesystem syscalls, networking,
   and SSH remain blocked.
+- Phase 8 initial process launch closeout checkpoint is accepted. It
+  reconciles the launch-preparation source inventory, contract, smoke plan,
+  core, retained QEMU/substitute evidence, deferred surfaces, and planning
+  state. The accepted frontier remains target-independent
+  InitialProcessLaunchPlan construction plus QEMU/substitute
+  no-partial-launch/no-runnable-publication evidence only. No executable user
+  process, initial stack, TTBR activation, lower-EL ERET, process lifecycle,
+  filesystem syscalls, hardware proof, networking, or SSH capability is
+  accepted.
+- Phase 8 initial user stack source inventory is accepted. It maps current
+  POSIX user-range/copy owners, loader/install/address-space/materialization
+  lease and teardown owners, InitialProcessLaunchPlan blocked stack state,
+  lower-EL saved-frame intent surfaces, scheduler placeholders, and proof-local
+  diagnostic stack fixtures. It identifies the smallest next boundary as a
+  target-independent initial stack record contract covering stack range,
+  guard, top-SP alignment/provenance, frame/page ownership, zero/copy
+  accounting, teardown, deterministic errors, and launch-plan stack-state
+  integration. It recommends
+  phase8-initial-user-stack-contract-20260530 as the next documentation-only
+  task. Stack implementation, argv/envp/auxv/TLS setup, TTBR activation,
+  lower-EL ERET, scheduler publication, process lifecycle, filesystem
+  syscalls, Pi 5 hardware proof, networking, and SSH remain blocked.
 
 Acceptance criteria:
 

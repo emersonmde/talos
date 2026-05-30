@@ -7737,3 +7737,43 @@ ADR template:
   next frontiers include initial user stack construction, live address-space
   activation, or lower-EL launch setup, but this checkpoint does not create or
   select that work.
+
+## 2026-05-30 - Phase 8 Initial User Stack Source Inventory Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 initial user stack
+  source inventory. No Rust behavior, assembly behavior, QEMU execution, Pi 5
+  hardware run, boot archive publication, hardware-lock acquisition,
+  TTBR/TCR/MAIR/SCTLR write, ASID allocation, live TLB invalidation,
+  lower-EL ERET, scheduler runnable publication, argv/envp/auxv/TLS layout,
+  process lifecycle, shell behavior, descriptor-backed filesystem syscalls,
+  writable filesystem, networking, SSH, RP1/PCIe, UART interrupt ownership,
+  or DMA/cache-driver policy was added.
+- Context: The accepted initial process launch closeout proved only
+  target-independent InitialProcessLaunchPlan construction plus
+  QEMU/substitute no-partial-launch/no-runnable-publication evidence.
+  user_sp_state remained blocked-missing-initial-user-stack, so the next
+  launch prerequisite needed source ownership and gap mapping before any stack
+  contract or implementation.
+- Decision: Accept phase8-initial-user-stack-source-inventory-20260530. The
+  inventory maps POSIX user-range/copy/descriptor vocabulary,
+  ProgramImagePlan, ProcessImageInstallPlan, ProcessAddressSpace,
+  ProcessPageTableMaterialization, InitialProcessLaunchPlan, lower-EL
+  saved-frame surfaces, scheduler placeholders, and QEMU/Pi 5 proof-local
+  stack fixtures to the missing stack contract boundary. It recommends
+  phase8-initial-user-stack-contract-20260530 as the next bounded
+  documentation-only task.
+- Evidence level: static documentation/source inspection. Reviewed accepted
+  initial process launch docs, task records, retained QEMU/substitute evidence,
+  POSIX, loader, process-install, ProcessAddressSpace, materialization,
+  initial launch, AArch64 lower-EL, scheduler, QEMU/Pi 5 proof-local stack
+  owners, lower-EL architecture notes, roadmap, SUMMARY, and ADR index.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next bounded task should be
+  phase8-initial-user-stack-contract-20260530. Stack implementation,
+  argv/envp/auxv/TLS setup, TTBR activation, lower-EL ERET, scheduler runnable
+  publication, process lifecycle, descriptor-backed filesystem syscalls,
+  Pi 5 hardware proof, shell, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, and DMA/cache-driver policy remain blocked until later explicit
+  tasks accept their contracts and gates.
