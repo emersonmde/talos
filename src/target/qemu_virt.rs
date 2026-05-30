@@ -148,18 +148,32 @@ use crate::{
         ProgramLoaderError, UserSegmentKind, plan_elf64_aarch64_image, plan_phase8_init_image,
     },
 };
-#[cfg(talos_boot_scenario = "qemu_process_install_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_process_install_smoke",
+    talos_boot_scenario = "qemu_process_address_space_smoke"
+))]
 use crate::{
     initramfs::{PHASE8_INIT_BYTES, PHASE8_INIT_PATH, phase8_readonly_initramfs_fixture},
     posix::{PosixError, UserMappingPermissions},
     process_install::{
-        MAX_PROCESS_INSTALL_FOOTPRINT, PROCESS_INSTALL_BOUNDARY_IDENTITY, ProcessImageInstallPlan,
-        ProcessImagePageInstallRecord, plan_process_image_install,
+        MAX_PROCESS_INSTALL_FOOTPRINT, MAX_PROCESS_INSTALL_PAGES, MAX_ZERO_RANGES_PER_PAGE,
+        PROCESS_INSTALL_BOUNDARY_IDENTITY, PageByteRange, ProcessImageInstallPlan,
+        ProcessImagePageInstallRecord, ProcessInstallAction, ProcessInstallSideEffects,
+        plan_process_image_install,
     },
     program_loader::{
         LOADER_PAGE_SIZE, MAX_LOAD_SEGMENTS, PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
         PlannedUserSegment, ProgramImagePlan, UserSegmentKind, plan_phase8_init_image,
     },
+};
+#[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
+use crate::{
+    process_address_space::{
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY, ProcessAddressSpace, ProcessAddressSpaceId,
+        ProcessAddressSpaceLeaseSource, ProcessUserMapping, UserFrameLease,
+        install_process_address_space,
+    },
+    scheduler::ProcessOwnerId,
 };
 
 const PL011_BASE: usize = 0x0900_0000;
@@ -5695,6 +5709,549 @@ fn process_install_budget_overflow_plan() -> Result<ProcessImageInstallPlan, Pos
         [Some(text), None, None, None],
         MAX_PROCESS_INSTALL_FOOTPRINT + LOADER_PAGE_SIZE,
     ))
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
+pub fn run_process_address_space_smoke() -> bool {
+    crate::println!("qemu-process-address-space-smoke: start");
+
+    let success_ok = process_address_space_report_success();
+    let teardown_ok = process_address_space_report_teardown();
+    let bad_install_ok = process_address_space_report_error(
+        "bad-install-plan",
+        process_address_space_bad_install_plan(),
+        PosixError::InvalidArgument,
+    );
+    let null_guard_ok = process_address_space_report_error(
+        "null-guard-or-kernel-split",
+        process_address_space_null_guard_plan(),
+        PosixError::AccessDenied,
+    );
+    let overlap_ok = process_address_space_report_error(
+        "overlap",
+        process_address_space_overlap_plan(),
+        PosixError::AccessDenied,
+    );
+    let permission_widening_ok = process_address_space_report_error(
+        "permission-widening",
+        process_address_space_permission_widening_plan(),
+        PosixError::AccessDenied,
+    );
+    let lease_exhaustion_ok = process_address_space_report_lease_exhaustion();
+    let copy_zero_ok = process_address_space_report_copy_zero_failure();
+
+    let participants = u64::from(success_ok)
+        + u64::from(teardown_ok)
+        + u64::from(bad_install_ok)
+        + u64::from(null_guard_ok)
+        + u64::from(overlap_ok)
+        + u64::from(permission_widening_ok)
+        + u64::from(lease_exhaustion_ok)
+        + u64::from(copy_zero_ok);
+    let errors = 8 - participants;
+    let classification = if participants == 8 && errors == 0 {
+        "qemu-process-address-space-smoke-complete"
+    } else {
+        "qemu-process-address-space-smoke-failed"
+    };
+
+    crate::println!(
+        "qemu-process-address-space-smoke: final participants={} expected=8 errors={} classification={}",
+        participants,
+        errors,
+        classification
+    );
+    if participants == 8 && errors == 0 {
+        crate::println!("qemu-process-address-space-smoke: PASS");
+        true
+    } else {
+        crate::println!("qemu-process-address-space-smoke: FAIL");
+        false
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
+fn process_address_space_report_success() -> bool {
+    let Ok(plan) = process_address_space_install_fixture() else {
+        crate::println!(
+            "qemu-process-address-space-smoke: success output=ProcessAddressSpace published=false id=0x0 owner=0x0 root-token=0x0 table-leases=0 user-frame-leases=0 mappings=0 ok=false"
+        );
+        return false;
+    };
+
+    crate::println!(
+        "qemu-process-address-space-smoke: fixture name={} path=/bin/init source-digest={:#x} install-boundary={} address-space-boundary={}",
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        plan.source_digest(),
+        PROCESS_INSTALL_BOUNDARY_IDENTITY,
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY
+    );
+
+    let mut lease_source = ProcessAddressSpaceLeaseSource::for_plan(plan);
+    let id = process_address_space_id();
+    let owner = process_address_space_owner_id();
+    let Ok(address_space) = install_process_address_space(plan, id, Some(owner), &mut lease_source)
+    else {
+        crate::println!(
+            "qemu-process-address-space-smoke: success output=ProcessAddressSpace published=false id={:#x} owner={:#x} root-token=0x0 table-leases=0 user-frame-leases=0 mappings=0 ok=false",
+            id.raw(),
+            owner.raw()
+        );
+        return false;
+    };
+
+    let success_ok = address_space.published()
+        && address_space.id() == id
+        && address_space.owner() == Some(owner)
+        && address_space.boundary_identity() == PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY
+        && !address_space.destroyed()
+        && address_space.table_lease_count() == 1
+        && address_space.user_frame_lease_count() == plan.page_count()
+        && address_space.mapping_count() == plan.page_count()
+        && process_address_space_mapping_ok(
+            address_space.mapping(0),
+            address_space.user_frame_lease(0),
+            UserSegmentKind::UserText,
+        )
+        && process_address_space_mapping_ok(
+            address_space.mapping(1),
+            address_space.user_frame_lease(1),
+            UserSegmentKind::UserData,
+        );
+
+    crate::println!(
+        "qemu-process-address-space-smoke: success output=ProcessAddressSpace published={} id={:#x} owner={:#x} root-token={:#x} table-leases={} user-frame-leases={} mappings={} ok={}",
+        address_space.published(),
+        address_space.id().raw(),
+        owner.raw(),
+        address_space.root().token().raw(),
+        address_space.table_lease_count(),
+        address_space.user_frame_lease_count(),
+        address_space.mapping_count(),
+        success_ok
+    );
+
+    process_address_space_report_mapping(
+        0,
+        address_space.mapping(0),
+        address_space.user_frame_lease(0),
+    );
+    process_address_space_report_mapping(
+        1,
+        address_space.mapping(1),
+        address_space.user_frame_lease(1),
+    );
+    if address_space.mapping_count() > 2 {
+        process_address_space_report_mapping(
+            2,
+            address_space.mapping(2),
+            address_space.user_frame_lease(2),
+        );
+    }
+
+    let side_effects = address_space.side_effects();
+    let snapshot = lease_source.snapshot();
+    let side_effects_ok = success_ok
+        && snapshot.root_leased
+        && snapshot.table_pages_leased == address_space.table_lease_count()
+        && snapshot.user_frames_leased == address_space.user_frame_lease_count()
+        && snapshot.mappings_installed == address_space.mapping_count()
+        && side_effects.copied_bytes() == 8
+        && side_effects.zeroed_bytes() == 0x2ff8;
+    crate::println!(
+        "qemu-process-address-space-smoke: side-effects root-leased={} table-leases={} user-frame-leases={} mappings-installed={} copied-bytes={:#x} zeroed-bytes={:#x} scheduler-owner=false descriptors-mutated=false lower-el-frame=false runnable=false ok={}",
+        snapshot.root_leased,
+        snapshot.table_pages_leased,
+        snapshot.user_frames_leased,
+        snapshot.mappings_installed,
+        side_effects.copied_bytes(),
+        side_effects.zeroed_bytes(),
+        side_effects_ok
+    );
+
+    side_effects_ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
+fn process_address_space_report_teardown() -> bool {
+    let Ok(plan) = process_address_space_install_fixture() else {
+        process_address_space_report_empty_teardown("first", false);
+        process_address_space_report_empty_teardown("second", true);
+        return false;
+    };
+    let mut lease_source = ProcessAddressSpaceLeaseSource::for_plan(plan);
+    let Ok(mut address_space) = install_process_address_space(
+        plan,
+        process_address_space_id(),
+        Some(process_address_space_owner_id()),
+        &mut lease_source,
+    ) else {
+        process_address_space_report_empty_teardown("first", false);
+        process_address_space_report_empty_teardown("second", true);
+        return false;
+    };
+
+    let first = address_space.destroy(&mut lease_source);
+    let first_ok = first.mappings_released() == plan.page_count()
+        && first.user_frame_releases() == plan.page_count()
+        && first.table_page_releases() == 1
+        && first.root_released()
+        && !first.already_destroyed()
+        && lease_source.outstanding_leases() == 0;
+    crate::println!(
+        "qemu-process-address-space-smoke: teardown phase=first mappings-released={} user-frame-releases={} table-lease-releases={} root-released={} already-destroyed={} ok={}",
+        first.mappings_released(),
+        first.user_frame_releases(),
+        first.table_page_releases(),
+        first.root_released(),
+        first.already_destroyed(),
+        first_ok
+    );
+
+    let second = address_space.destroy(&mut lease_source);
+    let second_ok = second.mappings_released() == 0
+        && second.user_frame_releases() == 0
+        && second.table_page_releases() == 0
+        && !second.root_released()
+        && second.already_destroyed()
+        && lease_source.outstanding_leases() == 0;
+    crate::println!(
+        "qemu-process-address-space-smoke: teardown phase=second mappings-released={} user-frame-releases={} table-lease-releases={} root-released={} already-destroyed={} ok={}",
+        second.mappings_released(),
+        second.user_frame_releases(),
+        second.table_page_releases(),
+        second.root_released(),
+        second.already_destroyed(),
+        second_ok
+    );
+
+    first_ok && second_ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
+fn process_address_space_report_empty_teardown(phase: &str, already_destroyed: bool) {
+    crate::println!(
+        "qemu-process-address-space-smoke: teardown phase={} mappings-released=0 user-frame-releases=0 table-lease-releases=0 root-released=false already-destroyed={} ok=false",
+        phase,
+        already_destroyed
+    );
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
+fn process_address_space_report_mapping(
+    index: usize,
+    mapping: Option<ProcessUserMapping>,
+    lease: Option<UserFrameLease>,
+) -> bool {
+    let (Some(mapping), Some(lease)) = (mapping, lease) else {
+        crate::println!(
+            "qemu-process-address-space-smoke: mapping index={} kind=missing flags=--- copy-bytes=0x0 zero-bytes=0x0 zero-before-copy=false source-page=0 permission-widened=true ok=false",
+            index
+        );
+        return false;
+    };
+    let permission_widened = match mapping.kind() {
+        UserSegmentKind::UserText => mapping.permissions() != UserMappingPermissions::USER_TEXT,
+        UserSegmentKind::UserData => mapping.permissions() != UserMappingPermissions::USER_DATA,
+    };
+    let ok = lease.zeroed_before_copy()
+        && lease.kind() == mapping.kind()
+        && lease.permissions() == mapping.permissions()
+        && lease.copied_bytes() == mapping.copy_len()
+        && lease.zeroed_bytes() == mapping.zero_len()
+        && lease.source_page_ordinal() == mapping.source_page_ordinal()
+        && mapping.el0_user_access()
+        && mapping.write_xor_execute()
+        && mapping.normal_memory_intent()
+        && mapping.kernel_device_denied()
+        && !permission_widened;
+    crate::println!(
+        "qemu-process-address-space-smoke: mapping index={} kind={} flags={} copy-bytes={:#x} zero-bytes={:#x} zero-before-copy={} source-page={} permission-widened={} ok={}",
+        index,
+        mapping.kind().name(),
+        process_address_space_permission_flags(mapping.permissions()),
+        mapping.copy_len(),
+        mapping.zero_len(),
+        lease.zeroed_before_copy(),
+        mapping.source_page_ordinal(),
+        permission_widened,
+        ok
+    );
+    ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
+fn process_address_space_mapping_ok(
+    mapping: Option<ProcessUserMapping>,
+    lease: Option<UserFrameLease>,
+    kind: UserSegmentKind,
+) -> bool {
+    let (Some(mapping), Some(lease)) = (mapping, lease) else {
+        return false;
+    };
+    mapping.kind() == kind
+        && lease.kind() == kind
+        && lease.zeroed_before_copy()
+        && process_address_space_permission_flags(mapping.permissions())
+            == process_address_space_expected_flags(kind)
+        && mapping.write_xor_execute()
+        && mapping.el0_user_access()
+        && mapping.normal_memory_intent()
+        && mapping.kernel_device_denied()
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
+fn process_address_space_permission_flags(permissions: UserMappingPermissions) -> &'static str {
+    match permissions {
+        UserMappingPermissions::USER_TEXT => "R-X",
+        UserMappingPermissions::USER_DATA => "RW-",
+        UserMappingPermissions::READ => "R--",
+        _ => "---",
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
+fn process_address_space_expected_flags(kind: UserSegmentKind) -> &'static str {
+    match kind {
+        UserSegmentKind::UserText => "R-X",
+        UserSegmentKind::UserData => "RW-",
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
+fn process_address_space_report_error(
+    case: &str,
+    plan: ProcessImageInstallPlan,
+    expected: PosixError,
+) -> bool {
+    let mut lease_source = ProcessAddressSpaceLeaseSource::for_plan(plan);
+    let result = install_process_address_space(
+        plan,
+        process_address_space_id(),
+        Some(process_address_space_owner_id()),
+        &mut lease_source,
+    );
+    let ok =
+        matches!(result, Err(error) if error == expected) && lease_source.outstanding_leases() == 0;
+    crate::println!(
+        "qemu-process-address-space-smoke: error case={} errno=-{} partial-install=false leaked-leases={} ok={}",
+        case,
+        expected.name(),
+        lease_source.outstanding_leases() != 0,
+        ok
+    );
+    ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
+fn process_address_space_report_lease_exhaustion() -> bool {
+    let Ok(plan) = process_address_space_install_fixture() else {
+        crate::println!(
+            "qemu-process-address-space-smoke: error case=lease-exhaustion errno=-ENOMEM partial-install=false leaked-leases=false ok=false"
+        );
+        return false;
+    };
+    let mut lease_source =
+        ProcessAddressSpaceLeaseSource::with_limits(1, 1, plan.page_count(), plan.page_count());
+    let result = install_process_address_space(
+        plan,
+        process_address_space_id(),
+        Some(process_address_space_owner_id()),
+        &mut lease_source,
+    );
+    let ok = matches!(result, Err(PosixError::NoMemory)) && lease_source.outstanding_leases() == 0;
+    crate::println!(
+        "qemu-process-address-space-smoke: error case=lease-exhaustion errno=-ENOMEM partial-install=false leaked-leases={} ok={}",
+        lease_source.outstanding_leases() != 0,
+        ok
+    );
+    ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
+fn process_address_space_report_copy_zero_failure() -> bool {
+    let Ok(plan) = process_address_space_install_fixture() else {
+        crate::println!(
+            "qemu-process-address-space-smoke: error case=copy-zero-model-failure errno=-EINVAL partial-install=false leaked-leases=false ok=false"
+        );
+        return false;
+    };
+    let mut lease_source = ProcessAddressSpaceLeaseSource::for_plan(plan);
+    lease_source.fail_copy_zero_at_page(1);
+    let result = install_process_address_space(
+        plan,
+        process_address_space_id(),
+        Some(process_address_space_owner_id()),
+        &mut lease_source,
+    );
+    let ok = matches!(result, Err(PosixError::InvalidArgument))
+        && lease_source.outstanding_leases() == 0;
+    crate::println!(
+        "qemu-process-address-space-smoke: error case=copy-zero-model-failure errno=-EINVAL partial-install=false leaked-leases={} ok={}",
+        lease_source.outstanding_leases() != 0,
+        ok
+    );
+    ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
+fn process_address_space_install_fixture() -> Result<ProcessImageInstallPlan, PosixError> {
+    plan_phase8_init_image(phase8_readonly_initramfs_fixture())
+        .map_err(|error| error.posix_error())
+        .and_then(plan_process_image_install)
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
+fn process_address_space_id() -> ProcessAddressSpaceId {
+    ProcessAddressSpaceId::new(0x8300_0001).expect("nonzero address-space id")
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
+fn process_address_space_owner_id() -> ProcessOwnerId {
+    ProcessOwnerId::new(0x8300_1001).expect("nonzero process owner id")
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
+fn process_address_space_bad_install_plan() -> ProcessImageInstallPlan {
+    let fixture = process_address_space_install_fixture().expect("fixture install plan");
+    let mut pages = [None; MAX_PROCESS_INSTALL_PAGES];
+    pages[0] = fixture.page(0);
+    ProcessImageInstallPlan::for_test_unchecked(
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        PROCESS_INSTALL_BOUNDARY_IDENTITY,
+        PHASE8_INIT_PATH,
+        fixture.source_digest(),
+        fixture.entry(),
+        LOADER_PAGE_SIZE * 2,
+        2,
+        pages,
+        ProcessInstallSideEffects::NONE,
+        true,
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
+fn process_address_space_null_guard_plan() -> ProcessImageInstallPlan {
+    let fixture = process_address_space_install_fixture().expect("fixture install plan");
+    let page = ProcessImagePageInstallRecord::for_test_unchecked(
+        0,
+        0,
+        0,
+        LOADER_PAGE_SIZE,
+        UserSegmentKind::UserText,
+        UserMappingPermissions::USER_TEXT,
+        0,
+        0,
+        4,
+        [Some(PageByteRange::for_test_unchecked(4, LOADER_PAGE_SIZE - 4));
+            MAX_ZERO_RANGES_PER_PAGE],
+        1,
+        LOADER_PAGE_SIZE - 4,
+        ProcessInstallAction::AllocateCopyZeroMap,
+    );
+    process_address_space_plan_from_pages(
+        fixture,
+        fixture.entry(),
+        LOADER_PAGE_SIZE,
+        [
+            Some(page),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        ],
+        1,
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
+fn process_address_space_overlap_plan() -> ProcessImageInstallPlan {
+    let fixture = process_address_space_install_fixture().expect("fixture install plan");
+    let text = fixture.page(0).expect("fixture text page");
+    let data = ProcessImagePageInstallRecord::for_test_unchecked(
+        1,
+        1,
+        text.virtual_start(),
+        text.virtual_end(),
+        UserSegmentKind::UserData,
+        UserMappingPermissions::USER_DATA,
+        0,
+        0,
+        0,
+        [None; MAX_ZERO_RANGES_PER_PAGE],
+        0,
+        0,
+        ProcessInstallAction::AllocateCopyZeroMap,
+    );
+    let mut pages = [None; MAX_PROCESS_INSTALL_PAGES];
+    pages[0] = Some(text);
+    pages[1] = Some(data);
+    process_address_space_plan_from_pages(fixture, fixture.entry(), LOADER_PAGE_SIZE * 2, pages, 2)
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
+fn process_address_space_permission_widening_plan() -> ProcessImageInstallPlan {
+    let fixture = process_address_space_install_fixture().expect("fixture install plan");
+    let page = ProcessImagePageInstallRecord::for_test_unchecked(
+        0,
+        0,
+        0x0000_0000_0001_0000,
+        0x0000_0000_0001_1000,
+        UserSegmentKind::UserText,
+        UserMappingPermissions::USER_DATA,
+        0x100,
+        0x100,
+        4,
+        [Some(PageByteRange::for_test_unchecked(
+            0x104,
+            LOADER_PAGE_SIZE - 0x104,
+        )); MAX_ZERO_RANGES_PER_PAGE],
+        1,
+        LOADER_PAGE_SIZE - 0x104,
+        ProcessInstallAction::AllocateCopyZeroMap,
+    );
+    let mut pages = [None; MAX_PROCESS_INSTALL_PAGES];
+    pages[0] = Some(page);
+    process_address_space_plan_from_pages(
+        fixture,
+        0x0000_0000_0001_0100,
+        LOADER_PAGE_SIZE,
+        pages,
+        1,
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
+fn process_address_space_plan_from_pages(
+    fixture: ProcessImageInstallPlan,
+    entry: u64,
+    memory_footprint: u64,
+    pages: [Option<ProcessImagePageInstallRecord>; MAX_PROCESS_INSTALL_PAGES],
+    page_count: usize,
+) -> ProcessImageInstallPlan {
+    ProcessImageInstallPlan::for_test_unchecked(
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        PROCESS_INSTALL_BOUNDARY_IDENTITY,
+        PHASE8_INIT_PATH,
+        fixture.source_digest(),
+        entry,
+        memory_footprint,
+        page_count,
+        pages,
+        ProcessInstallSideEffects::NONE,
+        true,
+    )
 }
 
 #[cfg(talos_boot_scenario = "qemu_syscall_smoke")]

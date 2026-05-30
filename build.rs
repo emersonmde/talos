@@ -280,6 +280,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         implied_values: &[],
         asm_defines: &[],
     },
+    BootScenario {
+        value: "qemu_process_address_space_smoke",
+        implied_values: &[],
+        asm_defines: &[],
+    },
 ];
 
 fn main() {

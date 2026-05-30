@@ -1,0 +1,24 @@
+
+Talos 0.1.0 booting on talos-aarch64-virt
+boot-info: dtb_pa=0x0000000048000000 core=0 el=2 target=talos-aarch64-virt
+target-services: uart=pl011 timer=arm-generic irq=gic-v2 dtb=Some(
+    0x0000000048000000,
+)
+mmio-regions: 3
+qemu-process-address-space-smoke: start
+qemu-process-address-space-smoke: fixture name=phase8-program-loader-elf64-aarch64-v1 path=/bin/init source-digest=0x3892eed223900c65 install-boundary=phase8-process-install-plan-v1 address-space-boundary=phase8-process-address-space-model-v1
+qemu-process-address-space-smoke: success output=ProcessAddressSpace published=true id=0x83000001 owner=0x83001001 root-token=0x1 table-leases=1 user-frame-leases=3 mappings=3 ok=true
+qemu-process-address-space-smoke: mapping index=0 kind=UserText flags=R-X copy-bytes=0x4 zero-bytes=0xffc zero-before-copy=true source-page=0 permission-widened=false ok=true
+qemu-process-address-space-smoke: mapping index=1 kind=UserData flags=RW- copy-bytes=0x4 zero-bytes=0xffc zero-before-copy=true source-page=1 permission-widened=false ok=true
+qemu-process-address-space-smoke: mapping index=2 kind=UserData flags=RW- copy-bytes=0x0 zero-bytes=0x1000 zero-before-copy=true source-page=2 permission-widened=false ok=true
+qemu-process-address-space-smoke: side-effects root-leased=true table-leases=1 user-frame-leases=3 mappings-installed=3 copied-bytes=0x8 zeroed-bytes=0x2ff8 scheduler-owner=false descriptors-mutated=false lower-el-frame=false runnable=false ok=true
+qemu-process-address-space-smoke: teardown phase=first mappings-released=3 user-frame-releases=3 table-lease-releases=1 root-released=true already-destroyed=false ok=true
+qemu-process-address-space-smoke: teardown phase=second mappings-released=0 user-frame-releases=0 table-lease-releases=0 root-released=false already-destroyed=true ok=true
+qemu-process-address-space-smoke: error case=bad-install-plan errno=-EINVAL partial-install=false leaked-leases=false ok=true
+qemu-process-address-space-smoke: error case=null-guard-or-kernel-split errno=-EACCES partial-install=false leaked-leases=false ok=true
+qemu-process-address-space-smoke: error case=overlap errno=-EACCES partial-install=false leaked-leases=false ok=true
+qemu-process-address-space-smoke: error case=permission-widening errno=-EACCES partial-install=false leaked-leases=false ok=true
+qemu-process-address-space-smoke: error case=lease-exhaustion errno=-ENOMEM partial-install=false leaked-leases=false ok=true
+qemu-process-address-space-smoke: error case=copy-zero-model-failure errno=-EINVAL partial-install=false leaked-leases=false ok=true
+qemu-process-address-space-smoke: final participants=8 expected=8 errors=0 classification=qemu-process-address-space-smoke-complete
+qemu-process-address-space-smoke: PASS
