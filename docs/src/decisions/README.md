@@ -7338,3 +7338,45 @@ ADR template:
   networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
   policy remain blocked until later explicit tasks accept their contracts and
   gates.
+
+## 2026-05-30 - Phase 8 QEMU Process Page-Table Materialization Smoke Plan Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 QEMU/substitute
+  process page-table materialization smoke plan. No Rust behavior, assembly
+  behavior, QEMU execution, Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, materialization core implementation, TTBR
+  activation, ASID/TLB policy change, lower-EL launch, argv/envp, process
+  lifecycle, shell behavior, descriptor-backed filesystem syscalls, writable
+  filesystem, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted materialization contract selected a non-activating
+  descriptor-image and user-frame materialization boundary but required one
+  QEMU/substitute smoke plan before implementation so success, rejection,
+  rollback, no-leak, teardown, and retained-evidence vocabulary stayed
+  mechanical.
+- Decision: Accept
+  phase8-qemu-process-page-table-materialization-smoke-plan-20260530. The plan
+  defines qemu_process_page_table_materialization_smoke, loader fixture
+  identity phase8-program-loader-elf64-aarch64-v1, install boundary
+  phase8-process-install-plan-v1, address-space boundary
+  phase8-process-address-space-model-v1, materialization boundary
+  phase8-process-page-table-materialization-v1, retained evidence path
+  tasks/evidence/2026-05-30-qemu-process-page-table-materialization-smoke-core/qemu-process-page-table-materialization-smoke.log,
+  classification qemu-process-page-table-materialization-smoke-complete, PASS
+  vocabulary, non-activating descriptor-image success observations,
+  deterministic rejection/no-partial-materialization and no-leak observations,
+  teardown idempotence, and conditional regression gates.
+- Evidence level: static documentation/source inspection. Reviewed the
+  accepted materialization contract and source inventory, process address-space
+  and process-install smoke-plan patterns, roadmap, SUMMARY, ADR index, and
+  accepted contract task record.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next bounded implementation task should be
+  phase8-process-page-table-materialization-core-20260530 because supervisor
+  planning has already queued it with explicit scope and gates. QEMU evidence
+  production, TTBR activation, ASID/TLB policy, lower-EL launch, argv/envp,
+  process lifecycle, filesystem syscalls, Pi 5 hardware proof, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
+  blocked until later explicit tasks accept their contracts and gates.

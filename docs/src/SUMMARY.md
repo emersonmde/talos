@@ -141,6 +141,7 @@
 - [Phase 8 Process Address-Space Closeout Checkpoint](project/phase8-process-address-space-closeout-checkpoint.md)
 - [Phase 8 Process Page-Table Materialization Source Inventory](project/phase8-process-page-table-materialization-source-inventory.md)
 - [Phase 8 Process Page-Table Materialization Contract](project/phase8-process-page-table-materialization-contract.md)
+- [Phase 8 QEMU Process Page-Table Materialization Smoke Plan](project/phase8-qemu-process-page-table-materialization-smoke-plan.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

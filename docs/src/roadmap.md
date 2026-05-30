@@ -2691,6 +2691,22 @@ Milestone 8.3: Program Loader
   filesystems, persistent storage, networking, SSH, RP1/PCIe, UART interrupt
   ownership, and DMA/cache-driver policy remain blocked until later explicit
   tasks accept their gates.
+- Phase 8 QEMU/substitute process page-table materialization smoke plan is
+  accepted. It defines qemu_process_page_table_materialization_smoke, fixture
+  identity phase8-program-loader-elf64-aarch64-v1, install boundary
+  phase8-process-install-plan-v1, address-space boundary
+  phase8-process-address-space-model-v1, materialization boundary
+  phase8-process-page-table-materialization-v1, retained evidence path
+  tasks/evidence/2026-05-30-qemu-process-page-table-materialization-smoke-core/qemu-process-page-table-materialization-smoke.log,
+  classification qemu-process-page-table-materialization-smoke-complete, PASS
+  vocabulary, non-activating descriptor-image success observations,
+  deterministic rejection/no-partial-materialization and no-leak observations,
+  teardown idempotence, and conditional regression gates. The next bounded task
+  should be phase8-process-page-table-materialization-core-20260530 because
+  supervisor planning has already queued it with explicit scope and gates. TTBR
+  activation, ASID/TLB policy, lower-EL launch, argv/envp, process lifecycle,
+  shell, filesystem syscalls, Pi 5 hardware proof, networking, and SSH remain
+  blocked.
 
 Acceptance criteria:
 
