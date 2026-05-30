@@ -87,6 +87,8 @@ mod pl011;
 #[cfg_attr(not(test), allow(dead_code))]
 mod posix;
 #[cfg_attr(not(test), allow(dead_code))]
+mod process_address_space;
+#[cfg_attr(not(test), allow(dead_code))]
 mod process_install;
 #[cfg_attr(not(test), allow(dead_code))]
 mod program_loader;

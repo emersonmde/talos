@@ -49,6 +49,11 @@ impl PageByteRange {
     pub(crate) const fn end(self) -> u64 {
         self.offset + self.len
     }
+
+    #[cfg(test)]
+    pub(crate) const fn for_test_unchecked(offset: u64, len: u64) -> Self {
+        Self { offset, len }
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -133,6 +138,39 @@ impl ProcessImagePageInstallRecord {
             _ => "---",
         }
     }
+
+    #[cfg(test)]
+    pub(crate) const fn for_test_unchecked(
+        index: usize,
+        segment_index: usize,
+        virtual_start: u64,
+        virtual_end: u64,
+        kind: UserSegmentKind,
+        permissions: UserMappingPermissions,
+        copy_page_offset: u64,
+        copy_file_offset: usize,
+        copy_len: u64,
+        zero_ranges: [Option<PageByteRange>; MAX_ZERO_RANGES_PER_PAGE],
+        zero_range_count: usize,
+        zero_len: u64,
+        action: ProcessInstallAction,
+    ) -> Self {
+        Self {
+            index,
+            segment_index,
+            virtual_start,
+            virtual_end,
+            kind,
+            permissions,
+            copy_page_offset,
+            copy_file_offset,
+            copy_len,
+            zero_ranges,
+            zero_range_count,
+            zero_len,
+            action,
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -192,6 +230,33 @@ impl ProcessImageInstallPlan {
 
     pub(crate) const fn lower_el_launch_blocked(self) -> bool {
         self.lower_el_launch_blocked
+    }
+
+    #[cfg(test)]
+    pub(crate) const fn for_test_unchecked(
+        fixture_identity: &'static str,
+        install_boundary_identity: &'static str,
+        source_path: &'static [u8],
+        source_digest: u64,
+        entry: u64,
+        memory_footprint: u64,
+        page_count: usize,
+        pages: [Option<ProcessImagePageInstallRecord>; MAX_PROCESS_INSTALL_PAGES],
+        side_effects: ProcessInstallSideEffects,
+        lower_el_launch_blocked: bool,
+    ) -> Self {
+        Self {
+            fixture_identity,
+            install_boundary_identity,
+            source_path,
+            source_digest,
+            entry,
+            memory_footprint,
+            page_count,
+            pages,
+            side_effects,
+            lower_el_launch_blocked,
+        }
     }
 }
 
