@@ -142,7 +142,17 @@ no-runnable-publication evidence. QEMU/substitute smoke evidence for this
 boundary is now accepted at
 tasks/evidence/2026-05-30-qemu-initial-process-launch-smoke-core/qemu-initial-process-launch-smoke.log
 with qemu-initial-process-launch-smoke-complete and PASS lines. Pi 5 hardware
-proof and runnable lower-EL process claims remain blocked.
+proof and runnable lower-EL process claims remain blocked. The initial process
+launch closeout checkpoint is now accepted. It reconciles the source
+inventory, contract, smoke plan, core, retained QEMU/substitute evidence, and
+deferred surfaces for this launch-preparation boundary. The accepted frontier
+is still only target-independent InitialProcessLaunchPlan construction plus
+QEMU/substitute no-partial-launch/no-runnable-publication evidence for
+immutable /bin/init. No executable user process, initial stack, TTBR
+activation, lower-EL ERET, process lifecycle, shell, filesystem syscall,
+hardware, networking, or SSH capability is accepted. No explicit queued
+follow-up task remains; supervisor planning is required before the worker may
+promote the next Phase 8.3 task.
 The
 accepted Phase 7
 frontier includes the Phase

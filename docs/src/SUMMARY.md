@@ -146,6 +146,7 @@
 - [Phase 8 Initial Process Launch Source Inventory](project/phase8-initial-process-launch-source-inventory.md)
 - [Phase 8 Initial Process Launch Contract](project/phase8-initial-process-launch-contract.md)
 - [Phase 8 QEMU Initial Process Launch Smoke Plan](project/phase8-qemu-initial-process-launch-smoke-plan.md)
+- [Phase 8 Initial Process Launch Closeout Checkpoint](project/phase8-initial-process-launch-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

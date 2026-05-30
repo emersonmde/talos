@@ -7699,3 +7699,41 @@ ADR template:
   publication, descriptor inheritance, filesystem syscalls, Pi 5 hardware
   proof, shell, networking, and SSH remain blocked until later explicit tasks
   accept their contracts and gates.
+
+## 2026-05-30 - Phase 8 Initial Process Launch Closeout Accepted
+
+- Status: accepted as a documentation-only Milestone 8.3 initial process
+  launch closeout checkpoint. No Rust behavior, assembly behavior, QEMU rerun,
+  Pi 5 hardware run, boot archive publication, hardware-lock acquisition,
+  initial user stack implementation, TTBR/TCR/MAIR/SCTLR write, ASID
+  allocation, live TLB invalidation, lower-EL ERET, argv/envp/auxv/TLS setup,
+  process lifecycle, scheduler runnable publication, shell behavior,
+  descriptor-backed filesystem syscalls, writable filesystem, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The accepted source inventory, contract, smoke plan, core, and
+  QEMU/substitute smoke evidence completed the first launch-preparation slice.
+  A closeout was required to reconcile accepted commits, retained evidence,
+  precise capability, deferred surfaces, and next planning state.
+- Decision: Accept
+  phase8-initial-process-launch-closeout-checkpoint-20260530. The checkpoint
+  records the accepted frontier as target-independent
+  InitialProcessLaunchPlan construction for immutable /bin/init plus
+  QEMU/substitute no-partial-launch/no-runnable-publication evidence. It keeps
+  initial stack construction, live address-space activation, lower-EL ERET,
+  scheduler runnable publication, process lifecycle, filesystem syscalls,
+  hardware proof, shell, networking, and SSH outside the accepted capability.
+- Evidence level: static documentation/evidence review. Reviewed the accepted
+  initial process launch source inventory, contract, smoke plan, core task,
+  retained QEMU/substitute smoke log, roadmap, SUMMARY, and ADR index. The
+  retained log contains
+  qemu-initial-process-launch-smoke: final participants=11 expected=11
+  errors=0 classification=qemu-initial-process-launch-smoke-complete and
+  qemu-initial-process-launch-smoke: PASS.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: No explicit queued follow-up task remains. Supervisor planning
+  is required before the worker may promote another Phase 8.3 task. Likely
+  next frontiers include initial user stack construction, live address-space
+  activation, or lower-EL launch setup, but this checkpoint does not create or
+  select that work.
