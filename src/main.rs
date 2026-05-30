@@ -85,6 +85,8 @@ mod early_format;
 #[cfg_attr(not(test), allow(dead_code))]
 mod initial_process_launch;
 #[cfg_attr(not(test), allow(dead_code))]
+mod initial_user_stack;
+#[cfg_attr(not(test), allow(dead_code))]
 mod initramfs;
 mod memory_map;
 mod mmio;

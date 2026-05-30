@@ -7853,3 +7853,41 @@ ADR template:
   proof, shell, networking, SSH, RP1/PCIe, UART interrupt ownership, and
   DMA/cache-driver policy remain blocked until later explicit tasks accept
   their contracts and gates.
+
+## 2026-05-30 - Phase 8 Initial User Stack Core Accepted
+
+- Status: accepted as the Milestone 8.3 target-independent initial user stack
+  core. No assembly behavior, QEMU smoke execution, Pi 5 hardware run, boot
+  archive publication, hardware-lock acquisition, TTBR/TCR/MAIR/SCTLR write,
+  ASID allocation, live TLB invalidation, lower-EL ERET, scheduler runnable
+  publication, process lifecycle, shell behavior, descriptor-backed filesystem
+  syscalls, writable filesystem, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache-driver policy was added.
+- Context: The accepted initial user stack contract and QEMU/substitute smoke
+  plan selected a model-only InitialUserStackPlan boundary below live launch.
+- Decision: Accept phase8-initial-user-stack-core-20260530. The core adds
+  src/initial_user_stack.rs and wires it into the kernel module list. The plan
+  records boundary identity phase8-initial-user-stack-plan-v1, fixed stack top
+  0x0000_8000_0000_0000, usable range
+  [0x0000_7fff_ffff_c000, 0x0000_8000_0000_0000), guard range
+  [0x0000_7fff_ffff_b000, 0x0000_7fff_ffff_c000), four zeroed USER_DATA
+  stack-owned page leases, one unmapped guard page, copied_bytes=0,
+  zeroed_bytes=0x4000, minimal-empty-argc0 startup metadata, model-only
+  launch-plan stack-ready binding, and idempotent stack teardown.
+- Evidence level: static inspection, no_std unit tests under QEMU/substitute,
+  and documentation validation. The unit tests cover success lineage/layout,
+  stack range and alignment, guard policy, zero/copy accounting, teardown,
+  launch-plan binding, live-launch rejection, already-stack-ready rejection,
+  range fault, image overlap, executable-stack permission rejection, and
+  capacity rollback.
+- Validation: git status --short before edits was clean; cargo fmt --all
+  -- --check passed; cargo -Zjson-target-spec test passed with 306 no_std
+  tests; git diff --check passed; mdbook build passed; git diff --cached
+  --check passed before commit.
+- Consequences: The next bounded task remains the already accepted
+  QEMU/substitute smoke-core follow-up if queued by the supervisor. Live TTBR
+  activation, lower-EL ERET, scheduler runnable publication, process
+  lifecycle, broad argv/envp/auxv/TLS ABI, descriptor-backed filesystem
+  syscalls, Pi 5 hardware proof, shell, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, and DMA/cache-driver policy remain blocked until later
+  explicit tasks accept their contracts and gates.

@@ -186,6 +186,15 @@ and names phase8-initial-user-stack-core-20260530 as the next bounded
 implementation task. Live TTBR activation, lower-EL ERET, scheduler
 publication, process lifecycle, broad argv/envp/auxv/TLS ABI, filesystem
 syscalls, Pi 5 hardware proof, networking, and SSH remain blocked.
+The initial user stack core is now accepted. It adds the target-independent
+InitialUserStackPlan model boundary, fixed top-of-user-space stack layout,
+stack-owned zeroed USER_DATA page leases, unmapped guard accounting,
+minimal-empty-argc0 startup placeholder, launch-plan stack-ready binding,
+idempotent stack teardown, deterministic no-partial-stack/no-partial-launch
+rejections, and unit evidence that live TTBR/TLB/lower-EL/scheduler/process
+and descriptor side effects remain zero. No QEMU smoke, Pi 5 hardware proof,
+live activation, runnable publication, process lifecycle, filesystem syscall,
+networking, or SSH capability is accepted by this core slice.
 The
 accepted Phase 7
 frontier includes the Phase

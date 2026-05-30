@@ -268,6 +268,13 @@ impl InitialProcessLaunchPlan {
             no_runnable_publication: true,
         })
     }
+
+    #[cfg(test)]
+    pub(crate) const fn for_test_with_user_sp_state(mut self, state: &'static str) -> Self {
+        self.user_sp_state = state;
+        self.saved_frame_intent.sp_el0_state = state;
+        self
+    }
 }
 
 pub(crate) fn prepare_initial_process_launch(
