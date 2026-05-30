@@ -2789,6 +2789,19 @@ Milestone 8.3: Program Loader
   argv/envp, process lifecycle, scheduler runnable publication, shell,
   filesystem syscalls, Pi 5 hardware proof, networking, and SSH remain
   blocked.
+- Phase 8 QEMU/substitute initial process launch smoke plan is accepted. It
+  defines qemu_initial_process_launch_smoke as the first evidence boundary for
+  the accepted launch-preparation record, with retained evidence at
+  tasks/evidence/2026-05-30-qemu-initial-process-launch-smoke-core/qemu-initial-process-launch-smoke.log,
+  classification qemu-initial-process-launch-smoke-complete, and PASS
+  vocabulary. The smoke must prove accepted fixture lineage, entry provenance,
+  blocked initial stack state, blocked activation state, saved-frame intent
+  without register writes, no launch side effects, and deterministic
+  no-partial-launch/no-runnable-publication rejection cases. The next bounded
+  task should be the queued phase8-initial-process-launch-core-20260530. TTBR
+  activation, lower-EL ERET, initial user stack, argv/envp, process lifecycle,
+  scheduler runnable publication, shell, filesystem syscalls, Pi 5 hardware
+  proof, networking, and SSH remain blocked.
 
 Acceptance criteria:
 

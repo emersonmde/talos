@@ -7571,3 +7571,45 @@ ADR template:
   Pi 5 hardware proof, networking, SSH, RP1/PCIe, UART interrupt ownership,
   and DMA/cache-driver policy remain blocked until later explicit tasks accept
   their contracts and gates.
+
+## 2026-05-30 - Phase 8 QEMU Initial Process Launch Smoke Plan Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 QEMU/substitute
+  initial process launch smoke plan. No Rust behavior, assembly behavior,
+  QEMU execution, Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, initial process launch implementation, TTBR/TCR/MAIR/SCTLR
+  write, ASID allocation, live TLB invalidation, lower-EL ERET, initial user
+  stack implementation, argv/envp, process lifecycle, scheduler runnable
+  publication, shell behavior, descriptor-backed filesystem syscalls,
+  writable filesystem, networking, SSH, RP1/PCIe, UART interrupt ownership,
+  or DMA/cache-driver policy was added.
+- Context: The accepted initial process launch contract selected
+  phase8-initial-process-launch-plan-v1 as a launch-preparation record and
+  required a QEMU/substitute smoke plan before implementation so entry
+  provenance, blocked stack/activation state, saved-frame intent,
+  no-partial-launch behavior, and no-runnable-publication evidence stay
+  mechanical.
+- Decision: Accept phase8-qemu-initial-process-launch-smoke-plan-20260530.
+  The plan defines qemu_initial_process_launch_smoke, retained evidence at
+  tasks/evidence/2026-05-30-qemu-initial-process-launch-smoke-core/qemu-initial-process-launch-smoke.log,
+  classification qemu-initial-process-launch-smoke-complete, and PASS
+  vocabulary. It requires success evidence for accepted loader, install,
+  address-space, materialization, and launch-plan identities; entry provenance
+  through UserText mapping and descriptor coverage; blocked missing stack and
+  activation state; saved-frame intent without register writes; and zero
+  TTBR/TLB/scheduler/process-table/descriptor-table/lower-EL side effects.
+- Evidence level: static documentation/source inspection. Reviewed the
+  accepted initial process launch contract and source inventory, the QEMU
+  process page-table materialization smoke-plan pattern, adjacent Phase 8
+  contracts, roadmap, SUMMARY, and ADR index.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next bounded implementation task should be
+  phase8-initial-process-launch-core-20260530 because supervisor planning has
+  already queued it with explicit scope and gates. TTBR activation, lower-EL
+  ERET to /bin/init, initial user stack implementation, argv/envp expansion,
+  process lifecycle, scheduler runnable publication, shell behavior,
+  descriptor-backed filesystem syscalls, Pi 5 hardware proof, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
+  blocked until later explicit tasks accept their contracts and gates.
