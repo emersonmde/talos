@@ -365,12 +365,25 @@ pub extern "C" fn rust_exception_handler(
         return 1;
     }
 
+    #[cfg(talos_boot_scenario = "rpi5_read_stdin_proof")]
+    if crate::target::rpi5::handle_read_stdin_proof_exception(
+        esr,
+        elr,
+        far,
+        vector,
+        spsr,
+        saved_frame,
+    ) {
+        return 1;
+    }
+
     #[cfg(all(
         talos_boot_scenario = "rpi5_syscall_proof",
         not(talos_boot_scenario = "rpi5_pointer_copy_proof"),
         not(talos_boot_scenario = "rpi5_descriptor_write_proof"),
         not(talos_boot_scenario = "rpi5_close_syscall_proof"),
-        not(talos_boot_scenario = "rpi5_dup_syscall_proof")
+        not(talos_boot_scenario = "rpi5_dup_syscall_proof"),
+        not(talos_boot_scenario = "rpi5_read_stdin_proof")
     ))]
     if crate::target::rpi5::handle_syscall_proof_exception(esr, elr, far, vector, spsr, saved_frame)
     {
