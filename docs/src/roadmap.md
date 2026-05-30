@@ -672,11 +672,18 @@ evidence task before the final closeout checkpoint, but it does not set a
 Phase 8 transition flag or accept filesystem/program-loading behavior. The next
 mechanically unblocked queued task is
 phase7-final-closeout-checkpoint-20260530.
+The accepted Phase 7 final closeout checkpoint closes Phase 7 for that bounded
+frontier and records the durable recommendation flag for the first Phase 8
+source-inventory task. It does not implement or accept filesystem/program
+loading, shell, networking, SSH, runtime-console0/TTY or hardware stdin,
+object finalization, RP1/PCIe, UART interrupt ownership, DMA/cache-driver
+policy, or full POSIX readiness.
 
-Near-term direction after the accepted Milestone 7.4 closeout:
+Near-term direction after the accepted Phase 7 closeout:
 
-- Use the accepted final frontier source inventory to complete the Phase 7
-  final closeout before any Phase 8 transition discussion.
+- Start with the explicitly queued Phase 8 filesystem/program-loading source
+  inventory, using the Phase 7 final closeout recommendation flag as the
+  mechanical dependency.
 - Keep QEMU, host-side unit tests, and static documentation gates first. Reserve
   serialized Pi 5 runs for the smallest physical claim that cannot be proven on
   the QEMU/substitute path.
@@ -2243,11 +2250,24 @@ Phase 7 final frontier checkpoint:
   before the final closeout checkpoint and recommends
   phase7-final-closeout-checkpoint-20260530 as the next mechanically unblocked
   task.
+- Phase 7 final closeout checkpoint is accepted. Phase 7 is closed for the
+  bounded POSIX/EL0/syscall/copy-helper/descriptor frontier accepted by the
+  Phase 7.1 through Phase 7.4 closeouts. The checkpoint records no remaining
+  bounded Phase 7 implementation or evidence blocker before Phase 8 source
+  inventory planning, and it recommends
+  phase8-filesystem-program-loading-source-inventory-20260530 as the next
+  mechanically derivable documentation-only task once the durable
+  phaseCheckpointStatus recommendation flag is set. This does not accept
+  filesystem/program loading, shell, networking, SSH, runtime-console0/TTY or
+  hardware stdin, object finalization, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, or full POSIX readiness.
 
 Acceptance criteria:
 
 - A test process can read/write through descriptor-backed console streams.
 - Descriptor lifetime and close semantics are documented.
+- Phase 7 closes only for the bounded accepted frontier and explicitly leaves
+  Phase 8 runtime capability to later tasks.
 
 ## Phase 8: Filesystem and Program Loading
 

@@ -12,6 +12,43 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 7 Final Closeout Checkpoint Accepted
+
+- Status: accepted as the documentation-only Phase 7 final closeout
+  checkpoint. No Rust behavior, assembly behavior, QEMU rerun, Pi 5 hardware
+  run, boot archive publication, hardware-lock acquisition,
+  filesystem/program-loading implementation, shell behavior, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, or full POSIX
+  readiness was added.
+- Context: The accepted Phase 7 final-frontier inventory reported no remaining
+  bounded Phase 7 implementation or evidence blocker after the accepted POSIX
+  baseline, EL0/address-space proof, syscall/copy boundary, descriptor writes,
+  close, dup, and fixed-stdin read slices. A final checkpoint was needed
+  before any Phase 8 source-inventory task could be mechanically unblocked.
+- Decision: Accept phase7-final-closeout-checkpoint-20260530. Phase 7 is
+  closed for the bounded frontier accepted by Phase 7.1 through Phase 7.4:
+  target-independent POSIX/path/error vocabulary, lower-EL SVC trap and return,
+  stable svc #0 syscall routing, copy helper EFAULT behavior, descriptor-backed
+  stdout/stderr writes, inherited stdio descriptor tables, close, dup, and
+  fixed-proof-stdin read through fd 0/fd 3.
+- Evidence level: static documentation/evidence inspection, retained
+  QEMU/substitute evidence review, retained Pi 5 hardware evidence review,
+  documentation build, whitespace inspection, and staged whitespace inspection.
+  No new QEMU or physical Pi 5 evidence was produced by this documentation-only
+  checkpoint.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: Durable state records
+  phaseCheckpointStatus.phase7FinalCloseoutRecommendsPhase8 == true. The next
+  mechanically derivable task is the already queued
+  phase8-filesystem-program-loading-source-inventory-20260530, scoped to
+  documentation-only inventory before any filesystem/program-loading
+  implementation. runtime-console0/TTY/hardware stdin, process loading
+  implementation, VFS/filesystem behavior, shell, networking, SSH, object
+  finalization, dup2/fcntl, signals, wait queues, nonblocking I/O, RP1/PCIe,
+  UART interrupt ownership, DMA/cache-driver policy, and full POSIX readiness
+  remain blocked until later explicit tasks accept them.
+
 ## 2026-05-30 - Phase 7 Final Frontier Source Inventory Accepted
 
 - Status: accepted as the documentation-only Phase 7 final frontier source
