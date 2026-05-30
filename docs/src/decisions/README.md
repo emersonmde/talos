@@ -7813,3 +7813,43 @@ ADR template:
   filesystem syscalls, Pi 5 hardware proof, shell, networking, SSH, RP1/PCIe,
   UART interrupt ownership, and DMA/cache-driver policy remain blocked until
   later explicit tasks accept their contracts and gates.
+
+## 2026-05-30 - Phase 8 QEMU Initial User Stack Smoke Plan Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 QEMU/substitute
+  initial user stack smoke plan. No Rust behavior, assembly behavior, QEMU
+  execution, Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, initial user stack implementation, TTBR/TCR/MAIR/SCTLR write,
+  ASID allocation, live TLB invalidation, lower-EL ERET, scheduler runnable
+  publication, process lifecycle, shell behavior, descriptor-backed filesystem
+  syscalls, writable filesystem, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache-driver policy was added.
+- Context: The accepted initial user stack contract selected a
+  target-independent InitialUserStackPlan boundary and explicitly named this
+  QEMU/substitute smoke plan as the next bounded evidence boundary before any
+  implementation.
+- Decision: Accept phase8-qemu-initial-user-stack-smoke-plan-20260530. The
+  plan selects qemu_initial_user_stack_smoke, retained evidence path
+  tasks/evidence/2026-05-30-qemu-initial-user-stack-smoke-core/qemu-initial-user-stack-smoke.log,
+  classification qemu-initial-user-stack-smoke-complete, and PASS vocabulary.
+  It requires success observations for stack top 0x0000_8000_0000_0000,
+  16-byte initial SP alignment, the fixed usable and guard ranges, four
+  USER_DATA stack-owned pages, one unmapped guard page, copied_bytes=0,
+  zeroed_bytes=0x4000, minimal-empty-argc0 startup metadata, model-only
+  launch-plan stack-state integration, teardown, deterministic
+  no-partial-stack/no-partial-launch rejection, and zero live-launch side
+  effects.
+- Evidence level: static documentation/source inspection. Reviewed the
+  accepted initial user stack contract and source inventory, initial process
+  launch contract and smoke-plan pattern, adjacent Phase 8 contracts,
+  roadmap, SUMMARY, and ADR index.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next bounded task should be
+  phase8-initial-user-stack-core-20260530. Live TTBR activation, lower-EL
+  ERET, scheduler runnable publication, process lifecycle, broad
+  argv/envp/auxv/TLS ABI, descriptor-backed filesystem syscalls, Pi 5 hardware
+  proof, shell, networking, SSH, RP1/PCIe, UART interrupt ownership, and
+  DMA/cache-driver policy remain blocked until later explicit tasks accept
+  their contracts and gates.

@@ -173,7 +173,19 @@ integration that may change only model stack state while activation,
 lower-EL ERET, scheduler publication, process lifecycle, filesystem syscalls,
 Pi 5 proof, networking, and SSH remain blocked. It names
 phase8-qemu-initial-user-stack-smoke-plan-20260530 as the next bounded
-documentation-only task.
+documentation-only task. That QEMU/substitute smoke plan is now accepted. It
+selects scenario qemu_initial_user_stack_smoke, retained evidence path
+tasks/evidence/2026-05-30-qemu-initial-user-stack-smoke-core/qemu-initial-user-stack-smoke.log,
+classification qemu-initial-user-stack-smoke-complete, and PASS vocabulary.
+It requires success observations for stack range, guard, alignment, top SP,
+frame/page ownership, zero/copy accounting, teardown, minimal-empty-argc0
+startup metadata, model-only launch-plan stack-state integration, and zero
+TTBR/TLB/lower-EL/scheduler/process-table/descriptor-table side effects. It
+also requires deterministic no-partial-stack/no-partial-launch rejection cases
+and names phase8-initial-user-stack-core-20260530 as the next bounded
+implementation task. Live TTBR activation, lower-EL ERET, scheduler
+publication, process lifecycle, broad argv/envp/auxv/TLS ABI, filesystem
+syscalls, Pi 5 hardware proof, networking, and SSH remain blocked.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -2895,6 +2907,19 @@ Milestone 8.3: Program Loader
   phase8-initial-user-stack-contract-20260530 as the next documentation-only
   task. Stack implementation, argv/envp/auxv/TLS setup, TTBR activation,
   lower-EL ERET, scheduler publication, process lifecycle, filesystem
+  syscalls, Pi 5 hardware proof, networking, and SSH remain blocked.
+- Phase 8 QEMU/substitute initial user stack smoke plan is accepted. It
+  selects qemu_initial_user_stack_smoke, retained evidence path
+  tasks/evidence/2026-05-30-qemu-initial-user-stack-smoke-core/qemu-initial-user-stack-smoke.log,
+  classification qemu-initial-user-stack-smoke-complete, and PASS vocabulary.
+  The planned smoke must prove stack layout, guard range, top-SP alignment,
+  stack-owned USER_DATA pages, zero/copy accounting, teardown, minimal empty
+  startup metadata, model-only launch-plan stack-state integration,
+  deterministic no-partial-stack/no-partial-launch rejection, and zero
+  TTBR/TLB/lower-EL/scheduler/process-table/descriptor-table side effects.
+  It names phase8-initial-user-stack-core-20260530 as the next bounded
+  implementation task. Live TTBR activation, lower-EL ERET, scheduler
+  publication, process lifecycle, broad argv/envp/auxv/TLS ABI, filesystem
   syscalls, Pi 5 hardware proof, networking, and SSH remain blocked.
 
 Acceptance criteria:

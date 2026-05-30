@@ -149,6 +149,7 @@
 - [Phase 8 Initial Process Launch Closeout Checkpoint](project/phase8-initial-process-launch-closeout-checkpoint.md)
 - [Phase 8 Initial User Stack Source Inventory](project/phase8-initial-user-stack-source-inventory.md)
 - [Phase 8 Initial User Stack Contract](project/phase8-initial-user-stack-contract.md)
+- [Phase 8 QEMU Initial User Stack Smoke Plan](project/phase8-qemu-initial-user-stack-smoke-plan.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture
