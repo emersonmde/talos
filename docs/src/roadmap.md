@@ -96,6 +96,18 @@ TTBR/TCR/ASID/TLB policy, lower-EL launch, argv/envp, scheduler handoff,
 process table/PID/wait/exit, descriptor inheritance, filesystem syscalls,
 hardware proof, networking, or SSH. The next bounded task is a
 QEMU/substitute process address-space smoke plan for this selected boundary.
+That QEMU/substitute process address-space smoke plan is now accepted. It
+defines qemu_process_address_space_smoke, loader fixture identity
+phase8-program-loader-elf64-aarch64-v1, install boundary identity
+phase8-process-install-plan-v1, address-space boundary identity
+phase8-process-address-space-model-v1, retained evidence path
+tasks/evidence/2026-05-30-qemu-process-address-space-smoke-core/qemu-process-address-space-smoke.log,
+exact PASS/classification vocabulary, target-independent address-space success
+observations, deterministic no-partial-install and no-leak rejection cases,
+teardown observations, and conditional regression gates. Process address-space
+implementation remains the next queued bounded task; hardware page tables,
+TTBR/TCR switching, lower-EL launch, argv/envp, scheduler handoff, shell, and
+filesystem syscall behavior remain blocked.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -2630,6 +2642,21 @@ Milestone 8.3: Program Loader
   phase8-qemu-process-address-space-smoke-plan-20260530 to define retained
   QEMU/substitute evidence for success, rejection, rollback, no-leak, and
   teardown observations before implementation.
+- Phase 8 QEMU/substitute process address-space smoke plan is accepted. It
+  defines qemu_process_address_space_smoke, fixture identity
+  phase8-program-loader-elf64-aarch64-v1, install boundary
+  phase8-process-install-plan-v1, address-space boundary
+  phase8-process-address-space-model-v1, retained evidence path
+  tasks/evidence/2026-05-30-qemu-process-address-space-smoke-core/qemu-process-address-space-smoke.log,
+  classification qemu-process-address-space-smoke-complete, PASS vocabulary,
+  target-independent ProcessAddressSpace success observations, deterministic
+  rejection/no-partial-install and no-leak observations, teardown idempotence,
+  and conditional regression gates. The next bounded task should be
+  phase8-process-address-space-core-20260530 because supervisor planning has
+  already queued it with explicit scope and gates. Hardware page-table
+  mutation, TTBR/TCR switching, lower-EL launch, argv/envp, process creation,
+  scheduler handoff, shell, filesystem syscalls, Pi 5 hardware proof,
+  networking, and SSH remain blocked.
 
 Acceptance criteria:
 

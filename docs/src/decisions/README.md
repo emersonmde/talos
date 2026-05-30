@@ -12,6 +12,47 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 QEMU Process Address-Space Smoke Plan Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 QEMU/substitute
+  process address-space smoke plan. No Rust behavior, assembly behavior, QEMU
+  execution, Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, process-address-space core implementation, AArch64 descriptor
+  construction, TTBR/TCR switching, lower-EL launch, argv/envp implementation,
+  exec/spawn/wait, shell, descriptor-backed filesystem syscall, writable
+  filesystem, persistent storage, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache-driver policy was added.
+- Context: The accepted process address-space contract selected a
+  target-independent ProcessAddressSpace boundary but required one
+  QEMU/substitute smoke plan before implementation so success, rejection,
+  no-partial-install, no-leak, teardown, and retained-evidence vocabulary
+  stayed mechanical.
+- Decision: Accept phase8-qemu-process-address-space-smoke-plan-20260530.
+  The plan defines qemu_process_address_space_smoke, loader fixture identity
+  phase8-program-loader-elf64-aarch64-v1, install boundary identity
+  phase8-process-install-plan-v1, address-space boundary identity
+  phase8-process-address-space-model-v1, retained evidence path
+  tasks/evidence/2026-05-30-qemu-process-address-space-smoke-core/qemu-process-address-space-smoke.log,
+  classification qemu-process-address-space-smoke-complete, PASS vocabulary,
+  target-independent success observations, deterministic rejection,
+  no-partial-install, and no-leak observations, teardown idempotence, and
+  conditional regression gates.
+- Evidence level: static documentation/source inspection. Reviewed the
+  accepted process address-space contract, process address-space source
+  inventory, process-install smoke-plan pattern, roadmap, SUMMARY, and ADR
+  index.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next bounded implementation task should be
+  phase8-process-address-space-core-20260530 because supervisor planning has
+  already queued it with explicit scope and gates. Hardware page-table
+  descriptor construction, TTBR/TCR switching, lower-EL launch, argv/envp
+  construction, process creation, scheduler handoff, exec/spawn/wait, shell,
+  descriptor-backed filesystem syscalls, Pi 5 hardware proof, writable
+  filesystems, persistent storage, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, and DMA/cache-driver policy remain blocked.
+
 ## 2026-05-30 - Phase 8 Process Address-Space Contract Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 process
