@@ -22,7 +22,10 @@ checkpoint is accepted and recommends a documentation-only program-loader
 source inventory before any loader implementation or shell work. That
 program-loader source inventory is now accepted and recommends a
 documentation-only loader format contract before any parser, mapper, process
-install, or shell task. The
+install, or shell task. That loader format contract is now accepted and
+chooses a narrow static ELF64/AArch64 subset, deterministic rejection matrix,
+segment permission/zero-fill/entry validation policy, and process-install
+boundary before any implementation. The
 accepted Phase 7
 frontier includes the Phase
 6.3 production scheduler runtime closeout,
@@ -2384,6 +2387,20 @@ Milestone 8.3: Program Loader
   hardware proof, writable filesystems, persistent storage, networking, SSH,
   RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
   blocked until later explicit tasks accept their gates.
+- Phase 8 program-loader format contract is accepted. It selects the first
+  executable format policy: a narrow static ELF64/AArch64 ET_EXEC subset from
+  the accepted read-only initramfs/VFS regular-file boundary. It defines
+  header and program-header validation, dynamic/interpreter rejection,
+  PT_LOAD segment permission mapping, W^X rejection, user-range and overlap
+  checks, BSS zero-fill, entry-point validation, deterministic loader errors,
+  and the process/address-space/stack/descriptor boundaries that remain later
+  responsibilities. The next bounded task is
+  phase8-qemu-program-loader-smoke-plan-20260530. Loader Rust implementation,
+  process address-space installation, argv/envp stack construction,
+  process creation, exec/spawn/wait, shell, descriptor-backed filesystem
+  syscalls, Pi 5 hardware proof, writable filesystems, persistent storage,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
+  policy remain blocked until later explicit tasks accept their gates.
 
 Acceptance criteria:
 

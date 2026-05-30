@@ -128,6 +128,7 @@
 - [Phase 8 Read-Only Initramfs/VFS Smoke Plan](project/phase8-readonly-initramfs-vfs-smoke-plan.md)
 - [Phase 8 Read-Only Initramfs/VFS Closeout Checkpoint](project/phase8-readonly-initramfs-vfs-closeout-checkpoint.md)
 - [Phase 8 Program Loader Source Inventory](project/phase8-program-loader-source-inventory.md)
+- [Phase 8 Program Loader Format Contract](project/phase8-program-loader-format-contract.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

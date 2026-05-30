@@ -12,6 +12,48 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 Program Loader Format Contract Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 program-loader
+  format contract. No Rust behavior, assembly behavior, QEMU run, Pi 5
+  hardware run, boot archive publication, hardware-lock acquisition, ELF
+  parser implementation, process creation, exec/spawn/wait, argv/envp stack
+  implementation, shell, descriptor-backed filesystem syscall, writable
+  filesystem, persistent storage, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache-driver policy was added.
+- Context: The accepted program-loader source inventory recommended one
+  format contract before any parser, mapper, process-install, or shell task.
+  The accepted input remains the read-only initramfs/VFS regular-file fixture;
+  /bin/init is still data until a later implementation task changes fixture
+  bytes under an accepted smoke plan.
+- Decision: Accept phase8-program-loader-format-contract-20260530. The first
+  executable policy is a narrow static ELF64/AArch64 ET_EXEC subset with
+  deterministic header/program-header validation, dynamic/interpreter
+  rejection, PT_LOAD permission mapping, W^X rejection, user-range and overlap
+  checks, BSS zero-fill, entry validation, and loader error mapping. The
+  loader produces an image plan only; process creation, address-space
+  installation, argv/envp, descriptors, and scheduler handoff remain separate
+  boundaries.
+- Evidence level: static documentation/source inspection. Reviewed the
+  accepted program-loader source inventory, read-only initramfs/VFS closeout,
+  Phase 7 EL0/address-space contract, copy-in/copy-out contract, POSIX
+  baseline loader vocabulary, src/initramfs.rs, src/posix.rs, src/syscall.rs,
+  roadmap, and ADR index. No QEMU or physical Pi 5 evidence was produced by
+  this documentation-only contract.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next mechanically unblocked task is
+  phase8-qemu-program-loader-smoke-plan-20260530, documentation-only. It
+  should define exact fixture image identity, success and negative output
+  observations, retained evidence path, PASS/classification lines, and
+  conditional regression gates. Loader implementation, process address-space
+  installation, argv/envp stack construction, process creation,
+  exec/spawn/wait, shell, descriptor-backed filesystem syscalls, Pi 5 hardware
+  proof, writable filesystems, persistent storage, networking, SSH, RP1/PCIe,
+  UART interrupt ownership, and DMA/cache-driver policy remain blocked until
+  later explicit tasks accept their contracts and gates.
+
 ## 2026-05-30 - Phase 8 Program Loader Source Inventory Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 program-loader
