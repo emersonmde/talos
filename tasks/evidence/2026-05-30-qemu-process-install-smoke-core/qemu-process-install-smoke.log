@@ -1,0 +1,20 @@
+
+Talos 0.1.0 booting on talos-aarch64-virt
+boot-info: dtb_pa=0x0000000048000000 core=0 el=2 target=talos-aarch64-virt
+target-services: uart=pl011 timer=arm-generic irq=gic-v2 dtb=Some(
+    0x0000000048000000,
+)
+mmio-regions: 3
+qemu-process-install-smoke: start
+qemu-process-install-smoke: fixture name=phase8-program-loader-elf64-aarch64-v1 path=/bin/init source-digest=0x3892eed223900c65 install-boundary=phase8-process-install-plan-v1
+qemu-process-install-smoke: success output=ProcessImageInstallPlan metadata-only=true entry=0x10100 entry-preserved=true footprint=0x3000 pages=3 ok=true
+qemu-process-install-smoke: page index=0 kind=UserText flags=R-X copy-offset=0x100 copy-len=0x4 zero-offset=0x0 zero-len=0xffc action-order=allocate,copy,zero,map permission-widened=false ok=true
+qemu-process-install-smoke: page index=1 kind=UserData flags=RW- copy-offset=0x200 copy-len=0x4 zero-offset=0x0 zero-len=0xffc action-order=allocate,copy,zero,map permission-widened=false ok=true
+qemu-process-install-smoke: side-effects frames-allocated=0 mappings-installed=0 process-created=false descriptors-mutated=false lower-el-frame=false runnable=false ok=true
+qemu-process-install-smoke: error case=bad-plan-invariant errno=-EINVAL partial-install=false ok=true
+qemu-process-install-smoke: error case=overlap errno=-EACCES partial-install=false ok=true
+qemu-process-install-smoke: error case=permission-widening errno=-EACCES partial-install=false ok=true
+qemu-process-install-smoke: error case=bad-entry errno=-ENOEXEC partial-install=false ok=true
+qemu-process-install-smoke: error case=budget-overflow errno=-ENOMEM partial-install=false ok=true
+qemu-process-install-smoke: final participants=7 expected=7 errors=0 classification=qemu-process-install-smoke-complete
+qemu-process-install-smoke: PASS

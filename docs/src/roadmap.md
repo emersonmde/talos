@@ -63,6 +63,17 @@ gates. Process-install implementation remains the next queued bounded task;
 hardware, physical page allocation, page-table mutation, lower-EL launch,
 argv/envp, scheduler handoff, shell, and filesystem syscall behavior remain
 blocked.
+The metadata-only process-install core and QEMU/substitute smoke are now
+accepted. The retained qemu_process_install_smoke evidence proves that the
+accepted /bin/init ProgramImagePlan derives a ProcessImageInstallPlan with
+preserved entry, footprint, ordered UserText/UserData page records, exact
+R-X/RW- permissions, explicit copy/zero-fill ranges, zero side effects, and
+deterministic no-partial-install rejections for bad plan invariants, overlap,
+permission widening, bad entry, and budget overflow. This still accepts no
+physical frame allocation, page-table mutation, process creation, lower-EL
+launch, argv/envp, exec/spawn/wait, shell, filesystem syscall behavior,
+hardware proof, writable filesystem, networking, SSH, RP1/PCIe, UART
+interrupt ownership, or DMA/cache-driver policy.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -2539,6 +2550,19 @@ Milestone 8.3: Program Loader
   Pi 5 hardware proof, argv/envp construction, exec/spawn/wait, shell,
   writable filesystem, networking, SSH, RP1/PCIe, UART interrupt ownership, or
   DMA/cache-driver policy is accepted by this core.
+- Phase 8 QEMU/substitute process-install smoke core is accepted. It adds
+  qemu_process_install_smoke routing, retained evidence at
+  tasks/evidence/2026-05-30-qemu-process-install-smoke-core/qemu-process-install-smoke.log,
+  and PASS/classification checks for metadata-only success, exact page
+  permission preservation, zero physical side effects, and deterministic
+  no-partial-install rejections. The next bounded task should be the queued
+  phase8-process-install-closeout-checkpoint-20260530 if dependencies remain
+  satisfied. Physical page allocation, page-table mutation, lower-EL launch,
+  argv/envp construction, process creation, exec/spawn/wait, shell,
+  descriptor-backed filesystem syscalls, Pi 5 hardware proof, writable
+  filesystems, persistent storage, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, and DMA/cache-driver policy remain blocked until later explicit
+  tasks accept their gates.
 
 Acceptance criteria:
 

@@ -148,6 +148,19 @@ use crate::{
         ProgramLoaderError, UserSegmentKind, plan_elf64_aarch64_image, plan_phase8_init_image,
     },
 };
+#[cfg(talos_boot_scenario = "qemu_process_install_smoke")]
+use crate::{
+    initramfs::{PHASE8_INIT_BYTES, PHASE8_INIT_PATH, phase8_readonly_initramfs_fixture},
+    posix::{PosixError, UserMappingPermissions},
+    process_install::{
+        MAX_PROCESS_INSTALL_FOOTPRINT, PROCESS_INSTALL_BOUNDARY_IDENTITY, ProcessImageInstallPlan,
+        ProcessImagePageInstallRecord, plan_process_image_install,
+    },
+    program_loader::{
+        LOADER_PAGE_SIZE, MAX_LOAD_SEGMENTS, PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        PlannedUserSegment, ProgramImagePlan, UserSegmentKind, plan_phase8_init_image,
+    },
+};
 
 const PL011_BASE: usize = 0x0900_0000;
 const GICD_BASE: usize = 0x0800_0000;
@@ -5339,6 +5352,349 @@ fn program_loader_write_u32(bytes: &mut [u8], offset: usize, value: u32) {
 #[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
 fn program_loader_write_u64(bytes: &mut [u8], offset: usize, value: u64) {
     bytes[offset..offset + 8].copy_from_slice(&value.to_le_bytes());
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_install_smoke")]
+pub fn run_process_install_smoke() -> bool {
+    crate::println!("qemu-process-install-smoke: start");
+
+    let success_ok = process_install_report_success();
+    let side_effects_ok = process_install_report_side_effects(success_ok);
+    let bad_plan_ok = process_install_report_error(
+        "bad-plan-invariant",
+        process_install_bad_plan_invariant(),
+        PosixError::InvalidArgument,
+    );
+    let overlap_ok = process_install_report_error(
+        "overlap",
+        process_install_overlap_plan(),
+        PosixError::AccessDenied,
+    );
+    let permission_widening_ok = process_install_report_error(
+        "permission-widening",
+        process_install_permission_widening_plan(),
+        PosixError::AccessDenied,
+    );
+    let bad_entry_ok = process_install_report_error(
+        "bad-entry",
+        process_install_bad_entry_plan(),
+        PosixError::NotExecutable,
+    );
+    let budget_overflow_ok = process_install_report_error(
+        "budget-overflow",
+        process_install_budget_overflow_plan(),
+        PosixError::NoMemory,
+    );
+
+    let participants = u64::from(success_ok)
+        + u64::from(bad_plan_ok)
+        + u64::from(overlap_ok)
+        + u64::from(permission_widening_ok)
+        + u64::from(bad_entry_ok)
+        + u64::from(budget_overflow_ok)
+        + u64::from(side_effects_ok);
+    let errors = 7 - participants;
+    let classification = if participants == 7 && errors == 0 {
+        "qemu-process-install-smoke-complete"
+    } else {
+        "qemu-process-install-smoke-failed"
+    };
+
+    crate::println!(
+        "qemu-process-install-smoke: final participants={} expected=7 errors={} classification={}",
+        participants,
+        errors,
+        classification
+    );
+    if participants == 7 && errors == 0 {
+        crate::println!("qemu-process-install-smoke: PASS");
+        true
+    } else {
+        crate::println!("qemu-process-install-smoke: FAIL");
+        false
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_install_smoke")]
+fn process_install_report_success() -> bool {
+    let result = plan_phase8_init_image(phase8_readonly_initramfs_fixture())
+        .map_err(|error| error.posix_error())
+        .and_then(plan_process_image_install);
+    let Ok(plan) = result else {
+        crate::println!(
+            "qemu-process-install-smoke: success output=ProcessImageInstallPlan metadata-only=true entry=0x0 entry-preserved=false footprint=0x0 pages=0 ok=false"
+        );
+        return false;
+    };
+
+    crate::println!(
+        "qemu-process-install-smoke: fixture name={} path=/bin/init source-digest={:#x} install-boundary={}",
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        plan.source_digest(),
+        PROCESS_INSTALL_BOUNDARY_IDENTITY
+    );
+
+    let expected_image = plan_phase8_init_image(phase8_readonly_initramfs_fixture());
+    let entry_preserved = matches!(expected_image, Ok(image) if image.entry() == plan.entry());
+    let success_ok = plan.fixture_identity() == PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY
+        && plan.install_boundary_identity() == PROCESS_INSTALL_BOUNDARY_IDENTITY
+        && plan.source_path() == PHASE8_INIT_PATH
+        && entry_preserved
+        && plan.memory_footprint() == 0x3000
+        && plan.page_count() == 3
+        && plan.lower_el_launch_blocked()
+        && process_install_page_ok(plan.page(0), UserSegmentKind::UserText)
+        && process_install_page_ok(plan.page(1), UserSegmentKind::UserData);
+
+    crate::println!(
+        "qemu-process-install-smoke: success output=ProcessImageInstallPlan metadata-only=true entry={:#x} entry-preserved={} footprint={:#x} pages={} ok={}",
+        plan.entry(),
+        entry_preserved,
+        plan.memory_footprint(),
+        plan.page_count(),
+        success_ok
+    );
+
+    process_install_report_page(0, plan.page(0));
+    process_install_report_page(1, plan.page(1));
+
+    success_ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_install_smoke")]
+fn process_install_report_side_effects(success_ok: bool) -> bool {
+    let result = plan_phase8_init_image(phase8_readonly_initramfs_fixture())
+        .map_err(|error| error.posix_error())
+        .and_then(plan_process_image_install);
+    let Ok(plan) = result else {
+        crate::println!(
+            "qemu-process-install-smoke: side-effects frames-allocated=0 mappings-installed=0 process-created=false descriptors-mutated=false lower-el-frame=false runnable=false ok=false"
+        );
+        return false;
+    };
+    let side_effects = plan.side_effects();
+    let side_effects_ok = success_ok
+        && side_effects.frames_allocated() == 0
+        && side_effects.mappings_installed() == 0
+        && !side_effects.process_created()
+        && !side_effects.descriptors_mutated()
+        && !side_effects.lower_el_frame()
+        && !side_effects.runnable();
+    crate::println!(
+        "qemu-process-install-smoke: side-effects frames-allocated={} mappings-installed={} process-created={} descriptors-mutated={} lower-el-frame={} runnable={} ok={}",
+        side_effects.frames_allocated(),
+        side_effects.mappings_installed(),
+        side_effects.process_created(),
+        side_effects.descriptors_mutated(),
+        side_effects.lower_el_frame(),
+        side_effects.runnable(),
+        side_effects_ok
+    );
+    side_effects_ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_install_smoke")]
+fn process_install_page_ok(
+    page: Option<ProcessImagePageInstallRecord>,
+    kind: UserSegmentKind,
+) -> bool {
+    let Some(page) = page else {
+        return false;
+    };
+    let expected_flags = match kind {
+        UserSegmentKind::UserText => "R-X",
+        UserSegmentKind::UserData => "RW-",
+    };
+    page.kind() == kind
+        && page.permission_flags() == expected_flags
+        && page.copy_len() != 0
+        && page.zero_len() != 0
+        && page.action().name() == "allocate,copy,zero,map"
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_install_smoke")]
+fn process_install_report_page(index: usize, page: Option<ProcessImagePageInstallRecord>) {
+    let Some(page) = page else {
+        crate::println!(
+            "qemu-process-install-smoke: page index={} kind=missing flags=--- copy-offset=0x0 copy-len=0x0 zero-offset=0x0 zero-len=0x0 action-order=allocate,copy,zero,map permission-widened=true ok=false",
+            index
+        );
+        return;
+    };
+    let (zero_offset, zero_len) = if let Some(zero) = page.zero_range(0) {
+        (zero.offset(), page.zero_len())
+    } else {
+        (0, 0)
+    };
+    let permission_widened = match page.kind() {
+        UserSegmentKind::UserText => page.permissions() != UserMappingPermissions::USER_TEXT,
+        UserSegmentKind::UserData => page.permissions() != UserMappingPermissions::USER_DATA,
+    };
+    let ok = process_install_page_ok(Some(page), page.kind()) && !permission_widened;
+    crate::println!(
+        "qemu-process-install-smoke: page index={} kind={} flags={} copy-offset={:#x} copy-len={:#x} zero-offset={:#x} zero-len={:#x} action-order={} permission-widened={} ok={}",
+        index,
+        page.kind().name(),
+        page.permission_flags(),
+        page.copy_page_offset(),
+        page.copy_len(),
+        zero_offset,
+        zero_len,
+        page.action().name(),
+        permission_widened,
+        ok
+    );
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_install_smoke")]
+fn process_install_report_error(
+    case: &str,
+    result: Result<ProcessImageInstallPlan, PosixError>,
+    expected: PosixError,
+) -> bool {
+    let ok = matches!(result, Err(error) if error == expected);
+    crate::println!(
+        "qemu-process-install-smoke: error case={} errno=-{} partial-install=false ok={}",
+        case,
+        expected.name(),
+        ok
+    );
+    ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_install_smoke")]
+fn process_install_segment(
+    kind: UserSegmentKind,
+    permissions: UserMappingPermissions,
+    virtual_start: u64,
+    memory_size: u64,
+    file_offset: usize,
+    file_size: usize,
+) -> PlannedUserSegment {
+    let virtual_end = virtual_start + memory_size;
+    PlannedUserSegment::for_test_unchecked(
+        kind,
+        permissions,
+        virtual_start,
+        virtual_end,
+        virtual_start & !(LOADER_PAGE_SIZE - 1),
+        (virtual_end + LOADER_PAGE_SIZE - 1) & !(LOADER_PAGE_SIZE - 1),
+        file_offset,
+        file_size,
+        virtual_start + file_size as u64,
+        virtual_end,
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_install_smoke")]
+fn process_install_unchecked_plan(
+    entry: u64,
+    segment_count: usize,
+    segments: [Option<PlannedUserSegment>; MAX_LOAD_SEGMENTS],
+    memory_footprint: u64,
+) -> ProgramImagePlan {
+    ProgramImagePlan::for_test_unchecked(
+        PHASE8_INIT_PATH,
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        PHASE8_INIT_BYTES.len(),
+        0x3892_eed2_2390_0c65,
+        entry,
+        segment_count,
+        segments,
+        0x0000_0000_0001_0000,
+        0x0000_0000_0002_2000,
+        memory_footprint,
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_install_smoke")]
+fn process_install_bad_plan_invariant() -> Result<ProcessImageInstallPlan, PosixError> {
+    plan_process_image_install(process_install_unchecked_plan(
+        0x0000_0000_0001_0100,
+        1,
+        [None, None, None, None],
+        LOADER_PAGE_SIZE,
+    ))
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_install_smoke")]
+fn process_install_overlap_plan() -> Result<ProcessImageInstallPlan, PosixError> {
+    let text = process_install_segment(
+        UserSegmentKind::UserText,
+        UserMappingPermissions::USER_TEXT,
+        0x0000_0000_0001_0100,
+        4,
+        0x100,
+        4,
+    );
+    let data = process_install_segment(
+        UserSegmentKind::UserData,
+        UserMappingPermissions::USER_DATA,
+        0x0000_0000_0001_0200,
+        4,
+        0x200,
+        4,
+    );
+    plan_process_image_install(process_install_unchecked_plan(
+        0x0000_0000_0001_0100,
+        2,
+        [Some(text), Some(data), None, None],
+        LOADER_PAGE_SIZE * 2,
+    ))
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_install_smoke")]
+fn process_install_permission_widening_plan() -> Result<ProcessImageInstallPlan, PosixError> {
+    let text = process_install_segment(
+        UserSegmentKind::UserText,
+        UserMappingPermissions::USER_DATA,
+        0x0000_0000_0001_0100,
+        4,
+        0x100,
+        4,
+    );
+    plan_process_image_install(process_install_unchecked_plan(
+        0x0000_0000_0001_0100,
+        1,
+        [Some(text), None, None, None],
+        LOADER_PAGE_SIZE,
+    ))
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_install_smoke")]
+fn process_install_bad_entry_plan() -> Result<ProcessImageInstallPlan, PosixError> {
+    let data = process_install_segment(
+        UserSegmentKind::UserData,
+        UserMappingPermissions::USER_DATA,
+        0x0000_0000_0002_0200,
+        4,
+        0x200,
+        4,
+    );
+    plan_process_image_install(process_install_unchecked_plan(
+        0x0000_0000_0002_0200,
+        1,
+        [Some(data), None, None, None],
+        LOADER_PAGE_SIZE,
+    ))
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_install_smoke")]
+fn process_install_budget_overflow_plan() -> Result<ProcessImageInstallPlan, PosixError> {
+    let text = process_install_segment(
+        UserSegmentKind::UserText,
+        UserMappingPermissions::USER_TEXT,
+        0x0000_0000_0001_0000,
+        MAX_PROCESS_INSTALL_FOOTPRINT + LOADER_PAGE_SIZE,
+        0,
+        4,
+    );
+    plan_process_image_install(process_install_unchecked_plan(
+        0x0000_0000_0001_0000,
+        1,
+        [Some(text), None, None, None],
+        MAX_PROCESS_INSTALL_FOOTPRINT + LOADER_PAGE_SIZE,
+    ))
 }
 
 #[cfg(talos_boot_scenario = "qemu_syscall_smoke")]

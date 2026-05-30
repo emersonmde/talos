@@ -50,6 +50,45 @@ ADR template:
   writable filesystems, persistent storage, networking, SSH, RP1/PCIe, UART
   interrupt ownership, and DMA/cache-driver policy remain blocked.
 
+## 2026-05-30 - Phase 8 QEMU Process Install Smoke Core Accepted
+
+- Status: accepted as the QEMU/substitute Milestone 8.3 process-install smoke
+  core. No Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, physical frame allocation, page-table mutation, process object
+  creation, descriptor mutation, lower-EL frame, runnable task, argv/envp
+  implementation, exec/spawn/wait, shell, descriptor-backed filesystem
+  syscall, writable filesystem, persistent storage, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The accepted process-install smoke plan required retained
+  QEMU/substitute evidence after the metadata-only process-install core
+  accepted ProcessImageInstallPlan derivation from the ProgramImagePlan
+  boundary.
+- Decision: Accept phase8-qemu-process-install-smoke-core-20260530. The
+  implementation adds qemu_process_install_smoke, routes it through the QEMU
+  boot-scenario selector, and retains
+  tasks/evidence/2026-05-30-qemu-process-install-smoke-core/qemu-process-install-smoke.log.
+  The smoke proves fixture identity phase8-program-loader-elf64-aarch64-v1,
+  install boundary phase8-process-install-plan-v1, preserved entry and
+  footprint, UserText R-X and UserData RW- page records, explicit copy/zero
+  ranges, zero side effects, deterministic no-partial-install rejections, final
+  classification qemu-process-install-smoke-complete, and PASS.
+- Evidence level: QEMU/substitute plus unit tests. The retained smoke log
+  contains the exact classification and PASS lines, and cargo
+  -Zjson-target-spec test passed with 279 no_std tests.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test passed; scripts/qemu-process-install-smoke.sh passed;
+  scripts/qemu-program-loader-smoke.sh passed as the conditional program-loader
+  regression gate; git diff --check passed; mdbook build passed; git diff
+  --cached --check passed before commit.
+- Consequences: The next bounded task should be
+  phase8-process-install-closeout-checkpoint-20260530 because supervisor
+  planning already queued it with explicit scope and gates. Physical process
+  address-space installation, user frame allocation, page-table mutation,
+  teardown, lower-EL launch, initial user stack, argv/envp, auxiliary vectors,
+  TLS, libc startup, shell behavior, writable storage, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
+  blocked.
+
 ## 2026-05-30 - Phase 8 Process Install Contract Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 process-install
