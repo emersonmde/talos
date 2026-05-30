@@ -13,9 +13,12 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is in Phase 8 source inventory after the accepted Phase 7 final closeout
+Talos is in Phase 8 Milestone 8.1 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning
-task. The accepted Phase 7 frontier includes the Phase
+task, the Phase 8 source inventory was accepted, and the read-only
+initramfs/VFS contract and smoke plan were accepted. The next bounded task is
+the target-independent read-only initramfs/VFS core. The accepted Phase 7
+frontier includes the Phase
 6.3 production scheduler runtime closeout,
 the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -2299,6 +2302,18 @@ Milestone 8.1: Initramfs or Ramfs
   hardware proof, ELF/program loading, process creation, shell, networking,
   SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy blocked
   until later explicit tasks accept their gates.
+- The read-only initramfs/VFS smoke plan is accepted. It defines the
+  qemu_readonly_initramfs_vfs_smoke scenario, deterministic fixture contents,
+  lookup/read/offset/EOF observations, ENOENT/ENOTDIR/EISDIR/ENAMETOOLONG/
+  EBADF/EFAULT/EINVAL/ENOTSUP negative cases, exact PASS/classification lines,
+  retained QEMU/substitute evidence path, failure classification, and
+  regression gates. It recommends
+  phase8-readonly-initramfs-vfs-core-20260530 next, followed by
+  phase8-qemu-readonly-initramfs-vfs-smoke-core-20260530 after the core is
+  accepted. QEMU runtime evidence, Pi 5 hardware proof, ELF/program loading,
+  process creation, shell, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, and DMA/cache-driver policy remain blocked until later explicit
+  tasks accept their gates.
 
 Acceptance criteria:
 

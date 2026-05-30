@@ -12,6 +12,39 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 Read-Only Initramfs/VFS Smoke Plan Accepted
+
+- Status: accepted as the documentation-only Milestone 8.1 read-only
+  initramfs/VFS QEMU/substitute smoke plan. No Rust behavior, assembly
+  behavior, QEMU run, Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, VFS implementation, initramfs parser,
+  descriptor-backed filesystem read, ELF/program loader, argv/envp setup,
+  process creation, shell behavior, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache-driver policy was added.
+- Context: The accepted read-only initramfs/VFS contract required a
+  deterministic QEMU/substitute smoke plan before target-independent core
+  implementation and before any runtime evidence claim.
+- Decision: Accept phase8-readonly-initramfs-vfs-smoke-plan-20260530. The
+  plan defines the qemu_readonly_initramfs_vfs_smoke scenario, deterministic
+  fixture contents, exact lookup/read/offset/EOF observations, required
+  ENOENT/ENOTDIR/EISDIR/ENAMETOOLONG/EBADF/EFAULT/EINVAL/ENOTSUP cases, exact
+  PASS/classification lines, retained evidence path, failure classification,
+  and regression gates.
+- Evidence level: static documentation inspection. Reviewed the accepted
+  read-only initramfs/VFS contract, Phase 8 source inventory, roadmap, ADR
+  index, and prior QEMU smoke plan patterns for exact output, evidence
+  retention, and deferred-surface language.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next mechanically unblocked task is
+  phase8-readonly-initramfs-vfs-core-20260530. The QEMU/substitute evidence
+  task remains dependency-gated behind the accepted core. Pi 5 hardware proof,
+  boot archive publication, ELF/program loading, argv/envp setup, process
+  creation, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, writable filesystems, and persistent storage remain
+  blocked until later explicit tasks accept their contracts and gates.
+
 ## 2026-05-30 - Phase 8 Read-Only Initramfs/VFS Contract Accepted
 
 - Status: accepted as the documentation-only Milestone 8.1 read-only

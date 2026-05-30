@@ -125,6 +125,7 @@
 - [Phase 7 Final Closeout Checkpoint](project/phase7-final-closeout-checkpoint.md)
 - [Phase 8 Filesystem And Program Loading Source Inventory](project/phase8-filesystem-program-loading-source-inventory.md)
 - [Phase 8 Read-Only Initramfs/VFS Contract](project/phase8-readonly-initramfs-vfs-contract.md)
+- [Phase 8 Read-Only Initramfs/VFS Smoke Plan](project/phase8-readonly-initramfs-vfs-smoke-plan.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture
