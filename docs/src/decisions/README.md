@@ -6119,3 +6119,37 @@ ADR template:
   networking, SSH, object finalization, dup2/fcntl, signals, wait queues,
   nonblocking I/O, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy,
   and full POSIX descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 QEMU Read And Stdin Smoke Plan Accepted
+
+- Status: accepted as the documentation-only Milestone 7.4 QEMU/substitute
+  read/stdin smoke plan. No Rust behavior, assembly behavior, QEMU run, Pi 5
+  hardware run, boot archive publication, hardware-lock acquisition,
+  runtime-console0/TTY/hardware stdin, process loading, VFS/filesystem
+  behavior, shell behavior, networking, SSH, object finalization, RP1/PCIe,
+  UART interrupt ownership, DMA/cache-driver policy, or full POSIX descriptor
+  readiness was added.
+- Context: The accepted read/stdin core added stable talos_read x8 = 4,
+  FixedStdin proof-buffer state, target-independent process descriptor
+  dispatch, and focused tests, but lower-AArch64 QEMU/substitute runtime
+  evidence remained unclaimed.
+- Decision: Accept phase7-qemu-read-stdin-smoke-plan-20260529. The plan
+  defines qemu_read_stdin_smoke with ProcessOwnerId-backed inherited stdio,
+  fixed proof stdin bytes talos-stdin-qemu\n, fd 0 duplication to fd 3,
+  copy-out -EFAULT, reserved-register -EINVAL, fd/error -EBADF, fd 0 success,
+  duplicated-stdin short read, bounded EOF, talos_nop and unknown-syscall
+  regressions, proof-only copy-probe quarantine, diagnostic-marker quarantine,
+  and exact PASS/classification lines for the later implementation task.
+- Evidence level: static documentation/source inspection, documentation build,
+  whitespace inspection, and staged whitespace inspection. No Rust tests, QEMU
+  run, or physical Pi 5 hardware evidence was produced by this
+  documentation-only plan.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The next mechanically derivable task is
+  phase7-qemu-read-stdin-smoke-core-20260529, scoped to implementing and
+  retaining only the planned QEMU/substitute read/stdin smoke evidence. Pi 5
+  physical read proof, runtime-console0/TTY/hardware stdin, process loading,
+  VFS/filesystem, shell, networking, SSH, object finalization, dup2/fcntl,
+  signals, wait queues, nonblocking I/O, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.

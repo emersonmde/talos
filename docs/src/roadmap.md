@@ -585,13 +585,25 @@ evidence only. QEMU/substitute lower-AArch64 read evidence, Pi 5 physical read
 proof, runtime-console0/TTY/hardware stdin, process loading, VFS/filesystem,
 shell, networking, SSH, object finalization, dup2/fcntl, signals, wait queues,
 nonblocking I/O, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy,
-and full POSIX descriptor readiness remain blocked. The next bounded Milestone
-7.4 task should be phase7-qemu-read-stdin-smoke-plan-20260529.
+and full POSIX descriptor readiness remain blocked. The accepted QEMU
+read/stdin smoke plan defines the qemu_read_stdin_smoke QEMU/substitute
+invariant for stable talos_read x8 = 4: fd 0 duplication, fixed proof stdin
+length/cursor validation, copy-out -EFAULT, reserved-register -EINVAL,
+fd/error -EBADF, fd 0 success copying talos, duplicated-fd short read copying
+-stdin-qemu\n, bounded EOF, talos_nop and unknown-syscall regressions,
+copy-probe quarantine, diagnostic-marker quarantine, and exact
+classification=qemu-read-stdin-smoke-complete plus PASS lines. It does not run
+QEMU or hardware. Pi 5 physical read proof, runtime-console0/TTY/hardware
+stdin, process loading, VFS/filesystem, shell, networking, SSH, object
+finalization, dup2/fcntl, signals, wait queues, nonblocking I/O, RP1/PCIe,
+UART interrupt ownership, DMA/cache-driver policy, and full POSIX descriptor
+readiness remain blocked. The next bounded Milestone 7.4 task should be
+phase7-qemu-read-stdin-smoke-core-20260529.
 
-Near-term direction after the accepted read/stdin core:
+Near-term direction after the accepted QEMU read/stdin smoke plan:
 
-- Plan only the bounded QEMU/substitute read/stdin smoke before adding lower-EL
-  runtime evidence.
+- Implement only the bounded QEMU/substitute read/stdin smoke before adding or
+  claiming lower-EL runtime evidence.
 - Keep QEMU, host-side unit tests, and static documentation gates first. Reserve
   serialized Pi 5 runs for the smallest physical claim that cannot be proven on
   the QEMU/substitute path.
