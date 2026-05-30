@@ -2162,6 +2162,18 @@ Accepted progress:
   next mechanically derivable Milestone 7.4 task should be
   phase7-pi5-read-stdin-proof-plan-20260530, queued explicitly by the
   supervisor before any Pi 5 hardware action.
+- Phase 7 Pi 5 read/stdin proof plan is accepted. It defines the serialized
+  rpi5_read_stdin_proof hardware plan for carrying the accepted fixed-stdin
+  talos_read QEMU/substitute invariant to Raspberry Pi 5. The plan requires
+  lock ownership, candidate identity, archive/kernel hashes, fresh serial and
+  TFTP evidence, inconclusive-run triage, restoration proof, exact fd 0/fd 3
+  read, errno, EOF, scalar-regression, copy-probe quarantine,
+  diagnostic-marker quarantine, classification, and PASS output. No hardware
+  run, archive publication, or physical read claim is made by the plan. The
+  next bounded Milestone 7.4 task should be
+  phase7-pi5-read-stdin-proof-20260530. runtime-console0/TTY/hardware stdin,
+  process loading, VFS/filesystem, shell, networking, SSH, object finalization,
+  dup2/fcntl, and full POSIX descriptor readiness remain blocked.
 
 Milestone 7.4: File Descriptor Table
 

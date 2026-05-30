@@ -6223,3 +6223,39 @@ ADR template:
   networking, SSH, object finalization, dup2/fcntl, signals, wait queues,
   nonblocking I/O, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy,
   and full POSIX descriptor claims remain blocked.
+
+## 2026-05-30 - Phase 7 Pi 5 Read/Stdin Proof Plan Accepted
+
+- Status: accepted as the documentation-only Milestone 7.4 serialized Pi 5
+  read/stdin proof plan. No Rust behavior, assembly behavior, QEMU run, Pi 5
+  hardware run, boot archive publication, hardware-lock acquisition,
+  runtime-console0/TTY/hardware stdin, process loading, VFS/filesystem
+  behavior, shell behavior, networking, SSH, object finalization, RP1/PCIe,
+  UART interrupt ownership, DMA/cache-driver policy, or full POSIX descriptor
+  readiness was added.
+- Context: The accepted read/stdin closeout limited the frontier to
+  target-independent and QEMU/substitute fixed proof stdin. A separate
+  hardware plan was needed before any serialized Raspberry Pi 5 action.
+- Decision: Accept phase7-pi5-read-stdin-proof-plan-20260530. The plan
+  defines rpi5_read_stdin_proof with ProcessOwnerId-backed inherited stdio,
+  fixed proof stdin bytes talos-stdin-rpi5\n, fd 0 duplication to fd 3,
+  copy-out -EFAULT, reserved-register -EINVAL, fd/error -EBADF, fd 0 success,
+  duplicated-stdin short read, bounded EOF, talos_nop and unknown-syscall
+  regressions, proof-only copy-probe quarantine, diagnostic-marker quarantine,
+  exact PASS/classification lines, candidate identity, fresh serial/TFTP
+  evidence, restore proof, and mandatory inconclusive-run triage for the later
+  hardware task.
+- Evidence level: static documentation/source inspection, retained
+  QEMU/substitute evidence reference, documentation build, whitespace
+  inspection, and staged whitespace inspection. No Rust tests, QEMU run, or
+  physical Pi 5 hardware evidence was produced by this documentation-only
+  plan.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The next mechanically derivable task is
+  phase7-pi5-read-stdin-proof-20260530, scoped to implementing and running
+  only the planned serialized physical proof if hardwareTestLock is
+  unlocked/restored. runtime-console0/TTY/hardware stdin, process loading,
+  VFS/filesystem, shell, networking, SSH, object finalization, dup2/fcntl,
+  signals, wait queues, nonblocking I/O, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.
