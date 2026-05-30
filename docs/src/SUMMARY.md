@@ -151,6 +151,7 @@
 - [Phase 8 Initial User Stack Contract](project/phase8-initial-user-stack-contract.md)
 - [Phase 8 QEMU Initial User Stack Smoke Plan](project/phase8-qemu-initial-user-stack-smoke-plan.md)
 - [Phase 8 Initial User Stack Closeout Checkpoint](project/phase8-initial-user-stack-closeout-checkpoint.md)
+- [Phase 8 Live Address-Space Activation Source Inventory](project/phase8-live-address-space-activation-source-inventory.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

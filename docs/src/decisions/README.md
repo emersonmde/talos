@@ -7972,3 +7972,44 @@ ADR template:
   syscalls, Pi 5 hardware proof, shell, networking, SSH, RP1/PCIe, UART
   interrupt ownership, and DMA/cache-driver policy remain blocked until later
   explicit tasks accept their contracts and gates.
+
+## 2026-05-30 - Phase 8 Live Address-Space Activation Source Inventory Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 live address-space
+  activation source inventory. No Rust behavior, assembly behavior, QEMU
+  execution, Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, TTBR/TCR/MAIR/SCTLR write, ASID allocation, TLB mutation,
+  lower-EL ERET, scheduler runnable publication, process lifecycle, shell
+  behavior, descriptor-backed filesystem syscalls, writable filesystem,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver
+  policy was added.
+- Context: The accepted loader/install/address-space/materialization/
+  launch/stack lineage can describe immutable /bin/init and its initial user
+  stack below live activation, but no accepted contract yet defines how the
+  materialized descriptor image becomes the live EL1 translation context while
+  preserving kernel reachability and fault reporting.
+- Decision: Accept
+  phase8-live-address-space-activation-source-inventory-20260530. The
+  inventory maps current owners for ProgramImagePlan,
+  ProcessImageInstallPlan, ProcessAddressSpace,
+  ProcessPageTableMaterialization, InitialProcessLaunchPlan,
+  InitialUserStackPlan, POSIX user-memory vocabulary, translation helpers,
+  AArch64 lower-EL/exception code, scheduler placeholders, QEMU evidence
+  producers, and Pi 5 proof-local precedents. It identifies the next missing
+  boundary as live address-space activation: TTBR0_EL1/TTBR1_EL1 root
+  provenance, TCR_EL1/MAIR_EL1/SCTLR_EL1 compatibility, ASID/TLB behavior,
+  barrier ordering, kernel reachability, exception/fault reporting,
+  rollback/teardown, and activation-state updates below lower-EL ERET.
+- Evidence level: static documentation/source inspection. Reviewed accepted
+  Phase 8 docs, task records, retained QEMU/substitute evidence, source
+  owners, lower-EL architecture notes, roadmap, SUMMARY, and ADR index.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next bounded task should be
+  phase8-live-address-space-activation-contract-20260530. Live register
+  mutation, lower-EL ERET, scheduler runnable publication, process lifecycle,
+  broad argv/envp/auxv/TLS ABI, descriptor-backed filesystem syscalls,
+  Pi 5 hardware proof, shell, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, and DMA/cache-driver policy remain blocked until later explicit
+  tasks accept their contracts and gates.

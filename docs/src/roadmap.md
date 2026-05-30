@@ -204,7 +204,19 @@ rejections, zero live-launch side effects, and final
 qemu-initial-user-stack-smoke-complete/PASS lines. No Pi 5 hardware proof,
 live TTBR activation, lower-EL ERET, scheduler runnable publication, process
 lifecycle, filesystem syscall, networking, or SSH capability is accepted by
-this smoke slice.
+this smoke slice. The initial user stack closeout checkpoint is accepted, and
+supervisor planning selected live address-space activation as the next Phase
+8.3 frontier. The live address-space activation source inventory is now
+accepted. It maps accepted loader/install/address-space/materialization/
+launch/stack artifacts to the still-missing live activation boundary:
+TTBR0_EL1/TTBR1_EL1 root provenance, TCR_EL1/MAIR_EL1/SCTLR_EL1 compatibility,
+ASID/TLB policy, barrier ordering, kernel reachability, exception/fault
+reporting, rollback/teardown, and the separation from lower-EL ERET and
+scheduler runnable publication. It recommends
+phase8-live-address-space-activation-contract-20260530 as the next bounded
+documentation-only task. Live register mutation, lower-EL launch, process
+lifecycle, filesystem syscalls, Pi 5 hardware proof, networking, and SSH
+remain blocked.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -2963,6 +2975,18 @@ Milestone 8.3: Program Loader
   networking, or SSH capability is accepted. No explicit queued follow-up task
   remains; supervisor planning is required before the worker may promote
   another Phase 8.3 task.
+- Phase 8 live address-space activation source inventory is accepted. It maps
+  the accepted ProgramImagePlan, ProcessImageInstallPlan,
+  ProcessAddressSpace, ProcessPageTableMaterialization,
+  InitialProcessLaunchPlan, and InitialUserStackPlan lineage to the next
+  missing live activation boundary. The inventory separates TTBR0_EL1/
+  TTBR1_EL1 root provenance, TCR_EL1/MAIR_EL1/SCTLR_EL1 compatibility,
+  ASID/TLB policy, barrier ordering, kernel reachability, exception/fault
+  reporting, rollback/teardown, and activation-state updates from lower-EL
+  ERET, scheduler runnable publication, process lifecycle, startup ABI,
+  filesystem syscalls, Pi 5 hardware proof, networking, and SSH. It
+  recommends phase8-live-address-space-activation-contract-20260530 as the
+  next bounded documentation-only task.
 
 Acceptance criteria:
 
