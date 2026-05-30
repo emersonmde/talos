@@ -54,6 +54,46 @@ ADR template:
   UART interrupt ownership, and DMA/cache-driver policy remain blocked until
   later explicit tasks accept their contracts and gates.
 
+## 2026-05-30 - Phase 8 QEMU Program Loader Smoke Plan Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 QEMU/substitute
+  program-loader smoke plan. No Rust behavior, assembly behavior, QEMU run,
+  Pi 5 hardware run, boot archive publication, hardware-lock acquisition,
+  loader core, process creation, exec/spawn/wait, argv/envp stack
+  implementation, shell, descriptor-backed filesystem syscall, writable
+  filesystem, persistent storage, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache-driver policy was added.
+- Context: The accepted program-loader format contract recommended one
+  QEMU/substitute smoke plan before any loader core, parser, mapper,
+  process-install, or hardware task. The accepted executable policy remains a
+  narrow static ELF64/AArch64 ET_EXEC image from the read-only initramfs/VFS
+  regular-file boundary.
+- Decision: Accept phase8-qemu-program-loader-smoke-plan-20260530. The smoke
+  plan defines qemu_program_loader_smoke, fixture identity
+  phase8-program-loader-elf64-aarch64-v1, retained evidence path
+  tasks/evidence/2026-05-30-qemu-program-loader-smoke-core/qemu-program-loader-smoke.log,
+  exact PASS/classification vocabulary, image-plan-only success observations,
+  deterministic negative cases for bad magic, dynamic interpreter, W+X
+  segment, out-of-user-range segment, overlap, bad entry, and file-range
+  overflow, plus conditional regression gates.
+- Evidence level: static documentation/source inspection. Reviewed the
+  accepted program-loader format contract, program-loader source inventory,
+  read-only initramfs/VFS smoke plan pattern, roadmap, and ADR index. No QEMU
+  or physical Pi 5 evidence was produced by this documentation-only plan.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next bounded implementation task should be
+  phase8-program-loader-core-20260530 only after supervisor planning queues it
+  with explicit scope, acceptance criteria, validation gates, documentation
+  requirements, and evidence requirements. Loader core implementation, process
+  address-space installation, lower-EL launch, argv/envp stack construction,
+  process creation, exec/spawn/wait, shell, descriptor-backed filesystem
+  syscalls, Pi 5 hardware proof, writable filesystems, persistent storage,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
+  policy remain blocked until later explicit tasks accept their contracts and
+  gates.
+
 ## 2026-05-30 - Phase 8 Program Loader Source Inventory Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 program-loader

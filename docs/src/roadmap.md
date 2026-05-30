@@ -2401,6 +2401,23 @@ Milestone 8.3: Program Loader
   syscalls, Pi 5 hardware proof, writable filesystems, persistent storage,
   networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
   policy remain blocked until later explicit tasks accept their gates.
+- Phase 8 QEMU/substitute program-loader smoke plan is accepted. It defines
+  the qemu_program_loader_smoke scenario, fixture identity
+  phase8-program-loader-elf64-aarch64-v1, image-plan-only success
+  observations for a narrow static ELF64/AArch64 ET_EXEC /bin/init fixture,
+  deterministic negative cases for bad magic, dynamic interpreter, W+X
+  segment, out-of-user-range segment, overlap, bad entry, and file-range
+  overflow, retained evidence path
+  tasks/evidence/2026-05-30-qemu-program-loader-smoke-core/qemu-program-loader-smoke.log,
+  PASS/classification lines, and conditional regression gates. The next
+  bounded implementation task should be phase8-program-loader-core-20260530
+  only after supervisor planning queues it with explicit scope and gates.
+  Loader core implementation, process address-space installation, lower-EL
+  launch of a loaded image, argv/envp stack construction, process creation,
+  exec/spawn/wait, shell, descriptor-backed filesystem syscalls, Pi 5 hardware
+  proof, writable filesystems, persistent storage, networking, SSH, RP1/PCIe,
+  UART interrupt ownership, and DMA/cache-driver policy remain blocked until
+  later explicit tasks accept their gates.
 
 Acceptance criteria:
 
