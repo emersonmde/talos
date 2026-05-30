@@ -12,6 +12,42 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 Process Install Source Inventory Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 process-install
+  source inventory. No Rust behavior, assembly behavior, QEMU execution, Pi 5
+  hardware run, boot archive publication, hardware-lock acquisition, process
+  creation, lower-EL launch, argv/envp implementation, exec/spawn/wait, shell,
+  descriptor-backed filesystem syscall, writable filesystem, persistent
+  storage, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted program-loader closeout proved only the image-plan
+  frontier: immutable /bin/init bytes can produce a deterministic
+  ProgramImagePlan, but no process-owned install surface exists.
+- Decision: Accept phase8-process-install-source-inventory-20260530. The
+  inventory maps accepted inputs and gaps for process address-space ownership,
+  user-frame allocation, page-table installation, segment copy/zero-fill,
+  rollback, initial lower-EL frame, user stack, scheduler/process ownership,
+  and descriptor inheritance.
+- Evidence level: static documentation/source inspection. Reviewed the
+  accepted Phase 8 loader inventory, format contract, smoke plan, core and
+  smoke task records, loader closeout, retained QEMU/substitute evidence,
+  Phase 7 EL0/address-space and descriptor-table contracts, src/program_loader.rs,
+  src/initramfs.rs, src/posix.rs, src/scheduler.rs, src/syscall.rs,
+  src/arch/aarch64/exceptions.rs, memory-map owners, QEMU/RPi5 target proof
+  owners, roadmap, SUMMARY, and ADR index.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next bounded task should be
+  phase8-process-install-contract-20260530, documentation-only, after
+  supervisor planning queues explicit scope, acceptance criteria, gates, docs,
+  and evidence. Process-install implementation, QEMU execution, Pi 5 hardware
+  proof, lower-EL launch of the loaded image, argv/envp construction,
+  exec/spawn/wait, shell, descriptor-backed filesystem syscalls, writable
+  filesystems, persistent storage, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, and DMA/cache-driver policy remain blocked.
+
 ## 2026-05-30 - Phase 8 Program Loader Core Accepted
 
 - Status: accepted as the target-independent Milestone 8.3 program-loader

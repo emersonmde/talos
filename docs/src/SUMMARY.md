@@ -131,6 +131,7 @@
 - [Phase 8 Program Loader Format Contract](project/phase8-program-loader-format-contract.md)
 - [Phase 8 QEMU Program Loader Smoke Plan](project/phase8-qemu-program-loader-smoke-plan.md)
 - [Phase 8 Program Loader Closeout Checkpoint](project/phase8-program-loader-closeout-checkpoint.md)
+- [Phase 8 Process Install Source Inventory](project/phase8-process-install-source-inventory.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

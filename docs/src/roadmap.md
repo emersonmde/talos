@@ -2467,6 +2467,18 @@ Milestone 8.3: Program Loader
   proof, networking, SSH, RP1/PCIe, UART interrupt ownership, and
   DMA/cache-driver policy blocked until later explicit tasks accept their
   gates.
+- Phase 8 process-install source inventory is accepted. It maps the source
+  owners and gaps between the accepted ProgramImagePlan and any future
+  process-owned address-space installation: frame allocation, page-table
+  mutation, rollback, initial lower-EL frame, user stack, descriptor
+  inheritance, process identity, and scheduler handoff. It recommends
+  phase8-process-install-contract-20260530 as the next bounded
+  documentation-only task. Rust implementation, QEMU execution, Pi 5 hardware
+  proof, lower-EL launch of the loaded image, argv/envp construction,
+  exec/spawn/wait, shell, descriptor-backed filesystem syscalls, writable
+  filesystems, persistent storage, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, and DMA/cache-driver policy remain blocked until later explicit
+  tasks accept their gates.
 
 Acceptance criteria:
 
