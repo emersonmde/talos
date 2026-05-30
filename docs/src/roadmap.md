@@ -52,6 +52,17 @@ page-table mutation, scheduler handoff, lower-EL launch, argv/envp, descriptor
 inheritance, shell, hardware, or filesystem syscall behavior. The next bounded
 task is a QEMU/substitute process-install smoke plan for this metadata-only
 boundary.
+That QEMU/substitute process-install smoke plan is now accepted. It defines
+qemu_process_install_smoke, loader fixture identity
+phase8-program-loader-elf64-aarch64-v1, install boundary identity
+phase8-process-install-plan-v1, retained evidence path
+tasks/evidence/2026-05-30-qemu-process-install-smoke-core/qemu-process-install-smoke.log,
+exact PASS/classification vocabulary, metadata-only success observations,
+deterministic no-partial-install rejection cases, and conditional regression
+gates. Process-install implementation remains the next queued bounded task;
+hardware, physical page allocation, page-table mutation, lower-EL launch,
+argv/envp, scheduler handoff, shell, and filesystem syscall behavior remain
+blocked.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -2489,6 +2500,31 @@ Milestone 8.3: Program Loader
   filesystems, persistent storage, networking, SSH, RP1/PCIe, UART interrupt
   ownership, and DMA/cache-driver policy remain blocked until later explicit
   tasks accept their gates.
+- Phase 8 process-install contract is accepted. It selects a
+  target-independent metadata-only ProcessImageInstallPlan boundary derived
+  from a validated ProgramImagePlan, with exact UserText/UserData permission
+  preservation, ordered page records, clipped file-copy and zero-fill ranges,
+  deterministic errors, and all-or-nothing semantics. It accepts no frame
+  allocation, physical byte copy, page-table mutation, scheduler handoff,
+  lower-EL launch, argv/envp, descriptor inheritance, shell, hardware, or
+  filesystem syscall behavior.
+- Phase 8 QEMU/substitute process-install smoke plan is accepted. It defines
+  qemu_process_install_smoke, fixture identity
+  phase8-program-loader-elf64-aarch64-v1, install boundary identity
+  phase8-process-install-plan-v1, retained evidence path
+  tasks/evidence/2026-05-30-qemu-process-install-smoke-core/qemu-process-install-smoke.log,
+  final classification qemu-process-install-smoke-complete, PASS vocabulary,
+  success observations for metadata-only ProcessImageInstallPlan derivation,
+  deterministic rejection observations for bad plan invariants, overlap,
+  permission widening, bad entry, and budget overflow, plus conditional
+  regression gates. The next bounded implementation task should be
+  phase8-process-install-core-20260530 only because supervisor planning has
+  already queued it with explicit scope and gates. Physical page allocation,
+  page-table mutation, lower-EL launch, argv/envp construction, process
+  creation, exec/spawn/wait, shell, descriptor-backed filesystem syscalls,
+  Pi 5 hardware proof, writable filesystems, persistent storage, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
+  blocked until later explicit tasks accept their gates.
 
 Acceptance criteria:
 
