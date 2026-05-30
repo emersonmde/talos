@@ -123,6 +123,7 @@
 - [Phase 7 File Descriptor Table Closeout Checkpoint](project/phase7-file-descriptor-table-closeout-checkpoint.md)
 - [Phase 7 Final Frontier Source Inventory](project/phase7-final-frontier-source-inventory.md)
 - [Phase 7 Final Closeout Checkpoint](project/phase7-final-closeout-checkpoint.md)
+- [Phase 8 Filesystem And Program Loading Source Inventory](project/phase8-filesystem-program-loading-source-inventory.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

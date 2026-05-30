@@ -13,7 +13,9 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is in the Phase 7 final frontier checkpoint, after accepting the Phase
+Talos is in Phase 8 source inventory after the accepted Phase 7 final closeout
+checkpoint recommended the first bounded filesystem/program-loading planning
+task. The accepted Phase 7 frontier includes the Phase
 6.3 production scheduler runtime closeout,
 the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -681,9 +683,12 @@ policy, or full POSIX readiness.
 
 Near-term direction after the accepted Phase 7 closeout:
 
-- Start with the explicitly queued Phase 8 filesystem/program-loading source
-  inventory, using the Phase 7 final closeout recommendation flag as the
-  mechanical dependency.
+- Start with the accepted Phase 8 filesystem/program-loading source inventory
+  as the source-owner and gap map for Milestone 8.1.
+- The next recommended task is the documentation-only
+  phase8-readonly-initramfs-vfs-contract-20260530 contract. It should define
+  the read-only initial filesystem/VFS boundary before ELF/program loading or
+  shell work.
 - Keep QEMU, host-side unit tests, and static documentation gates first. Reserve
   serialized Pi 5 runs for the smallest physical claim that cannot be proven on
   the QEMU/substitute path.
@@ -2277,6 +2282,14 @@ Milestone 8.1: Initramfs or Ramfs
 
 - Add an embedded or TFTP-loaded initramfs for early files.
 - Implement path lookup, file metadata, and read-only file contents.
+- Phase 8 filesystem/program-loading source inventory is accepted. It maps
+  existing owners and missing contracts for POSIX path copying, VFS/filesystem
+  objects, descriptor inheritance, process identity, address-space setup,
+  executable images, argv/envp, and boot/test scenarios. It recommends
+  phase8-readonly-initramfs-vfs-contract-20260530 as the next
+  documentation-only task and keeps ELF/program loading, process creation,
+  shell, networking, SSH, RP1/PCIe, UART interrupt ownership, and
+  DMA/cache-driver policy blocked.
 
 Acceptance criteria:
 

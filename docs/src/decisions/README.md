@@ -6440,3 +6440,36 @@ ADR template:
   networking, SSH, object finalization, dup2/fcntl, signals, wait queues,
   nonblocking I/O, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy,
   and full POSIX descriptor claims remain blocked.
+
+## 2026-05-30 - Phase 8 Filesystem/Program-Loading Source Inventory Accepted
+
+- Status: accepted as the documentation-only Milestone 8.1
+  filesystem/program-loading source inventory. No Rust behavior, assembly
+  behavior, QEMU run, Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, VFS lookup, filesystem-backed I/O, program
+  loading, ELF parsing, argv/envp setup, process creation, shell, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, or Phase 8
+  runtime capability was added.
+- Context: The accepted Phase 7 final closeout set the durable recommendation
+  flag for the first Phase 8 source-inventory task. The inventory maps the
+  accepted Phase 7 inputs that Phase 8 can reuse: lexical path/error
+  vocabulary, user-copy helpers, process-owner-backed descriptors, scheduler
+  ProcessOwnerId placeholders, lower-EL proof payload conventions, and
+  QEMU/Pi 5 evidence discipline.
+- Decision: Accept
+  phase8-filesystem-program-loading-source-inventory-20260530. The next
+  recommended bounded task is the documentation-only
+  phase8-readonly-initramfs-vfs-contract-20260530 contract, scoped to the
+  read-only initial filesystem and VFS object boundary before ELF/program
+  loading or shell behavior.
+- Evidence level: static source/documentation inspection, documentation build,
+  whitespace inspection, and staged whitespace inspection. No QEMU or physical
+  Pi 5 evidence was produced by this documentation-only inventory.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: Milestone 8.1 should contract read-only initramfs/VFS object
+  semantics next. ELF/program loading, argv/envp setup, process creation,
+  exec/spawn/wait, shell, writable filesystems, persistent storage, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and Pi 5
+  hardware proof remain blocked until later explicit tasks accept their
+  contracts and validation gates.
