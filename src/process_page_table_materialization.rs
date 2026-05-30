@@ -334,6 +334,21 @@ impl MaterializedUserFrameLease {
         self.physical_frame
     }
 
+    #[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+    pub(crate) const fn kind(self) -> crate::program_loader::UserSegmentKind {
+        self.kind
+    }
+
+    #[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+    pub(crate) const fn permissions(self) -> UserMappingPermissions {
+        self.permissions
+    }
+
+    #[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+    pub(crate) const fn zeroed_before_copy(self) -> bool {
+        self.zeroed_before_copy
+    }
+
     pub(crate) const fn copied_bytes(self) -> u64 {
         self.copied_bytes
     }
@@ -380,6 +395,11 @@ impl ProcessPageDescriptorRecord {
         self.mapping_index
     }
 
+    #[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+    pub(crate) const fn kind(self) -> crate::program_loader::UserSegmentKind {
+        self.kind
+    }
+
     pub(crate) const fn virtual_page(self) -> u64 {
         self.virtual_page
     }
@@ -402,6 +422,11 @@ impl ProcessPageDescriptorRecord {
 
     pub(crate) const fn user_execute_never(self) -> bool {
         self.user_execute_never
+    }
+
+    #[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+    pub(crate) const fn normal_inner_shareable(self) -> bool {
+        self.normal_inner_shareable
     }
 
     pub(crate) const fn writable(self) -> bool {

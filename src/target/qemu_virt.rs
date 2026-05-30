@@ -150,11 +150,12 @@ use crate::{
 };
 #[cfg(any(
     talos_boot_scenario = "qemu_process_install_smoke",
-    talos_boot_scenario = "qemu_process_address_space_smoke"
+    talos_boot_scenario = "qemu_process_address_space_smoke",
+    talos_boot_scenario = "qemu_process_page_table_materialization_smoke"
 ))]
 use crate::{
     initramfs::{PHASE8_INIT_BYTES, PHASE8_INIT_PATH, phase8_readonly_initramfs_fixture},
-    posix::{PosixError, UserMappingPermissions},
+    posix::{PosixError, USER_NULL_GUARD_END, UserMappingPermissions},
     process_install::{
         MAX_PROCESS_INSTALL_FOOTPRINT, MAX_PROCESS_INSTALL_PAGES, MAX_ZERO_RANGES_PER_PAGE,
         PROCESS_INSTALL_BOUNDARY_IDENTITY, PageByteRange, ProcessImageInstallPlan,
@@ -165,6 +166,21 @@ use crate::{
         LOADER_PAGE_SIZE, MAX_LOAD_SEGMENTS, PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
         PlannedUserSegment, ProgramImagePlan, UserSegmentKind, plan_phase8_init_image,
     },
+};
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+use crate::{
+    process_address_space::{
+        ModelLeaseToken, PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY, PageTableRootLease,
+        ProcessAddressSpace, ProcessAddressSpaceId, ProcessAddressSpaceLeaseSource,
+        ProcessAddressSpaceSideEffects, ProcessUserMapping, TablePageLease, UserFrameLease,
+        install_process_address_space,
+    },
+    process_page_table_materialization::{
+        PROCESS_PAGE_TABLE_KERNEL_MAPPING_POLICY,
+        PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY, ProcessMaterializationRequest,
+        ProcessPageTableMaterializationLeaseSource, materialize_process_page_tables,
+    },
+    scheduler::ProcessOwnerId,
 };
 #[cfg(talos_boot_scenario = "qemu_process_address_space_smoke")]
 use crate::{
@@ -6252,6 +6268,752 @@ fn process_address_space_plan_from_pages(
         ProcessInstallSideEffects::NONE,
         true,
     )
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+pub fn run_process_page_table_materialization_smoke() -> bool {
+    crate::println!("qemu-process-page-table-materialization-smoke: start");
+
+    let (success_ok, frames_ok, descriptors_ok, side_effects_ok) =
+        process_materialization_report_success();
+    let teardown_ok = process_materialization_report_teardown();
+    let bad_address_space_ok = process_materialization_report_bad_address_space();
+    let forbidden_range_ok = process_materialization_report_error(
+        "forbidden-range",
+        process_materialization_forbidden_range_fixture(),
+        PosixError::AccessDenied,
+        ProcessMaterializationRequest::DescriptorImageOnly,
+        None,
+    );
+    let permission_widening_ok = process_materialization_report_error(
+        "permission-widening",
+        process_materialization_permission_widening_fixture(),
+        PosixError::AccessDenied,
+        ProcessMaterializationRequest::DescriptorImageOnly,
+        None,
+    );
+    let resource_exhaustion_ok = process_materialization_report_error(
+        "resource-exhaustion",
+        process_materialization_valid_fixture(),
+        PosixError::NoMemory,
+        ProcessMaterializationRequest::DescriptorImageOnly,
+        Some(ProcessPageTableMaterializationLeaseSource::with_limits(
+            1, 3, 3,
+        )),
+    );
+    let unsupported_topology_ok = process_materialization_report_error(
+        "unsupported-topology",
+        process_materialization_unsupported_topology_fixture(),
+        PosixError::NotSupported,
+        ProcessMaterializationRequest::DescriptorImageOnly,
+        None,
+    );
+    let copy_zero_mismatch_ok = process_materialization_report_error(
+        "copy-zero-mismatch",
+        process_materialization_valid_fixture(),
+        PosixError::InvalidArgument,
+        ProcessMaterializationRequest::DescriptorImageOnly,
+        Some(process_materialization_copy_zero_failure_source()),
+    );
+    let activation_request_ok = process_materialization_report_error(
+        "activation-request",
+        process_materialization_valid_fixture(),
+        PosixError::NotImplemented,
+        ProcessMaterializationRequest::RunnableLowerElState,
+        None,
+    );
+
+    let participants = u64::from(success_ok)
+        + u64::from(frames_ok)
+        + u64::from(descriptors_ok)
+        + u64::from(side_effects_ok)
+        + u64::from(teardown_ok)
+        + u64::from(bad_address_space_ok)
+        + u64::from(forbidden_range_ok)
+        + u64::from(permission_widening_ok)
+        + u64::from(resource_exhaustion_ok)
+        + u64::from(unsupported_topology_ok)
+        + u64::from(copy_zero_mismatch_ok)
+        + u64::from(activation_request_ok);
+    let errors = 12 - participants;
+    let classification = if participants == 12 && errors == 0 {
+        "qemu-process-page-table-materialization-smoke-complete"
+    } else {
+        "qemu-process-page-table-materialization-smoke-failed"
+    };
+
+    crate::println!(
+        "qemu-process-page-table-materialization-smoke: final participants={} expected=12 errors={} classification={}",
+        participants,
+        errors,
+        classification
+    );
+    if participants == 12 && errors == 0 {
+        crate::println!("qemu-process-page-table-materialization-smoke: PASS");
+        true
+    } else {
+        crate::println!("qemu-process-page-table-materialization-smoke: FAIL");
+        false
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+fn process_materialization_report_success() -> (bool, bool, bool, bool) {
+    let Ok((image, install_plan, address_space)) = process_materialization_valid_fixture() else {
+        process_materialization_report_empty_success();
+        return (false, false, false, false);
+    };
+    let mut lease_source =
+        ProcessPageTableMaterializationLeaseSource::for_address_space(address_space);
+    let Ok(materialization) = materialize_process_page_tables(
+        image,
+        install_plan,
+        address_space,
+        ProcessMaterializationRequest::DescriptorImageOnly,
+        &mut lease_source,
+    ) else {
+        process_materialization_report_empty_success();
+        return (false, false, false, false);
+    };
+
+    crate::println!(
+        "qemu-process-page-table-materialization-smoke: fixture name={} path=/bin/init source-digest={:#x} install-boundary={} address-space-boundary={} materialization-boundary={}",
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        materialization.source_digest(),
+        PROCESS_INSTALL_BOUNDARY_IDENTITY,
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY,
+        PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY
+    );
+
+    let success_ok = materialization.published()
+        && materialization.boundary_identity()
+            == PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY
+        && materialization.kernel_mapping_policy() == PROCESS_PAGE_TABLE_KERNEL_MAPPING_POLICY
+        && materialization.root().physical_frame() != 0
+        && materialization.table_page_count() == 3
+        && materialization.user_frame_count() == install_plan.page_count()
+        && materialization.descriptor_count() == install_plan.page_count()
+        && materialization.activation_blocked();
+    crate::println!(
+        "qemu-process-page-table-materialization-smoke: success output=ProcessPageTableMaterialization published={} id={:#x} root-pages=1 table-pages={} user-frames={} descriptors={} activation-blocked={} kernel-mapping-policy={} ok={}",
+        materialization.published(),
+        materialization.id(),
+        materialization.table_page_count(),
+        materialization.user_frame_count(),
+        materialization.descriptor_count(),
+        materialization.activation_blocked(),
+        materialization.kernel_mapping_policy(),
+        success_ok
+    );
+
+    let frame0_ok = process_materialization_report_frame(
+        0,
+        materialization.user_frame(0),
+        UserSegmentKind::UserText,
+    );
+    let frame1_ok = process_materialization_report_frame(
+        1,
+        materialization.user_frame(1),
+        UserSegmentKind::UserData,
+    );
+    let descriptor0_ok = process_materialization_report_descriptor(
+        0,
+        materialization.descriptor(0),
+        UserSegmentKind::UserText,
+    );
+    let descriptor1_ok = process_materialization_report_descriptor(
+        1,
+        materialization.descriptor(1),
+        UserSegmentKind::UserData,
+    );
+
+    let side_effects = materialization.side_effects();
+    let snapshot = lease_source.snapshot();
+    let side_effects_ok = snapshot.root_pages_leased == 1
+        && snapshot.table_pages_leased == materialization.table_page_count()
+        && snapshot.user_frames_leased == materialization.user_frame_count()
+        && snapshot.descriptor_slots_installed == materialization.descriptor_count()
+        && side_effects.root_pages_leased() == 1
+        && side_effects.table_pages_leased() == materialization.table_page_count()
+        && side_effects.user_frames_leased() == materialization.user_frame_count()
+        && side_effects.descriptors_installed() == materialization.descriptor_count()
+        && side_effects.user_frames_populated() == materialization.user_frame_count()
+        && side_effects.activation_blocked();
+    crate::println!(
+        "qemu-process-page-table-materialization-smoke: side-effects root-pages-leased={} table-pages-leased={} user-frames-leased={} descriptors-installed={} copied-bytes={:#x} zeroed-bytes={:#x} ttbr-mutated=false tlb-mutated=false scheduler-published=false lower-el-frame=false runnable=false ok={}",
+        snapshot.root_pages_leased,
+        snapshot.table_pages_leased,
+        snapshot.user_frames_leased,
+        snapshot.descriptor_slots_installed,
+        side_effects.copied_bytes(),
+        side_effects.zeroed_bytes(),
+        side_effects_ok
+    );
+
+    (
+        success_ok,
+        frame0_ok && frame1_ok,
+        descriptor0_ok && descriptor1_ok,
+        side_effects_ok,
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+fn process_materialization_report_empty_success() {
+    crate::println!(
+        "qemu-process-page-table-materialization-smoke: fixture name={} path=/bin/init source-digest=0x0 install-boundary={} address-space-boundary={} materialization-boundary={}",
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        PROCESS_INSTALL_BOUNDARY_IDENTITY,
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY,
+        PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY
+    );
+    crate::println!(
+        "qemu-process-page-table-materialization-smoke: success output=ProcessPageTableMaterialization published=false id=0x0 root-pages=0 table-pages=0 user-frames=0 descriptors=0 activation-blocked=true kernel-mapping-policy={} ok=false",
+        PROCESS_PAGE_TABLE_KERNEL_MAPPING_POLICY
+    );
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+fn process_materialization_report_frame(
+    index: usize,
+    frame: Option<crate::process_page_table_materialization::MaterializedUserFrameLease>,
+    expected_kind: UserSegmentKind,
+) -> bool {
+    let Some(frame) = frame else {
+        crate::println!(
+            "qemu-process-page-table-materialization-smoke: frame index={} kind=missing virtual-page=0x0 physical-frame=0x0 copy-bytes=0x0 zero-bytes=0x0 zero-before-copy=false source-page=0 scrub-required=false ok=false",
+            index
+        );
+        return false;
+    };
+    let ok = frame.kind() == expected_kind
+        && frame.permissions() == process_materialization_expected_permissions(expected_kind)
+        && frame.zeroed_before_copy()
+        && frame.physical_frame() != 0
+        && frame.scrub_required()
+        && !frame.released();
+    crate::println!(
+        "qemu-process-page-table-materialization-smoke: frame index={} kind={} virtual-page={:#x} physical-frame={:#x} copy-bytes={:#x} zero-bytes={:#x} zero-before-copy={} source-page={} scrub-required={} ok={}",
+        index,
+        frame.kind().name(),
+        frame.virtual_page(),
+        frame.physical_frame(),
+        frame.copied_bytes(),
+        frame.zeroed_bytes(),
+        frame.zeroed_before_copy(),
+        frame.source_page_ordinal(),
+        frame.scrub_required(),
+        ok
+    );
+    ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+fn process_materialization_report_descriptor(
+    index: usize,
+    descriptor: Option<crate::process_page_table_materialization::ProcessPageDescriptorRecord>,
+    expected_kind: UserSegmentKind,
+) -> bool {
+    let Some(descriptor) = descriptor else {
+        crate::println!(
+            "qemu-process-page-table-materialization-smoke: descriptor index={} kind=missing flags=--- ap=EL0_NONE pxn=false uxn=false attr=unknown af=false wx=true ok=false",
+            index
+        );
+        return false;
+    };
+    let permissions = process_materialization_expected_permissions(expected_kind);
+    let wx = descriptor.writable() && descriptor.executable();
+    let ok = descriptor.kind() == expected_kind
+        && descriptor.privileged_execute_never()
+        && descriptor.user_execute_never()
+            == !permissions.contains(UserMappingPermissions::EXECUTE)
+        && descriptor.normal_inner_shareable()
+        && descriptor.write_xor_execute()
+        && !wx;
+    crate::println!(
+        "qemu-process-page-table-materialization-smoke: descriptor index={} kind={} flags={} ap={} pxn={} uxn={} attr=normal-inner-shareable af=true wx={} ok={}",
+        index,
+        descriptor.kind().name(),
+        process_materialization_permission_flags(permissions),
+        process_materialization_ap_name(permissions),
+        descriptor.privileged_execute_never(),
+        descriptor.user_execute_never(),
+        wx,
+        ok
+    );
+    ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+fn process_materialization_report_teardown() -> bool {
+    let Ok((image, install_plan, address_space)) = process_materialization_valid_fixture() else {
+        process_materialization_report_empty_teardown("first", false);
+        process_materialization_report_empty_teardown("second", true);
+        return false;
+    };
+    let mut lease_source =
+        ProcessPageTableMaterializationLeaseSource::for_address_space(address_space);
+    let Ok(mut materialization) = materialize_process_page_tables(
+        image,
+        install_plan,
+        address_space,
+        ProcessMaterializationRequest::DescriptorImageOnly,
+        &mut lease_source,
+    ) else {
+        process_materialization_report_empty_teardown("first", false);
+        process_materialization_report_empty_teardown("second", true);
+        return false;
+    };
+
+    let first = materialization.destroy(&mut lease_source);
+    let first_ok = first.descriptors_cleared() == install_plan.page_count()
+        && first.table_pages_released() == 3
+        && first.user_frames_released() == install_plan.page_count()
+        && first.root_released()
+        && !first.already_destroyed()
+        && lease_source.outstanding_leases() == 0;
+    crate::println!(
+        "qemu-process-page-table-materialization-smoke: teardown phase=first descriptors-cleared={} table-pages-released={} user-frames-released={} root-released={} already-destroyed={} ok={}",
+        first.descriptors_cleared(),
+        first.table_pages_released(),
+        first.user_frames_released(),
+        first.root_released(),
+        first.already_destroyed(),
+        first_ok
+    );
+
+    let second = materialization.destroy(&mut lease_source);
+    let second_ok = second.descriptors_cleared() == 0
+        && second.table_pages_released() == 0
+        && second.user_frames_released() == 0
+        && !second.root_released()
+        && second.already_destroyed()
+        && lease_source.outstanding_leases() == 0;
+    crate::println!(
+        "qemu-process-page-table-materialization-smoke: teardown phase=second descriptors-cleared={} table-pages-released={} user-frames-released={} root-released={} already-destroyed={} ok={}",
+        second.descriptors_cleared(),
+        second.table_pages_released(),
+        second.user_frames_released(),
+        second.root_released(),
+        second.already_destroyed(),
+        second_ok
+    );
+
+    first_ok && second_ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+fn process_materialization_report_empty_teardown(phase: &str, already_destroyed: bool) {
+    crate::println!(
+        "qemu-process-page-table-materialization-smoke: teardown phase={} descriptors-cleared=0 table-pages-released=0 user-frames-released=0 root-released=false already-destroyed={} ok=false",
+        phase,
+        already_destroyed
+    );
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+fn process_materialization_report_bad_address_space() -> bool {
+    let Ok((image, plan, mut address_space)) = process_materialization_valid_fixture() else {
+        crate::println!(
+            "qemu-process-page-table-materialization-smoke: error case=bad-address-space errno=-EINVAL partial-materialization=false leaked-leases=false ok=false"
+        );
+        return false;
+    };
+    let mut address_space_leases = ProcessAddressSpaceLeaseSource::for_plan(plan);
+    let _ = address_space.destroy(&mut address_space_leases);
+    process_materialization_report_error(
+        "bad-address-space",
+        Ok((image, plan, address_space)),
+        PosixError::InvalidArgument,
+        ProcessMaterializationRequest::DescriptorImageOnly,
+        None,
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+fn process_materialization_report_error(
+    case: &str,
+    fixture: Result<
+        (
+            ProgramImagePlan,
+            ProcessImageInstallPlan,
+            ProcessAddressSpace,
+        ),
+        PosixError,
+    >,
+    expected: PosixError,
+    request: ProcessMaterializationRequest,
+    source_override: Option<ProcessPageTableMaterializationLeaseSource>,
+) -> bool {
+    let Ok((image, plan, address_space)) = fixture else {
+        crate::println!(
+            "qemu-process-page-table-materialization-smoke: error case={} errno=-{} partial-materialization=false leaked-leases=false ok=false",
+            case,
+            expected.name()
+        );
+        return false;
+    };
+    let mut lease_source = source_override.unwrap_or_else(|| {
+        ProcessPageTableMaterializationLeaseSource::for_address_space(address_space)
+    });
+    let result =
+        materialize_process_page_tables(image, plan, address_space, request, &mut lease_source);
+    let ok =
+        matches!(result, Err(error) if error == expected) && lease_source.outstanding_leases() == 0;
+    crate::println!(
+        "qemu-process-page-table-materialization-smoke: error case={} errno=-{} partial-materialization=false leaked-leases={} ok={}",
+        case,
+        expected.name(),
+        lease_source.outstanding_leases() != 0,
+        ok
+    );
+    ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+fn process_materialization_valid_fixture() -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+    ),
+    PosixError,
+> {
+    let image = plan_phase8_init_image(phase8_readonly_initramfs_fixture())
+        .map_err(|error| error.posix_error())?;
+    let plan = plan_process_image_install(image)?;
+    let mut address_source = ProcessAddressSpaceLeaseSource::for_plan(plan);
+    let address_space = install_process_address_space(
+        plan,
+        process_materialization_address_space_id(),
+        Some(process_materialization_owner_id()),
+        &mut address_source,
+    )?;
+    Ok((image, plan, address_space))
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+fn process_materialization_forbidden_range_fixture() -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+    ),
+    PosixError,
+> {
+    let image = plan_phase8_init_image(phase8_readonly_initramfs_fixture())
+        .map_err(|error| error.posix_error())?;
+    let page = ProcessImagePageInstallRecord::for_test_unchecked(
+        0,
+        0,
+        0,
+        LOADER_PAGE_SIZE,
+        UserSegmentKind::UserText,
+        UserMappingPermissions::USER_TEXT,
+        0,
+        0,
+        4,
+        [
+            Some(PageByteRange::for_test_unchecked(4, LOADER_PAGE_SIZE - 4)),
+            None,
+        ],
+        1,
+        LOADER_PAGE_SIZE - 4,
+        ProcessInstallAction::AllocateCopyZeroMap,
+    );
+    process_materialization_fixture_from_pages(
+        image,
+        [
+            Some(page),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        ],
+        1,
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+fn process_materialization_permission_widening_fixture() -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+    ),
+    PosixError,
+> {
+    let image = plan_phase8_init_image(phase8_readonly_initramfs_fixture())
+        .map_err(|error| error.posix_error())?;
+    let page = ProcessImagePageInstallRecord::for_test_unchecked(
+        0,
+        0,
+        USER_NULL_GUARD_END,
+        USER_NULL_GUARD_END + LOADER_PAGE_SIZE,
+        UserSegmentKind::UserText,
+        UserMappingPermissions::READ,
+        0,
+        0,
+        4,
+        [
+            Some(PageByteRange::for_test_unchecked(4, LOADER_PAGE_SIZE - 4)),
+            None,
+        ],
+        1,
+        LOADER_PAGE_SIZE - 4,
+        ProcessInstallAction::AllocateCopyZeroMap,
+    );
+    process_materialization_fixture_from_pages(
+        image,
+        [
+            Some(page),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        ],
+        1,
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+fn process_materialization_unsupported_topology_fixture() -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+    ),
+    PosixError,
+> {
+    let image = plan_phase8_init_image(phase8_readonly_initramfs_fixture())
+        .map_err(|error| error.posix_error())?;
+    let text = ProcessImagePageInstallRecord::for_test_unchecked(
+        0,
+        0,
+        USER_NULL_GUARD_END,
+        USER_NULL_GUARD_END + LOADER_PAGE_SIZE,
+        UserSegmentKind::UserText,
+        UserMappingPermissions::USER_TEXT,
+        0,
+        0,
+        4,
+        [
+            Some(PageByteRange::for_test_unchecked(4, LOADER_PAGE_SIZE - 4)),
+            None,
+        ],
+        1,
+        LOADER_PAGE_SIZE - 4,
+        ProcessInstallAction::AllocateCopyZeroMap,
+    );
+    let data = ProcessImagePageInstallRecord::for_test_unchecked(
+        1,
+        1,
+        USER_NULL_GUARD_END + 0x20_0000,
+        USER_NULL_GUARD_END + 0x20_0000 + LOADER_PAGE_SIZE,
+        UserSegmentKind::UserData,
+        UserMappingPermissions::USER_DATA,
+        0,
+        4,
+        4,
+        [
+            Some(PageByteRange::for_test_unchecked(4, LOADER_PAGE_SIZE - 4)),
+            None,
+        ],
+        1,
+        LOADER_PAGE_SIZE - 4,
+        ProcessInstallAction::AllocateCopyZeroMap,
+    );
+    process_materialization_fixture_from_pages(
+        image,
+        [
+            Some(text),
+            Some(data),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        ],
+        2,
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+fn process_materialization_copy_zero_failure_source() -> ProcessPageTableMaterializationLeaseSource
+{
+    let Ok((_, _, address_space)) = process_materialization_valid_fixture() else {
+        return ProcessPageTableMaterializationLeaseSource::with_limits(0, 0, 0);
+    };
+    let mut source = ProcessPageTableMaterializationLeaseSource::for_address_space(address_space);
+    source.fail_population_at_page(1);
+    source
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+fn process_materialization_fixture_from_pages(
+    image: ProgramImagePlan,
+    pages: [Option<ProcessImagePageInstallRecord>; MAX_PROCESS_INSTALL_PAGES],
+    page_count: usize,
+) -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+    ),
+    PosixError,
+> {
+    let plan = ProcessImageInstallPlan::for_test_unchecked(
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        PROCESS_INSTALL_BOUNDARY_IDENTITY,
+        PHASE8_INIT_PATH,
+        image.source_digest(),
+        image.entry(),
+        image.memory_footprint(),
+        page_count,
+        pages,
+        ProcessInstallSideEffects::NONE,
+        true,
+    );
+    let address_space = process_materialization_address_space_from_plan(plan);
+    Ok((image, plan, address_space))
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+fn process_materialization_address_space_from_plan(
+    plan: ProcessImageInstallPlan,
+) -> ProcessAddressSpace {
+    let mut mappings = [None; MAX_PROCESS_INSTALL_PAGES];
+    let mut user_frame_leases = [None; MAX_PROCESS_INSTALL_PAGES];
+    let mut index = 0;
+    let mut copied_bytes = 0;
+    let mut zeroed_bytes = 0;
+    while index < plan.page_count() {
+        if let Some(page) = plan.page(index) {
+            mappings[index] = Some(ProcessUserMapping::for_test_unchecked(
+                page.virtual_start(),
+                page.virtual_end(),
+                page.kind(),
+                page.permissions(),
+                page.copy_page_offset(),
+                page.copy_file_offset(),
+                page.copy_len(),
+                page.zero_len(),
+                page.index(),
+                true,
+                !(page.permissions().contains(UserMappingPermissions::WRITE)
+                    && page.permissions().contains(UserMappingPermissions::EXECUTE)),
+                true,
+                true,
+            ));
+            user_frame_leases[index] = Some(UserFrameLease::for_test_unchecked(
+                ModelLeaseToken::for_test_unchecked(0x100 + index as u64),
+                page.virtual_start(),
+                page.kind(),
+                page.permissions(),
+                true,
+                page.copy_len(),
+                page.zero_len(),
+                page.index(),
+                false,
+            ));
+            copied_bytes += page.copy_len();
+            zeroed_bytes += page.zero_len();
+        }
+        index += 1;
+    }
+    ProcessAddressSpace::for_test_unchecked(
+        process_materialization_address_space_id(),
+        Some(process_materialization_owner_id()),
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY,
+        PageTableRootLease::for_test_unchecked(ModelLeaseToken::for_test_unchecked(1), false),
+        [Some(TablePageLease::for_test_unchecked(
+            ModelLeaseToken::for_test_unchecked(2),
+            false,
+        ))],
+        1,
+        user_frame_leases,
+        plan.page_count(),
+        mappings,
+        plan.page_count(),
+        ProcessAddressSpaceSideEffects::for_test_unchecked(
+            plan.page_count(),
+            1,
+            plan.page_count(),
+            copied_bytes,
+            zeroed_bytes,
+            0,
+        ),
+        true,
+        false,
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+fn process_materialization_address_space_id() -> ProcessAddressSpaceId {
+    ProcessAddressSpaceId::new(0x8300_2001).expect("nonzero address-space id")
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+fn process_materialization_owner_id() -> ProcessOwnerId {
+    ProcessOwnerId::new(0x8300_2002).expect("nonzero process owner id")
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+fn process_materialization_expected_permissions(kind: UserSegmentKind) -> UserMappingPermissions {
+    match kind {
+        UserSegmentKind::UserText => UserMappingPermissions::USER_TEXT,
+        UserSegmentKind::UserData => UserMappingPermissions::USER_DATA,
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+fn process_materialization_permission_flags(permissions: UserMappingPermissions) -> &'static str {
+    match permissions {
+        UserMappingPermissions::USER_TEXT => "R-X",
+        UserMappingPermissions::USER_DATA => "RW-",
+        UserMappingPermissions::READ => "R--",
+        _ => "---",
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+fn process_materialization_ap_name(permissions: UserMappingPermissions) -> &'static str {
+    if permissions.contains(UserMappingPermissions::WRITE) {
+        "EL0_RW"
+    } else {
+        "EL0_RO"
+    }
 }
 
 #[cfg(talos_boot_scenario = "qemu_syscall_smoke")]

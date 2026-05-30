@@ -51,6 +51,7 @@
             talos_boot_scenario = "qemu_program_loader_smoke",
             talos_boot_scenario = "qemu_process_install_smoke",
             talos_boot_scenario = "qemu_process_address_space_smoke",
+            talos_boot_scenario = "qemu_process_page_table_materialization_smoke",
             talos_boot_scenario = "qemu_descriptor_write_smoke"
         )
     ),
@@ -376,6 +377,14 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
+            #[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+            {
+                if target::qemu_virt::run_process_page_table_materialization_smoke() {
+                    target::qemu::exit_success();
+                }
+                target::qemu::exit_failure();
+            }
+
             #[cfg(all(
                 talos_boot_scenario = "qemu_descriptor_write_smoke",
                 not(talos_boot_scenario = "qemu_process_descriptor_stdio_smoke"),
@@ -467,6 +476,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_boot_scenario = "qemu_program_loader_smoke",
                 talos_boot_scenario = "qemu_process_install_smoke",
                 talos_boot_scenario = "qemu_process_address_space_smoke",
+                talos_boot_scenario = "qemu_process_page_table_materialization_smoke",
                 talos_boot_scenario = "qemu_descriptor_write_smoke"
             )))]
             if target::qemu_virt::run_el2_timer_irq_smoke() {
@@ -496,6 +506,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_boot_scenario = "qemu_program_loader_smoke",
                 talos_boot_scenario = "qemu_process_install_smoke",
                 talos_boot_scenario = "qemu_process_address_space_smoke",
+                talos_boot_scenario = "qemu_process_page_table_materialization_smoke",
                 talos_boot_scenario = "qemu_descriptor_write_smoke"
             )))]
             target::qemu::exit_failure();

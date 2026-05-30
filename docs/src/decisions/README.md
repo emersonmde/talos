@@ -7419,3 +7419,41 @@ ADR template:
   process lifecycle, filesystem syscalls, Pi 5 hardware proof, networking,
   SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
   blocked until later explicit tasks accept their contracts and gates.
+
+## 2026-05-30 - Phase 8 QEMU Process Page-Table Materialization Smoke Core Accepted
+
+- Status: accepted as the Milestone 8.3 QEMU/substitute process page-table
+  materialization smoke core. No Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, TTBR/TCR/MAIR/SCTLR writes, ASID/TLB policy
+  change, lower-EL launch, argv/envp, process lifecycle, shell behavior,
+  descriptor-backed filesystem syscalls, writable filesystem, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The accepted materialization core created a non-activating
+  descriptor-image boundary but intentionally deferred retained QEMU evidence
+  to this explicit smoke task.
+- Decision: Accept
+  phase8-qemu-process-page-table-materialization-smoke-core-20260530. The new
+  qemu_process_page_table_materialization_smoke scenario and script retain
+  tasks/evidence/2026-05-30-qemu-process-page-table-materialization-smoke-core/qemu-process-page-table-materialization-smoke.log
+  with classification qemu-process-page-table-materialization-smoke-complete
+  and qemu-process-page-table-materialization-smoke: PASS. The evidence proves
+  success, UserText/UserData frame and descriptor preservation, no live
+  TTBR/TLB/scheduler/lower-EL/runnable side effects, teardown idempotence, and
+  deterministic no-partial-materialization/no-leak rejections.
+- Evidence level: QEMU/substitute smoke evidence, target-independent unit
+  tests, conditional QEMU/substitute process-address-space and process-install
+  smoke regressions, formatting, documentation build, whitespace inspection,
+  and staged whitespace inspection. No physical Pi 5 evidence was produced or
+  claimed.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test passed with 291 no_std tests;
+  scripts/qemu-process-page-table-materialization-smoke.sh passed;
+  scripts/qemu-process-address-space-smoke.sh passed;
+  scripts/qemu-process-install-smoke.sh passed; git diff --check passed;
+  mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The next bounded task should be the queued
+  phase8-process-page-table-materialization-closeout-checkpoint-20260530.
+  TTBR activation, ASID/TLB policy, lower-EL launch, argv/envp, process
+  lifecycle, filesystem syscalls, Pi 5 hardware proof, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
+  blocked until later explicit tasks accept their contracts and gates.

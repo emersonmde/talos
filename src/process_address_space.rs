@@ -40,6 +40,11 @@ impl ModelLeaseToken {
     pub(crate) const fn raw(self) -> u64 {
         self.0
     }
+
+    #[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+    pub(crate) const fn for_test_unchecked(raw: u64) -> Self {
+        Self(raw)
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -84,6 +89,25 @@ impl ProcessAddressSpaceSideEffects {
 
     pub(crate) const fn rollback_releases(self) -> usize {
         self.rollback_releases
+    }
+
+    #[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+    pub(crate) const fn for_test_unchecked(
+        frames_leased: usize,
+        table_pages_leased: usize,
+        mappings_installed: usize,
+        copied_bytes: u64,
+        zeroed_bytes: u64,
+        rollback_releases: usize,
+    ) -> Self {
+        Self {
+            frames_leased,
+            table_pages_leased,
+            mappings_installed,
+            copied_bytes,
+            zeroed_bytes,
+            rollback_releases,
+        }
     }
 }
 
@@ -281,6 +305,11 @@ impl PageTableRootLease {
     pub(crate) const fn released(self) -> bool {
         self.released
     }
+
+    #[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+    pub(crate) const fn for_test_unchecked(token: ModelLeaseToken, released: bool) -> Self {
+        Self { token, released }
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -296,6 +325,11 @@ impl TablePageLease {
 
     pub(crate) const fn released(self) -> bool {
         self.released
+    }
+
+    #[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+    pub(crate) const fn for_test_unchecked(token: ModelLeaseToken, released: bool) -> Self {
+        Self { token, released }
     }
 }
 
@@ -347,6 +381,31 @@ impl UserFrameLease {
 
     pub(crate) const fn released(self) -> bool {
         self.released
+    }
+
+    #[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+    pub(crate) const fn for_test_unchecked(
+        token: ModelLeaseToken,
+        virtual_page: u64,
+        kind: UserSegmentKind,
+        permissions: UserMappingPermissions,
+        zeroed_before_copy: bool,
+        copied_bytes: u64,
+        zeroed_bytes: u64,
+        source_page_ordinal: usize,
+        released: bool,
+    ) -> Self {
+        Self {
+            token,
+            virtual_page,
+            kind,
+            permissions,
+            zeroed_before_copy,
+            copied_bytes,
+            zeroed_bytes,
+            source_page_ordinal,
+            released,
+        }
     }
 }
 
@@ -418,6 +477,39 @@ impl ProcessUserMapping {
 
     pub(crate) const fn kernel_device_denied(self) -> bool {
         self.kernel_device_denied
+    }
+
+    #[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+    pub(crate) const fn for_test_unchecked(
+        virtual_start: u64,
+        virtual_end: u64,
+        kind: UserSegmentKind,
+        permissions: UserMappingPermissions,
+        copy_page_offset: u64,
+        copy_file_offset: usize,
+        copy_len: u64,
+        zero_len: u64,
+        source_page_ordinal: usize,
+        el0_user_access: bool,
+        write_xor_execute: bool,
+        normal_memory_intent: bool,
+        kernel_device_denied: bool,
+    ) -> Self {
+        Self {
+            virtual_start,
+            virtual_end,
+            kind,
+            permissions,
+            copy_page_offset,
+            copy_file_offset,
+            copy_len,
+            zero_len,
+            source_page_ordinal,
+            el0_user_access,
+            write_xor_execute,
+            normal_memory_intent,
+            kernel_device_denied,
+        }
     }
 }
 
@@ -586,6 +678,39 @@ impl ProcessAddressSpace {
             table_page_releases,
             root_released: true,
             already_destroyed: false,
+        }
+    }
+
+    #[cfg(talos_boot_scenario = "qemu_process_page_table_materialization_smoke")]
+    pub(crate) const fn for_test_unchecked(
+        id: ProcessAddressSpaceId,
+        owner: Option<ProcessOwnerId>,
+        boundary_identity: &'static str,
+        root: PageTableRootLease,
+        table_leases: [Option<TablePageLease>; MODEL_TABLE_PAGE_LEASES_PER_ADDRESS_SPACE],
+        table_lease_count: usize,
+        user_frame_leases: [Option<UserFrameLease>; MAX_PROCESS_INSTALL_PAGES],
+        user_frame_lease_count: usize,
+        mappings: [Option<ProcessUserMapping>; MAX_PROCESS_INSTALL_PAGES],
+        mapping_count: usize,
+        side_effects: ProcessAddressSpaceSideEffects,
+        published: bool,
+        destroyed: bool,
+    ) -> Self {
+        Self {
+            id,
+            owner,
+            boundary_identity,
+            root,
+            table_leases,
+            table_lease_count,
+            user_frame_leases,
+            user_frame_lease_count,
+            mappings,
+            mapping_count,
+            side_effects,
+            published,
+            destroyed,
         }
     }
 }

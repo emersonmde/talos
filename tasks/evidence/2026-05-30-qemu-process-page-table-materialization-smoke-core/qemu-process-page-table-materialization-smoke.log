@@ -1,0 +1,26 @@
+
+Talos 0.1.0 booting on talos-aarch64-virt
+boot-info: dtb_pa=0x0000000048000000 core=0 el=2 target=talos-aarch64-virt
+target-services: uart=pl011 timer=arm-generic irq=gic-v2 dtb=Some(
+    0x0000000048000000,
+)
+mmio-regions: 3
+qemu-process-page-table-materialization-smoke: start
+qemu-process-page-table-materialization-smoke: fixture name=phase8-program-loader-elf64-aarch64-v1 path=/bin/init source-digest=0x3892eed223900c65 install-boundary=phase8-process-install-plan-v1 address-space-boundary=phase8-process-address-space-model-v1 materialization-boundary=phase8-process-page-table-materialization-v1
+qemu-process-page-table-materialization-smoke: success output=ProcessPageTableMaterialization published=true id=0x8b3002001 root-pages=1 table-pages=3 user-frames=3 descriptors=3 activation-blocked=true kernel-mapping-policy=activation-blocked-no-kernel-half ok=true
+qemu-process-page-table-materialization-smoke: frame index=0 kind=UserText virtual-page=0x10000 physical-frame=0x40004000 copy-bytes=0x4 zero-bytes=0xffc zero-before-copy=true source-page=0 scrub-required=true ok=true
+qemu-process-page-table-materialization-smoke: frame index=1 kind=UserData virtual-page=0x20000 physical-frame=0x40005000 copy-bytes=0x4 zero-bytes=0xffc zero-before-copy=true source-page=1 scrub-required=true ok=true
+qemu-process-page-table-materialization-smoke: descriptor index=0 kind=UserText flags=R-X ap=EL0_RO pxn=true uxn=false attr=normal-inner-shareable af=true wx=false ok=true
+qemu-process-page-table-materialization-smoke: descriptor index=1 kind=UserData flags=RW- ap=EL0_RW pxn=true uxn=true attr=normal-inner-shareable af=true wx=false ok=true
+qemu-process-page-table-materialization-smoke: side-effects root-pages-leased=1 table-pages-leased=3 user-frames-leased=3 descriptors-installed=3 copied-bytes=0x8 zeroed-bytes=0x2ff8 ttbr-mutated=false tlb-mutated=false scheduler-published=false lower-el-frame=false runnable=false ok=true
+qemu-process-page-table-materialization-smoke: teardown phase=first descriptors-cleared=3 table-pages-released=3 user-frames-released=3 root-released=true already-destroyed=false ok=true
+qemu-process-page-table-materialization-smoke: teardown phase=second descriptors-cleared=0 table-pages-released=0 user-frames-released=0 root-released=false already-destroyed=true ok=true
+qemu-process-page-table-materialization-smoke: error case=bad-address-space errno=-EINVAL partial-materialization=false leaked-leases=false ok=true
+qemu-process-page-table-materialization-smoke: error case=forbidden-range errno=-EACCES partial-materialization=false leaked-leases=false ok=true
+qemu-process-page-table-materialization-smoke: error case=permission-widening errno=-EACCES partial-materialization=false leaked-leases=false ok=true
+qemu-process-page-table-materialization-smoke: error case=resource-exhaustion errno=-ENOMEM partial-materialization=false leaked-leases=false ok=true
+qemu-process-page-table-materialization-smoke: error case=unsupported-topology errno=-ENOTSUP partial-materialization=false leaked-leases=false ok=true
+qemu-process-page-table-materialization-smoke: error case=copy-zero-mismatch errno=-EINVAL partial-materialization=false leaked-leases=false ok=true
+qemu-process-page-table-materialization-smoke: error case=activation-request errno=-ENOSYS partial-materialization=false leaked-leases=false ok=true
+qemu-process-page-table-materialization-smoke: final participants=12 expected=12 errors=0 classification=qemu-process-page-table-materialization-smoke-complete
+qemu-process-page-table-materialization-smoke: PASS

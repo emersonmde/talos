@@ -50,7 +50,11 @@ impl PageByteRange {
         self.offset + self.len
     }
 
-    #[cfg(any(test, talos_boot_scenario = "qemu_process_address_space_smoke"))]
+    #[cfg(any(
+        test,
+        talos_boot_scenario = "qemu_process_address_space_smoke",
+        talos_boot_scenario = "qemu_process_page_table_materialization_smoke"
+    ))]
     pub(crate) const fn for_test_unchecked(offset: u64, len: u64) -> Self {
         Self { offset, len }
     }
@@ -139,7 +143,11 @@ impl ProcessImagePageInstallRecord {
         }
     }
 
-    #[cfg(any(test, talos_boot_scenario = "qemu_process_address_space_smoke"))]
+    #[cfg(any(
+        test,
+        talos_boot_scenario = "qemu_process_address_space_smoke",
+        talos_boot_scenario = "qemu_process_page_table_materialization_smoke"
+    ))]
     pub(crate) const fn for_test_unchecked(
         index: usize,
         segment_index: usize,
@@ -232,7 +240,11 @@ impl ProcessImageInstallPlan {
         self.lower_el_launch_blocked
     }
 
-    #[cfg(any(test, talos_boot_scenario = "qemu_process_address_space_smoke"))]
+    #[cfg(any(
+        test,
+        talos_boot_scenario = "qemu_process_address_space_smoke",
+        talos_boot_scenario = "qemu_process_page_table_materialization_smoke"
+    ))]
     pub(crate) const fn for_test_unchecked(
         fixture_identity: &'static str,
         install_boundary_identity: &'static str,

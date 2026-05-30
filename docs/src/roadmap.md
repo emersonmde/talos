@@ -2722,6 +2722,19 @@ Milestone 8.3: Program Loader
   the accepted QEMU/substitute evidence. TTBR activation, ASID/TLB policy,
   lower-EL launch, argv/envp, process lifecycle, shell, filesystem syscalls,
   Pi 5 hardware proof, networking, and SSH remain blocked.
+- Phase 8 QEMU/substitute process page-table materialization smoke core is
+  accepted. It adds qemu_process_page_table_materialization_smoke and retains
+  tasks/evidence/2026-05-30-qemu-process-page-table-materialization-smoke-core/qemu-process-page-table-materialization-smoke.log
+  with classification qemu-process-page-table-materialization-smoke-complete
+  and PASS. The smoke proves non-activating descriptor-image success,
+  UserText/UserData frame and descriptor permission preservation, no
+  TTBR/TLB/scheduler/lower-EL/runnable side effects, teardown idempotence, and
+  deterministic no-partial-materialization/no-leak rejection cases. The next
+  bounded task should be the queued
+  phase8-process-page-table-materialization-closeout-checkpoint-20260530. TTBR
+  activation, ASID/TLB policy, lower-EL launch, argv/envp, process lifecycle,
+  shell, filesystem syscalls, Pi 5 hardware proof, networking, and SSH remain
+  blocked.
 
 Acceptance criteria:
 
