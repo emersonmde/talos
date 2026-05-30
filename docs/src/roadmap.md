@@ -641,13 +641,19 @@ limited to fixed proof stdin in the focused rpi5_read_stdin_proof scenario.
 runtime-console0/TTY/hardware stdin, process loading, VFS/filesystem, shell,
 networking, SSH, object finalization, dup2/fcntl, signals, wait queues,
 nonblocking I/O, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy,
-and full POSIX descriptor readiness remain blocked. The next queued bounded
-Milestone 7.4 task is phase7-pi5-read-stdin-proof-closeout-checkpoint-20260530.
+and full POSIX descriptor readiness remain blocked.
+The accepted Pi 5 read/stdin proof closeout reconciles the QEMU/substitute
+read/stdin evidence, Pi 5 hardware proof evidence, hardware-lock timeline,
+restore proof, fixed-proof-stdin status, residual risks, and deferred surfaces.
+It accepts no new Rust or assembly behavior and performs no QEMU or Pi 5
+rerun. The next mechanically derivable Milestone 7.4 task is the already queued
+phase7-file-descriptor-table-closeout-checkpoint-20260530, and no Phase 8
+transition is claimed by this closeout.
 
-Near-term direction after the accepted Pi 5 read/stdin proof:
+Near-term direction after the accepted Pi 5 read/stdin proof closeout:
 
-- Close out the Pi 5 read/stdin proof before any Milestone 7.4 file descriptor
-  table closeout.
+- Reconcile the full Milestone 7.4 file descriptor table slice before any
+  Phase 7 or Phase 8 transition discussion.
 - Keep QEMU, host-side unit tests, and static documentation gates first. Reserve
   serialized Pi 5 runs for the smallest physical claim that cannot be proven on
   the QEMU/substitute path.

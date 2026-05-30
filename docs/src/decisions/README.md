@@ -6299,3 +6299,39 @@ ADR template:
   VFS/filesystem, shell, networking, SSH, object finalization, dup2/fcntl,
   signals, wait queues, nonblocking I/O, RP1/PCIe, UART interrupt ownership,
   DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.
+
+## 2026-05-30 - Phase 7 Pi 5 Read/Stdin Proof Closeout Accepted
+
+- Status: accepted as the documentation-only Milestone 7.4 Pi 5 read/stdin
+  proof closeout checkpoint. No Rust behavior, assembly behavior, QEMU rerun,
+  Pi 5 hardware run, boot archive publication, hardware-lock acquisition,
+  runtime-console0/TTY/hardware stdin, process loading, VFS/filesystem
+  behavior, shell behavior, networking, SSH, object finalization, RP1/PCIe,
+  UART interrupt ownership, DMA/cache-driver policy, or full POSIX descriptor
+  readiness was added.
+- Context: The accepted QEMU/substitute read/stdin smoke and serialized Pi 5
+  read/stdin proof needed a checkpoint before the broader Milestone 7.4 file
+  descriptor table closeout. The closeout reconciles the fixed-proof-stdin
+  frontier, local5 physical evidence, hardware-lock timeline, restore proof,
+  deferred surfaces, and residual risks.
+- Decision: Accept phase7-pi5-read-stdin-proof-closeout-checkpoint-20260530.
+  The accepted physical claim remains bounded to the focused
+  rpi5_read_stdin_proof scenario: inherited fd 0 duplication to fd 3,
+  fixed proof stdin reads, short-read and EOF behavior, EFAULT/EINVAL/EBADF
+  error cases without cursor/user-memory mutation, scalar regressions,
+  talos_copy_probe quarantine, diagnostic-marker quarantine,
+  classification=pi5-read-stdin-proof-complete, and PASS.
+- Evidence level: static documentation/source inspection, retained
+  QEMU/substitute evidence review, retained Pi 5 serial/TFTP/restore evidence
+  review, documentation build, whitespace inspection, and staged whitespace
+  inspection. No new QEMU or physical Pi 5 evidence was produced by this
+  documentation-only closeout.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The next mechanically derivable task is the already queued
+  phase7-file-descriptor-table-closeout-checkpoint-20260530, scoped to
+  reconciling Milestone 7.4 without claiming a phase transition.
+  runtime-console0/TTY/hardware stdin, process loading, VFS/filesystem, shell,
+  networking, SSH, object finalization, dup2/fcntl, signals, wait queues,
+  nonblocking I/O, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy,
+  and full POSIX descriptor claims remain blocked.
