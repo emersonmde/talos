@@ -12,6 +12,39 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 7.4 File Descriptor Table Closeout Accepted
+
+- Status: accepted as the documentation-only Milestone 7.4 file descriptor
+  table closeout checkpoint. No Rust behavior, assembly behavior, QEMU rerun,
+  Pi 5 hardware rerun, archive publishing, hardware-lock acquisition,
+  process loading, VFS/filesystem behavior, shell behavior, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, object
+  finalization, dup2/fcntl, signals, wait queues, nonblocking I/O, full POSIX
+  descriptor readiness, or Phase 8 transition was added.
+- Context: The accepted Milestone 7.4 slice now includes process-owned
+  inherited stdio, descriptor lifetime/close semantics, talos_close,
+  talos_dup, fixed-proof-stdin talos_read, QEMU/substitute evidence, and
+  serialized Pi 5 physical proofs with retained hardware-lock and restore
+  records.
+- Decision: Accept
+  phase7-file-descriptor-table-closeout-checkpoint-20260530. The closeout
+  records the accepted task/commit/evidence map, retained QEMU and Pi 5 proof
+  paths, deferred surfaces, residual risks, and the next objective boundary.
+- Evidence level: static evidence and documentation inspection. Retained
+  QEMU/substitute evidence covers process descriptor stdio, close, dup, and
+  read/stdin smokes. Retained Pi 5 evidence covers close, dup, and fixed-stdin
+  read proofs.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: Milestone 7.4 is closed only for the bounded descriptor-table
+  frontier. The next objective task should be a supervisor-planned Phase 7
+  final closeout or frontier checkpoint before any Phase 8 transition is
+  considered. runtime-console0/TTY/hardware stdin, process loading,
+  VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, object finalization, dup2/fcntl, signals, wait
+  queues, nonblocking I/O, and full POSIX descriptor readiness remain blocked.
+
 ## 2026-05-29 - Phase 7.4 Pi 5 Dup Syscall Proof Closeout Accepted
 
 - Status: accepted as the documentation-only Milestone 7.4 Pi 5 dup syscall

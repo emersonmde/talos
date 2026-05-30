@@ -120,6 +120,7 @@
 - [Phase 7 Read And Stdin Closeout Checkpoint](project/phase7-read-stdin-closeout-checkpoint.md)
 - [Phase 7 Pi 5 Read And Stdin Proof Plan](project/phase7-pi5-read-stdin-proof-plan.md)
 - [Phase 7 Pi 5 Read And Stdin Proof Closeout Checkpoint](project/phase7-pi5-read-stdin-proof-closeout-checkpoint.md)
+- [Phase 7 File Descriptor Table Closeout Checkpoint](project/phase7-file-descriptor-table-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

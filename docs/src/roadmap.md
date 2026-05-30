@@ -649,11 +649,26 @@ It accepts no new Rust or assembly behavior and performs no QEMU or Pi 5
 rerun. The next mechanically derivable Milestone 7.4 task is the already queued
 phase7-file-descriptor-table-closeout-checkpoint-20260530, and no Phase 8
 transition is claimed by this closeout.
+The accepted Milestone 7.4 file descriptor table closeout reconciles
+process-owned inherited stdio, descriptor-backed stdout/stderr writes,
+descriptor lifetime/close semantics, stable talos_close, stable talos_dup,
+fixed-proof-stdin talos_read, QEMU/substitute evidence, serialized Pi 5
+physical evidence, hardware-lock/restore records, residual risks, and blocked
+surfaces. Milestone 7.4 is closed only for the bounded descriptor-table
+frontier: ProcessOwnerId-backed inherited stdio, runtime-console0-backed fd 1
+and fd 2 writes, close, dup, fixed proof stdin through fd 0/fd 3, scalar
+regressions, and diagnostic-surface quarantine. runtime-console0/TTY/hardware
+stdin, pipes, sockets, regular files, VFS/filesystem, process loading, shell,
+networking, SSH, object finalization, dup2/fcntl, signals, wait queues,
+nonblocking I/O, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy,
+and full POSIX descriptor readiness remain blocked. The next objective task
+should be a supervisor-planned Phase 7 final closeout or frontier checkpoint
+before any Phase 8 transition is considered.
 
-Near-term direction after the accepted Pi 5 read/stdin proof closeout:
+Near-term direction after the accepted Milestone 7.4 closeout:
 
-- Reconcile the full Milestone 7.4 file descriptor table slice before any
-  Phase 7 or Phase 8 transition discussion.
+- Reconcile the full accepted Phase 7 POSIX/EL0/syscall/descriptor frontier
+  before any Phase 8 transition discussion.
 - Keep QEMU, host-side unit tests, and static documentation gates first. Reserve
   serialized Pi 5 runs for the smallest physical claim that cannot be proven on
   the QEMU/substitute path.
@@ -2200,6 +2215,15 @@ Milestone 7.4: File Descriptor Table
 
 - Implement per-process descriptor tables.
 - Model standard input, output, error, pipes, devices, and later sockets through one interface.
+- Status: closed for the bounded descriptor-table frontier accepted by
+  phase7-file-descriptor-table-closeout-checkpoint-20260530. The accepted
+  frontier covers ProcessOwnerId-backed inherited stdio, descriptor-backed
+  stdout/stderr writes, talos_close, talos_dup, and fixed-proof-stdin
+  talos_read through fd 0/fd 3. Pipes, devices beyond runtime-console0, TTY or
+  hardware stdin, filesystems, sockets, process loading, shell, networking,
+  SSH, object finalization, dup2/fcntl, signals, wait queues, nonblocking I/O,
+  RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and full POSIX
+  descriptor readiness remain deferred.
 
 Acceptance criteria:
 
