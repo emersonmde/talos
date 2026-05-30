@@ -124,6 +124,7 @@
 - [Phase 7 Final Frontier Source Inventory](project/phase7-final-frontier-source-inventory.md)
 - [Phase 7 Final Closeout Checkpoint](project/phase7-final-closeout-checkpoint.md)
 - [Phase 8 Filesystem And Program Loading Source Inventory](project/phase8-filesystem-program-loading-source-inventory.md)
+- [Phase 8 Read-Only Initramfs/VFS Contract](project/phase8-readonly-initramfs-vfs-contract.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

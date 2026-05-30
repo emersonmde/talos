@@ -2290,6 +2290,15 @@ Milestone 8.1: Initramfs or Ramfs
   documentation-only task and keeps ELF/program loading, process creation,
   shell, networking, SSH, RP1/PCIe, UART interrupt ownership, and
   DMA/cache-driver policy blocked.
+- The read-only initramfs/VFS contract is accepted. It defines the immutable
+  initial filesystem content model, root/directory/regular-file vocabulary,
+  path-copy and lookup rules, descriptor-facing regular-file read semantics,
+  errno precedence, deterministic fixture expectations, and deferred surfaces.
+  It recommends phase8-readonly-initramfs-vfs-smoke-plan-20260530 next and
+  keeps target-independent core implementation, QEMU runtime evidence, Pi 5
+  hardware proof, ELF/program loading, process creation, shell, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy blocked
+  until later explicit tasks accept their gates.
 
 Acceptance criteria:
 

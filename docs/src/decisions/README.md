@@ -12,6 +12,40 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 Read-Only Initramfs/VFS Contract Accepted
+
+- Status: accepted as the documentation-only Milestone 8.1 read-only
+  initramfs/VFS contract. No Rust behavior, assembly behavior, QEMU run,
+  Pi 5 hardware run, boot archive publication, hardware-lock acquisition, VFS
+  implementation, initramfs parser, descriptor-backed filesystem read,
+  ELF/program loader, argv/envp setup, process creation, shell behavior,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver
+  policy was added.
+- Context: The accepted Phase 8 filesystem/program-loading source inventory
+  recommended a bounded read-only initramfs/VFS contract before any runtime
+  filesystem or program-loading implementation.
+- Decision: Accept phase8-readonly-initramfs-vfs-contract-20260530. The
+  contract defines the immutable initial filesystem content model,
+  root/directory/regular-file vocabulary, path-copy and lookup rules,
+  descriptor-facing regular-file read semantics, errno precedence,
+  deterministic fixture expectations, and explicit deferred surfaces.
+- Evidence level: static documentation and source-owner inspection. Reviewed
+  the accepted Phase 8 source inventory, roadmap, accepted POSIX path/error
+  vocabulary, read/stdin contract, process descriptor table contract, and
+  `src/posix.rs` ownership markers for errors, path normalization, and
+  descriptor object kinds.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next mechanically unblocked task is
+  phase8-readonly-initramfs-vfs-smoke-plan-20260530. The dependency-gated
+  target-independent core remains blocked until the contract and smoke plan are
+  accepted. QEMU runtime evidence, Pi 5 hardware proof, ELF/program loading,
+  argv/envp setup, process creation, shell, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, DMA/cache-driver policy, writable filesystems, and
+  persistent storage remain blocked until later explicit tasks accept their
+  contracts and gates.
+
 ## 2026-05-30 - Phase 7 Final Closeout Checkpoint Accepted
 
 - Status: accepted as the documentation-only Phase 7 final closeout
