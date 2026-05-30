@@ -117,6 +117,7 @@
 - [Phase 7 Read And Stdin Source Inventory](project/phase7-read-stdin-source-inventory.md)
 - [Phase 7 Read And Stdin Contract](project/phase7-read-stdin-contract.md)
 - [Phase 7 QEMU Read And Stdin Smoke Plan](project/phase7-qemu-read-stdin-smoke-plan.md)
+- [Phase 7 Read And Stdin Closeout Checkpoint](project/phase7-read-stdin-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

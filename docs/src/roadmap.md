@@ -615,11 +615,23 @@ nonblocking I/O, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy,
 and full POSIX descriptor readiness remain blocked. The next bounded
 Milestone 7.4 task should be
 phase7-read-stdin-closeout-checkpoint-20260529.
+The accepted read/stdin closeout checkpoint reconciles the source inventory,
+contract, target-independent core, QEMU/substitute smoke plan, retained
+qemu_read_stdin_smoke evidence, regression gates, residual risks, and
+deferred surfaces. It keeps accepted behavior bounded to fixed proof stdin on
+the target-independent and QEMU/substitute lower-AArch64 paths, with retained
+classification=qemu-read-stdin-smoke-complete plus PASS evidence. Pi 5
+physical read proof, runtime-console0/TTY/hardware stdin, process loading,
+VFS/filesystem, shell, networking, SSH, object finalization, dup2/fcntl,
+signals, wait queues, nonblocking I/O, RP1/PCIe, UART interrupt ownership,
+DMA/cache-driver policy, and full POSIX descriptor readiness remain blocked.
+The next mechanically derivable task should be the documentation-only
+phase7-pi5-read-stdin-proof-plan-20260530, queued by the supervisor before any
+hardware action.
 
-Near-term direction after the accepted QEMU read/stdin smoke core:
+Near-term direction after the accepted read/stdin closeout:
 
-- Reconcile the read/stdin frontier in the already queued closeout checkpoint
-  before any Pi 5 read proof plan.
+- Queue and accept a Pi 5 read/stdin proof plan before any hardware action.
 - Keep QEMU, host-side unit tests, and static documentation gates first. Reserve
   serialized Pi 5 runs for the smallest physical claim that cannot be proven on
   the QEMU/substitute path.
@@ -2144,6 +2156,12 @@ Accepted progress:
   runtime-console0/TTY/hardware stdin, process loading, VFS/filesystem, shell,
   networking, SSH, object finalization, dup2/fcntl, and full POSIX descriptor
   readiness remain blocked.
+- Phase 7 read/stdin closeout checkpoint is accepted. The checkpoint reconciles
+  the accepted inventory, contract, target-independent core, QEMU smoke plan,
+  retained QEMU/substitute evidence, residual risks, and deferred surfaces. The
+  next mechanically derivable Milestone 7.4 task should be
+  phase7-pi5-read-stdin-proof-plan-20260530, queued explicitly by the
+  supervisor before any Pi 5 hardware action.
 
 Milestone 7.4: File Descriptor Table
 

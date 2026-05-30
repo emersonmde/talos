@@ -6193,3 +6193,33 @@ ADR template:
   shell, networking, SSH, object finalization, dup2/fcntl, signals, wait
   queues, nonblocking I/O, RP1/PCIe, UART interrupt ownership,
   DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.
+
+## 2026-05-30 - Phase 7 Read/Stdin Closeout Checkpoint Accepted
+
+- Context: The accepted read/stdin inventory, contract, target-independent
+  core, QEMU smoke plan, and QEMU smoke core established a bounded fixed-stdin
+  talos_read frontier with retained QEMU/substitute lower-AArch64 evidence.
+  Before any Pi 5 read/stdin proof plan, the frontier needed a documentation
+  checkpoint that kept the accepted claim narrow and recorded residual risks.
+- Decision: Accept phase7-read-stdin-closeout-checkpoint-20260529. The
+  checkpoint reconciles the accepted source owners, stable talos_read x8 = 4
+  contract, FixedStdin target-independent core, retained
+  qemu_read_stdin_smoke evidence, validation gates, deferred surfaces, and
+  residual risks. It accepts only the fixed proof stdin target-independent and
+  QEMU/substitute frontier.
+- Evidence level: static documentation/source inspection, retained
+  QEMU/substitute evidence reference, documentation build, whitespace
+  inspection, and staged whitespace inspection. No Rust behavior, assembly
+  behavior, QEMU rerun, Pi 5 hardware run, archive publication, or
+  hardwareTestLock action was required.
+- Validation: git diff --check passed; mdbook build passed; git diff --cached
+  --check passed before commit.
+- Consequences: The next mechanically derivable task should be
+  phase7-pi5-read-stdin-proof-plan-20260530, scoped to documentation-only
+  planning for a serialized physical proof of the already accepted fixed-stdin
+  talos_read invariant. The supervisor must queue that task explicitly before
+  worker implementation continues. Pi 5 physical read proof,
+  runtime-console0/TTY/hardware stdin, process loading, VFS/filesystem, shell,
+  networking, SSH, object finalization, dup2/fcntl, signals, wait queues,
+  nonblocking I/O, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy,
+  and full POSIX descriptor claims remain blocked.
