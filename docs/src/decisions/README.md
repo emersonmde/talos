@@ -7935,3 +7935,40 @@ ADR template:
   proof, shell, networking, SSH, RP1/PCIe, UART interrupt ownership, and
   DMA/cache-driver policy remain blocked until later explicit tasks accept
   their contracts and gates.
+
+## 2026-05-30 - Phase 8 Initial User Stack Closeout Checkpoint Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 initial user stack
+  closeout checkpoint. No Rust behavior, assembly behavior, QEMU rerun, Pi 5
+  hardware run, boot archive publication, hardware-lock acquisition,
+  TTBR/TCR/MAIR/SCTLR write, ASID allocation, TLB mutation, lower-EL ERET,
+  scheduler runnable publication, process lifecycle, shell behavior,
+  descriptor-backed filesystem syscall, writable filesystem, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The initial user stack source inventory, contract, smoke plan,
+  core, and QEMU/substitute smoke evidence were accepted. A closeout
+  checkpoint was needed to reconcile the accepted frontier and deferred
+  surfaces before any later Phase 8.3 task is selected.
+- Decision: Accept
+  phase8-initial-user-stack-closeout-checkpoint-20260530. The checkpoint
+  records the accepted frontier as target-independent InitialUserStackPlan
+  construction plus retained QEMU/substitute evidence for fixed layout,
+  guard reservation, stack-owned USER_DATA leases, zero/copy accounting,
+  minimal-empty-argc0 startup metadata, idempotent teardown, model-only
+  launch-plan stack-ready binding, deterministic no-partial-stack/
+  no-partial-launch rejection, zero live-launch side effects,
+  qemu-initial-user-stack-smoke-complete, and PASS.
+- Evidence level: static documentation inspection of accepted commits
+  6a90e43, f64be3a, 5c6a975, f76c07f, and 7007acf plus retained
+  QEMU/substitute smoke evidence at
+  tasks/evidence/2026-05-30-qemu-initial-user-stack-smoke-core/qemu-initial-user-stack-smoke.log.
+- Validation: git status --short before edits was clean except durable
+  supervisor state promotion outside the Talos repo; git diff --check passed;
+  mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: No explicit queued follow-up task remains. Supervisor planning
+  is required before the worker may promote another Phase 8.3 task. Live TTBR
+  activation, lower-EL ERET, scheduler runnable publication, process
+  lifecycle, broad argv/envp/auxv/TLS ABI, descriptor-backed filesystem
+  syscalls, Pi 5 hardware proof, shell, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, and DMA/cache-driver policy remain blocked until later
+  explicit tasks accept their contracts and gates.

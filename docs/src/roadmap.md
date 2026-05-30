@@ -2953,6 +2953,16 @@ Milestone 8.3: Program Loader
   lower-EL ERET, scheduler publication, process lifecycle, broad
   argv/envp/auxv/TLS ABI, filesystem syscalls, Pi 5 hardware proof,
   networking, and SSH remain blocked.
+- Phase 8 initial user stack closeout checkpoint is accepted. It reconciles
+  the source inventory, contract, smoke plan, core, retained QEMU/substitute
+  evidence, deferred surfaces, and planning state. The accepted frontier
+  remains target-independent InitialUserStackPlan construction plus
+  QEMU/substitute no-partial-stack/no-partial-launch evidence only. No live
+  TTBR activation, lower-EL ERET, scheduler runnable publication, process
+  lifecycle, broad argv/envp/auxv/TLS ABI, filesystem syscall, hardware proof,
+  networking, or SSH capability is accepted. No explicit queued follow-up task
+  remains; supervisor planning is required before the worker may promote
+  another Phase 8.3 task.
 
 Acceptance criteria:
 
