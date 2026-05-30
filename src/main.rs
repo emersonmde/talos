@@ -325,11 +325,17 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu_virt::run_dup_syscall_smoke();
             }
 
+            #[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+            {
+                target::qemu_virt::run_read_stdin_smoke();
+            }
+
             #[cfg(all(
                 talos_boot_scenario = "qemu_descriptor_write_smoke",
                 not(talos_boot_scenario = "qemu_process_descriptor_stdio_smoke"),
                 not(talos_boot_scenario = "qemu_close_syscall_smoke"),
-                not(talos_boot_scenario = "qemu_dup_syscall_smoke")
+                not(talos_boot_scenario = "qemu_dup_syscall_smoke"),
+                not(talos_boot_scenario = "qemu_read_stdin_smoke")
             ))]
             {
                 target::qemu_virt::run_descriptor_write_smoke();

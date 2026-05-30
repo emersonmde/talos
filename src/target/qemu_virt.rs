@@ -661,6 +661,49 @@ impl El0TrapPayload {
     }
 }
 
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+impl El0TrapPayload {
+    const fn read_stdin_smoke() -> Self {
+        let mut page = [0; EL0_TRAP_USER_TEXT_LEN];
+        let bytes = [
+            0x00, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x80, 0xd2, 0x02, 0x00, 0x80, 0xd2, 0x03, 0x00,
+            0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2, 0x05, 0x00, 0x80, 0xd2, 0x68, 0x00, 0x80, 0xd2,
+            0x01, 0x00, 0x00, 0xd4, 0x00, 0x00, 0x80, 0xd2, 0xc1, 0x03, 0xa0, 0xd2, 0xa2, 0x00,
+            0x80, 0xd2, 0x03, 0x00, 0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2, 0x05, 0x00, 0x80, 0xd2,
+            0x88, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x00, 0xd4, 0x00, 0x00, 0x80, 0xd2, 0x01, 0x10,
+            0x80, 0xd2, 0x21, 0x02, 0xa0, 0xf2, 0xa2, 0x00, 0x80, 0xd2, 0x23, 0x00, 0x80, 0xd2,
+            0x04, 0x00, 0x80, 0xd2, 0x05, 0x00, 0x80, 0xd2, 0x88, 0x00, 0x80, 0xd2, 0x01, 0x00,
+            0x00, 0xd4, 0x20, 0x00, 0x80, 0xd2, 0x01, 0x10, 0x80, 0xd2, 0x21, 0x02, 0xa0, 0xf2,
+            0xa2, 0x00, 0x80, 0xd2, 0x03, 0x00, 0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2, 0x05, 0x00,
+            0x80, 0xd2, 0x88, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x00, 0xd4, 0x60, 0x0c, 0x80, 0xd2,
+            0x01, 0x10, 0x80, 0xd2, 0x21, 0x02, 0xa0, 0xf2, 0xa2, 0x00, 0x80, 0xd2, 0x03, 0x00,
+            0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2, 0x05, 0x00, 0x80, 0xd2, 0x88, 0x00, 0x80, 0xd2,
+            0x01, 0x00, 0x00, 0xd4, 0x00, 0x00, 0x80, 0xd2, 0x01, 0x10, 0x80, 0xd2, 0x21, 0x02,
+            0xa0, 0xf2, 0xa2, 0x00, 0x80, 0xd2, 0x03, 0x00, 0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2,
+            0x05, 0x00, 0x80, 0xd2, 0x88, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x00, 0xd4, 0x60, 0x00,
+            0x80, 0xd2, 0x01, 0x14, 0x80, 0xd2, 0x21, 0x02, 0xa0, 0xf2, 0x02, 0x04, 0x80, 0xd2,
+            0x03, 0x00, 0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2, 0x05, 0x00, 0x80, 0xd2, 0x88, 0x00,
+            0x80, 0xd2, 0x01, 0x00, 0x00, 0xd4, 0x00, 0x00, 0x80, 0xd2, 0x01, 0x18, 0x80, 0xd2,
+            0x21, 0x02, 0xa0, 0xf2, 0x22, 0x00, 0x80, 0xd2, 0x03, 0x00, 0x80, 0xd2, 0x04, 0x00,
+            0x80, 0xd2, 0x05, 0x00, 0x80, 0xd2, 0x88, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x00, 0xd4,
+            0x00, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x80, 0xd2, 0x02, 0x00, 0x80, 0xd2, 0x03, 0x00,
+            0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2, 0x05, 0x00, 0x80, 0xd2, 0x08, 0x00, 0x80, 0xd2,
+            0x01, 0x00, 0x00, 0xd4, 0x00, 0x00, 0x80, 0xd2, 0x01, 0x00, 0x80, 0xd2, 0x02, 0x00,
+            0x80, 0xd2, 0x03, 0x00, 0x80, 0xd2, 0x04, 0x00, 0x80, 0xd2, 0x05, 0x00, 0x80, 0xd2,
+            0x28, 0x02, 0x80, 0xd2, 0x01, 0x00, 0x00, 0xd4, 0x00, 0x00, 0x80, 0xd2, 0x01, 0x10,
+            0x80, 0xd2, 0x21, 0x02, 0xa0, 0xf2, 0xa2, 0x00, 0x80, 0xd2, 0x03, 0x00, 0x80, 0xd2,
+            0x04, 0x00, 0x80, 0xd2, 0x05, 0x00, 0x80, 0xd2, 0x28, 0x00, 0x8e, 0xd2, 0x01, 0x00,
+            0x00, 0xd4, 0x01, 0x42, 0x0f, 0xd4, 0x00, 0x00, 0x00, 0x14,
+        ];
+        let mut index = 0;
+        while index < bytes.len() {
+            page[index] = bytes[index];
+            index += 1;
+        }
+        Self(page)
+    }
+}
+
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
     talos_boot_scenario = "qemu_syscall_smoke",
@@ -706,7 +749,8 @@ static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::pointer_copy_smoke();
     talos_boot_scenario = "qemu_descriptor_write_smoke",
     not(talos_boot_scenario = "qemu_process_descriptor_stdio_smoke"),
     not(talos_boot_scenario = "qemu_close_syscall_smoke"),
-    not(talos_boot_scenario = "qemu_dup_syscall_smoke")
+    not(talos_boot_scenario = "qemu_dup_syscall_smoke"),
+    not(talos_boot_scenario = "qemu_read_stdin_smoke")
 ))]
 static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::descriptor_write_smoke();
 #[cfg(talos_boot_scenario = "qemu_process_descriptor_stdio_smoke")]
@@ -715,6 +759,8 @@ static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::descriptor_write_smoke
 static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::close_syscall_smoke();
 #[cfg(talos_boot_scenario = "qemu_dup_syscall_smoke")]
 static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::dup_syscall_smoke();
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+static EL0_TRAP_PAYLOAD: El0TrapPayload = El0TrapPayload::read_stdin_smoke();
 #[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
 static mut POINTER_COPY_USER_DATA: [u8; POINTER_COPY_USER_DATA_LEN] =
     [0; POINTER_COPY_USER_DATA_LEN];
@@ -728,16 +774,21 @@ static DESCRIPTOR_WRITE_CONSOLE_LEN: AtomicU64 = AtomicU64::new(0);
 #[cfg(any(
     talos_boot_scenario = "qemu_process_descriptor_stdio_smoke",
     talos_boot_scenario = "qemu_close_syscall_smoke",
-    talos_boot_scenario = "qemu_dup_syscall_smoke"
+    talos_boot_scenario = "qemu_dup_syscall_smoke",
+    talos_boot_scenario = "qemu_read_stdin_smoke"
 ))]
 static mut PROCESS_DESCRIPTOR_STDIO_STORE: crate::posix::ProcessDescriptorStore<1, 4> =
     crate::posix::ProcessDescriptorStore::new_empty();
 #[cfg(any(
     talos_boot_scenario = "qemu_process_descriptor_stdio_smoke",
     talos_boot_scenario = "qemu_close_syscall_smoke",
-    talos_boot_scenario = "qemu_dup_syscall_smoke"
+    talos_boot_scenario = "qemu_dup_syscall_smoke",
+    talos_boot_scenario = "qemu_read_stdin_smoke"
 ))]
 const PROCESS_DESCRIPTOR_STDIO_OWNER_RAW: u64 = 1;
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+static mut READ_STDIN_FIXED_STATE: crate::posix::FixedStdin<'static> =
+    crate::posix::FixedStdin::new(READ_STDIN_FIXED_BYTES);
 #[cfg(talos_boot_scenario = "qemu_descriptor_write_smoke")]
 static DESCRIPTOR_WRITE_STDOUT_OBSERVED: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_boot_scenario = "qemu_descriptor_write_smoke")]
@@ -784,6 +835,8 @@ static CLOSE_SYSCALL_COPY_PROBE_OBSERVED: AtomicU64 = AtomicU64::new(0);
 const DUP_SYSCALL_SOURCE: &[u8; 19] = b"talos-dup-src-qemu\n";
 #[cfg(talos_boot_scenario = "qemu_dup_syscall_smoke")]
 const DUP_SYSCALL_DUPLICATE: &[u8; 19] = b"talos-dup-new-qemu\n";
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+const READ_STDIN_FIXED_BYTES: &[u8; 17] = b"talos-stdin-qemu\n";
 #[cfg(talos_boot_scenario = "qemu_dup_syscall_smoke")]
 static DUP_SYSCALL_DUP_STDOUT_OBSERVED: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_boot_scenario = "qemu_dup_syscall_smoke")]
@@ -812,6 +865,30 @@ static DUP_SYSCALL_TALOS_NOP_OBSERVED: AtomicU64 = AtomicU64::new(0);
 static DUP_SYSCALL_UNKNOWN_OBSERVED: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_boot_scenario = "qemu_dup_syscall_smoke")]
 static DUP_SYSCALL_COPY_PROBE_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+static READ_STDIN_DUP_STDIN_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+static READ_STDIN_GUARD_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+static READ_STDIN_RESERVED_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+static READ_STDIN_FD1_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+static READ_STDIN_BADFD_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+static READ_STDIN_FIRST_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+static READ_STDIN_DUPLICATE_REMAINING_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+static READ_STDIN_EOF_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+static READ_STDIN_TALOS_NOP_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+static READ_STDIN_UNKNOWN_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+static READ_STDIN_COPY_PROBE_OBSERVED: AtomicU64 = AtomicU64::new(0);
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+static READ_STDIN_ERRORS: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
 static SYSCALL_SMOKE_TALOS_NOP_DISPATCHED: AtomicU64 = AtomicU64::new(0);
 #[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
@@ -4431,6 +4508,143 @@ pub fn run_dup_syscall_smoke() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+pub fn run_read_stdin_smoke() -> ! {
+    crate::println!("qemu-read-stdin-smoke: start");
+
+    let current_owner = crate::scheduler::ProcessOwnerId::new(PROCESS_DESCRIPTOR_STDIO_OWNER_RAW)
+        .expect("read stdin smoke owner id is nonzero");
+    unsafe {
+        *core::ptr::addr_of_mut!(PROCESS_DESCRIPTOR_STDIO_STORE) =
+            crate::posix::ProcessDescriptorStore::new_empty();
+        (*core::ptr::addr_of_mut!(PROCESS_DESCRIPTOR_STDIO_STORE))
+            .create_owner_with_inherited_stdio(current_owner)
+            .expect("process-owned inherited stdio table");
+        *core::ptr::addr_of_mut!(READ_STDIN_FIXED_STATE) =
+            crate::posix::FixedStdin::new(READ_STDIN_FIXED_BYTES);
+    }
+    let store = unsafe { &*core::ptr::addr_of!(PROCESS_DESCRIPTOR_STDIO_STORE) };
+    let descriptor_table = store
+        .current_descriptor_table(Some(current_owner))
+        .expect("current process owner resolves descriptor table");
+    descriptor_table
+        .get(crate::posix::STDIN_FD)
+        .expect("process-owned stdin descriptor exists");
+    descriptor_table
+        .get(crate::posix::STDOUT_FD)
+        .expect("process-owned stdout descriptor exists");
+    descriptor_table
+        .get(crate::posix::STDERR_FD)
+        .expect("process-owned stderr descriptor exists");
+
+    let mappings = [
+        UserMapping::new(
+            EL0_TRAP_USER_TEXT_START,
+            EL0_TRAP_USER_TEXT_LEN,
+            UserMappingPermissions::USER_TEXT,
+        )
+        .expect("fixed read stdin smoke text mapping is a valid user mapping"),
+        UserMapping::new(
+            DESCRIPTOR_WRITE_USER_DATA_START,
+            DESCRIPTOR_WRITE_USER_DATA_LEN,
+            UserMappingPermissions::USER_DATA,
+        )
+        .expect("fixed read stdin smoke data mapping is a valid user mapping"),
+        UserMapping::new(
+            EL0_TRAP_USER_STACK_START,
+            EL0_TRAP_USER_STACK_LEN,
+            UserMappingPermissions::USER_DATA,
+        )
+        .expect("fixed read stdin smoke stack mapping is a valid user mapping"),
+    ];
+    let entry = validate_user_memory_access(
+        &mappings,
+        EL0_TRAP_USER_TEXT_START,
+        4,
+        UserAccessKind::Execute,
+        EL0_TRAP_USER_TEXT_LEN,
+    )
+    .expect("read stdin smoke entry validates inside fixed UserText")
+    .start();
+    validate_user_memory_access(
+        &mappings,
+        DESCRIPTOR_WRITE_USER_DATA_START,
+        DESCRIPTOR_WRITE_USER_DATA_LEN,
+        UserAccessKind::Write,
+        DESCRIPTOR_WRITE_USER_DATA_LEN,
+    )
+    .expect("read stdin smoke data validates inside fixed UserData");
+    let user_sp = EL0_TRAP_USER_STACK_START + EL0_TRAP_USER_STACK_LEN as u64;
+    validate_user_memory_access(
+        &mappings,
+        user_sp - 16,
+        16,
+        UserAccessKind::Write,
+        EL0_TRAP_USER_STACK_LEN,
+    )
+    .expect("read stdin smoke stack top validates inside fixed UserStack");
+    let guard_result = validate_user_memory_access(
+        &mappings,
+        EL0_TRAP_USER_GUARD_START,
+        16,
+        UserAccessKind::Read,
+        EL0_TRAP_USER_TEXT_LEN,
+    );
+    let guard_blocked = matches!(guard_result, Err(PosixError::Fault));
+
+    crate::println!(
+        "qemu-read-stdin-smoke: validated elr={:#018x} sp={:#018x} user-data={:#018x} user-data-len={:#018x} guard-blocked={} process-owner={:#018x} current-owner={:#018x} descriptor-table=process-owned-inherited-stdio descriptor-capacity=4 fixed-stdin-len={} fixed-stdin-cursor={}",
+        entry,
+        user_sp,
+        DESCRIPTOR_WRITE_USER_DATA_START,
+        DESCRIPTOR_WRITE_USER_DATA_LEN as u64,
+        guard_blocked,
+        current_owner.raw(),
+        current_owner.raw(),
+        READ_STDIN_FIXED_BYTES.len(),
+        unsafe { &*core::ptr::addr_of!(READ_STDIN_FIXED_STATE) }.cursor()
+    );
+    crate::println!(
+        "qemu-read-stdin-smoke: current-descriptor-table lookup=process-owned owner={:#018x} resolved=true stdio=inherited fixed-stdin=proof-buffer",
+        current_owner.raw()
+    );
+    if !guard_blocked {
+        crate::println!(
+            "qemu-read-stdin-smoke: final participants=0 expected=11 errors=1 classification=qemu-read-stdin-smoke-guard-open"
+        );
+        crate::target::qemu::exit_failure();
+    }
+
+    unsafe {
+        core::ptr::write_bytes(
+            core::ptr::addr_of_mut!(DESCRIPTOR_WRITE_USER_DATA).cast::<u8>(),
+            0,
+            DESCRIPTOR_WRITE_USER_DATA_LEN,
+        );
+        READ_STDIN_ERRORS.store(0, Ordering::Relaxed);
+        READ_STDIN_DUP_STDIN_OBSERVED.store(0, Ordering::Relaxed);
+        READ_STDIN_GUARD_OBSERVED.store(0, Ordering::Relaxed);
+        READ_STDIN_RESERVED_OBSERVED.store(0, Ordering::Relaxed);
+        READ_STDIN_FD1_OBSERVED.store(0, Ordering::Relaxed);
+        READ_STDIN_BADFD_OBSERVED.store(0, Ordering::Relaxed);
+        READ_STDIN_FIRST_OBSERVED.store(0, Ordering::Relaxed);
+        READ_STDIN_DUPLICATE_REMAINING_OBSERVED.store(0, Ordering::Relaxed);
+        READ_STDIN_EOF_OBSERVED.store(0, Ordering::Relaxed);
+        READ_STDIN_TALOS_NOP_OBSERVED.store(0, Ordering::Relaxed);
+        READ_STDIN_UNKNOWN_OBSERVED.store(0, Ordering::Relaxed);
+        READ_STDIN_COPY_PROBE_OBSERVED.store(0, Ordering::Relaxed);
+        install_el0_trap_smoke_tables();
+        enable_el2_and_el0_translation();
+        enable_el1_and_el0_translation();
+        aarch64::enter_el1_then_el0(
+            entry as usize,
+            user_sp as usize,
+            EL0_TRAP_SPSR_EL0T_DAIF_MASKED,
+            EL0_TRAP_SPSR_EL1H_DAIF_MASKED,
+        );
+    }
+}
+
 #[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
 pub fn handle_syscall_smoke_exception(
     esr: u64,
@@ -5916,6 +6130,400 @@ pub fn handle_dup_syscall_smoke_exception(
     true
 }
 
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+fn read_stdin_user_matches(start: usize, expected: &[u8]) -> bool {
+    let Some(end) = start.checked_add(expected.len()) else {
+        return false;
+    };
+    if end > DESCRIPTOR_WRITE_USER_DATA_LEN {
+        return false;
+    }
+    let data = unsafe { &*core::ptr::addr_of!(DESCRIPTOR_WRITE_USER_DATA) };
+    &data[start..end] == expected
+}
+
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+fn read_stdin_user_zero(start: usize, len: usize) -> bool {
+    let Some(end) = start.checked_add(len) else {
+        return false;
+    };
+    if end > DESCRIPTOR_WRITE_USER_DATA_LEN {
+        return false;
+    }
+    let data = unsafe { &*core::ptr::addr_of!(DESCRIPTOR_WRITE_USER_DATA) };
+    data[start..end].iter().all(|byte| *byte == 0)
+}
+
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+fn read_stdin_user_all_zero() -> bool {
+    let data = unsafe { &*core::ptr::addr_of!(DESCRIPTOR_WRITE_USER_DATA) };
+    data.iter().all(|byte| *byte == 0)
+}
+
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+pub fn handle_read_stdin_smoke_exception(
+    esr: u64,
+    _elr: u64,
+    far: u64,
+    vector: ExceptionVector,
+    _spsr: u64,
+    saved_frame: *mut ExceptionFrame,
+) -> bool {
+    let marker = crate::arch::aarch64::exceptions::svc_immediate(esr);
+    let reported_esr = esr & !(1 << 25);
+    let Some(frame) = (unsafe { saved_frame.as_mut() }) else {
+        READ_STDIN_ERRORS.fetch_add(1, Ordering::Relaxed);
+        return false;
+    };
+
+    if marker == syscall::DIAGNOSTIC_EL0_TRAP_SVC_IMMEDIATE {
+        let stable = syscall::is_stable_syscall_svc_immediate(marker);
+        crate::println!(
+            "qemu-read-stdin-smoke: diagnostic-marker marker=0x7a10 stable-syscall={} dispatched=false",
+            stable
+        );
+        finish_read_stdin_smoke(reported_esr == SYSCALL_SMOKE_EXPECTED_MARKER_ESR && far == 0);
+    }
+
+    if reported_esr != SYSCALL_SMOKE_EXPECTED_SVC_ESR {
+        READ_STDIN_ERRORS.fetch_add(1, Ordering::Relaxed);
+        return false;
+    }
+
+    let current_owner = crate::scheduler::ProcessOwnerId::new(PROCESS_DESCRIPTOR_STDIO_OWNER_RAW)
+        .expect("read stdin smoke owner id is nonzero");
+    let arguments = syscall::SyscallArguments::new([
+        frame.reg(0),
+        frame.reg(1),
+        frame.reg(2),
+        frame.reg(3),
+        frame.reg(4),
+        frame.reg(5),
+    ]);
+    let args = arguments.values();
+    let raw_number = frame.reg(8);
+    let mappings = [UserMapping::new(
+        DESCRIPTOR_WRITE_USER_DATA_START,
+        DESCRIPTOR_WRITE_USER_DATA_LEN,
+        UserMappingPermissions::USER_DATA,
+    )
+    .expect("fixed read stdin smoke data mapping is valid")];
+    let mut scratch = [0u8; 64];
+    let mut console = DescriptorWriteCaptureConsole;
+    let result = {
+        let store = unsafe { &mut *core::ptr::addr_of_mut!(PROCESS_DESCRIPTOR_STDIO_STORE) };
+        let user_memory = unsafe { &mut *core::ptr::addr_of_mut!(DESCRIPTOR_WRITE_USER_DATA) };
+        let fixed_stdin = unsafe { &mut *core::ptr::addr_of_mut!(READ_STDIN_FIXED_STATE) };
+        syscall::dispatch_process_descriptor_with_fixed_stdin(
+            raw_number,
+            arguments,
+            Some(current_owner),
+            store,
+            &mappings,
+            DESCRIPTOR_WRITE_USER_DATA_START,
+            user_memory,
+            &mut scratch,
+            &mut console,
+            Some(fixed_stdin),
+        )
+    };
+    let return_x0 = result.return_value().x0();
+    frame.set_reg(0, return_x0);
+    let fixed_stdin_cursor = unsafe { &*core::ptr::addr_of!(READ_STDIN_FIXED_STATE) }.cursor();
+    let store = unsafe { &*core::ptr::addr_of!(PROCESS_DESCRIPTOR_STDIO_STORE) };
+    let table = store
+        .current_descriptor_table(Some(current_owner))
+        .expect("read stdin smoke current table remains present");
+    let stdin_open = table.get(crate::posix::STDIN_FD).is_ok();
+    let duplicate_open = table.get(3).is_ok();
+
+    match raw_number {
+        syscall::TALOS_DUP_SYSCALL
+            if args == [0, 0, 0, 0, 0, 0]
+                && READ_STDIN_DUP_STDIN_OBSERVED.load(Ordering::Relaxed) == 0 =>
+        {
+            let ok = return_x0 == 3 && stdin_open && duplicate_open;
+            READ_STDIN_DUP_STDIN_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                READ_STDIN_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-read-stdin-smoke: syscall case=dup_stdin vector={} esr={:#018x} svc=0x0000 number=3 args=[x0={:#018x} x1={:#018x} x2={:#018x} x3={:#018x} x4={:#018x} x5={:#018x}] descriptor-owner={:#018x} return-x0={:#018x} lowest-free={} source-open={}",
+                vector.name(),
+                reported_esr,
+                args[0],
+                args[1],
+                args[2],
+                args[3],
+                args[4],
+                args[5],
+                current_owner.raw(),
+                return_x0,
+                return_x0 == 3,
+                stdin_open
+            );
+        }
+        syscall::TALOS_READ_SYSCALL
+            if args[0] == 0
+                && args[1] == EL0_TRAP_USER_GUARD_START
+                && args[2] == 5
+                && args[3] == 0
+                && args[4] == 0
+                && args[5] == 0 =>
+        {
+            let user_unchanged = read_stdin_user_all_zero();
+            let ok = return_x0 == DESCRIPTOR_WRITE_EXPECTED_EFAULT_X0
+                && fixed_stdin_cursor == 0
+                && user_unchanged;
+            READ_STDIN_GUARD_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                READ_STDIN_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-read-stdin-smoke: syscall case=read_guard vector={} esr={:#018x} svc=0x0000 number=4 return-x0={:#018x} expected=-EFAULT fixed-stdin-cursor={} user-unchanged={}",
+                vector.name(),
+                reported_esr,
+                return_x0,
+                fixed_stdin_cursor,
+                user_unchanged
+            );
+        }
+        syscall::TALOS_READ_SYSCALL
+            if args[0] == 0
+                && args[1] == DESCRIPTOR_WRITE_USER_DATA_START + 0x80
+                && args[2] == 5
+                && args[3] == 1
+                && args[4] == 0
+                && args[5] == 0 =>
+        {
+            let user_unchanged = read_stdin_user_all_zero();
+            let ok = return_x0 == DESCRIPTOR_WRITE_EXPECTED_EINVAL_X0
+                && fixed_stdin_cursor == 0
+                && user_unchanged;
+            READ_STDIN_RESERVED_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                READ_STDIN_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-read-stdin-smoke: syscall case=read_reserved vector={} esr={:#018x} svc=0x0000 number=4 return-x0={:#018x} expected=-EINVAL fixed-stdin-cursor={} user-unchanged={}",
+                vector.name(),
+                reported_esr,
+                return_x0,
+                fixed_stdin_cursor,
+                user_unchanged
+            );
+        }
+        syscall::TALOS_READ_SYSCALL
+            if args[0] == 1
+                && args[1] == DESCRIPTOR_WRITE_USER_DATA_START + 0x80
+                && args[2] == 5
+                && args[3] == 0
+                && args[4] == 0
+                && args[5] == 0 =>
+        {
+            let user_unchanged = read_stdin_user_all_zero();
+            let ok = return_x0 == DESCRIPTOR_WRITE_EXPECTED_EBADF_X0
+                && fixed_stdin_cursor == 0
+                && user_unchanged;
+            READ_STDIN_FD1_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                READ_STDIN_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-read-stdin-smoke: syscall case=read_fd1 vector={} esr={:#018x} svc=0x0000 number=4 return-x0={:#018x} expected=-EBADF fixed-stdin-cursor={} user-unchanged={}",
+                vector.name(),
+                reported_esr,
+                return_x0,
+                fixed_stdin_cursor,
+                user_unchanged
+            );
+        }
+        syscall::TALOS_READ_SYSCALL
+            if args[0] == 99
+                && args[1] == DESCRIPTOR_WRITE_USER_DATA_START + 0x80
+                && args[2] == 5
+                && args[3] == 0
+                && args[4] == 0
+                && args[5] == 0 =>
+        {
+            let user_unchanged = read_stdin_user_all_zero();
+            let ok = return_x0 == DESCRIPTOR_WRITE_EXPECTED_EBADF_X0
+                && fixed_stdin_cursor == 0
+                && user_unchanged;
+            READ_STDIN_BADFD_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                READ_STDIN_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-read-stdin-smoke: syscall case=read_badfd vector={} esr={:#018x} svc=0x0000 number=4 return-x0={:#018x} expected=-EBADF fixed-stdin-cursor={} user-unchanged={}",
+                vector.name(),
+                reported_esr,
+                return_x0,
+                fixed_stdin_cursor,
+                user_unchanged
+            );
+        }
+        syscall::TALOS_READ_SYSCALL
+            if args[0] == 0
+                && args[1] == DESCRIPTOR_WRITE_USER_DATA_START + 0x80
+                && args[2] == 5
+                && args[3] == 0
+                && args[4] == 0
+                && args[5] == 0 =>
+        {
+            let ok = return_x0 == 5
+                && fixed_stdin_cursor == 5
+                && read_stdin_user_matches(0x80, b"talos");
+            READ_STDIN_FIRST_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                READ_STDIN_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-read-stdin-smoke: syscall case=read_stdin_first vector={} esr={:#018x} svc=0x0000 number=4 args=[x0={:#018x} x1={:#018x} x2={:#018x} x3={:#018x} x4={:#018x} x5={:#018x}] descriptor-owner={:#018x} return-x0={:#018x} fixed-stdin-cursor={}",
+                vector.name(),
+                reported_esr,
+                args[0],
+                args[1],
+                args[2],
+                args[3],
+                args[4],
+                args[5],
+                current_owner.raw(),
+                return_x0,
+                fixed_stdin_cursor
+            );
+            crate::println!(
+                "qemu-read-stdin-smoke: user-buffer case=read_stdin_first addr={:#018x} bytes=5 hex=74616c6f73 ok={}",
+                args[1],
+                read_stdin_user_matches(0x80, b"talos")
+            );
+            crate::println!(
+                "qemu-read-stdin-smoke: user-observed case=read_stdin_first x0={:#018x} ok={}",
+                return_x0,
+                ok
+            );
+        }
+        syscall::TALOS_READ_SYSCALL
+            if args[0] == 3
+                && args[1] == DESCRIPTOR_WRITE_USER_DATA_START + 0xa0
+                && args[2] == 32
+                && args[3] == 0
+                && args[4] == 0
+                && args[5] == 0 =>
+        {
+            let ok = return_x0 == 12
+                && fixed_stdin_cursor == READ_STDIN_FIXED_BYTES.len()
+                && read_stdin_user_matches(0xa0, b"-stdin-qemu\n");
+            READ_STDIN_DUPLICATE_REMAINING_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                READ_STDIN_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-read-stdin-smoke: syscall case=read_stdin_duplicate_remaining vector={} esr={:#018x} svc=0x0000 number=4 args=[x0={:#018x} x1={:#018x} x2={:#018x} x3={:#018x} x4={:#018x} x5={:#018x}] descriptor-owner={:#018x} return-x0={:#018x} fixed-stdin-cursor={} short-read={}",
+                vector.name(),
+                reported_esr,
+                args[0],
+                args[1],
+                args[2],
+                args[3],
+                args[4],
+                args[5],
+                current_owner.raw(),
+                return_x0,
+                fixed_stdin_cursor,
+                return_x0 < args[2]
+            );
+            crate::println!(
+                "qemu-read-stdin-smoke: user-buffer case=read_stdin_duplicate_remaining addr={:#018x} bytes=12 hex=2d737464696e2d71656d750a ok={}",
+                args[1],
+                read_stdin_user_matches(0xa0, b"-stdin-qemu\n")
+            );
+            crate::println!(
+                "qemu-read-stdin-smoke: user-observed case=read_stdin_duplicate_remaining x0={:#018x} ok={}",
+                return_x0,
+                ok
+            );
+        }
+        syscall::TALOS_READ_SYSCALL
+            if args[0] == 0
+                && args[1] == DESCRIPTOR_WRITE_USER_DATA_START + 0xc0
+                && args[2] == 1
+                && args[3] == 0
+                && args[4] == 0
+                && args[5] == 0 =>
+        {
+            let user_unchanged = read_stdin_user_zero(0xc0, 1);
+            let ok = return_x0 == 0
+                && fixed_stdin_cursor == READ_STDIN_FIXED_BYTES.len()
+                && user_unchanged;
+            READ_STDIN_EOF_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                READ_STDIN_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-read-stdin-smoke: syscall case=read_stdin_eof vector={} esr={:#018x} svc=0x0000 number=4 return-x0={:#018x} fixed-stdin-cursor={} user-unchanged={} eof=true",
+                vector.name(),
+                reported_esr,
+                return_x0,
+                fixed_stdin_cursor,
+                user_unchanged
+            );
+        }
+        syscall::TALOS_NOP_SYSCALL => {
+            let ok = return_x0 == 0;
+            READ_STDIN_TALOS_NOP_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                READ_STDIN_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-read-stdin-smoke: syscall case=talos_nop vector={} esr={:#018x} svc=0x0000 number=0 return-x0={:#018x}",
+                vector.name(),
+                reported_esr,
+                return_x0
+            );
+        }
+        SYSCALL_SMOKE_UNKNOWN_NUMBER => {
+            let ok = return_x0 == SYSCALL_SMOKE_EXPECTED_ENOSYS_X0;
+            READ_STDIN_UNKNOWN_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                READ_STDIN_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-read-stdin-smoke: syscall case=unknown vector={} esr={:#018x} svc=0x0000 number=17 return-x0={:#018x} expected=-ENOSYS",
+                vector.name(),
+                reported_esr,
+                return_x0
+            );
+        }
+        DESCRIPTOR_WRITE_COPY_PROBE_NUMBER => {
+            let ok = return_x0 == SYSCALL_SMOKE_EXPECTED_ENOSYS_X0;
+            READ_STDIN_COPY_PROBE_OBSERVED.store(u64::from(ok), Ordering::Relaxed);
+            if !ok {
+                READ_STDIN_ERRORS.fetch_add(1, Ordering::Relaxed);
+            }
+            crate::println!(
+                "qemu-read-stdin-smoke: syscall case=copy_probe_quarantine vector={} esr={:#018x} svc=0x0000 number={:#018x} return-x0={:#018x} expected=-ENOSYS dispatched=false",
+                vector.name(),
+                reported_esr,
+                raw_number,
+                return_x0
+            );
+        }
+        _ => {
+            READ_STDIN_ERRORS.fetch_add(1, Ordering::Relaxed);
+            crate::println!(
+                "qemu-read-stdin-smoke: syscall case=unexpected vector={} esr={:#018x} svc=0x0000 number={:#018x} return-x0={:#018x}",
+                vector.name(),
+                reported_esr,
+                raw_number,
+                return_x0
+            );
+        }
+    }
+
+    true
+}
+
 #[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
 fn pointer_copy_user_data_replaced() -> bool {
     let data = unsafe { &*core::ptr::addr_of!(POINTER_COPY_USER_DATA) };
@@ -6081,6 +6689,43 @@ fn finish_dup_syscall_smoke(marker_ok: bool) -> ! {
     );
     if complete {
         crate::println!("qemu-dup-syscall-smoke: PASS");
+        crate::target::qemu::exit_success();
+    }
+    crate::target::qemu::exit_failure();
+}
+
+#[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
+fn finish_read_stdin_smoke(marker_ok: bool) -> ! {
+    if !marker_ok {
+        READ_STDIN_ERRORS.fetch_add(1, Ordering::Relaxed);
+    }
+    let participants = READ_STDIN_DUP_STDIN_OBSERVED.load(Ordering::Relaxed)
+        + READ_STDIN_GUARD_OBSERVED.load(Ordering::Relaxed)
+        + READ_STDIN_RESERVED_OBSERVED.load(Ordering::Relaxed)
+        + READ_STDIN_FD1_OBSERVED.load(Ordering::Relaxed)
+        + READ_STDIN_BADFD_OBSERVED.load(Ordering::Relaxed)
+        + READ_STDIN_FIRST_OBSERVED.load(Ordering::Relaxed)
+        + READ_STDIN_DUPLICATE_REMAINING_OBSERVED.load(Ordering::Relaxed)
+        + READ_STDIN_EOF_OBSERVED.load(Ordering::Relaxed)
+        + READ_STDIN_TALOS_NOP_OBSERVED.load(Ordering::Relaxed)
+        + READ_STDIN_UNKNOWN_OBSERVED.load(Ordering::Relaxed)
+        + READ_STDIN_COPY_PROBE_OBSERVED.load(Ordering::Relaxed);
+    let errors = READ_STDIN_ERRORS.load(Ordering::Relaxed);
+    let complete = participants == 11 && errors == 0;
+    let classification = if complete {
+        "qemu-read-stdin-smoke-complete"
+    } else {
+        "qemu-read-stdin-smoke-failed"
+    };
+
+    crate::println!(
+        "qemu-read-stdin-smoke: final participants={} expected=11 errors={} classification={}",
+        participants,
+        errors,
+        classification
+    );
+    if complete {
+        crate::println!("qemu-read-stdin-smoke: PASS");
         crate::target::qemu::exit_success();
     }
     crate::target::qemu::exit_failure();

@@ -6153,3 +6153,43 @@ ADR template:
   VFS/filesystem, shell, networking, SSH, object finalization, dup2/fcntl,
   signals, wait queues, nonblocking I/O, RP1/PCIe, UART interrupt ownership,
   DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 QEMU Read And Stdin Smoke Core Accepted
+
+- Status: accepted as the QEMU/substitute Milestone 7.4 read/stdin smoke core.
+  No Pi 5 hardware run, boot archive publication, hardware-lock acquisition,
+  runtime-console0/TTY/hardware stdin, process loading, VFS/filesystem
+  behavior, shell behavior, networking, SSH, object finalization, RP1/PCIe,
+  UART interrupt ownership, DMA/cache-driver policy, or full POSIX descriptor
+  readiness was added.
+- Context: The accepted QEMU read/stdin smoke plan required lower-AArch64
+  svc #0 evidence for talos_read through the same current-owner
+  ProcessDescriptorStore and FixedStdin proof-buffer path accepted by the
+  target-independent core.
+- Decision: Accept phase7-qemu-read-stdin-smoke-core-20260529. The
+  implementation adds qemu_read_stdin_smoke boot-scenario routing, a focused
+  lower-EL payload, QEMU harness handling, and scripts/qemu-read-stdin-smoke.sh
+  with retained evidence. The smoke proves fd 0 duplication to fd 3, -EFAULT,
+  -EINVAL, -EBADF, fd 0 read success, duplicated-stdin short read, bounded EOF,
+  talos_nop and unknown-syscall regressions, copy-probe quarantine, diagnostic
+  marker quarantine, classification=qemu-read-stdin-smoke-complete, and PASS.
+- Evidence level: QEMU/substitute runtime evidence, fmt/lint/typecheck, no_std
+  unit tests, QEMU/substitute scalar and descriptor regressions, static
+  documentation/source inspection, documentation build, whitespace inspection,
+  and staged whitespace inspection. No Pi 5 hardware evidence was produced.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec test
+  passed with 248 no_std tests; scripts/qemu-read-stdin-smoke.sh,
+  scripts/qemu-syscall-smoke.sh, scripts/qemu-descriptor-write-smoke.sh,
+  scripts/qemu-close-syscall-smoke.sh, and scripts/qemu-dup-syscall-smoke.sh
+  passed; git diff --check passed; mdbook build passed; git diff --cached
+  --check passed before commit. An optional scripts/qemu-pointer-copy-smoke.sh
+  run was attempted but is not required for this task and failed to compile in
+  an unrelated pre-existing src/target/rpi5.rs pointer-copy finish path before
+  QEMU execution.
+- Consequences: The next mechanically derivable task is
+  phase7-read-stdin-closeout-checkpoint-20260529, scoped to reconciling the
+  accepted read/stdin frontier and retained QEMU evidence. Pi 5 physical read
+  proof, runtime-console0/TTY/hardware stdin, process loading, VFS/filesystem,
+  shell, networking, SSH, object finalization, dup2/fcntl, signals, wait
+  queues, nonblocking I/O, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.

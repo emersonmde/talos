@@ -599,11 +599,27 @@ finalization, dup2/fcntl, signals, wait queues, nonblocking I/O, RP1/PCIe,
 UART interrupt ownership, DMA/cache-driver policy, and full POSIX descriptor
 readiness remain blocked. The next bounded Milestone 7.4 task should be
 phase7-qemu-read-stdin-smoke-core-20260529.
+The accepted QEMU read/stdin smoke core adds qemu_read_stdin_smoke and
+retained QEMU/substitute evidence for lower-AArch64 stable talos_read x8 = 4.
+It proves current-owner ProcessDescriptorStore lookup, fd 0 duplication to
+fd 3, fixed proof stdin bytes talos-stdin-qemu\n, copy-out -EFAULT without
+cursor advance, reserved-register -EINVAL without mutation, fd/error -EBADF,
+fd 0 read success copying talos, duplicated-fd short read copying
+-stdin-qemu\n, bounded EOF, talos_nop and unknown-syscall regressions,
+copy-probe quarantine, diagnostic-marker quarantine, and
+classification=qemu-read-stdin-smoke-complete plus PASS. This is
+QEMU/substitute evidence only. Pi 5 physical read proof,
+runtime-console0/TTY/hardware stdin, process loading, VFS/filesystem, shell,
+networking, SSH, object finalization, dup2/fcntl, signals, wait queues,
+nonblocking I/O, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy,
+and full POSIX descriptor readiness remain blocked. The next bounded
+Milestone 7.4 task should be
+phase7-read-stdin-closeout-checkpoint-20260529.
 
-Near-term direction after the accepted QEMU read/stdin smoke plan:
+Near-term direction after the accepted QEMU read/stdin smoke core:
 
-- Implement only the bounded QEMU/substitute read/stdin smoke before adding or
-  claiming lower-EL runtime evidence.
+- Reconcile the read/stdin frontier in the already queued closeout checkpoint
+  before any Pi 5 read proof plan.
 - Keep QEMU, host-side unit tests, and static documentation gates first. Reserve
   serialized Pi 5 runs for the smallest physical claim that cannot be proven on
   the QEMU/substitute path.
@@ -2118,6 +2134,16 @@ Accepted progress:
   documentation-only read/stdin source inventory. Read/stdin behavior, process
   loading, VFS/filesystem, shell, networking, SSH, object finalization,
   dup2/fcntl, and full POSIX descriptor readiness remain blocked.
+- Phase 7 QEMU read/stdin smoke core is accepted. Retained QEMU/substitute
+  evidence proves qemu_read_stdin_smoke through the lower-AArch64 stable
+  talos_read path with fd 0 duplication, fixed proof stdin, errno cases,
+  short-read, EOF, scalar regressions, copy-probe quarantine,
+  diagnostic-marker quarantine, classification, and PASS. The next bounded
+  Milestone 7.4 task should be
+  phase7-read-stdin-closeout-checkpoint-20260529. Pi 5 physical read proof,
+  runtime-console0/TTY/hardware stdin, process loading, VFS/filesystem, shell,
+  networking, SSH, object finalization, dup2/fcntl, and full POSIX descriptor
+  readiness remain blocked.
 
 Milestone 7.4: File Descriptor Table
 
