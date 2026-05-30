@@ -12,6 +12,43 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 Process Install Closeout Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 process-install
+  closeout checkpoint. No Rust behavior, assembly behavior, QEMU rerun,
+  Pi 5 hardware run, boot archive publication, hardware-lock acquisition,
+  physical frame allocation, physical byte copy, page-table mutation,
+  process creation, descriptor mutation, lower-EL frame, runnable task,
+  argv/envp implementation, exec/spawn/wait, shell, descriptor-backed
+  filesystem syscall, writable filesystem, persistent storage, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy was
+  added.
+- Context: The accepted process-install contract, QEMU/substitute smoke plan,
+  metadata-only core, and retained QEMU/substitute smoke evidence established a
+  narrow ProcessImageInstallPlan frontier that needed reconciliation before
+  any broader process address-space or launch work.
+- Decision: Accept phase8-process-install-closeout-checkpoint-20260530. The
+  checkpoint records accepted commits, retained evidence at
+  tasks/evidence/2026-05-30-qemu-process-install-smoke-core/qemu-process-install-smoke.log,
+  classification qemu-process-install-smoke-complete, PASS, exact accepted
+  capability, deferred surfaces, and the absence of an explicit queued
+  follow-up task.
+- Evidence level: static documentation and retained QEMU/substitute evidence
+  review. Reviewed the accepted process-install contract, QEMU/substitute
+  smoke plan, process-install core task record, QEMU/substitute process-install
+  smoke task record, retained smoke evidence, roadmap, SUMMARY, and ADR index.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: Supervisor planning is required before the worker may promote
+  another Phase 8.3 task. The likely next frontier is a bounded process-owned
+  address-space installation contract or inventory, but this closeout does not
+  create that task. Physical process address-space mutation, frame allocation,
+  page-table installation, teardown, lower-EL launch, argv/envp,
+  exec/spawn/wait, shell, descriptor-backed filesystem syscalls, Pi 5 hardware
+  proof, writable filesystems, persistent storage, networking, SSH, RP1/PCIe,
+  UART interrupt ownership, and DMA/cache-driver policy remain blocked.
+
 ## 2026-05-30 - Phase 8 QEMU Process Install Smoke Plan Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 QEMU/substitute

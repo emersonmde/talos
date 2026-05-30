@@ -74,6 +74,18 @@ physical frame allocation, page-table mutation, process creation, lower-EL
 launch, argv/envp, exec/spawn/wait, shell, filesystem syscall behavior,
 hardware proof, writable filesystem, networking, SSH, RP1/PCIe, UART
 interrupt ownership, or DMA/cache-driver policy.
+The process-install closeout checkpoint is now accepted. It reconciles the
+accepted source inventory, contract, QEMU/substitute smoke plan, metadata-only
+core, retained QEMU/substitute smoke evidence, deferred surfaces, and residual
+risks. The accepted frontier is still only target-independent
+ProcessImageInstallPlan derivation plus QEMU/substitute no-partial-install
+evidence for the immutable /bin/init ProgramImagePlan. No process-owned
+address-space installation, frame allocation, page-table mutation, lower-EL
+launch, argv/envp, exec/spawn/wait, shell, filesystem syscall behavior,
+hardware proof, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+DMA/cache-driver policy is accepted. No explicit queued follow-up task remains;
+supervisor planning is required before the worker may promote the next
+Phase 8.3 task.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -2560,6 +2572,20 @@ Milestone 8.3: Program Loader
   satisfied. Physical page allocation, page-table mutation, lower-EL launch,
   argv/envp construction, process creation, exec/spawn/wait, shell,
   descriptor-backed filesystem syscalls, Pi 5 hardware proof, writable
+  filesystems, persistent storage, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, and DMA/cache-driver policy remain blocked until later explicit
+  tasks accept their gates.
+- Phase 8 process-install closeout checkpoint is accepted. It reconciles the
+  accepted source inventory, contract, QEMU/substitute smoke plan,
+  metadata-only core, retained QEMU/substitute process-install smoke evidence,
+  and deferred surfaces. The accepted capability remains
+  target-independent ProcessImageInstallPlan derivation plus retained
+  QEMU/substitute no-partial-install evidence only. No explicit queued
+  follow-up task remains; supervisor planning is required before the worker may
+  promote another Phase 8.3 task. Physical process address-space mutation,
+  frame allocation, physical byte copy, page-table mutation, teardown,
+  lower-EL launch, argv/envp construction, process creation, exec/spawn/wait,
+  shell, descriptor-backed filesystem syscalls, Pi 5 hardware proof, writable
   filesystems, persistent storage, networking, SSH, RP1/PCIe, UART interrupt
   ownership, and DMA/cache-driver policy remain blocked until later explicit
   tasks accept their gates.
