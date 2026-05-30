@@ -6021,3 +6021,33 @@ ADR template:
   VFS/filesystem, shell, networking, SSH, dup2/fcntl, object finalization,
   broader cache/DMA policy, RP1/PCIe, UART interrupt ownership, and full POSIX
   descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 Read And Stdin Source Inventory Accepted
+
+- Status: accepted as the documentation-only Milestone 7.4 read/stdin source
+  inventory. No Rust behavior, assembly behavior, syscall-number allocation,
+  read implementation, QEMU run, Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, process loading, VFS/filesystem behavior, shell
+  behavior, networking, SSH, object finalization, RP1/PCIe, UART interrupt
+  ownership, DMA/cache-driver policy, or full POSIX descriptor readiness was
+  added.
+- Context: The accepted write/close/dup frontier proves ProcessOwnerId-backed
+  inherited stdio descriptors through QEMU/substitute and focused Pi 5 hardware
+  paths, but fd 0/read still lacks a byte-source contract, EOF/readiness
+  stance, copy-out syscall boundary, object-lifetime policy, and runtime proof.
+- Decision: Accept phase7-read-stdin-source-inventory-20260529. The inventory
+  names `src/syscall.rs`, `src/posix.rs`, `src/runtime_console.rs`,
+  `src/tty.rs`, the TTY/stdin architecture note, and retained write/close/dup
+  evidence as current owners, while keeping read/stdin behavior unaccepted.
+- Evidence level: static documentation/source inspection, retained evidence
+  review, documentation build, whitespace inspection, and staged whitespace
+  inspection. No Rust tests, QEMU run, or physical Pi 5 hardware evidence was
+  produced by this documentation-only inventory.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The next mechanically derivable task is
+  phase7-read-stdin-contract-20260529, scoped to a documentation-only
+  read/stdin contract. Read implementation, QEMU/Pi 5 read proof, process
+  loading, VFS/filesystem, shell, networking, SSH, object finalization,
+  RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and full POSIX
+  descriptor claims remain blocked.

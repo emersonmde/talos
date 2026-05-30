@@ -553,22 +553,32 @@ production-timer control evidence proves lab health after the earlier
 inconclusive candidate/control runs. Read/stdin behavior, process loading,
 VFS/filesystem, shell, networking, SSH, object finalization, dup2/fcntl, and
 full POSIX descriptor readiness remain blocked.
+The accepted Pi 5 dup syscall proof closeout reconciles the QEMU and Pi 5 dup
+frontier, retained local7/local8 evidence, archive/TFTP identity, restore
+proof, hardware-lock timeline, residual risks, and deferred surfaces. The
+accepted read/stdin source inventory maps the current owners for syscall
+dispatch, copy_to_user/user-memory validation, ProcessDescriptorStore lookup,
+inherited fd 0, runtime-console0, TTY/stdin surfaces, and retained
+write/close/dup evidence. It lists the unresolved read/stdin policy gaps for
+byte source, EOF, blocking/readiness, partial reads, nonblocking mode,
+restart/signals, copy-out failure handling, object lifetime/finalization, and
+physical proof. It accepts no read behavior and recommends the documentation-only
+phase7-read-stdin-contract-20260529 as the next bounded Milestone 7.4 task.
 
-Near-term direction after the accepted Pi 5 dup syscall proof:
+Near-term direction after the accepted read/stdin source inventory:
 
-- Close out the Pi 5 dup syscall proof before starting read/stdin or broader
-  descriptor work. The checkpoint should reconcile accepted QEMU and Pi 5 dup
-  evidence, inconclusive-run triage, restore proof, residual risks, and
-  deferred surfaces.
+- Define the read/stdin contract before any implementation or runtime proof.
+  The contract should choose the syscall number, argument/return convention,
+  reserved-register behavior, fd/error cases, copy-out failure behavior, and
+  one bounded stdin byte-source/EOF/readiness stance.
 - Keep QEMU, host-side unit tests, and static documentation gates first. Reserve
   serialized Pi 5 runs for the smallest physical claim that cannot be proven on
   the QEMU/substitute path.
-- Preserve the deferred-surface boundary: read syscall expansion, QEMU/Pi 5
-  proof beyond the accepted QEMU dup frontier, process loading, descriptor I/O
-  beyond the accepted write/close/dup frontiers, VFS/filesystem, shell,
-  networking, SSH, RP1/PCIe, UART interrupt ownership, object finalization,
-  dup2/fcntl, and DMA/cache-driver policy remain out of scope until explicit
-  tasks accept their contracts and gates.
+- Preserve the deferred-surface boundary: read implementation, QEMU/Pi 5 read
+  proof, process loading, descriptor I/O beyond the accepted write/close/dup
+  frontiers, VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, object finalization, dup2/fcntl, and DMA/cache-driver policy
+  remain out of scope until explicit tasks accept their contracts and gates.
 - Treat the roadmap target as a usable local operating system: TTY, shell,
   separate user programs, and interaction/program-based tests that exercise new
   kernel features through the normal kernel/userspace boundary.
