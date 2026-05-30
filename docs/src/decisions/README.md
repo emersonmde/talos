@@ -12,6 +12,45 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 Process Page-Table Materialization Core Accepted
+
+- Status: accepted as the Milestone 8.3 process page-table materialization
+  core. No TTBR/TCR/MAIR/SCTLR write, ASID allocation, live TLB invalidation,
+  scheduler publication, lower-EL launch, argv/envp setup, process lifecycle,
+  QEMU evidence run, Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, filesystem syscall, writable filesystem,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver
+  policy was added.
+- Context: The accepted materialization contract and smoke plan selected a
+  non-activating descriptor-image boundary with identity
+  phase8-process-page-table-materialization-v1. The worker needed to implement
+  that target-independent core before the queued QEMU/substitute smoke-core
+  task can retain evidence.
+- Decision: Add src/process_page_table_materialization.rs, wire it into
+  src/main.rs, and expose the existing stage-1 descriptor bit constants through
+  memory_map. The new core consumes ProgramImagePlan, ProcessImageInstallPlan,
+  and ProcessAddressSpace; leases owned root/table/user-frame evidence records;
+  emits ordered AArch64 EL0 user descriptors for UserText/UserData mappings;
+  preserves copy/zero accounting and W^X permission policy; rejects activation
+  requests with ENOSYS; rolls back all partial leases on deterministic errors;
+  and makes teardown idempotent.
+- Evidence level: unit tests and static inspection. cargo -Zjson-target-spec
+  test passed with 291 tests, including success, permission preservation,
+  bad-address-space/install mismatch, activation-request rejection,
+  unsupported topology, resource exhaustion rollback, copy/zero failure
+  rollback, and idempotent teardown coverage.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test passed; conditional QEMU/substitute evidence for this new boundary is
+  deferred to the already queued smoke-core task because no accepted
+  materialization smoke script existed before this implementation; git diff
+  --check passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The accepted capability is still descriptor-image evidence
+  only. TTBR activation, kernel-half mapping policy, ASID/TLB sequencing,
+  lower-EL launch, argv/envp, process lifecycle, shell, filesystem syscalls,
+  Pi 5 hardware proof, networking, and SSH remain blocked. The next bounded
+  task is phase8-qemu-process-page-table-materialization-smoke-core-20260530.
+
 ## 2026-05-30 - Phase 8 Process Page-Table Materialization Source Inventory Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 process

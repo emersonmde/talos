@@ -38,8 +38,9 @@ pub use translation::{
     EARLY_TRANSLATION_TABLE_KIND, EARLY_TRANSLATION_TABLE_PAGES,
     EARLY_TRANSLATION_TABLE_POPULATION_KIND, EarlyDataCacheEnablePlan,
     EarlyInstructionCacheEnablePlan, EarlyTranslationRegisterPlan, EarlyTranslationTableLayout,
-    EarlyTranslationTablePopulation, early_data_cache_enable_plan,
-    early_instruction_cache_enable_plan, early_translation_register_plan,
-    early_translation_table_layout, early_translation_table_population_plan,
-    populate_early_translation_tables,
+    EarlyTranslationTablePopulation, STAGE1_DESC_AF, STAGE1_DESC_ATTR_INDEX_SHIFT, STAGE1_DESC_PXN,
+    STAGE1_DESC_SH_INNER, STAGE1_DESC_TABLE, STAGE1_DESC_UXN, STAGE1_DESC_VALID,
+    STAGE1_TABLE_ADDR_MASK, early_data_cache_enable_plan, early_instruction_cache_enable_plan,
+    early_translation_register_plan, early_translation_table_layout,
+    early_translation_table_population_plan, populate_early_translation_tables,
 };

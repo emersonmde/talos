@@ -248,14 +248,14 @@ pub fn early_data_cache_enable_plan(
     })
 }
 
-pub(super) const STAGE1_DESC_VALID: u64 = 1 << 0;
-const STAGE1_DESC_TABLE: u64 = 1 << 1;
-pub(super) const STAGE1_DESC_ATTR_INDEX_SHIFT: u64 = 2;
-pub(super) const STAGE1_DESC_SH_INNER: u64 = 0b11 << 8;
-pub(super) const STAGE1_DESC_AF: u64 = 1 << 10;
-pub(super) const STAGE1_DESC_PXN: u64 = 1 << 53;
-pub(super) const STAGE1_DESC_UXN: u64 = 1 << 54;
-const STAGE1_TABLE_ADDR_MASK: u64 = 0x0000_ffff_ffff_f000;
+pub const STAGE1_DESC_VALID: u64 = 1 << 0;
+pub const STAGE1_DESC_TABLE: u64 = 1 << 1;
+pub const STAGE1_DESC_ATTR_INDEX_SHIFT: u64 = 2;
+pub const STAGE1_DESC_SH_INNER: u64 = 0b11 << 8;
+pub const STAGE1_DESC_AF: u64 = 1 << 10;
+pub const STAGE1_DESC_PXN: u64 = 1 << 53;
+pub const STAGE1_DESC_UXN: u64 = 1 << 54;
+pub const STAGE1_TABLE_ADDR_MASK: u64 = 0x0000_ffff_ffff_f000;
 pub(super) const STAGE1_BLOCK_ADDR_MASK: u64 = 0x0000_ffff_ffe0_0000;
 const TABLE_ENTRIES: u64 = 512;
 const TCR_EL2_T0SZ_SHIFT: u64 = 0;

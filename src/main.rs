@@ -92,6 +92,8 @@ mod process_address_space;
 #[cfg_attr(not(test), allow(dead_code))]
 mod process_install;
 #[cfg_attr(not(test), allow(dead_code))]
+mod process_page_table_materialization;
+#[cfg_attr(not(test), allow(dead_code))]
 mod program_loader;
 mod runtime_console;
 // Phase 6.1 accepts per-core ownership before boot-time hardware use.

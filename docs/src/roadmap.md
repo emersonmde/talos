@@ -2707,6 +2707,21 @@ Milestone 8.3: Program Loader
   activation, ASID/TLB policy, lower-EL launch, argv/envp, process lifecycle,
   shell, filesystem syscalls, Pi 5 hardware proof, networking, and SSH remain
   blocked.
+- Phase 8 process page-table materialization core is accepted. It adds
+  src/process_page_table_materialization.rs and wires it into src/main.rs as a
+  non-activating materialization boundary. The implementation consumes the
+  accepted ProgramImagePlan, ProcessImageInstallPlan, and ProcessAddressSpace
+  records; produces owned root/table-page/user-frame leases, ordered AArch64
+  EL0 descriptor records, copied/zeroed byte accounting, rollback accounting,
+  idempotent teardown, activation_blocked=true, and
+  kernel_mapping_policy=activation-blocked-no-kernel-half. Tests cover success,
+  permission preservation, deterministic bad-input and activation-request
+  rejection, unsupported topology, resource exhaustion rollback, copy/zero
+  failure rollback, and idempotent teardown. The next bounded task should be
+  phase8-qemu-process-page-table-materialization-smoke-core-20260530 to retain
+  the accepted QEMU/substitute evidence. TTBR activation, ASID/TLB policy,
+  lower-EL launch, argv/envp, process lifecycle, shell, filesystem syscalls,
+  Pi 5 hardware proof, networking, and SSH remain blocked.
 
 Acceptance criteria:
 
