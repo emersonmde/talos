@@ -1,0 +1,28 @@
+TALOS: rust_entry
+TALOS: boot info parsed
+TALOS: target init
+TALOS: exceptions ready
+TALOS: kernel_main
+talos: boot start
+rpi5-read-stdin-proof: start
+rpi5-read-stdin-proof: validated elr=0x0000000000100000 sp=0x0000000000200000 user-data=0x0000000000110000 user-data-len=0x0000000000001000 guard-blocked=true process-owner=0x0000000000000001 current-owner=0x0000000000000001 descriptor-table=process-owned-inherited-stdio descriptor-capacity=4 fixed-stdin-len=17 fixed-stdin-cursor=0
+rpi5-read-stdin-proof: current-descriptor-table lookup=process-owned owner=0x0000000000000001 resolved=true stdio=inherited fixed-stdin=proof-buffer
+rpi5-read-stdin-proof: pre-eret hcr_el2=0x0000000080000000 sctlr_el1=0x0000000030d00800 tcr_el1=0x0000000200003010 ttbr0_el1=0x0000000000241000 vbar_el1=0x0000000000200800 elr_el1=0x0000000000100000 spsr_el1=0x00000000000003c0
+rpi5-read-stdin-proof: syscall case=dup_stdin vector=lower-aarch64-sync esr=0x0000000054000000 svc=0x0000 number=3 args=[x0=0x0000000000000000 x1=0x0000000000000000 x2=0x0000000000000000 x3=0x0000000000000000 x4=0x0000000000000000 x5=0x0000000000000000] descriptor-owner=0x0000000000000001 return-x0=0x0000000000000003 lowest-free=true source-open=true
+rpi5-read-stdin-proof: syscall case=read_guard vector=lower-aarch64-sync esr=0x0000000054000000 svc=0x0000 number=4 return-x0=0xfffffffffffffff2 expected=-EFAULT fixed-stdin-cursor=0 user-unchanged=true
+rpi5-read-stdin-proof: syscall case=read_reserved vector=lower-aarch64-sync esr=0x0000000054000000 svc=0x0000 number=4 return-x0=0xffffffffffffffea expected=-EINVAL fixed-stdin-cursor=0 user-unchanged=true
+rpi5-read-stdin-proof: syscall case=read_fd1 vector=lower-aarch64-sync esr=0x0000000054000000 svc=0x0000 number=4 return-x0=0xfffffffffffffff7 expected=-EBADF fixed-stdin-cursor=0 user-unchanged=true
+rpi5-read-stdin-proof: syscall case=read_badfd vector=lower-aarch64-sync esr=0x0000000054000000 svc=0x0000 number=4 return-x0=0xfffffffffffffff7 expected=-EBADF fixed-stdin-cursor=0 user-unchanged=true
+rpi5-read-stdin-proof: syscall case=read_stdin_first vector=lower-aarch64-sync esr=0x0000000054000000 svc=0x0000 number=4 args=[x0=0x0000000000000000 x1=0x0000000000110080 x2=0x0000000000000005 x3=0x0000000000000000 x4=0x0000000000000000 x5=0x0000000000000000] descriptor-owner=0x0000000000000001 return-x0=0x0000000000000005 fixed-stdin-cursor=5
+rpi5-read-stdin-proof: user-buffer case=read_stdin_first addr=0x0000000000110080 bytes=5 hex=74616c6f73 ok=true
+rpi5-read-stdin-proof: user-observed case=read_stdin_first x0=0x0000000000000005 ok=true
+rpi5-read-stdin-proof: syscall case=read_stdin_duplicate_remaining vector=lower-aarch64-sync esr=0x0000000054000000 svc=0x0000 number=4 args=[x0=0x0000000000000003 x1=0x00000000001100a0 x2=0x0000000000000020 x3=0x0000000000000000 x4=0x0000000000000000 x5=0x0000000000000000] descriptor-owner=0x0000000000000001 return-x0=0x000000000000000c fixed-stdin-cursor=17 short-read=true
+rpi5-read-stdin-proof: user-buffer case=read_stdin_duplicate_remaining addr=0x00000000001100a0 bytes=12 hex=2d737464696e2d727069350a ok=true
+rpi5-read-stdin-proof: user-observed case=read_stdin_duplicate_remaining x0=0x000000000000000c ok=true
+rpi5-read-stdin-proof: syscall case=read_stdin_eof vector=lower-aarch64-sync esr=0x0000000054000000 svc=0x0000 number=4 return-x0=0x0000000000000000 fixed-stdin-cursor=17 user-unchanged=true eof=true
+rpi5-read-stdin-proof: syscall case=talos_nop vector=lower-aarch64-sync esr=0x0000000054000000 svc=0x0000 number=0 return-x0=0x0000000000000000
+rpi5-read-stdin-proof: syscall case=unknown vector=lower-aarch64-sync esr=0x0000000054000000 svc=0x0000 number=17 return-x0=0xffffffffffffffda expected=-ENOSYS
+rpi5-read-stdin-proof: syscall case=copy_probe_quarantine vector=lower-aarch64-sync esr=0x0000000054000000 svc=0x0000 number=0x0000000000007001 return-x0=0xffffffffffffffda expected=-ENOSYS dispatched=false
+rpi5-read-stdin-proof: diagnostic-marker marker=0x7a10 stable-syscall=false dispatched=false
+rpi5-read-stdin-proof: final participants=11 expected=11 errors=0 classification=pi5-read-stdin-proof-complete
+rpi5-read-stdin-proof: PASS

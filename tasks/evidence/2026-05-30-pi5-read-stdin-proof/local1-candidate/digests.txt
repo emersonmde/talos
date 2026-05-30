@@ -1,0 +1,2 @@
+a51fc0110534e761e75cf58837c966d51984bb21b1358f02bca403625da80bb9  target/talos-rpi5-read-stdin-proof-local1-boot.tar.gz
+1b7417340d4b0dc44e741683464900500667929c2089b4c1ea88dc050f06d014  target/rpi5-read-stdin-proof-boot-tree-local1/kernel_2712.img

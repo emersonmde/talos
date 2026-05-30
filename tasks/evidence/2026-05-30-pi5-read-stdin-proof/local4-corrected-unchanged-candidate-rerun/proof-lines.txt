@@ -1,0 +1,6 @@
+TALOS: rust_entry
+TALOS: boot info parsed
+TALOS: target init
+TALOS: exceptions ready
+TALOS: kernel_main
+talos: boot start

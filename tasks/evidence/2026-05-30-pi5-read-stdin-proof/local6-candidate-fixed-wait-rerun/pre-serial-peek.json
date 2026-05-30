@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "bnVtYmVyPTE3IHJldHVybi14MD0weGZmZmZmZmZmZmZmZmZmZGEgZXhwZWN0ZWQ9LUVOT1NZUw0KcnBpNS1yZWFkLXN0ZGluLXByb29mOiBzeXNjYWxsIGNhc2U9Y29weV9wcm9iZV9xdWFyYW50aW5lIHZlY3Rvcj1sb3dlci1hYXJjaDY0LXN5bmMgZXNyPTB4MDAwMDAwMDA1NDAwMDAwMCBzdmM9MHgwMDAwIG51bWJlcj0weDAwMDAwMDAwMDAwMDcwMDEgcmV0dXJuLXgwPTB4ZmZmZmZmZmZmZmZmZmZkYSBleHBlY3RlZD0tRU5PU1lTIGRpc3BhdGNoZWQ9ZmFsc2UNCnJwaTUtcmVhZC1zdGRpbi1wcm9vZjogZGlhZ25vc3RpYy1tYXJrZXIgbWFya2VyPTB4N2ExMCBzdGFibGUtc3lzY2FsbD1mYWxzZSBkaXNwYXRjaGVkPWZhbHNlDQpycGk1LXJlYWQtc3RkaW4tcHJvb2Y6IGZpbmFsIHBhcnRpY2lwYW50cz0xMSBleHBlY3RlZD0xMSBlcnJvcnM9MCBjbGFzc2lmaWNhdGlvbj1waTUtcmVhZC1zdGRpbi1wcm9vZi1jb21wbGV0ZQ0KcnBpNS1yZWFkLXN0ZGluLXByb29mOiBQQVNTDQo=",
+  "bytes": 500,
+  "cursor": 3367978,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "number=17 return-x0=0xffffffffffffffda expected=-ENOSYS\r\nrpi5-read-stdin-proof: syscall case=copy_probe_quarantine vector=lower-aarch64-sync esr=0x0000000054000000 svc=0x0000 number=0x0000000000007001 return-x0=0xffffffffffffffda expected=-ENOSYS dispatched=false\r\nrpi5-read-stdin-proof: diagnostic-marker marker=0x7a10 stable-syscall=false dispatched=false\r\nrpi5-read-stdin-proof: final participants=11 expected=11 errors=0 classification=pi5-read-stdin-proof-complete\r\nrpi5-read-stdin-proof: PASS\r\n"
+}

@@ -1,0 +1,1 @@
+?? tasks/evidence/2026-05-30-pi5-read-stdin-proof/

@@ -6259,3 +6259,43 @@ ADR template:
   VFS/filesystem, shell, networking, SSH, object finalization, dup2/fcntl,
   signals, wait queues, nonblocking I/O, RP1/PCIe, UART interrupt ownership,
   DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.
+
+## 2026-05-30 - Phase 7 Pi 5 Read/Stdin Proof Accepted
+
+- Context: The accepted QEMU read/stdin proof and Pi 5 proof plan needed a
+  serialized physical run that tied a candidate archive to both TFTP and serial
+  evidence. Earlier candidate attempts produced inconclusive serial or
+  post-restore TFTP evidence, while the known-good control passed; retained
+  local5 evidence provided the decisive no-source-change candidate rerun.
+- Decision: Accept phase7-pi5-read-stdin-proof-20260530. The accepted physical
+  boundary is the focused rpi5_read_stdin_proof scenario only: fixed proof
+  stdin bytes talos-stdin-rpi5\n, fd 0 duplication to fd 3, copy-out -EFAULT
+  without cursor advance, reserved-register -EINVAL, fd/error -EBADF, fd 0
+  success copying talos, duplicated-stdin short read copying -stdin-rpi5\n,
+  bounded EOF, talos_nop and unknown-syscall regressions, proof-only
+  copy-probe quarantine, diagnostic-marker quarantine,
+  classification=pi5-read-stdin-proof-complete, and PASS.
+- Evidence level: fmt/lint/typecheck, unit tests, QEMU/substitute read/stdin
+  and scalar/descriptor regressions, static archive/image review,
+  lab-controller API and TFTP delta, serial hardware boot/output, restore
+  proof, documentation build, whitespace inspection, and staged whitespace
+  inspection. local5 ties implementation commit
+  fd2be8ea42ddf88dd4cff120439ab1d3df51bce1 to archive SHA-256
+  5f91281b2dcdfb1bca6fddd6dde6c3f0b39d89f4a4274a5bf91127d8ba833983,
+  kernel digest 1b7417340d4b0dc44e741683464900500667929c2089b4c1ea88dc050f06d014,
+  a 114816-byte da591740/kernel_2712.img TFTP fetch, retained serial PASS
+  lines, and restored 104136-byte prior accepted boot tree.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec test
+  passed; scripts/qemu-read-stdin-smoke.sh, scripts/qemu-syscall-smoke.sh,
+  scripts/qemu-descriptor-write-smoke.sh, scripts/qemu-close-syscall-smoke.sh,
+  and scripts/qemu-dup-syscall-smoke.sh passed before hardware; local5 archive
+  review, TFTP evidence, serial evidence, and restore proof passed; git diff
+  --check passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next queued bounded Milestone 7.4 task is
+  phase7-pi5-read-stdin-proof-closeout-checkpoint-20260530, scoped to
+  reconciling this accepted physical proof before the file descriptor table
+  closeout. runtime-console0/TTY/hardware stdin, process loading,
+  VFS/filesystem, shell, networking, SSH, object finalization, dup2/fcntl,
+  signals, wait queues, nonblocking I/O, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.

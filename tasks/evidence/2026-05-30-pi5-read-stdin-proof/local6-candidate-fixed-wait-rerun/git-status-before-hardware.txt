@@ -1,0 +1,2 @@
+ M tasks/2026-05-30-phase7-pi5-read-stdin-proof.md
+?? tasks/evidence/2026-05-30-pi5-read-stdin-proof/

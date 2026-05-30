@@ -1,0 +1,20 @@
+*   Trying 172.30.50.3:8080...
+* Connected to talos-lab-api (172.30.50.3) port 8080 (#0)
+> POST /serial/observe HTTP/1.1
+> Host: talos-lab-api:8080
+> User-Agent: curl/7.88.1
+> Accept: */*
+> Content-Type: application/json
+> Content-Length: 73
+>
+} [73 bytes data]
+* HTTP 1.0, assume close after body
+< HTTP/1.0 200 OK
+< Server: talos-lab-api/0.1 Python/3.13.13
+< Date: Sat, 30 May 2026 02:41:39 GMT
+< Content-Type: application/json
+< Cache-Control: no-store
+< Content-Length: 187
+<
+{ [187 bytes data]
+* Closing connection 0

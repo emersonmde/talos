@@ -1,0 +1,40 @@
+   Compiling talos v0.1.0 (/opt/strider/openclaw/current/workspace/projects/talos)
+warning: method `set_reg` is never used
+   --> src/arch/aarch64/exceptions.rs:151:12
+    |
+144 | impl ExceptionFrame {
+    | ------------------- method in this implementation
+...
+151 |     pub fn set_reg(&mut self, index: usize, value: u64) {
+    |            ^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `AARCH64_SVC_EXCEPTION_CLASS` is never used
+   --> src/arch/aarch64/exceptions.rs:156:18
+    |
+156 | pub(crate) const AARCH64_SVC_EXCEPTION_CLASS: u64 = 0x15;
+    |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `svc_immediate` is never used
+   --> src/arch/aarch64/exceptions.rs:162:21
+    |
+162 | pub(crate) const fn svc_immediate(esr: u64) -> u16 {
+    |                     ^^^^^^^^^^^^^
+
+warning: struct `RoutedSyscall` is never constructed
+   --> src/arch/aarch64/exceptions.rs:167:19
+    |
+167 | pub(crate) struct RoutedSyscall {
+    |                   ^^^^^^^^^^^^^
+
+warning: function `try_route_lower_aarch64_syscall` is never used
+   --> src/arch/aarch64/exceptions.rs:173:15
+    |
+173 | pub(crate) fn try_route_lower_aarch64_syscall(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: `talos` (bin "talos") generated 5 warnings
+    Finished `dev` profile [optimized + debuginfo] target(s) in 1.31s
+   Compiling talos v0.1.0 (/opt/strider/openclaw/current/workspace/projects/talos)
+    Finished `dev` profile [optimized + debuginfo] target(s) in 1.48s

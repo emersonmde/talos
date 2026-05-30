@@ -628,20 +628,35 @@ DMA/cache-driver policy, and full POSIX descriptor readiness remain blocked.
 The next mechanically derivable task should be the documentation-only
 phase7-pi5-read-stdin-proof-plan-20260530, queued by the supervisor before any
 hardware action.
+The accepted Pi 5 read/stdin proof plan and serialized proof carry the
+QEMU/substitute fixed-stdin talos_read invariant to Raspberry Pi 5 hardware.
+Retained local5 evidence ties the unchanged fd2be8e candidate archive to a
+114816-byte da591740/kernel_2712.img TFTP fetch, serial output proving fd 0
+read, duplicated fd 3 short read, EOF, -EFAULT/-EINVAL/-EBADF error cases,
+talos_nop and unknown-syscall regressions, copy-probe quarantine,
+diagnostic-marker quarantine, final
+classification=pi5-read-stdin-proof-complete, and PASS, followed by restore
+proof for the prior accepted 104136-byte boot tree. The accepted claim remains
+limited to fixed proof stdin in the focused rpi5_read_stdin_proof scenario.
+runtime-console0/TTY/hardware stdin, process loading, VFS/filesystem, shell,
+networking, SSH, object finalization, dup2/fcntl, signals, wait queues,
+nonblocking I/O, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy,
+and full POSIX descriptor readiness remain blocked. The next queued bounded
+Milestone 7.4 task is phase7-pi5-read-stdin-proof-closeout-checkpoint-20260530.
 
-Near-term direction after the accepted read/stdin closeout:
+Near-term direction after the accepted Pi 5 read/stdin proof:
 
-- Queue and accept a Pi 5 read/stdin proof plan before any hardware action.
+- Close out the Pi 5 read/stdin proof before any Milestone 7.4 file descriptor
+  table closeout.
 - Keep QEMU, host-side unit tests, and static documentation gates first. Reserve
   serialized Pi 5 runs for the smallest physical claim that cannot be proven on
   the QEMU/substitute path.
-- Preserve the deferred-surface boundary: QEMU/Pi 5 read proof,
-  runtime-console0/TTY/hardware stdin, process loading, descriptor I/O beyond
-  the accepted write/close/dup/read target-independent frontiers,
-  VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
-  object finalization, dup2/fcntl, signals, wait queues, nonblocking I/O, and
-  DMA/cache-driver policy remain out of scope until explicit tasks accept
-  their contracts and gates.
+- Preserve the deferred-surface boundary: runtime-console0/TTY/hardware stdin,
+  process loading, descriptor I/O beyond the accepted write/close/dup/read
+  frontiers, VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, object finalization, dup2/fcntl, signals, wait queues,
+  nonblocking I/O, and DMA/cache-driver policy remain out of scope until
+  explicit tasks accept their contracts and gates.
 - Treat the roadmap target as a usable local operating system: TTY, shell,
   separate user programs, and interaction/program-based tests that exercise new
   kernel features through the normal kernel/userspace boundary.

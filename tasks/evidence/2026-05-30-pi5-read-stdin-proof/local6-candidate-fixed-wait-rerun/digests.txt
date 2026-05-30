@@ -1,0 +1,2 @@
+1b7417340d4b0dc44e741683464900500667929c2089b4c1ea88dc050f06d014  target/rpi5-read-stdin-proof-boot-tree-local6/kernel_2712.img
+1b7417340d4b0dc44e741683464900500667929c2089b4c1ea88dc050f06d014  target/rpi5-read-stdin-proof-boot-tree-local6/kernel8.img
