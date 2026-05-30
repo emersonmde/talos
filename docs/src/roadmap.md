@@ -217,6 +217,19 @@ phase8-live-address-space-activation-contract-20260530 as the next bounded
 documentation-only task. Live register mutation, lower-EL launch, process
 lifecycle, filesystem syscalls, Pi 5 hardware proof, networking, and SSH
 remain blocked.
+The live address-space activation contract is accepted. It selects
+phase8-live-address-space-activation-plan-v1 as a target-independent
+activation-preflight record with policy
+preflight-split-user-ttbr0-kernel-reachability-blocked-v1. The contract
+defines the before/after activation invariant, TTBR0 root provenance,
+TTBR1/kernel-half blocker, TCR/MAIR/SCTLR compatibility checks, ASID/TLB/
+barrier blocked states, kernel reachability and fault-reporting prerequisites,
+deterministic error/blocker vocabulary, and no-partial-activation/
+no-runnable-publication behavior. It recommends
+phase8-qemu-live-address-space-activation-smoke-plan-20260530 as the next
+bounded documentation-only task. Live translation-register mutation,
+lower-EL ERET, scheduler publication, process lifecycle, filesystem syscalls,
+Pi 5 hardware proof, networking, and SSH remain blocked.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -2987,6 +3000,20 @@ Milestone 8.3: Program Loader
   filesystem syscalls, Pi 5 hardware proof, networking, and SSH. It
   recommends phase8-live-address-space-activation-contract-20260530 as the
   next bounded documentation-only task.
+- Phase 8 live address-space activation contract is accepted. It selects a
+  LiveAddressSpaceActivationPlan preflight boundary with identity
+  phase8-live-address-space-activation-plan-v1 and policy
+  preflight-split-user-ttbr0-kernel-reachability-blocked-v1. The contract
+  states the invariant before and after any eventual TTBR/TCR/MAIR/SCTLR
+  mutation, records TTBR0 root provenance and blocked TTBR1/kernel-half
+  policy, requires TCR/MAIR/SCTLR compatibility checks, preserves ASID/TLB/
+  barrier blocked states, names kernel reachability and fault-reporting
+  prerequisites, defines deterministic errors/blockers, and requires
+  no-partial-activation plus no-runnable-publication behavior. It recommends
+  phase8-qemu-live-address-space-activation-smoke-plan-20260530 as the next
+  bounded documentation-only task. Live register mutation, lower-EL ERET,
+  scheduler publication, process lifecycle, filesystem syscalls, Pi 5 hardware
+  proof, networking, and SSH remain blocked.
 
 Acceptance criteria:
 

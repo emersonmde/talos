@@ -12,6 +12,47 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 Live Address-Space Activation Contract Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 live address-space
+  activation contract. No Rust behavior, assembly behavior, QEMU execution,
+  Pi 5 hardware run, boot archive publication, hardware-lock acquisition,
+  TTBR/TCR/MAIR/SCTLR write, ASID allocation, live TLB invalidation, lower-EL
+  ERET, scheduler runnable publication, process lifecycle, shell behavior,
+  descriptor-backed filesystem syscalls, writable filesystem, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The accepted live address-space activation source inventory
+  identified the first missing boundary after accepted loader, install,
+  address-space, materialization, initial launch, and initial user stack
+  records: how a materialized process root can be prepared for future live
+  activation while preserving kernel reachability, exception/fault reporting,
+  rollback, and no-runnable-publication semantics.
+- Decision: Accept phase8-live-address-space-activation-contract-20260530.
+  The selected boundary is a target-independent
+  LiveAddressSpaceActivationPlan with identity
+  phase8-live-address-space-activation-plan-v1 and policy
+  preflight-split-user-ttbr0-kernel-reachability-blocked-v1. It records
+  TTBR0 root provenance from the materialized root lease, blocks TTBR1/kernel
+  half mapping until accepted separately, defines TCR/MAIR/SCTLR compatibility
+  checks, preserves ASID/TLB/barrier blocked states, requires kernel
+  reachability and fault-reporting prerequisites, and defines deterministic
+  errors, blockers, no-partial-activation, and no-runnable-publication
+  behavior.
+- Evidence level: static documentation/source review. Reviewed accepted live
+  activation inventory, initial user stack and launch contracts, process
+  page-table materialization contract, lower-EL architecture notes, loader,
+  install, address-space, materialization, launch, stack, POSIX, translation,
+  exception, and scheduler owners, roadmap, SUMMARY, and ADR index.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The next bounded task should be
+  phase8-qemu-live-address-space-activation-smoke-plan-20260530. Live
+  TTBR/TCR/MAIR/SCTLR mutation, ASID allocation, TLBI, lower-EL ERET,
+  scheduler runnable publication, process lifecycle, startup ABI expansion,
+  filesystem syscalls, Pi 5 hardware proof, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, and DMA/cache-driver policy remain blocked until later
+  explicit tasks accept their contracts and gates.
+
 ## 2026-05-30 - Phase 8 Process Page-Table Materialization Closeout Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 process page-table
