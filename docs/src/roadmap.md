@@ -13,13 +13,16 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is in Phase 8 Milestone 8.1 after the accepted Phase 7 final closeout
+Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning
 task, the Phase 8 source inventory was accepted, and the read-only
 initramfs/VFS contract, smoke plan, target-independent core, and
 QEMU/substitute smoke were accepted. The read-only initramfs/VFS closeout
 checkpoint is accepted and recommends a documentation-only program-loader
-source inventory before any loader implementation or shell work. The
+source inventory before any loader implementation or shell work. That
+program-loader source inventory is now accepted and recommends a
+documentation-only loader format contract before any parser, mapper, process
+install, or shell task. The
 accepted Phase 7
 frontier includes the Phase
 6.3 production scheduler runtime closeout,
@@ -2342,6 +2345,14 @@ Milestone 8.1: Initramfs or Ramfs
   initramfs/VFS closeout checkpoint is accepted and recommends
   phase8-program-loader-source-inventory-20260530 as the next bounded
   documentation-only task before any loader implementation.
+- The read-only initramfs/VFS closeout checkpoint is accepted. It reconciles
+  the accepted contract, smoke plan, target-independent core, retained
+  QEMU/substitute evidence, deferred surfaces, and residual risks, and it
+  recommends phase8-program-loader-source-inventory-20260530 as the next
+  bounded documentation-only task. It does not accept descriptor-backed
+  filesystem syscalls, executable /bin/init, ELF/program loading, process
+  creation, shell, Pi 5 hardware proof, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, or DMA/cache-driver policy.
 
 Acceptance criteria:
 
@@ -2360,6 +2371,19 @@ Milestone 8.3: Program Loader
 
 - Choose an executable format for early user programs.
 - Load a program from initramfs, map it into a process, and pass arguments.
+- Phase 8 program-loader source inventory is accepted. It maps the accepted
+  read-only initramfs/VFS regular-file input, current source owners for
+  filesystem bytes, POSIX errors, user-memory permissions, lower-EL proof
+  payloads, scheduler/process-owner placeholders, descriptor inheritance, and
+  evidence conventions. It also records missing contracts for executable
+  format selection, ELF/header validation, segment permissions, zero-fill,
+  entry-point validation, user stack and argv/envp layout, loader error
+  mapping, process-install ownership, and descriptor inheritance. The next
+  bounded task is phase8-program-loader-format-contract-20260530. ELF parsing,
+  loader implementation, process creation, exec/spawn/wait, shell, Pi 5
+  hardware proof, writable filesystems, persistent storage, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
+  blocked until later explicit tasks accept their gates.
 
 Acceptance criteria:
 

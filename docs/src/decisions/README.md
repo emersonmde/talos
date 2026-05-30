@@ -12,6 +12,44 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 Program Loader Source Inventory Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 program-loader
+  source inventory. No Rust behavior, assembly behavior, QEMU run, Pi 5
+  hardware run, boot archive publication, hardware-lock acquisition, ELF
+  parser, loader implementation, user page mapping, process creation,
+  exec/spawn/wait, argv/envp setup, shell, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, DMA/cache-driver policy, writable filesystem, or
+  persistent-storage behavior was added.
+- Context: The accepted read-only initramfs/VFS closeout recommended one
+  program-loader inventory before any executable-format contract or loader
+  implementation. The accepted filesystem input is still an immutable
+  regular-file fixture; `/bin/init` remains data only.
+- Decision: Accept phase8-program-loader-source-inventory-20260530. The
+  inventory maps owners for executable bytes, format validation, user-memory
+  mapping vocabulary, entry state, process ownership, descriptor inheritance,
+  loader errors, and QEMU/substitute evidence conventions, while recording the
+  missing contracts that must precede implementation.
+- Evidence level: static source/documentation inspection. Reviewed the
+  accepted read-only initramfs/VFS closeout and contracts, Phase 7 EL0 and
+  process-descriptor contracts, src/initramfs.rs, src/posix.rs, src/syscall.rs,
+  src/scheduler.rs, memory-map owners, exception routing, QEMU/RPi5 target
+  proof owners, roadmap, and ADR index. No QEMU or physical Pi 5 evidence was
+  produced by this documentation-only inventory.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next mechanically unblocked task is
+  phase8-program-loader-format-contract-20260530, documentation-only. It
+  should define the first executable image subset, likely narrow static
+  ELF64/AArch64 unless a smaller temporary format is justified, plus header
+  validation, segment permissions, zero-fill, entry validation, and loader
+  error mapping. ELF parsing, process creation, exec/spawn/wait, argv/envp
+  stack implementation, shell, Pi 5 hardware proof, writable filesystems,
+  persistent storage, networking, SSH, RP1/PCIe, UART interrupt ownership, and
+  DMA/cache-driver policy remain blocked until later explicit tasks accept
+  their contracts and gates.
+
 ## 2026-05-30 - Phase 8 Read-Only Initramfs/VFS Closeout Accepted
 
 - Status: accepted as the documentation-only Milestone 8.1 read-only
