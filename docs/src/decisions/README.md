@@ -7777,3 +7777,39 @@ ADR template:
   Pi 5 hardware proof, shell, networking, SSH, RP1/PCIe, UART interrupt
   ownership, and DMA/cache-driver policy remain blocked until later explicit
   tasks accept their contracts and gates.
+
+## 2026-05-30 - Phase 8 Initial User Stack Contract Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 initial user stack
+  contract. No Rust behavior, assembly behavior, QEMU execution, Pi 5
+  hardware run, boot archive publication, hardware-lock acquisition,
+  TTBR/TCR/MAIR/SCTLR write, ASID allocation, live TLB invalidation,
+  lower-EL ERET, scheduler runnable publication, process lifecycle, shell
+  behavior, descriptor-backed filesystem syscalls, writable filesystem,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver
+  policy was added.
+- Context: The accepted source inventory identified the missing launch
+  prerequisite as a target-independent initial user stack record that can bind
+  to InitialProcessLaunchPlan without live activation.
+- Decision: Accept phase8-initial-user-stack-contract-20260530. The contract
+  selects an InitialUserStackPlan boundary with fixed stack top
+  0x0000_8000_0000_0000, usable range
+  [0x0000_7fff_ffff_c000, 0x0000_8000_0000_0000), one unmapped guard page,
+  USER_DATA usable pages, copied_bytes=0, zeroed_bytes=0x4000, stack-owned
+  leases, idempotent teardown, deterministic errors, minimal empty argc=0
+  startup placeholder, and model-only launch-plan stack-state integration.
+- Evidence level: static documentation/source inspection. Reviewed the
+  accepted initial user stack source inventory, initial process launch
+  contract and closeout, POSIX user range/error vocabulary, loader,
+  process-install, ProcessAddressSpace, materialization, initial launch,
+  roadmap, and ADR index.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next bounded task should be
+  phase8-qemu-initial-user-stack-smoke-plan-20260530. Stack implementation,
+  live TTBR activation, lower-EL ERET, scheduler runnable publication,
+  process lifecycle, broad argv/envp/auxv/TLS ABI, descriptor-backed
+  filesystem syscalls, Pi 5 hardware proof, shell, networking, SSH, RP1/PCIe,
+  UART interrupt ownership, and DMA/cache-driver policy remain blocked until
+  later explicit tasks accept their contracts and gates.

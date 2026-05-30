@@ -163,6 +163,17 @@ phase8-initial-user-stack-contract-20260530 as the next bounded
 documentation-only task. Stack implementation, argv/envp/auxv/TLS setup,
 TTBR activation, lower-EL ERET, scheduler publication, process lifecycle,
 filesystem syscalls, Pi 5 hardware proof, networking, and SSH remain blocked.
+The initial user stack contract is now accepted. It selects a model-only
+InitialUserStackPlan boundary with stack top 0x0000_8000_0000_0000, usable
+range [0x0000_7fff_ffff_c000, 0x0000_8000_0000_0000), one unmapped guard page
+below it, 16-byte initial SP alignment, USER_DATA stack pages,
+copied_bytes=0, zeroed_bytes=0x4000, idempotent stack teardown,
+deterministic no-partial-stack/no-partial-launch errors, and launch-plan
+integration that may change only model stack state while activation,
+lower-EL ERET, scheduler publication, process lifecycle, filesystem syscalls,
+Pi 5 proof, networking, and SSH remain blocked. It names
+phase8-qemu-initial-user-stack-smoke-plan-20260530 as the next bounded
+documentation-only task.
 The
 accepted Phase 7
 frontier includes the Phase
