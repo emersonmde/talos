@@ -6847,3 +6847,38 @@ ADR template:
   shell, descriptor-backed filesystem syscalls, writable filesystems,
   persistent storage, networking, SSH, RP1/PCIe, UART interrupt ownership, and
   DMA/cache-driver policy remain blocked.
+
+## 2026-05-30 - Phase 8 Program Loader Closeout Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 program-loader
+  closeout checkpoint. No Rust behavior, assembly behavior, QEMU rerun, Pi 5
+  hardware run, boot archive publication, hardware-lock acquisition, process
+  address-space installation, lower-EL launch, argv/envp stack construction,
+  process creation, exec/spawn/wait, shell behavior, descriptor-backed
+  filesystem syscall behavior, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache-driver policy was added.
+- Context: The accepted QEMU/substitute smoke core proved the image-plan-only
+  program-loader frontier through retained qemu_program_loader_smoke evidence,
+  but process-install work still needed a closeout to reconcile commits,
+  evidence, deferred surfaces, and residual risks.
+- Decision: Accept phase8-program-loader-closeout-checkpoint-20260530. The
+  checkpoint reconciles the accepted loader source inventory, format contract,
+  smoke plan, target-independent core, and QEMU/substitute smoke core, records
+  the retained evidence path and fixture digest, and keeps the accepted
+  capability strictly image-plan-only.
+- Evidence level: static documentation and evidence review. Reviewed the
+  accepted project documents, task records, roadmap, ADR index, and retained
+  QEMU/substitute smoke log. No new QEMU or physical Pi 5 evidence was
+  produced or claimed.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next bounded task should be
+  phase8-process-install-source-inventory-20260530, documentation-only. It is
+  now mechanically unblocked only because this checkpoint explicitly
+  recommends it. Process address-space installation, lower-EL launch,
+  argv/envp stack construction, process creation, exec/spawn/wait, shell,
+  descriptor-backed filesystem syscalls, Pi 5 hardware proof, writable
+  filesystems, persistent storage, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, and DMA/cache-driver policy remain blocked until later explicit
+  tasks accept their contracts and gates.

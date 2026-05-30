@@ -38,7 +38,10 @@ out-of-range/overlap, bad entry, and file-range overflow. QEMU/substitute
 program-loader smoke evidence is now accepted from the retained
 qemu_program_loader_smoke log, which proves the image-plan-only success and
 negative cases without process launch or hardware claims. Process address-space
-installation remains blocked until later explicit tasks.
+installation remains blocked until later explicit tasks. The program-loader
+closeout checkpoint is now accepted and recommends a documentation-only
+process-install source inventory before any address-space installation,
+lower-EL launch, or shell implementation.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -2453,6 +2456,17 @@ Milestone 8.3: Program Loader
   persistent storage, networking, SSH, RP1/PCIe, UART interrupt ownership, and
   DMA/cache-driver policy remain blocked until later explicit tasks accept
   their gates.
+- Phase 8 program-loader closeout checkpoint is accepted. It reconciles the
+  accepted source inventory, format contract, smoke plan, target-independent
+  core, retained QEMU/substitute evidence, validation gates, deferred surfaces,
+  and residual risks for the image-plan-only frontier. It recommends
+  phase8-process-install-source-inventory-20260530 as the next bounded
+  documentation-only task and keeps process address-space installation,
+  lower-EL launch, argv/envp stack construction, process creation,
+  exec/spawn/wait, shell, descriptor-backed filesystem syscalls, Pi 5 hardware
+  proof, networking, SSH, RP1/PCIe, UART interrupt ownership, and
+  DMA/cache-driver policy blocked until later explicit tasks accept their
+  gates.
 
 Acceptance criteria:
 
