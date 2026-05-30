@@ -76,6 +76,8 @@ mod device_tree;
 mod diagnostic_command;
 mod diagnostics;
 mod early_format;
+#[cfg_attr(not(test), allow(dead_code))]
+mod initramfs;
 mod memory_map;
 mod mmio;
 mod pl011;

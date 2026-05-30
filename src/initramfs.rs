@@ -1,0 +1,912 @@
+//! Target-independent read-only initramfs/VFS primitives.
+//!
+//! This module owns only the immutable fixture object model, normalized path
+//! lookup, regular-file open-file descriptions, and all-or-nothing byte reads.
+//! It does not parse boot archives, publish filesystems to descriptor syscalls,
+//! load programs, or perform target I/O.
+
+use crate::posix::{
+    DEFAULT_PATH_LIMITS, DEFAULT_USER_COPY_LIMIT, DescriptorObjectKind, DescriptorTable,
+    PathLimits, PosixError, UserMapping, copy_to_user, normalize_path,
+};
+
+pub(crate) const DEFAULT_MAX_PATH_COMPONENTS: usize = 64;
+pub(crate) const PHASE8_FIXTURE_NAME: &str = "phase8-readonly-initramfs-vfs-v1";
+pub(crate) const PHASE8_BANNER_PATH: &[u8] = b"/etc/banner.txt";
+pub(crate) const PHASE8_BANNER_BYTES: &[u8] = b"Talos initramfs fixture\n";
+pub(crate) const PHASE8_INIT_PATH: &[u8] = b"/bin/init";
+pub(crate) const PHASE8_INIT_BYTES: &[u8] = b"not-executable-yet\n";
+pub(crate) const PHASE8_EMPTY_PATH: &[u8] = b"/empty";
+pub(crate) const PHASE8_NESTED_PATH: &[u8] = b"/dir/nested.txt";
+pub(crate) const PHASE8_NESTED_BYTES: &[u8] = b"nested fixture\n";
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum VfsNodeKind {
+    Directory,
+    RegularFile,
+}
+
+impl VfsNodeKind {
+    pub(crate) const fn name(self) -> &'static str {
+        match self {
+            Self::Directory => "directory",
+            Self::RegularFile => "regular",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct DirectoryEntry {
+    name: &'static [u8],
+    node_index: usize,
+}
+
+impl DirectoryEntry {
+    pub(crate) const fn new(name: &'static [u8], node_index: usize) -> Self {
+        Self { name, node_index }
+    }
+
+    pub(crate) const fn name(self) -> &'static [u8] {
+        self.name
+    }
+
+    pub(crate) const fn node_index(self) -> usize {
+        self.node_index
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum InitramfsNodeData {
+    Directory(&'static [DirectoryEntry]),
+    RegularFile(&'static [u8]),
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct InitramfsNode {
+    id: usize,
+    data: InitramfsNodeData,
+}
+
+impl InitramfsNode {
+    pub(crate) const fn directory(id: usize, entries: &'static [DirectoryEntry]) -> Self {
+        Self {
+            id,
+            data: InitramfsNodeData::Directory(entries),
+        }
+    }
+
+    pub(crate) const fn regular_file(id: usize, bytes: &'static [u8]) -> Self {
+        Self {
+            id,
+            data: InitramfsNodeData::RegularFile(bytes),
+        }
+    }
+
+    pub(crate) const fn id(self) -> usize {
+        self.id
+    }
+
+    pub(crate) const fn kind(self) -> VfsNodeKind {
+        match self.data {
+            InitramfsNodeData::Directory(_) => VfsNodeKind::Directory,
+            InitramfsNodeData::RegularFile(_) => VfsNodeKind::RegularFile,
+        }
+    }
+
+    pub(crate) const fn len(self) -> usize {
+        match self.data {
+            InitramfsNodeData::Directory(entries) => entries.len(),
+            InitramfsNodeData::RegularFile(bytes) => bytes.len(),
+        }
+    }
+
+    pub(crate) const fn is_directory(self) -> bool {
+        matches!(self.data, InitramfsNodeData::Directory(_))
+    }
+
+    pub(crate) const fn is_regular_file(self) -> bool {
+        matches!(self.data, InitramfsNodeData::RegularFile(_))
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct VfsMetadata {
+    node_id: usize,
+    kind: VfsNodeKind,
+    len: usize,
+    read_only: bool,
+}
+
+impl VfsMetadata {
+    pub(crate) const fn node_id(self) -> usize {
+        self.node_id
+    }
+
+    pub(crate) const fn kind(self) -> VfsNodeKind {
+        self.kind
+    }
+
+    pub(crate) const fn len(self) -> usize {
+        self.len
+    }
+
+    pub(crate) const fn read_only(self) -> bool {
+        self.read_only
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct VfsNodeHandle {
+    index: usize,
+    metadata: VfsMetadata,
+}
+
+impl VfsNodeHandle {
+    pub(crate) const fn index(self) -> usize {
+        self.index
+    }
+
+    pub(crate) const fn metadata(self) -> VfsMetadata {
+        self.metadata
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct ReadOnlyFileDescription {
+    node_index: usize,
+    offset: usize,
+}
+
+impl ReadOnlyFileDescription {
+    pub(crate) const fn offset(self) -> usize {
+        self.offset
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct ReadOnlyFileDescriptions<const CAPACITY: usize> {
+    entries: [Option<ReadOnlyFileDescription>; CAPACITY],
+}
+
+impl<const CAPACITY: usize> ReadOnlyFileDescriptions<CAPACITY> {
+    pub(crate) const fn new_empty() -> Self {
+        Self {
+            entries: [None; CAPACITY],
+        }
+    }
+
+    pub(crate) fn insert(
+        &mut self,
+        reference: usize,
+        description: ReadOnlyFileDescription,
+    ) -> Result<(), PosixError> {
+        let Some(slot) = self.entries.get_mut(reference) else {
+            return Err(PosixError::InvalidArgument);
+        };
+        if slot.is_some() {
+            return Err(PosixError::InvalidArgument);
+        }
+        *slot = Some(description);
+        Ok(())
+    }
+
+    pub(crate) fn get_mut(
+        &mut self,
+        reference: usize,
+    ) -> Result<&mut ReadOnlyFileDescription, PosixError> {
+        self.entries
+            .get_mut(reference)
+            .and_then(Option::as_mut)
+            .ok_or(PosixError::BadDescriptor)
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct ReadOnlyInitramfs {
+    nodes: &'static [InitramfsNode],
+    root_index: usize,
+}
+
+impl ReadOnlyInitramfs {
+    pub(crate) const fn new(nodes: &'static [InitramfsNode], root_index: usize) -> Self {
+        Self { nodes, root_index }
+    }
+
+    pub(crate) fn validate(self) -> Result<(), PosixError> {
+        let root = self.node(self.root_index)?;
+        if !root.is_directory() {
+            return Err(PosixError::InvalidArgument);
+        }
+
+        let mut index = 0;
+        while index < self.nodes.len() {
+            let node = self.nodes[index];
+            if node.id() != index {
+                return Err(PosixError::InvalidArgument);
+            }
+            if let InitramfsNodeData::Directory(entries) = node.data {
+                validate_directory_entries(entries, self.nodes.len())?;
+            }
+            index += 1;
+        }
+
+        Ok(())
+    }
+
+    pub(crate) fn lookup(
+        self,
+        path: &[u8],
+        limits: PathLimits,
+    ) -> Result<VfsNodeHandle, PosixError> {
+        self.validate()?;
+
+        let normalized = normalize_path::<DEFAULT_MAX_PATH_COMPONENTS>(path, limits)?;
+        let mut cursor = self.root_index;
+
+        for component in normalized.components() {
+            let current = self.node(cursor)?;
+            let entries = match current.data {
+                InitramfsNodeData::Directory(entries) => entries,
+                InitramfsNodeData::RegularFile(_) => return Err(PosixError::NotDirectory),
+            };
+            cursor = find_entry(entries, component.bytes()).ok_or(PosixError::NoEntry)?;
+        }
+
+        let node = self.node(cursor)?;
+        if normalized.requires_directory() && node.is_regular_file() {
+            return Err(PosixError::NotDirectory);
+        }
+
+        Ok(self.handle_for(cursor, node))
+    }
+
+    pub(crate) fn lookup_default(self, path: &[u8]) -> Result<VfsNodeHandle, PosixError> {
+        self.lookup(path, DEFAULT_PATH_LIMITS)
+    }
+
+    pub(crate) fn open_regular_file(
+        self,
+        path: &[u8],
+    ) -> Result<ReadOnlyFileDescription, PosixError> {
+        let handle = self.lookup_default(path)?;
+        if handle.metadata().kind() == VfsNodeKind::Directory {
+            return Err(PosixError::IsDirectory);
+        }
+
+        Ok(ReadOnlyFileDescription {
+            node_index: handle.index(),
+            offset: 0,
+        })
+    }
+
+    pub(crate) fn unsupported_operation(self) -> Result<(), PosixError> {
+        Err(PosixError::NotSupported)
+    }
+
+    pub(crate) fn read_descriptor<const DESCRIPTOR_CAPACITY: usize, const FILE_CAPACITY: usize>(
+        self,
+        descriptor_table: &DescriptorTable<DESCRIPTOR_CAPACITY>,
+        file_descriptions: &mut ReadOnlyFileDescriptions<FILE_CAPACITY>,
+        descriptor: usize,
+        mappings: &[UserMapping],
+        user_memory_start: u64,
+        user_memory: &mut [u8],
+        user_start: u64,
+        len: usize,
+        kernel_scratch: &mut [u8],
+    ) -> Result<usize, PosixError> {
+        let entry = descriptor_table.get(descriptor)?;
+        entry.require_readable()?;
+
+        match entry.object().kind() {
+            DescriptorObjectKind::RegularFile => {}
+            DescriptorObjectKind::Directory => return Err(PosixError::IsDirectory),
+            _ => return Err(PosixError::NotSupported),
+        }
+
+        let description = file_descriptions.get_mut(entry.object().reference())?;
+        self.read_regular_file(
+            description,
+            mappings,
+            user_memory_start,
+            user_memory,
+            user_start,
+            len,
+            kernel_scratch,
+        )
+    }
+
+    pub(crate) fn read_regular_file(
+        self,
+        description: &mut ReadOnlyFileDescription,
+        mappings: &[UserMapping],
+        user_memory_start: u64,
+        user_memory: &mut [u8],
+        user_start: u64,
+        len: usize,
+        kernel_scratch: &mut [u8],
+    ) -> Result<usize, PosixError> {
+        let node = self.node(description.node_index)?;
+        let bytes = match node.data {
+            InitramfsNodeData::Directory(_) => return Err(PosixError::IsDirectory),
+            InitramfsNodeData::RegularFile(bytes) => bytes,
+        };
+        if description.offset > bytes.len() {
+            return Err(PosixError::InvalidArgument);
+        }
+        if len == 0 || description.offset == bytes.len() {
+            return Ok(0);
+        }
+        if len > DEFAULT_USER_COPY_LIMIT {
+            return Err(PosixError::Fault);
+        }
+
+        let selected_len = core::cmp::min(len, bytes.len() - description.offset);
+        if kernel_scratch.len() < selected_len {
+            return Err(PosixError::InvalidArgument);
+        }
+
+        let end = description.offset + selected_len;
+        kernel_scratch[..selected_len].copy_from_slice(&bytes[description.offset..end]);
+        copy_to_user(
+            mappings,
+            user_memory_start,
+            user_memory,
+            user_start,
+            selected_len,
+            &kernel_scratch[..selected_len],
+        )?;
+        description.offset = end;
+        Ok(selected_len)
+    }
+
+    fn node(self, index: usize) -> Result<InitramfsNode, PosixError> {
+        self.nodes
+            .get(index)
+            .copied()
+            .ok_or(PosixError::InvalidArgument)
+    }
+
+    fn handle_for(self, index: usize, node: InitramfsNode) -> VfsNodeHandle {
+        VfsNodeHandle {
+            index,
+            metadata: VfsMetadata {
+                node_id: node.id(),
+                kind: node.kind(),
+                len: node.len(),
+                read_only: true,
+            },
+        }
+    }
+}
+
+pub(crate) fn phase8_readonly_initramfs_fixture() -> ReadOnlyInitramfs {
+    ReadOnlyInitramfs::new(&PHASE8_NODES, PHASE8_ROOT_INDEX)
+}
+
+fn validate_directory_entries(
+    entries: &[DirectoryEntry],
+    node_count: usize,
+) -> Result<(), PosixError> {
+    let mut index = 0;
+    while index < entries.len() {
+        let entry = entries[index];
+        if entry.name().is_empty()
+            || entry.name().contains(&b'/')
+            || entry.name().contains(&0)
+            || entry.node_index() >= node_count
+        {
+            return Err(PosixError::InvalidArgument);
+        }
+
+        let mut other = index + 1;
+        while other < entries.len() {
+            if entries[other].name() == entry.name() {
+                return Err(PosixError::InvalidArgument);
+            }
+            other += 1;
+        }
+        index += 1;
+    }
+
+    Ok(())
+}
+
+fn find_entry(entries: &[DirectoryEntry], name: &[u8]) -> Option<usize> {
+    let mut index = 0;
+    while index < entries.len() {
+        if entries[index].name() == name {
+            return Some(entries[index].node_index());
+        }
+        index += 1;
+    }
+    None
+}
+
+const PHASE8_ROOT_INDEX: usize = 0;
+const PHASE8_ETC_INDEX: usize = 1;
+const PHASE8_BANNER_INDEX: usize = 2;
+const PHASE8_BIN_INDEX: usize = 3;
+const PHASE8_INIT_INDEX: usize = 4;
+const PHASE8_EMPTY_INDEX: usize = 5;
+const PHASE8_DIR_INDEX: usize = 6;
+const PHASE8_NESTED_INDEX: usize = 7;
+
+static PHASE8_ROOT_ENTRIES: [DirectoryEntry; 4] = [
+    DirectoryEntry::new(b"etc", PHASE8_ETC_INDEX),
+    DirectoryEntry::new(b"bin", PHASE8_BIN_INDEX),
+    DirectoryEntry::new(b"empty", PHASE8_EMPTY_INDEX),
+    DirectoryEntry::new(b"dir", PHASE8_DIR_INDEX),
+];
+
+static PHASE8_ETC_ENTRIES: [DirectoryEntry; 1] =
+    [DirectoryEntry::new(b"banner.txt", PHASE8_BANNER_INDEX)];
+
+static PHASE8_BIN_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(b"init", PHASE8_INIT_INDEX)];
+
+static PHASE8_DIR_ENTRIES: [DirectoryEntry; 1] =
+    [DirectoryEntry::new(b"nested.txt", PHASE8_NESTED_INDEX)];
+
+static PHASE8_NODES: [InitramfsNode; 8] = [
+    InitramfsNode::directory(PHASE8_ROOT_INDEX, &PHASE8_ROOT_ENTRIES),
+    InitramfsNode::directory(PHASE8_ETC_INDEX, &PHASE8_ETC_ENTRIES),
+    InitramfsNode::regular_file(PHASE8_BANNER_INDEX, PHASE8_BANNER_BYTES),
+    InitramfsNode::directory(PHASE8_BIN_INDEX, &PHASE8_BIN_ENTRIES),
+    InitramfsNode::regular_file(PHASE8_INIT_INDEX, PHASE8_INIT_BYTES),
+    InitramfsNode::regular_file(PHASE8_EMPTY_INDEX, b""),
+    InitramfsNode::directory(PHASE8_DIR_INDEX, &PHASE8_DIR_ENTRIES),
+    InitramfsNode::regular_file(PHASE8_NESTED_INDEX, PHASE8_NESTED_BYTES),
+];
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::posix::{
+        DescriptorAccess, DescriptorEntry, DescriptorFlags, DescriptorObject, DescriptorObjectKind,
+        UserMapping, UserMappingPermissions,
+    };
+
+    const USER_BASE: u64 = 0x10000;
+
+    fn writable_mapping(len: usize) -> [UserMapping; 1] {
+        [
+            UserMapping::new(USER_BASE, len, UserMappingPermissions::USER_DATA)
+                .expect("writable mapping"),
+        ]
+    }
+
+    fn read_file_case(
+        fs: ReadOnlyInitramfs,
+        description: &mut ReadOnlyFileDescription,
+        user_memory: &mut [u8],
+        user_start: u64,
+        len: usize,
+        scratch: &mut [u8],
+    ) -> Result<usize, PosixError> {
+        let mappings = writable_mapping(user_memory.len());
+        fs.read_regular_file(
+            description,
+            &mappings,
+            USER_BASE,
+            user_memory,
+            user_start,
+            len,
+            scratch,
+        )
+    }
+
+    #[test_case]
+    fn phase8_fixture_name_is_stable() {
+        assert_eq!(PHASE8_FIXTURE_NAME, "phase8-readonly-initramfs-vfs-v1");
+        assert_eq!(VfsNodeKind::Directory.name(), "directory");
+        assert_eq!(VfsNodeKind::RegularFile.name(), "regular");
+    }
+
+    #[test_case]
+    fn fixture_validates_root_and_unique_directory_entries() {
+        let fs = phase8_readonly_initramfs_fixture();
+        assert_eq!(fs.validate(), Ok(()));
+
+        static DUPLICATE_ENTRIES: [DirectoryEntry; 2] = [
+            DirectoryEntry::new(b"dup", 0),
+            DirectoryEntry::new(b"dup", 0),
+        ];
+        static DUPLICATE_NODES: [InitramfsNode; 1] =
+            [InitramfsNode::directory(0, &DUPLICATE_ENTRIES)];
+        assert_eq!(
+            ReadOnlyInitramfs::new(&DUPLICATE_NODES, 0).validate(),
+            Err(PosixError::InvalidArgument)
+        );
+
+        static BAD_REFERENCE_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(b"missing", 3)];
+        static BAD_REFERENCE_NODES: [InitramfsNode; 1] =
+            [InitramfsNode::directory(0, &BAD_REFERENCE_ENTRIES)];
+        assert_eq!(
+            ReadOnlyInitramfs::new(&BAD_REFERENCE_NODES, 0).validate(),
+            Err(PosixError::InvalidArgument)
+        );
+    }
+
+    #[test_case]
+    fn lookup_reports_root_directory_and_contract_files() {
+        let fs = phase8_readonly_initramfs_fixture();
+
+        let root = fs.lookup_default(b"/").expect("root lookup");
+        assert_eq!(root.metadata().kind(), VfsNodeKind::Directory);
+        assert_eq!(root.metadata().len(), 4);
+        assert!(root.metadata().read_only());
+
+        let banner = fs
+            .lookup_default(PHASE8_BANNER_PATH)
+            .expect("banner lookup");
+        assert_eq!(banner.metadata().kind(), VfsNodeKind::RegularFile);
+        assert_eq!(banner.metadata().len(), PHASE8_BANNER_BYTES.len());
+
+        let init = fs.lookup_default(PHASE8_INIT_PATH).expect("init lookup");
+        assert_eq!(init.metadata().kind(), VfsNodeKind::RegularFile);
+        assert_eq!(init.metadata().len(), PHASE8_INIT_BYTES.len());
+
+        let empty = fs.lookup_default(PHASE8_EMPTY_PATH).expect("empty lookup");
+        assert_eq!(empty.metadata().kind(), VfsNodeKind::RegularFile);
+        assert_eq!(empty.metadata().len(), 0);
+
+        let nested = fs
+            .lookup_default(PHASE8_NESTED_PATH)
+            .expect("nested lookup");
+        assert_eq!(nested.metadata().kind(), VfsNodeKind::RegularFile);
+        assert_eq!(nested.metadata().len(), PHASE8_NESTED_BYTES.len());
+    }
+
+    #[test_case]
+    fn lookup_uses_accepted_path_normalization_from_root_and_cwd() {
+        let fs = phase8_readonly_initramfs_fixture();
+        let absolute = fs
+            .lookup_default(b"/etc/./../dir//nested.txt")
+            .expect("normalized absolute path");
+        let relative = fs
+            .lookup_default(b"./dir/nested.txt")
+            .expect("normalized relative path");
+
+        assert_eq!(absolute.metadata().node_id(), PHASE8_NESTED_INDEX);
+        assert_eq!(relative.metadata().node_id(), PHASE8_NESTED_INDEX);
+    }
+
+    #[test_case]
+    fn lookup_reports_contract_error_precedence() {
+        let fs = phase8_readonly_initramfs_fixture();
+
+        assert_eq!(fs.lookup_default(b""), Err(PosixError::NoEntry));
+        assert_eq!(fs.lookup_default(b"/missing"), Err(PosixError::NoEntry));
+        assert_eq!(
+            fs.lookup_default(b"/etc/banner.txt/child"),
+            Err(PosixError::NotDirectory)
+        );
+        assert_eq!(
+            fs.lookup_default(b"/etc/banner.txt/"),
+            Err(PosixError::NotDirectory)
+        );
+        assert_eq!(
+            fs.lookup(b"/abcde", PathLimits::new(4, 8, 4)),
+            Err(PosixError::NameTooLong)
+        );
+        assert_eq!(
+            fs.lookup_default(b"/etc/ban\0ner.txt"),
+            Err(PosixError::InvalidArgument)
+        );
+    }
+
+    #[test_case]
+    fn open_regular_file_rejects_directories_as_eisdir() {
+        let fs = phase8_readonly_initramfs_fixture();
+        assert_eq!(fs.open_regular_file(b"/etc"), Err(PosixError::IsDirectory));
+        assert_eq!(fs.unsupported_operation(), Err(PosixError::NotSupported));
+    }
+
+    #[test_case]
+    fn regular_file_reads_copy_bytes_advance_offset_and_report_eof() {
+        let fs = phase8_readonly_initramfs_fixture();
+        let mut description = fs
+            .open_regular_file(PHASE8_BANNER_PATH)
+            .expect("banner regular file");
+        let mut user_memory = [0u8; 64];
+        let mut scratch = [0u8; 64];
+
+        let copied = read_file_case(
+            fs,
+            &mut description,
+            &mut user_memory,
+            USER_BASE,
+            64,
+            &mut scratch,
+        )
+        .expect("read banner");
+
+        assert_eq!(copied, PHASE8_BANNER_BYTES.len());
+        assert_eq!(description.offset(), PHASE8_BANNER_BYTES.len());
+        assert_eq!(
+            &user_memory[..PHASE8_BANNER_BYTES.len()],
+            PHASE8_BANNER_BYTES
+        );
+
+        let eof = read_file_case(
+            fs,
+            &mut description,
+            &mut user_memory,
+            USER_BASE,
+            64,
+            &mut scratch,
+        )
+        .expect("read eof");
+        assert_eq!(eof, 0);
+        assert_eq!(description.offset(), PHASE8_BANNER_BYTES.len());
+    }
+
+    #[test_case]
+    fn zero_length_file_and_zero_length_reads_do_not_mutate_offsets() {
+        let fs = phase8_readonly_initramfs_fixture();
+        let mut empty = fs.open_regular_file(PHASE8_EMPTY_PATH).expect("empty file");
+        let mut banner = fs
+            .open_regular_file(PHASE8_BANNER_PATH)
+            .expect("banner regular file");
+        let mut user_memory = [0x55u8; 32];
+        let mut scratch = [0u8; 32];
+
+        assert_eq!(
+            read_file_case(
+                fs,
+                &mut empty,
+                &mut user_memory,
+                USER_BASE,
+                32,
+                &mut scratch
+            ),
+            Ok(0)
+        );
+        assert_eq!(empty.offset(), 0);
+
+        assert_eq!(
+            read_file_case(
+                fs,
+                &mut banner,
+                &mut user_memory,
+                USER_BASE,
+                0,
+                &mut scratch
+            ),
+            Ok(0)
+        );
+        assert_eq!(banner.offset(), 0);
+        assert_eq!(user_memory, [0x55u8; 32]);
+    }
+
+    #[test_case]
+    fn reads_are_short_only_at_fixture_eof() {
+        let fs = phase8_readonly_initramfs_fixture();
+        let mut nested = fs
+            .open_regular_file(PHASE8_NESTED_PATH)
+            .expect("nested regular file");
+        let mut user_memory = [0u8; 16];
+        let mut scratch = [0u8; 16];
+
+        assert_eq!(
+            read_file_case(
+                fs,
+                &mut nested,
+                &mut user_memory,
+                USER_BASE,
+                6,
+                &mut scratch
+            ),
+            Ok(6)
+        );
+        assert_eq!(nested.offset(), 6);
+        assert_eq!(&user_memory[..6], b"nested");
+    }
+
+    #[test_case]
+    fn copy_faults_and_invalid_scratch_do_not_mutate_offsets_or_user_bytes() {
+        let fs = phase8_readonly_initramfs_fixture();
+        let mut description = fs
+            .open_regular_file(PHASE8_BANNER_PATH)
+            .expect("banner regular file");
+        let mut user_memory = [0x77u8; 16];
+        let mut scratch = [0u8; 8];
+
+        assert_eq!(
+            read_file_case(
+                fs,
+                &mut description,
+                &mut user_memory,
+                USER_BASE + 128,
+                8,
+                &mut scratch,
+            ),
+            Err(PosixError::Fault)
+        );
+        assert_eq!(description.offset(), 0);
+        assert_eq!(user_memory, [0x77u8; 16]);
+
+        assert_eq!(
+            read_file_case(
+                fs,
+                &mut description,
+                &mut user_memory,
+                USER_BASE,
+                9,
+                &mut scratch,
+            ),
+            Err(PosixError::InvalidArgument)
+        );
+        assert_eq!(description.offset(), 0);
+        assert_eq!(user_memory, [0x77u8; 16]);
+    }
+
+    #[test_case]
+    fn malformed_open_file_description_reports_einval() {
+        let fs = phase8_readonly_initramfs_fixture();
+        let mut user_memory = [0u8; 16];
+        let mut scratch = [0u8; 16];
+        let mut missing = ReadOnlyFileDescription {
+            node_index: 99,
+            offset: 0,
+        };
+        let mut beyond_eof = ReadOnlyFileDescription {
+            node_index: PHASE8_BANNER_INDEX,
+            offset: PHASE8_BANNER_BYTES.len() + 1,
+        };
+
+        assert_eq!(
+            read_file_case(
+                fs,
+                &mut missing,
+                &mut user_memory,
+                USER_BASE,
+                1,
+                &mut scratch
+            ),
+            Err(PosixError::InvalidArgument)
+        );
+        assert_eq!(
+            read_file_case(
+                fs,
+                &mut beyond_eof,
+                &mut user_memory,
+                USER_BASE,
+                1,
+                &mut scratch,
+            ),
+            Err(PosixError::InvalidArgument)
+        );
+    }
+
+    #[test_case]
+    fn descriptor_facing_read_reports_ebadf_before_copy_or_offset_mutation() {
+        let fs = phase8_readonly_initramfs_fixture();
+        let mut descriptor_table = crate::posix::DescriptorTable::<4>::new_empty();
+        descriptor_table
+            .allocate_at(
+                3,
+                DescriptorEntry::new(
+                    DescriptorAccess::ReadOnly,
+                    DescriptorFlags::EMPTY,
+                    DescriptorObject::new(DescriptorObjectKind::RegularFile, 0),
+                ),
+            )
+            .expect("regular file descriptor");
+        let mut file_descriptions = ReadOnlyFileDescriptions::<1>::new_empty();
+        let mut banner = fs
+            .open_regular_file(PHASE8_BANNER_PATH)
+            .expect("banner regular file");
+        file_descriptions
+            .insert(0, banner)
+            .expect("file description slot");
+        let mut user_memory = [0x44u8; 32];
+        let mut scratch = [0u8; 32];
+        let mappings = writable_mapping(user_memory.len());
+
+        assert_eq!(
+            fs.read_descriptor(
+                &descriptor_table,
+                &mut file_descriptions,
+                2,
+                &mappings,
+                USER_BASE,
+                &mut user_memory,
+                USER_BASE,
+                8,
+                &mut scratch,
+            ),
+            Err(PosixError::BadDescriptor)
+        );
+        banner = *file_descriptions
+            .get_mut(0)
+            .expect("retained file description");
+        assert_eq!(banner.offset(), 0);
+        assert_eq!(user_memory, [0x44u8; 32]);
+
+        descriptor_table
+            .close(3)
+            .expect("close regular file descriptor");
+        assert_eq!(
+            fs.read_descriptor(
+                &descriptor_table,
+                &mut file_descriptions,
+                3,
+                &mappings,
+                USER_BASE,
+                &mut user_memory,
+                USER_BASE,
+                8,
+                &mut scratch,
+            ),
+            Err(PosixError::BadDescriptor)
+        );
+        assert_eq!(
+            file_descriptions
+                .get_mut(0)
+                .expect("retained file description")
+                .offset(),
+            0
+        );
+        assert_eq!(user_memory, [0x44u8; 32]);
+    }
+
+    #[test_case]
+    fn descriptor_facing_read_rejects_directory_and_unsupported_objects() {
+        let fs = phase8_readonly_initramfs_fixture();
+        let mut descriptor_table = crate::posix::DescriptorTable::<5>::new_empty();
+        descriptor_table
+            .allocate_at(
+                3,
+                DescriptorEntry::new(
+                    DescriptorAccess::ReadOnly,
+                    DescriptorFlags::EMPTY,
+                    DescriptorObject::new(DescriptorObjectKind::Directory, 0),
+                ),
+            )
+            .expect("directory descriptor");
+        descriptor_table
+            .allocate_at(
+                4,
+                DescriptorEntry::new(
+                    DescriptorAccess::ReadOnly,
+                    DescriptorFlags::EMPTY,
+                    DescriptorObject::new(DescriptorObjectKind::Device, 0),
+                ),
+            )
+            .expect("device descriptor");
+        let mut file_descriptions = ReadOnlyFileDescriptions::<1>::new_empty();
+        let mut user_memory = [0u8; 32];
+        let mut scratch = [0u8; 32];
+        let mappings = writable_mapping(user_memory.len());
+
+        assert_eq!(
+            fs.read_descriptor(
+                &descriptor_table,
+                &mut file_descriptions,
+                3,
+                &mappings,
+                USER_BASE,
+                &mut user_memory,
+                USER_BASE,
+                8,
+                &mut scratch,
+            ),
+            Err(PosixError::IsDirectory)
+        );
+        assert_eq!(
+            fs.read_descriptor(
+                &descriptor_table,
+                &mut file_descriptions,
+                4,
+                &mappings,
+                USER_BASE,
+                &mut user_memory,
+                USER_BASE,
+                8,
+                &mut scratch,
+            ),
+            Err(PosixError::NotSupported)
+        );
+    }
+}

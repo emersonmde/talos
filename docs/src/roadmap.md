@@ -16,8 +16,9 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 Talos is in Phase 8 Milestone 8.1 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning
 task, the Phase 8 source inventory was accepted, and the read-only
-initramfs/VFS contract and smoke plan were accepted. The next bounded task is
-the target-independent read-only initramfs/VFS core. The accepted Phase 7
+initramfs/VFS contract, smoke plan, and target-independent core were accepted.
+The next bounded task is the QEMU/substitute read-only initramfs/VFS smoke
+core. The accepted Phase 7
 frontier includes the Phase
 6.3 production scheduler runtime closeout,
 the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
@@ -2314,6 +2315,17 @@ Milestone 8.1: Initramfs or Ramfs
   process creation, shell, networking, SSH, RP1/PCIe, UART interrupt
   ownership, and DMA/cache-driver policy remain blocked until later explicit
   tasks accept their gates.
+- The target-independent read-only initramfs/VFS core is accepted. It adds the
+  immutable fixture object model, deterministic root/directory/regular-file
+  nodes, normalized absolute and current-directory-relative lookup,
+  regular-file open-file descriptions, all-or-nothing copy_to_user-backed
+  reads, offset/EOF behavior, and focused no_std unit tests for accepted
+  success and failure cases. It does not wire the filesystem to production
+  lower-EL syscalls, run QEMU, run Pi 5 hardware, publish a boot archive, parse
+  firmware/TFTP initramfs envelopes, or unblock ELF/program loading, process
+  creation, shell, networking, SSH, writable filesystems, persistent storage,
+  RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy. The next
+  bounded task is phase8-qemu-readonly-initramfs-vfs-smoke-core-20260530.
 
 Acceptance criteria:
 
