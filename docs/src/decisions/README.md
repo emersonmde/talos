@@ -12,6 +12,47 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 Process Page-Table Materialization Source Inventory Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 process
+  page-table materialization source inventory. No Rust behavior, assembly
+  behavior, QEMU execution, Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, physical page-table mutation, descriptor
+  installation, TTBR/TCR/MAIR/SCTLR/ASID/TLB policy change, lower-EL launch,
+  argv/envp implementation, process lifecycle, exec/spawn/wait, shell,
+  descriptor-backed filesystem syscall, writable filesystem, persistent
+  storage, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted process address-space closeout left a
+  target-independent ProcessAddressSpace model frontier. Supervisor planning
+  queued a bounded source inventory to map owners and gaps before any contract
+  or implementation can materialize model leases and mappings into
+  architecture-owned page-table resources.
+- Decision: Accept
+  phase8-process-page-table-materialization-source-inventory-20260530. The
+  inventory records accepted inputs and exact source owners for
+  ProgramImagePlan, ProcessImageInstallPlan, ProcessAddressSpace,
+  POSIX user-range and permission helpers, early frame ownership vocabulary,
+  translation helpers, scheduler process-owner placeholders,
+  QEMU/substitute evidence, and Pi 5 proof-local lower-EL page tables.
+- Evidence level: static documentation/source review. Reviewed accepted
+  process address-space docs, retained QEMU/substitute evidence, loader and
+  install sources, the ProcessAddressSpace model, POSIX user-memory helpers,
+  memory-map frame and translation code, architecture helpers, scheduler
+  owner placeholders, QEMU evidence producer, Pi 5 proof-local translation
+  fixtures, roadmap, SUMMARY, and ADR index.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next bounded task should be
+  phase8-process-page-table-materialization-contract-20260530. That contract
+  must define exact inputs, frame/table ownership, descriptor permissions,
+  kernel mapping sharing, ASID/TTBR/TCR/MAIR/TLB boundaries, rollback,
+  teardown, deterministic errors, and QEMU/substitute smoke-plan evidence
+  before implementation. Lower-EL launch, argv/envp, process lifecycle,
+  exec/spawn/wait, shell, descriptor-backed filesystem syscalls, Pi 5
+  hardware proof, networking, and SSH remain blocked.
+
 ## 2026-05-30 - Phase 8 Process Address-Space Closeout Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 process

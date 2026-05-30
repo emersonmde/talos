@@ -2660,6 +2660,22 @@ Milestone 8.3: Program Loader
   mutation, TTBR/TCR switching, lower-EL launch, argv/envp, process creation,
   scheduler handoff, shell, filesystem syscalls, Pi 5 hardware proof,
   networking, and SSH remain blocked.
+- Phase 8 process page-table materialization source inventory is accepted. It
+  maps the source owners and accepted inputs for ProgramImagePlan,
+  ProcessImageInstallPlan, the target-independent ProcessAddressSpace model,
+  POSIX user-range/permission vocabulary, early frame ownership vocabulary,
+  translation helpers, scheduler owner placeholders, QEMU/substitute evidence,
+  and Pi 5 proof-local lower-EL tables. It separates accepted model leases and
+  mappings from unaccepted architecture-specific materialization: real user
+  frames, page-table roots/table pages, descriptor bits, kernel mapping
+  sharing, ASID/TTBR/TCR/MAIR/TLB policy, rollback, teardown, and activation
+  evidence. It recommends
+  phase8-process-page-table-materialization-contract-20260530 as the next
+  bounded documentation-only task. Lower-EL launch, argv/envp, process
+  lifecycle, exec/spawn/wait, shell, descriptor-backed filesystem syscalls,
+  Pi 5 hardware proof, writable filesystems, persistent storage, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
+  blocked until later explicit tasks accept their gates.
 
 Acceptance criteria:
 
