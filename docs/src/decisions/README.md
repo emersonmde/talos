@@ -12,6 +12,46 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 Process Address-Space Closeout Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 process
+  address-space closeout checkpoint. No Rust behavior, assembly behavior, QEMU
+  rerun, Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, physical page-table mutation, TTBR/TCR switching, lower-EL
+  launch, argv/envp implementation, exec/spawn/wait, shell,
+  descriptor-backed filesystem syscall, writable filesystem, persistent
+  storage, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted process address-space contract, QEMU/substitute smoke
+  plan, core implementation, and retained smoke evidence completed the first
+  target-independent address-space installation model. The slice needed a
+  closeout to reconcile the exact accepted frontier and block broader process
+  launch or hardware claims.
+- Decision: Accept phase8-process-address-space-closeout-checkpoint-20260530.
+  The checkpoint reconciles commits 59928e0c929263d087dc37dab847fffdbf635a90,
+  84f5ef11f5e8afcb4c5b6196866e212ea17396a2,
+  48e6cb99869b46f7efaeba74dea7e17a7ebdd076,
+  06a5f4ed8e426afd01b77382c070a76d572d7c12, and
+  572faf034b90656c119682498a663cb258c780a5. It accepts only the
+  target-independent ProcessAddressSpace model evidence, including model root,
+  table, user-frame leases, ordered mappings, copy/zero accounting, rollback,
+  idempotent teardown, and retained qemu-process-address-space-smoke PASS
+  evidence.
+- Evidence level: static documentation/evidence review. Reviewed the accepted
+  process address-space inventory, contract, QEMU/substitute smoke plan, core
+  task record, QEMU/substitute smoke task record, retained smoke evidence,
+  roadmap, SUMMARY, and ADR index.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: No explicit queued follow-up task remains. Supervisor
+  planning is required before the worker may promote another Phase 8.3 task.
+  Physical page-table installation, TTBR/TCR switching, lower-EL launch,
+  argv/envp, process creation, exec/spawn/wait, shell, descriptor-backed
+  filesystem syscalls, Pi 5 hardware proof, writable filesystems, persistent
+  storage, networking, SSH, RP1/PCIe, UART interrupt ownership, and
+  DMA/cache-driver policy remain blocked.
+
 ## 2026-05-30 - Phase 8 QEMU Process Address-Space Smoke Plan Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 QEMU/substitute

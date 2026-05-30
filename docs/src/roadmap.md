@@ -96,18 +96,21 @@ TTBR/TCR/ASID/TLB policy, lower-EL launch, argv/envp, scheduler handoff,
 process table/PID/wait/exit, descriptor inheritance, filesystem syscalls,
 hardware proof, networking, or SSH. The next bounded task is a
 QEMU/substitute process address-space smoke plan for this selected boundary.
-That QEMU/substitute process address-space smoke plan is now accepted. It
-defines qemu_process_address_space_smoke, loader fixture identity
-phase8-program-loader-elf64-aarch64-v1, install boundary identity
-phase8-process-install-plan-v1, address-space boundary identity
-phase8-process-address-space-model-v1, retained evidence path
-tasks/evidence/2026-05-30-qemu-process-address-space-smoke-core/qemu-process-address-space-smoke.log,
-exact PASS/classification vocabulary, target-independent address-space success
-observations, deterministic no-partial-install and no-leak rejection cases,
-teardown observations, and conditional regression gates. Process address-space
-implementation remains the next queued bounded task; hardware page tables,
-TTBR/TCR switching, lower-EL launch, argv/envp, scheduler handoff, shell, and
-filesystem syscall behavior remain blocked.
+That QEMU/substitute process address-space smoke plan, target-independent
+core, retained QEMU/substitute smoke evidence, and closeout checkpoint are now
+accepted. The accepted frontier is a target-independent ProcessAddressSpace
+model for immutable /bin/init derived from the accepted ProgramImagePlan and
+ProcessImageInstallPlan. It proves one model root token, table lease,
+user-frame leases, ordered UserText/UserData mappings, copy/zero accounting,
+all-or-nothing rollback, idempotent teardown, and deterministic no-partial
+install/no-leak rejections through the retained
+qemu-process-address-space-smoke log. It still accepts no physical page-table
+mutation, TTBR/TCR switching, ASID/TLB policy, lower-EL launch, argv/envp,
+exec/spawn/wait, shell, descriptor-backed filesystem syscalls, writable
+filesystem, hardware proof, networking, SSH, RP1/PCIe, UART interrupt
+ownership, or DMA/cache-driver policy. No explicit queued follow-up task
+remains; supervisor planning is required before the worker may promote the
+next Phase 8.3 task.
 The
 accepted Phase 7
 frontier includes the Phase
