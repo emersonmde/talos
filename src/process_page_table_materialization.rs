@@ -633,6 +633,14 @@ impl ProcessPageTableMaterialization {
         self.side_effects.activation_blocked
     }
 
+    #[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+    pub(crate) fn for_test_missing_descriptor(mut self, index: usize) -> Self {
+        if index < MAX_PROCESS_INSTALL_PAGES {
+            self.descriptors[index] = None;
+        }
+        self
+    }
+
     pub(crate) fn destroy(
         &mut self,
         lease_source: &mut ProcessPageTableMaterializationLeaseSource,

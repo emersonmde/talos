@@ -7658,3 +7658,44 @@ ADR template:
   lifecycle, scheduler runnable publication, descriptor inheritance,
   filesystem syscalls, Pi 5 hardware proof, shell, networking, and SSH remain
   blocked until later explicit tasks accept their contracts and gates.
+
+## 2026-05-30 - Phase 8 QEMU Initial Process Launch Smoke Core Accepted
+
+- Status: accepted as the Milestone 8.3 QEMU/substitute initial process launch
+  smoke core. No Pi 5 hardware run, boot archive publication,
+  hardwareTestLock acquisition, physical serial observation, lower-EL ERET,
+  TTBR/TCR/MAIR/SCTLR write, ASID allocation, live TLB invalidation, initial
+  user stack implementation, argv/envp expansion, process lifecycle,
+  scheduler runnable publication, shell, descriptor-backed filesystem syscall,
+  writable filesystem, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted smoke plan required retained QEMU/substitute evidence
+  for qemu_initial_process_launch_smoke after the launch-preparation core made
+  phase8-initial-process-launch-plan-v1 inspectable.
+- Decision: Add qemu_initial_process_launch_smoke target routing and
+  scripts/qemu-initial-process-launch-smoke.sh. The smoke consumes the
+  accepted /bin/init ProgramImagePlan, ProcessImageInstallPlan,
+  ProcessAddressSpace, and ProcessPageTableMaterialization chain and retains
+  evidence for InitialProcessLaunchPlan publication, entry provenance,
+  saved-frame intent, zero launch side effects, ENOSYS runnable commit
+  rejection, and deterministic negative cases.
+- Evidence level: QEMU/substitute. The retained log is
+  tasks/evidence/2026-05-30-qemu-initial-process-launch-smoke-core/qemu-initial-process-launch-smoke.log
+  and contains
+  qemu-initial-process-launch-smoke: final participants=11 expected=11
+  errors=0 classification=qemu-initial-process-launch-smoke-complete and
+  qemu-initial-process-launch-smoke: PASS.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test passed with 298 tests; scripts/qemu-initial-process-launch-smoke.sh
+  passed; conditional QEMU/substitute regressions
+  scripts/qemu-process-page-table-materialization-smoke.sh,
+  scripts/qemu-process-address-space-smoke.sh,
+  scripts/qemu-process-install-smoke.sh, and
+  scripts/qemu-program-loader-smoke.sh passed; git diff --check passed;
+  mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The accepted capability is QEMU/substitute launch-preparation
+  evidence only. Initial user stack, TTBR activation, ASID/TLB sequencing,
+  lower-EL ERET, argv/envp, process lifecycle, scheduler runnable
+  publication, descriptor inheritance, filesystem syscalls, Pi 5 hardware
+  proof, shell, networking, and SSH remain blocked until later explicit tasks
+  accept their contracts and gates.

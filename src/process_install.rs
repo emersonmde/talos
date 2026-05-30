@@ -146,7 +146,8 @@ impl ProcessImagePageInstallRecord {
     #[cfg(any(
         test,
         talos_boot_scenario = "qemu_process_address_space_smoke",
-        talos_boot_scenario = "qemu_process_page_table_materialization_smoke"
+        talos_boot_scenario = "qemu_process_page_table_materialization_smoke",
+        talos_boot_scenario = "qemu_initial_process_launch_smoke"
     ))]
     pub(crate) const fn for_test_unchecked(
         index: usize,
@@ -243,7 +244,8 @@ impl ProcessImageInstallPlan {
     #[cfg(any(
         test,
         talos_boot_scenario = "qemu_process_address_space_smoke",
-        talos_boot_scenario = "qemu_process_page_table_materialization_smoke"
+        talos_boot_scenario = "qemu_process_page_table_materialization_smoke",
+        talos_boot_scenario = "qemu_initial_process_launch_smoke"
     ))]
     pub(crate) const fn for_test_unchecked(
         fixture_identity: &'static str,

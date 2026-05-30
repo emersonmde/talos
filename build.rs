@@ -290,6 +290,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         implied_values: &[],
         asm_defines: &[],
     },
+    BootScenario {
+        value: "qemu_initial_process_launch_smoke",
+        implied_values: &[],
+        asm_defines: &[],
+    },
 ];
 
 fn main() {

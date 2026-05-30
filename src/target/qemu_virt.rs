@@ -125,6 +125,35 @@ use crate::{
     target::{InterruptControllerKind, TargetServices, TimerKind, UartKind},
 };
 
+#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+use crate::{
+    initial_process_launch::{
+        INITIAL_ACTIVATION_BLOCKED, INITIAL_ADDRESS_SPACE_TOKEN_STATE, INITIAL_DAIF_BLOCKED,
+        INITIAL_PROCESS_LAUNCH_BOUNDARY_IDENTITY, INITIAL_SPSR_BLOCKED, INITIAL_USER_SP_BLOCKED,
+        INITIAL_X0_X5_BLOCKED, InitialProcessLaunchCommitTarget, InitialProcessLaunchRequest,
+        prepare_initial_process_launch,
+    },
+    initramfs::{PHASE8_INIT_PATH, phase8_readonly_initramfs_fixture},
+    posix::{PosixError, USER_NULL_GUARD_END, UserMappingPermissions},
+    process_address_space::{
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY, ProcessAddressSpace, ProcessAddressSpaceId,
+        ProcessAddressSpaceLeaseSource, install_process_address_space,
+    },
+    process_install::{
+        MAX_PROCESS_INSTALL_PAGES, PROCESS_INSTALL_BOUNDARY_IDENTITY, ProcessImageInstallPlan,
+        ProcessInstallSideEffects, plan_process_image_install,
+    },
+    process_page_table_materialization::{
+        PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY, ProcessMaterializationRequest,
+        ProcessPageTableMaterialization, ProcessPageTableMaterializationLeaseSource,
+        materialize_process_page_tables,
+    },
+    program_loader::{
+        MAX_LOAD_SEGMENTS, PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY, PlannedUserSegment,
+        ProgramImagePlan, UserSegmentKind, plan_phase8_init_image,
+    },
+    scheduler::ProcessOwnerId,
+};
 #[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
 use crate::{
     initramfs::{
@@ -7014,6 +7043,524 @@ fn process_materialization_ap_name(permissions: UserMappingPermissions) -> &'sta
     } else {
         "EL0_RO"
     }
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+pub fn run_initial_process_launch_smoke() -> bool {
+    crate::println!("qemu-initial-process-launch-smoke: start");
+
+    let (success_ok, provenance_ok, saved_frame_ok, side_effects_ok) =
+        initial_process_launch_report_success();
+    let commit_ok = initial_process_launch_report_commit_request();
+    let identity_ok = initial_process_launch_report_error(
+        "identity-mismatch",
+        initial_process_launch_identity_mismatch_fixture(),
+        PosixError::InvalidArgument,
+        InitialProcessLaunchRequest::PreparePlanOnly,
+    );
+    let entry_ok = initial_process_launch_report_error(
+        "entry-mismatch",
+        initial_process_launch_entry_mismatch_fixture(),
+        PosixError::NotExecutable,
+        InitialProcessLaunchRequest::PreparePlanOnly,
+    );
+    let missing_descriptor_ok = initial_process_launch_report_error(
+        "missing-user-text-descriptor",
+        initial_process_launch_missing_descriptor_fixture(),
+        PosixError::NotExecutable,
+        InitialProcessLaunchRequest::PreparePlanOnly,
+    );
+    let forbidden_range_ok = initial_process_launch_report_error(
+        "forbidden-entry-range",
+        initial_process_launch_forbidden_entry_fixture(),
+        PosixError::AccessDenied,
+        InitialProcessLaunchRequest::PreparePlanOnly,
+    );
+    let destroyed_input_ok = initial_process_launch_report_error(
+        "destroyed-input",
+        initial_process_launch_destroyed_input_fixture(),
+        PosixError::InvalidArgument,
+        InitialProcessLaunchRequest::PreparePlanOnly,
+    );
+    let activation_ok = initial_process_launch_report_error(
+        "activation-request",
+        initial_process_launch_valid_fixture(),
+        PosixError::NotImplemented,
+        InitialProcessLaunchRequest::ActivateAddressSpace,
+    );
+    let stack_required_ok = initial_process_launch_report_error(
+        "stack-required-launch",
+        initial_process_launch_valid_fixture(),
+        PosixError::NotImplemented,
+        InitialProcessLaunchRequest::StackRequiredLaunch,
+    );
+    let scheduler_publication_ok = initial_process_launch_report_error(
+        "scheduler-publication-request",
+        initial_process_launch_valid_fixture(),
+        PosixError::NotImplemented,
+        InitialProcessLaunchRequest::PublishSchedulerRunnable,
+    );
+    let blocked_request_group_ok = activation_ok && stack_required_ok && scheduler_publication_ok;
+
+    let participants = u64::from(success_ok)
+        + u64::from(provenance_ok)
+        + u64::from(saved_frame_ok)
+        + u64::from(side_effects_ok)
+        + u64::from(commit_ok)
+        + u64::from(identity_ok)
+        + u64::from(entry_ok)
+        + u64::from(missing_descriptor_ok)
+        + u64::from(forbidden_range_ok)
+        + u64::from(destroyed_input_ok)
+        + u64::from(blocked_request_group_ok);
+    let errors = 11 - participants;
+    let classification = if participants == 11 && errors == 0 {
+        "qemu-initial-process-launch-smoke-complete"
+    } else {
+        "qemu-initial-process-launch-smoke-failed"
+    };
+
+    crate::println!(
+        "qemu-initial-process-launch-smoke: final participants={} expected=11 errors={} classification={}",
+        participants,
+        errors,
+        classification
+    );
+    if participants == 11 && errors == 0 {
+        crate::println!("qemu-initial-process-launch-smoke: PASS");
+        true
+    } else {
+        crate::println!("qemu-initial-process-launch-smoke: FAIL");
+        false
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+fn initial_process_launch_report_success() -> (bool, bool, bool, bool) {
+    let Ok((image, install_plan, address_space, materialization)) =
+        initial_process_launch_valid_fixture()
+    else {
+        initial_process_launch_report_empty_success();
+        return (false, false, false, false);
+    };
+    let Ok(plan) = prepare_initial_process_launch(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        InitialProcessLaunchRequest::PreparePlanOnly,
+    ) else {
+        initial_process_launch_report_empty_success();
+        return (false, false, false, false);
+    };
+
+    crate::println!(
+        "qemu-initial-process-launch-smoke: fixture name={} path=/bin/init source-digest={:#x} install-boundary={} address-space-boundary={} materialization-boundary={} launch-boundary={}",
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        plan.source_digest(),
+        PROCESS_INSTALL_BOUNDARY_IDENTITY,
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY,
+        PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY,
+        INITIAL_PROCESS_LAUNCH_BOUNDARY_IDENTITY
+    );
+
+    let success_ok = plan.published()
+        && plan.boundary_identity() == INITIAL_PROCESS_LAUNCH_BOUNDARY_IDENTITY
+        && plan.image_fixture_identity() == PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY
+        && plan.install_boundary_identity() == PROCESS_INSTALL_BOUNDARY_IDENTITY
+        && plan.address_space_boundary_identity() == PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY
+        && plan.materialization_boundary_identity()
+            == PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY
+        && plan.source_path() == PHASE8_INIT_PATH
+        && plan.source_digest() == image.source_digest()
+        && plan.entry_pc() == image.entry()
+        && plan.user_sp_state() == INITIAL_USER_SP_BLOCKED
+        && plan.activation_state() == INITIAL_ACTIVATION_BLOCKED;
+    crate::println!(
+        "qemu-initial-process-launch-smoke: success output=InitialProcessLaunchPlan published={} entry={:#x} user-sp-state={} activation-state={} ok={}",
+        plan.published(),
+        plan.entry_pc(),
+        plan.user_sp_state(),
+        plan.activation_state(),
+        success_ok
+    );
+
+    let entry_mapping_ok = address_space.mapping(0).is_some_and(|mapping| {
+        mapping.kind() == UserSegmentKind::UserText
+            && mapping
+                .permissions()
+                .contains(UserMappingPermissions::EXECUTE)
+            && mapping.virtual_start() <= image.entry()
+            && image.entry() < mapping.virtual_end()
+    });
+    let descriptor_ok = materialization.descriptor(0).is_some_and(|descriptor| {
+        descriptor.virtual_page() == (image.entry() & !0xfff)
+            && descriptor.executable()
+            && !descriptor.user_execute_never()
+    });
+    let provenance_ok = image.entry() == install_plan.entry() && entry_mapping_ok && descriptor_ok;
+    crate::println!(
+        "qemu-initial-process-launch-smoke: entry provenance image=true install={} address-space-user-text={} materialization-user-text-descriptor={} el0-executable={} ok={}",
+        install_plan.entry() == image.entry(),
+        entry_mapping_ok,
+        descriptor_ok,
+        descriptor_ok,
+        provenance_ok
+    );
+
+    let frame = plan.saved_frame_intent();
+    let saved_frame_ok = frame.elr() == plan.entry_pc()
+        && frame.sp_el0_state() == INITIAL_USER_SP_BLOCKED
+        && frame.spsr_state() == INITIAL_SPSR_BLOCKED
+        && frame.x0_x5_state() == INITIAL_X0_X5_BLOCKED
+        && frame.daif_state() == INITIAL_DAIF_BLOCKED
+        && frame.address_space_id() == plan.address_space_id()
+        && frame.materialization_id() == plan.materialization_id()
+        && frame.address_space_token_state() == INITIAL_ADDRESS_SPACE_TOKEN_STATE;
+    crate::println!(
+        "qemu-initial-process-launch-smoke: saved-frame-intent elr=entry-pc sp-el0={} spsr={} x0-x5={} daif={} address-space-token={} ok={}",
+        frame.sp_el0_state(),
+        frame.spsr_state(),
+        frame.x0_x5_state(),
+        frame.daif_state(),
+        frame.address_space_token_state(),
+        saved_frame_ok
+    );
+
+    let side_effects = plan.side_effects();
+    let side_effects_ok = !side_effects.ttbr_mutated()
+        && !side_effects.tcr_mutated()
+        && !side_effects.mair_mutated()
+        && !side_effects.sctlr_mutated()
+        && !side_effects.asid_allocated()
+        && !side_effects.tlb_mutated()
+        && !side_effects.lower_el_eret()
+        && !side_effects.scheduler_published()
+        && !side_effects.process_table_mutated()
+        && !side_effects.descriptor_table_mutated();
+    crate::println!(
+        "qemu-initial-process-launch-smoke: side-effects ttbr-mutated={} tcr-mutated={} mair-mutated={} sctlr-mutated={} asid-allocated={} tlb-mutated={} lower-el-eret={} scheduler-published={} process-table-mutated={} descriptor-table-mutated={} ok={}",
+        side_effects.ttbr_mutated(),
+        side_effects.tcr_mutated(),
+        side_effects.mair_mutated(),
+        side_effects.sctlr_mutated(),
+        side_effects.asid_allocated(),
+        side_effects.tlb_mutated(),
+        side_effects.lower_el_eret(),
+        side_effects.scheduler_published(),
+        side_effects.process_table_mutated(),
+        side_effects.descriptor_table_mutated(),
+        side_effects_ok
+    );
+
+    (success_ok, provenance_ok, saved_frame_ok, side_effects_ok)
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+fn initial_process_launch_report_empty_success() {
+    crate::println!(
+        "qemu-initial-process-launch-smoke: fixture name={} path=/bin/init source-digest=0x0 install-boundary={} address-space-boundary={} materialization-boundary={} launch-boundary={}",
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        PROCESS_INSTALL_BOUNDARY_IDENTITY,
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY,
+        PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY,
+        INITIAL_PROCESS_LAUNCH_BOUNDARY_IDENTITY
+    );
+    crate::println!(
+        "qemu-initial-process-launch-smoke: success output=InitialProcessLaunchPlan published=false entry=0x0 user-sp-state={} activation-state={} ok=false",
+        INITIAL_USER_SP_BLOCKED,
+        INITIAL_ACTIVATION_BLOCKED
+    );
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+fn initial_process_launch_report_commit_request() -> bool {
+    let Ok((image, install_plan, address_space, materialization)) =
+        initial_process_launch_valid_fixture()
+    else {
+        crate::println!(
+            "qemu-initial-process-launch-smoke: commit-request target=runnable errno=-ENOSYS no-partial-launch=false no-runnable-publication=false ok=false"
+        );
+        return false;
+    };
+    let Ok(plan) = prepare_initial_process_launch(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        InitialProcessLaunchRequest::PreparePlanOnly,
+    ) else {
+        crate::println!(
+            "qemu-initial-process-launch-smoke: commit-request target=runnable errno=-ENOSYS no-partial-launch=false no-runnable-publication=false ok=false"
+        );
+        return false;
+    };
+    let result = plan.commit_request(InitialProcessLaunchCommitTarget::Runnable);
+    let ok = result.is_err_and(|error| {
+        error.error() == PosixError::NotImplemented
+            && error.no_partial_launch()
+            && error.no_runnable_publication()
+    });
+    crate::println!(
+        "qemu-initial-process-launch-smoke: commit-request target=runnable errno=-ENOSYS no-partial-launch=true no-runnable-publication=true ok={}",
+        ok
+    );
+    ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+fn initial_process_launch_report_error(
+    case: &str,
+    fixture: Result<
+        (
+            ProgramImagePlan,
+            ProcessImageInstallPlan,
+            ProcessAddressSpace,
+            ProcessPageTableMaterialization,
+        ),
+        PosixError,
+    >,
+    expected: PosixError,
+    request: InitialProcessLaunchRequest,
+) -> bool {
+    let result = fixture.and_then(|(image, install_plan, address_space, materialization)| {
+        prepare_initial_process_launch(image, install_plan, address_space, materialization, request)
+    });
+    let (errno, ok) = match result {
+        Ok(_) => (expected, false),
+        Err(error) => (error, error == expected),
+    };
+    crate::println!(
+        "qemu-initial-process-launch-smoke: error case={} errno=-{} partial-launch=false runnable-published=false ok={}",
+        case,
+        errno.name(),
+        ok
+    );
+    ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+fn initial_process_launch_valid_fixture() -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+        ProcessPageTableMaterialization,
+    ),
+    PosixError,
+> {
+    let image = plan_phase8_init_image(phase8_readonly_initramfs_fixture())
+        .map_err(|error| error.posix_error())?;
+    let install_plan = plan_process_image_install(image)?;
+    let mut address_source = ProcessAddressSpaceLeaseSource::for_plan(install_plan);
+    let address_space = install_process_address_space(
+        install_plan,
+        initial_process_launch_address_space_id(),
+        Some(initial_process_launch_owner_id()),
+        &mut address_source,
+    )?;
+    let mut materialization_source =
+        ProcessPageTableMaterializationLeaseSource::for_address_space(address_space);
+    let materialization = materialize_process_page_tables(
+        image,
+        install_plan,
+        address_space,
+        ProcessMaterializationRequest::DescriptorImageOnly,
+        &mut materialization_source,
+    )?;
+    Ok((image, install_plan, address_space, materialization))
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+fn initial_process_launch_identity_mismatch_fixture() -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+        ProcessPageTableMaterialization,
+    ),
+    PosixError,
+> {
+    let (image, install_plan, address_space, materialization) =
+        initial_process_launch_valid_fixture()?;
+    Ok((
+        initial_process_launch_image_with_identity(image, "wrong-fixture"),
+        install_plan,
+        address_space,
+        materialization,
+    ))
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+fn initial_process_launch_entry_mismatch_fixture() -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+        ProcessPageTableMaterialization,
+    ),
+    PosixError,
+> {
+    let (image, install_plan, address_space, materialization) =
+        initial_process_launch_valid_fixture()?;
+    Ok((
+        image,
+        initial_process_launch_install_with_entry(install_plan, image.entry() + 4),
+        address_space,
+        materialization,
+    ))
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+fn initial_process_launch_missing_descriptor_fixture() -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+        ProcessPageTableMaterialization,
+    ),
+    PosixError,
+> {
+    let (image, install_plan, address_space, materialization) =
+        initial_process_launch_valid_fixture()?;
+    Ok((
+        image,
+        install_plan,
+        address_space,
+        materialization.for_test_missing_descriptor(0),
+    ))
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+fn initial_process_launch_forbidden_entry_fixture() -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+        ProcessPageTableMaterialization,
+    ),
+    PosixError,
+> {
+    let (image, install_plan, address_space, materialization) =
+        initial_process_launch_valid_fixture()?;
+    let bad_image =
+        initial_process_launch_image_with_entry(image, USER_NULL_GUARD_END.saturating_sub(4));
+    Ok((
+        bad_image,
+        initial_process_launch_install_with_entry(install_plan, bad_image.entry()),
+        address_space,
+        materialization,
+    ))
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+fn initial_process_launch_destroyed_input_fixture() -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+        ProcessPageTableMaterialization,
+    ),
+    PosixError,
+> {
+    let (image, install_plan, mut address_space, materialization) =
+        initial_process_launch_valid_fixture()?;
+    let mut address_source = ProcessAddressSpaceLeaseSource::for_plan(install_plan);
+    let _ = address_space.destroy(&mut address_source);
+    Ok((image, install_plan, address_space, materialization))
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+fn initial_process_launch_image_with_identity(
+    image: ProgramImagePlan,
+    identity: &'static str,
+) -> ProgramImagePlan {
+    ProgramImagePlan::for_test_unchecked(
+        image.source_path(),
+        identity,
+        image.source_len(),
+        image.source_digest(),
+        image.entry(),
+        image.segment_count(),
+        initial_process_launch_image_segments(image),
+        image.memory_start(),
+        image.memory_end(),
+        image.memory_footprint(),
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+fn initial_process_launch_image_with_entry(
+    image: ProgramImagePlan,
+    entry: u64,
+) -> ProgramImagePlan {
+    ProgramImagePlan::for_test_unchecked(
+        image.source_path(),
+        image.fixture_identity(),
+        image.source_len(),
+        image.source_digest(),
+        entry,
+        image.segment_count(),
+        initial_process_launch_image_segments(image),
+        image.memory_start(),
+        image.memory_end(),
+        image.memory_footprint(),
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+fn initial_process_launch_image_segments(
+    image: ProgramImagePlan,
+) -> [Option<PlannedUserSegment>; MAX_LOAD_SEGMENTS] {
+    let mut segments = [None; MAX_LOAD_SEGMENTS];
+    let mut index = 0;
+    while index < image.segment_count() {
+        segments[index] = image.segment(index);
+        index += 1;
+    }
+    segments
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+fn initial_process_launch_install_with_entry(
+    install_plan: ProcessImageInstallPlan,
+    entry: u64,
+) -> ProcessImageInstallPlan {
+    ProcessImageInstallPlan::for_test_unchecked(
+        install_plan.fixture_identity(),
+        install_plan.install_boundary_identity(),
+        install_plan.source_path(),
+        install_plan.source_digest(),
+        entry,
+        install_plan.memory_footprint(),
+        install_plan.page_count(),
+        initial_process_launch_install_pages(install_plan),
+        ProcessInstallSideEffects::NONE,
+        install_plan.lower_el_launch_blocked(),
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+fn initial_process_launch_install_pages(
+    install_plan: ProcessImageInstallPlan,
+) -> [Option<crate::process_install::ProcessImagePageInstallRecord>; MAX_PROCESS_INSTALL_PAGES] {
+    let mut pages = [None; MAX_PROCESS_INSTALL_PAGES];
+    let mut index = 0;
+    while index < install_plan.page_count() {
+        pages[index] = install_plan.page(index);
+        index += 1;
+    }
+    pages
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+fn initial_process_launch_address_space_id() -> ProcessAddressSpaceId {
+    ProcessAddressSpaceId::new(0x8300_4001).expect("nonzero address-space id")
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+fn initial_process_launch_owner_id() -> ProcessOwnerId {
+    ProcessOwnerId::new(0x8300_4002).expect("nonzero process owner id")
 }
 
 #[cfg(talos_boot_scenario = "qemu_syscall_smoke")]

@@ -382,10 +382,9 @@ fn entry_descriptor(
 ) -> Result<ProcessPageDescriptorRecord, PosixError> {
     let mut index = 0;
     while index < materialization.descriptor_count() {
-        let descriptor = materialization
-            .descriptor(index)
-            .ok_or(PosixError::InvalidArgument)?;
-        if descriptor.virtual_page() == virtual_page {
+        if let Some(descriptor) = materialization.descriptor(index)
+            && descriptor.virtual_page() == virtual_page
+        {
             return Ok(descriptor);
         }
         index += 1;

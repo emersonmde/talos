@@ -138,9 +138,11 @@ blocked-missing-initial-user-stack and blocked-no-ttbr-activation state,
 saved-frame intent without architectural register writes, explicit zero
 TTBR/TLB/scheduler/process-table/descriptor-table/lower-EL side effects, and
 ENOSYS runnable-commit rejection with no-partial-launch and
-no-runnable-publication evidence. QEMU/substitute evidence for this boundary
-remains the next queued smoke-core task; Pi 5 hardware proof and runnable
-lower-EL process claims remain blocked.
+no-runnable-publication evidence. QEMU/substitute smoke evidence for this
+boundary is now accepted at
+tasks/evidence/2026-05-30-qemu-initial-process-launch-smoke-core/qemu-initial-process-launch-smoke.log
+with qemu-initial-process-launch-smoke-complete and PASS lines. Pi 5 hardware
+proof and runnable lower-EL process claims remain blocked.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -2828,6 +2830,19 @@ Milestone 8.3: Program Loader
   argv/envp, process lifecycle, scheduler runnable publication, shell,
   filesystem syscalls, Pi 5 hardware proof, networking, and SSH remain
   blocked.
+- Phase 8 QEMU/substitute initial process launch smoke core is accepted. The
+  retained log at
+  tasks/evidence/2026-05-30-qemu-initial-process-launch-smoke-core/qemu-initial-process-launch-smoke.log
+  records the accepted fixture, install, address-space, materialization, and
+  launch-plan identities; success publication of InitialProcessLaunchPlan;
+  entry provenance through UserText and EL0-executable descriptor evidence;
+  saved-frame intent without register writes; zero TTBR/TLB/scheduler/process
+  table/descriptor/lower-EL side effects; ENOSYS runnable commit rejection;
+  deterministic negative cases; and final
+  qemu-initial-process-launch-smoke-complete/PASS lines. Pi 5 hardware proof,
+  runnable lower-EL process launch, initial user stack, argv/envp, process
+  lifecycle, scheduler publication, shell, filesystem syscalls, networking,
+  and SSH remain blocked.
 
 Acceptance criteria:
 

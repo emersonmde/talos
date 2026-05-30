@@ -155,7 +155,11 @@ impl PlannedUserSegment {
             && entry < self.virtual_end
     }
 
-    #[cfg(any(test, talos_boot_scenario = "qemu_process_install_smoke"))]
+    #[cfg(any(
+        test,
+        talos_boot_scenario = "qemu_process_install_smoke",
+        talos_boot_scenario = "qemu_initial_process_launch_smoke"
+    ))]
     pub(crate) const fn for_test_unchecked(
         kind: UserSegmentKind,
         permissions: UserMappingPermissions,
@@ -242,7 +246,11 @@ impl ProgramImagePlan {
         self.memory_footprint
     }
 
-    #[cfg(any(test, talos_boot_scenario = "qemu_process_install_smoke"))]
+    #[cfg(any(
+        test,
+        talos_boot_scenario = "qemu_process_install_smoke",
+        talos_boot_scenario = "qemu_initial_process_launch_smoke"
+    ))]
     pub(crate) const fn for_test_unchecked(
         source_path: &'static [u8],
         fixture_identity: &'static str,

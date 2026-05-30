@@ -1,0 +1,24 @@
+
+Talos 0.1.0 booting on talos-aarch64-virt
+boot-info: dtb_pa=0x0000000048000000 core=0 el=2 target=talos-aarch64-virt
+target-services: uart=pl011 timer=arm-generic irq=gic-v2 dtb=Some(
+    0x0000000048000000,
+)
+mmio-regions: 3
+qemu-initial-process-launch-smoke: start
+qemu-initial-process-launch-smoke: fixture name=phase8-program-loader-elf64-aarch64-v1 path=/bin/init source-digest=0x3892eed223900c65 install-boundary=phase8-process-install-plan-v1 address-space-boundary=phase8-process-address-space-model-v1 materialization-boundary=phase8-process-page-table-materialization-v1 launch-boundary=phase8-initial-process-launch-plan-v1
+qemu-initial-process-launch-smoke: success output=InitialProcessLaunchPlan published=true entry=0x10100 user-sp-state=blocked-missing-initial-user-stack activation-state=blocked-no-ttbr-activation ok=true
+qemu-initial-process-launch-smoke: entry provenance image=true install=true address-space-user-text=true materialization-user-text-descriptor=true el0-executable=true ok=true
+qemu-initial-process-launch-smoke: saved-frame-intent elr=entry-pc sp-el0=blocked-missing-initial-user-stack spsr=blocked-pending-lower-el-pstate-policy x0-x5=blocked-pending-startup-abi daif=blocked-pending-interrupt-mask-policy address-space-token=model-only ok=true
+qemu-initial-process-launch-smoke: side-effects ttbr-mutated=false tcr-mutated=false mair-mutated=false sctlr-mutated=false asid-allocated=false tlb-mutated=false lower-el-eret=false scheduler-published=false process-table-mutated=false descriptor-table-mutated=false ok=true
+qemu-initial-process-launch-smoke: commit-request target=runnable errno=-ENOSYS no-partial-launch=true no-runnable-publication=true ok=true
+qemu-initial-process-launch-smoke: error case=identity-mismatch errno=-EINVAL partial-launch=false runnable-published=false ok=true
+qemu-initial-process-launch-smoke: error case=entry-mismatch errno=-ENOEXEC partial-launch=false runnable-published=false ok=true
+qemu-initial-process-launch-smoke: error case=missing-user-text-descriptor errno=-ENOEXEC partial-launch=false runnable-published=false ok=true
+qemu-initial-process-launch-smoke: error case=forbidden-entry-range errno=-EACCES partial-launch=false runnable-published=false ok=true
+qemu-initial-process-launch-smoke: error case=destroyed-input errno=-EINVAL partial-launch=false runnable-published=false ok=true
+qemu-initial-process-launch-smoke: error case=activation-request errno=-ENOSYS partial-launch=false runnable-published=false ok=true
+qemu-initial-process-launch-smoke: error case=stack-required-launch errno=-ENOSYS partial-launch=false runnable-published=false ok=true
+qemu-initial-process-launch-smoke: error case=scheduler-publication-request errno=-ENOSYS partial-launch=false runnable-published=false ok=true
+qemu-initial-process-launch-smoke: final participants=11 expected=11 errors=0 classification=qemu-initial-process-launch-smoke-complete
+qemu-initial-process-launch-smoke: PASS
