@@ -12,6 +12,42 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 QEMU Read-Only Initramfs/VFS Smoke Accepted
+
+- Status: accepted as the QEMU/substitute Milestone 8.1 read-only
+  initramfs/VFS smoke. No Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, firmware/TFTP initramfs parser, descriptor-backed
+  production filesystem syscall, ELF/program loader, argv/envp setup, process
+  creation, shell behavior, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, DMA/cache-driver policy, writable filesystem, or
+  persistent-storage behavior was added.
+- Context: The accepted smoke plan and target-independent core required one
+  retained QEMU/substitute scenario proving fixture identity, lookup, regular
+  file reads, offset/EOF behavior, and deterministic errno observations before
+  Milestone 8.1 closeout.
+- Decision: Accept phase8-qemu-readonly-initramfs-vfs-smoke-core-20260530.
+  The task registers qemu_readonly_initramfs_vfs_smoke, exercises the accepted
+  immutable fixture through the target-independent VFS/read helpers, emits the
+  planned PASS/classification lines, and retains the log at
+  tasks/evidence/2026-05-30-qemu-readonly-initramfs-vfs-smoke-core/qemu-readonly-initramfs-vfs-smoke.log.
+- Evidence level: QEMU/substitute serial/log evidence, no_std unit tests,
+  formatting, documentation build, whitespace inspection, and staged
+  whitespace inspection. Existing scalar/descriptor/read regression smoke
+  scripts were not rerun because this task did not touch shared syscall
+  dispatch, descriptor-table syscall behavior, read/stdin, user-copy helpers,
+  lower-EL routing, or their diagnostic output owners.
+- Validation: git status --short before edits was clean; cargo fmt --all --
+  --check passed; cargo -Zjson-target-spec test passed with 261 no_std tests;
+  scripts/qemu-readonly-initramfs-vfs-smoke.sh passed; git diff --check passed;
+  mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The next mechanically unblocked task is
+  phase8-readonly-initramfs-vfs-closeout-checkpoint-20260530. Pi 5 hardware
+  proof, boot archive publication, ELF/program loading, argv/envp setup,
+  process creation, shell, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, DMA/cache-driver policy, writable filesystems, persistent
+  storage, and firmware/TFTP initramfs delivery remain blocked until later
+  explicit tasks accept their contracts and gates.
+
 ## 2026-05-30 - Phase 8 Read-Only Initramfs/VFS Core Accepted
 
 - Status: accepted as the target-independent Milestone 8.1 read-only

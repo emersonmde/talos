@@ -47,6 +47,7 @@
             talos_boot_scenario = "qemu_el0_trap_smoke",
             talos_boot_scenario = "qemu_syscall_smoke",
             talos_boot_scenario = "qemu_pointer_copy_smoke",
+            talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke",
             talos_boot_scenario = "qemu_descriptor_write_smoke"
         )
     ),
@@ -330,6 +331,14 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
             #[cfg(talos_boot_scenario = "qemu_read_stdin_smoke")]
             {
                 target::qemu_virt::run_read_stdin_smoke();
+            }
+
+            #[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
+            {
+                if target::qemu_virt::run_readonly_initramfs_vfs_smoke() {
+                    target::qemu::exit_success();
+                }
+                target::qemu::exit_failure();
             }
 
             #[cfg(all(

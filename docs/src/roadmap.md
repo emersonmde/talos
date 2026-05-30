@@ -16,9 +16,10 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 Talos is in Phase 8 Milestone 8.1 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning
 task, the Phase 8 source inventory was accepted, and the read-only
-initramfs/VFS contract, smoke plan, and target-independent core were accepted.
-The next bounded task is the QEMU/substitute read-only initramfs/VFS smoke
-core. The accepted Phase 7
+initramfs/VFS contract, smoke plan, target-independent core, and
+QEMU/substitute smoke were accepted. The next bounded task is the read-only
+initramfs/VFS closeout checkpoint before any loader or shell work. The
+accepted Phase 7
 frontier includes the Phase
 6.3 production scheduler runtime closeout,
 the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source

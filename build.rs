@@ -265,6 +265,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         implied_values: &["qemu_descriptor_write_smoke"],
         asm_defines: &[QEMU_SYSCALL_SMOKE_ASM],
     },
+    BootScenario {
+        value: "qemu_readonly_initramfs_vfs_smoke",
+        implied_values: &[],
+        asm_defines: &[],
+    },
 ];
 
 fn main() {

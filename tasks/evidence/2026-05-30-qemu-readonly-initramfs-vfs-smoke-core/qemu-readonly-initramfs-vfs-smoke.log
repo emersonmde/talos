@@ -1,0 +1,25 @@
+
+Talos 0.1.0 booting on talos-aarch64-virt
+boot-info: dtb_pa=0x0000000048000000 core=0 el=2 target=talos-aarch64-virt
+target-services: uart=pl011 timer=arm-generic irq=gic-v2 dtb=Some(
+    0x0000000048000000,
+)
+mmio-regions: 3
+qemu-readonly-initramfs-vfs-smoke: start
+qemu-readonly-initramfs-vfs-smoke: fixture name=phase8-readonly-initramfs-vfs-v1 digest-algorithm=stable-manifest digest=0x2a2a56c54aecce72
+qemu-readonly-initramfs-vfs-smoke: lookup path=/ kind=directory entries=4 ok=true
+qemu-readonly-initramfs-vfs-smoke: lookup path=/etc/banner.txt kind=regular length=24 ok=true
+qemu-readonly-initramfs-vfs-smoke: read path=/etc/banner.txt offset-before=0 request=64 result=24 offset-after=24 data="Talos initramfs fixture\n" ok=true
+qemu-readonly-initramfs-vfs-smoke: read path=/etc/banner.txt offset-before=24 request=64 result=0 offset-after=24 eof=true ok=true
+qemu-readonly-initramfs-vfs-smoke: read path=/empty offset-before=0 request=64 result=0 offset-after=0 eof=true ok=true
+qemu-readonly-initramfs-vfs-smoke: lookup path=/dir/nested.txt kind=regular length=15 ok=true
+qemu-readonly-initramfs-vfs-smoke: error case=missing path=/missing errno=-ENOENT ok=true
+qemu-readonly-initramfs-vfs-smoke: error case=not-directory path=/etc/banner.txt/child errno=-ENOTDIR ok=true
+qemu-readonly-initramfs-vfs-smoke: error case=is-directory path=/etc errno=-EISDIR ok=true
+qemu-readonly-initramfs-vfs-smoke: error case=name-too-long errno=-ENAMETOOLONG ok=true
+qemu-readonly-initramfs-vfs-smoke: error case=bad-descriptor errno=-EBADF offset-unchanged=true ok=true
+qemu-readonly-initramfs-vfs-smoke: error case=user-fault errno=-EFAULT offset-unchanged=true ok=true
+qemu-readonly-initramfs-vfs-smoke: error case=invalid-input errno=-EINVAL offset-unchanged=true ok=true
+qemu-readonly-initramfs-vfs-smoke: error case=unsupported-operation errno=-ENOTSUP ok=true
+qemu-readonly-initramfs-vfs-smoke: final participants=8 expected=8 errors=0 classification=qemu-readonly-initramfs-vfs-smoke-complete
+qemu-readonly-initramfs-vfs-smoke: PASS

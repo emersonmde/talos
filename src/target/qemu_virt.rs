@@ -125,6 +125,19 @@ use crate::{
     target::{InterruptControllerKind, TargetServices, TimerKind, UartKind},
 };
 
+#[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
+use crate::{
+    initramfs::{
+        PHASE8_BANNER_BYTES, PHASE8_BANNER_PATH, PHASE8_EMPTY_PATH, PHASE8_FIXTURE_NAME,
+        PHASE8_NESTED_PATH, ReadOnlyFileDescriptions, VfsNodeKind,
+        phase8_readonly_initramfs_fixture,
+    },
+    posix::{
+        DescriptorAccess, DescriptorEntry, DescriptorFlags, DescriptorObject, DescriptorObjectKind,
+        DescriptorTable, PathLimits, PosixError, UserMapping, UserMappingPermissions,
+    },
+};
+
 const PL011_BASE: usize = 0x0900_0000;
 const GICD_BASE: usize = 0x0800_0000;
 const GICC_BASE: usize = 0x0801_0000;
@@ -194,6 +207,9 @@ const SCHEDULER_YIELD_TARGET_PROGRESS: u64 = 3;
 const TIMER_PREEMPTION_TARGET_PROGRESS: u64 = 3;
 #[cfg(talos_boot_scenario = "qemu_timer_preemption")]
 const TIMER_PREEMPTION_TARGET_SWITCHES: u64 = 6;
+
+#[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
+const READONLY_INITRAMFS_VFS_USER_BASE: u64 = 0x0000_0000_0011_0000;
 
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
@@ -4643,6 +4659,393 @@ pub fn run_read_stdin_smoke() -> ! {
             EL0_TRAP_SPSR_EL1H_DAIF_MASKED,
         );
     }
+}
+
+#[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
+pub fn run_readonly_initramfs_vfs_smoke() -> bool {
+    crate::println!("qemu-readonly-initramfs-vfs-smoke: start");
+
+    let fs = phase8_readonly_initramfs_fixture();
+    let digest = readonly_initramfs_vfs_manifest_digest();
+    crate::println!(
+        "qemu-readonly-initramfs-vfs-smoke: fixture name={} digest-algorithm=stable-manifest digest={:#x}",
+        PHASE8_FIXTURE_NAME,
+        digest
+    );
+
+    let root_ok = readonly_initramfs_vfs_report_lookup(fs, b"/", VfsNodeKind::Directory, 4);
+    let banner_lookup_ok = readonly_initramfs_vfs_report_lookup(
+        fs,
+        PHASE8_BANNER_PATH,
+        VfsNodeKind::RegularFile,
+        PHASE8_BANNER_BYTES.len(),
+    );
+    let banner_read_ok = readonly_initramfs_vfs_report_banner_read(fs);
+    let empty_read_ok = readonly_initramfs_vfs_report_empty_read(fs);
+    let nested_lookup_ok =
+        readonly_initramfs_vfs_report_lookup(fs, PHASE8_NESTED_PATH, VfsNodeKind::RegularFile, 15);
+    let lookup_error_ok = readonly_initramfs_vfs_report_lookup_errors(fs);
+    let descriptor_error_ok = readonly_initramfs_vfs_report_descriptor_errors(fs);
+    let unsupported_ok = readonly_initramfs_vfs_report_unsupported_error(fs);
+
+    let participants = u64::from(root_ok)
+        + u64::from(banner_lookup_ok)
+        + u64::from(banner_read_ok)
+        + u64::from(empty_read_ok)
+        + u64::from(nested_lookup_ok)
+        + u64::from(lookup_error_ok)
+        + u64::from(descriptor_error_ok)
+        + u64::from(unsupported_ok);
+    let errors = 8 - participants;
+    let classification = if participants == 8 && errors == 0 {
+        "qemu-readonly-initramfs-vfs-smoke-complete"
+    } else {
+        "qemu-readonly-initramfs-vfs-smoke-failed"
+    };
+
+    crate::println!(
+        "qemu-readonly-initramfs-vfs-smoke: final participants={} expected=8 errors={} classification={}",
+        participants,
+        errors,
+        classification
+    );
+    if participants == 8 && errors == 0 {
+        crate::println!("qemu-readonly-initramfs-vfs-smoke: PASS");
+        true
+    } else {
+        false
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
+fn readonly_initramfs_vfs_report_lookup(
+    fs: crate::initramfs::ReadOnlyInitramfs,
+    path: &[u8],
+    expected_kind: VfsNodeKind,
+    expected_len: usize,
+) -> bool {
+    let result = fs.lookup_default(path);
+    let ok = match result {
+        Ok(handle) => {
+            handle.metadata().kind() == expected_kind && handle.metadata().len() == expected_len
+        }
+        Err(_) => false,
+    };
+    crate::println!(
+        "qemu-readonly-initramfs-vfs-smoke: lookup path={} kind={} {}={} ok={}",
+        readonly_initramfs_vfs_path_name(path),
+        expected_kind.name(),
+        if expected_kind == VfsNodeKind::Directory {
+            "entries"
+        } else {
+            "length"
+        },
+        expected_len,
+        ok
+    );
+    ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
+fn readonly_initramfs_vfs_report_banner_read(fs: crate::initramfs::ReadOnlyInitramfs) -> bool {
+    let mut description = fs
+        .open_regular_file(PHASE8_BANNER_PATH)
+        .expect("phase8 banner fixture opens");
+    let mut user_memory = [0u8; 64];
+    let mappings = [UserMapping::new(
+        READONLY_INITRAMFS_VFS_USER_BASE,
+        user_memory.len(),
+        UserMappingPermissions::USER_DATA,
+    )
+    .expect("valid readonly initramfs smoke user mapping")];
+    let mut scratch = [0u8; 64];
+    let offset_before = description.offset();
+    let first = fs.read_regular_file(
+        &mut description,
+        &mappings,
+        READONLY_INITRAMFS_VFS_USER_BASE,
+        &mut user_memory,
+        READONLY_INITRAMFS_VFS_USER_BASE,
+        64,
+        &mut scratch,
+    );
+    let first_ok = first == Ok(PHASE8_BANNER_BYTES.len())
+        && description.offset() == PHASE8_BANNER_BYTES.len()
+        && &user_memory[..PHASE8_BANNER_BYTES.len()] == PHASE8_BANNER_BYTES;
+    crate::println!(
+        "qemu-readonly-initramfs-vfs-smoke: read path=/etc/banner.txt offset-before={} request=64 result={} offset-after={} data=\"Talos initramfs fixture\\n\" ok={}",
+        offset_before,
+        first.unwrap_or(usize::MAX),
+        description.offset(),
+        first_ok
+    );
+
+    let offset_before = description.offset();
+    let eof = fs.read_regular_file(
+        &mut description,
+        &mappings,
+        READONLY_INITRAMFS_VFS_USER_BASE,
+        &mut user_memory,
+        READONLY_INITRAMFS_VFS_USER_BASE,
+        64,
+        &mut scratch,
+    );
+    let eof_ok = eof == Ok(0) && description.offset() == PHASE8_BANNER_BYTES.len();
+    crate::println!(
+        "qemu-readonly-initramfs-vfs-smoke: read path=/etc/banner.txt offset-before={} request=64 result={} offset-after={} eof=true ok={}",
+        offset_before,
+        eof.unwrap_or(usize::MAX),
+        description.offset(),
+        eof_ok
+    );
+
+    first_ok && eof_ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
+fn readonly_initramfs_vfs_report_empty_read(fs: crate::initramfs::ReadOnlyInitramfs) -> bool {
+    let mut description = fs
+        .open_regular_file(PHASE8_EMPTY_PATH)
+        .expect("phase8 empty fixture opens");
+    let mut user_memory = [0u8; 64];
+    let mappings = [UserMapping::new(
+        READONLY_INITRAMFS_VFS_USER_BASE,
+        user_memory.len(),
+        UserMappingPermissions::USER_DATA,
+    )
+    .expect("valid readonly initramfs smoke user mapping")];
+    let mut scratch = [0u8; 64];
+    let offset_before = description.offset();
+    let result = fs.read_regular_file(
+        &mut description,
+        &mappings,
+        READONLY_INITRAMFS_VFS_USER_BASE,
+        &mut user_memory,
+        READONLY_INITRAMFS_VFS_USER_BASE,
+        64,
+        &mut scratch,
+    );
+    let ok = result == Ok(0) && description.offset() == 0;
+    crate::println!(
+        "qemu-readonly-initramfs-vfs-smoke: read path=/empty offset-before={} request=64 result={} offset-after={} eof=true ok={}",
+        offset_before,
+        result.unwrap_or(usize::MAX),
+        description.offset(),
+        ok
+    );
+    ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
+fn readonly_initramfs_vfs_report_lookup_errors(fs: crate::initramfs::ReadOnlyInitramfs) -> bool {
+    let missing = readonly_initramfs_vfs_report_error(
+        "missing path=/missing",
+        fs.lookup_default(b"/missing"),
+        PosixError::NoEntry,
+        None,
+    );
+    let not_directory = readonly_initramfs_vfs_report_error(
+        "not-directory path=/etc/banner.txt/child",
+        fs.lookup_default(b"/etc/banner.txt/child"),
+        PosixError::NotDirectory,
+        None,
+    );
+    let is_directory = readonly_initramfs_vfs_report_error(
+        "is-directory path=/etc",
+        fs.open_regular_file(b"/etc"),
+        PosixError::IsDirectory,
+        None,
+    );
+    let name_too_long = readonly_initramfs_vfs_report_error(
+        "name-too-long",
+        fs.lookup(b"/abcde", PathLimits::new(4, 8, 4)),
+        PosixError::NameTooLong,
+        None,
+    );
+
+    missing && not_directory && is_directory && name_too_long
+}
+
+#[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
+fn readonly_initramfs_vfs_report_descriptor_errors(
+    fs: crate::initramfs::ReadOnlyInitramfs,
+) -> bool {
+    let mut description = fs
+        .open_regular_file(PHASE8_BANNER_PATH)
+        .expect("phase8 banner fixture opens");
+    let initial_offset = description.offset();
+    let mut descriptions = ReadOnlyFileDescriptions::<1>::new_empty();
+    descriptions
+        .insert(0, description)
+        .expect("fixture file description inserts");
+    let descriptor_table = DescriptorTable::<1>::new_empty();
+    let mut user_memory = [0u8; 64];
+    let mappings = [UserMapping::new(
+        READONLY_INITRAMFS_VFS_USER_BASE,
+        user_memory.len(),
+        UserMappingPermissions::USER_DATA,
+    )
+    .expect("valid readonly initramfs smoke user mapping")];
+    let mut scratch = [0u8; 64];
+    let bad_descriptor_result = fs.read_descriptor(
+        &descriptor_table,
+        &mut descriptions,
+        0,
+        &mappings,
+        READONLY_INITRAMFS_VFS_USER_BASE,
+        &mut user_memory,
+        READONLY_INITRAMFS_VFS_USER_BASE,
+        8,
+        &mut scratch,
+    );
+    let offset_after_bad_descriptor = descriptions
+        .get_mut(0)
+        .expect("description present")
+        .offset();
+    let bad_descriptor = readonly_initramfs_vfs_report_error(
+        "bad-descriptor",
+        bad_descriptor_result,
+        PosixError::BadDescriptor,
+        Some(offset_after_bad_descriptor == initial_offset),
+    );
+
+    let mut descriptor_table = DescriptorTable::<1>::new_empty();
+    descriptor_table
+        .allocate_at(
+            0,
+            DescriptorEntry::new(
+                DescriptorAccess::ReadOnly,
+                DescriptorFlags::EMPTY,
+                DescriptorObject::new(DescriptorObjectKind::RegularFile, 0),
+            ),
+        )
+        .expect("fixture regular descriptor allocates");
+    let fault_result = fs.read_descriptor(
+        &descriptor_table,
+        &mut descriptions,
+        0,
+        &mappings,
+        READONLY_INITRAMFS_VFS_USER_BASE,
+        &mut user_memory,
+        READONLY_INITRAMFS_VFS_USER_BASE + 128,
+        8,
+        &mut scratch,
+    );
+    let offset_after_fault = descriptions
+        .get_mut(0)
+        .expect("description present")
+        .offset();
+    let user_fault = readonly_initramfs_vfs_report_error(
+        "user-fault",
+        fault_result,
+        PosixError::Fault,
+        Some(offset_after_fault == initial_offset),
+    );
+
+    description = fs
+        .open_regular_file(PHASE8_BANNER_PATH)
+        .expect("phase8 banner fixture opens");
+    let mut short_scratch = [0u8; 8];
+    let invalid_result = fs.read_regular_file(
+        &mut description,
+        &mappings,
+        READONLY_INITRAMFS_VFS_USER_BASE,
+        &mut user_memory,
+        READONLY_INITRAMFS_VFS_USER_BASE,
+        9,
+        &mut short_scratch,
+    );
+    let invalid_input = readonly_initramfs_vfs_report_error(
+        "invalid-input",
+        invalid_result,
+        PosixError::InvalidArgument,
+        Some(description.offset() == 0),
+    );
+
+    bad_descriptor && user_fault && invalid_input
+}
+
+#[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
+fn readonly_initramfs_vfs_report_unsupported_error(
+    fs: crate::initramfs::ReadOnlyInitramfs,
+) -> bool {
+    readonly_initramfs_vfs_report_error(
+        "unsupported-operation",
+        fs.unsupported_operation(),
+        PosixError::NotSupported,
+        None,
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
+fn readonly_initramfs_vfs_report_error<T>(
+    case: &str,
+    result: Result<T, PosixError>,
+    expected: PosixError,
+    offset_unchanged: Option<bool>,
+) -> bool {
+    let ok = matches!(result, Err(error) if error == expected) && offset_unchanged.unwrap_or(true);
+    match offset_unchanged {
+        Some(unchanged) => {
+            crate::println!(
+                "qemu-readonly-initramfs-vfs-smoke: error case={} errno=-{} offset-unchanged={} ok={}",
+                case,
+                expected.name(),
+                unchanged,
+                ok
+            );
+        }
+        None => {
+            crate::println!(
+                "qemu-readonly-initramfs-vfs-smoke: error case={} errno=-{} ok={}",
+                case,
+                expected.name(),
+                ok
+            );
+        }
+    }
+    ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
+fn readonly_initramfs_vfs_path_name(path: &[u8]) -> &'static str {
+    match path {
+        b"/" => "/",
+        b"/etc/banner.txt" => "/etc/banner.txt",
+        b"/dir/nested.txt" => "/dir/nested.txt",
+        _ => "<unknown>",
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
+fn readonly_initramfs_vfs_manifest_digest() -> u64 {
+    const FNV_OFFSET: u64 = 0xcbf2_9ce4_8422_2325;
+    const FNV_PRIME: u64 = 0x0000_0100_0000_01b3;
+    const MANIFEST: &[&[u8]] = &[
+        b"name=phase8-readonly-initramfs-vfs-v1\n",
+        b"/=dir:etc,bin,empty,dir\n",
+        b"/etc=dir:banner.txt\n",
+        b"/etc/banner.txt=file:",
+        PHASE8_BANNER_BYTES,
+        b"/bin=dir:init\n",
+        b"/bin/init=file:not-executable-yet\n",
+        b"/empty=file:\n",
+        b"/dir=dir:nested.txt\n",
+        b"/dir/nested.txt=file:nested fixture\n",
+    ];
+    let mut hash = FNV_OFFSET;
+    let mut chunk_index = 0;
+    while chunk_index < MANIFEST.len() {
+        let chunk = MANIFEST[chunk_index];
+        let mut byte_index = 0;
+        while byte_index < chunk.len() {
+            hash ^= chunk[byte_index] as u64;
+            hash = hash.wrapping_mul(FNV_PRIME);
+            byte_index += 1;
+        }
+        chunk_index += 1;
+    }
+    hash
 }
 
 #[cfg(talos_boot_scenario = "qemu_syscall_smoke")]
