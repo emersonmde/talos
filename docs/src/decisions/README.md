@@ -12,6 +12,44 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 Process Install Contract Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 process-install
+  contract. No Rust behavior, assembly behavior, QEMU execution, Pi 5
+  hardware run, boot archive publication, hardware-lock acquisition,
+  address-space mutation, user-frame allocation, page-table installation,
+  lower-EL launch, argv/envp implementation, exec/spawn/wait, shell,
+  descriptor-backed filesystem syscall, writable filesystem, persistent
+  storage, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted process-install source inventory found that the
+  program-loader frontier produces a ProgramImagePlan, but no source owner yet
+  accepts process address-space lifetime, frame leases, page-table roots,
+  install rollback, initial lower-EL frames, user stacks, descriptor
+  inheritance, or scheduler handoff.
+- Decision: Accept phase8-process-install-contract-20260530. The first
+  process-install boundary is target-independent and metadata-only: a
+  ProcessImageInstallPlan derived from a validated ProgramImagePlan, with
+  ordered page records, exact UserText/UserData permissions, file-copy and
+  zero-fill ranges, all-or-nothing semantics, deterministic errors, and
+  explicit lower-EL launch and descriptor deferrals.
+- Evidence level: static documentation/source inspection. Reviewed the
+  accepted process-install source inventory, loader format contract, loader
+  closeout, Phase 7 EL0/address-space and descriptor-table contracts,
+  src/program_loader.rs, src/posix.rs, src/scheduler.rs, roadmap, SUMMARY, and
+  ADR index.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next bounded task should be
+  phase8-qemu-process-install-smoke-plan-20260530, documentation-only, to
+  specify QEMU/substitute evidence for the metadata-only install-plan
+  boundary. Process-install implementation, physical page allocation,
+  page-table mutation, lower-EL launch of the loaded image, argv/envp
+  construction, exec/spawn/wait, shell, descriptor-backed filesystem syscalls,
+  writable filesystems, persistent storage, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, and DMA/cache-driver policy remain blocked.
+
 ## 2026-05-30 - Phase 8 Process Install Source Inventory Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 process-install

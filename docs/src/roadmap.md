@@ -42,6 +42,16 @@ installation remains blocked until later explicit tasks. The program-loader
 closeout checkpoint is now accepted and recommends a documentation-only
 process-install source inventory before any address-space installation,
 lower-EL launch, or shell implementation.
+The process-install source inventory is now followed by an accepted
+documentation-only process-install contract. The first process-install
+boundary is target-independent and metadata-only: a ProcessImageInstallPlan
+derived from a validated ProgramImagePlan, preserving exact UserText/UserData
+permissions, ordered file-copy and zero-fill page records, deterministic
+errors, and all-or-nothing semantics. It accepts no frame allocation,
+page-table mutation, scheduler handoff, lower-EL launch, argv/envp, descriptor
+inheritance, shell, hardware, or filesystem syscall behavior. The next bounded
+task is a QEMU/substitute process-install smoke plan for this metadata-only
+boundary.
 The
 accepted Phase 7
 frontier includes the Phase
