@@ -144,6 +144,7 @@
 - [Phase 8 QEMU Process Page-Table Materialization Smoke Plan](project/phase8-qemu-process-page-table-materialization-smoke-plan.md)
 - [Phase 8 Process Page-Table Materialization Closeout Checkpoint](project/phase8-process-page-table-materialization-closeout-checkpoint.md)
 - [Phase 8 Initial Process Launch Source Inventory](project/phase8-initial-process-launch-source-inventory.md)
+- [Phase 8 Initial Process Launch Contract](project/phase8-initial-process-launch-contract.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

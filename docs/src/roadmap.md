@@ -121,7 +121,14 @@ launch source inventory is now accepted and recommends a documentation-only
 initial-process-launch contract before any TTBR activation, lower-EL ERET,
 initial user stack implementation, scheduler runnable publication, argv/envp,
 process lifecycle, shell, filesystem syscall behavior, hardware proof,
-networking, or SSH.
+networking, or SSH. That initial-process-launch contract is now accepted. It
+selects a target-independent InitialProcessLaunchPlan boundary with identity
+phase8-initial-process-launch-plan-v1, validates entry provenance across the
+accepted image/install/address-space/materialization records, records
+blocked-missing-initial-user-stack and blocked-no-ttbr-activation state, and
+keeps saved-frame intent and scheduler publication below any register write,
+ERET, TTBR activation, runnable process, or hardware claim. The next bounded
+task is a QEMU/substitute smoke plan for this launch-preparation boundary.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -2768,6 +2775,20 @@ Milestone 8.3: Program Loader
   documentation-only task. Implementation, QEMU execution, TTBR activation,
   lower-EL ERET to /bin/init, argv/envp, process lifecycle, shell, filesystem
   syscalls, Pi 5 hardware proof, networking, and SSH remain blocked.
+- Phase 8 initial process launch contract is accepted. It selects
+  phase8-initial-process-launch-plan-v1 as a target-independent
+  launch-preparation boundary, not a live launch. The plan consumes the
+  accepted ProgramImagePlan, ProcessImageInstallPlan, ProcessAddressSpace, and
+  ProcessPageTableMaterialization records, validates entry provenance and
+  UserText descriptor coverage, records user_sp_state as
+  blocked-missing-initial-user-stack, records activation_state as
+  blocked-no-ttbr-activation, and defines saved-frame intent without writing
+  registers. It names
+  phase8-qemu-initial-process-launch-smoke-plan-20260530 as the next bounded
+  documentation-only task. TTBR activation, lower-EL ERET, initial user stack,
+  argv/envp, process lifecycle, scheduler runnable publication, shell,
+  filesystem syscalls, Pi 5 hardware proof, networking, and SSH remain
+  blocked.
 
 Acceptance criteria:
 
