@@ -2589,6 +2589,23 @@ Milestone 8.3: Program Loader
   filesystems, persistent storage, networking, SSH, RP1/PCIe, UART interrupt
   ownership, and DMA/cache-driver policy remain blocked until later explicit
   tasks accept their gates.
+- Phase 8 process address-space source inventory is accepted. It maps the
+  source owners and accepted inputs for ProcessImageInstallPlan,
+  ProgramImagePlan, user permission vocabulary, frame ownership vocabulary,
+  page-table/translation helpers, scheduler/process placeholders, and
+  QEMU/Pi 5 evidence producers. It separates accepted metadata-only
+  process-install behavior from unaccepted physical frame allocation, byte
+  copy, page-table mutation, address-space switching, lower-EL launch,
+  process creation, descriptor inheritance, and teardown. It recommends
+  phase8-process-address-space-contract-20260530 as the next bounded
+  documentation-only task to define the process address-space owner/lifetime,
+  frame lease/release policy, page-table root ownership, mapping order,
+  rollback/teardown rules, deterministic errors, and evidence boundary before
+  any implementation. Hardware proof, argv/envp, exec/spawn/wait, shell,
+  descriptor-backed filesystem syscalls, writable filesystems, persistent
+  storage, networking, SSH, RP1/PCIe, UART interrupt ownership, and
+  DMA/cache-driver policy remain blocked until later explicit tasks accept
+  their gates.
 
 Acceptance criteria:
 

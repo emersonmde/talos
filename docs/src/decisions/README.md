@@ -12,6 +12,44 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 Process Address-Space Source Inventory Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 process
+  address-space source inventory. No Rust behavior, assembly behavior, QEMU
+  execution, Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, frame allocation, physical byte copy, page-table mutation,
+  TTBR/TCR switching, lower-EL launch, argv/envp implementation,
+  exec/spawn/wait, shell, descriptor-backed filesystem syscall, writable
+  filesystem, persistent storage, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache-driver policy was added.
+- Context: The accepted process-install closeout left a metadata-only
+  ProcessImageInstallPlan frontier. Supervisor planning queued a bounded
+  source inventory to map the owners and gaps before any process-owned
+  address-space mutation contract or implementation.
+- Decision: Accept phase8-process-address-space-source-inventory-20260530.
+  The inventory records accepted inputs and exact source owners for
+  ProcessImageInstallPlan, ProgramImagePlan, user range/permission helpers,
+  early frame ownership vocabulary, translation helpers, scheduler/process
+  placeholders, lower-EL exception state, and target evidence producers.
+- Evidence level: static documentation/source review. Reviewed accepted
+  process-install docs, loader docs, Phase 7 lower-EL and copy contracts,
+  process-install and loader source, POSIX user-memory helpers, scheduler
+  placeholders, memory-map frame/translation code, architecture translation
+  helpers, QEMU/Pi 5 target evidence producers, and retained process-install
+  smoke evidence.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next bounded task should be
+  phase8-process-address-space-contract-20260530. That contract must define
+  the first process address-space owner/lifetime or smaller prerequisite,
+  frame lease/release policy, page-table root ownership, mapping order,
+  permission preservation, null-guard/user-kernel split checks,
+  rollback/teardown behavior, deterministic errors, and evidence boundary
+  before implementation. Physical mutation, lower-EL launch, argv/envp,
+  exec/spawn/wait, shell, descriptor-backed filesystem syscalls, hardware,
+  networking, and SSH remain blocked.
+
 ## 2026-05-30 - Phase 8 Process Install Closeout Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 process-install
