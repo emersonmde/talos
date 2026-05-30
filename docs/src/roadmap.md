@@ -2735,6 +2735,17 @@ Milestone 8.3: Program Loader
   activation, ASID/TLB policy, lower-EL launch, argv/envp, process lifecycle,
   shell, filesystem syscalls, Pi 5 hardware proof, networking, and SSH remain
   blocked.
+- Phase 8 process page-table materialization closeout checkpoint is accepted.
+  It reconciles the accepted materialization inventory, contract, smoke plan,
+  core implementation, and retained QEMU/substitute smoke evidence. The
+  accepted frontier is non-activating AArch64 descriptor-image/user-frame
+  materialization for immutable /bin/init below TTBR activation, with
+  rollback/no-leak and idempotent teardown evidence. No explicit queued
+  follow-up task remains after this checkpoint, so supervisor planning is
+  required before the worker may promote another Phase 8.3 task. TTBR
+  activation, TCR/MAIR/SCTLR mutation, ASID/TLB policy, lower-EL launch,
+  argv/envp, process lifecycle, shell, filesystem syscalls, Pi 5 hardware
+  proof, networking, and SSH remain blocked.
 
 Acceptance criteria:
 

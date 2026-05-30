@@ -12,6 +12,39 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 Process Page-Table Materialization Closeout Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 process page-table
+  materialization closeout checkpoint. No Rust behavior, assembly behavior,
+  QEMU rerun, Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, TTBR/TCR/MAIR/SCTLR writes, ASID/TLB policy change, lower-EL
+  launch, argv/envp, process lifecycle, shell behavior, descriptor-backed
+  filesystem syscalls, writable filesystem, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The accepted materialization inventory, contract, smoke plan, core,
+  and QEMU/substitute smoke evidence completed the bounded non-activating
+  descriptor-image/user-frame materialization slice below TTBR activation.
+- Decision: Accept
+  phase8-process-page-table-materialization-closeout-checkpoint-20260530. The
+  accepted frontier is
+  phase8-process-page-table-materialization-v1: non-activating AArch64
+  descriptor-image and user-frame materialization for immutable /bin/init,
+  with retained QEMU/substitute evidence for permission preservation,
+  no TTBR/TLB/scheduler/lower-EL/runnable side effects, rollback/no-leak
+  rejection behavior, and idempotent teardown.
+- Evidence level: static documentation/evidence review of accepted commits and
+  retained QEMU/substitute smoke evidence. No new QEMU run or physical Pi 5
+  evidence was produced or claimed.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: No explicit queued follow-up task remains. Supervisor planning
+  is required before the worker may promote another Phase 8.3 task. TTBR
+  activation, TCR/MAIR/SCTLR mutation, ASID/TLB sequencing, lower-EL launch,
+  argv/envp, process lifecycle, filesystem syscalls, Pi 5 hardware proof,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
+  policy remain blocked until later explicit tasks accept their contracts and
+  gates.
+
 ## 2026-05-30 - Phase 8 Process Page-Table Materialization Core Accepted
 
 - Status: accepted as the Milestone 8.3 process page-table materialization
