@@ -8948,7 +8948,10 @@ pub fn handle_syscall_proof_exception(
                 routed.return_x0
             );
         }
-        SyscallNumber::TalosWrite | SyscallNumber::TalosClose | SyscallNumber::TalosDup => {
+        SyscallNumber::TalosWrite
+        | SyscallNumber::TalosClose
+        | SyscallNumber::TalosDup
+        | SyscallNumber::TalosRead => {
             SYSCALL_PROOF_ERRORS.fetch_add(1, Ordering::Relaxed);
             crate::println!(
                 "rpi5-syscall-proof: syscall case=unexpected_context_syscall vector={} esr={:#018x} svc=0x0000 number={} return-x0={:#018x}",

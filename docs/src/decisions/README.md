@@ -6084,3 +6084,38 @@ ADR template:
   runtime-console0/TTY/hardware stdin, process loading, VFS/filesystem, shell,
   networking, SSH, object finalization, RP1/PCIe, UART interrupt ownership,
   DMA/cache-driver policy, and full POSIX descriptor claims remain blocked.
+
+## 2026-05-29 - Phase 7 Read And Stdin Core Accepted
+
+- Status: accepted as the target-independent Milestone 7.4 read/stdin core.
+  No QEMU run acceptance, Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, runtime-console0/TTY/hardware stdin, process
+  loading, VFS/filesystem behavior, shell behavior, networking, SSH, object
+  finalization, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy,
+  or full POSIX descriptor readiness was added.
+- Context: The accepted read/stdin contract fixed talos_read at x8 = 4 with x0
+  fd, x1 destination, x2 count, x3 through x5 reserved zero, fixed proof stdin
+  input, all-or-nothing copy_to_user, bounded short reads, and 0 EOF.
+- Decision: Accept phase7-read-stdin-core-20260529. The implementation adds
+  stable syscall number 4, `SyscallNumber::TalosRead`, `FixedStdin`
+  proof-buffer state, `read_descriptor_from_fixed_stdin()`, and a
+  target-independent process descriptor dispatch entry point that reads from fd
+  0 or duplicates of fd 0 only after resolving the current
+  `ProcessDescriptorStore` owner and validating writable user memory.
+- Evidence level: fmt/lint/typecheck, no_std unit tests, QEMU/substitute
+  scalar and descriptor regressions, static documentation/source inspection,
+  documentation build, whitespace inspection, and staged whitespace
+  inspection. No Pi 5 hardware evidence was produced by this target-independent
+  core task.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec test
+  passed with the Talos QEMU path configured; scripts/qemu-syscall-smoke.sh,
+  scripts/qemu-descriptor-write-smoke.sh, scripts/qemu-close-syscall-smoke.sh,
+  and scripts/qemu-dup-syscall-smoke.sh passed; git diff --check passed;
+  mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The next mechanically derivable task is
+  phase7-qemu-read-stdin-smoke-plan-20260529, scoped to a documentation-only
+  QEMU/substitute read/stdin smoke plan. Pi 5 physical read proof,
+  runtime-console0/TTY/hardware stdin, process loading, VFS/filesystem, shell,
+  networking, SSH, object finalization, dup2/fcntl, signals, wait queues,
+  nonblocking I/O, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy,
+  and full POSIX descriptor claims remain blocked.

@@ -573,19 +573,33 @@ copy_to_user all-or-nothing failure ordering, and no runtime-console0, TTY,
 filesystem, pipe, socket, signal, wait-queue, or hardware input claim. It
 recommends phase7-read-stdin-core-20260529 as the next bounded
 target-independent implementation task.
+The accepted read/stdin core adds stable syscall number 4 for talos_read,
+`FixedStdin` proof-buffer state, target-independent descriptor dispatch through
+`ProcessDescriptorStore`, and focused no_std coverage for fd 0 and duplicated
+stdin reads, proof-buffer short reads, 0 EOF, reserved-register -EINVAL,
+copy-out -EFAULT without cursor advance, fd/error -EBADF, non-stdin
+readable-object -ENOTSUP, missing fixed source -ENOTSUP, and
+scalar/write/close/dup/unknown/copy-probe regressions. This is
+target-independent implementation
+evidence only. QEMU/substitute lower-AArch64 read evidence, Pi 5 physical read
+proof, runtime-console0/TTY/hardware stdin, process loading, VFS/filesystem,
+shell, networking, SSH, object finalization, dup2/fcntl, signals, wait queues,
+nonblocking I/O, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy,
+and full POSIX descriptor readiness remain blocked. The next bounded Milestone
+7.4 task should be phase7-qemu-read-stdin-smoke-plan-20260529.
 
-Near-term direction after the accepted read/stdin contract:
+Near-term direction after the accepted read/stdin core:
 
-- Implement only the target-independent talos_read/stdin core for fixed proof
-  input before any QEMU/substitute or Pi 5 runtime proof.
+- Plan only the bounded QEMU/substitute read/stdin smoke before adding lower-EL
+  runtime evidence.
 - Keep QEMU, host-side unit tests, and static documentation gates first. Reserve
   serialized Pi 5 runs for the smallest physical claim that cannot be proven on
   the QEMU/substitute path.
-- Preserve the deferred-surface boundary: read implementation, QEMU/Pi 5 read
-  proof, runtime-console0/TTY/hardware stdin, process loading, descriptor I/O
-  beyond the accepted write/close/dup/read-contract frontiers, VFS/filesystem,
-  shell, networking, SSH, RP1/PCIe, UART interrupt ownership, object
-  finalization, dup2/fcntl, signals, wait queues, nonblocking I/O, and
+- Preserve the deferred-surface boundary: QEMU/Pi 5 read proof,
+  runtime-console0/TTY/hardware stdin, process loading, descriptor I/O beyond
+  the accepted write/close/dup/read target-independent frontiers,
+  VFS/filesystem, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
+  object finalization, dup2/fcntl, signals, wait queues, nonblocking I/O, and
   DMA/cache-driver policy remain out of scope until explicit tasks accept
   their contracts and gates.
 - Treat the roadmap target as a usable local operating system: TTY, shell,

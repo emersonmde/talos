@@ -12,6 +12,7 @@ pub(crate) const TALOS_NOP_SYSCALL: u64 = 0;
 pub(crate) const TALOS_WRITE_SYSCALL: u64 = 1;
 pub(crate) const TALOS_CLOSE_SYSCALL: u64 = 2;
 pub(crate) const TALOS_DUP_SYSCALL: u64 = 3;
+pub(crate) const TALOS_READ_SYSCALL: u64 = 4;
 #[cfg(any(
     test,
     talos_boot_scenario = "qemu_pointer_copy_smoke",
@@ -32,6 +33,7 @@ pub(crate) enum SyscallNumber {
     TalosWrite,
     TalosClose,
     TalosDup,
+    TalosRead,
     Unknown(u64),
 }
 
@@ -42,6 +44,7 @@ impl SyscallNumber {
             TALOS_WRITE_SYSCALL => Self::TalosWrite,
             TALOS_CLOSE_SYSCALL => Self::TalosClose,
             TALOS_DUP_SYSCALL => Self::TalosDup,
+            TALOS_READ_SYSCALL => Self::TalosRead,
             unknown => Self::Unknown(unknown),
         }
     }
@@ -52,6 +55,7 @@ impl SyscallNumber {
             Self::TalosWrite => TALOS_WRITE_SYSCALL,
             Self::TalosClose => TALOS_CLOSE_SYSCALL,
             Self::TalosDup => TALOS_DUP_SYSCALL,
+            Self::TalosRead => TALOS_READ_SYSCALL,
             Self::Unknown(raw) => raw,
         }
     }
@@ -165,9 +169,10 @@ pub(crate) const fn dispatch(
     let number = SyscallNumber::from_raw(raw_number);
     let return_value = match number {
         SyscallNumber::TalosNop => SyscallReturn::success(0),
-        SyscallNumber::TalosWrite | SyscallNumber::TalosClose | SyscallNumber::TalosDup => {
-            SyscallReturn::error(PosixError::NotSupported)
-        }
+        SyscallNumber::TalosWrite
+        | SyscallNumber::TalosClose
+        | SyscallNumber::TalosDup
+        | SyscallNumber::TalosRead => SyscallReturn::error(PosixError::NotSupported),
         SyscallNumber::Unknown(_) => SyscallReturn::error(PosixError::NotImplemented),
     };
 
@@ -205,6 +210,7 @@ where
         SyscallNumber::TalosNop
         | SyscallNumber::TalosClose
         | SyscallNumber::TalosDup
+        | SyscallNumber::TalosRead
         | SyscallNumber::Unknown(_) => dispatch(raw_number, arguments).return_value(),
     };
 
@@ -255,6 +261,69 @@ where
             dispatch_talos_close(arguments, current_owner, descriptor_store)
         }
         SyscallNumber::TalosDup => dispatch_talos_dup(arguments, current_owner, descriptor_store),
+        SyscallNumber::TalosRead | SyscallNumber::TalosNop | SyscallNumber::Unknown(_) => {
+            dispatch(raw_number, arguments).return_value()
+        }
+    };
+
+    SyscallDispatchResult {
+        number,
+        arguments,
+        return_value,
+    }
+}
+
+pub(crate) fn dispatch_process_descriptor_with_fixed_stdin<
+    const OWNER_CAPACITY: usize,
+    const DESCRIPTOR_CAPACITY: usize,
+    B,
+>(
+    raw_number: u64,
+    arguments: SyscallArguments,
+    current_owner: Option<crate::scheduler::ProcessOwnerId>,
+    descriptor_store: &mut crate::posix::ProcessDescriptorStore<
+        OWNER_CAPACITY,
+        DESCRIPTOR_CAPACITY,
+    >,
+    mappings: &[crate::posix::UserMapping],
+    user_memory_start: u64,
+    user_memory: &mut [u8],
+    kernel_scratch: &mut [u8],
+    console_backend: &mut B,
+    fixed_stdin: Option<&mut crate::posix::FixedStdin<'_>>,
+) -> SyscallDispatchResult
+where
+    B: crate::runtime_console::ConsoleBackend,
+{
+    let number = SyscallNumber::from_raw(raw_number);
+    let return_value = match number {
+        SyscallNumber::TalosWrite => match descriptor_store.current_descriptor_table(current_owner)
+        {
+            Ok(descriptor_table) => dispatch_talos_write(
+                arguments,
+                descriptor_table,
+                mappings,
+                user_memory_start,
+                user_memory,
+                kernel_scratch,
+                console_backend,
+            ),
+            Err(error) => SyscallReturn::error(error),
+        },
+        SyscallNumber::TalosClose => {
+            dispatch_talos_close(arguments, current_owner, descriptor_store)
+        }
+        SyscallNumber::TalosDup => dispatch_talos_dup(arguments, current_owner, descriptor_store),
+        SyscallNumber::TalosRead => dispatch_talos_read(
+            arguments,
+            current_owner,
+            descriptor_store,
+            mappings,
+            user_memory_start,
+            user_memory,
+            kernel_scratch,
+            fixed_stdin,
+        ),
         SyscallNumber::TalosNop | SyscallNumber::Unknown(_) => {
             dispatch(raw_number, arguments).return_value()
         }
@@ -307,6 +376,54 @@ where
         console_backend,
     ) {
         Ok(bytes_written) => SyscallReturn::success(bytes_written as u64),
+        Err(error) => SyscallReturn::error(error),
+    }
+}
+
+fn dispatch_talos_read<const OWNER_CAPACITY: usize, const DESCRIPTOR_CAPACITY: usize>(
+    arguments: SyscallArguments,
+    current_owner: Option<crate::scheduler::ProcessOwnerId>,
+    descriptor_store: &mut crate::posix::ProcessDescriptorStore<
+        OWNER_CAPACITY,
+        DESCRIPTOR_CAPACITY,
+    >,
+    mappings: &[crate::posix::UserMapping],
+    user_memory_start: u64,
+    user_memory: &mut [u8],
+    kernel_scratch: &mut [u8],
+    fixed_stdin: Option<&mut crate::posix::FixedStdin<'_>>,
+) -> SyscallReturn {
+    let [descriptor, user_start, len, reserved0, reserved1, reserved2] = arguments.values();
+    if reserved0 != 0 || reserved1 != 0 || reserved2 != 0 {
+        return SyscallReturn::error(PosixError::InvalidArgument);
+    }
+    if len > crate::posix::DEFAULT_USER_COPY_LIMIT as u64 {
+        return SyscallReturn::error(PosixError::Fault);
+    }
+
+    let Ok(descriptor) = usize::try_from(descriptor) else {
+        return SyscallReturn::error(PosixError::BadDescriptor);
+    };
+    let Ok(len) = usize::try_from(len) else {
+        return SyscallReturn::error(PosixError::Fault);
+    };
+    let descriptor_table = match descriptor_store.current_descriptor_table(current_owner) {
+        Ok(descriptor_table) => descriptor_table,
+        Err(error) => return SyscallReturn::error(error),
+    };
+
+    match crate::posix::read_descriptor_from_fixed_stdin(
+        descriptor_table,
+        descriptor,
+        mappings,
+        user_memory_start,
+        user_memory,
+        user_start,
+        len,
+        kernel_scratch,
+        fixed_stdin,
+    ) {
+        Ok(bytes_read) => SyscallReturn::success(bytes_read as u64),
         Err(error) => SyscallReturn::error(error),
     }
 }
@@ -527,6 +644,15 @@ mod tests {
     }
 
     #[test_case]
+    fn descriptor_read_number_requires_context_in_scalar_dispatch() {
+        let result = dispatch(TALOS_READ_SYSCALL, SyscallArguments::empty());
+
+        assert_eq!(result.number(), SyscallNumber::TalosRead);
+        assert_eq!(result.number().raw(), TALOS_READ_SYSCALL);
+        assert_eq!(result.return_value().x0(), (ENOTSUP as u64).wrapping_neg());
+    }
+
+    #[test_case]
     fn descriptor_close_number_requires_context_in_scalar_dispatch() {
         let result = dispatch(TALOS_CLOSE_SYSCALL, SyscallArguments::empty());
 
@@ -731,6 +857,38 @@ mod tests {
         user_memory[..18].copy_from_slice(b"talos-stdout-qemu\n");
         user_memory[0x40..0x52].copy_from_slice(b"talos-stderr-qemu\n");
         (owner, store, mappings, user_memory)
+    }
+
+    fn dispatch_read_case(
+        descriptor: u64,
+        user_start: u64,
+        len: u64,
+        reserved0: u64,
+        current_owner: Option<crate::scheduler::ProcessOwnerId>,
+        store: &mut crate::posix::ProcessDescriptorStore<2, 4>,
+        user_memory: &mut [u8; 128],
+        fixed_stdin: Option<&mut crate::posix::FixedStdin<'_>>,
+    ) -> SyscallDispatchResult {
+        let mappings = [crate::posix::UserMapping::new(
+            0x0000_0000_0011_0000,
+            0x80,
+            crate::posix::UserMappingPermissions::USER_DATA,
+        )
+        .expect("user data mapping")];
+        let mut scratch = [0u8; 64];
+        let mut console = CaptureConsole::new();
+        dispatch_process_descriptor_with_fixed_stdin(
+            TALOS_READ_SYSCALL,
+            SyscallArguments::new([descriptor, user_start, len, reserved0, 0, 0]),
+            current_owner,
+            store,
+            &mappings,
+            0x0000_0000_0011_0000,
+            user_memory,
+            &mut scratch,
+            &mut console,
+            fixed_stdin,
+        )
     }
 
     fn dispatch_write_case(
@@ -1312,6 +1470,311 @@ mod tests {
                 .is_ok()
         );
         assert_eq!(console.as_bytes(), b"");
+    }
+
+    #[test_case]
+    fn talos_read_stdin_copies_fixed_input_and_advances_after_copy() {
+        let (owner, mut store, _, _) = process_descriptor_fixture();
+        let mut user_memory = [0u8; 128];
+        let mut stdin = crate::posix::FixedStdin::new(b"talos-stdin");
+
+        let result = dispatch_read_case(
+            crate::posix::STDIN_FD as u64,
+            0x0000_0000_0011_0020,
+            5,
+            0,
+            Some(owner),
+            &mut store,
+            &mut user_memory,
+            Some(&mut stdin),
+        );
+
+        assert_eq!(result.number(), SyscallNumber::TalosRead);
+        assert_eq!(result.return_value().x0(), 5);
+        assert_eq!(&user_memory[0x20..0x25], b"talos");
+        assert_eq!(stdin.cursor(), 5);
+    }
+
+    #[test_case]
+    fn talos_read_short_count_and_eof_are_bounded_to_fixed_input() {
+        let (owner, mut store, _, _) = process_descriptor_fixture();
+        let mut user_memory = [0u8; 128];
+        let mut stdin = crate::posix::FixedStdin::new(b"abc");
+
+        let short = dispatch_read_case(
+            crate::posix::STDIN_FD as u64,
+            0x0000_0000_0011_0000,
+            8,
+            0,
+            Some(owner),
+            &mut store,
+            &mut user_memory,
+            Some(&mut stdin),
+        );
+        let eof = dispatch_read_case(
+            crate::posix::STDIN_FD as u64,
+            0x0000_0000_0011_0010,
+            8,
+            0,
+            Some(owner),
+            &mut store,
+            &mut user_memory,
+            Some(&mut stdin),
+        );
+
+        assert_eq!(short.return_value().x0(), 3);
+        assert_eq!(eof.return_value().x0(), 0);
+        assert_eq!(&user_memory[..3], b"abc");
+        assert_eq!(&user_memory[0x10..0x18], &[0; 8]);
+        assert_eq!(stdin.cursor(), 3);
+    }
+
+    #[test_case]
+    fn talos_read_duplicate_of_stdin_shares_fixed_input_cursor() {
+        let (owner, mut store, mappings, _) = process_descriptor_fixture();
+        let mut user_memory = [0u8; 128];
+        let mut scratch = [0u8; 64];
+        let mut console = CaptureConsole::new();
+        let mut stdin = crate::posix::FixedStdin::new(b"stdin-dupe");
+        let duplicate = dispatch_process_descriptor_with_fixed_stdin(
+            TALOS_DUP_SYSCALL,
+            SyscallArguments::new([crate::posix::STDIN_FD as u64, 0, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mappings,
+            0x0000_0000_0011_0000,
+            &mut user_memory,
+            &mut scratch,
+            &mut console,
+            None,
+        );
+
+        let read_duplicate = dispatch_read_case(
+            duplicate.return_value().x0(),
+            0x0000_0000_0011_0000,
+            5,
+            0,
+            Some(owner),
+            &mut store,
+            &mut user_memory,
+            Some(&mut stdin),
+        );
+        let read_original = dispatch_read_case(
+            crate::posix::STDIN_FD as u64,
+            0x0000_0000_0011_0010,
+            4,
+            0,
+            Some(owner),
+            &mut store,
+            &mut user_memory,
+            Some(&mut stdin),
+        );
+
+        assert_eq!(duplicate.return_value().x0(), 3);
+        assert_eq!(read_duplicate.return_value().x0(), 5);
+        assert_eq!(read_original.return_value().x0(), 4);
+        assert_eq!(&user_memory[..5], b"stdin");
+        assert_eq!(&user_memory[0x10..0x14], b"-dup");
+        assert_eq!(stdin.cursor(), 9);
+    }
+
+    #[test_case]
+    fn talos_read_zero_length_does_not_consume_or_use_destination() {
+        let (owner, mut store, _, _) = process_descriptor_fixture();
+        let mut user_memory = [0u8; 128];
+        let mut stdin = crate::posix::FixedStdin::new(b"abc");
+
+        let result = dispatch_read_case(
+            crate::posix::STDIN_FD as u64,
+            0,
+            0,
+            0,
+            Some(owner),
+            &mut store,
+            &mut user_memory,
+            Some(&mut stdin),
+        );
+
+        assert_eq!(result.return_value().x0(), 0);
+        assert_eq!(stdin.cursor(), 0);
+        assert_eq!(user_memory, [0; 128]);
+    }
+
+    #[test_case]
+    fn talos_read_fd_errors_do_not_copy_or_consume_input() {
+        let (owner, mut store, _, _) = process_descriptor_fixture();
+        let missing = crate::scheduler::ProcessOwnerId::new(32).expect("missing owner id");
+        let mut user_memory = [0u8; 128];
+        let mut stdin = crate::posix::FixedStdin::new(b"abc");
+
+        let stdout = dispatch_read_case(
+            crate::posix::STDOUT_FD as u64,
+            0x0000_0000_0011_0000,
+            3,
+            0,
+            Some(owner),
+            &mut store,
+            &mut user_memory,
+            Some(&mut stdin),
+        );
+        let bad_fd = dispatch_read_case(
+            99,
+            0x0000_0000_0011_0000,
+            3,
+            0,
+            Some(owner),
+            &mut store,
+            &mut user_memory,
+            Some(&mut stdin),
+        );
+        store
+            .close_current_descriptor(Some(owner), crate::posix::STDIN_FD)
+            .expect("close stdin");
+        let closed = dispatch_read_case(
+            crate::posix::STDIN_FD as u64,
+            0x0000_0000_0011_0000,
+            3,
+            0,
+            Some(owner),
+            &mut store,
+            &mut user_memory,
+            Some(&mut stdin),
+        );
+        let no_owner = dispatch_read_case(
+            crate::posix::STDIN_FD as u64,
+            0x0000_0000_0011_0000,
+            3,
+            0,
+            None,
+            &mut store,
+            &mut user_memory,
+            Some(&mut stdin),
+        );
+        let unknown_owner = dispatch_read_case(
+            crate::posix::STDIN_FD as u64,
+            0x0000_0000_0011_0000,
+            3,
+            0,
+            Some(missing),
+            &mut store,
+            &mut user_memory,
+            Some(&mut stdin),
+        );
+
+        assert_eq!(stdout.return_value().x0(), (EBADF as u64).wrapping_neg());
+        assert_eq!(bad_fd.return_value().x0(), (EBADF as u64).wrapping_neg());
+        assert_eq!(closed.return_value().x0(), (EBADF as u64).wrapping_neg());
+        assert_eq!(no_owner.return_value().x0(), (EBADF as u64).wrapping_neg());
+        assert_eq!(
+            unknown_owner.return_value().x0(),
+            (EBADF as u64).wrapping_neg()
+        );
+        assert_eq!(stdin.cursor(), 0);
+        assert_eq!(user_memory, [0; 128]);
+    }
+
+    #[test_case]
+    fn talos_read_reserved_registers_reject_without_mutation() {
+        let (owner, mut store, _, _) = process_descriptor_fixture();
+        let mut user_memory = [0u8; 128];
+        let mut stdin = crate::posix::FixedStdin::new(b"abc");
+
+        let result = dispatch_read_case(
+            crate::posix::STDIN_FD as u64,
+            0x0000_0000_0011_0000,
+            3,
+            1,
+            Some(owner),
+            &mut store,
+            &mut user_memory,
+            Some(&mut stdin),
+        );
+
+        assert_eq!(result.return_value().x0(), (EINVAL as u64).wrapping_neg());
+        assert_eq!(stdin.cursor(), 0);
+        assert_eq!(user_memory, [0; 128]);
+    }
+
+    #[test_case]
+    fn talos_read_copy_faults_do_not_consume_fixed_input() {
+        let (owner, mut store, _, _) = process_descriptor_fixture();
+        let mut user_memory = [0u8; 128];
+        let mut stdin = crate::posix::FixedStdin::new(b"abcdef");
+
+        let unmapped = dispatch_read_case(
+            crate::posix::STDIN_FD as u64,
+            0x0000_0000_001e_0000,
+            3,
+            0,
+            Some(owner),
+            &mut store,
+            &mut user_memory,
+            Some(&mut stdin),
+        );
+        let oversize = dispatch_read_case(
+            crate::posix::STDIN_FD as u64,
+            0x0000_0000_0011_0000,
+            crate::posix::DEFAULT_USER_COPY_LIMIT as u64 + 1,
+            0,
+            Some(owner),
+            &mut store,
+            &mut user_memory,
+            Some(&mut stdin),
+        );
+
+        assert_eq!(unmapped.return_value().x0(), (EFAULT as u64).wrapping_neg());
+        assert_eq!(oversize.return_value().x0(), (EFAULT as u64).wrapping_neg());
+        assert_eq!(stdin.cursor(), 0);
+        assert_eq!(user_memory, [0; 128]);
+    }
+
+    #[test_case]
+    fn talos_read_reports_enotsup_for_non_stdin_readable_objects_or_missing_source() {
+        let (owner, mut store, _, _) = process_descriptor_fixture();
+        let mut user_memory = [0u8; 128];
+        let mut stdin = crate::posix::FixedStdin::new(b"abc");
+        let regular = crate::posix::DescriptorEntry::new(
+            crate::posix::DescriptorAccess::ReadWrite,
+            crate::posix::DescriptorFlags::EMPTY,
+            crate::posix::DescriptorObject::new(crate::posix::DescriptorObjectKind::RegularFile, 7),
+        );
+        let regular_fd = store
+            .current_descriptor_table_mut(Some(owner))
+            .expect("current table")
+            .allocate(regular)
+            .expect("regular fixture fd");
+
+        let non_stdin = dispatch_read_case(
+            regular_fd as u64,
+            0x0000_0000_0011_0000,
+            3,
+            0,
+            Some(owner),
+            &mut store,
+            &mut user_memory,
+            Some(&mut stdin),
+        );
+        let missing_source = dispatch_read_case(
+            crate::posix::STDIN_FD as u64,
+            0x0000_0000_0011_0000,
+            3,
+            0,
+            Some(owner),
+            &mut store,
+            &mut user_memory,
+            None,
+        );
+
+        assert_eq!(
+            non_stdin.return_value().x0(),
+            (ENOTSUP as u64).wrapping_neg()
+        );
+        assert_eq!(
+            missing_source.return_value().x0(),
+            (ENOTSUP as u64).wrapping_neg()
+        );
+        assert_eq!(stdin.cursor(), 0);
+        assert_eq!(user_memory, [0; 128]);
     }
 
     #[test_case]

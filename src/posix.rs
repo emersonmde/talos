@@ -771,6 +771,75 @@ where
     }
 }
 
+#[derive(Debug, Eq, PartialEq)]
+pub(crate) struct FixedStdin<'a> {
+    bytes: &'a [u8],
+    cursor: usize,
+}
+
+impl<'a> FixedStdin<'a> {
+    pub(crate) const fn new(bytes: &'a [u8]) -> Self {
+        Self { bytes, cursor: 0 }
+    }
+
+    pub(crate) const fn cursor(&self) -> usize {
+        self.cursor
+    }
+
+    const fn remaining(&self) -> usize {
+        self.bytes.len() - self.cursor
+    }
+}
+
+pub(crate) fn read_descriptor_from_fixed_stdin<const CAPACITY: usize>(
+    table: &DescriptorTable<CAPACITY>,
+    descriptor: usize,
+    mappings: &[UserMapping],
+    user_memory_start: u64,
+    user_memory: &mut [u8],
+    user_start: u64,
+    len: usize,
+    kernel_scratch: &mut [u8],
+    fixed_stdin: Option<&mut FixedStdin<'_>>,
+) -> Result<usize, PosixError> {
+    let entry = table.get(descriptor)?;
+    entry.require_readable()?;
+
+    if entry.object().kind() != DescriptorObjectKind::StdioInput {
+        return Err(PosixError::NotSupported);
+    }
+    if len == 0 {
+        return Ok(0);
+    }
+    if len > DEFAULT_USER_COPY_LIMIT {
+        return Err(PosixError::Fault);
+    }
+
+    let Some(stdin) = fixed_stdin else {
+        return Err(PosixError::NotSupported);
+    };
+    let selected_len = core::cmp::min(len, stdin.remaining());
+    if selected_len == 0 {
+        return Ok(0);
+    }
+    if kernel_scratch.len() < selected_len {
+        return Err(PosixError::InvalidArgument);
+    }
+
+    let end = stdin.cursor + selected_len;
+    kernel_scratch[..selected_len].copy_from_slice(&stdin.bytes[stdin.cursor..end]);
+    copy_to_user(
+        mappings,
+        user_memory_start,
+        user_memory,
+        user_start,
+        selected_len,
+        &kernel_scratch[..selected_len],
+    )?;
+    stdin.cursor = end;
+    Ok(selected_len)
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct PathComponent<'a> {
     bytes: &'a [u8],
