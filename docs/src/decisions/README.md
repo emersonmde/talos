@@ -7490,3 +7490,42 @@ ADR template:
   lifecycle, filesystem syscalls, Pi 5 hardware proof, networking, SSH,
   RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
   blocked until later explicit tasks accept their contracts and gates.
+
+## 2026-05-30 - Phase 8 Initial Process Launch Source Inventory Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 initial process
+  launch source inventory. No Rust behavior, assembly behavior, QEMU
+  execution, Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, TTBR/TCR/MAIR/SCTLR write, ASID allocation, live TLB
+  invalidation, lower-EL ERET, initial user stack implementation, argv/envp,
+  process lifecycle, scheduler runnable publication, shell behavior,
+  descriptor-backed filesystem syscalls, writable filesystem, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The accepted materialization closeout proved only a
+  non-activating descriptor-image/user-frame record for immutable /bin/init.
+  The next frontier needed source ownership and gap mapping before any
+  contract could choose launch preparation, TTBR activation, stack setup, or
+  QEMU evidence.
+- Decision: Accept
+  phase8-initial-process-launch-source-inventory-20260530. The inventory maps
+  accepted ProgramImagePlan, ProcessImageInstallPlan, ProcessAddressSpace, and
+  ProcessPageTableMaterialization inputs to missing launch-frame, entry/SP,
+  initial stack, TTBR/TCR/MAIR/SCTLR, ASID/TLB, kernel-reachability,
+  scheduler-publication, and QEMU/substitute evidence boundaries. It
+  recommends phase8-initial-process-launch-contract-20260530 as the next
+  bounded documentation-only task.
+- Evidence level: static documentation/source inspection. Reviewed accepted
+  materialization docs, task records, retained QEMU/substitute evidence,
+  loader/install/address-space/materialization source owners, AArch64 lower-EL
+  helpers, exception routing, memory-map owners, scheduler owner placeholders,
+  QEMU/Pi 5 evidence producers, roadmap, SUMMARY, and ADR index.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next bounded task should be
+  phase8-initial-process-launch-contract-20260530. Implementation, QEMU
+  execution, TTBR activation, lower-EL ERET to /bin/init, argv/envp expansion,
+  process lifecycle, shell behavior, descriptor-backed filesystem syscalls,
+  Pi 5 hardware proof, networking, SSH, RP1/PCIe, UART interrupt ownership,
+  and DMA/cache-driver policy remain blocked until later explicit tasks accept
+  their contracts and gates.

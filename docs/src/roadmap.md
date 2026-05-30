@@ -111,6 +111,17 @@ filesystem, hardware proof, networking, SSH, RP1/PCIe, UART interrupt
 ownership, or DMA/cache-driver policy. No explicit queued follow-up task
 remains; supervisor planning is required before the worker may promote the
 next Phase 8.3 task.
+The process page-table materialization source inventory, contract, smoke plan,
+implementation, QEMU/substitute smoke evidence, and closeout checkpoint are
+now accepted. The accepted frontier is a non-activating AArch64
+descriptor-image/user-frame materialization record for immutable /bin/init,
+below TTBR activation and lower-EL launch, with retained
+qemu-process-page-table-materialization-smoke evidence. The initial process
+launch source inventory is now accepted and recommends a documentation-only
+initial-process-launch contract before any TTBR activation, lower-EL ERET,
+initial user stack implementation, scheduler runnable publication, argv/envp,
+process lifecycle, shell, filesystem syscall behavior, hardware proof,
+networking, or SSH.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -2746,6 +2757,17 @@ Milestone 8.3: Program Loader
   activation, TCR/MAIR/SCTLR mutation, ASID/TLB policy, lower-EL launch,
   argv/envp, process lifecycle, shell, filesystem syscalls, Pi 5 hardware
   proof, networking, and SSH remain blocked.
+- Phase 8 initial process launch source inventory is accepted. It maps the
+  accepted loader, process-install, ProcessAddressSpace, and non-activating
+  materialization records to the next launch gaps: entry/SP provenance,
+  initial user stack prerequisites, lower-EL frame construction,
+  TTBR/TCR/MAIR/SCTLR and ASID/TLB activation boundaries, kernel reachability,
+  scheduler runnable-publication blockers, trap/return evidence, and
+  descriptor/userland state. It recommends
+  phase8-initial-process-launch-contract-20260530 as the next bounded
+  documentation-only task. Implementation, QEMU execution, TTBR activation,
+  lower-EL ERET to /bin/init, argv/envp, process lifecycle, shell, filesystem
+  syscalls, Pi 5 hardware proof, networking, and SSH remain blocked.
 
 Acceptance criteria:
 
