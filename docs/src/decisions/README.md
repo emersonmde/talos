@@ -12,6 +12,49 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 Program Loader Core Accepted
+
+- Status: accepted as the target-independent Milestone 8.3 program-loader
+  core. No QEMU program-loader smoke run, Pi 5 hardware run, boot archive
+  publication, hardware-lock acquisition, process address-space installation,
+  page-table mutation, user-frame allocation, lower-EL launch, argv/envp stack
+  construction, process creation, exec/spawn/wait, shell, descriptor-backed
+  filesystem syscall, writable filesystem, persistent storage, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy was
+  added.
+- Context: The accepted QEMU/substitute smoke plan made the next mechanical
+  implementation step a pure ELF64/AArch64 validator and image-plan producer
+  for immutable /bin/init bytes from the accepted read-only initramfs/VFS
+  regular-file boundary.
+- Decision: Accept phase8-program-loader-core-20260530. The core adds
+  src/program_loader.rs, registers the module in src/main.rs, replaces
+  /bin/init fixture bytes with the accepted static ELF64/AArch64 ET_EXEC
+  fixture, adds ReadOnlyInitramfs::regular_file_bytes(), and updates the
+  read-only VFS smoke manifest digest to derive from the current fixture
+  bytes. The loader accepts the narrow static ELF subset and returns only a
+  ProgramImagePlan with source path, fixture identity, digest, entry, ordered
+  loadable segments, file-copy ranges, zero-fill ranges, user permission class,
+  and rounded memory footprint.
+- Evidence level: unit tests plus QEMU/substitute regression. Unit tests cover
+  the accepted success fixture and deterministic rejects for bad magic,
+  unsupported type/machine, dynamic interpreter, malformed program-header
+  range, W+X segment, out-of-user-range segment, rounded overlap, bad entry,
+  and file-range overflow. The fixture identity is
+  phase8-program-loader-elf64-aarch64-v1 with digest 0x3892eed223900c65.
+- Validation: git status --short before edits was clean; cargo fmt --all
+  -- --check passed; cargo -Zjson-target-spec test passed with 272 no_std
+  tests; scripts/qemu-readonly-initramfs-vfs-smoke.sh passed because the
+  /bin/init fixture and VFS manifest changed; git diff --check passed; mdbook
+  build passed; git diff --cached --check passed before commit.
+- Consequences: The next queued task is
+  phase8-qemu-program-loader-smoke-core-20260530, but it remains blocked until
+  this accepted core commit is recorded. Process address-space installation,
+  lower-EL launch, argv/envp stack construction, process creation,
+  exec/spawn/wait, shell, descriptor-backed filesystem syscalls, Pi 5 hardware
+  proof, writable filesystems, persistent storage, networking, SSH, RP1/PCIe,
+  UART interrupt ownership, and DMA/cache-driver policy remain blocked until
+  later explicit tasks accept their contracts and gates.
+
 ## 2026-05-30 - Phase 8 Program Loader Format Contract Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 program-loader

@@ -26,6 +26,18 @@ install, or shell task. That loader format contract is now accepted and
 chooses a narrow static ELF64/AArch64 subset, deterministic rejection matrix,
 segment permission/zero-fill/entry validation policy, and process-install
 boundary before any implementation. The
+QEMU/substitute program-loader smoke plan is accepted, naming fixture identity
+phase8-program-loader-elf64-aarch64-v1, the retained future smoke evidence
+path, exact PASS/classification vocabulary, and deterministic negative cases.
+The target-independent program-loader core is now accepted: /bin/init is the
+immutable static ELF64/AArch64 fixture, the loader returns an image plan only
+with digest, UserText/UserData segment classification, file-copy ranges,
+explicit BSS zero-fill, entry validation, and deterministic errors for bad
+identity, unsupported dynamic/interpreter headers, malformed ranges, W+X,
+out-of-range/overlap, bad entry, and file-range overflow. QEMU/substitute
+program-loader smoke evidence and process address-space installation remain
+blocked until later explicit tasks.
+The
 accepted Phase 7
 frontier includes the Phase
 6.3 production scheduler runtime closeout,

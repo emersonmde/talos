@@ -15,7 +15,8 @@ pub(crate) const PHASE8_FIXTURE_NAME: &str = "phase8-readonly-initramfs-vfs-v1";
 pub(crate) const PHASE8_BANNER_PATH: &[u8] = b"/etc/banner.txt";
 pub(crate) const PHASE8_BANNER_BYTES: &[u8] = b"Talos initramfs fixture\n";
 pub(crate) const PHASE8_INIT_PATH: &[u8] = b"/bin/init";
-pub(crate) const PHASE8_INIT_BYTES: &[u8] = b"not-executable-yet\n";
+pub(crate) const PHASE8_INIT_ELF_LEN: usize = 0x204;
+pub(crate) const PHASE8_INIT_BYTES: &[u8] = &PHASE8_INIT_ELF_BYTES;
 pub(crate) const PHASE8_EMPTY_PATH: &[u8] = b"/empty";
 pub(crate) const PHASE8_NESTED_PATH: &[u8] = b"/dir/nested.txt";
 pub(crate) const PHASE8_NESTED_BYTES: &[u8] = b"nested fixture\n";
@@ -279,6 +280,15 @@ impl ReadOnlyInitramfs {
         })
     }
 
+    pub(crate) fn regular_file_bytes(self, path: &[u8]) -> Result<&'static [u8], PosixError> {
+        let handle = self.lookup_default(path)?;
+        let node = self.node(handle.index())?;
+        match node.data {
+            InitramfsNodeData::Directory(_) => Err(PosixError::IsDirectory),
+            InitramfsNodeData::RegularFile(bytes) => Ok(bytes),
+        }
+    }
+
     pub(crate) fn unsupported_operation(self) -> Result<(), PosixError> {
         Err(PosixError::NotSupported)
     }
@@ -447,6 +457,8 @@ static PHASE8_BIN_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(b"init", P
 static PHASE8_DIR_ENTRIES: [DirectoryEntry; 1] =
     [DirectoryEntry::new(b"nested.txt", PHASE8_NESTED_INDEX)];
 
+static PHASE8_INIT_ELF_BYTES: [u8; PHASE8_INIT_ELF_LEN] = build_phase8_init_elf_bytes();
+
 static PHASE8_NODES: [InitramfsNode; 8] = [
     InitramfsNode::directory(PHASE8_ROOT_INDEX, &PHASE8_ROOT_ENTRIES),
     InitramfsNode::directory(PHASE8_ETC_INDEX, &PHASE8_ETC_ENTRIES),
@@ -457,6 +469,115 @@ static PHASE8_NODES: [InitramfsNode; 8] = [
     InitramfsNode::directory(PHASE8_DIR_INDEX, &PHASE8_DIR_ENTRIES),
     InitramfsNode::regular_file(PHASE8_NESTED_INDEX, PHASE8_NESTED_BYTES),
 ];
+
+const fn build_phase8_init_elf_bytes() -> [u8; PHASE8_INIT_ELF_LEN] {
+    const EHDR_LEN: usize = 64;
+    const PHENT_LEN: usize = 56;
+    const TEXT_OFFSET: usize = 0x100;
+    const DATA_OFFSET: usize = 0x200;
+    const TEXT_VADDR: u64 = 0x0000_0000_0001_0100;
+    const DATA_VADDR: u64 = 0x0000_0000_0002_0200;
+    const ENTRY: u64 = TEXT_VADDR;
+    const PF_X: u32 = 1;
+    const PF_W: u32 = 2;
+    const PF_R: u32 = 4;
+    const PAGE_ALIGN: u64 = 0x1000;
+
+    let mut bytes = [0u8; PHASE8_INIT_ELF_LEN];
+
+    bytes[0] = 0x7f;
+    bytes[1] = b'E';
+    bytes[2] = b'L';
+    bytes[3] = b'F';
+    bytes[4] = 2;
+    bytes[5] = 1;
+    bytes[6] = 1;
+    bytes[7] = 0;
+
+    write_le_u16(&mut bytes, 16, 2);
+    write_le_u16(&mut bytes, 18, 183);
+    write_le_u32(&mut bytes, 20, 1);
+    write_le_u64(&mut bytes, 24, ENTRY);
+    write_le_u64(&mut bytes, 32, EHDR_LEN as u64);
+    write_le_u16(&mut bytes, 52, EHDR_LEN as u16);
+    write_le_u16(&mut bytes, 54, PHENT_LEN as u16);
+    write_le_u16(&mut bytes, 56, 2);
+
+    write_load_phdr(
+        &mut bytes,
+        EHDR_LEN,
+        PF_R | PF_X,
+        TEXT_OFFSET as u64,
+        TEXT_VADDR,
+        4,
+        4,
+        PAGE_ALIGN,
+    );
+    write_load_phdr(
+        &mut bytes,
+        EHDR_LEN + PHENT_LEN,
+        PF_R | PF_W,
+        DATA_OFFSET as u64,
+        DATA_VADDR,
+        4,
+        0x1004,
+        PAGE_ALIGN,
+    );
+
+    bytes[TEXT_OFFSET] = 0xc0;
+    bytes[TEXT_OFFSET + 1] = 0x03;
+    bytes[TEXT_OFFSET + 2] = 0x5f;
+    bytes[TEXT_OFFSET + 3] = 0xd6;
+    bytes[DATA_OFFSET] = b'D';
+    bytes[DATA_OFFSET + 1] = b'A';
+    bytes[DATA_OFFSET + 2] = b'T';
+    bytes[DATA_OFFSET + 3] = b'A';
+
+    bytes
+}
+
+const fn write_load_phdr(
+    bytes: &mut [u8; PHASE8_INIT_ELF_LEN],
+    offset: usize,
+    flags: u32,
+    file_offset: u64,
+    virtual_address: u64,
+    file_size: u64,
+    memory_size: u64,
+    alignment: u64,
+) {
+    write_le_u32(bytes, offset, 1);
+    write_le_u32(bytes, offset + 4, flags);
+    write_le_u64(bytes, offset + 8, file_offset);
+    write_le_u64(bytes, offset + 16, virtual_address);
+    write_le_u64(bytes, offset + 24, virtual_address);
+    write_le_u64(bytes, offset + 32, file_size);
+    write_le_u64(bytes, offset + 40, memory_size);
+    write_le_u64(bytes, offset + 48, alignment);
+}
+
+const fn write_le_u16(bytes: &mut [u8; PHASE8_INIT_ELF_LEN], offset: usize, value: u16) {
+    bytes[offset] = value as u8;
+    bytes[offset + 1] = (value >> 8) as u8;
+}
+
+const fn write_le_u32(bytes: &mut [u8; PHASE8_INIT_ELF_LEN], offset: usize, value: u32) {
+    bytes[offset] = value as u8;
+    bytes[offset + 1] = (value >> 8) as u8;
+    bytes[offset + 2] = (value >> 16) as u8;
+    bytes[offset + 3] = (value >> 24) as u8;
+}
+
+const fn write_le_u64(bytes: &mut [u8; PHASE8_INIT_ELF_LEN], offset: usize, value: u64) {
+    bytes[offset] = value as u8;
+    bytes[offset + 1] = (value >> 8) as u8;
+    bytes[offset + 2] = (value >> 16) as u8;
+    bytes[offset + 3] = (value >> 24) as u8;
+    bytes[offset + 4] = (value >> 32) as u8;
+    bytes[offset + 5] = (value >> 40) as u8;
+    bytes[offset + 6] = (value >> 48) as u8;
+    bytes[offset + 7] = (value >> 56) as u8;
+}
 
 #[cfg(test)]
 mod tests {
@@ -600,6 +721,19 @@ mod tests {
         let fs = phase8_readonly_initramfs_fixture();
         assert_eq!(fs.open_regular_file(b"/etc"), Err(PosixError::IsDirectory));
         assert_eq!(fs.unsupported_operation(), Err(PosixError::NotSupported));
+    }
+
+    #[test_case]
+    fn regular_file_bytes_returns_immutable_init_fixture() {
+        let fs = phase8_readonly_initramfs_fixture();
+        let init = fs
+            .regular_file_bytes(PHASE8_INIT_PATH)
+            .expect("init fixture bytes");
+
+        assert_eq!(init, PHASE8_INIT_BYTES);
+        assert_eq!(init.len(), PHASE8_INIT_ELF_LEN);
+        assert_eq!(&init[..4], b"\x7fELF");
+        assert_eq!(fs.regular_file_bytes(b"/etc"), Err(PosixError::IsDirectory));
     }
 
     #[test_case]

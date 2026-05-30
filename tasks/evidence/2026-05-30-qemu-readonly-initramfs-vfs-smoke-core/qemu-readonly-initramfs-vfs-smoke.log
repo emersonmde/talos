@@ -6,7 +6,7 @@ target-services: uart=pl011 timer=arm-generic irq=gic-v2 dtb=Some(
 )
 mmio-regions: 3
 qemu-readonly-initramfs-vfs-smoke: start
-qemu-readonly-initramfs-vfs-smoke: fixture name=phase8-readonly-initramfs-vfs-v1 digest-algorithm=stable-manifest digest=0x2a2a56c54aecce72
+qemu-readonly-initramfs-vfs-smoke: fixture name=phase8-readonly-initramfs-vfs-v1 digest-algorithm=stable-manifest digest=0xd144990c173c899
 qemu-readonly-initramfs-vfs-smoke: lookup path=/ kind=directory entries=4 ok=true
 qemu-readonly-initramfs-vfs-smoke: lookup path=/etc/banner.txt kind=regular length=24 ok=true
 qemu-readonly-initramfs-vfs-smoke: read path=/etc/banner.txt offset-before=0 request=64 result=24 offset-after=24 data="Talos initramfs fixture\n" ok=true

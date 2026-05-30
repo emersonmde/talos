@@ -129,7 +129,7 @@ use crate::{
 use crate::{
     initramfs::{
         PHASE8_BANNER_BYTES, PHASE8_BANNER_PATH, PHASE8_EMPTY_PATH, PHASE8_FIXTURE_NAME,
-        PHASE8_NESTED_PATH, ReadOnlyFileDescriptions, VfsNodeKind,
+        PHASE8_INIT_BYTES, PHASE8_NESTED_PATH, ReadOnlyFileDescriptions, VfsNodeKind,
         phase8_readonly_initramfs_fixture,
     },
     posix::{
@@ -5028,7 +5028,9 @@ fn readonly_initramfs_vfs_manifest_digest() -> u64 {
         b"/etc/banner.txt=file:",
         PHASE8_BANNER_BYTES,
         b"/bin=dir:init\n",
-        b"/bin/init=file:not-executable-yet\n",
+        b"/bin/init=file:",
+        PHASE8_INIT_BYTES,
+        b"\n",
         b"/empty=file:\n",
         b"/dir=dir:nested.txt\n",
         b"/dir/nested.txt=file:nested fixture\n",
