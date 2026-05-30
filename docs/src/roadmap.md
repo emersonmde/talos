@@ -129,6 +129,18 @@ blocked-missing-initial-user-stack and blocked-no-ttbr-activation state, and
 keeps saved-frame intent and scheduler publication below any register write,
 ERET, TTBR activation, runnable process, or hardware claim. The next bounded
 task is a QEMU/substitute smoke plan for this launch-preparation boundary.
+That QEMU/substitute smoke plan and the target-independent initial process
+launch core are now accepted. The accepted frontier is an inspectable
+InitialProcessLaunchPlan for immutable /bin/init with copied fixture/install,
+address-space, and materialization identities, entry provenance through
+UserText mapping and EL0-executable descriptor coverage,
+blocked-missing-initial-user-stack and blocked-no-ttbr-activation state,
+saved-frame intent without architectural register writes, explicit zero
+TTBR/TLB/scheduler/process-table/descriptor-table/lower-EL side effects, and
+ENOSYS runnable-commit rejection with no-partial-launch and
+no-runnable-publication evidence. QEMU/substitute evidence for this boundary
+remains the next queued smoke-core task; Pi 5 hardware proof and runnable
+lower-EL process claims remain blocked.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -2802,6 +2814,20 @@ Milestone 8.3: Program Loader
   activation, lower-EL ERET, initial user stack, argv/envp, process lifecycle,
   scheduler runnable publication, shell, filesystem syscalls, Pi 5 hardware
   proof, networking, and SSH remain blocked.
+- Phase 8 initial process launch core is accepted. It adds
+  phase8-initial-process-launch-plan-v1 as a target-independent
+  launch-preparation record for immutable /bin/init. The core validates
+  loader, install, process address-space, and non-activating page-table
+  materialization lineage; preserves entry provenance through UserText mapping
+  and an EL0-executable descriptor; records blocked initial-stack and
+  activation states; exposes saved-frame intent without register writes; and
+  rejects runnable commit, activation, stack-required launch, and scheduler
+  publication requests with ENOSYS/no-partial-launch/no-runnable-publication
+  behavior. QEMU/substitute evidence for the new boundary remains the next
+  queued smoke-core task. TTBR activation, lower-EL ERET, initial user stack,
+  argv/envp, process lifecycle, scheduler runnable publication, shell,
+  filesystem syscalls, Pi 5 hardware proof, networking, and SSH remain
+  blocked.
 
 Acceptance criteria:
 

@@ -7613,3 +7613,48 @@ ADR template:
   descriptor-backed filesystem syscalls, Pi 5 hardware proof, networking, SSH,
   RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
   blocked until later explicit tasks accept their contracts and gates.
+
+## 2026-05-30 - Phase 8 Initial Process Launch Core Accepted
+
+- Status: accepted as the Milestone 8.3 initial process launch-preparation
+  core. No TTBR/TCR/MAIR/SCTLR write, ASID allocation, live TLB invalidation,
+  lower-EL ERET, initial user stack implementation, argv/envp/auxv/TLS setup,
+  process table/PID/wait/exit state, scheduler runnable publication,
+  descriptor-backed filesystem syscall, QEMU evidence run, Pi 5 hardware run,
+  boot archive publication, hardware-lock acquisition, shell, writable
+  filesystem, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted launch contract and QEMU/substitute smoke plan selected
+  phase8-initial-process-launch-plan-v1 as a target-independent,
+  launch-preparation-only record. The implementation needed to make that
+  record real before the queued QEMU/substitute smoke-core task can retain
+  evidence.
+- Decision: Add src/initial_process_launch.rs and wire it into src/main.rs.
+  The new core consumes accepted ProgramImagePlan, ProcessImageInstallPlan,
+  ProcessAddressSpace, and ProcessPageTableMaterialization records; validates
+  fixture, digest, boundary, publication, entry, UserText mapping, and
+  EL0-executable descriptor lineage; emits InitialProcessLaunchPlan with
+  blocked-missing-initial-user-stack and blocked-no-ttbr-activation states;
+  records saved-frame intent without architectural register writes; reports
+  zero TTBR/TLB/scheduler/process-table/descriptor-table/lower-EL side
+  effects; and rejects runnable commit, activation, stack-required launch, and
+  scheduler publication requests with ENOSYS/no-partial-launch/no-runnable
+  publication behavior.
+- Evidence level: unit tests and static inspection. cargo -Zjson-target-spec
+  test passed with 298 tests, including launch-plan success, entry and saved
+  frame intent preservation, zero side effects, runnable commit rejection,
+  identity mismatch, entry mismatch, forbidden entry range, destroyed input,
+  and activation/stack/scheduler request rejection coverage.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test passed; conditional QEMU/substitute regressions are not applicable for
+  this task because no existing runtime, target routing, loader, install,
+  address-space, materialization, lower-EL, or boot-scenario owner behavior was
+  changed; git diff --check passed; mdbook build passed; git diff --cached
+  --check passed before commit.
+- Consequences: The accepted capability is still launch preparation only.
+  QEMU/substitute evidence for the new boundary remains queued as
+  phase8-qemu-initial-process-launch-smoke-core-20260530. Initial user stack,
+  TTBR activation, ASID/TLB sequencing, lower-EL ERET, argv/envp, process
+  lifecycle, scheduler runnable publication, descriptor inheritance,
+  filesystem syscalls, Pi 5 hardware proof, shell, networking, and SSH remain
+  blocked until later explicit tasks accept their contracts and gates.
