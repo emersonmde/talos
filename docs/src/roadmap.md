@@ -17,8 +17,9 @@ Talos is in Phase 8 Milestone 8.1 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning
 task, the Phase 8 source inventory was accepted, and the read-only
 initramfs/VFS contract, smoke plan, target-independent core, and
-QEMU/substitute smoke were accepted. The next bounded task is the read-only
-initramfs/VFS closeout checkpoint before any loader or shell work. The
+QEMU/substitute smoke were accepted. The read-only initramfs/VFS closeout
+checkpoint is accepted and recommends a documentation-only program-loader
+source inventory before any loader implementation or shell work. The
 accepted Phase 7
 frontier includes the Phase
 6.3 production scheduler runtime closeout,
@@ -2327,6 +2328,20 @@ Milestone 8.1: Initramfs or Ramfs
   creation, shell, networking, SSH, writable filesystems, persistent storage,
   RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy. The next
   bounded task is phase8-qemu-readonly-initramfs-vfs-smoke-core-20260530.
+- The QEMU/substitute read-only initramfs/VFS smoke is accepted. It proves the
+  planned fixture identity, lookup, regular-file reads, offset/EOF behavior,
+  and deterministic ENOENT/ENOTDIR/EISDIR/ENAMETOOLONG/EBADF/EFAULT/EINVAL/
+  ENOTSUP cases, and retains
+  tasks/evidence/2026-05-30-qemu-readonly-initramfs-vfs-smoke-core/qemu-readonly-initramfs-vfs-smoke.log
+  with classification=qemu-readonly-initramfs-vfs-smoke-complete and PASS.
+  It does not accept Pi 5 hardware proof, boot archive publication,
+  descriptor-backed production filesystem syscalls, open syscall ABI,
+  firmware/TFTP initramfs delivery, ELF/program loading, process creation,
+  shell, networking, SSH, writable filesystems, persistent storage, RP1/PCIe,
+  UART interrupt ownership, or DMA/cache-driver policy. The read-only
+  initramfs/VFS closeout checkpoint is accepted and recommends
+  phase8-program-loader-source-inventory-20260530 as the next bounded
+  documentation-only task before any loader implementation.
 
 Acceptance criteria:
 

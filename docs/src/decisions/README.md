@@ -12,6 +12,40 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 Read-Only Initramfs/VFS Closeout Accepted
+
+- Status: accepted as the documentation-only Milestone 8.1 read-only
+  initramfs/VFS closeout. No Rust behavior, assembly behavior, QEMU rerun,
+  Pi 5 hardware run, boot archive publication, hardware-lock acquisition,
+  descriptor-backed production filesystem syscall, open syscall ABI,
+  firmware/TFTP initramfs delivery, ELF/program loader, argv/envp setup,
+  process creation, shell behavior, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, DMA/cache-driver policy, writable filesystem, or
+  persistent-storage behavior was added.
+- Context: The accepted read-only initramfs/VFS contract, smoke plan,
+  target-independent core, and QEMU/substitute smoke needed one checkpoint to
+  reconcile accepted capability, retained evidence, deferred surfaces, and the
+  next bounded Phase 8 recommendation before any loader work.
+- Decision: Accept phase8-readonly-initramfs-vfs-closeout-checkpoint-20260530.
+  The checkpoint records the accepted immutable fixture/VFS/read boundary,
+  reconciles commits b9c724c, 978fb2d, f0dc488, and 1146b51, and keeps
+  /bin/init data-only rather than executable.
+- Evidence level: static evidence review and documentation inspection. The
+  retained QEMU/substitute smoke evidence remains
+  tasks/evidence/2026-05-30-qemu-readonly-initramfs-vfs-smoke-core/qemu-readonly-initramfs-vfs-smoke.log
+  with classification=qemu-readonly-initramfs-vfs-smoke-complete and PASS.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The recommended next bounded task is
+  phase8-program-loader-source-inventory-20260530, documentation-only. It
+  should inventory executable image and ELF loader owners using the accepted
+  read-only VFS regular-file input boundary, while keeping process creation,
+  exec/spawn/wait, shell, Pi 5 hardware proof, networking, SSH, RP1/PCIe,
+  UART interrupt ownership, DMA/cache-driver policy, writable filesystems, and
+  persistent storage blocked until later explicit tasks accept their
+  contracts and gates.
+
 ## 2026-05-30 - Phase 8 QEMU Read-Only Initramfs/VFS Smoke Accepted
 
 - Status: accepted as the QEMU/substitute Milestone 8.1 read-only
