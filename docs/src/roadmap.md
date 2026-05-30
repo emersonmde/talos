@@ -230,6 +230,19 @@ phase8-qemu-live-address-space-activation-smoke-plan-20260530 as the next
 bounded documentation-only task. Live translation-register mutation,
 lower-EL ERET, scheduler publication, process lifecycle, filesystem syscalls,
 Pi 5 hardware proof, networking, and SSH remain blocked.
+The QEMU/substitute live address-space activation smoke plan is accepted. It
+defines qemu_live_address_space_activation_smoke, retained evidence path
+tasks/evidence/2026-05-30-qemu-live-address-space-activation-smoke-core/qemu-live-address-space-activation-smoke.log,
+exact qemu-live-address-space-activation-smoke-complete/PASS vocabulary,
+success observations for copied input identities, TTBR0 root provenance,
+blocked TTBR1/kernel-half policy, TCR/MAIR/SCTLR compatibility records,
+ASID/TLB/barrier blocked states, kernel reachability prerequisites,
+model-only activation binding, teardown, deterministic no-partial-activation
+rejections, and zero live side effects. The next bounded implementation task
+is phase8-live-address-space-activation-core-20260530 if dependencies remain
+satisfied. Live translation-register mutation, lower-EL ERET, scheduler
+publication, process lifecycle, filesystem syscalls, Pi 5 hardware proof,
+networking, and SSH remain blocked.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -3014,6 +3027,21 @@ Milestone 8.3: Program Loader
   bounded documentation-only task. Live register mutation, lower-EL ERET,
   scheduler publication, process lifecycle, filesystem syscalls, Pi 5 hardware
   proof, networking, and SSH remain blocked.
+- Phase 8 QEMU/substitute live address-space activation smoke plan is
+  accepted. It defines qemu_live_address_space_activation_smoke, retained
+  evidence path
+  tasks/evidence/2026-05-30-qemu-live-address-space-activation-smoke-core/qemu-live-address-space-activation-smoke.log,
+  exact qemu-live-address-space-activation-smoke-complete/PASS vocabulary,
+  success observations for copied input identities, TTBR0 root provenance,
+  blocked TTBR1/kernel-half policy, TCR/MAIR/SCTLR compatibility records,
+  ASID/TLB/barrier blocked states, kernel reachability prerequisites,
+  model-only activation binding, teardown, deterministic no-partial-activation
+  rejections, and zero live side effects. It names
+  phase8-live-address-space-activation-core-20260530 as the next bounded
+  implementation task if dependencies remain satisfied. Live register
+  mutation, lower-EL ERET, scheduler publication, process lifecycle,
+  filesystem syscalls, Pi 5 hardware proof, networking, and SSH remain
+  blocked.
 
 Acceptance criteria:
 

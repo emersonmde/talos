@@ -12,6 +12,46 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 QEMU Live Address-Space Activation Smoke Plan Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 QEMU/substitute
+  live address-space activation smoke plan. No Rust behavior, assembly
+  behavior, QEMU execution, Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, live TTBR/TCR/MAIR/SCTLR mutation, ASID
+  allocation, live TLB invalidation, lower-EL ERET, scheduler runnable
+  publication, process lifecycle, shell behavior, descriptor-backed
+  filesystem syscalls, writable filesystem, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The accepted live address-space activation contract selected an
+  inspectable activation-preflight record below live register mutation,
+  lower-EL launch, and scheduler publication. The next implementation needed
+  exact QEMU/substitute evidence vocabulary before any Rust boundary was
+  changed.
+- Decision: Accept
+  phase8-qemu-live-address-space-activation-smoke-plan-20260530. The plan
+  defines qemu_live_address_space_activation_smoke, retained evidence path
+  tasks/evidence/2026-05-30-qemu-live-address-space-activation-smoke-core/qemu-live-address-space-activation-smoke.log,
+  exact qemu-live-address-space-activation-smoke-complete/PASS vocabulary,
+  activation boundary phase8-live-address-space-activation-plan-v1, policy
+  preflight-split-user-ttbr0-kernel-reachability-blocked-v1, success
+  observations for copied input identities, TTBR0 root provenance, blocked
+  TTBR1/kernel-half policy, TCR/MAIR/SCTLR compatibility records, ASID/TLB/
+  barrier blocked states, kernel reachability prerequisites, model-only
+  activation binding, teardown, deterministic rejection, no-partial-activation,
+  no-runnable-publication, and zero live side effects.
+- Evidence level: static documentation/source review. Reviewed the accepted
+  live activation contract and source inventory, adjacent Phase 8 contracts,
+  QEMU smoke-plan patterns, roadmap, SUMMARY, and ADR index.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The next bounded task is
+  phase8-live-address-space-activation-core-20260530 if dependencies remain
+  satisfied. Live TTBR/TCR/MAIR/SCTLR mutation, ASID allocation, TLBI,
+  lower-EL ERET, scheduler runnable publication, process lifecycle, startup
+  ABI expansion, filesystem syscalls, Pi 5 hardware proof, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
+  blocked until later explicit tasks accept their contracts and gates.
+
 ## 2026-05-30 - Phase 8 Live Address-Space Activation Contract Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 live address-space
