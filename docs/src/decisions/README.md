@@ -6807,3 +6807,43 @@ ADR template:
   SSH, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and Pi 5
   hardware proof remain blocked until later explicit tasks accept their
   contracts and validation gates.
+
+## 2026-05-30 - Phase 8 QEMU Program Loader Smoke Core Accepted
+
+- Status: accepted as the Milestone 8.3 QEMU/substitute program-loader smoke
+  core. No Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, process address-space installation, lower-EL launch of the
+  loaded image, argv/envp stack construction, process creation, exec/spawn/wait,
+  shell behavior, descriptor-backed filesystem syscall behavior, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy was
+  added.
+- Context: The accepted target-independent loader core already validated the
+  immutable /bin/init ELF64/AArch64 static ET_EXEC fixture and deterministic
+  negative cases. The queued smoke task needed retained QEMU/substitute
+  evidence through the accepted read-only initramfs/VFS regular-file boundary.
+- Decision: Accept phase8-qemu-program-loader-smoke-core-20260530. The
+  qemu_program_loader_smoke scenario and
+  scripts/qemu-program-loader-smoke.sh now prove fixture identity
+  phase8-program-loader-elf64-aarch64-v1, digest 0x3892eed223900c65, success
+  image-plan-only output, UserText R-X and UserData RW-/BSS segment
+  classification, entry placement, all seven required negative errno cases, and
+  partial-install=false for every rejection.
+- Evidence level: QEMU/substitute retained log, unit tests, conditional
+  read-only initramfs/VFS QEMU regression, formatting, documentation build,
+  whitespace inspection, and staged whitespace inspection. No physical Pi 5
+  evidence was produced or claimed.
+- Validation: scripts/qemu-program-loader-smoke.sh passed with
+  classification=qemu-program-loader-smoke-complete and
+  qemu-program-loader-smoke: PASS; cargo fmt --all -- --check passed;
+  cargo -Zjson-target-spec test passed; scripts/qemu-readonly-initramfs-vfs-smoke.sh
+  passed because boot-scenario routing and shared diagnostic output owners were
+  touched; git diff --check passed; mdbook build passed; git diff --cached
+  --check passed before commit.
+- Consequences: The next queued bounded task is
+  phase8-program-loader-closeout-checkpoint-20260530, scoped to reconciling the
+  image-plan-only loader frontier before any process-install or lower-EL launch
+  work. Pi 5 hardware proof, process address-space installation, lower-EL
+  launch, argv/envp stack construction, process creation, exec/spawn/wait,
+  shell, descriptor-backed filesystem syscalls, writable filesystems,
+  persistent storage, networking, SSH, RP1/PCIe, UART interrupt ownership, and
+  DMA/cache-driver policy remain blocked.

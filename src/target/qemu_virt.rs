@@ -137,6 +137,17 @@ use crate::{
         DescriptorTable, PathLimits, PosixError, UserMapping, UserMappingPermissions,
     },
 };
+#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+use crate::{
+    initramfs::{
+        PHASE8_INIT_BYTES, PHASE8_INIT_ELF_LEN, PHASE8_INIT_PATH, phase8_readonly_initramfs_fixture,
+    },
+    posix::{PosixError, UserAccessKind, UserMappingPermissions},
+    program_loader::{
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY, PlannedUserSegment, ProgramImagePlan,
+        ProgramLoaderError, UserSegmentKind, plan_elf64_aarch64_image, plan_phase8_init_image,
+    },
+};
 
 const PL011_BASE: usize = 0x0900_0000;
 const GICD_BASE: usize = 0x0800_0000;
@@ -5048,6 +5059,286 @@ fn readonly_initramfs_vfs_manifest_digest() -> u64 {
         chunk_index += 1;
     }
     hash
+}
+
+#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+const PROGRAM_LOADER_PHDR0: usize = 64;
+#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+const PROGRAM_LOADER_PHDR1: usize = 120;
+#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+const PROGRAM_LOADER_PT_INTERP: u32 = 3;
+#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+const PROGRAM_LOADER_PF_RWX: u32 = 0x7;
+
+#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+pub fn run_program_loader_smoke() -> bool {
+    crate::println!("qemu-program-loader-smoke: start");
+
+    let success_ok = program_loader_report_success();
+    let bad_magic_ok = program_loader_report_error(
+        "bad-magic",
+        program_loader_mutated_result(|bytes| bytes[0] = 0),
+        PosixError::NotExecutable,
+    );
+    let dynamic_interpreter_ok = program_loader_report_error(
+        "dynamic-interpreter",
+        program_loader_mutated_result(|bytes| {
+            program_loader_write_u32(bytes, PROGRAM_LOADER_PHDR1, PROGRAM_LOADER_PT_INTERP);
+        }),
+        PosixError::NotSupported,
+    );
+    let wx_segment_ok = program_loader_report_error(
+        "wx-segment",
+        program_loader_mutated_result(|bytes| {
+            program_loader_write_u32(bytes, PROGRAM_LOADER_PHDR0 + 4, PROGRAM_LOADER_PF_RWX);
+        }),
+        PosixError::AccessDenied,
+    );
+    let out_of_user_range_ok = program_loader_report_error(
+        "out-of-user-range",
+        program_loader_mutated_result(|bytes| {
+            program_loader_write_u64(bytes, PROGRAM_LOADER_PHDR0 + 8, 0);
+            program_loader_write_u64(bytes, PROGRAM_LOADER_PHDR0 + 16, 0);
+        }),
+        PosixError::AccessDenied,
+    );
+    let overlap_ok = program_loader_report_error(
+        "overlap",
+        program_loader_mutated_result(|bytes| {
+            program_loader_write_u64(bytes, PROGRAM_LOADER_PHDR1 + 16, 0x0000_0000_0001_0200);
+        }),
+        PosixError::AccessDenied,
+    );
+    let bad_entry_ok = program_loader_report_error(
+        "bad-entry",
+        program_loader_mutated_result(|bytes| {
+            program_loader_write_u64(bytes, 24, 0x0000_0000_0002_0200);
+        }),
+        PosixError::NotExecutable,
+    );
+    let file_range_overflow_ok = program_loader_report_error(
+        "file-range-overflow",
+        program_loader_mutated_result(|bytes| {
+            program_loader_write_u64(bytes, PROGRAM_LOADER_PHDR1 + 32, 8);
+        }),
+        PosixError::NotExecutable,
+    );
+
+    let participants = u64::from(success_ok)
+        + u64::from(bad_magic_ok)
+        + u64::from(dynamic_interpreter_ok)
+        + u64::from(wx_segment_ok)
+        + u64::from(out_of_user_range_ok)
+        + u64::from(overlap_ok)
+        + u64::from(bad_entry_ok)
+        + u64::from(file_range_overflow_ok);
+    let errors = 8 - participants;
+    let classification = if participants == 8 && errors == 0 {
+        "qemu-program-loader-smoke-complete"
+    } else {
+        "qemu-program-loader-smoke-failed"
+    };
+
+    crate::println!(
+        "qemu-program-loader-smoke: final participants={} expected=8 errors={} classification={}",
+        participants,
+        errors,
+        classification
+    );
+    if participants == 8 && errors == 0 {
+        crate::println!("qemu-program-loader-smoke: PASS");
+        true
+    } else {
+        false
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+fn program_loader_report_success() -> bool {
+    let result = plan_phase8_init_image(phase8_readonly_initramfs_fixture());
+    let Ok(plan) = result else {
+        crate::println!(
+            "qemu-program-loader-smoke: success format=elf64-aarch64-static-et-exec type=ET_EXEC machine=EM_AARCH64 phdrs=2 loadable=0 dynamic=false relocations=false ok=false"
+        );
+        return false;
+    };
+
+    crate::println!(
+        "qemu-program-loader-smoke: fixture name={} path=/bin/init digest-algorithm=stable-elf-manifest digest={:#x}",
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        plan.source_digest()
+    );
+
+    let text = plan.segment(0);
+    let data = plan.segment(1);
+    let success_ok = plan.fixture_identity() == PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY
+        && plan.source_path() == PHASE8_INIT_PATH
+        && plan.source_len() == PHASE8_INIT_BYTES.len()
+        && plan.segment_count() == 2
+        && matches!(text, Some(segment) if program_loader_segment_ok(segment, UserSegmentKind::UserText, UserMappingPermissions::USER_TEXT, false))
+        && matches!(data, Some(segment) if program_loader_segment_ok(segment, UserSegmentKind::UserData, UserMappingPermissions::USER_DATA, true))
+        && program_loader_entry_ok(&plan);
+
+    crate::println!(
+        "qemu-program-loader-smoke: success format=elf64-aarch64-static-et-exec type=ET_EXEC machine=EM_AARCH64 phdrs=2 loadable={} dynamic=false relocations=false ok={}",
+        plan.segment_count(),
+        success_ok
+    );
+
+    if let Some(segment) = text {
+        program_loader_report_segment(0, segment);
+    } else {
+        crate::println!(
+            "qemu-program-loader-smoke: segment index=0 kind=UserText flags=R-X file-bytes=0x0 mem-bytes=0x0 zero-fill=0x0 wx=false ok=false"
+        );
+    }
+    if let Some(segment) = data {
+        program_loader_report_segment(1, segment);
+    } else {
+        crate::println!(
+            "qemu-program-loader-smoke: segment index=1 kind=UserData flags=RW- file-bytes=0x0 mem-bytes=0x0 zero-fill=0x0 wx=false ok=false"
+        );
+    }
+
+    let entry_ok = program_loader_entry_ok(&plan);
+    crate::println!(
+        "qemu-program-loader-smoke: entry va={:#x} in-user={} in-text={} aligned={} ok={}",
+        plan.entry(),
+        plan.entry() >= crate::posix::USER_NULL_GUARD_END
+            && plan.entry() < crate::posix::USER_ADDRESS_SPACE_END,
+        entry_ok,
+        plan.entry() & 0x3 == 0,
+        entry_ok
+    );
+    crate::println!(
+        "qemu-program-loader-smoke: image-plan source=/bin/init output=image-plan-only process-created=false stack-built=false descriptors-installed=false ok={}",
+        success_ok
+    );
+
+    success_ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+fn program_loader_segment_ok(
+    segment: PlannedUserSegment,
+    kind: UserSegmentKind,
+    permissions: UserMappingPermissions,
+    requires_zero_fill: bool,
+) -> bool {
+    let wx = segment.permissions().allows(UserAccessKind::Write)
+        && segment.permissions().allows(UserAccessKind::Execute);
+    segment.kind() == kind
+        && segment.permissions() == permissions
+        && segment.file_size() != 0
+        && (!requires_zero_fill || segment.zero_fill_len() != 0)
+        && !wx
+}
+
+#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+fn program_loader_report_segment(index: usize, segment: PlannedUserSegment) {
+    let flags = program_loader_segment_flags(segment);
+    let mem_bytes = segment.virtual_end() - segment.virtual_start();
+    let wx = segment.permissions().allows(UserAccessKind::Write)
+        && segment.permissions().allows(UserAccessKind::Execute);
+    let ok = match index {
+        0 => program_loader_segment_ok(
+            segment,
+            UserSegmentKind::UserText,
+            UserMappingPermissions::USER_TEXT,
+            false,
+        ),
+        1 => program_loader_segment_ok(
+            segment,
+            UserSegmentKind::UserData,
+            UserMappingPermissions::USER_DATA,
+            true,
+        ),
+        _ => false,
+    } && !wx;
+
+    crate::println!(
+        "qemu-program-loader-smoke: segment index={} kind={} flags={} file-bytes={:#x} mem-bytes={:#x} zero-fill={:#x} wx={} ok={}",
+        index,
+        segment.kind().name(),
+        flags,
+        segment.file_size(),
+        mem_bytes,
+        segment.zero_fill_len(),
+        wx,
+        ok
+    );
+}
+
+#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+fn program_loader_segment_flags(segment: PlannedUserSegment) -> &'static str {
+    match (
+        segment.permissions().allows(UserAccessKind::Read),
+        segment.permissions().allows(UserAccessKind::Write),
+        segment.permissions().allows(UserAccessKind::Execute),
+    ) {
+        (true, false, true) => "R-X",
+        (true, true, false) => "RW-",
+        (true, false, false) => "R--",
+        _ => "---",
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+fn program_loader_entry_ok(plan: &ProgramImagePlan) -> bool {
+    let mut index = 0;
+    while index < plan.segment_count() {
+        if let Some(segment) = plan.segment(index) {
+            if segment.kind() == UserSegmentKind::UserText
+                && segment.virtual_start() <= plan.entry()
+                && plan.entry() < segment.virtual_end()
+                && plan.entry() & 0x3 == 0
+            {
+                return true;
+            }
+        }
+        index += 1;
+    }
+    false
+}
+
+#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+fn program_loader_report_error(
+    case: &str,
+    result: Result<ProgramImagePlan, ProgramLoaderError>,
+    expected: PosixError,
+) -> bool {
+    let ok = matches!(result, Err(error) if error.posix_error() == expected);
+    crate::println!(
+        "qemu-program-loader-smoke: error case={} errno=-{} partial-install=false ok={}",
+        case,
+        expected.name(),
+        ok
+    );
+    ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+fn program_loader_mutated_result(
+    mutate: impl FnOnce(&mut [u8; PHASE8_INIT_ELF_LEN]),
+) -> Result<ProgramImagePlan, ProgramLoaderError> {
+    let mut bytes = [0; PHASE8_INIT_ELF_LEN];
+    bytes.copy_from_slice(PHASE8_INIT_BYTES);
+    mutate(&mut bytes);
+    plan_elf64_aarch64_image(
+        PHASE8_INIT_PATH,
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        &bytes,
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+fn program_loader_write_u32(bytes: &mut [u8], offset: usize, value: u32) {
+    bytes[offset..offset + 4].copy_from_slice(&value.to_le_bytes());
+}
+
+#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+fn program_loader_write_u64(bytes: &mut [u8], offset: usize, value: u64) {
+    bytes[offset..offset + 8].copy_from_slice(&value.to_le_bytes());
 }
 
 #[cfg(talos_boot_scenario = "qemu_syscall_smoke")]

@@ -35,8 +35,10 @@ with digest, UserText/UserData segment classification, file-copy ranges,
 explicit BSS zero-fill, entry validation, and deterministic errors for bad
 identity, unsupported dynamic/interpreter headers, malformed ranges, W+X,
 out-of-range/overlap, bad entry, and file-range overflow. QEMU/substitute
-program-loader smoke evidence and process address-space installation remain
-blocked until later explicit tasks.
+program-loader smoke evidence is now accepted from the retained
+qemu_program_loader_smoke log, which proves the image-plan-only success and
+negative cases without process launch or hardware claims. Process address-space
+installation remains blocked until later explicit tasks.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -2430,6 +2432,27 @@ Milestone 8.3: Program Loader
   proof, writable filesystems, persistent storage, networking, SSH, RP1/PCIe,
   UART interrupt ownership, and DMA/cache-driver policy remain blocked until
   later explicit tasks accept their gates.
+- Phase 8 program-loader core is accepted. It adds the target-independent
+  ELF64/AArch64 static ET_EXEC image-plan validator for immutable /bin/init
+  bytes from the read-only initramfs/VFS fixture, reports digest/source
+  identity, ordered UserText/UserData segments, file-copy ranges, explicit BSS
+  zero-fill, entry placement, total footprint, and deterministic loader errors
+  before any process-owned install surface exists.
+- Phase 8 QEMU/substitute program-loader smoke core is accepted. The
+  qemu_program_loader_smoke scenario and
+  scripts/qemu-program-loader-smoke.sh retain
+  tasks/evidence/2026-05-30-qemu-program-loader-smoke-core/qemu-program-loader-smoke.log
+  with fixture identity phase8-program-loader-elf64-aarch64-v1, digest
+  0x3892eed223900c65, success image-plan lines, all seven required negative
+  errno lines with partial-install=false, final
+  classification=qemu-program-loader-smoke-complete, and
+  qemu-program-loader-smoke: PASS. This evidence is QEMU/substitute only; Pi 5
+  hardware proof, process address-space installation, lower-EL launch of the
+  loaded image, argv/envp stack construction, process creation, exec/spawn/wait,
+  shell, descriptor-backed filesystem syscalls, writable filesystems,
+  persistent storage, networking, SSH, RP1/PCIe, UART interrupt ownership, and
+  DMA/cache-driver policy remain blocked until later explicit tasks accept
+  their gates.
 
 Acceptance criteria:
 
