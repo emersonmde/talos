@@ -7891,3 +7891,47 @@ ADR template:
   syscalls, Pi 5 hardware proof, shell, networking, SSH, RP1/PCIe, UART
   interrupt ownership, and DMA/cache-driver policy remain blocked until later
   explicit tasks accept their contracts and gates.
+
+## 2026-05-30 - Phase 8 QEMU Initial User Stack Smoke Core Accepted
+
+- Status: accepted as the Milestone 8.3 QEMU/substitute initial user stack
+  smoke evidence. No Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, physical serial observation, live TTBR/TCR/MAIR/
+  SCTLR write, ASID allocation, TLB mutation, lower-EL ERET, scheduler
+  runnable publication, process lifecycle, shell behavior,
+  descriptor-backed filesystem syscalls, writable filesystem, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy was
+  added.
+- Context: The accepted initial user stack core added the model-only
+  InitialUserStackPlan boundary selected by the smoke plan, but retained
+  QEMU/substitute evidence for that boundary was still outstanding.
+- Decision: Accept phase8-qemu-initial-user-stack-smoke-core-20260530. The
+  task adds qemu_initial_user_stack_smoke and
+  scripts/qemu-initial-user-stack-smoke.sh. The retained log proves the stack
+  boundary identity phase8-initial-user-stack-plan-v1, copied
+  loader/install/address-space/materialization/launch lineage, fixed top and
+  initial SP 0x0000_8000_0000_0000, usable range
+  [0x0000_7fff_ffff_c000, 0x0000_8000_0000_0000), guard range
+  [0x0000_7fff_ffff_b000, 0x0000_7fff_ffff_c000), four stack-owned zeroed
+  USER_DATA pages, one unmapped guard page, copied_bytes=0,
+  zeroed_bytes=0x4000, minimal-empty-argc0 startup metadata, model-only
+  launch-plan stack-ready binding, teardown, deterministic rejection cases,
+  zero live-launch side effects, classification
+  qemu-initial-user-stack-smoke-complete, and PASS.
+- Evidence level: QEMU/substitute serial output and retained log:
+  tasks/evidence/2026-05-30-qemu-initial-user-stack-smoke-core/qemu-initial-user-stack-smoke.log.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test passed with 306 no_std tests; scripts/qemu-initial-user-stack-smoke.sh
+  passed; conditional scripts/qemu-initial-process-launch-smoke.sh,
+  scripts/qemu-process-page-table-materialization-smoke.sh,
+  scripts/qemu-process-address-space-smoke.sh,
+  scripts/qemu-process-install-smoke.sh, and
+  scripts/qemu-program-loader-smoke.sh passed; git diff --check passed;
+  mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The initial user stack slice now has retained
+  QEMU/substitute evidence below live activation. Live TTBR activation,
+  lower-EL ERET, scheduler runnable publication, process lifecycle, broad
+  argv/envp/auxv/TLS ABI, descriptor-backed filesystem syscalls, Pi 5 hardware
+  proof, shell, networking, SSH, RP1/PCIe, UART interrupt ownership, and
+  DMA/cache-driver policy remain blocked until later explicit tasks accept
+  their contracts and gates.

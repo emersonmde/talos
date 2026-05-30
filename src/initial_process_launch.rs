@@ -269,7 +269,7 @@ impl InitialProcessLaunchPlan {
         })
     }
 
-    #[cfg(test)]
+    #[cfg(any(test, talos_boot_scenario = "qemu_initial_user_stack_smoke"))]
     pub(crate) const fn for_test_with_user_sp_state(mut self, state: &'static str) -> Self {
         self.user_sp_state = state;
         self.saved_frame_intent.sp_el0_state = state;

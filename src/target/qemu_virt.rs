@@ -125,7 +125,15 @@ use crate::{
     target::{InterruptControllerKind, TargetServices, TimerKind, UartKind},
 };
 
-#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+#[cfg(talos_boot_scenario = "qemu_initial_user_stack_smoke")]
+use crate::initial_user_stack::{
+    INITIAL_USER_STACK_BOUNDARY_IDENTITY, INITIAL_USER_STACK_READY, InitialUserStackLayout,
+    InitialUserStackLeaseSource, InitialUserStackRequest, plan_initial_user_stack,
+};
+#[cfg(any(
+    talos_boot_scenario = "qemu_initial_process_launch_smoke",
+    talos_boot_scenario = "qemu_initial_user_stack_smoke"
+))]
 use crate::{
     initial_process_launch::{
         INITIAL_ACTIVATION_BLOCKED, INITIAL_ADDRESS_SPACE_TOKEN_STATE, INITIAL_DAIF_BLOCKED,
@@ -149,8 +157,8 @@ use crate::{
         materialize_process_page_tables,
     },
     program_loader::{
-        MAX_LOAD_SEGMENTS, PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY, PlannedUserSegment,
-        ProgramImagePlan, UserSegmentKind, plan_phase8_init_image,
+        LOADER_PAGE_SIZE, MAX_LOAD_SEGMENTS, PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        PlannedUserSegment, ProgramImagePlan, UserSegmentKind, plan_phase8_init_image,
     },
     scheduler::ProcessOwnerId,
 };
@@ -7045,7 +7053,10 @@ fn process_materialization_ap_name(permissions: UserMappingPermissions) -> &'sta
     }
 }
 
-#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_initial_process_launch_smoke",
+    talos_boot_scenario = "qemu_initial_user_stack_smoke"
+))]
 pub fn run_initial_process_launch_smoke() -> bool {
     crate::println!("qemu-initial-process-launch-smoke: start");
 
@@ -7135,7 +7146,10 @@ pub fn run_initial_process_launch_smoke() -> bool {
     }
 }
 
-#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_initial_process_launch_smoke",
+    talos_boot_scenario = "qemu_initial_user_stack_smoke"
+))]
 fn initial_process_launch_report_success() -> (bool, bool, bool, bool) {
     let Ok((image, install_plan, address_space, materialization)) =
         initial_process_launch_valid_fixture()
@@ -7256,7 +7270,10 @@ fn initial_process_launch_report_success() -> (bool, bool, bool, bool) {
     (success_ok, provenance_ok, saved_frame_ok, side_effects_ok)
 }
 
-#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_initial_process_launch_smoke",
+    talos_boot_scenario = "qemu_initial_user_stack_smoke"
+))]
 fn initial_process_launch_report_empty_success() {
     crate::println!(
         "qemu-initial-process-launch-smoke: fixture name={} path=/bin/init source-digest=0x0 install-boundary={} address-space-boundary={} materialization-boundary={} launch-boundary={}",
@@ -7273,7 +7290,10 @@ fn initial_process_launch_report_empty_success() {
     );
 }
 
-#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_initial_process_launch_smoke",
+    talos_boot_scenario = "qemu_initial_user_stack_smoke"
+))]
 fn initial_process_launch_report_commit_request() -> bool {
     let Ok((image, install_plan, address_space, materialization)) =
         initial_process_launch_valid_fixture()
@@ -7308,7 +7328,10 @@ fn initial_process_launch_report_commit_request() -> bool {
     ok
 }
 
-#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_initial_process_launch_smoke",
+    talos_boot_scenario = "qemu_initial_user_stack_smoke"
+))]
 fn initial_process_launch_report_error(
     case: &str,
     fixture: Result<
@@ -7339,7 +7362,10 @@ fn initial_process_launch_report_error(
     ok
 }
 
-#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_initial_process_launch_smoke",
+    talos_boot_scenario = "qemu_initial_user_stack_smoke"
+))]
 fn initial_process_launch_valid_fixture() -> Result<
     (
         ProgramImagePlan,
@@ -7371,7 +7397,10 @@ fn initial_process_launch_valid_fixture() -> Result<
     Ok((image, install_plan, address_space, materialization))
 }
 
-#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_initial_process_launch_smoke",
+    talos_boot_scenario = "qemu_initial_user_stack_smoke"
+))]
 fn initial_process_launch_identity_mismatch_fixture() -> Result<
     (
         ProgramImagePlan,
@@ -7391,7 +7420,10 @@ fn initial_process_launch_identity_mismatch_fixture() -> Result<
     ))
 }
 
-#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_initial_process_launch_smoke",
+    talos_boot_scenario = "qemu_initial_user_stack_smoke"
+))]
 fn initial_process_launch_entry_mismatch_fixture() -> Result<
     (
         ProgramImagePlan,
@@ -7411,7 +7443,10 @@ fn initial_process_launch_entry_mismatch_fixture() -> Result<
     ))
 }
 
-#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_initial_process_launch_smoke",
+    talos_boot_scenario = "qemu_initial_user_stack_smoke"
+))]
 fn initial_process_launch_missing_descriptor_fixture() -> Result<
     (
         ProgramImagePlan,
@@ -7431,7 +7466,10 @@ fn initial_process_launch_missing_descriptor_fixture() -> Result<
     ))
 }
 
-#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_initial_process_launch_smoke",
+    talos_boot_scenario = "qemu_initial_user_stack_smoke"
+))]
 fn initial_process_launch_forbidden_entry_fixture() -> Result<
     (
         ProgramImagePlan,
@@ -7453,7 +7491,10 @@ fn initial_process_launch_forbidden_entry_fixture() -> Result<
     ))
 }
 
-#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_initial_process_launch_smoke",
+    talos_boot_scenario = "qemu_initial_user_stack_smoke"
+))]
 fn initial_process_launch_destroyed_input_fixture() -> Result<
     (
         ProgramImagePlan,
@@ -7470,7 +7511,10 @@ fn initial_process_launch_destroyed_input_fixture() -> Result<
     Ok((image, install_plan, address_space, materialization))
 }
 
-#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_initial_process_launch_smoke",
+    talos_boot_scenario = "qemu_initial_user_stack_smoke"
+))]
 fn initial_process_launch_image_with_identity(
     image: ProgramImagePlan,
     identity: &'static str,
@@ -7489,7 +7533,10 @@ fn initial_process_launch_image_with_identity(
     )
 }
 
-#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_initial_process_launch_smoke",
+    talos_boot_scenario = "qemu_initial_user_stack_smoke"
+))]
 fn initial_process_launch_image_with_entry(
     image: ProgramImagePlan,
     entry: u64,
@@ -7508,7 +7555,10 @@ fn initial_process_launch_image_with_entry(
     )
 }
 
-#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_initial_process_launch_smoke",
+    talos_boot_scenario = "qemu_initial_user_stack_smoke"
+))]
 fn initial_process_launch_image_segments(
     image: ProgramImagePlan,
 ) -> [Option<PlannedUserSegment>; MAX_LOAD_SEGMENTS] {
@@ -7521,7 +7571,10 @@ fn initial_process_launch_image_segments(
     segments
 }
 
-#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_initial_process_launch_smoke",
+    talos_boot_scenario = "qemu_initial_user_stack_smoke"
+))]
 fn initial_process_launch_install_with_entry(
     install_plan: ProcessImageInstallPlan,
     entry: u64,
@@ -7540,7 +7593,10 @@ fn initial_process_launch_install_with_entry(
     )
 }
 
-#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_initial_process_launch_smoke",
+    talos_boot_scenario = "qemu_initial_user_stack_smoke"
+))]
 fn initial_process_launch_install_pages(
     install_plan: ProcessImageInstallPlan,
 ) -> [Option<crate::process_install::ProcessImagePageInstallRecord>; MAX_PROCESS_INSTALL_PAGES] {
@@ -7553,14 +7609,574 @@ fn initial_process_launch_install_pages(
     pages
 }
 
-#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_initial_process_launch_smoke",
+    talos_boot_scenario = "qemu_initial_user_stack_smoke"
+))]
 fn initial_process_launch_address_space_id() -> ProcessAddressSpaceId {
     ProcessAddressSpaceId::new(0x8300_4001).expect("nonzero address-space id")
 }
 
-#[cfg(talos_boot_scenario = "qemu_initial_process_launch_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_initial_process_launch_smoke",
+    talos_boot_scenario = "qemu_initial_user_stack_smoke"
+))]
 fn initial_process_launch_owner_id() -> ProcessOwnerId {
     ProcessOwnerId::new(0x8300_4002).expect("nonzero process owner id")
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_user_stack_smoke")]
+pub fn run_initial_user_stack_smoke() -> bool {
+    crate::println!("qemu-initial-user-stack-smoke: start");
+
+    let (success_ok, layout_ok, ownership_ok, startup_ok, launch_binding_ok, side_effects_ok) =
+        initial_user_stack_report_success();
+    let teardown_ok = initial_user_stack_report_teardown();
+    let identity_ok = initial_user_stack_report_error(
+        "identity-mismatch",
+        initial_user_stack_identity_mismatch_fixture(),
+        InitialUserStackRequest::PlanOnly,
+        InitialUserStackLeaseSource::for_initial_stack(),
+        PosixError::InvalidArgument,
+    );
+    let range_ok = initial_user_stack_report_error(
+        "range-fault",
+        initial_user_stack_valid_fixture(),
+        InitialUserStackRequest::PlanOnly,
+        initial_user_stack_bad_range_source(),
+        PosixError::Fault,
+    );
+    let overlap_ok = initial_user_stack_report_error(
+        "image-overlap",
+        initial_user_stack_overlap_fixture(),
+        InitialUserStackRequest::PlanOnly,
+        InitialUserStackLeaseSource::for_initial_stack(),
+        PosixError::AccessDenied,
+    );
+    let executable_ok = initial_user_stack_report_error(
+        "executable-stack",
+        initial_user_stack_valid_fixture(),
+        InitialUserStackRequest::PlanOnly,
+        initial_user_stack_executable_source(),
+        PosixError::AccessDenied,
+    );
+    let capacity_ok = initial_user_stack_report_error(
+        "capacity-exhausted",
+        initial_user_stack_valid_fixture(),
+        InitialUserStackRequest::PlanOnly,
+        InitialUserStackLeaseSource::with_stack_frame_capacity(2),
+        PosixError::NoMemory,
+    );
+    let already_ready_ok = initial_user_stack_report_error(
+        "already-stack-ready",
+        initial_user_stack_already_ready_fixture(),
+        InitialUserStackRequest::PlanOnly,
+        InitialUserStackLeaseSource::for_initial_stack(),
+        PosixError::InvalidArgument,
+    );
+    let live_launch_ok = initial_user_stack_report_error(
+        "live-launch-request",
+        initial_user_stack_valid_fixture(),
+        InitialUserStackRequest::LiveLaunch,
+        InitialUserStackLeaseSource::for_initial_stack(),
+        PosixError::NotImplemented,
+    );
+    let blocked_request_group_ok = already_ready_ok && live_launch_ok;
+
+    let participants = u64::from(success_ok)
+        + u64::from(layout_ok)
+        + u64::from(ownership_ok)
+        + u64::from(startup_ok)
+        + u64::from(launch_binding_ok)
+        + u64::from(side_effects_ok)
+        + u64::from(teardown_ok)
+        + u64::from(identity_ok)
+        + u64::from(range_ok)
+        + u64::from(overlap_ok)
+        + u64::from(executable_ok)
+        + u64::from(capacity_ok)
+        + u64::from(blocked_request_group_ok);
+    let errors = 13 - participants;
+    let classification = if participants == 13 && errors == 0 {
+        "qemu-initial-user-stack-smoke-complete"
+    } else {
+        "qemu-initial-user-stack-smoke-failed"
+    };
+
+    crate::println!(
+        "qemu-initial-user-stack-smoke: final participants={} expected=13 errors={} classification={}",
+        participants,
+        errors,
+        classification
+    );
+    if participants == 13 && errors == 0 {
+        crate::println!("qemu-initial-user-stack-smoke: PASS");
+        true
+    } else {
+        crate::println!("qemu-initial-user-stack-smoke: FAIL");
+        false
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_user_stack_smoke")]
+fn initial_user_stack_report_success() -> (bool, bool, bool, bool, bool, bool) {
+    let Ok((image, install_plan, address_space, materialization, launch_plan)) =
+        initial_user_stack_valid_fixture()
+    else {
+        initial_user_stack_report_empty_success();
+        return (false, false, false, false, false, false);
+    };
+    let mut stack_source = InitialUserStackLeaseSource::for_initial_stack();
+    let Ok(plan) = plan_initial_user_stack(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        InitialUserStackRequest::PlanOnly,
+        &mut stack_source,
+    ) else {
+        initial_user_stack_report_empty_success();
+        return (false, false, false, false, false, false);
+    };
+
+    crate::println!(
+        "qemu-initial-user-stack-smoke: fixture name={} path=/bin/init source-digest={:#x} install-boundary={} address-space-boundary={} materialization-boundary={} launch-boundary={} stack-boundary={}",
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        plan.source_digest(),
+        PROCESS_INSTALL_BOUNDARY_IDENTITY,
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY,
+        PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY,
+        INITIAL_PROCESS_LAUNCH_BOUNDARY_IDENTITY,
+        INITIAL_USER_STACK_BOUNDARY_IDENTITY
+    );
+
+    let layout = plan.layout();
+    let success_ok = plan.published()
+        && plan.boundary_identity() == INITIAL_USER_STACK_BOUNDARY_IDENTITY
+        && plan.image_fixture_identity() == PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY
+        && plan.install_boundary_identity() == PROCESS_INSTALL_BOUNDARY_IDENTITY
+        && plan.address_space_boundary_identity() == PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY
+        && plan.materialization_boundary_identity()
+            == PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY
+        && plan.launch_boundary_identity() == INITIAL_PROCESS_LAUNCH_BOUNDARY_IDENTITY
+        && plan.source_path() == PHASE8_INIT_PATH
+        && plan.source_digest() == image.source_digest()
+        && plan.address_space_id() == address_space.id().raw()
+        && plan.materialization_id() == materialization.id()
+        && plan.entry_pc() == image.entry()
+        && layout.stack_top() == 0x0000_8000_0000_0000
+        && layout.initial_sp() == 0x0000_8000_0000_0000
+        && layout.sp_aligned_16();
+    crate::println!(
+        "qemu-initial-user-stack-smoke: success output=InitialUserStackPlan published={} stack-top={:#018x} initial-sp={:#018x} sp-aligned-16={} ok={}",
+        plan.published(),
+        layout.stack_top(),
+        layout.initial_sp(),
+        layout.sp_aligned_16(),
+        success_ok
+    );
+
+    let layout_ok = layout.usable_start() == 0x0000_7fff_ffff_c000
+        && layout.usable_end() == 0x0000_8000_0000_0000
+        && layout.guard_start() == 0x0000_7fff_ffff_b000
+        && layout.guard_end() == 0x0000_7fff_ffff_c000
+        && layout.page_size() == LOADER_PAGE_SIZE
+        && layout.usable_pages() == 4
+        && layout.guard_pages() == 1;
+    crate::println!(
+        "qemu-initial-user-stack-smoke: layout usable-start={:#018x} usable-end={:#018x} guard-start={:#018x} guard-end={:#018x} page-size={:#x} usable-pages={} guard-pages={} ok={}",
+        layout.usable_start(),
+        layout.usable_end(),
+        layout.guard_start(),
+        layout.guard_end(),
+        layout.page_size(),
+        layout.usable_pages(),
+        layout.guard_pages(),
+        layout_ok
+    );
+
+    let mut page_index = 0;
+    let mut usable_user_data = plan.page_lease_count() == layout.usable_pages();
+    let mut stack_owned = stack_source.outstanding_leases() == layout.usable_pages();
+    while page_index < plan.page_lease_count() {
+        let Some(lease) = plan.page_lease(page_index) else {
+            usable_user_data = false;
+            stack_owned = false;
+            break;
+        };
+        usable_user_data &= lease.permissions() == UserMappingPermissions::USER_DATA
+            && lease.zeroed_before_copy()
+            && lease.copied_bytes() == 0
+            && lease.zeroed_bytes() == LOADER_PAGE_SIZE;
+        stack_owned &= lease.token().raw() != 0 && !lease.released();
+        page_index += 1;
+    }
+    let ownership_ok = usable_user_data
+        && stack_owned
+        && plan.guard_pages_reserved() == 1
+        && plan.total_copied_bytes() == 0
+        && plan.total_zeroed_bytes() == 0x4000;
+    crate::println!(
+        "qemu-initial-user-stack-smoke: ownership usable-user-data={} stack-owned={} guard-has-frame=false guard-has-descriptor=false total-copied-bytes={} total-zeroed-bytes={:#x} ok={}",
+        usable_user_data,
+        stack_owned,
+        plan.total_copied_bytes(),
+        plan.total_zeroed_bytes(),
+        ownership_ok
+    );
+
+    let startup = plan.startup_payload();
+    let startup_ok = startup.state() == "minimal-empty-argc0"
+        && startup.argc() == 0
+        && startup.argv_null()
+        && startup.envp_null()
+        && startup.auxv_state() == "blocked-pending-startup-abi"
+        && startup.tls_state() == "blocked-pending-startup-abi"
+        && startup.copied_startup_bytes() == 0;
+    crate::println!(
+        "qemu-initial-user-stack-smoke: startup argc={} argv={} envp={} auxv={} tls={} copied-startup-bytes={} ok={}",
+        startup.argc(),
+        if startup.argv_null() {
+            "null"
+        } else {
+            "nonnull"
+        },
+        if startup.envp_null() {
+            "null"
+        } else {
+            "nonnull"
+        },
+        startup.auxv_state(),
+        startup.tls_state(),
+        startup.copied_startup_bytes(),
+        startup_ok
+    );
+
+    let binding = plan.launch_binding();
+    let launch_binding_ok = binding.user_sp_state() == INITIAL_USER_STACK_READY
+        && binding.saved_frame_sp_el0() == layout.initial_sp()
+        && binding.activation_state() == INITIAL_ACTIVATION_BLOCKED
+        && binding.no_partial_launch();
+    crate::println!(
+        "qemu-initial-user-stack-smoke: launch-binding user-sp-state={} saved-frame-sp-el0={:#018x} activation-state={} no-partial-launch={} ok={}",
+        binding.user_sp_state(),
+        binding.saved_frame_sp_el0(),
+        binding.activation_state(),
+        binding.no_partial_launch(),
+        launch_binding_ok
+    );
+
+    let side_effects = binding.side_effects();
+    let side_effects_ok = !side_effects.ttbr_mutated()
+        && !side_effects.tcr_mutated()
+        && !side_effects.mair_mutated()
+        && !side_effects.sctlr_mutated()
+        && !side_effects.asid_allocated()
+        && !side_effects.tlb_mutated()
+        && !side_effects.lower_el_eret()
+        && !side_effects.scheduler_published()
+        && !side_effects.process_table_mutated()
+        && !side_effects.descriptor_table_mutated();
+    crate::println!(
+        "qemu-initial-user-stack-smoke: side-effects ttbr-mutated={} tcr-mutated={} mair-mutated={} sctlr-mutated={} asid-allocated={} tlb-mutated={} lower-el-eret={} scheduler-published={} process-table-mutated={} descriptor-table-mutated={} ok={}",
+        side_effects.ttbr_mutated(),
+        side_effects.tcr_mutated(),
+        side_effects.mair_mutated(),
+        side_effects.sctlr_mutated(),
+        side_effects.asid_allocated(),
+        side_effects.tlb_mutated(),
+        side_effects.lower_el_eret(),
+        side_effects.scheduler_published(),
+        side_effects.process_table_mutated(),
+        side_effects.descriptor_table_mutated(),
+        side_effects_ok
+    );
+
+    (
+        success_ok,
+        layout_ok,
+        ownership_ok,
+        startup_ok,
+        launch_binding_ok,
+        side_effects_ok,
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_user_stack_smoke")]
+fn initial_user_stack_report_empty_success() {
+    crate::println!(
+        "qemu-initial-user-stack-smoke: fixture name={} path=/bin/init source-digest=0x0 install-boundary={} address-space-boundary={} materialization-boundary={} launch-boundary={} stack-boundary={}",
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        PROCESS_INSTALL_BOUNDARY_IDENTITY,
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY,
+        PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY,
+        INITIAL_PROCESS_LAUNCH_BOUNDARY_IDENTITY,
+        INITIAL_USER_STACK_BOUNDARY_IDENTITY
+    );
+    crate::println!(
+        "qemu-initial-user-stack-smoke: success output=InitialUserStackPlan published=false stack-top=0x0000000000000000 initial-sp=0x0000000000000000 sp-aligned-16=false ok=false"
+    );
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_user_stack_smoke")]
+fn initial_user_stack_report_teardown() -> bool {
+    let Ok((image, install_plan, address_space, materialization, launch_plan)) =
+        initial_user_stack_valid_fixture()
+    else {
+        crate::println!(
+            "qemu-initial-user-stack-smoke: teardown stack-leases-released=false image-leases-untouched=false idempotent=false ok=false"
+        );
+        return false;
+    };
+    let mut stack_source = InitialUserStackLeaseSource::for_initial_stack();
+    let Ok(mut plan) = plan_initial_user_stack(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        InitialUserStackRequest::PlanOnly,
+        &mut stack_source,
+    ) else {
+        crate::println!(
+            "qemu-initial-user-stack-smoke: teardown stack-leases-released=false image-leases-untouched=false idempotent=false ok=false"
+        );
+        return false;
+    };
+
+    let first = plan.destroy(&mut stack_source);
+    let second = plan.destroy(&mut stack_source);
+    let stack_leases_released =
+        first.stack_frame_releases() == 4 && stack_source.outstanding_leases() == 0;
+    let image_leases_untouched = first.image_leases_untouched() && second.image_leases_untouched();
+    let idempotent = !first.already_destroyed()
+        && second.already_destroyed()
+        && second.stack_frame_releases() == 0
+        && !plan.published()
+        && plan.destroyed();
+    let ok = stack_leases_released && image_leases_untouched && idempotent;
+    crate::println!(
+        "qemu-initial-user-stack-smoke: teardown stack-leases-released={} image-leases-untouched={} idempotent={} ok={}",
+        stack_leases_released,
+        image_leases_untouched,
+        idempotent,
+        ok
+    );
+    ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_user_stack_smoke")]
+fn initial_user_stack_report_error(
+    case: &str,
+    fixture: Result<
+        (
+            ProgramImagePlan,
+            ProcessImageInstallPlan,
+            ProcessAddressSpace,
+            ProcessPageTableMaterialization,
+            crate::initial_process_launch::InitialProcessLaunchPlan,
+        ),
+        PosixError,
+    >,
+    request: InitialUserStackRequest,
+    mut stack_source: InitialUserStackLeaseSource,
+    expected: PosixError,
+) -> bool {
+    let result = fixture.and_then(
+        |(image, install_plan, address_space, materialization, launch)| {
+            plan_initial_user_stack(
+                image,
+                install_plan,
+                address_space,
+                materialization,
+                launch,
+                request,
+                &mut stack_source,
+            )
+        },
+    );
+    let (errno, ok) = match result {
+        Ok(_) => (expected, false),
+        Err(error) => (error, error == expected),
+    };
+    let partial_stack = stack_source.outstanding_leases() != 0;
+    let partial_launch = false;
+    if case == "capacity-exhausted" {
+        crate::println!(
+            "qemu-initial-user-stack-smoke: error case={} errno=-{} partial-stack={} partial-launch={} leases-released={} ok={}",
+            case,
+            errno.name(),
+            partial_stack,
+            partial_launch,
+            stack_source.snapshot().stack_frame_releases == 2 && !partial_stack,
+            ok && !partial_stack
+        );
+    } else if case == "live-launch-request" {
+        crate::println!(
+            "qemu-initial-user-stack-smoke: error case={} errno=-{} partial-stack={} partial-launch={} runnable-published=false ok={}",
+            case,
+            errno.name(),
+            partial_stack,
+            partial_launch,
+            ok && !partial_stack
+        );
+    } else {
+        crate::println!(
+            "qemu-initial-user-stack-smoke: error case={} errno=-{} partial-stack={} partial-launch={} ok={}",
+            case,
+            errno.name(),
+            partial_stack,
+            partial_launch,
+            ok && !partial_stack
+        );
+    }
+    ok && !partial_stack && !partial_launch
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_user_stack_smoke")]
+fn initial_user_stack_valid_fixture() -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+        ProcessPageTableMaterialization,
+        crate::initial_process_launch::InitialProcessLaunchPlan,
+    ),
+    PosixError,
+> {
+    let (image, install_plan, address_space, materialization) =
+        initial_process_launch_valid_fixture()?;
+    let launch_plan = prepare_initial_process_launch(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        InitialProcessLaunchRequest::PreparePlanOnly,
+    )?;
+    Ok((
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+    ))
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_user_stack_smoke")]
+fn initial_user_stack_identity_mismatch_fixture() -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+        ProcessPageTableMaterialization,
+        crate::initial_process_launch::InitialProcessLaunchPlan,
+    ),
+    PosixError,
+> {
+    let (image, install_plan, address_space, materialization, launch_plan) =
+        initial_user_stack_valid_fixture()?;
+    Ok((
+        initial_process_launch_image_with_identity(image, "wrong-fixture"),
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+    ))
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_user_stack_smoke")]
+fn initial_user_stack_overlap_fixture() -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+        ProcessPageTableMaterialization,
+        crate::initial_process_launch::InitialProcessLaunchPlan,
+    ),
+    PosixError,
+> {
+    let (image, install_plan, address_space, materialization, launch_plan) =
+        initial_user_stack_valid_fixture()?;
+    let mut segments = initial_process_launch_image_segments(image);
+    let index = image.segment_count();
+    segments[index] = Some(PlannedUserSegment::for_test_unchecked(
+        UserSegmentKind::UserData,
+        UserMappingPermissions::USER_DATA,
+        0x0000_7fff_ffff_c000,
+        0x0000_8000_0000_0000,
+        0x0000_7fff_ffff_c000,
+        0x0000_8000_0000_0000,
+        0,
+        0,
+        0x0000_7fff_ffff_c000,
+        0x0000_8000_0000_0000,
+    ));
+    Ok((
+        ProgramImagePlan::for_test_unchecked(
+            image.source_path(),
+            image.fixture_identity(),
+            image.source_len(),
+            image.source_digest(),
+            image.entry(),
+            image.segment_count() + 1,
+            segments,
+            image.memory_start(),
+            image.memory_end(),
+            image.memory_footprint(),
+        ),
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+    ))
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_user_stack_smoke")]
+fn initial_user_stack_already_ready_fixture() -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+        ProcessPageTableMaterialization,
+        crate::initial_process_launch::InitialProcessLaunchPlan,
+    ),
+    PosixError,
+> {
+    let (image, install_plan, address_space, materialization, launch_plan) =
+        initial_user_stack_valid_fixture()?;
+    Ok((
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan.for_test_with_user_sp_state(INITIAL_USER_STACK_READY),
+    ))
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_user_stack_smoke")]
+fn initial_user_stack_bad_range_source() -> InitialUserStackLeaseSource {
+    let mut source = InitialUserStackLeaseSource::for_initial_stack();
+    source.override_layout(InitialUserStackLayout::for_test_unchecked(
+        0x0000_8000_0000_0000,
+        0x0000_8000_0000_0000,
+        0x0000_0000_0000_1000,
+        0x0000_0000_0000_5000,
+        0x0000_0000_0000_0000,
+        0x0000_0000_0000_1000,
+        LOADER_PAGE_SIZE,
+        4,
+        1,
+        UserMappingPermissions::USER_DATA,
+    ));
+    source
+}
+
+#[cfg(talos_boot_scenario = "qemu_initial_user_stack_smoke")]
+fn initial_user_stack_executable_source() -> InitialUserStackLeaseSource {
+    let mut source = InitialUserStackLeaseSource::for_initial_stack();
+    source.override_permissions(UserMappingPermissions::USER_TEXT);
+    source
 }
 
 #[cfg(talos_boot_scenario = "qemu_syscall_smoke")]

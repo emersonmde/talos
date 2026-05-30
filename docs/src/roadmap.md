@@ -195,6 +195,16 @@ rejections, and unit evidence that live TTBR/TLB/lower-EL/scheduler/process
 and descriptor side effects remain zero. No QEMU smoke, Pi 5 hardware proof,
 live activation, runnable publication, process lifecycle, filesystem syscall,
 networking, or SSH capability is accepted by this core slice.
+QEMU/substitute initial user stack smoke evidence is now accepted from the
+retained qemu_initial_user_stack_smoke log. It proves the accepted
+InitialUserStackPlan success, fixed stack layout, guard and page ownership,
+minimal-empty-argc0 startup placeholder, model-only launch-plan stack-ready
+binding, idempotent teardown, deterministic no-partial-stack/no-partial-launch
+rejections, zero live-launch side effects, and final
+qemu-initial-user-stack-smoke-complete/PASS lines. No Pi 5 hardware proof,
+live TTBR activation, lower-EL ERET, scheduler runnable publication, process
+lifecycle, filesystem syscall, networking, or SSH capability is accepted by
+this smoke slice.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -2930,6 +2940,19 @@ Milestone 8.3: Program Loader
   implementation task. Live TTBR activation, lower-EL ERET, scheduler
   publication, process lifecycle, broad argv/envp/auxv/TLS ABI, filesystem
   syscalls, Pi 5 hardware proof, networking, and SSH remain blocked.
+- Phase 8 QEMU/substitute initial user stack smoke evidence is accepted. The
+  retained qemu-initial-user-stack-smoke log proves the InitialUserStackPlan
+  boundary identity, copied loader/install/address-space/materialization/
+  launch lineage, fixed stack top and initial SP 0x0000_8000_0000_0000, usable
+  and guard ranges, four zeroed USER_DATA stack-owned pages, one unmapped guard
+  page, copied_bytes=0, zeroed_bytes=0x4000, minimal-empty-argc0 startup
+  metadata, model-only launch-plan stack-ready binding, teardown, deterministic
+  no-partial-stack/no-partial-launch rejection, zero TTBR/TLB/lower-EL/
+  scheduler/process-table/descriptor-table side effects, and
+  qemu-initial-user-stack-smoke-complete/PASS lines. Live TTBR activation,
+  lower-EL ERET, scheduler publication, process lifecycle, broad
+  argv/envp/auxv/TLS ABI, filesystem syscalls, Pi 5 hardware proof,
+  networking, and SSH remain blocked.
 
 Acceptance criteria:
 

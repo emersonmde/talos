@@ -88,9 +88,9 @@ pub(crate) struct InitialUserStackLeaseSource {
     next_token: u64,
     stack_frames_leased: usize,
     stack_frame_releases: usize,
-    #[cfg(test)]
+    #[cfg(any(test, talos_boot_scenario = "qemu_initial_user_stack_smoke"))]
     layout_override: Option<InitialUserStackLayout>,
-    #[cfg(test)]
+    #[cfg(any(test, talos_boot_scenario = "qemu_initial_user_stack_smoke"))]
     permission_override: Option<UserMappingPermissions>,
 }
 
@@ -101,9 +101,9 @@ impl InitialUserStackLeaseSource {
             next_token: 1,
             stack_frames_leased: 0,
             stack_frame_releases: 0,
-            #[cfg(test)]
+            #[cfg(any(test, talos_boot_scenario = "qemu_initial_user_stack_smoke"))]
             layout_override: None,
-            #[cfg(test)]
+            #[cfg(any(test, talos_boot_scenario = "qemu_initial_user_stack_smoke"))]
             permission_override: None,
         }
     }
@@ -123,13 +123,13 @@ impl InitialUserStackLeaseSource {
         self.stack_frames_leased
     }
 
-    #[cfg(test)]
-    fn override_layout(&mut self, layout: InitialUserStackLayout) {
+    #[cfg(any(test, talos_boot_scenario = "qemu_initial_user_stack_smoke"))]
+    pub(crate) fn override_layout(&mut self, layout: InitialUserStackLayout) {
         self.layout_override = Some(layout);
     }
 
-    #[cfg(test)]
-    fn override_permissions(&mut self, permissions: UserMappingPermissions) {
+    #[cfg(any(test, talos_boot_scenario = "qemu_initial_user_stack_smoke"))]
+    pub(crate) fn override_permissions(&mut self, permissions: UserMappingPermissions) {
         self.permission_override = Some(permissions);
     }
 
@@ -217,8 +217,8 @@ impl InitialUserStackLayout {
         self.initial_sp & 0xf == 0
     }
 
-    #[cfg(test)]
-    const fn for_test_unchecked(
+    #[cfg(any(test, talos_boot_scenario = "qemu_initial_user_stack_smoke"))]
+    pub(crate) const fn for_test_unchecked(
         stack_top: u64,
         initial_sp: u64,
         usable_start: u64,
@@ -572,15 +572,18 @@ pub(crate) fn plan_initial_user_stack(
         launch_plan,
     )?;
 
-    let mut layout = default_layout()?;
-    #[cfg(test)]
-    if let Some(override_layout) = lease_source.layout_override {
-        layout = override_layout;
-    }
-    #[cfg(test)]
-    if let Some(permissions) = lease_source.permission_override {
-        layout.permissions = permissions;
-    }
+    let layout = default_layout()?;
+    #[cfg(any(test, talos_boot_scenario = "qemu_initial_user_stack_smoke"))]
+    let layout = {
+        let mut layout = layout;
+        if let Some(override_layout) = lease_source.layout_override {
+            layout = override_layout;
+        }
+        if let Some(permissions) = lease_source.permission_override {
+            layout.permissions = permissions;
+        }
+        layout
+    };
 
     validate_layout(layout)?;
     validate_no_overlap(image, install_plan, address_space, materialization, layout)?;
