@@ -7302,3 +7302,39 @@ ADR template:
   networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
   policy remain blocked until later explicit tasks accept their contracts and
   gates.
+
+## 2026-05-30 - Phase 8 Process Page-Table Materialization Contract Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 process page-table
+  materialization contract. No Rust behavior, assembly behavior, QEMU run,
+  Pi 5 hardware run, boot archive publication, hardware-lock acquisition,
+  TTBR/TCR/MAIR/SCTLR/ASID/TLB policy change, lower-EL launch, argv/envp,
+  process lifecycle, shell behavior, descriptor-backed filesystem syscalls,
+  writable filesystem, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted source inventory separated target-independent
+  ProcessAddressSpace model leases and mappings from unaccepted
+  architecture-specific materialization. The next boundary needed exact
+  ownership and descriptor vocabulary before any implementation or smoke
+  evidence could be accepted.
+- Decision: Accept
+  phase8-process-page-table-materialization-contract-20260530. The selected
+  boundary is phase8-process-page-table-materialization-v1: a non-activating
+  AArch64 descriptor-image and user-frame materialization record. It fixes
+  ProgramImagePlan, ProcessImageInstallPlan, and ProcessAddressSpace inputs;
+  defines user-frame/root/table-page ownership, UserText/UserData descriptor
+  bits, kernel mapping and activation blockers, rollback, teardown, and
+  deterministic errors; and keeps TTBR activation and lower-EL launch blocked.
+- Evidence level: static documentation/source inspection, documentation
+  build, whitespace inspection, and staged whitespace inspection. No QEMU or
+  physical Pi 5 evidence was produced by this documentation-only contract.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next bounded task should be the already queued
+  phase8-qemu-process-page-table-materialization-smoke-plan-20260530.
+  Implementation, QEMU evidence production, TTBR activation, lower-EL launch,
+  argv/envp, process lifecycle, filesystem syscalls, Pi 5 hardware proof,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
+  policy remain blocked until later explicit tasks accept their contracts and
+  gates.

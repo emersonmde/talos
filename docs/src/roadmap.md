@@ -2676,6 +2676,21 @@ Milestone 8.3: Program Loader
   Pi 5 hardware proof, writable filesystems, persistent storage, networking,
   SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
   blocked until later explicit tasks accept their gates.
+- Phase 8 process page-table materialization contract is accepted. It selects
+  a non-activating AArch64 descriptor-image and user-frame materialization
+  boundary with identity phase8-process-page-table-materialization-v1. The
+  contract fixes inputs from ProgramImagePlan, ProcessImageInstallPlan, and
+  ProcessAddressSpace; defines user-frame/root/table-page ownership,
+  UserText/UserData descriptor policy, kernel mapping and activation
+  boundaries, ASID/TTBR/TCR/TLB blocked surfaces, rollback, teardown, and
+  deterministic errors; and names
+  phase8-qemu-process-page-table-materialization-smoke-plan-20260530 as the
+  next bounded documentation-only task. TTBR activation, lower-EL launch,
+  argv/envp, process lifecycle, exec/spawn/wait, shell,
+  descriptor-backed filesystem syscalls, Pi 5 hardware proof, writable
+  filesystems, persistent storage, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, and DMA/cache-driver policy remain blocked until later explicit
+  tasks accept their gates.
 
 Acceptance criteria:
 
