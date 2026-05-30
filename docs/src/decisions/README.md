@@ -6994,3 +6994,41 @@ ADR template:
   filesystems, persistent storage, networking, SSH, RP1/PCIe, UART interrupt
   ownership, and DMA/cache-driver policy remain blocked until later explicit
   tasks accept their contracts and gates.
+
+## 2026-05-30 - Phase 8 Process Install Core Accepted
+
+- Status: accepted as the Milestone 8.3 metadata-only process-install core.
+  No QEMU process-install smoke, Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, physical frame allocation, physical byte copy,
+  page-table mutation, process creation, descriptor mutation, lower-EL frame,
+  runnable task, argv/envp construction, exec/spawn/wait, shell behavior,
+  writable filesystem, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted process-install contract selected a
+  target-independent ProcessImageInstallPlan boundary before any process-owned
+  address-space mutator exists. The accepted QEMU/substitute smoke plan fixed
+  the later evidence vocabulary, but this core task only needed the data model
+  and focused unit coverage.
+- Decision: Accept phase8-process-install-core-20260530. The new
+  src/process_install.rs module derives ordered page-install metadata from a
+  ProgramImagePlan, preserving fixture identity, source digest, entry,
+  footprint, UserText/UserData permissions, clipped copy ranges, explicit
+  zero-fill ranges, no-side-effect counters, lower-EL launch blocking, and
+  allocate/copy/zero/map future action metadata.
+- Evidence level: target-independent unit tests, conditional QEMU/substitute
+  program-loader regression, formatting, documentation build, whitespace
+  inspection, and staged whitespace inspection. No physical Pi 5 evidence was
+  produced or claimed.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test passed with 279 no_std tests; scripts/qemu-program-loader-smoke.sh
+  passed with classification=qemu-program-loader-smoke-complete and
+  qemu-program-loader-smoke: PASS because src/program_loader.rs was touched
+  for test-only malformed-plan constructors; git diff --check passed; mdbook
+  build passed; git diff --cached --check passed before commit.
+- Consequences: The next bounded work remains the supervisor-owned
+  QEMU/substitute process-install smoke core. Process-owned address-space
+  mutation, frame allocation, page-table installation, lower-EL launch,
+  argv/envp, process lifecycle, exec/spawn/wait, shell, writable filesystem,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
+  policy remain blocked until later explicit tasks accept their contracts and
+  gates.

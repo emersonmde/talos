@@ -2525,6 +2525,20 @@ Milestone 8.3: Program Loader
   Pi 5 hardware proof, writable filesystems, persistent storage, networking,
   SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
   blocked until later explicit tasks accept their gates.
+- Phase 8 process-install core is accepted. It adds the metadata-only
+  ProcessImageInstallPlan owner in src/process_install.rs, deriving ordered
+  page install records from a validated ProgramImagePlan while preserving
+  UserText R-X and UserData RW- permissions, exact fixture identity, source
+  digest, entry point, total rounded footprint, clipped file-copy ranges,
+  explicit zero-fill ranges, and the later action order
+  allocate/copy/zero/map. The implementation is target-independent and returns
+  deterministic POSIX-shaped errors for malformed plan invariants, overlap,
+  permission widening, bad entry, budget overflow, and invalid source ranges.
+  No frame allocation, physical byte copy, page-table mutation, process
+  creation, descriptor mutation, lower-EL frame, runnable task, QEMU smoke,
+  Pi 5 hardware proof, argv/envp construction, exec/spawn/wait, shell,
+  writable filesystem, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy is accepted by this core.
 
 Acceptance criteria:
 

@@ -154,6 +154,33 @@ impl PlannedUserSegment {
             && self.virtual_start <= entry
             && entry < self.virtual_end
     }
+
+    #[cfg(test)]
+    pub(crate) const fn for_test_unchecked(
+        kind: UserSegmentKind,
+        permissions: UserMappingPermissions,
+        virtual_start: u64,
+        virtual_end: u64,
+        rounded_start: u64,
+        rounded_end: u64,
+        file_offset: usize,
+        file_size: usize,
+        zero_fill_start: u64,
+        zero_fill_end: u64,
+    ) -> Self {
+        Self {
+            kind,
+            permissions,
+            virtual_start,
+            virtual_end,
+            rounded_start,
+            rounded_end,
+            file_offset,
+            file_size,
+            zero_fill_start,
+            zero_fill_end,
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -213,6 +240,33 @@ impl ProgramImagePlan {
 
     pub(crate) const fn memory_footprint(self) -> u64 {
         self.memory_footprint
+    }
+
+    #[cfg(test)]
+    pub(crate) const fn for_test_unchecked(
+        source_path: &'static [u8],
+        fixture_identity: &'static str,
+        source_len: usize,
+        source_digest: u64,
+        entry: u64,
+        segment_count: usize,
+        segments: [Option<PlannedUserSegment>; MAX_LOAD_SEGMENTS],
+        memory_start: u64,
+        memory_end: u64,
+        memory_footprint: u64,
+    ) -> Self {
+        Self {
+            source_path,
+            fixture_identity,
+            source_len,
+            source_digest,
+            entry,
+            segment_count,
+            segments,
+            memory_start,
+            memory_end,
+            memory_footprint,
+        }
     }
 }
 
