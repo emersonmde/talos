@@ -13,7 +13,7 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Talos is in Phase 7.4 file-descriptor-table work, after accepting the Phase
+Talos is in the Phase 7 final frontier checkpoint, after accepting the Phase
 6.3 production scheduler runtime closeout,
 the full Phase 7.1 POSIX baseline slice, the Phase 7.2 EL0/address-space source
 inventory, the Phase 7.2 EL0 trap/address-space contract, and the first
@@ -664,11 +664,19 @@ nonblocking I/O, RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy,
 and full POSIX descriptor readiness remain blocked. The next objective task
 should be a supervisor-planned Phase 7 final closeout or frontier checkpoint
 before any Phase 8 transition is considered.
+The accepted Phase 7 final frontier source inventory reconciles the accepted
+Phase 7.1 POSIX baseline, Phase 7.2 lower-EL/address-space proof, Phase 7.3
+syscall/copy boundary, and Phase 7.4 descriptor-table work by commit and
+evidence level. It identifies no remaining bounded Phase 7 implementation or
+evidence task before the final closeout checkpoint, but it does not set a
+Phase 8 transition flag or accept filesystem/program-loading behavior. The next
+mechanically unblocked queued task is
+phase7-final-closeout-checkpoint-20260530.
 
 Near-term direction after the accepted Milestone 7.4 closeout:
 
-- Reconcile the full accepted Phase 7 POSIX/EL0/syscall/descriptor frontier
-  before any Phase 8 transition discussion.
+- Use the accepted final frontier source inventory to complete the Phase 7
+  final closeout before any Phase 8 transition discussion.
 - Keep QEMU, host-side unit tests, and static documentation gates first. Reserve
   serialized Pi 5 runs for the smallest physical claim that cannot be proven on
   the QEMU/substitute path.
@@ -2224,6 +2232,17 @@ Milestone 7.4: File Descriptor Table
   SSH, object finalization, dup2/fcntl, signals, wait queues, nonblocking I/O,
   RP1/PCIe, UART interrupt ownership, DMA/cache-driver policy, and full POSIX
   descriptor readiness remain deferred.
+
+Phase 7 final frontier checkpoint:
+
+- Phase 7 final frontier source inventory is accepted. It maps Phase 7.1
+  through Phase 7.4 accepted capabilities, commit/evidence anchors, deferred
+  surfaces, and residual risks. No implementation, QEMU run, Pi 5 run, archive
+  publication, hardware-lock acquisition, or Phase 8 transition was performed.
+  It reports no remaining bounded Phase 7 implementation or evidence blocker
+  before the final closeout checkpoint and recommends
+  phase7-final-closeout-checkpoint-20260530 as the next mechanically unblocked
+  task.
 
 Acceptance criteria:
 

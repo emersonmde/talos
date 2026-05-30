@@ -12,6 +12,41 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 7 Final Frontier Source Inventory Accepted
+
+- Status: accepted as the documentation-only Phase 7 final frontier source
+  inventory. No Rust behavior, assembly behavior, QEMU run, Pi 5 hardware run,
+  archive publishing, hardware-lock acquisition, filesystem/program-loading
+  behavior, shell behavior, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, DMA/cache-driver policy, full POSIX readiness, or Phase 8
+  transition was added.
+- Context: Milestone 7.4 was closed for the bounded descriptor-table frontier,
+  but a final Phase 7 checkpoint needed an inventory of all accepted Phase 7.1
+  through Phase 7.4 capabilities, evidence levels, deferred surfaces, and
+  residual risks before any Phase 8 recommendation.
+- Decision: Accept phase7-final-frontier-source-inventory-20260530. The
+  inventory maps the accepted POSIX baseline, EL0/address-space proof, syscall
+  ABI/copy-helper/descriptor-write frontier, and file descriptor table
+  frontier to commit and retained-evidence anchors.
+- Evidence level: static evidence and documentation inspection. Retained
+  evidence includes target-independent unit-test gates, QEMU/substitute serial
+  logs, serialized Pi 5 hardware boot/output, hardware-lock timelines,
+  candidate/archive/TFTP identity, known-good controls after inconclusive
+  runs, unchanged-candidate reruns, and restore proof recorded by the accepted
+  slice closeouts.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: No bounded Phase 7 implementation or evidence task is
+  identified as mechanically required before the final closeout checkpoint.
+  The next mechanically unblocked queued task is
+  phase7-final-closeout-checkpoint-20260530. Phase 8 remains blocked until that
+  checkpoint explicitly records a recommendation flag; filesystem/program
+  loading, shell, networking, SSH, RP1/PCIe, UART interrupt ownership,
+  DMA/cache-driver policy, runtime-console0/TTY/hardware stdin, process
+  loading, object finalization, dup2/fcntl, signals, wait queues, nonblocking
+  I/O, and full POSIX readiness remain blocked.
+
 ## 2026-05-30 - Phase 7.4 File Descriptor Table Closeout Accepted
 
 - Status: accepted as the documentation-only Milestone 7.4 file descriptor
