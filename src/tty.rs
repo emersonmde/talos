@@ -36,6 +36,7 @@ pub enum TtyMode {
 pub enum TtyInputOutcome {
     Pending,
     LineComplete,
+    LineCanceled,
     RawByte(u8),
     BufferLimit,
 }
@@ -44,6 +45,7 @@ pub enum TtyInputOutcome {
 pub enum PollingTtyRxOutcome {
     Pending,
     LineComplete,
+    LineCanceled,
     Timeout,
     InputUnavailable,
     BackendError,
@@ -54,6 +56,7 @@ impl PollingTtyRxOutcome {
         match self {
             Self::Pending => "pending",
             Self::LineComplete => "line-complete",
+            Self::LineCanceled => "line-canceled",
             Self::Timeout => "timeout",
             Self::InputUnavailable => "input-unavailable",
             Self::BackendError => "backend-error",
@@ -184,7 +187,14 @@ impl TtyLineDiscipline {
                 }
                 TtyInputOutcome::Pending
             }
-            0x03 => self.push_control(TtyControlEvent::Interrupt),
+            0x03 => {
+                self.line_len = 0;
+                self.push_control(TtyControlEvent::Interrupt);
+                self.push_echo(b'\r');
+                self.push_echo(b'\n');
+                self.terminated = true;
+                TtyInputOutcome::LineCanceled
+            }
             0x04 => self.push_control(TtyControlEvent::EndOfInput),
             0x1a => self.push_control(TtyControlEvent::Suspend),
             0x15 => {
@@ -318,7 +328,10 @@ impl PollingTtyRxResult {
     }
 
     pub const fn passed(&self) -> bool {
-        matches!(self.outcome, PollingTtyRxOutcome::LineComplete) && self.discipline.raw_bytes() > 0
+        matches!(
+            self.outcome,
+            PollingTtyRxOutcome::LineComplete | PollingTtyRxOutcome::LineCanceled
+        ) && self.discipline.raw_bytes() > 0
     }
 
     fn mark_timeout(&mut self) {
@@ -334,8 +347,10 @@ impl PollingTtyRxResult {
     }
 
     fn accept_byte(&mut self, byte: u8) {
-        if self.discipline.process_byte(byte) == TtyInputOutcome::LineComplete {
-            self.outcome = PollingTtyRxOutcome::LineComplete;
+        match self.discipline.process_byte(byte) {
+            TtyInputOutcome::LineComplete => self.outcome = PollingTtyRxOutcome::LineComplete,
+            TtyInputOutcome::LineCanceled => self.outcome = PollingTtyRxOutcome::LineCanceled,
+            _ => {}
         }
     }
 }
@@ -454,28 +469,42 @@ mod tests {
     }
 
     #[test_case]
+    fn line_discipline_cancels_current_line_on_ctrl_c() {
+        let mut tty = TtyLineDiscipline::canonical_lite();
+
+        for byte in b"partial" {
+            assert_eq!(tty.process_byte(*byte), TtyInputOutcome::Pending);
+        }
+        assert_eq!(tty.process_byte(0x03), TtyInputOutcome::LineCanceled);
+
+        assert_eq!(tty.line(), b"");
+        assert_eq!(tty.echo(), b"partial\r\n");
+        assert_eq!(tty.controls(), &[Some(TtyControlEvent::Interrupt)]);
+        assert_eq!(tty.raw_bytes(), 8);
+        assert!(tty.terminated());
+    }
+
+    #[test_case]
     fn line_discipline_records_deferred_control_event_names() {
         let mut tty = TtyLineDiscipline::canonical_lite();
 
-        for byte in [0x03, 0x04, 0x1a, 0x15, 0x01] {
+        for byte in [0x04, 0x1a, 0x15, 0x01] {
             tty.process_byte(byte);
         }
 
         assert_eq!(
             tty.controls(),
             &[
-                Some(TtyControlEvent::Interrupt),
                 Some(TtyControlEvent::EndOfInput),
                 Some(TtyControlEvent::Suspend),
                 Some(TtyControlEvent::ClearLine),
                 Some(TtyControlEvent::Unsupported(0x01)),
             ]
         );
-        assert_eq!(tty.controls()[0].unwrap().name(), "ctrl-c");
-        assert_eq!(tty.controls()[1].unwrap().name(), "ctrl-d");
-        assert_eq!(tty.controls()[2].unwrap().name(), "ctrl-z");
-        assert_eq!(tty.controls()[3].unwrap().name(), "ctrl-u");
-        assert_eq!(tty.controls()[4].unwrap().name(), "unsupported-control");
+        assert_eq!(tty.controls()[0].unwrap().name(), "ctrl-d");
+        assert_eq!(tty.controls()[1].unwrap().name(), "ctrl-z");
+        assert_eq!(tty.controls()[2].unwrap().name(), "ctrl-u");
+        assert_eq!(tty.controls()[3].unwrap().name(), "unsupported-control");
         assert_eq!(tty.line(), b"");
         assert_eq!(tty.echo(), b"");
     }
@@ -515,7 +544,7 @@ mod tests {
         let result = run_polling_rx_diagnostic_with_limit(
             ScriptedInput::new(
                 [
-                    b'a', b'b', b'X', 0x08, b'c', b'Y', 0x7f, b'd', 0x03, b'e', b'f', b'g', b'h',
+                    b'a', b'b', b'X', 0x08, b'c', b'Y', 0x7f, b'd', 0x01, b'e', b'f', b'g', b'h',
                     b'i', b'j', b'k', b'l', b'm', b'n', b'o', b'p', b'q', b'\r', 0, 0, 0, 0, 0, 0,
                     0, 0, 0,
                 ],
@@ -533,7 +562,10 @@ mod tests {
         assert_eq!(result.backspaces(), 1);
         assert_eq!(result.deletes(), 1);
         assert!(result.truncated());
-        assert_eq!(result.controls(), &[Some(TtyControlEvent::Interrupt)]);
+        assert_eq!(
+            result.controls(),
+            &[Some(TtyControlEvent::Unsupported(0x01))]
+        );
     }
 
     #[test_case]

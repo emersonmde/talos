@@ -3799,6 +3799,20 @@ line-cancel feature as the next smallest Phase 10 local interactivity slice;
 old Phase 8 proof-only work remains paused unless it directly unblocks local
 interactivity.
 
+The bounded Ctrl-C line-cancel core is now accepted in QEMU/substitute.
+Retained evidence is at
+tasks/evidence/2026-05-31-qemu-local-line-cancel-core/qemu-local-line-cancel-smoke.log.
+The accepted transcript types partial `bogus` input, sends Ctrl-C 0x03,
+prints `talos: line-canceled`, records an empty canceled line with control
+telemetry, returns to a fresh prompt, dispatches following `pwd`, prints `/`
+through descriptor-backed stdout, and ends with
+qemu-local-line-cancel-complete plus PASS. This remains a kernel-local prompt
+behavior only: no POSIX signal delivery, process interruption, job control,
+termios, userspace shell execution, filesystem-backed command lookup, Pi 5
+hardware proof, networking, or SSH is accepted by this core task. The next
+feature-led step is the already queued serialized Pi 5 line-cancel proof if
+its dependencies and hardwareTestLock state remain satisfied.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.

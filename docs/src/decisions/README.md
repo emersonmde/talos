@@ -9334,6 +9334,42 @@ ADR template:
   UART interrupt ownership, and DMA/cache-driver policy remain blocked until
   later explicit tasks accept them.
 
+## 2026-05-31 - Phase 10 Local Line-Cancel Core Accepted
+
+- Status: accepted as the Phase 10 QEMU/substitute local Ctrl-C line-cancel
+  core. No Pi 5 archive publication, hardwareTestLock acquisition, hardware
+  run, POSIX signal delivery, process interruption, userspace shell execution,
+  process spawning, job control, termios, filesystem lookup, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy changed in
+  this task.
+- Context: The accepted local command-loop frontier had descriptor-backed
+  serial input/output, kernel-backed help/status/stdio/echo/pwd built-ins,
+  prompt readiness, and Backspace/Delete correction. The next smallest
+  user-visible feature was canceling a partially typed prompt line before it
+  could be dispatched.
+- Decision: Accept phase10-local-line-cancel-core-20260531. Canonical-lite TTY
+  input treats Ctrl-C 0x03 as a prompt-local line-cancel event that clears the
+  current editable line, terminates that command cycle, and lets the local
+  command loop print `talos: line-canceled`. The QEMU/substitute line-cancel
+  scenario proves partial `bogus` input does not dispatch, then a fresh prompt
+  accepts `pwd`, prints visible `/`, and returns to ready prompt.
+- Evidence level: unit tests plus QEMU/substitute feature transcript retained
+  at
+  tasks/evidence/2026-05-31-qemu-local-line-cancel-core/qemu-local-line-cancel-smoke.log.
+  Backspace/Delete regression evidence was rerun at
+  tasks/evidence/2026-05-31-qemu-local-line-editing-core/qemu-local-line-editing-smoke.log.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test --quiet passed; scripts/qemu-local-line-cancel-smoke.sh --quiet passed;
+  scripts/qemu-local-line-editing-smoke.sh --quiet passed; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: Talos now has QEMU/substitute evidence for bounded local
+  Ctrl-C prompt cancellation on descriptor-backed serial input. Pi 5 proof,
+  POSIX signal delivery, process interruption, job control, termios, cursor
+  addressing, shell history, broad escape parsing, userspace shell execution,
+  process lifecycle, filesystem-backed commands, path traversal, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
+  deferred to explicit later tasks.
+
 ## 2026-05-30 - Phase 8 Live Address-Space Activation Source Inventory Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 live address-space

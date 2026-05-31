@@ -13,6 +13,7 @@ pub const LOCAL_COMMAND_CURRENT_DIRECTORY: &str = "/";
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum LocalCommandStatus {
     Handled,
+    LineCanceled,
     Empty,
     UnknownCommand,
     UnexpectedArgument,
@@ -24,6 +25,7 @@ impl LocalCommandStatus {
     pub const fn name(self) -> &'static str {
         match self {
             Self::Handled => "handled",
+            Self::LineCanceled => "line-canceled",
             Self::Empty => "empty-command",
             Self::UnknownCommand => "unknown-command",
             Self::UnexpectedArgument => "unexpected-argument",
@@ -355,7 +357,17 @@ fn dispatch_completed_line(
     let status;
     let response_lines;
 
-    if !input_result.passed() || input_result.truncated() || !input_result.controls().is_empty() {
+    if input_result.outcome() == PollingTtyRxOutcome::LineCanceled
+        && input_result.controls() == &[Some(tty::TtyControlEvent::Interrupt)]
+    {
+        status = LocalCommandStatus::LineCanceled;
+        let mut responses = 0usize;
+        write_line(sink, &mut responses, "talos: line-canceled")?;
+        response_lines = responses;
+    } else if !input_result.passed()
+        || input_result.truncated()
+        || !input_result.controls().is_empty()
+    {
         status = LocalCommandStatus::InputError(input_result.outcome());
         let mut responses = 0usize;
         write_parts_line(
@@ -806,6 +818,35 @@ mod tests {
     }
 
     #[test_case]
+    fn local_command_loop_cancels_partial_line_on_ctrl_c_before_next_dispatch() {
+        let input = ScriptedInput::new(
+            [
+                b'b', b'o', b'g', b'u', b's', 0x03, b'p', b'w', b'd', b'\r', 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            ],
+            10,
+        );
+        let mut backend = CaptureSink::new();
+        let (cancel_result, pwd_result) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            let cancel_result = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let pwd_result = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            (cancel_result, pwd_result)
+        };
+
+        assert_eq!(cancel_result.line(), b"");
+        assert_eq!(cancel_result.status(), LocalCommandStatus::LineCanceled);
+        assert_eq!(cancel_result.response_lines(), 1);
+        assert_eq!(cancel_result.raw_bytes(), 6);
+        assert_eq!(cancel_result.controls(), 1);
+        assert_eq!(pwd_result.line(), b"pwd");
+        assert_eq!(pwd_result.status(), LocalCommandStatus::Handled);
+        assert_eq!(pwd_result.response_lines(), 1);
+        assert_eq!(backend.as_str(), "talos> talos: line-canceled\ntalos> /\n");
+    }
+
+    #[test_case]
     fn local_command_loop_rejects_arguments_for_non_echo_builtins() {
         let mut input = ScriptedInput::new(
             [
@@ -910,6 +951,7 @@ talos: descriptor-backed-output=true\n"
     #[test_case]
     fn local_command_status_names_are_stable_for_transcripts() {
         assert_eq!(LocalCommandStatus::Empty.name(), "empty-command");
+        assert_eq!(LocalCommandStatus::LineCanceled.name(), "line-canceled");
         assert_eq!(LocalCommandStatus::UnknownCommand.name(), "unknown-command");
         assert_eq!(
             LocalCommandStatus::InputError(PollingTtyRxOutcome::Timeout).name(),
