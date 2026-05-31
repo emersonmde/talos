@@ -445,6 +445,20 @@ ERET, scheduler publication, process lifecycle, filesystem syscall expansion,
 Pi 5 proof, shell behavior, networking, and SSH remain blocked. No explicit
 queued follow-up task remains; supervisor planning is required before the
 worker may promote another Phase 8.3 task.
+The live descriptor-image installation source inventory is now accepted. It
+maps the accepted non-installed KernelHalfDescriptorImage frontier to the
+next installation handoff below TTBR activation. The inventory distinguishes
+published=true/installed=false descriptor-image evidence from any future
+installation claim, identifies src/kernel_half_descriptor_image.rs,
+src/live_address_space_activation.rs, src/kernel_half_reachability.rs,
+src/process_page_table_materialization.rs, src/memory_map/translation.rs,
+linker-owned ranges, exception/vector owners, UART/MMIO diagnostics, runtime
+console, and scheduler owners as source material, and recommends a
+target-independent installation-ready activation binding as the next
+contract. Live register mutation, ASID/TLB/barrier activation, lower-EL ERET,
+scheduler publication, process lifecycle, filesystem syscall expansion, Pi 5
+proof, shell behavior, networking, and SSH remain blocked. The next bounded
+task is phase8-live-descriptor-image-installation-contract-20260531.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -3428,6 +3442,18 @@ Milestone 8.3: Program Loader
   networking, and SSH remain blocked. No explicit queued follow-up task
   remains; supervisor planning is required before the worker may promote
   another Phase 8.3 task.
+- Phase 8 live descriptor-image installation source inventory is accepted. It
+  maps the accepted non-installed KernelHalfDescriptorImage closeout to the
+  next installation-ready handoff below TTBR activation. The inventory
+  distinguishes current published=true/installed=false evidence from any
+  future installation claim, names descriptor-image, live activation,
+  reachability, TTBR0 materialization, translation, linker, exception/vector,
+  UART/MMIO, runtime console, and scheduler source owners, and recommends
+  phase8-live-descriptor-image-installation-contract-20260531 as the next
+  bounded documentation-only task. Live register mutation, ASID/TLB/barrier
+  activation, lower-EL ERET, scheduler publication, process lifecycle,
+  filesystem syscall expansion, Pi 5 proof, shell behavior, networking, and
+  SSH remain blocked.
 
 Acceptance criteria:
 

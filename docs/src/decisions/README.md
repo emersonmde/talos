@@ -12,6 +12,47 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-31 - Phase 8 Live Descriptor-Image Installation Source Inventory Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 source inventory
+  for the live descriptor-image installation frontier. No Rust behavior,
+  assembly behavior, QEMU execution, Pi 5 hardware run, boot archive
+  publication, hardware-lock acquisition, live TTBR0_EL1/TTBR1_EL1/TCR_EL1/
+  MAIR_EL1/SCTLR_EL1 mutation, ASID allocation, live TLB mutation, activation
+  DSB/ISB, lower-EL ERET, scheduler runnable publication, process lifecycle,
+  shell behavior, descriptor-backed filesystem syscalls, writable filesystem,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver
+  policy was added.
+- Context: The accepted kernel-half descriptor-image closeout established a
+  target-independent KernelHalfDescriptorImage with published=true but
+  installed=false, descriptor-image-installed=false, ttbr1-written=false, and
+  zero live side effects. Supervisor planning selected a bounded inventory to
+  map the next handoff before any installation contract or implementation.
+- Decision: Accept
+  phase8-live-descriptor-image-installation-source-inventory-20260531. The
+  inventory distinguishes non-installed descriptor-image evidence from a
+  future installation-ready activation binding, identifies descriptor-image,
+  live activation, kernel-half reachability, TTBR0 materialization, AArch64
+  translation, linker, exception/vector, UART/MMIO, runtime console, and
+  scheduler source owners, and recommends
+  phase8-live-descriptor-image-installation-contract-20260531 as the next
+  bounded documentation-only task.
+- Evidence level: static documentation/source inspection of accepted live
+  activation, kernel-half reachability, and kernel-half descriptor-image
+  commits plus retained QEMU/substitute descriptor-image evidence at
+  tasks/evidence/2026-05-31-qemu-kernel-half-descriptor-image-smoke-core/qemu-kernel-half-descriptor-image-smoke.log.
+- Validation: git status --short before edits was clean except durable
+  supervisor state promotion outside the Talos repo; git diff --check passed;
+  mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The next objective task is the queued
+  phase8-live-descriptor-image-installation-contract-20260531 if dependencies
+  remain satisfied. Live register mutation, ASID/TLB/barrier activation,
+  lower-EL ERET, scheduler runnable publication, process lifecycle, startup
+  ABI expansion, descriptor-backed filesystem syscalls, Pi 5 hardware proof,
+  shell, networking, SSH, RP1/PCIe, UART interrupt ownership, and
+  DMA/cache-driver policy remain blocked until later explicit tasks accept
+  their contracts and gates.
+
 ## 2026-05-31 - Phase 8 Kernel-Half Descriptor-Image Closeout Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 closeout for the
