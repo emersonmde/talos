@@ -9,7 +9,7 @@ qemu-local-command-stdin-descriptor: start command-count=5 backend=runtime-conso
 qemu-local-command-stdin-descriptor: ready command=0
 talos> help
 talos: ok help
-talos: commands help status stdio
+talos: commands help status stdio echo
 
 qemu-local-command-stdin-descriptor: line command=0 hex=68 65 6c 70
 qemu-local-command-stdin-descriptor: dispatch command=0 status=handled responses=2 raw-bytes=5 truncated=false controls=0

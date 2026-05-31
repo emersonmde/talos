@@ -176,6 +176,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "qemu_local_echo_command",
+        implied_values: &["qemu_local_serial_command_loop"],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "qemu_secondary_core_workload",
         implied_values: &[],
         asm_defines: &[QEMU_SMP_ASM],

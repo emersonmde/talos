@@ -1,6 +1,6 @@
 use crate::runtime_console::{self, ConsoleInputBackend, ConsoleInputPollOutcome};
 
-pub const CANONICAL_LINE_CAPACITY: usize = 8;
+pub const CANONICAL_LINE_CAPACITY: usize = 16;
 pub const CANONICAL_ECHO_CAPACITY: usize = 32;
 pub const CONTROL_EVENT_CAPACITY: usize = 8;
 pub const POLLING_RX_WAIT_LIMIT: usize = 2_000_000;
@@ -398,13 +398,13 @@ mod tests {
     use super::*;
 
     struct ScriptedInput {
-        bytes: [u8; 16],
+        bytes: [u8; 32],
         len: usize,
         pos: usize,
     }
 
     impl ScriptedInput {
-        const fn new(bytes: [u8; 16], len: usize) -> Self {
+        const fn new(bytes: [u8; 32], len: usize) -> Self {
             Self { bytes, len, pos: 0 }
         }
     }
@@ -484,12 +484,12 @@ mod tests {
     fn line_discipline_reports_buffer_limit_without_implicit_timeout() {
         let mut tty = TtyLineDiscipline::canonical_lite();
 
-        for byte in b"abcdefgh" {
+        for byte in b"abcdefghijklmnop" {
             assert_eq!(tty.process_byte(*byte), TtyInputOutcome::Pending);
         }
-        assert_eq!(tty.process_byte(b'i'), TtyInputOutcome::BufferLimit);
+        assert_eq!(tty.process_byte(b'q'), TtyInputOutcome::BufferLimit);
 
-        assert_eq!(tty.line(), b"abcdefgh");
+        assert_eq!(tty.line(), b"abcdefghijklmnop");
         assert!(tty.truncated());
         assert!(!tty.terminated());
     }
@@ -516,9 +516,10 @@ mod tests {
             ScriptedInput::new(
                 [
                     b'a', b'b', b'X', 0x08, b'c', b'Y', 0x7f, b'd', 0x03, b'e', b'f', b'g', b'h',
-                    b'i', b'\r', 0,
+                    b'i', b'j', b'k', b'l', b'm', b'n', b'o', b'p', b'q', b'\r', 0, 0, 0, 0, 0, 0,
+                    0, 0, 0,
                 ],
-                15,
+                23,
             ),
             8,
         );
@@ -526,9 +527,9 @@ mod tests {
         assert!(result.passed());
         assert_eq!(result.outcome(), PollingTtyRxOutcome::LineComplete);
         assert_eq!(result.outcome_name(), "line-complete");
-        assert_eq!(result.line(), b"abcdefgh");
-        assert_eq!(result.echo(), b"abX\x08 \x08cY\x08 \x08defgh\r\n");
-        assert_eq!(result.raw_bytes(), 15);
+        assert_eq!(result.line(), b"abcdefghijklmnop");
+        assert_eq!(result.echo(), b"abX\x08 \x08cY\x08 \x08defghijklmnop\r\n");
+        assert_eq!(result.raw_bytes(), 23);
         assert_eq!(result.backspaces(), 1);
         assert_eq!(result.deletes(), 1);
         assert!(result.truncated());
@@ -537,7 +538,7 @@ mod tests {
 
     #[test_case]
     fn polling_rx_diagnostic_reports_bounded_timeout_without_input() {
-        let result = run_polling_rx_diagnostic_with_limit(ScriptedInput::new([0; 16], 0), 2);
+        let result = run_polling_rx_diagnostic_with_limit(ScriptedInput::new([0; 32], 0), 2);
 
         assert!(!result.passed());
         assert!(result.timed_out());

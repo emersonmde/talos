@@ -7,7 +7,7 @@ use crate::{
 
 pub const LOCAL_COMMAND_LOOP_VERSION: &str = "phase10.1-kernel-builtins-v1";
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
-pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 3;
+pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 4;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum LocalCommandStatus {
@@ -381,23 +381,27 @@ fn dispatch_local_command(
             write_line(sink, responses, "talos: empty-command")?;
             return Ok(LocalCommandStatus::Empty);
         }
-        Err(ParseLocalCommandError::UnexpectedArgument) => {
-            write_line(sink, responses, "talos: unexpected-argument")?;
-            return Ok(LocalCommandStatus::UnexpectedArgument);
-        }
         Err(ParseLocalCommandError::Invalid) => {
             write_line(sink, responses, "talos: parse-error")?;
             return Ok(LocalCommandStatus::ParseError);
         }
     };
 
-    match command {
+    match command.name {
         "help" => {
+            if command.arguments.is_some() {
+                write_line(sink, responses, "talos: unexpected-argument")?;
+                return Ok(LocalCommandStatus::UnexpectedArgument);
+            }
             write_line(sink, responses, "talos: ok help")?;
-            write_line(sink, responses, "talos: commands help status stdio")?;
+            write_line(sink, responses, "talos: commands help status stdio echo")?;
             Ok(LocalCommandStatus::Handled)
         }
         "status" => {
+            if command.arguments.is_some() {
+                write_line(sink, responses, "talos: unexpected-argument")?;
+                return Ok(LocalCommandStatus::UnexpectedArgument);
+            }
             write_line(sink, responses, "talos: ok status")?;
             write_parts_line(
                 sink,
@@ -413,6 +417,10 @@ fn dispatch_local_command(
             Ok(LocalCommandStatus::Handled)
         }
         "stdio" => {
+            if command.arguments.is_some() {
+                write_line(sink, responses, "talos: unexpected-argument")?;
+                return Ok(LocalCommandStatus::UnexpectedArgument);
+            }
             write_line(sink, responses, "talos: ok stdio")?;
             write_stdio_descriptor_line(sink, responses, posix::STDIN_FD)?;
             write_stdio_descriptor_line(sink, responses, posix::STDOUT_FD)?;
@@ -442,6 +450,10 @@ fn dispatch_local_command(
                 responses,
                 &["talos: descriptor-backed-output=", marker],
             )?;
+            Ok(LocalCommandStatus::Handled)
+        }
+        "echo" => {
+            write_line(sink, responses, command.arguments.unwrap_or(""))?;
             Ok(LocalCommandStatus::Handled)
         }
         _ => {
@@ -475,11 +487,16 @@ fn write_stdio_descriptor_line(
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 enum ParseLocalCommandError {
     Empty,
-    UnexpectedArgument,
     Invalid,
 }
 
-fn parse_local_command(line: &[u8]) -> Result<&str, ParseLocalCommandError> {
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+struct ParsedLocalCommand<'a> {
+    name: &'a str,
+    arguments: Option<&'a str>,
+}
+
+fn parse_local_command(line: &[u8]) -> Result<ParsedLocalCommand<'_>, ParseLocalCommandError> {
     let line = core::str::from_utf8(line).map_err(|_| ParseLocalCommandError::Invalid)?;
     let bytes = line.as_bytes();
     let mut start = 0usize;
@@ -502,11 +519,21 @@ fn parse_local_command(line: &[u8]) -> Result<&str, ParseLocalCommandError> {
     while next < bytes.len() && is_space(bytes[next]) {
         next += 1;
     }
-    if next != bytes.len() {
-        return Err(ParseLocalCommandError::UnexpectedArgument);
-    }
 
-    Ok(&line[start..end])
+    let mut argument_end = bytes.len();
+    while argument_end > next && is_space(bytes[argument_end - 1]) {
+        argument_end -= 1;
+    }
+    let arguments = if next == argument_end {
+        None
+    } else {
+        Some(&line[next..argument_end])
+    };
+
+    Ok(ParsedLocalCommand {
+        name: &line[start..end],
+        arguments,
+    })
 }
 
 const fn is_space(byte: u8) -> bool {
@@ -651,16 +678,56 @@ mod tests {
         assert_eq!(result.response_lines(), 2);
         assert_eq!(result.raw_bytes(), 5);
         assert_eq!(result.controls(), 0);
-        assert_eq!(DEFAULT_LOCAL_COMMAND_COUNT, 3);
+        assert_eq!(DEFAULT_LOCAL_COMMAND_COUNT, 4);
         assert_eq!(
             sink.as_str(),
-            "talos> talos: ok help\ntalos: commands help status stdio\n"
+            "talos> talos: ok help\ntalos: commands help status stdio echo\n"
         );
     }
 
     #[test_case]
-    fn local_command_loop_reports_descriptor_backed_stdio() {
+    fn local_command_loop_dispatches_kernel_backed_echo_argument() {
+        let input = ScriptedInput::new(
+            [
+                b'e', b'c', b'h', b'o', b' ', b'h', b'e', b'l', b'l', b'o', b'\r', 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            ],
+            11,
+        );
+        let mut backend = CaptureSink::new();
+        let result = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            run_one_descriptor_backed_serial_command(&mut io).unwrap()
+        };
+
+        assert_eq!(result.line(), b"echo hello");
+        assert_eq!(result.status(), LocalCommandStatus::Handled);
+        assert_eq!(result.response_lines(), 1);
+        assert_eq!(backend.as_str(), "talos> hello\n");
+    }
+
+    #[test_case]
+    fn local_command_loop_rejects_arguments_for_non_echo_builtins() {
         let mut input = ScriptedInput::new(
+            [
+                b's', b't', b'a', b't', b'u', b's', b' ', b'n', b'o', b'w', b'\r', 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            ],
+            11,
+        );
+        let mut sink = CaptureSink::new();
+        let result = run_one_serial_command(&mut input, &mut sink).unwrap();
+
+        assert_eq!(result.line(), b"status now");
+        assert_eq!(result.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(result.response_lines(), 1);
+        assert_eq!(sink.as_str(), "talos> talos: unexpected-argument\n");
+    }
+
+    #[test_case]
+    fn local_command_loop_reports_descriptor_backed_stdio() {
+        let input = ScriptedInput::new(
             [
                 b's', b't', b'd', b'i', b'o', b'\r', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -718,8 +785,11 @@ talos: descriptor-backed-output=true\n"
     #[test_case]
     fn local_command_loop_reports_input_and_response_failures() {
         let mut truncated_input = ScriptedInput::new(
-            *b"abcdefghi\r\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
-            10,
+            [
+                b'a', b'b', b'c', b'd', b'e', b'f', b'g', b'h', b'i', b'j', b'k', b'l', b'm', b'n',
+                b'o', b'p', b'q', b'\r', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            ],
+            18,
         );
         let mut sink = CaptureSink::new();
         let result = run_one_serial_command(&mut truncated_input, &mut sink).unwrap();

@@ -404,7 +404,7 @@ mod tests {
         assert_eq!(result.response_lines, 6);
         assert_eq!(
             sink.as_str(),
-            "diag: ok status\ndiag: version phase5.3-contract-v1\ndiag: runtime-console runtime-console0\ndiag: tty canonical-lite line-capacity 8\ndiag: command-count 3\ndiag: commands help list status\n"
+            "diag: ok status\ndiag: version phase5.3-contract-v1\ndiag: runtime-console runtime-console0\ndiag: tty canonical-lite line-capacity 16\ndiag: command-count 3\ndiag: commands help list status\n"
         );
     }
 

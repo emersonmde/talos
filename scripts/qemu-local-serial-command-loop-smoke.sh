@@ -12,6 +12,7 @@ EVIDENCE_LOG="${TALOS_QEMU_LOCAL_COMMAND_LOOP_EVIDENCE_LOG:-$EVIDENCE_DIR/qemu-l
 PORT="${TALOS_QEMU_LOCAL_COMMAND_LOOP_PORT:-54324}"
 LABEL="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LABEL:-qemu-local-serial-command-loop}"
 CLASSIFICATION="${TALOS_QEMU_LOCAL_COMMAND_LOOP_CLASSIFICATION:-qemu-local-serial-command-loop-complete}"
+ECHO_COMMAND_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_ECHO_COMMAND_SMOKE:-0}"
 
 script_dir="$(CDPATH= cd "$(dirname "$0")" && pwd)"
 . "$script_dir/objcopy-tool.sh"
@@ -78,14 +79,28 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                 ;;
             *"$LABEL: ready command=3"*)
                 if [ "$sent" -eq 3 ]; then
-                    printf '\r' >&3
+                    if [ "$ECHO_COMMAND_SMOKE" -eq 1 ]; then
+                        printf 'echo hello\r' >&3
+                    else
+                        printf '\r' >&3
+                    fi
                     sent=4
                 fi
                 ;;
             *"$LABEL: ready command=4"*)
                 if [ "$sent" -eq 4 ]; then
-                    printf 'bogus\r' >&3
+                    if [ "$ECHO_COMMAND_SMOKE" -eq 1 ]; then
+                        printf '\r' >&3
+                    else
+                        printf 'bogus\r' >&3
+                    fi
                     sent=5
+                fi
+                ;;
+            *"$LABEL: ready command=5"*)
+                if [ "$sent" -eq 5 ]; then
+                    printf 'bogus\r' >&3
+                    sent=6
                 fi
                 ;;
         esac
@@ -105,9 +120,12 @@ grep -q "$LABEL: ready command=1" "$LOG_FILE"
 grep -q "$LABEL: ready command=2" "$LOG_FILE"
 grep -q "$LABEL: ready command=3" "$LOG_FILE"
 grep -q "$LABEL: ready command=4" "$LOG_FILE"
+if [ "$ECHO_COMMAND_SMOKE" -eq 1 ]; then
+    grep -q "$LABEL: ready command=5" "$LOG_FILE"
+fi
 grep -q "talos> help" "$LOG_FILE"
 grep -q "talos: ok help" "$LOG_FILE"
-grep -q "talos: commands help status stdio" "$LOG_FILE"
+grep -q "talos: commands help status stdio echo" "$LOG_FILE"
 grep -q "$LABEL: line command=0 hex=68 65 6c 70" "$LOG_FILE"
 grep -q "$LABEL: dispatch command=0 status=handled responses=2" "$LOG_FILE"
 grep -q "talos> status" "$LOG_FILE"
@@ -126,6 +144,20 @@ grep -q "talos: descriptor-backed-input=true" "$LOG_FILE"
 grep -q "talos: descriptor-backed-output=true" "$LOG_FILE"
 grep -q "$LABEL: line command=2 hex=73 74 64 69 6f" "$LOG_FILE"
 grep -q "$LABEL: dispatch command=2 status=handled responses=7" "$LOG_FILE"
+if [ "$ECHO_COMMAND_SMOKE" -eq 1 ]; then
+    grep -q "talos> echo hello" "$LOG_FILE"
+    grep -q "^hello" "$LOG_FILE"
+    grep -q "$LABEL: line command=3 hex=65 63 68 6f 20 68 65 6c 6c 6f" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=3 status=handled responses=1" "$LOG_FILE"
+    grep -q "talos: empty-command" "$LOG_FILE"
+    grep -q "$LABEL: line command=4 hex=" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=4 status=empty-command responses=1" "$LOG_FILE"
+    grep -q "talos> bogus" "$LOG_FILE"
+    grep -q "talos: unknown-command" "$LOG_FILE"
+    grep -q "$LABEL: line command=5 hex=62 6f 67 75 73" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=5 status=unknown-command responses=1" "$LOG_FILE"
+    grep -q "$LABEL: final participants=6 expected=6 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+else
 grep -q "talos: empty-command" "$LOG_FILE"
 grep -q "$LABEL: line command=3 hex=" "$LOG_FILE"
 grep -q "$LABEL: dispatch command=3 status=empty-command responses=1" "$LOG_FILE"
@@ -133,8 +165,9 @@ grep -q "talos> bogus" "$LOG_FILE"
 grep -q "talos: unknown-command" "$LOG_FILE"
 grep -q "$LABEL: line command=4 hex=62 6f 67 75 73" "$LOG_FILE"
 grep -q "$LABEL: dispatch command=4 status=unknown-command responses=1" "$LOG_FILE"
+    grep -q "$LABEL: final participants=5 expected=5 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+fi
 grep -q "$LABEL: ready-for-next prompt=true" "$LOG_FILE"
-grep -q "$LABEL: final participants=5 expected=5 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
 grep -q "$LABEL: PASS" "$LOG_FILE"
 
 mkdir -p "$EVIDENCE_DIR"
