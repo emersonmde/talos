@@ -3772,11 +3772,18 @@ visible `/` output, and next-prompt readiness. This is not accepted `cd`,
 VFS lookup, directory listing, userspace shell execution, filesystem-backed
 command lookup, networking, or SSH.
 
-The next smallest feature-led Phase 10 task should improve local serial line
-editing by accepting Backspace/Delete before Enter, dispatching the corrected
-line through the existing descriptor-backed command path, printing the expected
-visible response, and returning to a ready prompt. Old Phase 8 proof-only work
-remains paused unless it directly unblocks this local interactivity feature.
+Retained QEMU/substitute line-editing evidence is at
+tasks/evidence/2026-05-31-qemu-local-line-editing-core/qemu-local-line-editing-smoke.log.
+The local command-loop core now records Backspace 0x08 and Delete 0x7f erase
+telemetry and proves both bytes remove the previous editable byte before
+dispatch. The accepted transcript types pwx, erases x, completes pwd, prints
+visible / through descriptor-backed stdout, preserves help/status/stdio/echo/
+empty/unknown/unexpected-argument behavior, and returns to a ready prompt. This
+is not accepted termios, cursor addressing, history, broad escape parsing,
+userspace shell execution, process spawning, filesystem-backed command lookup,
+networking, or SSH. The next feature-led task is serialized Pi 5 proof for the
+same local line-editing behavior; old Phase 8 proof-only work remains paused
+unless it directly unblocks this local interactivity feature.
 
 Milestone 10.1: Local Shell
 

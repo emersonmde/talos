@@ -9251,6 +9251,45 @@ ADR template:
   SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
   blocked until later explicit tasks accept them.
 
+## 2026-05-31 - Phase 10 Local Line-Editing Core Accepted
+
+- Status: accepted as the Phase 10 QEMU/substitute local line-editing core.
+  No Pi 5 archive publication, hardwareTestLock acquisition, hardware run,
+  userspace shell execution, process spawning, filesystem lookup, termios,
+  cursor addressing, history, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache-driver policy changed in this task.
+- Context: The accepted local command-loop frontier had descriptor-backed
+  serial input/output, kernel-backed help/status/stdio/echo/pwd built-ins, and
+  prompt readiness. The next smallest user-visible feature was correcting a
+  mistyped command line before Enter dispatches it.
+- Decision: Accept phase10-local-line-editing-core-20260531. The command-loop
+  result now carries Backspace and Delete erase counts from the canonical-lite
+  TTY path into feature transcripts. The QEMU/substitute line-editing scenario
+  proves both Backspace 0x08 and Delete 0x7f remove the previous editable byte
+  before dispatch by typing pwx, erasing x, completing pwd, printing visible /,
+  and returning to a ready talos> prompt.
+- Evidence level: unit tests plus QEMU/substitute feature transcript retained
+  at
+  tasks/evidence/2026-05-31-qemu-local-line-editing-core/qemu-local-line-editing-smoke.log.
+  The transcript includes descriptor-backed fd0/stdout markers, corrected pwd
+  dispatch after both erase bytes, echo hello, empty input, unknown command,
+  unexpected argument, final qemu-local-line-editing-complete classification,
+  and PASS.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test --quiet passed; scripts/qemu-local-line-editing-smoke.sh --quiet passed;
+  scripts/qemu-local-pwd-command-smoke.sh --quiet passed;
+  scripts/qemu-local-echo-command-smoke.sh --quiet passed;
+  scripts/qemu-local-command-stdin-descriptor-smoke.sh --quiet passed;
+  scripts/qemu-local-command-stdio-bridge-smoke.sh --quiet passed; git diff
+  --check passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: Talos now has QEMU/substitute evidence for bounded local line
+  editing on descriptor-backed serial input. Pi 5 proof, termios, cursor
+  addressing, history, readline behavior, userspace shell execution, process
+  spawning, filesystem-backed command lookup, path traversal, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
+  deferred to explicit later tasks.
+
 ## 2026-05-30 - Phase 8 Live Address-Space Activation Source Inventory Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 live address-space

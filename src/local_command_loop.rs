@@ -252,6 +252,8 @@ pub struct LocalCommandCycleResult {
     status: LocalCommandStatus,
     response_lines: usize,
     raw_bytes: usize,
+    backspaces: usize,
+    deletes: usize,
     truncated: bool,
     controls: usize,
 }
@@ -275,6 +277,14 @@ impl LocalCommandCycleResult {
 
     pub const fn raw_bytes(&self) -> usize {
         self.raw_bytes
+    }
+
+    pub const fn backspaces(&self) -> usize {
+        self.backspaces
+    }
+
+    pub const fn deletes(&self) -> usize {
+        self.deletes
     }
 
     pub const fn truncated(&self) -> bool {
@@ -366,6 +376,8 @@ fn dispatch_completed_line(
         status,
         response_lines,
         raw_bytes: input_result.raw_bytes(),
+        backspaces: input_result.backspaces(),
+        deletes: input_result.deletes(),
         truncated: input_result.truncated(),
         controls: input_result.controls().len(),
     })
@@ -740,6 +752,57 @@ mod tests {
         assert_eq!(result.status(), LocalCommandStatus::Handled);
         assert_eq!(result.response_lines(), 1);
         assert_eq!(backend.as_str(), "talos> /\n");
+    }
+
+    #[test_case]
+    fn local_command_loop_applies_backspace_and_delete_before_dispatch() {
+        let backspace_input = ScriptedInput::new(
+            [
+                b'p', b'w', b'x', 0x08, b'd', b'\r', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            ],
+            6,
+        );
+        let mut backspace_backend = CaptureSink::new();
+        let backspace_result = {
+            let mut io = DescriptorBackedLocalCommandIo::new_inherited_stdio(
+                backspace_input,
+                &mut backspace_backend,
+            )
+            .unwrap();
+            run_one_descriptor_backed_serial_command(&mut io).unwrap()
+        };
+
+        assert_eq!(backspace_result.line(), b"pwd");
+        assert_eq!(backspace_result.status(), LocalCommandStatus::Handled);
+        assert_eq!(backspace_result.response_lines(), 1);
+        assert_eq!(backspace_result.backspaces(), 1);
+        assert_eq!(backspace_result.deletes(), 0);
+        assert_eq!(backspace_backend.as_str(), "talos> /\n");
+
+        let delete_input = ScriptedInput::new(
+            [
+                b'p', b'w', b'x', 0x7f, b'd', b'\r', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            ],
+            6,
+        );
+        let mut delete_backend = CaptureSink::new();
+        let delete_result = {
+            let mut io = DescriptorBackedLocalCommandIo::new_inherited_stdio(
+                delete_input,
+                &mut delete_backend,
+            )
+            .unwrap();
+            run_one_descriptor_backed_serial_command(&mut io).unwrap()
+        };
+
+        assert_eq!(delete_result.line(), b"pwd");
+        assert_eq!(delete_result.status(), LocalCommandStatus::Handled);
+        assert_eq!(delete_result.response_lines(), 1);
+        assert_eq!(delete_result.backspaces(), 0);
+        assert_eq!(delete_result.deletes(), 1);
+        assert_eq!(delete_backend.as_str(), "talos> /\n");
     }
 
     #[test_case]
