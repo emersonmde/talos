@@ -12,6 +12,48 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-31 - Phase 8 QEMU Kernel-Half Descriptor-Image Smoke Core Accepted
+
+- Status: accepted as the Milestone 8.3 QEMU/substitute evidence for the
+  non-installed KernelHalfDescriptorImage boundary. No Pi 5 hardware run, boot
+  archive publication, hardware-lock acquisition, live TTBR0_EL1/TTBR1_EL1/
+  TCR_EL1/MAIR_EL1/SCTLR_EL1 mutation, ASID allocation, live TLB mutation,
+  activation DSB/ISB, lower-EL ERET, scheduler runnable publication, process
+  lifecycle, shell behavior, descriptor-backed filesystem syscalls, writable
+  filesystem, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted smoke plan selected
+  qemu_kernel_half_descriptor_image_smoke and required retained evidence for
+  copied input lineage, non-installed TTBR1 descriptor-image records,
+  deterministic rejection, teardown, and zero live side effects after the core
+  implementation commit 3e0e836.
+- Decision: Accept
+  phase8-qemu-kernel-half-descriptor-image-smoke-core-20260531. The task adds
+  the QEMU-only scenario wiring, retained script, and evidence log proving
+  phase8-kernel-half-descriptor-image-v1 with policy
+  ttbr1-shared-privileged-kernel-root-descriptor-image-v1. The evidence
+  records TTBR0 materialized-root provenance, model-owned TTBR1 kernel-root
+  image intent, required kernel coverage, privileged-only normal/device
+  descriptor attributes, root/table ownership, no-partial-image errors,
+  idempotent teardown, and zero live activation side effects.
+- Evidence level: QEMU/substitute boot smoke, unit tests, static inspection,
+  and documentation validation. Retained evidence path:
+  tasks/evidence/2026-05-31-qemu-kernel-half-descriptor-image-smoke-core/qemu-kernel-half-descriptor-image-smoke.log.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test passed with 324 no_std tests;
+  scripts/qemu-kernel-half-descriptor-image-smoke.sh passed and retained the
+  required final qemu-kernel-half-descriptor-image-smoke-complete/PASS lines;
+  git diff --check passed; mdbook build passed; git diff --cached --check
+  passed before commit.
+- Consequences: The next bounded task should be
+  phase8-kernel-half-descriptor-image-closeout-checkpoint-20260531. Live
+  register mutation, ASID/TLB/barrier activation, lower-EL ERET, scheduler
+  runnable publication, process lifecycle, startup ABI expansion,
+  descriptor-backed filesystem syscalls, Pi 5 hardware proof, shell,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
+  policy remain blocked until later explicit tasks accept their contracts and
+  gates.
+
 ## 2026-05-31 - Phase 8 Kernel-Half Descriptor-Image Core Accepted
 
 - Status: accepted as the Milestone 8.3 target-independent kernel-half

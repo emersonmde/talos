@@ -417,6 +417,20 @@ activation, lower-EL ERET, scheduler publication, process lifecycle,
 filesystem syscall expansion, Pi 5 hardware proof, shell behavior,
 networking, and SSH remain blocked. The next bounded task is
 phase8-qemu-kernel-half-descriptor-image-smoke-core-20260531.
+The QEMU/substitute kernel-half descriptor-image smoke core is now accepted.
+It wires qemu_kernel_half_descriptor_image_smoke, retains the planned log at
+tasks/evidence/2026-05-31-qemu-kernel-half-descriptor-image-smoke-core/qemu-kernel-half-descriptor-image-smoke.log,
+and proves copied input lineage, TTBR0 materialized-root provenance without a
+write, TTBR1 model-owned kernel-root image intent without installation,
+required kernel coverage, privileged-only normal/device descriptor
+attributes, model-owned root/table leases, deterministic no-partial-image
+rejections, idempotent teardown, and zero live activation/lower-EL/scheduler/
+process/descriptor-table side effects. Pi 5 hardware was not used and the
+hardware lock remained untouched. Live register mutation, ASID/TLB/barrier
+activation, lower-EL ERET, scheduler publication, process lifecycle,
+filesystem syscall expansion, Pi 5 proof, shell behavior, networking, and SSH
+remain blocked. The next bounded task is
+phase8-kernel-half-descriptor-image-closeout-checkpoint-20260531.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -3375,6 +3389,17 @@ Milestone 8.3: Program Loader
   expansion, Pi 5 hardware proof, shell behavior, networking, and SSH remain
   blocked. The next bounded task is
   phase8-qemu-kernel-half-descriptor-image-smoke-core-20260531.
+- Phase 8 QEMU/substitute kernel-half descriptor-image smoke core is
+  accepted. It wires qemu_kernel_half_descriptor_image_smoke and retains the
+  planned log proving descriptor-image construction records, deterministic
+  no-partial-image rejection, idempotent teardown, and zero live
+  TTBR/TCR/MAIR/SCTLR/TLB/barrier/lower-EL/scheduler/process/descriptor-table
+  side effects. Pi 5 hardware was not used and hardwareTestLock remained
+  unlocked/restored. Live register mutation, ASID/TLB/barrier activation,
+  lower-EL ERET, scheduler publication, process lifecycle, filesystem syscall
+  expansion, Pi 5 proof, shell behavior, networking, and SSH remain blocked.
+  The next bounded task is
+  phase8-kernel-half-descriptor-image-closeout-checkpoint-20260531.
 
 Acceptance criteria:
 

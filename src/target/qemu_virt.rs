@@ -245,6 +245,53 @@ use crate::{
     },
     scheduler::ProcessOwnerId,
 };
+#[cfg(talos_boot_scenario = "qemu_kernel_half_descriptor_image_smoke")]
+use crate::{
+    initial_process_launch::{
+        INITIAL_PROCESS_LAUNCH_BOUNDARY_IDENTITY, InitialProcessLaunchRequest,
+        prepare_initial_process_launch,
+    },
+    initial_user_stack::{
+        INITIAL_USER_STACK_BOUNDARY_IDENTITY, InitialUserStackLeaseSource, InitialUserStackRequest,
+        plan_initial_user_stack,
+    },
+    initramfs::{PHASE8_INIT_PATH, phase8_readonly_initramfs_fixture},
+    kernel_half_descriptor_image::{
+        KERNEL_HALF_DESCRIPTOR_IMAGE_BOUNDARY_IDENTITY, KERNEL_HALF_DESCRIPTOR_IMAGE_POLICY,
+        KERNEL_HALF_DESCRIPTOR_IMAGE_READY, KernelHalfDescriptorImageLeaseSource,
+        KernelHalfDescriptorImageRequest, TTBR0_ROOT_MATERIALIZED_PROVENANCE_ONLY,
+        TTBR1_OWNED_KERNEL_ROOT_IMAGE, construct_kernel_half_descriptor_image,
+    },
+    kernel_half_reachability::{
+        KERNEL_HALF_REACHABILITY_BOUNDARY_IDENTITY, KERNEL_HALF_REACHABILITY_POLICY,
+        KernelHalfReachabilityLeaseSource, KernelHalfReachabilityPlan,
+        KernelHalfReachabilityRequest, preflight_kernel_half_reachability,
+    },
+    live_address_space_activation::{
+        ASID_ALLOCATION_BLOCKED, BARRIER_SEQUENCE_PLANNED_ONLY,
+        LIVE_ADDRESS_SPACE_ACTIVATION_BOUNDARY_IDENTITY, LIVE_REGISTER_SEQUENCE_BLOCKED,
+        LiveAddressSpaceActivationLeaseSource, LiveAddressSpaceActivationPlan,
+        LiveAddressSpaceActivationRequest, SCTLR_MUTATION_BLOCKED, TLB_INVALIDATION_BLOCKED,
+        preflight_live_address_space_activation,
+    },
+    posix::{PosixError, UserMappingPermissions},
+    process_address_space::{
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY, ProcessAddressSpace, ProcessAddressSpaceId,
+        ProcessAddressSpaceLeaseSource, install_process_address_space,
+    },
+    process_install::{
+        PROCESS_INSTALL_BOUNDARY_IDENTITY, ProcessImageInstallPlan, plan_process_image_install,
+    },
+    process_page_table_materialization::{
+        PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY, ProcessMaterializationRequest,
+        ProcessPageTableMaterialization, ProcessPageTableMaterializationLeaseSource,
+        materialize_process_page_tables,
+    },
+    program_loader::{
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY, ProgramImagePlan, plan_phase8_init_image,
+    },
+    scheduler::ProcessOwnerId,
+};
 #[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
 use crate::{
     initramfs::{
@@ -15053,4 +15100,626 @@ fn kernel_half_reachability_image_with_identity(
         image.memory_end(),
         image.memory_footprint(),
     )
+}
+
+#[cfg(talos_boot_scenario = "qemu_kernel_half_descriptor_image_smoke")]
+pub fn run_kernel_half_descriptor_image_smoke() -> bool {
+    crate::println!("qemu-kernel-half-descriptor-image-smoke: start");
+
+    let (
+        success_ok,
+        root_ok,
+        coverage_ok,
+        permissions_ok,
+        attributes_ok,
+        ownership_ok,
+        compatibility_ok,
+        blocked_ok,
+        effects_ok,
+    ) = kernel_half_descriptor_image_report_success();
+    let teardown_ok = kernel_half_descriptor_image_report_teardown();
+    let bad_reachability_ok = kernel_half_descriptor_image_report_error(
+        "bad-reachability-plan",
+        KernelHalfDescriptorImageRequest::BadReachabilityPlan,
+        KernelHalfDescriptorImageLeaseSource::for_descriptor_image(),
+        PosixError::InvalidArgument,
+    );
+    let lineage_ok = kernel_half_descriptor_image_report_error(
+        "lineage-mismatch",
+        KernelHalfDescriptorImageRequest::LineageMismatch,
+        KernelHalfDescriptorImageLeaseSource::for_descriptor_image(),
+        PosixError::InvalidArgument,
+    );
+    let missing_coverage_ok = kernel_half_descriptor_image_report_error(
+        "missing-kernel-coverage",
+        KernelHalfDescriptorImageRequest::MissingKernelCoverage,
+        KernelHalfDescriptorImageLeaseSource::for_descriptor_image(),
+        PosixError::InvalidArgument,
+    );
+    let forbidden_ok = kernel_half_descriptor_image_report_error(
+        "forbidden-el0-access",
+        KernelHalfDescriptorImageRequest::ForbiddenEl0Access,
+        KernelHalfDescriptorImageLeaseSource::for_descriptor_image(),
+        PosixError::AccessDenied,
+    );
+    let writable_text_ok = kernel_half_descriptor_image_report_error(
+        "writable-text",
+        KernelHalfDescriptorImageRequest::WritableText,
+        KernelHalfDescriptorImageLeaseSource::for_descriptor_image(),
+        PosixError::AccessDenied,
+    );
+    let executable_data_ok = kernel_half_descriptor_image_report_error(
+        "executable-data",
+        KernelHalfDescriptorImageRequest::ExecutableData,
+        KernelHalfDescriptorImageLeaseSource::for_descriptor_image(),
+        PosixError::AccessDenied,
+    );
+    let device_ok = kernel_half_descriptor_image_report_error(
+        "bad-device-attribute-intent",
+        KernelHalfDescriptorImageRequest::BadDeviceAttributeIntent,
+        KernelHalfDescriptorImageLeaseSource::for_descriptor_image(),
+        PosixError::AccessDenied,
+    );
+    let overlapping_ok = kernel_half_descriptor_image_report_error(
+        "overlapping-range",
+        KernelHalfDescriptorImageRequest::OverlappingRange,
+        KernelHalfDescriptorImageLeaseSource::for_descriptor_image(),
+        PosixError::InvalidArgument,
+    );
+    let resource_ok = kernel_half_descriptor_image_report_error(
+        "resource-exhaustion",
+        KernelHalfDescriptorImageRequest::ConstructOnly,
+        KernelHalfDescriptorImageLeaseSource::with_limits(1, 1, 1),
+        PosixError::NoMemory,
+    );
+    let unsupported_ok = kernel_half_descriptor_image_report_error(
+        "unsupported-topology",
+        KernelHalfDescriptorImageRequest::UnsupportedTopology,
+        KernelHalfDescriptorImageLeaseSource::for_descriptor_image(),
+        PosixError::NotSupported,
+    );
+    let live_activation_ok = kernel_half_descriptor_image_report_error(
+        "live-activation-request",
+        KernelHalfDescriptorImageRequest::LiveActivationRequest,
+        KernelHalfDescriptorImageLeaseSource::for_descriptor_image(),
+        PosixError::NotImplemented,
+    );
+    let no_partial_ok = kernel_half_descriptor_image_no_partial_state_visible();
+
+    let invalid_request_ok = lineage_ok && missing_coverage_ok && overlapping_ok;
+    let access_request_ok = forbidden_ok && writable_text_ok && executable_data_ok && device_ok;
+    let participants = u64::from(success_ok)
+        + u64::from(root_ok)
+        + u64::from(coverage_ok)
+        + u64::from(permissions_ok)
+        + u64::from(attributes_ok)
+        + u64::from(ownership_ok)
+        + u64::from(compatibility_ok)
+        + u64::from(blocked_ok)
+        + u64::from(effects_ok)
+        + u64::from(teardown_ok)
+        + u64::from(bad_reachability_ok)
+        + u64::from(invalid_request_ok)
+        + u64::from(access_request_ok)
+        + u64::from(resource_ok)
+        + u64::from(unsupported_ok)
+        + u64::from(live_activation_ok)
+        + u64::from(no_partial_ok);
+    let errors = 17 - participants;
+    let classification = if participants == 17 && errors == 0 {
+        "qemu-kernel-half-descriptor-image-smoke-complete"
+    } else {
+        "qemu-kernel-half-descriptor-image-smoke-failed"
+    };
+
+    crate::println!(
+        "qemu-kernel-half-descriptor-image-smoke: final participants={} expected=17 errors={} classification={}",
+        participants,
+        errors,
+        classification
+    );
+    if participants == 17 && errors == 0 {
+        crate::println!("qemu-kernel-half-descriptor-image-smoke: PASS");
+        true
+    } else {
+        crate::println!("qemu-kernel-half-descriptor-image-smoke: FAIL");
+        false
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_kernel_half_descriptor_image_smoke")]
+fn kernel_half_descriptor_image_report_success()
+-> (bool, bool, bool, bool, bool, bool, bool, bool, bool) {
+    let Ok((
+        image,
+        _install_plan,
+        address_space,
+        materialization,
+        _activation_plan,
+        reachability_plan,
+    )) = kernel_half_descriptor_image_valid_fixture()
+    else {
+        kernel_half_descriptor_image_report_empty_success();
+        return (
+            false, false, false, false, false, false, false, false, false,
+        );
+    };
+    let mut lease_source = KernelHalfDescriptorImageLeaseSource::for_descriptor_image();
+    let Ok(descriptor_image) = construct_kernel_half_descriptor_image(
+        reachability_plan,
+        materialization,
+        KernelHalfDescriptorImageRequest::ConstructOnly,
+        &mut lease_source,
+    ) else {
+        kernel_half_descriptor_image_report_empty_success();
+        return (
+            false, false, false, false, false, false, false, false, false,
+        );
+    };
+
+    crate::println!(
+        "qemu-kernel-half-descriptor-image-smoke: fixture name={} path=/bin/init source-digest={:#x} install-boundary={} address-space-boundary={} materialization-boundary={} launch-boundary={} stack-boundary={} activation-boundary={} reachability-boundary={} descriptor-image-boundary={} descriptor-image-policy={}",
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        descriptor_image.source_digest(),
+        PROCESS_INSTALL_BOUNDARY_IDENTITY,
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY,
+        PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY,
+        INITIAL_PROCESS_LAUNCH_BOUNDARY_IDENTITY,
+        INITIAL_USER_STACK_BOUNDARY_IDENTITY,
+        LIVE_ADDRESS_SPACE_ACTIVATION_BOUNDARY_IDENTITY,
+        KERNEL_HALF_REACHABILITY_BOUNDARY_IDENTITY,
+        KERNEL_HALF_DESCRIPTOR_IMAGE_BOUNDARY_IDENTITY,
+        KERNEL_HALF_DESCRIPTOR_IMAGE_POLICY
+    );
+
+    let success_ok = descriptor_image.published()
+        && descriptor_image.boundary_identity() == KERNEL_HALF_DESCRIPTOR_IMAGE_BOUNDARY_IDENTITY
+        && descriptor_image.policy_identity() == KERNEL_HALF_DESCRIPTOR_IMAGE_POLICY
+        && descriptor_image.reachability_boundary_identity()
+            == KERNEL_HALF_REACHABILITY_BOUNDARY_IDENTITY
+        && descriptor_image.reachability_policy_identity() == KERNEL_HALF_REACHABILITY_POLICY
+        && descriptor_image.image_fixture_identity() == PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY
+        && descriptor_image.materialization_boundary_identity()
+            == PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY
+        && descriptor_image.source_path() == PHASE8_INIT_PATH
+        && descriptor_image.source_digest() == image.source_digest()
+        && descriptor_image.address_space_id() == address_space.id().raw()
+        && descriptor_image.materialization_id() == materialization.id();
+    crate::println!(
+        "qemu-kernel-half-descriptor-image-smoke: success output=KernelHalfDescriptorImage published={} installed={} copied-identities={} descriptor-image-boundary={} descriptor-image-policy={} ok={}",
+        descriptor_image.published(),
+        descriptor_image.side_effects().descriptor_image_installed(),
+        success_ok,
+        descriptor_image.boundary_identity(),
+        descriptor_image.policy_identity(),
+        success_ok
+    );
+
+    let root_ok = descriptor_image.ttbr0_root() == TTBR0_ROOT_MATERIALIZED_PROVENANCE_ONLY
+        && descriptor_image.ttbr0_root_token() == materialization.root().token().raw()
+        && descriptor_image.ttbr0_root_physical_frame() == materialization.root().physical_frame()
+        && !descriptor_image.ttbr0_written()
+        && descriptor_image.ttbr1_root() == TTBR1_OWNED_KERNEL_ROOT_IMAGE
+        && !descriptor_image.ttbr1_written()
+        && !descriptor_image.side_effects().descriptor_image_installed();
+    crate::println!(
+        "qemu-kernel-half-descriptor-image-smoke: root-policy ttbr0-root={} ttbr0-written={} ttbr1-root={} ttbr1-written={} descriptor-image-installed={} ok={}",
+        descriptor_image.ttbr0_root(),
+        descriptor_image.ttbr0_written(),
+        descriptor_image.ttbr1_root(),
+        descriptor_image.ttbr1_written(),
+        descriptor_image.side_effects().descriptor_image_installed(),
+        root_ok
+    );
+
+    let coverage = descriptor_image.coverage();
+    let coverage_ok = coverage.kernel_text()
+        && coverage.rodata()
+        && coverage.data()
+        && coverage.bss()
+        && coverage.vectors()
+        && coverage.active_stack()
+        && coverage.heap()
+        && coverage.page_frames()
+        && coverage.uart_mmio_diagnostics()
+        && coverage.scheduler_code_data()
+        && coverage.runtime_console()
+        && coverage.panic_fault_reporting();
+    crate::println!(
+        "qemu-kernel-half-descriptor-image-smoke: coverage kernel-text={} rodata={} data={} bss={} vectors={} active-stack={} heap={} page-frames={} uart-mmio-diagnostics={} scheduler-code-data={} runtime-console={} panic-fault-reporting={} ok={}",
+        coverage.kernel_text(),
+        coverage.rodata(),
+        coverage.data(),
+        coverage.bss(),
+        coverage.vectors(),
+        coverage.active_stack(),
+        coverage.heap(),
+        coverage.page_frames(),
+        coverage.uart_mmio_diagnostics(),
+        coverage.scheduler_code_data(),
+        coverage.runtime_console(),
+        coverage.panic_fault_reporting(),
+        coverage_ok
+    );
+
+    let permissions = descriptor_image.permissions();
+    let permissions_ok = permissions.text_exec_privileged_only()
+        && !permissions.rodata_write()
+        && !permissions.data_exec()
+        && !permissions.device_normal_memory()
+        && !permissions.el0_kernel_access()
+        && !permissions.wx_normal_memory();
+    crate::println!(
+        "qemu-kernel-half-descriptor-image-smoke: permissions text-exec=privileged-only rodata-write={} data-exec={} device-normal-memory={} el0-kernel-access={} wx-normal-memory={} ok={}",
+        permissions.rodata_write(),
+        permissions.data_exec(),
+        permissions.device_normal_memory(),
+        permissions.el0_kernel_access(),
+        permissions.wx_normal_memory(),
+        permissions_ok
+    );
+
+    let mut normal_inner_shareable = false;
+    let mut device_ngnre = false;
+    let mut af = true;
+    let mut user_denied = true;
+    let mut descriptor_index = 0;
+    while descriptor_index < descriptor_image.descriptor_record_count() {
+        let Some(record) = descriptor_image.descriptor_record(descriptor_index) else {
+            af = false;
+            user_denied = false;
+            break;
+        };
+        normal_inner_shareable |= record.normal_memory() && record.inner_shareable();
+        device_ngnre |= record.device_memory() && !record.normal_memory();
+        af &= record.access_flag();
+        user_denied &= !record.user_access() && record.privileged_only();
+        descriptor_index += 1;
+    }
+    let attributes_ok = normal_inner_shareable
+        && device_ngnre
+        && af
+        && user_denied
+        && descriptor_image.descriptor_record_count() == 12;
+    crate::println!(
+        "qemu-kernel-half-descriptor-image-smoke: attributes normal-memory={} device-memory={} af={} user-access={} exact-coverage={} ok={}",
+        if normal_inner_shareable {
+            "inner-shareable"
+        } else {
+            "missing"
+        },
+        if device_ngnre {
+            "device-nGnRE"
+        } else {
+            "missing"
+        },
+        af,
+        if user_denied { "denied" } else { "allowed" },
+        descriptor_image.descriptor_record_count() == 12,
+        attributes_ok
+    );
+
+    let ownership_ok = descriptor_image.root_lease().owner() == "model-owned"
+        && descriptor_image.table_lease_count() == 3
+        && !descriptor_image.root_lease().released()
+        && lease_source.outstanding_leases() == 16
+        && descriptor_image.descriptor_image_state() == KERNEL_HALF_DESCRIPTOR_IMAGE_READY;
+    crate::println!(
+        "qemu-kernel-half-descriptor-image-smoke: ownership root-lease={} table-leases={} live-table-borrowed=false input-records-owned=true rollback-ready=true ok={}",
+        descriptor_image.root_lease().owner(),
+        if descriptor_image.table_lease_count() == 3 {
+            "model-owned"
+        } else {
+            "incomplete"
+        },
+        ownership_ok
+    );
+
+    let compatibility_ok = descriptor_image.tcr_state() == reachability_plan.tcr_state()
+        && descriptor_image.mair_state() == reachability_plan.mair_state()
+        && descriptor_image.sctlr_state() == SCTLR_MUTATION_BLOCKED;
+    crate::println!(
+        "qemu-kernel-half-descriptor-image-smoke: compatibility tcr-state={} mair-state={} sctlr-state={} ok={}",
+        descriptor_image.tcr_state(),
+        descriptor_image.mair_state(),
+        descriptor_image.sctlr_state(),
+        compatibility_ok
+    );
+
+    let blocked_ok = descriptor_image.asid_state() == ASID_ALLOCATION_BLOCKED
+        && descriptor_image.tlb_state() == TLB_INVALIDATION_BLOCKED
+        && descriptor_image.barrier_state() == BARRIER_SEQUENCE_PLANNED_ONLY
+        && descriptor_image.live_register_sequence_state() == LIVE_REGISTER_SEQUENCE_BLOCKED
+        && !descriptor_image.lower_el_eret_state().is_empty()
+        && !descriptor_image.scheduler_publication_state().is_empty();
+    crate::println!(
+        "qemu-kernel-half-descriptor-image-smoke: blocked-states asid={} tlb={} barriers={} live-register-sequence={} lower-el-eret={} scheduler-publication={} ok={}",
+        descriptor_image.asid_state(),
+        descriptor_image.tlb_state(),
+        descriptor_image.barrier_state(),
+        descriptor_image.live_register_sequence_state(),
+        false,
+        false,
+        blocked_ok
+    );
+
+    let effects = descriptor_image.side_effects();
+    let effects_ok = !effects.ttbr_mutated()
+        && !effects.tcr_mutated()
+        && !effects.mair_mutated()
+        && !effects.sctlr_mutated()
+        && !effects.descriptor_image_installed()
+        && !effects.asid_allocated()
+        && !effects.tlb_mutated()
+        && !effects.live_dsb_isb()
+        && !effects.lower_el_eret()
+        && !effects.scheduler_published()
+        && !effects.process_table_mutated()
+        && !effects.descriptor_table_mutated();
+    crate::println!(
+        "qemu-kernel-half-descriptor-image-smoke: side-effects ttbr-mutated={} tcr-mutated={} mair-mutated={} sctlr-mutated={} descriptor-image-installed={} asid-allocated={} tlb-mutated={} live-dsb-isb={} lower-el-eret={} scheduler-published={} process-table-mutated={} descriptor-table-mutated={} ok={}",
+        effects.ttbr_mutated(),
+        effects.tcr_mutated(),
+        effects.mair_mutated(),
+        effects.sctlr_mutated(),
+        effects.descriptor_image_installed(),
+        effects.asid_allocated(),
+        effects.tlb_mutated(),
+        effects.live_dsb_isb(),
+        effects.lower_el_eret(),
+        effects.scheduler_published(),
+        effects.process_table_mutated(),
+        effects.descriptor_table_mutated(),
+        effects_ok
+    );
+
+    (
+        success_ok,
+        root_ok,
+        coverage_ok,
+        permissions_ok,
+        attributes_ok,
+        ownership_ok,
+        compatibility_ok,
+        blocked_ok,
+        effects_ok,
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_kernel_half_descriptor_image_smoke")]
+fn kernel_half_descriptor_image_report_empty_success() {
+    crate::println!(
+        "qemu-kernel-half-descriptor-image-smoke: fixture name={} path=/bin/init source-digest=0x0 install-boundary={} address-space-boundary={} materialization-boundary={} launch-boundary={} stack-boundary={} activation-boundary={} reachability-boundary={} descriptor-image-boundary={} descriptor-image-policy={}",
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        PROCESS_INSTALL_BOUNDARY_IDENTITY,
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY,
+        PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY,
+        INITIAL_PROCESS_LAUNCH_BOUNDARY_IDENTITY,
+        INITIAL_USER_STACK_BOUNDARY_IDENTITY,
+        LIVE_ADDRESS_SPACE_ACTIVATION_BOUNDARY_IDENTITY,
+        KERNEL_HALF_REACHABILITY_BOUNDARY_IDENTITY,
+        KERNEL_HALF_DESCRIPTOR_IMAGE_BOUNDARY_IDENTITY,
+        KERNEL_HALF_DESCRIPTOR_IMAGE_POLICY
+    );
+    crate::println!(
+        "qemu-kernel-half-descriptor-image-smoke: success output=KernelHalfDescriptorImage published=false installed=false copied-identities=false descriptor-image-boundary={} descriptor-image-policy={} ok=false",
+        KERNEL_HALF_DESCRIPTOR_IMAGE_BOUNDARY_IDENTITY,
+        KERNEL_HALF_DESCRIPTOR_IMAGE_POLICY
+    );
+}
+
+#[cfg(talos_boot_scenario = "qemu_kernel_half_descriptor_image_smoke")]
+fn kernel_half_descriptor_image_report_teardown() -> bool {
+    let Ok((
+        _image,
+        _install_plan,
+        _address_space,
+        materialization,
+        _activation_plan,
+        reachability_plan,
+    )) = kernel_half_descriptor_image_valid_fixture()
+    else {
+        crate::println!(
+            "qemu-kernel-half-descriptor-image-smoke: teardown phase=first descriptors-cleared=false root-released=false tables-released=false published=false input-records-owned=false already-destroyed=false ok=false"
+        );
+        crate::println!(
+            "qemu-kernel-half-descriptor-image-smoke: teardown phase=second descriptors-cleared=false root-released=false tables-released=false published=false already-destroyed=false ok=false"
+        );
+        return false;
+    };
+    let mut lease_source = KernelHalfDescriptorImageLeaseSource::for_descriptor_image();
+    let Ok(mut descriptor_image) = construct_kernel_half_descriptor_image(
+        reachability_plan,
+        materialization,
+        KernelHalfDescriptorImageRequest::ConstructOnly,
+        &mut lease_source,
+    ) else {
+        crate::println!(
+            "qemu-kernel-half-descriptor-image-smoke: teardown phase=first descriptors-cleared=false root-released=false tables-released=false published=false input-records-owned=false already-destroyed=false ok=false"
+        );
+        crate::println!(
+            "qemu-kernel-half-descriptor-image-smoke: teardown phase=second descriptors-cleared=false root-released=false tables-released=false published=false already-destroyed=false ok=false"
+        );
+        return false;
+    };
+
+    let first = descriptor_image.destroy(&mut lease_source);
+    let first_ok = first.descriptors_cleared() == 12
+        && first.root_released()
+        && first.tables_released() == 3
+        && first.input_records_owned()
+        && !first.already_destroyed()
+        && !descriptor_image.published()
+        && lease_source.outstanding_leases() == 0;
+    crate::println!(
+        "qemu-kernel-half-descriptor-image-smoke: teardown phase=first descriptors-cleared={} root-released={} tables-released={} published={} input-records-owned={} already-destroyed={} ok={}",
+        first.descriptors_cleared() == 12,
+        first.root_released(),
+        first.tables_released() == 3,
+        descriptor_image.published(),
+        first.input_records_owned(),
+        first.already_destroyed(),
+        first_ok
+    );
+
+    let second = descriptor_image.destroy(&mut lease_source);
+    let second_ok = second.descriptors_cleared() == 0
+        && !second.root_released()
+        && second.tables_released() == 0
+        && !descriptor_image.published()
+        && second.already_destroyed()
+        && lease_source.outstanding_leases() == 0;
+    crate::println!(
+        "qemu-kernel-half-descriptor-image-smoke: teardown phase=second descriptors-cleared={} root-released={} tables-released={} published={} already-destroyed={} ok={}",
+        second.descriptors_cleared() != 0,
+        second.root_released(),
+        second.tables_released() != 0,
+        descriptor_image.published(),
+        second.already_destroyed(),
+        second_ok
+    );
+
+    first_ok && second_ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_kernel_half_descriptor_image_smoke")]
+fn kernel_half_descriptor_image_report_error(
+    case: &str,
+    request: KernelHalfDescriptorImageRequest,
+    mut lease_source: KernelHalfDescriptorImageLeaseSource,
+    expected: PosixError,
+) -> bool {
+    let result = kernel_half_descriptor_image_valid_fixture().and_then(
+        |(_image, _install_plan, _address_space, materialization, _activation_plan, plan)| {
+            construct_kernel_half_descriptor_image(
+                plan,
+                materialization,
+                request,
+                &mut lease_source,
+            )
+        },
+    );
+    let (errno, ok) = match result {
+        Ok(_) => (expected, false),
+        Err(error) => (error, error == expected),
+    };
+    let leaked_leases = lease_source.outstanding_leases() != 0;
+    crate::println!(
+        "qemu-kernel-half-descriptor-image-smoke: error case={} errno=-{} partial-image=false leaked-leases={} ok={}",
+        case,
+        errno.name(),
+        leaked_leases,
+        ok && !leaked_leases
+    );
+    ok && !leaked_leases
+}
+
+#[cfg(talos_boot_scenario = "qemu_kernel_half_descriptor_image_smoke")]
+fn kernel_half_descriptor_image_no_partial_state_visible() -> bool {
+    let mut lease_source = KernelHalfDescriptorImageLeaseSource::with_limits(1, 1, 1);
+    let result = kernel_half_descriptor_image_valid_fixture().and_then(
+        |(_image, _install_plan, _address_space, materialization, activation_plan, plan)| {
+            let result = construct_kernel_half_descriptor_image(
+                plan,
+                materialization,
+                KernelHalfDescriptorImageRequest::ConstructOnly,
+                &mut lease_source,
+            );
+            if result.is_err()
+                && lease_source.outstanding_leases() == 0
+                && materialization.activation_blocked()
+                && activation_plan.published()
+                && !activation_plan.destroyed()
+                && !activation_plan.side_effects().ttbr_mutated()
+                && !activation_plan.side_effects().scheduler_published()
+            {
+                Err(PosixError::NoMemory)
+            } else {
+                result.map(|_| ())
+            }
+        },
+    );
+    result == Err(PosixError::NoMemory) && lease_source.outstanding_leases() == 0
+}
+
+#[cfg(talos_boot_scenario = "qemu_kernel_half_descriptor_image_smoke")]
+fn kernel_half_descriptor_image_valid_fixture() -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+        ProcessPageTableMaterialization,
+        LiveAddressSpaceActivationPlan,
+        KernelHalfReachabilityPlan,
+    ),
+    PosixError,
+> {
+    let image = plan_phase8_init_image(phase8_readonly_initramfs_fixture())
+        .map_err(|error| error.posix_error())?;
+    let install_plan = plan_process_image_install(image)?;
+    let mut address_source = ProcessAddressSpaceLeaseSource::for_plan(install_plan);
+    let address_space = install_process_address_space(
+        install_plan,
+        ProcessAddressSpaceId::new(0x8800_7001).expect("address-space id"),
+        Some(ProcessOwnerId::new(0x8800_7002).expect("owner id")),
+        &mut address_source,
+    )?;
+    let mut materialization_source =
+        ProcessPageTableMaterializationLeaseSource::for_address_space(address_space);
+    let materialization = materialize_process_page_tables(
+        image,
+        install_plan,
+        address_space,
+        ProcessMaterializationRequest::DescriptorImageOnly,
+        &mut materialization_source,
+    )?;
+    let launch_plan = prepare_initial_process_launch(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        InitialProcessLaunchRequest::PreparePlanOnly,
+    )?;
+    let mut stack_source = InitialUserStackLeaseSource::for_initial_stack();
+    let stack_plan = plan_initial_user_stack(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        InitialUserStackRequest::PlanOnly,
+        &mut stack_source,
+    )?;
+    let mut activation_source = LiveAddressSpaceActivationLeaseSource::for_single_plan();
+    let activation_plan = preflight_live_address_space_activation(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        stack_plan,
+        LiveAddressSpaceActivationRequest::PreflightOnly,
+        &mut activation_source,
+    )?;
+    let mut reachability_source = KernelHalfReachabilityLeaseSource::for_single_plan();
+    let reachability_plan = preflight_kernel_half_reachability(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        stack_plan,
+        activation_plan,
+        KernelHalfReachabilityRequest::PreflightOnly,
+        &mut reachability_source,
+    )?;
+
+    Ok((
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        activation_plan,
+        reachability_plan,
+    ))
 }
