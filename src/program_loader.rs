@@ -160,7 +160,8 @@ impl PlannedUserSegment {
         talos_boot_scenario = "qemu_process_install_smoke",
         talos_boot_scenario = "qemu_initial_process_launch_smoke",
         talos_boot_scenario = "qemu_initial_user_stack_smoke",
-        talos_boot_scenario = "qemu_live_address_space_activation_smoke"
+        talos_boot_scenario = "qemu_live_address_space_activation_smoke",
+        talos_boot_scenario = "qemu_kernel_half_reachability_smoke"
     ))]
     pub(crate) const fn for_test_unchecked(
         kind: UserSegmentKind,
@@ -253,7 +254,8 @@ impl ProgramImagePlan {
         talos_boot_scenario = "qemu_process_install_smoke",
         talos_boot_scenario = "qemu_initial_process_launch_smoke",
         talos_boot_scenario = "qemu_initial_user_stack_smoke",
-        talos_boot_scenario = "qemu_live_address_space_activation_smoke"
+        talos_boot_scenario = "qemu_live_address_space_activation_smoke",
+        talos_boot_scenario = "qemu_kernel_half_reachability_smoke"
     ))]
     pub(crate) const fn for_test_unchecked(
         source_path: &'static [u8],

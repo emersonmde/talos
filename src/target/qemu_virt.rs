@@ -201,6 +201,50 @@ use crate::{
     },
     scheduler::ProcessOwnerId,
 };
+#[cfg(talos_boot_scenario = "qemu_kernel_half_reachability_smoke")]
+use crate::{
+    initial_process_launch::{
+        INITIAL_PROCESS_LAUNCH_BOUNDARY_IDENTITY, InitialProcessLaunchPlan,
+        InitialProcessLaunchRequest, prepare_initial_process_launch,
+    },
+    initial_user_stack::{
+        INITIAL_USER_STACK_BOUNDARY_IDENTITY, InitialUserStackLeaseSource, InitialUserStackPlan,
+        InitialUserStackRequest, plan_initial_user_stack,
+    },
+    initramfs::{PHASE8_INIT_PATH, phase8_readonly_initramfs_fixture},
+    kernel_half_reachability::{
+        KERNEL_HALF_DESCRIPTOR_IMAGE_BLOCKED, KERNEL_HALF_REACHABILITY_BOUNDARY_IDENTITY,
+        KERNEL_HALF_REACHABILITY_POLICY, KernelHalfReachabilityLeaseSource,
+        KernelHalfReachabilityRequest, NORMAL_DEVICE_MAIR_COMPATIBILITY_RECORD_ONLY,
+        SPLIT_TCR_COMPATIBILITY_RECORD_ONLY, TTBR1_SHARED_KERNEL_ROOT_POLICY,
+        preflight_kernel_half_reachability,
+    },
+    live_address_space_activation::{
+        ASID_ALLOCATION_BLOCKED, BARRIER_SEQUENCE_PLANNED_ONLY,
+        LIVE_ADDRESS_SPACE_ACTIVATION_BOUNDARY_IDENTITY, LIVE_REGISTER_SEQUENCE_BLOCKED,
+        LiveAddressSpaceActivationLeaseSource, LiveAddressSpaceActivationPlan,
+        LiveAddressSpaceActivationRequest, SCTLR_MUTATION_BLOCKED, TLB_INVALIDATION_BLOCKED,
+        TTBR0_ROOT_PROVENANCE, preflight_live_address_space_activation,
+    },
+    posix::{PosixError, UserMappingPermissions},
+    process_address_space::{
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY, ProcessAddressSpace, ProcessAddressSpaceId,
+        ProcessAddressSpaceLeaseSource, install_process_address_space,
+    },
+    process_install::{
+        PROCESS_INSTALL_BOUNDARY_IDENTITY, ProcessImageInstallPlan, plan_process_image_install,
+    },
+    process_page_table_materialization::{
+        PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY, ProcessMaterializationRequest,
+        ProcessPageTableMaterialization, ProcessPageTableMaterializationLeaseSource,
+        materialize_process_page_tables,
+    },
+    program_loader::{
+        MAX_LOAD_SEGMENTS, PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY, ProgramImagePlan,
+        plan_phase8_init_image,
+    },
+    scheduler::ProcessOwnerId,
+};
 #[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
 use crate::{
     initramfs::{
@@ -14365,6 +14409,629 @@ fn live_address_space_activation_missing_descriptor_fixture() -> Result<
 
 #[cfg(talos_boot_scenario = "qemu_live_address_space_activation_smoke")]
 fn live_address_space_activation_image_with_identity(
+    image: ProgramImagePlan,
+    identity: &'static str,
+) -> ProgramImagePlan {
+    let mut segments = [None; MAX_LOAD_SEGMENTS];
+    let mut index = 0;
+    while index < image.segment_count() {
+        segments[index] = image.segment(index);
+        index += 1;
+    }
+    ProgramImagePlan::for_test_unchecked(
+        image.source_path(),
+        identity,
+        image.source_len(),
+        image.source_digest(),
+        image.entry(),
+        image.segment_count(),
+        segments,
+        image.memory_start(),
+        image.memory_end(),
+        image.memory_footprint(),
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_kernel_half_reachability_smoke")]
+pub fn run_kernel_half_reachability_smoke() -> bool {
+    crate::println!("qemu-kernel-half-reachability-smoke: start");
+
+    let (
+        success_ok,
+        root_ok,
+        reachability_ok,
+        permissions_ok,
+        compatibility_ok,
+        blocked_ok,
+        effects_ok,
+    ) = kernel_half_reachability_report_success();
+    let teardown_ok = kernel_half_reachability_report_teardown();
+    let identity_ok = kernel_half_reachability_report_error(
+        "identity-mismatch",
+        kernel_half_reachability_identity_mismatch_fixture(),
+        KernelHalfReachabilityRequest::PreflightOnly,
+        KernelHalfReachabilityLeaseSource::for_single_plan(),
+        PosixError::InvalidArgument,
+    );
+    let missing_range_ok = kernel_half_reachability_report_error(
+        "missing-kernel-range",
+        kernel_half_reachability_valid_fixture(),
+        KernelHalfReachabilityRequest::MissingKernelRange,
+        KernelHalfReachabilityLeaseSource::for_single_plan(),
+        PosixError::AccessDenied,
+    );
+    let diagnostic_ok = kernel_half_reachability_report_error(
+        "missing-diagnostic-fault-reporting",
+        kernel_half_reachability_valid_fixture(),
+        KernelHalfReachabilityRequest::MissingDiagnosticFaultReporting,
+        KernelHalfReachabilityLeaseSource::for_single_plan(),
+        PosixError::NotImplemented,
+    );
+    let forbidden_ok = kernel_half_reachability_report_error(
+        "forbidden-el0-access",
+        kernel_half_reachability_valid_fixture(),
+        KernelHalfReachabilityRequest::ForbiddenEl0Access,
+        KernelHalfReachabilityLeaseSource::for_single_plan(),
+        PosixError::AccessDenied,
+    );
+    let device_ok = kernel_half_reachability_report_error(
+        "bad-device-attribute-intent",
+        kernel_half_reachability_valid_fixture(),
+        KernelHalfReachabilityRequest::BadDeviceAttributeIntent,
+        KernelHalfReachabilityLeaseSource::for_single_plan(),
+        PosixError::AccessDenied,
+    );
+    let live_register_ok = kernel_half_reachability_report_error(
+        "live-register-request",
+        kernel_half_reachability_valid_fixture(),
+        KernelHalfReachabilityRequest::LiveRegisterSequence,
+        KernelHalfReachabilityLeaseSource::for_single_plan(),
+        PosixError::NotImplemented,
+    );
+    let descriptor_ok = kernel_half_reachability_report_error(
+        "descriptor-image-request",
+        kernel_half_reachability_valid_fixture(),
+        KernelHalfReachabilityRequest::DescriptorImage,
+        KernelHalfReachabilityLeaseSource::for_single_plan(),
+        PosixError::NotImplemented,
+    );
+    let scheduler_ok = kernel_half_reachability_report_error(
+        "scheduler-publication-request",
+        kernel_half_reachability_valid_fixture(),
+        KernelHalfReachabilityRequest::PublishSchedulerRunnable,
+        KernelHalfReachabilityLeaseSource::for_single_plan(),
+        PosixError::NotImplemented,
+    );
+    let lower_el_ok = kernel_half_reachability_report_error(
+        "lower-el-launch-request",
+        kernel_half_reachability_valid_fixture(),
+        KernelHalfReachabilityRequest::LowerElLaunch,
+        KernelHalfReachabilityLeaseSource::for_single_plan(),
+        PosixError::NotImplemented,
+    );
+    let resource_ok = kernel_half_reachability_report_error(
+        "resource-exhaustion",
+        kernel_half_reachability_valid_fixture(),
+        KernelHalfReachabilityRequest::PreflightOnly,
+        KernelHalfReachabilityLeaseSource::with_plan_record_capacity(0),
+        PosixError::NoMemory,
+    );
+    let no_partial_ok = kernel_half_reachability_no_partial_state_visible();
+
+    let participants = u64::from(success_ok)
+        + u64::from(root_ok)
+        + u64::from(reachability_ok)
+        + u64::from(permissions_ok)
+        + u64::from(compatibility_ok)
+        + u64::from(blocked_ok)
+        + u64::from(effects_ok)
+        + u64::from(teardown_ok)
+        + u64::from(identity_ok)
+        + u64::from(missing_range_ok)
+        + u64::from(diagnostic_ok)
+        + u64::from(forbidden_ok)
+        + u64::from(device_ok)
+        + u64::from(live_register_ok && descriptor_ok && scheduler_ok && lower_el_ok)
+        + u64::from(resource_ok)
+        + u64::from(no_partial_ok);
+    let errors = 16 - participants;
+    let classification = if participants == 16 && errors == 0 {
+        "qemu-kernel-half-reachability-smoke-complete"
+    } else {
+        "qemu-kernel-half-reachability-smoke-failed"
+    };
+
+    crate::println!(
+        "qemu-kernel-half-reachability-smoke: final participants={} expected=16 errors={} classification={}",
+        participants,
+        errors,
+        classification
+    );
+    if participants == 16 && errors == 0 {
+        crate::println!("qemu-kernel-half-reachability-smoke: PASS");
+        true
+    } else {
+        crate::println!("qemu-kernel-half-reachability-smoke: FAIL");
+        false
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_kernel_half_reachability_smoke")]
+fn kernel_half_reachability_report_success() -> (bool, bool, bool, bool, bool, bool, bool) {
+    let Ok((
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        stack_plan,
+        activation_plan,
+    )) = kernel_half_reachability_valid_fixture()
+    else {
+        kernel_half_reachability_report_empty_success();
+        return (false, false, false, false, false, false, false);
+    };
+    let mut reachability_source = KernelHalfReachabilityLeaseSource::for_single_plan();
+    let Ok(plan) = preflight_kernel_half_reachability(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        stack_plan,
+        activation_plan,
+        KernelHalfReachabilityRequest::PreflightOnly,
+        &mut reachability_source,
+    ) else {
+        kernel_half_reachability_report_empty_success();
+        return (false, false, false, false, false, false, false);
+    };
+
+    crate::println!(
+        "qemu-kernel-half-reachability-smoke: fixture name={} path=/bin/init source-digest={:#x} install-boundary={} address-space-boundary={} materialization-boundary={} launch-boundary={} stack-boundary={} activation-boundary={} kernel-half-boundary={} kernel-half-policy={}",
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        plan.source_digest(),
+        PROCESS_INSTALL_BOUNDARY_IDENTITY,
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY,
+        PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY,
+        INITIAL_PROCESS_LAUNCH_BOUNDARY_IDENTITY,
+        INITIAL_USER_STACK_BOUNDARY_IDENTITY,
+        LIVE_ADDRESS_SPACE_ACTIVATION_BOUNDARY_IDENTITY,
+        KERNEL_HALF_REACHABILITY_BOUNDARY_IDENTITY,
+        KERNEL_HALF_REACHABILITY_POLICY
+    );
+
+    let success_ok = plan.published()
+        && plan.boundary_identity() == KERNEL_HALF_REACHABILITY_BOUNDARY_IDENTITY
+        && plan.policy_identity() == KERNEL_HALF_REACHABILITY_POLICY
+        && plan.image_fixture_identity() == PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY
+        && plan.install_boundary_identity() == PROCESS_INSTALL_BOUNDARY_IDENTITY
+        && plan.address_space_boundary_identity() == PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY
+        && plan.materialization_boundary_identity()
+            == PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY
+        && plan.launch_boundary_identity() == INITIAL_PROCESS_LAUNCH_BOUNDARY_IDENTITY
+        && plan.stack_boundary_identity() == INITIAL_USER_STACK_BOUNDARY_IDENTITY
+        && plan.activation_boundary_identity() == LIVE_ADDRESS_SPACE_ACTIVATION_BOUNDARY_IDENTITY
+        && plan.source_path() == PHASE8_INIT_PATH
+        && plan.source_digest() == image.source_digest()
+        && plan.address_space_id() == address_space.id().raw()
+        && plan.materialization_id() == materialization.id()
+        && plan.entry_pc() == image.entry()
+        && plan.initial_sp() == stack_plan.layout().initial_sp();
+    crate::println!(
+        "qemu-kernel-half-reachability-smoke: success output=KernelHalfReachabilityPlan published={} copied-identities={} kernel-half-boundary={} kernel-half-policy={} ok={}",
+        plan.published(),
+        success_ok,
+        plan.boundary_identity(),
+        plan.policy_identity(),
+        success_ok
+    );
+
+    let root = plan.root_policy();
+    let root_ok = root.ttbr0_root() == TTBR0_ROOT_PROVENANCE
+        && root.ttbr0_root_token() == activation_plan.root_provenance().root_token()
+        && root.ttbr0_root_physical_frame()
+            == activation_plan.root_provenance().root_physical_frame()
+        && !root.ttbr0_written()
+        && root.ttbr1_policy() == TTBR1_SHARED_KERNEL_ROOT_POLICY
+        && !root.ttbr1_written()
+        && root.descriptor_image() == KERNEL_HALF_DESCRIPTOR_IMAGE_BLOCKED;
+    crate::println!(
+        "qemu-kernel-half-reachability-smoke: root-policy ttbr0-root={} ttbr0-written={} ttbr1-policy={} ttbr1-written={} descriptor-image={} ok={}",
+        root.ttbr0_root(),
+        root.ttbr0_written(),
+        root.ttbr1_policy(),
+        root.ttbr1_written(),
+        root.descriptor_image(),
+        root_ok
+    );
+
+    let reachability = plan.reachability();
+    let reachability_ok = reachability.kernel_text()
+        && reachability.rodata()
+        && reachability.data()
+        && reachability.bss()
+        && reachability.vectors()
+        && reachability.active_stack()
+        && reachability.heap()
+        && reachability.page_frames()
+        && reachability.uart_mmio_diagnostics()
+        && reachability.scheduler_code_data()
+        && reachability.panic_fault_reporting();
+    crate::println!(
+        "qemu-kernel-half-reachability-smoke: reachability kernel-text={} rodata={} data={} bss={} vectors={} active-stack={} heap={} page-frames={} uart-mmio-diagnostics={} scheduler-code-data={} panic-fault-reporting={} ok={}",
+        reachability.kernel_text(),
+        reachability.rodata(),
+        reachability.data(),
+        reachability.bss(),
+        reachability.vectors(),
+        reachability.active_stack(),
+        reachability.heap(),
+        reachability.page_frames(),
+        reachability.uart_mmio_diagnostics(),
+        reachability.scheduler_code_data(),
+        reachability.panic_fault_reporting(),
+        reachability_ok
+    );
+
+    let permissions = plan.permission_policy();
+    let permissions_ok = permissions.text_exec_privileged_only()
+        && !permissions.data_exec()
+        && !permissions.device_normal_memory()
+        && !permissions.el0_kernel_access();
+    crate::println!(
+        "qemu-kernel-half-reachability-smoke: permissions text-exec=privileged-only data-exec={} device-normal-memory={} el0-kernel-access={} ok={}",
+        permissions.data_exec(),
+        permissions.device_normal_memory(),
+        permissions.el0_kernel_access(),
+        permissions_ok
+    );
+
+    let compatibility_ok = plan.tcr_state() == SPLIT_TCR_COMPATIBILITY_RECORD_ONLY
+        && plan.mair_state() == NORMAL_DEVICE_MAIR_COMPATIBILITY_RECORD_ONLY
+        && plan.sctlr_state() == SCTLR_MUTATION_BLOCKED;
+    crate::println!(
+        "qemu-kernel-half-reachability-smoke: compatibility tcr-state={} mair-state={} sctlr-state={} ok={}",
+        plan.tcr_state(),
+        plan.mair_state(),
+        plan.sctlr_state(),
+        compatibility_ok
+    );
+
+    let blocked_ok = plan.asid_state() == ASID_ALLOCATION_BLOCKED
+        && plan.tlb_state() == TLB_INVALIDATION_BLOCKED
+        && plan.barrier_state() == BARRIER_SEQUENCE_PLANNED_ONLY
+        && plan.live_register_sequence_state() == LIVE_REGISTER_SEQUENCE_BLOCKED;
+    crate::println!(
+        "qemu-kernel-half-reachability-smoke: blocked-states asid={} tlb={} barriers={} live-register-sequence={} ok={}",
+        plan.asid_state(),
+        plan.tlb_state(),
+        plan.barrier_state(),
+        plan.live_register_sequence_state(),
+        blocked_ok
+    );
+
+    let effects = plan.side_effects();
+    let effects_ok = !effects.ttbr_mutated()
+        && !effects.tcr_mutated()
+        && !effects.mair_mutated()
+        && !effects.sctlr_mutated()
+        && !effects.descriptor_image_installed()
+        && !effects.asid_allocated()
+        && !effects.tlb_mutated()
+        && !effects.live_dsb_isb()
+        && !effects.lower_el_eret()
+        && !effects.scheduler_published()
+        && !effects.process_table_mutated()
+        && !effects.descriptor_table_mutated();
+    crate::println!(
+        "qemu-kernel-half-reachability-smoke: side-effects ttbr-mutated={} tcr-mutated={} mair-mutated={} sctlr-mutated={} descriptor-image-installed={} asid-allocated={} tlb-mutated={} live-dsb-isb={} lower-el-eret={} scheduler-published={} process-table-mutated={} descriptor-table-mutated={} ok={}",
+        effects.ttbr_mutated(),
+        effects.tcr_mutated(),
+        effects.mair_mutated(),
+        effects.sctlr_mutated(),
+        effects.descriptor_image_installed(),
+        effects.asid_allocated(),
+        effects.tlb_mutated(),
+        effects.live_dsb_isb(),
+        effects.lower_el_eret(),
+        effects.scheduler_published(),
+        effects.process_table_mutated(),
+        effects.descriptor_table_mutated(),
+        effects_ok
+    );
+
+    (
+        success_ok,
+        root_ok,
+        reachability_ok,
+        permissions_ok,
+        compatibility_ok,
+        blocked_ok,
+        effects_ok,
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_kernel_half_reachability_smoke")]
+fn kernel_half_reachability_report_empty_success() {
+    crate::println!(
+        "qemu-kernel-half-reachability-smoke: fixture name={} path=/bin/init source-digest=0x0 install-boundary={} address-space-boundary={} materialization-boundary={} launch-boundary={} stack-boundary={} activation-boundary={} kernel-half-boundary={} kernel-half-policy={}",
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        PROCESS_INSTALL_BOUNDARY_IDENTITY,
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY,
+        PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY,
+        INITIAL_PROCESS_LAUNCH_BOUNDARY_IDENTITY,
+        INITIAL_USER_STACK_BOUNDARY_IDENTITY,
+        LIVE_ADDRESS_SPACE_ACTIVATION_BOUNDARY_IDENTITY,
+        KERNEL_HALF_REACHABILITY_BOUNDARY_IDENTITY,
+        KERNEL_HALF_REACHABILITY_POLICY
+    );
+    crate::println!(
+        "qemu-kernel-half-reachability-smoke: success output=KernelHalfReachabilityPlan published=false copied-identities=false kernel-half-boundary={} kernel-half-policy={} ok=false",
+        KERNEL_HALF_REACHABILITY_BOUNDARY_IDENTITY,
+        KERNEL_HALF_REACHABILITY_POLICY
+    );
+}
+
+#[cfg(talos_boot_scenario = "qemu_kernel_half_reachability_smoke")]
+fn kernel_half_reachability_report_teardown() -> bool {
+    let Ok((
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        stack_plan,
+        activation_plan,
+    )) = kernel_half_reachability_valid_fixture()
+    else {
+        crate::println!(
+            "qemu-kernel-half-reachability-smoke: teardown plan-local-released=false input-records-owned=false descriptor-image-installed=false idempotent=false ok=false"
+        );
+        return false;
+    };
+    let mut reachability_source = KernelHalfReachabilityLeaseSource::for_single_plan();
+    let Ok(mut plan) = preflight_kernel_half_reachability(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        stack_plan,
+        activation_plan,
+        KernelHalfReachabilityRequest::PreflightOnly,
+        &mut reachability_source,
+    ) else {
+        crate::println!(
+            "qemu-kernel-half-reachability-smoke: teardown plan-local-released=false input-records-owned=false descriptor-image-installed=false idempotent=false ok=false"
+        );
+        return false;
+    };
+
+    let first = plan.destroy(&mut reachability_source);
+    let second = plan.destroy(&mut reachability_source);
+    let plan_local_released =
+        first.plan_record_released() && reachability_source.outstanding_leases() == 0;
+    let input_records_owned = first.input_records_owned() && second.input_records_owned();
+    let descriptor_image_installed =
+        first.descriptor_image_installed() || second.descriptor_image_installed();
+    let idempotent = !first.already_destroyed()
+        && second.already_destroyed()
+        && !second.plan_record_released()
+        && !plan.published()
+        && plan.destroyed();
+    let ok =
+        plan_local_released && input_records_owned && !descriptor_image_installed && idempotent;
+    crate::println!(
+        "qemu-kernel-half-reachability-smoke: teardown plan-local-released={} input-records-owned={} descriptor-image-installed={} idempotent={} ok={}",
+        plan_local_released,
+        input_records_owned,
+        descriptor_image_installed,
+        idempotent,
+        ok
+    );
+    ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_kernel_half_reachability_smoke")]
+fn kernel_half_reachability_report_error(
+    case: &str,
+    fixture: Result<
+        (
+            ProgramImagePlan,
+            ProcessImageInstallPlan,
+            ProcessAddressSpace,
+            ProcessPageTableMaterialization,
+            InitialProcessLaunchPlan,
+            InitialUserStackPlan,
+            LiveAddressSpaceActivationPlan,
+        ),
+        PosixError,
+    >,
+    request: KernelHalfReachabilityRequest,
+    mut reachability_source: KernelHalfReachabilityLeaseSource,
+    expected: PosixError,
+) -> bool {
+    let result = fixture.and_then(
+        |(
+            image,
+            install_plan,
+            address_space,
+            materialization,
+            launch_plan,
+            stack_plan,
+            activation_plan,
+        )| {
+            preflight_kernel_half_reachability(
+                image,
+                install_plan,
+                address_space,
+                materialization,
+                launch_plan,
+                stack_plan,
+                activation_plan,
+                request,
+                &mut reachability_source,
+            )
+        },
+    );
+    let (errno, ok) = match result {
+        Ok(_) => (expected, false),
+        Err(error) => (error, error == expected),
+    };
+    let partial_plan = reachability_source.outstanding_leases() != 0;
+    crate::println!(
+        "qemu-kernel-half-reachability-smoke: error case={} errno=-{} partial-plan={} ok={}",
+        case,
+        errno.name(),
+        partial_plan,
+        ok && !partial_plan
+    );
+    ok && !partial_plan
+}
+
+#[cfg(talos_boot_scenario = "qemu_kernel_half_reachability_smoke")]
+fn kernel_half_reachability_no_partial_state_visible() -> bool {
+    let Ok((
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        stack_plan,
+        activation_plan,
+    )) = kernel_half_reachability_valid_fixture()
+    else {
+        return false;
+    };
+    let mut reachability_source = KernelHalfReachabilityLeaseSource::with_plan_record_capacity(0);
+    let result = preflight_kernel_half_reachability(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        stack_plan,
+        activation_plan,
+        KernelHalfReachabilityRequest::PreflightOnly,
+        &mut reachability_source,
+    );
+    result.is_err()
+        && reachability_source.outstanding_leases() == 0
+        && materialization.activation_blocked()
+        && activation_plan.published()
+        && !activation_plan.destroyed()
+        && !activation_plan.side_effects().ttbr_mutated()
+        && !activation_plan.side_effects().scheduler_published()
+}
+
+#[cfg(talos_boot_scenario = "qemu_kernel_half_reachability_smoke")]
+fn kernel_half_reachability_valid_fixture() -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+        ProcessPageTableMaterialization,
+        InitialProcessLaunchPlan,
+        InitialUserStackPlan,
+        LiveAddressSpaceActivationPlan,
+    ),
+    PosixError,
+> {
+    let image = plan_phase8_init_image(phase8_readonly_initramfs_fixture())
+        .map_err(|error| error.posix_error())?;
+    let install_plan = plan_process_image_install(image)?;
+    let mut address_source = ProcessAddressSpaceLeaseSource::for_plan(install_plan);
+    let address_space = install_process_address_space(
+        install_plan,
+        ProcessAddressSpaceId::new(0x8800_6001).expect("address-space id"),
+        Some(ProcessOwnerId::new(0x8800_6002).expect("owner id")),
+        &mut address_source,
+    )?;
+    let mut materialization_source =
+        ProcessPageTableMaterializationLeaseSource::for_address_space(address_space);
+    let materialization = materialize_process_page_tables(
+        image,
+        install_plan,
+        address_space,
+        ProcessMaterializationRequest::DescriptorImageOnly,
+        &mut materialization_source,
+    )?;
+    let launch_plan = prepare_initial_process_launch(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        InitialProcessLaunchRequest::PreparePlanOnly,
+    )?;
+    let mut stack_source = InitialUserStackLeaseSource::for_initial_stack();
+    let stack_plan = plan_initial_user_stack(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        InitialUserStackRequest::PlanOnly,
+        &mut stack_source,
+    )?;
+    let mut activation_source = LiveAddressSpaceActivationLeaseSource::for_single_plan();
+    let activation_plan = preflight_live_address_space_activation(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        stack_plan,
+        LiveAddressSpaceActivationRequest::PreflightOnly,
+        &mut activation_source,
+    )?;
+
+    Ok((
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        stack_plan,
+        activation_plan,
+    ))
+}
+
+#[cfg(talos_boot_scenario = "qemu_kernel_half_reachability_smoke")]
+fn kernel_half_reachability_identity_mismatch_fixture() -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+        ProcessPageTableMaterialization,
+        InitialProcessLaunchPlan,
+        InitialUserStackPlan,
+        LiveAddressSpaceActivationPlan,
+    ),
+    PosixError,
+> {
+    let (
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        stack_plan,
+        activation_plan,
+    ) = kernel_half_reachability_valid_fixture()?;
+    Ok((
+        kernel_half_reachability_image_with_identity(image, "wrong-fixture"),
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        stack_plan,
+        activation_plan,
+    ))
+}
+
+#[cfg(talos_boot_scenario = "qemu_kernel_half_reachability_smoke")]
+fn kernel_half_reachability_image_with_identity(
     image: ProgramImagePlan,
     identity: &'static str,
 ) -> ProgramImagePlan {

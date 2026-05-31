@@ -1,0 +1,29 @@
+
+Talos 0.1.0 booting on talos-aarch64-virt
+boot-info: dtb_pa=0x0000000048000000 core=0 el=2 target=talos-aarch64-virt
+target-services: uart=pl011 timer=arm-generic irq=gic-v2 dtb=Some(
+    0x0000000048000000,
+)
+mmio-regions: 3
+qemu-kernel-half-reachability-smoke: start
+qemu-kernel-half-reachability-smoke: fixture name=phase8-program-loader-elf64-aarch64-v1 path=/bin/init source-digest=0x3892eed223900c65 install-boundary=phase8-process-install-plan-v1 address-space-boundary=phase8-process-address-space-model-v1 materialization-boundary=phase8-process-page-table-materialization-v1 launch-boundary=phase8-initial-process-launch-plan-v1 stack-boundary=phase8-initial-user-stack-plan-v1 activation-boundary=phase8-live-address-space-activation-plan-v1 kernel-half-boundary=phase8-kernel-half-reachability-plan-v1 kernel-half-policy=preflight-ttbr1-shared-kernel-root-reachability-v1
+qemu-kernel-half-reachability-smoke: success output=KernelHalfReachabilityPlan published=true copied-identities=true kernel-half-boundary=phase8-kernel-half-reachability-plan-v1 kernel-half-policy=preflight-ttbr1-shared-kernel-root-reachability-v1 ok=true
+qemu-kernel-half-reachability-smoke: root-policy ttbr0-root=materialized-process-root-lease ttbr0-written=false ttbr1-policy=shared-privileged-kernel-root ttbr1-written=false descriptor-image=blocked-no-kernel-half-descriptor-image ok=true
+qemu-kernel-half-reachability-smoke: reachability kernel-text=true rodata=true data=true bss=true vectors=true active-stack=true heap=true page-frames=true uart-mmio-diagnostics=true scheduler-code-data=true panic-fault-reporting=true ok=true
+qemu-kernel-half-reachability-smoke: permissions text-exec=privileged-only data-exec=false device-normal-memory=false el0-kernel-access=false ok=true
+qemu-kernel-half-reachability-smoke: compatibility tcr-state=split-compatibility-record-only mair-state=normal-device-compatibility-record-only sctlr-state=mutation-blocked ok=true
+qemu-kernel-half-reachability-smoke: blocked-states asid=blocked-no-asid-allocation tlb=blocked-no-live-tlbi barriers=planned-only-no-live-dsb-isb live-register-sequence=blocked-no-live-register-sequence ok=true
+qemu-kernel-half-reachability-smoke: side-effects ttbr-mutated=false tcr-mutated=false mair-mutated=false sctlr-mutated=false descriptor-image-installed=false asid-allocated=false tlb-mutated=false live-dsb-isb=false lower-el-eret=false scheduler-published=false process-table-mutated=false descriptor-table-mutated=false ok=true
+qemu-kernel-half-reachability-smoke: teardown plan-local-released=true input-records-owned=true descriptor-image-installed=false idempotent=true ok=true
+qemu-kernel-half-reachability-smoke: error case=identity-mismatch errno=-EINVAL partial-plan=false ok=true
+qemu-kernel-half-reachability-smoke: error case=missing-kernel-range errno=-EACCES partial-plan=false ok=true
+qemu-kernel-half-reachability-smoke: error case=missing-diagnostic-fault-reporting errno=-ENOSYS partial-plan=false ok=true
+qemu-kernel-half-reachability-smoke: error case=forbidden-el0-access errno=-EACCES partial-plan=false ok=true
+qemu-kernel-half-reachability-smoke: error case=bad-device-attribute-intent errno=-EACCES partial-plan=false ok=true
+qemu-kernel-half-reachability-smoke: error case=live-register-request errno=-ENOSYS partial-plan=false ok=true
+qemu-kernel-half-reachability-smoke: error case=descriptor-image-request errno=-ENOSYS partial-plan=false ok=true
+qemu-kernel-half-reachability-smoke: error case=scheduler-publication-request errno=-ENOSYS partial-plan=false ok=true
+qemu-kernel-half-reachability-smoke: error case=lower-el-launch-request errno=-ENOSYS partial-plan=false ok=true
+qemu-kernel-half-reachability-smoke: error case=resource-exhaustion errno=-ENOMEM partial-plan=false ok=true
+qemu-kernel-half-reachability-smoke: final participants=16 expected=16 errors=0 classification=qemu-kernel-half-reachability-smoke-complete
+qemu-kernel-half-reachability-smoke: PASS

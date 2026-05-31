@@ -333,6 +333,22 @@ live register mutation, lower-EL ERET, scheduler publication, process
 lifecycle, filesystem syscall behavior, Pi 5 hardware proof, networking, or
 SSH is accepted by this core. The next bounded task is
 phase8-qemu-kernel-half-reachability-smoke-core-20260531.
+The QEMU/substitute kernel-half reachability smoke core is now accepted. It
+adds qemu_kernel_half_reachability_smoke and retains evidence at
+tasks/evidence/2026-05-31-qemu-kernel-half-reachability-smoke-core/qemu-kernel-half-reachability-smoke.log.
+The log proves copied loader/install/address-space/materialization/launch/
+stack/live-activation lineage, the phase8-kernel-half-reachability-plan-v1
+boundary, TTBR0 materialized-root provenance with no write, TTBR1 shared
+privileged kernel-root policy with descriptor-image construction blocked,
+required kernel reachability entries, split TCR and normal/device MAIR
+compatibility-only records, blocked SCTLR/ASID/TLB/barrier/live-register
+states, deterministic no-partial rejection cases, idempotent plan-local
+teardown, zero live side effects, and final
+qemu-kernel-half-reachability-smoke-complete/PASS lines. Kernel-half
+descriptor-image construction, live register mutation, lower-EL ERET,
+scheduler publication, process lifecycle, filesystem syscalls, Pi 5 hardware
+proof, networking, and SSH remain blocked. The next bounded task is
+phase8-kernel-half-reachability-closeout-checkpoint-20260531.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -3220,6 +3236,20 @@ Milestone 8.3: Program Loader
   lower-EL ERET, scheduler publication, process lifecycle, filesystem
   syscalls, Pi 5 hardware proof, networking, and SSH remain blocked. The next
   bounded task is phase8-qemu-kernel-half-reachability-smoke-core-20260531.
+- Phase 8 QEMU/substitute kernel-half reachability smoke core is accepted. It
+  adds qemu_kernel_half_reachability_smoke and retains evidence at
+  tasks/evidence/2026-05-31-qemu-kernel-half-reachability-smoke-core/qemu-kernel-half-reachability-smoke.log.
+  The smoke proves copied input lineage through LiveAddressSpaceActivationPlan,
+  the phase8-kernel-half-reachability-plan-v1 boundary, TTBR0 materialized-root
+  provenance, TTBR1 shared privileged kernel-root policy with descriptor-image
+  construction blocked, required kernel reachability entries, compatibility-only
+  TCR/MAIR records, blocked SCTLR/ASID/TLB/barrier/live-register states,
+  deterministic no-partial rejection, idempotent plan-local teardown, zero live
+  side effects, and final qemu-kernel-half-reachability-smoke-complete/PASS
+  lines. Kernel-half descriptor-image construction, live register mutation,
+  lower-EL ERET, scheduler publication, process lifecycle, filesystem syscalls,
+  Pi 5 hardware proof, networking, and SSH remain blocked. The next bounded
+  task is phase8-kernel-half-reachability-closeout-checkpoint-20260531.
 
 Acceptance criteria:
 

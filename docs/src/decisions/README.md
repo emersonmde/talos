@@ -12,6 +12,45 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-31 - Phase 8 QEMU Kernel-Half Reachability Smoke Core Accepted
+
+- Status: accepted as the Milestone 8.3 QEMU/substitute kernel-half
+  reachability smoke evidence. No Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, physical serial observation, live TTBR0_EL1/
+  TTBR1_EL1/TCR_EL1/MAIR_EL1/SCTLR_EL1 mutation, ASID allocation, TLB
+  mutation, activation DSB/ISB, lower-EL ERET, scheduler runnable publication,
+  process lifecycle, shell behavior, descriptor-backed filesystem syscalls,
+  writable filesystem, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted kernel-half reachability core added the model-only
+  KernelHalfReachabilityPlan boundary selected by the smoke plan, but retained
+  QEMU/substitute evidence for that boundary was still outstanding.
+- Decision: Add qemu_kernel_half_reachability_smoke and
+  scripts/qemu-kernel-half-reachability-smoke.sh. The retained log proves the
+  boundary identity phase8-kernel-half-reachability-plan-v1, copied
+  loader/install/address-space/materialization/launch/stack/live-activation
+  lineage, TTBR0 materialized-root provenance with no write, TTBR1 shared
+  privileged kernel-root policy with descriptor-image construction blocked,
+  required kernel reachability entries, split TCR and normal/device MAIR
+  compatibility-only records, blocked SCTLR/ASID/TLB/barrier/live-register
+  states, deterministic no-partial rejection cases, idempotent plan-local
+  teardown, zero live side effects, classification
+  qemu-kernel-half-reachability-smoke-complete, and PASS.
+- Evidence level: QEMU/substitute serial output and retained log:
+  tasks/evidence/2026-05-31-qemu-kernel-half-reachability-smoke-core/qemu-kernel-half-reachability-smoke.log.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test passed with 318 no_std tests;
+  scripts/qemu-kernel-half-reachability-smoke.sh passed; conditional
+  scripts/qemu-program-loader-smoke.sh passed; git diff --check passed; mdbook
+  build passed; git diff --cached --check passed before commit.
+- Consequences: The kernel-half reachability slice now has retained
+  QEMU/substitute evidence below live descriptor-image construction and live
+  translation-register mutation. The next bounded task should be
+  phase8-kernel-half-reachability-closeout-checkpoint-20260531. Kernel-half
+  descriptor-image construction, live activation, lower-EL launch, scheduler
+  publication, process lifecycle, filesystem syscalls, Pi 5 proof, networking,
+  and SSH remain blocked.
+
 ## 2026-05-31 - Phase 8 Kernel-Half Reachability Core Accepted
 
 - Status: accepted as the target-independent Milestone 8.3 kernel-half
