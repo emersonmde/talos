@@ -1,0 +1,2 @@
+1bde053105052508d32ebd1c9fa8faa959a2b9959ff1b40721dc3859e668adda  target/talos-rpi5-local-line-editing-local1-boot.tar.gz
+f2b38552e791d7fb23aa8553694d30e914abfa80e8e3bf2b4c03f0547cb97f7e  target/rpi5-local-line-editing-boot-tree-local1/kernel_2712.img
