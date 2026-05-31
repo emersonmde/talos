@@ -349,6 +349,14 @@ descriptor-image construction, live register mutation, lower-EL ERET,
 scheduler publication, process lifecycle, filesystem syscalls, Pi 5 hardware
 proof, networking, and SSH remain blocked. The next bounded task is
 phase8-kernel-half-reachability-closeout-checkpoint-20260531.
+The kernel-half reachability closeout checkpoint is now accepted. It
+reconciles the source inventory, contract, smoke plan, target-independent
+preflight core, retained QEMU/substitute smoke evidence, deferred surfaces,
+and residual risks. The accepted frontier remains a model-only
+KernelHalfReachabilityPlan below kernel-half descriptor-image construction,
+live translation-register mutation, lower-EL ERET, and runnable publication.
+No explicit queued follow-up task remains; supervisor planning is required
+before the worker may promote another Phase 8.3 task.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -3250,6 +3258,14 @@ Milestone 8.3: Program Loader
   lower-EL ERET, scheduler publication, process lifecycle, filesystem syscalls,
   Pi 5 hardware proof, networking, and SSH remain blocked. The next bounded
   task is phase8-kernel-half-reachability-closeout-checkpoint-20260531.
+- Phase 8 kernel-half reachability closeout checkpoint is accepted. It
+  reconciles the source inventory, contract, smoke plan, target-independent
+  preflight core, retained QEMU/substitute smoke evidence, deferred surfaces,
+  and residual risks. The accepted frontier remains a model-only
+  KernelHalfReachabilityPlan below kernel-half descriptor-image construction,
+  live translation-register mutation, lower-EL ERET, and runnable
+  publication. No explicit queued follow-up task remains; supervisor planning
+  is required before the worker may promote another Phase 8.3 task.
 
 Acceptance criteria:
 
