@@ -1,0 +1,3 @@
+86a8557e9e891218dc5bf232615167409ebb2eb02fdcbfe985e845f7a7b4c71e  target/talos-rpi5-local-command-stdin-descriptor-local2-boot.tar.gz
+44c7d415cef40598c3076ba59cc6039b9f751ef574065d54f887552592d7007a  target/rpi5-local-command-stdin-descriptor-boot-tree-local2/kernel_2712.img
+97920 target/rpi5-local-command-stdin-descriptor-boot-tree-local2/kernel_2712.img

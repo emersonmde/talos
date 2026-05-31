@@ -3713,25 +3713,28 @@ Goal: make Talos useful from a local console before depending on Ethernet.
 
 Status: the feature-led reset accepted the first local serial interactivity
 slice in QEMU/substitute and on serialized Raspberry Pi 5 hardware, then
-accepted the next descriptor-backed stdio bridge slice. The kernel now has a
-bounded local command loop that reads a canonical TTY line from runtime-console0,
-dispatches kernel-backed built-ins, prints visible responses for help, empty
-input, unknown input, and `stdio`, and emits a prompt/ready marker for another
-command. The accepted stdio bridge reports fd 0/fd 1/fd 2 identities, routes
-visible output through inherited stdout in the QEMU/substitute path, records
-runtime-console0 backing, and carries the same `stdio` response to serialized
-Pi 5 hardware. Retained QEMU stdio bridge evidence is at
-tasks/evidence/2026-05-31-qemu-local-command-stdio-bridge-core/qemu-local-command-stdio-bridge-smoke.log.
-Retained Pi 5 hardware evidence is at
-tasks/evidence/2026-05-31-pi5-local-command-stdio-bridge-proof/local11-fresh-tftp-visible-response-candidate/serial-transcript.txt
-and proves the physical `stdio` input, Enter dispatch, visible fd identity
-response, descriptor-backed marker, next prompt, and
-pi5-local-command-stdio-bridge-complete PASS path. This is not accepted
-userspace shell execution, descriptor-backed filesystem commands, networking,
-or SSH. The stdio bridge closeout recommends the next feature-led task move the
-command-loop input side through fd0/runtime-console-backed descriptor reads
-while keeping old Phase 8 proof-only work paused unless it directly unblocks
-local interactivity.
+accepted descriptor-backed local command-loop stdio slices. The kernel now has
+a bounded local command loop that reads a canonical TTY line from
+runtime-console0, dispatches kernel-backed built-ins, prints visible responses
+for help, empty input, unknown input, and `stdio`, and emits a prompt/ready
+marker for another command. The accepted stdio bridge reports fd 0/fd 1/fd 2
+identities, routes visible output through inherited stdout in the
+QEMU/substitute path, records runtime-console0 backing, and carries the same
+`stdio` response to serialized Pi 5 hardware. The accepted stdin-descriptor
+slice moves the command-loop input side through fd0/runtime-console0 descriptor
+plumbing while preserving descriptor-backed visible output.
+
+Retained QEMU stdin-descriptor evidence is at
+tasks/evidence/2026-05-31-qemu-local-command-stdin-descriptor-core/qemu-local-command-stdin-descriptor-smoke.log.
+Retained Pi 5 stdin-descriptor hardware evidence is at
+tasks/evidence/2026-05-31-pi5-local-command-stdin-descriptor-proof/local8-fresh-tftp-candidate-rerun/serial-transcript.txt
+and proves the physical `stdio` input, fd0 descriptor-backed-input marker,
+visible fd identity response, descriptor-backed-output marker, next prompt, and
+pi5-local-command-stdio-bridge-complete PASS path with a fresh 97936-byte
+candidate TFTP fetch and restore proof. This is not accepted userspace shell
+execution, descriptor-backed filesystem commands, broad POSIX read readiness,
+networking, or SSH. The next explicit queued task is the Phase 10
+stdin-descriptor closeout checkpoint.
 
 Milestone 10.1: Local Shell
 

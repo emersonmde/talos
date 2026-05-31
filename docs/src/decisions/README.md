@@ -9130,6 +9130,44 @@ ADR template:
   interrupt ownership, and DMA/cache-driver policy remain blocked until later
   explicit tasks accept their contracts and gates.
 
+## 2026-05-31 - Phase 10 Pi 5 Local Command Stdin Descriptor Proof Accepted
+
+- Status: accepted as the serialized Raspberry Pi 5 hardware proof for the
+  Phase 10 local command-loop stdin descriptor feature. It proves physical
+  serial input, Enter dispatch, fd0/runtime-console0 descriptor-backed input,
+  descriptor-backed visible output, and next-prompt readiness for the selected
+  stdio path; it does not claim userspace process stdio, filesystem command
+  behavior, broad POSIX read readiness, networking, or SSH.
+- Context: The QEMU/substitute stdin descriptor core was already accepted.
+  The next bounded feature-led task was to carry the same local interactivity
+  path to physical Pi 5 hardware under the hardware lock and restore the prior
+  accepted boot tree afterward.
+- Decision: Accept
+  phase10-pi5-local-command-stdin-descriptor-proof-20260531. The Pi 5 boot
+  scenario runs the command loop over runtime-console0 backed by BCM2712
+  UART10, routes the completed stdio line through fd0 descriptor plumbing,
+  prints the visible fd identity response, and records descriptor-backed-input
+  and descriptor-backed-output markers.
+- Evidence level: serialized Pi 5 serial hardware boot/output, TFTP fetch, and
+  restore proof retained under
+  tasks/evidence/2026-05-31-pi5-local-command-stdin-descriptor-proof/local8-fresh-tftp-candidate-rerun/.
+  The accepted summary is proof-result-stdin-descriptor.txt. The candidate
+  archive digest is acabea1f0a779abca51c1d0b880b43929c2f09e39eed6304bdc7aaf7685cd65f,
+  with kernel digest 9466fb78b30029be15107ab8141fa9d0f033072e92c9fee2299d6c79ccda5d92
+  and two fresh 97936-byte da591740/kernel_2712.img TFTP fetches.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test --quiet passed; static archive/image review passed; serialized Pi 5
+  hardware proof passed; restore proof returned the prior accepted boot tree
+  hash a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10;
+  git diff --check passed; mdbook build passed; git diff --cached --check
+  passed before commit.
+- Consequences: The local command-loop feature now has both QEMU/substitute
+  and Pi 5 hardware evidence for descriptor-backed stdin and stdout in the
+  kernel-backed stdio command path. Full userspace shell behavior, process
+  spawning, filesystem-backed commands, broad POSIX stdio/read readiness,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
+  policy remain blocked until later explicit tasks accept them.
+
 ## 2026-05-30 - Phase 8 Live Address-Space Activation Source Inventory Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 live address-space

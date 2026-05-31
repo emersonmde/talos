@@ -1,0 +1,2 @@
+ M src/target/rpi5.rs
+?? tasks/evidence/2026-05-31-pi5-local-command-stdin-descriptor-proof/

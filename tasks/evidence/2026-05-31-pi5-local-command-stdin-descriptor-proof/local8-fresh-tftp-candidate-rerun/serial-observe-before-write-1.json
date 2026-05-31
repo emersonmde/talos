@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "MA0KdGFsb3M6IGR0YiBtZW1vcnlbMl06IGFkZHI9MHgxMDAwMDAwMDAgc2l6ZT0weDEwMDAwMDAwMA0KcnBpNS1sb2NhbC1jb21tYW5kLXN0ZGlvLWJyaWRnZS1wcm9vZjogc3RhcnQgY29tbWFuZC1jb3VudD0xIGJhY2tlbmQ9cnVudGltZS1jb25zb2xlMC9iY20yNzEyLXVhcnQxMC1wbDAxMSBpbnB1dD1mZDAvcnVudGltZS1jb25zb2xlMC90dHktY2Fub25pY2FsLWxpdGUgYnVpbHRpbnM9a2VybmVsLWJhY2tlZCBkZXNjcmlwdG9yLWJhY2tlZC1pbnB1dD10cnVlIGRlc2NyaXB0b3ItYmFja2VkLW91dHB1dD10cnVlDQpycGk1LWxvY2FsLWNvbW1hbmQtc3RkaW8tYnJpZGdlLXByb29mOiByZWFkeSBjb21tYW5kPTANCnRhbG9zPiA=",
+  "bytes": 359,
+  "cursor_end": 3537754,
+  "cursor_start": 3537395,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "0\r\ntalos: dtb memory[2]: addr=0x100000000 size=0x100000000\r\nrpi5-local-command-stdio-bridge-proof: start command-count=1 backend=runtime-console0/bcm2712-uart10-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed descriptor-backed-input=true descriptor-backed-output=true\r\nrpi5-local-command-stdio-bridge-proof: ready command=0\r\ntalos> ",
+  "truncated": false
+}

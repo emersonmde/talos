@@ -7327,14 +7327,9 @@ impl LocalCommandProofConsole {
 }
 
 #[cfg(talos_boot_scenario = "rpi5_local_serial_command_loop")]
-impl crate::runtime_console::ConsoleBackend for LocalCommandProofConsole {
+impl core::fmt::Write for LocalCommandProofConsole {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
-        self.write_bytes(s.as_bytes())
-    }
-
-    fn write_bytes(&mut self, bytes: &[u8]) -> core::fmt::Result {
-        let text = core::str::from_utf8(bytes).map_err(|_| core::fmt::Error)?;
-        crate::target::console::write_static(text);
+        crate::target::console::write_static(s);
         wait_uart10_empty_early_phase();
         Ok(())
     }

@@ -1,0 +1,12 @@
+classification=inconclusive
+candidate_archive=86a8557e9e891218dc5bf232615167409ebb2eb02fdcbfe985e845f7a7b4c71e
+candidate_kernel=44c7d415cef40598c3076ba59cc6039b9f751ef574065d54f887552592d7007a
+candidate_kernel_size=97920
+fresh_serial_cursor=3518703
+tftp_cursor=3920713
+serial_write=0
+kernel_fetch=served	da591740/kernel_2712.img	104136;served	da591740/kernel_2712.img	104136;
+restore_rc=0
+restore_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+rpi5-production-timer-preemption: final participants=3 expected=3 errors=0 state-lock-available=true metadata-lock-available=true wait-remaining=199997427 classification=pi5-production-timer-preemption-complete
+rpi5-production-timer-preemption: PASS
