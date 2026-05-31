@@ -315,6 +315,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         implied_values: &[],
         asm_defines: &[],
     },
+    BootScenario {
+        value: "qemu_live_descriptor_image_installation_smoke",
+        implied_values: &[],
+        asm_defines: &[],
+    },
 ];
 
 fn main() {
