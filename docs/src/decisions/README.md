@@ -9406,6 +9406,45 @@ ADR template:
   delivery, userspace process interruption, terminal/session semantics,
   filesystem-backed shell behavior, networking, and SSH remain deferred.
 
+## 2026-05-31 - Phase 10 Local Line-Kill Core Accepted
+
+- Status: accepted as the Phase 10 QEMU/substitute local Ctrl-U line-kill
+  core. No Pi 5 hardware proof, boot archive publication, hardware-lock
+  acquisition, POSIX signal delivery, process interruption, userspace shell
+  execution, process spawning, job control, terminal sessions, termios, shell
+  history, kill/yank behavior, cursor addressing, filesystem-backed command
+  lookup, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy is accepted here.
+- Context: The accepted line-cancel closeout recommended the next smallest
+  local interactivity slice: Ctrl-U should discard the current prompt-local
+  editable line and let the following command dispatch over the existing
+  descriptor-backed serial command loop.
+- Decision: Accept phase10-local-line-kill-core-20260531. Canonical-lite TTY
+  input treats Ctrl-U 0x15 as a clear-line control event that empties the
+  current line without completing the command. The local command loop allows
+  that clear-line control to accompany the final completed line, prints
+  `talos: line-killed`, and then dispatches the following kernel-backed
+  command normally through descriptor-backed stdout.
+- Evidence level: QEMU/substitute local serial feature transcript retained at
+  tasks/evidence/2026-05-31-qemu-local-line-kill-core/qemu-local-line-kill-smoke.log.
+  It shows partial `bogus` input, Ctrl-U 0x15, accepted `pwd` line bytes,
+  visible `talos: line-killed`, visible `/`, descriptor-backed fd0/stdout
+  markers, one clear-line control telemetry event, final
+  qemu-local-line-kill-complete classification, and
+  qemu-local-line-kill: PASS.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test --quiet passed; scripts/qemu-local-line-kill-smoke.sh --quiet passed;
+  scripts/qemu-local-line-cancel-smoke.sh --quiet passed;
+  scripts/qemu-local-line-editing-smoke.sh --quiet passed; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: Talos now has QEMU/substitute evidence for prompt-local Ctrl-U
+  whole-line discard followed by normal descriptor-backed command dispatch.
+  The accepted frontier remains kernel-backed local prompt interactivity only;
+  Pi 5 line-kill proof, POSIX terminal/session semantics, userspace shell
+  execution, process lifecycle, filesystem-backed shell behavior, networking,
+  and SSH remain deferred.
+
 ## 2026-05-30 - Phase 8 Live Address-Space Activation Source Inventory Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 live address-space

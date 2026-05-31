@@ -366,7 +366,7 @@ fn dispatch_completed_line(
         response_lines = responses;
     } else if !input_result.passed()
         || input_result.truncated()
-        || !input_result.controls().is_empty()
+        || has_unsupported_controls(input_result.controls())
     {
         status = LocalCommandStatus::InputError(input_result.outcome());
         let mut responses = 0usize;
@@ -378,6 +378,9 @@ fn dispatch_completed_line(
         response_lines = responses;
     } else {
         let mut responses = 0usize;
+        if has_line_kill(input_result.controls()) {
+            write_line(sink, &mut responses, "talos: line-killed")?;
+        }
         status = dispatch_local_command(input_result.line(), sink, &mut responses)?;
         response_lines = responses;
     }
@@ -393,6 +396,18 @@ fn dispatch_completed_line(
         truncated: input_result.truncated(),
         controls: input_result.controls().len(),
     })
+}
+
+fn has_line_kill(controls: &[Option<tty::TtyControlEvent>]) -> bool {
+    controls
+        .iter()
+        .any(|event| *event == Some(tty::TtyControlEvent::ClearLine))
+}
+
+fn has_unsupported_controls(controls: &[Option<tty::TtyControlEvent>]) -> bool {
+    controls
+        .iter()
+        .any(|event| *event != Some(tty::TtyControlEvent::ClearLine))
 }
 
 fn dispatch_local_command(
@@ -847,6 +862,30 @@ mod tests {
     }
 
     #[test_case]
+    fn local_command_loop_kills_partial_line_on_ctrl_u_before_dispatch() {
+        let input = ScriptedInput::new(
+            [
+                b'b', b'o', b'g', b'u', b's', 0x15, b'p', b'w', b'd', b'\r', 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            ],
+            10,
+        );
+        let mut backend = CaptureSink::new();
+        let result = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            run_one_descriptor_backed_serial_command(&mut io).unwrap()
+        };
+
+        assert_eq!(result.line(), b"pwd");
+        assert_eq!(result.status(), LocalCommandStatus::Handled);
+        assert_eq!(result.response_lines(), 2);
+        assert_eq!(result.raw_bytes(), 10);
+        assert_eq!(result.controls(), 1);
+        assert_eq!(backend.as_str(), "talos> talos: line-killed\n/\n");
+    }
+
+    #[test_case]
     fn local_command_loop_rejects_arguments_for_non_echo_builtins() {
         let mut input = ScriptedInput::new(
             [
@@ -958,5 +997,6 @@ talos: descriptor-backed-output=true\n"
             "input-error"
         );
         assert_eq!(TtyControlEvent::Interrupt.name(), "ctrl-c");
+        assert_eq!(TtyControlEvent::ClearLine.name(), "ctrl-u");
     }
 }

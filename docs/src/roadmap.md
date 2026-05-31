@@ -3842,6 +3842,22 @@ checkpoint recommends a bounded Ctrl-U prompt-local line-kill feature as the
 next smallest Phase 10 local interactivity slice; old Phase 8 proof-only work
 remains paused unless it directly unblocks local interactivity.
 
+The bounded Ctrl-U prompt-local line-kill core is now accepted in
+QEMU/substitute. Retained evidence is at
+tasks/evidence/2026-05-31-qemu-local-line-kill-core/qemu-local-line-kill-smoke.log.
+The accepted transcript types partial `bogus` input, sends Ctrl-U 0x15,
+records the dispatched line as `pwd`, prints `talos: line-killed`, prints `/`
+through descriptor-backed stdout, records fd0/stdout markers and one clear-line
+control event, returns to a ready prompt, and ends with
+qemu-local-line-kill-complete plus PASS. Ctrl-C line-cancel and
+Backspace/Delete local editing regressions also passed. This remains a
+kernel-local prompt behavior only: no POSIX signal delivery, process
+interruption, job control, termios, userspace shell execution,
+filesystem-backed command lookup, Pi 5 hardware proof, networking, or SSH is
+accepted by this core task. The next feature-led step is the already queued
+serialized Pi 5 line-kill proof if dependencies and hardwareTestLock state
+remain satisfied.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.

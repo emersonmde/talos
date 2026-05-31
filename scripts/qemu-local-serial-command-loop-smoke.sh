@@ -16,6 +16,7 @@ ECHO_COMMAND_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_ECHO_COMMAND_SMOKE:-0}"
 PWD_COMMAND_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_PWD_COMMAND_SMOKE:-0}"
 LINE_EDITING_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LINE_EDITING_SMOKE:-0}"
 LINE_CANCEL_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LINE_CANCEL_SMOKE:-0}"
+LINE_KILL_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LINE_KILL_SMOKE:-0}"
 
 script_dir="$(CDPATH= cd "$(dirname "$0")" && pwd)"
 . "$script_dir/objcopy-tool.sh"
@@ -82,7 +83,9 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                 ;;
             *"$LABEL: ready command=3"*)
                 if [ "$sent" -eq 3 ]; then
-                    if [ "$LINE_CANCEL_SMOKE" -eq 1 ]; then
+                    if [ "$LINE_KILL_SMOKE" -eq 1 ]; then
+                        printf 'bogus\025pwd\r' >&3
+                    elif [ "$LINE_CANCEL_SMOKE" -eq 1 ]; then
                         printf 'bogus\003' >&3
                     elif [ "$LINE_EDITING_SMOKE" -eq 1 ]; then
                         printf 'pwx\bd\r' >&3
@@ -98,7 +101,9 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                 ;;
             *"$LABEL: ready command=4"*)
                 if [ "$sent" -eq 4 ]; then
-                    if [ "$LINE_CANCEL_SMOKE" -eq 1 ]; then
+                    if [ "$LINE_KILL_SMOKE" -eq 1 ]; then
+                        printf 'pwd\r' >&3
+                    elif [ "$LINE_CANCEL_SMOKE" -eq 1 ]; then
                         printf 'pwd\r' >&3
                     elif [ "$LINE_EDITING_SMOKE" -eq 1 ]; then
                         printf 'pwx\177d\r' >&3
@@ -216,6 +221,16 @@ if [ "$LINE_EDITING_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: line command=8 hex=73 74 61 74 75 73 20 6e 6f 77" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=8 status=unexpected-argument responses=1" "$LOG_FILE"
     grep -q "$LABEL: final participants=9 expected=9 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+elif [ "$LINE_KILL_SMOKE" -eq 1 ]; then
+    grep -q "talos> bogus" "$LOG_FILE"
+    grep -q "talos: line-killed" "$LOG_FILE"
+    grep -q "^/" "$LOG_FILE"
+    grep -q "$LABEL: line command=3 hex=70 77 64" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=3 status=handled responses=2 raw-bytes=10 backspaces=0 deletes=0 truncated=false controls=1" "$LOG_FILE"
+    grep -q "talos> pwd" "$LOG_FILE"
+    grep -q "$LABEL: line command=4 hex=70 77 64" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=4 status=handled responses=1" "$LOG_FILE"
+    grep -q "$LABEL: final participants=5 expected=5 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
 elif [ "$LINE_CANCEL_SMOKE" -eq 1 ]; then
     grep -q "talos> bogus" "$LOG_FILE"
     grep -q "talos: line-canceled" "$LOG_FILE"

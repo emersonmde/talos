@@ -485,6 +485,26 @@ mod tests {
     }
 
     #[test_case]
+    fn line_discipline_kills_current_line_on_ctrl_u_without_termination() {
+        let mut tty = TtyLineDiscipline::canonical_lite();
+
+        for byte in b"partial" {
+            assert_eq!(tty.process_byte(*byte), TtyInputOutcome::Pending);
+        }
+        assert_eq!(tty.process_byte(0x15), TtyInputOutcome::Pending);
+        for byte in b"pwd" {
+            assert_eq!(tty.process_byte(*byte), TtyInputOutcome::Pending);
+        }
+        assert_eq!(tty.process_byte(b'\r'), TtyInputOutcome::LineComplete);
+
+        assert_eq!(tty.line(), b"pwd");
+        assert_eq!(tty.echo(), b"partialpwd\r\n");
+        assert_eq!(tty.controls(), &[Some(TtyControlEvent::ClearLine)]);
+        assert_eq!(tty.raw_bytes(), 12);
+        assert!(tty.terminated());
+    }
+
+    #[test_case]
     fn line_discipline_records_deferred_control_event_names() {
         let mut tty = TtyLineDiscipline::canonical_lite();
 
