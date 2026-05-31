@@ -3319,6 +3319,18 @@ Milestone 8.3: Program Loader
   expansion, Pi 5 hardware proof, shell behavior, networking, and SSH remain
   blocked. The next bounded task is
   phase8-qemu-kernel-half-descriptor-image-smoke-plan-20260531.
+- Phase 8 QEMU/substitute kernel-half descriptor-image smoke plan is accepted.
+  It defines qemu_kernel_half_descriptor_image_smoke, retained evidence path
+  tasks/evidence/2026-05-31-qemu-kernel-half-descriptor-image-smoke-core/qemu-kernel-half-descriptor-image-smoke.log,
+  classification qemu-kernel-half-descriptor-image-smoke-complete, PASS
+  vocabulary, success observations for copied input lineage, kernel coverage,
+  privileged-only normal/device descriptor attributes, model-owned root/table
+  leases, no-partial-image rollback, idempotent teardown, deterministic
+  rejection, and zero live activation side effects. Live register mutation,
+  ASID/TLB/barrier activation, lower-EL ERET, scheduler publication, process
+  lifecycle, filesystem syscall expansion, Pi 5 hardware proof, shell
+  behavior, networking, and SSH remain blocked. The next bounded task is
+  phase8-kernel-half-descriptor-image-core-20260531.
 
 Acceptance criteria:
 

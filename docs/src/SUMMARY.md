@@ -161,6 +161,7 @@
 - [Phase 8 Kernel-Half Reachability Closeout Checkpoint](project/phase8-kernel-half-reachability-closeout-checkpoint.md)
 - [Phase 8 Kernel-Half Descriptor-Image Source Inventory](project/phase8-kernel-half-descriptor-image-source-inventory.md)
 - [Phase 8 Kernel-Half Descriptor-Image Contract](project/phase8-kernel-half-descriptor-image-contract.md)
+- [Phase 8 QEMU Kernel-Half Descriptor-Image Smoke Plan](project/phase8-qemu-kernel-half-descriptor-image-smoke-plan.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture
