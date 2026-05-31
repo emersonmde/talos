@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "dHVzPWhhbmRsZWQgcmVzcG9uc2VzPTIgcmF3LWJ5dGVzPTUgdHJ1bmNhdGVkPWZhbHNlIGNvbnRyb2xzPTANCnJwaTUtbG9jYWwtc2VyaWFsLWNvbW1hbmQtbG9vcC1wcm9vZjogcmVhZHkgY29tbWFuZD0xDQp0YWxvcz4gDQ0KdGFsb3M6IGVtcHR5LWNvbW1hbmQNCg0KcnBpNS1sb2NhbC1zZXJpYWwtY29tbWFuZC1sb29wLXByb29mOiBsaW5lIGNvbW1hbmQ9MSBoZXg9DQpycGk1LWxvY2FsLXNlcmlhbC1jb21tYW5kLWxvb3AtcHJvb2Y6IGRpc3BhdGNoIGNvbW1hbmQ9MSBzdGF0dXM9ZW1wdHktY29tbWFuZCByZXNwb25zZXM9MSByYXctYnl0ZXM9MSB0cnVuY2F0ZWQ9ZmFsc2UgY29udHJvbHM9MA0KcnBpNS1sb2NhbC1zZXJpYWwtY29tbWFuZC1sb29wLXByb29mOiByZWFkeSBjb21tYW5kPTINCnRhbG9zPiBib2d1cw0NCnRhbG9zOiB1bmtub3duLWNvbW1hbmQNCg0KcnBpNS1sb2NhbC1zZXJpYWwtY29tbWFuZC1sb29wLXByb29mOiBsaW5lIGNvbW1hbmQ9MiBoZXg9NjIgNmYgNjcgNzUgNzMNCnJwaTUtbG9jYWwtc2VyaWFsLWNvbW1hbmQtbG9vcC1wcm9vZjogZGlzcGF0Y2ggY29tbWFuZD0yIHN0YXR1cz11bmtub3duLWNvbW1hbmQgcmVzcG9uc2VzPTEgcmF3LWJ5dGVzPTYgdHJ1bmNhdGVkPWZhbHNlIGNvbnRyb2xzPTANCnRhbG9zPiANCnJwaTUtbG9jYWwtc2VyaWFsLWNvbW1hbmQtbG9vcC1wcm9vZjogcmVhZHktZm9yLW5leHQgcHJvbXB0PXRydWUNCnJwaTUtbG9jYWwtc2VyaWFsLWNvbW1hbmQtbG9vcC1wcm9vZjogZmluYWwgcGFydGljaXBhbnRzPTQgZXhwZWN0ZWQ9NCBlcnJvcnM9MCBjbGFzc2lmaWNhdGlvbj1waTUtbG9jYWwtc2VyaWFsLWNvbW1hbmQtbG9vcC1jb21wbGV0ZQ0KcnBpNS1sb2NhbC1zZXJpYWwtY29tbWFuZC1sb29wLXByb29mOiBQQVNTDQo=",
+  "bytes": 896,
+  "cursor_end": 3400460,
+  "cursor_start": 3399564,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "tus=handled responses=2 raw-bytes=5 truncated=false controls=0\r\nrpi5-local-serial-command-loop-proof: ready command=1\r\ntalos> \r\r\ntalos: empty-command\r\n\r\nrpi5-local-serial-command-loop-proof: line command=1 hex=\r\nrpi5-local-serial-command-loop-proof: dispatch command=1 status=empty-command responses=1 raw-bytes=1 truncated=false controls=0\r\nrpi5-local-serial-command-loop-proof: ready command=2\r\ntalos> bogus\r\r\ntalos: unknown-command\r\n\r\nrpi5-local-serial-command-loop-proof: line command=2 hex=62 6f 67 75 73\r\nrpi5-local-serial-command-loop-proof: dispatch command=2 status=unknown-command responses=1 raw-bytes=6 truncated=false controls=0\r\ntalos> \r\nrpi5-local-serial-command-loop-proof: ready-for-next prompt=true\r\nrpi5-local-serial-command-loop-proof: final participants=4 expected=4 errors=0 classification=pi5-local-serial-command-loop-complete\r\nrpi5-local-serial-command-loop-proof: PASS\r\n",
+  "truncated": false
+}

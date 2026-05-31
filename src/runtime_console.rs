@@ -18,7 +18,8 @@ pub trait ConsoleBackend {
         talos_boot_scenario = "qemu_diagnostic_command_channel",
         talos_boot_scenario = "qemu_local_serial_command_loop",
         talos_boot_scenario = "rpi5_uart10_polling_rx",
-        talos_boot_scenario = "rpi5_diagnostic_command_channel"
+        talos_boot_scenario = "rpi5_diagnostic_command_channel",
+        talos_boot_scenario = "rpi5_local_serial_command_loop"
     )),
     allow(dead_code)
 )]
@@ -219,7 +220,8 @@ where
         talos_boot_scenario = "qemu_diagnostic_command_channel",
         talos_boot_scenario = "qemu_local_serial_command_loop",
         talos_boot_scenario = "rpi5_uart10_polling_rx",
-        talos_boot_scenario = "rpi5_diagnostic_command_channel"
+        talos_boot_scenario = "rpi5_diagnostic_command_channel",
+        talos_boot_scenario = "rpi5_local_serial_command_loop"
     )),
     allow(dead_code)
 )]

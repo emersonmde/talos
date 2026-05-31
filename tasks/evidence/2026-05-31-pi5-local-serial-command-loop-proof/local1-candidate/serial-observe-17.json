@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "dGFydA0K",
+  "bytes": 6,
+  "cursor_end": 3374069,
+  "cursor_start": 3374063,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "tart\r\n",
+  "truncated": false
+}

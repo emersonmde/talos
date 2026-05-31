@@ -116,6 +116,9 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
     #[cfg(talos_boot_scenario = "rpi5_diagnostic_command_channel")]
     target::rpi5::run_diagnostic_command_channel_proof();
 
+    #[cfg(talos_boot_scenario = "rpi5_local_serial_command_loop")]
+    target::rpi5::run_local_serial_command_loop_proof();
+
     #[cfg(talos_boot_scenario = "rpi5_timer_preemption")]
     target::rpi5::run_el2_timer_preemption_smoke();
 

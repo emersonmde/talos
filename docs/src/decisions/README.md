@@ -9025,6 +9025,41 @@ ADR template:
   spawning, persistent storage, networking, SSH, and resumed Phase 8 proof-only
   work remain blocked until separate feature-led tasks accept them.
 
+## 2026-05-31 - Phase 10 Pi 5 Local Serial Command Loop Proof Accepted
+
+- Status: accepted as the serialized Raspberry Pi 5 hardware proof for the
+  Phase 10 local serial command-loop feature. It proves physical serial input,
+  Enter dispatch, a visible response, and next-prompt readiness for the
+  selected unknown-command path; it does not claim userspace shell execution,
+  descriptor-backed filesystem commands, networking, or SSH.
+- Context: The QEMU/substitute command-loop core was already accepted. The
+  next bounded feature-led task was to carry the same local interactivity path
+  to physical Pi 5 hardware under the hardware lock and restore the prior
+  accepted boot tree afterward.
+- Decision: Accept phase10-pi5-local-serial-command-loop-proof-20260531. The
+  Pi 5 boot scenario runs the command loop over runtime-console0 backed by
+  BCM2712 UART10 and retains evidence for typed \`bogus\`, dispatch status
+  unknown-command, visible \`talos: unknown-command\`, \`ready-for-next
+  prompt=true\`, classification pi5-local-serial-command-loop-complete, and
+  PASS.
+- Evidence level: serialized Pi 5 serial hardware boot/output, TFTP fetch, and
+  restore proof retained under
+  tasks/evidence/2026-05-31-pi5-local-serial-command-loop-proof/local6-clean-candidate/.
+  The accepted summary is proof-result-selected-bogus.txt. The candidate
+  archive digest is b27764bce3d8a47562e16679119f24e3b841ed7f7aa6249070cb360cc6e3a134,
+  with kernel digest 09a02e4dd9cbeac61ef20f4cd4cef6a1e62d1364abdb87aff9724a6101e1fb34.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test --quiet passed; static archive/image review passed; serialized Pi 5
+  hardware proof passed; restore proof returned the prior accepted boot tree
+  hash a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10;
+  git diff --check passed; mdbook build passed; git diff --cached --check
+  passed before commit.
+- Consequences: The local command-loop feature now has both QEMU/substitute and
+  Pi 5 hardware evidence for the first interactive path. Full shell behavior,
+  userspace process execution, descriptor-backed filesystem commands,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
+  policy remain blocked until later explicit tasks accept them.
+
 ## 2026-05-30 - Phase 8 Initial User Stack Closeout Checkpoint Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 initial user stack

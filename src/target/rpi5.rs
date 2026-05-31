@@ -189,7 +189,8 @@ const EL2_PHYSICAL_TIMER_INTID: u32 = 26;
 const TIMER_IRQ_WAIT_LIMIT: usize = 8_000_000;
 #[cfg(any(
     talos_boot_scenario = "rpi5_uart10_polling_rx",
-    talos_boot_scenario = "rpi5_diagnostic_command_channel"
+    talos_boot_scenario = "rpi5_diagnostic_command_channel",
+    talos_boot_scenario = "rpi5_local_serial_command_loop"
 ))]
 const UART10_RX_WAIT_LIMIT: usize = 200_000_000;
 #[cfg(talos_boot_scenario = "rpi5_diagnostic_command_channel")]
@@ -7190,6 +7191,110 @@ fn settle_for_serial_capture() {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_local_serial_command_loop")]
+pub fn run_local_serial_command_loop_proof() -> bool {
+    crate::println!(
+        "rpi5-local-serial-command-loop-proof: start command-count={} backend=runtime-console0/bcm2712-uart10-pl011 input=tty-canonical-lite builtins=kernel-backed",
+        crate::local_command_loop::DEFAULT_LOCAL_COMMAND_COUNT
+    );
+    wait_uart10_empty_early_phase();
+
+    let mut input = firmware_console();
+    let mut sink = crate::runtime_console::RuntimeConsole::new(firmware_console());
+    let mut passed = true;
+
+    for command_index in 0..crate::local_command_loop::DEFAULT_LOCAL_COMMAND_COUNT {
+        crate::println!(
+            "rpi5-local-serial-command-loop-proof: ready command={}",
+            command_index
+        );
+        wait_uart10_empty_early_phase();
+
+        let result = match crate::local_command_loop::run_one_serial_command_with_limit(
+            &mut input,
+            &mut sink,
+            UART10_RX_WAIT_LIMIT,
+        ) {
+            Ok(result) => result,
+            Err(error) => {
+                crate::println!(
+                    "rpi5-local-serial-command-loop-proof: cycle-fail command={} error={:?}",
+                    command_index,
+                    error
+                );
+                passed = false;
+                continue;
+            }
+        };
+
+        crate::println!();
+        crate::print!(
+            "rpi5-local-serial-command-loop-proof: line command={} hex=",
+            command_index
+        );
+        print_tty_hex_bytes(result.line());
+        crate::println!();
+        crate::println!(
+            "rpi5-local-serial-command-loop-proof: dispatch command={} status={} responses={} raw-bytes={} truncated={} controls={}",
+            command_index,
+            result.status_name(),
+            result.response_lines(),
+            result.raw_bytes(),
+            result.truncated(),
+            result.controls()
+        );
+
+        if !expected_local_command_loop_dispatch(
+            command_index,
+            result.line(),
+            result.status(),
+            result.response_lines(),
+        ) {
+            passed = false;
+        }
+        wait_uart10_empty_early_phase();
+    }
+
+    let ready_for_next = crate::local_command_loop::write_local_command_prompt(&mut sink).is_ok();
+    crate::println!();
+    crate::println!(
+        "rpi5-local-serial-command-loop-proof: ready-for-next prompt={}",
+        ready_for_next
+    );
+
+    if ready_for_next && passed {
+        crate::println!(
+            "rpi5-local-serial-command-loop-proof: final participants=4 expected=4 errors=0 classification=pi5-local-serial-command-loop-complete"
+        );
+        crate::println!("rpi5-local-serial-command-loop-proof: PASS");
+    } else {
+        crate::println!(
+            "rpi5-local-serial-command-loop-proof: final participants=4 expected=4 errors=1 classification=pi5-local-serial-command-loop-incomplete"
+        );
+        crate::println!("rpi5-local-serial-command-loop-proof: FAIL");
+    }
+    wait_uart10_empty_early_phase();
+
+    ready_for_next && passed
+}
+
+#[cfg(talos_boot_scenario = "rpi5_local_serial_command_loop")]
+fn expected_local_command_loop_dispatch(
+    command_index: usize,
+    line: &[u8],
+    status: crate::local_command_loop::LocalCommandStatus,
+    response_lines: usize,
+) -> bool {
+    use crate::local_command_loop::LocalCommandStatus::{Empty, Handled, UnknownCommand};
+
+    match command_index {
+        0 => line == b"help" && status == Handled && response_lines == 2,
+        1 => line.is_empty() && status == Empty && response_lines == 1,
+        2 => line == b"bogus" && status == UnknownCommand && response_lines == 1,
+        _ => false,
+    }
+}
+
 #[cfg(talos_boot_scenario = "rpi5_diagnostic_command_channel")]
 fn diagnostic_dispatch_status_name(
     status: crate::diagnostic_command::DiagnosticDispatchStatus,
@@ -7224,7 +7329,8 @@ fn expected_diagnostic_dispatch(
 
 #[cfg(any(
     talos_boot_scenario = "rpi5_uart10_polling_rx",
-    talos_boot_scenario = "rpi5_diagnostic_command_channel"
+    talos_boot_scenario = "rpi5_diagnostic_command_channel",
+    talos_boot_scenario = "rpi5_local_serial_command_loop"
 ))]
 fn print_tty_hex_bytes(bytes: &[u8]) {
     for (index, byte) in bytes.iter().enumerate() {

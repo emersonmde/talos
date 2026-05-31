@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "ZXJpYWwtY29tbWFuZC1sb29wLXByb29mOiBsaW5lIGNvbW1hbmQ9MSBoZXg9DQpycGk1LWxvY2FsLXNlcmlhbC1jb21tYW5kLWxvb3AtcHJvb2Y6IGRpc3BhdGNoIGNvbW1hbmQ9MSBzdGF0dXM9aW5wdXQtZXJyb3IgcmVzcG9uc2VzPTEgcmF3LWJ5dGVzPTAgdHJ1bmNhdGVkPWZhbHNlIGNvbnRyb2xzPTANCnJwaTUtbG9jYWwtc2VyaWFsLWNvbW1hbmQtbG9vcC1wcm9vZjogcmVhZHkgY29tbWFuZD0yDQp0YWxvcz4gcm9scz0wDQp0YWxvcz4gDQpycGk1LWxvY2FsLXNlcmlhbC1jb21tYW5kLWxvb3AtcHJvb2Y6IHJlYWR5LWZvci1uZXh0IHByb21wdD10cnVlDQpycGk1LWxvY2FsLXNlcmlhbC1jb21tYW5kLWxvb3AtcHJvb2Y6IGZpbmFsIHBhcnRpY2lwYW50cz00IGV4cGVjdGVkPTQgZXJyb3JzPTEgY2xhc3NpZmljYXRpb249cGk1LWxvY2FsLXNlcmlhbC1jb21tYW5kLWxvb3AtaW5jb21wbGV0ZQ0KcnBpNS1sb2NhbC1zZXJpYWwtY29tbWFuZC1sb29wLXByb29mOiBGQUlMDQo=",
+  "bytes": 500,
+  "cursor": 3377425,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "erial-command-loop-proof: line command=1 hex=\r\nrpi5-local-serial-command-loop-proof: dispatch command=1 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\r\nrpi5-local-serial-command-loop-proof: ready command=2\r\ntalos> rols=0\r\ntalos> \r\nrpi5-local-serial-command-loop-proof: ready-for-next prompt=true\r\nrpi5-local-serial-command-loop-proof: final participants=4 expected=4 errors=1 classification=pi5-local-serial-command-loop-incomplete\r\nrpi5-local-serial-command-loop-proof: FAIL\r\n"
+}

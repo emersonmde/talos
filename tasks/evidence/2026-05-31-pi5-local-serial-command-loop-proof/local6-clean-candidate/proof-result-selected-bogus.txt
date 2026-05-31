@@ -1,0 +1,23 @@
+selected-command=bogus
+archive=b27764bce3d8a47562e16679119f24e3b841ed7f7aa6249070cb360cc6e3a134  target/talos-rpi5-local-serial-command-loop-local1-boot.tar.gz
+kernel=
+tftp_cursor=3901799
+serial_transcript=tasks/evidence/2026-05-31-pi5-local-serial-command-loop-proof/local6-clean-candidate/serial-transcript.txt
+tftp_delta=tasks/evidence/2026-05-31-pi5-local-serial-command-loop-proof/local6-clean-candidate/tftp-delta-before-restore-corrected.json
+restore_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+checks:
+PASS rpi5-local-serial-command-loop-proof: start command-count=3
+PASS rpi5-local-serial-command-loop-proof: ready command=2
+PASS talos> bogus
+PASS talos: unknown-command
+PASS rpi5-local-serial-command-loop-proof: dispatch command=2 status=unknown-command
+PASS rpi5-local-serial-command-loop-proof: ready-for-next prompt=true
+PASS classification=pi5-local-serial-command-loop-complete
+PASS rpi5-local-serial-command-loop-proof: PASS
+tftp_kernel_events=6
+May 31 10:17:44 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+May 31 10:17:44 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+May 31 10:22:08 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+May 31 10:22:08 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+May 31 10:23:23 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+May 31 10:23:24 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4

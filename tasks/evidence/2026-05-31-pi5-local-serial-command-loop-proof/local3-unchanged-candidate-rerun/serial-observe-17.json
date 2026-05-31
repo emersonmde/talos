@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "bGU9ZmFsc2UNCnRhbG9zOiByZXNlcnZlZC1tZW1vcnlbMl06IGFkZHI9MHgwIHNpemU9MHgwIG5vX21hcD10cnVlIHJldXNhYmxlPWZhbHNlDQpUQUxPUzogZHRiIG1lbW9yeSBzY2FuIHN0YXJ0DQo=",
+  "bytes": 113,
+  "cursor_end": 3396607,
+  "cursor_start": 3396494,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "le=false\r\ntalos: reserved-memory[2]: addr=0x0 size=0x0 no_map=true reusable=false\r\nTALOS: dtb memory scan start\r\n",
+  "truncated": false
+}

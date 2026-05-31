@@ -10,6 +10,7 @@
         any(
             talos_boot_scenario = "rpi5_timer_preemption",
             talos_boot_scenario = "rpi5_diagnostic_command_channel",
+            talos_boot_scenario = "rpi5_local_serial_command_loop",
             talos_boot_scenario = "rpi5_psci_secondary_core_alive",
             talos_boot_scenario = "rpi5_secondary_core_workload",
             talos_boot_scenario = "rpi5_smp_lock_cache_coherence",
@@ -138,7 +139,8 @@ mod target;
         talos_boot_scenario = "qemu_polling_tty_rx",
         talos_boot_scenario = "qemu_diagnostic_command_channel",
         talos_boot_scenario = "qemu_local_serial_command_loop",
-        talos_boot_scenario = "rpi5_diagnostic_command_channel"
+        talos_boot_scenario = "rpi5_diagnostic_command_channel",
+        talos_boot_scenario = "rpi5_local_serial_command_loop"
     )),
     allow(dead_code)
 )]

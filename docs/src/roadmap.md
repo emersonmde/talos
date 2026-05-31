@@ -3711,15 +3711,20 @@ Acceptance criteria:
 
 Goal: make Talos useful from a local console before depending on Ethernet.
 
-Status: the feature-led reset accepted the first QEMU/substitute local serial
-interactivity slice. The kernel now has a bounded local command loop that reads
-a canonical TTY line from runtime-console0, dispatches kernel-backed built-ins,
-prints visible responses for help, empty input, and unknown input, and emits
-a prompt/ready marker for another command. Retained QEMU serial evidence is at
+Status: the feature-led reset accepted the first local serial interactivity
+slice in QEMU/substitute and on serialized Raspberry Pi 5 hardware. The kernel
+now has a bounded local command loop that reads a canonical TTY line from
+runtime-console0, dispatches kernel-backed built-ins, prints visible responses
+for help, empty input, and unknown input in QEMU, and emits a prompt/ready
+marker for another command. Retained QEMU serial evidence is at
 tasks/evidence/2026-05-31-qemu-local-serial-command-loop-core/qemu-local-serial-command-loop-smoke.log.
-This is not accepted userspace shell execution, descriptor-backed filesystem
-commands, networking, SSH, or Pi 5 hardware behavior; the next explicit task is
-the serialized Pi 5 proof for this same local serial command-loop feature.
+Retained Pi 5 hardware evidence is at
+tasks/evidence/2026-05-31-pi5-local-serial-command-loop-proof/local6-clean-candidate/serial-transcript.txt
+and proves the physical \`bogus\` input, Enter dispatch, visible
+unknown-command response, next prompt, and
+pi5-local-serial-command-loop-complete PASS path. This is not accepted
+userspace shell execution, descriptor-backed filesystem commands, networking,
+or SSH.
 
 Milestone 10.1: Local Shell
 

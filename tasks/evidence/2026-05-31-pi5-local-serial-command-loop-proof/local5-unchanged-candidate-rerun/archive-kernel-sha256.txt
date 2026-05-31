@@ -1,0 +1,2 @@
+b27764bce3d8a47562e16679119f24e3b841ed7f7aa6249070cb360cc6e3a134  target/talos-rpi5-local-serial-command-loop-local1-boot.tar.gz
+09a02e4dd9cbeac61ef20f4cd4cef6a1e62d1364abdb87aff9724a6101e1fb34  target/rpi5-local-serial-command-loop-boot-tree-local1/kernel_2712.img

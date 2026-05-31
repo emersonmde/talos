@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "CnRhbG9zPiBib2d1cw0NCnRhbG9zOiB1bmtub3duLWNvbW1hbmQNCg0KcnBpNS1sb2NhbC1zZXJpYWwtY29tbWFuZC1sb29wLXByb29mOiBsaW5lIGNvbW1hbmQ9MiBoZXg9NjIgNmYgNjcgNzUgNzMNCnJwaTUtbG9jYWwtc2VyaWFsLWNvbW1hbmQtbG9vcC1wcm9vZjogZGlzcGF0Y2ggY29tbWFuZD0yIHN0YXR1cz11bmtub3duLWNvbW1hbmQgcmVzcG9uc2VzPTEgcmF3LWJ5dGVzPTYgdHJ1bmNhdGVkPWZhbHNlIGNvbnRyb2xzPTANCnRhbG9zPiANCnJwaTUtbG9jYWwtc2VyaWFsLWNvbW1hbmQtbG9vcC1wcm9vZjogcmVhZHktZm9yLW5leHQgcHJvbXB0PXRydWUNCnJwaTUtbG9jYWwtc2VyaWFsLWNvbW1hbmQtbG9vcC1wcm9vZjogZmluYWwgcGFydGljaXBhbnRzPTQgZXhwZWN0ZWQ9NCBlcnJvcnM9MCBjbGFzc2lmaWNhdGlvbj1waTUtbG9jYWwtc2VyaWFsLWNvbW1hbmQtbG9vcC1jb21wbGV0ZQ0KcnBpNS1sb2NhbC1zZXJpYWwtY29tbWFuZC1sb29wLXByb29mOiBQQVNTDQo=",
+  "bytes": 500,
+  "cursor": 3400460,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\ntalos> bogus\r\r\ntalos: unknown-command\r\n\r\nrpi5-local-serial-command-loop-proof: line command=2 hex=62 6f 67 75 73\r\nrpi5-local-serial-command-loop-proof: dispatch command=2 status=unknown-command responses=1 raw-bytes=6 truncated=false controls=0\r\ntalos> \r\nrpi5-local-serial-command-loop-proof: ready-for-next prompt=true\r\nrpi5-local-serial-command-loop-proof: final participants=4 expected=4 errors=0 classification=pi5-local-serial-command-loop-complete\r\nrpi5-local-serial-command-loop-proof: PASS\r\n"
+}

@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "dGFsb3M6IGlucHV0LWVycm9yIHRpbWVvdXQNCg0KcnBpNS1sb2NhbC1zZXJpYWwtY29tbWFuZC1sb29wLXByb29mOiBsaW5lIGNvbW1hbmQ9MSBoZXg9DQpycGk1LWxvY2FsLXNlcmlhbC1jb21tYW5kLWxvb3AtcHJvb2Y6IGRpc3BhdGNoIGNvbW1hbmQ9MSBzdGF0dXM9aW5wdXQtZXJyb3IgcmVzcG9uc2VzPTEgcmF3LWJ5dGVzPTAgdHJ1bmNhdGVkPWZhbHNlIGNvbnRyb2xzPTANCnJwaTUtbG9jYWwtc2VyaWFsLWNvbW1hbmQtbG9vcC1wcm9vZjogcmVhZHkgY29tbWFuZD0yDQp0YWxvcz4g",
+  "bytes": 279,
+  "cursor_end": 3377162,
+  "cursor_start": 3376883,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "talos: input-error timeout\r\n\r\nrpi5-local-serial-command-loop-proof: line command=1 hex=\r\nrpi5-local-serial-command-loop-proof: dispatch command=1 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\r\nrpi5-local-serial-command-loop-proof: ready command=2\r\ntalos> ",
+  "truncated": false
+}

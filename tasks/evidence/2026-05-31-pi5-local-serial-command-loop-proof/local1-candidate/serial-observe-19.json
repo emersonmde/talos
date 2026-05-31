@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "bWFuZD0xDQp0YWxvcz4g",
+  "bytes": 15,
+  "cursor_end": 3376883,
+  "cursor_start": 3376868,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "mand=1\r\ntalos> ",
+  "truncated": false
+}

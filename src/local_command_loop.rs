@@ -1,8 +1,6 @@
 use crate::{
     runtime_console::{self, ConsoleBackend, ConsoleInputBackend, DEFAULT_RUNTIME_CONSOLE},
-    tty::{
-        self, CANONICAL_LINE_CAPACITY, PollingTtyRxOutcome, PollingTtyRxResult, TtyControlEvent,
-    },
+    tty::{self, CANONICAL_LINE_CAPACITY, PollingTtyRxOutcome, PollingTtyRxResult},
 };
 
 pub const LOCAL_COMMAND_LOOP_VERSION: &str = "phase10.1-kernel-builtins-v1";
@@ -113,8 +111,20 @@ where
     I: ConsoleInputBackend,
     S: LocalCommandSink,
 {
+    run_one_serial_command_with_limit(input, sink, tty::POLLING_RX_WAIT_LIMIT)
+}
+
+pub fn run_one_serial_command_with_limit<I, S>(
+    input: &mut I,
+    sink: &mut S,
+    wait_limit: usize,
+) -> Result<LocalCommandCycleResult, LocalCommandCycleError>
+where
+    I: ConsoleInputBackend,
+    S: LocalCommandSink,
+{
     write_local_command_prompt(sink).map_err(|_| LocalCommandCycleError::PromptWriteFailed)?;
-    let input_result = tty::run_polling_rx_diagnostic(input);
+    let input_result = tty::run_polling_rx_diagnostic_with_limit(input, wait_limit);
     dispatch_completed_line(input_result, sink)
 }
 
@@ -276,6 +286,8 @@ fn copy_line(line: &[u8]) -> [u8; CANONICAL_LINE_CAPACITY] {
 
 #[cfg(test)]
 mod tests {
+    use crate::tty::TtyControlEvent;
+
     use super::*;
 
     struct ScriptedInput {
@@ -408,10 +420,10 @@ mod tests {
 
         assert_eq!(
             result.status(),
-            LocalCommandStatus::InputError(PollingTtyRxOutcome::Pending)
+            LocalCommandStatus::InputError(PollingTtyRxOutcome::LineComplete)
         );
         assert!(result.truncated());
-        assert_eq!(sink.as_str(), "talos> talos: input-error pending\n");
+        assert_eq!(sink.as_str(), "talos> talos: input-error line-complete\n");
 
         let mut input = ScriptedInput::new([b'\r'; 32], 1);
         let mut failing_sink = CaptureSink::failing_after(0);

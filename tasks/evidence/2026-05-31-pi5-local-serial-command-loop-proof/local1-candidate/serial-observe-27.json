@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "cm9scz0wDQp0YWxvcz4gDQpycGk1LWxvY2FsLXNlcmlhbC1jb21tYW5kLWxvb3AtcHJvb2Y6IHJlYWR5LWZvci1uZXh0IHByb21wdD10cnVlDQpycGk1LWxvY2FsLXNlcmlhbC1jb21tYW5kLWxvb3AtcHJvb2Y6IGZpbmFsIHBhcnRpY2lwYW50cz00IGV4cGVjdGVkPTQgZXJyb3JzPTEgY2xhc3NpZmljYXRpb249cGk1LWxvY2FsLXNlcmlhbC1jb21tYW5kLWxvb3AtaW5jb21wbGV0ZQ0KcnBpNS1sb2NhbC1zZXJpYWwtY29tbWFuZC1sb29wLXByb29mOiBGQUlMDQo=",
+  "bytes": 263,
+  "cursor_end": 3377425,
+  "cursor_start": 3377162,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "rols=0\r\ntalos> \r\nrpi5-local-serial-command-loop-proof: ready-for-next prompt=true\r\nrpi5-local-serial-command-loop-proof: final participants=4 expected=4 errors=1 classification=pi5-local-serial-command-loop-incomplete\r\nrpi5-local-serial-command-loop-proof: FAIL\r\n",
+  "truncated": false
+}
