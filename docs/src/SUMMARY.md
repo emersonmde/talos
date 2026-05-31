@@ -174,6 +174,7 @@
 - [Phase 10 Local Command Stdio Bridge Closeout Checkpoint](project/phase10-local-command-stdio-bridge-closeout-checkpoint.md)
 - [Phase 10 Local Command Stdin Descriptor Closeout Checkpoint](project/phase10-local-command-stdin-descriptor-closeout-checkpoint.md)
 - [Phase 10 Local Echo Command Closeout Checkpoint](project/phase10-local-echo-command-closeout-checkpoint.md)
+- [Phase 10 Local Pwd Command Closeout Checkpoint](project/phase10-local-pwd-command-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

@@ -3764,14 +3764,19 @@ tasks/evidence/2026-05-31-pi5-local-pwd-command-proof/local2-clean-candidate/pro
 The pwd proof records `typed_command=pwd`, visible `/` output from the
 root-only current-directory placeholder, descriptor-backed markers, prompt
 readiness, two fresh 98816-byte `da591740/kernel_2712.img` TFTP fetches, and
-restore to the prior accepted boot tree hash. This is not accepted `cd`, VFS
-lookup, directory listing, userspace shell execution, filesystem-backed command
-lookup, networking, or SSH.
+restore to the prior accepted boot tree hash. The pwd closeout checkpoint is
+accepted and records the current local interactivity frontier: serial prompt,
+typed `pwd`, fd0/runtime-console-backed descriptor input, kernel-backed
+built-in dispatch, root-only current-directory placeholder, descriptor-backed
+visible `/` output, and next-prompt readiness. This is not accepted `cd`,
+VFS lookup, directory listing, userspace shell execution, filesystem-backed
+command lookup, networking, or SSH.
 
-The next smallest feature-led Phase 10 task should close out the accepted
-`pwd` command frontier and then recommend the next local interactivity slice.
-Old Phase 8 proof-only work remains paused unless it directly unblocks this
-local interactivity feature.
+The next smallest feature-led Phase 10 task should improve local serial line
+editing by accepting Backspace/Delete before Enter, dispatching the corrected
+line through the existing descriptor-backed command path, printing the expected
+visible response, and returning to a ready prompt. Old Phase 8 proof-only work
+remains paused unless it directly unblocks this local interactivity feature.
 
 Milestone 10.1: Local Shell
 
