@@ -14,6 +14,30 @@ Use this pattern:
 4. Wake or report back when the task completes.
 5. Update docs or task records before declaring the work done.
 
+## Feature-Led Planning
+
+Planner work starts from the smallest useful user-visible capability, not from
+the next provable internal slice. The plan should name the interaction a person
+or normal program will be able to perform when the task lands, then choose the
+thinnest implementation path that makes that interaction real.
+
+For example, local console work should prefer "type a line over serial, press
+Enter, receive a command response" over another isolated stdin proof. A first
+shell may use kernel-backed fake built-ins while user program execution is still
+immature, as long as the interaction uses the same TTY/stdio/process surfaces
+that the real shell will grow into.
+
+Planner tasks must avoid mechanically expanding every subsystem into
+inventory, contract, smoke plan, smoke core, and closeout tasks. Use those
+documents only when they reduce risk for a real feature. If the next step is
+clear enough to code, assign a feature implementation task.
+
+Diagnostics are a fallback, not the default unit of progress. Add one only
+after a feature attempt is blocked by an unknown that cannot be resolved by code
+review, ordinary tests, or direct feature validation. A diagnostic must state the
+feature it unblocks, the exact question it answers, and how it will be removed
+or promoted after the answer is known.
+
 ## Roles
 
 The project lead owns prioritization, integration, and final decisions. Specialist agents can advise or implement, but their output is evidence for the lead to review.
@@ -32,7 +56,9 @@ A milestone is done only when:
 
 - Acceptance criteria are written clearly enough to review.
 - The code or lab infrastructure works against its acceptance criteria.
-- The result has been verified with the smallest meaningful test.
+- The acceptance criteria exercise the intended feature directly whenever
+  possible.
+- The result has been verified with the smallest meaningful feature-level test.
 - Hardware-dependent claims have completed the pre-hardware review, single-board hardware test, and post-hardware evidence review loop.
 - The roadmap status is updated.
 - Relevant architecture, hardware, ADR, or runbook docs are updated.

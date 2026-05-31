@@ -65,21 +65,29 @@ The physical lab is the source of truth for the talos-rpi5-bcm2712 target.
 
 ## Test Policy
 
-- Do not write ignored tests for hardware that QEMU cannot run. Prefer pure tests plus physical diagnostics.
-- Every hardware milestone needs a diagnostic command or serial-observable result.
+- The feature is the primary test. Prefer direct evidence of the intended
+  behavior over isolated proof scenarios. If the task is about a shell, the
+  acceptance evidence should show an interactive shell command. If the task is
+  about TTY stdin, the evidence should show typed serial input reaching the path
+  that future programs will use.
+- Do not write ignored tests for hardware that QEMU cannot run. Prefer pure tests plus physical feature validation.
+- Every hardware milestone needs a feature-level serial-observable result. Use a
+  diagnostic-only command only when the real feature path is blocked and the
+  command answers a named blocker.
 - Every boot attempt that changes direction should record the archive digest, power-cycle time, serial result, and classification.
 - Keep accepted evidence reviewable through task records and summaries. Raw lab
   captures belong in Git only when compact, decisive, or retained by an explicit
   evidence policy; see [Evidence Retention Policy](evidence-retention-policy.md).
 - Keep one-off diagnostic flags, proof scripts, and serial markers on a named
-  lifecycle. A diagnostic is either a retained gate, promoted into ordinary
-  product behavior or tests, quarantined for a bounded follow-up, or retired
-  after its accepted evidence is summarized; see
+  lifecycle. A diagnostic is either a temporary discriminator for a currently
+  blocked feature, a retained regression gate for already-working feature
+  behavior, promoted into ordinary product behavior or tests, quarantined for a
+  bounded follow-up, or retired after its accepted evidence is summarized; see
   [Diagnostic Surface Policy](diagnostic-surface-policy.md).
 - Only one physical Pi 5 test may run at a time. The lab board is a shared serial hardware resource, so hardware runs must use a durable test lock or queue.
 - Code must pass review before it is sent to the physical Pi 5. Hardware time should be spent on plausible candidates, not unreviewed work.
 - Hardware results must be reviewed after the run. Serial logs, boot classification, and lab-controller metadata are part of the task evidence, and the implementation may need another coding iteration before acceptance.
-- A task is accepted only when its stated acceptance criteria pass at the required validation level and the evidence is recorded.
+- A task is accepted only when its stated acceptance criteria pass at the required validation level and the evidence is recorded. For feature tasks, acceptance cannot be based solely on a diagnostic unless the task explicitly exists to resolve a blocker discovered while implementing the feature.
 - Treat flaky timing tests as bugs in the test design until proven otherwise.
 - Keep QEMU tests deterministic where possible.
 - Add property-style or fuzz-style host tests for path normalization, packet parsing, and descriptor-table lifetime rules once those modules exist.
@@ -90,7 +98,7 @@ The physical lab is the source of truth for the talos-rpi5-bcm2712 target.
 
 Physical Pi 5 testing follows a controlled acceptance loop:
 
-1. Define acceptance criteria for the task before requesting hardware time.
+1. Define feature-level acceptance criteria for the task before requesting hardware time.
 2. Complete implementation and local validation at the smallest meaningful non-hardware level.
 3. Run a focused code review and resolve blocking findings.
 4. Acquire the hardware test lock, publish the boot artifact, power-cycle the board, and capture serial/lab-controller evidence.
@@ -99,7 +107,7 @@ Physical Pi 5 testing follows a controlled acceptance loop:
 7. Iterate if the evidence shows a code, assumptions, or test-design issue.
 8. Accept the task only after the post-hardware review finds the criteria satisfied at the required validation level.
 
-Failed hardware tests are useful evidence, not automatic blockers. Record the failure mode, classify it, and decide whether the next step is another implementation iteration, a better diagnostic, a lab-controller fix, or a blocked state with the specific unblock requirement.
+Failed hardware tests are useful evidence, not automatic blockers. Record the failure mode, classify it, and first decide whether the next step is another feature implementation iteration. Add a diagnostic only when the failure has a specific unknown that blocks feature iteration.
 
 ## Validation Gates
 
@@ -109,14 +117,19 @@ Minimal gates by phase:
 - QEMU boot: serial hello, panic path, pass/fail exit.
 - Pi 5 first light: lab publish, power cycle, serial version line.
 - Boot ABI: serial report confirms DTB pointer, exception level, MMU/cache state, and chosen UART path.
-- MMU: serial works after MMU enable, fault diagnostic works.
+- MMU: the kernel continues the intended boot or user/process path after MMU
+  enable; fault diagnostics are secondary evidence only when debugging a fault
+  path.
 - Interrupts: timer IRQ observed and counted.
 - Scheduler: multiple tasks make progress under preemption.
 - SMP: all four cores execute controlled work.
 - RP1 substrate: stable RP1 register access, interrupt routing understood, DMA/cache rules documented.
 - Userspace: invalid user memory traps cleanly.
-- POSIX baseline: path, errno, descriptor, exec/wait/exit semantics have tests or design notes before VFS expansion.
-- Networking: ping or equivalent packet-level diagnostic, then TCP connection.
+- POSIX baseline: path, errno, descriptor, exec/wait/exit semantics are
+  exercised through small programs or shell-visible behavior as soon as that is
+  feasible.
+- Networking: first useful packet exchange, then TCP connection; packet-level
+  diagnostics are temporary unless retained as regression gates.
 - Remote shell: non-SSH TCP shell works before SSH.
 - SSH prerequisites: entropy, key provisioning, crypto strategy, and auth policy are validated.
 - SSH: remote login reaches shell.
