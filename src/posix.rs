@@ -771,6 +771,31 @@ where
     }
 }
 
+pub(crate) fn write_kernel_bytes_to_descriptor_console<const CAPACITY: usize, B>(
+    table: &DescriptorTable<CAPACITY>,
+    descriptor: usize,
+    bytes: &[u8],
+    console_backend: &mut B,
+) -> Result<usize, PosixError>
+where
+    B: ConsoleBackend,
+{
+    let entry = table.get(descriptor)?;
+    entry.require_writable()?;
+
+    if entry.object().kind() != DescriptorObjectKind::StdioOutput {
+        return Err(PosixError::NotSupported);
+    }
+    if bytes.is_empty() {
+        return Ok(0);
+    }
+
+    match runtime_console::write_default_console_bytes(console_backend, bytes) {
+        Ok(result) if result.bytes_written == bytes.len() => Ok(bytes.len()),
+        Ok(_) | Err(_) => Err(PosixError::Io),
+    }
+}
+
 #[derive(Debug, Eq, PartialEq)]
 pub(crate) struct FixedStdin<'a> {
     bytes: &'a [u8],

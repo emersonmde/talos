@@ -13219,16 +13219,31 @@ pub fn run_diagnostic_command_channel_smoke() -> bool {
 
 #[cfg(talos_boot_scenario = "qemu_local_serial_command_loop")]
 pub fn run_local_serial_command_loop_smoke() -> bool {
+    const COMMAND_COUNT: usize = 5;
+
     crate::println!(
         "qemu-local-serial-command-loop: start command-count={} backend=runtime-console0/qemu-virt-pl011 input=tty-canonical-lite builtins=kernel-backed",
-        crate::local_command_loop::DEFAULT_LOCAL_COMMAND_COUNT
+        COMMAND_COUNT
     );
 
     let mut input = console();
-    let mut sink = crate::runtime_console::RuntimeConsole::new(console());
+    let mut output = console();
+    let mut sink =
+        match crate::local_command_loop::DescriptorBackedLocalCommandSink::new_inherited_stdio(
+            &mut output,
+        ) {
+            Ok(sink) => sink,
+            Err(error) => {
+                crate::println!(
+                    "qemu-local-serial-command-loop: descriptor-bridge-fail error={}",
+                    error.name()
+                );
+                return false;
+            }
+        };
     let mut passed = true;
 
-    for command_index in 0..crate::local_command_loop::DEFAULT_LOCAL_COMMAND_COUNT {
+    for command_index in 0..COMMAND_COUNT {
         crate::println!(
             "qemu-local-serial-command-loop: ready command={}",
             command_index
@@ -13284,12 +13299,12 @@ pub fn run_local_serial_command_loop_smoke() -> bool {
 
     if ready_for_next && passed {
         crate::println!(
-            "qemu-local-serial-command-loop: final participants=4 expected=4 errors=0 classification=qemu-local-serial-command-loop-complete"
+            "qemu-local-serial-command-loop: final participants=5 expected=5 errors=0 classification=qemu-local-serial-command-loop-complete"
         );
         crate::println!("qemu-local-serial-command-loop: PASS");
     } else {
         crate::println!(
-            "qemu-local-serial-command-loop: final participants=4 expected=4 errors=1 classification=qemu-local-serial-command-loop-incomplete"
+            "qemu-local-serial-command-loop: final participants=5 expected=5 errors=1 classification=qemu-local-serial-command-loop-incomplete"
         );
         crate::println!("qemu-local-serial-command-loop: FAIL");
     }
@@ -13308,8 +13323,10 @@ fn expected_local_command_loop_dispatch(
 
     match command_index {
         0 => line == b"help" && status == Handled && response_lines == 2,
-        1 => line.is_empty() && status == Empty && response_lines == 1,
-        2 => line == b"bogus" && status == UnknownCommand && response_lines == 1,
+        1 => line == b"status" && status == Handled && response_lines == 4,
+        2 => line == b"stdio" && status == Handled && response_lines == 6,
+        3 => line.is_empty() && status == Empty && response_lines == 1,
+        4 => line == b"bogus" && status == UnknownCommand && response_lines == 1,
         _ => false,
     }
 }
