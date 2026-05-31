@@ -12,6 +12,51 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-31 - Phase 8 Live Translation-Register Activation Source Inventory Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 source inventory
+  for the live translation-register activation frontier. No Rust behavior,
+  assembly behavior, QEMU execution, Pi 5 hardware run, boot archive
+  publication, hardware-lock acquisition, live TTBR0_EL1/TTBR1_EL1/TCR_EL1/
+  MAIR_EL1/SCTLR_EL1 mutation, active-root descriptor copy, ASID allocation,
+  live TLB invalidation, activation DSB/ISB, lower-EL ERET, scheduler runnable
+  publication, process lifecycle, shell behavior, descriptor-backed filesystem
+  syscalls, writable filesystem, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache-driver policy was added.
+- Context: The accepted live descriptor-image installation closeout
+  established a model-only installation-ready binding between
+  KernelHalfDescriptorImage and LiveAddressSpaceActivationPlan below any live
+  translation-register sequence. Supervisor planning selected a bounded
+  inventory before any contract or implementation can admit register
+  activation.
+- Decision: Accept
+  phase8-live-translation-register-activation-source-inventory-20260531. The
+  inventory distinguishes accepted model-only TTBR0 materialized-root
+  provenance, TTBR1 descriptor-image kernel-root provenance, compatibility-only
+  TCR/MAIR records, blocked SCTLR/ASID/TLB states, planned-only no-live
+  DSB/ISB, kernel-owned fault-reporting reachability, and zero live side
+  effects from unaccepted live TTBR0_EL1/TTBR1_EL1/TCR_EL1/MAIR_EL1/
+  SCTLR_EL1 mutation, active-root copy, live ASID/TLB/barrier sequencing,
+  lower-EL launch, scheduler publication, process lifecycle, filesystem
+  syscalls, and Pi 5 proof.
+- Evidence level: static documentation/source inspection of accepted live
+  activation, kernel-half reachability, kernel-half descriptor-image, and live
+  descriptor-image installation docs/task records plus retained
+  QEMU/substitute installation evidence at
+  tasks/evidence/2026-05-31-qemu-live-descriptor-image-installation-smoke-core/qemu-live-descriptor-image-installation-smoke.log.
+- Validation: git status --short before edits was clean except durable
+  supervisor state promotion outside the Talos repo; git diff --check passed;
+  mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The next objective task is the queued
+  phase8-live-translation-register-activation-contract-20260531 if
+  dependencies remain satisfied. Live register mutation, active-root
+  descriptor copy, ASID/TLB/barrier activation, lower-EL ERET, scheduler
+  runnable publication, process lifecycle, startup ABI expansion,
+  descriptor-backed filesystem syscalls, Pi 5 hardware proof, shell,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
+  policy remain blocked until later explicit tasks accept their contracts and
+  gates.
+
 ## 2026-05-31 - Phase 8 Live Descriptor-Image Installation Closeout Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 closeout checkpoint

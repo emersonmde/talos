@@ -507,6 +507,22 @@ before the worker may promote another Phase 8.3 task. Live register mutation,
 active-root descriptor copy, ASID/TLB/barrier activation, lower-EL ERET,
 scheduler publication, process lifecycle, filesystem syscall expansion, Pi 5
 proof, shell behavior, networking, and SSH remain blocked.
+The live translation-register activation source inventory is now accepted. It
+maps the accepted model-only KernelHalfDescriptorImageInstallation frontier to
+the next activation handoff and distinguishes accepted TTBR0 materialized-root
+provenance, TTBR1 descriptor-image kernel-root provenance, compatibility-only
+TCR/MAIR records, blocked SCTLR/ASID/TLB states, planned-only no-live DSB/ISB,
+kernel-owned fault-reporting reachability, and zero live side effects from
+unaccepted TTBR0_EL1/TTBR1_EL1/TCR_EL1/MAIR_EL1/SCTLR_EL1 mutation. The
+inventory identifies live descriptor-image installation, live activation,
+kernel-half descriptor-image, kernel-half reachability, page-table
+materialization, translation, linker, exception/vector, UART/MMIO diagnostic,
+runtime console, and scheduler source owners, and recommends
+phase8-live-translation-register-activation-contract-20260531 as the next
+bounded documentation-only task. Active-root descriptor copy, ASID/TLB/barrier
+activation, lower-EL ERET, scheduler publication, process lifecycle,
+filesystem syscall expansion, Pi 5 proof, shell behavior, networking, and SSH
+remain blocked.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -3563,6 +3579,17 @@ Milestone 8.3: Program Loader
   translation-register activation planning, but no explicit queued follow-up
   task remains; supervisor planning is required before the worker may promote
   another Phase 8.3 task.
+- Phase 8 live translation-register activation source inventory is accepted.
+  It maps the accepted installation-ready binding to the next activation
+  handoff, identifies source owners for TTBR0/TTBR1 provenance, TCR/MAIR
+  compatibility, SCTLR/ASID/TLB/barrier vocabulary, kernel reachability,
+  exception/vector and UART/MMIO diagnostics, rollback, runtime console, and
+  scheduler side-effect boundaries, and recommends
+  phase8-live-translation-register-activation-contract-20260531 as the next
+  bounded documentation-only task. Live TTBR/TCR/MAIR/SCTLR mutation,
+  active-root descriptor copy, ASID/TLB/barrier activation, lower-EL ERET,
+  scheduler publication, process lifecycle, filesystem syscall expansion,
+  Pi 5 proof, shell behavior, networking, and SSH remain blocked.
 
 Acceptance criteria:
 
