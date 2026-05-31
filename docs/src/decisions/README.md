@@ -8990,6 +8990,41 @@ ADR template:
   DMA/cache-driver policy remain blocked until later explicit tasks accept
   their contracts and gates.
 
+## 2026-05-31 - Phase 10 Local Serial Command Loop Core Accepted
+
+- Status: accepted as the first feature-led Phase 10 local serial
+  interactivity core. The implementation is a kernel-backed command loop over
+  runtime-console0 and the existing canonical-lite TTY path; it does not claim
+  userspace shell execution, descriptor-backed filesystem commands, Pi 5
+  hardware behavior, networking, or SSH.
+- Context: Matthew reset the Talos workflow toward user-visible local
+  interactivity: type a line over serial, press Enter, dispatch a command, and
+  print a visible response. Existing Phase 5 TTY and diagnostic command
+  evidence supplied the input and console primitives, but the accepted unit of
+  progress needed to be the feature itself rather than another proof-only
+  slice.
+- Decision: Accept phase10-local-serial-command-loop-core-20260531. The task
+  adds a local command-loop boundary with a talos prompt, kernel-backed help
+  and status built-ins, visible empty-command and unknown-command responses,
+  and a QEMU serial transcript script that injects help, empty input, and
+  bogus over the serial socket.
+- Evidence level: target-independent no_std unit tests and QEMU/substitute
+  serial transcript evidence retained at
+  tasks/evidence/2026-05-31-qemu-local-serial-command-loop-core/qemu-local-serial-command-loop-smoke.log.
+  The retained log contains talos> help, talos: ok help, talos:
+  empty-command, talos> bogus, talos: unknown-command, ready-for-next
+  prompt=true, classification=qemu-local-serial-command-loop-complete, and
+  PASS.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test --quiet passed; scripts/qemu-local-serial-command-loop-smoke.sh
+  passed; git diff --check passed; mdbook build passed; git diff --cached
+  --check passed before commit.
+- Consequences: Local interactivity has a first QEMU-accepted kernel-backed
+  command-loop path suitable for the next serialized Pi 5 proof task. Full
+  userspace shell execution, descriptor-backed filesystem commands, program
+  spawning, persistent storage, networking, SSH, and resumed Phase 8 proof-only
+  work remain blocked until separate feature-led tasks accept them.
+
 ## 2026-05-30 - Phase 8 Initial User Stack Closeout Checkpoint Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 initial user stack

@@ -47,6 +47,7 @@
             talos_boot_scenario = "qemu_el0_trap_smoke",
             talos_boot_scenario = "qemu_syscall_smoke",
             talos_boot_scenario = "qemu_pointer_copy_smoke",
+            talos_boot_scenario = "qemu_local_serial_command_loop",
             talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke",
             talos_boot_scenario = "qemu_program_loader_smoke",
             talos_boot_scenario = "qemu_process_install_smoke",
@@ -104,6 +105,8 @@ mod live_address_space_activation;
 mod live_descriptor_image_installation;
 #[cfg_attr(not(test), allow(dead_code))]
 mod live_translation_register_activation;
+#[cfg_attr(not(test), allow(dead_code))]
+mod local_command_loop;
 mod memory_map;
 mod mmio;
 mod pl011;
@@ -134,6 +137,7 @@ mod target;
     not(any(
         talos_boot_scenario = "qemu_polling_tty_rx",
         talos_boot_scenario = "qemu_diagnostic_command_channel",
+        talos_boot_scenario = "qemu_local_serial_command_loop",
         talos_boot_scenario = "rpi5_diagnostic_command_channel"
     )),
     allow(dead_code)
@@ -489,6 +493,14 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
+            #[cfg(talos_boot_scenario = "qemu_local_serial_command_loop")]
+            {
+                if target::qemu_virt::run_local_serial_command_loop_smoke() {
+                    target::qemu::exit_success();
+                }
+                target::qemu::exit_failure();
+            }
+
             #[cfg(talos_boot_scenario = "qemu_polling_tty_rx")]
             {
                 if target::qemu_virt::run_polling_tty_rx_diagnostic() {
@@ -530,6 +542,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
 
             #[cfg(not(any(
                 talos_boot_scenario = "qemu_diagnostic_command_channel",
+                talos_boot_scenario = "qemu_local_serial_command_loop",
                 talos_boot_scenario = "qemu_polling_tty_rx",
                 talos_boot_scenario = "qemu_timer_preemption",
                 talos_boot_scenario = "qemu_scheduler_yield",
@@ -568,6 +581,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
             }
             #[cfg(not(any(
                 talos_boot_scenario = "qemu_diagnostic_command_channel",
+                talos_boot_scenario = "qemu_local_serial_command_loop",
                 talos_boot_scenario = "qemu_timer_preemption",
                 talos_boot_scenario = "qemu_scheduler_yield",
                 talos_boot_scenario = "qemu_context_switch",

@@ -13217,6 +13217,103 @@ pub fn run_diagnostic_command_channel_smoke() -> bool {
     passed
 }
 
+#[cfg(talos_boot_scenario = "qemu_local_serial_command_loop")]
+pub fn run_local_serial_command_loop_smoke() -> bool {
+    crate::println!(
+        "qemu-local-serial-command-loop: start command-count={} backend=runtime-console0/qemu-virt-pl011 input=tty-canonical-lite builtins=kernel-backed",
+        crate::local_command_loop::DEFAULT_LOCAL_COMMAND_COUNT
+    );
+
+    let mut input = console();
+    let mut sink = crate::runtime_console::RuntimeConsole::new(console());
+    let mut passed = true;
+
+    for command_index in 0..crate::local_command_loop::DEFAULT_LOCAL_COMMAND_COUNT {
+        crate::println!(
+            "qemu-local-serial-command-loop: ready command={}",
+            command_index
+        );
+
+        let result = match crate::local_command_loop::run_one_serial_command(&mut input, &mut sink)
+        {
+            Ok(result) => result,
+            Err(error) => {
+                crate::println!(
+                    "qemu-local-serial-command-loop: cycle-fail command={} error={:?}",
+                    command_index,
+                    error
+                );
+                passed = false;
+                continue;
+            }
+        };
+
+        crate::println!();
+        crate::print!(
+            "qemu-local-serial-command-loop: line command={} hex=",
+            command_index
+        );
+        print_hex_bytes(result.line());
+        crate::println!();
+        crate::println!(
+            "qemu-local-serial-command-loop: dispatch command={} status={} responses={} raw-bytes={} truncated={} controls={}",
+            command_index,
+            result.status_name(),
+            result.response_lines(),
+            result.raw_bytes(),
+            result.truncated(),
+            result.controls()
+        );
+
+        if !expected_local_command_loop_dispatch(
+            command_index,
+            result.line(),
+            result.status(),
+            result.response_lines(),
+        ) {
+            passed = false;
+        }
+    }
+
+    let ready_for_next = crate::local_command_loop::write_local_command_prompt(&mut sink).is_ok();
+    crate::println!();
+    crate::println!(
+        "qemu-local-serial-command-loop: ready-for-next prompt={}",
+        ready_for_next
+    );
+
+    if ready_for_next && passed {
+        crate::println!(
+            "qemu-local-serial-command-loop: final participants=4 expected=4 errors=0 classification=qemu-local-serial-command-loop-complete"
+        );
+        crate::println!("qemu-local-serial-command-loop: PASS");
+    } else {
+        crate::println!(
+            "qemu-local-serial-command-loop: final participants=4 expected=4 errors=1 classification=qemu-local-serial-command-loop-incomplete"
+        );
+        crate::println!("qemu-local-serial-command-loop: FAIL");
+    }
+
+    ready_for_next && passed
+}
+
+#[cfg(talos_boot_scenario = "qemu_local_serial_command_loop")]
+fn expected_local_command_loop_dispatch(
+    command_index: usize,
+    line: &[u8],
+    status: crate::local_command_loop::LocalCommandStatus,
+    response_lines: usize,
+) -> bool {
+    use crate::local_command_loop::LocalCommandStatus::{Empty, Handled, UnknownCommand};
+
+    match command_index {
+        0 => line == b"help" && status == Handled && response_lines == 2,
+        1 => line.is_empty() && status == Empty && response_lines == 1,
+        2 => line == b"bogus" && status == UnknownCommand && response_lines == 1,
+        _ => false,
+    }
+}
+
 #[cfg(talos_boot_scenario = "qemu_diagnostic_command_channel")]
 fn diagnostic_dispatch_status_name(
     status: crate::diagnostic_command::DiagnosticDispatchStatus,
@@ -13251,7 +13348,8 @@ fn expected_diagnostic_dispatch(
 
 #[cfg(any(
     talos_boot_scenario = "qemu_polling_tty_rx",
-    talos_boot_scenario = "qemu_diagnostic_command_channel"
+    talos_boot_scenario = "qemu_diagnostic_command_channel",
+    talos_boot_scenario = "qemu_local_serial_command_loop"
 ))]
 fn print_hex_bytes(bytes: &[u8]) {
     for (index, byte) in bytes.iter().enumerate() {

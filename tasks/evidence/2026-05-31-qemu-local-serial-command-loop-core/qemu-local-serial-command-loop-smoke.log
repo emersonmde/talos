@@ -1,0 +1,31 @@
+
+Talos 0.1.0 booting on talos-aarch64-virt
+boot-info: dtb_pa=0x0000000048000000 core=0 el=2 target=talos-aarch64-virt
+target-services: uart=pl011 timer=arm-generic irq=gic-v2 dtb=Some(
+    0x0000000048000000,
+)
+mmio-regions: 3
+qemu-local-serial-command-loop: start command-count=3 backend=runtime-console0/qemu-virt-pl011 input=tty-canonical-lite builtins=kernel-backed
+qemu-local-serial-command-loop: ready command=0
+talos> help
+talos: ok help
+talos: commands help status
+
+qemu-local-serial-command-loop: line command=0 hex=68 65 6c 70
+qemu-local-serial-command-loop: dispatch command=0 status=handled responses=2 raw-bytes=5 truncated=false controls=0
+qemu-local-serial-command-loop: ready command=1
+talos>
+talos: empty-command
+
+qemu-local-serial-command-loop: line command=1 hex=
+qemu-local-serial-command-loop: dispatch command=1 status=empty-command responses=1 raw-bytes=1 truncated=false controls=0
+qemu-local-serial-command-loop: ready command=2
+talos> bogus
+talos: unknown-command
+
+qemu-local-serial-command-loop: line command=2 hex=62 6f 67 75 73
+qemu-local-serial-command-loop: dispatch command=2 status=unknown-command responses=1 raw-bytes=6 truncated=false controls=0
+talos>
+qemu-local-serial-command-loop: ready-for-next prompt=true
+qemu-local-serial-command-loop: final participants=4 expected=4 errors=0 classification=qemu-local-serial-command-loop-complete
+qemu-local-serial-command-loop: PASS

@@ -16,6 +16,7 @@ pub trait ConsoleBackend {
         test,
         talos_boot_scenario = "qemu_polling_tty_rx",
         talos_boot_scenario = "qemu_diagnostic_command_channel",
+        talos_boot_scenario = "qemu_local_serial_command_loop",
         talos_boot_scenario = "rpi5_uart10_polling_rx",
         talos_boot_scenario = "rpi5_diagnostic_command_channel"
     )),
@@ -23,6 +24,15 @@ pub trait ConsoleBackend {
 )]
 pub trait ConsoleInputBackend {
     fn poll_read_byte(&mut self) -> Option<u8>;
+}
+
+impl<T> ConsoleInputBackend for &mut T
+where
+    T: ConsoleInputBackend,
+{
+    fn poll_read_byte(&mut self) -> Option<u8> {
+        (**self).poll_read_byte()
+    }
 }
 
 impl<T> ConsoleBackend for T
@@ -207,6 +217,7 @@ where
         test,
         talos_boot_scenario = "qemu_polling_tty_rx",
         talos_boot_scenario = "qemu_diagnostic_command_channel",
+        talos_boot_scenario = "qemu_local_serial_command_loop",
         talos_boot_scenario = "rpi5_uart10_polling_rx",
         talos_boot_scenario = "rpi5_diagnostic_command_channel"
     )),

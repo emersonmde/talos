@@ -93,6 +93,7 @@ impl Pl011 {
         not(any(
             test,
             talos_boot_scenario = "qemu_polling_tty_rx",
+            talos_boot_scenario = "qemu_local_serial_command_loop",
             talos_boot_scenario = "rpi5_uart10_polling_rx",
             talos_boot_scenario = "rpi5_diagnostic_command_channel"
         )),
