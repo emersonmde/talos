@@ -91,6 +91,8 @@ mod initial_user_stack;
 #[cfg_attr(not(test), allow(dead_code))]
 mod initramfs;
 #[cfg_attr(not(test), allow(dead_code))]
+mod kernel_half_reachability;
+#[cfg_attr(not(test), allow(dead_code))]
 mod live_address_space_activation;
 mod memory_map;
 mod mmio;

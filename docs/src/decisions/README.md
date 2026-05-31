@@ -12,6 +12,44 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-31 - Phase 8 Kernel-Half Reachability Core Accepted
+
+- Status: accepted as the target-independent Milestone 8.3 kernel-half
+  reachability preflight implementation. No QEMU/substitute retained log, Pi 5
+  hardware run, boot archive publication, hardware-lock acquisition, live
+  TTBR0_EL1/TTBR1_EL1/TCR_EL1/MAIR_EL1/SCTLR_EL1 mutation, ASID allocation,
+  TLB mutation, activation DSB/ISB, lower-EL ERET, scheduler runnable
+  publication, process lifecycle, shell behavior, descriptor-backed filesystem
+  syscalls, writable filesystem, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, or DMA/cache-driver policy was added.
+- Context: The accepted contract and smoke plan selected a preflight-only
+  KernelHalfReachabilityPlan with identity
+  phase8-kernel-half-reachability-plan-v1 and policy
+  preflight-ttbr1-shared-kernel-root-reachability-v1. The core task needed to
+  make that model concrete without introducing retained QEMU evidence yet.
+- Decision: Add src/kernel_half_reachability.rs and wire it into src/main.rs.
+  The implementation consumes accepted loader, install, address-space,
+  materialization, launch, stack, and LiveAddressSpaceActivationPlan lineage;
+  copies TTBR0 materialized-root provenance; selects a TTBR1 shared privileged
+  kernel-root policy; blocks kernel-half descriptor-image construction; records
+  required kernel text/rodata/data/bss/vector/stack/heap/page-frame/UART/MMIO/
+  scheduler/fault reachability; records split TCR and normal/device MAIR
+  compatibility only; preserves the live-register, ASID, TLB, barrier,
+  lower-EL, scheduler, process, filesystem, and Pi 5 blockers; and exposes
+  idempotent plan-local teardown.
+- Evidence level: static inspection, fmt/lint/typecheck, and unit tests.
+  cargo fmt --all -- --check passed, cargo -Zjson-target-spec test passed with
+  318 no_std tests, git diff --check passed, mdbook build passed, and staged
+  diff check passed before commit. QEMU/substitute retained evidence is not
+  applicable until phase8-qemu-kernel-half-reachability-smoke-core-20260531.
+- Consequences: The Phase 8 program-loader path now has a concrete
+  kernel-half reachability preflight record below any live translation-register
+  mutation. The next bounded task can implement/run the accepted
+  qemu_kernel_half_reachability_smoke and retain exact PASS/classification
+  evidence. Descriptor-image construction, live activation, lower-EL launch,
+  scheduler publication, process lifecycle, filesystem syscalls, Pi 5 proof,
+  networking, and SSH remain blocked.
+
 ## 2026-05-31 - Phase 8 QEMU Kernel-Half Reachability Smoke Plan Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 QEMU/substitute

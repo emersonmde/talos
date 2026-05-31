@@ -318,6 +318,21 @@ descriptor-image construction, live register mutation, lower-EL ERET,
 scheduler publication, process lifecycle, filesystem syscalls, Pi 5 hardware
 proof, networking, and SSH remain blocked. The next bounded task is
 phase8-kernel-half-reachability-core-20260531.
+The kernel-half reachability core is now accepted. It adds the
+target-independent KernelHalfReachabilityPlan preflight boundary with identity
+phase8-kernel-half-reachability-plan-v1 and policy
+preflight-ttbr1-shared-kernel-root-reachability-v1. The plan consumes accepted
+loader/install/address-space/materialization/launch/stack/live-activation
+lineage, copies TTBR0 root provenance, selects a TTBR1 shared privileged
+kernel-root policy, keeps descriptor-image construction blocked, records
+required kernel text/rodata/data/bss/vector/stack/heap/page-frame/UART/MMIO/
+scheduler/fault reachability, records split TCR and normal/device MAIR
+compatibility only, and proves deterministic no-partial rejection plus
+idempotent plan-local teardown in unit tests. No QEMU/substitute retained log,
+live register mutation, lower-EL ERET, scheduler publication, process
+lifecycle, filesystem syscall behavior, Pi 5 hardware proof, networking, or
+SSH is accepted by this core. The next bounded task is
+phase8-qemu-kernel-half-reachability-smoke-core-20260531.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -3192,6 +3207,19 @@ Milestone 8.3: Program Loader
   lower-EL ERET, scheduler publication, process lifecycle, filesystem
   syscalls, Pi 5 hardware proof, networking, and SSH remain blocked. The next
   bounded task is phase8-kernel-half-reachability-core-20260531.
+- Phase 8 kernel-half reachability core is accepted. It implements the
+  target-independent KernelHalfReachabilityPlan preflight boundary with
+  identity phase8-kernel-half-reachability-plan-v1 and policy
+  preflight-ttbr1-shared-kernel-root-reachability-v1. The record copies
+  accepted input lineage through LiveAddressSpaceActivationPlan, preserves
+  TTBR0 materialized-root provenance, selects a TTBR1 shared privileged
+  kernel-root policy while blocking descriptor-image construction, records
+  required kernel reachability entries and compatibility-only TCR/MAIR state,
+  and unit-tests deterministic no-partial rejection and idempotent plan-local
+  teardown. QEMU/substitute retained evidence, live register mutation,
+  lower-EL ERET, scheduler publication, process lifecycle, filesystem
+  syscalls, Pi 5 hardware proof, networking, and SSH remain blocked. The next
+  bounded task is phase8-qemu-kernel-half-reachability-smoke-core-20260531.
 
 Acceptance criteria:
 
