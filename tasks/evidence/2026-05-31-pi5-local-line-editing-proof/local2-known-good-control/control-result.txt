@@ -1,0 +1,7 @@
+control=restored-accepted-boot-tree-rerun
+tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+kernel_size=104136
+classification=pi5-production-timer-preemption-complete
+pass=1
+tftp_kernel_fetch=1
+note=Fresh serial control from this run reached the accepted production timer preemption PASS path.

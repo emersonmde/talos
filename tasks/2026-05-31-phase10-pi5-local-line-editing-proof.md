@@ -2,7 +2,7 @@
 
 Task: phase10-pi5-local-line-editing-proof-20260531
 
-Status: paused-with-resume
+Status: accepted
 
 ## Goal
 
@@ -75,7 +75,7 @@ candidate run. Triage recorded candidate identity, fresh serial cursor, TFTP
 delta, and a restored-tree known-good control attempt before any further
 implementation work.
 
-## Control And Restore
+## Control, Rerun, And Restore
 
 The pre-candidate boot tree was restored from snapshot
 `pre-pi5-local-line-editing-local1-20260531T173845Z`.
@@ -88,15 +88,60 @@ Restored tree evidence:
   a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
 - restored kernel size: 104136 bytes
 
-The known-good control fetched the restored 104136-byte kernel, but retained
-serial observation did not reach a Talos PASS path. That leaves the hardware
-proof unaccepted and the next action bounded to hardware-control triage or an
-unchanged candidate rerun only after a conclusive known-good control.
+The first restored-tree control fetched the restored 104136-byte kernel, but
+retained serial observation did not reach a Talos PASS path. No code changed
+after that inconclusive result.
 
-## Resume Rule
+The resumed hardware triage then reran the restored accepted boot tree and
+reached the accepted production timer preemption PASS path:
 
-Do not change code for this task until the inconclusive-run triage is completed
-with a conclusive known-good control and then an unchanged candidate rerun. If
-the lab continues to fetch kernels but serial does not reach any accepted Talos
-PASS path, keep the task paused and ask the supervisor to decide whether to
-retry a different accepted known-good snapshot or defer the physical proof.
+- tasks/evidence/2026-05-31-pi5-local-line-editing-proof/local2-known-good-control/control-result.txt
+- tasks/evidence/2026-05-31-pi5-local-line-editing-proof/local2-known-good-control/serial-transcript.txt
+
+After that conclusive known-good control, the worker reran the unchanged
+candidate archive from implementation commit
+d7b788caa1f93cf10575fcb9c650e923e660f307. The rerun typed
+`pwx` + Backspace + `d` + Enter through physical serial input. The accepted
+PASS window records the line-editing proof prompt, one Backspace, visible `/`
+output, descriptor-backed input/output markers, next prompt readiness, final
+`pi5-local-line-editing-complete` classification, and
+`rpi5-local-line-editing-proof: PASS`.
+
+Accepted rerun evidence:
+
+- tasks/evidence/2026-05-31-pi5-local-line-editing-proof/local2-unchanged-candidate-rerun/serial-transcript-through-pass.txt
+- tasks/evidence/2026-05-31-pi5-local-line-editing-proof/local2-unchanged-candidate-rerun/proof-result-local2.txt
+- tasks/evidence/2026-05-31-pi5-local-line-editing-proof/local2-unchanged-candidate-rerun/tftp-kernel-fetch-local2.txt
+- tasks/evidence/2026-05-31-pi5-local-line-editing-proof/local2-unchanged-candidate-rerun/post-restore-status.json
+
+The unchanged rerun retained two fresh 98944-byte
+`da591740/kernel_2712.img` TFTP fetches and restored the prior accepted boot
+tree hash:
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10`.
+The full raw serial transcript also contains later reset-loop output after the
+accepted PASS; `serial-transcript-through-pass.txt` is the bounded acceptance
+window.
+
+## Accepted Frontier
+
+Talos now has serialized Pi 5 hardware evidence that the descriptor-backed
+serial command loop accepts Backspace before Enter dispatch, removes the
+previous editable byte, dispatches the corrected kernel-backed `pwd` command,
+prints visible `/` through descriptor-backed stdout, and returns to a ready
+`talos>` prompt.
+
+This does not accept userspace shell execution, process spawning, filesystem
+lookup, `cd`, path traversal, termios, history, cursor addressing, networking,
+SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy.
+
+## Final Validation
+
+- fmt/lint: `cargo fmt --all -- --check` passed.
+- unit tests: `cargo -Zjson-target-spec test --quiet` passed with 343 tests.
+- QEMU/substitute regression:
+  `scripts/qemu-local-line-editing-smoke.sh --quiet` passed.
+- static inspection: `git diff --check` passed.
+- documentation: `mdbook build` passed with the existing large search-index
+  warning.
+- validation summary:
+  tasks/evidence/2026-05-31-pi5-local-line-editing-proof/validation/validation-summary.txt.

@@ -1,0 +1,2 @@
+served	da591740/kernel_2712.img	98944	May 31 17:56:39 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+served	da591740/kernel_2712.img	98944	May 31 17:56:39 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4

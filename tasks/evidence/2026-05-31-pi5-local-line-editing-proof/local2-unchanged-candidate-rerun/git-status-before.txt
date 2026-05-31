@@ -1,0 +1,2 @@
+?? tasks/evidence/2026-05-31-pi5-local-line-editing-proof/local2-known-good-control/
+?? tasks/evidence/2026-05-31-pi5-local-line-editing-proof/local2-unchanged-candidate-rerun/

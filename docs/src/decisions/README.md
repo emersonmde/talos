@@ -9290,6 +9290,50 @@ ADR template:
   RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
   deferred to explicit later tasks.
 
+## 2026-05-31 - Phase 10 Pi 5 Local Line-Editing Proof Accepted
+
+- Status: accepted as the serialized Raspberry Pi 5 hardware proof for the
+  Phase 10 local Backspace/Delete line-editing feature. It proves physical
+  serial input correcting a mistyped command before Enter dispatch, visible
+  `/` output from corrected `pwd`, descriptor-backed input/output markers,
+  prompt readiness, TFTP candidate identity, and restore proof. It does not
+  claim termios, cursor addressing, shell history, userspace shell execution,
+  process spawning, filesystem lookup, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, or DMA/cache-driver policy.
+- Context: The first candidate run fetched the expected 98944-byte kernel but
+  did not retain the prompt/PASS path. The worker made no code changes after
+  that inconclusive run. Resumed triage first reran the restored accepted boot
+  tree and reached the production timer preemption PASS path, then reran the
+  unchanged line-editing candidate archive.
+- Decision: Accept phase10-pi5-local-line-editing-proof-20260531. The accepted
+  rerun typed `pwx` + Backspace + `d` + Enter, recorded one Backspace erase,
+  printed visible `/`, returned to a ready `talos>` prompt, and ended with
+  `pi5-local-line-editing-complete` plus
+  `rpi5-local-line-editing-proof: PASS`.
+- Evidence level: serialized Pi 5 serial hardware boot/output, TFTP fetch, and
+  restore proof retained under
+  tasks/evidence/2026-05-31-pi5-local-line-editing-proof/local2-unchanged-candidate-rerun/.
+  The accepted PASS window is serial-transcript-through-pass.txt and the
+  accepted summary is proof-result-local2.txt. The candidate archive digest is
+  1bde053105052508d32ebd1c9fa8faa959a2b9959ff1b40721dc3859e668adda, with
+  kernel digest f2b38552e791d7fb23aa8553694d30e914abfa80e8e3bf2b4c03f0547cb97f7e
+  and two fresh 98944-byte da591740/kernel_2712.img TFTP fetches.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test --quiet passed; scripts/qemu-local-line-editing-smoke.sh --quiet
+  passed; static archive/image review passed; serialized Pi 5 hardware proof
+  passed after standard inconclusive-run triage; restore proof returned the
+  prior accepted boot tree hash
+  a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10; git
+  diff --check passed; mdbook build passed; git diff --cached --check passed
+  before commit.
+- Consequences: The local command-loop feature now has both QEMU/substitute and
+  Pi 5 hardware evidence for bounded Backspace correction over
+  descriptor-backed serial stdin/stdout. Termios, cursor addressing, shell
+  history, broad escape parsing, userspace shell execution, process lifecycle,
+  filesystem-backed commands, `cd`, path traversal, networking, SSH, RP1/PCIe,
+  UART interrupt ownership, and DMA/cache-driver policy remain blocked until
+  later explicit tasks accept them.
+
 ## 2026-05-30 - Phase 8 Live Address-Space Activation Source Inventory Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 live address-space

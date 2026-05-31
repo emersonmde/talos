@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "cm9scz0wDQpycGk1LWxvY2FsLWxpbmUtZWRpdGluZy1wcm9vZjogZWRpdCBjb21tYW5kPTAgYmFja3NwYWNlcz0xIGRlbGV0ZXM9MA0KLw0KdGFsb3M+IA0KcnBpNS1sb2NhbC1saW5lLWVkaXRpbmctcHJvb2Y6IHJlYWR5LWZvci1uZXh0IHByb21wdD10cnVlDQpycGk1LWxvY2FsLWxpbmUtZWRpdGluZy1wcm9vZjogZmluYWwgcGFydGljaXBhbnRzPTEgZXhwZWN0ZWQ9MSBlcnJvcnM9MCBjbGFzc2lmaWNhdGlvbj1waTUtbG9jYWwtbGluZS1lZGl0aW5nLWNvbXBsZXRlDQpycGk1LWxvY2FsLWxpbmUtZWRpdGluZy1wcm9vZjogUEFTUw0KcnBpNS1sb2NhbC1saW5lLWVkaXRpbmctcHJvb2Y6IHN0YXJ0IGNvbW1hbmQtY291bnQ9MSBiYWNrZW5kPXJ1bnRpbWUtY29uc29sZTAvYmNtMjcxMi11YXJ0MTAtcGwwMTEgaW5wdXQ9ZmQwL3J1bnRpbWUtY29uc29sZTAvdHR5LWNhbm9uaWNhbC1saXRlIGJ1aWx0aW5zPWtlcm5lbC1iYWNrZWQgZGVzY3JpcHRvci1iYWNrZWQtaW5wdXQ9dHJ1ZSBkZXNjcmlwdG9yLWJhY2tlZC1vdXRwdXQ9dHJ1ZQ0KcnBpNS1sb2NhbC1saW5lLWVkaXRpbmctcHJvb2Y6IHJlYWR5IGNvbW1hbmQ9MA0KdGFsb3M+IA==",
+  "bytes": 589,
+  "cursor_end": 3610363,
+  "cursor_start": 3609774,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "rols=0\r\nrpi5-local-line-editing-proof: edit command=0 backspaces=1 deletes=0\r\n/\r\ntalos> \r\nrpi5-local-line-editing-proof: ready-for-next prompt=true\r\nrpi5-local-line-editing-proof: final participants=1 expected=1 errors=0 classification=pi5-local-line-editing-complete\r\nrpi5-local-line-editing-proof: PASS\r\nrpi5-local-line-editing-proof: start command-count=1 backend=runtime-console0/bcm2712-uart10-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed descriptor-backed-input=true descriptor-backed-output=true\r\nrpi5-local-line-editing-proof: ready command=0\r\ntalos> ",
+  "truncated": false
+}

@@ -3779,11 +3779,20 @@ telemetry and proves both bytes remove the previous editable byte before
 dispatch. The accepted transcript types pwx, erases x, completes pwd, prints
 visible / through descriptor-backed stdout, preserves help/status/stdio/echo/
 empty/unknown/unexpected-argument behavior, and returns to a ready prompt. This
-is not accepted termios, cursor addressing, history, broad escape parsing,
-userspace shell execution, process spawning, filesystem-backed command lookup,
-networking, or SSH. The next feature-led task is serialized Pi 5 proof for the
-same local line-editing behavior; old Phase 8 proof-only work remains paused
-unless it directly unblocks this local interactivity feature.
+QEMU/substitute behavior is now carried to serialized Pi 5 hardware. Retained
+Pi 5 line-editing evidence is at
+tasks/evidence/2026-05-31-pi5-local-line-editing-proof/local2-unchanged-candidate-rerun/serial-transcript-through-pass.txt
+with proof summary
+tasks/evidence/2026-05-31-pi5-local-line-editing-proof/local2-unchanged-candidate-rerun/proof-result-local2.txt.
+The Pi 5 proof records typed `pwx` + Backspace + `d` + Enter input, one
+Backspace erase, corrected `pwd` dispatch, visible `/` output,
+descriptor-backed input/output markers, ready prompt, two fresh 98944-byte
+`da591740/kernel_2712.img` TFTP fetches, and restore to the prior accepted
+boot tree hash. This is not accepted termios, cursor addressing, history, broad
+escape parsing, userspace shell execution, process spawning, filesystem-backed
+command lookup, networking, or SSH. The next feature-led task is a closeout
+checkpoint for the accepted local line-editing frontier; old Phase 8 proof-only
+work remains paused unless it directly unblocks local interactivity.
 
 Milestone 10.1: Local Shell
 

@@ -1,0 +1,6 @@
+cargo fmt --all -- --check: passed
+cargo -Zjson-target-spec test --quiet: passed (343 tests)
+scripts/qemu-local-line-editing-smoke.sh --quiet: passed
+git diff --check: passed
+mdbook build: passed (HTML book written; search index warning only)
+git diff --cached --check: pending before commit
