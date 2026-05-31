@@ -12,6 +12,50 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-31 - Phase 8 Live Descriptor-Image Installation Closeout Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 closeout checkpoint
+  for the live descriptor-image installation frontier. No Rust behavior,
+  assembly behavior, QEMU rerun, Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, live TTBR0_EL1/TTBR1_EL1/TCR_EL1/MAIR_EL1/
+  SCTLR_EL1 mutation, active-root descriptor copy, ASID allocation, live TLB
+  mutation, activation DSB/ISB, lower-EL ERET, scheduler runnable publication,
+  process lifecycle, shell behavior, descriptor-backed filesystem syscalls,
+  writable filesystem, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy was added.
+- Context: The accepted implementation and retained QEMU/substitute smoke log
+  proved the model-only KernelHalfDescriptorImageInstallation boundary selected
+  by the contract and smoke plan. The evidence reaches installation-ready
+  activation binding state but deliberately leaves all live translation
+  register mutation blocked.
+- Decision: Accept
+  phase8-live-descriptor-image-installation-closeout-checkpoint-20260531. The
+  accepted frontier is model-only installation-ready binding between the
+  accepted non-installed KernelHalfDescriptorImage and accepted
+  LiveAddressSpaceActivationPlan for immutable /bin/init, with copied Phase 8
+  lineage, TTBR0/TTBR1 provenance without register writes, preserved
+  kernel-half coverage/permissions/diagnostics, deterministic
+  no-partial-install rejection, idempotent teardown, and zero live side
+  effects.
+- Evidence level: static documentation inspection plus retained
+  QEMU/substitute evidence at
+  tasks/evidence/2026-05-31-qemu-live-descriptor-image-installation-smoke-core/qemu-live-descriptor-image-installation-smoke.log.
+  The retained log contains final participants=15 expected=15 errors=0
+  classification=qemu-live-descriptor-image-installation-smoke-complete and
+  qemu-live-descriptor-image-installation-smoke: PASS.
+- Validation: git status --short before edits was clean except durable
+  supervisor state promotion outside the Talos repo; git diff --check passed;
+  mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The next objective Phase 8.3 frontier is live
+  translation-register activation planning, but no explicit queued follow-up
+  task remains. Supervisor planning is required before the worker may promote
+  another task. Live register mutation, active-root descriptor copy,
+  ASID/TLB/barrier activation, lower-EL ERET, scheduler runnable publication,
+  process lifecycle, startup ABI expansion, descriptor-backed filesystem
+  syscalls, Pi 5 hardware proof, shell, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, and DMA/cache-driver policy remain blocked until later
+  explicit tasks accept their contracts and gates.
+
 ## 2026-05-31 - Phase 8 QEMU Live Descriptor-Image Installation Smoke Plan Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 QEMU/substitute

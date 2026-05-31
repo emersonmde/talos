@@ -488,6 +488,25 @@ phase8-live-descriptor-image-installation-core-20260531. Live register
 mutation, active-root descriptor copy, ASID/TLB/barrier activation, lower-EL
 ERET, scheduler publication, process lifecycle, filesystem syscall expansion,
 Pi 5 proof, shell behavior, networking, and SSH remain blocked.
+The target-independent live descriptor-image installation core and
+QEMU/substitute smoke evidence are now accepted. The accepted frontier is a
+model-only KernelHalfDescriptorImageInstallation for immutable /bin/init that
+binds the accepted non-installed KernelHalfDescriptorImage to the accepted
+LiveAddressSpaceActivationPlan as an installation-ready activation binding.
+The retained qemu-live-descriptor-image-installation-smoke log proves copied
+loader/install/address-space/materialization/launch/stack/activation/
+reachability/descriptor-image lineage, TTBR0/TTBR1 provenance without register
+writes, preserved kernel-half coverage and privileged-only normal/device
+policy, diagnostic reachability, deterministic no-partial-install rejection,
+idempotent teardown, zero live side effects, and final
+qemu-live-descriptor-image-installation-smoke-complete/PASS lines. The live
+descriptor-image installation closeout checkpoint is now accepted. The next
+objective Phase 8.3 frontier is live translation-register activation planning,
+but no explicit queued follow-up task remains; supervisor planning is required
+before the worker may promote another Phase 8.3 task. Live register mutation,
+active-root descriptor copy, ASID/TLB/barrier activation, lower-EL ERET,
+scheduler publication, process lifecycle, filesystem syscall expansion, Pi 5
+proof, shell behavior, networking, and SSH remain blocked.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -3512,6 +3531,38 @@ Milestone 8.3: Program Loader
   mutation, active-root descriptor copy, ASID/TLB/barrier activation, lower-EL
   ERET, scheduler publication, process lifecycle, filesystem syscall
   expansion, Pi 5 proof, shell behavior, networking, and SSH remain blocked.
+- Phase 8 live descriptor-image installation core is accepted. It implements
+  the target-independent KernelHalfDescriptorImageInstallation boundary with
+  identity phase8-live-descriptor-image-installation-v1 and policy
+  model-installed-ttbr1-descriptor-image-below-live-registers-v1. The model
+  consumes the accepted non-installed KernelHalfDescriptorImage and accepted
+  LiveAddressSpaceActivationPlan, records copied lineage and TTBR0/TTBR1
+  provenance without register writes, preserves kernel-half coverage and
+  privileged-only normal/device policy, supports installation-local teardown,
+  deterministically rejects no-partial-install cases, and keeps all live side
+  effects zero. The next bounded task is
+  phase8-qemu-live-descriptor-image-installation-smoke-core-20260531.
+- Phase 8 QEMU/substitute live descriptor-image installation smoke core is
+  accepted. It retains
+  tasks/evidence/2026-05-31-qemu-live-descriptor-image-installation-smoke-core/qemu-live-descriptor-image-installation-smoke.log
+  with copied descriptor-image/activation lineage, TTBR0/TTBR1 provenance,
+  preserved coverage/permissions/diagnostics, installation-ready binding,
+  deterministic no-partial-install/no-live-state-mutation rejections,
+  idempotent teardown, zero live side effects, final
+  qemu-live-descriptor-image-installation-smoke-complete, and PASS. Live
+  register mutation, active-root descriptor copy, ASID/TLB/barrier activation,
+  lower-EL ERET, scheduler publication, process lifecycle, filesystem syscall
+  expansion, Pi 5 proof, shell behavior, networking, and SSH remain blocked.
+- Phase 8 live descriptor-image installation closeout checkpoint is accepted.
+  It reconciles the accepted source inventory, contract, smoke plan, model
+  core, retained QEMU/substitute smoke evidence, deferred surfaces, and
+  residual risks. The accepted frontier is model-only installation-ready
+  activation binding between KernelHalfDescriptorImage and
+  LiveAddressSpaceActivationPlan, below any live translation-register
+  mutation. The next objective Phase 8.3 frontier is live
+  translation-register activation planning, but no explicit queued follow-up
+  task remains; supervisor planning is required before the worker may promote
+  another Phase 8.3 task.
 
 Acceptance criteria:
 
