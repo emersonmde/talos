@@ -3755,12 +3755,23 @@ next-prompt readiness. This is not accepted userspace shell execution,
 descriptor-backed filesystem commands, broad POSIX read readiness, networking,
 or SSH.
 
-The next smallest feature-led Phase 10 task should add a kernel-backed `pwd`
-command over the accepted descriptor-backed stdin/stdout path. The feature
-should print `/` from a deliberately narrow process-local root placeholder and
-remain below VFS lookup, chdir, directory listing, userspace process execution,
-and filesystem-backed command lookup. Old Phase 8 proof-only work remains
-paused unless it directly unblocks this local interactivity feature.
+Retained QEMU pwd evidence is at
+tasks/evidence/2026-05-31-qemu-local-pwd-command-core/qemu-local-pwd-command-smoke.log.
+Retained Pi 5 pwd hardware evidence is at
+tasks/evidence/2026-05-31-pi5-local-pwd-command-proof/local2-clean-candidate/serial-transcript.txt
+with proof summary
+tasks/evidence/2026-05-31-pi5-local-pwd-command-proof/local2-clean-candidate/proof-result-local2.txt.
+The pwd proof records `typed_command=pwd`, visible `/` output from the
+root-only current-directory placeholder, descriptor-backed markers, prompt
+readiness, two fresh 98816-byte `da591740/kernel_2712.img` TFTP fetches, and
+restore to the prior accepted boot tree hash. This is not accepted `cd`, VFS
+lookup, directory listing, userspace shell execution, filesystem-backed command
+lookup, networking, or SSH.
+
+The next smallest feature-led Phase 10 task should close out the accepted
+`pwd` command frontier and then recommend the next local interactivity slice.
+Old Phase 8 proof-only work remains paused unless it directly unblocks this
+local interactivity feature.
 
 Milestone 10.1: Local Shell
 

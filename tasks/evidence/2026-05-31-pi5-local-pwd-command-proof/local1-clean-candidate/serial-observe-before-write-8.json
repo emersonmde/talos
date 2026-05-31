@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "DQogIDEuMDkgUlBpOiBCT09UU1lTIHJlbGVhc2UgVkVSU0lPTjpORklHOiAxNA0KICAxLjE0IEluaXRpYWxpc2luZyBTRFJBTSByYW5rIDIgdG90YWwtc2l6ZTogNjQgR2JpdCA0MjY3ICgweDE0IDB4MTQpDQogIDEuMTQgRERSIDQyNjcgMSAwIDY0IDE1MiBCTDoxDQogIDEuODMgUlAxX0JPT1QgY2hpcCBJRDogMHgyMDAwMTkyNw0K",
+  "bytes": 189,
+  "cursor_end": 3561072,
+  "cursor_start": 3560883,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\r\n  1.09 RPi: BOOTSYS release VERSION:NFIG: 14\r\n  1.14 Initialising SDRAM rank 2 total-size: 64 Gbit 4267 (0x14 0x14)\r\n  1.14 DDR 4267 1 0 64 152 BL:1\r\n  1.83 RP1_BOOT chip ID: 0x20001927\r\n",
+  "truncated": false
+}

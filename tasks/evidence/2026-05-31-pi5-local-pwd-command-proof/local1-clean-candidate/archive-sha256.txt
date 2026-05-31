@@ -1,0 +1,1 @@
+5e301a4d5425cabf7dbd64276eaa8eab1d60da0df73d0e2b908b2141e91e65d6  /opt/strider/openclaw/current/workspace/tmp/talos-rpi5-local-pwd-command-local1.tar.gz

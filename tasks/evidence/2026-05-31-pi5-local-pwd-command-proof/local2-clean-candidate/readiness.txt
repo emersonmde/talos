@@ -1,0 +1,2 @@
+ready at before-write 8
+pass at after-write 1

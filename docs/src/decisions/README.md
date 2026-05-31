@@ -9208,6 +9208,49 @@ ADR template:
   networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
   policy remain blocked until later explicit tasks accept them.
 
+## 2026-05-31 - Phase 10 Pi 5 Local Pwd Command Proof Accepted
+
+- Status: accepted as the serialized Raspberry Pi 5 hardware proof for the
+  Phase 10 local `pwd` command feature. It proves physical serial command
+  input through the descriptor-backed local command-loop path, visible `/`
+  output from the root-only current-directory placeholder, descriptor-backed
+  markers, prompt readiness, TFTP candidate identity, and restore proof. It
+  does not claim `cd`, VFS lookup, directory listing, userspace shell
+  execution, process spawning, filesystem command lookup, networking, or SSH.
+- Context: The QEMU/substitute local pwd core was accepted first, with retained
+  evidence for `pwd`, visible `/`, descriptor-backed input/output, and
+  prompt readiness. The next bounded feature-led task was to carry that
+  user-visible command behavior to physical Pi 5 hardware under the hardware
+  lock.
+- Decision: Accept phase10-pi5-local-pwd-command-proof-20260531. The Pi 5 boot
+  scenario adds a narrow `rpi5_local_pwd_command` proof harness over the
+  accepted command-loop feature. The accepted transcript prints `/`, the proof
+  summary records `typed_command=pwd`, and the final classification is
+  `pi5-local-pwd-command-complete` with
+  `rpi5-local-pwd-command-proof: PASS`.
+- Evidence level: serialized Pi 5 serial hardware boot/output, TFTP fetch, and
+  restore proof retained under
+  tasks/evidence/2026-05-31-pi5-local-pwd-command-proof/local2-clean-candidate/.
+  The accepted summary is proof-result-local2.txt. The candidate archive digest
+  is 6754773f7511b5c06b2fab5d1bb954212921ced5df1876f9c9c9d257dd2db5ae,
+  with kernel digest 1a31c94a569aa52ceb339b035ab35478f37adb5ef9ec2057b2cff8ab03327c4d
+  and two fresh 98816-byte da591740/kernel_2712.img TFTP fetches.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test --quiet passed; scripts/qemu-local-pwd-command-smoke.sh --quiet passed;
+  static archive/image review passed; serialized Pi 5 hardware proof passed
+  after standard inconclusive-run triage; restore proof returned the prior
+  accepted boot tree hash
+  a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10;
+  git diff --check passed; mdbook build passed; git diff --cached --check
+  passed before commit.
+- Consequences: The local command-loop feature now has both QEMU/substitute and
+  Pi 5 hardware evidence for a root-only `pwd` built-in over descriptor-backed
+  stdin/stdout. `cd`, path traversal/normalization, VFS lookup, directory
+  listing, full userspace shell behavior, process lifecycle,
+  filesystem-backed commands, broad POSIX stdio/read readiness, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
+  blocked until later explicit tasks accept them.
+
 ## 2026-05-30 - Phase 8 Live Address-Space Activation Source Inventory Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 live address-space

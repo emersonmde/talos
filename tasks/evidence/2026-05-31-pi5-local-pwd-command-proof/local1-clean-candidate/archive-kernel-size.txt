@@ -1,0 +1,3 @@
+ 98816 target/rpi5-local-pwd-command-boot-tree-local1/kernel_2712.img
+ 98816 target/rpi5-local-pwd-command-boot-tree-local1/da591740/kernel_2712.img
+197632 total

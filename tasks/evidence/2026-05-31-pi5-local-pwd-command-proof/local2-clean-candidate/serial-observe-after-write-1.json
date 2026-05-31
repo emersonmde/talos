@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "IGNvbnRyb2xzPTANCi8NCnRhbG9zPiANCnJwaTUtbG9jYWwtcHdkLWNvbW1hbmQtcHJvb2Y6IHJlYWR5LWZvci1uZXh0IHByb21wdD10cnVlDQpycGk1LWxvY2FsLXB3ZC1jb21tYW5kLXByb29mOiBmaW5hbCBwYXJ0aWNpcGFudHM9MSBleHBlY3RlZD0xIGVycm9ycz0wIGNsYXNzaWZpY2F0aW9uPXBpNS1sb2NhbC1wd2QtY29tbWFuZC1jb21wbGV0ZQ0KcnBpNS1sb2NhbC1wd2QtY29tbWFuZC1wcm9vZjogUEFTUw0K",
+  "bytes": 237,
+  "cursor_end": 3584880,
+  "cursor_start": 3584643,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": " controls=0\r\n/\r\ntalos> \r\nrpi5-local-pwd-command-proof: ready-for-next prompt=true\r\nrpi5-local-pwd-command-proof: final participants=1 expected=1 errors=0 classification=pi5-local-pwd-command-complete\r\nrpi5-local-pwd-command-proof: PASS\r\n",
+  "truncated": false
+}

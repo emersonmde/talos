@@ -1,0 +1,6 @@
+control=prior-accepted-restored-boot-tree
+tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+kernel_size=104136
+classification=pi5-production-timer-preemption-complete
+pass=1
+note=Known-good control booted the restored prior accepted tree and reached its accepted production timer PASS path; it is not an echo-command image.

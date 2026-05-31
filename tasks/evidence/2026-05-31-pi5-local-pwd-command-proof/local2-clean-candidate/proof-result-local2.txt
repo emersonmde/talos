@@ -1,0 +1,17 @@
+source_commit=215bf0bca780a8c50f01977e778cdadd34d20238
+archive=/opt/strider/openclaw/current/workspace/tmp/talos-rpi5-local-pwd-command-local2.tar.gz
+sha256=6754773f7511b5c06b2fab5d1bb954212921ced5df1876f9c9c9d257dd2db5ae
+file_count=19
+kernel_size=98816
+header_image_size=98816
+text_offset=0
+flags=12
+loader_diagnostic=false
+typed_command=pwd
+serial_write_success=true
+visible_root=1
+descriptor_backed_input=1
+descriptor_backed_output=1
+ready_prompt=1
+classification=pi5-local-pwd-command-complete
+pass=1
