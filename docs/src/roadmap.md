@@ -523,6 +523,22 @@ bounded documentation-only task. Active-root descriptor copy, ASID/TLB/barrier
 activation, lower-EL ERET, scheduler publication, process lifecycle,
 filesystem syscall expansion, Pi 5 proof, shell behavior, networking, and SSH
 remain blocked.
+The live translation-register activation contract is now accepted. It selects
+a target-independent model/substitute-only activation-commit boundary with
+identity phase8-live-translation-register-activation-v1 and policy
+model-ttbr0-ttbr1-activation-commit-below-live-registers-v1. The contract
+consumes the accepted live descriptor-image installation and copied Phase 8
+lineage, verifies TTBR0 materialized-root provenance, TTBR1 descriptor-image
+kernel-root provenance, TCR/MAIR compatibility records, blocked
+SCTLR/ASID/TLB/barrier states, active-root nonmutation, kernel-owned
+fault-reporting reachability, deterministic rejection vocabulary, rollback/
+teardown, and zero live side effects. It explicitly does not accept live
+TTBR0_EL1/TTBR1_EL1/TCR_EL1/MAIR_EL1/SCTLR_EL1 mutation, active-root copy,
+ASID/TLB/barrier execution, lower-EL ERET, scheduler publication, process
+lifecycle, filesystem syscall expansion, Pi 5 proof, boot archive publication,
+shell behavior, networking, or SSH. The mechanically next bounded task is
+phase8-qemu-live-translation-register-activation-smoke-plan-20260531 if
+dependencies remain satisfied.
 The
 accepted Phase 7
 frontier includes the Phase
