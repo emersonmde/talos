@@ -183,9 +183,11 @@ if [ "$LINE_EDITING_SMOKE" -eq 1 ]; then
 fi
 grep -q "talos> help" "$LOG_FILE"
 grep -q "talos: ok help" "$LOG_FILE"
-grep -q "talos: commands help status stdio echo pwd" "$LOG_FILE"
+grep -q "talos: commands help status stdio pwd echo" "$LOG_FILE"
+grep -q "talos: echo forms echo hello; echo local serial works" "$LOG_FILE"
+grep -q "talos: editing backspace delete ctrl-c ctrl-u" "$LOG_FILE"
 grep -q "$LABEL: line command=0 hex=68 65 6c 70" "$LOG_FILE"
-grep -q "$LABEL: dispatch command=0 status=handled responses=2" "$LOG_FILE"
+grep -q "$LABEL: dispatch command=0 status=handled responses=4" "$LOG_FILE"
 grep -q "talos> status" "$LOG_FILE"
 grep -q "talos: ok status" "$LOG_FILE"
 grep -q "talos: version phase10.1-kernel-builtins-v1" "$LOG_FILE"

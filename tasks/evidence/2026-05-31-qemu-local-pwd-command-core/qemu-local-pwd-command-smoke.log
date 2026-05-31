@@ -9,10 +9,12 @@ qemu-local-pwd-command: start command-count=7 backend=runtime-console0/qemu-virt
 qemu-local-pwd-command: ready command=0
 talos> help
 talos: ok help
-talos: commands help status stdio echo pwd
+talos: commands help status stdio pwd echo
+talos: echo forms echo hello; echo local serial works
+talos: editing backspace delete ctrl-c ctrl-u
 
 qemu-local-pwd-command: line command=0 hex=68 65 6c 70
-qemu-local-pwd-command: dispatch command=0 status=handled responses=2 raw-bytes=5 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-pwd-command: dispatch command=0 status=handled responses=4 raw-bytes=5 backspaces=0 deletes=0 truncated=false controls=0
 qemu-local-pwd-command: ready command=1
 talos> status
 talos: ok status

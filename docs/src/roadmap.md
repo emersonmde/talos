@@ -3936,6 +3936,22 @@ planning is required for the next smallest feature-led local interactivity
 task, and paused Phase 8 proof-only work remains paused unless it directly
 unblocks that feature.
 
+The local help command core is now accepted in QEMU/substitute evidence. The
+serial `help` command prints accurate kernel-backed guidance for the accepted
+local command frontier: `help`, `status`, `stdio`, `pwd`, `echo`, the accepted
+`echo hello` and `echo local serial works` forms, and prompt-local
+Backspace/Delete, Ctrl-C, and Ctrl-U controls. The retained
+qemu-local-help-command transcript shows descriptor-backed fd0/stdout markers,
+next-prompt readiness, final classification
+`qemu-local-help-command-complete`, and exact `qemu-local-help-command: PASS`
+vocabulary. Rerun QEMU/substitute regressions cover literal echo, pwd, line
+editing, Ctrl-C line cancel, and Ctrl-U line kill. This remains a
+kernel-backed prompt-local guide only; broad shell parsing, userspace process
+execution, filesystem-backed command lookup, terminal/session behavior,
+networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache policy
+remain deferred. The next queued task is the serialized Pi 5 help command
+proof.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.

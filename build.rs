@@ -216,6 +216,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "qemu_local_help_command",
+        implied_values: &["qemu_local_serial_command_loop"],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "qemu_local_pwd_command",
         implied_values: &["qemu_local_serial_command_loop"],
         asm_defines: &[],

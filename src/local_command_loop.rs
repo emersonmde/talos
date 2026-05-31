@@ -437,7 +437,17 @@ fn dispatch_local_command(
             write_line(
                 sink,
                 responses,
-                "talos: commands help status stdio echo pwd",
+                "talos: commands help status stdio pwd echo",
+            )?;
+            write_line(
+                sink,
+                responses,
+                "talos: echo forms echo hello; echo local serial works",
+            )?;
+            write_line(
+                sink,
+                responses,
+                "talos: editing backspace delete ctrl-c ctrl-u",
             )?;
             Ok(LocalCommandStatus::Handled)
         }
@@ -727,13 +737,16 @@ mod tests {
         assert_eq!(result.line(), b"help");
         assert_eq!(result.status(), LocalCommandStatus::Handled);
         assert_eq!(result.status_name(), "handled");
-        assert_eq!(result.response_lines(), 2);
+        assert_eq!(result.response_lines(), 4);
         assert_eq!(result.raw_bytes(), 5);
         assert_eq!(result.controls(), 0);
         assert_eq!(DEFAULT_LOCAL_COMMAND_COUNT, 5);
         assert_eq!(
             sink.as_str(),
-            "talos> talos: ok help\ntalos: commands help status stdio echo pwd\n"
+            "talos> talos: ok help\n\
+talos: commands help status stdio pwd echo\n\
+talos: echo forms echo hello; echo local serial works\n\
+talos: editing backspace delete ctrl-c ctrl-u\n"
         );
     }
 
