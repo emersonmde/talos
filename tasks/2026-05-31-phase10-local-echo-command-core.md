@@ -82,4 +82,5 @@ read/stdio behavior outside this descriptor-backed local command-loop path.
 
 ## Commit
 
-Pending.
+Implementation and retained QEMU/substitute evidence commit:
+33fcf235bf3528c75085c568404f3e7a3bd1d1ea.
