@@ -276,6 +276,18 @@ LiveAddressSpaceActivationPlan below live register mutation, lower-EL ERET,
 and runnable publication. No explicit queued follow-up task remains;
 supervisor planning is required before the worker may promote another Phase
 8.3 task.
+The kernel-half reachability source inventory is now accepted. It maps the
+accepted activation frontier to the remaining blocked-no-accepted-kernel-half-map
+gap: kernel text/rodata/data/bss, active kernel stack, heap/page-frame
+allocator, VBAR_EL1, exception vectors, UART/MMIO diagnostics, scheduler state,
+panic/fault reporting, early translation helpers, process descriptor images,
+and AArch64 TTBR/TCR/MAIR vocabulary. It identifies TTBR1_EL1 shared kernel
+root, replicated kernel-half descriptors, and an explicitly blocked preflight
+record as candidate first-slice policies, and recommends
+phase8-kernel-half-reachability-contract-20260531 as the next bounded
+documentation-only task. Live register mutation, lower-EL ERET, scheduler
+publication, process lifecycle, filesystem syscalls, Pi 5 hardware proof,
+networking, and SSH remain blocked.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -3103,6 +3115,27 @@ Milestone 8.3: Program Loader
   PASS. Live register mutation, lower-EL ERET, scheduler publication, process
   lifecycle, filesystem syscalls, Pi 5 hardware proof, networking, and SSH
   remain blocked.
+- Phase 8 live address-space activation closeout checkpoint is accepted. It
+  reconciles the source inventory, contract, smoke plan, core, retained
+  QEMU/substitute evidence, deferred surfaces, residual risks, and planning
+  state. The accepted frontier remains target-independent
+  LiveAddressSpaceActivationPlan construction plus QEMU/substitute
+  no-partial-activation evidence below live register mutation, lower-EL ERET,
+  scheduler publication, process lifecycle, filesystem syscalls, hardware
+  proof, networking, and SSH.
+- Phase 8 kernel-half reachability source inventory is accepted. It maps the
+  source owners and accepted inputs for the remaining
+  blocked-no-accepted-kernel-half-map frontier: linker kernel sections,
+  active stack, heap/page-frame allocator, VBAR_EL1, exception vectors,
+  UART/MMIO diagnostics, scheduler state, panic/fault reporting, early
+  translation helpers, process materialization descriptor images, and AArch64
+  TTBR/TCR/MAIR vocabulary. It separates candidate first-slice policies
+  (TTBR1_EL1 shared kernel root, replicated kernel-half descriptors, or an
+  explicitly blocked preflight record) from live register mutation,
+  lower-EL ERET, scheduler publication, process lifecycle, startup ABI,
+  filesystem syscalls, Pi 5 proof, networking, and SSH. It recommends
+  phase8-kernel-half-reachability-contract-20260531 as the next bounded
+  documentation-only task.
 
 Acceptance criteria:
 

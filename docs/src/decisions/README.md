@@ -12,6 +12,49 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-31 - Phase 8 Kernel-Half Reachability Source Inventory Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 kernel-half
+  reachability source inventory. No Rust behavior, assembly behavior, QEMU
+  execution, Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, live TTBR/TCR/MAIR/SCTLR mutation, ASID allocation, TLB
+  mutation, lower-EL ERET, scheduler runnable publication, process lifecycle,
+  shell behavior, descriptor-backed filesystem syscalls, writable filesystem,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver
+  policy was added.
+- Context: The accepted live address-space activation closeout records a
+  model-only LiveAddressSpaceActivationPlan with retained QEMU/substitute
+  evidence, but its TTBR1/kernel-half state remains
+  blocked-no-accepted-kernel-half-map. Before any live activation, Talos needs
+  an accepted policy for keeping kernel code/data, vectors, stacks, heap,
+  MMIO diagnostics, scheduler state, and fault reporting reachable under a
+  process address-space root.
+- Decision: Accept
+  phase8-kernel-half-reachability-source-inventory-20260531. The inventory
+  maps current owners for linker kernel sections, active stack, heap/page-frame
+  allocator, VBAR_EL1, exception vectors, UART/MMIO diagnostics, scheduler
+  state, panic/fault reporting, early translation helpers, process
+  materialization descriptor images, and AArch64 TTBR/TCR/MAIR vocabulary. It
+  identifies TTBR1_EL1 shared kernel root, replicated kernel-half descriptors,
+  and an explicitly blocked preflight record as candidate first-slice policies
+  and recommends phase8-kernel-half-reachability-contract-20260531 as the next
+  bounded documentation-only task.
+- Evidence level: static documentation/source inspection. Reviewed accepted
+  Phase 8 activation docs, task records, retained QEMU/substitute evidence,
+  linker layout, allocator/page-frame, translation, AArch64 exception/vector,
+  UART/MMIO diagnostic, scheduler, target evidence, architecture, roadmap,
+  SUMMARY, and ADR sources relevant to kernel-half reachability.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next bounded task should be
+  phase8-kernel-half-reachability-contract-20260531. Live register mutation,
+  lower-EL ERET, scheduler runnable publication, process lifecycle, broad
+  argv/envp/auxv/TLS ABI, descriptor-backed filesystem syscalls, Pi 5 hardware
+  proof, shell, networking, SSH, RP1/PCIe, UART interrupt ownership, and
+  DMA/cache-driver policy remain blocked until later explicit tasks accept
+  their contracts and gates.
+
 ## 2026-05-30 - Phase 8 Live Address-Space Activation Closeout Checkpoint Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 live address-space
