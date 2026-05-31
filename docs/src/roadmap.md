@@ -459,6 +459,20 @@ contract. Live register mutation, ASID/TLB/barrier activation, lower-EL ERET,
 scheduler publication, process lifecycle, filesystem syscall expansion, Pi 5
 proof, shell behavior, networking, and SSH remain blocked. The next bounded
 task is phase8-live-descriptor-image-installation-contract-20260531.
+The live descriptor-image installation contract is now accepted. It selects a
+target-independent KernelHalfDescriptorImageInstallation boundary, or
+equivalent activation extension record, that binds the accepted non-installed
+KernelHalfDescriptorImage to the accepted LiveAddressSpaceActivationPlan as a
+model-level installation-ready activation binding below TTBR activation. The
+contract preserves copied Phase 8 lineage, TTBR0 materialized-root
+provenance, TTBR1 descriptor-image root provenance without a register write,
+kernel-half coverage and privileged-only permissions, device MMIO attributes,
+fault-reporting prerequisites, rollback/teardown, deterministic no-partial
+installation rejection, and zero live side effects. Live register mutation,
+active-root descriptor copy, ASID/TLB/barrier activation, lower-EL ERET,
+scheduler publication, process lifecycle, filesystem syscall expansion,
+Pi 5 proof, shell behavior, networking, and SSH remain blocked. The next
+bounded task is phase8-qemu-live-descriptor-image-installation-smoke-plan-20260531.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -3454,6 +3468,20 @@ Milestone 8.3: Program Loader
   activation, lower-EL ERET, scheduler publication, process lifecycle,
   filesystem syscall expansion, Pi 5 proof, shell behavior, networking, and
   SSH remain blocked.
+- Phase 8 live descriptor-image installation contract is accepted. It selects
+  phase8-live-descriptor-image-installation-v1 with policy
+  model-installed-ttbr1-descriptor-image-below-live-registers-v1 as the
+  target-independent binding between the accepted non-installed
+  KernelHalfDescriptorImage and accepted LiveAddressSpaceActivationPlan. The
+  accepted frontier is model-level installation-ready activation binding only:
+  copied lineage and TTBR0/TTBR1 provenance are recorded, kernel-half
+  coverage/permissions/diagnostics are preserved, rollback/teardown is
+  installation-record-local, and zero live side effects remain required.
+  Live register mutation, active-root descriptor copy, ASID/TLB/barrier
+  activation, lower-EL ERET, scheduler publication, process lifecycle,
+  filesystem syscall expansion, Pi 5 proof, shell behavior, networking, and
+  SSH remain blocked. The next bounded documentation-only task is
+  phase8-qemu-live-descriptor-image-installation-smoke-plan-20260531.
 
 Acceptance criteria:
 

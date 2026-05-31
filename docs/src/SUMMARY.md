@@ -164,6 +164,7 @@
 - [Phase 8 QEMU Kernel-Half Descriptor-Image Smoke Plan](project/phase8-qemu-kernel-half-descriptor-image-smoke-plan.md)
 - [Phase 8 Kernel-Half Descriptor-Image Closeout Checkpoint](project/phase8-kernel-half-descriptor-image-closeout-checkpoint.md)
 - [Phase 8 Live Descriptor-Image Installation Source Inventory](project/phase8-live-descriptor-image-installation-source-inventory.md)
+- [Phase 8 Live Descriptor-Image Installation Contract](project/phase8-live-descriptor-image-installation-contract.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture
