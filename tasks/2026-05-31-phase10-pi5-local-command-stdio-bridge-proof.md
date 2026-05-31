@@ -92,4 +92,4 @@ The accepted candidate identity is shared by local10 and local11:
 
 ## Commit
 
-614c22a
+Implementation and evidence commit: 115a347.
