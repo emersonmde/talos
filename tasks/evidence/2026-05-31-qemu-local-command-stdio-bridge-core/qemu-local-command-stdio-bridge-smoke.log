@@ -9,7 +9,7 @@ qemu-local-serial-command-loop: start command-count=5 backend=runtime-console0/q
 qemu-local-serial-command-loop: ready command=0
 talos> help
 talos: ok help
-talos: commands help status stdio echo
+talos: commands help status stdio echo pwd
 
 qemu-local-serial-command-loop: line command=0 hex=68 65 6c 70
 qemu-local-serial-command-loop: dispatch command=0 status=handled responses=2 raw-bytes=5 truncated=false controls=0

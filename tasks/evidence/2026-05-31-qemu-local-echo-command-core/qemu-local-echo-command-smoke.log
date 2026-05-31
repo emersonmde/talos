@@ -9,7 +9,7 @@ qemu-local-echo-command: start command-count=6 backend=runtime-console0/qemu-vir
 qemu-local-echo-command: ready command=0
 talos> help
 talos: ok help
-talos: commands help status stdio echo
+talos: commands help status stdio echo pwd
 
 qemu-local-echo-command: line command=0 hex=68 65 6c 70
 qemu-local-echo-command: dispatch command=0 status=handled responses=2 raw-bytes=5 truncated=false controls=0

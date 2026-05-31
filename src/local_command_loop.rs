@@ -7,7 +7,8 @@ use crate::{
 
 pub const LOCAL_COMMAND_LOOP_VERSION: &str = "phase10.1-kernel-builtins-v1";
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
-pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 4;
+pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 5;
+pub const LOCAL_COMMAND_CURRENT_DIRECTORY: &str = "/";
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum LocalCommandStatus {
@@ -394,7 +395,11 @@ fn dispatch_local_command(
                 return Ok(LocalCommandStatus::UnexpectedArgument);
             }
             write_line(sink, responses, "talos: ok help")?;
-            write_line(sink, responses, "talos: commands help status stdio echo")?;
+            write_line(
+                sink,
+                responses,
+                "talos: commands help status stdio echo pwd",
+            )?;
             Ok(LocalCommandStatus::Handled)
         }
         "status" => {
@@ -454,6 +459,14 @@ fn dispatch_local_command(
         }
         "echo" => {
             write_line(sink, responses, command.arguments.unwrap_or(""))?;
+            Ok(LocalCommandStatus::Handled)
+        }
+        "pwd" => {
+            if command.arguments.is_some() {
+                write_line(sink, responses, "talos: unexpected-argument")?;
+                return Ok(LocalCommandStatus::UnexpectedArgument);
+            }
+            write_line(sink, responses, LOCAL_COMMAND_CURRENT_DIRECTORY)?;
             Ok(LocalCommandStatus::Handled)
         }
         _ => {
@@ -678,10 +691,10 @@ mod tests {
         assert_eq!(result.response_lines(), 2);
         assert_eq!(result.raw_bytes(), 5);
         assert_eq!(result.controls(), 0);
-        assert_eq!(DEFAULT_LOCAL_COMMAND_COUNT, 4);
+        assert_eq!(DEFAULT_LOCAL_COMMAND_COUNT, 5);
         assert_eq!(
             sink.as_str(),
-            "talos> talos: ok help\ntalos: commands help status stdio echo\n"
+            "talos> talos: ok help\ntalos: commands help status stdio echo pwd\n"
         );
     }
 
@@ -705,6 +718,28 @@ mod tests {
         assert_eq!(result.status(), LocalCommandStatus::Handled);
         assert_eq!(result.response_lines(), 1);
         assert_eq!(backend.as_str(), "talos> hello\n");
+    }
+
+    #[test_case]
+    fn local_command_loop_dispatches_root_only_pwd() {
+        let input = ScriptedInput::new(
+            [
+                b'p', b'w', b'd', b'\r', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0,
+            ],
+            4,
+        );
+        let mut backend = CaptureSink::new();
+        let result = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            run_one_descriptor_backed_serial_command(&mut io).unwrap()
+        };
+
+        assert_eq!(result.line(), b"pwd");
+        assert_eq!(result.status(), LocalCommandStatus::Handled);
+        assert_eq!(result.response_lines(), 1);
+        assert_eq!(backend.as_str(), "talos> /\n");
     }
 
     #[test_case]
