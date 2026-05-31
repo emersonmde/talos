@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "ZXNlcnZlDQp0YWxvczogZHRiIG1lbW9yeTogYWRkcmVzc19jZWxscz0yIHNpemVfY2VsbHM9MiBjb3VudD0zIHNob3duPTMgdHJ1bmNhdGVkPWZhbHNlDQp0YWxvczogZHRiIG1lbW9yeVswXTogYWRkcj0weDAgc2l6ZT0weDNmYzAwMDAwDQp0YWxvczogZHRiIG1lbW9yeVsxXTogYWRkcj0weDQwMDAwMDAwIHNpemU9MHhjMDAwMDAwMA0KdGFsb3M6IGR0YiBtZW1vcnlbMl06IGFkZHI9MHgxMDAwMDAwMDAgc2l6ZT0weDEwMDAwMDAwMA0KcnBpNS1sb2NhbC1jb21tYW5kLXN0ZGlvLWJyaWRnZS1wcm9vZjogc3RhcnQgY29tbWFuZC1jb3VudD0xIGJhY2tlbmQ9cnVudGltZS1jb25zb2xlMC9iY20yNzEyLXVhcnQxMC1wbDAxMSBpbnB1dD10dHktY2Fub25pY2FsLWxpdGUgYnVpbHRpbnM9a2VybmVsLWJhY2tlZCBkZXNjcmlwdG9yLWJhY2tlZC1vdXRwdXQ9dHJ1ZQ0KcnBpNS1sb2NhbC1jb21tYW5kLXN0ZGlvLWJyaWRnZS1wcm9vZjogcmVhZHkgY29tbWFuZD0wDQp0YWxvcz4gAAo=",
+  "bytes": 500,
+  "cursor": 3444879,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "eserve\r\ntalos: dtb memory: address_cells=2 size_cells=2 count=3 shown=3 truncated=false\r\ntalos: dtb memory[0]: addr=0x0 size=0x3fc00000\r\ntalos: dtb memory[1]: addr=0x40000000 size=0xc0000000\r\ntalos: dtb memory[2]: addr=0x100000000 size=0x100000000\r\nrpi5-local-command-stdio-bridge-proof: start command-count=1 backend=runtime-console0/bcm2712-uart10-pl011 input=tty-canonical-lite builtins=kernel-backed descriptor-backed-output=true\r\nrpi5-local-command-stdio-bridge-proof: ready command=0\r\ntalos> \u0000\n"
+}

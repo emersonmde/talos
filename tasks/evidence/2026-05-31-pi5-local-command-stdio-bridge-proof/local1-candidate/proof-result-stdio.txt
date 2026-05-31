@@ -1,0 +1,15 @@
+classification=inconclusive
+discriminator=descriptor-backed command dispatch returned handled/responses=6 and PASS, but serial-visible talos: ok stdio/fd/runtime-console response lines were absent from retained transcript.
+candidate_archive=63c3a8c6fba02c93aaf6bf8f3659ea1ccc0b685dcccebfbeef601bdf7c5ebfef
+candidate_kernel=f21b63beb1b0c9826e2f91bd8084d6e200ed41cd1335e176513eabf94150042a
+fresh_serial_cursor=3410813
+tftp_cursor=3905852
+restore_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+rpi5-local-command-stdio-bridge-proof: start command-count=1 backend=runtime-console0/bcm2712-uart10-pl011 input=tty-canonical-lite builtins=kernel-backed descriptor-backed-output=true
+rpi5-local-command-stdio-bridge-proof: ready command=0
+talos> 
+rpi5-local-command-stdio-bridge-proof: dispatch command=0 status=handled responses=6 raw-bytes=6 truncated=false controls=0
+talos> 
+rpi5-local-command-stdio-bridge-proof: ready-for-next prompt=true
+rpi5-local-command-stdio-bridge-proof: final participants=2 expected=2 errors=0 classification=pi5-local-command-stdio-bridge-complete
+rpi5-local-command-stdio-bridge-proof: PASS

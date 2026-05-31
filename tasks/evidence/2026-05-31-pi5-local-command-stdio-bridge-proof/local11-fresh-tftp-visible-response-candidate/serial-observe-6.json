@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "ICAxLjgyIFJQMSBGVzogbG9hZCAwDQo=",
+  "bytes": 23,
+  "cursor_end": 3507878,
+  "cursor_start": 3507855,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "  1.82 RP1 FW: load 0\r\n",
+  "truncated": false
+}

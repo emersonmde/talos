@@ -1,0 +1,5 @@
+ M src/local_command_loop.rs
+ M src/target/rpi5.rs
+?? scripts/rpi5-local-command-stdio-bridge-boot-tree.sh
+?? scripts/rpi5-local-command-stdio-bridge-image.sh
+?? tasks/evidence/2026-05-31-pi5-local-command-stdio-bridge-proof/

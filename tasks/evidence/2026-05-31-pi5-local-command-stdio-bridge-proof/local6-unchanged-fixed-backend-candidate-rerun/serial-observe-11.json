@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "cnBpNS1sb2NhbC1jb21tYW5kLXN0ZGlvLWJyaWRnZS1wcm9vZjogbGluZSBjb21tYW5kPTAgaGV4PTczIDc0IDY0IDY5IDZmDQpycGk1LWxvY2FsLWNvbW1hbmQtc3RkaW8tYnJpZGdlLXByb29mOiBkaXNwYXRjaCBjb21tYW5kPTAgc3RhdHVzPWhhbmRsZWQgcmVzcG9uc2VzPTYgcmF3LWJ5dGVzPTYgdHJ1bmNhdGVkPWZhbHNlIGNvbnRyb2xzPTANCnRhbG9zPiANCnJwaTUtbG9jYWwtY29tbWFuZC1zdGRpby1icmlkZ2UtcHJvb2Y6IHJlYWR5LWZvci1uZXh0IHByb21wdD10cnVlDQpycGk1LWxvY2FsLWNvbW1hbmQtc3RkaW8tYnJpZGdlLXByb29mOiBmaW5hbCBwYXJ0aWNpcGFudHM9MiBleHBlY3RlZD0yIGVycm9ycz0wIGNsYXNzaWZpY2F0aW9uPXBpNS1sb2NhbC1jb21tYW5kLXN0ZGlvLWJyaWRnZS1jb21wbGV0ZQ0KcnBpNS1sb2NhbC1jb21tYW5kLXN0ZGlvLWJyaWRnZS1wcm9vZjogUEFTUw0K",
+  "bytes": 456,
+  "cursor_end": 3471109,
+  "cursor_start": 3470653,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "rpi5-local-command-stdio-bridge-proof: line command=0 hex=73 74 64 69 6f\r\nrpi5-local-command-stdio-bridge-proof: dispatch command=0 status=handled responses=6 raw-bytes=6 truncated=false controls=0\r\ntalos> \r\nrpi5-local-command-stdio-bridge-proof: ready-for-next prompt=true\r\nrpi5-local-command-stdio-bridge-proof: final participants=2 expected=2 errors=0 classification=pi5-local-command-stdio-bridge-complete\r\nrpi5-local-command-stdio-bridge-proof: PASS\r\n",
+  "truncated": false
+}

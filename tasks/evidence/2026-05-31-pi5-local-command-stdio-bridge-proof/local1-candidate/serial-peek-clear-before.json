@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "cnBpNS1sb2NhbC1zZXJpYWwtY29tbWFuZC1sb29wLXByb29mOiBzdGFydCBjb21tYW5kLWNvdW50PTMgYmFja2VuZD1ydW50aW1lLWNvbnNvbGUwL2JjbTI3MTItdWFydDEwLXBsMDExIGlucHV0PXR0eS1jYW5vbmljYWwtbGl0ZSBidWlsdGlucz1rZXJuZWwtYmFja2VkDQpycGk1LWxvY2FsLXNlcmlhbC1jb21tYW5kLWxvb3AtcHJvb2Y6IHJlYWR5IGNvbW1hbmQ9MA0KdGFsb3M+IAAgdGFsb3M6IGlucHV0LWVycm9yIHRpbWVvdXQNCg0KcnBpNS1sb2NhbC1zZXJpYWwtY29tbWFuZC1sb29wLXByb29mOiBsaW5lIGNvbW1hbmQ9MSBoZXg9DQpycGk1LWxvY2FsLXNlcmlhbC1jb21tYW5kLWxvb3AtcHJvb2Y6IGRpc3BhdGNoIGNvbW1hbmQ9MSBzdGF0dXM9aW5wdXQtZXJyb3IgcmVzcG9uc2VzPTEgcmF3LWJ5dGVzPTAgdHJ1bmNhdGVkPWZhbHNlIGNvbnRyb2xzPTANCnJwaTUtbG9jYWwtc2VyaWFsLWNvbW1hbmQtbG9vcC1wcm9vZjogcmVhZHkgY29tbWFuZD0yDQp0YWxvcz4gAAo=",
+  "bytes": 500,
+  "cursor": 3410813,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "rpi5-local-serial-command-loop-proof: start command-count=3 backend=runtime-console0/bcm2712-uart10-pl011 input=tty-canonical-lite builtins=kernel-backed\r\nrpi5-local-serial-command-loop-proof: ready command=0\r\ntalos> \u0000 talos: input-error timeout\r\n\r\nrpi5-local-serial-command-loop-proof: line command=1 hex=\r\nrpi5-local-serial-command-loop-proof: dispatch command=1 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\r\nrpi5-local-serial-command-loop-proof: ready command=2\r\ntalos> \u0000\n"
+}

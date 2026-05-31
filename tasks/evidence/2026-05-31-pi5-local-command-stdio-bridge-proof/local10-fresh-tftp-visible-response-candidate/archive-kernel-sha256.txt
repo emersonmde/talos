@@ -1,0 +1,3 @@
+0885f021f34ab1398f91fa8206d587a40295663570ce8c505daa3b21ac8c2f02  target/talos-rpi5-local-command-stdio-bridge-local10-boot.tar.gz
+45934e74174388e3346cf76f63af3568abf260526fd749a707b2a67568191899  target/rpi5-local-command-stdio-bridge-boot-tree-local10/kernel_2712.img
+97472 target/rpi5-local-command-stdio-bridge-boot-tree-local10/kernel_2712.img

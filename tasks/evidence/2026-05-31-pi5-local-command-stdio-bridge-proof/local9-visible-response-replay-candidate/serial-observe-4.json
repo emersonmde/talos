@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "ICAzLjQxIE9UUCBib2FyZHJldiBkMDQxNzEgYm9vdHJvbSBhIGENCiAgMy40MSBDdXN0b21lciBrZXkgaGFzaCAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwDQogIDMuNDEgVkMtSlRBRyB1bmxvY2tlZA0KICAzLjQ0IFJQMV9CT09UIGNoaXAgSUQ6IDB4MjAwMDE5MjcNCg==",
+  "bytes": 193,
+  "cursor_end": 3494541,
+  "cursor_start": 3494348,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "  3.41 OTP boardrev d04171 bootrom a a\r\n  3.41 Customer key hash 0000000000000000000000000000000000000000000000000000000000000000\r\n  3.41 VC-JTAG unlocked\r\n  3.44 RP1_BOOT chip ID: 0x20001927\r\n",
+  "truncated": false
+}

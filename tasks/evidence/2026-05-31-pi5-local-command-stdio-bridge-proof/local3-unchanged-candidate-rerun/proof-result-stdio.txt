@@ -1,0 +1,8 @@
+classification=inconclusive
+discriminator=unchanged candidate rerun still lacks serial-visible stdio response lines despite dispatch handled/responses=6/PASS.
+wrote_stdio=1
+candidate_archive=63c3a8c6fba02c93aaf6bf8f3659ea1ccc0b685dcccebfbeef601bdf7c5ebfef
+candidate_kernel=f21b63beb1b0c9826e2f91bd8084d6e200ed41cd1335e176513eabf94150042a
+fresh_serial_cursor=3435498
+tftp_cursor=3908554
+talos> 

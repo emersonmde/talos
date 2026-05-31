@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "c3RkaW8tYnJpZGdlLXByb29mOiByZWFkeSBjb21tYW5kPTANCnRhbG9zPiBycGk1LWxvY2FsLWNvbW1hbmQtc3RkaW8tYnJpZGdlLXByb29mOiBsaW5lIGNvbW1hbmQ9MCBoZXg9NzMgNzQgNjQgNjkgNmYNCnJwaTUtbG9jYWwtY29tbWFuZC1zdGRpby1icmlkZ2UtcHJvb2Y6IGRpc3BhdGNoIGNvbW1hbmQ9MCBzdGF0dXM9aGFuZGxlZCByZXNwb25zZXM9NiByYXctYnl0ZXM9NiB0cnVuY2F0ZWQ9ZmFsc2UgY29udHJvbHM9MA0KdGFsb3M+IA0KcnBpNS1sb2NhbC1jb21tYW5kLXN0ZGlvLWJyaWRnZS1wcm9vZjogcmVhZHktZm9yLW5leHQgcHJvbXB0PXRydWUNCnJwaTUtbG9jYWwtY29tbWFuZC1zdGRpby1icmlkZ2UtcHJvb2Y6IGZpbmFsIHBhcnRpY2lwYW50cz0yIGV4cGVjdGVkPTIgZXJyb3JzPTAgY2xhc3NpZmljYXRpb249cGk1LWxvY2FsLWNvbW1hbmQtc3RkaW8tYnJpZGdlLWNvbXBsZXRlDQpycGk1LWxvY2FsLWNvbW1hbmQtc3RkaW8tYnJpZGdlLXByb29mOiBQQVNTDQo=",
+  "bytes": 500,
+  "cursor": 3421990,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "stdio-bridge-proof: ready command=0\r\ntalos> rpi5-local-command-stdio-bridge-proof: line command=0 hex=73 74 64 69 6f\r\nrpi5-local-command-stdio-bridge-proof: dispatch command=0 status=handled responses=6 raw-bytes=6 truncated=false controls=0\r\ntalos> \r\nrpi5-local-command-stdio-bridge-proof: ready-for-next prompt=true\r\nrpi5-local-command-stdio-bridge-proof: final participants=2 expected=2 errors=0 classification=pi5-local-command-stdio-bridge-complete\r\nrpi5-local-command-stdio-bridge-proof: PASS\r\n"
+}

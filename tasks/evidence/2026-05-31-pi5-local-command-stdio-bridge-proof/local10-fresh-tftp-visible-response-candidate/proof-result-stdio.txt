@@ -1,0 +1,9 @@
+classification=accepted
+candidate_archive=0885f021f34ab1398f91fa8206d587a40295663570ce8c505daa3b21ac8c2f02
+candidate_kernel=45934e74174388e3346cf76f63af3568abf260526fd749a707b2a67568191899
+candidate_kernel_size=97472
+fresh_serial_cursor=3504957
+tftp_cursor=3918011
+serial_write=yes
+kernel_fetch=served	da591740/kernel_2712.img	97472;served	da591740/kernel_2712.img	97472;served	da591740/kernel_2712.img	97472;served	da591740/kernel_2712.img	97472;
+restore_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10

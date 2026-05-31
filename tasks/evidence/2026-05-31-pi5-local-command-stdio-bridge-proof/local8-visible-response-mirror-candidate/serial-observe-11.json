@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "dGFsb3M6IHJ1bnRpbWUtY29uc29sZSBydW50aW1lLWNvbnNvbGUwDQp0YWxvczogcnVudGltZS1jb25zb2xlIHJ1bnRpbWUtY29uc29sZTANCnRhbG9zOiBkZXNjcmlwdG9yLWJhY2tlZC1vdXRwdXQ9dHJ1ZQ0KdGFsb3M6IGRlc2NyaXB0b3ItYmFja2VkLW91dHB1dD10cnVlDQoNCnJwaTUtbG9jYWwtY29tbWFuZC1zdGRpby1icmlkZ2UtcHJvb2Y6IGxpbmUgY29tbWFuZD0wIGhleD03MyA3NCA2NCA2OSA2Zg0KcnBpNS1sb2NhbC1jb21tYW5kLXN0ZGlvLWJyaWRnZS1wcm9vZjogZGlzcGF0Y2ggY29tbWFuZD0wIHN0YXR1cz1oYW5kbGVkIHJlc3BvbnNlcz02IHJhdy1ieXRlcz02IHRydW5jYXRlZD1mYWxzZSBjb250cm9scz0wDQp0YWxvcz4gDQpycGk1LWxvY2FsLWNvbW1hbmQtc3RkaW8tYnJpZGdlLXByb29mOiByZWFkeS1mb3ItbmV4dCBwcm9tcHQ9dHJ1ZQ0KcnBpNS1sb2NhbC1jb21tYW5kLXN0ZGlvLWJyaWRnZS1wcm9vZjogZmluYWwgcGFydGljaXBhbnRzPTIgZXhwZWN0ZWQ9MiBlcnJvcnM9MCBjbGFzc2lmaWNhdGlvbj1waTUtbG9jYWwtY29tbWFuZC1zdGRpby1icmlkZ2UtY29tcGxldGUNCnJwaTUtbG9jYWwtY29tbWFuZC1zdGRpby1icmlkZ2UtcHJvb2Y6IFBBU1MNCg==",
+  "bytes": 616,
+  "cursor_end": 3493617,
+  "cursor_start": 3493001,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "talos: runtime-console runtime-console0\r\ntalos: runtime-console runtime-console0\r\ntalos: descriptor-backed-output=true\r\ntalos: descriptor-backed-output=true\r\n\r\nrpi5-local-command-stdio-bridge-proof: line command=0 hex=73 74 64 69 6f\r\nrpi5-local-command-stdio-bridge-proof: dispatch command=0 status=handled responses=6 raw-bytes=6 truncated=false controls=0\r\ntalos> \r\nrpi5-local-command-stdio-bridge-proof: ready-for-next prompt=true\r\nrpi5-local-command-stdio-bridge-proof: final participants=2 expected=2 errors=0 classification=pi5-local-command-stdio-bridge-complete\r\nrpi5-local-command-stdio-bridge-proof: PASS\r\n",
+  "truncated": false
+}

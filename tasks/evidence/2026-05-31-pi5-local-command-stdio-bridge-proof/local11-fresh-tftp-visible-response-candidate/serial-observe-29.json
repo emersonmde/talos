@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "c3RkaW8NDQp0YWxvczogb2sgc3RkaW8NCnRhbG9zOiBmZCAwIHN0ZGlvLWlucHV0DQp0YWxvczogZmQgMSBzdGRpby1vdXRwdXQNCnRhbG9zOiBmZCAyIHN0ZGlvLW91dHB1dA0KdGFsb3M6IHJ1bnRpbWUtY29uc29sZSBydW50aW1lLWNvbnNvbGUwDQp0YWxvczogZGVzY3JpcHRvci1iYWNrZWQtb3V0cHV0PXRydWUNCg0KcnBpNS1sb2NhbC1jb21tYW5kLXN0ZGlvLWJyaWRnZS1wcm9vZjogbGluZSBjb21tYW5kPTAgaGV4PTczIDc0IDY0IDY5IDZmDQpycGk1LWxvY2FsLWNvbW1hbmQtc3RkaW8tYnJpZGdlLXByb29mOiBkaXNwYXRjaCBjb21tYW5kPTAgc3RhdHVzPWhhbmRsZWQgcmVzcG9uc2VzPTYgcmF3LWJ5dGVzPTYgdHJ1bmNhdGVkPWZhbHNlIGNvbnRyb2xzPTANCnRhbG9zOiBvayBzdGRpbw0KdGFsb3M6IGZkIDAgc3RkaW8taW5wdXQNCnRhbG9zOiBmZCAxIHN0ZGlvLW91dHB1dA0KdGFsb3M6IGZkIDIgc3RkaW8tb3V0cHV0DQp0YWxvczogcnVudGltZS1jb25zb2xlIHJ1bnRpbWUtY29uc29sZTANCnRhbG9zOiBkZXNjcmlwdG9yLWJhY2tlZC1vdXRwdXQ9dHJ1ZQ0KdGFsb3M+IA0KcnBpNS1sb2NhbC1jb21tYW5kLXN0ZGlvLWJyaWRnZS1wcm9vZjogcmVhZHktZm9yLW5leHQgcHJvbXB0PXRydWUNCnJwaTUtbG9jYWwtY29tbWFuZC1zdGRpby1icmlkZ2UtcHJvb2Y6IGZpbmFsIHBhcnRpY2lwYW50cz0yIGV4cGVjdGVkPTIgZXJyb3JzPTAgY2xhc3NpZmljYXRpb249cGk1LWxvY2FsLWNvbW1hbmQtc3RkaW8tYnJpZGdlLWNvbXBsZXRlDQpycGk1LWxvY2FsLWNvbW1hbmQtc3RkaW8tYnJpZGdlLXByb29mOiBQQVNTDQo=",
+  "bytes": 812,
+  "cursor_end": 3518703,
+  "cursor_start": 3517891,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "stdio\r\r\ntalos: ok stdio\r\ntalos: fd 0 stdio-input\r\ntalos: fd 1 stdio-output\r\ntalos: fd 2 stdio-output\r\ntalos: runtime-console runtime-console0\r\ntalos: descriptor-backed-output=true\r\n\r\nrpi5-local-command-stdio-bridge-proof: line command=0 hex=73 74 64 69 6f\r\nrpi5-local-command-stdio-bridge-proof: dispatch command=0 status=handled responses=6 raw-bytes=6 truncated=false controls=0\r\ntalos: ok stdio\r\ntalos: fd 0 stdio-input\r\ntalos: fd 1 stdio-output\r\ntalos: fd 2 stdio-output\r\ntalos: runtime-console runtime-console0\r\ntalos: descriptor-backed-output=true\r\ntalos> \r\nrpi5-local-command-stdio-bridge-proof: ready-for-next prompt=true\r\nrpi5-local-command-stdio-bridge-proof: final participants=2 expected=2 errors=0 classification=pi5-local-command-stdio-bridge-complete\r\nrpi5-local-command-stdio-bridge-proof: PASS\r\n",
+  "truncated": false
+}

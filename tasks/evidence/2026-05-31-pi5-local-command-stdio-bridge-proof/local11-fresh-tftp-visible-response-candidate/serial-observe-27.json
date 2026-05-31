@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "c29uPWJvb3RzdHJhcC1wYWdlLXRhYmxlcw0KdGFsb3M6IHRyYW5zbGF0aW9uIHRhYmxlczogc3RhcnQ9MHgyZjAwMDAwMCBlbmQ9MHgyZjAwNDAwMCBwYWdlcz0weDQgcGFnZV9zaXplPTB4MTAwMCBraW5kPWxheW91dC1vbmx5DQp0YWxvczogdHJhbnNsYXRpb24gdGFibGUgc2xvdHM6IHJvb3Q9MHgyZjAwMDAwMCBsMT0weDJmMDAxMDAwIGwyX2xvdz0weDJmMDAyMDAwIGwyX21taW89MHgyZjAwMzAwMA0KdGFsb3M6IHRyYW5zbGF0aW9uIHRhYmxlIHBvcHVsYXRpb246IHJvb3RfZW50cmllcz0weDEgbDFfZW50cmllcz0weDIgbG93X2wyX2Jsb2Nrcz0weDIwMCBtbWlvX2wyX2Jsb2Nrcz0weDIwIGJsb2NrX3NpemU9MHgyMDAwMDAga2luZD1zdGFnZTEtNGstbm8tZW5hYmxlDQp0YWxvczogdHJhbnNsYXRpb24gbWFwIHBvbGljeTogbG93PTB4MC4uMHg0MDAwMDAwMCBtbWlvPTB4MTA3YzAwMDAwMC4uMHgxMDgwMDAwMDAwIHJvb3RfaW5kZXg9MHgwIGxvd19sMV9pbmRleA==",
+  "bytes": 496,
+  "cursor_end": 3514797,
+  "cursor_start": 3514301,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "son=bootstrap-page-tables\r\ntalos: translation tables: start=0x2f000000 end=0x2f004000 pages=0x4 page_size=0x1000 kind=layout-only\r\ntalos: translation table slots: root=0x2f000000 l1=0x2f001000 l2_low=0x2f002000 l2_mmio=0x2f003000\r\ntalos: translation table population: root_entries=0x1 l1_entries=0x2 low_l2_blocks=0x200 mmio_l2_blocks=0x20 block_size=0x200000 kind=stage1-4k-no-enable\r\ntalos: translation map policy: low=0x0..0x40000000 mmio=0x107c000000..0x1080000000 root_index=0x0 low_l1_index",
+  "truncated": false
+}

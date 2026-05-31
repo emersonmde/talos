@@ -1,0 +1,7 @@
+classification=inconclusive
+discriminator=local4 fixed-backend candidate did not reach Talos entry before collection ended; retained serial shows firmware/TFTP config fetch but no OS start, and tftp-kernel-fetch-local4.txt is empty if no kernel fetch was logged.
+candidate_archive=6149417938acefe21a964654f7637eb152e44adeed7a9eaffd3ea161ae36e91c
+candidate_kernel=7df2a823b71ac3204cda866bf0cc0107f8a768c9d822939f3136280922a1a290
+fresh_serial_cursor=3444879
+tftp_cursor=3909905
+restore_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10

@@ -1,0 +1,17 @@
+classification=inconclusive
+candidate_archive=32be822bd1a3f68ccaf2699857f1906918df114758642c54b9b903682afa06b3
+candidate_kernel=c24ddfc082a1ced2150781ea8531978dcd12e7cd8f25c87885e758e8d84780bf
+candidate_kernel_size=97040
+fresh_serial_cursor=3471109
+tftp_cursor=3913958
+serial_write=yes
+kernel_fetch=served	da591740/kernel_2712.img	104136;served	da591740/kernel_2712.img	104136;
+restore_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+rpi5-local-command-stdio-bridge-proof: dispatch command=0 status=handled responses=6 raw-bytes=6 truncated=false controls=0
+rpi5-local-command-stdio-bridge-proof: ready-for-next prompt=true
+rpi5-local-command-stdio-bridge-proof: final participants=2 expected=2 errors=0 classification=pi5-local-command-stdio-bridge-complete
+rpi5-local-command-stdio-bridge-proof: PASS
+rpi5-local-command-stdio-bridge-proof: dispatch command=0 status=handled responses=6 raw-bytes=6 truncated=false controls=0
+rpi5-local-command-stdio-bridge-proof: ready-for-next prompt=true
+rpi5-local-command-stdio-bridge-proof: final participants=2 expected=2 errors=0 classification=pi5-local-command-stdio-bridge-complete
+rpi5-local-command-stdio-bridge-proof: PASS
