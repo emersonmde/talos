@@ -539,6 +539,21 @@ lifecycle, filesystem syscall expansion, Pi 5 proof, boot archive publication,
 shell behavior, networking, or SSH. The mechanically next bounded task is
 phase8-qemu-live-translation-register-activation-smoke-plan-20260531 if
 dependencies remain satisfied.
+The QEMU/substitute live translation-register activation smoke plan is now
+accepted. It requires scenario
+qemu_live_translation_register_activation_smoke, retained evidence at
+tasks/evidence/2026-05-31-qemu-live-translation-register-activation-smoke-core/qemu-live-translation-register-activation-smoke.log,
+classification qemu-live-translation-register-activation-smoke-complete, and
+PASS vocabulary. The smoke must prove copied installation and Phase 8 lineage,
+TTBR0/TTBR1 provenance without register writes, TCR/MAIR compatibility,
+blocked SCTLR/ASID/TLB/barrier states, active-root nonmutation, preserved
+kernel diagnostic reachability, model-only activation-commit intent,
+rollback/teardown, deterministic no-partial-activation rejection, and zero
+live side effects. The next bounded task is
+phase8-live-translation-register-activation-core-20260531. Live register
+mutation, active-root descriptor copy, ASID/TLB/barrier activation, lower-EL
+ERET, scheduler publication, process lifecycle, filesystem syscall expansion,
+Pi 5 proof, shell behavior, networking, and SSH remain blocked.
 The
 accepted Phase 7
 frontier includes the Phase

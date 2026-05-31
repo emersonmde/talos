@@ -169,6 +169,7 @@
 - [Phase 8 Live Descriptor-Image Installation Closeout Checkpoint](project/phase8-live-descriptor-image-installation-closeout-checkpoint.md)
 - [Phase 8 Live Translation-Register Activation Source Inventory](project/phase8-live-translation-register-activation-source-inventory.md)
 - [Phase 8 Live Translation-Register Activation Contract](project/phase8-live-translation-register-activation-contract.md)
+- [Phase 8 QEMU Live Translation-Register Activation Smoke Plan](project/phase8-qemu-live-translation-register-activation-smoke-plan.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture
