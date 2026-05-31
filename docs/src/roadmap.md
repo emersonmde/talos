@@ -288,6 +288,19 @@ phase8-kernel-half-reachability-contract-20260531 as the next bounded
 documentation-only task. Live register mutation, lower-EL ERET, scheduler
 publication, process lifecycle, filesystem syscalls, Pi 5 hardware proof,
 networking, and SSH remain blocked.
+The kernel-half reachability contract is now accepted. It selects a
+preflight-only KernelHalfReachabilityPlan with identity
+phase8-kernel-half-reachability-plan-v1 and policy
+preflight-ttbr1-shared-kernel-root-reachability-v1. The policy chooses the
+future split direction: process user mappings remain TTBR0_EL1-owned, while a
+shared privileged kernel root is reserved for TTBR1_EL1. This contract records
+required kernel text/data/bss/vector/stack/heap/UART/MMIO/scheduler/fault
+reachability, TCR/MAIR/TTBR/ASID/TLB/barrier compatibility vocabulary,
+deterministic blocker/error behavior, no-partial construction, and zero live
+side effects. Kernel-half descriptor-image construction, live register
+mutation, lower-EL ERET, scheduler publication, process lifecycle, filesystem
+syscalls, Pi 5 hardware proof, networking, and SSH remain blocked. The next
+bounded task is phase8-qemu-kernel-half-reachability-smoke-plan-20260531.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -3136,6 +3149,20 @@ Milestone 8.3: Program Loader
   filesystem syscalls, Pi 5 proof, networking, and SSH. It recommends
   phase8-kernel-half-reachability-contract-20260531 as the next bounded
   documentation-only task.
+- Phase 8 kernel-half reachability contract is accepted. It selects the first
+  preflight-only KernelHalfReachabilityPlan boundary with identity
+  phase8-kernel-half-reachability-plan-v1 and policy
+  preflight-ttbr1-shared-kernel-root-reachability-v1. The selected policy
+  chooses TTBR0_EL1 for process-user mappings and reserves TTBR1_EL1 for a
+  future shared privileged kernel root, while keeping descriptor-image
+  construction and all live register mutation blocked. It requires
+  reachability records for kernel text/rodata/data/bss, vectors, active kernel
+  stack, heap/page-frame allocator state, UART/MMIO diagnostics, scheduler
+  code/data, and panic/fault reporting; compatibility-only TCR/MAIR/TTBR/ASID/
+  TLB/barrier vocabulary; deterministic errors/blockers; all-or-nothing
+  construction; idempotent plan-local teardown; and zero live side effects.
+  It recommends phase8-qemu-kernel-half-reachability-smoke-plan-20260531 as
+  the next bounded documentation-only task.
 
 Acceptance criteria:
 

@@ -12,6 +12,49 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-31 - Phase 8 Kernel-Half Reachability Contract Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 kernel-half
+  reachability contract. No Rust behavior, assembly behavior, QEMU execution,
+  Pi 5 hardware run, boot archive publication, hardware-lock acquisition,
+  live TTBR0_EL1/TTBR1_EL1/TCR_EL1/MAIR_EL1/SCTLR_EL1 mutation, ASID
+  allocation, TLB mutation, activation DSB/ISB, lower-EL ERET, scheduler
+  runnable publication, process lifecycle, shell behavior, descriptor-backed
+  filesystem syscalls, writable filesystem, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The accepted kernel-half reachability source inventory mapped the
+  remaining blocked-no-accepted-kernel-half-map gap after model-only live
+  address-space activation. A bounded contract was needed to select policy
+  identity and evidence vocabulary before implementation or smoke evidence.
+- Decision: Accept
+  phase8-kernel-half-reachability-contract-20260531. The contract selects a
+  preflight-only KernelHalfReachabilityPlan with identity
+  phase8-kernel-half-reachability-plan-v1 and policy
+  preflight-ttbr1-shared-kernel-root-reachability-v1. The chosen future
+  direction keeps process-user mappings in TTBR0_EL1 and reserves TTBR1_EL1
+  for a shared privileged kernel root, while descriptor-image construction and
+  live register mutation remain blocked. The plan requires kernel
+  text/rodata/data/bss, vectors, active stack, heap/page-frame allocator,
+  UART/MMIO diagnostics, scheduler state, and panic/fault reporting
+  reachability records; compatibility-only TCR/MAIR/TTBR/ASID/TLB/barrier
+  vocabulary; deterministic blocker/error behavior; no-partial construction;
+  idempotent plan-local teardown; and zero live side effects.
+- Evidence level: static documentation/source inspection. Reviewed accepted
+  kernel-half inventory, live activation docs, adjacent Phase 8 contracts,
+  translation/vector/UART/MMIO/scheduler/fault-reporting source owners,
+  architecture notes, roadmap, SUMMARY, and ADR index.
+- Validation: git status --short before edits was clean; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The next bounded task should be
+  phase8-qemu-kernel-half-reachability-smoke-plan-20260531. Kernel-half
+  descriptor-image construction, live register mutation, lower-EL ERET,
+  scheduler runnable publication, process lifecycle, broad argv/envp/auxv/TLS
+  ABI, descriptor-backed filesystem syscalls, Pi 5 hardware proof, shell,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
+  policy remain blocked until later explicit tasks accept their contracts and
+  gates.
+
 ## 2026-05-31 - Phase 8 Kernel-Half Reachability Source Inventory Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 kernel-half
