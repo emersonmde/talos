@@ -61,6 +61,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "rpi5_local_line_kill",
+        implied_values: &["rpi5_local_serial_command_loop"],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "rpi5_psci_secondary_core_alive",
         implied_values: &[],
         asm_defines: &[RPI5_SMP_ASM],

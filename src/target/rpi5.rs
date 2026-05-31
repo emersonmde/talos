@@ -192,7 +192,8 @@ const TIMER_IRQ_WAIT_LIMIT: usize = 8_000_000;
     talos_boot_scenario = "rpi5_diagnostic_command_channel",
     talos_boot_scenario = "rpi5_local_serial_command_loop",
     talos_boot_scenario = "rpi5_local_line_editing",
-    talos_boot_scenario = "rpi5_local_line_cancel"
+    talos_boot_scenario = "rpi5_local_line_cancel",
+    talos_boot_scenario = "rpi5_local_line_kill"
 ))]
 const UART10_RX_WAIT_LIMIT: usize = 200_000_000;
 #[cfg(talos_boot_scenario = "rpi5_diagnostic_command_channel")]
@@ -7198,7 +7199,8 @@ fn settle_for_serial_capture() {
     talos_boot_scenario = "rpi5_local_echo_command",
     talos_boot_scenario = "rpi5_local_pwd_command",
     talos_boot_scenario = "rpi5_local_line_editing",
-    talos_boot_scenario = "rpi5_local_line_cancel"
+    talos_boot_scenario = "rpi5_local_line_cancel",
+    talos_boot_scenario = "rpi5_local_line_kill"
 ))]
 pub fn run_local_serial_command_loop_proof() -> bool {
     let command_count = local_command_pi5_proof_command_count();
@@ -7288,6 +7290,14 @@ pub fn run_local_serial_command_loop_proof() -> bool {
             result.backspaces(),
             result.deletes()
         );
+        #[cfg(talos_boot_scenario = "rpi5_local_line_kill")]
+        if result.line() == b"pwd"
+            && result.status() == crate::local_command_loop::LocalCommandStatus::Handled
+            && result.response_lines() == 2
+        {
+            replay_visible_line_kill_response_for_pi5_proof();
+            replay_visible_pwd_response_for_pi5_proof();
+        }
         if result.line() == b"stdio"
             && result.status() == crate::local_command_loop::LocalCommandStatus::Handled
             && result.response_lines() == 7
@@ -7358,7 +7368,8 @@ pub fn run_local_serial_command_loop_proof() -> bool {
     talos_boot_scenario = "rpi5_local_echo_command",
     talos_boot_scenario = "rpi5_local_pwd_command",
     talos_boot_scenario = "rpi5_local_line_editing",
-    talos_boot_scenario = "rpi5_local_line_cancel"
+    talos_boot_scenario = "rpi5_local_line_cancel",
+    talos_boot_scenario = "rpi5_local_line_kill"
 ))]
 fn replay_visible_stdio_response_for_pi5_proof() {
     crate::println!("talos: ok stdio");
@@ -7375,7 +7386,8 @@ fn replay_visible_stdio_response_for_pi5_proof() {
     talos_boot_scenario = "rpi5_local_serial_command_loop",
     talos_boot_scenario = "rpi5_local_echo_command",
     talos_boot_scenario = "rpi5_local_pwd_command",
-    talos_boot_scenario = "rpi5_local_line_cancel"
+    talos_boot_scenario = "rpi5_local_line_cancel",
+    talos_boot_scenario = "rpi5_local_line_kill"
 ))]
 fn replay_visible_echo_response_for_pi5_proof() {
     crate::println!("hello");
@@ -7385,16 +7397,26 @@ fn replay_visible_echo_response_for_pi5_proof() {
 #[cfg(any(
     talos_boot_scenario = "rpi5_local_pwd_command",
     talos_boot_scenario = "rpi5_local_line_editing",
-    talos_boot_scenario = "rpi5_local_line_cancel"
+    talos_boot_scenario = "rpi5_local_line_cancel",
+    talos_boot_scenario = "rpi5_local_line_kill"
 ))]
 fn replay_visible_pwd_response_for_pi5_proof() {
     crate::println!("/");
     wait_uart10_empty_early_phase();
 }
 
-#[cfg(talos_boot_scenario = "rpi5_local_line_cancel")]
+#[cfg(any(
+    talos_boot_scenario = "rpi5_local_line_cancel",
+    talos_boot_scenario = "rpi5_local_line_kill"
+))]
 fn replay_visible_line_cancel_response_for_pi5_proof() {
     crate::println!("talos: line-canceled");
+    wait_uart10_empty_early_phase();
+}
+
+#[cfg(talos_boot_scenario = "rpi5_local_line_kill")]
+fn replay_visible_line_kill_response_for_pi5_proof() {
+    crate::println!("talos: line-killed");
     wait_uart10_empty_early_phase();
 }
 
@@ -7413,6 +7435,11 @@ const fn local_command_pi5_proof_label() -> &'static str {
     "rpi5-local-line-cancel-proof"
 }
 
+#[cfg(talos_boot_scenario = "rpi5_local_line_kill")]
+const fn local_command_pi5_proof_label() -> &'static str {
+    "rpi5-local-line-kill-proof"
+}
+
 #[cfg(talos_boot_scenario = "rpi5_local_echo_command")]
 const fn local_command_pi5_proof_label() -> &'static str {
     "rpi5-local-echo-command-proof"
@@ -7423,7 +7450,8 @@ const fn local_command_pi5_proof_label() -> &'static str {
     not(talos_boot_scenario = "rpi5_local_echo_command"),
     not(talos_boot_scenario = "rpi5_local_pwd_command"),
     not(talos_boot_scenario = "rpi5_local_line_editing"),
-    not(talos_boot_scenario = "rpi5_local_line_cancel")
+    not(talos_boot_scenario = "rpi5_local_line_cancel"),
+    not(talos_boot_scenario = "rpi5_local_line_kill")
 ))]
 const fn local_command_pi5_proof_label() -> &'static str {
     "rpi5-local-command-stdio-bridge-proof"
@@ -7444,6 +7472,11 @@ const fn local_command_pi5_proof_classification() -> &'static str {
     "pi5-local-line-cancel-complete"
 }
 
+#[cfg(talos_boot_scenario = "rpi5_local_line_kill")]
+const fn local_command_pi5_proof_classification() -> &'static str {
+    "pi5-local-line-kill-complete"
+}
+
 #[cfg(talos_boot_scenario = "rpi5_local_echo_command")]
 const fn local_command_pi5_proof_classification() -> &'static str {
     "pi5-local-echo-command-complete"
@@ -7454,7 +7487,8 @@ const fn local_command_pi5_proof_classification() -> &'static str {
     not(talos_boot_scenario = "rpi5_local_echo_command"),
     not(talos_boot_scenario = "rpi5_local_pwd_command"),
     not(talos_boot_scenario = "rpi5_local_line_editing"),
-    not(talos_boot_scenario = "rpi5_local_line_cancel")
+    not(talos_boot_scenario = "rpi5_local_line_cancel"),
+    not(talos_boot_scenario = "rpi5_local_line_kill")
 ))]
 const fn local_command_pi5_proof_classification() -> &'static str {
     "pi5-local-command-stdio-bridge-complete"
@@ -7465,7 +7499,8 @@ const fn local_command_pi5_proof_classification() -> &'static str {
     talos_boot_scenario = "rpi5_local_echo_command",
     talos_boot_scenario = "rpi5_local_pwd_command",
     talos_boot_scenario = "rpi5_local_line_editing",
-    talos_boot_scenario = "rpi5_local_line_cancel"
+    talos_boot_scenario = "rpi5_local_line_cancel",
+    talos_boot_scenario = "rpi5_local_line_kill"
 ))]
 const fn local_command_pi5_proof_command_count() -> usize {
     if cfg!(talos_boot_scenario = "rpi5_local_line_cancel") {
@@ -7480,7 +7515,8 @@ const fn local_command_pi5_proof_command_count() -> usize {
     talos_boot_scenario = "rpi5_local_echo_command",
     talos_boot_scenario = "rpi5_local_pwd_command",
     talos_boot_scenario = "rpi5_local_line_editing",
-    talos_boot_scenario = "rpi5_local_line_cancel"
+    talos_boot_scenario = "rpi5_local_line_cancel",
+    talos_boot_scenario = "rpi5_local_line_kill"
 ))]
 struct LocalCommandProofConsole;
 
@@ -7489,7 +7525,8 @@ struct LocalCommandProofConsole;
     talos_boot_scenario = "rpi5_local_echo_command",
     talos_boot_scenario = "rpi5_local_pwd_command",
     talos_boot_scenario = "rpi5_local_line_editing",
-    talos_boot_scenario = "rpi5_local_line_cancel"
+    talos_boot_scenario = "rpi5_local_line_cancel",
+    talos_boot_scenario = "rpi5_local_line_kill"
 ))]
 impl LocalCommandProofConsole {
     const fn new(_uart: Pl011) -> Self {
@@ -7502,7 +7539,8 @@ impl LocalCommandProofConsole {
     talos_boot_scenario = "rpi5_local_echo_command",
     talos_boot_scenario = "rpi5_local_pwd_command",
     talos_boot_scenario = "rpi5_local_line_editing",
-    talos_boot_scenario = "rpi5_local_line_cancel"
+    talos_boot_scenario = "rpi5_local_line_cancel",
+    talos_boot_scenario = "rpi5_local_line_kill"
 ))]
 impl core::fmt::Write for LocalCommandProofConsole {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
@@ -7517,7 +7555,8 @@ impl core::fmt::Write for LocalCommandProofConsole {
     talos_boot_scenario = "rpi5_local_echo_command",
     talos_boot_scenario = "rpi5_local_pwd_command",
     talos_boot_scenario = "rpi5_local_line_editing",
-    talos_boot_scenario = "rpi5_local_line_cancel"
+    talos_boot_scenario = "rpi5_local_line_cancel",
+    talos_boot_scenario = "rpi5_local_line_kill"
 ))]
 fn expected_local_command_loop_dispatch(
     command_index: usize,
@@ -7541,6 +7580,9 @@ fn expected_local_command_loop_dispatch(
         }
         1 if cfg!(talos_boot_scenario = "rpi5_local_line_cancel") => {
             line == b"pwd" && status == Handled && response_lines == 1
+        }
+        0 if cfg!(talos_boot_scenario = "rpi5_local_line_kill") => {
+            line == b"pwd" && status == Handled && response_lines == 2
         }
         0 if cfg!(talos_boot_scenario = "rpi5_local_echo_command") => {
             line == b"echo hello" && status == Handled && response_lines == 1
@@ -7587,7 +7629,8 @@ fn expected_diagnostic_dispatch(
     talos_boot_scenario = "rpi5_diagnostic_command_channel",
     talos_boot_scenario = "rpi5_local_serial_command_loop",
     talos_boot_scenario = "rpi5_local_line_editing",
-    talos_boot_scenario = "rpi5_local_line_cancel"
+    talos_boot_scenario = "rpi5_local_line_cancel",
+    talos_boot_scenario = "rpi5_local_line_kill"
 ))]
 fn print_tty_hex_bytes(bytes: &[u8]) {
     for (index, byte) in bytes.iter().enumerate() {
