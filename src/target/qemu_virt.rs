@@ -131,6 +131,24 @@ use crate::initial_user_stack::{
     InitialUserStackLeaseSource, InitialUserStackRequest, plan_initial_user_stack,
 };
 #[cfg(any(
+    talos_boot_scenario = "qemu_live_descriptor_image_installation_smoke",
+    talos_boot_scenario = "qemu_live_translation_register_activation_smoke"
+))]
+use crate::live_descriptor_image_installation::{
+    DESCRIPTOR_IMAGE_INSTALLATION_READY_STATE, DESCRIPTOR_IMAGE_NOT_INSTALLED_STATE,
+    LIVE_DESCRIPTOR_IMAGE_INSTALLATION_BOUNDARY_IDENTITY,
+    LIVE_DESCRIPTOR_IMAGE_INSTALLATION_POLICY, LiveDescriptorImageInstallationLeaseSource,
+    LiveDescriptorImageInstallationRequest, TTBR1_DESCRIPTOR_IMAGE_ROOT_PROVENANCE,
+    install_live_descriptor_image_binding,
+};
+#[cfg(talos_boot_scenario = "qemu_live_translation_register_activation_smoke")]
+use crate::live_translation_register_activation::{
+    LIVE_TRANSLATION_REGISTER_ACTIVATION_BOUNDARY_IDENTITY,
+    LIVE_TRANSLATION_REGISTER_ACTIVATION_POLICY, LIVE_TRANSLATION_REGISTER_ACTIVATION_STATE,
+    LiveTranslationRegisterActivationLeaseSource, LiveTranslationRegisterActivationRequest,
+    commit_live_translation_register_activation,
+};
+#[cfg(any(
     talos_boot_scenario = "qemu_initial_process_launch_smoke",
     talos_boot_scenario = "qemu_initial_user_stack_smoke"
 ))]
@@ -247,7 +265,8 @@ use crate::{
 };
 #[cfg(any(
     talos_boot_scenario = "qemu_kernel_half_descriptor_image_smoke",
-    talos_boot_scenario = "qemu_live_descriptor_image_installation_smoke"
+    talos_boot_scenario = "qemu_live_descriptor_image_installation_smoke",
+    talos_boot_scenario = "qemu_live_translation_register_activation_smoke"
 ))]
 use crate::{
     initial_process_launch::{
@@ -273,8 +292,9 @@ use crate::{
     live_address_space_activation::{
         ASID_ALLOCATION_BLOCKED, BARRIER_SEQUENCE_PLANNED_ONLY,
         LIVE_ADDRESS_SPACE_ACTIVATION_BOUNDARY_IDENTITY, LIVE_REGISTER_SEQUENCE_BLOCKED,
-        LiveAddressSpaceActivationLeaseSource, LiveAddressSpaceActivationPlan,
-        LiveAddressSpaceActivationRequest, SCTLR_MUTATION_BLOCKED, TCR_COMPATIBILITY_RECORD_ONLY,
+        LOWER_EL_ERET_BLOCKED, LiveAddressSpaceActivationLeaseSource,
+        LiveAddressSpaceActivationPlan, LiveAddressSpaceActivationRequest,
+        RUNNABLE_PUBLICATION_BLOCKED, SCTLR_MUTATION_BLOCKED, TCR_COMPATIBILITY_RECORD_ONLY,
         TLB_INVALIDATION_BLOCKED, preflight_live_address_space_activation,
     },
     posix::{PosixError, UserMappingPermissions},
@@ -294,13 +314,6 @@ use crate::{
         PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY, ProgramImagePlan, plan_phase8_init_image,
     },
     scheduler::ProcessOwnerId,
-};
-#[cfg(talos_boot_scenario = "qemu_live_descriptor_image_installation_smoke")]
-use crate::live_descriptor_image_installation::{
-    DESCRIPTOR_IMAGE_INSTALLATION_READY_STATE, DESCRIPTOR_IMAGE_NOT_INSTALLED_STATE,
-    LIVE_DESCRIPTOR_IMAGE_INSTALLATION_BOUNDARY_IDENTITY, LIVE_DESCRIPTOR_IMAGE_INSTALLATION_POLICY,
-    LiveDescriptorImageInstallationLeaseSource, LiveDescriptorImageInstallationRequest,
-    TTBR1_DESCRIPTOR_IMAGE_ROOT_PROVENANCE, install_live_descriptor_image_binding,
 };
 #[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
 use crate::{
@@ -15654,7 +15667,8 @@ fn kernel_half_descriptor_image_no_partial_state_visible() -> bool {
 
 #[cfg(any(
     talos_boot_scenario = "qemu_kernel_half_descriptor_image_smoke",
-    talos_boot_scenario = "qemu_live_descriptor_image_installation_smoke"
+    talos_boot_scenario = "qemu_live_descriptor_image_installation_smoke",
+    talos_boot_scenario = "qemu_live_translation_register_activation_smoke"
 ))]
 fn kernel_half_descriptor_image_valid_fixture() -> Result<
     (
@@ -15862,11 +15876,19 @@ pub fn run_live_descriptor_image_installation_smoke() -> bool {
 #[cfg(talos_boot_scenario = "qemu_live_descriptor_image_installation_smoke")]
 fn live_descriptor_image_installation_report_success()
 -> (bool, bool, bool, bool, bool, bool, bool, bool, bool) {
-    let Ok((_image, _install_plan, address_space, materialization, activation_plan, reachability_plan)) =
-        kernel_half_descriptor_image_valid_fixture()
+    let Ok((
+        _image,
+        _install_plan,
+        address_space,
+        materialization,
+        activation_plan,
+        reachability_plan,
+    )) = kernel_half_descriptor_image_valid_fixture()
     else {
         live_descriptor_image_installation_report_empty_success();
-        return (false, false, false, false, false, false, false, false, false);
+        return (
+            false, false, false, false, false, false, false, false, false,
+        );
     };
     let mut descriptor_source = KernelHalfDescriptorImageLeaseSource::for_descriptor_image();
     let Ok(descriptor_image) = construct_kernel_half_descriptor_image(
@@ -15876,7 +15898,9 @@ fn live_descriptor_image_installation_report_success()
         &mut descriptor_source,
     ) else {
         live_descriptor_image_installation_report_empty_success();
-        return (false, false, false, false, false, false, false, false, false);
+        return (
+            false, false, false, false, false, false, false, false, false,
+        );
     };
     let mut installation_source =
         LiveDescriptorImageInstallationLeaseSource::for_single_installation();
@@ -15887,7 +15911,9 @@ fn live_descriptor_image_installation_report_success()
         &mut installation_source,
     ) else {
         live_descriptor_image_installation_report_empty_success();
-        return (false, false, false, false, false, false, false, false, false);
+        return (
+            false, false, false, false, false, false, false, false, false,
+        );
     };
 
     crate::println!(
@@ -15910,10 +15936,14 @@ fn live_descriptor_image_installation_report_success()
         && installation.boundary_identity() == LIVE_DESCRIPTOR_IMAGE_INSTALLATION_BOUNDARY_IDENTITY
         && installation.policy_identity() == LIVE_DESCRIPTOR_IMAGE_INSTALLATION_POLICY
         && installation.image_fixture_identity() == PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY
-        && installation.activation_boundary_identity() == LIVE_ADDRESS_SPACE_ACTIVATION_BOUNDARY_IDENTITY
-        && installation.reachability_boundary_identity() == KERNEL_HALF_REACHABILITY_BOUNDARY_IDENTITY
-        && installation.descriptor_image_boundary_identity() == KERNEL_HALF_DESCRIPTOR_IMAGE_BOUNDARY_IDENTITY
-        && installation.materialization_boundary_identity() == PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY
+        && installation.activation_boundary_identity()
+            == LIVE_ADDRESS_SPACE_ACTIVATION_BOUNDARY_IDENTITY
+        && installation.reachability_boundary_identity()
+            == KERNEL_HALF_REACHABILITY_BOUNDARY_IDENTITY
+        && installation.descriptor_image_boundary_identity()
+            == KERNEL_HALF_DESCRIPTOR_IMAGE_BOUNDARY_IDENTITY
+        && installation.materialization_boundary_identity()
+            == PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY
         && installation.source_path() == PHASE8_INIT_PATH
         && installation.address_space_id() == address_space.id().raw()
         && installation.materialization_id() == materialization.id();
@@ -16118,8 +16148,14 @@ fn live_descriptor_image_installation_report_empty_success() {
 
 #[cfg(talos_boot_scenario = "qemu_live_descriptor_image_installation_smoke")]
 fn live_descriptor_image_installation_report_teardown() -> bool {
-    let Ok((_image, _install_plan, _address_space, materialization, activation_plan, reachability_plan)) =
-        kernel_half_descriptor_image_valid_fixture()
+    let Ok((
+        _image,
+        _install_plan,
+        _address_space,
+        materialization,
+        activation_plan,
+        reachability_plan,
+    )) = kernel_half_descriptor_image_valid_fixture()
     else {
         live_descriptor_image_installation_print_empty_teardown();
         return false;
@@ -16204,23 +16240,27 @@ fn live_descriptor_image_installation_report_error(
     descriptor_installed: bool,
 ) -> bool {
     let result = if fixture_request.is_some() {
-        live_descriptor_image_installation_fixture().and_then(|(descriptor_image, activation_plan)| {
-            install_live_descriptor_image_binding(
-                Some(descriptor_image),
-                Some(activation_plan),
-                request,
-                &mut lease_source,
-            )
-        })
+        live_descriptor_image_installation_fixture().and_then(
+            |(descriptor_image, activation_plan)| {
+                install_live_descriptor_image_binding(
+                    Some(descriptor_image),
+                    Some(activation_plan),
+                    request,
+                    &mut lease_source,
+                )
+            },
+        )
     } else {
-        live_descriptor_image_installation_fixture().and_then(|(_descriptor_image, activation_plan)| {
-            install_live_descriptor_image_binding(
-                None,
-                Some(activation_plan),
-                request,
-                &mut lease_source,
-            )
-        })
+        live_descriptor_image_installation_fixture().and_then(
+            |(_descriptor_image, activation_plan)| {
+                install_live_descriptor_image_binding(
+                    None,
+                    Some(activation_plan),
+                    request,
+                    &mut lease_source,
+                )
+            },
+        )
     };
     live_descriptor_image_installation_print_error_result(
         case,
@@ -16257,7 +16297,10 @@ fn live_descriptor_image_installation_report_destroyed_input_error() -> bool {
 #[cfg(talos_boot_scenario = "qemu_live_descriptor_image_installation_smoke")]
 fn live_descriptor_image_installation_print_error_result(
     case: &str,
-    result: Result<crate::live_descriptor_image_installation::KernelHalfDescriptorImageInstallation, PosixError>,
+    result: Result<
+        crate::live_descriptor_image_installation::KernelHalfDescriptorImageInstallation,
+        PosixError,
+    >,
     lease_source: LiveDescriptorImageInstallationLeaseSource,
     expected: PosixError,
     descriptor_installed: bool,
@@ -16287,10 +16330,11 @@ fn live_descriptor_image_installation_fixture() -> Result<
     ),
     PosixError,
 > {
-    live_descriptor_image_installation_fixture_with_descriptor_source()
-        .map(|(descriptor_image, activation_plan, _descriptor_source)| {
+    live_descriptor_image_installation_fixture_with_descriptor_source().map(
+        |(descriptor_image, activation_plan, _descriptor_source)| {
             (descriptor_image, activation_plan)
-        })
+        },
+    )
 }
 
 #[cfg(talos_boot_scenario = "qemu_live_descriptor_image_installation_smoke")]
@@ -16302,8 +16346,14 @@ fn live_descriptor_image_installation_fixture_with_descriptor_source() -> Result
     ),
     PosixError,
 > {
-    let Ok((_image, _install_plan, _address_space, materialization, activation_plan, reachability_plan)) =
-        kernel_half_descriptor_image_valid_fixture()
+    let Ok((
+        _image,
+        _install_plan,
+        _address_space,
+        materialization,
+        activation_plan,
+        reachability_plan,
+    )) = kernel_half_descriptor_image_valid_fixture()
     else {
         return Err(PosixError::InvalidArgument);
     };
@@ -16315,4 +16365,583 @@ fn live_descriptor_image_installation_fixture_with_descriptor_source() -> Result
         &mut descriptor_source,
     )?;
     Ok((descriptor_image, activation_plan, descriptor_source))
+}
+
+#[cfg(talos_boot_scenario = "qemu_live_translation_register_activation_smoke")]
+pub fn run_live_translation_register_activation_smoke() -> bool {
+    crate::println!("qemu-live-translation-register-activation-smoke: start");
+
+    let (
+        success_ok,
+        input_ok,
+        ttbr_ok,
+        compatibility_ok,
+        blocked_ok,
+        reachability_ok,
+        activation_state_ok,
+        effects_ok,
+    ) = live_translation_register_activation_report_success();
+    let teardown_ok = live_translation_register_activation_report_teardown();
+    let missing_ok = live_translation_register_activation_report_error(
+        "missing-input",
+        None,
+        LiveTranslationRegisterActivationRequest::CommitModelIntent,
+        LiveTranslationRegisterActivationLeaseSource::for_single_activation(),
+        PosixError::InvalidArgument,
+        false,
+    );
+    let destroyed_ok = live_translation_register_activation_report_destroyed_input_error();
+    let identity_ok = live_translation_register_activation_report_error(
+        "identity-mismatch",
+        Some(LiveTranslationRegisterActivationRequest::IdentityMismatch),
+        LiveTranslationRegisterActivationRequest::IdentityMismatch,
+        LiveTranslationRegisterActivationLeaseSource::for_single_activation(),
+        PosixError::InvalidArgument,
+        false,
+    );
+    let lineage_ok = live_translation_register_activation_report_error(
+        "lineage-mismatch",
+        Some(LiveTranslationRegisterActivationRequest::LineageMismatch),
+        LiveTranslationRegisterActivationRequest::LineageMismatch,
+        LiveTranslationRegisterActivationLeaseSource::for_single_activation(),
+        PosixError::NotExecutable,
+        false,
+    );
+    let stale_ok = live_translation_register_activation_report_error(
+        "stale-root-provenance",
+        Some(LiveTranslationRegisterActivationRequest::StaleRootProvenance),
+        LiveTranslationRegisterActivationRequest::StaleRootProvenance,
+        LiveTranslationRegisterActivationLeaseSource::for_single_activation(),
+        PosixError::Busy,
+        false,
+    );
+    let already_consumed_ok = live_translation_register_activation_report_error(
+        "already-consumed-installation",
+        Some(LiveTranslationRegisterActivationRequest::AlreadyConsumedInstallation),
+        LiveTranslationRegisterActivationRequest::AlreadyConsumedInstallation,
+        LiveTranslationRegisterActivationLeaseSource::for_single_activation(),
+        PosixError::Busy,
+        true,
+    );
+    let forbidden_ok = live_translation_register_activation_report_error(
+        "forbidden-el0-kernel-access",
+        Some(LiveTranslationRegisterActivationRequest::ForbiddenEl0KernelAccess),
+        LiveTranslationRegisterActivationRequest::ForbiddenEl0KernelAccess,
+        LiveTranslationRegisterActivationLeaseSource::for_single_activation(),
+        PosixError::AccessDenied,
+        false,
+    );
+    let diagnostic_ok = live_translation_register_activation_report_error(
+        "diagnostic-reachability-loss",
+        Some(LiveTranslationRegisterActivationRequest::DiagnosticReachabilityLoss),
+        LiveTranslationRegisterActivationRequest::DiagnosticReachabilityLoss,
+        LiveTranslationRegisterActivationLeaseSource::for_single_activation(),
+        PosixError::AccessDenied,
+        false,
+    );
+    let live_register_ok = live_translation_register_activation_report_error(
+        "live-register-request",
+        Some(LiveTranslationRegisterActivationRequest::LiveRegisterRequest),
+        LiveTranslationRegisterActivationRequest::LiveRegisterRequest,
+        LiveTranslationRegisterActivationLeaseSource::for_single_activation(),
+        PosixError::NotImplemented,
+        false,
+    );
+    let active_root_ok = live_translation_register_activation_report_error(
+        "active-root-copy-request",
+        Some(LiveTranslationRegisterActivationRequest::ActiveRootCopyRequest),
+        LiveTranslationRegisterActivationRequest::ActiveRootCopyRequest,
+        LiveTranslationRegisterActivationLeaseSource::for_single_activation(),
+        PosixError::NotImplemented,
+        false,
+    );
+    let lower_el_ok = live_translation_register_activation_report_error(
+        "lower-el-launch-request",
+        Some(LiveTranslationRegisterActivationRequest::LowerElLaunchRequest),
+        LiveTranslationRegisterActivationRequest::LowerElLaunchRequest,
+        LiveTranslationRegisterActivationLeaseSource::for_single_activation(),
+        PosixError::NotImplemented,
+        false,
+    );
+    let scheduler_ok = live_translation_register_activation_report_error(
+        "scheduler-publication-request",
+        Some(LiveTranslationRegisterActivationRequest::SchedulerPublicationRequest),
+        LiveTranslationRegisterActivationRequest::SchedulerPublicationRequest,
+        LiveTranslationRegisterActivationLeaseSource::for_single_activation(),
+        PosixError::NotImplemented,
+        false,
+    );
+    let filesystem_ok = live_translation_register_activation_report_error(
+        "filesystem-request",
+        Some(LiveTranslationRegisterActivationRequest::FilesystemRequest),
+        LiveTranslationRegisterActivationRequest::FilesystemRequest,
+        LiveTranslationRegisterActivationLeaseSource::for_single_activation(),
+        PosixError::NotImplemented,
+        false,
+    );
+    let resource_ok = live_translation_register_activation_report_error(
+        "resource-exhaustion",
+        Some(LiveTranslationRegisterActivationRequest::CommitModelIntent),
+        LiveTranslationRegisterActivationRequest::CommitModelIntent,
+        LiveTranslationRegisterActivationLeaseSource::with_activation_record_capacity(0),
+        PosixError::NoMemory,
+        false,
+    );
+
+    let access_ok = forbidden_ok && diagnostic_ok;
+    let blocked_request_ok = live_register_ok
+        && active_root_ok
+        && lower_el_ok
+        && scheduler_ok
+        && filesystem_ok
+        && resource_ok;
+    let participants = u64::from(success_ok)
+        + u64::from(input_ok)
+        + u64::from(ttbr_ok)
+        + u64::from(compatibility_ok)
+        + u64::from(blocked_ok)
+        + u64::from(reachability_ok)
+        + u64::from(activation_state_ok)
+        + u64::from(effects_ok)
+        + u64::from(teardown_ok)
+        + u64::from(missing_ok)
+        + u64::from(destroyed_ok)
+        + u64::from(identity_ok)
+        + u64::from(lineage_ok)
+        + u64::from(stale_ok)
+        + u64::from(already_consumed_ok)
+        + u64::from(access_ok)
+        + u64::from(blocked_request_ok);
+    let errors = 17 - participants;
+    let classification = if participants == 17 && errors == 0 {
+        "qemu-live-translation-register-activation-smoke-complete"
+    } else {
+        "qemu-live-translation-register-activation-smoke-failed"
+    };
+
+    crate::println!(
+        "qemu-live-translation-register-activation-smoke: final participants={} expected=17 errors={} classification={}",
+        participants,
+        errors,
+        classification
+    );
+    if participants == 17 && errors == 0 {
+        crate::println!("qemu-live-translation-register-activation-smoke: PASS");
+        true
+    } else {
+        crate::println!("qemu-live-translation-register-activation-smoke: FAIL");
+        false
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_live_translation_register_activation_smoke")]
+fn live_translation_register_activation_report_success()
+-> (bool, bool, bool, bool, bool, bool, bool, bool) {
+    let Ok(installation) = live_translation_register_activation_fixture() else {
+        live_translation_register_activation_report_empty_success();
+        return (false, false, false, false, false, false, false, false);
+    };
+    let mut activation_source =
+        LiveTranslationRegisterActivationLeaseSource::for_single_activation();
+    let Ok(activation) = commit_live_translation_register_activation(
+        Some(installation),
+        LiveTranslationRegisterActivationRequest::CommitModelIntent,
+        &mut activation_source,
+    ) else {
+        live_translation_register_activation_report_empty_success();
+        return (false, false, false, false, false, false, false, false);
+    };
+
+    crate::println!(
+        "qemu-live-translation-register-activation-smoke: fixture name={} path=/bin/init source-digest={:#x} install-boundary={} address-space-boundary={} materialization-boundary={} launch-boundary={} stack-boundary={} activation-plan-boundary={} reachability-boundary={} descriptor-image-boundary={} installation-boundary={} activation-boundary={} activation-policy={}",
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        activation.source_digest(),
+        PROCESS_INSTALL_BOUNDARY_IDENTITY,
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY,
+        PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY,
+        INITIAL_PROCESS_LAUNCH_BOUNDARY_IDENTITY,
+        INITIAL_USER_STACK_BOUNDARY_IDENTITY,
+        LIVE_ADDRESS_SPACE_ACTIVATION_BOUNDARY_IDENTITY,
+        KERNEL_HALF_REACHABILITY_BOUNDARY_IDENTITY,
+        KERNEL_HALF_DESCRIPTOR_IMAGE_BOUNDARY_IDENTITY,
+        LIVE_DESCRIPTOR_IMAGE_INSTALLATION_BOUNDARY_IDENTITY,
+        LIVE_TRANSLATION_REGISTER_ACTIVATION_BOUNDARY_IDENTITY,
+        LIVE_TRANSLATION_REGISTER_ACTIVATION_POLICY
+    );
+
+    let success_ok = activation.published()
+        && activation.boundary_identity() == LIVE_TRANSLATION_REGISTER_ACTIVATION_BOUNDARY_IDENTITY
+        && activation.policy_identity() == LIVE_TRANSLATION_REGISTER_ACTIVATION_POLICY
+        && activation.image_fixture_identity() == PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY
+        && activation.source_path() == PHASE8_INIT_PATH;
+    crate::println!(
+        "qemu-live-translation-register-activation-smoke: success output=LiveTranslationRegisterActivation published={} copied-identities={} activation-boundary={} activation-policy={} ok={}",
+        activation.published(),
+        success_ok,
+        activation.boundary_identity(),
+        activation.policy_identity(),
+        success_ok
+    );
+
+    let input = activation.input_state();
+    let input_ok = input.installation_published()
+        && !input.installation_destroyed()
+        && input.below_live_registers()
+        && !input.descriptor_image_installed()
+        && !input.ttbr0_written()
+        && !input.ttbr1_written()
+        && !input.sctlr_mutated()
+        && !input.active_root_copied();
+    crate::println!(
+        "qemu-live-translation-register-activation-smoke: input-state installation-published={} installation-destroyed={} below-live-registers={} descriptor-image-installed={} ttbr0-written={} ttbr1-written={} sctlr-mutated={} active-root-copied={} ok={}",
+        input.installation_published(),
+        input.installation_destroyed(),
+        input.below_live_registers(),
+        input.descriptor_image_installed(),
+        input.ttbr0_written(),
+        input.ttbr1_written(),
+        input.sctlr_mutated(),
+        input.active_root_copied(),
+        input_ok
+    );
+
+    let ttbr = activation.ttbr_provenance();
+    let ttbr_ok = ttbr.ttbr0_root() == TTBR0_ROOT_MATERIALIZED_PROVENANCE_ONLY
+        && !ttbr.ttbr0_written()
+        && ttbr.ttbr1_root() == TTBR1_DESCRIPTOR_IMAGE_ROOT_PROVENANCE
+        && !ttbr.ttbr1_written()
+        && !ttbr.active_root_copied();
+    crate::println!(
+        "qemu-live-translation-register-activation-smoke: ttbr-provenance ttbr0-root={} ttbr0-written={} ttbr1-root={} ttbr1-written={} active-root-copied={} ok={}",
+        ttbr.ttbr0_root(),
+        ttbr.ttbr0_written(),
+        ttbr.ttbr1_root(),
+        ttbr.ttbr1_written(),
+        ttbr.active_root_copied(),
+        ttbr_ok
+    );
+
+    let compatibility_ok = activation.tcr_state() == TCR_COMPATIBILITY_RECORD_ONLY
+        && activation.sctlr_state() == SCTLR_MUTATION_BLOCKED;
+    crate::println!(
+        "qemu-live-translation-register-activation-smoke: compatibility tcr-state={} mair-state={} sctlr-state={} ok={}",
+        activation.tcr_state(),
+        activation.mair_state(),
+        activation.sctlr_state(),
+        compatibility_ok
+    );
+
+    let blocked_ok = activation.asid_state() == ASID_ALLOCATION_BLOCKED
+        && activation.tlb_state() == TLB_INVALIDATION_BLOCKED
+        && activation.barrier_state() == BARRIER_SEQUENCE_PLANNED_ONLY
+        && activation.live_register_sequence_state() == LIVE_REGISTER_SEQUENCE_BLOCKED;
+    crate::println!(
+        "qemu-live-translation-register-activation-smoke: blocked-states asid={} tlb={} barriers={} live-register-sequence={} ok={}",
+        activation.asid_state(),
+        activation.tlb_state(),
+        activation.barrier_state(),
+        activation.live_register_sequence_state(),
+        blocked_ok
+    );
+
+    let reachability = activation.reachability();
+    let reachability_ok = reachability.vbar()
+        && reachability.vectors()
+        && reachability.active_stack()
+        && reachability.kernel_text()
+        && reachability.rodata()
+        && reachability.data()
+        && reachability.bss()
+        && reachability.heap()
+        && reachability.allocator()
+        && reachability.uart_mmio_diagnostics()
+        && reachability.scheduler_code_data()
+        && reachability.runtime_console()
+        && reachability.panic_fault_reporting();
+    crate::println!(
+        "qemu-live-translation-register-activation-smoke: kernel-reachability vbar={} vectors={} active-stack={} kernel-text={} rodata={} data={} bss={} heap={} allocator={} uart-mmio-diagnostics={} scheduler-code-data={} runtime-console={} panic-fault-reporting={} ok={}",
+        reachability.vbar(),
+        reachability.vectors(),
+        reachability.active_stack(),
+        reachability.kernel_text(),
+        reachability.rodata(),
+        reachability.data(),
+        reachability.bss(),
+        reachability.heap(),
+        reachability.allocator(),
+        reachability.uart_mmio_diagnostics(),
+        reachability.scheduler_code_data(),
+        reachability.runtime_console(),
+        reachability.panic_fault_reporting(),
+        reachability_ok
+    );
+
+    let activation_state_ok = activation.previous_state()
+        == DESCRIPTOR_IMAGE_INSTALLATION_READY_STATE
+        && activation.next_state() == LIVE_TRANSLATION_REGISTER_ACTIVATION_STATE
+        && activation.lower_el_eret_state() == LOWER_EL_ERET_BLOCKED
+        && activation.runnable_publication_state() == RUNNABLE_PUBLICATION_BLOCKED;
+    crate::println!(
+        "qemu-live-translation-register-activation-smoke: activation-state previous={} next={} lower-el-eret={} scheduler-published={} ok={}",
+        activation.previous_state(),
+        activation.next_state(),
+        false,
+        false,
+        activation_state_ok
+    );
+
+    let effects = activation.side_effects();
+    let effects_ok = !effects.ttbr_mutated()
+        && !effects.tcr_mutated()
+        && !effects.mair_mutated()
+        && !effects.sctlr_mutated()
+        && !effects.active_root_copied()
+        && !effects.asid_allocated()
+        && !effects.tlb_mutated()
+        && !effects.live_dsb_isb()
+        && !effects.lower_el_eret()
+        && !effects.scheduler_published()
+        && !effects.process_table_mutated()
+        && !effects.descriptor_table_published()
+        && !effects.filesystem_mutated()
+        && !effects.hardware_action();
+    crate::println!(
+        "qemu-live-translation-register-activation-smoke: side-effects ttbr-mutated={} tcr-mutated={} mair-mutated={} sctlr-mutated={} active-root-copied={} asid-allocated={} tlb-mutated={} live-dsb-isb={} lower-el-eret={} scheduler-published={} process-table-mutated={} descriptor-table-published={} filesystem-mutated={} hardware-action={} ok={}",
+        effects.ttbr_mutated(),
+        effects.tcr_mutated(),
+        effects.mair_mutated(),
+        effects.sctlr_mutated(),
+        effects.active_root_copied(),
+        effects.asid_allocated(),
+        effects.tlb_mutated(),
+        effects.live_dsb_isb(),
+        effects.lower_el_eret(),
+        effects.scheduler_published(),
+        effects.process_table_mutated(),
+        effects.descriptor_table_published(),
+        effects.filesystem_mutated(),
+        effects.hardware_action(),
+        effects_ok
+    );
+
+    (
+        success_ok,
+        input_ok,
+        ttbr_ok,
+        compatibility_ok,
+        blocked_ok,
+        reachability_ok,
+        activation_state_ok,
+        effects_ok,
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_live_translation_register_activation_smoke")]
+fn live_translation_register_activation_report_empty_success() {
+    crate::println!(
+        "qemu-live-translation-register-activation-smoke: fixture name={} path=/bin/init source-digest=0x0 install-boundary={} address-space-boundary={} materialization-boundary={} launch-boundary={} stack-boundary={} activation-plan-boundary={} reachability-boundary={} descriptor-image-boundary={} installation-boundary={} activation-boundary={} activation-policy={}",
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        PROCESS_INSTALL_BOUNDARY_IDENTITY,
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY,
+        PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY,
+        INITIAL_PROCESS_LAUNCH_BOUNDARY_IDENTITY,
+        INITIAL_USER_STACK_BOUNDARY_IDENTITY,
+        LIVE_ADDRESS_SPACE_ACTIVATION_BOUNDARY_IDENTITY,
+        KERNEL_HALF_REACHABILITY_BOUNDARY_IDENTITY,
+        KERNEL_HALF_DESCRIPTOR_IMAGE_BOUNDARY_IDENTITY,
+        LIVE_DESCRIPTOR_IMAGE_INSTALLATION_BOUNDARY_IDENTITY,
+        LIVE_TRANSLATION_REGISTER_ACTIVATION_BOUNDARY_IDENTITY,
+        LIVE_TRANSLATION_REGISTER_ACTIVATION_POLICY
+    );
+    crate::println!(
+        "qemu-live-translation-register-activation-smoke: success output=LiveTranslationRegisterActivation published=false copied-identities=false activation-boundary={} activation-policy={} ok=false",
+        LIVE_TRANSLATION_REGISTER_ACTIVATION_BOUNDARY_IDENTITY,
+        LIVE_TRANSLATION_REGISTER_ACTIVATION_POLICY
+    );
+}
+
+#[cfg(talos_boot_scenario = "qemu_live_translation_register_activation_smoke")]
+fn live_translation_register_activation_report_teardown() -> bool {
+    let Ok(installation) = live_translation_register_activation_fixture() else {
+        live_translation_register_activation_print_empty_teardown();
+        return false;
+    };
+    let mut activation_source =
+        LiveTranslationRegisterActivationLeaseSource::for_single_activation();
+    let Ok(mut activation) = commit_live_translation_register_activation(
+        Some(installation),
+        LiveTranslationRegisterActivationRequest::CommitModelIntent,
+        &mut activation_source,
+    ) else {
+        live_translation_register_activation_print_empty_teardown();
+        return false;
+    };
+
+    let first = activation.destroy(&mut activation_source);
+    let first_ok = first.activation_cleared()
+        && first.installation_input_owned()
+        && first.descriptor_input_owned()
+        && first.activation_plan_owned()
+        && first.materialized_root_owned()
+        && !first.live_state_mutated()
+        && !first.already_destroyed()
+        && !activation.published()
+        && activation.destroyed()
+        && activation_source.outstanding_leases() == 0;
+    crate::println!(
+        "qemu-live-translation-register-activation-smoke: teardown phase=first activation-cleared={} installation-input-owned={} descriptor-input-owned={} activation-plan-owned={} materialized-root-owned={} live-state-mutated={} already-destroyed={} ok={}",
+        first.activation_cleared(),
+        first.installation_input_owned(),
+        first.descriptor_input_owned(),
+        first.activation_plan_owned(),
+        first.materialized_root_owned(),
+        first.live_state_mutated(),
+        first.already_destroyed(),
+        first_ok
+    );
+
+    let second = activation.destroy(&mut activation_source);
+    let second_ok = !second.activation_cleared()
+        && second.installation_input_owned()
+        && second.descriptor_input_owned()
+        && second.activation_plan_owned()
+        && second.materialized_root_owned()
+        && second.already_destroyed()
+        && !second.live_state_mutated()
+        && activation_source.outstanding_leases() == 0;
+    crate::println!(
+        "qemu-live-translation-register-activation-smoke: teardown phase=second activation-cleared={} installation-input-owned={} descriptor-input-owned={} activation-plan-owned={} materialized-root-owned={} already-destroyed={} ok={}",
+        second.activation_cleared(),
+        second.installation_input_owned(),
+        second.descriptor_input_owned(),
+        second.activation_plan_owned(),
+        second.materialized_root_owned(),
+        second.already_destroyed(),
+        second_ok
+    );
+
+    first_ok && second_ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_live_translation_register_activation_smoke")]
+fn live_translation_register_activation_print_empty_teardown() {
+    crate::println!(
+        "qemu-live-translation-register-activation-smoke: teardown phase=first activation-cleared=false installation-input-owned=false descriptor-input-owned=false activation-plan-owned=false materialized-root-owned=false live-state-mutated=false already-destroyed=false ok=false"
+    );
+    crate::println!(
+        "qemu-live-translation-register-activation-smoke: teardown phase=second activation-cleared=false installation-input-owned=false descriptor-input-owned=false activation-plan-owned=false materialized-root-owned=false already-destroyed=false ok=false"
+    );
+}
+
+#[cfg(talos_boot_scenario = "qemu_live_translation_register_activation_smoke")]
+fn live_translation_register_activation_report_error(
+    case: &str,
+    fixture_request: Option<LiveTranslationRegisterActivationRequest>,
+    request: LiveTranslationRegisterActivationRequest,
+    mut lease_source: LiveTranslationRegisterActivationLeaseSource,
+    expected: PosixError,
+    consumed: bool,
+) -> bool {
+    let result = if fixture_request.is_some() {
+        live_translation_register_activation_fixture().and_then(|installation| {
+            commit_live_translation_register_activation(
+                Some(installation),
+                request,
+                &mut lease_source,
+            )
+        })
+    } else {
+        commit_live_translation_register_activation(None, request, &mut lease_source)
+    };
+    live_translation_register_activation_print_error_result(
+        case,
+        result,
+        lease_source,
+        expected,
+        consumed,
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_live_translation_register_activation_smoke")]
+fn live_translation_register_activation_report_destroyed_input_error() -> bool {
+    let mut activation_source =
+        LiveTranslationRegisterActivationLeaseSource::for_single_activation();
+    let result = live_translation_register_activation_fixture().and_then(|mut installation| {
+        let mut installation_source =
+            LiveDescriptorImageInstallationLeaseSource::for_single_installation();
+        let _ = installation.destroy(&mut installation_source);
+        commit_live_translation_register_activation(
+            Some(installation),
+            LiveTranslationRegisterActivationRequest::CommitModelIntent,
+            &mut activation_source,
+        )
+    });
+    live_translation_register_activation_print_error_result(
+        "destroyed-input",
+        result,
+        activation_source,
+        PosixError::InvalidArgument,
+        false,
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_live_translation_register_activation_smoke")]
+fn live_translation_register_activation_print_error_result(
+    case: &str,
+    result: Result<
+        crate::live_translation_register_activation::LiveTranslationRegisterActivation,
+        PosixError,
+    >,
+    lease_source: LiveTranslationRegisterActivationLeaseSource,
+    expected: PosixError,
+    consumed: bool,
+) -> bool {
+    let (errno, expected_error) = match result {
+        Ok(_) => (expected, false),
+        Err(error) => (error, error == expected),
+    };
+    let partial_activation = lease_source.outstanding_leases() != 0;
+    let ok = expected_error && !partial_activation;
+    crate::println!(
+        "qemu-live-translation-register-activation-smoke: error case={} errno=-{} partial-activation={} consumed={} live-state-mutated=false ok={}",
+        case,
+        errno.name(),
+        partial_activation,
+        consumed,
+        ok
+    );
+    ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_live_translation_register_activation_smoke")]
+fn live_translation_register_activation_fixture() -> Result<
+    crate::live_descriptor_image_installation::KernelHalfDescriptorImageInstallation,
+    PosixError,
+> {
+    let Ok((
+        _image,
+        _install_plan,
+        _address_space,
+        materialization,
+        activation_plan,
+        reachability_plan,
+    )) = kernel_half_descriptor_image_valid_fixture()
+    else {
+        return Err(PosixError::InvalidArgument);
+    };
+    let mut descriptor_source = KernelHalfDescriptorImageLeaseSource::for_descriptor_image();
+    let descriptor_image = construct_kernel_half_descriptor_image(
+        reachability_plan,
+        materialization,
+        KernelHalfDescriptorImageRequest::ConstructOnly,
+        &mut descriptor_source,
+    )?;
+    let mut installation_source =
+        LiveDescriptorImageInstallationLeaseSource::for_single_installation();
+    install_live_descriptor_image_binding(
+        Some(descriptor_image),
+        Some(activation_plan),
+        LiveDescriptorImageInstallationRequest::InstallModelBinding,
+        &mut installation_source,
+    )
 }

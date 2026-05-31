@@ -58,6 +58,7 @@
             talos_boot_scenario = "qemu_kernel_half_reachability_smoke",
             talos_boot_scenario = "qemu_kernel_half_descriptor_image_smoke",
             talos_boot_scenario = "qemu_live_descriptor_image_installation_smoke",
+            talos_boot_scenario = "qemu_live_translation_register_activation_smoke",
             talos_boot_scenario = "qemu_descriptor_write_smoke"
         )
     ),
@@ -101,6 +102,8 @@ mod kernel_half_reachability;
 mod live_address_space_activation;
 #[cfg_attr(not(test), allow(dead_code))]
 mod live_descriptor_image_installation;
+#[cfg_attr(not(test), allow(dead_code))]
+mod live_translation_register_activation;
 mod memory_map;
 mod mmio;
 mod pl011;
@@ -451,6 +454,14 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
+            #[cfg(talos_boot_scenario = "qemu_live_translation_register_activation_smoke")]
+            {
+                if target::qemu_virt::run_live_translation_register_activation_smoke() {
+                    target::qemu::exit_success();
+                }
+                target::qemu::exit_failure();
+            }
+
             #[cfg(all(
                 talos_boot_scenario = "qemu_descriptor_write_smoke",
                 not(talos_boot_scenario = "qemu_process_descriptor_stdio_smoke"),
@@ -549,6 +560,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_boot_scenario = "qemu_kernel_half_reachability_smoke",
                 talos_boot_scenario = "qemu_kernel_half_descriptor_image_smoke",
                 talos_boot_scenario = "qemu_live_descriptor_image_installation_smoke",
+                talos_boot_scenario = "qemu_live_translation_register_activation_smoke",
                 talos_boot_scenario = "qemu_descriptor_write_smoke"
             )))]
             if target::qemu_virt::run_el2_timer_irq_smoke() {
@@ -585,6 +597,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_boot_scenario = "qemu_kernel_half_reachability_smoke",
                 talos_boot_scenario = "qemu_kernel_half_descriptor_image_smoke",
                 talos_boot_scenario = "qemu_live_descriptor_image_installation_smoke",
+                talos_boot_scenario = "qemu_live_translation_register_activation_smoke",
                 talos_boot_scenario = "qemu_descriptor_write_smoke"
             )))]
             target::qemu::exit_failure();

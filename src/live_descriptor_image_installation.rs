@@ -406,6 +406,22 @@ impl KernelHalfDescriptorImageInstallation {
         self.image_fixture_identity
     }
 
+    pub(crate) const fn install_boundary_identity(self) -> &'static str {
+        self.install_boundary_identity
+    }
+
+    pub(crate) const fn address_space_boundary_identity(self) -> &'static str {
+        self.address_space_boundary_identity
+    }
+
+    pub(crate) const fn launch_boundary_identity(self) -> &'static str {
+        self.launch_boundary_identity
+    }
+
+    pub(crate) const fn stack_boundary_identity(self) -> &'static str {
+        self.stack_boundary_identity
+    }
+
     pub(crate) const fn descriptor_image_boundary_identity(self) -> &'static str {
         self.descriptor_image_boundary_identity
     }

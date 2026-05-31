@@ -12,6 +12,52 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-31 - Phase 8 Live Translation-Register Activation Core Accepted
+
+- Status: accepted as the Milestone 8.3 implementation core for the
+  model/substitute-only live translation-register activation boundary. No live
+  TTBR0_EL1/TTBR1_EL1/TCR_EL1/MAIR_EL1/SCTLR_EL1 mutation, active-root
+  descriptor copy, ASID allocation, live TLB invalidation, activation DSB/ISB,
+  lower-EL ERET, scheduler runnable publication, process lifecycle,
+  descriptor-backed filesystem syscall behavior, writable filesystem, Pi 5
+  hardware run, boot archive publication, hardware-lock acquisition,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver
+  policy was added.
+- Context: The accepted live translation-register activation contract and
+  QEMU/substitute smoke plan selected a bounded model-level activation-commit
+  intent below architectural register mutation. The implementation needed to
+  make that boundary inspectable before the retained smoke-core task can
+  accept evidence.
+- Decision: Add src/live_translation_register_activation.rs with
+  LiveTranslationRegisterActivation boundary identity
+  phase8-live-translation-register-activation-v1 and policy
+  model-ttbr0-ttbr1-activation-commit-below-live-registers-v1. The model
+  consumes the accepted KernelHalfDescriptorImageInstallation, copies Phase 8
+  lineage, records TTBR0 materialized-root and TTBR1 descriptor-image
+  kernel-root provenance without writes, preserves TCR/MAIR compatibility,
+  blocks SCTLR/ASID/TLB/barrier/live-register state, preserves kernel
+  diagnostic reachability, provides idempotent teardown, exposes deterministic
+  no-partial-activation errors, and records zero live side effects. Wire the
+  qemu_live_translation_register_activation_smoke route and script so the
+  queued smoke-core task has an objective retained-log gate.
+- Evidence level: fmt/lint, no_std unit tests, QEMU/substitute smoke-routing
+  execution, static documentation/source inspection, and retained
+  QEMU/substitute log at
+  tasks/evidence/2026-05-31-qemu-live-translation-register-activation-smoke-core/qemu-live-translation-register-activation-smoke.log.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test --quiet passed with 334 tests; scripts/qemu-live-translation-register-
+  activation-smoke.sh passed; git diff --check passed; mdbook build passed;
+  git diff --cached --check passed before commit.
+- Consequences: The next queued task is
+  phase8-qemu-live-translation-register-activation-smoke-core-20260531 if the
+  accepted smoke plan still matches the implementation and the hardware lock
+  remains unlocked/restored. Live register mutation, active-root descriptor
+  copy, ASID/TLB/barrier execution, lower-EL ERET, scheduler publication,
+  process lifecycle, startup ABI expansion, descriptor-backed filesystem
+  syscalls, Pi 5 hardware proof, boot archive publication, shell, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
+  blocked until later explicit tasks accept their contracts and gates.
+
 ## 2026-05-31 - Phase 8 QEMU Live Translation-Register Activation Smoke Plan Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 QEMU/substitute

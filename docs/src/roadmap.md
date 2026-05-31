@@ -554,6 +554,21 @@ phase8-live-translation-register-activation-core-20260531. Live register
 mutation, active-root descriptor copy, ASID/TLB/barrier activation, lower-EL
 ERET, scheduler publication, process lifecycle, filesystem syscall expansion,
 Pi 5 proof, shell behavior, networking, and SSH remain blocked.
+The target-independent live translation-register activation core is now
+accepted. It implements a model-level LiveTranslationRegisterActivation record
+with boundary phase8-live-translation-register-activation-v1 and policy
+model-ttbr0-ttbr1-activation-commit-below-live-registers-v1. The record
+consumes the accepted live descriptor-image installation, copies the accepted
+Phase 8 lineage, preserves TTBR0 materialized-root and TTBR1 descriptor-image
+kernel-root provenance without register writes, records compatibility-only
+TCR/MAIR state, blocks SCTLR/ASID/TLB/barrier/live-register state, preserves
+kernel diagnostic reachability, supports idempotent teardown, rejects
+deterministic no-partial-activation cases, and keeps zero live side effects.
+The QEMU/substitute smoke route is wired and a retained log exists for the
+queued smoke-core task. Live register mutation, active-root descriptor copy,
+ASID/TLB/barrier execution, lower-EL ERET, scheduler publication, process
+lifecycle, filesystem syscall expansion, Pi 5 proof, shell behavior,
+networking, and SSH remain blocked.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -3621,6 +3636,18 @@ Milestone 8.3: Program Loader
   active-root descriptor copy, ASID/TLB/barrier activation, lower-EL ERET,
   scheduler publication, process lifecycle, filesystem syscall expansion,
   Pi 5 proof, shell behavior, networking, and SSH remain blocked.
+- Phase 8 live translation-register activation contract and QEMU/substitute
+  smoke plan are accepted. The implementation core is also accepted: it adds
+  a model-only LiveTranslationRegisterActivation record that consumes the
+  accepted KernelHalfDescriptorImageInstallation, preserves copied Phase 8
+  lineage and TTBR0/TTBR1 provenance, records compatibility and blocked live
+  register state, exposes deterministic no-partial-activation errors,
+  preserves kernel diagnostic reachability, and keeps zero live side effects.
+  The QEMU/substitute route is wired for the queued smoke-core task. Live
+  TTBR/TCR/MAIR/SCTLR mutation, active-root descriptor copy, ASID/TLB/barrier
+  execution, lower-EL ERET, scheduler publication, process lifecycle,
+  filesystem syscall expansion, Pi 5 proof, shell behavior, networking, and
+  SSH remain blocked.
 
 Acceptance criteria:
 
