@@ -7300,6 +7300,14 @@ pub fn run_local_serial_command_loop_proof() -> bool {
         {
             replay_visible_line_kill_response_for_pi5_proof();
             replay_visible_pwd_response_for_pi5_proof();
+            crate::println!(
+                "{}: line-kill-observed partial=bogus control=ctrl-u final-line=pwd raw-bytes={} controls={} responses={}",
+                local_command_pi5_proof_label(),
+                result.raw_bytes(),
+                result.controls(),
+                result.response_lines()
+            );
+            wait_uart10_empty_early_phase();
         }
         if result.line() == b"stdio"
             && result.status() == crate::local_command_loop::LocalCommandStatus::Handled
