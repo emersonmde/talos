@@ -3712,23 +3712,26 @@ Acceptance criteria:
 Goal: make Talos useful from a local console before depending on Ethernet.
 
 Status: the feature-led reset accepted the first local serial interactivity
-slice in QEMU/substitute and on serialized Raspberry Pi 5 hardware. The kernel
-now has a bounded local command loop that reads a canonical TTY line from
-runtime-console0, dispatches kernel-backed built-ins, prints visible responses
-for help, empty input, and unknown input in QEMU, and emits a prompt/ready
-marker for another command. Retained QEMU serial evidence is at
-tasks/evidence/2026-05-31-qemu-local-serial-command-loop-core/qemu-local-serial-command-loop-smoke.log.
+slice in QEMU/substitute and on serialized Raspberry Pi 5 hardware, then
+accepted the next descriptor-backed stdio bridge slice. The kernel now has a
+bounded local command loop that reads a canonical TTY line from runtime-console0,
+dispatches kernel-backed built-ins, prints visible responses for help, empty
+input, unknown input, and `stdio`, and emits a prompt/ready marker for another
+command. The accepted stdio bridge reports fd 0/fd 1/fd 2 identities, routes
+visible output through inherited stdout in the QEMU/substitute path, records
+runtime-console0 backing, and carries the same `stdio` response to serialized
+Pi 5 hardware. Retained QEMU stdio bridge evidence is at
+tasks/evidence/2026-05-31-qemu-local-command-stdio-bridge-core/qemu-local-command-stdio-bridge-smoke.log.
 Retained Pi 5 hardware evidence is at
-tasks/evidence/2026-05-31-pi5-local-serial-command-loop-proof/local6-clean-candidate/serial-transcript.txt
-and proves the physical \`bogus\` input, Enter dispatch, visible
-unknown-command response, next prompt, and
-pi5-local-serial-command-loop-complete PASS path. This is not accepted
+tasks/evidence/2026-05-31-pi5-local-command-stdio-bridge-proof/local11-fresh-tftp-visible-response-candidate/serial-transcript.txt
+and proves the physical `stdio` input, Enter dispatch, visible fd identity
+response, descriptor-backed marker, next prompt, and
+pi5-local-command-stdio-bridge-complete PASS path. This is not accepted
 userspace shell execution, descriptor-backed filesystem commands, networking,
-or SSH. The closeout checkpoint records that no explicit queued follow-up task
-remains; supervisor planning is required to define the next single feature-led
-Phase 10 task, likely moving the same user-visible command-loop interaction
-toward descriptor-backed stdin/stdout while keeping old Phase 8 proof-only work
-paused unless it directly unblocks local interactivity.
+or SSH. The stdio bridge closeout recommends the next feature-led task move the
+command-loop input side through fd0/runtime-console-backed descriptor reads
+while keeping old Phase 8 proof-only work paused unless it directly unblocks
+local interactivity.
 
 Milestone 10.1: Local Shell
 
