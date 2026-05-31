@@ -3731,10 +3731,15 @@ tasks/evidence/2026-05-31-pi5-local-command-stdin-descriptor-proof/local8-fresh-
 and proves the physical `stdio` input, fd0 descriptor-backed-input marker,
 visible fd identity response, descriptor-backed-output marker, next prompt, and
 pi5-local-command-stdio-bridge-complete PASS path with a fresh 97936-byte
-candidate TFTP fetch and restore proof. This is not accepted userspace shell
+candidate TFTP fetch and restore proof. The stdin-descriptor closeout
+checkpoint is accepted and records the current local interactivity frontier:
+serial prompt, typed `stdio`, fd0/runtime-console-backed descriptor input,
+descriptor-backed visible output, fd identity reporting, runtime-console0
+backing, and next-prompt readiness. This is not accepted userspace shell
 execution, descriptor-backed filesystem commands, broad POSIX read readiness,
-networking, or SSH. The next explicit queued task is the Phase 10
-stdin-descriptor closeout checkpoint.
+networking, or SSH. The next feature-led planning recommendation is an
+argument-bearing kernel-backed `echo` command over the same descriptor-backed
+stdin/stdout path, below userspace process execution.
 
 Milestone 10.1: Local Shell
 
