@@ -631,19 +631,19 @@ mod tests {
 
     use super::*;
 
-    struct ScriptedInput {
-        bytes: [u8; 32],
+    struct ScriptedInput<const N: usize> {
+        bytes: [u8; N],
         len: usize,
         pos: usize,
     }
 
-    impl ScriptedInput {
-        const fn new(bytes: [u8; 32], len: usize) -> Self {
+    impl<const N: usize> ScriptedInput<N> {
+        const fn new(bytes: [u8; N], len: usize) -> Self {
             Self { bytes, len, pos: 0 }
         }
     }
 
-    impl ConsoleInputBackend for ScriptedInput {
+    impl<const N: usize> ConsoleInputBackend for ScriptedInput<N> {
         fn poll_read_byte(&mut self) -> Option<u8> {
             if self.pos == self.len {
                 return None;
@@ -757,6 +757,29 @@ mod tests {
         assert_eq!(result.status(), LocalCommandStatus::Handled);
         assert_eq!(result.response_lines(), 1);
         assert_eq!(backend.as_str(), "talos> hello\n");
+    }
+
+    #[test_case]
+    fn local_command_loop_dispatches_bounded_literal_echo_tail() {
+        let input = ScriptedInput::new(
+            [
+                b'e', b'c', b'h', b'o', b' ', b'l', b'o', b'c', b'a', b'l', b' ', b's', b'e', b'r',
+                b'i', b'a', b'l', b' ', b'w', b'o', b'r', b'k', b's', b'\r', 0, 0, 0, 0, 0, 0, 0,
+                0,
+            ],
+            24,
+        );
+        let mut backend = CaptureSink::new();
+        let result = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            run_one_descriptor_backed_serial_command(&mut io).unwrap()
+        };
+
+        assert_eq!(result.line(), b"echo local serial works");
+        assert_eq!(result.status(), LocalCommandStatus::Handled);
+        assert_eq!(result.response_lines(), 1);
+        assert_eq!(backend.as_str(), "talos> local serial works\n");
     }
 
     #[test_case]
@@ -965,9 +988,10 @@ talos: descriptor-backed-output=true\n"
         let mut truncated_input = ScriptedInput::new(
             [
                 b'a', b'b', b'c', b'd', b'e', b'f', b'g', b'h', b'i', b'j', b'k', b'l', b'm', b'n',
-                b'o', b'p', b'q', b'\r', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                b'o', b'p', b'q', b'r', b's', b't', b'u', b'v', b'w', b'x', b'y', b'z', b'1', b'2',
+                b'3', b'4', b'5', b'6', b'7', b'\r', 0, 0, 0, 0, 0, 0,
             ],
-            18,
+            34,
         );
         let mut sink = CaptureSink::new();
         let result = run_one_serial_command(&mut truncated_input, &mut sink).unwrap();

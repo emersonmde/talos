@@ -1,6 +1,6 @@
 use crate::runtime_console::{self, ConsoleInputBackend, ConsoleInputPollOutcome};
 
-pub const CANONICAL_LINE_CAPACITY: usize = 16;
+pub const CANONICAL_LINE_CAPACITY: usize = 32;
 pub const CANONICAL_ECHO_CAPACITY: usize = 32;
 pub const CONTROL_EVENT_CAPACITY: usize = 8;
 pub const POLLING_RX_WAIT_LIMIT: usize = 2_000_000;
@@ -412,19 +412,19 @@ fn write_echo_byte(byte: u8) {
 mod tests {
     use super::*;
 
-    struct ScriptedInput {
-        bytes: [u8; 32],
+    struct ScriptedInput<const N: usize> {
+        bytes: [u8; N],
         len: usize,
         pos: usize,
     }
 
-    impl ScriptedInput {
-        const fn new(bytes: [u8; 32], len: usize) -> Self {
+    impl<const N: usize> ScriptedInput<N> {
+        const fn new(bytes: [u8; N], len: usize) -> Self {
             Self { bytes, len, pos: 0 }
         }
     }
 
-    impl ConsoleInputBackend for ScriptedInput {
+    impl<const N: usize> ConsoleInputBackend for ScriptedInput<N> {
         fn poll_read_byte(&mut self) -> Option<u8> {
             if self.pos == self.len {
                 return None;
@@ -533,12 +533,12 @@ mod tests {
     fn line_discipline_reports_buffer_limit_without_implicit_timeout() {
         let mut tty = TtyLineDiscipline::canonical_lite();
 
-        for byte in b"abcdefghijklmnop" {
+        for byte in b"abcdefghijklmnopqrstuvwxyz123456" {
             assert_eq!(tty.process_byte(*byte), TtyInputOutcome::Pending);
         }
-        assert_eq!(tty.process_byte(b'q'), TtyInputOutcome::BufferLimit);
+        assert_eq!(tty.process_byte(b'7'), TtyInputOutcome::BufferLimit);
 
-        assert_eq!(tty.line(), b"abcdefghijklmnop");
+        assert_eq!(tty.line(), b"abcdefghijklmnopqrstuvwxyz123456");
         assert!(tty.truncated());
         assert!(!tty.terminated());
     }
@@ -565,10 +565,10 @@ mod tests {
             ScriptedInput::new(
                 [
                     b'a', b'b', b'X', 0x08, b'c', b'Y', 0x7f, b'd', 0x01, b'e', b'f', b'g', b'h',
-                    b'i', b'j', b'k', b'l', b'm', b'n', b'o', b'p', b'q', b'\r', 0, 0, 0, 0, 0, 0,
-                    0, 0, 0,
+                    b'i', b'j', b'k', b'l', b'm', b'n', b'o', b'p', b'q', b'r', b's', b't', b'u',
+                    b'v', b'w', b'x', b'y', b'z', b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'\r',
                 ],
-                23,
+                39,
             ),
             8,
         );
@@ -576,9 +576,12 @@ mod tests {
         assert!(result.passed());
         assert_eq!(result.outcome(), PollingTtyRxOutcome::LineComplete);
         assert_eq!(result.outcome_name(), "line-complete");
-        assert_eq!(result.line(), b"abcdefghijklmnop");
-        assert_eq!(result.echo(), b"abX\x08 \x08cY\x08 \x08defghijklmnop\r\n");
-        assert_eq!(result.raw_bytes(), 23);
+        assert_eq!(result.line(), b"abcdefghijklmnopqrstuvwxyz123456");
+        assert_eq!(
+            result.echo(),
+            b"abX\x08 \x08cY\x08 \x08defghijklmnopqrstuvwx"
+        );
+        assert_eq!(result.raw_bytes(), 39);
         assert_eq!(result.backspaces(), 1);
         assert_eq!(result.deletes(), 1);
         assert!(result.truncated());

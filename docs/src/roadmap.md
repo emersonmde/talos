@@ -3888,6 +3888,25 @@ literal echo tail feature as the next smallest Phase 10 local interactivity
 slice; old Phase 8 proof-only work remains paused unless it directly unblocks
 local interactivity.
 
+The bounded literal echo core is now accepted in QEMU/substitute evidence. The
+local command loop accepts `echo local serial works` through
+fd0/runtime-console0 canonical-lite input, dispatches the existing
+kernel-backed `echo` built-in with a literal tail, prints visible
+`local serial works` through descriptor-backed stdout, preserves
+descriptor-backed fd0/stdout markers, returns to a ready prompt, and ends with
+qemu-local-literal-echo-complete plus qemu-local-literal-echo: PASS. This
+slice raises canonical-lite line capacity from 16 bytes to 32 bytes so the
+feature command fits without truncation, while retaining explicit truncation
+tests at the new boundary. Existing `echo hello`, `pwd`, `stdio`, empty
+input, unknown-command, unexpected-argument, Backspace/Delete editing, Ctrl-C
+line cancel, and Ctrl-U line kill behavior remains covered by rerun
+QEMU/substitute regressions. This remains kernel-backed prompt-local behavior
+only: broad shell parsing, quoting/escaping/globbing, argv/envp process ABI,
+userspace shell execution, process lifecycle, filesystem-backed commands,
+terminal/session semantics, networking, SSH, RP1/PCIe, UART interrupt
+ownership, and DMA/cache-driver policy remain deferred. The next mechanically
+queued task is the serialized Pi 5 literal echo proof.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.

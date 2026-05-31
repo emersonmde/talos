@@ -13349,6 +13349,11 @@ const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-echo-command"
 }
 
+#[cfg(talos_boot_scenario = "qemu_local_literal_echo")]
+const fn local_command_loop_smoke_label() -> &'static str {
+    "qemu-local-literal-echo"
+}
+
 #[cfg(talos_boot_scenario = "qemu_local_pwd_command")]
 const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-pwd-command"
@@ -13373,6 +13378,7 @@ const fn local_command_loop_smoke_label() -> &'static str {
     talos_boot_scenario = "qemu_local_serial_command_loop",
     not(talos_boot_scenario = "qemu_local_command_stdin_descriptor"),
     not(talos_boot_scenario = "qemu_local_echo_command"),
+    not(talos_boot_scenario = "qemu_local_literal_echo"),
     not(talos_boot_scenario = "qemu_local_pwd_command"),
     not(talos_boot_scenario = "qemu_local_line_editing"),
     not(talos_boot_scenario = "qemu_local_line_cancel"),
@@ -13390,6 +13396,11 @@ const fn local_command_loop_smoke_classification() -> &'static str {
 #[cfg(talos_boot_scenario = "qemu_local_echo_command")]
 const fn local_command_loop_smoke_classification() -> &'static str {
     "qemu-local-echo-command-complete"
+}
+
+#[cfg(talos_boot_scenario = "qemu_local_literal_echo")]
+const fn local_command_loop_smoke_classification() -> &'static str {
+    "qemu-local-literal-echo-complete"
 }
 
 #[cfg(talos_boot_scenario = "qemu_local_pwd_command")]
@@ -13416,6 +13427,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     talos_boot_scenario = "qemu_local_serial_command_loop",
     not(talos_boot_scenario = "qemu_local_command_stdin_descriptor"),
     not(talos_boot_scenario = "qemu_local_echo_command"),
+    not(talos_boot_scenario = "qemu_local_literal_echo"),
     not(talos_boot_scenario = "qemu_local_pwd_command"),
     not(talos_boot_scenario = "qemu_local_line_editing"),
     not(talos_boot_scenario = "qemu_local_line_cancel"),
@@ -13429,6 +13441,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     talos_boot_scenario = "qemu_local_serial_command_loop",
     talos_boot_scenario = "qemu_local_command_stdin_descriptor",
     talos_boot_scenario = "qemu_local_echo_command",
+    talos_boot_scenario = "qemu_local_literal_echo",
     talos_boot_scenario = "qemu_local_pwd_command",
     talos_boot_scenario = "qemu_local_line_editing",
     talos_boot_scenario = "qemu_local_line_cancel",
@@ -13444,7 +13457,10 @@ const fn local_command_loop_smoke_command_count() -> usize {
         5
     } else if cfg!(talos_boot_scenario = "qemu_local_pwd_command") {
         7
-    } else if cfg!(talos_boot_scenario = "qemu_local_echo_command") {
+    } else if cfg!(any(
+        talos_boot_scenario = "qemu_local_echo_command",
+        talos_boot_scenario = "qemu_local_literal_echo"
+    )) {
         6
     } else {
         5
@@ -13455,6 +13471,7 @@ const fn local_command_loop_smoke_command_count() -> usize {
     talos_boot_scenario = "qemu_local_serial_command_loop",
     talos_boot_scenario = "qemu_local_command_stdin_descriptor",
     talos_boot_scenario = "qemu_local_echo_command",
+    talos_boot_scenario = "qemu_local_literal_echo",
     talos_boot_scenario = "qemu_local_pwd_command",
     talos_boot_scenario = "qemu_local_line_editing",
     talos_boot_scenario = "qemu_local_line_cancel",
@@ -13489,6 +13506,9 @@ fn expected_local_command_loop_dispatch(
         3 if cfg!(talos_boot_scenario = "qemu_local_echo_command") => {
             line == b"echo hello" && status == Handled && response_lines == 1
         }
+        3 if cfg!(talos_boot_scenario = "qemu_local_literal_echo") => {
+            line == b"echo local serial works" && status == Handled && response_lines == 1
+        }
         3 => line.is_empty() && status == Empty && response_lines == 1,
         4 if cfg!(talos_boot_scenario = "qemu_local_pwd_command") => {
             line == b"echo hello" && status == Handled && response_lines == 1
@@ -13505,6 +13525,9 @@ fn expected_local_command_loop_dispatch(
         4 if cfg!(talos_boot_scenario = "qemu_local_echo_command") => {
             line.is_empty() && status == Empty && response_lines == 1
         }
+        4 if cfg!(talos_boot_scenario = "qemu_local_literal_echo") => {
+            line.is_empty() && status == Empty && response_lines == 1
+        }
         4 => line == b"bogus" && status == UnknownCommand && response_lines == 1,
         5 if cfg!(talos_boot_scenario = "qemu_local_line_editing") => {
             line == b"echo hello" && status == Handled && response_lines == 1
@@ -13513,6 +13536,9 @@ fn expected_local_command_loop_dispatch(
             line.is_empty() && status == Empty && response_lines == 1
         }
         5 if cfg!(talos_boot_scenario = "qemu_local_echo_command") => {
+            line == b"bogus" && status == UnknownCommand && response_lines == 1
+        }
+        5 if cfg!(talos_boot_scenario = "qemu_local_literal_echo") => {
             line == b"bogus" && status == UnknownCommand && response_lines == 1
         }
         6 if cfg!(talos_boot_scenario = "qemu_local_pwd_command") => {

@@ -12,7 +12,7 @@ talos: ok help
 talos: commands help status stdio echo pwd
 
 qemu-local-pwd-command: line command=0 hex=68 65 6c 70
-qemu-local-pwd-command: dispatch command=0 status=handled responses=2 raw-bytes=5 truncated=false controls=0
+qemu-local-pwd-command: dispatch command=0 status=handled responses=2 raw-bytes=5 backspaces=0 deletes=0 truncated=false controls=0
 qemu-local-pwd-command: ready command=1
 talos> status
 talos: ok status
@@ -21,7 +21,7 @@ talos: runtime-console runtime-console0
 talos: builtins kernel-backed
 
 qemu-local-pwd-command: line command=1 hex=73 74 61 74 75 73
-qemu-local-pwd-command: dispatch command=1 status=handled responses=4 raw-bytes=7 truncated=false controls=0
+qemu-local-pwd-command: dispatch command=1 status=handled responses=4 raw-bytes=7 backspaces=0 deletes=0 truncated=false controls=0
 qemu-local-pwd-command: ready command=2
 talos> stdio
 talos: ok stdio
@@ -33,31 +33,31 @@ talos: descriptor-backed-input=true
 talos: descriptor-backed-output=true
 
 qemu-local-pwd-command: line command=2 hex=73 74 64 69 6f
-qemu-local-pwd-command: dispatch command=2 status=handled responses=7 raw-bytes=6 truncated=false controls=0
+qemu-local-pwd-command: dispatch command=2 status=handled responses=7 raw-bytes=6 backspaces=0 deletes=0 truncated=false controls=0
 qemu-local-pwd-command: ready command=3
 talos> pwd
 /
 
 qemu-local-pwd-command: line command=3 hex=70 77 64
-qemu-local-pwd-command: dispatch command=3 status=handled responses=1 raw-bytes=4 truncated=false controls=0
+qemu-local-pwd-command: dispatch command=3 status=handled responses=1 raw-bytes=4 backspaces=0 deletes=0 truncated=false controls=0
 qemu-local-pwd-command: ready command=4
 talos> echo hello
 hello
 
 qemu-local-pwd-command: line command=4 hex=65 63 68 6f 20 68 65 6c 6c 6f
-qemu-local-pwd-command: dispatch command=4 status=handled responses=1 raw-bytes=11 truncated=false controls=0
+qemu-local-pwd-command: dispatch command=4 status=handled responses=1 raw-bytes=11 backspaces=0 deletes=0 truncated=false controls=0
 qemu-local-pwd-command: ready command=5
 talos>
 talos: empty-command
 
 qemu-local-pwd-command: line command=5 hex=
-qemu-local-pwd-command: dispatch command=5 status=empty-command responses=1 raw-bytes=1 truncated=false controls=0
+qemu-local-pwd-command: dispatch command=5 status=empty-command responses=1 raw-bytes=1 backspaces=0 deletes=0 truncated=false controls=0
 qemu-local-pwd-command: ready command=6
 talos> bogus
 talos: unknown-command
 
 qemu-local-pwd-command: line command=6 hex=62 6f 67 75 73
-qemu-local-pwd-command: dispatch command=6 status=unknown-command responses=1 raw-bytes=6 truncated=false controls=0
+qemu-local-pwd-command: dispatch command=6 status=unknown-command responses=1 raw-bytes=6 backspaces=0 deletes=0 truncated=false controls=0
 talos>
 qemu-local-pwd-command: ready-for-next prompt=true
 qemu-local-pwd-command: final participants=7 expected=7 errors=0 classification=qemu-local-pwd-command-complete
