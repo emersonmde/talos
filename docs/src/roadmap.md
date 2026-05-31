@@ -3790,9 +3790,14 @@ descriptor-backed input/output markers, ready prompt, two fresh 98944-byte
 `da591740/kernel_2712.img` TFTP fetches, and restore to the prior accepted
 boot tree hash. This is not accepted termios, cursor addressing, history, broad
 escape parsing, userspace shell execution, process spawning, filesystem-backed
-command lookup, networking, or SSH. The next feature-led task is a closeout
-checkpoint for the accepted local line-editing frontier; old Phase 8 proof-only
-work remains paused unless it directly unblocks local interactivity.
+command lookup, networking, or SSH. The local line-editing closeout checkpoint
+is now accepted and records the current local interactivity frontier: serial
+prompt, typed line with Backspace/Delete correction before dispatch,
+descriptor-backed input/output markers, corrected kernel-backed 'pwd'
+response, and next-prompt readiness. It recommends a bounded Ctrl-C
+line-cancel feature as the next smallest Phase 10 local interactivity slice;
+old Phase 8 proof-only work remains paused unless it directly unblocks local
+interactivity.
 
 Milestone 10.1: Local Shell
 
