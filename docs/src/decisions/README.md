@@ -12,6 +12,48 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 Live Address-Space Activation Core Accepted
+
+- Status: accepted as the Milestone 8.3 target-independent live
+  address-space activation preflight core. No QEMU execution, Pi 5 hardware
+  run, boot archive publication, hardware-lock acquisition, live TTBR/TCR/
+  MAIR/SCTLR mutation, ASID allocation, live TLB invalidation, lower-EL ERET,
+  scheduler runnable publication, process lifecycle, shell behavior,
+  descriptor-backed filesystem syscalls, writable filesystem, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy was
+  added.
+- Context: The accepted live address-space activation contract and smoke plan
+  selected an inspectable preflight boundary below live register mutation,
+  lower-EL launch, and scheduler publication. The implementation needed to
+  expose stable fields for a later QEMU/substitute smoke without shrinking the
+  original program-loader goal to a diagnostic shim.
+- Decision: Add src/live_address_space_activation.rs and wire it from
+  src/main.rs. The new LiveAddressSpaceActivationPlan records boundary
+  identity phase8-live-address-space-activation-plan-v1, policy
+  preflight-split-user-ttbr0-kernel-reachability-blocked-v1, copied accepted
+  image/install/address-space/materialization/launch/stack identities, TTBR0
+  root provenance from the materialized root lease without writing TTBR0_EL1,
+  blocked TTBR1/kernel-half policy, TCR/MAIR compatibility records, blocked
+  SCTLR/ASID/TLB/barrier/live-register states, kernel reachability checklist,
+  model-only activation-preflight-ready launch binding, idempotent plan-local
+  teardown, and deterministic ENOSYS rejections for live-register,
+  scheduler-runnable, and lower-EL requests with no partial activation.
+- Evidence level: fmt/lint/typecheck and unit tests. cargo fmt --all --
+  --check passed; cargo -Zjson-target-spec test passed with 312 no_std tests,
+  including six live-address-space activation tests. The QEMU/substitute smoke
+  is not yet applicable in this core task because no runnable
+  qemu_live_address_space_activation_smoke script was introduced.
+- Validation: git diff --check passed; mdbook build passed; git diff
+  --cached --check passed before commit.
+- Consequences: The next bounded task remains
+  phase8-qemu-live-address-space-activation-smoke-core-20260530 if the
+  accepted smoke plan still matches the implementation. Live TTBR/TCR/MAIR/
+  SCTLR mutation, ASID allocation, TLBI, lower-EL ERET, scheduler runnable
+  publication, process lifecycle, startup ABI expansion, filesystem syscalls,
+  Pi 5 hardware proof, networking, SSH, RP1/PCIe, UART interrupt ownership,
+  and DMA/cache-driver policy remain blocked until later explicit tasks accept
+  their contracts and gates.
+
 ## 2026-05-30 - Phase 8 QEMU Live Address-Space Activation Smoke Plan Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 QEMU/substitute

@@ -243,6 +243,20 @@ is phase8-live-address-space-activation-core-20260530 if dependencies remain
 satisfied. Live translation-register mutation, lower-EL ERET, scheduler
 publication, process lifecycle, filesystem syscalls, Pi 5 hardware proof,
 networking, and SSH remain blocked.
+The live address-space activation core is now accepted. It adds the
+target-independent LiveAddressSpaceActivationPlan preflight boundary with
+identity phase8-live-address-space-activation-plan-v1, copied accepted
+image/install/address-space/materialization/launch/stack lineage, TTBR0 root
+provenance from the materialized root lease without writing TTBR0_EL1, blocked
+TTBR1/kernel-half policy, TCR/MAIR compatibility records, blocked SCTLR/ASID/
+TLB/barrier/live-register states, required kernel reachability checklist,
+model-only activation-preflight-ready launch binding, idempotent plan-local
+teardown, deterministic no-partial-activation/no-runnable-publication
+rejections, and unit evidence that all live TTBR/TCR/MAIR/SCTLR/TLB/
+lower-EL/scheduler/process/descriptor side effects remain zero. QEMU smoke
+evidence, live register mutation, lower-EL ERET, scheduler publication,
+process lifecycle, filesystem syscalls, Pi 5 hardware proof, networking, and
+SSH remain blocked.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -3042,6 +3056,21 @@ Milestone 8.3: Program Loader
   mutation, lower-EL ERET, scheduler publication, process lifecycle,
   filesystem syscalls, Pi 5 hardware proof, networking, and SSH remain
   blocked.
+- Phase 8 live address-space activation core is accepted. It adds the
+  target-independent LiveAddressSpaceActivationPlan preflight boundary with
+  identity phase8-live-address-space-activation-plan-v1, policy
+  preflight-split-user-ttbr0-kernel-reachability-blocked-v1, copied accepted
+  loader/install/address-space/materialization/launch/stack lineage, TTBR0
+  root provenance from the materialized root lease without writing TTBR0_EL1,
+  blocked TTBR1/kernel-half policy, TCR/MAIR compatibility records, blocked
+  SCTLR/ASID/TLB/barrier/live-register states, required kernel reachability
+  checklist, model-only activation-preflight-ready launch binding,
+  idempotent plan-local teardown, deterministic no-partial-activation/
+  no-runnable-publication rejections, and unit evidence that all live
+  TTBR/TCR/MAIR/SCTLR/TLB/lower-EL/scheduler/process/descriptor side effects
+  remain zero. QEMU smoke evidence, live register mutation, lower-EL ERET,
+  scheduler publication, process lifecycle, filesystem syscalls, Pi 5
+  hardware proof, networking, and SSH remain blocked.
 
 Acceptance criteria:
 

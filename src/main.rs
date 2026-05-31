@@ -89,6 +89,8 @@ mod initial_process_launch;
 mod initial_user_stack;
 #[cfg_attr(not(test), allow(dead_code))]
 mod initramfs;
+#[cfg_attr(not(test), allow(dead_code))]
+mod live_address_space_activation;
 mod memory_map;
 mod mmio;
 mod pl011;
