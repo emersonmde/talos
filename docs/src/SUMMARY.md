@@ -157,6 +157,7 @@
 - [Phase 8 Live Address-Space Activation Closeout Checkpoint](project/phase8-live-address-space-activation-closeout-checkpoint.md)
 - [Phase 8 Kernel-Half Reachability Source Inventory](project/phase8-kernel-half-reachability-source-inventory.md)
 - [Phase 8 Kernel-Half Reachability Contract](project/phase8-kernel-half-reachability-contract.md)
+- [Phase 8 QEMU Kernel-Half Reachability Smoke Plan](project/phase8-qemu-kernel-half-reachability-smoke-plan.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

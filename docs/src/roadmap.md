@@ -301,6 +301,23 @@ side effects. Kernel-half descriptor-image construction, live register
 mutation, lower-EL ERET, scheduler publication, process lifecycle, filesystem
 syscalls, Pi 5 hardware proof, networking, and SSH remain blocked. The next
 bounded task is phase8-qemu-kernel-half-reachability-smoke-plan-20260531.
+The QEMU/substitute kernel-half reachability smoke plan is now accepted. It
+selects qemu_kernel_half_reachability_smoke as the retained-evidence scenario
+for the accepted preflight-only KernelHalfReachabilityPlan boundary and fixes
+the evidence path under
+tasks/evidence/2026-05-31-qemu-kernel-half-reachability-smoke-core/. The plan
+requires copied loader/install/address-space/materialization/launch/stack/
+activation lineage, TTBR0 root provenance, selected TTBR1 shared-kernel-root
+policy with descriptor-image construction blocked, kernel text/data/bss/
+vector/stack/heap/UART/MMIO/scheduler/fault reachability entries,
+compatibility-only TCR/MAIR records, blocked SCTLR/ASID/TLB/barrier/live
+register states, deterministic no-partial rejection cases, idempotent
+plan-local teardown, zero live side effects, and final
+qemu-kernel-half-reachability-smoke-complete/PASS lines. Kernel-half
+descriptor-image construction, live register mutation, lower-EL ERET,
+scheduler publication, process lifecycle, filesystem syscalls, Pi 5 hardware
+proof, networking, and SSH remain blocked. The next bounded task is
+phase8-kernel-half-reachability-core-20260531.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -3163,6 +3180,18 @@ Milestone 8.3: Program Loader
   construction; idempotent plan-local teardown; and zero live side effects.
   It recommends phase8-qemu-kernel-half-reachability-smoke-plan-20260531 as
   the next bounded documentation-only task.
+- Phase 8 QEMU/substitute kernel-half reachability smoke plan is accepted. It
+  selects qemu_kernel_half_reachability_smoke for retained evidence under
+  tasks/evidence/2026-05-31-qemu-kernel-half-reachability-smoke-core/ and
+  requires copied accepted input lineage, selected TTBR1 shared-kernel-root
+  policy, required kernel reachability entries, compatibility-only TCR/MAIR
+  records, blocked SCTLR/ASID/TLB/barrier/live-register states,
+  deterministic no-partial rejection cases, idempotent teardown, zero live
+  side effects, and final qemu-kernel-half-reachability-smoke-complete/PASS
+  lines. Kernel-half descriptor-image construction, live register mutation,
+  lower-EL ERET, scheduler publication, process lifecycle, filesystem
+  syscalls, Pi 5 hardware proof, networking, and SSH remain blocked. The next
+  bounded task is phase8-kernel-half-reachability-core-20260531.
 
 Acceptance criteria:
 
