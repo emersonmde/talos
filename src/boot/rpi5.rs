@@ -122,6 +122,9 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
     #[cfg(talos_boot_scenario = "rpi5_local_line_editing")]
     target::rpi5::run_local_serial_command_loop_proof();
 
+    #[cfg(talos_boot_scenario = "rpi5_local_line_cancel")]
+    target::rpi5::run_local_serial_command_loop_proof();
+
     #[cfg(talos_boot_scenario = "rpi5_timer_preemption")]
     target::rpi5::run_el2_timer_preemption_smoke();
 

@@ -97,7 +97,8 @@ impl Pl011 {
             talos_boot_scenario = "rpi5_uart10_polling_rx",
             talos_boot_scenario = "rpi5_diagnostic_command_channel",
             talos_boot_scenario = "rpi5_local_serial_command_loop",
-            talos_boot_scenario = "rpi5_local_line_editing"
+            talos_boot_scenario = "rpi5_local_line_editing",
+            talos_boot_scenario = "rpi5_local_line_cancel"
         )),
         allow(dead_code)
     )]
