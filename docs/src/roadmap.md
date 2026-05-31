@@ -357,6 +357,19 @@ KernelHalfReachabilityPlan below kernel-half descriptor-image construction,
 live translation-register mutation, lower-EL ERET, and runnable publication.
 No explicit queued follow-up task remains; supervisor planning is required
 before the worker may promote another Phase 8.3 task.
+The kernel-half descriptor-image source inventory is now accepted. It maps the
+accepted KernelHalfReachabilityPlan frontier to the remaining
+blocked-no-kernel-half-descriptor-image boundary and distinguishes
+descriptor-image construction from live TTBR/TCR/MAIR/SCTLR mutation,
+ASID/TLB/barrier activation, lower-EL ERET, and scheduler publication. It
+identifies src/kernel_half_reachability.rs, src/process_page_table_materialization.rs,
+src/memory_map/translation.rs, linker-owned kernel ranges, memory/page-frame
+owners, exception/vector owners, UART/MMIO diagnostics, scheduler state, and
+live activation records as source material for a non-installed TTBR1 shared
+privileged kernel-root descriptor image. Live register mutation, lower-EL
+launch, scheduler publication, process lifecycle, filesystem syscall
+expansion, Pi 5 hardware proof, networking, and SSH remain blocked. The next
+bounded task is phase8-kernel-half-descriptor-image-contract-20260531.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -3266,6 +3279,17 @@ Milestone 8.3: Program Loader
   live translation-register mutation, lower-EL ERET, and runnable
   publication. No explicit queued follow-up task remains; supervisor planning
   is required before the worker may promote another Phase 8.3 task.
+- Phase 8 kernel-half descriptor-image source inventory is accepted. It maps
+  the accepted KernelHalfReachabilityPlan frontier to the remaining
+  blocked-no-kernel-half-descriptor-image boundary and names the source owners
+  for a non-installed TTBR1 shared privileged kernel-root descriptor image:
+  accepted reachability records, process page-table materialization precedent,
+  AArch64 descriptor vocabulary, linker-owned kernel ranges, memory/page-frame
+  ownership, exception/vector reachability, UART/MMIO diagnostics, scheduler
+  state, and live activation blockers. Live register mutation, lower-EL ERET,
+  scheduler publication, process lifecycle, filesystem syscall expansion,
+  Pi 5 hardware proof, networking, and SSH remain blocked. The next bounded
+  task is phase8-kernel-half-descriptor-image-contract-20260531.
 
 Acceptance criteria:
 

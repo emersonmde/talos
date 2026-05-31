@@ -12,6 +12,48 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-31 - Phase 8 Kernel-Half Descriptor-Image Source Inventory Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 kernel-half
+  descriptor-image source inventory. No Rust behavior, assembly behavior, QEMU
+  execution, Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, live TTBR0_EL1/TTBR1_EL1/TCR_EL1/MAIR_EL1/SCTLR_EL1 mutation,
+  ASID allocation, TLB mutation, activation DSB/ISB, lower-EL ERET, scheduler
+  runnable publication, process lifecycle, shell behavior, descriptor-backed
+  filesystem syscalls, writable filesystem, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The accepted kernel-half reachability closeout left the precise
+  frontier at blocked-no-kernel-half-descriptor-image below live translation
+  register mutation and lower-EL launch. Supervisor planning added a bounded
+  source inventory to map the current source owners before selecting a
+  descriptor-image contract.
+- Decision: Accept
+  phase8-kernel-half-descriptor-image-source-inventory-20260531. The inventory
+  maps accepted KernelHalfReachabilityPlan evidence to a non-installed TTBR1
+  shared privileged kernel-root descriptor-image boundary, identifies
+  src/kernel_half_reachability.rs, src/process_page_table_materialization.rs,
+  src/memory_map/translation.rs, linker-owned kernel ranges, memory/page-frame
+  owners, exception/vector owners, UART/MMIO diagnostics, scheduler state, and
+  live activation records as source material, and recommends
+  phase8-kernel-half-descriptor-image-contract-20260531 as the next bounded
+  documentation-only task.
+- Evidence level: static documentation/source inspection of accepted
+  kernel-half reachability commits 1eda202, 7d95e0a, c1645d5, a4294f5,
+  edda81d, and e2b91b plus retained QEMU/substitute smoke evidence at
+  tasks/evidence/2026-05-31-qemu-kernel-half-reachability-smoke-core/qemu-kernel-half-reachability-smoke.log.
+- Validation: git status --short before edits was clean except durable
+  supervisor state promotion outside the Talos repo; git diff --check passed;
+  mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The next objective task is the queued
+  phase8-kernel-half-descriptor-image-contract-20260531 if dependencies remain
+  satisfied. Kernel-half descriptor-image implementation, live
+  translation-register mutation, ASID/TLB/barrier activation, lower-EL ERET,
+  scheduler runnable publication, process lifecycle, startup ABI expansion,
+  descriptor-backed filesystem syscalls, Pi 5 hardware proof, shell,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
+  policy remain blocked until later explicit tasks accept their contracts and
+  gates.
+
 ## 2026-05-31 - Phase 8 Kernel-Half Reachability Closeout Checkpoint Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 kernel-half
