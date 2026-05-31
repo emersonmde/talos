@@ -3747,10 +3747,20 @@ tasks/evidence/2026-05-31-pi5-local-echo-command-proof/local2-clean-candidate/pr
 The echo proof records `typed_command=echo hello`, visible `hello` output,
 descriptor-backed markers, prompt readiness, two fresh 98664-byte
 `da591740/kernel_2712.img` TFTP fetches, and restore to the prior accepted
-boot tree hash. This is not accepted userspace shell execution,
+boot tree hash. The echo closeout checkpoint is accepted and records the
+current local interactivity frontier: serial prompt, typed `echo hello`,
+fd0/runtime-console-backed descriptor input, simple trailing-argument parsing,
+kernel-backed built-in dispatch, descriptor-backed visible `hello` output, and
+next-prompt readiness. This is not accepted userspace shell execution,
 descriptor-backed filesystem commands, broad POSIX read readiness, networking,
-or SSH. Supervisor planning is required before the next feature-led local
-interactivity slice is promoted.
+or SSH.
+
+The next smallest feature-led Phase 10 task should add a kernel-backed `pwd`
+command over the accepted descriptor-backed stdin/stdout path. The feature
+should print `/` from a deliberately narrow process-local root placeholder and
+remain below VFS lookup, chdir, directory listing, userspace process execution,
+and filesystem-backed command lookup. Old Phase 8 proof-only work remains
+paused unless it directly unblocks this local interactivity feature.
 
 Milestone 10.1: Local Shell
 
