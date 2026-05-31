@@ -431,6 +431,20 @@ activation, lower-EL ERET, scheduler publication, process lifecycle,
 filesystem syscall expansion, Pi 5 proof, shell behavior, networking, and SSH
 remain blocked. The next bounded task is
 phase8-kernel-half-descriptor-image-closeout-checkpoint-20260531.
+The kernel-half descriptor-image closeout checkpoint is now accepted. It
+reconciles the accepted source inventory, contract, QEMU/substitute smoke
+plan, implementation, retained smoke evidence, and deferred surfaces for the
+non-installed KernelHalfDescriptorImage construction boundary. The accepted
+frontier is target-independent descriptor-image construction with copied
+Phase 8 lineage, TTBR0 provenance, model-owned TTBR1 kernel-root image intent,
+required kernel coverage, privileged-only normal/device descriptor attributes,
+model-owned root/table leases, deterministic no-partial rollback,
+idempotent teardown, and zero live side effects. Descriptor-image
+installation, live register mutation, ASID/TLB/barrier activation, lower-EL
+ERET, scheduler publication, process lifecycle, filesystem syscall expansion,
+Pi 5 proof, shell behavior, networking, and SSH remain blocked. No explicit
+queued follow-up task remains; supervisor planning is required before the
+worker may promote another Phase 8.3 task.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -3400,6 +3414,20 @@ Milestone 8.3: Program Loader
   expansion, Pi 5 proof, shell behavior, networking, and SSH remain blocked.
   The next bounded task is
   phase8-kernel-half-descriptor-image-closeout-checkpoint-20260531.
+- Phase 8 kernel-half descriptor-image closeout checkpoint is accepted. It
+  reconciles accepted commits 6cafdd8, a3bc161, ddaebb3, 3e0e836, and
+  424c1f3 plus the retained QEMU/substitute smoke log for the
+  non-installed KernelHalfDescriptorImage boundary. The accepted frontier
+  includes copied Phase 8 lineage, TTBR0 materialized-root provenance,
+  model-owned TTBR1 kernel-root image intent, required kernel coverage,
+  privileged-only normal/device descriptor attributes, root/table ownership,
+  deterministic no-partial-image rejection, idempotent teardown, and zero
+  live side effects. Descriptor-image installation, live register mutation,
+  ASID/TLB/barrier activation, lower-EL ERET, scheduler publication, process
+  lifecycle, filesystem syscall expansion, Pi 5 proof, shell behavior,
+  networking, and SSH remain blocked. No explicit queued follow-up task
+  remains; supervisor planning is required before the worker may promote
+  another Phase 8.3 task.
 
 Acceptance criteria:
 
