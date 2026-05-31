@@ -3858,6 +3858,23 @@ accepted by this core task. The next feature-led step is the already queued
 serialized Pi 5 line-kill proof if dependencies and hardwareTestLock state
 remain satisfied.
 
+The serialized Pi 5 Ctrl-U line-kill proof is now accepted. Retained physical
+evidence is at
+tasks/evidence/2026-05-31-pi5-local-line-kill-proof/local6-candidate-summary/serial-transcript-through-pass.txt
+and
+tasks/evidence/2026-05-31-pi5-local-line-kill-proof/local6-candidate-summary/proof-result-local6.txt.
+The proof types partial bogus, sends Ctrl-U 0x15, records final line pwd,
+prints visible talos: line-killed, prints slash output, records
+descriptor-backed fd0/stdout markers, reports raw-bytes=10, controls=1,
+responses=2, returns to a ready prompt, and ends with
+pi5-local-line-kill-complete plus rpi5-local-line-kill-proof: PASS. The task
+restored the prior accepted boot tree hash after the proof. This remains
+prompt-local kernel behavior only: no POSIX signal/session/terminal semantics,
+userspace shell execution, process lifecycle, filesystem-backed shell behavior,
+networking, SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy
+is accepted by this proof. The next queued task is the local line-kill closeout
+checkpoint.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.

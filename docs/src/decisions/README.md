@@ -9445,6 +9445,53 @@ ADR template:
   execution, process lifecycle, filesystem-backed shell behavior, networking,
   and SSH remain deferred.
 
+## 2026-05-31 - Phase 10 Pi 5 Local Line-Kill Proof Accepted
+
+- Status: accepted as the Phase 10 serialized Raspberry Pi 5 Ctrl-U
+  prompt-local line-kill proof. No POSIX signal delivery, process
+  interruption, userspace shell execution, process spawning, job control,
+  terminal sessions, termios, shell history, kill/yank behavior beyond bounded
+  Ctrl-U prompt-local line kill, cursor addressing, filesystem-backed command
+  lookup, networking, SSH, RP1/PCIe, UART interrupt ownership, or
+  DMA/cache-driver policy is accepted here.
+- Context: The QEMU/substitute line-kill core accepted Ctrl-U 0x15 as a
+  prompt-local whole-line discard followed by normal descriptor-backed command
+  dispatch. This task carried that exact user-visible behavior to serialized
+  Pi 5 hardware.
+- Decision: Accept phase10-pi5-local-line-kill-proof-20260531. The Pi 5
+  command-loop proof records descriptor-backed fd0/stdout markers, visible
+  talos: line-killed, following pwd, visible slash output, a proof summary for
+  partial bogus, Ctrl-U, final-line pwd, raw-bytes=10, controls=1, responses=2,
+  ready prompt, final pi5-local-line-kill-complete classification, and
+  rpi5-local-line-kill-proof: PASS.
+- Evidence level: serialized Pi 5 hardware boot/output retained at
+  tasks/evidence/2026-05-31-pi5-local-line-kill-proof/local6-candidate-summary/.
+  The candidate archive sha256 is
+  89049ac8adc6871ed728587e9445c91955f4d7a1d7f128abc4721724bde741a8; the
+  kernel sha256 is
+  f4e5d43981e049b008b750c5dd5fc37b458628f5a0cf7d8f038ca91e1d964765; the
+  kernel size is 100272 bytes. Fresh TFTP evidence records served
+  da591740/kernel_2712.img at 100272 bytes, and restore evidence records the
+  prior accepted boot tree hash
+  a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+- Inconclusive-run triage: Earlier candidate runs reached the internal PASS
+  path but missed required proof metadata in retained serial. Before proof-code
+  changes, the task recorded candidate identity, fresh serial/TFTP evidence,
+  restored-tree known-good controls, and unchanged candidate reruns. The final
+  accepted change is proof-local visibility only.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test --quiet passed; scripts/qemu-local-line-kill-smoke.sh --quiet passed;
+  scripts/qemu-local-line-cancel-smoke.sh --quiet passed;
+  scripts/qemu-local-line-editing-smoke.sh --quiet passed; static archive/image
+  review passed; serialized Pi 5 proof and restore proof passed; git diff
+  --check passed; mdbook build passed; git diff --cached --check passed before
+  commit.
+- Consequences: The accepted local interactivity frontier now includes
+  physical Pi 5 evidence for Ctrl-U prompt-local line kill followed by
+  descriptor-backed pwd dispatch. The next bounded task is the queued
+  line-kill closeout checkpoint; shell/userland/filesystem/network surfaces
+  remain deferred.
+
 ## 2026-05-30 - Phase 8 Live Address-Space Activation Source Inventory Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 live address-space

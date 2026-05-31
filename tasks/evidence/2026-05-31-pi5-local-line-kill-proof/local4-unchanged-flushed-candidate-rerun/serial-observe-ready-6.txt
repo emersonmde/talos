@@ -1,0 +1,4 @@
+ 12.11 LINK STATUS: speed: 1000 full duplex
+ 12.13 Link ready
+ 12.12 RX: 0 IP: 0 IPV4: 0 MAC: 0 UDP: 0 UDP RECV: 0 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+

@@ -1,0 +1,1 @@
+INCONCLUSIVE: unchanged flushed candidate rerun captured fresh boot/TFTP but did not reach ready prompt before manual restore; no code changes were made before this rerun.
