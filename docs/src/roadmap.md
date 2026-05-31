@@ -3922,6 +3922,20 @@ prior accepted boot tree hash
 `a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10` before
 hardwareTestLock release.
 
+The local literal echo closeout checkpoint is now accepted and records the
+current local interactivity frontier: serial prompt input through
+fd0/runtime-console0, bounded literal echo tail dispatch for
+`echo local serial works`, visible `local serial works` output through
+descriptor-backed stdout, and next-prompt readiness. This remains a
+kernel-backed prompt path only: broad shell parsing, quoting/escaping/globbing,
+argv/envp process ABI, userspace shell execution, process lifecycle,
+filesystem-backed commands, terminal/session semantics, networking, SSH,
+RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
+deferred. No explicit queued task remains after this checkpoint; supervisor
+planning is required for the next smallest feature-led local interactivity
+task, and paused Phase 8 proof-only work remains paused unless it directly
+unblocks that feature.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.
