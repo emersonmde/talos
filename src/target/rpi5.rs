@@ -7273,6 +7273,7 @@ pub fn run_local_serial_command_loop_proof() -> bool {
         );
         print_tty_hex_bytes(result.line());
         crate::println!();
+        wait_uart10_empty_early_phase();
         crate::println!(
             "{}: dispatch command={} status={} responses={} raw-bytes={} truncated={} controls={}",
             local_command_pi5_proof_label(),
@@ -7283,6 +7284,7 @@ pub fn run_local_serial_command_loop_proof() -> bool {
             result.truncated(),
             result.controls()
         );
+        wait_uart10_empty_early_phase();
         crate::println!(
             "{}: edit command={} backspaces={} deletes={}",
             local_command_pi5_proof_label(),
@@ -7290,6 +7292,7 @@ pub fn run_local_serial_command_loop_proof() -> bool {
             result.backspaces(),
             result.deletes()
         );
+        wait_uart10_empty_early_phase();
         #[cfg(talos_boot_scenario = "rpi5_local_line_kill")]
         if result.line() == b"pwd"
             && result.status() == crate::local_command_loop::LocalCommandStatus::Handled
