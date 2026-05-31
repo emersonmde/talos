@@ -98,6 +98,8 @@ mod kernel_half_descriptor_image;
 mod kernel_half_reachability;
 #[cfg_attr(not(test), allow(dead_code))]
 mod live_address_space_activation;
+#[cfg_attr(not(test), allow(dead_code))]
+mod live_descriptor_image_installation;
 mod memory_map;
 mod mmio;
 mod pl011;
