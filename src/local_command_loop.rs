@@ -51,6 +51,10 @@ pub trait LocalCommandSink {
     fn descriptor_backed_output(&self) -> bool {
         false
     }
+
+    fn descriptor_backed_input(&self) -> bool {
+        false
+    }
 }
 
 impl<B> LocalCommandSink for runtime_console::RuntimeConsole<B>
@@ -78,6 +82,23 @@ pub struct DescriptorBackedLocalCommandSink<
     console_backend: &'a mut B,
 }
 
+pub struct DescriptorBackedLocalCommandIo<
+    I,
+    O,
+    const OWNER_CAPACITY: usize,
+    const DESCRIPTOR_CAPACITY: usize,
+> where
+    I: ConsoleInputBackend,
+    O: ConsoleBackend,
+{
+    descriptor_store: posix::ProcessDescriptorStore<OWNER_CAPACITY, DESCRIPTOR_CAPACITY>,
+    current_owner: Option<ProcessOwnerId>,
+    input_descriptor: usize,
+    output_descriptor: usize,
+    input_backend: I,
+    output_backend: O,
+}
+
 impl<'a, B> DescriptorBackedLocalCommandSink<'a, B, 1, 4>
 where
     B: ConsoleBackend,
@@ -92,6 +113,50 @@ where
             output_descriptor: posix::STDOUT_FD,
             console_backend,
         })
+    }
+}
+
+impl<I, O> DescriptorBackedLocalCommandIo<I, O, 1, 4>
+where
+    I: ConsoleInputBackend,
+    O: ConsoleBackend,
+{
+    pub fn new_inherited_stdio(
+        input_backend: I,
+        output_backend: O,
+    ) -> Result<Self, posix::PosixError> {
+        let current_owner = ProcessOwnerId::new(1).expect("local command owner id is nonzero");
+        let mut descriptor_store = posix::ProcessDescriptorStore::<1, 4>::new_empty();
+        descriptor_store.create_owner_with_inherited_stdio(current_owner)?;
+        Ok(Self {
+            descriptor_store,
+            current_owner: Some(current_owner),
+            input_descriptor: posix::STDIN_FD,
+            output_descriptor: posix::STDOUT_FD,
+            input_backend,
+            output_backend,
+        })
+    }
+}
+
+impl<I, O, const OWNER_CAPACITY: usize, const DESCRIPTOR_CAPACITY: usize> ConsoleInputBackend
+    for DescriptorBackedLocalCommandIo<I, O, OWNER_CAPACITY, DESCRIPTOR_CAPACITY>
+where
+    I: ConsoleInputBackend,
+    O: ConsoleBackend,
+{
+    fn poll_read_byte(&mut self) -> Option<u8> {
+        let descriptor_table = self
+            .descriptor_store
+            .current_descriptor_table(self.current_owner)
+            .ok()?;
+        let entry = descriptor_table.get(self.input_descriptor).ok()?;
+        if entry.require_readable().is_err()
+            || entry.object().kind() != posix::DescriptorObjectKind::StdioInput
+        {
+            return None;
+        }
+        self.input_backend.poll_read_byte()
     }
 }
 
@@ -125,6 +190,51 @@ where
 
     fn descriptor_backed_output(&self) -> bool {
         true
+    }
+}
+
+impl<I, O, const OWNER_CAPACITY: usize, const DESCRIPTOR_CAPACITY: usize> LocalCommandSink
+    for DescriptorBackedLocalCommandIo<I, O, OWNER_CAPACITY, DESCRIPTOR_CAPACITY>
+where
+    I: ConsoleInputBackend,
+    O: ConsoleBackend,
+{
+    fn write_command_str(&mut self, text: &str) -> Result<(), LocalCommandWriteError> {
+        let descriptor_table = self
+            .descriptor_store
+            .current_descriptor_table(self.current_owner)
+            .map_err(|_| LocalCommandWriteError::BackendWriteFailed)?;
+        posix::write_kernel_bytes_to_descriptor_console(
+            descriptor_table,
+            self.output_descriptor,
+            text.as_bytes(),
+            &mut self.output_backend,
+        )
+        .map(|_| ())
+        .map_err(|_| LocalCommandWriteError::BackendWriteFailed)
+    }
+
+    fn stdio_descriptor_kind(&self, descriptor: usize) -> Option<&'static str> {
+        self.descriptor_store
+            .current_descriptor_table(self.current_owner)
+            .ok()
+            .and_then(|table| table.get(descriptor).ok())
+            .map(|entry| entry.object().kind().name())
+    }
+
+    fn descriptor_backed_output(&self) -> bool {
+        true
+    }
+
+    fn descriptor_backed_input(&self) -> bool {
+        self.descriptor_store
+            .current_descriptor_table(self.current_owner)
+            .ok()
+            .and_then(|table| table.get(self.input_descriptor).ok())
+            .is_some_and(|entry| {
+                entry.require_readable().is_ok()
+                    && entry.object().kind() == posix::DescriptorObjectKind::StdioInput
+            })
     }
 }
 
@@ -204,6 +314,27 @@ where
     write_local_command_prompt(sink).map_err(|_| LocalCommandCycleError::PromptWriteFailed)?;
     let input_result = tty::run_polling_rx_diagnostic_with_limit(input, wait_limit);
     dispatch_completed_line(input_result, sink)
+}
+
+pub fn run_one_descriptor_backed_serial_command_with_limit<T>(
+    io: &mut T,
+    wait_limit: usize,
+) -> Result<LocalCommandCycleResult, LocalCommandCycleError>
+where
+    T: ConsoleInputBackend + LocalCommandSink,
+{
+    write_local_command_prompt(io).map_err(|_| LocalCommandCycleError::PromptWriteFailed)?;
+    let input_result = tty::run_polling_rx_diagnostic_with_limit(&mut *io, wait_limit);
+    dispatch_completed_line(input_result, io)
+}
+
+pub fn run_one_descriptor_backed_serial_command<T>(
+    io: &mut T,
+) -> Result<LocalCommandCycleResult, LocalCommandCycleError>
+where
+    T: ConsoleInputBackend + LocalCommandSink,
+{
+    run_one_descriptor_backed_serial_command_with_limit(io, tty::POLLING_RX_WAIT_LIMIT)
 }
 
 fn dispatch_completed_line(
@@ -290,6 +421,16 @@ fn dispatch_local_command(
                 sink,
                 responses,
                 &["talos: runtime-console ", sink.runtime_console_name()],
+            )?;
+            let marker = if sink.descriptor_backed_input() {
+                "true"
+            } else {
+                "false"
+            };
+            write_parts_line(
+                sink,
+                responses,
+                &["talos: descriptor-backed-input=", marker],
             )?;
             let marker = if sink.descriptor_backed_output() {
                 "true"
@@ -528,14 +669,14 @@ mod tests {
         );
         let mut backend = CaptureSink::new();
         let result = {
-            let mut sink =
-                DescriptorBackedLocalCommandSink::new_inherited_stdio(&mut backend).unwrap();
-            run_one_serial_command(&mut input, &mut sink).unwrap()
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            run_one_descriptor_backed_serial_command(&mut io).unwrap()
         };
 
         assert_eq!(result.line(), b"stdio");
         assert_eq!(result.status(), LocalCommandStatus::Handled);
-        assert_eq!(result.response_lines(), 6);
+        assert_eq!(result.response_lines(), 7);
         assert_eq!(
             backend.as_str(),
             "talos> talos: ok stdio\n\
@@ -543,6 +684,7 @@ talos: fd 0 stdio-input\n\
 talos: fd 1 stdio-output\n\
 talos: fd 2 stdio-output\n\
 talos: runtime-console runtime-console0\n\
+talos: descriptor-backed-input=true\n\
 talos: descriptor-backed-output=true\n"
         );
     }

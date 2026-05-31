@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-TALOS_BOOT_SCENARIO=qemu_local_serial_command_loop cargo -Zjson-target-spec build "$@"
+TALOS_BOOT_SCENARIO="${TALOS_QEMU_LOCAL_COMMAND_LOOP_BOOT_SCENARIO:-qemu_local_serial_command_loop}" cargo -Zjson-target-spec build "$@"
 
 ELF_FILE="target/aarch64-talos-virt/debug/talos"
 IMG_FILE="$ELF_FILE.local-serial-command-loop.img"
@@ -10,6 +10,8 @@ QEMU_LOG_FILE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_QEMU_LOG_FILE:-target/qemu-local-
 EVIDENCE_DIR="${TALOS_QEMU_LOCAL_COMMAND_LOOP_EVIDENCE_DIR:-tasks/evidence/2026-05-31-qemu-local-serial-command-loop-core}"
 EVIDENCE_LOG="${TALOS_QEMU_LOCAL_COMMAND_LOOP_EVIDENCE_LOG:-$EVIDENCE_DIR/qemu-local-serial-command-loop-smoke.log}"
 PORT="${TALOS_QEMU_LOCAL_COMMAND_LOOP_PORT:-54324}"
+LABEL="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LABEL:-qemu-local-serial-command-loop}"
+CLASSIFICATION="${TALOS_QEMU_LOCAL_COMMAND_LOOP_CLASSIFICATION:-qemu-local-serial-command-loop-complete}"
 
 script_dir="$(CDPATH= cd "$(dirname "$0")" && pwd)"
 . "$script_dir/objcopy-tool.sh"
@@ -56,31 +58,31 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
     if IFS= read -r -t 0.2 line <&3; then
         printf '%s\n' "$line" >>"$LOG_FILE"
         case "$line" in
-            *"qemu-local-serial-command-loop: ready command=0"*)
+            *"$LABEL: ready command=0"*)
                 if [ "$sent" -eq 0 ]; then
                     printf 'help\r' >&3
                     sent=1
                 fi
                 ;;
-            *"qemu-local-serial-command-loop: ready command=1"*)
+            *"$LABEL: ready command=1"*)
                 if [ "$sent" -eq 1 ]; then
                     printf 'status\r' >&3
                     sent=2
                 fi
                 ;;
-            *"qemu-local-serial-command-loop: ready command=2"*)
+            *"$LABEL: ready command=2"*)
                 if [ "$sent" -eq 2 ]; then
                     printf 'stdio\r' >&3
                     sent=3
                 fi
                 ;;
-            *"qemu-local-serial-command-loop: ready command=3"*)
+            *"$LABEL: ready command=3"*)
                 if [ "$sent" -eq 3 ]; then
                     printf '\r' >&3
                     sent=4
                 fi
                 ;;
-            *"qemu-local-serial-command-loop: ready command=4"*)
+            *"$LABEL: ready command=4"*)
                 if [ "$sent" -eq 4 ]; then
                     printf 'bogus\r' >&3
                     sent=5
@@ -97,42 +99,43 @@ done || true
 wait "$qemu_pid"
 trap - EXIT
 
-grep -q "qemu-local-serial-command-loop: start" "$LOG_FILE"
-grep -q "qemu-local-serial-command-loop: ready command=0" "$LOG_FILE"
-grep -q "qemu-local-serial-command-loop: ready command=1" "$LOG_FILE"
-grep -q "qemu-local-serial-command-loop: ready command=2" "$LOG_FILE"
-grep -q "qemu-local-serial-command-loop: ready command=3" "$LOG_FILE"
-grep -q "qemu-local-serial-command-loop: ready command=4" "$LOG_FILE"
+grep -q "$LABEL: start" "$LOG_FILE"
+grep -q "$LABEL: ready command=0" "$LOG_FILE"
+grep -q "$LABEL: ready command=1" "$LOG_FILE"
+grep -q "$LABEL: ready command=2" "$LOG_FILE"
+grep -q "$LABEL: ready command=3" "$LOG_FILE"
+grep -q "$LABEL: ready command=4" "$LOG_FILE"
 grep -q "talos> help" "$LOG_FILE"
 grep -q "talos: ok help" "$LOG_FILE"
 grep -q "talos: commands help status stdio" "$LOG_FILE"
-grep -q "qemu-local-serial-command-loop: line command=0 hex=68 65 6c 70" "$LOG_FILE"
-grep -q "qemu-local-serial-command-loop: dispatch command=0 status=handled responses=2" "$LOG_FILE"
+grep -q "$LABEL: line command=0 hex=68 65 6c 70" "$LOG_FILE"
+grep -q "$LABEL: dispatch command=0 status=handled responses=2" "$LOG_FILE"
 grep -q "talos> status" "$LOG_FILE"
 grep -q "talos: ok status" "$LOG_FILE"
 grep -q "talos: version phase10.1-kernel-builtins-v1" "$LOG_FILE"
 grep -q "talos: runtime-console runtime-console0" "$LOG_FILE"
 grep -q "talos: builtins kernel-backed" "$LOG_FILE"
-grep -q "qemu-local-serial-command-loop: line command=1 hex=73 74 61 74 75 73" "$LOG_FILE"
-grep -q "qemu-local-serial-command-loop: dispatch command=1 status=handled responses=4" "$LOG_FILE"
+grep -q "$LABEL: line command=1 hex=73 74 61 74 75 73" "$LOG_FILE"
+grep -q "$LABEL: dispatch command=1 status=handled responses=4" "$LOG_FILE"
 grep -q "talos> stdio" "$LOG_FILE"
 grep -q "talos: ok stdio" "$LOG_FILE"
 grep -q "talos: fd 0 stdio-input" "$LOG_FILE"
 grep -q "talos: fd 1 stdio-output" "$LOG_FILE"
 grep -q "talos: fd 2 stdio-output" "$LOG_FILE"
+grep -q "talos: descriptor-backed-input=true" "$LOG_FILE"
 grep -q "talos: descriptor-backed-output=true" "$LOG_FILE"
-grep -q "qemu-local-serial-command-loop: line command=2 hex=73 74 64 69 6f" "$LOG_FILE"
-grep -q "qemu-local-serial-command-loop: dispatch command=2 status=handled responses=6" "$LOG_FILE"
+grep -q "$LABEL: line command=2 hex=73 74 64 69 6f" "$LOG_FILE"
+grep -q "$LABEL: dispatch command=2 status=handled responses=7" "$LOG_FILE"
 grep -q "talos: empty-command" "$LOG_FILE"
-grep -q "qemu-local-serial-command-loop: line command=3 hex=" "$LOG_FILE"
-grep -q "qemu-local-serial-command-loop: dispatch command=3 status=empty-command responses=1" "$LOG_FILE"
+grep -q "$LABEL: line command=3 hex=" "$LOG_FILE"
+grep -q "$LABEL: dispatch command=3 status=empty-command responses=1" "$LOG_FILE"
 grep -q "talos> bogus" "$LOG_FILE"
 grep -q "talos: unknown-command" "$LOG_FILE"
-grep -q "qemu-local-serial-command-loop: line command=4 hex=62 6f 67 75 73" "$LOG_FILE"
-grep -q "qemu-local-serial-command-loop: dispatch command=4 status=unknown-command responses=1" "$LOG_FILE"
-grep -q "qemu-local-serial-command-loop: ready-for-next prompt=true" "$LOG_FILE"
-grep -q "qemu-local-serial-command-loop: final participants=5 expected=5 errors=0 classification=qemu-local-serial-command-loop-complete" "$LOG_FILE"
-grep -q "qemu-local-serial-command-loop: PASS" "$LOG_FILE"
+grep -q "$LABEL: line command=4 hex=62 6f 67 75 73" "$LOG_FILE"
+grep -q "$LABEL: dispatch command=4 status=unknown-command responses=1" "$LOG_FILE"
+grep -q "$LABEL: ready-for-next prompt=true" "$LOG_FILE"
+grep -q "$LABEL: final participants=5 expected=5 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+grep -q "$LABEL: PASS" "$LOG_FILE"
 
 mkdir -p "$EVIDENCE_DIR"
 tr -d '\r' <"$LOG_FILE" | sed 's/[[:space:]]*$//' >"$EVIDENCE_LOG"

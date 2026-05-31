@@ -13217,25 +13217,31 @@ pub fn run_diagnostic_command_channel_smoke() -> bool {
     passed
 }
 
-#[cfg(talos_boot_scenario = "qemu_local_serial_command_loop")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_local_serial_command_loop",
+    talos_boot_scenario = "qemu_local_command_stdin_descriptor"
+))]
 pub fn run_local_serial_command_loop_smoke() -> bool {
     const COMMAND_COUNT: usize = 5;
 
     crate::println!(
-        "qemu-local-serial-command-loop: start command-count={} backend=runtime-console0/qemu-virt-pl011 input=tty-canonical-lite builtins=kernel-backed",
-        COMMAND_COUNT
+        "{}: start command-count={} backend=runtime-console0/qemu-virt-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed descriptor-backed-input=true descriptor-backed-output=true",
+        local_command_loop_smoke_label(),
+        COMMAND_COUNT,
     );
 
     let mut input = console();
     let mut output = console();
-    let mut sink =
-        match crate::local_command_loop::DescriptorBackedLocalCommandSink::new_inherited_stdio(
+    let mut io =
+        match crate::local_command_loop::DescriptorBackedLocalCommandIo::new_inherited_stdio(
+            &mut input,
             &mut output,
         ) {
             Ok(sink) => sink,
             Err(error) => {
                 crate::println!(
-                    "qemu-local-serial-command-loop: descriptor-bridge-fail error={}",
+                    "{}: descriptor-bridge-fail error={}",
+                    local_command_loop_smoke_label(),
                     error.name()
                 );
                 return false;
@@ -13245,33 +13251,37 @@ pub fn run_local_serial_command_loop_smoke() -> bool {
 
     for command_index in 0..COMMAND_COUNT {
         crate::println!(
-            "qemu-local-serial-command-loop: ready command={}",
+            "{}: ready command={}",
+            local_command_loop_smoke_label(),
             command_index
         );
 
-        let result = match crate::local_command_loop::run_one_serial_command(&mut input, &mut sink)
-        {
-            Ok(result) => result,
-            Err(error) => {
-                crate::println!(
-                    "qemu-local-serial-command-loop: cycle-fail command={} error={:?}",
-                    command_index,
-                    error
-                );
-                passed = false;
-                continue;
-            }
-        };
+        let result =
+            match crate::local_command_loop::run_one_descriptor_backed_serial_command(&mut io) {
+                Ok(result) => result,
+                Err(error) => {
+                    crate::println!(
+                        "{}: cycle-fail command={} error={:?}",
+                        local_command_loop_smoke_label(),
+                        command_index,
+                        error
+                    );
+                    passed = false;
+                    continue;
+                }
+            };
 
         crate::println!();
         crate::print!(
-            "qemu-local-serial-command-loop: line command={} hex=",
+            "{}: line command={} hex=",
+            local_command_loop_smoke_label(),
             command_index
         );
         print_hex_bytes(result.line());
         crate::println!();
         crate::println!(
-            "qemu-local-serial-command-loop: dispatch command={} status={} responses={} raw-bytes={} truncated={} controls={}",
+            "{}: dispatch command={} status={} responses={} raw-bytes={} truncated={} controls={}",
+            local_command_loop_smoke_label(),
             command_index,
             result.status_name(),
             result.response_lines(),
@@ -13290,29 +13300,64 @@ pub fn run_local_serial_command_loop_smoke() -> bool {
         }
     }
 
-    let ready_for_next = crate::local_command_loop::write_local_command_prompt(&mut sink).is_ok();
+    let ready_for_next = crate::local_command_loop::write_local_command_prompt(&mut io).is_ok();
     crate::println!();
     crate::println!(
-        "qemu-local-serial-command-loop: ready-for-next prompt={}",
+        "{}: ready-for-next prompt={}",
+        local_command_loop_smoke_label(),
         ready_for_next
     );
 
     if ready_for_next && passed {
         crate::println!(
-            "qemu-local-serial-command-loop: final participants=5 expected=5 errors=0 classification=qemu-local-serial-command-loop-complete"
+            "{}: final participants=5 expected=5 errors=0 classification={}",
+            local_command_loop_smoke_label(),
+            local_command_loop_smoke_classification()
         );
-        crate::println!("qemu-local-serial-command-loop: PASS");
+        crate::println!("{}: PASS", local_command_loop_smoke_label());
     } else {
         crate::println!(
-            "qemu-local-serial-command-loop: final participants=5 expected=5 errors=1 classification=qemu-local-serial-command-loop-incomplete"
+            "{}: final participants=5 expected=5 errors=1 classification={}{}",
+            local_command_loop_smoke_label(),
+            local_command_loop_smoke_classification(),
+            "-incomplete"
         );
-        crate::println!("qemu-local-serial-command-loop: FAIL");
+        crate::println!("{}: FAIL", local_command_loop_smoke_label());
     }
 
     ready_for_next && passed
 }
 
-#[cfg(talos_boot_scenario = "qemu_local_serial_command_loop")]
+#[cfg(talos_boot_scenario = "qemu_local_command_stdin_descriptor")]
+const fn local_command_loop_smoke_label() -> &'static str {
+    "qemu-local-command-stdin-descriptor"
+}
+
+#[cfg(all(
+    talos_boot_scenario = "qemu_local_serial_command_loop",
+    not(talos_boot_scenario = "qemu_local_command_stdin_descriptor")
+))]
+const fn local_command_loop_smoke_label() -> &'static str {
+    "qemu-local-serial-command-loop"
+}
+
+#[cfg(talos_boot_scenario = "qemu_local_command_stdin_descriptor")]
+const fn local_command_loop_smoke_classification() -> &'static str {
+    "qemu-local-command-stdin-descriptor-complete"
+}
+
+#[cfg(all(
+    talos_boot_scenario = "qemu_local_serial_command_loop",
+    not(talos_boot_scenario = "qemu_local_command_stdin_descriptor")
+))]
+const fn local_command_loop_smoke_classification() -> &'static str {
+    "qemu-local-serial-command-loop-complete"
+}
+
+#[cfg(any(
+    talos_boot_scenario = "qemu_local_serial_command_loop",
+    talos_boot_scenario = "qemu_local_command_stdin_descriptor"
+))]
 fn expected_local_command_loop_dispatch(
     command_index: usize,
     line: &[u8],
@@ -13324,7 +13369,7 @@ fn expected_local_command_loop_dispatch(
     match command_index {
         0 => line == b"help" && status == Handled && response_lines == 2,
         1 => line == b"status" && status == Handled && response_lines == 4,
-        2 => line == b"stdio" && status == Handled && response_lines == 6,
+        2 => line == b"stdio" && status == Handled && response_lines == 7,
         3 => line.is_empty() && status == Empty && response_lines == 1,
         4 => line == b"bogus" && status == UnknownCommand && response_lines == 1,
         _ => false,
@@ -13366,7 +13411,8 @@ fn expected_diagnostic_dispatch(
 #[cfg(any(
     talos_boot_scenario = "qemu_polling_tty_rx",
     talos_boot_scenario = "qemu_diagnostic_command_channel",
-    talos_boot_scenario = "qemu_local_serial_command_loop"
+    talos_boot_scenario = "qemu_local_serial_command_loop",
+    talos_boot_scenario = "qemu_local_command_stdin_descriptor"
 ))]
 fn print_hex_bytes(bytes: &[u8]) {
     for (index, byte) in bytes.iter().enumerate() {

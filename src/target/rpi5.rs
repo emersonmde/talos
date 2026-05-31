@@ -7196,15 +7196,16 @@ pub fn run_local_serial_command_loop_proof() -> bool {
     const COMMAND_COUNT: usize = 1;
 
     crate::println!(
-        "rpi5-local-command-stdio-bridge-proof: start command-count={} backend=runtime-console0/bcm2712-uart10-pl011 input=tty-canonical-lite builtins=kernel-backed descriptor-backed-output=true",
+        "rpi5-local-command-stdio-bridge-proof: start command-count={} backend=runtime-console0/bcm2712-uart10-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed descriptor-backed-input=true descriptor-backed-output=true",
         COMMAND_COUNT
     );
     wait_uart10_empty_early_phase();
 
     let mut input = firmware_console();
     let mut output = LocalCommandProofConsole::new(firmware_console());
-    let mut sink =
-        match crate::local_command_loop::DescriptorBackedLocalCommandSink::new_inherited_stdio(
+    let mut io =
+        match crate::local_command_loop::DescriptorBackedLocalCommandIo::new_inherited_stdio(
+            &mut input,
             &mut output,
         ) {
             Ok(sink) => sink,
@@ -7229,22 +7230,22 @@ pub fn run_local_serial_command_loop_proof() -> bool {
         );
         wait_uart10_empty_early_phase();
 
-        let result = match crate::local_command_loop::run_one_serial_command_with_limit(
-            &mut input,
-            &mut sink,
-            UART10_RX_WAIT_LIMIT,
-        ) {
-            Ok(result) => result,
-            Err(error) => {
-                crate::println!(
-                    "rpi5-local-command-stdio-bridge-proof: cycle-fail command={} error={:?}",
-                    command_index,
-                    error
-                );
-                passed = false;
-                continue;
-            }
-        };
+        let result =
+            match crate::local_command_loop::run_one_descriptor_backed_serial_command_with_limit(
+                &mut io,
+                UART10_RX_WAIT_LIMIT,
+            ) {
+                Ok(result) => result,
+                Err(error) => {
+                    crate::println!(
+                        "rpi5-local-command-stdio-bridge-proof: cycle-fail command={} error={:?}",
+                        command_index,
+                        error
+                    );
+                    passed = false;
+                    continue;
+                }
+            };
 
         crate::println!();
         crate::print!(
@@ -7264,7 +7265,7 @@ pub fn run_local_serial_command_loop_proof() -> bool {
         );
         if result.line() == b"stdio"
             && result.status() == crate::local_command_loop::LocalCommandStatus::Handled
-            && result.response_lines() == 6
+            && result.response_lines() == 7
         {
             replay_visible_stdio_response_for_pi5_proof();
         }
@@ -7280,7 +7281,7 @@ pub fn run_local_serial_command_loop_proof() -> bool {
         wait_uart10_empty_early_phase();
     }
 
-    let ready_for_next = crate::local_command_loop::write_local_command_prompt(&mut sink).is_ok();
+    let ready_for_next = crate::local_command_loop::write_local_command_prompt(&mut io).is_ok();
     crate::println!();
     crate::println!(
         "rpi5-local-command-stdio-bridge-proof: ready-for-next prompt={}",
@@ -7310,6 +7311,7 @@ fn replay_visible_stdio_response_for_pi5_proof() {
     crate::println!("talos: fd 1 stdio-output");
     crate::println!("talos: fd 2 stdio-output");
     crate::println!("talos: runtime-console runtime-console0");
+    crate::println!("talos: descriptor-backed-input=true");
     crate::println!("talos: descriptor-backed-output=true");
     wait_uart10_empty_early_phase();
 }
@@ -7348,7 +7350,7 @@ fn expected_local_command_loop_dispatch(
     use crate::local_command_loop::LocalCommandStatus::{Empty, Handled, UnknownCommand};
 
     match command_index {
-        0 => line == b"stdio" && status == Handled && response_lines == 6,
+        0 => line == b"stdio" && status == Handled && response_lines == 7,
         _ => false,
     }
 }
