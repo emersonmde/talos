@@ -12,6 +12,47 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-31 - Phase 8 Kernel-Half Descriptor-Image Core Accepted
+
+- Status: accepted as the Milestone 8.3 target-independent kernel-half
+  descriptor-image core. No QEMU execution, Pi 5 hardware run, boot archive
+  publication, hardware-lock acquisition, live TTBR0_EL1/TTBR1_EL1/TCR_EL1/
+  MAIR_EL1/SCTLR_EL1 mutation, ASID allocation, live TLB mutation, activation
+  DSB/ISB, lower-EL ERET, scheduler runnable publication, process lifecycle,
+  shell behavior, descriptor-backed filesystem syscalls, writable filesystem,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver
+  policy was added.
+- Context: The accepted descriptor-image contract and QEMU/substitute smoke
+  plan selected one non-installed KernelHalfDescriptorImage boundary below
+  live translation-register mutation. The previous worker left only a partial
+  src/main.rs module declaration for this same active task and no live cargo or
+  QEMU process; the worker continued the already-promoted bounded task.
+- Decision: Accept phase8-kernel-half-descriptor-image-core-20260531. The
+  implementation adds src/kernel_half_descriptor_image.rs with boundary
+  identity phase8-kernel-half-descriptor-image-v1 and policy
+  ttbr1-shared-privileged-kernel-root-descriptor-image-v1. It consumes the
+  accepted KernelHalfReachabilityPlan and ProcessPageTableMaterialization
+  provenance, records TTBR0 provenance-only root intent, a model-owned TTBR1
+  kernel-root image intent, root/table leases, descriptor records for required
+  kernel coverage, privileged-only normal/device attributes, deterministic
+  rejection cases, no-partial rollback, idempotent teardown, and zero live
+  activation side effects.
+- Evidence level: static inspection, unit tests, and documentation validation.
+  Reviewed the accepted contract commit a3bc161, accepted smoke-plan commit
+  ddaebb3, KernelHalfReachabilityPlan implementation, process page-table
+  materialization provenance, roadmap, and ADR index.
+- Validation: cargo fmt --all -- --check passed after formatting; cargo
+  -Zjson-target-spec test passed with 324 no_std tests; git diff --check
+  passed; mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The next bounded task should be
+  phase8-qemu-kernel-half-descriptor-image-smoke-core-20260531. Retained
+  QEMU/substitute smoke evidence, live register mutation, ASID/TLB/barrier
+  activation, lower-EL ERET, scheduler runnable publication, process
+  lifecycle, startup ABI expansion, descriptor-backed filesystem syscalls,
+  Pi 5 hardware proof, shell, networking, SSH, RP1/PCIe, UART interrupt
+  ownership, and DMA/cache-driver policy remain blocked until later explicit
+  tasks accept their contracts and gates.
+
 ## 2026-05-31 - Phase 8 QEMU Kernel-Half Descriptor-Image Smoke Plan Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 QEMU/substitute

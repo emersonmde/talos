@@ -386,6 +386,37 @@ register mutation, ASID/TLB/barrier activation, lower-EL ERET, scheduler
 publication, process lifecycle, filesystem syscall expansion, Pi 5 hardware
 proof, shell behavior, networking, and SSH remain blocked. The next bounded
 task is phase8-qemu-kernel-half-descriptor-image-smoke-plan-20260531.
+The QEMU/substitute kernel-half descriptor-image smoke plan is now accepted.
+It defines the retained qemu_kernel_half_descriptor_image_smoke evidence
+boundary for the selected non-installed KernelHalfDescriptorImage model:
+copied accepted input lineage, TTBR0 provenance-only root intent,
+model-owned TTBR1 kernel-root image intent, required kernel coverage,
+privileged-only normal/device descriptor attributes, root/table lease
+ownership, deterministic rejection, no-partial rollback, idempotent teardown,
+zero live activation side effects, and final
+qemu-kernel-half-descriptor-image-smoke-complete/PASS lines. Live register
+mutation, ASID/TLB/barrier activation, lower-EL ERET, scheduler publication,
+process lifecycle, filesystem syscall expansion, Pi 5 hardware proof, shell
+behavior, networking, and SSH remain blocked. The next bounded task is
+phase8-kernel-half-descriptor-image-core-20260531.
+The kernel-half descriptor-image core is now accepted. It adds the
+target-independent KernelHalfDescriptorImage construction boundary selected by
+the accepted contract and smoke plan, with boundary identity
+phase8-kernel-half-descriptor-image-v1 and policy
+ttbr1-shared-privileged-kernel-root-descriptor-image-v1. The model consumes
+the accepted KernelHalfReachabilityPlan and ProcessPageTableMaterialization
+provenance, publishes model-owned root/table leases and descriptor records
+for kernel text/rodata/data/bss, vectors, active stack, heap, page-frame
+metadata, UART/MMIO diagnostics, scheduler state, runtime console, and
+panic/fault reporting, preserves privileged-only normal/device attributes,
+rolls back resource failures without a partial image, supports idempotent
+teardown, and records zero live TTBR/TCR/MAIR/SCTLR/TLB/barrier, lower-EL,
+scheduler, process-table, or descriptor-table side effects. Retained
+QEMU/substitute smoke evidence, live register mutation, ASID/TLB/barrier
+activation, lower-EL ERET, scheduler publication, process lifecycle,
+filesystem syscall expansion, Pi 5 hardware proof, shell behavior,
+networking, and SSH remain blocked. The next bounded task is
+phase8-qemu-kernel-half-descriptor-image-smoke-core-20260531.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -3331,6 +3362,19 @@ Milestone 8.3: Program Loader
   lifecycle, filesystem syscall expansion, Pi 5 hardware proof, shell
   behavior, networking, and SSH remain blocked. The next bounded task is
   phase8-kernel-half-descriptor-image-core-20260531.
+- Phase 8 kernel-half descriptor-image core is accepted. It adds
+  src/kernel_half_descriptor_image.rs and the non-installed
+  KernelHalfDescriptorImage boundary selected by the accepted contract and
+  smoke plan. The model records copied KernelHalfReachabilityPlan lineage,
+  TTBR0 materialized-root provenance, TTBR1 owned kernel-root image intent,
+  required kernel coverage, privileged-only normal/device descriptor records,
+  model-owned root/table leases, deterministic no-partial errors, idempotent
+  teardown, and zero live activation side effects. Retained QEMU/substitute
+  smoke evidence, live register mutation, ASID/TLB/barrier activation,
+  lower-EL ERET, scheduler publication, process lifecycle, filesystem syscall
+  expansion, Pi 5 hardware proof, shell behavior, networking, and SSH remain
+  blocked. The next bounded task is
+  phase8-qemu-kernel-half-descriptor-image-smoke-core-20260531.
 
 Acceptance criteria:
 
