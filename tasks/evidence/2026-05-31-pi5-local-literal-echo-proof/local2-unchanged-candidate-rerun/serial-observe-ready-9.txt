@@ -1,0 +1,62 @@
+ 20.85 DHCP src: 60:22:32:71:62:87 10.42.1.1
+ 20.86 YI_ADDR 10.42.1.4
+ 20.88 SI_ADDR 10.42.1.3
+ 20.09 OPTIONS:-
+	op: 53 len:   1 DHCP recv OFFER (2) expect OFFER 20.09 
+	op: 54 len:   4 10.42.1.1 20.09 
+	op: 51 len:   4  20.10 
+	op: 67 len:  11  20.10 
+	op: 58 len:   4  20.10 
+	op: 59 len:   4  20.10 
+	op:  1 len:   4 255.255.255.0 20.11 
+	op: 66 len:  10 10.42.1.3 20.15 [66]: 10.42.1.3
+ 20.11 
+	op:  3 len:   4 10.42.1.1 20.12 
+ 20.68 DHCP src: 60:22:32:71:62:87 10.42.1.1
+ 20.69 YI_ADDR 10.42.1.4
+ 20.71 SI_ADDR 10.42.1.3
+ 20.17 OPTIONS:-
+	op: 53 len:   1 DHCP recv ACK (5) expect ACK 20.17 
+	op: 54 len:   4 10.42.1.1 20.18 
+	op: 51 len:   4  20.18 
+	op: 58 len:   4  20.18 
+	op: 59 len:   4  20.18 
+	op:  1 len:   4 255.255.255.0 20.19 
+	op: 15 len:  12  20.19 
+	op: 12 len:   5  20.19 
+	op: 28 len:   4 10.42.1.255 20.20 
+	op: 66 len:  10 10.42.1.3 20.03 [66]: 10.42.1.3
+ 20.20 
+	op:  6 len:   4 10.42.1.1 20.20 
+	op:  3 len:   4 10.42.1.1 20.21 
+ 20.12 NET 10.42.1.4 255.255.255.0 gw 0.0.0.0 tftp 10.42.1.3
+ 20.17 ARP 10.42.1.3 84:a9:38:6a:77:63
+ 20.21 NET 10.42.1.4 255.255.255.0 gw 0.0.0.0 tftp 10.42.1.3
+ 20.22 RX: 26 IP: 0 IPV4: 4 MAC: 4 UDP: 4 UDP RECV: 2 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.23 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740/config.txt
+
+ 20.23 RX: 26 IP: 0 IPV4: 4 MAC: 4 UDP: 4 UDP RECV: 2 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.24 RX: 27 IP: 0 IPV4: 5 MAC: 5 UDP: 5 UDP RECV: 3 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.25 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740/config.txt
+
+ 20.26 RX: 27 IP: 0 IPV4: 5 MAC: 5 UDP: 5 UDP RECV: 3 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.26 TFTP: complete 118
+ 20.27 RX: 29 IP: 0 IPV4: 7 MAC: 7 UDP: 7 UDP RECV: 5 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.78 Read da591740/config.txt bytes      118 hnd 0x0
+ 20.28 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740/pieeprom.sig
+
+ 20.28 RX: 29 IP: 0 IPV4: 7 MAC: 7 UDP: 7 UDP RECV: 5 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.97 TFTP 1: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4 
+ 20.30 RX: 30 IP: 0 IPV4: 8 MAC: 8 UDP: 8 UDP RECV: 6 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.31 Read da591740/pieeprom.upd failed
+ 20.14 usb_max_current_enable default 0 max-current 3000
+ 20.20 Selecting USB low current limit
+ 20.32 MESS:00:00:20.325707:0: *** Restart logging
+ 20.37 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740//config.txt
+
+ 20.38 RX: 30 IP: 0 IPV4: 8 MAC: 8 UDP: 8 UDP RECV: 6 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.39 TFTP: complete 118
+ 20.39 RX: 32 IP: 0 IPV4: 10 MAC: 10 UDP: 10 UDP RECV: 8 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.00 Read da591740//config.txt bytes      118 hnd 0x0
+ 20.40 da591740//config.txt 0x3cf70000 8e2972a9f5c17b887d556a4e1048551e46ffe239751a9ad92f64f9222eae2ad8
+

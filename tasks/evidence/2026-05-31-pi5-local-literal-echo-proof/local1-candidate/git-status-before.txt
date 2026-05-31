@@ -1,0 +1,8 @@
+ M build.rs
+ M src/main.rs
+ M src/pl011.rs
+ M src/runtime_console.rs
+ M src/target/rpi5.rs
+?? scripts/rpi5-local-literal-echo-boot-tree.sh
+?? scripts/rpi5-local-literal-echo-image.sh
+?? tasks/evidence/2026-05-31-pi5-local-literal-echo-proof/

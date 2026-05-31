@@ -3907,6 +3907,21 @@ terminal/session semantics, networking, SSH, RP1/PCIe, UART interrupt
 ownership, and DMA/cache-driver policy remain deferred. The next mechanically
 queued task is the serialized Pi 5 literal echo proof.
 
+The serialized Pi 5 literal echo proof is now accepted. Retained physical
+evidence in
+`tasks/evidence/2026-05-31-pi5-local-literal-echo-proof/local3-candidate-summary/serial-transcript-through-pass.txt`
+and
+`tasks/evidence/2026-05-31-pi5-local-literal-echo-proof/local3-candidate-summary/proof-result-local3.txt`
+shows descriptor-backed input/output markers, the input summary for
+`echo local serial works`, visible `local serial works` output, ready prompt
+return, pi5-local-literal-echo-complete, and
+rpi5-local-literal-echo-proof: PASS. The proof recorded archive/kernel
+identity, fresh serial/TFTP evidence, known-good control, unchanged-candidate
+rerun for the initial visibility-incomplete transcript, and restore to the
+prior accepted boot tree hash
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10` before
+hardwareTestLock release.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.

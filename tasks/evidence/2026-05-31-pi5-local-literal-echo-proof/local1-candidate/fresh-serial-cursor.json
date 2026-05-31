@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "cG9uc2VzPTINCnRhbG9zPiANCnJwaTUtbG9jYWwtbGluZS1raWxsLXByb29mOiByZWFkeS1mb3ItbmV4dCBwcm9tcHQ9dHJ1ZQ0KcnBpNS1sb2NhbC1saW5lLWtpbGwtcHJvb2Y6IGZpbmFsIHBhcnRpY2lwYW50cz0xIGV4cGVjdGVkPTEgZXJyb3JzPTAgY2xhc3NpZmljYXRpb249cGk1LWxvY2FsLWxpbmUta2lsbC1jb21wbGV0ZQ0KcnBpNS1sb2NhbC1saW5lLWtpbGwtcHJvb2Y6IFBBU1MNCnJwaTUtbG9jYWwtbGluZS1raWxsLXByb29mOiBzdGFydCBjb21tYW5kLWNvdW50PTEgYmFja2VuZD1ydW50aW1lLWNvbnNvbGUwL2JjbTI3MTItdWFydDEwLXBsMDExIGlucHV0PWZkMC9ydW50aW1lLWNvbnNvbGUwL3R0eS1jYW5vbmljYWwtbGl0ZSBidWlsdGlucz1rZXJuZWwtYmFja2VkIGRlc2NyaXB0b3ItYmFja2VkLWlucHV0PXRydWUgZGVzY3JpcHRvci1iYWNrZWQtb3V0cHV0PXRydWUNCnJwaTUtbG9jYWwtbGluZS1raWxsLXByb29mOiByZWFkeSBjb21tYW5kPTANCnRhbG9zPiA=",
+  "bytes": 500,
+  "cursor": 3767125,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "ponses=2\r\ntalos> \r\nrpi5-local-line-kill-proof: ready-for-next prompt=true\r\nrpi5-local-line-kill-proof: final participants=1 expected=1 errors=0 classification=pi5-local-line-kill-complete\r\nrpi5-local-line-kill-proof: PASS\r\nrpi5-local-line-kill-proof: start command-count=1 backend=runtime-console0/bcm2712-uart10-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed descriptor-backed-input=true descriptor-backed-output=true\r\nrpi5-local-line-kill-proof: ready command=0\r\ntalos> "
+}
