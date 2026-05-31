@@ -108,4 +108,5 @@ visibility and a fresh candidate boot/archive identity.
 
 ## Commit
 
-Implementation, documentation, task record, and evidence commit: pending.
+Implementation, documentation, task record, and evidence commit:
+83588278519d155bc5e714ff7df086ebc5cb04af.
