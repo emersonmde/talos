@@ -3713,16 +3713,19 @@ Goal: make Talos useful from a local console before depending on Ethernet.
 
 Status: the feature-led reset accepted the first local serial interactivity
 slice in QEMU/substitute and on serialized Raspberry Pi 5 hardware, then
-accepted descriptor-backed local command-loop stdio slices. The kernel now has
-a bounded local command loop that reads a canonical TTY line from
-runtime-console0, dispatches kernel-backed built-ins, prints visible responses
-for help, empty input, unknown input, and `stdio`, and emits a prompt/ready
-marker for another command. The accepted stdio bridge reports fd 0/fd 1/fd 2
-identities, routes visible output through inherited stdout in the
-QEMU/substitute path, records runtime-console0 backing, and carries the same
-`stdio` response to serialized Pi 5 hardware. The accepted stdin-descriptor
-slice moves the command-loop input side through fd0/runtime-console0 descriptor
-plumbing while preserving descriptor-backed visible output.
+accepted descriptor-backed local command-loop stdio and `echo hello` slices.
+The kernel now has a bounded local command loop that reads a canonical TTY line
+from runtime-console0, dispatches kernel-backed built-ins, prints visible
+responses for help, empty input, unknown input, `stdio`, and `echo hello`,
+and emits a prompt/ready marker for another command. The accepted stdio bridge
+reports fd 0/fd 1/fd 2 identities, routes visible output through inherited
+stdout in the QEMU/substitute path, records runtime-console0 backing, and
+carries the same `stdio` response to serialized Pi 5 hardware. The accepted
+stdin-descriptor slice moves the command-loop input side through
+fd0/runtime-console0 descriptor plumbing while preserving descriptor-backed
+visible output. The accepted echo slice proves a simple command-plus-argument
+path over the same descriptor-backed stdin/stdout boundary in QEMU/substitute
+and on Pi 5 hardware.
 
 Retained QEMU stdin-descriptor evidence is at
 tasks/evidence/2026-05-31-qemu-local-command-stdin-descriptor-core/qemu-local-command-stdin-descriptor-smoke.log.
@@ -3735,11 +3738,19 @@ candidate TFTP fetch and restore proof. The stdin-descriptor closeout
 checkpoint is accepted and records the current local interactivity frontier:
 serial prompt, typed `stdio`, fd0/runtime-console-backed descriptor input,
 descriptor-backed visible output, fd identity reporting, runtime-console0
-backing, and next-prompt readiness. This is not accepted userspace shell
-execution, descriptor-backed filesystem commands, broad POSIX read readiness,
-networking, or SSH. The next feature-led planning recommendation is an
-argument-bearing kernel-backed `echo` command over the same descriptor-backed
-stdin/stdout path, below userspace process execution.
+backing, and next-prompt readiness. Retained QEMU echo evidence is at
+tasks/evidence/2026-05-31-qemu-local-echo-command-core/qemu-local-echo-command-smoke.log.
+Retained Pi 5 echo hardware evidence is at
+tasks/evidence/2026-05-31-pi5-local-echo-command-proof/local2-clean-candidate/serial-transcript.txt
+with proof summary
+tasks/evidence/2026-05-31-pi5-local-echo-command-proof/local2-clean-candidate/proof-result-local2.txt.
+The echo proof records `typed_command=echo hello`, visible `hello` output,
+descriptor-backed markers, prompt readiness, two fresh 98664-byte
+`da591740/kernel_2712.img` TFTP fetches, and restore to the prior accepted
+boot tree hash. This is not accepted userspace shell execution,
+descriptor-backed filesystem commands, broad POSIX read readiness, networking,
+or SSH. Supervisor planning is required before the next feature-led local
+interactivity slice is promoted.
 
 Milestone 10.1: Local Shell
 

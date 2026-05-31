@@ -1,0 +1,2 @@
+98664 target/rpi5-local-echo-command-boot-tree-local2/kernel_2712.img
+98664 target/rpi5-local-echo-command-boot-tree-local2/da591740/kernel_2712.img

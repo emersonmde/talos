@@ -1,0 +1,1 @@
+1ec5389c84e3a779ef1d98c5b664b3771947c8415fd02ee731f2cbfbafa646d4  /opt/strider/openclaw/current/workspace/tmp/talos-rpi5-local-echo-command-local2.tar.gz

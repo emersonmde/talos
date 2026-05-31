@@ -1,0 +1,5 @@
+ M build.rs
+ M src/target/rpi5.rs
+?? scripts/rpi5-local-echo-command-boot-tree.sh
+?? scripts/rpi5-local-echo-command-image.sh
+?? tasks/evidence/2026-05-31-pi5-local-echo-command-proof/

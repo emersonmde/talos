@@ -1,0 +1,6 @@
+ed responses=1 raw-bytes=11 truncated=false controls=0
+talos> 
+rpi5-local-echo-command-proof: ready-for-next prompt=true
+rpi5-local-echo-command-proof: final participants=1 expected=1 errors=0 classification=pi5-local-echo-command-complete
+rpi5-local-echo-command-proof: PASS
+

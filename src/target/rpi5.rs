@@ -7191,13 +7191,17 @@ fn settle_for_serial_capture() {
     }
 }
 
-#[cfg(talos_boot_scenario = "rpi5_local_serial_command_loop")]
+#[cfg(any(
+    talos_boot_scenario = "rpi5_local_serial_command_loop",
+    talos_boot_scenario = "rpi5_local_echo_command"
+))]
 pub fn run_local_serial_command_loop_proof() -> bool {
-    const COMMAND_COUNT: usize = 1;
+    let command_count = local_command_pi5_proof_command_count();
 
     crate::println!(
-        "rpi5-local-command-stdio-bridge-proof: start command-count={} backend=runtime-console0/bcm2712-uart10-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed descriptor-backed-input=true descriptor-backed-output=true",
-        COMMAND_COUNT
+        "{}: start command-count={} backend=runtime-console0/bcm2712-uart10-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed descriptor-backed-input=true descriptor-backed-output=true",
+        local_command_pi5_proof_label(),
+        command_count
     );
     wait_uart10_empty_early_phase();
 
@@ -7211,21 +7215,27 @@ pub fn run_local_serial_command_loop_proof() -> bool {
             Ok(sink) => sink,
             Err(error) => {
                 crate::println!(
-                    "rpi5-local-command-stdio-bridge-proof: descriptor-bridge-fail error={}",
+                    "{}: descriptor-bridge-fail error={}",
+                    local_command_pi5_proof_label(),
                     error.name()
                 );
                 crate::println!(
-                    "rpi5-local-command-stdio-bridge-proof: final participants=0 expected=2 errors=1 classification=pi5-local-command-stdio-bridge-incomplete"
+                    "{}: final participants=0 expected={} errors=1 classification={}{}",
+                    local_command_pi5_proof_label(),
+                    command_count,
+                    local_command_pi5_proof_classification(),
+                    "-incomplete"
                 );
-                crate::println!("rpi5-local-command-stdio-bridge-proof: FAIL");
+                crate::println!("{}: FAIL", local_command_pi5_proof_label());
                 return false;
             }
         };
     let mut passed = true;
 
-    for command_index in 0..COMMAND_COUNT {
+    for command_index in 0..command_count {
         crate::println!(
-            "rpi5-local-command-stdio-bridge-proof: ready command={}",
+            "{}: ready command={}",
+            local_command_pi5_proof_label(),
             command_index
         );
         wait_uart10_empty_early_phase();
@@ -7238,7 +7248,8 @@ pub fn run_local_serial_command_loop_proof() -> bool {
                 Ok(result) => result,
                 Err(error) => {
                     crate::println!(
-                        "rpi5-local-command-stdio-bridge-proof: cycle-fail command={} error={:?}",
+                        "{}: cycle-fail command={} error={:?}",
+                        local_command_pi5_proof_label(),
                         command_index,
                         error
                     );
@@ -7249,13 +7260,15 @@ pub fn run_local_serial_command_loop_proof() -> bool {
 
         crate::println!();
         crate::print!(
-            "rpi5-local-command-stdio-bridge-proof: line command={} hex=",
+            "{}: line command={} hex=",
+            local_command_pi5_proof_label(),
             command_index
         );
         print_tty_hex_bytes(result.line());
         crate::println!();
         crate::println!(
-            "rpi5-local-command-stdio-bridge-proof: dispatch command={} status={} responses={} raw-bytes={} truncated={} controls={}",
+            "{}: dispatch command={} status={} responses={} raw-bytes={} truncated={} controls={}",
+            local_command_pi5_proof_label(),
             command_index,
             result.status_name(),
             result.response_lines(),
@@ -7268,6 +7281,11 @@ pub fn run_local_serial_command_loop_proof() -> bool {
             && result.response_lines() == 7
         {
             replay_visible_stdio_response_for_pi5_proof();
+        } else if result.line() == b"echo hello"
+            && result.status() == crate::local_command_loop::LocalCommandStatus::Handled
+            && result.response_lines() == 1
+        {
+            replay_visible_echo_response_for_pi5_proof();
         }
 
         if !expected_local_command_loop_dispatch(
@@ -7284,27 +7302,40 @@ pub fn run_local_serial_command_loop_proof() -> bool {
     let ready_for_next = crate::local_command_loop::write_local_command_prompt(&mut io).is_ok();
     crate::println!();
     crate::println!(
-        "rpi5-local-command-stdio-bridge-proof: ready-for-next prompt={}",
+        "{}: ready-for-next prompt={}",
+        local_command_pi5_proof_label(),
         ready_for_next
     );
 
     if ready_for_next && passed {
         crate::println!(
-            "rpi5-local-command-stdio-bridge-proof: final participants=2 expected=2 errors=0 classification=pi5-local-command-stdio-bridge-complete"
+            "{}: final participants={} expected={} errors=0 classification={}",
+            local_command_pi5_proof_label(),
+            command_count,
+            command_count,
+            local_command_pi5_proof_classification()
         );
-        crate::println!("rpi5-local-command-stdio-bridge-proof: PASS");
+        crate::println!("{}: PASS", local_command_pi5_proof_label());
     } else {
         crate::println!(
-            "rpi5-local-command-stdio-bridge-proof: final participants=2 expected=2 errors=1 classification=pi5-local-command-stdio-bridge-incomplete"
+            "{}: final participants={} expected={} errors=1 classification={}{}",
+            local_command_pi5_proof_label(),
+            command_count,
+            command_count,
+            local_command_pi5_proof_classification(),
+            "-incomplete"
         );
-        crate::println!("rpi5-local-command-stdio-bridge-proof: FAIL");
+        crate::println!("{}: FAIL", local_command_pi5_proof_label());
     }
     wait_uart10_empty_early_phase();
 
     ready_for_next && passed
 }
 
-#[cfg(talos_boot_scenario = "rpi5_local_serial_command_loop")]
+#[cfg(any(
+    talos_boot_scenario = "rpi5_local_serial_command_loop",
+    talos_boot_scenario = "rpi5_local_echo_command"
+))]
 fn replay_visible_stdio_response_for_pi5_proof() {
     crate::println!("talos: ok stdio");
     crate::println!("talos: fd 0 stdio-input");
@@ -7316,17 +7347,69 @@ fn replay_visible_stdio_response_for_pi5_proof() {
     wait_uart10_empty_early_phase();
 }
 
-#[cfg(talos_boot_scenario = "rpi5_local_serial_command_loop")]
+#[cfg(any(
+    talos_boot_scenario = "rpi5_local_serial_command_loop",
+    talos_boot_scenario = "rpi5_local_echo_command"
+))]
+fn replay_visible_echo_response_for_pi5_proof() {
+    crate::println!("hello");
+    wait_uart10_empty_early_phase();
+}
+
+#[cfg(talos_boot_scenario = "rpi5_local_echo_command")]
+const fn local_command_pi5_proof_label() -> &'static str {
+    "rpi5-local-echo-command-proof"
+}
+
+#[cfg(all(
+    talos_boot_scenario = "rpi5_local_serial_command_loop",
+    not(talos_boot_scenario = "rpi5_local_echo_command")
+))]
+const fn local_command_pi5_proof_label() -> &'static str {
+    "rpi5-local-command-stdio-bridge-proof"
+}
+
+#[cfg(talos_boot_scenario = "rpi5_local_echo_command")]
+const fn local_command_pi5_proof_classification() -> &'static str {
+    "pi5-local-echo-command-complete"
+}
+
+#[cfg(all(
+    talos_boot_scenario = "rpi5_local_serial_command_loop",
+    not(talos_boot_scenario = "rpi5_local_echo_command")
+))]
+const fn local_command_pi5_proof_classification() -> &'static str {
+    "pi5-local-command-stdio-bridge-complete"
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_local_serial_command_loop",
+    talos_boot_scenario = "rpi5_local_echo_command"
+))]
+const fn local_command_pi5_proof_command_count() -> usize {
+    1
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_local_serial_command_loop",
+    talos_boot_scenario = "rpi5_local_echo_command"
+))]
 struct LocalCommandProofConsole;
 
-#[cfg(talos_boot_scenario = "rpi5_local_serial_command_loop")]
+#[cfg(any(
+    talos_boot_scenario = "rpi5_local_serial_command_loop",
+    talos_boot_scenario = "rpi5_local_echo_command"
+))]
 impl LocalCommandProofConsole {
     const fn new(_uart: Pl011) -> Self {
         Self
     }
 }
 
-#[cfg(talos_boot_scenario = "rpi5_local_serial_command_loop")]
+#[cfg(any(
+    talos_boot_scenario = "rpi5_local_serial_command_loop",
+    talos_boot_scenario = "rpi5_local_echo_command"
+))]
 impl core::fmt::Write for LocalCommandProofConsole {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
         crate::target::console::write_static(s);
@@ -7335,7 +7418,10 @@ impl core::fmt::Write for LocalCommandProofConsole {
     }
 }
 
-#[cfg(talos_boot_scenario = "rpi5_local_serial_command_loop")]
+#[cfg(any(
+    talos_boot_scenario = "rpi5_local_serial_command_loop",
+    talos_boot_scenario = "rpi5_local_echo_command"
+))]
 fn expected_local_command_loop_dispatch(
     command_index: usize,
     line: &[u8],
@@ -7345,6 +7431,9 @@ fn expected_local_command_loop_dispatch(
     use crate::local_command_loop::LocalCommandStatus::{Empty, Handled, UnknownCommand};
 
     match command_index {
+        0 if cfg!(talos_boot_scenario = "rpi5_local_echo_command") => {
+            line == b"echo hello" && status == Handled && response_lines == 1
+        }
         0 => line == b"stdio" && status == Handled && response_lines == 7,
         _ => false,
     }

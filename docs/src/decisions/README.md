@@ -9168,6 +9168,46 @@ ADR template:
   networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
   policy remain blocked until later explicit tasks accept them.
 
+## 2026-05-31 - Phase 10 Pi 5 Local Echo Command Proof Accepted
+
+- Status: accepted as the serialized Raspberry Pi 5 hardware proof for the
+  Phase 10 local `echo hello` command feature. It proves physical serial
+  command input through the descriptor-backed local command-loop path, visible
+  `hello` output, descriptor-backed markers, prompt readiness, TFTP candidate
+  identity, and restore proof. It does not claim userspace shell execution,
+  process spawning, filesystem command lookup, broad POSIX read readiness,
+  networking, or SSH.
+- Context: The QEMU/substitute local echo core was accepted first, with
+  retained evidence for `echo hello`, visible `hello`, descriptor-backed
+  input/output, and prompt readiness. The next bounded feature-led task was to
+  carry that user-visible command behavior to physical Pi 5 hardware under the
+  hardware lock.
+- Decision: Accept phase10-pi5-local-echo-command-proof-20260531. The Pi 5
+  boot scenario adds a narrow `rpi5_local_echo_command` proof harness over the
+  accepted command-loop feature. The accepted transcript prints `hello`, the
+  proof summary records `typed_command=echo hello`, and the final
+  classification is `pi5-local-echo-command-complete` with
+  `rpi5-local-echo-command-proof: PASS`.
+- Evidence level: serialized Pi 5 serial hardware boot/output, TFTP fetch, and
+  restore proof retained under
+  tasks/evidence/2026-05-31-pi5-local-echo-command-proof/local2-clean-candidate/.
+  The accepted summary is proof-result-local2.txt. The candidate archive digest
+  is 1ec5389c84e3a779ef1d98c5b664b3771947c8415fd02ee731f2cbfbafa646d4,
+  with kernel digest cc80d0bb12d2f98a889ad5ec8de21119d2ba16031b4015c3b81bfcef958d5d4e
+  and two fresh 98664-byte da591740/kernel_2712.img TFTP fetches.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test --quiet passed; static archive/image review passed; serialized Pi 5
+  hardware proof passed; restore proof returned the prior accepted boot tree
+  hash a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10;
+  git diff --check passed; mdbook build passed; git diff --cached --check
+  passed before commit.
+- Consequences: The local command-loop feature now has both QEMU/substitute and
+  Pi 5 hardware evidence for the first simple argument-bearing built-in over
+  descriptor-backed stdin/stdout. Full userspace shell behavior, process
+  lifecycle, filesystem-backed commands, broad POSIX stdio/read readiness,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
+  policy remain blocked until later explicit tasks accept them.
+
 ## 2026-05-30 - Phase 8 Live Address-Space Activation Source Inventory Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 live address-space

@@ -1,0 +1,16 @@
+target/rpi5-local-echo-command-boot-tree-local2/bcm2712-rpi-5-b.dtb
+target/rpi5-local-echo-command-boot-tree-local2/cmdline.txt
+target/rpi5-local-echo-command-boot-tree-local2/config.txt
+target/rpi5-local-echo-command-boot-tree-local2/da591740/bcm2712-rpi-5-b.dtb
+target/rpi5-local-echo-command-boot-tree-local2/da591740/cmdline.txt
+target/rpi5-local-echo-command-boot-tree-local2/da591740/config.txt
+target/rpi5-local-echo-command-boot-tree-local2/da591740/kernel8.img
+target/rpi5-local-echo-command-boot-tree-local2/da591740/kernel_2712.img
+target/rpi5-local-echo-command-boot-tree-local2/da591740/overlays/bcm2712d0.dtbo
+target/rpi5-local-echo-command-boot-tree-local2/da591740/overlays/overlay_map.dtb
+target/rpi5-local-echo-command-boot-tree-local2/da591740/overlays/uart0-pi5.dtbo
+target/rpi5-local-echo-command-boot-tree-local2/kernel8.img
+target/rpi5-local-echo-command-boot-tree-local2/kernel_2712.img
+target/rpi5-local-echo-command-boot-tree-local2/overlays/bcm2712d0.dtbo
+target/rpi5-local-echo-command-boot-tree-local2/overlays/overlay_map.dtb
+target/rpi5-local-echo-command-boot-tree-local2/overlays/uart0-pi5.dtbo

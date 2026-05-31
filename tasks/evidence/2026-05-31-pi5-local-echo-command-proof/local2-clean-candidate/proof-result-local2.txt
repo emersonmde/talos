@@ -1,0 +1,19 @@
+classification=accepted
+evidence_dir=tasks/evidence/2026-05-31-pi5-local-echo-command-proof/local2-clean-candidate
+candidate_archive=1ec5389c84e3a779ef1d98c5b664b3771947c8415fd02ee731f2cbfbafa646d4
+candidate_kernel=cc80d0bb12d2f98a889ad5ec8de21119d2ba16031b4015c3b81bfcef958d5d4e
+candidate_kernel_size=98664
+fresh_serial_cursor=3549504
+tftp_cursor=3931521
+typed_command=echo hello
+serial_write={"ok":true,"bytes":11,"action":"serial write"}
+kernel_fetch=served	da591740/kernel_2712.img	98664;served	da591740/kernel_2712.img	98664;
+restore_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+--- accepted serial markers ---
+rpi5-local-echo-command-proof: start command-count=1 backend=runtime-console0/bcm2712-uart10-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed descriptor-backed-input=true descriptor-backed-output=true
+talos> raw-bytes=11 truncated=false controls=0
+hello
+talos> 
+rpi5-local-echo-command-proof: ready-for-next prompt=true
+rpi5-local-echo-command-proof: final participants=1 expected=1 errors=0 classification=pi5-local-echo-command-complete
+rpi5-local-echo-command-proof: PASS

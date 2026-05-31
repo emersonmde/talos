@@ -1,0 +1,14 @@
+classification=accepted
+evidence_dir=tasks/evidence/2026-05-31-pi5-local-echo-command-proof/local1-candidate
+candidate_archive=83614657b0ac5c5d959df4b0ab25a0ed5e94d198c2407c32fb035991ab7f3703
+candidate_kernel=351a09aecf9e7e8dc9c887f0dbeed12b4200818ec6d61a970e9608ca275c3b6f
+candidate_kernel_size=351a09aecf9e7e8dc9c887f0dbeed12b4200818ec6d61a970e9608ca275c3b6f
+fresh_serial_cursor=3538462
+tftp_cursor=3930170
+kernel_fetch=
+restore_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+--- accepted markers ---
+rpi5-local-echo-command-proof: start command-count=1 backend=runtime-console0/bcm2712-uart10-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed descriptor-backed-input=true descriptor-backed-output=true
+rpi5-local-echo-command-proof: ready-for-next prompt=true
+rpi5-local-echo-command-proof: final participants=1 expected=1 errors=0 classification=pi5-local-echo-command-complete
+rpi5-local-echo-command-proof: PASS
