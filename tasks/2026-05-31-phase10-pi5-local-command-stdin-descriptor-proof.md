@@ -90,8 +90,9 @@ filesystem command behavior, networking, SSH, or broad POSIX read readiness.
   available on PATH.
 - static inspection: git diff --check passed.
 - documentation: mdbook build passed.
-- staged whitespace inspection: pending before commit.
+- staged whitespace inspection: git diff --cached --check passed before
+  implementation/evidence commit.
 
 ## Commit
 
-Pending.
+Implementation, documentation, and evidence commit: 1b2ab4e.
