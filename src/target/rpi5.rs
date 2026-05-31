@@ -7303,6 +7303,10 @@ pub fn run_local_serial_command_loop_proof() -> bool {
             && result.response_lines() == 1
         {
             replay_visible_echo_response_for_pi5_proof();
+        } else if result.status() == crate::local_command_loop::LocalCommandStatus::LineCanceled
+            && result.response_lines() == 1
+        {
+            replay_visible_line_cancel_response_for_pi5_proof();
         }
 
         if !expected_local_command_loop_dispatch(
@@ -7385,6 +7389,12 @@ fn replay_visible_echo_response_for_pi5_proof() {
 ))]
 fn replay_visible_pwd_response_for_pi5_proof() {
     crate::println!("/");
+    wait_uart10_empty_early_phase();
+}
+
+#[cfg(talos_boot_scenario = "rpi5_local_line_cancel")]
+fn replay_visible_line_cancel_response_for_pi5_proof() {
+    crate::println!("talos: line-canceled");
     wait_uart10_empty_early_phase();
 }
 
