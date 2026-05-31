@@ -170,6 +170,7 @@
 - [Phase 8 Live Translation-Register Activation Source Inventory](project/phase8-live-translation-register-activation-source-inventory.md)
 - [Phase 8 Live Translation-Register Activation Contract](project/phase8-live-translation-register-activation-contract.md)
 - [Phase 8 QEMU Live Translation-Register Activation Smoke Plan](project/phase8-qemu-live-translation-register-activation-smoke-plan.md)
+- [Phase 10 Local Serial Command Loop Closeout Checkpoint](project/phase10-local-serial-command-loop-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

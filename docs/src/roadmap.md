@@ -3724,7 +3724,11 @@ and proves the physical \`bogus\` input, Enter dispatch, visible
 unknown-command response, next prompt, and
 pi5-local-serial-command-loop-complete PASS path. This is not accepted
 userspace shell execution, descriptor-backed filesystem commands, networking,
-or SSH.
+or SSH. The closeout checkpoint records that no explicit queued follow-up task
+remains; supervisor planning is required to define the next single feature-led
+Phase 10 task, likely moving the same user-visible command-loop interaction
+toward descriptor-backed stdin/stdout while keeping old Phase 8 proof-only work
+paused unless it directly unblocks local interactivity.
 
 Milestone 10.1: Local Shell
 

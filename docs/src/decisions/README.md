@@ -9060,6 +9060,39 @@ ADR template:
   networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
   policy remain blocked until later explicit tasks accept them.
 
+## 2026-05-31 - Phase 10 Local Serial Command Loop Closeout Accepted
+
+- Status: accepted as the documentation-only closeout checkpoint for the
+  first feature-led Phase 10 local serial interactivity slice. No Rust or
+  assembly behavior changed, no QEMU scenario was rerun, no Pi 5 hardware
+  action occurred, and hardwareTestLock remained unlocked/restored and unused.
+- Context: The command-loop core and Pi 5 proof are both accepted. Talos now
+  has QEMU/substitute evidence for help, empty input, and unknown-command
+  dispatch, plus serialized Pi 5 hardware evidence for physical bogus input,
+  Enter dispatch, visible unknown-command response, next prompt, and PASS.
+- Decision: Accept
+  phase10-local-serial-command-loop-closeout-checkpoint-20260531. The accepted
+  frontier is a bounded local command-loop boundary above runtime-console0 and
+  the canonical-lite TTY receive path: prompt, completed serial line, dispatch,
+  visible response, and next-prompt readiness. Current built-ins remain
+  temporary kernel-backed behavior, not userspace shell execution.
+- Evidence level: static documentation inspection of accepted commits
+  32be75b9471772aa7b2f53e7c2e8c5932015b17c and edb9b21 plus retained
+  QEMU/substitute evidence at
+  tasks/evidence/2026-05-31-qemu-local-serial-command-loop-core/qemu-local-serial-command-loop-smoke.log
+  and retained Pi 5 hardware evidence at
+  tasks/evidence/2026-05-31-pi5-local-serial-command-loop-proof/local6-clean-candidate/serial-transcript.txt.
+- Validation: git diff --check passed; mdbook build passed; git diff --cached
+  --check passed before commit.
+- Consequences: No explicit queued follow-up task remains. Durable supervisor
+  state is set to planningNeeded=true because the next Phase 10 feature step
+  needs supervisor decomposition with explicit scope, non-goals, dependencies,
+  acceptance criteria, gates, docs, and evidence. Likely planning should move
+  the accepted command-loop interaction toward descriptor-backed stdin/stdout
+  while preserving visible serial behavior; full shell execution, process
+  spawning, filesystem-backed commands, networking, SSH, and resumed Phase 8
+  proof-only work remain blocked until separate feature-led tasks accept them.
+
 ## 2026-05-30 - Phase 8 Initial User Stack Closeout Checkpoint Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 initial user stack
