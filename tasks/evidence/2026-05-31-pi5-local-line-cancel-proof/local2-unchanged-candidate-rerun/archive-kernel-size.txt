@@ -1,0 +1,3 @@
+ 99520 target/rpi5-local-line-cancel-boot-tree-local1/kernel_2712.img
+ 99520 target/rpi5-local-line-cancel-boot-tree-local1/da591740/kernel_2712.img
+199040 total

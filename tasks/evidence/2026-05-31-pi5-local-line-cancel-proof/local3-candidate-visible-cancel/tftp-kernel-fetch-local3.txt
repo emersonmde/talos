@@ -1,0 +1,4 @@
+ 20.10 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740/config.txt
+ 20.13 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740/config.txt
+ 20.20 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740/pieeprom.sig
+ 20.24 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740//config.txt

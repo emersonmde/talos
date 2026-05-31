@@ -9370,6 +9370,42 @@ ADR template:
   SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
   deferred to explicit later tasks.
 
+## 2026-05-31 - Phase 10 Pi 5 Local Line-Cancel Proof Accepted
+
+- Status: accepted as the serialized Raspberry Pi 5 proof for the Ctrl-C local
+  line-cancel feature. No POSIX signal delivery, process interruption,
+  userspace shell execution, process spawning, job control, terminal sessions,
+  termios, filesystem-backed command lookup, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, or DMA/cache-driver policy is accepted here.
+- Context: The QEMU/substitute line-cancel core accepted kernel-local Ctrl-C
+  prompt cancellation. The next bounded feature-led step was to prove the same
+  visible interaction on physical serial hardware.
+- Decision: Accept phase10-pi5-local-line-cancel-proof-20260531. The Pi 5
+  proof harness now supports rpi5_local_line_cancel; the retained local3
+  transcript shows partial input canceled by Ctrl-C, visible
+  talos: line-canceled, following pwd, visible slash output, descriptor-backed
+  input/output markers, ready prompt, final pi5-local-line-cancel-complete
+  classification, and rpi5-local-line-cancel-proof: PASS.
+- Evidence level: serialized Pi 5 hardware boot/output with retained archive,
+  TFTP, serial, and restore evidence at
+  tasks/evidence/2026-05-31-pi5-local-line-cancel-proof/local3-candidate-visible-cancel/.
+  Inconclusive-run triage retained candidate identity, fresh serial/TFTP
+  evidence, a restored-tree known-good control PASS, and an unchanged candidate
+  rerun before the proof-local visibility adjustment.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test --quiet passed; scripts/qemu-local-line-cancel-smoke.sh --quiet passed;
+  scripts/qemu-local-line-editing-smoke.sh --quiet passed; static
+  archive/image review passed; serialized Pi 5 local3 proof passed; restore
+  proof returned to tree hash
+  a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10; git
+  diff --check passed; mdbook build passed; git diff --cached --check passed
+  before commit.
+- Consequences: Talos now has physical Pi 5 evidence for descriptor-backed
+  Ctrl-C prompt cancellation followed by normal command dispatch. The accepted
+  frontier remains kernel-backed local prompt interactivity only; POSIX signal
+  delivery, userspace process interruption, terminal/session semantics,
+  filesystem-backed shell behavior, networking, and SSH remain deferred.
+
 ## 2026-05-30 - Phase 8 Live Address-Space Activation Source Inventory Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 live address-space

@@ -1,0 +1,12 @@
+source_commit=cb2a362712f9e8b803d4cd4e0aa98593bde2b49e
+archive=/opt/strider/openclaw/current/workspace/projects/talos/target/talos-rpi5-local-line-cancel-local1-boot.tar.gz
+archive_sha256=7a9fab3b3fe5260d05d63cd93837eaaef77ca28db3f680a88409df4ff69642ea
+kernel_sha256=9093feb3880324de9ac216bf85f5665c6d422f4861fd41d20e08b725ee544476
+kernel_size=99520
+fresh_serial_cursor=3610872
+snapshot=pre-pi5-local-line-cancel-local1-20260531T190546Z
+published_tree_hash=348876971b93a3e1c0d0bbae2d6c71e396d55f09df88bf6441ac59ac206b8378
+published_kernel_size=99520
+tftp_kernel_fetches=0
+result=INCONCLUSIVE
+reason=no candidate proof prompt or PASS in fresh serial window before observe timeout

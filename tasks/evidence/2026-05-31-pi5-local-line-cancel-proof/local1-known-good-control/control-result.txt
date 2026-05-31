@@ -1,0 +1,5 @@
+control=restored-accepted-boot-tree-rerun
+restored_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+post_control_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+found_pass=1
+result=PASS

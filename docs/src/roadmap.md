@@ -3813,6 +3813,21 @@ hardware proof, networking, or SSH is accepted by this core task. The next
 feature-led step is the already queued serialized Pi 5 line-cancel proof if
 its dependencies and hardwareTestLock state remain satisfied.
 
+The serialized Pi 5 Ctrl-C line-cancel proof is now accepted. Retained physical
+evidence is at
+tasks/evidence/2026-05-31-pi5-local-line-cancel-proof/local3-candidate-visible-cancel/serial-transcript-through-pass.txt
+and summarized in
+tasks/evidence/2026-05-31-pi5-local-line-cancel-proof/local3-candidate-visible-cancel/proof-result-local3.txt.
+The accepted transcript shows partial input canceled with Ctrl-C, visible
+talos: line-canceled, a fresh prompt, following pwd, visible slash output,
+descriptor-backed input/output markers, next-prompt readiness, final
+pi5-local-line-cancel-complete classification, and
+rpi5-local-line-cancel-proof: PASS. The proof restored the prior accepted boot
+tree hash after the run. This still does not accept POSIX signal delivery,
+process interruption, job control, termios, userspace shell execution,
+filesystem-backed command lookup, networking, or SSH. The next feature-led step
+should be a closeout checkpoint for the accepted line-cancel frontier.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.

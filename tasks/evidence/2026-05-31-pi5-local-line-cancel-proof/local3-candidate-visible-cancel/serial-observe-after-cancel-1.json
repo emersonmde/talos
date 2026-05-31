@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "Y2FuY2VsZWQgcmVzcG9uc2VzPTEgcmF3LWJ5dGVzPTYgdHJ1bmNhdGVkPWZhbHNlIGNvbnRyb2xzPTENCnJwaTUtbG9jYWwtbGluZS1jYW5jZWwtcHJvb2Y6IGVkaXQgY29tbWFuZD0wIGJhY2tzcGFjZXM9MCBkZWxldGVzPTANCnRhbG9zOiBsaW5lLWNhbmNlbGVkDQpycGk1LWxvY2FsLWxpbmUtY2FuY2VsLXByb29mOiByZWFkeSBjb21tYW5kPTENCnRhbG9zPiA=",
+  "bytes": 206,
+  "cursor_end": 3671330,
+  "cursor_start": 3671124,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "canceled responses=1 raw-bytes=6 truncated=false controls=1\r\nrpi5-local-line-cancel-proof: edit command=0 backspaces=0 deletes=0\r\ntalos: line-canceled\r\nrpi5-local-line-cancel-proof: ready command=1\r\ntalos> ",
+  "truncated": false
+}
