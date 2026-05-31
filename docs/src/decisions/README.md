@@ -12,6 +12,47 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-31 - Phase 8 Kernel-Half Descriptor-Image Contract Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 kernel-half
+  descriptor-image contract. No Rust behavior, assembly behavior, QEMU
+  execution, Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, live TTBR0_EL1/TTBR1_EL1/TCR_EL1/MAIR_EL1/SCTLR_EL1 mutation,
+  ASID allocation, TLB mutation, activation DSB/ISB, lower-EL ERET, scheduler
+  runnable publication, process lifecycle, shell behavior, descriptor-backed
+  filesystem syscalls, writable filesystem, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, or DMA/cache-driver policy was added.
+- Context: The accepted descriptor-image source inventory made the next
+  boundary objective: a non-installed TTBR1 shared privileged kernel-root
+  descriptor image for the accepted KernelHalfReachabilityPlan, below any live
+  translation-register mutation, lower-EL launch, or scheduler publication.
+- Decision: Accept phase8-kernel-half-descriptor-image-contract-20260531. The
+  contract selects KernelHalfDescriptorImage boundary identity
+  phase8-kernel-half-descriptor-image-v1 and policy
+  ttbr1-shared-privileged-kernel-root-descriptor-image-v1, defines accepted
+  inputs, generated descriptor-image records, privileged-only normal/device
+  descriptor attributes, deterministic rejection cases, all-or-nothing
+  ownership/rollback, idempotent teardown, and zero live activation side
+  effects.
+- Evidence level: static documentation/source inspection of accepted
+  descriptor-image inventory commit 6cafdd8, kernel-half reachability
+  closeout/contract/smoke plan, retained reachability QEMU/substitute smoke
+  evidence, process page-table materialization precedent, live activation
+  docs, AArch64 descriptor vocabulary, linker ranges, and source owners for
+  memory/vector/UART/MMIO/scheduler/fault-reporting boundaries.
+- Validation: git status --short before edits was clean except durable
+  supervisor state promotion outside the Talos repo; git diff --check passed;
+  mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The next objective task is the queued
+  phase8-qemu-kernel-half-descriptor-image-smoke-plan-20260531 if
+  dependencies remain satisfied. Kernel-half descriptor-image implementation,
+  live translation-register mutation, ASID/TLB/barrier activation, lower-EL
+  ERET, scheduler runnable publication, process lifecycle, startup ABI
+  expansion, descriptor-backed filesystem syscalls, Pi 5 hardware proof,
+  shell, networking, SSH, RP1/PCIe, UART interrupt ownership, and
+  DMA/cache-driver policy remain blocked until later explicit tasks accept
+  their contracts and gates.
+
 ## 2026-05-31 - Phase 8 Kernel-Half Descriptor-Image Source Inventory Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 kernel-half

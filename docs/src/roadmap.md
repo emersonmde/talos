@@ -370,6 +370,22 @@ privileged kernel-root descriptor image. Live register mutation, lower-EL
 launch, scheduler publication, process lifecycle, filesystem syscall
 expansion, Pi 5 hardware proof, networking, and SSH remain blocked. The next
 bounded task is phase8-kernel-half-descriptor-image-contract-20260531.
+The kernel-half descriptor-image contract is now accepted. It selects a
+non-installed KernelHalfDescriptorImage boundary with identity
+phase8-kernel-half-descriptor-image-v1 and policy
+ttbr1-shared-privileged-kernel-root-descriptor-image-v1. The contract consumes
+the accepted KernelHalfReachabilityPlan, TTBR0 materialized-root provenance,
+linker-owned kernel ranges, AArch64 descriptor vocabulary, and source-owner
+coverage for kernel text/rodata/data/bss, vectors, stack, heap, page-frame
+metadata, UART/MMIO diagnostics, scheduler state, runtime console, and
+panic/fault reporting. It requires privileged-only descriptor attributes,
+deterministic no-partial-image errors, explicit model-owned root/table lease
+ownership, idempotent teardown, and zero live TTBR/TCR/MAIR/SCTLR/TLB/barrier,
+lower-EL, scheduler, process-table, and descriptor-table side effects. Live
+register mutation, ASID/TLB/barrier activation, lower-EL ERET, scheduler
+publication, process lifecycle, filesystem syscall expansion, Pi 5 hardware
+proof, shell behavior, networking, and SSH remain blocked. The next bounded
+task is phase8-qemu-kernel-half-descriptor-image-smoke-plan-20260531.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -3290,6 +3306,19 @@ Milestone 8.3: Program Loader
   scheduler publication, process lifecycle, filesystem syscall expansion,
   Pi 5 hardware proof, networking, and SSH remain blocked. The next bounded
   task is phase8-kernel-half-descriptor-image-contract-20260531.
+- Phase 8 kernel-half descriptor-image contract is accepted. It selects the
+  non-installed KernelHalfDescriptorImage boundary
+  phase8-kernel-half-descriptor-image-v1 for the TTBR1 shared privileged
+  kernel-root policy
+  ttbr1-shared-privileged-kernel-root-descriptor-image-v1. It defines accepted
+  inputs, generated image/descriptor/coverage records, privileged-only normal
+  and device descriptor attributes, deterministic rejection cases,
+  all-or-nothing construction, idempotent teardown, and zero live activation
+  side effects. Live register mutation, ASID/TLB/barrier activation,
+  lower-EL ERET, scheduler publication, process lifecycle, filesystem syscall
+  expansion, Pi 5 hardware proof, shell behavior, networking, and SSH remain
+  blocked. The next bounded task is
+  phase8-qemu-kernel-half-descriptor-image-smoke-plan-20260531.
 
 Acceptance criteria:
 
