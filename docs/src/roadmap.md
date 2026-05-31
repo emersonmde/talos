@@ -3826,7 +3826,21 @@ rpi5-local-line-cancel-proof: PASS. The proof restored the prior accepted boot
 tree hash after the run. This still does not accept POSIX signal delivery,
 process interruption, job control, termios, userspace shell execution,
 filesystem-backed command lookup, networking, or SSH. The next feature-led step
-should be a closeout checkpoint for the accepted line-cancel frontier.
+was the closeout checkpoint for the accepted line-cancel frontier.
+
+The local line-cancel closeout checkpoint is now accepted and records the
+current local interactivity frontier: serial prompt input through
+fd0/runtime-console0, Ctrl-C prompt-local cancellation before dispatch,
+visible 'talos: line-canceled', fresh prompt readiness, following 'pwd'
+dispatch through descriptor-backed stdout, visible '/' output, and next-prompt
+readiness. This remains a kernel-backed local prompt path only: POSIX signal
+delivery, process interruption, terminal/session semantics, termios, job
+control, history, userspace shell execution, process lifecycle,
+filesystem-backed commands, 'cd', path traversal, networking, SSH, RP1/PCIe,
+UART interrupt ownership, and DMA/cache-driver policy remain blocked. The
+checkpoint recommends a bounded Ctrl-U prompt-local line-kill feature as the
+next smallest Phase 10 local interactivity slice; old Phase 8 proof-only work
+remains paused unless it directly unblocks local interactivity.
 
 Milestone 10.1: Local Shell
 
