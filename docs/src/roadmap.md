@@ -473,6 +473,21 @@ active-root descriptor copy, ASID/TLB/barrier activation, lower-EL ERET,
 scheduler publication, process lifecycle, filesystem syscall expansion,
 Pi 5 proof, shell behavior, networking, and SSH remain blocked. The next
 bounded task is phase8-qemu-live-descriptor-image-installation-smoke-plan-20260531.
+The QEMU/substitute live descriptor-image installation smoke plan is now
+accepted. It defines qemu_live_descriptor_image_installation_smoke as the
+first evidence boundary for the accepted model-level installation-ready
+binding, with retained evidence at
+tasks/evidence/2026-05-31-qemu-live-descriptor-image-installation-smoke-core/qemu-live-descriptor-image-installation-smoke.log,
+classification qemu-live-descriptor-image-installation-smoke-complete, and
+PASS vocabulary. The smoke must prove copied descriptor-image and activation
+lineage, TTBR0/TTBR1 provenance without register writes, preserved
+kernel-half coverage/permissions/diagnostics, installation-ready binding,
+rollback/teardown, deterministic no-partial-install rejection, and zero live
+side effects. The next bounded task is
+phase8-live-descriptor-image-installation-core-20260531. Live register
+mutation, active-root descriptor copy, ASID/TLB/barrier activation, lower-EL
+ERET, scheduler publication, process lifecycle, filesystem syscall expansion,
+Pi 5 proof, shell behavior, networking, and SSH remain blocked.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -3482,6 +3497,21 @@ Milestone 8.3: Program Loader
   filesystem syscall expansion, Pi 5 proof, shell behavior, networking, and
   SSH remain blocked. The next bounded documentation-only task is
   phase8-qemu-live-descriptor-image-installation-smoke-plan-20260531.
+- Phase 8 QEMU/substitute live descriptor-image installation smoke plan is
+  accepted. It defines qemu_live_descriptor_image_installation_smoke, fixture
+  identity phase8-program-loader-elf64-aarch64-v1, descriptor-image boundary
+  phase8-kernel-half-descriptor-image-v1, installation boundary
+  phase8-live-descriptor-image-installation-v1, retained evidence path
+  tasks/evidence/2026-05-31-qemu-live-descriptor-image-installation-smoke-core/qemu-live-descriptor-image-installation-smoke.log,
+  classification qemu-live-descriptor-image-installation-smoke-complete, PASS
+  vocabulary, installation-ready binding success observations,
+  deterministic no-partial-install/no-live-state-mutation rejection cases,
+  teardown idempotence, zero live side effects, and conditional regression
+  gates. The next bounded implementation task is
+  phase8-live-descriptor-image-installation-core-20260531. Live register
+  mutation, active-root descriptor copy, ASID/TLB/barrier activation, lower-EL
+  ERET, scheduler publication, process lifecycle, filesystem syscall
+  expansion, Pi 5 proof, shell behavior, networking, and SSH remain blocked.
 
 Acceptance criteria:
 

@@ -12,6 +12,49 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-31 - Phase 8 QEMU Live Descriptor-Image Installation Smoke Plan Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 QEMU/substitute
+  smoke plan for the live descriptor-image installation frontier. No Rust
+  behavior, assembly behavior, QEMU execution, Pi 5 hardware run, boot archive
+  publication, hardware-lock acquisition, live TTBR0_EL1/TTBR1_EL1/TCR_EL1/
+  MAIR_EL1/SCTLR_EL1 mutation, ASID allocation, live TLB mutation, activation
+  DSB/ISB, lower-EL ERET, scheduler runnable publication, process lifecycle,
+  shell behavior, descriptor-backed filesystem syscalls, writable filesystem,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver
+  policy was added.
+- Context: The accepted live descriptor-image installation contract selected a
+  model-level installation-ready activation binding between the accepted
+  non-installed KernelHalfDescriptorImage and the accepted
+  LiveAddressSpaceActivationPlan, below any live translation-register
+  mutation.
+- Decision: Accept
+  phase8-qemu-live-descriptor-image-installation-smoke-plan-20260531. The
+  plan defines qemu_live_descriptor_image_installation_smoke, retained
+  evidence path
+  tasks/evidence/2026-05-31-qemu-live-descriptor-image-installation-smoke-core/qemu-live-descriptor-image-installation-smoke.log,
+  classification qemu-live-descriptor-image-installation-smoke-complete, and
+  PASS vocabulary. It requires copied descriptor-image/activation lineage,
+  TTBR0/TTBR1 provenance without register writes, preserved
+  coverage/permissions/diagnostics, installation-ready binding observations,
+  deterministic no-partial-install rejection, idempotent teardown, and zero
+  live side effects.
+- Evidence level: static documentation inspection of the accepted live
+  descriptor-image installation contract/source inventory, adjacent Phase 8
+  contracts and QEMU/substitute smoke-plan patterns, roadmap, SUMMARY, and
+  ADR index.
+- Validation: git status --short before edits was clean except durable
+  supervisor state promotion outside the Talos repo; git diff --check passed;
+  mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The next objective task is the queued
+  phase8-live-descriptor-image-installation-core-20260531 if dependencies
+  remain satisfied. Live register mutation, active-root descriptor copy,
+  ASID/TLB/barrier activation, lower-EL ERET, scheduler runnable publication,
+  process lifecycle, startup ABI expansion, descriptor-backed filesystem
+  syscalls, Pi 5 hardware proof, shell, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, and DMA/cache-driver policy remain blocked until later
+  explicit tasks accept their contracts and gates.
+
 ## 2026-05-31 - Phase 8 Live Descriptor-Image Installation Contract Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 contract for the
