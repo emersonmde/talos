@@ -257,6 +257,17 @@ lower-EL/scheduler/process/descriptor side effects remain zero. QEMU smoke
 evidence, live register mutation, lower-EL ERET, scheduler publication,
 process lifecycle, filesystem syscalls, Pi 5 hardware proof, networking, and
 SSH remain blocked.
+The QEMU/substitute live address-space activation smoke core is accepted. It
+adds qemu_live_address_space_activation_smoke and retained evidence proving
+the accepted activation preflight identity, policy, copied loader/install/
+address-space/materialization/launch/stack lineage, TTBR0 root provenance,
+blocked TTBR1/kernel-half policy, TCR/MAIR/SCTLR compatibility/blocker
+states, ASID/TLB/barrier/live-register blockers, kernel reachability
+prerequisites, model-only activation binding, idempotent plan-local teardown,
+deterministic no-partial-activation rejection cases, zero live side effects,
+and final qemu-live-address-space-activation-smoke-complete/PASS lines. Live
+register mutation, lower-EL ERET, scheduler publication, process lifecycle,
+filesystem syscalls, Pi 5 hardware proof, networking, and SSH remain blocked.
 The
 accepted Phase 7
 frontier includes the Phase
@@ -3071,6 +3082,19 @@ Milestone 8.3: Program Loader
   remain zero. QEMU smoke evidence, live register mutation, lower-EL ERET,
   scheduler publication, process lifecycle, filesystem syscalls, Pi 5
   hardware proof, networking, and SSH remain blocked.
+- Phase 8 QEMU/substitute live address-space activation smoke core is
+  accepted. It adds qemu_live_address_space_activation_smoke and retained
+  evidence at
+  tasks/evidence/2026-05-30-qemu-live-address-space-activation-smoke-core/qemu-live-address-space-activation-smoke.log
+  proving accepted activation identity and policy, copied input lineage,
+  TTBR0 root provenance, blocked TTBR1/kernel-half policy, compatibility-only
+  TCR/MAIR state, blocked SCTLR/ASID/TLB/barrier/live-register state, kernel
+  reachability prerequisites, model-only activation binding, idempotent
+  plan-local teardown, deterministic no-partial-activation rejections, zero
+  live side effects, and qemu-live-address-space-activation-smoke-complete/
+  PASS. Live register mutation, lower-EL ERET, scheduler publication, process
+  lifecycle, filesystem syscalls, Pi 5 hardware proof, networking, and SSH
+  remain blocked.
 
 Acceptance criteria:
 

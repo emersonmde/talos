@@ -635,7 +635,8 @@ impl ProcessPageTableMaterialization {
 
     #[cfg(any(
         talos_boot_scenario = "qemu_initial_process_launch_smoke",
-        talos_boot_scenario = "qemu_initial_user_stack_smoke"
+        talos_boot_scenario = "qemu_initial_user_stack_smoke",
+        talos_boot_scenario = "qemu_live_address_space_activation_smoke"
     ))]
     pub(crate) fn for_test_missing_descriptor(mut self, index: usize) -> Self {
         if index < MAX_PROCESS_INSTALL_PAGES {

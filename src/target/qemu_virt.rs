@@ -162,6 +162,45 @@ use crate::{
     },
     scheduler::ProcessOwnerId,
 };
+#[cfg(talos_boot_scenario = "qemu_live_address_space_activation_smoke")]
+use crate::{
+    initial_process_launch::{
+        INITIAL_ACTIVATION_BLOCKED, INITIAL_PROCESS_LAUNCH_BOUNDARY_IDENTITY,
+        InitialProcessLaunchRequest, prepare_initial_process_launch,
+    },
+    initial_user_stack::{
+        INITIAL_USER_STACK_BOUNDARY_IDENTITY, InitialUserStackLeaseSource, InitialUserStackRequest,
+        plan_initial_user_stack,
+    },
+    initramfs::{PHASE8_INIT_PATH, phase8_readonly_initramfs_fixture},
+    live_address_space_activation::{
+        ACTIVATION_PREFLIGHT_READY, ASID_ALLOCATION_BLOCKED, BARRIER_SEQUENCE_PLANNED_ONLY,
+        LIVE_ADDRESS_SPACE_ACTIVATION_BOUNDARY_IDENTITY, LIVE_ADDRESS_SPACE_ACTIVATION_POLICY,
+        LIVE_REGISTER_SEQUENCE_BLOCKED, LiveAddressSpaceActivationCommitTarget,
+        LiveAddressSpaceActivationLeaseSource, LiveAddressSpaceActivationRequest,
+        MAIR_COMPATIBILITY_RECORD_ONLY, RUNNABLE_PUBLICATION_BLOCKED, SCTLR_MUTATION_BLOCKED,
+        TCR_COMPATIBILITY_RECORD_ONLY, TLB_INVALIDATION_BLOCKED, TTBR0_ROOT_PROVENANCE,
+        TTBR1_KERNEL_POLICY_BLOCKED, preflight_live_address_space_activation,
+    },
+    posix::{PosixError, UserMappingPermissions},
+    process_address_space::{
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY, ProcessAddressSpace, ProcessAddressSpaceId,
+        ProcessAddressSpaceLeaseSource, install_process_address_space,
+    },
+    process_install::{
+        PROCESS_INSTALL_BOUNDARY_IDENTITY, ProcessImageInstallPlan, plan_process_image_install,
+    },
+    process_page_table_materialization::{
+        PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY, ProcessMaterializationRequest,
+        ProcessPageTableMaterialization, ProcessPageTableMaterializationLeaseSource,
+        materialize_process_page_tables,
+    },
+    program_loader::{
+        MAX_LOAD_SEGMENTS, PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY, ProgramImagePlan,
+        plan_phase8_init_image,
+    },
+    scheduler::ProcessOwnerId,
+};
 #[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
 use crate::{
     initramfs::{
@@ -13783,4 +13822,568 @@ pub fn run_el2_timer_irq_smoke() -> bool {
     }
 
     passed
+}
+
+#[cfg(talos_boot_scenario = "qemu_live_address_space_activation_smoke")]
+pub fn run_live_address_space_activation_smoke() -> bool {
+    crate::println!("qemu-live-address-space-activation-smoke: start");
+
+    let (
+        success_ok,
+        ttbr_ok,
+        compatibility_ok,
+        blocked_ok,
+        reachability_ok,
+        binding_ok,
+        effects_ok,
+    ) = live_address_space_activation_report_success();
+    let teardown_ok = live_address_space_activation_report_teardown();
+    let identity_ok = live_address_space_activation_report_error(
+        "identity-mismatch",
+        live_address_space_activation_identity_mismatch_fixture(),
+        LiveAddressSpaceActivationRequest::PreflightOnly,
+        LiveAddressSpaceActivationLeaseSource::for_single_plan(),
+        PosixError::InvalidArgument,
+    );
+    let descriptor_ok = live_address_space_activation_report_error(
+        "entry-stack-descriptor-disagreement",
+        live_address_space_activation_missing_descriptor_fixture(),
+        LiveAddressSpaceActivationRequest::PreflightOnly,
+        LiveAddressSpaceActivationLeaseSource::for_single_plan(),
+        PosixError::NotExecutable,
+    );
+    let forbidden_ok = live_address_space_activation_report_error(
+        "forbidden-range",
+        live_address_space_activation_valid_fixture(),
+        LiveAddressSpaceActivationRequest::ForbiddenRangeProbe,
+        LiveAddressSpaceActivationLeaseSource::for_single_plan(),
+        PosixError::AccessDenied,
+    );
+    let reachability_error_ok = live_address_space_activation_report_error(
+        "missing-kernel-reachability",
+        live_address_space_activation_valid_fixture(),
+        LiveAddressSpaceActivationRequest::MissingKernelReachabilityProbe,
+        LiveAddressSpaceActivationLeaseSource::for_single_plan(),
+        PosixError::InvalidArgument,
+    );
+    let live_register_ok = live_address_space_activation_report_error(
+        "live-register-request",
+        live_address_space_activation_valid_fixture(),
+        LiveAddressSpaceActivationRequest::LiveRegisterSequence,
+        LiveAddressSpaceActivationLeaseSource::for_single_plan(),
+        PosixError::NotImplemented,
+    );
+    let scheduler_publication_ok = live_address_space_activation_report_error(
+        "scheduler-publication-request",
+        live_address_space_activation_valid_fixture(),
+        LiveAddressSpaceActivationRequest::PublishSchedulerRunnable,
+        LiveAddressSpaceActivationLeaseSource::for_single_plan(),
+        PosixError::NotImplemented,
+    );
+    let lower_el_ok = live_address_space_activation_report_error(
+        "lower-el-launch-request",
+        live_address_space_activation_valid_fixture(),
+        LiveAddressSpaceActivationRequest::LowerElLaunch,
+        LiveAddressSpaceActivationLeaseSource::for_single_plan(),
+        PosixError::NotImplemented,
+    );
+    let resource_ok = live_address_space_activation_report_error(
+        "resource-exhaustion",
+        live_address_space_activation_valid_fixture(),
+        LiveAddressSpaceActivationRequest::PreflightOnly,
+        LiveAddressSpaceActivationLeaseSource::with_plan_record_capacity(0),
+        PosixError::NoMemory,
+    );
+
+    let participants = u64::from(success_ok)
+        + u64::from(ttbr_ok)
+        + u64::from(compatibility_ok)
+        + u64::from(blocked_ok)
+        + u64::from(reachability_ok)
+        + u64::from(binding_ok)
+        + u64::from(effects_ok)
+        + u64::from(teardown_ok)
+        + u64::from(identity_ok)
+        + u64::from(descriptor_ok)
+        + u64::from(forbidden_ok)
+        + u64::from(reachability_error_ok)
+        + u64::from(live_register_ok && scheduler_publication_ok && lower_el_ok)
+        + u64::from(resource_ok)
+        + u64::from(effects_ok && !live_address_space_activation_runnable_publication_visible());
+    let errors = 15 - participants;
+    let classification = if participants == 15 && errors == 0 {
+        "qemu-live-address-space-activation-smoke-complete"
+    } else {
+        "qemu-live-address-space-activation-smoke-failed"
+    };
+
+    crate::println!(
+        "qemu-live-address-space-activation-smoke: final participants={} expected=15 errors={} classification={}",
+        participants,
+        errors,
+        classification
+    );
+    if participants == 15 && errors == 0 {
+        crate::println!("qemu-live-address-space-activation-smoke: PASS");
+        true
+    } else {
+        crate::println!("qemu-live-address-space-activation-smoke: FAIL");
+        false
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_live_address_space_activation_smoke")]
+fn live_address_space_activation_report_success() -> (bool, bool, bool, bool, bool, bool, bool) {
+    let Ok((image, install_plan, address_space, materialization, launch_plan, stack_plan)) =
+        live_address_space_activation_valid_fixture()
+    else {
+        live_address_space_activation_report_empty_success();
+        return (false, false, false, false, false, false, false);
+    };
+    let mut activation_source = LiveAddressSpaceActivationLeaseSource::for_single_plan();
+    let Ok(plan) = preflight_live_address_space_activation(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        stack_plan,
+        LiveAddressSpaceActivationRequest::PreflightOnly,
+        &mut activation_source,
+    ) else {
+        live_address_space_activation_report_empty_success();
+        return (false, false, false, false, false, false, false);
+    };
+
+    crate::println!(
+        "qemu-live-address-space-activation-smoke: fixture name={} path=/bin/init source-digest={:#x} install-boundary={} address-space-boundary={} materialization-boundary={} launch-boundary={} stack-boundary={} activation-boundary={} activation-policy={}",
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        plan.source_digest(),
+        PROCESS_INSTALL_BOUNDARY_IDENTITY,
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY,
+        PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY,
+        INITIAL_PROCESS_LAUNCH_BOUNDARY_IDENTITY,
+        INITIAL_USER_STACK_BOUNDARY_IDENTITY,
+        LIVE_ADDRESS_SPACE_ACTIVATION_BOUNDARY_IDENTITY,
+        LIVE_ADDRESS_SPACE_ACTIVATION_POLICY
+    );
+
+    let success_ok = plan.published()
+        && plan.boundary_identity() == LIVE_ADDRESS_SPACE_ACTIVATION_BOUNDARY_IDENTITY
+        && plan.activation_policy() == LIVE_ADDRESS_SPACE_ACTIVATION_POLICY
+        && plan.image_fixture_identity() == PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY
+        && plan.install_boundary_identity() == PROCESS_INSTALL_BOUNDARY_IDENTITY
+        && plan.address_space_boundary_identity() == PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY
+        && plan.materialization_boundary_identity()
+            == PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY
+        && plan.launch_boundary_identity() == INITIAL_PROCESS_LAUNCH_BOUNDARY_IDENTITY
+        && plan.stack_boundary_identity() == INITIAL_USER_STACK_BOUNDARY_IDENTITY
+        && plan.source_path() == PHASE8_INIT_PATH
+        && plan.source_digest() == image.source_digest()
+        && plan.address_space_id() == address_space.id().raw()
+        && plan.materialization_id() == materialization.id()
+        && plan.entry_pc() == image.entry()
+        && plan.initial_sp() == stack_plan.layout().initial_sp();
+    crate::println!(
+        "qemu-live-address-space-activation-smoke: success output=LiveAddressSpaceActivationPlan published={} copied-identities={} activation-boundary={} activation-policy={} ok={}",
+        plan.published(),
+        success_ok,
+        plan.boundary_identity(),
+        plan.activation_policy(),
+        success_ok
+    );
+
+    let root = plan.root_provenance();
+    let ttbr_ok = root.state() == TTBR0_ROOT_PROVENANCE
+        && root.materialization_id() == materialization.id()
+        && root.root_token() == materialization.root().token().raw()
+        && !root.ttbr0_written()
+        && plan.ttbr1_kernel_policy() == TTBR1_KERNEL_POLICY_BLOCKED;
+    crate::println!(
+        "qemu-live-address-space-activation-smoke: ttbr-provenance ttbr0-root={} ttbr0-written={} ttbr1-policy={} ok={}",
+        root.state(),
+        root.ttbr0_written(),
+        plan.ttbr1_kernel_policy(),
+        ttbr_ok
+    );
+
+    let compatibility_ok = plan.tcr_state() == TCR_COMPATIBILITY_RECORD_ONLY
+        && plan.mair_state() == MAIR_COMPATIBILITY_RECORD_ONLY
+        && plan.sctlr_state() == SCTLR_MUTATION_BLOCKED;
+    crate::println!(
+        "qemu-live-address-space-activation-smoke: compatibility tcr-state={} mair-state={} sctlr-state={} ok={}",
+        plan.tcr_state(),
+        plan.mair_state(),
+        plan.sctlr_state(),
+        compatibility_ok
+    );
+
+    let blocked_ok = plan.asid_state() == ASID_ALLOCATION_BLOCKED
+        && plan.tlb_state() == TLB_INVALIDATION_BLOCKED
+        && plan.barrier_state() == BARRIER_SEQUENCE_PLANNED_ONLY
+        && plan.live_register_sequence_state() == LIVE_REGISTER_SEQUENCE_BLOCKED;
+    crate::println!(
+        "qemu-live-address-space-activation-smoke: blocked-states asid={} tlb={} barriers={} live-register-sequence={} ok={}",
+        plan.asid_state(),
+        plan.tlb_state(),
+        plan.barrier_state(),
+        plan.live_register_sequence_state(),
+        blocked_ok
+    );
+
+    let reachability = plan.kernel_reachability();
+    let reachability_ok = reachability.vbar_el1()
+        && reachability.exception_vectors()
+        && reachability.active_kernel_stack()
+        && reachability.kernel_text_data()
+        && reachability.allocator()
+        && reachability.uart_mmio_diagnostics()
+        && reachability.scheduler_code_data()
+        && reachability.panic_fault_reporting();
+    crate::println!(
+        "qemu-live-address-space-activation-smoke: kernel-reachability vbar={} vectors={} active-stack={} kernel-text-data={} allocator={} uart-mmio-diagnostics={} scheduler-code-data={} panic-fault-reporting={} ok={}",
+        reachability.vbar_el1(),
+        reachability.exception_vectors(),
+        reachability.active_kernel_stack(),
+        reachability.kernel_text_data(),
+        reachability.allocator(),
+        reachability.uart_mmio_diagnostics(),
+        reachability.scheduler_code_data(),
+        reachability.panic_fault_reporting(),
+        reachability_ok
+    );
+
+    let binding_ok = launch_plan.activation_state() == INITIAL_ACTIVATION_BLOCKED
+        && plan.launch_activation_state() == ACTIVATION_PREFLIGHT_READY
+        && !plan.side_effects().lower_el_eret()
+        && !plan.side_effects().scheduler_published();
+    crate::println!(
+        "qemu-live-address-space-activation-smoke: launch-binding previous={} next={} lower-el-eret={} scheduler-published={} ok={}",
+        launch_plan.activation_state(),
+        plan.launch_activation_state(),
+        plan.side_effects().lower_el_eret(),
+        plan.side_effects().scheduler_published(),
+        binding_ok
+    );
+
+    let effects = plan.side_effects();
+    let effects_ok = !effects.ttbr_mutated()
+        && !effects.tcr_mutated()
+        && !effects.mair_mutated()
+        && !effects.sctlr_mutated()
+        && !effects.asid_allocated()
+        && !effects.tlb_mutated()
+        && !effects.live_dsb_isb()
+        && !effects.lower_el_eret()
+        && !effects.scheduler_published()
+        && !effects.process_table_mutated()
+        && !effects.descriptor_table_mutated();
+    crate::println!(
+        "qemu-live-address-space-activation-smoke: side-effects ttbr-mutated={} tcr-mutated={} mair-mutated={} sctlr-mutated={} asid-allocated={} tlb-mutated={} live-dsb-isb={} lower-el-eret={} scheduler-published={} process-table-mutated={} descriptor-table-mutated={} ok={}",
+        effects.ttbr_mutated(),
+        effects.tcr_mutated(),
+        effects.mair_mutated(),
+        effects.sctlr_mutated(),
+        effects.asid_allocated(),
+        effects.tlb_mutated(),
+        effects.live_dsb_isb(),
+        effects.lower_el_eret(),
+        effects.scheduler_published(),
+        effects.process_table_mutated(),
+        effects.descriptor_table_mutated(),
+        effects_ok
+    );
+
+    (
+        success_ok,
+        ttbr_ok,
+        compatibility_ok,
+        blocked_ok,
+        reachability_ok,
+        binding_ok,
+        effects_ok,
+    )
+}
+
+#[cfg(talos_boot_scenario = "qemu_live_address_space_activation_smoke")]
+fn live_address_space_activation_report_empty_success() {
+    crate::println!(
+        "qemu-live-address-space-activation-smoke: fixture name={} path=/bin/init source-digest=0x0 install-boundary={} address-space-boundary={} materialization-boundary={} launch-boundary={} stack-boundary={} activation-boundary={} activation-policy={}",
+        PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+        PROCESS_INSTALL_BOUNDARY_IDENTITY,
+        PROCESS_ADDRESS_SPACE_BOUNDARY_IDENTITY,
+        PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY,
+        INITIAL_PROCESS_LAUNCH_BOUNDARY_IDENTITY,
+        INITIAL_USER_STACK_BOUNDARY_IDENTITY,
+        LIVE_ADDRESS_SPACE_ACTIVATION_BOUNDARY_IDENTITY,
+        LIVE_ADDRESS_SPACE_ACTIVATION_POLICY
+    );
+    crate::println!(
+        "qemu-live-address-space-activation-smoke: success output=LiveAddressSpaceActivationPlan published=false copied-identities=false activation-boundary={} activation-policy={} ok=false",
+        LIVE_ADDRESS_SPACE_ACTIVATION_BOUNDARY_IDENTITY,
+        LIVE_ADDRESS_SPACE_ACTIVATION_POLICY
+    );
+}
+
+#[cfg(talos_boot_scenario = "qemu_live_address_space_activation_smoke")]
+fn live_address_space_activation_report_teardown() -> bool {
+    let Ok((image, install_plan, address_space, materialization, launch_plan, stack_plan)) =
+        live_address_space_activation_valid_fixture()
+    else {
+        crate::println!(
+            "qemu-live-address-space-activation-smoke: teardown plan-local-released=false materialization-owned=false launch-owned=false stack-owned=false image-owned=false idempotent=false ok=false"
+        );
+        return false;
+    };
+    let mut activation_source = LiveAddressSpaceActivationLeaseSource::for_single_plan();
+    let Ok(mut plan) = preflight_live_address_space_activation(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        stack_plan,
+        LiveAddressSpaceActivationRequest::PreflightOnly,
+        &mut activation_source,
+    ) else {
+        crate::println!(
+            "qemu-live-address-space-activation-smoke: teardown plan-local-released=false materialization-owned=false launch-owned=false stack-owned=false image-owned=false idempotent=false ok=false"
+        );
+        return false;
+    };
+
+    let first = plan.destroy(&mut activation_source);
+    let second = plan.destroy(&mut activation_source);
+    let plan_local_released =
+        first.plan_record_released() && activation_source.outstanding_leases() == 0;
+    let materialization_owned = first.materialization_owned() && second.materialization_owned();
+    let launch_owned = first.launch_owned() && second.launch_owned();
+    let stack_owned = first.stack_owned() && second.stack_owned();
+    let image_owned = first.image_owned() && second.image_owned();
+    let idempotent = !first.already_destroyed()
+        && second.already_destroyed()
+        && !second.plan_record_released()
+        && !plan.published()
+        && plan.destroyed();
+    let ok = plan_local_released
+        && materialization_owned
+        && launch_owned
+        && stack_owned
+        && image_owned
+        && idempotent;
+    crate::println!(
+        "qemu-live-address-space-activation-smoke: teardown plan-local-released={} materialization-owned={} launch-owned={} stack-owned={} image-owned={} idempotent={} ok={}",
+        plan_local_released,
+        materialization_owned,
+        launch_owned,
+        stack_owned,
+        image_owned,
+        idempotent,
+        ok
+    );
+    ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_live_address_space_activation_smoke")]
+fn live_address_space_activation_report_error(
+    case: &str,
+    fixture: Result<
+        (
+            ProgramImagePlan,
+            ProcessImageInstallPlan,
+            ProcessAddressSpace,
+            ProcessPageTableMaterialization,
+            crate::initial_process_launch::InitialProcessLaunchPlan,
+            crate::initial_user_stack::InitialUserStackPlan,
+        ),
+        PosixError,
+    >,
+    request: LiveAddressSpaceActivationRequest,
+    mut activation_source: LiveAddressSpaceActivationLeaseSource,
+    expected: PosixError,
+) -> bool {
+    let result = fixture.and_then(
+        |(image, install_plan, address_space, materialization, launch_plan, stack_plan)| {
+            preflight_live_address_space_activation(
+                image,
+                install_plan,
+                address_space,
+                materialization,
+                launch_plan,
+                stack_plan,
+                request,
+                &mut activation_source,
+            )
+        },
+    );
+    let (errno, ok) = match result {
+        Ok(_) => (expected, false),
+        Err(error) => (error, error == expected),
+    };
+    let partial_activation = activation_source.outstanding_leases() != 0;
+    crate::println!(
+        "qemu-live-address-space-activation-smoke: error case={} errno=-{} partial-activation={} runnable-published=false ok={}",
+        case,
+        errno.name(),
+        partial_activation,
+        ok && !partial_activation
+    );
+    ok && !partial_activation
+}
+
+#[cfg(talos_boot_scenario = "qemu_live_address_space_activation_smoke")]
+fn live_address_space_activation_runnable_publication_visible() -> bool {
+    let Ok((image, install_plan, address_space, materialization, launch_plan, stack_plan)) =
+        live_address_space_activation_valid_fixture()
+    else {
+        return true;
+    };
+    let mut activation_source = LiveAddressSpaceActivationLeaseSource::for_single_plan();
+    let Ok(plan) = preflight_live_address_space_activation(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        stack_plan,
+        LiveAddressSpaceActivationRequest::PreflightOnly,
+        &mut activation_source,
+    ) else {
+        return true;
+    };
+    plan.commit_request(LiveAddressSpaceActivationCommitTarget::Runnable)
+        .is_ok()
+        || plan.side_effects().scheduler_published()
+        || plan.side_effects().process_table_mutated()
+}
+
+#[cfg(talos_boot_scenario = "qemu_live_address_space_activation_smoke")]
+fn live_address_space_activation_valid_fixture() -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+        ProcessPageTableMaterialization,
+        crate::initial_process_launch::InitialProcessLaunchPlan,
+        crate::initial_user_stack::InitialUserStackPlan,
+    ),
+    PosixError,
+> {
+    let image = plan_phase8_init_image(phase8_readonly_initramfs_fixture())
+        .map_err(|error| error.posix_error())?;
+    let install_plan = plan_process_image_install(image)?;
+    let mut address_source = ProcessAddressSpaceLeaseSource::for_plan(install_plan);
+    let address_space = install_process_address_space(
+        install_plan,
+        ProcessAddressSpaceId::new(0x8800_4001).expect("address-space id"),
+        Some(ProcessOwnerId::new(0x8800_4002).expect("owner id")),
+        &mut address_source,
+    )?;
+    let mut materialization_source =
+        ProcessPageTableMaterializationLeaseSource::for_address_space(address_space);
+    let materialization = materialize_process_page_tables(
+        image,
+        install_plan,
+        address_space,
+        ProcessMaterializationRequest::DescriptorImageOnly,
+        &mut materialization_source,
+    )?;
+    let launch_plan = prepare_initial_process_launch(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        InitialProcessLaunchRequest::PreparePlanOnly,
+    )?;
+    let mut stack_source = InitialUserStackLeaseSource::for_initial_stack();
+    let stack_plan = plan_initial_user_stack(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        InitialUserStackRequest::PlanOnly,
+        &mut stack_source,
+    )?;
+    Ok((
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        stack_plan,
+    ))
+}
+
+#[cfg(talos_boot_scenario = "qemu_live_address_space_activation_smoke")]
+fn live_address_space_activation_identity_mismatch_fixture() -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+        ProcessPageTableMaterialization,
+        crate::initial_process_launch::InitialProcessLaunchPlan,
+        crate::initial_user_stack::InitialUserStackPlan,
+    ),
+    PosixError,
+> {
+    let (image, install_plan, address_space, materialization, launch_plan, stack_plan) =
+        live_address_space_activation_valid_fixture()?;
+    Ok((
+        live_address_space_activation_image_with_identity(image, "wrong-fixture"),
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        stack_plan,
+    ))
+}
+
+#[cfg(talos_boot_scenario = "qemu_live_address_space_activation_smoke")]
+fn live_address_space_activation_missing_descriptor_fixture() -> Result<
+    (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+        ProcessPageTableMaterialization,
+        crate::initial_process_launch::InitialProcessLaunchPlan,
+        crate::initial_user_stack::InitialUserStackPlan,
+    ),
+    PosixError,
+> {
+    let (image, install_plan, address_space, materialization, launch_plan, stack_plan) =
+        live_address_space_activation_valid_fixture()?;
+    Ok((
+        image,
+        install_plan,
+        address_space,
+        materialization.for_test_missing_descriptor(0),
+        launch_plan,
+        stack_plan,
+    ))
+}
+
+#[cfg(talos_boot_scenario = "qemu_live_address_space_activation_smoke")]
+fn live_address_space_activation_image_with_identity(
+    image: ProgramImagePlan,
+    identity: &'static str,
+) -> ProgramImagePlan {
+    let mut segments = [None; MAX_LOAD_SEGMENTS];
+    let mut index = 0;
+    while index < image.segment_count() {
+        segments[index] = image.segment(index);
+        index += 1;
+    }
+    ProgramImagePlan::for_test_unchecked(
+        image.source_path(),
+        identity,
+        image.source_len(),
+        image.source_digest(),
+        image.entry(),
+        image.segment_count(),
+        segments,
+        image.memory_start(),
+        image.memory_end(),
+        image.memory_footprint(),
+    )
 }

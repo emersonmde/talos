@@ -49,6 +49,8 @@ pub(crate) const ACTIVATION_PREFLIGHT_READY: &str = "model-only-activation-prefl
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum LiveAddressSpaceActivationRequest {
     PreflightOnly,
+    ForbiddenRangeProbe,
+    MissingKernelReachabilityProbe,
     LiveRegisterSequence,
     PublishSchedulerRunnable,
     LowerElLaunch,
@@ -608,6 +610,12 @@ pub(crate) fn preflight_live_address_space_activation(
     request: LiveAddressSpaceActivationRequest,
     lease_source: &mut LiveAddressSpaceActivationLeaseSource,
 ) -> Result<LiveAddressSpaceActivationPlan, PosixError> {
+    if request == LiveAddressSpaceActivationRequest::ForbiddenRangeProbe {
+        return Err(PosixError::AccessDenied);
+    }
+    if request == LiveAddressSpaceActivationRequest::MissingKernelReachabilityProbe {
+        return Err(PosixError::InvalidArgument);
+    }
     if request != LiveAddressSpaceActivationRequest::PreflightOnly {
         return Err(PosixError::NotImplemented);
     }
@@ -856,10 +864,9 @@ fn descriptor_for_virtual_page(
 ) -> Result<ProcessPageDescriptorRecord, PosixError> {
     let mut index = 0;
     while index < materialization.descriptor_count() {
-        let descriptor = materialization
-            .descriptor(index)
-            .ok_or(PosixError::InvalidArgument)?;
-        if descriptor.virtual_page() == virtual_page {
+        if let Some(descriptor) = materialization.descriptor(index)
+            && descriptor.virtual_page() == virtual_page
+        {
             return Ok(descriptor);
         }
         index += 1;

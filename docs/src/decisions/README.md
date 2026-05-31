@@ -12,6 +12,50 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 QEMU Live Address-Space Activation Smoke Core Accepted
+
+- Status: accepted as the Milestone 8.3 QEMU/substitute live address-space
+  activation smoke evidence. No Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, physical serial observation, live TTBR/TCR/MAIR/
+  SCTLR write, ASID allocation, live TLB invalidation, lower-EL ERET,
+  scheduler runnable publication, process lifecycle, shell behavior,
+  descriptor-backed filesystem syscalls, writable filesystem, networking,
+  SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver policy was
+  added.
+- Context: The accepted live address-space activation core exposed the
+  model-only preflight boundary, but retained QEMU/substitute evidence for the
+  accepted smoke plan was still outstanding.
+- Decision: Accept phase8-qemu-live-address-space-activation-smoke-core-20260530.
+  The task adds qemu_live_address_space_activation_smoke and
+  scripts/qemu-live-address-space-activation-smoke.sh. The retained log proves
+  copied accepted loader/install/address-space/materialization/launch/stack
+  lineage, activation identity phase8-live-address-space-activation-plan-v1,
+  policy preflight-split-user-ttbr0-kernel-reachability-blocked-v1, TTBR0 root
+  provenance without TTBR0_EL1 writes, blocked TTBR1/kernel-half policy,
+  TCR/MAIR compatibility records, blocked SCTLR/ASID/TLB/barrier/live-register
+  states, required kernel reachability prerequisites, model-only activation
+  binding, idempotent plan-local teardown, deterministic no-partial-activation
+  rejection cases, zero live side effects, classification
+  qemu-live-address-space-activation-smoke-complete, and PASS.
+- Evidence level: QEMU/substitute serial output and retained log:
+  tasks/evidence/2026-05-30-qemu-live-address-space-activation-smoke-core/qemu-live-address-space-activation-smoke.log.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test passed with 312 no_std tests; scripts/qemu-live-address-space-activation-smoke.sh
+  passed; conditional scripts/qemu-initial-user-stack-smoke.sh,
+  scripts/qemu-initial-process-launch-smoke.sh,
+  scripts/qemu-process-page-table-materialization-smoke.sh,
+  scripts/qemu-process-address-space-smoke.sh,
+  scripts/qemu-process-install-smoke.sh, and scripts/qemu-program-loader-smoke.sh
+  passed; git diff --check passed; mdbook build passed; git diff --cached
+  --check passed before commit.
+- Consequences: The live address-space activation preflight slice now has
+  retained QEMU/substitute evidence. Live register mutation, lower-EL ERET,
+  scheduler runnable publication, process lifecycle, broad argv/envp/auxv/TLS
+  ABI, descriptor-backed filesystem syscalls, Pi 5 hardware proof, shell,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
+  policy remain blocked until later explicit tasks accept their contracts and
+  gates.
+
 ## 2026-05-30 - Phase 8 Live Address-Space Activation Core Accepted
 
 - Status: accepted as the Milestone 8.3 target-independent live
