@@ -268,6 +268,14 @@ deterministic no-partial-activation rejection cases, zero live side effects,
 and final qemu-live-address-space-activation-smoke-complete/PASS lines. Live
 register mutation, lower-EL ERET, scheduler publication, process lifecycle,
 filesystem syscalls, Pi 5 hardware proof, networking, and SSH remain blocked.
+The live address-space activation closeout checkpoint is now accepted. It
+reconciles the source inventory, contract, smoke plan, target-independent
+preflight core, retained QEMU/substitute smoke evidence, deferred surfaces,
+and residual risks. The accepted frontier remains a model-only
+LiveAddressSpaceActivationPlan below live register mutation, lower-EL ERET,
+and runnable publication. No explicit queued follow-up task remains;
+supervisor planning is required before the worker may promote another Phase
+8.3 task.
 The
 accepted Phase 7
 frontier includes the Phase

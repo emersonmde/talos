@@ -154,6 +154,7 @@
 - [Phase 8 Live Address-Space Activation Source Inventory](project/phase8-live-address-space-activation-source-inventory.md)
 - [Phase 8 Live Address-Space Activation Contract](project/phase8-live-address-space-activation-contract.md)
 - [Phase 8 QEMU Live Address-Space Activation Smoke Plan](project/phase8-qemu-live-address-space-activation-smoke-plan.md)
+- [Phase 8 Live Address-Space Activation Closeout Checkpoint](project/phase8-live-address-space-activation-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

@@ -12,6 +12,51 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-05-30 - Phase 8 Live Address-Space Activation Closeout Checkpoint Accepted
+
+- Status: accepted as the documentation-only Milestone 8.3 live address-space
+  activation closeout checkpoint. No Rust behavior, assembly behavior, QEMU
+  rerun, Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, TTBR/TCR/MAIR/SCTLR write, ASID allocation, TLB mutation,
+  lower-EL ERET, scheduler runnable publication, process lifecycle, shell
+  behavior, descriptor-backed filesystem syscall, writable filesystem,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache-driver
+  policy was added.
+- Context: The live address-space activation source inventory, contract,
+  smoke plan, core, and QEMU/substitute smoke evidence were accepted. A
+  closeout checkpoint was needed to reconcile the accepted preflight frontier
+  and deferred surfaces before any later Phase 8.3 task is selected.
+- Decision: Accept
+  phase8-live-address-space-activation-closeout-checkpoint-20260530. The
+  checkpoint records the accepted frontier as target-independent
+  LiveAddressSpaceActivationPlan construction plus retained QEMU/substitute
+  evidence for copied loader/install/address-space/materialization/launch/
+  stack lineage, activation identity
+  phase8-live-address-space-activation-plan-v1, policy
+  preflight-split-user-ttbr0-kernel-reachability-blocked-v1, TTBR0 root
+  provenance without TTBR0 writes, blocked TTBR1/kernel-half policy,
+  compatibility-only TCR/MAIR state, blocked SCTLR/ASID/TLB/barrier/
+  live-register state, kernel reachability prerequisites, model-only launch
+  binding, idempotent plan-local teardown, deterministic
+  no-partial-activation rejection, no-runnable-publication, zero live side
+  effects, qemu-live-address-space-activation-smoke-complete, and PASS.
+- Evidence level: static documentation inspection of accepted commits
+  7f64569, 89c624b, b8f403d, 1293377, and 1c441c3 plus retained
+  QEMU/substitute smoke evidence at
+  tasks/evidence/2026-05-30-qemu-live-address-space-activation-smoke-core/qemu-live-address-space-activation-smoke.log.
+- Validation: git status --short before edits was clean except durable
+  supervisor state promotion outside the Talos repo; git diff --check passed;
+  mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: No explicit queued follow-up task remains. Supervisor
+  planning is required before the worker may promote another Phase 8.3 task.
+  Live TTBR/TCR/MAIR/SCTLR mutation, accepted kernel-half mapping, ASID
+  allocation, live TLB invalidation, lower-EL ERET, scheduler runnable
+  publication, process lifecycle, broad argv/envp/auxv/TLS ABI,
+  descriptor-backed filesystem syscalls, Pi 5 hardware proof, shell,
+  networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache-driver
+  policy remain blocked until later explicit tasks accept their contracts and
+  gates.
+
 ## 2026-05-30 - Phase 8 QEMU Live Address-Space Activation Smoke Core Accepted
 
 - Status: accepted as the Milestone 8.3 QEMU/substitute live address-space
