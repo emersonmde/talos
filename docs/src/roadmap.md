@@ -3969,6 +3969,17 @@ shell execution, filesystem-backed commands, broad parser behavior, terminal
 sessions, networking, SSH, RP1/PCIe, UART interrupts, and DMA/cache policy
 remain deferred.
 
+The local help command closeout checkpoint is now accepted and records the
+current descriptor-backed serial command-loop frontier: 'help' dispatches
+through fd0/runtime-console0, prints accurate accepted command guidance through
+descriptor-backed stdout, and returns to a ready 'talos>' prompt in both
+QEMU/substitute and serialized Pi 5 evidence. The checkpoint keeps userspace
+shell execution, filesystem-backed commands, broad parser behavior, terminal
+sessions, networking, SSH, RP1/PCIe, UART interrupts, DMA/cache policy, and
+paused Phase 8 proof-only work deferred. No explicit queued task remains after
+this checkpoint; supervisor planning is required for the next smallest
+feature-led local interactivity task.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.

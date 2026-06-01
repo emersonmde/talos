@@ -179,6 +179,7 @@
 - [Phase 10 Local Line-Cancel Closeout Checkpoint](project/phase10-local-line-cancel-closeout-checkpoint.md)
 - [Phase 10 Local Line-Kill Closeout Checkpoint](project/phase10-local-line-kill-closeout-checkpoint.md)
 - [Phase 10 Local Literal Echo Closeout Checkpoint](project/phase10-local-literal-echo-closeout-checkpoint.md)
+- [Phase 10 Local Help Command Closeout Checkpoint](project/phase10-local-help-command-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture
