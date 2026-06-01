@@ -1,0 +1,7 @@
+ M build.rs
+ M src/target/rpi5.rs
+?? scripts/rpi5-local-ls-root-boot-tree.sh
+?? scripts/rpi5-local-ls-root-image.sh
+?? tasks/2026-06-01-phase10-pi5-local-ls-root-proof.md
+?? tasks/evidence/2026-06-01-pi5-local-ls-root-proof/
+?? tasks/evidence/2026-06-01-pi5-serial-command-response-control-discriminator/
