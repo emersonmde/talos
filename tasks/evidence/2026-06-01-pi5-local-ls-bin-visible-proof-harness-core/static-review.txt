@@ -1,0 +1,42 @@
+Phase 10 Pi 5 Local Ls Bin Visible Proof-Harness Core Static Review
+
+Task: phase10-local-ls-bin-pi5-visible-proof-harness-core-20260601
+
+Source inspection:
+- src/target/rpi5.rs adds an rpi5_local_ls_bin-only replay helper:
+  replay_visible_ls_bin_response_for_pi5_proof().
+- The helper prints only the already accepted ls /bin response text, init.
+- run_local_serial_command_loop_proof() calls that helper only after the
+  descriptor-backed command result reports:
+  line == b"ls /bin", status == Handled, and response_lines() == 1.
+- The same branch emits an ls-bin-observed marker with input='ls /bin',
+  entries='init', raw byte count, control count, and response count.
+
+Boundary:
+- No command-loop parser behavior changed.
+- No read-only initramfs fixture changed.
+- No general path, VFS, userspace, process, terminal/session, networking,
+  UART interrupt, RP1/PCIe, DMA, or cache-driver behavior changed.
+- hardwareTestLock remained unlocked/restored and unused.
+
+QEMU/substitute evidence:
+- tasks/evidence/2026-06-01-qemu-local-ls-bin-core/qemu-local-ls-bin-smoke.log
+- Result: qemu-local-ls-bin: PASS with visible talos> ls /bin, init,
+  descriptor-backed fd0/stdout markers, next-prompt readiness, and
+  qemu-local-ls-bin-complete.
+
+Pi 5 image build/review:
+- Built with scripts/rpi5-local-ls-bin-image.sh.
+- Image: target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-local-ls-bin.img
+- sha256:
+  514d309d4f3d692c559a5bf7fbad7bcae438858b013ae83f6ad330db3c6c5eed
+- size: 106584 bytes
+- Binary string inspection found:
+  rpi5-local-ls-bin-proof
+  ls-bin-observed input='ls /bin' entries='init'
+
+Validation gates:
+- cargo fmt --all -- --check: passed.
+- cargo -Zjson-target-spec test --quiet: passed, 350 no_std tests.
+- scripts/qemu-local-ls-bin-smoke.sh --quiet: passed.
+- scripts/rpi5-local-ls-bin-image.sh: passed.

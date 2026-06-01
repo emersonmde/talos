@@ -7347,6 +7347,19 @@ pub fn run_local_serial_command_loop_proof() -> bool {
                 result.response_lines()
             );
             wait_uart10_empty_early_phase();
+        } else if result.line() == b"ls /bin"
+            && result.status() == crate::local_command_loop::LocalCommandStatus::Handled
+            && result.response_lines() == 1
+        {
+            replay_visible_ls_bin_response_for_pi5_proof();
+            crate::println!(
+                "{}: ls-bin-observed input='ls /bin' entries='init' raw-bytes={} controls={} responses={}",
+                local_command_pi5_proof_label(),
+                result.raw_bytes(),
+                result.controls(),
+                result.response_lines()
+            );
+            wait_uart10_empty_early_phase();
         } else if result.line() == b"echo hello"
             && result.status() == crate::local_command_loop::LocalCommandStatus::Handled
             && result.response_lines() == 1
@@ -7503,6 +7516,12 @@ fn replay_visible_ls_root_response_for_pi5_proof() {
     crate::println!("dir");
     crate::println!("empty");
     crate::println!("etc");
+    wait_uart10_empty_early_phase();
+}
+
+#[cfg(talos_boot_scenario = "rpi5_local_ls_bin")]
+fn replay_visible_ls_bin_response_for_pi5_proof() {
+    crate::println!("init");
     wait_uart10_empty_early_phase();
 }
 
