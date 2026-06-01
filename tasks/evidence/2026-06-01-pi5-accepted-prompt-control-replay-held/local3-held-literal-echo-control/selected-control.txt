@@ -1,0 +1,8 @@
+task=phase10-pi5-accepted-prompt-control-replay-held-20260601
+selected_control_task=phase10-pi5-local-literal-echo-proof-20260531
+selected_control_commit=29b8b7d6afbc57dc156db593c376aef36640ebb1
+selected_control_archive=target/talos-rpi5-local-literal-echo-local3.tar.gz
+expected_archive_sha256=7cc63a02e2d5dc68abd2127bad0867bc0c1bd0830f56c7ba74a6efbfe64438f5
+expected_kernel_sha256=63d16359baa5e3c8631f582014a3bcd14f78b64023717bb1546dcc9e9e4c3826
+local3_method=publish selected archive, power-cycle, wait 25s, write literal echo command without blocking observe, then capture transcript
+help_candidate=quarantined; not published or rerun

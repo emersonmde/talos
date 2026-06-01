@@ -1,0 +1,8 @@
+classification=accepted-prompt-control-firmware-only
+reason=Selected-control kernel_2712.img TFTP fetch was retained while the control archive was active, but fresh serial did not show Talos kernel-entry/prompt bytes.
+archive_sha256=7cc63a02e2d5dc68abd2127bad0867bc0c1bd0830f56c7ba74a6efbfe64438f5
+kernel_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+pre_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+post_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+help_candidate=not_published_not_rerun
+hardware_lock=released

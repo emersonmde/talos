@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "AAogIDMuMDEgUlAxIEZXOiBsb2FkIDENCjE5OjI5OjU0DQogIDQuMTUgQk9PVE1PREU6IDB4MDYgcGFydGl0aW9uIDAgYnVpbGQtdHMgQlVJTERfVElNRVNUQU1QPTE3NjUyMjIxOTQgc2VyaWFsIGRhNTkxNzQwIGJvYXJkcmV2IGQwNDE3MSBzdGMgNDE1NzUxMA0KICA0LjE5IHVzYl9wZF9pbml0IHN0YXR1cyAwDQo=",
+  "bytes": 179,
+  "cursor_end": 3830740,
+  "cursor_start": 3830561,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\u0000\n  3.01 RP1 FW: load 1\r\n19:29:54\r\n  4.15 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 4157510\r\n  4.19 usb_pd_init status 0\r\n",
+  "truncated": false
+}

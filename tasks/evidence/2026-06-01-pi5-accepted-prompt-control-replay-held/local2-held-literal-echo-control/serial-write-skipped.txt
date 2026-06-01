@@ -1,0 +1,1 @@
+serial write skipped: no ready marker seen in 40 short observe polls
