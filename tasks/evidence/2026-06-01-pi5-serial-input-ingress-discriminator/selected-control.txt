@@ -1,0 +1,2 @@
+selected accepted control: target/talos-rpi5-local-literal-echo-local3.tar.gz
+accepted reference: phase10-pi5-prompt-control-after-capture-recovery-20260601 / target/talos-rpi5-local-literal-echo-local3.tar.gz
