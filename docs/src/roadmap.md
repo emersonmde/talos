@@ -4013,6 +4013,19 @@ process lifecycle, terminal sessions, networking, SSH, RP1/PCIe, UART
 interrupts, and DMA/cache policy remain deferred. The next queued task is the
 local `ls /` closeout checkpoint.
 
+The local `ls /` closeout checkpoint is now accepted and records the current
+descriptor-backed serial command-loop frontier: `ls /` dispatches through
+fd0/runtime-console0, reads the accepted read-only initramfs root fixture,
+prints visible `bin`, `dir`, `empty`, and `etc` entries through
+descriptor-backed stdout in both QEMU/substitute and serialized Pi 5 evidence,
+and returns to a ready `talos>` prompt. The checkpoint keeps broad parser
+behavior, recursive listing, path traversal, writable filesystem state,
+descriptor-backed filesystem syscalls, userspace shell execution, process
+lifecycle, terminal sessions, networking, SSH, RP1/PCIe, UART interrupts,
+DMA/cache policy, and paused Phase 8 proof-only work deferred. No explicit
+queued task remains after this checkpoint; supervisor planning is required for
+the next smallest feature-led local interactivity task.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.
