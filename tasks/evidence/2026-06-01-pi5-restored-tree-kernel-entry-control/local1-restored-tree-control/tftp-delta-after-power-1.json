@@ -1,0 +1,14 @@
+{
+  "action": "tftp logs",
+  "ok": true,
+  "tftp": {
+    "cursor_end": 3974753,
+    "cursor_start": 3974753,
+    "events": [],
+    "lines": [],
+    "log": "/state/tftp.log",
+    "log_size": 3974753,
+    "tail_mode": false,
+    "truncated": false
+  }
+}

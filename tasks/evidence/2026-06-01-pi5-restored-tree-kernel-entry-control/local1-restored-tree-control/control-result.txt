@@ -1,0 +1,25 @@
+restored-tree kernel-entry/prompt control result
+classification=restored-tree-firmware-only
+power_ok=true
+power_guard_mode=fixed-port
+power_guard_switch=Weathertop
+power_guard_port=8
+power_guard_poe=UP
+pre_serial_cursor=3828040
+serial_observe1_bytes=648
+serial_observe2_bytes=652
+serial_observe3_bytes=652
+serial_has_firmware=true
+serial_has_talos_entry=false
+serial_has_prompt=false
+pre_tftp_cursor=3974753
+tftp_events=13
+tftp_kernel_serves=2
+configured_kernel=kernel_2712.img
+effective_kernel=kernel_2712.img
+tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+prompt_command_attempted=false
+prompt_command_responsive=false
+post_restore_state=preserved-current-restored-tree
+root_endpoint_status=404 tolerated; /status retained boot identity
+next_blocker=restored accepted tree reboots through firmware/TFTP but no Talos kernel-entry or prompt bytes are retained from the fresh cursor
