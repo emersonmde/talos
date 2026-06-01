@@ -1,0 +1,10 @@
+cargo fmt --all -- --check: PASS
+cargo -Zjson-target-spec test --quiet: PASS (349 no_std tests; dead-code warnings only)
+scripts/qemu-local-ls-root-smoke.sh --quiet: PASS
+scripts/qemu-local-help-command-smoke.sh --quiet: PASS
+scripts/qemu-local-literal-echo-smoke.sh --quiet: PASS
+scripts/qemu-local-pwd-command-smoke.sh --quiet: PASS
+scripts/qemu-local-line-editing-smoke.sh --quiet: PASS
+scripts/qemu-local-line-cancel-smoke.sh --quiet: PASS
+scripts/qemu-local-line-kill-smoke.sh --quiet: PASS
+scripts/qemu-local-serial-command-loop-smoke.sh --quiet: PASS

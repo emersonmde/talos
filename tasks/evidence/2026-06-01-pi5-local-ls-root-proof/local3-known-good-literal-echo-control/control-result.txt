@@ -1,0 +1,12 @@
+classification=blocked-control
+serial_cursor_before=3849730
+serial_cursor_after=3849734
+tftp_cursor_before=3997720
+tftp_cursor_after=3999071
+prompt_found=0
+output_found=0
+pass_found=0
+kernel_fetch_found=1
+pre_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+post_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+snapshot=pre-phase10-pi5-local-ls-root-control-20260601T102828Z

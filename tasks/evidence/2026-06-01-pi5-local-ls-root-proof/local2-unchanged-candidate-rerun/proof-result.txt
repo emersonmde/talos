@@ -1,0 +1,14 @@
+classification=blocked-or-inconclusive
+archive_sha256=16f5a053e05459239645b96eace01ee7f46139fa558b264af8a336a02d2a112c
+kernel_sha256=904eeb9348ff1c0d1ade43c8e441b68f3bf9cef01055b2af2c3ad7d23a82eb24
+serial_cursor_before=3848207
+serial_cursor_after=3849724
+tftp_cursor_before=3995018
+tftp_cursor_after=3995018
+prompt_found=0
+entries_found=0
+pass_found=0
+kernel_fetch_found=0
+pre_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+post_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+snapshot=pre-phase10-pi5-local-ls-root-local2-20260601T102403Z

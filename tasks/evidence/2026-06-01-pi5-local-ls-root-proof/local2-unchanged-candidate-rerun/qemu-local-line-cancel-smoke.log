@@ -1,0 +1,54 @@
+
+Talos 0.1.0 booting on talos-aarch64-virt
+boot-info: dtb_pa=0x0000000048000000 core=0 el=2 target=talos-aarch64-virt
+target-services: uart=pl011 timer=arm-generic irq=gic-v2 dtb=Some(
+    0x0000000048000000,
+)
+mmio-regions: 3
+qemu-local-line-cancel: start command-count=5 backend=runtime-console0/qemu-virt-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed descriptor-backed-input=true descriptor-backed-output=true
+qemu-local-line-cancel: ready command=0
+talos> help
+talos: ok help
+talos: commands help status stdio pwd echo ls
+talos: echo forms echo hello; echo local serial works
+talos: editing backspace delete ctrl-c ctrl-u
+
+qemu-local-line-cancel: line command=0 hex=68 65 6c 70
+qemu-local-line-cancel: dispatch command=0 status=handled responses=4 raw-bytes=5 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-line-cancel: ready command=1
+talos> status
+talos: ok status
+talos: version phase10.1-kernel-builtins-v1
+talos: runtime-console runtime-console0
+talos: builtins kernel-backed
+
+qemu-local-line-cancel: line command=1 hex=73 74 61 74 75 73
+qemu-local-line-cancel: dispatch command=1 status=handled responses=4 raw-bytes=7 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-line-cancel: ready command=2
+talos> stdio
+talos: ok stdio
+talos: fd 0 stdio-input
+talos: fd 1 stdio-output
+talos: fd 2 stdio-output
+talos: runtime-console runtime-console0
+talos: descriptor-backed-input=true
+talos: descriptor-backed-output=true
+
+qemu-local-line-cancel: line command=2 hex=73 74 64 69 6f
+qemu-local-line-cancel: dispatch command=2 status=handled responses=7 raw-bytes=6 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-line-cancel: ready command=3
+talos> bogus
+talos: line-canceled
+
+qemu-local-line-cancel: line command=3 hex=
+qemu-local-line-cancel: dispatch command=3 status=line-canceled responses=1 raw-bytes=6 backspaces=0 deletes=0 truncated=false controls=1
+qemu-local-line-cancel: ready command=4
+talos> pwd
+/
+
+qemu-local-line-cancel: line command=4 hex=70 77 64
+qemu-local-line-cancel: dispatch command=4 status=handled responses=1 raw-bytes=4 backspaces=0 deletes=0 truncated=false controls=0
+talos>
+qemu-local-line-cancel: ready-for-next prompt=true
+qemu-local-line-cancel: final participants=5 expected=5 errors=0 classification=qemu-local-line-cancel-complete
+qemu-local-line-cancel: PASS

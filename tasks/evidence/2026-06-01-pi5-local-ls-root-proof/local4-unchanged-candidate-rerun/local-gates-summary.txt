@@ -1,0 +1,6 @@
+cargo fmt --all -- --check: PASS
+cargo -Zjson-target-spec test --quiet: PASS (349 talos no_std tests)
+./scripts/qemu-local-ls-root-smoke.sh: PASS
+git diff --check: PASS
+selected_archive=target/talos-rpi5-local-ls-root-local1.tar.gz
+unchanged_candidate=true
