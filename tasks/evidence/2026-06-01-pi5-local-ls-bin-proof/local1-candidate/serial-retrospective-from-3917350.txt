@@ -1,0 +1,9 @@
+rue descriptor-backed-output=true
+rpi5-local-ls-bin-proof: ready command=0
+talos> ytes=8 truncated=false controls=0
+rpi5-local-ls-bin-proof: edit command=0 backspaces=0 deletes=0
+talos> 
+rpi5-local-ls-bin-proof: ready-for-next prompt=true
+rpi5-local-ls-bin-proof: final participants=1 expected=1 errors=0 classification=pi5-local-ls-bin-complete
+rpi5-local-ls-bin-proof: PASS
+

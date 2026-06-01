@@ -1,0 +1,10 @@
+{
+  "action": "serial read",
+  "base64": "dGVzPTUgdHJ1bmNhdGVkPWZhbHNlIGNvbnRyb2xzPTANCnJwaTUtbG9jYWwtbHMtcm9vdC1wcm9vZjogZWRpdCBjb21tYW5kPTAgYmFja3NwYWNlcz0wIGRlbGV0ZXM9MA0KYmluDQpkaXINCmVtcHR5DQpldGMNCnJwaTUtbG9jYWwtbHMtcm9vdC1wcm9vZjogbHMtcm9vdC1vYnNlcnZlZCBpbnB1dD0nbHMgLycgZW50cmllcz0nYmluIGRpciBlbXB0eSBldGMnIHJhdy1ieXRlcz01IGNvbnRyb2xzPTAgcmVzcG9uc2VzPTQNCnRhbG9zPiANCnJwaTUtbG9jYWwtbHMtcm9vdC1wcm9vZjogcmVhZHktZm9yLW5leHQgcHJvbXB0PXRydWUNCnJwaTUtbG9jYWwtbHMtcm9vdC1wcm9vZjogZmluYWwgcGFydGljaXBhbnRzPTEgZXhwZWN0ZWQ9MSBlcnJvcnM9MCBjbGFzc2lmaWNhdGlvbj1waTUtbG9jYWwtbHMtcm9vdC1jb21wbGV0ZQ0KcnBpNS1sb2NhbC1scy1yb290LXByb29mOiBQQVNTDQo=",
+  "bytes": 446,
+  "cursor": 3923436,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "tes=5 truncated=false controls=0\r\nrpi5-local-ls-root-proof: edit command=0 backspaces=0 deletes=0\r\nbin\r\ndir\r\nempty\r\netc\r\nrpi5-local-ls-root-proof: ls-root-observed input='ls /' entries='bin dir empty etc' raw-bytes=5 controls=0 responses=4\r\ntalos> \r\nrpi5-local-ls-root-proof: ready-for-next prompt=true\r\nrpi5-local-ls-root-proof: final participants=1 expected=1 errors=0 classification=pi5-local-ls-root-complete\r\nrpi5-local-ls-root-proof: PASS\r\n",
+  "truncated": false
+}

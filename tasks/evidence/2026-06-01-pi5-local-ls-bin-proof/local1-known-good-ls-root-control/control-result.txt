@@ -1,0 +1,12 @@
+case=local1-known-good-ls-root-control
+archive=target/talos-rpi5-local-ls-root-local1.tar.gz
+command=ls /
+prompt_found=1
+input_found=1
+pass_found=1
+tftp_fetch_found=1
+restore_found=1
+pre_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+post_restore_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+serial_cursor_before=3917734
+serial_write_cursor=3922990

@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "aW4tcHJvb2Y6IHJlYWR5IGNvbW1hbmQ9MA0KdGFsb3M+IHl0ZXM9OCB0cnVuY2F0ZWQ9ZmFsc2UgY29udHJvbHM9MA0KcnBpNS1sb2NhbC1scy1iaW4tcHJvb2Y6IGVkaXQgY29tbWFuZD0wIGJhY2tzcGFjZXM9MCBkZWxldGVzPTANCnRhbG9zPiANCnJwaTUtbG9jYWwtbHMtYmluLXByb29mOiByZWFkeS1mb3ItbmV4dCBwcm9tcHQ9dHJ1ZQ0KcnBpNS1sb2NhbC1scy1iaW4tcHJvb2Y6IGZpbmFsIHBhcnRpY2lwYW50cz0xIGV4cGVjdGVkPTEgZXJyb3JzPTAgY2xhc3NpZmljYXRpb249cGk1LWxvY2FsLWxzLWJpbi1jb21wbGV0ZQ0KcnBpNS1sb2NhbC1scy1iaW4tcHJvb2Y6IFBBU1MNCg==",
+  "bytes": 334,
+  "cursor_end": 3917734,
+  "cursor_start": 3917400,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "in-proof: ready command=0\r\ntalos> ytes=8 truncated=false controls=0\r\nrpi5-local-ls-bin-proof: edit command=0 backspaces=0 deletes=0\r\ntalos> \r\nrpi5-local-ls-bin-proof: ready-for-next prompt=true\r\nrpi5-local-ls-bin-proof: final participants=1 expected=1 errors=0 classification=pi5-local-ls-bin-complete\r\nrpi5-local-ls-bin-proof: PASS\r\n",
+  "truncated": false
+}

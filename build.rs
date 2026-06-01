@@ -61,6 +61,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "rpi5_local_ls_bin",
+        implied_values: &["rpi5_local_serial_command_loop"],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "rpi5_local_pwd_command",
         implied_values: &["rpi5_local_serial_command_loop"],
         asm_defines: &[],

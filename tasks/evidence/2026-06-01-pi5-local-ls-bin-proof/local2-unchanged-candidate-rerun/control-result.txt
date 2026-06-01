@@ -1,0 +1,12 @@
+case=local2-unchanged-candidate-rerun
+archive=target/talos-rpi5-local-ls-bin-local1.tar.gz
+command=ls /bin
+prompt_found=1
+input_found=0
+pass_found=1
+tftp_fetch_found=1
+restore_found=1
+pre_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+post_restore_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+serial_cursor_before=3923436
+serial_write_cursor=3929257

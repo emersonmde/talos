@@ -1,0 +1,3 @@
+cargo fmt --all -- --check: PASS
+cargo -Zjson-target-spec test --quiet: PASS (350 tests; existing DescriptorBackedLocalCommandSink dead-code warnings)
+scripts/qemu-local-ls-bin-smoke.sh --quiet: PASS

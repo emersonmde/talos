@@ -1,0 +1,79 @@
+t_entry
+TALOS: boot info parsed
+TALOS: target init
+TALOS: exceptions ready
+TALOS: kernel_main
+
+talos: boot start
+talos: board raspberry-pi-5-bcm2712
+talos: version 0.1.0
+talos: console early-uart fmt
+talos: boot core 0
+talos: boot dtb 0x2efec600
+talos: boot target talos-rpi5-bcm2712
+talos: pointer delta 0x0
+talos: boot info: dtb=0x2efec600 core=0 el=2 target=talos-rpi5-bcm2712
+talos: services: uart=firmware-preserved timer=arm-generic irq=gic-v2 mmio_regions=7 dtb=0x2efec600
+talos: dtb header: magic=0xd00dfeed size=80254 version=17 last_comp=16 struct=72496 strings=7702
+talos: dtb chosen bootargs: reboot=w coherent_pool=1M 8250.nr_uarts=1 pci=pcie_bus_safe cgroup_disable=memory numa_policy=interleave nvme.max_host_mem_size_mb=32 bcm2708_fb.fbwidth=640 bcm2708_fb.fbheight=480 bcm2708_fb.fbdepth=16 bcm2708_fb.fbswap=1 numa=fake=8 system_heap.max_order=0 iommu_dma_numa_policy=interleave smsc95xx.macaddr=88:A2:9E:AE:C8:7F vc_mem.mem_base=0x3fc00000 vc_mem.mem_size=0x40000000  console=ttyAMA10,115200 earlycon=pl011,mmio32,0x1f00030000 talos.boot=first-light
+talos: status early boot log ready
+TALOS: dtb reserved start
+talos: dtb reserved: count=0 shown=0 truncated=false
+TALOS: dtb reserved done
+TALOS: reserved-memory start
+TALOS: reserved-memory done
+talos: reserved-memory: addr_cells=2 size_cells=2 nodes=4 ranges=3 shown=3 truncated=false
+talos: reserved-memory[0]: addr=0x0 size=0x80000 no_map=true reusable=false
+talos: reserved-memory[1]: addr=0x3fd23160 size=0x3d no_map=true reusable=false
+talos: reserved-memory[2]: addr=0x0 size=0x0 no_map=true reusable=false
+TALOS: dtb memory scan start
+TALOS: dtb memory scan done
+talos: memory layout: kernel=0x200000..0x35a000 heap=0x219df0..0x319df0 stack=0x319df0..0x359df0
+talos: memory layout: dtb=0x2efec600..0x2effff7e size=0x1397e
+talos: memory usable: bank=0 start=0x2f000000 end=0x3fc00000 size=0x10c00000 align=0x1000 policy=low-tail
+talos: page frames seed: start=0x2f000000 end=0x3fc00000 pages=0x10c00 page_size=0x1000 source=memory-usable
+talos: bootstrap reserve: start=0x2f000000 end=0x2f010000 pages=0x10 page_size=0x1000 reason=bootstrap-page-tables
+talos: translation tables: start=0x2f000000 end=0x2f004000 pages=0x4 page_size=0x1000 kind=layout-only
+talos: translation table slots: root=0x2f000000 l1=0x2f001000 l2_low=0x2f002000 l2_mmio=0x2f003000
+talos: translation table population: root_entries=0x1 l1_entries=0x2 low_l2_blocks=0x200 mmio_l2_blocks=0x20 block_size=0x200000 kind=stage1-4k-no-enable
+talos: translation map policy: low=0x0..0x40000000 mmio=0x107c000000..0x1080000000 root_index=0x0 low_l1_index=0x0 mmio_l1_index=0x41 normal_attr=0x0 device_attr=0x1
+talos: translation control plan: el=0x2 mair=0x4ff tcr=0x53510 ttbr0=0x2f000000 sctlr_set=0x1 va_bits=0x30 pa_bits=0x30 kind=el2-stage1-4k-no-enable
+TALOS: mmu enable start
+TALOS: mmu enable done
+talos: translation enabled: el=0x2 sctlr=0x30c50831 ttbr0=0x2f000000 kind=el2-stage1-4k-enabled
+talos: instruction cache plan: el=0x2 sctlr_before=0x30c50831 sctlr_set=0x1000 kind=el2-stage1-icache-enabled
+TALOS: icache enable start
+TALOS: icache enable done
+talos: instruction cache enabled: el=0x2 sctlr=0x30c51831 kind=el2-stage1-icache-enabled
+talos: data cache plan: el=0x2 sctlr_before=0x30c51831 sctlr_set=0x4 kind=el2-stage1-dcache-enabled
+TALOS: dcache enable start
+TALOS: dcache enable done
+talos: data cache enabled: el=0x2 sctlr=0x30c51835 kind=el2-stage1-dcache-enabled
+talos: bootstrap allocator plan: start=0x2f010000 end=0x3fc00000 bytes=0x10bf0000 pages=0x10bf0 page_size=0x1000 kind=bump-no-free-low-tail
+talos: bootstrap allocator init: start=0x2f010000 next=0x2f010000 end=0x3fc00000 policy=no-free
+talos: string smoke: ptr=0x2f010000 len=5 cap=8 sum=0x203 next=0x2f010008 used=0x8 rem=0x10befff8 ex=true stable=true ok=true
+talos: translation tables: start=0x2f000000 end=0x2f004000 pages=0x4 page_size=0x1000 kind=layout-only phase=post-allocator
+talos: translation table slots: root=0x2f000000 l1=0x2f001000 l2_low=0x2f002000 l2_mmio=0x2f003000 phase=post-allocator
+talos: translation table population: root_entries=0x1 l1_entries=0x2 low_l2_blocks=0x200 mmio_l2_blocks=0x20 block_size=0x200000 kind=stage1-4k-no-enable phase=post-allocator
+talos: memory usable: bank=0 start=0x2f000000 end=0x3fc00000 size=0x10c00000 align=0x1000 policy=low-tail
+talos: page frames seed: start=0x2f000000 end=0x3fc00000 pages=0x10c00 page_size=0x1000 source=memory-usable phase=post-allocator
+talos: bootstrap reserve: start=0x2f000000 end=0x2f010000 pages=0x10 page_size=0x1000 reason=bootstrap-page-tables
+talos: page frames remaining: start=0x2f010000 end=0x3fc00000 pages=0x10bf0 page_size=0x1000 source=bootstrap-reserve
+talos: dtb memory: address_cells=2 size_cells=2 count=3 shown=3 truncated=false
+talos: dtb memory[0]: addr=0x0 size=0x3fc00000
+talos: dtb memory[1]: addr=0x40000000 size=0xc0000000
+talos: dtb memory[2]: addr=0x100000000 size=0x100000000
+rpi5-local-ls-root-proof: start command-count=1 backend=runtime-console0/bcm2712-uart10-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed descriptor-backed-input=true descriptor-backed-output=true
+rpi5-local-ls-root-proof: ready command=0
+talos> tes=5 truncated=false controls=0
+rpi5-local-ls-root-proof: edit command=0 backspaces=0 deletes=0
+bin
+dir
+empty
+etc
+rpi5-local-ls-root-proof: ls-root-observed input='ls /' entries='bin dir empty etc' raw-bytes=5 controls=0 responses=4
+talos> 
+rpi5-local-ls-root-proof: ready-for-next prompt=true
+rpi5-local-ls-root-proof: final participants=1 expected=1 errors=0 classification=pi5-local-ls-root-complete
+rpi5-local-ls-root-proof: PASS
+
