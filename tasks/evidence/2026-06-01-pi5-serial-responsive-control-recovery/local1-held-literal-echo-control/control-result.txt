@@ -1,0 +1,9 @@
+classification=blocked-control-nonresponsive
+reason=Selected literal-echo control did not produce the required prompt/response/PASS transcript in retained serial evidence.
+serial_cursor_before=3840874
+tftp_cursor_before=3990965
+snapshot=pre-phase10-pi5-serial-responsive-control-recovery-20260601T082137Z
+archive_sha256=7cc63a02e2d5dc68abd2127bad0867bc0c1bd0830f56c7ba74a6efbfe64438f5
+kernel_sha256=63d16359baa5e3c8631f582014a3bcd14f78b64023717bb1546dcc9e9e4c3826
+kernel_size=100352
+post_restore_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10

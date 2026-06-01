@@ -1,0 +1,7 @@
+task=phase10-pi5-serial-responsive-control-recovery-20260601
+control_task=phase10-pi5-accepted-prompt-control-replay-held-20260601
+accepted_control_archive=target/talos-rpi5-local-literal-echo-local3.tar.gz
+accepted_control_commit=9f02d5436b5b7d00f21a023f6bd90d725d8ccf34
+accepted_literal_echo_proof_commit=29b8b7d6afbc57dc156db593c376aef36640ebb1
+command=echo local serial works
+snapshot=pre-phase10-pi5-serial-responsive-control-recovery-20260601T082137Z
