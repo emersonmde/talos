@@ -1,0 +1,10 @@
+{
+  "action": "serial read",
+  "base64": "dW5jYXRlZD1mYWxzZSBjb250cm9scz0wDQpycGk1LWxvY2FsLWxzLWJpbi1wcm9vZjogZWRpdCBjb21tYW5kPTAgYmFja3NwYWNlcz0wIGRlbGV0ZXM9MA0KdGFsb3M+IA0KcnBpNS1sb2NhbC1scy1iaW4tcHJvb2Y6IHJlYWR5LWZvci1uZXh0IHByb21wdD10cnVlDQpycGk1LWxvY2FsLWxzLWJpbi1wcm9vZjogZmluYWwgcGFydGljaXBhbnRzPTEgZXhwZWN0ZWQ9MSBlcnJvcnM9MCBjbGFzc2lmaWNhdGlvbj1waTUtbG9jYWwtbHMtYmluLWNvbXBsZXRlDQpycGk1LWxvY2FsLWxzLWJpbi1wcm9vZjogUEFTUw0K",
+  "bytes": 291,
+  "cursor": 3972344,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "uncated=false controls=0\r\nrpi5-local-ls-bin-proof: edit command=0 backspaces=0 deletes=0\r\ntalos> \r\nrpi5-local-ls-bin-proof: ready-for-next prompt=true\r\nrpi5-local-ls-bin-proof: final participants=1 expected=1 errors=0 classification=pi5-local-ls-bin-complete\r\nrpi5-local-ls-bin-proof: PASS\r\n",
+  "truncated": false
+}
