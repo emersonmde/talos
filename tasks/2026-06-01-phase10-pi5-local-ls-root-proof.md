@@ -2,7 +2,7 @@
 
 Task: phase10-pi5-local-ls-root-proof-20260601
 
-Status: needs-supervisor-planning
+Status: paused-capture-gap-confirmed
 
 ## Goal
 
@@ -172,3 +172,34 @@ No Talos runtime semantics, proof harness code, boot scripts, or lab-controller
 code changed in local4. The next step requires supervisor planning around the
 retained-response capture gap or an explicit acceptance-policy decision; do not
 rerun or modify ls-root proof code from worker initiative alone.
+
+## 2026-06-01 Local4 Response Capture Audit
+
+The bounded response-capture audit task
+phase10-pi5-local-ls-root-response-capture-audit-20260601 inspected existing
+local4 evidence and read-only serial-log API windows without acquiring
+hardwareTestLock or mutating the lab.
+
+Audit task record:
+
+- tasks/2026-06-01-phase10-pi5-local-ls-root-response-capture-audit.md
+
+Audit evidence:
+
+- tasks/evidence/2026-06-01-pi5-local-ls-root-proof/local4-response-capture-audit/audit-summary.txt
+- tasks/evidence/2026-06-01-pi5-local-ls-root-proof/local4-response-capture-audit/serial-observe-from-retrospective-start.json
+- tasks/evidence/2026-06-01-pi5-local-ls-root-proof/local4-response-capture-audit/serial-observe-from-write-cursor.json
+
+The audit confirmed the local4 capture gap. The broader retained serial window
+from cursor 3899942 recovered 358 bytes, and the post-write window from cursor
+3900142 recovered 158 bytes. Both windows matched the existing retained local4
+evidence: final classification and PASS are present, but visible `bin`, `dir`,
+`empty`, and `etc` lines are still absent, and only the suffix
+`xt prompt=true` was retained instead of a complete `ready-for-next
+prompt=true` line.
+
+The Pi 5 ls-root proof remains not accepted because the visible-entry
+acceptance gate is unsatisfied. The next mechanically unblocked task is the
+queued unchanged-candidate capture-window proof, which may rerun the existing
+candidate exactly once with corrected retained-response capture if
+hardwareTestLock remains unlocked/restored.

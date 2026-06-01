@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "YmNtMjcxMi11YXJ0MTAtcGwwMTEgaW5wdXQ9ZmQwL3J1bnRpbWUtY29uc29sZTAvdHR5LWNhbm9uaWNhbC1saXRlIGJ1aWx0aW5zPWtlcm5lbC1iYWNrZWQgZGVzY3JpcHRvci1iYWNrZWQtaW5wdXQ9dHJ1ZSBkZXNjcmlwdG9yLWJhY2tlZC1vdXRwdXQ9dHJ1ZQ0KcnBpNS1sb2NhbC1scy1yb290LXByb29mOiByZWFkeSBjb21tYW5kPTANCnRhbG9zPiB4dCBwcm9tcHQ9dHJ1ZQ0KcnBpNS1sb2NhbC1scy1yb290LXByb29mOiBmaW5hbCBwYXJ0aWNpcGFudHM9MSBleHBlY3RlZD0xIGVycm9ycz0wIGNsYXNzaWZpY2F0aW9uPXBpNS1sb2NhbC1scy1yb290LWNvbXBsZXRlDQpycGk1LWxvY2FsLWxzLXJvb3QtcHJvb2Y6IFBBU1MNCg==",
+  "bytes": 358,
+  "cursor_end": 3900300,
+  "cursor_start": 3899942,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "bcm2712-uart10-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed descriptor-backed-input=true descriptor-backed-output=true\r\nrpi5-local-ls-root-proof: ready command=0\r\ntalos> xt prompt=true\r\nrpi5-local-ls-root-proof: final participants=1 expected=1 errors=0 classification=pi5-local-ls-root-complete\r\nrpi5-local-ls-root-proof: PASS\r\n",
+  "truncated": false
+}

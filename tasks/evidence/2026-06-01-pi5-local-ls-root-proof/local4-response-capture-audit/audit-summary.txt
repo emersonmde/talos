@@ -1,0 +1,13 @@
+audit_task=phase10-pi5-local-ls-root-response-capture-audit-20260601
+hardware_lock=untouched
+source_local4=tasks/evidence/2026-06-01-pi5-local-ls-root-proof/local4-unchanged-candidate-rerun
+observe_from_retrospective_start_cursor=3899942
+retrospective_bytes=358 retrospective_cursor_start=3899942 retrospective_cursor_end=3900300 retrospective_truncated=false
+observe_from_write_cursor=3900142
+write_bytes=158 write_cursor_start=3900142 write_cursor_end=3900300 write_truncated=false
+classification=accepted-capture-gap-confirmed
+entries_found=0
+ready_next_found=0
+pass_found=1
+validation_git_diff_check=PASS
+validation_mdbook=not-run-no-docs-src-touched

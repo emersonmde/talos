@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "eHQgcHJvbXB0PXRydWUNCnJwaTUtbG9jYWwtbHMtcm9vdC1wcm9vZjogZmluYWwgcGFydGljaXBhbnRzPTEgZXhwZWN0ZWQ9MSBlcnJvcnM9MCBjbGFzc2lmaWNhdGlvbj1waTUtbG9jYWwtbHMtcm9vdC1jb21wbGV0ZQ0KcnBpNS1sb2NhbC1scy1yb290LXByb29mOiBQQVNTDQo=",
+  "bytes": 158,
+  "cursor_end": 3900300,
+  "cursor_start": 3900142,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "xt prompt=true\r\nrpi5-local-ls-root-proof: final participants=1 expected=1 errors=0 classification=pi5-local-ls-root-complete\r\nrpi5-local-ls-root-proof: PASS\r\n",
+  "truncated": false
+}

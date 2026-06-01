@@ -1,0 +1,4 @@
+xt prompt=true
+rpi5-local-ls-root-proof: final participants=1 expected=1 errors=0 classification=pi5-local-ls-root-complete
+rpi5-local-ls-root-proof: PASS
+
