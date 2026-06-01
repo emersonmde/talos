@@ -1,0 +1,13 @@
+Serial cursor delta:
+3840874	3841582	708
+
+Fresh serial transcript key lines:
+  1.09 RPi: BOOTSYS release VERSION:2226a853 DATE: 2025/12/08 TIME: 19:29:54
+  1.09 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 1096514
+  1.12 RP1_BOOT chip ID: 0x20001927
+  1.12 PMIC reset-event 00000000 rtc 6a1d5716 alarm 00000000 enabled 0
+  1.82 RP1 FW: load 0
+  1.83 RP1_BOOT chip ID: 0x20001927
+
+TFTP delta:
+cursor_start=3992316 cursor_end=3992316 events=0

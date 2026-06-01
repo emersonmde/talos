@@ -1,0 +1,10 @@
+classification=accepted-capture-live
+discriminator=production-timer non-ls-root control archive
+archive=target/talos-rpi5-production-timer-preemption-boot.tar.gz
+snapshot=pre-phase10-pi5-independent-serial-capture-discriminator-20260601T095629Z
+serial_cursor_start=3840874
+serial_cursor_end=3841582
+serial_bytes=708
+tftp_events=0
+kernel_tftp_events=0
+restored_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
