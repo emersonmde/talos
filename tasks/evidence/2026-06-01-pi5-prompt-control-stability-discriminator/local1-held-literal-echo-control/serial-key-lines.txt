@@ -1,0 +1,3 @@
+86:rpi5-local-literal-echo-proof: start command-count=1 backend=runtime-console0/bcm2712-uart10-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed descriptor-backed-input=true descriptor-backed-output=true
+87:rpi5-local-literal-echo-proof: ready command=0
+88:talos> 
