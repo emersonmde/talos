@@ -1,0 +1,7 @@
+candidate serial cursor before: 3837241
+candidate serial cursor after power: 3837438
+candidate help write cursor: 3837438
+candidate tftp kernels:
+candidate help write:
+true
+key serial lines:

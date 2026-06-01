@@ -249,12 +249,12 @@ TFTP log endpoint reference:
 ```text
 GET /tftp/logs
 Query:
-  cursor: integer byte offset, default 0
+  cursor: optional integer byte offset; omit to read the current log tail
   max_bytes: integer, default 65536, range 1..1048576
   limit: integer line/event limit, default 200, range 1..2000
 Response:
   action, ok, tftp.log, tftp.cursor_start, tftp.cursor_end,
-  tftp.truncated, tftp.lines[], tftp.events[]
+  tftp.log_size, tftp.tail_mode, tftp.truncated, tftp.lines[], tftp.events[]
 
 tftp.events[] fields:
   status: served or not_found
@@ -265,7 +265,13 @@ tftp.events[] fields:
   line: raw dnsmasq log line
 ```
 
-Use `cursor_end` like the serial cursor: capture it before a power cycle, then call `/tftp/logs?cursor=<old cursor>` after the run to see only new TFTP activity.
+Use `cursor_end` like the serial cursor. To capture the current end of the TFTP log before a power cycle, omit `cursor`:
+
+```bash
+cursor="$(curl -fsS 'http://talos-lab-api:8080/tftp/logs?limit=1' | jq -r .tftp.cursor_end)"
+```
+
+After the run, call `/tftp/logs?cursor=<old cursor>` to see only new TFTP activity.
 For acceptance evidence that depends on served file sizes, query TFTP logs before restoring the boot tree. The `bytes` field is computed from the current TFTP file at query time, not parsed from the dnsmasq line, so querying after restore can label an earlier diagnostic serve with the restored file's size. Keep `limit` within the endpoint range, currently `1..2000`, or the request fails and can accidentally push evidence collection until after restore.
 
 Verified request sequence:

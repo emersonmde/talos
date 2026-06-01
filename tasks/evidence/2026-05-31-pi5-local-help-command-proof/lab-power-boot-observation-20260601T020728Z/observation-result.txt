@@ -1,0 +1,7 @@
+lab power/boot observation result
+current restored tree hash: a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+power control: ok=true guard=fixed-port switch=Weathertop port=8 poe=UP
+fresh serial after power: cursor 3827330 -> 3828038, bytes 708; marker:   1.09 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 1097422
+fresh tftp after power: cursor 3973402 -> 3974753, events 13, kernel serves 2
+control write after restored-tree reboot: bytes 0 from cursor 3828040; no prompt/PASS markers observed
+matthew cursor requery: cursor 3972051 -> 3974753, events 26, kernel serves 4

@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-06-01T00:31:51Z",
+  "health": {
+    "ok": true,
+    "service": "talos-lab-api"
+  },
+  "boot_kernel": {
+    "bytes": 104136,
+    "mtime": 1780271016,
+    "name": "kernel_2712.img"
+  },
+  "serial_cursor": 3827326,
+  "serial_len": 4096,
+  "serial_tail": "uncated=false controls=0\r\nrpi5-local-literal-echo-proof: edit command=0 backspaces=0 deletes=0\r\nlocal serial works\r\nrpi5-local-literal-echo-proof: literal-echo-observed input='echo local serial works' final-line='echo local serial works' raw-bytes=24 controls=0 responses=1\r\ntalos> \r\nrpi5-local-literal-echo-proof: ready-for-next prompt=true\r\nrpi5-local-literal-echo-proof: final participants=1 expected=1 errors=0 classification=pi5-local-literal-echo-complete\r\nrpi5-local-literal-echo-proof: PASS\r\n",
+  "dir": "tasks/evidence/2026-05-31-pi5-local-help-command-proof/serial-capture-still-stalled-20260601T0031Z"
+}

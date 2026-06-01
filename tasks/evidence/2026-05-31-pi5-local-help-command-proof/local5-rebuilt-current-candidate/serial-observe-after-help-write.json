@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "CnRhbG9zOiBlY2hvIGZvcm1zIGVjaG8gaGVsbG87IGVjaG8gbG9jYWwgc2VyaWFsIHdvcmtzDQp0YWxvczogZWRpdGluZyBiYWNrc3BhY2UgZGVsZXRlIGN0cmwtYyBjdHJsLXUNCnJwaTUtbG9jYWwtaGVscC1jb21tYW5kLXByb29mOiBoZWxwLW9ic2VydmVkIGlucHV0PSdoZWxwJyBjb21tYW5kcz0naGVscCBzdGF0dXMgc3RkaW8gcHdkIGVjaG8nIGVkaXRpbmc9J2JhY2tzcGFjZSBkZWxldGUgY3RybC1jIGN0cmwtdScgcmF3LWJ5dGVzPTUgY29udHJvbHM9MCByZXNwb25zZXM9NA0KdGFsb3M+IA0KcnBpNS1sb2NhbC1oZWxwLWNvbW1hbmQtcHJvb2Y6IHJlYWR5LWZvci1uZXh0IHByb21wdD10cnVlDQpycGk1LWxvY2FsLWhlbHAtY29tbWFuZC1wcm9vZjogZmluYWwgcGFydGljaXBhbnRzPTEgZXhwZWN0ZWQ9MSBlcnJvcnM9MCBjbGFzc2lmaWNhdGlvbj1waTUtbG9jYWwtaGVscC1jb21tYW5kLWNvbXBsZXRlDQpycGk1LWxvY2FsLWhlbHAtY29tbWFuZC1wcm9vZjogUEFTUw0K",
+  "bytes": 501,
+  "cursor_end": 3837941,
+  "cursor_start": 3837440,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\ntalos: echo forms echo hello; echo local serial works\r\ntalos: editing backspace delete ctrl-c ctrl-u\r\nrpi5-local-help-command-proof: help-observed input='help' commands='help status stdio pwd echo' editing='backspace delete ctrl-c ctrl-u' raw-bytes=5 controls=0 responses=4\r\ntalos> \r\nrpi5-local-help-command-proof: ready-for-next prompt=true\r\nrpi5-local-help-command-proof: final participants=1 expected=1 errors=0 classification=pi5-local-help-command-complete\r\nrpi5-local-help-command-proof: PASS\r\n",
+  "truncated": false
+}

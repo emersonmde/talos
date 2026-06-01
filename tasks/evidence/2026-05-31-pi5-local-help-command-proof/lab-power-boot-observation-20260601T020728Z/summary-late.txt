@@ -1,0 +1,11 @@
+evidence_dir=tasks/evidence/2026-05-31-pi5-local-help-command-proof/lab-power-boot-observation-20260601T020728Z
+serial_cursor_before=3827330
+serial_first_cursor_after=3828038 bytes=708
+serial_late_cursor_after=3828040 bytes=2
+tftp_cursor_before=3973402
+tftp_cursor_after=3974753
+tftp_event_count=13
+tftp_kernel_events=
+104136	da591740/kernel_2712.img	served
+104136	da591740/kernel_2712.img	served
+serial_markers_late=

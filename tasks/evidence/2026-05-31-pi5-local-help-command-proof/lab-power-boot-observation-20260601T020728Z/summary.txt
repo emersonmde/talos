@@ -1,0 +1,10 @@
+evidence_dir=tasks/evidence/2026-05-31-pi5-local-help-command-proof/lab-power-boot-observation-20260601T020728Z
+serial_cursor_before=3827330
+serial_cursor_after=3828038
+serial_bytes_after=708
+tftp_cursor_before=3973402
+tftp_cursor_after=3973402
+tftp_event_count=0
+tftp_kernel_events=
+serial_markers=
+3:  1.09 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 1097422

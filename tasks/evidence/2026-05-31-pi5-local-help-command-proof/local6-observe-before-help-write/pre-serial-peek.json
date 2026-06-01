@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "dGFsb3M6IGVjaG8gZm9ybXMgZWNobyBoZWxsbzsgZWNobyBsb2NhbCBzZXJpYWwgd29ya3MNCnRhbG9zOiBlZGl0aW5nIGJhY2tzcGFjZSBkZWxldGUgY3RybC1jIGN0cmwtdQ0KcnBpNS1sb2NhbC1oZWxwLWNvbW1hbmQtcHJvb2Y6IGhlbHAtb2JzZXJ2ZWQgaW5wdXQ9J2hlbHAnIGNvbW1hbmRzPSdoZWxwIHN0YXR1cyBzdGRpbyBwd2QgZWNobycgZWRpdGluZz0nYmFja3NwYWNlIGRlbGV0ZSBjdHJsLWMgY3RybC11JyByYXctYnl0ZXM9NSBjb250cm9scz0wIHJlc3BvbnNlcz00DQp0YWxvcz4gDQpycGk1LWxvY2FsLWhlbHAtY29tbWFuZC1wcm9vZjogcmVhZHktZm9yLW5leHQgcHJvbXB0PXRydWUNCnJwaTUtbG9jYWwtaGVscC1jb21tYW5kLXByb29mOiBmaW5hbCBwYXJ0aWNpcGFudHM9MSBleHBlY3RlZD0xIGVycm9ycz0wIGNsYXNzaWZpY2F0aW9uPXBpNS1sb2NhbC1oZWxwLWNvbW1hbmQtY29tcGxldGUNCnJwaTUtbG9jYWwtaGVscC1jb21tYW5kLXByb29mOiBQQVNTDQo=",
+  "bytes": 500,
+  "cursor": 3837941,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "talos: echo forms echo hello; echo local serial works\r\ntalos: editing backspace delete ctrl-c ctrl-u\r\nrpi5-local-help-command-proof: help-observed input='help' commands='help status stdio pwd echo' editing='backspace delete ctrl-c ctrl-u' raw-bytes=5 controls=0 responses=4\r\ntalos> \r\nrpi5-local-help-command-proof: ready-for-next prompt=true\r\nrpi5-local-help-command-proof: final participants=1 expected=1 errors=0 classification=pi5-local-help-command-complete\r\nrpi5-local-help-command-proof: PASS\r\n"
+}

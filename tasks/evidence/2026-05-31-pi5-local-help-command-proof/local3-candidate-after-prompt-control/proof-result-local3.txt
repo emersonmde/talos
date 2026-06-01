@@ -1,0 +1,6 @@
+candidate serial cursor before: 3837239
+candidate serial cursor after power: unknown
+candidate tftp kernels:
+candidate help write:
+skipped
+key serial lines:

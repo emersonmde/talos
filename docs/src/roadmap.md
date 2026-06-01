@@ -3952,6 +3952,23 @@ networking, SSH, RP1/PCIe, UART interrupt ownership, and DMA/cache policy
 remain deferred. The next queued task is the serialized Pi 5 help command
 proof.
 
+The serialized Pi 5 help command proof is now accepted. Retained physical
+hardware evidence in
+tasks/evidence/2026-05-31-pi5-local-help-command-proof/local6-observe-before-help-write/serial-transcript-through-pass.txt
+and
+tasks/evidence/2026-05-31-pi5-local-help-command-proof/local6-observe-before-help-write/proof-result-local6.txt
+shows input `help`, visible accurate help output for accepted commands and
+editing controls, descriptor-backed dispatch markers, next-prompt readiness,
+final classification `pi5-local-help-command-complete`, and exact
+`rpi5-local-help-command-proof: PASS` vocabulary. Fresh TFTP evidence served
+the 101088-byte `da591740/kernel_2712.img`, and post-proof restore evidence
+returned the boot tree to hash
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10`. The
+accepted frontier remains a kernel-backed prompt-local guide only; userspace
+shell execution, filesystem-backed commands, broad parser behavior, terminal
+sessions, networking, SSH, RP1/PCIe, UART interrupts, and DMA/cache policy
+remain deferred.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.

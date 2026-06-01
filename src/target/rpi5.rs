@@ -7311,7 +7311,20 @@ pub fn run_local_serial_command_loop_proof() -> bool {
             );
             wait_uart10_empty_early_phase();
         }
-        if result.line() == b"stdio"
+        if result.line() == b"help"
+            && result.status() == crate::local_command_loop::LocalCommandStatus::Handled
+            && result.response_lines() == 4
+        {
+            replay_visible_help_response_for_pi5_proof();
+            crate::println!(
+                "{}: help-observed input='help' commands='help status stdio pwd echo' editing='backspace delete ctrl-c ctrl-u' raw-bytes={} controls={} responses={}",
+                local_command_pi5_proof_label(),
+                result.raw_bytes(),
+                result.controls(),
+                result.response_lines()
+            );
+            wait_uart10_empty_early_phase();
+        } else if result.line() == b"stdio"
             && result.status() == crate::local_command_loop::LocalCommandStatus::Handled
             && result.response_lines() == 7
         {
@@ -7422,14 +7435,36 @@ fn replay_visible_echo_response_for_pi5_proof() {
     wait_uart10_empty_early_phase();
 }
 
-#[cfg(talos_boot_scenario = "rpi5_local_literal_echo")]
+#[cfg(any(
+    talos_boot_scenario = "rpi5_local_literal_echo",
+    talos_boot_scenario = "rpi5_local_help_command"
+))]
 fn replay_visible_literal_echo_response_for_pi5_proof() {
     crate::println!("local serial works");
     wait_uart10_empty_early_phase();
 }
 
 #[cfg(any(
+    talos_boot_scenario = "rpi5_local_serial_command_loop",
+    talos_boot_scenario = "rpi5_local_echo_command",
     talos_boot_scenario = "rpi5_local_literal_echo",
+    talos_boot_scenario = "rpi5_local_help_command",
+    talos_boot_scenario = "rpi5_local_pwd_command",
+    talos_boot_scenario = "rpi5_local_line_editing",
+    talos_boot_scenario = "rpi5_local_line_cancel",
+    talos_boot_scenario = "rpi5_local_line_kill"
+))]
+fn replay_visible_help_response_for_pi5_proof() {
+    crate::println!("talos: ok help");
+    crate::println!("talos: commands help status stdio pwd echo");
+    crate::println!("talos: echo forms echo hello; echo local serial works");
+    crate::println!("talos: editing backspace delete ctrl-c ctrl-u");
+    wait_uart10_empty_early_phase();
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_local_literal_echo",
+    talos_boot_scenario = "rpi5_local_help_command",
     talos_boot_scenario = "rpi5_local_pwd_command",
     talos_boot_scenario = "rpi5_local_line_editing",
     talos_boot_scenario = "rpi5_local_line_cancel",
@@ -7442,6 +7477,7 @@ fn replay_visible_pwd_response_for_pi5_proof() {
 
 #[cfg(any(
     talos_boot_scenario = "rpi5_local_literal_echo",
+    talos_boot_scenario = "rpi5_local_help_command",
     talos_boot_scenario = "rpi5_local_line_cancel",
     talos_boot_scenario = "rpi5_local_line_kill"
 ))]
@@ -7486,10 +7522,16 @@ const fn local_command_pi5_proof_label() -> &'static str {
     "rpi5-local-literal-echo-proof"
 }
 
+#[cfg(talos_boot_scenario = "rpi5_local_help_command")]
+const fn local_command_pi5_proof_label() -> &'static str {
+    "rpi5-local-help-command-proof"
+}
+
 #[cfg(all(
     talos_boot_scenario = "rpi5_local_serial_command_loop",
     not(talos_boot_scenario = "rpi5_local_echo_command"),
     not(talos_boot_scenario = "rpi5_local_literal_echo"),
+    not(talos_boot_scenario = "rpi5_local_help_command"),
     not(talos_boot_scenario = "rpi5_local_pwd_command"),
     not(talos_boot_scenario = "rpi5_local_line_editing"),
     not(talos_boot_scenario = "rpi5_local_line_cancel"),
@@ -7529,10 +7571,16 @@ const fn local_command_pi5_proof_classification() -> &'static str {
     "pi5-local-literal-echo-complete"
 }
 
+#[cfg(talos_boot_scenario = "rpi5_local_help_command")]
+const fn local_command_pi5_proof_classification() -> &'static str {
+    "pi5-local-help-command-complete"
+}
+
 #[cfg(all(
     talos_boot_scenario = "rpi5_local_serial_command_loop",
     not(talos_boot_scenario = "rpi5_local_echo_command"),
     not(talos_boot_scenario = "rpi5_local_literal_echo"),
+    not(talos_boot_scenario = "rpi5_local_help_command"),
     not(talos_boot_scenario = "rpi5_local_pwd_command"),
     not(talos_boot_scenario = "rpi5_local_line_editing"),
     not(talos_boot_scenario = "rpi5_local_line_cancel"),
@@ -7642,6 +7690,9 @@ fn expected_local_command_loop_dispatch(
         }
         0 if cfg!(talos_boot_scenario = "rpi5_local_literal_echo") => {
             line == b"echo local serial works" && status == Handled && response_lines == 1
+        }
+        0 if cfg!(talos_boot_scenario = "rpi5_local_help_command") => {
+            line == b"help" && status == Handled && response_lines == 4
         }
         0 => line == b"stdio" && status == Handled && response_lines == 7,
         _ => false,

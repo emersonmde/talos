@@ -1,0 +1,2 @@
+-rwxr-xr-x. 1 node node 101088 May 31 19:36 target/rpi5-local-help-command-boot-tree-local1/kernel_2712.img
+-rw-r--r--. 1 node node 199506 May 31 19:36 target/talos-rpi5-local-help-command-local1-boot.tar.gz

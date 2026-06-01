@@ -1,0 +1,15 @@
+candidate serial cursor before: 3837438
+candidate serial cursor after power: 3837440
+candidate help write cursor: 3837440
+candidate tftp kernels:
+101088 da591740/kernel_2712.img
+candidate help write:
+true
+key serial lines:
+talos: echo forms echo hello; echo local serial works
+talos: editing backspace delete ctrl-c ctrl-u
+rpi5-local-help-command-proof: help-observed input='help' commands='help status stdio pwd echo' editing='backspace delete ctrl-c ctrl-u' raw-bytes=5 controls=0 responses=4
+talos> 
+rpi5-local-help-command-proof: ready-for-next prompt=true
+rpi5-local-help-command-proof: final participants=1 expected=1 errors=0 classification=pi5-local-help-command-complete
+rpi5-local-help-command-proof: PASS
