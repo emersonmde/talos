@@ -16,6 +16,7 @@ LITERAL_ECHO_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LITERAL_ECHO_SMOKE:-0}"
 ECHO_COMMAND_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_ECHO_COMMAND_SMOKE:-0}"
 PWD_COMMAND_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_PWD_COMMAND_SMOKE:-0}"
 LS_ROOT_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LS_ROOT_SMOKE:-0}"
+LS_BIN_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LS_BIN_SMOKE:-0}"
 LINE_EDITING_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LINE_EDITING_SMOKE:-0}"
 LINE_CANCEL_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LINE_CANCEL_SMOKE:-0}"
 LINE_KILL_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LINE_KILL_SMOKE:-0}"
@@ -93,6 +94,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'pwx\bd\r' >&3
                     elif [ "$PWD_COMMAND_SMOKE" -eq 1 ]; then
                         printf 'pwd\r' >&3
+                    elif [ "$LS_BIN_SMOKE" -eq 1 ]; then
+                        printf 'ls /bin\r' >&3
                     elif [ "$LS_ROOT_SMOKE" -eq 1 ]; then
                         printf 'ls /\r' >&3
                     elif [ "$LITERAL_ECHO_SMOKE" -eq 1 ]; then
@@ -115,6 +118,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'pwx\177d\r' >&3
                     elif [ "$PWD_COMMAND_SMOKE" -eq 1 ]; then
                         printf 'echo hello\r' >&3
+                    elif [ "$LS_BIN_SMOKE" -eq 1 ]; then
+                        printf 'ls /\r' >&3
                     elif [ "$LS_ROOT_SMOKE" -eq 1 ]; then
                         printf '\r' >&3
                     elif [ "$LITERAL_ECHO_SMOKE" -eq 1 ] || [ "$ECHO_COMMAND_SMOKE" -eq 1 ]; then
@@ -130,6 +135,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                     if [ "$LINE_EDITING_SMOKE" -eq 1 ]; then
                         printf 'echo hello\r' >&3
                     elif [ "$PWD_COMMAND_SMOKE" -eq 1 ]; then
+                        printf '\r' >&3
+                    elif [ "$LS_BIN_SMOKE" -eq 1 ]; then
                         printf '\r' >&3
                     elif [ "$LS_ROOT_SMOKE" -eq 1 ]; then
                         printf 'bogus\r' >&3
@@ -178,10 +185,10 @@ grep -q "$LABEL: ready command=1" "$LOG_FILE"
 grep -q "$LABEL: ready command=2" "$LOG_FILE"
 grep -q "$LABEL: ready command=3" "$LOG_FILE"
 grep -q "$LABEL: ready command=4" "$LOG_FILE"
-if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_ROOT_SMOKE" -eq 1 ] || [ "$LITERAL_ECHO_SMOKE" -eq 1 ] || [ "$ECHO_COMMAND_SMOKE" -eq 1 ]; then
+if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_ROOT_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ] || [ "$LITERAL_ECHO_SMOKE" -eq 1 ] || [ "$ECHO_COMMAND_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=5" "$LOG_FILE"
 fi
-if [ "$PWD_COMMAND_SMOKE" -eq 1 ]; then
+if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=6" "$LOG_FILE"
 fi
 if [ "$LINE_EDITING_SMOKE" -eq 1 ]; then
@@ -262,6 +269,26 @@ elif [ "$PWD_COMMAND_SMOKE" -eq 1 ]; then
     grep -q "^hello" "$LOG_FILE"
     grep -q "$LABEL: line command=4 hex=65 63 68 6f 20 68 65 6c 6c 6f" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=4 status=handled responses=1" "$LOG_FILE"
+    grep -q "talos: empty-command" "$LOG_FILE"
+    grep -q "$LABEL: line command=5 hex=" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=5 status=empty-command responses=1" "$LOG_FILE"
+    grep -q "talos> bogus" "$LOG_FILE"
+    grep -q "talos: unknown-command" "$LOG_FILE"
+    grep -q "$LABEL: line command=6 hex=62 6f 67 75 73" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=6 status=unknown-command responses=1" "$LOG_FILE"
+    grep -q "$LABEL: final participants=7 expected=7 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+elif [ "$LS_BIN_SMOKE" -eq 1 ]; then
+    grep -q "talos> ls /bin" "$LOG_FILE"
+    grep -q "^init" "$LOG_FILE"
+    grep -q "$LABEL: line command=3 hex=6c 73 20 2f 62 69 6e" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=3 status=handled responses=1" "$LOG_FILE"
+    grep -q "talos> ls /" "$LOG_FILE"
+    grep -q "^bin" "$LOG_FILE"
+    grep -q "^dir" "$LOG_FILE"
+    grep -q "^empty" "$LOG_FILE"
+    grep -q "^etc" "$LOG_FILE"
+    grep -q "$LABEL: line command=4 hex=6c 73 20 2f" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=4 status=handled responses=4" "$LOG_FILE"
     grep -q "talos: empty-command" "$LOG_FILE"
     grep -q "$LABEL: line command=5 hex=" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=5 status=empty-command responses=1" "$LOG_FILE"

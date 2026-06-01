@@ -9,7 +9,7 @@ qemu-local-line-cancel: start command-count=5 backend=runtime-console0/qemu-virt
 qemu-local-line-cancel: ready command=0
 talos> help
 talos: ok help
-talos: commands help status stdio pwd echo
+talos: commands help status stdio pwd echo ls
 talos: echo forms echo hello; echo local serial works
 talos: editing backspace delete ctrl-c ctrl-u
 

@@ -4026,6 +4026,19 @@ DMA/cache policy, and paused Phase 8 proof-only work deferred. No explicit
 queued task remains after this checkpoint; supervisor planning is required for
 the next smallest feature-led local interactivity task.
 
+The local `ls /bin` core is now accepted in QEMU/substitute evidence. The
+serial command loop accepts only the exact bounded `ls /bin` path extension,
+uses the accepted read-only initramfs fixture to verify `/bin` and
+`/bin/init`, prints visible `init` output through descriptor-backed stdout,
+and returns to a ready `talos>` prompt. The retained
+qemu-local-ls-bin transcript also reruns `ls /` in the same scenario and
+shows the accepted `bin`, `dir`, `empty`, and `etc` root output still
+passes. This remains prompt-local and does not accept recursive/general path
+listing, relative paths, `cd`, file reads, descriptor-backed filesystem
+syscalls, userspace execution, process lifecycle, terminal/session behavior,
+networking, SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache policy. The
+next queued task is the serialized Pi 5 `ls /bin` proof.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.
