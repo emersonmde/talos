@@ -2,7 +2,7 @@
 
 Task: phase10-pi5-local-ls-root-proof-20260601
 
-Status: paused-capture-gap-confirmed
+Status: accepted
 
 ## Goal
 
@@ -203,3 +203,29 @@ acceptance gate is unsatisfied. The next mechanically unblocked task is the
 queued unchanged-candidate capture-window proof, which may rerun the existing
 candidate exactly once with corrected retained-response capture if
 hardwareTestLock remains unlocked/restored.
+
+## 2026-06-01 Local5 Capture-Window Proof
+
+The bounded follow-up task
+phase10-pi5-local-ls-root-capture-window-proof-20260601 reran the unchanged
+candidate archive target/talos-rpi5-local-ls-root-local1.tar.gz with a serial
+window starting before the prompt/write boundary.
+
+Task record:
+
+- tasks/2026-06-01-phase10-pi5-local-ls-root-capture-window-proof.md
+
+Evidence:
+
+- tasks/evidence/2026-06-01-pi5-local-ls-root-proof/local5-capture-window-proof/proof-result.txt
+- tasks/evidence/2026-06-01-pi5-local-ls-root-proof/local5-capture-window-proof/serial-full-window-after-write.txt
+- tasks/evidence/2026-06-01-pi5-local-ls-root-proof/local5-capture-window-proof/tftp-delta-before-restore.json
+- tasks/evidence/2026-06-01-pi5-local-ls-root-proof/local5-capture-window-proof/post-restore-status.json
+
+local5 is accepted. The retained Pi 5 serial window shows descriptor-backed
+fd0/stdout markers, input summary input='ls /', visible root entries bin, dir,
+empty, and etc, complete ready-for-next prompt=true, final classification
+pi5-local-ls-root-complete, and rpi5-local-ls-root-proof: PASS. The boot tree
+was restored to the pre-run hash
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10, and
+hardwareTestLock ended unlocked/restored.

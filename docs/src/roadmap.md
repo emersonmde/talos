@@ -3995,6 +3995,24 @@ lifecycle, terminal sessions, networking, SSH, RP1/PCIe, UART interrupts, and
 DMA/cache policy remain deferred. The next queued task is the serialized Pi 5
 `ls /` proof.
 
+The serialized Pi 5 `ls /` proof is now accepted after the local5
+capture-window rerun. The unchanged candidate archive
+`target/talos-rpi5-local-ls-root-local1.tar.gz` retained descriptor-backed
+fd0/stdout markers, input summary `input='ls /'`, visible root entries
+`bin`, `dir`, `empty`, and `etc`, complete
+`ready-for-next prompt=true`, final classification
+`pi5-local-ls-root-complete`, and exact
+`rpi5-local-ls-root-proof: PASS` vocabulary. Fresh TFTP evidence recorded
+served candidate boot requests, and post-proof restore evidence returned the
+boot tree to hash
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10`. The
+accepted frontier remains bounded to a kernel-backed prompt-local root listing;
+broad parser behavior, recursive listing, path traversal, writable filesystem
+state, descriptor-backed filesystem syscalls, userspace shell execution,
+process lifecycle, terminal sessions, networking, SSH, RP1/PCIe, UART
+interrupts, and DMA/cache policy remain deferred. The next queued task is the
+local `ls /` closeout checkpoint.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.

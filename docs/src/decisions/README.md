@@ -480,6 +480,47 @@ ADR template:
   ownership, and DMA/cache-driver policy remain blocked until later explicit
   tasks accept their contracts and gates.
 
+## 2026-06-01 - Phase 10 Pi 5 Local Ls Root Proof Accepted
+
+- Status: accepted as the serialized Raspberry Pi 5 hardware proof for the
+  bounded kernel-backed `ls /` root-listing command. No broad shell parser,
+  recursive listing, path traversal, writable filesystem state,
+  descriptor-backed filesystem syscalls, userspace shell execution, process
+  lifecycle, terminal/session behavior, networking, SSH, RP1/PCIe, UART
+  interrupt ownership, or DMA/cache-driver policy is accepted here.
+- Context: local4 proved the unchanged candidate reached final PASS, but its
+  retained response window missed visible `bin`, `dir`, `empty`, and `etc`
+  lines plus the complete ready-for-next line. A read-only audit confirmed the
+  capture gap and preserved the visible-entry acceptance gate, so local5 reran
+  the same candidate with a serial window beginning before the prompt/write
+  boundary.
+- Decision: Accept
+  phase10-pi5-local-ls-root-capture-window-proof-20260601 and update
+  phase10-pi5-local-ls-root-proof-20260601 to accepted. local5 retained
+  descriptor-backed fd0/stdout markers, input summary `input='ls /'`, visible
+  root entries `bin`, `dir`, `empty`, and `etc`, complete
+  `ready-for-next prompt=true`, final
+  `classification=pi5-local-ls-root-complete`, and
+  `rpi5-local-ls-root-proof: PASS`.
+- Evidence level: serialized Pi 5 hardware boot/output retained at
+  `tasks/evidence/2026-06-01-pi5-local-ls-root-proof/local5-capture-window-proof/`,
+  lab-controller TFTP evidence, static archive/image inspection, restore proof,
+  fmt/lint/typecheck, no_std unit tests, QEMU/substitute local `ls /` and
+  command-loop regressions, documentation build, and whitespace inspection.
+- Validation: `cargo fmt --all -- --check` passed;
+  `cargo -Zjson-target-spec test --quiet` passed;
+  `scripts/qemu-local-ls-root-smoke.sh --quiet` passed; echo, pwd, literal
+  echo, line editing, Ctrl-C line cancel, Ctrl-U line kill, help, and
+  serial-write ingress QEMU/substitute regressions passed; static archive/image
+  review passed; serialized Pi 5 proof and restore proof passed; `git diff
+  --check` passed; `mdbook build` passed; `git diff --cached --check`
+  passed before commit.
+- Consequences: The accepted local interactivity frontier now includes
+  physical Pi 5 evidence for bounded `ls /` root listing through the
+  descriptor-backed serial command loop. The next bounded task is the queued
+  `ls /` closeout checkpoint; broad shell, userspace, filesystem, terminal,
+  networking, and hardware-driver surfaces remain deferred.
+
 ## 2026-05-31 - Phase 8 QEMU Kernel-Half Descriptor-Image Smoke Plan Accepted
 
 - Status: accepted as the documentation-only Milestone 8.3 QEMU/substitute
