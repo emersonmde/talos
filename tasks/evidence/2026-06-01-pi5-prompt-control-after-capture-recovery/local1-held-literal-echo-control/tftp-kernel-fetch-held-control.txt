@@ -1,0 +1,2 @@
+da591740/kernel_2712.img bytes=104136 line=Jun  1 10:08:49 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4
+da591740/kernel_2712.img bytes=104136 line=Jun  1 10:08:49 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4

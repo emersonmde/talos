@@ -1,0 +1,4 @@
+task=phase10-pi5-prompt-control-after-capture-recovery-20260601
+archive=target/talos-rpi5-local-literal-echo-local3.tar.gz
+accepted_control_task=phase10-pi5-accepted-prompt-control-replay-held-20260601
+accepted_control_commit=9f02d5436b5b7d00f21a023f6bd90d725d8ccf34
