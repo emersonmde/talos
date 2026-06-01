@@ -1,0 +1,10 @@
+{
+  "action": "serial read",
+  "base64": "MTk6Mjk6NTQNCiAgNC4xMiBCT09UTU9ERTogMHgwNiBwYXJ0aXRpb24gMCBidWlsZC10cyBCVUlMRF9USU1FU1RBTVA9MTc2NTIyMjE5NCBzZXJpYWwgZGE1OTE3NDAgYm9hcmRyZXYgZDA0MTcxIHN0YyA0MTI2MTk3DQogIDQuMTYgdXNiX3BkX2luaXQgc3RhdHVzIDANCg==",
+  "bytes": 154,
+  "cursor": 3986787,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "19:29:54\r\n  4.12 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 4126197\r\n  4.16 usb_pd_init status 0\r\n",
+  "truncated": false
+}

@@ -1,0 +1,3 @@
+;: ls-bin-observed input='ls /bin' entries='init' raw-bytes=
+ rpi5-local-ls-bin-proof
+pi5-local-ls-bin-complete/

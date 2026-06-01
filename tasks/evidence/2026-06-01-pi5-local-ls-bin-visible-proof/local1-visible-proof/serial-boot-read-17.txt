@@ -1,0 +1,10 @@
+talos: input-error timeout
+
+rpi5-local-ls-bin-proof: line command=0 hex=
+rpi5-local-ls-bin-proof: dispatch command=0 status=input-error responses=1 raw-bytes=0 truncated=false controls=0
+rpi5-local-ls-bin-proof: edit command=0 backspaces=0 deletes=0
+talos> 
+rpi5-local-ls-bin-proof: ready-for-next prompt=true
+rpi5-local-ls-bin-proof: final participants=1 expected=1 errors=1 classification=pi5-local-ls-bin-complete-incomplete
+rpi5-local-ls-bin-proof: FAIL
+

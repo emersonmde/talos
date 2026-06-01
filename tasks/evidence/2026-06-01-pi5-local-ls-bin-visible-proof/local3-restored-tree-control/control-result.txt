@@ -1,0 +1,11 @@
+task=phase10-pi5-local-ls-bin-visible-proof-20260601
+classification=control-serial-live
+serial_advanced=1
+talos_boot_found=1
+proof_or_prompt_found=1
+tftp_fetch_found=1
+restore_found=1
+serial_cursor_before=3979362
+tftp_cursor_before=4030144
+pre_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+post_restore_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10

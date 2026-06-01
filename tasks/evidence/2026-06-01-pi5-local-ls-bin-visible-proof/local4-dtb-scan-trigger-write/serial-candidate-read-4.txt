@@ -1,0 +1,4 @@
+19:29:54
+  4.12 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 4126197
+  4.16 usb_pd_init status 0
+
