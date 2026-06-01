@@ -1,0 +1,1 @@
+prompt not observed after power; command not written
