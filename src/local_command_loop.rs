@@ -1,5 +1,5 @@
 use crate::{
-    posix,
+    initramfs, posix,
     runtime_console::{self, ConsoleBackend, ConsoleInputBackend, DEFAULT_RUNTIME_CONSOLE},
     scheduler::ProcessOwnerId,
     tty::{self, CANONICAL_LINE_CAPACITY, PollingTtyRxOutcome, PollingTtyRxResult},
@@ -7,8 +7,15 @@ use crate::{
 
 pub const LOCAL_COMMAND_LOOP_VERSION: &str = "phase10.1-kernel-builtins-v1";
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
-pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 5;
+pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 6;
 pub const LOCAL_COMMAND_CURRENT_DIRECTORY: &str = "/";
+
+const LOCAL_COMMAND_ROOT_LISTING: [(&[u8], &str); 4] = [
+    (b"/bin", "bin"),
+    (b"/dir", "dir"),
+    (b"/empty", "empty"),
+    (b"/etc", "etc"),
+];
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum LocalCommandStatus {
@@ -437,7 +444,7 @@ fn dispatch_local_command(
             write_line(
                 sink,
                 responses,
-                "talos: commands help status stdio pwd echo",
+                "talos: commands help status stdio pwd echo ls",
             )?;
             write_line(
                 sink,
@@ -518,11 +525,34 @@ fn dispatch_local_command(
             write_line(sink, responses, LOCAL_COMMAND_CURRENT_DIRECTORY)?;
             Ok(LocalCommandStatus::Handled)
         }
+        "ls" => {
+            if command.arguments != Some("/") {
+                write_line(sink, responses, "talos: unexpected-argument")?;
+                return Ok(LocalCommandStatus::UnexpectedArgument);
+            }
+            write_root_listing(sink, responses)?;
+            Ok(LocalCommandStatus::Handled)
+        }
         _ => {
             write_line(sink, responses, "talos: unknown-command")?;
             Ok(LocalCommandStatus::UnknownCommand)
         }
     }
+}
+
+fn write_root_listing(
+    sink: &mut impl LocalCommandSink,
+    responses: &mut usize,
+) -> Result<(), LocalCommandCycleError> {
+    let fs = initramfs::phase8_readonly_initramfs_fixture();
+    for (path, name) in LOCAL_COMMAND_ROOT_LISTING {
+        if fs.lookup_default(path).is_err() {
+            write_line(sink, responses, "talos: filesystem-error")?;
+            return Ok(());
+        }
+        write_line(sink, responses, name)?;
+    }
+    Ok(())
 }
 
 fn write_stdio_descriptor_line(
@@ -740,11 +770,11 @@ mod tests {
         assert_eq!(result.response_lines(), 4);
         assert_eq!(result.raw_bytes(), 5);
         assert_eq!(result.controls(), 0);
-        assert_eq!(DEFAULT_LOCAL_COMMAND_COUNT, 5);
+        assert_eq!(DEFAULT_LOCAL_COMMAND_COUNT, 6);
         assert_eq!(
             sink.as_str(),
             "talos> talos: ok help\n\
-talos: commands help status stdio pwd echo\n\
+talos: commands help status stdio pwd echo ls\n\
 talos: echo forms echo hello; echo local serial works\n\
 talos: editing backspace delete ctrl-c ctrl-u\n"
         );
@@ -815,6 +845,28 @@ talos: editing backspace delete ctrl-c ctrl-u\n"
         assert_eq!(result.status(), LocalCommandStatus::Handled);
         assert_eq!(result.response_lines(), 1);
         assert_eq!(backend.as_str(), "talos> /\n");
+    }
+
+    #[test_case]
+    fn local_command_loop_dispatches_bounded_ls_root() {
+        let input = ScriptedInput::new(
+            [
+                b'l', b's', b' ', b'/', b'\r', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            ],
+            5,
+        );
+        let mut backend = CaptureSink::new();
+        let result = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            run_one_descriptor_backed_serial_command(&mut io).unwrap()
+        };
+
+        assert_eq!(result.line(), b"ls /");
+        assert_eq!(result.status(), LocalCommandStatus::Handled);
+        assert_eq!(result.response_lines(), 4);
+        assert_eq!(backend.as_str(), "talos> bin\ndir\nempty\netc\n");
     }
 
     #[test_case]

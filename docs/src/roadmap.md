@@ -3980,6 +3980,21 @@ paused Phase 8 proof-only work deferred. No explicit queued task remains after
 this checkpoint; supervisor planning is required for the next smallest
 feature-led local interactivity task.
 
+The local `ls /` core is now accepted in QEMU/substitute evidence. The serial
+command loop dispatches the bounded kernel-backed `ls /` command through
+fd0/runtime-console0, validates the accepted read-only initramfs root entries,
+prints `bin`, `dir`, `empty`, and `etc` through descriptor-backed stdout, and
+returns to a ready `talos>` prompt. The retained
+qemu-local-ls-root transcript shows descriptor-backed input/output markers,
+the exact root entries, next-prompt readiness, final classification
+`qemu-local-ls-root-complete`, and exact `qemu-local-ls-root: PASS`
+vocabulary. This remains prompt-local and root-only; broad parser behavior,
+recursive listing, general path traversal, writable filesystem state,
+descriptor-backed filesystem syscalls, userspace shell execution, process
+lifecycle, terminal sessions, networking, SSH, RP1/PCIe, UART interrupts, and
+DMA/cache policy remain deferred. The next queued task is the serialized Pi 5
+`ls /` proof.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.
