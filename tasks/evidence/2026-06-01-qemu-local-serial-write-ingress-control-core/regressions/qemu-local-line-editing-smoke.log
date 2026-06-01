@@ -1,0 +1,78 @@
+
+Talos 0.1.0 booting on talos-aarch64-virt
+boot-info: dtb_pa=0x0000000048000000 core=0 el=2 target=talos-aarch64-virt
+target-services: uart=pl011 timer=arm-generic irq=gic-v2 dtb=Some(
+    0x0000000048000000,
+)
+mmio-regions: 3
+qemu-local-line-editing: start command-count=9 backend=runtime-console0/qemu-virt-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed descriptor-backed-input=true descriptor-backed-output=true
+qemu-local-line-editing: ready command=0
+talos> help
+talos: ok help
+talos: commands help status stdio pwd echo ls
+talos: echo forms echo hello; echo local serial works
+talos: editing backspace delete ctrl-c ctrl-u
+
+qemu-local-line-editing: line command=0 hex=68 65 6c 70
+qemu-local-line-editing: dispatch command=0 status=handled responses=4 raw-bytes=5 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-line-editing: ready command=1
+talos> status
+talos: ok status
+talos: version phase10.1-kernel-builtins-v1
+talos: runtime-console runtime-console0
+talos: builtins kernel-backed
+
+qemu-local-line-editing: line command=1 hex=73 74 61 74 75 73
+qemu-local-line-editing: dispatch command=1 status=handled responses=4 raw-bytes=7 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-line-editing: ready command=2
+talos> stdio
+talos: ok stdio
+talos: fd 0 stdio-input
+talos: fd 1 stdio-output
+talos: fd 2 stdio-output
+talos: runtime-console runtime-console0
+talos: descriptor-backed-input=true
+talos: descriptor-backed-output=true
+
+qemu-local-line-editing: line command=2 hex=73 74 64 69 6f
+qemu-local-line-editing: dispatch command=2 status=handled responses=7 raw-bytes=6 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-line-editing: ready command=3
+talos> pwx d
+/
+
+qemu-local-line-editing: line command=3 hex=70 77 64
+qemu-local-line-editing: dispatch command=3 status=handled responses=1 raw-bytes=6 backspaces=1 deletes=0 truncated=false controls=0
+qemu-local-line-editing: ready command=4
+talos> pwx d
+/
+
+qemu-local-line-editing: line command=4 hex=70 77 64
+qemu-local-line-editing: dispatch command=4 status=handled responses=1 raw-bytes=6 backspaces=0 deletes=1 truncated=false controls=0
+qemu-local-line-editing: ready command=5
+talos> echo hello
+hello
+
+qemu-local-line-editing: line command=5 hex=65 63 68 6f 20 68 65 6c 6c 6f
+qemu-local-line-editing: dispatch command=5 status=handled responses=1 raw-bytes=11 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-line-editing: ready command=6
+talos>
+talos: empty-command
+
+qemu-local-line-editing: line command=6 hex=
+qemu-local-line-editing: dispatch command=6 status=empty-command responses=1 raw-bytes=1 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-line-editing: ready command=7
+talos> bogus
+talos: unknown-command
+
+qemu-local-line-editing: line command=7 hex=62 6f 67 75 73
+qemu-local-line-editing: dispatch command=7 status=unknown-command responses=1 raw-bytes=6 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-line-editing: ready command=8
+talos> status now
+talos: unexpected-argument
+
+qemu-local-line-editing: line command=8 hex=73 74 61 74 75 73 20 6e 6f 77
+qemu-local-line-editing: dispatch command=8 status=unexpected-argument responses=1 raw-bytes=11 backspaces=0 deletes=0 truncated=false controls=0
+talos>
+qemu-local-line-editing: ready-for-next prompt=true
+qemu-local-line-editing: final participants=9 expected=9 errors=0 classification=qemu-local-line-editing-complete
+qemu-local-line-editing: PASS
