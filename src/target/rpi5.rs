@@ -7200,6 +7200,7 @@ fn settle_for_serial_capture() {
     talos_boot_scenario = "rpi5_local_echo_command",
     talos_boot_scenario = "rpi5_local_literal_echo",
     talos_boot_scenario = "rpi5_local_pwd_command",
+    talos_boot_scenario = "rpi5_local_cd_fixed_dirs",
     talos_boot_scenario = "rpi5_local_line_editing",
     talos_boot_scenario = "rpi5_local_line_cancel",
     talos_boot_scenario = "rpi5_local_line_kill"
@@ -7301,7 +7302,7 @@ pub fn run_local_serial_command_loop_proof() -> bool {
             && result.response_lines() == 2
         {
             replay_visible_line_kill_response_for_pi5_proof();
-            replay_visible_pwd_response_for_pi5_proof();
+            replay_visible_pwd_response_for_pi5_proof(command_index);
             crate::println!(
                 "{}: line-kill-observed partial=bogus control=ctrl-u final-line=pwd raw-bytes={} controls={} responses={}",
                 local_command_pi5_proof_label(),
@@ -7317,7 +7318,7 @@ pub fn run_local_serial_command_loop_proof() -> bool {
         {
             replay_visible_help_response_for_pi5_proof();
             crate::println!(
-                "{}: help-observed input='help' commands='help status stdio pwd echo' editing='backspace delete ctrl-c ctrl-u' raw-bytes={} controls={} responses={}",
+                "{}: help-observed input='help' commands='help status stdio pwd echo ls cat cd' editing='backspace delete ctrl-c ctrl-u' raw-bytes={} controls={} responses={}",
                 local_command_pi5_proof_label(),
                 result.raw_bytes(),
                 result.controls(),
@@ -7333,7 +7334,20 @@ pub fn run_local_serial_command_loop_proof() -> bool {
             && result.status() == crate::local_command_loop::LocalCommandStatus::Handled
             && result.response_lines() == 1
         {
-            replay_visible_pwd_response_for_pi5_proof();
+            replay_visible_pwd_response_for_pi5_proof(command_index);
+            #[cfg(talos_boot_scenario = "rpi5_local_cd_fixed_dirs")]
+            {
+                crate::println!(
+                    "{}: cd-fixed-dirs-pwd-observed command={} cwd='{}' raw-bytes={} controls={} responses={}",
+                    local_command_pi5_proof_label(),
+                    command_index,
+                    local_command_pi5_cd_fixed_dirs_expected_pwd(command_index),
+                    result.raw_bytes(),
+                    result.controls(),
+                    result.response_lines()
+                );
+                wait_uart10_empty_early_phase();
+            }
         } else if result.line() == b"ls /"
             && result.status() == crate::local_command_loop::LocalCommandStatus::Handled
             && result.response_lines() == 4
@@ -7446,6 +7460,7 @@ pub fn run_local_serial_command_loop_proof() -> bool {
     talos_boot_scenario = "rpi5_local_echo_command",
     talos_boot_scenario = "rpi5_local_literal_echo",
     talos_boot_scenario = "rpi5_local_pwd_command",
+    talos_boot_scenario = "rpi5_local_cd_fixed_dirs",
     talos_boot_scenario = "rpi5_local_line_editing",
     talos_boot_scenario = "rpi5_local_line_cancel",
     talos_boot_scenario = "rpi5_local_line_kill"
@@ -7479,7 +7494,8 @@ fn replay_visible_echo_response_for_pi5_proof() {
     talos_boot_scenario = "rpi5_local_help_command",
     talos_boot_scenario = "rpi5_local_ls_root",
     talos_boot_scenario = "rpi5_local_ls_bin",
-    talos_boot_scenario = "rpi5_local_cat_banner"
+    talos_boot_scenario = "rpi5_local_cat_banner",
+    talos_boot_scenario = "rpi5_local_cd_fixed_dirs"
 ))]
 fn replay_visible_literal_echo_response_for_pi5_proof() {
     crate::println!("local serial works");
@@ -7494,6 +7510,7 @@ fn replay_visible_literal_echo_response_for_pi5_proof() {
     talos_boot_scenario = "rpi5_local_ls_root",
     talos_boot_scenario = "rpi5_local_ls_bin",
     talos_boot_scenario = "rpi5_local_cat_banner",
+    talos_boot_scenario = "rpi5_local_cd_fixed_dirs",
     talos_boot_scenario = "rpi5_local_pwd_command",
     talos_boot_scenario = "rpi5_local_line_editing",
     talos_boot_scenario = "rpi5_local_line_cancel",
@@ -7501,7 +7518,7 @@ fn replay_visible_literal_echo_response_for_pi5_proof() {
 ))]
 fn replay_visible_help_response_for_pi5_proof() {
     crate::println!("talos: ok help");
-    crate::println!("talos: commands help status stdio pwd echo");
+    crate::println!("talos: commands help status stdio pwd echo ls cat cd");
     crate::println!("talos: echo forms echo hello; echo local serial works");
     crate::println!("talos: editing backspace delete ctrl-c ctrl-u");
     wait_uart10_empty_early_phase();
@@ -7513,14 +7530,34 @@ fn replay_visible_help_response_for_pi5_proof() {
     talos_boot_scenario = "rpi5_local_ls_root",
     talos_boot_scenario = "rpi5_local_ls_bin",
     talos_boot_scenario = "rpi5_local_cat_banner",
+    talos_boot_scenario = "rpi5_local_cd_fixed_dirs",
     talos_boot_scenario = "rpi5_local_pwd_command",
     talos_boot_scenario = "rpi5_local_line_editing",
     talos_boot_scenario = "rpi5_local_line_cancel",
     talos_boot_scenario = "rpi5_local_line_kill"
 ))]
-fn replay_visible_pwd_response_for_pi5_proof() {
-    crate::println!("/");
+fn replay_visible_pwd_response_for_pi5_proof(command_index: usize) {
+    #[cfg(talos_boot_scenario = "rpi5_local_cd_fixed_dirs")]
+    crate::println!(
+        "{}",
+        local_command_pi5_cd_fixed_dirs_expected_pwd(command_index)
+    );
+
+    #[cfg(not(talos_boot_scenario = "rpi5_local_cd_fixed_dirs"))]
+    {
+        let _ = command_index;
+        crate::println!("/");
+    }
     wait_uart10_empty_early_phase();
+}
+
+#[cfg(talos_boot_scenario = "rpi5_local_cd_fixed_dirs")]
+const fn local_command_pi5_cd_fixed_dirs_expected_pwd(command_index: usize) -> &'static str {
+    match command_index {
+        5 => "/etc",
+        7 => "/bin",
+        _ => "/",
+    }
 }
 
 #[cfg(any(
@@ -7556,6 +7593,7 @@ fn replay_visible_cat_banner_response_for_pi5_proof() {
     talos_boot_scenario = "rpi5_local_ls_root",
     talos_boot_scenario = "rpi5_local_ls_bin",
     talos_boot_scenario = "rpi5_local_cat_banner",
+    talos_boot_scenario = "rpi5_local_cd_fixed_dirs",
     talos_boot_scenario = "rpi5_local_line_cancel",
     talos_boot_scenario = "rpi5_local_line_kill"
 ))]
@@ -7620,6 +7658,11 @@ const fn local_command_pi5_proof_label() -> &'static str {
     "rpi5-local-cat-banner-proof"
 }
 
+#[cfg(talos_boot_scenario = "rpi5_local_cd_fixed_dirs")]
+const fn local_command_pi5_proof_label() -> &'static str {
+    "rpi5-local-cd-fixed-dirs-proof"
+}
+
 #[cfg(all(
     talos_boot_scenario = "rpi5_local_serial_command_loop",
     not(talos_boot_scenario = "rpi5_local_echo_command"),
@@ -7628,6 +7671,7 @@ const fn local_command_pi5_proof_label() -> &'static str {
     not(talos_boot_scenario = "rpi5_local_ls_root"),
     not(talos_boot_scenario = "rpi5_local_ls_bin"),
     not(talos_boot_scenario = "rpi5_local_cat_banner"),
+    not(talos_boot_scenario = "rpi5_local_cd_fixed_dirs"),
     not(talos_boot_scenario = "rpi5_local_pwd_command"),
     not(talos_boot_scenario = "rpi5_local_line_editing"),
     not(talos_boot_scenario = "rpi5_local_line_cancel"),
@@ -7687,6 +7731,11 @@ const fn local_command_pi5_proof_classification() -> &'static str {
     "pi5-local-cat-banner-complete"
 }
 
+#[cfg(talos_boot_scenario = "rpi5_local_cd_fixed_dirs")]
+const fn local_command_pi5_proof_classification() -> &'static str {
+    "pi5-local-cd-fixed-dirs-complete"
+}
+
 #[cfg(all(
     talos_boot_scenario = "rpi5_local_serial_command_loop",
     not(talos_boot_scenario = "rpi5_local_echo_command"),
@@ -7695,6 +7744,7 @@ const fn local_command_pi5_proof_classification() -> &'static str {
     not(talos_boot_scenario = "rpi5_local_ls_root"),
     not(talos_boot_scenario = "rpi5_local_ls_bin"),
     not(talos_boot_scenario = "rpi5_local_cat_banner"),
+    not(talos_boot_scenario = "rpi5_local_cd_fixed_dirs"),
     not(talos_boot_scenario = "rpi5_local_pwd_command"),
     not(talos_boot_scenario = "rpi5_local_line_editing"),
     not(talos_boot_scenario = "rpi5_local_line_cancel"),
@@ -7709,12 +7759,15 @@ const fn local_command_pi5_proof_classification() -> &'static str {
     talos_boot_scenario = "rpi5_local_echo_command",
     talos_boot_scenario = "rpi5_local_literal_echo",
     talos_boot_scenario = "rpi5_local_pwd_command",
+    talos_boot_scenario = "rpi5_local_cd_fixed_dirs",
     talos_boot_scenario = "rpi5_local_line_editing",
     talos_boot_scenario = "rpi5_local_line_cancel",
     talos_boot_scenario = "rpi5_local_line_kill"
 ))]
 const fn local_command_pi5_proof_command_count() -> usize {
-    if cfg!(talos_boot_scenario = "rpi5_local_line_cancel") {
+    if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") {
+        12
+    } else if cfg!(talos_boot_scenario = "rpi5_local_line_cancel") {
         2
     } else {
         1
@@ -7726,6 +7779,7 @@ const fn local_command_pi5_proof_command_count() -> usize {
     talos_boot_scenario = "rpi5_local_echo_command",
     talos_boot_scenario = "rpi5_local_literal_echo",
     talos_boot_scenario = "rpi5_local_pwd_command",
+    talos_boot_scenario = "rpi5_local_cd_fixed_dirs",
     talos_boot_scenario = "rpi5_local_line_editing",
     talos_boot_scenario = "rpi5_local_line_cancel",
     talos_boot_scenario = "rpi5_local_line_kill"
@@ -7737,6 +7791,7 @@ struct LocalCommandProofConsole;
     talos_boot_scenario = "rpi5_local_echo_command",
     talos_boot_scenario = "rpi5_local_literal_echo",
     talos_boot_scenario = "rpi5_local_pwd_command",
+    talos_boot_scenario = "rpi5_local_cd_fixed_dirs",
     talos_boot_scenario = "rpi5_local_line_editing",
     talos_boot_scenario = "rpi5_local_line_cancel",
     talos_boot_scenario = "rpi5_local_line_kill"
@@ -7752,6 +7807,7 @@ impl LocalCommandProofConsole {
     talos_boot_scenario = "rpi5_local_echo_command",
     talos_boot_scenario = "rpi5_local_literal_echo",
     talos_boot_scenario = "rpi5_local_pwd_command",
+    talos_boot_scenario = "rpi5_local_cd_fixed_dirs",
     talos_boot_scenario = "rpi5_local_line_editing",
     talos_boot_scenario = "rpi5_local_line_cancel",
     talos_boot_scenario = "rpi5_local_line_kill"
@@ -7816,6 +7872,44 @@ fn expected_local_command_loop_dispatch(
         }
         0 if cfg!(talos_boot_scenario = "rpi5_local_cat_banner") => {
             line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
+        }
+        0 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
+            line == b"help" && status == Handled && response_lines == 4
+        }
+        1 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
+            line == b"status" && status == Handled && response_lines == 5
+        }
+        2 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
+            line == b"stdio" && status == Handled && response_lines == 7
+        }
+        3 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
+            line == b"pwd" && status == Handled && response_lines == 1
+        }
+        4 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
+            line == b"cd /etc" && status == Handled && response_lines == 0
+        }
+        5 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
+            line == b"pwd" && status == Handled && response_lines == 1
+        }
+        6 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
+            line == b"cd /bin" && status == Handled && response_lines == 0
+        }
+        7 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
+            line == b"pwd" && status == Handled && response_lines == 1
+        }
+        8 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
+            line == b"cd /" && status == Handled && response_lines == 0
+        }
+        9 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
+            line == b"pwd" && status == Handled && response_lines == 1
+        }
+        10 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
+            line == b"cd /missing"
+                && status == crate::local_command_loop::LocalCommandStatus::UnexpectedArgument
+                && response_lines == 1
+        }
+        11 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
+            line == b"pwd" && status == Handled && response_lines == 1
         }
         0 => line == b"stdio" && status == Handled && response_lines == 7,
         _ => false,
