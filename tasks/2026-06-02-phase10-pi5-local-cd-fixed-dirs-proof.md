@@ -13,6 +13,7 @@ Carry the accepted bounded cd fixed-directories command-loop behavior to seriali
 - Archive/image inspection: local4 archive review passed; staged candidate kernel_2712.img size was 109192 bytes and image strings include rpi5-local-cd-fixed-dirs-proof and pi5-local-cd-fixed-dirs-complete.
 - Candidate local4: tasks/evidence/2026-06-02-pi5-local-cd-fixed-dirs-proof/local4-unchanged-candidate-rerun/proof-result.txt records fresh TFTP candidate kernel fetches for 109192 bytes but no Talos serial output beyond NUL/newline across cursor-advanced observes.
 - Control local5: tasks/evidence/2026-06-02-pi5-local-cd-fixed-dirs-proof/local5-clean-known-good-literal-echo-control/control-result.txt records fresh TFTP control kernel fetches for 100352 bytes but no retained literal-echo prompt/PASS before restore.
+- Control local6: tasks/evidence/2026-06-02-pi5-local-cd-fixed-dirs-proof/local6-known-good-literal-echo-control/control-result.txt records a clean repeated known-good literal-echo control with manual short cursor polls. It served fresh config/kernel/DTB/cmdline requests from settled same-cursor TFTP evidence, including kernel_2712.img size 100352 twice, but retained only NUL/newline serial bytes followed by empty serial polls before restore.
 - Earlier local1 is retained as an invalid candidate proof because restore timing contaminated the TFTP delta.
 
 ## Validation This Wake
@@ -25,6 +26,6 @@ Carry the accepted bounded cd fixed-directories command-loop behavior to seriali
 
 ## Current Classification
 
-Paused with resume. The accepted feature is not proven on Pi 5 hardware yet. The next wake should start from restored hardware, review local5 control serial chunks, and either rerun a known-good prompt/PASS control with manual short cursor polls or ask the supervisor for a lab-control-specific plan if repeated clean controls continue to fetch the kernel without prompt/PASS output.
+Paused for supervisor planning. The accepted feature is not proven on Pi 5 hardware yet. Repeated clean known-good controls local5 and local6 both fetched the accepted literal-echo kernel from fresh settled TFTP evidence but did not retain prompt/PASS serial output. Per the resume plan, further candidate reruns, runtime changes, or proof-strategy changes should wait for a lab-control-specific supervisor plan.
 
 HardwareTestLock was released/restored at end of wake.

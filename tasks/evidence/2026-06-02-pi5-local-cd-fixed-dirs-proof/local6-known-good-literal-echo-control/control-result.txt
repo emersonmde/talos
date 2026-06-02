@@ -1,0 +1,13 @@
+attempt=local6-known-good-literal-echo-control
+classification=control-fresh-kernel-fetch-no-prompt-retained
+accepted=false
+archive=target/talos-rpi5-local-literal-echo-local3.tar.gz
+archive_sha256=7cc63a02e2d5dc68abd2127bad0867bc0c1bd0830f56c7ba74a6efbfe64438f5
+pre_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+post_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+serial_cursor_start=4015184
+tftp_cursor_start=4051760
+tftp_result=fresh settled control requests served kernel_2712.img size 100352 twice from the captured same cursor before restore.
+serial_result=manual short cursor polls advanced only from 4015184 to 4015186 and retained NUL/newline bytes; subsequent polls from 4015186 retained no prompt, no Talos banner, and no rpi5-local-literal-echo-proof PASS before restore.
+restore_result=named snapshot phase10-pi5-cd-fixed-dirs-clean-control-pre-20260602T102856Z restored the pre-run tree hash.
+next_action=repeated clean known-good controls local5 and local6 both fetched the accepted literal-echo kernel without retained prompt/PASS; require supervisor lab-control-specific planning before further candidate reruns or runtime/proof changes.
