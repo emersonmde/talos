@@ -1,0 +1,122 @@
+task: phase10-rpi5-accepted-control-entry-provenance-core-20260602
+status: accepted-control-marker-core
+
+selected_control:
+- Scenario: rpi5_local_literal_echo.
+- Prior accepted Pi 5 proof:
+  tasks/2026-05-31-phase10-pi5-local-literal-echo-proof.md.
+- Prior accepted proof evidence:
+  tasks/evidence/2026-05-31-pi5-local-literal-echo-proof/local3-candidate-summary/proof-result-local3.txt.
+- Reason: literal echo is an already accepted prompt-capable Phase 10 control
+  with one command, descriptor-backed stdio markers, ready-next evidence, and
+  PASS. It is smaller than cd fixed-directories and is sufficient to prove
+  whether early entry marker capture works for a prompt-capable control.
+
+implementation:
+- build.rs now adds TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO only to the
+  selected rpi5_local_literal_echo control scenario in this task.
+- The assembly marker path in src/arch/aarch64/boot.S is unchanged. It emits
+  TALOS: asm_start immediately after the arm64 Image header branch and
+  TALOS: asm_pre_rust_entry after BSS clear and stack setup, before branching
+  to rust_entry.
+- No command semantics, descriptor-backed stdio behavior, cd behavior,
+  filesystem behavior, userspace execution, process lifecycle, networking,
+  RP1/PCIe, UART interrupt ownership, DMA, or cache policy changed.
+
+selected_control_archive_identity:
+- Archive: target/talos-rpi5-local-literal-echo-entry-provenance-control.tar.gz.
+- Archive sha256:
+  9580caf5c18139ca413a59adf717cdab4401b8452cdbfba7c0b3226e85f76694.
+- Kernel image:
+  target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-local-literal-echo.img.
+- Kernel sha256:
+  ee1128ac076b48e24f926e5f91e75f02d75c87adadea4e562b4f6040cb504a52.
+- scripts/rpi5-archive-review.sh passed with kernel_size=108896,
+  header_image_size=108896, text_offset=0, flags=12, loader_diagnostic=false,
+  and matching root/da591740-prefixed kernel files.
+
+static_comparison:
+- Image header fields:
+  - literal echo control: text_offset=0, image_size=108896,
+    header_image_size=108896, flags=12, magic=ARMd.
+  - blocked cd entry-provenance candidate: text_offset=0, image_size=110008,
+    header_image_size=110008, flags=12, magic=ARMd.
+- Linker entry and placement:
+  - both ELFs report Machine=AArch64 and Entry point address=0x200000.
+  - both place __kernel_start and _start at 0x200000.
+  - both keep .text.boot at 0x200000 with size 0x144 and place .text at
+    0x201000.
+  - both keep rust_entry at 0x201a48.
+- _start to rust_entry reachability:
+  - literal echo disassembly shows the header branch to 0x200040, asm_start
+    write, BSS clear, stack setup, asm_pre_rust_entry write, then
+    bl 0x201a48 <rust_entry>.
+  - cd disassembly shows the same sequence and branch target.
+- Marker strings:
+  - literal echo retains TALOS: asm_start, TALOS: asm_pre_rust_entry,
+    TALOS: command loop proof entered, and rpi5-local-literal-echo-proof.
+  - cd retains TALOS: asm_start, TALOS: asm_pre_rust_entry,
+    pi5-local-cd-fixed-dirs-complete, TALOS: command loop proof entered, and
+    rpi5-local-cd-fixed-dirs-proof.
+- Proof-main selection:
+  - literal echo routes through talos_boot_scenario=rpi5_local_literal_echo,
+    the one-command literal echo proof label, and the
+    pi5-local-literal-echo-complete classification.
+  - cd routes through talos_boot_scenario=rpi5_local_cd_fixed_dirs, the
+    twelve-command cwd proof label, and the pi5-local-cd-fixed-dirs-complete
+    classification.
+- Boot-tree routing:
+  - scripts/rpi5-local-literal-echo-boot-tree.sh rebuilds only the literal
+    echo image and mirrors kernel_2712.img/kernel8.img into root and
+    da591740-prefixed paths.
+  - scripts/rpi5-local-cd-fixed-dirs-boot-tree.sh does the same for the cd
+    fixed-directories image.
+  - No archive was published and hardwareTestLock was not touched.
+
+classification:
+- No concrete local Image/header/linker/.text.boot/build-routing defect was
+  found beyond adding the same earliest entry marker path to the selected
+  prompt-capable control.
+- Final classification: accepted-control-marker-core.
+
+evidence:
+- QEMU/substitute smoke:
+  qemu-local-literal-echo-smoke.log.
+- Archive review:
+  archive-review.txt.
+- Literal echo Image/header/symbol/string inspection:
+  entry-provenance-inspection.txt.
+- Literal echo entry disassembly:
+  literal-echo-entry-disassembly.txt.
+- Literal echo marker string extraction:
+  entry-provenance-marker-strings.txt.
+- Cd comparison inspection:
+  cd-candidate-comparison.txt.
+- Cd entry disassembly:
+  cd-candidate-entry-disassembly.txt.
+
+validation:
+- fmt/lint: cargo fmt --all -- --check passed, retained at
+  cargo-fmt-check.log.
+- unit tests: cargo -Zjson-target-spec test --quiet passed, retained at
+  cargo-test-quiet.log.
+- QEMU/substitute selected control: scripts/qemu-local-literal-echo-smoke.sh
+  --quiet passed, retained at qemu-local-literal-echo-smoke.log.
+- RPi5 archive/image inspection:
+  scripts/rpi5-local-literal-echo-boot-tree.sh rebuilt
+  target/talos-rpi5-local-literal-echo-entry-provenance-control.tar.gz locally
+  without publishing, and scripts/rpi5-archive-review.sh passed.
+- Static entry provenance inspection retained the selected control Image
+  header, ELF symbols/sections, marker strings, and disassembly showing
+  TALOS: asm_start and TALOS: asm_pre_rust_entry before rust_entry.
+- Static comparison against the blocked cd entry-provenance candidate retained
+  header, size, linker, .text.boot, rust_entry, proof label/classification, and
+  boot-tree routing evidence.
+- Static diff hygiene: git diff --check passed.
+- mdBook was not run because docs/src was not touched.
+- hardwareTestLock stayed unlocked/restored and unused.
+
+next_action:
+- The queued Pi 5 accepted-control entry-provenance proof may publish only this
+  selected control archive and classify whether entry marker capture is healthy
+  on an already prompt-capable control.

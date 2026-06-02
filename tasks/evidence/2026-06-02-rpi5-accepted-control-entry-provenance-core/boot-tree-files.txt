@@ -1,0 +1,16 @@
+target/talos-rpi5-local-literal-echo-entry-provenance-control/bcm2712-rpi-5-b.dtb
+target/talos-rpi5-local-literal-echo-entry-provenance-control/cmdline.txt
+target/talos-rpi5-local-literal-echo-entry-provenance-control/config.txt
+target/talos-rpi5-local-literal-echo-entry-provenance-control/da591740/bcm2712-rpi-5-b.dtb
+target/talos-rpi5-local-literal-echo-entry-provenance-control/da591740/cmdline.txt
+target/talos-rpi5-local-literal-echo-entry-provenance-control/da591740/config.txt
+target/talos-rpi5-local-literal-echo-entry-provenance-control/da591740/kernel8.img
+target/talos-rpi5-local-literal-echo-entry-provenance-control/da591740/kernel_2712.img
+target/talos-rpi5-local-literal-echo-entry-provenance-control/da591740/overlays/bcm2712d0.dtbo
+target/talos-rpi5-local-literal-echo-entry-provenance-control/da591740/overlays/overlay_map.dtb
+target/talos-rpi5-local-literal-echo-entry-provenance-control/da591740/overlays/uart0-pi5.dtbo
+target/talos-rpi5-local-literal-echo-entry-provenance-control/kernel8.img
+target/talos-rpi5-local-literal-echo-entry-provenance-control/kernel_2712.img
+target/talos-rpi5-local-literal-echo-entry-provenance-control/overlays/bcm2712d0.dtbo
+target/talos-rpi5-local-literal-echo-entry-provenance-control/overlays/overlay_map.dtb
+target/talos-rpi5-local-literal-echo-entry-provenance-control/overlays/uart0-pi5.dtbo

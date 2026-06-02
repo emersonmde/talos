@@ -1,0 +1,94 @@
+
+target/aarch64-talos-rpi5-bcm2712/debug/talos:	file format elf64-littleaarch64
+
+Disassembly of section .text.boot:
+
+0000000000200000 <_start>:
+  200000: 14000010     	b	0x200040 <_start+0x40>
+		...
+  200010: 60 a9 01 00  	.word	0x0001a960
+  200014: 00 00 00 00  	.word	0x00000000
+  200018: 0c 00 00 00  	.word	0x0000000c
+		...
+  200038: 41 52 4d 64  	.word	0x644d5241
+  20003c: 00 00 00 00  	.word	0x00000000
+  200040: aa0003f3     	mov	x19, x0
+  200044: 90000000     	adrp	x0, 0x200000 <_start>
+  200048: 91045000     	add	x0, x0, #0x114
+  20004c: d2800241     	mov	x1, #0x12               // =18
+  200050: 94000018     	bl	0x2000b0 <talos_rpi5_early_uart_write>
+  200054: d5381040     	mrs	x0, CPACR_EL1
+  200058: b26c0400     	orr	x0, x0, #0x300000
+  20005c: d5181040     	msr	CPACR_EL1, x0
+  200060: d5033fdf     	isb
+  200064: d503201f     	nop
+  200068: 100d47c0     	adr	x0, 0x21a960 <__bss_start>
+  20006c: d503201f     	nop
+  200070: 100d48c1     	adr	x1, 0x21a988 <__bss_end>
+  200074: eb01001f     	cmp	x0, x1
+  200078: 54000062     	b.hs	0x200084 <_start+0x84>
+  20007c: f800841f     	str	xzr, [x0], #0x8
+  200080: 17fffffd     	b	0x200074 <_start+0x74>
+  200084: d0000ac0     	adrp	x0, 0x35a000 <__stack_bottom+0x3f670>
+  200088: 91264000     	add	x0, x0, #0x990
+  20008c: 9100001f     	mov	sp, x0
+  200090: 90000000     	adrp	x0, 0x200000 <_start>
+  200094: 91049800     	add	x0, x0, #0x126
+  200098: d2800361     	mov	x1, #0x1b               // =27
+  20009c: 94000005     	bl	0x2000b0 <talos_rpi5_early_uart_write>
+  2000a0: aa1303e0     	mov	x0, x19
+  2000a4: 94000669     	bl	0x201a48 <rust_entry>
+  2000a8: d503205f     	wfe
+  2000ac: 17ffffff     	b	0x2000a8 <_start+0xa8>
+
+00000000002000b0 <talos_rpi5_early_uart_write>:
+  2000b0: aa1e03f6     	mov	x22, x30
+  2000b4: b40000c1     	cbz	x1, 0x2000cc <talos_rpi5_early_uart_write+0x1c>
+  2000b8: 3840140b     	ldrb	w11, [x0], #0x1
+  2000bc: 94000005     	bl	0x2000d0 <talos_rpi5_early_uart_putc>
+  2000c0: f1000421     	subs	x1, x1, #0x1
+  2000c4: 54ffffa1     	b.ne	0x2000b8 <talos_rpi5_early_uart_write+0x8>
+  2000c8: 94000009     	bl	0x2000ec <talos_rpi5_early_uart_wait_empty>
+  2000cc: d61f02c0     	br	x22
+
+00000000002000d0 <talos_rpi5_early_uart_putc>:
+  2000d0: d2820009     	mov	x9, #0x1000             // =4096
+  2000d4: f2afa009     	movk	x9, #0x7d00, lsl #16
+  2000d8: f2c00209     	movk	x9, #0x10, lsl #32
+  2000dc: b900012b     	str	w11, [x9]
+  2000e0: b940192a     	ldr	w10, [x9, #0x18]
+  2000e4: d5033f9f     	dsb	sy
+  2000e8: d65f03c0     	ret
+
+00000000002000ec <talos_rpi5_early_uart_wait_empty>:
+  2000ec: d2820009     	mov	x9, #0x1000             // =4096
+  2000f0: f2afa009     	movk	x9, #0x7d00, lsl #16
+  2000f4: f2c00209     	movk	x9, #0x10, lsl #32
+  2000f8: d2a00415     	mov	x21, #0x200000          // =2097152
+  2000fc: b940192a     	ldr	w10, [x9, #0x18]
+  200100: 3738006a     	tbnz	w10, #0x7, 0x20010c <talos_rpi5_early_uart_wait_empty+0x20>
+  200104: f10006b5     	subs	x21, x21, #0x1
+  200108: 54ffffa1     	b.ne	0x2000fc <talos_rpi5_early_uart_wait_empty+0x10>
+  20010c: d5033f9f     	dsb	sy
+  200110: d65f03c0     	ret
+
+0000000000200114 <talos_rpi5_asm_start_line>:
+  200114: 54 41 4c 4f  	.word	0x4f4c4154
+  200118: 53 3a 20 61  	.word	0x61203a53
+  20011c: 73 6d 5f 73  	.word	0x735f6d73
+  200120: 74 61 72 74  	.word	0x74726174
+  200124: 0d 0a        	.short	0x0a0d
+
+0000000000200126 <talos_rpi5_asm_start_line_end>:
+  200126: 54 41 4c 4f  	.word	0x4f4c4154
+  20012a: 53 3a 20 61  	.word	0x61203a53
+  20012e: 73 6d 5f 70  	.word	0x705f6d73
+  200132: 72 65 5f 72  	.word	0x725f6572
+  200136: 75 73 74 5f  	.word	0x5f747375
+  20013a: 65 6e 74 72  	.word	0x72746e65
+  20013e: 79 0d        	.short	0x0d79
+  200140: 0a           	.byte	0x0a
+
+0000000000200141 <talos_rpi5_asm_pre_rust_line_end>:
+  200141: 00 00        	.short	0x0000
+  200143: 00           	.byte	0x00

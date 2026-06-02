@@ -1,0 +1,134 @@
+selected_control=rpi5_local_literal_echo
+archive=target/talos-rpi5-local-literal-echo-entry-provenance-control.tar.gz
+archive_sha256=9580caf5c18139ca413a59adf717cdab4401b8452cdbfba7c0b3226e85f76694
+kernel_img=target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-local-literal-echo.img
+kernel_sha256=ee1128ac076b48e24f926e5f91e75f02d75c87adadea4e562b4f6040cb504a52
+cd_candidate_img=target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-local-cd-fixed-dirs.img
+cd_candidate_sha256=dd9fa1e0fc75b0f717099f9d027b95d3416afb948a72c180a591c19638c8a780
+
+image_header:
+  text_offset=0
+  image_size=108896
+  header_image_size=108896
+  flags=12
+  magic=ARMd
+
+elf_header:
+  Machine:                           AArch64
+  Entry point address:               0x200000
+
+symbols:
+0000000000200000 T __kernel_start
+0000000000200000 T _start
+0000000000201a48 T rust_entry
+000000000021a960 B __bss_start
+000000000021a960 R __kernel_image_end
+000000000021a988 B __bss_end
+000000000035a990 B __stack_top
+
+sections:
+  [ 1] .text.boot        PROGBITS        0000000000200000 010000 000144 00  AX  0   0 4096
+  [ 3] .text             PROGBITS        0000000000201000 011000 0105d8 00  AX  0   0 4096
+  [ 4] .rodata           PROGBITS        00000000002115e0 0215e0 009380 00 AMS  0   0 16
+  [ 5] .bss              NOBITS          000000000021a960 02a960 000028 00  WA  0   0 16
+
+marker_strings:
+TALOS: asm_start
+TALOS: asm_pre_rust_entry
+ rpi5-local-literal-echo-proofTALOS: command loop proof entered
+
+source_routing:
+50:        value: "rpi5_local_literal_echo",
+51-        implied_values: &["rpi5_local_serial_command_loop"],
+52-        asm_defines: &[RPI5_EARLY_ENTRY_PROVENANCE_ASM],
+53-    },
+.section .text.boot, "ax"
+.global _start
+.type _start, %function
+
+_start:
+    b 3f
+    .long 0
+    .quad KERNEL_IMAGE_TEXT_OFFSET
+    .quad __kernel_image_end - _start
+#ifdef TALOS_TARGET_RPI5_BCM2712
+    .quad 0xc
+#else
+    .quad 0
+#endif
+    .quad 0
+    .quad 0
+    .quad 0
+    .long 0x644d5241
+    .long 0
+
+3:
+    mov x19, x0
+
+#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO)
+    adrp x0, talos_rpi5_asm_start_line
+    add x0, x0, :lo12:talos_rpi5_asm_start_line
+    mov x1, #(talos_rpi5_asm_start_line_end - talos_rpi5_asm_start_line)
+    bl talos_rpi5_early_uart_write
+#endif
+    mrs x0, cpacr_el1
+    orr x0, x0, #(0b11 << 20)
+    msr cpacr_el1, x0
+    isb
+
+    adrp x0, __bss_start
+    add x0, x0, :lo12:__bss_start
+    adrp x1, __bss_end
+    add x1, x1, :lo12:__bss_end
+0:
+    cmp x0, x1
+    b.hs 1f
+    str xzr, [x0], #8
+    b 0b
+
+1:
+    adrp x0, __stack_top
+    add x0, x0, :lo12:__stack_top
+    mov sp, x0
+
+#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO)
+    adrp x0, talos_rpi5_asm_pre_rust_line
+    add x0, x0, :lo12:talos_rpi5_asm_pre_rust_line
+    mov x1, #(talos_rpi5_asm_pre_rust_line_end - talos_rpi5_asm_pre_rust_line)
+    bl talos_rpi5_early_uart_write
+#endif
+
+    mov x0, x19
+    bl rust_entry
+
+2:
+    wfe
+    b 2b
+
+.size _start, . - _start
+
+#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO)
+talos_rpi5_early_uart_write:
+    mov x22, x30
+    cbz x1, 2f
+1:
+    ldrb w11, [x0], #1
+    bl talos_rpi5_early_uart_putc
+    subs x1, x1, #1
+    b.ne 1b
+    bl talos_rpi5_early_uart_wait_empty
+2:
+    br x22
+
+talos_rpi5_early_uart_putc:
+    mov x9, #0x1000
+    movk x9, #0x7d00, lsl #16
+    movk x9, #0x10, lsl #32
+    str w11, [x9]
+    ldr w10, [x9, #0x18]
+    dsb sy
+    ret
+
+talos_rpi5_early_uart_wait_empty:
+    mov x9, #0x1000
+    movk x9, #0x7d00, lsl #16

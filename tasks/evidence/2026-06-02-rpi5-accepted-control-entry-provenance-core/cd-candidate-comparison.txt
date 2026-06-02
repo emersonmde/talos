@@ -1,0 +1,40 @@
+cd_candidate_static_comparison_rebuild=local_no_publish
+cd_kernel_img=target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-local-cd-fixed-dirs.img
+cd_kernel_sha256=dd9fa1e0fc75b0f717099f9d027b95d3416afb948a72c180a591c19638c8a780
+cd_image_header:
+  text_offset=0
+  image_size=110008
+  header_image_size=110008
+  flags=12
+  magic=ARMd
+
+cd_elf_header:
+  Machine:                           AArch64
+  Entry point address:               0x200000
+
+cd_symbols:
+0000000000200000 T __kernel_start
+0000000000200000 T _start
+0000000000201a48 T rust_entry
+000000000021adb8 R __kernel_image_end
+000000000021adc0 B __bss_start
+000000000021ade8 B __bss_end
+000000000035adf0 B __stack_top
+
+cd_sections:
+  [ 1] .text.boot        PROGBITS        0000000000200000 010000 000144 00  AX  0   0 4096
+  [ 3] .text             PROGBITS        0000000000201000 011000 0109b0 00  AX  0   0 4096
+  [ 4] .rodata           PROGBITS        00000000002119b0 0219b0 009408 00 AMS  0   0 16
+  [ 5] .bss              NOBITS          000000000021adc0 02adc0 000028 00  WA  0   0 16
+
+cd_marker_strings:
+TALOS: asm_start
+TALOS: asm_pre_rust_entry
+statusstdiopwdcdlscattalos: unknown-commandtalos: unexpected-argument/talos: not-directorytalos: ok stdiotalos: runtime-console falsetalos: descriptor-backed-input=talos: descriptor-backed-output=assertion failed: i <= index + 3talos: bootstrap reserve: start=pi5-local-cd-fixed-dirs-completeunknown-or-undefined-instructiontalos: ok status0123456789ABCDEFexception-regs0:current-sp0-syncexception-regs5:current-spx-syncexception-regs4:runtime-console0exception-regs1:talos: ok stdio
+ rpi5-local-cd-fixed-dirs-proofTALOS: command loop proof entered
+
+cd_source_routing:
+75:        value: "rpi5_local_cd_fixed_dirs",
+76-        implied_values: &["rpi5_local_serial_command_loop"],
+77-        asm_defines: &[RPI5_EARLY_ENTRY_PROVENANCE_ASM],
+78-    },

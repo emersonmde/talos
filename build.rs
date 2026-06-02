@@ -49,7 +49,7 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
     BootScenario {
         value: "rpi5_local_literal_echo",
         implied_values: &["rpi5_local_serial_command_loop"],
-        asm_defines: &[],
+        asm_defines: &[RPI5_EARLY_ENTRY_PROVENANCE_ASM],
     },
     BootScenario {
         value: "rpi5_local_help_command",
