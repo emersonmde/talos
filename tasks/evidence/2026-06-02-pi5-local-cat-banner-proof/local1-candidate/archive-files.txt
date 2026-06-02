@@ -1,0 +1,2 @@
+-rwxr-xr-x. 1 node node 107520 Jun  1 21:17 target/rpi5-local-cat-banner-boot-tree-local1/kernel_2712.img
+-rw-r--r--. 1 node node 210876 Jun  1 21:17 target/talos-rpi5-local-cat-banner-local1.tar.gz

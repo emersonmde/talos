@@ -1,0 +1,5 @@
+]: cat-banner-observed input='cat /etc/banner.txt' output='Talos initramfs fixture' raw-bytes=
+ rpi5-local-cat-banner-proof
+pi5-local-cat-banner-complete/
+Talos initramfs fixture
+DATATalos initramfs fixture

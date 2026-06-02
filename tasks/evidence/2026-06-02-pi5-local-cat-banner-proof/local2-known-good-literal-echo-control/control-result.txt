@@ -1,0 +1,19 @@
+task=phase10-pi5-local-cat-banner-proof-20260602
+attempt=local2-known-good-literal-echo-control
+result=control-not-responsive
+
+control_archive=target/talos-rpi5-local-literal-echo-local3.tar.gz
+control_archive_sha256=7cc63a02e2d5dc68abd2127bad0867bc0c1bd0830f56c7ba74a6efbfe64438f5
+pre_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+control_tree_hash=b742bba067ca68395007583f57408c755484318195d2af96551d6dfa56f92465
+post_restore_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+
+evidence:
+- image/archive inspection: archive-review.txt passed for the previously accepted local literal echo control archive.
+- TFTP evidence: tftp-delta-before-restore.json shows fresh da591740/kernel_2712.img fetches of 100352 bytes for the control.
+- serial hardware boot/output: serial-peek-late.txt retains firmware/Talos output only through TALOS: dtb memory scan start plus NUL/newline bytes. It does not retain the accepted literal-echo control prompt, command response, classification, or PASS evidence.
+- serial write: serial-write-echo.json accepted the lab write request, but serial-observe-after-write.txt retained no command response.
+- restore: post-control-restore-status.json returned the lab boot tree to pre-run hash a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+
+classification=control-not-responsive
+acceptance=not accepted

@@ -1,0 +1,1 @@
+GET / returned 404 in this lab API; used /status for status evidence.

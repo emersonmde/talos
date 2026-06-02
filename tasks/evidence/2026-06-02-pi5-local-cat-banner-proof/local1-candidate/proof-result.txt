@@ -1,0 +1,19 @@
+task=phase10-pi5-local-cat-banner-proof-20260602
+attempt=local1-candidate
+result=inconclusive-control-required
+
+candidate_archive=target/talos-rpi5-local-cat-banner-local1.tar.gz
+candidate_archive_sha256=35937283006c1079df2d95836343c4cd81e54655989e238fea70aa746778feb0
+candidate_kernel_sha256=5300184ebc40ac3b5bb44c9c96828f0d4b1c71b2a8f4431593fff8e5394abce3
+pre_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+candidate_tree_hash=5535fe57219ff7d2873926ba7b443603dd0ae85d00006a1fe31828087c9345d9
+
+evidence:
+- archive/image inspection: archive-review.txt and kernel-proof-strings.txt show the rpi5-local-cat-banner-proof label, cat-banner-observed marker, pi5-local-cat-banner-complete classification, and Talos initramfs fixture string are present.
+- lab-controller API: post-publish-status.json shows effective kernel_2712.img and candidate tree hash 5535fe57219ff7d2873926ba7b443603dd0ae85d00006a1fe31828087c9345d9.
+- TFTP evidence: tftp-delta-before-write.json shows fresh da591740/kernel_2712.img fetches of 107520 bytes for the candidate.
+- serial hardware boot/output: serial-peek-late.txt shows the candidate reaches Talos boot output through TALOS: dtb memory scan start, then NUL/newline bytes. It does not retain a fresh talos> prompt, cat /etc/banner.txt dispatch, descriptor-backed fd0/stdout markers, Talos initramfs fixture output, ready-for-next prompt, pi5-local-cat-banner-complete classification, or rpi5-local-cat-banner-proof: PASS.
+- serial write: serial-write-cat-banner.json accepted the lab write request, but serial-observe-after-write.txt retained no command response.
+
+classification=inconclusive-control-required
+acceptance=not accepted

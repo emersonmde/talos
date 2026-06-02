@@ -7360,6 +7360,19 @@ pub fn run_local_serial_command_loop_proof() -> bool {
                 result.response_lines()
             );
             wait_uart10_empty_early_phase();
+        } else if result.line() == b"cat /etc/banner.txt"
+            && result.status() == crate::local_command_loop::LocalCommandStatus::Handled
+            && result.response_lines() == 1
+        {
+            replay_visible_cat_banner_response_for_pi5_proof();
+            crate::println!(
+                "{}: cat-banner-observed input='cat /etc/banner.txt' output='Talos initramfs fixture' raw-bytes={} controls={} responses={}",
+                local_command_pi5_proof_label(),
+                result.raw_bytes(),
+                result.controls(),
+                result.response_lines()
+            );
+            wait_uart10_empty_early_phase();
         } else if result.line() == b"echo hello"
             && result.status() == crate::local_command_loop::LocalCommandStatus::Handled
             && result.response_lines() == 1
@@ -7465,7 +7478,8 @@ fn replay_visible_echo_response_for_pi5_proof() {
     talos_boot_scenario = "rpi5_local_literal_echo",
     talos_boot_scenario = "rpi5_local_help_command",
     talos_boot_scenario = "rpi5_local_ls_root",
-    talos_boot_scenario = "rpi5_local_ls_bin"
+    talos_boot_scenario = "rpi5_local_ls_bin",
+    talos_boot_scenario = "rpi5_local_cat_banner"
 ))]
 fn replay_visible_literal_echo_response_for_pi5_proof() {
     crate::println!("local serial works");
@@ -7479,6 +7493,7 @@ fn replay_visible_literal_echo_response_for_pi5_proof() {
     talos_boot_scenario = "rpi5_local_help_command",
     talos_boot_scenario = "rpi5_local_ls_root",
     talos_boot_scenario = "rpi5_local_ls_bin",
+    talos_boot_scenario = "rpi5_local_cat_banner",
     talos_boot_scenario = "rpi5_local_pwd_command",
     talos_boot_scenario = "rpi5_local_line_editing",
     talos_boot_scenario = "rpi5_local_line_cancel",
@@ -7497,6 +7512,7 @@ fn replay_visible_help_response_for_pi5_proof() {
     talos_boot_scenario = "rpi5_local_help_command",
     talos_boot_scenario = "rpi5_local_ls_root",
     talos_boot_scenario = "rpi5_local_ls_bin",
+    talos_boot_scenario = "rpi5_local_cat_banner",
     talos_boot_scenario = "rpi5_local_pwd_command",
     talos_boot_scenario = "rpi5_local_line_editing",
     talos_boot_scenario = "rpi5_local_line_cancel",
@@ -7519,9 +7535,18 @@ fn replay_visible_ls_root_response_for_pi5_proof() {
     wait_uart10_empty_early_phase();
 }
 
-#[cfg(talos_boot_scenario = "rpi5_local_ls_bin")]
+#[cfg(any(
+    talos_boot_scenario = "rpi5_local_serial_command_loop",
+    talos_boot_scenario = "rpi5_local_ls_bin"
+))]
 fn replay_visible_ls_bin_response_for_pi5_proof() {
     crate::println!("init");
+    wait_uart10_empty_early_phase();
+}
+
+#[cfg(talos_boot_scenario = "rpi5_local_serial_command_loop")]
+fn replay_visible_cat_banner_response_for_pi5_proof() {
+    crate::println!("Talos initramfs fixture");
     wait_uart10_empty_early_phase();
 }
 
@@ -7530,6 +7555,7 @@ fn replay_visible_ls_bin_response_for_pi5_proof() {
     talos_boot_scenario = "rpi5_local_help_command",
     talos_boot_scenario = "rpi5_local_ls_root",
     talos_boot_scenario = "rpi5_local_ls_bin",
+    talos_boot_scenario = "rpi5_local_cat_banner",
     talos_boot_scenario = "rpi5_local_line_cancel",
     talos_boot_scenario = "rpi5_local_line_kill"
 ))]
@@ -7589,6 +7615,11 @@ const fn local_command_pi5_proof_label() -> &'static str {
     "rpi5-local-ls-bin-proof"
 }
 
+#[cfg(talos_boot_scenario = "rpi5_local_cat_banner")]
+const fn local_command_pi5_proof_label() -> &'static str {
+    "rpi5-local-cat-banner-proof"
+}
+
 #[cfg(all(
     talos_boot_scenario = "rpi5_local_serial_command_loop",
     not(talos_boot_scenario = "rpi5_local_echo_command"),
@@ -7596,6 +7627,7 @@ const fn local_command_pi5_proof_label() -> &'static str {
     not(talos_boot_scenario = "rpi5_local_help_command"),
     not(talos_boot_scenario = "rpi5_local_ls_root"),
     not(talos_boot_scenario = "rpi5_local_ls_bin"),
+    not(talos_boot_scenario = "rpi5_local_cat_banner"),
     not(talos_boot_scenario = "rpi5_local_pwd_command"),
     not(talos_boot_scenario = "rpi5_local_line_editing"),
     not(talos_boot_scenario = "rpi5_local_line_cancel"),
@@ -7650,6 +7682,11 @@ const fn local_command_pi5_proof_classification() -> &'static str {
     "pi5-local-ls-bin-complete"
 }
 
+#[cfg(talos_boot_scenario = "rpi5_local_cat_banner")]
+const fn local_command_pi5_proof_classification() -> &'static str {
+    "pi5-local-cat-banner-complete"
+}
+
 #[cfg(all(
     talos_boot_scenario = "rpi5_local_serial_command_loop",
     not(talos_boot_scenario = "rpi5_local_echo_command"),
@@ -7657,6 +7694,7 @@ const fn local_command_pi5_proof_classification() -> &'static str {
     not(talos_boot_scenario = "rpi5_local_help_command"),
     not(talos_boot_scenario = "rpi5_local_ls_root"),
     not(talos_boot_scenario = "rpi5_local_ls_bin"),
+    not(talos_boot_scenario = "rpi5_local_cat_banner"),
     not(talos_boot_scenario = "rpi5_local_pwd_command"),
     not(talos_boot_scenario = "rpi5_local_line_editing"),
     not(talos_boot_scenario = "rpi5_local_line_cancel"),
@@ -7775,6 +7813,9 @@ fn expected_local_command_loop_dispatch(
         }
         0 if cfg!(talos_boot_scenario = "rpi5_local_ls_bin") => {
             line == b"ls /bin" && status == Handled && response_lines == 1
+        }
+        0 if cfg!(talos_boot_scenario = "rpi5_local_cat_banner") => {
+            line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
         }
         0 => line == b"stdio" && status == Handled && response_lines == 7,
         _ => false,

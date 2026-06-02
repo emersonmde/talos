@@ -1,0 +1,6 @@
+ M build.rs
+ M src/main.rs
+ M src/target/rpi5.rs
+?? scripts/rpi5-local-cat-banner-boot-tree.sh
+?? scripts/rpi5-local-cat-banner-image.sh
+?? tasks/evidence/2026-06-02-pi5-local-cat-banner-proof/

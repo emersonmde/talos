@@ -12,6 +12,7 @@
             talos_boot_scenario = "rpi5_diagnostic_command_channel",
             talos_boot_scenario = "rpi5_local_serial_command_loop",
             talos_boot_scenario = "rpi5_local_literal_echo",
+            talos_boot_scenario = "rpi5_local_cat_banner",
             talos_boot_scenario = "rpi5_local_line_editing",
             talos_boot_scenario = "rpi5_local_line_cancel",
             talos_boot_scenario = "rpi5_local_line_kill",
@@ -146,6 +147,7 @@ mod target;
         talos_boot_scenario = "rpi5_diagnostic_command_channel",
         talos_boot_scenario = "rpi5_local_serial_command_loop",
         talos_boot_scenario = "rpi5_local_literal_echo",
+        talos_boot_scenario = "rpi5_local_cat_banner",
         talos_boot_scenario = "rpi5_local_line_editing",
         talos_boot_scenario = "rpi5_local_line_cancel",
         talos_boot_scenario = "rpi5_local_line_kill"
