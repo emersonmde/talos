@@ -1,0 +1,12 @@
+attempt=1 events=0 cursor_start=4058515 cursor_end=4058515 kernel_seen=0 stable_after_kernel=0
+attempt=2 events=0 cursor_start=4058515 cursor_end=4058515 kernel_seen=0 stable_after_kernel=0
+attempt=3 events=0 cursor_start=4058515 cursor_end=4058515 kernel_seen=0 stable_after_kernel=0
+attempt=4 events=0 cursor_start=4058515 cursor_end=4058515 kernel_seen=0 stable_after_kernel=0
+attempt=5 events=0 cursor_start=4058515 cursor_end=4058515 kernel_seen=0 stable_after_kernel=0
+attempt=6 events=0 cursor_start=4058515 cursor_end=4058515 kernel_seen=0 stable_after_kernel=0
+attempt=7 events=0 cursor_start=4058515 cursor_end=4058515 kernel_seen=0 stable_after_kernel=0
+attempt=8 events=0 cursor_start=4058515 cursor_end=4058515 kernel_seen=0 stable_after_kernel=0
+attempt=9 events=0 cursor_start=4058515 cursor_end=4058515 kernel_seen=0 stable_after_kernel=0
+attempt=10 events=13 cursor_start=4058515 cursor_end=4059866 kernel_seen=1 stable_after_kernel=0
+attempt=11 events=13 cursor_start=4058515 cursor_end=4059866 kernel_seen=1 stable_after_kernel=1
+attempt=12 events=13 cursor_start=4058515 cursor_end=4059866 kernel_seen=1 stable_after_kernel=2

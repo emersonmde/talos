@@ -1,0 +1,44 @@
+{
+  "action": "tftp logs",
+  "ok": true,
+  "tftp": {
+    "cursor_end": 4061566,
+    "cursor_start": 4061217,
+    "events": [
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "Jun  2 14:52:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "Jun  2 14:52:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "Jun  2 14:52:22 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      }
+    ],
+    "lines": [
+      "Jun  2 14:52:22 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "Jun  2 14:52:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "Jun  2 14:52:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+      "Jun  2 14:52:22 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4"
+    ],
+    "log": "/state/tftp.log",
+    "log_size": 4061566,
+    "tail_mode": false,
+    "truncated": false
+  }
+}

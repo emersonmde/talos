@@ -1,7 +1,7 @@
 # Phase 10 Pi 5 Local Cd Fixed Dirs Proof Task
 
 Task: phase10-pi5-local-cd-fixed-dirs-proof-20260602
-Status: blocked-candidate-no-talos-serial
+Status: blocked-dtb-memory-scan-not-entered
 
 ## Scope
 
@@ -39,3 +39,5 @@ HardwareTestLock was released/restored at end of wake.
 phase10-pi5-local-cd-fixed-dirs-candidate-boot-output-discriminator-20260602 is accepted-blocked-candidate-entered-no-prompt. Its focused static comparison found no candidate-only boot-tree, image-script, build-routing, proof-main selection, command transcript, or early serial-output routing defect. It reclassified the committed local8 evidence as a fresh candidate that entered Talos through `TALOS: dtb memory scan start` but did not retain `TALOS: dtb memory scan done`, prompt, command transcript, final classification, or PASS. The original cd proof remains blocked pending supervisor-planned instrumentation or a concrete fix for the stop between DTB memory scan start and prompt entry.
 
 phase10-rpi5-dtb-memory-scan-progress-core-20260602 is accepted. It added bounded raw UART progress markers around DTB memory scan unavailable outcomes, memory planning, cache transition, local command-loop proof entry, descriptor-backed IO readiness, and final prompt readiness. The core retained QEMU/substitute cd and command-loop regression passes plus local RPi5 archive/image review, but did not run hardware and does not accept the cd feature. The original cd proof remains blocked until a later Pi 5 run retains the full cd transcript and rpi5-local-cd-fixed-dirs-proof: PASS.
+
+phase10-pi5-local-cd-fixed-dirs-dtb-scan-progress-proof-20260602 is accepted-blocked-dtb-memory-scan-not-entered. Its decisive local5 run fetched the progress-core candidate kernel from TFTP twice at 110008 bytes from the same pre-run cursor, then collected fresh serial after the settled TFTP window. The fresh serial retained only NUL/space bytes and no TALOS: rust_entry, TALOS: dtb memory scan start, command-loop marker, prompt, cd transcript, classification, or PASS. The original cd proof remains blocked; the cd closeout checkpoint must not be promoted until a later Pi 5 run retains the full feature transcript and PASS.

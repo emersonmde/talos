@@ -1,0 +1,2 @@
+archive=target/talos-rpi5-local-cd-fixed-dirs-dtb-scan-progress-local1.tar.gz
+source_archive_review=local1-dtb-progress-candidate/archive-review.txt
