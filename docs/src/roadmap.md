@@ -4132,6 +4132,19 @@ followed by restore to the pre-run boot tree hash. The cd fixed-directories
 hardware proof remains unaccepted, but the accepted control evidence
 mechanically unblocks the planned non-invasive cd recovery core.
 
+The non-invasive cd fixed-directories recovery core is now accepted. It made no
+additional runtime behavior change; instead it rebuilt and retained a fresh
+quarantined cd candidate archive at
+target/talos-rpi5-local-cd-fixed-dirs-noninvasive-recovery-core.tar.gz.
+Retained QEMU/substitute cd fixed-dirs, literal-echo, and command-loop
+regression logs pass. Archive review passes with a 110008-byte kernel_2712.img,
+and static string/route evidence retains rpi5-local-cd-fixed-dirs-proof,
+pi5-local-cd-fixed-dirs-complete, and TALOS: command loop proof entered while
+omitting TALOS: asm_start and TALOS: asm_pre_rust_entry. The next bounded task
+is the serialized Pi 5 non-invasive cd recovery proof; the original cd Pi 5
+proof remains unaccepted until hardware evidence retains the full cd transcript,
+ready prompt, final classification, and rpi5-local-cd-fixed-dirs-proof: PASS.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.

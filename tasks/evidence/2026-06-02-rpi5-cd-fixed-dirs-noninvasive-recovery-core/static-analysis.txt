@@ -1,0 +1,100 @@
+Task: phase10-rpi5-cd-fixed-dirs-noninvasive-recovery-core-20260602
+Classification: accepted-noninvasive-cd-candidate-rebuilt
+
+Control-vs-cd analysis
+----------------------
+
+The earlier cd fixed-directories Pi 5 candidate reached a blocked state after
+fresh settled TFTP evidence served the selected kernel but fresh post-TFTP
+serial retained no prompt, cd transcript, classification, or PASS. Subsequent
+entry-provenance work added raw pre-Rust assembly markers to both the cd
+candidate and a literal-echo control. Both then fetched from TFTP but retained
+only NUL/space serial and no asm_start, asm_pre_rust_entry, rust_entry, prompt,
+classification, or PASS.
+
+The accepted early-entry marker quarantine core removed that raw marker path
+from prompt-capable rpi5_local_literal_echo and rpi5_local_cd_fixed_dirs
+archives. The accepted non-invasive literal-echo control regression then fetched
+the rebuilt control archive from TFTP and retained visible "local serial works",
+a ready talos> prompt, pi5-local-literal-echo-complete, and
+rpi5-local-literal-echo-proof: PASS.
+
+That evidence proves the marker quarantine is sufficient to restore a
+prompt-capable local command-loop control. No new cd semantic defect is visible
+in static inspection or QEMU/substitute evidence, so the smallest recovery step
+is to carry a freshly rebuilt non-invasive cd candidate into the next serialized
+hardware proof.
+
+Recovery artifact
+-----------------
+
+No source change was made in this task. The concrete recovery candidate is the
+fresh archive:
+
+target/talos-rpi5-local-cd-fixed-dirs-noninvasive-recovery-core.tar.gz
+
+Archive identity:
+
+94b25d9b0a76b0c7979f975f17f20cb7a5fe6b6aace27d3586a5bbbaccabbbeb  target/talos-rpi5-local-cd-fixed-dirs-noninvasive-recovery-core.tar.gz
+d7f27f5111b758311f7762dadf764e055e6cd4d246a632cc4fffe041cfa1dcc3  target/rpi5-local-cd-fixed-dirs-noninvasive-recovery-core-boot-tree/kernel_2712.img
+
+Archive/image review:
+
+- scripts/rpi5-archive-review.sh passed.
+- kernel_2712.img size is 110008 bytes.
+- arm64 Image header size is 110008 bytes.
+- text_offset is 0.
+- flags are 12.
+- config.txt selects kernel_2712.img and preserves RP1 UART settings.
+
+Static route evidence
+---------------------
+
+Static string inspection retained:
+
+- rpi5-local-cd-fixed-dirs-proof
+- pi5-local-cd-fixed-dirs-complete
+- TALOS: command loop proof entered
+
+Static string inspection did not retain:
+
+- TALOS: asm_start
+- TALOS: asm_pre_rust_entry
+
+llvm-objdump static route inspection retained rust_entry and the call path from
+RPi5 kernel_main to run_local_serial_command_loop_proof. This is the expected
+cd proof route for the quarantined prompt-capable candidate.
+
+Validation
+----------
+
+- cargo fmt --all -- --check: passed.
+- cargo -Zjson-target-spec test --quiet: passed with existing dead_code
+  warnings.
+- scripts/qemu-local-cd-fixed-dirs-smoke.sh --quiet: passed; retained log ends
+  with qemu-local-cd-fixed-dirs-complete and qemu-local-cd-fixed-dirs: PASS.
+- scripts/qemu-local-literal-echo-smoke.sh --quiet: passed; retained log ends
+  with qemu-local-literal-echo-complete and qemu-local-literal-echo: PASS.
+- scripts/qemu-local-serial-command-loop-smoke.sh --quiet: passed; retained log
+  ends with qemu-local-serial-command-loop-complete and
+  qemu-local-serial-command-loop: PASS.
+- scripts/rpi5-archive-review.sh passed for the rebuilt cd candidate archive
+  without publishing.
+- git diff --check: passed after evidence and doc updates.
+- mdbook build: passed after task/roadmap updates.
+
+Hardware
+--------
+
+No boot tree was published, no fixed-port power-cycle was performed, and
+hardwareTestLock remained unlocked/restored and unused by this core task.
+
+Next discriminator
+------------------
+
+Run phase10-pi5-local-cd-fixed-dirs-noninvasive-recovery-proof-20260602 under
+hardware lock with this candidate archive. The proof must still retain the full
+cd command transcript, expected cwd outputs, rejected /missing behavior with cwd
+unchanged, ready prompt, pi5-local-cd-fixed-dirs-complete, and
+rpi5-local-cd-fixed-dirs-proof: PASS before the original Pi 5 cd proof can be
+accepted.

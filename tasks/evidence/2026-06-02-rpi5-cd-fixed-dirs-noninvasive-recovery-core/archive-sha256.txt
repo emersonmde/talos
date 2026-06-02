@@ -1,0 +1,2 @@
+94b25d9b0a76b0c7979f975f17f20cb7a5fe6b6aace27d3586a5bbbaccabbbeb  target/talos-rpi5-local-cd-fixed-dirs-noninvasive-recovery-core.tar.gz
+d7f27f5111b758311f7762dadf764e055e6cd4d246a632cc4fffe041cfa1dcc3  target/rpi5-local-cd-fixed-dirs-noninvasive-recovery-core-boot-tree/kernel_2712.img

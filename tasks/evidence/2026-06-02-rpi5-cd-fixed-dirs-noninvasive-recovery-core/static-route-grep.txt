@@ -1,0 +1,136 @@
+32:  200084: 94000671     	bl	0x201a48 <rust_entry>
+1231:0000000000201a48 <rust_entry>:
+3005:  20356c: 94001872     	bl	0x209734 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof>
+9558:0000000000209734 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof>:
+9603:  2097e4: 3738006a     	tbnz	w10, #0x7, 0x2097f0 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xbc>
+9605:  2097ec: 54ffffa1     	b.ne	0x2097e0 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xac>
+9619:  209824: 54007ee0     	b.eq	0x20a800 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x10cc>
+9674:  209900: 54006d60     	b.eq	0x20a6ac <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf78>
+9689:  20993c: 3738006a     	tbnz	w10, #0x7, 0x209948 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x214>
+9691:  209944: 54ffffa1     	b.ne	0x209938 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x204>
+9701:  20996c: 54000261     	b.ne	0x2099b8 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x284>
+9719:  2099b4: 17ffffd2     	b	0x2098fc <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x1c8>
+9740:  209a08: 54000320     	b.eq	0x209a6c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x338>
+9742:  209a10: 540075c0     	b.eq	0x20a8c8 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x1194>
+9744:  209a18: b40000e8     	cbz	x8, 0x209a34 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x300>
+9764:  209a68: 17ffffe7     	b	0x209a04 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x2d0>
+9775:  209a94: 3738006a     	tbnz	w10, #0x7, 0x209aa0 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x36c>
+9777:  209a9c: 54ffffa1     	b.ne	0x209a90 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x35c>
+9819:  209b44: 3738006a     	tbnz	w10, #0x7, 0x209b50 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x41c>
+9821:  209b4c: 54ffffa1     	b.ne	0x209b40 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x40c>
+9842:  209ba0: 3738006a     	tbnz	w10, #0x7, 0x209bac <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x478>
+9844:  209ba8: 54ffffa1     	b.ne	0x209b9c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x468>
+9851:  209bc4: 540009a1     	b.ne	0x209cf8 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x5c4>
+9856:  209bd8: 54000901     	b.ne	0x209cf8 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x5c4>
+9858:  209be0: 340008c0     	cbz	w0, 0x209cf8 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x5c4>
+9860:  209be8: 54000881     	b.ne	0x209cf8 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x5c4>
+9890:  209c60: 3738006a     	tbnz	w10, #0x7, 0x209c6c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x538>
+9892:  209c68: 54ffffa1     	b.ne	0x209c5c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x528>
+9921:  209cdc: 3738006a     	tbnz	w10, #0x7, 0x209ce8 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x5b4>
+9923:  209ce4: 54ffffa1     	b.ne	0x209cd8 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x5a4>
+9927:  209cf4: 14000041     	b	0x209df8 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x6c4>
+9933:  209d0c: 540007a1     	b.ne	0x209e00 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x6cc>
+9935:  209d14: 54000761     	b.ne	0x209e00 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x6cc>
+9937:  209d1c: 34000720     	cbz	w0, 0x209e00 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x6cc>
+9939:  209d24: 540006e1     	b.ne	0x209e00 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x6cc>
+9987:  209de4: 3738006a     	tbnz	w10, #0x7, 0x209df0 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x6bc>
+9989:  209dec: 54ffffa1     	b.ne	0x209de0 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x6ac>
+9993:  209dfc: 1400018f     	b	0x20a438 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xd04>
+9997:  209e0c: 540002c1     	b.ne	0x209e64 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x730>
+9999:  209e14: 54000281     	b.ne	0x209e64 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x730>
+10001:  209e1c: 34000240     	cbz	w0, 0x209e64 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x730>
+10003:  209e24: 54000201     	b.ne	0x209e64 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x730>
+10011:  209e44: 54002520     	b.eq	0x20a2e8 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xbb4>
+10013:  209e4c: 540025a1     	b.ne	0x20a300 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xbcc>
+10018:  209e60: 14000126     	b	0x20a2f8 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xbc4>
+10021:  209e6c: 540007c1     	b.ne	0x209f64 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x830>
+10027:  209e84: 54000701     	b.ne	0x209f64 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x830>
+10029:  209e8c: 340006c0     	cbz	w0, 0x209f64 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x830>
+10031:  209e94: 54000681     	b.ne	0x209f64 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x830>
+10061:  209f0c: 3738006a     	tbnz	w10, #0x7, 0x209f18 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x7e4>
+10063:  209f14: 54ffffa1     	b.ne	0x209f08 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x7d4>
+10078:  209f50: 3738006a     	tbnz	w10, #0x7, 0x209f5c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x828>
+10080:  209f58: 54ffffa1     	b.ne	0x209f4c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x818>
+10082:  209f60: 14000135     	b	0x20a434 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xd00>
+10086:  209f70: 54000541     	b.ne	0x20a018 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x8e4>
+10090:  209f80: 540004c1     	b.ne	0x20a018 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x8e4>
+10092:  209f88: 34000480     	cbz	w0, 0x20a018 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x8e4>
+10094:  209f90: 54000441     	b.ne	0x20a018 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x8e4>
+10106:  209fc0: 3738006a     	tbnz	w10, #0x7, 0x209fcc <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x898>
+10108:  209fc8: 54ffffa1     	b.ne	0x209fbc <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x888>
+10123:  20a004: 3738006a     	tbnz	w10, #0x7, 0x20a010 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x8dc>
+10125:  20a00c: 54ffffa1     	b.ne	0x20a000 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x8cc>
+10127:  20a014: 14000109     	b	0x20a438 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xd04>
+10130:  20a020: 54000101     	b.ne	0x20a040 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x90c>
+10137:  20a03c: 340010c0     	cbz	w0, 0x20a254 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xb20>
+10140:  20a048: 54000641     	b.ne	0x20a110 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x9dc>
+10169:  20a0bc: 540002a1     	b.ne	0x20a110 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x9dc>
+10171:  20a0c4: 34000260     	cbz	w0, 0x20a110 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x9dc>
+10173:  20a0cc: 54000221     	b.ne	0x20a110 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x9dc>
+10185:  20a0fc: 3738006a     	tbnz	w10, #0x7, 0x20a108 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x9d4>
+10187:  20a104: 54ffffa1     	b.ne	0x20a0f8 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x9c4>
+10189:  20a10c: 140000cb     	b	0x20a438 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xd04>
+10192:  20a118: 54000681     	b.ne	0x20a1e8 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xab4>
+10200:  20a138: 350005a0     	cbnz	w0, 0x20a1ec <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xab8>
+10208:  20a158: 340004a0     	cbz	w0, 0x20a1ec <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xab8>
+10210:  20a160: 54000461     	b.ne	0x20a1ec <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xab8>
+10222:  20a190: 3738006a     	tbnz	w10, #0x7, 0x20a19c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xa68>
+10224:  20a198: 54ffffa1     	b.ne	0x20a18c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xa58>
+10239:  20a1d4: 3738006a     	tbnz	w10, #0x7, 0x20a1e0 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xaac>
+10241:  20a1dc: 54ffffa1     	b.ne	0x20a1d0 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xa9c>
+10243:  20a1e4: 14000095     	b	0x20a438 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xd04>
+10252:  20a208: 34001180     	cbz	w0, 0x20a438 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xd04>
+10254:  20a210: 54001141     	b.ne	0x20a438 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xd04>
+10266:  20a240: 3738006a     	tbnz	w10, #0x7, 0x20a24c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xb18>
+10268:  20a248: 54ffffa1     	b.ne	0x20a23c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xb08>
+10270:  20a250: 1400007a     	b	0x20a438 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xd04>
+10272:  20a258: 34ffef40     	cbz	w0, 0x20a040 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x90c>
+10274:  20a260: 54ffef01     	b.ne	0x20a040 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x90c>
+10286:  20a290: 3738006a     	tbnz	w10, #0x7, 0x20a29c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xb68>
+10288:  20a298: 54ffffa1     	b.ne	0x20a28c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xb58>
+10303:  20a2d4: 3738006a     	tbnz	w10, #0x7, 0x20a2e0 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xbac>
+10305:  20a2dc: 54ffffa1     	b.ne	0x20a2d0 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xb9c>
+10307:  20a2e4: 14000055     	b	0x20a438 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xd04>
+10313:  20a2fc: 14000003     	b	0x20a308 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xbd4>
+10330:  20a340: 3738006a     	tbnz	w10, #0x7, 0x20a34c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xc18>
+10332:  20a348: 54ffffa1     	b.ne	0x20a33c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xc08>
+10338:  20a360: 54000160     	b.eq	0x20a38c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xc58>
+10341:  20a36c: 54000201     	b.ne	0x20a3ac <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xc78>
+10348:  20a388: 1400000b     	b	0x20a3b4 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xc80>
+10356:  20a3a8: 14000003     	b	0x20a3b4 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xc80>
+10387:  20a424: 3738006a     	tbnz	w10, #0x7, 0x20a430 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xcfc>
+10389:  20a42c: 54ffffa1     	b.ne	0x20a420 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xcec>
+10397:  20a44c: 54001148     	b.hi	0x20a674 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf40>
+10402:  20a460: 10000009     	adr	x9, 0x20a460 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xd2c>
+10407:  20a474: 54001001     	b.ne	0x20a674 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf40>
+10409:  20a47c: 54000fc1     	b.ne	0x20a674 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf40>
+10414:  20a490: 14000072     	b	0x20a658 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf24>
+10416:  20a498: 54000ee1     	b.ne	0x20a674 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf40>
+10448:  20a518: 54000ae1     	b.ne	0x20a674 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf40>
+10450:  20a520: 17ffffdb     	b	0x20a48c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xd58>
+10452:  20a528: 54000a61     	b.ne	0x20a674 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf40>
+10454:  20a530: 14000044     	b	0x20a640 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf0c>
+10456:  20a538: 540009e1     	b.ne	0x20a674 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf40>
+10458:  20a540: 540009a1     	b.ne	0x20a674 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf40>
+10461:  20a54c: 14000041     	b	0x20a650 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf1c>
+10463:  20a554: 54000901     	b.ne	0x20a674 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf40>
+10468:  20a568: 54000861     	b.ne	0x20a674 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf40>
+10471:  20a574: 14000037     	b	0x20a650 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf1c>
+10473:  20a57c: 540007c1     	b.ne	0x20a674 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf40>
+10490:  20a5c0: 540005a1     	b.ne	0x20a674 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf40>
+10493:  20a5cc: 14000021     	b	0x20a650 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf1c>
+10495:  20a5d4: 54000501     	b.ne	0x20a674 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf40>
+10500:  20a5e8: 54000300     	b.eq	0x20a648 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf14>
+10501:  20a5ec: 14000022     	b	0x20a674 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf40>
+10503:  20a5f4: 54000401     	b.ne	0x20a674 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf40>
+10523:  20a644: 54000181     	b.ne	0x20a674 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf40>
+10534:  20a670: 14000002     	b	0x20a678 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf44>
+10541:  20a68c: 3738006a     	tbnz	w10, #0x7, 0x20a698 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf64>
+10543:  20a694: 54ffffa1     	b.ne	0x20a688 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0xf54>
+10548:  20a6a8: 17fffc95     	b	0x2098fc <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x1c8>
+10571:  20a704: 370003d3     	tbnz	w19, #0x0, 0x20a77c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x1048>
+10578:  20a720: 360002fa     	tbz	w26, #0x0, 0x20a77c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x1048>
+10600:  20a778: 14000015     	b	0x20a7cc <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x1098>
+10628:  20a7e8: 3738006a     	tbnz	w10, #0x7, 0x20a7f4 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x10c0>
+10630:  20a7f0: 54ffffa1     	b.ne	0x20a7e4 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x10b0>
+10633:  20a7fc: 1400002b     	b	0x20a8a8 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_local_serial_command_loop_proof+0x1174>
