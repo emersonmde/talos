@@ -1,0 +1,1 @@
+local1 invalid/incomplete: first attempt used a wrong tar member path for kernel hash extraction and was restored manually before serial observe/classification. Retain only as aborted setup/evidence-collection failure; local2 is the accepted blocked hardware evidence.

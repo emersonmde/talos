@@ -4095,14 +4095,19 @@ placeholder for future process-local cwd only; it does not accept POSIX chdir,
 relative paths, broad path traversal, descriptor-backed filesystem syscalls,
 userspace shell execution, process lifecycle, terminal sessions, networking,
 SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache policy. Serialized Pi 5
-follow-up evidence has not accepted the cd feature yet: the entry-provenance
-candidate archive was fetched from TFTP with two 110008-byte `kernel_2712.img`
-serves, but fresh post-TFTP serial retained no `TALOS: asm_start`,
-`TALOS: asm_pre_rust_entry`, Rust entry marker, DTB scan marker, prompt, cd
-transcript, classification, or PASS. The Pi 5 cd proof remains blocked as
-`firmware-fetch-no-kernel-entry-marker`; supervisor planning is required before
-another Pi 5 rerun or code change, and the cd closeout checkpoint must not be
-promoted.
+follow-up evidence has not accepted the cd feature yet. The cd
+entry-provenance candidate archive was fetched from TFTP with two
+110008-byte `kernel_2712.img` serves, but fresh post-TFTP serial retained no
+`TALOS: asm_start`, `TALOS: asm_pre_rust_entry`, Rust entry marker, DTB scan
+marker, prompt, cd transcript, classification, or PASS. A prompt-capable
+literal-echo control rebuilt with the same earliest entry markers was also
+fetched from TFTP with two 108896-byte `kernel_2712.img` serves, but fresh
+post-TFTP serial again retained only NUL/space and no entry marker, prompt,
+classification, or PASS. The Pi 5 blocker is therefore no longer cd-specific;
+the cd proof remains blocked behind
+`firmware-fetch-no-entry-marker-control`, supervisor planning is required
+before another Pi 5 rerun or code change, and the cd closeout checkpoint must
+not be promoted.
 
 Milestone 10.1: Local Shell
 

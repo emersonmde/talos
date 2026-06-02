@@ -1,0 +1,4 @@
+{
+  "classification": "capture-inconclusive-aborted",
+  "note": "wrong tar member path in evidence script; manual restore completed before serial observation; local2 supersedes this attempt"
+}

@@ -1,0 +1,19 @@
+{
+  "classification": "firmware-fetch-no-entry-marker-control",
+  "pre_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "selected_archive": "target/talos-rpi5-local-literal-echo-entry-provenance-control.tar.gz",
+  "archive_sha256": "9580caf5c18139ca413a59adf717cdab4401b8452cdbfba7c0b3226e85f76694",
+  "kernel_sha256": "ee1128ac076b48e24f926e5f91e75f02d75c87adadea4e562b4f6040cb504a52",
+  "serial_cursor_start": 4018674,
+  "serial_cursor_end": 4018676,
+  "serial_bytes_post_tftp": 2,
+  "serial_bytes_after_write": 0,
+  "tftp_event_count": 13,
+  "expected_kernel_fetch_count": 2,
+  "any_kernel_fetch_count": 2,
+  "has_asm_start": false,
+  "has_asm_pre_rust_entry": false,
+  "has_rust_entry": false,
+  "has_prompt": false,
+  "has_pass": false
+}

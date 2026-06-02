@@ -1,0 +1,4 @@
+TALOS: asm_start
+TALOS: asm_pre_rust_entry
+ rpi5-local-literal-echo-proofTALOS: command loop proof entered
+pi5-local-literal-echo-complete/
