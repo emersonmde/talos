@@ -4078,9 +4078,6 @@ lineage. Future marker work is optional and must be feature-justified. Broad
 syscalls, userspace execution, process lifecycle, terminal/session behavior,
 networking, SSH, RP1/PCIe, UART interrupt ownership, DMA/cache policy, blocked
 `ls /bin` proof strategy, and paused Phase 8 proof-only work remain deferred.
-No explicit mechanically unblocked feature task remains after this checkpoint;
-supervisor planning is required for the next smallest feature-led local
-interactivity task.
 
 The local bounded cd fixed-directories core is now accepted in QEMU/substitute
 evidence. The descriptor-backed serial command loop tracks command-context
@@ -4197,9 +4194,19 @@ relative-path resolver, broad path traversal mechanism, descriptor-backed
 filesystem syscall, userspace shell, or process cwd inheritance model.
 Networking, SSH, RP1/PCIe, UART interrupt ownership, DMA/cache policy, blocked
 `ls /bin` proof strategy, and paused Phase 8 proof-only work remain deferred.
-No explicit mechanically unblocked feature task remains after this checkpoint;
-supervisor planning is required for the next smallest feature-led local
-interactivity task.
+
+The local cwd-aware bare `ls` core is now accepted in QEMU/substitute
+evidence. The descriptor-backed serial command loop resolves bare `ls` against
+the accepted command-context cwd state: root cwd lists `bin`, `dir`, `empty`,
+and `etc`; `cd /etc` followed by bare `ls` lists `banner.txt`; `cd /bin`
+followed by bare `ls` lists `init`; and `cd /` followed by bare `ls` returns
+to the root listing. Existing exact `ls /` and `ls /bin` forms remain
+preserved, while `ls /etc` is not accepted as a new explicit path form. The
+feature remains kernel-backed, prompt-local, and bounded; relative paths, `.`,
+`..`, arbitrary path listing, descriptor-backed filesystem syscalls, userspace
+shell execution, process cwd inheritance, networking, SSH, RP1/PCIe, UART
+interrupt ownership, and DMA/cache policy remain deferred. The next explicit
+queued task is the serialized Pi 5 proof for this bare `ls` cwd feature.
 
 Milestone 10.1: Local Shell
 

@@ -40,6 +40,8 @@ const LOCAL_COMMAND_ROOT_LISTING: [(&[u8], &str); 4] = [
     (b"/empty", "empty"),
     (b"/etc", "etc"),
 ];
+const LOCAL_COMMAND_ETC_LISTING: [(&[u8], &str); 1] =
+    [(initramfs::PHASE8_BANNER_PATH, "banner.txt")];
 const LOCAL_COMMAND_BIN_LISTING: [(&[u8], &str); 1] = [(initramfs::PHASE8_INIT_PATH, "init")];
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -602,6 +604,10 @@ fn dispatch_local_command(
         }
         "ls" => {
             match command.arguments {
+                None => {
+                    let directory = sink.current_directory();
+                    write_directory_listing(sink, responses, directory)?;
+                }
                 Some("/") => write_root_listing(sink, responses)?,
                 Some("/bin") => write_bin_listing(sink, responses)?,
                 _ => {
@@ -658,6 +664,25 @@ fn write_root_listing(
     Ok(())
 }
 
+fn write_etc_listing(
+    sink: &mut impl LocalCommandSink,
+    responses: &mut usize,
+) -> Result<(), LocalCommandCycleError> {
+    let fs = initramfs::phase8_readonly_initramfs_fixture();
+    if fs.lookup_default(b"/etc").is_err() {
+        write_line(sink, responses, "talos: filesystem-error")?;
+        return Ok(());
+    }
+    for (path, name) in LOCAL_COMMAND_ETC_LISTING {
+        if fs.lookup_default(path).is_err() {
+            write_line(sink, responses, "talos: filesystem-error")?;
+            return Ok(());
+        }
+        write_line(sink, responses, name)?;
+    }
+    Ok(())
+}
+
 fn write_bin_listing(
     sink: &mut impl LocalCommandSink,
     responses: &mut usize,
@@ -675,6 +700,18 @@ fn write_bin_listing(
         write_line(sink, responses, name)?;
     }
     Ok(())
+}
+
+fn write_directory_listing(
+    sink: &mut impl LocalCommandSink,
+    responses: &mut usize,
+    directory: LocalCommandDirectory,
+) -> Result<(), LocalCommandCycleError> {
+    match directory {
+        LocalCommandDirectory::Root => write_root_listing(sink, responses),
+        LocalCommandDirectory::Etc => write_etc_listing(sink, responses),
+        LocalCommandDirectory::Bin => write_bin_listing(sink, responses),
+    }
 }
 
 fn write_banner_file(
@@ -1121,6 +1158,68 @@ talos> /\n"
         assert_eq!(result.status(), LocalCommandStatus::Handled);
         assert_eq!(result.response_lines(), 1);
         assert_eq!(backend.as_str(), "talos> init\n");
+    }
+
+    #[test_case]
+    fn local_command_loop_dispatches_bare_ls_against_current_directory() {
+        let input = ScriptedInput::new(
+            [
+                b'l', b's', b'\r', b'c', b'd', b' ', b'/', b'e', b't', b'c', b'\r', b'l', b's',
+                b'\r', b'c', b'd', b' ', b'/', b'b', b'i', b'n', b'\r', b'l', b's', b'\r', b'c',
+                b'd', b' ', b'/', b'\r', b'l', b's', b'\r', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            ],
+            34,
+        );
+        let mut backend = CaptureSink::new();
+        let (root_ls, cd_etc, etc_ls, cd_bin, bin_ls, cd_root, final_root_ls) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+
+        assert_eq!(root_ls.line(), b"ls");
+        assert_eq!(root_ls.status(), LocalCommandStatus::Handled);
+        assert_eq!(root_ls.response_lines(), 4);
+        assert_eq!(cd_etc.line(), b"cd /etc");
+        assert_eq!(cd_etc.status(), LocalCommandStatus::Handled);
+        assert_eq!(cd_etc.response_lines(), 0);
+        assert_eq!(etc_ls.line(), b"ls");
+        assert_eq!(etc_ls.status(), LocalCommandStatus::Handled);
+        assert_eq!(etc_ls.response_lines(), 1);
+        assert_eq!(cd_bin.line(), b"cd /bin");
+        assert_eq!(cd_bin.status(), LocalCommandStatus::Handled);
+        assert_eq!(cd_bin.response_lines(), 0);
+        assert_eq!(bin_ls.line(), b"ls");
+        assert_eq!(bin_ls.status(), LocalCommandStatus::Handled);
+        assert_eq!(bin_ls.response_lines(), 1);
+        assert_eq!(cd_root.line(), b"cd /");
+        assert_eq!(cd_root.status(), LocalCommandStatus::Handled);
+        assert_eq!(cd_root.response_lines(), 0);
+        assert_eq!(final_root_ls.line(), b"ls");
+        assert_eq!(final_root_ls.status(), LocalCommandStatus::Handled);
+        assert_eq!(final_root_ls.response_lines(), 4);
+        assert_eq!(
+            backend.as_str(),
+            "talos> bin\n\
+dir\n\
+empty\n\
+etc\n\
+talos> talos> banner.txt\n\
+talos> talos> init\n\
+talos> talos> bin\n\
+dir\n\
+empty\n\
+etc\n"
+        );
     }
 
     #[test_case]
