@@ -1,0 +1,20 @@
+{
+  "classification": "firmware-fetch-no-kernel-entry",
+  "archive": "target/talos-rpi5-local-cd-fixed-dirs-noninvasive-recovery-core.tar.gz",
+  "archive_sha256": "94b25d9b0a76b0c7979f975f17f20cb7a5fe6b6aace27d3586a5bbbaccabbbeb",
+  "kernel_sha256": "d7f27f5111b758311f7762dadf764e055e6cd4d246a632cc4fffe041cfa1dcc3",
+  "serial_cursor_start": 4019290,
+  "tftp_cursor_start": 4067972,
+  "tftp_event_count": 13,
+  "fresh_candidate_kernel_fetch_count": 2,
+  "has_pass": false,
+  "has_complete": false,
+  "has_prompt": false,
+  "has_etc": false,
+  "has_bin": false,
+  "has_missing_response": false,
+  "has_ready_prompt": false,
+  "has_rust_entry": false,
+  "has_command_loop_marker": false,
+  "accepted": false
+}

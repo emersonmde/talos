@@ -1,0 +1,3 @@
+task=phase10-pi5-local-cd-fixed-dirs-noninvasive-recovery-proof-20260602
+run=local1-noninvasive-recovery-candidate
+archive=target/talos-rpi5-local-cd-fixed-dirs-noninvasive-recovery-core.tar.gz

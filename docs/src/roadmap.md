@@ -4145,6 +4145,17 @@ is the serialized Pi 5 non-invasive cd recovery proof; the original cd Pi 5
 proof remains unaccepted until hardware evidence retains the full cd transcript,
 ready prompt, final classification, and rpi5-local-cd-fixed-dirs-proof: PASS.
 
+The serialized Pi 5 non-invasive cd recovery proof is now
+accepted-blocked-firmware-fetch-no-kernel-entry. The recovered cd candidate
+archive was fetched from TFTP with two 110008-byte
+da591740/kernel_2712.img serves from settled same-cursor evidence, but fresh
+serial from the pre-run cursor retained only Raspberry Pi firmware/RP1 reboot
+output and no TALOS: rust_entry, command-loop marker, prompt, cd transcript,
+classification, or PASS. The lab boot tree was restored to the pre-run hash
+before hardwareTestLock release. The cd fixed-directories hardware proof
+remains unaccepted and no queued closeout is mechanically unblocked; supervisor
+planning is required before another Pi 5 rerun or code change.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.
