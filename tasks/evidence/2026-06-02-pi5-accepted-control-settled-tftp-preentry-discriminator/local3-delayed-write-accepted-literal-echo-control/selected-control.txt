@@ -1,0 +1,5 @@
+selected archive: target/talos-rpi5-local-literal-echo-local3.tar.gz
+selected control task: phase10-pi5-serial-write-ingress-control-proof-20260601
+selected control commit: 0aceae6708ac57b027184c436603bc24308e5d92
+accepted evidence: tasks/evidence/2026-06-01-pi5-serial-write-ingress-control-proof/local2-clean-prompt-live-literal-echo-control/proof-result.txt
+retry rationale: local2 settled TFTP worked but prompt/write orchestration missed the input window, yielding input-error/FAIL; this local3 retry writes once after a bounded 28-second delay from power-cycle.
