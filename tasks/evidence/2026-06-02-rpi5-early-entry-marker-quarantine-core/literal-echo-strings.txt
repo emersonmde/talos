@@ -1,0 +1,2 @@
+talos: line-killedtalos: input-error talos: line-canceledtalos> unavailable012talos: fd  
+ rpi5-local-literal-echo-proofTALOS: command loop proof entered

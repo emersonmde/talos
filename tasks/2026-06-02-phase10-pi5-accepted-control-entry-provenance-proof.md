@@ -104,6 +104,11 @@ because the control proof did not classify as prompt-entry-responsive.
 
 ## Next Action
 
-Supervisor planning is required. Do not promote the cd entry-regression core
-or any cd recovery proof from this task, because the control proof did not
-establish prompt-entry-responsive behavior.
+Superseded by
+phase10-rpi5-early-entry-marker-quarantine-core-20260602. That task quarantined
+the raw assembly entry-provenance path from prompt-capable literal-echo and cd
+local feature archives because the control proof changed the blocker framing to
+instrumentation/control-boundary rather than cd-specific. Do not promote the
+superseded cd entry-regression core from this task; proceed only through a
+non-invasive accepted-control regression proof that retains literal-echo
+prompt/PASS evidence.

@@ -1,0 +1,85 @@
+Task: phase10-rpi5-early-entry-marker-quarantine-core-20260602
+Classification: accepted-noninvasive-marker-quarantine-core
+
+Problem statement
+-----------------
+
+The accepted cd fixed-directories candidate and the accepted literal-echo
+control both fetched their selected kernels from TFTP on Pi 5 hardware after
+build.rs routed their scenarios through TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO.
+Both fresh serial captures then retained only NUL/space bytes and no
+TALOS: asm_start, TALOS: asm_pre_rust_entry, Rust marker, prompt, classification,
+or PASS.
+
+That changes the blocker framing. The evidence is no longer cd-specific: the
+same prompt-capable literal-echo control became non-responsive when the raw
+pre-Rust assembly marker path was added. The invariant to preserve is that
+prompt-capable RPi5 feature/control archives must not depend on raw UART writes
+before BSS clear, stack setup, Rust entry, target init, and runtime-console
+initialization unless that raw path is separately proven non-invasive.
+
+Change
+------
+
+build.rs no longer defines TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO for:
+
+- rpi5_local_literal_echo
+- rpi5_local_cd_fixed_dirs
+
+The boot.S implementation remains available for RPi5 SMP scenarios that already
+owned raw early UART marker use, but the prompt-capable local command-loop
+control/candidate archives no longer carry the unproven earliest assembly marker
+path.
+
+Static/image evidence
+---------------------
+
+Fresh non-published archives were rebuilt from target/timer-irq-boot-source:
+
+- target/talos-rpi5-local-literal-echo-noninvasive-control.tar.gz
+- target/talos-rpi5-local-cd-fixed-dirs-noninvasive-candidate.tar.gz
+
+scripts/rpi5-archive-review.sh passed for both archives.
+
+Image/string inspection:
+
+- literal-echo kernel size: 108896 bytes
+- cd fixed-dirs kernel size: 110008 bytes
+- literal-echo strings retain rpi5-local-literal-echo-proof and
+  TALOS: command loop proof entered.
+- cd strings retain rpi5-local-cd-fixed-dirs-proof and
+  TALOS: command loop proof entered.
+- Neither image contains TALOS: asm_start.
+- Neither image contains TALOS: asm_pre_rust_entry.
+
+Validation
+----------
+
+- cargo fmt --all -- --check: passed.
+- cargo -Zjson-target-spec test --quiet: passed with existing dead_code warnings.
+- scripts/qemu-local-literal-echo-smoke.sh --quiet: passed; retained log ends
+  with qemu-local-literal-echo-complete and qemu-local-literal-echo: PASS.
+- scripts/qemu-local-cd-fixed-dirs-smoke.sh --quiet: passed; retained log ends
+  with qemu-local-cd-fixed-dirs-complete and qemu-local-cd-fixed-dirs: PASS.
+- scripts/qemu-local-serial-command-loop-smoke.sh --quiet: passed; retained log
+  ends with qemu-local-serial-command-loop-complete and
+  qemu-local-serial-command-loop: PASS.
+- scripts/rpi5-archive-review.sh passed for the rebuilt literal-echo control
+  archive and cd fixed-dirs candidate archive without publishing.
+- git diff --check: passed.
+- mdbook build: passed because docs/src/roadmap.md was updated.
+
+Hardware
+--------
+
+No boot archives were published, no power cycle was performed, and
+hardwareTestLock remained unlocked/restored and unused by this task.
+
+Next discriminator
+------------------
+
+Run the queued accepted-control non-invasive regression proof under hardware
+lock. Only retained literal-echo prompt/PASS evidence from that proof should
+unblock cd recovery work. The superseded cd entry-regression path remains
+blocked because the accepted entry-provenance control did not prove
+prompt-entry-responsive behavior.

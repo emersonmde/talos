@@ -4109,6 +4109,18 @@ the cd proof remains blocked behind
 before another Pi 5 rerun or code change, and the cd closeout checkpoint must
 not be promoted.
 
+The early entry marker quarantine core is now accepted. It removes the
+unproven raw pre-Rust assembly entry-provenance marker route from the
+prompt-capable rpi5_local_literal_echo control and rpi5_local_cd_fixed_dirs
+candidate archives while leaving the marker support available for existing RPi5
+SMP diagnostic scenarios. Retained QEMU/substitute literal-echo, cd fixed-dirs,
+and command-loop regression logs pass, and rebuilt non-published Pi 5 archives
+pass image/archive review. Static string inspection shows both rebuilt images
+retain their proof strings and TALOS: command loop proof entered while omitting
+TALOS: asm_start and TALOS: asm_pre_rust_entry. The next hardware discriminator
+is a serialized non-invasive accepted-control regression proof; only retained
+literal-echo prompt/PASS evidence from that proof may unblock cd recovery work.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.

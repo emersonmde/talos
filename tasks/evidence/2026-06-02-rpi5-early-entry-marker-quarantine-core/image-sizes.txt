@@ -1,0 +1,3 @@
+108896 target/rpi5-local-literal-echo-noninvasive-control-boot-tree/kernel_2712.img
+110008 target/rpi5-local-cd-fixed-dirs-noninvasive-candidate-boot-tree/kernel_2712.img
+218904 total

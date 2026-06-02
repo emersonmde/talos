@@ -1,0 +1,2 @@
+literal_archive=target/talos-rpi5-local-literal-echo-noninvasive-control.tar.gz
+cd_archive=target/talos-rpi5-local-cd-fixed-dirs-noninvasive-candidate.tar.gz
