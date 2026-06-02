@@ -1,0 +1,38 @@
+# selected cd fix candidate ELF sections
+target/aarch64-talos-rpi5-bcm2712/debug/talos  :
+section               size      addr
+.text.boot             144   2097152
+.vectors              1940   2099200
+.text                67816   2101248
+.rodata              37880   2169072
+.bss                    40   2206960
+.debug_loc          888801         0
+.debug_abbrev        71992         0
+.debug_info        1090388         0
+.debug_aranges       50912         0
+.debug_ranges       257568         0
+.debug_str          719371         0
+.debug_frame         86912         0
+.debug_line         281538         0
+Total              3555302
+
+
+
+# selected cd fix candidate symbols
+0000000000200000 T _start
+0000000000201a48 T rust_entry
+000000000021acf0 B __bss_start
+000000000021ad18 B __bss_end
+000000000035ad20 B __stack_top
+000000000035b000 B __kernel_end
+
+# image size comparison
+accepted_literal_echo_control_kernel_size=108896
+prior_blocked_cd_candidate_kernel_size=110008
+selected_cd_fix_candidate_kernel_size=109800
+selected_delta_vs_prior_blocked_bytes=-208
+selected_delta_vs_control_bytes=904
+
+# retained strings
+statusstdiopwdcdlscattalos: unknown-commandtalos: unexpected-argument/talos: not-directorytalos: ok stdiotalos: runtime-console falsetalos: descriptor-backed-input=talos: descriptor-backed-output=assertion failed: i <= index + 3talos: bootstrap reserve: start=pi5-local-cd-fixed-dirs-completeunknown-or-undefined-instructiontalos: ok status0123456789ABCDEFexception-regs0:current-sp0-syncexception-regs5:current-spx-syncexception-regs4:runtime-console0exception-regs1:talos: ok stdio
+ rpi5-local-cd-fixed-dirs-proofTALOS: command loop proof entered

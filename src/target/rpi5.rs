@@ -7559,8 +7559,8 @@ fn replay_visible_pwd_response_for_pi5_proof(command_index: usize) {
 #[cfg(talos_boot_scenario = "rpi5_local_cd_fixed_dirs")]
 const fn local_command_pi5_cd_fixed_dirs_expected_pwd(command_index: usize) -> &'static str {
     match command_index {
-        5 => "/etc",
-        7 => "/bin",
+        2 => "/etc",
+        4 => "/bin",
         _ => "/",
     }
 }
@@ -7771,7 +7771,7 @@ const fn local_command_pi5_proof_classification() -> &'static str {
 ))]
 const fn local_command_pi5_proof_command_count() -> usize {
     if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") {
-        12
+        9
     } else if cfg!(talos_boot_scenario = "rpi5_local_line_cancel") {
         2
     } else {
@@ -7879,41 +7879,32 @@ fn expected_local_command_loop_dispatch(
             line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
         }
         0 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
-            line == b"help" && status == Handled && response_lines == 4
+            line == b"pwd" && status == Handled && response_lines == 1
         }
         1 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
-            line == b"status" && status == Handled && response_lines == 5
-        }
-        2 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
-            line == b"stdio" && status == Handled && response_lines == 7
-        }
-        3 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
-            line == b"pwd" && status == Handled && response_lines == 1
-        }
-        4 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
             line == b"cd /etc" && status == Handled && response_lines == 0
         }
-        5 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
+        2 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
             line == b"pwd" && status == Handled && response_lines == 1
         }
-        6 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
+        3 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
             line == b"cd /bin" && status == Handled && response_lines == 0
         }
-        7 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
+        4 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
             line == b"pwd" && status == Handled && response_lines == 1
         }
-        8 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
+        5 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
             line == b"cd /" && status == Handled && response_lines == 0
         }
-        9 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
+        6 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
             line == b"pwd" && status == Handled && response_lines == 1
         }
-        10 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
+        7 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
             line == b"cd /missing"
                 && status == crate::local_command_loop::LocalCommandStatus::UnexpectedArgument
                 && response_lines == 1
         }
-        11 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
+        8 if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") => {
             line == b"pwd" && status == Handled && response_lines == 1
         }
         0 => line == b"stdio" && status == Handled && response_lines == 7,

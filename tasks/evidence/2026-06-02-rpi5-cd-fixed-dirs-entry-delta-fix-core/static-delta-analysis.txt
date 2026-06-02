@@ -1,0 +1,62 @@
+# archive hashes
+## target/talos-rpi5-local-literal-echo-noninvasive-control.tar.gz
+229df66b85569e618153610cb3b5a9311d669b03fc5e387b9dbd80908c7f1190  target/talos-rpi5-local-literal-echo-noninvasive-control.tar.gz
+bcm2712-rpi-5-b.dtb
+cmdline.txt
+config.txt
+da591740/bcm2712-rpi-5-b.dtb
+da591740/cmdline.txt
+da591740/config.txt
+da591740/kernel_2712.img
+kernel_2712.img
+kernel_size=108896
+kernel_sha256=1946471fa1d5f5daa514d4320ddddab477605d7c1506240866adbc9f4de908e8
+header_text_offset=0
+header_image_size=108896
+header_flags=12
+magic=ARMd
+strings:
+ rpi5-local-literal-echo-proofTALOS: command loop proof entered
+pi5-local-literal-echo-complete/
+## target/talos-rpi5-local-cd-fixed-dirs-noninvasive-recovery-core.tar.gz
+94b25d9b0a76b0c7979f975f17f20cb7a5fe6b6aace27d3586a5bbbaccabbbeb  target/talos-rpi5-local-cd-fixed-dirs-noninvasive-recovery-core.tar.gz
+bcm2712-rpi-5-b.dtb
+cmdline.txt
+config.txt
+da591740/bcm2712-rpi-5-b.dtb
+da591740/cmdline.txt
+da591740/config.txt
+da591740/kernel_2712.img
+kernel_2712.img
+kernel_size=110008
+kernel_sha256=d7f27f5111b758311f7762dadf764e055e6cd4d246a632cc4fffe041cfa1dcc3
+header_text_offset=0
+header_image_size=110008
+header_flags=12
+magic=ARMd
+strings:
+statusstdiopwdcdlscattalos: unknown-commandtalos: unexpected-argument/talos: not-directorytalos: ok stdiotalos: runtime-console falsetalos: descriptor-backed-input=talos: descriptor-backed-output=assertion failed: i <= index + 3talos: bootstrap reserve: start=pi5-local-cd-fixed-dirs-completeunknown-or-undefined-instructiontalos: ok status0123456789ABCDEFexception-regs0:current-sp0-syncexception-regs5:current-spx-syncexception-regs4:runtime-console0exception-regs1:talos: ok stdio
+ rpi5-local-cd-fixed-dirs-proofTALOS: command loop proof entered
+
+## target/talos-rpi5-local-cd-fixed-dirs-entry-delta-fix-core.tar.gz
+52eb5d54aef19044ae9af0689786f49bc573b46bbff0d71956c3fbe6b45011a3  target/talos-rpi5-local-cd-fixed-dirs-entry-delta-fix-core.tar.gz
+bcm2712-rpi-5-b.dtb
+cmdline.txt
+config.txt
+da591740/bcm2712-rpi-5-b.dtb
+da591740/cmdline.txt
+da591740/config.txt
+da591740/kernel_2712.img
+kernel_2712.img
+kernel_size=109800
+kernel_sha256=c0d1983a39269e9bf3ddb2c29d0db498d0d23f9c25d696bda30bd1609ca1b45b
+header_text_offset=0
+header_image_size=109800
+header_flags=12
+magic=ARMd
+delta_hypothesis=rpi5_cd_proof_command_plan_removes_help_status_stdio_prelude
+delta_vs_prior_blocked_cd_bytes=-208
+delta_vs_accepted_literal_echo_control_bytes=904
+strings:
+statusstdiopwdcdlscattalos: unknown-commandtalos: unexpected-argument/talos: not-directorytalos: ok stdiotalos: runtime-console falsetalos: descriptor-backed-input=talos: descriptor-backed-output=assertion failed: i <= index + 3talos: bootstrap reserve: start=pi5-local-cd-fixed-dirs-completeunknown-or-undefined-instructiontalos: ok status0123456789ABCDEFexception-regs0:current-sp0-syncexception-regs5:current-spx-syncexception-regs4:runtime-console0exception-regs1:talos: ok stdio
+ rpi5-local-cd-fixed-dirs-proofTALOS: command loop proof entered

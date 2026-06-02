@@ -1,0 +1,29 @@
+archive=target/talos-rpi5-local-cd-fixed-dirs-entry-delta-fix-core.tar.gz
+sha256=52eb5d54aef19044ae9af0689786f49bc573b46bbff0d71956c3fbe6b45011a3
+file_count=19
+kernel_size=109800
+header_image_size=109800
+text_offset=0
+flags=12
+loader_diagnostic=false
+circle_config_loader_diagnostic=false
+manifest:
+  bcm2712-rpi-5-b.dtb
+  cmdline.txt
+  config.txt
+  da591740
+  da591740/bcm2712-rpi-5-b.dtb
+  da591740/cmdline.txt
+  da591740/config.txt
+  da591740/kernel8.img
+  da591740/kernel_2712.img
+  da591740/overlays
+  da591740/overlays/bcm2712d0.dtbo
+  da591740/overlays/overlay_map.dtb
+  da591740/overlays/uart0-pi5.dtbo
+  kernel8.img
+  kernel_2712.img
+  overlays
+  overlays/bcm2712d0.dtbo
+  overlays/overlay_map.dtb
+  overlays/uart0-pi5.dtbo

@@ -4153,8 +4153,22 @@ serial from the pre-run cursor retained only Raspberry Pi firmware/RP1 reboot
 output and no TALOS: rust_entry, command-loop marker, prompt, cd transcript,
 classification, or PASS. The lab boot tree was restored to the pre-run hash
 before hardwareTestLock release. The cd fixed-directories hardware proof
-remains unaccepted and no queued closeout is mechanically unblocked; supervisor
-planning is required before another Pi 5 rerun or code change.
+remains unaccepted.
+
+The RPi5 cd fixed-directories entry-delta fix core is now accepted. It changed
+only the Pi 5 cd proof harness command plan from the previous help/status/stdio
+prelude plus pwd/cd transcript to the original nine-command pwd/cd feature
+transcript. QEMU/substitute cd fixed-dirs, literal-echo, and command-loop
+regressions still pass. The fresh candidate archive
+target/talos-rpi5-local-cd-fixed-dirs-entry-delta-fix-core.tar.gz passed
+archive review with a 109800-byte kernel_2712.img, 208 bytes smaller than the
+prior blocked cd candidate, and static string/map evidence retains
+rpi5-local-cd-fixed-dirs-proof, pi5-local-cd-fixed-dirs-complete, and
+TALOS: command loop proof entered while omitting quarantined raw assembly entry
+markers. The next bounded task is the serialized Pi 5 entry-delta cd proof; the
+cd feature remains unaccepted until hardware evidence retains the full pwd/cd
+transcript, ready prompt, final classification, and
+rpi5-local-cd-fixed-dirs-proof: PASS.
 
 Milestone 10.1: Local Shell
 
