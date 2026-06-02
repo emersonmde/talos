@@ -4039,6 +4039,18 @@ syscalls, userspace execution, process lifecycle, terminal/session behavior,
 networking, SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache policy. The
 next queued task is the serialized Pi 5 `ls /bin` proof.
 
+The local `cat /etc/banner.txt` core is now accepted in QEMU/substitute
+evidence while the blocked Pi 5 `ls /bin` proof remains untouched. The serial
+command loop accepts only the exact bounded `cat /etc/banner.txt` file read,
+uses the accepted read-only initramfs fixture's regular-file bytes, prints
+visible `Talos initramfs fixture` output through descriptor-backed stdout, and
+returns to a ready `talos>` prompt. Help and status now expose the bounded
+`cat` frontier. General `cat`, arbitrary file reads, descriptor-backed
+filesystem syscalls, userspace execution, process lifecycle, shell parsing,
+terminal/session behavior, networking, SSH, RP1/PCIe, UART interrupt ownership,
+and DMA/cache policy remain deferred. The next queued task is the serialized
+Pi 5 `cat /etc/banner.txt` proof.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.

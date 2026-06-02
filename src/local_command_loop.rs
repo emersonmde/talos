@@ -7,7 +7,7 @@ use crate::{
 
 pub const LOCAL_COMMAND_LOOP_VERSION: &str = "phase10.1-kernel-builtins-v1";
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
-pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 6;
+pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 7;
 pub const LOCAL_COMMAND_CURRENT_DIRECTORY: &str = "/";
 
 const LOCAL_COMMAND_ROOT_LISTING: [(&[u8], &str); 4] = [
@@ -445,7 +445,7 @@ fn dispatch_local_command(
             write_line(
                 sink,
                 responses,
-                "talos: commands help status stdio pwd echo ls",
+                "talos: commands help status stdio pwd echo ls cat",
             )?;
             write_line(
                 sink,
@@ -476,6 +476,11 @@ fn dispatch_local_command(
                 &["talos: runtime-console ", DEFAULT_RUNTIME_CONSOLE.name],
             )?;
             write_line(sink, responses, "talos: builtins kernel-backed")?;
+            write_line(
+                sink,
+                responses,
+                "talos: commands help status stdio pwd echo ls cat",
+            )?;
             Ok(LocalCommandStatus::Handled)
         }
         "stdio" => {
@@ -537,6 +542,16 @@ fn dispatch_local_command(
             }
             Ok(LocalCommandStatus::Handled)
         }
+        "cat" => {
+            match command.arguments {
+                Some("/etc/banner.txt") => write_banner_file(sink, responses)?,
+                _ => {
+                    write_line(sink, responses, "talos: unexpected-argument")?;
+                    return Ok(LocalCommandStatus::UnexpectedArgument);
+                }
+            }
+            Ok(LocalCommandStatus::Handled)
+        }
         _ => {
             write_line(sink, responses, "talos: unknown-command")?;
             Ok(LocalCommandStatus::UnknownCommand)
@@ -576,6 +591,28 @@ fn write_bin_listing(
         write_line(sink, responses, name)?;
     }
     Ok(())
+}
+
+fn write_banner_file(
+    sink: &mut impl LocalCommandSink,
+    responses: &mut usize,
+) -> Result<(), LocalCommandCycleError> {
+    let fs = initramfs::phase8_readonly_initramfs_fixture();
+    let bytes = match fs.regular_file_bytes(initramfs::PHASE8_BANNER_PATH) {
+        Ok(bytes) => bytes,
+        Err(_) => {
+            write_line(sink, responses, "talos: filesystem-error")?;
+            return Ok(());
+        }
+    };
+    let text = match core::str::from_utf8(bytes) {
+        Ok(text) => text,
+        Err(_) => {
+            write_line(sink, responses, "talos: filesystem-error")?;
+            return Ok(());
+        }
+    };
+    write_file_contents(sink, responses, text)
 }
 
 fn write_stdio_descriptor_line(
@@ -678,6 +715,21 @@ fn write_parts_line(
     }
     sink.write_command_str("\n")
         .map_err(|_| LocalCommandCycleError::ResponseWriteFailed)?;
+    *response_lines += 1;
+    Ok(())
+}
+
+fn write_file_contents(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    text: &str,
+) -> Result<(), LocalCommandCycleError> {
+    sink.write_command_str(text)
+        .map_err(|_| LocalCommandCycleError::ResponseWriteFailed)?;
+    if !text.ends_with('\n') {
+        sink.write_command_str("\n")
+            .map_err(|_| LocalCommandCycleError::ResponseWriteFailed)?;
+    }
     *response_lines += 1;
     Ok(())
 }
@@ -793,11 +845,11 @@ mod tests {
         assert_eq!(result.response_lines(), 4);
         assert_eq!(result.raw_bytes(), 5);
         assert_eq!(result.controls(), 0);
-        assert_eq!(DEFAULT_LOCAL_COMMAND_COUNT, 6);
+        assert_eq!(DEFAULT_LOCAL_COMMAND_COUNT, 7);
         assert_eq!(
             sink.as_str(),
             "talos> talos: ok help\n\
-talos: commands help status stdio pwd echo ls\n\
+talos: commands help status stdio pwd echo ls cat\n\
 talos: echo forms echo hello; echo local serial works\n\
 talos: editing backspace delete ctrl-c ctrl-u\n"
         );
@@ -912,6 +964,28 @@ talos: editing backspace delete ctrl-c ctrl-u\n"
         assert_eq!(result.status(), LocalCommandStatus::Handled);
         assert_eq!(result.response_lines(), 1);
         assert_eq!(backend.as_str(), "talos> init\n");
+    }
+
+    #[test_case]
+    fn local_command_loop_dispatches_bounded_cat_banner() {
+        let input = ScriptedInput::new(
+            [
+                b'c', b'a', b't', b' ', b'/', b'e', b't', b'c', b'/', b'b', b'a', b'n', b'n', b'e',
+                b'r', b'.', b't', b'x', b't', b'\r', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            ],
+            20,
+        );
+        let mut backend = CaptureSink::new();
+        let result = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            run_one_descriptor_backed_serial_command(&mut io).unwrap()
+        };
+
+        assert_eq!(result.line(), b"cat /etc/banner.txt");
+        assert_eq!(result.status(), LocalCommandStatus::Handled);
+        assert_eq!(result.response_lines(), 1);
+        assert_eq!(backend.as_str(), "talos> Talos initramfs fixture\n");
     }
 
     #[test_case]

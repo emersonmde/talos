@@ -17,6 +17,7 @@ ECHO_COMMAND_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_ECHO_COMMAND_SMOKE:-0}"
 PWD_COMMAND_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_PWD_COMMAND_SMOKE:-0}"
 LS_ROOT_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LS_ROOT_SMOKE:-0}"
 LS_BIN_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LS_BIN_SMOKE:-0}"
+CAT_BANNER_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_CAT_BANNER_SMOKE:-0}"
 LINE_EDITING_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LINE_EDITING_SMOKE:-0}"
 LINE_CANCEL_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LINE_CANCEL_SMOKE:-0}"
 LINE_KILL_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LINE_KILL_SMOKE:-0}"
@@ -96,6 +97,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'pwd\r' >&3
                     elif [ "$LS_BIN_SMOKE" -eq 1 ]; then
                         printf 'ls /bin\r' >&3
+                    elif [ "$CAT_BANNER_SMOKE" -eq 1 ]; then
+                        printf 'cat /etc/banner.txt\r' >&3
                     elif [ "$LS_ROOT_SMOKE" -eq 1 ]; then
                         printf 'ls /\r' >&3
                     elif [ "$LITERAL_ECHO_SMOKE" -eq 1 ]; then
@@ -120,6 +123,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'echo hello\r' >&3
                     elif [ "$LS_BIN_SMOKE" -eq 1 ]; then
                         printf 'ls /\r' >&3
+                    elif [ "$CAT_BANNER_SMOKE" -eq 1 ]; then
+                        printf 'ls /bin\r' >&3
                     elif [ "$LS_ROOT_SMOKE" -eq 1 ]; then
                         printf '\r' >&3
                     elif [ "$LITERAL_ECHO_SMOKE" -eq 1 ] || [ "$ECHO_COMMAND_SMOKE" -eq 1 ]; then
@@ -137,6 +142,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                     elif [ "$PWD_COMMAND_SMOKE" -eq 1 ]; then
                         printf '\r' >&3
                     elif [ "$LS_BIN_SMOKE" -eq 1 ]; then
+                        printf '\r' >&3
+                    elif [ "$CAT_BANNER_SMOKE" -eq 1 ]; then
                         printf '\r' >&3
                     elif [ "$LS_ROOT_SMOKE" -eq 1 ]; then
                         printf 'bogus\r' >&3
@@ -185,10 +192,10 @@ grep -q "$LABEL: ready command=1" "$LOG_FILE"
 grep -q "$LABEL: ready command=2" "$LOG_FILE"
 grep -q "$LABEL: ready command=3" "$LOG_FILE"
 grep -q "$LABEL: ready command=4" "$LOG_FILE"
-if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_ROOT_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ] || [ "$LITERAL_ECHO_SMOKE" -eq 1 ] || [ "$ECHO_COMMAND_SMOKE" -eq 1 ]; then
+if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_ROOT_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ] || [ "$CAT_BANNER_SMOKE" -eq 1 ] || [ "$LITERAL_ECHO_SMOKE" -eq 1 ] || [ "$ECHO_COMMAND_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=5" "$LOG_FILE"
 fi
-if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ]; then
+if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ] || [ "$CAT_BANNER_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=6" "$LOG_FILE"
 fi
 if [ "$LINE_EDITING_SMOKE" -eq 1 ]; then
@@ -197,7 +204,7 @@ if [ "$LINE_EDITING_SMOKE" -eq 1 ]; then
 fi
 grep -q "talos> help" "$LOG_FILE"
 grep -q "talos: ok help" "$LOG_FILE"
-grep -q "talos: commands help status stdio pwd echo ls" "$LOG_FILE"
+grep -q "talos: commands help status stdio pwd echo ls cat" "$LOG_FILE"
 grep -q "talos: echo forms echo hello; echo local serial works" "$LOG_FILE"
 grep -q "talos: editing backspace delete ctrl-c ctrl-u" "$LOG_FILE"
 grep -q "$LABEL: line command=0 hex=68 65 6c 70" "$LOG_FILE"
@@ -208,7 +215,8 @@ grep -q "talos: version phase10.1-kernel-builtins-v1" "$LOG_FILE"
 grep -q "talos: runtime-console runtime-console0" "$LOG_FILE"
 grep -q "talos: builtins kernel-backed" "$LOG_FILE"
 grep -q "$LABEL: line command=1 hex=73 74 61 74 75 73" "$LOG_FILE"
-grep -q "$LABEL: dispatch command=1 status=handled responses=4" "$LOG_FILE"
+grep -q "talos: commands help status stdio pwd echo ls cat" "$LOG_FILE"
+grep -q "$LABEL: dispatch command=1 status=handled responses=5" "$LOG_FILE"
 grep -q "talos> stdio" "$LOG_FILE"
 grep -q "talos: ok stdio" "$LOG_FILE"
 grep -q "talos: fd 0 stdio-input" "$LOG_FILE"
@@ -289,6 +297,23 @@ elif [ "$LS_BIN_SMOKE" -eq 1 ]; then
     grep -q "^etc" "$LOG_FILE"
     grep -q "$LABEL: line command=4 hex=6c 73 20 2f" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=4 status=handled responses=4" "$LOG_FILE"
+    grep -q "talos: empty-command" "$LOG_FILE"
+    grep -q "$LABEL: line command=5 hex=" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=5 status=empty-command responses=1" "$LOG_FILE"
+    grep -q "talos> bogus" "$LOG_FILE"
+    grep -q "talos: unknown-command" "$LOG_FILE"
+    grep -q "$LABEL: line command=6 hex=62 6f 67 75 73" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=6 status=unknown-command responses=1" "$LOG_FILE"
+    grep -q "$LABEL: final participants=7 expected=7 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+elif [ "$CAT_BANNER_SMOKE" -eq 1 ]; then
+    grep -q "talos> cat /etc/banner.txt" "$LOG_FILE"
+    grep -q "^Talos initramfs fixture" "$LOG_FILE"
+    grep -q "$LABEL: line command=3 hex=63 61 74 20 2f 65 74 63 2f 62 61 6e 6e 65 72 2e 74 78 74" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=3 status=handled responses=1" "$LOG_FILE"
+    grep -q "talos> ls /bin" "$LOG_FILE"
+    grep -q "^init" "$LOG_FILE"
+    grep -q "$LABEL: line command=4 hex=6c 73 20 2f 62 69 6e" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=4 status=handled responses=1" "$LOG_FILE"
     grep -q "talos: empty-command" "$LOG_FILE"
     grep -q "$LABEL: line command=5 hex=" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=5 status=empty-command responses=1" "$LOG_FILE"

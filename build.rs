@@ -251,6 +251,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "qemu_local_cat_banner",
+        implied_values: &["qemu_local_serial_command_loop"],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "qemu_local_line_editing",
         implied_values: &["qemu_local_serial_command_loop"],
         asm_defines: &[],
