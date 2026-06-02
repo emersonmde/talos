@@ -4186,6 +4186,21 @@ syscalls, userspace shell execution, process lifecycle, terminal/session
 behavior, networking, SSH, RP1/PCIe, UART interrupt ownership, DMA, and cache
 driver policy remain deferred.
 
+The local cd fixed-directories closeout checkpoint is now accepted and records
+the current command-context cwd frontier: the exact bounded `cd /`,
+`cd /etc`, and `cd /bin` commands update prompt-local cwd state, `pwd`
+reflects that state, rejected nonexistent directory input leaves cwd
+unchanged, and the serial command loop returns to a ready `talos>` prompt in
+both QEMU/substitute and serialized Pi 5 feature evidence. This is deliberately
+future process-local cwd shaping, not an accepted POSIX `chdir` syscall,
+relative-path resolver, broad path traversal mechanism, descriptor-backed
+filesystem syscall, userspace shell, or process cwd inheritance model.
+Networking, SSH, RP1/PCIe, UART interrupt ownership, DMA/cache policy, blocked
+`ls /bin` proof strategy, and paused Phase 8 proof-only work remain deferred.
+No explicit mechanically unblocked feature task remains after this checkpoint;
+supervisor planning is required for the next smallest feature-led local
+interactivity task.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.
