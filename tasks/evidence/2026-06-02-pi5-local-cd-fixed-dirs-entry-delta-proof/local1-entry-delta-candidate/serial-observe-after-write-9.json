@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "dGVzPTQgdHJ1bmNhdGVkPWZhbHNlIGNvbnRyb2xzPTANCnJwaTUtbG9jYWwtY2QtZml4ZWQtZGlycy1wcm9vZjogZWRpdCBjb21tYW5kPTggYmFja3NwYWNlcz0wIGRlbGV0ZXM9MA0KLw0KcnBpNS1sb2NhbC1jZC1maXhlZC1kaXJzLXByb29mOiBjZC1maXhlZC1kaXJzLXB3ZC1vYnNlcnZlZCBjb21tYW5kPTggY3dkPScvJyByYXctYnl0ZXM9NCBjb250cm9scz0wIHJlc3BvbnNlcz0xDQp0YWxvcz4gDQpycGk1LWxvY2FsLWNkLWZpeGVkLWRpcnMtcHJvb2Y6IHJlYWR5LWZvci1uZXh0IHByb21wdD10cnVlDQpUQUxPUzogY29tbWFuZCBsb29wIHByb21wdCByZWFkeQ0KcnBpNS1sb2NhbC1jZC1maXhlZC1kaXJzLXByb29mOiBmaW5hbCBwYXJ0aWNpcGFudHM9OSBleHBlY3RlZD05IGVycm9ycz0wIGNsYXNzaWZpY2F0aW9uPXBpNS1sb2NhbC1jZC1maXhlZC1kaXJzLWNvbXBsZXRlDQpycGk1LWxvY2FsLWNkLWZpeGVkLWRpcnMtcHJvb2Y6IFBBU1MNCg==",
+  "bytes": 484,
+  "cursor_end": 4025624,
+  "cursor_start": 4025140,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "tes=4 truncated=false controls=0\r\nrpi5-local-cd-fixed-dirs-proof: edit command=8 backspaces=0 deletes=0\r\n/\r\nrpi5-local-cd-fixed-dirs-proof: cd-fixed-dirs-pwd-observed command=8 cwd='/' raw-bytes=4 controls=0 responses=1\r\ntalos> \r\nrpi5-local-cd-fixed-dirs-proof: ready-for-next prompt=true\r\nTALOS: command loop prompt ready\r\nrpi5-local-cd-fixed-dirs-proof: final participants=9 expected=9 errors=0 classification=pi5-local-cd-fixed-dirs-complete\r\nrpi5-local-cd-fixed-dirs-proof: PASS\r\n",
+  "truncated": false
+}

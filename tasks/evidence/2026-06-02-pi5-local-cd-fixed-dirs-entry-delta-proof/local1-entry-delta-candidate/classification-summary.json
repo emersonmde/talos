@@ -1,0 +1,14 @@
+{
+  "task": "phase10-pi5-local-cd-fixed-dirs-entry-delta-proof-20260602",
+  "classification": "cd-feature-pass-retained",
+  "selected_archive": "target/talos-rpi5-local-cd-fixed-dirs-entry-delta-fix-core.tar.gz",
+  "archive_sha256": "52eb5d54aef19044ae9af0689786f49bc573b46bbff0d71956c3fbe6b45011a3",
+  "kernel_sha256": "c9b174c3fe087ac6c887c102c9b2a8fe143ea265027d3bab498eb8c581e7464f",
+  "kernel_size": "109800",
+  "serial_cursor_start": "4019998",
+  "tftp_cursor_start": "4069323",
+  "tftp_settled": true,
+  "pre_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "post_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "restored_match": true
+}

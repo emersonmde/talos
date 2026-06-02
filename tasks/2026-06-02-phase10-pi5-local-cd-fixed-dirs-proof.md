@@ -1,7 +1,7 @@
 # Phase 10 Pi 5 Local Cd Fixed Dirs Proof Task
 
 Task: phase10-pi5-local-cd-fixed-dirs-proof-20260602
-Status: blocked-firmware-fetch-no-kernel-entry-marker
+Status: accepted-via-entry-delta-proof
 
 ## Scope
 
@@ -57,3 +57,5 @@ phase10-rpi5-cd-fixed-dirs-noninvasive-recovery-core-20260602 is accepted-noninv
 phase10-pi5-local-cd-fixed-dirs-noninvasive-recovery-proof-20260602 is accepted-blocked-firmware-fetch-no-kernel-entry. Its local3 run published the recovered non-invasive cd archive, retained a settled same-cursor TFTP delta before restore with two 110008-byte da591740/kernel_2712.img serves, then observed fresh serial from the pre-run cursor. Fresh serial retained Raspberry Pi firmware/RP1 boot output but no TALOS: rust_entry, command-loop marker, prompt, cd transcript, classification, or PASS. The pre-run boot tree hash was restored before hardwareTestLock release. The original cd proof remains blocked pending supervisor-planned follow-up; the cd closeout checkpoint must not be promoted.
 
 phase10-rpi5-cd-fixed-dirs-entry-delta-fix-core-20260602 is accepted-fix-candidate-produced. It changed only the RPi5 cd proof harness command plan from the previous help/status/stdio prelude plus pwd/cd transcript to the original nine-command pwd/cd feature transcript, retained QEMU/substitute cd, literal-echo, and command-loop PASS logs, and rebuilt target/talos-rpi5-local-cd-fixed-dirs-entry-delta-fix-core.tar.gz. Archive review passed with a 109800-byte kernel_2712.img, 208 bytes smaller than the prior blocked 110008-byte cd candidate, and string/map evidence retains rpi5-local-cd-fixed-dirs-proof, pi5-local-cd-fixed-dirs-complete, and TALOS: command loop proof entered while omitting quarantined raw assembly entry markers. The original cd proof remains blocked until the queued entry-delta Pi 5 proof retains the full cd feature transcript and PASS.
+
+phase10-pi5-local-cd-fixed-dirs-entry-delta-proof-20260602 is accepted. Its local1 run published only the entry-delta fixed cd candidate archive, retained a settled same-cursor TFTP delta before restore with two 109800-byte da591740/kernel_2712.img serves, then reached the command-loop proof on Pi 5 hardware. The retained serial evidence includes the original nine-command pwd/cd sequence, expected cwd outputs for /, /etc, /bin, and / after returning to root, rejected cd /missing with cwd unchanged, ready-for-next prompt=true, pi5-local-cd-fixed-dirs-complete, and rpi5-local-cd-fixed-dirs-proof: PASS. The lab boot tree was restored to the pre-run hash before hardwareTestLock release. This accepts the original bounded cd fixed-directories Pi 5 feature proof via the entry-delta candidate.

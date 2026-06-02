@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "IHJhdy1ieXRlcz00IHRydW5jYXRlZD1mYWxzZSBjb250cm9scz0wDQpycGk1LWxvY2FsLWNkLWZpeGVkLWRpcnMtcHJvb2Y6IGVkaXQgY29tbWFuZD0yIGJhY2tzcGFjZXM9MCBkZWxldGVzPTANCi9ldGMNCnJwaTUtbG9jYWwtY2QtZml4ZWQtZGlycy1wcm9vZjogY2QtZml4ZWQtZGlycy1wd2Qtb2JzZXJ2ZWQgY29tbWFuZD0yIGN3ZD0nL2V0YycgcmF3LWJ5dGVzPTQgY29udHJvbHM9MCByZXNwb25zZXM9MQ0KcnBpNS1sb2NhbC1jZC1maXhlZC1kaXJzLXByb29mOiByZWFkeSBjb21tYW5kPTMNCnRhbG9zPiA=",
+  "bytes": 290,
+  "cursor_end": 4024042,
+  "cursor_start": 4023752,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": " raw-bytes=4 truncated=false controls=0\r\nrpi5-local-cd-fixed-dirs-proof: edit command=2 backspaces=0 deletes=0\r\n/etc\r\nrpi5-local-cd-fixed-dirs-proof: cd-fixed-dirs-pwd-observed command=2 cwd='/etc' raw-bytes=4 controls=0 responses=1\r\nrpi5-local-cd-fixed-dirs-proof: ready command=3\r\ntalos> ",
+  "truncated": false
+}

@@ -4170,6 +4170,22 @@ cd feature remains unaccepted until hardware evidence retains the full pwd/cd
 transcript, ready prompt, final classification, and
 rpi5-local-cd-fixed-dirs-proof: PASS.
 
+The serialized Pi 5 entry-delta cd proof is now accepted. Retained Pi 5
+evidence in
+tasks/evidence/2026-06-02-pi5-local-cd-fixed-dirs-entry-delta-proof/local1-entry-delta-candidate/
+shows the entry-delta cd archive fetched over TFTP with two 109800-byte
+da591740/kernel_2712.img serves, command-loop proof entry, the original
+nine-command pwd/cd feature sequence, expected cwd outputs for /, /etc, /bin,
+and / after returning to root, rejected cd /missing with cwd unchanged,
+ready-for-next prompt=true, pi5-local-cd-fixed-dirs-complete, and
+rpi5-local-cd-fixed-dirs-proof: PASS. The lab boot tree was restored to the
+pre-run hash before hardwareTestLock release. This accepts the bounded
+kernel-backed cd fixed-directories Phase 10 feature on Pi 5 hardware; broad
+POSIX chdir, relative paths, path traversal, descriptor-backed filesystem
+syscalls, userspace shell execution, process lifecycle, terminal/session
+behavior, networking, SSH, RP1/PCIe, UART interrupt ownership, DMA, and cache
+driver policy remain deferred.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.

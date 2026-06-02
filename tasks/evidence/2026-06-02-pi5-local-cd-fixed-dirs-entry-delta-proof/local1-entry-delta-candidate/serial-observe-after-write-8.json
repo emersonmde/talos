@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "IGNvbW1hbmQ9NyBzdGF0dXM9dW5leHBlY3RlZC1hcmd1bWVudCByZXNwb25zZXM9MSByYXctYnl0ZXM9MTIgdHJ1bmNhdGVkPWZhbHNlIGNvbnRyb2xzPTANCnJwaTUtbG9jYWwtY2QtZml4ZWQtZGlycy1wcm9vZjogZWRpdCBjb21tYW5kPTcgYmFja3NwYWNlcz0wIGRlbGV0ZXM9MA0KcnBpNS1sb2NhbC1jZC1maXhlZC1kaXJzLXByb29mOiByZWFkeSBjb21tYW5kPTgNCnRhbG9zPiA=",
+  "bytes": 218,
+  "cursor_end": 4025140,
+  "cursor_start": 4024922,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": " command=7 status=unexpected-argument responses=1 raw-bytes=12 truncated=false controls=0\r\nrpi5-local-cd-fixed-dirs-proof: edit command=7 backspaces=0 deletes=0\r\nrpi5-local-cd-fixed-dirs-proof: ready command=8\r\ntalos> ",
+  "truncated": false
+}

@@ -1,0 +1,2 @@
+statusstdiopwdcdlscattalos: unknown-commandtalos: unexpected-argument/talos: not-directorytalos: ok stdiotalos: runtime-console falsetalos: descriptor-backed-input=talos: descriptor-backed-output=assertion failed: i <= index + 3talos: bootstrap reserve: start=pi5-local-cd-fixed-dirs-completeunknown-or-undefined-instructiontalos: ok status0123456789ABCDEFexception-regs0:current-sp0-syncexception-regs5:current-spx-syncexception-regs4:runtime-console0exception-regs1:talos: ok stdio
+ rpi5-local-cd-fixed-dirs-proofTALOS: command loop proof entered

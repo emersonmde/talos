@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "ZmFsc2UgY29udHJvbHM9MA0KcnBpNS1sb2NhbC1jZC1maXhlZC1kaXJzLXByb29mOiBlZGl0IGNvbW1hbmQ9NiBiYWNrc3BhY2VzPTAgZGVsZXRlcz0wDQovDQpycGk1LWxvY2FsLWNkLWZpeGVkLWRpcnMtcHJvb2Y6IGNkLWZpeGVkLWRpcnMtcHdkLW9ic2VydmVkIGNvbW1hbmQ9NiBjd2Q9Jy8nIHJhdy1ieXRlcz00IGNvbnRyb2xzPTAgcmVzcG9uc2VzPTENCnJwaTUtbG9jYWwtY2QtZml4ZWQtZGlycy1wcm9vZjogcmVhZHkgY29tbWFuZD03DQp0YWxvcz4g",
+  "bytes": 261,
+  "cursor_end": 4024922,
+  "cursor_start": 4024661,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "false controls=0\r\nrpi5-local-cd-fixed-dirs-proof: edit command=6 backspaces=0 deletes=0\r\n/\r\nrpi5-local-cd-fixed-dirs-proof: cd-fixed-dirs-pwd-observed command=6 cwd='/' raw-bytes=4 controls=0 responses=1\r\nrpi5-local-cd-fixed-dirs-proof: ready command=7\r\ntalos> ",
+  "truncated": false
+}

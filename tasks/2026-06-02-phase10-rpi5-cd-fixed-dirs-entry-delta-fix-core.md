@@ -47,7 +47,7 @@ Fresh fix candidate archive:
 - archive sha256:
   52eb5d54aef19044ae9af0689786f49bc573b46bbff0d71956c3fbe6b45011a3
 - kernel sha256:
-  c0d1983a39269e9bf3ddb2c29d0db498d0d23f9c25d696bda30bd1609ca1b45b
+  c9b174c3fe087ac6c887c102c9b2a8fe143ea265027d3bab498eb8c581e7464f
 - kernel size: 109800 bytes
 
 The selected candidate is 208 bytes smaller than the prior blocked
