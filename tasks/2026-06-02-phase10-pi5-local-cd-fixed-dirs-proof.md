@@ -33,3 +33,7 @@ Carry the accepted bounded cd fixed-directories command-loop behavior to seriali
 Blocked for supervisor planning. The accepted feature is still not proven on Pi 5 hardware. After the separate serial-output control discriminator accepted prompt capture as healthy, local8 performed one unchanged cd candidate proof rerun. The candidate archive was fetched from TFTP with the expected 109192-byte kernel, but the fresh serial observe retained no cd proof output beyond NUL/newline. Non-draining peek also contained stale prompt/PASS tail text from earlier accepted runs, so it is not used as candidate acceptance evidence for local8.
 
 HardwareTestLock was released/restored at end of wake.
+
+## Follow-up Discriminator
+
+phase10-pi5-local-cd-fixed-dirs-candidate-boot-output-discriminator-20260602 is accepted-blocked-candidate-entered-no-prompt. Its focused static comparison found no candidate-only boot-tree, image-script, build-routing, proof-main selection, command transcript, or early serial-output routing defect. It reclassified the committed local8 evidence as a fresh candidate that entered Talos through `TALOS: dtb memory scan start` but did not retain `TALOS: dtb memory scan done`, prompt, command transcript, final classification, or PASS. The original cd proof remains blocked pending supervisor-planned instrumentation or a concrete fix for the stop between DTB memory scan start and prompt entry.

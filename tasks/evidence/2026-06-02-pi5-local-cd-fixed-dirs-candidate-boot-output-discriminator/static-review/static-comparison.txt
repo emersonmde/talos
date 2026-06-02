@@ -1,0 +1,67 @@
+task=phase10-pi5-local-cd-fixed-dirs-candidate-boot-output-discriminator-20260602
+run=static-review
+classification=cd-candidate-entered-no-prompt
+
+invariant:
+- After a fresh TFTP fetch of the staged rpi5_local_cd_fixed_dirs kernel, retained
+  fresh serial evidence should reach the local command-loop proof prompt before
+  the typed pwd/cd sequence.
+- The full feature proof still requires the typed pwd/cd sequence, expected cwd
+  outputs for /etc, /bin, and /, a rejected nonexistent directory with cwd
+  unchanged, ready prompt, pi5-local-cd-fixed-dirs-complete, and
+  rpi5-local-cd-fixed-dirs-proof: PASS.
+
+static_comparison:
+- Boot-tree/image scripts: scripts/rpi5-local-cd-fixed-dirs-image.sh and
+  scripts/rpi5-local-cd-fixed-dirs-boot-tree.sh match the accepted local cat
+  banner and literal echo script structure: each selects a TALOS_BOOT_SCENARIO,
+  copies target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712.img to a
+  scenario-named image, replaces kernel_2712.img/kernel8.img in the boot tree,
+  and mirrors config/cmdline/DTB/kernel files under serial prefix da591740.
+- Build routing: build.rs registers rpi5_local_cd_fixed_dirs and implies
+  rpi5_local_serial_command_loop, matching the accepted prompt-visible local
+  command-loop scenario family.
+- Proof-main selection: src/boot/rpi5.rs dispatches
+  run_local_serial_command_loop_proof() on rpi5_local_serial_command_loop; the
+  implied cfg means rpi5_local_cd_fixed_dirs follows the same physical proof
+  entry as accepted prompt-visible controls.
+- Command transcript driver: src/target/rpi5.rs includes
+  rpi5_local_cd_fixed_dirs in the local command-loop proof, sets
+  command-count=12, names the label/classification as
+  rpi5-local-cd-fixed-dirs-proof/pi5-local-cd-fixed-dirs-complete, and checks
+  help, status, stdio, pwd, cd /etc, pwd, cd /bin, pwd, cd /, pwd,
+  cd /missing, pwd.
+- Early serial-output path: the cd scenario uses the same firmware-preserved
+  UART10 console and LocalCommandProofConsole write path as the prompt-visible
+  literal echo/cat-banner controls; no candidate-only early serial routing
+  defect was found in static inspection.
+
+hardware_evidence_reused:
+- Committed local8 unchanged candidate evidence at
+  tasks/evidence/2026-06-02-pi5-local-cd-fixed-dirs-proof/local8-unchanged-candidate-status-endpoint-retry/
+  is the relevant blocker input for this discriminator.
+- local8 archive review retained archive_sha256
+  8897a58f519d45de1cc6e8be91b2d1cc469c722536902edc1355e8a685f70f68 and
+  kernel_sha256 46ad6246b42f9a2459cf1ebe4fd0c0e1128e7ba5645da35cdd43d5a2dd1ac969.
+- local8 settled same-cursor TFTP evidence retained 13 events and two fresh
+  candidate kernel_2712.img fetches for the 109192-byte kernel.
+- local8 serial transcript retained Talos entry through
+  "TALOS: dtb memory scan start" followed by NUL/newline and subsequent reboot
+  output; it did not retain "TALOS: dtb memory scan done", a talos> prompt,
+  command transcript, pi5-local-cd-fixed-dirs-complete, or PASS.
+
+decision:
+- No proof-harness, boot-tree, image-script, build-routing, command-loop, or
+  acceptance change was made in this discriminator.
+- No additional hardware run was performed. A repeat unchanged candidate would
+  not be qualitatively different from local8 without a new instrumented
+  diagnostic or a suspected code/routing fix, and this task found no static
+  candidate-only routing defect to justify such a rerun.
+- Final classification is cd-candidate-entered-no-prompt: the candidate freshly
+  fetched and entered Talos, but it did not reach the proof prompt/command loop.
+
+next_action:
+- Keep phase10-pi5-local-cd-fixed-dirs-proof-20260602 blocked.
+- Supervisor planning is needed for a bounded next diagnostic or implementation
+  task that explains or instruments the physical stop between DTB memory scan
+  start and command-loop prompt without relaxing the cd feature acceptance gate.
