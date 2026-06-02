@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "eXRlcz0yMCB0cnVuY2F0ZWQ9ZmFsc2UgY29udHJvbHM9MA0KcnBpNS1sb2NhbC1jYXQtYmFubmVyLXByb29mOiBlZGl0IGNvbW1hbmQ9MCBiYWNrc3BhY2VzPTAgZGVsZXRlcz0wDQpUYWxvcyBpbml0cmFtZnMgZml4dHVyZQ0KcnBpNS1sb2NhbC1jYXQtYmFubmVyLXByb29mOiBjYXQtYmFubmVyLW9ic2VydmVkIGlucHV0PSdjYXQgL2V0Yy9iYW5uZXIudHh0JyBvdXRwdXQ9J1RhbG9zIGluaXRyYW1mcyBmaXh0dXJlJyByYXctYnl0ZXM9MjAgY29udHJvbHM9MCByZXNwb25zZXM9MQ0KdGFsb3M+IA0KcnBpNS1sb2NhbC1jYXQtYmFubmVyLXByb29mOiByZWFkeS1mb3ItbmV4dCBwcm9tcHQ9dHJ1ZQ0KcnBpNS1sb2NhbC1jYXQtYmFubmVyLXByb29mOiBmaW5hbCBwYXJ0aWNpcGFudHM9MSBleHBlY3RlZD0xIGVycm9ycz0wIGNsYXNzaWZpY2F0aW9uPXBpNS1sb2NhbC1jYXQtYmFubmVyLWNvbXBsZXRlDQpycGk1LWxvY2FsLWNhdC1iYW5uZXItcHJvb2Y6IFBBU1MNCg==",
+  "bytes": 493,
+  "cursor_end": 4002313,
+  "cursor_start": 4001820,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "ytes=20 truncated=false controls=0\r\nrpi5-local-cat-banner-proof: edit command=0 backspaces=0 deletes=0\r\nTalos initramfs fixture\r\nrpi5-local-cat-banner-proof: cat-banner-observed input='cat /etc/banner.txt' output='Talos initramfs fixture' raw-bytes=20 controls=0 responses=1\r\ntalos> \r\nrpi5-local-cat-banner-proof: ready-for-next prompt=true\r\nrpi5-local-cat-banner-proof: final participants=1 expected=1 errors=0 classification=pi5-local-cat-banner-complete\r\nrpi5-local-cat-banner-proof: PASS\r\n",
+  "truncated": false
+}

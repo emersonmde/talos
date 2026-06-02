@@ -1,0 +1,26 @@
+task=phase10-pi5-local-cat-banner-unchanged-rerun-after-control-20260602
+attempt=local3-unchanged-rerun-after-settled-control
+classification=blocked-acceptance-gate-mismatch
+accepted=false
+candidate_archive=target/talos-rpi5-local-cat-banner-local1.tar.gz
+candidate_archive_sha256=35937283006c1079df2d95836343c4cd81e54655989e238fea70aa746778feb0
+candidate_kernel_sha256=5300184ebc40ac3b5bb44c9c96828f0d4b1c71b2a8f4431593fff8e5394abce3
+pre_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+post_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+snapshot=phase10-pi5-cat-banner-unchanged-pre-20260602T071352Z
+tftp_cursor_start=4043654
+tftp_kernel_fetches_107520=2
+serial_has_prompt=true
+serial_has_banner=true
+serial_has_fd_descriptor_marker=false
+serial_has_pass=true
+
+evidence:
+- image/archive inspection: archive-review.txt retained for unchanged local1 candidate.
+- lab-controller API: pre/post status, publish, boot files, power-cycle, serial write/observe, TFTP delta, restore retained.
+- TFTP evidence: tftp-delta-before-restore.json records candidate fetch count above.
+- serial hardware boot/output: serial-transcript.txt records delayed-write observation from fresh serial cursor. It includes the fresh talos> prompt, visible Talos initramfs fixture output, ready-for-next prompt, final pi5-local-cat-banner-complete classification, and exact rpi5-local-cat-banner-proof: PASS line.
+- restore proof: pre/post tree hash match is true.
+
+blocker:
+- The queued acceptance gate also requires explicit descriptor-backed fd0/stdout markers in retained Pi 5 serial evidence. The unchanged rpi5_local_cat_banner candidate does not emit that startup marker in this scenario, so the worker cannot mark the task accepted without relaxing acceptance criteria or changing the candidate/proof harness.
