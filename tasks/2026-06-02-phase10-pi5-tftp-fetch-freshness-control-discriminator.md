@@ -111,6 +111,20 @@ matching the pre-run hash.
 - documentation: mdBook was not required because mdBook docs were not touched.
 - staged static inspection: `git diff --cached --check` passed before commit.
 
+## Supervisor Intervention Checklist
+
+The 2026-06-02 supervisor intervention checklist is retained at:
+
+`tasks/evidence/2026-06-02-pi5-tftp-fetch-freshness-control-discriminator/intervention-checklist.md`
+
+It restates the first-principles no-fresh-TFTP problem, the expected
+network-boot/TFTP cursor invariant, contradicting evidence from the two
+prompt-baseline control attempts and this discriminator, unproven boot-source
+and logging assumptions, qualitatively different next approaches, the smallest
+decisive discriminator, and the quarantine plan forbidding Talos runtime,
+proof-harness, candidate archive, marker, wait, or acceptance-criteria changes.
+A later replay of saved cursor `4038250` returned the expected 03:54:59-03:55:01 TFTP boot-file request sequence. Treat the immediate zero-delta artifact as a TFTP log collection timing problem unless a future settled cursor query remains empty and live-tail health is also proven.
+
 ## Next Action
 
 Supervisor planning is required. Do not rerun the unchanged cat-banner
