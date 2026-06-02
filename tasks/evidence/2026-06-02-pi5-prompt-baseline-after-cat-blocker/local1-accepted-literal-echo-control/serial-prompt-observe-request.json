@@ -1,0 +1,7 @@
+{
+  "cursor": 3992899,
+  "timeout_seconds": 90,
+  "settle_ms": 1000,
+  "max_bytes": 131072,
+  "encoding": "utf-8"
+}
