@@ -1,0 +1,10 @@
+tftp_cursor=4054462
+tftp-delta-settle-1.json events=0
+tftp-delta-settle-2.json events=0
+tftp-delta-settle-3.json events=0
+tftp-delta-settle-4.json events=0
+tftp-delta-settle-5.json events=0
+tftp-delta-settle-6.json events=0
+tftp-delta-settle-7.json events=0
+tftp-delta-settle-8.json events=0
+tftp-delta-settle-9.json events=13
