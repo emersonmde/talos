@@ -112,3 +112,11 @@ instrumentation/control-boundary rather than cd-specific. Do not promote the
 superseded cd entry-regression core from this task; proceed only through a
 non-invasive accepted-control regression proof that retains literal-echo
 prompt/PASS evidence.
+
+That follow-up proof is now accepted as
+phase10-pi5-accepted-control-noninvasive-regression-proof-20260602. It
+published the rebuilt literal-echo non-invasive control archive, retained fresh
+settled TFTP fetches and a visible echo local serial works response with
+rpi5-local-literal-echo-proof: PASS, and restored the pre-run boot tree. This
+unblocks the planned cd fixed-directories non-invasive recovery core; it does
+not by itself accept the cd hardware proof.

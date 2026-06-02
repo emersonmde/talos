@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "aXRlcmFsLWVjaG8tcHJvb2Y6IGRpc3BhdGNoIGNvbW1hbmQ9MCBzdGF0dXM9aGFuZGxlZCByZXNwb25zZXM9MSByYXctYnl0ZXM9MjQgdHJ1bmNhdGVkPWZhbHNlIGNvbnRyb2xzPTANCnJwaTUtbG9jYWwtbGl0ZXJhbC1lY2hvLXByb29mOiBlZGl0IGNvbW1hbmQ9MCBiYWNrc3BhY2VzPTAgZGVsZXRlcz0wDQpsb2NhbCBzZXJpYWwgd29ya3MNCnJwaTUtbG9jYWwtbGl0ZXJhbC1lY2hvLXByb29mOiBsaXRlcmFsLWVjaG8tb2JzZXJ2ZWQgaW5wdXQ9J2VjaG8gbG9jYWwgc2VyaWFsIHdvcmtzJyBmaW5hbC1saW5lPSdlY2hvIGxvY2FsIHNlcmlhbCB3b3JrcycgcmF3LWJ5dGVzPTI0IGNvbnRyb2xzPTAgcmVzcG9uc2VzPTENCnRhbG9zPiANCnJwaTUtbG9jYWwtbGl0ZXJhbC1lY2hvLXByb29mOiByZWFkeS1mb3ItbmV4dCBwcm9tcHQ9dHJ1ZQ0KVEFMT1M6IGNvbW1hbmQgbG9vcCBwcm9tcHQgcmVhZHkNCnJwaTUtbG9jYWwtbGl0ZXJhbC1lY2hvLXByb29mOiBmaW5hbCBwYXJ0aWNpcGFudHM9MSBleHBlY3RlZD0xIGVycm9ycz0wIGNsYXNzaWZpY2F0aW9uPXBpNS1sb2NhbC1saXRlcmFsLWVjaG8tY29tcGxldGUNCnJwaTUtbG9jYWwtbGl0ZXJhbC1lY2hvLXByb29mOiBQQVNTDQo=",
+  "bytes": 614,
+  "cursor_end": 4019290,
+  "cursor_start": 4018676,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "iteral-echo-proof: dispatch command=0 status=handled responses=1 raw-bytes=24 truncated=false controls=0\r\nrpi5-local-literal-echo-proof: edit command=0 backspaces=0 deletes=0\r\nlocal serial works\r\nrpi5-local-literal-echo-proof: literal-echo-observed input='echo local serial works' final-line='echo local serial works' raw-bytes=24 controls=0 responses=1\r\ntalos> \r\nrpi5-local-literal-echo-proof: ready-for-next prompt=true\r\nTALOS: command loop prompt ready\r\nrpi5-local-literal-echo-proof: final participants=1 expected=1 errors=0 classification=pi5-local-literal-echo-complete\r\nrpi5-local-literal-echo-proof: PASS\r\n",
+  "truncated": false
+}

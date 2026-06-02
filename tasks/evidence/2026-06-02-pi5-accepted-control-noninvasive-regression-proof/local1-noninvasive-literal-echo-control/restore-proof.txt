@@ -1,0 +1,4 @@
+snapshot=pre-phase10-pi5-accepted-control-noninvasive-regression-local1-20260602T191333Z
+pre_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+post_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+restored=true

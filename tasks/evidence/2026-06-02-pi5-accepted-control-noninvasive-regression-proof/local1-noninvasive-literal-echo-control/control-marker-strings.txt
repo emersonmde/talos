@@ -1,0 +1,6 @@
+g: literal-echo-observed input='echo local serial works' final-line='echo local serial works' raw-bytes=
+talos: builtins kernel-backedtalos: commands help status stdio pwd echo ls cat cdtalos: ok helptalos: echo forms echo hello; echo local serial workstalos: editing backspace delete ctrl-c ctrl-utalos: empty-commandtalos: parse-error
+ rpi5-local-literal-echo-proofTALOS: command loop proof entered
+cat /etc/banner.txtecho local serial works
+talos: echo forms echo hello; echo local serial works
+local serial works

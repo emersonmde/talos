@@ -4121,6 +4121,17 @@ TALOS: asm_start and TALOS: asm_pre_rust_entry. The next hardware discriminator
 is a serialized non-invasive accepted-control regression proof; only retained
 literal-echo prompt/PASS evidence from that proof may unblock cd recovery work.
 
+The serialized non-invasive accepted-control regression proof is now accepted.
+Retained Pi 5 evidence in
+tasks/evidence/2026-06-02-pi5-accepted-control-noninvasive-regression-proof/local1-noninvasive-literal-echo-control/
+shows the rebuilt literal-echo control archive fetched over TFTP with two
+108896-byte da591740/kernel_2712.img serves, visible echo local serial works
+response output, next talos> prompt readiness,
+pi5-local-literal-echo-complete, and rpi5-local-literal-echo-proof: PASS,
+followed by restore to the pre-run boot tree hash. The cd fixed-directories
+hardware proof remains unaccepted, but the accepted control evidence
+mechanically unblocks the planned non-invasive cd recovery core.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.

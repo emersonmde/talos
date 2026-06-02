@@ -1,0 +1,7 @@
+task=phase10-pi5-accepted-control-noninvasive-regression-proof-20260602
+classification=prompt-control-responsive
+selected_archive=target/talos-rpi5-local-literal-echo-noninvasive-control.tar.gz
+archive_sha256=229df66b85569e618153610cb3b5a9311d669b03fc5e387b9dbd80908c7f1190
+kernel_sha256=1946471fa1d5f5daa514d4320ddddab477605d7c1506240866adbc9f4de908e8
+serial_cursor_start=4018676
+tftp_cursor_start=4066621
