@@ -1,0 +1,90 @@
+task: phase10-rpi5-kernel-entry-provenance-core-20260602
+status: accepted
+
+current_invariant:
+- phase10-pi5-local-cd-fixed-dirs-dtb-scan-progress-proof-20260602 local5
+  retained settled same-cursor TFTP evidence that served the candidate kernel
+  twice at 110008 bytes.
+- Fresh post-TFTP serial retained no TALOS: rust_entry, no DTB memory scan
+  marker, no prompt, no cd transcript, no classification, and no PASS.
+
+static_review:
+- linker-rpi5.ld sets ENTRY(_start), KERNEL_LOAD_ADDR=0x00200000, keeps
+  .text.boot at the image start, and records __kernel_image_end before BSS.
+- src/arch/aarch64/boot.S provides the arm64 Image header at _start. The header
+  branch reaches the post-header body, preserves x0 in x19, clears BSS, sets
+  __stack_top, then calls rust_entry.
+- scripts/rpi5-image.sh converts the ELF to kernel_2712.img and verifies that
+  the arm64 Image header size matches the binary file size.
+- scripts/rpi5-local-cd-fixed-dirs-image.sh routes only
+  TALOS_BOOT_SCENARIO=rpi5_local_cd_fixed_dirs through scripts/rpi5-image.sh.
+- scripts/rpi5-local-cd-fixed-dirs-boot-tree.sh mirrors the rebuilt
+  kernel_2712.img and kernel8.img into root and da591740-prefixed boot-tree
+  paths.
+- No concrete Image header, linker entry, .text.boot preservation, _start to
+  rust_entry handoff, or boot-tree routing defect was found locally.
+
+selected_discriminator:
+- build.rs now adds TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO only for
+  rpi5_local_cd_fixed_dirs.
+- src/arch/aarch64/boot.S now emits the existing raw UART assembly markers
+  TALOS: asm_start and TALOS: asm_pre_rust_entry for either RPi5 SMP scenarios
+  or the cd fixed-directories entry-provenance scenario.
+- This distinguishes firmware-fetched-no-entry from entry-reached-before-rust
+  on the next Pi 5 run without changing cd command semantics or broadening the
+  shell, userspace, filesystem, networking, RP1/PCIe, UART interrupt, DMA, or
+  cache policy surfaces.
+
+entry_provenance_inspection:
+- Retained at entry-provenance-inspection.txt.
+- Image header: text_offset=0, image_size=110008, flags=12, magic=ARMd, and
+  file_size=110008.
+- ELF: Machine=AArch64, Entry point address=0x200000.
+- Symbols: _start and __kernel_start at 0x200000; rust_entry at 0x201a48;
+  __kernel_image_end at 0x21adb8; BSS and stack symbols retained.
+- Sections: .text.boot is present at 0x200000 and .text starts at 0x201000.
+- Disassembly shows _start branching past the Image header, writing the
+  asm_start marker, clearing BSS, setting SP, writing asm_pre_rust_entry, then
+  branching to rust_entry.
+- Marker inspection retained TALOS: asm_start, TALOS: asm_pre_rust_entry,
+  TALOS: command loop proof entered, and rpi5-local-cd-fixed-dirs-proof in the
+  rebuilt kernel image. Rust early phase lines are emitted byte-by-byte and are
+  therefore not expected as contiguous strings.
+
+archive_identity:
+- Archive: target/talos-rpi5-local-cd-fixed-dirs-entry-provenance-core.tar.gz.
+- Archive sha256:
+  80607b260c0f955d9e4184a72eb2dbf0d7e2347aab2320d241bd3c486c0252c5.
+- Kernel sha256:
+  18af7dcc7aed9aeb5be08eb15556d80a2c9e5dbb6497f6f7541d93f05174fd6a.
+- scripts/rpi5-archive-review.sh passed with kernel_size=110008,
+  header_image_size=110008, text_offset=0, flags=12, loader_diagnostic=false,
+  and matching root/da591740-prefixed kernel files.
+
+validation:
+- pre-edit git status: clean Talos worktree before promotion; durable state was
+  outside the Talos repo.
+- fmt/lint: cargo fmt --all -- --check passed, retained at
+  cargo-fmt-check.log.
+- unit tests: cargo -Zjson-target-spec test --quiet passed, 352 tests,
+  retained at cargo-test-quiet.log.
+- QEMU/substitute cd feature: scripts/qemu-local-cd-fixed-dirs-smoke.sh
+  --quiet passed, retained at qemu-local-cd-fixed-dirs-smoke.log.
+- QEMU/substitute prompt/readiness regression:
+  scripts/qemu-local-serial-command-loop-smoke.sh --quiet passed, retained at
+  qemu-local-serial-command-loop-smoke.log.
+- RPi5 image/archive inspection: scripts/rpi5-local-cd-fixed-dirs-boot-tree.sh
+  rebuilt the local archive without publishing, and scripts/rpi5-archive-review.sh
+  passed.
+- Static entry provenance: readelf/nm/llvm-objdump/Image-header/string
+  inspection retained in entry-provenance-inspection.txt and
+  entry-provenance-marker-strings.txt.
+- Static diff hygiene: git diff --check passed, retained at git-diff-check.log.
+- mdBook was not run because mdBook docs were not touched.
+- hardwareTestLock stayed unlocked/restored and unused.
+
+next_action:
+- The original Pi 5 cd fixed-directories proof remains blocked. The follow-up
+  queued Pi 5 entry-provenance proof may use the new asm_start/pre-rust markers
+  to classify the fresh candidate or accept the cd feature only if it retains
+  the full pwd/cd transcript and PASS.

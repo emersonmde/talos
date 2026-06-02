@@ -1,0 +1,79 @@
+tools:
+/usr/bin/readelf
+/usr/bin/objdump
+/usr/bin/nm
+
+image_header:
+branch_or_code_word=14000010
+
+text_offset=0
+
+image_size=110008
+
+flags=12
+
+magic=ARMd
+file_size=110008
+
+
+symbols:
+0000000000200000 T __kernel_start
+0000000000200000 T _start
+0000000000201a48 T rust_entry
+000000000021adb8 R __kernel_image_end
+000000000021adc0 B __bss_start
+000000000021ade8 B __bss_end
+000000000035adf0 B __stack_top
+
+sections:
+  [Nr] Name              Type             Address           Offset
+  [ 1] .text.boot        PROGBITS         0000000000200000  00010000
+  [ 3] .text             PROGBITS         0000000000201000  00011000
+  [ 4] .rodata           PROGBITS         00000000002119b0  000219b0
+  [ 5] .bss              NOBITS           000000000021adc0  0002adc0
+
+entry_header:
+  Type:                              EXEC (Executable file)
+  Machine:                           AArch64
+  Entry point address:               0x200000
+
+start_disassembly:
+start_disassembly_llvm:
+0000000000200000 <_start>:
+  200000:      	b	0x200040 <_start+0x40>
+		...
+  200010: b8 ad 01 00  	.word	0x0001adb8
+  200014: 00 00 00 00  	.word	0x00000000
+  200018: 0c 00 00 00  	.word	0x0000000c
+		...
+  200038: 41 52 4d 64  	.word	0x644d5241
+  20003c: 00 00 00 00  	.word	0x00000000
+  200040:      	mov	x19, x0
+  200044:      	adrp	x0, 0x200000 <_start>
+  200048:      	add	x0, x0, #0x114
+  20004c:      	mov	x1, #0x12               // =18
+  200050:      	bl	0x2000b0 <talos_rpi5_early_uart_write>
+  200054:      	mrs	x0, CPACR_EL1
+  200058:      	orr	x0, x0, #0x300000
+  20005c:      	msr	CPACR_EL1, x0
+  200060:      	isb
+  200064:      	nop
+  200068:      	adr	x0, 0x21adc0 <__bss_start>
+  20006c:      	nop
+  200070:      	adr	x1, 0x21ade8 <__bss_end>
+  200074:      	cmp	x0, x1
+  200078:      	b.hs	0x200084 <_start+0x84>
+  20007c:      	str	xzr, [x0], #0x8
+  200080:      	b	0x200074 <_start+0x74>
+  200084:      	adrp	x0, 0x35a000 <__stack_bottom+0x3f210>
+  200088:      	add	x0, x0, #0xdf0
+  20008c:      	mov	sp, x0
+  200090:      	adrp	x0, 0x200000 <_start>
+  200094:      	add	x0, x0, #0x126
+  200098:      	mov	x1, #0x1b               // =27
+  20009c:      	bl	0x2000b0 <talos_rpi5_early_uart_write>
+  2000a0:      	mov	x0, x19
+  2000a4:      	bl	0x201a48 <rust_entry>
+  2000a8:      	wfe
+  2000ac:      	b	0x2000a8 <_start+0xa8>
+

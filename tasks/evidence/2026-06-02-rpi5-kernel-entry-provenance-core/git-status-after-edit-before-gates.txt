@@ -1,0 +1,3 @@
+ M build.rs
+ M src/arch/aarch64/boot.S
+?? tasks/evidence/2026-06-02-rpi5-kernel-entry-provenance-core/

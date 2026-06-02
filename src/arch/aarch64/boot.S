@@ -21,7 +21,7 @@ _start:
 3:
     mov x19, x0
 
-#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO)
+#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO)
     adrp x0, talos_rpi5_asm_start_line
     add x0, x0, :lo12:talos_rpi5_asm_start_line
     mov x1, #(talos_rpi5_asm_start_line_end - talos_rpi5_asm_start_line)
@@ -47,7 +47,7 @@ _start:
     add x0, x0, :lo12:__stack_top
     mov sp, x0
 
-#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO)
+#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO)
     adrp x0, talos_rpi5_asm_pre_rust_line
     add x0, x0, :lo12:talos_rpi5_asm_pre_rust_line
     mov x1, #(talos_rpi5_asm_pre_rust_line_end - talos_rpi5_asm_pre_rust_line)
@@ -63,7 +63,7 @@ _start:
 
 .size _start, . - _start
 
-#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO)
+#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO)
 talos_rpi5_early_uart_write:
     mov x22, x30
     cbz x1, 2f

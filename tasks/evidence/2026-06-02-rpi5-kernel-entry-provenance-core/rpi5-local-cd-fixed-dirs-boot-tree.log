@@ -1,0 +1,56 @@
+   Compiling talos v0.1.0 (/opt/strider/openclaw/current/workspace/projects/talos)
+warning: method `set_reg` is never used
+   --> src/arch/aarch64/exceptions.rs:151:12
+    |
+144 | impl ExceptionFrame {
+    | ------------------- method in this implementation
+...
+151 |     pub fn set_reg(&mut self, index: usize, value: u64) {
+    |            ^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `AARCH64_SVC_EXCEPTION_CLASS` is never used
+   --> src/arch/aarch64/exceptions.rs:156:18
+    |
+156 | pub(crate) const AARCH64_SVC_EXCEPTION_CLASS: u64 = 0x15;
+    |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `svc_immediate` is never used
+   --> src/arch/aarch64/exceptions.rs:162:21
+    |
+162 | pub(crate) const fn svc_immediate(esr: u64) -> u16 {
+    |                     ^^^^^^^^^^^^^
+
+warning: struct `RoutedSyscall` is never constructed
+   --> src/arch/aarch64/exceptions.rs:167:19
+    |
+167 | pub(crate) struct RoutedSyscall {
+    |                   ^^^^^^^^^^^^^
+
+warning: function `try_route_lower_aarch64_syscall` is never used
+   --> src/arch/aarch64/exceptions.rs:173:15
+    |
+173 | pub(crate) fn try_route_lower_aarch64_syscall(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: `talos` (bin "talos") generated 5 warnings
+    Finished `dev` profile [optimized + debuginfo] target(s) in 1.63s
+   Compiling talos v0.1.0 (/opt/strider/openclaw/current/workspace/projects/talos)
+    Finished `dev` profile [optimized + debuginfo] target(s) in 1.81s
+target/rpi5-local-cd-fixed-dirs-entry-provenance-boot-tree/bcm2712-rpi-5-b.dtb
+target/rpi5-local-cd-fixed-dirs-entry-provenance-boot-tree/cmdline.txt
+target/rpi5-local-cd-fixed-dirs-entry-provenance-boot-tree/config.txt
+target/rpi5-local-cd-fixed-dirs-entry-provenance-boot-tree/da591740/bcm2712-rpi-5-b.dtb
+target/rpi5-local-cd-fixed-dirs-entry-provenance-boot-tree/da591740/cmdline.txt
+target/rpi5-local-cd-fixed-dirs-entry-provenance-boot-tree/da591740/config.txt
+target/rpi5-local-cd-fixed-dirs-entry-provenance-boot-tree/da591740/kernel8.img
+target/rpi5-local-cd-fixed-dirs-entry-provenance-boot-tree/da591740/kernel_2712.img
+target/rpi5-local-cd-fixed-dirs-entry-provenance-boot-tree/da591740/overlays/bcm2712d0.dtbo
+target/rpi5-local-cd-fixed-dirs-entry-provenance-boot-tree/da591740/overlays/overlay_map.dtb
+target/rpi5-local-cd-fixed-dirs-entry-provenance-boot-tree/da591740/overlays/uart0-pi5.dtbo
+target/rpi5-local-cd-fixed-dirs-entry-provenance-boot-tree/kernel8.img
+target/rpi5-local-cd-fixed-dirs-entry-provenance-boot-tree/kernel_2712.img
+target/rpi5-local-cd-fixed-dirs-entry-provenance-boot-tree/overlays/bcm2712d0.dtbo
+target/rpi5-local-cd-fixed-dirs-entry-provenance-boot-tree/overlays/overlay_map.dtb
+target/rpi5-local-cd-fixed-dirs-entry-provenance-boot-tree/overlays/uart0-pi5.dtbo
