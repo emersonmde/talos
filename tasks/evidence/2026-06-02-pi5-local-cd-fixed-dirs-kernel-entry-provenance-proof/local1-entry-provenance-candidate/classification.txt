@@ -1,0 +1,1 @@
+firmware-fetch-no-kernel-entry-marker

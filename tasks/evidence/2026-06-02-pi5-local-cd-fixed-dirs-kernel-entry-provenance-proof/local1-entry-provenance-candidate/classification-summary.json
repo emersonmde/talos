@@ -1,0 +1,19 @@
+{
+  "classification": "firmware-fetch-no-kernel-entry-marker",
+  "serial_bytes": 2,
+  "serial_cursor_start": 4018670,
+  "serial_cursor_end": 4018672,
+  "tftp_event_count": 13,
+  "kernel_fetch_count": 2,
+  "kernel_fetch_bytes": [
+    110008,
+    110008
+  ],
+  "has_asm_start": false,
+  "has_asm_pre_rust_entry": false,
+  "has_rust_entry": false,
+  "has_dtb_scan_start": false,
+  "has_dtb_scan_done": false,
+  "has_prompt": false,
+  "has_pass": false
+}

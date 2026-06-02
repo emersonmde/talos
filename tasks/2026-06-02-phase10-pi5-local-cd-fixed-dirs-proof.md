@@ -1,7 +1,7 @@
 # Phase 10 Pi 5 Local Cd Fixed Dirs Proof Task
 
 Task: phase10-pi5-local-cd-fixed-dirs-proof-20260602
-Status: blocked-dtb-memory-scan-not-entered
+Status: blocked-firmware-fetch-no-kernel-entry-marker
 
 ## Scope
 
@@ -43,3 +43,5 @@ phase10-rpi5-dtb-memory-scan-progress-core-20260602 is accepted. It added bounde
 phase10-pi5-local-cd-fixed-dirs-dtb-scan-progress-proof-20260602 is accepted-blocked-dtb-memory-scan-not-entered. Its decisive local5 run fetched the progress-core candidate kernel from TFTP twice at 110008 bytes from the same pre-run cursor, then collected fresh serial after the settled TFTP window. The fresh serial retained only NUL/space bytes and no TALOS: rust_entry, TALOS: dtb memory scan start, command-loop marker, prompt, cd transcript, classification, or PASS. The original cd proof remains blocked; the cd closeout checkpoint must not be promoted until a later Pi 5 run retains the full feature transcript and PASS.
 
 phase10-rpi5-kernel-entry-provenance-core-20260602 is accepted. It found no local Image/header/linker/.text.boot/_start-to-rust_entry/boot-tree routing defect, then added a narrow cd-scenario assembly-entry discriminator that emits TALOS: asm_start and TALOS: asm_pre_rust_entry before the Rust entry marker. The original cd proof remains blocked until a later Pi 5 run retains the full cd transcript and rpi5-local-cd-fixed-dirs-proof: PASS.
+
+phase10-pi5-local-cd-fixed-dirs-kernel-entry-provenance-proof-20260602 is accepted-blocked-firmware-fetch-no-kernel-entry-marker. Its local1 run published the accepted entry-provenance candidate archive, retained a settled same-cursor TFTP delta before restore with two 110008-byte kernel_2712.img fetches, then observed serial from the pre-run cursor after that TFTP window. Fresh serial retained only NUL/space and no TALOS: asm_start, asm_pre_rust_entry, rust_entry, DTB memory scan marker, prompt, cd transcript, classification, or PASS. The original cd proof remains blocked; the cd closeout checkpoint must not be promoted until a later Pi 5 run retains the full feature transcript and PASS.

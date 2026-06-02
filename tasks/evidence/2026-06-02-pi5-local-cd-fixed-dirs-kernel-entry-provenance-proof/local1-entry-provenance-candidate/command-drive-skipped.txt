@@ -1,0 +1,1 @@
+no fresh prompt in serial-observe-post-tftp; command sequence not sent
