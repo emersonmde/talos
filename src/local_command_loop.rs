@@ -8,7 +8,31 @@ use crate::{
 pub const LOCAL_COMMAND_LOOP_VERSION: &str = "phase10.1-kernel-builtins-v1";
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 7;
-pub const LOCAL_COMMAND_CURRENT_DIRECTORY: &str = "/";
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum LocalCommandDirectory {
+    Root,
+    Etc,
+    Bin,
+}
+
+impl LocalCommandDirectory {
+    pub const fn path(self) -> &'static str {
+        match self {
+            Self::Root => "/",
+            Self::Etc => "/etc",
+            Self::Bin => "/bin",
+        }
+    }
+
+    const fn initramfs_path(self) -> &'static [u8] {
+        match self {
+            Self::Root => b"/",
+            Self::Etc => b"/etc",
+            Self::Bin => b"/bin",
+        }
+    }
+}
 
 const LOCAL_COMMAND_ROOT_LISTING: [(&[u8], &str); 4] = [
     (b"/bin", "bin"),
@@ -66,6 +90,14 @@ pub trait LocalCommandSink {
     fn descriptor_backed_input(&self) -> bool {
         false
     }
+
+    fn current_directory(&self) -> LocalCommandDirectory {
+        LocalCommandDirectory::Root
+    }
+
+    fn set_current_directory(&mut self, directory: LocalCommandDirectory) -> bool {
+        directory == LocalCommandDirectory::Root
+    }
 }
 
 impl<B> LocalCommandSink for runtime_console::RuntimeConsole<B>
@@ -91,6 +123,7 @@ pub struct DescriptorBackedLocalCommandSink<
     current_owner: Option<ProcessOwnerId>,
     output_descriptor: usize,
     console_backend: &'a mut B,
+    current_directory: LocalCommandDirectory,
 }
 
 pub struct DescriptorBackedLocalCommandIo<
@@ -108,6 +141,7 @@ pub struct DescriptorBackedLocalCommandIo<
     output_descriptor: usize,
     input_backend: I,
     output_backend: O,
+    current_directory: LocalCommandDirectory,
 }
 
 impl<'a, B> DescriptorBackedLocalCommandSink<'a, B, 1, 4>
@@ -123,6 +157,7 @@ where
             current_owner: Some(current_owner),
             output_descriptor: posix::STDOUT_FD,
             console_backend,
+            current_directory: LocalCommandDirectory::Root,
         })
     }
 }
@@ -146,6 +181,7 @@ where
             output_descriptor: posix::STDOUT_FD,
             input_backend,
             output_backend,
+            current_directory: LocalCommandDirectory::Root,
         })
     }
 }
@@ -202,6 +238,15 @@ where
     fn descriptor_backed_output(&self) -> bool {
         true
     }
+
+    fn current_directory(&self) -> LocalCommandDirectory {
+        self.current_directory
+    }
+
+    fn set_current_directory(&mut self, directory: LocalCommandDirectory) -> bool {
+        self.current_directory = directory;
+        true
+    }
 }
 
 impl<I, O, const OWNER_CAPACITY: usize, const DESCRIPTOR_CAPACITY: usize> LocalCommandSink
@@ -246,6 +291,15 @@ where
                 entry.require_readable().is_ok()
                     && entry.object().kind() == posix::DescriptorObjectKind::StdioInput
             })
+    }
+
+    fn current_directory(&self) -> LocalCommandDirectory {
+        self.current_directory
+    }
+
+    fn set_current_directory(&mut self, directory: LocalCommandDirectory) -> bool {
+        self.current_directory = directory;
+        true
     }
 }
 
@@ -445,7 +499,7 @@ fn dispatch_local_command(
             write_line(
                 sink,
                 responses,
-                "talos: commands help status stdio pwd echo ls cat",
+                "talos: commands help status stdio pwd echo ls cat cd",
             )?;
             write_line(
                 sink,
@@ -479,7 +533,7 @@ fn dispatch_local_command(
             write_line(
                 sink,
                 responses,
-                "talos: commands help status stdio pwd echo ls cat",
+                "talos: commands help status stdio pwd echo ls cat cd",
             )?;
             Ok(LocalCommandStatus::Handled)
         }
@@ -528,7 +582,22 @@ fn dispatch_local_command(
                 write_line(sink, responses, "talos: unexpected-argument")?;
                 return Ok(LocalCommandStatus::UnexpectedArgument);
             }
-            write_line(sink, responses, LOCAL_COMMAND_CURRENT_DIRECTORY)?;
+            write_line(sink, responses, sink.current_directory().path())?;
+            Ok(LocalCommandStatus::Handled)
+        }
+        "cd" => {
+            let Some(arguments) = command.arguments else {
+                write_line(sink, responses, "talos: unexpected-argument")?;
+                return Ok(LocalCommandStatus::UnexpectedArgument);
+            };
+            let Some(directory) = parse_bounded_directory(arguments) else {
+                write_line(sink, responses, "talos: not-directory")?;
+                return Ok(LocalCommandStatus::UnexpectedArgument);
+            };
+            if !directory_exists(directory) || !sink.set_current_directory(directory) {
+                write_line(sink, responses, "talos: not-directory")?;
+                return Ok(LocalCommandStatus::UnexpectedArgument);
+            }
             Ok(LocalCommandStatus::Handled)
         }
         "ls" => {
@@ -557,6 +626,21 @@ fn dispatch_local_command(
             Ok(LocalCommandStatus::UnknownCommand)
         }
     }
+}
+
+fn parse_bounded_directory(path: &str) -> Option<LocalCommandDirectory> {
+    match path {
+        "/" => Some(LocalCommandDirectory::Root),
+        "/etc" => Some(LocalCommandDirectory::Etc),
+        "/bin" => Some(LocalCommandDirectory::Bin),
+        _ => None,
+    }
+}
+
+fn directory_exists(directory: LocalCommandDirectory) -> bool {
+    initramfs::phase8_readonly_initramfs_fixture()
+        .lookup_default(directory.initramfs_path())
+        .is_ok()
 }
 
 fn write_root_listing(
@@ -770,7 +854,7 @@ mod tests {
     }
 
     struct CaptureSink {
-        bytes: [u8; 512],
+        bytes: [u8; 1024],
         len: usize,
         fail_after: usize,
         writes: usize,
@@ -779,7 +863,7 @@ mod tests {
     impl CaptureSink {
         const fn new() -> Self {
             Self {
-                bytes: [0; 512],
+                bytes: [0; 1024],
                 len: 0,
                 fail_after: usize::MAX,
                 writes: 0,
@@ -788,7 +872,7 @@ mod tests {
 
         const fn failing_after(fail_after: usize) -> Self {
             Self {
-                bytes: [0; 512],
+                bytes: [0; 1024],
                 len: 0,
                 fail_after,
                 writes: 0,
@@ -849,9 +933,9 @@ mod tests {
         assert_eq!(
             sink.as_str(),
             "talos> talos: ok help\n\
-talos: commands help status stdio pwd echo ls cat\n\
-talos: echo forms echo hello; echo local serial works\n\
-talos: editing backspace delete ctrl-c ctrl-u\n"
+	talos: commands help status stdio pwd echo ls cat cd\n\
+	talos: echo forms echo hello; echo local serial works\n\
+	talos: editing backspace delete ctrl-c ctrl-u\n"
         );
     }
 
@@ -920,6 +1004,79 @@ talos: editing backspace delete ctrl-c ctrl-u\n"
         assert_eq!(result.status(), LocalCommandStatus::Handled);
         assert_eq!(result.response_lines(), 1);
         assert_eq!(backend.as_str(), "talos> /\n");
+    }
+
+    #[test_case]
+    fn local_command_loop_tracks_bounded_current_directory() {
+        let input = ScriptedInput::new(
+            [
+                b'p', b'w', b'd', b'\r', b'c', b'd', b' ', b'/', b'e', b't', b'c', b'\r', b'p',
+                b'w', b'd', b'\r', b'c', b'd', b' ', b'/', b'b', b'i', b'n', b'\r', b'p', b'w',
+                b'd', b'\r', b'c', b'd', b' ', b'/', b'\r', b'p', b'w', b'd', b'\r', b'c', b'd',
+                b' ', b'/', b'm', b'i', b's', b's', b'i', b'n', b'g', b'\r', b'p', b'w', b'd',
+                b'\r', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            ],
+            53,
+        );
+        let mut backend = CaptureSink::new();
+        let (
+            initial_pwd,
+            cd_etc,
+            etc_pwd,
+            cd_bin,
+            bin_pwd,
+            cd_root,
+            root_pwd,
+            missing_cd,
+            final_pwd,
+        ) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+
+        assert_eq!(initial_pwd.line(), b"pwd");
+        assert_eq!(initial_pwd.status(), LocalCommandStatus::Handled);
+        assert_eq!(initial_pwd.response_lines(), 1);
+        assert_eq!(cd_etc.line(), b"cd /etc");
+        assert_eq!(cd_etc.status(), LocalCommandStatus::Handled);
+        assert_eq!(cd_etc.response_lines(), 0);
+        assert_eq!(etc_pwd.line(), b"pwd");
+        assert_eq!(etc_pwd.response_lines(), 1);
+        assert_eq!(cd_bin.line(), b"cd /bin");
+        assert_eq!(cd_bin.status(), LocalCommandStatus::Handled);
+        assert_eq!(cd_bin.response_lines(), 0);
+        assert_eq!(bin_pwd.line(), b"pwd");
+        assert_eq!(bin_pwd.response_lines(), 1);
+        assert_eq!(cd_root.line(), b"cd /");
+        assert_eq!(cd_root.status(), LocalCommandStatus::Handled);
+        assert_eq!(cd_root.response_lines(), 0);
+        assert_eq!(root_pwd.line(), b"pwd");
+        assert_eq!(root_pwd.response_lines(), 1);
+        assert_eq!(missing_cd.line(), b"cd /missing");
+        assert_eq!(missing_cd.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(missing_cd.response_lines(), 1);
+        assert_eq!(final_pwd.line(), b"pwd");
+        assert_eq!(final_pwd.response_lines(), 1);
+        assert_eq!(
+            backend.as_str(),
+            "talos> /\n\
+talos> talos> /etc\n\
+talos> talos> /bin\n\
+talos> talos> /\n\
+talos> talos: not-directory\n\
+talos> /\n"
+        );
     }
 
     #[test_case]

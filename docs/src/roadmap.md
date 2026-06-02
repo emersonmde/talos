@@ -4082,6 +4082,22 @@ No explicit mechanically unblocked feature task remains after this checkpoint;
 supervisor planning is required for the next smallest feature-led local
 interactivity task.
 
+The local bounded cd fixed-directories core is now accepted in QEMU/substitute
+evidence. The descriptor-backed serial command loop tracks command-context
+current directory state for the exact directories /, /etc, and /bin; pwd
+reflects that state after cd /etc, cd /bin, and cd /; and cd /missing is
+rejected with talos: not-directory while leaving the current directory
+unchanged. Retained feature evidence is at
+tasks/evidence/2026-06-02-qemu-local-cd-fixed-dirs-core/qemu-local-cd-fixed-dirs-smoke.log
+with final classification qemu-local-cd-fixed-dirs-complete and exact
+qemu-local-cd-fixed-dirs: PASS vocabulary. This is a kernel-backed command-loop
+placeholder for future process-local cwd only; it does not accept POSIX chdir,
+relative paths, broad path traversal, descriptor-backed filesystem syscalls,
+userspace shell execution, process lifecycle, terminal sessions, networking,
+SSH, RP1/PCIe, UART interrupt ownership, or DMA/cache policy. The next queued
+task is the serialized Pi 5 cd fixed-directories proof if dependencies and
+hardwareTestLock state remain satisfied.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.

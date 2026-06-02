@@ -18,6 +18,7 @@ PWD_COMMAND_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_PWD_COMMAND_SMOKE:-0}"
 LS_ROOT_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LS_ROOT_SMOKE:-0}"
 LS_BIN_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LS_BIN_SMOKE:-0}"
 CAT_BANNER_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_CAT_BANNER_SMOKE:-0}"
+CD_FIXED_DIRS_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_CD_FIXED_DIRS_SMOKE:-0}"
 LINE_EDITING_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LINE_EDITING_SMOKE:-0}"
 LINE_CANCEL_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LINE_CANCEL_SMOKE:-0}"
 LINE_KILL_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LINE_KILL_SMOKE:-0}"
@@ -67,6 +68,18 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
     if IFS= read -r -t 0.2 line <&3; then
         printf '%s\n' "$line" >>"$LOG_FILE"
         case "$line" in
+            *"$LABEL: ready command=10"*)
+                if [ "$sent" -eq 10 ] && [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ]; then
+                    printf 'cd /missing\r' >&3
+                    sent=11
+                fi
+                ;;
+            *"$LABEL: ready command=11"*)
+                if [ "$sent" -eq 11 ] && [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ]; then
+                    printf 'pwd\r' >&3
+                    sent=12
+                fi
+                ;;
             *"$LABEL: ready command=0"*)
                 if [ "$sent" -eq 0 ]; then
                     printf 'help\r' >&3
@@ -99,6 +112,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'ls /bin\r' >&3
                     elif [ "$CAT_BANNER_SMOKE" -eq 1 ]; then
                         printf 'cat /etc/banner.txt\r' >&3
+                    elif [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ]; then
+                        printf 'pwd\r' >&3
                     elif [ "$LS_ROOT_SMOKE" -eq 1 ]; then
                         printf 'ls /\r' >&3
                     elif [ "$LITERAL_ECHO_SMOKE" -eq 1 ]; then
@@ -125,6 +140,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'ls /\r' >&3
                     elif [ "$CAT_BANNER_SMOKE" -eq 1 ]; then
                         printf 'ls /bin\r' >&3
+                    elif [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ]; then
+                        printf 'cd /etc\r' >&3
                     elif [ "$LS_ROOT_SMOKE" -eq 1 ]; then
                         printf '\r' >&3
                     elif [ "$LITERAL_ECHO_SMOKE" -eq 1 ] || [ "$ECHO_COMMAND_SMOKE" -eq 1 ]; then
@@ -145,6 +162,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf '\r' >&3
                     elif [ "$CAT_BANNER_SMOKE" -eq 1 ]; then
                         printf '\r' >&3
+                    elif [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ]; then
+                        printf 'pwd\r' >&3
                     elif [ "$LS_ROOT_SMOKE" -eq 1 ]; then
                         printf 'bogus\r' >&3
                     else
@@ -155,7 +174,9 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                 ;;
             *"$LABEL: ready command=6"*)
                 if [ "$sent" -eq 6 ]; then
-                    if [ "$LINE_EDITING_SMOKE" -eq 1 ]; then
+                    if [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ]; then
+                        printf 'cd /bin\r' >&3
+                    elif [ "$LINE_EDITING_SMOKE" -eq 1 ]; then
                         printf '\r' >&3
                     else
                         printf 'bogus\r' >&3
@@ -165,14 +186,28 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                 ;;
             *"$LABEL: ready command=7"*)
                 if [ "$sent" -eq 7 ]; then
-                    printf 'bogus\r' >&3
+                    if [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ]; then
+                        printf 'pwd\r' >&3
+                    else
+                        printf 'bogus\r' >&3
+                    fi
                     sent=8
                 fi
                 ;;
             *"$LABEL: ready command=8"*)
                 if [ "$sent" -eq 8 ]; then
-                    printf 'status now\r' >&3
+                    if [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ]; then
+                        printf 'cd /\r' >&3
+                    else
+                        printf 'status now\r' >&3
+                    fi
                     sent=9
+                fi
+                ;;
+            *"$LABEL: ready command=9"*)
+                if [ "$sent" -eq 9 ] && [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ]; then
+                    printf 'pwd\r' >&3
+                    sent=10
                 fi
                 ;;
         esac
@@ -192,11 +227,18 @@ grep -q "$LABEL: ready command=1" "$LOG_FILE"
 grep -q "$LABEL: ready command=2" "$LOG_FILE"
 grep -q "$LABEL: ready command=3" "$LOG_FILE"
 grep -q "$LABEL: ready command=4" "$LOG_FILE"
-if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_ROOT_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ] || [ "$CAT_BANNER_SMOKE" -eq 1 ] || [ "$LITERAL_ECHO_SMOKE" -eq 1 ] || [ "$ECHO_COMMAND_SMOKE" -eq 1 ]; then
+if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_ROOT_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ] || [ "$CAT_BANNER_SMOKE" -eq 1 ] || [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ] || [ "$LITERAL_ECHO_SMOKE" -eq 1 ] || [ "$ECHO_COMMAND_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=5" "$LOG_FILE"
 fi
-if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ] || [ "$CAT_BANNER_SMOKE" -eq 1 ]; then
+if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ] || [ "$CAT_BANNER_SMOKE" -eq 1 ] || [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=6" "$LOG_FILE"
+fi
+if [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ]; then
+    grep -q "$LABEL: ready command=7" "$LOG_FILE"
+    grep -q "$LABEL: ready command=8" "$LOG_FILE"
+    grep -q "$LABEL: ready command=9" "$LOG_FILE"
+    grep -q "$LABEL: ready command=10" "$LOG_FILE"
+    grep -q "$LABEL: ready command=11" "$LOG_FILE"
 fi
 if [ "$LINE_EDITING_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=7" "$LOG_FILE"
@@ -248,6 +290,35 @@ if [ "$LINE_EDITING_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: line command=8 hex=73 74 61 74 75 73 20 6e 6f 77" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=8 status=unexpected-argument responses=1" "$LOG_FILE"
     grep -q "$LABEL: final participants=9 expected=9 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+elif [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ]; then
+    grep -q "talos> pwd" "$LOG_FILE"
+    grep -q "^/" "$LOG_FILE"
+    grep -q "$LABEL: line command=3 hex=70 77 64" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=3 status=handled responses=1" "$LOG_FILE"
+    grep -q "talos> cd /etc" "$LOG_FILE"
+    grep -q "$LABEL: line command=4 hex=63 64 20 2f 65 74 63" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=4 status=handled responses=0" "$LOG_FILE"
+    grep -q "^/etc" "$LOG_FILE"
+    grep -q "$LABEL: line command=5 hex=70 77 64" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=5 status=handled responses=1" "$LOG_FILE"
+    grep -q "talos> cd /bin" "$LOG_FILE"
+    grep -q "$LABEL: line command=6 hex=63 64 20 2f 62 69 6e" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=6 status=handled responses=0" "$LOG_FILE"
+    grep -q "^/bin" "$LOG_FILE"
+    grep -q "$LABEL: line command=7 hex=70 77 64" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=7 status=handled responses=1" "$LOG_FILE"
+    grep -q "talos> cd /" "$LOG_FILE"
+    grep -q "$LABEL: line command=8 hex=63 64 20 2f" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=8 status=handled responses=0" "$LOG_FILE"
+    grep -q "$LABEL: line command=9 hex=70 77 64" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=9 status=handled responses=1" "$LOG_FILE"
+    grep -q "talos> cd /missing" "$LOG_FILE"
+    grep -q "talos: not-directory" "$LOG_FILE"
+    grep -q "$LABEL: line command=10 hex=63 64 20 2f 6d 69 73 73 69 6e 67" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=10 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: line command=11 hex=70 77 64" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=11 status=handled responses=1" "$LOG_FILE"
+    grep -q "$LABEL: final participants=12 expected=12 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
 elif [ "$LINE_KILL_SMOKE" -eq 1 ]; then
     grep -q "talos> bogus" "$LOG_FILE"
     grep -q "talos: line-killed" "$LOG_FILE"

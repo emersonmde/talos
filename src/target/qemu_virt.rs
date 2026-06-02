@@ -13224,6 +13224,7 @@ pub fn run_diagnostic_command_channel_smoke() -> bool {
     talos_boot_scenario = "qemu_local_help_command",
     talos_boot_scenario = "qemu_local_pwd_command",
     talos_boot_scenario = "qemu_local_cat_banner",
+    talos_boot_scenario = "qemu_local_cd_fixed_dirs",
     talos_boot_scenario = "qemu_local_line_editing",
     talos_boot_scenario = "qemu_local_line_cancel",
     talos_boot_scenario = "qemu_local_line_kill"
@@ -13381,6 +13382,11 @@ const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-cat-banner"
 }
 
+#[cfg(talos_boot_scenario = "qemu_local_cd_fixed_dirs")]
+const fn local_command_loop_smoke_label() -> &'static str {
+    "qemu-local-cd-fixed-dirs"
+}
+
 #[cfg(talos_boot_scenario = "qemu_local_line_editing")]
 const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-line-editing"
@@ -13406,6 +13412,7 @@ const fn local_command_loop_smoke_label() -> &'static str {
     not(talos_boot_scenario = "qemu_local_ls_root"),
     not(talos_boot_scenario = "qemu_local_ls_bin"),
     not(talos_boot_scenario = "qemu_local_cat_banner"),
+    not(talos_boot_scenario = "qemu_local_cd_fixed_dirs"),
     not(talos_boot_scenario = "qemu_local_line_editing"),
     not(talos_boot_scenario = "qemu_local_line_cancel"),
     not(talos_boot_scenario = "qemu_local_line_kill")
@@ -13454,6 +13461,11 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     "qemu-local-cat-banner-complete"
 }
 
+#[cfg(talos_boot_scenario = "qemu_local_cd_fixed_dirs")]
+const fn local_command_loop_smoke_classification() -> &'static str {
+    "qemu-local-cd-fixed-dirs-complete"
+}
+
 #[cfg(talos_boot_scenario = "qemu_local_line_editing")]
 const fn local_command_loop_smoke_classification() -> &'static str {
     "qemu-local-line-editing-complete"
@@ -13479,6 +13491,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     not(talos_boot_scenario = "qemu_local_ls_root"),
     not(talos_boot_scenario = "qemu_local_ls_bin"),
     not(talos_boot_scenario = "qemu_local_cat_banner"),
+    not(talos_boot_scenario = "qemu_local_cd_fixed_dirs"),
     not(talos_boot_scenario = "qemu_local_line_editing"),
     not(talos_boot_scenario = "qemu_local_line_cancel"),
     not(talos_boot_scenario = "qemu_local_line_kill")
@@ -13497,6 +13510,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     talos_boot_scenario = "qemu_local_ls_root",
     talos_boot_scenario = "qemu_local_ls_bin",
     talos_boot_scenario = "qemu_local_cat_banner",
+    talos_boot_scenario = "qemu_local_cd_fixed_dirs",
     talos_boot_scenario = "qemu_local_line_editing",
     talos_boot_scenario = "qemu_local_line_cancel",
     talos_boot_scenario = "qemu_local_line_kill"
@@ -13513,6 +13527,8 @@ const fn local_command_loop_smoke_command_count() -> usize {
         7
     } else if cfg!(talos_boot_scenario = "qemu_local_cat_banner") {
         7
+    } else if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") {
+        12
     } else if cfg!(talos_boot_scenario = "qemu_local_ls_bin") {
         7
     } else if cfg!(talos_boot_scenario = "qemu_local_ls_root") {
@@ -13537,6 +13553,7 @@ const fn local_command_loop_smoke_command_count() -> usize {
     talos_boot_scenario = "qemu_local_ls_root",
     talos_boot_scenario = "qemu_local_ls_bin",
     talos_boot_scenario = "qemu_local_cat_banner",
+    talos_boot_scenario = "qemu_local_cd_fixed_dirs",
     talos_boot_scenario = "qemu_local_line_editing",
     talos_boot_scenario = "qemu_local_line_cancel",
     talos_boot_scenario = "qemu_local_line_kill"
@@ -13576,6 +13593,9 @@ fn expected_local_command_loop_dispatch(
         3 if cfg!(talos_boot_scenario = "qemu_local_cat_banner") => {
             line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
         }
+        3 if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") => {
+            line == b"pwd" && status == Handled && response_lines == 1
+        }
         3 if cfg!(talos_boot_scenario = "qemu_local_echo_command") => {
             line == b"echo hello" && status == Handled && response_lines == 1
         }
@@ -13594,6 +13614,9 @@ fn expected_local_command_loop_dispatch(
         }
         4 if cfg!(talos_boot_scenario = "qemu_local_cat_banner") => {
             line == b"ls /bin" && status == Handled && response_lines == 1
+        }
+        4 if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") => {
+            line == b"cd /etc" && status == Handled && response_lines == 0
         }
         4 if cfg!(talos_boot_scenario = "qemu_local_line_cancel") => {
             line == b"pwd" && status == Handled && response_lines == 1
@@ -13626,6 +13649,9 @@ fn expected_local_command_loop_dispatch(
         5 if cfg!(talos_boot_scenario = "qemu_local_cat_banner") => {
             line.is_empty() && status == Empty && response_lines == 1
         }
+        5 if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") => {
+            line == b"pwd" && status == Handled && response_lines == 1
+        }
         5 if cfg!(talos_boot_scenario = "qemu_local_echo_command") => {
             line == b"bogus" && status == UnknownCommand && response_lines == 1
         }
@@ -13641,16 +13667,36 @@ fn expected_local_command_loop_dispatch(
         6 if cfg!(talos_boot_scenario = "qemu_local_cat_banner") => {
             line == b"bogus" && status == UnknownCommand && response_lines == 1
         }
+        6 if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") => {
+            line == b"cd /bin" && status == Handled && response_lines == 0
+        }
         6 if cfg!(talos_boot_scenario = "qemu_local_line_editing") => {
             line.is_empty() && status == Empty && response_lines == 1
         }
+        7 if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") => {
+            line == b"pwd" && status == Handled && response_lines == 1
+        }
         7 if cfg!(talos_boot_scenario = "qemu_local_line_editing") => {
             line == b"bogus" && status == UnknownCommand && response_lines == 1
+        }
+        8 if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") => {
+            line == b"cd /" && status == Handled && response_lines == 0
         }
         8 if cfg!(talos_boot_scenario = "qemu_local_line_editing") => {
             line == b"status now"
                 && status == crate::local_command_loop::LocalCommandStatus::UnexpectedArgument
                 && response_lines == 1
+        }
+        9 if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") => {
+            line == b"pwd" && status == Handled && response_lines == 1
+        }
+        10 if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") => {
+            line == b"cd /missing"
+                && status == crate::local_command_loop::LocalCommandStatus::UnexpectedArgument
+                && response_lines == 1
+        }
+        11 if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") => {
+            line == b"pwd" && status == Handled && response_lines == 1
         }
         _ => false,
     }
