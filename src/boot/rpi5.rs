@@ -291,7 +291,11 @@ fn scan_reserved_memory_ranges(services: &TargetServices) -> Option<FdtReservedM
 fn scan_memory_banks(services: &TargetServices) -> Option<FdtMemoryBanks> {
     target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::DtbMemoryScanStart);
     let memory_banks = unsafe { services.device_tree.memory_banks() };
-    target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::DtbMemoryScanDone);
+    if memory_banks.is_some() {
+        target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::DtbMemoryScanDone);
+    } else {
+        target::rpi5::write_early_static("TALOS: dtb memory scan unavailable\n");
+    }
     memory_banks
 }
 
@@ -313,9 +317,11 @@ fn dtb_blob_range(
 }
 
 fn plan_boot_memory(dtb: &Rpi5DtbPhase) -> Option<Rpi5MemoryPhase> {
+    target::rpi5::write_early_static("TALOS: memory plan start\n");
     let memory_banks = if let Some(memory_banks) = dtb.memory_banks {
         memory_banks
     } else {
+        target::rpi5::write_early_static("TALOS: memory plan unavailable\n");
         report_unavailable("talos: dtb memory: unavailable\n");
         return None;
     };
@@ -342,6 +348,7 @@ fn plan_boot_memory(dtb: &Rpi5DtbPhase) -> Option<Rpi5MemoryPhase> {
     ) {
         candidate
     } else {
+        target::rpi5::write_early_static("TALOS: memory plan unavailable\n");
         report_unavailable("talos: memory usable: unavailable\n");
         return None;
     };
@@ -352,6 +359,7 @@ fn plan_boot_memory(dtb: &Rpi5DtbPhase) -> Option<Rpi5MemoryPhase> {
     let seed = if let Some(seed) = memory_map::early_page_frame_seed_span(candidate) {
         seed
     } else {
+        target::rpi5::write_early_static("TALOS: memory plan unavailable\n");
         report_unavailable("talos: page frames seed: unavailable\n");
         return None;
     };
@@ -365,6 +373,7 @@ fn plan_boot_memory(dtb: &Rpi5DtbPhase) -> Option<Rpi5MemoryPhase> {
     ) {
         reservation
     } else {
+        target::rpi5::write_early_static("TALOS: memory plan unavailable\n");
         report_unavailable("talos: bootstrap reserve: unavailable\n");
         return None;
     };
@@ -375,6 +384,7 @@ fn plan_boot_memory(dtb: &Rpi5DtbPhase) -> Option<Rpi5MemoryPhase> {
     let layout = if let Some(layout) = memory_map::early_translation_table_layout(reservation) {
         layout
     } else {
+        target::rpi5::write_early_static("TALOS: memory plan done layout=unavailable\n");
         report_unavailable("talos: translation tables: unavailable\n");
         return Some(Rpi5MemoryPhase {
             candidate,
@@ -387,6 +397,7 @@ fn plan_boot_memory(dtb: &Rpi5DtbPhase) -> Option<Rpi5MemoryPhase> {
         write_rpi5_translation_table_layout_line(layout);
         write_rpi5_translation_table_slots_line(layout);
     }
+    target::rpi5::write_early_static("TALOS: memory plan done layout=available\n");
 
     Some(Rpi5MemoryPhase {
         candidate,
@@ -400,11 +411,13 @@ fn enable_translation_and_caches(
     boot_info: &BootInfo,
     layout: memory_map::EarlyTranslationTableLayout,
 ) -> bool {
+    target::rpi5::write_early_static("TALOS: cache transition start\n");
     let population = if let Some(population) =
         unsafe { memory_map::populate_early_translation_tables(layout) }
     {
         population
     } else {
+        target::rpi5::write_early_static("TALOS: cache transition unavailable\n");
         report_unavailable("talos: translation table population: unavailable\n");
         return false;
     };
@@ -418,6 +431,7 @@ fn enable_translation_and_caches(
     {
         register_plan
     } else {
+        target::rpi5::write_early_static("TALOS: cache transition unavailable\n");
         report_unavailable("talos: translation control plan: unavailable\n");
         return false;
     };
@@ -430,6 +444,7 @@ fn enable_translation_and_caches(
         if let Some(sctlr) = unsafe { arch::aarch64::enable_el2_mmu_from_plan(register_plan) } {
             sctlr
         } else {
+            target::rpi5::write_early_static("TALOS: cache transition unavailable\n");
             report_unavailable("talos: translation enable: unavailable\n");
             return false;
         };
@@ -447,6 +462,7 @@ fn enable_instruction_and_data_caches(boot_info: &BootInfo, sctlr: u64) -> bool 
     {
         icache_plan
     } else {
+        target::rpi5::write_early_static("TALOS: cache transition unavailable\n");
         report_unavailable("talos: instruction cache plan: unavailable\n");
         return false;
     };
@@ -460,6 +476,7 @@ fn enable_instruction_and_data_caches(boot_info: &BootInfo, sctlr: u64) -> bool 
     {
         icache_sctlr
     } else {
+        target::rpi5::write_early_static("TALOS: cache transition unavailable\n");
         report_unavailable("talos: instruction cache enable: unavailable\n");
         return false;
     };
@@ -473,6 +490,7 @@ fn enable_instruction_and_data_caches(boot_info: &BootInfo, sctlr: u64) -> bool 
     {
         dcache_plan
     } else {
+        target::rpi5::write_early_static("TALOS: cache transition unavailable\n");
         report_unavailable("talos: data cache plan: unavailable\n");
         return false;
     };
@@ -487,6 +505,7 @@ fn enable_instruction_and_data_caches(boot_info: &BootInfo, sctlr: u64) -> bool 
     {
         dcache_sctlr
     } else {
+        target::rpi5::write_early_static("TALOS: cache transition unavailable\n");
         report_unavailable("talos: data cache enable: unavailable\n");
         return false;
     };
@@ -495,6 +514,7 @@ fn enable_instruction_and_data_caches(boot_info: &BootInfo, sctlr: u64) -> bool 
     {
         write_rpi5_data_cache_enabled_line(dcache_plan, dcache_sctlr);
     }
+    target::rpi5::write_early_static("TALOS: cache transition done\n");
 
     true
 }

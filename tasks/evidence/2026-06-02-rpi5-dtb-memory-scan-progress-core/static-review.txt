@@ -1,0 +1,76 @@
+task=phase10-rpi5-dtb-memory-scan-progress-core-20260602
+classification=accepted-progress-core
+
+invariant:
+- The blocked cd candidate was freshly TFTP-served and retained Talos output
+  through "TALOS: dtb memory scan start".
+- The same fresh evidence did not retain "TALOS: dtb memory scan done",
+  memory-planning output, cache-transition output, command-loop entry, prompt,
+  cd transcript, final classification, or PASS.
+- The next Pi 5 proof needs a new discriminator that separates the stop
+  between DTB memory-bank scanning and the local command-loop prompt without
+  relaxing the original cd proof acceptance criteria.
+
+static_review:
+- src/boot/rpi5.rs already emitted raw UART markers for DTB memory scan
+  start/done, MMU enable start/done, I-cache enable start/done, and D-cache
+  start/done.
+- The blocker sits after scan_memory_banks() enters
+  services.device_tree.memory_banks() and before the retained done marker.
+- Existing memory-planning failures used human-readable report_unavailable()
+  lines, but lacked a small raw UART phase marker for no-rodata/stale-tail
+  classification.
+- The local command-loop proof already printed proof start/ready/prompt lines
+  through the normal formatter-backed console, but it lacked raw UART boundary
+  markers for proof entry, descriptor-backed IO readiness, and final prompt
+  readiness.
+
+implementation:
+- src/boot/rpi5.rs now emits a raw UART
+  "TALOS: dtb memory scan unavailable" marker when memory_banks() returns None
+  instead of reporting scan done for both success and unavailable outcomes.
+- src/boot/rpi5.rs now emits bounded raw UART memory-planning markers:
+  "TALOS: memory plan start", "TALOS: memory plan unavailable",
+  "TALOS: memory plan done layout=available", and
+  "TALOS: memory plan done layout=unavailable".
+- src/boot/rpi5.rs now emits bounded raw UART cache-transition markers:
+  "TALOS: cache transition start", "TALOS: cache transition unavailable", and
+  "TALOS: cache transition done".
+- src/target/rpi5.rs now emits bounded raw UART local-command-loop markers:
+  "TALOS: command loop proof entered", "TALOS: command loop io ready", and
+  "TALOS: command loop prompt ready".
+
+scope_control:
+- No local cd command-loop semantics changed.
+- No path handling, cwd model, descriptor filesystem surface, userspace shell,
+  process lifecycle, networking, RP1/PCIe, UART interrupt ownership, DMA, or
+  cache policy was added.
+- No Pi 5 hardware was run and hardwareTestLock remained unlocked/restored.
+- The original Pi 5 cd proof remains blocked until a later serialized hardware
+  task retains the full pwd/cd transcript and PASS.
+
+validation:
+- fmt/lint: cargo fmt --all -- --check, retained at
+  cargo-fmt-check.log.
+- unit tests: cargo -Zjson-target-spec test --quiet, retained at
+  cargo-test-quiet.log, 352 passed.
+- QEMU/substitute cd feature: scripts/qemu-local-cd-fixed-dirs-smoke.sh
+  --quiet, retained at qemu-local-cd-fixed-dirs-smoke.log, PASS.
+- QEMU/substitute command-loop regression:
+  scripts/qemu-local-serial-command-loop-smoke.sh --quiet, retained at
+  qemu-local-serial-command-loop-smoke.log, PASS.
+- RPi5 archive/image inspection:
+  scripts/rpi5-local-cd-fixed-dirs-boot-tree.sh rebuilt
+  target/talos-rpi5-local-cd-fixed-dirs-dtb-progress-core.tar.gz and
+  scripts/rpi5-archive-review.sh passed, retained at rpi5-archive-review.log.
+- Image marker inspection: strings on the rebuilt kernel retained each new
+  progress marker at rpi5-progress-marker-strings.txt.
+- Static diff hygiene: git diff --check passed, retained at
+  git-diff-check.log.
+
+next_action:
+- Promote the queued Pi 5 dtb-scan-progress proof task only after this core is
+  accepted and committed.
+- That hardware task should classify the fresh candidate with these markers or
+  accept the original cd proof only if the full cd transcript and PASS are
+  retained.

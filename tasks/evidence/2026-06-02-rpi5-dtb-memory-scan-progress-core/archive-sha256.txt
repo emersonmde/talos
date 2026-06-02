@@ -1,0 +1,2 @@
+a98dd763fbd0cc80cc4c3a09655795dbd52da5850fedc6a59278fc500ace6c58  target/talos-rpi5-local-cd-fixed-dirs-dtb-progress-core.tar.gz
+d7f27f5111b758311f7762dadf764e055e6cd4d246a632cc4fffe041cfa1dcc3  target/rpi5-local-cd-fixed-dirs-dtb-progress-core-boot-tree/kernel_2712.img

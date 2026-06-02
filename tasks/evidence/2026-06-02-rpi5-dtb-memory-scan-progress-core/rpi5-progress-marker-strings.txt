@@ -1,0 +1,11 @@
+ policy= ranges=memoryTALOS: memory plan start
+TALOS: memory plan done layout=available
+TALOS: memory plan done layout=unavailable
+TALOS: memory plan unavailable
+TALOS: dtb memory scan unavailable
+TALOS: cache transition start
+TALOS: cache transition unavailable
+TALOS: cache transition done
+ rpi5-local-cd-fixed-dirs-proofTALOS: command loop proof entered
+TALOS: command loop io ready
+TALOS: command loop prompt ready

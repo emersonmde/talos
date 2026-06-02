@@ -7206,6 +7206,7 @@ fn settle_for_serial_capture() {
     talos_boot_scenario = "rpi5_local_line_kill"
 ))]
 pub fn run_local_serial_command_loop_proof() -> bool {
+    write_early_static("TALOS: command loop proof entered\n");
     let command_count = local_command_pi5_proof_command_count();
 
     crate::println!(
@@ -7240,6 +7241,7 @@ pub fn run_local_serial_command_loop_proof() -> bool {
                 return false;
             }
         };
+    write_early_static("TALOS: command loop io ready\n");
     let mut passed = true;
 
     for command_index in 0..command_count {
@@ -7429,6 +7431,9 @@ pub fn run_local_serial_command_loop_proof() -> bool {
         local_command_pi5_proof_label(),
         ready_for_next
     );
+    if ready_for_next {
+        write_early_static("TALOS: command loop prompt ready\n");
+    }
 
     if ready_for_next && passed {
         crate::println!(
