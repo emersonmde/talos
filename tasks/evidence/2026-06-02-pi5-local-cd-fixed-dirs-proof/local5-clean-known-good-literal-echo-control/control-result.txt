@@ -1,0 +1,12 @@
+attempt=local5-clean-known-good-literal-echo-control
+classification=control-fresh-kernel-fetch-no-prompt-retained
+accepted=false
+archive=target/talos-rpi5-local-literal-echo-local3.tar.gz
+archive_sha256=7cc63a02e2d5dc68abd2127bad0867bc0c1bd0830f56c7ba74a6efbfe64438f5
+pre_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+post_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+serial_cursor_start=4015031
+tftp_cursor_start=4050409
+tftp_result=fresh control requests served kernel_2712.img size 100352 twice from cursor before restore.
+serial_result=cursor-advanced observes retained firmware network-link output plus repeated NUL/newline, but no rpi5-local-literal-echo-proof prompt or PASS before restore.
+restore_result=pre/post tree hash matched.

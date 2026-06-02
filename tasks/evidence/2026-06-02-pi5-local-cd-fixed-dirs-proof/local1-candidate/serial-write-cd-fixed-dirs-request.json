@@ -1,0 +1,4 @@
+{
+  "text": "help\nstatus\nstdio\npwd\ncd /etc\npwd\ncd /bin\npwd\ncd /\npwd\ncd /missing\npwd",
+  "append_newline": true
+}

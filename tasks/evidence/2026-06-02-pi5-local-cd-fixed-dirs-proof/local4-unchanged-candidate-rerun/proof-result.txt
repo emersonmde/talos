@@ -1,0 +1,13 @@
+attempt=local4-unchanged-candidate-rerun
+classification=pi5-local-cd-fixed-dirs-no-talos-serial-after-fresh-candidate-kernel-fetch
+accepted=false
+archive=target/talos-rpi5-local-cd-fixed-dirs-local1.tar.gz
+archive_sha256=8897a58f519d45de1cc6e8be91b2d1cc469c722536902edc1355e8a685f70f68
+kernel_sha256=46ad6246b42f9a2459cf1ebe4fd0c0e1128e7ba5645da35cdd43d5a2dd1ac969
+pre_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+post_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+serial_cursor_start=4015025
+tftp_cursor_start=4049058
+tftp_result=fresh candidate requests served kernel_2712.img size 109192 twice from cursor before restore.
+serial_result=three cursor-advanced observes retained only NUL/newline; no Talos boot lines, cd proof prompt, ready prompt, classification, or PASS.
+restore_result=pre/post tree hash matched.

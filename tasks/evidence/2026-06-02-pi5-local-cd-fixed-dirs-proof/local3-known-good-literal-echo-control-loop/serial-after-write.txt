@@ -1,0 +1,5 @@
+> 
+rpi5-local-literal-echo-proof: ready-for-next prompt=true
+rpi5-local-literal-echo-proof: final participants=1 expected=1 errors=0 classification=pi5-local-literal-echo-complete
+rpi5-local-literal-echo-proof: PASS
+

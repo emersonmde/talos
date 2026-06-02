@@ -1,0 +1,13 @@
+attempt=local1-candidate
+classification=pi5-local-cd-fixed-dirs-inconclusive-restored-before-candidate-kernel-fetch
+accepted=false
+archive=target/talos-rpi5-local-cd-fixed-dirs-local1.tar.gz
+archive_sha256=8897a58f519d45de1cc6e8be91b2d1cc469c722536902edc1355e8a685f70f68
+kernel_sha256=46ad6246b42f9a2459cf1ebe4fd0c0e1128e7ba5645da35cdd43d5a2dd1ac969
+pre_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+post_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+serial_cursor_start=4002313
+tftp_cursor_start=4045005
+serial_result=firmware-only observe; no rpi5-local-cd-fixed-dirs-proof prompt or PASS retained.
+tftp_result=settled requery returned boot requests, but served kernel_2712.img size 104136 after restore timing, so local1 is not valid candidate proof.
+restore_result=pre/post tree hash matched.
