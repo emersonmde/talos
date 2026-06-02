@@ -1,0 +1,5 @@
+212:g: literal-echo-observed input='echo local serial works' final-line='echo local serial works' raw-bytes=
+313:talos: line-killedtalos: input-error talos: line-canceledtalos> unavailable012talos: fd  
+381: rpi5-local-literal-echo-proof
+384:echo local serial works
+394:local serial works

@@ -1,0 +1,3 @@
+selected-control-task: phase10-pi5-serial-write-ingress-control-proof-20260601
+selected-control-commit: 0aceae6708ac57b027184c436603bc24308e5d92
+selected-control-archive: target/talos-rpi5-local-literal-echo-local3.tar.gz
