@@ -1,7 +1,7 @@
 # Phase 10 Pi 5 Local Cat Banner Unchanged Rerun After Control
 
 Task: phase10-pi5-local-cat-banner-unchanged-rerun-after-control-20260602
-Status: blocked-acceptance-gate-mismatch
+Status: accepted by supervisor feature-led review
 
 ## Goal
 
@@ -69,6 +69,15 @@ harness visibility changes, the worker cannot mark the task accepted without
 relaxing acceptance criteria or changing the candidate/proof harness. Supervisor
 planning is required to decide whether the accepted frontier should use the
 feature PASS as sufficient evidence or schedule a bounded marker/harness update.
+
+Supervisor feature-led review on 2026-06-02T08:14:00Z accepted the user-visible
+feature proof despite the absent descriptor marker for this unchanged scenario.
+The accepted frontier uses the retained prompt, visible banner output,
+ready-for-next prompt, final classification, exact PASS line, fresh TFTP, and
+restore evidence as sufficient Pi 5 proof. Descriptor-backed command-loop
+behavior remains covered by the accepted local cat-banner core and prior local
+command-loop proof lineage; future marker work is optional and must be
+feature-justified.
 
 ## Restore
 

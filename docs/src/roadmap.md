@@ -4051,6 +4051,37 @@ terminal/session behavior, networking, SSH, RP1/PCIe, UART interrupt ownership,
 and DMA/cache policy remain deferred. The next queued task is the serialized
 Pi 5 `cat /etc/banner.txt` proof.
 
+The serialized Pi 5 `cat /etc/banner.txt` feature proof is now accepted by
+feature-led supervisor review after an unchanged rerun following a settled
+accepted prompt-control discriminator. Retained physical evidence in
+`tasks/evidence/2026-06-02-pi5-local-cat-banner-proof/local3-unchanged-rerun-after-settled-control/serial-transcript.txt`
+and
+`tasks/evidence/2026-06-02-pi5-local-cat-banner-proof/local3-unchanged-rerun-after-settled-control/proof-result.txt`
+shows a fresh prompt, delayed write of `cat /etc/banner.txt`, visible
+`Talos initramfs fixture` output, `cat-banner-observed`, ready prompt
+return, final classification `pi5-local-cat-banner-complete`, and exact
+`rpi5-local-cat-banner-proof: PASS` vocabulary. Fresh TFTP evidence served
+`da591740/config.txt` and the 107520-byte `da591740/kernel_2712.img`, and
+post-proof restore returned the boot tree to hash
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10`.
+
+The local cat-banner closeout checkpoint is now accepted and records the
+current descriptor-backed serial command-loop frontier: the exact bounded
+`cat /etc/banner.txt` command prints the immutable initramfs fixture banner
+and returns to a ready `talos>` prompt in both QEMU/substitute and serialized
+Pi 5 feature evidence. The checkpoint reconciles descriptor-marker policy: the
+unchanged Pi 5 scenario was accepted on feature PASS without descriptor marker
+emission, while descriptor-backed command-loop behavior remains covered by
+QEMU/substitute cat-banner evidence and earlier accepted command-loop proof
+lineage. Future marker work is optional and must be feature-justified. Broad
+`cat`, arbitrary file reads, path traversal, descriptor-backed filesystem
+syscalls, userspace execution, process lifecycle, terminal/session behavior,
+networking, SSH, RP1/PCIe, UART interrupt ownership, DMA/cache policy, blocked
+`ls /bin` proof strategy, and paused Phase 8 proof-only work remain deferred.
+No explicit mechanically unblocked feature task remains after this checkpoint;
+supervisor planning is required for the next smallest feature-led local
+interactivity task.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.

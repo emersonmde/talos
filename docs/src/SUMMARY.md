@@ -181,6 +181,7 @@
 - [Phase 10 Local Literal Echo Closeout Checkpoint](project/phase10-local-literal-echo-closeout-checkpoint.md)
 - [Phase 10 Local Help Command Closeout Checkpoint](project/phase10-local-help-command-closeout-checkpoint.md)
 - [Phase 10 Local Ls Root Closeout Checkpoint](project/phase10-local-ls-root-closeout-checkpoint.md)
+- [Phase 10 Local Cat Banner Closeout Checkpoint](project/phase10-local-cat-banner-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture
