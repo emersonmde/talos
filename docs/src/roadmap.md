@@ -4220,6 +4220,27 @@ archive was published and no hardware was touched; the queued serialized Pi 5
 proof is now unblocked on archive identity, subject to hardwareTestLock and
 settled TFTP/serial evidence requirements.
 
+The serialized Pi 5 proof for bare `ls` cwd is now accepted. Published
+hardware evidence under
+tasks/evidence/2026-06-02-pi5-local-ls-cwd-proof/local2-candidate/ used the
+accepted archive
+`target/talos-rpi5-local-ls-cwd-candidate-archive-core.tar.gz` with kernel
+sha256 `da6bb65ad8529912e1feca037d6f1e3cfbc46c5ea052ee32a1ab669b000bfd3e`
+and 110624-byte `kernel_2712.img`. The run held hardwareTestLock, captured
+fresh serial/TFTP cursors, collected settled same-cursor TFTP evidence before
+restore, served `da591740/kernel_2712.img` twice at the expected size, and
+restored the pre-run boot tree hash
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10` before
+lock release. The retained serial transcript shows `pwd`, bare `ls` at
+`/`, `cd /etc` then bare `ls` with `banner.txt`, `cd /bin` then bare
+`ls` with `init`, `cd /` then bare `ls` with root entries, the `bogus`
+regression, ready-next prompt, `pi5-local-ls-cwd-complete`, and exact
+`rpi5-local-ls-cwd-proof: PASS`. This advances the accepted frontier to
+Pi 5-proven bounded command-context cwd listings while keeping broad path
+traversal, POSIX cwd/syscalls, descriptor-backed filesystem syscalls,
+process-local cwd inheritance, userspace shell execution, networking, SSH,
+RP1/PCIe, UART interrupt ownership, and DMA/cache policy deferred.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.

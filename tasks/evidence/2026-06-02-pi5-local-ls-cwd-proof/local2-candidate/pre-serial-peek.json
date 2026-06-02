@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "bW1hbmQ9OA0KdGFsb3M+IHRlcz00IHRydW5jYXRlZD1mYWxzZSBjb250cm9scz0wDQpycGk1LWxvY2FsLWNkLWZpeGVkLWRpcnMtcHJvb2Y6IGVkaXQgY29tbWFuZD04IGJhY2tzcGFjZXM9MCBkZWxldGVzPTANCi8NCnJwaTUtbG9jYWwtY2QtZml4ZWQtZGlycy1wcm9vZjogY2QtZml4ZWQtZGlycy1wd2Qtb2JzZXJ2ZWQgY29tbWFuZD04IGN3ZD0nLycgcmF3LWJ5dGVzPTQgY29udHJvbHM9MCByZXNwb25zZXM9MQ0KdGFsb3M+IA0KcnBpNS1sb2NhbC1jZC1maXhlZC1kaXJzLXByb29mOiByZWFkeS1mb3ItbmV4dCBwcm9tcHQ9dHJ1ZQ0KVEFMT1M6IGNvbW1hbmQgbG9vcCBwcm9tcHQgcmVhZHkNCnJwaTUtbG9jYWwtY2QtZml4ZWQtZGlycy1wcm9vZjogZmluYWwgcGFydGljaXBhbnRzPTkgZXhwZWN0ZWQ9OSBlcnJvcnM9MCBjbGFzc2lmaWNhdGlvbj1waTUtbG9jYWwtY2QtZml4ZWQtZGlycy1jb21wbGV0ZQ0KcnBpNS1sb2NhbC1jZC1maXhlZC1kaXJzLXByb29mOiBQQVNTDQo=",
+  "bytes": 500,
+  "cursor": 4025624,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "mmand=8\r\ntalos> tes=4 truncated=false controls=0\r\nrpi5-local-cd-fixed-dirs-proof: edit command=8 backspaces=0 deletes=0\r\n/\r\nrpi5-local-cd-fixed-dirs-proof: cd-fixed-dirs-pwd-observed command=8 cwd='/' raw-bytes=4 controls=0 responses=1\r\ntalos> \r\nrpi5-local-cd-fixed-dirs-proof: ready-for-next prompt=true\r\nTALOS: command loop prompt ready\r\nrpi5-local-cd-fixed-dirs-proof: final participants=9 expected=9 errors=0 classification=pi5-local-cd-fixed-dirs-complete\r\nrpi5-local-cd-fixed-dirs-proof: PASS\r\n"
+}

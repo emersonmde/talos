@@ -1,0 +1,12 @@
+task=phase10-pi5-local-ls-cwd-proof-20260602
+classification=ls-cwd-feature-pass-retained
+selected_archive=target/talos-rpi5-local-ls-cwd-candidate-archive-core.tar.gz
+archive_sha256=1f986f73b793b269e5b7aa0cf34cfc4cbf3b58358b0d9b409181e762b986919e
+kernel_sha256=da6bb65ad8529912e1feca037d6f1e3cfbc46c5ea052ee32a1ab669b000bfd3e
+kernel_size=110624
+serial_cursor_start=4025624
+tftp_cursor_start=4070674
+tftp_settled=1
+pre_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+post_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+restored_match=true

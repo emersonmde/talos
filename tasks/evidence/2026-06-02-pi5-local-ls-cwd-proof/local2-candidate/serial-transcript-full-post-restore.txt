@@ -1,0 +1,96 @@
+
+  1.09 RPi: BOOTSYS release VERSION:2226a853 DATE: 2025/12/08 TIME: 19:29:54
+  1.09 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 1098867
+  1.10 AON_RESET: 00000003 PM_RSTS 00001000
+  1.11 POWER_OFF_ON_HALT: 0 WAIT_FOR_POWER_BUTTON 0 power-on-reset 1
+  1.12 RP1_BOOT chip ID: 0x20001927
+  1.12 PCIEx1: PWR 0 DET_WAKE 0
+  1.12 part 00000000 reset_info 00000000
+  1.13 PMIC reset-event 00000000 rtc 6a1f6b2f alarm 00000000 enabled 0
+  1.13 uSD voltage 3.3V
+  1.14 SDRAM_CONFIG: 14
+  1.14 Initialising SDRAM rank 2 total-size: 64 Gbit 4267 (0x14 0x14)
+  1.14 DDR 4267 1 0 64 152 BL:1
+device_attr=0x1
+talos: translation control plan: el=0x2 mair=0x4ff tcr=0x53510 ttbr0=0x2f000000 sctlr_set=0x1 va_bits=0x30 pa_bits=0x30 kind=el2-stage1-4k-no-enable
+TALOS: mmu enable start
+TALOS: mmu enable done
+talos: translation enabled: el=0x2 sctlr=0x30c50831 ttbr0=0x2f000000 kind=el2-stage1-4k-enabled
+talos: instruction cache plan: el=0x2 sctlr_before=0x30c50831 sctlr_set=0x1000 kind=el2-stage1-icache-enabled
+TALOS: icache enable start
+TALOS: icache enable done
+talos: instruction cache enabled: el=0x2 sctlr=0x30c51831 kind=el2-stage1-icache-enabled
+talos: data cache plan: el=0x2 sctlr_before=0x30c51831 sctlr_set=0x4 kind=el2-stage1-dcache-enabled
+TALOS: dcache enable start
+TALOS: dcache enable done
+talos: data cache enabled: el=0x2 sctlr=0x30c51835 kind=el2-stage1-dcache-enabled
+TALOS: cache transition done
+talos: bootstrap allocator plan: start=0x2f010000 end=0x3fc00000 bytes=0x10bf0000 pages=0x10bf0 page_size=0x1000 kind=bump-no-free-low-tail
+talos: bootstrap allocator init: start=0x2f010000 next=0x2f010000 end=0x3fc00000 policy=no-free
+talos: string smoke: ptr=0x2f010000 len=5 cap=8 sum=0x203 next=0x2f010008 used=0x8 rem=0x10befff8 ex=true stable=true ok=true
+talos: translation tables: start=0x2f000000 end=0x2f004000 pages=0x4 page_size=0x1000 kind=layout-only phase=post-allocator
+talos: translation table slots: root=0x2f000000 l1=0x2f001000 l2_low=0x2f002000 l2_mmio=0x2f003000 phase=post-allocator
+talos: translation table population: root_entries=0x1 l1_entries=0x2 low_l2_blocks=0x200 mmio_l2_blocks=0x20 block_size=0x200000 kind=stage1-4k-no-enable phase=post-allocator
+talos: memory usable: bank=0 start=0x2f000000 end=0x3fc00000 size=0x10c00000 align=0x1000 policy=low-tail
+talos: page frames seed: start=0x2f000000 end=0x3fc00000 pages=0x10c00 page_size=0x1000 source=memory-usable phase=post-allocator
+talos: bootstrap reserve: start=0x2f000000 end=0x2f010000 pages=0x10 page_size=0x1000 reason=bootstrap-page-tables
+talos: page frames remaining: start=0x2f010000 end=0x3fc00000 pages=0x10bf0 page_size=0x1000 source=bootstrap-reserve
+talos: dtb memory: address_cells=2 size_cells=2 count=3 shown=3 truncated=false
+talos: dtb memory[0]: addr=0x0 size=0x3fc00000
+talos: dtb memory[1]: addr=0x40000000 size=0xc0000000
+talos: dtb memory[2]: addr=0x100000000 size=0x100000000
+TALOS: command loop proof entered
+rpi5-local-ls-cwd-proof: start command-count=9 backend=runtime-console0/bcm2712-uart10-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed descriptor-backed-input=true descriptor-backed-output=true
+TALOS: command loop io ready
+rpi5-local-ls-cwd-proof: ready command=0
+talos> pwd
+/
+
+rpi5-local-ls-cwd-proof: line command=0 hex=70 77 64
+rpi5-local-ls-cwd-proof: dispatch command=0 status=handled responses=1 raw-bytes=4 truncated=false controls=0
+rpi5-local-ls-cwd-proof: edit command=0 backspaces=0 deletes=0
+/
+rpi5-local-ls-cwd-proof: ready command=1
+talos> =3 truncated=false controls=0
+rpi5-local-ls-cwd-proof: edit command=1 backspaces=0 deletes=0
+bin
+dir
+empty
+etc
+rpi5-local-ls-cwd-proof: ls-cwd-observed command=1 cwd='/' entries='bin dir empty etc' raw-bytes=3 controls=0 responses=4
+rpi5-local-ls-cwd-proof: ready command=2
+talos> raw-bytes=8 truncated=false controls=0
+rpi5-local-ls-cwd-proof: edit command=2 backspaces=0 deletes=0
+rpi5-local-ls-cwd-proof: ready command=3
+talos> e controls=0
+rpi5-local-ls-cwd-proof: edit command=3 backspaces=0 deletes=0
+banner.txt
+rpi5-local-ls-cwd-proof: ls-cwd-observed command=3 cwd='/etc' entries='banner.txt' raw-bytes=3 controls=0 responses=1
+rpi5-local-ls-cwd-proof: ready command=4
+talos> =0 raw-bytes=8 truncated=false controls=0
+rpi5-local-ls-cwd-proof: edit command=4 backspaces=0 deletes=0
+rpi5-local-ls-cwd-proof: ready command=5
+talos>  controls=0
+rpi5-local-ls-cwd-proof: edit command=5 backspaces=0 deletes=0
+init
+rpi5-local-ls-cwd-proof: ls-cwd-observed command=5 cwd='/bin' entries='init' raw-bytes=3 controls=0 responses=1
+rpi5-local-ls-cwd-proof: ready command=6
+talos>  truncated=false controls=0
+rpi5-local-ls-cwd-proof: edit command=6 backspaces=0 deletes=0
+rpi5-local-ls-cwd-proof: ready command=7
+talos> =3 truncated=false controls=0
+rpi5-local-ls-cwd-proof: edit command=7 backspaces=0 deletes=0
+bin
+dir
+empty
+etc
+rpi5-local-ls-cwd-proof: ls-cwd-observed command=7 cwd='/' entries='bin dir empty etc' raw-bytes=3 controls=0 responses=4
+rpi5-local-ls-cwd-proof: ready command=8
+talos> -command responses=1 raw-bytes=6 truncated=false controls=0
+rpi5-local-ls-cwd-proof: edit command=8 backspaces=0 deletes=0
+talos> 
+rpi5-local-ls-cwd-proof: ready-for-next prompt=true
+TALOS: command loop prompt ready
+rpi5-local-ls-cwd-proof: final participants=9 expected=9 errors=0 classification=pi5-local-ls-cwd-complete
+rpi5-local-ls-cwd-proof: PASS
+
