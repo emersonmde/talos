@@ -4208,6 +4208,18 @@ shell execution, process cwd inheritance, networking, SSH, RP1/PCIe, UART
 interrupt ownership, and DMA/cache policy remain deferred. The next explicit
 queued task is the serialized Pi 5 proof for this bare `ls` cwd feature.
 
+The RPi5 candidate archive path for bare `ls` cwd is now accepted. The fresh
+archive `target/talos-rpi5-local-ls-cwd-candidate-archive-core.tar.gz` was
+built from the `rpi5_local_ls_cwd` scenario with retained archive review,
+archive/kernel hashes, kernel size, boot-tree file listing, QEMU/substitute
+regressions, and static proof-string inspection under
+tasks/evidence/2026-06-02-rpi5-local-ls-cwd-candidate-archive-core/. The image
+retains `rpi5-local-ls-cwd-proof`, `pi5-local-ls-cwd-complete`, and
+`ls-cwd-observed`, and omits quarantined raw assembly entry markers. No boot
+archive was published and no hardware was touched; the queued serialized Pi 5
+proof is now unblocked on archive identity, subject to hardwareTestLock and
+settled TFTP/serial evidence requirements.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.

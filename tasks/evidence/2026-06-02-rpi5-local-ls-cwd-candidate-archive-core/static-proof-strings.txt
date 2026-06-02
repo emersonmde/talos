@@ -1,0 +1,8 @@
+required strings:
+present: rpi5-local-ls-cwd-proof
+present: pi5-local-ls-cwd-complete
+present: ls-cwd-observed
+present: TALOS: command loop proof entered
+quarantined raw assembly markers:
+absent: TALOS: asm_start
+absent: TALOS: asm_pre_rust_entry

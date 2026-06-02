@@ -1,0 +1,94 @@
+
+Talos 0.1.0 booting on talos-aarch64-virt
+boot-info: dtb_pa=0x0000000048000000 core=0 el=2 target=talos-aarch64-virt
+target-services: uart=pl011 timer=arm-generic irq=gic-v2 dtb=Some(
+    0x0000000048000000,
+)
+mmio-regions: 3
+qemu-local-cd-fixed-dirs: start command-count=12 backend=runtime-console0/qemu-virt-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed descriptor-backed-input=true descriptor-backed-output=true
+qemu-local-cd-fixed-dirs: ready command=0
+talos> help
+talos: ok help
+talos: commands help status stdio pwd echo ls cat cd
+talos: echo forms echo hello; echo local serial works
+talos: editing backspace delete ctrl-c ctrl-u
+
+qemu-local-cd-fixed-dirs: line command=0 hex=68 65 6c 70
+qemu-local-cd-fixed-dirs: dispatch command=0 status=handled responses=4 raw-bytes=5 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-cd-fixed-dirs: ready command=1
+talos> status
+talos: ok status
+talos: version phase10.1-kernel-builtins-v1
+talos: runtime-console runtime-console0
+talos: builtins kernel-backed
+talos: commands help status stdio pwd echo ls cat cd
+
+qemu-local-cd-fixed-dirs: line command=1 hex=73 74 61 74 75 73
+qemu-local-cd-fixed-dirs: dispatch command=1 status=handled responses=5 raw-bytes=7 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-cd-fixed-dirs: ready command=2
+talos> stdio
+talos: ok stdio
+talos: fd 0 stdio-input
+talos: fd 1 stdio-output
+talos: fd 2 stdio-output
+talos: runtime-console runtime-console0
+talos: descriptor-backed-input=true
+talos: descriptor-backed-output=true
+
+qemu-local-cd-fixed-dirs: line command=2 hex=73 74 64 69 6f
+qemu-local-cd-fixed-dirs: dispatch command=2 status=handled responses=7 raw-bytes=6 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-cd-fixed-dirs: ready command=3
+talos> pwd
+/
+
+qemu-local-cd-fixed-dirs: line command=3 hex=70 77 64
+qemu-local-cd-fixed-dirs: dispatch command=3 status=handled responses=1 raw-bytes=4 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-cd-fixed-dirs: ready command=4
+talos> cd /etc
+
+qemu-local-cd-fixed-dirs: line command=4 hex=63 64 20 2f 65 74 63
+qemu-local-cd-fixed-dirs: dispatch command=4 status=handled responses=0 raw-bytes=8 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-cd-fixed-dirs: ready command=5
+talos> pwd
+/etc
+
+qemu-local-cd-fixed-dirs: line command=5 hex=70 77 64
+qemu-local-cd-fixed-dirs: dispatch command=5 status=handled responses=1 raw-bytes=4 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-cd-fixed-dirs: ready command=6
+talos> cd /bin
+
+qemu-local-cd-fixed-dirs: line command=6 hex=63 64 20 2f 62 69 6e
+qemu-local-cd-fixed-dirs: dispatch command=6 status=handled responses=0 raw-bytes=8 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-cd-fixed-dirs: ready command=7
+talos> pwd
+/bin
+
+qemu-local-cd-fixed-dirs: line command=7 hex=70 77 64
+qemu-local-cd-fixed-dirs: dispatch command=7 status=handled responses=1 raw-bytes=4 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-cd-fixed-dirs: ready command=8
+talos> cd /
+
+qemu-local-cd-fixed-dirs: line command=8 hex=63 64 20 2f
+qemu-local-cd-fixed-dirs: dispatch command=8 status=handled responses=0 raw-bytes=5 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-cd-fixed-dirs: ready command=9
+talos> pwd
+/
+
+qemu-local-cd-fixed-dirs: line command=9 hex=70 77 64
+qemu-local-cd-fixed-dirs: dispatch command=9 status=handled responses=1 raw-bytes=4 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-cd-fixed-dirs: ready command=10
+talos> cd /missing
+talos: not-directory
+
+qemu-local-cd-fixed-dirs: line command=10 hex=63 64 20 2f 6d 69 73 73 69 6e 67
+qemu-local-cd-fixed-dirs: dispatch command=10 status=unexpected-argument responses=1 raw-bytes=12 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-cd-fixed-dirs: ready command=11
+talos> pwd
+/
+
+qemu-local-cd-fixed-dirs: line command=11 hex=70 77 64
+qemu-local-cd-fixed-dirs: dispatch command=11 status=handled responses=1 raw-bytes=4 backspaces=0 deletes=0 truncated=false controls=0
+talos>
+qemu-local-cd-fixed-dirs: ready-for-next prompt=true
+qemu-local-cd-fixed-dirs: final participants=12 expected=12 errors=0 classification=qemu-local-cd-fixed-dirs-complete
+qemu-local-cd-fixed-dirs: PASS
