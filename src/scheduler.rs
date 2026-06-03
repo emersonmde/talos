@@ -1638,6 +1638,10 @@ impl<const RUNNABLE_CAPACITY: usize> SingleCoreScheduler<RUNNABLE_CAPACITY> {
     }
 
     pub fn make_runnable(&mut self, task: &mut Task) -> Result<(), RunnableQueueError> {
+        if self.runnable.is_full() {
+            return Err(RunnableQueueError::Full);
+        }
+
         task.set_state(TaskState::Runnable);
         self.counters.state_transitions += 1;
         self.runnable.enqueue(task.id())
@@ -1683,12 +1687,10 @@ impl<const RUNNABLE_CAPACITY: usize> SingleCoreScheduler<RUNNABLE_CAPACITY> {
         if current.state() != TaskState::Running {
             return Err(VoluntaryYieldError::CurrentTaskNotRunning);
         }
-        if self.runnable.is_empty() {
-            return Err(VoluntaryYieldError::NoRunnableTask);
-        }
-        if self.runnable.is_full() {
-            return Err(VoluntaryYieldError::RunnableQueueFull);
-        }
+        let next = self
+            .runnable
+            .dequeue()
+            .ok_or(VoluntaryYieldError::NoRunnableTask)?;
 
         current.set_state(TaskState::Runnable);
         self.counters.state_transitions += 1;
@@ -1696,10 +1698,6 @@ impl<const RUNNABLE_CAPACITY: usize> SingleCoreScheduler<RUNNABLE_CAPACITY> {
             .enqueue(current.id())
             .map_err(|_| VoluntaryYieldError::RunnableQueueFull)?;
 
-        let next = self
-            .runnable
-            .dequeue()
-            .expect("non-empty runnable queue after preflight");
         self.counters.voluntary_yields += 1;
         self.counters.context_switches += 1;
         Ok(next)
@@ -1709,12 +1707,10 @@ impl<const RUNNABLE_CAPACITY: usize> SingleCoreScheduler<RUNNABLE_CAPACITY> {
         if current.state() != TaskState::Running {
             return Err(TimerPreemptError::CurrentTaskNotRunning);
         }
-        if self.runnable.is_empty() {
-            return Err(TimerPreemptError::NoRunnableTask);
-        }
-        if self.runnable.is_full() {
-            return Err(TimerPreemptError::RunnableQueueFull);
-        }
+        let next = self
+            .runnable
+            .dequeue()
+            .ok_or(TimerPreemptError::NoRunnableTask)?;
 
         current.set_state(TaskState::Runnable);
         self.counters.state_transitions += 1;
@@ -1722,10 +1718,6 @@ impl<const RUNNABLE_CAPACITY: usize> SingleCoreScheduler<RUNNABLE_CAPACITY> {
             .enqueue(current.id())
             .map_err(|_| TimerPreemptError::RunnableQueueFull)?;
 
-        let next = self
-            .runnable
-            .dequeue()
-            .expect("non-empty runnable queue after preflight");
         self.counters.timer_preemptions += 1;
         self.counters.context_switches += 1;
         Ok(next)
@@ -2856,6 +2848,27 @@ mod tests {
     }
 
     #[test_case]
+    fn make_runnable_rejects_full_queue_without_mutating_task_or_counters() {
+        let mut scheduler = SingleCoreScheduler::<1>::new();
+        let mut queued = Task::kernel_thread(task_id(1), kernel_stack(), context());
+        let mut blocked = Task::kernel_thread(task_id(2), kernel_stack(), context());
+        blocked.set_state(TaskState::Blocked);
+
+        scheduler
+            .make_runnable(&mut queued)
+            .expect("first runnable fills queue");
+        let transitions = scheduler.counters().state_transitions();
+
+        assert_eq!(
+            scheduler.make_runnable(&mut blocked),
+            Err(RunnableQueueError::Full)
+        );
+        assert_eq!(blocked.state(), TaskState::Blocked);
+        assert_eq!(scheduler.counters().state_transitions(), transitions);
+        assert_eq!(scheduler.runnable().front(), Some(queued.id()));
+    }
+
+    #[test_case]
     fn voluntary_yield_requeues_current_and_counts_dispatch_switch() {
         let mut scheduler = SingleCoreScheduler::<2>::new();
         let mut current = Task::kernel_thread(task_id(1), kernel_stack(), context());
@@ -2876,6 +2889,27 @@ mod tests {
         assert_eq!(scheduler.counters().voluntary_yields(), 1);
         assert_eq!(scheduler.counters().context_switches(), 1);
         assert_eq!(scheduler.counters().state_transitions(), 2);
+    }
+
+    #[test_case]
+    fn voluntary_yield_allows_one_slot_queue_by_dequeuing_before_requeue() {
+        let mut scheduler = SingleCoreScheduler::<1>::new();
+        let mut current = Task::kernel_thread(task_id(1), kernel_stack(), context());
+        let mut next = Task::kernel_thread(task_id(2), kernel_stack(), context());
+        current.set_state(TaskState::Running);
+
+        scheduler
+            .make_runnable(&mut next)
+            .expect("single runnable slot holds next task");
+
+        let next_id = scheduler
+            .voluntary_yield(&mut current)
+            .expect("yield switches despite full one-slot runnable queue");
+
+        assert_eq!(next_id, next.id());
+        assert_eq!(current.state(), TaskState::Runnable);
+        assert_eq!(scheduler.runnable().front(), Some(current.id()));
+        assert_eq!(scheduler.runnable().len(), 1);
     }
 
     #[test_case]
@@ -2900,6 +2934,27 @@ mod tests {
         assert_eq!(scheduler.counters().timer_preemptions(), 1);
         assert_eq!(scheduler.counters().context_switches(), 1);
         assert_eq!(scheduler.counters().state_transitions(), 2);
+    }
+
+    #[test_case]
+    fn timer_preempt_allows_one_slot_queue_by_dequeuing_before_requeue() {
+        let mut scheduler = SingleCoreScheduler::<1>::new();
+        let mut current = Task::kernel_thread(task_id(1), kernel_stack(), context());
+        let mut next = Task::kernel_thread(task_id(2), kernel_stack(), context());
+        current.set_state(TaskState::Running);
+
+        scheduler
+            .make_runnable(&mut next)
+            .expect("single runnable slot holds next task");
+
+        let next_id = scheduler
+            .timer_preempt(&mut current)
+            .expect("timer preemption switches despite full one-slot runnable queue");
+
+        assert_eq!(next_id, next.id());
+        assert_eq!(current.state(), TaskState::Runnable);
+        assert_eq!(scheduler.runnable().front(), Some(current.id()));
+        assert_eq!(scheduler.runnable().len(), 1);
     }
 
     #[test_case]

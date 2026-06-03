@@ -153,14 +153,16 @@ impl PerCoreState {
     }
 
     pub fn snapshot(&self, logical_cpu: usize) -> CoreRegistration {
+        let lifecycle = CoreLifecycle::from_raw(self.lifecycle.load(Ordering::Acquire))
+            .unwrap_or(CoreLifecycle::Parked);
+
         CoreRegistration {
             logical_cpu,
             context: self.context.load(Ordering::Acquire) as usize,
             mpidr: self.mpidr.load(Ordering::Acquire),
             affinity: self.affinity.load(Ordering::Acquire),
             stack_pointer: self.stack_pointer.load(Ordering::Acquire) as usize,
-            lifecycle: CoreLifecycle::from_raw(self.lifecycle.load(Ordering::Acquire))
-                .unwrap_or(CoreLifecycle::Parked),
+            lifecycle,
             workload_progress: self.workload_progress.load(Ordering::Acquire),
         }
     }
