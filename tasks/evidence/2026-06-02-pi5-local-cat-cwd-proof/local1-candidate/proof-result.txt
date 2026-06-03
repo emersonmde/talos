@@ -1,0 +1,10 @@
+archive=a1159da288089df9cbbf17edc2289d7900108be7864b675bf8291d6352e62c83  target/talos-rpi5-local-cat-cwd-candidate-archive-core.tar.gz
+selected_kernel=kernel_2712.img
+tree_hash=ae7dcbef171d8e64d67f0783c6253c8860822f91e43689214e7ea3f0a4659d95
+serial_pass=
+classification=
+banner=
+negative=
+tftp_events=13
+tftp_kernel=
+restored_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10

@@ -1,0 +1,6 @@
+control_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+control_effective_kernel=kernel_2712.img
+control_kernel_size=104136
+control_serial_production_timer_pass=rpi5-production-timer-preemption: PASS
+control_serial_lscwd_pass=
+classification=control-mismatch-production-timer-not-prompt-responsive
