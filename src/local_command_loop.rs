@@ -17,7 +17,7 @@ use crate::{
 pub const LOCAL_COMMAND_LOOP_VERSION: &str = "phase10.2-kernel-builtins-v1";
 pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary",
-    "+lifecycle-laststatus+waitpid-lifecycle-observation"
+    "+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -28,6 +28,7 @@ const LOCAL_COMMAND_EXEC_READ_OFFSET: usize = 0x80;
 const LOCAL_COMMAND_EXEC_USER_MEMORY_LEN: usize = 1024;
 const LOCAL_COMMAND_EXEC_ADDRESS_SPACE_ID: u64 = 0x0010_0001;
 const LOCAL_COMMAND_EXEC_PROCESS_ID: u64 = 0x0010_0001;
+const LOCAL_COMMAND_EXEC_TEMP_DESCRIPTOR: usize = posix::STDERR_FD + 1;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum LocalCommandDirectory {
@@ -139,7 +140,20 @@ pub struct LocalCommandExecSummary {
     completion_status: u64,
     completion_marker: u64,
     completion_boundary: &'static str,
+    descriptor_inheritance: LocalCommandExecDescriptorInheritanceRecord,
     lifecycle: LocalCommandProcessLifecycleRecord,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LocalCommandExecDescriptorInheritanceRecord {
+    owner_id: u64,
+    stdin_kind: &'static str,
+    stdout_kind: &'static str,
+    stderr_kind: &'static str,
+    inherited_count: usize,
+    loader_temporary_descriptor: usize,
+    loader_temporary_descriptor_open: bool,
+    source: &'static str,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -406,6 +420,9 @@ where
             _ => return Err(LocalCommandExecError::NotExecutable),
         };
 
+        let owner = self
+            .current_owner
+            .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
         let mut program_bytes = [0u8; initramfs::PHASE8_INIT_ELF_LEN];
         let bytes_read = self
             .read_initramfs_file_via_syscall_with_memory::<LOCAL_COMMAND_EXEC_USER_MEMORY_LEN>(
@@ -414,6 +431,9 @@ where
                 LOCAL_COMMAND_EXEC_READ_OFFSET,
             )
             .map_err(|_| LocalCommandExecError::SyscallFailed)?;
+        let descriptor_inheritance = self
+            .standard_descriptor_inheritance_record(owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
         let image = program_loader::plan_elf64_aarch64_image(
             source_path,
             program_loader::PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
@@ -424,9 +444,6 @@ where
             .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
         let install_plan = process_install::plan_process_image_install(image)
             .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
-        let owner = self
-            .current_owner
-            .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
         let mut address_source = ProcessAddressSpaceLeaseSource::for_plan(install_plan);
         let address_space = process_address_space::install_process_address_space(
             install_plan,
@@ -498,6 +515,7 @@ where
             completion_status,
             completion_marker: initramfs::PHASE8_INIT_SVC_MARKER,
             completion_boundary: "lower-aarch64-svc-status-equivalent",
+            descriptor_inheritance,
             lifecycle,
         })
     }
@@ -609,6 +627,46 @@ where
             }
             _ => Err(LocalCommandFileReadError::SyscallFailed),
         }
+    }
+
+    fn standard_descriptor_inheritance_record(
+        &self,
+        owner: ProcessOwnerId,
+    ) -> Result<LocalCommandExecDescriptorInheritanceRecord, LocalCommandExecError> {
+        let table = self
+            .descriptor_store
+            .descriptor_table(owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let stdin = table
+            .get(posix::STDIN_FD)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let stdout = table
+            .get(posix::STDOUT_FD)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let stderr = table
+            .get(posix::STDERR_FD)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+
+        if stdin.require_readable().is_err()
+            || stdout.require_writable().is_err()
+            || stderr.require_writable().is_err()
+            || stdin.object().kind() != posix::DescriptorObjectKind::StdioInput
+            || stdout.object().kind() != posix::DescriptorObjectKind::StdioOutput
+            || stderr.object().kind() != posix::DescriptorObjectKind::StdioOutput
+        {
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
+        }
+
+        Ok(LocalCommandExecDescriptorInheritanceRecord {
+            owner_id: owner.raw(),
+            stdin_kind: stdin.object().kind().name(),
+            stdout_kind: stdout.object().kind().name(),
+            stderr_kind: stderr.object().kind().name(),
+            inherited_count: 3,
+            loader_temporary_descriptor: LOCAL_COMMAND_EXEC_TEMP_DESCRIPTOR,
+            loader_temporary_descriptor_open: table.get(LOCAL_COMMAND_EXEC_TEMP_DESCRIPTOR).is_ok(),
+            source: "shell-process-descriptor-table",
+        })
     }
 }
 
@@ -1291,6 +1349,7 @@ fn write_exec_summary(
     write_exec_source_line(sink, response_lines, summary)?;
     write_exec_entry_line(sink, response_lines, summary)?;
     write_exec_launch_line(sink, response_lines, summary)?;
+    write_exec_descriptor_inheritance_line(sink, response_lines, summary)?;
     write_exec_startup_abi_line(sink, response_lines, summary)?;
     write_exec_lifecycle_line(sink, response_lines, summary)?;
     write_exec_status_line(sink, response_lines, summary)?;
@@ -1342,6 +1401,38 @@ fn write_exec_launch_line(
     write_hex_u64_part(sink, summary.materialization_id)?;
     write_str_part(sink, " initial-sp=")?;
     write_hex_u64_part(sink, summary.initial_sp)?;
+    finish_dynamic_line(sink, response_lines)
+}
+
+fn write_exec_descriptor_inheritance_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    summary: LocalCommandExecSummary,
+) -> Result<(), LocalCommandCycleError> {
+    let record = summary.descriptor_inheritance;
+    write_str_part(sink, "talos: exec-descriptors owner=")?;
+    write_hex_u64_part(sink, record.owner_id)?;
+    write_str_part(sink, " inherited-count=")?;
+    write_hex_usize_part(sink, record.inherited_count)?;
+    write_str_part(sink, " fd0=")?;
+    write_str_part(sink, record.stdin_kind)?;
+    write_str_part(sink, " fd1=")?;
+    write_str_part(sink, record.stdout_kind)?;
+    write_str_part(sink, " fd2=")?;
+    write_str_part(sink, record.stderr_kind)?;
+    write_str_part(sink, " loader-temp-fd=")?;
+    write_hex_usize_part(sink, record.loader_temporary_descriptor)?;
+    write_str_part(sink, " loader-temp-open=")?;
+    write_str_part(
+        sink,
+        if record.loader_temporary_descriptor_open {
+            "true"
+        } else {
+            "false"
+        },
+    )?;
+    write_str_part(sink, " source=")?;
+    write_str_part(sink, record.source)?;
     finish_dynamic_line(sink, response_lines)
 }
 
@@ -1583,7 +1674,7 @@ mod tests {
 
         const fn failing_after(fail_after: usize) -> Self {
             Self {
-                bytes: [0; 2048],
+                bytes: [0; 4096],
                 len: 0,
                 fail_after,
                 writes: 0,
@@ -1959,7 +2050,7 @@ talos> Talos initramfs fixture\n"
 
         assert_eq!(result.line(), b"exec /bin/init");
         assert_eq!(result.status(), LocalCommandStatus::Handled);
-        assert_eq!(result.response_lines(), 8);
+        assert_eq!(result.response_lines(), 9);
         assert!(output.contains("talos> talos: exec path=/bin/init source=vfs-open-read\n"));
         assert!(output.contains("talos: exec-source bytes=0x0000000000000204 digest=0x"));
         assert!(output.contains(
@@ -1967,6 +2058,9 @@ talos> Talos initramfs fixture\n"
         ));
         assert!(output.contains(
             "talos: exec-launch launch-boundary=phase8-initial-process-launch-plan-v1 stack-boundary=phase8-initial-user-stack-plan-v1"
+        ));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
         ));
         assert!(output.contains(
             "talos: exec-startup-abi state=minimal-argc1-argv0-init-empty-envp argc=0x0000000000000001 argv0=/bin/init"
@@ -1998,9 +2092,12 @@ talos> Talos initramfs fixture\n"
 
         assert_eq!(result.line(), b"exec /bin/zero");
         assert_eq!(result.status(), LocalCommandStatus::Handled);
-        assert_eq!(result.response_lines(), 8);
+        assert_eq!(result.response_lines(), 9);
         assert!(output.contains("talos> talos: exec path=/bin/zero source=vfs-open-read\n"));
         assert!(output.contains("talos: exec-source bytes=0x0000000000000204 digest=0x"));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
         assert!(output.contains(
             "talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/zero"
         ));
@@ -2031,11 +2128,14 @@ talos> Talos initramfs fixture\n"
 
         assert_eq!(exec.line(), b"exec /bin/status42");
         assert_eq!(exec.status(), LocalCommandStatus::Handled);
-        assert_eq!(exec.response_lines(), 8);
+        assert_eq!(exec.response_lines(), 9);
         assert_eq!(observed.line(), b"laststatus");
         assert_eq!(observed.status(), LocalCommandStatus::Handled);
         assert_eq!(observed.response_lines(), 1);
         assert!(output.contains("talos> talos: exec path=/bin/status42 source=vfs-open-read\n"));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
         assert!(output.contains(
             "talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/status42"
         ));
@@ -2075,7 +2175,7 @@ talos> Talos initramfs fixture\n"
         assert_eq!(empty.response_lines(), 1);
         assert_eq!(exec.line(), b"exec /bin/status42");
         assert_eq!(exec.status(), LocalCommandStatus::Handled);
-        assert_eq!(exec.response_lines(), 8);
+        assert_eq!(exec.response_lines(), 9);
         assert_eq!(waited.line(), b"waitpid");
         assert_eq!(waited.status(), LocalCommandStatus::Handled);
         assert_eq!(waited.response_lines(), 1);
@@ -2086,6 +2186,9 @@ talos> Talos initramfs fixture\n"
         assert_eq!(observed.status(), LocalCommandStatus::Handled);
         assert_eq!(observed.response_lines(), 1);
         assert!(output.contains("talos> talos: waitpid no-child source=lifecycle-record\n"));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
         assert!(output.contains(
             "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record\n"
         ));
@@ -2114,11 +2217,14 @@ talos> Talos initramfs fixture\n"
         assert_eq!(none.response_lines(), 1);
         assert_eq!(exec.line(), b"exec /bin/init");
         assert_eq!(exec.status(), LocalCommandStatus::Handled);
-        assert_eq!(exec.response_lines(), 8);
+        assert_eq!(exec.response_lines(), 9);
         assert_eq!(observed.line(), b"laststatus");
         assert_eq!(observed.status(), LocalCommandStatus::Handled);
         assert_eq!(observed.response_lines(), 1);
         assert!(output.contains("talos> talos: last-process none\n"));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
         assert!(output.contains(
             "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/init state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"
         ));

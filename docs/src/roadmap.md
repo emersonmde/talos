@@ -193,6 +193,20 @@ The post-review correction chain is:
     primitive is standard descriptor inheritance across VFS-backed exec before
     PATH lookup, broad argv/envp, pipes, redirection, writable filesystem,
     hardware proof, networking, or SSH.
+20. standard descriptor inheritance across VFS-backed exec: accepted in
+    `phase10-standard-descriptor-inheritance-exec-core-20260603` with
+    shell-visible `exec /bin/status42`, `exec /bin/init`, and
+    `exec /bin/zero` each reporting inherited standard descriptors
+    `fd0=stdio-input`, `fd1=stdio-output`, and `fd2=stdio-output`
+    from the shell process descriptor table. The same transcript proves the
+    loader/VFS temporary executable-read descriptor is absent from the
+    inherited set with `loader-temp-open=false`. Nonzero/zero status
+    controls, `laststatus`, `waitpid`, deterministic negative exec
+    controls, and descriptor-backed `cat /etc/banner.txt` remain covered.
+    Userspace stdio I/O through inherited descriptors, broad descriptor
+    inheritance policy, close-on-exec behavior, fork, asynchronous execution,
+    multiple children, PATH lookup, broad argv/envp, pipes, redirection,
+    writable filesystem, hardware proof, networking, and SSH remain deferred.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
