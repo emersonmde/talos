@@ -14,10 +14,10 @@ use crate::{
     tty::{self, CANONICAL_LINE_CAPACITY, PollingTtyRxOutcome, PollingTtyRxResult},
 };
 
-pub const LOCAL_COMMAND_LOOP_VERSION: &str = "phase10.1-kernel-builtins-v1";
+pub const LOCAL_COMMAND_LOOP_VERSION: &str = "phase10.2-kernel-builtins-v1";
 pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary",
-    "+lifecycle-laststatus"
+    "+lifecycle-laststatus+waitpid-lifecycle-observation"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -230,6 +230,10 @@ pub trait LocalCommandSink {
     fn last_process_lifecycle_record(&self) -> Option<LocalCommandProcessLifecycleRecord> {
         None
     }
+
+    fn wait_process_lifecycle_record(&mut self) -> Option<LocalCommandProcessLifecycleRecord> {
+        None
+    }
 }
 
 impl<B> LocalCommandSink for runtime_console::RuntimeConsole<B>
@@ -261,6 +265,7 @@ pub struct DescriptorBackedLocalCommandIo<
     current_directory: LocalCommandDirectory,
     read_only_files: initramfs::ReadOnlyFileDescriptions<1>,
     last_process: Option<LocalCommandProcessLifecycleRecord>,
+    waitable_process: Option<LocalCommandProcessLifecycleRecord>,
 }
 
 impl<I, O> DescriptorBackedLocalCommandIo<I, O, 1, 4>
@@ -285,6 +290,7 @@ where
             current_directory: LocalCommandDirectory::Root,
             read_only_files: initramfs::ReadOnlyFileDescriptions::new_empty(),
             last_process: None,
+            waitable_process: None,
         })
     }
 }
@@ -466,6 +472,7 @@ where
             completion_status,
         );
         self.last_process = Some(lifecycle);
+        self.waitable_process = Some(lifecycle);
 
         Ok(LocalCommandExecSummary {
             source_path: image.source_path(),
@@ -497,6 +504,10 @@ where
 
     fn last_process_lifecycle_record(&self) -> Option<LocalCommandProcessLifecycleRecord> {
         self.last_process
+    }
+
+    fn wait_process_lifecycle_record(&mut self) -> Option<LocalCommandProcessLifecycleRecord> {
+        self.waitable_process.take()
     }
 }
 
@@ -830,7 +841,7 @@ fn dispatch_local_command(
             write_line(
                 sink,
                 responses,
-                "talos: commands help status stdio pwd echo ls cat cd exec laststatus",
+                "talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid",
             )?;
             write_line(
                 sink,
@@ -868,7 +879,7 @@ fn dispatch_local_command(
             write_line(
                 sink,
                 responses,
-                "talos: commands help status stdio pwd echo ls cat cd exec laststatus",
+                "talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid",
             )?;
             Ok(LocalCommandStatus::Handled)
         }
@@ -1008,6 +1019,26 @@ fn dispatch_local_command(
                 }
                 None => {
                     write_line(sink, responses, "talos: last-process none")?;
+                    Ok(LocalCommandStatus::Handled)
+                }
+            }
+        }
+        "waitpid" => {
+            if command.arguments.is_some() {
+                write_line(sink, responses, "talos: unexpected-argument")?;
+                return Ok(LocalCommandStatus::UnexpectedArgument);
+            }
+            match sink.wait_process_lifecycle_record() {
+                Some(record) => {
+                    write_waitpid_status_line(sink, responses, record)?;
+                    Ok(LocalCommandStatus::Handled)
+                }
+                None => {
+                    write_line(
+                        sink,
+                        responses,
+                        "talos: waitpid no-child source=lifecycle-record",
+                    )?;
                     Ok(LocalCommandStatus::Handled)
                 }
             }
@@ -1418,6 +1449,27 @@ fn write_last_process_status_line(
     finish_dynamic_line(sink, response_lines)
 }
 
+fn write_waitpid_status_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    lifecycle: LocalCommandProcessLifecycleRecord,
+) -> Result<(), LocalCommandCycleError> {
+    write_str_part(sink, "talos: waitpid pid=")?;
+    write_hex_u64_part(sink, lifecycle.process_id)?;
+    write_str_part(sink, " parent=shell owner=")?;
+    write_hex_u64_part(sink, lifecycle.parent_owner_id)?;
+    write_str_part(sink, " path=")?;
+    write_byte_path_part(sink, lifecycle.source_path)?;
+    write_str_part(sink, " state=")?;
+    write_str_part(sink, lifecycle.state.name())?;
+    write_str_part(sink, " status=")?;
+    write_hex_u64_part(sink, lifecycle.status)?;
+    write_str_part(sink, " observed-status=")?;
+    write_hex_u64_part(sink, lifecycle.observed_status)?;
+    write_str_part(sink, " reaped=true source=lifecycle-record")?;
+    finish_dynamic_line(sink, response_lines)
+}
+
 fn write_str_part(
     sink: &mut impl LocalCommandSink,
     text: &str,
@@ -1513,7 +1565,7 @@ mod tests {
     }
 
     struct CaptureSink {
-        bytes: [u8; 2048],
+        bytes: [u8; 4096],
         len: usize,
         fail_after: usize,
         writes: usize,
@@ -1522,7 +1574,7 @@ mod tests {
     impl CaptureSink {
         const fn new() -> Self {
             Self {
-                bytes: [0; 2048],
+                bytes: [0; 4096],
                 len: 0,
                 fail_after: usize::MAX,
                 writes: 0,
@@ -1592,7 +1644,7 @@ mod tests {
         assert_eq!(
             sink.as_str(),
             "talos> talos: ok help\n\
-	talos: commands help status stdio pwd echo ls cat cd exec laststatus\n\
+	talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid\n\
 	talos: echo forms echo hello; echo local serial works\n\
 	talos: editing backspace delete ctrl-c ctrl-u\n"
         );
@@ -1992,6 +2044,50 @@ talos> Talos initramfs fixture\n"
         ));
         assert!(output.contains(
             "talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x000000000000002a complete=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_waitpid_consumes_vfs_exec_lifecycle_record() {
+        let input = ScriptedInput::new(
+            *b"waitpid\rexec /bin/status42\rwaitpid\rwaitpid\rlaststatus\r",
+            54,
+        );
+        let mut backend = CaptureSink::new();
+        let (empty, exec, waited, consumed, observed) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(empty.line(), b"waitpid");
+        assert_eq!(empty.status(), LocalCommandStatus::Handled);
+        assert_eq!(empty.response_lines(), 1);
+        assert_eq!(exec.line(), b"exec /bin/status42");
+        assert_eq!(exec.status(), LocalCommandStatus::Handled);
+        assert_eq!(exec.response_lines(), 8);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(waited.response_lines(), 1);
+        assert_eq!(consumed.line(), b"waitpid");
+        assert_eq!(consumed.status(), LocalCommandStatus::Handled);
+        assert_eq!(consumed.response_lines(), 1);
+        assert_eq!(observed.line(), b"laststatus");
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.response_lines(), 1);
+        assert!(output.contains("talos> talos: waitpid no-child source=lifecycle-record\n"));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record\n"
         ));
         assert!(output.contains(
             "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record\n"

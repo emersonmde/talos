@@ -20,6 +20,7 @@ LS_BIN_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LS_BIN_SMOKE:-0}"
 CAT_BANNER_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_CAT_BANNER_SMOKE:-0}"
 CAT_CWD_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_CAT_CWD_SMOKE:-0}"
 SHELL_VFS_EXEC_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_VFS_EXEC_SMOKE:-0}"
+SHELL_WAITPID_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_WAITPID_SMOKE:-0}"
 CD_FIXED_DIRS_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_CD_FIXED_DIRS_SMOKE:-0}"
 LS_CWD_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LS_CWD_SMOKE:-0}"
 LINE_EDITING_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LINE_EDITING_SMOKE:-0}"
@@ -73,7 +74,10 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
         printf '%s\n' "$line" >>"$LOG_FILE"
         case "$line" in
             *"$LABEL: ready command=10"*)
-                if [ "$sent" -eq 10 ] && [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
+                if [ "$sent" -eq 10 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'exec /bin/zero\r' >&3
+                    sent=11
+                elif [ "$sent" -eq 10 ] && [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
                     printf 'exec init\r' >&3
                     sent=11
                 elif [ "$sent" -eq 10 ] && [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ]; then
@@ -85,7 +89,10 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                 fi
                 ;;
             *"$LABEL: ready command=11"*)
-                if [ "$sent" -eq 11 ] && [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
+                if [ "$sent" -eq 11 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'waitpid\r' >&3
+                    sent=12
+                elif [ "$sent" -eq 11 ] && [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
                     printf 'exec /bin\r' >&3
                     sent=12
                 elif [ "$sent" -eq 11 ] && [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ]; then
@@ -97,21 +104,48 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                 fi
                 ;;
             *"$LABEL: ready command=12"*)
-                if [ "$sent" -eq 12 ] && [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
+                if [ "$sent" -eq 12 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'exec /missing\r' >&3
+                    sent=13
+                elif [ "$sent" -eq 12 ] && [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
                     printf 'exec /etc/banner.txt\r' >&3
                     sent=13
                 fi
                 ;;
             *"$LABEL: ready command=13"*)
-                if [ "$sent" -eq 13 ] && [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
+                if [ "$sent" -eq 13 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'exec init\r' >&3
+                    sent=14
+                elif [ "$sent" -eq 13 ] && [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
                     printf 'exec /empty\r' >&3
                     sent=14
                 fi
                 ;;
             *"$LABEL: ready command=14"*)
-                if [ "$sent" -eq 14 ] && [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
+                if [ "$sent" -eq 14 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'exec /bin\r' >&3
+                    sent=15
+                elif [ "$sent" -eq 14 ] && [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
                     printf 'cat /etc/banner.txt\r' >&3
                     sent=15
+                fi
+                ;;
+            *"$LABEL: ready command=15"*)
+                if [ "$sent" -eq 15 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'exec /etc/banner.txt\r' >&3
+                    sent=16
+                fi
+                ;;
+            *"$LABEL: ready command=16"*)
+                if [ "$sent" -eq 16 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'exec /empty\r' >&3
+                    sent=17
+                fi
+                ;;
+            *"$LABEL: ready command=17"*)
+                if [ "$sent" -eq 17 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'cat /etc/banner.txt\r' >&3
+                    sent=18
                 fi
                 ;;
             *"$LABEL: ready command=0"*)
@@ -148,6 +182,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'cat /etc/banner.txt\r' >&3
                     elif [ "$CAT_CWD_SMOKE" -eq 1 ]; then
                         printf 'cd /etc\r' >&3
+                    elif [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                        printf 'waitpid\r' >&3
                     elif [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
                         printf 'exec /bin/status42\r' >&3
                     elif [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ]; then
@@ -182,6 +218,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'ls /bin\r' >&3
                     elif [ "$CAT_CWD_SMOKE" -eq 1 ]; then
                         printf 'cat banner.txt\r' >&3
+                    elif [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                        printf 'exec /bin/status42\r' >&3
                     elif [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
                         printf 'laststatus\r' >&3
                     elif [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ]; then
@@ -210,6 +248,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf '\r' >&3
                     elif [ "$CAT_CWD_SMOKE" -eq 1 ]; then
                         printf 'cd /\r' >&3
+                    elif [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                        printf 'waitpid\r' >&3
                     elif [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
                         printf 'exec /bin/init\r' >&3
                     elif [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ]; then
@@ -230,6 +270,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'cd /bin\r' >&3
                     elif [ "$CAT_CWD_SMOKE" -eq 1 ]; then
                         printf 'cat banner.txt\r' >&3
+                    elif [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                        printf 'waitpid\r' >&3
                     elif [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
                         printf 'laststatus\r' >&3
                     elif [ "$LS_CWD_SMOKE" -eq 1 ]; then
@@ -248,6 +290,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'pwd\r' >&3
                     elif [ "$LS_CWD_SMOKE" -eq 1 ]; then
                         printf 'cd /bin\r' >&3
+                    elif [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                        printf 'laststatus\r' >&3
                     elif [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
                         printf 'exec /bin/zero\r' >&3
                     else
@@ -262,6 +306,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'cd /\r' >&3
                     elif [ "$LS_CWD_SMOKE" -eq 1 ]; then
                         printf 'ls\r' >&3
+                    elif [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                        printf 'exec /bin/init\r' >&3
                     elif [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
                         printf 'laststatus\r' >&3
                     else
@@ -271,7 +317,10 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                 fi
                 ;;
             *"$LABEL: ready command=9"*)
-                if [ "$sent" -eq 9 ] && [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
+                if [ "$sent" -eq 9 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'waitpid\r' >&3
+                    sent=10
+                elif [ "$sent" -eq 9 ] && [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
                     printf 'exec /missing\r' >&3
                     sent=10
                 elif [ "$sent" -eq 9 ] && [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ]; then
@@ -299,10 +348,10 @@ grep -q "$LABEL: ready command=1" "$LOG_FILE"
 grep -q "$LABEL: ready command=2" "$LOG_FILE"
 grep -q "$LABEL: ready command=3" "$LOG_FILE"
 grep -q "$LABEL: ready command=4" "$LOG_FILE"
-if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_ROOT_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ] || [ "$CAT_BANNER_SMOKE" -eq 1 ] || [ "$CAT_CWD_SMOKE" -eq 1 ] || [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ] || [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ] || [ "$LS_CWD_SMOKE" -eq 1 ] || [ "$LITERAL_ECHO_SMOKE" -eq 1 ] || [ "$ECHO_COMMAND_SMOKE" -eq 1 ]; then
+if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_ROOT_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ] || [ "$CAT_BANNER_SMOKE" -eq 1 ] || [ "$CAT_CWD_SMOKE" -eq 1 ] || [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ] || [ "$SHELL_WAITPID_SMOKE" -eq 1 ] || [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ] || [ "$LS_CWD_SMOKE" -eq 1 ] || [ "$LITERAL_ECHO_SMOKE" -eq 1 ] || [ "$ECHO_COMMAND_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=5" "$LOG_FILE"
 fi
-if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ] || [ "$CAT_BANNER_SMOKE" -eq 1 ] || [ "$CAT_CWD_SMOKE" -eq 1 ] || [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ] || [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ] || [ "$LS_CWD_SMOKE" -eq 1 ]; then
+if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ] || [ "$CAT_BANNER_SMOKE" -eq 1 ] || [ "$CAT_CWD_SMOKE" -eq 1 ] || [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ] || [ "$SHELL_WAITPID_SMOKE" -eq 1 ] || [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ] || [ "$LS_CWD_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=6" "$LOG_FILE"
 fi
 if [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ] || [ "$LS_CWD_SMOKE" -eq 1 ]; then
@@ -322,6 +371,19 @@ if [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=13" "$LOG_FILE"
     grep -q "$LABEL: ready command=14" "$LOG_FILE"
 fi
+if [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+    grep -q "$LABEL: ready command=7" "$LOG_FILE"
+    grep -q "$LABEL: ready command=8" "$LOG_FILE"
+    grep -q "$LABEL: ready command=9" "$LOG_FILE"
+    grep -q "$LABEL: ready command=10" "$LOG_FILE"
+    grep -q "$LABEL: ready command=11" "$LOG_FILE"
+    grep -q "$LABEL: ready command=12" "$LOG_FILE"
+    grep -q "$LABEL: ready command=13" "$LOG_FILE"
+    grep -q "$LABEL: ready command=14" "$LOG_FILE"
+    grep -q "$LABEL: ready command=15" "$LOG_FILE"
+    grep -q "$LABEL: ready command=16" "$LOG_FILE"
+    grep -q "$LABEL: ready command=17" "$LOG_FILE"
+fi
 if [ "$LINE_EDITING_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=7" "$LOG_FILE"
     grep -q "$LABEL: ready command=8" "$LOG_FILE"
@@ -335,7 +397,7 @@ grep -q "$LABEL: line command=0 hex=68 65 6c 70" "$LOG_FILE"
 grep -q "$LABEL: dispatch command=0 status=handled responses=4" "$LOG_FILE"
 grep -q "talos> status" "$LOG_FILE"
 grep -q "talos: ok status" "$LOG_FILE"
-grep -q "talos: version phase10.1-kernel-builtins-v1" "$LOG_FILE"
+grep -q "talos: version phase10.2-kernel-builtins-v1" "$LOG_FILE"
 grep -q "talos: runtime-console runtime-console0" "$LOG_FILE"
 grep -q "talos: builtins kernel-backed" "$LOG_FILE"
 grep -q "$LABEL: line command=1 hex=73 74 61 74 75 73" "$LOG_FILE"
@@ -387,6 +449,38 @@ elif [ "$CAT_CWD_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: line command=6 hex=63 61 74 20 62 61 6e 6e 65 72 2e 74 78 74" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=6 status=unexpected-argument responses=1" "$LOG_FILE"
     grep -q "$LABEL: final participants=7 expected=7 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+elif [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+    grep -q "talos> waitpid" "$LOG_FILE"
+    grep -q "talos: waitpid no-child source=lifecycle-record" "$LOG_FILE"
+    grep -q "$LABEL: line command=3 hex=77 61 69 74 70 69 64" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=3 status=handled responses=1" "$LOG_FILE"
+    grep -q "talos> exec /bin/status42" "$LOG_FILE"
+    grep -q "talos: exec path=/bin/status42 source=vfs-open-read" "$LOG_FILE"
+    grep -Eq "talos: exec-lifecycle pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true" "$LOG_FILE"
+    grep -Eq "talos: waitpid pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -q "$LABEL: line command=5 hex=77 61 69 74 70 69 64" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=5 status=handled responses=1" "$LOG_FILE"
+    grep -q "$LABEL: line command=6 hex=77 61 69 74 70 69 64" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=6 status=handled responses=1" "$LOG_FILE"
+    grep -Eq "talos: last-process pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -q "$LABEL: line command=7 hex=6c 61 73 74 73 74 61 74 75 73" "$LOG_FILE"
+    grep -q "talos> exec /bin/init" "$LOG_FILE"
+    grep -Eq "talos: waitpid pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ path=/bin/init state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -q "$LABEL: line command=9 hex=77 61 69 74 70 69 64" "$LOG_FILE"
+    grep -q "talos> exec /bin/zero" "$LOG_FILE"
+    grep -Eq "talos: waitpid pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ path=/bin/zero state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -q "$LABEL: line command=11 hex=77 61 69 74 70 69 64" "$LOG_FILE"
+    grep -q "talos> exec /missing" "$LOG_FILE"
+    grep -q "talos: exec-not-found" "$LOG_FILE"
+    grep -q "talos> exec init" "$LOG_FILE"
+    grep -q "talos: exec-invalid-path" "$LOG_FILE"
+    grep -q "talos> exec /bin" "$LOG_FILE"
+    grep -q "talos> exec /etc/banner.txt" "$LOG_FILE"
+    grep -q "talos> exec /empty" "$LOG_FILE"
+    grep -q "talos: exec-not-executable" "$LOG_FILE"
+    grep -q "talos> cat /etc/banner.txt" "$LOG_FILE"
+    grep -q "^Talos initramfs fixture" "$LOG_FILE"
+    grep -q "$LABEL: final participants=18 expected=18 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
 elif [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
     grep -q "talos> exec /bin/status42" "$LOG_FILE"
     grep -q "talos: exec path=/bin/status42 source=vfs-open-read" "$LOG_FILE"

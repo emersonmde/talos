@@ -170,6 +170,19 @@ The post-review correction chain is:
     kernel-owned lifecycle/status record, before descriptor inheritance, PATH
     lookup, broad argv/envp, pipes, redirection, writable filesystem,
     hardware proof, networking, or SSH.
+18. minimal waitpid lifecycle observation core: accepted in
+    `phase10-minimal-waitpid-lifecycle-observation-core-20260603` with a
+    shell-visible `waitpid` observation command backed by the accepted
+    VFS-exec lifecycle/status record. `waitpid` reports no-child before any
+    successful exec, reports and consumes the completed `/bin/status42`
+    lifecycle/status record with status `0x2a`, reports no-child on a
+    second wait, and leaves `laststatus` as the non-consuming latest
+    lifecycle regression view. `/bin/init` and `/bin/zero` remain zero-status
+    wait controls; deterministic negative exec controls and descriptor-backed
+    `cat /etc/banner.txt` remain covered. This does not accept asynchronous
+    execution, multiple children, broad zombie-table policy, fork, signals,
+    descriptor inheritance expansion, PATH lookup, pipes, redirection,
+    writable filesystem, hardware proof, networking, or SSH.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -279,6 +292,19 @@ primitive is minimal wait/waitpid-style lifecycle observation backed by the
 accepted kernel-owned lifecycle/status record, before descriptor inheritance,
 PATH lookup, broad argv/envp, pipes, redirection, writable filesystem,
 hardware proof, networking, or SSH.
+
+The minimal waitpid lifecycle observation core is accepted in
+`phase10-minimal-waitpid-lifecycle-observation-core-20260603`. It adds the
+narrowest shell-visible wait surface for the current local execution frontier:
+`waitpid` consumes one completed child lifecycle/status record produced by the
+accepted descriptor-backed VFS exec path. The retained QEMU/substitute
+transcript proves no-child before exec, `/bin/status42` wait observation with
+status `0x2a`, deterministic already-consumed no-child behavior, `laststatus`
+as a non-consuming latest lifecycle view, zero-status waits for `/bin/init`
+and `/bin/zero`, negative exec controls, and descriptor-backed
+`cat /etc/banner.txt`. Multiple children, asynchronous execution, fork,
+signals, descriptor inheritance expansion, PATH lookup, pipes, redirection,
+writable filesystem, hardware proof, networking, and SSH remain deferred.
 
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning
