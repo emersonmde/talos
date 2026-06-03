@@ -7212,9 +7212,10 @@ pub fn run_local_serial_command_loop_proof() -> bool {
     let command_count = local_command_pi5_proof_command_count();
 
     crate::println!(
-        "{}: start command-count={} backend=runtime-console0/bcm2712-uart10-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed descriptor-backed-input=true descriptor-backed-output=true",
+        "{}: start command-count={} backend=runtime-console0/bcm2712-uart10-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins={} descriptor-backed-input=true descriptor-backed-output=true",
         local_command_pi5_proof_label(),
-        command_count
+        command_count,
+        crate::local_command_loop::LOCAL_COMMAND_BUILTIN_BOUNDARY
     );
     wait_uart10_empty_early_phase();
 

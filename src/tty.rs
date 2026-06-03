@@ -73,6 +73,7 @@ pub struct TtyLineDiscipline {
     echo_len: usize,
     controls: [Option<TtyControlEvent>; CONTROL_EVENT_CAPACITY],
     control_len: usize,
+    controls_truncated: bool,
     raw_bytes: usize,
     backspaces: usize,
     deletes: usize,
@@ -98,6 +99,7 @@ impl TtyLineDiscipline {
             echo_len: 0,
             controls: [None; CONTROL_EVENT_CAPACITY],
             control_len: 0,
+            controls_truncated: false,
             raw_bytes: 0,
             backspaces: 0,
             deletes: 0,
@@ -120,6 +122,10 @@ impl TtyLineDiscipline {
 
     pub fn controls(&self) -> &[Option<TtyControlEvent>] {
         &self.controls[..self.control_len]
+    }
+
+    pub const fn controls_truncated(&self) -> bool {
+        self.controls_truncated
     }
 
     pub const fn raw_bytes(&self) -> usize {
@@ -244,6 +250,8 @@ impl TtyLineDiscipline {
         if self.control_len < self.controls.len() {
             self.controls[self.control_len] = Some(event);
             self.control_len += 1;
+        } else {
+            self.controls_truncated = true;
         }
         TtyInputOutcome::Pending
     }
@@ -293,6 +301,10 @@ impl PollingTtyRxResult {
 
     pub fn controls(&self) -> &[Option<TtyControlEvent>] {
         self.discipline.controls()
+    }
+
+    pub const fn controls_truncated(&self) -> bool {
+        self.discipline.controls_truncated()
     }
 
     pub const fn raw_bytes(&self) -> usize {
@@ -527,6 +539,19 @@ mod tests {
         assert_eq!(tty.controls()[3].unwrap().name(), "unsupported-control");
         assert_eq!(tty.line(), b"");
         assert_eq!(tty.echo(), b"");
+    }
+
+    #[test_case]
+    fn line_discipline_marks_control_event_truncation() {
+        let mut tty = TtyLineDiscipline::canonical_lite();
+
+        for _ in 0..CONTROL_EVENT_CAPACITY {
+            assert_eq!(tty.process_byte(0x15), TtyInputOutcome::Pending);
+        }
+        assert_eq!(tty.process_byte(0x04), TtyInputOutcome::Pending);
+
+        assert_eq!(tty.controls().len(), CONTROL_EVENT_CAPACITY);
+        assert!(tty.controls_truncated());
     }
 
     #[test_case]

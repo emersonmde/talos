@@ -6,6 +6,7 @@ use crate::{
 };
 
 pub const LOCAL_COMMAND_LOOP_VERSION: &str = "phase10.1-kernel-builtins-v1";
+pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = "kernel-backed-regression-control";
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 7;
 
@@ -113,21 +114,6 @@ where
     }
 }
 
-pub struct DescriptorBackedLocalCommandSink<
-    'a,
-    B,
-    const OWNER_CAPACITY: usize,
-    const DESCRIPTOR_CAPACITY: usize,
-> where
-    B: ConsoleBackend,
-{
-    descriptor_store: posix::ProcessDescriptorStore<OWNER_CAPACITY, DESCRIPTOR_CAPACITY>,
-    current_owner: Option<ProcessOwnerId>,
-    output_descriptor: usize,
-    console_backend: &'a mut B,
-    current_directory: LocalCommandDirectory,
-}
-
 pub struct DescriptorBackedLocalCommandIo<
     I,
     O,
@@ -144,24 +130,6 @@ pub struct DescriptorBackedLocalCommandIo<
     input_backend: I,
     output_backend: O,
     current_directory: LocalCommandDirectory,
-}
-
-impl<'a, B> DescriptorBackedLocalCommandSink<'a, B, 1, 4>
-where
-    B: ConsoleBackend,
-{
-    pub fn new_inherited_stdio(console_backend: &'a mut B) -> Result<Self, posix::PosixError> {
-        let current_owner = ProcessOwnerId::new(1).expect("local command owner id is nonzero");
-        let mut descriptor_store = posix::ProcessDescriptorStore::<1, 4>::new_empty();
-        descriptor_store.create_owner_with_inherited_stdio(current_owner)?;
-        Ok(Self {
-            descriptor_store,
-            current_owner: Some(current_owner),
-            output_descriptor: posix::STDOUT_FD,
-            console_backend,
-            current_directory: LocalCommandDirectory::Root,
-        })
-    }
 }
 
 impl<I, O> DescriptorBackedLocalCommandIo<I, O, 1, 4>
@@ -206,48 +174,6 @@ where
             return None;
         }
         self.input_backend.poll_read_byte()
-    }
-}
-
-impl<B, const OWNER_CAPACITY: usize, const DESCRIPTOR_CAPACITY: usize> LocalCommandSink
-    for DescriptorBackedLocalCommandSink<'_, B, OWNER_CAPACITY, DESCRIPTOR_CAPACITY>
-where
-    B: ConsoleBackend,
-{
-    fn write_command_str(&mut self, text: &str) -> Result<(), LocalCommandWriteError> {
-        let descriptor_table = self
-            .descriptor_store
-            .current_descriptor_table(self.current_owner)
-            .map_err(|_| LocalCommandWriteError::BackendWriteFailed)?;
-        posix::write_kernel_bytes_to_descriptor_console(
-            descriptor_table,
-            self.output_descriptor,
-            text.as_bytes(),
-            self.console_backend,
-        )
-        .map(|_| ())
-        .map_err(|_| LocalCommandWriteError::BackendWriteFailed)
-    }
-
-    fn stdio_descriptor_kind(&self, descriptor: usize) -> Option<&'static str> {
-        self.descriptor_store
-            .current_descriptor_table(self.current_owner)
-            .ok()
-            .and_then(|table| table.get(descriptor).ok())
-            .map(|entry| entry.object().kind().name())
-    }
-
-    fn descriptor_backed_output(&self) -> bool {
-        true
-    }
-
-    fn current_directory(&self) -> LocalCommandDirectory {
-        self.current_directory
-    }
-
-    fn set_current_directory(&mut self, directory: LocalCommandDirectory) -> bool {
-        self.current_directory = directory;
-        true
     }
 }
 
@@ -322,6 +248,7 @@ pub struct LocalCommandCycleResult {
     deletes: usize,
     truncated: bool,
     controls: usize,
+    controls_truncated: bool,
 }
 
 impl LocalCommandCycleResult {
@@ -359,6 +286,10 @@ impl LocalCommandCycleResult {
 
     pub const fn controls(&self) -> usize {
         self.controls
+    }
+
+    pub const fn controls_truncated(&self) -> bool {
+        self.controls_truncated
     }
 }
 
@@ -430,6 +361,7 @@ fn dispatch_completed_line(
         response_lines = responses;
     } else if !input_result.passed()
         || input_result.truncated()
+        || input_result.controls_truncated()
         || has_unsupported_controls(input_result.controls())
     {
         status = LocalCommandStatus::InputError(input_result.outcome());
@@ -459,6 +391,7 @@ fn dispatch_completed_line(
         deletes: input_result.deletes(),
         truncated: input_result.truncated(),
         controls: input_result.controls().len(),
+        controls_truncated: input_result.controls_truncated(),
     })
 }
 
@@ -531,7 +464,11 @@ fn dispatch_local_command(
                 responses,
                 &["talos: runtime-console ", DEFAULT_RUNTIME_CONSOLE.name],
             )?;
-            write_line(sink, responses, "talos: builtins kernel-backed")?;
+            write_parts_line(
+                sink,
+                responses,
+                &["talos: builtins ", LOCAL_COMMAND_BUILTIN_BOUNDARY],
+            )?;
             write_line(
                 sink,
                 responses,
@@ -871,7 +808,7 @@ fn copy_line(line: &[u8]) -> [u8; CANONICAL_LINE_CAPACITY] {
 
 #[cfg(test)]
 mod tests {
-    use crate::tty::TtyControlEvent;
+    use crate::tty::{CONTROL_EVENT_CAPACITY, TtyControlEvent};
 
     use super::*;
 
@@ -1388,6 +1325,35 @@ talos> talos> talos: not-found\n"
         assert_eq!(result.raw_bytes(), 10);
         assert_eq!(result.controls(), 1);
         assert_eq!(backend.as_str(), "talos> talos: line-killed\n/\n");
+    }
+
+    #[test_case]
+    fn local_command_loop_rejects_truncated_control_history() {
+        let input = ScriptedInput::new(
+            [
+                0x15, 0x15, 0x15, 0x15, 0x15, 0x15, 0x15, 0x15, 0x15, b'p', b'w', b'd', b'\r', 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            ],
+            13,
+        );
+        let mut backend = CaptureSink::new();
+        let result = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            run_one_descriptor_backed_serial_command(&mut io).unwrap()
+        };
+
+        assert_eq!(result.line(), b"pwd");
+        assert_eq!(
+            result.status(),
+            LocalCommandStatus::InputError(PollingTtyRxOutcome::LineComplete)
+        );
+        assert_eq!(result.controls(), CONTROL_EVENT_CAPACITY);
+        assert!(result.controls_truncated());
+        assert_eq!(
+            backend.as_str(),
+            "talos> talos: input-error line-complete\n"
+        );
     }
 
     #[test_case]

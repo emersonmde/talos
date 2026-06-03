@@ -13235,9 +13235,10 @@ pub fn run_local_serial_command_loop_smoke() -> bool {
     let command_count = local_command_loop_smoke_command_count();
 
     crate::println!(
-        "{}: start command-count={} backend=runtime-console0/qemu-virt-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed descriptor-backed-input=true descriptor-backed-output=true",
+        "{}: start command-count={} backend=runtime-console0/qemu-virt-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins={} descriptor-backed-input=true descriptor-backed-output=true",
         local_command_loop_smoke_label(),
         command_count,
+        crate::local_command_loop::LOCAL_COMMAND_BUILTIN_BOUNDARY,
     );
 
     let mut input = console();
