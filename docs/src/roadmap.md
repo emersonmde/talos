@@ -61,9 +61,16 @@ The post-review correction chain is:
    `cat /etc/banner.txt` reading through `TalosOpen`/`TalosRead`, a
    descriptor-backed initramfs regular-file description, userspace-memory copy,
    cleanup of the opened descriptor/file-description pair, and QEMU/substitute
-   evidence ending in `qemu-local-cat-banner-complete` PASS. Broader shell
-   execution, external command lookup, argv/envp, pipes, redirection, writable
-   filesystem, and Pi 5 proof remain deferred.
+   evidence ending in `qemu-local-cat-banner-complete` PASS;
+7. first shell-visible execution boundary backed by the accepted VFS/userspace
+   layers: accepted in `phase10-shell-vfs-exec-boundary-20260603` with
+   `exec /bin/init` reading `/bin/init` through the descriptor-backed
+   `TalosOpen`/`TalosRead` path, parsing those bytes with the program loader,
+   building process-install/address-space/materialization/initial-stack/launch
+   records, and retaining QEMU/substitute evidence ending in
+   `qemu-local-shell-vfs-exec-complete` PASS. Process lifecycle, exit/status
+   handoff, external command lookup, argv/envp, PATH, pipes, redirection,
+   writable filesystem, and Pi 5 proof remain deferred.
 
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning

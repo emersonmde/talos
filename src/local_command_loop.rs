@@ -1,5 +1,13 @@
 use crate::{
+    initial_process_launch::{self, InitialProcessLaunchRequest},
+    initial_user_stack::{self, InitialUserStackLeaseSource, InitialUserStackRequest},
     initramfs, posix,
+    process_address_space::{self, ProcessAddressSpaceId, ProcessAddressSpaceLeaseSource},
+    process_install,
+    process_page_table_materialization::{
+        self, ProcessMaterializationRequest, ProcessPageTableMaterializationLeaseSource,
+    },
+    program_loader,
     runtime_console::{self, ConsoleBackend, ConsoleInputBackend, DEFAULT_RUNTIME_CONSOLE},
     scheduler::ProcessOwnerId,
     syscall,
@@ -7,12 +15,16 @@ use crate::{
 };
 
 pub const LOCAL_COMMAND_LOOP_VERSION: &str = "phase10.1-kernel-builtins-v1";
-pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = "kernel-backed-regression-control+vfs-syscall-cat";
+pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str =
+    "kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary";
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
-pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 7;
+pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
 const LOCAL_COMMAND_FILE_USER_BASE: u64 = 0x0000_0000_0011_0000;
 const LOCAL_COMMAND_FILE_READ_OFFSET: usize = 0x40;
 const LOCAL_COMMAND_FILE_USER_MEMORY_LEN: usize = 128;
+const LOCAL_COMMAND_EXEC_READ_OFFSET: usize = 0x80;
+const LOCAL_COMMAND_EXEC_USER_MEMORY_LEN: usize = 1024;
+const LOCAL_COMMAND_EXEC_ADDRESS_SPACE_ID: u64 = 0x0010_0001;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum LocalCommandDirectory {
@@ -85,6 +97,28 @@ pub enum LocalCommandFileReadError {
     SyscallFailed,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum LocalCommandExecError {
+    NotFound,
+    NotExecutable,
+    NotSupported,
+    SyscallFailed,
+    LaunchPipelineFailed,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LocalCommandExecSummary {
+    source_len: usize,
+    source_digest: u64,
+    entry: u64,
+    segments: usize,
+    address_space_id: u64,
+    materialization_id: u64,
+    initial_sp: u64,
+    launch_boundary: &'static str,
+    stack_boundary: &'static str,
+}
+
 pub trait LocalCommandSink {
     fn write_command_str(&mut self, text: &str) -> Result<(), LocalCommandWriteError>;
 
@@ -118,6 +152,13 @@ pub trait LocalCommandSink {
         _output: &mut [u8],
     ) -> Result<usize, LocalCommandFileReadError> {
         Err(LocalCommandFileReadError::NotSupported)
+    }
+
+    fn exec_vfs_program(
+        &mut self,
+        _path: &[u8],
+    ) -> Result<LocalCommandExecSummary, LocalCommandExecError> {
+        Err(LocalCommandExecError::NotSupported)
     }
 }
 
@@ -255,14 +296,133 @@ where
         path: &[u8],
         output: &mut [u8],
     ) -> Result<usize, LocalCommandFileReadError> {
-        if path.len() > LOCAL_COMMAND_FILE_READ_OFFSET
-            || LOCAL_COMMAND_FILE_READ_OFFSET + output.len() > LOCAL_COMMAND_FILE_USER_MEMORY_LEN
-        {
+        self.read_initramfs_file_via_syscall_with_memory::<LOCAL_COMMAND_FILE_USER_MEMORY_LEN>(
+            path,
+            output,
+            LOCAL_COMMAND_FILE_READ_OFFSET,
+        )
+    }
+
+    fn exec_vfs_program(
+        &mut self,
+        path: &[u8],
+    ) -> Result<LocalCommandExecSummary, LocalCommandExecError> {
+        let fs = initramfs::phase8_readonly_initramfs_fixture();
+        if path != initramfs::PHASE8_INIT_PATH {
+            return match fs.lookup_default(path) {
+                Ok(node) if node.metadata().kind() == initramfs::VfsNodeKind::RegularFile => {
+                    Err(LocalCommandExecError::NotExecutable)
+                }
+                _ => Err(LocalCommandExecError::NotFound),
+            };
+        }
+
+        let mut program_bytes = [0u8; initramfs::PHASE8_INIT_ELF_LEN];
+        let bytes_read = self
+            .read_initramfs_file_via_syscall_with_memory::<LOCAL_COMMAND_EXEC_USER_MEMORY_LEN>(
+                path,
+                &mut program_bytes,
+                LOCAL_COMMAND_EXEC_READ_OFFSET,
+            )
+            .map_err(|_| LocalCommandExecError::SyscallFailed)?;
+        let image = program_loader::plan_elf64_aarch64_image(
+            initramfs::PHASE8_INIT_PATH,
+            program_loader::PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+            &program_bytes[..bytes_read],
+        )
+        .map_err(|_| LocalCommandExecError::NotExecutable)?;
+        let install_plan = process_install::plan_process_image_install(image)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let owner = self
+            .current_owner
+            .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
+        let mut address_source = ProcessAddressSpaceLeaseSource::for_plan(install_plan);
+        let address_space = process_address_space::install_process_address_space(
+            install_plan,
+            ProcessAddressSpaceId::new(LOCAL_COMMAND_EXEC_ADDRESS_SPACE_ID)
+                .ok_or(LocalCommandExecError::LaunchPipelineFailed)?,
+            Some(owner),
+            &mut address_source,
+        )
+        .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let mut materialization_source =
+            ProcessPageTableMaterializationLeaseSource::for_address_space(address_space);
+        let materialization = process_page_table_materialization::materialize_process_page_tables(
+            image,
+            install_plan,
+            address_space,
+            ProcessMaterializationRequest::DescriptorImageOnly,
+            &mut materialization_source,
+        )
+        .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let launch_plan = initial_process_launch::prepare_initial_process_launch(
+            image,
+            install_plan,
+            address_space,
+            materialization,
+            InitialProcessLaunchRequest::PreparePlanOnly,
+        )
+        .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let mut stack_source = InitialUserStackLeaseSource::for_initial_stack();
+        let stack_plan = initial_user_stack::plan_initial_user_stack(
+            image,
+            install_plan,
+            address_space,
+            materialization,
+            launch_plan,
+            InitialUserStackRequest::PlanOnly,
+            &mut stack_source,
+        )
+        .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+
+        Ok(LocalCommandExecSummary {
+            source_len: image.source_len(),
+            source_digest: image.source_digest(),
+            entry: image.entry(),
+            segments: image.segment_count(),
+            address_space_id: address_space.id().raw(),
+            materialization_id: materialization.id(),
+            initial_sp: stack_plan.layout().initial_sp(),
+            launch_boundary: launch_plan.boundary_identity(),
+            stack_boundary: stack_plan.boundary_identity(),
+        })
+    }
+}
+
+impl<I, O, const OWNER_CAPACITY: usize, const DESCRIPTOR_CAPACITY: usize>
+    DescriptorBackedLocalCommandIo<I, O, OWNER_CAPACITY, DESCRIPTOR_CAPACITY>
+where
+    I: ConsoleInputBackend,
+    O: ConsoleBackend,
+{
+    fn close_regular_file_descriptor(
+        &mut self,
+        descriptor: usize,
+    ) -> Result<(), LocalCommandFileReadError> {
+        let entry = self
+            .descriptor_store
+            .close_current_descriptor(self.current_owner, descriptor)
+            .map_err(|_| LocalCommandFileReadError::SyscallFailed)?;
+        if entry.object().kind() == posix::DescriptorObjectKind::RegularFile {
+            self.read_only_files
+                .remove(entry.object().reference())
+                .map_err(|_| LocalCommandFileReadError::SyscallFailed)?;
+        }
+        Ok(())
+    }
+
+    fn read_initramfs_file_via_syscall_with_memory<const USER_MEMORY_LEN: usize>(
+        &mut self,
+        path: &[u8],
+        output: &mut [u8],
+        read_offset: usize,
+    ) -> Result<usize, LocalCommandFileReadError> {
+        if path.len() > read_offset || read_offset + output.len() > USER_MEMORY_LEN {
             return Err(LocalCommandFileReadError::SyscallFailed);
         }
 
-        let mut user_memory = [0u8; LOCAL_COMMAND_FILE_USER_MEMORY_LEN];
-        let mut scratch = [0u8; LOCAL_COMMAND_FILE_USER_MEMORY_LEN];
+        let mut user_memory = [0u8; USER_MEMORY_LEN];
+        let mut scratch = [0u8; USER_MEMORY_LEN];
         user_memory[..path.len()].copy_from_slice(path);
         let mappings = [posix::UserMapping::new(
             LOCAL_COMMAND_FILE_USER_BASE,
@@ -299,7 +459,7 @@ where
             syscall::TALOS_READ_SYSCALL,
             syscall::SyscallArguments::new([
                 descriptor as u64,
-                LOCAL_COMMAND_FILE_USER_BASE + LOCAL_COMMAND_FILE_READ_OFFSET as u64,
+                LOCAL_COMMAND_FILE_USER_BASE + read_offset as u64,
                 output.len() as u64,
                 0,
                 0,
@@ -321,37 +481,12 @@ where
 
         match (bytes_read, cleanup) {
             (Ok(bytes_read), Ok(())) => {
-                output[..bytes_read].copy_from_slice(
-                    &user_memory[LOCAL_COMMAND_FILE_READ_OFFSET
-                        ..LOCAL_COMMAND_FILE_READ_OFFSET + bytes_read],
-                );
+                output[..bytes_read]
+                    .copy_from_slice(&user_memory[read_offset..read_offset + bytes_read]);
                 Ok(bytes_read)
             }
             _ => Err(LocalCommandFileReadError::SyscallFailed),
         }
-    }
-}
-
-impl<I, O, const OWNER_CAPACITY: usize, const DESCRIPTOR_CAPACITY: usize>
-    DescriptorBackedLocalCommandIo<I, O, OWNER_CAPACITY, DESCRIPTOR_CAPACITY>
-where
-    I: ConsoleInputBackend,
-    O: ConsoleBackend,
-{
-    fn close_regular_file_descriptor(
-        &mut self,
-        descriptor: usize,
-    ) -> Result<(), LocalCommandFileReadError> {
-        let entry = self
-            .descriptor_store
-            .close_current_descriptor(self.current_owner, descriptor)
-            .map_err(|_| LocalCommandFileReadError::SyscallFailed)?;
-        if entry.object().kind() == posix::DescriptorObjectKind::RegularFile {
-            self.read_only_files
-                .remove(entry.object().reference())
-                .map_err(|_| LocalCommandFileReadError::SyscallFailed)?;
-        }
-        Ok(())
     }
 }
 
@@ -565,7 +700,7 @@ fn dispatch_local_command(
             write_line(
                 sink,
                 responses,
-                "talos: commands help status stdio pwd echo ls cat cd",
+                "talos: commands help status stdio pwd echo ls cat cd exec",
             )?;
             write_line(
                 sink,
@@ -603,7 +738,7 @@ fn dispatch_local_command(
             write_line(
                 sink,
                 responses,
-                "talos: commands help status stdio pwd echo ls cat cd",
+                "talos: commands help status stdio pwd echo ls cat cd exec",
             )?;
             Ok(LocalCommandStatus::Handled)
         }
@@ -702,6 +837,40 @@ fn dispatch_local_command(
                 }
             }
             Ok(LocalCommandStatus::Handled)
+        }
+        "exec" => {
+            let Some(arguments) = command.arguments else {
+                write_line(sink, responses, "talos: unexpected-argument")?;
+                return Ok(LocalCommandStatus::UnexpectedArgument);
+            };
+            match arguments {
+                "/bin/init" => match sink.exec_vfs_program(initramfs::PHASE8_INIT_PATH) {
+                    Ok(summary) => {
+                        write_exec_summary(sink, responses, summary)?;
+                        Ok(LocalCommandStatus::Handled)
+                    }
+                    Err(LocalCommandExecError::NotExecutable) => {
+                        write_line(sink, responses, "talos: exec-not-executable")?;
+                        Ok(LocalCommandStatus::UnexpectedArgument)
+                    }
+                    Err(LocalCommandExecError::NotFound) => {
+                        write_line(sink, responses, "talos: exec-not-found")?;
+                        Ok(LocalCommandStatus::UnexpectedArgument)
+                    }
+                    Err(_) => {
+                        write_line(sink, responses, "talos: exec-error")?;
+                        Ok(LocalCommandStatus::UnexpectedArgument)
+                    }
+                },
+                "/etc/banner.txt" => {
+                    write_line(sink, responses, "talos: exec-not-executable")?;
+                    Ok(LocalCommandStatus::UnexpectedArgument)
+                }
+                _ => {
+                    write_line(sink, responses, "talos: exec-not-found")?;
+                    Ok(LocalCommandStatus::UnexpectedArgument)
+                }
+            }
         }
         _ => {
             write_line(sink, responses, "talos: unknown-command")?;
@@ -932,6 +1101,120 @@ fn write_file_contents(
     Ok(())
 }
 
+fn write_exec_summary(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    summary: LocalCommandExecSummary,
+) -> Result<(), LocalCommandCycleError> {
+    write_line(
+        sink,
+        response_lines,
+        "talos: exec path=/bin/init source=vfs-open-read",
+    )?;
+    write_exec_source_line(sink, response_lines, summary)?;
+    write_exec_entry_line(sink, response_lines, summary)?;
+    write_exec_launch_line(sink, response_lines, summary)?;
+    write_line(
+        sink,
+        response_lines,
+        "talos: exec-signal lower-aarch64-svc-launch-boundary-equivalent",
+    )
+}
+
+fn write_exec_source_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    summary: LocalCommandExecSummary,
+) -> Result<(), LocalCommandCycleError> {
+    write_str_part(sink, "talos: exec-source bytes=")?;
+    write_hex_usize_part(sink, summary.source_len)?;
+    write_str_part(sink, " digest=")?;
+    write_hex_u64_part(sink, summary.source_digest)?;
+    finish_dynamic_line(sink, response_lines)
+}
+
+fn write_exec_entry_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    summary: LocalCommandExecSummary,
+) -> Result<(), LocalCommandCycleError> {
+    write_str_part(sink, "talos: exec-loader fixture=")?;
+    write_str_part(sink, program_loader::PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY)?;
+    write_str_part(sink, " entry=")?;
+    write_hex_u64_part(sink, summary.entry)?;
+    write_str_part(sink, " segments=")?;
+    write_hex_usize_part(sink, summary.segments)?;
+    finish_dynamic_line(sink, response_lines)
+}
+
+fn write_exec_launch_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    summary: LocalCommandExecSummary,
+) -> Result<(), LocalCommandCycleError> {
+    write_str_part(sink, "talos: exec-launch launch-boundary=")?;
+    write_str_part(sink, summary.launch_boundary)?;
+    write_str_part(sink, " stack-boundary=")?;
+    write_str_part(sink, summary.stack_boundary)?;
+    write_str_part(sink, " address-space=")?;
+    write_hex_u64_part(sink, summary.address_space_id)?;
+    write_str_part(sink, " materialization=")?;
+    write_hex_u64_part(sink, summary.materialization_id)?;
+    write_str_part(sink, " initial-sp=")?;
+    write_hex_u64_part(sink, summary.initial_sp)?;
+    finish_dynamic_line(sink, response_lines)
+}
+
+fn write_str_part(
+    sink: &mut impl LocalCommandSink,
+    text: &str,
+) -> Result<(), LocalCommandCycleError> {
+    sink.write_command_str(text)
+        .map_err(|_| LocalCommandCycleError::ResponseWriteFailed)
+}
+
+fn write_hex_usize_part(
+    sink: &mut impl LocalCommandSink,
+    value: usize,
+) -> Result<(), LocalCommandCycleError> {
+    write_hex_u64_part(sink, value as u64)
+}
+
+fn write_hex_u64_part(
+    sink: &mut impl LocalCommandSink,
+    value: u64,
+) -> Result<(), LocalCommandCycleError> {
+    let mut bytes = [0u8; 18];
+    bytes[0] = b'0';
+    bytes[1] = b'x';
+    let mut shift = 60usize;
+    let mut index = 2usize;
+    while index < bytes.len() {
+        let digit = ((value >> shift) & 0xf) as u8;
+        bytes[index] = match digit {
+            0..=9 => b'0' + digit,
+            _ => b'a' + (digit - 10),
+        };
+        if shift == 0 {
+            break;
+        }
+        shift -= 4;
+        index += 1;
+    }
+    let text =
+        core::str::from_utf8(&bytes).map_err(|_| LocalCommandCycleError::ResponseWriteFailed)?;
+    write_str_part(sink, text)
+}
+
+fn finish_dynamic_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+) -> Result<(), LocalCommandCycleError> {
+    write_str_part(sink, "\n")?;
+    *response_lines += 1;
+    Ok(())
+}
+
 fn copy_line(line: &[u8]) -> [u8; CANONICAL_LINE_CAPACITY] {
     let mut copy = [0; CANONICAL_LINE_CAPACITY];
     copy[..line.len()].copy_from_slice(line);
@@ -1043,11 +1326,11 @@ mod tests {
         assert_eq!(result.response_lines(), 4);
         assert_eq!(result.raw_bytes(), 5);
         assert_eq!(result.controls(), 0);
-        assert_eq!(DEFAULT_LOCAL_COMMAND_COUNT, 7);
+        assert_eq!(DEFAULT_LOCAL_COMMAND_COUNT, 8);
         assert_eq!(
             sink.as_str(),
             "talos> talos: ok help\n\
-	talos: commands help status stdio pwd echo ls cat cd\n\
+	talos: commands help status stdio pwd echo ls cat cd exec\n\
 	talos: echo forms echo hello; echo local serial works\n\
 	talos: editing backspace delete ctrl-c ctrl-u\n"
         );
@@ -1344,6 +1627,62 @@ etc\n"
             backend.as_str(),
             "talos> Talos initramfs fixture\n\
 talos> Talos initramfs fixture\n"
+        );
+    }
+
+    #[test_case]
+    fn local_command_loop_execs_init_through_vfs_launch_boundary() {
+        let input = ScriptedInput::new(*b"exec /bin/init\r", 15);
+        let mut backend = CaptureSink::new();
+        let result = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            run_one_descriptor_backed_serial_command(&mut io).unwrap()
+        };
+        let output = backend.as_str();
+
+        assert_eq!(result.line(), b"exec /bin/init");
+        assert_eq!(result.status(), LocalCommandStatus::Handled);
+        assert_eq!(result.response_lines(), 5);
+        assert!(output.contains("talos> talos: exec path=/bin/init source=vfs-open-read\n"));
+        assert!(output.contains("talos: exec-source bytes=0x0000000000000204 digest=0x"));
+        assert!(output.contains(
+            "talos: exec-loader fixture=phase8-program-loader-elf64-aarch64-v1 entry=0x"
+        ));
+        assert!(output.contains(
+            "talos: exec-launch launch-boundary=phase8-initial-process-launch-plan-v1 stack-boundary=phase8-initial-user-stack-plan-v1"
+        ));
+        assert!(
+            output.contains("talos: exec-signal lower-aarch64-svc-launch-boundary-equivalent\n")
+        );
+    }
+
+    #[test_case]
+    fn local_command_loop_rejects_missing_and_non_executable_exec_targets() {
+        let input = ScriptedInput::new(*b"exec /missing\rexec /etc/banner.txt\r", 35);
+        let mut backend = CaptureSink::new();
+        let (missing, non_executable) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+
+        assert_eq!(missing.line(), b"exec /missing");
+        assert_eq!(missing.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(missing.response_lines(), 1);
+        assert_eq!(non_executable.line(), b"exec /etc/banner.txt");
+        assert_eq!(
+            non_executable.status(),
+            LocalCommandStatus::UnexpectedArgument
+        );
+        assert_eq!(non_executable.response_lines(), 1);
+        assert_eq!(
+            backend.as_str(),
+            "talos> talos: exec-not-found\n\
+talos> talos: exec-not-executable\n"
         );
     }
 
