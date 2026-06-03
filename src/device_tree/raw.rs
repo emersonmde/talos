@@ -57,7 +57,7 @@ pub(super) unsafe fn read_be_u64_at(start: usize, offset: usize, limit: usize) -
         return None;
     }
 
-    let bytes = (start + offset) as *const u8;
+    let bytes = checked_address(start, offset)? as *const u8;
     let value = ((unsafe { core::ptr::read_volatile(bytes) } as u64) << 56)
         | ((unsafe { core::ptr::read_volatile(bytes.add(1)) } as u64) << 48)
         | ((unsafe { core::ptr::read_volatile(bytes.add(2)) } as u64) << 40)
@@ -105,11 +105,12 @@ impl FdtStructCursor {
         let start = self.offset;
         let mut end = start;
         while end < self.end {
-            let byte = unsafe { core::ptr::read_volatile((self.start + end) as *const u8) };
+            let byte =
+                unsafe { core::ptr::read_volatile(checked_address(self.start, end)? as *const u8) };
             if byte == 0 {
-                let name = unsafe {
-                    core::slice::from_raw_parts((self.start + start) as *const u8, end - start)
-                };
+                let name_start = checked_address(self.start, start)?;
+                let name =
+                    unsafe { core::slice::from_raw_parts(name_start as *const u8, end - start) };
                 self.offset = align4(end.checked_add(1)?)?;
                 return Some(name);
             }
@@ -131,8 +132,8 @@ impl FdtStructCursor {
             return None;
         }
 
-        let value =
-            unsafe { core::slice::from_raw_parts((self.start + value_start) as *const u8, len) };
+        let value_address = checked_address(self.start, value_start)?;
+        let value = unsafe { core::slice::from_raw_parts(value_address as *const u8, len) };
         self.offset = align4(value_end)?;
 
         Some(FdtProperty { name_offset, value })
@@ -144,7 +145,7 @@ impl FdtStructCursor {
             return None;
         }
 
-        let bytes = (self.start + offset) as *const u8;
+        let bytes = checked_address(self.start, offset)? as *const u8;
         let value = ((unsafe { core::ptr::read_volatile(bytes) } as u32) << 24)
             | ((unsafe { core::ptr::read_volatile(bytes.add(1)) } as u32) << 16)
             | ((unsafe { core::ptr::read_volatile(bytes.add(2)) } as u32) << 8)
@@ -155,6 +156,10 @@ impl FdtStructCursor {
 
 pub(super) fn checked_block_start(physical_address: usize, offset: u32) -> Option<usize> {
     physical_address.checked_add(offset as usize)
+}
+
+fn checked_address(start: usize, offset: usize) -> Option<usize> {
+    start.checked_add(offset)
 }
 
 pub(super) fn validate_fdt_block(header: &FdtHeader, offset: u32, size: usize) -> Option<()> {
@@ -186,10 +191,11 @@ pub(super) unsafe fn fdt_string_at(
 
     let mut end = offset;
     while end < size {
-        let byte = unsafe { core::ptr::read_volatile((start + end) as *const u8) };
+        let byte = unsafe { core::ptr::read_volatile(checked_address(start, end)? as *const u8) };
         if byte == 0 {
+            let string_start = checked_address(start, offset)?;
             return Some(unsafe {
-                core::slice::from_raw_parts((start + offset) as *const u8, end - offset)
+                core::slice::from_raw_parts(string_start as *const u8, end - offset)
             });
         }
         end = end.checked_add(1)?;

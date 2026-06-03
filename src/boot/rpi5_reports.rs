@@ -162,7 +162,7 @@ pub(crate) fn write_rpi5_memory_layout_dtb_line(dtb: memory_map::FdtBlobRange) {
     target::console::write_static("talos: memory layout: dtb=");
     target::console::write_hex_u64(dtb.address);
     target::console::write_static("..");
-    target::console::write_hex_u64(dtb.address + dtb.size);
+    write_rpi5_checked_end_address(dtb.address, dtb.size);
     target::console::write_static(" size=");
     target::console::write_hex_u64(dtb.size);
     target::console::write_static("\n");
@@ -272,15 +272,22 @@ pub(crate) fn write_rpi5_translation_table_layout_line(
 pub(crate) fn write_rpi5_translation_table_layout_post_allocator_line(
     reservation: memory_map::EarlyBootstrapPageReservation,
 ) {
-    let table_bytes = memory_map::EARLY_TRANSLATION_TABLE_PAGES * reservation.page_size;
-    let table_end = reservation.start + table_bytes;
-    println!(
-        "talos: translation tables: start={:#x} end={:#x} pages={:#x} page_size={:#x} kind=layout-only phase=post-allocator",
-        reservation.start,
-        table_end,
-        memory_map::EARLY_TRANSLATION_TABLE_PAGES,
-        reservation.page_size,
-    );
+    if let Some(table_end) = memory_map::EARLY_TRANSLATION_TABLE_PAGES
+        .checked_mul(reservation.page_size)
+        .and_then(|table_bytes| reservation.start.checked_add(table_bytes))
+    {
+        println!(
+            "talos: translation tables: start={:#x} end={:#x} pages={:#x} page_size={:#x} kind=layout-only phase=post-allocator",
+            reservation.start,
+            table_end,
+            memory_map::EARLY_TRANSLATION_TABLE_PAGES,
+            reservation.page_size,
+        );
+    } else {
+        target::console::write_static(
+            "talos: translation tables: unavailable phase=post-allocator\n",
+        );
+    }
     target::rpi5::wait_uart10_empty_early_phase();
 }
 
@@ -539,5 +546,14 @@ pub(crate) fn write_rpi5_bool(value: bool) {
         target::console::write_static("true");
     } else {
         target::console::write_static("false");
+    }
+}
+
+#[cfg(all(not(test), talos_target_rpi5_bcm2712))]
+fn write_rpi5_checked_end_address(start: u64, size: u64) {
+    if let Some(end) = start.checked_add(size) {
+        target::console::write_hex_u64(end);
+    } else {
+        target::console::write_static("overflow");
     }
 }
