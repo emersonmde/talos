@@ -1,0 +1,8 @@
+{
+  "control_pass": false,
+  "reason": "control-fetched-by-tftp-but-no-fresh-talos-prompt-or-pass-on-serial",
+  "archive_sha256": "1f986f73b793b269e5b7aa0cf34cfc4cbf3b58358b0d9b409181e762b986919e",
+  "kernel_size": 110624,
+  "tftp_cursor_start": 4076599,
+  "serial_cursor_start": 4066157
+}

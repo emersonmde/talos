@@ -1,0 +1,12 @@
+task=phase10-pi5-local-cat-cwd-single-runner-proof-rerun-20260603
+classification=blocked-control-inconclusive
+preflight=pass
+control_pass=false
+control_tftp_fetch=true
+control_serial_fresh_bytes=2
+candidate_run=false
+runtime_changes=false
+acceptance_changed=false
+restored_snapshot=pre-cat-cwd-single-runner-20260603T035710Z
+post_restore_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+hardware_lock_released=true

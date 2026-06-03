@@ -1,0 +1,12 @@
+{
+  "task": "phase10-pi5-local-cat-cwd-single-runner-proof-rerun-20260603",
+  "status": "blocked-control-inconclusive",
+  "classification": "blocked-control-inconclusive",
+  "reason": "Accepted ls-cwd control archive was fetched by TFTP with expected 110624-byte kernel, but fresh serial evidence from the pre-power cursor advanced only by NUL/space and retained no Talos prompt, ls-cwd transcript, completion, or PASS. Cat-cwd candidate was not run.",
+  "control_evidence": "tasks/evidence/2026-06-03-pi5-local-cat-cwd-single-runner-proof-rerun/local1-ls-cwd-control",
+  "cleanup_evidence": "tasks/evidence/2026-06-03-pi5-local-cat-cwd-single-runner-proof-rerun/cleanup",
+  "restored_snapshot": "pre-cat-cwd-single-runner-20260603T035710Z",
+  "runtime_changes": false,
+  "acceptance_changed": false,
+  "hardware_lock_released": true
+}

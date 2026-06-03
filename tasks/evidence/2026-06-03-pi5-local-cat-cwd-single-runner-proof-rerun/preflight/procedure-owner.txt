@@ -1,0 +1,6 @@
+task=phase10-pi5-local-cat-cwd-single-runner-proof-rerun-20260603
+procedure_owner_pid=2368809
+shell_pid=2368809
+ppid=269036
+cwd=/opt/strider/openclaw/current/workspace/projects/talos
+evidence_dir=tasks/evidence/2026-06-03-pi5-local-cat-cwd-single-runner-proof-rerun

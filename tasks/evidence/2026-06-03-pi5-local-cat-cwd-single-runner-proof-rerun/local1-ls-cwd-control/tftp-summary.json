@@ -1,0 +1,21 @@
+{
+  "event_count": 13,
+  "kernel_events": [
+    {
+      "filename": "da591740/kernel_2712.img",
+      "status": "served",
+      "bytes": 110624,
+      "client_ip": "10.42.1.4",
+      "client_mac": "88:a2:9e:ae:c8:7f"
+    },
+    {
+      "filename": "da591740/kernel_2712.img",
+      "status": "served",
+      "bytes": 110624,
+      "client_ip": "10.42.1.4",
+      "client_mac": "88:a2:9e:ae:c8:7f"
+    }
+  ],
+  "expected_kernel_size": 110624,
+  "has_expected_kernel": true
+}

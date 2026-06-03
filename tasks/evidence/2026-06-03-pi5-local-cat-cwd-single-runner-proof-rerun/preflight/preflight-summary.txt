@@ -1,0 +1,7 @@
+preflight=pass
+procedure_owner_pid=2368809
+active_proof_procedures=1
+active_serial_writers=0
+orphaned_prior_serial_processes=0
+fresh_evidence_dir=tasks/evidence/2026-06-03-pi5-local-cat-cwd-single-runner-proof-rerun
+polluted_evidence_reused=false

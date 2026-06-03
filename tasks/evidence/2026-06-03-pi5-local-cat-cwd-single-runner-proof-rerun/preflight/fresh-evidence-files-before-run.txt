@@ -1,0 +1,4 @@
+tasks/evidence/2026-06-03-pi5-local-cat-cwd-single-runner-proof-rerun/preflight/fresh-evidence-files-before-run.txt
+tasks/evidence/2026-06-03-pi5-local-cat-cwd-single-runner-proof-rerun/preflight/pre-run-git-status.txt
+tasks/evidence/2026-06-03-pi5-local-cat-cwd-single-runner-proof-rerun/preflight/preflight-started-at.txt
+tasks/evidence/2026-06-03-pi5-local-cat-cwd-single-runner-proof-rerun/preflight/procedure-owner.txt
