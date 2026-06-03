@@ -7542,6 +7542,7 @@ fn replay_visible_echo_response_for_pi5_proof() {
 }
 
 #[cfg(any(
+    talos_boot_scenario = "rpi5_local_serial_command_loop",
     talos_boot_scenario = "rpi5_local_literal_echo",
     talos_boot_scenario = "rpi5_local_help_command",
     talos_boot_scenario = "rpi5_local_ls_root",
@@ -7581,6 +7582,7 @@ fn replay_visible_help_response_for_pi5_proof() {
 }
 
 #[cfg(any(
+    talos_boot_scenario = "rpi5_local_serial_command_loop",
     talos_boot_scenario = "rpi5_local_literal_echo",
     talos_boot_scenario = "rpi5_local_help_command",
     talos_boot_scenario = "rpi5_local_ls_root",
@@ -7658,13 +7660,14 @@ fn replay_visible_cat_banner_response_for_pi5_proof() {
     wait_uart10_empty_early_phase();
 }
 
-#[cfg(talos_boot_scenario = "rpi5_local_cat_cwd")]
+#[cfg(talos_boot_scenario = "rpi5_local_serial_command_loop")]
 fn replay_visible_cat_not_found_response_for_pi5_proof() {
     crate::println!("talos: not-found");
     wait_uart10_empty_early_phase();
 }
 
 #[cfg(any(
+    talos_boot_scenario = "rpi5_local_serial_command_loop",
     talos_boot_scenario = "rpi5_local_literal_echo",
     talos_boot_scenario = "rpi5_local_help_command",
     talos_boot_scenario = "rpi5_local_ls_root",
