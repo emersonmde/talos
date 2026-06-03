@@ -98,19 +98,20 @@ The post-review correction chain is:
     PATH lookup, argv/envp, pipes, redirection, writable filesystem, hardware
     proof, networking, and SSH remain deferred.
 
-The shell userspace exit/status closeout checkpoint is accepted in
-phase10-shell-userspace-exit-status-closeout-20260603. It records the accepted
+The process lifecycle/status closeout checkpoint is accepted in
+`phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
-by real VFS/userspace layers: `cat /etc/banner.txt` uses descriptor-backed
-open/read, `exec /bin/init` reads the VFS-backed executable and derives the
-accepted loader/process/launch records, and `/bin/init` reports a deterministic
-zero status through the accepted lower-AArch64 SVC status-equivalent boundary.
-Kernel built-ins remain regression/control surfaces only. Supervisor planning
-added the narrow lifecycle/status record task and the immediately following
-`laststatus` observation task now accepted above. The next queued
-dependency-based slice is a process lifecycle/status closeout before any PATH
-lookup, argv/envp, pipes, redirection, writable filesystem, networking, SSH, or
-Pi 5 proof.
+by real VFS/userspace/lifecycle layers: `cat /etc/banner.txt` uses
+descriptor-backed open/read, `exec /bin/init` reads the VFS-backed executable
+and derives the accepted loader/process/launch records, the zero userspace
+status flows through a kernel-owned lifecycle/status record, and `laststatus`
+reports that latest lifecycle record with matching identity and status.
+Kernel built-ins remain regression/control surfaces only. The recommended next
+local execution slice is a supervisor-planned minimal argv/argc ABI for the
+existing `exec /bin/init` path, before PATH lookup, arbitrary executable
+dispatch, pipes, redirection, writable filesystem, networking, SSH, or Pi 5
+proof. No explicit queued follow-up task remains; supervisor planning is
+required before the worker may promote further work.
 
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning
