@@ -87,6 +87,16 @@ The post-review correction chain is:
    record, general wait/waitpid, asynchronous execution, PATH lookup,
    argv/envp, pipes, redirection, writable filesystem, hardware proof,
    networking, and SSH remain deferred.
+10. first shell-visible observation of the most recent lifecycle/status
+    record: accepted in
+    `phase10-shell-last-process-status-observation-20260603` with
+    `laststatus` reporting the same `/bin/init` lifecycle identity, shell
+    parent ownership, exited state, zero status, observed status, and reaped
+    state from the accepted kernel-owned lifecycle record. No-prior-process
+    behavior is deterministic with `talos: last-process none`. General
+    wait/waitpid, asynchronous execution, multiple children, zombie policy,
+    PATH lookup, argv/envp, pipes, redirection, writable filesystem, hardware
+    proof, networking, and SSH remain deferred.
 
 The shell userspace exit/status closeout checkpoint is accepted in
 phase10-shell-userspace-exit-status-closeout-20260603. It records the accepted
@@ -95,12 +105,12 @@ by real VFS/userspace layers: `cat /etc/banner.txt` uses descriptor-backed
 open/read, `exec /bin/init` reads the VFS-backed executable and derives the
 accepted loader/process/launch records, and `/bin/init` reports a deterministic
 zero status through the accepted lower-AArch64 SVC status-equivalent boundary.
-Kernel built-ins remain regression/control surfaces only. No later explicit
-queued task existed after the closeout until supervisor planning added the
-narrow lifecycle/status record task now accepted above. The next queued
-dependency-based slice is shell observation of the most recent lifecycle
-record before any PATH lookup, argv/envp, pipes, redirection, writable
-filesystem, networking, SSH, or Pi 5 proof.
+Kernel built-ins remain regression/control surfaces only. Supervisor planning
+added the narrow lifecycle/status record task and the immediately following
+`laststatus` observation task now accepted above. The next queued
+dependency-based slice is a process lifecycle/status closeout before any PATH
+lookup, argv/envp, pipes, redirection, writable filesystem, networking, SSH, or
+Pi 5 proof.
 
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning

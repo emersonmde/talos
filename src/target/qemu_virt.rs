@@ -14688,7 +14688,7 @@ const fn local_command_loop_smoke_command_count() -> usize {
     } else if cfg!(talos_boot_scenario = "qemu_local_cat_cwd") {
         7
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") {
-        7
+        8
     } else if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") {
         12
     } else if cfg!(talos_boot_scenario = "qemu_local_ls_cwd") {
@@ -14795,7 +14795,7 @@ fn expected_local_command_loop_dispatch(
             line == b"cat banner.txt" && status == Handled && response_lines == 1
         }
         4 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
-            line == b"exec /missing" && status == UnexpectedArgument && response_lines == 1
+            line == b"laststatus" && status == Handled && response_lines == 1
         }
         4 if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") => {
             line == b"cd /etc" && status == Handled && response_lines == 0
@@ -14838,7 +14838,7 @@ fn expected_local_command_loop_dispatch(
             line == b"cd /" && status == Handled && response_lines == 0
         }
         5 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
-            line == b"exec /etc/banner.txt" && status == UnexpectedArgument && response_lines == 1
+            line == b"exec /missing" && status == UnexpectedArgument && response_lines == 1
         }
         5 if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") => {
             line == b"pwd" && status == Handled && response_lines == 1
@@ -14865,6 +14865,9 @@ fn expected_local_command_loop_dispatch(
             line == b"cat banner.txt" && status == UnexpectedArgument && response_lines == 1
         }
         6 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
+            line == b"exec /etc/banner.txt" && status == UnexpectedArgument && response_lines == 1
+        }
+        7 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
             line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
         }
         6 if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") => {

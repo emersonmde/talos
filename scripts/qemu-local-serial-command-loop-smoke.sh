@@ -159,7 +159,7 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                     elif [ "$CAT_CWD_SMOKE" -eq 1 ]; then
                         printf 'cat banner.txt\r' >&3
                     elif [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
-                        printf 'exec /missing\r' >&3
+                        printf 'laststatus\r' >&3
                     elif [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ]; then
                         printf 'cd /etc\r' >&3
                     elif [ "$LS_CWD_SMOKE" -eq 1 ]; then
@@ -187,7 +187,7 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                     elif [ "$CAT_CWD_SMOKE" -eq 1 ]; then
                         printf 'cd /\r' >&3
                     elif [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
-                        printf 'exec /etc/banner.txt\r' >&3
+                        printf 'exec /missing\r' >&3
                     elif [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ]; then
                         printf 'pwd\r' >&3
                     elif [ "$LS_CWD_SMOKE" -eq 1 ]; then
@@ -207,7 +207,7 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                     elif [ "$CAT_CWD_SMOKE" -eq 1 ]; then
                         printf 'cat banner.txt\r' >&3
                     elif [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
-                        printf 'cat /etc/banner.txt\r' >&3
+                        printf 'exec /etc/banner.txt\r' >&3
                     elif [ "$LS_CWD_SMOKE" -eq 1 ]; then
                         printf 'ls\r' >&3
                     elif [ "$LINE_EDITING_SMOKE" -eq 1 ]; then
@@ -224,6 +224,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'pwd\r' >&3
                     elif [ "$LS_CWD_SMOKE" -eq 1 ]; then
                         printf 'cd /bin\r' >&3
+                    elif [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
+                        printf 'cat /etc/banner.txt\r' >&3
                     else
                         printf 'bogus\r' >&3
                     fi
@@ -280,6 +282,9 @@ if [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ] || [ "$LS_CWD_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=9" "$LOG_FILE"
     grep -q "$LABEL: ready command=10" "$LOG_FILE"
     grep -q "$LABEL: ready command=11" "$LOG_FILE"
+fi
+if [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
+    grep -q "$LABEL: ready command=7" "$LOG_FILE"
 fi
 if [ "$LINE_EDITING_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=7" "$LOG_FILE"
@@ -357,19 +362,23 @@ elif [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
     grep -q "talos: exec-signal lower-aarch64-svc-launch-boundary-equivalent" "$LOG_FILE"
     grep -q "$LABEL: line command=3 hex=65 78 65 63 20 2f 62 69 6e 2f 69 6e 69 74" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=3 status=handled responses=7" "$LOG_FILE"
+    grep -q "talos> laststatus" "$LOG_FILE"
+    grep -Eq "talos: last-process pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -q "$LABEL: line command=4 hex=6c 61 73 74 73 74 61 74 75 73" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=4 status=handled responses=1" "$LOG_FILE"
     grep -q "talos> exec /missing" "$LOG_FILE"
     grep -q "talos: exec-not-found" "$LOG_FILE"
-    grep -q "$LABEL: line command=4 hex=65 78 65 63 20 2f 6d 69 73 73 69 6e 67" "$LOG_FILE"
-    grep -q "$LABEL: dispatch command=4 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: line command=5 hex=65 78 65 63 20 2f 6d 69 73 73 69 6e 67" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=5 status=unexpected-argument responses=1" "$LOG_FILE"
     grep -q "talos> exec /etc/banner.txt" "$LOG_FILE"
     grep -q "talos: exec-not-executable" "$LOG_FILE"
-    grep -q "$LABEL: line command=5 hex=65 78 65 63 20 2f 65 74 63 2f 62 61 6e 6e 65 72 2e 74 78 74" "$LOG_FILE"
-    grep -q "$LABEL: dispatch command=5 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: line command=6 hex=65 78 65 63 20 2f 65 74 63 2f 62 61 6e 6e 65 72 2e 74 78 74" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=6 status=unexpected-argument responses=1" "$LOG_FILE"
     grep -q "talos> cat /etc/banner.txt" "$LOG_FILE"
     grep -q "^Talos initramfs fixture" "$LOG_FILE"
-    grep -q "$LABEL: line command=6 hex=63 61 74 20 2f 65 74 63 2f 62 61 6e 6e 65 72 2e 74 78 74" "$LOG_FILE"
-    grep -q "$LABEL: dispatch command=6 status=handled responses=1" "$LOG_FILE"
-    grep -q "$LABEL: final participants=7 expected=7 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+    grep -q "$LABEL: line command=7 hex=63 61 74 20 2f 65 74 63 2f 62 61 6e 6e 65 72 2e 74 78 74" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=7 status=handled responses=1" "$LOG_FILE"
+    grep -q "$LABEL: final participants=8 expected=8 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
 elif [ "$LS_CWD_SMOKE" -eq 1 ]; then
     grep -q "talos> pwd" "$LOG_FILE"
     grep -q "^/" "$LOG_FILE"
