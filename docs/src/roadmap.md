@@ -78,14 +78,19 @@ The post-review correction chain is:
    lifecycle, wait, external command lookup, argv/envp, PATH, pipes,
    redirection, writable filesystem, and Pi 5 proof remain deferred.
 
-The shell VFS exec closeout checkpoint is accepted in
-phase10-shell-vfs-exec-closeout-checkpoint-20260603. It records the accepted
-frontier as QEMU/substitute-proven shell-visible exec /bin/init through the
-VFS descriptor read and launch-planning chain, with kernel built-ins retained
-only as regression/control surfaces. The next dependency-based feature task is
-now the first lifecycle boundary after userspace status: either a supervisor
-planned process table/wait boundary or another explicitly dependency-backed
-local execution primitive.
+The shell userspace exit/status closeout checkpoint is accepted in
+phase10-shell-userspace-exit-status-closeout-20260603. It records the accepted
+frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
+by real VFS/userspace layers: `cat /etc/banner.txt` uses descriptor-backed
+open/read, `exec /bin/init` reads the VFS-backed executable and derives the
+accepted loader/process/launch records, and `/bin/init` reports a deterministic
+zero status through the accepted lower-AArch64 SVC status-equivalent boundary.
+Kernel built-ins remain regression/control surfaces only. No later explicit
+queued task exists after the closeout, so the next dependency-based feature
+task requires supervisor planning; the evidence points to a narrow
+kernel-owned process lifecycle or wait/status boundary before PATH lookup,
+argv/envp, pipes, redirection, writable filesystem, networking, SSH, or Pi 5
+proof.
 
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning
