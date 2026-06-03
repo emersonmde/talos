@@ -404,9 +404,34 @@ The post-review correction chain is:
     EOF/no-data/error stdin variants beyond the accepted proof input, blocking
     scheduler I/O, close/dup/fork policy, pipes, redirection, distinct stderr
     stream routing, writable filesystem behavior, broad shell grammar, libc
-    stdio, Pi 5 proof, networking, and SSH remain deferred. No explicit queued
-    follow-up remains after this closeout; supervisor planning is required
-    before broader shell I/O task promotion.
+    stdio, Pi 5 proof, networking, and SSH remain deferred. The next accepted
+    feature-led local I/O primitive is a bounded runtime-console0/local-input
+    read through inherited fd0, reported through the accepted userspace fd1
+    stdout path.
+33. runtime-console0 userspace stdin core: accepted in
+    `phase10-runtime-console0-stdin-core-20260603`. Shell-visible
+    `exec stdin` continues to resolve through the accepted fixed `/bin`
+    lookup to `/bin/stdin`, read the executable through descriptor-backed
+    VFS/open/read, and run it through the accepted loader/startup/descriptor
+    inheritance/lifecycle/status/`waitpid`/`laststatus` chain. The launched
+    fixture now performs one bounded `TalosRead` through inherited
+    `fd0=stdio-input` from runtime-console0/local input plumbing rather than
+    the older deterministic `FixedStdin` proof buffer. The QEMU/substitute
+    transcript feeds `talos-console0` after the `exec stdin` command
+    terminator, reports `Talos userspace stdin fixture read: talos-console0`
+    through inherited fd1, and records
+    `exec-stdin fd=0 bytes=0xe return=0xe
+    read-source=runtime-console0/local-input stdout-fd=1 stdout-bytes=0x33
+    stdout-return=0x33 source=userspace-talos-read+userspace-talos-write`.
+    Retained evidence also covers stdout, proof-buffer stdin as historical
+    regression evidence only, stderr, fixed `/bin` lookup, lifecycle/status,
+    `waitpid`, non-consuming `laststatus`, negative exec controls, and
+    descriptor-backed `cat /etc/banner.txt`. EOF/no-data/error stdin
+    variants, blocking scheduler I/O, terminal policy expansion, async
+    execution, fork, signals, pipes, redirection, distinct stderr routing,
+    writable filesystem behavior, libc stdio, Pi 5 proof, networking, and SSH
+    remain deferred. The queued runtime-console0 stdin closeout is
+    mechanically unblocked by this accepted evidence.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

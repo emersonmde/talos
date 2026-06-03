@@ -363,6 +363,7 @@ where
             user_memory,
             kernel_scratch,
             fixed_stdin,
+            None::<&mut NoConsoleInput>,
             None::<crate::initramfs::ReadOnlyInitramfs>,
             None::<&mut crate::initramfs::ReadOnlyFileDescriptions<0>>,
         ),
@@ -431,6 +432,98 @@ where
             user_memory,
             kernel_scratch,
             fixed_stdin,
+            None::<&mut NoConsoleInput>,
+            Some(initramfs),
+            Some(file_descriptions),
+        ),
+        SyscallNumber::TalosOpen => dispatch_talos_open_initramfs(
+            arguments,
+            current_owner,
+            descriptor_store,
+            mappings,
+            user_memory_start,
+            user_memory,
+            kernel_scratch,
+            initramfs,
+            file_descriptions,
+        ),
+        SyscallNumber::TalosNop | SyscallNumber::Unknown(_) => {
+            dispatch(raw_number, arguments).return_value()
+        }
+    };
+
+    SyscallDispatchResult {
+        number,
+        arguments,
+        return_value,
+    }
+}
+
+struct NoConsoleInput;
+
+impl crate::runtime_console::ConsoleInputBackend for NoConsoleInput {
+    fn poll_read_byte(&mut self) -> Option<u8> {
+        None
+    }
+}
+
+pub(crate) fn dispatch_process_descriptor_with_initramfs_and_console_stdin<
+    const OWNER_CAPACITY: usize,
+    const DESCRIPTOR_CAPACITY: usize,
+    const FILE_CAPACITY: usize,
+    B,
+    I,
+>(
+    raw_number: u64,
+    arguments: SyscallArguments,
+    current_owner: Option<crate::scheduler::ProcessOwnerId>,
+    descriptor_store: &mut crate::posix::ProcessDescriptorStore<
+        OWNER_CAPACITY,
+        DESCRIPTOR_CAPACITY,
+    >,
+    mappings: &[crate::posix::UserMapping],
+    user_memory_start: u64,
+    user_memory: &mut [u8],
+    kernel_scratch: &mut [u8],
+    console_backend: &mut B,
+    initramfs: crate::initramfs::ReadOnlyInitramfs,
+    file_descriptions: &mut crate::initramfs::ReadOnlyFileDescriptions<FILE_CAPACITY>,
+    fixed_stdin: Option<&mut crate::posix::FixedStdin<'_>>,
+    console_stdin: Option<&mut I>,
+) -> SyscallDispatchResult
+where
+    B: crate::runtime_console::ConsoleBackend,
+    I: crate::runtime_console::ConsoleInputBackend,
+{
+    let number = SyscallNumber::from_raw(raw_number);
+    let return_value = match number {
+        SyscallNumber::TalosWrite => match descriptor_store.current_descriptor_table(current_owner)
+        {
+            Ok(descriptor_table) => dispatch_talos_write(
+                arguments,
+                descriptor_table,
+                mappings,
+                user_memory_start,
+                user_memory,
+                kernel_scratch,
+                console_backend,
+            ),
+            Err(error) => SyscallReturn::error(error),
+        },
+        SyscallNumber::TalosClose => {
+            dispatch_talos_close(arguments, current_owner, descriptor_store)
+        }
+        SyscallNumber::TalosDup => dispatch_talos_dup(arguments, current_owner, descriptor_store),
+        SyscallNumber::TalosRead => dispatch_talos_read(
+            arguments,
+            current_owner,
+            descriptor_store,
+            mappings,
+            user_memory_start,
+            user_memory,
+            kernel_scratch,
+            fixed_stdin,
+            console_stdin,
             Some(initramfs),
             Some(file_descriptions),
         ),
@@ -505,6 +598,7 @@ fn dispatch_talos_read<
     const OWNER_CAPACITY: usize,
     const DESCRIPTOR_CAPACITY: usize,
     const FILE_CAPACITY: usize,
+    I,
 >(
     arguments: SyscallArguments,
     current_owner: Option<crate::scheduler::ProcessOwnerId>,
@@ -517,9 +611,13 @@ fn dispatch_talos_read<
     user_memory: &mut [u8],
     kernel_scratch: &mut [u8],
     fixed_stdin: Option<&mut crate::posix::FixedStdin<'_>>,
+    console_stdin: Option<&mut I>,
     initramfs: Option<crate::initramfs::ReadOnlyInitramfs>,
     file_descriptions: Option<&mut crate::initramfs::ReadOnlyFileDescriptions<FILE_CAPACITY>>,
-) -> SyscallReturn {
+) -> SyscallReturn
+where
+    I: crate::runtime_console::ConsoleInputBackend,
+{
     let [descriptor, user_start, len, reserved0, reserved1, reserved2] = arguments.values();
     if reserved0 != 0 || reserved1 != 0 || reserved2 != 0 {
         return SyscallReturn::error(PosixError::InvalidArgument);
@@ -548,8 +646,8 @@ fn dispatch_talos_read<
     }
 
     let read_result = match entry.object().kind() {
-        crate::posix::DescriptorObjectKind::StdioInput => {
-            crate::posix::read_descriptor_from_fixed_stdin(
+        crate::posix::DescriptorObjectKind::StdioInput => match fixed_stdin {
+            Some(stdin) => crate::posix::read_descriptor_from_fixed_stdin(
                 descriptor_table,
                 descriptor,
                 mappings,
@@ -558,9 +656,20 @@ fn dispatch_talos_read<
                 user_start,
                 len,
                 kernel_scratch,
-                fixed_stdin,
-            )
-        }
+                Some(stdin),
+            ),
+            None => crate::posix::read_descriptor_from_console_input(
+                descriptor_table,
+                descriptor,
+                mappings,
+                user_memory_start,
+                user_memory,
+                user_start,
+                len,
+                kernel_scratch,
+                console_stdin,
+            ),
+        },
         crate::posix::DescriptorObjectKind::RegularFile => match (initramfs, file_descriptions) {
             (Some(fs), Some(file_descriptions)) => fs.read_descriptor(
                 descriptor_table,

@@ -34,6 +34,7 @@ const LOCAL_COMMAND_EXEC_USER_MEMORY_LEN: usize = 1024;
 const LOCAL_COMMAND_STDIN_USER_BASE: u64 = 0x0000_0000_0013_0000;
 const LOCAL_COMMAND_STDIN_USER_MEMORY_LEN: usize = 128;
 const LOCAL_COMMAND_STDIN_READ_OFFSET: usize = 0x40;
+const LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES: &[u8] = b"talos-console0";
 const LOCAL_COMMAND_STDERR_USER_BASE: u64 = 0x0000_0000_0014_0000;
 const LOCAL_COMMAND_STDERR_USER_MEMORY_LEN: usize = 128;
 const LOCAL_COMMAND_EXEC_ADDRESS_SPACE_ID: u64 = 0x0010_0001;
@@ -348,6 +349,7 @@ pub struct LocalCommandUserspaceStdinRecord {
     read_descriptor: usize,
     read_bytes: usize,
     read_return_value: u64,
+    read_source: &'static str,
     stdout_descriptor: usize,
     stdout_bytes: usize,
     stdout_return_value: u64,
@@ -958,14 +960,12 @@ where
             posix::UserMappingPermissions::USER_DATA,
         )
         .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?];
-        let mut fixed_stdin = posix::FixedStdin::new(initramfs::PHASE10_STDIN_INPUT_BYTES);
-
-        let read = syscall::dispatch_process_descriptor_with_initramfs(
+        let read = syscall::dispatch_process_descriptor_with_initramfs_and_console_stdin(
             syscall::TALOS_READ_SYSCALL,
             syscall::SyscallArguments::new([
                 posix::STDIN_FD as u64,
                 LOCAL_COMMAND_STDIN_USER_BASE + LOCAL_COMMAND_STDIN_READ_OFFSET as u64,
-                initramfs::PHASE10_STDIN_INPUT_BYTES.len() as u64,
+                LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES.len() as u64,
                 0,
                 0,
                 0,
@@ -979,16 +979,17 @@ where
             &mut self.output_backend,
             initramfs::phase8_readonly_initramfs_fixture(),
             &mut self.read_only_files,
-            Some(&mut fixed_stdin),
+            None,
+            Some(&mut self.input_backend),
         );
         let read_return_value = read.return_value().x0();
-        if read_return_value != initramfs::PHASE10_STDIN_INPUT_BYTES.len() as u64 {
+        if read_return_value != LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES.len() as u64 {
             return Err(LocalCommandExecError::SyscallFailed);
         }
 
         let read_start = LOCAL_COMMAND_STDIN_READ_OFFSET;
-        let read_end = read_start + initramfs::PHASE10_STDIN_INPUT_BYTES.len();
-        if &user_memory[read_start..read_end] != initramfs::PHASE10_STDIN_INPUT_BYTES {
+        let read_end = read_start + LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES.len();
+        if &user_memory[read_start..read_end] != LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES {
             return Err(LocalCommandExecError::SyscallFailed);
         }
 
@@ -999,13 +1000,13 @@ where
         let read_write = self.write_userspace_stdout_bytes(
             &mappings,
             &user_memory[read_start..read_end],
-            initramfs::PHASE10_STDIN_INPUT_BYTES.len(),
+            LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES.len(),
         )?;
         user_memory[0] = b'\n';
         let newline_write = self.write_userspace_stdout_bytes(&mappings, &user_memory, 1)?;
         let stdout_bytes = prefix
             .len()
-            .checked_add(initramfs::PHASE10_STDIN_INPUT_BYTES.len())
+            .checked_add(LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES.len())
             .and_then(|len| len.checked_add(1))
             .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
         if prefix_write + read_write + newline_write != stdout_bytes as u64 {
@@ -1014,8 +1015,9 @@ where
 
         Ok(Some(LocalCommandUserspaceStdinRecord {
             read_descriptor: posix::STDIN_FD,
-            read_bytes: initramfs::PHASE10_STDIN_INPUT_BYTES.len(),
+            read_bytes: LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES.len(),
             read_return_value,
+            read_source: "runtime-console0/local-input",
             stdout_descriptor: posix::STDOUT_FD,
             stdout_bytes,
             stdout_return_value: stdout_bytes as u64,
@@ -2028,6 +2030,8 @@ fn write_exec_userspace_stdin_line(
     write_hex_usize_part(sink, record.read_bytes)?;
     write_str_part(sink, " return=")?;
     write_hex_u64_part(sink, record.read_return_value)?;
+    write_str_part(sink, " read-source=")?;
+    write_str_part(sink, record.read_source)?;
     write_str_part(sink, " stdout-fd=")?;
     write_hex_usize_part(sink, record.stdout_descriptor)?;
     write_str_part(sink, " stdout-bytes=")?;
@@ -2777,7 +2781,7 @@ talos> Talos initramfs fixture\n"
 
     #[test_case]
     fn local_command_loop_execs_userspace_stdin_fixture_through_fd0() {
-        let input = ScriptedInput::new(*b"exec stdin\rwaitpid\rlaststatus\r", 30);
+        let input = ScriptedInput::new(*b"exec stdin\rtalos-console0waitpid\rlaststatus\r", 44);
         let mut backend = CaptureSink::new();
         let (exec, waited, observed) = {
             let mut io =
@@ -2799,7 +2803,7 @@ talos> Talos initramfs fixture\n"
         assert_eq!(observed.line(), b"laststatus");
         assert_eq!(observed.status(), LocalCommandStatus::Handled);
         assert_eq!(observed.response_lines(), 1);
-        assert!(output.contains("talos> Talos userspace stdin fixture read: talos-fd0\n"));
+        assert!(output.contains("talos> Talos userspace stdin fixture read: talos-console0\n"));
         assert!(output.contains("talos: exec path=/bin/stdin source=vfs-open-read\n"));
         assert!(output.contains(
             "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
@@ -2808,7 +2812,7 @@ talos> Talos initramfs fixture\n"
             "talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/stdin"
         ));
         assert!(output.contains(
-            "talos: exec-stdin fd=0x0000000000000000 bytes=0x000000000000000a return=0x000000000000000a stdout-fd=0x0000000000000001 stdout-bytes=0x000000000000002f stdout-return=0x000000000000002f source=userspace-talos-read+userspace-talos-write\n"
+            "talos: exec-stdin fd=0x0000000000000000 bytes=0x000000000000000e return=0x000000000000000e read-source=runtime-console0/local-input stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000033 stdout-return=0x0000000000000033 source=userspace-talos-read+userspace-talos-write\n"
         ));
         assert!(output.contains(
             "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"

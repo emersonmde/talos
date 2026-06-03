@@ -7,7 +7,7 @@
 //! target-independent stdio-to-runtime-console boundary.
 
 use crate::{
-    runtime_console::{self, ConsoleBackend},
+    runtime_console::{self, ConsoleBackend, ConsoleInputBackend},
     scheduler::ProcessOwnerId,
 };
 
@@ -872,6 +872,62 @@ pub(crate) fn read_descriptor_from_fixed_stdin<const CAPACITY: usize>(
         &kernel_scratch[..selected_len],
     )?;
     stdin.cursor = end;
+    Ok(selected_len)
+}
+
+pub(crate) fn read_descriptor_from_console_input<const CAPACITY: usize, I>(
+    table: &DescriptorTable<CAPACITY>,
+    descriptor: usize,
+    mappings: &[UserMapping],
+    user_memory_start: u64,
+    user_memory: &mut [u8],
+    user_start: u64,
+    len: usize,
+    kernel_scratch: &mut [u8],
+    input_backend: Option<&mut I>,
+) -> Result<usize, PosixError>
+where
+    I: ConsoleInputBackend,
+{
+    let entry = table.get(descriptor)?;
+    entry.require_readable()?;
+
+    if entry.object().kind() != DescriptorObjectKind::StdioInput {
+        return Err(PosixError::NotSupported);
+    }
+    if len == 0 {
+        return Ok(0);
+    }
+    if len > DEFAULT_USER_COPY_LIMIT {
+        return Err(PosixError::Fault);
+    }
+    if kernel_scratch.len() < len {
+        return Err(PosixError::InvalidArgument);
+    }
+
+    let Some(input_backend) = input_backend else {
+        return Err(PosixError::NotSupported);
+    };
+    let mut selected_len = 0;
+    while selected_len < len {
+        let Some(byte) = input_backend.poll_read_byte() else {
+            break;
+        };
+        kernel_scratch[selected_len] = byte;
+        selected_len += 1;
+    }
+    if selected_len == 0 {
+        return Ok(0);
+    }
+
+    copy_to_user(
+        mappings,
+        user_memory_start,
+        user_memory,
+        user_start,
+        selected_len,
+        &kernel_scratch[..selected_len],
+    )?;
     Ok(selected_len)
 }
 
