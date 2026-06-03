@@ -183,6 +183,16 @@ The post-review correction chain is:
     execution, multiple children, broad zombie-table policy, fork, signals,
     descriptor inheritance expansion, PATH lookup, pipes, redirection,
     writable filesystem, hardware proof, networking, or SSH.
+19. waitpid lifecycle observation closeout: accepted in
+    `phase10-waitpid-lifecycle-observation-closeout-20260603`. It reconciles
+    the accepted single-child wait observation evidence, status `0x2a`
+    variation for `/bin/status42`, zero-status `/bin/init` and `/bin/zero`
+    controls, deterministic no-child and already-consumed behavior,
+    non-consuming `laststatus`, negative exec controls, and descriptor-backed
+    `cat /etc/banner.txt`. The next recommended feature-led local execution
+    primitive is standard descriptor inheritance across VFS-backed exec before
+    PATH lookup, broad argv/envp, pipes, redirection, writable filesystem,
+    hardware proof, networking, or SSH.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -305,6 +315,20 @@ and `/bin/zero`, negative exec controls, and descriptor-backed
 `cat /etc/banner.txt`. Multiple children, asynchronous execution, fork,
 signals, descriptor inheritance expansion, PATH lookup, pipes, redirection,
 writable filesystem, hardware proof, networking, and SSH remain deferred.
+
+The waitpid lifecycle observation closeout checkpoint is accepted in
+`phase10-waitpid-lifecycle-observation-closeout-20260603`. It keeps the
+accepted process-management frontier limited to a minimal consuming
+wait/waitpid-style observation of one completed child lifecycle/status record
+from the descriptor-backed VFS exec path. Retained evidence covers no-child
+before exec, `/bin/status42` status `0x2a`, already-consumed no-child,
+non-consuming `laststatus`, zero-status `/bin/init` and `/bin/zero`
+wait controls, negative exec controls, and descriptor-backed
+`cat /etc/banner.txt`. The next recommended feature-led local execution
+primitive is standard descriptor inheritance across VFS-backed exec, while
+multiple children, asynchronous execution, fork, signals, PATH lookup, pipes,
+redirection, writable filesystem, hardware proof, networking, and SSH remain
+deferred.
 
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning
