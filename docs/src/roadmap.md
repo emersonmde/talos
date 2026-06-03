@@ -51,7 +51,12 @@ The post-review correction chain is:
    evidence that the VFS-backed `/bin/init` ELF text is mapped at EL0, entered
    through the accepted launch/stack prerequisites, and reports a lower-AArch64
    SVC signal from the init entry path;
-5. shell behavior backed by VFS, descriptors, syscalls, and userspace.
+5. Phase 8 to Phase 10 shell transition checkpoint: accepted in
+   `phase8-to-phase10-shell-transition-checkpoint-20260603`, recording the
+   accepted chain, retained evidence, and rule that future shell-visible file
+   behavior must consume VFS, descriptors, syscalls, and userspace rather than
+   expanding fake command fixtures;
+6. shell behavior backed by VFS, descriptors, syscalls, and userspace.
 
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning
