@@ -297,6 +297,21 @@ The post-review correction chain is:
     stderr-specific output, pipes, redirection, writable filesystem behavior,
     fork/async execution, libc stdio, broader shell grammar, hardware proof,
     networking, and SSH remain deferred.
+27. userspace stdout through inherited fd closeout: accepted in
+    `phase10-userspace-stdout-inherited-fd-closeout-20260603`. It reconciles
+    the accepted process-originated stdout transcript, descriptor-backed
+    VFS/open/read and loader/lifecycle/status lineage, inherited descriptor
+    records, `exec-stdout fd=1 bytes=0x1f return=0x1f
+    source=userspace-talos-write`, `waitpid`, non-consuming `laststatus`,
+    retained fixed `/bin` lookup and absolute exec controls, `/bin/status42`
+    nonzero status, `/bin/init` and `/bin/zero` zero-status controls,
+    deterministic negative exec controls, loader temporary descriptor non-leak,
+    and descriptor-backed `cat /etc/banner.txt`. The next recommended
+    feature-led local I/O primitive is a bounded userspace read through
+    inherited `fd0=stdio-input`, reported through the accepted userspace stdout
+    path, before stderr expansion, blocking I/O, pipes, redirection, writable
+    filesystem behavior, broader shell grammar, hardware proof, networking, or
+    SSH.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
