@@ -116,6 +116,16 @@ The post-review correction chain is:
     startup, PATH lookup, arbitrary executable dispatch, descriptor
     inheritance, wait/waitpid, asynchronous execution, pipes, redirection,
     writable filesystem, hardware proof, networking, and SSH remain deferred.
+13. minimal startup ABI closeout: accepted in
+    `phase10-startup-abi-closeout-20260603`. The accepted frontier is limited
+    to the explicit VFS-backed `/bin/init` startup record with `argc=1`,
+    `argv[0]=/bin/init`, non-null argv state, `envp-state=empty-envp0`,
+    `envp-entries=0`, and `copied-startup-bytes=0x2a`, all tied to
+    `source=initial-user-stack-record` in the same VFS/open/read, loader,
+    launch, lifecycle, and status lineage. The recommended next feature-led
+    step is supervisor planning for absolute VFS executable dispatch before
+    PATH lookup, wait/waitpid, descriptor inheritance, pipes, redirection,
+    writable filesystem, hardware proof, networking, or SSH.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -162,6 +172,17 @@ The empty-envp exec-init task is accepted in
 lifecycle lineage. The next queued checkpoint should reconcile this narrow
 startup ABI frontier before any broader command lookup, process-management,
 environment-variable, auxv/TLS, or libc-startup planning.
+
+The startup ABI closeout checkpoint is accepted in
+`phase10-startup-abi-closeout-20260603`. It keeps the accepted frontier
+limited to explicit `/bin/init` startup with `argc=1`, `argv[0]=/bin/init`,
+non-null argv state, `envp-state=empty-envp0`, `envp-entries=0`, an envp
+NULL-slot user pointer, `copied-startup-bytes=0x2a`, and the same
+descriptor-backed VFS/open/read, loader, launch, lifecycle, `laststatus`, and
+VFS cat evidence chain. The closeout recommends supervisor planning for
+absolute VFS executable dispatch as the next local execution feature before
+PATH lookup, wait/waitpid, descriptor inheritance, pipes, redirection,
+writable filesystem, hardware proof, networking, or SSH.
 
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning
