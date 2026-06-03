@@ -351,6 +351,24 @@ The post-review correction chain is:
     process stdin, EOF/no-data/error stdin variants, stderr behavior, blocking
     I/O, pipes, redirection, writable filesystem behavior, hardware proof,
     networking, and SSH remain deferred.
+30. userspace stderr through inherited fd core: accepted in
+    `phase10-userspace-stderr-inherited-fd-core-20260603`. Shell-visible
+    `exec stderr` resolves through the accepted fixed `/bin` lookup to
+    `/bin/stderr`, reads the executable through descriptor-backed VFS/open/read,
+    and runs it through the accepted loader/startup/launch/descriptor
+    inheritance/lifecycle/status chain. The launched fixture emits
+    `Talos userspace stderr fixture` through inherited `fd2=stdio-output` using
+    the process descriptor `TalosWrite` syscall-substitute path and records
+    `exec-stderr fd=2 bytes=0x1f return=0x1f source=userspace-talos-write`.
+    The retained evidence also covers `waitpid`, non-consuming `laststatus`,
+    `/bin/status42` nonzero status, `/bin/init` and `/bin/zero` zero-status
+    controls, accepted stdout/stdin regressions, loader temporary descriptor
+    non-leak, deterministic negative exec controls, descriptor-backed
+    `cat /etc/banner.txt`, `qemu-local-shell-userspace-stderr-complete`, and
+    PASS. `fd2` currently shares the accepted `stdio-output` backend with `fd1`;
+    distinct stderr stream separation, pipes, redirection, terminal policy,
+    blocking I/O, writable filesystem behavior, hardware proof, networking, and
+    SSH remain deferred.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

@@ -33,6 +33,9 @@ pub(crate) const PHASE10_STDIN_PATH: &[u8] = b"/bin/stdin";
 pub(crate) const PHASE10_STDIN_INPUT_BYTES: &[u8] = b"talos-fd0\n";
 pub(crate) const PHASE10_STDIN_STDOUT_PREFIX: &[u8] = b"Talos userspace stdin fixture read: ";
 pub(crate) const PHASE10_STDIN_BYTES: &[u8] = &PHASE10_STDIN_ELF_BYTES;
+pub(crate) const PHASE10_STDERR_PATH: &[u8] = b"/bin/stderr";
+pub(crate) const PHASE10_STDERR_PAYLOAD: &[u8] = b"Talos userspace stderr fixture\n";
+pub(crate) const PHASE10_STDERR_BYTES: &[u8] = &PHASE10_STDERR_ELF_BYTES;
 pub(crate) const PHASE8_EMPTY_PATH: &[u8] = b"/empty";
 pub(crate) const PHASE8_NESTED_PATH: &[u8] = b"/dir/nested.txt";
 pub(crate) const PHASE8_NESTED_BYTES: &[u8] = b"nested fixture\n";
@@ -533,9 +536,10 @@ const PHASE10_ZERO_INDEX: usize = 5;
 const PHASE10_STATUS42_INDEX: usize = 6;
 const PHASE10_STDOUT_INDEX: usize = 7;
 const PHASE10_STDIN_INDEX: usize = 8;
-const PHASE8_EMPTY_INDEX: usize = 9;
-const PHASE8_DIR_INDEX: usize = 10;
-const PHASE8_NESTED_INDEX: usize = 11;
+const PHASE10_STDERR_INDEX: usize = 9;
+const PHASE8_EMPTY_INDEX: usize = 10;
+const PHASE8_DIR_INDEX: usize = 11;
+const PHASE8_NESTED_INDEX: usize = 12;
 
 static PHASE8_ROOT_ENTRIES: [DirectoryEntry; 4] = [
     DirectoryEntry::new(b"etc", PHASE8_ETC_INDEX),
@@ -547,12 +551,13 @@ static PHASE8_ROOT_ENTRIES: [DirectoryEntry; 4] = [
 static PHASE8_ETC_ENTRIES: [DirectoryEntry; 1] =
     [DirectoryEntry::new(b"banner.txt", PHASE8_BANNER_INDEX)];
 
-static PHASE8_BIN_ENTRIES: [DirectoryEntry; 5] = [
+static PHASE8_BIN_ENTRIES: [DirectoryEntry; 6] = [
     DirectoryEntry::new(b"init", PHASE8_INIT_INDEX),
     DirectoryEntry::new(b"zero", PHASE10_ZERO_INDEX),
     DirectoryEntry::new(b"status42", PHASE10_STATUS42_INDEX),
     DirectoryEntry::new(b"stdout", PHASE10_STDOUT_INDEX),
     DirectoryEntry::new(b"stdin", PHASE10_STDIN_INDEX),
+    DirectoryEntry::new(b"stderr", PHASE10_STDERR_INDEX),
 ];
 
 static PHASE8_DIR_ENTRIES: [DirectoryEntry; 1] =
@@ -568,8 +573,10 @@ static PHASE10_STDOUT_ELF_BYTES: [u8; PHASE8_INIT_ELF_LEN] =
     build_phase8_exit_elf_bytes(PHASE8_INIT_EXIT_STATUS);
 static PHASE10_STDIN_ELF_BYTES: [u8; PHASE8_INIT_ELF_LEN] =
     build_phase8_exit_elf_bytes(PHASE8_INIT_EXIT_STATUS);
+static PHASE10_STDERR_ELF_BYTES: [u8; PHASE8_INIT_ELF_LEN] =
+    build_phase8_exit_elf_bytes(PHASE8_INIT_EXIT_STATUS);
 
-static PHASE8_NODES: [InitramfsNode; 12] = [
+static PHASE8_NODES: [InitramfsNode; 13] = [
     InitramfsNode::directory(PHASE8_ROOT_INDEX, &PHASE8_ROOT_ENTRIES),
     InitramfsNode::directory(PHASE8_ETC_INDEX, &PHASE8_ETC_ENTRIES),
     InitramfsNode::regular_file(PHASE8_BANNER_INDEX, PHASE8_BANNER_BYTES),
@@ -579,6 +586,7 @@ static PHASE8_NODES: [InitramfsNode; 12] = [
     InitramfsNode::regular_file(PHASE10_STATUS42_INDEX, PHASE10_STATUS42_BYTES),
     InitramfsNode::regular_file(PHASE10_STDOUT_INDEX, PHASE10_STDOUT_BYTES),
     InitramfsNode::regular_file(PHASE10_STDIN_INDEX, PHASE10_STDIN_BYTES),
+    InitramfsNode::regular_file(PHASE10_STDERR_INDEX, PHASE10_STDERR_BYTES),
     InitramfsNode::regular_file(PHASE8_EMPTY_INDEX, b""),
     InitramfsNode::directory(PHASE8_DIR_INDEX, &PHASE8_DIR_ENTRIES),
     InitramfsNode::regular_file(PHASE8_NESTED_INDEX, PHASE8_NESTED_BYTES),
@@ -888,6 +896,15 @@ mod tests {
             PHASE10_STDIN_STDOUT_PREFIX,
             b"Talos userspace stdin fixture read: "
         );
+        let stderr = fs
+            .regular_file_bytes(PHASE10_STDERR_PATH)
+            .expect("stderr fixture bytes");
+        assert_eq!(stderr, PHASE10_STDERR_BYTES);
+        assert_eq!(
+            &stderr[PHASE8_INIT_TEXT_OFFSET..PHASE8_INIT_TEXT_OFFSET + 8],
+            &[0x00, 0x00, 0x80, 0xd2, 0x01, 0x42, 0x0f, 0xd4]
+        );
+        assert_eq!(PHASE10_STDERR_PAYLOAD, b"Talos userspace stderr fixture\n");
         assert_eq!(fs.regular_file_bytes(b"/etc"), Err(PosixError::IsDirectory));
     }
 

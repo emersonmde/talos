@@ -18,7 +18,8 @@ pub const LOCAL_COMMAND_LOOP_VERSION: &str = "phase10.2-kernel-builtins-v1";
 pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary",
     "+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance",
-    "+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0"
+    "+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0",
+    "+userspace-stderr-through-inherited-fd2"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -33,6 +34,8 @@ const LOCAL_COMMAND_EXEC_USER_MEMORY_LEN: usize = 1024;
 const LOCAL_COMMAND_STDIN_USER_BASE: u64 = 0x0000_0000_0013_0000;
 const LOCAL_COMMAND_STDIN_USER_MEMORY_LEN: usize = 128;
 const LOCAL_COMMAND_STDIN_READ_OFFSET: usize = 0x40;
+const LOCAL_COMMAND_STDERR_USER_BASE: u64 = 0x0000_0000_0014_0000;
+const LOCAL_COMMAND_STDERR_USER_MEMORY_LEN: usize = 128;
 const LOCAL_COMMAND_EXEC_ADDRESS_SPACE_ID: u64 = 0x0010_0001;
 const LOCAL_COMMAND_EXEC_PROCESS_ID: u64 = 0x0010_0001;
 const LOCAL_COMMAND_EXEC_TEMP_DESCRIPTOR: usize = posix::STDERR_FD + 1;
@@ -70,12 +73,13 @@ const LOCAL_COMMAND_ROOT_LISTING: [(&[u8], &str); 4] = [
 ];
 const LOCAL_COMMAND_ETC_LISTING: [(&[u8], &str); 1] =
     [(initramfs::PHASE8_BANNER_PATH, "banner.txt")];
-const LOCAL_COMMAND_BIN_LISTING: [(&[u8], &str); 5] = [
+const LOCAL_COMMAND_BIN_LISTING: [(&[u8], &str); 6] = [
     (initramfs::PHASE8_INIT_PATH, "init"),
     (initramfs::PHASE10_ZERO_PATH, "zero"),
     (initramfs::PHASE10_STATUS42_PATH, "status42"),
     (initramfs::PHASE10_STDOUT_PATH, "stdout"),
     (initramfs::PHASE10_STDIN_PATH, "stdin"),
+    (initramfs::PHASE10_STDERR_PATH, "stderr"),
 ];
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -315,6 +319,7 @@ pub struct LocalCommandExecSummary {
     descriptor_inheritance: LocalCommandExecDescriptorInheritanceRecord,
     userspace_stdout: Option<LocalCommandUserspaceStdoutRecord>,
     userspace_stdin: Option<LocalCommandUserspaceStdinRecord>,
+    userspace_stderr: Option<LocalCommandUserspaceStderrRecord>,
     lifecycle: LocalCommandProcessLifecycleRecord,
 }
 
@@ -346,6 +351,14 @@ pub struct LocalCommandUserspaceStdinRecord {
     stdout_descriptor: usize,
     stdout_bytes: usize,
     stdout_return_value: u64,
+    source: &'static str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LocalCommandUserspaceStderrRecord {
+    descriptor: usize,
+    bytes: usize,
+    return_value: u64,
     source: &'static str,
 }
 
@@ -610,6 +623,7 @@ where
             initramfs::PHASE10_STATUS42_PATH => initramfs::PHASE10_STATUS42_PATH,
             initramfs::PHASE10_STDOUT_PATH => initramfs::PHASE10_STDOUT_PATH,
             initramfs::PHASE10_STDIN_PATH => initramfs::PHASE10_STDIN_PATH,
+            initramfs::PHASE10_STDERR_PATH => initramfs::PHASE10_STDERR_PATH,
             initramfs::PHASE8_BANNER_PATH => initramfs::PHASE8_BANNER_PATH,
             initramfs::PHASE8_EMPTY_PATH => initramfs::PHASE8_EMPTY_PATH,
             initramfs::PHASE8_NESTED_PATH => initramfs::PHASE8_NESTED_PATH,
@@ -683,6 +697,7 @@ where
         .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
         let userspace_stdout = self.emit_userspace_stdout_fixture(source_path)?;
         let userspace_stdin = self.emit_userspace_stdin_fixture(source_path)?;
+        let userspace_stderr = self.emit_userspace_stderr_fixture(source_path)?;
         let lifecycle = LocalCommandProcessLifecycleRecord::exited(
             LOCAL_COMMAND_EXEC_PROCESS_ID,
             owner.raw(),
@@ -720,6 +735,7 @@ where
             descriptor_inheritance,
             userspace_stdout,
             userspace_stdin,
+            userspace_stderr,
             lifecycle,
         })
     }
@@ -1007,8 +1023,58 @@ where
         }))
     }
 
+    fn emit_userspace_stderr_fixture(
+        &mut self,
+        source_path: &'static [u8],
+    ) -> Result<Option<LocalCommandUserspaceStderrRecord>, LocalCommandExecError> {
+        if source_path != initramfs::PHASE10_STDERR_PATH {
+            return Ok(None);
+        }
+
+        let payload = initramfs::PHASE10_STDERR_PAYLOAD;
+        let mut user_memory = [0u8; LOCAL_COMMAND_STDERR_USER_MEMORY_LEN];
+        user_memory[..payload.len()].copy_from_slice(payload);
+        let mappings = [posix::UserMapping::new(
+            LOCAL_COMMAND_STDERR_USER_BASE,
+            user_memory.len(),
+            posix::UserMappingPermissions::USER_DATA,
+        )
+        .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?];
+        let return_value = self.write_userspace_stdio_bytes(
+            posix::STDERR_FD,
+            LOCAL_COMMAND_STDERR_USER_BASE,
+            &mappings,
+            &user_memory,
+            payload.len(),
+        )?;
+
+        Ok(Some(LocalCommandUserspaceStderrRecord {
+            descriptor: posix::STDERR_FD,
+            bytes: payload.len(),
+            return_value,
+            source: "userspace-talos-write",
+        }))
+    }
+
     fn write_userspace_stdout_bytes(
         &mut self,
+        mappings: &[posix::UserMapping],
+        user_memory: &[u8],
+        len: usize,
+    ) -> Result<u64, LocalCommandExecError> {
+        self.write_userspace_stdio_bytes(
+            posix::STDOUT_FD,
+            LOCAL_COMMAND_STDIN_USER_BASE,
+            mappings,
+            user_memory,
+            len,
+        )
+    }
+
+    fn write_userspace_stdio_bytes(
+        &mut self,
+        descriptor: usize,
+        user_memory_base: u64,
         mappings: &[posix::UserMapping],
         user_memory: &[u8],
         len: usize,
@@ -1017,8 +1083,8 @@ where
         let write = syscall::dispatch_process_descriptor(
             syscall::TALOS_WRITE_SYSCALL,
             syscall::SyscallArguments::new([
-                posix::STDOUT_FD as u64,
-                LOCAL_COMMAND_STDIN_USER_BASE,
+                descriptor as u64,
+                user_memory_base,
                 len as u64,
                 0,
                 0,
@@ -1027,7 +1093,7 @@ where
             self.current_owner,
             &mut self.descriptor_store,
             mappings,
-            LOCAL_COMMAND_STDIN_USER_BASE,
+            user_memory_base,
             user_memory,
             &mut scratch,
             &mut self.output_backend,
@@ -1773,6 +1839,9 @@ fn write_exec_summary(
     if let Some(record) = summary.userspace_stdin {
         write_exec_userspace_stdin_line(sink, response_lines, record)?;
     }
+    if let Some(record) = summary.userspace_stderr {
+        write_exec_userspace_stderr_line(sink, response_lines, record)?;
+    }
     write_exec_lifecycle_line(sink, response_lines, summary)?;
     write_exec_status_line(sink, response_lines, summary)?;
     write_line(
@@ -1965,6 +2034,22 @@ fn write_exec_userspace_stdin_line(
     write_hex_usize_part(sink, record.stdout_bytes)?;
     write_str_part(sink, " stdout-return=")?;
     write_hex_u64_part(sink, record.stdout_return_value)?;
+    write_str_part(sink, " source=")?;
+    write_str_part(sink, record.source)?;
+    finish_dynamic_line(sink, response_lines)
+}
+
+fn write_exec_userspace_stderr_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    record: LocalCommandUserspaceStderrRecord,
+) -> Result<(), LocalCommandCycleError> {
+    write_str_part(sink, "talos: exec-stderr fd=")?;
+    write_hex_usize_part(sink, record.descriptor)?;
+    write_str_part(sink, " bytes=")?;
+    write_hex_usize_part(sink, record.bytes)?;
+    write_str_part(sink, " return=")?;
+    write_hex_u64_part(sink, record.return_value)?;
     write_str_part(sink, " source=")?;
     write_str_part(sink, record.source)?;
     finish_dynamic_line(sink, response_lines)
@@ -2409,10 +2494,10 @@ talos> /\n"
 
         assert_eq!(result.line(), b"ls /bin");
         assert_eq!(result.status(), LocalCommandStatus::Handled);
-        assert_eq!(result.response_lines(), 5);
+        assert_eq!(result.response_lines(), 6);
         assert_eq!(
             backend.as_str(),
-            "talos> init\nzero\nstatus42\nstdout\nstdin\n"
+            "talos> init\nzero\nstatus42\nstdout\nstdin\nstderr\n"
         );
     }
 
@@ -2456,7 +2541,7 @@ talos> /\n"
         assert_eq!(cd_bin.response_lines(), 0);
         assert_eq!(bin_ls.line(), b"ls");
         assert_eq!(bin_ls.status(), LocalCommandStatus::Handled);
-        assert_eq!(bin_ls.response_lines(), 5);
+        assert_eq!(bin_ls.response_lines(), 6);
         assert_eq!(cd_root.line(), b"cd /");
         assert_eq!(cd_root.status(), LocalCommandStatus::Handled);
         assert_eq!(cd_root.response_lines(), 0);
@@ -2472,10 +2557,11 @@ etc\n\
 talos> talos> banner.txt\n\
 	talos> talos> init\n\
 	zero\n\
-	status42\n\
-	stdout\n\
-	stdin\n\
-	talos> talos> bin\n\
+		status42\n\
+		stdout\n\
+		stdin\n\
+		stderr\n\
+		talos> talos> bin\n\
 dir\n\
 empty\n\
 etc\n"
@@ -2732,6 +2818,52 @@ talos> Talos initramfs fixture\n"
         ));
         assert!(output.contains(
             "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_execs_userspace_stderr_fixture_through_fd2() {
+        let input = ScriptedInput::new(*b"exec stderr\rwaitpid\rlaststatus\r", 31);
+        let mut backend = CaptureSink::new();
+        let (exec, waited, observed) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(exec.line(), b"exec stderr");
+        assert_eq!(exec.status(), LocalCommandStatus::Handled);
+        assert_eq!(exec.response_lines(), 10);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(waited.response_lines(), 1);
+        assert_eq!(observed.line(), b"laststatus");
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.response_lines(), 1);
+        assert!(output.contains("talos> Talos userspace stderr fixture\n"));
+        assert!(output.contains("talos: exec path=/bin/stderr source=vfs-open-read\n"));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/stderr"
+        ));
+        assert!(output.contains(
+            "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f source=userspace-talos-write\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stderr state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stderr state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stderr state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
     }
 
