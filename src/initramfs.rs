@@ -21,6 +21,8 @@ pub(crate) const PHASE8_INIT_BYTES: &[u8] = &PHASE8_INIT_ELF_BYTES;
 pub(crate) const PHASE8_INIT_TEXT_OFFSET: usize = 0x100;
 pub(crate) const PHASE8_INIT_EXIT_STATUS: u64 = 0;
 pub(crate) const PHASE8_INIT_SVC_MARKER: u64 = 0x7a10;
+pub(crate) const PHASE10_ZERO_PATH: &[u8] = b"/bin/zero";
+pub(crate) const PHASE10_ZERO_BYTES: &[u8] = &PHASE10_ZERO_ELF_BYTES;
 pub(crate) const PHASE8_EMPTY_PATH: &[u8] = b"/empty";
 pub(crate) const PHASE8_NESTED_PATH: &[u8] = b"/dir/nested.txt";
 pub(crate) const PHASE8_NESTED_BYTES: &[u8] = b"nested fixture\n";
@@ -517,9 +519,10 @@ const PHASE8_ETC_INDEX: usize = 1;
 const PHASE8_BANNER_INDEX: usize = 2;
 const PHASE8_BIN_INDEX: usize = 3;
 const PHASE8_INIT_INDEX: usize = 4;
-const PHASE8_EMPTY_INDEX: usize = 5;
-const PHASE8_DIR_INDEX: usize = 6;
-const PHASE8_NESTED_INDEX: usize = 7;
+const PHASE10_ZERO_INDEX: usize = 5;
+const PHASE8_EMPTY_INDEX: usize = 6;
+const PHASE8_DIR_INDEX: usize = 7;
+const PHASE8_NESTED_INDEX: usize = 8;
 
 static PHASE8_ROOT_ENTRIES: [DirectoryEntry; 4] = [
     DirectoryEntry::new(b"etc", PHASE8_ETC_INDEX),
@@ -531,25 +534,32 @@ static PHASE8_ROOT_ENTRIES: [DirectoryEntry; 4] = [
 static PHASE8_ETC_ENTRIES: [DirectoryEntry; 1] =
     [DirectoryEntry::new(b"banner.txt", PHASE8_BANNER_INDEX)];
 
-static PHASE8_BIN_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(b"init", PHASE8_INIT_INDEX)];
+static PHASE8_BIN_ENTRIES: [DirectoryEntry; 2] = [
+    DirectoryEntry::new(b"init", PHASE8_INIT_INDEX),
+    DirectoryEntry::new(b"zero", PHASE10_ZERO_INDEX),
+];
 
 static PHASE8_DIR_ENTRIES: [DirectoryEntry; 1] =
     [DirectoryEntry::new(b"nested.txt", PHASE8_NESTED_INDEX)];
 
-static PHASE8_INIT_ELF_BYTES: [u8; PHASE8_INIT_ELF_LEN] = build_phase8_init_elf_bytes();
+static PHASE8_INIT_ELF_BYTES: [u8; PHASE8_INIT_ELF_LEN] =
+    build_phase8_exit_elf_bytes(PHASE8_INIT_EXIT_STATUS);
+static PHASE10_ZERO_ELF_BYTES: [u8; PHASE8_INIT_ELF_LEN] =
+    build_phase8_exit_elf_bytes(PHASE8_INIT_EXIT_STATUS);
 
-static PHASE8_NODES: [InitramfsNode; 8] = [
+static PHASE8_NODES: [InitramfsNode; 9] = [
     InitramfsNode::directory(PHASE8_ROOT_INDEX, &PHASE8_ROOT_ENTRIES),
     InitramfsNode::directory(PHASE8_ETC_INDEX, &PHASE8_ETC_ENTRIES),
     InitramfsNode::regular_file(PHASE8_BANNER_INDEX, PHASE8_BANNER_BYTES),
     InitramfsNode::directory(PHASE8_BIN_INDEX, &PHASE8_BIN_ENTRIES),
     InitramfsNode::regular_file(PHASE8_INIT_INDEX, PHASE8_INIT_BYTES),
+    InitramfsNode::regular_file(PHASE10_ZERO_INDEX, PHASE10_ZERO_BYTES),
     InitramfsNode::regular_file(PHASE8_EMPTY_INDEX, b""),
     InitramfsNode::directory(PHASE8_DIR_INDEX, &PHASE8_DIR_ENTRIES),
     InitramfsNode::regular_file(PHASE8_NESTED_INDEX, PHASE8_NESTED_BYTES),
 ];
 
-const fn build_phase8_init_elf_bytes() -> [u8; PHASE8_INIT_ELF_LEN] {
+const fn build_phase8_exit_elf_bytes(exit_status: u64) -> [u8; PHASE8_INIT_ELF_LEN] {
     const EHDR_LEN: usize = 64;
     const PHENT_LEN: usize = 56;
     const DATA_OFFSET: usize = 0x200;
@@ -602,9 +612,11 @@ const fn build_phase8_init_elf_bytes() -> [u8; PHASE8_INIT_ELF_LEN] {
         PAGE_ALIGN,
     );
 
-    bytes[PHASE8_INIT_TEXT_OFFSET] = 0x00;
-    bytes[PHASE8_INIT_TEXT_OFFSET + 1] = 0x00;
-    bytes[PHASE8_INIT_TEXT_OFFSET + 2] = 0x80;
+    let exit_status = (exit_status & 0xffff) as u32;
+    let movz_x0 = 0xd280_0000u32 | (exit_status << 5);
+    bytes[PHASE8_INIT_TEXT_OFFSET] = movz_x0 as u8;
+    bytes[PHASE8_INIT_TEXT_OFFSET + 1] = (movz_x0 >> 8) as u8;
+    bytes[PHASE8_INIT_TEXT_OFFSET + 2] = (movz_x0 >> 16) as u8;
     bytes[PHASE8_INIT_TEXT_OFFSET + 3] = 0xd2;
     bytes[PHASE8_INIT_TEXT_OFFSET + 4] = 0x01;
     bytes[PHASE8_INIT_TEXT_OFFSET + 5] = 0x42;

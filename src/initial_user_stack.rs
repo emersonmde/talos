@@ -27,6 +27,8 @@ pub(crate) const INITIAL_USER_STACK_BOUNDARY_IDENTITY: &str = "phase8-initial-us
 pub(crate) const INITIAL_USER_STACK_READY: &str = "model-only-initial-user-stack-ready";
 pub(crate) const INITIAL_USER_STACK_STARTUP_PAYLOAD_STATE: &str =
     "minimal-argc1-argv0-init-empty-envp";
+pub(crate) const INITIAL_USER_STACK_ABSOLUTE_ARGV0_PAYLOAD_STATE: &str =
+    "minimal-argc1-argv0-absolute-empty-envp";
 pub(crate) const INITIAL_USER_STACK_EMPTY_ENVP_STATE: &str = "empty-envp0";
 pub(crate) const STARTUP_ABI_BLOCKED: &str = "blocked-pending-startup-abi";
 pub(crate) const INITIAL_USER_STACK_USABLE_PAGES: usize = 4;
@@ -634,6 +636,8 @@ pub(crate) fn plan_initial_user_stack(
         total_zeroed_bytes: 0,
     };
 
+    let startup_payload_state = startup_payload_state_for_path(image.source_path());
+    let copied_startup_bytes = startup_payload_bytes(image.source_path())?;
     let result = lease_stack_pages(layout, lease_source, &mut partial);
     match result {
         Ok(()) => Ok(InitialUserStackPlan {
@@ -655,7 +659,7 @@ pub(crate) fn plan_initial_user_stack(
             total_copied_bytes: partial.total_copied_bytes,
             total_zeroed_bytes: partial.total_zeroed_bytes,
             startup_payload: InitialUserStackStartupPayload {
-                state: INITIAL_USER_STACK_STARTUP_PAYLOAD_STATE,
+                state: startup_payload_state,
                 argc: 1,
                 argv_null: false,
                 argv0_path: image.source_path(),
@@ -673,12 +677,12 @@ pub(crate) fn plan_initial_user_stack(
                 envp_null: true,
                 auxv_state: STARTUP_ABI_BLOCKED,
                 tls_state: STARTUP_ABI_BLOCKED,
-                copied_startup_bytes: INITIAL_USER_STACK_STARTUP_PAYLOAD_BYTES,
+                copied_startup_bytes,
             },
             launch_binding: InitialUserStackLaunchBinding {
                 user_sp_state: INITIAL_USER_STACK_READY,
                 saved_frame_sp_el0: layout.initial_sp(),
-                startup_payload_state: INITIAL_USER_STACK_STARTUP_PAYLOAD_STATE,
+                startup_payload_state,
                 activation_state: INITIAL_ACTIVATION_BLOCKED,
                 no_partial_launch: true,
                 no_runnable_publication: true,
@@ -692,6 +696,24 @@ pub(crate) fn plan_initial_user_stack(
             Err(error)
         }
     }
+}
+
+fn startup_payload_state_for_path(path: &[u8]) -> &'static str {
+    if path == b"/bin/init" {
+        INITIAL_USER_STACK_STARTUP_PAYLOAD_STATE
+    } else {
+        INITIAL_USER_STACK_ABSOLUTE_ARGV0_PAYLOAD_STATE
+    }
+}
+
+fn startup_payload_bytes(argv0_path: &[u8]) -> Result<u64, PosixError> {
+    let argv0_c_string_bytes =
+        u64::try_from(argv0_path.len()).map_err(|_| PosixError::InvalidArgument)? + 1;
+    Ok(INITIAL_USER_STACK_ARGC_WORD_BYTES
+        + INITIAL_USER_STACK_ARGV_POINTER_BYTES
+        + INITIAL_USER_STACK_ARGV_NULL_POINTER_BYTES
+        + INITIAL_USER_STACK_ENVP_NULL_POINTER_BYTES
+        + argv0_c_string_bytes)
 }
 
 struct PartialInitialUserStack {

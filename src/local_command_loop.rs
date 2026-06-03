@@ -62,7 +62,10 @@ const LOCAL_COMMAND_ROOT_LISTING: [(&[u8], &str); 4] = [
 ];
 const LOCAL_COMMAND_ETC_LISTING: [(&[u8], &str); 1] =
     [(initramfs::PHASE8_BANNER_PATH, "banner.txt")];
-const LOCAL_COMMAND_BIN_LISTING: [(&[u8], &str); 1] = [(initramfs::PHASE8_INIT_PATH, "init")];
+const LOCAL_COMMAND_BIN_LISTING: [(&[u8], &str); 2] = [
+    (initramfs::PHASE8_INIT_PATH, "init"),
+    (initramfs::PHASE10_ZERO_PATH, "zero"),
+];
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum LocalCommandStatus {
@@ -102,6 +105,7 @@ pub enum LocalCommandFileReadError {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum LocalCommandExecError {
+    InvalidPath,
     NotFound,
     NotExecutable,
     NotSupported,
@@ -111,6 +115,7 @@ pub enum LocalCommandExecError {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct LocalCommandExecSummary {
+    source_path: &'static [u8],
     source_len: usize,
     source_digest: u64,
     entry: u64,
@@ -140,6 +145,7 @@ pub struct LocalCommandExecSummary {
 pub struct LocalCommandProcessLifecycleRecord {
     process_id: u64,
     parent_owner_id: u64,
+    source_path: &'static [u8],
     state: LocalCommandProcessState,
     status: u64,
     observed_status: u64,
@@ -147,10 +153,16 @@ pub struct LocalCommandProcessLifecycleRecord {
 }
 
 impl LocalCommandProcessLifecycleRecord {
-    const fn exited(process_id: u64, parent_owner_id: u64, status: u64) -> Self {
+    const fn exited(
+        process_id: u64,
+        parent_owner_id: u64,
+        source_path: &'static [u8],
+        status: u64,
+    ) -> Self {
         Self {
             process_id,
             parent_owner_id,
+            source_path,
             state: LocalCommandProcessState::Exited,
             status,
             observed_status: status,
@@ -366,15 +378,25 @@ where
         &mut self,
         path: &[u8],
     ) -> Result<LocalCommandExecSummary, LocalCommandExecError> {
-        let fs = initramfs::phase8_readonly_initramfs_fixture();
-        if path != initramfs::PHASE8_INIT_PATH {
-            return match fs.lookup_default(path) {
-                Ok(node) if node.metadata().kind() == initramfs::VfsNodeKind::RegularFile => {
-                    Err(LocalCommandExecError::NotExecutable)
-                }
-                _ => Err(LocalCommandExecError::NotFound),
-            };
+        if !is_absolute_exec_path(path) {
+            return Err(LocalCommandExecError::InvalidPath);
         }
+
+        let fs = initramfs::phase8_readonly_initramfs_fixture();
+        let node = fs
+            .lookup_default(path)
+            .map_err(|_| LocalCommandExecError::NotFound)?;
+        if node.metadata().kind() != initramfs::VfsNodeKind::RegularFile {
+            return Err(LocalCommandExecError::NotExecutable);
+        }
+        let source_path = match path {
+            initramfs::PHASE8_INIT_PATH => initramfs::PHASE8_INIT_PATH,
+            initramfs::PHASE10_ZERO_PATH => initramfs::PHASE10_ZERO_PATH,
+            initramfs::PHASE8_BANNER_PATH => initramfs::PHASE8_BANNER_PATH,
+            initramfs::PHASE8_EMPTY_PATH => initramfs::PHASE8_EMPTY_PATH,
+            initramfs::PHASE8_NESTED_PATH => initramfs::PHASE8_NESTED_PATH,
+            _ => return Err(LocalCommandExecError::NotExecutable),
+        };
 
         let mut program_bytes = [0u8; initramfs::PHASE8_INIT_ELF_LEN];
         let bytes_read = self
@@ -384,14 +406,14 @@ where
                 LOCAL_COMMAND_EXEC_READ_OFFSET,
             )
             .map_err(|_| LocalCommandExecError::SyscallFailed)?;
-        let completion_status = decode_phase8_init_completion_status(&program_bytes[..bytes_read])
-            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
         let image = program_loader::plan_elf64_aarch64_image(
-            initramfs::PHASE8_INIT_PATH,
+            source_path,
             program_loader::PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
             &program_bytes[..bytes_read],
         )
         .map_err(|_| LocalCommandExecError::NotExecutable)?;
+        let completion_status = decode_phase8_init_completion_status(&program_bytes[..bytes_read])
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
         let install_plan = process_install::plan_process_image_install(image)
             .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
         let owner = self
@@ -438,11 +460,13 @@ where
         let lifecycle = LocalCommandProcessLifecycleRecord::exited(
             LOCAL_COMMAND_EXEC_PROCESS_ID,
             owner.raw(),
+            source_path,
             completion_status,
         );
         self.last_process = Some(lifecycle);
 
         Ok(LocalCommandExecSummary {
+            source_path: image.source_path(),
             source_len: image.source_len(),
             source_digest: image.source_digest(),
             entry: image.entry(),
@@ -947,31 +971,25 @@ fn dispatch_local_command(
                 write_line(sink, responses, "talos: unexpected-argument")?;
                 return Ok(LocalCommandStatus::UnexpectedArgument);
             };
-            match arguments {
-                "/bin/init" => match sink.exec_vfs_program(initramfs::PHASE8_INIT_PATH) {
-                    Ok(summary) => {
-                        write_exec_summary(sink, responses, summary)?;
-                        Ok(LocalCommandStatus::Handled)
-                    }
-                    Err(LocalCommandExecError::NotExecutable) => {
-                        write_line(sink, responses, "talos: exec-not-executable")?;
-                        Ok(LocalCommandStatus::UnexpectedArgument)
-                    }
-                    Err(LocalCommandExecError::NotFound) => {
-                        write_line(sink, responses, "talos: exec-not-found")?;
-                        Ok(LocalCommandStatus::UnexpectedArgument)
-                    }
-                    Err(_) => {
-                        write_line(sink, responses, "talos: exec-error")?;
-                        Ok(LocalCommandStatus::UnexpectedArgument)
-                    }
-                },
-                "/etc/banner.txt" => {
+            match sink.exec_vfs_program(arguments.as_bytes()) {
+                Ok(summary) => {
+                    write_exec_summary(sink, responses, summary)?;
+                    Ok(LocalCommandStatus::Handled)
+                }
+                Err(LocalCommandExecError::InvalidPath) => {
+                    write_line(sink, responses, "talos: exec-invalid-path")?;
+                    Ok(LocalCommandStatus::UnexpectedArgument)
+                }
+                Err(LocalCommandExecError::NotExecutable) => {
                     write_line(sink, responses, "talos: exec-not-executable")?;
                     Ok(LocalCommandStatus::UnexpectedArgument)
                 }
-                _ => {
+                Err(LocalCommandExecError::NotFound) => {
                     write_line(sink, responses, "talos: exec-not-found")?;
+                    Ok(LocalCommandStatus::UnexpectedArgument)
+                }
+                Err(_) => {
+                    write_line(sink, responses, "talos: exec-error")?;
                     Ok(LocalCommandStatus::UnexpectedArgument)
                 }
             }
@@ -1012,6 +1030,13 @@ fn directory_exists(directory: LocalCommandDirectory) -> bool {
     initramfs::phase8_readonly_initramfs_fixture()
         .lookup_default(directory.initramfs_path())
         .is_ok()
+}
+
+fn is_absolute_exec_path(path: &[u8]) -> bool {
+    if path.first() != Some(&b'/') {
+        return false;
+    }
+    !path.iter().any(|byte| is_space(*byte))
 }
 
 fn write_root_listing(
@@ -1226,11 +1251,10 @@ fn write_exec_summary(
     response_lines: &mut usize,
     summary: LocalCommandExecSummary,
 ) -> Result<(), LocalCommandCycleError> {
-    write_line(
-        sink,
-        response_lines,
-        "talos: exec path=/bin/init source=vfs-open-read",
-    )?;
+    write_str_part(sink, "talos: exec path=")?;
+    write_byte_path_part(sink, summary.source_path)?;
+    write_str_part(sink, " source=vfs-open-read")?;
+    finish_dynamic_line(sink, response_lines)?;
     write_exec_source_line(sink, response_lines, summary)?;
     write_exec_entry_line(sink, response_lines, summary)?;
     write_exec_launch_line(sink, response_lines, summary)?;
@@ -1341,6 +1365,8 @@ fn write_exec_lifecycle_line(
     write_hex_u64_part(sink, lifecycle.process_id)?;
     write_str_part(sink, " parent=shell owner=")?;
     write_hex_u64_part(sink, lifecycle.parent_owner_id)?;
+    write_str_part(sink, " path=")?;
+    write_byte_path_part(sink, lifecycle.source_path)?;
     write_str_part(sink, " state=")?;
     write_str_part(sink, lifecycle.state.name())?;
     write_str_part(sink, " status=")?;
@@ -1376,6 +1402,8 @@ fn write_last_process_status_line(
     write_hex_u64_part(sink, lifecycle.process_id)?;
     write_str_part(sink, " parent=shell owner=")?;
     write_hex_u64_part(sink, lifecycle.parent_owner_id)?;
+    write_str_part(sink, " path=")?;
+    write_byte_path_part(sink, lifecycle.source_path)?;
     write_str_part(sink, " state=")?;
     write_str_part(sink, lifecycle.state.name())?;
     write_str_part(sink, " status=")?;
@@ -1748,8 +1776,8 @@ talos> /\n"
 
         assert_eq!(result.line(), b"ls /bin");
         assert_eq!(result.status(), LocalCommandStatus::Handled);
-        assert_eq!(result.response_lines(), 1);
-        assert_eq!(backend.as_str(), "talos> init\n");
+        assert_eq!(result.response_lines(), 2);
+        assert_eq!(backend.as_str(), "talos> init\nzero\n");
     }
 
     #[test_case]
@@ -1792,7 +1820,7 @@ talos> /\n"
         assert_eq!(cd_bin.response_lines(), 0);
         assert_eq!(bin_ls.line(), b"ls");
         assert_eq!(bin_ls.status(), LocalCommandStatus::Handled);
-        assert_eq!(bin_ls.response_lines(), 1);
+        assert_eq!(bin_ls.response_lines(), 2);
         assert_eq!(cd_root.line(), b"cd /");
         assert_eq!(cd_root.status(), LocalCommandStatus::Handled);
         assert_eq!(cd_root.response_lines(), 0);
@@ -1807,6 +1835,7 @@ empty\n\
 etc\n\
 talos> talos> banner.txt\n\
 talos> talos> init\n\
+zero\n\
 talos> talos> bin\n\
 dir\n\
 empty\n\
@@ -1891,7 +1920,7 @@ talos> Talos initramfs fixture\n"
             "argv-null=false envp-null=true envp-state=empty-envp0 envp-entries=0x0000000000000000 envp0-ptr=0x00007fffffffffe8 copied-startup-bytes=0x000000000000002a source=initial-user-stack-record\n"
         ));
         assert!(output.contains(
-            "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"
+            "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/init state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"
         ));
         assert!(output.contains(
             "talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x0000000000000000 complete=true source=lifecycle-record\n"
@@ -1899,6 +1928,36 @@ talos> Talos initramfs fixture\n"
         assert!(
             output.contains("talos: exec-signal lower-aarch64-svc-launch-boundary-equivalent\n")
         );
+    }
+
+    #[test_case]
+    fn local_command_loop_execs_non_init_absolute_vfs_program() {
+        let input = ScriptedInput::new(*b"exec /bin/zero\r", 15);
+        let mut backend = CaptureSink::new();
+        let result = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            run_one_descriptor_backed_serial_command(&mut io).unwrap()
+        };
+        let output = backend.as_str();
+
+        assert_eq!(result.line(), b"exec /bin/zero");
+        assert_eq!(result.status(), LocalCommandStatus::Handled);
+        assert_eq!(result.response_lines(), 8);
+        assert!(output.contains("talos> talos: exec path=/bin/zero source=vfs-open-read\n"));
+        assert!(output.contains("talos: exec-source bytes=0x0000000000000204 digest=0x"));
+        assert!(output.contains(
+            "talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/zero"
+        ));
+        assert!(output.contains(
+            "argv-null=false envp-null=true envp-state=empty-envp0 envp-entries=0x0000000000000000 envp0-ptr=0x00007fffffffffe8 copied-startup-bytes=0x000000000000002a source=initial-user-stack-record\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/zero state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x0000000000000000 complete=true source=lifecycle-record\n"
+        ));
     }
 
     #[test_case]
@@ -1927,21 +1986,27 @@ talos> Talos initramfs fixture\n"
         assert_eq!(observed.response_lines(), 1);
         assert!(output.contains("talos> talos: last-process none\n"));
         assert!(output.contains(
-            "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"
+            "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/init state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"
         ));
         assert!(output.contains(
-            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/init state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
     }
 
     #[test_case]
     fn local_command_loop_rejects_missing_and_non_executable_exec_targets() {
-        let input = ScriptedInput::new(*b"exec /missing\rexec /etc/banner.txt\r", 35);
+        let input = ScriptedInput::new(
+            *b"exec /missing\rexec init\rexec /bin\rexec /etc/banner.txt\rexec /empty\r",
+            67,
+        );
         let mut backend = CaptureSink::new();
-        let (missing, non_executable) = {
+        let (missing, relative, directory, banner, empty) = {
             let mut io =
                 DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
             (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
             )
@@ -1950,15 +2015,24 @@ talos> Talos initramfs fixture\n"
         assert_eq!(missing.line(), b"exec /missing");
         assert_eq!(missing.status(), LocalCommandStatus::UnexpectedArgument);
         assert_eq!(missing.response_lines(), 1);
-        assert_eq!(non_executable.line(), b"exec /etc/banner.txt");
-        assert_eq!(
-            non_executable.status(),
-            LocalCommandStatus::UnexpectedArgument
-        );
-        assert_eq!(non_executable.response_lines(), 1);
+        assert_eq!(relative.line(), b"exec init");
+        assert_eq!(relative.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(relative.response_lines(), 1);
+        assert_eq!(directory.line(), b"exec /bin");
+        assert_eq!(directory.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(directory.response_lines(), 1);
+        assert_eq!(banner.line(), b"exec /etc/banner.txt");
+        assert_eq!(banner.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(banner.response_lines(), 1);
+        assert_eq!(empty.line(), b"exec /empty");
+        assert_eq!(empty.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(empty.response_lines(), 1);
         assert_eq!(
             backend.as_str(),
             "talos> talos: exec-not-found\n\
+talos> talos: exec-invalid-path\n\
+talos> talos: exec-not-executable\n\
+talos> talos: exec-not-executable\n\
 talos> talos: exec-not-executable\n"
         );
     }

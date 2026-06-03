@@ -126,6 +126,18 @@ The post-review correction chain is:
     step is supervisor planning for absolute VFS executable dispatch before
     PATH lookup, wait/waitpid, descriptor inheritance, pipes, redirection,
     writable filesystem, hardware proof, networking, or SSH.
+14. absolute VFS executable dispatch core: accepted in
+    `phase10-absolute-vfs-exec-dispatch-core-20260603` with
+    shell-visible `exec /bin/zero` and `exec /bin/init` both reading
+    executable bytes through descriptor-backed VFS/open/read before the
+    accepted loader/process/launch/startup/lifecycle/status chain.
+    `/bin/zero` reports `argv[0]=/bin/zero`,
+    `state=minimal-argc1-argv0-absolute-empty-envp`, deterministic empty
+    envp, zero status, and path-aware `laststatus`. Missing paths,
+    relative/PATH-style names, directories, non-ELF files, and empty files
+    fail deterministically. PATH lookup, broad argv/envp, nonzero status
+    variation, wait/waitpid, descriptor inheritance, pipes, redirection,
+    writable filesystem, hardware proof, networking, and SSH remain deferred.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -183,6 +195,19 @@ VFS cat evidence chain. The closeout recommends supervisor planning for
 absolute VFS executable dispatch as the next local execution feature before
 PATH lookup, wait/waitpid, descriptor inheritance, pipes, redirection,
 writable filesystem, hardware proof, networking, or SSH.
+
+The absolute VFS executable dispatch core is accepted in
+`phase10-absolute-vfs-exec-dispatch-core-20260603`. It advances the
+shell-visible exec frontier from the special `/bin/init` fixture to bounded
+absolute VFS dispatch for `/bin/init` and `/bin/zero`. Both successful
+paths read executable bytes through descriptor-backed `TalosOpen`/
+`TalosRead`, then preserve the accepted loader, process-install,
+address-space, materialization, launch, initial-stack, lifecycle, and status
+chain. `laststatus` now includes the latest lifecycle path. `exec /missing`,
+`exec init`, `exec /bin`, `exec /etc/banner.txt`, and `exec /empty`
+remain deterministic negative controls. Nonzero status variation, PATH lookup,
+broad argv/envp, wait/waitpid, descriptor inheritance, pipes, redirection,
+writable filesystem, hardware proof, networking, and SSH remain deferred.
 
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning
