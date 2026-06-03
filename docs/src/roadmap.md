@@ -385,6 +385,28 @@ The post-review correction chain is:
     Distinct stderr stream routing, runtime-console0/TTY-backed process stdin,
     blocking I/O, pipes, redirection, writable filesystem behavior, hardware
     proof, networking, and SSH remain deferred.
+32. userspace standard stdio triad closeout: accepted in
+    `phase10-userspace-stdio-triad-closeout-20260603`. It reconciles the
+    accepted process-originated standard descriptor operations: `/bin/stdout`
+    writes through inherited fd1 with `source=userspace-talos-write`,
+    `/bin/stdin` reads deterministic proof input through inherited fd0 and
+    reports through the accepted fd1 path with
+    `source=userspace-talos-read+userspace-talos-write`, and `/bin/stderr`
+    writes through inherited fd2 with `source=userspace-talos-write`.
+    The checkpoint keeps kernel-backed shell built-ins as regression/control
+    surfaces only; accepted userspace stdio capability is limited to launched
+    VFS-backed fixtures using inherited process descriptors. Retained evidence
+    also covers descriptor-backed VFS/open/read exec, loader temporary
+    descriptor non-leak, lifecycle/status, `waitpid`, non-consuming
+    `laststatus`, fixed `/bin` lookup, literal argv, zero/nonzero status
+    controls, negative exec controls, and descriptor-backed
+    `cat /etc/banner.txt`. Runtime-console0/TTY-backed process stdin,
+    EOF/no-data/error stdin variants beyond the accepted proof input, blocking
+    scheduler I/O, close/dup/fork policy, pipes, redirection, distinct stderr
+    stream routing, writable filesystem behavior, broad shell grammar, libc
+    stdio, Pi 5 proof, networking, and SSH remain deferred. No explicit queued
+    follow-up remains after this closeout; supervisor planning is required
+    before broader shell I/O task promotion.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
