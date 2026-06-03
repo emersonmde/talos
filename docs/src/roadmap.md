@@ -22,6 +22,14 @@ capability. The immediate feature path is descriptor-backed read-only
 initramfs/VFS file I/O, then program loading and userspace process launch,
 then shell behavior that consumes those layers.
 
+The scheduled correction chain is:
+
+1. descriptor-backed read-only initramfs/VFS file I/O;
+2. POSIX-shaped open/read syscall or syscall-substitute surface;
+3. program loader input from the VFS-backed `/bin/init` file;
+4. smallest real initial userspace `/bin/init` launch boundary;
+5. shell behavior backed by VFS, descriptors, syscalls, and userspace.
+
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning
 task, the Phase 8 source inventory was accepted, and the read-only

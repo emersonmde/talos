@@ -72,3 +72,28 @@ Writable filesystems, persistent storage, block devices, general path
 mutation, userspace shell execution, process lifecycle, networking, SSH,
 RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain blocked
 until explicit feature tasks accept their contracts and validation gates.
+
+## Scheduled Follow-Up Chain
+
+The supervisor state now schedules the drift correction as an explicit
+POSIX-backed task chain:
+
+1. `phase8-open-read-initramfs-descriptor-integration-20260603`: connect the
+   accepted initramfs/VFS fixture to descriptor-backed file objects and read
+   behavior.
+2. `phase8-open-read-syscall-surface-20260603`: expose the file-object path
+   through the narrowest POSIX-shaped open/read syscall or syscall-substitute
+   surface.
+3. `phase8-program-loader-from-vfs-file-20260603`: make the accepted program
+   loader consume `/bin/init` through the real VFS/file-object path.
+4. `phase8-initial-userspace-process-launch-20260603`: advance from
+   metadata-only process plans to the smallest real initial userspace
+   `/bin/init` launch path, or record the one missing launch prerequisite as a
+   bounded blocker task.
+5. `phase10-shell-backed-by-userspace-and-vfs-20260603`: return to shell UX
+   only after VFS/file I/O and userspace execution exist, so shell-visible file
+   behavior consumes real OS layers.
+
+The Talos async worker cron and supervisor audit cron have both been updated to
+use this priority. Existing Phase 10 commands are regression/control surfaces,
+not the next planned feature path.
