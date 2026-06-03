@@ -432,6 +432,18 @@ The post-review correction chain is:
     writable filesystem behavior, libc stdio, Pi 5 proof, networking, and SSH
     remain deferred. The queued runtime-console0 stdin closeout is
     mechanically unblocked by this accepted evidence.
+34. runtime-console0 userspace stdin closeout: accepted in
+    `phase10-runtime-console0-stdin-closeout-20260603`. It reconciles the
+    accepted `exec stdin` transcript where `/bin/stdin` reads
+    `talos-console0` through inherited `fd0=stdio-input` from
+    runtime-console0/local-input plumbing, then reports the bytes through
+    inherited fd1 using the accepted userspace TalosWrite path. The closeout
+    distinguishes this accepted frontier from the older proof-buffer stdin
+    evidence and from unaccepted EOF/no-data/error, blocking scheduler I/O,
+    terminal policy, pipes, redirection, writable filesystem, Pi 5 proof,
+    networking, and SSH claims. The queued EOF/no-data stdin variant remains
+    mechanically unblocked as the next narrow local I/O primitive, with the
+    successful runtime-console0 stdin read retained as a regression.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
