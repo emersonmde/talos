@@ -13,15 +13,14 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
-Architecture quality campaign: before further POSIX feature expansion, Talos is
-scheduled for subsystem-by-subsystem senior engineering review and refactor
-work. These reviews are implementation tasks, not read-only audits: broad
-refactors, dead-code removal, API cleanup, and small or large fixes are in
-scope. The campaign covers entry/boot/targets, memory/MMU/allocator, device
-tree/boot reports, console/TTY/command/stdio, scheduler/SMP/synchronization,
+Architecture quality campaign: the scheduled senior-engineer subsystem review
+and refactor campaign is complete through closeout. The campaign reviewed and
+fixed entry/boot/targets, memory/MMU/allocator, device tree/boot reports,
+console/TTY/command/stdio, scheduler/SMP/synchronization,
 POSIX/syscall/descriptors, VFS/loader/userspace, and docs/scripts/evidence
-hygiene. It is followed by two full-system review cycles and a closeout before
-the descriptor-backed VFS/open/read/userspace feature chain resumes.
+hygiene, then ran two full-system review cycles. The accepted closeout
+frontier allows the descriptor-backed VFS/open/read/userspace feature chain to
+resume, with retained review risks tracked as non-blocking follow-up context.
 
 Priority correction after the Phase 10 shell-command review: Talos should not
 plan additional fake/kernel-backed shell command expansion as operating-system
@@ -32,7 +31,7 @@ capability. The immediate feature path is descriptor-backed read-only
 initramfs/VFS file I/O, then program loading and userspace process launch,
 then shell behavior that consumes those layers.
 
-The scheduled correction chain is:
+The post-review correction chain is:
 
 1. descriptor-backed read-only initramfs/VFS file I/O;
 2. POSIX-shaped open/read syscall or syscall-substitute surface;
