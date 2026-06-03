@@ -113,4 +113,5 @@ ownership, or DMA/cache policy was added.
   PosixError variants must add explicit syscall encoding tests at the same
   time they are introduced.
 
-Accepted commit: 78f163dce03fa661282c61da11329ade05772b25.
+Review snapshot commit: 331345bf56a76557ec55cba1bf2c0f45af9aeefd.
+Final acceptance commit is recorded in durable state.
