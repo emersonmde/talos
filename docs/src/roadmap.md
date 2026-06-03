@@ -306,12 +306,34 @@ The post-review correction chain is:
     retained fixed `/bin` lookup and absolute exec controls, `/bin/status42`
     nonzero status, `/bin/init` and `/bin/zero` zero-status controls,
     deterministic negative exec controls, loader temporary descriptor non-leak,
-    and descriptor-backed `cat /etc/banner.txt`. The next recommended
+    and descriptor-backed `cat /etc/banner.txt`. The next accepted
     feature-led local I/O primitive is a bounded userspace read through
     inherited `fd0=stdio-input`, reported through the accepted userspace stdout
-    path, before stderr expansion, blocking I/O, pipes, redirection, writable
-    filesystem behavior, broader shell grammar, hardware proof, networking, or
-    SSH.
+    path.
+28. userspace stdin through inherited fd core: accepted in
+    `phase10-userspace-stdin-inherited-fd-core-20260603`. Shell-visible
+    `exec stdin` resolves through the accepted fixed `/bin` lookup to
+    `/bin/stdin`, reads the executable through descriptor-backed VFS/open/read,
+    and runs it through the accepted loader/startup/launch/descriptor
+    inheritance/lifecycle/status chain. The launched fixture performs a bounded
+    `TalosRead` through inherited `fd0=stdio-input` from a deterministic
+    QEMU/substitute proof input buffer `talos-fd0\n`, then reports
+    `Talos userspace stdin fixture read: talos-fd0` through inherited
+    `fd1=stdio-output` using the accepted process descriptor `TalosWrite`
+    path. The transcript records `exec-stdin fd=0 bytes=0xa return=0xa
+    stdout-fd=1 stdout-bytes=0x2f stdout-return=0x2f
+    source=userspace-talos-read+userspace-talos-write`, zero lifecycle status
+    for `/bin/stdin`, matching `waitpid` and non-consuming `laststatus`,
+    retained userspace stdout fixture evidence, `/bin/init` and `/bin/zero`
+    controls, literal argv control, deterministic negative exec controls,
+    descriptor-backed `cat /etc/banner.txt`,
+    `qemu-local-shell-userspace-stdin-complete`, and PASS. The first
+    implementation also fixed an overlap between the stdout prefix buffer and
+    the fd0 read destination; the accepted evidence asserts the non-corrupted
+    `talos-fd0` bytes. Runtime-console0/TTY-backed stdin, EOF/no-data/error
+    variants, stderr-specific output, blocking I/O, pipes, redirection,
+    writable filesystem behavior, broader shell grammar, hardware proof,
+    networking, and SSH remain deferred.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
