@@ -266,6 +266,19 @@ The post-review correction chain is:
     builtin conversion, quoting/escaping/globbing, variables, pipes,
     redirection, userspace stdio I/O, writable filesystem, hardware proof,
     networking, and SSH remain deferred.
+25. minimal fixed `/bin` PATH-style exec lookup closeout: accepted in
+    `phase10-minimal-path-lookup-exec-closeout-20260603`. It reconciles the
+    accepted bare `exec status42 alpha beta` lookup transcript, canonical
+    resolved-path argv0 policy, descriptor-backed VFS/open/read and
+    loader/lifecycle/status lineage, inherited standard descriptor records,
+    loader temporary descriptor non-leak, `waitpid`, non-consuming
+    `laststatus`, zero-status controls, absolute exec regression,
+    deterministic negative controls, unsupported grammar rejection, and
+    descriptor-backed `cat /etc/banner.txt`. The next recommended
+    feature-led local shell primitive is minimal userspace stdout I/O through
+    inherited standard descriptors before pipes, redirection, writable
+    filesystem behavior, broader shell grammar, hardware proof, networking, or
+    SSH.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
