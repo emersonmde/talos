@@ -107,7 +107,9 @@ counts are evidence fields, not implicit behavior.
 The installation must preserve the accepted process-install permissions:
 
 - UserText maps readable and executable, never writable.
-- UserData maps readable and writable, never executable.
+- UserData maps preserve the process-install permissions exactly: readable and
+  writable for R+W pages, or read-only for R-only pages; they are never
+  executable.
 - No mapping may grant permissions broader than the page install record.
 - No mapping may cover the null guard, canonical user limit, kernel space,
   kernel image, kernel stacks, bootstrap page tables, DTB memory, MMIO, or

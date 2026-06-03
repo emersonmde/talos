@@ -445,7 +445,12 @@ fn validate_segment(
         UserSegmentKind::UserText if segment.permissions() == UserMappingPermissions::USER_TEXT => {
             Ok(())
         }
-        UserSegmentKind::UserData if segment.permissions() == UserMappingPermissions::USER_DATA => {
+        UserSegmentKind::UserData
+            if matches!(
+                segment.permissions(),
+                UserMappingPermissions::USER_DATA | UserMappingPermissions::READ
+            ) =>
+        {
             Ok(())
         }
         _ => Err(PosixError::AccessDenied),
@@ -781,6 +786,39 @@ mod tests {
             plan_process_image_install(image),
             Err(PosixError::AccessDenied)
         );
+    }
+
+    #[test_case]
+    fn accepts_loader_readonly_data_segment_without_widening_permissions() {
+        let text = segment(
+            UserSegmentKind::UserText,
+            UserMappingPermissions::USER_TEXT,
+            0x0000_0000_0001_0100,
+            4,
+            0x100,
+            4,
+        );
+        let rodata = segment(
+            UserSegmentKind::UserData,
+            UserMappingPermissions::READ,
+            0x0000_0000_0002_0000,
+            4,
+            0x200,
+            4,
+        );
+        let image = unchecked_plan(
+            0x0000_0000_0001_0100,
+            2,
+            [Some(text), Some(rodata), None, None],
+            LOADER_PAGE_SIZE * 2,
+        );
+
+        let plan = plan_process_image_install(image).expect("readonly data install plan");
+        let readonly = plan.page(1).expect("readonly data page");
+        assert_eq!(readonly.kind(), UserSegmentKind::UserData);
+        assert_eq!(readonly.permissions(), UserMappingPermissions::READ);
+        assert_eq!(readonly.permission_flags(), "R--");
+        assert_eq!(readonly.copy_len(), 4);
     }
 
     #[test_case]

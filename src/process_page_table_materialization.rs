@@ -19,7 +19,9 @@ use crate::{
     process_install::{
         MAX_PROCESS_INSTALL_PAGES, PROCESS_INSTALL_BOUNDARY_IDENTITY, ProcessImageInstallPlan,
     },
-    program_loader::{LOADER_PAGE_SIZE, PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY, ProgramImagePlan},
+    program_loader::{
+        LOADER_PAGE_SIZE, PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY, ProgramImagePlan, UserSegmentKind,
+    },
 };
 
 pub(crate) const PROCESS_PAGE_TABLE_MATERIALIZATION_BOUNDARY_IDENTITY: &str =
@@ -956,8 +958,18 @@ fn validate_mapping(mapping: ProcessUserMapping) -> Result<(), PosixError> {
     {
         return Err(PosixError::AccessDenied);
     }
-    match mapping.permissions() {
-        UserMappingPermissions::USER_TEXT | UserMappingPermissions::USER_DATA => Ok(()),
+    match mapping.kind() {
+        UserSegmentKind::UserText if mapping.permissions() == UserMappingPermissions::USER_TEXT => {
+            Ok(())
+        }
+        UserSegmentKind::UserData
+            if matches!(
+                mapping.permissions(),
+                UserMappingPermissions::USER_DATA | UserMappingPermissions::READ
+            ) =>
+        {
+            Ok(())
+        }
         _ => Err(PosixError::AccessDenied),
     }
 }
@@ -1069,7 +1081,10 @@ mod tests {
             PageByteRange, ProcessImagePageInstallRecord, ProcessInstallAction,
             ProcessInstallSideEffects, plan_process_image_install,
         },
-        program_loader::{UserSegmentKind, plan_phase8_init_image},
+        program_loader::{
+            PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY, PlannedUserSegment, UserSegmentKind,
+            plan_phase8_init_image,
+        },
         scheduler::ProcessOwnerId,
     };
 
@@ -1113,6 +1128,56 @@ mod tests {
         )
         .expect("materialization");
         (materialization, lease_source)
+    }
+
+    fn readonly_data_plan() -> (
+        ProgramImagePlan,
+        ProcessImageInstallPlan,
+        ProcessAddressSpace,
+        ProcessAddressSpaceLeaseSource,
+    ) {
+        let text = ProgramImagePlan::for_test_unchecked(
+            PHASE8_INIT_PATH,
+            PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+            0x204,
+            0x3892_eed2_2390_0c65,
+            0x0000_0000_0001_0100,
+            2,
+            [
+                Some(PlannedUserSegment::for_test_unchecked(
+                    UserSegmentKind::UserText,
+                    UserMappingPermissions::USER_TEXT,
+                    0x0000_0000_0001_0100,
+                    0x0000_0000_0001_0104,
+                    0x0000_0000_0001_0000,
+                    0x0000_0000_0001_1000,
+                    0x100,
+                    4,
+                    0x0000_0000_0001_0104,
+                    0x0000_0000_0001_0104,
+                )),
+                Some(PlannedUserSegment::for_test_unchecked(
+                    UserSegmentKind::UserData,
+                    UserMappingPermissions::READ,
+                    0x0000_0000_0002_0000,
+                    0x0000_0000_0002_0004,
+                    0x0000_0000_0002_0000,
+                    0x0000_0000_0002_1000,
+                    0x200,
+                    4,
+                    0x0000_0000_0002_0004,
+                    0x0000_0000_0002_0004,
+                )),
+                None,
+                None,
+            ],
+            0x0000_0000_0001_0000,
+            0x0000_0000_0002_1000,
+            LOADER_PAGE_SIZE * 2,
+        );
+        let plan = plan_process_image_install(text).expect("readonly data install plan");
+        let (address_space, lease_source) = address_space_fixture(plan);
+        (text, plan, address_space, lease_source)
     }
 
     #[test_case]
@@ -1259,6 +1324,39 @@ mod tests {
             MATERIALIZATION_TABLE_PAGE_COUNT
         );
         assert_eq!(snapshot.root_page_releases, 1);
+    }
+
+    #[test_case]
+    fn materializes_readonly_data_descriptors_as_el0_read_only_non_executable() {
+        let (image, plan, address_space, _) = readonly_data_plan();
+        let mut lease_source =
+            ProcessPageTableMaterializationLeaseSource::for_address_space(address_space);
+
+        let materialization = materialize_process_page_tables(
+            image,
+            plan,
+            address_space,
+            ProcessMaterializationRequest::DescriptorImageOnly,
+            &mut lease_source,
+        )
+        .expect("readonly data materialization");
+
+        let rodata = materialization
+            .descriptor(1)
+            .expect("readonly data descriptor");
+        assert_eq!(rodata.mapping_index(), 1);
+        assert_eq!(rodata.virtual_page(), 0x0000_0000_0002_0000);
+        assert!(rodata.user_access);
+        assert!(rodata.privileged_execute_never());
+        assert!(rodata.user_execute_never());
+        assert!(!rodata.writable());
+        assert!(!rodata.executable());
+        assert!(rodata.write_xor_execute());
+        assert_eq!(rodata.descriptor_value() & STAGE1_DESC_UXN, STAGE1_DESC_UXN);
+        assert_eq!(
+            rodata.descriptor_value() & STAGE1_DESC_AP_EL0_RO,
+            STAGE1_DESC_AP_EL0_RO
+        );
     }
 
     #[test_case]

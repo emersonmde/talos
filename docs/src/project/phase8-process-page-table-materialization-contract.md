@@ -103,6 +103,8 @@ Required descriptor properties:
   AP=EL0 read-only, UXN clear, PXN set.
 - UserData maps readable and writable, never executable:
   AP=EL0 read-write, UXN set, PXN set.
+- R-only UserData maps readable and non-executable:
+  AP=EL0 read-only, UXN set, PXN set.
 - W^X is mandatory. Any mapping that requests both write and execute returns
   EACCES.
 - Kernel, device, null-guard, unaligned, overflowed, overlapping, or

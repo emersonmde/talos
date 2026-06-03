@@ -933,7 +933,11 @@ fn validate_page_record(
 
     match page.kind() {
         UserSegmentKind::UserText if page.permissions() == UserMappingPermissions::USER_TEXT => {}
-        UserSegmentKind::UserData if page.permissions() == UserMappingPermissions::USER_DATA => {}
+        UserSegmentKind::UserData
+            if matches!(
+                page.permissions(),
+                UserMappingPermissions::USER_DATA | UserMappingPermissions::READ
+            ) => {}
         _ => return Err(PosixError::AccessDenied),
     }
     if !is_write_xor_execute(page.permissions()) {
@@ -987,12 +991,15 @@ fn is_write_xor_execute(permissions: UserMappingPermissions) -> bool {
 mod tests {
     use super::*;
     use crate::{
-        initramfs::{PHASE8_INIT_BYTES, PHASE8_INIT_PATH, phase8_readonly_initramfs_fixture},
+        initramfs::{PHASE8_INIT_PATH, phase8_readonly_initramfs_fixture},
         process_install::{
             MAX_ZERO_RANGES_PER_PAGE, PageByteRange, ProcessImagePageInstallRecord,
             ProcessInstallAction, ProcessInstallSideEffects, plan_process_image_install,
         },
-        program_loader::{PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY, plan_phase8_init_image},
+        program_loader::{
+            PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY, PlannedUserSegment, ProgramImagePlan,
+            plan_phase8_init_image,
+        },
     };
 
     fn install_fixture() -> ProcessImageInstallPlan {
@@ -1014,6 +1021,55 @@ mod tests {
         lease_source: &mut ProcessAddressSpaceLeaseSource,
     ) -> Result<ProcessAddressSpace, PosixError> {
         install_process_address_space(plan, address_space_id(), Some(owner_id()), lease_source)
+    }
+
+    fn loader_segment(
+        kind: UserSegmentKind,
+        permissions: UserMappingPermissions,
+        virtual_start: u64,
+        file_offset: usize,
+    ) -> PlannedUserSegment {
+        PlannedUserSegment::for_test_unchecked(
+            kind,
+            permissions,
+            virtual_start,
+            virtual_start + 4,
+            virtual_start & !(LOADER_PAGE_SIZE - 1),
+            (virtual_start + 4 + LOADER_PAGE_SIZE - 1) & !(LOADER_PAGE_SIZE - 1),
+            file_offset,
+            4,
+            virtual_start + 4,
+            virtual_start + 4,
+        )
+    }
+
+    fn readonly_data_install_plan() -> ProcessImageInstallPlan {
+        let text = loader_segment(
+            UserSegmentKind::UserText,
+            UserMappingPermissions::USER_TEXT,
+            0x0000_0000_0001_0100,
+            0x100,
+        );
+        let rodata = loader_segment(
+            UserSegmentKind::UserData,
+            UserMappingPermissions::READ,
+            0x0000_0000_0002_0000,
+            0x200,
+        );
+        let image = ProgramImagePlan::for_test_unchecked(
+            PHASE8_INIT_PATH,
+            PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
+            0x204,
+            0x3892_eed2_2390_0c65,
+            text.virtual_start(),
+            2,
+            [Some(text), Some(rodata), None, None],
+            text.rounded_start(),
+            rodata.rounded_end(),
+            LOADER_PAGE_SIZE * 2,
+        );
+
+        plan_process_image_install(image).expect("readonly data install plan")
     }
 
     #[test_case]
@@ -1146,6 +1202,29 @@ mod tests {
     }
 
     #[test_case]
+    fn installs_readonly_data_pages_without_widening_permissions() {
+        let plan = readonly_data_install_plan();
+        let mut lease_source = ProcessAddressSpaceLeaseSource::for_plan(plan);
+
+        let address_space =
+            install_with_limits(plan, &mut lease_source).expect("process address space");
+
+        let mapping = address_space.mapping(1).expect("readonly data mapping");
+        assert_eq!(mapping.kind(), UserSegmentKind::UserData);
+        assert_eq!(mapping.permissions(), UserMappingPermissions::READ);
+        assert!(mapping.el0_user_access());
+        assert!(mapping.write_xor_execute());
+
+        let lease = address_space
+            .user_frame_lease(1)
+            .expect("readonly data frame");
+        assert_eq!(lease.kind(), UserSegmentKind::UserData);
+        assert_eq!(lease.permissions(), UserMappingPermissions::READ);
+        assert_eq!(lease.copied_bytes(), 4);
+        assert_eq!(lease.zeroed_bytes(), LOADER_PAGE_SIZE - 4);
+    }
+
+    #[test_case]
     fn rejects_bad_install_plan_before_leasing() {
         let mut pages = [None; MAX_PROCESS_INSTALL_PAGES];
         pages[0] = install_fixture().page(0);
@@ -1246,7 +1325,7 @@ mod tests {
         let overlap = ProcessImageInstallPlan::for_test_unchecked(
             PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
             PROCESS_INSTALL_BOUNDARY_IDENTITY,
-            PHASE8_INIT_BYTES,
+            PHASE8_INIT_PATH,
             0x3892_eed2_2390_0c65,
             fixture.page(0).expect("text").virtual_start(),
             LOADER_PAGE_SIZE * 2,

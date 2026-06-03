@@ -73,7 +73,9 @@ process handle, process table index, or authority to switch address spaces.
 The install plan preserves the loader's segment permissions exactly:
 
 - UserText pages are readable and executable, never writable.
-- UserData pages are readable and writable, never executable.
+- UserData pages preserve the loader's data permissions exactly: readable and
+  writable for R+W segments, or read-only for R-only segments; they are never
+  executable.
 - No page record may merge incompatible segment permissions.
 - No rounded page range may cross the null guard, user/kernel split,
   kernel mapping, MMIO, bootstrap table, kernel stack, DTB, or another segment.

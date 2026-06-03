@@ -3061,7 +3061,7 @@ Milestone 8.3: Program Loader
 - Phase 8 process-install core is accepted. It adds the metadata-only
   ProcessImageInstallPlan owner in src/process_install.rs, deriving ordered
   page install records from a validated ProgramImagePlan while preserving
-  UserText R-X and UserData RW- permissions, exact fixture identity, source
+  UserText R-X plus UserData RW-/R-- permissions, exact fixture identity, source
   digest, entry point, total rounded footprint, clipped file-copy ranges,
   explicit zero-fill ranges, and the later action order
   allocate/copy/zero/map. The implementation is target-independent and returns
@@ -3166,7 +3166,7 @@ Milestone 8.3: Program Loader
   boundary with identity phase8-process-page-table-materialization-v1. The
   contract fixes inputs from ProgramImagePlan, ProcessImageInstallPlan, and
   ProcessAddressSpace; defines user-frame/root/table-page ownership,
-  UserText/UserData descriptor policy, kernel mapping and activation
+  UserText/UserData descriptor policy including R-only data, kernel mapping and activation
   boundaries, ASID/TTBR/TCR/TLB blocked surfaces, rollback, teardown, and
   deterministic errors; and names
   phase8-qemu-process-page-table-materialization-smoke-plan-20260530 as the
@@ -3200,7 +3200,7 @@ Milestone 8.3: Program Loader
   EL0 descriptor records, copied/zeroed byte accounting, rollback accounting,
   idempotent teardown, activation_blocked=true, and
   kernel_mapping_policy=activation-blocked-no-kernel-half. Tests cover success,
-  permission preservation, deterministic bad-input and activation-request
+  permission preservation including R-only data descriptors, deterministic bad-input and activation-request
   rejection, unsupported topology, resource exhaustion rollback, copy/zero
   failure rollback, and idempotent teardown. The next bounded task should be
   phase8-qemu-process-page-table-materialization-smoke-core-20260530 to retain
