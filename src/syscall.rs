@@ -101,13 +101,9 @@ impl SyscallReturn {
     }
 
     pub(crate) const fn error(error: PosixError) -> Self {
-        match errno_number(error) {
-            Some(errno) => Self {
-                x0: (errno as u64).wrapping_neg(),
-            },
-            None => Self {
-                x0: (ENOSYS as u64).wrapping_neg(),
-            },
+        let errno = errno_number(error);
+        Self {
+            x0: (errno as u64).wrapping_neg(),
         }
     }
 
@@ -137,24 +133,61 @@ impl SyscallDispatchResult {
     }
 }
 
-pub(crate) const EINVAL: u16 = 22;
-pub(crate) const EBADF: u16 = 9;
+pub(crate) const EPERM: u16 = 1;
+pub(crate) const ENOENT: u16 = 2;
+pub(crate) const EINTR: u16 = 4;
 pub(crate) const EIO: u16 = 5;
+pub(crate) const ENOEXEC: u16 = 8;
+pub(crate) const EBADF: u16 = 9;
+pub(crate) const ECHILD: u16 = 10;
+pub(crate) const EAGAIN: u16 = 11;
+pub(crate) const ENOMEM: u16 = 12;
+pub(crate) const EACCES: u16 = 13;
 pub(crate) const EFAULT: u16 = 14;
+pub(crate) const EBUSY: u16 = 16;
+pub(crate) const EEXIST: u16 = 17;
+pub(crate) const ENODEV: u16 = 19;
+pub(crate) const ENOTDIR: u16 = 20;
+pub(crate) const EISDIR: u16 = 21;
+pub(crate) const EINVAL: u16 = 22;
 pub(crate) const EMFILE: u16 = 24;
+pub(crate) const ENOTTY: u16 = 25;
+pub(crate) const ENOSPC: u16 = 28;
+pub(crate) const EPIPE: u16 = 32;
+pub(crate) const ERANGE: u16 = 34;
+pub(crate) const ENAMETOOLONG: u16 = 36;
 pub(crate) const ENOSYS: u16 = 38;
+pub(crate) const ENOTEMPTY: u16 = 39;
 pub(crate) const ENOTSUP: u16 = 95;
 
-pub(crate) const fn errno_number(error: PosixError) -> Option<u16> {
+pub(crate) const fn errno_number(error: PosixError) -> u16 {
     match error {
-        PosixError::InvalidArgument => Some(EINVAL),
-        PosixError::BadDescriptor => Some(EBADF),
-        PosixError::Io => Some(EIO),
-        PosixError::Fault => Some(EFAULT),
-        PosixError::TooManyOpenFiles => Some(EMFILE),
-        PosixError::NotImplemented => Some(ENOSYS),
-        PosixError::NotSupported => Some(ENOTSUP),
-        _ => None,
+        PosixError::OperationNotPermitted => EPERM,
+        PosixError::NoEntry => ENOENT,
+        PosixError::Interrupted => EINTR,
+        PosixError::Io => EIO,
+        PosixError::NotExecutable => ENOEXEC,
+        PosixError::BadDescriptor => EBADF,
+        PosixError::NoChild => ECHILD,
+        PosixError::Again => EAGAIN,
+        PosixError::NoMemory => ENOMEM,
+        PosixError::AccessDenied => EACCES,
+        PosixError::Fault => EFAULT,
+        PosixError::Busy => EBUSY,
+        PosixError::Exists => EEXIST,
+        PosixError::NoDevice => ENODEV,
+        PosixError::NotDirectory => ENOTDIR,
+        PosixError::IsDirectory => EISDIR,
+        PosixError::InvalidArgument => EINVAL,
+        PosixError::TooManyOpenFiles => EMFILE,
+        PosixError::NotTty => ENOTTY,
+        PosixError::NoSpace => ENOSPC,
+        PosixError::Pipe => EPIPE,
+        PosixError::Range => ERANGE,
+        PosixError::NameTooLong => ENAMETOOLONG,
+        PosixError::NotImplemented => ENOSYS,
+        PosixError::NotEmpty => ENOTEMPTY,
+        PosixError::NotSupported => ENOTSUP,
     }
 }
 
@@ -736,21 +769,40 @@ mod tests {
     }
 
     #[test_case]
-    fn accepted_errno_subset_encodes_as_negative_x0_values() {
+    fn posix_error_vocabulary_encodes_as_negative_errno_x0_values() {
         let accepted = [
-            (PosixError::InvalidArgument, EINVAL),
-            (PosixError::BadDescriptor, EBADF),
+            (PosixError::OperationNotPermitted, EPERM),
+            (PosixError::NoEntry, ENOENT),
+            (PosixError::Interrupted, EINTR),
             (PosixError::Io, EIO),
+            (PosixError::NotExecutable, ENOEXEC),
+            (PosixError::BadDescriptor, EBADF),
+            (PosixError::NoChild, ECHILD),
+            (PosixError::Again, EAGAIN),
+            (PosixError::NoMemory, ENOMEM),
+            (PosixError::AccessDenied, EACCES),
             (PosixError::Fault, EFAULT),
+            (PosixError::Busy, EBUSY),
+            (PosixError::Exists, EEXIST),
+            (PosixError::NoDevice, ENODEV),
+            (PosixError::NotDirectory, ENOTDIR),
+            (PosixError::IsDirectory, EISDIR),
+            (PosixError::InvalidArgument, EINVAL),
             (PosixError::TooManyOpenFiles, EMFILE),
+            (PosixError::NotTty, ENOTTY),
+            (PosixError::NoSpace, ENOSPC),
+            (PosixError::Pipe, EPIPE),
+            (PosixError::Range, ERANGE),
+            (PosixError::NameTooLong, ENAMETOOLONG),
             (PosixError::NotImplemented, ENOSYS),
+            (PosixError::NotEmpty, ENOTEMPTY),
             (PosixError::NotSupported, ENOTSUP),
         ];
 
         let mut index = 0;
         while index < accepted.len() {
             let (error, errno) = accepted[index];
-            assert_eq!(errno_number(error), Some(errno));
+            assert_eq!(errno_number(error), errno);
             assert_eq!(
                 SyscallReturn::error(error).x0(),
                 (errno as u64).wrapping_neg()
@@ -760,11 +812,22 @@ mod tests {
     }
 
     #[test_case]
-    fn unaccepted_posix_errors_fall_back_to_enosys_encoding() {
-        assert_eq!(errno_number(PosixError::NoEntry), None);
+    fn vfs_path_errors_do_not_collapse_to_enosys() {
         assert_eq!(
             SyscallReturn::error(PosixError::NoEntry).x0(),
-            (ENOSYS as u64).wrapping_neg()
+            (ENOENT as u64).wrapping_neg()
+        );
+        assert_eq!(
+            SyscallReturn::error(PosixError::IsDirectory).x0(),
+            (EISDIR as u64).wrapping_neg()
+        );
+        assert_eq!(
+            SyscallReturn::error(PosixError::NotDirectory).x0(),
+            (ENOTDIR as u64).wrapping_neg()
+        );
+        assert_eq!(
+            SyscallReturn::error(PosixError::NameTooLong).x0(),
+            (ENAMETOOLONG as u64).wrapping_neg()
         );
     }
 

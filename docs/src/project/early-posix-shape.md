@@ -58,6 +58,12 @@ Talos should define path behavior before implementing VFS:
 
 Internal Rust errors can be rich enums. The syscall boundary should translate them into stable numeric errors. The mapping does not need to be complete initially, but it should reserve a path toward familiar errno-style behavior.
 
+The architecture-quality review for
+talos-review-posix-syscall-descriptors-20260603 tightened that rule: the
+syscall boundary now maps every current PosixError variant to an explicit
+errno number. Future PosixError additions should add syscall encoding tests
+with the new variant instead of relying on a fallback such as ENOSYS.
+
 ## Spawn, Exec, Exit, and Wait
 
 The first implementation can choose a small subset, but it should keep these concepts separate:

@@ -153,23 +153,28 @@ impl ExceptionFrame {
     }
 }
 
+#[allow(dead_code)]
 pub(crate) const AARCH64_SVC_EXCEPTION_CLASS: u64 = 0x15;
 
+#[allow(dead_code)]
 pub(crate) const fn exception_class(esr: u64) -> u64 {
     (esr >> 26) & 0x3f
 }
 
+#[allow(dead_code)]
 pub(crate) const fn svc_immediate(esr: u64) -> u16 {
     (esr & 0xffff) as u16
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[allow(dead_code)]
 pub(crate) struct RoutedSyscall {
     pub raw_number: u64,
     pub arguments: crate::syscall::SyscallArguments,
     pub return_x0: u64,
 }
 
+#[allow(dead_code)]
 pub(crate) fn try_route_lower_aarch64_syscall(
     vector: ExceptionVector,
     esr: u64,

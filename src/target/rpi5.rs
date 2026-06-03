@@ -11869,34 +11869,6 @@ fn finish_read_stdin_proof(marker_ok: bool) -> ! {
     crate::arch::aarch64::halt()
 }
 
-#[cfg(talos_boot_scenario = "qemu_pointer_copy_smoke")]
-fn finish_pointer_copy_smoke(marker_ok: bool) -> ! {
-    if !marker_ok {
-        POINTER_COPY_ERRORS.fetch_add(1, Ordering::Relaxed);
-    }
-    let participants = POINTER_COPY_SUCCESS_OBSERVED.load(Ordering::Relaxed)
-        + POINTER_COPY_EFAULT_OBSERVED.load(Ordering::Relaxed)
-        + POINTER_COPY_UNKNOWN_OBSERVED.load(Ordering::Relaxed);
-    let errors = POINTER_COPY_ERRORS.load(Ordering::Relaxed);
-    let complete = participants == 3 && errors == 0;
-    let classification = if complete {
-        "qemu-pointer-copy-smoke-complete"
-    } else {
-        "qemu-pointer-copy-smoke-failed"
-    };
-
-    crate::println!(
-        "qemu-pointer-copy-smoke: final participants={} expected=3 errors={} classification={}",
-        participants,
-        errors,
-        classification
-    );
-    if complete {
-        crate::println!("qemu-pointer-copy-smoke: PASS");
-        crate::target::qemu::exit_success();
-    }
-    crate::target::qemu::exit_failure();
-}
 #[cfg(talos_boot_scenario = "rpi5_pointer_copy_proof")]
 fn finish_pointer_copy_proof(marker_ok: bool) -> ! {
     if !marker_ok {

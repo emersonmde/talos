@@ -124,11 +124,21 @@ pub(crate) struct UserRange {
 
 impl UserRange {
     pub(crate) fn new(start: u64, len: usize, max_len: usize) -> Result<Self, PosixError> {
-        if len > max_len || !is_non_guard_user_address(start) {
+        if len > max_len {
             return Err(PosixError::Fault);
         }
 
         let end = start.checked_add(len as u64).ok_or(PosixError::Fault)?;
+        if len == 0 {
+            if end > USER_ADDRESS_SPACE_END {
+                return Err(PosixError::Fault);
+            }
+            return Ok(Self { start, len, end });
+        }
+
+        if !is_non_guard_user_address(start) {
+            return Err(PosixError::Fault);
+        }
         if end > USER_ADDRESS_SPACE_END {
             return Err(PosixError::Fault);
         }
@@ -1634,7 +1644,7 @@ mod tests {
     }
 
     #[test_case]
-    fn user_range_rejects_null_guard_and_kernel_addresses_as_efault() {
+    fn user_range_rejects_null_guard_and_kernel_addresses_for_nonempty_ranges_as_efault() {
         assert_eq!(
             UserRange::new(0, 1, DEFAULT_USER_COPY_LIMIT),
             Err(PosixError::Fault)
@@ -1645,7 +1655,11 @@ mod tests {
         );
         assert_eq!(
             UserRange::new(USER_ADDRESS_SPACE_END, 0, DEFAULT_USER_COPY_LIMIT),
-            Err(PosixError::Fault)
+            Ok(UserRange {
+                start: USER_ADDRESS_SPACE_END,
+                len: 0,
+                end: USER_ADDRESS_SPACE_END
+            })
         );
         assert_eq!(
             UserRange::new(USER_ADDRESS_SPACE_END, 1, DEFAULT_USER_COPY_LIMIT),
@@ -1848,23 +1862,36 @@ mod tests {
     }
 
     #[test_case]
-    fn copy_user_zero_length_succeeds_for_valid_user_start() {
+    fn copy_user_zero_length_succeeds_without_dereferencing_user_start() {
         let mappings: [UserMapping; 0] = [];
         let user_memory: [u8; 0] = [];
         let mut kernel_dst = [0xaa; 2];
+        let mut user_dst = [0xbbu8; 2];
 
         assert_eq!(
             copy_from_user(
                 &mappings,
                 USER_NULL_GUARD_END,
                 &user_memory,
-                USER_NULL_GUARD_END,
+                0,
                 0,
                 &mut kernel_dst
             ),
             Ok(0)
         );
+        assert_eq!(
+            copy_to_user(
+                &mappings,
+                USER_NULL_GUARD_END,
+                &mut user_dst,
+                USER_ADDRESS_SPACE_END,
+                0,
+                &[]
+            ),
+            Ok(0)
+        );
         assert_eq!(kernel_dst, [0xaa; 2]);
+        assert_eq!(user_dst, [0xbb; 2]);
     }
 
     #[test_case]
@@ -1884,17 +1911,6 @@ mod tests {
                 &user_memory,
                 0,
                 1,
-                &mut kernel_dst
-            ),
-            Err(PosixError::Fault)
-        );
-        assert_eq!(
-            copy_from_user(
-                &mappings,
-                USER_NULL_GUARD_END,
-                &user_memory,
-                USER_ADDRESS_SPACE_END,
-                0,
                 &mut kernel_dst
             ),
             Err(PosixError::Fault)
