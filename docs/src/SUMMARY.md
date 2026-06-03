@@ -183,6 +183,7 @@
 - [Phase 10 Local Ls Root Closeout Checkpoint](project/phase10-local-ls-root-closeout-checkpoint.md)
 - [Phase 10 Local Cat Banner Closeout Checkpoint](project/phase10-local-cat-banner-closeout-checkpoint.md)
 - [Phase 10 Local Cd Fixed Dirs Closeout Checkpoint](project/phase10-local-cd-fixed-dirs-closeout-checkpoint.md)
+- [Phase 10 Local Ls Cwd Closeout Checkpoint](project/phase10-local-ls-cwd-closeout-checkpoint.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

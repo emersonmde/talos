@@ -4241,6 +4241,18 @@ traversal, POSIX cwd/syscalls, descriptor-backed filesystem syscalls,
 process-local cwd inheritance, userspace shell execution, networking, SSH,
 RP1/PCIe, UART interrupt ownership, and DMA/cache policy deferred.
 
+The local bare `ls` cwd closeout checkpoint is now accepted. It reconciles
+the accepted QEMU/substitute core commit
+`4a3db877499328b10e75bff9f1eb3bc36f7579ae`, RPi5 candidate archive commit
+`742f0eaba91bd4986d8fa456722de89f94aa7015`, and Pi 5 proof commit
+`b17832a7232d74c3d4f90dde677c4beb86271945` into the current accepted
+frontier: bounded command-context cwd listings for `/`, `/etc`, and
+`/bin` over the descriptor-backed serial command loop. No implementation,
+QEMU rerun, hardware action, or archive publication was performed by the
+checkpoint. No explicit mechanically unblocked feature task remains after this
+closeout, so supervisor planning is required for the next smallest
+feature-led local interactivity slice.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.
