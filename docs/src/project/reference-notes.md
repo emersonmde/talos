@@ -85,7 +85,19 @@ Local Daedalus references:
 - RP1 Ethernet appears as rp1_eth, compatible with raspberrypi,rp1-gem and cdns,macb.
 - SD card runtime access is BCM2712 SDHCI; NVMe requires PCIe root complex plus NVMe driver and should not be the first persistent-storage path.
 - The current lab TFTP boot sequence successfully requests Pi 5 files including config.txt, bcm2712-rpi-5-b.dtb, kernel_2712.img, initramfs_2712, overlays, and cmdline.txt.
-- Lab TFTP evidence must capture the pre-run cursor with the full log window. Calling `/tftp/logs?cursor=0&limit=1` uses the endpoint default `max_bytes=65536`, so once logs exceed 64 KiB the returned `cursor_end` is a truncated-window boundary rather than the current EOF cursor. Use `scripts/rpi5-tftp-cursor.sh`, or explicitly request `max_bytes=1048576`, before each hardware run. After power-cycle, do not rollback immediately after the first serial burst; `/serial/observe` can return before the network/TFTP phase. Poll `scripts/rpi5-wait-tftp-delta.sh <cursor>` until fresh TFTP events appear or the bounded timeout expires. Several recent no-marker UART-proof follow-up reads are therefore reclassified as stale or premature TFTP-delta collection, while their publish, power-cycle, and serial evidence remains valid.
+- Lab TFTP evidence must capture the pre-run tail cursor with `cursor`
+  omitted. Calling `/tftp/logs?cursor=0&limit=1` uses the endpoint default
+  `max_bytes=65536`, so once logs exceed 64 KiB the returned `cursor_end`
+  is a truncated-window boundary rather than the current EOF cursor. Calling
+  with an invented large cursor is also not the tail-mode contract. Use
+  `scripts/rpi5-tftp-cursor.sh`, or call
+  `/tftp/logs?max_bytes=1048576&limit=1`, before each hardware run. After
+  power-cycle, do not rollback immediately after the first serial burst;
+  `/serial/observe` can return before the network/TFTP phase. Poll
+  `scripts/rpi5-wait-tftp-delta.sh <cursor>` until fresh TFTP events appear or
+  the bounded timeout expires. Several recent no-marker UART-proof follow-up
+  reads are therefore reclassified as stale or premature TFTP-delta collection,
+  while their publish, power-cycle, and serial evidence remains valid.
 - Direct-root, `boot_ramdisk=1`, root-only armstub, serial-prefixed mirror, combined prefix-plus-armstub, and preserved-UART marker Talos archives all stop at the same firmware/RP1 serial boundary. TFTP logs now prove the Pi is served the selected config, kernel, DTB, overlays, cmdline, and custom armstub files.
 - Circle's Raspberry Pi 5 bare-metal configuration keeps `kernel_2712.img` but sets `kernel_address=0x80000`. Talos now uses the same firmware load base while keeping arm64 Image `text_offset=0`, so post-marker absolute symbols match a reference bare-metal handoff convention.
 - The current assembly-only first-light proof deliberately has no Rust, stack setup, BSS clearing, exception vectors, MPIDR filtering, or broad fallback logic. It starts with a minimal arm64 Image header, writes a marker to BCM2712 `uart10`, configures RP1 GPIO14/GPIO15 for UART0, then repeatedly writes fixed bytes to RP1 UART0.

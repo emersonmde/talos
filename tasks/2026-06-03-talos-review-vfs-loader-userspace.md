@@ -3,7 +3,7 @@
 Task: talos-review-vfs-loader-userspace-20260603
 Status: accepted
 Started: 2026-06-03T06:30:13Z
-Completed: 2026-06-03T07:33:00Z
+Completed: 2026-06-03T06:47:24Z
 
 ## Scope
 
@@ -95,3 +95,4 @@ Pi 5 hardware.
 ## Commit
 
 - Review implementation commit: 47a21f081a8416ab78c59fe124d915d818dc8d35
+- Acceptance/state commit: b8ccec78b10de93951f50491e1ca42da21d9a664
