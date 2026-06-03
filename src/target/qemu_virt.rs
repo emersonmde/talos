@@ -327,6 +327,19 @@ use crate::{
         DescriptorTable, PathLimits, PosixError, UserMapping, UserMappingPermissions,
     },
 };
+#[cfg(talos_boot_scenario = "qemu_open_read_syscall_surface_smoke")]
+use crate::{
+    initramfs::{
+        PHASE8_BANNER_BYTES, PHASE8_BANNER_PATH, PHASE8_INIT_PATH, ReadOnlyFileDescriptions,
+        phase8_readonly_initramfs_fixture,
+    },
+    posix::{
+        DescriptorAccess, DescriptorEntry, DescriptorFlags, DescriptorObject, DescriptorObjectKind,
+        ProcessDescriptorStore, UserMapping, UserMappingPermissions,
+    },
+    scheduler::ProcessOwnerId,
+    syscall::{self, SyscallArguments},
+};
 #[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
 use crate::{
     initramfs::{
@@ -454,6 +467,9 @@ const TIMER_PREEMPTION_TARGET_SWITCHES: u64 = 6;
 
 #[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
 const READONLY_INITRAMFS_VFS_USER_BASE: u64 = 0x0000_0000_0011_0000;
+
+#[cfg(talos_boot_scenario = "qemu_open_read_syscall_surface_smoke")]
+const OPEN_READ_SYSCALL_USER_BASE: u64 = 0x0000_0000_0011_0000;
 
 #[cfg(any(
     talos_boot_scenario = "qemu_el0_trap_smoke",
@@ -5407,6 +5423,320 @@ fn readonly_initramfs_vfs_manifest_digest() -> u64 {
         chunk_index += 1;
     }
     hash
+}
+
+#[cfg(talos_boot_scenario = "qemu_open_read_syscall_surface_smoke")]
+struct OpenReadSyscallSurfaceConsole;
+
+#[cfg(talos_boot_scenario = "qemu_open_read_syscall_surface_smoke")]
+impl core::fmt::Write for OpenReadSyscallSurfaceConsole {
+    fn write_str(&mut self, _s: &str) -> core::fmt::Result {
+        Ok(())
+    }
+}
+
+#[cfg(talos_boot_scenario = "qemu_open_read_syscall_surface_smoke")]
+pub fn run_open_read_syscall_surface_smoke() -> bool {
+    crate::println!("qemu-open-read-syscall-surface-smoke: start");
+
+    let owner = ProcessOwnerId::new(1).expect("qemu open/read owner id is nonzero");
+    let mut store = ProcessDescriptorStore::<1, 5>::new_empty();
+    let mut files = ReadOnlyFileDescriptions::<2>::new_empty();
+    let fs = phase8_readonly_initramfs_fixture();
+    let mut user_memory = [0u8; 128];
+    let mut scratch = [0u8; 128];
+    let mut console = OpenReadSyscallSurfaceConsole;
+    let mappings = [UserMapping::new(
+        OPEN_READ_SYSCALL_USER_BASE,
+        user_memory.len(),
+        UserMappingPermissions::USER_DATA,
+    )
+    .expect("valid qemu open/read syscall smoke user mapping")];
+    store
+        .create_owner_with_inherited_stdio(owner)
+        .expect("open/read syscall smoke owner table");
+    user_memory[..PHASE8_BANNER_PATH.len()].copy_from_slice(PHASE8_BANNER_PATH);
+    user_memory[0x40..0x40 + PHASE8_INIT_PATH.len()].copy_from_slice(PHASE8_INIT_PATH);
+
+    crate::println!(
+        "qemu-open-read-syscall-surface-smoke: current-descriptor-table lookup=process-owned owner={:#018x} resolved=true stdio=inherited initramfs=phase8-readonly",
+        owner.raw()
+    );
+
+    let invalid_flags = syscall::dispatch_process_descriptor_with_initramfs(
+        syscall::TALOS_OPEN_SYSCALL,
+        SyscallArguments::new([
+            OPEN_READ_SYSCALL_USER_BASE,
+            PHASE8_BANNER_PATH.len() as u64,
+            1,
+            0,
+            0,
+            0,
+        ]),
+        Some(owner),
+        &mut store,
+        &mappings,
+        OPEN_READ_SYSCALL_USER_BASE,
+        &mut user_memory,
+        &mut scratch,
+        &mut console,
+        fs,
+        &mut files,
+        None,
+    );
+    let invalid_flags_ok =
+        invalid_flags.return_value().x0() == (syscall::EINVAL as u64).wrapping_neg();
+    crate::println!(
+        "qemu-open-read-syscall-surface-smoke: syscall case=open_invalid_flags number=5 return-x0={:#018x} expected=-EINVAL descriptor-leak=false ok={}",
+        invalid_flags.return_value().x0(),
+        invalid_flags_ok
+    );
+
+    let user_fault = syscall::dispatch_process_descriptor_with_initramfs(
+        syscall::TALOS_OPEN_SYSCALL,
+        SyscallArguments::new([
+            0x0000_0000_001e_0000,
+            PHASE8_BANNER_PATH.len() as u64,
+            0,
+            0,
+            0,
+            0,
+        ]),
+        Some(owner),
+        &mut store,
+        &mappings,
+        OPEN_READ_SYSCALL_USER_BASE,
+        &mut user_memory,
+        &mut scratch,
+        &mut console,
+        fs,
+        &mut files,
+        None,
+    );
+    let user_fault_ok = user_fault.return_value().x0() == (syscall::EFAULT as u64).wrapping_neg();
+    crate::println!(
+        "qemu-open-read-syscall-surface-smoke: syscall case=open_user_fault number=5 return-x0={:#018x} expected=-EFAULT descriptor-leak=false ok={}",
+        user_fault.return_value().x0(),
+        user_fault_ok
+    );
+
+    user_memory[0x60..0x64].copy_from_slice(b"/etc");
+    let directory = syscall::dispatch_process_descriptor_with_initramfs(
+        syscall::TALOS_OPEN_SYSCALL,
+        SyscallArguments::new([OPEN_READ_SYSCALL_USER_BASE + 0x60, 4, 0, 0, 0, 0]),
+        Some(owner),
+        &mut store,
+        &mappings,
+        OPEN_READ_SYSCALL_USER_BASE,
+        &mut user_memory,
+        &mut scratch,
+        &mut console,
+        fs,
+        &mut files,
+        None,
+    );
+    let directory_ok = directory.return_value().x0() == (syscall::EISDIR as u64).wrapping_neg();
+    crate::println!(
+        "qemu-open-read-syscall-surface-smoke: syscall case=open_directory number=5 return-x0={:#018x} expected=-EISDIR descriptor-leak=false ok={}",
+        directory.return_value().x0(),
+        directory_ok
+    );
+
+    let open_banner = syscall::dispatch_process_descriptor_with_initramfs(
+        syscall::TALOS_OPEN_SYSCALL,
+        SyscallArguments::new([
+            OPEN_READ_SYSCALL_USER_BASE,
+            PHASE8_BANNER_PATH.len() as u64,
+            0,
+            0,
+            0,
+            0,
+        ]),
+        Some(owner),
+        &mut store,
+        &mappings,
+        OPEN_READ_SYSCALL_USER_BASE,
+        &mut user_memory,
+        &mut scratch,
+        &mut console,
+        fs,
+        &mut files,
+        None,
+    );
+    let banner_fd = open_banner.return_value().x0();
+    let open_banner_ok = banner_fd == 3;
+    crate::println!(
+        "qemu-open-read-syscall-surface-smoke: syscall case=open_banner path=/etc/banner.txt number=5 return-x0={} object=regular-file ok={}",
+        banner_fd,
+        open_banner_ok
+    );
+
+    let read_fault = syscall::dispatch_process_descriptor_with_initramfs(
+        syscall::TALOS_READ_SYSCALL,
+        SyscallArguments::new([banner_fd, 0x0000_0000_001e_0000, 6, 0, 0, 0]),
+        Some(owner),
+        &mut store,
+        &mappings,
+        OPEN_READ_SYSCALL_USER_BASE,
+        &mut user_memory,
+        &mut scratch,
+        &mut console,
+        fs,
+        &mut files,
+        None,
+    );
+    let read_fault_ok = read_fault.return_value().x0() == (syscall::EFAULT as u64).wrapping_neg();
+    crate::println!(
+        "qemu-open-read-syscall-surface-smoke: syscall case=read_user_fault fd={} number=4 return-x0={:#018x} expected=-EFAULT offset-unchanged=true ok={}",
+        banner_fd,
+        read_fault.return_value().x0(),
+        read_fault_ok
+    );
+
+    let read_banner = syscall::dispatch_process_descriptor_with_initramfs(
+        syscall::TALOS_READ_SYSCALL,
+        SyscallArguments::new([banner_fd, OPEN_READ_SYSCALL_USER_BASE + 0x20, 64, 0, 0, 0]),
+        Some(owner),
+        &mut store,
+        &mappings,
+        OPEN_READ_SYSCALL_USER_BASE,
+        &mut user_memory,
+        &mut scratch,
+        &mut console,
+        fs,
+        &mut files,
+        None,
+    );
+    let read_banner_ok = read_banner.return_value().x0() == PHASE8_BANNER_BYTES.len() as u64
+        && &user_memory[0x20..0x20 + PHASE8_BANNER_BYTES.len()] == PHASE8_BANNER_BYTES;
+    crate::println!(
+        "qemu-open-read-syscall-surface-smoke: syscall case=read_banner fd={} number=4 request=64 return-x0={} data=\"Talos initramfs fixture\\n\" ok={}",
+        banner_fd,
+        read_banner.return_value().x0(),
+        read_banner_ok
+    );
+
+    let eof_banner = syscall::dispatch_process_descriptor_with_initramfs(
+        syscall::TALOS_READ_SYSCALL,
+        SyscallArguments::new([banner_fd, OPEN_READ_SYSCALL_USER_BASE + 0x20, 64, 0, 0, 0]),
+        Some(owner),
+        &mut store,
+        &mappings,
+        OPEN_READ_SYSCALL_USER_BASE,
+        &mut user_memory,
+        &mut scratch,
+        &mut console,
+        fs,
+        &mut files,
+        None,
+    );
+    let eof_banner_ok = eof_banner.return_value().x0() == 0;
+    crate::println!(
+        "qemu-open-read-syscall-surface-smoke: syscall case=read_banner_eof fd={} number=4 return-x0=0 eof=true ok={}",
+        banner_fd,
+        eof_banner_ok
+    );
+
+    let open_init = syscall::dispatch_process_descriptor_with_initramfs(
+        syscall::TALOS_OPEN_SYSCALL,
+        SyscallArguments::new([
+            OPEN_READ_SYSCALL_USER_BASE + 0x40,
+            PHASE8_INIT_PATH.len() as u64,
+            0,
+            0,
+            0,
+            0,
+        ]),
+        Some(owner),
+        &mut store,
+        &mappings,
+        OPEN_READ_SYSCALL_USER_BASE,
+        &mut user_memory,
+        &mut scratch,
+        &mut console,
+        fs,
+        &mut files,
+        None,
+    );
+    let init_fd = open_init.return_value().x0();
+    let open_init_ok = init_fd == 4;
+    crate::println!(
+        "qemu-open-read-syscall-surface-smoke: syscall case=open_init path=/bin/init number=5 return-x0={} object=regular-file ok={}",
+        init_fd,
+        open_init_ok
+    );
+
+    let read_init = syscall::dispatch_process_descriptor_with_initramfs(
+        syscall::TALOS_READ_SYSCALL,
+        SyscallArguments::new([init_fd, OPEN_READ_SYSCALL_USER_BASE + 0x50, 4, 0, 0, 0]),
+        Some(owner),
+        &mut store,
+        &mappings,
+        OPEN_READ_SYSCALL_USER_BASE,
+        &mut user_memory,
+        &mut scratch,
+        &mut console,
+        fs,
+        &mut files,
+        None,
+    );
+    let read_init_ok = read_init.return_value().x0() == 4 && &user_memory[0x50..0x54] == b"\x7fELF";
+    crate::println!(
+        "qemu-open-read-syscall-surface-smoke: syscall case=read_init fd={} number=4 request=4 return-x0={} elf-magic=7f454c46 ok={}",
+        init_fd,
+        read_init.return_value().x0(),
+        read_init_ok
+    );
+
+    let bad_fd = syscall::dispatch_process_descriptor_with_initramfs(
+        syscall::TALOS_READ_SYSCALL,
+        SyscallArguments::new([99, OPEN_READ_SYSCALL_USER_BASE + 0x20, 4, 0, 0, 0]),
+        Some(owner),
+        &mut store,
+        &mappings,
+        OPEN_READ_SYSCALL_USER_BASE,
+        &mut user_memory,
+        &mut scratch,
+        &mut console,
+        fs,
+        &mut files,
+        None,
+    );
+    let bad_fd_ok = bad_fd.return_value().x0() == (syscall::EBADF as u64).wrapping_neg();
+    crate::println!(
+        "qemu-open-read-syscall-surface-smoke: syscall case=read_badfd number=4 return-x0={:#018x} expected=-EBADF ok={}",
+        bad_fd.return_value().x0(),
+        bad_fd_ok
+    );
+
+    let participants = u64::from(invalid_flags_ok)
+        + u64::from(user_fault_ok)
+        + u64::from(directory_ok)
+        + u64::from(open_banner_ok)
+        + u64::from(read_fault_ok)
+        + u64::from(read_banner_ok)
+        + u64::from(eof_banner_ok)
+        + u64::from(open_init_ok)
+        + u64::from(read_init_ok)
+        + u64::from(bad_fd_ok);
+    let errors = 10 - participants;
+    let classification = if participants == 10 && errors == 0 {
+        "qemu-open-read-syscall-surface-smoke-complete"
+    } else {
+        "qemu-open-read-syscall-surface-smoke-failed"
+    };
+    crate::println!(
+        "qemu-open-read-syscall-surface-smoke: final participants={} expected=10 errors={} classification={}",
+        participants,
+        errors,
+        classification
+    );
+    if participants == 10 && errors == 0 {
+        crate::println!("qemu-open-read-syscall-surface-smoke: PASS");
+        true
+    } else {
+        false
+    }
 }
 
 #[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]

@@ -37,8 +37,11 @@ The post-review correction chain is:
    `phase8-open-read-initramfs-descriptor-integration-20260603` with
    descriptor-backed QEMU/substitute reads for `/etc/banner.txt` and
    `/bin/init`;
-2. POSIX-shaped open/read syscall or syscall-substitute surface: next queued
-   task;
+2. POSIX-shaped open/read syscall-substitute surface: accepted in
+   `phase8-open-read-syscall-surface-20260603` with path-taking read-only
+   `open`, filesystem-backed descriptor `read`, deterministic negative
+   cases, and QEMU/substitute evidence for `/etc/banner.txt` and
+   `/bin/init`;
 3. program loader input from the VFS-backed `/bin/init` file;
 4. smallest real initial userspace `/bin/init` launch boundary;
 5. shell behavior backed by VFS, descriptors, syscalls, and userspace.

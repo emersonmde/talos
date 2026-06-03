@@ -1,0 +1,21 @@
+
+Talos 0.1.0 booting on talos-aarch64-virt
+boot-info: dtb_pa=0x0000000048000000 core=0 el=2 target=talos-aarch64-virt
+target-services: uart=pl011 timer=arm-generic irq=gic-v2 dtb=Some(
+    0x0000000048000000,
+)
+mmio-regions: 3
+qemu-open-read-syscall-surface-smoke: start
+qemu-open-read-syscall-surface-smoke: current-descriptor-table lookup=process-owned owner=0x0000000000000001 resolved=true stdio=inherited initramfs=phase8-readonly
+qemu-open-read-syscall-surface-smoke: syscall case=open_invalid_flags number=5 return-x0=0xffffffffffffffea expected=-EINVAL descriptor-leak=false ok=true
+qemu-open-read-syscall-surface-smoke: syscall case=open_user_fault number=5 return-x0=0xfffffffffffffff2 expected=-EFAULT descriptor-leak=false ok=true
+qemu-open-read-syscall-surface-smoke: syscall case=open_directory number=5 return-x0=0xffffffffffffffeb expected=-EISDIR descriptor-leak=false ok=true
+qemu-open-read-syscall-surface-smoke: syscall case=open_banner path=/etc/banner.txt number=5 return-x0=3 object=regular-file ok=true
+qemu-open-read-syscall-surface-smoke: syscall case=read_user_fault fd=3 number=4 return-x0=0xfffffffffffffff2 expected=-EFAULT offset-unchanged=true ok=true
+qemu-open-read-syscall-surface-smoke: syscall case=read_banner fd=3 number=4 request=64 return-x0=24 data="Talos initramfs fixture\n" ok=true
+qemu-open-read-syscall-surface-smoke: syscall case=read_banner_eof fd=3 number=4 return-x0=0 eof=true ok=true
+qemu-open-read-syscall-surface-smoke: syscall case=open_init path=/bin/init number=5 return-x0=4 object=regular-file ok=true
+qemu-open-read-syscall-surface-smoke: syscall case=read_init fd=4 number=4 request=4 return-x0=4 elf-magic=7f454c46 ok=true
+qemu-open-read-syscall-surface-smoke: syscall case=read_badfd number=4 return-x0=0xfffffffffffffff7 expected=-EBADF ok=true
+qemu-open-read-syscall-surface-smoke: final participants=10 expected=10 errors=0 classification=qemu-open-read-syscall-surface-smoke-complete
+qemu-open-read-syscall-surface-smoke: PASS

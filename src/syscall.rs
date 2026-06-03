@@ -13,6 +13,7 @@ pub(crate) const TALOS_WRITE_SYSCALL: u64 = 1;
 pub(crate) const TALOS_CLOSE_SYSCALL: u64 = 2;
 pub(crate) const TALOS_DUP_SYSCALL: u64 = 3;
 pub(crate) const TALOS_READ_SYSCALL: u64 = 4;
+pub(crate) const TALOS_OPEN_SYSCALL: u64 = 5;
 #[cfg(any(
     test,
     talos_boot_scenario = "qemu_pointer_copy_smoke",
@@ -34,6 +35,7 @@ pub(crate) enum SyscallNumber {
     TalosClose,
     TalosDup,
     TalosRead,
+    TalosOpen,
     Unknown(u64),
 }
 
@@ -45,6 +47,7 @@ impl SyscallNumber {
             TALOS_CLOSE_SYSCALL => Self::TalosClose,
             TALOS_DUP_SYSCALL => Self::TalosDup,
             TALOS_READ_SYSCALL => Self::TalosRead,
+            TALOS_OPEN_SYSCALL => Self::TalosOpen,
             unknown => Self::Unknown(unknown),
         }
     }
@@ -56,6 +59,7 @@ impl SyscallNumber {
             Self::TalosClose => TALOS_CLOSE_SYSCALL,
             Self::TalosDup => TALOS_DUP_SYSCALL,
             Self::TalosRead => TALOS_READ_SYSCALL,
+            Self::TalosOpen => TALOS_OPEN_SYSCALL,
             Self::Unknown(raw) => raw,
         }
     }
@@ -205,7 +209,8 @@ pub(crate) const fn dispatch(
         SyscallNumber::TalosWrite
         | SyscallNumber::TalosClose
         | SyscallNumber::TalosDup
-        | SyscallNumber::TalosRead => SyscallReturn::error(PosixError::NotSupported),
+        | SyscallNumber::TalosRead
+        | SyscallNumber::TalosOpen => SyscallReturn::error(PosixError::NotSupported),
         SyscallNumber::Unknown(_) => SyscallReturn::error(PosixError::NotImplemented),
     };
 
@@ -244,6 +249,7 @@ where
         | SyscallNumber::TalosClose
         | SyscallNumber::TalosDup
         | SyscallNumber::TalosRead
+        | SyscallNumber::TalosOpen
         | SyscallNumber::Unknown(_) => dispatch(raw_number, arguments).return_value(),
     };
 
@@ -294,9 +300,10 @@ where
             dispatch_talos_close(arguments, current_owner, descriptor_store)
         }
         SyscallNumber::TalosDup => dispatch_talos_dup(arguments, current_owner, descriptor_store),
-        SyscallNumber::TalosRead | SyscallNumber::TalosNop | SyscallNumber::Unknown(_) => {
-            dispatch(raw_number, arguments).return_value()
-        }
+        SyscallNumber::TalosRead
+        | SyscallNumber::TalosOpen
+        | SyscallNumber::TalosNop
+        | SyscallNumber::Unknown(_) => dispatch(raw_number, arguments).return_value(),
     };
 
     SyscallDispatchResult {
@@ -356,6 +363,87 @@ where
             user_memory,
             kernel_scratch,
             fixed_stdin,
+            None::<crate::initramfs::ReadOnlyInitramfs>,
+            None::<&mut crate::initramfs::ReadOnlyFileDescriptions<0>>,
+        ),
+        SyscallNumber::TalosOpen | SyscallNumber::TalosNop | SyscallNumber::Unknown(_) => {
+            dispatch(raw_number, arguments).return_value()
+        }
+    };
+
+    SyscallDispatchResult {
+        number,
+        arguments,
+        return_value,
+    }
+}
+
+pub(crate) fn dispatch_process_descriptor_with_initramfs<
+    const OWNER_CAPACITY: usize,
+    const DESCRIPTOR_CAPACITY: usize,
+    const FILE_CAPACITY: usize,
+    B,
+>(
+    raw_number: u64,
+    arguments: SyscallArguments,
+    current_owner: Option<crate::scheduler::ProcessOwnerId>,
+    descriptor_store: &mut crate::posix::ProcessDescriptorStore<
+        OWNER_CAPACITY,
+        DESCRIPTOR_CAPACITY,
+    >,
+    mappings: &[crate::posix::UserMapping],
+    user_memory_start: u64,
+    user_memory: &mut [u8],
+    kernel_scratch: &mut [u8],
+    console_backend: &mut B,
+    initramfs: crate::initramfs::ReadOnlyInitramfs,
+    file_descriptions: &mut crate::initramfs::ReadOnlyFileDescriptions<FILE_CAPACITY>,
+    fixed_stdin: Option<&mut crate::posix::FixedStdin<'_>>,
+) -> SyscallDispatchResult
+where
+    B: crate::runtime_console::ConsoleBackend,
+{
+    let number = SyscallNumber::from_raw(raw_number);
+    let return_value = match number {
+        SyscallNumber::TalosWrite => match descriptor_store.current_descriptor_table(current_owner)
+        {
+            Ok(descriptor_table) => dispatch_talos_write(
+                arguments,
+                descriptor_table,
+                mappings,
+                user_memory_start,
+                user_memory,
+                kernel_scratch,
+                console_backend,
+            ),
+            Err(error) => SyscallReturn::error(error),
+        },
+        SyscallNumber::TalosClose => {
+            dispatch_talos_close(arguments, current_owner, descriptor_store)
+        }
+        SyscallNumber::TalosDup => dispatch_talos_dup(arguments, current_owner, descriptor_store),
+        SyscallNumber::TalosRead => dispatch_talos_read(
+            arguments,
+            current_owner,
+            descriptor_store,
+            mappings,
+            user_memory_start,
+            user_memory,
+            kernel_scratch,
+            fixed_stdin,
+            Some(initramfs),
+            Some(file_descriptions),
+        ),
+        SyscallNumber::TalosOpen => dispatch_talos_open_initramfs(
+            arguments,
+            current_owner,
+            descriptor_store,
+            mappings,
+            user_memory_start,
+            user_memory,
+            kernel_scratch,
+            initramfs,
+            file_descriptions,
         ),
         SyscallNumber::TalosNop | SyscallNumber::Unknown(_) => {
             dispatch(raw_number, arguments).return_value()
@@ -413,7 +501,11 @@ where
     }
 }
 
-fn dispatch_talos_read<const OWNER_CAPACITY: usize, const DESCRIPTOR_CAPACITY: usize>(
+fn dispatch_talos_read<
+    const OWNER_CAPACITY: usize,
+    const DESCRIPTOR_CAPACITY: usize,
+    const FILE_CAPACITY: usize,
+>(
     arguments: SyscallArguments,
     current_owner: Option<crate::scheduler::ProcessOwnerId>,
     descriptor_store: &mut crate::posix::ProcessDescriptorStore<
@@ -425,6 +517,8 @@ fn dispatch_talos_read<const OWNER_CAPACITY: usize, const DESCRIPTOR_CAPACITY: u
     user_memory: &mut [u8],
     kernel_scratch: &mut [u8],
     fixed_stdin: Option<&mut crate::posix::FixedStdin<'_>>,
+    initramfs: Option<crate::initramfs::ReadOnlyInitramfs>,
+    file_descriptions: Option<&mut crate::initramfs::ReadOnlyFileDescriptions<FILE_CAPACITY>>,
 ) -> SyscallReturn {
     let [descriptor, user_start, len, reserved0, reserved1, reserved2] = arguments.values();
     if reserved0 != 0 || reserved1 != 0 || reserved2 != 0 {
@@ -445,18 +539,102 @@ fn dispatch_talos_read<const OWNER_CAPACITY: usize, const DESCRIPTOR_CAPACITY: u
         Err(error) => return SyscallReturn::error(error),
     };
 
-    match crate::posix::read_descriptor_from_fixed_stdin(
-        descriptor_table,
-        descriptor,
+    let entry = match descriptor_table.get(descriptor) {
+        Ok(entry) => entry,
+        Err(error) => return SyscallReturn::error(error),
+    };
+    if let Err(error) = entry.require_readable() {
+        return SyscallReturn::error(error);
+    }
+
+    let read_result = match entry.object().kind() {
+        crate::posix::DescriptorObjectKind::StdioInput => {
+            crate::posix::read_descriptor_from_fixed_stdin(
+                descriptor_table,
+                descriptor,
+                mappings,
+                user_memory_start,
+                user_memory,
+                user_start,
+                len,
+                kernel_scratch,
+                fixed_stdin,
+            )
+        }
+        crate::posix::DescriptorObjectKind::RegularFile => match (initramfs, file_descriptions) {
+            (Some(fs), Some(file_descriptions)) => fs.read_descriptor(
+                descriptor_table,
+                file_descriptions,
+                descriptor,
+                mappings,
+                user_memory_start,
+                user_memory,
+                user_start,
+                len,
+                kernel_scratch,
+            ),
+            _ => Err(PosixError::NotSupported),
+        },
+        crate::posix::DescriptorObjectKind::Directory => Err(PosixError::IsDirectory),
+        _ => Err(PosixError::NotSupported),
+    };
+
+    match read_result {
+        Ok(bytes_read) => SyscallReturn::success(bytes_read as u64),
+        Err(error) => SyscallReturn::error(error),
+    }
+}
+
+fn dispatch_talos_open_initramfs<
+    const OWNER_CAPACITY: usize,
+    const DESCRIPTOR_CAPACITY: usize,
+    const FILE_CAPACITY: usize,
+>(
+    arguments: SyscallArguments,
+    current_owner: Option<crate::scheduler::ProcessOwnerId>,
+    descriptor_store: &mut crate::posix::ProcessDescriptorStore<
+        OWNER_CAPACITY,
+        DESCRIPTOR_CAPACITY,
+    >,
+    mappings: &[crate::posix::UserMapping],
+    user_memory_start: u64,
+    user_memory: &[u8],
+    kernel_scratch: &mut [u8],
+    initramfs: crate::initramfs::ReadOnlyInitramfs,
+    file_descriptions: &mut crate::initramfs::ReadOnlyFileDescriptions<FILE_CAPACITY>,
+) -> SyscallReturn {
+    let [path_start, path_len, flags, reserved0, reserved1, reserved2] = arguments.values();
+    if flags != 0 || reserved0 != 0 || reserved1 != 0 || reserved2 != 0 {
+        return SyscallReturn::error(PosixError::InvalidArgument);
+    }
+    if path_len > crate::posix::DEFAULT_PATH_LIMITS.max_path_len as u64 {
+        return SyscallReturn::error(PosixError::NameTooLong);
+    }
+
+    let Ok(path_len) = usize::try_from(path_len) else {
+        return SyscallReturn::error(PosixError::NameTooLong);
+    };
+    if kernel_scratch.len() < path_len {
+        return SyscallReturn::error(PosixError::InvalidArgument);
+    }
+
+    let descriptor_table = match descriptor_store.current_descriptor_table_mut(current_owner) {
+        Ok(descriptor_table) => descriptor_table,
+        Err(error) => return SyscallReturn::error(error),
+    };
+    let path = &mut kernel_scratch[..path_len];
+    let open_result = crate::posix::copy_from_user(
         mappings,
         user_memory_start,
         user_memory,
-        user_start,
-        len,
-        kernel_scratch,
-        fixed_stdin,
-    ) {
-        Ok(bytes_read) => SyscallReturn::success(bytes_read as u64),
+        path_start,
+        path_len,
+        path,
+    )
+    .and_then(|_| initramfs.open_regular_descriptor(descriptor_table, file_descriptions, path));
+
+    match open_result {
+        Ok(descriptor) => SyscallReturn::success(descriptor as u64),
         Err(error) => SyscallReturn::error(error),
     }
 }
@@ -700,6 +878,15 @@ mod tests {
 
         assert_eq!(result.number(), SyscallNumber::TalosDup);
         assert_eq!(result.number().raw(), TALOS_DUP_SYSCALL);
+        assert_eq!(result.return_value().x0(), (ENOTSUP as u64).wrapping_neg());
+    }
+
+    #[test_case]
+    fn descriptor_open_number_requires_initramfs_context_in_scalar_dispatch() {
+        let result = dispatch(TALOS_OPEN_SYSCALL, SyscallArguments::empty());
+
+        assert_eq!(result.number(), SyscallNumber::TalosOpen);
+        assert_eq!(result.number().raw(), TALOS_OPEN_SYSCALL);
         assert_eq!(result.return_value().x0(), (ENOTSUP as u64).wrapping_neg());
     }
 
@@ -951,6 +1138,38 @@ mod tests {
             &mut scratch,
             &mut console,
             fixed_stdin,
+        )
+    }
+
+    fn dispatch_initramfs_case<const FILE_CAPACITY: usize>(
+        raw_number: u64,
+        arguments: SyscallArguments,
+        store: &mut crate::posix::ProcessDescriptorStore<2, 5>,
+        files: &mut crate::initramfs::ReadOnlyFileDescriptions<FILE_CAPACITY>,
+        user_memory: &mut [u8; 128],
+    ) -> SyscallDispatchResult {
+        let owner = crate::scheduler::ProcessOwnerId::new(31).expect("owner id");
+        let mappings = [crate::posix::UserMapping::new(
+            0x0000_0000_0011_0000,
+            0x80,
+            crate::posix::UserMappingPermissions::USER_DATA,
+        )
+        .expect("user data mapping")];
+        let mut scratch = [0u8; 128];
+        let mut console = CaptureConsole::new();
+        dispatch_process_descriptor_with_initramfs(
+            raw_number,
+            arguments,
+            Some(owner),
+            store,
+            &mappings,
+            0x0000_0000_0011_0000,
+            user_memory,
+            &mut scratch,
+            &mut console,
+            crate::initramfs::phase8_readonly_initramfs_fixture(),
+            files,
+            None,
         )
     }
 
@@ -1838,6 +2057,233 @@ mod tests {
         );
         assert_eq!(stdin.cursor(), 0);
         assert_eq!(user_memory, [0; 128]);
+    }
+
+    #[test_case]
+    fn talos_open_initramfs_then_read_exposes_regular_file_contents() {
+        let owner = crate::scheduler::ProcessOwnerId::new(31).expect("owner id");
+        let mut store = crate::posix::ProcessDescriptorStore::<2, 5>::new_empty();
+        store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create owner");
+        let mut files = crate::initramfs::ReadOnlyFileDescriptions::<2>::new_empty();
+        let mut user_memory = [0u8; 128];
+        user_memory[..crate::initramfs::PHASE8_BANNER_PATH.len()]
+            .copy_from_slice(crate::initramfs::PHASE8_BANNER_PATH);
+        user_memory[0x40..0x40 + crate::initramfs::PHASE8_INIT_PATH.len()]
+            .copy_from_slice(crate::initramfs::PHASE8_INIT_PATH);
+
+        let open_banner = dispatch_initramfs_case(
+            TALOS_OPEN_SYSCALL,
+            SyscallArguments::new([
+                0x0000_0000_0011_0000,
+                crate::initramfs::PHASE8_BANNER_PATH.len() as u64,
+                0,
+                0,
+                0,
+                0,
+            ]),
+            &mut store,
+            &mut files,
+            &mut user_memory,
+        );
+        let read_banner = dispatch_initramfs_case(
+            TALOS_READ_SYSCALL,
+            SyscallArguments::new([
+                open_banner.return_value().x0(),
+                0x0000_0000_0011_0020,
+                64,
+                0,
+                0,
+                0,
+            ]),
+            &mut store,
+            &mut files,
+            &mut user_memory,
+        );
+        let eof_banner = dispatch_initramfs_case(
+            TALOS_READ_SYSCALL,
+            SyscallArguments::new([
+                open_banner.return_value().x0(),
+                0x0000_0000_0011_0020,
+                64,
+                0,
+                0,
+                0,
+            ]),
+            &mut store,
+            &mut files,
+            &mut user_memory,
+        );
+        let open_init = dispatch_initramfs_case(
+            TALOS_OPEN_SYSCALL,
+            SyscallArguments::new([
+                0x0000_0000_0011_0040,
+                crate::initramfs::PHASE8_INIT_PATH.len() as u64,
+                0,
+                0,
+                0,
+                0,
+            ]),
+            &mut store,
+            &mut files,
+            &mut user_memory,
+        );
+        let read_init = dispatch_initramfs_case(
+            TALOS_READ_SYSCALL,
+            SyscallArguments::new([
+                open_init.return_value().x0(),
+                0x0000_0000_0011_0060,
+                4,
+                0,
+                0,
+                0,
+            ]),
+            &mut store,
+            &mut files,
+            &mut user_memory,
+        );
+
+        assert_eq!(open_banner.number(), SyscallNumber::TalosOpen);
+        assert_eq!(open_banner.return_value().x0(), 3);
+        assert_eq!(
+            read_banner.return_value().x0(),
+            crate::initramfs::PHASE8_BANNER_BYTES.len() as u64
+        );
+        assert_eq!(
+            &user_memory[0x20..0x20 + crate::initramfs::PHASE8_BANNER_BYTES.len()],
+            crate::initramfs::PHASE8_BANNER_BYTES
+        );
+        assert_eq!(eof_banner.return_value().x0(), 0);
+        assert_eq!(open_init.return_value().x0(), 4);
+        assert_eq!(read_init.return_value().x0(), 4);
+        assert_eq!(&user_memory[0x60..0x64], b"\x7fELF");
+    }
+
+    #[test_case]
+    fn talos_open_initramfs_errors_do_not_allocate_descriptors_or_files() {
+        let owner = crate::scheduler::ProcessOwnerId::new(31).expect("owner id");
+        let mut store = crate::posix::ProcessDescriptorStore::<2, 5>::new_empty();
+        store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create owner");
+        let mut files = crate::initramfs::ReadOnlyFileDescriptions::<1>::new_empty();
+        let mut user_memory = [0u8; 128];
+        user_memory[..4].copy_from_slice(b"/etc");
+        user_memory[0x20..0x20 + crate::initramfs::PHASE8_BANNER_PATH.len()]
+            .copy_from_slice(crate::initramfs::PHASE8_BANNER_PATH);
+
+        let invalid_flags = dispatch_initramfs_case(
+            TALOS_OPEN_SYSCALL,
+            SyscallArguments::new([
+                0x0000_0000_0011_0020,
+                crate::initramfs::PHASE8_BANNER_PATH.len() as u64,
+                1,
+                0,
+                0,
+                0,
+            ]),
+            &mut store,
+            &mut files,
+            &mut user_memory,
+        );
+        let user_fault = dispatch_initramfs_case(
+            TALOS_OPEN_SYSCALL,
+            SyscallArguments::new([
+                0x0000_0000_001e_0000,
+                crate::initramfs::PHASE8_BANNER_PATH.len() as u64,
+                0,
+                0,
+                0,
+                0,
+            ]),
+            &mut store,
+            &mut files,
+            &mut user_memory,
+        );
+        let directory = dispatch_initramfs_case(
+            TALOS_OPEN_SYSCALL,
+            SyscallArguments::new([0x0000_0000_0011_0000, 4, 0, 0, 0, 0]),
+            &mut store,
+            &mut files,
+            &mut user_memory,
+        );
+        let valid = dispatch_initramfs_case(
+            TALOS_OPEN_SYSCALL,
+            SyscallArguments::new([
+                0x0000_0000_0011_0020,
+                crate::initramfs::PHASE8_BANNER_PATH.len() as u64,
+                0,
+                0,
+                0,
+                0,
+            ]),
+            &mut store,
+            &mut files,
+            &mut user_memory,
+        );
+
+        assert_eq!(
+            invalid_flags.return_value().x0(),
+            (EINVAL as u64).wrapping_neg()
+        );
+        assert_eq!(
+            user_fault.return_value().x0(),
+            (EFAULT as u64).wrapping_neg()
+        );
+        assert_eq!(
+            directory.return_value().x0(),
+            (EISDIR as u64).wrapping_neg()
+        );
+        assert_eq!(valid.return_value().x0(), 3);
+    }
+
+    #[test_case]
+    fn talos_read_initramfs_errors_preserve_file_offset_and_user_memory() {
+        let owner = crate::scheduler::ProcessOwnerId::new(31).expect("owner id");
+        let mut store = crate::posix::ProcessDescriptorStore::<2, 5>::new_empty();
+        store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create owner");
+        let mut files = crate::initramfs::ReadOnlyFileDescriptions::<1>::new_empty();
+        let mut user_memory = [0u8; 128];
+        user_memory[..crate::initramfs::PHASE8_BANNER_PATH.len()]
+            .copy_from_slice(crate::initramfs::PHASE8_BANNER_PATH);
+
+        let open = dispatch_initramfs_case(
+            TALOS_OPEN_SYSCALL,
+            SyscallArguments::new([
+                0x0000_0000_0011_0000,
+                crate::initramfs::PHASE8_BANNER_PATH.len() as u64,
+                0,
+                0,
+                0,
+                0,
+            ]),
+            &mut store,
+            &mut files,
+            &mut user_memory,
+        );
+        let fault = dispatch_initramfs_case(
+            TALOS_READ_SYSCALL,
+            SyscallArguments::new([open.return_value().x0(), 0x0000_0000_001e_0000, 6, 0, 0, 0]),
+            &mut store,
+            &mut files,
+            &mut user_memory,
+        );
+        assert_eq!(fault.return_value().x0(), (EFAULT as u64).wrapping_neg());
+        assert_eq!(&user_memory[0x20..0x26], &[0; 6]);
+
+        let ok = dispatch_initramfs_case(
+            TALOS_READ_SYSCALL,
+            SyscallArguments::new([open.return_value().x0(), 0x0000_0000_0011_0020, 6, 0, 0, 0]),
+            &mut store,
+            &mut files,
+            &mut user_memory,
+        );
+
+        assert_eq!(ok.return_value().x0(), 6);
+        assert_eq!(&user_memory[0x20..0x26], b"Talos ");
     }
 
     #[test_case]
