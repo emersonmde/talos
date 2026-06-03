@@ -23,6 +23,7 @@ pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
 const LOCAL_COMMAND_LITERAL_ARGV_CAPACITY: usize = 4;
 const LOCAL_COMMAND_LITERAL_ARG_BYTES: usize = 32;
+const LOCAL_COMMAND_EXEC_PATH_BYTES: usize = LOCAL_COMMAND_LITERAL_ARG_BYTES;
 const LOCAL_COMMAND_FILE_USER_BASE: u64 = 0x0000_0000_0011_0000;
 const LOCAL_COMMAND_FILE_READ_OFFSET: usize = 0x40;
 const LOCAL_COMMAND_FILE_USER_MEMORY_LEN: usize = 128;
@@ -118,14 +119,65 @@ pub enum LocalCommandExecError {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub struct LocalCommandExecRequest<'a> {
-    path: &'a [u8],
+pub struct LocalCommandExecRequest {
+    path: LocalCommandExecPath,
     argv: LocalCommandLiteralArgv,
 }
 
-impl<'a> LocalCommandExecRequest<'a> {
-    const fn path(self) -> &'a [u8] {
-        self.path
+impl LocalCommandExecRequest {
+    fn path(&self) -> &[u8] {
+        self.path.as_bytes()
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LocalCommandExecPath {
+    bytes: [u8; LOCAL_COMMAND_EXEC_PATH_BYTES],
+    len: usize,
+}
+
+impl LocalCommandExecPath {
+    const BIN_PREFIX: &'static [u8] = b"/bin/";
+
+    const EMPTY: Self = Self {
+        bytes: [0; LOCAL_COMMAND_EXEC_PATH_BYTES],
+        len: 0,
+    };
+
+    fn from_absolute(path: &[u8]) -> Result<Self, LocalCommandExecError> {
+        Self::from_bytes(path)
+    }
+
+    fn from_fixed_bin_name(name: &[u8]) -> Result<Self, LocalCommandExecError> {
+        if name.is_empty() || name.iter().any(|byte| *byte == b'/') {
+            return Err(LocalCommandExecError::InvalidPath);
+        }
+        let len = Self::BIN_PREFIX
+            .len()
+            .checked_add(name.len())
+            .ok_or(LocalCommandExecError::InvalidPath)?;
+        if len > LOCAL_COMMAND_EXEC_PATH_BYTES {
+            return Err(LocalCommandExecError::InvalidPath);
+        }
+        let mut path = Self::EMPTY;
+        path.bytes[..Self::BIN_PREFIX.len()].copy_from_slice(Self::BIN_PREFIX);
+        path.bytes[Self::BIN_PREFIX.len()..len].copy_from_slice(name);
+        path.len = len;
+        Ok(path)
+    }
+
+    fn from_bytes(bytes: &[u8]) -> Result<Self, LocalCommandExecError> {
+        if bytes.is_empty() || bytes.len() > LOCAL_COMMAND_EXEC_PATH_BYTES {
+            return Err(LocalCommandExecError::InvalidPath);
+        }
+        let mut path = Self::EMPTY;
+        path.bytes[..bytes.len()].copy_from_slice(bytes);
+        path.len = bytes.len();
+        Ok(path)
+    }
+
+    fn as_bytes(&self) -> &[u8] {
+        &self.bytes[..self.len]
     }
 }
 
@@ -198,6 +250,14 @@ impl LocalCommandLiteralArgv {
         } else {
             None
         }
+    }
+
+    fn with_resolved_argv0(mut self, argv0: &[u8]) -> Result<Self, LocalCommandExecError> {
+        if self.argc == 0 {
+            return Err(LocalCommandExecError::InvalidPath);
+        }
+        self.args[0] = LocalCommandLiteralArg::from_bytes(argv0)?;
+        Ok(self)
     }
 
     fn copied_startup_bytes(self) -> Result<u64, LocalCommandExecError> {
@@ -342,7 +402,7 @@ pub trait LocalCommandSink {
 
     fn exec_vfs_program(
         &mut self,
-        _request: LocalCommandExecRequest<'_>,
+        _request: LocalCommandExecRequest,
     ) -> Result<LocalCommandExecSummary, LocalCommandExecError> {
         Err(LocalCommandExecError::NotSupported)
     }
@@ -503,7 +563,7 @@ where
 
     fn exec_vfs_program(
         &mut self,
-        request: LocalCommandExecRequest<'_>,
+        request: LocalCommandExecRequest,
     ) -> Result<LocalCommandExecSummary, LocalCommandExecError> {
         let path = request.path();
         if !is_absolute_exec_path(path) {
@@ -1241,9 +1301,7 @@ fn is_absolute_exec_path(path: &[u8]) -> bool {
     !path.iter().any(|byte| is_space(*byte))
 }
 
-fn parse_exec_request(
-    arguments: &str,
-) -> Result<LocalCommandExecRequest<'_>, LocalCommandExecError> {
+fn parse_exec_request(arguments: &str) -> Result<LocalCommandExecRequest, LocalCommandExecError> {
     let mut tokens: [&[u8]; LOCAL_COMMAND_LITERAL_ARGV_CAPACITY] =
         [&[]; LOCAL_COMMAND_LITERAL_ARGV_CAPACITY];
     let mut count = 0usize;
@@ -1260,11 +1318,16 @@ fn parse_exec_request(
     if count == 0 {
         return Err(LocalCommandExecError::InvalidPath);
     }
-    let argv = LocalCommandLiteralArgv::from_tokens(&tokens[..count])?;
-    Ok(LocalCommandExecRequest {
-        path: tokens[0],
-        argv,
-    })
+    let path = if is_absolute_exec_path(tokens[0]) {
+        LocalCommandExecPath::from_absolute(tokens[0])?
+    } else if tokens[0].iter().any(|byte| *byte == b'/') {
+        return Err(LocalCommandExecError::InvalidPath);
+    } else {
+        LocalCommandExecPath::from_fixed_bin_name(tokens[0])?
+    };
+    let argv = LocalCommandLiteralArgv::from_tokens(&tokens[..count])?
+        .with_resolved_argv0(path.as_bytes())?;
+    Ok(LocalCommandExecRequest { path, argv })
 }
 
 fn is_supported_literal_exec_token(token: &[u8]) -> bool {
@@ -2368,6 +2431,45 @@ talos> Talos initramfs fixture\n"
     }
 
     #[test_case]
+    fn local_command_loop_resolves_bare_exec_name_through_fixed_bin_lookup() {
+        let input = ScriptedInput::new(*b"exec status42 alpha beta\rwaitpid\rlaststatus\r", 48);
+        let mut backend = CaptureSink::new();
+        let (exec, waited, observed) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(exec.line(), b"exec status42 alpha beta");
+        assert_eq!(exec.status(), LocalCommandStatus::Handled);
+        assert_eq!(exec.response_lines(), 9);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(waited.response_lines(), 1);
+        assert_eq!(observed.line(), b"laststatus");
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.response_lines(), 1);
+        assert!(output.contains("talos> talos: exec path=/bin/status42 source=vfs-open-read\n"));
+        assert!(output.contains(
+            "talos: exec-startup-abi state=literal-argv-absolute-empty-envp argc=0x0000000000000003 argv0=/bin/status42 argv1=alpha argv2=beta argv0-ptr=0x00007fffffffffe0 argv-null=false envp-null=true envp-state=empty-envp0 envp-entries=0x0000000000000000 envp0-ptr=0x00007fffffffffd8 copied-startup-bytes=0x0000000000000049 source=initial-user-stack-record\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record\n"
+        ));
+    }
+
+    #[test_case]
     fn local_command_loop_rejects_unsupported_literal_exec_grammar() {
         let input = ScriptedInput::new(
             *b"exec /bin/status42 *\rexec /bin/status42 quoted\\arg\r",
@@ -2482,8 +2584,8 @@ talos> talos: exec-invalid-path\n"
     #[test_case]
     fn local_command_loop_rejects_missing_and_non_executable_exec_targets() {
         let input = ScriptedInput::new(
-            *b"exec /missing\rexec init\rexec /bin\rexec /etc/banner.txt\rexec /empty\r",
-            67,
+            *b"exec /missing\rexec bin/init\rexec /bin\rexec /etc/banner.txt\rexec /empty\r",
+            71,
         );
         let mut backend = CaptureSink::new();
         let (missing, relative, directory, banner, empty) = {
@@ -2501,7 +2603,7 @@ talos> talos: exec-invalid-path\n"
         assert_eq!(missing.line(), b"exec /missing");
         assert_eq!(missing.status(), LocalCommandStatus::UnexpectedArgument);
         assert_eq!(missing.response_lines(), 1);
-        assert_eq!(relative.line(), b"exec init");
+        assert_eq!(relative.line(), b"exec bin/init");
         assert_eq!(relative.status(), LocalCommandStatus::UnexpectedArgument);
         assert_eq!(relative.response_lines(), 1);
         assert_eq!(directory.line(), b"exec /bin");

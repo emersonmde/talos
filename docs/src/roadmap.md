@@ -247,6 +247,25 @@ The post-review correction chain is:
     PATH, current-directory search, quoting/globbing/variables, pipes,
     redirection, userspace stdio I/O, writable filesystem, hardware proof,
     networking, or SSH.
+24. minimal fixed `/bin` PATH-style exec lookup core: accepted in
+    `phase10-minimal-path-lookup-exec-core-20260603`. Shell-visible
+    `exec status42 alpha beta` resolves the bare first exec token only to
+    `/bin/status42`, reads the resolved executable through descriptor-backed
+    VFS/open/read, and runs it through the accepted loader/startup/launch/
+    lifecycle/status chain. The accepted argv0 policy is canonical resolved
+    path argv0: the startup ABI records `argv0=/bin/status42`,
+    `argv1=alpha`, and `argv2=beta` with deterministic empty envp, inherited
+    standard descriptors, loader temporary descriptor non-leak, nonzero
+    status `0x2a`, and matching `waitpid`/`laststatus`. The retained
+    QEMU/substitute evidence also covers bare `exec init` and `exec zero`
+    zero-status controls, absolute `exec /bin/status42 gamma`, missing bare
+    name, path-like relative name, directory and non-executable negatives,
+    unsupported glob grammar rejection, descriptor-backed
+    `cat /etc/banner.txt`, and `qemu-local-shell-path-lookup-complete` PASS.
+    Environment-backed PATH, current-directory search, command hashing, shell
+    builtin conversion, quoting/escaping/globbing, variables, pipes,
+    redirection, userspace stdio I/O, writable filesystem, hardware proof,
+    networking, and SSH remain deferred.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
