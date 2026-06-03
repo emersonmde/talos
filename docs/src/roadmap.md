@@ -72,6 +72,14 @@ The post-review correction chain is:
    handoff, external command lookup, argv/envp, PATH, pipes, redirection,
    writable filesystem, and Pi 5 proof remain deferred.
 
+The shell VFS exec closeout checkpoint is accepted in
+phase10-shell-vfs-exec-closeout-checkpoint-20260603. It records the accepted
+frontier as QEMU/substitute-proven shell-visible exec /bin/init through the
+VFS descriptor read and launch-planning chain, with kernel built-ins retained
+only as regression/control surfaces. The next dependency-based feature task is
+userspace completion/status observation through the accepted lower-EL/SVC or
+equivalent launch-boundary mechanism.
+
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning
 task, the Phase 8 source inventory was accepted, and the read-only
