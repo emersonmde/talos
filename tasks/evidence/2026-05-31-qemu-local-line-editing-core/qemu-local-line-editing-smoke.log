@@ -9,7 +9,7 @@ qemu-local-line-editing: start command-count=9 backend=runtime-console0/qemu-vir
 qemu-local-line-editing: ready command=0
 talos> help
 talos: ok help
-talos: commands help status stdio pwd echo ls cat
+talos: commands help status stdio pwd echo ls cat cd
 talos: echo forms echo hello; echo local serial works
 talos: editing backspace delete ctrl-c ctrl-u
 
@@ -21,7 +21,7 @@ talos: ok status
 talos: version phase10.1-kernel-builtins-v1
 talos: runtime-console runtime-console0
 talos: builtins kernel-backed
-talos: commands help status stdio pwd echo ls cat
+talos: commands help status stdio pwd echo ls cat cd
 
 qemu-local-line-editing: line command=1 hex=73 74 61 74 75 73
 qemu-local-line-editing: dispatch command=1 status=handled responses=5 raw-bytes=7 backspaces=0 deletes=0 truncated=false controls=0

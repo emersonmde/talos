@@ -4253,6 +4253,24 @@ checkpoint. No explicit mechanically unblocked feature task remains after this
 closeout, so supervisor planning is required for the next smallest
 feature-led local interactivity slice.
 
+The local cwd-aware cat banner.txt core is now accepted in QEMU/substitute
+evidence with a static RPi5 candidate archive ready for the serialized proof.
+The descriptor-backed serial command loop now accepts cat banner.txt only
+when command-context cwd is /etc, prints the immutable Talos initramfs fixture
+banner, returns to a ready prompt, and preserves a cwd-sensitive negative case
+from / with talos: not-found. The exact absolute path cat /etc/banner.txt,
+fixed-directory cd, bare ls cwd, line editing, line cancel, line kill, and
+command-loop regressions were rerun locally. The fresh archive
+target/talos-rpi5-local-cat-cwd-candidate-archive-core.tar.gz was built from
+the rpi5_local_cat_cwd scenario with retained archive review, archive/kernel
+hashes, kernel size, boot-tree file listing, and static proof-string
+inspection under tasks/evidence/2026-06-02-qemu-local-cat-cwd-core/. The
+image retains rpi5-local-cat-cwd-proof, pi5-local-cat-cwd-complete,
+cat-cwd-observed, and cat-cwd-negative-observed, and omits quarantined raw
+assembly entry markers. No boot archive was published and no hardware was
+touched; the next explicit queued task is the serialized Pi 5 proof for this
+bounded cwd-aware cat banner.txt feature.
+
 Milestone 10.1: Local Shell
 
 - Implement or port a small shell that runs as a user program.

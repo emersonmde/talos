@@ -620,6 +620,14 @@ fn dispatch_local_command(
         "cat" => {
             match command.arguments {
                 Some("/etc/banner.txt") => write_banner_file(sink, responses)?,
+                Some("banner.txt") => {
+                    if sink.current_directory() == LocalCommandDirectory::Etc {
+                        write_banner_file(sink, responses)?;
+                    } else {
+                        write_line(sink, responses, "talos: not-found")?;
+                        return Ok(LocalCommandStatus::UnexpectedArgument);
+                    }
+                }
                 _ => {
                     write_line(sink, responses, "talos: unexpected-argument")?;
                     return Ok(LocalCommandStatus::UnexpectedArgument);
@@ -1242,6 +1250,40 @@ etc\n"
         assert_eq!(result.status(), LocalCommandStatus::Handled);
         assert_eq!(result.response_lines(), 1);
         assert_eq!(backend.as_str(), "talos> Talos initramfs fixture\n");
+    }
+
+    #[test_case]
+    fn local_command_loop_dispatches_cat_banner_against_current_directory() {
+        let input = ScriptedInput::new(*b"cd /etc\rcat banner.txt\rcd /\rcat banner.txt\r", 43);
+        let mut backend = CaptureSink::new();
+        let (cd_etc, cat_etc, cd_root, cat_root) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+
+        assert_eq!(cd_etc.line(), b"cd /etc");
+        assert_eq!(cd_etc.status(), LocalCommandStatus::Handled);
+        assert_eq!(cd_etc.response_lines(), 0);
+        assert_eq!(cat_etc.line(), b"cat banner.txt");
+        assert_eq!(cat_etc.status(), LocalCommandStatus::Handled);
+        assert_eq!(cat_etc.response_lines(), 1);
+        assert_eq!(cd_root.line(), b"cd /");
+        assert_eq!(cd_root.status(), LocalCommandStatus::Handled);
+        assert_eq!(cd_root.response_lines(), 0);
+        assert_eq!(cat_root.line(), b"cat banner.txt");
+        assert_eq!(cat_root.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(cat_root.response_lines(), 1);
+        assert_eq!(
+            backend.as_str(),
+            "talos> talos> Talos initramfs fixture\n\
+talos> talos> talos: not-found\n"
+        );
     }
 
     #[test_case]

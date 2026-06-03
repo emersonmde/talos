@@ -71,6 +71,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "rpi5_local_cat_cwd",
+        implied_values: &["rpi5_local_serial_command_loop"],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "rpi5_local_cd_fixed_dirs",
         implied_values: &["rpi5_local_serial_command_loop"],
         asm_defines: &[],
@@ -267,6 +272,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
     },
     BootScenario {
         value: "qemu_local_cat_banner",
+        implied_values: &["qemu_local_serial_command_loop"],
+        asm_defines: &[],
+    },
+    BootScenario {
+        value: "qemu_local_cat_cwd",
         implied_values: &["qemu_local_serial_command_loop"],
         asm_defines: &[],
     },
