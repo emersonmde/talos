@@ -1,0 +1,58 @@
+talos: input-error timeout
+
+rpi5-local-ls-c
+talos: input-error timeout
+
+rpi5-local-ls-cwd-proof: line command=0 hex=
+rpi5-local-ls-cwd-proof: dispatch command=0 status=input-error responses=1 raw-bytes=0 truncated=false controls=0
+rpi5-local-ls-cwd-proof: edit command=0 backspaces=0 deletes=0
+rpi5-local-ls-cwd-proof: ready command=1
+talos> 
+talos: input-error timeout
+
+rpi5-local-ls-cwd-proof: line command=0 hex=
+rpi5-local-ls-cwd-proof: dispatch command=0 status=input-error responses=1 raw-bytes=0 truncated=false controls=0
+rpi5-local-ls-cwd-proof: edit command=0 backspaces=0 deletes=0
+rpi5-local-ls-cwd-proof: ready command=1
+talos> pwd
+/
+
+rpi5-local-ls-cwd-proof: line command=1 hex=70 77 64
+rpi5-local-ls-cwd-proof: dispatch command=1 status=handled responses=1 raw-bytes=4 truncated=false controls=0
+rpi5-local-ls-cwd-proof: edit command=1 backspaces=0 deletes=0
+/
+rpi5-local-ls-cwd-proof: ready command=2
+talos> 
+wd-proof: line command=0 hex=
+rpi5-local-ls-cwd-proof: dispatch command=0 status=input-error responses=1 raw-bytes=0 truncated=false controls=0
+rpi5-local-ls-cwd-proof: edit command=0 backspaces=0 deletes=0
+rpi5-local-ls-cwd-proof: ready command=1
+talos> pwd
+/
+
+rpi5-local-ls-cwd-proof: line command=1 hex=70 77 64
+rpi5-local-ls-cwd-proof: dispatch command=1 status=handled responses=1 raw-bytes=4 truncated=false controls=0
+rpi5-local-ls-cwd-proof: edit command=1 backspaces=0 deletes=0
+/
+rpi5-local-ls-cwd-proof: ready command=2
+talos> pwd
+/
+
+rpi5-local-ls-cwd-proof: line command=2 hex=70 77 64
+rpi5-local-ls-cwd-proof: dispatch command=2 status=handled responses=1 raw-bytes=4 truncated=false controls=0
+rpi5-local-ls-cwd-proof: edit command=2 backspaces=0 deletes=0
+/
+rpi5-local-ls-cwd-proof: ready command=3
+talos> ls
+bin
+dir
+empty
+etc
+
+rpi5-local-ls-cwd-proof: line command=3 hex=6c 73
+rpi5-local-ls-cwd-proof: dispatch command=3 status=handled responses=4 raw-bytes=3 truncated=false controls=0
+rpi5-local-ls-cwd-proof: edit command=3 backspaces=0 deletes=0
+banner.txt
+rpi5-local-ls-cwd-proof: ls-cwd-observed command=3 cwd='/etc' entries='banner.txt' raw-bytes=3 controls=0 responses=4
+rpi5-local-ls-cwd-proof: ready command=4
+talos> 

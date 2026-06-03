@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "LWxvY2FsLWxzLWN3ZC1wcm9vZjogRkFJTA0K",
+  "bytes": 27,
+  "cursor_end": 4066157,
+  "cursor_start": 4066130,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "-local-ls-cwd-proof: FAIL\r\n",
+  "truncated": false
+}

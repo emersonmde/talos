@@ -1,0 +1,11 @@
+{
+  "action": "serial observe",
+  "base64": "dGFsb3M6IGlucHV0LWVycm9yIHRpbWVvdXQNCg0KcnBpNS1sb2NhbC1scy1jd2QtcHJvb2Y6IGxpbmUgY29tbWFuZD03IGhleD0NCnJwaTUtbG9jYWwtbHMtY3dkLXByb29mOiBkaXNwYXRjaCBjb21tYW5kPTcgc3RhdHVzPWlucHV0LWVycm9yIHJlc3BvbnNlcz0xIHJhdy1ieXRlcz0wIHRydW5jYXRlZD1mYWxzZSBjb250cm9scz0wDQpycGk1LWxvY2FsLWxzLWN3ZC1wcm9vZjogZWRpdCBjb21tYW5kPTcgYmFja3NwYWNlcz0wIGRlbGV0ZXM9MA0KcnBpNS1sb2NhbC1scy1jd2QtcHJvb2Y6IHJlYWR5IGNvbW1hbmQ9OA0KdGFsb3M+IC1sb2NhbC1scy1jd2QtcHJvb2Y6IEZBSUwNCg==",
+  "bytes": 331,
+  "cursor_end": 4066157,
+  "cursor_start": 4065826,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "talos: input-error timeout\r\n\r\nrpi5-local-ls-cwd-proof: line command=7 hex=\r\nrpi5-local-ls-cwd-proof: dispatch command=7 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\r\nrpi5-local-ls-cwd-proof: edit command=7 backspaces=0 deletes=0\r\nrpi5-local-ls-cwd-proof: ready command=8\r\ntalos> -local-ls-cwd-proof: FAIL\r\n",
+  "truncated": false
+}

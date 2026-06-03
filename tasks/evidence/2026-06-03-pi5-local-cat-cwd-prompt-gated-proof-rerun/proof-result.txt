@@ -1,0 +1,13 @@
+task=phase10-pi5-local-cat-cwd-prompt-gated-proof-rerun-20260603
+classification=blocked-proof-runner-concurrency-polluted-control
+control_archive_sha256=1f986f73b793b269e5b7aa0cf34cfc4cbf3b58358b0d9b409181e762b986919e
+control_kernel_size=110624
+control_tftp_events=0
+pollution=multiple worker-owned runner instances wrote to the same serial control proof and evidence directory
+candidate_run=false
+runtime_changes=false
+acceptance_changed=false
+restored_snapshot=pre-cat-cwd-prompt-gated-20260603T022654Z
+post_restore_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+post_restore_kernel_size=104136
+hardware_lock_released=true
