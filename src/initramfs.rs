@@ -600,10 +600,10 @@ const fn build_phase8_init_elf_bytes() -> [u8; PHASE8_INIT_ELF_LEN] {
         PAGE_ALIGN,
     );
 
-    bytes[TEXT_OFFSET] = 0xc0;
-    bytes[TEXT_OFFSET + 1] = 0x03;
-    bytes[TEXT_OFFSET + 2] = 0x5f;
-    bytes[TEXT_OFFSET + 3] = 0xd6;
+    bytes[TEXT_OFFSET] = 0x01;
+    bytes[TEXT_OFFSET + 1] = 0x42;
+    bytes[TEXT_OFFSET + 2] = 0x0f;
+    bytes[TEXT_OFFSET + 3] = 0xd4;
     bytes[DATA_OFFSET] = b'D';
     bytes[DATA_OFFSET + 1] = b'A';
     bytes[DATA_OFFSET + 2] = b'T';

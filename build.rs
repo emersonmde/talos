@@ -451,6 +451,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "qemu_initial_userspace_process_launch_smoke",
+        implied_values: &[],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "qemu_initial_user_stack_smoke",
         implied_values: &[],
         asm_defines: &[],

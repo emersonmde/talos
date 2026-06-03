@@ -6,7 +6,7 @@ target-services: uart=pl011 timer=arm-generic irq=gic-v2 dtb=Some(
 )
 mmio-regions: 3
 qemu-program-loader-from-vfs-smoke: start
-qemu-program-loader-from-vfs-smoke: fixture name=phase8-program-loader-elf64-aarch64-v1 path=/bin/init digest-algorithm=stable-elf-manifest digest=0x3892eed223900c65
+qemu-program-loader-from-vfs-smoke: fixture name=phase8-program-loader-elf64-aarch64-v1 path=/bin/init digest-algorithm=stable-elf-manifest digest=0xf4a6cc15f4d94461
 qemu-program-loader-from-vfs-smoke: vfs-source path=/bin/init object=regular-file read-boundary=kernel-file-object bytes=516 eof=true ok=true
 qemu-program-loader-from-vfs-smoke: success format=elf64-aarch64-static-et-exec type=ET_EXEC machine=EM_AARCH64 phdrs=2 loadable=2 dynamic=false relocations=false ok=true
 qemu-program-loader-from-vfs-smoke: segment index=0 kind=UserText flags=R-X file-bytes=0x4 mem-bytes=0x4 zero-fill=0x0 wx=false ok=true

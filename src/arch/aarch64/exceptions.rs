@@ -514,6 +514,16 @@ pub extern "C" fn rust_exception_handler(
         saved_frame,
     );
 
+    #[cfg(talos_boot_scenario = "qemu_initial_userspace_process_launch_smoke")]
+    crate::target::qemu_virt::handle_initial_userspace_process_launch_exception(
+        esr,
+        elr,
+        far,
+        vector,
+        spsr,
+        saved_frame,
+    );
+
     println!();
     println!("talos exception: {}", vector.name());
     println!(

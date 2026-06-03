@@ -46,7 +46,11 @@ The post-review correction chain is:
    `phase8-program-loader-from-vfs-file-20260603` with the loader sourcing
    bytes through the read-only initramfs file-object boundary before returning
    its image plan;
-4. smallest real initial userspace `/bin/init` launch boundary;
+4. smallest real initial userspace `/bin/init` launch boundary: accepted in
+   `phase8-initial-userspace-process-launch-20260603` with QEMU/substitute
+   evidence that the VFS-backed `/bin/init` ELF text is mapped at EL0, entered
+   through the accepted launch/stack prerequisites, and reports a lower-AArch64
+   SVC signal from the init entry path;
 5. shell behavior backed by VFS, descriptors, syscalls, and userspace.
 
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout

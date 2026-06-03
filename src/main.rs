@@ -70,6 +70,7 @@
             talos_boot_scenario = "qemu_process_address_space_smoke",
             talos_boot_scenario = "qemu_process_page_table_materialization_smoke",
             talos_boot_scenario = "qemu_initial_process_launch_smoke",
+            talos_boot_scenario = "qemu_initial_userspace_process_launch_smoke",
             talos_boot_scenario = "qemu_initial_user_stack_smoke",
             talos_boot_scenario = "qemu_live_address_space_activation_smoke",
             talos_boot_scenario = "qemu_kernel_half_reachability_smoke",
@@ -464,6 +465,9 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
+            #[cfg(talos_boot_scenario = "qemu_initial_userspace_process_launch_smoke")]
+            target::qemu_virt::run_initial_userspace_process_launch_smoke();
+
             #[cfg(talos_boot_scenario = "qemu_initial_user_stack_smoke")]
             {
                 if target::qemu_virt::run_initial_user_stack_smoke() {
@@ -616,6 +620,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_boot_scenario = "qemu_process_address_space_smoke",
                 talos_boot_scenario = "qemu_process_page_table_materialization_smoke",
                 talos_boot_scenario = "qemu_initial_process_launch_smoke",
+                talos_boot_scenario = "qemu_initial_userspace_process_launch_smoke",
                 talos_boot_scenario = "qemu_initial_user_stack_smoke",
                 talos_boot_scenario = "qemu_live_address_space_activation_smoke",
                 talos_boot_scenario = "qemu_kernel_half_reachability_smoke",
@@ -656,6 +661,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_boot_scenario = "qemu_process_address_space_smoke",
                 talos_boot_scenario = "qemu_process_page_table_materialization_smoke",
                 talos_boot_scenario = "qemu_initial_process_launch_smoke",
+                talos_boot_scenario = "qemu_initial_userspace_process_launch_smoke",
                 talos_boot_scenario = "qemu_initial_user_stack_smoke",
                 talos_boot_scenario = "qemu_live_address_space_activation_smoke",
                 talos_boot_scenario = "qemu_kernel_half_reachability_smoke",
