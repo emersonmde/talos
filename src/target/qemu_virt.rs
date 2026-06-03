@@ -14706,7 +14706,7 @@ const fn local_command_loop_smoke_command_count() -> usize {
     } else if cfg!(talos_boot_scenario = "qemu_local_cat_cwd") {
         7
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") {
-        13
+        15
     } else if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") {
         12
     } else if cfg!(talos_boot_scenario = "qemu_local_ls_cwd") {
@@ -14773,7 +14773,7 @@ fn expected_local_command_loop_dispatch(
             line == b"ls /" && status == Handled && response_lines == 4
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_ls_bin") => {
-            line == b"ls /bin" && status == Handled && response_lines == 2
+            line == b"ls /bin" && status == Handled && response_lines == 3
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_cat_banner") => {
             line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
@@ -14782,7 +14782,7 @@ fn expected_local_command_loop_dispatch(
             line == b"cd /etc" && status == Handled && response_lines == 0
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
-            line == b"exec /bin/zero" && status == Handled && response_lines == 8
+            line == b"exec /bin/status42" && status == Handled && response_lines == 8
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") => {
             line == b"pwd" && status == Handled && response_lines == 1
@@ -14807,7 +14807,7 @@ fn expected_local_command_loop_dispatch(
             line == b"ls /" && status == Handled && response_lines == 4
         }
         4 if cfg!(talos_boot_scenario = "qemu_local_cat_banner") => {
-            line == b"ls /bin" && status == Handled && response_lines == 2
+            line == b"ls /bin" && status == Handled && response_lines == 3
         }
         4 if cfg!(talos_boot_scenario = "qemu_local_cat_cwd") => {
             line == b"cat banner.txt" && status == Handled && response_lines == 1
@@ -14886,7 +14886,7 @@ fn expected_local_command_loop_dispatch(
             line == b"laststatus" && status == Handled && response_lines == 1
         }
         7 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
-            line == b"exec /missing" && status == UnexpectedArgument && response_lines == 1
+            line == b"exec /bin/zero" && status == Handled && response_lines == 8
         }
         6 if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") => {
             line == b"cd /bin" && status == Handled && response_lines == 0
@@ -14910,21 +14910,27 @@ fn expected_local_command_loop_dispatch(
             line == b"cd /" && status == Handled && response_lines == 0
         }
         8 if cfg!(talos_boot_scenario = "qemu_local_ls_cwd") => {
-            line == b"ls" && status == Handled && response_lines == 2
+            line == b"ls" && status == Handled && response_lines == 3
         }
         8 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
-            line == b"exec init" && status == UnexpectedArgument && response_lines == 1
+            line == b"laststatus" && status == Handled && response_lines == 1
         }
         9 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
-            line == b"exec /bin" && status == UnexpectedArgument && response_lines == 1
+            line == b"exec /missing" && status == UnexpectedArgument && response_lines == 1
         }
         10 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
-            line == b"exec /etc/banner.txt" && status == UnexpectedArgument && response_lines == 1
+            line == b"exec init" && status == UnexpectedArgument && response_lines == 1
         }
         11 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
-            line == b"exec /empty" && status == UnexpectedArgument && response_lines == 1
+            line == b"exec /bin" && status == UnexpectedArgument && response_lines == 1
         }
         12 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
+            line == b"exec /etc/banner.txt" && status == UnexpectedArgument && response_lines == 1
+        }
+        13 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
+            line == b"exec /empty" && status == UnexpectedArgument && response_lines == 1
+        }
+        14 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
             line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
         }
         8 if cfg!(talos_boot_scenario = "qemu_local_line_editing") => {

@@ -62,9 +62,10 @@ const LOCAL_COMMAND_ROOT_LISTING: [(&[u8], &str); 4] = [
 ];
 const LOCAL_COMMAND_ETC_LISTING: [(&[u8], &str); 1] =
     [(initramfs::PHASE8_BANNER_PATH, "banner.txt")];
-const LOCAL_COMMAND_BIN_LISTING: [(&[u8], &str); 2] = [
+const LOCAL_COMMAND_BIN_LISTING: [(&[u8], &str); 3] = [
     (initramfs::PHASE8_INIT_PATH, "init"),
     (initramfs::PHASE10_ZERO_PATH, "zero"),
+    (initramfs::PHASE10_STATUS42_PATH, "status42"),
 ];
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -392,6 +393,7 @@ where
         let source_path = match path {
             initramfs::PHASE8_INIT_PATH => initramfs::PHASE8_INIT_PATH,
             initramfs::PHASE10_ZERO_PATH => initramfs::PHASE10_ZERO_PATH,
+            initramfs::PHASE10_STATUS42_PATH => initramfs::PHASE10_STATUS42_PATH,
             initramfs::PHASE8_BANNER_PATH => initramfs::PHASE8_BANNER_PATH,
             initramfs::PHASE8_EMPTY_PATH => initramfs::PHASE8_EMPTY_PATH,
             initramfs::PHASE8_NESTED_PATH => initramfs::PHASE8_NESTED_PATH,
@@ -1776,8 +1778,8 @@ talos> /\n"
 
         assert_eq!(result.line(), b"ls /bin");
         assert_eq!(result.status(), LocalCommandStatus::Handled);
-        assert_eq!(result.response_lines(), 2);
-        assert_eq!(backend.as_str(), "talos> init\nzero\n");
+        assert_eq!(result.response_lines(), 3);
+        assert_eq!(backend.as_str(), "talos> init\nzero\nstatus42\n");
     }
 
     #[test_case]
@@ -1820,7 +1822,7 @@ talos> /\n"
         assert_eq!(cd_bin.response_lines(), 0);
         assert_eq!(bin_ls.line(), b"ls");
         assert_eq!(bin_ls.status(), LocalCommandStatus::Handled);
-        assert_eq!(bin_ls.response_lines(), 2);
+        assert_eq!(bin_ls.response_lines(), 3);
         assert_eq!(cd_root.line(), b"cd /");
         assert_eq!(cd_root.status(), LocalCommandStatus::Handled);
         assert_eq!(cd_root.response_lines(), 0);
@@ -1834,9 +1836,10 @@ dir\n\
 empty\n\
 etc\n\
 talos> talos> banner.txt\n\
-talos> talos> init\n\
-zero\n\
-talos> talos> bin\n\
+	talos> talos> init\n\
+	zero\n\
+	status42\n\
+	talos> talos> bin\n\
 dir\n\
 empty\n\
 etc\n"
@@ -1957,6 +1960,41 @@ talos> Talos initramfs fixture\n"
         ));
         assert!(output.contains(
             "talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x0000000000000000 complete=true source=lifecycle-record\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_execs_nonzero_status_vfs_program() {
+        let input = ScriptedInput::new(*b"exec /bin/status42\rlaststatus\r", 30);
+        let mut backend = CaptureSink::new();
+        let (exec, observed) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(exec.line(), b"exec /bin/status42");
+        assert_eq!(exec.status(), LocalCommandStatus::Handled);
+        assert_eq!(exec.response_lines(), 8);
+        assert_eq!(observed.line(), b"laststatus");
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.response_lines(), 1);
+        assert!(output.contains("talos> talos: exec path=/bin/status42 source=vfs-open-read\n"));
+        assert!(output.contains(
+            "talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/status42"
+        ));
+        assert!(output.contains(
+            "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x000000000000002a complete=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record\n"
         ));
     }
 

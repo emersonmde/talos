@@ -146,6 +146,20 @@ The post-review correction chain is:
     variation through a VFS-backed executable before PATH lookup,
     wait/waitpid, descriptor inheritance, pipes, redirection, writable
     filesystem, hardware proof, networking, or SSH.
+16. nonzero VFS exec status core: accepted in
+    `phase10-vfs-exec-nonzero-status-core-20260603` with shell-visible
+    `exec /bin/status42` reading executable bytes through descriptor-backed
+    VFS/open/read before the accepted loader/process/launch/startup/
+    lifecycle/status chain. `/bin/status42` reports
+    `argv[0]=/bin/status42`,
+    `state=minimal-argc1-argv0-absolute-empty-envp`, deterministic empty
+    envp, copied startup bytes for the longer path, lifecycle/status
+    `0x2a`, and matching `laststatus`. `/bin/init` and `/bin/zero`
+    remain zero-status controls. Missing paths, relative/PATH-style names,
+    directories, non-ELF files, and empty files fail deterministically. PATH
+    lookup, broad argv/envp, wait/waitpid, descriptor inheritance, pipes,
+    redirection, writable filesystem, hardware proof, networking, and SSH
+    remain deferred.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -229,6 +243,19 @@ The next queued task remains mechanically justified as nonzero status
 variation from a VFS-backed executable before PATH lookup, broader argv/envp,
 wait/waitpid, descriptor inheritance, pipes, redirection, writable filesystem,
 hardware proof, networking, or SSH.
+
+The nonzero VFS exec status task is accepted in
+`phase10-vfs-exec-nonzero-status-core-20260603`. It advances the
+shell-visible exec/status frontier from only zero-status fixtures to a
+deterministic VFS-backed nonzero executable, `/bin/status42`. The transcript
+shows `/bin/status42` reaching the accepted descriptor-backed `TalosOpen`/
+`TalosRead`, loader, startup ABI, launch, lifecycle/status, and
+`laststatus` chain with status `0x2a`. `/bin/init` and `/bin/zero`
+remain zero-status controls, deterministic negative exec controls remain
+intact, and descriptor-backed `cat /etc/banner.txt` still passes. PATH
+lookup, broad argv/envp, wait/waitpid, descriptor inheritance, pipes,
+redirection, writable filesystem, hardware proof, networking, and SSH remain
+deferred.
 
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning
