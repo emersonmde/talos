@@ -47,7 +47,17 @@ impl BumpAllocator {
     pub fn init_from_plan(&self, plan: EarlyBootstrapAllocatorPlan) -> Option<BumpAllocatorState> {
         let start = usize::try_from(plan.start).ok()?;
         let end = usize::try_from(plan.end).ok()?;
-        if start >= end {
+        let size = usize::try_from(plan.size).ok()?;
+        let page_size = usize::try_from(plan.page_size).ok()?;
+        let page_count = usize::try_from(plan.page_count).ok()?;
+        if start >= end
+            || page_size == 0
+            || page_count == 0
+            || end.checked_sub(start)? != size
+            || page_count.checked_mul(page_size)? != size
+            || !start.is_multiple_of(page_size)
+            || !end.is_multiple_of(page_size)
+        {
             return None;
         }
 
@@ -97,8 +107,7 @@ impl BumpAllocator {
         }
 
         loop {
-            let aligned =
-                align_up(current, alignment).ok_or(BumpAllocatorAllocError::InvalidAlignment)?;
+            let aligned = align_up(current, alignment)?;
             let alloc_end = aligned
                 .checked_add(size)
                 .ok_or(BumpAllocatorAllocError::AddressOverflow)?;
@@ -131,12 +140,15 @@ unsafe impl GlobalAlloc for BumpAllocator {
     unsafe fn dealloc(&self, _ptr: *mut u8, _layout: Layout) {}
 }
 
-fn align_up(value: usize, alignment: usize) -> Option<usize> {
+fn align_up(value: usize, alignment: usize) -> Result<usize, BumpAllocatorAllocError> {
     if alignment == 0 || !alignment.is_power_of_two() {
-        return None;
+        return Err(BumpAllocatorAllocError::InvalidAlignment);
     }
     let mask = alignment - 1;
-    value.checked_add(mask).map(|value| value & !mask)
+    value
+        .checked_add(mask)
+        .map(|value| value & !mask)
+        .ok_or(BumpAllocatorAllocError::AddressOverflow)
 }
 
 #[cfg(test)]
@@ -178,12 +190,46 @@ mod tests {
     }
 
     #[test_case]
+    fn init_rejects_inconsistent_allocator_plan_contracts() {
+        let allocator = BumpAllocator::new();
+        let valid = EarlyBootstrapAllocatorPlan {
+            start: 0x2f01_0000,
+            end: 0x2f02_0000,
+            page_size: EARLY_PAGE_SIZE,
+            page_count: 0x10,
+            size: 0x1_0000,
+        };
+
+        assert_eq!(
+            allocator.init_from_plan(EarlyBootstrapAllocatorPlan {
+                size: valid.size - 1,
+                ..valid
+            }),
+            None
+        );
+        assert_eq!(
+            allocator.init_from_plan(EarlyBootstrapAllocatorPlan {
+                page_count: valid.page_count - 1,
+                ..valid
+            }),
+            None
+        );
+        assert_eq!(
+            allocator.init_from_plan(EarlyBootstrapAllocatorPlan {
+                start: valid.start + 1,
+                ..valid
+            }),
+            None
+        );
+    }
+
+    #[test_case]
     fn allocation_advances_with_alignment_and_updates_accounting() {
         let allocator = BumpAllocator::new();
         let plan = EarlyBootstrapAllocatorPlan {
             start: 0x2f01_0000,
             end: 0x2f01_0100,
-            page_size: EARLY_PAGE_SIZE,
+            page_size: 0x100,
             page_count: 1,
             size: 0x100,
         };
@@ -218,7 +264,7 @@ mod tests {
         let plan = EarlyBootstrapAllocatorPlan {
             start: 0x2f01_0000,
             end: 0x2f01_0040,
-            page_size: EARLY_PAGE_SIZE,
+            page_size: 0x40,
             page_count: 1,
             size: 0x40,
         };
@@ -244,7 +290,7 @@ mod tests {
         let plan = EarlyBootstrapAllocatorPlan {
             start: 0x2f01_0000,
             end: 0x2f01_0040,
-            page_size: EARLY_PAGE_SIZE,
+            page_size: 0x40,
             page_count: 1,
             size: 0x40,
         };
@@ -263,6 +309,23 @@ mod tests {
             })
         );
         assert_eq!(allocator.state(), Some(before));
+    }
+
+    #[test_case]
+    fn fallible_allocation_reports_alignment_overflow_separately() {
+        let allocator = BumpAllocator::new();
+        let plan = EarlyBootstrapAllocatorPlan {
+            start: usize::MAX as u64 - 0x7,
+            end: usize::MAX as u64,
+            page_size: 1,
+            page_count: 7,
+            size: 7,
+        };
+        allocator.init_from_plan(plan).expect("allocator state");
+
+        let result = allocator.try_allocate(1, 0x10);
+
+        assert_eq!(result, Err(BumpAllocatorAllocError::AddressOverflow));
     }
 
     #[test_case]

@@ -162,6 +162,9 @@ pub fn early_translation_table_population_plan(
     if layout.page_size != EARLY_PAGE_SIZE || layout.page_count != EARLY_TRANSLATION_TABLE_PAGES {
         return None;
     }
+    if !translation_tables_match_reserved_layout(layout) {
+        return None;
+    }
     if !is_aligned(layout.root_table, EARLY_PAGE_SIZE)
         || !is_aligned(layout.l1_table, EARLY_PAGE_SIZE)
         || !is_aligned(layout.low_l2_table, EARLY_PAGE_SIZE)
@@ -268,8 +271,37 @@ const TCR_CACHE_WBWA: u64 = 0b01;
 const TCR_SH_INNER: u64 = 0b11;
 const TCR_PS_48BIT: u64 = 0b101;
 
+fn translation_tables_match_reserved_layout(layout: EarlyTranslationTableLayout) -> bool {
+    let Some(l1_table) = layout.start.checked_add(layout.page_size) else {
+        return false;
+    };
+    let Some(low_l2_table) = l1_table.checked_add(layout.page_size) else {
+        return false;
+    };
+    let Some(mmio_l2_table) = low_l2_table.checked_add(layout.page_size) else {
+        return false;
+    };
+    let Some(table_bytes) = layout.page_count.checked_mul(layout.page_size) else {
+        return false;
+    };
+    let Some(end) = layout.start.checked_add(table_bytes) else {
+        return false;
+    };
+
+    layout.end == end
+        && layout.root_table == layout.start
+        && layout.l1_table == l1_table
+        && layout.low_l2_table == low_l2_table
+        && layout.mmio_l2_table == mmio_l2_table
+}
+
+fn address_fits_mask(address: u64, mask: u64) -> bool {
+    address & !mask == 0
+}
+
 pub(super) fn table_descriptor(address: u64) -> Option<u64> {
-    if !is_aligned(address, EARLY_PAGE_SIZE) {
+    if !is_aligned(address, EARLY_PAGE_SIZE) || !address_fits_mask(address, STAGE1_TABLE_ADDR_MASK)
+    {
         return None;
     }
 
@@ -309,7 +341,9 @@ pub(super) fn device_block_descriptor(address: u64) -> Option<u64> {
 }
 
 fn block_descriptor(address: u64, attr_index: u64, extra_attrs: u64) -> Option<u64> {
-    if !is_aligned(address, EARLY_TRANSLATION_L2_BLOCK_SIZE) {
+    if !is_aligned(address, EARLY_TRANSLATION_L2_BLOCK_SIZE)
+        || !address_fits_mask(address, STAGE1_BLOCK_ADDR_MASK)
+    {
         return None;
     }
 
@@ -509,6 +543,20 @@ mod tests {
         assert_eq!(early_translation_register_plan(layout, 1), None);
         assert_eq!(early_translation_register_plan(layout, 3), None);
         assert_eq!(early_translation_register_plan(bad_layout, 2), None);
+        assert_eq!(
+            early_translation_table_population_plan(EarlyTranslationTableLayout {
+                l1_table: layout.root_table,
+                ..layout
+            }),
+            None
+        );
+        assert_eq!(
+            early_translation_table_population_plan(EarlyTranslationTableLayout {
+                mmio_l2_table: layout.mmio_l2_table + EARLY_PAGE_SIZE,
+                ..layout
+            }),
+            None
+        );
     }
 
     #[test_case]
@@ -560,6 +608,10 @@ mod tests {
     fn translation_table_descriptors_encode_table_normal_and_device_entries() {
         assert_eq!(table_descriptor(0x2f00_1000), Some(0x2f00_1003));
         assert_eq!(table_descriptor(0x2f00_1001), None);
+        assert_eq!(
+            table_descriptor(STAGE1_TABLE_ADDR_MASK + EARLY_PAGE_SIZE),
+            None
+        );
 
         let normal = normal_block_descriptor(0x3fe0_0000).expect("normal descriptor");
         assert_eq!(normal & 0x3, STAGE1_DESC_VALID);
@@ -580,6 +632,10 @@ mod tests {
         );
         assert_eq!(device & STAGE1_DESC_PXN, STAGE1_DESC_PXN);
         assert_eq!(device & STAGE1_DESC_UXN, STAGE1_DESC_UXN);
+        assert_eq!(
+            device_block_descriptor(STAGE1_BLOCK_ADDR_MASK + EARLY_TRANSLATION_L2_BLOCK_SIZE),
+            None
+        );
     }
 
     #[test_case]
@@ -587,19 +643,30 @@ mod tests {
         #[repr(align(4096))]
         struct TablePage([u64; 512]);
 
-        let mut root = TablePage([0xdead_beef; 512]);
-        let mut l1 = TablePage([0xdead_beef; 512]);
-        let mut low_l2 = TablePage([0xdead_beef; 512]);
-        let mut mmio_l2 = TablePage([0xdead_beef; 512]);
+        #[repr(C, align(4096))]
+        struct TableArena {
+            root: TablePage,
+            l1: TablePage,
+            low_l2: TablePage,
+            mmio_l2: TablePage,
+        }
+
+        let mut arena = TableArena {
+            root: TablePage([0xdead_beef; 512]),
+            l1: TablePage([0xdead_beef; 512]),
+            low_l2: TablePage([0xdead_beef; 512]),
+            mmio_l2: TablePage([0xdead_beef; 512]),
+        };
+        let root = core::ptr::addr_of_mut!(arena.root) as u64;
         let layout = EarlyTranslationTableLayout {
-            start: core::ptr::addr_of!(root) as u64,
-            end: core::ptr::addr_of!(mmio_l2) as u64 + EARLY_PAGE_SIZE,
+            start: root,
+            end: root + (EARLY_TRANSLATION_TABLE_PAGES * EARLY_PAGE_SIZE),
             page_size: EARLY_PAGE_SIZE,
             page_count: EARLY_TRANSLATION_TABLE_PAGES,
-            root_table: core::ptr::addr_of_mut!(root) as u64,
-            l1_table: core::ptr::addr_of_mut!(l1) as u64,
-            low_l2_table: core::ptr::addr_of_mut!(low_l2) as u64,
-            mmio_l2_table: core::ptr::addr_of_mut!(mmio_l2) as u64,
+            root_table: root,
+            l1_table: root + EARLY_PAGE_SIZE,
+            low_l2_table: root + (2 * EARLY_PAGE_SIZE),
+            mmio_l2_table: root + (3 * EARLY_PAGE_SIZE),
         };
 
         let population =
@@ -607,32 +674,33 @@ mod tests {
 
         assert_eq!(population.root_entries, 1);
         assert_eq!(
-            root.0[0],
-            table_descriptor(core::ptr::addr_of!(l1) as u64).expect("l1 descriptor")
+            arena.root.0[0],
+            table_descriptor(core::ptr::addr_of!(arena.l1) as u64).expect("l1 descriptor")
         );
         assert_eq!(
-            l1.0[EARLY_TRANSLATION_LOW_L1_INDEX as usize],
-            table_descriptor(core::ptr::addr_of!(low_l2) as u64).expect("low l2 descriptor")
+            arena.l1.0[EARLY_TRANSLATION_LOW_L1_INDEX as usize],
+            table_descriptor(core::ptr::addr_of!(arena.low_l2) as u64).expect("low l2 descriptor")
         );
         assert_eq!(
-            l1.0[EARLY_TRANSLATION_BCM2712_MMIO_L1_INDEX as usize],
-            table_descriptor(core::ptr::addr_of!(mmio_l2) as u64).expect("mmio l2 descriptor")
+            arena.l1.0[EARLY_TRANSLATION_BCM2712_MMIO_L1_INDEX as usize],
+            table_descriptor(core::ptr::addr_of!(arena.mmio_l2) as u64)
+                .expect("mmio l2 descriptor")
         );
         assert_eq!(
-            low_l2.0[0],
+            arena.low_l2.0[0],
             normal_block_descriptor(0).expect("low block 0")
         );
         assert_eq!(
-            low_l2.0[511],
+            arena.low_l2.0[511],
             normal_block_descriptor(0x3fe0_0000).expect("low block 511")
         );
-        assert_eq!(mmio_l2.0[479], 0);
+        assert_eq!(arena.mmio_l2.0[479], 0);
         assert_eq!(
-            mmio_l2.0[480],
+            arena.mmio_l2.0[480],
             device_block_descriptor(0x10_7c00_0000).expect("mmio first block")
         );
         assert_eq!(
-            mmio_l2.0[511],
+            arena.mmio_l2.0[511],
             device_block_descriptor(0x10_7fe0_0000).expect("mmio last block")
         );
     }

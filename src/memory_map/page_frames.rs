@@ -179,7 +179,7 @@ pub fn early_page_frame_reuse_allocator<'a>(
         || !is_aligned(owned.start, owned.page_size)
         || !is_aligned(owned.end, owned.page_size)
         || metadata.is_empty()
-        || metadata_start >= metadata_end
+        || !metadata_range_can_hold_free_list(metadata, metadata_start, metadata_end)
         || ranges_intersect(metadata_start, metadata_end, owned.start, owned.end)
     {
         return None;
@@ -206,6 +206,26 @@ pub fn early_page_frame_reuse_allocator<'a>(
         metadata_start,
         metadata_end,
     })
+}
+
+fn metadata_range_can_hold_free_list(
+    metadata: &[u64],
+    metadata_start: u64,
+    metadata_end: u64,
+) -> bool {
+    let Some(metadata_bytes) =
+        (metadata.len() as u64).checked_mul(core::mem::size_of::<u64>() as u64)
+    else {
+        return false;
+    };
+    let Some(range_bytes) = metadata_end.checked_sub(metadata_start) else {
+        return false;
+    };
+
+    metadata_start < metadata_end
+        && is_aligned(metadata_start, core::mem::align_of::<u64>() as u64)
+        && is_aligned(metadata_end, core::mem::align_of::<u64>() as u64)
+        && range_bytes >= metadata_bytes
 }
 
 #[allow(dead_code)]
@@ -837,6 +857,20 @@ mod tests {
             early_page_frame_reuse_allocator(owned, &mut metadata, 0x2f01_1000, 0x2f01_1020)
                 .is_none()
         );
+    }
+
+    #[test_case]
+    fn page_frame_reuse_allocator_rejects_bad_metadata_contracts() {
+        let owned = EarlyPageFrameSpan {
+            start: 0x2f01_0000,
+            end: 0x2f01_4000,
+            page_size: EARLY_PAGE_SIZE,
+            page_count: 4,
+        };
+        let mut metadata = [0; 4];
+
+        assert!(early_page_frame_reuse_allocator(owned, &mut metadata, 0x8000, 0x8008).is_none());
+        assert!(early_page_frame_reuse_allocator(owned, &mut metadata, 0x8001, 0x8030).is_none());
     }
 
     #[test_case]
