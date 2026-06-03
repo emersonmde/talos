@@ -1,6 +1,6 @@
 # Phase 8 Open/Read Initramfs Descriptor Integration
 
-Status: planned
+Status: accepted
 
 Task: phase8-open-read-initramfs-descriptor-integration-20260603
 
@@ -97,3 +97,65 @@ POSIX-backed task chain:
 The Talos async worker cron and supervisor audit cron have both been updated to
 use this priority. Existing Phase 10 commands are regression/control surfaces,
 not the next planned feature path.
+
+## Implementation
+
+- Added `ReadOnlyFileDescriptions::allocate` and `remove` so immutable
+  initramfs regular files can be allocated as open-file descriptions by
+  reference.
+- Added `ReadOnlyInitramfs::open_regular_descriptor`, which opens a VFS regular
+  file, stores the open-file description, attaches a read-only regular-file
+  descriptor entry, and rolls the description back if descriptor allocation
+  fails.
+- Updated the QEMU/substitute read-only initramfs/VFS smoke so `/etc/banner.txt`,
+  `/bin/init`, and `/empty` are read through descriptor-backed file I/O rather
+  than direct helper calls.
+- No `cat`, `ls`, or other Phase 10 command behavior was changed.
+
+## Findings
+
+- fixed: The accepted VFS core had descriptor-facing read support, but no
+  atomic open-file-description-to-descriptor allocation path.
+- fixed: The QEMU smoke still proved direct regular-file helper reads for
+  success cases; it now requires descriptor-open and descriptor-read transcript
+  lines.
+- fixed: `/bin/init` was only covered by lookup/loader-era evidence in this
+  smoke; it now has a descriptor-backed ELF magic read.
+- fixed: Descriptor allocation failure could not be tested for file-description
+  rollback because there was no allocation helper.
+- not-an-issue: Descriptor `dup` already preserves the same object reference,
+  so duplicate descriptors share the read offset through the existing
+  `read_descriptor` path.
+- deferred: Final open-file-description release on last close remains deferred
+  to the later broader descriptor lifetime/syscall surface. This task prevents
+  negative-path leaks and preserves duplicate shared offsets, but does not add
+  a refcounted file-object table.
+
+## Evidence
+
+- source/test evidence: `src/initramfs.rs` now includes descriptor-open tests,
+  duplicate/shared-offset descriptor read tests, and open rollback tests.
+- QEMU/substitute evidence:
+  `tasks/evidence/2026-05-30-qemu-readonly-initramfs-vfs-smoke-core/qemu-readonly-initramfs-vfs-smoke.log`
+  records descriptor-backed reads for `/etc/banner.txt`, `/bin/init`, and
+  `/empty`, with
+  `qemu-readonly-initramfs-vfs-smoke-complete` and `PASS`.
+- validation gate: `cargo fmt --all -- --check` initially failed only on
+  formatting in the changed QEMU smoke; `cargo fmt --all` was applied.
+- validation gate: `cargo -Zjson-target-spec test --quiet` passed with 369
+  Talos no_std tests.
+- validation gate: `scripts/qemu-readonly-initramfs-vfs-smoke.sh` passed.
+
+## Remaining Risks
+
+- The next task still owns the POSIX-shaped open/read syscall or
+  syscall-substitute surface. This task proves the kernel file-object path but
+  does not add a stable userspace open ABI.
+- Pi 5 hardware was not used; the accepted claim is target-independent plus
+  QEMU/substitute evidence only.
+
+## Acceptance
+
+Accepted at: 2026-06-03T07:56Z
+
+Acceptance commit: recorded in durable supervisor state after commit.

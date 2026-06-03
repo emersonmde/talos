@@ -9,9 +9,12 @@ qemu-readonly-initramfs-vfs-smoke: start
 qemu-readonly-initramfs-vfs-smoke: fixture name=phase8-readonly-initramfs-vfs-v1 digest-algorithm=stable-manifest digest=0xd144990c173c899
 qemu-readonly-initramfs-vfs-smoke: lookup path=/ kind=directory entries=4 ok=true
 qemu-readonly-initramfs-vfs-smoke: lookup path=/etc/banner.txt kind=regular length=24 ok=true
-qemu-readonly-initramfs-vfs-smoke: read path=/etc/banner.txt offset-before=0 request=64 result=24 offset-after=24 data="Talos initramfs fixture\n" ok=true
-qemu-readonly-initramfs-vfs-smoke: read path=/etc/banner.txt offset-before=24 request=64 result=0 offset-after=24 eof=true ok=true
-qemu-readonly-initramfs-vfs-smoke: read path=/empty offset-before=0 request=64 result=0 offset-after=0 eof=true ok=true
+qemu-readonly-initramfs-vfs-smoke: descriptor-open path=/etc/banner.txt fd=3 object=regular-file reference=0 ok=true
+qemu-readonly-initramfs-vfs-smoke: descriptor-read path=/etc/banner.txt fd=3 offset-before=0 request=64 result=24 offset-after=24 data="Talos initramfs fixture\n" ok=true
+qemu-readonly-initramfs-vfs-smoke: descriptor-read path=/etc/banner.txt fd=3 offset-before=24 request=64 result=0 offset-after=24 eof=true ok=true
+qemu-readonly-initramfs-vfs-smoke: descriptor-open path=/bin/init fd=3 object=regular-file reference=0 ok=true
+qemu-readonly-initramfs-vfs-smoke: descriptor-read path=/bin/init fd=3 offset-before=0 request=4 result=4 offset-after=4 elf-magic=7f454c46 ok=true
+qemu-readonly-initramfs-vfs-smoke: descriptor-read path=/empty fd=3 offset-before=0 request=64 result=0 offset-after=0 eof=true ok=true
 qemu-readonly-initramfs-vfs-smoke: lookup path=/dir/nested.txt kind=regular length=15 ok=true
 qemu-readonly-initramfs-vfs-smoke: error case=missing path=/missing errno=-ENOENT ok=true
 qemu-readonly-initramfs-vfs-smoke: error case=not-directory path=/etc/banner.txt/child errno=-ENOTDIR ok=true
@@ -21,5 +24,5 @@ qemu-readonly-initramfs-vfs-smoke: error case=bad-descriptor errno=-EBADF offset
 qemu-readonly-initramfs-vfs-smoke: error case=user-fault errno=-EFAULT offset-unchanged=true ok=true
 qemu-readonly-initramfs-vfs-smoke: error case=invalid-input errno=-EINVAL offset-unchanged=true ok=true
 qemu-readonly-initramfs-vfs-smoke: error case=unsupported-operation errno=-ENOTSUP ok=true
-qemu-readonly-initramfs-vfs-smoke: final participants=8 expected=8 errors=0 classification=qemu-readonly-initramfs-vfs-smoke-complete
+qemu-readonly-initramfs-vfs-smoke: final participants=9 expected=9 errors=0 classification=qemu-readonly-initramfs-vfs-smoke-complete
 qemu-readonly-initramfs-vfs-smoke: PASS

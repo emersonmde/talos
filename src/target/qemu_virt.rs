@@ -319,8 +319,8 @@ use crate::{
 use crate::{
     initramfs::{
         PHASE8_BANNER_BYTES, PHASE8_BANNER_PATH, PHASE8_EMPTY_PATH, PHASE8_FIXTURE_NAME,
-        PHASE8_INIT_BYTES, PHASE8_NESTED_PATH, ReadOnlyFileDescriptions, VfsNodeKind,
-        phase8_readonly_initramfs_fixture,
+        PHASE8_INIT_BYTES, PHASE8_INIT_PATH, PHASE8_NESTED_PATH, ReadOnlyFileDescriptions,
+        VfsNodeKind, phase8_readonly_initramfs_fixture,
     },
     posix::{
         DescriptorAccess, DescriptorEntry, DescriptorFlags, DescriptorObject, DescriptorObjectKind,
@@ -4924,8 +4924,9 @@ pub fn run_readonly_initramfs_vfs_smoke() -> bool {
         VfsNodeKind::RegularFile,
         PHASE8_BANNER_BYTES.len(),
     );
-    let banner_read_ok = readonly_initramfs_vfs_report_banner_read(fs);
-    let empty_read_ok = readonly_initramfs_vfs_report_empty_read(fs);
+    let banner_read_ok = readonly_initramfs_vfs_report_banner_descriptor_read(fs);
+    let init_read_ok = readonly_initramfs_vfs_report_init_descriptor_read(fs);
+    let empty_read_ok = readonly_initramfs_vfs_report_empty_descriptor_read(fs);
     let nested_lookup_ok =
         readonly_initramfs_vfs_report_lookup(fs, PHASE8_NESTED_PATH, VfsNodeKind::RegularFile, 15);
     let lookup_error_ok = readonly_initramfs_vfs_report_lookup_errors(fs);
@@ -4935,25 +4936,26 @@ pub fn run_readonly_initramfs_vfs_smoke() -> bool {
     let participants = u64::from(root_ok)
         + u64::from(banner_lookup_ok)
         + u64::from(banner_read_ok)
+        + u64::from(init_read_ok)
         + u64::from(empty_read_ok)
         + u64::from(nested_lookup_ok)
         + u64::from(lookup_error_ok)
         + u64::from(descriptor_error_ok)
         + u64::from(unsupported_ok);
-    let errors = 8 - participants;
-    let classification = if participants == 8 && errors == 0 {
+    let errors = 9 - participants;
+    let classification = if participants == 9 && errors == 0 {
         "qemu-readonly-initramfs-vfs-smoke-complete"
     } else {
         "qemu-readonly-initramfs-vfs-smoke-failed"
     };
 
     crate::println!(
-        "qemu-readonly-initramfs-vfs-smoke: final participants={} expected=8 errors={} classification={}",
+        "qemu-readonly-initramfs-vfs-smoke: final participants={} expected=9 errors={} classification={}",
         participants,
         errors,
         classification
     );
-    if participants == 8 && errors == 0 {
+    if participants == 9 && errors == 0 {
         crate::println!("qemu-readonly-initramfs-vfs-smoke: PASS");
         true
     } else {
@@ -4991,10 +4993,26 @@ fn readonly_initramfs_vfs_report_lookup(
 }
 
 #[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
-fn readonly_initramfs_vfs_report_banner_read(fs: crate::initramfs::ReadOnlyInitramfs) -> bool {
-    let mut description = fs
-        .open_regular_file(PHASE8_BANNER_PATH)
-        .expect("phase8 banner fixture opens");
+fn readonly_initramfs_vfs_report_banner_descriptor_read(
+    fs: crate::initramfs::ReadOnlyInitramfs,
+) -> bool {
+    let mut descriptor_table = DescriptorTable::<4>::with_inherited_stdio().expect("stdio table");
+    let mut descriptions = ReadOnlyFileDescriptions::<1>::new_empty();
+    let descriptor = fs
+        .open_regular_descriptor(&mut descriptor_table, &mut descriptions, PHASE8_BANNER_PATH)
+        .expect("phase8 banner fixture opens through descriptor");
+    let entry = descriptor_table
+        .get(descriptor)
+        .expect("banner descriptor entry");
+    let open_ok = entry.object().kind() == DescriptorObjectKind::RegularFile
+        && entry.object().reference() == 0;
+    crate::println!(
+        "qemu-readonly-initramfs-vfs-smoke: descriptor-open path=/etc/banner.txt fd={} object={} reference={} ok={}",
+        descriptor,
+        entry.object().kind().name(),
+        entry.object().reference(),
+        open_ok
+    );
     let mut user_memory = [0u8; 64];
     let mappings = [UserMapping::new(
         READONLY_INITRAMFS_VFS_USER_BASE,
@@ -5003,9 +5021,14 @@ fn readonly_initramfs_vfs_report_banner_read(fs: crate::initramfs::ReadOnlyInitr
     )
     .expect("valid readonly initramfs smoke user mapping")];
     let mut scratch = [0u8; 64];
-    let offset_before = description.offset();
-    let first = fs.read_regular_file(
-        &mut description,
+    let offset_before = descriptions
+        .get_mut(entry.object().reference())
+        .expect("banner file description")
+        .offset();
+    let first = fs.read_descriptor(
+        &descriptor_table,
+        &mut descriptions,
+        descriptor,
         &mappings,
         READONLY_INITRAMFS_VFS_USER_BASE,
         &mut user_memory,
@@ -5013,20 +5036,30 @@ fn readonly_initramfs_vfs_report_banner_read(fs: crate::initramfs::ReadOnlyInitr
         64,
         &mut scratch,
     );
+    let offset_after = descriptions
+        .get_mut(entry.object().reference())
+        .expect("banner file description")
+        .offset();
     let first_ok = first == Ok(PHASE8_BANNER_BYTES.len())
-        && description.offset() == PHASE8_BANNER_BYTES.len()
+        && offset_after == PHASE8_BANNER_BYTES.len()
         && &user_memory[..PHASE8_BANNER_BYTES.len()] == PHASE8_BANNER_BYTES;
     crate::println!(
-        "qemu-readonly-initramfs-vfs-smoke: read path=/etc/banner.txt offset-before={} request=64 result={} offset-after={} data=\"Talos initramfs fixture\\n\" ok={}",
+        "qemu-readonly-initramfs-vfs-smoke: descriptor-read path=/etc/banner.txt fd={} offset-before={} request=64 result={} offset-after={} data=\"Talos initramfs fixture\\n\" ok={}",
+        descriptor,
         offset_before,
         first.unwrap_or(usize::MAX),
-        description.offset(),
+        offset_after,
         first_ok
     );
 
-    let offset_before = description.offset();
-    let eof = fs.read_regular_file(
-        &mut description,
+    let offset_before = descriptions
+        .get_mut(entry.object().reference())
+        .expect("banner file description")
+        .offset();
+    let eof = fs.read_descriptor(
+        &descriptor_table,
+        &mut descriptions,
+        descriptor,
         &mappings,
         READONLY_INITRAMFS_VFS_USER_BASE,
         &mut user_memory,
@@ -5034,23 +5067,95 @@ fn readonly_initramfs_vfs_report_banner_read(fs: crate::initramfs::ReadOnlyInitr
         64,
         &mut scratch,
     );
-    let eof_ok = eof == Ok(0) && description.offset() == PHASE8_BANNER_BYTES.len();
+    let offset_after = descriptions
+        .get_mut(entry.object().reference())
+        .expect("banner file description")
+        .offset();
+    let eof_ok = eof == Ok(0) && offset_after == PHASE8_BANNER_BYTES.len();
     crate::println!(
-        "qemu-readonly-initramfs-vfs-smoke: read path=/etc/banner.txt offset-before={} request=64 result={} offset-after={} eof=true ok={}",
+        "qemu-readonly-initramfs-vfs-smoke: descriptor-read path=/etc/banner.txt fd={} offset-before={} request=64 result={} offset-after={} eof=true ok={}",
+        descriptor,
         offset_before,
         eof.unwrap_or(usize::MAX),
-        description.offset(),
+        offset_after,
         eof_ok
     );
 
-    first_ok && eof_ok
+    open_ok && first_ok && eof_ok
 }
 
 #[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
-fn readonly_initramfs_vfs_report_empty_read(fs: crate::initramfs::ReadOnlyInitramfs) -> bool {
-    let mut description = fs
-        .open_regular_file(PHASE8_EMPTY_PATH)
-        .expect("phase8 empty fixture opens");
+fn readonly_initramfs_vfs_report_init_descriptor_read(
+    fs: crate::initramfs::ReadOnlyInitramfs,
+) -> bool {
+    let mut descriptor_table = DescriptorTable::<4>::with_inherited_stdio().expect("stdio table");
+    let mut descriptions = ReadOnlyFileDescriptions::<1>::new_empty();
+    let descriptor = fs
+        .open_regular_descriptor(&mut descriptor_table, &mut descriptions, PHASE8_INIT_PATH)
+        .expect("phase8 init fixture opens through descriptor");
+    let entry = descriptor_table
+        .get(descriptor)
+        .expect("init descriptor entry");
+    let open_ok = entry.object().kind() == DescriptorObjectKind::RegularFile
+        && entry.object().reference() == 0;
+    crate::println!(
+        "qemu-readonly-initramfs-vfs-smoke: descriptor-open path=/bin/init fd={} object={} reference={} ok={}",
+        descriptor,
+        entry.object().kind().name(),
+        entry.object().reference(),
+        open_ok
+    );
+    let mut user_memory = [0u8; 16];
+    let mappings = [UserMapping::new(
+        READONLY_INITRAMFS_VFS_USER_BASE,
+        user_memory.len(),
+        UserMappingPermissions::USER_DATA,
+    )
+    .expect("valid readonly initramfs smoke user mapping")];
+    let mut scratch = [0u8; 16];
+    let offset_before = descriptions
+        .get_mut(entry.object().reference())
+        .expect("init file description")
+        .offset();
+    let result = fs.read_descriptor(
+        &descriptor_table,
+        &mut descriptions,
+        descriptor,
+        &mappings,
+        READONLY_INITRAMFS_VFS_USER_BASE,
+        &mut user_memory,
+        READONLY_INITRAMFS_VFS_USER_BASE,
+        4,
+        &mut scratch,
+    );
+    let offset_after = descriptions
+        .get_mut(entry.object().reference())
+        .expect("init file description")
+        .offset();
+    let ok = result == Ok(4) && offset_after == 4 && user_memory[..4] == PHASE8_INIT_BYTES[..4];
+    crate::println!(
+        "qemu-readonly-initramfs-vfs-smoke: descriptor-read path=/bin/init fd={} offset-before={} request=4 result={} offset-after={} elf-magic=7f454c46 ok={}",
+        descriptor,
+        offset_before,
+        result.unwrap_or(usize::MAX),
+        offset_after,
+        ok
+    );
+    open_ok && ok
+}
+
+#[cfg(talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke")]
+fn readonly_initramfs_vfs_report_empty_descriptor_read(
+    fs: crate::initramfs::ReadOnlyInitramfs,
+) -> bool {
+    let mut descriptor_table = DescriptorTable::<4>::with_inherited_stdio().expect("stdio table");
+    let mut descriptions = ReadOnlyFileDescriptions::<1>::new_empty();
+    let descriptor = fs
+        .open_regular_descriptor(&mut descriptor_table, &mut descriptions, PHASE8_EMPTY_PATH)
+        .expect("phase8 empty fixture opens through descriptor");
+    let entry = descriptor_table
+        .get(descriptor)
+        .expect("empty descriptor entry");
     let mut user_memory = [0u8; 64];
     let mappings = [UserMapping::new(
         READONLY_INITRAMFS_VFS_USER_BASE,
@@ -5059,9 +5164,14 @@ fn readonly_initramfs_vfs_report_empty_read(fs: crate::initramfs::ReadOnlyInitra
     )
     .expect("valid readonly initramfs smoke user mapping")];
     let mut scratch = [0u8; 64];
-    let offset_before = description.offset();
-    let result = fs.read_regular_file(
-        &mut description,
+    let offset_before = descriptions
+        .get_mut(entry.object().reference())
+        .expect("empty file description")
+        .offset();
+    let result = fs.read_descriptor(
+        &descriptor_table,
+        &mut descriptions,
+        descriptor,
         &mappings,
         READONLY_INITRAMFS_VFS_USER_BASE,
         &mut user_memory,
@@ -5069,12 +5179,17 @@ fn readonly_initramfs_vfs_report_empty_read(fs: crate::initramfs::ReadOnlyInitra
         64,
         &mut scratch,
     );
-    let ok = result == Ok(0) && description.offset() == 0;
+    let offset_after = descriptions
+        .get_mut(entry.object().reference())
+        .expect("empty file description")
+        .offset();
+    let ok = result == Ok(0) && offset_after == 0;
     crate::println!(
-        "qemu-readonly-initramfs-vfs-smoke: read path=/empty offset-before={} request=64 result={} offset-after={} eof=true ok={}",
+        "qemu-readonly-initramfs-vfs-smoke: descriptor-read path=/empty fd={} offset-before={} request=64 result={} offset-after={} eof=true ok={}",
+        descriptor,
         offset_before,
         result.unwrap_or(usize::MAX),
-        description.offset(),
+        offset_after,
         ok
     );
     ok

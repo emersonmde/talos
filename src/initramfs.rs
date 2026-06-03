@@ -6,8 +6,9 @@
 //! load programs, or perform target I/O.
 
 use crate::posix::{
-    DEFAULT_PATH_LIMITS, DEFAULT_USER_COPY_LIMIT, DescriptorObjectKind, DescriptorTable,
-    PathLimits, PosixError, UserMapping, copy_to_user, normalize_path,
+    DEFAULT_PATH_LIMITS, DEFAULT_USER_COPY_LIMIT, DescriptorAccess, DescriptorEntry,
+    DescriptorFlags, DescriptorObject, DescriptorObjectKind, DescriptorTable, PathLimits,
+    PosixError, UserMapping, copy_to_user, normalize_path,
 };
 
 pub(crate) const DEFAULT_MAX_PATH_COMPONENTS: usize = 64;
@@ -191,6 +192,31 @@ impl<const CAPACITY: usize> ReadOnlyFileDescriptions<CAPACITY> {
         Ok(())
     }
 
+    pub(crate) fn allocate(
+        &mut self,
+        description: ReadOnlyFileDescription,
+    ) -> Result<usize, PosixError> {
+        let mut reference = 0;
+        while reference < CAPACITY {
+            if self.entries[reference].is_none() {
+                self.entries[reference] = Some(description);
+                return Ok(reference);
+            }
+            reference += 1;
+        }
+        Err(PosixError::TooManyOpenFiles)
+    }
+
+    pub(crate) fn remove(
+        &mut self,
+        reference: usize,
+    ) -> Result<ReadOnlyFileDescription, PosixError> {
+        self.entries
+            .get_mut(reference)
+            .and_then(Option::take)
+            .ok_or(PosixError::BadDescriptor)
+    }
+
     pub(crate) fn get_mut(
         &mut self,
         reference: usize,
@@ -291,6 +317,32 @@ impl ReadOnlyInitramfs {
 
     pub(crate) fn unsupported_operation(self) -> Result<(), PosixError> {
         Err(PosixError::NotSupported)
+    }
+
+    pub(crate) fn open_regular_descriptor<
+        const DESCRIPTOR_CAPACITY: usize,
+        const FILE_CAPACITY: usize,
+    >(
+        self,
+        descriptor_table: &mut DescriptorTable<DESCRIPTOR_CAPACITY>,
+        file_descriptions: &mut ReadOnlyFileDescriptions<FILE_CAPACITY>,
+        path: &[u8],
+    ) -> Result<usize, PosixError> {
+        let description = self.open_regular_file(path)?;
+        let reference = file_descriptions.allocate(description)?;
+        let entry = DescriptorEntry::new(
+            DescriptorAccess::ReadOnly,
+            DescriptorFlags::EMPTY,
+            DescriptorObject::new(DescriptorObjectKind::RegularFile, reference),
+        );
+
+        match descriptor_table.allocate(entry) {
+            Ok(descriptor) => Ok(descriptor),
+            Err(error) => {
+                let _ = file_descriptions.remove(reference);
+                Err(error)
+            }
+        }
     }
 
     pub(crate) fn read_descriptor<const DESCRIPTOR_CAPACITY: usize, const FILE_CAPACITY: usize>(
@@ -734,6 +786,130 @@ mod tests {
         assert_eq!(init.len(), PHASE8_INIT_ELF_LEN);
         assert_eq!(&init[..4], b"\x7fELF");
         assert_eq!(fs.regular_file_bytes(b"/etc"), Err(PosixError::IsDirectory));
+    }
+
+    #[test_case]
+    fn open_regular_descriptor_attaches_file_description_to_lowest_fd() {
+        let fs = phase8_readonly_initramfs_fixture();
+        let mut descriptor_table = DescriptorTable::<4>::with_inherited_stdio().expect("stdio");
+        let mut file_descriptions = ReadOnlyFileDescriptions::<2>::new_empty();
+
+        let descriptor = fs
+            .open_regular_descriptor(
+                &mut descriptor_table,
+                &mut file_descriptions,
+                PHASE8_BANNER_PATH,
+            )
+            .expect("open banner through descriptor");
+
+        assert_eq!(descriptor, 3);
+        let entry = descriptor_table
+            .get(descriptor)
+            .expect("regular file descriptor");
+        assert_eq!(entry.access(), DescriptorAccess::ReadOnly);
+        assert_eq!(entry.flags(), DescriptorFlags::EMPTY);
+        assert_eq!(entry.object().kind(), DescriptorObjectKind::RegularFile);
+        assert_eq!(
+            file_descriptions
+                .get_mut(entry.object().reference())
+                .expect("open file description")
+                .offset(),
+            0
+        );
+    }
+
+    #[test_case]
+    fn descriptor_reads_opened_files_and_duplicates_share_offset() {
+        let fs = phase8_readonly_initramfs_fixture();
+        let mut descriptor_table = DescriptorTable::<5>::with_inherited_stdio().expect("stdio");
+        let mut file_descriptions = ReadOnlyFileDescriptions::<1>::new_empty();
+        let descriptor = fs
+            .open_regular_descriptor(
+                &mut descriptor_table,
+                &mut file_descriptions,
+                PHASE8_BANNER_PATH,
+            )
+            .expect("open banner through descriptor");
+        let duplicate = descriptor_table.dup(descriptor).expect("dup regular file");
+        let mut user_memory = [0u8; 64];
+        let mappings = writable_mapping(user_memory.len());
+        let mut scratch = [0u8; 64];
+
+        assert_eq!(
+            fs.read_descriptor(
+                &descriptor_table,
+                &mut file_descriptions,
+                descriptor,
+                &mappings,
+                USER_BASE,
+                &mut user_memory,
+                USER_BASE,
+                5,
+                &mut scratch,
+            ),
+            Ok(5)
+        );
+        assert_eq!(&user_memory[..5], b"Talos");
+
+        assert_eq!(
+            fs.read_descriptor(
+                &descriptor_table,
+                &mut file_descriptions,
+                duplicate,
+                &mappings,
+                USER_BASE,
+                &mut user_memory,
+                USER_BASE + 8,
+                64,
+                &mut scratch,
+            ),
+            Ok(PHASE8_BANNER_BYTES.len() - 5)
+        );
+        assert_eq!(
+            &user_memory[8..8 + PHASE8_BANNER_BYTES.len() - 5],
+            &PHASE8_BANNER_BYTES[5..]
+        );
+
+        assert_eq!(
+            fs.read_descriptor(
+                &descriptor_table,
+                &mut file_descriptions,
+                descriptor,
+                &mappings,
+                USER_BASE,
+                &mut user_memory,
+                USER_BASE,
+                64,
+                &mut scratch,
+            ),
+            Ok(0)
+        );
+    }
+
+    #[test_case]
+    fn open_regular_descriptor_rolls_back_file_description_on_descriptor_failure() {
+        let fs = phase8_readonly_initramfs_fixture();
+        let mut descriptor_table = DescriptorTable::<3>::with_inherited_stdio().expect("stdio");
+        let mut file_descriptions = ReadOnlyFileDescriptions::<1>::new_empty();
+
+        assert_eq!(
+            fs.open_regular_descriptor(
+                &mut descriptor_table,
+                &mut file_descriptions,
+                PHASE8_BANNER_PATH,
+            ),
+            Err(PosixError::TooManyOpenFiles)
+        );
+
+        let mut descriptor_table = DescriptorTable::<4>::with_inherited_stdio().expect("stdio");
+        assert_eq!(
+            fs.open_regular_descriptor(
+                &mut descriptor_table,
+                &mut file_descriptions,
+                PHASE8_INIT_PATH,
+            ),
+            Ok(3)
+        );
     }
 
     #[test_case]

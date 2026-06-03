@@ -33,8 +33,12 @@ then shell behavior that consumes those layers.
 
 The post-review correction chain is:
 
-1. descriptor-backed read-only initramfs/VFS file I/O;
-2. POSIX-shaped open/read syscall or syscall-substitute surface;
+1. descriptor-backed read-only initramfs/VFS file I/O: accepted in
+   `phase8-open-read-initramfs-descriptor-integration-20260603` with
+   descriptor-backed QEMU/substitute reads for `/etc/banner.txt` and
+   `/bin/init`;
+2. POSIX-shaped open/read syscall or syscall-substitute surface: next queued
+   task;
 3. program loader input from the VFS-backed `/bin/init` file;
 4. smallest real initial userspace `/bin/init` launch boundary;
 5. shell behavior backed by VFS, descriptors, syscalls, and userspace.
