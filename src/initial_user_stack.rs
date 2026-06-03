@@ -29,6 +29,8 @@ pub(crate) const INITIAL_USER_STACK_STARTUP_PAYLOAD_STATE: &str =
     "minimal-argc1-argv0-init-empty-envp";
 pub(crate) const INITIAL_USER_STACK_ABSOLUTE_ARGV0_PAYLOAD_STATE: &str =
     "minimal-argc1-argv0-absolute-empty-envp";
+pub(crate) const INITIAL_USER_STACK_LITERAL_ARGV_PAYLOAD_STATE: &str =
+    "literal-argv-absolute-empty-envp";
 pub(crate) const INITIAL_USER_STACK_EMPTY_ENVP_STATE: &str = "empty-envp0";
 pub(crate) const STARTUP_ABI_BLOCKED: &str = "blocked-pending-startup-abi";
 pub(crate) const INITIAL_USER_STACK_USABLE_PAGES: usize = 4;
@@ -601,8 +603,35 @@ pub(crate) fn plan_initial_user_stack(
     request: InitialUserStackRequest,
     lease_source: &mut InitialUserStackLeaseSource,
 ) -> Result<InitialUserStackPlan, PosixError> {
+    plan_initial_user_stack_with_startup_payload(
+        image,
+        install_plan,
+        address_space,
+        materialization,
+        launch_plan,
+        request,
+        lease_source,
+        1,
+        startup_payload_bytes(image.source_path())?,
+    )
+}
+
+pub(crate) fn plan_initial_user_stack_with_startup_payload(
+    image: ProgramImagePlan,
+    install_plan: ProcessImageInstallPlan,
+    address_space: ProcessAddressSpace,
+    materialization: ProcessPageTableMaterialization,
+    launch_plan: InitialProcessLaunchPlan,
+    request: InitialUserStackRequest,
+    lease_source: &mut InitialUserStackLeaseSource,
+    startup_argc: usize,
+    copied_startup_bytes: u64,
+) -> Result<InitialUserStackPlan, PosixError> {
     if request != InitialUserStackRequest::PlanOnly {
         return Err(PosixError::NotImplemented);
+    }
+    if startup_argc == 0 {
+        return Err(PosixError::InvalidArgument);
     }
 
     validate_lineage(
@@ -613,7 +642,7 @@ pub(crate) fn plan_initial_user_stack(
         launch_plan,
     )?;
 
-    let layout = default_layout()?;
+    let layout = default_layout(copied_startup_bytes)?;
     #[cfg(any(test, talos_boot_scenario = "qemu_initial_user_stack_smoke"))]
     let layout = {
         let mut layout = layout;
@@ -636,8 +665,9 @@ pub(crate) fn plan_initial_user_stack(
         total_zeroed_bytes: 0,
     };
 
-    let startup_payload_state = startup_payload_state_for_path(image.source_path());
-    let copied_startup_bytes = startup_payload_bytes(image.source_path())?;
+    let startup_payload_state = startup_payload_state_for_path(image.source_path(), startup_argc);
+    let argv0_user_address = startup_argv0_user_address(layout, startup_argc)?;
+    let envp0_user_address = startup_envp0_user_address(layout, startup_argc)?;
     let result = lease_stack_pages(layout, lease_source, &mut partial);
     match result {
         Ok(()) => Ok(InitialUserStackPlan {
@@ -660,20 +690,13 @@ pub(crate) fn plan_initial_user_stack(
             total_zeroed_bytes: partial.total_zeroed_bytes,
             startup_payload: InitialUserStackStartupPayload {
                 state: startup_payload_state,
-                argc: 1,
+                argc: startup_argc,
                 argv_null: false,
                 argv0_path: image.source_path(),
-                argv0_user_address: layout.initial_sp()
-                    + INITIAL_USER_STACK_ARGC_WORD_BYTES
-                    + INITIAL_USER_STACK_ARGV_POINTER_BYTES
-                    + INITIAL_USER_STACK_ARGV_NULL_POINTER_BYTES
-                    + INITIAL_USER_STACK_ENVP_NULL_POINTER_BYTES,
+                argv0_user_address,
                 envp_state: INITIAL_USER_STACK_EMPTY_ENVP_STATE,
                 envp_entry_count: 0,
-                envp0_user_address: layout.initial_sp()
-                    + INITIAL_USER_STACK_ARGC_WORD_BYTES
-                    + INITIAL_USER_STACK_ARGV_POINTER_BYTES
-                    + INITIAL_USER_STACK_ARGV_NULL_POINTER_BYTES,
+                envp0_user_address,
                 envp_null: true,
                 auxv_state: STARTUP_ABI_BLOCKED,
                 tls_state: STARTUP_ABI_BLOCKED,
@@ -698,8 +721,10 @@ pub(crate) fn plan_initial_user_stack(
     }
 }
 
-fn startup_payload_state_for_path(path: &[u8]) -> &'static str {
-    if path == b"/bin/init" {
+fn startup_payload_state_for_path(path: &[u8], startup_argc: usize) -> &'static str {
+    if startup_argc > 1 {
+        INITIAL_USER_STACK_LITERAL_ARGV_PAYLOAD_STATE
+    } else if path == b"/bin/init" {
         INITIAL_USER_STACK_STARTUP_PAYLOAD_STATE
     } else {
         INITIAL_USER_STACK_ABSOLUTE_ARGV0_PAYLOAD_STATE
@@ -716,6 +741,33 @@ fn startup_payload_bytes(argv0_path: &[u8]) -> Result<u64, PosixError> {
         + argv0_c_string_bytes)
 }
 
+fn startup_argv0_user_address(
+    layout: InitialUserStackLayout,
+    startup_argc: usize,
+) -> Result<u64, PosixError> {
+    let argc = u64::try_from(startup_argc).map_err(|_| PosixError::InvalidArgument)?;
+    layout
+        .initial_sp()
+        .checked_add(INITIAL_USER_STACK_ARGC_WORD_BYTES)
+        .and_then(|address| address.checked_add(INITIAL_USER_STACK_ARGV_POINTER_BYTES * argc))
+        .and_then(|address| address.checked_add(INITIAL_USER_STACK_ARGV_NULL_POINTER_BYTES))
+        .and_then(|address| address.checked_add(INITIAL_USER_STACK_ENVP_NULL_POINTER_BYTES))
+        .ok_or(PosixError::Fault)
+}
+
+fn startup_envp0_user_address(
+    layout: InitialUserStackLayout,
+    startup_argc: usize,
+) -> Result<u64, PosixError> {
+    let argc = u64::try_from(startup_argc).map_err(|_| PosixError::InvalidArgument)?;
+    layout
+        .initial_sp()
+        .checked_add(INITIAL_USER_STACK_ARGC_WORD_BYTES)
+        .and_then(|address| address.checked_add(INITIAL_USER_STACK_ARGV_POINTER_BYTES * argc))
+        .and_then(|address| address.checked_add(INITIAL_USER_STACK_ARGV_NULL_POINTER_BYTES))
+        .ok_or(PosixError::Fault)
+}
+
 struct PartialInitialUserStack {
     page_leases: [Option<InitialUserStackPageLease>; INITIAL_USER_STACK_PAGE_COUNT],
     page_lease_count: usize,
@@ -723,7 +775,7 @@ struct PartialInitialUserStack {
     total_zeroed_bytes: u64,
 }
 
-fn default_layout() -> Result<InitialUserStackLayout, PosixError> {
+fn default_layout(copied_startup_bytes: u64) -> Result<InitialUserStackLayout, PosixError> {
     let usable_end = USER_ADDRESS_SPACE_END;
     let usable_start = usable_end
         .checked_sub(INITIAL_USER_STACK_USABLE_BYTES)
@@ -731,9 +783,12 @@ fn default_layout() -> Result<InitialUserStackLayout, PosixError> {
     let guard_start = usable_start
         .checked_sub(INITIAL_USER_STACK_GUARD_BYTES)
         .ok_or(PosixError::Fault)?;
+    let aligned_startup_bytes = (copied_startup_bytes + 15) & !15;
     Ok(InitialUserStackLayout {
         stack_top: USER_ADDRESS_SPACE_END,
-        initial_sp: USER_ADDRESS_SPACE_END - INITIAL_USER_STACK_STARTUP_PAYLOAD_ALIGNED_BYTES,
+        initial_sp: USER_ADDRESS_SPACE_END
+            .checked_sub(aligned_startup_bytes)
+            .ok_or(PosixError::Fault)?,
         usable_start,
         usable_end,
         guard_start,

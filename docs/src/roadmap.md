@@ -218,6 +218,22 @@ The post-review correction chain is:
     expansion for absolute VFS exec, before PATH lookup, pipes, redirection,
     userspace stdio I/O through inherited descriptors, broad descriptor
     policy, writable filesystem, hardware proof, networking, or SSH.
+22. literal argv propagation for absolute VFS exec: accepted in
+    `phase10-literal-argv-exec-core-20260603` with shell-visible
+    `exec /bin/status42 alpha beta` still reading executable bytes through
+    descriptor-backed VFS/open/read before the accepted loader/process/launch/
+    startup/lifecycle/status chain. The startup ABI transcript now records
+    `state=literal-argv-absolute-empty-envp`, `argc=3`,
+    `argv[0]=/bin/status42`, `argv[1]=alpha`, `argv[2]=beta`,
+    deterministic empty envp, adjusted startup pointers, and
+    `copied-startup-bytes=0x49`. The same QEMU/substitute evidence preserves
+    inherited `fd0`/`fd1`/`fd2`, loader temporary descriptor non-leak,
+    `waitpid`, non-consuming `laststatus`, `/bin/init` and `/bin/zero`
+    controls, unsupported glob/escape-style grammar rejection, missing and
+    relative exec negatives, and descriptor-backed `cat /etc/banner.txt`.
+    Quoting, escaping, globbing, variables, PATH lookup, broad envp/auxv/TLS,
+    userspace stdio I/O through inherited descriptors, pipes, redirection,
+    writable filesystem, hardware proof, networking, and SSH remain deferred.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
