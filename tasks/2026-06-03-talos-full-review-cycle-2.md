@@ -93,5 +93,5 @@ expansion was added.
   QEMU evidence, but should not add more kernel-backed command-loop fixtures as
   feature progress.
 
-Implementation commit: pending.
-Final acceptance/state commit: pending.
+Implementation commit: 20dd708af263f7871c26bc4b705c4c7f523d9eb6.
+Final acceptance/state commit: recorded in durable state after acceptance.
