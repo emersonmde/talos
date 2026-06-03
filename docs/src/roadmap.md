@@ -234,6 +234,19 @@ The post-review correction chain is:
     Quoting, escaping, globbing, variables, PATH lookup, broad envp/auxv/TLS,
     userspace stdio I/O through inherited descriptors, pipes, redirection,
     writable filesystem, hardware proof, networking, and SSH remain deferred.
+23. literal argv exec closeout: accepted in
+    `phase10-literal-argv-exec-closeout-20260603`. It reconciles the
+    accepted `exec /bin/status42 alpha beta` startup ABI evidence,
+    descriptor-backed VFS/open/read and loader/lifecycle/status lineage,
+    inherited standard descriptor records, loader temporary descriptor
+    non-leak, `waitpid`, non-consuming `laststatus`, zero-status
+    controls, unsupported grammar rejection, negative exec controls, and
+    descriptor-backed `cat /etc/banner.txt`. The next recommended
+    feature-led local execution primitive is minimal fixed `/bin`
+    PATH-style lookup for bare executable names, with no environment-backed
+    PATH, current-directory search, quoting/globbing/variables, pipes,
+    redirection, userspace stdio I/O, writable filesystem, hardware proof,
+    networking, or SSH.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
