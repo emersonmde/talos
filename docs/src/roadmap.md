@@ -279,6 +279,24 @@ The post-review correction chain is:
     inherited standard descriptors before pipes, redirection, writable
     filesystem behavior, broader shell grammar, hardware proof, networking, or
     SSH.
+26. userspace stdout through inherited fd core: accepted in
+    `phase10-userspace-stdout-inherited-fd-core-20260603`. Shell-visible
+    `exec stdout` resolves through the accepted fixed `/bin` lookup to
+    `/bin/stdout`, reads the executable through descriptor-backed VFS/open/read,
+    and runs it through the accepted loader/startup/launch/descriptor
+    inheritance/lifecycle/status chain. The launched fixture emits the
+    deterministic line `Talos userspace stdout fixture` through inherited
+    `fd1=stdio-output` using the process descriptor `TalosWrite`
+    syscall-substitute path and records the matching write byte count and
+    return value. The retained evidence also covers `waitpid`, non-consuming
+    `laststatus`, `/bin/status42` nonzero status, `/bin/init` and `/bin/zero`
+    zero-status controls, absolute exec regression, fixed `/bin` lookup,
+    negative exec controls, loader temporary descriptor non-leak, inherited
+    standard descriptors, descriptor-backed `cat /etc/banner.txt`,
+    `qemu-local-shell-userspace-stdout-complete`, and PASS. Stdin reads,
+    stderr-specific output, pipes, redirection, writable filesystem behavior,
+    fork/async execution, libc stdio, broader shell grammar, hardware proof,
+    networking, and SSH remain deferred.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
