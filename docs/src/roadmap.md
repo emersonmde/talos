@@ -13,6 +13,16 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
+Architecture quality campaign: before further POSIX feature expansion, Talos is
+scheduled for subsystem-by-subsystem senior engineering review and refactor
+work. These reviews are implementation tasks, not read-only audits: broad
+refactors, dead-code removal, API cleanup, and small or large fixes are in
+scope. The campaign covers entry/boot/targets, memory/MMU/allocator, device
+tree/boot reports, console/TTY/command/stdio, scheduler/SMP/synchronization,
+POSIX/syscall/descriptors, VFS/loader/userspace, and docs/scripts/evidence
+hygiene. It is followed by two full-system review cycles and a closeout before
+the descriptor-backed VFS/open/read/userspace feature chain resumes.
+
 Priority correction after the Phase 10 shell-command review: Talos should not
 plan additional fake/kernel-backed shell command expansion as operating-system
 progress. The accepted `ls`, `cd`, `pwd`, and `cat` command-loop slices may
