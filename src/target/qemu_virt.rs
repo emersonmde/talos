@@ -14764,7 +14764,7 @@ fn expected_local_command_loop_dispatch(
             line == b"cd /etc" && status == Handled && response_lines == 0
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
-            line == b"exec /bin/init" && status == Handled && response_lines == 6
+            line == b"exec /bin/init" && status == Handled && response_lines == 7
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") => {
             line == b"pwd" && status == Handled && response_lines == 1

@@ -25,6 +25,7 @@ const LOCAL_COMMAND_FILE_USER_MEMORY_LEN: usize = 128;
 const LOCAL_COMMAND_EXEC_READ_OFFSET: usize = 0x80;
 const LOCAL_COMMAND_EXEC_USER_MEMORY_LEN: usize = 1024;
 const LOCAL_COMMAND_EXEC_ADDRESS_SPACE_ID: u64 = 0x0010_0001;
+const LOCAL_COMMAND_EXEC_PROCESS_ID: u64 = 0x0010_0001;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum LocalCommandDirectory {
@@ -120,6 +121,43 @@ pub struct LocalCommandExecSummary {
     completion_status: u64,
     completion_marker: u64,
     completion_boundary: &'static str,
+    lifecycle: LocalCommandProcessLifecycleRecord,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LocalCommandProcessLifecycleRecord {
+    process_id: u64,
+    parent_owner_id: u64,
+    state: LocalCommandProcessState,
+    status: u64,
+    observed_status: u64,
+    reaped: bool,
+}
+
+impl LocalCommandProcessLifecycleRecord {
+    const fn exited(process_id: u64, parent_owner_id: u64, status: u64) -> Self {
+        Self {
+            process_id,
+            parent_owner_id,
+            state: LocalCommandProcessState::Exited,
+            status,
+            observed_status: status,
+            reaped: true,
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum LocalCommandProcessState {
+    Exited,
+}
+
+impl LocalCommandProcessState {
+    const fn name(self) -> &'static str {
+        match self {
+            Self::Exited => "exited",
+        }
+    }
 }
 
 pub trait LocalCommandSink {
@@ -193,6 +231,7 @@ pub struct DescriptorBackedLocalCommandIo<
     output_backend: O,
     current_directory: LocalCommandDirectory,
     read_only_files: initramfs::ReadOnlyFileDescriptions<1>,
+    last_process: Option<LocalCommandProcessLifecycleRecord>,
 }
 
 impl<I, O> DescriptorBackedLocalCommandIo<I, O, 1, 4>
@@ -216,6 +255,7 @@ where
             output_backend,
             current_directory: LocalCommandDirectory::Root,
             read_only_files: initramfs::ReadOnlyFileDescriptions::new_empty(),
+            last_process: None,
         })
     }
 }
@@ -379,6 +419,12 @@ where
             &mut stack_source,
         )
         .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let lifecycle = LocalCommandProcessLifecycleRecord::exited(
+            LOCAL_COMMAND_EXEC_PROCESS_ID,
+            owner.raw(),
+            completion_status,
+        );
+        self.last_process = Some(lifecycle);
 
         Ok(LocalCommandExecSummary {
             source_len: image.source_len(),
@@ -393,6 +439,7 @@ where
             completion_status,
             completion_marker: initramfs::PHASE8_INIT_SVC_MARKER,
             completion_boundary: "lower-aarch64-svc-status-equivalent",
+            lifecycle,
         })
     }
 }
@@ -1141,6 +1188,7 @@ fn write_exec_summary(
     write_exec_source_line(sink, response_lines, summary)?;
     write_exec_entry_line(sink, response_lines, summary)?;
     write_exec_launch_line(sink, response_lines, summary)?;
+    write_exec_lifecycle_line(sink, response_lines, summary)?;
     write_exec_status_line(sink, response_lines, summary)?;
     write_line(
         sink,
@@ -1193,6 +1241,27 @@ fn write_exec_launch_line(
     finish_dynamic_line(sink, response_lines)
 }
 
+fn write_exec_lifecycle_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    summary: LocalCommandExecSummary,
+) -> Result<(), LocalCommandCycleError> {
+    let lifecycle = summary.lifecycle;
+    write_str_part(sink, "talos: exec-lifecycle pid=")?;
+    write_hex_u64_part(sink, lifecycle.process_id)?;
+    write_str_part(sink, " parent=shell owner=")?;
+    write_hex_u64_part(sink, lifecycle.parent_owner_id)?;
+    write_str_part(sink, " state=")?;
+    write_str_part(sink, lifecycle.state.name())?;
+    write_str_part(sink, " status=")?;
+    write_hex_u64_part(sink, lifecycle.status)?;
+    write_str_part(sink, " observed-status=")?;
+    write_hex_u64_part(sink, lifecycle.observed_status)?;
+    write_str_part(sink, " reaped=")?;
+    write_str_part(sink, if lifecycle.reaped { "true" } else { "false" })?;
+    finish_dynamic_line(sink, response_lines)
+}
+
 fn write_exec_status_line(
     sink: &mut impl LocalCommandSink,
     response_lines: &mut usize,
@@ -1204,7 +1273,7 @@ fn write_exec_status_line(
     write_hex_u64_part(sink, summary.completion_marker)?;
     write_str_part(sink, " status=")?;
     write_hex_u64_part(sink, summary.completion_status)?;
-    write_str_part(sink, " complete=true")?;
+    write_str_part(sink, " complete=true source=lifecycle-record")?;
     finish_dynamic_line(sink, response_lines)
 }
 
@@ -1686,7 +1755,7 @@ talos> Talos initramfs fixture\n"
 
         assert_eq!(result.line(), b"exec /bin/init");
         assert_eq!(result.status(), LocalCommandStatus::Handled);
-        assert_eq!(result.response_lines(), 6);
+        assert_eq!(result.response_lines(), 7);
         assert!(output.contains("talos> talos: exec path=/bin/init source=vfs-open-read\n"));
         assert!(output.contains("talos: exec-source bytes=0x0000000000000204 digest=0x"));
         assert!(output.contains(
@@ -1696,7 +1765,10 @@ talos> Talos initramfs fixture\n"
             "talos: exec-launch launch-boundary=phase8-initial-process-launch-plan-v1 stack-boundary=phase8-initial-user-stack-plan-v1"
         ));
         assert!(output.contains(
-            "talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x0000000000000000 complete=true\n"
+            "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x0000000000000000 complete=true source=lifecycle-record\n"
         ));
         assert!(
             output.contains("talos: exec-signal lower-aarch64-svc-launch-boundary-equivalent\n")
