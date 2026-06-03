@@ -3,7 +3,7 @@
 Task: talos-full-review-cycle-1-20260603
 Status: accepted
 Started: 2026-06-03T07:00:00Z
-Completed: 2026-06-03T07:28:00Z
+Completed: 2026-06-03T07:15:00Z
 
 ## Scope
 
@@ -88,5 +88,5 @@ RP1/PCIe, UART interrupt ownership, or DMA/cache policy was added.
 - Kernel-backed shell fixtures remain retained only as regression/control
   surfaces. No fake command behavior was expanded.
 
-Implementation commit: pending.
+Implementation commit: 3b72ab5561d18bb6224d32993c2b35ef180ddac7.
 Final acceptance/state commit: recorded in durable state.
