@@ -41,6 +41,11 @@ Local evidence:
   through `scripts/qemu-tool.sh`. Use
   `QEMU_SYSTEM_AARCH64=/path/to/qemu-system-aarch64` when the intended
   workspace QEMU binary is not on `PATH`.
+- Simple nographic QEMU smoke scripts share
+  `scripts/qemu-nographic-smoke-lib.sh` for Cargo build, objcopy, and QEMU
+  launch setup. Keep scenario assertions and retained-evidence copy rules in
+  the individual smoke scripts; socket-driven command-channel scripts remain
+  separate because they interact with QEMU while it is running.
 
 ### QEMU raspi4b
 

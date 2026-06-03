@@ -91,7 +91,9 @@ git diff --check
 
 QEMU scripts and the Cargo test runner use `qemu-system-aarch64` from `PATH` by
 default. Set `QEMU_SYSTEM_AARCH64=/path/to/qemu-system-aarch64` when the
-workspace QEMU build is not on `PATH`.
+workspace QEMU build is not on `PATH`. Nographic QEMU smoke scripts share
+`scripts/qemu-nographic-smoke-lib.sh` for build/image/run setup; keep
+script-specific assertions in the individual smoke script.
 
 The QEMU smoke test expects this line:
 
