@@ -132,6 +132,17 @@ lifecycle lineage. The next queued checkpoint should reconcile this narrow ABI
 claim before any empty-envp slice or broader command lookup/process-management
 planning.
 
+The argc/argv exec-init closeout checkpoint is accepted in
+`phase10-argv-argc-exec-init-closeout-20260603`. It keeps the accepted
+frontier limited to explicit `/bin/init` startup with `argc=1`,
+`argv[0]=/bin/init`, non-null argv state, `envp-null=true` as a current
+record field, and the same descriptor-backed VFS/open/read, loader, launch,
+lifecycle, `laststatus`, and VFS cat evidence chain. The next queued startup
+ABI task remains a deterministic empty-envp record for that same explicit path;
+environment variables, auxv/TLS, PATH lookup, arbitrary executable dispatch,
+wait/waitpid, descriptor inheritance, pipes, redirection, writable filesystem,
+hardware proof, networking, and SSH remain deferred.
+
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning
 task, the Phase 8 source inventory was accepted, and the read-only
