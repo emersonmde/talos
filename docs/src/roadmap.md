@@ -207,6 +207,17 @@ The post-review correction chain is:
     inheritance policy, close-on-exec behavior, fork, asynchronous execution,
     multiple children, PATH lookup, broad argv/envp, pipes, redirection,
     writable filesystem, hardware proof, networking, and SSH remain deferred.
+21. standard descriptor inheritance closeout: accepted in
+    `phase10-standard-descriptor-inheritance-closeout-20260603`. It
+    reconciles the accepted standard `fd0`/`fd1`/`fd2` inheritance
+    records, loader/VFS temporary descriptor non-leak evidence,
+    `/bin/status42` nonzero status, `/bin/init` and `/bin/zero`
+    zero-status controls, `laststatus`, `waitpid`, deterministic negative
+    exec controls, and descriptor-backed `cat /etc/banner.txt`. The next
+    recommended feature-led local execution primitive is minimal literal argv
+    expansion for absolute VFS exec, before PATH lookup, pipes, redirection,
+    userspace stdio I/O through inherited descriptors, broad descriptor
+    policy, writable filesystem, hardware proof, networking, or SSH.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -343,6 +354,20 @@ primitive is standard descriptor inheritance across VFS-backed exec, while
 multiple children, asynchronous execution, fork, signals, PATH lookup, pipes,
 redirection, writable filesystem, hardware proof, networking, and SSH remain
 deferred.
+
+The standard descriptor inheritance closeout checkpoint is accepted in
+`phase10-standard-descriptor-inheritance-closeout-20260603`. It keeps the
+accepted descriptor frontier limited to standard `fd0`/`fd1`/`fd2`
+inheritance records from the shell process descriptor table across
+VFS-backed exec, plus proof that loader/VFS temporary executable-read
+descriptors are absent from the launched process descriptor set. Retained
+evidence covers `/bin/status42`, `/bin/init`, and `/bin/zero` exec
+controls, `laststatus`, `waitpid`, deterministic negative exec controls,
+and descriptor-backed `cat /etc/banner.txt`. The next recommended
+feature-led local execution primitive is minimal literal argv expansion for
+absolute VFS exec, while PATH lookup, pipes, redirection, userspace stdio I/O
+through inherited descriptors, broad descriptor policy, writable filesystem,
+hardware proof, networking, and SSH remain deferred.
 
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning
