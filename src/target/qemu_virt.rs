@@ -8709,7 +8709,7 @@ fn initial_user_stack_report_success() -> (bool, bool, bool, bool, bool, bool) {
             break;
         };
         let expected_copied_bytes = if page_index == layout.usable_pages() - 1 {
-            34
+            42
         } else {
             0
         };
@@ -8723,7 +8723,7 @@ fn initial_user_stack_report_success() -> (bool, bool, bool, bool, bool, bool) {
     let ownership_ok = usable_user_data
         && stack_owned
         && plan.guard_pages_reserved() == 1
-        && plan.total_copied_bytes() == 34
+        && plan.total_copied_bytes() == 42
         && plan.total_zeroed_bytes() == 0x4000;
     crate::println!(
         "qemu-initial-user-stack-smoke: ownership usable-user-data={} stack-owned={} guard-has-frame=false guard-has-descriptor=false total-copied-bytes={} total-zeroed-bytes={:#x} ok={}",
@@ -8739,16 +8739,18 @@ fn initial_user_stack_report_success() -> (bool, bool, bool, bool, bool, bool) {
         Ok(path) => path,
         Err(_) => "<invalid>",
     };
-    let startup_ok = startup.state() == "minimal-argc1-argv0-init"
+    let startup_ok = startup.state() == "minimal-argc1-argv0-init-empty-envp"
         && startup.argc() == 1
         && !startup.argv_null()
         && startup.argv0_path() == crate::initramfs::PHASE8_INIT_PATH
+        && startup.envp_state() == "empty-envp0"
+        && startup.envp_entry_count() == 0
         && startup.envp_null()
         && startup.auxv_state() == "blocked-pending-startup-abi"
         && startup.tls_state() == "blocked-pending-startup-abi"
-        && startup.copied_startup_bytes() == 34;
+        && startup.copied_startup_bytes() == 42;
     crate::println!(
-        "qemu-initial-user-stack-smoke: startup state={} argc={} argv={} argv0={} argv0-ptr={:#018x} envp={} auxv={} tls={} copied-startup-bytes={} ok={}",
+        "qemu-initial-user-stack-smoke: startup state={} argc={} argv={} argv0={} argv0-ptr={:#018x} envp={} envp-state={} envp-entries={} envp0-ptr={:#018x} auxv={} tls={} copied-startup-bytes={} ok={}",
         startup.state(),
         startup.argc(),
         if startup.argv_null() {
@@ -8763,6 +8765,9 @@ fn initial_user_stack_report_success() -> (bool, bool, bool, bool, bool, bool) {
         } else {
             "nonnull"
         },
+        startup.envp_state(),
+        startup.envp_entry_count(),
+        startup.envp0_user_address(),
         startup.auxv_state(),
         startup.tls_state(),
         startup.copied_startup_bytes(),

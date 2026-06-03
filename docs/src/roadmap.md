@@ -107,6 +107,15 @@ The post-review correction chain is:
     arbitrary executable dispatch, descriptor inheritance, wait/waitpid,
     asynchronous execution, pipes, redirection, writable filesystem, hardware
     proof, networking, and SSH remain deferred.
+12. deterministic empty envp for the same explicit VFS-backed `/bin/init`
+    exec path: accepted in `phase10-empty-envp-exec-init-20260603` with
+    the initial stack record preserving `argc=1`, `argv[0]=/bin/init`,
+    and non-null argv state while adding `envp-state=empty-envp0`,
+    `envp-entries=0`, an envp NULL-slot user pointer, and
+    `copied-startup-bytes=0x2a`. Environment variables, auxv/TLS, libc
+    startup, PATH lookup, arbitrary executable dispatch, descriptor
+    inheritance, wait/waitpid, asynchronous execution, pipes, redirection,
+    writable filesystem, hardware proof, networking, and SSH remain deferred.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -142,6 +151,17 @@ ABI task remains a deterministic empty-envp record for that same explicit path;
 environment variables, auxv/TLS, PATH lookup, arbitrary executable dispatch,
 wait/waitpid, descriptor inheritance, pipes, redirection, writable filesystem,
 hardware proof, networking, and SSH remain deferred.
+
+The empty-envp exec-init task is accepted in
+`phase10-empty-envp-exec-init-20260603`. It advances only the same explicit
+`/bin/init` startup ABI record: the shell-visible exec transcript now reports
+`state=minimal-argc1-argv0-init-empty-envp`, `argc=1`,
+`argv0=/bin/init`, `argv-null=false`, `envp-null=true`,
+`envp-state=empty-envp0`, `envp-entries=0`, and
+`source=initial-user-stack-record` from the same VFS/program-loader/launch/
+lifecycle lineage. The next queued checkpoint should reconcile this narrow
+startup ABI frontier before any broader command lookup, process-management,
+environment-variable, auxv/TLS, or libc-startup planning.
 
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning

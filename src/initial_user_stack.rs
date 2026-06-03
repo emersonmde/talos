@@ -25,7 +25,9 @@ use crate::{
 
 pub(crate) const INITIAL_USER_STACK_BOUNDARY_IDENTITY: &str = "phase8-initial-user-stack-plan-v1";
 pub(crate) const INITIAL_USER_STACK_READY: &str = "model-only-initial-user-stack-ready";
-pub(crate) const INITIAL_USER_STACK_STARTUP_PAYLOAD_STATE: &str = "minimal-argc1-argv0-init";
+pub(crate) const INITIAL_USER_STACK_STARTUP_PAYLOAD_STATE: &str =
+    "minimal-argc1-argv0-init-empty-envp";
+pub(crate) const INITIAL_USER_STACK_EMPTY_ENVP_STATE: &str = "empty-envp0";
 pub(crate) const STARTUP_ABI_BLOCKED: &str = "blocked-pending-startup-abi";
 pub(crate) const INITIAL_USER_STACK_USABLE_PAGES: usize = 4;
 pub(crate) const INITIAL_USER_STACK_GUARD_PAGES: usize = 1;
@@ -36,11 +38,13 @@ pub(crate) const INITIAL_USER_STACK_GUARD_BYTES: u64 =
     LOADER_PAGE_SIZE * INITIAL_USER_STACK_GUARD_PAGES as u64;
 const INITIAL_USER_STACK_ARGC_WORD_BYTES: u64 = 8;
 const INITIAL_USER_STACK_ARGV_POINTER_BYTES: u64 = 8;
-const INITIAL_USER_STACK_NULL_POINTER_BYTES: u64 = 8;
+const INITIAL_USER_STACK_ARGV_NULL_POINTER_BYTES: u64 = 8;
+const INITIAL_USER_STACK_ENVP_NULL_POINTER_BYTES: u64 = 8;
 const INITIAL_USER_STACK_ARGV0_C_STRING_BYTES: u64 = 10;
 const INITIAL_USER_STACK_STARTUP_PAYLOAD_BYTES: u64 = INITIAL_USER_STACK_ARGC_WORD_BYTES
     + INITIAL_USER_STACK_ARGV_POINTER_BYTES
-    + INITIAL_USER_STACK_NULL_POINTER_BYTES
+    + INITIAL_USER_STACK_ARGV_NULL_POINTER_BYTES
+    + INITIAL_USER_STACK_ENVP_NULL_POINTER_BYTES
     + INITIAL_USER_STACK_ARGV0_C_STRING_BYTES;
 const INITIAL_USER_STACK_STARTUP_PAYLOAD_ALIGNED_BYTES: u64 =
     (INITIAL_USER_STACK_STARTUP_PAYLOAD_BYTES + 15) & !15;
@@ -308,6 +312,9 @@ pub(crate) struct InitialUserStackStartupPayload {
     argv_null: bool,
     argv0_path: &'static [u8],
     argv0_user_address: u64,
+    envp_state: &'static str,
+    envp_entry_count: usize,
+    envp0_user_address: u64,
     envp_null: bool,
     auxv_state: &'static str,
     tls_state: &'static str,
@@ -333,6 +340,18 @@ impl InitialUserStackStartupPayload {
 
     pub(crate) const fn argv0_user_address(self) -> u64 {
         self.argv0_user_address
+    }
+
+    pub(crate) const fn envp_state(self) -> &'static str {
+        self.envp_state
+    }
+
+    pub(crate) const fn envp_entry_count(self) -> usize {
+        self.envp_entry_count
+    }
+
+    pub(crate) const fn envp0_user_address(self) -> u64 {
+        self.envp0_user_address
     }
 
     pub(crate) const fn envp_null(self) -> bool {
@@ -643,7 +662,14 @@ pub(crate) fn plan_initial_user_stack(
                 argv0_user_address: layout.initial_sp()
                     + INITIAL_USER_STACK_ARGC_WORD_BYTES
                     + INITIAL_USER_STACK_ARGV_POINTER_BYTES
-                    + INITIAL_USER_STACK_NULL_POINTER_BYTES,
+                    + INITIAL_USER_STACK_ARGV_NULL_POINTER_BYTES
+                    + INITIAL_USER_STACK_ENVP_NULL_POINTER_BYTES,
+                envp_state: INITIAL_USER_STACK_EMPTY_ENVP_STATE,
+                envp_entry_count: 0,
+                envp0_user_address: layout.initial_sp()
+                    + INITIAL_USER_STACK_ARGC_WORD_BYTES
+                    + INITIAL_USER_STACK_ARGV_POINTER_BYTES
+                    + INITIAL_USER_STACK_ARGV_NULL_POINTER_BYTES,
                 envp_null: true,
                 auxv_state: STARTUP_ABI_BLOCKED,
                 tls_state: STARTUP_ABI_BLOCKED,
@@ -1193,7 +1219,17 @@ mod tests {
             plan.layout().initial_sp()
                 + INITIAL_USER_STACK_ARGC_WORD_BYTES
                 + INITIAL_USER_STACK_ARGV_POINTER_BYTES
-                + INITIAL_USER_STACK_NULL_POINTER_BYTES
+                + INITIAL_USER_STACK_ARGV_NULL_POINTER_BYTES
+                + INITIAL_USER_STACK_ENVP_NULL_POINTER_BYTES
+        );
+        assert_eq!(payload.envp_state(), INITIAL_USER_STACK_EMPTY_ENVP_STATE);
+        assert_eq!(payload.envp_entry_count(), 0);
+        assert_eq!(
+            payload.envp0_user_address(),
+            plan.layout().initial_sp()
+                + INITIAL_USER_STACK_ARGC_WORD_BYTES
+                + INITIAL_USER_STACK_ARGV_POINTER_BYTES
+                + INITIAL_USER_STACK_ARGV_NULL_POINTER_BYTES
         );
         assert!(payload.envp_null());
         assert_eq!(payload.auxv_state(), STARTUP_ABI_BLOCKED);

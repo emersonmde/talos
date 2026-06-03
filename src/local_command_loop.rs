@@ -125,6 +125,9 @@ pub struct LocalCommandExecSummary {
     startup_argv0_path: &'static [u8],
     startup_argv0_user_address: u64,
     startup_argv_null: bool,
+    startup_envp_state: &'static str,
+    startup_envp_entry_count: usize,
+    startup_envp0_user_address: u64,
     startup_envp_null: bool,
     copied_startup_bytes: u64,
     completion_status: u64,
@@ -454,6 +457,9 @@ where
             startup_argv0_path: stack_plan.startup_payload().argv0_path(),
             startup_argv0_user_address: stack_plan.startup_payload().argv0_user_address(),
             startup_argv_null: stack_plan.startup_payload().argv_null(),
+            startup_envp_state: stack_plan.startup_payload().envp_state(),
+            startup_envp_entry_count: stack_plan.startup_payload().envp_entry_count(),
+            startup_envp0_user_address: stack_plan.startup_payload().envp0_user_address(),
             startup_envp_null: stack_plan.startup_payload().envp_null(),
             copied_startup_bytes: stack_plan.startup_payload().copied_startup_bytes(),
             completion_status,
@@ -1313,6 +1319,12 @@ fn write_exec_startup_abi_line(
             "false"
         },
     )?;
+    write_str_part(sink, " envp-state=")?;
+    write_str_part(sink, summary.startup_envp_state)?;
+    write_str_part(sink, " envp-entries=")?;
+    write_hex_usize_part(sink, summary.startup_envp_entry_count)?;
+    write_str_part(sink, " envp0-ptr=")?;
+    write_hex_u64_part(sink, summary.startup_envp0_user_address)?;
     write_str_part(sink, " copied-startup-bytes=")?;
     write_hex_u64_part(sink, summary.copied_startup_bytes)?;
     write_str_part(sink, " source=initial-user-stack-record")?;
@@ -1873,10 +1885,10 @@ talos> Talos initramfs fixture\n"
             "talos: exec-launch launch-boundary=phase8-initial-process-launch-plan-v1 stack-boundary=phase8-initial-user-stack-plan-v1"
         ));
         assert!(output.contains(
-            "talos: exec-startup-abi state=minimal-argc1-argv0-init argc=0x0000000000000001 argv0=/bin/init"
+            "talos: exec-startup-abi state=minimal-argc1-argv0-init-empty-envp argc=0x0000000000000001 argv0=/bin/init"
         ));
         assert!(output.contains(
-            "argv-null=false envp-null=true copied-startup-bytes=0x0000000000000022 source=initial-user-stack-record\n"
+            "argv-null=false envp-null=true envp-state=empty-envp0 envp-entries=0x0000000000000000 envp0-ptr=0x00007fffffffffe8 copied-startup-bytes=0x000000000000002a source=initial-user-stack-record\n"
         ));
         assert!(output.contains(
             "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"

@@ -357,7 +357,7 @@ elif [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
     grep -Eq "talos: exec-source bytes=0x[0-9a-f]+ digest=0x[0-9a-f]+" "$LOG_FILE"
     grep -Eq "talos: exec-loader fixture=phase8-program-loader-elf64-aarch64-v1 entry=0x[0-9a-f]+ segments=0x[0-9a-f]+" "$LOG_FILE"
     grep -Eq "talos: exec-launch launch-boundary=phase8-initial-process-launch-plan-v1 stack-boundary=phase8-initial-user-stack-plan-v1 address-space=0x[0-9a-f]+ materialization=0x[0-9a-f]+ initial-sp=0x[0-9a-f]+" "$LOG_FILE"
-    grep -Eq "talos: exec-startup-abi state=minimal-argc1-argv0-init argc=0x0000000000000001 argv0=/bin/init argv0-ptr=0x[0-9a-f]+ argv-null=false envp-null=true copied-startup-bytes=0x0000000000000022 source=initial-user-stack-record" "$LOG_FILE"
+    grep -Eq "talos: exec-startup-abi state=minimal-argc1-argv0-init-empty-envp argc=0x0000000000000001 argv0=/bin/init argv0-ptr=0x[0-9a-f]+ argv-null=false envp-null=true envp-state=empty-envp0 envp-entries=0x0000000000000000 envp0-ptr=0x[0-9a-f]+ copied-startup-bytes=0x000000000000002a source=initial-user-stack-record" "$LOG_FILE"
     grep -Eq "talos: exec-lifecycle pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true" "$LOG_FILE"
     grep -q "talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x0000000000000000 complete=true source=lifecycle-record" "$LOG_FILE"
     grep -q "talos: exec-signal lower-aarch64-svc-launch-boundary-equivalent" "$LOG_FILE"
