@@ -117,6 +117,9 @@ pub struct LocalCommandExecSummary {
     initial_sp: u64,
     launch_boundary: &'static str,
     stack_boundary: &'static str,
+    completion_status: u64,
+    completion_marker: u64,
+    completion_boundary: &'static str,
 }
 
 pub trait LocalCommandSink {
@@ -325,6 +328,8 @@ where
                 LOCAL_COMMAND_EXEC_READ_OFFSET,
             )
             .map_err(|_| LocalCommandExecError::SyscallFailed)?;
+        let completion_status = decode_phase8_init_completion_status(&program_bytes[..bytes_read])
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
         let image = program_loader::plan_elf64_aarch64_image(
             initramfs::PHASE8_INIT_PATH,
             program_loader::PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
@@ -385,6 +390,9 @@ where
             initial_sp: stack_plan.layout().initial_sp(),
             launch_boundary: launch_plan.boundary_identity(),
             stack_boundary: stack_plan.boundary_identity(),
+            completion_status,
+            completion_marker: initramfs::PHASE8_INIT_SVC_MARKER,
+            completion_boundary: "lower-aarch64-svc-status-equivalent",
         })
     }
 }
@@ -495,6 +503,25 @@ fn syscall_success_usize(value: u64) -> Result<usize, LocalCommandFileReadError>
         return Err(LocalCommandFileReadError::SyscallFailed);
     }
     usize::try_from(value).map_err(|_| LocalCommandFileReadError::SyscallFailed)
+}
+
+fn decode_phase8_init_completion_status(
+    program_bytes: &[u8],
+) -> Result<u64, LocalCommandExecError> {
+    let text = program_bytes
+        .get(initramfs::PHASE8_INIT_TEXT_OFFSET..initramfs::PHASE8_INIT_TEXT_OFFSET + 8)
+        .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
+    let movz_x0 = u32::from_le_bytes([text[0], text[1], text[2], text[3]]);
+    let svc = u32::from_le_bytes([text[4], text[5], text[6], text[7]]);
+    let status = (movz_x0 >> 5) & 0xffff;
+    let marker = (svc >> 5) & 0xffff;
+    if movz_x0 & 0xffe0_001f != 0xd280_0000
+        || svc & 0xffe0_001f != 0xd400_0001
+        || marker as u64 != initramfs::PHASE8_INIT_SVC_MARKER
+    {
+        return Err(LocalCommandExecError::LaunchPipelineFailed);
+    }
+    Ok(status as u64)
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -1114,6 +1141,7 @@ fn write_exec_summary(
     write_exec_source_line(sink, response_lines, summary)?;
     write_exec_entry_line(sink, response_lines, summary)?;
     write_exec_launch_line(sink, response_lines, summary)?;
+    write_exec_status_line(sink, response_lines, summary)?;
     write_line(
         sink,
         response_lines,
@@ -1162,6 +1190,21 @@ fn write_exec_launch_line(
     write_hex_u64_part(sink, summary.materialization_id)?;
     write_str_part(sink, " initial-sp=")?;
     write_hex_u64_part(sink, summary.initial_sp)?;
+    finish_dynamic_line(sink, response_lines)
+}
+
+fn write_exec_status_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    summary: LocalCommandExecSummary,
+) -> Result<(), LocalCommandCycleError> {
+    write_str_part(sink, "talos: exec-status boundary=")?;
+    write_str_part(sink, summary.completion_boundary)?;
+    write_str_part(sink, " marker=")?;
+    write_hex_u64_part(sink, summary.completion_marker)?;
+    write_str_part(sink, " status=")?;
+    write_hex_u64_part(sink, summary.completion_status)?;
+    write_str_part(sink, " complete=true")?;
     finish_dynamic_line(sink, response_lines)
 }
 
@@ -1643,7 +1686,7 @@ talos> Talos initramfs fixture\n"
 
         assert_eq!(result.line(), b"exec /bin/init");
         assert_eq!(result.status(), LocalCommandStatus::Handled);
-        assert_eq!(result.response_lines(), 5);
+        assert_eq!(result.response_lines(), 6);
         assert!(output.contains("talos> talos: exec path=/bin/init source=vfs-open-read\n"));
         assert!(output.contains("talos: exec-source bytes=0x0000000000000204 digest=0x"));
         assert!(output.contains(
@@ -1651,6 +1694,9 @@ talos> Talos initramfs fixture\n"
         ));
         assert!(output.contains(
             "talos: exec-launch launch-boundary=phase8-initial-process-launch-plan-v1 stack-boundary=phase8-initial-user-stack-plan-v1"
+        ));
+        assert!(output.contains(
+            "talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x0000000000000000 complete=true\n"
         ));
         assert!(
             output.contains("talos: exec-signal lower-aarch64-svc-launch-boundary-equivalent\n")

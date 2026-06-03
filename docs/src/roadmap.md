@@ -68,17 +68,24 @@ The post-review correction chain is:
    `TalosOpen`/`TalosRead` path, parsing those bytes with the program loader,
    building process-install/address-space/materialization/initial-stack/launch
    records, and retaining QEMU/substitute evidence ending in
-   `qemu-local-shell-vfs-exec-complete` PASS. Process lifecycle, exit/status
-   handoff, external command lookup, argv/envp, PATH, pipes, redirection,
-   writable filesystem, and Pi 5 proof remain deferred.
+   `qemu-local-shell-vfs-exec-complete` PASS;
+8. first shell-visible userspace completion/status observation: accepted in
+   `phase10-shell-userspace-exit-status-20260603` with the VFS-backed
+   `/bin/init` fixture setting `x0=0` before the accepted `svc #0x7a10`,
+   QEMU lower-EL launch evidence observing that status in the exception frame,
+   and shell-visible `exec /bin/init` reporting the matching
+   `lower-aarch64-svc-status-equivalent` zero status. General process
+   lifecycle, wait, external command lookup, argv/envp, PATH, pipes,
+   redirection, writable filesystem, and Pi 5 proof remain deferred.
 
 The shell VFS exec closeout checkpoint is accepted in
 phase10-shell-vfs-exec-closeout-checkpoint-20260603. It records the accepted
 frontier as QEMU/substitute-proven shell-visible exec /bin/init through the
 VFS descriptor read and launch-planning chain, with kernel built-ins retained
 only as regression/control surfaces. The next dependency-based feature task is
-userspace completion/status observation through the accepted lower-EL/SVC or
-equivalent launch-boundary mechanism.
+now the first lifecycle boundary after userspace status: either a supervisor
+planned process table/wait boundary or another explicitly dependency-backed
+local execution primitive.
 
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning

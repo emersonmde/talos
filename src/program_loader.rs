@@ -668,7 +668,7 @@ mod tests {
 
     const PHDR0: usize = ELF_HEADER_SIZE;
     const PHDR1: usize = ELF_HEADER_SIZE + ELF_PROGRAM_HEADER_SIZE;
-    const PHASE8_INIT_DIGEST: u64 = 0xf4a6_cc15_f4d9_4461;
+    const PHASE8_INIT_DIGEST: u64 = 0x96ee_5866_736d_445b;
 
     fn fixture_bytes() -> [u8; PHASE8_INIT_ELF_LEN] {
         let mut bytes = [0u8; PHASE8_INIT_ELF_LEN];
@@ -720,10 +720,10 @@ mod tests {
         assert_eq!(text.kind().name(), "UserText");
         assert_eq!(text.permissions(), UserMappingPermissions::USER_TEXT);
         assert_eq!(text.file_offset(), 0x100);
-        assert_eq!(text.file_size(), 4);
-        assert_eq!(text.file_end(), 0x104);
+        assert_eq!(text.file_size(), 8);
+        assert_eq!(text.file_end(), 0x108);
         assert_eq!(text.virtual_start(), 0x0000_0000_0001_0100);
-        assert_eq!(text.virtual_end(), 0x0000_0000_0001_0104);
+        assert_eq!(text.virtual_end(), 0x0000_0000_0001_0108);
         assert_eq!(text.zero_fill_len(), 0);
 
         let data = plan.segment(1).expect("data segment");

@@ -1060,7 +1060,7 @@ mod tests {
             PHASE8_INIT_PATH,
             PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
             0x204,
-            0xf4a6_cc15_f4d9_4461,
+            0x96ee_5866_736d_445b,
             text.virtual_start(),
             2,
             [Some(text), Some(rodata), None, None],
@@ -1117,8 +1117,8 @@ mod tests {
             address_space.side_effects().mappings_installed(),
             plan.page_count()
         );
-        assert_eq!(address_space.side_effects().copied_bytes(), 8);
-        assert_eq!(address_space.side_effects().zeroed_bytes(), 0x2ff8);
+        assert_eq!(address_space.side_effects().copied_bytes(), 12);
+        assert_eq!(address_space.side_effects().zeroed_bytes(), 0x2ff4);
         assert_eq!(address_space.side_effects().rollback_releases(), 0);
 
         let text = address_space.mapping(0).expect("text mapping");
@@ -1132,8 +1132,8 @@ mod tests {
         assert!(text.kernel_device_denied());
         assert_eq!(text.copy_page_offset(), 0x100);
         assert_eq!(text.copy_file_offset(), 0x100);
-        assert_eq!(text.copy_len(), 4);
-        assert_eq!(text.zero_len(), 0xffc);
+        assert_eq!(text.copy_len(), 8);
+        assert_eq!(text.zero_len(), 0xff8);
         assert_eq!(text.source_page_ordinal(), 0);
 
         let data0 = address_space.mapping(1).expect("data mapping");
@@ -1232,7 +1232,7 @@ mod tests {
             PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
             PROCESS_INSTALL_BOUNDARY_IDENTITY,
             PHASE8_INIT_PATH,
-            0xf4a6_cc15_f4d9_4461,
+            0x96ee_5866_736d_445b,
             0x0000_0000_0001_0100,
             LOADER_PAGE_SIZE,
             2,
@@ -1326,7 +1326,7 @@ mod tests {
             PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
             PROCESS_INSTALL_BOUNDARY_IDENTITY,
             PHASE8_INIT_PATH,
-            0xf4a6_cc15_f4d9_4461,
+            0x96ee_5866_736d_445b,
             fixture.page(0).expect("text").virtual_start(),
             LOADER_PAGE_SIZE * 2,
             2,
@@ -1438,7 +1438,7 @@ mod tests {
             PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
             PROCESS_INSTALL_BOUNDARY_IDENTITY,
             PHASE8_INIT_PATH,
-            0xf4a6_cc15_f4d9_4461,
+            0x96ee_5866_736d_445b,
             entry,
             LOADER_PAGE_SIZE,
             1,

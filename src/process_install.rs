@@ -576,7 +576,7 @@ mod tests {
         program_loader::{PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY, plan_phase8_init_image},
     };
 
-    const PHASE8_INIT_DIGEST: u64 = 0xf4a6_cc15_f4d9_4461;
+    const PHASE8_INIT_DIGEST: u64 = 0x96ee_5866_736d_445b;
 
     fn install_fixture() -> ProcessImageInstallPlan {
         let image = plan_phase8_init_image(phase8_readonly_initramfs_fixture())
@@ -663,7 +663,7 @@ mod tests {
         assert_eq!(text.virtual_end(), 0x0000_0000_0001_1000);
         assert_eq!(text.copy_page_offset(), 0x100);
         assert_eq!(text.copy_file_offset(), 0x100);
-        assert_eq!(text.copy_len(), 4);
+        assert_eq!(text.copy_len(), 8);
         assert_eq!(text.zero_range_count(), 2);
         assert_eq!(
             text.zero_range(0),
@@ -675,11 +675,11 @@ mod tests {
         assert_eq!(
             text.zero_range(1),
             Some(PageByteRange {
-                offset: 0x104,
-                len: 0xefc,
+                offset: 0x108,
+                len: 0xef8,
             })
         );
-        assert_eq!(text.zero_len(), 0xffc);
+        assert_eq!(text.zero_len(), 0xff8);
         assert_eq!(text.action().name(), "allocate,copy,zero,map");
 
         let data0 = plan.page(1).expect("first data page");

@@ -18,6 +18,9 @@ pub(crate) const PHASE8_BANNER_BYTES: &[u8] = b"Talos initramfs fixture\n";
 pub(crate) const PHASE8_INIT_PATH: &[u8] = b"/bin/init";
 pub(crate) const PHASE8_INIT_ELF_LEN: usize = 0x204;
 pub(crate) const PHASE8_INIT_BYTES: &[u8] = &PHASE8_INIT_ELF_BYTES;
+pub(crate) const PHASE8_INIT_TEXT_OFFSET: usize = 0x100;
+pub(crate) const PHASE8_INIT_EXIT_STATUS: u64 = 0;
+pub(crate) const PHASE8_INIT_SVC_MARKER: u64 = 0x7a10;
 pub(crate) const PHASE8_EMPTY_PATH: &[u8] = b"/empty";
 pub(crate) const PHASE8_NESTED_PATH: &[u8] = b"/dir/nested.txt";
 pub(crate) const PHASE8_NESTED_BYTES: &[u8] = b"nested fixture\n";
@@ -549,7 +552,6 @@ static PHASE8_NODES: [InitramfsNode; 8] = [
 const fn build_phase8_init_elf_bytes() -> [u8; PHASE8_INIT_ELF_LEN] {
     const EHDR_LEN: usize = 64;
     const PHENT_LEN: usize = 56;
-    const TEXT_OFFSET: usize = 0x100;
     const DATA_OFFSET: usize = 0x200;
     const TEXT_VADDR: u64 = 0x0000_0000_0001_0100;
     const DATA_VADDR: u64 = 0x0000_0000_0002_0200;
@@ -583,10 +585,10 @@ const fn build_phase8_init_elf_bytes() -> [u8; PHASE8_INIT_ELF_LEN] {
         &mut bytes,
         EHDR_LEN,
         PF_R | PF_X,
-        TEXT_OFFSET as u64,
+        PHASE8_INIT_TEXT_OFFSET as u64,
         TEXT_VADDR,
-        4,
-        4,
+        8,
+        8,
         PAGE_ALIGN,
     );
     write_load_phdr(
@@ -600,10 +602,14 @@ const fn build_phase8_init_elf_bytes() -> [u8; PHASE8_INIT_ELF_LEN] {
         PAGE_ALIGN,
     );
 
-    bytes[TEXT_OFFSET] = 0x01;
-    bytes[TEXT_OFFSET + 1] = 0x42;
-    bytes[TEXT_OFFSET + 2] = 0x0f;
-    bytes[TEXT_OFFSET + 3] = 0xd4;
+    bytes[PHASE8_INIT_TEXT_OFFSET] = 0x00;
+    bytes[PHASE8_INIT_TEXT_OFFSET + 1] = 0x00;
+    bytes[PHASE8_INIT_TEXT_OFFSET + 2] = 0x80;
+    bytes[PHASE8_INIT_TEXT_OFFSET + 3] = 0xd2;
+    bytes[PHASE8_INIT_TEXT_OFFSET + 4] = 0x01;
+    bytes[PHASE8_INIT_TEXT_OFFSET + 5] = 0x42;
+    bytes[PHASE8_INIT_TEXT_OFFSET + 6] = 0x0f;
+    bytes[PHASE8_INIT_TEXT_OFFSET + 7] = 0xd4;
     bytes[DATA_OFFSET] = b'D';
     bytes[DATA_OFFSET + 1] = b'A';
     bytes[DATA_OFFSET + 2] = b'T';
@@ -809,6 +815,12 @@ mod tests {
         assert_eq!(init, PHASE8_INIT_BYTES);
         assert_eq!(init.len(), PHASE8_INIT_ELF_LEN);
         assert_eq!(&init[..4], b"\x7fELF");
+        assert_eq!(
+            &init[PHASE8_INIT_TEXT_OFFSET..PHASE8_INIT_TEXT_OFFSET + 8],
+            &[0x00, 0x00, 0x80, 0xd2, 0x01, 0x42, 0x0f, 0xd4]
+        );
+        assert_eq!(PHASE8_INIT_EXIT_STATUS, 0);
+        assert_eq!(PHASE8_INIT_SVC_MARKER, 0x7a10);
         assert_eq!(fs.regular_file_bytes(b"/etc"), Err(PosixError::IsDirectory));
     }
 

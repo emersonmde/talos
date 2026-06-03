@@ -131,6 +131,8 @@ use crate::initial_user_stack::{
     INITIAL_USER_STACK_BOUNDARY_IDENTITY, INITIAL_USER_STACK_READY, InitialUserStackLayout,
     InitialUserStackLeaseSource, InitialUserStackRequest, plan_initial_user_stack,
 };
+#[cfg(talos_boot_scenario = "qemu_initial_userspace_process_launch_smoke")]
+use crate::initramfs::PHASE8_INIT_EXIT_STATUS;
 #[cfg(any(
     talos_boot_scenario = "qemu_live_descriptor_image_installation_smoke",
     talos_boot_scenario = "qemu_live_translation_register_activation_smoke"
@@ -316,6 +318,7 @@ use crate::{
     },
     scheduler::ProcessOwnerId,
 };
+
 #[cfg(talos_boot_scenario = "qemu_initial_userspace_process_launch_smoke")]
 use crate::{
     initial_process_launch::{InitialProcessLaunchRequest, prepare_initial_process_launch},
@@ -6564,7 +6567,7 @@ fn process_install_unchecked_plan(
         PHASE8_INIT_PATH,
         PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
         PHASE8_INIT_BYTES.len(),
-        0xf4a6_cc15_f4d9_4461,
+        0x96ee_5866_736d_445b,
         entry,
         segment_count,
         segments,
@@ -11293,7 +11296,8 @@ pub fn handle_initial_userspace_process_launch_exception(
     let ok = vector == ExceptionVector::LowerAarch64Sync
         && reported_esr == INITIAL_USERSPACE_PROCESS_LAUNCH_EXPECTED_ESR
         && marker == INITIAL_USERSPACE_SVC_MARKER
-        && elr == INITIAL_USERSPACE_TEXT_PAGE_START + 0x104
+        && elr == INITIAL_USERSPACE_TEXT_PAGE_START + 0x108
+        && frame_x0 == PHASE8_INIT_EXIT_STATUS
         && user_sp == crate::posix::USER_ADDRESS_SPACE_END;
 
     crate::println!(
@@ -11307,10 +11311,12 @@ pub fn handle_initial_userspace_process_launch_exception(
         marker
     );
     crate::println!(
-        "qemu-initial-userspace-process-launch-smoke: frame available={} x0={:#018x} x1={:#018x}",
+        "qemu-initial-userspace-process-launch-smoke: frame available={} x0={:#018x} x1={:#018x} status={:#018x} complete={}",
         frame_available,
         frame_x0,
-        frame_x1
+        frame_x1,
+        PHASE8_INIT_EXIT_STATUS,
+        frame_x0 == PHASE8_INIT_EXIT_STATUS
     );
 
     if ok {
@@ -14758,7 +14764,7 @@ fn expected_local_command_loop_dispatch(
             line == b"cd /etc" && status == Handled && response_lines == 0
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
-            line == b"exec /bin/init" && status == Handled && response_lines == 5
+            line == b"exec /bin/init" && status == Handled && response_lines == 6
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") => {
             line == b"pwd" && status == Handled && response_lines == 1

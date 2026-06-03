@@ -1140,7 +1140,7 @@ mod tests {
             PHASE8_INIT_PATH,
             PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
             0x204,
-            0xf4a6_cc15_f4d9_4461,
+            0x96ee_5866_736d_445b,
             0x0000_0000_0001_0100,
             2,
             [
@@ -1192,7 +1192,7 @@ mod tests {
             materialization.kernel_mapping_policy(),
             PROCESS_PAGE_TABLE_KERNEL_MAPPING_POLICY
         );
-        assert_eq!(materialization.source_digest(), 0xf4a6_cc15_f4d9_4461);
+        assert_eq!(materialization.source_digest(), 0x96ee_5866_736d_445b);
         assert_eq!(materialization.id(), 0x8_b000_0001);
         assert!(materialization.published());
         assert!(!materialization.destroyed());
@@ -1234,16 +1234,16 @@ mod tests {
         assert_eq!(materialization.side_effects().user_frames_leased(), 3);
         assert_eq!(materialization.side_effects().user_frames_populated(), 3);
         assert_eq!(materialization.side_effects().descriptors_installed(), 3);
-        assert_eq!(materialization.side_effects().copied_bytes(), 8);
-        assert_eq!(materialization.side_effects().zeroed_bytes(), 0x2ff8);
+        assert_eq!(materialization.side_effects().copied_bytes(), 12);
+        assert_eq!(materialization.side_effects().zeroed_bytes(), 0x2ff4);
         assert_eq!(materialization.side_effects().rollback_releases(), 0);
         assert_eq!(materialization.side_effects().teardown_releases(), 0);
         assert!(materialization.side_effects().activation_blocked());
 
         let text_frame = materialization.user_frame(0).expect("text frame");
         assert_eq!(text_frame.virtual_page(), 0x0000_0000_0001_0000);
-        assert_eq!(text_frame.copied_bytes(), 4);
-        assert_eq!(text_frame.zeroed_bytes(), 0xffc);
+        assert_eq!(text_frame.copied_bytes(), 8);
+        assert_eq!(text_frame.zeroed_bytes(), 0xff8);
         assert_eq!(text_frame.source_page_ordinal(), 0);
         assert!(text_frame.scrub_required());
         assert!(!text_frame.released());
@@ -1573,7 +1573,7 @@ mod tests {
             PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
             PROCESS_INSTALL_BOUNDARY_IDENTITY,
             PHASE8_INIT_PATH,
-            0xf4a6_cc15_f4d9_4461,
+            0x96ee_5866_736d_445b,
             image_fixture().entry(),
             image_fixture().memory_footprint(),
             2,
