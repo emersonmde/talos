@@ -2,13 +2,17 @@ use crate::{
     initramfs, posix,
     runtime_console::{self, ConsoleBackend, ConsoleInputBackend, DEFAULT_RUNTIME_CONSOLE},
     scheduler::ProcessOwnerId,
+    syscall,
     tty::{self, CANONICAL_LINE_CAPACITY, PollingTtyRxOutcome, PollingTtyRxResult},
 };
 
 pub const LOCAL_COMMAND_LOOP_VERSION: &str = "phase10.1-kernel-builtins-v1";
-pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = "kernel-backed-regression-control";
+pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = "kernel-backed-regression-control+vfs-syscall-cat";
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 7;
+const LOCAL_COMMAND_FILE_USER_BASE: u64 = 0x0000_0000_0011_0000;
+const LOCAL_COMMAND_FILE_READ_OFFSET: usize = 0x40;
+const LOCAL_COMMAND_FILE_USER_MEMORY_LEN: usize = 128;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum LocalCommandDirectory {
@@ -75,6 +79,12 @@ pub enum LocalCommandWriteError {
     BackendWriteFailed,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum LocalCommandFileReadError {
+    NotSupported,
+    SyscallFailed,
+}
+
 pub trait LocalCommandSink {
     fn write_command_str(&mut self, text: &str) -> Result<(), LocalCommandWriteError>;
 
@@ -100,6 +110,14 @@ pub trait LocalCommandSink {
 
     fn set_current_directory(&mut self, directory: LocalCommandDirectory) -> bool {
         directory == LocalCommandDirectory::Root
+    }
+
+    fn read_initramfs_file_via_syscall(
+        &mut self,
+        _path: &[u8],
+        _output: &mut [u8],
+    ) -> Result<usize, LocalCommandFileReadError> {
+        Err(LocalCommandFileReadError::NotSupported)
     }
 }
 
@@ -130,6 +148,7 @@ pub struct DescriptorBackedLocalCommandIo<
     input_backend: I,
     output_backend: O,
     current_directory: LocalCommandDirectory,
+    read_only_files: initramfs::ReadOnlyFileDescriptions<1>,
 }
 
 impl<I, O> DescriptorBackedLocalCommandIo<I, O, 1, 4>
@@ -152,6 +171,7 @@ where
             input_backend,
             output_backend,
             current_directory: LocalCommandDirectory::Root,
+            read_only_files: initramfs::ReadOnlyFileDescriptions::new_empty(),
         })
     }
 }
@@ -229,6 +249,117 @@ where
         self.current_directory = directory;
         true
     }
+
+    fn read_initramfs_file_via_syscall(
+        &mut self,
+        path: &[u8],
+        output: &mut [u8],
+    ) -> Result<usize, LocalCommandFileReadError> {
+        if path.len() > LOCAL_COMMAND_FILE_READ_OFFSET
+            || LOCAL_COMMAND_FILE_READ_OFFSET + output.len() > LOCAL_COMMAND_FILE_USER_MEMORY_LEN
+        {
+            return Err(LocalCommandFileReadError::SyscallFailed);
+        }
+
+        let mut user_memory = [0u8; LOCAL_COMMAND_FILE_USER_MEMORY_LEN];
+        let mut scratch = [0u8; LOCAL_COMMAND_FILE_USER_MEMORY_LEN];
+        user_memory[..path.len()].copy_from_slice(path);
+        let mappings = [posix::UserMapping::new(
+            LOCAL_COMMAND_FILE_USER_BASE,
+            user_memory.len(),
+            posix::UserMappingPermissions::USER_DATA,
+        )
+        .map_err(|_| LocalCommandFileReadError::SyscallFailed)?];
+        let fs = initramfs::phase8_readonly_initramfs_fixture();
+
+        let open = syscall::dispatch_process_descriptor_with_initramfs(
+            syscall::TALOS_OPEN_SYSCALL,
+            syscall::SyscallArguments::new([
+                LOCAL_COMMAND_FILE_USER_BASE,
+                path.len() as u64,
+                0,
+                0,
+                0,
+                0,
+            ]),
+            self.current_owner,
+            &mut self.descriptor_store,
+            &mappings,
+            LOCAL_COMMAND_FILE_USER_BASE,
+            &mut user_memory,
+            &mut scratch,
+            &mut self.output_backend,
+            fs,
+            &mut self.read_only_files,
+            None,
+        );
+        let descriptor = syscall_success_usize(open.return_value().x0())?;
+
+        let read = syscall::dispatch_process_descriptor_with_initramfs(
+            syscall::TALOS_READ_SYSCALL,
+            syscall::SyscallArguments::new([
+                descriptor as u64,
+                LOCAL_COMMAND_FILE_USER_BASE + LOCAL_COMMAND_FILE_READ_OFFSET as u64,
+                output.len() as u64,
+                0,
+                0,
+                0,
+            ]),
+            self.current_owner,
+            &mut self.descriptor_store,
+            &mappings,
+            LOCAL_COMMAND_FILE_USER_BASE,
+            &mut user_memory,
+            &mut scratch,
+            &mut self.output_backend,
+            fs,
+            &mut self.read_only_files,
+            None,
+        );
+        let bytes_read = syscall_success_usize(read.return_value().x0());
+        let cleanup = self.close_regular_file_descriptor(descriptor);
+
+        match (bytes_read, cleanup) {
+            (Ok(bytes_read), Ok(())) => {
+                output[..bytes_read].copy_from_slice(
+                    &user_memory[LOCAL_COMMAND_FILE_READ_OFFSET
+                        ..LOCAL_COMMAND_FILE_READ_OFFSET + bytes_read],
+                );
+                Ok(bytes_read)
+            }
+            _ => Err(LocalCommandFileReadError::SyscallFailed),
+        }
+    }
+}
+
+impl<I, O, const OWNER_CAPACITY: usize, const DESCRIPTOR_CAPACITY: usize>
+    DescriptorBackedLocalCommandIo<I, O, OWNER_CAPACITY, DESCRIPTOR_CAPACITY>
+where
+    I: ConsoleInputBackend,
+    O: ConsoleBackend,
+{
+    fn close_regular_file_descriptor(
+        &mut self,
+        descriptor: usize,
+    ) -> Result<(), LocalCommandFileReadError> {
+        let entry = self
+            .descriptor_store
+            .close_current_descriptor(self.current_owner, descriptor)
+            .map_err(|_| LocalCommandFileReadError::SyscallFailed)?;
+        if entry.object().kind() == posix::DescriptorObjectKind::RegularFile {
+            self.read_only_files
+                .remove(entry.object().reference())
+                .map_err(|_| LocalCommandFileReadError::SyscallFailed)?;
+        }
+        Ok(())
+    }
+}
+
+fn syscall_success_usize(value: u64) -> Result<usize, LocalCommandFileReadError> {
+    if value > isize::MAX as u64 {
+        return Err(LocalCommandFileReadError::SyscallFailed);
+    }
+    usize::try_from(value).map_err(|_| LocalCommandFileReadError::SyscallFailed)
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -663,15 +794,16 @@ fn write_banner_file(
     sink: &mut impl LocalCommandSink,
     responses: &mut usize,
 ) -> Result<(), LocalCommandCycleError> {
-    let fs = initramfs::phase8_readonly_initramfs_fixture();
-    let bytes = match fs.regular_file_bytes(initramfs::PHASE8_BANNER_PATH) {
-        Ok(bytes) => bytes,
-        Err(_) => {
-            write_line(sink, responses, "talos: filesystem-error")?;
-            return Ok(());
-        }
-    };
-    let text = match core::str::from_utf8(bytes) {
+    let mut bytes = [0u8; initramfs::PHASE8_BANNER_BYTES.len()];
+    let bytes_read =
+        match sink.read_initramfs_file_via_syscall(initramfs::PHASE8_BANNER_PATH, &mut bytes) {
+            Ok(bytes_read) => bytes_read,
+            Err(_) => {
+                write_line(sink, responses, "talos: filesystem-error")?;
+                return Ok(());
+            }
+        };
+    let text = match core::str::from_utf8(&bytes[..bytes_read]) {
         Ok(text) => text,
         Err(_) => {
             write_line(sink, responses, "talos: filesystem-error")?;
@@ -1187,6 +1319,32 @@ etc\n"
         assert_eq!(result.status(), LocalCommandStatus::Handled);
         assert_eq!(result.response_lines(), 1);
         assert_eq!(backend.as_str(), "talos> Talos initramfs fixture\n");
+    }
+
+    #[test_case]
+    fn local_command_loop_cats_banner_through_reusable_vfs_syscall_descriptor() {
+        let input = ScriptedInput::new(*b"cat /etc/banner.txt\rcat /etc/banner.txt\r", 40);
+        let mut backend = CaptureSink::new();
+        let (first, second) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+
+        assert_eq!(first.line(), b"cat /etc/banner.txt");
+        assert_eq!(first.status(), LocalCommandStatus::Handled);
+        assert_eq!(first.response_lines(), 1);
+        assert_eq!(second.line(), b"cat /etc/banner.txt");
+        assert_eq!(second.status(), LocalCommandStatus::Handled);
+        assert_eq!(second.response_lines(), 1);
+        assert_eq!(
+            backend.as_str(),
+            "talos> Talos initramfs fixture\n\
+talos> Talos initramfs fixture\n"
+        );
     }
 
     #[test_case]

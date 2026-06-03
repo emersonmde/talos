@@ -56,7 +56,14 @@ The post-review correction chain is:
    accepted chain, retained evidence, and rule that future shell-visible file
    behavior must consume VFS, descriptors, syscalls, and userspace rather than
    expanding fake command fixtures;
-6. shell behavior backed by VFS, descriptors, syscalls, and userspace.
+6. first shell-visible file operation backed by the accepted layers: accepted
+   in `phase10-shell-backed-by-userspace-and-vfs-20260603` with
+   `cat /etc/banner.txt` reading through `TalosOpen`/`TalosRead`, a
+   descriptor-backed initramfs regular-file description, userspace-memory copy,
+   cleanup of the opened descriptor/file-description pair, and QEMU/substitute
+   evidence ending in `qemu-local-cat-banner-complete` PASS. Broader shell
+   execution, external command lookup, argv/envp, pipes, redirection, writable
+   filesystem, and Pi 5 proof remain deferred.
 
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning
