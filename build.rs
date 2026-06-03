@@ -426,6 +426,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "qemu_program_loader_from_vfs_smoke",
+        implied_values: &[],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "qemu_process_install_smoke",
         implied_values: &[],
         asm_defines: &[],

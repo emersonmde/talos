@@ -42,7 +42,10 @@ The post-review correction chain is:
    `open`, filesystem-backed descriptor `read`, deterministic negative
    cases, and QEMU/substitute evidence for `/etc/banner.txt` and
    `/bin/init`;
-3. program loader input from the VFS-backed `/bin/init` file;
+3. program loader input from the VFS-backed `/bin/init` file: accepted in
+   `phase8-program-loader-from-vfs-file-20260603` with the loader sourcing
+   bytes through the read-only initramfs file-object boundary before returning
+   its image plan;
 4. smallest real initial userspace `/bin/init` launch boundary;
 5. shell behavior backed by VFS, descriptors, syscalls, and userspace.
 
@@ -3016,6 +3019,16 @@ Milestone 8.3: Program Loader
   persistent storage, networking, SSH, RP1/PCIe, UART interrupt ownership, and
   DMA/cache-driver policy remain blocked until later explicit tasks accept
   their gates.
+- Phase 8 loader-from-VFS input is accepted. The `plan_phase8_init_image`
+  boundary now opens `/bin/init` as a read-only initramfs regular file and
+  reads it through the kernel file-object path before running the existing
+  ELF64/AArch64 image-plan validator. The retained
+  `qemu_program_loader_from_vfs_smoke` evidence proves VFS-sourced `/bin/init`
+  bytes, image-plan-only success, and the existing deterministic negative
+  loader matrix. Process launch, scheduler publication, argv/envp stack setup,
+  shell behavior, Pi 5 hardware claims, writable filesystems, networking, SSH,
+  RP1/PCIe, UART interrupt ownership, and DMA/cache-driver policy remain
+  deferred.
 - Phase 8 program-loader closeout checkpoint is accepted. It reconciles the
   accepted source inventory, format contract, smoke plan, target-independent
   core, retained QEMU/substitute evidence, validation gates, deferred surfaces,

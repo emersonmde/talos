@@ -294,14 +294,43 @@ struct ElfHeader {
 pub(crate) fn plan_phase8_init_image(
     fs: ReadOnlyInitramfs,
 ) -> Result<ProgramImagePlan, ProgramLoaderError> {
-    let bytes = fs
-        .regular_file_bytes(PHASE8_INIT_PATH)
-        .map_err(ProgramLoaderError::Source)?;
+    let mut storage = [0u8; MAX_PROGRAM_IMAGE_BYTES];
+    let bytes = read_vfs_regular_file_into_storage(fs, PHASE8_INIT_PATH, &mut storage)?;
     plan_elf64_aarch64_image(
         PHASE8_INIT_PATH,
         PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
         bytes,
     )
+}
+
+fn read_vfs_regular_file_into_storage<'a>(
+    fs: ReadOnlyInitramfs,
+    path: &[u8],
+    storage: &'a mut [u8; MAX_PROGRAM_IMAGE_BYTES],
+) -> Result<&'a [u8], ProgramLoaderError> {
+    let mut description = fs
+        .open_regular_file(path)
+        .map_err(ProgramLoaderError::Source)?;
+    let mut total = 0;
+
+    loop {
+        if total == storage.len() {
+            let mut overflow_probe = [0u8; 1];
+            return match fs.read_regular_file_to_kernel(&mut description, &mut overflow_probe) {
+                Ok(0) => Ok(&storage[..total]),
+                Ok(_) => Err(ProgramLoaderError::ImageTooLarge),
+                Err(error) => Err(ProgramLoaderError::Source(error)),
+            };
+        }
+
+        let copied = fs
+            .read_regular_file_to_kernel(&mut description, &mut storage[total..])
+            .map_err(ProgramLoaderError::Source)?;
+        if copied == 0 {
+            return Ok(&storage[..total]);
+        }
+        total += copied;
+    }
 }
 
 pub(crate) fn plan_elf64_aarch64_image(
@@ -707,6 +736,22 @@ mod tests {
         assert_eq!(data.zero_fill_start(), 0x0000_0000_0002_0204);
         assert_eq!(data.zero_fill_end(), 0x0000_0000_0002_1204);
         assert_eq!(data.zero_fill_len(), 0x1000);
+    }
+
+    #[test_case]
+    fn phase8_init_loader_reports_vfs_source_errors() {
+        static ROOT_ENTRIES: [crate::initramfs::DirectoryEntry; 1] =
+            [crate::initramfs::DirectoryEntry::new(b"bin", 1)];
+        static BIN_ENTRIES: [crate::initramfs::DirectoryEntry; 0] = [];
+        static NODES: [crate::initramfs::InitramfsNode; 2] = [
+            crate::initramfs::InitramfsNode::directory(0, &ROOT_ENTRIES),
+            crate::initramfs::InitramfsNode::directory(1, &BIN_ENTRIES),
+        ];
+
+        assert_eq!(
+            plan_phase8_init_image(ReadOnlyInitramfs::new(&NODES, 0)),
+            Err(ProgramLoaderError::Source(PosixError::NoEntry))
+        );
     }
 
     #[test_case]

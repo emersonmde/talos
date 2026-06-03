@@ -65,6 +65,7 @@
             talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke",
             talos_boot_scenario = "qemu_open_read_syscall_surface_smoke",
             talos_boot_scenario = "qemu_program_loader_smoke",
+            talos_boot_scenario = "qemu_program_loader_from_vfs_smoke",
             talos_boot_scenario = "qemu_process_install_smoke",
             talos_boot_scenario = "qemu_process_address_space_smoke",
             talos_boot_scenario = "qemu_process_page_table_materialization_smoke",
@@ -423,6 +424,14 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 target::qemu::exit_failure();
             }
 
+            #[cfg(talos_boot_scenario = "qemu_program_loader_from_vfs_smoke")]
+            {
+                if target::qemu_virt::run_program_loader_from_vfs_smoke() {
+                    target::qemu::exit_success();
+                }
+                target::qemu::exit_failure();
+            }
+
             #[cfg(talos_boot_scenario = "qemu_process_install_smoke")]
             {
                 if target::qemu_virt::run_process_install_smoke() {
@@ -602,6 +611,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke",
                 talos_boot_scenario = "qemu_open_read_syscall_surface_smoke",
                 talos_boot_scenario = "qemu_program_loader_smoke",
+                talos_boot_scenario = "qemu_program_loader_from_vfs_smoke",
                 talos_boot_scenario = "qemu_process_install_smoke",
                 talos_boot_scenario = "qemu_process_address_space_smoke",
                 talos_boot_scenario = "qemu_process_page_table_materialization_smoke",
@@ -641,6 +651,7 @@ fn kernel_main(boot_info: &BootInfo) -> ! {
                 talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke",
                 talos_boot_scenario = "qemu_open_read_syscall_surface_smoke",
                 talos_boot_scenario = "qemu_program_loader_smoke",
+                talos_boot_scenario = "qemu_program_loader_from_vfs_smoke",
                 talos_boot_scenario = "qemu_process_install_smoke",
                 talos_boot_scenario = "qemu_process_address_space_smoke",
                 talos_boot_scenario = "qemu_process_page_table_materialization_smoke",

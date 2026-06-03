@@ -422,6 +422,30 @@ impl ReadOnlyInitramfs {
         Ok(selected_len)
     }
 
+    pub(crate) fn read_regular_file_to_kernel(
+        self,
+        description: &mut ReadOnlyFileDescription,
+        kernel_buffer: &mut [u8],
+    ) -> Result<usize, PosixError> {
+        let node = self.node(description.node_index)?;
+        let bytes = match node.data {
+            InitramfsNodeData::Directory(_) => return Err(PosixError::IsDirectory),
+            InitramfsNodeData::RegularFile(bytes) => bytes,
+        };
+        if description.offset > bytes.len() {
+            return Err(PosixError::InvalidArgument);
+        }
+        if description.offset == bytes.len() {
+            return Ok(0);
+        }
+
+        let selected_len = core::cmp::min(kernel_buffer.len(), bytes.len() - description.offset);
+        let end = description.offset + selected_len;
+        kernel_buffer[..selected_len].copy_from_slice(&bytes[description.offset..end]);
+        description.offset = end;
+        Ok(selected_len)
+    }
+
     fn node(self, index: usize) -> Result<InitramfsNode, PosixError> {
         self.nodes
             .get(index)
@@ -949,6 +973,34 @@ mod tests {
         .expect("read eof");
         assert_eq!(eof, 0);
         assert_eq!(description.offset(), PHASE8_BANNER_BYTES.len());
+    }
+
+    #[test_case]
+    fn regular_file_kernel_reads_copy_bytes_advance_offset_and_report_eof() {
+        let fs = phase8_readonly_initramfs_fixture();
+        let mut description = fs
+            .open_regular_file(PHASE8_INIT_PATH)
+            .expect("init regular file");
+        let mut first = [0u8; 4];
+        let mut rest = [0u8; PHASE8_INIT_ELF_LEN];
+
+        assert_eq!(
+            fs.read_regular_file_to_kernel(&mut description, &mut first),
+            Ok(4)
+        );
+        assert_eq!(&first, b"\x7fELF");
+        assert_eq!(description.offset(), 4);
+
+        let copied = fs
+            .read_regular_file_to_kernel(&mut description, &mut rest)
+            .expect("read remaining init bytes");
+        assert_eq!(copied, PHASE8_INIT_ELF_LEN - 4);
+        assert_eq!(&rest[..copied], &PHASE8_INIT_BYTES[4..]);
+        assert_eq!(
+            fs.read_regular_file_to_kernel(&mut description, &mut rest),
+            Ok(0)
+        );
+        assert_eq!(description.offset(), PHASE8_INIT_ELF_LEN);
     }
 
     #[test_case]

@@ -340,7 +340,10 @@ use crate::{
     scheduler::ProcessOwnerId,
     syscall::{self, SyscallArguments},
 };
-#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_program_loader_smoke",
+    talos_boot_scenario = "qemu_program_loader_from_vfs_smoke"
+))]
 use crate::{
     initramfs::{
         PHASE8_INIT_BYTES, PHASE8_INIT_ELF_LEN, PHASE8_INIT_PATH, phase8_readonly_initramfs_fixture,
@@ -5739,26 +5742,56 @@ pub fn run_open_read_syscall_surface_smoke() -> bool {
     }
 }
 
-#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_program_loader_smoke",
+    talos_boot_scenario = "qemu_program_loader_from_vfs_smoke"
+))]
 const PROGRAM_LOADER_PHDR0: usize = 64;
-#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_program_loader_smoke",
+    talos_boot_scenario = "qemu_program_loader_from_vfs_smoke"
+))]
 const PROGRAM_LOADER_PHDR1: usize = 120;
-#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_program_loader_smoke",
+    talos_boot_scenario = "qemu_program_loader_from_vfs_smoke"
+))]
 const PROGRAM_LOADER_PT_INTERP: u32 = 3;
-#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_program_loader_smoke",
+    talos_boot_scenario = "qemu_program_loader_from_vfs_smoke"
+))]
 const PROGRAM_LOADER_PF_RWX: u32 = 0x7;
 
-#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_program_loader_smoke",
+    talos_boot_scenario = "qemu_program_loader_from_vfs_smoke"
+))]
 pub fn run_program_loader_smoke() -> bool {
-    crate::println!("qemu-program-loader-smoke: start");
+    program_loader_run_smoke("qemu-program-loader-smoke", false)
+}
 
-    let success_ok = program_loader_report_success();
+#[cfg(talos_boot_scenario = "qemu_program_loader_from_vfs_smoke")]
+pub fn run_program_loader_from_vfs_smoke() -> bool {
+    program_loader_run_smoke("qemu-program-loader-from-vfs-smoke", true)
+}
+
+#[cfg(any(
+    talos_boot_scenario = "qemu_program_loader_smoke",
+    talos_boot_scenario = "qemu_program_loader_from_vfs_smoke"
+))]
+fn program_loader_run_smoke(prefix: &str, require_vfs_source: bool) -> bool {
+    crate::println!("{}: start", prefix);
+
+    let success_ok = program_loader_report_success(prefix, require_vfs_source);
     let bad_magic_ok = program_loader_report_error(
+        prefix,
         "bad-magic",
         program_loader_mutated_result(|bytes| bytes[0] = 0),
         PosixError::NotExecutable,
     );
     let dynamic_interpreter_ok = program_loader_report_error(
+        prefix,
         "dynamic-interpreter",
         program_loader_mutated_result(|bytes| {
             program_loader_write_u32(bytes, PROGRAM_LOADER_PHDR1, PROGRAM_LOADER_PT_INTERP);
@@ -5766,6 +5799,7 @@ pub fn run_program_loader_smoke() -> bool {
         PosixError::NotSupported,
     );
     let wx_segment_ok = program_loader_report_error(
+        prefix,
         "wx-segment",
         program_loader_mutated_result(|bytes| {
             program_loader_write_u32(bytes, PROGRAM_LOADER_PHDR0 + 4, PROGRAM_LOADER_PF_RWX);
@@ -5773,6 +5807,7 @@ pub fn run_program_loader_smoke() -> bool {
         PosixError::AccessDenied,
     );
     let out_of_user_range_ok = program_loader_report_error(
+        prefix,
         "out-of-user-range",
         program_loader_mutated_result(|bytes| {
             program_loader_write_u64(bytes, PROGRAM_LOADER_PHDR0 + 8, 0);
@@ -5781,6 +5816,7 @@ pub fn run_program_loader_smoke() -> bool {
         PosixError::AccessDenied,
     );
     let overlap_ok = program_loader_report_error(
+        prefix,
         "overlap",
         program_loader_mutated_result(|bytes| {
             program_loader_write_u64(bytes, PROGRAM_LOADER_PHDR1 + 16, 0x0000_0000_0001_0200);
@@ -5788,6 +5824,7 @@ pub fn run_program_loader_smoke() -> bool {
         PosixError::AccessDenied,
     );
     let bad_entry_ok = program_loader_report_error(
+        prefix,
         "bad-entry",
         program_loader_mutated_result(|bytes| {
             program_loader_write_u64(bytes, 24, 0x0000_0000_0002_0200);
@@ -5795,6 +5832,7 @@ pub fn run_program_loader_smoke() -> bool {
         PosixError::NotExecutable,
     );
     let file_range_overflow_ok = program_loader_report_error(
+        prefix,
         "file-range-overflow",
         program_loader_mutated_result(|bytes| {
             program_loader_write_u64(bytes, PROGRAM_LOADER_PHDR1 + 32, 8);
@@ -5812,37 +5850,51 @@ pub fn run_program_loader_smoke() -> bool {
         + u64::from(file_range_overflow_ok);
     let errors = 8 - participants;
     let classification = if participants == 8 && errors == 0 {
-        "qemu-program-loader-smoke-complete"
+        if require_vfs_source {
+            "qemu-program-loader-from-vfs-smoke-complete"
+        } else {
+            "qemu-program-loader-smoke-complete"
+        }
     } else {
-        "qemu-program-loader-smoke-failed"
+        if require_vfs_source {
+            "qemu-program-loader-from-vfs-smoke-failed"
+        } else {
+            "qemu-program-loader-smoke-failed"
+        }
     };
 
     crate::println!(
-        "qemu-program-loader-smoke: final participants={} expected=8 errors={} classification={}",
+        "{}: final participants={} expected=8 errors={} classification={}",
+        prefix,
         participants,
         errors,
         classification
     );
     if participants == 8 && errors == 0 {
-        crate::println!("qemu-program-loader-smoke: PASS");
+        crate::println!("{}: PASS", prefix);
         true
     } else {
         false
     }
 }
 
-#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
-fn program_loader_report_success() -> bool {
+#[cfg(any(
+    talos_boot_scenario = "qemu_program_loader_smoke",
+    talos_boot_scenario = "qemu_program_loader_from_vfs_smoke"
+))]
+fn program_loader_report_success(prefix: &str, require_vfs_source: bool) -> bool {
     let result = plan_phase8_init_image(phase8_readonly_initramfs_fixture());
     let Ok(plan) = result else {
         crate::println!(
-            "qemu-program-loader-smoke: success format=elf64-aarch64-static-et-exec type=ET_EXEC machine=EM_AARCH64 phdrs=2 loadable=0 dynamic=false relocations=false ok=false"
+            "{}: success format=elf64-aarch64-static-et-exec type=ET_EXEC machine=EM_AARCH64 phdrs=2 loadable=0 dynamic=false relocations=false ok=false",
+            prefix
         );
         return false;
     };
 
     crate::println!(
-        "qemu-program-loader-smoke: fixture name={} path=/bin/init digest-algorithm=stable-elf-manifest digest={:#x}",
+        "{}: fixture name={} path=/bin/init digest-algorithm=stable-elf-manifest digest={:#x}",
+        prefix,
         PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
         plan.source_digest()
     );
@@ -5856,31 +5908,46 @@ fn program_loader_report_success() -> bool {
         && matches!(text, Some(segment) if program_loader_segment_ok(segment, UserSegmentKind::UserText, UserMappingPermissions::USER_TEXT, false))
         && matches!(data, Some(segment) if program_loader_segment_ok(segment, UserSegmentKind::UserData, UserMappingPermissions::USER_DATA, true))
         && program_loader_entry_ok(&plan);
+    let vfs_source_ok = !require_vfs_source
+        || (plan.source_path() == PHASE8_INIT_PATH && plan.source_len() == PHASE8_INIT_BYTES.len());
+
+    if require_vfs_source {
+        crate::println!(
+            "{}: vfs-source path=/bin/init object=regular-file read-boundary=kernel-file-object bytes={} eof=true ok={}",
+            prefix,
+            plan.source_len(),
+            vfs_source_ok
+        );
+    }
 
     crate::println!(
-        "qemu-program-loader-smoke: success format=elf64-aarch64-static-et-exec type=ET_EXEC machine=EM_AARCH64 phdrs=2 loadable={} dynamic=false relocations=false ok={}",
+        "{}: success format=elf64-aarch64-static-et-exec type=ET_EXEC machine=EM_AARCH64 phdrs=2 loadable={} dynamic=false relocations=false ok={}",
+        prefix,
         plan.segment_count(),
-        success_ok
+        success_ok && vfs_source_ok
     );
 
     if let Some(segment) = text {
-        program_loader_report_segment(0, segment);
+        program_loader_report_segment(prefix, 0, segment);
     } else {
         crate::println!(
-            "qemu-program-loader-smoke: segment index=0 kind=UserText flags=R-X file-bytes=0x0 mem-bytes=0x0 zero-fill=0x0 wx=false ok=false"
+            "{}: segment index=0 kind=UserText flags=R-X file-bytes=0x0 mem-bytes=0x0 zero-fill=0x0 wx=false ok=false",
+            prefix
         );
     }
     if let Some(segment) = data {
-        program_loader_report_segment(1, segment);
+        program_loader_report_segment(prefix, 1, segment);
     } else {
         crate::println!(
-            "qemu-program-loader-smoke: segment index=1 kind=UserData flags=RW- file-bytes=0x0 mem-bytes=0x0 zero-fill=0x0 wx=false ok=false"
+            "{}: segment index=1 kind=UserData flags=RW- file-bytes=0x0 mem-bytes=0x0 zero-fill=0x0 wx=false ok=false",
+            prefix
         );
     }
 
     let entry_ok = program_loader_entry_ok(&plan);
     crate::println!(
-        "qemu-program-loader-smoke: entry va={:#x} in-user={} in-text={} aligned={} ok={}",
+        "{}: entry va={:#x} in-user={} in-text={} aligned={} ok={}",
+        prefix,
         plan.entry(),
         plan.entry() >= crate::posix::USER_NULL_GUARD_END
             && plan.entry() < crate::posix::USER_ADDRESS_SPACE_END,
@@ -5889,14 +5956,18 @@ fn program_loader_report_success() -> bool {
         entry_ok
     );
     crate::println!(
-        "qemu-program-loader-smoke: image-plan source=/bin/init output=image-plan-only process-created=false stack-built=false descriptors-installed=false ok={}",
-        success_ok
+        "{}: image-plan source=/bin/init output=image-plan-only process-created=false stack-built=false descriptors-installed=false ok={}",
+        prefix,
+        success_ok && vfs_source_ok
     );
 
-    success_ok
+    success_ok && vfs_source_ok
 }
 
-#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_program_loader_smoke",
+    talos_boot_scenario = "qemu_program_loader_from_vfs_smoke"
+))]
 fn program_loader_segment_ok(
     segment: PlannedUserSegment,
     kind: UserSegmentKind,
@@ -5912,8 +5983,11 @@ fn program_loader_segment_ok(
         && !wx
 }
 
-#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
-fn program_loader_report_segment(index: usize, segment: PlannedUserSegment) {
+#[cfg(any(
+    talos_boot_scenario = "qemu_program_loader_smoke",
+    talos_boot_scenario = "qemu_program_loader_from_vfs_smoke"
+))]
+fn program_loader_report_segment(prefix: &str, index: usize, segment: PlannedUserSegment) {
     let flags = program_loader_segment_flags(segment);
     let mem_bytes = segment.virtual_end() - segment.virtual_start();
     let wx = segment.permissions().allows(UserAccessKind::Write)
@@ -5935,7 +6009,8 @@ fn program_loader_report_segment(index: usize, segment: PlannedUserSegment) {
     } && !wx;
 
     crate::println!(
-        "qemu-program-loader-smoke: segment index={} kind={} flags={} file-bytes={:#x} mem-bytes={:#x} zero-fill={:#x} wx={} ok={}",
+        "{}: segment index={} kind={} flags={} file-bytes={:#x} mem-bytes={:#x} zero-fill={:#x} wx={} ok={}",
+        prefix,
         index,
         segment.kind().name(),
         flags,
@@ -5947,7 +6022,10 @@ fn program_loader_report_segment(index: usize, segment: PlannedUserSegment) {
     );
 }
 
-#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_program_loader_smoke",
+    talos_boot_scenario = "qemu_program_loader_from_vfs_smoke"
+))]
 fn program_loader_segment_flags(segment: PlannedUserSegment) -> &'static str {
     match (
         segment.permissions().allows(UserAccessKind::Read),
@@ -5961,7 +6039,10 @@ fn program_loader_segment_flags(segment: PlannedUserSegment) -> &'static str {
     }
 }
 
-#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_program_loader_smoke",
+    talos_boot_scenario = "qemu_program_loader_from_vfs_smoke"
+))]
 fn program_loader_entry_ok(plan: &ProgramImagePlan) -> bool {
     let mut index = 0;
     while index < plan.segment_count() {
@@ -5979,15 +6060,20 @@ fn program_loader_entry_ok(plan: &ProgramImagePlan) -> bool {
     false
 }
 
-#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_program_loader_smoke",
+    talos_boot_scenario = "qemu_program_loader_from_vfs_smoke"
+))]
 fn program_loader_report_error(
+    prefix: &str,
     case: &str,
     result: Result<ProgramImagePlan, ProgramLoaderError>,
     expected: PosixError,
 ) -> bool {
     let ok = matches!(result, Err(error) if error.posix_error() == expected);
     crate::println!(
-        "qemu-program-loader-smoke: error case={} errno=-{} partial-install=false ok={}",
+        "{}: error case={} errno=-{} partial-install=false ok={}",
+        prefix,
         case,
         expected.name(),
         ok
@@ -5995,7 +6081,10 @@ fn program_loader_report_error(
     ok
 }
 
-#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_program_loader_smoke",
+    talos_boot_scenario = "qemu_program_loader_from_vfs_smoke"
+))]
 fn program_loader_mutated_result(
     mutate: impl FnOnce(&mut [u8; PHASE8_INIT_ELF_LEN]),
 ) -> Result<ProgramImagePlan, ProgramLoaderError> {
@@ -6009,12 +6098,18 @@ fn program_loader_mutated_result(
     )
 }
 
-#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_program_loader_smoke",
+    talos_boot_scenario = "qemu_program_loader_from_vfs_smoke"
+))]
 fn program_loader_write_u32(bytes: &mut [u8], offset: usize, value: u32) {
     bytes[offset..offset + 4].copy_from_slice(&value.to_le_bytes());
 }
 
-#[cfg(talos_boot_scenario = "qemu_program_loader_smoke")]
+#[cfg(any(
+    talos_boot_scenario = "qemu_program_loader_smoke",
+    talos_boot_scenario = "qemu_program_loader_from_vfs_smoke"
+))]
 fn program_loader_write_u64(bytes: &mut [u8], offset: usize, value: u64) {
     bytes[offset..offset + 8].copy_from_slice(&value.to_le_bytes());
 }

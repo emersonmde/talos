@@ -1,0 +1,24 @@
+
+Talos 0.1.0 booting on talos-aarch64-virt
+boot-info: dtb_pa=0x0000000048000000 core=0 el=2 target=talos-aarch64-virt
+target-services: uart=pl011 timer=arm-generic irq=gic-v2 dtb=Some(
+    0x0000000048000000,
+)
+mmio-regions: 3
+qemu-program-loader-from-vfs-smoke: start
+qemu-program-loader-from-vfs-smoke: fixture name=phase8-program-loader-elf64-aarch64-v1 path=/bin/init digest-algorithm=stable-elf-manifest digest=0x3892eed223900c65
+qemu-program-loader-from-vfs-smoke: vfs-source path=/bin/init object=regular-file read-boundary=kernel-file-object bytes=516 eof=true ok=true
+qemu-program-loader-from-vfs-smoke: success format=elf64-aarch64-static-et-exec type=ET_EXEC machine=EM_AARCH64 phdrs=2 loadable=2 dynamic=false relocations=false ok=true
+qemu-program-loader-from-vfs-smoke: segment index=0 kind=UserText flags=R-X file-bytes=0x4 mem-bytes=0x4 zero-fill=0x0 wx=false ok=true
+qemu-program-loader-from-vfs-smoke: segment index=1 kind=UserData flags=RW- file-bytes=0x4 mem-bytes=0x1004 zero-fill=0x1000 wx=false ok=true
+qemu-program-loader-from-vfs-smoke: entry va=0x10100 in-user=true in-text=true aligned=true ok=true
+qemu-program-loader-from-vfs-smoke: image-plan source=/bin/init output=image-plan-only process-created=false stack-built=false descriptors-installed=false ok=true
+qemu-program-loader-from-vfs-smoke: error case=bad-magic errno=-ENOEXEC partial-install=false ok=true
+qemu-program-loader-from-vfs-smoke: error case=dynamic-interpreter errno=-ENOTSUP partial-install=false ok=true
+qemu-program-loader-from-vfs-smoke: error case=wx-segment errno=-EACCES partial-install=false ok=true
+qemu-program-loader-from-vfs-smoke: error case=out-of-user-range errno=-EACCES partial-install=false ok=true
+qemu-program-loader-from-vfs-smoke: error case=overlap errno=-EACCES partial-install=false ok=true
+qemu-program-loader-from-vfs-smoke: error case=bad-entry errno=-ENOEXEC partial-install=false ok=true
+qemu-program-loader-from-vfs-smoke: error case=file-range-overflow errno=-ENOEXEC partial-install=false ok=true
+qemu-program-loader-from-vfs-smoke: final participants=8 expected=8 errors=0 classification=qemu-program-loader-from-vfs-smoke-complete
+qemu-program-loader-from-vfs-smoke: PASS
