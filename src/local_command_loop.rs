@@ -120,6 +120,13 @@ pub struct LocalCommandExecSummary {
     initial_sp: u64,
     launch_boundary: &'static str,
     stack_boundary: &'static str,
+    startup_state: &'static str,
+    startup_argc: usize,
+    startup_argv0_path: &'static [u8],
+    startup_argv0_user_address: u64,
+    startup_argv_null: bool,
+    startup_envp_null: bool,
+    copied_startup_bytes: u64,
     completion_status: u64,
     completion_marker: u64,
     completion_boundary: &'static str,
@@ -442,6 +449,13 @@ where
             initial_sp: stack_plan.layout().initial_sp(),
             launch_boundary: launch_plan.boundary_identity(),
             stack_boundary: stack_plan.boundary_identity(),
+            startup_state: stack_plan.startup_payload().state(),
+            startup_argc: stack_plan.startup_payload().argc(),
+            startup_argv0_path: stack_plan.startup_payload().argv0_path(),
+            startup_argv0_user_address: stack_plan.startup_payload().argv0_user_address(),
+            startup_argv_null: stack_plan.startup_payload().argv_null(),
+            startup_envp_null: stack_plan.startup_payload().envp_null(),
+            copied_startup_bytes: stack_plan.startup_payload().copied_startup_bytes(),
             completion_status,
             completion_marker: initramfs::PHASE8_INIT_SVC_MARKER,
             completion_boundary: "lower-aarch64-svc-status-equivalent",
@@ -1214,6 +1228,7 @@ fn write_exec_summary(
     write_exec_source_line(sink, response_lines, summary)?;
     write_exec_entry_line(sink, response_lines, summary)?;
     write_exec_launch_line(sink, response_lines, summary)?;
+    write_exec_startup_abi_line(sink, response_lines, summary)?;
     write_exec_lifecycle_line(sink, response_lines, summary)?;
     write_exec_status_line(sink, response_lines, summary)?;
     write_line(
@@ -1264,6 +1279,43 @@ fn write_exec_launch_line(
     write_hex_u64_part(sink, summary.materialization_id)?;
     write_str_part(sink, " initial-sp=")?;
     write_hex_u64_part(sink, summary.initial_sp)?;
+    finish_dynamic_line(sink, response_lines)
+}
+
+fn write_exec_startup_abi_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    summary: LocalCommandExecSummary,
+) -> Result<(), LocalCommandCycleError> {
+    write_str_part(sink, "talos: exec-startup-abi state=")?;
+    write_str_part(sink, summary.startup_state)?;
+    write_str_part(sink, " argc=")?;
+    write_hex_usize_part(sink, summary.startup_argc)?;
+    write_str_part(sink, " argv0=")?;
+    write_byte_path_part(sink, summary.startup_argv0_path)?;
+    write_str_part(sink, " argv0-ptr=")?;
+    write_hex_u64_part(sink, summary.startup_argv0_user_address)?;
+    write_str_part(sink, " argv-null=")?;
+    write_str_part(
+        sink,
+        if summary.startup_argv_null {
+            "true"
+        } else {
+            "false"
+        },
+    )?;
+    write_str_part(sink, " envp-null=")?;
+    write_str_part(
+        sink,
+        if summary.startup_envp_null {
+            "true"
+        } else {
+            "false"
+        },
+    )?;
+    write_str_part(sink, " copied-startup-bytes=")?;
+    write_hex_u64_part(sink, summary.copied_startup_bytes)?;
+    write_str_part(sink, " source=initial-user-stack-record")?;
     finish_dynamic_line(sink, response_lines)
 }
 
@@ -1330,6 +1382,15 @@ fn write_str_part(
 ) -> Result<(), LocalCommandCycleError> {
     sink.write_command_str(text)
         .map_err(|_| LocalCommandCycleError::ResponseWriteFailed)
+}
+
+fn write_byte_path_part(
+    sink: &mut impl LocalCommandSink,
+    path: &[u8],
+) -> Result<(), LocalCommandCycleError> {
+    let text =
+        core::str::from_utf8(path).map_err(|_| LocalCommandCycleError::ResponseWriteFailed)?;
+    write_str_part(sink, text)
 }
 
 fn write_hex_usize_part(
@@ -1802,7 +1863,7 @@ talos> Talos initramfs fixture\n"
 
         assert_eq!(result.line(), b"exec /bin/init");
         assert_eq!(result.status(), LocalCommandStatus::Handled);
-        assert_eq!(result.response_lines(), 7);
+        assert_eq!(result.response_lines(), 8);
         assert!(output.contains("talos> talos: exec path=/bin/init source=vfs-open-read\n"));
         assert!(output.contains("talos: exec-source bytes=0x0000000000000204 digest=0x"));
         assert!(output.contains(
@@ -1810,6 +1871,12 @@ talos> Talos initramfs fixture\n"
         ));
         assert!(output.contains(
             "talos: exec-launch launch-boundary=phase8-initial-process-launch-plan-v1 stack-boundary=phase8-initial-user-stack-plan-v1"
+        ));
+        assert!(output.contains(
+            "talos: exec-startup-abi state=minimal-argc1-argv0-init argc=0x0000000000000001 argv0=/bin/init"
+        ));
+        assert!(output.contains(
+            "argv-null=false envp-null=true copied-startup-bytes=0x0000000000000022 source=initial-user-stack-record\n"
         ));
         assert!(output.contains(
             "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"
@@ -1842,7 +1909,7 @@ talos> Talos initramfs fixture\n"
         assert_eq!(none.response_lines(), 1);
         assert_eq!(exec.line(), b"exec /bin/init");
         assert_eq!(exec.status(), LocalCommandStatus::Handled);
-        assert_eq!(exec.response_lines(), 7);
+        assert_eq!(exec.response_lines(), 8);
         assert_eq!(observed.line(), b"laststatus");
         assert_eq!(observed.status(), LocalCommandStatus::Handled);
         assert_eq!(observed.response_lines(), 1);

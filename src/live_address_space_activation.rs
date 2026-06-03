@@ -794,12 +794,14 @@ fn validate_descriptor_stack_and_entry(
     }
 
     let layout = stack_plan.layout();
+    let initial_sp = layout.initial_sp();
     validate_user_range(
         layout.guard_start(),
         (layout.usable_end() - layout.guard_start()) as usize,
     )?;
     if !layout.sp_aligned_16()
-        || layout.initial_sp() != layout.usable_end()
+        || initial_sp < layout.usable_start()
+        || initial_sp > layout.usable_end()
         || layout.permissions() != UserMappingPermissions::USER_DATA
         || stack_plan.page_lease_count() == 0
     {

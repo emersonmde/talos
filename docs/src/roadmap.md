@@ -97,6 +97,16 @@ The post-review correction chain is:
     wait/waitpid, asynchronous execution, multiple children, zombie policy,
     PATH lookup, argv/envp, pipes, redirection, writable filesystem, hardware
     proof, networking, and SSH remain deferred.
+11. minimal startup argc/argv for the explicit VFS-backed `/bin/init` exec
+    path: accepted in
+    `phase10-minimal-argv-argc-exec-init-20260603` with the initial stack
+    record carrying `argc=1`, `argv[0]=/bin/init`, non-null argv state, an
+    argv0 user pointer, and copied startup bytes while preserving the same
+    VFS/open/read, loader, launch, lifecycle, `laststatus`, and VFS cat
+    regression surfaces. envp/auxv/TLS, environment variables, PATH lookup,
+    arbitrary executable dispatch, descriptor inheritance, wait/waitpid,
+    asynchronous execution, pipes, redirection, writable filesystem, hardware
+    proof, networking, and SSH remain deferred.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -110,8 +120,17 @@ Kernel built-ins remain regression/control surfaces only. The recommended next
 local execution slice is a supervisor-planned minimal argv/argc ABI for the
 existing `exec /bin/init` path, before PATH lookup, arbitrary executable
 dispatch, pipes, redirection, writable filesystem, networking, SSH, or Pi 5
-proof. No explicit queued follow-up task remains; supervisor planning is
-required before the worker may promote further work.
+proof.
+
+The minimal argc/argv exec-init task is accepted in
+`phase10-minimal-argv-argc-exec-init-20260603`. It advances only the explicit
+`/bin/init` startup ABI record: the shell-visible exec transcript now reports
+`state=minimal-argc1-argv0-init`, `argc=1`, `argv0=/bin/init`,
+`argv-null=false`, `envp-null=true`, and
+`source=initial-user-stack-record` from the same VFS/program-loader/launch/
+lifecycle lineage. The next queued checkpoint should reconcile this narrow ABI
+claim before any empty-envp slice or broader command lookup/process-management
+planning.
 
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning

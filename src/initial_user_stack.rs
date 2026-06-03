@@ -25,7 +25,7 @@ use crate::{
 
 pub(crate) const INITIAL_USER_STACK_BOUNDARY_IDENTITY: &str = "phase8-initial-user-stack-plan-v1";
 pub(crate) const INITIAL_USER_STACK_READY: &str = "model-only-initial-user-stack-ready";
-pub(crate) const INITIAL_USER_STACK_STARTUP_PAYLOAD_STATE: &str = "minimal-empty-argc0";
+pub(crate) const INITIAL_USER_STACK_STARTUP_PAYLOAD_STATE: &str = "minimal-argc1-argv0-init";
 pub(crate) const STARTUP_ABI_BLOCKED: &str = "blocked-pending-startup-abi";
 pub(crate) const INITIAL_USER_STACK_USABLE_PAGES: usize = 4;
 pub(crate) const INITIAL_USER_STACK_GUARD_PAGES: usize = 1;
@@ -34,6 +34,16 @@ pub(crate) const INITIAL_USER_STACK_USABLE_BYTES: u64 =
     LOADER_PAGE_SIZE * INITIAL_USER_STACK_USABLE_PAGES as u64;
 pub(crate) const INITIAL_USER_STACK_GUARD_BYTES: u64 =
     LOADER_PAGE_SIZE * INITIAL_USER_STACK_GUARD_PAGES as u64;
+const INITIAL_USER_STACK_ARGC_WORD_BYTES: u64 = 8;
+const INITIAL_USER_STACK_ARGV_POINTER_BYTES: u64 = 8;
+const INITIAL_USER_STACK_NULL_POINTER_BYTES: u64 = 8;
+const INITIAL_USER_STACK_ARGV0_C_STRING_BYTES: u64 = 10;
+const INITIAL_USER_STACK_STARTUP_PAYLOAD_BYTES: u64 = INITIAL_USER_STACK_ARGC_WORD_BYTES
+    + INITIAL_USER_STACK_ARGV_POINTER_BYTES
+    + INITIAL_USER_STACK_NULL_POINTER_BYTES
+    + INITIAL_USER_STACK_ARGV0_C_STRING_BYTES;
+const INITIAL_USER_STACK_STARTUP_PAYLOAD_ALIGNED_BYTES: u64 =
+    (INITIAL_USER_STACK_STARTUP_PAYLOAD_BYTES + 15) & !15;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum InitialUserStackRequest {
@@ -296,6 +306,8 @@ pub(crate) struct InitialUserStackStartupPayload {
     state: &'static str,
     argc: usize,
     argv_null: bool,
+    argv0_path: &'static [u8],
+    argv0_user_address: u64,
     envp_null: bool,
     auxv_state: &'static str,
     tls_state: &'static str,
@@ -313,6 +325,14 @@ impl InitialUserStackStartupPayload {
 
     pub(crate) const fn argv_null(self) -> bool {
         self.argv_null
+    }
+
+    pub(crate) const fn argv0_path(self) -> &'static [u8] {
+        self.argv0_path
+    }
+
+    pub(crate) const fn argv0_user_address(self) -> u64 {
+        self.argv0_user_address
     }
 
     pub(crate) const fn envp_null(self) -> bool {
@@ -617,12 +637,17 @@ pub(crate) fn plan_initial_user_stack(
             total_zeroed_bytes: partial.total_zeroed_bytes,
             startup_payload: InitialUserStackStartupPayload {
                 state: INITIAL_USER_STACK_STARTUP_PAYLOAD_STATE,
-                argc: 0,
-                argv_null: true,
+                argc: 1,
+                argv_null: false,
+                argv0_path: image.source_path(),
+                argv0_user_address: layout.initial_sp()
+                    + INITIAL_USER_STACK_ARGC_WORD_BYTES
+                    + INITIAL_USER_STACK_ARGV_POINTER_BYTES
+                    + INITIAL_USER_STACK_NULL_POINTER_BYTES,
                 envp_null: true,
                 auxv_state: STARTUP_ABI_BLOCKED,
                 tls_state: STARTUP_ABI_BLOCKED,
-                copied_startup_bytes: 0,
+                copied_startup_bytes: INITIAL_USER_STACK_STARTUP_PAYLOAD_BYTES,
             },
             launch_binding: InitialUserStackLaunchBinding {
                 user_sp_state: INITIAL_USER_STACK_READY,
@@ -660,7 +685,7 @@ fn default_layout() -> Result<InitialUserStackLayout, PosixError> {
         .ok_or(PosixError::Fault)?;
     Ok(InitialUserStackLayout {
         stack_top: USER_ADDRESS_SPACE_END,
-        initial_sp: USER_ADDRESS_SPACE_END,
+        initial_sp: USER_ADDRESS_SPACE_END - INITIAL_USER_STACK_STARTUP_PAYLOAD_ALIGNED_BYTES,
         usable_start,
         usable_end,
         guard_start,
@@ -785,7 +810,6 @@ fn validate_layout(layout: InitialUserStackLayout) -> Result<(), PosixError> {
         || layout.usable_pages != INITIAL_USER_STACK_USABLE_PAGES
         || layout.guard_pages != INITIAL_USER_STACK_GUARD_PAGES
         || layout.stack_top != USER_ADDRESS_SPACE_END
-        || layout.initial_sp != layout.stack_top
         || !layout.sp_aligned_16()
         || layout.usable_start % LOADER_PAGE_SIZE != 0
         || layout.usable_end % LOADER_PAGE_SIZE != 0
@@ -811,6 +835,8 @@ fn validate_layout(layout: InitialUserStackLayout) -> Result<(), PosixError> {
             != layout.guard_end
         || layout.guard_end != layout.usable_start
         || layout.usable_end != USER_ADDRESS_SPACE_END
+        || layout.initial_sp < layout.usable_start
+        || layout.initial_sp > layout.usable_end
         || layout.guard_start < USER_NULL_GUARD_END
         || layout.usable_start < USER_NULL_GUARD_END
         || layout.usable_end > USER_ADDRESS_SPACE_END
@@ -916,13 +942,18 @@ fn lease_stack_pages(
             virtual_page,
             permissions: layout.permissions,
             zeroed_before_copy: true,
-            copied_bytes: 0,
+            copied_bytes: if page_index == INITIAL_USER_STACK_USABLE_PAGES - 1 {
+                INITIAL_USER_STACK_STARTUP_PAYLOAD_BYTES
+            } else {
+                0
+            },
             zeroed_bytes: LOADER_PAGE_SIZE,
             source_page_ordinal: page_index,
             released: false,
         };
         partial.page_leases[partial.page_lease_count] = Some(lease);
         partial.page_lease_count += 1;
+        partial.total_copied_bytes += lease.copied_bytes();
         partial.total_zeroed_bytes += LOADER_PAGE_SIZE;
         page_index += 1;
     }
@@ -1094,7 +1125,10 @@ mod tests {
 
         let layout = plan.layout();
         assert_eq!(layout.stack_top(), USER_ADDRESS_SPACE_END);
-        assert_eq!(layout.initial_sp(), USER_ADDRESS_SPACE_END);
+        assert_eq!(
+            layout.initial_sp(),
+            USER_ADDRESS_SPACE_END - INITIAL_USER_STACK_STARTUP_PAYLOAD_ALIGNED_BYTES
+        );
         assert!(layout.sp_aligned_16());
         assert_eq!(layout.usable_start(), 0x0000_7fff_ffff_c000);
         assert_eq!(layout.usable_end(), 0x0000_8000_0000_0000);
@@ -1107,7 +1141,10 @@ mod tests {
 
         assert_eq!(plan.page_lease_count(), INITIAL_USER_STACK_USABLE_PAGES);
         assert_eq!(plan.guard_pages_reserved(), INITIAL_USER_STACK_GUARD_PAGES);
-        assert_eq!(plan.total_copied_bytes(), 0);
+        assert_eq!(
+            plan.total_copied_bytes(),
+            INITIAL_USER_STACK_STARTUP_PAYLOAD_BYTES
+        );
         assert_eq!(plan.total_zeroed_bytes(), INITIAL_USER_STACK_USABLE_BYTES);
         assert_eq!(
             stack_source.outstanding_leases(),
@@ -1128,7 +1165,14 @@ mod tests {
             );
             assert_eq!(lease.permissions(), UserMappingPermissions::USER_DATA);
             assert!(lease.zeroed_before_copy());
-            assert_eq!(lease.copied_bytes(), 0);
+            if index == INITIAL_USER_STACK_USABLE_PAGES - 1 {
+                assert_eq!(
+                    lease.copied_bytes(),
+                    INITIAL_USER_STACK_STARTUP_PAYLOAD_BYTES
+                );
+            } else {
+                assert_eq!(lease.copied_bytes(), 0);
+            }
             assert_eq!(lease.zeroed_bytes(), LOADER_PAGE_SIZE);
             assert_eq!(lease.source_page_ordinal(), index);
             assert!(!lease.released());
@@ -1137,16 +1181,27 @@ mod tests {
     }
 
     #[test_case]
-    fn records_empty_startup_payload_and_launch_binding_without_live_side_effects() {
+    fn records_minimal_argv_startup_payload_and_launch_binding_without_live_side_effects() {
         let (plan, _) = plan_fixture();
         let payload = plan.startup_payload();
         assert_eq!(payload.state(), INITIAL_USER_STACK_STARTUP_PAYLOAD_STATE);
-        assert_eq!(payload.argc(), 0);
-        assert!(payload.argv_null());
+        assert_eq!(payload.argc(), 1);
+        assert!(!payload.argv_null());
+        assert_eq!(payload.argv0_path(), PHASE8_INIT_PATH);
+        assert_eq!(
+            payload.argv0_user_address(),
+            plan.layout().initial_sp()
+                + INITIAL_USER_STACK_ARGC_WORD_BYTES
+                + INITIAL_USER_STACK_ARGV_POINTER_BYTES
+                + INITIAL_USER_STACK_NULL_POINTER_BYTES
+        );
         assert!(payload.envp_null());
         assert_eq!(payload.auxv_state(), STARTUP_ABI_BLOCKED);
         assert_eq!(payload.tls_state(), STARTUP_ABI_BLOCKED);
-        assert_eq!(payload.copied_startup_bytes(), 0);
+        assert_eq!(
+            payload.copied_startup_bytes(),
+            INITIAL_USER_STACK_STARTUP_PAYLOAD_BYTES
+        );
 
         let binding = plan.launch_binding();
         assert_eq!(binding.user_sp_state(), INITIAL_USER_STACK_READY);

@@ -8669,7 +8669,7 @@ fn initial_user_stack_report_success() -> (bool, bool, bool, bool, bool, bool) {
         && plan.materialization_id() == materialization.id()
         && plan.entry_pc() == image.entry()
         && layout.stack_top() == 0x0000_8000_0000_0000
-        && layout.initial_sp() == 0x0000_8000_0000_0000
+        && layout.initial_sp() == 0x0000_7fff_ffff_ffd0
         && layout.sp_aligned_16();
     crate::println!(
         "qemu-initial-user-stack-smoke: success output=InitialUserStackPlan published={} stack-top={:#018x} initial-sp={:#018x} sp-aligned-16={} ok={}",
@@ -8708,9 +8708,14 @@ fn initial_user_stack_report_success() -> (bool, bool, bool, bool, bool, bool) {
             stack_owned = false;
             break;
         };
+        let expected_copied_bytes = if page_index == layout.usable_pages() - 1 {
+            34
+        } else {
+            0
+        };
         usable_user_data &= lease.permissions() == UserMappingPermissions::USER_DATA
             && lease.zeroed_before_copy()
-            && lease.copied_bytes() == 0
+            && lease.copied_bytes() == expected_copied_bytes
             && lease.zeroed_bytes() == LOADER_PAGE_SIZE;
         stack_owned &= lease.token().raw() != 0 && !lease.released();
         page_index += 1;
@@ -8718,7 +8723,7 @@ fn initial_user_stack_report_success() -> (bool, bool, bool, bool, bool, bool) {
     let ownership_ok = usable_user_data
         && stack_owned
         && plan.guard_pages_reserved() == 1
-        && plan.total_copied_bytes() == 0
+        && plan.total_copied_bytes() == 34
         && plan.total_zeroed_bytes() == 0x4000;
     crate::println!(
         "qemu-initial-user-stack-smoke: ownership usable-user-data={} stack-owned={} guard-has-frame=false guard-has-descriptor=false total-copied-bytes={} total-zeroed-bytes={:#x} ok={}",
@@ -8730,21 +8735,29 @@ fn initial_user_stack_report_success() -> (bool, bool, bool, bool, bool, bool) {
     );
 
     let startup = plan.startup_payload();
-    let startup_ok = startup.state() == "minimal-empty-argc0"
-        && startup.argc() == 0
-        && startup.argv_null()
+    let argv0 = match core::str::from_utf8(startup.argv0_path()) {
+        Ok(path) => path,
+        Err(_) => "<invalid>",
+    };
+    let startup_ok = startup.state() == "minimal-argc1-argv0-init"
+        && startup.argc() == 1
+        && !startup.argv_null()
+        && startup.argv0_path() == crate::initramfs::PHASE8_INIT_PATH
         && startup.envp_null()
         && startup.auxv_state() == "blocked-pending-startup-abi"
         && startup.tls_state() == "blocked-pending-startup-abi"
-        && startup.copied_startup_bytes() == 0;
+        && startup.copied_startup_bytes() == 34;
     crate::println!(
-        "qemu-initial-user-stack-smoke: startup argc={} argv={} envp={} auxv={} tls={} copied-startup-bytes={} ok={}",
+        "qemu-initial-user-stack-smoke: startup state={} argc={} argv={} argv0={} argv0-ptr={:#018x} envp={} auxv={} tls={} copied-startup-bytes={} ok={}",
+        startup.state(),
         startup.argc(),
         if startup.argv_null() {
             "null"
         } else {
             "nonnull"
         },
+        argv0,
+        startup.argv0_user_address(),
         if startup.envp_null() {
             "null"
         } else {
@@ -14764,7 +14777,7 @@ fn expected_local_command_loop_dispatch(
             line == b"cd /etc" && status == Handled && response_lines == 0
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
-            line == b"exec /bin/init" && status == Handled && response_lines == 7
+            line == b"exec /bin/init" && status == Handled && response_lines == 8
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") => {
             line == b"pwd" && status == Handled && response_lines == 1
