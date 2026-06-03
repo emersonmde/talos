@@ -576,6 +576,8 @@ mod tests {
         program_loader::{PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY, plan_phase8_init_image},
     };
 
+    const PHASE8_INIT_DIGEST: u64 = 0xf4a6_cc15_f4d9_4461;
+
     fn install_fixture() -> ProcessImageInstallPlan {
         let image = plan_phase8_init_image(phase8_readonly_initramfs_fixture())
             .expect("program image plan");
@@ -615,7 +617,7 @@ mod tests {
             PHASE8_INIT_PATH,
             PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
             PHASE8_INIT_BYTES.len(),
-            0x3892_eed2_2390_0c65,
+            PHASE8_INIT_DIGEST,
             entry,
             segment_count,
             segments,
@@ -638,7 +640,7 @@ mod tests {
             PROCESS_INSTALL_BOUNDARY_IDENTITY
         );
         assert_eq!(plan.source_path(), PHASE8_INIT_PATH);
-        assert_eq!(plan.source_digest(), 0x3892_eed2_2390_0c65);
+        assert_eq!(plan.source_digest(), PHASE8_INIT_DIGEST);
         assert_eq!(plan.entry(), 0x0000_0000_0001_0100);
         assert_eq!(plan.memory_footprint(), 0x3000);
         assert_eq!(plan.page_count(), 3);

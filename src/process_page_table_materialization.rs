@@ -1140,7 +1140,7 @@ mod tests {
             PHASE8_INIT_PATH,
             PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
             0x204,
-            0x3892_eed2_2390_0c65,
+            0xf4a6_cc15_f4d9_4461,
             0x0000_0000_0001_0100,
             2,
             [
@@ -1192,7 +1192,7 @@ mod tests {
             materialization.kernel_mapping_policy(),
             PROCESS_PAGE_TABLE_KERNEL_MAPPING_POLICY
         );
-        assert_eq!(materialization.source_digest(), 0x3892_eed2_2390_0c65);
+        assert_eq!(materialization.source_digest(), 0xf4a6_cc15_f4d9_4461);
         assert_eq!(materialization.id(), 0x8_b000_0001);
         assert!(materialization.published());
         assert!(!materialization.destroyed());
@@ -1573,7 +1573,7 @@ mod tests {
             PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
             PROCESS_INSTALL_BOUNDARY_IDENTITY,
             PHASE8_INIT_PATH,
-            0x3892_eed2_2390_0c65,
+            0xf4a6_cc15_f4d9_4461,
             image_fixture().entry(),
             image_fixture().memory_footprint(),
             2,

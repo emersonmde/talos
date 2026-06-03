@@ -668,7 +668,7 @@ mod tests {
 
     const PHDR0: usize = ELF_HEADER_SIZE;
     const PHDR1: usize = ELF_HEADER_SIZE + ELF_PROGRAM_HEADER_SIZE;
-    const PHASE8_INIT_DIGEST: u64 = 0x3892_eed2_2390_0c65;
+    const PHASE8_INIT_DIGEST: u64 = 0xf4a6_cc15_f4d9_4461;
 
     fn fixture_bytes() -> [u8; PHASE8_INIT_ELF_LEN] {
         let mut bytes = [0u8; PHASE8_INIT_ELF_LEN];

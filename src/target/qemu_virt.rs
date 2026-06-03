@@ -6564,7 +6564,7 @@ fn process_install_unchecked_plan(
         PHASE8_INIT_PATH,
         PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
         PHASE8_INIT_BYTES.len(),
-        0x3892_eed2_2390_0c65,
+        0xf4a6_cc15_f4d9_4461,
         entry,
         segment_count,
         segments,
