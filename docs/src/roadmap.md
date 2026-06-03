@@ -334,6 +334,23 @@ The post-review correction chain is:
     variants, stderr-specific output, blocking I/O, pipes, redirection,
     writable filesystem behavior, broader shell grammar, hardware proof,
     networking, and SSH remain deferred.
+29. userspace stdin through inherited fd closeout: accepted in
+    `phase10-userspace-stdin-inherited-fd-closeout-20260603`. It reconciles
+    the accepted `exec stdin` transcript, descriptor-backed VFS/open/read and
+    loader/lifecycle/status lineage, inherited descriptor records,
+    `exec-stdin fd=0 bytes=0xa return=0xa stdout-fd=1 stdout-bytes=0x2f
+    stdout-return=0x2f source=userspace-talos-read+userspace-talos-write`,
+    the visible stdout report `Talos userspace stdin fixture read: talos-fd0`,
+    `waitpid`, non-consuming `laststatus`, retained userspace stdout
+    regression evidence, fixed `/bin` lookup and absolute exec controls,
+    `/bin/init` and `/bin/zero` zero-status controls, deterministic negative
+    exec controls, loader temporary descriptor non-leak, and descriptor-backed
+    `cat /etc/banner.txt`. The next queued stderr-through-inherited-fd task
+    remains mechanically unblocked by accepted fd2 inheritance plus accepted
+    stdout/stdin syscall-substitute evidence. Runtime-console0/TTY-backed
+    process stdin, EOF/no-data/error stdin variants, stderr behavior, blocking
+    I/O, pipes, redirection, writable filesystem behavior, hardware proof,
+    networking, and SSH remain deferred.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
