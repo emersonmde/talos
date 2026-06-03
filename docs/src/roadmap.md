@@ -138,6 +138,14 @@ The post-review correction chain is:
     fail deterministically. PATH lookup, broad argv/envp, nonzero status
     variation, wait/waitpid, descriptor inheritance, pipes, redirection,
     writable filesystem, hardware proof, networking, and SSH remain deferred.
+15. absolute VFS executable dispatch closeout: accepted in
+    `phase10-absolute-vfs-exec-dispatch-closeout-20260603`. It reconciles the
+    accepted `/bin/zero` non-init dispatch, `/bin/init` regression,
+    path-aware `laststatus`, negative controls, and descriptor-backed VFS cat
+    evidence. The next queued feature-led slice remains nonzero status
+    variation through a VFS-backed executable before PATH lookup,
+    wait/waitpid, descriptor inheritance, pipes, redirection, writable
+    filesystem, hardware proof, networking, or SSH.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -208,6 +216,19 @@ chain. `laststatus` now includes the latest lifecycle path. `exec /missing`,
 remain deterministic negative controls. Nonzero status variation, PATH lookup,
 broad argv/envp, wait/waitpid, descriptor inheritance, pipes, redirection,
 writable filesystem, hardware proof, networking, and SSH remain deferred.
+
+The absolute VFS executable dispatch closeout checkpoint is accepted in
+`phase10-absolute-vfs-exec-dispatch-closeout-20260603`. It keeps the accepted
+frontier limited to absolute VFS dispatch for `/bin/init` and `/bin/zero`
+through descriptor-backed `TalosOpen`/`TalosRead`, the accepted loader,
+startup ABI, launch, lifecycle/status, and path-aware `laststatus` chain.
+Retained evidence covers the non-init `/bin/zero` transcript, `/bin/init`
+regression, deterministic failures for `/missing`, `init`, `/bin`,
+`/etc/banner.txt`, and `/empty`, plus descriptor-backed `cat /etc/banner.txt`.
+The next queued task remains mechanically justified as nonzero status
+variation from a VFS-backed executable before PATH lookup, broader argv/envp,
+wait/waitpid, descriptor inheritance, pipes, redirection, writable filesystem,
+hardware proof, networking, or SSH.
 
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning
