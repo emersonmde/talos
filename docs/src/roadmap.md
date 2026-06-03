@@ -13,6 +13,15 @@ The Pi 5 boot path should follow the normal firmware contract first. The EEPROM 
 
 ## Current Status
 
+Priority correction after the Phase 10 shell-command review: Talos should not
+plan additional fake/kernel-backed shell command expansion as operating-system
+progress. The accepted `ls`, `cd`, `pwd`, and `cat` command-loop slices may
+remain useful regression/control surfaces, but future command-visible behavior
+must be backed by real VFS, descriptor, syscall, or userspace-program
+capability. The immediate feature path is descriptor-backed read-only
+initramfs/VFS file I/O, then program loading and userspace process launch,
+then shell behavior that consumes those layers.
+
 Talos is in Phase 8 Milestone 8.3 after the accepted Phase 7 final closeout
 checkpoint recommended the first bounded filesystem/program-loading planning
 task, the Phase 8 source inventory was accepted, and the read-only
