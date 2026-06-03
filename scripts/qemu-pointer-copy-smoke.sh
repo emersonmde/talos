@@ -11,10 +11,11 @@ EVIDENCE_LOG="$EVIDENCE_DIR/qemu-pointer-copy-smoke.log"
 
 script_dir="$(CDPATH= cd "$(dirname "$0")" && pwd)"
 . "$script_dir/objcopy-tool.sh"
+. "$script_dir/qemu-tool.sh"
 
 "$objcopy_tool" -O binary "$ELF_FILE" "$IMG_FILE"
 
-qemu-system-aarch64 \
+"$qemu_tool" \
     -M virt,gic-version=2,virtualization=on \
     -cpu cortex-a76 \
     -m 256M \

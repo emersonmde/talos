@@ -27,12 +27,13 @@ LINE_KILL_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LINE_KILL_SMOKE:-0}"
 
 script_dir="$(CDPATH= cd "$(dirname "$0")" && pwd)"
 . "$script_dir/objcopy-tool.sh"
+. "$script_dir/qemu-tool.sh"
 
 "$objcopy_tool" -O binary "$ELF_FILE" "$IMG_FILE"
 : >"$LOG_FILE"
 : >"$QEMU_LOG_FILE"
 
-qemu-system-aarch64 \
+"$qemu_tool" \
     -M virt,gic-version=2,virtualization=on \
     -cpu cortex-a76 \
     -m 256M \

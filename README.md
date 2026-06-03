@@ -89,6 +89,10 @@ mdbook build
 git diff --check
 ```
 
+QEMU scripts and the Cargo test runner use `qemu-system-aarch64` from `PATH` by
+default. Set `QEMU_SYSTEM_AARCH64=/path/to/qemu-system-aarch64` when the
+workspace QEMU build is not on `PATH`.
+
 The QEMU smoke test expects this line:
 
 ```text

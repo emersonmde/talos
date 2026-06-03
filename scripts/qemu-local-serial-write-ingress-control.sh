@@ -16,13 +16,14 @@ CONTROL_DELAY="${TALOS_QEMU_SERIAL_WRITE_INGRESS_DELAY_SECONDS:-0.25}"
 
 script_dir="$(CDPATH= cd "$(dirname "$0")" && pwd)"
 . "$script_dir/objcopy-tool.sh"
+. "$script_dir/qemu-tool.sh"
 
 "$objcopy_tool" -O binary "$ELF_FILE" "$IMG_FILE"
 : >"$RAW_LOG_FILE"
 : >"$EVENT_LOG_FILE"
 : >"$QEMU_LOG_FILE"
 
-qemu-system-aarch64 \
+"$qemu_tool" \
     -M virt,gic-version=2,virtualization=on \
     -cpu cortex-a76 \
     -m 256M \

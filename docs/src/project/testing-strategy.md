@@ -37,6 +37,10 @@ Local evidence:
 - System QEMU is 7.2.22 and supports Raspberry Pi machines only through raspi3b.
 - Workspace QEMU 9.2.0 supports raspi4b but not raspi5, bcm2712, or RP1.
 - Workspace QEMU supports -cpu cortex-a76, which is useful with -M virt.
+- QEMU smoke scripts and the Cargo test runner resolve `qemu-system-aarch64`
+  through `scripts/qemu-tool.sh`. Use
+  `QEMU_SYSTEM_AARCH64=/path/to/qemu-system-aarch64` when the intended
+  workspace QEMU binary is not on `PATH`.
 
 ### QEMU raspi4b
 
