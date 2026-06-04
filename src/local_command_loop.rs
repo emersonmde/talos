@@ -1014,15 +1014,15 @@ where
                 return Err(LocalCommandExecError::SyscallFailed);
             }
             (expected_read_bytes, stdout_bytes, None)
-        } else if read_return_value == 0 {
-            let payload = initramfs::PHASE10_STDIN_NO_DATA_STDOUT;
+        } else if read_return_value == (syscall::EAGAIN as u64).wrapping_neg() {
+            let payload = initramfs::PHASE10_STDIN_READINESS_STDOUT;
             user_memory[..payload.len()].copy_from_slice(payload);
             let stdout_return =
                 self.write_userspace_stdout_bytes(&mappings, &user_memory, payload.len())?;
             if stdout_return != payload.len() as u64 {
                 return Err(LocalCommandExecError::SyscallFailed);
             }
-            (0, payload.len(), Some("eof/no-data"))
+            (0, payload.len(), Some("readiness/no-data"))
         } else {
             return Err(LocalCommandExecError::SyscallFailed);
         };
@@ -2858,10 +2858,10 @@ talos> Talos initramfs fixture\n"
         assert_eq!(exec.line(), b"exec stdin");
         assert_eq!(exec.status(), LocalCommandStatus::Handled);
         assert_eq!(exec.response_lines(), 10);
-        assert!(output.contains("talos> Talos userspace stdin fixture no-data: eof\n"));
+        assert!(output.contains("talos> Talos userspace stdin fixture no-data: readiness\n"));
         assert!(output.contains("talos: exec path=/bin/stdin source=vfs-open-read\n"));
         assert!(output.contains(
-            "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000000 return=0x0000000000000000 read-source=runtime-console0/local-input stdout-fd=0x0000000000000001 stdout-bytes=0x000000000000002b stdout-return=0x000000000000002b source=userspace-talos-read+userspace-talos-write read-result=eof/no-data\n"
+            "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000000 return=0xfffffffffffffff5 read-source=runtime-console0/local-input stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000031 stdout-return=0x0000000000000031 source=userspace-talos-read+userspace-talos-write read-result=readiness/no-data\n"
         ));
         assert!(output.contains(
             "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"

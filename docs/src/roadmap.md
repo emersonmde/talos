@@ -485,6 +485,23 @@ The post-review correction chain is:
     proof, networking, or SSH. No broader shell I/O task is mechanically
     unblocked by the closeout alone; supervisor planning is required for the
     next feature-led local I/O primitive.
+37. runtime-console0 stdin readiness distinction core: accepted in
+    `phase10-runtime-stdin-readiness-distinction-core-20260604`. This task
+    corrects the earlier EOF/no-data wording for runtime-console0/local-input:
+    ordinary no bytes immediately available now returns `-EAGAIN` from the
+    inherited `fd0=stdio-input` `TalosRead` path, reports
+    `Talos userspace stdin fixture no-data: readiness` through inherited fd1,
+    and records `read-result=readiness/no-data`. True terminal EOF remains
+    unimplemented for runtime-console0/local-input; fixed proof-buffer stdin
+    retains its bounded EOF behavior as historical Phase 7 evidence. The
+    successful `talos-console0` stdin read, stdout/stderr, descriptor-backed
+    VFS exec, lifecycle/status, consuming `waitpid`, non-consuming
+    `laststatus`, fixed `/bin` lookup, negative exec controls, and
+    descriptor-backed `cat /etc/banner.txt` remain retained regressions.
+    Scheduler-backed blocking reads, wait queues, select/poll, nonblocking
+    flags, Ctrl-D EOF policy, async execution, fork, signals, pipes,
+    redirection, distinct stderr stream routing, writable filesystem behavior,
+    libc stdio, Pi 5 proof, networking, and SSH remain deferred.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

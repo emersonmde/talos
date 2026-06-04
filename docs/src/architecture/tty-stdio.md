@@ -79,6 +79,15 @@ kernel-object handles for unit tests. It must not call TTY functions, poll
 UART MMIO, write runtime-console0 bytes, or present direct diagnostic TTY calls
 as POSIX descriptor I/O.
 
+The current Phase 10 runtime-console0/local-input stdin bridge keeps no-data
+readiness distinct from EOF. A shell-visible VFS-backed `/bin/stdin` process
+that reads inherited `fd0=stdio-input` receives available runtime-console0
+bytes immediately when present; if no byte is available, the syscall-substitute
+path reports `EAGAIN` and the fixture labels the transcript
+`read-result=readiness/no-data`. That no-data result is not terminal EOF.
+Ctrl-D, canonical EOF policy, blocking waits, readiness polling APIs, and
+scheduler wakeups remain future descriptor/syscall/TTY work.
+
 Until descriptor tables exist, kernel diagnostics may call TTY functions directly. They must not present those direct calls as POSIX read or write.
 
 ## Diagnostic Command Client

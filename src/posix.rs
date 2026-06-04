@@ -917,7 +917,7 @@ where
         selected_len += 1;
     }
     if selected_len == 0 {
-        return Ok(0);
+        return Err(PosixError::Again);
     }
 
     copy_to_user(
