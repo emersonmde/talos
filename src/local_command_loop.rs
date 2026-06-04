@@ -22,7 +22,7 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2",
     "+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1",
     "+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline",
-    "+stdout-only-pipeline-stderr-not-piped"
+    "+stdout-only-pipeline-stderr-not-piped+pipeline-stderr-dup-to-stdout"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -1055,8 +1055,13 @@ where
             request.producer.path(),
             initramfs::PHASE10_STDOUT_PATH | initramfs::PHASE10_STDERR_PATH
         ) || request.consumer.path() != initramfs::PHASE10_STDIN_PATH
-            || request.producer.redirection.is_some()
             || request.consumer.redirection.is_some()
+            || !matches!(
+                request.producer.redirection,
+                None | Some(LocalCommandExecRedirection::StderrToStdout)
+            )
+            || (request.producer.path() == initramfs::PHASE10_STDOUT_PATH
+                && request.producer.redirection.is_some())
         {
             return Err(LocalCommandExecError::InvalidPath);
         }
@@ -1077,10 +1082,13 @@ where
         self.pipe.close_reader();
         self.restore_pipe_endpoint(posix::STDIN_FD, stdin_restore)?;
         let consumer = consumer?;
-        let pipe_source = if producer.source_path == initramfs::PHASE10_STDERR_PATH {
-            "shell-pipe-stdout-only-stderr-not-piped"
-        } else {
-            "shell-pipe-stdout-to-stdin"
+        let pipe_source = match request.producer.redirection {
+            Some(LocalCommandExecRedirection::StderrToStdout) => "shell-pipe-stderr-dup-to-stdout",
+            None if producer.source_path == initramfs::PHASE10_STDERR_PATH => {
+                "shell-pipe-stdout-only-stderr-not-piped"
+            }
+            None => "shell-pipe-stdout-to-stdin",
+            _ => return Err(LocalCommandExecError::InvalidPath),
         };
 
         Ok(LocalCommandPipelineSummary {
@@ -1152,15 +1160,25 @@ where
                     .get(target_descriptor)
                     .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
                 if target_entry.require_writable().is_err()
-                    || target_entry.object().kind() != posix::DescriptorObjectKind::StdioOutput
+                    || !matches!(
+                        target_entry.object().kind(),
+                        posix::DescriptorObjectKind::StdioOutput
+                            | posix::DescriptorObjectKind::PipeEndpoint
+                    )
                 {
                     return Err(LocalCommandExecError::LaunchPipelineFailed);
                 }
-                (
-                    Some(target_entry),
-                    target_entry.object().stdio_stream_name(),
-                    target_entry.object().runtime_console_route_name(),
-                )
+                let (target_stream, target_route) = match target_entry.object().kind() {
+                    posix::DescriptorObjectKind::StdioOutput => (
+                        target_entry.object().stdio_stream_name(),
+                        target_entry.object().runtime_console_route_name(),
+                    ),
+                    posix::DescriptorObjectKind::PipeEndpoint => {
+                        ("pipe-writer", "pipe:stdout-to-stdin")
+                    }
+                    _ => return Err(LocalCommandExecError::LaunchPipelineFailed),
+                };
+                (Some(target_entry), target_stream, target_route)
             } else {
                 (None, "closed", "closed-descriptor")
             };
@@ -1404,7 +1422,11 @@ where
         let stderr_kind = match stderr {
             Ok(stderr) => {
                 if stderr.require_writable().is_err()
-                    || stderr.object().kind() != posix::DescriptorObjectKind::StdioOutput
+                    || !matches!(
+                        stderr.object().kind(),
+                        posix::DescriptorObjectKind::StdioOutput
+                            | posix::DescriptorObjectKind::PipeEndpoint
+                    )
                 {
                     return Err(LocalCommandExecError::LaunchPipelineFailed);
                 }
@@ -1672,12 +1694,14 @@ where
 
         if read_return_value == expected_read_bytes as u64 {
             let read_end = read_start + expected_read_bytes;
-            let expected_input = if read_source == "pipe:stdout-to-stdin" {
-                initramfs::PHASE10_STDOUT_PAYLOAD
-            } else {
-                LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES
-            };
-            if &user_memory[read_start..read_end] != expected_input {
+            let read_input = &user_memory[read_start..read_end];
+            if read_source == "pipe:stdout-to-stdin" {
+                if read_input != initramfs::PHASE10_STDOUT_PAYLOAD
+                    && read_input != initramfs::PHASE10_STDERR_PAYLOAD
+                {
+                    return Err(LocalCommandExecError::SyscallFailed);
+                }
+            } else if read_input != LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES {
                 return Err(LocalCommandExecError::SyscallFailed);
             }
 
@@ -3346,7 +3370,7 @@ mod tests {
     }
 
     struct CaptureSink {
-        bytes: [u8; 8192],
+        bytes: [u8; 16384],
         len: usize,
         fail_after: usize,
         writes: usize,
@@ -3355,7 +3379,7 @@ mod tests {
     impl CaptureSink {
         const fn new() -> Self {
             Self {
-                bytes: [0; 8192],
+                bytes: [0; 16384],
                 len: 0,
                 fail_after: usize::MAX,
                 writes: 0,
@@ -3364,7 +3388,7 @@ mod tests {
 
         const fn failing_after(fail_after: usize) -> Self {
             Self {
-                bytes: [0; 8192],
+                bytes: [0; 16384],
                 len: 0,
                 fail_after,
                 writes: 0,
@@ -4184,11 +4208,72 @@ talos> talos: exec-invalid-path\n"
     }
 
     #[test_case]
-    fn local_command_loop_rejects_unsupported_pipeline_forms() {
-        let bytes = *b"| exec stdin\rexec stdout |\rexec stdout | exec stdin | x\rexec missing | exec stdin\rexec stderr 2>&1 | exec stdin\r";
+    fn local_command_loop_pipes_child_stderr_after_dup_to_stdout() {
+        let bytes = *b"exec stderr 2>&1 | exec stdin\rwaitpid\rlaststatus\rexec stderr | exec stdin\rexec stdout | exec stdin\r";
         let input = ScriptedInput::new(bytes, bytes.len());
         let mut backend = CaptureSink::new();
-        let (leading, trailing, multi, missing, mixed_stderr) = {
+        let (mixed, waited, observed, plain_stderr, plain_stdout) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(mixed.line(), b"exec stderr 2>&1 | exec stdin");
+        assert_eq!(mixed.status(), LocalCommandStatus::Handled);
+        assert_eq!(mixed.response_lines(), 22);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.line(), b"laststatus");
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(plain_stderr.line(), b"exec stderr | exec stdin");
+        assert_eq!(plain_stderr.status(), LocalCommandStatus::Handled);
+        assert_eq!(plain_stdout.line(), b"exec stdout | exec stdin");
+        assert_eq!(plain_stdout.status(), LocalCommandStatus::Handled);
+        assert!(output.contains(
+            "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stderr consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stderr-dup-to-stdout\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=pipe-endpoint fd2=pipe-endpoint loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=dup source-fd=0x0000000000000002 target-fd=0x0000000000000001 target-stream=pipe-writer target-route=pipe:stdout-to-stdin child-only=true shell-restored=true source=shell-redirection-2-to-1\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=pipe-writer route=pipe:stdout-to-stdin source=userspace-talos-write\n"
+        ));
+        assert!(output.contains(
+            "talos> Talos userspace stdin fixture read: Talos userspace stderr fixture\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdin fd=0x0000000000000000 bytes=0x000000000000001f return=0x000000000000001f read-source=pipe:stdout-to-stdin stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000044 stdout-return=0x0000000000000044 source=userspace-talos-read+userspace-talos-write read-result=pipe-eof-after-writer-close\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stderr consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x0000000000000000 bytes-read=0x0000000000000000 writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-only-stderr-not-piped\n"
+        ));
+        assert!(output.contains(
+            "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-to-stdin\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_rejects_unsupported_pipeline_forms() {
+        let bytes = *b"| exec stdin\rexec stdout |\rexec stdout | exec stdin | x\rexec missing | exec stdin\rexec stdout 1>&2 | exec stdin\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (leading, trailing, multi, missing, mixed_stdout) = {
             let mut io =
                 DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
             (
@@ -4209,9 +4294,9 @@ talos> talos: exec-invalid-path\n"
         assert_eq!(multi.status(), LocalCommandStatus::UnexpectedArgument);
         assert_eq!(missing.line(), b"exec missing | exec stdin");
         assert_eq!(missing.status(), LocalCommandStatus::UnexpectedArgument);
-        assert_eq!(mixed_stderr.line(), b"exec stderr 2>&1 | exec stdin");
+        assert_eq!(mixed_stdout.line(), b"exec stdout 1>&2 | exec stdin");
         assert_eq!(
-            mixed_stderr.status(),
+            mixed_stdout.status(),
             LocalCommandStatus::UnexpectedArgument
         );
         assert!(output.contains("talos> talos: parse-error\n"));

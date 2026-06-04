@@ -990,6 +990,31 @@ The post-review correction chain is:
     'exec stderr 2>&1 | exec stdin'; file/device redirection needs an explicit
     target/sink contract, and broader multi-stage pipelines need a separate
     scheduling/status plan.
+62. pipeline stderr dup-to-stdout core: accepted in
+    'phase10-pipeline-stderr-dup-to-stdout-core-20260604'. This checkpoint
+    accepts exactly one descriptor-mixing pipeline form:
+    'exec stderr 2>&1 | exec stdin'. The producer pipe endpoint is installed on
+    fd1 first, then child-only '2>&1' duplicates that pipe-backed fd1 endpoint
+    into producer fd2. The VFS-backed '/bin/stderr' fixture writes 31 bytes
+    through fd2 as 'stream=pipe-writer route=pipe:stdout-to-stdin', the
+    VFS-backed '/bin/stdin' consumer reads those stderr fixture bytes from
+    inherited fd0, reports them through inherited fd1, observes
+    writer-close EOF, and leaves shell fd0/fd1/fd2 restored after the command.
+    Task-owned QEMU/substitute evidence records the mixed positive case,
+    consumer 'waitpid', non-consuming 'laststatus', no leaked pipe endpoints,
+    final classification
+    'qemu-local-shell-pipeline-stderr-dup-to-stdout-complete', and PASS.
+    Refreshed controls preserve plain 'exec stderr | exec stdin' as
+    stdout-only with zero pipe bytes and 'pipe-eof/no-data', plain
+    'exec stdout | exec stdin' as the 31-byte stdout transfer, both
+    descriptor-dup directions, both descriptor-close directions, deterministic
+    negative redirection controls, and descriptor-backed
+    'cat /etc/banner.txt'. This does not accept the inverse
+    'exec stdout 1>&2 | exec stdin', arbitrary 'N>&M', explicit stderr pipe
+    syntax, file/device redirection, writable filesystem behavior,
+    multi-stage/concurrent pipelines, pipefail, jobs, fork/signals, Pi 5
+    proof, networking, or SSH. The queued closeout is mechanically unblocked
+    and must remain docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
