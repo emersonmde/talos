@@ -1733,6 +1733,28 @@ The post-review correction chain is:
     transition remain deferred. The queued stderr arbitrary-/tmp core is
     mechanically unblocked and must stay bounded to stderr '2>' and '2>>'
     output redirection using this same policy.
+94. stderr arbitrary /tmp output redirection core: accepted in
+    'phase10-stderr-arbitrary-tmp-output-redirection-core-20260604'. This
+    extends stderr regular-file redirection from exact '/tmp/stderr.txt' to
+    conservative volatile '/tmp/BASENAME' output paths for the VFS-backed
+    '/bin/stderr' fixture. Accepted forms are
+    'exec stderr 2>/tmp/BASENAME' and
+    'exec stderr 2>>/tmp/BASENAME' where the basename is non-empty ASCII
+    letters, digits, '.', '_', or '-'. The retained QEMU/substitute transcript
+    proves truncate/create through '/tmp/omega.err', append/create through
+    '/tmp/theta.log', userspace TalosWrite provenance,
+    'target-route=volatile-vfs:/tmp/BASENAME', descriptor-backed cat readbacks,
+    waitpid, laststatus, and shell fd2 restoration. A normal 'exec stdout'
+    control remains routed to 'runtime-console0/stdout'. Deterministic negatives
+    reject outside-/tmp paths, nested/traversal paths, empty basenames,
+    unsupported fd numbers, the reserved stdout scratch name '/tmp/stdout.txt',
+    and fd2 shorthand output redirection without an explicit '2>'. Input
+    arbitrary paths, persistence, recursive directories, broad writable
+    filesystem mutation, arbitrary descriptor syntax beyond accepted forms,
+    descriptor moves, process accounting/concurrency, Pi 5 proof, networking,
+    SSH, and phase transition remain deferred. The queued stderr arbitrary-/tmp
+    closeout is mechanically unblocked and must stay docs/evidence
+    reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

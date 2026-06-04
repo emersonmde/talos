@@ -27,7 +27,7 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+stderr-dev-null-redirection+stdin-dev-null-redirection",
     "+readonly-regular-file-stdin-redirection+volatile-stdout-regular-file-redirection",
     "+volatile-stderr-regular-file-redirection+explicit-fd1-regular-file-redirection",
-    "+stdout-arbitrary-tmp-output-redirection"
+    "+stdout-arbitrary-tmp-output-redirection+stderr-arbitrary-tmp-output-redirection"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -225,6 +225,14 @@ pub struct LocalCommandVolatilePath {
 
 impl LocalCommandVolatilePath {
     fn from_supported_stdout_path(path: &[u8]) -> Option<Self> {
+        Self::from_supported_output_path(path, b"stderr.txt")
+    }
+
+    fn from_supported_stderr_path(path: &[u8]) -> Option<Self> {
+        Self::from_supported_output_path(path, b"stdout.txt")
+    }
+
+    fn from_supported_output_path(path: &[u8], reserved_basename: &[u8]) -> Option<Self> {
         const PREFIX: &[u8] = b"/tmp/";
         if !path.starts_with(PREFIX) {
             return None;
@@ -233,7 +241,7 @@ impl LocalCommandVolatilePath {
         if basename.is_empty()
             || basename == b"."
             || basename == b".."
-            || basename == b"stderr.txt"
+            || basename == reserved_basename
             || path.len() > LOCAL_COMMAND_VOLATILE_PATH_BYTES
         {
             return None;
@@ -282,8 +290,8 @@ pub enum LocalCommandExecRedirection {
     StdinFromEtcBanner,
     StdoutToTmpStdout(LocalCommandVolatilePath),
     StdoutAppendTmpStdout(LocalCommandVolatilePath),
-    StderrToTmpStderr,
-    StderrAppendTmpStderr,
+    StderrToTmpStderr(LocalCommandVolatilePath),
+    StderrAppendTmpStderr(LocalCommandVolatilePath),
 }
 
 impl LocalCommandExecRedirection {
@@ -297,7 +305,7 @@ impl LocalCommandExecRedirection {
             Self::StderrToDevNull => posix::STDERR_FD,
             Self::StdinFromDevNull | Self::StdinFromEtcBanner => posix::STDIN_FD,
             Self::StdoutToTmpStdout(_) | Self::StdoutAppendTmpStdout(_) => posix::STDOUT_FD,
-            Self::StderrToTmpStderr | Self::StderrAppendTmpStderr => posix::STDERR_FD,
+            Self::StderrToTmpStderr(_) | Self::StderrAppendTmpStderr(_) => posix::STDERR_FD,
         }
     }
 
@@ -313,8 +321,8 @@ impl LocalCommandExecRedirection {
             | Self::StdinFromEtcBanner
             | Self::StdoutToTmpStdout(_)
             | Self::StdoutAppendTmpStdout(_)
-            | Self::StderrToTmpStderr
-            | Self::StderrAppendTmpStderr => None,
+            | Self::StderrToTmpStderr(_)
+            | Self::StderrAppendTmpStderr(_) => None,
         }
     }
 
@@ -325,8 +333,8 @@ impl LocalCommandExecRedirection {
             Self::StdoutToDevNull
             | Self::StderrToDevNull
             | Self::StdoutToTmpStdout(_)
-            | Self::StderrToTmpStderr => "sink",
-            Self::StdoutAppendTmpStdout(_) | Self::StderrAppendTmpStderr => "append",
+            | Self::StderrToTmpStderr(_) => "sink",
+            Self::StdoutAppendTmpStdout(_) | Self::StderrAppendTmpStderr(_) => "append",
             Self::StdinFromDevNull | Self::StdinFromEtcBanner => "source",
         }
     }
@@ -343,8 +351,8 @@ impl LocalCommandExecRedirection {
             Self::StdinFromEtcBanner => "shell-redirection-stdin-etc-banner",
             Self::StdoutToTmpStdout(_) => "shell-redirection-stdout-tmp-stdout",
             Self::StdoutAppendTmpStdout(_) => "shell-redirection-stdout-tmp-stdout-append",
-            Self::StderrToTmpStderr => "shell-redirection-stderr-tmp-stderr",
-            Self::StderrAppendTmpStderr => "shell-redirection-stderr-tmp-stderr-append",
+            Self::StderrToTmpStderr(_) => "shell-redirection-stderr-tmp-stderr",
+            Self::StderrAppendTmpStderr(_) => "shell-redirection-stderr-tmp-stderr-append",
         }
     }
 
@@ -359,8 +367,8 @@ impl LocalCommandExecRedirection {
                 | Self::StdinFromEtcBanner
                 | Self::StdoutToTmpStdout(_)
                 | Self::StdoutAppendTmpStdout(_)
-                | Self::StderrToTmpStderr
-                | Self::StderrAppendTmpStderr
+                | Self::StderrToTmpStderr(_)
+                | Self::StderrAppendTmpStderr(_)
         )
     }
 }
@@ -713,13 +721,6 @@ pub trait LocalCommandSink {
         Err(LocalCommandFileReadError::NotSupported)
     }
 
-    fn read_stdout_scratch_file_via_descriptor(
-        &mut self,
-        _output: &mut [u8],
-    ) -> Result<usize, LocalCommandFileReadError> {
-        Err(LocalCommandFileReadError::NotSupported)
-    }
-
     fn read_stdout_tmp_file_via_descriptor(
         &mut self,
         _path: &[u8],
@@ -728,8 +729,9 @@ pub trait LocalCommandSink {
         Err(LocalCommandFileReadError::NotSupported)
     }
 
-    fn read_stderr_scratch_file_via_descriptor(
+    fn read_stderr_tmp_file_via_descriptor(
         &mut self,
+        _path: &[u8],
         _output: &mut [u8],
     ) -> Result<usize, LocalCommandFileReadError> {
         Err(LocalCommandFileReadError::NotSupported)
@@ -936,38 +938,28 @@ impl LocalCommandVolatileFileState {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 enum LocalCommandVolatileFileTarget {
     Stdout(LocalCommandVolatilePath),
-    Stderr,
+    Stderr(LocalCommandVolatilePath),
 }
 
 impl LocalCommandVolatileFileTarget {
     fn reference(self) -> usize {
         match self {
             Self::Stdout(_) => LOCAL_COMMAND_STDOUT_VOLATILE_FILE_REFERENCE,
-            Self::Stderr => LOCAL_COMMAND_STDERR_VOLATILE_FILE_REFERENCE,
-        }
-    }
-
-    fn path(self) -> LocalCommandVolatilePath {
-        match self {
-            Self::Stdout(path) => path,
-            Self::Stderr => LocalCommandVolatilePath {
-                path: LocalCommandText::from_bytes(b"/tmp/stderr.txt")
-                    .expect("stderr scratch path fits"),
-            },
+            Self::Stderr(_) => LOCAL_COMMAND_STDERR_VOLATILE_FILE_REFERENCE,
         }
     }
 
     fn path_text(self) -> LocalCommandFieldText<LOCAL_COMMAND_VOLATILE_PATH_BYTES> {
         match self {
             Self::Stdout(path) => path.path_text(),
-            Self::Stderr => LocalCommandFieldText::from_static("/tmp/stderr.txt"),
+            Self::Stderr(path) => path.path_text(),
         }
     }
 
     fn route_text(self) -> LocalCommandFieldText<LOCAL_COMMAND_VOLATILE_ROUTE_BYTES> {
         match self {
             Self::Stdout(path) => path.route_text(),
-            Self::Stderr => LocalCommandFieldText::from_static("volatile-vfs:/tmp/stderr.txt"),
+            Self::Stderr(path) => path.route_text(),
         }
     }
 }
@@ -1175,13 +1167,6 @@ where
         )
     }
 
-    fn read_stdout_scratch_file_via_descriptor(
-        &mut self,
-        output: &mut [u8],
-    ) -> Result<usize, LocalCommandFileReadError> {
-        self.read_stdout_tmp_file_via_descriptor(b"/tmp/stdout.txt", output)
-    }
-
     fn read_stdout_tmp_file_via_descriptor(
         &mut self,
         path: &[u8],
@@ -1196,13 +1181,16 @@ where
         )
     }
 
-    fn read_stderr_scratch_file_via_descriptor(
+    fn read_stderr_tmp_file_via_descriptor(
         &mut self,
+        path: &[u8],
         output: &mut [u8],
     ) -> Result<usize, LocalCommandFileReadError> {
+        let path = LocalCommandVolatilePath::from_supported_stderr_path(path)
+            .ok_or(LocalCommandFileReadError::NotSupported)?;
         self.read_scratch_file_descriptor(
             LOCAL_COMMAND_STDERR_VOLATILE_FILE_REFERENCE,
-            LocalCommandVolatileFileTarget::Stderr,
+            LocalCommandVolatileFileTarget::Stderr(path),
             output,
         )
     }
@@ -1258,8 +1246,8 @@ where
         if matches!(
             request.redirection,
             Some(
-                LocalCommandExecRedirection::StderrToTmpStderr
-                    | LocalCommandExecRedirection::StderrAppendTmpStderr
+                LocalCommandExecRedirection::StderrToTmpStderr(_)
+                    | LocalCommandExecRedirection::StderrAppendTmpStderr(_)
             )
         ) && source_path != initramfs::PHASE10_STDERR_PATH
         {
@@ -1510,18 +1498,24 @@ where
         )
     }
 
-    fn open_stderr_scratch_redirection(&mut self) -> Result<(), LocalCommandExecError> {
+    fn open_stderr_scratch_redirection(
+        &mut self,
+        path: LocalCommandVolatilePath,
+    ) -> Result<(), LocalCommandExecError> {
         self.open_scratch_redirection(
             posix::STDERR_FD,
-            LocalCommandVolatileFileTarget::Stderr,
+            LocalCommandVolatileFileTarget::Stderr(path),
             true,
         )
     }
 
-    fn open_stderr_scratch_append_redirection(&mut self) -> Result<(), LocalCommandExecError> {
+    fn open_stderr_scratch_append_redirection(
+        &mut self,
+        path: LocalCommandVolatilePath,
+    ) -> Result<(), LocalCommandExecError> {
         self.open_scratch_redirection(
             posix::STDERR_FD,
-            LocalCommandVolatileFileTarget::Stderr,
+            LocalCommandVolatileFileTarget::Stderr(path),
             false,
         )
     }
@@ -1552,8 +1546,8 @@ where
                 LocalCommandVolatileFileTarget::Stdout(path) => {
                     self.stdout_scratch_file.truncate_create(path)
                 }
-                LocalCommandVolatileFileTarget::Stderr => {
-                    self.stderr_scratch_file.truncate_create(target.path())
+                LocalCommandVolatileFileTarget::Stderr(path) => {
+                    self.stderr_scratch_file.truncate_create(path)
                 }
             }
         } else {
@@ -1561,8 +1555,8 @@ where
                 LocalCommandVolatileFileTarget::Stdout(path) => {
                     self.stdout_scratch_file.create_if_missing(path)
                 }
-                LocalCommandVolatileFileTarget::Stderr => {
-                    self.stderr_scratch_file.create_if_missing(target.path())
+                LocalCommandVolatileFileTarget::Stderr(path) => {
+                    self.stderr_scratch_file.create_if_missing(path)
                 }
             }
         }
@@ -1579,7 +1573,9 @@ where
             LocalCommandVolatileFileTarget::Stdout(path) => {
                 self.stdout_scratch_file.exists && self.stdout_scratch_file.path == path
             }
-            LocalCommandVolatileFileTarget::Stderr => self.stderr_scratch_file.exists,
+            LocalCommandVolatileFileTarget::Stderr(path) => {
+                self.stderr_scratch_file.exists && self.stderr_scratch_file.path == path
+            }
         };
         if !exists {
             return Err(LocalCommandFileReadError::NotFound);
@@ -1600,8 +1596,8 @@ where
             LocalCommandVolatileFileTarget::Stdout(path) => {
                 self.stdout_scratch_file.read(path, output)
             }
-            LocalCommandVolatileFileTarget::Stderr => {
-                self.stderr_scratch_file.read(target.path(), output)
+            LocalCommandVolatileFileTarget::Stderr(path) => {
+                self.stderr_scratch_file.read(path, output)
             }
         };
         let cleanup = self.close_regular_file_descriptor(descriptor);
@@ -1761,16 +1757,14 @@ where
                 "regular-file",
                 LocalCommandVolatileFileTarget::Stdout(path).route_text(),
             )
-        } else if matches!(
-            redirection,
-            LocalCommandExecRedirection::StderrToTmpStderr
-                | LocalCommandExecRedirection::StderrAppendTmpStderr
-        ) {
+        } else if let LocalCommandExecRedirection::StderrToTmpStderr(path)
+        | LocalCommandExecRedirection::StderrAppendTmpStderr(path) = redirection
+        {
             (
                 None,
-                Some(LocalCommandVolatileFileTarget::Stderr.path_text()),
+                Some(LocalCommandVolatileFileTarget::Stderr(path).path_text()),
                 "regular-file",
-                LocalCommandVolatileFileTarget::Stderr.route_text(),
+                LocalCommandVolatileFileTarget::Stderr(path).route_text(),
             )
         } else if redirection == LocalCommandExecRedirection::StdinFromEtcBanner {
             (
@@ -1829,9 +1823,14 @@ where
             LocalCommandExecRedirection::StdoutAppendTmpStdout(path) => Some(path),
             _ => None,
         };
-        let install_stderr_scratch = redirection == LocalCommandExecRedirection::StderrToTmpStderr;
-        let install_stderr_scratch_append =
-            redirection == LocalCommandExecRedirection::StderrAppendTmpStderr;
+        let install_stderr_scratch = match redirection {
+            LocalCommandExecRedirection::StderrToTmpStderr(path) => Some(path),
+            _ => None,
+        };
+        let install_stderr_scratch_append = match redirection {
+            LocalCommandExecRedirection::StderrAppendTmpStderr(path) => Some(path),
+            _ => None,
+        };
         if let Some(target_entry) = target_entry {
             if table.allocate_at(source_descriptor, target_entry).is_err() {
                 let _ = table.allocate_at(source_descriptor, restored_entry);
@@ -1870,9 +1869,9 @@ where
                 let _ = restore_table.allocate_at(source_descriptor, restored_entry);
                 return Err(LocalCommandExecError::LaunchPipelineFailed);
             }
-        } else if install_stderr_scratch {
+        } else if let Some(path) = install_stderr_scratch {
             let _ = table;
-            if self.open_stderr_scratch_redirection().is_err() {
+            if self.open_stderr_scratch_redirection(path).is_err() {
                 let restore_table = self
                     .descriptor_store
                     .current_descriptor_table_mut(self.current_owner)
@@ -1880,9 +1879,9 @@ where
                 let _ = restore_table.allocate_at(source_descriptor, restored_entry);
                 return Err(LocalCommandExecError::LaunchPipelineFailed);
             }
-        } else if install_stderr_scratch_append {
+        } else if let Some(path) = install_stderr_scratch_append {
             let _ = table;
-            if self.open_stderr_scratch_append_redirection().is_err() {
+            if self.open_stderr_scratch_append_redirection(path).is_err() {
                 let restore_table = self
                     .descriptor_store
                     .current_descriptor_table_mut(self.current_owner)
@@ -2656,7 +2655,8 @@ where
                 )),
                 LOCAL_COMMAND_STDERR_VOLATILE_FILE_REFERENCE => Ok((
                     "regular-file",
-                    LocalCommandVolatileFileTarget::Stderr.route_text(),
+                    LocalCommandVolatileFileTarget::Stderr(self.stderr_scratch_file.path)
+                        .route_text(),
                 )),
                 _ => Err(LocalCommandExecError::LaunchPipelineFailed),
             },
@@ -2733,7 +2733,7 @@ where
                     LocalCommandVolatileFileTarget::Stdout(self.stdout_scratch_file.path)
                 }
                 LOCAL_COMMAND_STDERR_VOLATILE_FILE_REFERENCE => {
-                    LocalCommandVolatileFileTarget::Stderr
+                    LocalCommandVolatileFileTarget::Stderr(self.stderr_scratch_file.path)
                 }
                 _ => return (syscall::EBADF as u64).wrapping_neg(),
             };
@@ -2759,7 +2759,7 @@ where
                 LocalCommandVolatileFileTarget::Stdout(_) => {
                     self.stdout_scratch_file.write(&scratch[..len])
                 }
-                LocalCommandVolatileFileTarget::Stderr => {
+                LocalCommandVolatileFileTarget::Stderr(_) => {
                     self.stderr_scratch_file.write(&scratch[..len])
                 }
             };
@@ -3144,12 +3144,15 @@ fn dispatch_local_command(
         "cat" => {
             match command.arguments {
                 Some("/etc/banner.txt") => write_banner_file(sink, responses)?,
-                Some("/tmp/stderr.txt") => write_stderr_scratch_file(sink, responses)?,
                 Some(path)
                     if LocalCommandVolatilePath::from_supported_stdout_path(path.as_bytes())
+                        .is_some()
+                        || LocalCommandVolatilePath::from_supported_stderr_path(
+                            path.as_bytes(),
+                        )
                         .is_some() =>
                 {
-                    write_stdout_scratch_file(sink, responses, path.as_bytes())?
+                    write_tmp_scratch_file(sink, responses, path.as_bytes())?
                 }
                 Some("banner.txt") => {
                     if sink.current_directory() == LocalCommandDirectory::Etc {
@@ -3381,10 +3384,16 @@ fn parse_exec_request(arguments: &str) -> Result<LocalCommandExecRequest, LocalC
             .and_then(LocalCommandVolatilePath::from_supported_stdout_path)
         {
             Some(LocalCommandExecRedirection::StdoutAppendTmpStdout(path))
-        } else if token == b"2>/tmp/stderr.txt" {
-            Some(LocalCommandExecRedirection::StderrToTmpStderr)
-        } else if token == b"2>>/tmp/stderr.txt" {
-            Some(LocalCommandExecRedirection::StderrAppendTmpStderr)
+        } else if let Some(path) = token
+            .strip_prefix(b"2>")
+            .and_then(LocalCommandVolatilePath::from_supported_stderr_path)
+        {
+            Some(LocalCommandExecRedirection::StderrToTmpStderr(path))
+        } else if let Some(path) = token
+            .strip_prefix(b"2>>")
+            .and_then(LocalCommandVolatilePath::from_supported_stderr_path)
+        {
+            Some(LocalCommandExecRedirection::StderrAppendTmpStderr(path))
         } else {
             None
         };
@@ -3528,58 +3537,59 @@ fn write_banner_file(
     write_file_contents(sink, responses, text)
 }
 
-fn write_stdout_scratch_file(
+fn write_tmp_scratch_file(
     sink: &mut impl LocalCommandSink,
     responses: &mut usize,
     path: &[u8],
 ) -> Result<(), LocalCommandCycleError> {
-    let Some(path) = LocalCommandVolatilePath::from_supported_stdout_path(path) else {
-        write_line(sink, responses, "talos: unexpected-argument")?;
-        return Ok(());
-    };
-    write_volatile_scratch_file(
-        sink,
-        responses,
-        LocalCommandVolatileFileTarget::Stdout(path),
-        |sink, output| sink.read_stdout_tmp_file_via_descriptor(path.as_bytes(), output),
-    )
+    let stdout_path = LocalCommandVolatilePath::from_supported_stdout_path(path);
+    let stderr_path = LocalCommandVolatilePath::from_supported_stderr_path(path);
+    if let Some(path) = stdout_path {
+        let mut bytes = [0u8; LOCAL_COMMAND_VOLATILE_FILE_BYTES];
+        match sink.read_stdout_tmp_file_via_descriptor(path.as_bytes(), &mut bytes) {
+            Ok(bytes_read) => {
+                return write_volatile_scratch_file_contents(
+                    sink,
+                    responses,
+                    LocalCommandVolatileFileTarget::Stdout(path),
+                    &bytes[..bytes_read],
+                );
+            }
+            Err(LocalCommandFileReadError::NotFound) => {}
+            Err(_) => {
+                write_line(sink, responses, "talos: filesystem-error")?;
+                return Ok(());
+            }
+        }
+    }
+    if let Some(path) = stderr_path {
+        let mut bytes = [0u8; LOCAL_COMMAND_VOLATILE_FILE_BYTES];
+        match sink.read_stderr_tmp_file_via_descriptor(path.as_bytes(), &mut bytes) {
+            Ok(bytes_read) => {
+                return write_volatile_scratch_file_contents(
+                    sink,
+                    responses,
+                    LocalCommandVolatileFileTarget::Stderr(path),
+                    &bytes[..bytes_read],
+                );
+            }
+            Err(LocalCommandFileReadError::NotFound) => {}
+            Err(_) => {
+                write_line(sink, responses, "talos: filesystem-error")?;
+                return Ok(());
+            }
+        }
+    }
+    write_line(sink, responses, "talos: not-found")
 }
 
-fn write_stderr_scratch_file(
+fn write_volatile_scratch_file_contents(
     sink: &mut impl LocalCommandSink,
     responses: &mut usize,
-) -> Result<(), LocalCommandCycleError> {
-    write_volatile_scratch_file(
-        sink,
-        responses,
-        LocalCommandVolatileFileTarget::Stderr,
-        |sink, output| sink.read_stderr_scratch_file_via_descriptor(output),
-    )
-}
-
-fn write_volatile_scratch_file<S, F>(
-    sink: &mut S,
-    responses: &mut usize,
     target: LocalCommandVolatileFileTarget,
-    read: F,
-) -> Result<(), LocalCommandCycleError>
-where
-    S: LocalCommandSink,
-    F: FnOnce(&mut S, &mut [u8]) -> Result<usize, LocalCommandFileReadError>,
-{
-    let mut bytes = [0u8; LOCAL_COMMAND_VOLATILE_FILE_BYTES];
-    let bytes_read = match read(sink, &mut bytes) {
-        Ok(bytes_read) => bytes_read,
-        Err(LocalCommandFileReadError::NotFound) => {
-            write_line(sink, responses, "talos: not-found")?;
-            return Ok(());
-        }
-        Err(_) => {
-            write_line(sink, responses, "talos: filesystem-error")?;
-            return Ok(());
-        }
-    };
-    let text = match core::str::from_utf8(&bytes[..bytes_read]) {
+    bytes: &[u8],
+) -> Result<(), LocalCommandCycleError> {
+    let text = match core::str::from_utf8(bytes) {
         Ok(text) => text,
         Err(_) => {
             write_line(sink, responses, "talos: filesystem-error")?;
@@ -3590,7 +3600,7 @@ where
     write_str_part(sink, "talos: cat path=")?;
     write_field_text_part(sink, target.path_text())?;
     write_str_part(sink, " bytes=")?;
-    write_hex_usize_part(sink, bytes_read)?;
+    write_hex_usize_part(sink, bytes.len())?;
     write_str_part(sink, " source=volatile-vfs-descriptor-read")?;
     finish_dynamic_line(sink, responses)
 }
@@ -5294,8 +5304,85 @@ talos> Talos initramfs fixture\n"
     }
 
     #[test_case]
+    fn local_command_loop_redirects_stderr_to_arbitrary_tmp_basenames() {
+        let bytes = *b"exec stderr 2>/tmp/omega.err\rwaitpid\rlaststatus\rcat /tmp/omega.err\rexec stderr 2>>/tmp/theta.log\rwaitpid\rlaststatus\rcat /tmp/theta.log\rexec stderr\rexec stdout\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (
+            truncated,
+            first_waited,
+            first_observed,
+            first_readback,
+            appended,
+            second_waited,
+            second_observed,
+            second_readback,
+            normal_stderr,
+            normal_stdout,
+        ) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(truncated.line(), b"exec stderr 2>/tmp/omega.err");
+        assert_eq!(truncated.status(), LocalCommandStatus::Handled);
+        assert_eq!(first_waited.line(), b"waitpid");
+        assert_eq!(first_waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(first_observed.line(), b"laststatus");
+        assert_eq!(first_observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(first_readback.line(), b"cat /tmp/omega.err");
+        assert_eq!(first_readback.status(), LocalCommandStatus::Handled);
+        assert_eq!(appended.line(), b"exec stderr 2>>/tmp/theta.log");
+        assert_eq!(appended.status(), LocalCommandStatus::Handled);
+        assert_eq!(second_waited.line(), b"waitpid");
+        assert_eq!(second_waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(second_observed.line(), b"laststatus");
+        assert_eq!(second_observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(second_readback.line(), b"cat /tmp/theta.log");
+        assert_eq!(second_readback.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal_stderr.line(), b"exec stderr");
+        assert_eq!(normal_stderr.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal_stdout.line(), b"exec stdout");
+        assert_eq!(normal_stdout.status(), LocalCommandStatus::Handled);
+        assert!(output.contains(
+            "talos: exec-redirection op=sink source-fd=0x0000000000000002 target-path=/tmp/omega.err target-stream=regular-file target-route=volatile-vfs:/tmp/omega.err child-only=true shell-restored=true source=shell-redirection-stderr-tmp-stderr\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=regular-file route=volatile-vfs:/tmp/omega.err source=userspace-talos-write\n"
+        ));
+        assert!(output.contains(
+            "talos: cat path=/tmp/omega.err bytes=0x000000000000001f source=volatile-vfs-descriptor-read\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=append source-fd=0x0000000000000002 target-path=/tmp/theta.log target-stream=regular-file target-route=volatile-vfs:/tmp/theta.log child-only=true shell-restored=true source=shell-redirection-stderr-tmp-stderr-append\n"
+        ));
+        assert!(output.contains(
+            "talos: cat path=/tmp/theta.log bytes=0x000000000000001f source=volatile-vfs-descriptor-read\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=stderr route=runtime-console0/stderr source=userspace-talos-write\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write\n"
+        ));
+    }
+
+    #[test_case]
     fn local_command_loop_rejects_unsupported_explicit_file_output_aliases() {
-        let bytes = *b"exec stdout 3>/tmp/stdout.txt\rexec stdout 1>/var/other.txt\rexec stdout 1>>/tmp/nested/other.txt\r";
+        let bytes = *b"exec stdout 3>/tmp/stdout.txt\rexec stdout 1>/var/other.txt\rexec stdout 1>>/tmp/nested/x.txt\r";
         let input = ScriptedInput::new(bytes, bytes.len());
         let mut backend = CaptureSink::new();
         let (unsupported_fd, unsupported_truncate_path, unsupported_append_path) = {
@@ -5324,7 +5411,7 @@ talos> Talos initramfs fixture\n"
         );
         assert_eq!(
             unsupported_append_path.line(),
-            b"exec stdout 1>>/tmp/nested/other.txt"
+            b"exec stdout 1>>/tmp/nested/x.txt"
         );
         assert_eq!(
             unsupported_append_path.status(),
@@ -5802,7 +5889,7 @@ talos> Talos initramfs fixture\n"
 
     #[test_case]
     fn local_command_loop_rejects_unsupported_redirection_forms() {
-        let bytes = *b"exec stdout 2>&3\rexec stdout 1>file\rexec stdout | stderr\rexec stderr 2>file\rexec stdout >>/tmp/stdout.txt\rexec stderr 2>>/tmp/stderr.txt\rexec stdout >/var/other.txt\rexec stderr 2>/tmp/stdout.txt\r";
+        let bytes = *b"exec stdout 2>&3\rexec stdout 1>file\rexec stdout | stderr\rexec stderr 2>file\rexec stdout >>/tmp/stderr.txt\rexec stderr 2>>/tmp/stdout.txt\rexec stdout >/var/other.txt\rexec stderr 2>/tmp/stdout.txt\r";
         let input = ScriptedInput::new(bytes, bytes.len());
         let mut backend = CaptureSink::new();
         let (
@@ -5841,9 +5928,9 @@ talos> Talos initramfs fixture\n"
         assert_eq!(pipe.status(), LocalCommandStatus::UnexpectedArgument);
         assert_eq!(stderr_file.line(), b"exec stderr 2>file");
         assert_eq!(stderr_file.status(), LocalCommandStatus::UnexpectedArgument);
-        assert_eq!(append.line(), b"exec stdout >>/tmp/stdout.txt");
+        assert_eq!(append.line(), b"exec stdout >>/tmp/stderr.txt");
         assert_eq!(append.status(), LocalCommandStatus::UnexpectedArgument);
-        assert_eq!(stderr_append.line(), b"exec stderr 2>>/tmp/stderr.txt");
+        assert_eq!(stderr_append.line(), b"exec stderr 2>>/tmp/stdout.txt");
         assert_eq!(
             stderr_append.status(),
             LocalCommandStatus::UnexpectedArgument
