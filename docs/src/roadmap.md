@@ -900,6 +900,26 @@ The post-review correction chain is:
     descriptor syntax, writable filesystem behavior, Pi 5 proof, networking,
     and SSH remain deferred. The queued minimal pipeline closeout is
     mechanically unblocked and must remain docs/evidence reconciliation only.
+58. minimal stdout-to-stdin pipeline closeout: accepted in
+    'phase10-minimal-stdout-to-stdin-pipe-closeout-20260604'. This closeout
+    checkpoints the accepted first pipeline frontier as exactly one
+    shell-visible form: 'exec stdout | exec stdin'. Retained QEMU/substitute
+    evidence maps producer fd1 as the pipe writer, consumer fd0 as the
+    matching pipe reader, matching 31-byte write/read counts,
+    writer-close EOF, shell descriptor restoration, producer and consumer
+    lifecycle/status records, consumer 'waitpid' and 'laststatus',
+    deterministic unsupported pipe/bad-command controls, descriptor
+    redirection controls, normal stdio controls, stdin wait/readiness and EOF
+    controls, and descriptor-backed 'cat /etc/banner.txt'. This frontier
+    accepts descriptor ownership, deterministic byte transfer, close/EOF
+    behavior, and consumer status observation for one exact two-stage form.
+    It does not accept concurrent POSIX pipeline scheduling, multi-stage
+    pipelines, pipefail, background jobs, async execution, fork, signals, job
+    control, file redirection, arbitrary descriptor syntax, writable
+    filesystem behavior, Pi 5 proof, networking, or SSH. The queued
+    stdout-only stderr-not-piped core is mechanically unblocked as the next
+    bounded pipe semantic and must keep the accepted minimal pipeline as its
+    positive control.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
