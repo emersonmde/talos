@@ -1306,6 +1306,29 @@ The post-review correction chain is:
     pipes, Pi 5 proof, networking, SSH, and a phase transition remain deferred.
     The queued read-only regular-file stdin closeout is mechanically unblocked
     and must remain docs/evidence reconciliation only.
+76. read-only regular-file stdin redirection closeout: accepted in
+    'phase10-readonly-regular-file-stdin-redirection-closeout-20260604'. This
+    checkpoint reconciles exact 'exec stdin </etc/banner.txt' as the first
+    accepted regular-file fd0 source redirection for the VFS-backed
+    '/bin/stdin' fixture. The accepted record reports 'fd0=regular-file',
+    'op=source', 'source-path=/etc/banner.txt',
+    'source-stream=regular-file',
+    'source-route=initramfs:/etc/banner.txt',
+    'read-source=initramfs:/etc/banner.txt', 'bytes=0x18', and
+    'read-result=regular-file-eof-after-read'; the visible userspace output is
+    the banner payload read through 'TalosRead'. A following normal
+    'exec stdin' control proves restored shell fd0 by reading
+    'talos-console0' from runtime-console0/local-input. The evidence map
+    retains '/dev/null' stdin, runtime-console0 stdin readiness/EOF,
+    userspace stdout/stderr, descriptor redirection and pipeline controls,
+    VFS exec/open/read, lifecycle/status, waitpid, laststatus, deterministic
+    negatives, and descriptor-backed 'cat /etc/banner.txt'. This does not
+    accept output regular-file redirection, append/truncate, writable
+    filesystem mutation, arbitrary descriptor syntax, arbitrary path
+    expansion, here-docs, broader pipes, Pi 5 proof, networking, SSH, or a
+    phase transition. The queued read-only input redirection frontier closeout
+    is mechanically unblocked and must remain docs/evidence reconciliation
+    only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
