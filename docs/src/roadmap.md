@@ -964,6 +964,32 @@ The post-review correction chain is:
     Pi 5 proof, networking, or SSH. The queued minimal pipeline frontier
     closeout is mechanically unblocked and must remain docs/evidence
     reconciliation only.
+61. minimal pipeline frontier closeout: accepted in
+    'phase10-minimal-pipeline-frontier-closeout-20260604'. This closeout
+    reconciles the accepted exact two-stage pipeline frontier before broader
+    pipe syntax, descriptor-mixing syntax, file/device redirection,
+    process-control expansion, networking, or SSH. The accepted forms remain
+    exactly 'exec stdout | exec stdin' and 'exec stderr | exec stdin'.
+    The first transfers 31 bytes from producer fd1/stdout to consumer
+    fd0/stdin; the second proves stdout-only pipe semantics by leaving
+    producer fd2/stderr on 'stream=stderr route=runtime-console0/stderr'
+    while the consumer sees zero pipe bytes with
+    'read-result=pipe-eof/no-data'. Retained QEMU/substitute evidence maps
+    shell descriptor restoration, descriptor-dup and descriptor-close
+    controls, normal stdout/stderr route controls, stdin wait/readiness and
+    Ctrl-D EOF controls, descriptor-backed VFS exec, lifecycle/status,
+    consuming 'waitpid', non-consuming 'laststatus', deterministic negative
+    controls, and descriptor-backed 'cat /etc/banner.txt'. This frontier does
+    not accept '2>&1' inside pipelines, explicit stderr piping, multi-stage
+    pipelines, concurrent POSIX pipeline scheduling, pipefail, async
+    execution, fork, signals, job control, file/device redirection, arbitrary
+    descriptor syntax, writable filesystem behavior, Pi 5 proof, networking,
+    or SSH. Supervisor planning is required before the next feature-led shell
+    I/O task because no explicit queued task remains. The strongest local
+    recommendation is an explicit descriptor-mixing pipeline slice such as
+    'exec stderr 2>&1 | exec stdin'; file/device redirection needs an explicit
+    target/sink contract, and broader multi-stage pipelines need a separate
+    scheduling/status plan.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
