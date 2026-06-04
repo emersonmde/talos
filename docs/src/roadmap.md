@@ -1775,6 +1775,32 @@ The post-review correction chain is:
     arbitrary '/tmp' output redirection frontier closeout is mechanically
     unblocked and must stay docs/evidence reconciliation only before requiring
     supervisor planning for any broader capability.
+96. arbitrary /tmp output redirection frontier closeout: accepted in
+    'phase10-arbitrary-tmp-output-redirection-frontier-closeout-20260604'.
+    This closeout reconciles the accepted stdout and stderr volatile
+    '/tmp/BASENAME' output path frontier without adding code. The accepted
+    stdout forms remain 'exec stdout >/tmp/BASENAME',
+    'exec stdout >>/tmp/BASENAME', 'exec stdout 1>/tmp/BASENAME', and
+    'exec stdout 1>>/tmp/BASENAME'; the accepted stderr forms remain
+    'exec stderr 2>/tmp/BASENAME' and
+    'exec stderr 2>>/tmp/BASENAME'. The basename grammar remains non-empty
+    ASCII letters, digits, '.', '_', or '-' under '/tmp/', and the accepted
+    route remains volatile VFS only. The consolidated evidence map retains the
+    task-owned stdout and stderr arbitrary-/tmp QEMU/substitute transcripts for
+    truncate/create, append/create, explicit fd1 aliases, userspace TalosWrite
+    provenance, volatile VFS target routes, descriptor-backed readbacks,
+    fd1/fd2 restoration, distinct stdout/stderr behavior, waitpid,
+    laststatus, path-policy negatives, errors=0, and PASS. Retained controls
+    cover exact stdout/stderr output redirection, append/create, explicit fd1,
+    /dev/null, read-only stdin redirection, normal stdio, descriptor
+    redirection/pipeline behavior, VFS exec/open/read/write, lifecycle/status,
+    and descriptor-backed cat. Arbitrary input paths, persistence, recursive
+    directories, path traversal, broad writable filesystem mutation,
+    arbitrary descriptor syntax beyond accepted fd1/fd2 output forms,
+    descriptor moves, process accounting/concurrency, Pi 5 proof, networking,
+    SSH, and phase transition remain deferred. No explicit queued follow-up is
+    mechanically unblocked; supervisor planning is required before any broader
+    capability is promoted.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
