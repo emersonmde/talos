@@ -23,7 +23,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1",
     "+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline",
     "+stdout-only-pipeline-stderr-not-piped+pipeline-stderr-dup-to-stdout",
-    "+pipeline-stdout-redirect-away+stdout-dev-null-redirection"
+    "+pipeline-stdout-redirect-away+stdout-dev-null-redirection",
+    "+stderr-dev-null-redirection"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -172,6 +173,7 @@ pub enum LocalCommandExecRedirection {
     CloseStdout,
     CloseStderr,
     StdoutToDevNull,
+    StderrToDevNull,
 }
 
 impl LocalCommandExecRedirection {
@@ -182,6 +184,7 @@ impl LocalCommandExecRedirection {
             Self::CloseStdout => posix::STDOUT_FD,
             Self::CloseStderr => posix::STDERR_FD,
             Self::StdoutToDevNull => posix::STDOUT_FD,
+            Self::StderrToDevNull => posix::STDERR_FD,
         }
     }
 
@@ -189,7 +192,10 @@ impl LocalCommandExecRedirection {
         match self {
             Self::StdoutToStderr => Some(posix::STDERR_FD),
             Self::StderrToStdout => Some(posix::STDOUT_FD),
-            Self::CloseStdout | Self::CloseStderr | Self::StdoutToDevNull => None,
+            Self::CloseStdout
+            | Self::CloseStderr
+            | Self::StdoutToDevNull
+            | Self::StderrToDevNull => None,
         }
     }
 
@@ -197,7 +203,7 @@ impl LocalCommandExecRedirection {
         match self {
             Self::StdoutToStderr | Self::StderrToStdout => "dup",
             Self::CloseStdout | Self::CloseStderr => "close",
-            Self::StdoutToDevNull => "sink",
+            Self::StdoutToDevNull | Self::StderrToDevNull => "sink",
         }
     }
 
@@ -208,13 +214,17 @@ impl LocalCommandExecRedirection {
             Self::CloseStdout => "shell-redirection-1-close",
             Self::CloseStderr => "shell-redirection-2-close",
             Self::StdoutToDevNull => "shell-redirection-stdout-dev-null",
+            Self::StderrToDevNull => "shell-redirection-stderr-dev-null",
         }
     }
 
     const fn installs_replacement_descriptor(self) -> bool {
         matches!(
             self,
-            Self::StdoutToStderr | Self::StderrToStdout | Self::StdoutToDevNull
+            Self::StdoutToStderr
+                | Self::StderrToStdout
+                | Self::StdoutToDevNull
+                | Self::StderrToDevNull
         )
     }
 }
@@ -1176,48 +1186,51 @@ where
         {
             return Err(LocalCommandExecError::LaunchPipelineFailed);
         }
-        let (target_entry, target_path, target_stream, target_route) =
-            if redirection == LocalCommandExecRedirection::StdoutToDevNull {
-                (
-                    Some(posix::DescriptorEntry::new(
-                        posix::DescriptorAccess::WriteOnly,
-                        posix::DescriptorFlags::EMPTY,
-                        posix::DescriptorObject::new(
-                            posix::DescriptorObjectKind::Device,
-                            posix::DEV_NULL_REFERENCE,
-                        ),
-                    )),
-                    Some("/dev/null"),
-                    "null-sink",
-                    "device:/dev/null",
-                )
-            } else if let Some(target_descriptor) = target_descriptor {
-                let target_entry = table
-                    .get(target_descriptor)
-                    .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
-                if target_entry.require_writable().is_err()
-                    || !matches!(
-                        target_entry.object().kind(),
-                        posix::DescriptorObjectKind::StdioOutput
-                            | posix::DescriptorObjectKind::PipeEndpoint
-                    )
-                {
-                    return Err(LocalCommandExecError::LaunchPipelineFailed);
-                }
-                let (target_stream, target_route) = match target_entry.object().kind() {
-                    posix::DescriptorObjectKind::StdioOutput => (
-                        target_entry.object().stdio_stream_name(),
-                        target_entry.object().runtime_console_route_name(),
+        let (target_entry, target_path, target_stream, target_route) = if matches!(
+            redirection,
+            LocalCommandExecRedirection::StdoutToDevNull
+                | LocalCommandExecRedirection::StderrToDevNull
+        ) {
+            (
+                Some(posix::DescriptorEntry::new(
+                    posix::DescriptorAccess::WriteOnly,
+                    posix::DescriptorFlags::EMPTY,
+                    posix::DescriptorObject::new(
+                        posix::DescriptorObjectKind::Device,
+                        posix::DEV_NULL_REFERENCE,
                     ),
-                    posix::DescriptorObjectKind::PipeEndpoint => {
-                        ("pipe-writer", "pipe:stdout-to-stdin")
-                    }
-                    _ => return Err(LocalCommandExecError::LaunchPipelineFailed),
-                };
-                (Some(target_entry), None, target_stream, target_route)
-            } else {
-                (None, None, "closed", "closed-descriptor")
+                )),
+                Some("/dev/null"),
+                "null-sink",
+                "device:/dev/null",
+            )
+        } else if let Some(target_descriptor) = target_descriptor {
+            let target_entry = table
+                .get(target_descriptor)
+                .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+            if target_entry.require_writable().is_err()
+                || !matches!(
+                    target_entry.object().kind(),
+                    posix::DescriptorObjectKind::StdioOutput
+                        | posix::DescriptorObjectKind::PipeEndpoint
+                )
+            {
+                return Err(LocalCommandExecError::LaunchPipelineFailed);
+            }
+            let (target_stream, target_route) = match target_entry.object().kind() {
+                posix::DescriptorObjectKind::StdioOutput => (
+                    target_entry.object().stdio_stream_name(),
+                    target_entry.object().runtime_console_route_name(),
+                ),
+                posix::DescriptorObjectKind::PipeEndpoint => {
+                    ("pipe-writer", "pipe:stdout-to-stdin")
+                }
+                _ => return Err(LocalCommandExecError::LaunchPipelineFailed),
             };
+            (Some(target_entry), None, target_stream, target_route)
+        } else {
+            (None, None, "closed", "closed-descriptor")
+        };
 
         table
             .close(source_descriptor)
@@ -2549,6 +2562,8 @@ fn parse_exec_request(arguments: &str) -> Result<LocalCommandExecRequest, LocalC
             Some(LocalCommandExecRedirection::CloseStderr)
         } else if token == b">/dev/null" {
             Some(LocalCommandExecRedirection::StdoutToDevNull)
+        } else if token == b"2>/dev/null" {
+            Some(LocalCommandExecRedirection::StderrToDevNull)
         } else {
             None
         };
@@ -4050,6 +4065,54 @@ talos> Talos initramfs fixture\n"
         ));
         assert!(output.contains(
             "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_redirects_child_stderr_to_dev_null_only_for_one_exec() {
+        let bytes = *b"exec stderr 2>/dev/null\rwaitpid\rexec stderr\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (redirected, waited, normal) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(redirected.line(), b"exec stderr 2>/dev/null");
+        assert_eq!(redirected.status(), LocalCommandStatus::Handled);
+        assert_eq!(redirected.response_lines(), 11);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal.line(), b"exec stderr");
+        assert_eq!(normal.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal.response_lines(), 10);
+        assert_eq!(
+            output
+                .matches("talos> Talos userspace stderr fixture\n")
+                .count(),
+            1
+        );
+        assert!(output.contains("talos: exec path=/bin/stderr source=vfs-open-read\n"));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=device loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=sink source-fd=0x0000000000000002 target-path=/dev/null target-stream=null-sink target-route=device:/dev/null child-only=true shell-restored=true source=shell-redirection-stderr-dev-null\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=null-sink route=device:/dev/null source=userspace-talos-write\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stderr state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=stderr route=runtime-console0/stderr source=userspace-talos-write\n"
         ));
     }
 

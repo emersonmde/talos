@@ -1142,6 +1142,27 @@ The post-review correction chain is:
     transition. The queued stderr-to-/dev/null core is mechanically unblocked
     and must remain bounded to the same explicit `/dev/null` sink contract.
 
+69. /dev/null stderr redirection core: accepted in
+    `phase10-dev-null-stderr-redirection-core-20260604`. This checkpoint
+    accepts exactly `exec stderr 2>/dev/null` as the fd2 sibling of the
+    accepted stdout sink contract. The VFS-backed `/bin/stderr` child has
+    fd2 rebound to the `/dev/null` device sink, reports `fd2=device`,
+    `op=sink`, `target-path=/dev/null`, `target-stream=null-sink`,
+    `target-route=device:/dev/null`, and `exec-stderr ... stream=null-sink
+    route=device:/dev/null`, while `TalosWrite` validates/copies and
+    discards 31 bytes. The task-owned QEMU/substitute smoke confirms the
+    redirected stderr fixture payload is absent from runtime-console0/stderr
+    for the redirected command, then a following normal `exec stderr` proves
+    shell fd2 restoration. The evidence map retains stdout-to-/dev/null,
+    normal stderr, descriptor redirection, descriptor-mixing pipeline, stdin
+    readiness/EOF, and descriptor-backed `cat /etc/banner.txt` controls.
+    `exec stderr 2>file`, `exec stderr 2>>/dev/null`,
+    `exec stderr </dev/null`, regular-file redirection, append/truncate, input
+    redirection, arbitrary descriptor syntax, writable filesystem behavior,
+    multi-stage/concurrent pipelines, Pi 5 proof, networking, SSH, and a
+    phase transition remain deferred. The queued stderr-to-/dev/null closeout
+    is mechanically unblocked for docs/evidence reconciliation only.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
