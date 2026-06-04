@@ -538,6 +538,22 @@ The post-review correction chain is:
     flags, Ctrl-D EOF policy, async execution, fork, signals, pipes,
     redirection, distinct stderr stream routing, writable filesystem behavior,
     libc stdio, Pi 5 proof, networking, and SSH remain deferred.
+40. bounded runtime-console0 stdin wait closeout: accepted in
+    `phase10-bounded-runtime-stdin-wait-closeout-20260604`. This checkpoint
+    reconciles the delayed-byte bounded wait and no-bytes-within-budget
+    readiness/no-data regression before any broader I/O work. The evidence map
+    keeps delayed `talos-console0` bytes as
+    `read-result=bounded-wait/delayed-input`, keeps no bytes within the
+    bounded budget as `-EAGAIN`/`read-result=readiness/no-data`, retains the
+    successful immediate runtime-console0 stdin read, and preserves
+    stdout/stderr, descriptor-backed VFS exec, loader temporary descriptor
+    non-leak, lifecycle/status, consuming `waitpid`, non-consuming
+    `laststatus`, fixed `/bin` lookup, negative exec controls, and
+    descriptor-backed `cat /etc/banner.txt` regressions. The bounded retry is
+    not full POSIX blocking read semantics. No explicit queued follow-up task
+    remains; supervisor planning is required before scheduler-backed
+    blocking/readiness, Ctrl-D EOF, distinct stderr routing, pipes,
+    redirection, or other local I/O expansion.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
