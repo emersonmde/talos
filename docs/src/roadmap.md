@@ -1015,6 +1015,28 @@ The post-review correction chain is:
     multi-stage/concurrent pipelines, pipefail, jobs, fork/signals, Pi 5
     proof, networking, or SSH. The queued closeout is mechanically unblocked
     and must remain docs/evidence reconciliation only.
+63. pipeline stderr dup-to-stdout closeout: accepted in
+    'phase10-pipeline-stderr-dup-to-stdout-closeout-20260604'. This closeout
+    records the accepted descriptor-ordering boundary for exactly
+    'exec stderr 2>&1 | exec stdin': producer fd1 becomes the pipe writer,
+    then child-only '2>&1' duplicates that pipe-backed endpoint into producer
+    fd2 before '/bin/stderr' writes. Retained QEMU/substitute evidence maps
+    the 31-byte stderr fixture transfer into consumer fd0, stdout reporting
+    through inherited fd1, writer-close EOF, shell fd0/fd1/fd2 restoration,
+    consumer 'waitpid', consumer 'laststatus', no leaked pipe endpoints,
+    final classification
+    'qemu-local-shell-pipeline-stderr-dup-to-stdout-complete', errors=0, and
+    PASS. The evidence map also retains plain 'exec stdout | exec stdin',
+    plain 'exec stderr | exec stdin', descriptor-dup and descriptor-close
+    controls, normal stdio/stderr routing, stdin readiness and Ctrl-D EOF,
+    VFS exec, lifecycle/status, deterministic negative controls, and
+    descriptor-backed 'cat /etc/banner.txt'. This checkpoint does not accept
+    inverse 'exec stdout 1>&2 | exec stdin', arbitrary descriptor syntax,
+    explicit stderr pipe syntax, file/device redirection, writable filesystem
+    behavior, multi-stage/concurrent pipelines, pipefail, jobs, fork/signals,
+    Pi 5 proof, networking, SSH, or a phase transition. The queued inverse
+    redirection-away core is mechanically unblocked and must remain bounded to
+    that exact command form.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
