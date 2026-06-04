@@ -1357,6 +1357,30 @@ The post-review correction chain is:
     feature-led shell I/O task because likely follow-ups cross distinct risks:
     writable output targets, broader descriptor grammar, or lifecycle/process
     accounting.
+78. stdout regular-file redirection core: accepted in
+    'phase10-stdout-regular-file-redirection-core-20260604'. This accepts
+    exactly 'exec stdout >/tmp/stdout.txt' for the VFS-backed '/bin/stdout'
+    fixture. The launched child fd1 is rebound to a minimal volatile
+    regular-file descriptor, reports 'fd1=regular-file', 'op=sink',
+    'target-path=/tmp/stdout.txt', 'target-stream=regular-file',
+    'target-route=volatile-vfs:/tmp/stdout.txt', and the userspace stdout
+    fixture writes 'bytes=0x1f' through 'source=userspace-talos-write'. A
+    following descriptor-backed 'cat /tmp/stdout.txt' observes the captured
+    'Talos userspace stdout fixture' bytes and records
+    'cat path=/tmp/stdout.txt bytes=0x1f
+    source=volatile-vfs-descriptor-read'; a later normal 'exec stdout' proves
+    shell fd1 restoration through 'runtime-console0/stdout'. The evidence map
+    retains /dev/null output sinks, read-only stdin redirection, normal stdio,
+    descriptor dup/close redirection, descriptor-mixing pipelines, VFS
+    exec/open/read, lifecycle/status, waitpid, laststatus, deterministic
+    append/arbitrary-path/stderr-file negatives, and
+    descriptor-backed 'cat /etc/banner.txt'. This does not accept stderr
+    regular-file redirection, append/truncate variants beyond the exact
+    create/truncate behavior, arbitrary paths, persistent storage, wider
+    writable filesystem mutation, broader descriptor syntax, Pi 5 proof,
+    networking, SSH, or a phase transition. The queued stdout regular-file
+    redirection closeout is mechanically unblocked and must remain
+    docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
