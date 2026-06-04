@@ -12,6 +12,47 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-04 - Phase 10 Scheduler-Backed Runtime Stdin Wait Accepted
+
+- Status: accepted as the Phase 10 QEMU/substitute scheduler-backed stdin
+  wait core. No Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, Ctrl-D EOF policy, select/poll, nonblocking flags, pipes,
+  redirection, async job control, fork, signals, termios, writable filesystem,
+  networking, SSH, or distinct physical stderr sink was added.
+- Context: The prior bounded runtime-console0 stdin wait proved delayed bytes
+  could be consumed after an initial readiness/no-data observation, but the
+  accepted mechanism was still a task-local finite retry budget rather than a
+  scheduler-owned wait/readiness boundary.
+- Decision: Accept
+  phase10-scheduler-backed-stdin-wait-core-20260604. After an inherited
+  fd0 TalosRead returns -EAGAIN for runtime-console0/local-input, Talos now
+  records a scheduler stdin wait with task 0x100001, fd0, blocked sleep state,
+  runnable wake state, wait-cycle count, and
+  source=scheduler-runtime-console-readiness. Delayed talos-console0 bytes
+  wake/resume that same path and are then consumed through inherited fd0 and
+  reported through inherited fd1 as read-result=scheduler-wait/delayed-input.
+  The no-delayed-input control records timeout/no-false-eof and remains
+  readiness/no-data, not terminal EOF.
+- Evidence level: fmt/lint, no_std unit tests, QEMU/substitute delayed-input
+  scheduler-wait smoke, QEMU/substitute no-false-EOF/no-data control,
+  QEMU/substitute immediate stdin control, and QEMU/substitute stdout/stderr
+  plus VFS exec/status/wait/cat controls. Retained logs live under
+  tasks/evidence/2026-06-04-phase10-scheduler-backed-stdin-wait-core/,
+  tasks/evidence/2026-06-04-phase10-runtime-stdin-readiness-distinction-core/,
+  tasks/evidence/2026-06-03-phase10-runtime-console0-stdin-core/, and
+  tasks/evidence/2026-06-03-phase10-userspace-stderr-inherited-fd-core/.
+- Validation: cargo fmt --all -- --check passed; cargo -Zjson-target-spec
+  test --quiet passed with 390 tests; qemu-local-shell-scheduler-backed-stdin-
+  wait-smoke.sh passed; qemu-local-shell-runtime-stdin-readiness-smoke.sh
+  passed; qemu-local-shell-runtime-console0-stdin-smoke.sh passed;
+  qemu-local-shell-userspace-stderr-smoke.sh passed; git diff --check passed;
+  mdbook build passed; git diff --cached --check passed before commit.
+- Consequences: The accepted local stdin frontier moves from bounded retry
+  evidence to scheduler-owned wait/readiness evidence. Ctrl-D EOF remains the
+  next queued local I/O primitive after closeout; broader poll/select,
+  nonblocking flags, pipes, redirection, job control, writable filesystem,
+  networking, and SSH remain deferred.
+
 ## 2026-05-31 - Phase 8 Live Translation-Register Activation Core Accepted
 
 - Status: accepted as the Milestone 8.3 implementation core for the

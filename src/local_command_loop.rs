@@ -9,7 +9,7 @@ use crate::{
     },
     program_loader,
     runtime_console::{self, ConsoleBackend, ConsoleInputBackend, DEFAULT_RUNTIME_CONSOLE},
-    scheduler::ProcessOwnerId,
+    scheduler::{ProcessOwnerId, TaskId, TaskState},
     syscall,
     tty::{self, CANONICAL_LINE_CAPACITY, PollingTtyRxOutcome, PollingTtyRxResult},
 };
@@ -36,9 +36,9 @@ const LOCAL_COMMAND_STDIN_USER_MEMORY_LEN: usize = 128;
 const LOCAL_COMMAND_STDIN_READ_OFFSET: usize = 0x40;
 const LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES: &[u8] = b"talos-console0";
 #[cfg(not(test))]
-const LOCAL_COMMAND_RUNTIME_STDIN_WAIT_ATTEMPTS: usize = 1_000_000;
+const LOCAL_COMMAND_RUNTIME_STDIN_WAIT_CYCLES: usize = 1_000_000;
 #[cfg(test)]
-const LOCAL_COMMAND_RUNTIME_STDIN_WAIT_ATTEMPTS: usize = 4;
+const LOCAL_COMMAND_RUNTIME_STDIN_WAIT_CYCLES: usize = 4;
 const LOCAL_COMMAND_STDERR_USER_BASE: u64 = 0x0000_0000_0014_0000;
 const LOCAL_COMMAND_STDERR_USER_MEMORY_LEN: usize = 128;
 const LOCAL_COMMAND_EXEC_ADDRESS_SPACE_ID: u64 = 0x0010_0001;
@@ -360,6 +360,18 @@ pub struct LocalCommandUserspaceStdinRecord {
     source: &'static str,
     read_result: Option<&'static str>,
     readiness_observations: usize,
+    scheduler_wait: Option<LocalCommandSchedulerStdinWaitRecord>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LocalCommandSchedulerStdinWaitRecord {
+    task_id: u64,
+    descriptor: usize,
+    sleep_state: TaskState,
+    wake_state: TaskState,
+    wait_cycles: usize,
+    result: &'static str,
+    source: &'static str,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -541,6 +553,77 @@ where
             return None;
         }
         self.input_backend.poll_read_byte()
+    }
+}
+
+struct RuntimeStdinReadBackend<'a, I> {
+    ready_byte: &'a mut Option<u8>,
+    backend: &'a mut I,
+}
+
+impl<I> ConsoleInputBackend for RuntimeStdinReadBackend<'_, I>
+where
+    I: ConsoleInputBackend,
+{
+    fn poll_read_byte(&mut self) -> Option<u8> {
+        self.ready_byte
+            .take()
+            .or_else(|| self.backend.poll_read_byte())
+    }
+}
+
+struct LocalCommandRuntimeStdinWait {
+    task_id: TaskId,
+    descriptor: usize,
+    state: TaskState,
+    wait_cycles: usize,
+}
+
+impl LocalCommandRuntimeStdinWait {
+    const SOURCE: &'static str = "scheduler-runtime-console-readiness";
+
+    const fn new(task_id: TaskId, descriptor: usize) -> Self {
+        Self {
+            task_id,
+            descriptor,
+            state: TaskState::Running,
+            wait_cycles: 0,
+        }
+    }
+
+    fn sleep(&mut self) -> LocalCommandSchedulerStdinWaitRecord {
+        self.state = TaskState::Blocked;
+        self.record("sleep")
+    }
+
+    fn observe_wait_cycle(&mut self) -> Result<(), LocalCommandExecError> {
+        self.wait_cycles = self
+            .wait_cycles
+            .checked_add(1)
+            .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
+        Ok(())
+    }
+
+    fn wake(&mut self) -> LocalCommandSchedulerStdinWaitRecord {
+        self.state = TaskState::Runnable;
+        self.record("wakeup/resume")
+    }
+
+    fn cancel_no_data(&mut self) -> LocalCommandSchedulerStdinWaitRecord {
+        self.state = TaskState::Runnable;
+        self.record("timeout/no-false-eof")
+    }
+
+    const fn record(&self, result: &'static str) -> LocalCommandSchedulerStdinWaitRecord {
+        LocalCommandSchedulerStdinWaitRecord {
+            task_id: self.task_id.raw(),
+            descriptor: self.descriptor,
+            sleep_state: TaskState::Blocked,
+            wake_state: self.state,
+            wait_cycles: self.wait_cycles,
+            result,
+            source: Self::SOURCE,
+        }
     }
 }
 
@@ -897,6 +980,100 @@ where
         })
     }
 
+    fn dispatch_runtime_stdin_read(
+        &mut self,
+        mappings: &[posix::UserMapping],
+        user_memory: &mut [u8; LOCAL_COMMAND_STDIN_USER_MEMORY_LEN],
+        scratch: &mut [u8; LOCAL_COMMAND_STDIN_USER_MEMORY_LEN],
+        ready_byte: &mut Option<u8>,
+    ) -> u64 {
+        let mut stdin_backend = RuntimeStdinReadBackend {
+            ready_byte,
+            backend: &mut self.input_backend,
+        };
+        syscall::dispatch_process_descriptor_with_initramfs_and_console_stdin(
+            syscall::TALOS_READ_SYSCALL,
+            syscall::SyscallArguments::new([
+                posix::STDIN_FD as u64,
+                LOCAL_COMMAND_STDIN_USER_BASE + LOCAL_COMMAND_STDIN_READ_OFFSET as u64,
+                LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES.len() as u64,
+                0,
+                0,
+                0,
+            ]),
+            self.current_owner,
+            &mut self.descriptor_store,
+            mappings,
+            LOCAL_COMMAND_STDIN_USER_BASE,
+            user_memory,
+            scratch,
+            &mut self.output_backend,
+            initramfs::phase8_readonly_initramfs_fixture(),
+            &mut self.read_only_files,
+            None,
+            Some(&mut stdin_backend),
+        )
+        .return_value()
+        .x0()
+    }
+
+    fn wait_for_runtime_stdin_readiness(
+        &mut self,
+        ready_byte: &mut Option<u8>,
+    ) -> Result<LocalCommandSchedulerStdinWaitRecord, LocalCommandExecError> {
+        let task_id = TaskId::new(LOCAL_COMMAND_EXEC_PROCESS_ID)
+            .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
+        let mut wait = LocalCommandRuntimeStdinWait::new(task_id, posix::STDIN_FD);
+        self.write_scheduler_stdin_wait_line(wait.sleep())?;
+
+        while wait.wait_cycles < LOCAL_COMMAND_RUNTIME_STDIN_WAIT_CYCLES {
+            wait.observe_wait_cycle()?;
+            if let Some(byte) = self.input_backend.poll_read_byte() {
+                *ready_byte = Some(byte);
+                let record = wait.wake();
+                self.write_scheduler_stdin_wait_line(record)?;
+                return Ok(record);
+            }
+        }
+
+        let record = wait.cancel_no_data();
+        self.write_scheduler_stdin_wait_line(record)?;
+        Ok(record)
+    }
+
+    fn write_scheduler_stdin_wait_line(
+        &mut self,
+        record: LocalCommandSchedulerStdinWaitRecord,
+    ) -> Result<(), LocalCommandExecError> {
+        self.write_command_str("talos: stdin-wait task=")
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        write_hex_u64_to_command_sink(self, record.task_id)?;
+        self.write_command_str(" fd=")
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        write_hex_usize_to_command_sink(self, record.descriptor)?;
+        self.write_command_str(" sleep-state=")
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        self.write_command_str(task_state_name(record.sleep_state))
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        self.write_command_str(" wake-state=")
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        self.write_command_str(task_state_name(record.wake_state))
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        self.write_command_str(" wait-cycles=")
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        write_hex_usize_to_command_sink(self, record.wait_cycles)?;
+        self.write_command_str(" result=")
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        self.write_command_str(record.result)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        self.write_command_str(" source=")
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        self.write_command_str(record.source)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        self.write_command_str("\n")
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)
+    }
+
     fn emit_userspace_stdout_fixture(
         &mut self,
         source_path: &'static [u8],
@@ -970,98 +1147,83 @@ where
         let expected_read_bytes = LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES.len();
         let mut readiness_observations = 0usize;
         let mut stdout_bytes = 0usize;
-        let mut read_return_value;
+        let mut ready_byte = None;
+        let mut scheduler_wait = None;
         let read_bytes;
         let read_result;
+        let mut read_return_value = self.dispatch_runtime_stdin_read(
+            &mappings,
+            &mut user_memory,
+            &mut scratch,
+            &mut ready_byte,
+        );
 
-        loop {
-            let read = syscall::dispatch_process_descriptor_with_initramfs_and_console_stdin(
-                syscall::TALOS_READ_SYSCALL,
-                syscall::SyscallArguments::new([
-                    posix::STDIN_FD as u64,
-                    LOCAL_COMMAND_STDIN_USER_BASE + LOCAL_COMMAND_STDIN_READ_OFFSET as u64,
-                    LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES.len() as u64,
-                    0,
-                    0,
-                    0,
-                ]),
-                self.current_owner,
-                &mut self.descriptor_store,
-                &mappings,
-                LOCAL_COMMAND_STDIN_USER_BASE,
-                &mut user_memory,
-                &mut scratch,
-                &mut self.output_backend,
-                initramfs::phase8_readonly_initramfs_fixture(),
-                &mut self.read_only_files,
-                None,
-                Some(&mut self.input_backend),
-            );
-            read_return_value = read.return_value().x0();
-            if read_return_value == expected_read_bytes as u64 {
-                let read_end = read_start + expected_read_bytes;
-                if &user_memory[read_start..read_end] != LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES {
-                    return Err(LocalCommandExecError::SyscallFailed);
-                }
-
-                let prefix = initramfs::PHASE10_STDIN_STDOUT_PREFIX;
-                user_memory[..prefix.len()].copy_from_slice(prefix);
-                let prefix_write =
-                    self.write_userspace_stdout_bytes(&mappings, &user_memory, prefix.len())?;
-                let read_write = self.write_userspace_stdout_bytes(
-                    &mappings,
-                    &user_memory[read_start..read_end],
-                    expected_read_bytes,
-                )?;
-                user_memory[0] = b'\n';
-                let newline_write =
-                    self.write_userspace_stdout_bytes(&mappings, &user_memory, 1)?;
-                let read_stdout_bytes = prefix
-                    .len()
-                    .checked_add(expected_read_bytes)
-                    .and_then(|len| len.checked_add(1))
-                    .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
-                if prefix_write + read_write + newline_write != read_stdout_bytes as u64 {
-                    return Err(LocalCommandExecError::SyscallFailed);
-                }
-                stdout_bytes = stdout_bytes
-                    .checked_add(read_stdout_bytes)
-                    .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
-                read_bytes = expected_read_bytes;
-                read_result = if readiness_observations == 0 {
-                    None
-                } else {
-                    Some("bounded-wait/delayed-input")
-                };
-                break;
+        if read_return_value == (syscall::EAGAIN as u64).wrapping_neg() {
+            let payload = initramfs::PHASE10_STDIN_READINESS_STDOUT;
+            user_memory[..payload.len()].copy_from_slice(payload);
+            let stdout_return =
+                self.write_userspace_stdout_bytes(&mappings, &user_memory, payload.len())?;
+            if stdout_return != payload.len() as u64 {
+                return Err(LocalCommandExecError::SyscallFailed);
             }
+            stdout_bytes = stdout_bytes
+                .checked_add(payload.len())
+                .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
 
-            if read_return_value != (syscall::EAGAIN as u64).wrapping_neg() {
+            let wait_record = self.wait_for_runtime_stdin_readiness(&mut ready_byte)?;
+            readiness_observations = wait_record.wait_cycles;
+            scheduler_wait = Some(wait_record);
+            if ready_byte.is_some() {
+                read_return_value = self.dispatch_runtime_stdin_read(
+                    &mappings,
+                    &mut user_memory,
+                    &mut scratch,
+                    &mut ready_byte,
+                );
+            }
+        }
+
+        if read_return_value == expected_read_bytes as u64 {
+            let read_end = read_start + expected_read_bytes;
+            if &user_memory[read_start..read_end] != LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES {
                 return Err(LocalCommandExecError::SyscallFailed);
             }
 
-            readiness_observations = readiness_observations
-                .checked_add(1)
+            let prefix = initramfs::PHASE10_STDIN_STDOUT_PREFIX;
+            user_memory[..prefix.len()].copy_from_slice(prefix);
+            let prefix_write =
+                self.write_userspace_stdout_bytes(&mappings, &user_memory, prefix.len())?;
+            let read_write = self.write_userspace_stdout_bytes(
+                &mappings,
+                &user_memory[read_start..read_end],
+                expected_read_bytes,
+            )?;
+            user_memory[0] = b'\n';
+            let newline_write = self.write_userspace_stdout_bytes(&mappings, &user_memory, 1)?;
+            let read_stdout_bytes = prefix
+                .len()
+                .checked_add(expected_read_bytes)
+                .and_then(|len| len.checked_add(1))
                 .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
-            if readiness_observations == 1 {
-                let payload = initramfs::PHASE10_STDIN_READINESS_STDOUT;
-                user_memory[..payload.len()].copy_from_slice(payload);
-                let stdout_return =
-                    self.write_userspace_stdout_bytes(&mappings, &user_memory, payload.len())?;
-                if stdout_return != payload.len() as u64 {
-                    return Err(LocalCommandExecError::SyscallFailed);
-                }
-                stdout_bytes = stdout_bytes
-                    .checked_add(payload.len())
-                    .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
+            if prefix_write + read_write + newline_write != read_stdout_bytes as u64 {
+                return Err(LocalCommandExecError::SyscallFailed);
             }
-
-            if readiness_observations >= LOCAL_COMMAND_RUNTIME_STDIN_WAIT_ATTEMPTS {
-                read_bytes = 0;
-                read_result = Some("readiness/no-data");
-                break;
-            }
-            core::hint::spin_loop();
+            stdout_bytes = stdout_bytes
+                .checked_add(read_stdout_bytes)
+                .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
+            read_bytes = expected_read_bytes;
+            read_result = if readiness_observations == 0 {
+                None
+            } else {
+                Some("scheduler-wait/delayed-input")
+            };
+        } else if read_return_value == (syscall::EAGAIN as u64).wrapping_neg()
+            && scheduler_wait.is_some()
+        {
+            read_bytes = 0;
+            read_result = Some("readiness/no-data");
+        } else {
+            return Err(LocalCommandExecError::SyscallFailed);
         }
 
         Ok(Some(LocalCommandUserspaceStdinRecord {
@@ -1075,6 +1237,7 @@ where
             source: "userspace-talos-read+userspace-talos-write",
             read_result,
             readiness_observations,
+            scheduler_wait,
         }))
     }
 
@@ -2101,6 +2264,14 @@ fn write_exec_userspace_stdin_line(
         write_str_part(sink, " readiness-observations=")?;
         write_hex_usize_part(sink, record.readiness_observations)?;
     }
+    if let Some(wait) = record.scheduler_wait {
+        write_str_part(sink, " scheduler-wait-result=")?;
+        write_str_part(sink, wait.result)?;
+        write_str_part(sink, " scheduler-wait-cycles=")?;
+        write_hex_usize_part(sink, wait.wait_cycles)?;
+        write_str_part(sink, " scheduler-wait-source=")?;
+        write_str_part(sink, wait.source)?;
+    }
     finish_dynamic_line(sink, response_lines)
 }
 
@@ -2201,6 +2372,48 @@ fn write_hex_usize_part(
     value: usize,
 ) -> Result<(), LocalCommandCycleError> {
     write_hex_u64_part(sink, value as u64)
+}
+
+fn write_hex_usize_to_command_sink(
+    sink: &mut impl LocalCommandSink,
+    value: usize,
+) -> Result<(), LocalCommandExecError> {
+    write_hex_u64_to_command_sink(sink, value as u64)
+}
+
+fn write_hex_u64_to_command_sink(
+    sink: &mut impl LocalCommandSink,
+    value: u64,
+) -> Result<(), LocalCommandExecError> {
+    let mut bytes = [0u8; 18];
+    bytes[0] = b'0';
+    bytes[1] = b'x';
+    let mut shift = 60usize;
+    let mut index = 2usize;
+    while index < bytes.len() {
+        let digit = ((value >> shift) & 0xf) as u8;
+        bytes[index] = match digit {
+            0..=9 => b'0' + digit,
+            _ => b'a' + (digit - 10),
+        };
+        if shift == 0 {
+            break;
+        }
+        shift -= 4;
+        index += 1;
+    }
+    let text =
+        core::str::from_utf8(&bytes).map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+    sink.write_command_str(text)
+        .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)
+}
+
+const fn task_state_name(state: TaskState) -> &'static str {
+    match state {
+        TaskState::Running => "running",
+        TaskState::Runnable => "runnable",
+        TaskState::Blocked => "blocked",
+    }
 }
 
 fn write_decimal_usize_part(
@@ -2941,9 +3154,15 @@ talos> Talos initramfs fixture\n"
         assert_eq!(exec.status(), LocalCommandStatus::Handled);
         assert_eq!(exec.response_lines(), 10);
         assert!(output.contains("talos> Talos userspace stdin fixture no-data: readiness\n"));
+        assert!(output.contains(
+            "talos: stdin-wait task=0x0000000000100001 fd=0x0000000000000000 sleep-state=blocked wake-state=blocked wait-cycles=0x0000000000000000 result=sleep source=scheduler-runtime-console-readiness\n"
+        ));
+        assert!(output.contains(
+            "talos: stdin-wait task=0x0000000000100001 fd=0x0000000000000000 sleep-state=blocked wake-state=runnable wait-cycles=0x0000000000000004 result=timeout/no-false-eof source=scheduler-runtime-console-readiness\n"
+        ));
         assert!(output.contains("talos: exec path=/bin/stdin source=vfs-open-read\n"));
         assert!(output.contains(
-            "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000000 return=0xfffffffffffffff5 read-source=runtime-console0/local-input stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000031 stdout-return=0x0000000000000031 source=userspace-talos-read+userspace-talos-write read-result=readiness/no-data readiness-observations=0x0000000000000004\n"
+            "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000000 return=0xfffffffffffffff5 read-source=runtime-console0/local-input stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000031 stdout-return=0x0000000000000031 source=userspace-talos-read+userspace-talos-write read-result=readiness/no-data readiness-observations=0x0000000000000004 scheduler-wait-result=timeout/no-false-eof scheduler-wait-cycles=0x0000000000000004 scheduler-wait-source=scheduler-runtime-console-readiness\n"
         ));
         assert!(output.contains(
             "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"
@@ -2978,9 +3197,15 @@ talos> Talos initramfs fixture\n"
         assert_eq!(observed.line(), b"laststatus");
         assert_eq!(observed.status(), LocalCommandStatus::Handled);
         assert!(output.contains("talos> Talos userspace stdin fixture no-data: readiness\n"));
+        assert!(output.contains(
+            "talos: stdin-wait task=0x0000000000100001 fd=0x0000000000000000 sleep-state=blocked wake-state=blocked wait-cycles=0x0000000000000000 result=sleep source=scheduler-runtime-console-readiness\n"
+        ));
+        assert!(output.contains(
+            "talos: stdin-wait task=0x0000000000100001 fd=0x0000000000000000 sleep-state=blocked wake-state=runnable wait-cycles=0x0000000000000002 result=wakeup/resume source=scheduler-runtime-console-readiness\n"
+        ));
         assert!(output.contains("Talos userspace stdin fixture read: talos-console0\n"));
         assert!(output.contains(
-            "talos: exec-stdin fd=0x0000000000000000 bytes=0x000000000000000e return=0x000000000000000e read-source=runtime-console0/local-input stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000064 stdout-return=0x0000000000000064 source=userspace-talos-read+userspace-talos-write read-result=bounded-wait/delayed-input readiness-observations=0x0000000000000002\n"
+            "talos: exec-stdin fd=0x0000000000000000 bytes=0x000000000000000e return=0x000000000000000e read-source=runtime-console0/local-input stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000064 stdout-return=0x0000000000000064 source=userspace-talos-read+userspace-talos-write read-result=scheduler-wait/delayed-input readiness-observations=0x0000000000000002 scheduler-wait-result=wakeup/resume scheduler-wait-cycles=0x0000000000000002 scheduler-wait-source=scheduler-runtime-console-readiness\n"
         ));
         assert!(output.contains(
             "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"

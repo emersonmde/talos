@@ -554,6 +554,28 @@ The post-review correction chain is:
     remains; supervisor planning is required before scheduler-backed
     blocking/readiness, Ctrl-D EOF, distinct stderr routing, pipes,
     redirection, or other local I/O expansion.
+41. scheduler-backed runtime-console0 stdin wait core: accepted in
+    `phase10-scheduler-backed-stdin-wait-core-20260604`. Shell-visible
+    VFS-backed `exec stdin` now records an explicit scheduler-owned stdin
+    wait/readiness state after the first inherited fd0 `TalosRead` returns
+    `-EAGAIN`. The delayed-byte evidence records `talos: stdin-wait` sleep and
+    wake/resume markers tied to task `0x100001`, fd0, blocked/runnable task
+    states, wait-cycle count, and
+    `source=scheduler-runtime-console-readiness`, then consumes delayed
+    `talos-console0` bytes through inherited fd0 and reports them through
+    inherited fd1 with `read-result=scheduler-wait/delayed-input`. The
+    no-delayed-input control remains `-EAGAIN` with
+    `result=timeout/no-false-eof` and does not claim terminal EOF. The prior
+    bounded retry loop is no longer the accepted delayed-stdin mechanism; the
+    old bounded smoke path is retained only as compatibility scaffolding for
+    scheduler-backed markers. Immediate runtime-console0 stdin, stdout/stderr,
+    descriptor-backed VFS exec, loader temporary descriptor non-leak,
+    lifecycle/status, consuming `waitpid`, non-consuming `laststatus`, fixed
+    `/bin` lookup, negative exec controls, and descriptor-backed
+    `cat /etc/banner.txt` remain retained regressions. Ctrl-D EOF, select/poll,
+    nonblocking flags, async execution, fork, signals, termios, pipes,
+    redirection, distinct stderr routing, writable filesystem behavior, libc
+    stdio, Pi 5 proof, networking, and SSH remain deferred.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
