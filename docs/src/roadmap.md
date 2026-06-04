@@ -444,6 +444,30 @@ The post-review correction chain is:
     networking, and SSH claims. The queued EOF/no-data stdin variant remains
     mechanically unblocked as the next narrow local I/O primitive, with the
     successful runtime-console0 stdin read retained as a regression.
+35. stdin EOF/no-data core: accepted in
+    `phase10-stdin-eof-no-data-core-20260603`. Shell-visible `exec stdin`
+    continues to resolve through the accepted fixed `/bin` lookup to
+    `/bin/stdin`, read the executable through descriptor-backed VFS/open/read,
+    and run it through the accepted loader/startup/descriptor inheritance/
+    lifecycle/status/`waitpid`/`laststatus` chain. When runtime-console0/local
+    input has no bytes immediately available after the command terminator, the
+    launched fixture observes `TalosRead` return `0` through inherited
+    `fd0=stdio-input`, reports
+    `Talos userspace stdin fixture no-data: eof` through inherited fd1, and
+    records
+    `exec-stdin fd=0 bytes=0 return=0
+    read-source=runtime-console0/local-input stdout-fd=1 stdout-bytes=0x2b
+    stdout-return=0x2b source=userspace-talos-read+userspace-talos-write
+    read-result=eof/no-data`. The successful runtime-console0
+    `talos-console0` stdin read remains retained as the happy-path regression
+    alongside stdout/stderr, VFS exec, lifecycle/status, `waitpid`,
+    non-consuming `laststatus`, fixed `/bin` lookup, zero/nonzero status
+    controls, negative exec controls, and descriptor-backed
+    `cat /etc/banner.txt`. Blocking scheduler I/O, readiness/polling APIs,
+    canonical terminal policy expansion, async execution, fork, signals, pipes,
+    redirection, distinct stderr stream routing, writable filesystem behavior,
+    libc stdio, Pi 5 proof, networking, and SSH remain deferred. The queued
+    EOF/no-data closeout is mechanically unblocked by this accepted evidence.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
