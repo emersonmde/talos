@@ -24,7 +24,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline",
     "+stdout-only-pipeline-stderr-not-piped+pipeline-stderr-dup-to-stdout",
     "+pipeline-stdout-redirect-away+stdout-dev-null-redirection",
-    "+stderr-dev-null-redirection+stdin-dev-null-redirection"
+    "+stderr-dev-null-redirection+stdin-dev-null-redirection",
+    "+readonly-regular-file-stdin-redirection"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -34,6 +35,7 @@ const LOCAL_COMMAND_EXEC_PATH_BYTES: usize = LOCAL_COMMAND_LITERAL_ARG_BYTES;
 const LOCAL_COMMAND_FILE_USER_BASE: u64 = 0x0000_0000_0011_0000;
 const LOCAL_COMMAND_FILE_READ_OFFSET: usize = 0x40;
 const LOCAL_COMMAND_FILE_USER_MEMORY_LEN: usize = 128;
+const LOCAL_COMMAND_READ_ONLY_FILE_CAPACITY: usize = 2;
 const LOCAL_COMMAND_EXEC_READ_OFFSET: usize = 0x80;
 const LOCAL_COMMAND_EXEC_USER_MEMORY_LEN: usize = 1024;
 const LOCAL_COMMAND_STDIN_USER_BASE: u64 = 0x0000_0000_0013_0000;
@@ -175,6 +177,7 @@ pub enum LocalCommandExecRedirection {
     StdoutToDevNull,
     StderrToDevNull,
     StdinFromDevNull,
+    StdinFromEtcBanner,
 }
 
 impl LocalCommandExecRedirection {
@@ -186,7 +189,7 @@ impl LocalCommandExecRedirection {
             Self::CloseStderr => posix::STDERR_FD,
             Self::StdoutToDevNull => posix::STDOUT_FD,
             Self::StderrToDevNull => posix::STDERR_FD,
-            Self::StdinFromDevNull => posix::STDIN_FD,
+            Self::StdinFromDevNull | Self::StdinFromEtcBanner => posix::STDIN_FD,
         }
     }
 
@@ -198,7 +201,8 @@ impl LocalCommandExecRedirection {
             | Self::CloseStderr
             | Self::StdoutToDevNull
             | Self::StderrToDevNull
-            | Self::StdinFromDevNull => None,
+            | Self::StdinFromDevNull
+            | Self::StdinFromEtcBanner => None,
         }
     }
 
@@ -207,7 +211,7 @@ impl LocalCommandExecRedirection {
             Self::StdoutToStderr | Self::StderrToStdout => "dup",
             Self::CloseStdout | Self::CloseStderr => "close",
             Self::StdoutToDevNull | Self::StderrToDevNull => "sink",
-            Self::StdinFromDevNull => "source",
+            Self::StdinFromDevNull | Self::StdinFromEtcBanner => "source",
         }
     }
 
@@ -220,6 +224,7 @@ impl LocalCommandExecRedirection {
             Self::StdoutToDevNull => "shell-redirection-stdout-dev-null",
             Self::StderrToDevNull => "shell-redirection-stderr-dev-null",
             Self::StdinFromDevNull => "shell-redirection-stdin-dev-null",
+            Self::StdinFromEtcBanner => "shell-redirection-stdin-etc-banner",
         }
     }
 
@@ -231,6 +236,7 @@ impl LocalCommandExecRedirection {
                 | Self::StdoutToDevNull
                 | Self::StderrToDevNull
                 | Self::StdinFromDevNull
+                | Self::StdinFromEtcBanner
         )
     }
 }
@@ -633,7 +639,7 @@ pub struct DescriptorBackedLocalCommandIo<
     input_backend: I,
     output_backend: O,
     current_directory: LocalCommandDirectory,
-    read_only_files: initramfs::ReadOnlyFileDescriptions<1>,
+    read_only_files: initramfs::ReadOnlyFileDescriptions<LOCAL_COMMAND_READ_ONLY_FILE_CAPACITY>,
     last_process: Option<LocalCommandProcessLifecycleRecord>,
     waitable_process: Option<LocalCommandProcessLifecycleRecord>,
     pipe: LocalCommandPipeState,
@@ -946,8 +952,13 @@ where
             initramfs::PHASE8_NESTED_PATH => initramfs::PHASE8_NESTED_PATH,
             _ => return Err(LocalCommandExecError::NotExecutable),
         };
-        if request.redirection == Some(LocalCommandExecRedirection::StdinFromDevNull)
-            && source_path != initramfs::PHASE10_STDIN_PATH
+        if matches!(
+            request.redirection,
+            Some(
+                LocalCommandExecRedirection::StdinFromDevNull
+                    | LocalCommandExecRedirection::StdinFromEtcBanner
+            )
+        ) && source_path != initramfs::PHASE10_STDIN_PATH
         {
             return Err(LocalCommandExecError::InvalidPath);
         }
@@ -1172,6 +1183,79 @@ where
         Ok(())
     }
 
+    fn open_readonly_stdin_redirection(
+        &mut self,
+        path: &[u8],
+    ) -> Result<(), LocalCommandExecError> {
+        if path.len() > LOCAL_COMMAND_FILE_READ_OFFSET {
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
+        }
+
+        let mut user_memory = [0u8; LOCAL_COMMAND_FILE_USER_MEMORY_LEN];
+        let mut scratch = [0u8; LOCAL_COMMAND_FILE_USER_MEMORY_LEN];
+        user_memory[..path.len()].copy_from_slice(path);
+        let mappings = [posix::UserMapping::new(
+            LOCAL_COMMAND_FILE_USER_BASE,
+            user_memory.len(),
+            posix::UserMappingPermissions::USER_DATA,
+        )
+        .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?];
+        let fs = initramfs::phase8_readonly_initramfs_fixture();
+
+        let open = syscall::dispatch_process_descriptor_with_initramfs(
+            syscall::TALOS_OPEN_SYSCALL,
+            syscall::SyscallArguments::new([
+                LOCAL_COMMAND_FILE_USER_BASE,
+                path.len() as u64,
+                0,
+                0,
+                0,
+                0,
+            ]),
+            self.current_owner,
+            &mut self.descriptor_store,
+            &mappings,
+            LOCAL_COMMAND_FILE_USER_BASE,
+            &mut user_memory,
+            &mut scratch,
+            &mut self.output_backend,
+            fs,
+            &mut self.read_only_files,
+            None,
+        );
+        let descriptor = syscall_success_usize(open.return_value().x0())
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        if descriptor != posix::STDIN_FD {
+            let _ = self.close_regular_file_descriptor(descriptor);
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
+        }
+
+        Ok(())
+    }
+
+    fn close_replacement_descriptor(
+        &mut self,
+        descriptor: usize,
+    ) -> Result<(), LocalCommandExecError> {
+        let table = self
+            .descriptor_store
+            .current_descriptor_table(self.current_owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let entry = table
+            .get(descriptor)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        if entry.object().kind() == posix::DescriptorObjectKind::RegularFile {
+            return self
+                .close_regular_file_descriptor(descriptor)
+                .map_err(|_| LocalCommandExecError::LaunchPipelineFailed);
+        }
+
+        self.descriptor_store
+            .close_current_descriptor(self.current_owner, descriptor)
+            .map(|_| ())
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)
+    }
+
     fn apply_exec_redirection(
         &mut self,
         redirection: Option<LocalCommandExecRedirection>,
@@ -1189,7 +1273,8 @@ where
             .get(source_descriptor)
             .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
         match redirection {
-            LocalCommandExecRedirection::StdinFromDevNull => {
+            LocalCommandExecRedirection::StdinFromDevNull
+            | LocalCommandExecRedirection::StdinFromEtcBanner => {
                 if restored_entry.require_readable().is_err()
                     || !matches!(
                         restored_entry.object().kind(),
@@ -1239,6 +1324,13 @@ where
                 },
                 "device:/dev/null",
             )
+        } else if redirection == LocalCommandExecRedirection::StdinFromEtcBanner {
+            (
+                None,
+                Some("/etc/banner.txt"),
+                "regular-file",
+                "initramfs:/etc/banner.txt",
+            )
         } else if let Some(target_descriptor) = target_descriptor {
             let target_entry = table
                 .get(target_descriptor)
@@ -1270,9 +1362,23 @@ where
         table
             .close(source_descriptor)
             .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let install_regular_stdin = redirection == LocalCommandExecRedirection::StdinFromEtcBanner;
         if let Some(target_entry) = target_entry {
             if table.allocate_at(source_descriptor, target_entry).is_err() {
                 let _ = table.allocate_at(source_descriptor, restored_entry);
+                return Err(LocalCommandExecError::LaunchPipelineFailed);
+            }
+        } else if install_regular_stdin {
+            let _ = table;
+            if self
+                .open_readonly_stdin_redirection(initramfs::PHASE8_BANNER_PATH)
+                .is_err()
+            {
+                let restore_table = self
+                    .descriptor_store
+                    .current_descriptor_table_mut(self.current_owner)
+                    .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+                let _ = restore_table.allocate_at(source_descriptor, restored_entry);
                 return Err(LocalCommandExecError::LaunchPipelineFailed);
             }
         }
@@ -1298,16 +1404,14 @@ where
         &mut self,
         applied: AppliedLocalCommandExecRedirection,
     ) -> Result<(), LocalCommandExecError> {
+        let descriptor = applied.request.source_descriptor();
+        if applied.request.installs_replacement_descriptor() {
+            self.close_replacement_descriptor(descriptor)?;
+        }
         let table = self
             .descriptor_store
             .current_descriptor_table_mut(self.current_owner)
             .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
-        let descriptor = applied.request.source_descriptor();
-        if applied.request.installs_replacement_descriptor() {
-            table
-                .close(descriptor)
-                .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
-        }
         table
             .allocate_at(descriptor, applied.restored_entry)
             .map(|_| ())
@@ -1478,6 +1582,7 @@ where
                 stdin.object().kind(),
                 posix::DescriptorObjectKind::StdioInput
                     | posix::DescriptorObjectKind::PipeEndpoint
+                    | posix::DescriptorObjectKind::RegularFile
                     | posix::DescriptorObjectKind::Device
             )
             || (stdin.object().kind() == posix::DescriptorObjectKind::Device
@@ -1574,6 +1679,11 @@ where
             return bytes_read as u64;
         }
 
+        let read_len = if entry.object().kind() == posix::DescriptorObjectKind::RegularFile {
+            initramfs::PHASE8_BANNER_BYTES.len()
+        } else {
+            LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES.len()
+        };
         let mut stdin_backend = RuntimeStdinReadBackend {
             ready_byte,
             backend: &mut self.input_backend,
@@ -1583,7 +1693,7 @@ where
             syscall::SyscallArguments::new([
                 posix::STDIN_FD as u64,
                 LOCAL_COMMAND_STDIN_USER_BASE + LOCAL_COMMAND_STDIN_READ_OFFSET as u64,
-                LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES.len() as u64,
+                read_len as u64,
                 0,
                 0,
                 0,
@@ -1624,6 +1734,17 @@ where
             .get(posix::STDIN_FD)
             .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
         Ok(entry.object().is_dev_null())
+    }
+
+    fn stdin_descriptor_is_regular_file(&self) -> Result<bool, LocalCommandExecError> {
+        let table = self
+            .descriptor_store
+            .current_descriptor_table(self.current_owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let entry = table
+            .get(posix::STDIN_FD)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        Ok(entry.object().kind() == posix::DescriptorObjectKind::RegularFile)
     }
 
     fn wait_for_runtime_stdin_readiness(
@@ -1765,12 +1886,17 @@ where
         );
         let stdin_is_pipe = self.stdin_descriptor_is_pipe()?;
         let stdin_is_dev_null = self.stdin_descriptor_is_dev_null()?;
+        let stdin_is_regular_file = self.stdin_descriptor_is_regular_file()?;
         if stdin_is_dev_null {
             read_source = "device:/dev/null";
         }
         if read_return_value != (syscall::EAGAIN as u64).wrapping_neg() && stdin_is_pipe {
             expected_read_bytes = initramfs::PHASE10_STDOUT_PAYLOAD.len();
             read_source = "pipe:stdout-to-stdin";
+        }
+        if read_return_value != (syscall::EAGAIN as u64).wrapping_neg() && stdin_is_regular_file {
+            expected_read_bytes = initramfs::PHASE8_BANNER_BYTES.len();
+            read_source = "initramfs:/etc/banner.txt";
         }
 
         if read_return_value == (syscall::EAGAIN as u64).wrapping_neg() {
@@ -1805,6 +1931,10 @@ where
                 if read_input != initramfs::PHASE10_STDOUT_PAYLOAD
                     && read_input != initramfs::PHASE10_STDERR_PAYLOAD
                 {
+                    return Err(LocalCommandExecError::SyscallFailed);
+                }
+            } else if read_source == "initramfs:/etc/banner.txt" {
+                if read_input != initramfs::PHASE8_BANNER_BYTES {
                     return Err(LocalCommandExecError::SyscallFailed);
                 }
             } else if read_input != LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES {
@@ -1848,6 +1978,17 @@ where
                     return Err(LocalCommandExecError::SyscallFailed);
                 }
                 read_result = Some("pipe-eof-after-writer-close");
+            } else if read_source == "initramfs:/etc/banner.txt" {
+                let eof = self.dispatch_stdin_fixture_read(
+                    &mappings,
+                    &mut user_memory,
+                    &mut scratch,
+                    &mut ready_byte,
+                );
+                if eof != 0 {
+                    return Err(LocalCommandExecError::SyscallFailed);
+                }
+                read_result = Some("regular-file-eof-after-read");
             }
         } else if read_return_value == (syscall::EAGAIN as u64).wrapping_neg()
             && scheduler_wait.is_some()
@@ -2633,6 +2774,8 @@ fn parse_exec_request(arguments: &str) -> Result<LocalCommandExecRequest, LocalC
             Some(LocalCommandExecRedirection::StderrToDevNull)
         } else if token == b"</dev/null" {
             Some(LocalCommandExecRedirection::StdinFromDevNull)
+        } else if token == b"</etc/banner.txt" {
+            Some(LocalCommandExecRedirection::StdinFromEtcBanner)
         } else {
             None
         };
@@ -4233,6 +4376,50 @@ talos> Talos initramfs fixture\n"
         );
         assert!(output.contains(
             "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000000 return=0x0000000000000000 read-source=device:/dev/null stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000043 stdout-return=0x0000000000000043 source=userspace-talos-read+userspace-talos-write read-result=null-source-eof/no-data\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains("Talos userspace stdin fixture read: talos-console0\n"));
+        assert!(output.contains(
+            "talos: exec-stdin fd=0x0000000000000000 bytes=0x000000000000000e return=0x000000000000000e read-source=runtime-console0/local-input stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000033 stdout-return=0x0000000000000033 source=userspace-talos-read+userspace-talos-write\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_redirects_child_stdin_from_readonly_regular_file_only_for_one_exec() {
+        let bytes = *b"exec stdin </etc/banner.txt\rwaitpid\rexec stdin\rtalos-console0";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (redirected, waited, normal) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(redirected.line(), b"exec stdin </etc/banner.txt");
+        assert_eq!(redirected.status(), LocalCommandStatus::Handled);
+        assert_eq!(redirected.response_lines(), 11);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal.line(), b"exec stdin");
+        assert_eq!(normal.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal.response_lines(), 10);
+        assert!(output.contains("talos: exec path=/bin/stdin source=vfs-open-read\n"));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=regular-file fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=source source-fd=0x0000000000000000 source-path=/etc/banner.txt source-stream=regular-file source-route=initramfs:/etc/banner.txt child-only=true shell-restored=true source=shell-redirection-stdin-etc-banner\n"
+        ));
+        assert!(output.contains("Talos userspace stdin fixture read: Talos initramfs fixture\n"));
+        assert!(output.contains(
+            "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000018 return=0x0000000000000018 read-source=initramfs:/etc/banner.txt stdout-fd=0x0000000000000001 stdout-bytes=0x000000000000003d stdout-return=0x000000000000003d source=userspace-talos-read+userspace-talos-write read-result=regular-file-eof-after-read\n"
         ));
         assert!(output.contains(
             "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"

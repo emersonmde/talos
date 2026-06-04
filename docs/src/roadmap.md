@@ -1283,6 +1283,29 @@ The post-review correction chain is:
     redirection core is mechanically unblocked and must stay bounded to a
     read-only input source through the accepted descriptor-backed initramfs/VFS
     path.
+75. read-only regular-file stdin redirection core: accepted in
+    `phase10-readonly-regular-file-stdin-redirection-core-20260604`. This
+    checkpoint accepts exactly `exec stdin </etc/banner.txt` as a child-only
+    fd0 source redirection for the VFS-backed `/bin/stdin` fixture. The shell
+    closes fd0 for the child, opens `/etc/banner.txt` through the existing
+    `TalosOpen` initramfs path, requires the resulting read-only regular-file
+    descriptor to occupy fd0, and restores the original shell fd0 after the
+    child exits. The local shell read-only file-description capacity is now two
+    slots so redirected fd0 and the loader temporary descriptor can coexist.
+    The accepted transcript reports `fd0=regular-file`, `op=source`,
+    `source-path=/etc/banner.txt`, `source-stream=regular-file`,
+    `source-route=initramfs:/etc/banner.txt`,
+    `read-source=initramfs:/etc/banner.txt`, `bytes=0x18`, and
+    `read-result=regular-file-eof-after-read`; the visible userspace output is
+    the banner payload read through `TalosRead`, not a kernel-backed command
+    shim. Following normal `exec stdin`, `/dev/null` stdin, unsupported stdout
+    input-redirection, shorthand-negative, waitpid/laststatus, and
+    descriptor-backed `cat /etc/banner.txt` controls are retained. Output
+    regular-file redirection, append/truncate, writable filesystem mutation,
+    arbitrary descriptor syntax, arbitrary path expansion, here-docs, broader
+    pipes, Pi 5 proof, networking, SSH, and a phase transition remain deferred.
+    The queued read-only regular-file stdin closeout is mechanically unblocked
+    and must remain docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
