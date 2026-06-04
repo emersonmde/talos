@@ -1078,6 +1078,29 @@ The post-review correction chain is:
     networking, SSH, or a phase transition. The queued descriptor-mixing
     frontier closeout is mechanically unblocked and must remain
     docs/evidence reconciliation only.
+66. pipeline descriptor-mixing frontier closeout: accepted in
+    'phase10-pipeline-descriptor-mixing-frontier-closeout-20260604'. This
+    closeout checkpoints the accepted descriptor-mixing pipeline frontier as
+    exactly four two-stage forms: 'exec stdout | exec stdin',
+    'exec stderr | exec stdin', 'exec stderr 2>&1 | exec stdin', and
+    'exec stdout 1>&2 | exec stdin'. Producer fd1 remains the default pipe
+    writer; mixed forms install that pipe endpoint before applying the
+    producer child-only descriptor operation. The accepted evidence map
+    retains the positive stdout transfer, stdout-only stderr-not-piped
+    no-data behavior, stderr-to-pipe '2>&1' behavior, stdout-redirection-away
+    '1>&2' behavior, descriptor-dup and descriptor-close controls, normal
+    stdio/stderr routing, stdin wait/readiness/EOF controls, VFS exec,
+    lifecycle/status, waitpid, laststatus, negative controls, and
+    descriptor-backed 'cat /etc/banner.txt'. This checkpoint does not accept
+    arbitrary descriptor syntax, arbitrary 'N>&M', explicit stderr pipe
+    syntax, file/device redirection, writable filesystem behavior,
+    multi-stage/concurrent pipelines, pipefail, jobs, fork/signals, Pi 5
+    proof, networking, SSH, or a phase transition. Supervisor planning is
+    required before the next feature-led shell I/O task. The bounded
+    recommendation is file/device redirection only with an explicit
+    target/sink contract; multi-stage pipeline status/scheduling needs a
+    separate process-accounting plan first, and descriptor syntax cleanup
+    should wait until it directly supports an explicit feature slice.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
