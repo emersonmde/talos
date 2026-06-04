@@ -1329,6 +1329,34 @@ The post-review correction chain is:
     phase transition. The queued read-only input redirection frontier closeout
     is mechanically unblocked and must remain docs/evidence reconciliation
     only.
+77. read-only input redirection frontier closeout: accepted in
+    'phase10-readonly-input-redirection-frontier-closeout-20260604'. This
+    checkpoint reconciles the accepted read-only input redirection forms:
+    exactly 'exec stdin </dev/null' and 'exec stdin </etc/banner.txt' for the
+    VFS-backed '/bin/stdin' fixture. The '/dev/null' form binds only the
+    launched child fd0 descriptor to the device source, reports 'fd0=device',
+    'op=source', 'source-path=/dev/null',
+    'source-stream=null-source', 'source-route=device:/dev/null', and a
+    zero-byte true EOF/no-data read result. The regular-file form binds only
+    child fd0 to a read-only initramfs regular-file descriptor for
+    '/etc/banner.txt', reports 'fd0=regular-file', 'op=source',
+    'source-path=/etc/banner.txt', 'source-stream=regular-file',
+    'source-route=initramfs:/etc/banner.txt',
+    'read-source=initramfs:/etc/banner.txt', 'bytes=0x18', and
+    'read-result=regular-file-eof-after-read'. Following normal 'exec stdin'
+    controls prove restored shell fd0 through runtime-console0/local-input.
+    The evidence map retains accepted stdout/stderr '/dev/null' sink
+    redirection, normal stdio/stderr routing, descriptor dup/close
+    redirection, descriptor-mixing pipelines, stdin readiness and terminal
+    EOF, VFS exec/open/read, lifecycle/status, waitpid, laststatus,
+    deterministic negatives, and descriptor-backed 'cat /etc/banner.txt'.
+    This does not accept output regular-file redirection, append/truncate,
+    writable filesystem mutation, arbitrary descriptor syntax, arbitrary path
+    expansion, here-docs, broader pipes, Pi 5 proof, networking, SSH, or a
+    phase transition. Supervisor planning is required before the next
+    feature-led shell I/O task because likely follow-ups cross distinct risks:
+    writable output targets, broader descriptor grammar, or lifecycle/process
+    accounting.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
