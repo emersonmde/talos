@@ -1428,6 +1428,33 @@ The post-review correction chain is:
     broader descriptor syntax, Pi 5 proof, networking, SSH, or a phase
     transition. The queued stderr regular-file redirection closeout is
     mechanically unblocked and must remain docs/evidence reconciliation only.
+81. stderr regular-file redirection closeout: accepted in
+    'phase10-stderr-regular-file-redirection-closeout-20260604'. This
+    checkpoint reconciles the exact accepted output form:
+    'exec stderr 2>/tmp/stderr.txt' for the VFS-backed '/bin/stderr' fixture.
+    The child-only fd2 sink is a volatile VFS regular-file descriptor for
+    '/tmp/stderr.txt', reports 'fd2=regular-file', 'op=sink',
+    'target-path=/tmp/stderr.txt', 'target-stream=regular-file',
+    'target-route=volatile-vfs:/tmp/stderr.txt', and writes 0x1f
+    userspace stderr bytes through 'source=userspace-talos-write'. A following
+    descriptor-backed 'cat /tmp/stderr.txt' reads back
+    'Talos userspace stderr fixture' with 'bytes=0x1f' and
+    'source=volatile-vfs-descriptor-read', while a later normal
+    'exec stderr' proves shell fd2 restoration through
+    'runtime-console0/stderr'. A normal 'exec stdout' remains visible through
+    'runtime-console0/stdout', proving the stderr file sink does not capture
+    stdout. The evidence map retains stdout regular-file redirection,
+    task-owned append/arbitrary-path/stdout-file negatives, /dev/null output
+    sinks, read-only input redirection, normal stdio, descriptor dup/close
+    redirection, descriptor-mixing pipelines, VFS exec/open/read/write,
+    lifecycle/status, waitpid, laststatus, and descriptor-backed cat controls.
+    This accepts only minimal volatile create/truncate/write/read behavior for
+    '/tmp/stderr.txt'; append, partial overwrite, arbitrary paths,
+    persistence, wider filesystem mutation, broader descriptor syntax, Pi 5
+    proof, networking, SSH, and phase transition remain deferred. The queued
+    regular-file output redirection frontier closeout is mechanically
+    unblocked only as docs/evidence reconciliation across the accepted stdout
+    and stderr regular-file slices.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
