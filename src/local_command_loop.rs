@@ -19,7 +19,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary",
     "+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance",
     "+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0",
-    "+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2"
+    "+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2",
+    "+descriptor-dup-redirection-2-to-1"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -149,24 +150,28 @@ impl LocalCommandExecRequest {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum LocalCommandExecRedirection {
     StdoutToStderr,
+    StderrToStdout,
 }
 
 impl LocalCommandExecRedirection {
     const fn source_descriptor(self) -> usize {
         match self {
             Self::StdoutToStderr => posix::STDOUT_FD,
+            Self::StderrToStdout => posix::STDERR_FD,
         }
     }
 
     const fn target_descriptor(self) -> usize {
         match self {
             Self::StdoutToStderr => posix::STDERR_FD,
+            Self::StderrToStdout => posix::STDOUT_FD,
         }
     }
 
     const fn source(self) -> &'static str {
         match self {
             Self::StdoutToStderr => "shell-redirection-1-to-2",
+            Self::StderrToStdout => "shell-redirection-2-to-1",
         }
     }
 }
@@ -1979,11 +1984,18 @@ fn parse_exec_request(arguments: &str) -> Result<LocalCommandExecRequest, LocalC
         if token.is_empty() {
             continue;
         }
-        if token == b"1>&2" {
+        let parsed_redirection = if token == b"1>&2" {
+            Some(LocalCommandExecRedirection::StdoutToStderr)
+        } else if token == b"2>&1" {
+            Some(LocalCommandExecRedirection::StderrToStdout)
+        } else {
+            None
+        };
+        if let Some(parsed_redirection) = parsed_redirection {
             if redirection.is_some() {
                 return Err(LocalCommandExecError::InvalidPath);
             }
-            redirection = Some(LocalCommandExecRedirection::StdoutToStderr);
+            redirection = Some(parsed_redirection);
             continue;
         }
         if redirection.is_some() {
@@ -3374,13 +3386,10 @@ talos> Talos initramfs fixture\n"
     }
 
     #[test_case]
-    fn local_command_loop_rejects_unsupported_redirection_forms() {
-        let input = ScriptedInput::new(
-            *b"exec stdout 2>&1\rexec stdout 1>file\rexec stdout | stderr\r",
-            57,
-        );
+    fn local_command_loop_redirects_child_stderr_to_inherited_stdout_fd() {
+        let input = ScriptedInput::new(*b"exec stderr 2>&1\rwaitpid\rexec stderr\r", 37);
         let mut backend = CaptureSink::new();
-        let (inverse, file, pipe) = {
+        let (redirected, waited, normal) = {
             let mut io =
                 DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
             (
@@ -3391,8 +3400,53 @@ talos> Talos initramfs fixture\n"
         };
         let output = backend.as_str();
 
-        assert_eq!(inverse.line(), b"exec stdout 2>&1");
-        assert_eq!(inverse.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(redirected.line(), b"exec stderr 2>&1");
+        assert_eq!(redirected.status(), LocalCommandStatus::Handled);
+        assert_eq!(redirected.response_lines(), 11);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal.line(), b"exec stderr");
+        assert_eq!(normal.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal.response_lines(), 10);
+        assert!(output.contains("talos> Talos userspace stderr fixture\n"));
+        assert!(output.contains("talos: exec path=/bin/stderr source=vfs-open-read\n"));
+        assert!(output.contains(
+            "talos: exec-redirection op=dup source-fd=0x0000000000000002 target-fd=0x0000000000000001 target-stream=stdout target-route=runtime-console0/stdout child-only=true shell-restored=true source=shell-redirection-2-to-1\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stderr state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=stderr route=runtime-console0/stderr source=userspace-talos-write\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_rejects_unsupported_redirection_forms() {
+        let input = ScriptedInput::new(
+            *b"exec stdout 2>&3\rexec stdout 1>file\rexec stdout | stderr\r",
+            57,
+        );
+        let mut backend = CaptureSink::new();
+        let (bad_descriptor, file, pipe) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(bad_descriptor.line(), b"exec stdout 2>&3");
+        assert_eq!(
+            bad_descriptor.status(),
+            LocalCommandStatus::UnexpectedArgument
+        );
         assert_eq!(file.line(), b"exec stdout 1>file");
         assert_eq!(file.status(), LocalCommandStatus::UnexpectedArgument);
         assert_eq!(pipe.line(), b"exec stdout | stderr");

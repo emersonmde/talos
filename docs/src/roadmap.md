@@ -680,8 +680,8 @@ The post-review correction chain is:
     with `stream=stderr route=runtime-console0/stderr`. A following normal
     `exec stdout` control records `stream=stdout
     route=runtime-console0/stdout`, proving the shell descriptor table is
-    restored after the child launch. Unsupported inverse, file, and pipe
-    redirection forms are deterministic negatives. Inverse `2>&1`, regular
+    restored after the child launch. At that frontier, inverse `2>&1`, file,
+    and pipe redirection forms were deterministic negatives. Inverse `2>&1`, regular
     file redirection, append/truncate, descriptor close/move syntax, pipes,
     writable filesystem behavior, separate physical sinks, terminal policy,
     async jobs, fork, signals, libc stdio, Pi 5 proof, networking, and SSH
@@ -708,6 +708,27 @@ The post-review correction chain is:
     SSH remain deferred. The queued inverse descriptor-duplication slice is
     mechanically unblocked, provided it stays bounded to child-only `2>&1`
     descriptor duplication.
+49. stderr-to-stdout descriptor-dup redirection core: accepted in
+    `phase10-stderr-to-stdout-fd-dup-redirection-core-20260604`.
+    Shell-visible `exec stderr 2>&1` now parses as the inverse exact
+    descriptor-dup redirection form. The launched VFS-backed `/bin/stderr`
+    child still loads through the accepted descriptor-backed `/bin` lookup and
+    VFS/open/read path, but child fd2 is temporarily rebound to the inherited
+    fd1 descriptor target. The task-owned QEMU/substitute evidence records
+    `exec-redirection op=dup source-fd=2 target-fd=1
+    target-stream=stdout target-route=runtime-console0/stdout
+    child-only=true shell-restored=true`, followed by a userspace fd2 write
+    with `stream=stdout route=runtime-console0/stdout`. A following normal
+    `exec stderr` control records `stream=stderr
+    route=runtime-console0/stderr`, proving the shell descriptor table is
+    restored after the child launch. Accepted `exec stdout 1>&2` behavior,
+    normal stdout/stderr route controls, terminal EOF/readiness, lifecycle,
+    waitpid/laststatus, negative redirection, and descriptor-backed cat
+    controls remain covered. Descriptor close/move syntax, arbitrary `N>&M`,
+    regular-file redirection, append/truncate, pipes, writable filesystem
+    behavior, separate physical sinks, terminal policy, async jobs, fork,
+    signals, libc stdio, Pi 5 proof, networking, and SSH remain deferred. The
+    queued inverse descriptor-dup closeout is mechanically unblocked.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
