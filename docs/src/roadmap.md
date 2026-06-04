@@ -1479,6 +1479,27 @@ The post-review correction chain is:
     queued task is mechanically unblocked by this closeout; supervisor
     planning is required before choosing between append behavior, broader
     descriptor grammar, or process accounting/concurrency.
+83. stdout regular-file append redirection core: accepted in
+    'phase10-stdout-regular-file-append-redirection-core-20260604'. This
+    accepts exactly the bounded sequence 'exec stdout >/tmp/stdout.txt'
+    followed by 'exec stdout >>/tmp/stdout.txt' for the VFS-backed
+    '/bin/stdout' fixture. The first command preserves the accepted volatile
+    create/truncate behavior; the append command rebinds child fd1 to the same
+    volatile regular-file descriptor without truncating existing contents and
+    records 'op=append', 'target-path=/tmp/stdout.txt',
+    'target-stream=regular-file',
+    'target-route=volatile-vfs:/tmp/stdout.txt',
+    'source=shell-redirection-stdout-tmp-stdout-append', and userspace
+    'TalosWrite' provenance. A following descriptor-backed
+    'cat /tmp/stdout.txt' reads two stdout fixture payloads in order with
+    'bytes=0x3e source=volatile-vfs-descriptor-read'; later normal
+    'exec stdout' proves shell fd1 restoration through
+    'runtime-console0/stdout'. Append to missing files, arbitrary append
+    paths, stderr append, persistence, partial overwrite, broad writable
+    filesystem mutation, broader descriptor grammar, Pi 5 proof, networking,
+    SSH, and phase transition remain deferred. The queued stdout append
+    closeout is mechanically unblocked and must remain docs/evidence
+    reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

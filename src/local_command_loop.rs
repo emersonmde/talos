@@ -184,6 +184,7 @@ pub enum LocalCommandExecRedirection {
     StdinFromDevNull,
     StdinFromEtcBanner,
     StdoutToTmpStdout,
+    StdoutAppendTmpStdout,
     StderrToTmpStderr,
 }
 
@@ -197,7 +198,7 @@ impl LocalCommandExecRedirection {
             Self::StdoutToDevNull => posix::STDOUT_FD,
             Self::StderrToDevNull => posix::STDERR_FD,
             Self::StdinFromDevNull | Self::StdinFromEtcBanner => posix::STDIN_FD,
-            Self::StdoutToTmpStdout => posix::STDOUT_FD,
+            Self::StdoutToTmpStdout | Self::StdoutAppendTmpStdout => posix::STDOUT_FD,
             Self::StderrToTmpStderr => posix::STDERR_FD,
         }
     }
@@ -213,6 +214,7 @@ impl LocalCommandExecRedirection {
             | Self::StdinFromDevNull
             | Self::StdinFromEtcBanner
             | Self::StdoutToTmpStdout
+            | Self::StdoutAppendTmpStdout
             | Self::StderrToTmpStderr => None,
         }
     }
@@ -225,6 +227,7 @@ impl LocalCommandExecRedirection {
             | Self::StderrToDevNull
             | Self::StdoutToTmpStdout
             | Self::StderrToTmpStderr => "sink",
+            Self::StdoutAppendTmpStdout => "append",
             Self::StdinFromDevNull | Self::StdinFromEtcBanner => "source",
         }
     }
@@ -240,6 +243,7 @@ impl LocalCommandExecRedirection {
             Self::StdinFromDevNull => "shell-redirection-stdin-dev-null",
             Self::StdinFromEtcBanner => "shell-redirection-stdin-etc-banner",
             Self::StdoutToTmpStdout => "shell-redirection-stdout-tmp-stdout",
+            Self::StdoutAppendTmpStdout => "shell-redirection-stdout-tmp-stdout-append",
             Self::StderrToTmpStderr => "shell-redirection-stderr-tmp-stderr",
         }
     }
@@ -254,6 +258,7 @@ impl LocalCommandExecRedirection {
                 | Self::StdinFromDevNull
                 | Self::StdinFromEtcBanner
                 | Self::StdoutToTmpStdout
+                | Self::StdoutAppendTmpStdout
                 | Self::StderrToTmpStderr
         )
     }
@@ -1086,8 +1091,18 @@ where
         {
             return Err(LocalCommandExecError::InvalidPath);
         }
-        if request.redirection == Some(LocalCommandExecRedirection::StdoutToTmpStdout)
-            && source_path != initramfs::PHASE10_STDOUT_PATH
+        if matches!(
+            request.redirection,
+            Some(
+                LocalCommandExecRedirection::StdoutToTmpStdout
+                    | LocalCommandExecRedirection::StdoutAppendTmpStdout
+            )
+        ) && source_path != initramfs::PHASE10_STDOUT_PATH
+        {
+            return Err(LocalCommandExecError::InvalidPath);
+        }
+        if request.redirection == Some(LocalCommandExecRedirection::StdoutAppendTmpStdout)
+            && !self.stdout_scratch_file.exists
         {
             return Err(LocalCommandExecError::InvalidPath);
         }
@@ -1325,6 +1340,16 @@ where
             posix::STDOUT_FD,
             LOCAL_COMMAND_STDOUT_VOLATILE_FILE_REFERENCE,
             LocalCommandVolatileFileTarget::Stdout,
+            true,
+        )
+    }
+
+    fn open_stdout_scratch_append_redirection(&mut self) -> Result<(), LocalCommandExecError> {
+        self.open_scratch_redirection(
+            posix::STDOUT_FD,
+            LOCAL_COMMAND_STDOUT_VOLATILE_FILE_REFERENCE,
+            LocalCommandVolatileFileTarget::Stdout,
+            false,
         )
     }
 
@@ -1333,6 +1358,7 @@ where
             posix::STDERR_FD,
             LOCAL_COMMAND_STDERR_VOLATILE_FILE_REFERENCE,
             LocalCommandVolatileFileTarget::Stderr,
+            true,
         )
     }
 
@@ -1341,6 +1367,7 @@ where
         descriptor: usize,
         reference: usize,
         target: LocalCommandVolatileFileTarget,
+        truncate: bool,
     ) -> Result<(), LocalCommandExecError> {
         let table = self
             .descriptor_store
@@ -1354,9 +1381,15 @@ where
         table
             .allocate_at(descriptor, entry)
             .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
-        match target {
-            LocalCommandVolatileFileTarget::Stdout => self.stdout_scratch_file.truncate_create(),
-            LocalCommandVolatileFileTarget::Stderr => self.stderr_scratch_file.truncate_create(),
+        if truncate {
+            match target {
+                LocalCommandVolatileFileTarget::Stdout => {
+                    self.stdout_scratch_file.truncate_create()
+                }
+                LocalCommandVolatileFileTarget::Stderr => {
+                    self.stderr_scratch_file.truncate_create()
+                }
+            }
         }
         Ok(())
     }
@@ -1538,7 +1571,11 @@ where
                 },
                 "device:/dev/null",
             )
-        } else if redirection == LocalCommandExecRedirection::StdoutToTmpStdout {
+        } else if matches!(
+            redirection,
+            LocalCommandExecRedirection::StdoutToTmpStdout
+                | LocalCommandExecRedirection::StdoutAppendTmpStdout
+        ) {
             (
                 None,
                 Some(LocalCommandVolatileFileTarget::Stdout.path()),
@@ -1592,6 +1629,8 @@ where
             .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
         let install_regular_stdin = redirection == LocalCommandExecRedirection::StdinFromEtcBanner;
         let install_stdout_scratch = redirection == LocalCommandExecRedirection::StdoutToTmpStdout;
+        let install_stdout_scratch_append =
+            redirection == LocalCommandExecRedirection::StdoutAppendTmpStdout;
         let install_stderr_scratch = redirection == LocalCommandExecRedirection::StderrToTmpStderr;
         if let Some(target_entry) = target_entry {
             if table.allocate_at(source_descriptor, target_entry).is_err() {
@@ -1614,6 +1653,16 @@ where
         } else if install_stdout_scratch {
             let _ = table;
             if self.open_stdout_scratch_redirection().is_err() {
+                let restore_table = self
+                    .descriptor_store
+                    .current_descriptor_table_mut(self.current_owner)
+                    .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+                let _ = restore_table.allocate_at(source_descriptor, restored_entry);
+                return Err(LocalCommandExecError::LaunchPipelineFailed);
+            }
+        } else if install_stdout_scratch_append {
+            let _ = table;
+            if self.open_stdout_scratch_append_redirection().is_err() {
                 let restore_table = self
                     .descriptor_store
                     .current_descriptor_table_mut(self.current_owner)
@@ -3084,6 +3133,8 @@ fn parse_exec_request(arguments: &str) -> Result<LocalCommandExecRequest, LocalC
             Some(LocalCommandExecRedirection::StdinFromEtcBanner)
         } else if token == b">/tmp/stdout.txt" {
             Some(LocalCommandExecRedirection::StdoutToTmpStdout)
+        } else if token == b">>/tmp/stdout.txt" {
+            Some(LocalCommandExecRedirection::StdoutAppendTmpStdout)
         } else if token == b"2>/tmp/stderr.txt" {
             Some(LocalCommandExecRedirection::StderrToTmpStderr)
         } else {
@@ -4714,6 +4765,62 @@ talos> Talos initramfs fixture\n"
         ));
         assert!(output.contains(
             "talos: cat path=/tmp/stdout.txt bytes=0x000000000000001f source=volatile-vfs-descriptor-read\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_appends_child_stdout_to_existing_volatile_regular_file() {
+        let bytes = *b"exec stdout >/tmp/stdout.txt\rexec stdout >>/tmp/stdout.txt\rwaitpid\rlaststatus\rcat /tmp/stdout.txt\rexec stdout\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (created, appended, waited, observed, readback, normal) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(created.line(), b"exec stdout >/tmp/stdout.txt");
+        assert_eq!(created.status(), LocalCommandStatus::Handled);
+        assert_eq!(appended.line(), b"exec stdout >>/tmp/stdout.txt");
+        assert_eq!(appended.status(), LocalCommandStatus::Handled);
+        assert_eq!(appended.response_lines(), 11);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.line(), b"laststatus");
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(readback.line(), b"cat /tmp/stdout.txt");
+        assert_eq!(readback.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal.line(), b"exec stdout");
+        assert_eq!(normal.status(), LocalCommandStatus::Handled);
+        assert_eq!(
+            output.matches("Talos userspace stdout fixture\n").count(),
+            3
+        );
+        assert!(output.contains(
+            "talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/stdout.txt target-stream=regular-file target-route=volatile-vfs:/tmp/stdout.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=append source-fd=0x0000000000000001 target-path=/tmp/stdout.txt target-stream=regular-file target-route=volatile-vfs:/tmp/stdout.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout-append\n"
+        ));
+        assert!(output.contains(
+            "talos: cat path=/tmp/stdout.txt bytes=0x000000000000003e source=volatile-vfs-descriptor-read\n"
         ));
         assert!(output.contains(
             "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
