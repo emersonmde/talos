@@ -1500,6 +1500,28 @@ The post-review correction chain is:
     SSH, and phase transition remain deferred. The queued stdout append
     closeout is mechanically unblocked and must remain docs/evidence
     reconciliation only.
+84. stdout regular-file append redirection closeout: accepted in
+    'phase10-stdout-regular-file-append-redirection-closeout-20260604'. It
+    reconciles the bounded append sequence 'exec stdout >/tmp/stdout.txt'
+    followed by 'exec stdout >>/tmp/stdout.txt' for the VFS-backed
+    '/bin/stdout' fixture, with required setup/truncate-create before append,
+    scratch path limited to '/tmp/stdout.txt', child-only fd1 regular-file
+    rebinding, 'op=append',
+    'target-route=volatile-vfs:/tmp/stdout.txt', userspace TalosWrite
+    provenance, descriptor-backed 'cat /tmp/stdout.txt' readback of two
+    stdout fixture payloads with 'bytes=0x3e
+    source=volatile-vfs-descriptor-read', shell fd1 restoration through a
+    later normal 'exec stdout', lifecycle/status, waitpid, laststatus, and
+    deterministic negative controls. The closeout retains stdout
+    truncate/create, stderr regular-file, read-only input redirection,
+    /dev/null redirection, normal stdio, descriptor redirection/pipeline,
+    VFS exec/open/read/write, and descriptor-backed cat controls. Stderr
+    append, append-create for missing files, arbitrary append paths,
+    persistence, broad writable filesystem mutation, broader descriptor
+    grammar, process accounting/concurrency, Pi 5 proof, networking, SSH, and
+    phase transition remain deferred. The queued stderr append core is
+    mechanically unblocked and must stay limited to the explicit
+    '/tmp/stderr.txt' mirror.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
