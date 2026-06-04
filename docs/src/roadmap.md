@@ -1058,6 +1058,26 @@ The post-review correction chain is:
     pipelines, pipefail, jobs, fork/signals, Pi 5 proof, networking, SSH, or a
     phase transition. The queued inverse closeout is mechanically unblocked
     and must remain docs/evidence reconciliation only.
+65. pipeline stdout redirect-away closeout: accepted in
+    `phase10-pipeline-stdout-redirect-away-closeout-20260604`. This closeout
+    checkpoints both exact descriptor-mixing pipeline directions. For
+    `exec stderr 2>&1 | exec stdin`, producer fd1 is installed as the pipe
+    writer first and child-only `2>&1` duplicates that pipe endpoint onto
+    producer fd2, so the stderr fixture enters consumer fd0. For
+    `exec stdout 1>&2 | exec stdin`, producer fd1 is also installed as the
+    pipe writer first, but child-only `1>&2` rebinds fd1 to inherited
+    fd2/stderr before `/bin/stdout` writes, so no fixture bytes enter the
+    pipe and the consumer reports `pipe-eof/no-data`. The evidence map
+    retains both mixed forms, plain stdout pipeline transfer, stdout-only
+    stderr-not-piped semantics, descriptor-dup/close controls, normal stdio,
+    stdin wait/readiness/EOF controls, VFS exec, lifecycle/status, waitpid,
+    laststatus, negative controls, and descriptor-backed `cat /etc/banner.txt`.
+    This checkpoint does not accept arbitrary `N>&M`, explicit stderr pipe
+    syntax, file/device redirection, writable filesystem behavior,
+    multi-stage/concurrent pipelines, pipefail, jobs, fork/signals, Pi 5 proof,
+    networking, SSH, or a phase transition. The queued descriptor-mixing
+    frontier closeout is mechanically unblocked and must remain
+    docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
