@@ -1186,6 +1186,34 @@ The post-review correction chain is:
     pipelines, Pi 5 proof, networking, SSH, or a phase transition. The queued
     /dev/null redirection frontier closeout is mechanically unblocked and
     must remain docs/evidence reconciliation only.
+71. /dev/null redirection frontier closeout: accepted in
+    'phase10-dev-null-redirection-frontier-closeout-20260604'. This checkpoint
+    reconciles the accepted explicit '/dev/null' file/device redirection
+    frontier. The accepted forms are exactly 'exec stdout >/dev/null' and
+    'exec stderr 2>/dev/null'; '/dev/null' is accepted only as an output sink
+    device, not writable filesystem behavior. Each form launches the
+    VFS-backed child with only the target child descriptor rebound to the
+    '/dev/null' device sink, records 'op=sink',
+    'target-path=/dev/null', 'target-stream=null-sink',
+    'target-route=device:/dev/null', routes the userspace write to
+    'stream=null-sink route=device:/dev/null', and returns the accepted
+    31-byte 'TalosWrite' count while discarding the fixture payload. The
+    evidence map keeps redirected stdout/stderr payloads absent for the
+    redirected commands, keeps following normal 'exec stdout' and
+    'exec stderr' controls as shell descriptor restoration proof, and retains
+    descriptor redirection controls, descriptor-mixing pipeline controls,
+    normal stdio/stderr routing, stdin readiness/EOF controls, VFS exec,
+    lifecycle/status, 'waitpid', 'laststatus', deterministic negatives, and
+    descriptor-backed 'cat /etc/banner.txt'. This frontier does not accept
+    shorthand '1>/dev/null', arbitrary descriptor syntax, regular-file
+    redirection, append/truncate, input redirection, writable filesystem
+    behavior, broader file/device semantics, multi-stage/concurrent
+    pipelines, Pi 5 proof, networking, SSH, or a phase transition. Supervisor
+    planning is required before the next feature-led shell I/O task; likely
+    smaller next candidates are an explicit '/dev/null' input-redirection
+    contract or a read-only VFS-backed regular-file redirection target, while
+    append/truncate and writable regular-file output require a separate
+    filesystem mutation plan.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
