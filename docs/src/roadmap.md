@@ -941,6 +941,29 @@ The post-review correction chain is:
     control, file redirection, writable filesystem behavior, Pi 5 proof,
     networking, or SSH. The queued stderr-not-piped closeout is mechanically
     unblocked and must remain docs/evidence reconciliation only.
+60. pipeline stderr-not-piped closeout: accepted in
+    'phase10-pipeline-stderr-not-piped-closeout-20260604'. This closeout
+    checkpoints stdout-only pipeline semantics as a durable local shell I/O
+    boundary for the accepted exact two-stage pipeline grammar. The pipeline
+    operator connects producer fd1/stdout only: 'exec stdout | exec stdin'
+    transfers 31 bytes through the pipe, while 'exec stderr | exec stdin'
+    leaves producer fd2 on 'stream=stderr route=runtime-console0/stderr' and
+    the consumer observes zero pipe bytes with
+    'read-result=pipe-eof/no-data'. Retained QEMU/substitute evidence maps
+    normal stderr routing, shell descriptor restoration, both descriptor-dup
+    and descriptor-close controls, stdin wait/readiness, Ctrl-D EOF,
+    descriptor-backed VFS exec, lifecycle/status, consuming 'waitpid',
+    'laststatus', deterministic unsupported descriptor-mixing pipeline forms,
+    and descriptor-backed 'cat /etc/banner.txt'. This frontier accepts the
+    stdout-only pipe rule, empty-pipe no-data behavior, shell descriptor
+    restoration, and consumer lifecycle observation for the accepted exact
+    two-stage forms. It does not accept '2>&1' inside pipelines, explicit
+    stderr piping, multi-stage pipelines, concurrent POSIX pipeline
+    scheduling, pipefail, async execution, fork, signals, job control, file
+    redirection, arbitrary descriptor syntax, writable filesystem behavior,
+    Pi 5 proof, networking, or SSH. The queued minimal pipeline frontier
+    closeout is mechanically unblocked and must remain docs/evidence
+    reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

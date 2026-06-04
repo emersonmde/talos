@@ -12,6 +12,47 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-04 - Phase 10 Stdout-Only Pipeline Semantics Accepted
+
+- Status: accepted as the Phase 10 QEMU/substitute stdout-only pipeline
+  semantics boundary. No Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, '2>&1' inside pipelines, explicit stderr piping,
+  multi-stage pipelines, concurrent pipe scheduling, pipefail, background
+  jobs, async execution, fork, signals, job control, file redirection,
+  arbitrary descriptor syntax, writable filesystem behavior, networking, or
+  SSH was added.
+- Context: The accepted minimal pipeline core connected one VFS-backed
+  producer stdout to one VFS-backed consumer stdin. Before extending pipeline
+  syntax, Talos needed to pin the POSIX-compatible default: a pipe connects
+  stdout only, while stderr remains on fd2 unless an explicit future
+  descriptor-mixing task accepts otherwise.
+- Decision: Accept phase10-pipeline-stderr-not-piped-core-20260604 and
+  phase10-pipeline-stderr-not-piped-closeout-20260604. Shell-visible
+  'exec stderr | exec stdin' keeps producer fd1 as the only pipe writer
+  endpoint and leaves producer fd2 routed to
+  'stream=stderr route=runtime-console0/stderr'. The consumer reads zero bytes
+  from fd0 and reports deterministic 'read-result=pipe-eof/no-data'. The
+  positive 'exec stdout | exec stdin' control still transfers 31 bytes through
+  the pipe. The accepted lifecycle observation remains the consumer record
+  reported by 'waitpid' and 'laststatus' for this bounded two-stage form.
+- Evidence level: static closeout inspection plus retained QEMU/substitute
+  stderr-not-piped pipeline smoke, positive minimal pipeline control, normal
+  stderr routing control, descriptor redirection controls, stdin
+  wait/readiness and EOF controls, lifecycle/status controls, and
+  descriptor-backed cat control. The primary task-owned log is
+  'tasks/evidence/2026-06-04-phase10-pipeline-stderr-not-piped-core/qemu-local-shell-pipeline-stderr-not-piped-smoke.log'.
+- Validation: 'git diff --check' passed; '/home/node/.cargo/bin/mdbook build'
+  passed; 'git diff --cached --check' passed before commit. The accepted core
+  previously passed fmt, no_std unit tests, task-owned QEMU/substitute smoke,
+  retained QEMU/substitute controls, and docs validation.
+- Consequences: Talos now has an explicit stdout-only pipe rule for the
+  accepted exact two-stage shell grammar. Stderr only enters a pipe after a
+  later explicit descriptor-mixing task accepts that behavior. Broader
+  pipeline scheduling, multi-stage pipelines, pipe status policy, file
+  redirection, arbitrary descriptor syntax, writable filesystem behavior,
+  Pi 5 proof, networking, and SSH remain deferred. The next queued task is the
+  minimal pipeline frontier closeout.
+
 ## 2026-06-04 - Phase 10 Minimal Stdout-To-Stdin Pipeline Accepted
 
 - Status: accepted as the Phase 10 QEMU/substitute minimal
