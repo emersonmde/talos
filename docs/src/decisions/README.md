@@ -12,6 +12,43 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-04 - Phase 10 /dev/null Stdout Sink Contract Accepted
+
+- Status: accepted as the first explicit Phase 10 file/device redirection sink
+  contract. No Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, regular-file redirection, append/truncate, input redirection,
+  stderr redirection, writable filesystem behavior, arbitrary descriptor
+  syntax, networking, SSH, or phase transition was added.
+- Context: The descriptor-mixing pipeline frontier recommended file/device
+  redirection only after naming a concrete target/sink contract. `/dev/null`
+  is the smallest useful POSIX-like sink because it can exercise child-only
+  descriptor rebinding and write accounting without implying persistent file
+  writes.
+- Decision: Accept
+  `phase10-dev-null-stdout-redirection-contract-core-20260604`. The exact
+  command `exec stdout >/dev/null` launches the VFS-backed `/bin/stdout`
+  fixture with child fd1 rebound to a `DescriptorObjectKind::Device`
+  `/dev/null` sink. `TalosWrite` validates/copies the user buffer, discards
+  the bytes, and returns the accepted byte count. Evidence reports
+  `fd1=device`, `op=sink`, `target-path=/dev/null`,
+  `target-stream=null-sink`, `target-route=device:/dev/null`, and
+  `exec-stdout ... stream=null-sink route=device:/dev/null`.
+- Evidence level: fmt/lint/typecheck, no_std unit tests, task-owned
+  QEMU/substitute stdout-to-/dev/null smoke, retained normal stdout,
+  descriptor dup/close redirection, descriptor-mixing pipeline, stdin
+  readiness/EOF, and descriptor-backed cat QEMU/substitute controls.
+- Validation: `cargo fmt --all -- --check` passed;
+  `cargo -Zjson-target-spec test --quiet` passed;
+  `scripts/qemu-local-shell-dev-null-stdout-redirection-smoke.sh` passed;
+  retained QEMU/substitute controls passed; `git diff --check` passed;
+  `/home/node/.cargo/bin/mdbook build` passed; `git diff --cached --check`
+  passed before commit.
+- Consequences: Talos now has an explicit null sink device contract for
+  child-only stdout redirection. This does not accept writable filesystem
+  behavior or broader file redirection. The next queued task is the
+  stdout-to-/dev/null closeout before extending the same sink contract to
+  stderr.
+
 ## 2026-06-04 - Phase 10 Stdout-Only Pipeline Semantics Accepted
 
 - Status: accepted as the Phase 10 QEMU/substitute stdout-only pipeline

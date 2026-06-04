@@ -1101,6 +1101,24 @@ The post-review correction chain is:
     target/sink contract; multi-stage pipeline status/scheduling needs a
     separate process-accounting plan first, and descriptor syntax cleanup
     should wait until it directly supports an explicit feature slice.
+67. /dev/null stdout redirection contract core: accepted in
+    `phase10-dev-null-stdout-redirection-contract-core-20260604`. This
+    checkpoint accepts exactly `exec stdout >/dev/null` as a child-only fd1
+    sink redirection for the VFS-backed `/bin/stdout` fixture. The child
+    descriptor table reports `fd1=device`; the redirection record reports
+    `op=sink`, `target-path=/dev/null`, `target-stream=null-sink`, and
+    `target-route=device:/dev/null`; and the userspace write reports the
+    accepted byte count while routing to `stream=null-sink`. The
+    task-owned QEMU/substitute smoke confirms that the redirected stdout
+    fixture payload is absent from runtime-console0/stdout for the redirected
+    command and that a following normal `exec stdout` prints through restored
+    shell fd1. `/dev/null` is accepted only as an explicit sink device, not as
+    writable filesystem behavior. `1>/dev/null`, regular-file redirection,
+    append/truncate, input redirection, stderr-to-/dev/null, arbitrary
+    descriptor syntax, broader file/device semantics, multi-stage pipelines,
+    writable filesystem behavior, Pi 5 proof, networking, SSH, and a phase
+    transition remain deferred. The queued stdout-to-/dev/null closeout is
+    mechanically unblocked for docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

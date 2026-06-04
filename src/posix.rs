@@ -355,6 +355,7 @@ pub(crate) const STDIN_FD: usize = 0;
 pub(crate) const STDOUT_FD: usize = 1;
 pub(crate) const STDERR_FD: usize = 2;
 pub(crate) const TERMINAL_EOF_BYTE: u8 = 0x04;
+pub(crate) const DEV_NULL_REFERENCE: usize = 0;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct DescriptorFlags {
@@ -467,10 +468,18 @@ impl DescriptorObject {
             (DescriptorObjectKind::StdioInput, STDIN_FD) => "runtime-console0/stdin",
             (DescriptorObjectKind::StdioOutput, STDOUT_FD) => "runtime-console0/stdout",
             (DescriptorObjectKind::StdioOutput, STDERR_FD) => "runtime-console0/stderr",
+            (DescriptorObjectKind::Device, DEV_NULL_REFERENCE) => "device:/dev/null",
             (DescriptorObjectKind::StdioInput, _) => "runtime-console0/stdio-input",
             (DescriptorObjectKind::StdioOutput, _) => "runtime-console0/stdio-output",
             _ => "runtime-console0/unsupported",
         }
+    }
+
+    pub(crate) const fn is_dev_null(self) -> bool {
+        matches!(
+            (self.kind, self.reference),
+            (DescriptorObjectKind::Device, DEV_NULL_REFERENCE)
+        )
     }
 }
 
@@ -776,7 +785,7 @@ where
     let entry = table.get(descriptor)?;
     entry.require_writable()?;
 
-    if entry.object().kind() != DescriptorObjectKind::StdioOutput {
+    if entry.object().kind() != DescriptorObjectKind::StdioOutput && !entry.object().is_dev_null() {
         return Err(PosixError::NotSupported);
     }
     if len == 0 {
@@ -797,6 +806,10 @@ where
         len,
         &mut kernel_scratch[..len],
     )?;
+
+    if entry.object().is_dev_null() {
+        return Ok(copied);
+    }
 
     match runtime_console::write_default_console_bytes(console_backend, &kernel_scratch[..copied]) {
         Ok(result) if result.bytes_written == copied => Ok(copied),

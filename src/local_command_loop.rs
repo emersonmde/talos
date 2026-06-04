@@ -23,7 +23,7 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1",
     "+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline",
     "+stdout-only-pipeline-stderr-not-piped+pipeline-stderr-dup-to-stdout",
-    "+pipeline-stdout-redirect-away"
+    "+pipeline-stdout-redirect-away+stdout-dev-null-redirection"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -171,6 +171,7 @@ pub enum LocalCommandExecRedirection {
     StderrToStdout,
     CloseStdout,
     CloseStderr,
+    StdoutToDevNull,
 }
 
 impl LocalCommandExecRedirection {
@@ -180,6 +181,7 @@ impl LocalCommandExecRedirection {
             Self::StderrToStdout => posix::STDERR_FD,
             Self::CloseStdout => posix::STDOUT_FD,
             Self::CloseStderr => posix::STDERR_FD,
+            Self::StdoutToDevNull => posix::STDOUT_FD,
         }
     }
 
@@ -187,7 +189,7 @@ impl LocalCommandExecRedirection {
         match self {
             Self::StdoutToStderr => Some(posix::STDERR_FD),
             Self::StderrToStdout => Some(posix::STDOUT_FD),
-            Self::CloseStdout | Self::CloseStderr => None,
+            Self::CloseStdout | Self::CloseStderr | Self::StdoutToDevNull => None,
         }
     }
 
@@ -195,6 +197,7 @@ impl LocalCommandExecRedirection {
         match self {
             Self::StdoutToStderr | Self::StderrToStdout => "dup",
             Self::CloseStdout | Self::CloseStderr => "close",
+            Self::StdoutToDevNull => "sink",
         }
     }
 
@@ -204,7 +207,15 @@ impl LocalCommandExecRedirection {
             Self::StderrToStdout => "shell-redirection-2-to-1",
             Self::CloseStdout => "shell-redirection-1-close",
             Self::CloseStderr => "shell-redirection-2-close",
+            Self::StdoutToDevNull => "shell-redirection-stdout-dev-null",
         }
+    }
+
+    const fn installs_replacement_descriptor(self) -> bool {
+        matches!(
+            self,
+            Self::StdoutToStderr | Self::StderrToStdout | Self::StdoutToDevNull
+        )
     }
 }
 
@@ -397,6 +408,7 @@ pub struct LocalCommandExecRedirectionRecord {
     operation: &'static str,
     source_descriptor: usize,
     target_descriptor: Option<usize>,
+    target_path: Option<&'static str>,
     target_stream: &'static str,
     target_route: &'static str,
     child_only: bool,
@@ -1164,8 +1176,22 @@ where
         {
             return Err(LocalCommandExecError::LaunchPipelineFailed);
         }
-        let (target_entry, target_stream, target_route) =
-            if let Some(target_descriptor) = target_descriptor {
+        let (target_entry, target_path, target_stream, target_route) =
+            if redirection == LocalCommandExecRedirection::StdoutToDevNull {
+                (
+                    Some(posix::DescriptorEntry::new(
+                        posix::DescriptorAccess::WriteOnly,
+                        posix::DescriptorFlags::EMPTY,
+                        posix::DescriptorObject::new(
+                            posix::DescriptorObjectKind::Device,
+                            posix::DEV_NULL_REFERENCE,
+                        ),
+                    )),
+                    Some("/dev/null"),
+                    "null-sink",
+                    "device:/dev/null",
+                )
+            } else if let Some(target_descriptor) = target_descriptor {
                 let target_entry = table
                     .get(target_descriptor)
                     .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
@@ -1188,9 +1214,9 @@ where
                     }
                     _ => return Err(LocalCommandExecError::LaunchPipelineFailed),
                 };
-                (Some(target_entry), target_stream, target_route)
+                (Some(target_entry), None, target_stream, target_route)
             } else {
-                (None, "closed", "closed-descriptor")
+                (None, None, "closed", "closed-descriptor")
             };
 
         table
@@ -1210,6 +1236,7 @@ where
                 operation: redirection.operation(),
                 source_descriptor,
                 target_descriptor,
+                target_path,
                 target_stream,
                 target_route,
                 child_only: true,
@@ -1228,7 +1255,7 @@ where
             .current_descriptor_table_mut(self.current_owner)
             .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
         let descriptor = applied.request.source_descriptor();
-        if applied.request.target_descriptor().is_some() {
+        if applied.request.installs_replacement_descriptor() {
             table
                 .close(descriptor)
                 .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
@@ -1415,6 +1442,7 @@ where
                         stdout.object().kind(),
                         posix::DescriptorObjectKind::StdioOutput
                             | posix::DescriptorObjectKind::PipeEndpoint
+                            | posix::DescriptorObjectKind::Device
                     )
                 {
                     return Err(LocalCommandExecError::LaunchPipelineFailed);
@@ -1436,6 +1464,7 @@ where
                         stderr.object().kind(),
                         posix::DescriptorObjectKind::StdioOutput
                             | posix::DescriptorObjectKind::PipeEndpoint
+                            | posix::DescriptorObjectKind::Device
                     )
                 {
                     return Err(LocalCommandExecError::LaunchPipelineFailed);
@@ -1869,6 +1898,9 @@ where
             )),
             posix::DescriptorObjectKind::PipeEndpoint => {
                 Ok(("pipe-writer", "pipe:stdout-to-stdin"))
+            }
+            posix::DescriptorObjectKind::Device if entry.object().is_dev_null() => {
+                Ok(("null-sink", "device:/dev/null"))
             }
             _ => Err(LocalCommandExecError::LaunchPipelineFailed),
         }
@@ -2515,6 +2547,8 @@ fn parse_exec_request(arguments: &str) -> Result<LocalCommandExecRequest, LocalC
             Some(LocalCommandExecRedirection::CloseStdout)
         } else if token == b"2>&-" {
             Some(LocalCommandExecRedirection::CloseStderr)
+        } else if token == b">/dev/null" {
+            Some(LocalCommandExecRedirection::StdoutToDevNull)
         } else {
             None
         };
@@ -2871,6 +2905,13 @@ fn write_exec_redirection_line(
     if let Some(target_descriptor) = record.target_descriptor {
         write_str_part(sink, " target-fd=")?;
         write_hex_usize_part(sink, target_descriptor)?;
+        write_str_part(sink, " target-stream=")?;
+        write_str_part(sink, record.target_stream)?;
+        write_str_part(sink, " target-route=")?;
+        write_str_part(sink, record.target_route)?;
+    } else if let Some(target_path) = record.target_path {
+        write_str_part(sink, " target-path=")?;
+        write_str_part(sink, target_path)?;
         write_str_part(sink, " target-stream=")?;
         write_str_part(sink, record.target_stream)?;
         write_str_part(sink, " target-route=")?;
@@ -3956,6 +3997,53 @@ talos> Talos initramfs fixture\n"
         ));
         assert!(output.contains(
             "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stderr route=runtime-console0/stderr source=userspace-talos-write\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_redirects_child_stdout_to_dev_null_only_for_one_exec() {
+        let input = ScriptedInput::new(*b"exec stdout >/dev/null\rwaitpid\rexec stdout\r", 43);
+        let mut backend = CaptureSink::new();
+        let (redirected, waited, normal) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(redirected.line(), b"exec stdout >/dev/null");
+        assert_eq!(redirected.status(), LocalCommandStatus::Handled);
+        assert_eq!(redirected.response_lines(), 11);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal.line(), b"exec stdout");
+        assert_eq!(normal.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal.response_lines(), 10);
+        assert_eq!(
+            output
+                .matches("talos> Talos userspace stdout fixture\n")
+                .count(),
+            1
+        );
+        assert!(output.contains("talos: exec path=/bin/stdout source=vfs-open-read\n"));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=device fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/dev/null target-stream=null-sink target-route=device:/dev/null child-only=true shell-restored=true source=shell-redirection-stdout-dev-null\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=null-sink route=device:/dev/null source=userspace-talos-write\n"
         ));
         assert!(output.contains(
             "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
