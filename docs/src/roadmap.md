@@ -1544,6 +1544,30 @@ The post-review correction chain is:
     grammar, process accounting/concurrency, Pi 5 proof, networking, SSH, and
     phase transition remain deferred. The queued stderr append closeout is
     mechanically unblocked and must remain docs/evidence reconciliation only.
+86. stderr regular-file append redirection closeout: accepted in
+    'phase10-stderr-regular-file-append-redirection-closeout-20260604'. It
+    reconciles the bounded append sequence 'exec stderr 2>/tmp/stderr.txt'
+    followed by 'exec stderr 2>>/tmp/stderr.txt' for the VFS-backed
+    '/bin/stderr' fixture, with required setup/truncate-create before append,
+    scratch path limited to '/tmp/stderr.txt', child-only fd2 regular-file
+    rebinding, 'op=append',
+    'target-route=volatile-vfs:/tmp/stderr.txt', userspace TalosWrite
+    provenance, descriptor-backed 'cat /tmp/stderr.txt' readback of two
+    stderr fixture payloads with 'bytes=0x3e
+    source=volatile-vfs-descriptor-read', shell fd2 restoration through a
+    later normal 'exec stderr', distinct stdout behavior through a later
+    normal 'exec stdout', lifecycle/status, waitpid, laststatus, and
+    deterministic negative controls. The closeout retains stdout
+    append/truncate, stderr truncate/create, read-only input redirection,
+    /dev/null redirection, normal stdio, descriptor redirection/pipeline,
+    VFS exec/open/read/write, and descriptor-backed cat controls. Append-create
+    for missing files, arbitrary append paths, stdout-to-stderr and
+    stderr-to-stdout append mixups, persistence, broad writable filesystem
+    mutation, broader descriptor grammar, process accounting/concurrency,
+    Pi 5 proof, networking, SSH, and phase transition remain deferred. The
+    queued regular-file append frontier closeout is mechanically unblocked and
+    must stay docs/evidence reconciliation only before supervisor planning
+    chooses any broader local execution primitive.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
