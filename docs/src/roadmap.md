@@ -1596,6 +1596,28 @@ The post-review correction chain is:
     unblocked; supervisor planning is required before any broader descriptor
     grammar, append-create, arbitrary-path, process-management, or
     phase-transition work.
+88. regular-file append-create redirection core: accepted in
+    'phase10-regular-file-append-create-redirection-core-20260604'. This
+    accepts exactly 'exec stdout >>/tmp/stdout.txt' and exactly
+    'exec stderr 2>>/tmp/stderr.txt' as missing-file append-create forms with
+    no prior setup/truncate command in the task-owned transcripts. The stdout
+    form binds child fd1 to the volatile '/tmp/stdout.txt' regular-file
+    descriptor, records 'op=append',
+    'target-route=volatile-vfs:/tmp/stdout.txt', writes one VFS-backed
+    '/bin/stdout' fixture payload through userspace TalosWrite, reads it back
+    through descriptor-backed 'cat /tmp/stdout.txt' with 'bytes=0x1f
+    source=volatile-vfs-descriptor-read', and restores normal fd1 stdout. The
+    stderr form mirrors this for child fd2, '/tmp/stderr.txt', the
+    VFS-backed '/bin/stderr' fixture, descriptor-backed
+    'cat /tmp/stderr.txt', normal fd2 stderr restoration, and a normal stdout
+    distinct-stream control. Existing setup-then-append still appends without
+    truncating existing scratch-file contents. Arbitrary append paths,
+    stdout/stderr scratch path mixups, persistent storage, broad writable
+    filesystem mutation, arbitrary descriptor syntax, descriptor moves,
+    process accounting/concurrency, Pi 5 proof, networking, SSH, and phase
+    transition remain deferred. The queued append-create closeout is
+    mechanically unblocked and must remain docs/evidence reconciliation only
+    before explicit fd1 grammar can be promoted.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
