@@ -25,6 +25,7 @@ SHELL_PATH_LOOKUP_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_PATH_LOOKUP_SMOKE
 SHELL_STDOUT_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDOUT_SMOKE:-0}"
 SHELL_STDIN_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDIN_SMOKE:-0}"
 SHELL_STDIN_EOF_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDIN_EOF_SMOKE:-0}"
+SHELL_STDIN_TERMINAL_EOF_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDIN_TERMINAL_EOF_SMOKE:-0}"
 SHELL_STDIN_READINESS_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDIN_READINESS_SMOKE:-0}"
 SHELL_STDIN_BOUNDED_WAIT_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDIN_BOUNDED_WAIT_SMOKE:-0}"
 SHELL_STDIN_SCHEDULER_WAIT_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDIN_SCHEDULER_WAIT_SMOKE:-0}"
@@ -36,7 +37,7 @@ LINE_EDITING_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LINE_EDITING_SMOKE:-0}"
 LINE_CANCEL_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LINE_CANCEL_SMOKE:-0}"
 LINE_KILL_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LINE_KILL_SMOKE:-0}"
 SHELL_STDIO_SMOKE=0
-if [ "$SHELL_STDOUT_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_EOF_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_READINESS_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_BOUNDED_WAIT_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_SCHEDULER_WAIT_SMOKE" -eq 1 ] || [ "$SHELL_STDERR_SMOKE" -eq 1 ]; then
+if [ "$SHELL_STDOUT_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_EOF_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_TERMINAL_EOF_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_READINESS_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_BOUNDED_WAIT_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_SCHEDULER_WAIT_SMOKE" -eq 1 ] || [ "$SHELL_STDERR_SMOKE" -eq 1 ]; then
     SHELL_STDIO_SMOKE=1
 fi
 
@@ -267,6 +268,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'exec stdin\rtalos-console0' >&3
                     elif [ "$SHELL_STDIN_EOF_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_READINESS_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_BOUNDED_WAIT_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_SCHEDULER_WAIT_SMOKE" -eq 1 ]; then
                         printf 'exec stdin\r' >&3
+                    elif [ "$SHELL_STDIN_TERMINAL_EOF_SMOKE" -eq 1 ]; then
+                        printf 'exec stdin\r\004' >&3
                     elif [ "$SHELL_STDOUT_SMOKE" -eq 1 ]; then
                         printf 'exec stdout\r' >&3
                     elif [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
@@ -373,7 +376,7 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'exec /bin/init\r' >&3
                     elif [ "$SHELL_PATH_LOOKUP_SMOKE" -eq 1 ]; then
                         printf 'exec init\r' >&3
-                    elif [ "$SHELL_STDIN_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_EOF_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_READINESS_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_BOUNDED_WAIT_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_SCHEDULER_WAIT_SMOKE" -eq 1 ]; then
+                    elif [ "$SHELL_STDIN_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_EOF_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_TERMINAL_EOF_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_READINESS_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_BOUNDED_WAIT_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_SCHEDULER_WAIT_SMOKE" -eq 1 ]; then
                         printf 'exec stdout\r' >&3
                     elif [ "$SHELL_STDERR_SMOKE" -eq 1 ]; then
                         printf 'exec status42\r' >&3
@@ -645,13 +648,17 @@ elif [ "$SHELL_STDERR_SMOKE" -eq 1 ]; then
     grep -q "talos> cat /etc/banner.txt" "$LOG_FILE"
     grep -q "^Talos initramfs fixture" "$LOG_FILE"
     grep -q "$LABEL: final participants=18 expected=18 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
-elif [ "$SHELL_STDIN_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_EOF_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_READINESS_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_BOUNDED_WAIT_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_SCHEDULER_WAIT_SMOKE" -eq 1 ]; then
+elif [ "$SHELL_STDIN_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_EOF_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_TERMINAL_EOF_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_READINESS_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_BOUNDED_WAIT_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_SCHEDULER_WAIT_SMOKE" -eq 1 ]; then
     grep -q "talos> exec stdin" "$LOG_FILE"
     if [ "$SHELL_STDIN_BOUNDED_WAIT_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_SCHEDULER_WAIT_SMOKE" -eq 1 ]; then
         grep -q "^Talos userspace stdin fixture no-data: readiness" "$LOG_FILE"
         grep -Eq "talos: stdin-wait task=0x[0-9a-f]+ fd=0x0000000000000000 sleep-state=blocked wake-state=blocked wait-cycles=0x0000000000000000 result=sleep source=scheduler-runtime-console-readiness" "$LOG_FILE"
         grep -Eq "talos: stdin-wait task=0x[0-9a-f]+ fd=0x0000000000000000 sleep-state=blocked wake-state=runnable wait-cycles=0x[0-9a-f]+ result=wakeup/resume source=scheduler-runtime-console-readiness" "$LOG_FILE"
         grep -q "^Talos userspace stdin fixture read: talos-console0" "$LOG_FILE"
+    elif [ "$SHELL_STDIN_TERMINAL_EOF_SMOKE" -eq 1 ]; then
+        grep -q "^Talos userspace stdin fixture read-result: terminal-eof" "$LOG_FILE"
+        ! grep -q "^Talos userspace stdin fixture no-data: readiness" "$LOG_FILE"
+        ! grep -q "talos: stdin-wait task=" "$LOG_FILE"
     elif [ "$SHELL_STDIN_EOF_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_READINESS_SMOKE" -eq 1 ]; then
         grep -q "^Talos userspace stdin fixture no-data: readiness" "$LOG_FILE"
         grep -Eq "talos: stdin-wait task=0x[0-9a-f]+ fd=0x0000000000000000 sleep-state=blocked wake-state=blocked wait-cycles=0x0000000000000000 result=sleep source=scheduler-runtime-console-readiness" "$LOG_FILE"
@@ -667,6 +674,8 @@ elif [ "$SHELL_STDIN_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_EOF_SMOKE" -eq 1 ] || [ "
     grep -Eq "talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/stdin argv0-ptr=0x[0-9a-f]+ argv-null=false envp-null=true envp-state=empty-envp0 envp-entries=0x0000000000000000 envp0-ptr=0x[0-9a-f]+ copied-startup-bytes=0x000000000000002b source=initial-user-stack-record" "$LOG_FILE"
     if [ "$SHELL_STDIN_BOUNDED_WAIT_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_SCHEDULER_WAIT_SMOKE" -eq 1 ]; then
         grep -Eq "talos: exec-stdin fd=0x0000000000000000 bytes=0x000000000000000e return=0x000000000000000e read-source=runtime-console0/local-input stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000064 stdout-return=0x0000000000000064 source=userspace-talos-read\\+userspace-talos-write read-result=scheduler-wait/delayed-input readiness-observations=0x[0-9a-f]+ scheduler-wait-result=wakeup/resume scheduler-wait-cycles=0x[0-9a-f]+ scheduler-wait-source=scheduler-runtime-console-readiness" "$LOG_FILE"
+    elif [ "$SHELL_STDIN_TERMINAL_EOF_SMOKE" -eq 1 ]; then
+        grep -q "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000000 return=0x0000000000000000 read-source=runtime-console0/local-input stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000038 stdout-return=0x0000000000000038 source=userspace-talos-read+userspace-talos-write read-result=terminal-eof" "$LOG_FILE"
     elif [ "$SHELL_STDIN_EOF_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_READINESS_SMOKE" -eq 1 ]; then
         grep -q "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000000 return=0xfffffffffffffff5 read-source=runtime-console0/local-input stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000031 stdout-return=0x0000000000000031 source=userspace-talos-read+userspace-talos-write read-result=readiness/no-data" "$LOG_FILE"
         grep -q "scheduler-wait-result=timeout/no-false-eof" "$LOG_FILE"

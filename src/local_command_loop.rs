@@ -1222,6 +1222,19 @@ where
         {
             read_bytes = 0;
             read_result = Some("readiness/no-data");
+        } else if read_return_value == 0 {
+            let payload = initramfs::PHASE10_STDIN_TERMINAL_EOF_STDOUT;
+            user_memory[..payload.len()].copy_from_slice(payload);
+            let stdout_return =
+                self.write_userspace_stdout_bytes(&mappings, &user_memory, payload.len())?;
+            if stdout_return != payload.len() as u64 {
+                return Err(LocalCommandExecError::SyscallFailed);
+            }
+            stdout_bytes = stdout_bytes
+                .checked_add(payload.len())
+                .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
+            read_bytes = 0;
+            read_result = Some("terminal-eof");
         } else {
             return Err(LocalCommandExecError::SyscallFailed);
         }
@@ -3166,6 +3179,45 @@ talos> Talos initramfs fixture\n"
         ));
         assert!(output.contains(
             "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_reports_userspace_stdin_ctrl_d_terminal_eof() {
+        let input = ScriptedInput::new(*b"exec stdin\r\x04waitpid\rlaststatus\r", 31);
+        let mut backend = CaptureSink::new();
+        let (exec, waited, observed) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(exec.line(), b"exec stdin");
+        assert_eq!(exec.status(), LocalCommandStatus::Handled);
+        assert_eq!(exec.response_lines(), 10);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.line(), b"laststatus");
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert!(
+            output.contains("talos> Talos userspace stdin fixture read-result: terminal-eof\n")
+        );
+        assert!(!output.contains("read-result=readiness/no-data"));
+        assert!(!output.contains("talos: stdin-wait task="));
+        assert!(output.contains("talos: exec path=/bin/stdin source=vfs-open-read\n"));
+        assert!(output.contains(
+            "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000000 return=0x0000000000000000 read-source=runtime-console0/local-input stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000038 stdout-return=0x0000000000000038 source=userspace-talos-read+userspace-talos-write read-result=terminal-eof\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
     }
 

@@ -34,6 +34,8 @@ pub(crate) const PHASE10_STDIN_INPUT_BYTES: &[u8] = b"talos-fd0\n";
 pub(crate) const PHASE10_STDIN_STDOUT_PREFIX: &[u8] = b"Talos userspace stdin fixture read: ";
 pub(crate) const PHASE10_STDIN_READINESS_STDOUT: &[u8] =
     b"Talos userspace stdin fixture no-data: readiness\n";
+pub(crate) const PHASE10_STDIN_TERMINAL_EOF_STDOUT: &[u8] =
+    b"Talos userspace stdin fixture read-result: terminal-eof\n";
 pub(crate) const PHASE10_STDIN_BYTES: &[u8] = &PHASE10_STDIN_ELF_BYTES;
 pub(crate) const PHASE10_STDERR_PATH: &[u8] = b"/bin/stderr";
 pub(crate) const PHASE10_STDERR_PAYLOAD: &[u8] = b"Talos userspace stderr fixture\n";
@@ -901,6 +903,10 @@ mod tests {
         assert_eq!(
             PHASE10_STDIN_READINESS_STDOUT,
             b"Talos userspace stdin fixture no-data: readiness\n"
+        );
+        assert_eq!(
+            PHASE10_STDIN_TERMINAL_EOF_STDOUT,
+            b"Talos userspace stdin fixture read-result: terminal-eof\n"
         );
         let stderr = fs
             .regular_file_bytes(PHASE10_STDERR_PATH)

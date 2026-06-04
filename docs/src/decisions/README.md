@@ -12,6 +12,43 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-04 - Phase 10 Terminal Ctrl-D EOF Accepted
+
+- Status: accepted as the Phase 10 QEMU/substitute terminal Ctrl-D EOF core.
+  No Pi 5 hardware run, boot archive publication, hardware-lock acquisition,
+  full termios/canonical mode, POSIX signal/session/job-control behavior,
+  select/poll, nonblocking flags, pipes, redirection, async execution, fork,
+  writable filesystem behavior, networking, SSH, or distinct physical stderr
+  sink was added.
+- Context: Accepted runtime-console0/local-input stdin semantics already
+  distinguished ordinary no-data/readiness as `-EAGAIN` and delayed input as
+  scheduler-wait/delayed-input. The remaining narrow semantic gap was a true
+  terminal EOF event that did not collapse ordinary no-data back into EOF.
+- Decision: Accept phase10-terminal-ctrl-d-eof-core-20260604. A first
+  runtime-console0/local-input byte of Ctrl-D 0x04 on an inherited
+  `fd0=stdio-input` `TalosRead` now returns `0` as true terminal EOF. The
+  shell-visible `/bin/stdin` fixture reports
+  `Talos userspace stdin fixture read-result: terminal-eof` through inherited
+  fd1 and records `read-result=terminal-eof`. This policy is bounded to the
+  first-byte terminal EOF boundary and does not add broader termios behavior.
+- Evidence level: fmt/lint, no_std unit tests, QEMU/substitute terminal
+  Ctrl-D EOF smoke, QEMU/substitute scheduler-backed delayed-input control,
+  QEMU/substitute no-data/readiness control, and QEMU/substitute stdout/stderr
+  plus VFS exec/status/wait/cat controls. The task-owned log is
+  `tasks/evidence/2026-06-04-phase10-terminal-ctrl-d-eof-core/qemu-local-shell-terminal-ctrl-d-eof-smoke.log`.
+- Validation: `cargo fmt --all -- --check` passed;
+  `cargo -Zjson-target-spec test --quiet` passed;
+  `scripts/qemu-local-shell-terminal-ctrl-d-eof-smoke.sh --quiet` passed;
+  `scripts/qemu-local-shell-scheduler-backed-stdin-wait-smoke.sh --quiet`
+  passed; `scripts/qemu-local-shell-runtime-stdin-readiness-smoke.sh --quiet`
+  passed; `scripts/qemu-local-shell-userspace-stderr-smoke.sh --quiet`
+  passed; git diff checks and mdbook are part of the task closeout gate.
+- Consequences: The local stdin frontier now has three distinct outcomes:
+  terminal Ctrl-D EOF returns `0`, ordinary no-data/readiness returns
+  `-EAGAIN`, and delayed bytes wake/resume through the scheduler-backed stdin
+  path. Broader terminal/session semantics, pipes, redirection, distinct stderr
+  routing, writable filesystem behavior, networking, and SSH remain deferred.
+
 ## 2026-06-04 - Phase 10 Scheduler-Backed Runtime Stdin Wait Accepted
 
 - Status: accepted as the Phase 10 QEMU/substitute scheduler-backed stdin

@@ -354,6 +354,7 @@ pub(crate) const DEFAULT_PATH_LIMITS: PathLimits = PathLimits::new(4096, 255, 64
 pub(crate) const STDIN_FD: usize = 0;
 pub(crate) const STDOUT_FD: usize = 1;
 pub(crate) const STDERR_FD: usize = 2;
+pub(crate) const TERMINAL_EOF_BYTE: u8 = 0x04;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct DescriptorFlags {
@@ -913,6 +914,9 @@ where
         let Some(byte) = input_backend.poll_read_byte() else {
             break;
         };
+        if selected_len == 0 && byte == TERMINAL_EOF_BYTE {
+            return Ok(0);
+        }
         kernel_scratch[selected_len] = byte;
         selected_len += 1;
     }

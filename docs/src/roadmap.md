@@ -594,6 +594,25 @@ The post-review correction chain is:
     select/poll, nonblocking flags, async execution, fork, signals, termios,
     pipes, redirection, distinct stderr routing, writable filesystem behavior,
     libc stdio, Pi 5 proof, networking, or SSH.
+43. terminal Ctrl-D EOF core: accepted in
+    `phase10-terminal-ctrl-d-eof-core-20260604`. Shell-visible VFS-backed
+    `exec stdin` now treats a first runtime-console0/local-input Ctrl-D
+    0x04 byte on inherited `fd0=stdio-input` as true terminal EOF. The
+    launched `/bin/stdin` fixture reports
+    `Talos userspace stdin fixture read-result: terminal-eof` through
+    inherited fd1 and records
+    `exec-stdin ... return=0x0000000000000000 ... read-result=terminal-eof`.
+    Ordinary no-data/readiness remains `-EAGAIN` with
+    `read-result=readiness/no-data`, and delayed input remains
+    `read-result=scheduler-wait/delayed-input` with scheduler sleep and
+    wake/resume markers. Retained QEMU/substitute evidence also covers
+    stdout/stderr, descriptor-backed VFS exec, loader temporary descriptor
+    non-leak, lifecycle/status, consuming `waitpid`, non-consuming
+    `laststatus`, fixed `/bin` lookup, negative exec controls, and
+    descriptor-backed `cat /etc/banner.txt`. Full termios, POSIX signals,
+    sessions, job control, select/poll, nonblocking flags, pipes, redirection,
+    async execution, fork, writable filesystem behavior, distinct stderr
+    routing, Pi 5 proof, networking, and SSH remain deferred.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
