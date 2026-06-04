@@ -502,6 +502,22 @@ The post-review correction chain is:
     flags, Ctrl-D EOF policy, async execution, fork, signals, pipes,
     redirection, distinct stderr stream routing, writable filesystem behavior,
     libc stdio, Pi 5 proof, networking, and SSH remain deferred.
+38. runtime-console0 stdin readiness distinction closeout: accepted in
+    `phase10-runtime-stdin-readiness-distinction-closeout-20260604`. This
+    checkpoint reconciles the accepted readiness/no-data implementation and
+    retained evidence before bounded wait work. The evidence map keeps ordinary
+    no-data as `-EAGAIN`/`read-result=readiness/no-data`, keeps true terminal
+    EOF unimplemented for runtime-console0/local-input, and keeps the
+    successful `talos-console0` stdin read as a separate regression. Retained
+    stdout/stderr, descriptor-backed VFS exec, lifecycle/status, consuming
+    `waitpid`, non-consuming `laststatus`, fixed `/bin` lookup, negative
+    exec controls, and descriptor-backed `cat /etc/banner.txt` evidence remain
+    mapped. The bounded runtime-console0 stdin wait core is mechanically
+    unblocked as the next local feature step, but scheduler-backed blocking
+    reads, wait queues, select/poll, nonblocking flags, Ctrl-D EOF policy,
+    async execution, fork, signals, pipes, redirection, distinct stderr stream
+    routing, writable filesystem behavior, libc stdio, Pi 5 proof, networking,
+    and SSH remain deferred.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
