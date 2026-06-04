@@ -613,6 +613,24 @@ The post-review correction chain is:
     sessions, job control, select/poll, nonblocking flags, pipes, redirection,
     async execution, fork, writable filesystem behavior, distinct stderr
     routing, Pi 5 proof, networking, and SSH remain deferred.
+44. terminal Ctrl-D EOF closeout: accepted in
+    `phase10-terminal-ctrl-d-eof-closeout-20260604`. This checkpoint records
+    the accepted stdin policy split for shell-visible VFS-backed
+    `exec stdin`: first-byte Ctrl-D 0x04 on inherited fd0 is true terminal
+    EOF with `return=0` and `read-result=terminal-eof`; ordinary no-data
+    remains `-EAGAIN` with `read-result=readiness/no-data` and
+    `timeout/no-false-eof`; delayed `talos-console0` input remains
+    scheduler-owned `read-result=scheduler-wait/delayed-input` with sleep
+    and wake/resume markers. Retained evidence still maps immediate
+    runtime-console0 stdin, stdout/stderr, descriptor-backed VFS exec, loader
+    temporary descriptor non-leak, lifecycle/status, consuming `waitpid`,
+    non-consuming `laststatus`, fixed `/bin` lookup, negative exec controls,
+    and descriptor-backed `cat /etc/banner.txt`. Full termios, POSIX signals,
+    sessions, job control, select/poll, nonblocking flags, pipes, redirection,
+    async execution, fork, writable filesystem behavior, libc stdio, Pi 5
+    proof, networking, and SSH remain deferred. Distinct stderr routing is the
+    next smallest queued local I/O task because fd2 still shares the accepted
+    `stdio-output` backend with fd1.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
