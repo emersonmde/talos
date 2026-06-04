@@ -817,6 +817,27 @@ The post-review correction chain is:
     descriptor-close core is mechanically unblocked as the inverse
     standard-stream close slice and must stay bounded to child-only
     'exec stderr 2>&-'.
+54. stderr descriptor-close redirection core: accepted in
+    `phase10-stderr-close-redirection-core-20260604`. Shell-visible
+    `exec stderr 2>&-` now parses as the inverse exact descriptor-close
+    redirection form. The launched VFS-backed `/bin/stderr` child still loads
+    through the accepted descriptor-backed `/bin` lookup and VFS/open/read
+    path, but child fd2 is closed before the userspace fixture attempts its
+    `TalosWrite`. The task-owned QEMU/substitute evidence records
+    `exec-descriptors ... inherited-count=2 fd2=closed`,
+    `exec-redirection op=close source-fd=2 result=closed-descriptor
+    child-only=true shell-restored=true`, and fd2 write return `-EBADF`
+    with `stream=closed route=closed-descriptor`. A following normal
+    `exec stderr` control records `stream=stderr
+    route=runtime-console0/stderr`, proving shell fd2 restoration. The
+    accepted `exec stdout 1>&-` close form, both descriptor-dup directions,
+    normal stdout/stderr route controls, terminal EOF/readiness, lifecycle,
+    waitpid/laststatus, negative redirection, and descriptor-backed cat
+    controls remain covered. Arbitrary `N>&-`, descriptor moves,
+    regular-file redirection, append/truncate, pipes, writable filesystem
+    behavior, separate physical sinks, terminal policy, async jobs, fork,
+    signals, libc stdio, Pi 5 proof, networking, and SSH remain deferred. The
+    queued stderr descriptor-close closeout is mechanically unblocked.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

@@ -12,6 +12,47 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-04 - Phase 10 Stderr Descriptor-Close Redirection Accepted
+
+- Status: accepted as the Phase 10 QEMU/substitute stderr descriptor-close
+  redirection core. No Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, arbitrary descriptor close, descriptor moves,
+  regular-file redirection, append/truncate, pipes, writable filesystem
+  behavior, separate physical sinks, terminal policy, libc stdio, async jobs,
+  fork, signals, networking, or SSH was added.
+- Context: The accepted descriptor-dup frontier and stdout close slice proved
+  child-only descriptor-table mutation, shell descriptor restoration, and
+  deterministic closed-fd write behavior for fd1. The inverse standard stream
+  close was the next bounded descriptor-policy step and did not require a
+  broader redirection grammar.
+- Decision: Accept phase10-stderr-close-redirection-core-20260604.
+  Shell-visible `exec stderr 2>&-` parses as the inverse exact
+  descriptor-close redirection form. The launched VFS-backed `/bin/stderr`
+  child still loads through the descriptor-backed `/bin` lookup and
+  VFS/open/read path, but fd2 is closed only for that child. The stderr fixture
+  attempts fd2 `TalosWrite` and records `-EBADF`; the shell descriptor
+  table is restored afterward, and a following normal `exec stderr` records
+  the stderr route again.
+- Evidence level: fmt/lint, no_std unit tests, QEMU/substitute stderr
+  descriptor-close redirection smoke, QEMU/substitute stdout close regression,
+  QEMU/substitute descriptor-dup controls, QEMU/substitute normal stdout and
+  stderr route controls, and QEMU/substitute terminal EOF/readiness control.
+  The task-owned log is
+  `tasks/evidence/2026-06-04-phase10-stderr-close-redirection-core/qemu-local-shell-stderr-close-redirection-smoke.log`.
+- Validation: `cargo fmt --all -- --check` passed;
+  `cargo -Zjson-target-spec test --quiet` passed;
+  `scripts/qemu-local-shell-stderr-close-redirection-smoke.sh --quiet`
+  passed; retained stdout-close, both descriptor-dup direction, userspace
+  stdout/stderr, and terminal Ctrl-D EOF QEMU/substitute controls passed;
+  `git diff --check` passed; mdbook build is required before commit because
+  docs changed.
+- Consequences: The accepted descriptor-close frontier now covers exactly
+  child-only `exec stdout 1>&-` and `exec stderr 2>&-`. Arbitrary `N>&-`,
+  descriptor moves, file redirection, pipes, writable filesystem behavior,
+  separate physical sinks, terminal policy, async jobs, fork, signals, libc
+  stdio, Pi 5 proof, networking, and SSH remain deferred. The next bounded
+  task is the queued stderr descriptor-close closeout.
+
 ## 2026-06-04 - Phase 10 Stdout Descriptor-Close Redirection Accepted
 
 - Status: accepted as the Phase 10 QEMU/substitute stdout descriptor-close
