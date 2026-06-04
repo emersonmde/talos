@@ -14374,6 +14374,7 @@ pub fn run_diagnostic_command_channel_smoke() -> bool {
     talos_boot_scenario = "qemu_local_shell_stdout_regular_file_append_redirection",
     talos_boot_scenario = "qemu_local_shell_stdout_regular_file_append_create_redirection",
     talos_boot_scenario = "qemu_local_shell_explicit_fd1_regular_file_redirection",
+    talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection",
@@ -14630,6 +14631,11 @@ const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-shell-explicit-fd1-regular-file-redirection"
 }
 
+#[cfg(talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection")]
+const fn local_command_loop_smoke_label() -> &'static str {
+    "qemu-local-shell-stdout-arbitrary-tmp-output-redirection"
+}
+
 #[cfg(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection")]
 const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-shell-stderr-regular-file-redirection"
@@ -14737,6 +14743,7 @@ const fn local_command_loop_smoke_label() -> &'static str {
     not(talos_boot_scenario = "qemu_local_shell_stdout_regular_file_append_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stdout_regular_file_append_create_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_explicit_fd1_regular_file_redirection"),
+    not(talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection"),
@@ -14883,6 +14890,11 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     "qemu-local-shell-explicit-fd1-regular-file-redirection-complete"
 }
 
+#[cfg(talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection")]
+const fn local_command_loop_smoke_classification() -> &'static str {
+    "qemu-local-shell-stdout-arbitrary-tmp-output-redirection-complete"
+}
+
 #[cfg(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection")]
 const fn local_command_loop_smoke_classification() -> &'static str {
     "qemu-local-shell-stderr-regular-file-redirection-complete"
@@ -14990,6 +15002,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     not(talos_boot_scenario = "qemu_local_shell_stdout_regular_file_append_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stdout_regular_file_append_create_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_explicit_fd1_regular_file_redirection"),
+    not(talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection"),
@@ -15038,6 +15051,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection",
     talos_boot_scenario = "qemu_local_shell_stdout_regular_file_append_create_redirection",
     talos_boot_scenario = "qemu_local_shell_explicit_fd1_regular_file_redirection",
+    talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_to_stdout_redirection",
     talos_boot_scenario = "qemu_local_shell_stdout_close_redirection",
@@ -15093,6 +15107,9 @@ const fn local_command_loop_smoke_command_count() -> usize {
         11
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_explicit_fd1_regular_file_redirection") {
         14
+    } else if cfg!(talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection")
+    {
+        26
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection") {
         14
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection")
@@ -15174,6 +15191,7 @@ const fn local_command_loop_smoke_command_count() -> usize {
     talos_boot_scenario = "qemu_local_shell_stdout_regular_file_append_redirection",
     talos_boot_scenario = "qemu_local_shell_stdout_regular_file_append_create_redirection",
     talos_boot_scenario = "qemu_local_shell_explicit_fd1_regular_file_redirection",
+    talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection",
@@ -15205,6 +15223,154 @@ fn expected_local_command_loop_dispatch(
         0 => line == b"help" && status == Handled && response_lines == 4,
         1 => line == b"status" && status == Handled && response_lines == 5,
         2 => line == b"stdio" && status == Handled && response_lines == 7,
+        3 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"exec stdout >/tmp/alpha.log" && status == Handled && response_lines == 11
+        }
+        4 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"waitpid" && status == Handled && response_lines == 1
+        }
+        5 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"laststatus" && status == Handled && response_lines == 1
+        }
+        6 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"cat /tmp/alpha.log" && status == Handled && response_lines == 2
+        }
+        7 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"exec stdout >>/tmp/beta.out" && status == Handled && response_lines == 11
+        }
+        8 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"waitpid" && status == Handled && response_lines == 1
+        }
+        9 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"laststatus" && status == Handled && response_lines == 1
+        }
+        10 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"cat /tmp/beta.out" && status == Handled && response_lines == 2
+        }
+        11 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"exec stdout 1>/tmp/gamma.log" && status == Handled && response_lines == 11
+        }
+        12 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"waitpid" && status == Handled && response_lines == 1
+        }
+        13 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"laststatus" && status == Handled && response_lines == 1
+        }
+        14 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"cat /tmp/gamma.log" && status == Handled && response_lines == 2
+        }
+        15 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"exec stdout 1>>/tmp/delta.out" && status == Handled && response_lines == 11
+        }
+        16 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"waitpid" && status == Handled && response_lines == 1
+        }
+        17 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"laststatus" && status == Handled && response_lines == 1
+        }
+        18 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"cat /tmp/delta.out" && status == Handled && response_lines == 2
+        }
+        19 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"exec stdout" && status == Handled && response_lines == 10
+        }
+        20 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"exec stdout >/var/out.txt"
+                && status == UnexpectedArgument
+                && response_lines == 1
+        }
+        21 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"exec stdout >/tmp/nested/out.txt"
+                && status == UnexpectedArgument
+                && response_lines == 1
+        }
+        22 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"exec stdout >/tmp/" && status == UnexpectedArgument && response_lines == 1
+        }
+        23 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"exec stdout 3>/tmp/alpha.log"
+                && status == UnexpectedArgument
+                && response_lines == 1
+        }
+        24 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"exec stdout >/tmp/../bad.txt"
+                && status == UnexpectedArgument
+                && response_lines == 1
+        }
+        25 if cfg!(
+            talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"
+        ) =>
+        {
+            line == b"exec stdout >/tmp/stderr.txt"
+                && status == UnexpectedArgument
+                && response_lines == 1
+        }
         3 if cfg!(talos_boot_scenario = "qemu_local_line_editing") => {
             line == b"pwd" && status == Handled && response_lines == 1
         }
@@ -15883,7 +16049,7 @@ fn expected_local_command_loop_dispatch(
             talos_boot_scenario = "qemu_local_shell_stdout_regular_file_append_create_redirection"
         ) =>
         {
-            line == b"exec stdout >>/tmp/other.txt"
+            line == b"exec stdout >>/var/other.txt"
                 && status == UnexpectedArgument
                 && response_lines == 1
         }
@@ -15963,7 +16129,7 @@ fn expected_local_command_loop_dispatch(
             line == b"exec stdin </dev/null" && status == Handled && response_lines == 11
         }
         9 if cfg!(talos_boot_scenario = "qemu_local_shell_stdout_regular_file_redirection") => {
-            line == b"exec stdout >>/tmp/other.txt"
+            line == b"exec stdout >>/var/other.txt"
                 && status == UnexpectedArgument
                 && response_lines == 1
         }
@@ -16061,7 +16227,7 @@ fn expected_local_command_loop_dispatch(
                 && response_lines == 1
         }
         10 if cfg!(talos_boot_scenario = "qemu_local_shell_stdout_regular_file_redirection") => {
-            line == b"exec stdout >/tmp/other.txt"
+            line == b"exec stdout >/var/other.txt"
                 && status == UnexpectedArgument
                 && response_lines == 1
         }
@@ -16163,7 +16329,7 @@ fn expected_local_command_loop_dispatch(
             talos_boot_scenario = "qemu_local_shell_stdout_regular_file_append_redirection"
         ) =>
         {
-            line == b"exec stdout >>/tmp/other.txt"
+            line == b"exec stdout >>/var/other.txt"
                 && status == UnexpectedArgument
                 && response_lines == 1
         }
@@ -16253,7 +16419,7 @@ fn expected_local_command_loop_dispatch(
             talos_boot_scenario = "qemu_local_shell_explicit_fd1_regular_file_redirection"
         ) =>
         {
-            line == b"exec stdout 1>/tmp/other.txt"
+            line == b"exec stdout 1>/var/other.txt"
                 && status == UnexpectedArgument
                 && response_lines == 1
         }

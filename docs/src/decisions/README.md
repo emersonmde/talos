@@ -12,6 +12,44 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-04 - Phase 10 Conservative Volatile /tmp Output Paths Accepted
+
+- Status: accepted as the Phase 10 stdout regular-file output path policy for
+  conservative volatile `/tmp` basename targets. No Pi 5 hardware run,
+  boot archive publication, hardware-lock acquisition, stderr arbitrary path
+  support, input arbitrary path support, persistent storage, recursive
+  directories, broad writable filesystem mutation, descriptor moves,
+  process accounting/concurrency, networking, SSH, or phase transition was
+  added.
+- Context: Earlier regular-file redirection tasks proved exact volatile
+  scratch targets such as `/tmp/stdout.txt`, append/create behavior, and
+  explicit fd1 aliases. The next useful shell I/O slice needed broader output
+  target names without implying a persistent or general filesystem contract.
+- Decision: Accept
+  `phase10-stdout-arbitrary-tmp-output-redirection-core-20260604`. Stdout
+  redirection now accepts `/tmp/<basename>` for `>`, `>>`, `1>`, and `1>>`
+  when the basename is non-empty ASCII letters, digits, `.`, `_`, or `-`.
+  The accepted route is still volatile VFS only, reported as
+  `target-route=volatile-vfs:/tmp/<basename>`, and descriptor-backed `cat`
+  readback requires the active matching path. Outside-`/tmp`, nested paths,
+  traversal, empty basenames, unsupported fd numbers, and reserved
+  `/tmp/stderr.txt` remain deterministic negatives.
+- Evidence level: fmt/lint/typecheck, no_std unit tests, task-owned
+  QEMU/substitute stdout arbitrary-/tmp smoke, and retained static controls
+  for exact output redirection, append/create, explicit fd1, `/dev/null`,
+  read-only stdin, descriptor/pipeline controls, VFS exec/open/read/write,
+  lifecycle/status, waitpid, laststatus, and descriptor-backed cat.
+- Validation: `cargo fmt --all -- --check` passed;
+  `cargo -Zjson-target-spec test --quiet` passed;
+  `scripts/qemu-local-shell-stdout-arbitrary-tmp-output-redirection-smoke.sh --quiet`
+  passed; retained control evidence was statically inspected;
+  `git diff --check` passed; `/home/node/.cargo/bin/mdbook build` passed;
+  and `git diff --cached --check` passed before commit.
+- Consequences: The next stderr arbitrary-/tmp output task can reuse this
+  conservative path grammar without re-deciding the policy. Talos still does
+  not claim persistence, general file creation, directories, arbitrary input
+  paths, or broader descriptor grammar.
+
 ## 2026-06-04 - Phase 10 /dev/null Stdout Sink Contract Accepted
 
 - Status: accepted as the first explicit Phase 10 file/device redirection sink

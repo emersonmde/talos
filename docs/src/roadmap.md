@@ -1688,6 +1688,29 @@ The post-review correction chain is:
     mechanically unblocked; supervisor planning is required before any broader
     descriptor grammar, arbitrary-path, process-management, persistent
     filesystem, hardware-proof, networking/SSH, or phase-transition work.
+92. stdout arbitrary /tmp output redirection core: accepted in
+    'phase10-stdout-arbitrary-tmp-output-redirection-core-20260604'. This
+    extends stdout regular-file redirection from exact '/tmp/stdout.txt' to
+    conservative volatile `/tmp/<basename>` output paths for the VFS-backed
+    '/bin/stdout' fixture. Accepted forms are
+    `exec stdout >/tmp/<basename>`,
+    `exec stdout >>/tmp/<basename>`,
+    `exec stdout 1>/tmp/<basename>`, and
+    `exec stdout 1>>/tmp/<basename>` where the basename is non-empty ASCII
+    letters, digits, '.', '_', or '-'. The retained QEMU/substitute transcript
+    proves truncate/create through '/tmp/alpha.log', append/create through
+    '/tmp/beta.out', explicit fd1 truncate through '/tmp/gamma.log',
+    explicit fd1 append through '/tmp/delta.out', userspace TalosWrite
+    provenance, `target-route=volatile-vfs:/tmp/<basename>`,
+    descriptor-backed cat readbacks, waitpid, laststatus, and shell fd1
+    restoration. Deterministic negatives reject outside-/tmp paths,
+    nested/traversal paths, empty basenames, unsupported fd numbers, and the
+    reserved stderr scratch name '/tmp/stderr.txt'. Stderr arbitrary paths,
+    input arbitrary paths, persistent storage, broad writable filesystem
+    mutation, recursive directories, descriptor moves, process
+    accounting/concurrency, Pi 5 proof, networking, SSH, and phase transition
+    remain deferred. The queued stdout arbitrary-/tmp closeout is mechanically
+    unblocked and must stay docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

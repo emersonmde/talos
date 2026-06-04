@@ -39,6 +39,7 @@ SHELL_STDOUT_REGULAR_FILE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHE
 SHELL_STDOUT_REGULAR_FILE_APPEND_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDOUT_REGULAR_FILE_APPEND_REDIRECTION_SMOKE:-0}"
 SHELL_STDOUT_REGULAR_FILE_APPEND_CREATE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDOUT_REGULAR_FILE_APPEND_CREATE_REDIRECTION_SMOKE:-0}"
 SHELL_EXPLICIT_FD1_REGULAR_FILE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_EXPLICIT_FD1_REGULAR_FILE_REDIRECTION_SMOKE:-0}"
+SHELL_STDOUT_ARBITRARY_TMP_OUTPUT_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDOUT_ARBITRARY_TMP_OUTPUT_REDIRECTION_SMOKE:-0}"
 SHELL_STDERR_REGULAR_FILE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDERR_REGULAR_FILE_REDIRECTION_SMOKE:-0}"
 SHELL_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE:-0}"
 SHELL_STDERR_REGULAR_FILE_APPEND_CREATE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDERR_REGULAR_FILE_APPEND_CREATE_REDIRECTION_SMOKE:-0}"
@@ -106,6 +107,42 @@ delayed_stdin_sent=0
 while kill -0 "$qemu_pid" 2>/dev/null; do
     if IFS= read -r -t 0.2 line <&3; then
         printf '%s\n' "$line" >>"$LOG_FILE"
+        if [ "$SHELL_STDOUT_ARBITRARY_TMP_OUTPUT_REDIRECTION_SMOKE" -eq 1 ] && [[ "$line" =~ ready\ command=([0-9]+) ]]; then
+            arbitrary_tmp_commands=(
+                "help"
+                "status"
+                "stdio"
+                "exec stdout >/tmp/alpha.log"
+                "waitpid"
+                "laststatus"
+                "cat /tmp/alpha.log"
+                "exec stdout >>/tmp/beta.out"
+                "waitpid"
+                "laststatus"
+                "cat /tmp/beta.out"
+                "exec stdout 1>/tmp/gamma.log"
+                "waitpid"
+                "laststatus"
+                "cat /tmp/gamma.log"
+                "exec stdout 1>>/tmp/delta.out"
+                "waitpid"
+                "laststatus"
+                "cat /tmp/delta.out"
+                "exec stdout"
+                "exec stdout >/var/out.txt"
+                "exec stdout >/tmp/nested/out.txt"
+                "exec stdout >/tmp/"
+                "exec stdout 3>/tmp/alpha.log"
+                "exec stdout >/tmp/../bad.txt"
+                "exec stdout >/tmp/stderr.txt"
+            )
+            command_index="${BASH_REMATCH[1]}"
+            if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#arbitrary_tmp_commands[@]}" ]; then
+                printf '%s\r' "${arbitrary_tmp_commands[$command_index]}" >&3
+                sent=$((command_index + 1))
+            fi
+            continue
+        fi
         if { [ "$SHELL_STDIN_BOUNDED_WAIT_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_SCHEDULER_WAIT_SMOKE" -eq 1 ]; } && [ "$delayed_stdin_sent" -eq 0 ]; then
             case "$line" in
                 *"talos: stdin-wait "*" result=sleep source=scheduler-runtime-console-readiness"*)
@@ -144,7 +181,7 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                     printf 'exec stdin < /etc/banner.txt\r' >&3
                     sent=11
                 elif [ "$sent" -eq 10 ] && [ "$SHELL_STDOUT_REGULAR_FILE_REDIRECTION_SMOKE" -eq 1 ]; then
-                    printf 'exec stdout >/tmp/other.txt\r' >&3
+                    printf 'exec stdout >/var/other.txt\r' >&3
                     sent=11
                 elif [ "$sent" -eq 10 ] && [ "$SHELL_STDOUT_REGULAR_FILE_APPEND_REDIRECTION_SMOKE" -eq 1 ]; then
                     printf 'exec stdout\r' >&3
@@ -216,7 +253,7 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                     printf 'exec stderr 2>/tmp/stdout.txt\r' >&3
                     sent=12
                 elif [ "$sent" -eq 11 ] && [ "$SHELL_STDOUT_REGULAR_FILE_APPEND_REDIRECTION_SMOKE" -eq 1 ]; then
-                    printf 'exec stdout >>/tmp/other.txt\r' >&3
+                    printf 'exec stdout >>/var/other.txt\r' >&3
                     sent=12
                 elif [ "$sent" -eq 11 ] && [ "$SHELL_EXPLICIT_FD1_REGULAR_FILE_REDIRECTION_SMOKE" -eq 1 ]; then
                     printf 'cat /tmp/stdout.txt\r' >&3
@@ -291,7 +328,7 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                     printf 'cat /etc/banner.txt\r' >&3
                     sent=14
                 elif [ "$sent" -eq 13 ] && [ "$SHELL_EXPLICIT_FD1_REGULAR_FILE_REDIRECTION_SMOKE" -eq 1 ]; then
-                    printf 'exec stdout 1>/tmp/other.txt\r' >&3
+                    printf 'exec stdout 1>/var/other.txt\r' >&3
                     sent=14
                 elif [ "$sent" -eq 13 ] && [ "$SHELL_STDERR_REGULAR_FILE_REDIRECTION_SMOKE" -eq 1 ]; then
                     printf 'cat /etc/banner.txt\r' >&3
@@ -776,7 +813,7 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                     elif [ "$SHELL_STDOUT_REGULAR_FILE_APPEND_REDIRECTION_SMOKE" -eq 1 ]; then
                         printf 'laststatus\r' >&3
                     elif [ "$SHELL_STDOUT_REGULAR_FILE_APPEND_CREATE_REDIRECTION_SMOKE" -eq 1 ]; then
-                        printf 'exec stdout >>/tmp/other.txt\r' >&3
+                        printf 'exec stdout >>/var/other.txt\r' >&3
                     elif [ "$SHELL_EXPLICIT_FD1_REGULAR_FILE_REDIRECTION_SMOKE" -eq 1 ]; then
                         printf 'exec stdout 1>>/tmp/stdout.txt\r' >&3
                     elif [ "$SHELL_STDERR_REGULAR_FILE_REDIRECTION_SMOKE" -eq 1 ]; then
@@ -834,7 +871,7 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                     printf 'exec stdin </dev/null\r' >&3
                     sent=10
                 elif [ "$sent" -eq 9 ] && [ "$SHELL_STDOUT_REGULAR_FILE_REDIRECTION_SMOKE" -eq 1 ]; then
-                    printf 'exec stdout >>/tmp/other.txt\r' >&3
+                    printf 'exec stdout >>/var/other.txt\r' >&3
                     sent=10
                 elif [ "$sent" -eq 9 ] && [ "$SHELL_STDOUT_REGULAR_FILE_APPEND_REDIRECTION_SMOKE" -eq 1 ]; then
                     printf 'cat /tmp/stdout.txt\r' >&3
@@ -1330,8 +1367,8 @@ elif [ "$SHELL_STDOUT_REGULAR_FILE_REDIRECTION_SMOKE" -eq 1 ]; then
     grep -q "talos: cat path=/tmp/stdout.txt bytes=0x000000000000001f source=volatile-vfs-descriptor-read" "$LOG_FILE"
     grep -q "talos> exec stdout" "$LOG_FILE"
     grep -q "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write" "$LOG_FILE"
-    grep -q "talos> exec stdout >>/tmp/other.txt" "$LOG_FILE"
-    grep -q "talos> exec stdout >/tmp/other.txt" "$LOG_FILE"
+    grep -q "talos> exec stdout >>/var/other.txt" "$LOG_FILE"
+    grep -q "talos> exec stdout >/var/other.txt" "$LOG_FILE"
     grep -q "talos> exec stderr 2>/tmp/stdout.txt" "$LOG_FILE"
     grep -c "talos: exec-invalid-path" "$LOG_FILE" | grep -q "^3$"
     grep -q "talos> cat /etc/banner.txt" "$LOG_FILE"
@@ -1350,7 +1387,7 @@ elif [ "$SHELL_STDOUT_REGULAR_FILE_APPEND_REDIRECTION_SMOKE" -eq 1 ]; then
     grep -q "talos: cat path=/tmp/stdout.txt bytes=0x000000000000003e source=volatile-vfs-descriptor-read" "$LOG_FILE"
     grep -q "talos> exec stdout" "$LOG_FILE"
     grep -q "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write" "$LOG_FILE"
-    grep -q "talos> exec stdout >>/tmp/other.txt" "$LOG_FILE"
+    grep -q "talos> exec stdout >>/var/other.txt" "$LOG_FILE"
     grep -q "talos> exec stderr 2>>/tmp/stderr.txt" "$LOG_FILE"
     grep -c "talos: exec-invalid-path" "$LOG_FILE" | grep -q "^2$"
     grep -q "talos> cat /etc/banner.txt" "$LOG_FILE"
@@ -1367,7 +1404,7 @@ elif [ "$SHELL_STDOUT_REGULAR_FILE_APPEND_CREATE_REDIRECTION_SMOKE" -eq 1 ]; the
     grep -q "talos: cat path=/tmp/stdout.txt bytes=0x000000000000001f source=volatile-vfs-descriptor-read" "$LOG_FILE"
     grep -q "talos> exec stdout" "$LOG_FILE"
     grep -q "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write" "$LOG_FILE"
-    grep -q "talos> exec stdout >>/tmp/other.txt" "$LOG_FILE"
+    grep -q "talos> exec stdout >>/var/other.txt" "$LOG_FILE"
     grep -q "talos> exec stdout >>/tmp/stderr.txt" "$LOG_FILE"
     grep -c "talos: exec-invalid-path" "$LOG_FILE" | grep -q "^2$"
     grep -q "talos> cat /etc/banner.txt" "$LOG_FILE"
@@ -1388,9 +1425,36 @@ elif [ "$SHELL_EXPLICIT_FD1_REGULAR_FILE_REDIRECTION_SMOKE" -eq 1 ]; then
     grep -q "talos: exec-redirection op=append source-fd=0x0000000000000001 target-path=/tmp/stdout.txt target-stream=regular-file target-route=volatile-vfs:/tmp/stdout.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout-append" "$LOG_FILE"
     grep -q "talos: cat path=/tmp/stdout.txt bytes=0x000000000000003e source=volatile-vfs-descriptor-read" "$LOG_FILE"
     grep -q "talos> exec stdout 3>/tmp/stdout.txt" "$LOG_FILE"
-    grep -q "talos> exec stdout 1>/tmp/other.txt" "$LOG_FILE"
+    grep -q "talos> exec stdout 1>/var/other.txt" "$LOG_FILE"
     grep -c "talos: exec-invalid-path" "$LOG_FILE" | grep -q "^2$"
     grep -q "$LABEL: final participants=14 expected=14 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+elif [ "$SHELL_STDOUT_ARBITRARY_TMP_OUTPUT_REDIRECTION_SMOKE" -eq 1 ]; then
+    grep -q "talos> exec stdout >/tmp/alpha.log" "$LOG_FILE"
+    grep -q "talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/alpha.log target-stream=regular-file target-route=volatile-vfs:/tmp/alpha.log child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout" "$LOG_FILE"
+    grep -q "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=regular-file route=volatile-vfs:/tmp/alpha.log source=userspace-talos-write" "$LOG_FILE"
+    grep -q "talos> cat /tmp/alpha.log" "$LOG_FILE"
+    grep -q "talos: cat path=/tmp/alpha.log bytes=0x000000000000001f source=volatile-vfs-descriptor-read" "$LOG_FILE"
+    grep -q "talos> exec stdout >>/tmp/beta.out" "$LOG_FILE"
+    grep -q "talos: exec-redirection op=append source-fd=0x0000000000000001 target-path=/tmp/beta.out target-stream=regular-file target-route=volatile-vfs:/tmp/beta.out child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout-append" "$LOG_FILE"
+    grep -q "talos: cat path=/tmp/beta.out bytes=0x000000000000001f source=volatile-vfs-descriptor-read" "$LOG_FILE"
+    grep -q "talos> exec stdout 1>/tmp/gamma.log" "$LOG_FILE"
+    grep -q "talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/gamma.log target-stream=regular-file target-route=volatile-vfs:/tmp/gamma.log child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout" "$LOG_FILE"
+    grep -q "talos: cat path=/tmp/gamma.log bytes=0x000000000000001f source=volatile-vfs-descriptor-read" "$LOG_FILE"
+    grep -q "talos> exec stdout 1>>/tmp/delta.out" "$LOG_FILE"
+    grep -q "talos: exec-redirection op=append source-fd=0x0000000000000001 target-path=/tmp/delta.out target-stream=regular-file target-route=volatile-vfs:/tmp/delta.out child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout-append" "$LOG_FILE"
+    grep -q "talos: cat path=/tmp/delta.out bytes=0x000000000000001f source=volatile-vfs-descriptor-read" "$LOG_FILE"
+    grep -q "talos> exec stdout" "$LOG_FILE"
+    grep -q "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write" "$LOG_FILE"
+    grep -q "talos> exec stdout >/var/out.txt" "$LOG_FILE"
+    grep -q "talos> exec stdout >/tmp/nested/out.txt" "$LOG_FILE"
+    grep -q "talos> exec stdout >/tmp/" "$LOG_FILE"
+    grep -q "talos> exec stdout 3>/tmp/alpha.log" "$LOG_FILE"
+    grep -q "talos> exec stdout >/tmp/../bad.txt" "$LOG_FILE"
+    grep -q "talos> exec stdout >/tmp/stderr.txt" "$LOG_FILE"
+    grep -c "talos: exec-invalid-path" "$LOG_FILE" | grep -q "^6$"
+    grep -Eq "talos: waitpid pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -Eq "talos: last-process pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -q "$LABEL: final participants=26 expected=26 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
 elif [ "$SHELL_STDERR_REGULAR_FILE_APPEND_CREATE_REDIRECTION_SMOKE" -eq 1 ]; then
     grep -q "talos> exec stderr 2>>/tmp/stderr.txt" "$LOG_FILE"
     grep -q "talos: exec-redirection op=append source-fd=0x0000000000000002 target-path=/tmp/stderr.txt target-stream=regular-file target-route=volatile-vfs:/tmp/stderr.txt child-only=true shell-restored=true source=shell-redirection-stderr-tmp-stderr-append" "$LOG_FILE"
