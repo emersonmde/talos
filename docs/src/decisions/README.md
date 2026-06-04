@@ -12,6 +12,48 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-04 - Phase 10 Stdout Descriptor-Close Redirection Accepted
+
+- Status: accepted as the Phase 10 QEMU/substitute stdout descriptor-close
+  redirection core. No Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, stderr close syntax, arbitrary descriptor close,
+  descriptor moves, regular-file redirection, append/truncate, pipes, writable
+  filesystem behavior, separate physical sinks, terminal policy, libc stdio,
+  async jobs, fork, signals, networking, or SSH was added.
+- Context: The accepted descriptor-dup frontier already proved child-only
+  descriptor-table mutation and shell descriptor restoration for `1>&2` and
+  `2>&1`. The next reversible descriptor-policy step was an exact close form
+  that could prove a closed child standard descriptor without claiming file
+  redirection or pipes.
+- Decision: Accept phase10-stdout-close-redirection-core-20260604.
+  Shell-visible `exec stdout 1>&-` parses as the first exact
+  descriptor-close redirection form. The launched VFS-backed `/bin/stdout`
+  child still loads through the descriptor-backed `/bin` lookup and
+  VFS/open/read path, but fd1 is closed only for that child. The stdout fixture
+  attempts fd1 `TalosWrite` and records `-EBADF`; the shell descriptor table
+  is restored afterward, and a following normal `exec stdout` records the
+  stdout route again.
+- Evidence level: fmt/lint, no_std unit tests, QEMU/substitute stdout
+  descriptor-close redirection smoke, QEMU/substitute descriptor-dup controls,
+  QEMU/substitute normal stdout route control, QEMU/substitute distinct stderr
+  route control, and QEMU/substitute terminal EOF/readiness control. The
+  task-owned log is
+  `tasks/evidence/2026-06-04-phase10-stdout-close-redirection-core/qemu-local-shell-stdout-close-redirection-smoke.log`.
+- Validation: `cargo fmt --all -- --check` passed;
+  `cargo -Zjson-target-spec test --quiet` passed;
+  `scripts/qemu-local-shell-stdout-close-redirection-smoke.sh` passed;
+  `scripts/qemu-local-shell-stdout-to-stderr-redirection-smoke.sh` passed;
+  `scripts/qemu-local-shell-stderr-to-stdout-redirection-smoke.sh` passed;
+  `scripts/qemu-local-shell-userspace-stdout-smoke.sh` passed;
+  `scripts/qemu-local-shell-distinct-stderr-routing-smoke.sh` passed;
+  `scripts/qemu-local-shell-terminal-ctrl-d-eof-smoke.sh` passed; mdbook and
+  git diff checks passed.
+- Consequences: The accepted local redirection frontier can close child fd1
+  for one launched VFS-backed executable while preserving shell fd restoration
+  and the shared runtime-console0 sink. Stderr close syntax, arbitrary
+  descriptor close/move syntax, file-backed streams, pipes, writable filesystem
+  behavior, separate sinks, networking, and SSH remain deferred.
+
 ## 2026-06-04 - Phase 10 Stdout-To-Stderr Descriptor-Dup Redirection Accepted
 
 - Status: accepted as the Phase 10 QEMU/substitute stdout-to-stderr

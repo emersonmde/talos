@@ -777,6 +777,28 @@ The post-review correction chain is:
     supervisor continues inside descriptor policy, descriptor close/restore
     syntax is the smallest plausible next slice; file/device redirection needs
     an explicit writable target or device-sink plan.
+52. stdout descriptor-close redirection core: accepted in
+    `phase10-stdout-close-redirection-core-20260604`. Shell-visible
+    `exec stdout 1>&-` now parses as the first exact descriptor-close
+    redirection form. The launched VFS-backed `/bin/stdout` child still loads
+    through the accepted descriptor-backed `/bin` lookup and VFS/open/read
+    path, but child fd1 is closed before the userspace fixture attempts its
+    `TalosWrite`. The task-owned QEMU/substitute evidence records
+    `exec-descriptors ... inherited-count=2 fd1=closed`,
+    `exec-redirection op=close source-fd=1 result=closed-descriptor
+    child-only=true shell-restored=true`, and fd1 write return `-EBADF`
+    with `stream=closed route=closed-descriptor`. A following normal
+    `exec stdout` control records `stream=stdout
+    route=runtime-console0/stdout`, proving the shell descriptor table is
+    restored after the child launch. Accepted descriptor-dup directions,
+    normal stdout/stderr route controls, terminal EOF/readiness, lifecycle,
+    waitpid/laststatus, negative redirection, and descriptor-backed cat
+    controls remain covered. Stderr `2>&-`, arbitrary `N>&-`, descriptor
+    moves, regular-file redirection, append/truncate, pipes, writable
+    filesystem behavior, separate physical sinks, terminal policy, async
+    jobs, fork, signals, libc stdio, Pi 5 proof, networking, and SSH remain
+    deferred. The queued stdout descriptor-close closeout is mechanically
+    unblocked.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
