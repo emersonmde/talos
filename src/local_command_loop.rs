@@ -345,6 +345,8 @@ pub struct LocalCommandUserspaceStdoutRecord {
     descriptor: usize,
     bytes: usize,
     return_value: u64,
+    stream: &'static str,
+    route: &'static str,
     source: &'static str,
 }
 
@@ -379,6 +381,8 @@ pub struct LocalCommandUserspaceStderrRecord {
     descriptor: usize,
     bytes: usize,
     return_value: u64,
+    stream: &'static str,
+    route: &'static str,
     source: &'static str,
 }
 
@@ -1118,11 +1122,14 @@ where
         if return_value != payload.len() as u64 {
             return Err(LocalCommandExecError::SyscallFailed);
         }
+        let (stream, route) = self.stdio_output_route_metadata(posix::STDOUT_FD)?;
 
         Ok(Some(LocalCommandUserspaceStdoutRecord {
             descriptor: posix::STDOUT_FD,
             bytes: payload.len(),
             return_value,
+            stream,
+            route,
             source: "userspace-talos-write",
         }))
     }
@@ -1278,13 +1285,38 @@ where
             &user_memory,
             payload.len(),
         )?;
+        let (stream, route) = self.stdio_output_route_metadata(posix::STDERR_FD)?;
 
         Ok(Some(LocalCommandUserspaceStderrRecord {
             descriptor: posix::STDERR_FD,
             bytes: payload.len(),
             return_value,
+            stream,
+            route,
             source: "userspace-talos-write",
         }))
+    }
+
+    fn stdio_output_route_metadata(
+        &self,
+        descriptor: usize,
+    ) -> Result<(&'static str, &'static str), LocalCommandExecError> {
+        let table = self
+            .descriptor_store
+            .current_descriptor_table(self.current_owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let entry = table
+            .get(descriptor)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        if entry.require_writable().is_err()
+            || entry.object().kind() != posix::DescriptorObjectKind::StdioOutput
+        {
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
+        }
+        Ok((
+            entry.object().stdio_stream_name(),
+            entry.object().runtime_console_route_name(),
+        ))
     }
 
     fn write_userspace_stdout_bytes(
@@ -2243,6 +2275,10 @@ fn write_exec_userspace_stdout_line(
     write_hex_usize_part(sink, record.bytes)?;
     write_str_part(sink, " return=")?;
     write_hex_u64_part(sink, record.return_value)?;
+    write_str_part(sink, " stream=")?;
+    write_str_part(sink, record.stream)?;
+    write_str_part(sink, " route=")?;
+    write_str_part(sink, record.route)?;
     write_str_part(sink, " source=")?;
     write_str_part(sink, record.source)?;
     finish_dynamic_line(sink, response_lines)
@@ -2299,6 +2335,10 @@ fn write_exec_userspace_stderr_line(
     write_hex_usize_part(sink, record.bytes)?;
     write_str_part(sink, " return=")?;
     write_hex_u64_part(sink, record.return_value)?;
+    write_str_part(sink, " stream=")?;
+    write_str_part(sink, record.stream)?;
+    write_str_part(sink, " route=")?;
+    write_str_part(sink, record.route)?;
     write_str_part(sink, " source=")?;
     write_str_part(sink, record.source)?;
     finish_dynamic_line(sink, response_lines)
@@ -3093,7 +3133,7 @@ talos> Talos initramfs fixture\n"
             "talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/stdout"
         ));
         assert!(output.contains(
-            "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f source=userspace-talos-write\n"
+            "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write\n"
         ));
         assert!(output.contains(
             "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"
@@ -3300,7 +3340,7 @@ talos> Talos initramfs fixture\n"
             "talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/stderr"
         ));
         assert!(output.contains(
-            "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f source=userspace-talos-write\n"
+            "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=stderr route=runtime-console0/stderr source=userspace-talos-write\n"
         ));
         assert!(output.contains(
             "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stderr state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"

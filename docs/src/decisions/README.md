@@ -12,6 +12,43 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-04 - Phase 10 Distinct Stderr Routing Metadata Accepted
+
+- Status: accepted as the Phase 10 QEMU/substitute distinct stderr routing
+  core. No Pi 5 hardware run, boot archive publication, hardware-lock
+  acquisition, separate physical stderr sink, pipes, redirection, file-backed
+  stderr, terminal colors/policy, libc stdio, async jobs, fork, signals,
+  writable filesystem behavior, networking, or SSH was added.
+- Context: The accepted `/bin/stderr` path already proved process-originated
+  writes through inherited fd2, but fd1 and fd2 both reported the same
+  `stdio-output` object kind. The next reversible step was to prove distinct
+  stream origin/routing while preserving the shared runtime-console0 sink.
+- Decision: Accept phase10-distinct-stderr-routing-core-20260604. Descriptor
+  objects now expose reserved-stdio stream and runtime-console route names
+  derived from their descriptor reference. Shell-visible `exec stderr`
+  records `stream=stderr route=runtime-console0/stderr`; the retained
+  `exec stdout` control records
+  `stream=stdout route=runtime-console0/stdout`.
+- Evidence level: fmt/lint, no_std unit tests, QEMU/substitute distinct
+  stderr routing smoke, QEMU/substitute stdout control, QEMU/substitute
+  scheduler-backed stdin wait control, QEMU/substitute no-data/readiness
+  control, and QEMU/substitute terminal EOF control. The task-owned log is
+  `tasks/evidence/2026-06-04-phase10-distinct-stderr-routing-core/qemu-local-shell-distinct-stderr-routing-smoke.log`.
+- Validation: `cargo fmt --all -- --check` passed;
+  `cargo -Zjson-target-spec test --quiet` passed with 391 tests and no
+  unexpected-cfg warnings; `scripts/qemu-local-shell-distinct-stderr-routing-smoke.sh --quiet`
+  passed; `scripts/qemu-local-shell-userspace-stdout-smoke.sh --quiet`
+  passed; `scripts/qemu-local-shell-scheduler-backed-stdin-wait-smoke.sh --quiet`
+  passed; `scripts/qemu-local-shell-runtime-stdin-readiness-smoke.sh --quiet`
+  passed; `scripts/qemu-local-shell-terminal-ctrl-d-eof-smoke.sh --quiet`
+  passed; `/home/node/.cargo/bin/mdbook build` passed with the existing
+  large search-index warning; git diff checks passed.
+- Consequences: The accepted local I/O frontier distinguishes fd1 stdout and
+  fd2 stderr at the descriptor/stream-route metadata boundary while retaining
+  the shared runtime-console0 sink. Pipes, redirection, file-backed streams,
+  separate sinks, writable filesystem behavior, networking, and SSH remain
+  deferred.
+
 ## 2026-06-04 - Phase 10 Terminal Ctrl-D EOF Accepted
 
 - Status: accepted as the Phase 10 QEMU/substitute terminal Ctrl-D EOF core.

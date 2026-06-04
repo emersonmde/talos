@@ -62,6 +62,7 @@
             talos_boot_scenario = "qemu_syscall_smoke",
             talos_boot_scenario = "qemu_pointer_copy_smoke",
             talos_boot_scenario = "qemu_local_serial_command_loop",
+            talos_boot_scenario = "qemu_local_shell_distinct_stderr_routing",
             talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke",
             talos_boot_scenario = "qemu_open_read_syscall_surface_smoke",
             talos_boot_scenario = "qemu_program_loader_smoke",

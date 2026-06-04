@@ -450,6 +450,28 @@ impl DescriptorObject {
     pub(crate) const fn reference(self) -> usize {
         self.reference
     }
+
+    pub(crate) const fn stdio_stream_name(self) -> &'static str {
+        match (self.kind, self.reference) {
+            (DescriptorObjectKind::StdioInput, STDIN_FD) => "stdin",
+            (DescriptorObjectKind::StdioOutput, STDOUT_FD) => "stdout",
+            (DescriptorObjectKind::StdioOutput, STDERR_FD) => "stderr",
+            (DescriptorObjectKind::StdioInput, _) => "stdio-input",
+            (DescriptorObjectKind::StdioOutput, _) => "stdio-output",
+            _ => self.kind.name(),
+        }
+    }
+
+    pub(crate) const fn runtime_console_route_name(self) -> &'static str {
+        match (self.kind, self.reference) {
+            (DescriptorObjectKind::StdioInput, STDIN_FD) => "runtime-console0/stdin",
+            (DescriptorObjectKind::StdioOutput, STDOUT_FD) => "runtime-console0/stdout",
+            (DescriptorObjectKind::StdioOutput, STDERR_FD) => "runtime-console0/stderr",
+            (DescriptorObjectKind::StdioInput, _) => "runtime-console0/stdio-input",
+            (DescriptorObjectKind::StdioOutput, _) => "runtime-console0/stdio-output",
+            _ => "runtime-console0/unsupported",
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -1236,6 +1258,16 @@ mod tests {
         assert_eq!(stderr.access(), DescriptorAccess::WriteOnly);
         assert_eq!(stderr.object().kind(), DescriptorObjectKind::StdioOutput);
         assert_ne!(stdout.object().reference(), stderr.object().reference());
+        assert_eq!(stdout.object().stdio_stream_name(), "stdout");
+        assert_eq!(
+            stdout.object().runtime_console_route_name(),
+            "runtime-console0/stdout"
+        );
+        assert_eq!(stderr.object().stdio_stream_name(), "stderr");
+        assert_eq!(
+            stderr.object().runtime_console_route_name(),
+            "runtime-console0/stderr"
+        );
         assert_eq!(stdin.require_readable(), Ok(()));
         assert_eq!(stdout.require_writable(), Ok(()));
         assert_eq!(stderr.require_tty(), Ok(()));

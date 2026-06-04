@@ -631,6 +631,23 @@ The post-review correction chain is:
     proof, networking, and SSH remain deferred. Distinct stderr routing is the
     next smallest queued local I/O task because fd2 still shares the accepted
     `stdio-output` backend with fd1.
+45. distinct stderr routing core: accepted in
+    `phase10-distinct-stderr-routing-core-20260604`. Shell-visible
+    VFS-backed `exec stderr` now records inherited fd2 writes with explicit
+    stream identity and route metadata:
+    `stream=stderr route=runtime-console0/stderr`. The retained stdout
+    control records inherited fd1 writes as
+    `stream=stdout route=runtime-console0/stdout`, proving fd1 is not
+    mislabeled as stderr. The accepted physical sink remains shared
+    runtime-console0; this task does not add pipes, redirection, file-backed
+    stderr, separate physical sinks, terminal colors/policy, libc stdio,
+    async jobs, fork, signals, writable filesystem behavior, Pi 5 proof,
+    networking, or SSH. Retained evidence still maps scheduler-backed stdin
+    wait/readiness, Ctrl-D EOF, descriptor-backed VFS exec, loader temporary
+    descriptor non-leak, lifecycle/status, consuming `waitpid`,
+    non-consuming `laststatus`, fixed `/bin` lookup, negative exec controls,
+    and descriptor-backed `cat /etc/banner.txt`. The queued distinct stderr
+    routing closeout is mechanically unblocked.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
