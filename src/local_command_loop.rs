@@ -186,6 +186,7 @@ pub enum LocalCommandExecRedirection {
     StdoutToTmpStdout,
     StdoutAppendTmpStdout,
     StderrToTmpStderr,
+    StderrAppendTmpStderr,
 }
 
 impl LocalCommandExecRedirection {
@@ -199,7 +200,7 @@ impl LocalCommandExecRedirection {
             Self::StderrToDevNull => posix::STDERR_FD,
             Self::StdinFromDevNull | Self::StdinFromEtcBanner => posix::STDIN_FD,
             Self::StdoutToTmpStdout | Self::StdoutAppendTmpStdout => posix::STDOUT_FD,
-            Self::StderrToTmpStderr => posix::STDERR_FD,
+            Self::StderrToTmpStderr | Self::StderrAppendTmpStderr => posix::STDERR_FD,
         }
     }
 
@@ -215,7 +216,8 @@ impl LocalCommandExecRedirection {
             | Self::StdinFromEtcBanner
             | Self::StdoutToTmpStdout
             | Self::StdoutAppendTmpStdout
-            | Self::StderrToTmpStderr => None,
+            | Self::StderrToTmpStderr
+            | Self::StderrAppendTmpStderr => None,
         }
     }
 
@@ -227,7 +229,7 @@ impl LocalCommandExecRedirection {
             | Self::StderrToDevNull
             | Self::StdoutToTmpStdout
             | Self::StderrToTmpStderr => "sink",
-            Self::StdoutAppendTmpStdout => "append",
+            Self::StdoutAppendTmpStdout | Self::StderrAppendTmpStderr => "append",
             Self::StdinFromDevNull | Self::StdinFromEtcBanner => "source",
         }
     }
@@ -245,6 +247,7 @@ impl LocalCommandExecRedirection {
             Self::StdoutToTmpStdout => "shell-redirection-stdout-tmp-stdout",
             Self::StdoutAppendTmpStdout => "shell-redirection-stdout-tmp-stdout-append",
             Self::StderrToTmpStderr => "shell-redirection-stderr-tmp-stderr",
+            Self::StderrAppendTmpStderr => "shell-redirection-stderr-tmp-stderr-append",
         }
     }
 
@@ -260,6 +263,7 @@ impl LocalCommandExecRedirection {
                 | Self::StdoutToTmpStdout
                 | Self::StdoutAppendTmpStdout
                 | Self::StderrToTmpStderr
+                | Self::StderrAppendTmpStderr
         )
     }
 }
@@ -1106,8 +1110,18 @@ where
         {
             return Err(LocalCommandExecError::InvalidPath);
         }
-        if request.redirection == Some(LocalCommandExecRedirection::StderrToTmpStderr)
-            && source_path != initramfs::PHASE10_STDERR_PATH
+        if matches!(
+            request.redirection,
+            Some(
+                LocalCommandExecRedirection::StderrToTmpStderr
+                    | LocalCommandExecRedirection::StderrAppendTmpStderr
+            )
+        ) && source_path != initramfs::PHASE10_STDERR_PATH
+        {
+            return Err(LocalCommandExecError::InvalidPath);
+        }
+        if request.redirection == Some(LocalCommandExecRedirection::StderrAppendTmpStderr)
+            && !self.stderr_scratch_file.exists
         {
             return Err(LocalCommandExecError::InvalidPath);
         }
@@ -1362,6 +1376,15 @@ where
         )
     }
 
+    fn open_stderr_scratch_append_redirection(&mut self) -> Result<(), LocalCommandExecError> {
+        self.open_scratch_redirection(
+            posix::STDERR_FD,
+            LOCAL_COMMAND_STDERR_VOLATILE_FILE_REFERENCE,
+            LocalCommandVolatileFileTarget::Stderr,
+            false,
+        )
+    }
+
     fn open_scratch_redirection(
         &mut self,
         descriptor: usize,
@@ -1582,7 +1605,11 @@ where
                 "regular-file",
                 LocalCommandVolatileFileTarget::Stdout.route(),
             )
-        } else if redirection == LocalCommandExecRedirection::StderrToTmpStderr {
+        } else if matches!(
+            redirection,
+            LocalCommandExecRedirection::StderrToTmpStderr
+                | LocalCommandExecRedirection::StderrAppendTmpStderr
+        ) {
             (
                 None,
                 Some(LocalCommandVolatileFileTarget::Stderr.path()),
@@ -1632,6 +1659,8 @@ where
         let install_stdout_scratch_append =
             redirection == LocalCommandExecRedirection::StdoutAppendTmpStdout;
         let install_stderr_scratch = redirection == LocalCommandExecRedirection::StderrToTmpStderr;
+        let install_stderr_scratch_append =
+            redirection == LocalCommandExecRedirection::StderrAppendTmpStderr;
         if let Some(target_entry) = target_entry {
             if table.allocate_at(source_descriptor, target_entry).is_err() {
                 let _ = table.allocate_at(source_descriptor, restored_entry);
@@ -1673,6 +1702,16 @@ where
         } else if install_stderr_scratch {
             let _ = table;
             if self.open_stderr_scratch_redirection().is_err() {
+                let restore_table = self
+                    .descriptor_store
+                    .current_descriptor_table_mut(self.current_owner)
+                    .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+                let _ = restore_table.allocate_at(source_descriptor, restored_entry);
+                return Err(LocalCommandExecError::LaunchPipelineFailed);
+            }
+        } else if install_stderr_scratch_append {
+            let _ = table;
+            if self.open_stderr_scratch_append_redirection().is_err() {
                 let restore_table = self
                     .descriptor_store
                     .current_descriptor_table_mut(self.current_owner)
@@ -3137,6 +3176,8 @@ fn parse_exec_request(arguments: &str) -> Result<LocalCommandExecRequest, LocalC
             Some(LocalCommandExecRedirection::StdoutAppendTmpStdout)
         } else if token == b"2>/tmp/stderr.txt" {
             Some(LocalCommandExecRedirection::StderrToTmpStderr)
+        } else if token == b"2>>/tmp/stderr.txt" {
+            Some(LocalCommandExecRedirection::StderrAppendTmpStderr)
         } else {
             None
         };
@@ -4908,6 +4949,74 @@ talos> Talos initramfs fixture\n"
     }
 
     #[test_case]
+    fn local_command_loop_appends_child_stderr_to_existing_volatile_regular_file() {
+        let bytes = *b"exec stderr 2>/tmp/stderr.txt\rexec stderr 2>>/tmp/stderr.txt\rwaitpid\rlaststatus\rcat /tmp/stderr.txt\rexec stderr\rexec stdout\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (created, appended, waited, observed, readback, normal_stderr, normal_stdout) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(created.line(), b"exec stderr 2>/tmp/stderr.txt");
+        assert_eq!(created.status(), LocalCommandStatus::Handled);
+        assert_eq!(appended.line(), b"exec stderr 2>>/tmp/stderr.txt");
+        assert_eq!(appended.status(), LocalCommandStatus::Handled);
+        assert_eq!(appended.response_lines(), 11);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.line(), b"laststatus");
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(readback.line(), b"cat /tmp/stderr.txt");
+        assert_eq!(readback.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal_stderr.line(), b"exec stderr");
+        assert_eq!(normal_stderr.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal_stdout.line(), b"exec stdout");
+        assert_eq!(normal_stdout.status(), LocalCommandStatus::Handled);
+        assert_eq!(
+            output.matches("Talos userspace stderr fixture\n").count(),
+            3
+        );
+        assert_eq!(
+            output
+                .matches("talos> Talos userspace stdout fixture\n")
+                .count(),
+            1
+        );
+        assert!(output.contains(
+            "talos: exec-redirection op=sink source-fd=0x0000000000000002 target-path=/tmp/stderr.txt target-stream=regular-file target-route=volatile-vfs:/tmp/stderr.txt child-only=true shell-restored=true source=shell-redirection-stderr-tmp-stderr\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=append source-fd=0x0000000000000002 target-path=/tmp/stderr.txt target-stream=regular-file target-route=volatile-vfs:/tmp/stderr.txt child-only=true shell-restored=true source=shell-redirection-stderr-tmp-stderr-append\n"
+        ));
+        assert!(output.contains(
+            "talos: cat path=/tmp/stderr.txt bytes=0x000000000000003e source=volatile-vfs-descriptor-read\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stderr state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stderr state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=stderr route=runtime-console0/stderr source=userspace-talos-write\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write\n"
+        ));
+    }
+
+    #[test_case]
     fn local_command_loop_redirects_child_stderr_to_dev_null_only_for_one_exec() {
         let bytes = *b"exec stderr 2>/dev/null\rwaitpid\rexec stderr\r";
         let input = ScriptedInput::new(bytes, bytes.len());
@@ -5168,15 +5277,23 @@ talos> Talos initramfs fixture\n"
 
     #[test_case]
     fn local_command_loop_rejects_unsupported_redirection_forms() {
-        let input = ScriptedInput::new(
-            *b"exec stdout 2>&3\rexec stdout 1>file\rexec stdout | stderr\rexec stderr 2>file\rexec stdout >>/tmp/stdout.txt\rexec stdout >/tmp/other.txt\rexec stderr 2>/tmp/stdout.txt\r",
-            164,
-        );
+        let bytes = *b"exec stdout 2>&3\rexec stdout 1>file\rexec stdout | stderr\rexec stderr 2>file\rexec stdout >>/tmp/stdout.txt\rexec stderr 2>>/tmp/stderr.txt\rexec stdout >/tmp/other.txt\rexec stderr 2>/tmp/stdout.txt\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
         let mut backend = CaptureSink::new();
-        let (bad_descriptor, file, pipe, stderr_file, append, other_path, stderr_regular_file) = {
+        let (
+            bad_descriptor,
+            file,
+            pipe,
+            stderr_file,
+            append,
+            stderr_append,
+            other_path,
+            stderr_regular_file,
+        ) = {
             let mut io =
                 DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
             (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
@@ -5201,6 +5318,11 @@ talos> Talos initramfs fixture\n"
         assert_eq!(stderr_file.status(), LocalCommandStatus::UnexpectedArgument);
         assert_eq!(append.line(), b"exec stdout >>/tmp/stdout.txt");
         assert_eq!(append.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(stderr_append.line(), b"exec stderr 2>>/tmp/stderr.txt");
+        assert_eq!(
+            stderr_append.status(),
+            LocalCommandStatus::UnexpectedArgument
+        );
         assert_eq!(other_path.line(), b"exec stdout >/tmp/other.txt");
         assert_eq!(other_path.status(), LocalCommandStatus::UnexpectedArgument);
         assert_eq!(stderr_regular_file.line(), b"exec stderr 2>/tmp/stdout.txt");
@@ -5211,6 +5333,7 @@ talos> Talos initramfs fixture\n"
         assert_eq!(
             output,
             "talos> talos: exec-invalid-path\n\
+talos> talos: exec-invalid-path\n\
 talos> talos: exec-invalid-path\n\
 talos> talos: exec-invalid-path\n\
 talos> talos: exec-invalid-path\n\

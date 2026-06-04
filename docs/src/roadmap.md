@@ -1522,6 +1522,28 @@ The post-review correction chain is:
     phase transition remain deferred. The queued stderr append core is
     mechanically unblocked and must stay limited to the explicit
     '/tmp/stderr.txt' mirror.
+85. stderr regular-file append redirection core: accepted in
+    'phase10-stderr-regular-file-append-redirection-core-20260604'. This
+    accepts exactly the bounded sequence 'exec stderr 2>/tmp/stderr.txt'
+    followed by 'exec stderr 2>>/tmp/stderr.txt' for the VFS-backed
+    '/bin/stderr' fixture. The first command preserves the accepted volatile
+    create/truncate behavior; the append command rebinds child fd2 to the same
+    volatile regular-file descriptor without truncating existing contents and
+    records 'op=append', 'target-path=/tmp/stderr.txt',
+    'target-stream=regular-file',
+    'target-route=volatile-vfs:/tmp/stderr.txt',
+    'source=shell-redirection-stderr-tmp-stderr-append', and userspace
+    'TalosWrite' provenance. A following descriptor-backed
+    'cat /tmp/stderr.txt' reads two stderr fixture payloads in order with
+    'bytes=0x3e source=volatile-vfs-descriptor-read'; later normal
+    'exec stderr' proves shell fd2 restoration through
+    'runtime-console0/stderr' and normal 'exec stdout' proves stdout remains
+    distinct through 'runtime-console0/stdout'. Append-create for missing
+    files, arbitrary append paths, stdout-to-stderr path mixups, persistence,
+    partial overwrite, broad writable filesystem mutation, broader descriptor
+    grammar, process accounting/concurrency, Pi 5 proof, networking, SSH, and
+    phase transition remain deferred. The queued stderr append closeout is
+    mechanically unblocked and must remain docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
