@@ -26,7 +26,7 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+pipeline-stdout-redirect-away+stdout-dev-null-redirection",
     "+stderr-dev-null-redirection+stdin-dev-null-redirection",
     "+readonly-regular-file-stdin-redirection+volatile-stdout-regular-file-redirection",
-    "+volatile-stderr-regular-file-redirection"
+    "+volatile-stderr-regular-file-redirection+explicit-fd1-regular-file-redirection"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -3172,9 +3172,9 @@ fn parse_exec_request(arguments: &str) -> Result<LocalCommandExecRequest, LocalC
             Some(LocalCommandExecRedirection::StdinFromDevNull)
         } else if token == b"</etc/banner.txt" {
             Some(LocalCommandExecRedirection::StdinFromEtcBanner)
-        } else if token == b">/tmp/stdout.txt" {
+        } else if token == b">/tmp/stdout.txt" || token == b"1>/tmp/stdout.txt" {
             Some(LocalCommandExecRedirection::StdoutToTmpStdout)
-        } else if token == b">>/tmp/stdout.txt" {
+        } else if token == b">>/tmp/stdout.txt" || token == b"1>>/tmp/stdout.txt" {
             Some(LocalCommandExecRedirection::StdoutAppendTmpStdout)
         } else if token == b"2>/tmp/stderr.txt" {
             Some(LocalCommandExecRedirection::StderrToTmpStderr)
@@ -4928,6 +4928,119 @@ talos> Talos initramfs fixture\n"
         assert!(output.contains(
             "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write\n"
         ));
+    }
+
+    #[test_case]
+    fn local_command_loop_accepts_explicit_fd1_stdout_regular_file_aliases() {
+        let bytes = *b"exec stdout 1>/tmp/stdout.txt\rwaitpid\rlaststatus\rcat /tmp/stdout.txt\rexec stdout\rexec stdout 1>>/tmp/stdout.txt\rwaitpid\rlaststatus\rcat /tmp/stdout.txt\rexec stdout\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (
+            truncated,
+            waited,
+            observed,
+            first_readback,
+            normal,
+            appended,
+            append_waited,
+            append_observed,
+            second_readback,
+            restored,
+        ) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(truncated.line(), b"exec stdout 1>/tmp/stdout.txt");
+        assert_eq!(truncated.status(), LocalCommandStatus::Handled);
+        assert_eq!(truncated.response_lines(), 11);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.line(), b"laststatus");
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(first_readback.line(), b"cat /tmp/stdout.txt");
+        assert_eq!(first_readback.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal.line(), b"exec stdout");
+        assert_eq!(normal.status(), LocalCommandStatus::Handled);
+        assert_eq!(appended.line(), b"exec stdout 1>>/tmp/stdout.txt");
+        assert_eq!(appended.status(), LocalCommandStatus::Handled);
+        assert_eq!(appended.response_lines(), 11);
+        assert_eq!(append_waited.line(), b"waitpid");
+        assert_eq!(append_waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(append_observed.line(), b"laststatus");
+        assert_eq!(append_observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(second_readback.line(), b"cat /tmp/stdout.txt");
+        assert_eq!(second_readback.status(), LocalCommandStatus::Handled);
+        assert_eq!(restored.line(), b"exec stdout");
+        assert_eq!(restored.status(), LocalCommandStatus::Handled);
+        assert!(output.contains(
+            "talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/stdout.txt target-stream=regular-file target-route=volatile-vfs:/tmp/stdout.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=append source-fd=0x0000000000000001 target-path=/tmp/stdout.txt target-stream=regular-file target-route=volatile-vfs:/tmp/stdout.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout-append\n"
+        ));
+        assert!(output.contains(
+            "talos: cat path=/tmp/stdout.txt bytes=0x000000000000001f source=volatile-vfs-descriptor-read\n"
+        ));
+        assert!(output.contains(
+            "talos: cat path=/tmp/stdout.txt bytes=0x000000000000003e source=volatile-vfs-descriptor-read\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_rejects_unsupported_explicit_file_output_aliases() {
+        let bytes = *b"exec stdout 3>/tmp/stdout.txt\rexec stdout 1>/tmp/other.txt\rexec stdout 1>>/tmp/other.txt\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (unsupported_fd, unsupported_truncate_path, unsupported_append_path) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(unsupported_fd.line(), b"exec stdout 3>/tmp/stdout.txt");
+        assert_eq!(
+            unsupported_fd.status(),
+            LocalCommandStatus::UnexpectedArgument
+        );
+        assert_eq!(
+            unsupported_truncate_path.line(),
+            b"exec stdout 1>/tmp/other.txt"
+        );
+        assert_eq!(
+            unsupported_truncate_path.status(),
+            LocalCommandStatus::UnexpectedArgument
+        );
+        assert_eq!(
+            unsupported_append_path.line(),
+            b"exec stdout 1>>/tmp/other.txt"
+        );
+        assert_eq!(
+            unsupported_append_path.status(),
+            LocalCommandStatus::UnexpectedArgument
+        );
+        assert_eq!(output.matches("talos: exec-invalid-path\n").count(), 3);
     }
 
     #[test_case]

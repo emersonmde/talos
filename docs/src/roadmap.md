@@ -1643,6 +1643,26 @@ The post-review correction chain is:
     mechanically unblocked and must stay limited to exact '1>/tmp/stdout.txt'
     and '1>>/tmp/stdout.txt' aliases for the VFS-backed '/bin/stdout'
     fixture.
+90. explicit fd1 regular-file redirection core: accepted in
+    'phase10-explicit-fd1-regular-file-redirection-core-20260604'. This
+    accepts exactly 'exec stdout 1>/tmp/stdout.txt' and exactly
+    'exec stdout 1>>/tmp/stdout.txt' as fd1 aliases for the accepted volatile
+    '/tmp/stdout.txt' VFS descriptor path. The truncate alias records
+    'op=sink', 'source-fd=0x1', 'target-path=/tmp/stdout.txt',
+    'target-route=volatile-vfs:/tmp/stdout.txt', userspace TalosWrite
+    provenance, descriptor-backed readback with 'bytes=0x1f
+    source=volatile-vfs-descriptor-read', waitpid, laststatus, and shell fd1
+    restoration. The append alias records 'op=append' through the same fd1
+    descriptor path and reads back two fixture payloads with 'bytes=0x3e
+    source=volatile-vfs-descriptor-read'. Unsupported explicit fd numbers and
+    arbitrary output paths remain deterministic negatives. These forms are
+    grammar aliases for existing fd1 regular-file sink/append behavior, not a
+    new descriptor class. Arbitrary descriptors, arbitrary output paths, fd2
+    alias expansion beyond accepted exact stderr forms, descriptor moves,
+    persistent storage, broad writable filesystem mutation, process
+    accounting/concurrency, Pi 5 proof, networking, SSH, and phase transition
+    remain deferred. The queued explicit fd1 closeout is mechanically
+    unblocked and must stay docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
