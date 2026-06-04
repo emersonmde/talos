@@ -1663,6 +1663,31 @@ The post-review correction chain is:
     accounting/concurrency, Pi 5 proof, networking, SSH, and phase transition
     remain deferred. The queued explicit fd1 closeout is mechanically
     unblocked and must stay docs/evidence reconciliation only.
+91. explicit fd1 regular-file redirection closeout: accepted in
+    'phase10-explicit-fd1-regular-file-redirection-closeout-20260604'. It
+    checkpoints the exact explicit fd1 aliases
+    'exec stdout 1>/tmp/stdout.txt' and
+    'exec stdout 1>>/tmp/stdout.txt' as grammar spellings for the accepted
+    volatile fd1 regular-file descriptor path. The truncate alias records
+    'op=sink', 'source-fd=0x1', 'target-path=/tmp/stdout.txt',
+    'target-route=volatile-vfs:/tmp/stdout.txt', userspace TalosWrite
+    provenance, descriptor-backed readback with 'bytes=0x1f
+    source=volatile-vfs-descriptor-read', waitpid, laststatus, and shell fd1
+    restoration. The append alias records 'op=append' through the same fd1
+    descriptor path and reads back two fixture payloads with 'bytes=0x3e
+    source=volatile-vfs-descriptor-read'. The closeout retains implicit
+    stdout/stderr truncate and append/create redirection, read-only input
+    redirection, /dev/null stdio redirection, normal stdio, descriptor
+    redirection/pipeline controls, VFS exec/open/read/write lineage,
+    lifecycle/status, waitpid, laststatus, deterministic negatives, and
+    descriptor-backed cat evidence. Arbitrary descriptor syntax, descriptor
+    moves, arbitrary output paths, fd2 shorthand aliases beyond accepted exact
+    stderr forms, persistent storage, broad writable filesystem mutation,
+    process accounting/concurrency, Pi 5 proof, networking, SSH, and phase
+    transition remain deferred. No explicit queued follow-up remains
+    mechanically unblocked; supervisor planning is required before any broader
+    descriptor grammar, arbitrary-path, process-management, persistent
+    filesystem, hardware-proof, networking/SSH, or phase-transition work.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
