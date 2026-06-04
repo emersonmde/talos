@@ -856,6 +856,27 @@ The post-review correction chain is:
     fork, signals, libc stdio, Pi 5 proof, networking, and SSH remain
     deferred. The queued descriptor-close frontier closeout is mechanically
     unblocked and must remain docs/evidence reconciliation only.
+56. descriptor-close redirection frontier closeout: accepted in
+    'phase10-fd-close-redirection-frontier-closeout-20260604'. This closeout
+    accepts exactly the two shell-visible descriptor-close forms
+    'exec stdout 1>&-' and 'exec stderr 2>&-' for VFS-backed exec children.
+    Both are child-only descriptor-table mutations: the launched child sees
+    fd1 or fd2 closed, the relevant userspace fixture's fd write reports
+    '-EBADF' with 'stream=closed route=closed-descriptor', and the shell
+    descriptor table is restored after the launch. Retained QEMU/substitute
+    evidence maps both descriptor-close directions, both descriptor-dup
+    directions, normal stdout/stderr route controls, scheduler-backed stdin
+    wait/readiness, Ctrl-D EOF, descriptor-backed VFS exec, lifecycle/status,
+    waitpid/laststatus, deterministic negative exec/redirection controls, and
+    descriptor-backed 'cat /etc/banner.txt'. Arbitrary descriptor close
+    beyond the two exact forms, descriptor moves, broad descriptor
+    close/restore syntax, regular-file redirection, append/truncate, pipes,
+    writable filesystem behavior, separate physical sinks, terminal policy,
+    async jobs, fork, signals, libc stdio, Pi 5 proof, networking, and SSH
+    remain deferred. Supervisor planning is required before the next
+    feature-led shell I/O task; do not infer arbitrary descriptor syntax,
+    pipes, file/device redirection, writable filesystem behavior, networking,
+    SSH, or a phase transition from this frontier closeout.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
