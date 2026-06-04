@@ -84,8 +84,13 @@ readiness distinct from EOF. A shell-visible VFS-backed `/bin/stdin` process
 that reads inherited `fd0=stdio-input` receives available runtime-console0
 bytes immediately when present; if no byte is available, the syscall-substitute
 path reports `EAGAIN` and the fixture labels the transcript
-`read-result=readiness/no-data`. That no-data result is not terminal EOF.
-Ctrl-D, canonical EOF policy, blocking waits, readiness polling APIs, and
+`read-result=readiness/no-data`. The current local shell fixture also has a
+task-bounded retry path: after the first no-data observation it may poll
+runtime-console0/local-input for a finite budget and consume delayed bytes if
+they arrive, labeling that transcript
+`read-result=bounded-wait/delayed-input`. That bounded retry is below full
+POSIX blocking read semantics, and no-data remains non-EOF. Ctrl-D, canonical
+EOF policy, scheduler-backed blocking waits, readiness polling APIs, and
 scheduler wakeups remain future descriptor/syscall/TTY work.
 
 Until descriptor tables exist, kernel diagnostics may call TTY functions directly. They must not present those direct calls as POSIX read or write.

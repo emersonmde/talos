@@ -518,6 +518,26 @@ The post-review correction chain is:
     async execution, fork, signals, pipes, redirection, distinct stderr stream
     routing, writable filesystem behavior, libc stdio, Pi 5 proof, networking,
     and SSH remain deferred.
+39. bounded runtime-console0 stdin wait core: accepted in
+    `phase10-bounded-runtime-stdin-wait-core-20260604`. Shell-visible
+    VFS-backed `exec stdin` now has a task-local bounded retry step for
+    runtime-console0/local-input: the delayed-byte evidence records
+    `Talos userspace stdin fixture no-data: readiness` first, then consumes
+    delayed `talos-console0` bytes through inherited `fd0=stdio-input` and
+    reports them through inherited fd1 with
+    `read-result=bounded-wait/delayed-input` and
+    `readiness-observations=...`. A separate no-bytes-within-budget
+    regression still reports `-EAGAIN` and
+    `read-result=readiness/no-data` without claiming true EOF or hanging.
+    Immediate runtime-console0 stdin, stdout/stderr, descriptor-backed VFS
+    exec, loader temporary descriptor non-leak, lifecycle/status, consuming
+    `waitpid`, non-consuming `laststatus`, fixed `/bin` lookup, negative
+    exec controls, and descriptor-backed `cat /etc/banner.txt` remain
+    retained regressions. This is not full POSIX blocking read semantics:
+    scheduler-backed blocking reads, wait queues, select/poll, nonblocking
+    flags, Ctrl-D EOF policy, async execution, fork, signals, pipes,
+    redirection, distinct stderr stream routing, writable filesystem behavior,
+    libc stdio, Pi 5 proof, networking, and SSH remain deferred.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
