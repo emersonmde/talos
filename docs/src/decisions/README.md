@@ -12,6 +12,44 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-04 - Phase 10 Stdout-To-Stderr Descriptor-Dup Redirection Accepted
+
+- Status: accepted as the Phase 10 QEMU/substitute stdout-to-stderr
+  descriptor-dup redirection core. No Pi 5 hardware run, boot archive
+  publication, hardware-lock acquisition, inverse descriptor duplication,
+  regular-file redirection, append/truncate, descriptor close/move syntax,
+  pipes, writable filesystem behavior, separate physical sinks, terminal
+  policy, libc stdio, async jobs, fork, signals, networking, or SSH was added.
+- Context: The accepted local I/O frontier already distinguished inherited fd1
+  stdout and fd2 stderr stream/route metadata while retaining the shared
+  runtime-console0 physical sink. The next reversible redirection step was an
+  exact descriptor-dup form that could prove child descriptor-table rewriting
+  without claiming files, pipes, or broader shell syntax.
+- Decision: Accept phase10-stdout-to-stderr-fd-dup-redirection-core-20260604.
+  Shell-visible `exec stdout 1>&2` parses as the first exact descriptor-dup
+  redirection form. The launched VFS-backed `/bin/stdout` child still loads
+  through the descriptor-backed `/bin` lookup and VFS/open/read path, but fd1
+  is temporarily rebound to the inherited fd2 descriptor entry for the child.
+  The shell descriptor table is restored afterward, and a following normal
+  `exec stdout` records the stdout route again.
+- Evidence level: fmt/lint, no_std unit tests, QEMU/substitute
+  stdout-to-stderr redirection smoke, QEMU/substitute normal stdout route
+  control, QEMU/substitute distinct stderr route control, and QEMU/substitute
+  terminal EOF/readiness control. The task-owned log is
+  `tasks/evidence/2026-06-04-phase10-stdout-to-stderr-fd-dup-redirection-core/qemu-local-shell-stdout-to-stderr-redirection-smoke.log`.
+- Validation: `cargo fmt --all -- --check` passed;
+  `cargo -Zjson-target-spec test --quiet` passed with 393 tests;
+  `scripts/qemu-local-shell-stdout-to-stderr-redirection-smoke.sh --quiet`
+  passed; `scripts/qemu-local-shell-userspace-stdout-smoke.sh --quiet`
+  passed; `scripts/qemu-local-shell-distinct-stderr-routing-smoke.sh --quiet`
+  passed; `scripts/qemu-local-shell-terminal-ctrl-d-eof-smoke.sh --quiet`
+  passed; mdbook and git diff checks passed.
+- Consequences: The accepted local redirection frontier can route a child fd1
+  write to the inherited fd2 target while preserving shell fd restoration and
+  the shared runtime-console0 sink. Broader redirection syntax, file-backed
+  streams, pipes, writable filesystem behavior, separate sinks, networking, and
+  SSH remain deferred.
+
 ## 2026-06-04 - Phase 10 Distinct Stderr Routing Metadata Accepted
 
 - Status: accepted as the Phase 10 QEMU/substitute distinct stderr routing

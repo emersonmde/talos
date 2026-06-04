@@ -19,7 +19,7 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary",
     "+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance",
     "+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0",
-    "+userspace-stderr-through-inherited-fd2"
+    "+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -137,11 +137,37 @@ pub enum LocalCommandExecError {
 pub struct LocalCommandExecRequest {
     path: LocalCommandExecPath,
     argv: LocalCommandLiteralArgv,
+    redirection: Option<LocalCommandExecRedirection>,
 }
 
 impl LocalCommandExecRequest {
     fn path(&self) -> &[u8] {
         self.path.as_bytes()
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum LocalCommandExecRedirection {
+    StdoutToStderr,
+}
+
+impl LocalCommandExecRedirection {
+    const fn source_descriptor(self) -> usize {
+        match self {
+            Self::StdoutToStderr => posix::STDOUT_FD,
+        }
+    }
+
+    const fn target_descriptor(self) -> usize {
+        match self {
+            Self::StdoutToStderr => posix::STDERR_FD,
+        }
+    }
+
+    const fn source(self) -> &'static str {
+        match self {
+            Self::StdoutToStderr => "shell-redirection-1-to-2",
+        }
     }
 }
 
@@ -322,10 +348,22 @@ pub struct LocalCommandExecSummary {
     completion_marker: u64,
     completion_boundary: &'static str,
     descriptor_inheritance: LocalCommandExecDescriptorInheritanceRecord,
+    redirection: Option<LocalCommandExecRedirectionRecord>,
     userspace_stdout: Option<LocalCommandUserspaceStdoutRecord>,
     userspace_stdin: Option<LocalCommandUserspaceStdinRecord>,
     userspace_stderr: Option<LocalCommandUserspaceStderrRecord>,
     lifecycle: LocalCommandProcessLifecycleRecord,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LocalCommandExecRedirectionRecord {
+    source_descriptor: usize,
+    target_descriptor: usize,
+    target_stream: &'static str,
+    target_route: &'static str,
+    child_only: bool,
+    shell_restored: bool,
+    source: &'static str,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -510,6 +548,22 @@ pub struct DescriptorBackedLocalCommandIo<
     read_only_files: initramfs::ReadOnlyFileDescriptions<1>,
     last_process: Option<LocalCommandProcessLifecycleRecord>,
     waitable_process: Option<LocalCommandProcessLifecycleRecord>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+struct AppliedLocalCommandExecRedirection {
+    request: LocalCommandExecRedirection,
+    restored_entry: posix::DescriptorEntry,
+    record: LocalCommandExecRedirectionRecord,
+}
+
+impl AppliedLocalCommandExecRedirection {
+    const fn restored_record(self) -> LocalCommandExecRedirectionRecord {
+        LocalCommandExecRedirectionRecord {
+            shell_restored: true,
+            ..self.record
+        }
+    }
 }
 
 impl<I, O> DescriptorBackedLocalCommandIo<I, O, 1, 4>
@@ -736,9 +790,6 @@ where
                 LOCAL_COMMAND_EXEC_READ_OFFSET,
             )
             .map_err(|_| LocalCommandExecError::SyscallFailed)?;
-        let descriptor_inheritance = self
-            .standard_descriptor_inheritance_record(owner)
-            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
         let image = program_loader::plan_elf64_aarch64_image(
             source_path,
             program_loader::PHASE8_PROGRAM_LOADER_FIXTURE_IDENTITY,
@@ -790,9 +841,28 @@ where
             copied_startup_bytes,
         )
         .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
-        let userspace_stdout = self.emit_userspace_stdout_fixture(source_path)?;
-        let userspace_stdin = self.emit_userspace_stdin_fixture(source_path)?;
-        let userspace_stderr = self.emit_userspace_stderr_fixture(source_path)?;
+        let applied_redirection = self.apply_exec_redirection(request.redirection)?;
+        let descriptor_inheritance = self
+            .standard_descriptor_inheritance_record(owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let emitted = (
+            self.emit_userspace_stdout_fixture(source_path),
+            self.emit_userspace_stdin_fixture(source_path),
+            self.emit_userspace_stderr_fixture(source_path),
+        );
+        let redirection = if let Some(applied) = applied_redirection {
+            let restore = self.restore_exec_redirection(applied);
+            if restore.is_err() {
+                return Err(LocalCommandExecError::LaunchPipelineFailed);
+            }
+            Some(applied.restored_record())
+        } else {
+            None
+        };
+        let (userspace_stdout, userspace_stdin, userspace_stderr) = match emitted {
+            (Ok(stdout), Ok(stdin), Ok(stderr)) => (stdout, stdin, stderr),
+            _ => return Err(LocalCommandExecError::SyscallFailed),
+        };
         let lifecycle = LocalCommandProcessLifecycleRecord::exited(
             LOCAL_COMMAND_EXEC_PROCESS_ID,
             owner.raw(),
@@ -828,6 +898,7 @@ where
             completion_marker: initramfs::PHASE8_INIT_SVC_MARKER,
             completion_boundary: "lower-aarch64-svc-status-equivalent",
             descriptor_inheritance,
+            redirection,
             userspace_stdout,
             userspace_stdin,
             userspace_stderr,
@@ -864,6 +935,76 @@ where
                 .map_err(|_| LocalCommandFileReadError::SyscallFailed)?;
         }
         Ok(())
+    }
+
+    fn apply_exec_redirection(
+        &mut self,
+        redirection: Option<LocalCommandExecRedirection>,
+    ) -> Result<Option<AppliedLocalCommandExecRedirection>, LocalCommandExecError> {
+        let Some(redirection) = redirection else {
+            return Ok(None);
+        };
+        let table = self
+            .descriptor_store
+            .current_descriptor_table_mut(self.current_owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let source_descriptor = redirection.source_descriptor();
+        let target_descriptor = redirection.target_descriptor();
+        let restored_entry = table
+            .get(source_descriptor)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let target_entry = table
+            .get(target_descriptor)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        if restored_entry.require_writable().is_err()
+            || target_entry.require_writable().is_err()
+            || restored_entry.object().kind() != posix::DescriptorObjectKind::StdioOutput
+            || target_entry.object().kind() != posix::DescriptorObjectKind::StdioOutput
+        {
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
+        }
+        let target_stream = target_entry.object().stdio_stream_name();
+        let target_route = target_entry.object().runtime_console_route_name();
+
+        table
+            .close(source_descriptor)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        if table.allocate_at(source_descriptor, target_entry).is_err() {
+            let _ = table.allocate_at(source_descriptor, restored_entry);
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
+        }
+
+        Ok(Some(AppliedLocalCommandExecRedirection {
+            request: redirection,
+            restored_entry,
+            record: LocalCommandExecRedirectionRecord {
+                source_descriptor,
+                target_descriptor,
+                target_stream,
+                target_route,
+                child_only: true,
+                shell_restored: false,
+                source: redirection.source(),
+            },
+        }))
+    }
+
+    fn restore_exec_redirection(
+        &mut self,
+        applied: AppliedLocalCommandExecRedirection,
+    ) -> Result<(), LocalCommandExecError> {
+        let table = self
+            .descriptor_store
+            .current_descriptor_table_mut(self.current_owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let descriptor = applied.request.source_descriptor();
+        table
+            .close(descriptor)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        table
+            .allocate_at(descriptor, applied.restored_entry)
+            .map(|_| ())
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)
     }
 
     fn read_initramfs_file_via_syscall_with_memory<const USER_MEMORY_LEN: usize>(
@@ -1833,9 +1974,20 @@ fn parse_exec_request(arguments: &str) -> Result<LocalCommandExecRequest, LocalC
     let mut tokens: [&[u8]; LOCAL_COMMAND_LITERAL_ARGV_CAPACITY] =
         [&[]; LOCAL_COMMAND_LITERAL_ARGV_CAPACITY];
     let mut count = 0usize;
+    let mut redirection = None;
     for token in arguments.as_bytes().split(|byte| is_space(*byte)) {
         if token.is_empty() {
             continue;
+        }
+        if token == b"1>&2" {
+            if redirection.is_some() {
+                return Err(LocalCommandExecError::InvalidPath);
+            }
+            redirection = Some(LocalCommandExecRedirection::StdoutToStderr);
+            continue;
+        }
+        if redirection.is_some() {
+            return Err(LocalCommandExecError::InvalidPath);
         }
         if count == tokens.len() || !is_supported_literal_exec_token(token) {
             return Err(LocalCommandExecError::InvalidPath);
@@ -1855,7 +2007,11 @@ fn parse_exec_request(arguments: &str) -> Result<LocalCommandExecRequest, LocalC
     };
     let argv = LocalCommandLiteralArgv::from_tokens(&tokens[..count])?
         .with_resolved_argv0(path.as_bytes())?;
-    Ok(LocalCommandExecRequest { path, argv })
+    Ok(LocalCommandExecRequest {
+        path,
+        argv,
+        redirection,
+    })
 }
 
 fn is_supported_literal_exec_token(token: &[u8]) -> bool {
@@ -2096,6 +2252,9 @@ fn write_exec_summary(
     write_exec_launch_line(sink, response_lines, summary)?;
     write_exec_descriptor_inheritance_line(sink, response_lines, summary)?;
     write_exec_startup_abi_line(sink, response_lines, summary)?;
+    if let Some(record) = summary.redirection {
+        write_exec_redirection_line(sink, response_lines, record)?;
+    }
     if let Some(record) = summary.userspace_stdout {
         write_exec_userspace_stdout_line(sink, response_lines, record)?;
     }
@@ -2112,6 +2271,35 @@ fn write_exec_summary(
         response_lines,
         "talos: exec-signal lower-aarch64-svc-launch-boundary-equivalent",
     )
+}
+
+fn write_exec_redirection_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    record: LocalCommandExecRedirectionRecord,
+) -> Result<(), LocalCommandCycleError> {
+    write_str_part(sink, "talos: exec-redirection op=dup source-fd=")?;
+    write_hex_usize_part(sink, record.source_descriptor)?;
+    write_str_part(sink, " target-fd=")?;
+    write_hex_usize_part(sink, record.target_descriptor)?;
+    write_str_part(sink, " target-stream=")?;
+    write_str_part(sink, record.target_stream)?;
+    write_str_part(sink, " target-route=")?;
+    write_str_part(sink, record.target_route)?;
+    write_str_part(sink, " child-only=")?;
+    write_str_part(sink, if record.child_only { "true" } else { "false" })?;
+    write_str_part(sink, " shell-restored=")?;
+    write_str_part(
+        sink,
+        if record.shell_restored {
+            "true"
+        } else {
+            "false"
+        },
+    )?;
+    write_str_part(sink, " source=")?;
+    write_str_part(sink, record.source)?;
+    finish_dynamic_line(sink, response_lines)
 }
 
 fn write_exec_source_line(
@@ -3144,6 +3332,77 @@ talos> Talos initramfs fixture\n"
         assert!(output.contains(
             "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
+    }
+
+    #[test_case]
+    fn local_command_loop_redirects_child_stdout_to_inherited_stderr_fd() {
+        let input = ScriptedInput::new(*b"exec stdout 1>&2\rwaitpid\rexec stdout\r", 37);
+        let mut backend = CaptureSink::new();
+        let (redirected, waited, normal) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(redirected.line(), b"exec stdout 1>&2");
+        assert_eq!(redirected.status(), LocalCommandStatus::Handled);
+        assert_eq!(redirected.response_lines(), 11);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal.line(), b"exec stdout");
+        assert_eq!(normal.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal.response_lines(), 10);
+        assert!(output.contains("talos> Talos userspace stdout fixture\n"));
+        assert!(output.contains("talos: exec path=/bin/stdout source=vfs-open-read\n"));
+        assert!(output.contains(
+            "talos: exec-redirection op=dup source-fd=0x0000000000000001 target-fd=0x0000000000000002 target-stream=stderr target-route=runtime-console0/stderr child-only=true shell-restored=true source=shell-redirection-1-to-2\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stderr route=runtime-console0/stderr source=userspace-talos-write\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_rejects_unsupported_redirection_forms() {
+        let input = ScriptedInput::new(
+            *b"exec stdout 2>&1\rexec stdout 1>file\rexec stdout | stderr\r",
+            57,
+        );
+        let mut backend = CaptureSink::new();
+        let (inverse, file, pipe) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(inverse.line(), b"exec stdout 2>&1");
+        assert_eq!(inverse.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(file.line(), b"exec stdout 1>file");
+        assert_eq!(file.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(pipe.line(), b"exec stdout | stderr");
+        assert_eq!(pipe.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(
+            output,
+            "talos> talos: exec-invalid-path\n\
+talos> talos: exec-invalid-path\n\
+talos> talos: exec-invalid-path\n"
+        );
     }
 
     #[test_case]

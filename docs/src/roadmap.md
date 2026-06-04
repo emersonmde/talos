@@ -667,6 +667,26 @@ The post-review correction chain is:
     redirection slice is likely smaller than pipe-backed producer/consumer
     lifecycle behavior, provided it does not claim writable filesystem support
     without an explicit writable target.
+47. stdout-to-stderr descriptor-dup redirection core: accepted in
+    `phase10-stdout-to-stderr-fd-dup-redirection-core-20260604`.
+    Shell-visible `exec stdout 1>&2` now parses as the first exact
+    descriptor-dup redirection form. The launched VFS-backed `/bin/stdout`
+    child still loads through the accepted descriptor-backed `/bin` lookup and
+    VFS/open/read path, but child fd1 is temporarily rebound to the inherited
+    fd2 descriptor target. The task-owned QEMU/substitute evidence records
+    `exec-redirection op=dup source-fd=1 target-fd=2
+    target-stream=stderr target-route=runtime-console0/stderr
+    child-only=true shell-restored=true`, followed by a userspace fd1 write
+    with `stream=stderr route=runtime-console0/stderr`. A following normal
+    `exec stdout` control records `stream=stdout
+    route=runtime-console0/stdout`, proving the shell descriptor table is
+    restored after the child launch. Unsupported inverse, file, and pipe
+    redirection forms are deterministic negatives. Inverse `2>&1`, regular
+    file redirection, append/truncate, descriptor close/move syntax, pipes,
+    writable filesystem behavior, separate physical sinks, terminal policy,
+    async jobs, fork, signals, libc stdio, Pi 5 proof, networking, and SSH
+    remain deferred. The queued stdout-to-stderr redirection closeout is
+    mechanically unblocked.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
