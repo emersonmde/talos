@@ -1455,6 +1455,30 @@ The post-review correction chain is:
     regular-file output redirection frontier closeout is mechanically
     unblocked only as docs/evidence reconciliation across the accepted stdout
     and stderr regular-file slices.
+82. regular-file output redirection frontier closeout: accepted in
+    'phase10-regular-file-output-redirection-frontier-closeout-20260604'.
+    This checkpoint reconciles the exact accepted output regular-file forms:
+    'exec stdout >/tmp/stdout.txt' for '/bin/stdout' and
+    'exec stderr 2>/tmp/stderr.txt' for '/bin/stderr'. The accepted scratch
+    paths are only '/tmp/stdout.txt' and '/tmp/stderr.txt'. Each launched child
+    has only the target descriptor rebound to a volatile VFS regular-file
+    descriptor, writes 0x1f fixture bytes through
+    'source=userspace-talos-write', and is read back through descriptor-backed
+    'cat' with 'source=volatile-vfs-descriptor-read'. Later normal
+    'exec stdout' and 'exec stderr' controls prove shell fd1/fd2 restoration,
+    and the stderr evidence retains a normal stdout control proving distinct
+    stream behavior. The evidence map retains read-only input redirection,
+    /dev/null output sinks, normal stdio, descriptor dup/close redirection,
+    descriptor-mixing pipelines, VFS exec/open/read/write, lifecycle/status,
+    waitpid, laststatus, deterministic append/arbitrary-path/cross-file
+    negatives, and descriptor-backed cat controls. This accepts only minimal
+    volatile create/truncate/write/read behavior for the two exact scratch
+    files; append, partial overwrite, arbitrary output paths, persistence,
+    broad writable filesystem mutation, arbitrary descriptor syntax, Pi 5
+    proof, networking, SSH, and phase transition remain deferred. No further
+    queued task is mechanically unblocked by this closeout; supervisor
+    planning is required before choosing between append behavior, broader
+    descriptor grammar, or process accounting/concurrency.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
