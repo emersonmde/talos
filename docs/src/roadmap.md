@@ -576,6 +576,24 @@ The post-review correction chain is:
     nonblocking flags, async execution, fork, signals, termios, pipes,
     redirection, distinct stderr routing, writable filesystem behavior, libc
     stdio, Pi 5 proof, networking, and SSH remain deferred.
+42. scheduler-backed runtime-console0 stdin wait closeout: accepted in
+    `phase10-scheduler-backed-stdin-wait-closeout-20260604`. This checkpoint
+    reconciles the accepted scheduler-owned stdin wait/readiness boundary:
+    ordinary runtime-console0/local-input no-data remains `-EAGAIN`,
+    delayed `talos-console0` bytes wake/resume the waiting VFS-backed
+    `/bin/stdin` path through inherited fd0, and no delayed input within the
+    finite QEMU/substitute harness records `timeout/no-false-eof` rather than
+    true terminal EOF. The prior bounded retry evidence is superseded by
+    `read-result=scheduler-wait/delayed-input` and retained only as
+    compatibility scaffolding for scheduler-backed markers. Immediate stdin,
+    stdout/stderr, descriptor-backed VFS exec, loader temporary descriptor
+    non-leak, lifecycle/status, consuming `waitpid`, non-consuming
+    `laststatus`, fixed `/bin` lookup, negative exec controls, and
+    descriptor-backed `cat /etc/banner.txt` remain mapped as regressions.
+    Ctrl-D EOF remains the next smallest feature-led local I/O task before
+    select/poll, nonblocking flags, async execution, fork, signals, termios,
+    pipes, redirection, distinct stderr routing, writable filesystem behavior,
+    libc stdio, Pi 5 proof, networking, or SSH.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
