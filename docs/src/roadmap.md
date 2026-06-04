@@ -838,6 +838,24 @@ The post-review correction chain is:
     behavior, separate physical sinks, terminal policy, async jobs, fork,
     signals, libc stdio, Pi 5 proof, networking, and SSH remain deferred. The
     queued stderr descriptor-close closeout is mechanically unblocked.
+55. stderr descriptor-close redirection closeout: accepted in
+    'phase10-stderr-close-redirection-closeout-20260604'. This closeout
+    checkpoints the accepted standard-stream descriptor-close frontier as two
+    exact child-only forms: 'exec stdout 1>&-' and 'exec stderr 2>&-'.
+    Retained QEMU/substitute evidence maps closed child fd1 and fd2 behavior,
+    shell descriptor restoration, both descriptor-dup direction controls,
+    normal stdout/stderr route controls, scheduler-backed stdin
+    wait/readiness, Ctrl-D EOF, descriptor-backed VFS exec, lifecycle/status,
+    waitpid/laststatus, deterministic negative exec/redirection controls, and
+    descriptor-backed 'cat /etc/banner.txt'. The accepted observable close
+    result remains the relevant userspace fixture's fd write '-EBADF' with
+    'stream=closed route=closed-descriptor' after descriptor-backed VFS
+    loading succeeds. Arbitrary 'N>&-' descriptor close syntax, descriptor
+    moves, regular-file redirection, append/truncate, pipes, writable
+    filesystem behavior, separate physical sinks, terminal policy, async jobs,
+    fork, signals, libc stdio, Pi 5 proof, networking, and SSH remain
+    deferred. The queued descriptor-close frontier closeout is mechanically
+    unblocked and must remain docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
