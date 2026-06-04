@@ -1405,6 +1405,29 @@ The post-review correction chain is:
     descriptor syntax, Pi 5 proof, networking, SSH, and phase transition
     remain deferred. The queued stderr regular-file redirection core is
     mechanically unblocked only as the exact already-planned stderr slice.
+80. stderr regular-file redirection core: accepted in
+    'phase10-stderr-regular-file-redirection-core-20260604'. This accepts
+    exactly 'exec stderr 2>/tmp/stderr.txt' for the VFS-backed '/bin/stderr'
+    fixture. The launched child fd2 is rebound to a minimal volatile
+    regular-file descriptor, reports 'fd2=regular-file', 'op=sink',
+    'target-path=/tmp/stderr.txt', 'target-stream=regular-file',
+    'target-route=volatile-vfs:/tmp/stderr.txt', and the userspace stderr
+    fixture writes 'bytes=0x1f' through 'source=userspace-talos-write'. A
+    following descriptor-backed 'cat /tmp/stderr.txt' observes the captured
+    'Talos userspace stderr fixture' bytes and records
+    'cat path=/tmp/stderr.txt bytes=0x1f
+    source=volatile-vfs-descriptor-read'; a later normal 'exec stderr' proves
+    shell fd2 restoration through 'runtime-console0/stderr', and a normal
+    'exec stdout' remains visible through 'runtime-console0/stdout'. The
+    evidence map retains stdout regular-file redirection, /dev/null output
+    sinks, normal stdio, descriptor dup redirection, descriptor-mixing
+    pipelines, VFS exec/open/read, lifecycle/status, waitpid, laststatus,
+    deterministic append/arbitrary-path/stdout-file negatives, and
+    descriptor-backed 'cat /etc/banner.txt'. This does not accept append,
+    arbitrary paths, persistent storage, wider writable filesystem mutation,
+    broader descriptor syntax, Pi 5 proof, networking, SSH, or a phase
+    transition. The queued stderr regular-file redirection closeout is
+    mechanically unblocked and must remain docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
