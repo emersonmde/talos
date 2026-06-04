@@ -468,6 +468,23 @@ The post-review correction chain is:
     redirection, distinct stderr stream routing, writable filesystem behavior,
     libc stdio, Pi 5 proof, networking, and SSH remain deferred. The queued
     EOF/no-data closeout is mechanically unblocked by this accepted evidence.
+36. stdin EOF/no-data closeout: accepted in
+    phase10-stdin-eof-no-data-closeout-20260603. It reconciles the accepted
+    successful runtime-console0/local-input fd0 read and deterministic
+    EOF/no-data branch for the same inherited fd0 path. The accepted stdin
+    frontier now includes exec stdin resolving through fixed /bin lookup,
+    descriptor-backed VFS/open/read loading of /bin/stdin, inherited
+    fd0=stdio-input reads from runtime-console0/local-input, visible reports
+    through inherited fd1, lifecycle/status, waitpid, non-consuming
+    laststatus, zero/nonzero controls, negative exec controls, and
+    descriptor-backed cat /etc/banner.txt regressions. The closeout prevents
+    acceptance drift back to proof-buffer-only stdin and does not accept
+    blocking terminal reads, readiness/polling APIs, canonical terminal policy
+    expansion, async execution, fork, signals, pipes, redirection, distinct
+    stderr stream routing, writable filesystem behavior, libc stdio, Pi 5
+    proof, networking, or SSH. No broader shell I/O task is mechanically
+    unblocked by the closeout alone; supervisor planning is required for the
+    next feature-led local I/O primitive.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
