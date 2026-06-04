@@ -921,6 +921,27 @@ The post-review correction chain is:
     bounded pipe semantic and must keep the accepted minimal pipeline as its
     positive control.
 
+59. pipeline stderr-not-piped core: accepted in
+    `phase10-pipeline-stderr-not-piped-core-20260604`. Shell-visible
+    `exec stderr | exec stdin` now proves stdout-only pipe semantics for the
+    accepted exact two-stage pipeline grammar: producer fd1 is the pipe writer
+    endpoint, while producer fd2 remains the inherited stderr descriptor and
+    writes `stream=stderr route=runtime-console0/stderr`. The consumer
+    `/bin/stdin` sees zero bytes from fd0 and records deterministic
+    `read-result=pipe-eof/no-data`, distinct from terminal Ctrl-D EOF and
+    runtime-console0 readiness/no-data. The task-owned QEMU/substitute smoke
+    also retains the positive `exec stdout | exec stdin` control with 31 bytes
+    written/read through the pipe and a descriptor-backed
+    `cat /etc/banner.txt` control after both pipeline forms. Refreshed
+    controls cover distinct stderr routing and both descriptor-dup directions.
+    Unsupported descriptor-mixing forms such as `exec stderr 2>&1 | exec
+    stdin` still fail deterministically. This does not accept `2>&1` inside
+    pipelines, stderr piping by default, pipefail, multi-stage pipelines,
+    concurrent POSIX pipeline scheduling, async execution, fork, signals, job
+    control, file redirection, writable filesystem behavior, Pi 5 proof,
+    networking, or SSH. The queued stderr-not-piped closeout is mechanically
+    unblocked and must remain docs/evidence reconciliation only.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed

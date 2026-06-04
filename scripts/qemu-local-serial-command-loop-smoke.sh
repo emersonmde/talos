@@ -35,6 +35,7 @@ SHELL_STDERR_TO_STDOUT_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_
 SHELL_STDOUT_CLOSE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDOUT_CLOSE_REDIRECTION_SMOKE:-0}"
 SHELL_STDERR_CLOSE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDERR_CLOSE_REDIRECTION_SMOKE:-0}"
 SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE:-0}"
+SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE:-0}"
 SHELL_WAITPID_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_WAITPID_SMOKE:-0}"
 CD_FIXED_DIRS_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_CD_FIXED_DIRS_SMOKE:-0}"
 LS_CWD_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LS_CWD_SMOKE:-0}"
@@ -302,6 +303,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'exec stdout 1>&-\r' >&3
                     elif [ "$SHELL_STDERR_CLOSE_REDIRECTION_SMOKE" -eq 1 ]; then
                         printf 'exec stderr 2>&-\r' >&3
+                    elif [ "$SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE" -eq 1 ]; then
+                        printf 'exec stderr | exec stdin\r' >&3
                     elif [ "$SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE" -eq 1 ]; then
                         printf 'exec stdout | exec stdin\r' >&3
                     elif [ "$SHELL_STDERR_SMOKE" -eq 1 ]; then
@@ -362,6 +365,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'waitpid\r' >&3
                     elif [ "$SHELL_STDERR_CLOSE_REDIRECTION_SMOKE" -eq 1 ]; then
                         printf 'waitpid\r' >&3
+                    elif [ "$SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE" -eq 1 ]; then
+                        printf 'waitpid\r' >&3
                     elif [ "$SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE" -eq 1 ]; then
                         printf 'waitpid\r' >&3
                     elif [ "$SHELL_STDIO_SMOKE" -eq 1 ]; then
@@ -408,6 +413,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'laststatus\r' >&3
                     elif [ "$SHELL_STDERR_CLOSE_REDIRECTION_SMOKE" -eq 1 ]; then
                         printf 'laststatus\r' >&3
+                    elif [ "$SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE" -eq 1 ]; then
+                        printf 'laststatus\r' >&3
                     elif [ "$SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE" -eq 1 ]; then
                         printf 'laststatus\r' >&3
                     elif [ "$SHELL_STDIO_SMOKE" -eq 1 ]; then
@@ -446,6 +453,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'exec stdout\r' >&3
                     elif [ "$SHELL_STDERR_CLOSE_REDIRECTION_SMOKE" -eq 1 ]; then
                         printf 'exec stderr\r' >&3
+                    elif [ "$SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE" -eq 1 ]; then
+                        printf 'exec stdout | exec stdin\r' >&3
                     elif [ "$SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE" -eq 1 ]; then
                         printf 'cat /etc/banner.txt\r' >&3
                     elif [ "$SHELL_STDIN_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_EOF_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_TERMINAL_EOF_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_READINESS_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_BOUNDED_WAIT_SMOKE" -eq 1 ] || [ "$SHELL_STDIN_SCHEDULER_WAIT_SMOKE" -eq 1 ]; then
@@ -488,6 +497,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'waitpid\r' >&3
                     elif [ "$SHELL_STDIO_SMOKE" -eq 1 ]; then
                         printf 'waitpid\r' >&3
+                    elif [ "$SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE" -eq 1 ]; then
+                        printf 'cat /etc/banner.txt\r' >&3
                     elif [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
                         printf 'exec /bin/zero\r' >&3
                     else
@@ -579,10 +590,10 @@ grep -q "$LABEL: ready command=1" "$LOG_FILE"
 grep -q "$LABEL: ready command=2" "$LOG_FILE"
 grep -q "$LABEL: ready command=3" "$LOG_FILE"
 grep -q "$LABEL: ready command=4" "$LOG_FILE"
-if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_ROOT_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ] || [ "$CAT_BANNER_SMOKE" -eq 1 ] || [ "$CAT_CWD_SMOKE" -eq 1 ] || [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ] || [ "$SHELL_LITERAL_ARGV_SMOKE" -eq 1 ] || [ "$SHELL_PATH_LOOKUP_SMOKE" -eq 1 ] || [ "$SHELL_STDIO_SMOKE" -eq 1 ] || [ "$SHELL_STDOUT_TO_STDERR_REDIRECTION_SMOKE" -eq 1 ] || [ "$SHELL_STDERR_TO_STDOUT_REDIRECTION_SMOKE" -eq 1 ] || [ "$SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE" -eq 1 ] || [ "$SHELL_WAITPID_SMOKE" -eq 1 ] || [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ] || [ "$LS_CWD_SMOKE" -eq 1 ] || [ "$LITERAL_ECHO_SMOKE" -eq 1 ] || [ "$ECHO_COMMAND_SMOKE" -eq 1 ]; then
+if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_ROOT_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ] || [ "$CAT_BANNER_SMOKE" -eq 1 ] || [ "$CAT_CWD_SMOKE" -eq 1 ] || [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ] || [ "$SHELL_LITERAL_ARGV_SMOKE" -eq 1 ] || [ "$SHELL_PATH_LOOKUP_SMOKE" -eq 1 ] || [ "$SHELL_STDIO_SMOKE" -eq 1 ] || [ "$SHELL_STDOUT_TO_STDERR_REDIRECTION_SMOKE" -eq 1 ] || [ "$SHELL_STDERR_TO_STDOUT_REDIRECTION_SMOKE" -eq 1 ] || [ "$SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE" -eq 1 ] || [ "$SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE" -eq 1 ] || [ "$SHELL_WAITPID_SMOKE" -eq 1 ] || [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ] || [ "$LS_CWD_SMOKE" -eq 1 ] || [ "$LITERAL_ECHO_SMOKE" -eq 1 ] || [ "$ECHO_COMMAND_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=5" "$LOG_FILE"
 fi
-if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ] || [ "$CAT_BANNER_SMOKE" -eq 1 ] || [ "$CAT_CWD_SMOKE" -eq 1 ] || [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ] || [ "$SHELL_LITERAL_ARGV_SMOKE" -eq 1 ] || [ "$SHELL_PATH_LOOKUP_SMOKE" -eq 1 ] || [ "$SHELL_STDIO_SMOKE" -eq 1 ] || [ "$SHELL_STDOUT_TO_STDERR_REDIRECTION_SMOKE" -eq 1 ] || [ "$SHELL_STDERR_TO_STDOUT_REDIRECTION_SMOKE" -eq 1 ] || [ "$SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE" -eq 1 ] || [ "$SHELL_WAITPID_SMOKE" -eq 1 ] || [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ] || [ "$LS_CWD_SMOKE" -eq 1 ]; then
+if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ] || [ "$CAT_BANNER_SMOKE" -eq 1 ] || [ "$CAT_CWD_SMOKE" -eq 1 ] || [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ] || [ "$SHELL_LITERAL_ARGV_SMOKE" -eq 1 ] || [ "$SHELL_PATH_LOOKUP_SMOKE" -eq 1 ] || [ "$SHELL_STDIO_SMOKE" -eq 1 ] || [ "$SHELL_STDOUT_TO_STDERR_REDIRECTION_SMOKE" -eq 1 ] || [ "$SHELL_STDERR_TO_STDOUT_REDIRECTION_SMOKE" -eq 1 ] || [ "$SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE" -eq 1 ] || [ "$SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE" -eq 1 ] || [ "$SHELL_WAITPID_SMOKE" -eq 1 ] || [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ] || [ "$LS_CWD_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=6" "$LOG_FILE"
 fi
 if [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ] || [ "$LS_CWD_SMOKE" -eq 1 ]; then
@@ -650,6 +661,10 @@ if [ "$SHELL_STDERR_TO_STDOUT_REDIRECTION_SMOKE" -eq 1 ]; then
 fi
 if [ "$SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=6" "$LOG_FILE"
+fi
+if [ "$SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE" -eq 1 ]; then
+    grep -q "$LABEL: ready command=6" "$LOG_FILE"
+    grep -q "$LABEL: ready command=7" "$LOG_FILE"
 fi
 if [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=7" "$LOG_FILE"
@@ -729,6 +744,24 @@ elif [ "$CAT_CWD_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: line command=6 hex=63 61 74 20 62 61 6e 6e 65 72 2e 74 78 74" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=6 status=unexpected-argument responses=1" "$LOG_FILE"
     grep -q "$LABEL: final participants=7 expected=7 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+elif [ "$SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE" -eq 1 ]; then
+    grep -Fq "talos> exec stderr | exec stdin" "$LOG_FILE"
+    grep -q "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stderr consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x0000000000000000 bytes-read=0x0000000000000000 writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-only-stderr-not-piped" "$LOG_FILE"
+    grep -q "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=pipe-endpoint fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table" "$LOG_FILE"
+    grep -q "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=stderr route=runtime-console0/stderr source=userspace-talos-write" "$LOG_FILE"
+    grep -q "^Talos userspace stderr fixture" "$LOG_FILE"
+    grep -q "^Talos userspace stdin fixture read-result: pipe-eof/no-data" "$LOG_FILE"
+    grep -q "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000000 return=0x0000000000000000 read-source=pipe:stdout-to-stdin stdout-fd=0x0000000000000001 stdout-bytes=0x000000000000003c stdout-return=0x000000000000003c source=userspace-talos-read+userspace-talos-write read-result=pipe-eof/no-data" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=3 status=handled responses=21" "$LOG_FILE"
+    grep -Eq "talos: waitpid pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -Eq "talos: last-process pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -Fq "talos> exec stdout | exec stdin" "$LOG_FILE"
+    grep -q "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-to-stdin" "$LOG_FILE"
+    grep -q "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=pipe-writer route=pipe:stdout-to-stdin source=userspace-talos-write" "$LOG_FILE"
+    grep -q "^Talos userspace stdin fixture read: Talos userspace stdout fixture" "$LOG_FILE"
+    grep -q "talos> cat /etc/banner.txt" "$LOG_FILE"
+    grep -q "^Talos initramfs fixture" "$LOG_FILE"
+    grep -q "$LABEL: final participants=8 expected=8 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
 elif [ "$SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE" -eq 1 ]; then
     grep -Fq "talos> exec stdout | exec stdin" "$LOG_FILE"
     grep -q "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-to-stdin" "$LOG_FILE"

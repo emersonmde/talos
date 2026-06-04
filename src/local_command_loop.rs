@@ -21,7 +21,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0",
     "+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2",
     "+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1",
-    "+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline"
+    "+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline",
+    "+stdout-only-pipeline-stderr-not-piped"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -1050,8 +1051,10 @@ where
         &mut self,
         request: LocalCommandPipelineRequest,
     ) -> Result<LocalCommandPipelineSummary, LocalCommandExecError> {
-        if request.producer.path() != initramfs::PHASE10_STDOUT_PATH
-            || request.consumer.path() != initramfs::PHASE10_STDIN_PATH
+        if !matches!(
+            request.producer.path(),
+            initramfs::PHASE10_STDOUT_PATH | initramfs::PHASE10_STDERR_PATH
+        ) || request.consumer.path() != initramfs::PHASE10_STDIN_PATH
             || request.producer.redirection.is_some()
             || request.consumer.redirection.is_some()
         {
@@ -1074,6 +1077,11 @@ where
         self.pipe.close_reader();
         self.restore_pipe_endpoint(posix::STDIN_FD, stdin_restore)?;
         let consumer = consumer?;
+        let pipe_source = if producer.source_path == initramfs::PHASE10_STDERR_PATH {
+            "shell-pipe-stdout-only-stderr-not-piped"
+        } else {
+            "shell-pipe-stdout-to-stdin"
+        };
 
         Ok(LocalCommandPipelineSummary {
             pipe: LocalCommandPipeRecord {
@@ -1087,7 +1095,7 @@ where
                 writer_closed: !self.pipe.writer_open,
                 reader_eof: self.pipe.eof_observed,
                 shell_restored: self.shell_standard_descriptors_restored()?,
-                source: "shell-pipe-stdout-to-stdin",
+                source: pipe_source,
             },
             producer,
             consumer,
@@ -1631,9 +1639,8 @@ where
             &mut scratch,
             &mut ready_byte,
         );
-        if read_return_value != (syscall::EAGAIN as u64).wrapping_neg()
-            && self.stdin_descriptor_is_pipe()?
-        {
+        let stdin_is_pipe = self.stdin_descriptor_is_pipe()?;
+        if read_return_value != (syscall::EAGAIN as u64).wrapping_neg() && stdin_is_pipe {
             expected_read_bytes = initramfs::PHASE10_STDOUT_PAYLOAD.len();
             read_source = "pipe:stdout-to-stdin";
         }
@@ -1717,6 +1724,19 @@ where
         {
             read_bytes = 0;
             read_result = Some("readiness/no-data");
+        } else if read_return_value == 0 && stdin_is_pipe {
+            let payload = initramfs::PHASE10_STDIN_PIPE_EOF_STDOUT;
+            user_memory[..payload.len()].copy_from_slice(payload);
+            let stdout_return =
+                self.write_userspace_stdout_bytes(&mappings, &user_memory, payload.len())?;
+            if stdout_return != payload.len() as u64 {
+                return Err(LocalCommandExecError::SyscallFailed);
+            }
+            stdout_bytes = stdout_bytes
+                .checked_add(payload.len())
+                .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
+            read_bytes = 0;
+            read_result = Some("pipe-eof/no-data");
         } else if read_return_value == 0 {
             let payload = initramfs::PHASE10_STDIN_TERMINAL_EOF_STDOUT;
             user_memory[..payload.len()].copy_from_slice(payload);
@@ -4120,16 +4140,59 @@ talos> talos: exec-invalid-path\n"
     }
 
     #[test_case]
-    fn local_command_loop_rejects_unsupported_pipeline_forms() {
-        let input = ScriptedInput::new(
-            *b"| exec stdin\rexec stdout |\rexec stdout | exec stdin | x\rexec missing | exec stdin\r",
-            82,
-        );
+    fn local_command_loop_keeps_stderr_out_of_stdout_pipeline() {
+        let input = ScriptedInput::new(*b"exec stderr | exec stdin\rwaitpid\rlaststatus\r", 44);
         let mut backend = CaptureSink::new();
-        let (leading, trailing, multi, missing) = {
+        let (pipeline, waited, observed) = {
             let mut io =
                 DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
             (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(pipeline.line(), b"exec stderr | exec stdin");
+        assert_eq!(pipeline.status(), LocalCommandStatus::Handled);
+        assert_eq!(pipeline.response_lines(), 21);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.line(), b"laststatus");
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert!(output.contains(
+            "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stderr consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x0000000000000000 bytes-read=0x0000000000000000 writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-only-stderr-not-piped\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=pipe-endpoint fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=stderr route=runtime-console0/stderr source=userspace-talos-write\n"
+        ));
+        assert!(output.contains("talos> Talos userspace stderr fixture\n"));
+        assert!(output.contains("Talos userspace stdin fixture read-result: pipe-eof/no-data\n"));
+        assert!(output.contains(
+            "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000000 return=0x0000000000000000 read-source=pipe:stdout-to-stdin stdout-fd=0x0000000000000001 stdout-bytes=0x000000000000003c stdout-return=0x000000000000003c source=userspace-talos-read+userspace-talos-write read-result=pipe-eof/no-data\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_rejects_unsupported_pipeline_forms() {
+        let bytes = *b"| exec stdin\rexec stdout |\rexec stdout | exec stdin | x\rexec missing | exec stdin\rexec stderr 2>&1 | exec stdin\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (leading, trailing, multi, missing, mixed_stderr) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
@@ -4146,8 +4209,13 @@ talos> talos: exec-invalid-path\n"
         assert_eq!(multi.status(), LocalCommandStatus::UnexpectedArgument);
         assert_eq!(missing.line(), b"exec missing | exec stdin");
         assert_eq!(missing.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(mixed_stderr.line(), b"exec stderr 2>&1 | exec stdin");
+        assert_eq!(
+            mixed_stderr.status(),
+            LocalCommandStatus::UnexpectedArgument
+        );
         assert!(output.contains("talos> talos: parse-error\n"));
-        assert_eq!(output.matches("talos: exec-invalid-path").count(), 3);
+        assert_eq!(output.matches("talos: exec-invalid-path").count(), 4);
     }
 
     #[test_case]
