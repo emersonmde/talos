@@ -1236,6 +1236,26 @@ The post-review correction chain is:
     behavior, broader file/device semantics, Pi 5 proof, networking, SSH, or a
     phase transition. The queued `/dev/null` stdin closeout is mechanically
     unblocked and must remain docs/evidence reconciliation only.
+73. /dev/null stdin redirection closeout: accepted in
+    'phase10-dev-null-stdin-redirection-closeout-20260604'. This checkpoint
+    reconciles exact 'exec stdin </dev/null' as a child-only fd0 source
+    redirection for the VFS-backed '/bin/stdin' fixture. The accepted record
+    reports 'fd0=device', 'op=source', 'source-path=/dev/null',
+    'source-stream=null-source', 'source-route=device:/dev/null', and
+    'read-source=device:/dev/null'; 'TalosRead' returns zero bytes as true
+    device-source EOF/no-data without polling runtime-console0. A following
+    normal 'exec stdin' control consumes 'talos-console0' through the restored
+    shell fd0, and deterministic negatives keep 'exec stdout </dev/null',
+    'exec stdin </etc/banner.txt', and 'exec stdin < /dev/null' outside the
+    accepted surface. The evidence map retains stdout/stderr '/dev/null'
+    sinks, runtime-console0 stdin, stdin readiness/EOF, descriptor
+    redirection and pipeline controls, VFS exec, lifecycle/status, waitpid,
+    laststatus, and descriptor-backed cat. This does not accept regular-file
+    input redirection, output regular-file redirection, append/truncate,
+    shorthand/broader descriptor syntax, writable filesystem behavior,
+    broader file/device semantics, Pi 5 proof, networking, SSH, or a phase
+    transition. The queued /dev/null stdio frontier closeout is mechanically
+    unblocked and must remain docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
