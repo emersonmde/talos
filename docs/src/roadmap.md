@@ -1119,6 +1119,28 @@ The post-review correction chain is:
     writable filesystem behavior, Pi 5 proof, networking, SSH, and a phase
     transition remain deferred. The queued stdout-to-/dev/null closeout is
     mechanically unblocked for docs/evidence reconciliation only.
+68. /dev/null stdout redirection closeout: accepted in
+    `phase10-dev-null-stdout-redirection-closeout-20260604`. This checkpoint
+    reconciles the first explicit file/device redirection sink contract before
+    extending it to stderr. The accepted behavior remains exactly
+    `exec stdout >/dev/null`: the VFS-backed `/bin/stdout` child has fd1
+    rebound to the `/dev/null` device sink, reports `fd1=device`,
+    `op=sink`, `target-path=/dev/null`,
+    `target-stream=null-sink`, `target-route=device:/dev/null`, and
+    `exec-stdout ... stream=null-sink route=device:/dev/null`, while
+    `TalosWrite` validates/copies and discards 31 bytes. The evidence map
+    keeps the redirected stdout payload absent from runtime-console0/stdout
+    for the redirected command, keeps the following normal `exec stdout`
+    visible payload as shell fd1 restoration proof, and retains lifecycle,
+    `waitpid`, `laststatus`, deterministic negative redirection forms,
+    descriptor-dup/close controls, descriptor-mixing pipeline controls, stdin
+    readiness/EOF controls, and descriptor-backed `cat /etc/banner.txt`.
+    This closeout does not accept writable filesystem behavior, regular-file
+    redirection, append/truncate, input redirection, stderr-to-/dev/null,
+    arbitrary descriptor syntax, broader file/device semantics,
+    multi-stage/concurrent pipelines, Pi 5 proof, networking, SSH, or a phase
+    transition. The queued stderr-to-/dev/null core is mechanically unblocked
+    and must remain bounded to the same explicit `/dev/null` sink contract.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
