@@ -37,6 +37,7 @@ SHELL_STDERR_CLOSE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDE
 SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE:-0}"
 SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE:-0}"
 SHELL_PIPELINE_STDERR_DUP_TO_STDOUT_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_PIPELINE_STDERR_DUP_TO_STDOUT_SMOKE:-0}"
+SHELL_PIPELINE_STDOUT_REDIRECT_AWAY_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_PIPELINE_STDOUT_REDIRECT_AWAY_SMOKE:-0}"
 SHELL_WAITPID_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_WAITPID_SMOKE:-0}"
 CD_FIXED_DIRS_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_CD_FIXED_DIRS_SMOKE:-0}"
 LS_CWD_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LS_CWD_SMOKE:-0}"
@@ -306,6 +307,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'exec stderr 2>&-\r' >&3
                     elif [ "$SHELL_PIPELINE_STDERR_DUP_TO_STDOUT_SMOKE" -eq 1 ]; then
                         printf 'exec stderr 2>&1 | exec stdin\r' >&3
+                    elif [ "$SHELL_PIPELINE_STDOUT_REDIRECT_AWAY_SMOKE" -eq 1 ]; then
+                        printf 'exec stdout 1>&2 | exec stdin\r' >&3
                     elif [ "$SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE" -eq 1 ]; then
                         printf 'exec stderr | exec stdin\r' >&3
                     elif [ "$SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE" -eq 1 ]; then
@@ -370,6 +373,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'waitpid\r' >&3
                     elif [ "$SHELL_PIPELINE_STDERR_DUP_TO_STDOUT_SMOKE" -eq 1 ]; then
                         printf 'waitpid\r' >&3
+                    elif [ "$SHELL_PIPELINE_STDOUT_REDIRECT_AWAY_SMOKE" -eq 1 ]; then
+                        printf 'waitpid\r' >&3
                     elif [ "$SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE" -eq 1 ]; then
                         printf 'waitpid\r' >&3
                     elif [ "$SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE" -eq 1 ]; then
@@ -420,6 +425,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'laststatus\r' >&3
                     elif [ "$SHELL_PIPELINE_STDERR_DUP_TO_STDOUT_SMOKE" -eq 1 ]; then
                         printf 'laststatus\r' >&3
+                    elif [ "$SHELL_PIPELINE_STDOUT_REDIRECT_AWAY_SMOKE" -eq 1 ]; then
+                        printf 'laststatus\r' >&3
                     elif [ "$SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE" -eq 1 ]; then
                         printf 'laststatus\r' >&3
                     elif [ "$SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE" -eq 1 ]; then
@@ -462,6 +469,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'exec stderr\r' >&3
                     elif [ "$SHELL_PIPELINE_STDERR_DUP_TO_STDOUT_SMOKE" -eq 1 ]; then
                         printf 'exec stderr | exec stdin\r' >&3
+                    elif [ "$SHELL_PIPELINE_STDOUT_REDIRECT_AWAY_SMOKE" -eq 1 ]; then
+                        printf 'exec stderr 2>&1 | exec stdin\r' >&3
                     elif [ "$SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE" -eq 1 ]; then
                         printf 'exec stdout | exec stdin\r' >&3
                     elif [ "$SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE" -eq 1 ]; then
@@ -510,6 +519,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                         printf 'cat /etc/banner.txt\r' >&3
                     elif [ "$SHELL_PIPELINE_STDERR_DUP_TO_STDOUT_SMOKE" -eq 1 ]; then
                         printf 'exec stdout | exec stdin\r' >&3
+                    elif [ "$SHELL_PIPELINE_STDOUT_REDIRECT_AWAY_SMOKE" -eq 1 ]; then
+                        printf 'exec stdout | exec stdin\r' >&3
                     elif [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
                         printf 'exec /bin/zero\r' >&3
                     else
@@ -541,6 +552,8 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                     elif [ "$SHELL_STDIO_SMOKE" -eq 1 ]; then
                         printf 'exec init\r' >&3
                     elif [ "$SHELL_PIPELINE_STDERR_DUP_TO_STDOUT_SMOKE" -eq 1 ]; then
+                        printf 'cat /etc/banner.txt\r' >&3
+                    elif [ "$SHELL_PIPELINE_STDOUT_REDIRECT_AWAY_SMOKE" -eq 1 ]; then
                         printf 'cat /etc/banner.txt\r' >&3
                     elif [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
                         printf 'laststatus\r' >&3
@@ -775,6 +788,24 @@ elif [ "$SHELL_PIPELINE_STDERR_DUP_TO_STDOUT_SMOKE" -eq 1 ]; then
     grep -Eq "talos: last-process pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record" "$LOG_FILE"
     grep -Fq "talos> exec stderr | exec stdin" "$LOG_FILE"
     grep -q "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stderr consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x0000000000000000 bytes-read=0x0000000000000000 writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-only-stderr-not-piped" "$LOG_FILE"
+    grep -Fq "talos> exec stdout | exec stdin" "$LOG_FILE"
+    grep -q "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-to-stdin" "$LOG_FILE"
+    grep -q "talos> cat /etc/banner.txt" "$LOG_FILE"
+    grep -q "^Talos initramfs fixture" "$LOG_FILE"
+    grep -q "$LABEL: final participants=9 expected=9 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+elif [ "$SHELL_PIPELINE_STDOUT_REDIRECT_AWAY_SMOKE" -eq 1 ]; then
+    grep -Fq "talos> exec stdout 1>&2 | exec stdin" "$LOG_FILE"
+    grep -q "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x0000000000000000 bytes-read=0x0000000000000000 writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-redirect-away" "$LOG_FILE"
+    grep -q "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table" "$LOG_FILE"
+    grep -q "talos: exec-redirection op=dup source-fd=0x0000000000000001 target-fd=0x0000000000000002 target-stream=stderr target-route=runtime-console0/stderr child-only=true shell-restored=true source=shell-redirection-1-to-2" "$LOG_FILE"
+    grep -q "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stderr route=runtime-console0/stderr source=userspace-talos-write" "$LOG_FILE"
+    grep -q "^Talos userspace stdin fixture read-result: pipe-eof/no-data" "$LOG_FILE"
+    grep -q "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000000 return=0x0000000000000000 read-source=pipe:stdout-to-stdin stdout-fd=0x0000000000000001 stdout-bytes=0x000000000000003c stdout-return=0x000000000000003c source=userspace-talos-read+userspace-talos-write read-result=pipe-eof/no-data" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=3 status=handled responses=22" "$LOG_FILE"
+    grep -Eq "talos: waitpid pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -Eq "talos: last-process pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -Fq "talos> exec stderr 2>&1 | exec stdin" "$LOG_FILE"
+    grep -q "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stderr consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stderr-dup-to-stdout" "$LOG_FILE"
     grep -Fq "talos> exec stdout | exec stdin" "$LOG_FILE"
     grep -q "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-to-stdin" "$LOG_FILE"
     grep -q "talos> cat /etc/banner.txt" "$LOG_FILE"

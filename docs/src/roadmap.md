@@ -1037,6 +1037,27 @@ The post-review correction chain is:
     Pi 5 proof, networking, SSH, or a phase transition. The queued inverse
     redirection-away core is mechanically unblocked and must remain bounded to
     that exact command form.
+64. pipeline stdout redirect-away core: accepted in
+    `phase10-pipeline-stdout-redirect-away-core-20260604`. This checkpoint
+    accepts exactly one inverse descriptor-mixing pipeline form:
+    `exec stdout 1>&2 | exec stdin`. The producer pipe endpoint is installed
+    on fd1 first, then child-only `1>&2` rebinds producer fd1 to inherited
+    fd2/stderr before `/bin/stdout` writes. The stdout fixture writes 31 bytes
+    through `stream=stderr route=runtime-console0/stderr`, no fixture bytes
+    enter the pipe, and the VFS-backed `/bin/stdin` consumer reports
+    `pipe-eof/no-data` through inherited fd1. Task-owned QEMU/substitute
+    evidence records zero pipe bytes, shell fd0/fd1/fd2 restoration, consumer
+    `waitpid`, consumer `laststatus`, final classification
+    `qemu-local-shell-pipeline-stdout-redirect-away-complete`, errors=0, and
+    PASS. Refreshed controls preserve `exec stderr 2>&1 | exec stdin`, plain
+    `exec stdout | exec stdin`, plain `exec stderr | exec stdin`, both
+    descriptor-dup directions, both descriptor-close directions, deterministic
+    negative controls, and descriptor-backed `cat /etc/banner.txt`. This does
+    not accept arbitrary `N>&M`, explicit stderr pipe syntax, file/device
+    redirection, writable filesystem behavior, multi-stage/concurrent
+    pipelines, pipefail, jobs, fork/signals, Pi 5 proof, networking, SSH, or a
+    phase transition. The queued inverse closeout is mechanically unblocked
+    and must remain docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
