@@ -752,6 +752,31 @@ The post-review correction chain is:
     closeout is mechanically unblocked, provided it stays bounded to the
     accepted exact descriptor-dup forms and does not claim file redirection,
     pipes, writable filesystem behavior, or a phase transition.
+51. descriptor-dup redirection frontier closeout: accepted in
+    `phase10-fd-dup-redirection-frontier-closeout-20260604`. This checkpoint
+    accepts exactly the two shell-visible descriptor-duplication forms
+    `exec stdout 1>&2` and `exec stderr 2>&1` for launched VFS-backed
+    children. Both forms are child-only descriptor-table mutations: fd1 can be
+    rebound to the inherited fd2 stderr route for `/bin/stdout`, and fd2 can
+    be rebound to the inherited fd1 stdout route for `/bin/stderr`, while
+    the shell descriptor table is restored afterward. Retained evidence maps
+    both direction smokes, normal stdout/stderr route controls,
+    scheduler-backed stdin wait/readiness, Ctrl-D EOF, descriptor-backed VFS
+    exec, loader temporary descriptor non-leak, lifecycle/status, consuming
+    `waitpid`, non-consuming `laststatus`, deterministic negative
+    exec/redirection controls, and descriptor-backed `cat /etc/banner.txt`.
+    The accepted physical sink remains shared runtime-console0; this frontier
+    accepts stream/route metadata and descriptor-table behavior, not separate
+    physical sinks. Arbitrary `N>&M`, descriptor close/move syntax,
+    regular-file redirection, append/truncate, pipes, writable filesystem
+    behavior, terminal policy, async jobs, fork, signals, libc stdio, Pi 5
+    proof, networking, and SSH remain deferred. Supervisor planning is
+    required before the next feature-led shell I/O task because descriptor
+    close/restore syntax, minimal pipe producer-consumer lifecycle, and
+    file/device redirection have different scope and dependency risks. If the
+    supervisor continues inside descriptor policy, descriptor close/restore
+    syntax is the smallest plausible next slice; file/device redirection needs
+    an explicit writable target or device-sink plan.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
