@@ -12,6 +12,51 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-04 - Phase 10 Minimal Stdout-To-Stdin Pipeline Accepted
+
+- Status: accepted as the Phase 10 QEMU/substitute minimal
+  stdout-to-stdin pipeline core. No Pi 5 hardware run, boot archive
+  publication, hardware-lock acquisition, multi-stage pipelines, concurrent
+  pipe scheduling, stdout-only stderr-not-piped proof, pipefail, background
+  jobs, async execution, fork, signals, job control, file redirection,
+  arbitrary descriptor syntax, writable filesystem behavior, networking, or
+  SSH was added.
+- Context: The accepted descriptor-close frontier restored the shell standard
+  descriptor table after child-only fd mutations. The next feature-led local
+  I/O step was the thinnest real pipeline path: connect one VFS-backed
+  userspace producer stdout to one VFS-backed userspace consumer stdin without
+  claiming broader shell pipeline semantics.
+- Decision: Accept phase10-minimal-stdout-to-stdin-pipe-core-20260604.
+  Shell-visible `exec stdout | exec stdin` parses as one exact two-stage
+  pipeline form. The producer and consumer launch through the accepted fixed
+  `/bin` VFS exec path. A task-local pipe endpoint descriptor connects
+  producer fd1 to consumer fd0, records matching write/read byte counts,
+  closes the writer before the consumer EOF check, and restores the shell
+  standard descriptor table after the command. The consumer lifecycle is the
+  accepted `waitpid`/`laststatus` observation for this bounded form, while
+  both participant exec summaries remain visible in the pipeline transcript.
+- Evidence level: fmt/lint, no_std unit tests, QEMU/substitute minimal
+  pipeline smoke, QEMU/substitute descriptor dup/close controls,
+  QEMU/substitute userspace stdout/stdin controls, QEMU/substitute
+  scheduler-backed stdin wait control, and QEMU/substitute descriptor-backed
+  cat control. The task-owned log is
+  `tasks/evidence/2026-06-04-phase10-minimal-stdout-to-stdin-pipe-core/qemu-local-shell-minimal-stdout-to-stdin-pipeline-smoke.log`.
+- Validation: `cargo fmt --all -- --check` passed;
+  `cargo -Zjson-target-spec test --quiet` passed;
+  `scripts/qemu-local-shell-minimal-stdout-to-stdin-pipeline-smoke.sh`
+  passed; retained stdout-to-stderr and stderr-to-stdout descriptor-dup,
+  stdout-close and stderr-close descriptor-close, userspace stdout/stdin,
+  scheduler-backed stdin wait, and descriptor-backed cat QEMU/substitute
+  controls passed; `git diff --check` passed; `mdbook build` passed.
+- Consequences: Talos now has a real shell-visible producer-to-consumer pipe
+  frontier backed by descriptor ownership, byte transfer, EOF, shell
+  descriptor restoration, and lifecycle evidence. The accepted boundary is
+  intentionally exact; multi-stage pipelines, concurrent scheduling, stdout
+  versus stderr pipe separation, broader status policy, file redirection,
+  arbitrary descriptor syntax, writable filesystem behavior, Pi 5 proof,
+  networking, and SSH remain deferred. The next bounded task is the queued
+  minimal pipeline closeout.
+
 ## 2026-06-04 - Phase 10 Stderr Descriptor-Close Redirection Accepted
 
 - Status: accepted as the Phase 10 QEMU/substitute stderr descriptor-close

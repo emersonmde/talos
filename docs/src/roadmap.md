@@ -877,6 +877,29 @@ The post-review correction chain is:
     feature-led shell I/O task; do not infer arbitrary descriptor syntax,
     pipes, file/device redirection, writable filesystem behavior, networking,
     SSH, or a phase transition from this frontier closeout.
+57. minimal stdout-to-stdin pipeline core: accepted in
+    `phase10-minimal-stdout-to-stdin-pipe-core-20260604`.
+    Shell-visible `exec stdout | exec stdin` now parses as the first exact
+    two-stage pipeline form. The producer `/bin/stdout` and consumer
+    `/bin/stdin` both launch through the accepted fixed `/bin`
+    descriptor-backed VFS exec path. During the command, producer fd1 is a
+    pipe writer and consumer fd0 is the matching pipe reader; the retained
+    QEMU/substitute evidence records 31 bytes written and read, the consumer
+    visible line `Talos userspace stdin fixture read: Talos userspace stdout
+    fixture`, `writer-closed=true reader-eof=true shell-restored=true`,
+    and `read-result=pipe-eof-after-writer-close`. The accepted lifecycle
+    observation for this bounded form is the consumer record through
+    `waitpid` and `laststatus`; the producer and consumer exec summaries
+    remain printed in the pipeline transcript. Retained controls cover both
+    descriptor-dup directions, both descriptor-close directions, normal
+    userspace stdout/stdin, scheduler-backed stdin wait/readiness, unsupported
+    pipe forms, deterministic bad-command behavior, and descriptor-backed
+    `cat /etc/banner.txt`. Multi-stage pipelines, concurrent pipe
+    scheduling, stdout-only stderr-not-piped proof, pipefail, background jobs,
+    async execution, fork, signals, job control, file redirection, arbitrary
+    descriptor syntax, writable filesystem behavior, Pi 5 proof, networking,
+    and SSH remain deferred. The queued minimal pipeline closeout is
+    mechanically unblocked and must remain docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

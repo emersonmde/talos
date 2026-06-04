@@ -21,7 +21,7 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0",
     "+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2",
     "+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1",
-    "+descriptor-close-redirection-2"
+    "+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -46,6 +46,8 @@ const LOCAL_COMMAND_STDERR_USER_MEMORY_LEN: usize = 128;
 const LOCAL_COMMAND_EXEC_ADDRESS_SPACE_ID: u64 = 0x0010_0001;
 const LOCAL_COMMAND_EXEC_PROCESS_ID: u64 = 0x0010_0001;
 const LOCAL_COMMAND_EXEC_TEMP_DESCRIPTOR: usize = posix::STDERR_FD + 1;
+const LOCAL_COMMAND_PIPE_BUFFER_LEN: usize = 128;
+const LOCAL_COMMAND_PIPE_ENDPOINT_REFERENCE: usize = 1;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum LocalCommandDirectory {
@@ -146,6 +148,19 @@ impl LocalCommandExecRequest {
     fn path(&self) -> &[u8] {
         self.path.as_bytes()
     }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LocalCommandPipelineRequest {
+    producer: LocalCommandExecRequest,
+    consumer: LocalCommandExecRequest,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LocalCommandPipelineSummary {
+    pipe: LocalCommandPipeRecord,
+    producer: LocalCommandExecSummary,
+    consumer: LocalCommandExecSummary,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -410,6 +425,21 @@ pub struct LocalCommandUserspaceStdoutRecord {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LocalCommandPipeRecord {
+    id: usize,
+    producer_fd: usize,
+    producer_path: &'static [u8],
+    consumer_fd: usize,
+    consumer_path: &'static [u8],
+    bytes_written: usize,
+    bytes_read: usize,
+    writer_closed: bool,
+    reader_eof: bool,
+    shell_restored: bool,
+    source: &'static str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct LocalCommandUserspaceStdinRecord {
     read_descriptor: usize,
     read_bytes: usize,
@@ -530,6 +560,13 @@ pub trait LocalCommandSink {
         Err(LocalCommandExecError::NotSupported)
     }
 
+    fn exec_vfs_pipeline(
+        &mut self,
+        _request: LocalCommandPipelineRequest,
+    ) -> Result<LocalCommandPipelineSummary, LocalCommandExecError> {
+        Err(LocalCommandExecError::NotSupported)
+    }
+
     fn last_process_lifecycle_record(&self) -> Option<LocalCommandProcessLifecycleRecord> {
         None
     }
@@ -569,6 +606,85 @@ pub struct DescriptorBackedLocalCommandIo<
     read_only_files: initramfs::ReadOnlyFileDescriptions<1>,
     last_process: Option<LocalCommandProcessLifecycleRecord>,
     waitable_process: Option<LocalCommandProcessLifecycleRecord>,
+    pipe: LocalCommandPipeState,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+struct LocalCommandPipeState {
+    bytes: [u8; LOCAL_COMMAND_PIPE_BUFFER_LEN],
+    len: usize,
+    cursor: usize,
+    writer_open: bool,
+    reader_open: bool,
+    eof_observed: bool,
+}
+
+impl LocalCommandPipeState {
+    const fn new_empty() -> Self {
+        Self {
+            bytes: [0; LOCAL_COMMAND_PIPE_BUFFER_LEN],
+            len: 0,
+            cursor: 0,
+            writer_open: false,
+            reader_open: false,
+            eof_observed: false,
+        }
+    }
+
+    fn reset(&mut self) {
+        *self = Self::new_empty();
+    }
+
+    fn open_writer(&mut self) {
+        self.writer_open = true;
+        self.eof_observed = false;
+    }
+
+    fn close_writer(&mut self) {
+        self.writer_open = false;
+    }
+
+    fn open_reader(&mut self) {
+        self.reader_open = true;
+    }
+
+    fn close_reader(&mut self) {
+        self.reader_open = false;
+    }
+
+    fn write(&mut self, bytes: &[u8]) -> Result<usize, LocalCommandExecError> {
+        if !self.writer_open {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let end = self
+            .len
+            .checked_add(bytes.len())
+            .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
+        if end > self.bytes.len() {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        self.bytes[self.len..end].copy_from_slice(bytes);
+        self.len = end;
+        Ok(bytes.len())
+    }
+
+    fn read(&mut self, output: &mut [u8]) -> usize {
+        if !self.reader_open || output.is_empty() {
+            return 0;
+        }
+        let remaining = self.len - self.cursor;
+        let selected = core::cmp::min(output.len(), remaining);
+        if selected == 0 {
+            if !self.writer_open {
+                self.eof_observed = true;
+            }
+            return 0;
+        }
+        let end = self.cursor + selected;
+        output[..selected].copy_from_slice(&self.bytes[self.cursor..end]);
+        self.cursor = end;
+        selected
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -610,6 +726,7 @@ where
             read_only_files: initramfs::ReadOnlyFileDescriptions::new_empty(),
             last_process: None,
             waitable_process: None,
+            pipe: LocalCommandPipeState::new_empty(),
         })
     }
 }
@@ -866,11 +983,9 @@ where
         let descriptor_inheritance = self
             .standard_descriptor_inheritance_record(owner, request.redirection)
             .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
-        let emitted = (
-            self.emit_userspace_stdout_fixture(source_path),
-            self.emit_userspace_stdin_fixture(source_path),
-            self.emit_userspace_stderr_fixture(source_path),
-        );
+        let userspace_stdout = self.emit_userspace_stdout_fixture(source_path)?;
+        let userspace_stdin = self.emit_userspace_stdin_fixture(source_path)?;
+        let userspace_stderr = self.emit_userspace_stderr_fixture(source_path)?;
         let redirection = if let Some(applied) = applied_redirection {
             let restore = self.restore_exec_redirection(applied);
             if restore.is_err() {
@@ -879,10 +994,6 @@ where
             Some(applied.restored_record())
         } else {
             None
-        };
-        let (userspace_stdout, userspace_stdin, userspace_stderr) = match emitted {
-            (Ok(stdout), Ok(stdin), Ok(stderr)) => (stdout, stdin, stderr),
-            _ => return Err(LocalCommandExecError::SyscallFailed),
         };
         let lifecycle = LocalCommandProcessLifecycleRecord::exited(
             LOCAL_COMMAND_EXEC_PROCESS_ID,
@@ -933,6 +1044,54 @@ where
 
     fn wait_process_lifecycle_record(&mut self) -> Option<LocalCommandProcessLifecycleRecord> {
         self.waitable_process.take()
+    }
+
+    fn exec_vfs_pipeline(
+        &mut self,
+        request: LocalCommandPipelineRequest,
+    ) -> Result<LocalCommandPipelineSummary, LocalCommandExecError> {
+        if request.producer.path() != initramfs::PHASE10_STDOUT_PATH
+            || request.consumer.path() != initramfs::PHASE10_STDIN_PATH
+            || request.producer.redirection.is_some()
+            || request.consumer.redirection.is_some()
+        {
+            return Err(LocalCommandExecError::InvalidPath);
+        }
+
+        self.pipe.reset();
+        let stdout_restore =
+            self.install_pipe_endpoint(posix::STDOUT_FD, posix::DescriptorAccess::WriteOnly)?;
+        self.pipe.open_writer();
+        let producer = self.exec_vfs_program(request.producer);
+        self.pipe.close_writer();
+        self.restore_pipe_endpoint(posix::STDOUT_FD, stdout_restore)?;
+        let producer = producer?;
+
+        let stdin_restore =
+            self.install_pipe_endpoint(posix::STDIN_FD, posix::DescriptorAccess::ReadOnly)?;
+        self.pipe.open_reader();
+        let consumer = self.exec_vfs_program(request.consumer);
+        self.pipe.close_reader();
+        self.restore_pipe_endpoint(posix::STDIN_FD, stdin_restore)?;
+        let consumer = consumer?;
+
+        Ok(LocalCommandPipelineSummary {
+            pipe: LocalCommandPipeRecord {
+                id: LOCAL_COMMAND_PIPE_ENDPOINT_REFERENCE,
+                producer_fd: posix::STDOUT_FD,
+                producer_path: producer.source_path,
+                consumer_fd: posix::STDIN_FD,
+                consumer_path: consumer.source_path,
+                bytes_written: self.pipe.len,
+                bytes_read: self.pipe.cursor,
+                writer_closed: !self.pipe.writer_open,
+                reader_eof: self.pipe.eof_observed,
+                shell_restored: self.shell_standard_descriptors_restored()?,
+                source: "shell-pipe-stdout-to-stdin",
+            },
+            producer,
+            consumer,
+        })
     }
 }
 
@@ -1044,6 +1203,72 @@ where
             .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)
     }
 
+    fn install_pipe_endpoint(
+        &mut self,
+        descriptor: usize,
+        access: posix::DescriptorAccess,
+    ) -> Result<posix::DescriptorEntry, LocalCommandExecError> {
+        let table = self
+            .descriptor_store
+            .current_descriptor_table_mut(self.current_owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let restored = table
+            .close(descriptor)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let pipe = posix::DescriptorEntry::new(
+            access,
+            posix::DescriptorFlags::EMPTY,
+            posix::DescriptorObject::new(
+                posix::DescriptorObjectKind::PipeEndpoint,
+                LOCAL_COMMAND_PIPE_ENDPOINT_REFERENCE,
+            ),
+        );
+        if table.allocate_at(descriptor, pipe).is_err() {
+            let _ = table.allocate_at(descriptor, restored);
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
+        }
+        Ok(restored)
+    }
+
+    fn restore_pipe_endpoint(
+        &mut self,
+        descriptor: usize,
+        restored: posix::DescriptorEntry,
+    ) -> Result<(), LocalCommandExecError> {
+        let table = self
+            .descriptor_store
+            .current_descriptor_table_mut(self.current_owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        table
+            .close(descriptor)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        table
+            .allocate_at(descriptor, restored)
+            .map(|_| ())
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)
+    }
+
+    fn shell_standard_descriptors_restored(&self) -> Result<bool, LocalCommandExecError> {
+        let table = self
+            .descriptor_store
+            .current_descriptor_table(self.current_owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let stdin = table
+            .get(posix::STDIN_FD)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let stdout = table
+            .get(posix::STDOUT_FD)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let stderr = table
+            .get(posix::STDERR_FD)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        Ok(
+            stdin.object().kind() == posix::DescriptorObjectKind::StdioInput
+                && stdout.object().kind() == posix::DescriptorObjectKind::StdioOutput
+                && stderr.object().kind() == posix::DescriptorObjectKind::StdioOutput,
+        )
+    }
+
     fn read_initramfs_file_via_syscall_with_memory<const USER_MEMORY_LEN: usize>(
         &mut self,
         path: &[u8],
@@ -1138,7 +1363,10 @@ where
         let stderr = table.get(posix::STDERR_FD);
 
         if stdin.require_readable().is_err()
-            || stdin.object().kind() != posix::DescriptorObjectKind::StdioInput
+            || !matches!(
+                stdin.object().kind(),
+                posix::DescriptorObjectKind::StdioInput | posix::DescriptorObjectKind::PipeEndpoint
+            )
         {
             return Err(LocalCommandExecError::LaunchPipelineFailed);
         }
@@ -1147,7 +1375,11 @@ where
         let stdout_kind = match stdout {
             Ok(stdout) => {
                 if stdout.require_writable().is_err()
-                    || stdout.object().kind() != posix::DescriptorObjectKind::StdioOutput
+                    || !matches!(
+                        stdout.object().kind(),
+                        posix::DescriptorObjectKind::StdioOutput
+                            | posix::DescriptorObjectKind::PipeEndpoint
+                    )
                 {
                     return Err(LocalCommandExecError::LaunchPipelineFailed);
                 }
@@ -1191,13 +1423,36 @@ where
         })
     }
 
-    fn dispatch_runtime_stdin_read(
+    fn dispatch_stdin_fixture_read(
         &mut self,
         mappings: &[posix::UserMapping],
         user_memory: &mut [u8; LOCAL_COMMAND_STDIN_USER_MEMORY_LEN],
         scratch: &mut [u8; LOCAL_COMMAND_STDIN_USER_MEMORY_LEN],
         ready_byte: &mut Option<u8>,
     ) -> u64 {
+        let descriptor_table = match self
+            .descriptor_store
+            .current_descriptor_table(self.current_owner)
+        {
+            Ok(table) => table,
+            Err(_) => return (syscall::EBADF as u64).wrapping_neg(),
+        };
+        let entry = match descriptor_table.get(posix::STDIN_FD) {
+            Ok(entry) => entry,
+            Err(_) => return (syscall::EBADF as u64).wrapping_neg(),
+        };
+        if entry.object().kind() == posix::DescriptorObjectKind::PipeEndpoint {
+            if entry.require_readable().is_err() {
+                return (syscall::EBADF as u64).wrapping_neg();
+            }
+            let read_start = LOCAL_COMMAND_STDIN_READ_OFFSET;
+            let read_len = initramfs::PHASE10_STDOUT_PAYLOAD.len();
+            let bytes_read = self
+                .pipe
+                .read(&mut user_memory[read_start..read_start + read_len]);
+            return bytes_read as u64;
+        }
+
         let mut stdin_backend = RuntimeStdinReadBackend {
             ready_byte,
             backend: &mut self.input_backend,
@@ -1226,6 +1481,17 @@ where
         )
         .return_value()
         .x0()
+    }
+
+    fn stdin_descriptor_is_pipe(&self) -> Result<bool, LocalCommandExecError> {
+        let table = self
+            .descriptor_store
+            .current_descriptor_table(self.current_owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let entry = table
+            .get(posix::STDIN_FD)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        Ok(entry.object().kind() == posix::DescriptorObjectKind::PipeEndpoint)
     }
 
     fn wait_for_runtime_stdin_readiness(
@@ -1307,28 +1573,17 @@ where
         )
         .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?];
 
-        let write = syscall::dispatch_process_descriptor(
-            syscall::TALOS_WRITE_SYSCALL,
-            syscall::SyscallArguments::new([
-                posix::STDOUT_FD as u64,
-                USER_MEMORY_BASE,
-                payload.len() as u64,
-                0,
-                0,
-                0,
-            ]),
-            self.current_owner,
-            &mut self.descriptor_store,
-            &mappings,
+        let return_value = self.write_userspace_fd_bytes(
+            posix::STDOUT_FD,
             USER_MEMORY_BASE,
+            &mappings,
             &user_memory,
             &mut scratch,
-            &mut self.output_backend,
+            payload.len(),
         );
-        let return_value = write.return_value().x0();
         let bad_descriptor = (syscall::EBADF as u64).wrapping_neg();
         let (stream, route) = if return_value == payload.len() as u64 {
-            self.stdio_output_route_metadata(posix::STDOUT_FD)?
+            self.output_route_metadata(posix::STDOUT_FD)?
         } else if return_value == bad_descriptor {
             ("closed", "closed-descriptor")
         } else {
@@ -1362,19 +1617,26 @@ where
         )
         .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?];
         let read_start = LOCAL_COMMAND_STDIN_READ_OFFSET;
-        let expected_read_bytes = LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES.len();
+        let mut expected_read_bytes = LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES.len();
         let mut readiness_observations = 0usize;
         let mut stdout_bytes = 0usize;
         let mut ready_byte = None;
         let mut scheduler_wait = None;
         let read_bytes;
-        let read_result;
-        let mut read_return_value = self.dispatch_runtime_stdin_read(
+        let mut read_result;
+        let mut read_source = "runtime-console0/local-input";
+        let mut read_return_value = self.dispatch_stdin_fixture_read(
             &mappings,
             &mut user_memory,
             &mut scratch,
             &mut ready_byte,
         );
+        if read_return_value != (syscall::EAGAIN as u64).wrapping_neg()
+            && self.stdin_descriptor_is_pipe()?
+        {
+            expected_read_bytes = initramfs::PHASE10_STDOUT_PAYLOAD.len();
+            read_source = "pipe:stdout-to-stdin";
+        }
 
         if read_return_value == (syscall::EAGAIN as u64).wrapping_neg() {
             let payload = initramfs::PHASE10_STDIN_READINESS_STDOUT;
@@ -1392,7 +1654,7 @@ where
             readiness_observations = wait_record.wait_cycles;
             scheduler_wait = Some(wait_record);
             if ready_byte.is_some() {
-                read_return_value = self.dispatch_runtime_stdin_read(
+                read_return_value = self.dispatch_stdin_fixture_read(
                     &mappings,
                     &mut user_memory,
                     &mut scratch,
@@ -1403,7 +1665,12 @@ where
 
         if read_return_value == expected_read_bytes as u64 {
             let read_end = read_start + expected_read_bytes;
-            if &user_memory[read_start..read_end] != LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES {
+            let expected_input = if read_source == "pipe:stdout-to-stdin" {
+                initramfs::PHASE10_STDOUT_PAYLOAD
+            } else {
+                LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES
+            };
+            if &user_memory[read_start..read_end] != expected_input {
                 return Err(LocalCommandExecError::SyscallFailed);
             }
 
@@ -1411,11 +1678,9 @@ where
             user_memory[..prefix.len()].copy_from_slice(prefix);
             let prefix_write =
                 self.write_userspace_stdout_bytes(&mappings, &user_memory, prefix.len())?;
-            let read_write = self.write_userspace_stdout_bytes(
-                &mappings,
-                &user_memory[read_start..read_end],
-                expected_read_bytes,
-            )?;
+            user_memory.copy_within(read_start..read_end, 0);
+            let read_write =
+                self.write_userspace_stdout_bytes(&mappings, &user_memory, expected_read_bytes)?;
             user_memory[0] = b'\n';
             let newline_write = self.write_userspace_stdout_bytes(&mappings, &user_memory, 1)?;
             let read_stdout_bytes = prefix
@@ -1435,6 +1700,18 @@ where
             } else {
                 Some("scheduler-wait/delayed-input")
             };
+            if read_source == "pipe:stdout-to-stdin" {
+                let eof = self.dispatch_stdin_fixture_read(
+                    &mappings,
+                    &mut user_memory,
+                    &mut scratch,
+                    &mut ready_byte,
+                );
+                if eof != 0 {
+                    return Err(LocalCommandExecError::SyscallFailed);
+                }
+                read_result = Some("pipe-eof-after-writer-close");
+            }
         } else if read_return_value == (syscall::EAGAIN as u64).wrapping_neg()
             && scheduler_wait.is_some()
         {
@@ -1461,7 +1738,7 @@ where
             read_descriptor: posix::STDIN_FD,
             read_bytes,
             read_return_value,
-            read_source: "runtime-console0/local-input",
+            read_source,
             stdout_descriptor: posix::STDOUT_FD,
             stdout_bytes,
             stdout_return_value: stdout_bytes as u64,
@@ -1490,28 +1767,17 @@ where
         )
         .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?];
         let mut scratch = [0u8; LOCAL_COMMAND_STDERR_USER_MEMORY_LEN];
-        let write = syscall::dispatch_process_descriptor(
-            syscall::TALOS_WRITE_SYSCALL,
-            syscall::SyscallArguments::new([
-                posix::STDERR_FD as u64,
-                LOCAL_COMMAND_STDERR_USER_BASE,
-                payload.len() as u64,
-                0,
-                0,
-                0,
-            ]),
-            self.current_owner,
-            &mut self.descriptor_store,
-            &mappings,
+        let return_value = self.write_userspace_fd_bytes(
+            posix::STDERR_FD,
             LOCAL_COMMAND_STDERR_USER_BASE,
+            &mappings,
             &user_memory,
             &mut scratch,
-            &mut self.output_backend,
+            payload.len(),
         );
-        let return_value = write.return_value().x0();
         let bad_descriptor = (syscall::EBADF as u64).wrapping_neg();
         let (stream, route) = if return_value == payload.len() as u64 {
-            self.stdio_output_route_metadata(posix::STDERR_FD)?
+            self.output_route_metadata(posix::STDERR_FD)?
         } else if return_value == bad_descriptor {
             ("closed", "closed-descriptor")
         } else {
@@ -1528,7 +1794,7 @@ where
         }))
     }
 
-    fn stdio_output_route_metadata(
+    fn output_route_metadata(
         &self,
         descriptor: usize,
     ) -> Result<(&'static str, &'static str), LocalCommandExecError> {
@@ -1539,15 +1805,19 @@ where
         let entry = table
             .get(descriptor)
             .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
-        if entry.require_writable().is_err()
-            || entry.object().kind() != posix::DescriptorObjectKind::StdioOutput
-        {
+        if entry.require_writable().is_err() {
             return Err(LocalCommandExecError::LaunchPipelineFailed);
         }
-        Ok((
-            entry.object().stdio_stream_name(),
-            entry.object().runtime_console_route_name(),
-        ))
+        match entry.object().kind() {
+            posix::DescriptorObjectKind::StdioOutput => Ok((
+                entry.object().stdio_stream_name(),
+                entry.object().runtime_console_route_name(),
+            )),
+            posix::DescriptorObjectKind::PipeEndpoint => {
+                Ok(("pipe-writer", "pipe:stdout-to-stdin"))
+            }
+            _ => Err(LocalCommandExecError::LaunchPipelineFailed),
+        }
     }
 
     fn write_userspace_stdout_bytes(
@@ -1574,7 +1844,47 @@ where
         len: usize,
     ) -> Result<u64, LocalCommandExecError> {
         let mut scratch = [0u8; LOCAL_COMMAND_STDIN_USER_MEMORY_LEN];
-        let write = syscall::dispatch_process_descriptor(
+        Ok(self.write_userspace_fd_bytes(
+            descriptor,
+            user_memory_base,
+            mappings,
+            user_memory,
+            &mut scratch,
+            len,
+        ))
+    }
+
+    fn write_userspace_fd_bytes(
+        &mut self,
+        descriptor: usize,
+        user_memory_base: u64,
+        mappings: &[posix::UserMapping],
+        user_memory: &[u8],
+        scratch: &mut [u8],
+        len: usize,
+    ) -> u64 {
+        let descriptor_table = match self
+            .descriptor_store
+            .current_descriptor_table(self.current_owner)
+        {
+            Ok(table) => table,
+            Err(_) => return (syscall::EBADF as u64).wrapping_neg(),
+        };
+        let entry = match descriptor_table.get(descriptor) {
+            Ok(entry) => entry,
+            Err(_) => return (syscall::EBADF as u64).wrapping_neg(),
+        };
+        if entry.object().kind() == posix::DescriptorObjectKind::PipeEndpoint {
+            if entry.require_writable().is_err() || len > user_memory.len() {
+                return (syscall::EBADF as u64).wrapping_neg();
+            }
+            return match self.pipe.write(&user_memory[..len]) {
+                Ok(bytes) => bytes as u64,
+                Err(_) => (syscall::EPIPE as u64).wrapping_neg(),
+            };
+        }
+
+        syscall::dispatch_process_descriptor(
             syscall::TALOS_WRITE_SYSCALL,
             syscall::SyscallArguments::new([
                 descriptor as u64,
@@ -1589,14 +1899,11 @@ where
             mappings,
             user_memory_base,
             user_memory,
-            &mut scratch,
+            scratch,
             &mut self.output_backend,
-        );
-        let return_value = write.return_value().x0();
-        if return_value != len as u64 {
-            return Err(LocalCommandExecError::SyscallFailed);
-        }
-        Ok(return_value)
+        )
+        .return_value()
+        .x0()
     }
 }
 
@@ -1972,6 +2279,40 @@ fn dispatch_local_command(
                 write_line(sink, responses, "talos: unexpected-argument")?;
                 return Ok(LocalCommandStatus::UnexpectedArgument);
             };
+            if arguments.as_bytes().contains(&b'|') {
+                match parse_pipeline_request(arguments)
+                    .and_then(|request| sink.exec_vfs_pipeline(request))
+                {
+                    Ok(summary) => {
+                        write_pipeline_summary(sink, responses, summary)?;
+                        return Ok(LocalCommandStatus::Handled);
+                    }
+                    Err(LocalCommandExecError::InvalidPath) => {
+                        write_line(sink, responses, "talos: exec-invalid-path")?;
+                        return Ok(LocalCommandStatus::UnexpectedArgument);
+                    }
+                    Err(LocalCommandExecError::NotExecutable) => {
+                        write_line(sink, responses, "talos: exec-not-executable")?;
+                        return Ok(LocalCommandStatus::UnexpectedArgument);
+                    }
+                    Err(LocalCommandExecError::NotFound) => {
+                        write_line(sink, responses, "talos: exec-not-found")?;
+                        return Ok(LocalCommandStatus::UnexpectedArgument);
+                    }
+                    Err(LocalCommandExecError::SyscallFailed) => {
+                        write_line(sink, responses, "talos: exec-syscall-failed")?;
+                        return Ok(LocalCommandStatus::UnexpectedArgument);
+                    }
+                    Err(LocalCommandExecError::LaunchPipelineFailed) => {
+                        write_line(sink, responses, "talos: exec-launch-failed")?;
+                        return Ok(LocalCommandStatus::UnexpectedArgument);
+                    }
+                    Err(_) => {
+                        write_line(sink, responses, "talos: exec-error")?;
+                        return Ok(LocalCommandStatus::UnexpectedArgument);
+                    }
+                }
+            }
             match parse_exec_request(arguments).and_then(|request| sink.exec_vfs_program(request)) {
                 Ok(summary) => {
                     write_exec_summary(sink, responses, summary)?;
@@ -2036,6 +2377,49 @@ fn dispatch_local_command(
             Ok(LocalCommandStatus::UnknownCommand)
         }
     }
+}
+
+fn parse_pipeline_request(
+    arguments: &str,
+) -> Result<LocalCommandPipelineRequest, LocalCommandExecError> {
+    let bytes = arguments.as_bytes();
+    let mut pipe = None;
+    let mut index = 0usize;
+    while index < bytes.len() {
+        if bytes[index] == b'|' {
+            if pipe.is_some() {
+                return Err(LocalCommandExecError::InvalidPath);
+            }
+            pipe = Some(index);
+        }
+        index += 1;
+    }
+    let pipe = pipe.ok_or(LocalCommandExecError::InvalidPath)?;
+    let producer = trim_ascii_space(&arguments[..pipe]);
+    let consumer = trim_ascii_space(&arguments[pipe + 1..]);
+    let consumer = consumer
+        .strip_prefix("exec ")
+        .ok_or(LocalCommandExecError::InvalidPath)?;
+    if producer.is_empty() || consumer.is_empty() {
+        return Err(LocalCommandExecError::InvalidPath);
+    }
+    Ok(LocalCommandPipelineRequest {
+        producer: parse_exec_request(producer)?,
+        consumer: parse_exec_request(consumer)?,
+    })
+}
+
+fn trim_ascii_space(text: &str) -> &str {
+    let bytes = text.as_bytes();
+    let mut start = 0usize;
+    while start < bytes.len() && is_space(bytes[start]) {
+        start += 1;
+    }
+    let mut end = bytes.len();
+    while end > start && is_space(bytes[end - 1]) {
+        end -= 1;
+    }
+    &text[start..end]
 }
 
 fn parse_bounded_directory(path: &str) -> Option<LocalCommandDirectory> {
@@ -2372,6 +2756,53 @@ fn write_exec_summary(
         response_lines,
         "talos: exec-signal lower-aarch64-svc-launch-boundary-equivalent",
     )
+}
+
+fn write_pipeline_summary(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    summary: LocalCommandPipelineSummary,
+) -> Result<(), LocalCommandCycleError> {
+    let record = summary.pipe;
+    write_str_part(sink, "talos: pipeline id=")?;
+    write_hex_usize_part(sink, record.id)?;
+    write_str_part(sink, " producer-fd=")?;
+    write_hex_usize_part(sink, record.producer_fd)?;
+    write_str_part(sink, " producer-path=")?;
+    write_byte_path_part(sink, record.producer_path)?;
+    write_str_part(sink, " consumer-fd=")?;
+    write_hex_usize_part(sink, record.consumer_fd)?;
+    write_str_part(sink, " consumer-path=")?;
+    write_byte_path_part(sink, record.consumer_path)?;
+    write_str_part(sink, " bytes-written=")?;
+    write_hex_usize_part(sink, record.bytes_written)?;
+    write_str_part(sink, " bytes-read=")?;
+    write_hex_usize_part(sink, record.bytes_read)?;
+    write_str_part(sink, " writer-closed=")?;
+    write_str_part(
+        sink,
+        if record.writer_closed {
+            "true"
+        } else {
+            "false"
+        },
+    )?;
+    write_str_part(sink, " reader-eof=")?;
+    write_str_part(sink, if record.reader_eof { "true" } else { "false" })?;
+    write_str_part(sink, " shell-restored=")?;
+    write_str_part(
+        sink,
+        if record.shell_restored {
+            "true"
+        } else {
+            "false"
+        },
+    )?;
+    write_str_part(sink, " source=")?;
+    write_str_part(sink, record.source)?;
+    finish_dynamic_line(sink, response_lines)?;
+    write_exec_summary(sink, response_lines, summary.producer)?;
+    write_exec_summary(sink, response_lines, summary.consumer)
 }
 
 fn write_exec_redirection_line(
@@ -2895,7 +3326,7 @@ mod tests {
     }
 
     struct CaptureSink {
-        bytes: [u8; 4096],
+        bytes: [u8; 8192],
         len: usize,
         fail_after: usize,
         writes: usize,
@@ -2904,7 +3335,7 @@ mod tests {
     impl CaptureSink {
         const fn new() -> Self {
             Self {
-                bytes: [0; 4096],
+                bytes: [0; 8192],
                 len: 0,
                 fail_after: usize::MAX,
                 writes: 0,
@@ -2913,7 +3344,7 @@ mod tests {
 
         const fn failing_after(fail_after: usize) -> Self {
             Self {
-                bytes: [0; 4096],
+                bytes: [0; 8192],
                 len: 0,
                 fail_after,
                 writes: 0,
@@ -3638,6 +4069,85 @@ talos> talos: exec-invalid-path\n\
 talos> talos: exec-invalid-path\n\
 talos> talos: exec-invalid-path\n"
         );
+    }
+
+    #[test_case]
+    fn local_command_loop_execs_minimal_stdout_to_stdin_pipeline() {
+        let input = ScriptedInput::new(*b"exec stdout | exec stdin\rwaitpid\rlaststatus\r", 44);
+        let mut backend = CaptureSink::new();
+        let (pipeline, waited, observed) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(pipeline.line(), b"exec stdout | exec stdin");
+        assert_eq!(pipeline.status(), LocalCommandStatus::Handled);
+        assert_eq!(pipeline.response_lines(), 21);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.line(), b"laststatus");
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert!(output.contains(
+            "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-to-stdin\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=pipe-endpoint fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=pipe-writer route=pipe:stdout-to-stdin source=userspace-talos-write\n"
+        ));
+        assert!(output.contains(
+            "talos> Talos userspace stdin fixture read: Talos userspace stdout fixture\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=pipe-endpoint fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdin fd=0x0000000000000000 bytes=0x000000000000001f return=0x000000000000001f read-source=pipe:stdout-to-stdin stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000044 stdout-return=0x0000000000000044 source=userspace-talos-read+userspace-talos-write read-result=pipe-eof-after-writer-close\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_rejects_unsupported_pipeline_forms() {
+        let input = ScriptedInput::new(
+            *b"| exec stdin\rexec stdout |\rexec stdout | exec stdin | x\rexec missing | exec stdin\r",
+            82,
+        );
+        let mut backend = CaptureSink::new();
+        let (leading, trailing, multi, missing) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(leading.line(), b"| exec stdin");
+        assert_eq!(leading.status(), LocalCommandStatus::ParseError);
+        assert_eq!(trailing.line(), b"exec stdout |");
+        assert_eq!(trailing.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(multi.line(), b"exec stdout | exec stdin | x");
+        assert_eq!(multi.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(missing.line(), b"exec missing | exec stdin");
+        assert_eq!(missing.status(), LocalCommandStatus::UnexpectedArgument);
+        assert!(output.contains("talos> talos: parse-error\n"));
+        assert_eq!(output.matches("talos: exec-invalid-path").count(), 3);
     }
 
     #[test_case]
