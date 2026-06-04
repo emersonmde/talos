@@ -684,6 +684,7 @@ where
             ),
             _ => Err(PosixError::NotSupported),
         },
+        crate::posix::DescriptorObjectKind::Device if entry.object().is_dev_null() => Ok(0),
         crate::posix::DescriptorObjectKind::Directory => Err(PosixError::IsDirectory),
         _ => Err(PosixError::NotSupported),
     };

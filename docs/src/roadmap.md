@@ -1214,6 +1214,28 @@ The post-review correction chain is:
     contract or a read-only VFS-backed regular-file redirection target, while
     append/truncate and writable regular-file output require a separate
     filesystem mutation plan.
+72. /dev/null stdin redirection core: accepted in
+    `phase10-dev-null-stdin-redirection-core-20260604`. This checkpoint
+    accepts exactly `exec stdin </dev/null` as a child-only fd0 source
+    redirection for the VFS-backed `/bin/stdin` fixture. The child descriptor
+    table reports `fd0=device`; the redirection record reports
+    `op=source`, `source-path=/dev/null`,
+    `source-stream=null-source`, and
+    `source-route=device:/dev/null`; and `TalosRead` from that descriptor
+    returns zero bytes as true device-source EOF without polling
+    runtime-console0 input. The stdin fixture reports the result through
+    accepted stdout/status paths as
+    `read-source=device:/dev/null` and
+    `read-result=null-source-eof/no-data`. A following normal
+    `exec stdin` control consumes `talos-console0` through the restored
+    shell fd0, proving child-only restoration. Deterministic negative controls
+    keep `exec stdout </dev/null`, `exec stdin </etc/banner.txt`, and
+    `exec stdin < /dev/null` outside the accepted surface. This does not
+    accept regular-file input redirection, output regular-file redirection,
+    append/truncate, shorthand/broader descriptor syntax, writable filesystem
+    behavior, broader file/device semantics, Pi 5 proof, networking, SSH, or a
+    phase transition. The queued `/dev/null` stdin closeout is mechanically
+    unblocked and must remain docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

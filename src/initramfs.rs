@@ -36,6 +36,8 @@ pub(crate) const PHASE10_STDIN_READINESS_STDOUT: &[u8] =
     b"Talos userspace stdin fixture no-data: readiness\n";
 pub(crate) const PHASE10_STDIN_TERMINAL_EOF_STDOUT: &[u8] =
     b"Talos userspace stdin fixture read-result: terminal-eof\n";
+pub(crate) const PHASE10_STDIN_DEV_NULL_EOF_STDOUT: &[u8] =
+    b"Talos userspace stdin fixture read-result: null-source-eof/no-data\n";
 pub(crate) const PHASE10_STDIN_PIPE_EOF_STDOUT: &[u8] =
     b"Talos userspace stdin fixture read-result: pipe-eof/no-data\n";
 pub(crate) const PHASE10_STDIN_BYTES: &[u8] = &PHASE10_STDIN_ELF_BYTES;
@@ -909,6 +911,10 @@ mod tests {
         assert_eq!(
             PHASE10_STDIN_TERMINAL_EOF_STDOUT,
             b"Talos userspace stdin fixture read-result: terminal-eof\n"
+        );
+        assert_eq!(
+            PHASE10_STDIN_DEV_NULL_EOF_STDOUT,
+            b"Talos userspace stdin fixture read-result: null-source-eof/no-data\n"
         );
         assert_eq!(
             PHASE10_STDIN_PIPE_EOF_STDOUT,
