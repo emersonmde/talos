@@ -1568,6 +1568,34 @@ The post-review correction chain is:
     queued regular-file append frontier closeout is mechanically unblocked and
     must stay docs/evidence reconciliation only before supervisor planning
     chooses any broader local execution primitive.
+87. regular-file append redirection frontier closeout: accepted in
+    'phase10-regular-file-append-redirection-frontier-closeout-20260604'. It
+    reconciles the accepted append sequences 'exec stdout >/tmp/stdout.txt'
+    followed by 'exec stdout >>/tmp/stdout.txt' and
+    'exec stderr 2>/tmp/stderr.txt' followed by
+    'exec stderr 2>>/tmp/stderr.txt'. Append is accepted only after the prior
+    setup/truncate-create command in retained evidence, only for scratch paths
+    '/tmp/stdout.txt' and '/tmp/stderr.txt', and only for the VFS-backed
+    '/bin/stdout' and '/bin/stderr' fixtures. The accepted evidence records
+    child-only fd1/fd2 regular-file rebinding, 'op=append',
+    'target-route=volatile-vfs:/tmp/stdout.txt' or
+    'target-route=volatile-vfs:/tmp/stderr.txt', userspace TalosWrite
+    provenance, descriptor-backed 'cat' readback of two fixture payloads per
+    stream with 'bytes=0x3e source=volatile-vfs-descriptor-read', shell
+    fd1/fd2 restoration, distinct stdout behavior after stderr append,
+    lifecycle/status, waitpid, laststatus, and deterministic negative
+    controls. The closeout retains stdout/stderr truncate-create, read-only
+    input redirection, /dev/null redirection, normal stdio, descriptor
+    redirection/pipeline controls, VFS exec/open/read/write lineage, and
+    descriptor-backed cat evidence. Append-create for missing files, arbitrary
+    append paths, stdout-to-stderr and stderr-to-stdout append mixups beyond
+    accepted negatives, persistence, broad writable filesystem mutation,
+    arbitrary descriptor syntax, descriptor moves, process
+    accounting/concurrency, Pi 5 proof, networking, SSH, and phase transition
+    remain deferred. No explicit queued follow-up remains mechanically
+    unblocked; supervisor planning is required before any broader descriptor
+    grammar, append-create, arbitrary-path, process-management, or
+    phase-transition work.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
