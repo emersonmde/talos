@@ -1755,6 +1755,26 @@ The post-review correction chain is:
     SSH, and phase transition remain deferred. The queued stderr arbitrary-/tmp
     closeout is mechanically unblocked and must stay docs/evidence
     reconciliation only.
+95. stderr arbitrary /tmp output redirection closeout: accepted in
+    'phase10-stderr-arbitrary-tmp-output-redirection-closeout-20260604'. This
+    reconciles the accepted stderr volatile '/tmp/BASENAME' output path
+    frontier without adding code. The accepted forms remain
+    'exec stderr 2>/tmp/BASENAME' and
+    'exec stderr 2>>/tmp/BASENAME' where the basename is non-empty ASCII
+    letters, digits, '.', '_', or '-'. The evidence map retains the
+    task-owned QEMU/substitute stderr arbitrary-/tmp transcript for
+    truncate/create, append/create, userspace TalosWrite provenance, volatile
+    VFS target routes, descriptor-backed readbacks, waitpid, laststatus, shell
+    fd2 restoration, distinct stdout behavior, deterministic path/fd/shorthand
+    negatives, errors=0, and PASS. This closeout reuses the accepted
+    conservative output-path grammar and records no new policy change. Input
+    arbitrary paths, persistence, recursive directories, path traversal, broad
+    writable filesystem mutation, arbitrary descriptor syntax beyond accepted
+    fd1/fd2 forms, descriptor moves, process accounting/concurrency, Pi 5
+    proof, networking, SSH, and phase transition remain deferred. The queued
+    arbitrary '/tmp' output redirection frontier closeout is mechanically
+    unblocked and must stay docs/evidence reconciliation only before requiring
+    supervisor planning for any broader capability.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
