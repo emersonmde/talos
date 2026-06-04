@@ -1381,6 +1381,30 @@ The post-review correction chain is:
     networking, SSH, or a phase transition. The queued stdout regular-file
     redirection closeout is mechanically unblocked and must remain
     docs/evidence reconciliation only.
+79. stdout regular-file redirection closeout: accepted in
+    'phase10-stdout-regular-file-redirection-closeout-20260604'. This
+    checkpoint reconciles the exact accepted output form:
+    'exec stdout >/tmp/stdout.txt' for the VFS-backed '/bin/stdout' fixture.
+    The child-only fd1 sink is a volatile VFS regular-file descriptor for
+    '/tmp/stdout.txt', reports 'fd1=regular-file', 'op=sink',
+    'target-path=/tmp/stdout.txt', 'target-stream=regular-file',
+    'target-route=volatile-vfs:/tmp/stdout.txt', and writes 0x1f
+    userspace stdout bytes through 'source=userspace-talos-write'. A following
+    descriptor-backed 'cat /tmp/stdout.txt' reads back
+    'Talos userspace stdout fixture' with 'bytes=0x1f' and
+    'source=volatile-vfs-descriptor-read', while a later normal
+    'exec stdout' proves shell fd1 restoration through
+    'runtime-console0/stdout'. The evidence map retains task-owned
+    append/arbitrary-path/stderr-file negatives, /dev/null output sinks,
+    read-only input redirection, normal stdio, descriptor dup/close
+    redirection, descriptor-mixing pipelines, VFS exec/open/read,
+    lifecycle/status, waitpid, laststatus, and descriptor-backed cat controls.
+    This accepts only minimal volatile create/truncate/write/read behavior for
+    '/tmp/stdout.txt'; stderr file redirection, append, partial overwrite,
+    arbitrary paths, persistence, wider filesystem mutation, broader
+    descriptor syntax, Pi 5 proof, networking, SSH, and phase transition
+    remain deferred. The queued stderr regular-file redirection core is
+    mechanically unblocked only as the exact already-planned stderr slice.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
