@@ -1711,6 +1711,28 @@ The post-review correction chain is:
     accounting/concurrency, Pi 5 proof, networking, SSH, and phase transition
     remain deferred. The queued stdout arbitrary-/tmp closeout is mechanically
     unblocked and must stay docs/evidence reconciliation only.
+93. stdout arbitrary /tmp output redirection closeout: accepted in
+    'phase10-stdout-arbitrary-tmp-output-redirection-closeout-20260604'. This
+    reconciles the accepted stdout volatile '/tmp/BASENAME' output path
+    frontier without adding code. The accepted forms remain
+    'exec stdout >/tmp/BASENAME',
+    'exec stdout >>/tmp/BASENAME',
+    'exec stdout 1>/tmp/BASENAME', and
+    'exec stdout 1>>/tmp/BASENAME' where the basename is non-empty ASCII
+    letters, digits, '.', '_', or '-'. The evidence map retains the
+    task-owned QEMU/substitute stdout arbitrary-/tmp transcript for
+    truncate/create, append/create, explicit fd1 aliases, userspace TalosWrite
+    provenance, volatile VFS target routes, descriptor-backed readbacks,
+    waitpid, laststatus, shell fd1 restoration, deterministic path/fd
+    negatives, errors=0, and PASS. The closeout also records the existing ADR
+    as the no-new-policy rationale for reusing the conservative output-path
+    grammar. Stderr arbitrary paths, input arbitrary paths, persistence,
+    recursive directories, path traversal, broad writable filesystem mutation,
+    arbitrary descriptor syntax beyond accepted forms, descriptor moves,
+    process accounting/concurrency, Pi 5 proof, networking, SSH, and phase
+    transition remain deferred. The queued stderr arbitrary-/tmp core is
+    mechanically unblocked and must stay bounded to stderr '2>' and '2>>'
+    output redirection using this same policy.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
