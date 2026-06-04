@@ -1618,6 +1618,31 @@ The post-review correction chain is:
     transition remain deferred. The queued append-create closeout is
     mechanically unblocked and must remain docs/evidence reconciliation only
     before explicit fd1 grammar can be promoted.
+89. regular-file append-create redirection closeout: accepted in
+    'phase10-regular-file-append-create-redirection-closeout-20260604'. It
+    reconciles the accepted missing-file append-create forms
+    'exec stdout >>/tmp/stdout.txt' and
+    'exec stderr 2>>/tmp/stderr.txt' with no prior setup/truncate command in
+    the task-owned transcripts. The accepted scratch paths remain only
+    '/tmp/stdout.txt' and '/tmp/stderr.txt', with VFS-backed '/bin/stdout' and
+    '/bin/stderr' fixtures, child-only fd1/fd2 regular-file rebinding,
+    create-if-missing behavior for missing volatile scratch files,
+    append-without-truncate behavior for existing scratch files, userspace
+    TalosWrite provenance, descriptor-backed 'cat' readback of one fixture
+    payload per transcript with 'bytes=0x1f
+    source=volatile-vfs-descriptor-read', shell fd1/fd2 restoration,
+    lifecycle/status, waitpid, laststatus, and deterministic negatives. The
+    closeout retains setup-then-append, truncate/create output redirection,
+    read-only input redirection, /dev/null redirection, normal stdio,
+    descriptor redirection/pipeline controls, VFS exec/open/read/write
+    lineage, and descriptor-backed cat evidence. Arbitrary output paths,
+    arbitrary descriptor syntax beyond accepted exact fd1/fd2 forms,
+    descriptor moves, broad writable filesystem mutation, process
+    accounting/concurrency, Pi 5 proof, networking, SSH, and phase transition
+    remain deferred. The queued explicit fd1 regular-file redirection core is
+    mechanically unblocked and must stay limited to exact '1>/tmp/stdout.txt'
+    and '1>>/tmp/stdout.txt' aliases for the VFS-backed '/bin/stdout'
+    fixture.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
