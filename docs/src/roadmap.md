@@ -1163,6 +1163,30 @@ The post-review correction chain is:
     phase transition remain deferred. The queued stderr-to-/dev/null closeout
     is mechanically unblocked for docs/evidence reconciliation only.
 
+70. /dev/null stderr redirection closeout: accepted in
+    `phase10-dev-null-stderr-redirection-closeout-20260604`. This checkpoint
+    reconciles the accepted explicit `/dev/null` sink behavior for stdout
+    and stderr before the broader file/device redirection
+    frontier closeout. The accepted forms are exactly
+    `exec stdout >/dev/null` and `exec stderr 2>/dev/null`: each launched
+    VFS-backed child has only the target child descriptor rebound to the
+    `/dev/null` device sink, reports `op=sink`,
+    `target-path=/dev/null`, `target-stream=null-sink`,
+    `target-route=device:/dev/null`, and returns the accepted 31-byte
+    `TalosWrite` count while discarding the userspace fixture payload. The
+    evidence map keeps redirected stdout/stderr payloads absent for the
+    redirected commands, keeps following normal `exec stdout` and
+    `exec stderr` controls as shell descriptor restoration proof, and
+    retains lifecycle, `waitpid`, `laststatus`, deterministic negative
+    redirection forms, descriptor redirection/pipeline controls, stdin
+    readiness/EOF controls, and descriptor-backed `cat /etc/banner.txt`.
+    This closeout does not accept regular-file redirection, append/truncate,
+    input redirection, arbitrary descriptor syntax, writable filesystem
+    behavior, broader file/device semantics, multi-stage/concurrent
+    pipelines, Pi 5 proof, networking, SSH, or a phase transition. The queued
+    /dev/null redirection frontier closeout is mechanically unblocked and
+    must remain docs/evidence reconciliation only.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
