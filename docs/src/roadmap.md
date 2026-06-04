@@ -1256,6 +1256,33 @@ The post-review correction chain is:
     broader file/device semantics, Pi 5 proof, networking, SSH, or a phase
     transition. The queued /dev/null stdio frontier closeout is mechanically
     unblocked and must remain docs/evidence reconciliation only.
+74. /dev/null stdio redirection frontier closeout: accepted in
+    'phase10-dev-null-stdio-redirection-frontier-closeout-20260604'. This
+    checkpoint reconciles the accepted explicit /dev/null standard-I/O
+    frontier across fd0/fd1/fd2. The accepted forms are exactly
+    'exec stdout >/dev/null', 'exec stderr 2>/dev/null', and
+    'exec stdin </dev/null'. Stdout and stderr forms bind only the launched
+    child fd1/fd2 descriptor to the /dev/null sink device, record 'op=sink',
+    'target-path=/dev/null', 'target-stream=null-sink',
+    'target-route=device:/dev/null', return the accepted 31-byte TalosWrite
+    count, and discard the userspace fixture payload. The stdin form binds
+    only the launched child fd0 descriptor to the /dev/null source device,
+    records 'op=source', 'source-path=/dev/null',
+    'source-stream=null-source', 'source-route=device:/dev/null', and returns
+    a zero-byte true EOF/no-data TalosRead result without polling
+    runtime-console0. Following normal 'exec stdout', 'exec stderr', and
+    'exec stdin' controls prove shell descriptor restoration. The evidence
+    map retains normal stdio/stderr routing, descriptor dup/close
+    redirection, descriptor-mixing pipelines, stdin readiness and terminal
+    EOF, VFS exec, lifecycle/status, waitpid, laststatus, deterministic
+    negatives, and descriptor-backed cat. This does not accept regular-file
+    input or output redirection, append/truncate, writable filesystem
+    behavior, shorthand/broader descriptor syntax, broader file/device
+    semantics, multi-stage/concurrent pipelines, Pi 5 proof, networking, SSH,
+    or a phase transition. The queued read-only regular-file stdin
+    redirection core is mechanically unblocked and must stay bounded to a
+    read-only input source through the accepted descriptor-backed initramfs/VFS
+    path.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
