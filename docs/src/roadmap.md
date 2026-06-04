@@ -648,6 +648,25 @@ The post-review correction chain is:
     non-consuming `laststatus`, fixed `/bin` lookup, negative exec controls,
     and descriptor-backed `cat /etc/banner.txt`. The queued distinct stderr
     routing closeout is mechanically unblocked.
+46. distinct stderr routing closeout: accepted in
+    `phase10-distinct-stderr-routing-closeout-20260604`. This checkpoint
+    reconciles the accepted fd2 stream-origin split for shell-visible
+    VFS-backed userspace execution: inherited fd2 writes now carry
+    `stream=stderr route=runtime-console0/stderr`, while the retained fd1
+    stdout control carries `stream=stdout route=runtime-console0/stdout`.
+    The accepted physical sink remains shared runtime-console0. Retained
+    evidence still maps scheduler-backed stdin wait/readiness, Ctrl-D EOF,
+    descriptor-backed VFS exec, loader temporary descriptor non-leak,
+    lifecycle/status, consuming `waitpid`, non-consuming `laststatus`,
+    fixed `/bin` lookup, negative exec controls, and descriptor-backed
+    `cat /etc/banner.txt`. Pipes, redirection, file-backed stderr/stdout,
+    writable filesystem behavior, separate physical stdout/stderr sinks,
+    terminal policy, async jobs, fork, signals, Pi 5 proof, networking, and SSH
+    remain deferred. Supervisor planning is required before the next feature;
+    if choosing between pipes and redirection, a narrow descriptor-routing
+    redirection slice is likely smaller than pipe-backed producer/consumer
+    lifecycle behavior, provided it does not claim writable filesystem support
+    without an explicit writable target.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
