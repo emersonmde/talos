@@ -729,6 +729,29 @@ The post-review correction chain is:
     behavior, separate physical sinks, terminal policy, async jobs, fork,
     signals, libc stdio, Pi 5 proof, networking, and SSH remain deferred. The
     queued inverse descriptor-dup closeout is mechanically unblocked.
+50. stderr-to-stdout descriptor-dup redirection closeout: accepted in
+    `phase10-stderr-to-stdout-fd-dup-redirection-closeout-20260604`. This
+    checkpoint accepts only the narrow `exec stderr 2>&1` boundary:
+    child fd2 is rebound to the inherited fd1 stdout route for the launched
+    VFS-backed `/bin/stderr` executable, and the shell descriptor table is
+    restored afterward. Retained QEMU/substitute evidence maps redirected fd2
+    writes as `stream=stdout route=runtime-console0/stdout`, retained
+    `exec stdout 1>&2` fd1 writes as
+    `stream=stderr route=runtime-console0/stderr`, normal fd1 stdout writes
+    as `stream=stdout route=runtime-console0/stdout`, and normal fd2 stderr
+    writes as `stream=stderr route=runtime-console0/stderr`. The evidence
+    map also retains scheduler-backed stdin wait/readiness, Ctrl-D EOF,
+    descriptor-backed VFS exec, loader temporary descriptor non-leak,
+    lifecycle/status, consuming `waitpid`, non-consuming `laststatus`,
+    fixed `/bin` lookup, deterministic negative exec/redirection controls,
+    and descriptor-backed `cat /etc/banner.txt`. Arbitrary `N>&M`,
+    descriptor close/move syntax, regular-file redirection, append/truncate,
+    pipes, writable filesystem behavior, separate physical sinks, terminal
+    policy, async jobs, fork, signals, libc stdio, Pi 5 proof, networking, and
+    SSH remain deferred. The queued descriptor-dup redirection frontier
+    closeout is mechanically unblocked, provided it stays bounded to the
+    accepted exact descriptor-dup forms and does not claim file redirection,
+    pipes, writable filesystem behavior, or a phase transition.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
