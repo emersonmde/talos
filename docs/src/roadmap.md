@@ -6769,16 +6769,26 @@ Selected first slice:
   local/QEMU-substitute evidence only; Pi 5 boot archive/TFTP behavior,
   writable persistence, storage drivers, networking, SSH, and phase transition
   remain deferred.
+- 'phase10-generated-root-no-rebuild-transport-closeout-20260605' accepts the
+  local/QEMU no-kernel-rebuild generated-root transport frontier. The accepted
+  Milestone 10.3 boundary now includes a same-kernel/two-artifact proof where
+  external generated-root artifact A and B change /generated/manifest.txt
+  contents and /generated/status7 status without rebuilding the kernel binary
+  between runs. Missing and malformed artifacts remain deterministic
+  compiled-fallback cases. This still does not accept Pi 5 firmware/TFTP
+  placement, boot archive publication, writable persistence, SD/USB/block
+  storage, networking, SSH, or phase transition.
 
 Acceptance criteria:
 
 - Talos can load a nontrivial userland image without rebuilding the kernel for
-  every user program change. Current status: not fully accepted; the generated
-  manifest slices avoid editing kernel source for the accepted generated file
-  and executable content, and the local/QEMU no-rebuild transport contract now
-  selects the same-kernel/two-artifact proof shape. Runtime transport is not
-  accepted yet, so the generated root is still consumed at build time and still
-  requires a kernel rebuild.
+  every user program change. Current status: accepted for the local/QEMU
+  generated-root transport boundary only. The accepted evidence runs the same
+  kernel ELF/image hashes against two different external generated-root
+  artifacts and observes distinct generated file and executable behavior.
+  Pi 5 firmware/TFTP placement, boot archive publication, writable
+  persistence, SD/USB/block storage, networking, SSH, and phase transition
+  remain deferred and require explicit follow-up tasks.
 - Documentation explains the chosen local storage path and remaining risks.
 
 ## Phase 11: RP1, PCIe, DMA, and Hardware Substrate
