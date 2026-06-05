@@ -2073,6 +2073,29 @@ The post-review correction chain is:
     networking, SSH, and phase transition remain deferred. Supervisor planning
     is required before any further process-control, local storage, Pi 5 proof,
     networking, SSH, or phase-transition work.
+108. multiple background VFS exec records core: accepted in
+    'phase10-multiple-background-vfs-exec-records-core-20260605'. The
+    command loop now retains a bounded two-record background accounting table
+    for accepted fixed-/bin background VFS exec commands. The task-owned
+    QEMU/substitute transcript launches 'exec /bin/status42 &' and
+    'exec /bin/zero &' through 'source=vfs-open-read mode=background', then
+    reports both records through 'jobs' with distinct stable job ids and pids:
+    '/bin/status42' as job 0x1 pid 0x100001 with status 0x2a, and '/bin/zero'
+    as job 0x2 pid 0x100002 with status 0x0. Foreground 'waitpid' still
+    reports no-child and 'laststatus' still reports none after background-only
+    completions; a later foreground 'exec /bin/zero' preserves the normal
+    waitpid/laststatus lifecycle controls. Malformed 'exec /bin/status42&' and
+    unsupported 'exec stdout &' remain deterministic negatives. Retained
+    controls cover accepted single-background and jobs evidence,
+    pipeline/file-redirection composition, descriptor-backed cat,
+    waitpid/laststatus, errors=0, final classifications, and PASS. This slice
+    accepts bounded local/QEMU multiple-background accounting only; stale-entry
+    policy beyond retained records, fg/bg/kill/disown, process groups,
+    sessions, terminal ownership, signals, fork, background pipelines or
+    redirections, scheduler fairness proof, Pi 5 proof, persistent storage,
+    networking, SSH, and phase transition remain deferred. The queued
+    multiple-background closeout is mechanically unblocked and must remain
+    docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

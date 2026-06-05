@@ -46,6 +46,7 @@ SHELL_PIPELINE_CONSUMER_OUTPUT_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOO
 SHELL_PIPELINE_PRODUCER_FILE_REDIRECTION_AWAY_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_PIPELINE_PRODUCER_FILE_REDIRECTION_AWAY_SMOKE:-0}"
 SHELL_BACKGROUND_VFS_EXEC_LIFECYCLE_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_BACKGROUND_VFS_EXEC_LIFECYCLE_SMOKE:-0}"
 SHELL_JOBS_ACCOUNTING_LIST_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_JOBS_ACCOUNTING_LIST_SMOKE:-0}"
+SHELL_MULTIPLE_BACKGROUND_JOBS_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_MULTIPLE_BACKGROUND_JOBS_SMOKE:-0}"
 SHELL_STDERR_REGULAR_FILE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDERR_REGULAR_FILE_REDIRECTION_SMOKE:-0}"
 SHELL_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE:-0}"
 SHELL_STDERR_REGULAR_FILE_APPEND_CREATE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDERR_REGULAR_FILE_APPEND_CREATE_REDIRECTION_SMOKE:-0}"
@@ -223,6 +224,31 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
             command_index="${BASH_REMATCH[1]}"
             if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#jobs_accounting_list_commands[@]}" ]; then
                 printf '%s\r' "${jobs_accounting_list_commands[$command_index]}" >&3
+                sent=$((command_index + 1))
+            fi
+            continue
+        fi
+        if [ "$SHELL_MULTIPLE_BACKGROUND_JOBS_SMOKE" -eq 1 ] && [[ "$line" =~ ready\ command=([0-9]+) ]]; then
+            multiple_background_jobs_commands=(
+                "help"
+                "status"
+                "stdio"
+                "jobs"
+                "exec /bin/status42 &"
+                "exec /bin/zero &"
+                "jobs"
+                "jobs"
+                "waitpid"
+                "laststatus"
+                "exec /bin/zero"
+                "waitpid"
+                "laststatus"
+                "exec /bin/status42&"
+                "exec stdout &"
+            )
+            command_index="${BASH_REMATCH[1]}"
+            if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#multiple_background_jobs_commands[@]}" ]; then
+                printf '%s\r' "${multiple_background_jobs_commands[$command_index]}" >&3
                 sent=$((command_index + 1))
             fi
             continue
@@ -1078,10 +1104,10 @@ grep -q "$LABEL: ready command=1" "$LOG_FILE"
 grep -q "$LABEL: ready command=2" "$LOG_FILE"
 grep -q "$LABEL: ready command=3" "$LOG_FILE"
 grep -q "$LABEL: ready command=4" "$LOG_FILE"
-if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_ROOT_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ] || [ "$CAT_BANNER_SMOKE" -eq 1 ] || [ "$CAT_CWD_SMOKE" -eq 1 ] || [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ] || [ "$SHELL_LITERAL_ARGV_SMOKE" -eq 1 ] || [ "$SHELL_PATH_LOOKUP_SMOKE" -eq 1 ] || [ "$SHELL_STDIO_SMOKE" -eq 1 ] || [ "$SHELL_STDOUT_TO_STDERR_REDIRECTION_SMOKE" -eq 1 ] || [ "$SHELL_DEV_NULL_STDOUT_REDIRECTION_SMOKE" -eq 1 ] || [ "$SHELL_STDERR_TO_STDOUT_REDIRECTION_SMOKE" -eq 1 ] || [ "$SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE" -eq 1 ] || [ "$SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE" -eq 1 ] || [ "$SHELL_BACKGROUND_VFS_EXEC_LIFECYCLE_SMOKE" -eq 1 ] || [ "$SHELL_JOBS_ACCOUNTING_LIST_SMOKE" -eq 1 ] || [ "$SHELL_WAITPID_SMOKE" -eq 1 ] || [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ] || [ "$LS_CWD_SMOKE" -eq 1 ] || [ "$LITERAL_ECHO_SMOKE" -eq 1 ] || [ "$ECHO_COMMAND_SMOKE" -eq 1 ]; then
+if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_ROOT_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ] || [ "$CAT_BANNER_SMOKE" -eq 1 ] || [ "$CAT_CWD_SMOKE" -eq 1 ] || [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ] || [ "$SHELL_LITERAL_ARGV_SMOKE" -eq 1 ] || [ "$SHELL_PATH_LOOKUP_SMOKE" -eq 1 ] || [ "$SHELL_STDIO_SMOKE" -eq 1 ] || [ "$SHELL_STDOUT_TO_STDERR_REDIRECTION_SMOKE" -eq 1 ] || [ "$SHELL_DEV_NULL_STDOUT_REDIRECTION_SMOKE" -eq 1 ] || [ "$SHELL_STDERR_TO_STDOUT_REDIRECTION_SMOKE" -eq 1 ] || [ "$SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE" -eq 1 ] || [ "$SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE" -eq 1 ] || [ "$SHELL_BACKGROUND_VFS_EXEC_LIFECYCLE_SMOKE" -eq 1 ] || [ "$SHELL_JOBS_ACCOUNTING_LIST_SMOKE" -eq 1 ] || [ "$SHELL_MULTIPLE_BACKGROUND_JOBS_SMOKE" -eq 1 ] || [ "$SHELL_WAITPID_SMOKE" -eq 1 ] || [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ] || [ "$LS_CWD_SMOKE" -eq 1 ] || [ "$LITERAL_ECHO_SMOKE" -eq 1 ] || [ "$ECHO_COMMAND_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=5" "$LOG_FILE"
 fi
-if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ] || [ "$CAT_BANNER_SMOKE" -eq 1 ] || [ "$CAT_CWD_SMOKE" -eq 1 ] || [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ] || [ "$SHELL_LITERAL_ARGV_SMOKE" -eq 1 ] || [ "$SHELL_PATH_LOOKUP_SMOKE" -eq 1 ] || [ "$SHELL_STDIO_SMOKE" -eq 1 ] || [ "$SHELL_STDOUT_TO_STDERR_REDIRECTION_SMOKE" -eq 1 ] || [ "$SHELL_DEV_NULL_STDOUT_REDIRECTION_SMOKE" -eq 1 ] || [ "$SHELL_STDERR_TO_STDOUT_REDIRECTION_SMOKE" -eq 1 ] || [ "$SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE" -eq 1 ] || [ "$SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE" -eq 1 ] || [ "$SHELL_BACKGROUND_VFS_EXEC_LIFECYCLE_SMOKE" -eq 1 ] || [ "$SHELL_JOBS_ACCOUNTING_LIST_SMOKE" -eq 1 ] || [ "$SHELL_WAITPID_SMOKE" -eq 1 ] || [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ] || [ "$LS_CWD_SMOKE" -eq 1 ]; then
+if [ "$PWD_COMMAND_SMOKE" -eq 1 ] || [ "$LS_BIN_SMOKE" -eq 1 ] || [ "$CAT_BANNER_SMOKE" -eq 1 ] || [ "$CAT_CWD_SMOKE" -eq 1 ] || [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ] || [ "$SHELL_LITERAL_ARGV_SMOKE" -eq 1 ] || [ "$SHELL_PATH_LOOKUP_SMOKE" -eq 1 ] || [ "$SHELL_STDIO_SMOKE" -eq 1 ] || [ "$SHELL_STDOUT_TO_STDERR_REDIRECTION_SMOKE" -eq 1 ] || [ "$SHELL_DEV_NULL_STDOUT_REDIRECTION_SMOKE" -eq 1 ] || [ "$SHELL_STDERR_TO_STDOUT_REDIRECTION_SMOKE" -eq 1 ] || [ "$SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE" -eq 1 ] || [ "$SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE" -eq 1 ] || [ "$SHELL_BACKGROUND_VFS_EXEC_LIFECYCLE_SMOKE" -eq 1 ] || [ "$SHELL_JOBS_ACCOUNTING_LIST_SMOKE" -eq 1 ] || [ "$SHELL_MULTIPLE_BACKGROUND_JOBS_SMOKE" -eq 1 ] || [ "$SHELL_WAITPID_SMOKE" -eq 1 ] || [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ] || [ "$LS_CWD_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=6" "$LOG_FILE"
 fi
 if [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ] || [ "$LS_CWD_SMOKE" -eq 1 ]; then
@@ -1286,6 +1312,16 @@ if [ "$SHELL_JOBS_ACCOUNTING_LIST_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=15" "$LOG_FILE"
     grep -q "$LABEL: ready command=16" "$LOG_FILE"
 fi
+if [ "$SHELL_MULTIPLE_BACKGROUND_JOBS_SMOKE" -eq 1 ]; then
+    grep -q "$LABEL: ready command=7" "$LOG_FILE"
+    grep -q "$LABEL: ready command=8" "$LOG_FILE"
+    grep -q "$LABEL: ready command=9" "$LOG_FILE"
+    grep -q "$LABEL: ready command=10" "$LOG_FILE"
+    grep -q "$LABEL: ready command=11" "$LOG_FILE"
+    grep -q "$LABEL: ready command=12" "$LOG_FILE"
+    grep -q "$LABEL: ready command=13" "$LOG_FILE"
+    grep -q "$LABEL: ready command=14" "$LOG_FILE"
+fi
 if [ "$LINE_EDITING_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=7" "$LOG_FILE"
     grep -q "$LABEL: ready command=8" "$LOG_FILE"
@@ -1299,7 +1335,7 @@ grep -q "$LABEL: line command=0 hex=68 65 6c 70" "$LOG_FILE"
 grep -q "$LABEL: dispatch command=0 status=handled responses=4" "$LOG_FILE"
 grep -q "talos> status" "$LOG_FILE"
 grep -q "talos: ok status" "$LOG_FILE"
-grep -q "talos: version phase10.2-kernel-builtins-v1" "$LOG_FILE"
+grep -q "talos: version phase10.2-kernel-builtins-v2" "$LOG_FILE"
 grep -q "talos: runtime-console runtime-console0" "$LOG_FILE"
 grep -q "talos: builtins kernel-backed" "$LOG_FILE"
 grep -q "$LABEL: line command=1 hex=73 74 61 74 75 73" "$LOG_FILE"
@@ -2397,6 +2433,29 @@ elif [ "$SHELL_JOBS_ACCOUNTING_LIST_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: dispatch command=15 status=unknown-command responses=1" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=16 status=unknown-command responses=1" "$LOG_FILE"
     grep -q "$LABEL: final participants=17 expected=17 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+elif [ "$SHELL_MULTIPLE_BACKGROUND_JOBS_SMOKE" -eq 1 ]; then
+    grep -q "talos> jobs" "$LOG_FILE"
+    grep -q "talos: jobs none source=background-vfs-exec-accounting" "$LOG_FILE"
+    grep -q "talos> exec /bin/status42 &" "$LOG_FILE"
+    grep -q "talos: exec path=/bin/status42 source=vfs-open-read mode=background" "$LOG_FILE"
+    grep -q "talos: background-job id=0x0000000000000001 pid=0x0000000000100001 command=/bin/status42 state=running reaped=false status=pending shell-responsive=true source=background-vfs-exec-accounting" "$LOG_FILE"
+    grep -q "talos: background-job id=0x0000000000000001 pid=0x0000000000100001 command=/bin/status42 state=completed status=0x000000000000002a observed-status=0x000000000000002a reaped=true shell-responsive=observed source=background-vfs-exec-accounting" "$LOG_FILE"
+    grep -q "talos> exec /bin/zero &" "$LOG_FILE"
+    grep -q "talos: exec path=/bin/zero source=vfs-open-read mode=background" "$LOG_FILE"
+    grep -q "talos: background-job id=0x0000000000000002 pid=0x0000000000100002 command=/bin/zero state=running reaped=false status=pending shell-responsive=true source=background-vfs-exec-accounting" "$LOG_FILE"
+    grep -q "talos: jobs id=0x0000000000000001 pid=0x0000000000100001 command=/bin/status42 state=completed status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=background-vfs-exec-accounting" "$LOG_FILE"
+    grep -q "talos: jobs id=0x0000000000000002 pid=0x0000000000100002 command=/bin/zero state=running status=pending reaped=false source=background-vfs-exec-accounting" "$LOG_FILE"
+    grep -q "talos: jobs id=0x0000000000000002 pid=0x0000000000100002 command=/bin/zero state=completed status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=background-vfs-exec-accounting" "$LOG_FILE"
+    grep -q "talos: waitpid no-child source=lifecycle-record" "$LOG_FILE"
+    grep -q "talos: last-process none" "$LOG_FILE"
+    grep -q "talos> exec /bin/zero" "$LOG_FILE"
+    grep -q "talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/zero state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -q "talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/zero state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -q "talos> exec /bin/status42&" "$LOG_FILE"
+    grep -q "talos> exec stdout &" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=13 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=14 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: final participants=15 expected=15 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
 else
 grep -q "talos: empty-command" "$LOG_FILE"
 grep -q "$LABEL: line command=3 hex=" "$LOG_FILE"

@@ -14,7 +14,7 @@ use crate::{
     tty::{self, CANONICAL_LINE_CAPACITY, PollingTtyRxOutcome, PollingTtyRxResult},
 };
 
-pub const LOCAL_COMMAND_LOOP_VERSION: &str = "phase10.2-kernel-builtins-v1";
+pub const LOCAL_COMMAND_LOOP_VERSION: &str = "phase10.2-kernel-builtins-v2";
 pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary",
     "+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance",
@@ -30,7 +30,7 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+stdout-arbitrary-tmp-output-redirection+stderr-arbitrary-tmp-output-redirection",
     "+combined-stdin-stdout-redirection+pipeline-consumer-output-redirection",
     "+pipeline-producer-file-redirection-away+background-vfs-exec-lifecycle",
-    "+jobs-accounting-list"
+    "+jobs-accounting-list+multiple-background-vfs-exec-records"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -61,7 +61,8 @@ const LOCAL_COMMAND_STDERR_USER_BASE: u64 = 0x0000_0000_0014_0000;
 const LOCAL_COMMAND_STDERR_USER_MEMORY_LEN: usize = 128;
 const LOCAL_COMMAND_EXEC_ADDRESS_SPACE_ID: u64 = 0x0010_0001;
 const LOCAL_COMMAND_EXEC_PROCESS_ID: u64 = 0x0010_0001;
-const LOCAL_COMMAND_BACKGROUND_JOB_ID: u64 = 0x0000_0001;
+const LOCAL_COMMAND_BACKGROUND_JOB_CAPACITY: usize = 2;
+const LOCAL_COMMAND_BACKGROUND_JOB_FIRST_ID: u64 = 0x0000_0001;
 const LOCAL_COMMAND_EXEC_TEMP_DESCRIPTOR: usize = posix::STDERR_FD + 1;
 const LOCAL_COMMAND_PIPE_BUFFER_LEN: usize = 128;
 const LOCAL_COMMAND_PIPE_ENDPOINT_REFERENCE: usize = 1;
@@ -682,6 +683,10 @@ impl LocalCommandProcessLifecycleRecord {
             reaped: true,
         }
     }
+
+    const fn with_process_id(self, process_id: u64) -> Self {
+        Self { process_id, ..self }
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -829,8 +834,10 @@ pub trait LocalCommandSink {
         None
     }
 
-    fn background_job_record(&self) -> Option<LocalCommandBackgroundJobRecord> {
-        None
+    fn background_job_records(
+        &self,
+    ) -> [Option<LocalCommandBackgroundJobRecord>; LOCAL_COMMAND_BACKGROUND_JOB_CAPACITY] {
+        [None; LOCAL_COMMAND_BACKGROUND_JOB_CAPACITY]
     }
 
     fn last_process_lifecycle_record(&self) -> Option<LocalCommandProcessLifecycleRecord> {
@@ -872,7 +879,9 @@ pub struct DescriptorBackedLocalCommandIo<
     read_only_files: initramfs::ReadOnlyFileDescriptions<LOCAL_COMMAND_READ_ONLY_FILE_CAPACITY>,
     last_process: Option<LocalCommandProcessLifecycleRecord>,
     waitable_process: Option<LocalCommandProcessLifecycleRecord>,
-    background_job: Option<LocalCommandBackgroundJobRecord>,
+    background_jobs:
+        [Option<LocalCommandBackgroundJobRecord>; LOCAL_COMMAND_BACKGROUND_JOB_CAPACITY],
+    next_background_job_id: u64,
     pipe: LocalCommandPipeState,
     stdout_scratch_file: LocalCommandVolatileFileState,
     stderr_scratch_file: LocalCommandVolatileFileState,
@@ -1100,7 +1109,8 @@ where
             read_only_files: initramfs::ReadOnlyFileDescriptions::new_empty(),
             last_process: None,
             waitable_process: None,
-            background_job: None,
+            background_jobs: [None; LOCAL_COMMAND_BACKGROUND_JOB_CAPACITY],
+            next_background_job_id: LOCAL_COMMAND_BACKGROUND_JOB_FIRST_ID,
             pipe: LocalCommandPipeState::new_empty(),
             stdout_scratch_file: LocalCommandVolatileFileState::new_empty(),
             stderr_scratch_file: LocalCommandVolatileFileState::new_empty(),
@@ -1599,42 +1609,66 @@ where
         &mut self,
         request: LocalCommandExecRequest,
     ) -> Result<LocalCommandBackgroundExecSummary, LocalCommandExecError> {
-        if request.path() != initramfs::PHASE10_STATUS42_PATH
-            || request.redirection.is_some()
+        if !matches!(
+            request.path(),
+            initramfs::PHASE10_STATUS42_PATH | initramfs::PHASE10_ZERO_PATH
+        ) || request.redirection.is_some()
             || request.stdin_redirection.is_some()
-            || self.background_job.is_some_and(|job| {
-                job.state == LocalCommandBackgroundJobState::Running && !job.reaped
-            })
+            || self
+                .background_jobs
+                .iter()
+                .flatten()
+                .any(|job| job.state == LocalCommandBackgroundJobState::Running && !job.reaped)
         {
             return Err(LocalCommandExecError::InvalidPath);
         }
+        let slot = self
+            .background_jobs
+            .iter()
+            .position(Option::is_none)
+            .ok_or(LocalCommandExecError::InvalidPath)?;
 
         let previous_last = self.last_process;
         let previous_waitable = self.waitable_process;
         let exec = self.exec_vfs_program(request)?;
         self.last_process = previous_last;
         self.waitable_process = previous_waitable;
+        let job_id = self.next_background_job_id;
+        self.next_background_job_id = self
+            .next_background_job_id
+            .checked_add(1)
+            .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
+        let process_id = LOCAL_COMMAND_EXEC_PROCESS_ID
+            .checked_add(job_id.saturating_sub(LOCAL_COMMAND_BACKGROUND_JOB_FIRST_ID))
+            .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
         let job = LocalCommandBackgroundJobRecord::running(
-            LOCAL_COMMAND_BACKGROUND_JOB_ID,
-            exec.lifecycle,
+            job_id,
+            exec.lifecycle.with_process_id(process_id),
             exec.source_path,
         );
-        self.background_job = Some(job);
+        self.background_jobs[slot] = Some(job);
         Ok(LocalCommandBackgroundExecSummary { exec, job })
     }
 
     fn poll_background_job_completion(&mut self) -> Option<LocalCommandBackgroundJobRecord> {
-        let job = self.background_job?;
-        if job.state != LocalCommandBackgroundJobState::Running || job.reaped {
-            return None;
+        for slot in &mut self.background_jobs {
+            let Some(job) = *slot else {
+                continue;
+            };
+            if job.state != LocalCommandBackgroundJobState::Running || job.reaped {
+                continue;
+            }
+            let completed = job.completed_reaped();
+            *slot = Some(completed);
+            return Some(completed);
         }
-        let completed = job.completed_reaped();
-        self.background_job = Some(completed);
-        Some(completed)
+        None
     }
 
-    fn background_job_record(&self) -> Option<LocalCommandBackgroundJobRecord> {
-        self.background_job
+    fn background_job_records(
+        &self,
+    ) -> [Option<LocalCommandBackgroundJobRecord>; LOCAL_COMMAND_BACKGROUND_JOB_CAPACITY] {
+        self.background_jobs
     }
 }
 
@@ -3232,7 +3266,7 @@ fn dispatch_local_command(
     };
 
     if command.name != "jobs" {
-        if let Some(job) = sink.poll_background_job_completion() {
+        while let Some(job) = sink.poll_background_job_completion() {
             write_background_job_completion_line(sink, responses, job)?;
         }
     }
@@ -3294,18 +3328,19 @@ fn dispatch_local_command(
                 write_line(sink, responses, "talos: unexpected-argument")?;
                 return Ok(LocalCommandStatus::UnexpectedArgument);
             }
-            match sink.background_job_record() {
-                Some(job) => {
-                    write_jobs_accounting_line(sink, responses, job)?;
-                    if job.state == LocalCommandBackgroundJobState::Running && !job.reaped {
-                        let _ = sink.poll_background_job_completion();
-                    }
-                }
-                None => write_line(
+            let mut found_job = false;
+            for job in sink.background_job_records().into_iter().flatten() {
+                found_job = true;
+                write_jobs_accounting_line(sink, responses, job)?;
+            }
+            if found_job {
+                let _ = sink.poll_background_job_completion();
+            } else {
+                write_line(
                     sink,
                     responses,
                     "talos: jobs none source=background-vfs-exec-accounting",
-                )?,
+                )?;
             }
             Ok(LocalCommandStatus::Handled)
         }
@@ -7281,6 +7316,109 @@ talos> talos: exec-invalid-path\n"
         assert!(output.contains("talos> talos: last-process none\n"));
         assert_eq!(output.matches("talos: jobs id=").count(), 2);
         assert_eq!(output.matches("talos: unknown-command\n").count(), 2);
+    }
+
+    #[test_case]
+    fn local_command_loop_records_multiple_background_vfs_exec_jobs() {
+        let bytes = *b"jobs\rexec /bin/status42 &\rexec /bin/zero &\rjobs\rjobs\rwaitpid\rlaststatus\rexec /bin/zero\rwaitpid\rlaststatus\rexec /bin/status42&\rexec stdout &\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (
+            empty,
+            first_background,
+            second_background,
+            mixed_jobs,
+            completed_jobs,
+            empty_wait,
+            empty_last,
+            foreground,
+            foreground_wait,
+            foreground_last,
+            malformed_background,
+            unsupported_background,
+        ) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(empty.line(), b"jobs");
+        assert_eq!(empty.status(), LocalCommandStatus::Handled);
+        assert_eq!(empty.response_lines(), 1);
+        assert_eq!(first_background.line(), b"exec /bin/status42 &");
+        assert_eq!(first_background.status(), LocalCommandStatus::Handled);
+        assert_eq!(first_background.response_lines(), 8);
+        assert_eq!(second_background.line(), b"exec /bin/zero &");
+        assert_eq!(second_background.status(), LocalCommandStatus::Handled);
+        assert_eq!(second_background.response_lines(), 9);
+        assert_eq!(mixed_jobs.line(), b"jobs");
+        assert_eq!(mixed_jobs.status(), LocalCommandStatus::Handled);
+        assert_eq!(mixed_jobs.response_lines(), 2);
+        assert_eq!(completed_jobs.line(), b"jobs");
+        assert_eq!(completed_jobs.status(), LocalCommandStatus::Handled);
+        assert_eq!(completed_jobs.response_lines(), 2);
+        assert_eq!(empty_wait.line(), b"waitpid");
+        assert_eq!(empty_wait.status(), LocalCommandStatus::Handled);
+        assert_eq!(empty_last.line(), b"laststatus");
+        assert_eq!(empty_last.status(), LocalCommandStatus::Handled);
+        assert_eq!(foreground.line(), b"exec /bin/zero");
+        assert_eq!(foreground.status(), LocalCommandStatus::Handled);
+        assert_eq!(foreground.response_lines(), 9);
+        assert_eq!(foreground_wait.line(), b"waitpid");
+        assert_eq!(foreground_wait.status(), LocalCommandStatus::Handled);
+        assert_eq!(foreground_last.line(), b"laststatus");
+        assert_eq!(foreground_last.status(), LocalCommandStatus::Handled);
+        assert_eq!(
+            malformed_background.status(),
+            LocalCommandStatus::UnexpectedArgument
+        );
+        assert_eq!(
+            unsupported_background.status(),
+            LocalCommandStatus::UnexpectedArgument
+        );
+        assert!(output.contains("talos> talos: jobs none source=background-vfs-exec-accounting\n"));
+        assert!(output.contains(
+            "talos: background-job id=0x0000000000000001 pid=0x0000000000100001 command=/bin/status42 state=running reaped=false status=pending shell-responsive=true source=background-vfs-exec-accounting\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: background-job id=0x0000000000000001 pid=0x0000000000100001 command=/bin/status42 state=completed status=0x000000000000002a observed-status=0x000000000000002a reaped=true shell-responsive=observed source=background-vfs-exec-accounting\n"
+        ));
+        assert!(output.contains(
+            "talos: background-job id=0x0000000000000002 pid=0x0000000000100002 command=/bin/zero state=running reaped=false status=pending shell-responsive=true source=background-vfs-exec-accounting\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: jobs id=0x0000000000000001 pid=0x0000000000100001 command=/bin/status42 state=completed status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=background-vfs-exec-accounting\n"
+        ));
+        assert!(output.contains(
+            "talos: jobs id=0x0000000000000002 pid=0x0000000000100002 command=/bin/zero state=running status=pending reaped=false source=background-vfs-exec-accounting\n"
+        ));
+        assert!(output.contains(
+            "talos: jobs id=0x0000000000000002 pid=0x0000000000100002 command=/bin/zero state=completed status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=background-vfs-exec-accounting\n"
+        ));
+        assert!(output.contains("talos> talos: waitpid no-child source=lifecycle-record\n"));
+        assert!(output.contains("talos> talos: last-process none\n"));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/zero state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/zero state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert_eq!(output.matches("talos: jobs id=").count(), 4);
+        assert_eq!(output.matches("talos: exec-invalid-path\n").count(), 2);
     }
 
     #[test_case]
