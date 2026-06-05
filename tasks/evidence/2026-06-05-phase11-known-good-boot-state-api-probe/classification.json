@@ -1,0 +1,113 @@
+{
+  "classification": "ready-for-serialized-discriminator",
+  "evidence_level": "lab-controller API + static evidence inspection",
+  "reasons": [
+    "health.ok is true",
+    "GET /status and GET /boot/files agree on restored tree_hash a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "configured_kernel and effective_kernel are kernel_2712.img",
+    "root and da591740/ prefixed kernel_2712.img and kernel8.img are present",
+    "Unifi guard is fixed-port and target PoE state is UP",
+    "TFTP tail exposes cursor/log_size and contains a prior da591740/kernel_2712.img served event"
+  ],
+  "blockers": [],
+  "status": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "active_name": "kernel8.img",
+    "configured_kernel": "kernel_2712.img",
+    "effective_kernel": "kernel_2712.img",
+    "config": {
+      "enable_rp1_uart": "1",
+      "kernel": "kernel_2712.img",
+      "os_check": "0"
+    },
+    "unifi_guard": "fixed-port",
+    "poe_state": "UP",
+    "file_count": 16,
+    "kernel_files": [
+      {
+        "bytes": 104136,
+        "mtime": 1780687452,
+        "name": "da591740/kernel8.img"
+      },
+      {
+        "bytes": 104136,
+        "mtime": 1780687452,
+        "name": "da591740/kernel_2712.img"
+      },
+      {
+        "bytes": 104136,
+        "mtime": 1780687452,
+        "name": "kernel8.img"
+      },
+      {
+        "bytes": 104136,
+        "mtime": 1780687452,
+        "name": "kernel_2712.img"
+      }
+    ]
+  },
+  "boot_files": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "file_count": 16,
+    "required_present": {
+      "root_kernel_2712": true,
+      "prefixed_kernel_2712": true,
+      "root_config": true,
+      "prefixed_config": true
+    }
+  },
+  "boot_snapshots": {
+    "count": 293,
+    "newest": [
+      {
+        "bytes": 201816,
+        "mtime": 1780687361,
+        "name": "phase11-staging-capture-known-good-pre-20260605T1919Z"
+      },
+      {
+        "bytes": 201824,
+        "mtime": 1780677175,
+        "name": "phase11-rp1-entry-control-proof-pre-20260605T1632Z"
+      },
+      {
+        "bytes": 201820,
+        "mtime": 1780671128,
+        "name": "phase11-rp1-entry-proof-pre-20260605T1452Z"
+      },
+      {
+        "bytes": 201800,
+        "mtime": 1780667461,
+        "name": "phase11-rp1-register-read-pre-local3-20260605T140500Z"
+      },
+      {
+        "bytes": 201859,
+        "mtime": 1780667206,
+        "name": "phase11-rp1-register-read-pre-local2-20260605T135300Z"
+      }
+    ]
+  },
+  "tftp_tail": {
+    "cursor_start": 4028715,
+    "cursor_end": 4094251,
+    "log_size": 4094251,
+    "tail_mode": true,
+    "truncated": true,
+    "events": [
+      {
+        "bytes": 104136,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "Jun  5 19:24:25 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      }
+    ]
+  },
+  "non_goals_honored": [
+    "no hardware lock acquired",
+    "no power cycle",
+    "no boot archive publication",
+    "no restore",
+    "no RP1/runtime/source change"
+  ]
+}
