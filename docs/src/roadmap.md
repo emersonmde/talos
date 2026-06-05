@@ -1934,6 +1934,32 @@ The post-review correction chain is:
     networking, SSH, and phase transition remain deferred. The queued pipeline
     file-redirection frontier closeout is mechanically unblocked and must
     remain docs/evidence reconciliation only.
+102. pipeline file-redirection frontier closeout: accepted in
+    'phase10-pipeline-file-redirection-frontier-closeout-20260605'. This
+    closeout checkpoints the accepted pipeline plus volatile-file redirection
+    frontier without adding code. The accepted consumer-output form remains
+    'exec stdout | exec stdin >/tmp/pipe-consumer.txt': producer fd1 feeds the
+    pipe, consumer fd0 reads the pipe, and consumer fd1 is rebound child-only
+    to 'volatile-vfs:/tmp/pipe-consumer.txt'. The accepted producer-output-away
+    form remains 'exec stdout >/tmp/pipe-source.txt | exec stdin': producer fd1
+    is rebound child-only to 'volatile-vfs:/tmp/pipe-source.txt', so the
+    consumer observes deterministic pipe EOF/no-data while descriptor-backed
+    'cat /tmp/pipe-source.txt' reads the producer payload. The consolidated
+    evidence map retains both QEMU/substitute transcripts, descriptor-backed
+    readbacks, pipe endpoint closure/restoration, waitpid, laststatus,
+    deterministic negatives, errors=0, final classifications, and PASS.
+    Retained controls cover plain stdout-to-stdin pipeline transfer,
+    stderr-not-piped and descriptor-mixing pipelines, arbitrary '/tmp' output
+    redirection, descriptor-backed cat, VFS exec/open/read/write,
+    lifecycle/status, and descriptor restoration. No ordering, descriptor,
+    path, persistence, lifecycle, or process-concurrency policy changed in
+    this closeout. Multi-stage/concurrent pipelines, process
+    accounting/concurrency, pipefail, jobs, fork/signals, arbitrary descriptor
+    syntax, descriptor moves, producer plus consumer file redirection in the
+    same pipeline, persistence, recursive directories, Pi 5 proof, networking,
+    SSH, and phase transition remain deferred. No explicit queued follow-up is
+    mechanically unblocked; supervisor planning is required before promoting
+    minimal process accounting/concurrency or another justified shell feature.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
