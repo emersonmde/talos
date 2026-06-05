@@ -2141,6 +2141,30 @@ The post-review correction chain is:
     storage, networking, SSH, and phase transition remain deferred. The queued
     stale-entry closeout is mechanically unblocked and must remain
     docs/evidence reconciliation only.
+111. background jobs stale-entry policy closeout: accepted in
+    'phase10-background-jobs-stale-entry-policy-closeout-20260605'. Static
+    inspection reconciles the accepted completed-job retention policy, retained
+    multiple-background records, prior jobs/accounting controls, foreground
+    lifecycle isolation, descriptor-backed file controls, pipeline/file
+    redirection controls, deterministic negatives, roadmap language, and commit
+    history without adding runtime behavior. The accepted boundary is two exact
+    fixed-/bin background VFS exec forms, 'exec /bin/status42 &' and
+    'exec /bin/zero &', plus a minimal shell-owned jobs retention rule:
+    completed/reaped records are visible for one jobs report, cleared
+    afterward, and a later jobs inspection reports 'jobs none' once all
+    completed records have been exposed and removed. Evidence confirms stable
+    job ids and pids, '/bin/status42' status 0x2a, '/bin/zero' status 0x0,
+    foreground 'waitpid no-child' and 'last-process none' isolation after
+    background-only completions, normal foreground '/bin/zero'
+    waitpid/laststatus controls afterward, retained descriptor-backed cat and
+    pipeline/file-redirection controls, errors=0, classifications, and PASS.
+    fg/bg/kill/disown, process groups, sessions, terminal ownership, signals,
+    fork, process-tree/procfs inspection, true scheduler-concurrent userspace
+    execution, background pipelines/redirections, persistent storage, Pi 5
+    proof, networking, SSH, and phase transition remain deferred. The queued
+    process-control frontier checkpoint is mechanically unblocked and must
+    remain static evidence reconciliation before any milestone closeout,
+    local-storage, hardware-proof, networking, SSH, or phase-transition plan.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
