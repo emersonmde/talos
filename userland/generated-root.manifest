@@ -1,0 +1,3 @@
+# First generated-root slice: one read-only file consumed through initramfs/VFS.
+path=/generated/manifest.txt
+contents=Talos generated-root manifest fixture\n

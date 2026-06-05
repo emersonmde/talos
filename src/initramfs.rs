@@ -48,6 +48,8 @@ pub(crate) const PHASE8_EMPTY_PATH: &[u8] = b"/empty";
 pub(crate) const PHASE8_NESTED_PATH: &[u8] = b"/dir/nested.txt";
 pub(crate) const PHASE8_NESTED_BYTES: &[u8] = b"nested fixture\n";
 
+include!(concat!(env!("OUT_DIR"), "/generated_initramfs.rs"));
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum VfsNodeKind {
     Directory,
@@ -548,12 +550,15 @@ const PHASE10_STDERR_INDEX: usize = 9;
 const PHASE8_EMPTY_INDEX: usize = 10;
 const PHASE8_DIR_INDEX: usize = 11;
 const PHASE8_NESTED_INDEX: usize = 12;
+const GENERATED_ROOT_DIR_INDEX: usize = 13;
+const GENERATED_ROOT_FILE_INDEX: usize = 14;
 
-static PHASE8_ROOT_ENTRIES: [DirectoryEntry; 4] = [
+static PHASE8_ROOT_ENTRIES: [DirectoryEntry; 5] = [
     DirectoryEntry::new(b"etc", PHASE8_ETC_INDEX),
     DirectoryEntry::new(b"bin", PHASE8_BIN_INDEX),
     DirectoryEntry::new(b"empty", PHASE8_EMPTY_INDEX),
     DirectoryEntry::new(b"dir", PHASE8_DIR_INDEX),
+    DirectoryEntry::new(GENERATED_ROOT_DIR_NAME, GENERATED_ROOT_DIR_INDEX),
 ];
 
 static PHASE8_ETC_ENTRIES: [DirectoryEntry; 1] =
@@ -570,6 +575,10 @@ static PHASE8_BIN_ENTRIES: [DirectoryEntry; 6] = [
 
 static PHASE8_DIR_ENTRIES: [DirectoryEntry; 1] =
     [DirectoryEntry::new(b"nested.txt", PHASE8_NESTED_INDEX)];
+static GENERATED_ROOT_DIR_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(
+    GENERATED_ROOT_FILE_NAME,
+    GENERATED_ROOT_FILE_INDEX,
+)];
 
 static PHASE8_INIT_ELF_BYTES: [u8; PHASE8_INIT_ELF_LEN] =
     build_phase8_exit_elf_bytes(PHASE8_INIT_EXIT_STATUS);
@@ -584,7 +593,7 @@ static PHASE10_STDIN_ELF_BYTES: [u8; PHASE8_INIT_ELF_LEN] =
 static PHASE10_STDERR_ELF_BYTES: [u8; PHASE8_INIT_ELF_LEN] =
     build_phase8_exit_elf_bytes(PHASE8_INIT_EXIT_STATUS);
 
-static PHASE8_NODES: [InitramfsNode; 13] = [
+static PHASE8_NODES: [InitramfsNode; 15] = [
     InitramfsNode::directory(PHASE8_ROOT_INDEX, &PHASE8_ROOT_ENTRIES),
     InitramfsNode::directory(PHASE8_ETC_INDEX, &PHASE8_ETC_ENTRIES),
     InitramfsNode::regular_file(PHASE8_BANNER_INDEX, PHASE8_BANNER_BYTES),
@@ -598,6 +607,8 @@ static PHASE8_NODES: [InitramfsNode; 13] = [
     InitramfsNode::regular_file(PHASE8_EMPTY_INDEX, b""),
     InitramfsNode::directory(PHASE8_DIR_INDEX, &PHASE8_DIR_ENTRIES),
     InitramfsNode::regular_file(PHASE8_NESTED_INDEX, PHASE8_NESTED_BYTES),
+    InitramfsNode::directory(GENERATED_ROOT_DIR_INDEX, &GENERATED_ROOT_DIR_ENTRIES),
+    InitramfsNode::regular_file(GENERATED_ROOT_FILE_INDEX, GENERATED_ROOT_FILE_BYTES),
 ];
 
 const fn build_phase8_exit_elf_bytes(exit_status: u64) -> [u8; PHASE8_INIT_ELF_LEN] {
@@ -789,7 +800,7 @@ mod tests {
 
         let root = fs.lookup_default(b"/").expect("root lookup");
         assert_eq!(root.metadata().kind(), VfsNodeKind::Directory);
-        assert_eq!(root.metadata().len(), 4);
+        assert_eq!(root.metadata().len(), 5);
         assert!(root.metadata().read_only());
 
         let banner = fs
@@ -811,6 +822,19 @@ mod tests {
             .expect("nested lookup");
         assert_eq!(nested.metadata().kind(), VfsNodeKind::RegularFile);
         assert_eq!(nested.metadata().len(), PHASE8_NESTED_BYTES.len());
+
+        let generated = fs
+            .lookup_default(GENERATED_ROOT_FILE_PATH)
+            .expect("generated manifest file lookup");
+        assert_eq!(generated.metadata().kind(), VfsNodeKind::RegularFile);
+        assert_eq!(generated.metadata().len(), GENERATED_ROOT_FILE_BYTES.len());
+        assert!(generated.metadata().read_only());
+        assert_eq!(
+            GENERATED_ROOT_IDENTITY,
+            "phase10-generated-root-manifest-v1"
+        );
+        assert_eq!(GENERATED_ROOT_SOURCE, "userland/generated-root.manifest");
+        assert_ne!(GENERATED_ROOT_DIGEST, 0);
     }
 
     #[test_case]
@@ -929,6 +953,11 @@ mod tests {
             &[0x00, 0x00, 0x80, 0xd2, 0x01, 0x42, 0x0f, 0xd4]
         );
         assert_eq!(PHASE10_STDERR_PAYLOAD, b"Talos userspace stderr fixture\n");
+        assert_eq!(
+            fs.regular_file_bytes(GENERATED_ROOT_FILE_PATH)
+                .expect("generated manifest file bytes"),
+            GENERATED_ROOT_FILE_BYTES
+        );
         assert_eq!(fs.regular_file_bytes(b"/etc"), Err(PosixError::IsDirectory));
     }
 

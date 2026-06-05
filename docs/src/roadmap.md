@@ -6708,6 +6708,16 @@ Selected first slice:
   userspace lifecycle path. No runtime behavior, no-rebuild transport, Pi 5
   proof, boot archive publication, writable persistence, or phase transition is
   accepted by the contract alone.
+- 'phase10-generated-userland-image-manifest-core-20260605' accepts the first
+  implementation slice: a host-side manifest generates
+  '/generated/manifest.txt' into the existing read-only initramfs/VFS fixture,
+  cat /generated/manifest.txt reads it through the descriptor-backed shell
+  path, and QEMU/substitute evidence records generated-root identity/source/
+  digest plus retained cat, VFS exec/open/read, loader, status/wait,
+  pipeline/redirection, and jobs/accounting controls. Generated executable
+  proof, kernel binary no-rebuild transport, boot archives, Pi 5 hardware proof,
+  writable persistence, block drivers, networking, SSH, and phase transition
+  remain deferred.
 
 Acceptance criteria:
 

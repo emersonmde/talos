@@ -14689,6 +14689,11 @@ const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-shell-background-jobs-stale-entry-policy"
 }
 
+#[cfg(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest")]
+const fn local_command_loop_smoke_label() -> &'static str {
+    "qemu-local-shell-generated-userland-manifest"
+}
+
 #[cfg(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection")]
 const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-shell-stderr-regular-file-redirection"
@@ -14805,6 +14810,7 @@ const fn local_command_loop_smoke_label() -> &'static str {
     not(talos_boot_scenario = "qemu_local_shell_jobs_accounting_list"),
     not(talos_boot_scenario = "qemu_local_shell_multiple_background_jobs"),
     not(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy"),
+    not(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection"),
@@ -14996,6 +15002,11 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     "qemu-local-shell-background-jobs-stale-entry-policy-complete"
 }
 
+#[cfg(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest")]
+const fn local_command_loop_smoke_classification() -> &'static str {
+    "qemu-local-shell-generated-userland-manifest-complete"
+}
+
 #[cfg(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection")]
 const fn local_command_loop_smoke_classification() -> &'static str {
     "qemu-local-shell-stderr-regular-file-redirection-complete"
@@ -15112,6 +15123,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     not(talos_boot_scenario = "qemu_local_shell_jobs_accounting_list"),
     not(talos_boot_scenario = "qemu_local_shell_multiple_background_jobs"),
     not(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy"),
+    not(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection"),
@@ -15169,6 +15181,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     talos_boot_scenario = "qemu_local_shell_jobs_accounting_list",
     talos_boot_scenario = "qemu_local_shell_multiple_background_jobs",
     talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy",
+    talos_boot_scenario = "qemu_local_shell_generated_userland_manifest",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_to_stdout_redirection",
     talos_boot_scenario = "qemu_local_shell_stdout_close_redirection",
@@ -15245,6 +15258,8 @@ const fn local_command_loop_smoke_command_count() -> usize {
         15
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy") {
         16
+    } else if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") {
+        11
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection") {
         14
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection")
@@ -15331,6 +15346,7 @@ const fn local_command_loop_smoke_command_count() -> usize {
     talos_boot_scenario = "qemu_local_shell_combined_stdin_stdout_redirection",
     talos_boot_scenario = "qemu_local_shell_pipeline_consumer_output_redirection",
     talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle",
+    talos_boot_scenario = "qemu_local_shell_generated_userland_manifest",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection",
@@ -15362,6 +15378,30 @@ fn expected_local_command_loop_dispatch(
         0 => line == b"help" && status == Handled && response_lines == 4,
         1 => line == b"status" && status == Handled && response_lines == 5,
         2 => line == b"stdio" && status == Handled && response_lines == 7,
+        3 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
+            line == b"cat /generated/manifest.txt" && status == Handled && response_lines == 1
+        }
+        4 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
+            line == b"ls /" && status == Handled && response_lines == 5
+        }
+        5 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
+            line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
+        }
+        6 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
+            line == b"exec /bin/status42" && status == Handled && response_lines == 9
+        }
+        7 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
+            line == b"waitpid" && status == Handled && response_lines == 1
+        }
+        8 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
+            line == b"laststatus" && status == Handled && response_lines == 1
+        }
+        9 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
+            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 21
+        }
+        10 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
+            line == b"jobs" && status == Handled && response_lines == 1
+        }
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_combined_stdin_stdout_redirection") => {
             line == b"exec stdin </etc/banner.txt >/tmp/stdin-report.txt"
                 && status == Handled

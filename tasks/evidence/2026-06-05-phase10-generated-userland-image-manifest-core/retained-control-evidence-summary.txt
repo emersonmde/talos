@@ -1,0 +1,31 @@
+Task: phase10-generated-userland-image-manifest-core-20260605
+Date: 2026-06-05
+
+Evidence levels:
+
+- static inspection: generated content is sourced from userland/generated-root.manifest; src/initramfs.rs includes generated OUT_DIR constants and no hardcoded "Talos generated-root manifest fixture" content.
+- fmt/lint/typecheck: cargo fmt --all -- --check passed.
+- unit tests: cargo -Zjson-target-spec test --quiet passed, 421 talos no_std tests.
+- QEMU/substitute: scripts/qemu-local-shell-generated-userland-manifest-smoke.sh --quiet passed and retained qemu-local-shell-generated-userland-manifest-smoke.log.
+
+Generated-root evidence:
+
+- identity: phase10-generated-root-manifest-v1.
+- source: userland/generated-root.manifest.
+- manifest sha256: fcd3045b60cc061a8ca3a288cf0c50cac4cb33e89041b9a17867403c1ffd5ede.
+- QEMU/substitute proof: cat /generated/manifest.txt prints "Talos generated-root manifest fixture" through the descriptor-backed shell read path.
+- root visibility proof: ls / lists generated.
+
+Retained controls in the same QEMU/substitute run:
+
+- descriptor-backed cat control: cat /etc/banner.txt prints the accepted initramfs banner.
+- VFS/open/read loader control: exec /bin/status42 reports source=vfs-open-read.
+- argv/envp/status evidence: exec-startup-abi reports argc=1, argv0=/bin/status42, envp-state=empty-envp0; exec-status reports status=0x2a.
+- wait/status controls: waitpid and laststatus report the accepted lifecycle record.
+- pipeline/redirection control: exec stdout | exec stdin reports source=shell-pipe-stdout-to-stdin with stdout/stdin userland read/write evidence.
+- jobs/accounting control: jobs reports none after foreground execution.
+
+Deferred:
+
+- generated executable proof was not included in this thinnest slice.
+- kernel binary no-rebuild transport, boot archive publication, Pi 5 hardware proof, writable persistence, SD/USB/block drivers, networking, SSH, and phase transition remain out of scope.

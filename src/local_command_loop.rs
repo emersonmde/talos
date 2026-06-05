@@ -31,7 +31,7 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+combined-stdin-stdout-redirection+pipeline-consumer-output-redirection",
     "+pipeline-producer-file-redirection-away+background-vfs-exec-lifecycle",
     "+jobs-accounting-list+multiple-background-vfs-exec-records",
-    "+background-jobs-stale-entry-policy"
+    "+background-jobs-stale-entry-policy+generated-root-manifest-read"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -41,6 +41,7 @@ const LOCAL_COMMAND_EXEC_PATH_BYTES: usize = LOCAL_COMMAND_LITERAL_ARG_BYTES;
 const LOCAL_COMMAND_FILE_USER_BASE: u64 = 0x0000_0000_0011_0000;
 const LOCAL_COMMAND_FILE_READ_OFFSET: usize = 0x40;
 const LOCAL_COMMAND_FILE_USER_MEMORY_LEN: usize = 128;
+const LOCAL_COMMAND_INITRAMFS_CAT_BUFFER_LEN: usize = 64;
 const LOCAL_COMMAND_READ_ONLY_FILE_CAPACITY: usize = 2;
 const LOCAL_COMMAND_STDOUT_VOLATILE_FILE_REFERENCE: usize = 0x100;
 const LOCAL_COMMAND_STDERR_VOLATILE_FILE_REFERENCE: usize = 0x101;
@@ -93,11 +94,12 @@ impl LocalCommandDirectory {
     }
 }
 
-const LOCAL_COMMAND_ROOT_LISTING: [(&[u8], &str); 4] = [
+const LOCAL_COMMAND_ROOT_LISTING: [(&[u8], &str); 5] = [
     (b"/bin", "bin"),
     (b"/dir", "dir"),
     (b"/empty", "empty"),
     (b"/etc", "etc"),
+    (b"/generated", "generated"),
 ];
 const LOCAL_COMMAND_ETC_LISTING: [(&[u8], &str); 1] =
     [(initramfs::PHASE8_BANNER_PATH, "banner.txt")];
@@ -3445,6 +3447,9 @@ fn dispatch_local_command(
         "cat" => {
             match command.arguments {
                 Some("/etc/banner.txt") => write_banner_file(sink, responses)?,
+                Some("/generated/manifest.txt") => {
+                    write_initramfs_text_file(sink, responses, initramfs::GENERATED_ROOT_FILE_PATH)?
+                }
                 Some(path)
                     if LocalCommandVolatilePath::from_supported_stdout_path(path.as_bytes())
                         .is_some()
@@ -3888,15 +3893,22 @@ fn write_banner_file(
     sink: &mut impl LocalCommandSink,
     responses: &mut usize,
 ) -> Result<(), LocalCommandCycleError> {
-    let mut bytes = [0u8; initramfs::PHASE8_BANNER_BYTES.len()];
-    let bytes_read =
-        match sink.read_initramfs_file_via_syscall(initramfs::PHASE8_BANNER_PATH, &mut bytes) {
-            Ok(bytes_read) => bytes_read,
-            Err(_) => {
-                write_line(sink, responses, "talos: filesystem-error")?;
-                return Ok(());
-            }
-        };
+    write_initramfs_text_file(sink, responses, initramfs::PHASE8_BANNER_PATH)
+}
+
+fn write_initramfs_text_file(
+    sink: &mut impl LocalCommandSink,
+    responses: &mut usize,
+    path: &[u8],
+) -> Result<(), LocalCommandCycleError> {
+    let mut bytes = [0u8; LOCAL_COMMAND_INITRAMFS_CAT_BUFFER_LEN];
+    let bytes_read = match sink.read_initramfs_file_via_syscall(path, &mut bytes) {
+        Ok(bytes_read) => bytes_read,
+        Err(_) => {
+            write_line(sink, responses, "talos: filesystem-error")?;
+            return Ok(());
+        }
+    };
     let text = match core::str::from_utf8(&bytes[..bytes_read]) {
         Ok(text) => text,
         Err(_) => {
@@ -5083,8 +5095,8 @@ talos> /\n"
 
         assert_eq!(result.line(), b"ls /");
         assert_eq!(result.status(), LocalCommandStatus::Handled);
-        assert_eq!(result.response_lines(), 4);
-        assert_eq!(backend.as_str(), "talos> bin\ndir\nempty\netc\n");
+        assert_eq!(result.response_lines(), 5);
+        assert_eq!(backend.as_str(), "talos> bin\ndir\nempty\netc\ngenerated\n");
     }
 
     #[test_case]
@@ -5140,7 +5152,7 @@ talos> /\n"
 
         assert_eq!(root_ls.line(), b"ls");
         assert_eq!(root_ls.status(), LocalCommandStatus::Handled);
-        assert_eq!(root_ls.response_lines(), 4);
+        assert_eq!(root_ls.response_lines(), 5);
         assert_eq!(cd_etc.line(), b"cd /etc");
         assert_eq!(cd_etc.status(), LocalCommandStatus::Handled);
         assert_eq!(cd_etc.response_lines(), 0);
@@ -5158,13 +5170,14 @@ talos> /\n"
         assert_eq!(cd_root.response_lines(), 0);
         assert_eq!(final_root_ls.line(), b"ls");
         assert_eq!(final_root_ls.status(), LocalCommandStatus::Handled);
-        assert_eq!(final_root_ls.response_lines(), 4);
+        assert_eq!(final_root_ls.response_lines(), 5);
         assert_eq!(
             backend.as_str(),
             "talos> bin\n\
 dir\n\
 empty\n\
 etc\n\
+generated\n\
 talos> talos> banner.txt\n\
 	talos> talos> init\n\
 	zero\n\
@@ -5175,7 +5188,8 @@ talos> talos> banner.txt\n\
 		talos> talos> bin\n\
 dir\n\
 empty\n\
-etc\n"
+etc\n\
+generated\n"
         );
     }
 
@@ -5199,6 +5213,25 @@ etc\n"
         assert_eq!(result.status(), LocalCommandStatus::Handled);
         assert_eq!(result.response_lines(), 1);
         assert_eq!(backend.as_str(), "talos> Talos initramfs fixture\n");
+    }
+
+    #[test_case]
+    fn local_command_loop_cats_generated_manifest_through_vfs_syscall_descriptor() {
+        let input = ScriptedInput::new(*b"cat /generated/manifest.txt\r", 28);
+        let mut backend = CaptureSink::new();
+        let result = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            run_one_descriptor_backed_serial_command(&mut io).unwrap()
+        };
+
+        assert_eq!(result.line(), b"cat /generated/manifest.txt");
+        assert_eq!(result.status(), LocalCommandStatus::Handled);
+        assert_eq!(result.response_lines(), 1);
+        assert_eq!(
+            backend.as_str(),
+            "talos> Talos generated-root manifest fixture\n"
+        );
     }
 
     #[test_case]
