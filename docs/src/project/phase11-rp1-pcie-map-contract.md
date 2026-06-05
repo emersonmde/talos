@@ -121,6 +121,20 @@ path. This is only a source/local discriminator and does not accept handoff
 reachability or any RP1 mapped/unmapped behavior until the queued Pi 5 proof
 publishes the candidate and retains hardware serial/TFTP evidence.
 
+phase11-rp1-diagnostic-entry-control-pi5-proof-20260605 completed with a
+staging-or-capture blocker. The task published only the accepted entry-control
+candidate archive
+`target/talos-rpi5-rp1-entry-control-source-core.tar.gz`, staging tree
+`ab88a3d8549837459c8cebf8cb22580b52b39665421b7eb6d6773ebce8c6f9c2` and a
+51,808-byte `da591740/kernel_2712.img`. The first candidate run, known-good
+control, and candidate rerun all reached visible Raspberry Pi firmware serial
+output through `Boot mode: NETWORK`, but fresh TFTP deltas were empty in all
+three runs. The proof therefore does not show candidate fetch, Rust entry,
+entry-control PASS, RP1 mapped/read-value, or RP1 unmapped/trap behavior. The
+boot tree was restored to
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10` before
+completion.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path first reports `rpi5-rp1-uart0-fr-read: start` and `rpi5-rp1-uart0-fr-read: pre-mmio-read`, flushes UART10, then reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load. A returned read reports the contract id, target name, address, width, raw value, `mapped/read-value` success classification, and PASS before returning to the existing final halt path. The pre-MMIO marker is a discriminator for the next serialized proof: if hardware reaches that marker but not the read-value line, the result is entry/handoff reachability plus an RP1 read trap/hang boundary, not a mapping acceptance.
