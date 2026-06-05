@@ -2261,6 +2261,17 @@ The post-review correction chain is:
     reason=missing-artifact'. The next work should be a planned implementation
     to reserve or copy the firmware initramfs range before early memory setup
     can overwrite it, followed by a fresh serialized Pi 5 proof.
+118. Pi 5 generated-root boot transport closeout: accepted in
+    'phase10-pi5-generated-root-boot-transport-closeout-20260605' as static
+    evidence/docs reconciliation only. It freezes the current Milestone 10.3
+    hardware boundary: local/QEMU no-kernel-rebuild generated-root transport is
+    accepted, the Pi 5 firmware-initramfs candidate archive shape is accepted as
+    a non-published static candidate, and the serialized Pi 5 run is retained as
+    source-backed blocker evidence. Pi 5 consumption of the external
+    generated-root artifact remains not accepted because the firmware initramfs
+    range overlapped early memory setup. Milestone 10.3 remains open until a
+    planned implementation reserves or copies that range and a fresh serialized
+    Pi 5 proof passes.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -6836,6 +6847,12 @@ Selected first slice:
   fell back to the compiled generated-root image with reason=missing-artifact.
   A later implementation must reserve or copy that firmware range before
   proving Pi 5 generated-root consumption.
+- 'phase10-pi5-generated-root-boot-transport-closeout-20260605' accepts a
+  static closeout of that blocked proof boundary. It records contract,
+  candidate, proof/blocker, restore, and retained local/QEMU control evidence,
+  but does not accept Pi 5 generated-root artifact consumption or close
+  Milestone 10.3. The next Milestone 10.3 task should be explicitly planned
+  around the firmware initramfs range overlap.
 
 Acceptance criteria:
 
@@ -6845,10 +6862,11 @@ Acceptance criteria:
   kernel ELF/image hashes against two different external generated-root
   artifacts and observes distinct generated file and executable behavior.
   Pi 5 candidate boot archive placement is accepted only as a non-published
-  static archive. The first Pi 5 boot-transport proof is blocked by firmware
-  initramfs range overlap with early memory setup; Pi 5 consumption acceptance,
-  writable persistence, SD/USB/block storage, networking, SSH, and phase
-  transition remain deferred and require explicit follow-up tasks.
+  static archive. The first Pi 5 boot-transport proof and its closeout retain a
+  source-backed blocker: firmware initramfs range overlap with early memory
+  setup. Pi 5 consumption acceptance, writable persistence, SD/USB/block
+  storage, networking, SSH, and phase transition remain deferred and require
+  explicit follow-up tasks.
 - Documentation explains the chosen local storage path and remaining risks.
 
 ## Phase 11: RP1, PCIe, DMA, and Hardware Substrate
