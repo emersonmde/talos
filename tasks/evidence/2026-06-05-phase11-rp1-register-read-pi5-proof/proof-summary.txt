@@ -1,0 +1,40 @@
+Phase 11 RP1 register-read Pi 5 proof summary
+
+Result: completed with hardware blocker; mapping acceptance not claimed.
+
+Candidate identity:
+archive=target/talos-rpi5-rp1-uart0-fr-read-proof-20260605.tar.gz
+archive_sha256=937d749b4fe2ef40a5ee730461ebae7108edad437b3b216856d7b549b5129e0a
+kernel_root_sha256=bed60fc8babf5c91117dd1ccb7c9a105af2bcd30cfedcc098a414029b46fe3c5
+kernel_prefixed_sha256=bed60fc8babf5c91117dd1ccb7c9a105af2bcd30cfedcc098a414029b46fe3c5
+kernel_size=87392
+boot_tree=target/rpi5-rp1-uart0-fr-read-proof-boot-tree-local1
+boot_source=target/rpi5-local-cat-banner-boot-tree-local1
+
+Local2 decisive candidate rerun:
+- status-before tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 kernel_bytes=104136
+- status-after-publish tree_hash=a96f0d8dc17a4872cb52e94c37c85d5adc5312255d26f988dbd8b71e1b6118c9 kernel_bytes=87392
+- status-before-restore tree_hash=a96f0d8dc17a4872cb52e94c37c85d5adc5312255d26f988dbd8b71e1b6118c9 kernel_bytes=87392
+- status-after-restore tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 kernel_bytes=104136
+- fresh serial cursor=4076234
+- TFTP cursor=4080741
+- TFTP served da591740/kernel_2712.img twice at 87392 bytes before restore.
+- serial observe after fresh cursor recorded only NUL/LF and no TALOS/rpi5-rp1 output.
+
+Known-good control:
+- boot tree remained a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 with kernel bytes 104136.
+- TFTP served da591740/kernel_2712.img at 104136 bytes.
+- serial tail captured TALOS kernel_main and accepted command-loop output after the control power cycle, proving serial capture and the restored boot tree remain viable.
+
+Local3 candidate after control:
+- status-after-publish tree_hash=a96f0d8dc17a4872cb52e94c37c85d5adc5312255d26f988dbd8b71e1b6118c9 kernel_bytes=87392
+- status-before-restore tree_hash=a96f0d8dc17a4872cb52e94c37c85d5adc5312255d26f988dbd8b71e1b6118c9 kernel_bytes=87392
+- status-after-restore tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 kernel_bytes=104136
+- TFTP served da591740/kernel_2712.img twice at 87392 bytes before restore.
+- serial observe from fresh cursor recorded zero bytes; tail retained no rpi5-rp1-uart0-fr-read/mapped-read/PASS lines for the candidate run.
+
+Classification:
+- candidate publication/fetch: passed at lab-controller/TFTP level.
+- diagnostic classification: not reached.
+- hardware result: blocked-pre-entry-or-handoff-after-candidate-fetch.
+- mapping claim: no accepted RP1 mapped/read-value claim.

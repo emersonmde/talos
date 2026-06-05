@@ -6925,6 +6925,18 @@ UART0 state and the lab `enable_rp1_uart=1` boot config; it does not claim
 GPIO ownership, interrupts, DMA/cache policy, Ethernet, networking, SSH, or
 broader PCIe enumeration.
 
+Proof status: `phase11-rp1-register-read-pi5-proof-20260605` completed with
+a hardware blocker, not mapping acceptance. The lab published candidate tree
+`a96f0d8dc17a4872cb52e94c37c85d5adc5312255d26f988dbd8b71e1b6118c9` and TFTP
+served the selected 87,392-byte `da591740/kernel_2712.img` in two candidate
+runs, but neither run reached `rpi5-rp1-uart0-fr-read`,
+`mapped/read-value`, or `PASS` serial output. A known-good control on the
+restored tree `a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10`
+retained `TALOS: kernel_main` and accepted command-loop output, so the current
+boundary is `blocked-pre-entry-or-handoff-after-candidate-fetch`. The mapping
+contract remains unaccepted on hardware until a separately planned
+pre-entry/handoff investigation or revised diagnostic reaches decisive output.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

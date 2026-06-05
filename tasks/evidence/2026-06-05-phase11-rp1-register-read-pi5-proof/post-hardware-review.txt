@@ -1,0 +1,7 @@
+Post-hardware review
+
+- fixed: local2 and local3 captured fresh candidate identity, serial cursor, TFTP cursor, pre/post status, TFTP deltas before restore, and restore evidence.
+- fixed: local2 and local3 both published candidate tree a96f0d8dc17a4872cb52e94c37c85d5adc5312255d26f988dbd8b71e1b6118c9 with 87392-byte kernel and restored a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 afterward.
+- fixed: known-good control power-cycled the restored a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 boot tree and retained serial tail showing TALOS kernel_main plus accepted command-loop output, so the lack of candidate diagnostic output is not explained by serial capture alone.
+- deferred: source-level root cause for the candidate pre-entry/handoff stop is outside this proof task and needs supervisor planning; do not churn RP1 constants or broaden into GPIO/interrupt/DMA/networking work.
+- not-an-issue: candidate archive publication and TFTP placement worked; the Pi fetched the selected kernel before restore.

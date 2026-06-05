@@ -1,0 +1,7 @@
+archive=target/talos-rpi5-rp1-uart0-fr-read-proof-20260605.tar.gz
+archive_sha256=937d749b4fe2ef40a5ee730461ebae7108edad437b3b216856d7b549b5129e0a
+kernel_root_sha256=bed60fc8babf5c91117dd1ccb7c9a105af2bcd30cfedcc098a414029b46fe3c5
+kernel_prefixed_sha256=bed60fc8babf5c91117dd1ccb7c9a105af2bcd30cfedcc098a414029b46fe3c5
+kernel_size=87392
+boot_tree=target/rpi5-rp1-uart0-fr-read-proof-boot-tree-local1
+boot_source=target/rpi5-local-cat-banner-boot-tree-local1

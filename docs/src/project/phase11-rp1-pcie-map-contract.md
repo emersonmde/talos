@@ -67,6 +67,24 @@ The diagnostic should report:
 
 The accepted local core may add build/static/archive-review evidence only. The serialized Pi 5 proof remains a separate task that must acquire `hardwareTestLock`, capture candidate identity, serial cursor, TFTP delta, and restore evidence.
 
+## Pi 5 Proof Status
+
+`phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware
+blocker, not a mapping acceptance. The lab published candidate tree
+`a96f0d8dc17a4872cb52e94c37c85d5adc5312255d26f988dbd8b71e1b6118c9`; TFTP
+served the selected 87,392-byte `da591740/kernel_2712.img` before restore in
+two candidate runs. Neither run reached `rpi5-rp1-uart0-fr-read`,
+`mapped/read-value`, or `PASS` serial output from a fresh cursor. A
+known-good control on the restored accepted tree
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10` retained
+`TALOS: kernel_main` and accepted command-loop output, so the proof boundary
+is `blocked-pre-entry-or-handoff-after-candidate-fetch`.
+
+Do not treat this as evidence that the RP1 UART0 flag register is mapped or
+unmapped. The next source-level investigation or revised diagnostic shape must
+be supervisor-planned before changing RP1 constants or broadening into GPIO,
+interrupt, DMA/cache, networking, SSH, or storage work.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load, reports the contract id, target name, address, width, raw value, and `mapped/read-value` success classification, then returns to the existing final halt path. It does not add GPIO, pin-control, clock, reset, interrupt, DMA/cache, Ethernet, networking, SSH, storage, generated-root, or shell behavior.
