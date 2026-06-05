@@ -1801,6 +1801,28 @@ The post-review correction chain is:
     SSH, and phase transition remain deferred. No explicit queued follow-up is
     mechanically unblocked; supervisor planning is required before any broader
     capability is promoted.
+97. combined stdin/stdout redirection core: accepted in
+    'phase10-combined-stdin-stdout-redirection-core-20260605'.
+    Shell-visible 'exec stdin </etc/banner.txt >/tmp/stdin-report.txt' now
+    composes two child-only descriptor mutations in one VFS-backed userspace
+    launch: fd0 is rebound to the accepted read-only initramfs
+    '/etc/banner.txt' source and fd1 is rebound to the accepted volatile VFS
+    '/tmp/stdin-report.txt' sink. The task-owned QEMU/substitute evidence
+    records 'fd0=regular-file fd1=regular-file fd2=stdio-output', separate
+    exec-redirection records for fd0 and fd1, the userspace stdin fixture
+    reading 'Talos initramfs fixture', writing its report to redirected fd1,
+    descriptor-backed 'cat /tmp/stdin-report.txt' readback, consuming
+    'waitpid', non-consuming 'laststatus', errors=0, and PASS. The accepted
+    serial command required raising the canonical line capacity from 32 to 64
+    bytes; parser policy remains conservative and the retained negatives
+    reject output-first ordering, combined '/dev/null' input, explicit fd1
+    aliasing in the combined form, and spaced input grammar. Arbitrary input
+    paths, '/dev/null' combined input, append/stderr combined forms, broader
+    descriptor grammar, descriptor moves, multi-command redirection,
+    persistence, recursive directories, process accounting/concurrency, Pi 5
+    proof, networking, SSH, and phase transition remain deferred. The queued
+    combined-redirection closeout is mechanically unblocked and must stay
+    docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

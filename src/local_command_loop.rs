@@ -27,7 +27,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+stderr-dev-null-redirection+stdin-dev-null-redirection",
     "+readonly-regular-file-stdin-redirection+volatile-stdout-regular-file-redirection",
     "+volatile-stderr-regular-file-redirection+explicit-fd1-regular-file-redirection",
-    "+stdout-arbitrary-tmp-output-redirection+stderr-arbitrary-tmp-output-redirection"
+    "+stdout-arbitrary-tmp-output-redirection+stderr-arbitrary-tmp-output-redirection",
+    "+combined-stdin-stdout-redirection"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -156,6 +157,7 @@ pub struct LocalCommandExecRequest {
     path: LocalCommandExecPath,
     argv: LocalCommandLiteralArgv,
     redirection: Option<LocalCommandExecRedirection>,
+    stdin_redirection: Option<LocalCommandExecRedirection>,
 }
 
 impl LocalCommandExecRequest {
@@ -550,7 +552,7 @@ pub struct LocalCommandExecSummary {
     completion_marker: u64,
     completion_boundary: &'static str,
     descriptor_inheritance: LocalCommandExecDescriptorInheritanceRecord,
-    redirection: Option<LocalCommandExecRedirectionRecord>,
+    redirections: [Option<LocalCommandExecRedirectionRecord>; 2],
     userspace_stdout: Option<LocalCommandUserspaceStdoutRecord>,
     userspace_stdin: Option<LocalCommandUserspaceStdinRecord>,
     userspace_stderr: Option<LocalCommandUserspaceStderrRecord>,
@@ -980,6 +982,20 @@ impl AppliedLocalCommandExecRedirection {
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+struct AppliedLocalCommandExecRedirections {
+    entries: [Option<AppliedLocalCommandExecRedirection>; 2],
+}
+
+impl AppliedLocalCommandExecRedirections {
+    fn records(self) -> [Option<LocalCommandExecRedirectionRecord>; 2] {
+        [
+            self.entries[0].map(|applied| applied.restored_record()),
+            self.entries[1].map(|applied| applied.restored_record()),
+        ]
+    }
+}
+
 impl<I, O> DescriptorBackedLocalCommandIo<I, O, 1, 4>
 where
     I: ConsoleInputBackend,
@@ -1224,7 +1240,7 @@ where
             _ => return Err(LocalCommandExecError::NotExecutable),
         };
         if matches!(
-            request.redirection,
+            request.stdin_redirection,
             Some(
                 LocalCommandExecRedirection::StdinFromDevNull
                     | LocalCommandExecRedirection::StdinFromEtcBanner
@@ -1240,6 +1256,15 @@ where
                     | LocalCommandExecRedirection::StdoutAppendTmpStdout(_)
             )
         ) && source_path != initramfs::PHASE10_STDOUT_PATH
+            && !(source_path == initramfs::PHASE10_STDIN_PATH
+                && matches!(
+                    request.stdin_redirection,
+                    Some(LocalCommandExecRedirection::StdinFromEtcBanner)
+                )
+                && matches!(
+                    request.redirection,
+                    Some(LocalCommandExecRedirection::StdoutToTmpStdout(_))
+                ))
         {
             return Err(LocalCommandExecError::InvalidPath);
         }
@@ -1315,22 +1340,15 @@ where
             copied_startup_bytes,
         )
         .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
-        let applied_redirection = self.apply_exec_redirection(request.redirection)?;
+        let applied_redirections =
+            self.apply_exec_redirections(request.stdin_redirection, request.redirection)?;
         let descriptor_inheritance = self
             .standard_descriptor_inheritance_record(owner, request.redirection)
             .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
         let userspace_stdout = self.emit_userspace_stdout_fixture(source_path)?;
         let userspace_stdin = self.emit_userspace_stdin_fixture(source_path)?;
         let userspace_stderr = self.emit_userspace_stderr_fixture(source_path)?;
-        let redirection = if let Some(applied) = applied_redirection {
-            let restore = self.restore_exec_redirection(applied);
-            if restore.is_err() {
-                return Err(LocalCommandExecError::LaunchPipelineFailed);
-            }
-            Some(applied.restored_record())
-        } else {
-            None
-        };
+        let redirections = self.restore_exec_redirections(applied_redirections)?;
         let lifecycle = LocalCommandProcessLifecycleRecord::exited(
             LOCAL_COMMAND_EXEC_PROCESS_ID,
             owner.raw(),
@@ -1366,7 +1384,7 @@ where
             completion_marker: initramfs::PHASE8_INIT_SVC_MARKER,
             completion_boundary: "lower-aarch64-svc-status-equivalent",
             descriptor_inheritance,
-            redirection,
+            redirections,
             userspace_stdout,
             userspace_stdin,
             userspace_stderr,
@@ -1386,21 +1404,27 @@ where
         &mut self,
         request: LocalCommandPipelineRequest,
     ) -> Result<LocalCommandPipelineSummary, LocalCommandExecError> {
-        let producer_redirection_supported =
-            match (request.producer.path(), request.producer.redirection) {
-                (
-                    initramfs::PHASE10_STDOUT_PATH,
-                    None | Some(LocalCommandExecRedirection::StdoutToStderr),
-                ) => true,
-                (
-                    initramfs::PHASE10_STDERR_PATH,
-                    None | Some(LocalCommandExecRedirection::StderrToStdout),
-                ) => true,
-                _ => false,
-            };
+        let producer_redirection_supported = match (
+            request.producer.path(),
+            request.producer.stdin_redirection,
+            request.producer.redirection,
+        ) {
+            (
+                initramfs::PHASE10_STDOUT_PATH,
+                None,
+                None | Some(LocalCommandExecRedirection::StdoutToStderr),
+            ) => true,
+            (
+                initramfs::PHASE10_STDERR_PATH,
+                None,
+                None | Some(LocalCommandExecRedirection::StderrToStdout),
+            ) => true,
+            _ => false,
+        };
         if !producer_redirection_supported
             || request.consumer.path() != initramfs::PHASE10_STDIN_PATH
             || request.consumer.redirection.is_some()
+            || request.consumer.stdin_redirection.is_some()
         {
             return Err(LocalCommandExecError::InvalidPath);
         }
@@ -1924,6 +1948,39 @@ where
             .allocate_at(descriptor, applied.restored_entry)
             .map(|_| ())
             .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)
+    }
+
+    fn apply_exec_redirections(
+        &mut self,
+        stdin_redirection: Option<LocalCommandExecRedirection>,
+        redirection: Option<LocalCommandExecRedirection>,
+    ) -> Result<AppliedLocalCommandExecRedirections, LocalCommandExecError> {
+        let first = self.apply_exec_redirection(stdin_redirection)?;
+        let second = match self.apply_exec_redirection(redirection) {
+            Ok(applied) => applied,
+            Err(error) => {
+                if let Some(applied) = first {
+                    let _ = self.restore_exec_redirection(applied);
+                }
+                return Err(error);
+            }
+        };
+        Ok(AppliedLocalCommandExecRedirections {
+            entries: [first, second],
+        })
+    }
+
+    fn restore_exec_redirections(
+        &mut self,
+        applied: AppliedLocalCommandExecRedirections,
+    ) -> Result<[Option<LocalCommandExecRedirectionRecord>; 2], LocalCommandExecError> {
+        if let Some(second) = applied.entries[1] {
+            self.restore_exec_redirection(second)?;
+        }
+        if let Some(first) = applied.entries[0] {
+            self.restore_exec_redirection(first)?;
+        }
+        Ok(applied.records())
     }
 
     fn install_pipe_endpoint(
@@ -3344,6 +3401,8 @@ fn parse_exec_request(arguments: &str) -> Result<LocalCommandExecRequest, LocalC
         [&[]; LOCAL_COMMAND_LITERAL_ARGV_CAPACITY];
     let mut count = 0usize;
     let mut redirection = None;
+    let mut stdin_redirection = None;
+    let mut redirection_started = false;
     for token in arguments.as_bytes().split(|byte| is_space(*byte)) {
         if token.is_empty() {
             continue;
@@ -3398,13 +3457,36 @@ fn parse_exec_request(arguments: &str) -> Result<LocalCommandExecRequest, LocalC
             None
         };
         if let Some(parsed_redirection) = parsed_redirection {
-            if redirection.is_some() {
-                return Err(LocalCommandExecError::InvalidPath);
+            redirection_started = true;
+            if matches!(
+                parsed_redirection,
+                LocalCommandExecRedirection::StdinFromDevNull
+                    | LocalCommandExecRedirection::StdinFromEtcBanner
+            ) {
+                if stdin_redirection.is_some() || redirection.is_some() {
+                    return Err(LocalCommandExecError::InvalidPath);
+                }
+                stdin_redirection = Some(parsed_redirection);
+            } else {
+                if redirection.is_some() {
+                    return Err(LocalCommandExecError::InvalidPath);
+                }
+                if stdin_redirection.is_some()
+                    && (!matches!(
+                        stdin_redirection,
+                        Some(LocalCommandExecRedirection::StdinFromEtcBanner)
+                    ) || !matches!(
+                        parsed_redirection,
+                        LocalCommandExecRedirection::StdoutToTmpStdout(_)
+                    ) || !token.starts_with(b">/tmp/"))
+                {
+                    return Err(LocalCommandExecError::InvalidPath);
+                }
+                redirection = Some(parsed_redirection);
             }
-            redirection = Some(parsed_redirection);
             continue;
         }
-        if redirection.is_some() {
+        if redirection_started {
             return Err(LocalCommandExecError::InvalidPath);
         }
         if count == tokens.len() || !is_supported_literal_exec_token(token) {
@@ -3429,6 +3511,7 @@ fn parse_exec_request(arguments: &str) -> Result<LocalCommandExecRequest, LocalC
         path,
         argv,
         redirection,
+        stdin_redirection,
     })
 }
 
@@ -3738,8 +3821,10 @@ fn write_exec_summary(
     write_exec_launch_line(sink, response_lines, summary)?;
     write_exec_descriptor_inheritance_line(sink, response_lines, summary)?;
     write_exec_startup_abi_line(sink, response_lines, summary)?;
-    if let Some(record) = summary.redirection {
-        write_exec_redirection_line(sink, response_lines, record)?;
+    for record in summary.redirections {
+        if let Some(record) = record {
+            write_exec_redirection_line(sink, response_lines, record)?;
+        }
     }
     if let Some(record) = summary.userspace_stdout {
         write_exec_userspace_stdout_line(sink, response_lines, record)?;
@@ -5759,6 +5844,94 @@ talos> Talos initramfs fixture\n"
         ));
         assert!(output.contains(
             "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains("Talos userspace stdin fixture read: talos-console0\n"));
+        assert!(output.contains(
+            "talos: exec-stdin fd=0x0000000000000000 bytes=0x000000000000000e return=0x000000000000000e read-source=runtime-console0/local-input stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000033 stdout-return=0x0000000000000033 source=userspace-talos-read+userspace-talos-write\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_combines_readonly_stdin_and_volatile_stdout_redirection() {
+        let bytes = *b"exec stdin </etc/banner.txt >/tmp/stdin-report.txt\rwaitpid\rlaststatus\rcat /tmp/stdin-report.txt\rexec stdin >/tmp/stdin-report.txt </etc/banner.txt\rexec stdin </dev/null >/tmp/stdin-report.txt\rexec stdin </etc/banner.txt 1>/tmp/stdin-report.txt\rexec stdin < /etc/banner.txt >/tmp/stdin-report.txt\rexec stdin </etc/banner.txt >/tmp/nested/out.txt\rexec stdin\rtalos-console0";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (
+            redirected,
+            waited,
+            observed,
+            readback,
+            output_first,
+            dev_null_input,
+            explicit_fd1,
+            spaced_input,
+            nested_output,
+            normal,
+        ) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(
+            redirected.line(),
+            b"exec stdin </etc/banner.txt >/tmp/stdin-report.txt"
+        );
+        assert_eq!(redirected.status(), LocalCommandStatus::Handled);
+        assert_eq!(redirected.response_lines(), 12);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.line(), b"laststatus");
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(readback.line(), b"cat /tmp/stdin-report.txt");
+        assert_eq!(readback.status(), LocalCommandStatus::Handled);
+        assert_eq!(readback.response_lines(), 2);
+        assert_eq!(normal.line(), b"exec stdin");
+        assert_eq!(normal.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal.response_lines(), 10);
+        for rejected in [
+            output_first,
+            dev_null_input,
+            explicit_fd1,
+            spaced_input,
+            nested_output,
+        ] {
+            assert_eq!(rejected.status(), LocalCommandStatus::UnexpectedArgument);
+            assert_eq!(rejected.response_lines(), 1);
+        }
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=regular-file fd1=regular-file fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=source source-fd=0x0000000000000000 source-path=/etc/banner.txt source-stream=regular-file source-route=initramfs:/etc/banner.txt child-only=true shell-restored=true source=shell-redirection-stdin-etc-banner\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/stdin-report.txt target-stream=regular-file target-route=volatile-vfs:/tmp/stdin-report.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000018 return=0x0000000000000018 read-source=initramfs:/etc/banner.txt stdout-fd=0x0000000000000001 stdout-bytes=0x000000000000003d stdout-return=0x000000000000003d source=userspace-talos-read+userspace-talos-write read-result=regular-file-eof-after-read\n"
+        ));
+        assert!(output.contains(
+            "talos: cat path=/tmp/stdin-report.txt bytes=0x000000000000003d source=volatile-vfs-descriptor-read\n"
+        ));
+        assert!(output.contains("Talos userspace stdin fixture read: Talos initramfs fixture\n"));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
         assert!(output.contains("Talos userspace stdin fixture read: talos-console0\n"));
         assert!(output.contains(

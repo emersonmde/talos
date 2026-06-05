@@ -1,6 +1,6 @@
 use crate::runtime_console::{self, ConsoleInputBackend, ConsoleInputPollOutcome};
 
-pub const CANONICAL_LINE_CAPACITY: usize = 32;
+pub const CANONICAL_LINE_CAPACITY: usize = 64;
 pub const CANONICAL_ECHO_CAPACITY: usize = 32;
 pub const CONTROL_EVENT_CAPACITY: usize = 8;
 pub const POLLING_RX_WAIT_LIMIT: usize = 2_000_000;
