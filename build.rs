@@ -401,6 +401,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "qemu_local_shell_background_jobs_stale_entry_policy",
+        implied_values: &["qemu_local_serial_command_loop"],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "qemu_local_shell_stderr_regular_file_redirection",
         implied_values: &["qemu_local_serial_command_loop"],
         asm_defines: &[],

@@ -79,11 +79,10 @@ qemu-local-shell-multiple-background-jobs: line command=6 hex=6a 6f 62 73
 qemu-local-shell-multiple-background-jobs: dispatch command=6 status=handled responses=2 raw-bytes=5 backspaces=0 deletes=0 truncated=false controls=0
 qemu-local-shell-multiple-background-jobs: ready command=7
 talos> jobs
-talos: jobs id=0x0000000000000001 pid=0x0000000000100001 command=/bin/status42 state=completed status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=background-vfs-exec-accounting
 talos: jobs id=0x0000000000000002 pid=0x0000000000100002 command=/bin/zero state=completed status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=background-vfs-exec-accounting
 
 qemu-local-shell-multiple-background-jobs: line command=7 hex=6a 6f 62 73
-qemu-local-shell-multiple-background-jobs: dispatch command=7 status=handled responses=2 raw-bytes=5 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-multiple-background-jobs: dispatch command=7 status=handled responses=1 raw-bytes=5 backspaces=0 deletes=0 truncated=false controls=0
 qemu-local-shell-multiple-background-jobs: ready command=8
 talos> waitpid
 talos: waitpid no-child source=lifecycle-record

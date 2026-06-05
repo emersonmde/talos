@@ -1,0 +1,67 @@
+Phase 10 background jobs stale-entry policy retained-control inspection
+
+Task: phase10-background-jobs-stale-entry-policy-core-20260605
+Inspection level: static inspection + QEMU/substitute retained-control reruns
+
+Task-owned feature evidence:
+
+- tasks/evidence/2026-06-05-phase10-background-jobs-stale-entry-policy-core/qemu-local-shell-background-jobs-stale-entry-policy-smoke.log
+- Classification: qemu-local-shell-background-jobs-stale-entry-policy-complete
+- Final line: final participants=16 expected=16 errors=0
+- PASS present.
+
+Accepted stale-entry policy:
+
+- jobs reports every retained shell-owned background record in table order.
+- Completed/reaped records remain visible for the jobs inspection that reports them.
+- After that jobs report, completed/reaped records are removed from the bounded table.
+- One running job is then observed as completed for the next jobs inspection.
+- A later jobs inspection reports jobs none once all completed records have been reported and cleared.
+
+Feature evidence lines:
+
+- jobs before background launch reports:
+  talos: jobs none source=background-vfs-exec-accounting
+- exec /bin/status42 & launches through:
+  talos: exec path=/bin/status42 source=vfs-open-read mode=background
+- exec /bin/zero & launches through:
+  talos: exec path=/bin/zero source=vfs-open-read mode=background
+- first jobs inspection after both launches reports both records:
+  job 0x1 /bin/status42 completed status=0x2a reaped=true
+  job 0x2 /bin/zero running status=pending reaped=false
+- second jobs inspection reports only the later completed /bin/zero record:
+  job 0x2 /bin/zero completed status=0x0 reaped=true
+- third jobs inspection reports:
+  talos: jobs none source=background-vfs-exec-accounting
+
+Retained controls:
+
+- Multiple-background records control rerun:
+  tasks/evidence/2026-06-05-phase10-multiple-background-vfs-exec-records-core/qemu-local-shell-multiple-background-jobs-smoke.log
+  PASS, classification=qemu-local-shell-multiple-background-jobs-complete,
+  final participants=15 expected=15 errors=0.
+- Prior jobs/accounting list control rerun:
+  tasks/evidence/2026-06-05-phase10-jobs-accounting-list-core/qemu-local-shell-jobs-accounting-list-smoke.log
+  PASS, classification=qemu-local-shell-jobs-accounting-list-complete,
+  final participants=17 expected=17 errors=0.
+- Foreground isolation retained in the task-owned smoke:
+  talos: waitpid no-child source=lifecycle-record
+  talos: last-process none
+- Foreground lifecycle control retained in the task-owned smoke:
+  exec /bin/zero, then waitpid/laststatus report /bin/zero status=0x0.
+- Descriptor-backed cat and pipeline/file-redirection controls remain covered by
+  the rerun prior jobs/accounting control and retained accepted evidence from:
+  tasks/evidence/2026-06-05-phase10-jobs-accounting-list-core/qemu-local-shell-jobs-accounting-list-smoke.log
+  tasks/evidence/2026-06-05-phase10-pipeline-file-redirection-frontier-closeout/retained-evidence-inspection.txt
+- Deterministic async/job-control negatives retained:
+  exec /bin/status42& and exec stdout & report unexpected-argument/exec-invalid-path;
+  prior jobs/accounting rerun retains fg, bg, and kill %1 unknown-command controls.
+
+Disposition:
+
+- fixed: completed/reaped background records are now reported once by jobs and then cleared deterministically.
+- fixed: bounded two-record jobs accounting still reports distinct job ids, pids, command labels, state, status, observed-status, and reaped fields.
+- fixed: foreground waitpid/laststatus isolation remains intact until a foreground exec runs.
+- fixed: task-owned QEMU/substitute stale-entry evidence records the new policy and retained negatives.
+- not-an-issue: no ADR is required; this is a minimal shell-owned accounting retention rule, not POSIX job control or a broad process table/procfs contract.
+- deferred: fg/bg/kill/disown, signals, process groups, sessions, terminal ownership, fork, background pipelines/redirections, scheduler fairness proof, Pi 5 proof, persistent storage, networking, SSH, and phase transition.

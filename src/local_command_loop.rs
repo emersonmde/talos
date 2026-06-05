@@ -30,7 +30,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+stdout-arbitrary-tmp-output-redirection+stderr-arbitrary-tmp-output-redirection",
     "+combined-stdin-stdout-redirection+pipeline-consumer-output-redirection",
     "+pipeline-producer-file-redirection-away+background-vfs-exec-lifecycle",
-    "+jobs-accounting-list+multiple-background-vfs-exec-records"
+    "+jobs-accounting-list+multiple-background-vfs-exec-records",
+    "+background-jobs-stale-entry-policy"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -832,6 +833,10 @@ pub trait LocalCommandSink {
 
     fn poll_background_job_completion(&mut self) -> Option<LocalCommandBackgroundJobRecord> {
         None
+    }
+
+    fn clear_completed_background_job_records(&mut self) -> usize {
+        0
     }
 
     fn background_job_records(
@@ -1663,6 +1668,20 @@ where
             return Some(completed);
         }
         None
+    }
+
+    fn clear_completed_background_job_records(&mut self) -> usize {
+        let mut cleared = 0;
+        for slot in &mut self.background_jobs {
+            let Some(job) = *slot else {
+                continue;
+            };
+            if job.state == LocalCommandBackgroundJobState::Completed && job.reaped {
+                *slot = None;
+                cleared += 1;
+            }
+        }
+        cleared
     }
 
     fn background_job_records(
@@ -3334,6 +3353,7 @@ fn dispatch_local_command(
                 write_jobs_accounting_line(sink, responses, job)?;
             }
             if found_job {
+                let _ = sink.clear_completed_background_job_records();
                 let _ = sink.poll_background_job_completion();
             } else {
                 write_line(
@@ -7320,7 +7340,7 @@ talos> talos: exec-invalid-path\n"
 
     #[test_case]
     fn local_command_loop_records_multiple_background_vfs_exec_jobs() {
-        let bytes = *b"jobs\rexec /bin/status42 &\rexec /bin/zero &\rjobs\rjobs\rwaitpid\rlaststatus\rexec /bin/zero\rwaitpid\rlaststatus\rexec /bin/status42&\rexec stdout &\r";
+        let bytes = *b"jobs\rexec /bin/status42 &\rexec /bin/zero &\rjobs\rjobs\rjobs\rwaitpid\rlaststatus\rexec /bin/zero\rwaitpid\rlaststatus\rexec /bin/status42&\rexec stdout &\r";
         let input = ScriptedInput::new(bytes, bytes.len());
         let mut backend = CaptureSink::new();
         let (
@@ -7329,6 +7349,7 @@ talos> talos: exec-invalid-path\n"
             second_background,
             mixed_jobs,
             completed_jobs,
+            stale_cleared_jobs,
             empty_wait,
             empty_last,
             foreground,
@@ -7340,6 +7361,7 @@ talos> talos: exec-invalid-path\n"
             let mut io =
                 DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
             (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
@@ -7370,7 +7392,10 @@ talos> talos: exec-invalid-path\n"
         assert_eq!(mixed_jobs.response_lines(), 2);
         assert_eq!(completed_jobs.line(), b"jobs");
         assert_eq!(completed_jobs.status(), LocalCommandStatus::Handled);
-        assert_eq!(completed_jobs.response_lines(), 2);
+        assert_eq!(completed_jobs.response_lines(), 1);
+        assert_eq!(stale_cleared_jobs.line(), b"jobs");
+        assert_eq!(stale_cleared_jobs.status(), LocalCommandStatus::Handled);
+        assert_eq!(stale_cleared_jobs.response_lines(), 1);
         assert_eq!(empty_wait.line(), b"waitpid");
         assert_eq!(empty_wait.status(), LocalCommandStatus::Handled);
         assert_eq!(empty_last.line(), b"laststatus");
@@ -7409,6 +7434,12 @@ talos> talos: exec-invalid-path\n"
         assert!(output.contains(
             "talos: jobs id=0x0000000000000002 pid=0x0000000000100002 command=/bin/zero state=completed status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=background-vfs-exec-accounting\n"
         ));
+        assert_eq!(
+            output
+                .matches("talos> talos: jobs none source=background-vfs-exec-accounting\n")
+                .count(),
+            2
+        );
         assert!(output.contains("talos> talos: waitpid no-child source=lifecycle-record\n"));
         assert!(output.contains("talos> talos: last-process none\n"));
         assert!(output.contains(
@@ -7417,7 +7448,7 @@ talos> talos: exec-invalid-path\n"
         assert!(output.contains(
             "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/zero state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
-        assert_eq!(output.matches("talos: jobs id=").count(), 4);
+        assert_eq!(output.matches("talos: jobs id=").count(), 3);
         assert_eq!(output.matches("talos: exec-invalid-path\n").count(), 2);
     }
 

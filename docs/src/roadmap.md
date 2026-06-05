@@ -2118,6 +2118,29 @@ The post-review correction chain is:
     and phase transition remain deferred. The next mechanically unblocked task
     is the stale-entry policy core; keep it bounded to documented completed-job
     retention for the accepted two-record table.
+110. background jobs stale-entry policy core: accepted in
+    'phase10-background-jobs-stale-entry-policy-core-20260605'. The
+    shell-owned background accounting table now has a minimal bounded
+    stale-entry policy: 'jobs' reports all retained records, clears
+    completed/reaped records after the report that exposes them, then observes
+    one running background job completion for the next inspection. The
+    task-owned QEMU/substitute transcript launches 'exec /bin/status42 &' and
+    'exec /bin/zero &', shows the first post-launch jobs inspection reporting
+    both records, the second inspection reporting only the completed '/bin/zero'
+    record, and a later inspection reporting 'jobs none'. Foreground
+    'waitpid' still reports no-child and 'laststatus' still reports none after
+    background-only completions; a later foreground 'exec /bin/zero' preserves
+    normal waitpid/laststatus lifecycle controls. Retained QEMU controls for
+    multiple-background records and prior jobs/accounting still pass, including
+    descriptor-backed cat, pipeline/file-redirection controls, deterministic
+    async/job-control negatives, errors=0, final classifications, and PASS.
+    This slice accepts only a minimal shell-owned completed-job retention rule;
+    arbitrary process tree/procfs inspection, fg/bg/kill/disown, process
+    groups, sessions, terminal ownership, signals, fork, background
+    pipelines/redirections, scheduler fairness proof, Pi 5 proof, persistent
+    storage, networking, SSH, and phase transition remain deferred. The queued
+    stale-entry closeout is mechanically unblocked and must remain
+    docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

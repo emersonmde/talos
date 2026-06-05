@@ -14382,6 +14382,7 @@ pub fn run_diagnostic_command_channel_smoke() -> bool {
     talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle",
     talos_boot_scenario = "qemu_local_shell_jobs_accounting_list",
     talos_boot_scenario = "qemu_local_shell_multiple_background_jobs",
+    talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection",
@@ -14396,6 +14397,7 @@ pub fn run_diagnostic_command_channel_smoke() -> bool {
     talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle",
     talos_boot_scenario = "qemu_local_shell_jobs_accounting_list",
     talos_boot_scenario = "qemu_local_shell_multiple_background_jobs",
+    talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy",
     talos_boot_scenario = "qemu_local_shell_waitpid",
     talos_boot_scenario = "qemu_local_cd_fixed_dirs",
     talos_boot_scenario = "qemu_local_ls_cwd",
@@ -14682,6 +14684,11 @@ const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-shell-multiple-background-jobs"
 }
 
+#[cfg(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy")]
+const fn local_command_loop_smoke_label() -> &'static str {
+    "qemu-local-shell-background-jobs-stale-entry-policy"
+}
+
 #[cfg(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection")]
 const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-shell-stderr-regular-file-redirection"
@@ -14797,6 +14804,7 @@ const fn local_command_loop_smoke_label() -> &'static str {
     not(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle"),
     not(talos_boot_scenario = "qemu_local_shell_jobs_accounting_list"),
     not(talos_boot_scenario = "qemu_local_shell_multiple_background_jobs"),
+    not(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection"),
@@ -14983,6 +14991,11 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     "qemu-local-shell-multiple-background-jobs-complete"
 }
 
+#[cfg(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy")]
+const fn local_command_loop_smoke_classification() -> &'static str {
+    "qemu-local-shell-background-jobs-stale-entry-policy-complete"
+}
+
 #[cfg(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection")]
 const fn local_command_loop_smoke_classification() -> &'static str {
     "qemu-local-shell-stderr-regular-file-redirection-complete"
@@ -15098,6 +15111,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     not(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle"),
     not(talos_boot_scenario = "qemu_local_shell_jobs_accounting_list"),
     not(talos_boot_scenario = "qemu_local_shell_multiple_background_jobs"),
+    not(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection"),
@@ -15154,6 +15168,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle",
     talos_boot_scenario = "qemu_local_shell_jobs_accounting_list",
     talos_boot_scenario = "qemu_local_shell_multiple_background_jobs",
+    talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_to_stdout_redirection",
     talos_boot_scenario = "qemu_local_shell_stdout_close_redirection",
@@ -15228,6 +15243,8 @@ const fn local_command_loop_smoke_command_count() -> usize {
         17
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_multiple_background_jobs") {
         15
+    } else if cfg!(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy") {
+        16
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection") {
         14
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection")
@@ -15579,7 +15596,7 @@ fn expected_local_command_loop_dispatch(
             line == b"jobs" && status == Handled && response_lines == 2
         }
         7 if cfg!(talos_boot_scenario = "qemu_local_shell_multiple_background_jobs") => {
-            line == b"jobs" && status == Handled && response_lines == 2
+            line == b"jobs" && status == Handled && response_lines == 1
         }
         8 if cfg!(talos_boot_scenario = "qemu_local_shell_multiple_background_jobs") => {
             line == b"waitpid" && status == Handled && response_lines == 1
@@ -15600,6 +15617,45 @@ fn expected_local_command_loop_dispatch(
             line == b"exec /bin/status42&" && status == UnexpectedArgument && response_lines == 1
         }
         14 if cfg!(talos_boot_scenario = "qemu_local_shell_multiple_background_jobs") => {
+            line == b"exec stdout &" && status == UnexpectedArgument && response_lines == 1
+        }
+        3 if cfg!(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy") => {
+            line == b"jobs" && status == Handled && response_lines == 1
+        }
+        4 if cfg!(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy") => {
+            line == b"exec /bin/status42 &" && status == Handled && response_lines == 8
+        }
+        5 if cfg!(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy") => {
+            line == b"exec /bin/zero &" && status == Handled && response_lines == 9
+        }
+        6 if cfg!(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy") => {
+            line == b"jobs" && status == Handled && response_lines == 2
+        }
+        7 if cfg!(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy") => {
+            line == b"jobs" && status == Handled && response_lines == 1
+        }
+        8 if cfg!(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy") => {
+            line == b"jobs" && status == Handled && response_lines == 1
+        }
+        9 if cfg!(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy") => {
+            line == b"waitpid" && status == Handled && response_lines == 1
+        }
+        10 if cfg!(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy") => {
+            line == b"laststatus" && status == Handled && response_lines == 1
+        }
+        11 if cfg!(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy") => {
+            line == b"exec /bin/zero" && status == Handled && response_lines == 9
+        }
+        12 if cfg!(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy") => {
+            line == b"waitpid" && status == Handled && response_lines == 1
+        }
+        13 if cfg!(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy") => {
+            line == b"laststatus" && status == Handled && response_lines == 1
+        }
+        14 if cfg!(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy") => {
+            line == b"exec /bin/status42&" && status == UnexpectedArgument && response_lines == 1
+        }
+        15 if cfg!(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy") => {
             line == b"exec stdout &" && status == UnexpectedArgument && response_lines == 1
         }
         3 if cfg!(
