@@ -6887,6 +6887,15 @@ Acceptance criteria:
 Goal: understand the Pi 5 I/O substrate before relying on RP1 devices for
 networking, GPIO, storage, or broader hardware support.
 
+Entry status: Phase 10 is closed by
+`phase10-to-phase11-transition-checkpoint-20260605`. The accepted Phase 10
+frontier covers local shell behavior and local/QEMU generated-root transport.
+Pi 5 generated-root consumption remains deferred on the firmware initramfs
+range-overlap blocker, but that storage transport blocker does not prevent
+Phase 11 RP1/PCIe mapping from starting. The first Phase 11 slice must stay on
+RP1/PCIe mapping and a narrow register-read diagnostic before GPIO,
+interrupts, DMA, networking, or SSH work.
+
 Milestone 11.1: RP1 and PCIe Mapping
 
 - Determine whether firmware leaves RP1 configured and usable for early
