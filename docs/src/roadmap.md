@@ -2096,6 +2096,28 @@ The post-review correction chain is:
     networking, SSH, and phase transition remain deferred. The queued
     multiple-background closeout is mechanically unblocked and must remain
     docs/evidence reconciliation only.
+109. multiple background VFS exec records closeout: accepted in
+    'phase10-multiple-background-vfs-exec-records-closeout-20260605'. Static
+    inspection reconciles the accepted two-record background accounting
+    transcript, retained controls, roadmap language, and commit history without
+    adding runtime behavior. The accepted boundary is two exact fixed-/bin
+    background VFS exec forms, 'exec /bin/status42 &' and 'exec /bin/zero &',
+    plus 'jobs' inspection of both retained shell-owned records. Evidence
+    confirms distinct stable job ids and pids, '/bin/status42' status 0x2a,
+    '/bin/zero' status 0x0, running/completed state transitions,
+    observed-status fields, reaped flags, foreground 'waitpid no-child' and
+    'last-process none' isolation after background-only completions, and normal
+    foreground '/bin/zero' waitpid/laststatus controls afterward. Retained
+    controls cover accepted single-background exec, jobs/accounting list,
+    pipeline/file-redirection composition, descriptor-backed cat,
+    waitpid/laststatus, deterministic async negatives, errors=0,
+    classifications, and PASS. Stale-entry clearing/retention beyond retained
+    records, fg/bg/kill/disown, process groups, sessions, terminal ownership,
+    signals, fork, true scheduler-concurrent userspace execution, background
+    pipelines/redirections, Pi 5 proof, persistent storage, networking, SSH,
+    and phase transition remain deferred. The next mechanically unblocked task
+    is the stale-entry policy core; keep it bounded to documented completed-job
+    retention for the accepted two-record table.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

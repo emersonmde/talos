@@ -1,0 +1,34 @@
+phase10-multiple-background-vfs-exec-records-closeout retained-evidence inspection
+timestamp=2026-06-05T06:10:00Z
+
+Primary accepted evidence:
+- tasks/evidence/2026-06-05-phase10-multiple-background-vfs-exec-records-core/qemu-local-shell-multiple-background-jobs-smoke.log
+  - QEMU/substitute PASS with final participants=15 expected=15 errors=0 classification=qemu-local-shell-multiple-background-jobs-complete.
+  - Launches exec /bin/status42 & and exec /bin/zero & through source=vfs-open-read mode=background.
+  - Records distinct background identities: job id 0x1 pid 0x100001 command=/bin/status42 status=0x2a, and job id 0x2 pid 0x100002 command=/bin/zero status=0x0.
+  - jobs reports both records together, first with the second job running/pending and later with both records completed/observed/reaped.
+  - foreground waitpid reports no-child and laststatus reports none after background-only completions.
+  - foreground exec /bin/zero later preserves the normal consuming waitpid and non-consuming laststatus controls.
+  - malformed exec /bin/status42& and unsupported exec stdout & remain deterministic exec-invalid-path negatives.
+
+Retained controls inspected:
+- tasks/evidence/2026-06-05-phase10-multiple-background-vfs-exec-records-core/retained-control-inspection.txt
+  - Maps primary evidence to retained background/jobs, pipeline/file redirection, descriptor-backed cat, waitpid/laststatus, and deterministic negative controls.
+- tasks/evidence/2026-06-05-phase10-background-vfs-exec-lifecycle-core/qemu-local-shell-background-vfs-exec-lifecycle-smoke.log
+  - PASS retained for single background VFS exec lifecycle, shell responsiveness, foreground waitpid/laststatus isolation, foreground /bin/zero, and async negatives.
+- tasks/evidence/2026-06-05-phase10-jobs-accounting-list-core/qemu-local-shell-jobs-accounting-list-smoke.log
+  - PASS retained for jobs none, running/completed accounting, foreground lifecycle isolation, foreground /bin/zero, pipeline/cat controls, and job-control negatives.
+- tasks/evidence/2026-06-05-phase10-pipeline-consumer-output-redirection-core/qemu-local-shell-pipeline-consumer-output-redirection-smoke.log
+  - PASS retained for pipeline plus consumer output redirection, descriptor restoration, waitpid/laststatus, and deterministic negatives.
+- tasks/evidence/2026-06-05-phase10-pipeline-producer-file-redirection-away-core/qemu-local-shell-pipeline-producer-file-redirection-away-smoke.log
+  - PASS retained for producer file-redirection-away pipeline composition, descriptor-backed volatile-file cat, waitpid/laststatus, and deterministic negatives.
+- tasks/evidence/2026-06-04-phase10-minimal-stdout-to-stdin-pipe-core/qemu-local-shell-minimal-stdout-to-stdin-pipeline-smoke.log
+  - PASS retained for plain stdout-to-stdin pipeline transfer and descriptor-backed cat.
+- tasks/evidence/2026-06-03-phase10-minimal-waitpid-lifecycle-observation-core/qemu-local-shell-waitpid-lifecycle-smoke.log
+  - PASS retained for no-child, consuming waitpid, already-consumed no-child, and non-consuming laststatus lifecycle observation.
+
+Disposition:
+- fixed: closeout now records the exact accepted two-record background accounting capability and retained evidence map.
+- not-an-issue: No ADR update is needed; accepted behavior remains a bounded shell-owned accounting table, not POSIX job control.
+- not-an-issue: hardwareTestLock remained unlocked/restored and unused; Pi 5 proof is outside this local/QEMU closeout.
+- deferred: stale-entry clearing/retention policy, fg/bg/kill/disown, signals, process groups, sessions, terminal ownership, fork, scheduler fairness proof, true scheduler-concurrent userspace execution, background pipelines/redirections, persistent storage, Pi 5 proof, networking, SSH, and phase transition.
