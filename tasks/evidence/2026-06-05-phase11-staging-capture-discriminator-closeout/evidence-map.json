@@ -1,0 +1,77 @@
+{
+  "task_id": "phase11-staging-capture-discriminator-closeout-20260605",
+  "classification": "known-good-capture-staging-accepted-runtime-readiness-blocked",
+  "evidence_level": "static evidence inspection",
+  "accepted": {
+    "proof_semantics": true,
+    "known_good_capture_staging_health": true,
+    "rp1_candidate_fetch": false,
+    "rp1_rust_entry": false,
+    "rp1_entry_control_reachability": false,
+    "rp1_mapped_read_value": false,
+    "rp1_unmapped_trap": false,
+    "milestone_11_2": false
+  },
+  "dependencies": [
+    {
+      "task_id": "phase11-lab-evidence-contract-repair-core-20260605",
+      "commit": "a79b1f2d0a336077c957727e27b7f105a4f6ea29",
+      "evidence": [
+        "tasks/2026-06-05-phase11-lab-evidence-contract-repair-core.md",
+        "tasks/evidence/2026-06-05-phase11-lab-evidence-contract-repair-core/static-inspection.md"
+      ],
+      "accepted_facts": [
+        "GET /status is the deployed authoritative boot identity endpoint.",
+        "A single empty fresh TFTP response is not no-fetch evidence until stable pre-restore cursor replay completes.",
+        "Classifications distinguish staging/publication mismatch, TFTP capture/logging blindness, serial-only firmware reboot, and valid known-good Talos readiness."
+      ]
+    },
+    {
+      "task_id": "phase11-known-good-boot-state-api-probe-20260605",
+      "commit": "6e9ca49ca66bfbfe1582a414dabb9e368e711fbf",
+      "evidence": [
+        "tasks/2026-06-05-phase11-known-good-boot-state-api-probe.md",
+        "tasks/evidence/2026-06-05-phase11-known-good-boot-state-api-probe/classification.json",
+        "tasks/evidence/2026-06-05-phase11-known-good-boot-state-api-probe/status.json",
+        "tasks/evidence/2026-06-05-phase11-known-good-boot-state-api-probe/boot-files.json"
+      ],
+      "accepted_facts": [
+        "Read-only API evidence classified the restored known-good tree as ready-for-serialized-discriminator.",
+        "GET /status and GET /boot/files agreed on restored tree hash a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.",
+        "configured_kernel and effective_kernel were kernel_2712.img."
+      ]
+    },
+    {
+      "task_id": "phase11-known-good-capture-staging-pi5-discriminator-20260605",
+      "commit": "9fea6a52fe6072aafa846926e24fe1ad5c2f25de",
+      "evidence": [
+        "tasks/2026-06-05-phase11-known-good-capture-staging-pi5-discriminator.md",
+        "tasks/evidence/2026-06-05-phase11-known-good-capture-staging-pi5-discriminator/observed-summary.json",
+        "tasks/evidence/2026-06-05-phase11-known-good-capture-staging-pi5-discriminator/classification.json",
+        "tasks/evidence/2026-06-05-phase11-known-good-capture-staging-pi5-discriminator/known-good-tftp-delta-stable-pre-restore-rerun.json",
+        "tasks/evidence/2026-06-05-phase11-known-good-capture-staging-pi5-discriminator/known-good-serial-observe.json"
+      ],
+      "accepted_facts": [
+        "Final stable pre-restore TFTP evidence from fresh cursor 4094251 contained 13 events.",
+        "The TFTP events included two served 104,136-byte da591740/kernel_2712.img fetches.",
+        "Serial reached Raspberry Pi firmware/RP1 boot output but not TALOS: kernel_main, command-loop readiness, or PASS.",
+        "The pre-run snapshot restored successfully after the run."
+      ]
+    }
+  ],
+  "blockers": [
+    {
+      "name": "boot-runtime-readiness-after-known-good-fetch",
+      "status": "deferred-to-supervisor-planning",
+      "reason": "Known-good TFTP fetch visibility is accepted, but serial did not reach Talos runtime readiness markers from the fresh cursor."
+    }
+  ],
+  "non_goals_honored": [
+    "no hardware lock acquired",
+    "no hardware run",
+    "no boot archive publication",
+    "no RP1 runtime/source change",
+    "no RP1 candidate rerun",
+    "no phase transition"
+  ]
+}

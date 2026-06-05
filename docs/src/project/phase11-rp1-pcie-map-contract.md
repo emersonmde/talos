@@ -205,6 +205,17 @@ candidate fetch, Rust entry, RP1 mapped/read-value, RP1 unmapped/trap, GPIO,
 interrupt, DMA/cache, networking, SSH, storage, broader PCIe, or Milestone 11.2
 behavior.
 
+phase11-staging-capture-discriminator-closeout-20260605 accepts the repaired
+proof semantics and known-good capture/staging health only. It reconciles the
+initial zero-event TFTP sample as capture-latency evidence superseded by the
+final stable pre-restore replay. The remaining blocker is
+boot-runtime-readiness-after-known-good-fetch: the restored known-good tree
+fetched kernel_2712.img, but serial did not reach Talos runtime readiness.
+RP1 candidate/source work, candidate reruns, mapped/unmapped claims, GPIO,
+interrupts, DMA/cache, networking, SSH, storage, generated-root, broader PCIe,
+Milestone 11.2, and phase transition remain blocked pending supervisor
+planning.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path first reports `rpi5-rp1-uart0-fr-read: start` and `rpi5-rp1-uart0-fr-read: pre-mmio-read`, flushes UART10, then reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load. A returned read reports the contract id, target name, address, width, raw value, `mapped/read-value` success classification, and PASS before returning to the existing final halt path. The pre-MMIO marker is a discriminator for the next serialized proof: if hardware reaches that marker but not the read-value line, the result is entry/handoff reachability plus an RP1 read trap/hang boundary, not a mapping acceptance.

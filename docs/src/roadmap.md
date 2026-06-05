@@ -7040,6 +7040,18 @@ separate blocker and no RP1 candidate, mapped/unmapped, GPIO, interrupt,
 DMA/cache, networking, SSH, storage, broader PCIe, or Milestone 11.2 behavior
 is accepted.
 
+The closeout
+`phase11-staging-capture-discriminator-closeout-20260605` accepts repaired
+proof semantics and known-good capture/staging health only. The initial
+zero-event TFTP sample is retained as capture-latency evidence but superseded
+for fetch classification by the final stable pre-restore replay. The next
+blocker is `boot-runtime-readiness-after-known-good-fetch`: the known-good
+tree fetched `kernel_2712.img`, but serial did not reach Talos runtime
+readiness. Supervisor planning is required before any RP1 candidate/source
+work, candidate rerun, mapped/unmapped claim, GPIO, interrupts, DMA/cache,
+networking, SSH, storage, generated-root, broader PCIe, Milestone 11.2 work,
+or phase transition.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
