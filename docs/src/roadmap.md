@@ -6853,6 +6853,16 @@ Selected first slice:
   but does not accept Pi 5 generated-root artifact consumption or close
   Milestone 10.3. The next Milestone 10.3 task should be explicitly planned
   around the firmware initramfs range overlap.
+- 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
+  10.3 checkpoint at the local/QEMU generated-root transport frontier and
+  defers the Pi 5 hardware boundary on the retained source-backed blocker. The
+  accepted frontier covers generated-root file and executable content through
+  the read-only VFS/loader/process path plus same-kernel/two-artifact
+  local/QEMU no-rebuild transport. Pi 5 generated-root consumption remains
+  deferred until Talos reserves or copies the firmware initramfs range before
+  early memory setup and passes a fresh serialized hardware proof. Writable
+  persistence, SD/USB/block storage, broader filesystem mutation, networking,
+  SSH, and Phase 11 transition remain unaccepted.
 
 Acceptance criteria:
 
@@ -6868,6 +6878,9 @@ Acceptance criteria:
   storage, networking, SSH, and phase transition remain deferred and require
   explicit follow-up tasks.
 - Documentation explains the chosen local storage path and remaining risks.
+  Current status: accepted by the Milestone 10.3 closeout as a local/QEMU
+  generated-root transport checkpoint; Pi 5 generated-root consumption and true
+  writable or block-backed storage remain deferred.
 
 ## Phase 11: RP1, PCIe, DMA, and Hardware Substrate
 
