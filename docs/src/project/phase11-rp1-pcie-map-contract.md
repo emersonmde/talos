@@ -135,6 +135,15 @@ boot tree was restored to
 `a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10` before
 completion.
 
+phase11-rp1-diagnostic-entry-control-closeout-20260605 reconciles that
+source/local discriminator and blocker proof. It accepts only the source
+contract, the local pre-BootInfo entry-control candidate, recorded
+publication/staging state, and restore state. It does not accept candidate
+fetch, Rust entry or entry-control reachability, RP1 mapped/read-value,
+unmapped, trap, firmware-state, GPIO, interrupt, DMA/cache, networking, SSH,
+storage, generated-root, broader PCIe, or Milestone 11.2 behavior. The next
+bounded Phase 11 slice requires supervisor planning.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path first reports `rpi5-rp1-uart0-fr-read: start` and `rpi5-rp1-uart0-fr-read: pre-mmio-read`, flushes UART10, then reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load. A returned read reports the contract id, target name, address, width, raw value, `mapped/read-value` success classification, and PASS before returning to the existing final halt path. The pre-MMIO marker is a discriminator for the next serialized proof: if hardware reaches that marker but not the read-value line, the result is entry/handoff reachability plus an RP1 read trap/hang boundary, not a mapping acceptance.

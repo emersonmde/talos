@@ -6961,6 +6961,26 @@ networking, SSH, storage drivers, broader PCIe enumeration, generated-root
 blocker work, source-level handoff fixes, or a revised diagnostic shape.
 Supervisor planning is required before any next Phase 11 slice.
 
+Entry-control follow-up status:
+`phase11-rp1-diagnostic-entry-control-source-core-20260605` accepted a local
+`rpi5_rp1_entry_control` candidate that emits a unique no-RP1-MMIO
+marker/PASS immediately after the normal Pi 5 `rust_entry` early-phase line
+and stops before BootInfo parsing, normal Pi 5 target initialization, RP1
+GPIO/pin flushes, boot reports, memory planning, or the RP1 UART0 FR read
+path. The serialized
+`phase11-rp1-diagnostic-entry-control-pi5-proof-20260605` then published that
+candidate, but first candidate, known-good control, and candidate rerun
+attempts all had empty fresh TFTP deltas. Serial output reached Raspberry Pi
+firmware output through `Boot mode: NETWORK` in all three attempts, but did
+not reach `TALOS: kernel_main`, entry-control PASS, known-good PASS, or any
+RP1 diagnostic classification. The closeout
+`phase11-rp1-diagnostic-entry-control-closeout-20260605` therefore records
+`staging-or-capture-blocker`: candidate fetch, Rust entry, entry-control
+reachability, RP1 mapped/read-value, RP1 unmapped/trap, firmware-state
+behavior, source-level handoff fixes, revised diagnostics, Milestone 11.2,
+networking, SSH, GPIO ownership, interrupts, DMA/cache, storage, generated-root
+work, and broader PCIe remain unaccepted pending supervisor planning.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
