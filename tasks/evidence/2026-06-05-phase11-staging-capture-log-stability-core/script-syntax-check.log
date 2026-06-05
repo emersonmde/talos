@@ -1,0 +1,1 @@
+sh -n scripts/rpi5-wait-tftp-delta.sh: passed

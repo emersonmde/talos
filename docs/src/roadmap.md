@@ -6981,6 +6981,18 @@ behavior, source-level handoff fixes, revised diagnostics, Milestone 11.2,
 networking, SSH, GPIO ownership, interrupts, DMA/cache, storage, generated-root
 work, and broader PCIe remain unaccepted pending supervisor planning.
 
+Staging/capture repair status:
+`phase11-staging-capture-log-stability-core-20260605` repairs the proof
+rule that allowed proof-time empty TFTP deltas to stand after late-visible
+`/tftp/logs` replay from cursor `4088847` returned 13 events, including a
+104,136-byte restored known-good `da591740/kernel_2712.img` fetch. Future
+Pi 5 proofs must classify TFTP evidence before restore by re-querying from the
+fresh cursor until the cursor/log size/event set is stable or a bounded timeout
+is reached. This accepts only evidence-capture semantics; it does not accept
+candidate fetch, Rust entry, RP1 mapped/read-value, RP1 unmapped/trap, GPIO,
+interrupts, DMA/cache, storage, generated-root work, networking, SSH, broader
+PCIe, or Milestone 11.2 behavior.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

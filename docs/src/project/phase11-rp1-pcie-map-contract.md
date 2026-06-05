@@ -144,6 +144,19 @@ unmapped, trap, firmware-state, GPIO, interrupt, DMA/cache, networking, SSH,
 storage, generated-root, broader PCIe, or Milestone 11.2 behavior. The next
 bounded Phase 11 slice requires supervisor planning.
 
+phase11-staging-capture-log-stability-core-20260605 repairs the Pi 5
+proof-rule boundary exposed by that blocker. Replay from the retained cursor
+`4088847` later returned 13 TFTP events, including a restored known-good
+104,136-byte `da591740/kernel_2712.img` fetch, so future hardware proofs must
+not classify a single empty `/tftp/logs?cursor=<fresh>` response as no-fetch
+evidence. A proof must capture a fresh TFTP cursor immediately before power
+cycle, observe serial, then re-query the same TFTP cursor until `cursor_end`,
+`log_size`, `truncated`, and parsed events are stable for the accepted
+sample count or until a bounded timeout is recorded. Fetch-byte classification
+must happen before restore; any zero-event result is meaningful only after this
+stable-log rule. This changes evidence semantics only and does not accept
+entry-control reachability or RP1 mapped/unmapped behavior.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path first reports `rpi5-rp1-uart0-fr-read: start` and `rpi5-rp1-uart0-fr-read: pre-mmio-read`, flushes UART10, then reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load. A returned read reports the contract id, target name, address, width, raw value, `mapped/read-value` success classification, and PASS before returning to the existing final halt path. The pre-MMIO marker is a discriminator for the next serialized proof: if hardware reaches that marker but not the read-value line, the result is entry/handoff reachability plus an RP1 read trap/hang boundary, not a mapping acceptance.

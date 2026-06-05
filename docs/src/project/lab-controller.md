@@ -271,8 +271,9 @@ Use `cursor_end` like the serial cursor. To capture the current end of the TFTP 
 cursor="$(curl -fsS 'http://talos-lab-api:8080/tftp/logs?limit=1' | jq -r .tftp.cursor_end)"
 ```
 
-After the run, call `/tftp/logs?cursor=<old cursor>` to see only new TFTP activity.
-For acceptance evidence that depends on served file sizes, query TFTP logs before restoring the boot tree. The `bytes` field is computed from the current TFTP file at query time, not parsed from the dnsmasq line, so querying after restore can label an earlier diagnostic serve with the restored file's size. Keep `limit` within the endpoint range, currently `1..2000`, or the request fails and can accidentally push evidence collection until after restore.
+After the run, call `/tftp/logs?cursor=<old cursor>` to see only new TFTP activity. Hardware proofs must treat this as a stability check, not a single sample: re-query from the same cursor until `cursor_end`, `log_size`, `truncated`, and the parsed event set are unchanged for the required number of samples, or until the bounded timeout is reached. `scripts/rpi5-wait-tftp-delta.sh <cursor> [timeout_seconds] [stable_samples]` implements that rule and annotates its output with `talos_tftp_stability`; exit 0 means a stable non-empty delta, exit 1 means either stable zero events or timeout. A zero-event TFTP delta is meaningful evidence only when it is stable under that rule and is recorded before the boot tree is restored.
+
+For acceptance evidence that depends on served file sizes, query stable TFTP logs before restoring the boot tree. The `bytes` field is computed from the current TFTP file at query time, not parsed from the dnsmasq line, so querying after restore can label an earlier diagnostic serve with the restored file's size. Keep `limit` within the endpoint range, currently `1..2000`, or the request fails and can accidentally push evidence collection until after restore.
 
 Verified request sequence:
 
