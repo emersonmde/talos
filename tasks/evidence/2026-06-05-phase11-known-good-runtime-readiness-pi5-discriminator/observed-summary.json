@@ -1,0 +1,52 @@
+{
+  "classification": "known-good-fetch-without-readiness",
+  "completion_status_recommendation": "completed-blocker-evidence",
+  "blocker": "boot-runtime-readiness-after-known-good-fetch",
+  "evidence_caveat": "Initial pre-restore cursor-delta files were collected with a blank cursor because the wrapper looked for top-level cursor_end instead of .tftp.cursor_end; the fresh cursor was recovered from tftp-tail-before.json and replayed after restore. The final pre-restore TFTP tail is retained separately.",
+  "status_before_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "status_before_effective_kernel": "kernel_2712.img",
+  "status_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "status_after_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "serial_cursor_start": 4095332,
+  "serial_cursor_end": 4096040,
+  "serial_bytes": 708,
+  "serial_has_kernel_main": false,
+  "serial_has_prompt": false,
+  "serial_has_required_pass": false,
+  "serial_observe_exit": 1,
+  "readiness_annotation": {
+    "timeout_seconds": 75,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "required_kernel_marker": "TALOS: kernel_main",
+    "required_success_marker": "rpi5-production-timer-preemption: PASS",
+    "prompt_marker": "talos>",
+    "has_kernel_main": false,
+    "has_required_success_marker": false,
+    "has_prompt_marker": false,
+    "valid_known_good_talos_readiness": false,
+    "classification": "known-good-fetch-observed-without-talos-readiness"
+  },
+  "tftp_cursor_start": 4095602,
+  "tftp_cursor_end": 4096953,
+  "pre_restore_tail_cursor_end": 4095602,
+  "replay_event_count": 13,
+  "replay_rerun_event_count": 13,
+  "stable_replay_same_event_count_after_5s": true,
+  "stable_tftp_kernel_2712_served": true,
+  "stable_tftp_kernel_2712_serves": [
+    {
+      "filename": "da591740/kernel_2712.img",
+      "bytes": 104136,
+      "client_ip": "10.42.1.4"
+    },
+    {
+      "filename": "da591740/kernel_2712.img",
+      "bytes": 104136,
+      "client_ip": "10.42.1.4"
+    }
+  ],
+  "restore_ok": true,
+  "rp1_behavior_accepted": false,
+  "candidate_behavior_accepted": false
+}

@@ -1,0 +1,8 @@
+{
+  "classification": "known-good-fetch-without-readiness",
+  "blocker": "boot-runtime-readiness-after-known-good-fetch",
+  "evidence_level": "serialized Pi 5 hardware evidence through lab-controller endpoints + post-restore cursor replay of retained fresh TFTP cursor",
+  "disposition": "Known-good kernel fetch appeared under stable cursor replay, but serial did not reach accepted Talos readiness markers; because the pre-restore delta file used a blank cursor, this task is completed with blocker evidence rather than accepted runtime readiness.",
+  "evidence_caveat": "Initial pre-restore cursor-delta files were collected with a blank cursor because the wrapper looked for top-level cursor_end instead of .tftp.cursor_end; the fresh cursor was recovered from tftp-tail-before.json and replayed after restore. The final pre-restore TFTP tail is retained separately.",
+  "accepted_rp1_behavior": false
+}
