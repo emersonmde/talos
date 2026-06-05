@@ -2049,6 +2049,30 @@ The post-review correction chain is:
     proof, networking, SSH, and phase transition remain deferred. The queued
     async process-control frontier closeout is mechanically unblocked and must
     remain docs/evidence reconciliation only.
+107. async process-control frontier closeout: accepted in
+    'phase10-async-process-control-frontier-closeout-20260605'. Static
+    inspection reconciles the accepted background VFS exec lifecycle and
+    jobs/accounting list slices with retained VFS exec, descriptor inheritance,
+    waitpid, laststatus, pipeline, redirection, and descriptor-backed file
+    controls without adding runtime behavior. The accepted frontier is one exact
+    trailing-ampersand background launch, 'exec /bin/status42 &', through the
+    accepted fixed '/bin' VFS exec path, plus one shell-owned accounting record
+    visible through 'jobs'. Evidence confirms a stable job id, pid, command
+    label, running/completed state, pending/completed status, observed status,
+    and reaped flag; shell responsiveness at the command-loop boundary; and
+    foreground 'waitpid no-child' plus 'last-process none' isolation until a
+    normal foreground exec updates lifecycle state. Retained controls cover
+    VFS exec/open/read/write, descriptor inheritance/restoration,
+    descriptor-backed cat, plain pipeline transfer, pipeline/file redirection
+    composition, deterministic async/job-control negatives, errors=0, final
+    classifications, and PASS. Multiple jobs, stale-entry policy beyond the
+    accepted single record, kill/fg/bg/disown, process groups, sessions,
+    terminal ownership, signals, fork, true scheduler-concurrent userspace
+    execution, background pipelines/redirections, pipefail,
+    process-tree/procfs inspection, scheduling fairness proof, Pi 5 proof,
+    networking, SSH, and phase transition remain deferred. Supervisor planning
+    is required before any further process-control, local storage, Pi 5 proof,
+    networking, SSH, or phase-transition work.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
