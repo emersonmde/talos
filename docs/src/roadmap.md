@@ -2206,6 +2206,19 @@ The post-review correction chain is:
     10.3 implementation, Phase 11, or any phase transition. The next queued
     Milestone 10.3 storage path evaluation remains a separate explicit
     checkpoint.
+114. local storage path evaluation checkpoint: accepted in
+    'phase10-local-storage-path-evaluation-checkpoint-20260605'. Static
+    source/doc/script review selects generated userland/initramfs manifest
+    ingestion into the existing read-only VFS model as the primary Milestone
+    10.3 implementation slice. The first proof should add or change userland
+    content through a manifest/root input and consume it through the accepted
+    descriptor-backed VFS/open/read and, if contracted, VFS-backed exec path
+    without adding a hardcoded file-content constant to 'src/initramfs.rs'.
+    This selection proves source-code edit avoidance only; kernel binary
+    rebuild avoidance, boot archive update, true persistence, SD/USB/block
+    storage, Pi 5 proof, networking, SSH, and phase transition remain deferred.
+    TFTP-loaded generated initramfs transport is the fallback after the local
+    manifest/root contract and implementation are accepted.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -6670,6 +6683,20 @@ Milestone 10.3: Persistent or Larger Local Storage
   initramfs expansion for a practical development filesystem.
 - Add a persistent filesystem path only after VFS and block/storage ownership
   rules are clear.
+
+Selected first slice:
+
+- 'phase10-local-storage-path-evaluation-checkpoint-20260605' selects generated
+  userland/initramfs manifest ingestion into the existing read-only VFS model as
+  the smallest useful next capability. The first implementation should prove a
+  manifest/root-defined file, and optionally a manifest/root-defined
+  executable, reaches the accepted descriptor-backed VFS/open/read and loader
+  path without adding a new hardcoded file-content constant to
+  'src/initramfs.rs'.
+- This slice is a source-code edit avoidance step only. Avoiding kernel binary
+  rebuilds, publishing boot archives, Pi 5 TFTP transport, writable persistent
+  storage, SD/USB/block drivers, networking, SSH, and phase transition remain
+  deferred.
 
 Acceptance criteria:
 

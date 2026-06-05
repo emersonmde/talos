@@ -1,0 +1,32 @@
+phase10-local-storage-path-evaluation-checkpoint-20260605
+
+Evidence level: static source/doc/script review.
+
+Reviewed:
+- src/initramfs.rs: immutable static nodes and hardcoded userland/file bytes.
+- src/local_command_loop.rs: accepted descriptor-backed cat, VFS exec, redirection, pipeline, and jobs surfaces.
+- src/program_loader.rs: accepted loader input through VFS regular-file boundary.
+- build.rs and scripts/qemu-local-serial-command-loop-smoke.sh: QEMU/local scenario and evidence harness shape.
+- docs/src/project/lab-controller.md: Pi 5 boot archive/TFTP/hardware lock boundary.
+- tasks/2026-06-03-phase8-open-read-initramfs-descriptor-integration.md
+- tasks/2026-06-03-phase8-open-read-syscall-surface.md
+- tasks/2026-06-03-phase8-program-loader-from-vfs-file.md
+- tasks/2026-06-03-phase8-initial-userspace-process-launch.md
+- tasks/2026-06-05-phase10-pipelines-process-control-milestone-closeout.md
+
+Decision:
+- Primary next slice: generated userland/initramfs manifest ingestion into the existing read-only VFS model.
+- Fallback: TFTP-loaded generated initramfs transport after the local generated-root contract and implementation exist.
+
+Disposition:
+- generated userland/initramfs manifest: fixed as selected primary path.
+- TFTP-loaded initramfs transport: deferred fallback.
+- current compiled fixture table: removed as a progress path; retained as regression/control baseline.
+- SD card storage: deferred.
+- USB mass storage: deferred.
+
+Claim boundary:
+- The selected primary path should avoid editing kernel source for every userland file/program change.
+- It does not yet avoid kernel binary rebuilds.
+- It does not publish or update a Pi 5 boot archive.
+- It does not prove writable persistence.

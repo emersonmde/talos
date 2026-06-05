@@ -48,6 +48,35 @@ ADR template:
   process trees, scheduler-concurrent userspace, Pi 5 proof, networking, and
   SSH remain deferred.
 
+## 2026-06-05 - Phase 10 Generated Userland Manifest Path Selected
+
+- Status: accepted as the Milestone 10.3 local storage/userland-image path
+  evaluation. No runtime behavior change, QEMU run, Pi 5 hardware run,
+  boot archive publication, hardware-lock acquisition, writable persistent
+  filesystem, block driver, networking, SSH, or phase transition was added.
+- Context: Milestone 10.2 closed at the accepted local/QEMU pipelines and
+  process-control frontier. The next roadmap milestone needs a practical way
+  to change or expand userland content without editing kernel source for every
+  file or program, while preserving the accepted VFS/open/read/loader/shell
+  evidence chain.
+- Decision: Select generated userland/initramfs manifest ingestion into the
+  existing read-only VFS model as the first Milestone 10.3 implementation
+  slice. The follow-up contract should define manifest/root shape,
+  deterministic ordering, path normalization, file-kind and size limits,
+  generated-root identity reporting, and QEMU/local proof that generated
+  content is consumed through descriptor-backed `cat` and optionally VFS-backed
+  `exec` without adding a hardcoded `src/initramfs.rs` file-content constant.
+- Evidence level: static source/doc/script review of `src/initramfs.rs`,
+  `src/local_command_loop.rs`, `src/program_loader.rs`, `build.rs`, QEMU local
+  command-loop scripts, Pi 5 lab-controller docs, accepted Phase 8 VFS/loader
+  records, and accepted Milestone 10.2 closeout.
+- Validation: `git diff --check` passed; `/home/node/.cargo/bin/mdbook build`
+  passed; and `git diff --cached --check` passed before commit.
+- Consequences: The next generated-userland contract task is mechanically
+  unblocked. This selection proves source-code edit avoidance first; kernel
+  binary rebuild avoidance, TFTP/boot-archive transport, true persistence,
+  SD/USB/block storage, Pi 5 proof, networking, and SSH remain deferred.
+
 ## 2026-06-04 - Phase 10 Conservative Volatile /tmp Output Paths Accepted
 
 - Status: accepted as the Phase 10 stdout regular-file output path policy for
