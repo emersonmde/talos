@@ -6737,6 +6737,16 @@ Selected first slice:
   no-kernel-rebuild transport, boot archive update, Pi 5 behavior, writable
   persistence, general PATH discovery, networking, SSH, or phase transition is
   accepted.
+- 'phase10-generated-userland-executable-closeout-20260605' accepts the
+  generated executable frontier closeout. The accepted Milestone 10.3 boundary
+  now covers one generated regular file and one generated executable defined by
+  the manifest/root input, both consumed through the existing read-only
+  initramfs/VFS model. This still does not satisfy the milestone's stronger
+  no-kernel-rebuild criterion because the generated root is consumed at build
+  time. The next mechanically unblocked task is the local/QEMU
+  no-kernel-rebuild generated-root transport contract; implementation,
+  boot archive publication, Pi 5 proof, writable persistence, storage drivers,
+  networking, SSH, and phase transition remain deferred.
 
 Acceptance criteria:
 
