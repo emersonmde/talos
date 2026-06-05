@@ -43,6 +43,7 @@ SHELL_STDOUT_ARBITRARY_TMP_OUTPUT_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_
 SHELL_STDERR_ARBITRARY_TMP_OUTPUT_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDERR_ARBITRARY_TMP_OUTPUT_REDIRECTION_SMOKE:-0}"
 SHELL_COMBINED_STDIN_STDOUT_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_COMBINED_STDIN_STDOUT_REDIRECTION_SMOKE:-0}"
 SHELL_PIPELINE_CONSUMER_OUTPUT_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_PIPELINE_CONSUMER_OUTPUT_REDIRECTION_SMOKE:-0}"
+SHELL_PIPELINE_PRODUCER_FILE_REDIRECTION_AWAY_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_PIPELINE_PRODUCER_FILE_REDIRECTION_AWAY_SMOKE:-0}"
 SHELL_STDERR_REGULAR_FILE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDERR_REGULAR_FILE_REDIRECTION_SMOKE:-0}"
 SHELL_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE:-0}"
 SHELL_STDERR_REGULAR_FILE_APPEND_CREATE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDERR_REGULAR_FILE_APPEND_CREATE_REDIRECTION_SMOKE:-0}"
@@ -148,6 +149,27 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
             command_index="${BASH_REMATCH[1]}"
             if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#pipeline_consumer_output_commands[@]}" ]; then
                 printf '%s\r' "${pipeline_consumer_output_commands[$command_index]}" >&3
+                sent=$((command_index + 1))
+            fi
+            continue
+        fi
+        if [ "$SHELL_PIPELINE_PRODUCER_FILE_REDIRECTION_AWAY_SMOKE" -eq 1 ] && [[ "$line" =~ ready\ command=([0-9]+) ]]; then
+            pipeline_producer_file_redirection_away_commands=(
+                "help"
+                "status"
+                "stdio"
+                "exec stdout >/tmp/pipe-source.txt | exec stdin"
+                "waitpid"
+                "laststatus"
+                "cat /tmp/pipe-source.txt"
+                "exec stdout | exec stdin"
+                "exec stdout >>/tmp/pipe-source.txt | exec stdin"
+                "exec stderr >/tmp/pipe-source.txt | exec stdin"
+                "exec stdout >/tmp/src.txt | exec stdin >/tmp/out.txt"
+            )
+            command_index="${BASH_REMATCH[1]}"
+            if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#pipeline_producer_file_redirection_away_commands[@]}" ]; then
+                printf '%s\r' "${pipeline_producer_file_redirection_away_commands[$command_index]}" >&3
                 sent=$((command_index + 1))
             fi
             continue
@@ -2233,6 +2255,23 @@ elif [ "$SHELL_PIPELINE_CONSUMER_OUTPUT_REDIRECTION_SMOKE" -eq 1 ]; then
     grep -q "source=shell-pipe-stdout-to-stdin" "$LOG_FILE"
     grep -q "talos> exec stdout | exec stdin >>/tmp/pipe-consumer.txt" "$LOG_FILE"
     grep -q "talos> exec stderr | exec stdin >/tmp/pipe-consumer.txt" "$LOG_FILE"
+    grep -q "talos> exec stdout >/tmp/src.txt | exec stdin >/tmp/out.txt" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=8 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=9 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=10 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: final participants=11 expected=11 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+elif [ "$SHELL_PIPELINE_PRODUCER_FILE_REDIRECTION_AWAY_SMOKE" -eq 1 ]; then
+    grep -q "talos> exec stdout >/tmp/pipe-source.txt | exec stdin" "$LOG_FILE"
+    grep -q "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x0000000000000000 bytes-read=0x0000000000000000 writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-producer-file-redirection-away" "$LOG_FILE"
+    grep -q "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=regular-file fd2=stdio-output" "$LOG_FILE"
+    grep -q "talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/pipe-source.txt target-stream=regular-file target-route=volatile-vfs:/tmp/pipe-source.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout" "$LOG_FILE"
+    grep -q "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=regular-file route=volatile-vfs:/tmp/pipe-source.txt source=userspace-talos-write" "$LOG_FILE"
+    grep -q "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000000 return=0x0000000000000000 read-source=pipe:stdout-to-stdin stdout-fd=0x0000000000000001 stdout-bytes=0x000000000000003c stdout-return=0x000000000000003c source=userspace-talos-read+userspace-talos-write read-result=pipe-eof/no-data" "$LOG_FILE"
+    grep -q "talos: cat path=/tmp/pipe-source.txt bytes=0x000000000000001f source=volatile-vfs-descriptor-read" "$LOG_FILE"
+    grep -q "talos> exec stdout | exec stdin" "$LOG_FILE"
+    grep -q "source=shell-pipe-stdout-to-stdin" "$LOG_FILE"
+    grep -q "talos> exec stdout >>/tmp/pipe-source.txt | exec stdin" "$LOG_FILE"
+    grep -q "talos> exec stderr >/tmp/pipe-source.txt | exec stdin" "$LOG_FILE"
     grep -q "talos> exec stdout >/tmp/src.txt | exec stdin >/tmp/out.txt" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=8 status=unexpected-argument responses=1" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=9 status=unexpected-argument responses=1" "$LOG_FILE"

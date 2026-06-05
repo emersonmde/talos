@@ -1905,6 +1905,35 @@ The post-review correction chain is:
     next queued producer file-redirection-away core is mechanically unblocked
     and must remain bounded to the exact inverse pipeline/file-redirection
     form.
+101. pipeline producer file-redirection-away core: accepted in
+    'phase10-pipeline-producer-file-redirection-away-core-20260605'.
+    Shell-visible 'exec stdout >/tmp/pipe-source.txt | exec stdin' now
+    composes the accepted two-stage VFS-backed stdout-to-stdin pipeline with a
+    child-only volatile VFS stdout sink on the producer. The producer pipe
+    endpoint is installed on fd1 first, then the producer's child-only stdout
+    file redirection replaces fd1 with the accepted regular-file sink
+    'volatile-vfs:/tmp/pipe-source.txt', so the stdout fixture writes 0x1f
+    bytes to the volatile VFS file instead of the pipe. The consumer inherits
+    fd0 as the pipe reader, observes pipe EOF/no-data with bytes written/read at
+    zero, writes the accepted no-data stdin report to inherited stdout, and
+    waitpid/laststatus report the consumer lifecycle. Descriptor-backed 'cat
+    /tmp/pipe-source.txt' reads back the redirected producer payload. The
+    retained QEMU/substitute evidence records the new
+    'source=shell-pipe-producer-file-redirection-away' marker, producer
+    'fd1=regular-file', the stdout sink redirection record, shell descriptor
+    restoration, the positive plain pipeline control, deterministic negatives
+    for producer append redirection, stderr producer file redirection, and
+    producer+consumer file redirection, errors=0, and PASS. The first smoke
+    iteration exposed missing kernel-side label/classification wiring for the
+    new scenario; the feature transcript was correct but the harness classified
+    it as the generic serial loop, so the harness wiring was completed and
+    rerun. Producer append pipeline redirection, stderr producer file
+    redirection, producer and consumer file redirection in the same pipeline,
+    multi-stage/concurrent pipelines, process accounting/concurrency, arbitrary
+    descriptor syntax, persistence, recursive directories, Pi 5 proof,
+    networking, SSH, and phase transition remain deferred. The queued pipeline
+    file-redirection frontier closeout is mechanically unblocked and must
+    remain docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

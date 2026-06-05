@@ -28,7 +28,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+readonly-regular-file-stdin-redirection+volatile-stdout-regular-file-redirection",
     "+volatile-stderr-regular-file-redirection+explicit-fd1-regular-file-redirection",
     "+stdout-arbitrary-tmp-output-redirection+stderr-arbitrary-tmp-output-redirection",
-    "+combined-stdin-stdout-redirection+pipeline-consumer-output-redirection"
+    "+combined-stdin-stdout-redirection+pipeline-consumer-output-redirection",
+    "+pipeline-producer-file-redirection-away"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -1436,7 +1437,9 @@ where
             (
                 initramfs::PHASE10_STDOUT_PATH,
                 None,
-                None | Some(LocalCommandExecRedirection::StdoutToStderr),
+                None
+                | Some(LocalCommandExecRedirection::StdoutToStderr)
+                | Some(LocalCommandExecRedirection::StdoutToTmpStdout(_)),
             ) => true,
             (
                 initramfs::PHASE10_STDERR_PATH,
@@ -1483,6 +1486,9 @@ where
         let pipe_source = match (request.producer.redirection, request.consumer.redirection) {
             (None, Some(LocalCommandExecRedirection::StdoutToTmpStdout(_))) => {
                 "shell-pipe-consumer-stdout-redirection"
+            }
+            (Some(LocalCommandExecRedirection::StdoutToTmpStdout(_)), None) => {
+                "shell-pipe-producer-file-redirection-away"
             }
             (Some(LocalCommandExecRedirection::StderrToStdout), None) => {
                 "shell-pipe-stderr-dup-to-stdout"
@@ -6449,6 +6455,85 @@ talos> talos: exec-invalid-path\n"
         assert!(output.contains(
             "talos: cat path=/tmp/pipe-consumer.txt bytes=0x0000000000000044 source=volatile-vfs-descriptor-read\n"
         ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-to-stdin\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_redirects_pipeline_producer_stdout_to_volatile_file() {
+        let bytes = *b"exec stdout >/tmp/pipe-source.txt | exec stdin\rwaitpid\rlaststatus\rcat /tmp/pipe-source.txt\rexec stdout | exec stdin\rexec stdout >>/tmp/pipe-source.txt | exec stdin\rexec stderr >/tmp/pipe-source.txt | exec stdin\rexec stdout >/tmp/src.txt | exec stdin >/tmp/out.txt\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (
+            redirected,
+            waited,
+            observed,
+            readback,
+            plain_pipeline,
+            append_producer,
+            stderr_producer,
+            both_redirected,
+        ) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(
+            redirected.line(),
+            b"exec stdout >/tmp/pipe-source.txt | exec stdin"
+        );
+        assert_eq!(redirected.status(), LocalCommandStatus::Handled);
+        assert_eq!(redirected.response_lines(), 22);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.line(), b"laststatus");
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(readback.line(), b"cat /tmp/pipe-source.txt");
+        assert_eq!(readback.status(), LocalCommandStatus::Handled);
+        assert_eq!(readback.response_lines(), 2);
+        assert_eq!(plain_pipeline.line(), b"exec stdout | exec stdin");
+        assert_eq!(plain_pipeline.status(), LocalCommandStatus::Handled);
+        for rejected in [append_producer, stderr_producer, both_redirected] {
+            assert_eq!(rejected.status(), LocalCommandStatus::UnexpectedArgument);
+            assert_eq!(rejected.response_lines(), 1);
+        }
+        assert!(output.contains(
+            "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x0000000000000000 bytes-read=0x0000000000000000 writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-producer-file-redirection-away\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=regular-file fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/pipe-source.txt target-stream=regular-file target-route=volatile-vfs:/tmp/pipe-source.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=regular-file route=volatile-vfs:/tmp/pipe-source.txt source=userspace-talos-write\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000000 return=0x0000000000000000 read-source=pipe:stdout-to-stdin stdout-fd=0x0000000000000001 stdout-bytes=0x000000000000003c stdout-return=0x000000000000003c source=userspace-talos-read+userspace-talos-write read-result=pipe-eof/no-data\n"
+        ));
+        assert!(output.contains(
+            "talos: cat path=/tmp/pipe-source.txt bytes=0x000000000000001f source=volatile-vfs-descriptor-read\n"
+        ));
+        assert!(output.contains("talos> Talos userspace stdout fixture\n"));
         assert!(output.contains(
             "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
