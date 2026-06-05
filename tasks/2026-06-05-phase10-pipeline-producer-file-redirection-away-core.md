@@ -105,4 +105,5 @@ Retained control evidence inspected:
 - docs validation: `/home/node/.cargo/bin/mdbook build` passed.
 - staged diff hygiene: `git diff --cached --check` passed.
 
-Commit: `8b7b102ac3a0e6c04a81c8f804ffa748ee949b80`.
+Implementation/evidence commit:
+`ccdb07d8a7297b90ca2770c7d8fa9478839c2274`.
