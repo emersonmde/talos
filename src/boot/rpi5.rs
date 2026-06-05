@@ -128,6 +128,9 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
     #[cfg(talos_boot_scenario = "rpi5_generated_root_boot_transport")]
     target::rpi5::run_local_serial_command_loop_proof();
 
+    #[cfg(talos_boot_scenario = "rpi5_rp1_uart0_fr_read")]
+    target::rpi5::run_rp1_uart0_fr_read_diagnostic();
+
     #[cfg(talos_boot_scenario = "rpi5_local_line_editing")]
     target::rpi5::run_local_serial_command_loop_proof();
 

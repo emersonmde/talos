@@ -67,6 +67,15 @@ The diagnostic should report:
 
 The accepted local core may add build/static/archive-review evidence only. The serialized Pi 5 proof remains a separate task that must acquire `hardwareTestLock`, capture candidate identity, serial cursor, TFTP delta, and restore evidence.
 
+## Diagnostic Core Implementation
+
+The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load, reports the contract id, target name, address, width, raw value, and `mapped/read-value` success classification, then returns to the existing final halt path. It does not add GPIO, pin-control, clock, reset, interrupt, DMA/cache, Ethernet, networking, SSH, storage, generated-root, or shell behavior.
+
+Artifact helpers:
+
+- `scripts/rpi5-rp1-uart0-fr-read-image.sh` builds the candidate image.
+- `scripts/rpi5-rp1-uart0-fr-read-boot-tree.sh` stages the candidate image into a Pi 5 boot tree for the later serialized hardware proof.
+
 ## Deferred Work
 
 - PCIe enumeration and BAR discovery for general external devices.

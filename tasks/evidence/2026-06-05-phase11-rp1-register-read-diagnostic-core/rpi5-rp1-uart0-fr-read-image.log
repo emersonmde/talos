@@ -1,0 +1,9 @@
+   Compiling talos v0.1.0 (/opt/strider/openclaw/current/workspace/projects/talos)
+    Finished `dev` profile [optimized + debuginfo] target(s) in 0.94s
+image=target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-rp1-uart0-fr-read.img
+sha256=bed60fc8babf5c91117dd1ccb7c9a105af2bcd30cfedcc098a414029b46fe3c5
+size=87392
+text_offset=0
+header_image_size=87392
+flags=12
+magic=ARMd

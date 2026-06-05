@@ -158,6 +158,7 @@ pub const UART10_BASE: usize = 0x10_7d00_1000;
 pub const RP1_UART0_PCIE2_BASE: usize = 0x1f_0003_0000;
 pub const RP1_UART0_FIRMWARE_BASE: usize = 0x1c_0003_0000;
 pub const RP1_UART0_BASE: usize = RP1_UART0_PCIE2_BASE;
+pub const RP1_UART0_FR: usize = RP1_UART0_BASE + 0x18;
 #[allow(dead_code)]
 pub const RP1_UART0_GPIO14_PAD: usize = 0x1f_000f_003c;
 #[allow(dead_code)]
@@ -12479,6 +12480,40 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
 }
 
 #[cfg(talos_target_rpi5_bcm2712)]
+fn read_rp1_reg_u32(addr: usize) -> u32 {
+    let reg = addr as *const u32;
+    unsafe { core::ptr::read_volatile(reg) }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_uart0_fr_read")]
+pub fn run_rp1_uart0_fr_read_diagnostic() {
+    const CONTRACT_ID: &str = "phase11-rp1-pcie-map-contract-v1";
+    const TARGET: &str = "rp1-uart0-fr-read";
+    const WIDTH_BITS: usize = 32;
+
+    let value = read_rp1_reg_u32(RP1_UART0_FR);
+
+    crate::println!("rpi5-rp1-uart0-fr-read: start");
+    crate::println!(
+        "rpi5-rp1-uart0-fr-read: contract={} target={} address={:#018x} width={} raw={:#010x}",
+        CONTRACT_ID,
+        TARGET,
+        RP1_UART0_FR,
+        WIDTH_BITS,
+        value
+    );
+    crate::println!("rpi5-rp1-uart0-fr-read: classification=mapped/read-value");
+    crate::println!("rpi5-rp1-uart0-fr-read: PASS");
+    wait_uart10_empty_early_phase();
+}
+
+#[cfg(not(talos_target_rpi5_bcm2712))]
+#[allow(dead_code)]
+fn read_rp1_reg_u32(_addr: usize) -> u32 {
+    0
+}
+
+#[cfg(talos_target_rpi5_bcm2712)]
 pub fn write_early_static(s: &str) {
     for byte in s.bytes() {
         if byte == b'\n' {
@@ -12611,6 +12646,7 @@ mod tests {
         assert_eq!(UART10_BASE, 0x10_7d00_1000);
         assert_eq!(RP1_UART0_PCIE2_BASE, 0x1f_0003_0000);
         assert_eq!(RP1_UART0_FIRMWARE_BASE, 0x1c_0003_0000);
+        assert_eq!(RP1_UART0_FR, 0x1f_0003_0018);
         assert_eq!(RP1_UART0_GPIO14_PAD, 0x1f_000f_003c);
         assert_eq!(RP1_UART0_GPIO15_PAD, 0x1f_000f_0040);
         assert_eq!(RP1_UART0_GPIO14_CTRL, 0x1f_000d_0074);
