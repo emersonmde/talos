@@ -7005,6 +7005,15 @@ readiness, or PASS. The classification remains
 the staging/capture repair closeout and supervisor planning decide the next
 bounded lab/capture step.
 
+The closeout `phase11-staging-capture-repair-closeout-20260605` accepts only
+the stable TFTP evidence semantics. It does not accept the lab/staging path for
+RP1 candidate reruns because the known-good control still produced stable
+zero-event TFTP deltas and no Talos serial readiness. The next Phase 11 step
+requires supervisor planning for a bounded lab-controller/capture or
+staging-publication discriminator before any RP1 diagnostic/source changes,
+Milestone 11.2, networking, SSH, GPIO ownership, interrupts, DMA/cache, storage,
+generated-root work, or broader PCIe work.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
