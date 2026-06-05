@@ -7067,6 +7067,21 @@ GPIO, interrupts, DMA/cache, networking, SSH, storage, generated-root,
 broader PCIe, Milestone 11.2, and phase transition remain blocked until that
 serialized discriminator and closeout are accepted.
 
+`phase11-known-good-runtime-readiness-pi5-discriminator-20260605` completed
+with blocker evidence, and
+`phase11-known-good-runtime-readiness-closeout-20260605` accepts the closeout
+classification `known-good-fetch-accepted-runtime-readiness-blocked`. Stable
+replay from retained fresh TFTP cursor `4095602` showed two 104,136-byte
+`da591740/kernel_2712.img` fetches for the restored known-good tree, but the
+bounded serial readiness window did not contain `TALOS: kernel_main`, `talos>`,
+or `rpi5-production-timer-preemption: PASS`. The queued RP1 entry-control
+candidate rerun remains blocked because valid known-good Talos runtime
+readiness is not accepted. Supervisor planning is required for the next bounded
+boot-runtime-readiness discriminator or repair before RP1 candidate/source
+work, candidate rerun, mapped/unmapped claims, GPIO, interrupts, DMA/cache,
+networking, SSH, storage, generated-root, broader PCIe, Milestone 11.2, or
+phase transition.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

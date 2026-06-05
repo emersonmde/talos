@@ -1,0 +1,58 @@
+{
+  "task_id": "phase11-known-good-runtime-readiness-closeout-20260605",
+  "classification": "known-good-fetch-accepted-runtime-readiness-blocked",
+  "evidence_level": "static evidence inspection + docs validation + diff hygiene",
+  "accepted": {
+    "proof_semantics": true,
+    "known_good_capture_staging_health": true,
+    "known_good_fetch_visibility": true,
+    "known_good_runtime_readiness": false,
+    "rp1_candidate_fetch": false,
+    "rp1_rust_entry": false,
+    "rp1_entry_control_reachability": false,
+    "rp1_mapped_read_value": false,
+    "rp1_unmapped_trap": false,
+    "milestone_11_2": false
+  },
+  "dependencies": {
+    "contract_core": {
+      "task_id": "phase11-known-good-runtime-readiness-contract-core-20260605",
+      "task_record": "tasks/2026-06-05-phase11-known-good-runtime-readiness-contract-core.md",
+      "commit": "63c83f923857f2f2cb22ef9e82c213183e32f55e",
+      "evidence_map": "tasks/evidence/2026-06-05-phase11-known-good-runtime-readiness-contract-core/evidence-map.json"
+    },
+    "pi5_discriminator": {
+      "task_id": "phase11-known-good-runtime-readiness-pi5-discriminator-20260605",
+      "task_record": "tasks/2026-06-05-phase11-known-good-runtime-readiness-pi5-discriminator.md",
+      "commit": "6d3d5cb8d0e0243380cec12b5b0e72129591d8b5",
+      "classification": "tasks/evidence/2026-06-05-phase11-known-good-runtime-readiness-pi5-discriminator/classification.json",
+      "observed_summary": "tasks/evidence/2026-06-05-phase11-known-good-runtime-readiness-pi5-discriminator/observed-summary.json"
+    }
+  },
+  "known_good_fetch_evidence": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "tftp_cursor_start": 4095602,
+    "stable_replay_event_count": 13,
+    "stable_replay_same_event_count_after_5s": true,
+    "kernel_2712_serves": 2,
+    "kernel_2712_bytes": 104136
+  },
+  "runtime_readiness_evidence": {
+    "serial_cursor_start": 4095332,
+    "serial_cursor_end": 4096040,
+    "serial_bytes": 708,
+    "has_kernel_main": false,
+    "has_prompt": false,
+    "has_required_pass": false,
+    "timeout_seconds": 75,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "required_markers": [
+      "TALOS: kernel_main",
+      "rpi5-production-timer-preemption: PASS"
+    ]
+  },
+  "blocker": "boot-runtime-readiness-after-known-good-fetch",
+  "next_action": "Supervisor planning required for the smallest boot-runtime-readiness discriminator or repair; RP1 entry-control candidate rerun remains blocked."
+}
