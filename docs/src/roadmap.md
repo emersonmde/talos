@@ -1877,6 +1877,34 @@ The post-review correction chain is:
     and phase transition remain deferred. The queued consumer-output closeout
     is mechanically unblocked and must remain docs/evidence reconciliation
     only.
+100. pipeline consumer-output redirection closeout: accepted in
+    'phase10-pipeline-consumer-output-redirection-closeout-20260605'. This
+    closeout checkpoints the exact pipeline consumer-output frontier without
+    adding code. The accepted form remains
+    'exec stdout | exec stdin >/tmp/pipe-consumer.txt': producer fd1 remains
+    the accepted pipe writer, consumer fd0 remains the accepted pipe reader,
+    and consumer fd1 is rebound child-only to the accepted volatile VFS
+    '/tmp/pipe-consumer.txt' sink. The consolidated evidence map retains the
+    primary QEMU/substitute transcript with producer
+    'stream=pipe-writer route=pipe:stdout-to-stdin', consumer
+    'fd0=pipe-endpoint fd1=regular-file', the child-only stdout sink route
+    'volatile-vfs:/tmp/pipe-consumer.txt', pipe bytes written/read at 0x1f,
+    writer closure, reader EOF, shell restoration, descriptor-backed
+    'cat /tmp/pipe-consumer.txt' readback of the 0x44-byte consumer report,
+    waitpid, laststatus, deterministic negatives, errors=0, and PASS.
+    Retained controls cover the plain stdout-to-stdin pipeline,
+    stderr-not-piped and descriptor-mixing pipelines, arbitrary '/tmp' output
+    redirection, descriptor-backed cat, waitpid, laststatus, VFS
+    exec/open/read/write, lifecycle/status, and descriptor restoration. No
+    ordering, descriptor, path, persistence, or lifecycle policy changed in
+    this closeout. Producer output file redirection away from the pipe,
+    consumer append/stderr redirection, arbitrary descriptor syntax,
+    multi-stage/concurrent pipelines, pipefail, jobs, fork/signals,
+    persistence, recursive directories, process accounting/concurrency,
+    Pi 5 proof, networking, SSH, and phase transition remain deferred. The
+    next queued producer file-redirection-away core is mechanically unblocked
+    and must remain bounded to the exact inverse pipeline/file-redirection
+    form.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
