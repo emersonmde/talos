@@ -1,0 +1,43 @@
+root config
+arm_64bit=1
+kernel=kernel_2712.img
+os_check=0
+enable_uart=1
+enable_rp1_uart=1
+pciex4_reset=0
+uart_2ndstage=1
+sha256=1
+
+root cmdline
+console=serial0,115200 earlycon=pl011,mmio32,0x1f00030000 talos.boot=first-light
+
+prefixed config
+arm_64bit=1
+kernel=kernel_2712.img
+os_check=0
+enable_uart=1
+enable_rp1_uart=1
+pciex4_reset=0
+uart_2ndstage=1
+sha256=1
+
+prefixed cmdline
+console=serial0,115200 earlycon=pl011,mmio32,0x1f00030000 talos.boot=first-light
+
+file list
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/bcm2712-rpi-5-b.dtb
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/cmdline.txt
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/config.txt
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/da591740/bcm2712-rpi-5-b.dtb
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/da591740/cmdline.txt
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/da591740/config.txt
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/da591740/kernel8.img
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/da591740/kernel_2712.img
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/da591740/overlays/bcm2712d0.dtbo
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/da591740/overlays/overlay_map.dtb
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/da591740/overlays/uart0-pi5.dtbo
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/kernel8.img
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/kernel_2712.img
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/overlays/bcm2712d0.dtbo
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/overlays/overlay_map.dtb
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/overlays/uart0-pi5.dtbo

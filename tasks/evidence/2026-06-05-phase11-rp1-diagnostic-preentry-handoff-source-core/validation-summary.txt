@@ -1,0 +1,23 @@
+Validation summary for phase11-rp1-diagnostic-preentry-handoff-source-core-20260605
+
+fmt/lint:
+- cargo fmt --all -- --check: passed
+
+unit tests:
+- cargo -Zjson-target-spec test --quiet: passed, 423 no_std tests
+
+image/archive/static review:
+- scripts/rpi5-rp1-uart0-fr-read-boot-tree.sh target/rpi5-local-cat-banner-boot-tree-local1 target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree: passed
+- scripts/rpi5-archive-review.sh target/talos-rpi5-rp1-uart0-fr-read-preentry-handoff-source-core.tar.gz: passed
+- archive SHA-256: 2640ab9ceabee343ee1426b7137e1597687517f56d3b61f58a7ac0e7ab4b6608
+- root/prefixed kernel SHA-256: 4500b99a4405f91176d39dc8178fcd396611e97577eb98c357927df05de6f792
+- kernel size/header_image_size: 87480/87480
+- text_offset=0 flags=12 magic=ARMd
+- marker review: pre-mmio-read marker present; quarantined asm_start and asm_pre_rust_entry markers absent
+
+docs/diff gates:
+- git diff --check: passed
+- /home/node/.cargo/bin/mdbook build: passed with existing large search-index warning
+
+hardware:
+- not run; hardwareTestLock remained unlocked/restored and unused

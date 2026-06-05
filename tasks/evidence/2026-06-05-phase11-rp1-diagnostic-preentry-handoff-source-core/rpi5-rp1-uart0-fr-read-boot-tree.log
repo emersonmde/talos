@@ -1,0 +1,35 @@
+   Compiling talos v0.1.0 (/opt/strider/openclaw/current/workspace/projects/talos)
+warning: constant `RP1_UART0_FR` is never used
+   --> src/target/rpi5.rs:161:11
+    |
+161 | pub const RP1_UART0_FR: usize = RP1_UART0_BASE + 0x18;
+    |           ^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `read_rp1_reg_u32` is never used
+     --> src/target/rpi5.rs:12483:4
+      |
+12483 | fn read_rp1_reg_u32(addr: usize) -> u32 {
+      |    ^^^^^^^^^^^^^^^^
+
+warning: `talos` (bin "talos") generated 2 warnings
+    Finished `dev` profile [optimized + debuginfo] target(s) in 1.29s
+   Compiling talos v0.1.0 (/opt/strider/openclaw/current/workspace/projects/talos)
+    Finished `dev` profile [optimized + debuginfo] target(s) in 1.24s
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/bcm2712-rpi-5-b.dtb
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/cmdline.txt
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/config.txt
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/da591740/bcm2712-rpi-5-b.dtb
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/da591740/cmdline.txt
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/da591740/config.txt
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/da591740/kernel8.img
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/da591740/kernel_2712.img
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/da591740/overlays/bcm2712d0.dtbo
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/da591740/overlays/overlay_map.dtb
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/da591740/overlays/uart0-pi5.dtbo
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/kernel8.img
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/kernel_2712.img
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/overlays/bcm2712d0.dtbo
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/overlays/overlay_map.dtb
+target/rpi5-rp1-uart0-fr-read-preentry-handoff-source-core-boot-tree/overlays/uart0-pi5.dtbo

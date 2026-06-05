@@ -1,0 +1,12 @@
+  Class:                             ELF64
+  Machine:                           AArch64
+  Entry point address:               0x200000
+   900: 0000000000207c34   384 FUNC    LOCAL  HIDDEN     3 _RNvNtNtCsan2nlJD4ir9_5talos6target4rpi532run_rp1_uart0_fr_read_diagnostic
+  2317: 00000000002014e0    88 FUNC    GLOBAL DEFAULT    3 rust_entry
+  2329: 0000000000200000     0 NOTYPE  GLOBAL DEFAULT    1 __kernel_start
+  2406: 0000000000200000   144 FUNC    GLOBAL DEFAULT    1 _start
+  2408: 00000000002155b8     0 NOTYPE  GLOBAL DEFAULT    4 __kernel_image_end
+  [ 1] .text.boot        PROGBITS        0000000000200000 010000 000090 00  AX  0   0 4096
+  [ 3] .text             PROGBITS        0000000000201000 011000 00d07c 00  AX  0   0 4096
+  [ 4] .rodata           PROGBITS        000000000020e080 01e080 007538 00 AMS  0   0 16
+  [ 5] .bss              NOBITS          00000000002155c0 0255c0 000028 00  WA  0   0 16

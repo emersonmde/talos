@@ -12491,9 +12491,12 @@ pub fn run_rp1_uart0_fr_read_diagnostic() {
     const TARGET: &str = "rp1-uart0-fr-read";
     const WIDTH_BITS: usize = 32;
 
+    crate::println!("rpi5-rp1-uart0-fr-read: start");
+    crate::println!("rpi5-rp1-uart0-fr-read: pre-mmio-read");
+    wait_uart10_empty_early_phase();
+
     let value = read_rp1_reg_u32(RP1_UART0_FR);
 
-    crate::println!("rpi5-rp1-uart0-fr-read: start");
     crate::println!(
         "rpi5-rp1-uart0-fr-read: contract={} target={} address={:#018x} width={} raw={:#010x}",
         CONTRACT_ID,

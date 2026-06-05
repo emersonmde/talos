@@ -1,0 +1,15 @@
+archive=target/talos-rpi5-rp1-uart0-fr-read-preentry-handoff-source-core.tar.gz
+2640ab9ceabee343ee1426b7137e1597687517f56d3b61f58a7ac0e7ab4b6608  target/talos-rpi5-rp1-uart0-fr-read-preentry-handoff-source-core.tar.gz
+root_kernel_sha256=4500b99a4405f91176d39dc8178fcd396611e97577eb98c357927df05de6f792
+prefixed_kernel_sha256=4500b99a4405f91176d39dc8178fcd396611e97577eb98c357927df05de6f792
+root_kernel_size=87480
+
+prefixed_kernel_size=87480
+
+header_image_size=87480
+
+text_offset=0
+
+flags=12
+
+magic=ARMd
