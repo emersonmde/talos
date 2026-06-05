@@ -1,0 +1,46 @@
+phase10-process-control-frontier-checkpoint retained-evidence inspection
+timestamp=2026-06-05T06:48:00Z
+
+Primary process-control evidence inspected:
+- tasks/evidence/2026-06-05-phase10-background-vfs-exec-lifecycle-core/qemu-local-shell-background-vfs-exec-lifecycle-smoke.log
+  - QEMU/substitute PASS with final participants=14 expected=14 errors=0 classification=qemu-local-shell-background-vfs-exec-lifecycle-complete.
+  - Records exec /bin/status42 & through source=vfs-open-read mode=background.
+  - Records stable background-job id=0x1 pid=0x100001 command=/bin/status42 state=running, then completed status=0x2a observed-status=0x2a reaped=true.
+  - Shows shell-responsive=true and a later shell-responsive=observed completion.
+  - Shows foreground waitpid no-child and last-process none after background completion.
+  - Shows later foreground exec /bin/zero preserving consuming waitpid and non-consuming laststatus controls.
+- tasks/evidence/2026-06-05-phase10-jobs-accounting-list-core/qemu-local-shell-jobs-accounting-list-smoke.log
+  - QEMU/substitute PASS with final participants=17 expected=17 errors=0 classification=qemu-local-shell-jobs-accounting-list-complete.
+  - Records jobs none before launch, running /bin/status42, completed /bin/status42 with status 0x2a, and fg/bg/kill deterministic unknown-command negatives.
+  - Confirms background accounting does not create foreground waitable children or overwrite laststatus.
+- tasks/evidence/2026-06-05-phase10-multiple-background-vfs-exec-records-core/qemu-local-shell-multiple-background-jobs-smoke.log
+  - QEMU/substitute PASS with final participants=15 expected=15 errors=0 classification=qemu-local-shell-multiple-background-jobs-complete.
+  - Records exec /bin/status42 & and exec /bin/zero & through background VFS exec.
+  - Records distinct stable records: job 0x1 pid 0x100001 /bin/status42 status 0x2a and job 0x2 pid 0x100002 /bin/zero status 0x0.
+  - Retains foreground waitpid no-child and last-process none after background-only completions.
+- tasks/evidence/2026-06-05-phase10-background-jobs-stale-entry-policy-core/qemu-local-shell-background-jobs-stale-entry-policy-smoke.log
+  - QEMU/substitute PASS with final participants=16 expected=16 errors=0 classification=qemu-local-shell-background-jobs-stale-entry-policy-complete.
+  - First post-launch jobs inspection reports /bin/status42 completed/reaped and /bin/zero running/pending.
+  - Second jobs inspection reports /bin/zero completed/reaped after /bin/status42 was cleared.
+  - Third jobs inspection reports jobs none after all completed records were exposed and cleared.
+  - Retains foreground waitpid no-child and last-process none after background-only completions.
+
+Pipeline and redirection evidence inspected:
+- tasks/2026-06-05-phase10-pipeline-file-redirection-frontier-closeout.md
+  - Maps consumer-output and producer-output-away pipeline/file redirection evidence with PASS/classification markers and exact deferred boundaries.
+- tasks/evidence/2026-06-05-phase10-pipeline-consumer-output-redirection-core/qemu-local-shell-pipeline-consumer-output-redirection-smoke.log
+  - Retains exact exec stdout | exec stdin >/tmp/pipe-consumer.txt composition, consumer fd1 regular-file sink, pipe transfer, descriptor-backed readback, waitpid, laststatus, errors=0, classification, and PASS.
+- tasks/evidence/2026-06-05-phase10-pipeline-producer-file-redirection-away-core/qemu-local-shell-pipeline-producer-file-redirection-away-smoke.log
+  - Retains exact exec stdout >/tmp/pipe-source.txt | exec stdin composition, producer fd1 regular-file sink overriding the pipe writer, consumer pipe EOF/no-data, descriptor-backed readback, waitpid, laststatus, errors=0, classification, and PASS.
+- Retained baseline controls cover minimal stdout-to-stdin pipeline, stderr-not-piped pipeline, descriptor-mixing pipeline, arbitrary /tmp output redirection, combined stdin/stdout redirection, descriptor-backed cat, waitpid, and laststatus.
+
+Milestone acceptance statement:
+- Accepted local/QEMU frontier: multiple fixed-/bin VFS-backed user program records can be launched through the background path, observed through shell-owned jobs accounting, completed with stable status records, and cleared by the bounded stale-entry policy while the command loop remains responsive for later inspections and commands.
+- Not accepted as a broader claim: preemptive or otherwise proven scheduler-concurrent userspace execution, POSIX job control, process groups, signals, fork, terminal ownership, background pipelines/redirections, multi-stage/concurrent pipelines, pipefail, Pi 5 proof, persistent storage, networking, SSH, or phase transition.
+
+Disposition:
+- fixed: checkpoint maps accepted Milestone 10.2 local/QEMU evidence across pipelines, redirection, lifecycle/status, background exec, jobs accounting, multiple records, and stale-entry clearing.
+- fixed: checkpoint states the accepted multiple-program progress claim narrowly and defers stronger scheduler-concurrency/POSIX claims.
+- not-an-issue: No ADR update is required; this checkpoint does not codify a new expensive-to-reverse policy.
+- not-an-issue: hardwareTestLock stayed unlocked/restored and unused.
+- deferred: true scheduler-concurrent userspace execution, broader POSIX job control, persistent/larger local storage, Pi 5 proof, networking, SSH, Milestone 10.3, Phase 11, and phase transition.

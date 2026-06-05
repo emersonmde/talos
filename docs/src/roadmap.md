@@ -2165,6 +2165,27 @@ The post-review correction chain is:
     process-control frontier checkpoint is mechanically unblocked and must
     remain static evidence reconciliation before any milestone closeout,
     local-storage, hardware-proof, networking, SSH, or phase-transition plan.
+112. process-control frontier checkpoint: accepted in
+    'phase10-process-control-frontier-checkpoint-20260605'. Static inspection
+    reconciles the accepted Milestone 10.2 local/QEMU frontier across simple
+    pipelines, pipeline/file-redirection composition, descriptor inheritance and
+    restoration, VFS exec/open/read/write, waitpid, laststatus,
+    descriptor-backed cat controls, fixed-/bin background VFS exec, jobs
+    accounting, two retained background records, and deterministic stale-entry
+    clearing. The accepted multiple-program progress claim is intentionally
+    narrow: multiple fixed-/bin VFS-backed user program records can be launched
+    through the background path, inspected through shell-owned jobs accounting,
+    completed with stable status records, and cleared by the bounded
+    stale-entry policy while the command loop remains responsive for later
+    inspections and commands. This checkpoint does not claim preemptive or
+    otherwise proven scheduler-concurrent userspace execution, POSIX job
+    control, process groups, signals, fork, terminal ownership, background
+    pipelines/redirections, multi-stage/concurrent pipelines, pipefail,
+    persistent or larger local storage, Pi 5 proof, networking, SSH, Milestone
+    10.3, Phase 11, or any phase transition. Supervisor planning should decide
+    whether Milestone 10.2 closeout can explicitly preserve that local/QEMU
+    frontier wording, or whether one more bounded local process-control proof is
+    required first.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
