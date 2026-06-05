@@ -6937,6 +6937,20 @@ boundary is `blocked-pre-entry-or-handoff-after-candidate-fetch`. The mapping
 contract remains unaccepted on hardware until a separately planned
 pre-entry/handoff investigation or revised diagnostic reaches decisive output.
 
+Follow-up proof status:
+`phase11-rp1-diagnostic-entry-pi5-proof-20260605` reran the revised
+pre-MMIO-marker candidate after source-level handoff review. The known-good
+control restored
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10`, fetched
+the 104,136-byte control kernel, reached `TALOS: kernel_main`, and retained
+PASS output. The candidate tree
+`0b25c8e08b7cdbac0447ee80a962ed7ee0fa9d219eafc3f060cfcd902c035511` fetched
+the selected 87,480-byte `da591740/kernel_2712.img` twice before restore, but
+serial still did not reach Talos entry, the pre-MMIO marker, diagnostic
+classification, or PASS. The hardware boundary remains
+`blocked-pre-entry-or-handoff-after-candidate-fetch`, not RP1 mapped/unmapped
+evidence.
+
 Closeout status: `phase11-rp1-pcie-mapping-closeout-20260605` accepts
 Milestone 11.1 only at the source-contract/local-diagnostic/hardware-blocker
 boundary. It does not accept a stable RP1 register read on hardware, RP1

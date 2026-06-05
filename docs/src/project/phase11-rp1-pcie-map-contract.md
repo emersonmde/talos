@@ -85,6 +85,22 @@ unmapped. The next source-level investigation or revised diagnostic shape must
 be supervisor-planned before changing RP1 constants or broadening into GPIO,
 interrupt, DMA/cache, networking, SSH, or storage work.
 
+`phase11-rp1-diagnostic-entry-pi5-proof-20260605` reran the revised
+pre-MMIO-marker candidate after the source-level handoff task. The candidate
+archive SHA-256 was
+`2640ab9ceabee343ee1426b7137e1597687517f56d3b61f58a7ac0e7ab4b6608`, and the
+published boot tree was
+`0b25c8e08b7cdbac0447ee80a962ed7ee0fa9d219eafc3f060cfcd902c035511`. After
+mandatory inconclusive-run triage, the known-good control restored
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10`, fetched
+the 104,136-byte control kernel, reached `TALOS: kernel_main`, and retained
+PASS output. The candidate rerun fetched the selected 87,480-byte
+`da591740/kernel_2712.img` twice before restore, but serial output still did
+not reach `TALOS: kernel_main`, `rpi5-rp1-uart0-fr-read: start`,
+`rpi5-rp1-uart0-fr-read: pre-mmio-read`, `mapped/read-value`, or `PASS`.
+The classification remains `blocked-pre-entry-or-handoff-after-candidate-fetch`;
+the proof does not accept RP1 mapped or unmapped behavior.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path first reports `rpi5-rp1-uart0-fr-read: start` and `rpi5-rp1-uart0-fr-read: pre-mmio-read`, flushes UART10, then reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load. A returned read reports the contract id, target name, address, width, raw value, `mapped/read-value` success classification, and PASS before returning to the existing final halt path. The pre-MMIO marker is a discriminator for the next serialized proof: if hardware reaches that marker but not the read-value line, the result is entry/handoff reachability plus an RP1 read trap/hang boundary, not a mapping acceptance.
