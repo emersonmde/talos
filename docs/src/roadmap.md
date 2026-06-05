@@ -6937,6 +6937,14 @@ boundary is `blocked-pre-entry-or-handoff-after-candidate-fetch`. The mapping
 contract remains unaccepted on hardware until a separately planned
 pre-entry/handoff investigation or revised diagnostic reaches decisive output.
 
+Closeout status: `phase11-rp1-pcie-mapping-closeout-20260605` accepts
+Milestone 11.1 only at the source-contract/local-diagnostic/hardware-blocker
+boundary. It does not accept a stable RP1 register read on hardware, RP1
+`mapped/read-value`, GPIO ownership, interrupts, DMA/cache policy, Ethernet,
+networking, SSH, storage drivers, broader PCIe enumeration, or generated-root
+blocker work. Supervisor planning is required before any next Phase 11 slice or
+revised RP1 diagnostic.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
