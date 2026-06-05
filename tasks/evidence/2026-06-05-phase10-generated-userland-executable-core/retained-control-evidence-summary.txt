@@ -1,0 +1,49 @@
+Task: phase10-generated-userland-executable-core-20260605
+Date: 2026-06-05
+
+Evidence levels:
+
+- static inspection: generated file and executable content are sourced from
+  userland/generated-root.manifest; build.rs emits generated OUT_DIR constants;
+  src/initramfs.rs includes those constants and no hardcoded
+  "Talos generated-root manifest fixture" or "status7" content.
+- fmt/lint/typecheck: cargo fmt --all -- --check passed.
+- unit tests: cargo -Zjson-target-spec test --quiet passed.
+- QEMU/substitute: scripts/qemu-local-shell-generated-userland-manifest-smoke.sh
+  --quiet passed and retained qemu-local-shell-generated-userland-manifest-smoke.log.
+
+Generated-root evidence:
+
+- identity: phase10-generated-root-manifest-v1.
+- source: userland/generated-root.manifest.
+- manifest sha256: a4ee55e33293077013f9eb63e40f90abc6ac2d823bfac3d815553679cd62494d.
+- generated regular file proof: cat /generated/manifest.txt prints
+  "Talos generated-root manifest fixture" through the descriptor-backed shell
+  read path.
+- generated executable proof: exec /generated/status7 alpha reports
+  source=vfs-open-read, loader fixture phase8-program-loader-elf64-aarch64-v1,
+  argc=2, argv0=/generated/status7, argv1=alpha,
+  envp-state=empty-envp0, status=0x7, and lifecycle path=/generated/status7.
+- wait/status proof: waitpid and laststatus report the generated executable's
+  lifecycle record with status=0x7.
+- root visibility proof: ls / lists generated.
+
+Retained controls in the same QEMU/substitute run:
+
+- descriptor-backed cat control: cat /etc/banner.txt prints the accepted
+  initramfs banner.
+- VFS/open/read loader control: exec /bin/status42 reports source=vfs-open-read
+  and status=0x2a.
+- status observation controls: waitpid and laststatus report the /bin/status42
+  lifecycle record after the generated executable proof.
+- pipeline/redirection control: exec stdout | exec stdin reports
+  source=shell-pipe-stdout-to-stdin with stdout/stdin userland read/write
+  evidence.
+- jobs/accounting control: jobs reports none after foreground execution.
+
+Deferred:
+
+- kernel binary no-rebuild transport, boot archive publication, Pi 5 hardware
+  proof, writable persistence, SD/USB/block drivers, networking, SSH, PATH
+  discovery beyond the existing fixed allowlist, and phase transition remain
+  out of scope.

@@ -552,6 +552,7 @@ const PHASE8_DIR_INDEX: usize = 11;
 const PHASE8_NESTED_INDEX: usize = 12;
 const GENERATED_ROOT_DIR_INDEX: usize = 13;
 const GENERATED_ROOT_FILE_INDEX: usize = 14;
+const GENERATED_ROOT_EXEC_INDEX: usize = 15;
 
 static PHASE8_ROOT_ENTRIES: [DirectoryEntry; 5] = [
     DirectoryEntry::new(b"etc", PHASE8_ETC_INDEX),
@@ -575,10 +576,10 @@ static PHASE8_BIN_ENTRIES: [DirectoryEntry; 6] = [
 
 static PHASE8_DIR_ENTRIES: [DirectoryEntry; 1] =
     [DirectoryEntry::new(b"nested.txt", PHASE8_NESTED_INDEX)];
-static GENERATED_ROOT_DIR_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(
-    GENERATED_ROOT_FILE_NAME,
-    GENERATED_ROOT_FILE_INDEX,
-)];
+static GENERATED_ROOT_DIR_ENTRIES: [DirectoryEntry; 2] = [
+    DirectoryEntry::new(GENERATED_ROOT_FILE_NAME, GENERATED_ROOT_FILE_INDEX),
+    DirectoryEntry::new(GENERATED_ROOT_EXEC_NAME, GENERATED_ROOT_EXEC_INDEX),
+];
 
 static PHASE8_INIT_ELF_BYTES: [u8; PHASE8_INIT_ELF_LEN] =
     build_phase8_exit_elf_bytes(PHASE8_INIT_EXIT_STATUS);
@@ -593,7 +594,7 @@ static PHASE10_STDIN_ELF_BYTES: [u8; PHASE8_INIT_ELF_LEN] =
 static PHASE10_STDERR_ELF_BYTES: [u8; PHASE8_INIT_ELF_LEN] =
     build_phase8_exit_elf_bytes(PHASE8_INIT_EXIT_STATUS);
 
-static PHASE8_NODES: [InitramfsNode; 15] = [
+static PHASE8_NODES: [InitramfsNode; 16] = [
     InitramfsNode::directory(PHASE8_ROOT_INDEX, &PHASE8_ROOT_ENTRIES),
     InitramfsNode::directory(PHASE8_ETC_INDEX, &PHASE8_ETC_ENTRIES),
     InitramfsNode::regular_file(PHASE8_BANNER_INDEX, PHASE8_BANNER_BYTES),
@@ -609,6 +610,7 @@ static PHASE8_NODES: [InitramfsNode; 15] = [
     InitramfsNode::regular_file(PHASE8_NESTED_INDEX, PHASE8_NESTED_BYTES),
     InitramfsNode::directory(GENERATED_ROOT_DIR_INDEX, &GENERATED_ROOT_DIR_ENTRIES),
     InitramfsNode::regular_file(GENERATED_ROOT_FILE_INDEX, GENERATED_ROOT_FILE_BYTES),
+    InitramfsNode::regular_file(GENERATED_ROOT_EXEC_INDEX, GENERATED_ROOT_EXEC_BYTES),
 ];
 
 const fn build_phase8_exit_elf_bytes(exit_status: u64) -> [u8; PHASE8_INIT_ELF_LEN] {
@@ -829,6 +831,18 @@ mod tests {
         assert_eq!(generated.metadata().kind(), VfsNodeKind::RegularFile);
         assert_eq!(generated.metadata().len(), GENERATED_ROOT_FILE_BYTES.len());
         assert!(generated.metadata().read_only());
+        let generated_executable = fs
+            .lookup_default(GENERATED_ROOT_EXEC_PATH)
+            .expect("generated executable lookup");
+        assert_eq!(
+            generated_executable.metadata().kind(),
+            VfsNodeKind::RegularFile
+        );
+        assert_eq!(
+            generated_executable.metadata().len(),
+            GENERATED_ROOT_EXEC_BYTES.len()
+        );
+        assert!(generated_executable.metadata().read_only());
         assert_eq!(
             GENERATED_ROOT_IDENTITY,
             "phase10-generated-root-manifest-v1"
@@ -957,6 +971,16 @@ mod tests {
             fs.regular_file_bytes(GENERATED_ROOT_FILE_PATH)
                 .expect("generated manifest file bytes"),
             GENERATED_ROOT_FILE_BYTES
+        );
+        assert_eq!(
+            fs.regular_file_bytes(GENERATED_ROOT_EXEC_PATH)
+                .expect("generated executable bytes"),
+            GENERATED_ROOT_EXEC_BYTES
+        );
+        assert_eq!(GENERATED_ROOT_EXEC_EXIT_STATUS, 7);
+        assert_eq!(
+            &GENERATED_ROOT_EXEC_BYTES[PHASE8_INIT_TEXT_OFFSET..PHASE8_INIT_TEXT_OFFSET + 8],
+            &[0xe0, 0x00, 0x80, 0xd2, 0x01, 0x42, 0x0f, 0xd4]
         );
         assert_eq!(fs.regular_file_bytes(b"/etc"), Err(PosixError::IsDirectory));
     }

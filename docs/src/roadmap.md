@@ -6726,13 +6726,25 @@ Selected first slice:
   transport/no-rebuild slice is required before claiming the milestone's
   stronger "without rebuilding the kernel for every user program change"
   criterion.
+- 'phase10-generated-userland-executable-core-20260605' accepts the generated
+  executable proof: the manifest/root input now defines '/generated/status7',
+  build.rs synthesizes its ELF bytes into OUT_DIR generated constants, the
+  read-only initramfs/VFS fixture exposes it as a regular generated node, and
+  QEMU/substitute evidence shows exec /generated/status7 alpha reaching the
+  accepted VFS/open/read, loader, startup argv/envp, lifecycle status,
+  waitpid, and laststatus path with deterministic status 0x7. This remains a
+  build-time generated-root source-code edit avoidance slice only; no
+  no-kernel-rebuild transport, boot archive update, Pi 5 behavior, writable
+  persistence, general PATH discovery, networking, SSH, or phase transition is
+  accepted.
 
 Acceptance criteria:
 
 - Talos can load a nontrivial userland image without rebuilding the kernel for
   every user program change. Current status: not fully accepted; the generated
-  manifest slice only avoids editing kernel source for the accepted generated
-  file content.
+  manifest slices avoid editing kernel source for the accepted generated file
+  and executable content, but the generated root is still consumed at build time
+  and still requires a kernel rebuild.
 - Documentation explains the chosen local storage path and remaining risks.
 
 ## Phase 11: RP1, PCIe, DMA, and Hardware Substrate

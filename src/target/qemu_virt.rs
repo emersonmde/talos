@@ -15259,7 +15259,7 @@ const fn local_command_loop_smoke_command_count() -> usize {
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy") {
         16
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") {
-        11
+        14
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection") {
         14
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection")
@@ -15388,7 +15388,7 @@ fn expected_local_command_loop_dispatch(
             line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
         }
         6 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
-            line == b"exec /bin/status42" && status == Handled && response_lines == 9
+            line == b"exec /generated/status7 alpha" && status == Handled && response_lines == 9
         }
         7 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
             line == b"waitpid" && status == Handled && response_lines == 1
@@ -15397,9 +15397,18 @@ fn expected_local_command_loop_dispatch(
             line == b"laststatus" && status == Handled && response_lines == 1
         }
         9 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
-            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 21
+            line == b"exec /bin/status42" && status == Handled && response_lines == 9
         }
         10 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
+            line == b"waitpid" && status == Handled && response_lines == 1
+        }
+        11 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
+            line == b"laststatus" && status == Handled && response_lines == 1
+        }
+        12 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
+            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 21
+        }
+        13 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
             line == b"jobs" && status == Handled && response_lines == 1
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_combined_stdin_stdout_redirection") => {

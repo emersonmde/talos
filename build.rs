@@ -18,6 +18,8 @@ const QEMU_SYSCALL_SMOKE_ASM: &str = "TALOS_QEMU_SYSCALL_SMOKE_SCENARIO";
 const GENERATED_ROOT_MANIFEST: &str = "userland/generated-root.manifest";
 const GENERATED_INITRAMFS_RUST: &str = "generated_initramfs.rs";
 const GENERATED_ROOT_IDENTITY: &str = "phase10-generated-root-manifest-v1";
+const GENERATED_ROOT_EXEC_ELF_LEN: usize = 0x204;
+const GENERATED_ROOT_EXEC_TEXT_OFFSET: usize = 0x100;
 
 const BOOT_SCENARIOS: &[BootScenario] = &[
     BootScenario {
@@ -752,8 +754,14 @@ fn emit_scenario_cfg(value: &str) {
 fn generate_initramfs_manifest(out_dir: &PathBuf) {
     let manifest = fs::read_to_string(GENERATED_ROOT_MANIFEST)
         .unwrap_or_else(|error| panic!("failed to read {GENERATED_ROOT_MANIFEST}: {error}"));
-    let entry = parse_generated_manifest(&manifest);
-    let digest = generated_root_digest(entry.path.as_bytes(), entry.contents.as_bytes());
+    let manifest = parse_generated_manifest(&manifest);
+    let executable_bytes = build_generated_root_exit_elf_bytes(manifest.executable.exit_status);
+    let digest = generated_root_digest(
+        manifest.file.path.as_bytes(),
+        manifest.file.contents.as_bytes(),
+        manifest.executable.path.as_bytes(),
+        &executable_bytes,
+    );
     let output = out_dir.join(GENERATED_INITRAMFS_RUST);
     let mut file = fs::File::create(&output)
         .unwrap_or_else(|error| panic!("failed to create {}: {error}", output.display()));
@@ -778,39 +786,76 @@ fn generate_initramfs_manifest(out_dir: &PathBuf) {
     writeln!(
         file,
         "pub(crate) const GENERATED_ROOT_FILE_PATH: &[u8] = &{:?};",
-        entry.path.as_bytes()
+        manifest.file.path.as_bytes()
     )
     .expect("write generated root path");
     writeln!(
         file,
         "pub(crate) const GENERATED_ROOT_DIR_NAME: &[u8] = &{:?};",
-        entry.directory.as_bytes()
+        manifest.file.directory.as_bytes()
     )
     .expect("write generated root dir");
     writeln!(
         file,
         "pub(crate) const GENERATED_ROOT_FILE_NAME: &[u8] = &{:?};",
-        entry.file_name.as_bytes()
+        manifest.file.file_name.as_bytes()
     )
     .expect("write generated root file name");
     writeln!(
         file,
         "pub(crate) const GENERATED_ROOT_FILE_BYTES: &[u8] = &{:?};",
-        entry.contents.as_bytes()
+        manifest.file.contents.as_bytes()
     )
     .expect("write generated root bytes");
+    writeln!(
+        file,
+        "pub(crate) const GENERATED_ROOT_EXEC_PATH: &[u8] = &{:?};",
+        manifest.executable.path.as_bytes()
+    )
+    .expect("write generated root executable path");
+    writeln!(
+        file,
+        "pub(crate) const GENERATED_ROOT_EXEC_NAME: &[u8] = &{:?};",
+        manifest.executable.file_name.as_bytes()
+    )
+    .expect("write generated root executable file name");
+    writeln!(
+        file,
+        "pub(crate) const GENERATED_ROOT_EXEC_EXIT_STATUS: u64 = {:#018x};",
+        manifest.executable.exit_status
+    )
+    .expect("write generated root executable exit status");
+    writeln!(
+        file,
+        "pub(crate) const GENERATED_ROOT_EXEC_BYTES: &[u8] = &{:?};",
+        executable_bytes
+    )
+    .expect("write generated root executable bytes");
 }
 
-struct GeneratedManifestEntry {
+struct GeneratedRootManifest {
+    file: GeneratedManifestFile,
+    executable: GeneratedManifestExecutable,
+}
+
+struct GeneratedManifestFile {
     path: String,
     directory: String,
     file_name: String,
     contents: String,
 }
 
-fn parse_generated_manifest(manifest: &str) -> GeneratedManifestEntry {
-    let mut path = None;
-    let mut contents = None;
+struct GeneratedManifestExecutable {
+    path: String,
+    file_name: String,
+    exit_status: u64,
+}
+
+fn parse_generated_manifest(manifest: &str) -> GeneratedRootManifest {
+    let mut file_path = None;
+    let mut file_contents = None;
+    let mut exec_path = None;
+    let mut exec_exit_status = None;
 
     for line in manifest.lines() {
         let trimmed = line.trim();
@@ -821,15 +866,54 @@ fn parse_generated_manifest(manifest: &str) -> GeneratedManifestEntry {
             .split_once('=')
             .unwrap_or_else(|| panic!("invalid generated manifest line: {trimmed}"));
         match key {
-            "path" => path = Some(value.to_string()),
-            "contents" => contents = Some(unescape_manifest_value(value)),
+            "file.path" => file_path = Some(value.to_string()),
+            "file.contents" => file_contents = Some(unescape_manifest_value(value)),
+            "exec.path" => exec_path = Some(value.to_string()),
+            "exec.exit_status" => {
+                exec_exit_status = Some(
+                    value
+                        .parse::<u64>()
+                        .unwrap_or_else(|_| panic!("invalid generated executable status: {value}")),
+                )
+            }
             _ => panic!("unsupported generated manifest key: {key}"),
         }
     }
 
-    let path = path.expect("generated manifest path is required");
-    let contents = contents.expect("generated manifest contents are required");
-    validate_generated_manifest_entry(&path, &contents);
+    let file_path = file_path.expect("generated manifest file.path is required");
+    let file_contents = file_contents.expect("generated manifest file.contents is required");
+    validate_generated_manifest_file(&file_path, &file_contents);
+    let (file_directory, file_name) = split_generated_manifest_path(&file_path);
+
+    let exec_path = exec_path.expect("generated manifest exec.path is required");
+    let exec_exit_status =
+        exec_exit_status.expect("generated manifest exec.exit_status is required");
+    validate_generated_manifest_executable(&exec_path, exec_exit_status);
+    let (exec_directory, exec_name) = split_generated_manifest_path(&exec_path);
+
+    if file_directory != exec_directory {
+        panic!("generated manifest first slice requires file and executable in one directory");
+    }
+    if file_name == exec_name {
+        panic!("generated manifest file and executable names must differ");
+    }
+
+    GeneratedRootManifest {
+        file: GeneratedManifestFile {
+            path: file_path,
+            directory: file_directory,
+            file_name,
+            contents: file_contents,
+        },
+        executable: GeneratedManifestExecutable {
+            path: exec_path,
+            file_name: exec_name,
+            exit_status: exec_exit_status,
+        },
+    }
+}
+
+fn split_generated_manifest_path(path: &str) -> (String, String) {
     let (directory, file_name) = path
         .strip_prefix('/')
         .expect("validated generated manifest path is absolute")
@@ -841,26 +925,35 @@ fn parse_generated_manifest(manifest: &str) -> GeneratedManifestEntry {
         panic!("generated manifest path must be /directory/file: {path}");
     }
 
-    GeneratedManifestEntry {
-        path,
-        directory,
-        file_name,
-        contents,
-    }
+    (directory, file_name)
 }
 
-fn validate_generated_manifest_entry(path: &str, contents: &str) {
+fn validate_generated_manifest_path(path: &str) {
     if !path.starts_with('/') || path == "/" {
         panic!("generated manifest path must be absolute and non-root: {path}");
     }
-    if path.as_bytes().contains(&0) || contents.as_bytes().contains(&0) {
-        panic!("generated manifest path and contents must not contain NUL bytes");
+    if path.as_bytes().contains(&0) {
+        panic!("generated manifest path must not contain NUL bytes");
     }
     if path.contains("//") || path.split('/').any(|part| part == "." || part == "..") {
         panic!("generated manifest path must be normalized inside root: {path}");
     }
+}
+
+fn validate_generated_manifest_file(path: &str, contents: &str) {
+    validate_generated_manifest_path(path);
+    if contents.as_bytes().contains(&0) {
+        panic!("generated manifest contents must not contain NUL bytes");
+    }
     if contents.len() > 4096 {
         panic!("generated manifest file exceeds first-slice 4096-byte limit");
+    }
+}
+
+fn validate_generated_manifest_executable(path: &str, exit_status: u64) {
+    validate_generated_manifest_path(path);
+    if exit_status > 0xffff {
+        panic!("generated executable exit status exceeds first-slice 16-bit status limit");
     }
 }
 
@@ -884,7 +977,12 @@ fn unescape_manifest_value(value: &str) -> String {
     output
 }
 
-fn generated_root_digest(path: &[u8], contents: &[u8]) -> u64 {
+fn generated_root_digest(
+    file_path: &[u8],
+    file_contents: &[u8],
+    exec_path: &[u8],
+    exec_contents: &[u8],
+) -> u64 {
     const FNV_OFFSET: u64 = 0xcbf2_9ce4_8422_2325;
 
     let mut hash = FNV_OFFSET;
@@ -892,14 +990,128 @@ fn generated_root_digest(path: &[u8], contents: &[u8]) -> u64 {
         hash = fnv_step(hash, *byte);
     }
     hash = fnv_step(hash, 0);
-    for byte in path {
+    for byte in file_path {
         hash = fnv_step(hash, *byte);
     }
     hash = fnv_step(hash, 0);
-    for byte in contents {
+    for byte in file_contents {
+        hash = fnv_step(hash, *byte);
+    }
+    hash = fnv_step(hash, 0);
+    for byte in exec_path {
+        hash = fnv_step(hash, *byte);
+    }
+    hash = fnv_step(hash, 0);
+    for byte in exec_contents {
         hash = fnv_step(hash, *byte);
     }
     hash
+}
+
+fn build_generated_root_exit_elf_bytes(exit_status: u64) -> Vec<u8> {
+    const EHDR_LEN: usize = 64;
+    const PHENT_LEN: usize = 56;
+    const DATA_OFFSET: usize = 0x200;
+    const TEXT_VADDR: u64 = 0x0000_0000_0001_0100;
+    const DATA_VADDR: u64 = 0x0000_0000_0002_0200;
+    const ENTRY: u64 = TEXT_VADDR;
+    const PF_X: u32 = 1;
+    const PF_W: u32 = 2;
+    const PF_R: u32 = 4;
+    const PAGE_ALIGN: u64 = 0x1000;
+
+    let mut bytes = vec![0u8; GENERATED_ROOT_EXEC_ELF_LEN];
+    bytes[0] = 0x7f;
+    bytes[1] = b'E';
+    bytes[2] = b'L';
+    bytes[3] = b'F';
+    bytes[4] = 2;
+    bytes[5] = 1;
+    bytes[6] = 1;
+
+    write_le_u16(&mut bytes, 16, 2);
+    write_le_u16(&mut bytes, 18, 183);
+    write_le_u32(&mut bytes, 20, 1);
+    write_le_u64(&mut bytes, 24, ENTRY);
+    write_le_u64(&mut bytes, 32, EHDR_LEN as u64);
+    write_le_u16(&mut bytes, 52, EHDR_LEN as u16);
+    write_le_u16(&mut bytes, 54, PHENT_LEN as u16);
+    write_le_u16(&mut bytes, 56, 2);
+
+    write_load_phdr(
+        &mut bytes,
+        EHDR_LEN,
+        PF_R | PF_X,
+        GENERATED_ROOT_EXEC_TEXT_OFFSET as u64,
+        TEXT_VADDR,
+        8,
+        8,
+        PAGE_ALIGN,
+    );
+    write_load_phdr(
+        &mut bytes,
+        EHDR_LEN + PHENT_LEN,
+        PF_R | PF_W,
+        DATA_OFFSET as u64,
+        DATA_VADDR,
+        4,
+        0x1004,
+        PAGE_ALIGN,
+    );
+
+    let exit_status = (exit_status & 0xffff) as u32;
+    let movz_x0 = 0xd280_0000u32 | (exit_status << 5);
+    write_le_u32(&mut bytes, GENERATED_ROOT_EXEC_TEXT_OFFSET, movz_x0);
+    write_le_u32(&mut bytes, GENERATED_ROOT_EXEC_TEXT_OFFSET + 4, 0xd40f_4201);
+    bytes[DATA_OFFSET] = b'D';
+    bytes[DATA_OFFSET + 1] = b'A';
+    bytes[DATA_OFFSET + 2] = b'T';
+    bytes[DATA_OFFSET + 3] = b'A';
+
+    bytes
+}
+
+fn write_load_phdr(
+    bytes: &mut [u8],
+    offset: usize,
+    flags: u32,
+    file_offset: u64,
+    virtual_address: u64,
+    file_size: u64,
+    memory_size: u64,
+    alignment: u64,
+) {
+    write_le_u32(bytes, offset, 1);
+    write_le_u32(bytes, offset + 4, flags);
+    write_le_u64(bytes, offset + 8, file_offset);
+    write_le_u64(bytes, offset + 16, virtual_address);
+    write_le_u64(bytes, offset + 24, virtual_address);
+    write_le_u64(bytes, offset + 32, file_size);
+    write_le_u64(bytes, offset + 40, memory_size);
+    write_le_u64(bytes, offset + 48, alignment);
+}
+
+fn write_le_u16(bytes: &mut [u8], offset: usize, value: u16) {
+    bytes[offset] = value as u8;
+    bytes[offset + 1] = (value >> 8) as u8;
+}
+
+fn write_le_u32(bytes: &mut [u8], offset: usize, value: u32) {
+    bytes[offset] = value as u8;
+    bytes[offset + 1] = (value >> 8) as u8;
+    bytes[offset + 2] = (value >> 16) as u8;
+    bytes[offset + 3] = (value >> 24) as u8;
+}
+
+fn write_le_u64(bytes: &mut [u8], offset: usize, value: u64) {
+    bytes[offset] = value as u8;
+    bytes[offset + 1] = (value >> 8) as u8;
+    bytes[offset + 2] = (value >> 16) as u8;
+    bytes[offset + 3] = (value >> 24) as u8;
+    bytes[offset + 4] = (value >> 32) as u8;
+    bytes[offset + 5] = (value >> 40) as u8;
+    bytes[offset + 6] = (value >> 48) as u8;
+    bytes[offset + 7] = (value >> 56) as u8;
 }
 
 fn fnv_step(hash: u64, byte: u8) -> u64 {

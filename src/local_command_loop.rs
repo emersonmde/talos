@@ -31,7 +31,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+combined-stdin-stdout-redirection+pipeline-consumer-output-redirection",
     "+pipeline-producer-file-redirection-away+background-vfs-exec-lifecycle",
     "+jobs-accounting-list+multiple-background-vfs-exec-records",
-    "+background-jobs-stale-entry-policy+generated-root-manifest-read"
+    "+background-jobs-stale-entry-policy+generated-root-manifest-read",
+    "+generated-root-executable-vfs-exec"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -1341,6 +1342,7 @@ where
             initramfs::PHASE10_STDOUT_PATH => initramfs::PHASE10_STDOUT_PATH,
             initramfs::PHASE10_STDIN_PATH => initramfs::PHASE10_STDIN_PATH,
             initramfs::PHASE10_STDERR_PATH => initramfs::PHASE10_STDERR_PATH,
+            initramfs::GENERATED_ROOT_EXEC_PATH => initramfs::GENERATED_ROOT_EXEC_PATH,
             initramfs::PHASE8_BANNER_PATH => initramfs::PHASE8_BANNER_PATH,
             initramfs::PHASE8_EMPTY_PATH => initramfs::PHASE8_EMPTY_PATH,
             initramfs::PHASE8_NESTED_PATH => initramfs::PHASE8_NESTED_PATH,
@@ -7237,6 +7239,46 @@ talos> talos: exec-invalid-path\n"
         ));
         assert!(output.contains(
             "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_execs_generated_root_executable_with_literal_argv() {
+        let input =
+            ScriptedInput::new(*b"exec /generated/status7 alpha\rwaitpid\rlaststatus\r", 49);
+        let mut backend = CaptureSink::new();
+        let (exec, waited, observed) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(exec.line(), b"exec /generated/status7 alpha");
+        assert_eq!(exec.status(), LocalCommandStatus::Handled);
+        assert_eq!(exec.response_lines(), 9);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.line(), b"laststatus");
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert!(
+            output.contains("talos> talos: exec path=/generated/status7 source=vfs-open-read\n")
+        );
+        assert!(output.contains(
+            "talos: exec-startup-abi state=literal-argv-absolute-empty-envp argc=0x0000000000000002 argv0=/generated/status7 argv1=alpha"
+        ));
+        assert!(output.contains(
+            "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/generated/status7 state=exited status=0x0000000000000007 observed-status=0x0000000000000007 reaped=true\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/generated/status7 state=exited status=0x0000000000000007 observed-status=0x0000000000000007 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/generated/status7 state=exited status=0x0000000000000007 observed-status=0x0000000000000007 reaped=true source=lifecycle-record\n"
         ));
     }
 

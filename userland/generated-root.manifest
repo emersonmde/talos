@@ -1,3 +1,6 @@
-# First generated-root slice: one read-only file consumed through initramfs/VFS.
-path=/generated/manifest.txt
-contents=Talos generated-root manifest fixture\n
+# Generated-root slice: one read-only file and one executable consumed through
+# initramfs/VFS without adding file-content constants to src/initramfs.rs.
+file.path=/generated/manifest.txt
+file.contents=Talos generated-root manifest fixture\n
+exec.path=/generated/status7
+exec.exit_status=7
