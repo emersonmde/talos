@@ -2186,6 +2186,26 @@ The post-review correction chain is:
     whether Milestone 10.2 closeout can explicitly preserve that local/QEMU
     frontier wording, or whether one more bounded local process-control proof is
     required first.
+113. pipelines and process-control milestone closeout: accepted in
+    'phase10-pipelines-process-control-milestone-closeout-20260605'. This
+    closeout records Milestone 10.2 as accepted only at the current local/QEMU
+    frontier. Retained evidence covers simple two-stage pipelines, pipeline and
+    volatile-file redirection composition, exit-status observation, waitpid and
+    laststatus, descriptor inheritance/restoration, loader temporary descriptor
+    non-leak, descriptor-backed cat, fixed-/bin background VFS exec, jobs
+    accounting, multiple background records, and deterministic stale-entry
+    clearing. The accepted multiple-program progress claim remains intentionally
+    narrow: multiple fixed-/bin VFS-backed user program records can be launched
+    through the background path, completed, inspected through shell-owned jobs
+    accounting, and cleared while the command loop remains responsive for later
+    inspections and commands. This does not claim preemptive or otherwise
+    proven scheduler-concurrent userspace execution, full POSIX job control,
+    process groups, signals, fork, terminal ownership, background
+    pipelines/redirections, multi-stage/concurrent pipelines, pipefail,
+    persistent or larger local storage, Pi 5 proof, networking, SSH, Milestone
+    10.3 implementation, Phase 11, or any phase transition. The next queued
+    Milestone 10.3 storage path evaluation remains a separate explicit
+    checkpoint.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -6631,6 +6651,18 @@ Acceptance criteria:
 - The shell can run simple pipelines and report exit statuses.
 - Multiple user programs can make progress while the shell remains responsive.
 - Descriptor inheritance and close-on-exec behavior are tested.
+
+Accepted closeout boundary:
+
+- 'phase10-pipelines-process-control-milestone-closeout-20260605' accepts these
+  criteria only at the local/QEMU frontier: simple exact two-stage pipelines,
+  exit-status/waitpid/laststatus controls, descriptor inheritance/restoration
+  including loader temporary descriptor non-leak, bounded fixed-/bin background
+  VFS exec accounting, and deterministic jobs stale-entry clearing.
+- True scheduler-concurrent userspace execution, full POSIX job control,
+  multi-stage/concurrent pipelines, pipefail, background pipelines/redirections,
+  persistent storage, Pi 5 proof, networking, SSH, and phase transition remain
+  deferred.
 
 Milestone 10.3: Persistent or Larger Local Storage
 

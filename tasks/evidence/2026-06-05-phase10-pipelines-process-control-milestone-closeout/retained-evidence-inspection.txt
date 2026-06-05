@@ -1,0 +1,110 @@
+phase10-pipelines-process-control-milestone-closeout retained-evidence inspection
+timestamp=2026-06-05T07:20:00Z
+
+Milestone checkpoint inspected:
+- tasks/2026-06-05-phase10-process-control-frontier-checkpoint.md
+  - Status accepted; maps simple pipelines, pipeline/file redirection, descriptor
+    controls, VFS exec/open/read/write, waitpid, laststatus, descriptor-backed
+    cat, background VFS exec, jobs accounting, multiple background records, and
+    stale-entry clearing.
+  - Accepted multiple-program progress claim is local/QEMU-only: multiple
+    fixed-/bin VFS-backed records can launch through the background path,
+    complete, be inspected through jobs, and be cleared while the command loop
+    remains responsive.
+- tasks/evidence/2026-06-05-phase10-process-control-frontier-checkpoint/retained-evidence-inspection.txt
+  - Confirms the checkpoint inspected primary pipeline/redirection/background
+    logs and deferred scheduler-concurrent userspace execution, POSIX job
+    control, storage, Pi 5 proof, networking, SSH, Milestone 10.3, Phase 11,
+    and phase transition.
+
+Pipeline evidence inspected:
+- tasks/evidence/2026-06-04-phase10-minimal-stdout-to-stdin-pipe-core/qemu-local-shell-minimal-stdout-to-stdin-pipeline-smoke.log
+  - PASS with final participants=7 expected=7 errors=0
+    classification=qemu-local-shell-minimal-stdout-to-stdin-pipeline-complete.
+  - Records producer fd1 pipe endpoint, consumer fd0 pipe endpoint, 0x1f bytes
+    written/read, writer closed, reader EOF, shell restored, consuming waitpid,
+    non-consuming laststatus, and descriptor-backed cat control.
+- tasks/evidence/2026-06-04-phase10-pipeline-stderr-not-piped-core/qemu-local-shell-pipeline-stderr-not-piped-smoke.log
+  - PASS with final participants=8 expected=8 errors=0
+    classification=qemu-local-shell-pipeline-stderr-not-piped-complete.
+  - Records stderr producer not piped by default and retained stdout pipeline
+    control.
+- tasks/evidence/2026-06-04-phase10-pipeline-stderr-dup-to-stdout-core/qemu-local-shell-pipeline-stderr-dup-to-stdout-smoke.log
+  - PASS with final participants=9 expected=9 errors=0
+    classification=qemu-local-shell-pipeline-stderr-dup-to-stdout-complete.
+  - Records exact 2>&1 producer-to-pipe descriptor-mixing behavior and stdout
+    pipeline control.
+- tasks/evidence/2026-06-04-phase10-pipeline-stdout-redirect-away-core/qemu-local-shell-pipeline-stdout-redirect-away-smoke.log
+  - PASS retained for exact inverse descriptor-mixing behavior where stdout is
+    redirected away and the consumer observes deterministic pipe EOF/no-data.
+- tasks/2026-06-05-phase10-pipeline-file-redirection-frontier-closeout.md
+  - Accepted closeout maps consumer-output and producer-output-away
+    pipeline/file-redirection forms without expanding grammar or persistence
+    claims.
+- tasks/evidence/2026-06-05-phase10-pipeline-consumer-output-redirection-core/qemu-local-shell-pipeline-consumer-output-redirection-smoke.log
+  - Retains consumer fd1 volatile-file sink, producer pipe transfer,
+    descriptor-backed readback, waitpid, laststatus, errors=0, classification,
+    and PASS.
+- tasks/evidence/2026-06-05-phase10-pipeline-producer-file-redirection-away-core/qemu-local-shell-pipeline-producer-file-redirection-away-smoke.log
+  - Retains producer fd1 volatile-file sink overriding the pipe writer,
+    consumer pipe EOF/no-data, descriptor-backed readback, waitpid, laststatus,
+    errors=0, classification, and PASS.
+
+Descriptor/lifecycle/file controls inspected:
+- tasks/evidence/2026-06-03-phase10-standard-descriptor-inheritance-exec-core/qemu-local-shell-standard-descriptor-inheritance-smoke.log
+  - PASS with standard fd0=stdio-input, fd1=stdio-output, fd2=stdio-output,
+    inherited-count=3, and loader-temp-open=false for accepted VFS exec.
+- tasks/evidence/2026-06-03-phase10-minimal-waitpid-lifecycle-observation-core/qemu-local-shell-waitpid-lifecycle-smoke.log
+  - PASS with no-child, consuming waitpid, already-consumed no-child, nonzero
+    status 0x2a, zero-status controls, and negative exec controls.
+- tasks/evidence/2026-06-03-phase10-shell-last-process-status-observation/qemu-local-shell-last-process-status-smoke.log
+  - PASS with non-consuming laststatus over the latest accepted lifecycle
+    record.
+- tasks/evidence/2026-06-02-qemu-local-cat-banner-core/qemu-local-cat-banner-smoke.log
+  - PASS with descriptor-backed cat /etc/banner.txt control.
+
+Background/process-control evidence inspected:
+- tasks/evidence/2026-06-05-phase10-background-vfs-exec-lifecycle-core/qemu-local-shell-background-vfs-exec-lifecycle-smoke.log
+  - PASS with final participants=14 expected=14 errors=0
+    classification=qemu-local-shell-background-vfs-exec-lifecycle-complete.
+  - Records exec /bin/status42 & through source=vfs-open-read mode=background,
+    shell-responsive=true, completed status=0x2a, observed-status=0x2a,
+    reaped=true, and foreground waitpid/laststatus isolation.
+- tasks/evidence/2026-06-05-phase10-jobs-accounting-list-core/qemu-local-shell-jobs-accounting-list-smoke.log
+  - PASS with final participants=17 expected=17 errors=0
+    classification=qemu-local-shell-jobs-accounting-list-complete.
+  - Records jobs none, running and completed /bin/status42 records, foreground
+    isolation, fg/bg/kill deterministic negatives, and retained pipeline/cat
+    controls.
+- tasks/evidence/2026-06-05-phase10-multiple-background-vfs-exec-records-core/qemu-local-shell-multiple-background-jobs-smoke.log
+  - PASS with final participants=15 expected=15 errors=0
+    classification=qemu-local-shell-multiple-background-jobs-complete.
+  - Records distinct /bin/status42 and /bin/zero background records with stable
+    job ids/pids and statuses 0x2a and 0x0.
+- tasks/evidence/2026-06-05-phase10-background-jobs-stale-entry-policy-core/qemu-local-shell-background-jobs-stale-entry-policy-smoke.log
+  - PASS with final participants=16 expected=16 errors=0
+    classification=qemu-local-shell-background-jobs-stale-entry-policy-complete.
+  - First jobs report exposes completed /bin/status42 and running /bin/zero,
+    second report exposes completed /bin/zero after clearing /bin/status42, and
+    third report returns jobs none after all completed records were reported and
+    cleared.
+
+Disposition:
+- fixed: Milestone 10.2 closeout maps retained evidence for simple pipelines,
+  redirection composition, exit status, waitpid/laststatus, descriptor
+  inheritance/restoration, loader-temp descriptor non-leak, background VFS exec,
+  jobs accounting, multiple background records, and stale-entry policy.
+- fixed: The accepted multiple-program progress claim is kept to the local/QEMU
+  background-accounting frontier and does not claim true scheduler-concurrent
+  userspace execution or POSIX job control.
+- not-an-issue: No ADR update is needed; this closeout records a milestone
+  boundary without changing process-control policy.
+- not-an-issue: hardwareTestLock remained unlocked/restored and unused; Pi 5
+  proof is outside this local/QEMU milestone closeout.
+- deferred: scheduler-concurrent userspace execution, full POSIX job control,
+  close-on-exec expansion beyond accepted controls, multi-stage/concurrent
+  pipelines, pipefail, background pipelines/redirections, fg/bg/kill/disown,
+  signals, process groups, sessions, terminal ownership, fork, procfs/process
+  tree inspection, scheduling fairness proof, persistent/larger storage, Pi 5
+  proof, networking, SSH, Milestone 10.3 implementation, Phase 11, and phase
+  transition.
