@@ -1,0 +1,44 @@
+phase10-generated-userland-image-contract-20260605
+
+Evidence level: static source/doc/script review.
+
+Reviewed:
+- src/initramfs.rs: immutable static nodes, hardcoded file/program bytes, path
+  lookup, regular-file open descriptions, descriptor read plumbing, directory
+  validation, and current compiled fixture entry table.
+- src/local_command_loop.rs: descriptor-backed cat, VFS exec, fixed /bin lookup,
+  inherited stdio, laststatus/waitpid, redirection/pipeline/jobs controls, and
+  current dependence on phase8_readonly_initramfs_fixture().
+- src/program_loader.rs: VFS-backed loader input, MAX_PROGRAM_IMAGE_BYTES, ELF
+  validation, and accepted executable-image planning boundary.
+- src/syscall.rs: TalosOpen/TalosRead descriptor-backed initramfs dispatch.
+- src/posix.rs: normalize_path(), DEFAULT_PATH_LIMITS, path component limits,
+  descriptor object vocabulary, and errno mapping.
+- build.rs and scripts/qemu-local-serial-command-loop-smoke.sh: QEMU scenario
+  and retained-evidence harness shape.
+- tasks/2026-06-05-phase10-local-storage-path-evaluation-checkpoint.md and
+  tasks/evidence/2026-06-05-phase10-local-storage-path-evaluation-checkpoint/static-evaluation-matrix.txt.
+- Retained Phase 8/10 task records covering VFS open/read, loader, userspace
+  launch, status/wait, descriptor inheritance, pipeline/redirection, and jobs
+  controls.
+
+Contract result:
+- The first implementation must prove generated-root read-only content reaches
+  the existing descriptor-backed VFS model without adding a hardcoded
+  src/initramfs.rs file-content constant for that content.
+- The next slice may claim source-code edit avoidance for userland content
+  changes only.
+- Kernel binary rebuild avoidance, boot archive publication, Pi 5 behavior,
+  writable persistence, SD/USB/block drivers, networking, SSH, and phase
+  transition remain deferred.
+
+Disposition:
+- fixed: generated-root input shape, deterministic ordering, identity/digest
+  reporting, path normalization, file-kind limits, size limits, VFS integration,
+  optional executable policy, and retained evidence controls are specified.
+- removed: using another hardcoded src/initramfs.rs file-content constant as
+  Milestone 10.3 progress.
+- deferred: TFTP/no-rebuild transport, Pi 5 proof, writable persistence,
+  SD/USB/block storage, symlinks/devices/sockets/mounts, networking, and SSH.
+- not-an-issue: no runtime code, QEMU run, Pi 5 run, or hardware lock was
+  required for this documentation-only contract.

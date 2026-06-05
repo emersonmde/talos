@@ -6697,6 +6697,17 @@ Selected first slice:
   rebuilds, publishing boot archives, Pi 5 TFTP transport, writable persistent
   storage, SD/USB/block drivers, networking, SSH, and phase transition remain
   deferred.
+- 'phase10-generated-userland-image-contract-20260605' accepts the
+  documentation-only contract for that generated-root slice. The next
+  implementation must define generated-root identity/digest evidence,
+  deterministic path ordering and normalization, directory/regular-file-only
+  limits, fixed size limits, descriptor-backed VFS/open/read proof for a
+  generated file, and retained controls for accepted VFS exec, loader,
+  status/wait, descriptor, pipeline/redirection, and jobs behavior. A generated
+  executable is allowed only if it stays within the accepted VFS/loader/
+  userspace lifecycle path. No runtime behavior, no-rebuild transport, Pi 5
+  proof, boot archive publication, writable persistence, or phase transition is
+  accepted by the contract alone.
 
 Acceptance criteria:
 
