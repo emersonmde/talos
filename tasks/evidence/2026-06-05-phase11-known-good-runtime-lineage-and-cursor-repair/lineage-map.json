@@ -1,0 +1,66 @@
+{
+  "task_id": "phase11-known-good-runtime-lineage-and-cursor-repair-20260605",
+  "status": "accepted",
+  "evidence_level": "static source/doc/evidence inspection + shell syntax checks",
+  "restored_known_good": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "configured_kernel": "kernel_2712.img",
+    "effective_kernel": "kernel_2712.img",
+    "known_good_kernel_path": "da591740/kernel_2712.img",
+    "known_good_kernel_bytes": 104136,
+    "status_evidence": "tasks/evidence/2026-06-05-phase11-known-good-runtime-readiness-pi5-discriminator/lab-status-before.json",
+    "boot_files_evidence": "tasks/evidence/2026-06-05-phase11-known-good-runtime-readiness-pi5-discriminator/boot-files-before.json"
+  },
+  "observed_fetch": {
+    "retained_fresh_tftp_cursor": 4095602,
+    "stable_replay_event_count": 13,
+    "kernel_2712_serves": 2,
+    "kernel_2712_bytes": 104136,
+    "evidence": [
+      "tasks/evidence/2026-06-05-phase11-known-good-runtime-readiness-pi5-discriminator/tftp-cursor-before.txt",
+      "tasks/evidence/2026-06-05-phase11-known-good-runtime-readiness-pi5-discriminator/known-good-tftp-delta-replay-after-restore.json",
+      "tasks/evidence/2026-06-05-phase11-known-good-runtime-readiness-pi5-discriminator/known-good-tftp-delta-replay-after-restore-rerun.json"
+    ]
+  },
+  "readiness_contract": {
+    "required_kernel_marker": "TALOS: kernel_main",
+    "required_success_marker": "rpi5-production-timer-preemption: PASS",
+    "prompt_marker": "talos>",
+    "timeout_seconds": 75,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "contract_task": "tasks/2026-06-05-phase11-known-good-runtime-readiness-contract-core.md",
+    "contract_commit": "63c83f923857f2f2cb22ef9e82c213183e32f55e"
+  },
+  "latest_readiness_result": {
+    "classification": "known-good-fetch-without-readiness",
+    "blocker": "boot-runtime-readiness-after-known-good-fetch",
+    "serial_bytes": 708,
+    "has_kernel_main": false,
+    "has_prompt": false,
+    "has_required_pass": false,
+    "evidence": [
+      "tasks/evidence/2026-06-05-phase11-known-good-runtime-readiness-pi5-discriminator/known-good-runtime-readiness-observe.json",
+      "tasks/evidence/2026-06-05-phase11-known-good-runtime-readiness-pi5-discriminator/observed-summary.json",
+      "tasks/evidence/2026-06-05-phase11-known-good-runtime-readiness-pi5-discriminator/classification.json"
+    ]
+  },
+  "prior_same_tree_readiness_evidence": {
+    "task": "tasks/2026-06-05-phase11-rp1-diagnostic-entry-pi5-proof.md",
+    "commit": "d1aff42567e95708aa6fa346a7fe39d7d0eb0632",
+    "serial_evidence": "tasks/evidence/2026-06-05-phase11-rp1-diagnostic-entry-pi5-proof/known-good-serial-observe-followup.json",
+    "tftp_evidence": "tasks/evidence/2026-06-05-phase11-rp1-diagnostic-entry-pi5-proof/known-good-tftp-delta-followup.json",
+    "markers_observed": [
+      "TALOS: kernel_main",
+      "rpi5-production-timer-preemption: PASS"
+    ]
+  },
+  "cursor_repair": {
+    "fixed_scripts": [
+      "scripts/rpi5-tftp-cursor.sh",
+      "scripts/rpi5-wait-tftp-delta.sh"
+    ],
+    "disposition": "blank cursor fixed/quarantined by failing missing cursor extraction and rejecting blank or non-numeric delta cursors"
+  },
+  "next_mechanically_checkable_path": "phase11-known-good-runtime-direct-cursor-pi5-recheck-20260605"
+}

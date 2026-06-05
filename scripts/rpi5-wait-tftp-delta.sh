@@ -19,6 +19,13 @@ if [ "$STABLE_SAMPLES" -lt 1 ]; then
     exit 2
 fi
 
+case "$CURSOR" in
+    ''|*[!0-9]*)
+        echo "cursor must be a non-empty numeric /tftp/logs cursor_end" >&2
+        exit 2
+        ;;
+esac
+
 annotate_response() {
     jq \
         --argjson stable "$1" \
