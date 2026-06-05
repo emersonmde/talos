@@ -12,6 +12,35 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-05 - Pi 5 Generated-Root Boot Transport Contract
+
+- Status: accepted as a contract-only Milestone 10.3 checkpoint. No runtime
+  behavior change, QEMU run, Pi 5 hardware run, boot archive publication,
+  hardware-lock acquisition, writable persistent filesystem, block driver,
+  networking, SSH, or phase transition was added.
+- Context: The accepted local/QEMU generated-root no-rebuild transport proves
+  one kernel image can consume two different generated-root artifacts through
+  QEMU's loader-device address 0x47000000. That address is not a Pi 5 firmware
+  placement guarantee; the next Pi 5 step needed a source-backed boot archive
+  contract before candidate publication.
+- Decision: Select Raspberry Pi firmware initramfs transport for the Pi 5
+  candidate. The non-published archive candidate must carry the existing
+  talos-generated-root-v1 artifact as initramfs_2712 in both root and
+  da591740/ paths, configure both config files with initramfs initramfs_2712
+  followkernel, and require runtime source evidence from FDT /chosen
+  linux,initrd-start and linux,initrd-end.
+- Evidence level: static inspection of accepted generated-root transport task
+  records, Pi 5 lab-controller docs, boot archive scripts, archive-review
+  script, generated-root artifact tooling, initramfs/FDT source, linker layout,
+  roadmap notes, and the public Raspberry Pi config.txt documentation mirror.
+- Validation: git diff --check passed; /home/node/.cargo/bin/mdbook build
+  passed; and git diff --cached --check passed before commit.
+- Consequences: The next candidate archive core is mechanically unblocked only
+  for a non-published archive/static review. Hardware publication and Pi 5 proof
+  remain serialized under hardwareTestLock, with candidate identity, fresh
+  serial cursor, fresh TFTP delta, known-good/rerun triage for inconclusive
+  runs, and post-run restore evidence required.
+
 ## 2026-06-05 - Phase 10 Local Generated-Root No-Rebuild Transport Accepted
 
 - Status: accepted as the Milestone 10.3 local/QEMU no-kernel-rebuild

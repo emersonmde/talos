@@ -2219,6 +2219,21 @@ The post-review correction chain is:
     storage, Pi 5 proof, networking, SSH, and phase transition remain deferred.
     TFTP-loaded generated initramfs transport is the fallback after the local
     manifest/root contract and implementation are accepted.
+115. Pi 5 generated-root boot transport contract: accepted in
+    'phase10-pi5-generated-root-boot-transport-contract-20260605'. Static
+    source/doc/script review selects a concrete Pi 5 candidate transport:
+    carry the existing talos-generated-root-v1 artifact as firmware-loaded
+    'initramfs_2712' with root and 'da591740/' archive copies, configure both
+    config files with 'initramfs initramfs_2712 followkernel', and derive the
+    runtime artifact range from FDT /chosen 'linux,initrd-start' and
+    'linux,initrd-end' rather than QEMU's fixed 0x47000000 loader-device
+    address. The next candidate task is mechanically unblocked only for a
+    non-published archive/static review using
+    'target/talos-rpi5-generated-root-boot-transport-candidate-20260605.tar.gz'
+    and the matching boot tree directory. Hardware publication, fresh serial and
+    TFTP evidence, candidate restore, writable persistence, SD/USB/block
+    drivers, networking, SSH, and phase transition remain deferred to explicit
+    later tasks.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
