@@ -12,6 +12,42 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-05 - Phase 10 Local Generated-Root No-Rebuild Transport Accepted
+
+- Status: accepted as the Milestone 10.3 local/QEMU no-kernel-rebuild
+  generated-root transport core. No Pi 5 hardware run, boot archive
+  publication, hardware-lock acquisition, writable persistence, SD/USB/block
+  driver, networking, SSH, or phase transition was added.
+- Context: The accepted generated-root manifest and executable slices proved
+  source-code edit avoidance, but their generated content was still compiled
+  into the kernel image. The next bounded storage/userland-image slice needed
+  to prove the stronger local criterion: changing generated userland content
+  without rebuilding the kernel binary.
+- Decision: Accept
+  `phase10-generated-root-no-rebuild-transport-core-20260605`. Talos now
+  parses a deterministic `talos-generated-root-v1` artifact placed by QEMU's
+  loader device at `0x47000000`, replacing only the accepted generated file
+  and generated executable bytes after all-or-nothing validation. The address
+  differs from the original `0x48000000` contract candidate because QEMU
+  places the DTB there for `-M virt -m 256M`; evidence records
+  `__kernel_end=0x00000000403bb000 <= 0x47000000`.
+- Evidence level: fmt/lint/typecheck, no_std unit tests, task-owned
+  QEMU/substitute no-rebuild transport smoke, static hash/digest/collision
+  inspection, and retained controls for VFS/open/read, loader/status,
+  waitpid/laststatus, pipeline, and jobs behavior.
+- Validation: `cargo fmt --all -- --check` passed;
+  `cargo -Zjson-target-spec test --quiet` passed;
+  `scripts/qemu-local-shell-generated-root-no-rebuild-transport-smoke.sh`
+  passed; `git diff --check` passed; `/home/node/.cargo/bin/mdbook build`
+  passed; and `git diff --cached --check` passed before commit.
+- Consequences: Talos has local/QEMU evidence that two different generated-root
+  artifacts can change generated file content and generated executable status
+  while the kernel ELF/image hashes remain unchanged. Missing artifacts use the
+  compiled fallback with reason `missing-artifact`; malformed artifacts use
+  the fallback with reason `digest-mismatch`. Pi 5 boot archive/TFTP
+  transport, writable persistence, storage drivers, networking, SSH, and phase
+  transition remain deferred.
+
 ## 2026-06-05 - Phase 10 Minimal Jobs Accounting List Accepted
 
 - Status: accepted as the Phase 10 QEMU/substitute jobs/accounting list core.

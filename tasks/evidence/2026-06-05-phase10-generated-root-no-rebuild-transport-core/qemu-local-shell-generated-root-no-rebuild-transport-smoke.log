@@ -1,0 +1,7 @@
+qemu-local-shell-generated-root-no-rebuild-transport: kernel-elf-sha256=a0bc112bde45ef36f18d5d283cf540553827ed5dd31e1afcfb51f54505331197
+qemu-local-shell-generated-root-no-rebuild-transport: kernel-img-sha256=e8d4d60e0c3ecfc42ba8c4a8e13886a6534450b5e0a36ef2eb4b797990ed50a5
+qemu-local-shell-generated-root-no-rebuild-transport: kernel-end=0x00000000403bb000 artifact-address=0x47000000 collision-guard=pass
+qemu-local-shell-generated-root-no-rebuild-transport: artifact-a-sha256=0341f5393502f54489acb1951633bf2773fb846a82bde89b3e4a2e82000724c6 path=target/generated-root-artifact-a.bin
+qemu-local-shell-generated-root-no-rebuild-transport: artifact-b-sha256=1413c055cae7fde00194947b10fc69bc3da095a9cd7d78d3d5c877d7f4a1933d path=target/generated-root-artifact-b.bin
+qemu-local-shell-generated-root-no-rebuild-transport: artifact-malformed-sha256=adadd8535e6f6ca3c9295a1ba44ee41ee503e37e141b2f5ed725257aee6abbd2 path=target/generated-root-artifact-malformed.bin
+qemu-local-shell-generated-root-no-rebuild-transport: same-kernel-binary=true source-edits-between-artifacts=false classification=qemu-local-shell-generated-root-no-rebuild-transport-complete

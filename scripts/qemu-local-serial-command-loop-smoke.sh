@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-TALOS_BOOT_SCENARIO="${TALOS_QEMU_LOCAL_COMMAND_LOOP_BOOT_SCENARIO:-qemu_local_serial_command_loop}" cargo -Zjson-target-spec build "$@"
+if [ -z "${TALOS_QEMU_LOCAL_COMMAND_LOOP_PREBUILT_ELF:-}" ]; then
+    TALOS_BOOT_SCENARIO="${TALOS_QEMU_LOCAL_COMMAND_LOOP_BOOT_SCENARIO:-qemu_local_serial_command_loop}" cargo -Zjson-target-spec build "$@"
+fi
 
-ELF_FILE="target/aarch64-talos-virt/debug/talos"
+ELF_FILE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_PREBUILT_ELF:-target/aarch64-talos-virt/debug/talos}"
 IMG_FILE="$ELF_FILE.local-serial-command-loop.img"
 LOG_FILE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LOG_FILE:-target/qemu-local-serial-command-loop-smoke.log}"
 QEMU_LOG_FILE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_QEMU_LOG_FILE:-target/qemu-local-serial-command-loop-smoke.qemu.log}"
@@ -49,6 +51,11 @@ SHELL_JOBS_ACCOUNTING_LIST_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_JOBS_ACC
 SHELL_MULTIPLE_BACKGROUND_JOBS_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_MULTIPLE_BACKGROUND_JOBS_SMOKE:-0}"
 SHELL_BACKGROUND_JOBS_STALE_ENTRY_POLICY_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_BACKGROUND_JOBS_STALE_ENTRY_POLICY_SMOKE:-0}"
 SHELL_GENERATED_USERLAND_MANIFEST_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_GENERATED_USERLAND_MANIFEST_SMOKE:-0}"
+GENERATED_ROOT_ARTIFACT="${TALOS_QEMU_LOCAL_COMMAND_LOOP_GENERATED_ROOT_ARTIFACT:-}"
+GENERATED_ROOT_EXPECTED_SOURCE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_GENERATED_ROOT_EXPECTED_SOURCE:-compiled-fallback}"
+GENERATED_ROOT_EXPECTED_REASON="${TALOS_QEMU_LOCAL_COMMAND_LOOP_GENERATED_ROOT_EXPECTED_REASON:-missing-artifact}"
+GENERATED_ROOT_EXPECTED_CONTENT="${TALOS_QEMU_LOCAL_COMMAND_LOOP_GENERATED_ROOT_EXPECTED_CONTENT:-Talos generated-root manifest fixture}"
+GENERATED_ROOT_EXPECTED_STATUS_HEX="${TALOS_QEMU_LOCAL_COMMAND_LOOP_GENERATED_ROOT_EXPECTED_STATUS_HEX:-0x0000000000000007}"
 SHELL_STDERR_REGULAR_FILE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDERR_REGULAR_FILE_REDIRECTION_SMOKE:-0}"
 SHELL_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE:-0}"
 SHELL_STDERR_REGULAR_FILE_APPEND_CREATE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDERR_REGULAR_FILE_APPEND_CREATE_REDIRECTION_SMOKE:-0}"
@@ -78,6 +85,11 @@ script_dir="$(CDPATH= cd "$(dirname "$0")" && pwd)"
 : >"$LOG_FILE"
 : >"$QEMU_LOG_FILE"
 
+qemu_generated_root_loader_args=()
+if [ -n "$GENERATED_ROOT_ARTIFACT" ]; then
+    qemu_generated_root_loader_args=(-device "loader,file=$GENERATED_ROOT_ARTIFACT,addr=0x47000000")
+fi
+
 "$qemu_tool" \
     -M virt,gic-version=2,virtualization=on \
     -cpu cortex-a76 \
@@ -87,6 +99,7 @@ script_dir="$(CDPATH= cd "$(dirname "$0")" && pwd)"
     -chardev socket,id=serial0,host=127.0.0.1,port="$PORT",server=on,wait=on \
     -serial chardev:serial0 \
     -semihosting-config enable=on,target=native \
+    "${qemu_generated_root_loader_args[@]}" \
     -kernel "$IMG_FILE" >"$QEMU_LOG_FILE" 2>&1 &
 qemu_pid=$!
 
@@ -297,6 +310,7 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                 "laststatus"
                 "exec stdout | exec stdin"
                 "jobs"
+                "rootinfo"
             )
             command_index="${BASH_REMATCH[1]}"
             if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#generated_userland_manifest_commands[@]}" ]; then
@@ -1181,6 +1195,7 @@ if [ "$SHELL_GENERATED_USERLAND_MANIFEST_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=11" "$LOG_FILE"
     grep -q "$LABEL: ready command=12" "$LOG_FILE"
     grep -q "$LABEL: ready command=13" "$LOG_FILE"
+    grep -q "$LABEL: ready command=14" "$LOG_FILE"
 fi
 if [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ] || [ "$LS_CWD_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=7" "$LOG_FILE"
@@ -1437,8 +1452,10 @@ if [ "$SHELL_GENERATED_USERLAND_MANIFEST_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: generated-root identity=phase10-generated-root-manifest-v1 source=userland/generated-root.manifest digest=sha256:" "$LOG_FILE"
     grep -q "$LABEL: generated-root hardcoded-src-initramfs-constant=false path=src/initramfs.rs" "$LOG_FILE"
     grep -q "$LABEL: generated-root executable-hardcoded-src-initramfs-constant=false path=src/initramfs.rs" "$LOG_FILE"
+    grep -q "$LABEL: generated-root-selection source=$GENERATED_ROOT_EXPECTED_SOURCE reason=$GENERATED_ROOT_EXPECTED_REASON" "$LOG_FILE"
+    grep -q "talos: generated-root source=$GENERATED_ROOT_EXPECTED_SOURCE reason=$GENERATED_ROOT_EXPECTED_REASON" "$LOG_FILE"
     grep -q "talos> cat /generated/manifest.txt" "$LOG_FILE"
-    grep -q "^Talos generated-root manifest fixture" "$LOG_FILE"
+    grep -q "^$GENERATED_ROOT_EXPECTED_CONTENT" "$LOG_FILE"
     grep -q "$LABEL: line command=3 hex=63 61 74 20 2f 67 65 6e 65 72 61 74 65 64 2f 6d 61 6e 69 66 65 73 74 2e 74 78 74" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=3 status=handled responses=1" "$LOG_FILE"
     grep -q "talos> ls /" "$LOG_FILE"
@@ -1450,13 +1467,13 @@ if [ "$SHELL_GENERATED_USERLAND_MANIFEST_SMOKE" -eq 1 ]; then
     grep -q "talos> exec /generated/status7 alpha" "$LOG_FILE"
     grep -q "talos: exec path=/generated/status7 source=vfs-open-read" "$LOG_FILE"
     grep -q "talos: exec-startup-abi state=literal-argv-absolute-empty-envp argc=0x0000000000000002 argv0=/generated/status7 argv1=alpha" "$LOG_FILE"
-    grep -q "talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x0000000000000007 complete=true source=lifecycle-record" "$LOG_FILE"
+    grep -q "talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=$GENERATED_ROOT_EXPECTED_STATUS_HEX complete=true source=lifecycle-record" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=6 status=handled responses=9" "$LOG_FILE"
     grep -q "talos> waitpid" "$LOG_FILE"
-    grep -q "talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/generated/status7 state=exited status=0x0000000000000007 observed-status=0x0000000000000007 reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -q "talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/generated/status7 state=exited status=$GENERATED_ROOT_EXPECTED_STATUS_HEX observed-status=$GENERATED_ROOT_EXPECTED_STATUS_HEX reaped=true source=lifecycle-record" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=7 status=handled responses=1" "$LOG_FILE"
     grep -q "talos> laststatus" "$LOG_FILE"
-    grep -q "talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/generated/status7 state=exited status=0x0000000000000007 observed-status=0x0000000000000007 reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -q "talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/generated/status7 state=exited status=$GENERATED_ROOT_EXPECTED_STATUS_HEX observed-status=$GENERATED_ROOT_EXPECTED_STATUS_HEX reaped=true source=lifecycle-record" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=8 status=handled responses=1" "$LOG_FILE"
     grep -q "talos> exec /bin/status42" "$LOG_FILE"
     grep -q "talos: exec path=/bin/status42 source=vfs-open-read" "$LOG_FILE"
@@ -1470,7 +1487,9 @@ if [ "$SHELL_GENERATED_USERLAND_MANIFEST_SMOKE" -eq 1 ]; then
     grep -q "talos> jobs" "$LOG_FILE"
     grep -q "talos: jobs none source=background-vfs-exec-accounting" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=13 status=handled responses=1" "$LOG_FILE"
-    grep -q "$LABEL: final participants=14 expected=14 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+    grep -q "talos> rootinfo" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=14 status=handled responses=1" "$LOG_FILE"
+    grep -q "$LABEL: final participants=15 expected=15 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
 elif [ "$LINE_EDITING_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: dispatch command=3 status=handled responses=1 raw-bytes=6 backspaces=1 deletes=0" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=4 status=handled responses=1 raw-bytes=6 backspaces=0 deletes=1" "$LOG_FILE"

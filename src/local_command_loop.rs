@@ -3368,6 +3368,14 @@ fn dispatch_local_command(
             }
             Ok(LocalCommandStatus::Handled)
         }
+        "rootinfo" => {
+            if command.arguments.is_some() {
+                write_line(sink, responses, "talos: unexpected-argument")?;
+                return Ok(LocalCommandStatus::UnexpectedArgument);
+            }
+            write_generated_root_selection_line(sink, responses)?;
+            Ok(LocalCommandStatus::Handled)
+        }
         "stdio" => {
             if command.arguments.is_some() {
                 write_line(sink, responses, "talos: unexpected-argument")?;
@@ -4008,6 +4016,30 @@ fn write_stdio_descriptor_line(
         response_lines,
         &["talos: fd ", descriptor_name, " ", kind],
     )
+}
+
+fn write_generated_root_selection_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+) -> Result<(), LocalCommandCycleError> {
+    let report = initramfs::generated_root_selection_report();
+    write_str_part(sink, "talos: generated-root source=")?;
+    write_str_part(sink, report.source)?;
+    write_str_part(sink, " reason=")?;
+    write_str_part(sink, report.reason)?;
+    write_str_part(sink, " digest=")?;
+    write_hex_u64_part(sink, report.digest)?;
+    write_str_part(sink, " total-len=")?;
+    write_hex_usize_part(sink, report.total_len)?;
+    write_str_part(sink, " file-len=")?;
+    write_hex_usize_part(sink, report.file_len)?;
+    write_str_part(sink, " exec-len=")?;
+    write_hex_usize_part(sink, report.exec_len)?;
+    write_str_part(sink, " path=")?;
+    write_byte_path_part(sink, initramfs::GENERATED_ROOT_FILE_PATH)?;
+    write_str_part(sink, " exec-path=")?;
+    write_byte_path_part(sink, initramfs::GENERATED_ROOT_EXEC_PATH)?;
+    finish_dynamic_line(sink, response_lines)
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

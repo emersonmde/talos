@@ -6749,7 +6749,7 @@ Selected first slice:
   networking, SSH, and phase transition remain deferred.
 - 'phase10-generated-root-no-rebuild-transport-contract-20260605' accepts the
   documentation-only local/QEMU no-kernel-rebuild transport contract. The
-  selected first proof shape is QEMU `-device loader,file=<artifact>,addr=0x48000000`
+  selected first proof shape is QEMU `-device loader,file=<artifact>,addr=0x47000000`
   on the existing `-M virt -m 256M` local runner, with a 4 MiB artifact
   window, a `__kernel_end` collision guard, a self-describing deterministic
   generated-root v1 artifact, same-kernel image hash evidence for two artifact
@@ -6757,6 +6757,18 @@ Selected first slice:
   missing or malformed artifacts. This contract does not implement the
   transport and does not accept Pi 5 boot archive/TFTP behavior, writable
   persistence, SD/USB/block drivers, networking, SSH, or phase transition.
+- 'phase10-generated-root-no-rebuild-transport-core-20260605' accepts the
+  local/QEMU no-kernel-rebuild transport core. The accepted proof runs the same
+  kernel ELF/image hashes against two different generated-root artifacts loaded
+  with QEMU's loader device at `0x47000000`, after proving
+  `__kernel_end=0x00000000403bb000 <= 0x47000000`. Artifact A and B have
+  distinct SHA-256 digests and produce distinct generated file contents plus
+  generated executable statuses through the accepted VFS, loader, waitpid,
+  laststatus, pipeline, and jobs controls. Missing and malformed artifacts
+  deterministically fall back to the compiled generated-root source. This is
+  local/QEMU-substitute evidence only; Pi 5 boot archive/TFTP behavior,
+  writable persistence, storage drivers, networking, SSH, and phase transition
+  remain deferred.
 
 Acceptance criteria:
 

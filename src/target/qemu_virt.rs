@@ -14408,6 +14408,27 @@ pub fn run_diagnostic_command_channel_smoke() -> bool {
 pub fn run_local_serial_command_loop_smoke() -> bool {
     let command_count = local_command_loop_smoke_command_count();
 
+    #[cfg(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest")]
+    {
+        let artifact_window = unsafe {
+            core::slice::from_raw_parts(
+                crate::initramfs::GENERATED_ROOT_EXTERNAL_ARTIFACT_ADDRESS as *const u8,
+                crate::initramfs::GENERATED_ROOT_EXTERNAL_ARTIFACT_MAX_LEN,
+            )
+        };
+        let report = crate::initramfs::install_external_generated_root_artifact(artifact_window);
+        crate::println!(
+            "{}: generated-root-selection source={} reason={} digest={:#018x} total-len={:#018x} file-len={:#018x} exec-len={:#018x}",
+            local_command_loop_smoke_label(),
+            report.source,
+            report.reason,
+            report.digest,
+            report.total_len,
+            report.file_len,
+            report.exec_len
+        );
+    }
+
     crate::println!(
         "{}: start command-count={} backend=runtime-console0/qemu-virt-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins={} descriptor-backed-input=true descriptor-backed-output=true",
         local_command_loop_smoke_label(),
@@ -15259,7 +15280,7 @@ const fn local_command_loop_smoke_command_count() -> usize {
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy") {
         16
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") {
-        14
+        15
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection") {
         14
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection")
@@ -15410,6 +15431,9 @@ fn expected_local_command_loop_dispatch(
         }
         13 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
             line == b"jobs" && status == Handled && response_lines == 1
+        }
+        14 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
+            line == b"rootinfo" && status == Handled && response_lines == 1
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_combined_stdin_stdout_redirection") => {
             line == b"exec stdin </etc/banner.txt >/tmp/stdin-report.txt"

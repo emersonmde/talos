@@ -47,8 +47,85 @@ pub(crate) const PHASE10_STDERR_BYTES: &[u8] = &PHASE10_STDERR_ELF_BYTES;
 pub(crate) const PHASE8_EMPTY_PATH: &[u8] = b"/empty";
 pub(crate) const PHASE8_NESTED_PATH: &[u8] = b"/dir/nested.txt";
 pub(crate) const PHASE8_NESTED_BYTES: &[u8] = b"nested fixture\n";
+#[cfg_attr(test, allow(dead_code))]
+pub(crate) const GENERATED_ROOT_EXTERNAL_ARTIFACT_ADDRESS: usize = 0x4700_0000;
+#[cfg_attr(test, allow(dead_code))]
+pub(crate) const GENERATED_ROOT_EXTERNAL_ARTIFACT_MAX_LEN: usize = 4 * 1024 * 1024;
+#[cfg_attr(test, allow(dead_code))]
+const GENERATED_ROOT_EXTERNAL_ARTIFACT_HEADER_LEN: usize = 40;
+#[cfg_attr(test, allow(dead_code))]
+const GENERATED_ROOT_EXTERNAL_ARTIFACT_ENTRY_HEADER_LEN: usize = 12;
+#[cfg_attr(test, allow(dead_code))]
+const GENERATED_ROOT_EXTERNAL_ARTIFACT_DIGEST_OFFSET: usize = 32;
+#[cfg_attr(test, allow(dead_code))]
+const GENERATED_ROOT_EXTERNAL_ARTIFACT_MAGIC: &[u8; 16] = b"TALOSROOTV1\0\0\0\0\0";
+#[cfg_attr(test, allow(dead_code))]
+const GENERATED_ROOT_EXTERNAL_ARTIFACT_VERSION: u32 = 1;
+#[cfg_attr(test, allow(dead_code))]
+const GENERATED_ROOT_EXTERNAL_ARTIFACT_ENTRY_FILE: u8 = 1;
+#[cfg_attr(test, allow(dead_code))]
+const GENERATED_ROOT_EXTERNAL_ARTIFACT_FLAG_EXECUTABLE: u8 = 1;
+#[cfg_attr(test, allow(dead_code))]
+const GENERATED_ROOT_EXTERNAL_ARTIFACT_MAX_FILE_LEN: usize = 4096;
+#[cfg_attr(test, allow(dead_code))]
+const GENERATED_ROOT_EXTERNAL_ARTIFACT_MAX_EXEC_LEN: usize = 16 * 1024;
 
 include!(concat!(env!("OUT_DIR"), "/generated_initramfs.rs"));
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct GeneratedRootSelectionReport {
+    pub(crate) source: &'static str,
+    pub(crate) reason: &'static str,
+    pub(crate) digest: u64,
+    pub(crate) total_len: usize,
+    pub(crate) file_len: usize,
+    pub(crate) exec_len: usize,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+struct ExternalGeneratedRoot {
+    active: bool,
+    reason: &'static str,
+    digest: u64,
+    total_len: usize,
+    file_bytes: &'static [u8],
+    exec_bytes: &'static [u8],
+}
+
+impl ExternalGeneratedRoot {
+    const fn fallback(reason: &'static str) -> Self {
+        Self {
+            active: false,
+            reason,
+            digest: GENERATED_ROOT_DIGEST,
+            total_len: 0,
+            file_bytes: GENERATED_ROOT_FILE_BYTES,
+            exec_bytes: GENERATED_ROOT_EXEC_BYTES,
+        }
+    }
+
+    const fn source(self) -> &'static str {
+        if self.active {
+            "external"
+        } else {
+            "compiled-fallback"
+        }
+    }
+
+    const fn report(self) -> GeneratedRootSelectionReport {
+        GeneratedRootSelectionReport {
+            source: self.source(),
+            reason: self.reason,
+            digest: self.digest,
+            total_len: self.total_len,
+            file_len: self.file_bytes.len(),
+            exec_len: self.exec_bytes.len(),
+        }
+    }
+}
+
+static mut EXTERNAL_GENERATED_ROOT: ExternalGeneratedRoot =
+    ExternalGeneratedRoot::fallback("missing-artifact");
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum VfsNodeKind {
@@ -339,7 +416,9 @@ impl ReadOnlyInitramfs {
         let node = self.node(handle.index())?;
         match node.data {
             InitramfsNodeData::Directory(_) => Err(PosixError::IsDirectory),
-            InitramfsNodeData::RegularFile(bytes) => Ok(bytes),
+            InitramfsNodeData::RegularFile(bytes) => {
+                Ok(generated_root_runtime_bytes(handle.index()).unwrap_or(bytes))
+            }
         }
     }
 
@@ -419,7 +498,9 @@ impl ReadOnlyInitramfs {
         let node = self.node(description.node_index)?;
         let bytes = match node.data {
             InitramfsNodeData::Directory(_) => return Err(PosixError::IsDirectory),
-            InitramfsNodeData::RegularFile(bytes) => bytes,
+            InitramfsNodeData::RegularFile(bytes) => {
+                generated_root_runtime_bytes(description.node_index).unwrap_or(bytes)
+            }
         };
         if description.offset > bytes.len() {
             return Err(PosixError::InvalidArgument);
@@ -458,7 +539,9 @@ impl ReadOnlyInitramfs {
         let node = self.node(description.node_index)?;
         let bytes = match node.data {
             InitramfsNodeData::Directory(_) => return Err(PosixError::IsDirectory),
-            InitramfsNodeData::RegularFile(bytes) => bytes,
+            InitramfsNodeData::RegularFile(bytes) => {
+                generated_root_runtime_bytes(description.node_index).unwrap_or(bytes)
+            }
         };
         if description.offset > bytes.len() {
             return Err(PosixError::InvalidArgument);
@@ -482,12 +565,14 @@ impl ReadOnlyInitramfs {
     }
 
     fn handle_for(self, index: usize, node: InitramfsNode) -> VfsNodeHandle {
+        let len =
+            generated_root_runtime_bytes(index).map_or_else(|| node.len(), |bytes| bytes.len());
         VfsNodeHandle {
             index,
             metadata: VfsMetadata {
                 node_id: node.id(),
                 kind: node.kind(),
-                len: node.len(),
+                len,
                 read_only: true,
             },
         }
@@ -496,6 +581,218 @@ impl ReadOnlyInitramfs {
 
 pub(crate) fn phase8_readonly_initramfs_fixture() -> ReadOnlyInitramfs {
     ReadOnlyInitramfs::new(&PHASE8_NODES, PHASE8_ROOT_INDEX)
+}
+
+pub(crate) fn generated_root_selection_report() -> GeneratedRootSelectionReport {
+    // SAFETY: Talos installs this once during single-core QEMU smoke startup
+    // before local shell commands can observe it. Later reads are immutable.
+    unsafe { EXTERNAL_GENERATED_ROOT.report() }
+}
+
+#[cfg_attr(test, allow(dead_code))]
+pub(crate) fn install_external_generated_root_artifact(
+    artifact_window: &'static [u8],
+) -> GeneratedRootSelectionReport {
+    let parsed = parse_external_generated_root_artifact(artifact_window)
+        .unwrap_or_else(ExternalGeneratedRoot::fallback);
+    // SAFETY: The caller runs during single-core QEMU smoke startup before any
+    // descriptor-backed VFS operation observes generated-root nodes.
+    unsafe {
+        EXTERNAL_GENERATED_ROOT = parsed;
+        EXTERNAL_GENERATED_ROOT.report()
+    }
+}
+
+fn generated_root_runtime_bytes(node_index: usize) -> Option<&'static [u8]> {
+    // SAFETY: See generated_root_selection_report; after startup the active
+    // generated-root selection is immutable for the lifetime of the kernel.
+    let selected = unsafe { EXTERNAL_GENERATED_ROOT };
+    if !selected.active {
+        return None;
+    }
+    match node_index {
+        GENERATED_ROOT_FILE_INDEX => Some(selected.file_bytes),
+        GENERATED_ROOT_EXEC_INDEX => Some(selected.exec_bytes),
+        _ => None,
+    }
+}
+
+#[cfg_attr(test, allow(dead_code))]
+fn parse_external_generated_root_artifact(
+    artifact_window: &'static [u8],
+) -> Result<ExternalGeneratedRoot, &'static str> {
+    if artifact_window.len() < GENERATED_ROOT_EXTERNAL_ARTIFACT_HEADER_LEN {
+        return Err("missing-artifact");
+    }
+    if &artifact_window[..GENERATED_ROOT_EXTERNAL_ARTIFACT_MAGIC.len()]
+        != GENERATED_ROOT_EXTERNAL_ARTIFACT_MAGIC
+    {
+        return Err("missing-artifact");
+    }
+
+    let version = read_artifact_u32(artifact_window, 16)?;
+    let header_len = read_artifact_u32(artifact_window, 20)? as usize;
+    let total_len = read_artifact_u32(artifact_window, 24)? as usize;
+    let entry_count = read_artifact_u32(artifact_window, 28)? as usize;
+    let digest = read_artifact_u64(
+        artifact_window,
+        GENERATED_ROOT_EXTERNAL_ARTIFACT_DIGEST_OFFSET,
+    )?;
+
+    if version != GENERATED_ROOT_EXTERNAL_ARTIFACT_VERSION {
+        return Err("unsupported-version");
+    }
+    if header_len != GENERATED_ROOT_EXTERNAL_ARTIFACT_HEADER_LEN {
+        return Err("invalid-header-len");
+    }
+    if !(GENERATED_ROOT_EXTERNAL_ARTIFACT_HEADER_LEN..=GENERATED_ROOT_EXTERNAL_ARTIFACT_MAX_LEN)
+        .contains(&total_len)
+        || total_len > artifact_window.len()
+    {
+        return Err("invalid-total-len");
+    }
+    if entry_count != 2 {
+        return Err("invalid-entry-count");
+    }
+    if digest
+        != generated_root_external_artifact_digest(
+            &artifact_window[..total_len],
+            GENERATED_ROOT_EXTERNAL_ARTIFACT_DIGEST_OFFSET,
+        )
+    {
+        return Err("digest-mismatch");
+    }
+
+    let (file_path, file_bytes, next) =
+        parse_external_generated_root_entry(&artifact_window[..total_len], header_len, false)?;
+    let (exec_path, exec_bytes, next) =
+        parse_external_generated_root_entry(&artifact_window[..total_len], next, true)?;
+    if next != total_len {
+        return Err("trailing-bytes");
+    }
+    if file_path != GENERATED_ROOT_FILE_PATH || exec_path != GENERATED_ROOT_EXEC_PATH {
+        return Err("unsupported-path");
+    }
+    if file_path >= exec_path {
+        return Err("invalid-entry-order");
+    }
+    if file_bytes.len() > GENERATED_ROOT_EXTERNAL_ARTIFACT_MAX_FILE_LEN {
+        return Err("file-too-large");
+    }
+    if exec_bytes.len() > GENERATED_ROOT_EXTERNAL_ARTIFACT_MAX_EXEC_LEN {
+        return Err("exec-too-large");
+    }
+    if file_path.contains(&0) || file_bytes.contains(&0) || exec_path.contains(&0) {
+        return Err("nul-byte");
+    }
+
+    Ok(ExternalGeneratedRoot {
+        active: true,
+        reason: "valid-artifact",
+        digest,
+        total_len,
+        file_bytes,
+        exec_bytes,
+    })
+}
+
+#[cfg_attr(test, allow(dead_code))]
+fn parse_external_generated_root_entry(
+    artifact: &'static [u8],
+    offset: usize,
+    expect_executable: bool,
+) -> Result<(&'static [u8], &'static [u8], usize), &'static str> {
+    let entry_end = offset
+        .checked_add(GENERATED_ROOT_EXTERNAL_ARTIFACT_ENTRY_HEADER_LEN)
+        .ok_or("entry-overflow")?;
+    if entry_end > artifact.len() {
+        return Err("truncated-entry");
+    }
+    let kind = artifact[offset];
+    let flags = artifact[offset + 1];
+    let reserved = read_artifact_u16(artifact, offset + 2)?;
+    let path_len = read_artifact_u16(artifact, offset + 4)? as usize;
+    let reserved2 = read_artifact_u16(artifact, offset + 6)?;
+    let content_len = read_artifact_u32(artifact, offset + 8)? as usize;
+    if kind != GENERATED_ROOT_EXTERNAL_ARTIFACT_ENTRY_FILE
+        || reserved != 0
+        || reserved2 != 0
+        || (flags & !GENERATED_ROOT_EXTERNAL_ARTIFACT_FLAG_EXECUTABLE) != 0
+        || ((flags & GENERATED_ROOT_EXTERNAL_ARTIFACT_FLAG_EXECUTABLE) != 0) != expect_executable
+    {
+        return Err("invalid-entry-header");
+    }
+    let path_start = entry_end;
+    let content_start = path_start.checked_add(path_len).ok_or("entry-overflow")?;
+    let content_end = content_start
+        .checked_add(content_len)
+        .ok_or("entry-overflow")?;
+    if path_len == 0 || content_end > artifact.len() {
+        return Err("truncated-entry-payload");
+    }
+    Ok((
+        &artifact[path_start..content_start],
+        &artifact[content_start..content_end],
+        content_end,
+    ))
+}
+
+#[cfg_attr(test, allow(dead_code))]
+fn generated_root_external_artifact_digest(bytes: &[u8], digest_offset: usize) -> u64 {
+    const FNV_OFFSET: u64 = 0xcbf2_9ce4_8422_2325;
+    let mut hash = FNV_OFFSET;
+    let mut index = 0;
+    while index < bytes.len() {
+        let byte = if (digest_offset..digest_offset + 8).contains(&index) {
+            0
+        } else {
+            bytes[index]
+        };
+        hash = hash.wrapping_mul(0x0000_0100_0000_01b3) ^ byte as u64;
+        index += 1;
+    }
+    hash
+}
+
+#[cfg_attr(test, allow(dead_code))]
+fn read_artifact_u16(bytes: &[u8], offset: usize) -> Result<u16, &'static str> {
+    let end = offset.checked_add(2).ok_or("integer-overflow")?;
+    if end > bytes.len() {
+        return Err("truncated-integer");
+    }
+    Ok(u16::from_le_bytes([bytes[offset], bytes[offset + 1]]))
+}
+
+#[cfg_attr(test, allow(dead_code))]
+fn read_artifact_u32(bytes: &[u8], offset: usize) -> Result<u32, &'static str> {
+    let end = offset.checked_add(4).ok_or("integer-overflow")?;
+    if end > bytes.len() {
+        return Err("truncated-integer");
+    }
+    Ok(u32::from_le_bytes([
+        bytes[offset],
+        bytes[offset + 1],
+        bytes[offset + 2],
+        bytes[offset + 3],
+    ]))
+}
+
+#[cfg_attr(test, allow(dead_code))]
+fn read_artifact_u64(bytes: &[u8], offset: usize) -> Result<u64, &'static str> {
+    let end = offset.checked_add(8).ok_or("integer-overflow")?;
+    if end > bytes.len() {
+        return Err("truncated-integer");
+    }
+    Ok(u64::from_le_bytes([
+        bytes[offset],
+        bytes[offset + 1],
+        bytes[offset + 2],
+        bytes[offset + 3],
+        bytes[offset + 4],
+        bytes[offset + 5],
+        bytes[offset + 6],
+        bytes[offset + 7],
+    ]))
 }
 
 fn validate_directory_entries(

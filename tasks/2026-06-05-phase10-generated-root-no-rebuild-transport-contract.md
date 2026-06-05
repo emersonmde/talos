@@ -27,10 +27,10 @@ The accepted contract is
 The selected local proof shape is:
 
 - build one kernel ELF/image for the task-owned scenario;
-- use QEMU `-device loader,file=<artifact>,addr=0x48000000` to place an
-  external generated-root artifact in the `0x48000000..0x48400000` physical
+- use QEMU `-device loader,file=<artifact>,addr=0x47000000` to place an
+  external generated-root artifact in the `0x47000000..0x47400000` physical
   window;
-- require a `__kernel_end <= 0x48000000` collision guard before evidence;
+- require a `__kernel_end <= 0x47000000` collision guard before evidence;
 - parse/copy a self-describing deterministic generated-root v1 artifact into
   the existing immutable generated-root/VFS model;
 - prove artifact A and artifact B have different digests and visible generated
@@ -54,7 +54,7 @@ boot-archive assembly, writable persistence, and block storage remain deferred.
   only. The next core task may add an optional generated-root artifact loader
   argument to this wrapper.
 - `linker.ld` loads the QEMU kernel at `0x40200000` and defines
-  `__kernel_end`; the selected `0x48000000` artifact window is outside the
+  `__kernel_end`; the selected `0x47000000` artifact window is outside the
   kernel load base and must be guarded against the final linked kernel size
   before evidence.
 - `docs/src/project/phase10-generated-userland-image-contract.md` and
@@ -64,7 +64,7 @@ boot-archive assembly, writable persistence, and block storage remain deferred.
 
 ## Findings
 
-- fixed: Selected QEMU's generic loader device at `0x48000000` as the first
+- fixed: Selected QEMU's generic loader device at `0x47000000` as the first
   local no-rebuild transport proof shape.
 - fixed: Required same-kernel ELF/image hashes plus two distinct artifact
   digests and visible generated file/executable behavior changes.

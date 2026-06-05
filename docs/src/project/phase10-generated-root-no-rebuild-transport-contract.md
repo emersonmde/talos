@@ -40,10 +40,10 @@ The selected local boundary is:
 | Field | Contract |
 | --- | --- |
 | kernel image | one `target/aarch64-talos-virt/<profile>/talos` ELF and one objcopied `.img` built once for the task-owned scenario |
-| artifact loader | `-device loader,file=<artifact>,addr=0x48000000` on `-M virt -m 256M` |
-| artifact window | physical `0x48000000..0x48400000` |
+| artifact loader | `-device loader,file=<artifact>,addr=0x47000000` on `-M virt -m 256M` |
+| artifact window | physical `0x47000000..0x47400000` |
 | maximum artifact length | 4 MiB including header, entries, paths, and contents |
-| collision guard | implementation must prove `__kernel_end <= 0x48000000` for the accepted build before running artifact evidence |
+| collision guard | implementation must prove `__kernel_end <= 0x47000000` for the accepted build before running artifact evidence |
 | ownership | the kernel copies/parses the artifact into the existing immutable generated-root/VFS model before shell-visible reads or execs use it |
 | fallback source | the accepted build-time generated root remains the fallback when no valid external artifact is supplied |
 
@@ -133,8 +133,10 @@ persistence, SD/USB/block storage, networking, SSH, or phase transition.
 ## Findings
 
 - fixed: Selected a concrete local/QEMU transport shape:
-  `-device loader,file=<artifact>,addr=0x48000000` plus a fixed 4 MiB
-  artifact window and same-kernel hash evidence.
+  `-device loader,file=<artifact>,addr=0x47000000` plus a fixed 4 MiB
+  artifact window and same-kernel hash evidence. The implementation adjusted
+  the original candidate address away from QEMU's observed DTB placement at
+  `0x48000000` while preserving the selected loader-device boundary.
 - fixed: Defined how two generated-root artifacts prove no kernel rebuild
   occurred between userland content changes.
 - fixed: Named artifact identity, digest, limits, handoff ownership, and
