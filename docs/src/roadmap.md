@@ -6951,13 +6951,15 @@ classification, or PASS. The hardware boundary remains
 `blocked-pre-entry-or-handoff-after-candidate-fetch`, not RP1 mapped/unmapped
 evidence.
 
-Closeout status: `phase11-rp1-pcie-mapping-closeout-20260605` accepts
-Milestone 11.1 only at the source-contract/local-diagnostic/hardware-blocker
-boundary. It does not accept a stable RP1 register read on hardware, RP1
+Closeout status: `phase11-rp1-diagnostic-entry-closeout-20260605` supersedes
+the earlier `phase11-rp1-pcie-mapping-closeout-20260605` with the revised
+pre-MMIO-marker hardware proof. Milestone 11.1 is accepted only at the
+source-contract/local-diagnostic/candidate-fetch hardware-blocker boundary. It
+does not accept a stable RP1 register read on hardware, RP1
 `mapped/read-value`, GPIO ownership, interrupts, DMA/cache policy, Ethernet,
-networking, SSH, storage drivers, broader PCIe enumeration, or generated-root
-blocker work. Supervisor planning is required before any next Phase 11 slice or
-revised RP1 diagnostic.
+networking, SSH, storage drivers, broader PCIe enumeration, generated-root
+blocker work, source-level handoff fixes, or a revised diagnostic shape.
+Supervisor planning is required before any next Phase 11 slice.
 
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
