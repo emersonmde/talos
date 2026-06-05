@@ -216,6 +216,21 @@ interrupts, DMA/cache, networking, SSH, storage, generated-root, broader PCIe,
 Milestone 11.2, and phase transition remain blocked pending supervisor
 planning.
 
+phase11-known-good-runtime-readiness-contract-core-20260605 repairs that
+blocker contract without hardware. The next known-good runtime proof must keep
+the restored tree identity
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10`,
+`effective_kernel=kernel_2712.img`, and the stable pre-restore
+104,136-byte `da591740/kernel_2712.img` fetch separate from runtime
+readiness. Runtime readiness requires a bounded serial observation from the
+fresh cursor with a 75-second timeout, 1000 ms settle, 65536-byte cap, and
+the markers `TALOS: kernel_main` plus
+`rpi5-production-timer-preemption: PASS` for the current restored control.
+`scripts/rpi5-observe-runtime-readiness.sh` records that classification. This
+does not accept RP1 candidate fetch, Rust entry, entry-control reachability,
+mapped/read-value, unmapped/trap, GPIO, interrupt, DMA/cache, networking, SSH,
+storage, generated-root, broader PCIe, Milestone 11.2, or phase transition.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path first reports `rpi5-rp1-uart0-fr-read: start` and `rpi5-rp1-uart0-fr-read: pre-mmio-read`, flushes UART10, then reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load. A returned read reports the contract id, target name, address, width, raw value, `mapped/read-value` success classification, and PASS before returning to the existing final halt path. The pre-MMIO marker is a discriminator for the next serialized proof: if hardware reaches that marker but not the read-value line, the result is entry/handoff reachability plus an RP1 read trap/hang boundary, not a mapping acceptance.

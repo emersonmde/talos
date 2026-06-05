@@ -1,0 +1,57 @@
+{
+  "task_id": "phase11-known-good-runtime-readiness-contract-core-20260605",
+  "classification": "runtime-readiness-contract-repaired",
+  "evidence_level": "static source/doc/evidence inspection",
+  "accepted": {
+    "known_good_capture_staging_health": true,
+    "known_good_runtime_readiness": false,
+    "rp1_candidate_fetch": false,
+    "rp1_rust_entry": false,
+    "rp1_entry_control_reachability": false,
+    "rp1_mapped_read_value": false,
+    "rp1_unmapped_trap": false,
+    "milestone_11_2": false
+  },
+  "restored_known_good_identity": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_2712_bytes": 104136,
+    "serial_prefix": "da591740"
+  },
+  "prior_accepted_runtime_evidence": [
+    {
+      "task_id": "phase11-rp1-register-read-pi5-proof-20260605",
+      "evidence": "tasks/2026-06-05-phase11-rp1-register-read-pi5-proof.md",
+      "accepted_fact": "Known-good control on the restored tree retained TALOS: kernel_main plus accepted command-loop output after the 104,136-byte kernel fetch."
+    },
+    {
+      "task_id": "phase11-rp1-diagnostic-entry-pi5-proof-20260605",
+      "evidence": "tasks/evidence/2026-06-05-phase11-rp1-diagnostic-entry-pi5-proof/known-good-serial-observe-followup.json",
+      "accepted_fact": "Known-good control reached TALOS: kernel_main and rpi5-production-timer-preemption: PASS on the restored tree."
+    }
+  ],
+  "latest_fetch_without_readiness": {
+    "task_id": "phase11-known-good-capture-staging-pi5-discriminator-20260605",
+    "evidence": "tasks/evidence/2026-06-05-phase11-known-good-capture-staging-pi5-discriminator/observed-summary.json",
+    "fresh_tftp_cursor": 4094251,
+    "stable_tftp_event_count": 13,
+    "kernel_2712_serves": 2,
+    "serial_cursor_start": 4094624,
+    "serial_cursor_end": 4095332,
+    "serial_bytes": 708,
+    "serial_reached_talos_kernel_main": false,
+    "serial_reached_pass": false,
+    "classification": "known-good-fetch-observed-without-talos-readiness"
+  },
+  "readiness_invariant": {
+    "boot_identity": "GET /status and GET /boot/files identify the restored expected tree before power-cycle and before restore.",
+    "tftp": "Stable pre-restore TFTP replay from the fresh cursor includes da591740/kernel_2712.img at 104136 bytes.",
+    "serial_window": "Observe from the fresh serial cursor with timeout_seconds=75, settle_ms=1000, max_bytes=65536.",
+    "serial_markers": [
+      "TALOS: kernel_main",
+      "rpi5-production-timer-preemption: PASS"
+    ],
+    "restore": "Pre-run snapshot is restored and hardwareTestLock is released before completion."
+  },
+  "next_serialized_discriminator": "phase11-known-good-runtime-readiness-pi5-discriminator-20260605"
+}

@@ -7052,6 +7052,21 @@ work, candidate rerun, mapped/unmapped claim, GPIO, interrupts, DMA/cache,
 networking, SSH, storage, generated-root, broader PCIe, Milestone 11.2 work,
 or phase transition.
 
+`phase11-known-good-runtime-readiness-contract-core-20260605` is now accepted
+as a no-hardware contract repair for that blocker. It compares prior accepted
+known-good runtime evidence against the latest fetch-without-readiness run for
+restored tree
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10` and the
+104,136-byte `da591740/kernel_2712.img` fetch. The next serialized
+known-good discriminator must observe serial from the fresh cursor for the
+bounded 75-second/1000 ms/65536-byte window and accepts known-good runtime
+readiness only if `TALOS: kernel_main` and
+`rpi5-production-timer-preemption: PASS` appear after the stable pre-restore
+fetch. RP1 candidate/source work, candidate reruns, mapped/unmapped claims,
+GPIO, interrupts, DMA/cache, networking, SSH, storage, generated-root,
+broader PCIe, Milestone 11.2, and phase transition remain blocked until that
+serialized discriminator and closeout are accepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

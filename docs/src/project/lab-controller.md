@@ -297,16 +297,30 @@ tftp_cursor="$(curl -fsS 'http://talos-lab-api:8080/tftp/logs?limit=1' | jq -r .
 
 After the power cycle, observe serial from the saved serial cursor and query
 `scripts/rpi5-wait-tftp-delta.sh "$tftp_cursor"` before restoring the boot
-tree. If the run is inconclusive, retain one final pre-restore `GET /status`,
-`GET /boot/files`, and TFTP-tail or stable-delta sample. Restore evidence and
-hardware lock release evidence belong in the same proof bundle.
+tree. Known-good runtime readiness must use an explicit bounded serial
+observation instead of a default observe call:
+
+~~~bash
+scripts/rpi5-observe-runtime-readiness.sh "$serial_cursor" 75 1000 65536
+~~~
+
+For the current restored known-good control, the accepted readiness markers
+are `TALOS: kernel_main` plus `rpi5-production-timer-preemption: PASS` within
+that observation window after a stable 104,136-byte
+`da591740/kernel_2712.img` fetch. If a future accepted known-good control uses
+a different success marker, set `TALOS_READINESS_REQUIRED_MARKER` and record
+that exact marker in the proof bundle. If the run is inconclusive, retain one
+final pre-restore `GET /status`, `GET /boot/files`, and TFTP-tail or
+stable-delta sample. Restore evidence and hardware lock release evidence
+belong in the same proof bundle.
 
 Classification rules:
 
 - `valid-known-good-talos-readiness`: `GET /status` and `GET /boot/files`
   identify the expected boot tree, the stable TFTP delta includes the expected
-  `kernel_2712.img` fetch before restore, and serial reaches the accepted
-  Talos readiness or PASS marker for that control.
+  `kernel_2712.img` fetch before restore, and the bounded serial observation
+  reaches both `TALOS: kernel_main` and the proof-recorded success marker for
+  that known-good control.
 - `staging-publication-mismatch`: `GET /status` or `GET /boot/files` shows an
   unexpected tree hash, selected kernel, missing boot file, or boot-config
   mismatch before the run.
