@@ -157,6 +157,18 @@ must happen before restore; any zero-event result is meaningful only after this
 stable-log rule. This changes evidence semantics only and does not accept
 entry-control reachability or RP1 mapped/unmapped behavior.
 
+phase11-staging-capture-known-good-pi5-proof-20260605 then applied that rule to
+the restored accepted boot tree
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10` with
+`effective_kernel=kernel_2712.img`. Two serialized known-good power cycles
+captured fresh serial and TFTP cursors, stable pre-restore TFTP deltas, and
+restore evidence, but both stable deltas had zero events and serial did not
+reach `TALOS: kernel_main`, command-loop readiness, or PASS. The deployed lab
+API also returned `404` for `GET /`, so this proof used the documented
+`GET /status` boot identity endpoint. Classification remains
+`staging-capture-still-blocked`; the repaired rule is not yet accepted for RP1
+candidate reuse.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path first reports `rpi5-rp1-uart0-fr-read: start` and `rpi5-rp1-uart0-fr-read: pre-mmio-read`, flushes UART10, then reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load. A returned read reports the contract id, target name, address, width, raw value, `mapped/read-value` success classification, and PASS before returning to the existing final halt path. The pre-MMIO marker is a discriminator for the next serialized proof: if hardware reaches that marker but not the read-value line, the result is entry/handoff reachability plus an RP1 read trap/hang boundary, not a mapping acceptance.

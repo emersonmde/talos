@@ -1,0 +1,5 @@
+{
+  "error": "unknown endpoint: GET /",
+  "ok": false
+}
+HTTP:404

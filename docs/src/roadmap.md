@@ -6993,6 +6993,18 @@ candidate fetch, Rust entry, RP1 mapped/read-value, RP1 unmapped/trap, GPIO,
 interrupts, DMA/cache, storage, generated-root work, networking, SSH, broader
 PCIe, or Milestone 11.2 behavior.
 
+The serialized
+`phase11-staging-capture-known-good-pi5-proof-20260605` applied the repaired
+rule to the restored accepted boot tree
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10`. Two
+known-good power cycles recorded fresh serial/TFTP cursors, stable pre-restore
+TFTP decisions, serial output, and restore proof, but both stable TFTP deltas
+had zero events and serial did not reach `TALOS: kernel_main`, command-loop
+readiness, or PASS. The classification remains
+`staging-capture-still-blocked`, so RP1 candidate reruns remain blocked until
+the staging/capture repair closeout and supervisor planning decide the next
+bounded lab/capture step.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
