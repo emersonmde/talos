@@ -1,0 +1,2 @@
+/generated/manifest.txtTalos generated-root external artifact A
+/generated/status7

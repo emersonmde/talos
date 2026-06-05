@@ -8,6 +8,8 @@ mod memory;
 mod raw;
 
 #[allow(unused_imports)]
+pub use chosen::FdtInitrdRange;
+#[allow(unused_imports)]
 pub use memory::{
     FdtMemoryBank, FdtMemoryBanks, FdtMemoryReservation, FdtMemoryReservations,
     FdtReservedMemoryRange, FdtReservedMemoryRanges,

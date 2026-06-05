@@ -1,0 +1,6 @@
+cargo fmt --all -- --check: passed
+cargo -Zjson-target-spec test --quiet: passed (423 talos no_std tests)
+rpi5 generated-root candidate review: passed
+rpi5 archive review: passed
+git diff --check: passed
+/home/node/.cargo/bin/mdbook build: passed

@@ -1,0 +1,31 @@
+candidate_archive=target/talos-rpi5-generated-root-boot-transport-candidate-20260605.tar.gz
+candidate_archive_sha256=8cb1d731e55f35d13328cf4f618c9dac2bf673311535ddd36038680d8a4ef60e
+kernel_2712_sha256=c44e5a55eb600a09a217c6ad23f665a43d1092a8e982423f5162099c34a42169
+kernel_2712_size=204888
+kernel8_matches_kernel_2712=true
+generated_root_artifact_sha256=0341f5393502f54489acb1951633bf2773fb846a82bde89b3e4a2e82000724c6
+generated_root_artifact_size=662
+serial_prefixed_artifact_matches_root=true
+initramfs_config_line=initramfs initramfs_2712 followkernel
+manifest:
+  bcm2712-rpi-5-b.dtb
+  cmdline.txt
+  config.txt
+  da591740
+  da591740/bcm2712-rpi-5-b.dtb
+  da591740/cmdline.txt
+  da591740/config.txt
+  da591740/initramfs_2712
+  da591740/kernel8.img
+  da591740/kernel_2712.img
+  da591740/overlays
+  da591740/overlays/bcm2712d0.dtbo
+  da591740/overlays/overlay_map.dtb
+  da591740/overlays/uart0-pi5.dtbo
+  initramfs_2712
+  kernel8.img
+  kernel_2712.img
+  overlays
+  overlays/bcm2712d0.dtbo
+  overlays/overlay_map.dtb
+  overlays/uart0-pi5.dtbo

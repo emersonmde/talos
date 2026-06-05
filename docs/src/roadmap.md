@@ -2234,6 +2234,21 @@ The post-review correction chain is:
     TFTP evidence, candidate restore, writable persistence, SD/USB/block
     drivers, networking, SSH, and phase transition remain deferred to explicit
     later tasks.
+116. Pi 5 generated-root boot archive candidate core: accepted in
+    'phase10-pi5-generated-root-boot-archive-candidate-core-20260605'. The
+    non-published candidate archive exists at
+    'target/talos-rpi5-generated-root-boot-transport-candidate-20260605.tar.gz'
+    with archive SHA-256
+    '8cb1d731e55f35d13328cf4f618c9dac2bf673311535ddd36038680d8a4ef60e'. The
+    candidate boot tree carries root and 'da591740/' copies of
+    'initramfs_2712', configures both config files with
+    'initramfs initramfs_2712 followkernel', and includes a Pi 5 runtime source
+    path that reads FDT /chosen 'linux,initrd-start'/'linux,initrd-end' before
+    installing source 'firmware-initramfs'. Static evidence records kernel and
+    artifact digests, boot-tree listing, config placement, and proof strings.
+    The archive remains non-published; Pi 5 power-cycle, TFTP/serial proof,
+    restore, writable persistence, SD/USB/block drivers, networking, SSH, and
+    phase transition remain deferred to the serialized proof and closeout tasks.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -6793,6 +6808,13 @@ Selected first slice:
   compiled-fallback cases. This still does not accept Pi 5 firmware/TFTP
   placement, boot archive publication, writable persistence, SD/USB/block
   storage, networking, SSH, or phase transition.
+- 'phase10-pi5-generated-root-boot-archive-candidate-core-20260605' accepts the
+  non-published Pi 5 generated-root boot-transport candidate archive. The
+  candidate archive carries 'initramfs_2712' at the root and 'da591740/' mirror,
+  records kernel and artifact digests, and includes the firmware-initramfs FDT
+  source path needed for a later hardware proof. This still does not accept
+  archive publication, Pi 5 TFTP/serial consumption proof, writable persistence,
+  SD/USB/block storage, networking, SSH, or phase transition.
 
 Acceptance criteria:
 
@@ -6801,9 +6823,10 @@ Acceptance criteria:
   generated-root transport boundary only. The accepted evidence runs the same
   kernel ELF/image hashes against two different external generated-root
   artifacts and observes distinct generated file and executable behavior.
-  Pi 5 firmware/TFTP placement, boot archive publication, writable
-  persistence, SD/USB/block storage, networking, SSH, and phase transition
-  remain deferred and require explicit follow-up tasks.
+  Pi 5 candidate boot archive placement is accepted only as a non-published
+  static archive. Pi 5 TFTP/serial consumption proof, boot archive publication
+  to the lab tree, writable persistence, SD/USB/block storage, networking, SSH,
+  and phase transition remain deferred and require explicit follow-up tasks.
 - Documentation explains the chosen local storage path and remaining risks.
 
 ## Phase 11: RP1, PCIe, DMA, and Hardware Substrate

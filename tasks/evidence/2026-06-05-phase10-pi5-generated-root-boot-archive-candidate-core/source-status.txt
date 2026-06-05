@@ -1,0 +1,15 @@
+source_commit_before_candidate_commit=7f915dd4f5d168f0fbe1ca93b0821187d0c9b719
+git_status_short_before_candidate_commit:
+ M build.rs
+ M docs/src/project/phase10-pi5-generated-root-boot-transport-contract.md
+ M docs/src/roadmap.md
+ M src/boot/rpi5.rs
+ M src/device_tree/chosen.rs
+ M src/device_tree/mod.rs
+ M src/initramfs.rs
+ M src/target/rpi5.rs
+?? scripts/rpi5-generated-root-boot-transport-boot-tree.sh
+?? scripts/rpi5-generated-root-boot-transport-candidate-review.sh
+?? scripts/rpi5-generated-root-boot-transport-image.sh
+?? tasks/2026-06-05-phase10-pi5-generated-root-boot-archive-candidate-core.md
+?? tasks/evidence/2026-06-05-phase10-pi5-generated-root-boot-archive-candidate-core/

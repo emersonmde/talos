@@ -46,6 +46,9 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
 
     report_dtb_memory_banks(dtb.memory_banks);
 
+    #[cfg(talos_boot_scenario = "rpi5_generated_root_boot_transport")]
+    install_firmware_initramfs_generated_root(&services);
+
     #[cfg(talos_boot_scenario = "rpi5_psci_secondary_core_alive")]
     target::rpi5::run_psci_secondary_core_alive_proof();
 
@@ -116,7 +119,13 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
     #[cfg(talos_boot_scenario = "rpi5_diagnostic_command_channel")]
     target::rpi5::run_diagnostic_command_channel_proof();
 
-    #[cfg(talos_boot_scenario = "rpi5_local_serial_command_loop")]
+    #[cfg(all(
+        talos_boot_scenario = "rpi5_local_serial_command_loop",
+        not(talos_boot_scenario = "rpi5_generated_root_boot_transport")
+    ))]
+    target::rpi5::run_local_serial_command_loop_proof();
+
+    #[cfg(talos_boot_scenario = "rpi5_generated_root_boot_transport")]
     target::rpi5::run_local_serial_command_loop_proof();
 
     #[cfg(talos_boot_scenario = "rpi5_local_line_editing")]
@@ -223,6 +232,69 @@ fn report_chosen_bootargs(services: &TargetServices) {
     } else {
         println!("talos: dtb chosen bootargs: unavailable");
     }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_generated_root_boot_transport")]
+fn install_firmware_initramfs_generated_root(services: &TargetServices) {
+    let report_fallback = |reason: &'static str| {
+        let report = crate::initramfs::install_external_generated_root_fallback(reason);
+        println!(
+            "rpi5-generated-root-boot-transport: firmware-initramfs unavailable source={} reason={} digest={:#018x} total-len={:#018x} file-len={:#018x} exec-len={:#018x}",
+            report.source,
+            report.reason,
+            report.digest,
+            report.total_len,
+            report.file_len,
+            report.exec_len
+        );
+        target::rpi5::wait_uart10_empty_early_phase();
+    };
+
+    let Some(range) = (unsafe { services.device_tree.chosen_initrd_range() }) else {
+        report_fallback("missing-firmware-initramfs-bounds");
+        return;
+    };
+
+    let Ok(len) = usize::try_from(range.len()) else {
+        report_fallback("initramfs-range-too-large");
+        return;
+    };
+
+    if len == 0 || len > crate::initramfs::GENERATED_ROOT_EXTERNAL_ARTIFACT_MAX_LEN {
+        report_fallback("initramfs-range-too-large");
+        return;
+    }
+
+    let Ok(start) = usize::try_from(range.start) else {
+        report_fallback("initramfs-range-too-large");
+        return;
+    };
+    if start == 0 {
+        report_fallback("invalid-initramfs-range");
+        return;
+    }
+
+    // SAFETY: The Pi firmware passes the initramfs range in the already
+    // accepted FDT /chosen properties. The slice is parsed all-or-nothing
+    // before the local command loop can observe generated-root files.
+    let artifact_window = unsafe { core::slice::from_raw_parts(start as *const u8, len) };
+    let report = crate::initramfs::install_external_generated_root_artifact_with_source(
+        artifact_window,
+        "firmware-initramfs",
+    );
+    println!(
+        "rpi5-generated-root-boot-transport: firmware-initramfs start={:#018x} end={:#018x} len={:#018x} source={} reason={} digest={:#018x} total-len={:#018x} file-len={:#018x} exec-len={:#018x}",
+        range.start,
+        range.end,
+        range.len(),
+        report.source,
+        report.reason,
+        report.digest,
+        report.total_len,
+        report.file_len,
+        report.exec_len
+    );
+    target::rpi5::wait_uart10_empty_early_phase();
 }
 
 fn scan_dtb_reservations(services: &TargetServices) -> Option<FdtMemoryReservations> {

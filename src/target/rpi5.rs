@@ -7756,6 +7756,11 @@ const fn local_command_pi5_proof_label() -> &'static str {
     "rpi5-local-ls-cwd-proof"
 }
 
+#[cfg(talos_boot_scenario = "rpi5_generated_root_boot_transport")]
+const fn local_command_pi5_proof_label() -> &'static str {
+    "rpi5-generated-root-boot-transport-proof"
+}
+
 #[cfg(all(
     talos_boot_scenario = "rpi5_local_serial_command_loop",
     not(talos_boot_scenario = "rpi5_local_echo_command"),
@@ -7767,6 +7772,7 @@ const fn local_command_pi5_proof_label() -> &'static str {
     not(talos_boot_scenario = "rpi5_local_cat_cwd"),
     not(talos_boot_scenario = "rpi5_local_cd_fixed_dirs"),
     not(talos_boot_scenario = "rpi5_local_ls_cwd"),
+    not(talos_boot_scenario = "rpi5_generated_root_boot_transport"),
     not(talos_boot_scenario = "rpi5_local_pwd_command"),
     not(talos_boot_scenario = "rpi5_local_line_editing"),
     not(talos_boot_scenario = "rpi5_local_line_cancel"),
@@ -7841,6 +7847,11 @@ const fn local_command_pi5_proof_classification() -> &'static str {
     "pi5-local-ls-cwd-complete"
 }
 
+#[cfg(talos_boot_scenario = "rpi5_generated_root_boot_transport")]
+const fn local_command_pi5_proof_classification() -> &'static str {
+    "pi5-generated-root-boot-transport-complete"
+}
+
 #[cfg(all(
     talos_boot_scenario = "rpi5_local_serial_command_loop",
     not(talos_boot_scenario = "rpi5_local_echo_command"),
@@ -7852,6 +7863,7 @@ const fn local_command_pi5_proof_classification() -> &'static str {
     not(talos_boot_scenario = "rpi5_local_cat_cwd"),
     not(talos_boot_scenario = "rpi5_local_cd_fixed_dirs"),
     not(talos_boot_scenario = "rpi5_local_ls_cwd"),
+    not(talos_boot_scenario = "rpi5_generated_root_boot_transport"),
     not(talos_boot_scenario = "rpi5_local_pwd_command"),
     not(talos_boot_scenario = "rpi5_local_line_editing"),
     not(talos_boot_scenario = "rpi5_local_line_cancel"),
@@ -7874,7 +7886,9 @@ const fn local_command_pi5_proof_classification() -> &'static str {
     talos_boot_scenario = "rpi5_local_line_kill"
 ))]
 const fn local_command_pi5_proof_command_count() -> usize {
-    if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") {
+    if cfg!(talos_boot_scenario = "rpi5_generated_root_boot_transport") {
+        5
+    } else if cfg!(talos_boot_scenario = "rpi5_local_cd_fixed_dirs") {
         9
     } else if cfg!(talos_boot_scenario = "rpi5_local_ls_cwd") {
         9
@@ -8061,6 +8075,21 @@ fn expected_local_command_loop_dispatch(
         }
         8 if cfg!(talos_boot_scenario = "rpi5_local_ls_cwd") => {
             line == b"bogus" && status == UnknownCommand && response_lines == 1
+        }
+        0 if cfg!(talos_boot_scenario = "rpi5_generated_root_boot_transport") => {
+            line == b"rootinfo" && status == Handled && response_lines == 1
+        }
+        1 if cfg!(talos_boot_scenario = "rpi5_generated_root_boot_transport") => {
+            line == b"cat /generated/manifest.txt" && status == Handled && response_lines == 1
+        }
+        2 if cfg!(talos_boot_scenario = "rpi5_generated_root_boot_transport") => {
+            line == b"exec /generated/status7 alpha" && status == Handled && response_lines == 9
+        }
+        3 if cfg!(talos_boot_scenario = "rpi5_generated_root_boot_transport") => {
+            line == b"waitpid" && status == Handled && response_lines == 1
+        }
+        4 if cfg!(talos_boot_scenario = "rpi5_generated_root_boot_transport") => {
+            line == b"laststatus" && status == Handled && response_lines == 1
         }
         0 => line == b"stdio" && status == Handled && response_lines == 7,
         _ => false,

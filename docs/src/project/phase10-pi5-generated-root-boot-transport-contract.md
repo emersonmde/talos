@@ -59,6 +59,32 @@ Required static evidence:
 
 The candidate task must not publish the archive or touch hardware.
 
+## Candidate Implementation
+
+`phase10-pi5-generated-root-boot-archive-candidate-core-20260605` accepted the
+non-published candidate archive at the contract path. The candidate is built by
+`scripts/rpi5-generated-root-boot-transport-boot-tree.sh` and reviewed by
+`scripts/rpi5-generated-root-boot-transport-candidate-review.sh`.
+
+The candidate kernel includes the `rpi5_generated_root_boot_transport` scenario.
+At Pi 5 startup it reads `/chosen` `linux,initrd-start` and `linux,initrd-end`,
+installs the selected artifact as generated-root source `firmware-initramfs`,
+and falls back to the compiled generated-root image for missing or oversized
+firmware bounds or malformed artifact bytes. The proof harness is limited to
+`rootinfo`, `cat /generated/manifest.txt`, `exec /generated/status7 alpha`,
+`waitpid`, and `laststatus`.
+
+Accepted candidate identity:
+
+- archive SHA-256:
+  `8cb1d731e55f35d13328cf4f618c9dac2bf673311535ddd36038680d8a4ef60e`
+- kernel SHA-256:
+  `c44e5a55eb600a09a217c6ad23f665a43d1092a8e982423f5162099c34a42169`
+- generated-root artifact SHA-256:
+  `0341f5393502f54489acb1951633bf2773fb846a82bde89b3e4a2e82000724c6`
+- retained evidence:
+  `tasks/evidence/2026-06-05-phase10-pi5-generated-root-boot-archive-candidate-core/`
+
 ## Hardware Proof Contract
 
 The later hardware proof must own hardwareTestLock, publication, power-cycle,

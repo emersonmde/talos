@@ -1,0 +1,1 @@
+204888 target/rpi5-generated-root-boot-transport-candidate-20260605-boot-tree/kernel_2712.img

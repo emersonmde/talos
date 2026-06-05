@@ -85,6 +85,7 @@ pub(crate) struct GeneratedRootSelectionReport {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 struct ExternalGeneratedRoot {
     active: bool,
+    source: &'static str,
     reason: &'static str,
     digest: u64,
     total_len: usize,
@@ -96,6 +97,7 @@ impl ExternalGeneratedRoot {
     const fn fallback(reason: &'static str) -> Self {
         Self {
             active: false,
+            source: "compiled-fallback",
             reason,
             digest: GENERATED_ROOT_DIGEST,
             total_len: 0,
@@ -106,7 +108,7 @@ impl ExternalGeneratedRoot {
 
     const fn source(self) -> &'static str {
         if self.active {
-            "external"
+            self.source
         } else {
             "compiled-fallback"
         }
@@ -593,12 +595,32 @@ pub(crate) fn generated_root_selection_report() -> GeneratedRootSelectionReport 
 pub(crate) fn install_external_generated_root_artifact(
     artifact_window: &'static [u8],
 ) -> GeneratedRootSelectionReport {
-    let parsed = parse_external_generated_root_artifact(artifact_window)
+    install_external_generated_root_artifact_with_source(artifact_window, "external")
+}
+
+#[cfg_attr(test, allow(dead_code))]
+pub(crate) fn install_external_generated_root_artifact_with_source(
+    artifact_window: &'static [u8],
+    source: &'static str,
+) -> GeneratedRootSelectionReport {
+    let parsed = parse_external_generated_root_artifact(artifact_window, source)
         .unwrap_or_else(ExternalGeneratedRoot::fallback);
     // SAFETY: The caller runs during single-core QEMU smoke startup before any
     // descriptor-backed VFS operation observes generated-root nodes.
     unsafe {
         EXTERNAL_GENERATED_ROOT = parsed;
+        EXTERNAL_GENERATED_ROOT.report()
+    }
+}
+
+#[cfg_attr(test, allow(dead_code))]
+pub(crate) fn install_external_generated_root_fallback(
+    reason: &'static str,
+) -> GeneratedRootSelectionReport {
+    // SAFETY: The caller runs during single-core startup before any
+    // descriptor-backed VFS operation observes generated-root nodes.
+    unsafe {
+        EXTERNAL_GENERATED_ROOT = ExternalGeneratedRoot::fallback(reason);
         EXTERNAL_GENERATED_ROOT.report()
     }
 }
@@ -620,6 +642,7 @@ fn generated_root_runtime_bytes(node_index: usize) -> Option<&'static [u8]> {
 #[cfg_attr(test, allow(dead_code))]
 fn parse_external_generated_root_artifact(
     artifact_window: &'static [u8],
+    source: &'static str,
 ) -> Result<ExternalGeneratedRoot, &'static str> {
     if artifact_window.len() < GENERATED_ROOT_EXTERNAL_ARTIFACT_HEADER_LEN {
         return Err("missing-artifact");
@@ -688,6 +711,7 @@ fn parse_external_generated_root_artifact(
 
     Ok(ExternalGeneratedRoot {
         active: true,
+        source,
         reason: "valid-artifact",
         digest,
         total_len,

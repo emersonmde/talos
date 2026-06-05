@@ -1,0 +1,6 @@
+low-tail digest= return=rootinfo status= result=overflow stream= no_map= source= reason=bootargs marker=
+Jrpi5-generated-root-boot-transport: firmware-initramfs unavailable source=
+invalid-initramfs-rangefirmware-initramfs=rpi5-generated-root-boot-transport: firmware-initramfs start=
+initramfs-range-too-largemissing-firmware-initramfs-boundsis_aligned_to: align is not a power-of-two
+ rpi5-generated-root-boot-transport-proofTALOS: command loop proof entered
+cat /generated/manifest.txtexec /generated/status7 alphapi5-generated-root-boot-transport-complete/
