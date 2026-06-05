@@ -1,0 +1,75 @@
+# Phase 11 RP1/PCIe Map Contract
+
+This contract defines the first Talos RP1/PCIe mapping slice. It is a source-backed contract for one narrow read-only diagnostic; it does not claim a driver, GPIO ownership, interrupt routing, DMA/cache policy, Ethernet, networking, SSH, or generated-root progress.
+
+## Inputs
+
+- Raspberry Pi Linux `rpi-6.12.y` device-tree sources retained under `tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/`: `bcm2712.dtsi`, `bcm2712-rpi-5-b.dts`, `bcm2712-rpi.dtsi`, and `rp1.dtsi`.
+- Existing Talos reference notes for Pi 5, RP1 UART0, and RP1 pin-control bring-up evidence.
+- Lab-controller status from `GET /status` showing the current boot tree is restored and the boot config includes `enable_rp1_uart=1`.
+- Talos' existing PL011 model, where the flag register is at offset `0x18`.
+
+## Address Contract
+
+Linux `bcm2712.dtsi` defines the Pi 5 `pcie2` non-prefetchable PCIe window:
+
+~~~text
+PCIe 00_00000000 -> CPU physical 0x1f_0000_0000
+size             -> 0xffff_fffc bytes in the source range
+~~~
+
+Linux `bcm2712-rpi-5-b.dts` supplies the RP1 child range under `pcie2`:
+
+~~~text
+RP1 bus 0xc0_40000000 -> PCIe 00_00000000
+size                  -> 0x0041_0000 bytes
+~~~
+
+For this first slice Talos treats the initial RP1 peripheral CPU mapping as:
+
+~~~text
+cpu_phys = 0x1f_0000_0000 + (rp1_bus - 0xc0_4000_0000)
+~~~
+
+Relevant translated addresses:
+
+| RP1 object | RP1 bus address | CPU physical address | Width | Use |
+| --- | ---: | ---: | ---: | --- |
+| RP1 UART0 PL011 base | `0xc0_4003_0000` | `0x1f_0003_0000` | 32-bit MMIO | Parent block only |
+| RP1 UART0 PL011 flag register | `0xc0_4003_0018` | `0x1f_0003_0018` | 32-bit read | First diagnostic target |
+| RP1 GPIO bank0 control base | `0xc0_400d_0000` | `0x1f_000d_0000` | 32-bit MMIO | Documented only |
+| RP1 pads bank0 base | `0xc0_400f_0000` | `0x1f_000f_0000` | 32-bit MMIO | Documented only |
+
+## Firmware-State Assumptions
+
+The first diagnostic depends on firmware/boot configuration leaving RP1 and UART0 mapped and clocked enough for a non-destructive flag-register read. The current lab boot config reports `enable_rp1_uart=1`, and historical Talos first-light work already used RP1 UART0 through the `pcie2` address path.
+
+The next task must not configure GPIO14/GPIO15, change UART baud/programming, touch RP1 clocks or resets, enable interrupts, or allocate DMA. If the read faults or returns an implausible value, classify that as evidence about this firmware-state assumption rather than expanding the diagnostic in place.
+
+## Diagnostic Contract
+
+The next diagnostic-core task may implement only this first read:
+
+~~~text
+name: rp1-uart0-fr-read
+address: 0x1f_0003_0018
+width: 32-bit volatile little-endian load
+source target: RP1 UART0 PL011 flag register
+expected success class: mapped/read-value
+~~~
+
+The diagnostic should report:
+
+- the source contract id `phase11-rp1-pcie-map-contract-v1`;
+- the target name, address, width, and raw value;
+- a classification: `mapped/read-value`, `bus-fault/trap`, `firmware-state-dependency`, or `staging/build-blocker`;
+- enough serial text to tie the output to the candidate artifact in the later Pi 5 proof task.
+
+The accepted local core may add build/static/archive-review evidence only. The serialized Pi 5 proof remains a separate task that must acquire `hardwareTestLock`, capture candidate identity, serial cursor, TFTP delta, and restore evidence.
+
+## Deferred Work
+
+- PCIe enumeration and BAR discovery for general external devices.
+- Talos-owned RP1 reset, clock, GPIO, pinctrl, UART initialization, and interrupt routing.
+- DMA addressability, cache maintenance, IOMMU policy, Ethernet, networking, SSH, storage drivers, and writable persistent filesystems.
+- Any fix for the Phase 10 Pi 5 generated-root firmware-initramfs overlap blocker.

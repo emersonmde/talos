@@ -6912,6 +6912,19 @@ Acceptance criteria:
   assumptions.
 - Known limitations around firmware-initialized state are recorded.
 
+Contract status: `phase11-rp1-pcie-map-source-contract-20260605` records
+the first source-backed mapping contract. Linux `rpi-6.12.y` device-tree
+sources map `pcie2` non-prefetchable PCIe address `00_00000000` to
+CPU physical `0x1f_0000_0000`, and map RP1 peripheral bus
+`0xc0_4000_0000` to that window. The first diagnostic target is the
+read-only RP1 UART0 PL011 flag register at CPU physical
+`0x1f_0003_0018`, width 32 bits, classified as `mapped/read-value`,
+`bus-fault/trap`, `firmware-state-dependency`, or
+`staging/build-blocker`. This contract depends on firmware-preserved RP1
+UART0 state and the lab `enable_rp1_uart=1` boot config; it does not claim
+GPIO ownership, interrupts, DMA/cache policy, Ethernet, networking, SSH, or
+broader PCIe enumeration.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
