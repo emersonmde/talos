@@ -6718,11 +6718,21 @@ Selected first slice:
   proof, kernel binary no-rebuild transport, boot archives, Pi 5 hardware proof,
   writable persistence, block drivers, networking, SSH, and phase transition
   remain deferred.
+- 'phase10-generated-userland-image-manifest-closeout-20260605' accepts that
+  boundary as source-code edit avoidance for one generated read-only userland
+  file only. It explicitly does not accept kernel binary no-rebuild transport,
+  boot archive update, Pi 5 behavior, writable persistence, generated executable
+  support, networking, SSH, or phase transition. A later supervisor-planned
+  transport/no-rebuild slice is required before claiming the milestone's
+  stronger "without rebuilding the kernel for every user program change"
+  criterion.
 
 Acceptance criteria:
 
 - Talos can load a nontrivial userland image without rebuilding the kernel for
-  every user program change.
+  every user program change. Current status: not fully accepted; the generated
+  manifest slice only avoids editing kernel source for the accepted generated
+  file content.
 - Documentation explains the chosen local storage path and remaining risks.
 
 ## Phase 11: RP1, PCIe, DMA, and Hardware Substrate
