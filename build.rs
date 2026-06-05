@@ -123,6 +123,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "rpi5_rp1_entry_control",
+        implied_values: &[],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "rpi5_psci_secondary_core_alive",
         implied_values: &[],
         asm_defines: &[RPI5_SMP_ASM],

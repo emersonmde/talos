@@ -1,0 +1,12 @@
+# Validation Summary
+
+Task: phase11-rp1-diagnostic-entry-control-source-core-20260605
+
+- fmt/lint: cargo fmt --all -- --check passed; log retained at cargo-fmt.log.
+- unit tests: cargo -Zjson-target-spec test --quiet passed with 423 tests using /opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin on PATH; log retained at cargo-test.log.
+- focused Pi 5 builds: rpi5_local_cat_banner, rpi5_rp1_uart0_fr_read, and rpi5_rp1_entry_control built without warnings; logs retained as build-*.log.
+- boot-tree/archive review: scripts/rpi5-rp1-entry-control-boot-tree.sh target/rpi5-local-cat-banner-boot-tree-local1 target/rpi5-rp1-entry-control-source-core-boot-tree and scripts/rpi5-archive-review.sh target/talos-rpi5-rp1-entry-control-source-core.tar.gz passed.
+- static marker review: marker-review.txt confirms the entry-control marker/PASS strings and absence of RP1 read-value, contract, and quarantined assembly marker strings.
+- symbol/header/section review: symbol-header-section-review.txt compares accepted-control, blocked-RP1-read, revised-pre-MMIO, and entry-control images and ELF snapshots.
+- docs validation: /home/node/.cargo/bin/mdbook build passed with the existing large search-index warning; log retained at mdbook-build.log.
+- diff hygiene: git diff --check and git diff --cached --check passed; logs retained at git-diff-check.log and git-diff-cached-check.log.

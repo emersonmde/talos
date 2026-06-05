@@ -1,0 +1,15 @@
+Static marker/string review
+
+entry-control candidate markers:
+rpi5-rp1-entry-control: rust-entry-control
+rpi5-rp1-entry-control: no-rp1-mmio
+rpi5-rp1-entry-control: classification=entry-control-reached
+rpi5-rp1-entry-control: PASS
+
+assertions:
+present: rpi5-rp1-entry-control: rust-entry-control
+present: rpi5-rp1-entry-control: no-rp1-mmio
+present: classification=entry-control-reached
+present: rpi5-rp1-entry-control: PASS
+absent: RP1 register-read classification/path strings
+absent: quarantined raw assembly provenance markers

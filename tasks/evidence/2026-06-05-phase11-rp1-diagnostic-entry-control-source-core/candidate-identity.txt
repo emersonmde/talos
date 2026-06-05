@@ -1,0 +1,6 @@
+archive=target/talos-rpi5-rp1-entry-control-source-core.tar.gz
+dcbcf06ebdf2304630dc52d0aac689c6ec363f04074a055bc391a0c7829e5f37  target/talos-rpi5-rp1-entry-control-source-core.tar.gz
+kernel_sha256=b3e62b950cf007a0ee8d1d7f420fd8c26c28573c5b6925a7f0d93d0b77a367ea
+kernel_size=51808
+
+archive_review_sha256=dcbcf06ebdf2304630dc52d0aac689c6ec363f04074a055bc391a0c7829e5f37

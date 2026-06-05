@@ -36,6 +36,7 @@
             talos_boot_scenario = "rpi5_el0_trap_proof",
             talos_boot_scenario = "rpi5_syscall_proof",
             talos_boot_scenario = "rpi5_pointer_copy_proof",
+            talos_boot_scenario = "rpi5_rp1_entry_control",
         )
     ),
     allow(dead_code, unused_imports, unused_variables, unreachable_code)
@@ -221,31 +222,48 @@ fn alloc_error(layout: core::alloc::Layout) -> ! {
 
 #[unsafe(no_mangle)]
 pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
-    #[cfg(talos_target_rpi5_bcm2712)]
-    target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::RustEntry);
-    let boot_info = BootInfo::from_aarch64_x0(dtb_pa);
-
-    #[cfg(talos_target_rpi5_bcm2712)]
-    target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::BootInfoParsed);
-
-    target::init(&boot_info);
-
-    #[cfg(talos_target_rpi5_bcm2712)]
-    target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::TargetInit);
-
-    arch::aarch64::exceptions::init();
-
-    #[cfg(talos_target_rpi5_bcm2712)]
-    target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::ExceptionsReady);
-
-    #[cfg(test)]
+    #[cfg(all(
+        talos_target_rpi5_bcm2712,
+        talos_boot_scenario = "rpi5_rp1_entry_control"
+    ))]
     {
-        test_main();
-        target::qemu::exit_success();
+        let _ = dtb_pa;
+        target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::RustEntry);
+        target::rpi5::run_rp1_entry_control_diagnostic();
     }
 
-    #[cfg(not(test))]
-    kernel_main(&boot_info)
+    #[cfg(not(all(
+        talos_target_rpi5_bcm2712,
+        talos_boot_scenario = "rpi5_rp1_entry_control"
+    )))]
+    {
+        #[cfg(talos_target_rpi5_bcm2712)]
+        target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::RustEntry);
+
+        let boot_info = BootInfo::from_aarch64_x0(dtb_pa);
+
+        #[cfg(talos_target_rpi5_bcm2712)]
+        target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::BootInfoParsed);
+
+        target::init(&boot_info);
+
+        #[cfg(talos_target_rpi5_bcm2712)]
+        target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::TargetInit);
+
+        arch::aarch64::exceptions::init();
+
+        #[cfg(talos_target_rpi5_bcm2712)]
+        target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::ExceptionsReady);
+
+        #[cfg(test)]
+        {
+            test_main();
+            target::qemu::exit_success();
+        }
+
+        #[cfg(not(test))]
+        kernel_main(&boot_info)
+    }
 }
 
 #[cfg(not(test))]

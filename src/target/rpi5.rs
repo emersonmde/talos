@@ -158,6 +158,7 @@ pub const UART10_BASE: usize = 0x10_7d00_1000;
 pub const RP1_UART0_PCIE2_BASE: usize = 0x1f_0003_0000;
 pub const RP1_UART0_FIRMWARE_BASE: usize = 0x1c_0003_0000;
 pub const RP1_UART0_BASE: usize = RP1_UART0_PCIE2_BASE;
+#[allow(dead_code)]
 pub const RP1_UART0_FR: usize = RP1_UART0_BASE + 0x18;
 #[allow(dead_code)]
 pub const RP1_UART0_GPIO14_PAD: usize = 0x1f_000f_003c;
@@ -12479,10 +12480,28 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
     }
 }
 
-#[cfg(talos_target_rpi5_bcm2712)]
+#[cfg(all(
+    talos_target_rpi5_bcm2712,
+    talos_boot_scenario = "rpi5_rp1_uart0_fr_read"
+))]
 fn read_rp1_reg_u32(addr: usize) -> u32 {
     let reg = addr as *const u32;
     unsafe { core::ptr::read_volatile(reg) }
+}
+
+#[cfg(all(
+    talos_target_rpi5_bcm2712,
+    talos_boot_scenario = "rpi5_rp1_entry_control"
+))]
+pub fn run_rp1_entry_control_diagnostic() -> ! {
+    write_early_static("rpi5-rp1-entry-control: rust-entry-control\n");
+    write_early_static("rpi5-rp1-entry-control: no-rp1-mmio\n");
+    write_early_static("rpi5-rp1-entry-control: classification=entry-control-reached\n");
+    write_early_static("rpi5-rp1-entry-control: PASS\n");
+    wait_uart10_empty_early_phase();
+    loop {
+        core::hint::spin_loop();
+    }
 }
 
 #[cfg(talos_boot_scenario = "rpi5_rp1_uart0_fr_read")]
