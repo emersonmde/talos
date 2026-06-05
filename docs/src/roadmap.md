@@ -2028,6 +2028,27 @@ The post-review correction chain is:
     networking, SSH, and phase transition remain deferred. The queued
     jobs/accounting closeout is mechanically unblocked and must remain
     docs/evidence reconciliation only.
+106. jobs/accounting list closeout: accepted in
+    'phase10-jobs-accounting-list-closeout-20260605'. Static inspection
+    reconciles the accepted 'jobs' QEMU/substitute transcript, retained control
+    evidence, roadmap language, and commit history without adding runtime
+    behavior. The accepted boundary remains one minimal shell-owned accounting
+    inspection command: 'jobs none' before launch, then stable id, pid, command
+    label, running/completed state, pending/completed status, observed status,
+    and reaped flag for the single accepted 'exec /bin/status42 &' background
+    record. Evidence confirms background accounting does not create foreground
+    waitable lifecycle records: 'waitpid' reports no-child and 'laststatus'
+    reports none after background jobs observations, while a later foreground
+    'exec /bin/zero' preserves the normal waitpid/laststatus controls.
+    Retained controls cover accepted background exec, pipeline/file
+    redirection, descriptor inheritance, descriptor-backed cat, deterministic
+    job-control negatives, errors=0, classifications, and PASS. Multiple jobs,
+    kill/fg/bg/disown, process groups, sessions, terminal ownership, signals,
+    process-tree/procfs inspection, true scheduler-concurrent userspace
+    execution, scheduling fairness, background pipelines/redirections, Pi 5
+    proof, networking, SSH, and phase transition remain deferred. The queued
+    async process-control frontier closeout is mechanically unblocked and must
+    remain docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
