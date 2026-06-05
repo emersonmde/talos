@@ -187,6 +187,7 @@
 - [Phase 10 Shell VFS Exec Closeout Checkpoint](project/phase10-shell-vfs-exec-closeout-checkpoint.md)
 - [Phase 10 Shell Userspace Exit Status Closeout Checkpoint](project/phase10-shell-userspace-exit-status-closeout-checkpoint.md)
 - [Phase 10 Generated Userland Image Contract](project/phase10-generated-userland-image-contract.md)
+- [Phase 10 Generated Root No-Rebuild Transport Contract](project/phase10-generated-root-no-rebuild-transport-contract.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture

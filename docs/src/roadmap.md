@@ -6747,14 +6747,26 @@ Selected first slice:
   no-kernel-rebuild generated-root transport contract; implementation,
   boot archive publication, Pi 5 proof, writable persistence, storage drivers,
   networking, SSH, and phase transition remain deferred.
+- 'phase10-generated-root-no-rebuild-transport-contract-20260605' accepts the
+  documentation-only local/QEMU no-kernel-rebuild transport contract. The
+  selected first proof shape is QEMU `-device loader,file=<artifact>,addr=0x48000000`
+  on the existing `-M virt -m 256M` local runner, with a 4 MiB artifact
+  window, a `__kernel_end` collision guard, a self-describing deterministic
+  generated-root v1 artifact, same-kernel image hash evidence for two artifact
+  runs, distinct artifact digests, and compiled generated-root fallback for
+  missing or malformed artifacts. This contract does not implement the
+  transport and does not accept Pi 5 boot archive/TFTP behavior, writable
+  persistence, SD/USB/block drivers, networking, SSH, or phase transition.
 
 Acceptance criteria:
 
 - Talos can load a nontrivial userland image without rebuilding the kernel for
   every user program change. Current status: not fully accepted; the generated
   manifest slices avoid editing kernel source for the accepted generated file
-  and executable content, but the generated root is still consumed at build time
-  and still requires a kernel rebuild.
+  and executable content, and the local/QEMU no-rebuild transport contract now
+  selects the same-kernel/two-artifact proof shape. Runtime transport is not
+  accepted yet, so the generated root is still consumed at build time and still
+  requires a kernel rebuild.
 - Documentation explains the chosen local storage path and remaining risks.
 
 ## Phase 11: RP1, PCIe, DMA, and Hardware Substrate
