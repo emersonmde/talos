@@ -7014,6 +7014,17 @@ staging-publication discriminator before any RP1 diagnostic/source changes,
 Milestone 11.2, networking, SSH, GPIO ownership, interrupts, DMA/cache, storage,
 generated-root work, or broader PCIe work.
 
+The contract repair
+`phase11-lab-evidence-contract-repair-core-20260605` makes `GET /status` the
+authoritative boot identity endpoint for the deployed lab API and treats
+`GET /` 404s as endpoint-semantics evidence only. The next discriminator must
+retain status, boot files, snapshots, fresh serial/TFTP cursors, stable
+pre-restore TFTP evidence, and pre-restore inconclusive samples. Its
+classification boundary distinguishes staging/publication mismatch, TFTP
+capture/logging blindness, serial-only firmware reboot, and valid known-good
+Talos readiness without accepting RP1 candidate behavior or Milestone 11.2
+progress.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

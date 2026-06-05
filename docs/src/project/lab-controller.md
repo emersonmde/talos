@@ -146,6 +146,10 @@ Response:
 Current verified behavior:
 
 - `GET /status` reports guard `fixed-port`, a configured port index, and `poe_state=UP`.
+- `GET /` is not an authoritative boot identity endpoint for the deployed lab
+  API. If a proof needs boot identity, use `GET /status` and retain the full
+  response. A `404 unknown endpoint: GET /` result is endpoint-semantics
+  evidence, not proof of a broken boot tree.
 - `POST /power/cycle` succeeds without consulting the live client list for `talos-pi5`.
 - After a successful power cycle, serial may emit Raspberry Pi firmware/RP1 boot messages before any kernel output. Treat firmware output as proof of reboot and serial wiring, not proof that Talos reached entry.
 
@@ -274,6 +278,49 @@ cursor="$(curl -fsS 'http://talos-lab-api:8080/tftp/logs?limit=1' | jq -r .tftp.
 After the run, call `/tftp/logs?cursor=<old cursor>` to see only new TFTP activity. Hardware proofs must treat this as a stability check, not a single sample: re-query from the same cursor until `cursor_end`, `log_size`, `truncated`, and the parsed event set are unchanged for the required number of samples, or until the bounded timeout is reached. `scripts/rpi5-wait-tftp-delta.sh <cursor> [timeout_seconds] [stable_samples]` implements that rule and annotates its output with `talos_tftp_stability`; exit 0 means a stable non-empty delta, exit 1 means either stable zero events or timeout. A zero-event TFTP delta is meaningful evidence only when it is stable under that rule and is recorded before the boot tree is restored.
 
 For acceptance evidence that depends on served file sizes, query stable TFTP logs before restoring the boot tree. The `bytes` field is computed from the current TFTP file at query time, not parsed from the dnsmasq line, so querying after restore can label an earlier diagnostic serve with the restored file's size. Keep `limit` within the endpoint range, currently `1..2000`, or the request fails and can accidentally push evidence collection until after restore.
+
+## Pi 5 Hardware Proof Record Contract
+
+Every serialized Pi 5 hardware proof must retain one deterministic evidence
+bundle before classifying the run. The authoritative boot identity sample is
+`GET /status`; record `boot.tree_hash`, `boot.effective_kernel`,
+`boot.configured_kernel`, `boot.config`, guard fields, and snapshot state.
+Also retain `GET /boot/files` and `GET /boot/snapshots` before any power
+cycle so the visible TFTP root and restore candidates are reviewable.
+
+Before the power cycle, retain fresh serial and TFTP cursors:
+
+~~~bash
+serial_cursor="$(curl -fsS 'http://talos-lab-api:8080/serial/peek?max_bytes=500&drain=true' | jq -r .cursor)"
+tftp_cursor="$(curl -fsS 'http://talos-lab-api:8080/tftp/logs?limit=1' | jq -r .tftp.cursor_end)"
+~~~
+
+After the power cycle, observe serial from the saved serial cursor and query
+`scripts/rpi5-wait-tftp-delta.sh "$tftp_cursor"` before restoring the boot
+tree. If the run is inconclusive, retain one final pre-restore `GET /status`,
+`GET /boot/files`, and TFTP-tail or stable-delta sample. Restore evidence and
+hardware lock release evidence belong in the same proof bundle.
+
+Classification rules:
+
+- `valid-known-good-talos-readiness`: `GET /status` and `GET /boot/files`
+  identify the expected boot tree, the stable TFTP delta includes the expected
+  `kernel_2712.img` fetch before restore, and serial reaches the accepted
+  Talos readiness or PASS marker for that control.
+- `staging-publication-mismatch`: `GET /status` or `GET /boot/files` shows an
+  unexpected tree hash, selected kernel, missing boot file, or boot-config
+  mismatch before the run.
+- `tftp-capture-logging-blindness`: serial proves a network boot attempt from
+  the fresh cursor, but the stable pre-restore TFTP delta has zero events while
+  `GET /status` and `GET /boot/files` still show the expected boot tree.
+- `serial-only-firmware-reboot`: serial reaches Raspberry Pi firmware NETWORK
+  output from the fresh cursor, stable TFTP evidence does not show the expected
+  fetch, and no Talos readiness marker appears.
+
+Do not shrink a feature proof's original target based on these classifications.
+For example, firmware NETWORK serial with stable zero TFTP events does not
+accept candidate fetch, Talos entry, RP1 mapped/read-value, RP1 unmapped/trap,
+or known-good boot health.
 
 Verified request sequence:
 

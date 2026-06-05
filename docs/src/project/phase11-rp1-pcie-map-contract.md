@@ -178,6 +178,19 @@ discrimination before any RP1 diagnostic/source changes, candidate rerun,
 Milestone 11.2, networking, SSH, GPIO, interrupts, DMA/cache, storage,
 generated-root, or broader PCIe work.
 
+phase11-lab-evidence-contract-repair-core-20260605 repairs the proof contract
+for the next discriminator without touching hardware, boot publication, or RP1
+runtime code. The deployed lab API's authoritative boot identity endpoint is
+`GET /status`; `GET /` returning `404 unknown endpoint: GET /` is recorded as
+endpoint-semantics evidence only. The next proof checklist must retain
+`GET /status`, `GET /boot/files`, `GET /boot/snapshots`, fresh serial and TFTP
+cursors, stable pre-restore TFTP evidence, and final pre-restore
+status/boot-file samples when inconclusive. Classification now separates
+`staging-publication-mismatch`, `tftp-capture-logging-blindness`,
+`serial-only-firmware-reboot`, and `valid-known-good-talos-readiness` without
+accepting candidate fetch, Rust entry, RP1 mapped/read-value, RP1 unmapped/trap,
+or Milestone 11.2 behavior.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path first reports `rpi5-rp1-uart0-fr-read: start` and `rpi5-rp1-uart0-fr-read: pre-mmio-read`, flushes UART10, then reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load. A returned read reports the contract id, target name, address, width, raw value, `mapped/read-value` success classification, and PASS before returning to the existing final halt path. The pre-MMIO marker is a discriminator for the next serialized proof: if hardware reaches that marker but not the read-value line, the result is entry/handoff reachability plus an RP1 read trap/hang boundary, not a mapping acceptance.
