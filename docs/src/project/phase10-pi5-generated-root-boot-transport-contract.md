@@ -103,6 +103,24 @@ Any inconclusive run must follow the standard triage sequence before code
 changes: candidate identity, fresh serial cursor, TFTP delta, known-good
 control, then candidate rerun.
 
+## Hardware Blocker
+
+phase10-pi5-generated-root-boot-transport-proof-20260605 completed the first
+serialized Pi 5 candidate run with a source-backed blocker, not acceptance. The
+Pi fetched the selected candidate files, including da591740/kernel_2712.img at
+204888 bytes and da591740/initramfs_2712 at 662 bytes, and Talos received FDT
+/chosen initramfs bounds:
+
+start=0x000000002efff000 end=0x000000002efff296 len=0x0000000000000296
+
+Talos then reported source=compiled-fallback reason=missing-artifact. The same
+serial transcript shows the initramfs range starts at the early page-frame seed
+and bootstrap reservation address, and overlaps the initial translation table
+layout at 0x2efff000. The next implementation must reserve or copy the firmware
+initramfs range before early page-table/bootstrap allocation can overwrite it.
+The accepted archive/TFTP placement is therefore not enough by itself to claim
+Pi 5 generated-root transport acceptance.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11 remain

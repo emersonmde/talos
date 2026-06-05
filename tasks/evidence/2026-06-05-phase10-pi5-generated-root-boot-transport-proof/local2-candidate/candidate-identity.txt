@@ -1,0 +1,6 @@
+task=phase10-pi5-generated-root-boot-transport-proof-20260605
+started_at=2026-06-05T12:24:16Z
+archive=target/talos-rpi5-generated-root-boot-transport-candidate-20260605.tar.gz
+8cb1d731e55f35d13328cf4f618c9dac2bf673311535ddd36038680d8a4ef60e  target/talos-rpi5-generated-root-boot-transport-candidate-20260605.tar.gz
+c44e5a55eb600a09a217c6ad23f665a43d1092a8e982423f5162099c34a42169  target/rpi5-generated-root-boot-transport-candidate-20260605-boot-tree/kernel_2712.img
+0341f5393502f54489acb1951633bf2773fb846a82bde89b3e4a2e82000724c6  target/rpi5-generated-root-boot-transport-candidate-20260605-boot-tree/initramfs_2712

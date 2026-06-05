@@ -2249,6 +2249,18 @@ The post-review correction chain is:
     The archive remains non-published; Pi 5 power-cycle, TFTP/serial proof,
     restore, writable persistence, SD/USB/block drivers, networking, SSH, and
     phase transition remain deferred to the serialized proof and closeout tasks.
+117. Pi 5 generated-root boot transport proof: completed with a source-backed
+    blocker in 'phase10-pi5-generated-root-boot-transport-proof-20260605', not
+    accepted. Serialized lab evidence shows the Pi fetched the accepted
+    candidate kernel and 'da591740/initramfs_2712' artifact, restored the prior
+    accepted boot tree hash after the run, and reached the command-loop proof
+    harness. The blocker is runtime placement: firmware supplied '/chosen'
+    initramfs bounds at '0x2efff000..0x2efff296', but that range overlaps
+    Talos' early page-frame seed/bootstrap reservation/translation tables, so
+    the generated-root installer later observed 'source=compiled-fallback
+    reason=missing-artifact'. The next work should be a planned implementation
+    to reserve or copy the firmware initramfs range before early memory setup
+    can overwrite it, followed by a fresh serialized Pi 5 proof.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -6815,6 +6827,15 @@ Selected first slice:
   source path needed for a later hardware proof. This still does not accept
   archive publication, Pi 5 TFTP/serial consumption proof, writable persistence,
   SD/USB/block storage, networking, SSH, or phase transition.
+- 'phase10-pi5-generated-root-boot-transport-proof-20260605' completed with a
+  source-backed blocker, not acceptance. Hardware evidence records candidate
+  publication, fresh serial/TFTP cursors, da591740/initramfs_2712 fetch at
+  662 bytes, command-loop readiness, and restore to the prior boot tree hash.
+  The firmware initramfs bounds existed but overlapped Talos' early
+  page-frame/bootstrap/translation-table range at 0x2efff000, so the runtime
+  fell back to the compiled generated-root image with reason=missing-artifact.
+  A later implementation must reserve or copy that firmware range before
+  proving Pi 5 generated-root consumption.
 
 Acceptance criteria:
 
@@ -6824,9 +6845,10 @@ Acceptance criteria:
   kernel ELF/image hashes against two different external generated-root
   artifacts and observes distinct generated file and executable behavior.
   Pi 5 candidate boot archive placement is accepted only as a non-published
-  static archive. Pi 5 TFTP/serial consumption proof, boot archive publication
-  to the lab tree, writable persistence, SD/USB/block storage, networking, SSH,
-  and phase transition remain deferred and require explicit follow-up tasks.
+  static archive. The first Pi 5 boot-transport proof is blocked by firmware
+  initramfs range overlap with early memory setup; Pi 5 consumption acceptance,
+  writable persistence, SD/USB/block storage, networking, SSH, and phase
+  transition remain deferred and require explicit follow-up tasks.
 - Documentation explains the chosen local storage path and remaining risks.
 
 ## Phase 11: RP1, PCIe, DMA, and Hardware Substrate

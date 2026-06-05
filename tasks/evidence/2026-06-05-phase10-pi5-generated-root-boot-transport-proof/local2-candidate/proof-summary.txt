@@ -1,0 +1,9 @@
+completed_at=2026-06-05T12:24:44Z
+snapshot=phase10-pi5-generated-root-pre-20260605T122417Z
+serial_cursor_before=4066159
+tftp_cursor_before=4077950
+before_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+after_publish_tree_hash=5c24d009220334ebaff9dacc037ef2833c1ea21ecee1296818953449c602c7e6
+after_restore_tree_hash=a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+ready_before_write=1
+rpi5-generated-root-boot-transport: firmware-initramfs start=0x000000002efff000 end=0x000000002efff296 len=0x0000000000000296 source=compiled-fallback reason=missing-artifact digest=0x683ab092c3101887 total-len=0x0000000000000000 file-len=0x0000000000000026 exec-len=0x0000000000000204

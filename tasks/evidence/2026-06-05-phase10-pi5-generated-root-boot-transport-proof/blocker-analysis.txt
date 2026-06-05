@@ -1,0 +1,45 @@
+phase10-pi5-generated-root-boot-transport-proof-20260605 blocker analysis
+
+Result: source-backed hardware blocker, not acceptance.
+
+The local2 Pi 5 run published only the accepted candidate archive
+target/talos-rpi5-generated-root-boot-transport-candidate-20260605.tar.gz.
+The lab TFTP delta proves the Pi fetched the expected candidate files:
+
+- da591740/kernel_2712.img, 204888 bytes
+- da591740/initramfs_2712, 662 bytes
+
+The serial transcript then reported:
+
+  rpi5-generated-root-boot-transport: firmware-initramfs start=0x000000002efff000 end=0x000000002efff296 len=0x0000000000000296 source=compiled-fallback reason=missing-artifact ...
+
+That range proves firmware supplied /chosen initramfs bounds, but Talos parsed
+the bytes at that range as a missing artifact and fell back to the compiled
+generated-root image. The same transcript shows why this is a source-backed
+blocker rather than a TFTP, archive, or serial-capture failure:
+
+- memory usable: start=0x2efff000 end=0x3fc00000
+- page frames seed: start=0x2efff000 end=0x3fc00000
+- bootstrap reserve: start=0x2efff000 end=0x2f00f000
+- translation tables: start=0x2efff000 end=0x2f003000
+- firmware-initramfs: start=0x2efff000 end=0x2efff296
+
+The firmware-loaded initramfs range starts exactly where the early bootstrap
+page reservation and translation tables are placed. In source,
+src/boot/rpi5.rs plans and installs early translation tables, enables caches,
+initializes the bootstrap allocator, and reports post-allocator memory before
+calling install_firmware_initramfs_generated_root(). That installer then reads
+the original /chosen range in src/boot/rpi5.rs:237-292, after the range has
+already overlapped early memory setup.
+
+Disposition:
+
+- fixed: candidate publication/restore evidence captured; boot tree restored
+  to the prior tree hash a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+- fixed: source-backed blocker identified and recorded.
+- deferred: code remediation must reserve or copy the firmware initramfs range
+  before using it for page tables/bootstrap allocation. That is outside this
+  serialized proof task's scope and should be planned explicitly.
+- not-an-issue: the archive and TFTP placement are not the blocker; the Pi
+  fetched the selected kernel and initramfs_2712 artifact before Talos booted.
+

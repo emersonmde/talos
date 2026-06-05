@@ -12,6 +12,37 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-05 - Pi 5 Generated-Root Boot Transport Blocked by Initramfs Range Overlap
+
+- Status: completed as a source-backed hardware blocker for
+  phase10-pi5-generated-root-boot-transport-proof-20260605, not accepted as
+  Pi 5 generated-root transport.
+- Context: The accepted candidate archive carried initramfs_2712 at the root
+  and da591740/ mirror, with both configs selecting initramfs initramfs_2712
+  followkernel. The serialized proof published only that candidate and used
+  lab-controller serial, TFTP, snapshot, and restore endpoints under the
+  hardware lock.
+- Decision: Do not accept the Pi 5 generated-root boot transport yet. Hardware
+  evidence proves the Pi fetched da591740/kernel_2712.img and
+  da591740/initramfs_2712, and Talos received FDT /chosen initramfs bounds,
+  but the bounds started at 0x2efff000, the same address used by the early
+  page-frame seed, bootstrap reservation, and translation table layout. Talos
+  later reported source=compiled-fallback reason=missing-artifact, so the
+  external artifact was not consumed.
+- Evidence level: serialized Pi 5 hardware boot/output, lab-controller TFTP
+  evidence, lab-controller boot snapshot/restore evidence, static source
+  inspection. Evidence is retained under
+  tasks/evidence/2026-06-05-phase10-pi5-generated-root-boot-transport-proof/.
+- Validation: candidate TFTP delta and serial transcript captured before
+  restore; restore returned the prior boot tree hash
+  a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10;
+  git diff --check, mdbook build, and staged diff hygiene passed before commit.
+- Consequences: The archive/TFTP placement remains useful, but the runtime must
+  reserve or copy the firmware initramfs range before early page-table or
+  bootstrap allocation can overwrite it. Pi 5 generated-root consumption,
+  writable persistence, SD/USB/block storage, networking, SSH, and phase
+  transition remain unaccepted.
+
 ## 2026-06-05 - Pi 5 Generated-Root Boot Transport Contract
 
 - Status: accepted as a contract-only Milestone 10.3 checkpoint. No runtime
