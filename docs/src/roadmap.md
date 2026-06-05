@@ -1984,6 +1984,26 @@ The post-review correction chain is:
     syntax, broad process table policy, Pi 5 proof, networking, SSH, and phase
     transition remain deferred. The queued background lifecycle closeout is
     mechanically unblocked and must remain docs/evidence reconciliation only.
+104. background VFS exec lifecycle closeout: accepted in
+    'phase10-background-vfs-exec-lifecycle-closeout-20260605'. Static
+    inspection reconciles the accepted 'exec /bin/status42 &' QEMU/substitute
+    transcript, retained control evidence, roadmap language, and commit
+    history without adding runtime behavior. The accepted boundary remains one
+    exact shell-owned background accounting record layered on the existing
+    VFS exec/open/read, loader, descriptor inheritance, startup ABI, and
+    lifecycle/status records. Evidence confirms command-loop responsiveness
+    through a following descriptor-backed 'cat /etc/banner.txt', completion
+    observation with status '0x2a' and 'reaped=true', foreground 'waitpid
+    no-child' and 'last-process none' isolation, and a later normal
+    foreground 'exec /bin/zero' waitpid/laststatus control. Retained controls
+    cover pipeline/file redirection, stdio, descriptor-backed cat, VFS
+    exec/open/read/write, waitpid, laststatus, deterministic negatives,
+    errors=0, classifications, and PASS. The next mechanically unblocked task
+    is the minimal jobs/accounting list core. Multiple jobs, POSIX job-control
+    commands, process groups, sessions, terminal ownership, signals, fork,
+    true scheduler-concurrent userspace execution, background pipelines or
+    redirections, pipefail, Pi 5 proof, networking, SSH, and phase transition
+    remain deferred.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
