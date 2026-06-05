@@ -1,0 +1,36 @@
+{
+  "classification": "known-good-fetch-observed-without-talos-readiness",
+  "blocker": "boot-runtime-readiness-after-known-good-fetch",
+  "status_before_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "status_before_effective_kernel": "kernel_2712.img",
+  "status_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "status_after_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "serial_cursor_start": 4094624,
+  "serial_cursor_end": 4095332,
+  "serial_bytes": 708,
+  "serial_has_firmware_reboot": true,
+  "serial_has_network_boot": false,
+  "serial_has_talos_readiness": false,
+  "initial_tftp_stable": true,
+  "initial_tftp_event_count": 0,
+  "final_tftp_exit": 0,
+  "final_tftp_stable": true,
+  "final_tftp_stability_reason": "stable",
+  "final_tftp_event_count": 13,
+  "final_tftp_kernel_2712_served": true,
+  "final_tftp_kernel_2712_serves": [
+    {
+      "filename": "da591740/kernel_2712.img",
+      "bytes": 104136,
+      "client_ip": "10.42.1.4"
+    },
+    {
+      "filename": "da591740/kernel_2712.img",
+      "bytes": 104136,
+      "client_ip": "10.42.1.4"
+    }
+  ],
+  "restore_ok": true,
+  "rp1_behavior_accepted": false,
+  "candidate_behavior_accepted": false
+}

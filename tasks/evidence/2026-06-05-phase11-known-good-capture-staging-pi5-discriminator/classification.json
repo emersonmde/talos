@@ -1,0 +1,7 @@
+{
+  "classification": "known-good-fetch-observed-without-talos-readiness",
+  "blocker": "boot-runtime-readiness-after-known-good-fetch",
+  "evidence_level": "serialized Pi 5 hardware evidence through lab-controller endpoints",
+  "disposition": "TFTP capture/staging observed known-good config/kernel/DTB fetches before restore, but serial did not reach accepted Talos readiness markers; RP1 candidate/source behavior remains blocked pending closeout.",
+  "accepted_rp1_behavior": false
+}

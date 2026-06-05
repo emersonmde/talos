@@ -191,6 +191,20 @@ status/boot-file samples when inconclusive. Classification now separates
 accepting candidate fetch, Rust entry, RP1 mapped/read-value, RP1 unmapped/trap,
 or Milestone 11.2 behavior.
 
+phase11-known-good-capture-staging-pi5-discriminator-20260605 ran one
+serialized power cycle on the restored accepted boot tree
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10` with
+`effective_kernel=kernel_2712.img`. Final stable pre-restore TFTP evidence
+from fresh cursor `4094251` contained 13 events, including two served
+104,136-byte `da591740/kernel_2712.img` fetches, so the discriminator observed
+known-good capture/staging before restore. Serial from the fresh cursor reached
+Raspberry Pi firmware/RP1 boot output but did not reach `TALOS: kernel_main`,
+command-loop readiness, or PASS. The task is classified
+`known-good-fetch-observed-without-talos-readiness`; it accepts no RP1
+candidate fetch, Rust entry, RP1 mapped/read-value, RP1 unmapped/trap, GPIO,
+interrupt, DMA/cache, networking, SSH, storage, broader PCIe, or Milestone 11.2
+behavior.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path first reports `rpi5-rp1-uart0-fr-read: start` and `rpi5-rp1-uart0-fr-read: pre-mmio-read`, flushes UART10, then reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load. A returned read reports the contract id, target name, address, width, raw value, `mapped/read-value` success classification, and PASS before returning to the existing final halt path. The pre-MMIO marker is a discriminator for the next serialized proof: if hardware reaches that marker but not the read-value line, the result is entry/handoff reachability plus an RP1 read trap/hang boundary, not a mapping acceptance.

@@ -7025,6 +7025,21 @@ capture/logging blindness, serial-only firmware reboot, and valid known-good
 Talos readiness without accepting RP1 candidate behavior or Milestone 11.2
 progress.
 
+The serialized
+`phase11-known-good-capture-staging-pi5-discriminator-20260605` then ran one
+power cycle on the restored known-good tree
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10`.
+Final stable pre-restore TFTP evidence from fresh cursor `4094251` contained
+13 events, including two served 104,136-byte
+`da591740/kernel_2712.img` fetches, while serial reached Raspberry Pi
+firmware/RP1 boot output but not `TALOS: kernel_main`, command-loop readiness,
+or PASS. The classification is
+`known-good-fetch-observed-without-talos-readiness`: capture/staging is now
+observed for the known-good tree, but Talos runtime readiness remains a
+separate blocker and no RP1 candidate, mapped/unmapped, GPIO, interrupt,
+DMA/cache, networking, SSH, storage, broader PCIe, or Milestone 11.2 behavior
+is accepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
