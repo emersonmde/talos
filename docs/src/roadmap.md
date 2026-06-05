@@ -2004,6 +2004,30 @@ The post-review correction chain is:
     true scheduler-concurrent userspace execution, background pipelines or
     redirections, pipefail, Pi 5 proof, networking, SSH, and phase transition
     remain deferred.
+105. jobs/accounting list core: accepted in
+    'phase10-jobs-accounting-list-core-20260605'. Shell-visible 'jobs' now
+    reports the existing single background VFS exec accounting record without
+    adding POSIX job control. Before any background launch it reports
+    'jobs none'. After 'exec /bin/status42 &' the first 'jobs' inspection
+    reports the stable job id, pid, command label, 'state=running',
+    'status=pending', and 'reaped=false'. A following 'jobs' inspection reports
+    the same stable id/pid/command with 'state=completed', status '0x2a',
+    matching observed status, and 'reaped=true'. The task-owned QEMU/substitute
+    transcript proves that the background job table does not create foreground
+    waitable lifecycle records: foreground 'waitpid' still reports no-child and
+    'laststatus' still reports none after the background accounting observation.
+    A later foreground 'exec /bin/zero' preserves normal consuming 'waitpid' and
+    non-consuming 'laststatus', and retained controls cover plain pipeline
+    transfer, descriptor-backed 'cat /etc/banner.txt', accepted background exec
+    evidence, waitpid, pipeline/file redirection, errors=0, final
+    classification, and PASS. Unsupported 'fg', 'bg', and 'kill %1' remain
+    deterministic unknown-command negatives. This slice accepts only a minimal
+    one-record accounting inspection surface; multiple jobs, kill/fg/bg/disown,
+    signals, process groups, sessions, terminal ownership, process-tree
+    inspection, true scheduler-concurrent userspace execution, Pi 5 proof,
+    networking, SSH, and phase transition remain deferred. The queued
+    jobs/accounting closeout is mechanically unblocked and must remain
+    docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

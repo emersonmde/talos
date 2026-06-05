@@ -12,6 +12,42 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-05 - Phase 10 Minimal Jobs Accounting List Accepted
+
+- Status: accepted as the Phase 10 QEMU/substitute jobs/accounting list core.
+  No Pi 5 hardware run, boot archive publication, hardware-lock acquisition,
+  kill/fg/bg/disown, signals, process groups, sessions, terminal ownership,
+  arbitrary process tree inspection, networking, SSH, or phase transition was
+  added.
+- Context: The accepted background VFS exec lifecycle slice created exactly one
+  shell-owned background accounting record for `exec /bin/status42 &`, but it
+  deliberately deferred a shell-visible inspection command. The next bounded
+  process-control step needed to expose that accepted accounting state without
+  claiming POSIX job control or scheduler-concurrent userspace execution.
+- Decision: Accept `phase10-jobs-accounting-list-core-20260605`. The `jobs`
+  command reports either `jobs none` or the existing one-record background job
+  table with stable job id, pid, command label, lifecycle state, reaped flag,
+  and pending/completed status. The first `jobs` after the accepted background
+  launch reports `state=running status=pending reaped=false`; the following
+  `jobs` reports the same id/pid/command as `state=completed`, status `0x2a`,
+  matching observed status, and `reaped=true`. The command does not create or
+  consume foreground waitable lifecycle records.
+- Evidence level: fmt/lint/typecheck, no_std unit tests, task-owned
+  QEMU/substitute jobs/accounting list smoke, and retained static controls for
+  background exec, waitpid, laststatus, pipeline/file redirection, and
+  descriptor-backed cat behavior.
+- Validation: `cargo fmt --all -- --check` passed;
+  `cargo -Zjson-target-spec test --quiet` passed;
+  `scripts/qemu-local-shell-jobs-accounting-list-smoke.sh --quiet` passed;
+  retained controls were statically inspected; `git diff --check` passed;
+  `/home/node/.cargo/bin/mdbook build` passed; and
+  `git diff --cached --check` passed before commit.
+- Consequences: Talos now has a minimal job/accounting inspection surface for
+  the accepted background VFS exec record. Multiple jobs, POSIX job-control
+  commands, signal delivery, process groups, sessions, terminal ownership,
+  process trees, scheduler-concurrent userspace, Pi 5 proof, networking, and
+  SSH remain deferred.
+
 ## 2026-06-04 - Phase 10 Conservative Volatile /tmp Output Paths Accepted
 
 - Status: accepted as the Phase 10 stdout regular-file output path policy for
