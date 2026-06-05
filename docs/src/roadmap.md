@@ -1823,6 +1823,33 @@ The post-review correction chain is:
     proof, networking, SSH, and phase transition remain deferred. The queued
     combined-redirection closeout is mechanically unblocked and must stay
     docs/evidence reconciliation only.
+98. combined stdin/stdout redirection closeout: accepted in
+    'phase10-combined-stdin-stdout-redirection-closeout-20260605'. This
+    closeout checkpoints the exact single-command combined-redirection
+    frontier without adding code. The accepted form remains
+    'exec stdin </etc/banner.txt >/tmp/stdin-report.txt': fd0 is rebound to
+    the accepted read-only initramfs '/etc/banner.txt' source, fd1 is rebound
+    to the accepted volatile VFS '/tmp/stdin-report.txt' sink, and one
+    VFS-backed userspace '/bin/stdin' process observes both child-only
+    descriptor mutations. The consolidated evidence map retains the primary
+    QEMU/substitute transcript with separate fd0/fd1 exec-redirection records,
+    'fd0=regular-file fd1=regular-file fd2=stdio-output',
+    descriptor-backed 'cat /tmp/stdin-report.txt' readback, waitpid,
+    laststatus, deterministic negatives for output-first ordering,
+    '/dev/null' combined input, explicit fd1 aliasing, spaced input grammar,
+    errors=0, and PASS. Retained controls cover read-only stdin,
+    '/dev/null' stdin, arbitrary '/tmp' stdout output, descriptor-routing and
+    pipeline behavior, VFS exec/open/read/write, lifecycle/status, waitpid,
+    laststatus, and descriptor-backed cat. No ordering or path-policy decision
+    changed; the core task's 64-byte canonical line capacity is treated as an
+    implementation fix for carrying the accepted exact command, not a parser
+    grammar expansion. Arbitrary input paths, '/dev/null' combined input,
+    append/stderr combined forms, broader descriptor grammar, descriptor
+    moves, multi-command redirection, persistence, recursive directories,
+    process accounting/concurrency, Pi 5 proof, networking, SSH, and phase
+    transition remain deferred. The next queued pipeline consumer-output
+    redirection core is mechanically unblocked and must remain bounded to
+    exact consumer stdout file redirection on the accepted two-stage pipeline.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
