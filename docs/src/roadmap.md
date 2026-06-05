@@ -1850,6 +1850,33 @@ The post-review correction chain is:
     transition remain deferred. The next queued pipeline consumer-output
     redirection core is mechanically unblocked and must remain bounded to
     exact consumer stdout file redirection on the accepted two-stage pipeline.
+99. pipeline consumer-output redirection core: accepted in
+    'phase10-pipeline-consumer-output-redirection-core-20260605'.
+    Shell-visible 'exec stdout | exec stdin >/tmp/pipe-consumer.txt' now
+    composes the accepted two-stage VFS-backed stdout-to-stdin pipeline with a
+    child-only volatile VFS stdout sink on the consumer. The producer still
+    inherits fd1 as the pipe writer and writes 0x1f fixture bytes to
+    'stream=pipe-writer route=pipe:stdout-to-stdin'. The consumer inherits
+    fd0 as the pipe endpoint and fd1 as a regular file, reads the pipe bytes,
+    writes the 0x44-byte stdin report to '/tmp/pipe-consumer.txt', and the
+    report is read back through descriptor-backed 'cat
+    /tmp/pipe-consumer.txt'. The retained QEMU/substitute evidence records
+    waitpid and laststatus for the consumer lifecycle, pipe closure and
+    descriptor restoration, the new
+    'source=shell-pipe-consumer-stdout-redirection' marker, the retained plain
+    pipeline control, deterministic negatives for consumer append redirection,
+    stderr-producer consumer-output redirection, and producer-file plus
+    consumer-file redirection, errors=0, and PASS. A first smoke iteration
+    exposed an overlong negative command that hit the 64-byte line boundary;
+    the retained evidence uses a shorter negative so the failure is a parser
+    rejection rather than line truncation. Append consumer output, stderr
+    producer output redirection, producer file redirection combined with
+    consumer output redirection, multi-stage/concurrent pipelines, pipefail,
+    jobs, fork/signals, arbitrary descriptor syntax, persistence, recursive
+    directories, process accounting/concurrency, Pi 5 proof, networking, SSH,
+    and phase transition remain deferred. The queued consumer-output closeout
+    is mechanically unblocked and must remain docs/evidence reconciliation
+    only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

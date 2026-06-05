@@ -28,7 +28,7 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+readonly-regular-file-stdin-redirection+volatile-stdout-regular-file-redirection",
     "+volatile-stderr-regular-file-redirection+explicit-fd1-regular-file-redirection",
     "+stdout-arbitrary-tmp-output-redirection+stderr-arbitrary-tmp-output-redirection",
-    "+combined-stdin-stdout-redirection"
+    "+combined-stdin-stdout-redirection+pipeline-consumer-output-redirection"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -746,6 +746,14 @@ pub trait LocalCommandSink {
         Err(LocalCommandExecError::NotSupported)
     }
 
+    fn exec_vfs_program_with_policy(
+        &mut self,
+        request: LocalCommandExecRequest,
+        _allow_stdin_stdout_file_redirection: bool,
+    ) -> Result<LocalCommandExecSummary, LocalCommandExecError> {
+        self.exec_vfs_program(request)
+    }
+
     fn exec_vfs_pipeline(
         &mut self,
         _request: LocalCommandPipelineRequest,
@@ -1215,6 +1223,14 @@ where
         &mut self,
         request: LocalCommandExecRequest,
     ) -> Result<LocalCommandExecSummary, LocalCommandExecError> {
+        self.exec_vfs_program_with_policy(request, false)
+    }
+
+    fn exec_vfs_program_with_policy(
+        &mut self,
+        request: LocalCommandExecRequest,
+        allow_stdin_stdout_file_redirection: bool,
+    ) -> Result<LocalCommandExecSummary, LocalCommandExecError> {
         let path = request.path();
         if !is_absolute_exec_path(path) {
             return Err(LocalCommandExecError::InvalidPath);
@@ -1249,6 +1265,13 @@ where
         {
             return Err(LocalCommandExecError::InvalidPath);
         }
+        let allowed_stdin_stdout_file_redirection = allow_stdin_stdout_file_redirection
+            && source_path == initramfs::PHASE10_STDIN_PATH
+            && request.stdin_redirection.is_none()
+            && matches!(
+                request.redirection,
+                Some(LocalCommandExecRedirection::StdoutToTmpStdout(_))
+            );
         if matches!(
             request.redirection,
             Some(
@@ -1265,6 +1288,7 @@ where
                     request.redirection,
                     Some(LocalCommandExecRedirection::StdoutToTmpStdout(_))
                 ))
+            && !allowed_stdin_stdout_file_redirection
         {
             return Err(LocalCommandExecError::InvalidPath);
         }
@@ -1421,10 +1445,20 @@ where
             ) => true,
             _ => false,
         };
+        let consumer_output_redirection_supported = request.producer.path()
+            == initramfs::PHASE10_STDOUT_PATH
+            && request.producer.stdin_redirection.is_none()
+            && request.producer.redirection.is_none()
+            && request.consumer.path() == initramfs::PHASE10_STDIN_PATH
+            && request.consumer.stdin_redirection.is_none()
+            && matches!(
+                request.consumer.redirection,
+                Some(LocalCommandExecRedirection::StdoutToTmpStdout(_))
+            );
         if !producer_redirection_supported
             || request.consumer.path() != initramfs::PHASE10_STDIN_PATH
-            || request.consumer.redirection.is_some()
             || request.consumer.stdin_redirection.is_some()
+            || (request.consumer.redirection.is_some() && !consumer_output_redirection_supported)
         {
             return Err(LocalCommandExecError::InvalidPath);
         }
@@ -1441,17 +1475,25 @@ where
         let stdin_restore =
             self.install_pipe_endpoint(posix::STDIN_FD, posix::DescriptorAccess::ReadOnly)?;
         self.pipe.open_reader();
-        let consumer = self.exec_vfs_program(request.consumer);
+        let consumer = self
+            .exec_vfs_program_with_policy(request.consumer, consumer_output_redirection_supported);
         self.pipe.close_reader();
         self.restore_pipe_endpoint(posix::STDIN_FD, stdin_restore)?;
         let consumer = consumer?;
-        let pipe_source = match request.producer.redirection {
-            Some(LocalCommandExecRedirection::StderrToStdout) => "shell-pipe-stderr-dup-to-stdout",
-            Some(LocalCommandExecRedirection::StdoutToStderr) => "shell-pipe-stdout-redirect-away",
-            None if producer.source_path == initramfs::PHASE10_STDERR_PATH => {
+        let pipe_source = match (request.producer.redirection, request.consumer.redirection) {
+            (None, Some(LocalCommandExecRedirection::StdoutToTmpStdout(_))) => {
+                "shell-pipe-consumer-stdout-redirection"
+            }
+            (Some(LocalCommandExecRedirection::StderrToStdout), None) => {
+                "shell-pipe-stderr-dup-to-stdout"
+            }
+            (Some(LocalCommandExecRedirection::StdoutToStderr), None) => {
+                "shell-pipe-stdout-redirect-away"
+            }
+            (None, None) if producer.source_path == initramfs::PHASE10_STDERR_PATH => {
                 "shell-pipe-stdout-only-stderr-not-piped"
             }
-            None => "shell-pipe-stdout-to-stdin",
+            (None, None) => "shell-pipe-stdout-to-stdin",
             _ => return Err(LocalCommandExecError::InvalidPath),
         };
 
@@ -6334,6 +6376,84 @@ talos> talos: exec-invalid-path\n"
         ));
         assert!(output.contains(
             "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stderr consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stderr-dup-to-stdout\n"
+        ));
+        assert!(output.contains(
+            "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-to-stdin\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_redirects_pipeline_consumer_stdout_to_volatile_file() {
+        let bytes = *b"exec stdout | exec stdin >/tmp/pipe-consumer.txt\rwaitpid\rlaststatus\rcat /tmp/pipe-consumer.txt\rexec stdout | exec stdin\rexec stdout | exec stdin >>/tmp/pipe-consumer.txt\rexec stderr | exec stdin >/tmp/pipe-consumer.txt\rexec stdout >/tmp/pipe-source.txt | exec stdin >/tmp/pipe-consumer.txt\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (
+            redirected,
+            waited,
+            observed,
+            readback,
+            plain_pipeline,
+            append_consumer,
+            stderr_producer,
+            redirected_producer,
+        ) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(
+            redirected.line(),
+            b"exec stdout | exec stdin >/tmp/pipe-consumer.txt"
+        );
+        assert_eq!(redirected.status(), LocalCommandStatus::Handled);
+        assert_eq!(redirected.response_lines(), 22);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.line(), b"laststatus");
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(readback.line(), b"cat /tmp/pipe-consumer.txt");
+        assert_eq!(readback.status(), LocalCommandStatus::Handled);
+        assert_eq!(readback.response_lines(), 2);
+        assert_eq!(plain_pipeline.line(), b"exec stdout | exec stdin");
+        assert_eq!(plain_pipeline.status(), LocalCommandStatus::Handled);
+        for rejected in [append_consumer, stderr_producer, redirected_producer] {
+            assert_eq!(rejected.status(), LocalCommandStatus::UnexpectedArgument);
+            assert_eq!(rejected.response_lines(), 1);
+        }
+        assert!(output.contains(
+            "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-consumer-stdout-redirection\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=pipe-endpoint fd1=regular-file fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/pipe-consumer.txt target-stream=regular-file target-route=volatile-vfs:/tmp/pipe-consumer.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=pipe-writer route=pipe:stdout-to-stdin source=userspace-talos-write\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdin fd=0x0000000000000000 bytes=0x000000000000001f return=0x000000000000001f read-source=pipe:stdout-to-stdin stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000044 stdout-return=0x0000000000000044 source=userspace-talos-read+userspace-talos-write read-result=pipe-eof-after-writer-close\n"
+        ));
+        assert!(output.contains(
+            "talos: cat path=/tmp/pipe-consumer.txt bytes=0x0000000000000044 source=volatile-vfs-descriptor-read\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
         assert!(output.contains(
             "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-to-stdin\n"
