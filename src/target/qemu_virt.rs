@@ -14379,6 +14379,7 @@ pub fn run_diagnostic_command_channel_smoke() -> bool {
     talos_boot_scenario = "qemu_local_shell_combined_stdin_stdout_redirection",
     talos_boot_scenario = "qemu_local_shell_pipeline_consumer_output_redirection",
     talos_boot_scenario = "qemu_local_shell_pipeline_producer_file_redirection_away",
+    talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection",
@@ -14390,6 +14391,7 @@ pub fn run_diagnostic_command_channel_smoke() -> bool {
     talos_boot_scenario = "qemu_local_shell_pipeline_stderr_dup_to_stdout",
     talos_boot_scenario = "qemu_local_shell_pipeline_stdout_redirect_away",
     talos_boot_scenario = "qemu_local_shell_pipeline_producer_file_redirection_away",
+    talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle",
     talos_boot_scenario = "qemu_local_shell_waitpid",
     talos_boot_scenario = "qemu_local_cd_fixed_dirs",
     talos_boot_scenario = "qemu_local_ls_cwd",
@@ -14661,6 +14663,11 @@ const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-shell-pipeline-producer-file-redirection-away"
 }
 
+#[cfg(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle")]
+const fn local_command_loop_smoke_label() -> &'static str {
+    "qemu-local-shell-background-vfs-exec-lifecycle"
+}
+
 #[cfg(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection")]
 const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-shell-stderr-regular-file-redirection"
@@ -14773,6 +14780,7 @@ const fn local_command_loop_smoke_label() -> &'static str {
     not(talos_boot_scenario = "qemu_local_shell_combined_stdin_stdout_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_pipeline_consumer_output_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_pipeline_producer_file_redirection_away"),
+    not(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection"),
@@ -14944,6 +14952,11 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     "qemu-local-shell-pipeline-producer-file-redirection-away-complete"
 }
 
+#[cfg(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle")]
+const fn local_command_loop_smoke_classification() -> &'static str {
+    "qemu-local-shell-background-vfs-exec-lifecycle-complete"
+}
+
 #[cfg(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection")]
 const fn local_command_loop_smoke_classification() -> &'static str {
     "qemu-local-shell-stderr-regular-file-redirection-complete"
@@ -15056,6 +15069,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     not(talos_boot_scenario = "qemu_local_shell_combined_stdin_stdout_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_pipeline_consumer_output_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_pipeline_producer_file_redirection_away"),
+    not(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection"),
@@ -15109,6 +15123,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     talos_boot_scenario = "qemu_local_shell_combined_stdin_stdout_redirection",
     talos_boot_scenario = "qemu_local_shell_pipeline_consumer_output_redirection",
     talos_boot_scenario = "qemu_local_shell_pipeline_producer_file_redirection_away",
+    talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_to_stdout_redirection",
     talos_boot_scenario = "qemu_local_shell_stdout_close_redirection",
@@ -15177,6 +15192,8 @@ const fn local_command_loop_smoke_command_count() -> usize {
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_producer_file_redirection_away")
     {
         11
+    } else if cfg!(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle") {
+        14
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection") {
         14
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection")
@@ -15262,6 +15279,7 @@ const fn local_command_loop_smoke_command_count() -> usize {
     talos_boot_scenario = "qemu_local_shell_stderr_arbitrary_tmp_output_redirection",
     talos_boot_scenario = "qemu_local_shell_combined_stdin_stdout_redirection",
     talos_boot_scenario = "qemu_local_shell_pipeline_consumer_output_redirection",
+    talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection",
@@ -15438,6 +15456,39 @@ fn expected_local_command_loop_dispatch(
             line == b"exec stdout >/tmp/src.txt | exec stdin >/tmp/out.txt"
                 && status == UnexpectedArgument
                 && response_lines == 1
+        }
+        3 if cfg!(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle") => {
+            line == b"exec /bin/status42 &" && status == Handled && response_lines == 8
+        }
+        4 if cfg!(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle") => {
+            line == b"cat /etc/banner.txt" && status == Handled && response_lines == 2
+        }
+        5 if cfg!(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle") => {
+            line == b"waitpid" && status == Handled && response_lines == 1
+        }
+        6 if cfg!(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle") => {
+            line == b"laststatus" && status == Handled && response_lines == 1
+        }
+        7 if cfg!(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle") => {
+            line == b"exec /bin/zero" && status == Handled && response_lines == 9
+        }
+        8 if cfg!(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle") => {
+            line == b"waitpid" && status == Handled && response_lines == 1
+        }
+        9 if cfg!(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle") => {
+            line == b"laststatus" && status == Handled && response_lines == 1
+        }
+        10 if cfg!(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle") => {
+            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 21
+        }
+        11 if cfg!(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle") => {
+            line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
+        }
+        12 if cfg!(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle") => {
+            line == b"exec /bin/status42&" && status == UnexpectedArgument && response_lines == 1
+        }
+        13 if cfg!(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle") => {
+            line == b"exec stdout &" && status == UnexpectedArgument && response_lines == 1
         }
         3 if cfg!(
             talos_boot_scenario = "qemu_local_shell_stdout_arbitrary_tmp_output_redirection"

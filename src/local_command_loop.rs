@@ -29,7 +29,7 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+volatile-stderr-regular-file-redirection+explicit-fd1-regular-file-redirection",
     "+stdout-arbitrary-tmp-output-redirection+stderr-arbitrary-tmp-output-redirection",
     "+combined-stdin-stdout-redirection+pipeline-consumer-output-redirection",
-    "+pipeline-producer-file-redirection-away"
+    "+pipeline-producer-file-redirection-away+background-vfs-exec-lifecycle"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -60,6 +60,7 @@ const LOCAL_COMMAND_STDERR_USER_BASE: u64 = 0x0000_0000_0014_0000;
 const LOCAL_COMMAND_STDERR_USER_MEMORY_LEN: usize = 128;
 const LOCAL_COMMAND_EXEC_ADDRESS_SPACE_ID: u64 = 0x0010_0001;
 const LOCAL_COMMAND_EXEC_PROCESS_ID: u64 = 0x0010_0001;
+const LOCAL_COMMAND_BACKGROUND_JOB_ID: u64 = 0x0000_0001;
 const LOCAL_COMMAND_EXEC_TEMP_DESCRIPTOR: usize = posix::STDERR_FD + 1;
 const LOCAL_COMMAND_PIPE_BUFFER_LEN: usize = 128;
 const LOCAL_COMMAND_PIPE_ENDPOINT_REFERENCE: usize = 1;
@@ -178,6 +179,12 @@ pub struct LocalCommandPipelineSummary {
     pipe: LocalCommandPipeRecord,
     producer: LocalCommandExecSummary,
     consumer: LocalCommandExecSummary,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LocalCommandBackgroundExecSummary {
+    exec: LocalCommandExecSummary,
+    job: LocalCommandBackgroundJobRecord,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -689,6 +696,54 @@ impl LocalCommandProcessState {
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LocalCommandBackgroundJobRecord {
+    job_id: u64,
+    lifecycle: LocalCommandProcessLifecycleRecord,
+    command_label: &'static [u8],
+    state: LocalCommandBackgroundJobState,
+    reaped: bool,
+}
+
+impl LocalCommandBackgroundJobRecord {
+    const fn running(
+        job_id: u64,
+        lifecycle: LocalCommandProcessLifecycleRecord,
+        command_label: &'static [u8],
+    ) -> Self {
+        Self {
+            job_id,
+            lifecycle,
+            command_label,
+            state: LocalCommandBackgroundJobState::Running,
+            reaped: false,
+        }
+    }
+
+    const fn completed_reaped(self) -> Self {
+        Self {
+            state: LocalCommandBackgroundJobState::Completed,
+            reaped: true,
+            ..self
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum LocalCommandBackgroundJobState {
+    Running,
+    Completed,
+}
+
+impl LocalCommandBackgroundJobState {
+    const fn name(self) -> &'static str {
+        match self {
+            Self::Running => "running",
+            Self::Completed => "completed",
+        }
+    }
+}
+
 pub trait LocalCommandSink {
     fn write_command_str(&mut self, text: &str) -> Result<(), LocalCommandWriteError>;
 
@@ -762,6 +817,17 @@ pub trait LocalCommandSink {
         Err(LocalCommandExecError::NotSupported)
     }
 
+    fn exec_background_vfs_program(
+        &mut self,
+        _request: LocalCommandExecRequest,
+    ) -> Result<LocalCommandBackgroundExecSummary, LocalCommandExecError> {
+        Err(LocalCommandExecError::NotSupported)
+    }
+
+    fn poll_background_job_completion(&mut self) -> Option<LocalCommandBackgroundJobRecord> {
+        None
+    }
+
     fn last_process_lifecycle_record(&self) -> Option<LocalCommandProcessLifecycleRecord> {
         None
     }
@@ -801,6 +867,7 @@ pub struct DescriptorBackedLocalCommandIo<
     read_only_files: initramfs::ReadOnlyFileDescriptions<LOCAL_COMMAND_READ_ONLY_FILE_CAPACITY>,
     last_process: Option<LocalCommandProcessLifecycleRecord>,
     waitable_process: Option<LocalCommandProcessLifecycleRecord>,
+    background_job: Option<LocalCommandBackgroundJobRecord>,
     pipe: LocalCommandPipeState,
     stdout_scratch_file: LocalCommandVolatileFileState,
     stderr_scratch_file: LocalCommandVolatileFileState,
@@ -1028,6 +1095,7 @@ where
             read_only_files: initramfs::ReadOnlyFileDescriptions::new_empty(),
             last_process: None,
             waitable_process: None,
+            background_job: None,
             pipe: LocalCommandPipeState::new_empty(),
             stdout_scratch_file: LocalCommandVolatileFileState::new_empty(),
             stderr_scratch_file: LocalCommandVolatileFileState::new_empty(),
@@ -1520,6 +1588,44 @@ where
             producer,
             consumer,
         })
+    }
+
+    fn exec_background_vfs_program(
+        &mut self,
+        request: LocalCommandExecRequest,
+    ) -> Result<LocalCommandBackgroundExecSummary, LocalCommandExecError> {
+        if request.path() != initramfs::PHASE10_STATUS42_PATH
+            || request.redirection.is_some()
+            || request.stdin_redirection.is_some()
+            || self.background_job.is_some_and(|job| {
+                job.state == LocalCommandBackgroundJobState::Running && !job.reaped
+            })
+        {
+            return Err(LocalCommandExecError::InvalidPath);
+        }
+
+        let previous_last = self.last_process;
+        let previous_waitable = self.waitable_process;
+        let exec = self.exec_vfs_program(request)?;
+        self.last_process = previous_last;
+        self.waitable_process = previous_waitable;
+        let job = LocalCommandBackgroundJobRecord::running(
+            LOCAL_COMMAND_BACKGROUND_JOB_ID,
+            exec.lifecycle,
+            exec.source_path,
+        );
+        self.background_job = Some(job);
+        Ok(LocalCommandBackgroundExecSummary { exec, job })
+    }
+
+    fn poll_background_job_completion(&mut self) -> Option<LocalCommandBackgroundJobRecord> {
+        let job = self.background_job?;
+        if job.state != LocalCommandBackgroundJobState::Running || job.reaped {
+            return None;
+        }
+        let completed = job.completed_reaped();
+        self.background_job = Some(completed);
+        Some(completed)
     }
 }
 
@@ -3116,6 +3222,10 @@ fn dispatch_local_command(
         }
     };
 
+    if let Some(job) = sink.poll_background_job_completion() {
+        write_background_job_completion_line(sink, responses, job)?;
+    }
+
     match command.name {
         "help" => {
             if command.arguments.is_some() {
@@ -3279,6 +3389,32 @@ fn dispatch_local_command(
                 write_line(sink, responses, "talos: unexpected-argument")?;
                 return Ok(LocalCommandStatus::UnexpectedArgument);
             };
+            if has_background_exec_suffix(arguments) {
+                match parse_background_exec_request(arguments)
+                    .and_then(|request| sink.exec_background_vfs_program(request))
+                {
+                    Ok(summary) => {
+                        write_background_exec_summary(sink, responses, summary)?;
+                        return Ok(LocalCommandStatus::Handled);
+                    }
+                    Err(LocalCommandExecError::InvalidPath) => {
+                        write_line(sink, responses, "talos: exec-invalid-path")?;
+                        return Ok(LocalCommandStatus::UnexpectedArgument);
+                    }
+                    Err(LocalCommandExecError::NotExecutable) => {
+                        write_line(sink, responses, "talos: exec-not-executable")?;
+                        return Ok(LocalCommandStatus::UnexpectedArgument);
+                    }
+                    Err(LocalCommandExecError::NotFound) => {
+                        write_line(sink, responses, "talos: exec-not-found")?;
+                        return Ok(LocalCommandStatus::UnexpectedArgument);
+                    }
+                    Err(_) => {
+                        write_line(sink, responses, "talos: exec-error")?;
+                        return Ok(LocalCommandStatus::UnexpectedArgument);
+                    }
+                }
+            }
             if arguments.as_bytes().contains(&b'|') {
                 match parse_pipeline_request(arguments)
                     .and_then(|request| sink.exec_vfs_pipeline(request))
@@ -3407,6 +3543,23 @@ fn parse_pipeline_request(
         producer: parse_exec_request(producer)?,
         consumer: parse_exec_request(consumer)?,
     })
+}
+
+fn parse_background_exec_request(
+    arguments: &str,
+) -> Result<LocalCommandExecRequest, LocalCommandExecError> {
+    let trimmed = trim_ascii_space(arguments);
+    let foreground = trimmed
+        .strip_suffix(" &")
+        .ok_or(LocalCommandExecError::InvalidPath)?;
+    if foreground.as_bytes().contains(&b'&') {
+        return Err(LocalCommandExecError::InvalidPath);
+    }
+    parse_exec_request(trim_ascii_space(foreground))
+}
+
+fn has_background_exec_suffix(arguments: &str) -> bool {
+    trim_ascii_space(arguments).ends_with(" &")
 }
 
 fn trim_ascii_space(text: &str) -> &str {
@@ -3890,6 +4043,91 @@ fn write_exec_summary(
         response_lines,
         "talos: exec-signal lower-aarch64-svc-launch-boundary-equivalent",
     )
+}
+
+fn write_background_exec_summary(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    summary: LocalCommandBackgroundExecSummary,
+) -> Result<(), LocalCommandCycleError> {
+    write_str_part(sink, "talos: exec path=")?;
+    write_byte_path_part(sink, summary.exec.source_path)?;
+    write_str_part(sink, " source=vfs-open-read mode=background")?;
+    finish_dynamic_line(sink, response_lines)?;
+    write_exec_source_line(sink, response_lines, summary.exec)?;
+    write_exec_entry_line(sink, response_lines, summary.exec)?;
+    write_exec_launch_line(sink, response_lines, summary.exec)?;
+    write_exec_descriptor_inheritance_line(sink, response_lines, summary.exec)?;
+    write_exec_startup_abi_line(sink, response_lines, summary.exec)?;
+    for record in summary.exec.redirections {
+        if let Some(record) = record {
+            write_exec_redirection_line(sink, response_lines, record)?;
+        }
+    }
+    if let Some(record) = summary.exec.userspace_stdout {
+        write_exec_userspace_stdout_line(sink, response_lines, record)?;
+    }
+    if let Some(record) = summary.exec.userspace_stdin {
+        write_exec_userspace_stdin_line(sink, response_lines, record)?;
+    }
+    if let Some(record) = summary.exec.userspace_stderr {
+        write_exec_userspace_stderr_line(sink, response_lines, record)?;
+    }
+    write_background_job_running_line(sink, response_lines, summary.job)?;
+    write_line(
+        sink,
+        response_lines,
+        "talos: background-signal lower-aarch64-svc-launch-boundary-equivalent",
+    )
+}
+
+fn write_background_job_running_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    job: LocalCommandBackgroundJobRecord,
+) -> Result<(), LocalCommandCycleError> {
+    write_background_job_line(
+        sink,
+        response_lines,
+        job,
+        "status=pending shell-responsive=true",
+    )
+}
+
+fn write_background_job_completion_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    job: LocalCommandBackgroundJobRecord,
+) -> Result<(), LocalCommandCycleError> {
+    write_background_job_line(sink, response_lines, job, "shell-responsive=observed")
+}
+
+fn write_background_job_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    job: LocalCommandBackgroundJobRecord,
+    suffix: &str,
+) -> Result<(), LocalCommandCycleError> {
+    write_str_part(sink, "talos: background-job id=")?;
+    write_hex_u64_part(sink, job.job_id)?;
+    write_str_part(sink, " pid=")?;
+    write_hex_u64_part(sink, job.lifecycle.process_id)?;
+    write_str_part(sink, " command=")?;
+    write_byte_path_part(sink, job.command_label)?;
+    write_str_part(sink, " state=")?;
+    write_str_part(sink, job.state.name())?;
+    if job.state == LocalCommandBackgroundJobState::Completed {
+        write_str_part(sink, " status=")?;
+        write_hex_u64_part(sink, job.lifecycle.status)?;
+        write_str_part(sink, " observed-status=")?;
+        write_hex_u64_part(sink, job.lifecycle.observed_status)?;
+    }
+    write_str_part(sink, " reaped=")?;
+    write_str_part(sink, if job.reaped { "true" } else { "false" })?;
+    write_str_part(sink, " ")?;
+    write_str_part(sink, suffix)?;
+    write_str_part(sink, " source=background-vfs-exec-accounting")?;
+    finish_dynamic_line(sink, response_lines)
 }
 
 fn write_pipeline_summary(
@@ -6390,7 +6628,7 @@ talos> talos: exec-invalid-path\n"
 
     #[test_case]
     fn local_command_loop_redirects_pipeline_consumer_stdout_to_volatile_file() {
-        let bytes = *b"exec stdout | exec stdin >/tmp/pipe-consumer.txt\rwaitpid\rlaststatus\rcat /tmp/pipe-consumer.txt\rexec stdout | exec stdin\rexec stdout | exec stdin >>/tmp/pipe-consumer.txt\rexec stderr | exec stdin >/tmp/pipe-consumer.txt\rexec stdout >/tmp/pipe-source.txt | exec stdin >/tmp/pipe-consumer.txt\r";
+        let bytes = *b"exec stdout | exec stdin >/tmp/pipe-consumer.txt\rwaitpid\rlaststatus\rcat /tmp/pipe-consumer.txt\rexec stdout | exec stdin\rexec stdout | exec stdin >>/tmp/pipe-consumer.txt\rexec stderr | exec stdin >/tmp/pipe-consumer.txt\rexec stdout >/tmp/src.txt | exec stdin >/tmp/out.txt\r";
         let input = ScriptedInput::new(bytes, bytes.len());
         let mut backend = CaptureSink::new();
         let (
@@ -7256,14 +7494,9 @@ talos: descriptor-backed-output=true\n"
 
     #[test_case]
     fn local_command_loop_reports_input_and_response_failures() {
-        let mut truncated_input = ScriptedInput::new(
-            [
-                b'a', b'b', b'c', b'd', b'e', b'f', b'g', b'h', b'i', b'j', b'k', b'l', b'm', b'n',
-                b'o', b'p', b'q', b'r', b's', b't', b'u', b'v', b'w', b'x', b'y', b'z', b'1', b'2',
-                b'3', b'4', b'5', b'6', b'7', b'\r', 0, 0, 0, 0, 0, 0,
-            ],
-            34,
-        );
+        let mut truncated_bytes = [b'a'; CANONICAL_LINE_CAPACITY + 2];
+        truncated_bytes[CANONICAL_LINE_CAPACITY + 1] = b'\r';
+        let mut truncated_input = ScriptedInput::new(truncated_bytes, truncated_bytes.len());
         let mut sink = CaptureSink::new();
         let result = run_one_serial_command(&mut truncated_input, &mut sink).unwrap();
 

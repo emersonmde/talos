@@ -1960,6 +1960,30 @@ The post-review correction chain is:
     SSH, and phase transition remain deferred. No explicit queued follow-up is
     mechanically unblocked; supervisor planning is required before promoting
     minimal process accounting/concurrency or another justified shell feature.
+103. background VFS exec lifecycle core: accepted in
+    'phase10-background-vfs-exec-lifecycle-core-20260605'. Shell-visible
+    'exec /bin/status42 &' now launches through the accepted fixed '/bin'
+    descriptor-backed VFS exec path while recording minimal shell-owned
+    background job accounting. The launch transcript reports
+    'source=vfs-open-read mode=background', preserves the accepted
+    exec-source/loader/launch/descriptors/startup ABI lines, records a running
+    background job with 'shell-responsive=true', and observes completion on the
+    next command with status '0x2a', 'observed-status=0x2a', and
+    'reaped=true'. The task-owned QEMU/substitute transcript proves the next
+    command remains responsive by running descriptor-backed 'cat
+    /etc/banner.txt', then records foreground 'waitpid no-child' and
+    'last-process none' so the background completion does not corrupt
+    foreground lifecycle state. A following foreground 'exec /bin/zero'
+    preserves normal consuming 'waitpid' and non-consuming 'laststatus'. The
+    evidence map retains plain pipeline transfer, pipeline/file-redirection
+    controls, stdio descriptor controls, descriptor-backed cat, deterministic
+    async syntax negatives, errors=0, final classification, and PASS. This
+    slice accepts only one exact background VFS exec/accounting boundary; true
+    scheduler-concurrent user processes, multiple background jobs, jobs/fg/bg,
+    process groups, signals, background pipelines/redirections, arbitrary async
+    syntax, broad process table policy, Pi 5 proof, networking, SSH, and phase
+    transition remain deferred. The queued background lifecycle closeout is
+    mechanically unblocked and must remain docs/evidence reconciliation only.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

@@ -558,12 +558,12 @@ mod tests {
     fn line_discipline_reports_buffer_limit_without_implicit_timeout() {
         let mut tty = TtyLineDiscipline::canonical_lite();
 
-        for byte in b"abcdefghijklmnopqrstuvwxyz123456" {
-            assert_eq!(tty.process_byte(*byte), TtyInputOutcome::Pending);
+        for _ in 0..CANONICAL_LINE_CAPACITY {
+            assert_eq!(tty.process_byte(b'a'), TtyInputOutcome::Pending);
         }
-        assert_eq!(tty.process_byte(b'7'), TtyInputOutcome::BufferLimit);
+        assert_eq!(tty.process_byte(b'b'), TtyInputOutcome::BufferLimit);
 
-        assert_eq!(tty.line(), b"abcdefghijklmnopqrstuvwxyz123456");
+        assert_eq!(tty.line(), &[b'a'; CANONICAL_LINE_CAPACITY]);
         assert!(tty.truncated());
         assert!(!tty.terminated());
     }
@@ -586,27 +586,29 @@ mod tests {
 
     #[test_case]
     fn canonical_lite_applies_backspace_delete_control_truncation_and_newline() {
-        let result = run_polling_rx_diagnostic_with_limit(
-            ScriptedInput::new(
-                [
-                    b'a', b'b', b'X', 0x08, b'c', b'Y', 0x7f, b'd', 0x01, b'e', b'f', b'g', b'h',
-                    b'i', b'j', b'k', b'l', b'm', b'n', b'o', b'p', b'q', b'r', b's', b't', b'u',
-                    b'v', b'w', b'x', b'y', b'z', b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'\r',
-                ],
-                39,
-            ),
-            8,
-        );
+        let mut bytes = [b'e'; CANONICAL_LINE_CAPACITY + 8];
+        bytes[0] = b'a';
+        bytes[1] = b'b';
+        bytes[2] = b'X';
+        bytes[3] = 0x08;
+        bytes[4] = b'c';
+        bytes[5] = b'Y';
+        bytes[6] = 0x7f;
+        bytes[7] = b'd';
+        bytes[8] = 0x01;
+        bytes[CANONICAL_LINE_CAPACITY + 7] = b'\r';
+
+        let result =
+            run_polling_rx_diagnostic_with_limit(ScriptedInput::new(bytes, bytes.len()), 8);
 
         assert!(result.passed());
         assert_eq!(result.outcome(), PollingTtyRxOutcome::LineComplete);
         assert_eq!(result.outcome_name(), "line-complete");
-        assert_eq!(result.line(), b"abcdefghijklmnopqrstuvwxyz123456");
-        assert_eq!(
-            result.echo(),
-            b"abX\x08 \x08cY\x08 \x08defghijklmnopqrstuvwx"
-        );
-        assert_eq!(result.raw_bytes(), 39);
+        assert_eq!(result.line().len(), CANONICAL_LINE_CAPACITY);
+        assert!(result.line().starts_with(b"abcde"));
+        assert_eq!(result.echo().len(), CANONICAL_ECHO_CAPACITY);
+        assert!(result.echo().starts_with(b"abX\x08 \x08cY\x08 \x08de"));
+        assert_eq!(result.raw_bytes(), CANONICAL_LINE_CAPACITY + 8);
         assert_eq!(result.backspaces(), 1);
         assert_eq!(result.deletes(), 1);
         assert!(result.truncated());

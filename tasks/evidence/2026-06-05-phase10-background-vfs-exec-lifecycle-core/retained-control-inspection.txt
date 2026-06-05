@@ -1,0 +1,181 @@
+retained control inspection for phase10-background-vfs-exec-lifecycle-core
+inspected-at=2026-06-05T04:26:35Z
+
+FILE tasks/evidence/2026-06-05-phase10-background-vfs-exec-lifecycle-core/qemu-local-shell-background-vfs-exec-lifecycle-smoke.log
+8:qemu-local-shell-background-vfs-exec-lifecycle: start command-count=14 backend=runtime-console0/qemu-virt-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline+stdout-only-pipeline-stderr-not-piped+pipeline-stderr-dup-to-stdout+pipeline-stdout-redirect-away+stdout-dev-null-redirection+stderr-dev-null-redirection+stdin-dev-null-redirection+readonly-regular-file-stdin-redirection+volatile-stdout-regular-file-redirection+volatile-stderr-regular-file-redirection+explicit-fd1-regular-file-redirection+stdout-arbitrary-tmp-output-redirection+stderr-arbitrary-tmp-output-redirection+combined-stdin-stdout-redirection+pipeline-consumer-output-redirection+pipeline-producer-file-redirection-away+background-vfs-exec-lifecycle descriptor-backed-input=true descriptor-backed-output=true
+12:talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid
+23:talos: builtins kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline+stdout-only-pipeline-stderr-not-piped+pipeline-stderr-dup-to-stdout+pipeline-stdout-redirect-away+stdout-dev-null-redirection+stderr-dev-null-redirection+stdin-dev-null-redirection+readonly-regular-file-stdin-redirection+volatile-stdout-regular-file-redirection+volatile-stderr-regular-file-redirection+explicit-fd1-regular-file-redirection+stdout-arbitrary-tmp-output-redirection+stderr-arbitrary-tmp-output-redirection+combined-stdin-stdout-redirection+pipeline-consumer-output-redirection+pipeline-producer-file-redirection-away+background-vfs-exec-lifecycle
+24:talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid
+31:talos: fd 0 stdio-input
+32:talos: fd 1 stdio-output
+33:talos: fd 2 stdio-output
+35:talos: descriptor-backed-input=true
+36:talos: descriptor-backed-output=true
+46:talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+48:talos: background-job id=0x0000000000000001 pid=0x0000000000100001 command=/bin/status42 state=running reaped=false status=pending shell-responsive=true source=background-vfs-exec-accounting
+55:talos: background-job id=0x0000000000000001 pid=0x0000000000100001 command=/bin/status42 state=completed status=0x000000000000002a observed-status=0x000000000000002a reaped=true shell-responsive=observed source=background-vfs-exec-accounting
+56:Talos initramfs fixture
+61:talos> waitpid
+62:talos: waitpid no-child source=lifecycle-record
+68:talos: last-process none
+78:talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+87:talos> waitpid
+88:talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/zero state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record
+94:talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/zero state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record
+102:talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-to-stdin
+107:talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=pipe-endpoint fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+117:talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=pipe-endpoint fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+128:Talos initramfs fixture
+146:qemu-local-shell-background-vfs-exec-lifecycle: final participants=14 expected=14 errors=0 classification=qemu-local-shell-background-vfs-exec-lifecycle-complete
+147:qemu-local-shell-background-vfs-exec-lifecycle: PASS
+
+FILE tasks/evidence/2026-06-05-phase10-combined-stdin-stdout-redirection-core/qemu-local-shell-combined-stdin-stdout-redirection-smoke.log
+8:qemu-local-shell-combined-stdin-stdout-redirection: start command-count=11 backend=runtime-console0/qemu-virt-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline+stdout-only-pipeline-stderr-not-piped+pipeline-stderr-dup-to-stdout+pipeline-stdout-redirect-away+stdout-dev-null-redirection+stderr-dev-null-redirection+stdin-dev-null-redirection+readonly-regular-file-stdin-redirection+volatile-stdout-regular-file-redirection+volatile-stderr-regular-file-redirection+explicit-fd1-regular-file-redirection+stdout-arbitrary-tmp-output-redirection+stderr-arbitrary-tmp-output-redirection+combined-stdin-stdout-redirection descriptor-backed-input=true descriptor-backed-output=true
+12:talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid
+23:talos: builtins kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline+stdout-only-pipeline-stderr-not-piped+pipeline-stderr-dup-to-stdout+pipeline-stdout-redirect-away+stdout-dev-null-redirection+stderr-dev-null-redirection+stdin-dev-null-redirection+readonly-regular-file-stdin-redirection+volatile-stdout-regular-file-redirection+volatile-stderr-regular-file-redirection+explicit-fd1-regular-file-redirection+stdout-arbitrary-tmp-output-redirection+stderr-arbitrary-tmp-output-redirection+combined-stdin-stdout-redirection
+24:talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid
+31:talos: fd 0 stdio-input
+32:talos: fd 1 stdio-output
+33:talos: fd 2 stdio-output
+35:talos: descriptor-backed-input=true
+36:talos: descriptor-backed-output=true
+46:talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=regular-file fd1=regular-file fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+48:talos: exec-redirection op=source source-fd=0x0000000000000000 source-path=/etc/banner.txt source-stream=regular-file source-route=initramfs:/etc/banner.txt child-only=true shell-restored=true source=shell-redirection-stdin-etc-banner
+49:talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/stdin-report.txt target-stream=regular-file target-route=volatile-vfs:/tmp/stdin-report.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout
+50:talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000018 return=0x0000000000000018 read-source=initramfs:/etc/banner.txt stdout-fd=0x0000000000000001 stdout-bytes=0x000000000000003d stdout-return=0x000000000000003d source=userspace-talos-read+userspace-talos-write read-result=regular-file-eof-after-read
+58:talos> waitpid
+59:talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record
+65:talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record
+71:Talos userspace stdin fixture read: Talos initramfs fixture
+103:qemu-local-shell-combined-stdin-stdout-redirection: final participants=11 expected=11 errors=0 classification=qemu-local-shell-combined-stdin-stdout-redirection-complete
+104:qemu-local-shell-combined-stdin-stdout-redirection: PASS
+
+FILE tasks/evidence/2026-06-05-phase10-pipeline-consumer-output-redirection-core/qemu-local-shell-pipeline-consumer-output-redirection-smoke.log
+8:qemu-local-shell-pipeline-consumer-output-redirection: start command-count=11 backend=runtime-console0/qemu-virt-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline+stdout-only-pipeline-stderr-not-piped+pipeline-stderr-dup-to-stdout+pipeline-stdout-redirect-away+stdout-dev-null-redirection+stderr-dev-null-redirection+stdin-dev-null-redirection+readonly-regular-file-stdin-redirection+volatile-stdout-regular-file-redirection+volatile-stderr-regular-file-redirection+explicit-fd1-regular-file-redirection+stdout-arbitrary-tmp-output-redirection+stderr-arbitrary-tmp-output-redirection+combined-stdin-stdout-redirection+pipeline-consumer-output-redirection descriptor-backed-input=true descriptor-backed-output=true
+12:talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid
+23:talos: builtins kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline+stdout-only-pipeline-stderr-not-piped+pipeline-stderr-dup-to-stdout+pipeline-stdout-redirect-away+stdout-dev-null-redirection+stderr-dev-null-redirection+stdin-dev-null-redirection+readonly-regular-file-stdin-redirection+volatile-stdout-regular-file-redirection+volatile-stderr-regular-file-redirection+explicit-fd1-regular-file-redirection+stdout-arbitrary-tmp-output-redirection+stderr-arbitrary-tmp-output-redirection+combined-stdin-stdout-redirection+pipeline-consumer-output-redirection
+24:talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid
+31:talos: fd 0 stdio-input
+32:talos: fd 1 stdio-output
+33:talos: fd 2 stdio-output
+35:talos: descriptor-backed-input=true
+36:talos: descriptor-backed-output=true
+42:talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-consumer-stdout-redirection
+47:talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=pipe-endpoint fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+57:talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=pipe-endpoint fd1=regular-file fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+59:talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/pipe-consumer.txt target-stream=regular-file target-route=volatile-vfs:/tmp/pipe-consumer.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout
+68:talos> waitpid
+69:talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record
+75:talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record
+91:talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-to-stdin
+96:talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=pipe-endpoint fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+106:talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=pipe-endpoint fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+135:qemu-local-shell-pipeline-consumer-output-redirection: final participants=11 expected=11 errors=0 classification=qemu-local-shell-pipeline-consumer-output-redirection-complete
+136:qemu-local-shell-pipeline-consumer-output-redirection: PASS
+
+FILE tasks/evidence/2026-06-05-phase10-pipeline-producer-file-redirection-away-core/qemu-local-shell-pipeline-producer-file-redirection-away-smoke.log
+8:qemu-local-shell-pipeline-producer-file-redirection-away: start command-count=11 backend=runtime-console0/qemu-virt-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline+stdout-only-pipeline-stderr-not-piped+pipeline-stderr-dup-to-stdout+pipeline-stdout-redirect-away+stdout-dev-null-redirection+stderr-dev-null-redirection+stdin-dev-null-redirection+readonly-regular-file-stdin-redirection+volatile-stdout-regular-file-redirection+volatile-stderr-regular-file-redirection+explicit-fd1-regular-file-redirection+stdout-arbitrary-tmp-output-redirection+stderr-arbitrary-tmp-output-redirection+combined-stdin-stdout-redirection+pipeline-consumer-output-redirection+pipeline-producer-file-redirection-away descriptor-backed-input=true descriptor-backed-output=true
+12:talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid
+23:talos: builtins kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline+stdout-only-pipeline-stderr-not-piped+pipeline-stderr-dup-to-stdout+pipeline-stdout-redirect-away+stdout-dev-null-redirection+stderr-dev-null-redirection+stdin-dev-null-redirection+readonly-regular-file-stdin-redirection+volatile-stdout-regular-file-redirection+volatile-stderr-regular-file-redirection+explicit-fd1-regular-file-redirection+stdout-arbitrary-tmp-output-redirection+stderr-arbitrary-tmp-output-redirection+combined-stdin-stdout-redirection+pipeline-consumer-output-redirection+pipeline-producer-file-redirection-away
+24:talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid
+31:talos: fd 0 stdio-input
+32:talos: fd 1 stdio-output
+33:talos: fd 2 stdio-output
+35:talos: descriptor-backed-input=true
+36:talos: descriptor-backed-output=true
+43:talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x0000000000000000 bytes-read=0x0000000000000000 writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-producer-file-redirection-away
+48:talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=regular-file fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+50:talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/pipe-source.txt target-stream=regular-file target-route=volatile-vfs:/tmp/pipe-source.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout
+51:talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=regular-file route=volatile-vfs:/tmp/pipe-source.txt source=userspace-talos-write
+59:talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=pipe-endpoint fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+69:talos> waitpid
+70:talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record
+76:talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record
+91:talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-to-stdin
+96:talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=pipe-endpoint fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+106:talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=pipe-endpoint fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+135:qemu-local-shell-pipeline-producer-file-redirection-away: final participants=11 expected=11 errors=0 classification=qemu-local-shell-pipeline-producer-file-redirection-away-complete
+136:qemu-local-shell-pipeline-producer-file-redirection-away: PASS
+
+FILE tasks/evidence/2026-06-04-phase10-minimal-stdout-to-stdin-pipe-core/qemu-local-shell-minimal-stdout-to-stdin-pipeline-smoke.log
+8:qemu-local-shell-minimal-stdout-to-stdin-pipeline: start command-count=7 backend=runtime-console0/qemu-virt-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline+stdout-only-pipeline-stderr-not-piped+pipeline-stderr-dup-to-stdout+pipeline-stdout-redirect-away descriptor-backed-input=true descriptor-backed-output=true
+12:talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid
+23:talos: builtins kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline+stdout-only-pipeline-stderr-not-piped+pipeline-stderr-dup-to-stdout+pipeline-stdout-redirect-away
+24:talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid
+31:talos: fd 0 stdio-input
+32:talos: fd 1 stdio-output
+33:talos: fd 2 stdio-output
+35:talos: descriptor-backed-input=true
+36:talos: descriptor-backed-output=true
+44:talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-to-stdin
+49:talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=pipe-endpoint fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+59:talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=pipe-endpoint fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+69:talos> waitpid
+70:talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record
+76:talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record
+82:Talos initramfs fixture
+88:qemu-local-shell-minimal-stdout-to-stdin-pipeline: final participants=7 expected=7 errors=0 classification=qemu-local-shell-minimal-stdout-to-stdin-pipeline-complete
+89:qemu-local-shell-minimal-stdout-to-stdin-pipeline: PASS
+
+FILE tasks/evidence/2026-06-04-phase10-stdout-regular-file-redirection-core/qemu-local-shell-stdout-regular-file-redirection-smoke.log
+8:qemu-local-shell-stdout-regular-file-redirection: start command-count=13 backend=runtime-console0/qemu-virt-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline+stdout-only-pipeline-stderr-not-piped+pipeline-stderr-dup-to-stdout+pipeline-stdout-redirect-away+stdout-dev-null-redirection+stderr-dev-null-redirection+stdin-dev-null-redirection+readonly-regular-file-stdin-redirection+volatile-stdout-regular-file-redirection descriptor-backed-input=true descriptor-backed-output=true
+9:qemu-local-shell-stdout-regular-file-redirection: ready command=0
+12:talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid
+16:qemu-local-shell-stdout-regular-file-redirection: line command=0 hex=68 65 6c 70
+17:qemu-local-shell-stdout-regular-file-redirection: dispatch command=0 status=handled responses=4 raw-bytes=5 backspaces=0 deletes=0 truncated=false controls=0
+18:qemu-local-shell-stdout-regular-file-redirection: ready command=1
+23:talos: builtins kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline+stdout-only-pipeline-stderr-not-piped+pipeline-stderr-dup-to-stdout+pipeline-stdout-redirect-away+stdout-dev-null-redirection+stderr-dev-null-redirection+stdin-dev-null-redirection+readonly-regular-file-stdin-redirection+volatile-stdout-regular-file-redirection
+24:talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid
+26:qemu-local-shell-stdout-regular-file-redirection: line command=1 hex=73 74 61 74 75 73
+27:qemu-local-shell-stdout-regular-file-redirection: dispatch command=1 status=handled responses=5 raw-bytes=7 backspaces=0 deletes=0 truncated=false controls=0
+28:qemu-local-shell-stdout-regular-file-redirection: ready command=2
+31:talos: fd 0 stdio-input
+32:talos: fd 1 stdio-output
+33:talos: fd 2 stdio-output
+35:talos: descriptor-backed-input=true
+36:talos: descriptor-backed-output=true
+38:qemu-local-shell-stdout-regular-file-redirection: line command=2 hex=73 74 64 69 6f
+39:qemu-local-shell-stdout-regular-file-redirection: dispatch command=2 status=handled responses=7 raw-bytes=6 backspaces=0 deletes=0 truncated=false controls=0
+40:qemu-local-shell-stdout-regular-file-redirection: ready command=3
+46:talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=regular-file fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+48:talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/stdout.txt target-stream=regular-file target-route=volatile-vfs:/tmp/stdout.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout
+49:talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=regular-file route=volatile-vfs:/tmp/stdout.txt source=userspace-talos-write
+54:qemu-local-shell-stdout-regular-file-redirection: line command=3 hex=65 78 65 63 20 73 74 64 6f 75 74 20 3e 2f 74 6d 70 2f 73 74 64 6f 75 74 2e 74 78 74
+55:qemu-local-shell-stdout-regular-file-redirection: dispatch command=3 status=handled responses=11 raw-bytes=29 backspaces=0 deletes=0 truncated=false controls=0
+56:qemu-local-shell-stdout-regular-file-redirection: ready command=4
+57:talos> waitpid
+58:talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record
+60:qemu-local-shell-stdout-regular-file-redirection: line command=4 hex=77 61 69 74 70 69 64
+61:qemu-local-shell-stdout-regular-file-redirection: dispatch command=4 status=handled responses=1 raw-bytes=8 backspaces=0 deletes=0 truncated=false controls=0
+62:qemu-local-shell-stdout-regular-file-redirection: ready command=5
+64:talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record
+66:qemu-local-shell-stdout-regular-file-redirection: line command=5 hex=6c 61 73 74 73 74 61 74 75 73
+67:qemu-local-shell-stdout-regular-file-redirection: dispatch command=5 status=handled responses=1 raw-bytes=11 backspaces=0 deletes=0 truncated=false controls=0
+68:qemu-local-shell-stdout-regular-file-redirection: ready command=6
+73:qemu-local-shell-stdout-regular-file-redirection: line command=6 hex=63 61 74 20 2f 74 6d 70 2f 73 74 64 6f 75 74 2e 74 78 74
+74:qemu-local-shell-stdout-regular-file-redirection: dispatch command=6 status=handled responses=2 raw-bytes=20 backspaces=0 deletes=0 truncated=false controls=0
+75:qemu-local-shell-stdout-regular-file-redirection: ready command=7
+82:talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+89:qemu-local-shell-stdout-regular-file-redirection: line command=7 hex=65 78 65 63 20 73 74 64 6f 75 74
+90:qemu-local-shell-stdout-regular-file-redirection: dispatch command=7 status=handled responses=10 raw-bytes=12 backspaces=0 deletes=0 truncated=false controls=0
+91:qemu-local-shell-stdout-regular-file-redirection: ready command=8
+92:talos> waitpid
+93:talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record
+95:qemu-local-shell-stdout-regular-file-redirection: line command=8 hex=77 61 69 74 70 69 64
+96:qemu-local-shell-stdout-regular-file-redirection: dispatch command=8 status=handled responses=1 raw-bytes=8 backspaces=0 deletes=0 truncated=false controls=0
+97:qemu-local-shell-stdout-regular-file-redirection: ready command=9
+101:qemu-local-shell-stdout-regular-file-redirection: line command=9 hex=65 78 65 63 20 73 74 64 6f 75 74 20 3e 3e 2f 74 6d 70 2f 73 74 64 6f 75 74 2e 74 78 74
+102:qemu-local-shell-stdout-regular-file-redirection: dispatch command=9 status=unexpected-argument responses=1 raw-bytes=30 backspaces=0 deletes=0 truncated=false controls=0
+103:qemu-local-shell-stdout-regular-file-redirection: ready command=10
+107:qemu-local-shell-stdout-regular-file-redirection: line command=10 hex=65 78 65 63 20 73 74 64 6f 75 74 20 3e 2f 74 6d 70 2f 6f 74 68 65 72 2e 74 78 74
+108:qemu-local-shell-stdout-regular-file-redirection: dispatch command=10 status=unexpected-argument responses=1 raw-bytes=28 backspaces=0 deletes=0 truncated=false controls=0
+109:qemu-local-shell-stdout-regular-file-redirection: ready command=11
+113:qemu-local-shell-stdout-regular-file-redirection: line command=11 hex=65 78 65 63 20 73 74 64 65 72 72 20 32 3e 2f 74 6d 70 2f 73 74 64 6f 75 74 2e 74 78 74
+114:qemu-local-shell-stdout-regular-file-redirection: dispatch command=11 status=unexpected-argument responses=1 raw-bytes=30 backspaces=0 deletes=0 truncated=false controls=0
+115:qemu-local-shell-stdout-regular-file-redirection: ready command=12
+117:Talos initramfs fixture
+119:qemu-local-shell-stdout-regular-file-redirection: line command=12 hex=63 61 74 20 2f 65 74 63 2f 62 61 6e 6e 65 72 2e 74 78 74
+120:qemu-local-shell-stdout-regular-file-redirection: dispatch command=12 status=handled responses=1 raw-bytes=20 backspaces=0 deletes=0 truncated=false controls=0
+122:qemu-local-shell-stdout-regular-file-redirection: ready-for-next prompt=true
+123:qemu-local-shell-stdout-regular-file-redirection: final participants=13 expected=13 errors=0 classification=qemu-local-shell-stdout-regular-file-redirection-complete
+124:qemu-local-shell-stdout-regular-file-redirection: PASS
