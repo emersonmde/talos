@@ -7362,13 +7362,23 @@ passed that contract with tree
 45,816-byte da591740/kernel_2712.img fetches, an empty pre-power serial drain,
 7,489 occurrences of TALOS: fr-final-preload-hold-loop, final selected-tree
 identity, and restore to
-a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The next
-mechanically unblocked task is the queued RP1 UART0 FR-read hold-control v2
-proof under hardwareTestLock. RP1 UART0 FR mapped/read-value,
-bus-fault/trap, firmware-state behavior, GPIO, interrupts, DMA/cache, storage,
-generated-root, networking, SSH, broader PCIe, Milestone 11.2, and phase
-transition remain unaccepted until that selected RP1 candidate passes the same
-v2 identity join.
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+
+phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5-20260606 and
+phase11-rp1-uart0-fr-read-hold-control-v2-closeout-20260606 then classify the
+selected RP1 UART0 FR-read candidate as candidate-fetch-without-control-marker.
+The decisive candidate rerun passed v2 identity join for tree
+ae324bd791d7df59a0a8eabc74c936b1bd68ba6c2c9b645dcdc19f561e4e80c0 with two
+46,320-byte da591740/kernel_2712.img fetches, empty pre-power serial drain,
+final selected-tree identity, restore proof, and 27,177 occurrences of
+TALOS: fr-hold-control-post-read-loop. The serial window did not retain the
+contracted read-value/classification line, pre-read control marker, post-read
+terminal marker, or trap/panic text. RP1 UART0 FR mapped/read-value,
+bus-fault/trap, pre-read-control-visible-without-read-result, firmware-state
+behavior, GPIO, interrupts, DMA/cache, storage, generated-root, networking,
+SSH, broader PCIe, Milestone 11.2, and phase transition remain unaccepted. The
+next bounded step requires supervisor planning for a qualitatively different
+discriminator; another same-shaped RP1 FR-read hardware rerun is not progress.
 
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 

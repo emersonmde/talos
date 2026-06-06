@@ -1,0 +1,57 @@
+{
+  "task": "phase11-rp1-uart0-fr-read-hold-control-v2-closeout-20260606",
+  "status": "accepted",
+  "classification": "candidate-fetch-without-control-marker",
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-v2-closeout.md",
+    "staticEvidenceInspection": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-v2-closeout/static-evidence-inspection.md",
+    "sourceProofTask": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5.md",
+    "sourceProofClassification": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5/classification.json",
+    "sourceProofEvidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5/evidence-map.json",
+    "candidateRerunIdentityJoinCheck": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5/candidate-rerun-identity-join-check.json",
+    "knownGoodControlIdentityJoinCheck": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5/known-good-control-identity-join-check.json",
+    "candidateRerunSummary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5/candidate-rerun-summary.json",
+    "knownGoodControlSummary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5/known-good-control-summary.json",
+    "triageAnalysis": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5/triage-and-rerun-analysis.json"
+  },
+  "accepted": [
+    "accepted hold-control candidate archive publication/fetch evidence",
+    "candidate rerun v2 identity join for selected tree ae324bd791d7df59a0a8eabc74c936b1bd68ba6c2c9b645dcdc19f561e4e80c0",
+    "two stable 46,320-byte da591740/kernel_2712.img fetches for the selected candidate",
+    "empty pre-power /serial/read drain for the decisive candidate rerun",
+    "final pre-restore selected-tree identity and restore proof",
+    "27,177 TALOS: fr-hold-control-post-read-loop occurrences in the selected candidate serial window",
+    "known-good v2 proof-chain control",
+    "candidate-fetch-without-control-marker classification"
+  ],
+  "notAccepted": [
+    "RP1 UART0 FR mapped/read-value behavior",
+    "RP1 UART0 FR bus-fault/trap behavior",
+    "pre-read-control-visible-without-read-result",
+    "firmware-state behavior",
+    "GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone 11.2, or phase transition"
+  ],
+  "summary": {
+    "sourceProofCommit": "2622424972e8fbf7c3a0749ddb4c7458d3ec68c5",
+    "candidateTreeHash": "ae324bd791d7df59a0a8eabc74c936b1bd68ba6c2c9b645dcdc19f561e4e80c0",
+    "expectedFetchPath": "da591740/kernel_2712.img",
+    "expectedFetchBytes": 46320,
+    "candidateRerunIdentityJoinAllowed": true,
+    "candidateRerunExpectedFetchCount": 2,
+    "candidateRerunExpectedFetchByteMatchCount": 2,
+    "candidateRerunSerialBytes": 1064457,
+    "candidateRerunPostReadLoopOccurrences": 27177,
+    "candidateRerunMappedReadValueOccurrences": 0,
+    "candidateRerunPreReadControlMarkerOccurrences": 0,
+    "candidateRerunPostReadTerminalMarkerOccurrences": 0,
+    "candidateRerunTrapTextOccurrences": 0,
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "validation": {
+    "staticEvidenceInspection": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  },
+  "nextAction": "Supervisor planning required for a qualitatively different discriminator; do not repeat the same RP1 FR-read hardware proof shape without new acceptance criteria."
+}

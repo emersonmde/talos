@@ -802,11 +802,22 @@ ae324bd791d7df59a0a8eabc74c936b1bd68ba6c2c9b645dcdc19f561e4e80c0 with two
 and restore proof. Its direct-read serial window retained 27,177 occurrences
 of TALOS: fr-hold-control-post-read-loop, but did not retain the contracted
 rpi5-rp1-uart0-fr-read read-value/classification line, pre-read control
-marker, post-read terminal marker, or trap/panic text. This accepts candidate
-fetch and post-read-loop-tail evidence only; RP1 UART0 FR mapped/read-value,
-bus-fault/trap, pre-read-control-visible-without-read-result, firmware-state
-behavior, broader PCIe, Milestone 11.2, and phase transition remain
-unaccepted until the queued closeout reconciles the exact boundary.
+marker, post-read terminal marker, or trap/panic text.
+
+phase11-rp1-uart0-fr-read-hold-control-v2-closeout-20260606 reconciles that
+boundary as candidate-fetch-without-control-marker. It accepts selected
+candidate publication/fetch, v2 identity join, visible post-read-loop-tail
+output without contracted control/read-result markers, the known-good v2
+proof-chain control, and restore hygiene. It does not accept RP1 UART0 FR
+mapped/read-value behavior, bus-fault/trap behavior,
+pre-read-control-visible-without-read-result, firmware-state behavior, GPIO,
+interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
+Milestone 11.2, or phase transition. The v2 proof contract is no longer the
+blocker, but another same-shaped RP1 FR-read hardware rerun is not progress by
+itself; the next step requires supervisor planning for a qualitatively
+different discriminator that explains why the selected candidate produces the
+post-read-loop tail without retaining the contracted control/read-result/trap
+markers.
 
 ## Diagnostic Core Implementation
 
