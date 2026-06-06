@@ -144,6 +144,30 @@ unmapped, trap, firmware-state, GPIO, interrupt, DMA/cache, networking, SSH,
 storage, generated-root, broader PCIe, or Milestone 11.2 behavior. The next
 bounded Phase 11 slice requires supervisor planning.
 
+phase11-rp1-entry-control-candidate-rerun-20260605 later reran the accepted
+entry-control candidate under the repaired known-good readiness and stable TFTP
+rules. The candidate archive
+target/talos-rpi5-rp1-entry-control-source-core.tar.gz staged a 51,808-byte
+da591740/kernel_2712.img, and stable pre-restore TFTP evidence observed two
+candidate kernel fetches. Fresh serial still did not reach TALOS: kernel_main,
+the entry-control markers, or PASS. The result classification is
+candidate-fetch-observed-without-entry-control; it accepts candidate fetch only,
+not Rust entry, entry-control reachability, RP1 mapped/unmapped behavior, or
+firmware-state behavior.
+
+phase11-rp1-entry-control-handoff-discriminator-core-20260606 replaces the next
+source discriminator with a non-published, no-RP1-MMIO reset-side-effect
+candidate. The rpi5_rp1_handoff_reset scenario calls PSCI SYSTEM_RESET
+immediately from rust_entry, before BootInfo::from_aarch64_x0, target::init,
+boot reports, memory planning, allocator setup, or the RP1 UART0 FR read path.
+Static inspection of target/talos-rpi5-rp1-handoff-reset-discriminator-core.tar.gz
+proves the 45,248-byte image keeps text_offset=0, header_image_size=45248,
+flags=12, ARMd magic, and _start -> rust_entry -> smc #0 side-effect
+provenance. The next Pi 5 discriminator may accept only candidate fetch and
+pre-BootInfo handoff reachability if a repeated TFTP boot/fetch sequence proves
+the reset side effect after one candidate power cycle; RP1 mapped/unmapped
+behavior remains blocked.
+
 phase11-staging-capture-log-stability-core-20260605 repairs the Pi 5
 proof-rule boundary exposed by that blocker. Replay from the retained cursor
 `4088847` later returned 13 TFTP events, including a restored known-good

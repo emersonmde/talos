@@ -7124,6 +7124,30 @@ gates; no RP1 candidate fetch, Rust entry, mapped/read-value, unmapped/trap,
 firmware-state, GPIO, interrupt, DMA/cache, storage, networking, SSH, broader
 PCIe, Milestone 11.2, or phase transition is accepted here.
 
+phase11-rp1-entry-control-candidate-rerun-20260605 then published the accepted
+entry-control candidate after known-good readiness was accepted. Stable
+pre-restore TFTP evidence observed two 51,808-byte
+da591740/kernel_2712.img candidate fetches, but fresh serial did not reach
+TALOS: kernel_main, entry-control markers, classification, or PASS. The
+classification is candidate-fetch-observed-without-entry-control: fetch is
+accepted, while Rust entry, pre-BootInfo entry-control reachability,
+mapped/read-value, unmapped/trap, firmware-state behavior, GPIO, interrupts,
+DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
+11.2, and phase transition remain blocked.
+
+phase11-rp1-entry-control-handoff-discriminator-core-20260606 is accepted as
+ready-for-rp1-handoff-pi5-discriminator. It adds the no-RP1-MMIO
+rpi5_rp1_handoff_reset candidate and archive
+target/talos-rpi5-rp1-handoff-reset-discriminator-core.tar.gz. The candidate
+branches from rust_entry directly to PSCI SYSTEM_RESET before BootInfo parsing,
+target initialization, boot reports, memory planning, allocator setup, or the
+RP1 UART0 FR read path. Static archive/disassembly evidence shows a 45,248-byte
+kernel_2712.img, arm64 Image fields text_offset=0, header_image_size=45248,
+flags=12, ARMd, and _start -> rust_entry -> smc #0. The next serialized Pi 5
+task may classify only candidate fetch and the reset side effect's repeated
+TFTP boot/fetch signal; serial visibility and RP1 mapped/unmapped behavior
+remain separate and unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

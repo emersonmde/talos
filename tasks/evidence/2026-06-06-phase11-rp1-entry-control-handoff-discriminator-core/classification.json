@@ -1,0 +1,29 @@
+{
+  "task_id": "phase11-rp1-entry-control-handoff-discriminator-core-20260606",
+  "classification": "ready-for-rp1-handoff-pi5-discriminator",
+  "level": "source/static image/archive inspection",
+  "candidate_archive": "target/talos-rpi5-rp1-handoff-reset-discriminator-core.tar.gz",
+  "candidate_archive_sha256": "ee251a145b88df55fd162b0150a82d62a9671906f401948524d27d45929516c6",
+  "candidate_kernel_sha256": "38170a7fe229b37bfb358479f09d45a14a342af86b16c51d36b3c33023255594",
+  "candidate_kernel_size": 45248,
+  "accepted_boundary": "pre-BootInfo rust_entry-to-PSCI-reset side-effect candidate only",
+  "next_hardware_signal": "repeated TFTP boot/fetch sequence after one candidate power cycle",
+  "not_accepted": [
+    "Pi 5 hardware run",
+    "candidate publication",
+    "Rust-entry hardware reachability",
+    "entry-control serial reachability",
+    "RP1 mapped/read-value",
+    "RP1 unmapped/trap",
+    "firmware-state behavior",
+    "GPIO ownership",
+    "interrupts",
+    "DMA/cache",
+    "storage",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ]
+}

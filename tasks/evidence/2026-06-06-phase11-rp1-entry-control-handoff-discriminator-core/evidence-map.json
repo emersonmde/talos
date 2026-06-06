@@ -1,0 +1,19 @@
+{
+  "task_id": "phase11-rp1-entry-control-handoff-discriminator-core-20260606",
+  "task_record": "tasks/2026-06-06-phase11-rp1-entry-control-handoff-discriminator-core.md",
+  "classification": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-discriminator-core/classification.json",
+  "source_script_image_comparison": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-discriminator-core/source-script-image-comparison.md",
+  "candidate_identity": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-discriminator-core/candidate-identity.txt",
+  "archive_review": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-discriminator-core/archive-review.log",
+  "boot_tree_review": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-discriminator-core/rpi5-rp1-handoff-reset-boot-tree.log",
+  "symbol_header_section_review": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-discriminator-core/symbol-header-section-review.txt",
+  "side_effect_provenance": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-discriminator-core/side-effect-provenance.txt",
+  "validation_summary": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-discriminator-core/validation-summary.txt",
+  "validation_logs": {
+    "cargo_fmt": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-discriminator-core/cargo-fmt.log",
+    "cargo_test": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-discriminator-core/cargo-test.log",
+    "git_diff_check": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-discriminator-core/git-diff-check.log",
+    "mdbook_build": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-discriminator-core/mdbook-build.log",
+    "git_diff_cached_check": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-discriminator-core/git-diff-cached-check.log"
+  }
+}

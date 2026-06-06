@@ -1,0 +1,5 @@
+archive=target/talos-rpi5-rp1-handoff-reset-discriminator-core.tar.gz
+ee251a145b88df55fd162b0150a82d62a9671906f401948524d27d45929516c6  target/talos-rpi5-rp1-handoff-reset-discriminator-core.tar.gz
+kernel=target/rpi5-rp1-handoff-reset-discriminator-core-boot-tree/kernel_2712.img
+38170a7fe229b37bfb358479f09d45a14a342af86b16c51d36b3c33023255594  target/rpi5-rp1-handoff-reset-discriminator-core-boot-tree/kernel_2712.img
+45248 target/rpi5-rp1-handoff-reset-discriminator-core-boot-tree/kernel_2712.img

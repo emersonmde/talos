@@ -1,0 +1,12 @@
+Side-effect provenance review
+
+source scenario: rpi5_rp1_handoff_reset
+entry point: rust_entry cfg branch before BootInfo::from_aarch64_x0, target::init, boot reports, memory planning, allocator setup, or RP1 UART0 FR read
+hardware-visible side effect: PSCI SYSTEM_RESET SMC function id 0x84000009 in run_rp1_handoff_reset_diagnostic
+expected Pi 5 discriminator signal: repeated TFTP boot/fetch sequence after one candidate power cycle, classified separately from serial marker visibility
+
+static assertions:
+present: rust_entry handoff-reset scenario branch
+present: task-owned reset diagnostic
+present: smc #0 PSCI reset instruction
+absent: old RP1 read and entry-control serial classification strings

@@ -37,6 +37,7 @@
             talos_boot_scenario = "rpi5_syscall_proof",
             talos_boot_scenario = "rpi5_pointer_copy_proof",
             talos_boot_scenario = "rpi5_rp1_entry_control",
+            talos_boot_scenario = "rpi5_rp1_handoff_reset",
         )
     ),
     allow(dead_code, unused_imports, unused_variables, unreachable_code)
@@ -224,6 +225,15 @@ fn alloc_error(layout: core::alloc::Layout) -> ! {
 pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
     #[cfg(all(
         talos_target_rpi5_bcm2712,
+        talos_boot_scenario = "rpi5_rp1_handoff_reset"
+    ))]
+    {
+        let _ = dtb_pa;
+        target::rpi5::run_rp1_handoff_reset_diagnostic();
+    }
+
+    #[cfg(all(
+        talos_target_rpi5_bcm2712,
         talos_boot_scenario = "rpi5_rp1_entry_control"
     ))]
     {
@@ -234,7 +244,10 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
 
     #[cfg(not(all(
         talos_target_rpi5_bcm2712,
-        talos_boot_scenario = "rpi5_rp1_entry_control"
+        any(
+            talos_boot_scenario = "rpi5_rp1_entry_control",
+            talos_boot_scenario = "rpi5_rp1_handoff_reset"
+        )
     )))]
     {
         #[cfg(talos_target_rpi5_bcm2712)]

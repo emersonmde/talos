@@ -1,0 +1,109 @@
+Symbol/header/section review
+
+handoff-reset image=target/rpi5-rp1-handoff-reset-discriminator-core-boot-tree/kernel_2712.img sha256=38170a7fe229b37bfb358479f09d45a14a342af86b16c51d36b3c33023255594 size=45248 text_offset=0 header_image_size=45248 flags=12 magic=ARMd
+
+ELF header:
+ELF Header:
+  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00 
+  Class:                             ELF64
+  Data:                              2's complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              EXEC (Executable file)
+  Machine:                           AArch64
+  Version:                           0x1
+  Entry point address:               0x200000
+  Start of program headers:          64 (bytes into file)
+  Start of section headers:          3229880 (bytes into file)
+  Flags:                             0x0
+  Size of this header:               64 (bytes)
+  Size of program headers:           56 (bytes)
+  Number of program headers:         4
+  Size of section headers:           64 (bytes)
+  Number of section headers:         17
+  Section header string table index: 15
+
+Selected sections:
+  [ 1] .text.boot        PROGBITS         0000000000200000  00010000
+  [ 2] .vectors          PROGBITS         0000000000200800  00010800
+  [ 3] .text             PROGBITS         0000000000201000  00011000
+  [ 4] .rodata           PROGBITS         00000000002065e0  000165e0
+  [ 5] .bss              NOBITS           000000000020b0c0  0001b0c0
+
+Selected symbols:
+   146: 00000000002015e4    20 FUNC    LOCAL  HIDDEN     3 _RNvNtNtCsan2nlJD4ir9_5talos6target4rpi532run_rp1_handoff_reset_diagnostic
+  1370: 00000000002011d8     4 FUNC    GLOBAL DEFAULT    3 rust_entry
+  1442: 0000000000200000   144 FUNC    GLOBAL DEFAULT    1 _start
+  1444: 000000000020b0c0     0 NOTYPE  GLOBAL DEFAULT    4 __kernel_image_end
+  1453: 0000000000200000     0 NOTYPE  GLOBAL DEFAULT    1 __kernel_start
+
+Disassembly snippets:
+  200084:      	bl	0x2011d8 <rust_entry>
+  200088:      	wfe
+  20008c:      	b	0x200088 <_start+0x88>
+
+Disassembly of section .vectors:
+
+0000000000200800 <__exception_vectors>:
+  200800:      	sub	sp, sp, #0x20
+  200804:      	stp	x0, x1, [sp]
+  200808:      	mov	x0, #0x0                // =0
+  20080c:      	str	x0, [sp, #0x10]
+  200810:      	b	0x206468 <__exception_entry_frame>
+  200814:      	nop
+  200818:      	nop
+  20081c:      	nop
+  200820:      	nop
+  200824:      	nop
+  200828:      	nop
+  20082c:      	nop
+--
+00000000002011d8 <rust_entry>:
+  2011d8:      	bl	0x2015e4 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi532run_rp1_handoff_reset_diagnostic>
+
+00000000002011dc <_RINvNtCsan2nlJD4ir9_5talos15runtime_console28write_default_console_outputNtNtB4_5pl0115Pl011EB4_>:
+  2011dc:      	sub	sp, sp, #0x40
+  2011e0:      	stp	x30, x19, [sp, #0x30]
+  2011e4:      	mov	x19, x8
+  2011e8:      	mov	x8, #0x74e3             // =29923
+  2011ec:      	str	xzr, [sp, #0x18]
+  2011f0:      	ldp	x9, x10, [x0]
+  2011f4:      	movk	x8, #0x20, lsl #16
+  2011f8:      	movk	x8, #0x0, lsl #32
+  2011fc:      	movk	x8, #0x0, lsl #48
+  201200:      	stp	x9, x10, [sp, #0x20]
+  201204:      	mov	w10, #0x10              // =16
+  201208:      	stp	x8, x10, [sp, #0x8]
+  20120c:      	tbnz	w2, #0x0, 0x201224 <_RINvNtCsan2nlJD4ir9_5talos15runtime_console28write_default_console_outputNtNtB4_5pl0115Pl011EB4_+0x48>
+  201210:      	add	x0, sp, #0x8
+  201214:      	bl	0x201420 <_RNvYINtNtCsan2nlJD4ir9_5talos15runtime_console14RuntimeConsoleNtNtB7_5pl0115Pl011ENtNtCseijFR6oQb7J_4core3fmt5Write9write_fmtB7_.llvm.8567399641236102286>
+  201218:      	tbz	w0, #0x0, 0x201234 <_RINvNtCsan2nlJD4ir9_5talos15runtime_console28write_default_console_outputNtNtB4_5pl0115Pl011EB4_+0x58>
+--
+00000000002015e4 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi532run_rp1_handoff_reset_diagnostic>:
+  2015e4:      	mov	w0, #0x9                // =9
+  2015e8:      	movk	w0, #0x8400, lsl #16
+  2015ec:      	smc	#0
+  2015f0:      	isb
+  2015f4:      	b	0x2015e4 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi532run_rp1_handoff_reset_diagnostic>
+
+00000000002015f8 <OUTLINED_FUNCTION_0>:
+  2015f8:      	ldr	x21, [sp], #0x10
+  2015fc:      	ret
+
+0000000000201600 <_RNvMNtNtNtCsan2nlJD4ir9_5talos4arch7aarch6410exceptionsNtB2_15ExceptionVector4name>:
+  201600:      	mov	x8, #0x7a20             // =31264
+  201604:      	mov	x9, #0x7aa0             // =31392
+  201608:      	movk	x8, #0x20, lsl #16
+  20160c:      	movk	x9, #0x20, lsl #16
+  201610:      	movk	x8, #0x0, lsl #32
+  201614:      	movk	x9, #0x0, lsl #32
+  201618:      	movk	x8, #0x0, lsl #48
+  20161c:      	movk	x9, #0x0, lsl #48
+  201620:      	ldr	x1, [x8, x0, lsl #3]
+  201624:      	ldr	x0, [x9, x0, lsl #3]
+  201628:      	ret
+
+
+PSCI reset instruction check:
+935:  2015ec:      	smc	#0
