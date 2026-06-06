@@ -466,6 +466,22 @@ transition. Another same-shaped RP1 UART0 FR-read hardware rerun remains
 blocked until serial cursor/capture completeness is repaired or decisively
 classified.
 
+phase11-known-good-serial-cursor-completeness-closeout-20260606 reconciles the
+repair-core task and the serialized known-good Pi 5 proof as
+serial-cursor-capture-completeness-accepted. The restored accepted tree
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10` served
+two 104,136-byte `da591740/kernel_2712.img` fetches in stable pre-restore
+TFTP evidence. Starting from saturated serial cursor `4194304`, the repaired
+direct-read path retained 6,347 fresh bytes, including firmware NETWORK output
+and `rpi5-production-timer-preemption: PASS`. A future explicitly queued RP1
+UART0 FR-read rerun may use this repaired proof path without repeating the
+cursor-saturation failure class, but the rerun must still independently prove
+its candidate identity, serial/TFTP evidence, restore proof, and exact RP1
+classification. This closeout does not accept RP1 mapped/read-value behavior,
+unmapped/trap behavior, firmware-state behavior, pre-MMIO reachability, GPIO,
+interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
+Milestone 11.2, or a phase transition.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path now branches directly from `rust_entry`, reports `rpi5-rp1-uart0-fr-read: start` and `rpi5-rp1-uart0-fr-read: pre-mmio-read` through the UART10 early-serial helper, flushes UART10, then reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load. A returned read reports the contract id, target name, address, width, raw value, `mapped/read-value` success classification, and PASS before halting in a spin loop. The pre-MMIO marker is a discriminator for the next serialized proof: if hardware reaches that marker but not the read-value line, the result is entry/handoff reachability plus an RP1 read trap/hang boundary, not a mapping acceptance.

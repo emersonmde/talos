@@ -1,0 +1,52 @@
+{
+  "task_id": "phase11-known-good-serial-cursor-completeness-closeout-20260606",
+  "classification": "serial-cursor-capture-completeness-accepted",
+  "task_record": "tasks/2026-06-06-phase11-known-good-serial-cursor-completeness-closeout.md",
+  "inputs": {
+    "repair_core_task": "tasks/2026-06-06-phase11-serial-cursor-saturation-repair-core.md",
+    "repair_core_commit": "8a15ddb16c808ab6cd044f7b030fbe85d56511e8",
+    "known_good_pi5_task": "tasks/2026-06-06-phase11-known-good-serial-cursor-completeness-pi5.md",
+    "known_good_pi5_commit": "e57bba756d9864bbfa0b708f755253de7eb8244a",
+    "selected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 104136,
+    "saturated_cursor": 4194304
+  },
+  "evidence": {
+    "static_inspection": "tasks/evidence/2026-06-06-phase11-known-good-serial-cursor-completeness-closeout/static-evidence-inspection.md",
+    "repair_core_static_inspection": "tasks/evidence/2026-06-06-phase11-serial-cursor-saturation-repair-core/static-evidence-inspection.md",
+    "repair_core_evidence_map": "tasks/evidence/2026-06-06-phase11-serial-cursor-saturation-repair-core/evidence-map.json",
+    "known_good_pi5_evidence_map": "tasks/evidence/2026-06-06-phase11-known-good-serial-cursor-completeness-pi5/evidence-map.json",
+    "known_good_pi5_capture_summary": "tasks/evidence/2026-06-06-phase11-known-good-serial-cursor-completeness-pi5/known-good-run/capture-invariant-summary.json",
+    "known_good_pi5_serial_excerpt": "tasks/evidence/2026-06-06-phase11-known-good-serial-cursor-completeness-pi5/serial-window-excerpt.txt"
+  },
+  "validation": {
+    "static_evidence_inspection": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  },
+  "future_rp1_fr_read_rerun_rules": [
+    "Requires an explicit queued supervisor task.",
+    "Must use repaired direct-read serial capture when the saved cursor is saturated.",
+    "Must retain candidate identity, fresh serial/TFTP cursors, stable pre-restore TFTP evidence, restore proof, and exact RP1 classification text.",
+    "Does not relax RP1 mapped/read-value, unmapped/trap, firmware-state, or pre-MMIO reachability acceptance."
+  ],
+  "unaccepted": [
+    "RP1 UART0 FR-read mapped/read-value",
+    "RP1 unmapped/trap",
+    "RP1 firmware-state",
+    "pre-MMIO reachability",
+    "GPIO",
+    "interrupts",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ]
+}
