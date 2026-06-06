@@ -1,0 +1,48 @@
+{
+  "task": "phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun-20260606",
+  "status": "completed",
+  "classification": "candidate-fetch-reset-loop-without-visible-fr-marker",
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun.md",
+    "classification": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun/classification.json",
+    "archiveSha256": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun/archive-sha256.txt",
+    "archiveReview": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun/archive-review-rerun.txt",
+    "preSnapshotStatus": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun/pre-snapshot-status.json",
+    "preSnapshotBootFiles": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun/pre-snapshot-boot-files.json",
+    "preRunSnapshot": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun/pre-run-snapshot.json",
+    "publishCandidateArchive": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun/publish-candidate-archive.json",
+    "postPublishStatus": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun/post-publish-status.json",
+    "postPublishBootFiles": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun/post-publish-boot-files.json",
+    "candidateRun": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun/candidate-run/",
+    "candidateSummaryExtract": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun/candidate-summary-extract.json",
+    "validationSummary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun/validation-summary.txt"
+  },
+  "candidate": {
+    "archive": "target/talos-rpi5-rp1-uart0-fr-read-refresh-core.tar.gz",
+    "archiveSha256": "da35a26e817fd30b81874a701171de1b9d47c47024d5fc405a7068ca3b2e5d60",
+    "publishedTreeHash": "25ff74c5c496e861d534080a6e8ec65cb36d261f16775515cd37a79938d41b71",
+    "effectiveKernel": "kernel_2712.img",
+    "expectedFetch": "da591740/kernel_2712.img",
+    "expectedFetchBytes": 45832,
+    "serialCursor": 4194304,
+    "tftpCursor": 4129377,
+    "serialBytes": 4470,
+    "serialCaptureMode": "read",
+    "tftpEventCount": 13,
+    "expectedFetchCount": 2,
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "accepted": [
+    "candidate archive identity and publication",
+    "candidate TFTP fetch visibility",
+    "repaired saturated-cursor serial direct-read path captured fresh firmware output",
+    "restore hygiene"
+  ],
+  "notAccepted": [
+    "Talos kernel_main visibility",
+    "RP1 UART0 FR-read start or pre-mmio marker visibility",
+    "RP1 mapped/read-value",
+    "RP1 unmapped/trap",
+    "GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone 11.2, or phase transition"
+  ]
+}

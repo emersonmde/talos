@@ -1,0 +1,11 @@
+Task: phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun-20260606
+
+- Preflight git status: clean before task-owned evidence creation.
+- Archive SHA-256 check: passed for target/talos-rpi5-rp1-uart0-fr-read-refresh-core.tar.gz.
+- scripts/rpi5-archive-review.sh target/talos-rpi5-rp1-uart0-fr-read-refresh-core.tar.gz: passed.
+- Serialized Pi 5 hardware run through lab-controller: completed with candidate publication, power cycle, repaired direct-read serial window, stable same-cursor pre-restore TFTP delta, restore, and post-restore status evidence.
+- Candidate classification: candidate-fetch-reset-loop-without-visible-fr-marker.
+- Known-good control: not run; first candidate run was not inconclusive for staging, capture, or evidence.
+- git diff --check: passed.
+- /home/node/.cargo/bin/mdbook build: passed.
+- git diff --cached --check: passed.

@@ -1,0 +1,37 @@
+{
+  "suggested_classification": "reset-side-effect-without-visible-marker-candidate",
+  "exits": {
+    "serial_observe_window": 1,
+    "tftp_delta_stable_pre_restore": 0
+  },
+  "serial_window": {
+    "requested_timeout_seconds": 90,
+    "elapsed_seconds": 90,
+    "settle_ms": 1000,
+    "max_bytes": 131072,
+    "observe_attempts": 7,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 4470,
+    "required_marker": "rpi5-rp1-uart0-fr-read: PASS",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": false,
+    "has_firmware_network": true,
+    "firmware_network_occurrences": 2,
+    "required_marker_occurrences": 0
+  },
+  "tftp_event_count": 13,
+  "expected_fetch_count": 2,
+  "proof_contract": {
+    "serial_observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "serial_capture_mode": "read",
+    "serial_start_cursor_saturated": true,
+    "tftp_contract": "stable-same-cursor-delta-before-restore",
+    "zero_event_tftp_meaningful_only_before_restore": true,
+    "firmware_network_is_not_talos_entry": true
+  }
+}
