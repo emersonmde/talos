@@ -1,0 +1,48 @@
+{
+  "contract_version": "pi5-proof-identity-join-v1",
+  "run_label": "phase11-pi5-proof-identity-join-known-good-control-20260606",
+  "summary_label": "phase11-pi5-proof-identity-join-known-good-control-20260606",
+  "decisive_rp1_hardware_classification_allowed": true,
+  "classification": "proof-chain-ready-for-candidate-rerun",
+  "rejection_reasons": [],
+  "proof_run_identity": {
+    "selected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 104136,
+    "serial": {
+      "cursor_file": 4194304,
+      "window_cursor_start": 4194304,
+      "window_cursor_end": 4194304,
+      "window_bytes": 7070,
+      "response_bytes": 7070,
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+    },
+    "tftp": {
+      "cursor_file": 4145589,
+      "delta_cursor_start": 4145589,
+      "delta_cursor_end": 4146940,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        104136,
+        104136
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 104136
+    },
+    "restore": {
+      "snapshot_name": "phase11-pi5-proof-identity-join-known-good-pre-20260606T210203Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "rule": "missing or mismatched candidate identity, serial-window, or TFTP fields prevent decisive RP1 hardware classification"
+}

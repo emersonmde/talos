@@ -1,0 +1,125 @@
+{
+  "task_id": "phase11-pi5-proof-identity-join-known-good-control-20260606",
+  "classification": "proof-chain-known-good-ready",
+  "accepted_claims": [
+    "known-good selected tree identity joined to fresh serial window",
+    "stable pre-restore TFTP delta joined to the same proof run",
+    "known-good proof-chain readiness for a later candidate rerun"
+  ],
+  "unaccepted_claims": [
+    "RP1 mapped/read-value",
+    "RP1 bus-fault/trap",
+    "RP1 firmware-state behavior",
+    "candidate behavior",
+    "GPIO",
+    "interrupts",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ],
+  "run": {
+    "label": "phase11-pi5-proof-identity-join-known-good-control-20260606",
+    "restore_snapshot": "phase11-pi5-proof-identity-join-known-good-pre-20260606T210203Z",
+    "expected": {
+      "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "effective_kernel": "kernel_2712.img",
+      "fetch": "da591740/kernel_2712.img",
+      "fetch_bytes": 104136
+    },
+    "serial_window": {
+      "requested_timeout_seconds": 120,
+      "elapsed_seconds": 27,
+      "settle_ms": 1000,
+      "max_bytes": 262144,
+      "observe_attempts": 7,
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+      "capture_mode": "read",
+      "saturation_limit": 4194304,
+      "start_cursor_saturated": true,
+      "response_bytes": 7070,
+      "required_marker": "rpi5-production-timer-preemption: PASS",
+      "kernel_marker": "TALOS: kernel_main",
+      "firmware_network_marker": "NETWORK",
+      "has_kernel_main": false,
+      "has_required_marker": true,
+      "has_firmware_network": true,
+      "firmware_network_occurrences": 2,
+      "required_marker_occurrences": 1
+    },
+    "tftp_stability": {
+      "stable": true,
+      "reason": "stable",
+      "stable_samples": 3,
+      "required_samples": 3
+    },
+    "tftp_event_count": 13,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "final_pre_restore_identity": {
+      "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "effective_kernel": "kernel_2712.img",
+      "expected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": true
+    },
+    "restore": {
+      "snapshot_name": "phase11-pi5-proof-identity-join-known-good-pre-20260606T210203Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "identity_join_check": {
+    "contract_version": "pi5-proof-identity-join-v1",
+    "decisive_rp1_hardware_classification_allowed": true,
+    "checker_classification": "proof-chain-ready-for-candidate-rerun",
+    "rejection_reasons": [],
+    "proof_run_identity": {
+      "selected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "effective_kernel": "kernel_2712.img",
+      "expected_fetch_path": "da591740/kernel_2712.img",
+      "expected_fetch_byte_count": 104136,
+      "serial": {
+        "cursor_file": 4194304,
+        "window_cursor_start": 4194304,
+        "window_cursor_end": 4194304,
+        "window_bytes": 7070,
+        "response_bytes": 7070,
+        "capture_mode": "read",
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+      },
+      "tftp": {
+        "cursor_file": 4145589,
+        "delta_cursor_start": 4145589,
+        "delta_cursor_end": 4146940,
+        "stable": true,
+        "event_count": 13,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 2,
+        "expected_fetch_bytes_seen": [
+          104136,
+          104136
+        ]
+      },
+      "final_pre_restore": {
+        "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+        "effective_kernel": "kernel_2712.img",
+        "selected_tree_still_staged": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes": 104136
+      },
+      "restore": {
+        "snapshot_name": "phase11-pi5-proof-identity-join-known-good-pre-20260606T210203Z",
+        "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      }
+    }
+  },
+  "post_release_status": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "configured_kernel": "kernel_2712.img"
+  }
+}

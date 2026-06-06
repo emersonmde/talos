@@ -1,0 +1,57 @@
+{
+  "task_id": "phase11-pi5-proof-identity-join-known-good-control-20260606",
+  "classification": "proof-chain-known-good-ready",
+  "commit": "recorded in memory/talos-supervisor-state.json after commit",
+  "evidence_paths": {
+    "classification": "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-known-good-control/classification.json",
+    "identity_join_check": "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-known-good-control/known-good-run-identity-join-check.json",
+    "identity_join_check_exit": "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-known-good-control/known-good-run-identity-join-check.exit",
+    "proof_bundle": "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-known-good-control/known-good-run/",
+    "post_lock_release_status": "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-known-good-control/post-lock-release-status-sample.json",
+    "hardware_lock": "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-known-good-control/hardware-lock.json"
+  },
+  "hardware_evidence": {
+    "selected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 104136,
+    "serial_observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "serial_capture_mode": "read",
+    "serial_response_bytes": 7070,
+    "required_marker": "rpi5-production-timer-preemption: PASS",
+    "has_required_marker": true,
+    "tftp_stable": true,
+    "tftp_event_count": 13,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "restore_snapshot": "phase11-pi5-proof-identity-join-known-good-pre-20260606T210203Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "validation": {
+    "serialized_pi5_hardware_run_lab_controller": "passed",
+    "lab_api_preflight_post_restore_records": "passed",
+    "fresh_serial_capture_repaired_contract": "passed",
+    "stable_same_cursor_tftp_pre_restore": "passed",
+    "restore_proof_before_lock_release": "passed",
+    "identity_join_checker": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "not-run-docs-src-untouched",
+    "git_diff_cached_check": "passed"
+  },
+  "unaccepted_claims": [
+    "RP1 mapped/read-value",
+    "RP1 bus-fault/trap",
+    "RP1 firmware-state behavior",
+    "candidate behavior",
+    "GPIO",
+    "interrupts",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ]
+}

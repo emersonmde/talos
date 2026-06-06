@@ -1,0 +1,19 @@
+{
+  "task_id": "phase11-pi5-proof-identity-join-known-good-control-20260606",
+  "lock": {
+    "locked": false,
+    "owner": null,
+    "taskId": "phase11-pi5-proof-identity-join-known-good-control-20260606",
+    "acquiredAt": "2026-06-06T21:01:17Z",
+    "releasedAt": "2026-06-06T21:03:17Z",
+    "restored": true,
+    "note": "Released/restored after known-good proof identity-join control; post-restore tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10."
+  },
+  "run_in_progress": {
+    "active": true,
+    "owner": "worker",
+    "taskId": "phase11-pi5-proof-identity-join-known-good-control-20260606",
+    "startedAt": "2026-06-06T21:00:05Z",
+    "note": "Worker promoted known-good proof identity-join control."
+  }
+}

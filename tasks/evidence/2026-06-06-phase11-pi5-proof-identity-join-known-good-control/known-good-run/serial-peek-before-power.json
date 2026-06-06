@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "b3ANClRBTE9TOiBmci1ob2xkLWNvbnRyb2wtcG9zdC1yZWFkLWxvb3ANClRBTE9TOiBmci1ob2xkLWNvbnRyb2wtcG9zdC1yZWFkLWxvb3ANClRBTE9TOiBmci1ob2xkLWNvbnRyb2wtcG9zdC1yZWFkLWxvb3ANClRBTE9TOiBmci1ob2xkLWNvbnRyb2wtcG9zdC1yZWFkLWxvb3ANClRBTE9TOiBmci1ob2xkLWNvbnRyb2wtcG9zdC1yZWFkLWxvb3ANClRBTE9TOiBmci1ob2xkLWNvbnRyb2wtcG9zdC1yZWFkLWxvb3ANClRBTE9TOiBmci1ob2xkLWNvbnRyb2wtcG9zdC1yZWFkLWxvb3ANClRBTE9TOiBmci1ob2xkLWNvbnRyb2wtcG9zdC1yZWFkLWxvb3ANClRBTE9TOiBmci1ob2xkLWNvbnRyb2wtcG9zdC1yZWFkLWxvb3ANClRBTE9TOiBmci1ob2xkLWNvbnRyb2wtcG9zdC1yZWFkLWxvb3ANClRBTE9TOiBmci1ob2xkLWNvbnRyb2wtcG9zdC1yZWFkLWxvb3ANClRBTE9TOiBmci1ob2xkLWNvbnRyb2wtcG9zdC1yZWFkLWxvb3ANClRBTE9TOiBmci1ob2xkLWNvbnRyb2wtcG9zdC0=",
+  "bytes": 500,
+  "cursor": 4194304,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "op\r\nTALOS: fr-hold-control-post-read-loop\r\nTALOS: fr-hold-control-post-read-loop\r\nTALOS: fr-hold-control-post-read-loop\r\nTALOS: fr-hold-control-post-read-loop\r\nTALOS: fr-hold-control-post-read-loop\r\nTALOS: fr-hold-control-post-read-loop\r\nTALOS: fr-hold-control-post-read-loop\r\nTALOS: fr-hold-control-post-read-loop\r\nTALOS: fr-hold-control-post-read-loop\r\nTALOS: fr-hold-control-post-read-loop\r\nTALOS: fr-hold-control-post-read-loop\r\nTALOS: fr-hold-control-post-read-loop\r\nTALOS: fr-hold-control-post-"
+}
