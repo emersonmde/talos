@@ -7223,6 +7223,17 @@ accept visible marker serial output or any RP1 mapped/unmapped behavior; the
 queued Pi 5 discriminator must decide marker visibility before the RP1 UART0
 flag-register read can resume.
 
+phase11-rp1-rust-entry-uart10-marker-loop-closeout-20260606 is accepted as
+post-handoff-rust-entry-uart10-marker-visible after the serialized Pi 5
+marker-loop run retained stable 45,328-byte da591740/kernel_2712.img candidate
+fetch evidence and observed TALOS: reu10-loop 2,961 times in a fresh serial
+window. This accepts only visible UART10 marker output after rust_entry for the
+selected marker-loop candidate. It does not accept RP1 mapped/read-value,
+unmapped/trap, firmware-state behavior, GPIO, interrupts, DMA/cache,
+networking, SSH, storage, generated-root, broader PCIe, Milestone 11.2, or
+phase transition. The existing RP1 UART0 FR-read refresh core is mechanically
+unblocked next; the hardware proof and closeout remain separately gated.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

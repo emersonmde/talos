@@ -1,0 +1,47 @@
+{
+  "task_id": "phase11-rp1-rust-entry-uart10-marker-loop-closeout-20260606",
+  "classification": "post-handoff-rust-entry-uart10-marker-visible",
+  "task_record": "tasks/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-closeout.md",
+  "static_evidence_inspection": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-closeout/static-evidence-inspection.md",
+  "marker_loop_core": {
+    "task_record": "tasks/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-core.md",
+    "evidence_map": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-core/evidence-map.json",
+    "static_inspection": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-core/static-inspection.md",
+    "archive": "target/talos-rpi5-rust-entry-uart10-marker-loop-core.tar.gz",
+    "archive_sha256": "ab6de452670427cee2d411cbcd2a92602331e9d03a9d68dae20b75d649d1565b",
+    "kernel_sha256": "6335cc2f229c38258d88000fe968248ca2e47d61e47f874bf246862e0d2b248a",
+    "kernel_bytes": 45328,
+    "marker": "TALOS: reu10-loop",
+    "commit": "bf25fe41eb6ce9e8e40dc807e6a10bce69f01cb4"
+  },
+  "pi5_discriminator": {
+    "task_record": "tasks/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator.md",
+    "classification": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/evidence-map.json",
+    "summary": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/candidate-run/capture-invariant-summary.json",
+    "candidate_tree_hash": "1d7cdd3d265fb983ec77d9281098d6a920e0bc957a1f0a15f279fe35c618ee6c",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 45328,
+    "fresh_serial_cursor": 4133556,
+    "serial_cursor_end": 4194304,
+    "serial_window_bytes": 60748,
+    "serial_window_elapsed_seconds": 32,
+    "serial_marker_occurrences": 2961,
+    "fresh_tftp_cursor": "retained in candidate-run/tftp-cursor-before-power.txt",
+    "stable_tftp_event_count": 13,
+    "stable_tftp_expected_fetch_count": 2,
+    "restore_snapshot": "phase11-rust-entry-uart10-marker-loop-pre-20260606T1032Z",
+    "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "commit": "71aa67e6557527ba30ba0fd404650e6871e19fee"
+  },
+  "docs_updated": [
+    "docs/src/project/phase11-rp1-pcie-map-contract.md",
+    "docs/src/roadmap.md"
+  ],
+  "validation": {
+    "git_diff_check": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-closeout/git-diff-check.log",
+    "mdbook_build": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-closeout/mdbook-build.log",
+    "git_diff_cached_check": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-closeout/git-diff-cached-check.log"
+  },
+  "next_action": "phase11-rp1-uart0-fr-read-refresh-core-20260606 is mechanically unblocked for the next worker wake if hardwareTestLock remains unlocked/restored."
+}
