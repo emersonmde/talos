@@ -715,6 +715,21 @@ matches the selected 46,320-byte hold-control candidate. The accepted boundary
 therefore remains capture-staging-blocked; RP1 mapped/read-value and
 unmapped/trap behavior remain unaccepted.
 
+phase11-pi5-proof-identity-join-known-good-control-20260606 and
+phase11-pi5-proof-identity-join-repair-closeout-20260606 accept the repaired
+proof chain as ready for a later candidate rerun. The known-good control used
+selected tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10, effective
+kernel_2712.img, expected da591740/kernel_2712.img byte count 104,136, stable
+same-cursor TFTP evidence with two expected 104,136-byte fetches, a fresh
+direct-read serial window containing rpi5-production-timer-preemption: PASS,
+final pre-restore identity, restore evidence, and post-restore identity. The
+identity-join checker reported proof-chain-ready-for-candidate-rerun with no
+rejection reasons. This accepts only proof-chain readiness; the next RP1 UART0
+FR-read hold-control candidate proof must pass the same
+pi5-proof-identity-join-v1 gate before it can accept mapped/read-value,
+bus-fault/trap, or other decisive RP1 behavior.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

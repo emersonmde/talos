@@ -1,0 +1,96 @@
+{
+  "task_id": "phase11-pi5-proof-identity-join-repair-closeout-20260606",
+  "classification": "proof-chain-ready-for-candidate-rerun",
+  "commit": "recorded in memory/talos-supervisor-state.json after commit",
+  "source_evidence": {
+    "repair_core_task": "tasks/2026-06-06-phase11-pi5-proof-identity-join-repair-core.md",
+    "repair_core_evidence_map": "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-repair-core/evidence-map.json",
+    "repair_core_commit": "4c3e0cfe836a679443983ffbc0f2dbab35f0bc5a",
+    "old_hold_control_replay": "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-repair-core/hold-control-candidate-run-identity-join-check.json",
+    "known_good_control_task": "tasks/2026-06-06-phase11-pi5-proof-identity-join-known-good-control.md",
+    "known_good_evidence_map": "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-known-good-control/evidence-map.json",
+    "known_good_classification": "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-known-good-control/classification.json",
+    "known_good_identity_join_check": "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-known-good-control/known-good-run-identity-join-check.json",
+    "known_good_proof_bundle": "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-known-good-control/known-good-run/",
+    "known_good_commit": "5edb8fa141f18d3e44cd3c2e1dd07396eeb4b298"
+  },
+  "repaired_contract": {
+    "name": "pi5-proof-identity-join-v1",
+    "required_fields": [
+      "shared run label",
+      "selected tree hash",
+      "effective kernel",
+      "expected fetch path and byte count",
+      "serial cursor and window identity",
+      "stable TFTP cursor and delta identity",
+      "final pre-restore identity",
+      "restore identity"
+    ],
+    "checker": "scripts/rpi5-proof-identity-join-check.sh"
+  },
+  "known_good_hardware_evidence": {
+    "selected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 104136,
+    "serial_observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "serial_capture_mode": "read",
+    "serial_response_bytes": 7070,
+    "required_marker": "rpi5-production-timer-preemption: PASS",
+    "has_required_marker": true,
+    "tftp_stable": true,
+    "tftp_event_count": 13,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "restore_snapshot": "phase11-pi5-proof-identity-join-known-good-pre-20260606T210203Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "checker_result": {
+    "decisive_rp1_hardware_classification_allowed": true,
+    "checker_classification": "proof-chain-ready-for-candidate-rerun",
+    "rejection_reasons": []
+  },
+  "blocked_old_evidence_result": {
+    "classification": "capture-staging-blocked",
+    "decisive_rp1_hardware_classification_allowed": false,
+    "rejection_reasons": [
+      "tftp-expected-fetch-byte-mismatch",
+      "final-pre-restore-selected-tree-mismatch",
+      "final-pre-restore-expected-fetch-byte-mismatch"
+    ]
+  },
+  "accepted_claims": [
+    "proof-chain readiness for a later candidate rerun",
+    "later candidate proofs must pass pi5-proof-identity-join-v1 before decisive RP1 hardware classification"
+  ],
+  "unaccepted_claims": [
+    "RP1 UART0 FR mapped/read-value",
+    "RP1 bus-fault/trap",
+    "RP1 unmapped/trap",
+    "firmware-state behavior",
+    "candidate behavior",
+    "GPIO",
+    "interrupts",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ],
+  "validation": {
+    "static_evidence_inspection": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  },
+  "changed_files": [
+    "docs/src/project/phase11-rp1-pcie-map-contract.md",
+    "docs/src/roadmap.md",
+    "tasks/2026-06-06-phase11-pi5-proof-identity-join-repair-closeout.md",
+    "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-repair-closeout/static-evidence-inspection.md",
+    "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-repair-closeout/evidence-map.json"
+  ]
+}

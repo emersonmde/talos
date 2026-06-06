@@ -7315,6 +7315,25 @@ unaccepted. Returning to the actual RP1 UART0 flag-register read now requires
 supervisor planning for a non-repetitive bounded task with explicit
 source/static and serialized Pi 5 acceptance gates.
 
+phase11-pi5-proof-identity-join-repair-core-20260606, the known-good control,
+and phase11-pi5-proof-identity-join-repair-closeout-20260606 repair and accept
+the proof-chain gate for the next RP1 UART0 FR-read hold-control candidate
+proof. The repaired gate is `pi5-proof-identity-join-v1`: one run label must
+tie selected tree hash, effective kernel, expected fetch path and byte count,
+serial cursor/window identity, stable TFTP cursor/delta identity, final
+pre-restore identity, and restore identity. Replaying the old hold-control run
+keeps it capture-staging-blocked because its TFTP/final identity matched the
+restored known-good tree instead of the selected candidate. The known-good
+control then passed the repaired gate on tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 with two
+104,136-byte da591740/kernel_2712.img TFTP fetches and a fresh direct-read
+serial window containing rpi5-production-timer-preemption: PASS. The accepted
+frontier is only proof-chain-ready-for-candidate-rerun. RP1 UART0 FR
+mapped/read-value, bus-fault/trap, firmware-state behavior, GPIO, interrupts,
+DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
+11.2, and phase transition remain unaccepted until a separately queued
+candidate proof passes that gate.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
