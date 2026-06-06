@@ -1,0 +1,63 @@
+{
+  "task": "phase11-rp1-uart0-fr-read-hold-control-closeout-20260606",
+  "status": "accepted",
+  "classification": "capture-staging-blocked",
+  "acceptedClaims": [
+    "hold-control RP1 UART0 FR-read source/static candidate remains accepted as local/static/archive evidence",
+    "Pi 5 discriminator retained hardware-locked publication/capture attempts and restore hygiene",
+    "final accepted hardware boundary is capture-staging-blocked",
+    "same-shaped RP1 UART0 FR hardware rerun is rejected as the next step without a capture/staging repair"
+  ],
+  "notAccepted": [
+    "RP1 UART0 FR mapped/read-value behavior",
+    "bus-fault/trap behavior",
+    "pre-read-control-visible-without-read-result",
+    "candidate-fetch-without-control-marker",
+    "firmware-state behavior",
+    "GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone 11.2, or phase transition"
+  ],
+  "sourceStaticCore": {
+    "task": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-core.md",
+    "evidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-core/evidence-map.json",
+    "staticInspection": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-core/static-inspection.md",
+    "commit": "056442eff4aa862d27a1ab48ae77c2bc3d9a7bfa",
+    "archiveSha256": "e9ab45b6dd15e4e80395302a116fb8aa751d699c5b679e5b9cee22077059a9b2",
+    "kernelSizeBytes": 46320,
+    "contractId": "phase11-rp1-pcie-map-contract-v1",
+    "target": "rp1-uart0-fr-read",
+    "address": "0x1f00030018",
+    "widthBits": 32
+  },
+  "pi5Discriminator": {
+    "task": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-pi5-discriminator.md",
+    "classification": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-pi5-discriminator/classification.json",
+    "evidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-pi5-discriminator/evidence-map.json",
+    "commit": "b09842f1a6070215e6c3dc8966d3920f88948aff",
+    "publicationTree": "ae324bd791d7df59a0a8eabc74c936b1bd68ba6c2c9b645dcdc19f561e4e80c0",
+    "effectiveKernel": "kernel_2712.img",
+    "expectedFetch": "da591740/kernel_2712.img",
+    "expectedFetchBytes": 46320,
+    "mainSerialBytes": 222783,
+    "mainPostReadLoopOccurrences": 5582,
+    "mainTftpEvents": 13,
+    "mainSelectedCandidateFetchCount": 0,
+    "triage": {
+      "knownGoodControlTftpEvents": 0,
+      "candidateRerunTftpEvents": 0,
+      "candidateRerunSerial": "empty"
+    },
+    "restoredTree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "closeoutEvidence": {
+    "taskRecord": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-closeout.md",
+    "staticEvidenceInspection": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-closeout/static-evidence-inspection.md",
+    "evidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-closeout/evidence-map.json",
+    "contractDoc": "docs/src/project/phase11-rp1-pcie-map-contract.md"
+  },
+  "validation": {
+    "staticEvidenceInspection": "completed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "not-run-docs-src-not-touched",
+    "gitDiffCachedCheck": "passed"
+  }
+}
