@@ -501,6 +501,20 @@ firmware-state behavior beyond the candidate fetch/reset-loop evidence, GPIO,
 interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
 Milestone 11.2, or a phase transition.
 
+phase11-rp1-uart0-fr-read-repaired-cursor-closeout-20260606 reconciles that
+rerun as blocker evidence, not an RP1 mapping proof. It removes the prior
+serial-cursor-saturation explanation because the repaired direct-read path did
+retain fresh candidate serial bytes. The accepted boundary remains limited to
+candidate archive identity, publication/fetch evidence, repaired serial
+capture of firmware NETWORK output, and restore hygiene. RP1 UART0 FR-read
+start/pre-MMIO marker visibility, mapped/read-value behavior, unmapped/trap
+behavior, firmware-state behavior beyond candidate fetch/reset-loop evidence,
+GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader
+PCIe, Milestone 11.2, and phase transition remain unaccepted. The next
+discriminator must be supervisor-planned and non-repetitive; another
+same-shaped FR-read hardware rerun is not mechanically unblocked without a
+new source/static or marker-path discriminator.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path now branches directly from `rust_entry`, reports `rpi5-rp1-uart0-fr-read: start` and `rpi5-rp1-uart0-fr-read: pre-mmio-read` through the UART10 early-serial helper, flushes UART10, then reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load. A returned read reports the contract id, target name, address, width, raw value, `mapped/read-value` success classification, and PASS before halting in a spin loop. The pre-MMIO marker is a discriminator for the next serialized proof: if hardware reaches that marker but not the read-value line, the result is entry/handoff reachability plus an RP1 read trap/hang boundary, not a mapping acceptance.

@@ -1,0 +1,62 @@
+{
+  "task_id": "phase11-rp1-uart0-fr-read-repaired-cursor-closeout-20260606",
+  "classification": "candidate-fetch-reset-loop-without-visible-fr-marker",
+  "task_record": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-closeout.md",
+  "inputs": {
+    "rerun_task": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun.md",
+    "rerun_commit": "0d9e6f7e6d47e6080f5f8f9aaef8314a1e4ef6f2",
+    "rerun_classification": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun/classification.json",
+    "rerun_evidence_map": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun/evidence-map.json",
+    "candidate_archive_sha256": "da35a26e817fd30b81874a701171de1b9d47c47024d5fc405a7068ca3b2e5d60",
+    "published_tree_hash": "25ff74c5c496e861d534080a6e8ec65cb36d261f16775515cd37a79938d41b71",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 45832,
+    "serial_cursor": 4194304,
+    "tftp_cursor": 4129377,
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "evidence": {
+    "static_inspection": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-closeout/static-evidence-inspection.md",
+    "candidate_capture_summary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun/candidate-run/capture-invariant-summary.json",
+    "stable_pre_restore_tftp": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun/candidate-run/tftp-delta-stable-pre-restore.json",
+    "candidate_serial_window": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun/candidate-run/serial-observe-window.json",
+    "post_restore_status": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-repaired-cursor-pi5-rerun/candidate-run/post-restore-status.json",
+    "phase11_contract": "docs/src/project/phase11-rp1-pcie-map-contract.md"
+  },
+  "accepted": [
+    "candidate archive identity",
+    "candidate publication",
+    "candidate kernel fetch visibility",
+    "repaired saturated-cursor serial capture of fresh firmware output",
+    "restore hygiene"
+  ],
+  "unaccepted": [
+    "TALOS kernel_main visibility for the selected candidate",
+    "RP1 UART0 FR-read start or pre-mmio marker visibility",
+    "RP1 UART0 FR mapped/read-value",
+    "RP1 UART0 FR unmapped/trap",
+    "firmware-state behavior beyond candidate fetch/reset-loop evidence",
+    "GPIO",
+    "interrupts",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ],
+  "next_discriminator": {
+    "planning_required": true,
+    "reason": "No queued follow-up is mechanically unblocked. Another same-shaped FR-read hardware rerun would repeat a candidate-fetch/reset-loop-without-marker class without a new discriminator.",
+    "smallest_non_repetitive_shape": "Separate the FR-read candidate pre-MMIO entry/reporting path from the accepted Rust-entry UART10 marker-loop path, for example with a no-MMIO FR-read-shaped marker candidate or equivalent static/binary discriminator before any further hardware proof."
+  },
+  "validation": {
+    "static_evidence_inspection": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  }
+}
