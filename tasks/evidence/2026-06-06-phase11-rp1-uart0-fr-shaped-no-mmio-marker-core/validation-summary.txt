@@ -1,0 +1,10 @@
+Task: phase11-rp1-uart0-fr-shaped-no-mmio-marker-core-20260606
+
+- cargo fmt --all -- --check: passed
+- cargo -Zjson-target-spec test --quiet: passed, 423 tests
+- scripts/rpi5-rp1-uart0-fr-shaped-no-mmio-marker-boot-tree.sh target/rpi5-local-cat-banner-boot-tree-local1 target/rpi5-rp1-uart0-fr-shaped-no-mmio-marker-core-boot-tree: passed
+- scripts/rpi5-rp1-uart0-fr-shaped-no-mmio-marker-review.sh target/talos-rpi5-rp1-uart0-fr-shaped-no-mmio-marker-core.tar.gz: passed
+- static image/header/symbol/disassembly inspection: passed
+- git diff --check: passed
+- /home/node/.cargo/bin/mdbook build: passed
+- git diff --cached --check before commit: passed

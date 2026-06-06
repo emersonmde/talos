@@ -1,0 +1,9 @@
+candidate_archive=target/talos-rpi5-rp1-uart0-fr-shaped-no-mmio-marker-core.tar.gz
+candidate_archive_sha256=05a6801471ffd5cb3ae61f450734728f7980d8a2c4db20b3a6280d83b470a484
+kernel_2712_sha256=e8b7d507a0b14e5f18270e65c48b1f4c629923c93bd0eeaeb4b24670b70daabb
+kernel_2712_size=45600
+header_image_size=45600
+text_offset=0
+flags=12
+marker=TALOS: fr-no-mmio-loop
+forbidden_rp1_fr_success_strings_absent=true

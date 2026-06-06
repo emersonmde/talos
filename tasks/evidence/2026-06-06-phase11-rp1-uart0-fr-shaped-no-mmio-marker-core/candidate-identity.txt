@@ -1,0 +1,3 @@
+05a6801471ffd5cb3ae61f450734728f7980d8a2c4db20b3a6280d83b470a484  target/talos-rpi5-rp1-uart0-fr-shaped-no-mmio-marker-core.tar.gz
+e8b7d507a0b14e5f18270e65c48b1f4c629923c93bd0eeaeb4b24670b70daabb  target/rpi5-rp1-uart0-fr-shaped-no-mmio-marker-core-boot-tree/kernel_2712.img
+e8b7d507a0b14e5f18270e65c48b1f4c629923c93bd0eeaeb4b24670b70daabb  target/rpi5-rp1-uart0-fr-shaped-no-mmio-marker-core-boot-tree/da591740/kernel_2712.img

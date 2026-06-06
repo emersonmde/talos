@@ -515,6 +515,27 @@ discriminator must be supervisor-planned and non-repetitive; another
 same-shaped FR-read hardware rerun is not mechanically unblocked without a
 new source/static or marker-path discriminator.
 
+phase11-rp1-uart0-fr-shaped-no-mmio-marker-core-20260606 adds that
+non-repetitive source/static discriminator. The
+`rpi5_rp1_uart0_fr_shaped_no_mmio_marker` scenario follows the FR-read-shaped
+selection from `rust_entry`, emits the same
+`rpi5-rp1-uart0-fr-read: start` and `pre-mmio-read` UART10 lines, reports
+`classification=no-mmio-marker-before-rp1-read`, flushes UART10, and then
+repeats `TALOS: fr-no-mmio-loop`. Static disassembly shows the marker path
+does not call `read_rp1_reg_u32`, does not construct `0x1f_0003_0018`, and
+does not execute RP1 UART0 FR MMIO before the marker loop. The non-published
+candidate archive is
+`target/talos-rpi5-rp1-uart0-fr-shaped-no-mmio-marker-core.tar.gz` with
+archive SHA-256
+`05a6801471ffd5cb3ae61f450734728f7980d8a2c4db20b3a6280d83b470a484`, boot-tree
+identity
+`05f68072e4f1653c10eadfefbe099c92cefdde024b7f7d985b7c785c48011e45`, and a
+45,600-byte `kernel_2712.img`. This accepts only the source/static candidate;
+visible marker output, RP1 mapped/read-value behavior, unmapped/trap behavior,
+firmware-state behavior, GPIO, interrupts, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe, Milestone 11.2, and phase transition remain
+unaccepted pending the queued serialized Pi 5 discriminator.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path now branches directly from `rust_entry`, reports `rpi5-rp1-uart0-fr-read: start` and `rpi5-rp1-uart0-fr-read: pre-mmio-read` through the UART10 early-serial helper, flushes UART10, then reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load. A returned read reports the contract id, target name, address, width, raw value, `mapped/read-value` success classification, and PASS before halting in a spin loop. The pre-MMIO marker is a discriminator for the next serialized proof: if hardware reaches that marker but not the read-value line, the result is entry/handoff reachability plus an RP1 read trap/hang boundary, not a mapping acceptance.
@@ -525,6 +546,12 @@ Artifact helpers:
 
 - `scripts/rpi5-rp1-uart0-fr-read-image.sh` builds the candidate image.
 - `scripts/rpi5-rp1-uart0-fr-read-boot-tree.sh` stages the candidate image into a Pi 5 boot tree for the later serialized hardware proof.
+- `scripts/rpi5-rp1-uart0-fr-shaped-no-mmio-marker-image.sh`,
+  `scripts/rpi5-rp1-uart0-fr-shaped-no-mmio-marker-boot-tree.sh`,
+  `scripts/rpi5-rp1-uart0-fr-shaped-no-mmio-marker-archive.sh`, and
+  `scripts/rpi5-rp1-uart0-fr-shaped-no-mmio-marker-review.sh` build and
+  inspect the no-MMIO marker discriminator archive for the queued serialized
+  Pi 5 proof.
 
 ## Deferred Work
 

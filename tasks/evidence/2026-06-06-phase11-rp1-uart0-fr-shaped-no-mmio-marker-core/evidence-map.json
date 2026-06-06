@@ -1,0 +1,63 @@
+{
+  "task": "phase11-rp1-uart0-fr-shaped-no-mmio-marker-core-20260606",
+  "classification": "local-static-fr-shaped-no-mmio-marker-accepted",
+  "accepted": [
+    "rpi5_rp1_uart0_fr_shaped_no_mmio_marker branches directly from rust_entry",
+    "candidate emits the FR-shaped start and pre-mmio-read lines before any RP1 load",
+    "candidate emits classification=no-mmio-marker-before-rp1-read and repeatedly emits TALOS: fr-no-mmio-loop",
+    "static disassembly shows UART10 FR polling only and no RP1 UART0 FR volatile load before the marker loop",
+    "non-published Pi 5 candidate archive passed task-owned archive review"
+  ],
+  "notAccepted": [
+    "Pi 5 hardware execution",
+    "visible marker serial output",
+    "RP1 mapped/read-value behavior",
+    "RP1 unmapped/trap behavior",
+    "firmware-state behavior",
+    "GPIO ownership or pin mux changes",
+    "interrupts",
+    "DMA/cache behavior",
+    "storage or generated-root behavior",
+    "networking or SSH",
+    "broader PCIe behavior",
+    "Milestone 11.2",
+    "phase transition"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-core.md",
+    "staticInspection": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-core/static-inspection.md",
+    "archiveReview": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-core/archive-review.txt",
+    "candidateIdentity": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-core/candidate-identity.txt",
+    "bootTreeIdentity": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-core/boot-tree-identity.txt",
+    "bootTreeFileSha256s": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-core/boot-tree-file-sha256s.txt",
+    "candidateStrings": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-core/candidate-strings.txt",
+    "stringReview": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-core/string-review.txt",
+    "symbols": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-core/symbols.txt",
+    "symbolReview": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-core/symbol-review.txt",
+    "disassemblyStart": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-core/disassembly-start.txt",
+    "disassemblyRustEntry": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-core/disassembly-rust-entry.txt",
+    "disassemblyMarker": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-core/disassembly-marker.txt",
+    "candidateArchive": "target/talos-rpi5-rp1-uart0-fr-shaped-no-mmio-marker-core.tar.gz"
+  },
+  "candidate": {
+    "archive": "target/talos-rpi5-rp1-uart0-fr-shaped-no-mmio-marker-core.tar.gz",
+    "archiveSha256": "05a6801471ffd5cb3ae61f450734728f7980d8a2c4db20b3a6280d83b470a484",
+    "bootTreeIdentity": "05f68072e4f1653c10eadfefbe099c92cefdde024b7f7d985b7c785c48011e45",
+    "kernelSha256": "e8b7d507a0b14e5f18270e65c48b1f4c629923c93bd0eeaeb4b24670b70daabb",
+    "kernelSizeBytes": 45600,
+    "textOffset": 0,
+    "headerImageSize": 45600,
+    "flags": 12,
+    "magic": "ARMd",
+    "marker": "TALOS: fr-no-mmio-loop"
+  },
+  "validation": {
+    "cargoFmt": "passed",
+    "cargoTestQuiet": "passed",
+    "archiveReview": "passed",
+    "staticImageHeaderSymbolDisassemblyInspection": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  }
+}

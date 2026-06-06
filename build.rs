@@ -123,6 +123,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "rpi5_rp1_uart0_fr_shaped_no_mmio_marker",
+        implied_values: &[],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "rpi5_rp1_entry_control",
         implied_values: &[],
         asm_defines: &[],

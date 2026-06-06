@@ -1,0 +1,3 @@
+115:rpi5-rp1-uart0-fr-read: start
+116:rpi5-rp1-uart0-fr-read: pre-mmio-read
+118:TALOS: fr-no-mmio-loop

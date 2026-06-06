@@ -1,0 +1,1 @@
+05f68072e4f1653c10eadfefbe099c92cefdde024b7f7d985b7c785c48011e45  tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-core/boot-tree-file-sha256s.txt

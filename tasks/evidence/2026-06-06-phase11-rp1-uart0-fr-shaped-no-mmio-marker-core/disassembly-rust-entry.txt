@@ -1,0 +1,3 @@
+00000000002011d8 <rust_entry>:
+  2011d8: 94000103     	bl	0x2015e4 <talos::target::rpi5::run_rp1_uart0_fr_shaped_no_mmio_marker>
+

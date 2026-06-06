@@ -1,0 +1,7 @@
+434:0000000000200000 T __kernel_start
+435:0000000000200000 T _start
+449:00000000002011d8 T rust_entry
+469:00000000002015e4 t _RNvNtNtCsan2nlJD4ir9_5talos6target4rpi538run_rp1_uart0_fr_shaped_no_mmio_marker
+979:0000000000206690 R __rodata_start
+1400:000000000020b220 B __bss_start
+1406:000000000020b230 B __heap_start

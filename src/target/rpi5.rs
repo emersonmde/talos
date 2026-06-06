@@ -12597,6 +12597,21 @@ pub fn run_rp1_uart0_fr_read_diagnostic() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_uart0_fr_shaped_no_mmio_marker")]
+pub fn run_rp1_uart0_fr_shaped_no_mmio_marker() -> ! {
+    write_early_static("rpi5-rp1-uart0-fr-read: start\n");
+    write_early_static("rpi5-rp1-uart0-fr-read: pre-mmio-read\n");
+    write_early_static(
+        "rpi5-rp1-uart0-fr-shaped-no-mmio-marker: classification=no-mmio-marker-before-rp1-read\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: fr-no-mmio-loop\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
 #[cfg(not(talos_target_rpi5_bcm2712))]
 #[allow(dead_code)]
 fn read_rp1_reg_u32(_addr: usize) -> u32 {

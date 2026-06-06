@@ -1,0 +1,2 @@
+92c6397825ee1dbbfafe2618a0557f887ced1b9e37d78d223a6278b1ac7cf3a0  target/talos-rpi5-rp1-uart0-fr-shaped-no-mmio-marker-core.tar.gz
+e8b7d507a0b14e5f18270e65c48b1f4c629923c93bd0eeaeb4b24670b70daabb  target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-rp1-uart0-fr-shaped-no-mmio-marker.img
