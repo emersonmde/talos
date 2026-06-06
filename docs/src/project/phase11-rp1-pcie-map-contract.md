@@ -447,6 +447,25 @@ mechanically unblocked to refresh the narrow local RP1 UART0 flag-register read
 candidate; the serialized hardware proof remains separately gated behind that
 refresh.
 
+phase11-rp1-uart0-fr-read-closeout-20260606 reconciles the refreshed local
+RP1 UART0 flag-register read candidate and the serialized Pi 5 proof as
+serial-capture-saturated-after-candidate-fetch. The refreshed candidate staged
+tree `25ff74c5c496e861d534080a6e8ec65cb36d261f16775515cd37a79938d41b71`
+with a 45,832-byte `da591740/kernel_2712.img`, and the first proof run
+retained stable same-cursor pre-restore TFTP evidence with two served
+candidate kernel fetches. The fresh serial cursor was already `4194304`, and
+candidate, known-good control, and candidate rerun observations from that
+cursor returned zero bytes. The known-good control did retain two 104,136-byte
+control kernel fetches; the candidate rerun retained stable zero-event TFTP
+evidence. The accepted boundary is limited to source/static candidate refresh,
+first-run candidate publication/fetch, restore hygiene, and serial-capture
+blocker evidence. It does not accept `mapped/read-value`, unmapped/trap,
+firmware-state, pre-MMIO reachability, GPIO, interrupts, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe, Milestone 11.2, or phase
+transition. Another same-shaped RP1 UART0 FR-read hardware rerun remains
+blocked until serial cursor/capture completeness is repaired or decisively
+classified.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path now branches directly from `rust_entry`, reports `rpi5-rp1-uart0-fr-read: start` and `rpi5-rp1-uart0-fr-read: pre-mmio-read` through the UART10 early-serial helper, flushes UART10, then reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load. A returned read reports the contract id, target name, address, width, raw value, `mapped/read-value` success classification, and PASS before halting in a spin loop. The pre-MMIO marker is a discriminator for the next serialized proof: if hardware reaches that marker but not the read-value line, the result is entry/handoff reachability plus an RP1 read trap/hang boundary, not a mapping acceptance.

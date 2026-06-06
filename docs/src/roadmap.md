@@ -7251,6 +7251,24 @@ generated-root, networking, SSH, broader PCIe, Milestone 11.2, and phase
 transition remain unaccepted until the separately gated Pi 5 proof runs under
 hardwareTestLock.
 
+phase11-rp1-uart0-fr-read-closeout-20260606 is accepted as
+serial-capture-saturated-after-candidate-fetch after the serialized Pi 5 proof.
+The first candidate run selected tree
+25ff74c5c496e861d534080a6e8ec65cb36d261f16775515cd37a79938d41b71 and
+retained stable TFTP evidence with two served 45,832-byte
+da591740/kernel_2712.img fetches, proving first-run candidate publication and
+fetch. The fresh serial cursor was already 4194304, and candidate,
+known-good-control, and candidate-rerun observations from that cursor returned
+zero bytes. The known-good control still retained two served 104,136-byte
+kernel fetches, while the candidate rerun retained stable zero-event TFTP
+evidence. This accepts source/static candidate refresh, first-run candidate
+publication/fetch, restore hygiene, and serial-capture blocker evidence only.
+It does not accept RP1 mapped/read-value, unmapped/trap, firmware-state,
+pre-MMIO reachability, GPIO, interrupts, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe, Milestone 11.2, or phase transition. The queued
+serial cursor/capture completeness repair must run before any same-shaped RP1
+UART0 FR-read hardware rerun.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

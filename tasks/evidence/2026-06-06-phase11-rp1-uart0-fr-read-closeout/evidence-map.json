@@ -1,0 +1,44 @@
+{
+  "task_id": "phase11-rp1-uart0-fr-read-closeout-20260606",
+  "classification": "serial-capture-saturated-after-candidate-fetch",
+  "inputs": {
+    "refresh_core_task": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-refresh-core.md",
+    "refresh_core_evidence_map": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-refresh-core/evidence-map.json",
+    "refresh_core_static_inspection": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-refresh-core/static-inspection.md",
+    "pi5_proof_task": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-pi5-proof.md",
+    "pi5_proof_evidence_map": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-pi5-proof/evidence-map.json",
+    "pi5_proof_classification": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-pi5-proof/classification.json",
+    "candidate_run_summary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-pi5-proof/candidate-run/capture-invariant-summary.json",
+    "candidate_serial_window": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-pi5-proof/candidate-run/serial-observe-window.json",
+    "known_good_control_summary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-pi5-proof/known-good-control-run/run-summary.json",
+    "candidate_rerun_summary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-pi5-proof/candidate-rerun/run-summary.json",
+    "pi5_proof_validation_summary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-pi5-proof/validation-summary.txt"
+  },
+  "outputs": {
+    "closeout_task": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-closeout.md",
+    "static_evidence_inspection": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-closeout/static-evidence-inspection.md"
+  },
+  "accepted_claims": [
+    "refreshed local/static RP1 UART0 FR-read candidate",
+    "first-run candidate publication/fetch",
+    "restore hygiene",
+    "serial capture blocker evidence"
+  ],
+  "rejected_claims": [
+    "RP1 mapped/read-value",
+    "RP1 unmapped/trap",
+    "firmware-state",
+    "pre-MMIO reachability",
+    "GPIO",
+    "interrupts",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ],
+  "next_task": "phase11-serial-cursor-saturation-repair-core-20260606"
+}
