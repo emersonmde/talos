@@ -1,0 +1,57 @@
+{
+  "task_id": "phase11-known-good-runtime-direct-cursor-closeout-20260605",
+  "status": "accepted",
+  "evidence_level": "static evidence inspection",
+  "classification": "known-good-direct-cursor-fetch-runtime-readiness-blocked",
+  "lineage_and_cursor_repair": {
+    "task": "tasks/2026-06-05-phase11-known-good-runtime-lineage-and-cursor-repair.md",
+    "commit": "17466dd51fa0f8baa9e847f592bee64829769759",
+    "evidence": [
+      "tasks/evidence/2026-06-05-phase11-known-good-runtime-lineage-and-cursor-repair/lineage-map.json",
+      "tasks/evidence/2026-06-05-phase11-known-good-runtime-lineage-and-cursor-repair/static-source-doc-evidence-inspection.md",
+      "tasks/evidence/2026-06-05-phase11-known-good-runtime-lineage-and-cursor-repair/cursor-caveat-disposition.md"
+    ]
+  },
+  "direct_cursor_pi5_recheck": {
+    "task": "tasks/2026-06-05-phase11-known-good-runtime-direct-cursor-pi5-recheck.md",
+    "commit": "a84ecc6266ace084cf4824ccd5da2add7384c850",
+    "classification": "boot-runtime-readiness-after-known-good-fetch",
+    "evidence": [
+      "tasks/evidence/2026-06-05-phase11-known-good-runtime-direct-cursor-pi5-recheck/observed-summary.json",
+      "tasks/evidence/2026-06-05-phase11-known-good-runtime-direct-cursor-pi5-recheck/classification.json",
+      "tasks/evidence/2026-06-05-phase11-known-good-runtime-direct-cursor-pi5-recheck/static-evidence-inspection.md",
+      "tasks/evidence/2026-06-05-phase11-known-good-runtime-direct-cursor-pi5-recheck/known-good-runtime-readiness-observe.json",
+      "tasks/evidence/2026-06-05-phase11-known-good-runtime-direct-cursor-pi5-recheck/known-good-tftp-delta-stable-pre-restore.json",
+      "tasks/evidence/2026-06-05-phase11-known-good-runtime-direct-cursor-pi5-recheck/known-good-tftp-delta-stable-pre-restore-rerun.json",
+      "tasks/evidence/2026-06-05-phase11-known-good-runtime-direct-cursor-pi5-recheck/lab-status-before.json",
+      "tasks/evidence/2026-06-05-phase11-known-good-runtime-direct-cursor-pi5-recheck/lab-status-pre-restore.json",
+      "tasks/evidence/2026-06-05-phase11-known-good-runtime-direct-cursor-pi5-recheck/lab-status-after-restore.json",
+      "tasks/evidence/2026-06-05-phase11-known-good-runtime-direct-cursor-pi5-recheck/final-restore.json"
+    ]
+  },
+  "accepted": {
+    "proof_semantics": "direct fresh-cursor TFTP evidence for the restored known-good tree is retained and stable",
+    "known_good_fetch_visibility": "two 104136-byte da591740/kernel_2712.img serves were observed from fresh cursor 4096953",
+    "direct_cursor_evidence_quality": "blank-cursor caveat is repaired and the pre-restore delta is stable across replay",
+    "restore_state": "hardwareTestLock was released and the pre-run restored known-good boot tree was restored"
+  },
+  "blocked": {
+    "valid_known_good_talos_readiness": "serial from fresh cursor 4096040 did not contain TALOS: kernel_main, talos>, or rpi5-production-timer-preemption: PASS",
+    "rp1_entry_control_candidate_rerun": "blocked because valid-known-good-talos-readiness is not accepted",
+    "rp1_claims": [
+      "candidate fetch",
+      "Rust entry",
+      "entry-control reachability",
+      "mapped/read-value",
+      "unmapped/trap",
+      "firmware-state behavior"
+    ]
+  },
+  "smallest_next_discriminator": "supervisor-planned boot/runtime readiness repair or discriminator for why the restored known-good tree fetches kernel_2712.img but does not reach Talos readiness markers",
+  "validation": {
+    "static_evidence_inspection": "tasks/evidence/2026-06-05-phase11-known-good-runtime-direct-cursor-closeout/static-evidence-inspection.md",
+    "git_diff_check": "tasks/evidence/2026-06-05-phase11-known-good-runtime-direct-cursor-closeout/git-diff-check.log",
+    "mdbook_build": "tasks/evidence/2026-06-05-phase11-known-good-runtime-direct-cursor-closeout/mdbook-build.log",
+    "git_diff_cached_check": "tasks/evidence/2026-06-05-phase11-known-good-runtime-direct-cursor-closeout/git-diff-cached-check.log"
+  }
+}

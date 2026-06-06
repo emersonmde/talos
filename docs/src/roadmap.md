@@ -7082,6 +7082,22 @@ work, candidate rerun, mapped/unmapped claims, GPIO, interrupts, DMA/cache,
 networking, SSH, storage, generated-root, broader PCIe, Milestone 11.2, or
 phase transition.
 
+phase11-known-good-runtime-lineage-and-cursor-repair-20260605 accepted a
+no-hardware repair for the blank-cursor caveat and direct-cursor proof hygiene.
+phase11-known-good-runtime-direct-cursor-pi5-recheck-20260605 then completed
+with committed blocker evidence: fresh TFTP cursor 4096953 produced stable
+pre-restore evidence with two 104,136-byte da591740/kernel_2712.img fetches,
+while fresh serial cursor 4096040 did not reach TALOS: kernel_main, talos>, or
+rpi5-production-timer-preemption: PASS. The direct-cursor closeout accepts
+known-good-direct-cursor-fetch-runtime-readiness-blocked: known-good fetch
+visibility and restore hygiene are accepted, but valid known-good Talos runtime
+readiness is still blocked after confirmed fetch. The RP1 entry-control
+candidate rerun must not be promoted; supervisor planning is required for a
+bounded boot/runtime readiness repair or discriminator before RP1
+candidate/source work, candidate rerun, mapped/unmapped claims, GPIO,
+interrupts, DMA/cache, networking, SSH, storage, generated-root, broader PCIe,
+Milestone 11.2, or phase transition.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
