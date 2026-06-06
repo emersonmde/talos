@@ -343,6 +343,22 @@ status/files, restore status/files, and `capture-invariant-summary.json`. Its
 summary suggests only the capture/observability classification; the task
 record remains responsible for accepting or rejecting the feature boundary.
 
+Before a proof task accepts a decisive RP1 hardware classification from that
+bundle, replay the retained files through:
+
+~~~bash
+scripts/rpi5-proof-identity-join-check.sh \
+  --evidence-dir tasks/evidence/<task-id>/<run-dir> \
+  --label <proof-label>
+~~~
+
+The checker enforces the `pi5-proof-identity-join-v1` contract: one shared run
+label must tie the selected tree hash, effective kernel, expected fetch path
+and byte count, serial cursor/window identity, stable TFTP cursor/delta
+identity, final pre-restore identity, and restore identity. Missing fields or
+byte mismatches classify the bundle as `capture-staging-blocked`; they do not
+support `mapped/read-value`, trap/unmapped, or other decisive RP1 behavior.
+
 For the current restored known-good control, the preferred readiness markers
 are `TALOS: kernel_main` plus `rpi5-production-timer-preemption: PASS` within
 that observation window after a stable 104,136-byte

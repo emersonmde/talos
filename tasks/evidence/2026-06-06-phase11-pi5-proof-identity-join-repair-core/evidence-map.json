@@ -1,0 +1,75 @@
+{
+  "task_id": "phase11-pi5-proof-identity-join-repair-core-20260606",
+  "classification": "proof-harness-identity-join-repaired",
+  "commit": "recorded in memory/talos-supervisor-state.json after commit",
+  "changed_files": [
+    "scripts/rpi5-capture-invariant-proof-bundle.sh",
+    "scripts/rpi5-proof-identity-join-check.sh",
+    "docs/src/project/lab-controller.md",
+    "docs/src/project/phase11-rp1-pcie-map-contract.md",
+    "tasks/2026-06-06-phase11-pi5-proof-identity-join-repair-core.md",
+    "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-repair-core/static-evidence-inspection.md",
+    "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-repair-core/evidence-map.json",
+    "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-repair-core/capture-invariant-proof-bundle-dry-run.json",
+    "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-repair-core/hold-control-candidate-run-identity-join-check.json",
+    "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-repair-core/hold-control-candidate-run-identity-join-check.exit"
+  ],
+  "source_evidence": {
+    "hold_control_discriminator_task": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-pi5-discriminator.md",
+    "hold_control_closeout_task": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-closeout.md",
+    "retained_candidate_run": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-pi5-discriminator/candidate-run",
+    "retained_closeout_static_inspection": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-closeout/static-evidence-inspection.md"
+  },
+  "repaired_contract": {
+    "name": "pi5-proof-identity-join-v1",
+    "required_fields": [
+      "shared run label",
+      "selected tree hash",
+      "effective kernel",
+      "expected fetch path and byte count",
+      "serial cursor and window identity",
+      "stable TFTP cursor and delta identity",
+      "final pre-restore identity",
+      "restore identity"
+    ],
+    "checker": "scripts/rpi5-proof-identity-join-check.sh",
+    "dry_run": "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-repair-core/capture-invariant-proof-bundle-dry-run.json"
+  },
+  "old_evidence_replay": {
+    "path": "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-repair-core/hold-control-candidate-run-identity-join-check.json",
+    "exit_code_file": "tasks/evidence/2026-06-06-phase11-pi5-proof-identity-join-repair-core/hold-control-candidate-run-identity-join-check.exit",
+    "classification": "capture-staging-blocked",
+    "decisive_rp1_hardware_classification_allowed": false,
+    "rejection_reasons": [
+      "tftp-expected-fetch-byte-mismatch",
+      "final-pre-restore-selected-tree-mismatch",
+      "final-pre-restore-expected-fetch-byte-mismatch"
+    ]
+  },
+  "validation": {
+    "static_evidence_inspection": "passed",
+    "bash_n": "passed",
+    "no_hardware_dry_run": "passed",
+    "no_hardware_replay_against_retained_evidence": "passed_expected_blocker",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  },
+  "unaccepted_claims": [
+    "RP1 mapped/read-value",
+    "RP1 bus-fault/trap",
+    "pre-read-control-visible-without-read-result",
+    "candidate-fetch-without-control-marker",
+    "firmware-state behavior",
+    "GPIO",
+    "interrupts",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ]
+}

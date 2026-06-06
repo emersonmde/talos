@@ -702,6 +702,19 @@ marker, firmware-state behavior, GPIO, interrupts, DMA/cache, storage,
 generated-root, networking, SSH, broader PCIe, Milestone 11.2, and phase
 transition remain unaccepted.
 
+phase11-pi5-proof-identity-join-repair-core-20260606 formalizes the proof
+bundle join rule behind that blocker. Future decisive RP1 hardware
+classifications must pass `pi5-proof-identity-join-v1`: the same run label must
+tie selected tree hash, effective kernel, expected fetch path and byte count,
+serial cursor/window identity, stable TFTP cursor/delta identity, final
+pre-restore identity, and restore identity. Replaying the retained
+hold-control candidate-run evidence rejects decisive RP1 classification because
+the TFTP delta served 104,136-byte restored-tree kernel fetches, final
+pre-restore identity had already changed to the restored tree, and neither
+matches the selected 46,320-byte hold-control candidate. The accepted boundary
+therefore remains capture-staging-blocked; RP1 mapped/read-value and
+unmapped/trap behavior remain unaccepted.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when
