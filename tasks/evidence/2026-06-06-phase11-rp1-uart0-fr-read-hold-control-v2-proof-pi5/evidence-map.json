@@ -1,0 +1,56 @@
+{
+  "task": "phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5-20260606",
+  "status": "accepted",
+  "classification": "candidate-fetch-without-control-marker",
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5.md",
+    "classification": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5/classification.json",
+    "validationSummary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5/validation-summary.txt",
+    "firstCandidateRun": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5/candidate-run/",
+    "knownGoodControlRun": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5/known-good-control-run/",
+    "candidateRerun": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5/candidate-rerun/",
+    "triageAnalysis": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5/triage-and-rerun-analysis.json",
+    "candidateRerunIdentityJoinCheck": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5/candidate-rerun-identity-join-check.json",
+    "knownGoodControlIdentityJoinCheck": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5/known-good-control-identity-join-check.json"
+  },
+  "accepted": [
+    "accepted hold-control candidate archive identity",
+    "candidate publication and v2 candidate-tied fetch/final identity on rerun",
+    "known-good v2 proof-chain control",
+    "visible post-read-loop tail output without contracted read-value/classification output",
+    "restore proof",
+    "candidate-fetch-without-control-marker classification"
+  ],
+  "notAccepted": [
+    "RP1 UART0 FR mapped/read-value behavior",
+    "RP1 UART0 FR bus-fault/trap behavior",
+    "pre-read-control-visible-without-read-result",
+    "firmware-state behavior",
+    "GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone 11.2, or phase transition"
+  ],
+  "summary": {
+    "archiveSha256": "e9ab45b6dd15e4e80395302a116fb8aa751d699c5b679e5b9cee22077059a9b2",
+    "selectedTreeHash": "ae324bd791d7df59a0a8eabc74c936b1bd68ba6c2c9b645dcdc19f561e4e80c0",
+    "kernelBytes": 46320,
+    "knownGoodControlIdentityJoinAllowed": true,
+    "candidateRerunIdentityJoinAllowed": true,
+    "candidateRerunExpectedFetchCount": 2,
+    "candidateRerunExpectedFetchByteMatchCount": 2,
+    "candidateRerunSerialBytes": 1064457,
+    "candidateRerunPostReadLoopOccurrences": 27177,
+    "candidateRerunMappedReadValueOccurrences": 0,
+    "candidateRerunPreReadControlMarkerOccurrences": 0,
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "validation": {
+    "serializedPi5HardwareRunLabController": "completed-candidate-fetch-without-control-marker",
+    "staticArchiveIdentityCheck": "passed",
+    "captureTransactionV2IdentityJoin": "passed-on-known-good-control-and-candidate-rerun",
+    "stableTftpBeforeRestore": "passed",
+    "restoreProofBeforeHardwareLockRelease": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  },
+  "nextAction": "Promote phase11-rp1-uart0-fr-read-hold-control-v2-closeout-20260606 on the next worker wake if hardwareTestLock remains unlocked/restored."
+}

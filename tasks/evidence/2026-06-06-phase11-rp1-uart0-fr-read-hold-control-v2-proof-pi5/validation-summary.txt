@@ -1,0 +1,18 @@
+Task: phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5-20260606
+
+Validation evidence:
+- serialized Pi 5 hardware run through lab-controller endpoints under hardwareTestLock: completed.
+- static archive identity check: passed against e9ab45b6dd15e4e80395302a116fb8aa751d699c5b679e5b9cee22077059a9b2.
+- capture-transaction v2 identity check: first candidate rejected by non-empty pre-power serial drain; known-good control passed; candidate rerun passed.
+- stable same-cursor TFTP before restore: passed for known-good control and candidate rerun.
+- restore proof before hardware-lock release: passed; restored tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+- git diff --check: passed.
+- mdbook build: passed.
+- git diff --cached --check before commit: passed.
+
+Classification:
+- candidate-fetch-without-control-marker.
+
+Accepted boundary:
+- v2 candidate identity, candidate fetch/final identity, visible post-read-loop tail output, and restore hygiene.
+- RP1 mapped/read-value, bus-fault/trap, pre-read-control-visible-without-read-result, broader PCIe, Milestone 11.2, and phase transition remain unaccepted.

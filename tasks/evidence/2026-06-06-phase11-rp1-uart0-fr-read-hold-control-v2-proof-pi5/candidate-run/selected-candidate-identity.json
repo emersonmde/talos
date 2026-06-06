@@ -1,0 +1,8 @@
+{
+  "archive": "target/talos-rpi5-rp1-uart0-fr-read-hold-control-core.tar.gz",
+  "archive_sha256": "e9ab45b6dd15e4e80395302a116fb8aa751d699c5b679e5b9cee22077059a9b2",
+  "expected_tree_hash": "ae324bd791d7df59a0a8eabc74c936b1bd68ba6c2c9b645dcdc19f561e4e80c0",
+  "expected_fetch_path": "da591740/kernel_2712.img",
+  "expected_fetch_bytes": 46320,
+  "contract": "pi5-capture-transaction-v2"
+}

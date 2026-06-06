@@ -788,6 +788,26 @@ v2 identity join for the selected RP1 candidate before any mapped/read-value,
 trap/unmapped, firmware-state, broader PCIe, Milestone 11.2, or phase
 transition claim is accepted.
 
+phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5-20260606 then published
+the accepted hold-control RP1 UART0 FR-read candidate under the hardware lock
+and classified the proof as candidate-fetch-without-control-marker. The first
+candidate run had selected-tree TFTP/final identity, but v2 rejected decisive
+classification because the pre-power /serial/read drain was not empty before a
+saturated direct-read serial window. After rebooting to the restored
+known-good tree, the known-good control passed v2 identity join with two
+104,136-byte control kernel fetches and PASS serial output. The single
+candidate rerun then passed v2 identity join for tree
+ae324bd791d7df59a0a8eabc74c936b1bd68ba6c2c9b645dcdc19f561e4e80c0 with two
+46,320-byte da591740/kernel_2712.img fetches, final selected-tree identity,
+and restore proof. Its direct-read serial window retained 27,177 occurrences
+of TALOS: fr-hold-control-post-read-loop, but did not retain the contracted
+rpi5-rp1-uart0-fr-read read-value/classification line, pre-read control
+marker, post-read terminal marker, or trap/panic text. This accepts candidate
+fetch and post-read-loop-tail evidence only; RP1 UART0 FR mapped/read-value,
+bus-fault/trap, pre-read-control-visible-without-read-result, firmware-state
+behavior, broader PCIe, Milestone 11.2, and phase transition remain
+unaccepted until the queued closeout reconciles the exact boundary.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

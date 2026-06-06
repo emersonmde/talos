@@ -1,0 +1,34 @@
+{
+  "path": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5/candidate-run",
+  "identity_allowed": false,
+  "rejection_reasons": [
+    "serial-drain-not-empty-before-power",
+    "saturated-direct-read-without-empty-pre-power-drain"
+  ],
+  "serial": {
+    "response_bytes": 1064894,
+    "pre_power_empty": null,
+    "mapped_read_value_occurrences": 0,
+    "pre_read_control_marker_occurrences": 0,
+    "post_read_terminal_marker_occurrences": 0,
+    "post_read_loop_occurrences": 27178,
+    "exception_or_trap_text_occurrences": 0
+  },
+  "tftp": {
+    "stable": true,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2
+  },
+  "final_pre_restore": {
+    "tree_hash": "ae324bd791d7df59a0a8eabc74c936b1bd68ba6c2c9b645dcdc19f561e4e80c0",
+    "effective_kernel": "kernel_2712.img",
+    "selected_tree_still_staged": true,
+    "expected_fetch_present": true,
+    "expected_fetch_bytes_match": true
+  },
+  "restore": {
+    "snapshot_name": "phase11-rp1-uart0-fr-read-hold-control-v2-proof-pre-20260606T230601Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "suggested_classification": "identity-join-mismatch"
+}
