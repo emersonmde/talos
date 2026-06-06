@@ -1,0 +1,49 @@
+{
+  "task_id": "phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator-20260606",
+  "classification": "post-handoff-rust-entry-uart10-marker-visible",
+  "candidate_archive": "target/talos-rpi5-rust-entry-uart10-marker-loop-core.tar.gz",
+  "candidate_archive_sha256": "ab6de452670427cee2d411cbcd2a92602331e9d03a9d68dae20b75d649d1565b",
+  "expected_tree_hash": "1d7cdd3d265fb983ec77d9281098d6a920e0bc957a1f0a15f279fe35c618ee6c",
+  "expected_kernel": "kernel_2712.img",
+  "expected_fetch": "da591740/kernel_2712.img",
+  "expected_fetch_bytes": 45328,
+  "marker": "TALOS: reu10-loop",
+  "observed": {
+    "helper_suggested_classification": "post-handoff-marker-visible",
+    "stable_tftp": true,
+    "tftp_event_count": 13,
+    "expected_fetch_count": 2,
+    "serial_cursor_start": 4133556,
+    "serial_cursor_end": 4194304,
+    "serial_bytes": 60748,
+    "serial_marker_visible": true,
+    "serial_marker_occurrences": 2961,
+    "serial_elapsed_seconds": 32,
+    "serial_observe_attempts": 6,
+    "firmware_network_occurrences": 2,
+    "final_pre_restore_tree_hash": "1d7cdd3d265fb983ec77d9281098d6a920e0bc957a1f0a15f279fe35c618ee6c",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "accepted_boundary": [
+    "visible post-handoff Rust-entry UART10 marker observability for the selected marker-loop candidate",
+    "selected candidate identity and stable pre-restore fetch evidence for 45328-byte da591740/kernel_2712.img",
+    "deadline-looped fresh serial window containing repeated TALOS: reu10-loop markers from the same run"
+  ],
+  "not_accepted": [
+    "RP1 UART0 FR-read readiness",
+    "RP1 mapped/read-value behavior",
+    "RP1 unmapped/trap behavior",
+    "firmware-state behavior",
+    "GPIO",
+    "interrupts",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ],
+  "next_action": "Promote marker-loop closeout before any RP1 UART0 FR-read refresh; the closeout must reconcile this visible UART10 marker evidence and keep RP1 mapped/unmapped claims out of scope."
+}

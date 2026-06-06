@@ -1,0 +1,13 @@
+Validation summary for phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator-20260606
+
+- lab-controller API candidate identity: passed via GET /status and GET /boot/files. The deployed GET / endpoint returned curl exit 22 / HTTP 404 and is retained as endpoint-semantics evidence.
+- selected candidate identity: tree_hash 1d7cdd3d265fb983ec77d9281098d6a920e0bc957a1f0a15f279fe35c618ee6c, effective_kernel kernel_2712.img, da591740/kernel_2712.img bytes 45328.
+- fresh serial cursor: captured before power cycle at cursor 4133556.
+- fresh TFTP cursor: captured before power cycle and stable pre-restore replay retained.
+- serial hardware boot/output: deadline-looped fresh window retained 60748 bytes over 32 seconds and saw TALOS: reu10-loop 2961 times.
+- TFTP hardware evidence: stable same-cursor pre-restore delta retained 13 events, including 2 served da591740/kernel_2712.img fetches at 45328 bytes.
+- restore proof: restored snapshot phase11-rust-entry-uart10-marker-loop-pre-20260606T1032Z and post-restore tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+- known-good control/candidate rerun: not run; first candidate run was definitive marker-visible with stable candidate fetch evidence, not capture/staging inconclusive.
+- git diff --check: passed.
+- mdbook build: passed because docs/src/project/phase11-rp1-pcie-map-contract.md is updated.
+- git diff --cached --check before commit: passed.

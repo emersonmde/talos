@@ -418,6 +418,22 @@ generated-root, broader PCIe, Milestone 11.2, or phase transition. The queued
 marker-boundary closeout must reconcile this classification before any RP1
 candidate rerun is promoted.
 
+phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator-20260606 accepts
+visible post-handoff Rust-entry UART10 marker observability for the selected
+marker-loop candidate only. The published candidate tree
+`1d7cdd3d265fb983ec77d9281098d6a920e0bc957a1f0a15f279fe35c618ee6c`
+served two 45,328-byte `da591740/kernel_2712.img` fetches in stable
+pre-restore TFTP evidence. The deadline-looped fresh serial window retained
+60,748 bytes over 32 seconds and reached `TALOS: reu10-loop` 2,961 times.
+The run restored the boot tree to
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10`.
+This evidence accepts UART10 marker visibility at Rust entry but does not
+accept RP1 UART0 FR-read readiness, RP1 mapped/read-value behavior,
+unmapped/trap behavior, firmware-state behavior, GPIO, interrupts, DMA/cache,
+networking, SSH, storage, generated-root, broader PCIe, Milestone 11.2, or a
+phase transition. The marker-loop closeout must reconcile this boundary before
+any RP1 UART0 flag-register refresh is promoted.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path first reports `rpi5-rp1-uart0-fr-read: start` and `rpi5-rp1-uart0-fr-read: pre-mmio-read`, flushes UART10, then reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load. A returned read reports the contract id, target name, address, width, raw value, `mapped/read-value` success classification, and PASS before returning to the existing final halt path. The pre-MMIO marker is a discriminator for the next serialized proof: if hardware reaches that marker but not the read-value line, the result is entry/handoff reachability plus an RP1 read trap/hang boundary, not a mapping acceptance.

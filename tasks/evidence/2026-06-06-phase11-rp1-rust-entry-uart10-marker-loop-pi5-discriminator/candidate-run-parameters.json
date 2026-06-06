@@ -1,0 +1,14 @@
+{
+  "archive": "target/talos-rpi5-rust-entry-uart10-marker-loop-core.tar.gz",
+  "archive_sha256": "ab6de452670427cee2d411cbcd2a92602331e9d03a9d68dae20b75d649d1565b",
+  "restore_snapshot": "phase11-rust-entry-uart10-marker-loop-pre-20260606T1032Z",
+  "expected_tree_hash": "1d7cdd3d265fb983ec77d9281098d6a920e0bc957a1f0a15f279fe35c618ee6c",
+  "expected_kernel": "kernel_2712.img",
+  "expected_fetch": "da591740/kernel_2712.img",
+  "expected_fetch_bytes": 45328,
+  "marker": "TALOS: reu10-loop",
+  "root_endpoint_exit_codes": {
+    "initial": 22,
+    "post_publish": 22
+  }
+}

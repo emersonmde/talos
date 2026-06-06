@@ -1,0 +1,37 @@
+{
+  "task_id": "phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator-20260606",
+  "classification": "post-handoff-rust-entry-uart10-marker-visible",
+  "evidence": {
+    "archive_sha256": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/archive-sha256.txt",
+    "archive_listing": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/archive-listing.txt",
+    "initial_status": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/initial-status-before-lock-run.json",
+    "initial_boot_files": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/initial-boot-files-before-lock-run.json",
+    "initial_snapshots": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/initial-snapshots-before-lock-run.json",
+    "root_endpoint_initial_exit": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/initial-root-before-lock-run.exit",
+    "pre_run_snapshot": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/pre-run-snapshot-create.json",
+    "publish_response": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/candidate-publish.json",
+    "candidate_status": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/candidate-post-publish-status.json",
+    "candidate_boot_files": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/candidate-post-publish-boot-files.json",
+    "candidate_run_parameters": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/candidate-run-parameters.json",
+    "candidate_run_summary": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/candidate-run/capture-invariant-summary.json",
+    "serial_window": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/candidate-run/serial-observe-window.json",
+    "tftp_stable_delta": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/candidate-run/tftp-delta-stable-pre-restore.json",
+    "restore_snapshot": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/candidate-run/restore-snapshot.json",
+    "post_restore_status": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/candidate-run/post-restore-status.json",
+    "classification": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/classification.json",
+    "validation_summary": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/validation-summary.txt",
+    "git_diff_check": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/git-diff-check.log",
+    "git_diff_cached_check": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/git-diff-cached-check.log",
+    "mdbook_build": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/mdbook-build.log"
+  },
+  "validation": {
+    "lab_api_status_identity": "passed via GET /status; deployed GET / returned 404 and is retained as endpoint-semantics evidence",
+    "fresh_serial_cursor": "passed",
+    "fresh_tftp_cursor": "passed",
+    "stable_same_cursor_tftp": "passed",
+    "post_run_restore": "passed",
+    "git_diff_check": "passed",
+    "git_diff_cached_check": "passed",
+    "mdbook_build": "passed"
+  }
+}
