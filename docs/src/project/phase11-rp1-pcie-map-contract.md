@@ -229,6 +229,27 @@ generated-root, networking, SSH, broader PCIe, and Milestone 11.2 remain
 unaccepted. The queued RP1 UART0 FR-read refresh is therefore not
 mechanically unblocked.
 
+phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5-20260606 reran the
+same accepted marker/reset archive under the repaired capture-invariant rule.
+Preflight and final pre-restore identity matched selected tree
+37995c483190ddcfaef70c9cf5be04244f75c4fcd9cf25fdd90f941ccc48c4f2,
+effective kernel kernel_2712.img, and the 51,736-byte
+da591740/kernel_2712.img. Stable same-cursor TFTP evidence from fresh cursor
+4111814 retained 65 events and 10 served candidate kernel fetches before
+restore. Fresh serial from cursor 4113931 retained 19,625 bytes over 90
+seconds and showed repeated firmware NETWORK boot/fetch cycles, but did not
+show `TALOS: kernel_main` or `rpi5-rp1-post-handoff-marker-reset`.
+The capture-recheck closeout classification is
+reset-side-effect-accepted-marker-visibility-blocked: candidate fetch and the
+PSCI reset-loop side effect are accepted for the selected no-RP1-MMIO
+marker/reset candidate only. Visible post-handoff serial observability,
+RP1 UART0 FR-read readiness, RP1 mapped/read-value, RP1 unmapped/trap,
+firmware-state behavior, GPIO, interrupts, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe, Milestone 11.2, and phase transition remain
+unaccepted. The queued RP1 UART0 FR-read refresh is still not mechanically
+unblocked because reset-side-effect-only evidence is not visible marker
+observability.
+
 phase11-staging-capture-log-stability-core-20260605 repairs the Pi 5
 proof-rule boundary exposed by that blocker. Replay from the retained cursor
 `4088847` later returned 13 TFTP events, including a restored known-good

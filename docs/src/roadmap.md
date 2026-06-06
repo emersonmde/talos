@@ -7189,6 +7189,22 @@ classify only marker visibility, reset side effect, marker-path hang/fault, or
 staging/capture blocker; RP1 mapped/unmapped behavior remains separate and
 unaccepted.
 
+phase11-rp1-post-handoff-marker-reset-capture-recheck-closeout-20260606 is
+accepted as reset-side-effect-accepted-marker-visibility-blocked. The repaired
+Pi 5 recheck published the same 51,736-byte marker/reset archive, selected
+tree 37995c483190ddcfaef70c9cf5be04244f75c4fcd9cf25fdd90f941ccc48c4f2, and
+retained stable pre-restore TFTP evidence with 10 served candidate
+da591740/kernel_2712.img fetches. Fresh serial retained repeated firmware
+NETWORK boot/fetch cycles but did not show TALOS: kernel_main, TALOS:
+rust_entry, or the unique marker/reset text. This accepts candidate fetch and
+the PSCI reset-loop side effect only. Visible post-handoff serial
+observability, marker text visibility, RP1 UART0 FR-read readiness,
+mapped/read-value, unmapped/trap, firmware-state behavior, GPIO, interrupts,
+DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
+11.2, and phase transition remain unaccepted. The next bounded direction
+requires supervisor planning for post-handoff marker visibility before
+returning to the RP1 UART0 flag-register read.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

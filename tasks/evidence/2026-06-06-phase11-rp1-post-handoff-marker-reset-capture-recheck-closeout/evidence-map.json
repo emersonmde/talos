@@ -1,0 +1,52 @@
+{
+  "task_id": "phase11-rp1-post-handoff-marker-reset-capture-recheck-closeout-20260606",
+  "classification": "reset-side-effect-accepted-marker-visibility-blocked",
+  "task_record": "tasks/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-closeout.md",
+  "static_evidence_inspection": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-closeout/static-evidence-inspection.md",
+  "source_marker_reset_core": {
+    "task_record": "tasks/2026-06-06-phase11-rp1-post-handoff-marker-reset-core.md",
+    "classification": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-core/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-core/evidence-map.json",
+    "archive_sha256": "73a74db1d08d89a3aa371d5329bc6158553bef172a82f0b479598bc29f15acaa",
+    "kernel_bytes": 51736,
+    "commit": "a2d4c6add9e2ec7e91ba9dcd82c549c82ea01807"
+  },
+  "previous_marker_reset_closeout": {
+    "task_record": "tasks/2026-06-06-phase11-rp1-post-handoff-marker-reset-closeout.md",
+    "evidence_map": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-closeout/evidence-map.json",
+    "classification": "staging-capture-blocked",
+    "commit": "6b41f0d4798a03b4de8380e7095a9f375b17eb4d"
+  },
+  "capture_invariant_recheck": {
+    "task_record": "tasks/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5.md",
+    "classification": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/evidence-map.json",
+    "summary": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run/capture-invariant-summary.json",
+    "candidate_archive_sha256": "73a74db1d08d89a3aa371d5329bc6158553bef172a82f0b479598bc29f15acaa",
+    "candidate_tree_hash": "37995c483190ddcfaef70c9cf5be04244f75c4fcd9cf25fdd90f941ccc48c4f2",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 51736,
+    "fresh_serial_cursor": 4113931,
+    "fresh_tftp_cursor": 4111814,
+    "stable_tftp_cursor_end": 4118569,
+    "stable_tftp_event_count": 65,
+    "stable_tftp_expected_fetch_count": 10,
+    "serial_window_bytes": 19625,
+    "serial_window_elapsed_seconds": 90,
+    "firmware_network_occurrences": 10,
+    "has_kernel_main": false,
+    "has_post_handoff_marker": false,
+    "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "commit": "5c86ae2060b1aac4a7b6a4475e47d4b2de8e8019"
+  },
+  "docs_updated": [
+    "docs/src/project/phase11-rp1-pcie-map-contract.md",
+    "docs/src/roadmap.md"
+  ],
+  "validation": {
+    "git_diff_check": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-closeout/git-diff-check.log",
+    "mdbook_build": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-closeout/mdbook-build.log",
+    "git_diff_cached_check": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-closeout/git-diff-cached-check.log"
+  },
+  "next_action": "Supervisor planning required for the next bounded post-handoff marker-visibility discriminator before returning to the RP1 UART0 flag-register read."
+}
