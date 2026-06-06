@@ -12530,6 +12530,36 @@ pub fn run_rp1_handoff_reset_diagnostic() -> ! {
     }
 }
 
+#[cfg(all(
+    talos_target_rpi5_bcm2712,
+    talos_boot_scenario = "rpi5_rp1_post_handoff_marker_reset"
+))]
+pub fn run_rp1_post_handoff_marker_reset_diagnostic() -> ! {
+    write_early_static("rpi5-rp1-post-handoff-marker-reset: post-handoff-marker\n");
+    write_early_static("rpi5-rp1-post-handoff-marker-reset: classification=marker-before-reset\n");
+    wait_uart10_empty_early_phase();
+
+    loop {
+        unsafe {
+            core::arch::asm!(
+                "mov w0, #0x0009",
+                "movk w0, #0x8400, lsl #16",
+                "smc #0",
+                lateout("x0") _,
+                lateout("x1") _,
+                lateout("x2") _,
+                lateout("x3") _,
+                lateout("x4") _,
+                lateout("x5") _,
+                lateout("x6") _,
+                lateout("x7") _,
+                options(nostack)
+            );
+        }
+        core::hint::spin_loop();
+    }
+}
+
 #[cfg(talos_boot_scenario = "rpi5_rp1_uart0_fr_read")]
 pub fn run_rp1_uart0_fr_read_diagnostic() {
     const CONTRACT_ID: &str = "phase11-rp1-pcie-map-contract-v1";

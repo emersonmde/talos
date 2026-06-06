@@ -38,6 +38,7 @@
             talos_boot_scenario = "rpi5_pointer_copy_proof",
             talos_boot_scenario = "rpi5_rp1_entry_control",
             talos_boot_scenario = "rpi5_rp1_handoff_reset",
+            talos_boot_scenario = "rpi5_rp1_post_handoff_marker_reset",
         )
     ),
     allow(dead_code, unused_imports, unused_variables, unreachable_code)
@@ -234,6 +235,16 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
 
     #[cfg(all(
         talos_target_rpi5_bcm2712,
+        talos_boot_scenario = "rpi5_rp1_post_handoff_marker_reset"
+    ))]
+    {
+        let _ = dtb_pa;
+        target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::RustEntry);
+        target::rpi5::run_rp1_post_handoff_marker_reset_diagnostic();
+    }
+
+    #[cfg(all(
+        talos_target_rpi5_bcm2712,
         talos_boot_scenario = "rpi5_rp1_entry_control"
     ))]
     {
@@ -246,7 +257,8 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
         talos_target_rpi5_bcm2712,
         any(
             talos_boot_scenario = "rpi5_rp1_entry_control",
-            talos_boot_scenario = "rpi5_rp1_handoff_reset"
+            talos_boot_scenario = "rpi5_rp1_handoff_reset",
+            talos_boot_scenario = "rpi5_rp1_post_handoff_marker_reset"
         )
     )))]
     {

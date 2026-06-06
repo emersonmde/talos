@@ -1,0 +1,40 @@
+{
+  "task": "phase11-rp1-post-handoff-marker-reset-core-20260606",
+  "classification": "ready-for-post-handoff-marker-reset-pi5-discriminator",
+  "level": "static inspection + fmt/lint/typecheck/unit tests + image/archive inspection",
+  "archive": "target/talos-rpi5-post-handoff-marker-reset-core.tar.gz",
+  "archiveSha256": "73a74db1d08d89a3aa371d5329bc6158553bef172a82f0b479598bc29f15acaa",
+  "kernelSha256": "42367beda5de1d0564417e6267a59bd5ae5b770798fa4a3cbb3c0ce101554350",
+  "kernelSize": 51736,
+  "evidence": {
+    "staticInspection": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-core/static-inspection.md",
+    "archiveReview": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-core/archive-review.log",
+    "bootTreeReview": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-core/rpi5-rp1-post-handoff-marker-reset-boot-tree.log",
+    "sourceScriptImageComparison": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-core/source-script-image-comparison.md",
+    "candidateIdentity": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-core/candidate-identity.txt",
+    "validationSummary": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-core/validation-summary.txt"
+  },
+  "accepted": [
+    "source route enters rust_entry before BootInfo parsing",
+    "post-handoff marker and classification are emitted before PSCI SYSTEM_RESET",
+    "archive is ready for the queued serialized Pi 5 discriminator"
+  ],
+  "notAccepted": [
+    "Pi 5 serial marker visibility",
+    "candidate fetch",
+    "reset-loop side effect on hardware",
+    "RP1 mapped/read-value",
+    "RP1 unmapped/trap",
+    "firmware-state behavior",
+    "GPIO",
+    "interrupts",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "task": "phase11-rp1-post-handoff-marker-reset-core-20260606",
+  "classification": "ready-for-post-handoff-marker-reset-pi5-discriminator",
+  "acceptedBoundary": "source/static post-handoff marker then PSCI reset candidate only",
+  "nextHardwareTaskMayClassify": [
+    "post-handoff marker visible plus reset",
+    "reset side effect without visible marker",
+    "marker path hangs or faults before reset",
+    "staging/capture blocker"
+  ],
+  "hardwarePerformed": false,
+  "hardwareTestLockAcquired": false,
+  "rp1RegisterReadPerformed": false
+}

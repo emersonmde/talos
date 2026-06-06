@@ -194,6 +194,22 @@ remain unaccepted. The next bounded step requires supervisor planning for a
 focused post-handoff observability or entry-control repair before returning to
 the serial-reported RP1 UART0 flag-register diagnostic.
 
+phase11-rp1-post-handoff-marker-reset-core-20260606 adds the no-hardware
+rpi5_rp1_post_handoff_marker_reset candidate for that focused observability
+repair. The candidate enters rust_entry, emits the normal TALOS: rust_entry line
+and a unique rpi5-rp1-post-handoff-marker-reset marker/classification through
+the current UART10 early-serial path, flushes with wait_uart10_empty_early_phase,
+then calls PSCI SYSTEM_RESET. Static archive/disassembly evidence for
+target/talos-rpi5-post-handoff-marker-reset-core.tar.gz shows a 51,736-byte
+kernel_2712.img, text_offset=0, header_image_size=51736, flags=12, ARMd magic,
+_start -> rust_entry -> marker writes -> smc #0, and no RP1 UART0 FR-read
+symbol/string. This is source/static evidence only; post-handoff marker
+visibility, reset side effect, staging/capture behavior, and restore remain for
+the queued serialized Pi 5 discriminator. RP1 mapped/read-value,
+unmapped/trap, firmware-state behavior, GPIO, interrupts, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe, and Milestone 11.2 remain
+unaccepted.
+
 phase11-staging-capture-log-stability-core-20260605 repairs the Pi 5
 proof-rule boundary exposed by that blocker. Replay from the retained cursor
 `4088847` later returned 13 TFTP events, including a restored known-good

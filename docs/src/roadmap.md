@@ -7173,6 +7173,22 @@ mapped/read-value, unmapped/trap, firmware-state behavior, GPIO, interrupts,
 DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
 11.2, and phase transition remain unaccepted.
 
+phase11-rp1-post-handoff-marker-reset-core-20260606 is accepted as
+ready-for-post-handoff-marker-reset-pi5-discriminator. It adds the no-RP1-MMIO
+rpi5_rp1_post_handoff_marker_reset candidate and archive
+target/talos-rpi5-post-handoff-marker-reset-core.tar.gz. The candidate enters
+rust_entry, emits the normal TALOS: rust_entry line and a unique
+rpi5-rp1-post-handoff-marker-reset marker/classification through the current
+UART10 early-serial helper, flushes, then calls PSCI SYSTEM_RESET before
+BootInfo parsing, target initialization, boot reports, memory planning,
+allocator setup, scheduler work, or the RP1 UART0 FR read path. Static
+archive/disassembly evidence shows a 51,736-byte kernel_2712.img, arm64 Image
+fields text_offset=0, header_image_size=51736, flags=12, ARMd, and _start ->
+rust_entry -> marker writes -> smc #0. The next serialized Pi 5 task may
+classify only marker visibility, reset side effect, marker-path hang/fault, or
+staging/capture blocker; RP1 mapped/unmapped behavior remains separate and
+unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

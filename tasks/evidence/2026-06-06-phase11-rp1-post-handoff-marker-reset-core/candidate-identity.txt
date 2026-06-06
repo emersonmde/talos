@@ -1,0 +1,8 @@
+archive=target/talos-rpi5-post-handoff-marker-reset-core.tar.gz
+archive_sha256=73a74db1d08d89a3aa371d5329bc6158553bef172a82f0b479598bc29f15acaa
+boot_tree=target/rpi5-rp1-post-handoff-marker-reset-core-boot-tree
+kernel=target/rpi5-rp1-post-handoff-marker-reset-core-boot-tree/kernel_2712.img
+kernel_sha256=42367beda5de1d0564417e6267a59bd5ae5b770798fa4a3cbb3c0ce101554350
+kernel_size=51736
+scenario=rpi5_rp1_post_handoff_marker_reset
+classification=ready-for-post-handoff-marker-reset-pi5-discriminator
