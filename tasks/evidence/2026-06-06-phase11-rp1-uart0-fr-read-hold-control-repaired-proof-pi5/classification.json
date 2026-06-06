@@ -1,0 +1,98 @@
+{
+  "task_id": "phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5-20260606",
+  "classification": "capture-staging-blocked",
+  "acceptedClaims": [
+    "accepted hold-control RP1 UART0 FR-read candidate archive was published under hardwareTestLock",
+    "main candidate run captured a large serial window with post-read-loop output but failed pi5-proof-identity-join-v1 because TFTP/final identity matched restored known-good bytes rather than selected-candidate bytes",
+    "known-good control passed pi5-proof-identity-join-v1 during required triage",
+    "one same-shaped candidate rerun was attempted and stopped; same-shaped reruns must stop at this blocker"
+  ],
+  "unacceptedClaims": [
+    "RP1 UART0 FR mapped/read-value behavior",
+    "RP1 UART0 FR bus-fault/trap behavior",
+    "pre-read-control-visible-without-read-result",
+    "candidate-fetch-without-control-marker",
+    "firmware-state behavior",
+    "GPIO",
+    "interrupts",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ],
+  "candidate": {
+    "archive": "target/talos-rpi5-rp1-uart0-fr-read-hold-control-core.tar.gz",
+    "archiveSha256": "e9ab45b6dd15e4e80395302a116fb8aa751d699c5b679e5b9cee22077059a9b2",
+    "expectedKernel": "kernel_2712.img",
+    "expectedFetch": "da591740/kernel_2712.img",
+    "expectedFetchBytes": 46320,
+    "publishedLabTreeHash": "ae324bd791d7df59a0a8eabc74c936b1bd68ba6c2c9b645dcdc19f561e4e80c0"
+  },
+  "hardwareEvidence": {
+    "restoreSnapshot": "phase11-rp1-uart0-fr-read-repaired-proof-pre-20260606T212222Z",
+    "preRunTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "mainCandidateRun": {
+      "proofContract": "pi5-proof-identity-join-v1",
+      "identityJoinAllowed": false,
+      "rejectionReasons": [
+        "tftp-expected-fetch-byte-mismatch",
+        "final-pre-restore-tree-mismatch",
+        "final-pre-restore-selected-tree-mismatch",
+        "final-pre-restore-expected-fetch-byte-mismatch"
+      ],
+      "serialCaptureMode": "deadline-loop-direct-read-after-saturated-cursor",
+      "serialResponseBytes": 973431,
+      "serialTruncated": true,
+      "postReadLoopOccurrences": 24796,
+      "preReadMarkerVisibleInRetainedWindow": false,
+      "postReadTerminalMarkerVisibleInRetainedWindow": false,
+      "contractReportVisibleInRetainedWindow": false,
+      "tftpStable": true,
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 0,
+      "observedExpectedFetchBytes": [
+        104136,
+        104136
+      ],
+      "suggestedClassification": "identity-join-mismatch"
+    },
+    "knownGoodControl": {
+      "proofContract": "pi5-proof-identity-join-v1",
+      "identityJoinAllowed": true,
+      "classification": "proof-chain-ready-for-candidate-rerun",
+      "selectedTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "expectedFetchBytes": 104136,
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 2,
+      "serialResponseBytes": 7075,
+      "requiredMarker": "rpi5-production-timer-preemption: PASS",
+      "hasRequiredMarker": true
+    },
+    "candidateRerun": {
+      "attempted": true,
+      "serialObserveOutputBytes": 0,
+      "preRestoreTftpStableEvidenceRetained": false,
+      "recoveryTftpAfterRestoreStable": true,
+      "recoveryExpectedFetchCount": 2,
+      "recoveryCandidateByteMatchCount": 0,
+      "recoveryKnownGoodByteMatchCount": 2
+    }
+  },
+  "validation": {
+    "serializedPi5HardwareRunLabController": "completed-classified-capture-staging-blocked",
+    "staticArchiveIdentityCheck": "passed",
+    "repairedProofChainIdentitySummary": "failed-for-main-candidate-run-with-identity-join-mismatch",
+    "knownGoodControl": "passed",
+    "candidateRerun": "attempted-stopped-same-shaped",
+    "stableSameCursorTftpBeforeRestore": "retained-for-main-run-but-not-candidate-tied",
+    "restoreProofBeforeHardwareLockRelease": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  }
+}

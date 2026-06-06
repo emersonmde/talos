@@ -730,6 +730,23 @@ FR-read hold-control candidate proof must pass the same
 pi5-proof-identity-join-v1 gate before it can accept mapped/read-value,
 bus-fault/trap, or other decisive RP1 behavior.
 
+phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5-20260606 then ran
+that repaired-proof candidate task and kept the hardware boundary
+capture-staging-blocked. The accepted candidate archive was published as the
+46,320-byte `da591740/kernel_2712.img` in lab tree
+`ae324bd791d7df59a0a8eabc74c936b1bd68ba6c2c9b645dcdc19f561e4e80c0`, and the
+main run retained 973,431 bytes of direct-read serial containing 24,796
+`TALOS: fr-hold-control-post-read-loop` occurrences. The repaired
+`pi5-proof-identity-join-v1` gate rejected that serial as non-decisive because
+stable same-cursor TFTP and final pre-restore identity matched restored
+known-good 104,136-byte fetches instead of the selected 46,320-byte candidate
+fetch. The required known-good control passed the repaired gate, and one
+candidate rerun was stopped after recovery evidence again lacked candidate-byte
+TFTP identity. This accepts only capture-staging-blocked; RP1 UART0 FR
+mapped/read-value behavior, bus-fault/trap behavior, firmware-state behavior,
+GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader
+PCIe, Milestone 11.2, and phase transition remain unaccepted.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

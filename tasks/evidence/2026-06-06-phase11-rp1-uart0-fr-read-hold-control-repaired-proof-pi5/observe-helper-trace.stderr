@@ -1,0 +1,280 @@
++ set -eu
++ [ 5 -lt 1 ]
++ [ 5 -gt 5 ]
++ API_BASE=http://talos-lab-api:8080
++ SERIAL_CURSOR=4194304
++ TIMEOUT_SECONDS=5
++ SETTLE_MS=1000
++ MAX_BYTES=65536
++ MARKER=rpi5-production-timer-preemption: PASS
++ CAPTURE_MODE=auto
++ SATURATION_LIMIT=4194304
++ date +%s
++ start_epoch=1780781112
++ attempts=0
++ annotated=
++ observe_cursor=4194304
++ mktemp
++ responses_file=/tmp/tmp.76mymdYZiv
++ trap rm -f "$responses_file" EXIT
++ [ auto = auto ]
++ [ 4194304 -ge 4194304 ]
++ CAPTURE_MODE=read
++ :
++ date +%s
++ now_epoch=1780781112
++ elapsed_seconds=0
++ remaining_seconds=5
++ [ 5 -le 0 ]
++ [ read = read ]
++ jq -n --argjson timeout_seconds 5 --argjson settle_ms 1000 --argjson max_bytes 65536 {timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}
++ payload={
+  "timeout_seconds": 5,
+  "settle_ms": 1000,
+  "max_bytes": 65536
+}
++ curl -fsS -X POST -H Content-Type: application/json --data {
+  "timeout_seconds": 5,
+  "settle_ms": 1000,
+  "max_bytes": 65536
+} http://talos-lab-api:8080/serial/read
++ response={
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
++ attempts=1
++ printf %s\n {
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
++ printf %s {
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
++ jq -r .cursor_end // .cursor // empty
++ observe_cursor=4194304
++ [ -z 4194304 ]
++ date +%s
++ now_epoch=1780781117
++ elapsed_seconds=5
++ jq -s --arg marker rpi5-production-timer-preemption: PASS --argjson cursor_start 4194304 --argjson cursor_end 4194304 --argjson requested_timeout_seconds 5 --argjson elapsed_seconds 5 --argjson settle_ms 1000 --argjson max_bytes 65536 --argjson attempts 1 --arg capture_mode read --argjson saturation_limit 4194304 (if length == 0 then {} else .[-1] end) as $last
+         | (map(.text // "") | add) as $text
+         | (map((.bytes // ((.text // "") | length)) | tonumber) | add) as $response_bytes
+         | ($text | contains("TALOS: kernel_main")) as $has_kernel_main
+         | ($text | contains($marker)) as $has_marker
+         | ($text | contains("NETWORK")) as $has_firmware_network
+         | (if $text == "" then 0 else (($text | split("NETWORK") | length) - 1) end) as $firmware_network_occurrences
+         | (if $text == "" then 0 else (($text | split($marker) | length) - 1) end) as $marker_occurrences
+         | (if $capture_mode == "read" then $response_bytes else ($cursor_end - $cursor_start) end) as $window_bytes
+         | $last + {
+             cursor_start: $cursor_start,
+             cursor_end: $cursor_end,
+             bytes: $window_bytes,
+             text: $text,
+             truncated: (any(.[]; .truncated == true)),
+             talos_serial_window: {
+                 requested_timeout_seconds: $requested_timeout_seconds,
+                 elapsed_seconds: $elapsed_seconds,
+                 settle_ms: $settle_ms,
+                 max_bytes: $max_bytes,
+                 observe_attempts: $attempts,
+                 observe_contract: (if $capture_mode == "read" then "deadline-loop-direct-read-after-saturated-cursor" else "deadline-loop-accumulated-from-fresh-cursor" end),
+                 capture_mode: $capture_mode,
+                 saturation_limit: $saturation_limit,
+                 start_cursor_saturated: ($cursor_start >= $saturation_limit),
+                 response_bytes: $response_bytes,
+                 required_marker: $marker,
+                 kernel_marker: "TALOS: kernel_main",
+                 firmware_network_marker: "NETWORK",
+                 has_kernel_main: $has_kernel_main,
+                 has_required_marker: $has_marker,
+                 has_firmware_network: $has_firmware_network,
+                 firmware_network_occurrences: $firmware_network_occurrences,
+                 required_marker_occurrences: $marker_occurrences
+             }} /tmp/tmp.76mymdYZiv
++ annotated={
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 5,
+    "elapsed_seconds": 5,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 0,
+    "required_marker": "rpi5-production-timer-preemption: PASS",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": false,
+    "has_firmware_network": false,
+    "firmware_network_occurrences": 0,
+    "required_marker_occurrences": 0
+  }
+}
++ printf %s {
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 5,
+    "elapsed_seconds": 5,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 0,
+    "required_marker": "rpi5-production-timer-preemption: PASS",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": false,
+    "has_firmware_network": false,
+    "firmware_network_occurrences": 0,
+    "required_marker_occurrences": 0
+  }
+}
++ jq -e .talos_serial_window.has_required_marker
++ date +%s
++ now_epoch=1780781117
++ elapsed_seconds=5
++ [ 5 -ge 5 ]
++ break
++ [ -z {
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 5,
+    "elapsed_seconds": 5,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 0,
+    "required_marker": "rpi5-production-timer-preemption: PASS",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": false,
+    "has_firmware_network": false,
+    "firmware_network_occurrences": 0,
+    "required_marker_occurrences": 0
+  }
+} ]
++ printf %s\n {
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 5,
+    "elapsed_seconds": 5,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 0,
+    "required_marker": "rpi5-production-timer-preemption: PASS",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": false,
+    "has_firmware_network": false,
+    "firmware_network_occurrences": 0,
+    "required_marker_occurrences": 0
+  }
+}
++ printf %s {
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 5,
+    "elapsed_seconds": 5,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 0,
+    "required_marker": "rpi5-production-timer-preemption: PASS",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": false,
+    "has_firmware_network": false,
+    "firmware_network_occurrences": 0,
+    "required_marker_occurrences": 0
+  }
+}
++ jq -e .talos_serial_window.has_required_marker
++ rm -f /tmp/tmp.76mymdYZiv

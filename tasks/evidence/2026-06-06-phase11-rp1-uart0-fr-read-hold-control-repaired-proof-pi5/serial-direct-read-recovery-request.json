@@ -1,0 +1,5 @@
+{
+  "timeout_seconds": 10,
+  "settle_ms": 1000,
+  "max_bytes": 262144
+}

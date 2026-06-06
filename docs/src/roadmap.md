@@ -7334,6 +7334,21 @@ DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
 11.2, and phase transition remain unaccepted until a separately queued
 candidate proof passes that gate.
 
+The separately queued repaired-proof candidate run
+phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5-20260606 is now
+accepted as capture-staging-blocked. It published the accepted 46,320-byte
+hold-control RP1 UART0 FR-read candidate, but the repaired
+`pi5-proof-identity-join-v1` gate rejected the main serial window because
+stable TFTP and final identity matched restored known-good 104,136-byte fetches
+instead of selected-candidate fetches. A known-good control passed the repaired
+gate, and one candidate rerun stopped same-shaped repetition after recovery
+evidence again lacked candidate-byte TFTP identity. RP1 UART0 FR
+mapped/read-value, bus-fault/trap, firmware-state behavior, GPIO, interrupts,
+DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
+11.2, and phase transition remain unaccepted. The next bounded step requires
+supervisor planning for a different discriminator; another same-shaped hardware
+rerun is not progress.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

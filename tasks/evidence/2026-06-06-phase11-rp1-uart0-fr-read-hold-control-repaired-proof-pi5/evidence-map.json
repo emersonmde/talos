@@ -1,0 +1,103 @@
+{
+  "task_id": "phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5-20260606",
+  "classification": "capture-staging-blocked",
+  "commit": "recorded in memory/talos-supervisor-state.json after commit",
+  "evidence_paths": {
+    "classification": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5/classification.json",
+    "taskRecord": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5.md",
+    "archiveSha256": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5/archive-sha256.txt",
+    "prePublishStatus": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5/pre-publish-status.json",
+    "preRunSnapshot": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5/pre-run-snapshot.json",
+    "publication": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5/publication.json",
+    "postPublishStatus": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5/post-publish-status.json",
+    "mainCandidateRun": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5/candidate-run/",
+    "mainCandidateSummary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5/candidate-run/capture-invariant-summary.json",
+    "knownGoodControlRun": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5/known-good-control-run/",
+    "knownGoodControlSummary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5/known-good-control-run/capture-invariant-summary.json",
+    "knownGoodControlIdentityJoinCheck": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5/known-good-control-identity-join-check.json",
+    "candidateRerun": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5/candidate-rerun/",
+    "observeHelperTrace": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5/observe-helper-trace.stderr",
+    "postLockReleaseStatusSample": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5/post-lock-release-status-sample.json",
+    "fileSizeSummary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5/file-size-summary.txt"
+  },
+  "classification_basis": {
+    "restoreSnapshot": "phase11-rp1-uart0-fr-read-repaired-proof-pre-20260606T212222Z",
+    "preRunTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "mainCandidateRun": {
+      "proofContract": "pi5-proof-identity-join-v1",
+      "identityJoinAllowed": false,
+      "rejectionReasons": [
+        "tftp-expected-fetch-byte-mismatch",
+        "final-pre-restore-tree-mismatch",
+        "final-pre-restore-selected-tree-mismatch",
+        "final-pre-restore-expected-fetch-byte-mismatch"
+      ],
+      "serialCaptureMode": "deadline-loop-direct-read-after-saturated-cursor",
+      "serialResponseBytes": 973431,
+      "serialTruncated": true,
+      "postReadLoopOccurrences": 24796,
+      "preReadMarkerVisibleInRetainedWindow": false,
+      "postReadTerminalMarkerVisibleInRetainedWindow": false,
+      "contractReportVisibleInRetainedWindow": false,
+      "tftpStable": true,
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 0,
+      "observedExpectedFetchBytes": [
+        104136,
+        104136
+      ],
+      "suggestedClassification": "identity-join-mismatch"
+    },
+    "knownGoodControl": {
+      "proofContract": "pi5-proof-identity-join-v1",
+      "identityJoinAllowed": true,
+      "classification": "proof-chain-ready-for-candidate-rerun",
+      "selectedTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "expectedFetchBytes": 104136,
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 2,
+      "serialResponseBytes": 7075,
+      "requiredMarker": "rpi5-production-timer-preemption: PASS",
+      "hasRequiredMarker": true
+    },
+    "candidateRerun": {
+      "attempted": true,
+      "serialObserveOutputBytes": 0,
+      "preRestoreTftpStableEvidenceRetained": false,
+      "recoveryTftpAfterRestoreStable": true,
+      "recoveryExpectedFetchCount": 2,
+      "recoveryCandidateByteMatchCount": 0,
+      "recoveryKnownGoodByteMatchCount": 2
+    }
+  },
+  "validation": {
+    "serializedPi5HardwareRunLabController": "completed-classified-capture-staging-blocked",
+    "staticArchiveIdentityCheck": "passed",
+    "repairedProofChainIdentitySummary": "failed-for-main-candidate-run-with-identity-join-mismatch",
+    "knownGoodControl": "passed",
+    "candidateRerun": "attempted-stopped-same-shaped",
+    "stableSameCursorTftpBeforeRestore": "retained-for-main-run-but-not-candidate-tied",
+    "restoreProofBeforeHardwareLockRelease": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  },
+  "unaccepted_claims": [
+    "RP1 UART0 FR mapped/read-value behavior",
+    "RP1 UART0 FR bus-fault/trap behavior",
+    "pre-read-control-visible-without-read-result",
+    "candidate-fetch-without-control-marker",
+    "firmware-state behavior",
+    "GPIO",
+    "interrupts",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ]
+}
