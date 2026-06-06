@@ -1,0 +1,10 @@
+Validation summary
+
+- static archive identity check: passed against accepted core SHA-256 07af64b86908f36c63d368589d79c76aebd492a81906a39586a2c5902d8b9287.
+- lab-controller API hardware run: completed with classification final-preload-hold-marker-visible from tree 101a453d873ecec34cf43e0db4129e81167009e8915b25926ce2308d225b1c47.
+- stable same-cursor TFTP evidence: passed with 13 events and 2 served da591740/kernel_2712.img fetches of 45,816 bytes.
+- serial hardware boot/output: direct-read captured 57040 bytes and 1628 hold marker occurrences.
+- restore proof: passed; post-restore tree hash a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+- git diff --check: passed.
+- mdbook build: passed because docs/src changed.
+- git diff --cached --check before commit: passed.

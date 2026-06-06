@@ -7287,6 +7287,20 @@ networking, SSH, broader PCIe, Milestone 11.2, and phase transition remain
 unaccepted until the queued serialized Pi 5 marker-visibility discriminator
 runs under hardwareTestLock.
 
+phase11-rp1-final-preload-marker-hold-pi5-discriminator-20260606 is accepted
+as final-preload-hold-marker-visible. The hardware-locked run published the
+accepted no-RP1-MMIO hold candidate at tree
+101a453d873ecec34cf43e0db4129e81167009e8915b25926ce2308d225b1c47 with
+effective kernel kernel_2712.img and a 45,816-byte
+da591740/kernel_2712.img. Stable pre-restore TFTP retained 13 events with two
+served candidate kernel fetches. Direct serial read from saturated cursor
+4194304 retained 57,040 bytes with 1,628 occurrences of
+TALOS: fr-final-preload-hold-loop. This accepts only the selected candidate's
+hold-marker visibility; final pre-load marker visibility before the hold loop,
+RP1 mapped/read-value, unmapped/trap, firmware-state behavior, GPIO,
+interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
+Milestone 11.2, and phase transition remain unaccepted pending closeout.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

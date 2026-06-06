@@ -1,0 +1,11 @@
+candidate_archive=target/talos-rpi5-rp1-final-preload-marker-hold-core.tar.gz
+candidate_archive_sha256=07af64b86908f36c63d368589d79c76aebd492a81906a39586a2c5902d8b9287
+kernel_2712_sha256=03e26bc9821a9de07d8314bea9d4eabf963224866cd6d64a94390a6ae8b1b8a8
+kernel_2712_size=45816
+header_image_size=45816
+text_offset=0
+flags=12
+loop_marker=TALOS: fr-delayed-preload-loop
+final_marker=rpi5-rp1-uart0-fr-read-delayed-marker: final-preload-marker
+hold_marker=TALOS: fr-final-preload-hold-loop
+forbidden_rp1_fr_success_strings_absent=true

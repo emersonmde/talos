@@ -1,0 +1,65 @@
+{
+  "task": "phase11-rp1-final-preload-marker-hold-pi5-discriminator-20260606",
+  "classification": "final-preload-hold-marker-visible",
+  "candidate_run": {
+    "snapshot_name": "phase11-rp1-final-preload-hold-pre-20260606T1811Z",
+    "post_publish_identity": {
+      "observed_tree_hash": "101a453d873ecec34cf43e0db4129e81167009e8915b25926ce2308d225b1c47",
+      "observed_effective_kernel": "kernel_2712.img",
+      "configured_kernel": "kernel_2712.img",
+      "expected_fetch": "da591740/kernel_2712.img",
+      "expected_fetch_bytes": 45816,
+      "observed_fetch_bytes": 45816,
+      "effective_kernel_matches": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": true
+    },
+    "archive_sha256": "07af64b86908f36c63d368589d79c76aebd492a81906a39586a2c5902d8b9287",
+    "kernel_sha256": "03e26bc9821a9de07d8314bea9d4eabf963224866cd6d64a94390a6ae8b1b8a8",
+    "kernel_bytes": 45816,
+    "tree_hash": "101a453d873ecec34cf43e0db4129e81167009e8915b25926ce2308d225b1c47",
+    "publish_file_count": 16,
+    "serial_window": {
+      "requested_timeout_seconds": 5,
+      "elapsed_seconds": 5,
+      "settle_ms": 1000,
+      "max_bytes": 262144,
+      "observe_attempts": 1,
+      "observe_contract": "direct-read-after-observe-script-http22",
+      "capture_mode": "read",
+      "saturation_limit": 4194304,
+      "start_cursor_saturated": true,
+      "response_bytes": 57040,
+      "required_marker": "TALOS: fr-final-preload-hold-loop",
+      "kernel_marker": "TALOS: kernel_main",
+      "firmware_network_marker": "NETWORK",
+      "has_kernel_main": false,
+      "has_required_marker": true,
+      "has_firmware_network": false,
+      "firmware_network_occurrences": 0,
+      "required_marker_occurrences": 1628,
+      "has_final_preload_marker": false,
+      "final_preload_marker_occurrences": 0
+    },
+    "serial_bytes": 57040,
+    "final_preload_visible": false,
+    "final_preload_occurrences": 0,
+    "hold_marker_visible": true,
+    "hold_marker_occurrences": 1628,
+    "tftp_stable": true,
+    "tftp_event_count": 13,
+    "expected_candidate_fetch_count": 2,
+    "tftp_cursor_end": 4141536
+  },
+  "restore": {
+    "snapshot_name": "phase11-rp1-final-preload-hold-pre-20260606T1811Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "post_restore_effective_kernel": "kernel_2712.img",
+    "restored_to_previous_tree": true
+  },
+  "notes": [
+    "classification is limited to candidate-tied TFTP fetch plus visible unique hold marker output",
+    "direct /serial/read retained the hold-loop output after the observe helper returned HTTP 22 with an empty observe file",
+    "RP1 mapped/read-value, unmapped/trap, and firmware-state behavior remain unaccepted"
+  ]
+}
