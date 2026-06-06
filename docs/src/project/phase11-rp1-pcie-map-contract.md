@@ -776,6 +776,18 @@ This accepts the capture transaction as no-mmio-sentinel-identity-joined for
 the proof chain only; RP1 UART0 FR mapped/read-value, trap/unmapped, and
 firmware-state behavior remain unaccepted until a separate RP1 proof task.
 
+phase11-pi5-capture-transaction-v2-closeout-20260606 reconciles the
+forensics repair and no-MMIO sentinel evidence as
+proof-chain-ready-for-rp1-fr-read-v2. The accepted boundary is limited to the
+v2 proof contract and the sentinel identity join: selected tree, effective
+kernel, empty pre-power /serial/read drain, fresh marker serial, stable
+pre-restore TFTP, final pre-restore identity, and restore proof all tied to one
+run label. The next mechanically unblocked task is the queued RP1 UART0
+FR-read hold-control v2 proof, but that proof must independently pass the same
+v2 identity join for the selected RP1 candidate before any mapped/read-value,
+trap/unmapped, firmware-state, broader PCIe, Milestone 11.2, or phase
+transition claim is accepted.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

@@ -366,6 +366,14 @@ serial cursor is saturated and the helper falls back to direct read, the
 direct-read output is decisive only if `serial-drain-before-power.json` proves
 the pre-power `/serial/read` drain reached an empty device-buffer read.
 
+The Phase 11 capture-transaction v2 closeout accepts this proof-chain boundary
+as ready for the queued RP1 UART0 FR-read hold-control v2 proof only after a
+no-RP1-MMIO sentinel joined selected-tree identity, empty pre-power serial
+drain, fresh marker serial, stable pre-restore TFTP, final pre-restore
+identity, and restore proof under one run label. This readiness does not by
+itself accept any RP1 mapped/read-value, trap/unmapped, or firmware-state
+behavior; the RP1 candidate must pass the same v2 join.
+
 For the current restored known-good control, the preferred readiness markers
 are `TALOS: kernel_main` plus `rpi5-production-timer-preemption: PASS` within
 that observation window after a stable 104,136-byte

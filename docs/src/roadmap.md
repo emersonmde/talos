@@ -7349,6 +7349,27 @@ DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
 supervisor planning for a different discriminator; another same-shaped hardware
 rerun is not progress.
 
+phase11-pi5-capture-transaction-forensics-core-20260606,
+phase11-pi5-capture-transaction-no-mmio-sentinel-pi5-20260606, and
+phase11-pi5-capture-transaction-v2-closeout-20260606 repair and accept the
+capture transaction as proof-chain-ready-for-rp1-fr-read-v2. The v2 proof
+contract requires selected candidate identity, effective kernel, expected fetch
+path and byte count, an empty pre-power /serial/read drain, fresh serial
+evidence, stable same-cursor TFTP evidence before restore, final pre-restore
+identity, restore identity, and one shared run label. The no-MMIO sentinel
+passed that contract with tree
+101a453d873ecec34cf43e0db4129e81167009e8915b25926ce2308d225b1c47, two
+45,816-byte da591740/kernel_2712.img fetches, an empty pre-power serial drain,
+7,489 occurrences of TALOS: fr-final-preload-hold-loop, final selected-tree
+identity, and restore to
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The next
+mechanically unblocked task is the queued RP1 UART0 FR-read hold-control v2
+proof under hardwareTestLock. RP1 UART0 FR mapped/read-value,
+bus-fault/trap, firmware-state behavior, GPIO, interrupts, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe, Milestone 11.2, and phase
+transition remain unaccepted until that selected RP1 candidate passes the same
+v2 identity join.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

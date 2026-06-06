@@ -1,0 +1,55 @@
+{
+  "task": "phase11-pi5-capture-transaction-v2-closeout-20260606",
+  "status": "accepted",
+  "classification": "proof-chain-ready-for-rp1-fr-read-v2",
+  "inputs": {
+    "forensicsTask": "tasks/2026-06-06-phase11-pi5-capture-transaction-forensics-core.md",
+    "forensicsClassification": "tasks/evidence/2026-06-06-phase11-pi5-capture-transaction-forensics-core/classification.json",
+    "forensicsEvidenceMap": "tasks/evidence/2026-06-06-phase11-pi5-capture-transaction-forensics-core/evidence-map.json",
+    "sentinelTask": "tasks/2026-06-06-phase11-pi5-capture-transaction-no-mmio-sentinel-pi5.md",
+    "sentinelClassification": "tasks/evidence/2026-06-06-phase11-pi5-capture-transaction-no-mmio-sentinel-pi5/classification.json",
+    "sentinelEvidenceMap": "tasks/evidence/2026-06-06-phase11-pi5-capture-transaction-no-mmio-sentinel-pi5/evidence-map.json"
+  },
+  "closeoutEvidence": {
+    "taskRecord": "tasks/2026-06-06-phase11-pi5-capture-transaction-v2-closeout.md",
+    "staticEvidenceInspection": "tasks/evidence/2026-06-06-phase11-pi5-capture-transaction-v2-closeout/static-evidence-inspection.md",
+    "evidenceMap": "tasks/evidence/2026-06-06-phase11-pi5-capture-transaction-v2-closeout/evidence-map.json",
+    "contractDoc": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+    "labControllerDoc": "docs/src/project/lab-controller.md",
+    "roadmap": "docs/src/roadmap.md"
+  },
+  "acceptedClaims": [
+    "pi5-capture-transaction-v2 proof contract is accepted for new candidate proofs",
+    "no-MMIO sentinel passed selected-tree identity, empty pre-power serial drain, fresh marker serial, stable TFTP, final pre-restore identity, and restore proof under v2",
+    "proof chain is mechanically ready for the queued RP1 UART0 FR-read hold-control v2 proof task"
+  ],
+  "notAccepted": [
+    "RP1 UART0 FR mapped/read-value behavior",
+    "RP1 UART0 FR bus-fault/trap behavior",
+    "firmware-state behavior",
+    "GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone 11.2, or phase transition",
+    "the compromised first sentinel attempt as feature evidence",
+    "retained f274ff7 saturated serial output as RP1 behavior evidence"
+  ],
+  "evidenceSummary": {
+    "forensicsClassification": "capture-transaction-v2-ready",
+    "oldCandidateReplayClassification": "capture-staging-blocked",
+    "sentinelClassification": "no-mmio-sentinel-identity-joined",
+    "sentinelArchiveSha256": "07af64b86908f36c63d368589d79c76aebd492a81906a39586a2c5902d8b9287",
+    "sentinelTreeHash": "101a453d873ecec34cf43e0db4129e81167009e8915b25926ce2308d225b1c47",
+    "sentinelExpectedFetch": "da591740/kernel_2712.img",
+    "sentinelExpectedFetchBytes": 45816,
+    "sentinelFetchCount": 2,
+    "sentinelSerialDrainEmpty": true,
+    "sentinelMarker": "TALOS: fr-final-preload-hold-loop",
+    "sentinelMarkerOccurrences": 7489,
+    "sentinelPostRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "validation": {
+    "staticEvidenceInspection": "completed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  },
+  "nextAction": "Promote phase11-rp1-uart0-fr-read-hold-control-v2-proof-pi5-20260606 on the next worker wake if hardwareTestLock remains unlocked/restored."
+}
