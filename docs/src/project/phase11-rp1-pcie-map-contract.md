@@ -536,6 +536,22 @@ firmware-state behavior, GPIO, interrupts, DMA/cache, storage, generated-root,
 networking, SSH, broader PCIe, Milestone 11.2, and phase transition remain
 unaccepted pending the queued serialized Pi 5 discriminator.
 
+phase11-rp1-uart0-fr-shaped-no-mmio-marker-pi5-discriminator-20260606 then
+published only that accepted no-MMIO marker archive. The accepted clean run
+staged tree `2bd7db27d7bdf27a356c81408fefce059148f61e332fb3a207d280913b6ec27d`
+with a 45,600-byte `da591740/kernel_2712.img`. Stable same-cursor
+pre-restore TFTP evidence from cursor `4134781` retained 13 events and two
+served candidate kernel fetches. Starting from saturated serial cursor
+`4194304`, the repaired direct-read path retained 70,004 bytes with firmware
+NETWORK output and 2,730 occurrences of `TALOS: fr-no-mmio-loop`. This
+accepts only that the FR-read-shaped path reaches UART10 pre-MMIO marker output
+when the volatile RP1 UART0 FR load is absent. It does not accept RP1 UART0
+FR-read mapped/read-value behavior, unmapped/trap behavior, firmware-state
+behavior, GPIO, interrupts, DMA/cache, storage, generated-root, networking,
+SSH, broader PCIe, Milestone 11.2, or a phase transition. The lab restored the
+pre-run tree `a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10`
+before hardware-lock release.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path now branches directly from `rust_entry`, reports `rpi5-rp1-uart0-fr-read: start` and `rpi5-rp1-uart0-fr-read: pre-mmio-read` through the UART10 early-serial helper, flushes UART10, then reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load. A returned read reports the contract id, target name, address, width, raw value, `mapped/read-value` success classification, and PASS before halting in a spin loop. The pre-MMIO marker is a discriminator for the next serialized proof: if hardware reaches that marker but not the read-value line, the result is entry/handoff reachability plus an RP1 read trap/hang boundary, not a mapping acceptance.

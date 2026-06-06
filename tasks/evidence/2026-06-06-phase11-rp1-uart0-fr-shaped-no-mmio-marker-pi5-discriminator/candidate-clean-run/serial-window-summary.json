@@ -1,0 +1,22 @@
+{
+  "serial_window": {
+    "requested_timeout_seconds": 90,
+    "elapsed_seconds": 31,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 6,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 70004,
+    "required_marker": "TALOS: fr-no-mmio-loop",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": true,
+    "has_firmware_network": true,
+    "firmware_network_occurrences": 2,
+    "required_marker_occurrences": 2730
+  }
+}

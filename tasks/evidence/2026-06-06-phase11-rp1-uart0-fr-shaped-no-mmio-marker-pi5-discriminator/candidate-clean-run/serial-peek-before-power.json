@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "bWlvLWxvb3ANClRBTE9TOiBmci1uby1tbWlvLWxvb3ANClRBTE9TOiBmci1uby1tbWlvLWxvb3ANClRBTE9TOiBmci1ub0FMT1M6IGZyLW5vLW1taW8tbG9vcA0KVEFMT1M6IGZyLW5vLW1taW8tbG9vcA0KVEFMT1M6IGZyLW5vLW1taW8tbG9vcA0KVEFMT1M6IGZyLW5vLW1taW8tbG9vcA0KVEFMT1M6IGZyLW5vLW1taW8tbG9vcA0KVEFMT1M6IGZyLW5vLW1taW8tbG9vcA0KVEFMT1M6IGZyLW5vLW1taW8tbG9vcA0KVEFMT1M6IGZyLW5vLW1taW8tbG9vcA0KVEFMT1M6IGZyLW5vLW1taW8tbG9vcA0KVEFMT1M6IGZyLW5vLW1taW8tbG9vcA0KVEFMT1M6IGZyLW5vLW1taW8tbG9vcA0KVEFMT1M6IGZyLW5vLW1taW8tbG9vcA0KVEFMT1M6IGZyLW5vLW1taW8tbG9vcA0KVEFMT1M6IGZyLW5vLW1taW8tbG9vcA0KVEFMT1M6IGZyLW5vLW1taW8tbG9vcA0KVEFMT1M6IGZyLW5vLW1taW8tbG9vcA0KVEFMT1M6IGZyLW5vLW1taW8tbG9vcA0KVEFMT1M6IGZyLW5vLW1taW8tbAAKAAo=",
+  "bytes": 500,
+  "cursor": 4194304,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "mio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-noALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-l\u0000\n\u0000\n"
+}

@@ -1,0 +1,7 @@
+{
+  "status": "not-used-for-acceptance",
+  "reason": "This rerun was started before the yielded original proof session was collected. It exposed stale direct-read marker bytes after a TFTP restore without a physical restored-tree power cycle; stable same-cursor TFTP had zero events. Acceptance uses candidate-clean-run instead.",
+  "serialEvidence": "serial-observe-window.json",
+  "tftpEvidence": "tftp-delta-stable-pre-restore.json",
+  "restoreEvidence": "restore-snapshot.json"
+}

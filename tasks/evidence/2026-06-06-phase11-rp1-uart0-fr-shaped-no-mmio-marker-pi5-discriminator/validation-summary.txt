@@ -1,0 +1,10 @@
+archive preflight: passed; archive SHA-256 matched 05a6801471ffd5cb3ae61f450734728f7980d8a2c4db20b3a6280d83b470a484.
+lab-controller API / serial hardware boot/output: passed for accepted clean candidate run.
+fresh serial cursor: passed; cursor 4194304 used repaired direct-read path.
+fresh TFTP cursor: passed; cursor 4134781 captured before candidate power cycle.
+stable TFTP pre-restore: passed; 13 stable events, two served 45,600-byte da591740/kernel_2712.img fetches.
+serial marker: passed; 70,004 direct-read bytes, firmware NETWORK output, 2,730 TALOS: fr-no-mmio-loop occurrences.
+restore: passed; post-restore tree hash a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+git diff --check: passed.
+mdbook build: passed; warning only for existing large search index.
+git diff --cached --check before commit: passed.

@@ -1,0 +1,33 @@
+{
+  "task": "phase11-rp1-uart0-fr-shaped-no-mmio-marker-pi5-discriminator-20260606",
+  "status": "accepted",
+  "classification": "fr-shaped-no-mmio-marker-visible",
+  "acceptedBoundary": "FR-read-shaped path reaches UART10 pre-MMIO marker output when the volatile RP1 UART0 FR load is absent.",
+  "notAccepted": [
+    "RP1 UART0 FR mapped/read-value behavior",
+    "RP1 UART0 FR unmapped/trap behavior",
+    "firmware-state behavior",
+    "GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone 11.2, or phase transition"
+  ],
+  "candidate": {
+    "archive": "target/talos-rpi5-rp1-uart0-fr-shaped-no-mmio-marker-core.tar.gz",
+    "archiveSha256": "05a6801471ffd5cb3ae61f450734728f7980d8a2c4db20b3a6280d83b470a484",
+    "publishedTreeHash": "2bd7db27d7bdf27a356c81408fefce059148f61e332fb3a207d280913b6ec27d",
+    "expectedFetch": "da591740/kernel_2712.img",
+    "expectedFetchBytes": 45600,
+    "marker": "TALOS: fr-no-mmio-loop"
+  },
+  "acceptedCleanRun": {
+    "path": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-pi5-discriminator/candidate-clean-run",
+    "serialCursor": 4194304,
+    "serialCaptureMode": "read",
+    "serialObserveContract": "deadline-loop-direct-read-after-saturated-cursor",
+    "serialBytes": 70004,
+    "requiredMarkerOccurrences": 2730,
+    "firmwareNetworkOccurrences": 2,
+    "tftpCursor": 4134781,
+    "tftpEventCount": 13,
+    "expectedFetchCount": 2,
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  }
+}

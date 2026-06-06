@@ -1,0 +1,32 @@
+{
+  "action": "serial read",
+  "base64": "QUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1s",
+  "bytes": 426,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "ALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-l",
+  "truncated": false,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 90,
+    "elapsed_seconds": 1,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 426,
+    "required_marker": "TALOS: fr-no-mmio-loop",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": true,
+    "has_firmware_network": false,
+    "firmware_network_occurrences": 0,
+    "required_marker_occurrences": 16
+  }
+}

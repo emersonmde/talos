@@ -1,0 +1,56 @@
+{
+  "task": "phase11-rp1-uart0-fr-shaped-no-mmio-marker-pi5-discriminator-20260606",
+  "status": "accepted",
+  "classification": "fr-shaped-no-mmio-marker-visible",
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-pi5-discriminator.md",
+    "classification": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-pi5-discriminator/classification.json",
+    "archiveSha256": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-pi5-discriminator/archive-sha256.txt",
+    "archiveReview": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-pi5-discriminator/archive-review-before-hardware.txt",
+    "candidateInitialRun": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-pi5-discriminator/candidate-run/",
+    "candidateCleanRun": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-pi5-discriminator/candidate-clean-run/",
+    "restoredTreeClearControl": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-pi5-discriminator/restored-tree-clear-control/",
+    "validationSummary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-pi5-discriminator/validation-summary.txt"
+  },
+  "accepted": [
+    "candidate archive identity and publication",
+    "stable pre-restore candidate TFTP fetch visibility",
+    "repaired saturated-cursor serial direct-read visibility for the no-MMIO marker",
+    "restore hygiene",
+    "FR-read-shaped path reaches UART10 pre-MMIO marker output when the volatile RP1 load is absent"
+  ],
+  "notAccepted": [
+    "RP1 UART0 FR volatile read execution",
+    "RP1 mapped/read-value",
+    "RP1 unmapped/trap",
+    "firmware-state behavior",
+    "GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone 11.2, or phase transition"
+  ],
+  "acceptedCleanRun": {
+    "publishedTreeHash": "2bd7db27d7bdf27a356c81408fefce059148f61e332fb3a207d280913b6ec27d",
+    "effectiveKernel": "kernel_2712.img",
+    "expectedFetch": "da591740/kernel_2712.img",
+    "expectedFetchBytes": 45600,
+    "serialCursor": 4194304,
+    "serialCaptureMode": "read",
+    "serialObserveContract": "deadline-loop-direct-read-after-saturated-cursor",
+    "serialBytes": 70004,
+    "requiredMarkerOccurrences": 2730,
+    "tftpCursor": 4134781,
+    "tftpEventCount": 13,
+    "expectedFetchCount": 2,
+    "tftpStability": "stable-same-cursor-delta-before-restore",
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "validation": {
+    "labControllerHardwareRun": "passed",
+    "freshSerialCursor": "passed",
+    "freshTftpCursor": "passed",
+    "stableTftpBeforeRestore": "passed",
+    "repairedSaturatedCursorDirectRead": "passed",
+    "restoreProof": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  }
+}

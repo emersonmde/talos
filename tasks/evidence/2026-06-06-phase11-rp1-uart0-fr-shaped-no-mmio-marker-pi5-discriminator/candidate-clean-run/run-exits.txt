@@ -1,0 +1,2 @@
+serial_exit=0
+tftp_exit=0

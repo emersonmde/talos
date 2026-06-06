@@ -1,0 +1,4 @@
+task=phase11-rp1-uart0-fr-shaped-no-mmio-marker-pi5-discriminator-20260606
+locked=true
+owner=worker
+acquired_at=2026-06-06T14:59:00Z
