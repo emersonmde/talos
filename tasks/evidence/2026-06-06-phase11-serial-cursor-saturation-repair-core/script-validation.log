@@ -1,0 +1,42 @@
+$ bash -n scripts/rpi5-observe-serial-window.sh scripts/rpi5-capture-invariant-proof-bundle.sh
+PASS shell syntax
+$ scripts/rpi5-capture-invariant-proof-bundle.sh --dry-run with explicit args
+{
+  "dry_run": true,
+  "hardware_actions": [],
+  "would_write": {
+    "evidence_dir": "tasks/evidence/2026-06-06-phase11-serial-cursor-saturation-repair-core/dry-run-placeholder",
+    "pre_status": "pre-status.json",
+    "pre_boot_files": "pre-boot-files.json",
+    "pre_snapshots": "pre-snapshots.json",
+    "serial_peek_before_power": "serial-peek-before-power.json",
+    "tftp_cursor_before_power": "tftp-cursor-before-power.json",
+    "power_cycle": "power-cycle.json",
+    "serial_observe_window": "serial-observe-window.json",
+    "tftp_delta_stable_pre_restore": "tftp-delta-stable-pre-restore.json",
+    "final_pre_restore_status": "final-pre-restore-status.json",
+    "final_pre_restore_boot_files": "final-pre-restore-boot-files.json",
+    "restore_snapshot": "restore-snapshot.json",
+    "post_restore_status": "post-restore-status.json",
+    "post_restore_boot_files": "post-restore-boot-files.json",
+    "summary": "capture-invariant-summary.json"
+  },
+  "contract": {
+    "label": "dry-run",
+    "restore_snapshot": "dry-run",
+    "expected_tree_hash": "",
+    "expected_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": "",
+    "serial_marker": "TALOS_DRY_RUN",
+    "serial_observe_contract": "serial-window-helper-auto-observe-or-direct-read",
+    "saturated_cursor_fallback": "direct-/serial/read when the saved cursor is at TALOS_SERIAL_CURSOR_SATURATION_LIMIT",
+    "tftp_contract": "stable-same-cursor-delta-before-restore",
+    "serial_timeout_seconds": 1,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "tftp_timeout_seconds": 1,
+    "stable_samples": 3
+  }
+}
+PASS capture-invariant dry run

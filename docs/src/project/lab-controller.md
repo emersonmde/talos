@@ -301,7 +301,7 @@ tree. Known-good runtime readiness must use an explicit bounded serial
 observation instead of a default observe call. The helper loops until the
 requested deadline while advancing the serial cursor and accumulating output,
 because a single `/serial/observe` request can return after a quiet firmware
-burst before the later TFTP/kernel/readiness output appears:
+burst before the later TFTP/kernel/readiness output appears.
 
 ~~~bash
 scripts/rpi5-observe-runtime-readiness.sh "$serial_cursor" 75 1000 65536
@@ -311,6 +311,14 @@ Retain the helper JSON and check
 `talos_runtime_readiness.observe_contract=deadline-loop-accumulated-from-fresh-cursor`
 for known-good runtime-readiness proofs. A settled first firmware burst is not
 the full readiness window.
+
+For capture-invariant proof bundles that call
+`scripts/rpi5-observe-serial-window.sh`, the default auto mode switches from
+cursor-based `/serial/observe` to direct `/serial/read` when the saved cursor is
+at the lab controller retention cap. Those records must carry
+`observe_contract=deadline-loop-direct-read-after-saturated-cursor`; this is the
+repository-side repair for cursor saturation until the lab endpoint exposes a
+monotonic cursor beyond the retained log cap.
 
 For marker/reset and other focused candidate proofs that need to separate
 serial-only firmware reboot, TFTP capture blindness, staging mismatch, and real
@@ -673,6 +681,7 @@ Cursor notes:
 - `observe` with a cursor returns the bytes after that cursor.
 - `observe` without a cursor starts at the current end of log, waits, and returns only newly arriving bytes.
 - If the rolling log has trimmed older bytes, very old cursors may no longer be meaningful. In normal agent loops, use a cursor from the immediately preceding `peek`.
+- If the current cursor equals the retention cap, currently 4 MiB by default, cursor-based `observe` can remain pinned while new device bytes are appended and older retained bytes are dropped. Use `scripts/rpi5-observe-serial-window.sh` in its default auto mode so saturated cursors fall back to direct `/serial/read` capture. Do not accept an empty `observe` window from a saturated cursor as proof that the current boot emitted no serial output.
 
 For boot/kernel output, do not wait for `login:` or a shell prompt. Use `read` or `observe` with a timeout and inspect `base64`/`text`. The base64 field preserves raw bytes for diagnosing ANSI escape sequences, encoding problems, or baud-rate issues. The current baud rate is known good because the API has received `talos-pi5 login:` from the Pi.
 

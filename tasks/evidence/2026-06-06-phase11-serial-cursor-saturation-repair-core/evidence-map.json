@@ -1,0 +1,54 @@
+{
+  "task_id": "phase11-serial-cursor-saturation-repair-core-20260606",
+  "classification": "ready-for-known-good-serial-cursor-completeness-pi5",
+  "inputs": {
+    "fr_read_proof_task": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-pi5-proof.md",
+    "fr_read_candidate_summary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-pi5-proof/candidate-run/capture-invariant-summary.json",
+    "fr_read_known_good_summary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-pi5-proof/known-good-control-run/run-summary.json",
+    "fr_read_candidate_rerun_summary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-pi5-proof/candidate-rerun/run-summary.json",
+    "uart10_marker_loop_summary": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator/candidate-run/capture-invariant-summary.json"
+  },
+  "evidence": {
+    "static_inspection": "tasks/evidence/2026-06-06-phase11-serial-cursor-saturation-repair-core/static-evidence-inspection.md",
+    "script_validation": "tasks/evidence/2026-06-06-phase11-serial-cursor-saturation-repair-core/script-validation.log",
+    "read_fallback_validation": "tasks/evidence/2026-06-06-phase11-serial-cursor-saturation-repair-core/read-fallback-validation.log",
+    "read_fallback_output": "tasks/evidence/2026-06-06-phase11-serial-cursor-saturation-repair-core/read-fallback-output.json"
+  },
+  "repair": {
+    "changed_scripts": [
+      "scripts/rpi5-observe-serial-window.sh",
+      "scripts/rpi5-capture-invariant-proof-bundle.sh"
+    ],
+    "changed_docs": [
+      "docs/src/project/lab-controller.md"
+    ],
+    "contract": "serial-window-helper-auto-observe-or-direct-read",
+    "saturated_cursor_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "saturation_limit_default": 4194304
+  },
+  "validation": {
+    "static_inspection": "passed",
+    "bash_n": "passed",
+    "capture_bundle_dry_run": "passed",
+    "fake_curl_direct_read_fallback": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  },
+  "unaccepted": [
+    "RP1 mapped/read-value",
+    "RP1 trap/unmapped",
+    "RP1 firmware-state",
+    "pre-MMIO reachability",
+    "GPIO",
+    "interrupts",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ]
+}

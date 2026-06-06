@@ -1,0 +1,3 @@
+$ PATH=fakebin TALOS_SERIAL_CAPTURE_MODE=auto scripts/rpi5-observe-serial-window.sh 4194304 5 1 4096 TALOS_SATURATED_MARKER
+true
+PASS saturated-cursor direct-read fallback

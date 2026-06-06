@@ -1,0 +1,30 @@
+{
+  "action": "read",
+  "ok": true,
+  "bytes": 31,
+  "text": "firmware\nTALOS_SATURATED_MARKER\n",
+  "cursor": 4194304,
+  "truncated": false,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 5,
+    "elapsed_seconds": 0,
+    "settle_ms": 1,
+    "max_bytes": 4096,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 31,
+    "required_marker": "TALOS_SATURATED_MARKER",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": true,
+    "has_firmware_network": false,
+    "firmware_network_occurrences": 0,
+    "required_marker_occurrences": 1
+  }
+}

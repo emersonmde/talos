@@ -156,7 +156,8 @@ if [ "$DRY_RUN" = true ]; then
               expected_fetch: $expected_fetch,
               expected_fetch_bytes: $expected_fetch_bytes,
               serial_marker: $serial_marker,
-              serial_observe_contract: "deadline-loop-accumulated-from-fresh-cursor",
+              serial_observe_contract: "serial-window-helper-auto-observe-or-direct-read",
+              saturated_cursor_fallback: "direct-/serial/read when the saved cursor is at TALOS_SERIAL_CURSOR_SATURATION_LIMIT",
               tftp_contract: "stable-same-cursor-delta-before-restore",
               serial_timeout_seconds: $serial_timeout,
               settle_ms: $settle_ms,
@@ -313,7 +314,9 @@ jq -n \
              else "still-blocked-without-fresh-boot-evidence"
              end),
          proof_contract: {
-             serial_observe_contract: "deadline-loop-accumulated-from-fresh-cursor",
+             serial_observe_contract: ($sw.observe_contract // "deadline-loop-accumulated-from-fresh-cursor"),
+             serial_capture_mode: ($sw.capture_mode // "observe"),
+             serial_start_cursor_saturated: ($sw.start_cursor_saturated // false),
              tftp_contract: "stable-same-cursor-delta-before-restore",
              zero_event_tftp_meaningful_only_before_restore: true,
              firmware_network_is_not_talos_entry: true
