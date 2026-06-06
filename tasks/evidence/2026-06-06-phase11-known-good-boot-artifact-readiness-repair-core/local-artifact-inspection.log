@@ -1,0 +1,19 @@
+target/rpi5-production-timer-preemption-boot-tree/da591740/kernel_2712.img
+104136 target/rpi5-production-timer-preemption-boot-tree/da591740/kernel_2712.img
+fdf8858d0740c0d7bf4fc0df884d4052d8309fd9c020ba65e5df1472198e7dfa  target/rpi5-production-timer-preemption-boot-tree/da591740/kernel_2712.img
+
+target/rpi5-production-timer-preemption-boot-tree-local5/da591740/kernel_2712.img
+104136 target/rpi5-production-timer-preemption-boot-tree-local5/da591740/kernel_2712.img
+c80c272fade2120e3b8ffd2452466d340707a14dd55f3c2397aa659c687aa1cc  target/rpi5-production-timer-preemption-boot-tree-local5/da591740/kernel_2712.img
+
+strings markers from production tree:
+TALOS: asm_start
+5rpi5-production-timer-preemption: final participants=
+:rpi5-production-timer-preemption: start conduit=smc cores=
+1rpi5-production-timer-preemption: report logical=
+onoffon-pendingPrpi5-production-timer-preemption: secondary-cacheable-mmu-handoff-plan mair-el2=
+rpi5-production-timer-preemption: secondary-cacheable-mmu-handoff-plan unavailable
+pi5-production-timer-preemption-lock-still-heldpi5-psci-smc-cpu-on-failedpi5-production-timer-preemption-invariant-failedpi5-production-timer-preemption-completerpi5-production-timer-preemption: FAIL
+rpi5-production-timer-preemption: PASS
+errorcoalesced1rpi5-production-timer-preemption: cpu-on logical=
+9rpi5-production-timer-preemption: affinity-after logical=

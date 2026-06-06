@@ -1,0 +1,87 @@
+{
+  "task_id": "phase11-known-good-boot-artifact-readiness-repair-core-20260606",
+  "evidence_level": "static source/artifact/evidence inspection + lab-controller API read + archive static review",
+  "restored_known_good": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "configured_kernel": "kernel_2712.img",
+    "effective_kernel": "kernel_2712.img",
+    "known_good_kernel_path": "da591740/kernel_2712.img",
+    "known_good_kernel_bytes": 104136,
+    "status_evidence": "tasks/evidence/2026-06-05-phase11-known-good-runtime-readiness-pi5-discriminator/lab-status-before.json",
+    "boot_files_evidence": "tasks/evidence/2026-06-05-phase11-known-good-runtime-readiness-pi5-discriminator/boot-files-before.json"
+  },
+  "latest_direct_cursor": {
+    "task_id": "phase11-known-good-runtime-direct-cursor-pi5-recheck-20260605",
+    "boot_identity": {
+      "before_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "before_effective_kernel": "kernel_2712.img",
+      "pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "pre_restore_effective_kernel": "kernel_2712.img",
+      "after_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "after_restore_effective_kernel": "kernel_2712.img"
+    },
+    "cursors": {
+      "serial_cursor": "4096040",
+      "tftp_cursor": "4096953"
+    },
+    "tftp": {
+      "stable": true,
+      "event_count": 13,
+      "known_good_kernel_fetch_count": 2,
+      "known_good_kernel_fetches": [
+        {
+          "bytes": 104136,
+          "client_ip": "10.42.1.4",
+          "client_mac": "88:a2:9e:ae:c8:7f",
+          "filename": "da591740/kernel_2712.img",
+          "line": "Jun  5 23:47:58 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+          "status": "served"
+        },
+        {
+          "bytes": 104136,
+          "client_ip": "10.42.1.4",
+          "client_mac": "88:a2:9e:ae:c8:7f",
+          "filename": "da591740/kernel_2712.img",
+          "line": "Jun  5 23:47:59 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+          "status": "served"
+        }
+      ]
+    },
+    "serial_readiness": {
+      "timeout_seconds": 75,
+      "settle_ms": 1000,
+      "max_bytes": 65536,
+      "required_kernel_marker": "TALOS: kernel_main",
+      "required_success_marker": "rpi5-production-timer-preemption: PASS",
+      "prompt_marker": "talos>",
+      "has_kernel_main": false,
+      "has_required_success_marker": false,
+      "has_prompt_marker": false,
+      "valid_known_good_talos_readiness": false,
+      "classification": "known-good-fetch-observed-without-talos-readiness"
+    },
+    "classification": "boot-runtime-readiness-after-known-good-fetch",
+    "blocker": "known-good fetch observed but Talos readiness markers absent"
+  },
+  "current_lab_status": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "configured_kernel": "kernel_2712.img",
+    "effective_kernel": "kernel_2712.img",
+    "selected_kernel_bytes": 104136
+  },
+  "static_artifact_review": {
+    "archive_review": "tasks/evidence/2026-06-06-phase11-known-good-boot-artifact-readiness-repair-core/production-timer-archive-review.log",
+    "local_artifact_inspection": "tasks/evidence/2026-06-06-phase11-known-good-boot-artifact-readiness-repair-core/local-artifact-inspection.log",
+    "serial_comparison": "tasks/evidence/2026-06-06-phase11-known-good-boot-artifact-readiness-repair-core/serial-comparison.log"
+  },
+  "validation": {
+    "git_diff_check": "tasks/evidence/2026-06-06-phase11-known-good-boot-artifact-readiness-repair-core/git-diff-check.log",
+    "git_diff_cached_check": "tasks/evidence/2026-06-06-phase11-known-good-boot-artifact-readiness-repair-core/git-diff-cached-check.log",
+    "mdbook_build": "not run; no docs/src files touched and accepted readiness boundary did not change",
+    "cargo_fmt_test": "not run; no Rust runtime/source files touched",
+    "archive_script_dry_run": "not run; no build/archive/staging scripts touched"
+  },
+  "classification": "no-actionable-source-artifact-defect",
+  "blocker": "known-good fetch observed but latest serial stopped before Talos runtime readiness; no source/artifact/staging mismatch found in no-hardware inspection",
+  "next_discriminator": "supervisor-planned serialized known-good runtime rerun or lab firmware/serial observation discriminator; RP1 candidate/source work remains blocked"
+}
