@@ -1,0 +1,47 @@
+{
+  "task_id": "phase11-known-good-serial-cursor-completeness-pi5-20260606",
+  "classification": "known-good-fresh-talos-serial-visible-after-saturated-cursor",
+  "accepted": true,
+  "hardware_level": "serial hardware boot/output + lab-controller API",
+  "selected_known_good": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 104136,
+    "restore_snapshot": "phase11-known-good-serial-cursor-pre-20260606T1209Z"
+  },
+  "serial_window": {
+    "cursor_start": 4194304,
+    "cursor_end": 4194304,
+    "capture_mode": "read",
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "start_cursor_saturated": true,
+    "bytes": 6347,
+    "required_marker": "rpi5-production-timer-preemption: PASS",
+    "required_marker_occurrences": 1,
+    "has_required_marker": true,
+    "has_kernel_main": false,
+    "has_firmware_network": true
+  },
+  "tftp": {
+    "stable": true,
+    "event_count": 13,
+    "expected_fetch_count": 2
+  },
+  "unaccepted": [
+    "RP1 UART0 FR-read mapped/read-value",
+    "RP1 trap/unmapped",
+    "RP1 firmware-state",
+    "pre-MMIO reachability",
+    "GPIO",
+    "interrupts",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ]
+}

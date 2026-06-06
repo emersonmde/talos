@@ -1,0 +1,75 @@
+  4.29 xHC1 ports 3 slots 64 intrs 4
+  4.34 SD_OC: 0
+  4.45 Boot mode: NETWORK (02) order f1
+  9.44 NETWORK: 88:a2:9e:ae:c8:7f wait for link TFTP: 0.0.0.0
+ 12.18 LINK STATUS: speed: 1000 full duplex
+ 12.87 Link ready
+ 12.19 RX: 0 IP: 0 IPV4: 0 MAC: 0 UDP: 0 UDP RECV: 0 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.99 DHCP src: 60:22:32:71:62:87 10.42.1.1
+ 20.00 YI_ADDR 10.42.1.4
+ 20.02 SI_ADDR 10.42.1.3
+ 20.20 OPTIONS:-
+	op: 53 len:   1 DHCP recv OFFER (2) expect OFFER 20.21 
+	op: 54 len:   4 10.42.1.1 20.21 
+	op: 51 len:   4  20.21 
+	op: 67 len:  11  20.21 
+	op: 58 len:   4  20.22 
+	op: 59 len:   4  20.22 
+	op:  1 len:   4 255.255.255.0 20.22 
+	op: 66 len:  10 10.42.1.3 20.29 [66]: 10.42.1.3
+ 20.23 
+	op:  3 len:   4 10.42.1.1 20.23 
+ 20.82 DHCP src: 60:22:32:71:62:87 10.42.1.1
+ 20.83 YI_ADDR 10.42.1.4
+ 20.85 SI_ADDR 10.42.1.3
+ 20.28 OPTIONS:-
+	op: 53 len:   1 DHCP recv ACK (5) expect ACK 20.29 
+	op: 54 len:   4 10.42.1.1 20.29 
+	op: 51 len:   4  20.29 
+	op: 58 len:   4  20.30 
+	op: 59 len:   4  20.30 
+	op:  1 len:   4 255.255.255.0 20.30 
+	op: 15 len:  12  20.30 
+	op: 12 len:   5  20.31 
+	op: 28 len:   4 10.42.1.255 20.31 
+	op: 66 len:  10 10.42.1.3 20.17 [66]: 10.42.1.3
+ 20.31 
+	op:  6 len:   4 10.42.1.1 20.32 
+	op:  3 len:   4 10.42.1.1 20.32 
+ 20.26 NET 10.42.1.4 255.255.255.0 gw 0.0.0.0 tftp 10.42.1.3
+ 20.32 ARP 10.42.1.3 84:a9:38:6a:77:63
+ 20.35 NET 10.42.1.4 255.255.255.0 gw 0.0.0.0 tftp 10.42.1.3
+ 20.34 RX: 32 IP: 0 IPV4: 5 MAC: 5 UDP: 5 UDP RECV: 2 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.34 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740/config.txt
+
+ 20.35 RX: 32 IP: 0 IPV4: 5 MAC: 5 UDP: 5 UDP RECV: 2 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.36 RX: 33 IP: 0 IPV4: 6 MAC: 6 UDP: 6 UDP RECV: 3 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.37 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740/config.txt
+
+ 20.37 RX: 33 IP: 0 IPV4: 6 MAC: 6 UDP: 6 UDP RECV: 3 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.38 TFTP: complete 118
+ 20.38 RX: 35 IP: 0 IPV4: 8 MAC: 8 UDP: 8 UDP RECV: 5 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.92 Read da591740/config.txt bytes      118 hnd 0x0
+ 20.39 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740/pieeprom.sig
+
+ 20.40 RX: 35 IP: 0 IPV4: 8 MAC: 8 UDP: 8 UDP RECV: 5 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.11 TFTP 1: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4 
+ 20.41 RX: 36 IP: 0 IPV4: 9 MAC: 9 UDP: 9 UDP RECV: 6 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.42 Read da591740/pieeprom.upd failed
+ 20.29 usb_max_current_enable default 0 max-current 3000
+ 20.34 Selecting USB low current limit
+ 20.43 MESS:00:00:20.439881:0: *** Restart logging
+ 20.49 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740//config.txt
+
+ 20.49 RX: 36 IP: 0 IPV4: 9 MAC: 9 UDP: 9 UDP RECV: 6 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.50 TFTP: complete 118
+ 20.50 RX: 38 IP: 0 IPV4: 11 MAC: 11 UDP: 11 UDP RECV: 8 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0
+ 20.14 Read da591740//config.txt bytes      118 hnd 0x0
+ 20.51 da591740//config.txt 0x3cf70000 8e2972a9f5c17b887d556a4e1048551e46ffe239751a9ad92f64f9222eae2ad8
+te=on raw=0
+TALOS: secondary_state_publishedTALOS: secondary_prropdiu5c-tpiroduction-timer-preemption: report logical=1 state=workload-complete mapped=Some(1) owner=1 role=secondary-production-diagnostic entry-path=production-timer-irq-adapter record-outcome=inserted duplicate-outcome=coalesced cross-owner-rejected=true record-misses=0 timer-record-rejections=1 irq-record-scheduler-mutated=false pending-after-record=true service-timer-preemption=202 pending-after-service=false recorded=1 coalesced=1 serviced=1 metadata-generation-after-service=3 lock-progress=1 errors=0 ok=true
+rpi5-production-timer-preemption: report logical=2 state=workload-complete mapped=Some(2) owner=2 role=secondary-production-diagnostic entry-path=production-timer-irq-adapter record-outcome=inserted duplicate-outcome=coalesced cross-owner-rejected=true record-misses=0 timer-record-rejections=1 irq-record-scheduler-mutated=false pending-after-record=true service-timer-preemption=302 pending-after-service=false recorded=1 coalesced=1 serviced=1 metadata-generation-after-service=3 lock-progress=1 errors=0 ok=true
+rpi5-production-timer-preemption: report logical=3 state=workload-complete mapped=Some(3) owner=3 role=secondary-production-diagnostic entry-path=production-timer-irq-adapter record-outcome=inserted duplicate-outcome=coalesced cross-owner-rejected=true record-misses=0 timer-record-rejections=1 irq-record-scheduler-mutated=false pending-after-record=true service-timer-preemption=402 pending-after-service=false recorded=1 coalesced=1 serviced=1 metadata-generation-after-service=3 lock-progress=1 errors=0 ok=true
+rpi5-production-timer-preemption: final participants=3 expected=3 errors=0 state-lock-available=true metadata-lock-available=true wait-remaining=199997427 classification=pi5-production-timer-preemption-complete
+rpi5-production-timer-preemption: PASS
+

@@ -1,0 +1,17 @@
+Validation summary for phase11-known-good-serial-cursor-completeness-pi5-20260606
+
+- serialized Pi 5 hardware run through lab controller: passed.
+- lab-controller API preflight identity: passed; selected tree
+  a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10,
+  effective kernel kernel_2712.img, expected fetch da591740/kernel_2712.img,
+  expected fetch bytes 104136.
+- serial hardware boot/output: passed; direct /serial/read from saturated
+  cursor 4194304 captured 6347 fresh bytes and
+  rpi5-production-timer-preemption: PASS.
+- TFTP hardware evidence: passed; stable same-cursor pre-restore delta retained
+  13 events, including two 104136-byte da591740/kernel_2712.img fetches.
+- restore proof: passed; post-restore tree hash remained
+  a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+- docs validation: not run; docs/src files were not touched.
+- git diff --check: passed.
+- git diff --cached --check before commit: passed.
