@@ -182,6 +182,18 @@ behavior. The lab restored the pre-run tree
 a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 before
 hardware-lock release.
 
+phase11-rp1-entry-control-handoff-closeout-20260606 reconciles that source and
+hardware evidence as pre-bootinfo-handoff-reachability-accepted. The accepted
+boundary is limited to candidate fetch and the rust_entry-to-PSCI-reset side
+effect before BootInfo parsing, target initialization, boot reports, memory
+planning, allocator setup, or the RP1 UART0 FR read path. Candidate serial
+visibility, entry-control UART marker visibility, RP1 mapped/read-value,
+RP1 unmapped/trap, firmware-state behavior, GPIO, interrupts, DMA/cache,
+storage, generated-root, networking, SSH, broader PCIe, and Milestone 11.2
+remain unaccepted. The next bounded step requires supervisor planning for a
+focused post-handoff observability or entry-control repair before returning to
+the serial-reported RP1 UART0 flag-register diagnostic.
+
 phase11-staging-capture-log-stability-core-20260605 repairs the Pi 5
 proof-rule boundary exposed by that blocker. Replay from the retained cursor
 `4088847` later returned 13 TFTP events, including a restored known-good

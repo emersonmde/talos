@@ -7161,6 +7161,18 @@ GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader
 PCIe, and Milestone 11.2 remain blocked pending the queued handoff closeout and
 later supervisor-planned diagnostic work.
 
+phase11-rp1-entry-control-handoff-closeout-20260606 reconciles the source and
+Pi 5 discriminator evidence as pre-bootinfo-handoff-reachability-accepted. The
+accepted boundary is candidate fetch plus rust_entry handoff reachability by
+the PSCI reset side effect only. Candidate serial visibility and entry-control
+UART marker visibility remain unresolved, so the mechanically safe next
+direction is supervisor planning for a focused post-handoff observability or
+entry-control repair before returning to the RP1 UART0 flag-register read.
+Staging/capture is not the active blocker for this boundary, but RP1
+mapped/read-value, unmapped/trap, firmware-state behavior, GPIO, interrupts,
+DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
+11.2, and phase transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

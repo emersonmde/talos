@@ -1,0 +1,29 @@
+{
+  "task_id": "phase11-rp1-entry-control-handoff-closeout-20260606",
+  "classification": "pre-bootinfo-handoff-reachability-accepted",
+  "task_record": "tasks/2026-06-06-phase11-rp1-entry-control-handoff-closeout.md",
+  "static_evidence_inspection": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-closeout/static-evidence-inspection.md",
+  "source_handoff_core": {
+    "task_record": "tasks/2026-06-06-phase11-rp1-entry-control-handoff-discriminator-core.md",
+    "classification": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-discriminator-core/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-discriminator-core/evidence-map.json",
+    "commit": "d6042e06cfd9a76329c3733c2727320cf2c55e33"
+  },
+  "pi5_handoff_discriminator": {
+    "task_record": "tasks/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator.md",
+    "classification": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/evidence-map.json",
+    "stable_tftp_followup": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/tftp-delta-stable-followup-pre-restore.json",
+    "commit": "e5f79f75048139f786a8398ed7c9a0a0eed9b396"
+  },
+  "docs_updated": [
+    "docs/src/project/phase11-rp1-pcie-map-contract.md",
+    "docs/src/roadmap.md"
+  ],
+  "validation": {
+    "git_diff_check": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-closeout/git-diff-check.log",
+    "mdbook_build": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-closeout/mdbook-build.log",
+    "git_diff_cached_check": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-closeout/git-diff-cached-check.log"
+  },
+  "next_action": "Supervisor planning required for a focused post-handoff observability or entry-control repair before returning to the RP1 UART0 flag-register read."
+}
