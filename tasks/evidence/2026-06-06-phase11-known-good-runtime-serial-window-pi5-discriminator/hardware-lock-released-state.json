@@ -1,0 +1,9 @@
+{
+  "acquiredAt": "2026-06-06T02:50:15Z",
+  "locked": false,
+  "note": "Unlocked/restored after phase11-known-good-runtime-serial-window-pi5-discriminator-20260606 completed with committed blocker evidence.",
+  "owner": null,
+  "releasedAt": "2026-06-06T03:02:57Z",
+  "restored": true,
+  "taskId": null
+}

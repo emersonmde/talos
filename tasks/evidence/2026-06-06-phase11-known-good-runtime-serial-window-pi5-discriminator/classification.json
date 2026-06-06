@@ -1,0 +1,16 @@
+{
+  "pre_run_effective_kernel": "kernel_2712.img",
+  "pre_run_kernel_2712_bytes": 104136,
+  "serial_helper_requested_timeout_seconds": 20,
+  "serial_helper_observe_contract": "deadline-loop-accumulated-from-fresh-cursor",
+  "serial_helper_valid_known_good_talos_readiness": false,
+  "serial_helper_has_kernel_main": false,
+  "serial_helper_has_required_success_marker": true,
+  "serial_direct_has_kernel_main": false,
+  "serial_direct_has_required_success_marker": true,
+  "tftp_stable": true,
+  "tftp_event_count": 13,
+  "tftp_kernel_2712_fetches": 2,
+  "restored_ok": true,
+  "classification": "boot-runtime-readiness-blocked"
+}

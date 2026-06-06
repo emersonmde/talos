@@ -1,0 +1,75 @@
+{
+  "task_id": "phase11-known-good-runtime-serial-window-pi5-discriminator-20260606",
+  "evidence_level": "serialized Pi 5 hardware evidence through lab-controller API + serial hardware boot/output + stable TFTP delta + restore evidence",
+  "classification": "boot-runtime-readiness-blocked",
+  "summary": {
+    "pre_run_effective_kernel": "kernel_2712.img",
+    "pre_run_kernel_2712_bytes": 104136,
+    "serial_helper_requested_timeout_seconds": 20,
+    "serial_helper_observe_contract": "deadline-loop-accumulated-from-fresh-cursor",
+    "serial_helper_valid_known_good_talos_readiness": false,
+    "serial_helper_has_kernel_main": false,
+    "serial_helper_has_required_success_marker": true,
+    "serial_direct_has_kernel_main": false,
+    "serial_direct_has_required_success_marker": true,
+    "tftp_stable": true,
+    "tftp_event_count": 13,
+    "tftp_kernel_2712_fetches": 2,
+    "restored_ok": true,
+    "classification": "boot-runtime-readiness-blocked"
+  },
+  "files": {
+    "pre_run_identity": [
+      "pre-run-status.json",
+      "pre-run-boot-files.json",
+      "pre-run-snapshots.json",
+      "pre-run-snapshot-create.json",
+      "pre-run-snapshot-name.txt"
+    ],
+    "cursors_and_power": [
+      "serial-cursor.json",
+      "serial-cursor.txt",
+      "tftp-cursor-before.json",
+      "tftp-cursor-before.txt",
+      "power-cycle.json"
+    ],
+    "serial": [
+      "serial-readiness-observe.json",
+      "serial-readiness-observe-manual.json",
+      "serial-observe-direct-large-after-manual.json"
+    ],
+    "tftp": [
+      "tftp-delta-stable-pre-restore.json",
+      "tftp-tail-pre-restore.json"
+    ],
+    "restore": [
+      "final-pre-restore-status.json",
+      "final-pre-restore-boot-files.json",
+      "restore.json",
+      "post-restore-status.json",
+      "post-restore-boot-files.json"
+    ],
+    "classification": [
+      "classification.json"
+    ],
+    "lock": [
+      "hardware-lock-acquired-state.json",
+      "hardware-lock-released-state.json"
+    ]
+  },
+  "dispositions": [
+    {
+      "kind": "fixed",
+      "note": "Retained serialized hardware proof, stable TFTP delta, serial output, and restore evidence."
+    },
+    {
+      "kind": "fixed",
+      "note": "Stable pre-restore TFTP delta includes two da591740/kernel_2712.img fetches."
+    },
+    {
+      "kind": "deferred",
+      "note": "valid-known-good-talos-readiness remains unaccepted because retained serial output lacks TALOS: kernel_main despite reaching production-timer PASS."
+    }
+  ],
+  "next_discriminator": "serial-log completeness/marker-boundary review before any RP1 candidate/source work"
+}

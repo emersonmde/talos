@@ -1,0 +1,9 @@
+{
+  "acquiredAt": "2026-06-06T02:50:15Z",
+  "locked": true,
+  "note": "Acquired by worker for serialized known-good Pi 5 serial-window discriminator.",
+  "owner": "worker",
+  "releasedAt": null,
+  "restored": false,
+  "taskId": "phase11-known-good-runtime-serial-window-pi5-discriminator-20260606"
+}
