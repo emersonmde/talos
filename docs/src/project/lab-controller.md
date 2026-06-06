@@ -312,6 +312,29 @@ Retain the helper JSON and check
 for known-good runtime-readiness proofs. A settled first firmware burst is not
 the full readiness window.
 
+For marker/reset and other focused candidate proofs that need to separate
+serial-only firmware reboot, TFTP capture blindness, staging mismatch, and real
+candidate progress, use the capture-invariant bundle helper after staging the
+intended boot tree:
+
+~~~bash
+scripts/rpi5-capture-invariant-proof-bundle.sh \
+  --evidence-dir tasks/evidence/<task-id> \
+  --restore-snapshot <pre-run-snapshot-name> \
+  --label <proof-label> \
+  --expected-tree-hash <post-publish-tree-hash> \
+  --expected-fetch da591740/kernel_2712.img \
+  --expected-fetch-bytes <candidate-kernel-bytes> \
+  --serial-marker <candidate-marker>
+~~~
+
+The helper writes a deterministic proof bundle with pre-run status/files,
+snapshots, fresh serial and TFTP cursors, bounded accumulated serial output,
+stable same-cursor TFTP evidence before restore, final pre-restore
+status/files, restore status/files, and `capture-invariant-summary.json`. Its
+summary suggests only the capture/observability classification; the task
+record remains responsible for accepting or rejecting the feature boundary.
+
 For the current restored known-good control, the preferred readiness markers
 are `TALOS: kernel_main` plus `rpi5-production-timer-preemption: PASS` within
 that observation window after a stable 104,136-byte

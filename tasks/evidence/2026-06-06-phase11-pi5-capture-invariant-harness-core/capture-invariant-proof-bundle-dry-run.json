@@ -1,0 +1,37 @@
+{
+  "dry_run": true,
+  "hardware_actions": [],
+  "would_write": {
+    "evidence_dir": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5",
+    "pre_status": "pre-status.json",
+    "pre_boot_files": "pre-boot-files.json",
+    "pre_snapshots": "pre-snapshots.json",
+    "serial_peek_before_power": "serial-peek-before-power.json",
+    "tftp_cursor_before_power": "tftp-cursor-before-power.json",
+    "power_cycle": "power-cycle.json",
+    "serial_observe_window": "serial-observe-window.json",
+    "tftp_delta_stable_pre_restore": "tftp-delta-stable-pre-restore.json",
+    "final_pre_restore_status": "final-pre-restore-status.json",
+    "final_pre_restore_boot_files": "final-pre-restore-boot-files.json",
+    "restore_snapshot": "restore-snapshot.json",
+    "post_restore_status": "post-restore-status.json",
+    "post_restore_boot_files": "post-restore-boot-files.json",
+    "summary": "capture-invariant-summary.json"
+  },
+  "contract": {
+    "label": "post-handoff-marker-reset-capture-recheck",
+    "restore_snapshot": "phase11-post-handoff-marker-reset-pre-20260606T072152Z",
+    "expected_tree_hash": "37995c483190ddcfaef70c9cf5be04244f75c4fcd9cf25fdd90f941ccc48c4f2",
+    "expected_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": "51736",
+    "serial_marker": "rpi5-rp1-post-handoff-marker-reset",
+    "serial_observe_contract": "deadline-loop-accumulated-from-fresh-cursor",
+    "tftp_contract": "stable-same-cursor-delta-before-restore",
+    "serial_timeout_seconds": 90,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "tftp_timeout_seconds": 90,
+    "stable_samples": 3
+  }
+}

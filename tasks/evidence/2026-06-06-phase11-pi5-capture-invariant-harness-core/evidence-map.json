@@ -1,0 +1,26 @@
+{
+  "task_id": "phase11-pi5-capture-invariant-harness-core-20260606",
+  "classification": "ready-for-post-handoff-marker-reset-capture-recheck",
+  "task_record": "tasks/2026-06-06-phase11-pi5-capture-invariant-harness-core.md",
+  "static_evidence_inspection": "tasks/evidence/2026-06-06-phase11-pi5-capture-invariant-harness-core/static-evidence-inspection.md",
+  "scripts_added": [
+    "scripts/rpi5-observe-serial-window.sh",
+    "scripts/rpi5-capture-invariant-proof-bundle.sh"
+  ],
+  "docs_updated": [
+    "docs/src/project/lab-controller.md"
+  ],
+  "prior_blocker_evidence": {
+    "closeout": "tasks/2026-06-06-phase11-rp1-post-handoff-marker-reset-closeout.md",
+    "pi5_discriminator": "tasks/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator.md",
+    "classification": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/classification.json"
+  },
+  "validation": {
+    "bash_n": "tasks/evidence/2026-06-06-phase11-pi5-capture-invariant-harness-core/bash-n.log",
+    "dry_run": "tasks/evidence/2026-06-06-phase11-pi5-capture-invariant-harness-core/capture-invariant-proof-bundle-dry-run.json",
+    "git_diff_check": "tasks/evidence/2026-06-06-phase11-pi5-capture-invariant-harness-core/git-diff-check.log",
+    "mdbook_build": "tasks/evidence/2026-06-06-phase11-pi5-capture-invariant-harness-core/mdbook-build.log",
+    "git_diff_cached_check": "tasks/evidence/2026-06-06-phase11-pi5-capture-invariant-harness-core/git-diff-cached-check.log"
+  },
+  "next_action": "Promote phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5-20260606 only after this task is committed and hardwareTestLock remains unlocked/restored."
+}
