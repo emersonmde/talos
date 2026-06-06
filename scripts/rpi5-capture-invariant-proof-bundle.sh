@@ -136,6 +136,7 @@ if [ "$DRY_RUN" = true ]; then
               pre_status: "pre-status.json",
               pre_boot_files: "pre-boot-files.json",
               pre_snapshots: "pre-snapshots.json",
+              serial_drain_before_power: "serial-drain-before-power.json",
               serial_peek_before_power: "serial-peek-before-power.json",
               tftp_cursor_before_power: "tftp-cursor-before-power.json",
               power_cycle: "power-cycle.json",
@@ -156,19 +157,20 @@ if [ "$DRY_RUN" = true ]; then
               expected_fetch: $expected_fetch,
               expected_fetch_bytes: $expected_fetch_bytes,
               proof_run_identity_contract: {
-                  version: "pi5-proof-identity-join-v1",
+                  version: "pi5-capture-transaction-v2",
                   shared_run_label: $proof_label,
                   required_fields: [
                       "selected_tree_hash",
                       "effective_kernel",
                       "expected_fetch_path",
                       "expected_fetch_byte_count",
+                      "pre_power_serial_drain_empty",
                       "serial_cursor_and_window",
                       "tftp_cursor_and_stable_delta",
                       "final_pre_restore_identity",
                       "restore_identity"
                   ],
-                  rejection_rule: "missing or mismatched candidate identity, serial-window, or TFTP fields prevent decisive RP1 hardware classification"
+                  rejection_rule: "missing or mismatched candidate identity, serial-drain, serial-window, TFTP, or final identity fields prevent decisive hardware classification"
               },
               serial_marker: $serial_marker,
               serial_observe_contract: "serial-window-helper-auto-observe-or-direct-read",
@@ -230,9 +232,51 @@ if jq -e '.staging_publication_mismatch' "$EVIDENCE_DIR/preflight-identity.json"
     exit 1
 fi
 
-curl -fsS "${API_BASE}/serial/peek?max_bytes=500&drain=true" > "$EVIDENCE_DIR/serial-peek-before-power.json"
+serial_drain_tmp="$(mktemp)"
+serial_drain_last="$(mktemp)"
+trap 'rm -f "$serial_drain_tmp" "$serial_drain_last"' EXIT
+drain_attempts=0
+drain_total_bytes=0
+drain_empty=false
+drain_cursor=0
+
+while [ "$drain_attempts" -lt 8 ]; do
+    curl -fsS "${API_BASE}/serial/peek?max_bytes=65536&drain=true" > "$serial_drain_last"
+    cat "$serial_drain_last" >> "$serial_drain_tmp"
+    printf '\n' >> "$serial_drain_tmp"
+    drain_attempts=$((drain_attempts + 1))
+    drain_bytes="$(jq -r '(.bytes // ((.text // "") | length))' "$serial_drain_last")"
+    drain_cursor="$(jq -r '(.cursor // 0)' "$serial_drain_last")"
+    drain_total_bytes=$((drain_total_bytes + drain_bytes))
+    if [ "$drain_bytes" -eq 0 ]; then
+        drain_empty=true
+        break
+    fi
+    sleep 1
+done
+
+cp "$serial_drain_last" "$EVIDENCE_DIR/serial-peek-before-power.json"
+jq -s \
+    --argjson attempts "$drain_attempts" \
+    --argjson total_bytes "$drain_total_bytes" \
+    --argjson final_cursor "$drain_cursor" \
+    --argjson empty_before_power "$drain_empty" \
+    '{
+        action: "serial drain before power",
+        ok: true,
+        responses: .,
+        talos_serial_drain: {
+            contract_version: "pi5-capture-transaction-v2",
+            attempts: $attempts,
+            total_bytes: $total_bytes,
+            final_cursor: $final_cursor,
+            empty_before_power: $empty_before_power,
+            rule: "pre-power serial drain must reach an empty read before saturated direct-read output can be treated as fresh"
+        }
+    }' "$serial_drain_tmp" > "$EVIDENCE_DIR/serial-drain-before-power.json"
+
 curl -fsS "${API_BASE}/tftp/logs?max_bytes=1048576&limit=1" > "$EVIDENCE_DIR/tftp-cursor-before-power.json"
-serial_cursor="$(jq -r '.cursor' "$EVIDENCE_DIR/serial-peek-before-power.json")"
+serial_cursor="$(jq -r '.talos_serial_drain.final_cursor' "$EVIDENCE_DIR/serial-drain-before-power.json")"
 tftp_cursor="$(jq -r '.tftp.cursor_end' "$EVIDENCE_DIR/tftp-cursor-before-power.json")"
 printf '%s\n' "$serial_cursor" > "$EVIDENCE_DIR/serial-cursor-before-power.txt"
 printf '%s\n' "$tftp_cursor" > "$EVIDENCE_DIR/tftp-cursor-before-power.txt"
@@ -270,6 +314,7 @@ jq -n \
     --argjson serial_exit "$serial_exit" \
     --argjson tftp_exit "$tftp_exit" \
     --slurpfile preflight "$EVIDENCE_DIR/preflight-identity.json" \
+    --slurpfile drain "$EVIDENCE_DIR/serial-drain-before-power.json" \
     --slurpfile serial "$EVIDENCE_DIR/serial-observe-window.json" \
     --slurpfile tftp "$EVIDENCE_DIR/tftp-delta-stable-pre-restore.json" \
     --slurpfile final_status "$EVIDENCE_DIR/final-pre-restore-status.json" \
@@ -278,6 +323,7 @@ jq -n \
     --slurpfile post_restore "$EVIDENCE_DIR/post-restore-status.json" \
     '(($expected_fetch_bytes | tonumber?) // null) as $expected_bytes
      | ($serial[0].talos_serial_window // {}) as $sw
+     | ($drain[0].talos_serial_drain // {}) as $sd
      | ($tftp[0].talos_tftp_stability // {}) as $ts
      | (($tftp[0].tftp.events // []) | map(select(.filename == $expected_fetch))) as $fetch_events
      | ($fetch_events | map(select(.status == "served" and .bytes == $expected_bytes))) as $matching_fetch_events
@@ -298,6 +344,8 @@ jq -n \
          (if ($preflight[0].effective_kernel_matches // false) != true then "effective-kernel-mismatch" else empty end),
          (if ($preflight[0].expected_fetch_present // false) != true then "preflight-expected-fetch-missing" else empty end),
          (if ($preflight[0].expected_fetch_bytes_match // false) != true then "preflight-expected-fetch-byte-mismatch" else empty end),
+         (if (($sd.contract_version // "") != "pi5-capture-transaction-v2") then "missing-v2-serial-drain-contract" else empty end),
+         (if ($sd.empty_before_power // false) != true then "serial-drain-not-empty-before-power" else empty end),
          (if (($serial[0].cursor_start // null) == null) then "missing-serial-cursor-start" else empty end),
          (if (($serial[0].cursor_end // null) == null) then "missing-serial-cursor-end" else empty end),
          (if (($sw.capture_mode // "") == "") then "missing-serial-capture-mode" else empty end),
@@ -340,13 +388,19 @@ jq -n \
          expected_fetch_byte_match_count: ($matching_fetch_events | length),
          expected_fetch_events: $fetch_events,
          proof_run_identity: {
-             contract_version: "pi5-proof-identity-join-v1",
+             contract_version: "pi5-capture-transaction-v2",
              shared_run_label: $proof_label,
              selected_tree_hash: $selected_tree_hash,
              effective_kernel: ($preflight[0].observed_effective_kernel // null),
              expected_fetch_path: $expected_fetch,
              expected_fetch_byte_count: $expected_bytes,
              serial: {
+                 pre_power_drain: {
+                     attempts: ($sd.attempts // null),
+                     total_bytes: ($sd.total_bytes // null),
+                     final_cursor: ($sd.final_cursor // null),
+                     empty_before_power: ($sd.empty_before_power // false)
+                 },
                  cursor_start: ($serial[0].cursor_start // null),
                  cursor_end: ($serial[0].cursor_end // null),
                  window_bytes: ($serial[0].bytes // null),
@@ -376,7 +430,7 @@ jq -n \
              }
          },
          identity_join_contract: {
-             contract_version: "pi5-proof-identity-join-v1",
+             contract_version: "pi5-capture-transaction-v2",
              decisive_rp1_hardware_classification_allowed: (($identity_join_rejection_reasons | length) == 0),
              rejection_reasons: $identity_join_rejection_reasons,
              rejected_classification: (if (($identity_join_rejection_reasons | length) == 0) then null else "capture-staging-blocked" end),

@@ -747,6 +747,20 @@ mapped/read-value behavior, bus-fault/trap behavior, firmware-state behavior,
 GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader
 PCIe, Milestone 11.2, and phase transition remain unaccepted.
 
+phase11-pi5-capture-transaction-forensics-core-20260606 repairs the proof
+transaction contract after that mismatch. The retained f274ff7 evidence is
+explained as serial-freshness-contract-fixed: v1 rejected the restored-tree
+TFTP/final identity mismatch, but it did not require proof that saturated
+direct-read serial began after an empty pre-power drain. The new
+`pi5-capture-transaction-v2` bundle records
+`serial-drain-before-power.json` and rejects saturated direct-read output
+unless the pre-power drain reaches an empty read. Replaying f274ff7 under v2
+remains capture-staging-blocked due to missing v2 drain evidence plus
+restored-tree TFTP/final identity. This accepts only proof-contract readiness
+for a no-RP1-MMIO sentinel; RP1 UART0 FR mapped/read-value behavior,
+bus-fault/trap behavior, firmware-state behavior, broader PCIe, Milestone
+11.2, and phase transition remain unaccepted.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

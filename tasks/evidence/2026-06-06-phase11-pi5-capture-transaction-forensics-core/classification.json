@@ -1,0 +1,17 @@
+{
+  "task_id": "phase11-pi5-capture-transaction-forensics-core-20260606",
+  "classification": "capture-transaction-v2-ready",
+  "explanation": "f274ff7 mismatch is explained as serial-freshness-contract-fixed: v1 allowed saturated direct-read output without proving the pre-power serial buffer had been fully drained; v2 requires serial-drain-before-power evidence and still rejects restored-tree TFTP/final identity mismatches.",
+  "acceptedClaims": [
+    "pi5-capture-transaction-v2 requires selected candidate identity, an empty pre-power serial drain, fresh serial window, stable pre-restore TFTP, final pre-restore identity, restore identity, and one shared run label",
+    "retained f274ff7 candidate evidence is capture-staging-blocked under v2",
+    "the next no-RP1-MMIO sentinel can use the v2 proof bundle before any RP1 FR-read retry"
+  ],
+  "unacceptedClaims": [
+    "RP1 UART0 FR mapped/read-value behavior",
+    "RP1 UART0 FR bus-fault/trap behavior",
+    "firmware-state behavior",
+    "candidate hardware behavior from retained stale serial",
+    "phase transition"
+  ]
+}

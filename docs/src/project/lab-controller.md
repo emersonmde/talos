@@ -337,11 +337,12 @@ scripts/rpi5-capture-invariant-proof-bundle.sh \
 ~~~
 
 The helper writes a deterministic proof bundle with pre-run status/files,
-snapshots, fresh serial and TFTP cursors, bounded accumulated serial output,
-stable same-cursor TFTP evidence before restore, final pre-restore
-status/files, restore status/files, and `capture-invariant-summary.json`. Its
-summary suggests only the capture/observability classification; the task
-record remains responsible for accepting or rejecting the feature boundary.
+snapshots, an explicit pre-power serial drain, fresh serial and TFTP cursors,
+bounded accumulated serial output, stable same-cursor TFTP evidence before
+restore, final pre-restore status/files, restore status/files, and
+`capture-invariant-summary.json`. Its summary suggests only the
+capture/observability classification; the task record remains responsible for
+accepting or rejecting the feature boundary.
 
 Before a proof task accepts a decisive RP1 hardware classification from that
 bundle, replay the retained files through:
@@ -352,12 +353,16 @@ scripts/rpi5-proof-identity-join-check.sh \
   --label <proof-label>
 ~~~
 
-The checker enforces the `pi5-proof-identity-join-v1` contract: one shared run
-label must tie the selected tree hash, effective kernel, expected fetch path
-and byte count, serial cursor/window identity, stable TFTP cursor/delta
-identity, final pre-restore identity, and restore identity. Missing fields or
-byte mismatches classify the bundle as `capture-staging-blocked`; they do not
-support `mapped/read-value`, trap/unmapped, or other decisive RP1 behavior.
+The checker enforces the `pi5-capture-transaction-v2` contract for new proof
+bundles: one shared run label must tie the selected tree hash, effective
+kernel, expected fetch path and byte count, an empty pre-power serial drain,
+serial cursor/window identity, stable TFTP cursor/delta identity, final
+pre-restore identity, and restore identity. Missing fields or byte mismatches
+classify the bundle as `capture-staging-blocked`; they do not support
+`mapped/read-value`, trap/unmapped, or other decisive RP1 behavior. When the
+serial cursor is saturated and the helper falls back to direct read, the
+direct-read output is decisive only if `serial-drain-before-power.json` proves
+the pre-power drain reached an empty read.
 
 For the current restored known-good control, the preferred readiness markers
 are `TALOS: kernel_main` plus `rpi5-production-timer-preemption: PASS` within

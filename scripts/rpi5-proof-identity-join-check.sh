@@ -6,8 +6,9 @@ usage() {
 usage: rpi5-proof-identity-join-check.sh --evidence-dir DIR [--label LABEL]
 
 Replays a retained Pi 5 capture-invariant proof bundle without hardware and
-checks whether candidate identity, serial window, TFTP delta, final
-pre-restore identity, and restore identity join into one proof run. The script
+checks whether candidate identity, pre-power serial drain, serial window, TFTP
+delta, final pre-restore identity, and restore identity join into one proof
+run. The script
 prints JSON. Exit 0 means decisive RP1 hardware classification is allowed by
 the evidence-chain contract; exit 1 means the evidence is limited to a blocker.
 EOF
@@ -72,11 +73,17 @@ if [ -f "$EVIDENCE_DIR/capture-invariant-summary.json" ]; then
     summary_arg="$(cat "$EVIDENCE_DIR/capture-invariant-summary.json")"
 fi
 
+drain_arg='{}'
+if [ -f "$EVIDENCE_DIR/serial-drain-before-power.json" ]; then
+    drain_arg="$(cat "$EVIDENCE_DIR/serial-drain-before-power.json")"
+fi
+
 output="$(jq -n \
     --arg expected_label "$EXPECTED_LABEL" \
     --arg serial_cursor_file "$serial_cursor_file" \
     --arg tftp_cursor_file "$tftp_cursor_file" \
     --argjson summary "$summary_arg" \
+    --argjson drain_summary "$drain_arg" \
     --slurpfile preflight "$EVIDENCE_DIR/preflight-identity.json" \
     --slurpfile serial "$EVIDENCE_DIR/serial-observe-window.json" \
     --slurpfile tftp "$EVIDENCE_DIR/tftp-delta-stable-pre-restore.json" \
@@ -89,6 +96,7 @@ output="$(jq -n \
     | (if $expected_label != "" then $expected_label else $summary_label end) as $run_label
     | ($summary.expected.fetch // $preflight[0].expected_fetch // "") as $expected_fetch
     | (($summary.expected.fetch_bytes // $preflight[0].expected_fetch_bytes) | tonumber?) as $expected_bytes
+    | ($drain_summary.talos_serial_drain // {}) as $sd
     | ($serial[0].talos_serial_window // {}) as $sw
     | ($tftp[0].talos_tftp_stability // {}) as $ts
     | (($tftp[0].tftp.events // []) | map(select(.filename == $expected_fetch and .status == "served"))) as $fetch_events
@@ -109,6 +117,9 @@ output="$(jq -n \
         (if $expected_bytes == null then "missing-expected-fetch-byte-count" else empty end),
         (if ($preflight[0].expected_fetch_present // false) != true then "preflight-expected-fetch-missing" else empty end),
         (if ($preflight[0].expected_fetch_bytes_match // false) != true then "preflight-expected-fetch-byte-mismatch" else empty end),
+        (if (($sd.contract_version // "") != "pi5-capture-transaction-v2") then "missing-v2-serial-drain-contract" else empty end),
+        (if ($sd.empty_before_power // false) != true then "serial-drain-not-empty-before-power" else empty end),
+        (if (($sw.capture_mode // "") == "read" and ($sw.start_cursor_saturated // false) == true and ($sd.empty_before_power // false) != true) then "saturated-direct-read-without-empty-pre-power-drain" else empty end),
         (if ($serial_cursor_file == "" and (($serial[0].cursor_start // null) == null)) then "missing-serial-cursor-start" else empty end),
         (if (($serial[0].cursor_end // null) == null) then "missing-serial-cursor-end" else empty end),
         (if (($sw.capture_mode // "") == "") then "missing-serial-capture-mode" else empty end),
@@ -127,11 +138,11 @@ output="$(jq -n \
         (if ($post_restore_tree_hash // "") == "" then "missing-post-restore-tree-hash" else empty end)
       ] as $rejection_reasons
     | {
-        contract_version: "pi5-proof-identity-join-v1",
+        contract_version: "pi5-capture-transaction-v2",
         run_label: $run_label,
         summary_label: $summary_label,
         decisive_rp1_hardware_classification_allowed: (($rejection_reasons | length) == 0),
-        classification: (if (($rejection_reasons | length) == 0) then "proof-chain-ready-for-candidate-rerun" else "capture-staging-blocked" end),
+        classification: (if (($rejection_reasons | length) == 0) then "capture-transaction-v2-ready" else "capture-staging-blocked" end),
         rejection_reasons: $rejection_reasons,
         proof_run_identity: {
           selected_tree_hash: $selected_tree_hash,
@@ -139,6 +150,12 @@ output="$(jq -n \
           expected_fetch_path: $expected_fetch,
           expected_fetch_byte_count: $expected_bytes,
           serial: {
+            pre_power_drain: {
+              attempts: ($sd.attempts // null),
+              total_bytes: ($sd.total_bytes // null),
+              final_cursor: ($sd.final_cursor // null),
+              empty_before_power: ($sd.empty_before_power // false)
+            },
             cursor_file: (if $serial_cursor_file == "" then null else ($serial_cursor_file | tonumber?) end),
             window_cursor_start: ($serial[0].cursor_start // null),
             window_cursor_end: ($serial[0].cursor_end // null),
@@ -169,7 +186,7 @@ output="$(jq -n \
             post_restore_tree_hash: $post_restore_tree_hash
           }
         },
-        rule: "missing or mismatched candidate identity, serial-window, or TFTP fields prevent decisive RP1 hardware classification"
+        rule: "missing or mismatched candidate identity, pre-power serial-drain, serial-window, TFTP, or final identity fields prevent decisive hardware classification"
       }
     ')"
 

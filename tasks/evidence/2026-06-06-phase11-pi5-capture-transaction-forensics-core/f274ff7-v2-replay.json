@@ -1,0 +1,61 @@
+{
+  "contract_version": "pi5-capture-transaction-v2",
+  "run_label": "phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5",
+  "summary_label": "phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5",
+  "decisive_rp1_hardware_classification_allowed": false,
+  "classification": "capture-staging-blocked",
+  "rejection_reasons": [
+    "missing-v2-serial-drain-contract",
+    "serial-drain-not-empty-before-power",
+    "saturated-direct-read-without-empty-pre-power-drain",
+    "tftp-expected-fetch-byte-mismatch",
+    "final-pre-restore-selected-tree-mismatch",
+    "final-pre-restore-expected-fetch-byte-mismatch"
+  ],
+  "proof_run_identity": {
+    "selected_tree_hash": "ae324bd791d7df59a0a8eabc74c936b1bd68ba6c2c9b645dcdc19f561e4e80c0",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 46320,
+    "serial": {
+      "pre_power_drain": {
+        "attempts": null,
+        "total_bytes": null,
+        "final_cursor": null,
+        "empty_before_power": false
+      },
+      "cursor_file": 4194304,
+      "window_cursor_start": 4194304,
+      "window_cursor_end": 4194304,
+      "window_bytes": 973431,
+      "response_bytes": 973431,
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+    },
+    "tftp": {
+      "cursor_file": 4146940,
+      "delta_cursor_start": 4146940,
+      "delta_cursor_end": 4148291,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 0,
+      "expected_fetch_bytes_seen": [
+        104136,
+        104136
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": false,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 104136
+    },
+    "restore": {
+      "snapshot_name": "phase11-rp1-uart0-fr-read-repaired-proof-pre-20260606T212222Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "rule": "missing or mismatched candidate identity, pre-power serial-drain, serial-window, TFTP, or final identity fields prevent decisive hardware classification"
+}

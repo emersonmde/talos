@@ -1,0 +1,30 @@
+{
+  "task_id": "phase11-pi5-capture-transaction-forensics-core-20260606",
+  "classification": "capture-transaction-v2-ready",
+  "mismatch_explanation": "serial-freshness-contract-fixed",
+  "evidence": {
+    "static_inspection": "tasks/evidence/2026-06-06-phase11-pi5-capture-transaction-forensics-core/static-evidence-inspection.md",
+    "classification": "tasks/evidence/2026-06-06-phase11-pi5-capture-transaction-forensics-core/classification.json",
+    "v2_dry_run": "tasks/evidence/2026-06-06-phase11-pi5-capture-transaction-forensics-core/capture-transaction-v2-dry-run.json",
+    "f274ff7_v2_replay": "tasks/evidence/2026-06-06-phase11-pi5-capture-transaction-forensics-core/f274ff7-v2-replay.json",
+    "f274ff7_v2_replay_exit": "tasks/evidence/2026-06-06-phase11-pi5-capture-transaction-forensics-core/f274ff7-v2-replay.exit",
+    "retained_f274ff7_task": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5.md",
+    "retained_f274ff7_summary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-repaired-proof-pi5/candidate-run/capture-invariant-summary.json"
+  },
+  "validation": {
+    "bash_syntax": "passed: bash -n scripts/rpi5-capture-invariant-proof-bundle.sh scripts/rpi5-proof-identity-join-check.sh",
+    "dry_run": "passed: capture bundle emitted pi5-capture-transaction-v2 required fields",
+    "fixture_replay": "passed: f274ff7 replay exited nonzero with capture-staging-blocked",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  },
+  "unaccepted_claims": [
+    "RP1 UART0 FR mapped/read-value behavior",
+    "RP1 UART0 FR bus-fault/trap behavior",
+    "firmware-state behavior",
+    "candidate hardware behavior from retained stale serial",
+    "phase transition"
+  ],
+  "next_action": "Promote the no-RP1-MMIO sentinel only after this accepted commit; sentinel must use pi5-capture-transaction-v2 and hardwareTestLock."
+}
