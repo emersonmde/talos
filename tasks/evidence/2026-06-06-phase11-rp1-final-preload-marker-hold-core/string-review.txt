@@ -1,0 +1,6 @@
+115:rpi5-rp1-uart0-fr-read: start
+116:rpi5-rp1-uart0-fr-read: pre-mmio-read
+117:rpi5-rp1-uart0-fr-read-delayed-marker: classification=before-rp1-read
+118:rpi5-rp1-uart0-fr-read-delayed-marker: final-preload-marker
+119:TALOS: fr-final-preload-hold-loop
+120:TALOS: fr-delayed-preload-loop

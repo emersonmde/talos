@@ -1,0 +1,50 @@
+1:00000000002015e4 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold>:
+6:  2015f4: f2a00400     	movk	x0, #0x20, lsl #16
+7:  2015f8: f2c00000     	movk	x0, #0x0, lsl #32
+8:  2015fc: f2e00000     	movk	x0, #0x0, lsl #48
+9:  201600: 97ffff93     	bl	0x20144c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+12:  20160c: f2a00400     	movk	x0, #0x20, lsl #16
+13:  201610: f2c00000     	movk	x0, #0x0, lsl #32
+14:  201614: f2e00000     	movk	x0, #0x0, lsl #48
+15:  201618: 97ffff8d     	bl	0x20144c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+18:  201624: f2a00400     	movk	x0, #0x20, lsl #16
+19:  201628: f2c00000     	movk	x0, #0x0, lsl #32
+20:  20162c: f2e00000     	movk	x0, #0x0, lsl #48
+21:  201630: 97ffff87     	bl	0x20144c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+24:  20163c: f2afa009     	movk	x9, #0x7d00, lsl #16
+25:  201640: f2c00209     	movk	x9, #0x10, lsl #32
+27:  201648: b940192a     	ldr	w10, [x9, #0x18]
+28:  20164c: 3738006a     	tbnz	w10, #0x7, 0x201658 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0x74>
+30:  201654: 54ffffa1     	b.ne	0x201648 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0x64>
+33:  201660: f2a00413     	movk	x19, #0x20, lsl #16
+34:  201664: f2c00013     	movk	x19, #0x0, lsl #32
+35:  201668: f2e00013     	movk	x19, #0x0, lsl #48
+36:  20166c: b40001f4     	cbz	x20, 0x2016a8 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0xc4>
+38:  201674: 528003e1     	mov	w1, #0x1f               // =31
+39:  201678: 97ffff75     	bl	0x20144c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+41:  201680: f2afa009     	movk	x9, #0x7d00, lsl #16
+42:  201684: f2c00209     	movk	x9, #0x10, lsl #32
+44:  20168c: b940192a     	ldr	w10, [x9, #0x18]
+45:  201690: 3738006a     	tbnz	w10, #0x7, 0x20169c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0xb8>
+47:  201698: 54ffffa1     	b.ne	0x20168c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0xa8>
+50:  2016a4: b5fffe74     	cbnz	x20, 0x201670 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0x8c>
+52:  2016ac: 52800781     	mov	w1, #0x3c               // =60
+53:  2016b0: f2a00400     	movk	x0, #0x20, lsl #16
+54:  2016b4: f2c00000     	movk	x0, #0x0, lsl #32
+55:  2016b8: f2e00000     	movk	x0, #0x0, lsl #48
+56:  2016bc: 97ffff64     	bl	0x20144c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+59:  2016c8: f2afa009     	movk	x9, #0x7d00, lsl #16
+60:  2016cc: f2c00209     	movk	x9, #0x10, lsl #32
+62:  2016d4: b940192a     	ldr	w10, [x9, #0x18]
+63:  2016d8: 3738006a     	tbnz	w10, #0x7, 0x2016e4 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0x100>
+65:  2016e0: 54ffffa1     	b.ne	0x2016d4 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0xf0>
+67:  2016e8: f2a00413     	movk	x19, #0x20, lsl #16
+68:  2016ec: f2c00013     	movk	x19, #0x0, lsl #32
+69:  2016f0: f2e00013     	movk	x19, #0x0, lsl #48
+72:  2016fc: 97ffff54     	bl	0x20144c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+74:  201704: f2afa009     	movk	x9, #0x7d00, lsl #16
+75:  201708: f2c00209     	movk	x9, #0x10, lsl #32
+77:  201710: b940192a     	ldr	w10, [x9, #0x18]
+78:  201714: 3738006a     	tbnz	w10, #0x7, 0x201720 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0x13c>
+80:  20171c: 54ffffa1     	b.ne	0x201710 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0x12c>
+82:  201724: 17fffff4     	b	0x2016f4 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0x110>

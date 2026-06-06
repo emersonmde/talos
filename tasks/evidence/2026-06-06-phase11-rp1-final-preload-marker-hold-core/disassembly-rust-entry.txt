@@ -1,0 +1,3 @@
+00000000002011d8 <rust_entry>:
+  2011d8: 94000103     	bl	0x2015e4 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold>
+

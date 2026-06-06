@@ -1,0 +1,20 @@
+Task: phase11-rp1-final-preload-marker-hold-core-20260606
+
+Validation gates:
+
+- fmt/lint/typecheck: cargo fmt --all -- --check passed.
+- unit tests: cargo -Zjson-target-spec test --quiet passed with 423 tests after setting the documented Talos QEMU PATH.
+- normal rpi5 image build: scripts/rpi5-image.sh passed.
+- task-owned archive/header/string review: scripts/rpi5-rp1-final-preload-marker-hold-review.sh passed.
+- targeted static/disassembly review: retained _start, rust_entry, and hold-function disassembly; selected path has no read_rp1_reg_u32 symbol/call and no RP1 UART0 FR load.
+- git diff --check: passed.
+- mdbook build: passed because docs/src files changed.
+- git diff --cached --check before commit: passed.
+
+Accepted classification:
+
+- local-static-final-preload-marker-hold-candidate-accepted.
+
+Non-accepted claims:
+
+- No Pi 5 final marker visibility, Pi 5 hold marker visibility, RP1 mapped/read-value, RP1 unmapped/trap, firmware-state, GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone 11.2, or phase transition claim is accepted by this task.

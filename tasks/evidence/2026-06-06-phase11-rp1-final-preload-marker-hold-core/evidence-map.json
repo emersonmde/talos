@@ -1,0 +1,61 @@
+{
+  "task": "phase11-rp1-final-preload-marker-hold-core-20260606",
+  "classification": "local-static-final-preload-marker-hold-candidate-accepted",
+  "acceptedClaims": [
+    "candidate emits delayed-marker FR-read-shaped start, pre-mmio-read, and before-rp1-read UART10 lines",
+    "candidate emits 32 bounded repeated pre-load markers and one final pre-load marker",
+    "candidate enters a unique repeated no-RP1-MMIO hold marker loop after the final pre-load marker",
+    "candidate does not call read_rp1_reg_u32, construct 0x1f_0003_0018, or execute the RP1 UART0 FR volatile load on the selected path",
+    "candidate archive is built locally and not published"
+  ],
+  "unacceptedClaims": [
+    "visible Pi 5 final pre-load marker output",
+    "visible Pi 5 hold marker output",
+    "candidate fetch on Pi 5",
+    "RP1 mapped/read-value hardware behavior",
+    "RP1 trap/no-return hardware behavior",
+    "firmware-state behavior",
+    "GPIO ownership",
+    "interrupt routing",
+    "DMA/cache policy",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ],
+  "candidate": {
+    "archive": "target/talos-rpi5-rp1-final-preload-marker-hold-core.tar.gz",
+    "archiveSha256": "07af64b86908f36c63d368589d79c76aebd492a81906a39586a2c5902d8b9287",
+    "bootTreeIdentity": "ed111afd660d233f95e78a2703c6fd17f12419771e34141ea2dbe3f15ffed3e8",
+    "kernelSha256": "03e26bc9821a9de07d8314bea9d4eabf963224866cd6d64a94390a6ae8b1b8a8",
+    "kernelSizeBytes": 45816,
+    "arm64ImageHeader": {
+      "textOffset": 0,
+      "headerImageSize": 45816,
+      "flags": 12,
+      "magic": "ARMd"
+    },
+    "repeatedPreloadMarker": "TALOS: fr-delayed-preload-loop",
+    "finalPreloadMarker": "rpi5-rp1-uart0-fr-read-delayed-marker: final-preload-marker",
+    "holdMarker": "TALOS: fr-final-preload-hold-loop"
+  },
+  "evidence": {
+    "taskRecord": "tasks/2026-06-06-phase11-rp1-final-preload-marker-hold-core.md",
+    "staticInspection": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-core/static-inspection.md",
+    "candidateIdentity": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-core/candidate-identity.txt",
+    "bootTreeIdentity": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-core/boot-tree-identity.txt",
+    "archiveReview": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-core/archive-review.txt",
+    "candidateStrings": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-core/candidate-strings.txt",
+    "stringReview": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-core/string-review.txt",
+    "symbols": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-core/symbols.txt",
+    "symbolReview": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-core/symbol-review.txt",
+    "disassemblyStart": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-core/disassembly-start.txt",
+    "disassemblyRustEntry": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-core/disassembly-rust-entry.txt",
+    "disassemblyHold": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-core/disassembly-hold.txt",
+    "disassemblyReview": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-core/disassembly-review.txt",
+    "validationSummary": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-core/validation-summary.txt"
+  }
+}

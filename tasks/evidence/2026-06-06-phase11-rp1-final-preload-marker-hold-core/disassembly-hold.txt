@@ -1,0 +1,83 @@
+00000000002015e4 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold>:
+  2015e4: a9be57fe     	stp	x30, x21, [sp, #-0x20]!
+  2015e8: a9014ff4     	stp	x20, x19, [sp, #0x10]
+  2015ec: d28f0700     	mov	x0, #0x7838             // =30776
+  2015f0: 528003c1     	mov	w1, #0x1e               // =30
+  2015f4: f2a00400     	movk	x0, #0x20, lsl #16
+  2015f8: f2c00000     	movk	x0, #0x0, lsl #32
+  2015fc: f2e00000     	movk	x0, #0x0, lsl #48
+  201600: 97ffff93     	bl	0x20144c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+  201604: d28f0ac0     	mov	x0, #0x7856             // =30806
+  201608: 528004c1     	mov	w1, #0x26               // =38
+  20160c: f2a00400     	movk	x0, #0x20, lsl #16
+  201610: f2c00000     	movk	x0, #0x0, lsl #32
+  201614: f2e00000     	movk	x0, #0x0, lsl #48
+  201618: 97ffff8d     	bl	0x20144c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+  20161c: d28f0f80     	mov	x0, #0x787c             // =30844
+  201620: 528008c1     	mov	w1, #0x46               // =70
+  201624: f2a00400     	movk	x0, #0x20, lsl #16
+  201628: f2c00000     	movk	x0, #0x0, lsl #32
+  20162c: f2e00000     	movk	x0, #0x0, lsl #48
+  201630: 97ffff87     	bl	0x20144c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+  201634: d28f2413     	mov	x19, #0x7920            // =31008
+  201638: d2820009     	mov	x9, #0x1000             // =4096
+  20163c: f2afa009     	movk	x9, #0x7d00, lsl #16
+  201640: f2c00209     	movk	x9, #0x10, lsl #32
+  201644: d2a00415     	mov	x21, #0x200000          // =2097152
+  201648: b940192a     	ldr	w10, [x9, #0x18]
+  20164c: 3738006a     	tbnz	w10, #0x7, 0x201658 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0x74>
+  201650: f10006b5     	subs	x21, x21, #0x1
+  201654: 54ffffa1     	b.ne	0x201648 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0x64>
+  201658: d5033f9f     	dsb	sy
+  20165c: 928003f4     	mov	x20, #-0x20             // =-32
+  201660: f2a00413     	movk	x19, #0x20, lsl #16
+  201664: f2c00013     	movk	x19, #0x0, lsl #32
+  201668: f2e00013     	movk	x19, #0x0, lsl #48
+  20166c: b40001f4     	cbz	x20, 0x2016a8 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0xc4>
+  201670: aa1303e0     	mov	x0, x19
+  201674: 528003e1     	mov	w1, #0x1f               // =31
+  201678: 97ffff75     	bl	0x20144c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+  20167c: d2820009     	mov	x9, #0x1000             // =4096
+  201680: f2afa009     	movk	x9, #0x7d00, lsl #16
+  201684: f2c00209     	movk	x9, #0x10, lsl #32
+  201688: d2a00415     	mov	x21, #0x200000          // =2097152
+  20168c: b940192a     	ldr	w10, [x9, #0x18]
+  201690: 3738006a     	tbnz	w10, #0x7, 0x20169c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0xb8>
+  201694: f10006b5     	subs	x21, x21, #0x1
+  201698: 54ffffa1     	b.ne	0x20168c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0xa8>
+  20169c: d5033f9f     	dsb	sy
+  2016a0: 91000694     	add	x20, x20, #0x1
+  2016a4: b5fffe74     	cbnz	x20, 0x201670 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0x8c>
+  2016a8: d28f1840     	mov	x0, #0x78c2             // =30914
+  2016ac: 52800781     	mov	w1, #0x3c               // =60
+  2016b0: f2a00400     	movk	x0, #0x20, lsl #16
+  2016b4: f2c00000     	movk	x0, #0x0, lsl #32
+  2016b8: f2e00000     	movk	x0, #0x0, lsl #48
+  2016bc: 97ffff64     	bl	0x20144c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+  2016c0: d28f1fd3     	mov	x19, #0x78fe            // =30974
+  2016c4: d2820009     	mov	x9, #0x1000             // =4096
+  2016c8: f2afa009     	movk	x9, #0x7d00, lsl #16
+  2016cc: f2c00209     	movk	x9, #0x10, lsl #32
+  2016d0: d2a00415     	mov	x21, #0x200000          // =2097152
+  2016d4: b940192a     	ldr	w10, [x9, #0x18]
+  2016d8: 3738006a     	tbnz	w10, #0x7, 0x2016e4 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0x100>
+  2016dc: f10006b5     	subs	x21, x21, #0x1
+  2016e0: 54ffffa1     	b.ne	0x2016d4 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0xf0>
+  2016e4: d5033f9f     	dsb	sy
+  2016e8: f2a00413     	movk	x19, #0x20, lsl #16
+  2016ec: f2c00013     	movk	x19, #0x0, lsl #32
+  2016f0: f2e00013     	movk	x19, #0x0, lsl #48
+  2016f4: aa1303e0     	mov	x0, x19
+  2016f8: 52800441     	mov	w1, #0x22               // =34
+  2016fc: 97ffff54     	bl	0x20144c <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+  201700: d2820009     	mov	x9, #0x1000             // =4096
+  201704: f2afa009     	movk	x9, #0x7d00, lsl #16
+  201708: f2c00209     	movk	x9, #0x10, lsl #32
+  20170c: d2a00415     	mov	x21, #0x200000          // =2097152
+  201710: b940192a     	ldr	w10, [x9, #0x18]
+  201714: 3738006a     	tbnz	w10, #0x7, 0x201720 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0x13c>
+  201718: f10006b5     	subs	x21, x21, #0x1
+  20171c: 54ffffa1     	b.ne	0x201710 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0x12c>
+  201720: d5033f9f     	dsb	sy
+  201724: 17fffff4     	b	0x2016f4 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rp1_final_preload_marker_hold+0x110>
+

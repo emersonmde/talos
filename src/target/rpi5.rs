@@ -12638,6 +12638,31 @@ pub fn run_rp1_uart0_fr_read_delayed_marker_diagnostic() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_final_preload_marker_hold")]
+pub fn run_rp1_final_preload_marker_hold() -> ! {
+    const PRELOAD_MARKER_REPEAT_COUNT: usize = 32;
+
+    write_early_static("rpi5-rp1-uart0-fr-read: start\n");
+    write_early_static("rpi5-rp1-uart0-fr-read: pre-mmio-read\n");
+    write_early_static("rpi5-rp1-uart0-fr-read-delayed-marker: classification=before-rp1-read\n");
+    wait_uart10_empty_early_phase();
+
+    let mut remaining = PRELOAD_MARKER_REPEAT_COUNT;
+    while remaining != 0 {
+        write_early_static("TALOS: fr-delayed-preload-loop\n");
+        wait_uart10_empty_early_phase();
+        remaining -= 1;
+    }
+
+    write_early_static("rpi5-rp1-uart0-fr-read-delayed-marker: final-preload-marker\n");
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: fr-final-preload-hold-loop\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
 #[cfg(talos_boot_scenario = "rpi5_rp1_uart0_fr_shaped_no_mmio_marker")]
 pub fn run_rp1_uart0_fr_shaped_no_mmio_marker() -> ! {
     write_early_static("rpi5-rp1-uart0-fr-read: start\n");

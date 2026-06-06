@@ -7269,6 +7269,24 @@ networking, SSH, broader PCIe, Milestone 11.2, or phase transition. The queued
 serial cursor/capture completeness repair must run before any same-shaped RP1
 UART0 FR-read hardware rerun.
 
+phase11-rp1-final-preload-marker-hold-core-20260606 is accepted as a
+source/static final-preload-marker hold candidate. The
+rpi5_rp1_final_preload_marker_hold scenario branches directly from rust_entry,
+preserves the delayed-marker FR-read start, pre-MMIO, before-RP1-read,
+repeated-preload, and final-preload marker strings, and then loops on the unique
+TALOS: fr-final-preload-hold-loop marker without calling read_rp1_reg_u32,
+constructing 0x1f_0003_0018, or executing the RP1 UART0 FR volatile load. The
+non-published archive
+target/talos-rpi5-rp1-final-preload-marker-hold-core.tar.gz has SHA-256
+07af64b86908f36c63d368589d79c76aebd492a81906a39586a2c5902d8b9287 and a
+45,816-byte kernel_2712.img with text_offset=0/header_image_size=45816/flags=12.
+This accepts only source/static and archive-readiness evidence; final marker
+visibility, hold marker visibility, RP1 mapped/read-value, unmapped/trap,
+firmware-state behavior, GPIO, interrupts, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe, Milestone 11.2, and phase transition remain
+unaccepted until the queued serialized Pi 5 marker-visibility discriminator
+runs under hardwareTestLock.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
