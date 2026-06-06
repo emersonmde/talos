@@ -172,6 +172,19 @@ storage, generated-root, networking, SSH, broader PCIe, or Milestone 11.2
 behavior. The next step must be a non-repetitive closeout-planned discriminator,
 not another same-shaped FR-read rerun.
 
+phase11-rp1-uart0-fr-read-delayed-marker-closeout-20260606 reconciles that
+source/static candidate and Pi 5 blocker evidence as
+candidate-fetch-without-final-preload-marker. The accepted boundary is limited
+to the delayed-marker source/static candidate shape, candidate
+publication/fetch evidence, and restore hygiene. It does not accept visible
+final pre-load marker output, post-load RP1 UART0 FR value output, RP1
+mapped/read-value behavior, RP1 unmapped/trap behavior, firmware-state
+behavior, GPIO, interrupts, DMA/cache, storage, generated-root, networking,
+SSH, broader PCIe, Milestone 11.2, or phase transition. A further same-shaped
+delayed-marker FR-read rerun is not a valid next step; supervisor planning is
+required for a non-repetitive post-handoff or serial-marker visibility
+discriminator before returning to the RP1 UART0 flag-register read.
+
 phase11-rp1-entry-control-handoff-discriminator-core-20260606 replaces the next
 source discriminator with a non-published, no-RP1-MMIO reset-side-effect
 candidate. The rpi5_rp1_handoff_reset scenario calls PSCI SYSTEM_RESET

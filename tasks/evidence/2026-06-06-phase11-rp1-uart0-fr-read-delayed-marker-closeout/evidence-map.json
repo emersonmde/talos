@@ -1,0 +1,58 @@
+{
+  "task": "phase11-rp1-uart0-fr-read-delayed-marker-closeout-20260606",
+  "status": "accepted",
+  "classification": "candidate-fetch-without-final-preload-marker",
+  "inputs": {
+    "coreTask": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-core.md",
+    "coreEvidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-core/evidence-map.json",
+    "coreStaticInspection": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-core/static-inspection.md",
+    "pi5Task": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-pi5-discriminator.md",
+    "pi5Classification": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-pi5-discriminator/classification.json",
+    "pi5EvidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-pi5-discriminator/evidence-map.json",
+    "pi5ValidationSummary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-pi5-discriminator/validation-summary.txt"
+  },
+  "closeoutArtifacts": {
+    "taskRecord": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-closeout.md",
+    "staticEvidenceInspection": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-closeout/static-evidence-inspection.md",
+    "evidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-closeout/evidence-map.json",
+    "contractDoc": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+    "gitDiffCheck": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-closeout/git-diff-check.log",
+    "mdbookBuild": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-closeout/mdbook-build.log",
+    "gitDiffCachedCheck": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-closeout/git-diff-cached-check.log"
+  },
+  "accepted": [
+    "source/static delayed-marker candidate shape",
+    "candidate archive publication and selected kernel fetch evidence",
+    "classification candidate-fetch-without-final-preload-marker",
+    "restore hygiene and hardware lock release/restored state"
+  ],
+  "notAccepted": [
+    "visible final pre-load marker",
+    "post-load RP1 UART0 FR value output",
+    "RP1 mapped/read-value behavior",
+    "RP1 unmapped/trap behavior",
+    "firmware-state behavior",
+    "GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone 11.2, or phase transition"
+  ],
+  "evidenceSummary": {
+    "coreArchiveSha256": "90452242f872eb085c9fe7963c02ad67556694326daebd7d199caf4ed5f597f4",
+    "coreBootTreeIdentity": "bc72d011494343727ebce2a37e4f2d3b14079065f5990100f7c7769f4313fbc6",
+    "coreKernelSizeBytes": 46152,
+    "contractedLoadAddress": "0x1f_0003_0018",
+    "publishedCandidateTree": "e9cd5c4a9571cab464ee76c046a7c4a2f42ba9cf75bb91f55de931dba16a3e2a",
+    "selectedFetch": "da591740/kernel_2712.img",
+    "selectedFetchBytes": 46152,
+    "firstCandidateFetchCount": 2,
+    "firstCandidateSerialBytes": 5039,
+    "candidateRerunFetchCount": 2,
+    "candidateRerunSerialBytes": 4479,
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "validation": {
+    "staticEvidenceInspection": "completed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  },
+  "nextAction": "Supervisor planning required for a non-repetitive post-handoff or serial-marker visibility discriminator; do not run another same-shaped delayed-marker FR-read rerun."
+}
