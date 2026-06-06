@@ -210,6 +210,25 @@ unmapped/trap, firmware-state behavior, GPIO, interrupts, DMA/cache, storage,
 generated-root, networking, SSH, broader PCIe, and Milestone 11.2 remain
 unaccepted.
 
+phase11-rp1-post-handoff-marker-reset-pi5-discriminator-20260606 published
+only that accepted marker/reset archive, but completed as
+staging-capture-blocker. The candidate publication staged tree
+37995c483190ddcfaef70c9cf5be04244f75c4fcd9cf25fdd90f941ccc48c4f2 with a
+51,736-byte `kernel_2712.img`, and fresh serial reached Raspberry Pi
+firmware/RP1 output without any `TALOS: rust_entry` or
+`rpi5-rp1-post-handoff-marker-reset` marker text. Stable same-cursor TFTP
+samples for the candidate, candidate rerun, and restored known-good control
+did not retain candidate-tied fetch evidence in their bounded windows. A late
+first-run TFTP replay is retained as capture-timing evidence only, not
+candidate identity proof, because status had already returned to the restored
+tree when it was queried. The closeout classification is
+staging-capture-blocked: visible post-handoff serial observability, reset
+side-effect evidence, marker-path hang/fault evidence, RP1 UART0 FR-read
+readiness, RP1 mapped/unmapped behavior, GPIO, interrupts, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe, and Milestone 11.2 remain
+unaccepted. The queued RP1 UART0 FR-read refresh is therefore not
+mechanically unblocked.
+
 phase11-staging-capture-log-stability-core-20260605 repairs the Pi 5
 proof-rule boundary exposed by that blocker. Replay from the retained cursor
 `4088847` later returned 13 TFTP events, including a restored known-good

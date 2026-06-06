@@ -1,0 +1,33 @@
+{
+  "task_id": "phase11-rp1-post-handoff-marker-reset-closeout-20260606",
+  "classification": "staging-capture-blocked",
+  "task_record": "tasks/2026-06-06-phase11-rp1-post-handoff-marker-reset-closeout.md",
+  "static_evidence_inspection": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-closeout/static-evidence-inspection.md",
+  "source_marker_reset_core": {
+    "task_record": "tasks/2026-06-06-phase11-rp1-post-handoff-marker-reset-core.md",
+    "classification": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-core/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-core/evidence-map.json",
+    "archive_sha256": "73a74db1d08d89a3aa371d5329bc6158553bef172a82f0b479598bc29f15acaa",
+    "kernel_bytes": 51736,
+    "commit": "a2d4c6add9e2ec7e91ba9dcd82c549c82ea01807"
+  },
+  "pi5_marker_reset_discriminator": {
+    "task_record": "tasks/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator.md",
+    "classification": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/evidence-map.json",
+    "stable_tftp": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/tftp-delta-stable-pre-restore.json",
+    "late_tftp": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/tftp-delta-late-before-restore.json",
+    "rerun_stable_tftp": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/rerun-tftp-delta-stable-pre-restore.json",
+    "control_stable_tftp": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/control-tftp-delta-stable-pre-restore.json",
+    "commit": "0d38d65a19fc0dd31836b5427e30215d9213c057"
+  },
+  "docs_updated": [
+    "docs/src/project/phase11-rp1-pcie-map-contract.md"
+  ],
+  "validation": {
+    "git_diff_check": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-closeout/git-diff-check.log",
+    "mdbook_build": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-closeout/mdbook-build.log",
+    "git_diff_cached_check": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-closeout/git-diff-cached-check.log"
+  },
+  "next_action": "Supervisor planning required for the next bounded staging/capture or post-handoff observability discriminator before returning to the RP1 UART0 flag-register read."
+}
