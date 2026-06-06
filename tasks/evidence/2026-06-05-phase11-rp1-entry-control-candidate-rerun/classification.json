@@ -1,0 +1,19 @@
+{
+  "task": "phase11-rp1-entry-control-candidate-rerun-20260605",
+  "archive_sha256": "dcbcf06ebdf2304630dc52d0aac689c6ec363f04074a055bc391a0c7829e5f37",
+  "candidate_kernel_expected_sha256": "b3e62b950cf007a0ee8d1d7f420fd8c26c28573c5b6925a7f0d93d0b77a367ea",
+  "candidate_kernel_expected_bytes": 51808,
+  "candidate_serial_rc": 1,
+  "candidate_tftp_rc": 0,
+  "candidate_fetch_count": 2,
+  "serial_markers": {
+    "has_kernel_main": false,
+    "has_entry_control_marker": false,
+    "has_no_rp1_mmio_marker": false,
+    "has_entry_control_classification": false,
+    "has_entry_control_pass": false
+  },
+  "classification": "candidate-fetch-observed-without-entry-control",
+  "accepted_boundary": null,
+  "rp1_behavior_accepted": false
+}

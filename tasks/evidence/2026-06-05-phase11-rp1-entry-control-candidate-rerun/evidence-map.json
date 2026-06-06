@@ -1,0 +1,49 @@
+{
+  "task": "phase11-rp1-entry-control-candidate-rerun-20260605",
+  "status": "completed-with-blocker",
+  "classification": "candidate-fetch-observed-without-entry-control",
+  "accepted_boundary": null,
+  "rp1_behavior_accepted": false,
+  "candidate": {
+    "archive": "target/talos-rpi5-rp1-entry-control-source-core.tar.gz",
+    "archive_sha256": "dcbcf06ebdf2304630dc52d0aac689c6ec363f04074a055bc391a0c7829e5f37",
+    "kernel_sha256": "b3e62b950cf007a0ee8d1d7f420fd8c26c28573c5b6925a7f0d93d0b77a367ea",
+    "kernel_bytes": 51808,
+    "published_tree_hash": "ab88a3d8549837459c8cebf8cb22580b52b39665421b7eb6d6773ebce8c6f9c2",
+    "effective_kernel": "kernel_2712.img"
+  },
+  "restore": {
+    "pre_run_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "hardware_lock_released": true,
+    "hardware_lock_restored": true
+  },
+  "serial_evidence": {
+    "path": "tasks/evidence/2026-06-05-phase11-rp1-entry-control-candidate-rerun/candidate-serial-entry-control-observe.json",
+    "cursor_start": 4103494,
+    "cursor_end": 4107969,
+    "bytes": 4475,
+    "contains_kernel_main": false,
+    "contains_entry_control_pass": false,
+    "contains_entry_control_marker": false
+  },
+  "tftp_evidence": {
+    "path": "tasks/evidence/2026-06-05-phase11-rp1-entry-control-candidate-rerun/candidate-tftp-delta-stable-pre-restore.json",
+    "stable": true,
+    "stable_samples": 3,
+    "required_samples": 3,
+    "candidate_kernel_fetch_count": 2,
+    "candidate_kernel_fetch_bytes": 51808
+  },
+  "files": {
+    "task_record": "tasks/2026-06-05-phase11-rp1-entry-control-candidate-rerun.md",
+    "classification": "tasks/evidence/2026-06-05-phase11-rp1-entry-control-candidate-rerun/classification.json",
+    "candidate_archive_review": "tasks/evidence/2026-06-05-phase11-rp1-entry-control-candidate-rerun/candidate-archive-review.log",
+    "pre_run_status": "tasks/evidence/2026-06-05-phase11-rp1-entry-control-candidate-rerun/pre-run-status.json",
+    "candidate_status_after_publish": "tasks/evidence/2026-06-05-phase11-rp1-entry-control-candidate-rerun/candidate-status-after-publish.json",
+    "final_pre_restore_status": "tasks/evidence/2026-06-05-phase11-rp1-entry-control-candidate-rerun/final-pre-restore-status.json",
+    "post_restore_status": "tasks/evidence/2026-06-05-phase11-rp1-entry-control-candidate-rerun/post-restore-status.json"
+  },
+  "next_action": "Supervisor planning required for the smallest source/handoff/runtime-readiness discriminator before BootInfo or the focused entry-control branch. Do not infer RP1 MMIO, GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone 11.2, or a phase transition from this blocker."
+}
