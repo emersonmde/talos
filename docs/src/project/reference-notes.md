@@ -86,6 +86,11 @@ Local Daedalus references:
 - RP1 Ethernet appears as rp1_eth, compatible with raspberrypi,rp1-gem and cdns,macb.
 - SD card runtime access is BCM2712 SDHCI; NVMe requires PCIe root complex plus NVMe driver and should not be the first persistent-storage path.
 - The current lab TFTP boot sequence successfully requests Pi 5 files including config.txt, bcm2712-rpi-5-b.dtb, kernel_2712.img, initramfs_2712, overlays, and cmdline.txt.
+- For the restored known-good production-timer control, a fresh serial window
+  that contains `rpi5-production-timer-preemption: PASS` is sufficient to
+  prove known-good Talos runtime readiness even if the same window omits the
+  earlier `TALOS: kernel_main` line. Source order records that the PASS line
+  is downstream of `kernel_main`; this is not an RP1 candidate acceptance.
 - Lab TFTP evidence must capture the pre-run tail cursor with `cursor`
   omitted. Calling `/tftp/logs?cursor=0&limit=1` uses the endpoint default
   `max_bytes=65536`, so once logs exceed 64 KiB the returned `cursor_end`

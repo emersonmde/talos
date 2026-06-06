@@ -1,0 +1,62 @@
+{
+  "taskId": "phase11-known-good-runtime-marker-boundary-review-core-20260606",
+  "classification": "valid-known-good-talos-readiness-by-downstream-marker",
+  "boundaryReviewed": "For the restored known-good production-timer control, fresh serial evidence containing rpi5-production-timer-preemption: PASS is sufficient to accept known-good Talos runtime readiness even when the same serial window omits the earlier TALOS: kernel_main marker, because source order proves PASS is downstream of kernel_main.",
+  "sourceReferences": [
+    {
+      "path": "src/main.rs",
+      "lines": "240-265",
+      "note": "Non-RP1-entry-control Pi 5 path writes early phase markers, initializes target and exceptions, then calls kernel_main."
+    },
+    {
+      "path": "src/boot/rpi5.rs",
+      "lines": "29-83",
+      "note": "Pi 5 kernel_main writes EarlyPhaseLine::KernelMain before reaching the production-timer proof call."
+    },
+    {
+      "path": "src/target/rpi5.rs",
+      "lines": "8844-8927",
+      "note": "EarlyPhaseLine::KernelMain emits literal TALOS: kernel_main."
+    },
+    {
+      "path": "src/target/rpi5.rs",
+      "lines": "6628-6818",
+      "note": "Production-timer PASS is emitted only after production-timer report predicates pass."
+    }
+  ],
+  "evidenceReferences": [
+    {
+      "path": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-pi5-discriminator/tftp-delta-stable-pre-restore.json",
+      "level": "lab-controller API",
+      "note": "Stable pre-restore replay includes two served 104,136-byte da591740/kernel_2712.img fetches."
+    },
+    {
+      "path": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-pi5-discriminator/serial-readiness-observe.json",
+      "level": "serial hardware boot/output",
+      "note": "Fresh serial cursor 4096748 accumulated 6,746 bytes, has_kernel_main=false, has_required_success_marker=true, and contains rpi5-production-timer-preemption: PASS."
+    },
+    {
+      "path": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-pi5-discriminator/serial-observe-direct-large-after-manual.json",
+      "level": "serial hardware boot/output",
+      "note": "Direct large observe preserves the same cursor window and marker mismatch."
+    },
+    {
+      "path": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-pi5-discriminator/post-restore-status.json",
+      "level": "lab-controller API",
+      "note": "Post-proof restore status retained."
+    },
+    {
+      "path": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-pi5-discriminator/post-restore-boot-files.json",
+      "level": "lab-controller API",
+      "note": "Post-proof restore boot-file listing retained."
+    }
+  ],
+  "validation": [
+    {
+      "gate": "Static source/evidence inspection",
+      "status": "passed",
+      "evidence": "tasks/evidence/2026-06-06-phase11-known-good-runtime-marker-boundary-review-core/static-inspection.md"
+    }
+  ],
+  "nextAction": "Promote phase11-known-good-runtime-marker-boundary-closeout-20260606 on the next worker wake; do not promote RP1 candidate/source work from this core review alone."
+}

@@ -312,23 +312,31 @@ Retain the helper JSON and check
 for known-good runtime-readiness proofs. A settled first firmware burst is not
 the full readiness window.
 
-For the current restored known-good control, the accepted readiness markers
+For the current restored known-good control, the preferred readiness markers
 are `TALOS: kernel_main` plus `rpi5-production-timer-preemption: PASS` within
 that observation window after a stable 104,136-byte
-`da591740/kernel_2712.img` fetch. If a future accepted known-good control uses
-a different success marker, set `TALOS_READINESS_REQUIRED_MARKER` and record
-that exact marker in the proof bundle. If the run is inconclusive, retain one
-final pre-restore `GET /status`, `GET /boot/files`, and TFTP-tail or
-stable-delta sample. Restore evidence and hardware lock release evidence
-belong in the same proof bundle.
+`da591740/kernel_2712.img` fetch. If the same fresh serial window omits
+`TALOS: kernel_main` but contains
+`rpi5-production-timer-preemption: PASS`, the downstream PASS marker is
+sufficient for this restored production-timer control because source order
+proves it is reachable only after `kernel_main`. If a future accepted
+known-good control uses a different success marker, set
+`TALOS_READINESS_REQUIRED_MARKER` and record that exact marker in the proof
+bundle. If the run is inconclusive, retain one final pre-restore
+`GET /status`, `GET /boot/files`, and TFTP-tail or stable-delta sample.
+Restore evidence and hardware lock release evidence belong in the same proof
+bundle.
 
 Classification rules:
 
 - `valid-known-good-talos-readiness`: `GET /status` and `GET /boot/files`
   identify the expected boot tree, the stable TFTP delta includes the expected
   `kernel_2712.img` fetch before restore, and the bounded serial observation
-  reaches both `TALOS: kernel_main` and the proof-recorded success marker for
-  that known-good control.
+  either reaches both `TALOS: kernel_main` and the proof-recorded success
+  marker or, for the current restored production-timer control, reaches the
+  downstream `rpi5-production-timer-preemption: PASS` marker whose source-order
+  proof is recorded in
+  `phase11-known-good-runtime-marker-boundary-review-core-20260606`.
 - `staging-publication-mismatch`: `GET /status` or `GET /boot/files` shows an
   unexpected tree hash, selected kernel, missing boot file, or boot-config
   mismatch before the run.

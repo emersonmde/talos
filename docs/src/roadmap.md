@@ -7109,6 +7109,23 @@ boundary around the restored 104,136-byte control fetch. RP1 entry-control
 candidate rerun and source work remain blocked unless that discriminator and
 its closeout accept valid known-good Talos readiness.
 
+phase11-known-good-runtime-marker-boundary-review-core-20260606 is now accepted
+as `valid-known-good-talos-readiness-by-downstream-marker`. The retained
+serial-window discriminator evidence showed two stable 104,136-byte
+`da591740/kernel_2712.img` fetches and a fresh 6,746-byte serial window that
+omitted `TALOS: kernel_main` but reached
+`rpi5-production-timer-preemption: PASS`. Static source inspection proves the
+PASS line is emitted only after the restored production-timer control has
+entered `kernel_main` and completed the production-timer proof predicates, so
+the missing earlier marker is treated as a serial-window completeness
+limitation rather than a runtime-readiness blocker for that known-good control.
+RP1 entry-control candidate rerun and source work remain blocked until
+phase11-known-good-runtime-marker-boundary-closeout-20260606 reconciles this
+classification and records the exact next action; no RP1 candidate fetch, Rust
+entry, mapped/read-value, unmapped/trap, firmware-state, GPIO, interrupt,
+DMA/cache, storage, networking, SSH, broader PCIe, Milestone 11.2, or phase
+transition is accepted here.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

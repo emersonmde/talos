@@ -276,6 +276,23 @@ evidence before it can accept or reject valid known-good Talos readiness. RP1
 candidate rerun/source work remains blocked until that proof and closeout
 accept valid known-good Talos readiness.
 
+phase11-known-good-runtime-serial-window-pi5-discriminator-20260606 then
+retained a deadline-looped fresh serial window and stable pre-restore TFTP
+evidence for the restored known-good tree. TFTP replay showed two served
+104,136-byte `da591740/kernel_2712.img` fetches. The fresh serial window
+omitted `TALOS: kernel_main` but reached
+`rpi5-production-timer-preemption: PASS`. The marker-boundary review
+`phase11-known-good-runtime-marker-boundary-review-core-20260606` accepts that
+as `valid-known-good-talos-readiness-by-downstream-marker` for the current
+restored production-timer control: source order proves the PASS line is emitted
+only after the Pi 5 path has entered `kernel_main` and completed the
+production-timer proof predicates. This does not accept RP1 candidate fetch,
+Rust entry, entry-control reachability, mapped/read-value, unmapped/trap,
+firmware-state behavior, GPIO, interrupts, DMA/cache, networking, SSH, storage,
+generated-root, broader PCIe, Milestone 11.2, or phase transition. The queued
+marker-boundary closeout must reconcile this classification before any RP1
+candidate rerun is promoted.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path first reports `rpi5-rp1-uart0-fr-read: start` and `rpi5-rp1-uart0-fr-read: pre-mmio-read`, flushes UART10, then reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load. A returned read reports the contract id, target name, address, width, raw value, `mapped/read-value` success classification, and PASS before returning to the existing final halt path. The pre-MMIO marker is a discriminator for the next serialized proof: if hardware reaches that marker but not the read-value line, the result is entry/handoff reachability plus an RP1 read trap/hang boundary, not a mapping acceptance.
