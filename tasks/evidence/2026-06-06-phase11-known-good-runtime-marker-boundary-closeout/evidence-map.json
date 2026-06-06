@@ -1,0 +1,75 @@
+{
+  "task_id": "phase11-known-good-runtime-marker-boundary-closeout-20260606",
+  "classification": "valid-known-good-talos-readiness",
+  "evidence_level": "static evidence inspection + docs validation + diff hygiene + staged diff hygiene",
+  "accepted": {
+    "valid_known_good_talos_readiness": true,
+    "known_good_boundary": "restored known-good production-timer control with stable 104136-byte da591740/kernel_2712.img TFTP fetch/restore identity and downstream rpi5-production-timer-preemption: PASS serial marker",
+    "rp1_candidate_fetch": false,
+    "rp1_rust_entry": false,
+    "rp1_entry_control_reachability": false,
+    "rp1_mapped_read_value": false,
+    "rp1_unmapped_trap": false,
+    "firmware_state_behavior": false,
+    "milestone_11_2": false
+  },
+  "prior_serial_window_closeout": {
+    "task_id": "phase11-known-good-runtime-serial-window-closeout-20260606",
+    "commit": "24475451e26bd834b90cad7fc4654ba1ca094a11",
+    "task_record": "tasks/2026-06-06-phase11-known-good-runtime-serial-window-closeout.md",
+    "evidence_map": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-closeout/evidence-map.json",
+    "classification": "boot-runtime-readiness-blocked",
+    "accepted_boundary": "known-good fetch visibility and restore identity, but not runtime readiness under the old full-marker requirement"
+  },
+  "marker_boundary_review_core": {
+    "task_id": "phase11-known-good-runtime-marker-boundary-review-core-20260606",
+    "commit": "e93b2d6e0157064369ce835f41f4fa678a8318c7",
+    "task_record": "tasks/2026-06-06-phase11-known-good-runtime-marker-boundary-review-core.md",
+    "evidence_map": "tasks/evidence/2026-06-06-phase11-known-good-runtime-marker-boundary-review-core/evidence-map.json",
+    "static_inspection": "tasks/evidence/2026-06-06-phase11-known-good-runtime-marker-boundary-review-core/static-inspection.md",
+    "classification": "valid-known-good-talos-readiness-by-downstream-marker"
+  },
+  "retained_hardware_evidence": {
+    "task_id": "phase11-known-good-runtime-serial-window-pi5-discriminator-20260606",
+    "commit": "cca81457e4ac0552106772236274cc28d4433aad",
+    "evidence_map": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-pi5-discriminator/evidence-map.json",
+    "tftp_delta": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-pi5-discriminator/tftp-delta-stable-pre-restore.json",
+    "serial_helper": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-pi5-discriminator/serial-readiness-observe.json",
+    "serial_direct_large": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-pi5-discriminator/serial-observe-direct-large-after-manual.json",
+    "post_restore_status": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-pi5-discriminator/post-restore-status.json",
+    "summary": {
+      "stable_known_good_fetches": 2,
+      "kernel_2712_bytes": 104136,
+      "serial_cursor": 4096748,
+      "serial_window_bytes": 6746,
+      "has_kernel_main": false,
+      "has_downstream_pass": true,
+      "restored_ok": true
+    }
+  },
+  "dispositions": [
+    {
+      "kind": "fixed",
+      "note": "Closeout resolves the prior full-marker blocker by accepting valid known-good Talos readiness under the downstream PASS marker boundary."
+    },
+    {
+      "kind": "fixed",
+      "note": "Evidence map links the prior serial-window closeout, marker-boundary review, retained serial/TFTP evidence, validation logs, and prior commit records."
+    },
+    {
+      "kind": "not-an-issue",
+      "note": "Omitted TALOS: kernel_main text is serial-window completeness loss rather than a runtime-readiness blocker for this restored known-good production-timer control."
+    },
+    {
+      "kind": "deferred",
+      "note": "No RP1 candidate fetch, Rust entry, entry-control reachability, mapped/read-value, unmapped/trap, firmware-state, GPIO, interrupt, DMA/cache, storage, networking, SSH, broader PCIe, Milestone 11.2, or phase transition is accepted."
+    }
+  ],
+  "validation": {
+    "static_evidence_inspection": "tasks/evidence/2026-06-06-phase11-known-good-runtime-marker-boundary-closeout/static-evidence-inspection.md",
+    "git_diff_check": "tasks/evidence/2026-06-06-phase11-known-good-runtime-marker-boundary-closeout/git-diff-check.log",
+    "mdbook_build": "tasks/evidence/2026-06-06-phase11-known-good-runtime-marker-boundary-closeout/mdbook-build.log",
+    "git_diff_cached_check": "tasks/evidence/2026-06-06-phase11-known-good-runtime-marker-boundary-closeout/git-diff-cached-check.log"
+  },
+  "next_action": "Only phase11-rp1-entry-control-candidate-rerun-20260605 becomes mechanically eligible from this closeout, subject to its own hardware lock and validation gates. The queued serial-completeness discriminator is not eligible because this closeout does not classify ready-for-serial-completeness-pi5-discriminator."
+}
