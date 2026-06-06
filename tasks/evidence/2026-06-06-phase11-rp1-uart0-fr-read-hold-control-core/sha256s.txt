@@ -1,0 +1,2 @@
+e9ab45b6dd15e4e80395302a116fb8aa751d699c5b679e5b9cee22077059a9b2  target/talos-rpi5-rp1-uart0-fr-read-hold-control-core.tar.gz
+2e10735026f6abd3d9d919d79f95ebc80caf9ba065d317b5c99b45f75d656eb6  target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-rp1-uart0-fr-read-hold-control.img

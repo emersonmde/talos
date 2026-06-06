@@ -1,0 +1,19 @@
+1:666:  2011d8: 03 01 00 94  	bl	0x2015e4 <talos::target::rpi5::run_rp1_uart0_fr_read_hold_control>
+183:944:00000000002015e4 <talos::target::rpi5::run_rp1_uart0_fr_read_hold_control>:
+210:971:  20164c: 6a 00 38 37  	tbnz	w10, #7, 0x201658 <talos::target::rpi5::run_rp1_uart0_fr_read_hold_control+0x74>
+212:973:  201654: a1 ff ff 54  	b.ne	0x201648 <talos::target::rpi5::run_rp1_uart0_fr_read_hold_control+0x64>
+218:979:  20166c: f4 01 00 b4  	cbz	x20, 0x2016a8 <talos::target::rpi5::run_rp1_uart0_fr_read_hold_control+0xc4>
+227:988:  201690: 6a 00 38 37  	tbnz	w10, #7, 0x20169c <talos::target::rpi5::run_rp1_uart0_fr_read_hold_control+0xb8>
+229:990:  201698: a1 ff ff 54  	b.ne	0x20168c <talos::target::rpi5::run_rp1_uart0_fr_read_hold_control+0xa8>
+232:993:  2016a4: 74 fe ff b5  	cbnz	x20, 0x201670 <talos::target::rpi5::run_rp1_uart0_fr_read_hold_control+0x8c>
+239:1000-  2016c0: 14 03 80 d2  	mov	x20, #24
+246:1007:  2016dc: 6a 00 38 37  	tbnz	w10, #7, 0x2016e8 <talos::target::rpi5::run_rp1_uart0_fr_read_hold_control+0x104>
+248:1009:  2016e4: a1 ff ff 54  	b.ne	0x2016d8 <talos::target::rpi5::run_rp1_uart0_fr_read_hold_control+0xf4>
+250:1011-  2016ec: 74 00 a0 f2  	movk	x20, #3, lsl #16
+253:1014-  2016f8: f4 03 c0 f2  	movk	x20, #31, lsl #32
+255:1016-  201700: 93 02 40 b9  	ldr	w19, [x20]
+304:1065:  2017c4: 6a 00 38 37  	tbnz	w10, #7, 0x2017d0 <talos::target::rpi5::run_rp1_uart0_fr_read_hold_control+0x1ec>
+306:1067:  2017cc: a1 ff ff 54  	b.ne	0x2017c0 <talos::target::rpi5::run_rp1_uart0_fr_read_hold_control+0x1dc>
+319:1080:  201800: 6a 00 38 37  	tbnz	w10, #7, 0x20180c <talos::target::rpi5::run_rp1_uart0_fr_read_hold_control+0x228>
+321:1082:  201808: a1 ff ff 54  	b.ne	0x2017fc <talos::target::rpi5::run_rp1_uart0_fr_read_hold_control+0x218>
+323:1084:  201810: f4 ff ff 17  	b	0x2017e0 <talos::target::rpi5::run_rp1_uart0_fr_read_hold_control+0x1fc>

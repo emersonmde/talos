@@ -1,0 +1,65 @@
+{
+  "task": "phase11-rp1-uart0-fr-read-hold-control-core-20260606",
+  "classification": "local-static-hold-control-rp1-uart0-fr-read-candidate-accepted",
+  "acceptedClaims": [
+    "candidate branches directly from rust_entry before BootInfo parsing, target initialization, boot reports, memory planning, allocator setup, scheduler work, and command-loop work",
+    "candidate emits a unique pre-read control marker through the accepted UART10 early-serial path before the RP1 UART0 FR read",
+    "candidate performs exactly one contracted 32-bit volatile load from 0x1f00030018 on the selected path",
+    "candidate reports contract id, target, address, width, raw value, mapped/read-value classification, and a unique post-read terminal hold marker after a returned read",
+    "candidate archive is built locally and not published"
+  ],
+  "unacceptedClaims": [
+    "Pi 5 marker visibility for this candidate",
+    "candidate fetch on Pi 5",
+    "RP1 mapped/read-value hardware behavior",
+    "RP1 trap/no-return hardware behavior",
+    "firmware-state behavior",
+    "GPIO ownership",
+    "interrupt routing",
+    "DMA/cache policy",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ],
+  "candidate": {
+    "archive": "target/talos-rpi5-rp1-uart0-fr-read-hold-control-core.tar.gz",
+    "archiveSha256": "e9ab45b6dd15e4e80395302a116fb8aa751d699c5b679e5b9cee22077059a9b2",
+    "bootTreeIdentity": "a479f225f68424f228635fcc796b7e5707f6e5b16c3b35ad53f09496786992cf",
+    "kernelSha256": "2e10735026f6abd3d9d919d79f95ebc80caf9ba065d317b5c99b45f75d656eb6",
+    "kernelSizeBytes": 46320,
+    "arm64ImageHeader": {
+      "textOffset": 0,
+      "headerImageSize": 46320,
+      "flags": 12,
+      "magic": "ARMd"
+    },
+    "contractId": "phase11-rp1-pcie-map-contract-v1",
+    "target": "rp1-uart0-fr-read",
+    "address": "0x1f00030018",
+    "widthBits": 32,
+    "preLoopMarker": "TALOS: fr-hold-control-pre-read-loop",
+    "preReadMarker": "rpi5-rp1-uart0-fr-read-hold-control: pre-read-control-marker",
+    "postReadMarker": "rpi5-rp1-uart0-fr-read-hold-control: post-read-terminal-hold-marker",
+    "postLoopMarker": "TALOS: fr-hold-control-post-read-loop"
+  },
+  "evidence": {
+    "taskRecord": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-core.md",
+    "staticInspection": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-core/static-inspection.md",
+    "candidateIdentity": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-core/candidate-identity.txt",
+    "bootTreeIdentity": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-core/boot-tree-identity.txt",
+    "archiveReview": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-core/archive-review.txt",
+    "candidateStrings": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-core/candidate-strings.txt",
+    "stringReview": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-core/string-review.txt",
+    "symbols": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-core/symbols.txt",
+    "symbolReview": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-core/symbol-review.txt",
+    "disassemblyStart": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-core/disassembly-start.txt",
+    "disassemblyRustEntry": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-core/disassembly-rust-entry.txt",
+    "disassemblyHoldControl": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-core/disassembly-hold-control.txt",
+    "disassemblyReview": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-core/disassembly-review.txt",
+    "validationSummary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-core/validation-summary.txt"
+  }
+}

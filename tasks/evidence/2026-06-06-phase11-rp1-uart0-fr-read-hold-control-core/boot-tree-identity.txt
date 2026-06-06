@@ -1,0 +1,1 @@
+a479f225f68424f228635fcc796b7e5707f6e5b16c3b35ad53f09496786992cf  tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-core/boot-tree-file-sha256s.txt

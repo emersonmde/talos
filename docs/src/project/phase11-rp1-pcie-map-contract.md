@@ -666,12 +666,28 @@ Milestone 11.2, and phase transition remain unaccepted. Any return to the
 actual RP1 UART0 flag-register read must be supervisor-planned with explicit
 source/static and serialized Pi 5 acceptance gates.
 
+phase11-rp1-uart0-fr-read-hold-control-core-20260606 adds that
+source/static follow-up candidate. It branches directly from Pi 5 rust_entry
+before BootInfo parsing, target initialization, boot reports, memory planning,
+allocator setup, scheduler work, or command-loop work. It emits a unique
+UART10 pre-read control marker through the accepted hold-marker-visible path,
+then performs exactly one contracted 32-bit volatile load from RP1 UART0 FR at
+0x1f00030018. If the read returns, it reports contract id
+phase11-rp1-pcie-map-contract-v1, target rp1-uart0-fr-read, address, width,
+raw value, mapped/read-value classification, and a unique post-read terminal
+hold marker. This is accepted only as a local/static/archive candidate; Pi 5
+marker visibility for this candidate, RP1 mapped/read-value hardware behavior,
+unmapped/trap behavior, firmware-state behavior, GPIO, interrupts, DMA/cache,
+storage, generated-root, networking, SSH, broader PCIe, Milestone 11.2, and
+phase transition remain unaccepted until the queued serialized discriminator.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when
 `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read`,
-`TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read_delayed_marker`, or
-`TALOS_BOOT_SCENARIO=rpi5_rp1_final_preload_marker_hold` is selected. The
+`TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read_delayed_marker`,
+`TALOS_BOOT_SCENARIO=rpi5_rp1_final_preload_marker_hold`, or
+`TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read_hold_control` is selected. The
 original path branches directly from `rust_entry`, reports
 `rpi5-rp1-uart0-fr-read: start` and
 `rpi5-rp1-uart0-fr-read: pre-mmio-read` through the UART10 early-serial
@@ -680,13 +696,16 @@ helper, flushes UART10, then reads exactly `RP1_UART0_FR`
 bounded repeated and final pre-load UART10 markers before the same contracted
 load. The final-preload-marker hold path adds the same bounded repeated and
 final pre-load UART10 markers, then repeats a unique hold marker without
-calling the RP1 read helper or constructing the contracted address. A returned
-read from the true FR-read paths reports the contract id, target name, address,
-width, raw value, `mapped/read-value` success classification, and PASS before
-halting in a spin loop. The pre-load markers are discriminators for the next
-serialized proof: if hardware reaches the final pre-load marker but not the
-read-value line, the result is an at-or-after-load no-return/trap boundary, not
-a mapping acceptance.
+calling the RP1 read helper or constructing the contracted address. The
+hold-control FR-read path uses the accepted visible hold-marker boundary as a
+pre-read control, then executes the same contracted load once and enters a
+unique post-read terminal hold loop after reporting the returned raw value. A
+returned read from the true FR-read paths reports the contract id, target name,
+address, width, raw value, and `mapped/read-value` success classification.
+The pre-load and hold-control markers are discriminators for the next
+serialized proof: if hardware reaches a pre-read marker but not the read-value
+line, the result is an at-or-after-load no-return/trap boundary, not a mapping
+acceptance.
 
 The diagnostic does not add raw assembly early-entry UART markers. Prior Phase 10 evidence quarantined that path from prompt-capable Pi 5 controls after it made accepted controls fail, so this slice keeps the marker inside the existing Rust/serial path. It does not add GPIO, pin-control, clock, reset, interrupt, DMA/cache, Ethernet, networking, SSH, storage, generated-root, or shell behavior.
 
@@ -706,6 +725,12 @@ Artifact helpers:
   `scripts/rpi5-rp1-final-preload-marker-hold-review.sh` build and inspect the
   no-RP1-MMIO final-preload-marker hold candidate archive for the queued
   serialized Pi 5 marker-visibility discriminator.
+- `scripts/rpi5-rp1-uart0-fr-read-hold-control-image.sh`,
+  `scripts/rpi5-rp1-uart0-fr-read-hold-control-boot-tree.sh`,
+  `scripts/rpi5-rp1-uart0-fr-read-hold-control-archive.sh`, and
+  `scripts/rpi5-rp1-uart0-fr-read-hold-control-review.sh` build and inspect
+  the hold-control RP1 UART0 FR-read candidate archive for the queued
+  serialized Pi 5 discriminator.
 - `scripts/rpi5-rp1-uart0-fr-shaped-no-mmio-marker-image.sh`,
   `scripts/rpi5-rp1-uart0-fr-shaped-no-mmio-marker-boot-tree.sh`,
   `scripts/rpi5-rp1-uart0-fr-shaped-no-mmio-marker-archive.sh`, and
