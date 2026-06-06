@@ -1,0 +1,59 @@
+{
+  "task": "phase11-rp1-uart0-fr-read-delayed-marker-core-20260606",
+  "classification": "local-static-delayed-marker-fr-read-candidate-accepted",
+  "acceptedClaims": [
+    "candidate emits accepted FR-shaped start and pre-mmio-read UART10 lines before the RP1 load",
+    "candidate emits 32 bounded repeated pre-load markers and one final pre-load marker before the RP1 load",
+    "candidate executes exactly one contracted 32-bit volatile load from 0x1f_0003_0018 on the selected path",
+    "candidate emits post-load contract, raw-value, mapped/read-value, and PASS output only if the volatile load returns",
+    "candidate archive is built locally and not published"
+  ],
+  "unacceptedClaims": [
+    "visible Pi 5 final pre-load marker output",
+    "RP1 mapped/read-value hardware behavior",
+    "RP1 trap/no-return hardware behavior",
+    "firmware-state behavior",
+    "GPIO ownership",
+    "interrupt routing",
+    "DMA/cache policy",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ],
+  "candidate": {
+    "archive": "target/talos-rpi5-rp1-uart0-fr-read-delayed-marker-core.tar.gz",
+    "archiveSha256": "90452242f872eb085c9fe7963c02ad67556694326daebd7d199caf4ed5f597f4",
+    "bootTreeIdentity": "bc72d011494343727ebce2a37e4f2d3b14079065f5990100f7c7769f4313fbc6",
+    "kernelSha256": "0fd1e68e50da725b416079ae168a89a4b44a6a68aab40c4fff8cabf210db1b6f",
+    "kernelSizeBytes": 46152,
+    "arm64ImageHeader": {
+      "textOffset": 0,
+      "headerImageSize": 46152,
+      "flags": 12,
+      "magic": "ARMd"
+    },
+    "repeatedMarker": "TALOS: fr-delayed-preload-loop",
+    "finalPreloadMarker": "rpi5-rp1-uart0-fr-read-delayed-marker: final-preload-marker",
+    "contractedLoadAddress": "0x1f_0003_0018"
+  },
+  "evidence": {
+    "taskRecord": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-core.md",
+    "staticInspection": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-core/static-inspection.md",
+    "candidateIdentity": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-core/candidate-identity.txt",
+    "bootTreeIdentity": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-core/boot-tree-identity.txt",
+    "archiveReview": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-core/archive-review.txt",
+    "candidateStrings": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-core/candidate-strings.txt",
+    "stringReview": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-core/string-review.txt",
+    "symbols": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-core/symbols.txt",
+    "symbolReview": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-core/symbol-review.txt",
+    "disassemblyStart": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-core/disassembly-start.txt",
+    "disassemblyRustEntry": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-core/disassembly-rust-entry.txt",
+    "disassemblyDelayedMarker": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-core/disassembly-delayed-marker.txt",
+    "disassemblyReview": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-core/disassembly-review.txt",
+    "validationSummary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-core/validation-summary.txt"
+  }
+}

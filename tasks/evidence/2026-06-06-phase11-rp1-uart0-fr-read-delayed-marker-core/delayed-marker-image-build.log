@@ -1,0 +1,3 @@
+   Compiling talos v0.1.0 (/opt/strider/openclaw/current/workspace/projects/talos)
+    Finished `dev` profile [optimized + debuginfo] target(s) in 1.70s
+target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-rp1-uart0-fr-read-delayed-marker.img

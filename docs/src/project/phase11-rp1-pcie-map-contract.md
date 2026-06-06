@@ -563,9 +563,43 @@ PCIe, Milestone 11.2, or a phase transition. Any actual RP1 UART0 FR-read
 hardware proof needs a new supervisor-planned task with explicit acceptance
 gates.
 
+phase11-rp1-uart0-fr-read-delayed-marker-core-20260606 adds the next
+source/static candidate without running hardware. The
+rpi5_rp1_uart0_fr_read_delayed_marker scenario keeps the accepted FR-shaped
+UART10 start and pre-MMIO report path, emits 32 bounded
+TALOS: fr-delayed-preload-loop markers, emits the final
+rpi5-rp1-uart0-fr-read-delayed-marker: final-preload-marker, and then
+executes exactly one 32-bit volatile load from the contracted RP1 UART0 FR
+address 0x1f_0003_0018. Static disassembly shows post-load contract,
+raw-value, mapped/read-value, and PASS output are control-dependent on that
+load returning. The non-published archive is
+target/talos-rpi5-rp1-uart0-fr-read-delayed-marker-core.tar.gz with archive
+SHA-256 90452242f872eb085c9fe7963c02ad67556694326daebd7d199caf4ed5f597f4,
+boot-tree identity
+bc72d011494343727ebce2a37e4f2d3b14079065f5990100f7c7769f4313fbc6, and a
+46,152-byte kernel_2712.img. This accepts only the source/static delayed
+marker candidate; RP1 mapped/read-value behavior, trap/no-return behavior,
+firmware-state behavior, GPIO, interrupts, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe, Milestone 11.2, and phase transition remain
+unaccepted pending the queued serialized Pi 5 discriminator.
+
 ## Diagnostic Core Implementation
 
-The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path now branches directly from `rust_entry`, reports `rpi5-rp1-uart0-fr-read: start` and `rpi5-rp1-uart0-fr-read: pre-mmio-read` through the UART10 early-serial helper, flushes UART10, then reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load. A returned read reports the contract id, target name, address, width, raw value, `mapped/read-value` success classification, and PASS before halting in a spin loop. The pre-MMIO marker is a discriminator for the next serialized proof: if hardware reaches that marker but not the read-value line, the result is entry/handoff reachability plus an RP1 read trap/hang boundary, not a mapping acceptance.
+The local diagnostic core is compiled only when
+`TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` or
+`TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read_delayed_marker` is selected. The
+original path branches directly from `rust_entry`, reports
+`rpi5-rp1-uart0-fr-read: start` and
+`rpi5-rp1-uart0-fr-read: pre-mmio-read` through the UART10 early-serial
+helper, flushes UART10, then reads exactly `RP1_UART0_FR`
+(`0x1f_0003_0018`) with one 32-bit volatile load. The delayed-marker path adds
+bounded repeated and final pre-load UART10 markers before the same contracted
+load. A returned read reports the contract id, target name, address, width,
+raw value, `mapped/read-value` success classification, and PASS before halting
+in a spin loop. The pre-load markers are discriminators for the next serialized
+proof: if hardware reaches the final pre-load marker but not the read-value
+line, the result is an at-or-after-load no-return/trap boundary, not a mapping
+acceptance.
 
 The diagnostic does not add raw assembly early-entry UART markers. Prior Phase 10 evidence quarantined that path from prompt-capable Pi 5 controls after it made accepted controls fail, so this slice keeps the marker inside the existing Rust/serial path. It does not add GPIO, pin-control, clock, reset, interrupt, DMA/cache, Ethernet, networking, SSH, storage, generated-root, or shell behavior.
 
@@ -573,6 +607,12 @@ Artifact helpers:
 
 - `scripts/rpi5-rp1-uart0-fr-read-image.sh` builds the candidate image.
 - `scripts/rpi5-rp1-uart0-fr-read-boot-tree.sh` stages the candidate image into a Pi 5 boot tree for the later serialized hardware proof.
+- `scripts/rpi5-rp1-uart0-fr-read-delayed-marker-image.sh`,
+  `scripts/rpi5-rp1-uart0-fr-read-delayed-marker-boot-tree.sh`,
+  `scripts/rpi5-rp1-uart0-fr-read-delayed-marker-archive.sh`, and
+  `scripts/rpi5-rp1-uart0-fr-read-delayed-marker-review.sh` build and inspect
+  the delayed-marker FR-read candidate archive for the queued serialized Pi 5
+  discriminator.
 - `scripts/rpi5-rp1-uart0-fr-shaped-no-mmio-marker-image.sh`,
   `scripts/rpi5-rp1-uart0-fr-shaped-no-mmio-marker-boot-tree.sh`,
   `scripts/rpi5-rp1-uart0-fr-shaped-no-mmio-marker-archive.sh`, and

@@ -1,0 +1,7 @@
+
+target/aarch64-talos-rpi5-bcm2712/debug/talos:	file format elf64-littleaarch64
+
+Disassembly of section .text.boot:
+
+0000000000200000 <_start>:
+  200000:      	b	 <_start+0x40>

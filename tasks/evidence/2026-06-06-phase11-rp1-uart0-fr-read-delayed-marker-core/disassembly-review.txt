@@ -1,0 +1,35 @@
+Task: phase11-rp1-uart0-fr-read-delayed-marker-core-20260606
+
+Disassembly review:
+6:00000000002015e4 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi547run_rp1_uart0_fr_read_delayed_marker_diagnostic>:
+7:  2015e4:      	stp	x30, x21, [sp, #-0x20]!
+14:  201600:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+20:  201618:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+26:  201630:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+33:  201648:      	ldr	w10, [x9, #0x18]
+39:  20165c:      	mov	x20, #-0x20             // =-32
+47:  201678:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+53:  20168c:      	ldr	w10, [x9, #0x18]
+67:  2016bc:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+68:  2016c0:      	mov	x20, #0x18              // =24
+75:  2016d8:      	ldr	w10, [x9, #0x18]
+81:  2016ec:      	movk	x20, #0x3, lsl #16
+84:  2016f8:      	movk	x20, #0x1f, lsl #32
+86:  201700:      	ldr	w19, [x20]
+88:  201708:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+94:  201720:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+100:  201738:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+108:  201758:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+116:  201778:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+122:  201790:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+128:  2017a8:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+134:  2017bc:      	ldr	w10, [x9, #0x18]
+
+Contracted RP1 load count:
+86:  201700:      	ldr	w19, [x20]
+
+UART10 FR polling loads:
+33:  201648:      	ldr	w10, [x9, #0x18]
+53:  20168c:      	ldr	w10, [x9, #0x18]
+75:  2016d8:      	ldr	w10, [x9, #0x18]
+134:  2017bc:      	ldr	w10, [x9, #0x18]

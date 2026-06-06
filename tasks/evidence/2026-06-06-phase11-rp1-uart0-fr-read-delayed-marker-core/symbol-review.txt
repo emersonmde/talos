@@ -1,0 +1,8 @@
+6:0000000000200000 T __kernel_start
+7:0000000000200000 T _start
+13:00000000002011d8 T rust_entry
+21:000000000020144c t _RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static
+23:00000000002015e4 t _RNvNtNtCsan2nlJD4ir9_5talos6target4rpi547run_rp1_uart0_fr_read_delayed_marker_diagnostic
+281:00000000002067c0 R __rodata_start
+438:000000000020b450 B __bss_start
+441:000000000020b460 B __heap_start

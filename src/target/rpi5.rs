@@ -12482,7 +12482,10 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
 
 #[cfg(all(
     talos_target_rpi5_bcm2712,
-    talos_boot_scenario = "rpi5_rp1_uart0_fr_read"
+    any(
+        talos_boot_scenario = "rpi5_rp1_uart0_fr_read",
+        talos_boot_scenario = "rpi5_rp1_uart0_fr_read_delayed_marker"
+    )
 ))]
 fn read_rp1_reg_u32(addr: usize) -> u32 {
     let reg = addr as *const u32;
@@ -12577,6 +12580,44 @@ pub fn run_rp1_uart0_fr_read_diagnostic() -> ! {
 
     write_early_static("rpi5-rp1-uart0-fr-read: start\n");
     write_early_static("rpi5-rp1-uart0-fr-read: pre-mmio-read\n");
+    wait_uart10_empty_early_phase();
+
+    let value = read_rp1_reg_u32(RP1_UART0_FR);
+
+    write_early_static("rpi5-rp1-uart0-fr-read: contract=");
+    write_early_static(CONTRACT_ID);
+    write_early_static(" target=rp1-uart0-fr-read address=");
+    write_early_hex_u64(RP1_UART0_FR as u64);
+    write_early_static(" width=32 raw=");
+    write_early_hex_u64(value as u64);
+    write_early_static("\n");
+    write_early_static("rpi5-rp1-uart0-fr-read: classification=mapped/read-value\n");
+    write_early_static("rpi5-rp1-uart0-fr-read: PASS\n");
+    wait_uart10_empty_early_phase();
+
+    loop {
+        core::hint::spin_loop();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_uart0_fr_read_delayed_marker")]
+pub fn run_rp1_uart0_fr_read_delayed_marker_diagnostic() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-pcie-map-contract-v1";
+    const PRELOAD_MARKER_REPEAT_COUNT: usize = 32;
+
+    write_early_static("rpi5-rp1-uart0-fr-read: start\n");
+    write_early_static("rpi5-rp1-uart0-fr-read: pre-mmio-read\n");
+    write_early_static("rpi5-rp1-uart0-fr-read-delayed-marker: classification=before-rp1-read\n");
+    wait_uart10_empty_early_phase();
+
+    let mut remaining = PRELOAD_MARKER_REPEAT_COUNT;
+    while remaining != 0 {
+        write_early_static("TALOS: fr-delayed-preload-loop\n");
+        wait_uart10_empty_early_phase();
+        remaining -= 1;
+    }
+
+    write_early_static("rpi5-rp1-uart0-fr-read-delayed-marker: final-preload-marker\n");
     wait_uart10_empty_early_phase();
 
     let value = read_rp1_reg_u32(RP1_UART0_FR);

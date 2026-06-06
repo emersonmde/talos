@@ -1,0 +1,7 @@
+
+target/aarch64-talos-rpi5-bcm2712/debug/talos:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000002011d8 <rust_entry>:
+  2011d8:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi547run_rp1_uart0_fr_read_delayed_marker_diagnostic>

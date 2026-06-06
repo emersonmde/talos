@@ -1,0 +1,23 @@
+Task: phase11-rp1-uart0-fr-read-delayed-marker-core-20260606
+
+Passed gates:
+- cargo fmt --all -- --check
+- cargo -Zjson-target-spec test --quiet
+- scripts/rpi5-image.sh
+- scripts/rpi5-rp1-uart0-fr-read-delayed-marker-image.sh
+- scripts/rpi5-rp1-uart0-fr-read-delayed-marker-boot-tree.sh target/rpi5-local-cat-banner-boot-tree-local1 target/rpi5-rp1-uart0-fr-read-delayed-marker-core-boot-tree
+- scripts/rpi5-rp1-uart0-fr-read-delayed-marker-archive.sh target/rpi5-local-cat-banner-boot-tree-local1 target/talos-rpi5-rp1-uart0-fr-read-delayed-marker-core.tar.gz
+- scripts/rpi5-rp1-uart0-fr-read-delayed-marker-review.sh target/talos-rpi5-rp1-uart0-fr-read-delayed-marker-core.tar.gz
+- targeted disassembly review
+- git diff --check
+- /home/node/.cargo/bin/mdbook build
+- git diff --cached --check
+
+Evidence level:
+- fmt/lint/typecheck
+- unit tests
+- image/archive/header/string inspection
+- static disassembly inspection
+- docs validation
+
+No hardware gate was run by this source/static task.

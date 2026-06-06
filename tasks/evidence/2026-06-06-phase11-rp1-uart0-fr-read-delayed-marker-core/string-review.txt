@@ -1,0 +1,8 @@
+115:  30952 rpi5-rp1-uart0-fr-read: start
+116:  30982 rpi5-rp1-uart0-fr-read: pre-mmio-read
+117:  31020 rpi5-rp1-uart0-fr-read-delayed-marker: classification=before-rp1-read
+118:  31090 rpi5-rp1-uart0-fr-read-delayed-marker: final-preload-marker
+119:  31150 rpi5-rp1-uart0-fr-read: contract=phase11-rp1-pcie-map-contract-v1assertion failed: i <= index + 3unknown-or-undefined-instruction target=rp1-uart0-fr-read address= width=32 raw=
+120:  31328 rpi5-rp1-uart0-fr-read: classification=mapped/read-value
+121:  31385 rpi5-rp1-uart0-fr-read: PASS
+122:  31414 TALOS: fr-delayed-preload-loop

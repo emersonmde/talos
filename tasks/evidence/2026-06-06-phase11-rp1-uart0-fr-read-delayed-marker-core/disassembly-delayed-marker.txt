@@ -1,0 +1,142 @@
+
+target/aarch64-talos-rpi5-bcm2712/debug/talos:	file format elf64-littleaarch64
+
+Disassembly of section .text:
+
+00000000002015e4 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi547run_rp1_uart0_fr_read_delayed_marker_diagnostic>:
+  2015e4:      	stp	x30, x21, [sp, #-0x20]!
+  2015e8:      	stp	x20, x19, [sp, #0x10]
+  2015ec:      	mov	x0, #0x78e8             // =30952
+  2015f0:      	mov	w1, #0x1e               // =30
+  2015f4:      	movk	x0, #0x20, lsl #16
+  2015f8:      	movk	x0, #0x0, lsl #32
+  2015fc:      	movk	x0, #0x0, lsl #48
+  201600:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+  201604:      	mov	x0, #0x7906             // =30982
+  201608:      	mov	w1, #0x26               // =38
+  20160c:      	movk	x0, #0x20, lsl #16
+  201610:      	movk	x0, #0x0, lsl #32
+  201614:      	movk	x0, #0x0, lsl #48
+  201618:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+  20161c:      	mov	x0, #0x792c             // =31020
+  201620:      	mov	w1, #0x46               // =70
+  201624:      	movk	x0, #0x20, lsl #16
+  201628:      	movk	x0, #0x0, lsl #32
+  20162c:      	movk	x0, #0x0, lsl #48
+  201630:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+  201634:      	mov	x19, #0x7ab6            // =31414
+  201638:      	mov	x9, #0x1000             // =4096
+  20163c:      	movk	x9, #0x7d00, lsl #16
+  201640:      	movk	x9, #0x10, lsl #32
+  201644:      	mov	x21, #0x200000          // =2097152
+<L0>:
+  201648:      	ldr	w10, [x9, #0x18]
+  20164c:      	tbnz	w10, #0x7,  <L1>
+  201650:      	subs	x21, x21, #0x1
+  201654:      	b.ne	 <L0>
+<L1>:
+  201658:      	dsb	sy
+  20165c:      	mov	x20, #-0x20             // =-32
+  201660:      	movk	x19, #0x20, lsl #16
+  201664:      	movk	x19, #0x0, lsl #32
+  201668:      	movk	x19, #0x0, lsl #48
+  20166c:      	cbz	x20,  <L5>
+<L2>:
+  201670:      	mov	x0, x19
+  201674:      	mov	w1, #0x1f               // =31
+  201678:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+  20167c:      	mov	x9, #0x1000             // =4096
+  201680:      	movk	x9, #0x7d00, lsl #16
+  201684:      	movk	x9, #0x10, lsl #32
+  201688:      	mov	x21, #0x200000          // =2097152
+<L3>:
+  20168c:      	ldr	w10, [x9, #0x18]
+  201690:      	tbnz	w10, #0x7,  <L4>
+  201694:      	subs	x21, x21, #0x1
+  201698:      	b.ne	 <L3>
+<L4>:
+  20169c:      	dsb	sy
+  2016a0:      	add	x20, x20, #0x1
+  2016a4:      	cbnz	x20,  <L2>
+<L5>:
+  2016a8:      	mov	x0, #0x7972             // =31090
+  2016ac:      	mov	w1, #0x3c               // =60
+  2016b0:      	movk	x0, #0x20, lsl #16
+  2016b4:      	movk	x0, #0x0, lsl #32
+  2016b8:      	movk	x0, #0x0, lsl #48
+  2016bc:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+  2016c0:      	mov	x20, #0x18              // =24
+  2016c4:      	mov	x0, #0x79ae             // =31150
+  2016c8:      	mov	x9, #0x1000             // =4096
+  2016cc:      	movk	x9, #0x7d00, lsl #16
+  2016d0:      	movk	x9, #0x10, lsl #32
+  2016d4:      	mov	x21, #0x200000          // =2097152
+<L6>:
+  2016d8:      	ldr	w10, [x9, #0x18]
+  2016dc:      	tbnz	w10, #0x7,  <L7>
+  2016e0:      	subs	x21, x21, #0x1
+  2016e4:      	b.ne	 <L6>
+<L7>:
+  2016e8:      	dsb	sy
+  2016ec:      	movk	x20, #0x3, lsl #16
+  2016f0:      	movk	x0, #0x20, lsl #16
+  2016f4:      	mov	w1, #0x21               // =33
+  2016f8:      	movk	x20, #0x1f, lsl #32
+  2016fc:      	movk	x0, #0x0, lsl #32
+  201700:      	ldr	w19, [x20]
+  201704:      	movk	x0, #0x0, lsl #48
+  201708:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+  20170c:      	mov	x0, #0x79cf             // =31183
+  201710:      	mov	w1, #0x20               // =32
+  201714:      	movk	x0, #0x20, lsl #16
+  201718:      	movk	x0, #0x0, lsl #32
+  20171c:      	movk	x0, #0x0, lsl #48
+  201720:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+  201724:      	mov	x0, #0x7a2f             // =31279
+  201728:      	mov	w1, #0x22               // =34
+  20172c:      	movk	x0, #0x20, lsl #16
+  201730:      	movk	x0, #0x0, lsl #32
+  201734:      	movk	x0, #0x0, lsl #48
+  201738:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+  20173c:      	mov	x0, x20
+  201740:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi519write_early_hex_u64>
+  201744:      	mov	x0, #0x7a51             // =31313
+  201748:      	mov	w1, #0xe                // =14
+  20174c:      	movk	x0, #0x20, lsl #16
+  201750:      	movk	x0, #0x0, lsl #32
+  201754:      	movk	x0, #0x0, lsl #48
+  201758:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+  20175c:      	mov	x0, x19
+  201760:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi519write_early_hex_u64>
+  201764:      	mov	x0, #0x7a5f             // =31327
+  201768:      	mov	w1, #0x1                // =1
+  20176c:      	movk	x0, #0x20, lsl #16
+  201770:      	movk	x0, #0x0, lsl #32
+  201774:      	movk	x0, #0x0, lsl #48
+  201778:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+  20177c:      	mov	x0, #0x7a60             // =31328
+  201780:      	mov	w1, #0x39               // =57
+  201784:      	movk	x0, #0x20, lsl #16
+  201788:      	movk	x0, #0x0, lsl #32
+  20178c:      	movk	x0, #0x0, lsl #48
+  201790:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+  201794:      	mov	x0, #0x7a99             // =31385
+  201798:      	mov	w1, #0x1d               // =29
+  20179c:      	movk	x0, #0x20, lsl #16
+  2017a0:      	movk	x0, #0x0, lsl #32
+  2017a4:      	movk	x0, #0x0, lsl #48
+  2017a8:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+  2017ac:      	mov	x9, #0x1000             // =4096
+  2017b0:      	movk	x9, #0x7d00, lsl #16
+  2017b4:      	movk	x9, #0x10, lsl #32
+  2017b8:      	mov	x21, #0x200000          // =2097152
+<L8>:
+  2017bc:      	ldr	w10, [x9, #0x18]
+  2017c0:      	tbnz	w10, #0x7,  <L9>
+  2017c4:      	subs	x21, x21, #0x1
+  2017c8:      	b.ne	 <L8>
+<L9>:
+  2017cc:      	dsb	sy
+<L10>:
+  2017d0:      	isb
+  2017d4:      	b	 <L10>
