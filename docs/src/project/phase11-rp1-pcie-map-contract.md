@@ -552,6 +552,17 @@ SSH, broader PCIe, Milestone 11.2, or a phase transition. The lab restored the
 pre-run tree `a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10`
 before hardware-lock release.
 
+phase11-rp1-uart0-fr-shaped-no-mmio-marker-closeout-20260606 reconciles that
+source/static and Pi 5 evidence as fr-shaped-no-mmio-marker-visible. The
+accepted boundary remains limited to the selected FR-read-shaped path reaching
+visible UART10 pre-MMIO marker output when the volatile RP1 UART0 FR load is
+absent. This closeout does not accept RP1 UART0 FR volatile-read execution,
+mapped/read-value behavior, unmapped/trap behavior, firmware-state behavior,
+GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader
+PCIe, Milestone 11.2, or a phase transition. Any actual RP1 UART0 FR-read
+hardware proof needs a new supervisor-planned task with explicit acceptance
+gates.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path now branches directly from `rust_entry`, reports `rpi5-rp1-uart0-fr-read: start` and `rpi5-rp1-uart0-fr-read: pre-mmio-read` through the UART10 early-serial helper, flushes UART10, then reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load. A returned read reports the contract id, target name, address, width, raw value, `mapped/read-value` success classification, and PASS before halting in a spin loop. The pre-MMIO marker is a discriminator for the next serialized proof: if hardware reaches that marker but not the read-value line, the result is entry/handoff reachability plus an RP1 read trap/hang boundary, not a mapping acceptance.

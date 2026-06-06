@@ -1,0 +1,68 @@
+{
+  "task_id": "phase11-rp1-uart0-fr-shaped-no-mmio-marker-closeout-20260606",
+  "classification": "fr-shaped-no-mmio-marker-visible",
+  "task_record": "tasks/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-closeout.md",
+  "inputs": {
+    "core_task": "tasks/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-core.md",
+    "core_commit": "e953ea57faba02a2c5a53348f7043ef12f779d20",
+    "core_evidence_map": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-core/evidence-map.json",
+    "core_static_inspection": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-core/static-inspection.md",
+    "pi5_discriminator_task": "tasks/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-pi5-discriminator.md",
+    "pi5_discriminator_commit": "c0dc045fc676d7e4e0900042d2edb273870c9227",
+    "pi5_discriminator_classification": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-pi5-discriminator/classification.json",
+    "pi5_discriminator_evidence_map": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-pi5-discriminator/evidence-map.json",
+    "candidate_archive_sha256": "05a6801471ffd5cb3ae61f450734728f7980d8a2c4db20b3a6280d83b470a484",
+    "source_boot_tree_identity": "05f68072e4f1653c10eadfefbe099c92cefdde024b7f7d985b7c785c48011e45",
+    "published_tree_hash": "2bd7db27d7bdf27a356c81408fefce059148f61e332fb3a207d280913b6ec27d",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 45600,
+    "serial_cursor": 4194304,
+    "tftp_cursor": 4134781,
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "evidence": {
+    "static_inspection": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-closeout/static-evidence-inspection.md",
+    "core_static_inspection": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-core/static-inspection.md",
+    "core_candidate_identity": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-core/candidate-identity.txt",
+    "clean_run_serial_summary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-pi5-discriminator/candidate-clean-run/serial-window-summary.json",
+    "clean_run_stable_pre_restore_tftp": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-pi5-discriminator/candidate-clean-run/tftp-delta-stable-pre-restore.json",
+    "clean_run_post_restore_status": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-shaped-no-mmio-marker-pi5-discriminator/candidate-clean-run/post-restore-status.json",
+    "phase11_contract": "docs/src/project/phase11-rp1-pcie-map-contract.md"
+  },
+  "accepted": [
+    "FR-shaped no-MMIO marker candidate archive identity",
+    "static absence of RP1 UART0 FR MMIO before the marker loop",
+    "candidate publication and stable kernel fetch visibility",
+    "repaired saturated-cursor serial visibility for the repeated no-MMIO marker",
+    "FR-read-shaped path reaches UART10 pre-MMIO marker output when the volatile RP1 UART0 FR load is absent",
+    "restore hygiene"
+  ],
+  "unaccepted": [
+    "RP1 UART0 FR volatile-read execution",
+    "RP1 UART0 FR mapped/read-value",
+    "RP1 UART0 FR unmapped/trap",
+    "firmware-state behavior for the RP1 UART0 FR read",
+    "GPIO",
+    "interrupts",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ],
+  "next_discriminator": {
+    "planning_required": true,
+    "reason": "No explicit queued follow-up task remains mechanically unblocked. The no-MMIO marker is visible, but it does not execute the volatile RP1 UART0 FR load or classify RP1 mapped/unmapped behavior.",
+    "smallest_next_shape": "Supervisor planning should define the next actual RP1 UART0 FR volatile-read boundary using the accepted FR-shaped marker visibility, such as a delayed/repeated pre-MMIO marker followed by the volatile load or another precise trap/hang discriminator."
+  },
+  "validation": {
+    "static_evidence_inspection": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  }
+}
