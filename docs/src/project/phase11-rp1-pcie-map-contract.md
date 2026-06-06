@@ -168,6 +168,20 @@ pre-BootInfo handoff reachability if a repeated TFTP boot/fetch sequence proves
 the reset side effect after one candidate power cycle; RP1 mapped/unmapped
 behavior remains blocked.
 
+phase11-rp1-entry-control-handoff-pi5-discriminator-20260606 then published
+only that accepted archive. The published tree was
+760e7e3c59c3d6d6da4f465c9f67fc53a445bfa18850c6a76f2a3972af680d2d with a
+45,248-byte da591740/kernel_2712.img. From one fresh power cycle, same-cursor
+stable pre-restore TFTP evidence retained four candidate kernel fetches across
+two boot sequences at 05:51:46/05:51:47 and 05:52:04/05:52:05 UTC. That
+accepts pre-BootInfo rust_entry handoff reachability by the PSCI reset side
+effect. It does not accept TALOS: kernel_main serial visibility, RP1
+mapped/read-value, unmapped/trap, firmware-state, GPIO, interrupts, DMA/cache,
+storage, generated-root, networking, SSH, broader PCIe, or Milestone 11.2
+behavior. The lab restored the pre-run tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 before
+hardware-lock release.
+
 phase11-staging-capture-log-stability-core-20260605 repairs the Pi 5
 proof-rule boundary exposed by that blocker. Replay from the retained cursor
 `4088847` later returned 13 TFTP events, including a restored known-good

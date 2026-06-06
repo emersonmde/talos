@@ -7148,6 +7148,19 @@ task may classify only candidate fetch and the reset side effect's repeated
 TFTP boot/fetch signal; serial visibility and RP1 mapped/unmapped behavior
 remain separate and unaccepted.
 
+phase11-rp1-entry-control-handoff-pi5-discriminator-20260606 is accepted as
+pre-bootinfo-handoff-reachability-accepted. The Pi 5 run published only
+target/talos-rpi5-rp1-handoff-reset-discriminator-core.tar.gz, staged tree
+760e7e3c59c3d6d6da4f465c9f67fc53a445bfa18850c6a76f2a3972af680d2d, and stable
+same-cursor pre-restore TFTP evidence observed four 45,248-byte
+da591740/kernel_2712.img fetches across two boot sequences after one power
+cycle. That accepts candidate fetch and pre-BootInfo rust_entry handoff
+reachability by PSCI reset side effect only. TALOS: kernel_main serial
+visibility, RP1 mapped/read-value, unmapped/trap, firmware-state behavior,
+GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader
+PCIe, and Milestone 11.2 remain blocked pending the queued handoff closeout and
+later supervisor-planned diagnostic work.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

@@ -1,0 +1,27 @@
+{
+  "task_id": "phase11-rp1-entry-control-handoff-pi5-discriminator-20260606",
+  "classification": "pre-bootinfo-handoff-reachability-accepted",
+  "accepted": [
+    "candidate archive publication",
+    "candidate TFTP fetch",
+    "pre-BootInfo rust_entry handoff reachability by repeated PSCI reset side effect",
+    "post-run restore to pre-run boot tree"
+  ],
+  "not_accepted": [
+    "TALOS: kernel_main serial visibility",
+    "entry-control UART marker visibility",
+    "RP1 mapped/read-value behavior",
+    "RP1 unmapped/trap behavior",
+    "firmware-state behavior",
+    "GPIO ownership",
+    "interrupts",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ]
+}

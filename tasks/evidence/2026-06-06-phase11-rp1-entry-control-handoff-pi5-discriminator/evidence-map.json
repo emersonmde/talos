@@ -1,0 +1,62 @@
+{
+  "task_id": "phase11-rp1-entry-control-handoff-pi5-discriminator-20260606",
+  "classification": "pre-bootinfo-handoff-reachability-accepted",
+  "archive": {
+    "path": "target/talos-rpi5-rp1-handoff-reset-discriminator-core.tar.gz",
+    "sha256_file": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/archive-sha256.txt",
+    "sha256": "ee251a145b88df55fd162b0150a82d62a9671906f401948524d27d45929516c6",
+    "published_only_archive": true
+  },
+  "boot_identity": {
+    "pre_status": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/pre-status.json",
+    "pre_boot_files": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/pre-boot-files.json",
+    "pre_snapshots": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/pre-snapshots.json",
+    "pre_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "pre_run_snapshot_name": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/pre-run-snapshot-name.txt",
+    "pre_run_snapshot": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/pre-run-snapshot.json"
+  },
+  "publication": {
+    "publish": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/publish.json",
+    "post_publish_status": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/post-publish-status.json",
+    "post_publish_boot_files": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/post-publish-boot-files.json",
+    "published_tree_hash": "760e7e3c59c3d6d6da4f465c9f67fc53a445bfa18850c6a76f2a3972af680d2d",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_bytes": 45248
+  },
+  "fresh_cursors": {
+    "serial_peek": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/serial-peek-before-power.json",
+    "serial_cursor": 4107969,
+    "tftp_cursor_sample": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/tftp-cursor-before-power.json",
+    "tftp_cursor": 4101006
+  },
+  "candidate_run": {
+    "power_cycle": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/power-cycle.json",
+    "serial_observations": [
+      "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/serial-observe-1.json",
+      "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/serial-observe-2.json",
+      "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/serial-observe-3.json"
+    ],
+    "serial_bytes_from_fresh_cursor": 2748,
+    "stable_tftp_initial": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/tftp-delta-stable-pre-restore.json",
+    "stable_tftp_followup": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/tftp-delta-stable-followup-pre-restore.json",
+    "final_tftp_pre_restore": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/tftp-delta-final2-pre-restore.json",
+    "stable_followup_event_count": 26,
+    "stable_followup_kernel_fetches": 4,
+    "accepted_signal": "repeated candidate TFTP boot/fetch sequence after one power cycle, matching PSCI SYSTEM_RESET side effect from rust_entry"
+  },
+  "restore": {
+    "restore_snapshot": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/restore-snapshot.json",
+    "post_restore_status": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/post-restore-status.json",
+    "post_restore_boot_files": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/post-restore-boot-files.json",
+    "post_restore_snapshots": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/post-restore-snapshots.json",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "restore_matches_pre_run": true
+  },
+  "validation": {
+    "hardware_level": "serialized Pi 5 hardware evidence through lab-controller endpoints + serial hardware boot/output + stable TFTP delta + restore proof",
+    "git_diff_check": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/git-diff-check.log",
+    "mdbook_build": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/mdbook-build.log",
+    "git_diff_cached_check": "tasks/evidence/2026-06-06-phase11-rp1-entry-control-handoff-pi5-discriminator/git-diff-cached-check.log"
+  },
+  "next_action": "Promote phase11-rp1-entry-control-handoff-closeout-20260606 on a later worker wake after this accepted proof is committed; do not infer RP1 mapped/unmapped behavior."
+}
