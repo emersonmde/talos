@@ -1,0 +1,90 @@
+{
+  "task": "phase11-rp1-uart0-fr-tail-stable-result-core-20260606",
+  "status": "accepted",
+  "classification": "local-static-tail-stable-result-core-accepted",
+  "accepted": [
+    "rpi5_rp1_uart0_fr_tail_stable_result branches directly from rust_entry",
+    "RP1 candidate performs exactly one 32-bit volatile load from 0x1f00030018",
+    "RP1 candidate repeatedly emits TALOS: fr-tail-stable-result with contract id, target, address, width, raw value, and mapped/read-value classification after a returned load",
+    "rpi5_rp1_uart0_fr_tail_stable_no_mmio_control branches directly from rust_entry",
+    "no-MMIO control candidate constructs no RP1 FR address and performs zero RP1 loads",
+    "no-MMIO control candidate repeatedly emits TALOS: fr-tail-stable-control with simulated/control classification",
+    "both non-published Pi 5 candidate archives passed task-owned archive review"
+  ],
+  "notAccepted": [
+    "Pi 5 hardware execution",
+    "visible no-MMIO control serial output",
+    "visible RP1 result serial output",
+    "RP1 mapped/read-value hardware behavior",
+    "RP1 bus-fault/trap hardware behavior",
+    "firmware-state behavior",
+    "GPIO or pin-control ownership",
+    "interrupts",
+    "DMA/cache behavior",
+    "storage or generated-root behavior",
+    "networking or SSH",
+    "broader PCIe behavior",
+    "Milestone 11.2",
+    "phase transition"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-core.md",
+    "staticInspection": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-core/static-inspection.md",
+    "assemblyReview": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-core/assembly-review.txt",
+    "rp1ArchiveReview": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-core/rp1-archive-review.txt",
+    "controlArchiveReview": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-core/control-archive-review.txt",
+    "rp1Assembly": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-core/rp1-tail-stable-result-asm.txt",
+    "controlAssembly": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-core/control-tail-stable-asm.txt",
+    "stringReview": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-core/string-review.txt",
+    "rp1CandidateArchive": "target/talos-rpi5-rp1-uart0-fr-tail-stable-result-core.tar.gz",
+    "controlCandidateArchive": "target/talos-rpi5-rp1-uart0-fr-tail-stable-no-mmio-control-core.tar.gz"
+  },
+  "rp1Candidate": {
+    "archive": "target/talos-rpi5-rp1-uart0-fr-tail-stable-result-core.tar.gz",
+    "archiveSha256": "521ea4e092321f19e414020303f4127aaf5f076095bd636bf2578cc452959541",
+    "bootTreeIdentity": "b912e810a162700602469b9039c22143cddcd587a53312bdecdc1ca4d0f04a27",
+    "kernelSha256": "63c0eddbbd90da106a5eb20095e3108a05d53001edd017d1d6a7c4b9271cc2b8",
+    "kernelSizeBytes": 45800,
+    "textOffset": 0,
+    "headerImageSize": 45800,
+    "flags": 12,
+    "magic": "ARMd",
+    "marker": "TALOS: fr-tail-stable-result",
+    "contractId": "phase11-rp1-pcie-map-contract-v1",
+    "target": "rp1-uart0-fr-read",
+    "address": "0x1f00030018",
+    "widthBits": 32,
+    "assemblyReview": {
+      "rp1VolatileLoadCount": 1,
+      "rp1AddressConstructionCount": 1
+    }
+  },
+  "controlCandidate": {
+    "archive": "target/talos-rpi5-rp1-uart0-fr-tail-stable-no-mmio-control-core.tar.gz",
+    "archiveSha256": "050542fe57dc5d53ce5ee87a16c139701c8beedc25f8a1c26a8b5b1b21bdae9b",
+    "bootTreeIdentity": "74e0c0a9c294927d8e7f377fd8272d587050bd3dd5fb471e120f126e65fd4764",
+    "kernelSha256": "c9c473242310875f232c19c97caa82dfc2ca843c3bf159a3380d01f6b2105581",
+    "kernelSizeBytes": 45728,
+    "textOffset": 0,
+    "headerImageSize": 45728,
+    "flags": 12,
+    "magic": "ARMd",
+    "marker": "TALOS: fr-tail-stable-control",
+    "classification": "simulated/control",
+    "assemblyReview": {
+      "rp1VolatileLoadCount": 0,
+      "rp1AddressConstructionCount": 0,
+      "readRp1RegReferences": 0
+    }
+  },
+  "validation": {
+    "cargoFmt": "passed",
+    "cargoTestQuiet": "passed",
+    "archiveReview": "passed",
+    "staticAssemblyInspection": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  },
+  "nextAction": "Mechanically promote phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5-20260606 on a future worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive."
+}

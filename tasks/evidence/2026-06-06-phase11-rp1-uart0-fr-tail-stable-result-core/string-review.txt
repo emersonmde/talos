@@ -1,0 +1,8 @@
+RP1 exact-tail strings:
+115:rpi5-rp1-uart0-fr-tail-stable-result: start
+116:rpi5-rp1-uart0-fr-tail-stable-result: before-rp1-load
+117:TALOS: fr-tail-stable-result contract=phase11-rp1-pcie-map-contract-v1assertion failed: i <= index + 3unknown-or-undefined-instruction target=rp1-uart0-fr-read address= width=32 raw= classification=mapped/read-value
+Control exact-tail strings:
+115:rpi5-rp1-uart0-fr-tail-stable-control: start
+116:rpi5-rp1-uart0-fr-tail-stable-control: no-rp1-mmio
+117:TALOS: fr-tail-stable-control contract=phase11-rp1-pcie-map-contract-v1assertion failed: i <= index + 3unknown-or-undefined-instruction target=rp1-uart0-fr-read width=32 raw= classification=simulated/control

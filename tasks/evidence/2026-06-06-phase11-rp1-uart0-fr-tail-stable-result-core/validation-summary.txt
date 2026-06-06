@@ -1,0 +1,7 @@
+fmt/lint/typecheck: cargo fmt --all -- --check passed
+unit tests: cargo -Zjson-target-spec test --quiet passed
+image/archive inspection: both tail-stable archive review scripts passed
+static assembly inspection: assembly-review.txt proves one RP1 load in the RP1 candidate and zero RP1 loads in the control candidate
+git diff --check: passed
+mdbook build: passed
+git diff --cached --check: passed

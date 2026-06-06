@@ -1,0 +1,21 @@
+rp1_function_ldr_w23_x19_count=1
+rp1_function_rp1_base_movk_count=1
+rp1_function_rp1_offset_movk_count=1
+control_function_ldr_w23_x19_count=0
+control_function_rp1_base_movk_count=0
+control_function_rp1_offset_movk_count=0
+control_function_read_rp1_symbol_refs=0
+
+RP1 volatile load line:
+67:	ldr	w23, [x19]
+
+RP1 address construction lines:
+9:	stp	x20, x19, [sp, #64]
+23:	mov	x19, #24
+26:	movk	x19, #3, lsl #16
+28:	movk	x19, #31, lsl #32
+67:	ldr	w23, [x19]
+
+Control UART10-only polling loads:
+46:	ldr	w10, [x9, #24]
+90:	ldr	w10, [x9, #24]

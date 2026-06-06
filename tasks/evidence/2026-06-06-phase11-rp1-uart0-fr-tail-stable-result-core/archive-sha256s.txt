@@ -1,0 +1,2 @@
+521ea4e092321f19e414020303f4127aaf5f076095bd636bf2578cc452959541  target/talos-rpi5-rp1-uart0-fr-tail-stable-result-core.tar.gz
+050542fe57dc5d53ce5ee87a16c139701c8beedc25f8a1c26a8b5b1b21bdae9b  target/talos-rpi5-rp1-uart0-fr-tail-stable-no-mmio-control-core.tar.gz

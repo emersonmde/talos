@@ -819,6 +819,27 @@ different discriminator that explains why the selected candidate produces the
 post-read-loop tail without retaining the contracted control/read-result/trap
 markers.
 
+phase11-rp1-uart0-fr-tail-stable-result-core-20260606 adds that next
+source/static discriminator. The RP1 candidate branches directly from
+rust_entry, emits rpi5-rp1-uart0-fr-tail-stable-result: before-rp1-load,
+executes exactly one 32-bit volatile load from RP1_UART0_FR
+(0x1f_0003_0018), and, only if the load returns, repeatedly emits
+TALOS: fr-tail-stable-result with contract id, target, address, width, raw
+value, and classification=mapped/read-value. A matching no-RP1-MMIO control
+candidate branches directly from rust_entry, emits
+rpi5-rp1-uart0-fr-tail-stable-control: no-rp1-mmio, constructs no RP1 FR
+address, executes no RP1 volatile load, and repeatedly emits
+TALOS: fr-tail-stable-control with the same compact result-output shape and
+classification=simulated/control.
+
+Static assembly evidence accepts only the local candidate shape: one RP1 load
+in the RP1 candidate and zero RP1 loads in the control candidate. RP1 UART0 FR
+mapped/read-value behavior, bus-fault/trap behavior, firmware-state behavior,
+GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader
+PCIe, Milestone 11.2, and phase transition remain unaccepted. The next
+hardware control must first prove the no-MMIO tail-stable output shape is
+capturable on Pi 5 before any RP1 mapped/read-value proof can be attempted.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when
@@ -840,6 +861,11 @@ pre-read control, then executes the same contracted load once and enters a
 unique post-read terminal hold loop after reporting the returned raw value. A
 returned read from the true FR-read paths reports the contract id, target name,
 address, width, raw value, and `mapped/read-value` success classification.
+The tail-stable RP1 result path keeps the same single-load contract but moves
+the returned read-value/classification text into a repeated terminal marker so
+a saturated serial window can retain the result if the load returns. The
+tail-stable no-MMIO control path shares the repeated result-output shape with
+an explicit simulated/control classification and no RP1 address construction.
 The pre-load and hold-control markers are discriminators for the next
 serialized proof: if hardware reaches a pre-read marker but not the read-value
 line, the result is an at-or-after-load no-return/trap boundary, not a mapping
@@ -875,6 +901,17 @@ Artifact helpers:
   `scripts/rpi5-rp1-uart0-fr-shaped-no-mmio-marker-review.sh` build and
   inspect the no-MMIO marker discriminator archive for the queued serialized
   Pi 5 proof.
+- scripts/rpi5-rp1-uart0-fr-tail-stable-result-image.sh,
+  scripts/rpi5-rp1-uart0-fr-tail-stable-result-boot-tree.sh,
+  scripts/rpi5-rp1-uart0-fr-tail-stable-result-archive.sh, and
+  scripts/rpi5-rp1-uart0-fr-tail-stable-result-review.sh build and inspect
+  the tail-stable RP1 single-load result candidate archive.
+- scripts/rpi5-rp1-uart0-fr-tail-stable-no-mmio-control-image.sh,
+  scripts/rpi5-rp1-uart0-fr-tail-stable-no-mmio-control-boot-tree.sh,
+  scripts/rpi5-rp1-uart0-fr-tail-stable-no-mmio-control-archive.sh, and
+  scripts/rpi5-rp1-uart0-fr-tail-stable-no-mmio-control-review.sh build and
+  inspect the no-RP1-MMIO tail-stable control archive required before the RP1
+  hardware proof.
 
 ## Deferred Work
 

@@ -12485,7 +12485,8 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
     any(
         talos_boot_scenario = "rpi5_rp1_uart0_fr_read",
         talos_boot_scenario = "rpi5_rp1_uart0_fr_read_delayed_marker",
-        talos_boot_scenario = "rpi5_rp1_uart0_fr_read_hold_control"
+        talos_boot_scenario = "rpi5_rp1_uart0_fr_read_hold_control",
+        talos_boot_scenario = "rpi5_rp1_uart0_fr_tail_stable_result"
     )
 ))]
 fn read_rp1_reg_u32(addr: usize) -> u32 {
@@ -12716,6 +12717,47 @@ pub fn run_rp1_uart0_fr_shaped_no_mmio_marker() -> ! {
 
     loop {
         write_early_static("TALOS: fr-no-mmio-loop\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_uart0_fr_tail_stable_result")]
+pub fn run_rp1_uart0_fr_tail_stable_result() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-pcie-map-contract-v1";
+
+    write_early_static("rpi5-rp1-uart0-fr-tail-stable-result: start\n");
+    write_early_static("rpi5-rp1-uart0-fr-tail-stable-result: before-rp1-load\n");
+    wait_uart10_empty_early_phase();
+
+    let value = read_rp1_reg_u32(RP1_UART0_FR);
+
+    loop {
+        write_early_static("TALOS: fr-tail-stable-result contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=rp1-uart0-fr-read address=");
+        write_early_hex_u64(RP1_UART0_FR as u64);
+        write_early_static(" width=32 raw=");
+        write_early_hex_u64(value as u64);
+        write_early_static(" classification=mapped/read-value\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_uart0_fr_tail_stable_no_mmio_control")]
+pub fn run_rp1_uart0_fr_tail_stable_no_mmio_control() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-pcie-map-contract-v1";
+    const SIMULATED_RAW_VALUE: u64 = 0;
+
+    write_early_static("rpi5-rp1-uart0-fr-tail-stable-control: start\n");
+    write_early_static("rpi5-rp1-uart0-fr-tail-stable-control: no-rp1-mmio\n");
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: fr-tail-stable-control contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=rp1-uart0-fr-read width=32 raw=");
+        write_early_hex_u64(SIMULATED_RAW_VALUE);
+        write_early_static(" classification=simulated/control\n");
         wait_uart10_empty_early_phase();
     }
 }

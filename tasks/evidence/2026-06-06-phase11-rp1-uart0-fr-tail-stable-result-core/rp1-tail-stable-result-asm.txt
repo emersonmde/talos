@@ -1,0 +1,124 @@
+_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_rp1_uart0_fr_tail_stable_result:
+.Lfunc_begin16:
+	.loc	8 12725 0
+	.cfi_startproc
+	str	x30, [sp, #-80]!
+	stp	x26, x25, [sp, #16]
+	stp	x24, x23, [sp, #32]
+	stp	x22, x21, [sp, #48]
+	stp	x20, x19, [sp, #64]
+	.cfi_def_cfa_offset 80
+	.cfi_offset w19, -8
+	.cfi_offset w20, -16
+	.cfi_offset w21, -24
+	.cfi_offset w22, -32
+	.cfi_offset w23, -40
+	.cfi_offset w24, -48
+	.cfi_offset w25, -56
+	.cfi_offset w26, -64
+	.cfi_offset w30, -80
+.Ltmp165:
+	.loc	8 12728 5 prologue_end
+	movz	x0, #:abs_g0_nc:.Lanon.38ce256f059264a555424238489c4788.36
+	mov	x19, #24
+	mov	w1, #44
+	movk	x0, #:abs_g1_nc:.Lanon.38ce256f059264a555424238489c4788.36
+	movk	x19, #3, lsl #16
+	movk	x0, #:abs_g2_nc:.Lanon.38ce256f059264a555424238489c4788.36
+	movk	x19, #31, lsl #32
+	movk	x0, #:abs_g3:.Lanon.38ce256f059264a555424238489c4788.36
+	bl	_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static
+	.loc	8 12729 5
+	movz	x0, #:abs_g0_nc:.Lanon.38ce256f059264a555424238489c4788.37
+	mov	w1, #54
+	movk	x0, #:abs_g1_nc:.Lanon.38ce256f059264a555424238489c4788.37
+	movk	x0, #:abs_g2_nc:.Lanon.38ce256f059264a555424238489c4788.37
+	movk	x0, #:abs_g3:.Lanon.38ce256f059264a555424238489c4788.37
+	bl	_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static
+	movz	x20, #:abs_g0_nc:.Lanon.38ce256f059264a555424238489c4788.38
+	movz	x22, #:abs_g0_nc:.Lanon.38ce256f059264a555424238489c4788.39
+.Ltmp166:
+	.loc	8 0 5 is_stmt 0
+	movz	x24, #:abs_g0_nc:.Lanon.38ce256f059264a555424238489c4788.40
+	movz	x25, #:abs_g0_nc:.Lanon.38ce256f059264a555424238489c4788.41
+	movz	x26, #:abs_g0_nc:.Lanon.38ce256f059264a555424238489c4788.42
+.Ltmp167:
+	.loc	8 12841 9 is_stmt 1
+	//APP
+	mov	x9, #4096
+	movk	x9, #32000, lsl #16
+	movk	x9, #16, lsl #32
+	mov	x21, #2097152
+.Ltmp168:
+	ldr	w10, [x9, #24]
+	tbnz	w10, #7, .Ltmp169
+	subs	x21, x21, #1
+	b.ne	.Ltmp168
+.Ltmp169:
+	dsb	sy
+	//NO_APP
+	movk	x20, #:abs_g1_nc:.Lanon.38ce256f059264a555424238489c4788.38
+	movk	x22, #:abs_g1_nc:.Lanon.38ce256f059264a555424238489c4788.39
+	movk	x24, #:abs_g1_nc:.Lanon.38ce256f059264a555424238489c4788.40
+	movk	x25, #:abs_g1_nc:.Lanon.38ce256f059264a555424238489c4788.41
+	movk	x26, #:abs_g1_nc:.Lanon.38ce256f059264a555424238489c4788.42
+.Ltmp170:
+	.loc	14 2107 9
+	ldr	w23, [x19]
+	movk	x20, #:abs_g2_nc:.Lanon.38ce256f059264a555424238489c4788.38
+	movk	x22, #:abs_g2_nc:.Lanon.38ce256f059264a555424238489c4788.39
+	movk	x24, #:abs_g2_nc:.Lanon.38ce256f059264a555424238489c4788.40
+	movk	x25, #:abs_g2_nc:.Lanon.38ce256f059264a555424238489c4788.41
+	movk	x26, #:abs_g2_nc:.Lanon.38ce256f059264a555424238489c4788.42
+	movk	x20, #:abs_g3:.Lanon.38ce256f059264a555424238489c4788.38
+	movk	x22, #:abs_g3:.Lanon.38ce256f059264a555424238489c4788.39
+	movk	x24, #:abs_g3:.Lanon.38ce256f059264a555424238489c4788.40
+	movk	x25, #:abs_g3:.Lanon.38ce256f059264a555424238489c4788.41
+	movk	x26, #:abs_g3:.Lanon.38ce256f059264a555424238489c4788.42
+.Ltmp171:
+.LBB16_1:
+	.loc	8 12735 9
+	mov	x0, x20
+	mov	w1, #38
+	bl	_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static
+	.loc	8 12736 9
+	mov	x0, x22
+	mov	w1, #32
+	bl	_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static
+	.loc	8 12737 9
+	mov	x0, x24
+	mov	w1, #34
+	bl	_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static
+	bl	OUTLINED_FUNCTION_3
+	.loc	8 12739 9
+	mov	x0, x25
+	mov	w1, #14
+	bl	_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static
+	.loc	8 12740 9
+	mov	x0, x23
+	bl	_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi519write_early_hex_u64
+	.loc	8 12741 9
+	mov	x0, x26
+	mov	w1, #34
+	bl	_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static
+.Ltmp172:
+	.loc	8 12841 9
+	//APP
+	mov	x9, #4096
+	movk	x9, #32000, lsl #16
+	movk	x9, #16, lsl #32
+	mov	x21, #2097152
+.Ltmp173:
+	ldr	w10, [x9, #24]
+	tbnz	w10, #7, .Ltmp174
+	subs	x21, x21, #1
+	b.ne	.Ltmp173
+.Ltmp174:
+	dsb	sy
+	//NO_APP
+.Ltmp175:
+	.loc	8 12742 9
+	b	.LBB16_1
+.Ltmp176:
+.Lfunc_end16:
+	.size	_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_rp1_uart0_fr_tail_stable_result, .Lfunc_end16-_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi535run_rp1_uart0_fr_tail_stable_result

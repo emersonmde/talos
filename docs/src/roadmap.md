@@ -7380,6 +7380,17 @@ SSH, broader PCIe, Milestone 11.2, and phase transition remain unaccepted. The
 next bounded step requires supervisor planning for a qualitatively different
 discriminator; another same-shaped RP1 FR-read hardware rerun is not progress.
 
+phase11-rp1-uart0-fr-tail-stable-result-core-20260606 accepts a local/static
+tail-stable discriminator for that next step. The RP1 candidate keeps exactly
+one contracted volatile load from RP1 UART0 FR at 0x1f00030018, then, if the
+load returns, repeatedly emits TALOS: fr-tail-stable-result with contract id,
+target, address, width, raw value, and mapped/read-value classification. The
+paired no-RP1-MMIO control candidate constructs no RP1 FR address, performs no
+RP1 volatile load, and repeatedly emits TALOS: fr-tail-stable-control with a
+simulated/control classification. This accepts only source/static/archive
+evidence; the queued no-MMIO Pi 5 control must pass before an RP1
+mapped/read-value hardware proof can be attempted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

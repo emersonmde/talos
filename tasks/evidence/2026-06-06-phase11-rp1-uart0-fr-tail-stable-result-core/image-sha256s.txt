@@ -1,0 +1,2 @@
+63c0eddbbd90da106a5eb20095e3108a05d53001edd017d1d6a7c4b9271cc2b8  target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-rp1-uart0-fr-tail-stable-result.img
+c9c473242310875f232c19c97caa82dfc2ca843c3bf159a3380d01f6b2105581  target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-rp1-uart0-fr-tail-stable-no-mmio-control.img
