@@ -7234,6 +7234,23 @@ networking, SSH, storage, generated-root, broader PCIe, Milestone 11.2, or
 phase transition. The existing RP1 UART0 FR-read refresh core is mechanically
 unblocked next; the hardware proof and closeout remain separately gated.
 
+phase11-rp1-uart0-fr-read-refresh-core-20260606 is accepted as the refreshed
+local/static RP1 UART0 flag-register read candidate. The
+rpi5_rp1_uart0_fr_read scenario now branches directly from rust_entry, emits
+the start and pre-MMIO discriminator lines through the UART10 early-serial
+helper, flushes UART10, performs exactly one 32-bit volatile load from
+0x1f_0003_0018, reports contract id phase11-rp1-pcie-map-contract-v1, target
+rp1-uart0-fr-read, address, width, raw value, mapped/read-value
+classification, and PASS if the read returns, then halts. The retained archive
+target/talos-rpi5-rp1-uart0-fr-read-refresh-core.tar.gz has SHA-256
+da35a26e817fd30b81874a701171de1b9d47c47024d5fc405a7068ca3b2e5d60 and a
+45,832-byte kernel_2712.img with text_offset=0/header_image_size=45832/flags=12.
+This is source/static and archive-review evidence only; RP1 mapped/read-value,
+unmapped/trap, firmware-state behavior, GPIO, interrupts, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe, Milestone 11.2, and phase
+transition remain unaccepted until the separately gated Pi 5 proof runs under
+hardwareTestLock.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

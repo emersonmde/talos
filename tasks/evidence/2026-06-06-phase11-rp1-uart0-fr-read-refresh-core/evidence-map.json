@@ -1,0 +1,52 @@
+{
+  "task": "phase11-rp1-uart0-fr-read-refresh-core-20260606",
+  "classification": "local-static-rp1-uart0-fr-read-refresh-accepted",
+  "accepted": [
+    "rpi5_rp1_uart0_fr_read branches directly from rust_entry",
+    "diagnostic emits UART10 early-serial start and pre-mmio-read markers",
+    "diagnostic performs exactly one 32-bit volatile read from 0x1f00030018",
+    "diagnostic reports contract id, target, address, width, raw value, mapped/read-value classification, and PASS only if the read returns",
+    "non-published Pi 5 candidate archive passed archive review"
+  ],
+  "notAccepted": [
+    "Pi 5 hardware execution",
+    "RP1 mapped/read-value behavior",
+    "RP1 unmapped/trap behavior",
+    "firmware-state behavior",
+    "GPIO ownership or pin mux changes",
+    "interrupts",
+    "DMA/cache behavior",
+    "storage or generated-root behavior",
+    "networking or SSH",
+    "broader PCIe behavior",
+    "Milestone 11.2",
+    "phase transition"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-refresh-core.md",
+    "staticInspection": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-refresh-core/static-inspection.md",
+    "archiveReview": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-refresh-core/archive-review.txt",
+    "candidateIdentity": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-refresh-core/candidate-identity.txt",
+    "candidateStrings": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-refresh-core/candidate-strings.txt",
+    "symbols": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-refresh-core/symbols.txt",
+    "disassembly": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-refresh-core/disassembly.txt",
+    "validationSummary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-refresh-core/validation-summary.txt",
+    "candidateArchive": "target/talos-rpi5-rp1-uart0-fr-read-refresh-core.tar.gz"
+  },
+  "candidate": {
+    "archive": "target/talos-rpi5-rp1-uart0-fr-read-refresh-core.tar.gz",
+    "archiveSha256": "da35a26e817fd30b81874a701171de1b9d47c47024d5fc405a7068ca3b2e5d60",
+    "kernelSha256": "1e4dc50ad6ac8662beec8fd92e41930e2b083956eb46f715924729aff8fa131a",
+    "kernelSizeBytes": 45832,
+    "textOffset": 0,
+    "headerImageSize": 45832,
+    "flags": 12
+  },
+  "validation": {
+    "cargoFmt": "passed",
+    "cargoTestQuiet": "passed; 423 passed",
+    "archiveReview": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed"
+  }
+}

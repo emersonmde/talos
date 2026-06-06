@@ -12572,28 +12572,29 @@ pub fn run_rust_entry_uart10_marker_loop() -> ! {
 }
 
 #[cfg(talos_boot_scenario = "rpi5_rp1_uart0_fr_read")]
-pub fn run_rp1_uart0_fr_read_diagnostic() {
+pub fn run_rp1_uart0_fr_read_diagnostic() -> ! {
     const CONTRACT_ID: &str = "phase11-rp1-pcie-map-contract-v1";
-    const TARGET: &str = "rp1-uart0-fr-read";
-    const WIDTH_BITS: usize = 32;
 
-    crate::println!("rpi5-rp1-uart0-fr-read: start");
-    crate::println!("rpi5-rp1-uart0-fr-read: pre-mmio-read");
+    write_early_static("rpi5-rp1-uart0-fr-read: start\n");
+    write_early_static("rpi5-rp1-uart0-fr-read: pre-mmio-read\n");
     wait_uart10_empty_early_phase();
 
     let value = read_rp1_reg_u32(RP1_UART0_FR);
 
-    crate::println!(
-        "rpi5-rp1-uart0-fr-read: contract={} target={} address={:#018x} width={} raw={:#010x}",
-        CONTRACT_ID,
-        TARGET,
-        RP1_UART0_FR,
-        WIDTH_BITS,
-        value
-    );
-    crate::println!("rpi5-rp1-uart0-fr-read: classification=mapped/read-value");
-    crate::println!("rpi5-rp1-uart0-fr-read: PASS");
+    write_early_static("rpi5-rp1-uart0-fr-read: contract=");
+    write_early_static(CONTRACT_ID);
+    write_early_static(" target=rp1-uart0-fr-read address=");
+    write_early_hex_u64(RP1_UART0_FR as u64);
+    write_early_static(" width=32 raw=");
+    write_early_hex_u64(value as u64);
+    write_early_static("\n");
+    write_early_static("rpi5-rp1-uart0-fr-read: classification=mapped/read-value\n");
+    write_early_static("rpi5-rp1-uart0-fr-read: PASS\n");
     wait_uart10_empty_early_phase();
+
+    loop {
+        core::hint::spin_loop();
+    }
 }
 
 #[cfg(not(talos_target_rpi5_bcm2712))]
