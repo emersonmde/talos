@@ -298,11 +298,19 @@ tftp_cursor="$(curl -fsS 'http://talos-lab-api:8080/tftp/logs?limit=1' | jq -r .
 After the power cycle, observe serial from the saved serial cursor and query
 `scripts/rpi5-wait-tftp-delta.sh "$tftp_cursor"` before restoring the boot
 tree. Known-good runtime readiness must use an explicit bounded serial
-observation instead of a default observe call:
+observation instead of a default observe call. The helper loops until the
+requested deadline while advancing the serial cursor and accumulating output,
+because a single `/serial/observe` request can return after a quiet firmware
+burst before the later TFTP/kernel/readiness output appears:
 
 ~~~bash
 scripts/rpi5-observe-runtime-readiness.sh "$serial_cursor" 75 1000 65536
 ~~~
+
+Retain the helper JSON and check
+`talos_runtime_readiness.observe_contract=deadline-loop-accumulated-from-fresh-cursor`
+for known-good runtime-readiness proofs. A settled first firmware burst is not
+the full readiness window.
 
 For the current restored known-good control, the accepted readiness markers
 are `TALOS: kernel_main` plus `rpi5-production-timer-preemption: PASS` within

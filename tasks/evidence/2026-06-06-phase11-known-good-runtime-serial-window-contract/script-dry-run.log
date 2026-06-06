@@ -1,0 +1,29 @@
+command: PATH=<fake-curl> TALOS_LAB_API=http://fake scripts/rpi5-observe-runtime-readiness.sh 100 5 1 4096
+
+{
+  "action": "observe",
+  "ok": true,
+  "cursor_start": 100,
+  "cursor_end": 150,
+  "bytes": 50,
+  "text": "firmware burst\nTALOS: kernel_main\nrpi5-production-timer-preemption: PASS\n",
+  "truncated": false,
+  "talos_runtime_readiness": {
+    "requested_timeout_seconds": 5,
+    "elapsed_seconds": 1,
+    "settle_ms": 1,
+    "max_bytes": 4096,
+    "observe_attempts": 2,
+    "observe_contract": "deadline-loop-accumulated-from-fresh-cursor",
+    "required_kernel_marker": "TALOS: kernel_main",
+    "required_success_marker": "rpi5-production-timer-preemption: PASS",
+    "prompt_marker": "talos>",
+    "has_kernel_main": true,
+    "has_required_success_marker": true,
+    "has_prompt_marker": false,
+    "valid_known_good_talos_readiness": true,
+    "classification": "valid-known-good-talos-readiness"
+  }
+}
+
+script_exit=0

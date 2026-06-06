@@ -7098,6 +7098,17 @@ candidate/source work, candidate rerun, mapped/unmapped claims, GPIO,
 interrupts, DMA/cache, networking, SSH, storage, generated-root, broader PCIe,
 Milestone 11.2, or phase transition.
 
+phase11-known-good-runtime-serial-window-contract-20260606 is now accepted as
+a no-hardware serial-observation contract repair. The single-call readiness
+helper could classify only the first settled firmware/RP1 burst as the whole
+window; it now accumulates serial output across repeated `/serial/observe`
+calls until the requested deadline and records
+`deadline-loop-accumulated-from-fresh-cursor`. This makes the next queued
+known-good Pi 5 discriminator mechanically ready to test only the serial-window
+boundary around the restored 104,136-byte control fetch. RP1 entry-control
+candidate rerun and source work remain blocked unless that discriminator and
+its closeout accept valid known-good Talos readiness.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

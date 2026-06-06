@@ -261,6 +261,21 @@ unmapped/trap, and firmware-state behavior remain blocked until a
 supervisor-planned boot/runtime readiness repair or discriminator accepts valid
 known-good Talos runtime readiness.
 
+phase11-known-good-runtime-serial-window-contract-20260606 repairs the
+serial-observation side of that blocker without running hardware. Static
+inspection showed the previous helper used one settled `/serial/observe` call,
+which could stop after the first 708-byte firmware/RP1 burst and before the
+later network/TFTP/kernel window. `scripts/rpi5-observe-runtime-readiness.sh`
+now loops until the requested deadline from the fresh serial cursor, advances
+the observe cursor between calls, accumulates serial text, and records
+`observe_contract=deadline-loop-accumulated-from-fresh-cursor`. The next
+serialized known-good proof is ready only for this serial-window discriminator:
+it must retain selected boot identity, stable pre-restore TFTP fetch evidence,
+the deadline-looped serial JSON, pre-restore state, restore, and lock-release
+evidence before it can accept or reject valid known-good Talos readiness. RP1
+candidate rerun/source work remains blocked until that proof and closeout
+accept valid known-good Talos readiness.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read` is selected. That path first reports `rpi5-rp1-uart0-fr-read: start` and `rpi5-rp1-uart0-fr-read: pre-mmio-read`, flushes UART10, then reads exactly `RP1_UART0_FR` (`0x1f_0003_0018`) with one 32-bit volatile load. A returned read reports the contract id, target name, address, width, raw value, `mapped/read-value` success classification, and PASS before returning to the existing final halt path. The pre-MMIO marker is a discriminator for the next serialized proof: if hardware reaches that marker but not the read-value line, the result is entry/handoff reachability plus an RP1 read trap/hang boundary, not a mapping acceptance.

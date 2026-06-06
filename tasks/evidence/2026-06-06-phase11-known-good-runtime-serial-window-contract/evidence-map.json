@@ -1,0 +1,65 @@
+{
+  "task_id": "phase11-known-good-runtime-serial-window-contract-20260606",
+  "classification": "ready-for-serial-window-discriminator",
+  "evidence_level": "static source/script/docs/evidence inspection + shell/script dry run + docs validation",
+  "accepted": {
+    "serial_observer_contract_repaired": true,
+    "known_good_runtime_readiness": false,
+    "rp1_candidate_fetch": false,
+    "rp1_rust_entry": false,
+    "rp1_entry_control_reachability": false,
+    "rp1_mapped_read_value": false,
+    "rp1_unmapped_trap": false,
+    "milestone_11_2": false
+  },
+  "prior_accepted_runtime_evidence": {
+    "task_id": "phase11-rp1-diagnostic-entry-pi5-proof-20260605",
+    "evidence": "tasks/evidence/2026-06-05-phase11-rp1-diagnostic-entry-pi5-proof/known-good-serial-observe-followup.json",
+    "cursor_start": 4076948,
+    "cursor_end": 4085680,
+    "bytes": 8732,
+    "markers": [
+      "TALOS: kernel_main",
+      "rpi5-production-timer-preemption: PASS"
+    ]
+  },
+  "latest_direct_cursor_missing_readiness": {
+    "task_id": "phase11-known-good-runtime-direct-cursor-pi5-recheck-20260605",
+    "serial_evidence": "tasks/evidence/2026-06-05-phase11-known-good-runtime-direct-cursor-pi5-recheck/known-good-runtime-readiness-observe.json",
+    "serial_cursor_start": 4096040,
+    "serial_cursor_end": 4096748,
+    "serial_bytes": 708,
+    "serial_stopped_at": "RP1 firmware early burst before TALOS: kernel_main",
+    "tftp_classification": "boot-runtime-readiness-after-known-good-fetch",
+    "stable_tftp_kernel_fetch_count": 2,
+    "stable_tftp_kernel_fetch_bytes": 104136
+  },
+  "no_actionable_artifact_classification": {
+    "task_id": "phase11-known-good-boot-artifact-readiness-repair-core-20260606",
+    "evidence": "tasks/evidence/2026-06-06-phase11-known-good-boot-artifact-readiness-repair-core/evidence-map.json",
+    "classification": "no-actionable-source-artifact-defect"
+  },
+  "repair": {
+    "script": "scripts/rpi5-observe-runtime-readiness.sh",
+    "old_contract": "single settled /serial/observe call from fresh cursor",
+    "new_contract": "deadline-loop-accumulated-from-fresh-cursor",
+    "preconditions_for_next_hardware_task": [
+      "hardwareTestLock unlocked/restored",
+      "restored known-good tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 selected",
+      "effective_kernel=kernel_2712.img",
+      "stable pre-restore TFTP delta includes 104136-byte da591740/kernel_2712.img fetch",
+      "readiness helper JSON records deadline-loop-accumulated-from-fresh-cursor",
+      "restore and lock-release evidence retained"
+    ]
+  },
+  "validation": {
+    "static_inspection": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-contract/static-inspection.md",
+    "script_dry_run": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-contract/script-dry-run.log",
+    "shell_syntax_check": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-contract/shell-syntax-check.log",
+    "git_diff_check": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-contract/git-diff-check.log",
+    "mdbook_build": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-contract/mdbook-build.log",
+    "git_diff_cached_check": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-contract/git-diff-cached-check.log",
+    "cargo_fmt_test": "not run; no Rust source/runtime/boot/target/readiness-marker code touched"
+  },
+  "next_queued_task": "phase11-known-good-runtime-serial-window-pi5-discriminator-20260606"
+}
