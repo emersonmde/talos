@@ -1,0 +1,17 @@
+Task: phase11-rp1-uart0-fr-read-pi5-proof-20260606
+Classification: serial-capture-saturated-after-candidate-fetch
+
+Validation gates:
+- lab-controller API candidate identity: passed through GET /status and GET /boot/files.
+- Serialized Pi 5 hardware proof: completed with blocker evidence.
+- Fresh serial cursor: captured, but cursor was already 4194304 for candidate, known-good control, and candidate rerun.
+- Serial hardware boot/output: completed with blocker evidence; all observations from cursor 4194304 returned zero bytes and no RP1 FR-read or known-good runtime marker.
+- Stable same-cursor TFTP evidence: first candidate run retained two 45,832-byte candidate kernel fetches in candidate-run/capture-invariant-summary.json; known-good control retained two 104,136-byte kernel fetches; candidate rerun retained stable zero-event TFTP evidence.
+- Mandatory inconclusive-run triage: completed with candidate identity, fresh serial cursor, stable TFTP delta, known-good control, and candidate rerun.
+- Restore proof: passed; post-restore tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+- git diff --check: passed.
+- git diff --cached --check before commit: passed.
+
+Notes:
+- The authoritative first-candidate pre-restore TFTP event bytes are retained in candidate-run/capture-invariant-summary.json. A later manual re-query of the same TFTP cursor after restore can relabel event bytes from the current restored boot file, so the summary is the evidence used for candidate fetch identity.
+- No RP1 mapped/read-value, unmapped/trap, firmware-state, pre-MMIO reachability, GPIO, interrupts, DMA/cache, storage, networking, SSH, broader PCIe, Milestone 11.2, or phase transition behavior is accepted.

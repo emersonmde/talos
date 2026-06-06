@@ -1,0 +1,79 @@
+{
+  "task": "phase11-rp1-uart0-fr-read-pi5-proof-20260606",
+  "classification": "serial-capture-saturated-after-candidate-fetch",
+  "accepted": false,
+  "completed_with_blocker_evidence": true,
+  "basis": {
+    "first_candidate": {
+      "candidate_tree": "25ff74c5c496e861d534080a6e8ec65cb36d261f16775515cd37a79938d41b71",
+      "expected_fetch_bytes": 45832,
+      "expected_fetch_count": 2,
+      "serial_bytes": 0,
+      "marker_seen": false
+    },
+    "known_good_control": {
+      "label": "known-good-control",
+      "pre_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "serial_marker": "TALOS: kernel_main",
+      "serial": {
+        "cursor_start": 4194304,
+        "cursor_end": 4194304,
+        "bytes": 0,
+        "has_required_marker": false,
+        "has_kernel_main": false,
+        "has_firmware_network": false,
+        "required_marker_occurrences": -1
+      },
+      "tftp": {
+        "stable": true,
+        "event_count": 13,
+        "expected_fetch_count": 2,
+        "expected_fetch_bytes": [
+          104136
+        ]
+      }
+    },
+    "candidate_rerun": {
+      "label": "candidate-rerun",
+      "pre_tree": "25ff74c5c496e861d534080a6e8ec65cb36d261f16775515cd37a79938d41b71",
+      "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "serial_marker": "rpi5-rp1-uart0-fr-read: classification=mapped/read-value",
+      "serial": {
+        "cursor_start": 4194304,
+        "cursor_end": 4194304,
+        "bytes": 0,
+        "has_required_marker": false,
+        "has_kernel_main": false,
+        "has_firmware_network": false,
+        "required_marker_occurrences": -1
+      },
+      "tftp": {
+        "stable": true,
+        "event_count": 0,
+        "expected_fetch_count": 0,
+        "expected_fetch_bytes": []
+      }
+    }
+  },
+  "accepted_claims": [
+    "candidate publication/fetch for first run",
+    "restore hygiene",
+    "serial capture blocker evidence"
+  ],
+  "rejected_claims": [
+    "RP1 mapped/read-value",
+    "RP1 unmapped/trap",
+    "firmware-state",
+    "pre-MMIO reachability",
+    "GPIO",
+    "interrupts",
+    "DMA/cache",
+    "storage",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2"
+  ],
+  "next_discriminator": "Repair or bypass the saturated serial capture/cursor path before another same-shaped RP1 FR-read rerun."
+}

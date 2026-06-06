@@ -1,0 +1,13 @@
+{
+  "task": "phase11-rp1-uart0-fr-read-pi5-proof-20260606",
+  "archive": "target/talos-rpi5-rp1-uart0-fr-read-refresh-core.tar.gz",
+  "restore_snapshot": "phase11-rp1-uart0-fr-read-pre-20260606T1119Z",
+  "expected_tree_hash": "25ff74c5c496e861d534080a6e8ec65cb36d261f16775515cd37a79938d41b71",
+  "expected_kernel": "kernel_2712.img",
+  "expected_fetch": "da591740/kernel_2712.img",
+  "expected_fetch_bytes": 45832,
+  "serial_marker": "rpi5-rp1-uart0-fr-read: classification=mapped/read-value",
+  "serial_timeout_seconds": 90,
+  "tftp_timeout_seconds": 90,
+  "stable_samples": 3
+}

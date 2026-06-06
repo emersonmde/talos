@@ -1,0 +1,27 @@
+{
+  "action": "serial observe",
+  "base64": "",
+  "bytes": 0,
+  "cursor_end": 4194304,
+  "cursor_start": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 5,
+    "elapsed_seconds": 5,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-accumulated-from-fresh-cursor",
+    "required_marker": "rpi5-rp1-uart0-fr-read: classification=mapped/read-value",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": false,
+    "has_firmware_network": false,
+    "firmware_network_occurrences": -1,
+    "required_marker_occurrences": -1
+  }
+}

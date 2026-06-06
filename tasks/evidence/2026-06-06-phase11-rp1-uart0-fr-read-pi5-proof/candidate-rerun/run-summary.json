@@ -1,0 +1,21 @@
+{
+  "label": "candidate-rerun",
+  "pre_tree": "25ff74c5c496e861d534080a6e8ec65cb36d261f16775515cd37a79938d41b71",
+  "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "serial_marker": "rpi5-rp1-uart0-fr-read: classification=mapped/read-value",
+  "serial": {
+    "cursor_start": 4194304,
+    "cursor_end": 4194304,
+    "bytes": 0,
+    "has_required_marker": false,
+    "has_kernel_main": false,
+    "has_firmware_network": false,
+    "required_marker_occurrences": -1
+  },
+  "tftp": {
+    "stable": true,
+    "event_count": 0,
+    "expected_fetch_count": 0,
+    "expected_fetch_bytes": []
+  }
+}
