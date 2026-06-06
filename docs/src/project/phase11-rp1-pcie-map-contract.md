@@ -681,6 +681,27 @@ unmapped/trap behavior, firmware-state behavior, GPIO, interrupts, DMA/cache,
 storage, generated-root, networking, SSH, broader PCIe, Milestone 11.2, and
 phase transition remain unaccepted until the queued serialized discriminator.
 
+phase11-rp1-uart0-fr-read-hold-control-pi5-discriminator-20260606 publishes
+that accepted hold-control FR-read candidate under the hardware lock and
+classifies the attempt as capture-staging-blocked. Publication reported lab
+tree ae324bd791d7df59a0a8eabc74c936b1bd68ba6c2c9b645dcdc19f561e4e80c0,
+effective kernel kernel_2712.img, and the expected 46,320-byte
+da591740/kernel_2712.img. The main direct-read serial window retained 222,783
+bytes with 5,582 TALOS: fr-hold-control-post-read-loop occurrences, but stable
+same-cursor TFTP evidence for that run recorded restored-tree 104,136-byte
+kernel fetches and zero selected 46,320-byte candidate fetches. Required
+triage was attempted: the known-good control produced stable zero-event TFTP,
+and a candidate rerun again staged the 46,320-byte kernel but produced
+zero-event same-cursor TFTP and an empty serial observe file. The lab was
+restored to tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 before
+hardware-lock release. This accepts only the capture-staging-blocked
+classification; mapped/read-value behavior, bus-fault/trap behavior,
+pre-read-control-visible-without-read-result, candidate-fetch-without-control-
+marker, firmware-state behavior, GPIO, interrupts, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe, Milestone 11.2, and phase
+transition remain unaccepted.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

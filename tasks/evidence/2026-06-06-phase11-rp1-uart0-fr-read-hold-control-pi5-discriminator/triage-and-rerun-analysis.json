@@ -1,0 +1,90 @@
+{
+  "known_good_control": {
+    "serial_window": {
+      "requested_timeout_seconds": 20,
+      "elapsed_seconds": 20,
+      "settle_ms": 1000,
+      "max_bytes": 131072,
+      "observe_attempts": 4,
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+      "capture_mode": "read",
+      "saturation_limit": 4194304,
+      "start_cursor_saturated": true,
+      "response_bytes": 3345,
+      "required_marker": "TALOS: kernel_main",
+      "kernel_marker": "TALOS: kernel_main",
+      "firmware_network_marker": "NETWORK",
+      "has_kernel_main": false,
+      "has_required_marker": false,
+      "has_firmware_network": true,
+      "firmware_network_occurrences": 1,
+      "required_marker_occurrences": 0
+    },
+    "tftp_events": 0,
+    "kernel_fetches": []
+  },
+  "candidate_rerun": {
+    "post_publish_identity": {
+      "observed_tree_hash": "ae324bd791d7df59a0a8eabc74c936b1bd68ba6c2c9b645dcdc19f561e4e80c0",
+      "observed_effective_kernel": "kernel_2712.img",
+      "configured_kernel": "kernel_2712.img",
+      "expected_fetch": "da591740/kernel_2712.img",
+      "expected_fetch_bytes": 46320,
+      "observed_fetch_bytes": 46320,
+      "effective_kernel_matches": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": true
+    },
+    "serial_window": {
+      "requested_timeout_seconds": 45,
+      "elapsed_seconds": 44,
+      "settle_ms": 1000,
+      "max_bytes": 262144,
+      "observe_attempts": 5,
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+      "capture_mode": "read",
+      "saturation_limit": 4194304,
+      "start_cursor_saturated": true,
+      "response_bytes": 263272,
+      "required_marker": "TALOS: fr-hold-control-post-read-loop",
+      "kernel_marker": "TALOS: kernel_main",
+      "firmware_network_marker": "NETWORK",
+      "has_kernel_main": false,
+      "has_required_marker": true,
+      "has_firmware_network": true,
+      "firmware_network_occurrences": 1,
+      "required_marker_occurrences": 6720
+    },
+    "tftp_stability": {
+      "stable": true,
+      "reason": "stable",
+      "stable_samples": 3,
+      "required_samples": 3
+    },
+    "tftp_event_count": 0,
+    "candidate_fetch_count": 0,
+    "candidate_fetch_events": [],
+    "serial_findings": {
+      "bytes": 263272,
+      "has_pre_loop_marker": false,
+      "pre_loop_marker_occurrences": 0,
+      "has_pre_read_control_marker": false,
+      "pre_read_control_marker_occurrences": 0,
+      "has_contract_id": false,
+      "has_target": false,
+      "has_address": false,
+      "has_width": false,
+      "has_raw_value": false,
+      "has_mapped_read_value": false,
+      "has_post_read_terminal_hold_marker": false,
+      "post_read_terminal_hold_marker_occurrences": 0,
+      "has_post_loop_marker": true,
+      "post_loop_marker_occurrences": 6720,
+      "has_trap_or_panic": true
+    },
+    "restore": {
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "post_restore_effective_kernel": "kernel_2712.img"
+    }
+  }
+}

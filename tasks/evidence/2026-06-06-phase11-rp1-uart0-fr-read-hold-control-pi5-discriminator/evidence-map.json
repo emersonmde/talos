@@ -1,0 +1,28 @@
+{
+  "task": "phase11-rp1-uart0-fr-read-hold-control-pi5-discriminator-20260606",
+  "classification": "capture-staging-blocked",
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-pi5-discriminator.md",
+    "classification": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-pi5-discriminator/classification.json",
+    "evidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-pi5-discriminator/evidence-map.json",
+    "preflightNoPower": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-pi5-discriminator/preflight-tree-hash-mismatch-no-power/",
+    "candidateRun": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-pi5-discriminator/candidate-run/",
+    "knownGoodControlRun": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-pi5-discriminator/known-good-control-run/",
+    "candidateRerun": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-pi5-discriminator/candidate-rerun/",
+    "contractDoc": "docs/src/project/phase11-rp1-pcie-map-contract.md"
+  },
+  "accepted": [
+    "hardware-locked publication/capture attempts retained",
+    "selected archive identity checked against accepted core SHA-256",
+    "candidate publication identity recorded",
+    "restore evidence retained",
+    "capture-staging-blocked classification retained after required triage"
+  ],
+  "notAccepted": [
+    "mapped/read-value",
+    "bus-fault/trap",
+    "pre-read-control-visible-without-read-result",
+    "candidate-fetch-without-control-marker",
+    "GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone 11.2, or phase transition"
+  ]
+}

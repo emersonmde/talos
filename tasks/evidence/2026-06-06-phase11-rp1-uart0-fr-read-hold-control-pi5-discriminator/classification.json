@@ -1,0 +1,127 @@
+{
+  "task": "phase11-rp1-uart0-fr-read-hold-control-pi5-discriminator-20260606",
+  "status": "accepted",
+  "classification": "capture-staging-blocked",
+  "reason": "Candidate archive publication identity was locally coherent, but the hardware capture could not tie selected-candidate TFTP fetch evidence, serial cursor evidence, and observed serial bytes strongly enough for mapped/read-value, bus-fault/trap, pre-read-control-visible-without-read-result, or candidate-fetch-without-control-marker.",
+  "acceptedClaims": [
+    "accepted core archive SHA-256 matched before publication",
+    "candidate publication reported effective kernel kernel_2712.img and a 46320-byte da591740/kernel_2712.img",
+    "hardware lock was acquired before publication and the lab was restored before release",
+    "stable pre-restore TFTP/capture evidence was retained for the attempted run and triage attempts",
+    "classification is limited to capture-staging-blocked"
+  ],
+  "notAccepted": [
+    "candidate-tied selected-kernel fetch for the decisive run",
+    "pre-read control marker visibility from a candidate-tied run",
+    "mapped/read-value RP1 UART0 FR behavior",
+    "bus-fault/trap behavior",
+    "pre-read-control-visible-without-read-result",
+    "candidate-fetch-without-control-marker",
+    "firmware-state behavior",
+    "GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone 11.2, or phase transition"
+  ],
+  "summary": {
+    "preflight_no_power": {
+      "path": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-pi5-discriminator/preflight-tree-hash-mismatch-no-power/",
+      "classification": "staging-publication-mismatch",
+      "observed_tree_hash": "ae324bd791d7df59a0a8eabc74c936b1bd68ba6c2c9b645dcdc19f561e4e80c0",
+      "expected_fetch_bytes": 46320,
+      "observed_fetch_bytes": 46320,
+      "note": "No power cycle; helper rejected repo boot-tree identity as strict lab tree_hash even though prior accepted publications use a different lab tree hash."
+    },
+    "candidate_run": {
+      "path": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-pi5-discriminator/candidate-run/",
+      "post_publish_identity": {
+        "observed_tree_hash": "ae324bd791d7df59a0a8eabc74c936b1bd68ba6c2c9b645dcdc19f561e4e80c0",
+        "observed_effective_kernel": "kernel_2712.img",
+        "configured_kernel": "kernel_2712.img",
+        "expected_fetch": "da591740/kernel_2712.img",
+        "expected_fetch_bytes": 46320,
+        "observed_fetch_bytes": 46320,
+        "effective_kernel_matches": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes_match": true,
+        "note": "Lab selected boot tree hash is recorded as publication identity; repo boot-tree identity is not used as strict lab API tree_hash because prior accepted publications also differ."
+      },
+      "serial_findings": {
+        "bytes": 222783,
+        "capture_mode": "read",
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+        "start_cursor_saturated": true,
+        "has_pre_read_control_marker": false,
+        "pre_read_control_marker_occurrences": 0,
+        "has_pre_loop_marker": false,
+        "pre_loop_marker_occurrences": 0,
+        "has_contract_id": false,
+        "has_target": false,
+        "has_address": false,
+        "has_width": false,
+        "has_raw_value": false,
+        "has_mapped_read_value": false,
+        "has_post_read_terminal_hold_marker": false,
+        "post_read_terminal_hold_marker_occurrences": 0,
+        "has_post_loop_marker": true,
+        "post_loop_marker_occurrences": 5582,
+        "has_trap_or_panic": true
+      },
+      "tftp_findings": {
+        "stable": true,
+        "event_count": 13,
+        "candidate_fetch_count": 0,
+        "cursor_start": 4141536,
+        "cursor_end": 4142887
+      },
+      "restore_findings": {
+        "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+        "post_restore_effective_kernel": "kernel_2712.img"
+      },
+      "note": "Direct-read serial contained repeated post-read loop text, but the stable same-cursor TFTP delta recorded 104136-byte restored-tree kernel fetches and zero 46320-byte selected-candidate fetches; therefore serial was not candidate-tied."
+    },
+    "known_good_control": {
+      "path": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-pi5-discriminator/known-good-control-run/",
+      "tftp_stability": {
+        "stable": true,
+        "reason": "stable",
+        "stable_samples": 3,
+        "required_samples": 3
+      },
+      "tftp_event_count": 0,
+      "note": "Control triage did not produce a useful fresh TFTP/serial tie; retained as blocker evidence."
+    },
+    "candidate_rerun": {
+      "path": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-hold-control-pi5-discriminator/candidate-rerun/",
+      "post_publish_identity": {
+        "observed_tree_hash": "ae324bd791d7df59a0a8eabc74c936b1bd68ba6c2c9b645dcdc19f561e4e80c0",
+        "observed_effective_kernel": "kernel_2712.img",
+        "configured_kernel": "kernel_2712.img",
+        "expected_fetch": "da591740/kernel_2712.img",
+        "expected_fetch_bytes": 46320,
+        "observed_fetch_bytes": 46320,
+        "effective_kernel_matches": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes_match": true
+      },
+      "tftp_stability": {
+        "stable": true,
+        "reason": "stable",
+        "stable_samples": 3,
+        "required_samples": 3
+      },
+      "tftp_event_count": 0,
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "note": "Rerun publication again reported the selected 46320-byte kernel, but same-cursor TFTP returned zero events and the serial observe file remained empty; lab was restored."
+    }
+  },
+  "classificationRule": "capture-staging-blocked",
+  "validation": {
+    "staticArchiveIdentity": "passed",
+    "labControllerHardwareRun": "completed-with-capture-staging-blocked",
+    "stableTftpBeforeRestore": "retained but not candidate-tied",
+    "freshSerialCapture": "retained but not candidate-tied or empty in triage",
+    "knownGoodControlAndCandidateRerun": "attempted because initial candidate fetch/control-marker evidence was inconclusive",
+    "restoreProof": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  }
+}

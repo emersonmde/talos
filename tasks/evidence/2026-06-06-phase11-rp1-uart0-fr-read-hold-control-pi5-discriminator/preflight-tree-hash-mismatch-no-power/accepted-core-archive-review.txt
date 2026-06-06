@@ -1,0 +1,11 @@
+candidate_archive=target/talos-rpi5-rp1-uart0-fr-read-hold-control-core.tar.gz
+candidate_archive_sha256=e9ab45b6dd15e4e80395302a116fb8aa751d699c5b679e5b9cee22077059a9b2
+kernel_2712_sha256=2e10735026f6abd3d9d919d79f95ebc80caf9ba065d317b5c99b45f75d656eb6
+kernel_2712_size=46320
+header_image_size=46320
+text_offset=0
+flags=12
+pre_loop_marker=TALOS: fr-hold-control-pre-read-loop
+pre_read_marker=rpi5-rp1-uart0-fr-read-hold-control: pre-read-control-marker
+post_read_marker=rpi5-rp1-uart0-fr-read-hold-control: post-read-terminal-hold-marker
+post_loop_marker=TALOS: fr-hold-control-post-read-loop
