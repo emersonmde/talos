@@ -1,0 +1,32 @@
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 5039,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "o-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nT�\r\n  1.09 RPi: BOOTSYS release VERSION:2226a853 DATE: 2025/12/08 TIME: 19:29:54\r\n  1.09 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 1096756\r\n  1.10 AON_RESET: 00000003 PM_RSTS 00001000\r\n  1.11 POWER_OFF_ON_HALT: 0 WAIT_FOR_POWER_BUTTON 0 power-on-reset 1\r\n  1.12 RP1_BOOT chip ID: 0x20001927\r\n  1.12 PCIEx1: PWR 0 DET_WAKE 0\r\n  1.12 part 00000000 reset_info 00000000\r\n  1.12 PMIC reset-event 00000000 rtc 6a244e20 alarm 00000000 enabled 0\r\n  1.13 uSD voltage 3.3V\r\n  1.14 SDRAM_CONFIG: 14\r\n  1.14 Initialising SDRAM rank 2 total-size: 64 Gbit 4267 (0x14 0x14)\r\n  1.14 DDR 4267 1 0 64 152 BL:1\r\n  1.82 RP1 FW: load 0\r\n  1.84 RP1_BOOT chip ID: 0x20001927\r\n\r\n  4.09 PCI2 init\r\n  4.09 PCI2 reset\r\n  4.14 PCIe scan 00001de4:00000001\r\n  4.14 RP1_CHIP_INFO 20001927\r\n\r\n  4.14 RPi: BOOTLOADER release VERSION:2226a853 DATE: 2025/12/08 TIME: 19:29:54\r\n  4.15 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 4152703\r\n  4.18 usb_pd_init status 0\r\n  4.25 XHCI-STOP\r\n  4.25 xHC0 ver: 272 HCS: 03000440 140000f1 07ff000a HCC: 0240fe6d\r\n  4.25 USBSTS 1\r\n  4.26 xHC0 ver: 272 HCS: 03000440 140000f1 07ff000a HCC: 0240fe6d\r\n  4.26 xHC0 ports 3 slots 64 intrs 4\r\n  4.27 XHCI-STOP\r\n  4.27 xHC1 ver: 272 HCS: 03000440 140000f1 07ff000a HCC: 0240fe6d\r\n  4.28 USBSTS 1\r\n  4.28 xHC1 ver: 272 HCS: 03000440 140000f1 07ff000a HCC: 0240fe6d\r\n  4.29 xHC1 ports 3 slots 64 intrs 4\r\n  4.33 SD_OC: 0\r\n  4.38 Boot mode: NETWORK (02) order f1\r\n  9.36 NETWORK: 88:a2:9e:ae:c8:7f wait for link TFTP: 0.0.0.0\r\n 12.00 LINK STATUS: speed: 1000 full duplex\r\n 12.02 Link ready\r\n 12.05 RX: 0 IP: 0 IPV4: 0 MAC: 0 UDP: 0 UDP RECV: 0 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n 20.59 DHCP src: 60:22:32:71:62:87 10.42.1.1\r\n 20.60 YI_ADDR 10.42.1.4\r\n 20.62 SI_ADDR 10.42.1.3\r\n 20.06 OPTIONS:-\r\n\top: 53 len:   1 DHCP recv OFFER (2) expect OFFER 20.07 \r\n\top: 54 len:   4 10.42.1.1 20.07 \r\n\top: 51 len:   4  20.07 \r\n\top: 67 len:  11  20.07 \r\n\top: 58 len:   4  20.08 \r\n\top: 59 len:   4  20.08 \r\n\top:  1 len:   4 255.255.255.0 20.08 \r\n\top: 66 len:  10 10.42.1.3 20.89 [66]: 10.42.1.3\r\n 20.09 \r\n\top:  3 len:   4 10.42.1.1 20.09 \r\n 20.95 NET 10.42.1.4 255.255.255.0 gw 0.0.0.0 tftp 10.42.1.3\r\n 20.01 DHCP src: 60:22:32:71:62:87 10.42.1.1\r\n 20.05 YI_ADDR 10.42.1.4\r\n 20.07 SI_ADDR 10.42.1.3\r\n 20.10 OPTIONS:-\r\n\top: 53 len:   1 DHCP recv ACK (5) expect ACK 20.11 \r\n\top: 54 len:   4 10.42.1.1 20.11 \r\n\top: 51 len:   4  20.12 \r\n\top: 58 len:   4  20.12 \r\n\top: 59 len:   4  20.12 \r\n\top:  1 len:   4 255.255.255.0 20.12 \r\n\top: 15 len:  12  20.13 \r\n\top: 12 len:   5  20.13 \r\n\top: 28 len:   4 10.42.1.255 20.13 \r\n\top: 66 len:  10 10.42.1.3 20.39 [66]: 10.42.1.3\r\n 20.14 \r\n\top:  6 len:   4 10.42.1.1 20.14 \r\n\top:  3 len:   4 10.42.1.1 20.14 \r\n 20.48 ARP 10.42.1.3 84:a9:38:6a:77:63\r\n 20.51 NET 10.42.1.4 255.255.255.0 gw 0.0.0.0 tftp 10.42.1.3\r\n 20.15 RX: 21 IP: 0 IPV4: 3 MAC: 3 UDP: 3 UDP RECV: 2 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n 20.16 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740/config.txt\n\r\n 20.17 RX: 21 IP: 0 IPV4: 3 MAC: 3 UDP: 3 UDP RECV: 2 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n 20.17 RX: 22 IP: 0 IPV4: 4 MAC: 4 UDP: 4 UDP RECV: 3 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n 20.18 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740/config.txt\n\r\n 20.19 RX: 23 IP: 0 IPV4: 4 MAC: 4 UDP: 4 UDP RECV: 3 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n 20.19 TFTP: complete 118\r\n 20.20 RX: 26 IP: 0 IPV4: 6 MAC: 6 UDP: 6 UDP RECV: 5 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n 20.56 Read da591740/config.txt bytes      118 hnd 0x0\r\n 20.25 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740/pieeprom.sig\n\r\n 20.26 RX: 26 IP: 0 IPV4: 6 MAC: 6 UDP: 6 UDP RECV: 5 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n 20.72 TFTP 1: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4 \r\n 20.27 RX: 27 IP: 0 IPV4: 7 MAC: 7 UDP: 7 UDP RECV: 6 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n 20.28 Read da591740/pieeprom.upd failed\r\n 20.90 usb_max_current_enable default 0 max-current 3000\r\n 20.95 Selecting USB low current limit\r\n 20.30 MESS:00:00:20.300907:0: *** Restart logging\r\n 20.30 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740//config.txt\n\r\n 20.30 RX: 27 IP: 0 IPV4: 7 MAC: 7 UDP: 7 UDP RECV: 6 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n 20.31 TFTP: complete 118\r\n 20.31 RX: 29 IP: 0 IPV4: 9 MAC: 9 UDP: 9 UDP RECV: 8 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n 20.26 Read da591740//config.txt bytes      118 hnd 0x0\r\n 20.33 da591740//config.txt 0x3cf70000 8e2972a9f5c17b887d556a4e1048551e46ffe239751a9ad92f64f9222eae2ad8\r\n\u0000\n",
+  "truncated": false,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 100,
+    "elapsed_seconds": 100,
+    "settle_ms": 1000,
+    "max_bytes": 262144,
+    "observe_attempts": 8,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 5039,
+    "required_marker": "classification=mapped/read-value",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": false,
+    "has_firmware_network": true,
+    "firmware_network_occurrences": 2,
+    "required_marker_occurrences": 0
+  }
+}

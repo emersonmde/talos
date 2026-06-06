@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "DQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby1sb29wDQpUQUxPUzogZnItbm8tbW1pby0=",
+  "bytes": 500,
+  "cursor": 4194304,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-loop\r\nTALOS: fr-no-mmio-"
+}

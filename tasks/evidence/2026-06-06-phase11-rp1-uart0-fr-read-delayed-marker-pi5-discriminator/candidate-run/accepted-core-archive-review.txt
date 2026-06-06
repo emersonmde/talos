@@ -1,0 +1,9 @@
+candidate_archive=target/talos-rpi5-rp1-uart0-fr-read-delayed-marker-core.tar.gz
+candidate_archive_sha256=90452242f872eb085c9fe7963c02ad67556694326daebd7d199caf4ed5f597f4
+kernel_2712_sha256=0fd1e68e50da725b416079ae168a89a4b44a6a68aab40c4fff8cabf210db1b6f
+kernel_2712_size=46152
+header_image_size=46152
+text_offset=0
+flags=12
+loop_marker=TALOS: fr-delayed-preload-loop
+final_marker=rpi5-rp1-uart0-fr-read-delayed-marker: final-preload-marker

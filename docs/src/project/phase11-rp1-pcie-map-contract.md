@@ -155,6 +155,23 @@ candidate-fetch-observed-without-entry-control; it accepts candidate fetch only,
 not Rust entry, entry-control reachability, RP1 mapped/unmapped behavior, or
 firmware-state behavior.
 
+phase11-rp1-uart0-fr-read-delayed-marker-pi5-discriminator-20260606 published
+the accepted delayed-marker RP1 UART0 FR candidate after local/static evidence
+proved one contracted 32-bit volatile load from 0x1f_0003_0018 after bounded
+pre-load UART10 markers. Hardware evidence is still limited to
+candidate-fetch-without-final-preload-marker: the staged tree
+e9cd5c4a9571cab464ee76c046a7c4a2f42ba9cf75bb91f55de931dba16a3e2a fetched the
+46,152-byte da591740/kernel_2712.img twice in the first candidate run and twice
+again in the candidate rerun, but repaired saturated-cursor serial capture
+showed firmware NETWORK output without the delayed preload loop, final pre-load
+marker, post-load output, mapped/read-value classification, or trap/panic
+output. The known-good control also retained firmware serial output without
+TALOS: kernel_main in its bounded window. This does not accept RP1
+mapped/read-value, unmapped/trap, firmware-state, GPIO, interrupt, DMA/cache,
+storage, generated-root, networking, SSH, broader PCIe, or Milestone 11.2
+behavior. The next step must be a non-repetitive closeout-planned discriminator,
+not another same-shaped FR-read rerun.
+
 phase11-rp1-entry-control-handoff-discriminator-core-20260606 replaces the next
 source discriminator with a non-published, no-RP1-MMIO reset-side-effect
 candidate. The rpi5_rp1_handoff_reset scenario calls PSCI SYSTEM_RESET

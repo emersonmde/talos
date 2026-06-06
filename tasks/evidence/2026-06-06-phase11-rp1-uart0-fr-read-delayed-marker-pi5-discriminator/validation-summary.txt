@@ -1,0 +1,11 @@
+Validation summary for phase11-rp1-uart0-fr-read-delayed-marker-pi5-discriminator-20260606
+
+- static archive identity check: passed; accepted core archive SHA-256 matched 90452242f872eb085c9fe7963c02ad67556694326daebd7d199caf4ed5f597f4 before publish.
+- lab-controller API GET /status and GET /boot/files: passed for candidate preflight and restore status.
+- serial hardware boot/output: completed with blocker evidence; repaired saturated-cursor direct-read captured firmware NETWORK output but no delayed preload loop, final pre-load marker, mapped/read-value output, or trap/panic output.
+- stable same-cursor TFTP evidence: passed for the first candidate run and candidate rerun; both retained two selected 46,152-byte da591740/kernel_2712.img candidate fetches before restore.
+- known-good control and candidate rerun: completed because candidate fetch/marker evidence was inconclusive.
+- restore proof: passed; lab restored to a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+- git diff --check: passed.
+- mdbook build: passed because docs/src changed.
+- git diff --cached --check before commit: passed.

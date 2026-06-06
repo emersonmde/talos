@@ -1,0 +1,151 @@
+{
+  "task": "phase11-rp1-uart0-fr-read-delayed-marker-pi5-discriminator-20260606",
+  "status": "completed",
+  "classification": "candidate-fetch-without-final-preload-marker",
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-pi5-discriminator.md",
+    "classification": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-pi5-discriminator/classification.json",
+    "firstCandidateRun": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-pi5-discriminator/candidate-run/",
+    "knownGoodControl": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-pi5-discriminator/known-good-control-run/",
+    "candidateRerun": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-pi5-discriminator/candidate-rerun/",
+    "validationSummary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-read-delayed-marker-pi5-discriminator/validation-summary.txt",
+    "contractDoc": "docs/src/project/phase11-rp1-pcie-map-contract.md"
+  },
+  "accepted": [
+    "accepted core archive identity before hardware publication",
+    "candidate publication and selected kernel fetch evidence",
+    "fresh serial cursor and repaired saturated-cursor direct-read evidence",
+    "stable same-cursor TFTP evidence before restore",
+    "known-good control and candidate rerun triage",
+    "restore hygiene"
+  ],
+  "notAccepted": [
+    "visible final pre-load marker",
+    "RP1 mapped/read-value behavior",
+    "RP1 unmapped/trap behavior",
+    "firmware-state behavior",
+    "GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone 11.2, or phase transition"
+  ],
+  "summary": {
+    "firstCandidateRun": {
+      "post_publish_identity": {
+        "observed_tree_hash": "e9cd5c4a9571cab464ee76c046a7c4a2f42ba9cf75bb91f55de931dba16a3e2a",
+        "expected_kernel": "kernel_2712.img",
+        "observed_effective_kernel": "kernel_2712.img",
+        "expected_fetch": "da591740/kernel_2712.img",
+        "expected_fetch_bytes": 46152,
+        "observed_fetch_bytes": 46152,
+        "effective_kernel_matches": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes_match": true
+      },
+      "serial_window": {
+        "requested_timeout_seconds": 100,
+        "elapsed_seconds": 100,
+        "settle_ms": 1000,
+        "max_bytes": 262144,
+        "observe_attempts": 8,
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+        "capture_mode": "read",
+        "saturation_limit": 4194304,
+        "start_cursor_saturated": true,
+        "response_bytes": 5039,
+        "required_marker": "classification=mapped/read-value",
+        "kernel_marker": "TALOS: kernel_main",
+        "firmware_network_marker": "NETWORK",
+        "has_kernel_main": false,
+        "has_required_marker": false,
+        "has_firmware_network": true,
+        "firmware_network_occurrences": 2,
+        "required_marker_occurrences": 0
+      },
+      "serial_bytes": 5039,
+      "final_preload_visible": false,
+      "delayed_loop_visible": false,
+      "mapped_read_value_visible": false,
+      "expected_fetch_count": 2,
+      "tftp_stable": true,
+      "tftp_event_count": 13
+    },
+    "knownGoodControl": {
+      "label": "known-good-control",
+      "requested_marker": "TALOS: kernel_main",
+      "serial_window": {
+        "requested_timeout_seconds": 100,
+        "elapsed_seconds": 101,
+        "settle_ms": 1000,
+        "max_bytes": 262144,
+        "observe_attempts": 7,
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+        "capture_mode": "read",
+        "saturation_limit": 4194304,
+        "start_cursor_saturated": true,
+        "response_bytes": 6575,
+        "required_marker": "TALOS: kernel_main",
+        "kernel_marker": "TALOS: kernel_main",
+        "firmware_network_marker": "NETWORK",
+        "has_kernel_main": false,
+        "has_required_marker": false,
+        "has_firmware_network": true,
+        "firmware_network_occurrences": 2,
+        "required_marker_occurrences": 0
+      },
+      "serial_bytes": 6575,
+      "has_requested_marker": false,
+      "has_kernel_main": false,
+      "has_delayed_loop": false,
+      "has_final_preload": false,
+      "has_mapped_read_value": false,
+      "has_trap_or_panic": false,
+      "tftp_stable": true,
+      "tftp_event_count": 13,
+      "expected_candidate_fetch_count": 2
+    },
+    "candidateRerun": {
+      "label": "candidate-rerun",
+      "requested_marker": "classification=mapped/read-value",
+      "serial_window": {
+        "requested_timeout_seconds": 100,
+        "elapsed_seconds": 100,
+        "settle_ms": 1000,
+        "max_bytes": 262144,
+        "observe_attempts": 7,
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+        "capture_mode": "read",
+        "saturation_limit": 4194304,
+        "start_cursor_saturated": true,
+        "response_bytes": 4479,
+        "required_marker": "classification=mapped/read-value",
+        "kernel_marker": "TALOS: kernel_main",
+        "firmware_network_marker": "NETWORK",
+        "has_kernel_main": false,
+        "has_required_marker": false,
+        "has_firmware_network": true,
+        "firmware_network_occurrences": 2,
+        "required_marker_occurrences": 0
+      },
+      "serial_bytes": 4479,
+      "has_requested_marker": false,
+      "has_kernel_main": false,
+      "has_delayed_loop": false,
+      "has_final_preload": false,
+      "has_mapped_read_value": false,
+      "has_trap_or_panic": false,
+      "tftp_stable": true,
+      "tftp_event_count": 13,
+      "expected_candidate_fetch_count": 2
+    },
+    "restore": {
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "restored_to_previous_tree": true
+    }
+  },
+  "validation": {
+    "staticArchiveIdentity": "passed",
+    "labControllerHardwareRun": "completed-with-blocker-classification",
+    "stableTftpBeforeRestore": "passed",
+    "repairedSaturatedCursorDirectRead": "completed-without-final-preload-marker",
+    "knownGoodControlAndCandidateRerun": "completed",
+    "restoreProof": "passed"
+  }
+}
