@@ -1,0 +1,61 @@
+{
+  "task": "phase11-rp1-final-preload-marker-hold-closeout-20260606",
+  "status": "accepted",
+  "classification": "final-preload-hold-marker-visible",
+  "inputs": {
+    "coreTask": "tasks/2026-06-06-phase11-rp1-final-preload-marker-hold-core.md",
+    "coreEvidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-core/evidence-map.json",
+    "coreStaticInspection": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-core/static-inspection.md",
+    "pi5Task": "tasks/2026-06-06-phase11-rp1-final-preload-marker-hold-pi5-discriminator.md",
+    "pi5Classification": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-pi5-discriminator/classification.json",
+    "pi5EvidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-pi5-discriminator/evidence-map.json",
+    "pi5ValidationSummary": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-pi5-discriminator/validation-summary.txt"
+  },
+  "closeoutArtifacts": {
+    "taskRecord": "tasks/2026-06-06-phase11-rp1-final-preload-marker-hold-closeout.md",
+    "staticEvidenceInspection": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-closeout/static-evidence-inspection.md",
+    "evidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-closeout/evidence-map.json",
+    "contractDoc": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+    "roadmap": "docs/src/roadmap.md",
+    "gitDiffCheck": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-closeout/git-diff-check.log",
+    "mdbookBuild": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-closeout/mdbook-build.log",
+    "gitDiffCachedCheck": "tasks/evidence/2026-06-06-phase11-rp1-final-preload-marker-hold-closeout/git-diff-cached-check.log"
+  },
+  "accepted": [
+    "source/static final-preload-marker hold candidate shape",
+    "candidate archive publication and selected kernel fetch evidence",
+    "classification final-preload-hold-marker-visible",
+    "visible unique hold-marker output from the selected no-RP1-MMIO candidate",
+    "restore hygiene and hardware lock release/restored state"
+  ],
+  "notAccepted": [
+    "visible final pre-load marker before the hold loop",
+    "RP1 mapped/read-value behavior",
+    "RP1 unmapped/trap behavior",
+    "firmware-state behavior",
+    "GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone 11.2, or phase transition"
+  ],
+  "evidenceSummary": {
+    "coreArchiveSha256": "07af64b86908f36c63d368589d79c76aebd492a81906a39586a2c5902d8b9287",
+    "coreBootTreeIdentity": "ed111afd660d233f95e78a2703c6fd17f12419771e34141ea2dbe3f15ffed3e8",
+    "coreKernelSha256": "03e26bc9821a9de07d8314bea9d4eabf963224866cd6d64a94390a6ae8b1b8a8",
+    "coreKernelSizeBytes": 45816,
+    "publishedCandidateTree": "101a453d873ecec34cf43e0db4129e81167009e8915b25926ce2308d225b1c47",
+    "selectedFetch": "da591740/kernel_2712.img",
+    "selectedFetchBytes": 45816,
+    "candidateFetchCount": 2,
+    "serialCursor": 4194304,
+    "serialBytes": 57040,
+    "holdMarker": "TALOS: fr-final-preload-hold-loop",
+    "holdMarkerOccurrences": 1628,
+    "finalPreloadMarkerVisible": false,
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "validation": {
+    "staticEvidenceInspection": "completed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  },
+  "nextAction": "Supervisor planning required for a non-repetitive RP1 UART0 FR-read task that uses the accepted hold-marker visibility boundary as a control point; do not auto-promote a hardware FR-read run."
+}

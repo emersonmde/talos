@@ -652,6 +652,20 @@ restored to tree
 a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 before
 hardware-lock release.
 
+phase11-rp1-final-preload-marker-hold-closeout-20260606 reconciles the
+source/static and Pi 5 discriminator evidence as
+final-preload-hold-marker-visible. The accepted boundary is limited to the
+source/static no-RP1-MMIO hold candidate shape, candidate publication/fetch
+evidence, visible unique hold-marker output from the selected candidate, and
+restore hygiene. The direct-read window did not retain the earlier final
+pre-load marker, and the candidate intentionally avoided the RP1 UART0 FR
+volatile load. Visible final pre-load marker output, RP1 mapped/read-value
+behavior, RP1 unmapped/trap behavior, firmware-state behavior, GPIO,
+interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
+Milestone 11.2, and phase transition remain unaccepted. Any return to the
+actual RP1 UART0 flag-register read must be supervisor-planned with explicit
+source/static and serialized Pi 5 acceptance gates.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

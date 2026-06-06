@@ -7299,7 +7299,21 @@ TALOS: fr-final-preload-hold-loop. This accepts only the selected candidate's
 hold-marker visibility; final pre-load marker visibility before the hold loop,
 RP1 mapped/read-value, unmapped/trap, firmware-state behavior, GPIO,
 interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
-Milestone 11.2, and phase transition remain unaccepted pending closeout.
+Milestone 11.2, and phase transition remained unaccepted for closeout
+reconciliation.
+
+phase11-rp1-final-preload-marker-hold-closeout-20260606 reconciles that
+source/static and hardware evidence as final-preload-hold-marker-visible. The
+accepted boundary is limited to the no-RP1-MMIO hold candidate shape, selected
+candidate publication/fetch evidence, visible hold-marker output, and restore
+hygiene. The direct-read window did not retain the earlier final pre-load
+marker, and the candidate intentionally avoided the RP1 UART0 FR volatile load,
+so final pre-load marker visibility, RP1 mapped/read-value, unmapped/trap,
+firmware-state behavior, GPIO, interrupts, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe, Milestone 11.2, and phase transition remain
+unaccepted. Returning to the actual RP1 UART0 flag-register read now requires
+supervisor planning for a non-repetitive bounded task with explicit
+source/static and serialized Pi 5 acceptance gates.
 
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
