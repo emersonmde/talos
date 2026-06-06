@@ -1,0 +1,64 @@
+{
+  "task_id": "phase11-rp1-rust-entry-uart10-marker-loop-core-20260606",
+  "classification": "ready-for-rust-entry-uart10-marker-loop-pi5-discriminator",
+  "task_record": "tasks/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-core.md",
+  "static_inspection": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-core/static-inspection.md",
+  "candidate": {
+    "archive": "target/talos-rpi5-rust-entry-uart10-marker-loop-core.tar.gz",
+    "archive_sha256": "ab6de452670427cee2d411cbcd2a92602331e9d03a9d68dae20b75d649d1565b",
+    "kernel_image": "target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-rust-entry-uart10-marker-loop.img",
+    "kernel_sha256": "6335cc2f229c38258d88000fe968248ca2e47d61e47f874bf246862e0d2b248a",
+    "kernel_size_bytes": 45328,
+    "arm64_image_header": {
+      "text_offset": 0,
+      "header_image_size": 45328,
+      "flags": 12
+    },
+    "marker": "TALOS: reu10-loop"
+  },
+  "evidence_files": {
+    "archive_review": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-core/archive-review.txt",
+    "disassembly_start": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-core/disassembly-start.txt",
+    "disassembly_rust_entry": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-core/disassembly-rust-entry.txt",
+    "disassembly_marker_loop": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-core/disassembly-marker-loop.txt",
+    "symbols": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-core/symbols.txt",
+    "kernel_marker_string_scan": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-core/kernel-marker-string-scan.txt",
+    "sha256s": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-core/sha256s.txt",
+    "kernel_size": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-core/kernel-size.txt",
+    "header_text_offset": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-core/header-text-offset.txt",
+    "header_image_size": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-core/header-image-size.txt",
+    "header_flags": "tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-core/header-flags.txt"
+  },
+  "validation": {
+    "cargo_fmt_check": "passed",
+    "cargo_json_target_spec_test_quiet": "passed",
+    "archive_review": "passed",
+    "static_inspection": "completed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  },
+  "accepted_boundary": [
+    "source/static no-RP1-MMIO Rust-entry UART10 marker-loop candidate",
+    "non-published candidate archive identity",
+    "static path before BootInfo parsing and target initialization"
+  ],
+  "not_accepted": [
+    "visible marker serial output",
+    "RP1 UART0 FR-read readiness",
+    "RP1 mapped/read-value behavior",
+    "RP1 unmapped/trap behavior",
+    "firmware-state behavior",
+    "GPIO",
+    "interrupts",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ],
+  "next_action": "Promote phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator-20260606 only after confirming hardwareTestLock is unlocked/restored."
+}

@@ -1,0 +1,33 @@
+0000000000200000 <_start>:
+  200000:      	b	 <_start+0x40>
+		...
+  200010: 10 b1 00 00  	.word	0x0000b110
+  200014: 00 00 00 00  	.word	0x00000000
+  200018: 0c 00 00 00  	.word	0x0000000c
+		...
+  200038: 41 52 4d 64  	.word	0x644d5241
+  20003c: 00 00 00 00  	.word	0x00000000
+  200040:      	mov	x19, x0
+  200044:      	mrs	x0, CPACR_EL1
+  200048:      	orr	x0, x0, #0x300000
+  20004c:      	msr	CPACR_EL1, x0
+  200050:      	isb
+  200054:      	nop
+  200058:      	adr	x0,  <__bss_start>
+  20005c:      	nop
+  200060:      	adr	x1,  <__heap_start>
+<L0>:
+  200064:      	cmp	x0, x1
+  200068:      	b.hs	 <L1>
+  20006c:      	str	xzr, [x0], #0x8
+  200070:      	b	 <L0>
+<L1>:
+  200074:      	adrp	x0, 0x34b000 <__stack_bottom+0x3fee0>
+  200078:      	add	x0, x0, #0x120
+  20007c:      	mov	sp, x0
+  200080:      	mov	x0, x19
+  200084:      	bl	 <rust_entry>
+<L2>:
+  200088:      	wfe
+  20008c:      	b	 <L2>
+

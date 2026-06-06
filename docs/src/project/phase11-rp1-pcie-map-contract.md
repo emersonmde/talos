@@ -250,6 +250,25 @@ unaccepted. The queued RP1 UART0 FR-read refresh is still not mechanically
 unblocked because reset-side-effect-only evidence is not visible marker
 observability.
 
+phase11-rp1-rust-entry-uart10-marker-loop-core-20260606 adds the next
+no-hardware discriminator candidate without changing RP1 source. The
+rpi5_rust_entry_uart10_marker_loop scenario branches directly from rust_entry
+to a repeated UART10 marker loop before BootInfo parsing, target::init, boot
+reports, memory planning, allocator setup, scheduler work, PSCI SYSTEM_RESET,
+or RP1 UART0 MMIO. Static archive/disassembly evidence for
+target/talos-rpi5-rust-entry-uart10-marker-loop-core.tar.gz shows a
+45,328-byte kernel_2712.img, arm64 Image fields text_offset=0,
+header_image_size=45328, flags=12, and _start -> rust_entry ->
+run_rust_entry_uart10_marker_loop. The candidate marker is TALOS: reu10-loop;
+string review confirms the RP1 UART0 FR-read report strings are absent. This
+accepts only the source/static marker-loop candidate and does not accept
+visible marker serial output, RP1 UART0 FR-read readiness, RP1
+mapped/unmapped behavior, GPIO, interrupts, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe, Milestone 11.2, or phase transition. The
+queued RP1 UART0 FR-read refresh remains blocked until the marker-loop
+hardware discriminator and closeout accept visible Rust-entry UART10 marker
+observability.
+
 phase11-staging-capture-log-stability-core-20260605 repairs the Pi 5
 proof-rule boundary exposed by that blocker. Replay from the retained cursor
 `4088847` later returned 13 TFTP events, including a restored known-good

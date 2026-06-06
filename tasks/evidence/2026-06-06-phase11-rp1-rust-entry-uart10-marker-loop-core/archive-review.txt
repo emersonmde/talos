@@ -1,0 +1,9 @@
+candidate_archive=target/talos-rpi5-rust-entry-uart10-marker-loop-core.tar.gz
+candidate_archive_sha256=ab6de452670427cee2d411cbcd2a92602331e9d03a9d68dae20b75d649d1565b
+kernel_2712_sha256=6335cc2f229c38258d88000fe968248ca2e47d61e47f874bf246862e0d2b248a
+kernel_2712_size=45328
+header_image_size=45328
+text_offset=0
+flags=12
+marker=TALOS: reu10-loop
+forbidden_rp1_fr_read_strings_absent=true

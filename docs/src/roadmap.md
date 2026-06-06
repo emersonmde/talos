@@ -7205,6 +7205,24 @@ DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
 requires supervisor planning for post-handoff marker visibility before
 returning to the RP1 UART0 flag-register read.
 
+phase11-rp1-rust-entry-uart10-marker-loop-core-20260606 is accepted as a
+source/static marker-visibility discriminator. It adds the
+rpi5_rust_entry_uart10_marker_loop scenario and non-published archive
+target/talos-rpi5-rust-entry-uart10-marker-loop-core.tar.gz. The selected
+45,328-byte kernel branches _start -> rust_entry ->
+run_rust_entry_uart10_marker_loop, repeatedly writes TALOS: reu10-loop
+through the existing UART10 early-phase helper, and does so before BootInfo
+parsing, target initialization, boot reports, memory planning, allocator setup,
+scheduler work, PSCI reset, or RP1 UART0 MMIO. Static review confirms the
+candidate archive SHA-256
+ab6de452670427cee2d411cbcd2a92602331e9d03a9d68dae20b75d649d1565b, kernel
+SHA-256 6335cc2f229c38258d88000fe968248ca2e47d61e47f874bf246862e0d2b248a,
+arm64 Image fields text_offset=0/header_image_size=45328/flags=12, marker
+presence, and absence of RP1 UART0 FR-read report strings. This does not
+accept visible marker serial output or any RP1 mapped/unmapped behavior; the
+queued Pi 5 discriminator must decide marker visibility before the RP1 UART0
+flag-register read can resume.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

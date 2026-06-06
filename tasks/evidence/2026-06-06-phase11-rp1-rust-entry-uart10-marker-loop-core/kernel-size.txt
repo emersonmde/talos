@@ -1,0 +1,1 @@
+45328 target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-rust-entry-uart10-marker-loop.img

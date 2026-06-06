@@ -12560,6 +12560,17 @@ pub fn run_rp1_post_handoff_marker_reset_diagnostic() -> ! {
     }
 }
 
+#[cfg(all(
+    talos_target_rpi5_bcm2712,
+    talos_boot_scenario = "rpi5_rust_entry_uart10_marker_loop"
+))]
+pub fn run_rust_entry_uart10_marker_loop() -> ! {
+    loop {
+        write_early_static("TALOS: reu10-loop\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
 #[cfg(talos_boot_scenario = "rpi5_rp1_uart0_fr_read")]
 pub fn run_rp1_uart0_fr_read_diagnostic() {
     const CONTRACT_ID: &str = "phase11-rp1-pcie-map-contract-v1";

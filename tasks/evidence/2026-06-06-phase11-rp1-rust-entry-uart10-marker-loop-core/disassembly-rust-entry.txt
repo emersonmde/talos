@@ -1,0 +1,3 @@
+00000000002011d8 <rust_entry>:
+  2011d8:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rust_entry_uart10_marker_loop>
+

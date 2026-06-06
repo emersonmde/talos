@@ -1,0 +1,26 @@
+  2011d8:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rust_entry_uart10_marker_loop>
+
+00000000002015e4 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi533run_rust_entry_uart10_marker_loop>:
+  2015e4:      	str	x30, [sp, #-0x20]!
+  2015e8:      	stp	x21, x19, [sp, #0x10]
+  2015ec:      	mov	x19, #0x7748            // =30536
+  2015f0:      	movk	x19, #0x20, lsl #16
+  2015f4:      	movk	x19, #0x0, lsl #32
+  2015f8:      	movk	x19, #0x0, lsl #48
+<L0>:
+  2015fc:      	mov	x0, x19
+  201600:      	mov	w1, #0x12               // =18
+  201604:      	bl	 <_RNvNtNtCsan2nlJD4ir9_5talos6target4rpi518write_early_static>
+  201608:      	mov	x9, #0x1000             // =4096
+  20160c:      	movk	x9, #0x7d00, lsl #16
+  201610:      	movk	x9, #0x10, lsl #32
+  201614:      	mov	x21, #0x200000          // =2097152
+<L1>:
+  201618:      	ldr	w10, [x9, #0x18]
+  20161c:      	tbnz	w10, #0x7,  <L2>
+  201620:      	subs	x21, x21, #0x1
+  201624:      	b.ne	 <L1>
+<L2>:
+  201628:      	dsb	sy
+  20162c:      	b	 <L0>
+

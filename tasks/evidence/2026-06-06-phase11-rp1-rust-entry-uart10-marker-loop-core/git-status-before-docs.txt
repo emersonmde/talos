@@ -1,0 +1,8 @@
+ M build.rs
+ M src/main.rs
+ M src/target/rpi5.rs
+?? scripts/rpi5-rust-entry-uart10-marker-loop-archive.sh
+?? scripts/rpi5-rust-entry-uart10-marker-loop-boot-tree.sh
+?? scripts/rpi5-rust-entry-uart10-marker-loop-image.sh
+?? scripts/rpi5-rust-entry-uart10-marker-loop-review.sh
+?? tasks/evidence/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-core/
