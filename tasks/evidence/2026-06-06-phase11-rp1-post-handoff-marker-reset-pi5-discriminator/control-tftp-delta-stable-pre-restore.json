@@ -1,0 +1,20 @@
+{
+  "action": "tftp logs",
+  "ok": true,
+  "tftp": {
+    "cursor_end": 4110463,
+    "cursor_start": 4110463,
+    "events": [],
+    "lines": [],
+    "log": "/state/tftp.log",
+    "log_size": 4110463,
+    "tail_mode": false,
+    "truncated": false
+  },
+  "talos_tftp_stability": {
+    "stable": true,
+    "reason": "stable",
+    "stable_samples": 3,
+    "required_samples": 3
+  }
+}

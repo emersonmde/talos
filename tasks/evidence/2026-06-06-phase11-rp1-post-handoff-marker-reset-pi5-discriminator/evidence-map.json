@@ -1,0 +1,72 @@
+{
+  "task_id": "phase11-rp1-post-handoff-marker-reset-pi5-discriminator-20260606",
+  "classification": "staging-capture-blocker",
+  "archive": {
+    "path": "target/talos-rpi5-post-handoff-marker-reset-core.tar.gz",
+    "sha256_file": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/archive-sha256.txt",
+    "sha256": "73a74db1d08d89a3aa371d5329bc6158553bef172a82f0b479598bc29f15acaa",
+    "published_only_archive": true
+  },
+  "boot_identity": {
+    "pre_status": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/pre-status.json",
+    "pre_boot_files": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/pre-boot-files.json",
+    "pre_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "pre_run_snapshot": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/pre-run-snapshot.json"
+  },
+  "publication": {
+    "publish": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/publish.json",
+    "post_publish_status": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/post-publish-status.json",
+    "post_publish_boot_files": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/post-publish-boot-files.json",
+    "published_tree_hash": "37995c483190ddcfaef70c9cf5be04244f75c4fcd9cf25fdd90f941ccc48c4f2",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_bytes": 51736
+  },
+  "candidate_run": {
+    "serial_cursor": 4110717,
+    "tftp_cursor": 4106410,
+    "power_cycle": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/power-cycle.json",
+    "serial_observations": [
+      "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/serial-observe-1.json",
+      "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/serial-observe-2.json",
+      "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/serial-observe-3.json",
+      "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/serial-observe-late-before-restore.json"
+    ],
+    "stable_tftp": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/tftp-delta-stable-pre-restore.json",
+    "stable_tftp_events": 0,
+    "late_tftp": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/tftp-delta-late-before-restore.json",
+    "late_tftp_events": 26,
+    "late_tftp_kernel_events": 4,
+    "late_tftp_disposition": "capture-timing evidence only; not used as candidate identity proof because final-pre-restore status had already returned to the restored tree"
+  },
+  "candidate_rerun": {
+    "pre_status": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/rerun-pre-status.json",
+    "post_publish_status": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/rerun-post-publish-status.json",
+    "serial": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/rerun-serial-observe-90s.json",
+    "stable_tftp": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/rerun-tftp-delta-stable-pre-restore.json",
+    "final_tftp": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/rerun-tftp-delta-final-pre-restore.json",
+    "stable_tftp_events": 0,
+    "restore": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/rerun-restore-snapshot.json"
+  },
+  "restored_control": {
+    "pre_status": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/control-pre-status.json",
+    "serial": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/control-serial-observe-90s.json",
+    "stable_tftp": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/control-tftp-delta-stable-pre-restore.json",
+    "final_tftp": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/control-tftp-delta-final-pre-restore.json",
+    "stable_tftp_events": 0,
+    "restore": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/control-restore-snapshot.json"
+  },
+  "restore": {
+    "post_restore_status": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/post-restore-status.json",
+    "rerun_post_restore_status": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/rerun-post-restore-status.json",
+    "control_post_restore_status": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/control-post-restore-status.json",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "restore_matches_pre_run": true
+  },
+  "validation": {
+    "hardware_level": "serialized Pi 5 hardware evidence through lab-controller endpoints + serial hardware boot/output + stable TFTP samples + restore proof",
+    "git_diff_check": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/git-diff-check.log",
+    "mdbook_build": "not run; no docs/src files touched",
+    "git_diff_cached_check": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-pi5-discriminator/git-diff-cached-check.log"
+  },
+  "next_action": "Promote phase11-rp1-post-handoff-marker-reset-closeout-20260606 on a later worker wake if hardwareTestLock remains unlocked/restored; closeout must block RP1 UART0 FR-read refresh because post-handoff serial observability was not accepted."
+}

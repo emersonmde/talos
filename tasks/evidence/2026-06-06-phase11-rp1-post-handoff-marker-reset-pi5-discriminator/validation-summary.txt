@@ -1,0 +1,7 @@
+serialized Pi 5 hardware evidence through lab-controller endpoints: completed
+serial hardware boot/output: candidate, rerun, and restored control produced fresh Raspberry Pi firmware/RP1 output; no Talos post-handoff marker observed
+TFTP hardware evidence: candidate stable sample, candidate rerun, and restored control recorded stable zero same-cursor TFTP deltas in their bounded windows
+late TFTP evidence: retained as capture-timing evidence only; not accepted as candidate identity proof because status had already returned to the restored tree when queried
+restore proof: post-restore status returned tree hash a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 after every run
+classification: staging-capture-blocker
+mdbook build: not run because no docs/src files were touched

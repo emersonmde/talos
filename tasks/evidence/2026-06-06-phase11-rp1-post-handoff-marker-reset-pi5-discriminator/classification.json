@@ -1,0 +1,14 @@
+{
+  "task_id": "phase11-rp1-post-handoff-marker-reset-pi5-discriminator-20260606",
+  "classification": "staging-capture-blocker",
+  "accepted_boundary": null,
+  "summary": "Candidate publication succeeded, but bounded candidate, candidate-rerun, and restored-control windows did not produce stable TFTP fetch evidence tied to the staged tree. Fresh serial showed firmware/RP1 boot output with no Talos post-handoff marker. Late first-run TFTP lines are retained as capture-timing evidence but are not candidate identity proof because status had already returned to the restored tree when they were queried.",
+  "not_accepted": [
+    "visible post-handoff serial observability",
+    "reset side-effect evidence",
+    "marker-path-hangs-or-faults-before-reset",
+    "RP1 UART0 FR read readiness",
+    "RP1 mapped or unmapped behavior"
+  ],
+  "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+}
