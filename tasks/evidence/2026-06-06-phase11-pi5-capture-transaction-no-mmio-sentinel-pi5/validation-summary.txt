@@ -1,0 +1,17 @@
+Task: phase11-pi5-capture-transaction-no-mmio-sentinel-pi5-20260606
+
+- static archive identity check: passed for target/talos-rpi5-rp1-final-preload-marker-hold-core.tar.gz, SHA-256 07af64b86908f36c63d368589d79c76aebd492a81906a39586a2c5902d8b9287.
+- first sentinel attempt: retained as compromised blocker evidence; manual restore occurred while the capture command was still running, so restored-tree TFTP/final identity cannot classify the feature.
+- script repair: bash syntax passed for scripts/rpi5-capture-invariant-proof-bundle.sh and scripts/rpi5-proof-identity-join-check.sh.
+- script repair: dry-run contract check passed and now records serial-read-empty-before-power.json.
+- script repair: identity checker replay no longer fails with large serial-drain JSON.
+- serialized Pi 5 hardware run: clean rerun completed with classification no-mmio-sentinel-identity-joined.
+- capture-transaction v2 identity checker: passed with classification capture-transaction-v2-ready and no rejection reasons.
+- stable same-cursor TFTP evidence: passed; two served 45,816-byte da591740/kernel_2712.img fetches.
+- serial hardware boot/output: passed; saturated-cursor direct-read window retained 7,489 occurrences of TALOS: fr-final-preload-hold-loop after empty pre-power /serial/read drain.
+- restore proof: passed; post-restore tree hash a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+- git diff --check: passed.
+- mdbook build: passed.
+- git diff --cached --check before commit: passed.
+
+Result: no-mmio-sentinel-identity-joined.

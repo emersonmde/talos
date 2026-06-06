@@ -1,0 +1,56 @@
+{
+  "task": "phase11-pi5-capture-transaction-no-mmio-sentinel-pi5-20260606",
+  "status": "accepted",
+  "classification": "no-mmio-sentinel-identity-joined",
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-06-phase11-pi5-capture-transaction-no-mmio-sentinel-pi5.md",
+    "classification": "tasks/evidence/2026-06-06-phase11-pi5-capture-transaction-no-mmio-sentinel-pi5/classification.json",
+    "validationSummary": "tasks/evidence/2026-06-06-phase11-pi5-capture-transaction-no-mmio-sentinel-pi5/validation-summary.txt",
+    "cleanRerun": "tasks/evidence/2026-06-06-phase11-pi5-capture-transaction-no-mmio-sentinel-pi5/sentinel-rerun/",
+    "compromisedFirstAttempt": "tasks/evidence/2026-06-06-phase11-pi5-capture-transaction-no-mmio-sentinel-pi5/sentinel-run/",
+    "identityJoinCheck": "tasks/evidence/2026-06-06-phase11-pi5-capture-transaction-no-mmio-sentinel-pi5/identity-join-check-rerun.json",
+    "contractDryRun": "tasks/evidence/2026-06-06-phase11-pi5-capture-transaction-no-mmio-sentinel-pi5/capture-bundle-v2-read-drain-dry-run.json"
+  },
+  "accepted": [
+    "selected no-MMIO sentinel archive identity",
+    "empty pre-power /serial/read drain",
+    "fresh saturated-cursor direct-read serial marker output",
+    "stable same-cursor TFTP evidence before restore",
+    "final pre-restore selected-tree identity",
+    "restore proof"
+  ],
+  "notAccepted": [
+    "the compromised first attempt as feature evidence",
+    "RP1 mapped/read-value behavior",
+    "RP1 unmapped/trap behavior",
+    "firmware-state behavior",
+    "GPIO, interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone 11.2, or phase transition"
+  ],
+  "summary": {
+    "selectedTreeHash": "101a453d873ecec34cf43e0db4129e81167009e8915b25926ce2308d225b1c47",
+    "archiveSha256": "07af64b86908f36c63d368589d79c76aebd492a81906a39586a2c5902d8b9287",
+    "kernelBytes": 45816,
+    "identityJoinClassification": "capture-transaction-v2-ready",
+    "serialDrainEmpty": true,
+    "serialMarker": "TALOS: fr-final-preload-hold-loop",
+    "serialMarkerOccurrences": 7489,
+    "tftpStable": true,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "validation": {
+    "staticArchiveIdentity": "passed",
+    "labControllerHardwareRun": "passed-no-mmio-sentinel-identity-joined",
+    "captureTransactionV2Summary": "passed",
+    "identityJoinChecker": "passed",
+    "stableTftpBeforeRestore": "passed",
+    "restoreProof": "passed",
+    "bashSyntax": "passed",
+    "dryRun": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  },
+  "nextAction": "Promote phase11-pi5-capture-transaction-v2-closeout-20260606 on the next worker wake if hardwareTestLock remains unlocked/restored."
+}

@@ -137,7 +137,7 @@ if [ "$DRY_RUN" = true ]; then
               pre_boot_files: "pre-boot-files.json",
               pre_snapshots: "pre-snapshots.json",
               serial_drain_before_power: "serial-drain-before-power.json",
-              serial_peek_before_power: "serial-peek-before-power.json",
+              serial_read_empty_before_power: "serial-read-empty-before-power.json",
               tftp_cursor_before_power: "tftp-cursor-before-power.json",
               power_cycle: "power-cycle.json",
               serial_observe_window: "serial-observe-window.json",
@@ -240,8 +240,10 @@ drain_total_bytes=0
 drain_empty=false
 drain_cursor=0
 
-while [ "$drain_attempts" -lt 8 ]; do
-    curl -fsS "${API_BASE}/serial/peek?max_bytes=65536&drain=true" > "$serial_drain_last"
+while [ "$drain_attempts" -lt 16 ]; do
+    curl -fsS -X POST -H 'Content-Type: application/json' \
+        --data '{"timeout_seconds":1,"settle_ms":100,"max_bytes":65536}' \
+        "${API_BASE}/serial/read" > "$serial_drain_last"
     cat "$serial_drain_last" >> "$serial_drain_tmp"
     printf '\n' >> "$serial_drain_tmp"
     drain_attempts=$((drain_attempts + 1))
@@ -252,10 +254,9 @@ while [ "$drain_attempts" -lt 8 ]; do
         drain_empty=true
         break
     fi
-    sleep 1
 done
 
-cp "$serial_drain_last" "$EVIDENCE_DIR/serial-peek-before-power.json"
+cp "$serial_drain_last" "$EVIDENCE_DIR/serial-read-empty-before-power.json"
 jq -s \
     --argjson attempts "$drain_attempts" \
     --argjson total_bytes "$drain_total_bytes" \
@@ -271,7 +272,7 @@ jq -s \
             total_bytes: $total_bytes,
             final_cursor: $final_cursor,
             empty_before_power: $empty_before_power,
-            rule: "pre-power serial drain must reach an empty read before saturated direct-read output can be treated as fresh"
+            rule: "pre-power serial drain must reach an empty /serial/read response before saturated direct-read output can be treated as fresh"
         }
     }' "$serial_drain_tmp" > "$EVIDENCE_DIR/serial-drain-before-power.json"
 

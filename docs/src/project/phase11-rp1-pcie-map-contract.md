@@ -754,12 +754,27 @@ TFTP/final identity mismatch, but it did not require proof that saturated
 direct-read serial began after an empty pre-power drain. The new
 `pi5-capture-transaction-v2` bundle records
 `serial-drain-before-power.json` and rejects saturated direct-read output
-unless the pre-power drain reaches an empty read. Replaying f274ff7 under v2
+unless the pre-power `/serial/read` drain reaches an empty device-buffer
+read; `/serial/peek` is only retained-tail/cursor evidence, not drain
+proof. Replaying f274ff7 under v2
 remains capture-staging-blocked due to missing v2 drain evidence plus
 restored-tree TFTP/final identity. This accepts only proof-contract readiness
 for a no-RP1-MMIO sentinel; RP1 UART0 FR mapped/read-value behavior,
 bus-fault/trap behavior, firmware-state behavior, broader PCIe, Milestone
 11.2, and phase transition remain unaccepted.
+
+phase11-pi5-capture-transaction-no-mmio-sentinel-pi5-20260606 validates the
+v2 contract on the accepted no-MMIO final-preload-marker hold archive. The
+clean rerun staged tree
+`101a453d873ecec34cf43e0db4129e81167009e8915b25926ce2308d225b1c47`,
+proved an empty pre-power `/serial/read` drain, retained two stable
+45,816-byte `da591740/kernel_2712.img` fetches, retained final
+pre-restore selected-tree identity, and captured 7,489 occurrences of
+`TALOS: fr-final-preload-hold-loop` before restoring to
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10`.
+This accepts the capture transaction as no-mmio-sentinel-identity-joined for
+the proof chain only; RP1 UART0 FR mapped/read-value, trap/unmapped, and
+firmware-state behavior remain unaccepted until a separate RP1 proof task.
 
 ## Diagnostic Core Implementation
 

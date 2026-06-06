@@ -68,22 +68,22 @@ if [ -f "$EVIDENCE_DIR/tftp-cursor-before-power.txt" ]; then
     tftp_cursor_file="$(cat "$EVIDENCE_DIR/tftp-cursor-before-power.txt")"
 fi
 
-summary_arg='{}'
+summary_file=/dev/null
 if [ -f "$EVIDENCE_DIR/capture-invariant-summary.json" ]; then
-    summary_arg="$(cat "$EVIDENCE_DIR/capture-invariant-summary.json")"
+    summary_file="$EVIDENCE_DIR/capture-invariant-summary.json"
 fi
 
-drain_arg='{}'
+drain_file=/dev/null
 if [ -f "$EVIDENCE_DIR/serial-drain-before-power.json" ]; then
-    drain_arg="$(cat "$EVIDENCE_DIR/serial-drain-before-power.json")"
+    drain_file="$EVIDENCE_DIR/serial-drain-before-power.json"
 fi
 
 output="$(jq -n \
     --arg expected_label "$EXPECTED_LABEL" \
     --arg serial_cursor_file "$serial_cursor_file" \
     --arg tftp_cursor_file "$tftp_cursor_file" \
-    --argjson summary "$summary_arg" \
-    --argjson drain_summary "$drain_arg" \
+    --slurpfile summary "$summary_file" \
+    --slurpfile drain_summary "$drain_file" \
     --slurpfile preflight "$EVIDENCE_DIR/preflight-identity.json" \
     --slurpfile serial "$EVIDENCE_DIR/serial-observe-window.json" \
     --slurpfile tftp "$EVIDENCE_DIR/tftp-delta-stable-pre-restore.json" \
@@ -92,11 +92,13 @@ output="$(jq -n \
     --slurpfile restore "$EVIDENCE_DIR/restore-snapshot.json" \
     --slurpfile post_restore "$EVIDENCE_DIR/post-restore-status.json" \
     '
-    ($summary.label // "") as $summary_label
+    ($summary[0] // {}) as $summary_doc
+    | ($drain_summary[0] // {}) as $drain_doc
+    | ($summary_doc.label // "") as $summary_label
     | (if $expected_label != "" then $expected_label else $summary_label end) as $run_label
-    | ($summary.expected.fetch // $preflight[0].expected_fetch // "") as $expected_fetch
-    | (($summary.expected.fetch_bytes // $preflight[0].expected_fetch_bytes) | tonumber?) as $expected_bytes
-    | ($drain_summary.talos_serial_drain // {}) as $sd
+    | ($summary_doc.expected.fetch // $preflight[0].expected_fetch // "") as $expected_fetch
+    | (($summary_doc.expected.fetch_bytes // $preflight[0].expected_fetch_bytes) | tonumber?) as $expected_bytes
+    | ($drain_doc.talos_serial_drain // {}) as $sd
     | ($serial[0].talos_serial_window // {}) as $sw
     | ($tftp[0].talos_tftp_stability // {}) as $ts
     | (($tftp[0].tftp.events // []) | map(select(.filename == $expected_fetch and .status == "served"))) as $fetch_events

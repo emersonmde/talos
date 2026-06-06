@@ -1,0 +1,9 @@
+First sentinel attempt disposition: removed from accepted feature evidence.
+
+The capture command was still running in a background PTY session when manual restore was performed. The bundle therefore recorded restored-tree TFTP/final-identity evidence and must not classify the selected no-MMIO sentinel feature.
+
+The attempt also exposed two proof-helper issues that were fixed before the clean rerun:
+- rpi5-capture-invariant-proof-bundle.sh used /serial/peek for the pre-power drain. /serial/peek reports retained log tail bytes and cannot prove the device buffer is empty. The helper now drains with /serial/read.
+- rpi5-proof-identity-join-check.sh passed large retained JSON through command-line arguments. It now loads summary and drain evidence with jq --slurpfile.
+
+The clean rerun in sentinel-rerun/ is the accepted hardware evidence.

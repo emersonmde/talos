@@ -340,7 +340,9 @@ The helper writes a deterministic proof bundle with pre-run status/files,
 snapshots, an explicit pre-power serial drain, fresh serial and TFTP cursors,
 bounded accumulated serial output, stable same-cursor TFTP evidence before
 restore, final pre-restore status/files, restore status/files, and
-`capture-invariant-summary.json`. Its summary suggests only the
+`capture-invariant-summary.json`. The pre-power drain uses `/serial/read`, not
+`/serial/peek`, because `peek` reports the retained log tail and does not
+consume retained bytes. Its summary suggests only the
 capture/observability classification; the task record remains responsible for
 accepting or rejecting the feature boundary.
 
@@ -362,7 +364,7 @@ classify the bundle as `capture-staging-blocked`; they do not support
 `mapped/read-value`, trap/unmapped, or other decisive RP1 behavior. When the
 serial cursor is saturated and the helper falls back to direct read, the
 direct-read output is decisive only if `serial-drain-before-power.json` proves
-the pre-power drain reached an empty read.
+the pre-power `/serial/read` drain reached an empty device-buffer read.
 
 For the current restored known-good control, the preferred readiness markers
 are `TALOS: kernel_main` plus `rpi5-production-timer-preemption: PASS` within

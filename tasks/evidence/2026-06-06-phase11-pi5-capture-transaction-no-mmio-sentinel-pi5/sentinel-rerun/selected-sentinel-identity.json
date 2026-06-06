@@ -1,0 +1,16 @@
+{
+  "selectedSentinel": "final-preload-marker-hold-core",
+  "archive": "target/talos-rpi5-rp1-final-preload-marker-hold-core.tar.gz",
+  "expectedArchiveSha256": "07af64b86908f36c63d368589d79c76aebd492a81906a39586a2c5902d8b9287",
+  "expectedTreeHash": "101a453d873ecec34cf43e0db4129e81167009e8915b25926ce2308d225b1c47",
+  "observedTreeHash": "101a453d873ecec34cf43e0db4129e81167009e8915b25926ce2308d225b1c47",
+  "expectedKernel": "kernel_2712.img",
+  "observedEffectiveKernel": "kernel_2712.img",
+  "expectedFetch": "da591740/kernel_2712.img",
+  "expectedFetchBytes": 45816,
+  "observedFetchBytes": 45816,
+  "serialMarker": "TALOS: fr-final-preload-hold-loop",
+  "restoreSnapshot": "phase11-capture-v2-no-mmio-sentinel-rerun-pre-20260606T2239Z",
+  "publicationOk": true,
+  "identityMatches": true
+}
