@@ -303,6 +303,7 @@ jq -n \
              post_restore_tree_hash: $post_restore_tree_hash
          },
          suggested_classification:
+             (
              if $preflight_mismatch then "staging-publication-mismatch"
              elif ($sw.has_required_marker == true) then "post-handoff-marker-visible"
              elif (($fetch_events | length) >= 2 and (($sw.firmware_network_occurrences // 0) >= 2)) then "reset-side-effect-without-visible-marker-candidate"
@@ -310,7 +311,7 @@ jq -n \
              elif ($stable_zero_tftp and ($sw.has_firmware_network == true) and $final_tree_ok and ($final_fetch != null) and $final_bytes_ok) then "tftp-capture-logging-blindness"
              elif ($sw.has_firmware_network == true) then "serial-only-firmware-reboot"
              else "still-blocked-without-fresh-boot-evidence"
-             end,
+             end),
          proof_contract: {
              serial_observe_contract: "deadline-loop-accumulated-from-fresh-cursor",
              tftp_contract: "stable-same-cursor-delta-before-restore",

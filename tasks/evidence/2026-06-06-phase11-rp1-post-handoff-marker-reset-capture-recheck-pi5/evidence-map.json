@@ -1,0 +1,50 @@
+{
+  "task_id": "phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5-20260606",
+  "task_record": "tasks/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5.md",
+  "classification": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/classification.json",
+  "candidate_identity": {
+    "archive_sha256": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/archive-sha256.txt",
+    "archive_listing": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/archive-listing.txt",
+    "publish_response": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-publish.json",
+    "post_publish_status": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-post-publish-status.json",
+    "post_publish_boot_files": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-post-publish-boot-files.json",
+    "tree_hash": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-post-publish-tree-hash.txt",
+    "kernel_bytes": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-kernel-bytes.txt"
+  },
+  "pre_run_restore_point": {
+    "snapshot_name": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/restore-snapshot-name.txt",
+    "snapshot_create": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/pre-run-snapshot-create.json",
+    "initial_status": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/initial-status-before-lock-run.json",
+    "initial_boot_files": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/initial-boot-files-before-lock-run.json",
+    "initial_snapshots": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/initial-snapshots-before-lock-run.json"
+  },
+  "candidate_run_bundle": {
+    "pre_status": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run/pre-status.json",
+    "pre_boot_files": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run/pre-boot-files.json",
+    "pre_snapshots": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run/pre-snapshots.json",
+    "preflight_identity": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run/preflight-identity.json",
+    "serial_cursor": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run/serial-cursor-before-power.txt",
+    "serial_peek": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run/serial-peek-before-power.json",
+    "tftp_cursor": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run/tftp-cursor-before-power.txt",
+    "tftp_cursor_response": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run/tftp-cursor-before-power.json",
+    "power_cycle": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run/power-cycle.json",
+    "serial_observation": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run/serial-observe-window.json",
+    "serial_observation_exit": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run/serial-observe-window.exit",
+    "stable_tftp_delta": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run/tftp-delta-stable-pre-restore.json",
+    "stable_tftp_delta_exit": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run/tftp-delta-stable-pre-restore.exit",
+    "final_pre_restore_status": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run/final-pre-restore-status.json",
+    "final_pre_restore_boot_files": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run/final-pre-restore-boot-files.json",
+    "restore_snapshot": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run/restore-snapshot.json",
+    "post_restore_status": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run/post-restore-status.json",
+    "post_restore_boot_files": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run/post-restore-boot-files.json",
+    "summary": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run/capture-invariant-summary.json",
+    "helper_output": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/candidate-run-helper-output.json"
+  },
+  "post_failure_restore_check": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/status-after-helper-jq-failure.json",
+  "validation": {
+    "summary": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/validation-summary.txt",
+    "bash_n": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/bash-n-rpi5-capture-invariant-proof-bundle.log",
+    "helper_dry_run": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/helper-dry-run.json",
+    "git_diff_check": "tasks/evidence/2026-06-06-phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5/git-diff-check.log"
+  }
+}

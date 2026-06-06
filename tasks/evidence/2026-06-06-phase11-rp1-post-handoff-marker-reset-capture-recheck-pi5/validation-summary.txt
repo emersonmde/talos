@@ -1,0 +1,5 @@
+bash -n scripts/rpi5-capture-invariant-proof-bundle.sh: passed
+scripts/rpi5-capture-invariant-proof-bundle.sh --dry-run: passed
+git diff --check: passed
+mdbook build: not run because no docs/src files were touched
+git diff --cached --check before commit: passed

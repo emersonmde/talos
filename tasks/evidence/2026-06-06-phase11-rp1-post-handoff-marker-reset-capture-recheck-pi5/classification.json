@@ -1,0 +1,32 @@
+{
+  "task_id": "phase11-rp1-post-handoff-marker-reset-capture-recheck-pi5-20260606",
+  "classification": "reset-side-effect-without-visible-marker",
+  "candidate_archive": "target/talos-rpi5-post-handoff-marker-reset-core.tar.gz",
+  "candidate_archive_sha256": "73a74db1d08d89a3aa371d5329bc6158553bef172a82f0b479598bc29f15acaa",
+  "candidate_tree_hash": "37995c483190ddcfaef70c9cf5be04244f75c4fcd9cf25fdd90f941ccc48c4f2",
+  "expected_fetch": "da591740/kernel_2712.img",
+  "expected_fetch_bytes": 51736,
+  "stable_tftp": {
+    "cursor_start": 4111814,
+    "cursor_end": 4118569,
+    "stable": true,
+    "stable_samples": 3,
+    "event_count": 65,
+    "expected_fetch_count": 10
+  },
+  "serial_window": {
+    "cursor_start": 4113931,
+    "cursor_end": 4133556,
+    "bytes": 19625,
+    "elapsed_seconds": 90,
+    "observe_attempts": 21,
+    "has_kernel_main": false,
+    "has_post_handoff_marker": false,
+    "firmware_network_occurrences": 10
+  },
+  "restore": {
+    "snapshot": "phase11-post-handoff-marker-reset-capture-recheck-pre-20260606T0852Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "accepted_boundary": "Candidate fetch and reset-loop side-effect evidence only; no visible post-handoff marker and no RP1 mapped/unmapped behavior."
+}
