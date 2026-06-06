@@ -1,0 +1,71 @@
+{
+  "task_id": "phase11-known-good-runtime-serial-window-closeout-20260606",
+  "classification": "boot-runtime-readiness-blocked",
+  "evidence_level": "static evidence inspection + docs validation + diff hygiene + staged diff hygiene",
+  "accepted": {
+    "serial_window_proof_semantics": true,
+    "known_good_fetch_visibility": true,
+    "known_good_runtime_readiness": false,
+    "valid_known_good_talos_readiness": false,
+    "rp1_candidate_fetch": false,
+    "rp1_rust_entry": false,
+    "rp1_entry_control_reachability": false,
+    "rp1_mapped_read_value": false,
+    "rp1_unmapped_trap": false,
+    "milestone_11_2": false
+  },
+  "contract": {
+    "task_id": "phase11-known-good-runtime-serial-window-contract-20260606",
+    "commit": "d2419b79474d699e55f19af65406e0f6eacb0ccf",
+    "task_record": "tasks/2026-06-06-phase11-known-good-runtime-serial-window-contract.md",
+    "evidence_map": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-contract/evidence-map.json",
+    "classification": "ready-for-serial-window-discriminator",
+    "accepted_boundary": "deadline-loop serial observation contract only"
+  },
+  "hardware_discriminator": {
+    "task_id": "phase11-known-good-runtime-serial-window-pi5-discriminator-20260606",
+    "commit": "cca81457e4ac0552106772236274cc28d4433aad",
+    "task_record": "tasks/2026-06-06-phase11-known-good-runtime-serial-window-pi5-discriminator.md",
+    "evidence_map": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-pi5-discriminator/evidence-map.json",
+    "classification": "boot-runtime-readiness-blocked",
+    "evidence_level": "serialized Pi 5 hardware evidence through lab-controller API + serial hardware boot/output + stable TFTP delta + restore evidence",
+    "summary": {
+      "pre_run_effective_kernel": "kernel_2712.img",
+      "pre_run_kernel_2712_bytes": 104136,
+      "serial_helper_observe_contract": "deadline-loop-accumulated-from-fresh-cursor",
+      "serial_helper_has_kernel_main": false,
+      "serial_helper_has_required_success_marker": true,
+      "serial_direct_has_kernel_main": false,
+      "serial_direct_has_required_success_marker": true,
+      "tftp_stable": true,
+      "tftp_event_count": 13,
+      "tftp_kernel_2712_fetches": 2,
+      "restored_ok": true
+    }
+  },
+  "dispositions": [
+    {
+      "kind": "fixed",
+      "note": "Closeout records the accepted proof boundary and links contract, hardware, restore, validation, and commit evidence."
+    },
+    {
+      "kind": "not-an-issue",
+      "note": "Known-good fetch visibility remains accepted because the stable pre-restore TFTP delta contains the expected 104,136-byte kernel_2712.img fetches."
+    },
+    {
+      "kind": "deferred",
+      "note": "valid-known-good-talos-readiness remains unaccepted because retained serial evidence lacks TALOS: kernel_main."
+    },
+    {
+      "kind": "deferred",
+      "note": "RP1 candidate/source work remains blocked pending a supervisor-planned serial-log completeness/marker-boundary discriminator."
+    }
+  ],
+  "validation": {
+    "static_evidence_inspection": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-closeout/static-evidence-inspection.md",
+    "git_diff_check": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-closeout/git-diff-check.log",
+    "mdbook_build": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-closeout/mdbook-build.log",
+    "git_diff_cached_check": "tasks/evidence/2026-06-06-phase11-known-good-runtime-serial-window-closeout/git-diff-cached-check.log"
+  },
+  "next_action": "Supervisor planning required for serial-log completeness/marker-boundary discriminator before RP1 candidate/source work; queued RP1 entry-control candidate rerun remains blocked."
+}
