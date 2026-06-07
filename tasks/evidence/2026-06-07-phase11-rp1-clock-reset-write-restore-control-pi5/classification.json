@@ -1,0 +1,81 @@
+{
+  "task": "phase11-rp1-clock-reset-write-restore-control-pi5-20260607",
+  "status": "accepted",
+  "classification": "no-mmio-clock-adc-ctrl-write-restore-control-visible",
+  "evidenceLevel": [
+    "static archive identity inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "stable same-cursor TFTP evidence",
+    "pi5-capture-transaction-v2 identity join",
+    "restore proof",
+    "known-good control after inconclusive first run"
+  ],
+  "controlCandidate": {
+    "archive": "target/talos-rpi5-rp1-clock-adc-ctrl-write-restore-no-mmio-control-core.tar.gz",
+    "archiveSha256": "dd57daffc4196e8314336492fd86ee098974dd5fb30085ea2e689d24bf0de659",
+    "kernel2712Sha256": "9dec210a6885dc38b7982ac69b83e45478b80ec965952a499cd064f29559f2f2",
+    "kernelSizeBytes": 46888,
+    "marker": "TALOS: rp1-clock-adc-ctrl-write-restore-control",
+    "outputClassification": "simulated/control"
+  },
+  "accepted": [
+    "Pi 5 fetched the selected no-MMIO/no-RP1/no-GIC CLK_ADC_CTRL write/restore control candidate as da591740/kernel_2712.img",
+    "control rerun passed pi5-capture-transaction-v2 identity join with no rejection reasons",
+    "serial hardware output retained repeated TALOS: rp1-clock-adc-ctrl-write-restore-control markers from the selected candidate",
+    "stable pre-restore TFTP evidence retained two served 46888-byte candidate kernel fetches",
+    "restore returned the lab to the pre-run boot tree"
+  ],
+  "notAccepted": [
+    "real RP1 CLK_ADC_CTRL write/readback/restore behavior",
+    "RP1 clock/reset ownership",
+    "RP1 clock/reset writes",
+    "GPIO ownership",
+    "GPIO event generation",
+    "interrupt delivery",
+    "GIC acknowledgement",
+    "ISR or handler ownership",
+    "RP1/GIC/MSI-X/PCIe/MIP/GPIO/pads/RIO/clock/reset MMIO behavior",
+    "DMA/cache behavior",
+    "storage or generated-root behavior",
+    "networking or SSH",
+    "broader PCIe behavior",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "runs": {
+    "acceptedControlRerun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-control-pi5/control-rerun-after-kg",
+      "selectedTreeHash": "94775dea793b4493ad2cdbdfd3bd6e8882362d10d440a0fadb1ed9296ab27f8e",
+      "preRunTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "identityJoinAllowed": true,
+      "rejectionReasons": [],
+      "markerOccurrences": 108,
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 2,
+      "expectedFetchBytes": 46888,
+      "snapshotName": "pre-clock-adc-ctrl-write-restore-control-rerun-205822"
+    },
+    "firstControlRun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-control-pi5/control-run",
+      "classification": "capture-staging-blocked",
+      "rejectionReasons": [
+        "serial-drain-not-empty-before-power",
+        "saturated-direct-read-without-empty-pre-power-drain"
+      ],
+      "markerOccurrences": 64,
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 2,
+      "snapshotName": "pre-clock-adc-ctrl-write-restore-control-205409"
+    },
+    "knownGoodControl": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-control-pi5/known-good-control-run",
+      "selectedTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "identityJoinAllowed": true,
+      "markerOccurrences": 1,
+      "expectedFetchBytes": 104136,
+      "snapshotName": "pre-clock-adc-ctrl-write-restore-kg-control-205718"
+    }
+  }
+}

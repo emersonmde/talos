@@ -1,0 +1,95 @@
+{
+  "task": "phase11-rp1-clock-reset-write-restore-control-pi5-20260607",
+  "status": "accepted",
+  "classification": "no-mmio-clock-adc-ctrl-write-restore-control-visible",
+  "generatedAt": "2026-06-07T20:59:00Z",
+  "evidenceLevel": [
+    "static archive identity inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "stable same-cursor TFTP evidence",
+    "pi5-capture-transaction-v2 identity join",
+    "restore proof",
+    "known-good control after inconclusive first run",
+    "git diff checks"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-07-phase11-rp1-clock-reset-write-restore-control-pi5.md",
+    "classification": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-control-pi5/classification.json",
+    "firstControlRun": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-control-pi5/control-run",
+    "knownGoodControlRun": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-control-pi5/known-good-control-run",
+    "acceptedControlRerun": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-control-pi5/control-rerun-after-kg"
+  },
+  "sourceAndCore": {
+    "sourceContractTask": "tasks/2026-06-07-phase11-rp1-clock-reset-write-restore-source-contract.md",
+    "sourceContractCommit": "7a8f5e726a0b43ab740cb82817c2c75877db5909",
+    "coreTask": "tasks/2026-06-07-phase11-rp1-clock-reset-write-restore-core.md",
+    "coreCommit": "d8280863d781df2ee072bd93ecd0d24a1942c06f"
+  },
+  "controlCandidate": {
+    "archive": "target/talos-rpi5-rp1-clock-adc-ctrl-write-restore-no-mmio-control-core.tar.gz",
+    "archiveSha256": "dd57daffc4196e8314336492fd86ee098974dd5fb30085ea2e689d24bf0de659",
+    "kernel2712Sha256": "9dec210a6885dc38b7982ac69b83e45478b80ec965952a499cd064f29559f2f2",
+    "kernelSizeBytes": 46888,
+    "marker": "TALOS: rp1-clock-adc-ctrl-write-restore-control",
+    "outputClassification": "simulated/control",
+    "staticArchiveReview": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-control-pi5/control-rerun-after-kg/static-archive-review.txt"
+  },
+  "acceptedRun": {
+    "path": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-control-pi5/control-rerun-after-kg",
+    "selectedTreeHash": "94775dea793b4493ad2cdbdfd3bd6e8882362d10d440a0fadb1ed9296ab27f8e",
+    "preRunTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "identityAllowed": true,
+    "rejectionReasons": [],
+    "markerOccurrences": 108,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 46888,
+    "serialCaptureMode": "read",
+    "serialObserveContract": "deadline-loop-direct-read-after-saturated-cursor",
+    "tftpStable": true
+  },
+  "inconclusiveFirstRun": {
+    "path": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-control-pi5/control-run",
+    "classification": "capture-staging-blocked",
+    "rejectionReasons": [
+      "serial-drain-not-empty-before-power",
+      "saturated-direct-read-without-empty-pre-power-drain"
+    ],
+    "markerOccurrences": 64,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2
+  },
+  "knownGoodControl": {
+    "path": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-control-pi5/known-good-control-run",
+    "classification": "capture-transaction-v2-ready",
+    "identityAllowed": true,
+    "markerOccurrences": 1,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 104136
+  },
+  "validation": [
+    "scripts/rpi5-rp1-clock-adc-ctrl-write-restore-no-mmio-control-review.sh target/talos-rpi5-rp1-clock-adc-ctrl-write-restore-no-mmio-control-core.tar.gz",
+    "lab-controller API status/boot-files/snapshot/publish/power-cycle/restore",
+    "scripts/rpi5-capture-invariant-proof-bundle.sh with marker TALOS: rp1-clock-adc-ctrl-write-restore-control",
+    "scripts/rpi5-proof-identity-join-check.sh --evidence-dir tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-control-pi5/control-rerun-after-kg",
+    "known-good control after inconclusive first run",
+    "git diff --check",
+    "git diff --cached --check"
+  ],
+  "acceptedClaims": [
+    "no-MMIO/no-RP1/no-GIC CLK_ADC_CTRL write/restore control output and capture path is visible on Pi 5",
+    "the selected candidate identity, TFTP fetches, serial markers, final pre-restore identity, and restore proof join under pi5-capture-transaction-v2"
+  ],
+  "rejectedClaims": [
+    "real RP1 CLK_ADC_CTRL write/readback/restore behavior",
+    "RP1 clock/reset ownership or writes",
+    "GPIO ownership or event generation",
+    "interrupt delivery or GIC acknowledgement",
+    "ISR or handler ownership",
+    "DMA/cache, storage, generated-root, networking, SSH, broader PCIe behavior, Milestone 11.3, or phase transition"
+  ],
+  "nextAction": "Promote phase11-rp1-clock-reset-write-restore-pi5-20260607 on the next worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive."
+}
