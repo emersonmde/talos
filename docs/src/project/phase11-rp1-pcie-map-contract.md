@@ -139,6 +139,19 @@ enumeration, Milestone 11.3, or phase transition. Same-shaped MSIX_CFG(0)
 hardware reruns are not progress unless a future supervisor task supplies a
 different discriminator or new acceptance criteria.
 
+phase11-rp1-gic-visible-route-source-contract-20260607 accepts the next narrow
+GIC-visible source contract only. The selected diagnostic target is
+`rp1-io-bank0-gic-route-status-read`: a read-only/no-ack GICv2 status snapshot
+for the source-predicted RP1 IO_BANK0 route to GIC SPI 128 / INTID 160. The
+only allowed reads are `GICD_ISENABLER5` at `0x10_7fff_9114`,
+`GICD_ISPENDR5` at `0x10_7fff_9214`, `GICD_ISACTIVER5` at
+`0x10_7fff_9314`, and `GICC_HPPIR` at `0x10_7fff_a018`; INTID 160 is bank 5
+bit 0. The contract forbids GIC writes, `GICC_IAR`, `GICC_EOIR`, interrupt
+unmasking, ISR installation, RP1/MSI-X/PCIe/MIP/GPIO/pads/RIO/clock-reset
+MMIO, and any treatment of a status value as proof of interrupt delivery. The
+paired control must preserve the output shape while constructing no GIC, RP1,
+MSI-X, PCIe, MIP, GPIO, pads, RIO, or clock/reset MMIO address.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware

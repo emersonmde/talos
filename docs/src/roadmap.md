@@ -7536,6 +7536,19 @@ delivery, handler ownership, GPIO ownership, pin-control behavior, clocks and
 resets, DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
 Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-gic-visible-route-source-contract-20260607 is accepted as
+phase11-rp1-gic-visible-route-source-contract-v1. It selects the next
+read-only/no-ack GIC-visible route status diagnostic for the source-predicted
+RP1 IO_BANK0 route to GIC SPI 128 / INTID 160. The allowed status snapshot is
+limited to GICD_ISENABLER5 at `0x10_7fff_9114`, GICD_ISPENDR5 at
+`0x10_7fff_9214`, GICD_ISACTIVER5 at `0x10_7fff_9314`, and GICC_HPPIR at
+`0x10_7fff_a018`. INTID 160 is bank 5 bit 0. The paired control must construct
+no GIC, RP1, MSI-X, PCIe, MIP, GPIO, pads, RIO, or clock/reset MMIO path before
+any real Pi 5 proof. This accepts only a source contract, not pending state,
+interrupt delivery, IAR/EOIR acknowledgement, handler ownership, GPIO
+ownership, clock/reset programming, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe, Milestone 11.3, or phase transition.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
