@@ -840,13 +840,35 @@ PCIe, Milestone 11.2, and phase transition remain unaccepted. The next
 hardware control must first prove the no-MMIO tail-stable output shape is
 capturable on Pi 5 before any RP1 mapped/read-value proof can be attempted.
 
+phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5-20260606 accepts that
+hardware control as tail-stable-control-visible. The accepted candidate rerun
+published only the no-RP1-MMIO tail-stable control archive and selected tree
+`b4b780193281538a643aec3c17898ae59204c335f32452b90cf08b0cb8e10161` with a
+45,728-byte `da591740/kernel_2712.img`. The v2 identity join passed with an
+empty pre-power `/serial/read` drain, two stable 45,728-byte TFTP fetches,
+final pre-restore selected-tree identity, and restore to
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10`. The
+saturated direct-read window retained 1,771 occurrences of
+`TALOS: fr-tail-stable-control`.
+
+This accepts only the no-MMIO simulated/control tail-stable output shape and
+proof-chain readiness for the queued RP1 tail-stable result proof. RP1 UART0
+FR mapped/read-value behavior, bus-fault/trap behavior, firmware-state
+behavior, GPIO, interrupts, DMA/cache, storage, generated-root, networking,
+SSH, broader PCIe, Milestone 11.2, and phase transition remain unaccepted
+until a separate RP1 proof passes its own hardware lock and classification
+gates.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when
 `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read`,
 `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read_delayed_marker`,
 `TALOS_BOOT_SCENARIO=rpi5_rp1_final_preload_marker_hold`, or
-`TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read_hold_control` is selected. The
+`TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read_hold_control`,
+`TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_tail_stable_result`, or
+`TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_tail_stable_no_mmio_control` is
+selected. The
 original path branches directly from `rust_entry`, reports
 `rpi5-rp1-uart0-fr-read: start` and
 `rpi5-rp1-uart0-fr-read: pre-mmio-read` through the UART10 early-serial

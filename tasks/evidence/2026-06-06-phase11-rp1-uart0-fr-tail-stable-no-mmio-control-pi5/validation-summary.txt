@@ -1,0 +1,16 @@
+Task: phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5-20260606
+
+- static archive identity check: passed for target/talos-rpi5-rp1-uart0-fr-tail-stable-no-mmio-control-core.tar.gz, SHA-256 050542fe57dc5d53ce5ee87a16c139701c8beedc25f8a1c26a8b5b1b21bdae9b.
+- first candidate attempt: retained as staging-publication-mismatch because the script used the local archive tree hash as the lab selected-tree hash; no hardware feature claim is accepted from it.
+- first candidate rerun: retained as capture-staging-blocked because v2 rejected saturated direct-read evidence after the pre-power serial drain never emptied.
+- known-good control: retained as capture-staging-blocked for the same non-empty pre-power serial drain condition; this satisfied the required known-good control triage gate but did not classify the feature.
+- candidate rerun after known-good control: completed with classification tail-stable-control-visible.
+- pi5-capture-transaction-v2 identity checker: passed with capture-transaction-v2-ready and no rejection reasons on the accepted candidate rerun.
+- stable same-cursor TFTP evidence: passed; two served 45,728-byte da591740/kernel_2712.img fetches.
+- serial hardware boot/output: passed; saturated direct-read window retained 1,771 occurrences of TALOS: fr-tail-stable-control after an empty pre-power /serial/read drain.
+- restore proof: passed; post-restore tree hash a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+- git diff --check: passed.
+- mdbook build: passed.
+- git diff --cached --check before commit: passed.
+
+Result: tail-stable-control-visible.

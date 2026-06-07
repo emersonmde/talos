@@ -1,0 +1,1 @@
+c9c473242310875f232c19c97caa82dfc2ca843c3bf159a3380d01f6b2105581  /opt/strider/openclaw/current/workspace/tmp/talos-tail-stable-control-review/da591740/kernel_2712.img

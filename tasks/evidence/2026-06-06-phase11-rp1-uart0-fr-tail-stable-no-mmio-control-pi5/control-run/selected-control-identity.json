@@ -1,0 +1,10 @@
+{
+  "archive": "target/talos-rpi5-rp1-uart0-fr-tail-stable-no-mmio-control-core.tar.gz",
+  "expectedTreeHash": "74e0c0a9c294927d8e7f377fd8272d587050bd3dd5fb471e120f126e65fd4764",
+  "observedTreeHash": "b4b780193281538a643aec3c17898ae59204c335f32452b90cf08b0cb8e10161",
+  "effectiveKernel": "kernel_2712.img",
+  "expectedKernelBytes": 45728,
+  "observedKernelBytes": 45728,
+  "treeMatches": false,
+  "kernelBytesMatch": true
+}

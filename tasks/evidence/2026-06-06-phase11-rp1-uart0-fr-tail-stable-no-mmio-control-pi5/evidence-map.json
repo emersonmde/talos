@@ -1,0 +1,71 @@
+{
+  "task": "phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5-20260606",
+  "status": "accepted",
+  "classification": "tail-stable-control-visible",
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-06-phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5.md",
+    "classification": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5/classification.json",
+    "validationSummary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5/validation-summary.txt",
+    "acceptedCandidateRun": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5/control-rerun-after-kg/",
+    "knownGoodControlRun": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5/known-good-control-run/",
+    "firstStagingMismatch": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5/control-run/",
+    "firstCandidateRerun": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5/control-rerun/",
+    "identityJoinCheck": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5/control-rerun-after-kg/identity-join-check.json",
+    "captureSummary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5/control-rerun-after-kg/capture-invariant-summary.json"
+  },
+  "accepted": [
+    "selected no-MMIO tail-stable control archive identity",
+    "empty pre-power /serial/read drain on the accepted candidate rerun",
+    "pi5-capture-transaction-v2 identity join with no rejection reasons",
+    "stable same-cursor TFTP evidence before restore",
+    "two served 45,728-byte da591740/kernel_2712.img candidate fetches",
+    "final pre-restore selected-tree identity",
+    "repeated TALOS: fr-tail-stable-control serial marker retained from the selected candidate",
+    "restore proof returning the lab to the pre-run tree"
+  ],
+  "notAccepted": [
+    "first staging-mismatch attempt as feature evidence",
+    "candidate rerun and known-good control with non-empty pre-power serial drains as decisive feature evidence",
+    "RP1 UART0 FR mapped/read-value",
+    "RP1 bus-fault/trap",
+    "firmware-state behavior",
+    "GPIO",
+    "interrupts",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ],
+  "summary": {
+    "selectedTreeHash": "b4b780193281538a643aec3c17898ae59204c335f32452b90cf08b0cb8e10161",
+    "archiveSha256": "050542fe57dc5d53ce5ee87a16c139701c8beedc25f8a1c26a8b5b1b21bdae9b",
+    "kernelSha256": "c9c473242310875f232c19c97caa82dfc2ca843c3bf159a3380d01f6b2105581",
+    "kernelBytes": 45728,
+    "identityJoinClassification": "capture-transaction-v2-ready",
+    "identityJoinRejectionReasons": [],
+    "serialDrainEmpty": true,
+    "serialMarker": "TALOS: fr-tail-stable-control",
+    "serialMarkerOccurrences": 1771,
+    "tftpStable": true,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "validation": {
+    "staticArchiveIdentity": "passed",
+    "labControllerHardwareRun": "passed-tail-stable-control-visible",
+    "captureTransactionV2IdentityJoin": "passed",
+    "stableTftpBeforeRestore": "passed",
+    "serialHardwareBootOutput": "passed",
+    "knownGoodControlAndCandidateRerunAfterInconclusiveEvidence": "passed",
+    "restoreProof": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  },
+  "nextAction": "Promote phase11-rp1-uart0-fr-tail-stable-control-closeout-20260606 on the next worker wake if hardwareTestLock remains unlocked/restored."
+}
