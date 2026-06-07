@@ -468,6 +468,49 @@ acknowledgement, handler ownership, DMA/cache, storage, generated-root,
 networking, SSH, broader PCIe enumeration, Milestone 11.3, and phase
 transition remain unaccepted.
 
+phase11-rp1-clock-reset-write-restore-core-20260607 accepts the local/static
+diagnostic pair for that contract only. The real candidate performs the
+accepted `CLK_ADC_CTRL` pre-read, idempotent write, post-read, restore-write,
+and restore-read sequence and repeats TALOS:
+rp1-clock-adc-ctrl-write-restore-result with the accepted report fields. The
+paired control repeats TALOS:
+rp1-clock-adc-ctrl-write-restore-control with the same output shape while
+constructing no RP1 clock/reset, GPIO/RIO/pads, MSI-X/PCIe/MIP, or GIC MMIO
+address. No Pi 5 hardware behavior is accepted by the local/static core.
+
+phase11-rp1-clock-reset-write-restore-control-pi5-20260607 accepts only the
+serialized Pi 5 no-MMIO/no-RP1/no-GIC control output/capture path. After a
+first candidate run was rejected by serial-drain/capture freshness evidence,
+the accepted control rerun selected tree
+94775dea793b4493ad2cdbdfd3bd6e8882362d10d440a0fadb1ed9296ab27f8e, retained
+two served 46,888-byte da591740/kernel_2712.img TFTP fetches, passed the v2
+identity join with no rejection reasons, retained 108 TALOS:
+rp1-clock-adc-ctrl-write-restore-control records, and restored the lab to tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This
+proves only the simulated/control output and capture path before the real
+diagnostic.
+
+phase11-rp1-clock-reset-write-restore-pi5-20260607 accepts the selected real
+`CLK_ADC_CTRL` idempotent write/readback/restore boundary on Pi 5. After a
+first candidate run and a known-good control were rejected by
+serial-drain/capture freshness evidence, the accepted diagnostic rerun selected
+tree 3ea80fee925c554e0e65141bbd18174ab661b3e5ac6a73b82d7c130ca7adb709,
+retained two served 47,232-byte da591740/kernel_2712.img TFTP fetches, passed
+the v2 identity join with no rejection reasons, retained 102 TALOS:
+rp1-clock-adc-ctrl-write-restore-result records, and restored the lab to the
+original pre-run tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The visible
+result reported pre-raw=0xdeaddead, post-raw=0xdeaddead,
+restore-raw=0xdeaddead, post-eq-pre=true, restore-eq-pre=true,
+retained-gpio14-blocker=fsel13, retained-gpio16-blocker=fsel13, and
+classification rp1-clock-adc-ctrl-idempotent-write-restored. This accepts only
+the selected idempotent write/readback/restore proof and restore discipline;
+broad clock/reset ownership, non-idempotent clock programming,
+reset-controller writes, GPIO ownership, event generation, interrupt delivery,
+GIC acknowledgement, handler ownership, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe enumeration, Milestone 11.3, and phase
+transition remain unaccepted.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware

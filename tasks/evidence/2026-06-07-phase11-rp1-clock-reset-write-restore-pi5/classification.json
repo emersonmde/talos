@@ -1,0 +1,31 @@
+{
+  "task": "phase11-rp1-clock-reset-write-restore-pi5-20260607",
+  "status": "accepted",
+  "classification": "rp1-clock-adc-ctrl-idempotent-write-restored",
+  "acceptedRun": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-pi5/real-rerun-after-kg",
+  "identityJoinAllowed": true,
+  "rejectionReasons": [],
+  "selectedTreeHash": "3ea80fee925c554e0e65141bbd18174ab661b3e5ac6a73b82d7c130ca7adb709",
+  "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "register": "CLK_ADC_CTRL",
+  "address": "0x1f00018144",
+  "width": 32,
+  "preRaw": "0xdeaddead",
+  "postRaw": "0xdeaddead",
+  "restoreRaw": "0xdeaddead",
+  "postEqPre": true,
+  "restoreEqPre": true,
+  "acceptedClaims": [
+    "the selected CLK_ADC_CTRL idempotent write/readback/restore operation is visible on Pi 5",
+    "the selected candidate identity, TFTP fetches, serial markers, final pre-restore identity, and restore proof join under pi5-capture-transaction-v2",
+    "the selected proof restored the raw CLK_ADC_CTRL value observed before the write"
+  ],
+  "rejectedClaims": [
+    "broad RP1 clock/reset ownership",
+    "non-idempotent clock enable, disable, divider, source, PLL, or reset-controller programming",
+    "GPIO ownership or event generation",
+    "interrupt delivery or GIC acknowledgement",
+    "ISR or handler ownership",
+    "DMA/cache, storage, generated-root, networking, SSH, broader PCIe behavior, Milestone 11.3, or phase transition"
+  ]
+}

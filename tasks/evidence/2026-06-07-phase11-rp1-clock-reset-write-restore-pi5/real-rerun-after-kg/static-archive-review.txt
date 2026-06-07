@@ -1,0 +1,8 @@
+candidate_archive=target/talos-rpi5-rp1-clock-adc-ctrl-write-restore-core.tar.gz
+candidate_archive_sha256=64175bff01b53efdb3ab71219e24e7c9740e34a0f82bcbe31c4fc65e51e74add
+kernel_2712_sha256=19f2485cd3078e68cf29596b46493d11ba9911016ef6bafc9747d3cb0515a252
+kernel_2712_size=47232
+header_image_size=47232
+text_offset=0
+flags=12
+result_marker=TALOS: rp1-clock-adc-ctrl-write-restore-result
