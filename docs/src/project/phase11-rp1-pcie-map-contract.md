@@ -87,6 +87,19 @@ clock/reset programming, interrupt enablement or delivery, DMA/cache, storage,
 generated-root, networking, SSH, broader PCIe enumeration, Milestone 11.3, or
 phase transition.
 
+phase11-rp1-irq-clock-gpio-repaired-proof-closeout-20260607 reconciles the
+source contract, local diagnostic core, repaired capture identity replay,
+repaired no-MMIO control, and real GPIO14 STATUS repaired proof as
+gpio14-status-read-frontier-closed. The frontier remains limited to the
+read-only GPIO14 STATUS diagnostic boundary above. Same-shaped GPIO14 STATUS
+hardware reruns are blocked unless a future supervisor task supplies a
+different discriminator or new acceptance criteria. The next Milestone 11.2
+step requires supervisor planning for an interrupt-routing source contract;
+GPIO ownership, pin-control or pad writes, clock/reset programming, interrupt
+enablement or delivery, DMA/cache, storage, generated-root, networking, SSH,
+broader PCIe enumeration, Milestone 11.3, and phase transition remain
+unaccepted.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware

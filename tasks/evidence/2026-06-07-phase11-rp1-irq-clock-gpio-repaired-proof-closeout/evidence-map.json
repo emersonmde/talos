@@ -1,0 +1,114 @@
+{
+  "task": "phase11-rp1-irq-clock-gpio-repaired-proof-closeout-20260607",
+  "status": "accepted",
+  "classification": "gpio14-status-read-frontier-closed",
+  "evidenceLevel": "static reconciliation of accepted source contract, diagnostic core, capture repair, no-MMIO control, real GPIO14 STATUS proof, docs, and evidence maps",
+  "inputs": {
+    "sourceContract": {
+      "task": "tasks/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract.md",
+      "classification": "accepted-source-contract",
+      "evidence": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/evidence-map.json"
+    },
+    "diagnosticCore": {
+      "task": "tasks/2026-06-07-phase11-rp1-gpio-status-diagnostic-core.md",
+      "classification": "local-static-gpio14-status-core-accepted",
+      "evidence": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-core/evidence-map.json"
+    },
+    "captureIdentityRepair": {
+      "task": "tasks/2026-06-07-phase11-pi5-capture-identity-join-repair-core.md",
+      "classification": "capture-identity-join-no-change-needed",
+      "evidence": "tasks/evidence/2026-06-07-phase11-pi5-capture-identity-join-repair-core/evidence-map.json"
+    },
+    "repairedNoMmioControl": {
+      "task": "tasks/2026-06-07-phase11-pi5-capture-identity-repaired-control-pi5.md",
+      "classification": "repaired-capture-control-visible",
+      "evidence": "tasks/evidence/2026-06-07-phase11-pi5-capture-identity-repaired-control-pi5/evidence-map.json"
+    },
+    "repairedRealProof": {
+      "task": "tasks/2026-06-07-phase11-rp1-gpio-status-repaired-proof-pi5.md",
+      "classification": "gpio14-status-result-identity-joined",
+      "evidence": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-repaired-proof-pi5/evidence-map.json",
+      "commit": "f782bbd8a29d780bbdf90bc55c7f1a81c5e2f17a"
+    }
+  },
+  "acceptedClaims": [
+    "The accepted Milestone 11.2 boundary is one read-only RP1 GPIO14 STATUS diagnostic under contract phase11-rp1-irq-clock-gpio-contract-v1.",
+    "The real diagnostic uses target rp1-gpio14-status-read at CPU physical 0x1f000d0070 with one 32-bit volatile load.",
+    "The accepted Pi 5 proof rerun joined selected candidate identity, two 46336-byte TFTP fetches, final selected-tree identity, 390 TALOS: gpio14-status-result markers, raw 0xdeaddead, and restore proof.",
+    "The repaired capture identity path did not relax v2 acceptance criteria; compromised marker-visible evidence remains rejected when serial freshness or identity gates fail.",
+    "The paired no-MMIO control remains accepted as visible proof of the repaired capture path, not as real RP1 GPIO/status behavior."
+  ],
+  "unacceptedClaims": [
+    "GPIO ownership",
+    "pin-control or pad writes",
+    "clock/reset programming",
+    "interrupt enablement or delivery",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Reconciled source contract, diagnostic core, capture identity repair, no-MMIO control, real GPIO14 STATUS proof, and retained compromised-run evidence."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Recorded the accepted frontier as the read-only GPIO14 STATUS diagnostic boundary with v2 identity-joined Pi 5 evidence."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Updated roadmap and project contract docs to replace pending-closeout language with the accepted closeout boundary."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "The earlier marker-visible GPIO14 output is retained but remains rejected by the v2 identity join due to non-fresh serial state."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "The observed raw value 0xdeaddead is a diagnostic result, not a claim of GPIO ownership or pinmux state."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Interrupt-routing source contract work remains a supervisor-planned Milestone 11.2 follow-up."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Talos-owned GPIO/pin-control, pads, clocks/resets, interrupt delivery, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone 11.3, and phase transition remain unaccepted."
+    }
+  ],
+  "retainedRisks": [
+    "GPIO14 may remain firmware-owned or muxed for UART0 TXD.",
+    "Interrupt routing, MSI-X/GIC delivery, clock/reset dependencies, and pad programming are not implemented.",
+    "The raw value is accepted only as observed diagnostic output."
+  ],
+  "docsUpdated": [
+    "docs/src/roadmap.md",
+    "docs/src/project/phase11-rp1-pcie-map-contract.md"
+  ],
+  "validation": [
+    {
+      "gate": "Static inspection of capture repair, no-MMIO control, real proof/blocker, source contract, and evidence maps",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "pass"
+    }
+  ],
+  "nextAction": "No explicit worker-owned queued task remains after accepted closeout. Set planningNeeded=true for supervisor planning of the next Milestone 11.2 interrupt-routing source contract; block same-shaped GPIO14 STATUS hardware reruns unless a future supervisor task supplies a different discriminator or acceptance criteria.",
+  "commit": "recorded in talos-supervisor-state.json after acceptance commit"
+}

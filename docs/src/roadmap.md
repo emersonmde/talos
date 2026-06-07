@@ -7482,7 +7482,17 @@ classification=diagnostic-result-visible. This accepts only the read-only
 GPIO14 STATUS diagnostic boundary. GPIO ownership, pad writes, interrupt
 delivery, clock/reset programming, DMA/cache, storage, generated-root,
 networking, SSH, broader PCIe, Milestone 11.3, and phase transition remain
-unaccepted pending the queued closeout.
+unaccepted.
+
+phase11-rp1-irq-clock-gpio-repaired-proof-closeout-20260607 reconciles the
+source contract, local diagnostic core, repaired capture identity replay,
+repaired no-MMIO control, and real GPIO14 STATUS repaired proof as
+gpio14-status-read-frontier-closed. The accepted frontier is limited to that
+one read-only GPIO14 STATUS load and its v2 identity-joined Pi 5 result
+evidence. Same-shaped GPIO14 STATUS hardware reruns are blocked unless a future
+supervisor task supplies a different discriminator or new acceptance criteria.
+No explicit worker-owned task remains after this closeout; supervisor planning
+is required before the next Milestone 11.2 interrupt-routing source contract.
 
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
