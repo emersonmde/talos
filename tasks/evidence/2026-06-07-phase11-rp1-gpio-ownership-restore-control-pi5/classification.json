@@ -1,0 +1,85 @@
+{
+  "taskId": "phase11-rp1-gpio-ownership-restore-control-pi5-20260607",
+  "status": "accepted",
+  "classification": "no-mmio-gpio-ownership-restore-control-visible",
+  "evidenceLevel": [
+    "static archive identity inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "stable same-cursor TFTP evidence",
+    "pi5-capture-transaction-v2 identity join",
+    "restore proof",
+    "git diff checks"
+  ],
+  "artifact": {
+    "archive": "target/talos-rpi5-rp1-gpio14-ownership-route-preflight-no-mmio-control-core.tar.gz",
+    "archiveSha256": "5977bfdd8880a7eebe5a7d31c1db8cde10bea65994c9da3d14c41b1913dba170",
+    "kernel2712Sha256": "c406268f9c5b5257bd3671d9502b1328910d56352e720d46ae6d5cf34e6964e7",
+    "kernel2712Bytes": 48368,
+    "marker": "TALOS: rp1-gpio14-ownership-route-preflight-control"
+  },
+  "acceptedClaims": [
+    "the no-MMIO/no-RP1/no-GIC GPIO ownership/restore control candidate is visible on Pi 5 hardware",
+    "the accepted control archive passed static identity review before publication",
+    "the accepted rerun passed pi5-capture-transaction-v2 identity join with no rejection reasons",
+    "the accepted rerun retained 556 control markers",
+    "stable pre-restore TFTP retained 2 candidate kernel fetches with 2 byte matches",
+    "restore returned the lab to pre-run boot tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  ],
+  "rejectedOrLimitedClaims": [
+    "the first candidate run is retained only as capture-staging-blocked because pre-power serial drain was non-empty",
+    "the known-good control is retained only as capture-staging-blocked because pre-power serial drain was non-empty",
+    "no RP1 GPIO ownership/restore, source-status behavior, event generation, interrupt pending generation, delivery, GIC acknowledgement, ISR ownership, broad GPIO ownership, clock/reset, DMA/cache, storage, generated-root, networking, SSH, Milestone 11.3, or phase transition is accepted"
+  ],
+  "triage": {
+    "firstControlRun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-control-pi5/control-run/run-result-summary.json",
+      "classification": "capture-staging-blocked",
+      "rejectionReasons": [
+        "serial-drain-not-empty-before-power"
+      ],
+      "markerOccurrences": 556,
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 2
+    },
+    "knownGoodControlRun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-control-pi5/known-good-control-run/run-result-summary.json",
+      "classification": "capture-staging-blocked",
+      "rejectionReasons": [
+        "serial-drain-not-empty-before-power"
+      ],
+      "markerOccurrences": 1,
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 2
+    },
+    "acceptedCandidateRerun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-control-pi5/control-rerun-after-kg/run-result-summary.json",
+      "classification": "no-mmio-gpio-ownership-restore-control-visible",
+      "rejectionReasons": [],
+      "selectedTreeHash": "8eb3d68d4402cb3701d8a6a9451bbe4d9c19a9c4556449a8c7378f54163d47b0",
+      "markerOccurrences": 556,
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 2,
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "hardwareLock": {
+    "locked": false,
+    "owner": null,
+    "taskId": "phase11-rp1-gpio-ownership-restore-control-pi5-20260607",
+    "acquiredAt": "2026-06-07T12:59:30Z",
+    "releasedAt": "2026-06-07T13:09:41.806Z",
+    "restored": true,
+    "note": "Released after GPIO ownership/restore no-MMIO/no-RP1/no-GIC control proof; capture restore returned lab to pre-run tree."
+  },
+  "validation": {
+    "staticArchiveIdentity": "passed",
+    "labStatusPreflightAndPostRestore": "passed",
+    "freshSerialCaptureSummary": "passed on accepted rerun",
+    "stableSameCursorTftpEvidence": "passed on accepted rerun",
+    "pi5CaptureTransactionV2IdentityJoin": "passed on accepted rerun",
+    "restoreProof": "passed",
+    "mdbookBuild": "not run; no docs/src files touched"
+  },
+  "nextAction": "Mechanically promote phase11-rp1-gpio-ownership-restore-pi5-20260607 on a future worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive."
+}

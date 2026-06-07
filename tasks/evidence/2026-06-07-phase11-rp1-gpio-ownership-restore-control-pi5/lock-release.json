@@ -1,0 +1,23 @@
+{
+  "timestamp": "2026-06-07T13:09:41.806Z",
+  "previous": {
+    "locked": true,
+    "owner": "worker",
+    "taskId": "phase11-rp1-gpio-ownership-restore-control-pi5-20260607",
+    "acquiredAt": "2026-06-07T12:59:30Z",
+    "releasedAt": null,
+    "restored": false,
+    "note": "Locked for serialized GPIO ownership/restore no-MMIO/no-RP1/no-GIC Pi 5 control proof."
+  },
+  "released": {
+    "locked": false,
+    "owner": null,
+    "taskId": "phase11-rp1-gpio-ownership-restore-control-pi5-20260607",
+    "acquiredAt": "2026-06-07T12:59:30Z",
+    "releasedAt": "2026-06-07T13:09:41.806Z",
+    "restored": true,
+    "note": "Released after GPIO ownership/restore no-MMIO/no-RP1/no-GIC control proof; capture restore returned lab to pre-run tree."
+  },
+  "restored": true,
+  "note": "Released after GPIO ownership/restore no-MMIO/no-RP1/no-GIC control proof; capture restore returned lab to pre-run tree."
+}

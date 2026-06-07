@@ -1,0 +1,9 @@
+candidate_archive=target/talos-rpi5-rp1-gpio14-ownership-route-preflight-no-mmio-control-core.tar.gz
+candidate_archive_sha256=5977bfdd8880a7eebe5a7d31c1db8cde10bea65994c9da3d14c41b1913dba170
+kernel_2712_sha256=c406268f9c5b5257bd3671d9502b1328910d56352e720d46ae6d5cf34e6964e7
+kernel_2712_size=48368
+header_image_size=48368
+text_offset=0
+flags=12
+control_marker=TALOS: rp1-gpio14-ownership-route-preflight-control
+forbidden_gpio14_ownership_preflight_strings_absent=true
