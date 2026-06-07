@@ -1,0 +1,42 @@
+Assembly review: phase11-rp1-gpio-status-diagnostic-core-20260607
+
+Evidence level: static disassembly/source inspection.
+
+Inputs:
+
+- Real candidate assembly:
+  tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-core/rp1-gpio14-status-read-asm.txt
+- No-MMIO control assembly:
+  tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-core/control-gpio14-status-asm.txt
+
+Real candidate:
+
+- The selected function constructs the contracted RP1 GPIO14 STATUS physical
+  address in x19:
+  - mov x19, #0x70
+  - movk x19, #0xd, lsl #16
+  - movk x19, #0x1f, lsl #32
+- It performs exactly one contracted RP1 volatile load:
+  - ldr w8, [x19]
+- The later x0 0x1f000d0070 construction is for printing the accepted target
+  address in the terminal marker, not for an additional MMIO access.
+- The retained ldr w10, [x9, #0x18] instructions use x9 = 0x107d001000 and
+  are UART10 FR polling in wait_uart10_empty_early_phase.
+
+No-MMIO control:
+
+- The selected function does not construct 0x1f000d0070, 0x1f000e0008,
+  0x1f000f003c, 0x1f00018000, or an RP1 MSI-X/config address.
+- It has no read_rp1_reg_u32 call and no ldr from a constructed RP1 GPIO/RIO,
+  pad, clock, reset, or interrupt address.
+- The only MMIO-looking loads in the selected control function are
+  ldr w10, [x9, #0x18] with x9 = 0x107d001000, which is UART10 FR polling for
+  serial flush behavior.
+
+Disposition:
+
+- fixed: real candidate performs the one contracted 32-bit GPIO14 STATUS read.
+- fixed: no-MMIO control preserves the serial output shape without the
+  contracted RP1 address or RP1 MMIO.
+- not-an-issue: UART10 polling loads are required for serial output and are not
+  RP1 GPIO/RIO/PADS/clock/reset/interrupt MMIO.

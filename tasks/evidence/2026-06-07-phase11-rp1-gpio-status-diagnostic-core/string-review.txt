@@ -1,0 +1,6 @@
+tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-core/control-candidate-strings.txt:115:false raw-falling= raw-rising= raw-low= raw-high= filtered-falling= filtered-rising= filtered-low= filtered-high=rpi5-rp1-gpio14-status-control: start
+tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-core/control-candidate-strings.txt:116:rpi5-rp1-gpio14-status-control: no-rp1-mmio
+tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-core/control-candidate-strings.txt:117:TALOS: gpio14-status-control contract=phase11-rp1-irq-clock-gpio-contract-v1 target=rp1-gpio14-status-read address=not-constructed width=32 raw= classification=simulated/control
+tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-core/rp1-candidate-strings.txt:117:falseZero ec=truename     raw-falling= raw-rising= raw-low= raw-high= filtered-falling= filtered-rising= filtered-low= filtered-high=rpi5-rp1-gpio14-status-read: start
+tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-core/rp1-candidate-strings.txt:118:rpi5-rp1-gpio14-status-read: before-rp1-load
+tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-core/rp1-candidate-strings.txt:119:TALOS: gpio14-status-result contract=phase11-rp1-irq-clock-gpio-contract-v1 target=rp1-gpio14-status-read address= width=32 raw= classification=diagnostic-result-visible

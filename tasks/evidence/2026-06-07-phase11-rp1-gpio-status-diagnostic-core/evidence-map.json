@@ -1,0 +1,89 @@
+{
+  "task": "phase11-rp1-gpio-status-diagnostic-core-20260607",
+  "status": "accepted",
+  "classification": "local-static-gpio14-status-core-accepted",
+  "accepted": [
+    "rpi5_rp1_gpio14_status_read branches directly from rust_entry",
+    "real candidate performs exactly one 32-bit volatile load from 0x1f000d0070",
+    "real candidate repeatedly emits TALOS: gpio14-status-result with contract id, target, address, width, raw value, raw/filtered status bits, and diagnostic-result-visible classification after a returned load",
+    "rpi5_rp1_gpio14_status_no_mmio_control branches directly from rust_entry",
+    "no-MMIO control candidate constructs no contracted RP1 GPIO14/RIO/PADS/clock address and performs zero contracted RP1 MMIO loads/stores",
+    "no-MMIO control candidate repeatedly emits TALOS: gpio14-status-control with the same field shape, address=not-constructed, raw value 0, status bits, and simulated/control classification",
+    "both non-published Pi 5 candidate archives passed task-owned archive review"
+  ],
+  "notAccepted": [
+    "Pi 5 hardware execution",
+    "visible no-MMIO control serial output",
+    "visible RP1 GPIO14 status serial output",
+    "GPIO ownership or pinmux behavior",
+    "pad writes",
+    "interrupt enablement or delivery",
+    "clock/reset programming",
+    "DMA/cache behavior",
+    "storage or generated-root behavior",
+    "networking or SSH",
+    "broader PCIe behavior",
+    "phase transition"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-07-phase11-rp1-gpio-status-diagnostic-core.md",
+    "staticInspection": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-core/static-inspection.md",
+    "assemblyReview": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-core/assembly-review.txt",
+    "validationSummary": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-core/validation-summary.txt",
+    "rp1ArchiveReview": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-core/rp1-archive-review.txt",
+    "controlArchiveReview": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-core/control-archive-review.txt",
+    "rp1Assembly": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-core/rp1-gpio14-status-read-asm.txt",
+    "controlAssembly": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-core/control-gpio14-status-asm.txt",
+    "stringReview": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-core/string-review.txt",
+    "rp1CandidateArchive": "target/talos-rpi5-rp1-gpio14-status-read-core.tar.gz",
+    "controlCandidateArchive": "target/talos-rpi5-rp1-gpio14-status-no-mmio-control-core.tar.gz"
+  },
+  "rp1Candidate": {
+    "archive": "target/talos-rpi5-rp1-gpio14-status-read-core.tar.gz",
+    "archiveSha256": "7bc21b39a5d0150221a244701285d733c8faef4e153085a49a34b5069c1fecea",
+    "bootTreeIdentity": "2f9b2d308af2b7db1b0099e8910457be008ed98a4abfc75ec5b6b06432e49e6a",
+    "kernelSha256": "e95dbb1cf6e3296bc29832c69115afadf78622c0995c4734638dd249f8867efc",
+    "kernelSizeBytes": 46336,
+    "textOffset": 0,
+    "headerImageSize": 46336,
+    "flags": 12,
+    "magic": "ARMd",
+    "marker": "TALOS: gpio14-status-result",
+    "contractId": "phase11-rp1-irq-clock-gpio-contract-v1",
+    "target": "rp1-gpio14-status-read",
+    "address": "0x1f000d0070",
+    "widthBits": 32,
+    "assemblyReview": {
+      "rp1VolatileLoadCount": 1,
+      "rp1AddressConstructionForLoadCount": 1
+    }
+  },
+  "controlCandidate": {
+    "archive": "target/talos-rpi5-rp1-gpio14-status-no-mmio-control-core.tar.gz",
+    "archiveSha256": "0f3b084d686a12d101b5f43d6f8b264a57eee7241790e6ab87577454dd6ac611",
+    "bootTreeIdentity": "6bfc9797b0efe254d4a02fe4569064f565281f77191ac56b87351a92c2b7160b",
+    "kernelSha256": "148fd0e7dada9646be1c4c74796e13bea535bc4f03ec11330aa2cab237600b52",
+    "kernelSizeBytes": 46160,
+    "textOffset": 0,
+    "headerImageSize": 46160,
+    "flags": 12,
+    "magic": "ARMd",
+    "marker": "TALOS: gpio14-status-control",
+    "classification": "simulated/control",
+    "assemblyReview": {
+      "rp1VolatileLoadCount": 0,
+      "rp1AddressConstructionCount": 0,
+      "readRp1RegReferences": 0
+    }
+  },
+  "validation": {
+    "cargoFmt": "passed",
+    "cargoTestQuiet": "passed",
+    "archiveReview": "passed",
+    "staticAssemblyInspection": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "not run; no docs/src files touched",
+    "gitDiffCachedCheck": "passed"
+  },
+  "nextAction": "Mechanically promote phase11-rp1-gpio-status-no-mmio-control-pi5-20260607 on a future worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive."
+}

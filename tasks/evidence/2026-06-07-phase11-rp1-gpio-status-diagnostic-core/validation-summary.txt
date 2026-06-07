@@ -1,0 +1,15 @@
+Validation summary: phase11-rp1-gpio-status-diagnostic-core-20260607
+
+- fmt/lint/typecheck: cargo fmt --all -- --check passed.
+- unit tests: cargo -Zjson-target-spec test --quiet passed.
+- artifact build helpers: rpi5-rp1-gpio14-status-read and
+  rpi5-rp1-gpio14-status-no-mmio-control boot-tree/archive helpers passed.
+- archive review helpers:
+  scripts/rpi5-rp1-gpio14-status-read-review.sh and
+  scripts/rpi5-rp1-gpio14-status-no-mmio-control-review.sh passed.
+- static disassembly/source inspection: passed; real candidate has one
+  contracted GPIO14 STATUS load, control has zero contracted RP1 MMIO loads and
+  no contracted RP1 address construction.
+- git diff --check: passed.
+- mdbook build: not run; no docs/src files touched.
+- git diff --cached --check: passed.

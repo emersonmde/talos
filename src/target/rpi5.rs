@@ -168,6 +168,8 @@ pub const RP1_UART0_GPIO15_PAD: usize = 0x1f_000f_0040;
 pub const RP1_UART0_GPIO14_CTRL: usize = 0x1f_000d_0074;
 #[allow(dead_code)]
 pub const RP1_UART0_GPIO15_CTRL: usize = 0x1f_000d_007c;
+#[allow(dead_code)]
+pub const RP1_GPIO14_STATUS: usize = 0x1f_000d_0070;
 #[cfg(any(
     talos_boot_scenario = "rpi5_timer_irq",
     talos_boot_scenario = "rpi5_timer_preemption",
@@ -12486,7 +12488,8 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_uart0_fr_read",
         talos_boot_scenario = "rpi5_rp1_uart0_fr_read_delayed_marker",
         talos_boot_scenario = "rpi5_rp1_uart0_fr_read_hold_control",
-        talos_boot_scenario = "rpi5_rp1_uart0_fr_tail_stable_result"
+        talos_boot_scenario = "rpi5_rp1_uart0_fr_tail_stable_result",
+        talos_boot_scenario = "rpi5_rp1_gpio14_status_read"
     )
 ))]
 fn read_rp1_reg_u32(addr: usize) -> u32 {
@@ -12762,6 +12765,84 @@ pub fn run_rp1_uart0_fr_tail_stable_no_mmio_control() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_gpio14_status_read")]
+pub fn run_rp1_gpio14_status_read_diagnostic() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-irq-clock-gpio-contract-v1";
+
+    write_early_static("rpi5-rp1-gpio14-status-read: start\n");
+    write_early_static("rpi5-rp1-gpio14-status-read: before-rp1-load\n");
+    wait_uart10_empty_early_phase();
+
+    let value = read_rp1_reg_u32(RP1_GPIO14_STATUS);
+
+    loop {
+        write_early_static("TALOS: gpio14-status-result contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=rp1-gpio14-status-read address=");
+        write_early_hex_u64(RP1_GPIO14_STATUS as u64);
+        write_early_static(" width=32 raw=");
+        write_early_hex_u64(value as u64);
+        write_gpio_status_bits(value);
+        write_early_static(" classification=diagnostic-result-visible\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_gpio14_status_no_mmio_control")]
+pub fn run_rp1_gpio14_status_no_mmio_control() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-irq-clock-gpio-contract-v1";
+    const SIMULATED_RAW_VALUE: u32 = 0;
+
+    write_early_static("rpi5-rp1-gpio14-status-control: start\n");
+    write_early_static("rpi5-rp1-gpio14-status-control: no-rp1-mmio\n");
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: gpio14-status-control contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=rp1-gpio14-status-read address=not-constructed width=32 raw=");
+        write_early_hex_u64(SIMULATED_RAW_VALUE as u64);
+        write_gpio_status_bits(SIMULATED_RAW_VALUE);
+        write_early_static(" classification=simulated/control\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_gpio14_status_read",
+    talos_boot_scenario = "rpi5_rp1_gpio14_status_no_mmio_control"
+))]
+fn write_gpio_status_bits(value: u32) {
+    write_early_static(" raw-falling=");
+    write_bool(value & (1 << 20) != 0);
+    write_early_static(" raw-rising=");
+    write_bool(value & (1 << 21) != 0);
+    write_early_static(" raw-low=");
+    write_bool(value & (1 << 22) != 0);
+    write_early_static(" raw-high=");
+    write_bool(value & (1 << 23) != 0);
+    write_early_static(" filtered-falling=");
+    write_bool(value & (1 << 24) != 0);
+    write_early_static(" filtered-rising=");
+    write_bool(value & (1 << 25) != 0);
+    write_early_static(" filtered-low=");
+    write_bool(value & (1 << 26) != 0);
+    write_early_static(" filtered-high=");
+    write_bool(value & (1 << 27) != 0);
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_gpio14_status_read",
+    talos_boot_scenario = "rpi5_rp1_gpio14_status_no_mmio_control"
+))]
+fn write_bool(value: bool) {
+    if value {
+        write_early_static("true");
+    } else {
+        write_early_static("false");
+    }
+}
+
 #[cfg(not(talos_target_rpi5_bcm2712))]
 #[allow(dead_code)]
 fn read_rp1_reg_u32(_addr: usize) -> u32 {
@@ -12904,6 +12985,7 @@ mod tests {
         assert_eq!(RP1_UART0_FR, 0x1f_0003_0018);
         assert_eq!(RP1_UART0_GPIO14_PAD, 0x1f_000f_003c);
         assert_eq!(RP1_UART0_GPIO15_PAD, 0x1f_000f_0040);
+        assert_eq!(RP1_GPIO14_STATUS, 0x1f_000d_0070);
         assert_eq!(RP1_UART0_GPIO14_CTRL, 0x1f_000d_0074);
         assert_eq!(RP1_UART0_GPIO15_CTRL, 0x1f_000d_007c);
         assert_eq!(RP1_UART0_BASE, RP1_UART0_PCIE2_BASE);

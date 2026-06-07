@@ -1,0 +1,3 @@
+0f3b084d686a12d101b5f43d6f8b264a57eee7241790e6ab87577454dd6ac611  target/talos-rpi5-rp1-gpio14-status-no-mmio-control-core.tar.gz
+148fd0e7dada9646be1c4c74796e13bea535bc4f03ec11330aa2cab237600b52  target/rpi5-rp1-gpio14-status-no-mmio-control-core-boot-tree/kernel_2712.img
+148fd0e7dada9646be1c4c74796e13bea535bc4f03ec11330aa2cab237600b52  target/rpi5-rp1-gpio14-status-no-mmio-control-core-boot-tree/da591740/kernel_2712.img
