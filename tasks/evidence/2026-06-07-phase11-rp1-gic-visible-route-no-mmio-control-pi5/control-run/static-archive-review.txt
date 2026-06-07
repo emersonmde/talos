@@ -1,0 +1,9 @@
+candidate_archive=target/talos-rpi5-rp1-gic-visible-route-no-mmio-control-core.tar.gz
+candidate_archive_sha256=37360a3f30c3f60af9c2e497caff498e3a85328c39f9fc90953a088df4d6b56a
+kernel_2712_sha256=85b21994d20d539ec62ef99142e6589ef7bab3bf5070b8399b76fa84bfe262c5
+kernel_2712_size=47040
+header_image_size=47040
+text_offset=0
+flags=12
+control_marker=TALOS: rp1-gic-route-status-control
+forbidden_gic_visible_route_strings_absent=true
