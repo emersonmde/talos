@@ -1,0 +1,65 @@
+{
+  "task": "phase11-rp1-uart0-fr-tail-stable-control-closeout-20260606",
+  "status": "accepted",
+  "classification": "tail-stable-control-visible",
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-06-phase11-rp1-uart0-fr-tail-stable-control-closeout.md",
+    "staticEvidenceInspection": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-control-closeout/static-evidence-inspection.md",
+    "sourceCoreTask": "tasks/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-core.md",
+    "sourceCoreEvidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-core/evidence-map.json",
+    "sourceCoreStaticInspection": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-core/static-inspection.md",
+    "controlTask": "tasks/2026-06-06-phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5.md",
+    "controlClassification": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5/classification.json",
+    "controlEvidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5/evidence-map.json",
+    "controlIdentityJoinCheck": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5/control-rerun-after-kg/identity-join-check.json",
+    "controlCaptureSummary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5/control-rerun-after-kg/capture-invariant-summary.json"
+  },
+  "accepted": [
+    "tail-stable-control-visible classification for the no-MMIO Pi 5 control",
+    "paired source/static discriminator boundary with one RP1 load in the queued RP1 candidate and zero RP1 loads in the accepted no-MMIO control",
+    "selected no-MMIO control archive identity",
+    "v2 identity-joined selected control rerun with empty pre-power serial drain",
+    "stable same-cursor TFTP evidence with two 45,728-byte da591740/kernel_2712.img fetches",
+    "final pre-restore selected-tree identity and restore proof",
+    "1,771 TALOS: fr-tail-stable-control occurrences in the selected candidate serial window",
+    "queued RP1 tail-stable result proof mechanically unblocked under hardware lock and supervisor intervention rules"
+  ],
+  "notAccepted": [
+    "RP1 UART0 FR mapped/read-value behavior",
+    "RP1 UART0 FR bus-fault/trap behavior",
+    "firmware-state behavior",
+    "GPIO",
+    "interrupts",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ],
+  "summary": {
+    "sourceCoreCommit": "c3700b21166100468e2131d35c221d88d1f1612e",
+    "controlProofCommit": "b5878af296576c6b930426b2b6db208eaeec515c",
+    "classification": "tail-stable-control-visible",
+    "selectedTreeHash": "b4b780193281538a643aec3c17898ae59204c335f32452b90cf08b0cb8e10161",
+    "controlArchiveSha256": "050542fe57dc5d53ce5ee87a16c139701c8beedc25f8a1c26a8b5b1b21bdae9b",
+    "controlKernelSha256": "c9c473242310875f232c19c97caa82dfc2ca843c3bf159a3380d01f6b2105581",
+    "controlKernelBytes": 45728,
+    "controlIdentityJoinAllowed": true,
+    "controlIdentityJoinRejectionReasons": [],
+    "controlExpectedFetchCount": 2,
+    "controlExpectedFetchByteMatchCount": 2,
+    "controlSerialMarker": "TALOS: fr-tail-stable-control",
+    "controlSerialMarkerOccurrences": 1771,
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "validation": {
+    "staticEvidenceInspection": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  },
+  "nextAction": "Mechanically promote phase11-rp1-uart0-fr-tail-stable-result-pi5-20260606 on a future worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive."
+}

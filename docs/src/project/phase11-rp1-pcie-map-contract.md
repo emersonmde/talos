@@ -859,6 +859,18 @@ SSH, broader PCIe, Milestone 11.2, and phase transition remain unaccepted
 until a separate RP1 proof passes its own hardware lock and classification
 gates.
 
+phase11-rp1-uart0-fr-tail-stable-control-closeout-20260606 reconciles the
+paired source/static discriminator and no-MMIO Pi 5 control as
+tail-stable-control-visible. The accepted boundary is limited to the
+one-load/zero-load candidate design, the v2 identity-joined no-MMIO control
+rerun, two 45,728-byte candidate TFTP fetches, final selected-tree identity,
+restore hygiene, and repeated simulated/control marker retention. This
+mechanically unblocks the queued RP1 tail-stable result proof under hardware
+lock and supervisor-intervention rules, but still does not accept RP1 UART0 FR
+mapped/read-value, bus-fault/trap, firmware-state, GPIO, interrupts,
+DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
+11.2, or a phase transition.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

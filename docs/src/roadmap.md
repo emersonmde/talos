@@ -7391,6 +7391,21 @@ simulated/control classification. This accepts only source/static/archive
 evidence; the queued no-MMIO Pi 5 control must pass before an RP1
 mapped/read-value hardware proof can be attempted.
 
+phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5-20260606 and
+phase11-rp1-uart0-fr-tail-stable-control-closeout-20260606 accept that
+hardware control as tail-stable-control-visible. The decisive control rerun
+passed the v2 identity join for selected tree
+b4b780193281538a643aec3c17898ae59204c335f32452b90cf08b0cb8e10161, two
+45,728-byte da591740/kernel_2712.img fetches, empty pre-power serial drain,
+final selected-tree identity, restore to
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10, and 1,771
+occurrences of TALOS: fr-tail-stable-control. This accepts only the no-MMIO
+simulated/control tail-stable output shape and mechanically unblocks the queued
+RP1 tail-stable result proof under hardware-lock rules. RP1 UART0 FR
+mapped/read-value, bus-fault/trap, firmware-state behavior, GPIO, interrupts,
+DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
+11.2, and phase transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
