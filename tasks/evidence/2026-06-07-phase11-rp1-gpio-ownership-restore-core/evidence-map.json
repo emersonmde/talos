@@ -1,0 +1,111 @@
+{
+  "taskId": "phase11-rp1-gpio-ownership-restore-core-20260607",
+  "status": "accepted",
+  "classification": "accepted-local-static-gpio-ownership-restore-core",
+  "evidenceLevel": "static/archive inspection + fmt/lint/typecheck + unit tests",
+  "claims": [
+    "real candidate implements only the accepted read-only GPIO14 ownership/route preflight snapshot",
+    "real candidate emits TALOS: rp1-gpio14-ownership-route-preflight-result with the accepted report fields and one accepted preflight classification",
+    "control candidate constructs no forbidden RP1 GPIO/RIO/pads/clock/reset/MSI-X/PCIe/MIP/GIC MMIO address and performs zero forbidden MMIO loads/stores",
+    "control candidate emits TALOS: rp1-gpio14-ownership-route-preflight-control with the same field shape, not-constructed address fields, zero raw values, and simulated/control classification",
+    "no Pi 5 hardware behavior is accepted by this task"
+  ],
+  "sourceContract": {
+    "task": "tasks/2026-06-07-phase11-rp1-gpio-ownership-restore-source-contract.md",
+    "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-source-contract/evidence-map.json",
+    "contractId": "phase11-rp1-gpio-ownership-restore-source-contract-v1",
+    "target": "rp1-gpio14-ownership-route-preflight-read",
+    "allowedReads": [
+      "GPIO14 STATUS @ 0x1f000d0070, 32-bit volatile load",
+      "GPIO14 CTRL @ 0x1f000d0074, 32-bit volatile load",
+      "IO_BANK0 INTE @ 0x1f000d011c, 32-bit volatile load",
+      "IO_BANK0 INTS @ 0x1f000d0124, 32-bit volatile load",
+      "RIO0 OUT @ 0x1f000e0000, 32-bit volatile load",
+      "RIO0 OE @ 0x1f000e0004, 32-bit volatile load",
+      "RIO0 IN @ 0x1f000e0008, 32-bit volatile load",
+      "GPIO14 pad control @ 0x1f000f003c, 32-bit volatile load",
+      "GICD_ISENABLER5 @ 0x107fff9114, 32-bit volatile load",
+      "GICD_ISPENDR5 @ 0x107fff9214, 32-bit volatile load",
+      "GICD_ISACTIVER5 @ 0x107fff9314, 32-bit volatile load",
+      "GICC_HPPIR @ 0x107fffa018, 32-bit volatile load"
+    ],
+    "allowedWrites": []
+  },
+  "implementation": {
+    "sourceFiles": [
+      "build.rs",
+      "src/main.rs",
+      "src/target/rpi5.rs"
+    ],
+    "scripts": [
+      "scripts/rpi5-rp1-gpio14-ownership-route-preflight-read-image.sh",
+      "scripts/rpi5-rp1-gpio14-ownership-route-preflight-read-boot-tree.sh",
+      "scripts/rpi5-rp1-gpio14-ownership-route-preflight-read-archive.sh",
+      "scripts/rpi5-rp1-gpio14-ownership-route-preflight-read-review.sh",
+      "scripts/rpi5-rp1-gpio14-ownership-route-preflight-no-mmio-control-image.sh",
+      "scripts/rpi5-rp1-gpio14-ownership-route-preflight-no-mmio-control-boot-tree.sh",
+      "scripts/rpi5-rp1-gpio14-ownership-route-preflight-no-mmio-control-archive.sh",
+      "scripts/rpi5-rp1-gpio14-ownership-route-preflight-no-mmio-control-review.sh"
+    ]
+  },
+  "realCandidate": {
+    "archive": "target/talos-rpi5-rp1-gpio14-ownership-route-preflight-read-core.tar.gz",
+    "archiveSha256": "7ccb204d6c14f0b2ad6d9c3796ec4fe000956d98ab25c02a014f75d01184f40e",
+    "kernel2712Sha256": "cb4155be67ee9188dda9f0f17c55afd3e539381e96e35afdec74a2a3a2ebdc19",
+    "kernel2712Size": 50056,
+    "marker": "TALOS: rp1-gpio14-ownership-route-preflight-result",
+    "classifications": [
+      "gpio14-ownership-route-preflight-visible",
+      "gpio14-ownership-preflight-blocked-non-gpio-function",
+      "gpio14-ownership-preflight-blocked-parent-route-state",
+      "gpio14-ownership-preflight-blocked-existing-event-or-enable-state"
+    ],
+    "review": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-core/real-archive-review.txt",
+    "strings": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-core/real-candidate-strings.txt",
+    "assembly": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-core/real-gpio14-ownership-preflight-asm.txt"
+  },
+  "controlCandidate": {
+    "archive": "target/talos-rpi5-rp1-gpio14-ownership-route-preflight-no-mmio-control-core.tar.gz",
+    "archiveSha256": "5977bfdd8880a7eebe5a7d31c1db8cde10bea65994c9da3d14c41b1913dba170",
+    "kernel2712Sha256": "c406268f9c5b5257bd3671d9502b1328910d56352e720d46ae6d5cf34e6964e7",
+    "kernel2712Size": 48368,
+    "marker": "TALOS: rp1-gpio14-ownership-route-preflight-control",
+    "classification": "simulated/control",
+    "forbiddenStringsAbsent": true,
+    "review": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-core/control-archive-review.txt",
+    "strings": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-core/control-candidate-strings.txt",
+    "assembly": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-core/control-gpio14-ownership-preflight-asm.txt"
+  },
+  "validation": [
+    "cargo fmt --all -- --check",
+    "cargo -Zjson-target-spec test --quiet",
+    "scripts/rpi5-rp1-gpio14-ownership-route-preflight-read-review.sh target/talos-rpi5-rp1-gpio14-ownership-route-preflight-read-core.tar.gz",
+    "scripts/rpi5-rp1-gpio14-ownership-route-preflight-no-mmio-control-review.sh target/talos-rpi5-rp1-gpio14-ownership-route-preflight-no-mmio-control-core.tar.gz",
+    "static source/string/disassembly inspection",
+    "git diff --check",
+    "git diff --cached --check"
+  ],
+  "validationSummary": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-core/validation-summary.txt",
+  "staticInspection": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-core/static-inspection.md",
+  "acceptedClaims": "Local/static real candidate, local/static no-MMIO/no-RP1/no-GIC control candidate, and archive/static boundary only.",
+  "rejectedClaims": [
+    "Pi 5 hardware behavior",
+    "GPIO ownership",
+    "GPIO event generation",
+    "interrupt pending generation",
+    "interrupt enablement or delivery",
+    "GIC IAR/EOIR acknowledgement",
+    "ISR or handler ownership",
+    "GPIO CTRL, IO_BANK0 INTE, RIO, or pad writes",
+    "clock/reset programming",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "nextAction": "Promote phase11-rp1-gpio-ownership-restore-control-pi5-20260607 after this task is accepted and committed and hardwareTestLock remains unlocked/restored."
+}

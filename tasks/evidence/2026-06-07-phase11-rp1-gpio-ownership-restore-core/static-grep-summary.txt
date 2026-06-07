@@ -1,0 +1,20 @@
+Static grep summary
+
+Real candidate selected function address/load evidence:
+18:  2017f0: f2a001f3     	movk	x19, #0xf, lsl #16
+19:  2017f4: f2a001d4     	movk	x20, #0xe, lsl #16
+20:  2017f8: f2a001b6     	movk	x22, #0xd, lsl #16
+24:  201808: f2c003f3     	movk	x19, #0x1f, lsl #32
+25:  20180c: f2c003f4     	movk	x20, #0x1f, lsl #32
+26:  201810: f2c003f6     	movk	x22, #0x1f, lsl #32
+46:  201860: b94002c8     	ldr	w8, [x22]
+48:  201868: b94006d9     	ldr	w25, [x22, #0x4]
+49:  20186c: b940aec8     	ldr	w8, [x22, #0xac]
+51:  201874: b940b6c8     	ldr	w8, [x22, #0xb4]
+55:  201884: b9400288     	ldr	w8, [x20]
+57:  20188c: b9400688     	ldr	w8, [x20, #0x4]
+59:  201894: b9400278     	ldr	w24, [x19]
+
+Control candidate forbidden address grep:
+
+Control direct non-UART load/store note: only UART10 FR/load and UART10 DR/store paths appear in selected function grep.

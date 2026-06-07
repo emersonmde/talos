@@ -1,0 +1,8 @@
+candidate_archive=target/talos-rpi5-rp1-gpio14-ownership-route-preflight-read-core.tar.gz
+candidate_archive_sha256=7ccb204d6c14f0b2ad6d9c3796ec4fe000956d98ab25c02a014f75d01184f40e
+kernel_2712_sha256=cb4155be67ee9188dda9f0f17c55afd3e539381e96e35afdec74a2a3a2ebdc19
+kernel_2712_size=50056
+header_image_size=50056
+text_offset=0
+flags=12
+result_marker=TALOS: rp1-gpio14-ownership-route-preflight-result

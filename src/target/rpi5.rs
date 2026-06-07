@@ -20,7 +20,8 @@ use crate::arch::aarch64::generic_timer;
     talos_boot_scenario = "rpi5_timer_preemption",
     talos_boot_scenario = "rpi5_cross_core_ipi_delivery",
     talos_boot_scenario = "rpi5_remote_wakeup_request",
-    talos_boot_scenario = "rpi5_rp1_gic_visible_route_status_read"
+    talos_boot_scenario = "rpi5_rp1_gic_visible_route_status_read",
+    talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read"
 ))]
 use crate::arch::aarch64::{
     self,
@@ -172,6 +173,12 @@ pub const RP1_UART0_GPIO15_CTRL: usize = 0x1f_000d_007c;
 #[allow(dead_code)]
 pub const RP1_GPIO14_STATUS: usize = 0x1f_000d_0070;
 #[allow(dead_code)]
+pub const RP1_RIO0_OUT: usize = 0x1f_000e_0000;
+#[allow(dead_code)]
+pub const RP1_RIO0_OE: usize = 0x1f_000e_0004;
+#[allow(dead_code)]
+pub const RP1_RIO0_IN: usize = 0x1f_000e_0008;
+#[allow(dead_code)]
 pub const RP1_IO_BANK0_INTE: usize = 0x1f_000d_011c;
 #[allow(dead_code)]
 pub const RP1_IO_BANK0_INTS: usize = 0x1f_000d_0124;
@@ -182,7 +189,8 @@ pub const RP1_IO_BANK0_MSIX_CFG: usize = 0x1f_0010_8008;
     talos_boot_scenario = "rpi5_timer_preemption",
     talos_boot_scenario = "rpi5_cross_core_ipi_delivery",
     talos_boot_scenario = "rpi5_remote_wakeup_request",
-    talos_boot_scenario = "rpi5_rp1_gic_visible_route_status_read"
+    talos_boot_scenario = "rpi5_rp1_gic_visible_route_status_read",
+    talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read"
 ))]
 const GICD_BASE: usize = 0x10_7fff_9000;
 #[cfg(any(
@@ -190,7 +198,8 @@ const GICD_BASE: usize = 0x10_7fff_9000;
     talos_boot_scenario = "rpi5_timer_preemption",
     talos_boot_scenario = "rpi5_cross_core_ipi_delivery",
     talos_boot_scenario = "rpi5_remote_wakeup_request",
-    talos_boot_scenario = "rpi5_rp1_gic_visible_route_status_read"
+    talos_boot_scenario = "rpi5_rp1_gic_visible_route_status_read",
+    talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read"
 ))]
 const GICC_BASE: usize = 0x10_7fff_a000;
 #[cfg(any(
@@ -12524,7 +12533,8 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_uart0_fr_tail_stable_result",
         talos_boot_scenario = "rpi5_rp1_gpio14_status_read",
         talos_boot_scenario = "rpi5_rp1_interrupt_routing_msix_cfg_read",
-        talos_boot_scenario = "rpi5_rp1_gpio_bank_source_status_read"
+        talos_boot_scenario = "rpi5_rp1_gpio_bank_source_status_read",
+        talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read"
     )
 ))]
 fn read_rp1_reg_u32(addr: usize) -> u32 {
@@ -13100,6 +13110,157 @@ pub fn run_rp1_gpio_bank_source_status_no_mmio_control() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read")]
+pub fn run_rp1_gpio14_ownership_route_preflight_read() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-gpio-ownership-restore-source-contract-v1";
+    const TARGET: &str = "rp1-gpio14-ownership-route-preflight-read";
+    const PIN: &str = "GPIO14";
+    const GPIO14_MASK: u32 = 1 << 14;
+    const GIC_INTID: u32 = 160;
+    const GICD_ISENABLER5: usize = GICD_BASE + 0x114;
+    const GICD_ISPENDR5: usize = GICD_BASE + 0x214;
+    const GICD_ISACTIVER5: usize = GICD_BASE + 0x314;
+    const GICC_HPPIR: usize = GICC_BASE + 0x18;
+
+    write_early_static("rpi5-rp1-gpio14-ownership-route-preflight-read: start\n");
+    write_early_static("rpi5-rp1-gpio14-ownership-route-preflight-read: before-read-only-loads\n");
+    wait_uart10_empty_early_phase();
+
+    let gpio14_status = read_rp1_reg_u32(RP1_GPIO14_STATUS);
+    let gpio14_ctrl = read_rp1_reg_u32(RP1_UART0_GPIO14_CTRL);
+    let io_bank0_inte = read_rp1_reg_u32(RP1_IO_BANK0_INTE);
+    let io_bank0_ints = read_rp1_reg_u32(RP1_IO_BANK0_INTS);
+    let rio_out = read_rp1_reg_u32(RP1_RIO0_OUT);
+    let rio_oe = read_rp1_reg_u32(RP1_RIO0_OE);
+    let rio_in = read_rp1_reg_u32(RP1_RIO0_IN);
+    let pad = read_rp1_reg_u32(RP1_UART0_GPIO14_PAD);
+
+    let gic = GicV2::new(GICD_BASE, GICC_BASE);
+    let (gicd_isenabler5, gicd_ispendr5, gicd_isactiver5, gicc_hppir) = unsafe {
+        (
+            gic.enable_bits(GIC_INTID),
+            gic.pending_bits(GIC_INTID),
+            gic.active_bits(GIC_INTID),
+            gic.highest_pending(),
+        )
+    };
+    let hppir_intid = gicc_hppir & 0x3ff;
+    let classification = gpio14_ownership_preflight_classification(
+        gpio14_status,
+        gpio14_ctrl,
+        io_bank0_inte,
+        gicd_isenabler5,
+        gicd_ispendr5,
+        gicd_isactiver5,
+        hppir_intid,
+        GPIO14_MASK,
+        GIC_INTID,
+    );
+
+    loop {
+        write_early_static("TALOS: rp1-gpio14-ownership-route-preflight-result contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_early_static(" pin=");
+        write_early_static(PIN);
+        write_early_static(" gpio14-bit-mask=");
+        write_early_hex_u64(GPIO14_MASK as u64);
+        write_early_static(" gpio14-status-address=");
+        write_early_hex_u64(RP1_GPIO14_STATUS as u64);
+        write_early_static(" gpio14-ctrl-address=");
+        write_early_hex_u64(RP1_UART0_GPIO14_CTRL as u64);
+        write_early_static(" io-bank0-inte-address=");
+        write_early_hex_u64(RP1_IO_BANK0_INTE as u64);
+        write_early_static(" io-bank0-ints-address=");
+        write_early_hex_u64(RP1_IO_BANK0_INTS as u64);
+        write_early_static(" rio-out-address=");
+        write_early_hex_u64(RP1_RIO0_OUT as u64);
+        write_early_static(" rio-oe-address=");
+        write_early_hex_u64(RP1_RIO0_OE as u64);
+        write_early_static(" rio-in-address=");
+        write_early_hex_u64(RP1_RIO0_IN as u64);
+        write_early_static(" pad-address=");
+        write_early_hex_u64(RP1_UART0_GPIO14_PAD as u64);
+        write_early_static(" gicd-isenabler5-address=");
+        write_early_hex_u64(GICD_ISENABLER5 as u64);
+        write_early_static(" gicd-ispendr5-address=");
+        write_early_hex_u64(GICD_ISPENDR5 as u64);
+        write_early_static(" gicd-isactiver5-address=");
+        write_early_hex_u64(GICD_ISACTIVER5 as u64);
+        write_early_static(" gicc-hppir-address=");
+        write_early_hex_u64(GICC_HPPIR as u64);
+        write_gpio14_ownership_preflight_fields(
+            gpio14_status,
+            gpio14_ctrl,
+            io_bank0_inte,
+            io_bank0_ints,
+            rio_out,
+            rio_oe,
+            rio_in,
+            pad,
+            gicd_isenabler5,
+            gicd_ispendr5,
+            gicd_isactiver5,
+            gicc_hppir,
+            hppir_intid,
+            GPIO14_MASK,
+        );
+        write_early_static(" classification=");
+        write_early_static(classification);
+        write_early_static("\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control")]
+pub fn run_rp1_gpio14_ownership_route_preflight_no_mmio_control() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-gpio-ownership-restore-source-contract-v1";
+    const TARGET: &str = "rp1-gpio14-ownership-route-preflight-read";
+    const PIN: &str = "GPIO14";
+    const GPIO14_MASK: u32 = 1 << 14;
+    const SIMULATED_RAW_VALUE: u32 = 0;
+    const SIMULATED_HPPIR_INTID: u32 = 0;
+
+    write_early_static("rpi5-rp1-gpio14-ownership-route-preflight-control: start\n");
+    write_early_static(
+        "rpi5-rp1-gpio14-ownership-route-preflight-control: no-rp1-gpio-rio-pads-clock-reset-msix-pcie-mip-gic-mmio\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-gpio14-ownership-route-preflight-control contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_early_static(" pin=");
+        write_early_static(PIN);
+        write_early_static(" gpio14-bit-mask=");
+        write_early_hex_u64(GPIO14_MASK as u64);
+        write_early_static(
+            " gpio14-status-address=not-constructed gpio14-ctrl-address=not-constructed io-bank0-inte-address=not-constructed io-bank0-ints-address=not-constructed rio-out-address=not-constructed rio-oe-address=not-constructed rio-in-address=not-constructed pad-address=not-constructed gicd-isenabler5-address=not-constructed gicd-ispendr5-address=not-constructed gicd-isactiver5-address=not-constructed gicc-hppir-address=not-constructed",
+        );
+        write_gpio14_ownership_preflight_fields(
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+            SIMULATED_HPPIR_INTID,
+            GPIO14_MASK,
+        );
+        write_early_static(" classification=simulated/control\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
 #[cfg(any(
     talos_boot_scenario = "rpi5_rp1_gpio14_status_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_status_no_mmio_control"
@@ -13187,6 +13348,158 @@ fn write_gpio_bank_source_status_bits(inte: u32, ints: u32, gpio14_mask: u32) {
 }
 
 #[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
+    talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control"
+))]
+fn write_gpio14_ownership_preflight_fields(
+    gpio14_status: u32,
+    gpio14_ctrl: u32,
+    io_bank0_inte: u32,
+    io_bank0_ints: u32,
+    rio_out: u32,
+    rio_oe: u32,
+    rio_in: u32,
+    pad: u32,
+    gicd_isenabler5: u32,
+    gicd_ispendr5: u32,
+    gicd_isactiver5: u32,
+    gicc_hppir: u32,
+    hppir_intid: u32,
+    gpio14_mask: u32,
+) {
+    const INTID160_MASK: u32 = 1;
+
+    write_early_static(" width=32 gpio14-status-raw=");
+    write_early_hex_u64(gpio14_status as u64);
+    write_early_static(" gpio14-ctrl-raw=");
+    write_early_hex_u64(gpio14_ctrl as u64);
+    write_early_static(" gpio14-funcsel=");
+    write_early_dec_u64(gpio14_funcsel(gpio14_ctrl) as u64);
+    write_early_static(" gpio14-func-name=");
+    write_early_static(gpio14_func_name(gpio14_ctrl));
+    write_early_static(" gpio14-outover=");
+    write_early_dec_u64(((gpio14_ctrl >> 12) & 0x3) as u64);
+    write_early_static(" gpio14-oeover=");
+    write_early_dec_u64(((gpio14_ctrl >> 14) & 0x3) as u64);
+    write_early_static(" gpio14-inover=");
+    write_early_dec_u64(((gpio14_ctrl >> 16) & 0x3) as u64);
+    write_early_static(" gpio14-raw-event-enable-mask=");
+    write_early_hex_u64(((gpio14_ctrl >> 20) & 0xf) as u64);
+    write_early_static(" gpio14-filtered-event-enable-mask=");
+    write_early_hex_u64(((gpio14_ctrl >> 24) & 0xf) as u64);
+    write_early_static(" gpio14-status-event-mask=");
+    write_early_hex_u64(((gpio14_status >> 20) & 0xff) as u64);
+    write_early_static(" io-bank0-inte-raw=");
+    write_early_hex_u64(io_bank0_inte as u64);
+    write_early_static(" io-bank0-ints-raw=");
+    write_early_hex_u64(io_bank0_ints as u64);
+    write_early_static(" rio-out-raw=");
+    write_early_hex_u64(rio_out as u64);
+    write_early_static(" rio-oe-raw=");
+    write_early_hex_u64(rio_oe as u64);
+    write_early_static(" rio-in-raw=");
+    write_early_hex_u64(rio_in as u64);
+    write_early_static(" rio-out-gpio14=");
+    write_bool(rio_out & gpio14_mask != 0);
+    write_early_static(" rio-oe-gpio14=");
+    write_bool(rio_oe & gpio14_mask != 0);
+    write_early_static(" rio-in-gpio14=");
+    write_bool(rio_in & gpio14_mask != 0);
+    write_early_static(" pad-raw=");
+    write_early_hex_u64(pad as u64);
+    write_early_static(" pad-input-enable=");
+    write_bool(pad & (1 << 6) != 0);
+    write_early_static(" pad-output-disable=");
+    write_bool(pad & (1 << 7) != 0);
+    write_early_static(" pad-pull=");
+    write_early_hex_u64(((pad >> 2) & 0x3) as u64);
+    write_early_static(" pad-drive=");
+    write_early_hex_u64(((pad >> 4) & 0x3) as u64);
+    write_early_static(" pad-schmitt=");
+    write_bool(pad & (1 << 1) != 0);
+    write_early_static(" pad-slew=");
+    write_bool(pad & 1 != 0);
+    write_early_static(" gicd-isenabler5-raw=");
+    write_early_hex_u64(gicd_isenabler5 as u64);
+    write_early_static(" gicd-ispendr5-raw=");
+    write_early_hex_u64(gicd_ispendr5 as u64);
+    write_early_static(" gicd-isactiver5-raw=");
+    write_early_hex_u64(gicd_isactiver5 as u64);
+    write_early_static(" gicc-hppir-raw=");
+    write_early_hex_u64(gicc_hppir as u64);
+    write_early_static(" intid160-enabled=");
+    write_bool(gicd_isenabler5 & INTID160_MASK != 0);
+    write_early_static(" intid160-pending=");
+    write_bool(gicd_ispendr5 & INTID160_MASK != 0);
+    write_early_static(" intid160-active=");
+    write_bool(gicd_isactiver5 & INTID160_MASK != 0);
+    write_early_static(" hppir-intid=");
+    write_early_dec_u64(hppir_intid as u64);
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
+    talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control"
+))]
+fn gpio14_funcsel(gpio14_ctrl: u32) -> u32 {
+    gpio14_ctrl & 0x1f
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
+    talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control"
+))]
+fn gpio14_func_name(gpio14_ctrl: u32) -> &'static str {
+    match gpio14_funcsel(gpio14_ctrl) {
+        0 => "pwm0",
+        1 => "dpi",
+        2 => "uart4",
+        3 => "i2c3",
+        4 => "uart0",
+        5 => "gpio",
+        6 => "proc_rio",
+        7 => "pio",
+        8 => "spi5",
+        _ => "unknown",
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read")]
+fn gpio14_ownership_preflight_classification(
+    gpio14_status: u32,
+    gpio14_ctrl: u32,
+    io_bank0_inte: u32,
+    gicd_isenabler5: u32,
+    gicd_ispendr5: u32,
+    gicd_isactiver5: u32,
+    hppir_intid: u32,
+    gpio14_mask: u32,
+    gic_intid: u32,
+) -> &'static str {
+    let funcsel = gpio14_funcsel(gpio14_ctrl);
+    let raw_event_enable = (gpio14_ctrl >> 20) & 0xf;
+    let filtered_event_enable = (gpio14_ctrl >> 24) & 0xf;
+    let status_event_mask = (gpio14_status >> 20) & 0xff;
+    if funcsel != 5 {
+        "gpio14-ownership-preflight-blocked-non-gpio-function"
+    } else if (gicd_isenabler5 & 1) != 0
+        || (gicd_ispendr5 & 1) != 0
+        || (gicd_isactiver5 & 1) != 0
+        || hppir_intid == gic_intid
+    {
+        "gpio14-ownership-preflight-blocked-parent-route-state"
+    } else if raw_event_enable != 0
+        || filtered_event_enable != 0
+        || status_event_mask != 0
+        || (io_bank0_inte & gpio14_mask) != 0
+    {
+        "gpio14-ownership-preflight-blocked-existing-event-or-enable-state"
+    } else {
+        "gpio14-ownership-route-preflight-visible"
+    }
+}
+
+#[cfg(any(
     talos_boot_scenario = "rpi5_rp1_gpio14_status_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_status_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_interrupt_routing_msix_cfg_read",
@@ -13194,7 +13507,9 @@ fn write_gpio_bank_source_status_bits(inte: u32, ints: u32, gpio14_mask: u32) {
     talos_boot_scenario = "rpi5_rp1_gic_visible_route_status_read",
     talos_boot_scenario = "rpi5_rp1_gic_visible_route_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gpio_bank_source_status_read",
-    talos_boot_scenario = "rpi5_rp1_gpio_bank_source_status_no_mmio_control"
+    talos_boot_scenario = "rpi5_rp1_gpio_bank_source_status_no_mmio_control",
+    talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
+    talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control"
 ))]
 fn write_bool(value: bool) {
     if value {
@@ -13349,6 +13664,9 @@ mod tests {
         assert_eq!(RP1_GPIO14_STATUS, 0x1f_000d_0070);
         assert_eq!(RP1_UART0_GPIO14_CTRL, 0x1f_000d_0074);
         assert_eq!(RP1_UART0_GPIO15_CTRL, 0x1f_000d_007c);
+        assert_eq!(RP1_RIO0_OUT, 0x1f_000e_0000);
+        assert_eq!(RP1_RIO0_OE, 0x1f_000e_0004);
+        assert_eq!(RP1_RIO0_IN, 0x1f_000e_0008);
         assert_eq!(RP1_IO_BANK0_INTE, 0x1f_000d_011c);
         assert_eq!(RP1_IO_BANK0_INTS, 0x1f_000d_0124);
         assert_eq!(RP1_UART0_BASE, RP1_UART0_PCIE2_BASE);

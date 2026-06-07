@@ -1,0 +1,19 @@
+Validation summary: phase11-rp1-gpio-ownership-restore-core-20260607
+
+- cargo fmt --all -- --check: pass.
+- cargo -Zjson-target-spec test --quiet: pass, 423 talos no_std tests.
+- Archive build/review:
+  scripts/rpi5-rp1-gpio14-ownership-route-preflight-read-archive.sh and
+  scripts/rpi5-rp1-gpio14-ownership-route-preflight-no-mmio-control-archive.sh
+  produced local/static candidate archives.
+- Archive review:
+  scripts/rpi5-rp1-gpio14-ownership-route-preflight-read-review.sh and
+  scripts/rpi5-rp1-gpio14-ownership-route-preflight-no-mmio-control-review.sh
+  passed.
+- Static disassembly/source inspection: pass. Real candidate constructs the
+  contracted RP1 GPIO/RIO/pad read addresses and accepted GIC status reads;
+  control candidate constructs no forbidden RP1/GIC/MSI-X/PCIe/MIP/GPIO/pads/
+  RIO/clock/reset MMIO address.
+- git diff --check: pass.
+- mdbook build: not run; no docs/src files were touched.
+- git diff --cached --check: pass.
