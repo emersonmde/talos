@@ -7873,6 +7873,59 @@ interrupt delivery, GIC acknowledgement, handler ownership, DMA/cache,
 storage, generated-root, networking, SSH, broader PCIe, Milestone 11.3, and
 phase transition remain unaccepted.
 
+phase11-rp1-clock-adc-enable-toggle-core-20260607 is accepted as
+accepted-local-static-clock-adc-ctrl-enable-toggle-core. It adds the real
+rpi5_rp1_clock_adc_ctrl_enable_toggle diagnostic and paired
+rpi5_rp1_clock_adc_ctrl_enable_toggle_no_mmio_control candidate. The real
+candidate performs only the contracted CLK_ADC_CTRL pre-read, enable-bit
+transition-write, post-read, restore-write, and restore-read sequence and
+reports TALOS: rp1-clock-adc-ctrl-enable-toggle-result; the control preserves
+the output shape with no RP1 clock/reset, GPIO/RIO/pads, MSI-X/PCIe/MIP, or
+GIC MMIO address construction. No hardware behavior is accepted by this task.
+
+phase11-rp1-clock-adc-enable-toggle-control-pi5-20260607 accepted only the
+serialized Pi 5 no-MMIO/no-RP1/no-GIC control output/capture path. After a
+first candidate run and known-good control were rejected by serial-drain
+freshness evidence, the accepted control rerun selected tree
+37d1a4225602da70e0f1aba12047a77f5ab8644a9eba23854d31d05afdd068d1, retained
+two served 47,240-byte da591740/kernel_2712.img TFTP fetches, passed the v2
+identity join with no rejection reasons, retained 84 TALOS:
+rp1-clock-adc-ctrl-enable-toggle-control records, and restored the lab to tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This
+proves only the simulated/control output and capture path before the real
+diagnostic.
+
+phase11-rp1-clock-adc-enable-toggle-pi5-20260607 accepted the selected real
+CLK_ADC_CTRL enable-bit transition attempt as
+rp1-clock-adc-ctrl-enable-toggle-mismatch-restored. After a first candidate
+run was rejected by capture/staging evidence, a known-good control passed, and
+the accepted diagnostic rerun selected tree
+7024bb54a9446c681d4a8b9c80372fe52a4d4f93b7939f299a8eb2d7199a697a, retained
+two served 47,512-byte da591740/kernel_2712.img TFTP fetches, passed the v2
+identity join with no rejection reasons, retained 78 TALOS:
+rp1-clock-adc-ctrl-enable-toggle-result records, and restored the lab to the
+original pre-run tree. The visible result reported pre-raw=0xdeaddead,
+transition-raw=0xdeadd6ad, post-raw=0xdeaddead, restore-raw=0xdeaddead,
+one-bit-transition=true, post-enable-flipped=false,
+post-delta-is-transition-mask=false, and restore-eq-pre=true. This accepts a
+restored mismatch blocker, not successful non-idempotent clock ownership.
+
+phase11-rp1-clock-adc-enable-toggle-closeout-20260607 closes the chain as
+rp1-clock-adc-ctrl-enable-toggle-mismatch-restored-frontier-closed. The
+accepted frontier is only the source-backed CLK_ADC_CTRL enable-bit
+transition/readback/restore contract, local real/control candidate split,
+no-MMIO/no-RP1/no-GIC control proof, and real Pi 5 proof that the selected
+transition attempt ran under identity-joined evidence and restored the
+observed pre-read raw value. Same-shaped enable-toggle hardware reruns are
+blocked unless a future supervisor task supplies a different discriminator or
+new acceptance criteria. Successful non-idempotent clock ownership, broad
+clock/reset ownership, reset-controller writes, GPIO ownership, event
+generation, interrupt delivery, GIC acknowledgement, handler ownership,
+DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
+11.3, and phase transition remain unaccepted. Supervisor planning is required
+for the next Milestone 11.2 feature slice; this closeout does not create a
+worker-owned follow-up task.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

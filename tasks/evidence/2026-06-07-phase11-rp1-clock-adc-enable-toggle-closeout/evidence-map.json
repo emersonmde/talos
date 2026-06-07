@@ -1,0 +1,168 @@
+{
+  "task": "phase11-rp1-clock-adc-enable-toggle-closeout-20260607",
+  "status": "accepted",
+  "classification": "rp1-clock-adc-ctrl-enable-toggle-mismatch-restored-frontier-closed",
+  "evidenceLevel": [
+    "static inspection",
+    "source contract reconciliation",
+    "local/static core reconciliation",
+    "lab-controller API evidence review",
+    "serial hardware boot/output evidence review",
+    "stable same-cursor TFTP evidence review",
+    "v2 identity join evidence review",
+    "restore proof review",
+    "docs validation",
+    "git diff checks"
+  ],
+  "inputs": {
+    "sourceContract": {
+      "task": "phase11-rp1-clock-adc-enable-toggle-source-contract-20260607",
+      "classification": "accepted-source-contract",
+      "commit": "b1d24ee996f92d36c959d391a978ae1fc05d1673",
+      "contractId": "phase11-rp1-clock-adc-enable-toggle-source-contract-v1",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-clock-adc-enable-toggle-source-contract/evidence-map.json"
+    },
+    "diagnosticCore": {
+      "task": "phase11-rp1-clock-adc-enable-toggle-core-20260607",
+      "classification": "accepted-local-static-clock-adc-ctrl-enable-toggle-core",
+      "commit": "f09db82af7da90031d5e2a40aae19764e2297110",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-clock-adc-enable-toggle-core/evidence-map.json"
+    },
+    "noMmioControl": {
+      "task": "phase11-rp1-clock-adc-enable-toggle-control-pi5-20260607",
+      "classification": "no-mmio-clock-adc-ctrl-enable-toggle-control-visible",
+      "commit": "4de96f29df11ffeaa4c4917dc13287731385d2f6",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-clock-adc-enable-toggle-control-pi5/evidence-map.json"
+    },
+    "realDiagnostic": {
+      "task": "phase11-rp1-clock-adc-enable-toggle-pi5-20260607",
+      "classification": "rp1-clock-adc-ctrl-enable-toggle-mismatch-restored",
+      "commit": "b2c0a11b4199ec1804e88ef2213e85b94dbf2a09",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-clock-adc-enable-toggle-pi5/evidence-map.json"
+    }
+  },
+  "acceptedFrontier": {
+    "name": "rp1-clock-adc-ctrl-enable-toggle-mismatch-restored-frontier-closed",
+    "contractId": "phase11-rp1-clock-adc-enable-toggle-source-contract-v1",
+    "target": "rp1-clk-adc-ctrl-enable-bit-toggle-restore",
+    "operationClass": "bounded pre-state-derived RP1 clock-manager enable-bit transition/readback/restore attempt",
+    "register": "CLK_ADC_CTRL",
+    "address": "0x1f00018144",
+    "width": 32,
+    "transitionMask": "0x00000800",
+    "allowedOperations": [
+      "pre-read CLK_ADC_CTRL",
+      "compute transition_raw = pre_raw ^ 0x00000800",
+      "write transition_raw to CLK_ADC_CTRL",
+      "post-read CLK_ADC_CTRL",
+      "restore-write pre_raw to CLK_ADC_CTRL",
+      "restore-read CLK_ADC_CTRL"
+    ],
+    "realCandidate": {
+      "archive": "target/talos-rpi5-rp1-clock-adc-ctrl-enable-toggle-core.tar.gz",
+      "archiveSha256": "4d1119458c9d9caaacb6cdadcc1f5c1a1d3e87d8e538d4dcc4d3abbe47574c30",
+      "kernel2712Sha256": "61a47b90c5ee98e7d3c4ebb934cc57c4a87e68a8944fb1563b83a357b1bae7ca",
+      "kernelSizeBytes": 47512
+    },
+    "controlProof": {
+      "selectedTreeHash": "37d1a4225602da70e0f1aba12047a77f5ab8644a9eba23854d31d05afdd068d1",
+      "expectedFetchBytes": 47240,
+      "expectedFetchCount": 2,
+      "marker": "TALOS: rp1-clock-adc-ctrl-enable-toggle-control",
+      "markerOccurrences": 84,
+      "identityJoin": "passed with no rejection reasons"
+    },
+    "realProof": {
+      "acceptedRun": "tasks/evidence/2026-06-07-phase11-rp1-clock-adc-enable-toggle-pi5/real-rerun-after-kg",
+      "selectedTreeHash": "7024bb54a9446c681d4a8b9c80372fe52a4d4f93b7939f299a8eb2d7199a697a",
+      "expectedFetchBytes": 47512,
+      "expectedFetchCount": 2,
+      "marker": "TALOS: rp1-clock-adc-ctrl-enable-toggle-result",
+      "markerOccurrences": 78,
+      "identityJoin": "passed with no rejection reasons",
+      "restore": "post-run restore returned the lab to the pre-run boot tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "operationResult": {
+        "preRaw": "0xdeaddead",
+        "transitionRaw": "0xdeadd6ad",
+        "postRaw": "0xdeaddead",
+        "restoreRaw": "0xdeaddead",
+        "preEnable": true,
+        "postEnable": true,
+        "restoreEnable": true,
+        "preAuxsrc": "0x15",
+        "postAuxsrc": "0x15",
+        "restoreAuxsrc": "0x15",
+        "preSource": "0x1",
+        "postSource": "0x1",
+        "restoreSource": "0x1",
+        "oneBitTransition": true,
+        "postEnableFlipped": false,
+        "postDeltaIsTransitionMask": false,
+        "restoreEqPre": true,
+        "classification": "rp1-clock-adc-ctrl-enable-toggle-mismatch-restored"
+      }
+    }
+  },
+  "acceptedClaims": [
+    "source-backed CLK_ADC_CTRL enable-bit transition/readback/restore register identity and operation sequence",
+    "local/static real candidate implements only the contracted CLK_ADC_CTRL enable-bit transition/readback/restore path",
+    "paired no-MMIO/no-RP1/no-GIC control candidate constructs no forbidden RP1/GIC/MSI-X/PCIe/MIP/GPIO/RIO/pad/clock-reset MMIO path",
+    "no-MMIO/no-RP1/no-GIC control output shape is visible on Pi 5 under v2 identity join",
+    "real CLK_ADC_CTRL enable-bit transition output is visible on Pi 5 under v2 identity join",
+    "the selected real run restored the observed pre-read raw value after the attempted transition",
+    "the selected real run is a mismatch-restored blocker because post-read did not reflect the requested enable-bit transition"
+  ],
+  "unacceptedClaims": [
+    "successful non-idempotent CLK_ADC_CTRL enable-bit transition ownership",
+    "broad RP1 clock/reset ownership",
+    "additional non-idempotent clock enable, disable, divider, source, PLL, or reset-controller programming",
+    "GPIO ownership",
+    "GPIO event generation",
+    "interrupt pending generation",
+    "interrupt delivery",
+    "IAR or EOIR acknowledgement",
+    "ISR or handler ownership",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "summary": "Closed source/core/control/real proof chain as an accepted restored mismatch frontier with retained identity-joined Pi 5 evidence."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Recorded paired no-MMIO/no-RP1/no-GIC control proof as satisfied before the real Pi 5 proof."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Retained rejected first real run, known-good control, decisive rerun, identity join, stable TFTP, and restore proof while accepting only the decisive identity-joined rerun."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Updated roadmap and project contract docs for the final mismatch-restored closeout boundary."
+    },
+    {
+      "disposition": "deferred",
+      "summary": "A successful non-idempotent CLK_ADC_CTRL transition, GPIO ownership retry, interrupt-delivery work, non-idempotent clock/reset operations, reset-controller paths, and broad RP1 clock/reset ownership require supervisor planning with new acceptance criteria."
+    },
+    {
+      "disposition": "not-an-issue",
+      "summary": "The observed 0xdeaddead raw value is retained only as the value restored by this selected proof."
+    }
+  ],
+  "nextAction": "Set planningNeeded=true for supervisor planning of the next Milestone 11.2 feature slice; do not create same-shaped CLK_ADC_CTRL enable-bit transition rerun tasks, GPIO ownership retries, interrupt-delivery tasks, or non-idempotent clock/reset tasks without a different discriminator or new source contract and acceptance criteria.",
+  "validation": {
+    "staticInspection": "passed",
+    "gitDiffCheck": "pass",
+    "mdbookBuild": "pass",
+    "gitDiffCachedCheck": "pass"
+  },
+  "commit": "recorded in talos-supervisor-state.json after commit"
+}

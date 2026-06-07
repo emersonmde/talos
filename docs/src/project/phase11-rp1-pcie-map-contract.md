@@ -562,6 +562,22 @@ ownership, event generation, interrupt delivery, handler ownership, DMA/cache,
 storage, generated-root, networking, SSH, broader PCIe, Milestone 11.3, and a
 phase transition remain unaccepted.
 
+phase11-rp1-clock-adc-enable-toggle-closeout-20260607 closes that chain as
+rp1-clock-adc-ctrl-enable-toggle-mismatch-restored-frontier-closed. The
+accepted frontier is limited to the source-backed CLK_ADC_CTRL enable-bit
+transition/readback/restore contract, the local real/control candidate split,
+the paired no-MMIO/no-RP1/no-GIC control proof, and the real Pi 5 proof that
+the selected transition attempt ran under identity-joined serial/TFTP/final
+tree evidence and restored the observed pre-read raw value. It is a precise
+blocker: the post-read still matched pre-read instead of the requested
+0x00000800 transition. Same-shaped CLK_ADC_CTRL enable-bit transition hardware
+reruns are blocked unless a future supervisor task supplies a different
+discriminator or new acceptance criteria. Successful non-idempotent clock
+ownership, broad clock/reset ownership, GPIO ownership, event generation,
+interrupt delivery, handler ownership, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe, Milestone 11.3, and phase transition remain
+unaccepted.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware
