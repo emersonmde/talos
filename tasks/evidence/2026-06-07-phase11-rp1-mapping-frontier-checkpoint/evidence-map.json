@@ -1,0 +1,65 @@
+{
+  "task": "phase11-rp1-mapping-frontier-checkpoint-20260607",
+  "status": "accepted",
+  "classification": "milestone-11-1-frontier-accepted",
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-07-phase11-rp1-mapping-frontier-checkpoint.md",
+    "staticReconciliation": "tasks/evidence/2026-06-07-phase11-rp1-mapping-frontier-checkpoint/static-reconciliation.md",
+    "sourceCoreTask": "tasks/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-core.md",
+    "sourceCoreEvidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-core/evidence-map.json",
+    "controlTask": "tasks/2026-06-06-phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5.md",
+    "controlEvidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-no-mmio-control-pi5/evidence-map.json",
+    "controlCloseoutTask": "tasks/2026-06-06-phase11-rp1-uart0-fr-tail-stable-control-closeout.md",
+    "controlCloseoutEvidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-control-closeout/evidence-map.json",
+    "resultProofTask": "tasks/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-pi5.md",
+    "resultProofEvidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-pi5/evidence-map.json",
+    "resultCloseoutTask": "tasks/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-closeout.md",
+    "resultCloseoutEvidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-closeout/evidence-map.json"
+  },
+  "accepted": [
+    "Milestone 11.1 frontier is the read-only RP1 UART0 FR single-load diagnostic at 0x1f00030018",
+    "source/static core proves exactly one 32-bit volatile load in the RP1 candidate and zero RP1 loads in the no-MMIO control",
+    "no-MMIO control proof accepts the repeated output shape as capturable on Pi 5",
+    "RP1 result proof accepts mapped-read-value-tail-stable with v2 identity, stable TFTP, final pre-restore identity, restore proof, and 1,498 repeated result markers",
+    "raw value retained from the selected candidate result path is 0xdeaddead",
+    "phase11-rp1-irq-clock-gpio-source-contract-20260607 is the next mechanically unblocked task after checkpoint commit"
+  ],
+  "notAccepted": [
+    "GPIO or pin-control ownership",
+    "RP1 clocks/resets",
+    "interrupt routing or handling",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.2 implementation",
+    "phase transition"
+  ],
+  "summary": {
+    "sourceCoreCommit": "c3700b21166100468e2131d35c221d88d1f1612e",
+    "controlProofCommit": "b5878af296576c6b930426b2b6db208eaeec515c",
+    "controlCloseoutCommit": "9b2d46059c0ebe99327a189da1894b2f11d0e9e9",
+    "resultProofCommit": "427acda2f1b6cf95a0e56a01196596e5be9cd97d",
+    "resultCloseoutCommit": "01f09f9c9853badcc6c7e72d58492a2b49600c70",
+    "classification": "milestone-11-1-frontier-accepted",
+    "acceptedDiagnostic": {
+      "contractId": "phase11-rp1-pcie-map-contract-v1",
+      "target": "rp1-uart0-fr-read",
+      "address": "0x1f00030018",
+      "widthBits": 32,
+      "classification": "mapped/read-value",
+      "rawValue": "0xdeaddead",
+      "serialMarkerOccurrences": 1498
+    },
+    "nextTask": "phase11-rp1-irq-clock-gpio-source-contract-20260607"
+  },
+  "validation": {
+    "staticEvidenceInspection": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  },
+  "nextAction": "Promote phase11-rp1-irq-clock-gpio-source-contract-20260607 on a future worker wake if hardwareTestLock remains unlocked and supervisorIntervention remains inactive."
+}

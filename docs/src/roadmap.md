@@ -7432,6 +7432,14 @@ the next bounded Phase 11 slice. GPIO/pin-control ownership, clocks/resets,
 interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
 Milestone 11.2, and phase transition remain unaccepted.
 
+phase11-rp1-mapping-frontier-checkpoint-20260607 accepts that read-only RP1
+UART0 FR diagnostic as the Milestone 11.1 frontier and authorizes only the next
+bounded source-contract task, phase11-rp1-irq-clock-gpio-source-contract-20260607.
+GPIO/pin-control ownership, RP1 clocks/resets, interrupts, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe enumeration, Milestone 11.2
+implementation, and phase transition remain unaccepted until that source
+contract and later proof tasks satisfy their own gates.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

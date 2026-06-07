@@ -898,6 +898,16 @@ slice. GPIO/pin-control ownership, clocks/resets, interrupts, DMA/cache,
 storage, generated-root, networking, SSH, broader PCIe, Milestone 11.2, and
 phase transition remain unaccepted.
 
+phase11-rp1-mapping-frontier-checkpoint-20260607 accepts that as the
+Milestone 11.1 frontier and explicitly authorizes only the next source-contract
+slice, phase11-rp1-irq-clock-gpio-source-contract-20260607. The accepted claims
+remain limited to the read-only RP1 UART0 FR single-load diagnostic at
+0x1f00030018 with v2 identity, stable TFTP, final pre-restore identity,
+restore proof, and repeated mapped/read-value markers. GPIO/pin-control
+ownership, clocks/resets, interrupts, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe enumeration, and Milestone 11.2 implementation
+remain unaccepted until later tasks supply their own source contract and proof.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when
