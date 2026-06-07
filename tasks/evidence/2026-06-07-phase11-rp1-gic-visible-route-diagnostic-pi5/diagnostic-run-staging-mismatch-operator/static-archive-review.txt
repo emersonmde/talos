@@ -1,0 +1,8 @@
+candidate_archive=target/talos-rpi5-rp1-gic-visible-route-status-read-core.tar.gz
+candidate_archive_sha256=6cd353262326572afb217cfe1a348199cf4be20e5bd24cf54d41527100b12f4a
+kernel_2712_sha256=cf499fb46542395bddd00b5232bc6f19b35298b15d08fd731a0008d73a969137
+kernel_2712_size=47816
+header_image_size=47816
+text_offset=0
+flags=12
+result_marker=TALOS: rp1-gic-route-status-result

@@ -1,0 +1,70 @@
+{
+  "task": "phase11-rp1-gic-visible-route-diagnostic-pi5-20260607",
+  "status": "accepted",
+  "classification": "gic-route-status-visible",
+  "acceptedRun": {
+    "path": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-diagnostic-pi5/diagnostic-rerun-after-kg",
+    "identityJoinAllowed": true,
+    "rejectionReasons": [],
+    "selectedTreeHash": "8ef75b3125c21d7025cff539f5004d7f6911af057c5523ce1610be46deecbbe4",
+    "effectiveKernel": "kernel_2712.img",
+    "expectedFetchPath": "da591740/kernel_2712.img",
+    "expectedFetchBytes": 47816,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "marker": "TALOS: rp1-gic-route-status-result",
+    "markerOccurrences": 209,
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "reportedStatus": {
+    "contract": "phase11-rp1-gic-visible-route-source-contract-v1",
+    "target": "rp1-io-bank0-gic-route-status-read",
+    "hwirq": 0,
+    "predictedMsixVector": 0,
+    "predictedGicSpi": 128,
+    "predictedGicIntid": 160,
+    "gicdBase": "0x107fff9000",
+    "giccBase": "0x107fffa000",
+    "bank": 5,
+    "bitMask": "0x1",
+    "isenablerAddress": "0x107fff9114",
+    "ispendrAddress": "0x107fff9214",
+    "isactiverAddress": "0x107fff9314",
+    "hppirAddress": "0x107fffa018",
+    "isenablerRaw": "0x0",
+    "ispendrRaw": "0x0",
+    "isactiverRaw": "0x0",
+    "intidEnabled": false,
+    "intidPending": false,
+    "intidActive": false,
+    "hppirRaw": "0x3ff",
+    "hppirIntid": 1023,
+    "hppirSpurious": true,
+    "hppirTargetMatch": false,
+    "classification": "gic-route-status-visible"
+  },
+  "triage": {
+    "firstRun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-diagnostic-pi5/diagnostic-run",
+      "identityJoinAllowed": false,
+      "rejectionReasons": [
+        "serial-drain-not-empty-before-power",
+        "saturated-direct-read-without-empty-pre-power-drain",
+        "expected-fetch-not-observed-in-tftp-delta"
+      ],
+      "expectedFetchCount": 0
+    },
+    "knownGoodControl": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-diagnostic-pi5/known-good-control-run",
+      "identityJoinAllowed": true,
+      "rejectionReasons": [],
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 2,
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "candidateRerun": {
+      "identityJoinAllowed": true,
+      "rejectionReasons": []
+    }
+  }
+}

@@ -152,6 +152,26 @@ MMIO, and any treatment of a status value as proof of interrupt delivery. The
 paired control must preserve the output shape while constructing no GIC, RP1,
 MSI-X, PCIe, MIP, GPIO, pads, RIO, or clock/reset MMIO address.
 
+phase11-rp1-gic-visible-route-diagnostic-core-20260607 implements that source
+contract as the local/static real candidate and paired no-MMIO/no-GIC/no-RP1
+control. phase11-rp1-gic-visible-route-no-mmio-control-pi5-20260607 accepts
+the paired control output shape as visible on Pi 5.
+phase11-rp1-gic-visible-route-diagnostic-pi5-20260607 accepts the real
+read-only/no-ack GIC-visible route status proof as gic-route-status-visible.
+After an inconclusive first run, a known-good control passed and the decisive
+candidate rerun passed the v2 identity join for tree
+`8ef75b3125c21d7025cff539f5004d7f6911af057c5523ce1610be46deecbbe4`,
+retained two 47,816-byte `da591740/kernel_2712.img` fetches, final
+selected-tree identity, restore proof, and 209
+`TALOS: rp1-gic-route-status-result` records. The visible result reported
+GICD_ISENABLER5, GICD_ISPENDR5, and GICD_ISACTIVER5 raw values of `0x0` for
+INTID 160 bank 5 bit 0, and GICC_HPPIR `0x3ff` / INTID 1023 as spurious.
+This accepts only the selected read-only status snapshot. Interrupt pending
+generation, delivery, IAR/EOIR acknowledgement, ISR/handler ownership, GPIO
+ownership, pin-control behavior, clock/reset programming, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe enumeration, Milestone 11.3, and
+phase transition remain unaccepted.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware

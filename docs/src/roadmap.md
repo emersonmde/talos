@@ -7549,6 +7549,22 @@ interrupt delivery, IAR/EOIR acknowledgement, handler ownership, GPIO
 ownership, clock/reset programming, DMA/cache, storage, generated-root,
 networking, SSH, broader PCIe, Milestone 11.3, or phase transition.
 
+phase11-rp1-gic-visible-route-no-mmio-control-pi5-20260607 accepted the paired
+no-MMIO/no-GIC/no-RP1 output shape as visible on Pi 5. The subsequent real
+diagnostic proof phase11-rp1-gic-visible-route-diagnostic-pi5-20260607 is
+accepted as gic-route-status-visible. The decisive rerun passed the v2 identity
+join for tree `8ef75b3125c21d7025cff539f5004d7f6911af057c5523ce1610be46deecbbe4`,
+retained two 47,816-byte `da591740/kernel_2712.img` fetches, final
+selected-tree identity, restore proof, and 209
+`TALOS: rp1-gic-route-status-result` records carrying contract
+phase11-rp1-gic-visible-route-source-contract-v1, target
+rp1-io-bank0-gic-route-status-read, predicted GIC SPI 128 / INTID 160,
+enable/pending/active bits clear for INTID 160, and HPPIR spurious. This
+accepts only the selected read-only/no-ack GIC-visible status boundary.
+Interrupt delivery, handler ownership, GPIO ownership, pin-control behavior,
+clocks/resets, DMA/cache, storage, generated-root, networking, SSH, broader
+PCIe, Milestone 11.3, and phase transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

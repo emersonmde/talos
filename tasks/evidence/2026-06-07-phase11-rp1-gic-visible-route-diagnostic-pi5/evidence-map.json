@@ -1,0 +1,106 @@
+{
+  "task": "phase11-rp1-gic-visible-route-diagnostic-pi5-20260607",
+  "status": "accepted",
+  "classification": "gic-route-status-visible",
+  "generatedAt": "2026-06-07T08:22:00Z",
+  "evidenceLevel": [
+    "static archive identity inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "stable same-cursor TFTP evidence",
+    "pi5-capture-transaction-v2 identity join",
+    "restore proof",
+    "git diff checks",
+    "docs validation"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-07-phase11-rp1-gic-visible-route-diagnostic-pi5.md",
+    "classification": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-diagnostic-pi5/classification.json",
+    "firstRun": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-diagnostic-pi5/diagnostic-run",
+    "knownGoodControlRun": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-diagnostic-pi5/known-good-control-run",
+    "acceptedCandidateRerun": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-diagnostic-pi5/diagnostic-rerun-after-kg",
+    "operatorStagingMismatch": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-diagnostic-pi5/diagnostic-run-staging-mismatch-operator"
+  },
+  "realCandidate": {
+    "archive": "target/talos-rpi5-rp1-gic-visible-route-status-read-core.tar.gz",
+    "archiveSha256": "6cd353262326572afb217cfe1a348199cf4be20e5bd24cf54d41527100b12f4a",
+    "kernel2712Sha256": "cf499fb46542395bddd00b5232bc6f19b35298b15d08fd731a0008d73a969137",
+    "kernelSizeBytes": 47816,
+    "marker": "TALOS: rp1-gic-route-status-result",
+    "outputClassification": "gic-route-status-visible"
+  },
+  "accepted": [
+    "Pi 5 fetched the selected real GIC-visible route status candidate as da591740/kernel_2712.img",
+    "accepted candidate rerun passed pi5-capture-transaction-v2 identity join with no rejection reasons",
+    "serial hardware output retained repeated TALOS: rp1-gic-route-status-result markers from the selected candidate",
+    "stable pre-restore TFTP evidence retained two served 47816-byte candidate kernel fetches",
+    "restore returned the lab to the pre-run boot tree",
+    "read-only GIC status values reported enable=false pending=false active=false and HPPIR spurious"
+  ],
+  "notAccepted": [
+    "interrupt pending generation",
+    "interrupt delivery",
+    "IAR/EOIR acknowledgement",
+    "ISR or handler ownership",
+    "GPIO ownership",
+    "pin-control behavior",
+    "GIC/RP1/MSI-X/PCIe/MIP/GPIO/pads/RIO/clock/reset write behavior",
+    "DMA/cache behavior",
+    "storage or generated-root behavior",
+    "networking or SSH",
+    "broader PCIe behavior",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "firstRun": {
+    "path": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-diagnostic-pi5/diagnostic-run",
+    "classification": "capture-staging-blocked",
+    "identityJoinAllowed": false,
+    "rejectionReasons": [
+      "serial-drain-not-empty-before-power",
+      "saturated-direct-read-without-empty-pre-power-drain",
+      "expected-fetch-not-observed-in-tftp-delta"
+    ],
+    "expectedFetchCount": 0
+  },
+  "triage": {
+    "knownGoodControlRun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-diagnostic-pi5/known-good-control-run",
+      "marker": "rpi5-production-timer-preemption: PASS",
+      "classification": "capture-transaction-v2-ready",
+      "identityJoinAllowed": true,
+      "rejectionReasons": [],
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 2,
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "acceptedCandidateRerun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-diagnostic-pi5/diagnostic-rerun-after-kg",
+      "identityJoinAllowed": true,
+      "rejectionReasons": [],
+      "markerOccurrences": 209,
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 2,
+      "tftpEventCount": 13,
+      "selectedTreeHash": "8ef75b3125c21d7025cff539f5004d7f6911af057c5523ce1610be46deecbbe4",
+      "effectiveKernel": "kernel_2712.img",
+      "expectedFetchPath": "da591740/kernel_2712.img",
+      "expectedFetchBytes": 47816,
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "validation": {
+    "staticArchiveIdentityCheck": "passed",
+    "labControllerPi5HardwareRun": "passed on accepted candidate rerun",
+    "identityJoin": "passed on accepted candidate rerun",
+    "stableSameCursorTftp": "passed",
+    "serialHardwareOutput": "passed",
+    "knownGoodControlAndCandidateRerun": "run and retained after rejected candidate evidence",
+    "restoreProof": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  },
+  "nextAction": "Promote phase11-rp1-gic-visible-route-closeout-20260607 on a future worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive.",
+  "commit": null
+}
