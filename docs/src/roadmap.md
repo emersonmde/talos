@@ -7594,6 +7594,23 @@ enablement or delivery, IAR/EOIR acknowledgement, handler ownership, GPIO
 ownership, clock/reset programming, DMA/cache, storage, generated-root,
 networking, SSH, broader PCIe, Milestone 11.3, or phase transition.
 
+phase11-rp1-gpio-bank-source-status-pi5-20260607 accepts the real read-only
+GPIO bank source-status proof as gpio-bank-source-status-visible. After an
+inconclusive first candidate run, a known-good control retained matching TFTP
+and PASS evidence, and the decisive candidate rerun passed the v2 identity
+join for tree 84ee89db45d5298e49f44c74e6a18b9c07ce2c146879f677aceace6ad252ea0f.
+The accepted rerun retained two 46,904-byte da591740/kernel_2712.img fetches,
+final selected-tree identity, restore proof, and 269 TALOS:
+rp1-gpio-bank-source-status-result records. The visible result reported
+IO_BANK0 INTE at 0x1f000d011c and INTS at 0x1f000d0124, raw values
+0xdeaddead/0xdeaddead, GPIO14 mask 0x4000, gpio14-enabled=true, and
+gpio14-source-status=true. This accepts only the selected read-only source
+snapshot visibility and report decoding. GPIO event generation, interrupt
+pending generation beyond that snapshot, interrupt enablement or delivery,
+IAR/EOIR acknowledgement, handler ownership, GPIO ownership, pin-control
+behavior, clocks and resets, DMA/cache, storage, generated-root, networking,
+SSH, broader PCIe, Milestone 11.3, and phase transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

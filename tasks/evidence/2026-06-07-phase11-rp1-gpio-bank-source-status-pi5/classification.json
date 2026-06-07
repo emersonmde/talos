@@ -1,0 +1,55 @@
+{
+  "taskId": "phase11-rp1-gpio-bank-source-status-pi5-20260607",
+  "acceptedAt": "2026-06-07T09:50:21Z",
+  "classification": "gpio-bank-source-status-visible",
+  "evidenceLevel": "static archive identity inspection + lab-controller API + serial hardware boot/output + stable same-cursor TFTP evidence + pi5-capture-transaction-v2 identity join + restore proof",
+  "acceptedClaims": [
+    "read-only RP1 IO_BANK0 source-status diagnostic output was visible on Pi 5 for the selected candidate tree",
+    "the selected proof bundle passed pi5-capture-transaction-v2 identity join with no rejection reasons",
+    "accepted boundary is limited to IO_BANK0 INTE/INTS snapshot visibility and report decoding"
+  ],
+  "unacceptedClaims": [
+    "GPIO event generation",
+    "interrupt pending generation beyond the read-only source-status snapshot",
+    "interrupt enablement or delivery",
+    "IAR/EOIR acknowledgement",
+    "ISR/handler ownership",
+    "GPIO ownership or pin-control state",
+    "clock/reset programming",
+    "DMA/cache, storage, generated-root, networking, SSH, broader PCIe enumeration, Milestone 11.3, or phase transition"
+  ],
+  "candidate": {
+    "archive": "target/talos-rpi5-rp1-gpio-bank-source-status-read-core.tar.gz",
+    "archiveSha256": "52b71d101dce9884499bc94fcb3cce2121f5ec065881087b77ff6748e4e4a82b",
+    "kernelSha256": "54f57ef743fb1bc3e760dc6f13f5d6a9485efb71027834b13f32194cd24228cf",
+    "kernelSizeBytes": 46904,
+    "marker": "TALOS: rp1-gpio-bank-source-status-result"
+  },
+  "decisiveRun": {
+    "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-pi5/real-rerun-after-kg",
+    "label": "phase11-rp1-gpio-bank-source-status-real-rerun-094525",
+    "selectedTreeHash": "84ee89db45d5298e49f44c74e6a18b9c07ce2c146879f677aceace6ad252ea0f",
+    "expectedFetch": "da591740/kernel_2712.img",
+    "expectedFetchBytes": 46904,
+    "expectedFetchByteMatchCount": 2,
+    "markerCount": 269,
+    "identityJoinClassification": "capture-transaction-v2-ready",
+    "identityJoinAllowed": true,
+    "rejectionReasons": [],
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "sampleResultLine": "TALOS: rp1-gpio-bank-source-status-result contract=phase11-rp1-gpio-bank-source-status-contract-v1 target=rp1-io-bank0-source-status-read source-hwirq=0 bank=0 bank-first-gpio=0 bank-gpio-count=28 bank-last-gpio=27 inte-address=0x1f000d011c ints-address=0x1f000d0124 width=32 inte-raw=0xdeaddead ints-raw=0xdeaddead gpio14-mask=0x4000 gpio14-enabled=true gpio14-source-status=true source-status-mask=0xdeaddead source-status-nonzero=true classification=gpio-bank-source-status-visible"
+  },
+  "triage": {
+    "firstCandidateRun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-pi5/real-run",
+      "classification": "capture-staging-blocked",
+      "reason": "pre-power serial drain was not empty before power"
+    },
+    "knownGoodControl": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-pi5/known-good-control-run",
+      "classification": "capture-staging-blocked",
+      "reason": "known-good retained PASS marker and matching TFTP fetches but preserved serial-drain rejection evidence"
+    }
+  },
+  "nextAction": "Promote phase11-rp1-gpio-bank-source-status-closeout-20260607 on a future worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive."
+}

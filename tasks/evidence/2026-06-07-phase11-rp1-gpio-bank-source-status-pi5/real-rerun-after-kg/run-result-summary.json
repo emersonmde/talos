@@ -1,0 +1,15 @@
+{
+  "label": "phase11-rp1-gpio-bank-source-status-real-rerun-094525",
+  "suggested_classification": "post-handoff-marker-visible",
+  "marker_count": 269,
+  "expected_fetch_count": 2,
+  "expected_fetch_byte_match_count": 2,
+  "identity_join_contract": {
+    "contract_version": "pi5-capture-transaction-v2",
+    "decisive_rp1_hardware_classification_allowed": true,
+    "rejection_reasons": [],
+    "rejected_classification": null,
+    "rule": "missing or mismatched candidate identity, serial-window, or TFTP fields prevent decisive RP1 hardware classification"
+  },
+  "postCaptureTree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+}

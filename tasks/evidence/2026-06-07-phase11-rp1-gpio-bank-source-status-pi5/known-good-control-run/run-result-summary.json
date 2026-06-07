@@ -1,0 +1,16 @@
+{
+  "label": "phase11-rp1-gpio-bank-source-status-known-good-094357",
+  "suggested_classification": "identity-join-mismatch",
+  "marker_count": 1,
+  "expected_fetch_count": 2,
+  "expected_fetch_byte_match_count": 2,
+  "identity_join_contract": {
+    "contract_version": "pi5-capture-transaction-v2",
+    "decisive_rp1_hardware_classification_allowed": false,
+    "rejection_reasons": [
+      "serial-drain-not-empty-before-power"
+    ],
+    "rejected_classification": "capture-staging-blocked",
+    "rule": "missing or mismatched candidate identity, serial-window, or TFTP fields prevent decisive RP1 hardware classification"
+  }
+}

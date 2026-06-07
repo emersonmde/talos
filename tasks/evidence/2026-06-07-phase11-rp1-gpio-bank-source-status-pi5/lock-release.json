@@ -1,0 +1,10 @@
+{
+  "releasedAt": "2026-06-07T09:52:43Z",
+  "taskId": "phase11-rp1-gpio-bank-source-status-pi5-20260607",
+  "locked": false,
+  "owner": null,
+  "restored": true,
+  "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "effectiveKernel": "kernel_2712.img",
+  "note": "Released after accepted real RP1 GPIO bank source-status Pi 5 diagnostic; capture restore returned lab to pre-run tree."
+}
