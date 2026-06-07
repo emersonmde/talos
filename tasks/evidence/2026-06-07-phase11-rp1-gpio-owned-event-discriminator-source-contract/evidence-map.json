@@ -1,0 +1,172 @@
+{
+  "task": "phase11-rp1-gpio-owned-event-discriminator-source-contract-20260607",
+  "status": "accepted",
+  "classification": "accepted-source-contract",
+  "evidenceLevel": [
+    "static source inspection",
+    "static doc inspection",
+    "accepted evidence reconciliation",
+    "docs validation",
+    "git diff checks"
+  ],
+  "contract": {
+    "id": "phase11-rp1-gpio-owned-event-discriminator-source-contract-v1",
+    "target": "rp1-gpio16-owned-level-high-event-discriminator",
+    "pin": "GPIO16",
+    "bank": "IO_BANK0",
+    "bankBitMask": "0x00010000",
+    "sourceRoute": "RP1 IO_BANK0 hwirq 0, source-predicted GIC SPI 128 / INTID 160",
+    "operationClass": "bounded GPIO16 write/read event/source-status discriminator with exact restore"
+  },
+  "sourceReferences": [
+    {
+      "path": "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/bcm2712-rpi-5-b.dts",
+      "kind": "Raspberry Pi 5 board device-tree source"
+    },
+    {
+      "path": "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/bcm2712-rpi.dtsi",
+      "kind": "Raspberry Pi shared board device-tree source"
+    },
+    {
+      "path": "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/rp1.dtsi",
+      "kind": "RP1 device-tree source"
+    },
+    {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/pinctrl-rp1.c",
+      "kind": "Raspberry Pi Linux rpi-6.12.y RP1 pinctrl/GPIO source"
+    },
+    {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-closeout/evidence-map.json",
+      "kind": "accepted GPIO14 ownership/restore closeout"
+    }
+  ],
+  "selectedPinEvidence": {
+    "lineName": "GPIO16",
+    "notSelected": [
+      "GPIO14",
+      "GPIO15"
+    ],
+    "reason": "GPIO14 is blocked by accepted fsel 13 / unknown-function evidence; GPIO15 is the paired RP1 UART0 path. GPIO16 is generically named in the retained Pi 5 line names and has no retained fixed board consumer.",
+    "fselTable": {
+      "0": "spi1",
+      "1": "dpi",
+      "2": "dsi0_te_ext",
+      "3": "_",
+      "4": "uart0",
+      "5": "gpio",
+      "6": "proc_rio",
+      "7": "pio",
+      "8": "_"
+    }
+  },
+  "addresses": {
+    "GPIO16_STATUS": "0x1f000d0080",
+    "GPIO16_CTRL_RW": "0x1f000d0084",
+    "GPIO16_CTRL_SET": "0x1f000d2084",
+    "GPIO16_CTRL_CLR": "0x1f000d3084",
+    "IO_BANK0_INTE_RW": "0x1f000d011c",
+    "IO_BANK0_INTE_SET": "0x1f000d211c",
+    "IO_BANK0_INTE_CLR": "0x1f000d311c",
+    "IO_BANK0_INTS": "0x1f000d0124",
+    "RIO0_OUT": "0x1f000e0000",
+    "RIO0_OE": "0x1f000e0004",
+    "RIO0_IN": "0x1f000e0008",
+    "GPIO16_PAD": "0x1f000f0044",
+    "GICD_ISENABLER5": "0x107fff9114",
+    "GICD_ISPENDR5": "0x107fff9214",
+    "GICD_ISACTIVER5": "0x107fff9314",
+    "GICC_HPPIR": "0x107fffa018"
+  },
+  "allowedWrites": [
+    "IO_BANK0_INTE_CLR bit 16",
+    "GPIO16 pad bounded input-enable/output-enable update",
+    "GPIO16 CTRL bounded GPIO/override update",
+    "RIO0 OUT/OE bit 16 set/clear aliases",
+    "GPIO16 CTRL_CLR raw event-enable mask",
+    "GPIO16 CTRL_SET IRQRESET",
+    "GPIO16 CTRL_SET raw level-high event enable",
+    "IO_BANK0_INTE_SET bit 16",
+    "restore writes for the exact preflight GPIO16/IO_BANK0/RIO/pad state"
+  ],
+  "forbiddenOperations": [
+    "GPIO14 writes",
+    "GPIO15 writes",
+    "any GIC write",
+    "GIC IAR/EOIR acknowledgement",
+    "MSI-X, PCIe config, or MIP writes",
+    "clock/reset programming",
+    "writes to any pin other than GPIO16",
+    "interrupt delivery enablement",
+    "ISR/handler installation",
+    "broad GPIO driver ownership",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "classifications": [
+    "gpio16-owned-level-high-event-discriminator-visible",
+    "gpio16-owned-event-preflight-blocked-parent-route",
+    "gpio16-owned-event-preflight-blocked-pin-function",
+    "gpio16-owned-event-preflight-blocked-restore-mismatch",
+    "gpio16-owned-event-preflight-blocked-missing-status-transition",
+    "gpio16-owned-event-preflight-inconclusive-capture"
+  ],
+  "acceptedClaims": [
+    "source-backed GPIO16 register identity for the selected bounded discriminator",
+    "GPIO16 is the next selected non-GPIO14 candidate based on retained Pi 5 source line names and absence of fixed board consumers",
+    "parent-route containment preflight must pass before any GPIO16/RIO/pad/INTE write",
+    "later local/static core and hardware tasks must use the exact allowed operations, report fields, classifications, and restore semantics named here"
+  ],
+  "unacceptedClaims": [
+    "hardware behavior",
+    "GPIO event generation on Pi 5",
+    "interrupt delivery",
+    "GIC acknowledgement",
+    "ISR or handler ownership",
+    "broad GPIO ownership",
+    "clock/reset programming",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "summary": "Selected GPIO16 and one bounded level-high event/source-status discriminator."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Recorded exact source-backed GPIO16, IO_BANK0, RIO, pad, and GIC-visible status addresses."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Defined parent-route containment, ordering, report fields, classifications, no-MMIO control requirements, and exact restore semantics."
+    },
+    {
+      "disposition": "deferred",
+      "summary": "Hardware proof, interrupt delivery, GIC acknowledgement, handler ownership, broad GPIO ownership, and GPIO14 event generation remain future gated work."
+    },
+    {
+      "disposition": "not-an-issue",
+      "summary": "GPIO16 selection is source-contract-only; hardware acceptance remains gated by local/static core, no-MMIO control, and serialized Pi 5 evidence."
+    }
+  ],
+  "validation": {
+    "staticInspection": "passed",
+    "gitDiffCheck": "pass",
+    "mdbookBuild": "pass",
+    "gitDiffCachedCheck": "pass"
+  },
+  "nextAction": "Promote phase11-rp1-gpio-owned-event-discriminator-core-20260607 after this source contract is committed, if dependencies remain satisfied.",
+  "commit": null
+}

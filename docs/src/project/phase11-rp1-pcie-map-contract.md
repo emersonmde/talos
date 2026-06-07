@@ -316,6 +316,29 @@ parent-route masking writes, clock/reset programming, DMA/cache, storage,
 generated-root, networking, SSH, broader PCIe enumeration, Milestone 11.3, and
 phase transition remain unaccepted.
 
+phase11-rp1-gpio-owned-event-discriminator-source-contract-20260607 accepts a
+new source-only GPIO16 event/source-status discriminator contract after the
+GPIO14 blocker. The selected target is
+`rp1-gpio16-owned-level-high-event-discriminator`. Retained Pi 5 source names
+RP1 GPIO16 as a generic `GPIO16` line, retained fixed board consumers do not
+reference GPIO16, the debug UART is `uart10`, and prior Talos RP1 UART0 usage
+is confined to GPIO14/GPIO15. The contract derives GPIO16 STATUS/CTRL at
+`0x1f000d0080`/`0x1f000d0084`, CTRL SET/CLR at
+`0x1f000d2084`/`0x1f000d3084`, GPIO16 pad control at `0x1f000f0044`,
+IO_BANK0 INTE/INTS at `0x1f000d011c`/`0x1f000d0124`, RIO0 OUT/OE/IN at
+`0x1f000e0000`/`0x1f000e0004`/`0x1f000e0008`, and the accepted INTID 160
+GIC-visible status registers. The only accepted writes are the bounded GPIO16
+pad/CTRL/RIO/event-enable/IRQRESET/IO_BANK0-INTE bit-16 writes and exact
+restore writes named by the task, gated by a read-only parent-route preflight
+that must show INTID 160 disabled, not pending, not active, and not visible in
+HPPIR. The paired control must preserve the output shape while constructing no
+RP1 GPIO/RIO/pads/clock/reset, MSI-X/PCIe/MIP, or GIC MMIO path. This accepts
+only the source contract, not hardware behavior, interrupt delivery, GIC
+acknowledgement, ISR/handler ownership, broad GPIO ownership, GPIO14
+event-generation retry, clock/reset programming, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe enumeration, Milestone 11.3, or
+a phase transition.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware

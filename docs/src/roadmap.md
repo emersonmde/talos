@@ -7689,6 +7689,23 @@ partial-write recovery, and restore acceptance criteria. Supervisor planning is
 required for the next Milestone 11.2 feature slice; this closeout does not
 create a worker-owned follow-up task or accept a phase transition.
 
+phase11-rp1-gpio-owned-event-discriminator-source-contract-20260607 is
+accepted as accepted-source-contract. It selects GPIO16, not GPIO14, for the
+next bounded RP1 GPIO event/source-status discriminator because retained Pi 5
+source names GPIO16 as a generic line, no retained fixed board consumer uses
+it, the lab debug UART is uart10, and the prior Talos RP1 UART0 path is
+GPIO14/GPIO15. The accepted target is
+rp1-gpio16-owned-level-high-event-discriminator with source-backed GPIO16
+STATUS/CTRL, IO_BANK0 INTE/INTS, RIO0 OUT/OE/IN, GPIO16 pad, and read-only
+INTID 160 GIC-visible status observations. The only accepted writes are the
+bounded GPIO16 pad/CTRL/RIO/event-enable/IRQRESET/IO_BANK0-INTE bit-16 writes
+and exact restore writes named by the task, and only after a parent-route
+preflight shows INTID 160 disabled, not pending, not active, and not visible in
+HPPIR. Hardware behavior, interrupt delivery, GIC acknowledgement, handler
+ownership, broad GPIO ownership, GPIO14 event-generation retry, clocks and
+resets, DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
+Milestone 11.3, and phase transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
