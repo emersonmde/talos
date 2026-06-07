@@ -1,0 +1,26 @@
+{
+  "task": "phase11-pi5-capture-identity-repaired-control-pi5-20260607",
+  "status": "accepted",
+  "classification": "repaired-capture-control-visible",
+  "evidence": {
+    "classification": "tasks/evidence/2026-06-07-phase11-pi5-capture-identity-repaired-control-pi5/classification.json",
+    "controlRun": "tasks/evidence/2026-06-07-phase11-pi5-capture-identity-repaired-control-pi5/control-run",
+    "knownGoodControlRun": "tasks/evidence/2026-06-07-phase11-pi5-capture-identity-repaired-control-pi5/known-good-control-run",
+    "acceptedControlRerun": "tasks/evidence/2026-06-07-phase11-pi5-capture-identity-repaired-control-pi5/control-rerun-after-kg",
+    "finalLabStatus": "tasks/evidence/2026-06-07-phase11-pi5-capture-identity-repaired-control-pi5/final-lab-status.json"
+  },
+  "acceptedRun": "control-rerun-after-kg",
+  "validation": {
+    "staticArchiveIdentityCheck": "passed",
+    "labControllerPi5HardwareRun": "passed on accepted candidate rerun",
+    "repairedIdentityJoin": "passed on accepted candidate rerun",
+    "stableSameCursorTftp": "passed; two selected 46160-byte candidate fetches retained",
+    "serialHardwareOutput": "passed; 795 TALOS: gpio14-status-control markers retained",
+    "knownGoodControlAndCandidateRerun": "run after compromised first attempt",
+    "restoreProof": "passed; final lab status returned to pre-run tree",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "not run; no docs/src files touched",
+    "gitDiffCachedCheck": "passed"
+  },
+  "commit": "eafee702c183027862031a13ba1423ee9e3158a5"
+}

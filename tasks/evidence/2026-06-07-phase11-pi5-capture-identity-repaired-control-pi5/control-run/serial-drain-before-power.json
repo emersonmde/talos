@@ -1,0 +1,34 @@
+{
+  "action": "serial drain before power",
+  "ok": true,
+  "responses": [
+    {
+      "action": "serial read",
+      "base64": "AAo=",
+      "bytes": 2,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "\u0000\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    }
+  ],
+  "talos_serial_drain": {
+    "contract_version": "pi5-capture-transaction-v2",
+    "attempts": 2,
+    "total_bytes": 2,
+    "final_cursor": 4194304,
+    "empty_before_power": true,
+    "rule": "pre-power serial drain must reach an empty /serial/read response before saturated direct-read output can be treated as fresh"
+  }
+}

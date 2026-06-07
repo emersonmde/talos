@@ -1,0 +1,79 @@
+{
+  "task": "phase11-pi5-capture-identity-repaired-control-pi5-20260607",
+  "status": "accepted",
+  "classification": "repaired-capture-control-visible",
+  "acceptedRun": "control-rerun-after-kg",
+  "firstRun": {
+    "path": "tasks/evidence/2026-06-07-phase11-pi5-capture-identity-repaired-control-pi5/control-run",
+    "classification": "capture-staging-blocked",
+    "note": "operator/manual restore overlapped the capture transaction, so final pre-restore identity matched the restored tree; retained as compromised evidence only",
+    "summary": {
+      "capture_exit": 0,
+      "identity_join_exit": 1,
+      "suggested": "identity-join-mismatch",
+      "join_classification": "capture-staging-blocked",
+      "rejection_reasons": [
+        "tftp-expected-fetch-byte-mismatch",
+        "final-pre-restore-selected-tree-mismatch",
+        "final-pre-restore-expected-fetch-byte-mismatch"
+      ],
+      "marker_occurrences": 0,
+      "expected_fetch_count": 2,
+      "selected_tree": "99b1f8b2d7295da435bc82236fe0192f9dd9aade64e877508335cc2014d356fc",
+      "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "triage": {
+    "knownGoodControlRun": {
+      "path": "tasks/evidence/2026-06-07-phase11-pi5-capture-identity-repaired-control-pi5/known-good-control-run",
+      "marker": "rpi5-production-timer-preemption: PASS",
+      "summary": {
+        "capture_exit": 0,
+        "identity_join_exit": 0,
+        "join_classification": "capture-transaction-v2-ready",
+        "rejection_reasons": [],
+        "marker_occurrences": 1,
+        "expected_fetch_count": 2,
+        "expected_fetch_bytes": 104136,
+        "selected_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+        "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      }
+    },
+    "candidateRerun": {
+      "path": "tasks/evidence/2026-06-07-phase11-pi5-capture-identity-repaired-control-pi5/control-rerun-after-kg",
+      "marker": "TALOS: gpio14-status-control",
+      "summary": {
+        "capture_exit": 0,
+        "identity_join_exit": 0,
+        "join_classification": "capture-transaction-v2-ready",
+        "rejection_reasons": [],
+        "marker_occurrences": 795,
+        "expected_fetch_count": 2,
+        "expected_fetch_bytes": 46160,
+        "selected_tree": "99b1f8b2d7295da435bc82236fe0192f9dd9aade64e877508335cc2014d356fc",
+        "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      }
+    }
+  },
+  "acceptedClaims": [
+    "The repaired/audited pi5-capture-transaction-v2 path joined the no-MMIO GPIO14 control rerun with clean pre-power serial drain, selected candidate TFTP fetch evidence, final selected-tree identity, visible control marker output, and restore proof.",
+    "The accepted rerun retained two 46160-byte da591740/kernel_2712.img TFTP fetches and 795 TALOS: gpio14-status-control marker occurrences.",
+    "The lab was restored to the pre-run known-good tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10."
+  ],
+  "notAccepted": [
+    "real RP1 GPIO14 STATUS behavior",
+    "GPIO ownership or pin-control writes",
+    "interrupt delivery",
+    "clock/reset programming",
+    "DMA/cache",
+    "storage/generated-root/networking/SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "finalLabStatus": {
+    "tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effectiveKernel": "kernel_2712.img"
+  },
+  "commit": "eafee702c183027862031a13ba1423ee9e3158a5"
+}

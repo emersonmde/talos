@@ -1,0 +1,11 @@
+{
+  "capture_exit": 0,
+  "identity_join_exit": 0,
+  "join_classification": "capture-transaction-v2-ready",
+  "rejection_reasons": [],
+  "marker_occurrences": 795,
+  "expected_fetch_count": 2,
+  "expected_fetch_bytes": 46160,
+  "selected_tree": "99b1f8b2d7295da435bc82236fe0192f9dd9aade64e877508335cc2014d356fc",
+  "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+}

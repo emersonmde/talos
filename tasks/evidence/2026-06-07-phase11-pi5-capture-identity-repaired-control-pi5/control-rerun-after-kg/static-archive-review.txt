@@ -1,0 +1,9 @@
+candidate_archive=target/talos-rpi5-rp1-gpio14-status-no-mmio-control-core.tar.gz
+candidate_archive_sha256=0f3b084d686a12d101b5f43d6f8b264a57eee7241790e6ab87577454dd6ac611
+kernel_2712_sha256=148fd0e7dada9646be1c4c74796e13bea535bc4f03ec11330aa2cab237600b52
+kernel_2712_size=46160
+header_image_size=46160
+text_offset=0
+flags=12
+control_marker=TALOS: gpio14-status-control
+forbidden_rp1_gpio_strings_absent=true
