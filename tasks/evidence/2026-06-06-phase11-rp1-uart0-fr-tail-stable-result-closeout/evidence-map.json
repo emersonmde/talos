@@ -1,0 +1,70 @@
+{
+  "task": "phase11-rp1-uart0-fr-tail-stable-result-closeout-20260606",
+  "status": "accepted",
+  "classification": "mapped-read-value-tail-stable",
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-closeout.md",
+    "staticEvidenceInspection": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-closeout/static-evidence-inspection.md",
+    "sourceCoreTask": "tasks/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-core.md",
+    "sourceCoreEvidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-core/evidence-map.json",
+    "controlCloseoutTask": "tasks/2026-06-06-phase11-rp1-uart0-fr-tail-stable-control-closeout.md",
+    "controlCloseoutEvidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-control-closeout/evidence-map.json",
+    "resultProofTask": "tasks/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-pi5.md",
+    "resultProofClassification": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-pi5/classification.json",
+    "resultProofEvidenceMap": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-pi5/evidence-map.json",
+    "resultProofIdentityJoinCheck": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-pi5/result-rerun-after-kg/identity-join-check.json",
+    "resultProofCaptureSummary": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-pi5/result-rerun-after-kg/capture-invariant-summary.json",
+    "validationLogs": {
+      "gitDiffCheck": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-closeout/git-diff-check.log",
+      "mdbookBuild": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-closeout/mdbook-build.log",
+      "gitDiffCachedCheck": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-closeout/git-diff-cached-check.log"
+    }
+  },
+  "accepted": [
+    "mapped-read-value-tail-stable classification for the narrow RP1 UART0 FR read-only diagnostic",
+    "source/static core proves exactly one contracted volatile 32-bit load from 0x1f00030018 in the RP1 candidate",
+    "source/static core proves zero RP1 MMIO loads in the paired no-MMIO control",
+    "no-MMIO control closeout accepted the tail-stable result-output shape as capturable on Pi 5",
+    "decisive RP1 candidate rerun passed pi5-capture-transaction-v2 identity join",
+    "stable same-cursor TFTP retained two selected-candidate 45,800-byte da591740/kernel_2712.img fetches",
+    "final pre-restore selected-tree identity and restore proof",
+    "1,498 TALOS: fr-tail-stable-result occurrences with raw=0xdeaddead and classification=mapped/read-value"
+  ],
+  "notAccepted": [
+    "GPIO or pin-control ownership",
+    "RP1 clocks/resets",
+    "interrupts",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe",
+    "Milestone 11.2",
+    "phase transition"
+  ],
+  "summary": {
+    "sourceCoreCommit": "c3700b21166100468e2131d35c221d88d1f1612e",
+    "controlCloseoutCommit": "9b2d46059c0ebe99327a189da1894b2f11d0e9e9",
+    "resultProofCommit": "427acda2f1b6cf95a0e56a01196596e5be9cd97d",
+    "classification": "mapped-read-value-tail-stable",
+    "selectedTreeHash": "0e187f9f73118c237337b25d85e57c51dbf18a18bf87ab0d3850c63291b153eb",
+    "expectedFetchPath": "da591740/kernel_2712.img",
+    "expectedFetchBytes": 45800,
+    "identityJoinAllowed": true,
+    "identityJoinRejectionReasons": [],
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "serialMarker": "TALOS: fr-tail-stable-result",
+    "serialMarkerOccurrences": 1498,
+    "rawValue": "0xdeaddead",
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "validation": {
+    "staticEvidenceInspection": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  },
+  "nextAction": "Supervisor planning required; no explicit queued task remains after accepted closeout."
+}

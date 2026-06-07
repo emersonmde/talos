@@ -7421,6 +7421,17 @@ mapped/read-value diagnostic boundary. GPIO/pin-control ownership, RP1
 clocks/resets, interrupts, DMA/cache, storage, generated-root, networking,
 SSH, broader PCIe, Milestone 11.2, and phase transition remain unaccepted.
 
+phase11-rp1-uart0-fr-tail-stable-result-closeout-20260606 reconciles the
+tail-stable source/static core, no-MMIO control, and RP1 Pi 5 proof as
+mapped-read-value-tail-stable. The accepted frontier is limited to the
+read-only RP1 UART0 FR single-load diagnostic at 0x1f00030018 with v2
+candidate identity, stable TFTP, final pre-restore identity, restore proof,
+and repeated tail-stable result markers carrying raw 0xdeaddead. No explicit
+queued task remains after the closeout; supervisor planning is required for
+the next bounded Phase 11 slice. GPIO/pin-control ownership, clocks/resets,
+interrupts, DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
+Milestone 11.2, and phase transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
