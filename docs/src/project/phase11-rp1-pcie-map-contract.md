@@ -448,6 +448,26 @@ transition remain unaccepted. Future clock/reset writes, GPIO ownership
 retries, or interrupt-delivery work require supervisor planning with a new
 source contract and acceptance criteria.
 
+phase11-rp1-clock-reset-write-restore-source-contract-20260607 accepts the
+next narrow source contract only. The selected target is
+`rp1-clk-adc-ctrl-idempotent-write-restore`: a bounded RP1 clock-manager
+write/readback/restore proof against `CLK_ADC_CTRL` at CPU physical
+`0x1f00018144` (source offset `0x00144`). The only allowed real-candidate
+operations are: pre-read `CLK_ADC_CTRL` and retain `pre_raw`, write `pre_raw`
+back to `CLK_ADC_CTRL`, post-read and retain `post_raw`, restore-write
+`pre_raw`, and restore-read `restore_raw`. The expected unchanged fields are
+the full raw value, `CLK_CTRL_ENABLE` bit 11, `CLK_CTRL_AUXSRC` bits 9:5, and
+source bits. `clk-rp1.c` models `clk_adc` as a normal clock with no GPCLK
+output-enable mask, and retained `rp1.dtsi` marks the ADC consumer disabled;
+the contract therefore avoids boot UART, critical system clocks, PCIe/RP1
+access, GPIO14/GPIO16 state, interrupt routing, serial capture, and
+reset-controller paths. This accepts only an idempotent clock-manager write
+path and restore discipline. Non-idempotent clock changes, reset-controller
+writes, GPIO ownership retries, event generation, interrupt delivery, GIC
+acknowledgement, handler ownership, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe enumeration, Milestone 11.3, and phase
+transition remain unaccepted.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware

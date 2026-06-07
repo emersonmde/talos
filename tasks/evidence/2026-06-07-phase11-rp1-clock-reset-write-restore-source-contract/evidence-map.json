@@ -1,0 +1,130 @@
+{
+  "taskId": "phase11-rp1-clock-reset-write-restore-source-contract-20260607",
+  "status": "accepted",
+  "classification": "accepted-source-contract",
+  "evidenceLevel": [
+    "static source/doc inspection",
+    "docs validation",
+    "git diff checks"
+  ],
+  "contract": {
+    "id": "phase11-rp1-clock-reset-write-restore-source-contract-v1",
+    "target": "rp1-clk-adc-ctrl-idempotent-write-restore",
+    "operation": "idempotent clock-manager write/readback/restore",
+    "baseCpuPhysical": "0x1f00018000",
+    "selectedRegister": {
+      "name": "CLK_ADC_CTRL",
+      "sourceOffset": "0x00144",
+      "cpuPhysical": "0x1f00018144",
+      "width": 32,
+      "decode": "CLK_CTRL_ENABLE bit11, CLK_CTRL_AUXSRC bits9:5, source bits"
+    },
+    "allowedOperationsInOrder": [
+      "pre-read CLK_ADC_CTRL and retain pre_raw",
+      "write pre_raw back to CLK_ADC_CTRL",
+      "post-read CLK_ADC_CTRL and retain post_raw",
+      "restore-write pre_raw back to CLK_ADC_CTRL",
+      "restore-read CLK_ADC_CTRL and retain restore_raw"
+    ],
+    "expectedUnchangedFields": [
+      "full 32-bit raw value",
+      "CLK_CTRL_ENABLE bit11",
+      "CLK_CTRL_AUXSRC bits9:5",
+      "source bits"
+    ],
+    "classifications": [
+      "rp1-clock-adc-ctrl-idempotent-write-restored",
+      "rp1-clock-adc-ctrl-idempotent-write-mismatch-restored",
+      "rp1-clock-adc-ctrl-idempotent-write-restore-failed",
+      "rp1-clock-adc-ctrl-idempotent-write-blocked-missing-clock-manager",
+      "rp1-clock-adc-ctrl-idempotent-write-inconclusive-capture",
+      "staging/build-blocker"
+    ],
+    "controlRequirement": "same output shape with no RP1 clock/reset, GPIO/RIO/pads, MSI-X/PCIe/MIP, or GIC MMIO address construction and no volatile load/store to those paths"
+  },
+  "retainedEvidence": [
+    {
+      "path": "tasks/2026-06-07-phase11-rp1-clock-reset-write-restore-source-contract.md",
+      "kind": "task record"
+    },
+    {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-source-contract/source-reference-notes.md",
+      "kind": "source-reference notes"
+    },
+    {
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "kind": "project contract update"
+    },
+    {
+      "path": "docs/src/roadmap.md",
+      "kind": "roadmap update"
+    },
+    {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/clk-rp1.c",
+      "kind": "retained Raspberry Pi Linux rpi-6.12.y clock source"
+    },
+    {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/mfd-rp1.c",
+      "kind": "retained Raspberry Pi Linux rpi-6.12.y MFD/reset source"
+    },
+    {
+      "path": "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/rp1.dtsi",
+      "kind": "retained Raspberry Pi Linux rpi-6.12.y device tree"
+    }
+  ],
+  "acceptedClaims": [
+    "one idempotent source-backed RP1 clock-manager write/readback/restore contract is defined",
+    "the selected target names exact register address, allowed operations, report fields, classifications, and restore semantics",
+    "the selected write does not intentionally change clock enable, divider, source, PLL, reset, GPIO, interrupt, PCIe/MSI-X/MIP, or GIC state",
+    "the paired no-MMIO/no-RP1/no-GIC control gate is required before hardware proof"
+  ],
+  "unacceptedClaims": [
+    "runtime behavior",
+    "hardware behavior",
+    "non-idempotent clock changes",
+    "reset ownership",
+    "GPIO ownership",
+    "GPIO event generation",
+    "interrupt delivery",
+    "GIC acknowledgement",
+    "ISR or handler ownership",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "summary": "Selected CLK_ADC_CTRL as one idempotent clock-manager write/readback/restore target."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Avoided critical SYS/SLOW_SYS clocks, UART clock, GPCLK output-enable, GPIO14/GPIO16, interrupt, PCIe/MSI-X/MIP, GIC, and reset-controller paths."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Required pre-read raw value writes only, so partial failure after the first write leaves the register at the pre-read value."
+    },
+    {
+      "disposition": "deferred",
+      "summary": "Non-idempotent clock changes, reset writes, GPIO ownership, event generation, and interrupt delivery require later source contracts."
+    },
+    {
+      "disposition": "not-an-issue",
+      "summary": "The accepted contract is a narrow write-path proof, not broad RP1 clock/reset ownership."
+    }
+  ],
+  "validation": {
+    "staticInspection": "pass",
+    "gitDiffCheck": "pass",
+    "mdbookBuild": "pass",
+    "gitDiffCachedCheck": "pass"
+  },
+  "nextAction": "Promote phase11-rp1-clock-reset-write-restore-core-20260607 on the next worker wake if dependencies remain satisfied; do not acquire hardwareTestLock for the local/static core.",
+  "commit": "recorded in talos-supervisor-state.json after commit"
+}

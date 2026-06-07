@@ -7795,6 +7795,24 @@ Milestone 11.3, and phase transition remain unaccepted. Supervisor planning is
 required for the next Milestone 11.2 feature slice; this closeout does not
 create a worker-owned follow-up task.
 
+phase11-rp1-clock-reset-write-restore-source-contract-20260607 is accepted as
+phase11-rp1-clock-reset-write-restore-source-contract-v1. It selects the
+bounded idempotent `rp1-clk-adc-ctrl-idempotent-write-restore` target:
+pre-read `CLK_ADC_CTRL` at `0x1f00018144`, write the pre-read raw value back to
+that register, post-read, restore-write the same pre-read value, and
+restore-read. The expected unchanged fields are the full raw value,
+`CLK_CTRL_ENABLE` bit 11, `CLK_CTRL_AUXSRC` bits 9:5, and source bits.
+`clk_adc` has no GPCLK output-enable mask and the retained ADC device-tree
+consumer is disabled, so this does not intentionally disturb boot UART,
+critical system clocks, PCIe/RP1 access, GPIO14/GPIO16 state, interrupt
+routing, serial capture, or reset-controller paths. The paired
+no-MMIO/no-RP1/no-GIC control must pass before any real Pi 5 proof. This
+accepts only the narrow idempotent clock-manager write/readback/restore source
+contract; non-idempotent clock changes, reset writes, GPIO ownership, event
+generation, interrupt delivery, GIC acknowledgement, handler ownership,
+DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
+Milestone 11.3, and phase transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
