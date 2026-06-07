@@ -1,0 +1,151 @@
+{
+  "task": "phase11-rp1-gpio-ownership-restore-closeout-20260607",
+  "status": "accepted",
+  "classification": "gpio14-ownership-preflight-blocked-frontier-closed",
+  "evidenceLevel": [
+    "static inspection",
+    "source contract reconciliation",
+    "local/static core reconciliation",
+    "lab-controller API evidence review",
+    "serial hardware boot/output evidence review",
+    "stable same-cursor TFTP evidence review",
+    "v2 identity join evidence review",
+    "restore proof review",
+    "docs validation",
+    "git diff checks"
+  ],
+  "inputs": {
+    "sourceContract": {
+      "task": "phase11-rp1-gpio-ownership-restore-source-contract-20260607",
+      "classification": "accepted-source-contract",
+      "commit": "19f9b3321e9571b6bea1e8c33070665591d01bf5",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-source-contract/evidence-map.json"
+    },
+    "diagnosticCore": {
+      "task": "phase11-rp1-gpio-ownership-restore-core-20260607",
+      "classification": "accepted-local-static-gpio-ownership-restore-core",
+      "commit": "de90251824613e8f7874fe579202f4834b26074d",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-core/evidence-map.json"
+    },
+    "noMmioControl": {
+      "task": "phase11-rp1-gpio-ownership-restore-control-pi5-20260607",
+      "classification": "no-mmio-gpio-ownership-restore-control-visible",
+      "commit": "d160ffbe9866420eb29f3ef6e9f6c0b4ae8a528c",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-control-pi5/evidence-map.json"
+    },
+    "realDiagnostic": {
+      "task": "phase11-rp1-gpio-ownership-restore-pi5-20260607",
+      "classification": "gpio14-ownership-preflight-blocked-non-gpio-function",
+      "commit": "c07747ea1662746eed29c2462281c2157862f8ec",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-pi5/evidence-map.json"
+    }
+  },
+  "acceptedFrontier": {
+    "name": "gpio14-ownership-preflight-blocked-frontier-closed",
+    "contractId": "phase11-rp1-gpio-ownership-restore-source-contract-v1",
+    "target": "rp1-gpio14-ownership-route-preflight-read",
+    "operationClass": "read-only/preflight",
+    "pin": "GPIO14",
+    "gpio14BitMask": "0x00004000",
+    "allowedReads": [
+      "GPIO14_STATUS @ 0x1f000d0070",
+      "GPIO14_CTRL @ 0x1f000d0074",
+      "IO_BANK0_INTE @ 0x1f000d011c",
+      "IO_BANK0_INTS @ 0x1f000d0124",
+      "RIO0_OUT @ 0x1f000e0000",
+      "RIO0_OE @ 0x1f000e0004",
+      "RIO0_IN @ 0x1f000e0008",
+      "GPIO14_PAD @ 0x1f000f003c",
+      "GICD_ISENABLER5 @ 0x107fff9114",
+      "GICD_ISPENDR5 @ 0x107fff9214",
+      "GICD_ISACTIVER5 @ 0x107fff9314",
+      "GICC_HPPIR @ 0x107fffa018"
+    ],
+    "observedStatus": {
+      "gpio14StatusRaw": "0xdeaddead",
+      "gpio14CtrlRaw": "0xdeaddead",
+      "gpio14Funcsel": 13,
+      "gpio14FuncName": "unknown",
+      "rioOutGpio14": true,
+      "rioOeGpio14": true,
+      "rioInGpio14": true,
+      "padInputEnable": false,
+      "padOutputDisable": true,
+      "intid160Enabled": false,
+      "intid160Pending": false,
+      "intid160Active": false,
+      "hppirIntid": 1023,
+      "classification": "gpio14-ownership-preflight-blocked-non-gpio-function"
+    },
+    "marker": "TALOS: rp1-gpio14-ownership-route-preflight-result",
+    "acceptedRerunMarkerOccurrences": 93,
+    "acceptedRerunSelectedTreeHash": "91372af6aeecc90b47b57d6d3f1caf46ee5b20f47ec392977fdae2674ac0112f",
+    "acceptedRerunExpectedFetchPath": "da591740/kernel_2712.img",
+    "acceptedRerunExpectedFetchBytes": 50056,
+    "acceptedRerunExpectedFetchCount": 2,
+    "identityJoin": "passed with no rejection reasons",
+    "restore": "post-run restore returned the lab to the pre-run boot tree"
+  },
+  "acceptedClaims": [
+    "source-backed GPIO14 ownership/route preflight register identity",
+    "local/static real candidate performs only the contracted read-only GPIO14 ownership/route preflight loads",
+    "paired no-MMIO/no-RP1/no-GIC control candidate constructs no forbidden RP1/GIC/MSI-X/PCIe/MIP/GPIO/pads/RIO/clock-reset MMIO path",
+    "no-MMIO/no-RP1/no-GIC control output shape is visible on Pi 5 under v2 identity join",
+    "real read-only GPIO14 ownership/route preflight output is visible on Pi 5 under v2 identity join",
+    "later GPIO14 event-generation work is blocked because the preflight observed fsel 13 / unknown function"
+  ],
+  "unacceptedClaims": [
+    "GPIO ownership",
+    "GPIO event generation",
+    "interrupt pending generation beyond the read-only snapshot",
+    "interrupt enablement",
+    "interrupt delivery",
+    "IAR or EOIR acknowledgement",
+    "ISR or handler ownership",
+    "GPIO CTRL, IO_BANK0 INTE, RIO, or pad writes",
+    "parent-route masking writes",
+    "clock/reset programming",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "summary": "Closed source/core/control/real proof chain as a read-only GPIO14 ownership/route preflight frontier with a retained blocker."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Recorded paired no-MMIO/no-RP1/no-GIC control proof as satisfied before the real Pi 5 preflight proof."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Retained rejected first real run, known-good control, and decisive rerun as capture hygiene evidence while accepting only the decisive identity-joined rerun."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Updated roadmap and project contract docs for the accepted blocker frontier."
+    },
+    {
+      "disposition": "deferred",
+      "summary": "Event-generation or pending-generation retry requires new supervisor planning around GPIO14 ownership/function selection, parent-route masking, deterministic event source, partial-write recovery, and restore semantics."
+    },
+    {
+      "disposition": "not-an-issue",
+      "summary": "Raw 0xdeaddead snapshot values are treated only as visible read-only diagnostic data, not as GPIO ownership, event generation, delivery, or handler ownership."
+    }
+  ],
+  "nextAction": "Set planningNeeded=true for supervisor planning of the next Milestone 11.2 feature slice; do not create same-shaped GPIO ownership/route preflight, event-latch, or event-generation hardware rerun tasks without a different discriminator or new acceptance criteria.",
+  "validation": {
+    "staticInspection": "passed",
+    "gitDiffCheck": "pass",
+    "mdbookBuild": "pass",
+    "gitDiffCachedCheck": "pass"
+  },
+  "commit": null
+}

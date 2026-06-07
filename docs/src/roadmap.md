@@ -7677,6 +7677,18 @@ GIC acknowledgement, handler ownership, GPIO CTRL/INTE/RIO/pad writes, clocks
 and resets, DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
 Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-gpio-ownership-restore-closeout-20260607 closes that chain as
+gpio14-ownership-preflight-blocked-frontier-closed. The accepted frontier is
+only the source-backed GPIO14 ownership/route preflight register identity, the
+read-only local/static real candidate, the paired no-MMIO/no-RP1/no-GIC
+control proof, and the real Pi 5 blocker proof. Same-shaped GPIO
+ownership/route preflight, event-latch, or event-generation hardware reruns
+are blocked without a different discriminator or supervisor-planned
+ownership/function selection, parent-route masking, deterministic event-source,
+partial-write recovery, and restore acceptance criteria. Supervisor planning is
+required for the next Milestone 11.2 feature slice; this closeout does not
+create a worker-owned follow-up task or accept a phase transition.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

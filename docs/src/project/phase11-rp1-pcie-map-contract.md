@@ -298,6 +298,24 @@ enumeration, Milestone 11.3, and phase transition remain unaccepted. The lab
 was restored to tree
 a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
 
+phase11-rp1-gpio-ownership-restore-closeout-20260607 closes the GPIO14
+ownership/route preflight chain as
+gpio14-ownership-preflight-blocked-frontier-closed. The accepted frontier is
+limited to the source-backed GPIO14 ownership/route preflight register
+identity, the local real/control candidate split, the no-MMIO/no-RP1/no-GIC
+control output proof, and the real Pi 5 visibility proof that blocks later
+GPIO14 event-generation work because GPIO14 reported fsel 13 / unknown
+function. Same-shaped GPIO ownership/route preflight, event-latch, or
+event-generation hardware reruns are blocked unless a future supervisor task
+supplies a different discriminator or explicit ownership, masking,
+deterministic event-source, partial-write recovery, and restore acceptance
+criteria. GPIO ownership, GPIO event generation, interrupt pending generation
+beyond the read-only snapshot, interrupt enablement or delivery, GIC
+acknowledgement, handler ownership, GPIO CTRL/INTE/RIO/pad writes,
+parent-route masking writes, clock/reset programming, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe enumeration, Milestone 11.3, and
+phase transition remain unaccepted.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware
