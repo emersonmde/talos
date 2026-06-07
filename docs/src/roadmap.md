@@ -7856,6 +7856,23 @@ transition remain unaccepted. Supervisor planning is required for the next
 Milestone 11.2 feature slice; this closeout does not create a worker-owned
 follow-up task.
 
+phase11-rp1-clock-adc-enable-toggle-source-contract-20260607 is accepted as
+phase11-rp1-clock-adc-enable-toggle-source-contract-v1. It selects the bounded
+non-idempotent rp1-clk-adc-ctrl-enable-bit-toggle-restore target: pre-read and
+report CLK_ADC_CTRL at 0x1f00018144, compute
+transition_raw = pre_raw ^ 0x00000800, write that transition value, post-read,
+restore-write pre_raw, and restore-read. Accepted invariants require a one-bit
+enable transition, restore equality, unchanged auxsrc/source fields, and a
+paired no-MMIO/no-RP1/no-GIC control before any real Pi 5 proof. The source
+evidence is limited to clk_adc, whose retained Linux clock descriptor has no
+GPCLK output-enable mask and whose retained ADC device-tree consumer is
+disabled. This accepts only the source contract for the selected enable-bit
+transition/readback/restore boundary. Hardware behavior, broad clock/reset
+ownership, reset-controller writes, GPIO ownership, event generation,
+interrupt delivery, GIC acknowledgement, handler ownership, DMA/cache,
+storage, generated-root, networking, SSH, broader PCIe, Milestone 11.3, and
+phase transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

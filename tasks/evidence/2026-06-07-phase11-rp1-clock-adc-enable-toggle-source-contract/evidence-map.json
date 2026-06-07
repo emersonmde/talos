@@ -1,0 +1,125 @@
+{
+  "task": "phase11-rp1-clock-adc-enable-toggle-source-contract-20260607",
+  "status": "accepted",
+  "classification": "accepted-source-contract",
+  "evidenceLevel": [
+    "static inspection",
+    "source contract reconciliation",
+    "docs validation",
+    "git diff checks"
+  ],
+  "inputs": {
+    "clockAdcWriteRestoreCloseout": {
+      "task": "phase11-rp1-clock-reset-write-restore-closeout-20260607",
+      "classification": "rp1-clock-adc-ctrl-write-restore-frontier-closed",
+      "commit": "5ea59195c43065dbb54b6f80e6bdd1b178f4195c",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-closeout/evidence-map.json"
+    },
+    "clockAdcWriteRestorePi5": {
+      "task": "phase11-rp1-clock-reset-write-restore-pi5-20260607",
+      "classification": "rp1-clock-adc-ctrl-idempotent-write-restored",
+      "commit": "da7070869b66bb492f1147703f7bd5472861a1f0",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-pi5/evidence-map.json"
+    },
+    "retainedLinuxSources": {
+      "clockSource": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/clk-rp1.c",
+      "clockHeader": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/rp1-clock.h",
+      "deviceTree": "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/rp1.dtsi",
+      "mfdSource": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/mfd-rp1.c"
+    }
+  },
+  "acceptedSourceContract": {
+    "contractId": "phase11-rp1-clock-adc-enable-toggle-source-contract-v1",
+    "target": "rp1-clk-adc-ctrl-enable-bit-toggle-restore",
+    "operationClass": "reversible pre-state-derived CLK_ADC_CTRL enable-bit transition/readback/restore",
+    "register": "CLK_ADC_CTRL",
+    "address": "0x1f00018144",
+    "sourceOffset": "0x00144",
+    "width": 32,
+    "transitionMask": "0x00000800",
+    "allowedOperations": [
+      "pre-read CLK_ADC_CTRL and emit retained pre-state before writes",
+      "compute transition_raw = pre_raw ^ 0x00000800",
+      "write transition_raw to CLK_ADC_CTRL",
+      "post-read CLK_ADC_CTRL",
+      "restore-write pre_raw to CLK_ADC_CTRL",
+      "restore-read CLK_ADC_CTRL"
+    ],
+    "expectedInvariants": [
+      "transition_raw differs from pre_raw only by bit 11",
+      "post_raw differs from pre_raw only by bit 11 for accepted restored transition",
+      "restore_raw equals pre_raw",
+      "CLK_CTRL_ENABLE flips after the transition and returns after restore",
+      "CLK_CTRL_AUXSRC and source fields do not change"
+    ],
+    "partialFailureCleanup": "The retained pre_raw value is the only cleanup value; transition evidence without restore evidence must classify as restore-failed or inconclusive rather than accepted ownership."
+  },
+  "sourceFacts": [
+    "rp1.dtsi maps rp1_clocks at RP1 bus 0xc040018000, accepted as CPU physical 0x1f00018000.",
+    "clk-rp1.c defines CLK_ADC_CTRL at offset 0x00144 and CLK_CTRL_ENABLE as bit 11.",
+    "Linux rp1_clock_on/off modify CLK_CTRL_ENABLE on the clock's own ctrl_reg.",
+    "GPCLK output-enable writes are guarded by oe_mask; clk_adc has no oe_mask.",
+    "rp1.dtsi marks the ADC consumer node disabled.",
+    "critical CLK_SYS/CLK_SLOW_SYS, accepted CLK_UART, GPIO/RIO/pads, interrupt, PCIe/MSI-X/MIP/GIC, and reset-controller paths are outside the selected operation."
+  ],
+  "acceptedClaims": [
+    "source-backed CLK_ADC_CTRL enable-bit register identity, transition mask, and operation ordering",
+    "source-backed isolation of the selected clk_adc enable-bit transition from boot UART, critical clocks, PCIe/RP1 access, GPIO14/GPIO16 state, interrupt routing, serial capture, GPCLK output-enable, and reset-controller paths",
+    "paired no-MMIO/no-RP1/no-GIC control requirement for the same output shape",
+    "follow-up local/static core may implement only the accepted source-contract boundary"
+  ],
+  "unacceptedClaims": [
+    "runtime behavior",
+    "hardware behavior",
+    "broad RP1 clock/reset ownership",
+    "reset-controller writes",
+    "GPIO ownership",
+    "GPIO event generation",
+    "interrupt pending generation",
+    "interrupt delivery",
+    "IAR or EOIR acknowledgement",
+    "ISR or handler ownership",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "summary": "Selected one non-idempotent but bounded transition on the accepted CLK_ADC_CTRL register."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Defined transition_raw as pre_raw XOR CLK_CTRL_ENABLE so only the source-defined enable bit may change."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Required pre-state reporting before transition write, immediate restore-write of pre_raw, and restore-read equality."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Retained source evidence isolating clk_adc from GPCLK output-enable, boot UART, critical clocks, GPIO14/GPIO16, interrupt routing, PCIe/RP1 access, and reset-controller paths."
+    },
+    {
+      "disposition": "deferred",
+      "summary": "Broad clock/reset ownership, reset-controller operations, GPIO ownership, event generation, interrupt delivery, and handler ownership require later supervisor planning."
+    },
+    {
+      "disposition": "not-an-issue",
+      "summary": "The prior 0xdeaddead raw value is retained only as prior-run raw evidence, not a broad decoded state claim."
+    }
+  ],
+  "validation": {
+    "staticInspection": "passed",
+    "gitDiffCheck": "pass",
+    "mdbookBuild": "pass",
+    "gitDiffCachedCheck": "pass"
+  },
+  "nextAction": "Promote phase11-rp1-clock-adc-enable-toggle-core-20260607 on the next worker wake if dependencies remain satisfied; do not acquire hardwareTestLock for the local/static core.",
+  "commit": "recorded in talos-supervisor-state.json after commit"
+}

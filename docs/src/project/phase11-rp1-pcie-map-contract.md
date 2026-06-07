@@ -526,6 +526,26 @@ storage, generated-root, networking, SSH, broader PCIe enumeration, Milestone
 slice, or broader clock/reset step requires supervisor planning with a new
 source contract and acceptance criteria.
 
+phase11-rp1-clock-adc-enable-toggle-source-contract-20260607 accepts the next
+bounded non-idempotent clock-manager source contract:
+phase11-rp1-clock-adc-enable-toggle-source-contract-v1, target
+rp1-clk-adc-ctrl-enable-bit-toggle-restore. The selected register remains
+CLK_ADC_CTRL at CPU physical 0x1f00018144, and the only selected transition
+mask is CLK_CTRL_ENABLE bit 11 (0x00000800). The allowed operation sequence is
+pre-read and report pre_raw, compute transition_raw = pre_raw ^ 0x00000800,
+write transition_raw, post-read, restore-write pre_raw, and restore-read.
+Accepted invariants require the post-read to differ from pre-read only by bit
+11, restore-read to equal pre-read, the decoded enable bit to flip and return,
+and auxsrc/source fields to remain unchanged. The source evidence is limited
+to clk_adc: Linux rp1_clock_on/rp1_clock_off modify bit 11 on a normal clock's
+own control register, clk_adc has no GPCLK output-enable mask, and the retained
+ADC device-tree consumer is disabled. This source contract accepts only the
+reversible enable-bit transition boundary and paired no-MMIO/no-RP1/no-GIC
+control requirement; it does not accept hardware behavior, broad clock/reset
+ownership, reset-controller writes, GPIO ownership, event generation,
+interrupt delivery, handler ownership, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe, Milestone 11.3, or a phase transition.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware
