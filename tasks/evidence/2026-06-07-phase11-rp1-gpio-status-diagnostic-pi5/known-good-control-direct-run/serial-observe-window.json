@@ -1,0 +1,32 @@
+{
+  "action": "serial read",
+  "base64": "DQogIDEuMTAgUlBpOiBCT09UU1lTIHJlbGVhc2UgVkVSU0lPTjoyMjI2YTg1MyBEQVRFOiAyMDI1LzEyLzA4IFRJTUU6IDE5OjI5OjU0DQogIDEuMTAgQk9PVE1PREU6IDB4MDYgcGFydGl0aW9uIDAgYnVpbGQtdHMgQlVJTERfVElNRVNUQU1QPTE3NjUyMjIxOTQgc2VyaWFsIGRhNTkxNzQwIGJvYXJkcmV2IGQwNDE3MSBzdGMgMTEwNTM1OQ0KICAxLjExIEFPTl9SRVNFVDogMDAwMDAwMDMgUE1fUlNUUyAwMDAwMTAwMA0KICAxLjExIFBPV0VSX09GRl9PTl9IQUxUOiAwIFdBSVRfRk9SX1BPV0VSX0JVVFRPTiAwIHBvd2VyLW9uLXJlc2V0IDENCiAgMS4xMiBSUDFfQk9PVCBjaGlwIElEOiAweDIwMDAxOTI3DQogIDEuMTMgUENJRXgxOiBQV1IgMCBERVRfV0FLRSAwDQogIDEuMTMgcGFydCAwMDAwMDAwMCByZXNldF9pbmZvIDAwMDAwMDAwDQogIDEuMTMgUE1JQyByZXNldC1ldmVudCAwMDAwMDAwMCBydGMgNmEyNGQ5YzUgYWxhcm0gMDAwMDAwMDAgZW5hYmxlZCAwDQogIDEuMTQgdVNEIHZvbHRhZ2UgMy4zVg0KICAxLjE0IFNEUkFNX0NPTkZJRzogMTQNCiAgMS4xNCBJbml0aWFsaXNpbmcgU0RSQU0gcmFuayAyIHRvdGFsLXNpemU6IDY0IEdiaXQgNDI2NyAoMHgxNCAweDE0KQ0KICAxLjE1IEREUiA0MjY3IDEgMCA2NCAxNTIgQkw6MQ0KICAxLjg0IFJQMV9CT09UIGNoaXAgSUQ6IDB4MjAwMDE5MjcNCg==",
+  "bytes": 685,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\r\n  1.10 RPi: BOOTSYS release VERSION:2226a853 DATE: 2025/12/08 TIME: 19:29:54\r\n  1.10 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 1105359\r\n  1.11 AON_RESET: 00000003 PM_RSTS 00001000\r\n  1.11 POWER_OFF_ON_HALT: 0 WAIT_FOR_POWER_BUTTON 0 power-on-reset 1\r\n  1.12 RP1_BOOT chip ID: 0x20001927\r\n  1.13 PCIEx1: PWR 0 DET_WAKE 0\r\n  1.13 part 00000000 reset_info 00000000\r\n  1.13 PMIC reset-event 00000000 rtc 6a24d9c5 alarm 00000000 enabled 0\r\n  1.14 uSD voltage 3.3V\r\n  1.14 SDRAM_CONFIG: 14\r\n  1.14 Initialising SDRAM rank 2 total-size: 64 Gbit 4267 (0x14 0x14)\r\n  1.15 DDR 4267 1 0 64 152 BL:1\r\n  1.84 RP1_BOOT chip ID: 0x20001927\r\n",
+  "truncated": false,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 80,
+    "elapsed_seconds": null,
+    "settle_ms": 1000,
+    "max_bytes": 262144,
+    "observe_attempts": 1,
+    "observe_contract": "direct-read-after-empty-pre-power-drain",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 685,
+    "required_marker": "rpi5-production-timer-preemption: PASS",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": false,
+    "has_firmware_network": false,
+    "firmware_network_occurrences": 0,
+    "required_marker_occurrences": 0
+  }
+}

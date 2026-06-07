@@ -1,0 +1,12 @@
+{
+  "expectedArchiveSha256": "7bc21b39a5d0150221a244701285d733c8faef4e153085a49a34b5069c1fecea",
+  "publishOk": true,
+  "expectedTreeHash": "2f9b2d308af2b7db1b0099e8910457be008ed98a4abfc75ec5b6b06432e49e6a",
+  "observedTreeHash": "cb7827b07a3822370fc610dfd18a8ab580cea31a47c4559e41a242975976f83a",
+  "effectiveKernel": "kernel_2712.img",
+  "expectedFetch": "da591740/kernel_2712.img",
+  "observedFetchBytes": 46336,
+  "treeMatches": false,
+  "effectiveKernelMatches": true,
+  "expectedFetchBytesMatch": true
+}

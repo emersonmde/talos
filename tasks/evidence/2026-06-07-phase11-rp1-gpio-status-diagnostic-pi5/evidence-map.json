@@ -1,0 +1,87 @@
+{
+  "task": "phase11-rp1-gpio-status-diagnostic-pi5-20260607",
+  "status": "accepted",
+  "classification": "capture-staging-blocked",
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-07-phase11-rp1-gpio-status-diagnostic-pi5.md",
+    "classification": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-pi5/classification.json",
+    "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-pi5/evidence-map.json",
+    "initialPreflightMismatch": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-pi5/diagnostic-run/",
+    "markerVisibleRejectedRun": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-pi5/diagnostic-rerun-selected-tree/",
+    "knownGoodControlDirectRun": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-pi5/known-good-control-direct-run/",
+    "candidateRerunAfterKnownGood": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-pi5/diagnostic-rerun-after-kg/"
+  },
+  "summary": {
+    "task": "phase11-rp1-gpio-status-diagnostic-pi5-20260607",
+    "status": "accepted",
+    "classification": "capture-staging-blocked",
+    "reason": "standard inconclusive-run triage completed; decisive candidate rerun did not retain candidate-tied TFTP or diagnostic marker despite selected final identity and restore proof",
+    "archive": {
+      "path": "target/talos-rpi5-rp1-gpio14-status-read-core.tar.gz",
+      "sha256": "7bc21b39a5d0150221a244701285d733c8faef4e153085a49a34b5069c1fecea",
+      "kernelSizeBytes": 46336
+    },
+    "markerVisibleRejectedRun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-pi5/diagnostic-rerun-selected-tree",
+      "markerOccurrences": 483,
+      "identityJoinAllowed": false,
+      "rejectionReasons": [
+        "serial-drain-not-empty-before-power",
+        "saturated-direct-read-without-empty-pre-power-drain",
+        "tftp-expected-fetch-byte-mismatch",
+        "final-pre-restore-selected-tree-mismatch",
+        "final-pre-restore-expected-fetch-byte-mismatch"
+      ]
+    },
+    "triage": {
+      "knownGoodControlDirectRun": {
+        "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-pi5/known-good-control-direct-run",
+        "marker": "rpi5-production-timer-preemption: PASS",
+        "markerOccurrences": 0,
+        "tftpEventCount": 0,
+        "fetchBytes": []
+      },
+      "candidateRerunAfterKnownGood": {
+        "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-pi5/diagnostic-rerun-after-kg",
+        "selectedTreeHash": "cb7827b07a3822370fc610dfd18a8ab580cea31a47c4559e41a242975976f83a",
+        "expectedFetchBytes": 46336,
+        "drainEmptyBeforePower": true,
+        "markerOccurrences": 0,
+        "tftpEventCount": 0,
+        "expectedFetchCount": 0,
+        "finalPreRestoreTreeHash": "cb7827b07a3822370fc610dfd18a8ab580cea31a47c4559e41a242975976f83a",
+        "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      }
+    },
+    "acceptedClaims": [
+      "The accepted real diagnostic archive was published under hardware lock and retained static/lab identity evidence.",
+      "The marker-visible candidate run is retained only as rejected capture-staging evidence because the v2 identity join failed.",
+      "The required known-good control and candidate rerun were performed before any code changes.",
+      "Final classification is capture-staging-blocked."
+    ],
+    "notAccepted": [
+      "real RP1 GPIO14 STATUS behavior",
+      "interrupt delivery",
+      "clock/reset programming",
+      "GPIO ownership or pin-control writes",
+      "broader PCIe behavior",
+      "DMA/cache",
+      "storage/generated-root/networking/SSH",
+      "phase transition"
+    ]
+  },
+  "validation": {
+    "staticArchiveIdentityCheck": "passed",
+    "labControllerPi5Hardware": "capture-staging-blocked",
+    "identityJoin": "rejected marker-visible run because candidate identity was not strong enough",
+    "stableTftp": "retained; final candidate rerun had stable zero-event TFTP",
+    "freshSerial": "retained; final candidate rerun had no diagnostic marker",
+    "knownGoodControlAndCandidateRerun": "run",
+    "restoreProof": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "not run; no docs/src files touched",
+    "gitDiffCachedCheck": "passed",
+    "gitDiffCheckLog": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-pi5/git-diff-check.log",
+    "gitDiffCachedCheckLog": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-pi5/git-diff-cached-check.log"
+  }
+}
