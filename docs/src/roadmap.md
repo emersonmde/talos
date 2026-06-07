@@ -7660,6 +7660,23 @@ parent-route masking writes, clocks and resets, DMA/cache, storage,
 generated-root, networking, SSH, broader PCIe, Milestone 11.3, or phase
 transition.
 
+phase11-rp1-gpio-ownership-restore-control-pi5-20260607 and
+phase11-rp1-gpio-ownership-restore-pi5-20260607 complete the serialized
+control/real preflight proof chain. The real Pi 5 proof is accepted as
+gpio14-ownership-preflight-blocked-non-gpio-function: the decisive rerun
+passed pi5-capture-transaction-v2 with selected tree
+91372af6aeecc90b47b57d6d3f1caf46ee5b20f47ec392977fdae2674ac0112f, two
+50056-byte candidate TFTP fetches, and 93
+TALOS: rp1-gpio14-ownership-route-preflight-result markers. The observed
+preflight reported GPIO14 fsel 13 / unknown function, so any event-generation
+retry remains blocked pending new supervisor planning around GPIO14 ownership,
+function selection, parent-route masking, deterministic event source, and
+restore semantics. GPIO ownership, GPIO event generation, interrupt pending
+generation beyond the read-only snapshot, interrupt enablement or delivery,
+GIC acknowledgement, handler ownership, GPIO CTRL/INTE/RIO/pad writes, clocks
+and resets, DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
+Milestone 11.3, and phase transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

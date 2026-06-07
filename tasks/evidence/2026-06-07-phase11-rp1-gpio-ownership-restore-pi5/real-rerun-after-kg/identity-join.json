@@ -1,0 +1,54 @@
+{
+  "contract_version": "pi5-capture-transaction-v2",
+  "run_label": "phase11-rp1-gpio-ownership-restore-real-rerun-132853",
+  "summary_label": "phase11-rp1-gpio-ownership-restore-real-rerun-132853",
+  "decisive_rp1_hardware_classification_allowed": true,
+  "classification": "capture-transaction-v2-ready",
+  "rejection_reasons": [],
+  "proof_run_identity": {
+    "selected_tree_hash": "91372af6aeecc90b47b57d6d3f1caf46ee5b20f47ec392977fdae2674ac0112f",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 50056,
+    "serial": {
+      "pre_power_drain": {
+        "attempts": 1,
+        "total_bytes": 0,
+        "final_cursor": 4194304,
+        "empty_before_power": true
+      },
+      "cursor_file": 4194304,
+      "window_cursor_start": 4194304,
+      "window_cursor_end": 4194304,
+      "window_bytes": 135545,
+      "response_bytes": 135545,
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+    },
+    "tftp": {
+      "cursor_file": 4221245,
+      "delta_cursor_start": 4221245,
+      "delta_cursor_end": 4222596,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        50056,
+        50056
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "91372af6aeecc90b47b57d6d3f1caf46ee5b20f47ec392977fdae2674ac0112f",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 50056
+    },
+    "restore": {
+      "snapshot_name": "pre-phase11-rp1-gpio-ownership-restore-real-rerun-132853",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "rule": "missing or mismatched candidate identity, pre-power serial-drain, serial-window, TFTP, or final identity fields prevent decisive hardware classification"
+}

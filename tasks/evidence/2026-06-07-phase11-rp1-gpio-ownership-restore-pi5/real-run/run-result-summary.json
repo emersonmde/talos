@@ -1,0 +1,139 @@
+{
+  "label": "phase11-rp1-gpio-ownership-restore-real-132432",
+  "identity_join": {
+    "contract_version": "pi5-capture-transaction-v2",
+    "run_label": "phase11-rp1-gpio-ownership-restore-real-132432",
+    "summary_label": "phase11-rp1-gpio-ownership-restore-real-132432",
+    "decisive_rp1_hardware_classification_allowed": false,
+    "classification": "capture-staging-blocked",
+    "rejection_reasons": [
+      "serial-drain-not-empty-before-power",
+      "saturated-direct-read-without-empty-pre-power-drain"
+    ],
+    "proof_run_identity": {
+      "selected_tree_hash": "91372af6aeecc90b47b57d6d3f1caf46ee5b20f47ec392977fdae2674ac0112f",
+      "effective_kernel": "kernel_2712.img",
+      "expected_fetch_path": "da591740/kernel_2712.img",
+      "expected_fetch_byte_count": 50056,
+      "serial": {
+        "pre_power_drain": {
+          "attempts": 16,
+          "total_bytes": 182528,
+          "final_cursor": 4194304,
+          "empty_before_power": false
+        },
+        "cursor_file": 4194304,
+        "window_cursor_start": 4194304,
+        "window_cursor_end": 4194304,
+        "window_bytes": 136227,
+        "response_bytes": 136227,
+        "capture_mode": "read",
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+      },
+      "tftp": {
+        "cursor_file": 4217192,
+        "delta_cursor_start": 4217192,
+        "delta_cursor_end": 4218543,
+        "stable": true,
+        "event_count": 13,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 2,
+        "expected_fetch_bytes_seen": [
+          50056,
+          50056
+        ]
+      },
+      "final_pre_restore": {
+        "tree_hash": "91372af6aeecc90b47b57d6d3f1caf46ee5b20f47ec392977fdae2674ac0112f",
+        "effective_kernel": "kernel_2712.img",
+        "selected_tree_still_staged": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes": 50056
+      },
+      "restore": {
+        "snapshot_name": "pre-phase11-rp1-gpio-ownership-restore-real-132432",
+        "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      }
+    },
+    "rule": "missing or mismatched candidate identity, pre-power serial-drain, serial-window, TFTP, or final identity fields prevent decisive hardware classification"
+  },
+  "capture_summary": {
+    "exits": {
+      "serial_observe_window": 0,
+      "tftp_delta_stable_pre_restore": 0
+    },
+    "serial_window": {
+      "requested_timeout_seconds": 90,
+      "elapsed_seconds": 37,
+      "settle_ms": 1000,
+      "max_bytes": 131072,
+      "observe_attempts": 7,
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+      "capture_mode": "read",
+      "saturation_limit": 4194304,
+      "start_cursor_saturated": true,
+      "response_bytes": 136227,
+      "required_marker": "TALOS: rp1-gpio14-ownership-route-preflight-result",
+      "kernel_marker": "TALOS: kernel_main",
+      "firmware_network_marker": "NETWORK",
+      "has_kernel_main": false,
+      "has_required_marker": true,
+      "has_firmware_network": true,
+      "firmware_network_occurrences": 2,
+      "required_marker_occurrences": 94
+    },
+    "tftp_event_count": 13,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "proof_run_identity": {
+      "contract_version": "pi5-capture-transaction-v2",
+      "shared_run_label": "phase11-rp1-gpio-ownership-restore-real-132432",
+      "selected_tree_hash": "91372af6aeecc90b47b57d6d3f1caf46ee5b20f47ec392977fdae2674ac0112f",
+      "effective_kernel": "kernel_2712.img",
+      "expected_fetch_path": "da591740/kernel_2712.img",
+      "expected_fetch_byte_count": 50056,
+      "serial": {
+        "pre_power_drain": {
+          "attempts": 16,
+          "total_bytes": 182528,
+          "final_cursor": 4194304,
+          "empty_before_power": false
+        },
+        "cursor_start": 4194304,
+        "cursor_end": 4194304,
+        "window_bytes": 136227,
+        "response_bytes": 136227,
+        "capture_mode": "read",
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+        "required_marker": "TALOS: rp1-gpio14-ownership-route-preflight-result"
+      },
+      "tftp": {
+        "cursor_start": 4217192,
+        "cursor_end": 4218543,
+        "stable": true,
+        "event_count": 13,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 2
+      },
+      "final_pre_restore": {
+        "tree_hash": "91372af6aeecc90b47b57d6d3f1caf46ee5b20f47ec392977fdae2674ac0112f",
+        "effective_kernel": "kernel_2712.img",
+        "selected_tree_still_staged": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes_match": true
+      },
+      "restore": {
+        "snapshot_name": "pre-phase11-rp1-gpio-ownership-restore-real-132432",
+        "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      }
+    }
+  },
+  "diagnostic_output": {
+    "marker": "TALOS: rp1-gpio14-ownership-route-preflight-result",
+    "marker_visible": true,
+    "marker_count": 94,
+    "sample_line": "TALOS: rp1-gpio14-ownership-route-preflight-result contract=phase11-rp1-gpio-ownership-restore-source-contract-v1 target=rp1-gpio14-ownership-route-preflight-read pin=GPIO14 gpio14-bit-mask=0x4000 gpio14-status-address=0x1f000d0070 gpio14-ctrl-address=0x1f000d0074 io-bank0-inte-address=0x1f000d011c io-bank0-ints-address=0x1f000d0124 rio-out-address=0x1f000e0000 rio-oe-address=0x1f000e0004 rio-in-address=0x1f000e0008 pad-address=0x1f000f003c gicd-isenabler5-address=0x107fff9114 gicd-ispendr5-address=0x107fff9214 gicd-isactiver5-address=0x107fff9314 gicc-hppir-address=0x107fffa018 width=32 gpio14-status-raw=0xdeaddead gpio14-ctrl-raw=0xdeaddead gpio14-funcsel=13 gpio14-func-name=unknown gpio14-outover=1 gpio14-oeover=3 gpio14-inover=1 gpio14-raw-event-enable-mask=0xa gpio14-filtered-event-enable-mask=0xe gpio14-status-event-mask=0xea io-bank0-inte-raw=0xdeaddead io-bank0-ints-raw=0xdeaddead rio-out-raw=0xdeaddead rio-oe-raw=0xdeaddead rio-in-raw=0xdeaddead rio-out-gpio14=true rio-oe-gpio14=true rio-in-gpio14=true pad-raw=0xdeaddead pad-input-enable=false pad-output-disable=true pad-pull=0x3 pad-drive=0x2 pad-schmitt=false pad-slew=true gicd-isenabler5-raw=0x0 gicd-ispendr5-raw=0x0 gicd-isactiver5-raw=0x0 gicc-hppir-raw=0x3ff intid160-enabled=false intid160-pending=false intid160-active=false hppir-intid=1023 classification=gpio14-ownership-preflight-blocked-non-gpio-function",
+    "line_classification": "gpio14-ownership-preflight-blocked-non-gpio-function"
+  },
+  "classification": "capture-staging-blocked"
+}

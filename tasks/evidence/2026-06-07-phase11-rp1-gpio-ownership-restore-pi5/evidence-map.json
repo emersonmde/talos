@@ -1,0 +1,107 @@
+{
+  "taskId": "phase11-rp1-gpio-ownership-restore-pi5-20260607",
+  "generatedAt": "2026-06-07T13:31:16Z",
+  "classification": "gpio14-ownership-preflight-blocked-non-gpio-function",
+  "evidenceLevel": "static archive identity inspection + lab-controller API + serial hardware boot/output + stable same-cursor TFTP evidence + pi5-capture-transaction-v2 identity join + restore proof",
+  "sourceContract": {
+    "task": "tasks/2026-06-07-phase11-rp1-gpio-ownership-restore-source-contract.md",
+    "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-source-contract/evidence-map.json",
+    "commit": "19f9b3321e9571b6bea1e8c33070665591d01bf5",
+    "contractId": "phase11-rp1-gpio-ownership-restore-source-contract-v1"
+  },
+  "core": {
+    "task": "tasks/2026-06-07-phase11-rp1-gpio-ownership-restore-core.md",
+    "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-core/evidence-map.json",
+    "commit": "de90251824613e8f7874fe579202f4834b26074d"
+  },
+  "noMmioControl": {
+    "task": "tasks/2026-06-07-phase11-rp1-gpio-ownership-restore-control-pi5.md",
+    "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-control-pi5/evidence-map.json",
+    "commit": "d160ffbe9866420eb29f3ef6e9f6c0b4ae8a528c"
+  },
+  "staticIdentity": {
+    "review": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-pi5/static/static-archive-review.txt",
+    "archiveSha256": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-pi5/static/static-archive-sha256.txt",
+    "kernelSha256": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-pi5/static/kernel_2712.img.sha256",
+    "archiveContents": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-pi5/static/archive-contents.txt"
+  },
+  "hardwareRuns": {
+    "firstCandidateRun": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-pi5/real-run",
+    "knownGoodControl": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-pi5/known-good-control-run",
+    "decisiveCandidateRerun": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-pi5/real-rerun-after-kg"
+  },
+  "classificationDetail": {
+    "taskId": "phase11-rp1-gpio-ownership-restore-pi5-20260607",
+    "acceptedAt": "2026-06-07T13:31:16Z",
+    "classification": "gpio14-ownership-preflight-blocked-non-gpio-function",
+    "evidenceLevel": "static archive identity inspection + lab-controller API + serial hardware boot/output + stable same-cursor TFTP evidence + pi5-capture-transaction-v2 identity join + restore proof",
+    "acceptedClaims": [
+      "read-only GPIO14 ownership/route preflight diagnostic output was visible on Pi 5 for the selected candidate tree",
+      "the selected proof bundle passed pi5-capture-transaction-v2 identity join with no rejection reasons",
+      "accepted boundary is limited to GPIO14 ownership/route preflight snapshot visibility and report decoding",
+      "GPIO14 is blocked for the later event-generation path because the preflight observed non-GPIO function state"
+    ],
+    "unacceptedClaims": [
+      "GPIO ownership",
+      "GPIO event generation",
+      "interrupt pending generation beyond the read-only snapshot",
+      "interrupt enablement or delivery",
+      "GIC IAR/EOIR acknowledgement",
+      "ISR or handler ownership",
+      "GPIO CTRL, IO_BANK0 INTE, RIO, or pad writes",
+      "clock/reset programming",
+      "DMA/cache, storage, generated-root, networking, SSH, broader PCIe enumeration, Milestone 11.3, or phase transition"
+    ],
+    "candidate": {
+      "archive": "target/talos-rpi5-rp1-gpio14-ownership-route-preflight-read-core.tar.gz",
+      "archiveSha256": "7ccb204d6c14f0b2ad6d9c3796ec4fe000956d98ab25c02a014f75d01184f40e",
+      "kernelSha256": "cb4155be67ee9188dda9f0f17c55afd3e539381e96e35afdec74a2a3a2ebdc19",
+      "kernelSizeBytes": 50056,
+      "marker": "TALOS: rp1-gpio14-ownership-route-preflight-result"
+    },
+    "decisiveRun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-pi5/real-rerun-after-kg",
+      "label": "phase11-rp1-gpio-ownership-restore-real-rerun-132853",
+      "selectedTreeHash": "91372af6aeecc90b47b57d6d3f1caf46ee5b20f47ec392977fdae2674ac0112f",
+      "expectedFetch": "da591740/kernel_2712.img",
+      "expectedFetchBytes": 50056,
+      "expectedFetchByteMatchCount": 2,
+      "markerCount": 93,
+      "lineClassification": "gpio14-ownership-preflight-blocked-non-gpio-function",
+      "identityJoinClassification": "capture-transaction-v2-ready",
+      "identityJoinAllowed": true,
+      "rejectionReasons": [],
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "sampleResultLine": "TALOS: rp1-gpio14-ownership-route-preflight-result contract=phase11-rp1-gpio-ownership-restore-source-contract-v1 target=rp1-gpio14-ownership-route-preflight-read pin=GPIO14 gpio14-bit-mask=0x4000 gpio14-status-address=0x1f000d0070 gpio14-ctrl-address=0x1f000d0074 io-bank0-inte-address=0x1f000d011c io-bank0-ints-address=0x1f000d0124 rio-out-address=0x1f000e0000 rio-oe-address=0x1f000e0004 rio-in-address=0x1f000e0008 pad-address=0x1f000f003c gicd-isenabler5-address=0x107fff9114 gicd-ispendr5-address=0x107fff9214 gicd-isactiver5-address=0x107fff9314 gicc-hppir-address=0x107fffa018 width=32 gpio14-status-raw=0xdeaddead gpio14-ctrl-raw=0xdeaddead gpio14-funcsel=13 gpio14-func-name=unknown gpio14-outover=1 gpio14-oeover=3 gpio14-inover=1 gpio14-raw-event-enable-mask=0xa gpio14-filtered-event-enable-mask=0xe gpio14-status-event-mask=0xea io-bank0-inte-raw=0xdeaddead io-bank0-ints-raw=0xdeaddead rio-out-raw=0xdeaddead rio-oe-raw=0xdeaddead rio-in-raw=0xdeaddead rio-out-gpio14=true rio-oe-gpio14=true rio-in-gpio14=true pad-raw=0xdeaddead pad-input-enable=false pad-output-disable=true pad-pull=0x3 pad-drive=0x2 pad-schmitt=false pad-slew=true gicd-isenabler5-raw=0x0 gicd-ispendr5-raw=0x0 gicd-isactiver5-raw=0x0 gicc-hppir-raw=0x3ff intid160-enabled=false intid160-pending=false intid160-active=false hppir-intid=1023 classification=gpio14-ownership-preflight-blocked-non-gpio-function"
+    },
+    "triage": {
+      "firstCandidateRun": {
+        "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-pi5/real-run",
+        "classification": "capture-staging-blocked",
+        "lineClassification": "gpio14-ownership-preflight-blocked-non-gpio-function",
+        "markerCount": 94,
+        "rejectionReasons": [
+          "serial-drain-not-empty-before-power",
+          "saturated-direct-read-without-empty-pre-power-drain"
+        ]
+      },
+      "knownGoodControl": {
+        "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-ownership-restore-pi5/known-good-control-run",
+        "classification": "known-good-control-visible",
+        "rejectionReasons": []
+      }
+    },
+    "nextAction": "Promote phase11-rp1-gpio-ownership-restore-closeout-20260607 on a future worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive."
+  },
+  "validation": [
+    "static archive identity check: pass",
+    "lab-controller API preflight/post-restore records: retained",
+    "fresh serial capture and stable same-cursor TFTP evidence: retained",
+    "pi5-capture-transaction-v2 identity join: pass on decisive candidate rerun",
+    "known-good control and candidate rerun after inconclusive first run: retained",
+    "git diff --check: pass",
+    "mdbook build: pass",
+    "git diff --cached --check: pass"
+  ],
+  "nextAction": "Promote phase11-rp1-gpio-ownership-restore-closeout-20260607 on a future worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive."
+}

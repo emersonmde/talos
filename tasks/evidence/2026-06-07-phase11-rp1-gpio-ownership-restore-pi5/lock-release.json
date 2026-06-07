@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-06-07T13:31:16Z",
+  "hardwareTestLock": {
+    "locked": false,
+    "restored": true
+  },
+  "labPostRestore": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img"
+  },
+  "note": "Capture helper restored the pre-run boot tree after the decisive real rerun; worker may release hardwareTestLock."
+}

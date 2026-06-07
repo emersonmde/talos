@@ -275,6 +275,29 @@ writes, parent-route masking writes, clock/reset programming, DMA/cache,
 storage, generated-root, networking, SSH, broader PCIe enumeration, Milestone
 11.3, or phase transition.
 
+phase11-rp1-gpio-ownership-restore-pi5-20260607 accepts the real Pi 5
+preflight proof as gpio14-ownership-preflight-blocked-non-gpio-function.
+After a first candidate run was rejected by non-empty pre-power serial drain
+evidence, a known-good control passed the v2 identity join and the real
+candidate rerun selected tree
+91372af6aeecc90b47b57d6d3f1caf46ee5b20f47ec392977fdae2674ac0112f.
+Stable pre-restore TFTP evidence retained two served 50056-byte
+da591740/kernel_2712.img candidate fetches, final pre-restore identity still
+matched the selected tree, and fresh serial retained 93
+TALOS: rp1-gpio14-ownership-route-preflight-result markers. The diagnostic
+reported GPIO14 fsel 13 / unknown function, RIO GPIO14 out/oe/in true, pad
+input disabled and output disabled, INTID160 not enabled, pending, or active,
+HPPIR INTID 1023, and classification
+gpio14-ownership-preflight-blocked-non-gpio-function. This accepts only the
+read-only preflight visibility and blocker; GPIO ownership, event generation,
+interrupt pending generation beyond the read-only snapshot, interrupt
+enablement or delivery, GIC acknowledgement, handler ownership, GPIO
+CTRL/INTE/RIO/pad writes, parent-route masking writes, clock/reset
+programming, DMA/cache, storage, generated-root, networking, SSH, broader PCIe
+enumeration, Milestone 11.3, and phase transition remain unaccepted. The lab
+was restored to tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware
