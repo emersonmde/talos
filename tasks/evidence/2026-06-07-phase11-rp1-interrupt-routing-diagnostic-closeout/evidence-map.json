@@ -1,0 +1,128 @@
+{
+  "task": "phase11-rp1-interrupt-routing-diagnostic-closeout-20260607",
+  "status": "accepted",
+  "classification": "interrupt-routing-msix-cfg-read-frontier-closed",
+  "evidenceLevel": [
+    "static inspection",
+    "source contract reconciliation",
+    "local/static core reconciliation",
+    "lab-controller API evidence review",
+    "serial hardware boot/output evidence review",
+    "stable same-cursor TFTP evidence review",
+    "v2 identity join evidence review",
+    "restore proof review",
+    "docs validation",
+    "git diff checks"
+  ],
+  "inputs": {
+    "sourceContract": {
+      "task": "phase11-rp1-interrupt-routing-source-contract-20260607",
+      "classification": "accepted-source-contract",
+      "commit": "74a3c4ccb3adc951afffc17677f39921211493d9",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-source-contract/evidence-map.json"
+    },
+    "diagnosticCore": {
+      "task": "phase11-rp1-interrupt-routing-diagnostic-core-20260607",
+      "classification": "local-static-interrupt-routing-core-accepted",
+      "commit": "f74dd155e3807b96bdc4eed0328d3ffd3e97b53a",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-core/evidence-map.json"
+    },
+    "noMmioControl": {
+      "task": "phase11-rp1-interrupt-routing-no-mmio-control-pi5-20260607",
+      "classification": "no-mmio-interrupt-routing-control-visible",
+      "commit": "3f25b967166f41a486bb1594e439c4f358ab9de3",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-no-mmio-control-pi5/evidence-map.json"
+    },
+    "realDiagnostic": {
+      "task": "phase11-rp1-interrupt-routing-diagnostic-pi5-20260607",
+      "classification": "routing-msix-cfg-visible",
+      "commit": "62993382188707e089c3ac5a386ea52fedb3e74d",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-pi5/evidence-map.json"
+    }
+  },
+  "acceptedFrontier": {
+    "name": "interrupt-routing-msix-cfg-read-frontier-closed",
+    "contractId": "phase11-rp1-interrupt-routing-source-contract-v1",
+    "target": "rp1-io-bank0-msix-cfg-read",
+    "operationClass": "read-only/no-enable",
+    "address": "0x1f00108008",
+    "widthBits": 32,
+    "sourceHwirq": 0,
+    "predictedPciMsixVector": 0,
+    "predictedGicSpi": 128,
+    "predictedGicIntid": 160,
+    "observedRawValue": "0xdeaddead",
+    "observedDecodedBits": {
+      "enable": true,
+      "test": false,
+      "iack": true,
+      "iackEn": true
+    },
+    "marker": "TALOS: rp1-interrupt-routing-result",
+    "acceptedRerunMarkerOccurrences": 970,
+    "acceptedRerunSelectedTreeHash": "63800845c9837b3d57153051583b269070b028412bcd57ea9c55a5f9e56a2304",
+    "acceptedRerunExpectedFetchPath": "da591740/kernel_2712.img",
+    "acceptedRerunExpectedFetchBytes": 46648,
+    "acceptedRerunExpectedFetchCount": 2,
+    "identityJoin": "passed with no rejection reasons",
+    "restore": "post-run restore returned the lab to the pre-run boot tree"
+  },
+  "acceptedClaims": [
+    "source-backed RP1 IO_BANK0 hwirq identity",
+    "source-backed RP1 MSI-X/irqdomain and BCM2712 pcie2/MIP0/GIC route assumptions for the selected diagnostic",
+    "real local/static candidate performs exactly one contracted 32-bit volatile load from 0x1f00108008",
+    "paired no-MMIO/no-enable control candidate constructs no forbidden RP1/MSI-X/PCIe/GIC MMIO path",
+    "no-MMIO/no-enable control output shape is visible on Pi 5 under v2 identity join",
+    "real read-only/no-enable MSIX_CFG(0) diagnostic result is visible on Pi 5 under v2 identity join"
+  ],
+  "unacceptedClaims": [
+    "interrupt delivery",
+    "ISR or handler ownership",
+    "GPIO ownership",
+    "pin-control behavior",
+    "pad writes",
+    "clock/reset programming",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "summary": "Closed source/core/control/real proof chain as an accepted read-only/no-enable RP1 MSIX_CFG(0) visibility frontier."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Recorded paired control proof as satisfied before the real diagnostic proof."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Retained rejected first real run and known-good control as capture hygiene evidence while accepting only the decisive identity-joined rerun."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Updated roadmap and project contract docs for the accepted frontier."
+    },
+    {
+      "disposition": "deferred",
+      "summary": "Interrupt delivery, handler ownership, GPIO ownership, pin-control, clock/reset, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone 11.3, and phase transition remain future work."
+    },
+    {
+      "disposition": "not-an-issue",
+      "summary": "Raw 0xdeaddead is treated only as the observed diagnostic result, not as proof of delivered or Talos-owned interrupts."
+    }
+  ],
+  "nextAction": "Set planningNeeded=true for supervisor planning of the next Milestone 11.2 feature slice; do not create a same-shaped MSIX_CFG(0) rerun task.",
+  "validation": {
+    "staticInspection": "passed",
+    "gitDiffCheck": "pass",
+    "mdbookBuild": "pass",
+    "gitDiffCachedCheck": "pass"
+  },
+  "commit": null
+}

@@ -7523,6 +7523,19 @@ handler ownership, GPIO ownership, pin-control behavior, clocks/resets,
 DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
 Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-interrupt-routing-diagnostic-closeout-20260607 reconciles the
+source contract, local/static core, no-MMIO/no-enable Pi 5 control, and real
+Pi 5 diagnostic proof as interrupt-routing-msix-cfg-read-frontier-closed. The
+accepted frontier is limited to the source-backed IO_BANK0 interrupt identity,
+selected read-only/no-enable MSIX_CFG(0) diagnostic boundary, paired control
+proof, and real Pi 5 visibility proof. Same-shaped MSIX_CFG(0) hardware reruns
+are blocked unless a future supervisor task supplies a different discriminator
+or new acceptance criteria. No explicit worker-owned task remains; supervisor
+planning is required for the next Milestone 11.2 feature slice. Interrupt
+delivery, handler ownership, GPIO ownership, pin-control behavior, clocks and
+resets, DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
+Milestone 11.3, and phase transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

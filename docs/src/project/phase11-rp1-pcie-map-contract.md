@@ -100,6 +100,45 @@ enablement or delivery, DMA/cache, storage, generated-root, networking, SSH,
 broader PCIe enumeration, Milestone 11.3, and phase transition remain
 unaccepted.
 
+## Milestone 11.2 Interrupt-Routing Boundary
+
+phase11-rp1-interrupt-routing-source-contract-20260607 accepts
+phase11-rp1-interrupt-routing-source-contract-v1 as the next narrow
+source-backed interrupt-routing contract. The selected diagnostic is the
+read-only/no-enable rp1-io-bank0-msix-cfg-read, a single 32-bit volatile load
+from RP1 MSIX_CFG(0) at CPU physical 0x1f00108008. Source inspection predicts
+RP1 hwirq 0 through PCI MSI-X vector 0 and MIP0 MSI vector 0 to GIC SPI 128 /
+INTID 160, but this source route is not itself proof of delivered interrupts.
+
+phase11-rp1-interrupt-routing-diagnostic-core-20260607 accepts a local/static
+real candidate with exactly one contracted volatile load and a paired
+no-MMIO/no-enable control candidate that constructs no forbidden RP1
+interrupt, GPIO, pads, RIO, clock/reset, MSI-X, PCIe config, MIP, or GIC MMIO
+path. phase11-rp1-interrupt-routing-no-mmio-control-pi5-20260607 accepts that
+paired control output shape as visible on Pi 5 before the real diagnostic
+proof.
+
+phase11-rp1-interrupt-routing-diagnostic-pi5-20260607 accepts the real proof
+as routing-msix-cfg-visible. The decisive rerun passed the v2 identity join for
+tree 63800845c9837b3d57153051583b269070b028412bcd57ea9c55a5f9e56a2304,
+retained two 46,648-byte da591740/kernel_2712.img TFTP fetches, final
+selected-tree identity, restore proof, and 970
+TALOS: rp1-interrupt-routing-result records carrying contract
+phase11-rp1-interrupt-routing-source-contract-v1, target
+rp1-io-bank0-msix-cfg-read, address 0x1f00108008, raw 0xdeaddead, and
+classification=routing-msix-cfg-visible.
+
+phase11-rp1-interrupt-routing-diagnostic-closeout-20260607 reconciles that
+chain as interrupt-routing-msix-cfg-read-frontier-closed. The accepted
+frontier is limited to the source-backed IO_BANK0 interrupt identity, selected
+read-only/no-enable MSIX_CFG(0) diagnostic boundary, paired control proof, and
+real Pi 5 visibility proof. It does not accept interrupt delivery, ISR/handler
+ownership, GPIO ownership, pin-control behavior, pad writes, clock/reset
+programming, DMA/cache, storage, generated-root, networking, SSH, broader PCIe
+enumeration, Milestone 11.3, or phase transition. Same-shaped MSIX_CFG(0)
+hardware reruns are not progress unless a future supervisor task supplies a
+different discriminator or new acceptance criteria.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware
