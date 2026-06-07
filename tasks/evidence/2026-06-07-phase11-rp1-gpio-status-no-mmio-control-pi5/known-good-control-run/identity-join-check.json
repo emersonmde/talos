@@ -1,0 +1,57 @@
+{
+  "contract_version": "pi5-capture-transaction-v2",
+  "run_label": "phase11-rp1-gpio-status-no-mmio-control-pi5-20260607/known-good-control",
+  "summary_label": "phase11-rp1-gpio-status-no-mmio-control-pi5-20260607/known-good-control",
+  "decisive_rp1_hardware_classification_allowed": false,
+  "classification": "capture-staging-blocked",
+  "rejection_reasons": [
+    "serial-drain-not-empty-before-power",
+    "saturated-direct-read-without-empty-pre-power-drain"
+  ],
+  "proof_run_identity": {
+    "selected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 104136,
+    "serial": {
+      "pre_power_drain": {
+        "attempts": 16,
+        "total_bytes": 182528,
+        "final_cursor": 4194304,
+        "empty_before_power": false
+      },
+      "cursor_file": 4194304,
+      "window_cursor_start": 4194304,
+      "window_cursor_end": 4194304,
+      "window_bytes": 7396,
+      "response_bytes": 7396,
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+    },
+    "tftp": {
+      "cursor_file": 4169907,
+      "delta_cursor_start": 4169907,
+      "delta_cursor_end": 4171258,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        104136,
+        104136
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 104136
+    },
+    "restore": {
+      "snapshot_name": "pre-gpio14-no-mmio-kg-021825",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "rule": "missing or mismatched candidate identity, pre-power serial-drain, serial-window, TFTP, or final identity fields prevent decisive hardware classification"
+}

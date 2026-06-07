@@ -55,10 +55,14 @@ The diagnostic should report contract id, target, address, width, raw status val
 
 Before any real Pi 5 proof for this diagnostic, the paired no-MMIO control must be accepted locally/static and then on Pi 5. The control must preserve the same serial/output shape while constructing no RP1 GPIO, RIO, pads, clock, reset, or MSI-X address and performing no RP1 volatile load or store.
 
-The later Pi 5 no-MMIO proof may accept only control output-shape visibility and proof-chain readiness. It must not accept real RP1 GPIO/status, interrupt, clock/reset, or broader hardware behavior.
+Accepted by phase11-rp1-gpio-status-no-mmio-control-pi5-20260607: the no-MMIO control output shape is visible on Pi 5. The accepted rerun fetched the selected 46,160-byte da591740/kernel_2712.img, passed the pi5-capture-transaction-v2 identity join with no rejection reasons, retained repeated TALOS: gpio14-status-control output, and restored the pre-run boot tree.
+
+This proof accepts only control output-shape visibility and proof-chain readiness. It does not accept real RP1 GPIO/status, interrupt, clock/reset, or broader hardware behavior.
 
 ## Accepted Boundary
 
 Accepted by `phase11-rp1-irq-clock-gpio-source-contract-20260607`: source-backed GPIO14 status target and address translation, source-backed interrupt path notes for later work, source-backed clock/reset assumptions for this read-only slice, and no-MMIO control requirement before real hardware proof.
 
-Unaccepted: GPIO/pin-control ownership or writes, pad writes, interrupt enablement/routing proof/delivery, clock/reset programming, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, and any Pi 5 hardware result for the GPIO status diagnostic.
+Accepted by phase11-rp1-gpio-status-no-mmio-control-pi5-20260607: Pi 5 visibility of the paired no-MMIO GPIO14 status control output shape and proof-chain readiness for the real diagnostic proof.
+
+Unaccepted: real RP1 GPIO14 STATUS read behavior, GPIO/pin-control ownership or writes, pad writes, interrupt enablement/routing proof/delivery, clock/reset programming, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, and any Pi 5 hardware result for the real GPIO status diagnostic.
