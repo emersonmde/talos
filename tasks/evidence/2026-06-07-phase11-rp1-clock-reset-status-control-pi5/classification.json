@@ -1,0 +1,58 @@
+{
+  "task": "phase11-rp1-clock-reset-status-control-pi5-20260607",
+  "status": "accepted",
+  "classification": "no-mmio-clock-reset-status-control-visible",
+  "evidenceLevel": [
+    "static archive identity inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "stable same-cursor TFTP evidence",
+    "pi5-capture-transaction-v2 identity join",
+    "restore proof"
+  ],
+  "controlCandidate": {
+    "archive": "target/talos-rpi5-rp1-clock-manager-status-no-mmio-control-core.tar.gz",
+    "archiveSha256": "9fff700d3f1f324954e29d0179e6695b118f0e4bd68d10318cdb968fabf99e55",
+    "kernel2712Sha256": "d0f3150df81a78f1a9bc7960390256d8162ec49ca92348604ac64ab7336ddbab",
+    "kernelSizeBytes": 47120,
+    "marker": "TALOS: rp1-clock-manager-status-control",
+    "outputClassification": "simulated/control"
+  },
+  "accepted": [
+    "Pi 5 fetched the selected no-MMIO/no-RP1/no-GIC clock/reset/status control candidate as da591740/kernel_2712.img",
+    "control run passed pi5-capture-transaction-v2 identity join with no rejection reasons",
+    "serial hardware output retained repeated TALOS: rp1-clock-manager-status-control markers from the selected candidate",
+    "stable pre-restore TFTP evidence retained two served 47120-byte candidate kernel fetches",
+    "restore returned the lab to the pre-run boot tree"
+  ],
+  "notAccepted": [
+    "real RP1 clock manager status diagnostic behavior",
+    "RP1 clock/reset ownership",
+    "RP1 clock/reset writes",
+    "GPIO ownership",
+    "GPIO event generation",
+    "interrupt delivery",
+    "GIC acknowledgement",
+    "ISR or handler ownership",
+    "RP1/GIC/MSI-X/PCIe/MIP/GPIO/pads/RIO/clock/reset MMIO behavior",
+    "DMA/cache behavior",
+    "storage or generated-root behavior",
+    "networking or SSH",
+    "broader PCIe behavior",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "run": {
+    "path": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-control-pi5/control-run",
+    "selectedTreeHash": "eeb71c0bfc3cbd259a18c5f53403555628a5cf8f3273d764cab80656087dbb66",
+    "preRunTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "identityJoinAllowed": true,
+    "rejectionReasons": [],
+    "markerOccurrences": 49,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 47120,
+    "snapshotName": "pre-clock-reset-status-control-183334"
+  }
+}
