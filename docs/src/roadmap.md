@@ -7740,6 +7740,24 @@ source-backed ownership/function acceptance criteria. Supervisor planning is
 required for the next Milestone 11.2 feature slice; this closeout does not
 create a worker-owned follow-up task or accept a phase transition.
 
+phase11-rp1-clock-reset-status-source-contract-20260607 is accepted as
+phase11-rp1-clock-reset-status-source-contract-v1. It selects a single
+read-only/no-write RP1 clock manager status diagnostic after GPIO14 and
+GPIO16 both blocked on fsel 13 / unknown function. The selected target is
+`rp1-clock-manager-status-read`, limited to 32-bit volatile loads from
+`PLL_SYS_CS` at `0x1f00020000`, `CLK_SYS_CTRL` at `0x1f00018014`,
+`CLK_SYS_DIV_INT` at `0x1f00018018`, `CLK_SYS_SEL` at `0x1f00018020`,
+`CLK_SLOW_SYS_CTRL` at `0x1f00018024`, `CLK_UART_CTRL` at `0x1f00018054`,
+`CLK_UART_DIV_INT` at `0x1f00018058`, and `CLK_UART_SEL` at
+`0x1f00018060`. The contract may decode PLL lock, clock enable, source,
+and divider fields and report the retained GPIO14/GPIO16 fsel 13 blocker
+context. The paired no-MMIO/no-RP1/no-GIC control must pass before any real
+Pi 5 proof. Linux RP1 reset behavior is retained only as forbidden source
+context. Clock/reset writes or ownership, GPIO ownership retries, event
+generation, interrupt delivery, GIC acknowledgement, handler ownership,
+DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
+Milestone 11.3, and phase transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

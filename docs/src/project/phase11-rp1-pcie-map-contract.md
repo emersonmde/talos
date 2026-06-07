@@ -383,6 +383,25 @@ clock/reset programming, DMA/cache, storage, generated-root, networking, SSH,
 broader PCIe enumeration, Milestone 11.3, and phase transition remain
 unaccepted.
 
+phase11-rp1-clock-reset-status-source-contract-20260607 accepts the next
+read-only source contract only. The selected target is
+`rp1-clock-manager-status-read`: a non-destructive RP1 clock manager status
+snapshot after GPIO14 and GPIO16 both blocked on fsel 13 / unknown function.
+The allowed 32-bit volatile loads are `PLL_SYS_CS` at `0x1f00020000`,
+`CLK_SYS_CTRL` at `0x1f00018014`, `CLK_SYS_DIV_INT` at `0x1f00018018`,
+`CLK_SYS_SEL` at `0x1f00018020`, `CLK_SLOW_SYS_CTRL` at `0x1f00018024`,
+`CLK_UART_CTRL` at `0x1f00018054`, `CLK_UART_DIV_INT` at `0x1f00018058`,
+and `CLK_UART_SEL` at `0x1f00018060`. The diagnostic may decode only
+`PLL_CS_LOCK`, `CLK_CTRL_ENABLE`, source, and divider fields, and may report
+the retained GPIO14/GPIO16 fsel 13 blocker context. The paired control must
+preserve the output shape while constructing no RP1 clock/reset, GPIO/RIO/pads,
+MSI-X/PCIe/MIP, or GIC MMIO address and performing no volatile load/store to
+those paths. Linux's RP1 reset path is retained only as forbidden source
+context; reset writes, clock writes, GPIO ownership retries, event generation,
+interrupt delivery, handler ownership, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe enumeration, Milestone 11.3, and phase
+transition remain unaccepted.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware
