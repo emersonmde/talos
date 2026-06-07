@@ -1,0 +1,4 @@
+479f5978f1a8fdcc1d8fa2447cbb2919454ec8f648adef5f5640b399b16e6ca5  target/talos-rpi5-rp1-gpio16-owned-event-discriminator-core.tar.gz
+b1968a1ff0fa4652f9a156ca48a17958f9b99bda54326fa589deaa74a8576c3f  target/talos-rpi5-rp1-gpio16-owned-event-discriminator-no-mmio-control-core.tar.gz
+585adf175826e6f33e5e2eb727100117b9a1ca1d110115252e336c18a573ff81  target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-rp1-gpio16-owned-event-discriminator.img
+8e5f3a6a3c58b23a5e707b2b112e852a706da8c3752748b2a14d82d567a35e80  target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-rp1-gpio16-owned-event-discriminator-no-mmio-control.img

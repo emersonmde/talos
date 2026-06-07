@@ -1,0 +1,19 @@
+Validation summary: phase11-rp1-gpio-owned-event-discriminator-core-20260607
+
+- cargo fmt --all -- --check: pass.
+- cargo -Zjson-target-spec test --quiet: pass, 423 talos no_std tests.
+- Archive build/review:
+  scripts/rpi5-rp1-gpio16-owned-event-discriminator-archive.sh and
+  scripts/rpi5-rp1-gpio16-owned-event-discriminator-no-mmio-control-archive.sh
+  produced local/static candidate archives.
+- Archive review:
+  scripts/rpi5-rp1-gpio16-owned-event-discriminator-review.sh and
+  scripts/rpi5-rp1-gpio16-owned-event-discriminator-no-mmio-control-review.sh
+  passed.
+- Static disassembly/source inspection: pass. Real candidate constructs the
+  contracted GPIO16/RIO/pad/IO_BANK0/GIC status boundary and restore path;
+  control candidate constructs no forbidden RP1/GIC/MSI-X/PCIe/MIP/GPIO/pad/
+  RIO/clock/reset MMIO address.
+- git diff --check: pass.
+- mdbook build: not run; no docs/src files were touched.
+- git diff --cached --check: pass.

@@ -1,0 +1,97 @@
+{
+  "taskId": "phase11-rp1-gpio-owned-event-discriminator-core-20260607",
+  "status": "accepted",
+  "classification": "accepted-local-static-gpio16-owned-event-discriminator-core",
+  "evidenceLevel": [
+    "static source inspection",
+    "static archive inspection",
+    "static disassembly inspection",
+    "fmt/lint/typecheck",
+    "unit tests"
+  ],
+  "sourceContract": {
+    "taskId": "phase11-rp1-gpio-owned-event-discriminator-source-contract-20260607",
+    "classification": "accepted-source-contract",
+    "commit": "4776a5cb923d3821491354484a0fa840e4870648"
+  },
+  "candidateArtifacts": {
+    "realArchive": "target/talos-rpi5-rp1-gpio16-owned-event-discriminator-core.tar.gz",
+    "realArchiveSha256": "479f5978f1a8fdcc1d8fa2447cbb2919454ec8f648adef5f5640b399b16e6ca5",
+    "realKernelSha256": "585adf175826e6f33e5e2eb727100117b9a1ca1d110115252e336c18a573ff81",
+    "realKernelSize": 52056,
+    "controlArchive": "target/talos-rpi5-rp1-gpio16-owned-event-discriminator-no-mmio-control-core.tar.gz",
+    "controlArchiveSha256": "b1968a1ff0fa4652f9a156ca48a17958f9b99bda54326fa589deaa74a8576c3f",
+    "controlKernelSha256": "8e5f3a6a3c58b23a5e707b2b112e852a706da8c3752748b2a14d82d567a35e80",
+    "controlKernelSize": 49480
+  },
+  "retainedEvidence": {
+    "taskRecord": "tasks/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-core.md",
+    "staticInspection": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-core/static-inspection.md",
+    "validationSummary": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-core/validation-summary.txt",
+    "archiveSha256s": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-core/archive-sha256s.txt",
+    "realArchiveReview": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-core/real-archive-review.txt",
+    "controlArchiveReview": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-core/control-archive-review.txt",
+    "realStrings": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-core/real-candidate-strings.txt",
+    "controlStrings": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-core/control-candidate-strings.txt",
+    "realAssembly": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-core/real-gpio16-owned-event-discriminator-asm.txt",
+    "controlAssembly": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-core/control-gpio16-owned-event-discriminator-asm.txt",
+    "staticGrepSummary": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-core/static-grep-summary.txt"
+  },
+  "acceptedClaims": [
+    "real candidate implements only the accepted GPIO16 event/source-status discriminator operations and restore/report fields",
+    "control candidate emits the same output/capture shape while constructing no forbidden RP1/GIC/MSI-X/PCIe/MIP/GPIO/RIO/pad/clock/reset MMIO path",
+    "static/archive evidence proves candidate identity, Image/archive shape, cleanup/restore logic, and real-vs-control boundary",
+    "no hardware behavior is accepted; next hardware task remains a serialized control proof"
+  ],
+  "unacceptedClaims": [
+    "Pi 5 hardware behavior",
+    "GPIO event generation on hardware",
+    "interrupt pending generation",
+    "interrupt enablement or delivery",
+    "GIC IAR/EOIR acknowledgement",
+    "ISR or handler ownership",
+    "broad GPIO ownership",
+    "clock/reset programming",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "summary": "Implemented real and no-MMIO/no-RP1/no-GIC control boot scenarios."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Real candidate performs parent-route/pin-function preflight, accepted write order, post-action report, and reverse-order restore."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Control candidate preserves report shape with simulated zero/not-constructed fields and no forbidden selected-address strings."
+    },
+    {
+      "disposition": "deferred",
+      "summary": "Serialized Pi 5 control and real proofs remain queued."
+    },
+    {
+      "disposition": "not-an-issue",
+      "summary": "UART10 serial MMIO remains the accepted output path, not part of the RP1 GPIO/GIC boundary."
+    }
+  ],
+  "validation": {
+    "cargoFmtCheck": "pass",
+    "cargoJsonTargetSpecTestQuiet": "pass: 423 talos no_std tests",
+    "realArchiveReview": "pass",
+    "controlArchiveReview": "pass",
+    "gitDiffCheck": "pass",
+    "mdbookBuild": "not-run: no docs/src files touched",
+    "gitDiffCachedCheck": "pass"
+  },
+  "nextAction": "Promote phase11-rp1-gpio-owned-event-discriminator-control-pi5-20260607 on the next worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive; acquire hardwareTestLock only inside that hardware task.",
+  "commit": null
+}
