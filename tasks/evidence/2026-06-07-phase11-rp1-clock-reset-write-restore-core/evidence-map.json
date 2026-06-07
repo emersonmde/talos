@@ -1,0 +1,100 @@
+{
+  "taskId": "phase11-rp1-clock-reset-write-restore-core-20260607",
+  "status": "accepted",
+  "classification": "accepted-local-static-clock-adc-ctrl-write-restore-core",
+  "evidenceLevel": "static/archive inspection + fmt/lint/typecheck + unit tests",
+  "claims": [
+    "real candidate implements only the accepted CLK_ADC_CTRL pre-read, idempotent write, post-read, restore-write, and restore-read sequence",
+    "real candidate emits TALOS: rp1-clock-adc-ctrl-write-restore-result with the accepted report fields and accepted core classifications",
+    "control candidate constructs no forbidden RP1 clock/reset, GPIO/RIO/pads, MSI-X/PCIe/MIP, or GIC MMIO address and performs zero forbidden MMIO loads/stores",
+    "control candidate emits TALOS: rp1-clock-adc-ctrl-write-restore-control with the same field shape, not-constructed address fields, simulated zero raw values, and simulated/control classification",
+    "no Pi 5 hardware behavior is accepted by this task"
+  ],
+  "sourceContract": {
+    "task": "tasks/2026-06-07-phase11-rp1-clock-reset-write-restore-source-contract.md",
+    "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-source-contract/evidence-map.json",
+    "contractId": "phase11-rp1-clock-reset-write-restore-source-contract-v1",
+    "target": "rp1-clk-adc-ctrl-idempotent-write-restore",
+    "selectedRegister": "CLK_ADC_CTRL @ 0x1f00018144, 32-bit volatile load/store",
+    "allowedOperationSequence": [
+      "pre-read CLK_ADC_CTRL and retain pre_raw",
+      "write pre_raw back to CLK_ADC_CTRL",
+      "post-read CLK_ADC_CTRL and retain post_raw",
+      "restore-write pre_raw back to CLK_ADC_CTRL",
+      "restore-read CLK_ADC_CTRL and retain restore_raw"
+    ]
+  },
+  "implementation": {
+    "sourceFiles": [
+      "build.rs",
+      "src/main.rs",
+      "src/target/rpi5.rs"
+    ],
+    "scripts": [
+      "scripts/rpi5-rp1-clock-adc-ctrl-write-restore-image.sh",
+      "scripts/rpi5-rp1-clock-adc-ctrl-write-restore-boot-tree.sh",
+      "scripts/rpi5-rp1-clock-adc-ctrl-write-restore-archive.sh",
+      "scripts/rpi5-rp1-clock-adc-ctrl-write-restore-review.sh",
+      "scripts/rpi5-rp1-clock-adc-ctrl-write-restore-no-mmio-control-image.sh",
+      "scripts/rpi5-rp1-clock-adc-ctrl-write-restore-no-mmio-control-boot-tree.sh",
+      "scripts/rpi5-rp1-clock-adc-ctrl-write-restore-no-mmio-control-archive.sh",
+      "scripts/rpi5-rp1-clock-adc-ctrl-write-restore-no-mmio-control-review.sh"
+    ]
+  },
+  "realCandidate": {
+    "archive": "target/talos-rpi5-rp1-clock-adc-ctrl-write-restore-core.tar.gz",
+    "archiveSha256": "64175bff01b53efdb3ab71219e24e7c9740e34a0f82bcbe31c4fc65e51e74add",
+    "kernel2712Sha256": "19f2485cd3078e68cf29596b46493d11ba9911016ef6bafc9747d3cb0515a252",
+    "kernel2712Size": 47232,
+    "marker": "TALOS: rp1-clock-adc-ctrl-write-restore-result",
+    "classifications": [
+      "rp1-clock-adc-ctrl-idempotent-write-restored",
+      "rp1-clock-adc-ctrl-idempotent-write-mismatch-restored",
+      "rp1-clock-adc-ctrl-idempotent-write-restore-failed"
+    ],
+    "review": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-core/real-archive-review.txt",
+    "strings": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-core/real-candidate-strings.txt",
+    "assembly": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-core/real-clock-adc-ctrl-write-restore-asm.txt"
+  },
+  "controlCandidate": {
+    "archive": "target/talos-rpi5-rp1-clock-adc-ctrl-write-restore-no-mmio-control-core.tar.gz",
+    "archiveSha256": "dd57daffc4196e8314336492fd86ee098974dd5fb30085ea2e689d24bf0de659",
+    "kernel2712Sha256": "9dec210a6885dc38b7982ac69b83e45478b80ec965952a499cd064f29559f2f2",
+    "kernel2712Size": 46888,
+    "marker": "TALOS: rp1-clock-adc-ctrl-write-restore-control",
+    "classification": "simulated/control",
+    "forbiddenStringsAbsent": true,
+    "review": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-core/control-archive-review.txt",
+    "strings": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-core/control-candidate-strings.txt",
+    "assembly": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-core/control-clock-adc-ctrl-write-restore-asm.txt"
+  },
+  "validation": [
+    "cargo fmt --all -- --check",
+    "cargo -Zjson-target-spec test --quiet",
+    "scripts/rpi5-rp1-clock-adc-ctrl-write-restore-review.sh target/talos-rpi5-rp1-clock-adc-ctrl-write-restore-core.tar.gz",
+    "scripts/rpi5-rp1-clock-adc-ctrl-write-restore-no-mmio-control-review.sh target/talos-rpi5-rp1-clock-adc-ctrl-write-restore-no-mmio-control-core.tar.gz",
+    "static source/string/disassembly inspection",
+    "git diff --check",
+    "git diff --cached --check"
+  ],
+  "validationSummary": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-core/validation-summary.txt",
+  "staticInspection": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-core/static-inspection.md",
+  "acceptedClaims": "Local/static real candidate, local/static no-MMIO/no-RP1/no-GIC control candidate, and archive/static boundary only.",
+  "rejectedClaims": [
+    "Pi 5 hardware behavior",
+    "broad clock/reset ownership",
+    "GPIO ownership",
+    "GPIO event generation",
+    "interrupt delivery",
+    "handler ownership",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "nextAction": "Promote phase11-rp1-clock-reset-write-restore-control-pi5-20260607 after this task is accepted and committed and hardwareTestLock remains unlocked/restored."
+}

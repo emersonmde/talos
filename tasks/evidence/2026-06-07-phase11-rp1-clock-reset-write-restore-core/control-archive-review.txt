@@ -1,0 +1,8 @@
+candidate_archive=target/talos-rpi5-rp1-clock-adc-ctrl-write-restore-no-mmio-control-core.tar.gz
+candidate_archive_sha256=dd57daffc4196e8314336492fd86ee098974dd5fb30085ea2e689d24bf0de659
+kernel_2712_sha256=9dec210a6885dc38b7982ac69b83e45478b80ec965952a499cd064f29559f2f2
+kernel_2712_size=46888
+header_image_size=46888
+text_offset=0
+flags=12
+control_marker=TALOS: rp1-clock-adc-ctrl-write-restore-control

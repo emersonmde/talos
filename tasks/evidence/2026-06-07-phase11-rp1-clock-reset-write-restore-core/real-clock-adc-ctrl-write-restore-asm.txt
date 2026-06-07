@@ -1,0 +1,634 @@
+24-  200064: eb01001f     	cmp	x0, x1
+25-  200068: 54000062     	b.hs	0x200074 <_start+0x74>
+26-  20006c: f800841f     	str	xzr, [x0], #0x8
+27-  200070: 17fffffd     	b	0x200064 <_start+0x64>
+28-  200074: f0000a40     	adrp	x0, 0x34b000 <__stack_bottom+0x3f770>
+29-  200078: 91224000     	add	x0, x0, #0x890
+30-  20007c: 9100001f     	mov	sp, x0
+31-  200080: aa1303e0     	mov	x0, x19
+32:  200084: 94000455     	bl	0x2011d8 <rust_entry>
+33-  200088: d503205f     	wfe
+34-  20008c: 17ffffff     	b	0x200088 <_start+0x88>
+35-
+36-Disassembly of section .vectors:
+37-
+38-0000000000200800 <__exception_vectors>:
+39-  200800: d10083ff     	sub	sp, sp, #0x20
+40-  200804: a90007e0     	stp	x0, x1, [sp]
+41-  200808: d2800000     	mov	x0, #0x0                // =0
+42-  20080c: f9000be0     	str	x0, [sp, #0x10]
+43-  200810: 14001846     	b	0x206928 <__exception_entry_frame>
+44-  200814: d503201f     	nop
+45-  200818: d503201f     	nop
+46-  20081c: d503201f     	nop
+47-  200820: d503201f     	nop
+48-  200824: d503201f     	nop
+49-  200828: d503201f     	nop
+50-  20082c: d503201f     	nop
+51-  200830: d503201f     	nop
+52-  200834: d503201f     	nop
+53-  200838: d503201f     	nop
+54-  20083c: d503201f     	nop
+55-  200840: d503201f     	nop
+56-  200844: d503201f     	nop
+57-  200848: d503201f     	nop
+58-  20084c: d503201f     	nop
+59-  200850: d503201f     	nop
+60-  200854: d503201f     	nop
+61-  200858: d503201f     	nop
+62-  20085c: d503201f     	nop
+63-  200860: d503201f     	nop
+64-  200864: d503201f     	nop
+65-  200868: d503201f     	nop
+66-  20086c: d503201f     	nop
+67-  200870: d503201f     	nop
+68-  200874: d503201f     	nop
+69-  200878: d503201f     	nop
+70-  20087c: d503201f     	nop
+71-  200880: d10083ff     	sub	sp, sp, #0x20
+72-  200884: a90007e0     	stp	x0, x1, [sp]
+73-  200888: d2800020     	mov	x0, #0x1                // =1
+74-  20088c: f9000be0     	str	x0, [sp, #0x10]
+75-  200890: 14001826     	b	0x206928 <__exception_entry_frame>
+76-  200894: d503201f     	nop
+77-  200898: d503201f     	nop
+78-  20089c: d503201f     	nop
+79-  2008a0: d503201f     	nop
+80-  2008a4: d503201f     	nop
+81-  2008a8: d503201f     	nop
+82-  2008ac: d503201f     	nop
+83-  2008b0: d503201f     	nop
+84-  2008b4: d503201f     	nop
+85-  2008b8: d503201f     	nop
+86-  2008bc: d503201f     	nop
+87-  2008c0: d503201f     	nop
+88-  2008c4: d503201f     	nop
+89-  2008c8: d503201f     	nop
+90-  2008cc: d503201f     	nop
+91-  2008d0: d503201f     	nop
+92-  2008d4: d503201f     	nop
+93-  2008d8: d503201f     	nop
+94-  2008dc: d503201f     	nop
+95-  2008e0: d503201f     	nop
+96-  2008e4: d503201f     	nop
+97-  2008e8: d503201f     	nop
+98-  2008ec: d503201f     	nop
+99-  2008f0: d503201f     	nop
+100-  2008f4: d503201f     	nop
+101-  2008f8: d503201f     	nop
+102-  2008fc: d503201f     	nop
+103-  200900: d10083ff     	sub	sp, sp, #0x20
+104-  200904: a90007e0     	stp	x0, x1, [sp]
+105-  200908: d2800040     	mov	x0, #0x2                // =2
+106-  20090c: f9000be0     	str	x0, [sp, #0x10]
+107-  200910: 14001806     	b	0x206928 <__exception_entry_frame>
+108-  200914: d503201f     	nop
+109-  200918: d503201f     	nop
+110-  20091c: d503201f     	nop
+111-  200920: d503201f     	nop
+112-  200924: d503201f     	nop
+113-  200928: d503201f     	nop
+114-  20092c: d503201f     	nop
+115-  200930: d503201f     	nop
+116-  200934: d503201f     	nop
+117-  200938: d503201f     	nop
+118-  20093c: d503201f     	nop
+119-  200940: d503201f     	nop
+120-  200944: d503201f     	nop
+121-  200948: d503201f     	nop
+122-  20094c: d503201f     	nop
+123-  200950: d503201f     	nop
+124-  200954: d503201f     	nop
+125-  200958: d503201f     	nop
+126-  20095c: d503201f     	nop
+127-  200960: d503201f     	nop
+128-  200964: d503201f     	nop
+129-  200968: d503201f     	nop
+130-  20096c: d503201f     	nop
+131-  200970: d503201f     	nop
+132-  200974: d503201f     	nop
+133-  200978: d503201f     	nop
+134-  20097c: d503201f     	nop
+135-  200980: d10083ff     	sub	sp, sp, #0x20
+136-  200984: a90007e0     	stp	x0, x1, [sp]
+137-  200988: d2800060     	mov	x0, #0x3                // =3
+138-  20098c: f9000be0     	str	x0, [sp, #0x10]
+139-  200990: 140017e6     	b	0x206928 <__exception_entry_frame>
+140-  200994: d503201f     	nop
+141-  200998: d503201f     	nop
+142-  20099c: d503201f     	nop
+143-  2009a0: d503201f     	nop
+144-  2009a4: d503201f     	nop
+145-  2009a8: d503201f     	nop
+146-  2009ac: d503201f     	nop
+147-  2009b0: d503201f     	nop
+148-  2009b4: d503201f     	nop
+149-  2009b8: d503201f     	nop
+150-  2009bc: d503201f     	nop
+151-  2009c0: d503201f     	nop
+152-  2009c4: d503201f     	nop
+153-  2009c8: d503201f     	nop
+154-  2009cc: d503201f     	nop
+155-  2009d0: d503201f     	nop
+156-  2009d4: d503201f     	nop
+157-  2009d8: d503201f     	nop
+158-  2009dc: d503201f     	nop
+159-  2009e0: d503201f     	nop
+160-  2009e4: d503201f     	nop
+161-  2009e8: d503201f     	nop
+162-  2009ec: d503201f     	nop
+163-  2009f0: d503201f     	nop
+164-  2009f4: d503201f     	nop
+165-  2009f8: d503201f     	nop
+166-  2009fc: d503201f     	nop
+167-  200a00: d10083ff     	sub	sp, sp, #0x20
+168-  200a04: a90007e0     	stp	x0, x1, [sp]
+169-  200a08: d2800080     	mov	x0, #0x4                // =4
+170-  200a0c: f9000be0     	str	x0, [sp, #0x10]
+171-  200a10: 140017c6     	b	0x206928 <__exception_entry_frame>
+172-  200a14: d503201f     	nop
+--
+645-  2011bc: d2a00415     	mov	x21, #0x200000          // =2097152
+646-  2011c0: b940192a     	ldr	w10, [x9, #0x18]
+647-  2011c4: 3738006a     	tbnz	w10, #0x7, 0x2011d0 <__rustc::rust_begin_unwind+0xe0>
+648-  2011c8: f10006b5     	subs	x21, x21, #0x1
+649-  2011cc: 54ffffa1     	b.ne	0x2011c0 <__rustc::rust_begin_unwind+0xd0>
+650-  2011d0: d5033f9f     	dsb	sy
+651-  2011d4: 9400009c     	bl	0x201444 <talos::arch::aarch64::halt>
+652-
+653:00000000002011d8 <rust_entry>:
+654:  2011d8: 94000128     	bl	0x201678 <talos::target::rpi5::run_rp1_clock_adc_ctrl_write_restore>
+655-
+656-00000000002011dc <talos::runtime_console::write_default_console_output::<talos::pl011::Pl011>>:
+657-  2011dc: d10103ff     	sub	sp, sp, #0x40
+658-  2011e0: a9034ffe     	stp	x30, x19, [sp, #0x30]
+659-  2011e4: aa0803f3     	mov	x19, x8
+660-  2011e8: d28f3a68     	mov	x8, #0x79d3             // =31187
+661-  2011ec: f9000fff     	str	xzr, [sp, #0x18]
+662-  2011f0: a9402809     	ldp	x9, x10, [x0]
+663-  2011f4: f2a00408     	movk	x8, #0x20, lsl #16
+664-  2011f8: f2c00008     	movk	x8, #0x0, lsl #32
+665-  2011fc: f2e00008     	movk	x8, #0x0, lsl #48
+666-  201200: a9022be9     	stp	x9, x10, [sp, #0x20]
+667-  201204: 5280020a     	mov	w10, #0x10              // =16
+668-  201208: a900abe8     	stp	x8, x10, [sp, #0x8]
+669-  20120c: 370000c2     	tbnz	w2, #0x0, 0x201224 <talos::runtime_console::write_default_console_output::<talos::pl011::Pl011>+0x48>
+670-  201210: 910023e0     	add	x0, sp, #0x8
+671-  201214: 94000083     	bl	0x201420 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_fmt (.llvm.3584946348081513597)>
+672-  201218: 360000e0     	tbz	w0, #0x0, 0x201234 <talos::runtime_console::write_default_console_output::<talos::pl011::Pl011>+0x58>
+673-  20121c: 52800028     	mov	w8, #0x1                // =1
+674-  201220: 14000006     	b	0x201238 <talos::runtime_console::write_default_console_output::<talos::pl011::Pl011>+0x5c>
+675-  201224: d341fc42     	lsr	x2, x2, #1
+676-  201228: 910023e0     	add	x0, sp, #0x8
+677-  20122c: 94000015     	bl	0x201280 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_str (.llvm.3584946348081513597)>
+678-  201230: 3707ff60     	tbnz	w0, #0x0, 0x20121c <talos::runtime_console::write_default_console_output::<talos::pl011::Pl011>+0x40>
+679-  201234: aa1f03e8     	mov	x8, xzr
+680-  201238: a9412be9     	ldp	x9, x10, [sp, #0x10]
+681-  20123c: f94007eb     	ldr	x11, [sp, #0x8]
+682-  201240: a9002e68     	stp	x8, x11, [x19]
+683-  201244: a9012a69     	stp	x9, x10, [x19, #0x10]
+684-  201248: a9434ffe     	ldp	x30, x19, [sp, #0x30]
+685-  20124c: 910103ff     	add	sp, sp, #0x40
+686-  201250: d65f03c0     	ret
+687-
+688-0000000000201254 <<*mut _>::add::precondition_check>:
+689-  201254: ab01001f     	cmn	x0, x1
+690-  201258: 54000042     	b.hs	0x201260 <<*mut _>::add::precondition_check+0xc>
+691-  20125c: d65f03c0     	ret
+692-  201260: d28f5f00     	mov	x0, #0x7af8             // =31480
+693-  201264: aa0203e3     	mov	x3, x2
+694-  201268: 528035a1     	mov	w1, #0x1ad              // =429
+695-  20126c: f2a00400     	movk	x0, #0x20, lsl #16
+696-  201270: 2a1f03e2     	mov	w2, wzr
+697-  201274: f2c00000     	movk	x0, #0x0, lsl #32
+698-  201278: f2e00000     	movk	x0, #0x0, lsl #48
+699-  20127c: 94000eac     	bl	0x204d2c <core::panicking::panic_nounwind_fmt>
+700-
+701-0000000000201280 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_str (.llvm.3584946348081513597)>:
+702-  201280: f81e0ffe     	str	x30, [sp, #-0x20]!
+703-  201284: a9014ff4     	stp	x20, x19, [sp, #0x10]
+704-  201288: f9400808     	ldr	x8, [x0, #0x10]
+705-  20128c: ab020114     	adds	x20, x8, x2
+706-  201290: 540000a2     	b.hs	0x2012a4 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_str (.llvm.3584946348081513597)+0x24>
+707-  201294: aa0003f3     	mov	x19, x0
+708-  201298: 91006000     	add	x0, x0, #0x18
+709-  20129c: 940003e8     	bl	0x20223c <<talos::pl011::Pl011 as core::fmt::Write>::write_str>
+710-  2012a0: 36000060     	tbz	w0, #0x0, 0x2012ac <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_str (.llvm.3584946348081513597)+0x2c>
+711-  2012a4: 52800020     	mov	w0, #0x1                // =1
+712-  2012a8: 14000003     	b	0x2012b4 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_str (.llvm.3584946348081513597)+0x34>
+713-  2012ac: 2a1f03e0     	mov	w0, wzr
+714-  2012b0: f9000a74     	str	x20, [x19, #0x10]
+715-  2012b4: a9414ff4     	ldp	x20, x19, [sp, #0x10]
+716-  2012b8: f84207fe     	ldr	x30, [sp], #0x20
+717-  2012bc: d65f03c0     	ret
+718-
+719-00000000002012c0 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_char (.llvm.3584946348081513597)>:
+720-  2012c0: f81d0ffe     	str	x30, [sp, #-0x30]!
+721-  2012c4: a90157f6     	stp	x22, x21, [sp, #0x10]
+722-  2012c8: a9024ff4     	stp	x20, x19, [sp, #0x20]
+723-  2012cc: aa0003f3     	mov	x19, x0
+724-  2012d0: 7102003f     	cmp	w1, #0x80
+725-  2012d4: b9000fff     	str	wzr, [sp, #0xc]
+726-  2012d8: 54000082     	b.hs	0x2012e8 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_char (.llvm.3584946348081513597)+0x28>
+727-  2012dc: 390033e1     	strb	w1, [sp, #0xc]
+728-  2012e0: 52800022     	mov	w2, #0x1                // =1
+729-  2012e4: 14000048     	b	0x201404 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_char (.llvm.3584946348081513597)+0x144>
+730-  2012e8: 7120003f     	cmp	w1, #0x800
+731-  2012ec: 540001e2     	b.hs	0x201328 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_char (.llvm.3584946348081513597)+0x68>
+732-  2012f0: d28f4d02     	mov	x2, #0x7a68             // =31336
+733-  2012f4: 53067c28     	lsr	w8, w1, #6
+734-  2012f8: 52801014     	mov	w20, #0x80              // =128
+735-  2012fc: f2a00402     	movk	x2, #0x20, lsl #16
+736-  201300: 33001434     	bfxil	w20, w1, #0, #6
+737-  201304: 910033e0     	add	x0, sp, #0xc
+738-  201308: f2c00002     	movk	x2, #0x0, lsl #32
+739-  20130c: 321a0508     	orr	w8, w8, #0xc0
+740-  201310: 52800021     	mov	w1, #0x1                // =1
+741-  201314: f2e00002     	movk	x2, #0x0, lsl #48
+742-  201318: 94000049     	bl	0x20143c <OUTLINED_FUNCTION_0>
+743-  20131c: 390037f4     	strb	w20, [sp, #0xd]
+744-  201320: 52800042     	mov	w2, #0x2                // =2
+745-  201324: 14000038     	b	0x201404 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_char (.llvm.3584946348081513597)+0x144>
+746-  201328: 12800ff5     	mov	w21, #-0x80             // =-128
+747-  20132c: 12800ff4     	mov	w20, #-0x80             // =-128
+748-  201330: 7140403f     	cmp	w1, #0x10, lsl #12      // =0x10000
+749-  201334: 33001434     	bfxil	w20, w1, #0, #6
+750-  201338: 33062c35     	bfxil	w21, w1, #6, #6
+751-  20133c: 540002a2     	b.hs	0x201390 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_char (.llvm.3584946348081513597)+0xd0>
+752-  201340: d28f5002     	mov	x2, #0x7a80             // =31360
+753-  201344: 530c7c28     	lsr	w8, w1, #12
+754-  201348: 910033e0     	add	x0, sp, #0xc
+755-  20134c: f2a00402     	movk	x2, #0x20, lsl #16
+756-  201350: 52800021     	mov	w1, #0x1                // =1
+757-  201354: f2c00002     	movk	x2, #0x0, lsl #32
+758-  201358: 321b0908     	orr	w8, w8, #0xe0
+759-  20135c: f2e00002     	movk	x2, #0x0, lsl #48
+760-  201360: 94000037     	bl	0x20143c <OUTLINED_FUNCTION_0>
+761-  201364: d28f5302     	mov	x2, #0x7a98             // =31384
+762-  201368: 910033e0     	add	x0, sp, #0xc
+763-  20136c: 52800041     	mov	w1, #0x2                // =2
+764-  201370: f2a00402     	movk	x2, #0x20, lsl #16
+765-  201374: 390037f5     	strb	w21, [sp, #0xd]
+766-  201378: f2c00002     	movk	x2, #0x0, lsl #32
+767-  20137c: f2e00002     	movk	x2, #0x0, lsl #48
+768-  201380: 97ffffb5     	bl	0x201254 <<*mut _>::add::precondition_check>
+769-  201384: 39003bf4     	strb	w20, [sp, #0xe]
+770-  201388: 52800062     	mov	w2, #0x3                // =3
+771-  20138c: 1400001e     	b	0x201404 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_char (.llvm.3584946348081513597)+0x144>
+772-  201390: d28f5602     	mov	x2, #0x7ab0             // =31408
+773-  201394: 53127c28     	lsr	w8, w1, #18
+774-  201398: 52801016     	mov	w22, #0x80              // =128
+775-  20139c: f2a00402     	movk	x2, #0x20, lsl #16
+776-  2013a0: 330c4436     	bfxil	w22, w1, #12, #6
+777-  2013a4: 910033e0     	add	x0, sp, #0xc
+778-  2013a8: f2c00002     	movk	x2, #0x0, lsl #32
+779-  2013ac: 321c0d08     	orr	w8, w8, #0xf0
+780-  2013b0: 52800021     	mov	w1, #0x1                // =1
+781-  2013b4: f2e00002     	movk	x2, #0x0, lsl #48
+782-  2013b8: 94000021     	bl	0x20143c <OUTLINED_FUNCTION_0>
+783-  2013bc: d28f5902     	mov	x2, #0x7ac8             // =31432
+784-  2013c0: 910033e0     	add	x0, sp, #0xc
+785-  2013c4: 52800041     	mov	w1, #0x2                // =2
+786-  2013c8: f2a00402     	movk	x2, #0x20, lsl #16
+787-  2013cc: 390037f6     	strb	w22, [sp, #0xd]
+788-  2013d0: f2c00002     	movk	x2, #0x0, lsl #32
+789-  2013d4: f2e00002     	movk	x2, #0x0, lsl #48
+790-  2013d8: 97ffff9f     	bl	0x201254 <<*mut _>::add::precondition_check>
+791-  2013dc: d28f5c02     	mov	x2, #0x7ae0             // =31456
+792-  2013e0: 910033e0     	add	x0, sp, #0xc
+793-  2013e4: 52800061     	mov	w1, #0x3                // =3
+794-  2013e8: f2a00402     	movk	x2, #0x20, lsl #16
+--
+965-  20165c: aa1403e1     	mov	x1, x20
+966-  201660: 97ffff88     	bl	0x201480 <talos::target::rpi5::write_early_static>
+967-  201664: 12000660     	and	w0, w19, #0x3
+968-  201668: a9424ff4     	ldp	x20, x19, [sp, #0x20]
+969-  20166c: a94157f6     	ldp	x22, x21, [sp, #0x10]
+970-  201670: a8c35ffe     	ldp	x30, x23, [sp], #0x30
+971-  201674: 17ffffb8     	b	0x201554 <talos::target::rpi5::write_early_hex_u64>
+972-
+973:0000000000201678 <talos::target::rpi5::run_rp1_clock_adc_ctrl_write_restore>:
+974-  201678: d102c3ff     	sub	sp, sp, #0xb0
+975-  20167c: a9057bfd     	stp	x29, x30, [sp, #0x50]
+976-  201680: a9066ffc     	stp	x28, x27, [sp, #0x60]
+977-  201684: a90767fa     	stp	x26, x25, [sp, #0x70]
+978-  201688: a9085ff8     	stp	x24, x23, [sp, #0x80]
+979-  20168c: a90957f6     	stp	x22, x21, [sp, #0x90]
+980-  201690: a90a4ff4     	stp	x20, x19, [sp, #0xa0]
+981-  201694: d28f9380     	mov	x0, #0x7c9c             // =31900
+982-  201698: d2902893     	mov	x19, #0x8144            // =33092
+983-  20169c: 528005a1     	mov	w1, #0x2d               // =45
+984-  2016a0: f2a00400     	movk	x0, #0x20, lsl #16
+985-  2016a4: f2a00033     	movk	x19, #0x1, lsl #16
+986-  2016a8: f2c00000     	movk	x0, #0x0, lsl #32
+987-  2016ac: f2c003f3     	movk	x19, #0x1f, lsl #32
+988-  2016b0: f2e00000     	movk	x0, #0x0, lsl #48
+989-  2016b4: 97ffff73     	bl	0x201480 <talos::target::rpi5::write_early_static>
+990-  2016b8: d28f9920     	mov	x0, #0x7cc9             // =31945
+991-  2016bc: 528008c1     	mov	w1, #0x46               // =70
+992-  2016c0: f2a00400     	movk	x0, #0x20, lsl #16
+993-  2016c4: f2c00000     	movk	x0, #0x0, lsl #32
+994-  2016c8: f2e00000     	movk	x0, #0x0, lsl #48
+995-  2016cc: 97ffff6d     	bl	0x201480 <talos::target::rpi5::write_early_static>
+996-  2016d0: d2820009     	mov	x9, #0x1000             // =4096
+997-  2016d4: f2afa009     	movk	x9, #0x7d00, lsl #16
+998-  2016d8: f2c00209     	movk	x9, #0x10, lsl #32
+999-  2016dc: d2a00415     	mov	x21, #0x200000          // =2097152
+1000-  2016e0: b940192a     	ldr	w10, [x9, #0x18]
+1001:  2016e4: 3738006a     	tbnz	w10, #0x7, 0x2016f0 <talos::target::rpi5::run_rp1_clock_adc_ctrl_write_restore+0x78>
+1002-  2016e8: f10006b5     	subs	x21, x21, #0x1
+1003:  2016ec: 54ffffa1     	b.ne	0x2016e0 <talos::target::rpi5::run_rp1_clock_adc_ctrl_write_restore+0x68>
+1004-  2016f0: d5033f9f     	dsb	sy
+1005-  2016f4: d28faecb     	mov	x11, #0x7d76            // =32118
+1006-  2016f8: d28fa1ed     	mov	x13, #0x7d0f            // =32015
+1007-  2016fc: b9400274     	ldr	w20, [x19]
+1008-  201700: d28fa88a     	mov	x10, #0x7d44            // =32068
+1009-  201704: f2a0040b     	movk	x11, #0x20, lsl #16
+1010-  201708: f2a0040a     	movk	x10, #0x20, lsl #16
+1011-  20170c: f2a0040d     	movk	x13, #0x20, lsl #16
+1012-  201710: f2c0000b     	movk	x11, #0x0, lsl #32
+1013-  201714: b9000274     	str	w20, [x19]
+1014-  201718: f2c0000a     	movk	x10, #0x0, lsl #32
+1015-  20171c: f2c0000d     	movk	x13, #0x0, lsl #32
+1016-  201720: d5033f9f     	dsb	sy
+1017-  201724: 52800648     	mov	w8, #0x32               // =50
+1018-  201728: 52800589     	mov	w9, #0x2c               // =44
+1019-  20172c: b9400278     	ldr	w24, [x19]
+1020-  201730: b9000274     	str	w20, [x19]
+1021-  201734: 528006ac     	mov	w12, #0x35              // =53
+1022-  201738: d5033f9f     	dsb	sy
+1023-  20173c: f2e0000a     	movk	x10, #0x0, lsl #48
+1024-  201740: f2e0000b     	movk	x11, #0x0, lsl #48
+1025-  201744: b9400279     	ldr	w25, [x19]
+1026-  201748: f2e0000d     	movk	x13, #0x0, lsl #48
+1027-  20174c: d28fb44e     	mov	x14, #0x7da2            // =32162
+1028-  201750: d28fbb4f     	mov	x15, #0x7dda            // =32218
+1029-  201754: d28fcb37     	mov	x23, #0x7e59            // =32345
+1030-  201758: d28fcdba     	mov	x26, #0x7e6d            // =32365
+1031-  20175c: 6b14033f     	cmp	w25, w20
+1032-  201760: d28fcf9b     	mov	x27, #0x7e7c            // =32380
+1033-  201764: d28fd0bc     	mov	x28, #0x7e85            // =32389
+1034-  201768: 9a880129     	csel	x9, x9, x8, eq
+1035-  20176c: 9a8a016b     	csel	x11, x11, x10, eq
+1036-  201770: 9a880188     	csel	x8, x12, x8, eq
+1037-  201774: 9a8a01aa     	csel	x10, x13, x10, eq
+1038-  201778: 6b14031f     	cmp	w24, w20
+1039-  20177c: d28fc24c     	mov	x12, #0x7e12            // =32274
+1040-  201780: 9a880128     	csel	x8, x9, x8, eq
+1041-  201784: d28fc869     	mov	x9, #0x7e43             // =32323
+1042-  201788: d28f863d     	mov	x29, #0x7c31            // =31793
+1043-  20178c: f9001be8     	str	x8, [sp, #0x30]
+1044-  201790: 9a8a0168     	csel	x8, x11, x10, eq
+1045-  201794: f2a00409     	movk	x9, #0x20, lsl #16
+1046-  201798: f90017e8     	str	x8, [sp, #0x28]
+1047-  20179c: d28fc348     	mov	x8, #0x7e1a             // =32282
+1048-  2017a0: f2c00009     	movk	x9, #0x0, lsl #32
+1049-  2017a4: f2a00408     	movk	x8, #0x20, lsl #16
+1050-  2017a8: f2e00009     	movk	x9, #0x0, lsl #48
+1051-  2017ac: d28fc9aa     	mov	x10, #0x7e4d            // =32333
+1052-  2017b0: f2c00008     	movk	x8, #0x0, lsl #32
+1053-  2017b4: f2a0040e     	movk	x14, #0x20, lsl #16
+1054-  2017b8: f2a0040f     	movk	x15, #0x20, lsl #16
+1055-  2017bc: f2e00008     	movk	x8, #0x0, lsl #48
+1056-  2017c0: f2a0040c     	movk	x12, #0x20, lsl #16
+1057-  2017c4: f2a0040a     	movk	x10, #0x20, lsl #16
+1058-  2017c8: a901a3e9     	stp	x9, x8, [sp, #0x18]
+1059-  2017cc: d1051268     	sub	x8, x19, #0x144
+1060-  2017d0: d28f8753     	mov	x19, #0x7c3a            // =31802
+1061-  2017d4: f2a00417     	movk	x23, #0x20, lsl #16
+1062-  2017d8: f2a0041a     	movk	x26, #0x20, lsl #16
+1063-  2017dc: f2a0041b     	movk	x27, #0x20, lsl #16
+1064-  2017e0: f2a0041c     	movk	x28, #0x20, lsl #16
+1065-  2017e4: f2a0041d     	movk	x29, #0x20, lsl #16
+1066-  2017e8: f2a00413     	movk	x19, #0x20, lsl #16
+1067-  2017ec: f2c0000e     	movk	x14, #0x0, lsl #32
+1068-  2017f0: f2c0000f     	movk	x15, #0x0, lsl #32
+1069-  2017f4: f2c0000c     	movk	x12, #0x0, lsl #32
+1070-  2017f8: f2c0000a     	movk	x10, #0x0, lsl #32
+1071-  2017fc: f2c00017     	movk	x23, #0x0, lsl #32
+1072-  201800: f2c0001a     	movk	x26, #0x0, lsl #32
+1073-  201804: f2c0001b     	movk	x27, #0x0, lsl #32
+1074-  201808: f2c0001c     	movk	x28, #0x0, lsl #32
+1075-  20180c: f2c0001d     	movk	x29, #0x0, lsl #32
+1076-  201810: f2c00013     	movk	x19, #0x0, lsl #32
+1077-  201814: f2e0000e     	movk	x14, #0x0, lsl #48
+1078-  201818: f2e0000f     	movk	x15, #0x0, lsl #48
+1079-  20181c: f2e0000c     	movk	x12, #0x0, lsl #48
+1080-  201820: f2e0000a     	movk	x10, #0x0, lsl #48
+1081-  201824: f2e00017     	movk	x23, #0x0, lsl #48
+1082-  201828: f2e0001a     	movk	x26, #0x0, lsl #48
+1083-  20182c: f2e0001b     	movk	x27, #0x0, lsl #48
+1084-  201830: f2e0001c     	movk	x28, #0x0, lsl #48
+1085-  201834: f2e0001d     	movk	x29, #0x0, lsl #48
+1086-  201838: f2e00013     	movk	x19, #0x0, lsl #48
+1087-  20183c: a9043bef     	stp	x15, x14, [sp, #0x40]
+1088-  201840: f9001fec     	str	x12, [sp, #0x38]
+1089-  201844: a900abe8     	stp	x8, x10, [sp, #0x8]
+1090-  201848: 6b14033f     	cmp	w25, w20
+1091-  20184c: f94027e0     	ldr	x0, [sp, #0x48]
+1092-  201850: 52800701     	mov	w1, #0x38               // =56
+1093-  201854: 1a9f17f5     	cset	w21, eq
+1094-  201858: 6b14031f     	cmp	w24, w20
+1095-  20185c: 1a9f17f6     	cset	w22, eq
+1096-  201860: 97ffff08     	bl	0x201480 <talos::target::rpi5::write_early_static>
+1097-  201864: f94023e0     	ldr	x0, [sp, #0x40]
+1098-  201868: 52800701     	mov	w1, #0x38               // =56
+1099-  20186c: 97ffff05     	bl	0x201480 <talos::target::rpi5::write_early_static>
+1100-  201870: f9401fe0     	ldr	x0, [sp, #0x38]
+1101-  201874: 52800101     	mov	w1, #0x8                // =8
+1102-  201878: 97ffff02     	bl	0x201480 <talos::target::rpi5::write_early_static>
+1103-  20187c: f94013e0     	ldr	x0, [sp, #0x20]
+1104-  201880: 52800521     	mov	w1, #0x29               // =41
+1105-  201884: 97fffeff     	bl	0x201480 <talos::target::rpi5::write_early_static>
+1106-  201888: f9400fe0     	ldr	x0, [sp, #0x18]
+1107-  20188c: 52800141     	mov	w1, #0xa                // =10
+1108-  201890: 97fffefc     	bl	0x201480 <talos::target::rpi5::write_early_static>
+1109-  201894: f9400be0     	ldr	x0, [sp, #0x10]
+1110-  201898: 52800181     	mov	w1, #0xc                // =12
+1111-  20189c: 97fffef9     	bl	0x201480 <talos::target::rpi5::write_early_static>
+1112-  2018a0: aa1703e0     	mov	x0, x23
+1113-  2018a4: 52800281     	mov	w1, #0x14               // =20
+1114-  2018a8: 97fffef6     	bl	0x201480 <talos::target::rpi5::write_early_static>
+1115-  2018ac: f94007e0     	ldr	x0, [sp, #0x8]
+1116-  2018b0: 97ffff29     	bl	0x201554 <talos::target::rpi5::write_early_hex_u64>
+1117-  2018b4: aa1a03e0     	mov	x0, x26
+1118-  2018b8: 528001e1     	mov	w1, #0xf                // =15
+1119-  2018bc: 97fffef1     	bl	0x201480 <talos::target::rpi5::write_early_static>
+1120-  2018c0: 52802880     	mov	w0, #0x144              // =324
+1121-  2018c4: 97ffff24     	bl	0x201554 <talos::target::rpi5::write_early_hex_u64>
+1122-  2018c8: aa1b03e0     	mov	x0, x27
+1123-  2018cc: 94000079     	bl	0x201ab0 <OUTLINED_FUNCTION_0>
+1124-  2018d0: d2902880     	mov	x0, #0x8144             // =33092
+1125-  2018d4: f2a00020     	movk	x0, #0x1, lsl #16
+1126-  2018d8: f2c003e0     	movk	x0, #0x1f, lsl #32
+1127-  2018dc: 97ffff1e     	bl	0x201554 <talos::target::rpi5::write_early_hex_u64>
+1128-  2018e0: aa1c03e0     	mov	x0, x28
+1129-  2018e4: 94000073     	bl	0x201ab0 <OUTLINED_FUNCTION_0>
+1130-  2018e8: aa1d03e0     	mov	x0, x29
+1131-  2018ec: 94000071     	bl	0x201ab0 <OUTLINED_FUNCTION_0>
+1132-  2018f0: aa1403e0     	mov	x0, x20
+1133-  2018f4: 97ffff18     	bl	0x201554 <talos::target::rpi5::write_early_hex_u64>
+1134-  2018f8: d28f88c2     	mov	x2, #0x7c46             // =31814
+1135-  2018fc: d28f8a44     	mov	x4, #0x7c52             // =31826
+1136-  201900: aa1303e0     	mov	x0, x19
+1137-  201904: f2a00402     	movk	x2, #0x20, lsl #16
+1138-  201908: f2a00404     	movk	x4, #0x20, lsl #16
+1139-  20190c: 52800181     	mov	w1, #0xc                // =12
+1140-  201910: f2c00002     	movk	x2, #0x0, lsl #32
+1141-  201914: f2c00004     	movk	x4, #0x0, lsl #32
+1142-  201918: 52800183     	mov	w3, #0xc                // =12
+1143-  20191c: f2e00002     	movk	x2, #0x0, lsl #48
+--
+1231-  201a7c: f2c00000     	movk	x0, #0x0, lsl #32
+1232-  201a80: f2e00000     	movk	x0, #0x0, lsl #48
+1233-  201a84: 97fffe7f     	bl	0x201480 <talos::target::rpi5::write_early_static>
+1234-  201a88: d2820009     	mov	x9, #0x1000             // =4096
+1235-  201a8c: f2afa009     	movk	x9, #0x7d00, lsl #16
+1236-  201a90: f2c00209     	movk	x9, #0x10, lsl #32
+1237-  201a94: d2a00415     	mov	x21, #0x200000          // =2097152
+1238-  201a98: b940192a     	ldr	w10, [x9, #0x18]
+1239:  201a9c: 3738006a     	tbnz	w10, #0x7, 0x201aa8 <talos::target::rpi5::run_rp1_clock_adc_ctrl_write_restore+0x430>
+1240-  201aa0: f10006b5     	subs	x21, x21, #0x1
+1241:  201aa4: 54ffffa1     	b.ne	0x201a98 <talos::target::rpi5::run_rp1_clock_adc_ctrl_write_restore+0x420>
+1242-  201aa8: d5033f9f     	dsb	sy
+1243:  201aac: 17ffff67     	b	0x201848 <talos::target::rpi5::run_rp1_clock_adc_ctrl_write_restore+0x1d0>
+1244-
+1245-0000000000201ab0 <OUTLINED_FUNCTION_0>:
+1246-  201ab0: 52800121     	mov	w1, #0x9                // =9
+1247-  201ab4: 17fffe73     	b	0x201480 <talos::target::rpi5::write_early_static>
+1248-
+1249-0000000000201ab8 <OUTLINED_FUNCTION_1>:
+1250-  201ab8: f84107f5     	ldr	x21, [sp], #0x10
+1251-  201abc: d65f03c0     	ret
+1252-
+1253-0000000000201ac0 <<talos::arch::aarch64::exceptions::ExceptionVector>::name>:
+1254-  201ac0: d2903c08     	mov	x8, #0x81e0             // =33248
+1255-  201ac4: d2904c09     	mov	x9, #0x8260             // =33376
+1256-  201ac8: f2a00408     	movk	x8, #0x20, lsl #16
+1257-  201acc: f2a00409     	movk	x9, #0x20, lsl #16
+1258-  201ad0: f2c00008     	movk	x8, #0x0, lsl #32
+1259-  201ad4: f2c00009     	movk	x9, #0x0, lsl #32
+1260-  201ad8: f2e00008     	movk	x8, #0x0, lsl #48
+1261-  201adc: f2e00009     	movk	x9, #0x0, lsl #48
+1262-  201ae0: f8607901     	ldr	x1, [x8, x0, lsl #3]
+1263-  201ae4: f8607920     	ldr	x0, [x9, x0, lsl #3]
+1264-  201ae8: d65f03c0     	ret
+1265-
+1266-0000000000201aec <talos::arch::aarch64::exceptions::write_exception_class>:
+1267-  201aec: a9bf4ffe     	stp	x30, x19, [sp, #-0x10]!
+1268-  201af0: aa0003f3     	mov	x19, x0
+1269-  201af4: d2902b60     	mov	x0, #0x815b             // =33115
+1270-  201af8: 52800221     	mov	w1, #0x11               // =17
+1271-  201afc: f2a00400     	movk	x0, #0x20, lsl #16
+1272-  201b00: f2c00000     	movk	x0, #0x0, lsl #32
+1273-  201b04: f2e00000     	movk	x0, #0x0, lsl #48
+1274-  201b08: 97fffe5e     	bl	0x201480 <talos::target::rpi5::write_early_static>
+1275-  201b0c: 531a7e73     	lsr	w19, w19, #26
+1276-  201b10: d1008268     	sub	x8, x19, #0x20
+1277-  201b14: f100151f     	cmp	x8, #0x5
+1278-  201b18: 540001e8     	b.hi	0x201b54 <talos::arch::aarch64::exceptions::write_exception_class+0x68>
+1279-  201b1c: d28ff609     	mov	x9, #0x7fb0             // =32688
+1280-  201b20: f2a00409     	movk	x9, #0x20, lsl #16
+1281-  201b24: f2c00009     	movk	x9, #0x0, lsl #32
+1282-  201b28: f2e00009     	movk	x9, #0x0, lsl #48
+1283-  201b2c: 1000008a     	adr	x10, 0x201b3c <talos::arch::aarch64::exceptions::write_exception_class+0x50>
+1284-  201b30: 3868692b     	ldrb	w11, [x9, x8]
+1285-  201b34: 8b0b094a     	add	x10, x10, x11, lsl #2
+1286-  201b38: d61f0140     	br	x10
+1287-  201b3c: d2901cc0     	mov	x0, #0x80e6             // =32998
+1288-  201b40: 52800341     	mov	w1, #0x1a               // =26
+1289-  201b44: f2a00400     	movk	x0, #0x20, lsl #16
+1290-  201b48: f2c00000     	movk	x0, #0x0, lsl #32
+1291-  201b4c: f2e00000     	movk	x0, #0x0, lsl #48
+1292-  201b50: 1400002f     	b	0x201c0c <talos::arch::aarch64::exceptions::write_exception_class+0x120>
+1293-  201b54: b4000533     	cbz	x19, 0x201bf8 <talos::arch::aarch64::exceptions::write_exception_class+0x10c>
+1294-  201b58: f100be7f     	cmp	x19, #0x2f
+1295-  201b5c: 54000420     	b.eq	0x201be0 <talos::arch::aarch64::exceptions::write_exception_class+0xf4>
+1296-  201b60: f100f27f     	cmp	x19, #0x3c
+1297-  201b64: 540000e1     	b.ne	0x201b80 <talos::arch::aarch64::exceptions::write_exception_class+0x94>
+1298-  201b68: d2902880     	mov	x0, #0x8144             // =33092
+1299-  201b6c: 52800161     	mov	w1, #0xb                // =11
+1300-  201b70: f2a00400     	movk	x0, #0x20, lsl #16
+1301-  201b74: f2c00000     	movk	x0, #0x0, lsl #32
+1302-  201b78: f2e00000     	movk	x0, #0x0, lsl #48
+1303-  201b7c: 14000024     	b	0x201c0c <talos::arch::aarch64::exceptions::write_exception_class+0x120>
+1304-  201b80: d29029e0     	mov	x0, #0x814f             // =33103
+1305-  201b84: 52800181     	mov	w1, #0xc                // =12
+1306-  201b88: f2a00400     	movk	x0, #0x20, lsl #16
+1307-  201b8c: f2c00000     	movk	x0, #0x0, lsl #32
+1308-  201b90: f2e00000     	movk	x0, #0x0, lsl #48
+1309-  201b94: 1400001e     	b	0x201c0c <talos::arch::aarch64::exceptions::write_exception_class+0x120>
+1310-  201b98: d2902000     	mov	x0, #0x8100             // =33024
+1311-  201b9c: 52800321     	mov	w1, #0x19               // =25
+1312-  201ba0: f2a00400     	movk	x0, #0x20, lsl #16
+1313-  201ba4: f2c00000     	movk	x0, #0x0, lsl #32
+1314-  201ba8: f2e00000     	movk	x0, #0x0, lsl #48
+1315-  201bac: 14000018     	b	0x201c0c <talos::arch::aarch64::exceptions::write_exception_class+0x120>
+1316-  201bb0: d2902580     	mov	x0, #0x812c             // =33068
+1317-  201bb4: 52800241     	mov	w1, #0x12               // =18
+1318-  201bb8: f2a00400     	movk	x0, #0x20, lsl #16
+1319-  201bbc: f2c00000     	movk	x0, #0x0, lsl #32
+1320-  201bc0: f2e00000     	movk	x0, #0x0, lsl #48
+1321-  201bc4: 14000012     	b	0x201c0c <talos::arch::aarch64::exceptions::write_exception_class+0x120>
+1322-  201bc8: d2902320     	mov	x0, #0x8119             // =33049
+1323-  201bcc: 52800261     	mov	w1, #0x13               // =19
+1324-  201bd0: f2a00400     	movk	x0, #0x20, lsl #16
+1325-  201bd4: f2c00000     	movk	x0, #0x0, lsl #32
+1326-  201bd8: f2e00000     	movk	x0, #0x0, lsl #48
+1327-  201bdc: 1400000c     	b	0x201c0c <talos::arch::aarch64::exceptions::write_exception_class+0x120>
+1328-  201be0: d29027c0     	mov	x0, #0x813e             // =33086
+1329-  201be4: 528000c1     	mov	w1, #0x6                // =6
+1330-  201be8: f2a00400     	movk	x0, #0x20, lsl #16
+1331-  201bec: f2c00000     	movk	x0, #0x0, lsl #32
+1332-  201bf0: f2e00000     	movk	x0, #0x0, lsl #48
+1333-  201bf4: 14000006     	b	0x201c0c <talos::arch::aarch64::exceptions::write_exception_class+0x120>
+1334-  201bf8: d29018c0     	mov	x0, #0x80c6             // =32966
+1335-  201bfc: 52800401     	mov	w1, #0x20               // =32
+1336-  201c00: f2a00400     	movk	x0, #0x20, lsl #16
+1337-  201c04: f2c00000     	movk	x0, #0x0, lsl #32
+1338-  201c08: f2e00000     	movk	x0, #0x0, lsl #48
+1339-  201c0c: 97fffe1d     	bl	0x201480 <talos::target::rpi5::write_early_static>
+1340-  201c10: d28f8420     	mov	x0, #0x7c21             // =31777
+1341-  201c14: 52800081     	mov	w1, #0x4                // =4
+1342-  201c18: f2a00400     	movk	x0, #0x20, lsl #16
+1343-  201c1c: f2c00000     	movk	x0, #0x0, lsl #32
+1344-  201c20: f2e00000     	movk	x0, #0x0, lsl #48
+1345-  201c24: 97fffe17     	bl	0x201480 <talos::target::rpi5::write_early_static>
+1346-  201c28: aa1303e0     	mov	x0, x19
+1347-  201c2c: 97fffe4a     	bl	0x201554 <talos::target::rpi5::write_early_hex_u64>
+1348-  201c30: 940000cc     	bl	0x201f60 <OUTLINED_FUNCTION_0>
+1349-  201c34: a8c14ffe     	ldp	x30, x19, [sp], #0x10
+1350-  201c38: 17fffe12     	b	0x201480 <talos::target::rpi5::write_early_static>
+1351-
+1352-0000000000201c3c <talos::arch::aarch64::exceptions::write_exception_context>:
+1353-  201c3c: f81e0ffe     	str	x30, [sp, #-0x20]!
+1354-  201c40: a9014ff4     	stp	x20, x19, [sp, #0x10]
+1355-  201c44: aa0003f4     	mov	x20, x0
+1356-  201c48: d2902da0     	mov	x0, #0x816d             // =33133
+1357-  201c4c: aa0103f3     	mov	x19, x1
+1358-  201c50: f2a00400     	movk	x0, #0x20, lsl #16
+1359-  201c54: 528002e1     	mov	w1, #0x17               // =23
+1360-  201c58: f2c00000     	movk	x0, #0x0, lsl #32
+1361-  201c5c: f2e00000     	movk	x0, #0x0, lsl #48
+1362-  201c60: 97fffe08     	bl	0x201480 <talos::target::rpi5::write_early_static>
+1363-  201c64: aa1403e0     	mov	x0, x20
+1364-  201c68: 97fffe3b     	bl	0x201554 <talos::target::rpi5::write_early_hex_u64>
+1365-  201c6c: 940000bd     	bl	0x201f60 <OUTLINED_FUNCTION_0>
+1366-  201c70: 97fffe04     	bl	0x201480 <talos::target::rpi5::write_early_static>
+1367-  201c74: b4000873     	cbz	x19, 0x201d80 <talos::arch::aarch64::exceptions::write_exception_context+0x144>
+1368-  201c78: d28f3060     	mov	x0, #0x7983             // =31107
+1369-  201c7c: aa1303e1     	mov	x1, x19
+1370-  201c80: aa1f03e2     	mov	x2, xzr
+1371-  201c84: f2a00400     	movk	x0, #0x20, lsl #16
+1372-  201c88: 52800083     	mov	w3, #0x4                // =4
+1373-  201c8c: f2c00000     	movk	x0, #0x0, lsl #32
+1374-  201c90: f2e00000     	movk	x0, #0x0, lsl #48
+1375-  201c94: 94000043     	bl	0x201da0 <talos::arch::aarch64::exceptions::write_saved_register_line>
+1376-  201c98: d28f3c60     	mov	x0, #0x79e3             // =31203
+1377-  201c9c: aa1303e1     	mov	x1, x19
+1378-  201ca0: 52800082     	mov	w2, #0x4                // =4
+1379-  201ca4: f2a00400     	movk	x0, #0x20, lsl #16
+1380-  201ca8: 52800103     	mov	w3, #0x8                // =8
+1381-  201cac: f2c00000     	movk	x0, #0x0, lsl #32
+1382-  201cb0: f2e00000     	movk	x0, #0x0, lsl #48
+1383-  201cb4: 9400003b     	bl	0x201da0 <talos::arch::aarch64::exceptions::write_saved_register_line>
