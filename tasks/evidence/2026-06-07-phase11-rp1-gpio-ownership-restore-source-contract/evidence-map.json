@@ -1,0 +1,220 @@
+{
+  "taskId": "phase11-rp1-gpio-ownership-restore-source-contract-20260607",
+  "status": "accepted",
+  "classification": "accepted-source-contract",
+  "evidenceLevel": [
+    "static source inspection",
+    "static documentation inspection"
+  ],
+  "acceptedContract": {
+    "id": "phase11-rp1-gpio-ownership-restore-source-contract-v1",
+    "target": "rp1-gpio14-ownership-route-preflight-read",
+    "operationClass": "read-only preflight",
+    "pin": "GPIO14",
+    "bank": "IO_BANK0",
+    "bitMask": "0x00004000",
+    "allowedWrites": [],
+    "allowedReads": [
+      {
+        "name": "GPIO14_STATUS",
+        "address": "0x1f_000d_0070",
+        "widthBits": 32
+      },
+      {
+        "name": "GPIO14_CTRL",
+        "address": "0x1f_000d_0074",
+        "widthBits": 32
+      },
+      {
+        "name": "IO_BANK0_INTE",
+        "address": "0x1f_000d_011c",
+        "widthBits": 32
+      },
+      {
+        "name": "IO_BANK0_INTS",
+        "address": "0x1f_000d_0124",
+        "widthBits": 32
+      },
+      {
+        "name": "RIO0_OUT",
+        "address": "0x1f_000e_0000",
+        "widthBits": 32
+      },
+      {
+        "name": "RIO0_OE",
+        "address": "0x1f_000e_0004",
+        "widthBits": 32
+      },
+      {
+        "name": "RIO0_IN",
+        "address": "0x1f_000e_0008",
+        "widthBits": 32
+      },
+      {
+        "name": "GPIO14_PAD",
+        "address": "0x1f_000f_003c",
+        "widthBits": 32
+      },
+      {
+        "name": "GICD_ISENABLER5",
+        "address": "0x10_7fff_9114",
+        "widthBits": 32
+      },
+      {
+        "name": "GICD_ISPENDR5",
+        "address": "0x10_7fff_9214",
+        "widthBits": 32
+      },
+      {
+        "name": "GICD_ISACTIVER5",
+        "address": "0x10_7fff_9314",
+        "widthBits": 32
+      },
+      {
+        "name": "GICC_HPPIR",
+        "address": "0x10_7fff_a018",
+        "widthBits": 32
+      }
+    ]
+  },
+  "sourceReferences": [
+    {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/pinctrl-rp1.c",
+      "claims": [
+        "GPIO14 fsel table includes uart0 at fsel 4, gpio at fsel 5, and proc_rio at fsel 6",
+        "GPIO14 CTRL exposes FUNCSEL/OUTOVER/OEOVER/INOVER/event-enable/IRQOVER fields",
+        "RIO OUT/OE/IN and pad control are separate source-backed ownership-adjacent state",
+        "Linux event setup and IRQ enable/ack paths write GPIO CTRL/INTE/IRQRESET, which this contract forbids"
+      ]
+    },
+    {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/rp1-mfd.h",
+      "claims": [
+        "RP1_SYS_RIO0_BASE = 0x0e0000",
+        "RP1_PADS_BANK0_BASE = 0x0f0000",
+        "RP1_INT_IO_BANK0 = 0"
+      ]
+    },
+    {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-event-latch-source-contract/source-reference-notes.md",
+      "claims": [
+        "GPIO event-latch writes are source-contract-blocked until ownership, masking, deterministic event source, and restore semantics are proven"
+      ]
+    },
+    {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-source-contract/source-reference-notes.md",
+      "claims": [
+        "INTID 160 read-only GIC status registers are accepted for observation only"
+      ]
+    }
+  ],
+  "reportFields": [
+    "contract",
+    "target",
+    "pin",
+    "gpio14-bit-mask",
+    "gpio14-status-address",
+    "gpio14-ctrl-address",
+    "io-bank0-inte-address",
+    "io-bank0-ints-address",
+    "rio-out-address",
+    "rio-oe-address",
+    "rio-in-address",
+    "pad-address",
+    "gicd-isenabler5-address",
+    "gicd-ispendr5-address",
+    "gicd-isactiver5-address",
+    "gicc-hppir-address",
+    "width",
+    "gpio14-status-raw",
+    "gpio14-ctrl-raw",
+    "gpio14-funcsel",
+    "gpio14-func-name",
+    "gpio14-outover",
+    "gpio14-oeover",
+    "gpio14-inover",
+    "gpio14-raw-event-enable-mask",
+    "gpio14-filtered-event-enable-mask",
+    "gpio14-status-event-mask",
+    "io-bank0-inte-raw",
+    "io-bank0-ints-raw",
+    "rio-out-raw",
+    "rio-oe-raw",
+    "rio-in-raw",
+    "pad-raw",
+    "pad-input-enable",
+    "pad-output-disable",
+    "gicd-isenabler5-raw",
+    "gicd-ispendr5-raw",
+    "gicd-isactiver5-raw",
+    "gicc-hppir-raw",
+    "intid160-enabled",
+    "intid160-pending",
+    "intid160-active",
+    "hppir-intid",
+    "classification"
+  ],
+  "classifications": [
+    "gpio14-ownership-route-preflight-visible",
+    "gpio14-ownership-preflight-blocked-non-gpio-function",
+    "gpio14-ownership-preflight-blocked-parent-route-state",
+    "gpio14-ownership-preflight-blocked-existing-event-or-enable-state",
+    "gpio14-ownership-preflight-bus-fault-or-trap-visible",
+    "candidate-fetch-without-gpio14-ownership-preflight-marker",
+    "capture-staging-blocked",
+    "staging/build-blocker"
+  ],
+  "forbiddenOperations": [
+    "GPIO14 CTRL writes",
+    "IO_BANK0 INTE writes",
+    "GPIO IRQRESET acknowledgement",
+    "RIO writes",
+    "pad writes",
+    "GIC writes",
+    "GICC_IAR reads",
+    "GICC_EOIR writes",
+    "interrupt unmasking",
+    "ISR installation",
+    "MSI-X enable/IACK writes",
+    "PCIe config/MSI/MIP writes",
+    "clock/reset writes",
+    "GPIO event generation",
+    "interrupt pending generation",
+    "GPIO ownership claims"
+  ],
+  "acceptedClaims": [
+    "one read-only GPIO14 ownership/route preflight source contract",
+    "exact allowed reads and report fields",
+    "no allowed writes",
+    "paired no-MMIO/no-RP1/no-GIC control requirement",
+    "cleanup/quarantine rules for read-only preflight"
+  ],
+  "unacceptedClaims": [
+    "GPIO ownership",
+    "GPIO event generation",
+    "interrupt pending generation",
+    "interrupt enablement",
+    "parent interrupt delivery",
+    "CPU interface delivery",
+    "GIC acknowledgement",
+    "ISR or handler ownership",
+    "GPIO CTRL/INTE/RIO/pad writes",
+    "parent-route masking writes",
+    "clock/reset programming",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "validation": {
+    "staticInspection": "source-reference-notes.md",
+    "gitDiffCheck": "pass",
+    "mdbookBuild": "pass",
+    "gitDiffCachedCheck": "pass"
+  },
+  "commit": null
+}

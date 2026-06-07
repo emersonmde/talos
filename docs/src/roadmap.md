@@ -7640,6 +7640,26 @@ pin-control behavior, clocks and resets, DMA/cache, storage, generated-root,
 networking, SSH, broader PCIe, Milestone 11.3, and phase transition remain
 unaccepted.
 
+phase11-rp1-gpio-ownership-restore-source-contract-20260607 is accepted as
+phase11-rp1-gpio-ownership-restore-source-contract-v1. It selects only a
+read-only GPIO14 ownership/route preflight target,
+rp1-gpio14-ownership-route-preflight-read, before any future event-generation
+retry. The allowed reads are GPIO14 STATUS/CTRL, IO_BANK0 INTE/INTS, RIO0
+OUT/OE/IN, GPIO14 pad control, and the accepted INTID 160 GIC route status
+registers. The contract records GPIO14's source-backed fsel table, including
+uart0 at fsel 4, gpio at fsel 5, and proc_rio at fsel 6, so the preflight can
+report whether the pin appears compatible with later GPIO event ownership
+without switching function or direction. No writes are allowed, and cleanup is
+no-op hardware-state cleanup because the preflight is read-only. The paired
+control must construct no RP1 GPIO/RIO/pads/clock/reset, MSI-X/PCIe/MIP, or
+GIC MMIO path before any real Pi 5 proof. This accepts only the read-only
+preflight source contract, not GPIO ownership, GPIO event generation,
+interrupt pending generation, interrupt enablement or delivery, IAR/EOIR
+acknowledgement, handler ownership, GPIO CTRL/INTE/RIO/pad writes,
+parent-route masking writes, clocks and resets, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe, Milestone 11.3, or phase
+transition.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

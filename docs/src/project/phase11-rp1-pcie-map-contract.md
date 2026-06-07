@@ -255,6 +255,26 @@ ownership, GPIO ownership, pin-control/pad behavior, clock/reset programming,
 DMA/cache, storage, generated-root, networking, SSH, broader PCIe enumeration,
 Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-gpio-ownership-restore-source-contract-20260607 accepts the next
+narrow source contract only. The selected diagnostic target is
+`rp1-gpio14-ownership-route-preflight-read`: a read-only GPIO14 ownership and
+parent-route preflight before any event-generation retry. The allowed reads are
+GPIO14 STATUS/CTRL at `0x1f000d0070`/`0x1f000d0074`, IO_BANK0 INTE/INTS at
+`0x1f000d011c`/`0x1f000d0124`, RIO0 OUT/OE/IN at
+`0x1f000e0000`/`0x1f000e0004`/`0x1f000e0008`, GPIO14 pad control at
+`0x1f000f003c`, and the already accepted read-only INTID 160 GIC status
+registers. GPIO14 remains the only candidate pin because prior frontiers
+already use GPIO14 STATUS, IO_BANK0 bit 14, and the IO_BANK0 route. The
+contract allows no writes; cleanup is no-op hardware-state cleanup because the
+diagnostic is read-only. Its paired control must preserve the same output shape
+while constructing no RP1 GPIO/RIO/pads/clock/reset, MSI-X/PCIe/MIP, or GIC
+MMIO address. This accepts only the read-only preflight contract, not GPIO
+ownership, event generation, pending generation, interrupt enablement or
+delivery, GIC acknowledgement, handler ownership, GPIO CTRL/INTE/RIO/pad
+writes, parent-route masking writes, clock/reset programming, DMA/cache,
+storage, generated-root, networking, SSH, broader PCIe enumeration, Milestone
+11.3, or phase transition.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware
