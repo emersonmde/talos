@@ -24,5 +24,6 @@
     "mdbookBuild": "passed",
     "gitDiffCachedCheck": "passed"
   },
-  "commit": null
+  "commit": "f782bbd8a29d780bbdf90bc55c7f1a81c5e2f17a",
+  "commitNote": "commit containing accepted evidence before this hash-record follow-up"
 }

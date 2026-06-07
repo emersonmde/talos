@@ -99,5 +99,6 @@
     "tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
     "effectiveKernel": "kernel_2712.img"
   },
-  "commit": null
+  "commit": "f782bbd8a29d780bbdf90bc55c7f1a81c5e2f17a",
+  "commitNote": "commit containing accepted evidence before this hash-record follow-up"
 }
