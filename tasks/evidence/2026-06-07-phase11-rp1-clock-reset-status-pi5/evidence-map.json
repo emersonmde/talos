@@ -1,0 +1,148 @@
+{
+  "taskId": "phase11-rp1-clock-reset-status-pi5-20260607",
+  "status": "accepted",
+  "classification": "rp1-clock-manager-status-visible",
+  "evidenceLevel": [
+    "static archive inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "TFTP stable same-cursor evidence",
+    "pi5-capture-transaction-v2 identity join",
+    "restore proof"
+  ],
+  "dependencies": {
+    "coreTask": {
+      "taskId": "phase11-rp1-clock-reset-status-core-20260607",
+      "classification": "accepted-local-static-clock-reset-status-core",
+      "commit": "39dfd6c56266761750da17c1ad5da61fc3186510"
+    },
+    "controlTask": {
+      "taskId": "phase11-rp1-clock-reset-status-control-pi5-20260607",
+      "classification": "no-mmio-clock-reset-status-control-visible",
+      "commit": "86cb47cac3a278c26f40b9b24b3475137db4f9de"
+    }
+  },
+  "candidateArtifacts": {
+    "realArchive": "target/talos-rpi5-rp1-clock-manager-status-read-core.tar.gz",
+    "realArchiveSha256": "22d7592ef17ff5641e724d5b9ebcb3496071cb9237e22adadc915358079d268d",
+    "realKernelSha256": "4267655039e0882377407302f012c610f0b011a23507c1a6aabcbd515f83dd8b",
+    "realKernelSize": 47280,
+    "realMarker": "TALOS: rp1-clock-manager-status-result"
+  },
+  "acceptedRun": {
+    "path": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-pi5/real-rerun-after-kg",
+    "selectedTreeHash": "3e64059ed440eaf48f096d8e2e4113609dbfe9f78444955003547515439c3704",
+    "effectiveKernel": "kernel_2712.img",
+    "expectedFetch": "da591740/kernel_2712.img",
+    "expectedFetchBytes": 47280,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "serialMarkerOccurrences": 320,
+    "identityJoin": "capture-transaction-v2-ready",
+    "identityJoinRejectionReasons": [],
+    "terminalClassification": "rp1-clock-manager-status-visible",
+    "reportedFields": {
+      "pllSysLock": true,
+      "clkSysEnabled": true,
+      "clkUartEnabled": true
+    }
+  },
+  "triageEvidence": {
+    "firstCandidateRun": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-pi5/real-run",
+    "knownGoodControl": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-pi5/known-good-control-run",
+    "firstCandidateRejectionReasons": [
+      "serial-drain-not-empty-before-power",
+      "saturated-direct-read-without-empty-pre-power-drain"
+    ],
+    "knownGoodControlRejectionReasons": [
+      "serial-drain-not-empty-before-power",
+      "saturated-direct-read-without-empty-pre-power-drain",
+      "expected-fetch-not-observed-in-tftp-delta"
+    ]
+  },
+  "restoreEvidence": {
+    "captureHelperRerunRestore": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-pi5/real-rerun-after-kg/post-restore-status.json",
+    "finalOriginalRestore": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-pi5/final-post-restore-original-status.json",
+    "originalSnapshotName": "pre-clock-reset-status-real-184321",
+    "originalTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "finalOriginalTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "retainedEvidence": {
+    "taskRecord": "tasks/2026-06-07-phase11-rp1-clock-reset-status-pi5.md",
+    "classification": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-pi5/classification.json",
+    "staticArchiveReview": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-pi5/real-rerun-after-kg/static-archive-review.txt",
+    "publicationResponse": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-pi5/real-rerun-after-kg/publication-response.json",
+    "captureSummary": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-pi5/real-rerun-after-kg/capture-invariant-summary.json",
+    "identityJoin": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-pi5/real-rerun-after-kg/identity-join.json",
+    "stableTftpDelta": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-pi5/real-rerun-after-kg/tftp-delta-stable-pre-restore.json",
+    "serialWindow": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-pi5/real-rerun-after-kg/serial-observe-window.json"
+  },
+  "acceptedClaims": [
+    "real RP1 clock manager status candidate reached the contracted result marker on Pi 5",
+    "accepted candidate rerun passed pi5-capture-transaction-v2 identity join with no rejection reasons",
+    "stable pre-restore TFTP evidence retained candidate fetch identity before restore",
+    "result markers report pll-sys-lock=true, clk-sys-enabled=true, and clk-uart-enabled=true",
+    "hardware lock was released only after final restore to the original pre-run tree"
+  ],
+  "unacceptedClaims": [
+    "RP1 clock/reset ownership",
+    "RP1 clock/reset writes",
+    "GPIO ownership",
+    "GPIO event generation",
+    "interrupt delivery",
+    "GIC acknowledgement",
+    "ISR or handler ownership",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "summary": "Acquired and released hardwareTestLock around serialized Pi 5 real diagnostic work."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Retained static archive identity and candidate publication/restore proof."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Completed known-good/control plus candidate-rerun triage after the first serial-drain-rejected run."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Accepted the identity-joined read-only RP1 clock manager status snapshot."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Restored the lab to the original pre-run boot tree after the accepted rerun."
+    },
+    {
+      "disposition": "deferred",
+      "summary": "Future clock/reset writes or ownership require supervisor planning after closeout."
+    },
+    {
+      "disposition": "not-an-issue",
+      "summary": "The accepted result is a read-only status classification, not clock/reset ownership evidence."
+    }
+  ],
+  "validation": {
+    "staticArchiveIdentityCheck": "pass",
+    "labControllerSerializedPi5Run": "pass on accepted candidate rerun",
+    "pi5CaptureTransactionV2IdentityJoin": "pass on accepted candidate rerun",
+    "stableSameCursorTftpEvidence": "pass",
+    "serialHardwareBootOutput": "pass: 320 real result marker occurrences",
+    "inconclusiveRunTriage": "pass: known-good/control and candidate rerun retained",
+    "finalOriginalRestoreProof": "pass",
+    "gitDiffCheck": "pass",
+    "mdbookBuild": "not run; no docs/src files touched",
+    "gitDiffCachedCheck": "pass"
+  },
+  "nextAction": "Promote phase11-rp1-clock-reset-status-closeout-20260607 on the next worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive.",
+  "commit": "recorded in talos-supervisor-state.json after commit"
+}

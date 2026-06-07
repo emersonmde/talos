@@ -1,0 +1,64 @@
+{
+  "taskId": "phase11-rp1-clock-reset-status-pi5-20260607",
+  "status": "accepted",
+  "classification": "rp1-clock-manager-status-visible",
+  "acceptedRun": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-pi5/real-rerun-after-kg",
+  "identityJoin": "capture-transaction-v2-ready",
+  "identityJoinRejectionReasons": [],
+  "selectedTreeHash": "3e64059ed440eaf48f096d8e2e4113609dbfe9f78444955003547515439c3704",
+  "expectedFetch": "da591740/kernel_2712.img",
+  "expectedFetchBytes": 47280,
+  "expectedFetchCount": 2,
+  "expectedFetchByteMatchCount": 2,
+  "serialMarker": "TALOS: rp1-clock-manager-status-result",
+  "serialMarkerOccurrences": 320,
+  "reportedFields": {
+    "pllSysLock": true,
+    "clkSysEnabled": true,
+    "clkUartEnabled": true
+  },
+  "firstRun": {
+    "path": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-pi5/real-run",
+    "classification": "capture-staging-blocked",
+    "rejectionReasons": [
+      "serial-drain-not-empty-before-power",
+      "saturated-direct-read-without-empty-pre-power-drain"
+    ]
+  },
+  "knownGoodControl": {
+    "path": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-pi5/known-good-control-run",
+    "classification": "capture-staging-blocked",
+    "rejectionReasons": [
+      "serial-drain-not-empty-before-power",
+      "saturated-direct-read-without-empty-pre-power-drain",
+      "expected-fetch-not-observed-in-tftp-delta"
+    ]
+  },
+  "finalOriginalRestore": {
+    "snapshotName": "pre-clock-reset-status-real-184321",
+    "treeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "acceptedClaims": [
+    "read-only RP1 clock manager status result marker is visible on Pi 5",
+    "accepted candidate rerun passed pi5-capture-transaction-v2 identity join with no rejection reasons",
+    "stable pre-restore TFTP evidence retained two matching candidate fetches before restore",
+    "retained result markers report pll-sys-lock=true, clk-sys-enabled=true, and clk-uart-enabled=true"
+  ],
+  "rejectedClaims": [
+    "RP1 clock/reset ownership",
+    "RP1 clock/reset writes",
+    "GPIO ownership",
+    "GPIO event generation",
+    "interrupt delivery",
+    "GIC acknowledgement",
+    "ISR or handler ownership",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ]
+}

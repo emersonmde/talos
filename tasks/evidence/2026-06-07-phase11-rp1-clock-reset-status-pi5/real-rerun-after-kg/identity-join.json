@@ -1,0 +1,54 @@
+{
+  "contract_version": "pi5-capture-transaction-v2",
+  "run_label": "phase11-rp1-clock-reset-status-pi5-20260607/real-rerun-after-kg",
+  "summary_label": "phase11-rp1-clock-reset-status-pi5-20260607/real-rerun-after-kg",
+  "decisive_rp1_hardware_classification_allowed": true,
+  "classification": "capture-transaction-v2-ready",
+  "rejection_reasons": [],
+  "proof_run_identity": {
+    "selected_tree_hash": "3e64059ed440eaf48f096d8e2e4113609dbfe9f78444955003547515439c3704",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 47280,
+    "serial": {
+      "pre_power_drain": {
+        "attempts": 2,
+        "total_bytes": 772,
+        "final_cursor": 4194304,
+        "empty_before_power": true
+      },
+      "cursor_file": 4194304,
+      "window_cursor_start": 4194304,
+      "window_cursor_end": 4194304,
+      "window_bytes": 332153,
+      "response_bytes": 332153,
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+    },
+    "tftp": {
+      "cursor_file": 4233404,
+      "delta_cursor_start": 4233404,
+      "delta_cursor_end": 4234755,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        47280,
+        47280
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "3e64059ed440eaf48f096d8e2e4113609dbfe9f78444955003547515439c3704",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 47280
+    },
+    "restore": {
+      "snapshot_name": "pre-clock-reset-status-real-rerun-185014",
+      "post_restore_tree_hash": "3e64059ed440eaf48f096d8e2e4113609dbfe9f78444955003547515439c3704"
+    }
+  },
+  "rule": "missing or mismatched candidate identity, pre-power serial-drain, serial-window, TFTP, or final identity fields prevent decisive hardware classification"
+}

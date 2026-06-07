@@ -1,0 +1,14 @@
+{
+  "expected_tree_hash": "3e64059ed440eaf48f096d8e2e4113609dbfe9f78444955003547515439c3704",
+  "observed_tree_hash": "3e64059ed440eaf48f096d8e2e4113609dbfe9f78444955003547515439c3704",
+  "expected_kernel": "kernel_2712.img",
+  "observed_effective_kernel": "kernel_2712.img",
+  "expected_fetch": "da591740/kernel_2712.img",
+  "expected_fetch_bytes": 47280,
+  "observed_fetch_bytes": 47280,
+  "tree_matches": true,
+  "effective_kernel_matches": true,
+  "expected_fetch_present": true,
+  "expected_fetch_bytes_match": true,
+  "staging_publication_mismatch": false
+}

@@ -1,0 +1,13 @@
+{
+  "capture_exit": 0,
+  "identity_join_exit": 0,
+  "identity_allowed": true,
+  "join_classification": "capture-transaction-v2-ready",
+  "rejection_reasons": [],
+  "suggested": "post-handoff-marker-visible",
+  "marker_occurrences": 320,
+  "expected_fetch_count": 2,
+  "expected_fetch_byte_match_count": 2,
+  "expected_fetch_bytes": 47280,
+  "post_restore_tree": "3e64059ed440eaf48f096d8e2e4113609dbfe9f78444955003547515439c3704"
+}

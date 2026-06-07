@@ -1,0 +1,34 @@
+{
+  "action": "serial drain before power",
+  "ok": true,
+  "responses": [
+    {
+      "action": "serial read",
+      "base64": "AAogIDQuMTUgUENJZSBzY2FuIDAwMDAxZGU0OjAwMDAwMDAxDQogIDQuMTUgUlAxX0NISVBfSU5GTyAyMDAwMTkyNw0KDQogIDQuMTUgUlBpOiBCT09UTE9BREVSIHJlbGVhc2UgVkVSU0lPTjoyMjI2YTg1MyBEQVRFOiAyMDI1LzEyLzA4IFRJTUU6IDE5OjI5OjU0DQogIDQuMTYgQk9PVE1PREU6IDB4MDYgcGFydGl0aW9uIDAgYnVpbGQtdHMgQlVJTERfVElNRVNUQU1QPTE3NjUyMjIxOTQgc2VyaWFsIGRhNTkxNzQwIGJvYXJkcmV2IGQwNDE3MSBzdGMgNDE2Mzc0OQ0KICA0LjE5IHVzYl9wZF9pbml0IHN0YXR1cyAwDQogIDQuMjYgWEhDSS1TVE9QDQogIDQuMjYgeEhDMCB2ZXI6IDI3MiBIQ1M6IDAzMDAwNDQwIDE0MDAwMGYxIDA3ZmYwMDBhIEhDQzogMDI0MGZlNmQNCiAgNC4yNiBVU0JTVFMgMQ0KICA0LjI3IHhIQzAgdmVyOiAyNzIgSENTOiAwMzAwMDQ0MCAxNDAwMDBmMSAwN2ZmMDAwYSBIQ0M6IDAyNDBmZTZkDQogIDQuMjcgeEhDMCBwb3J0cyAzIHNsb3RzIDY0IGludHJzIDQNCiAgNC4yOCBYSENJLVNUT1ANCiAgNC4yOCB4SEMxIHZlcjogMjcyIEhDUzogMDMwMDA0NDAgMTQwMDAwZjEgMDdmZjAwMGEgSENDOiAwMjQwZmU2ZA0KICA0LjI5IFVTQlNUUyAxDQogIDQuMjkgeEhDMSB2ZXI6IDI3MiBIQ1M6IDAzMDAwNDQwIDE0MDAwMGYxIDA3ZmYwMDBhIEhDQzogMDI0MGZlNmQNCiAgNC4zMCB4SEMxIHBvcnRzIDMgc2xvdHMgNjQgaW50cnMgNA0KICA0LjM0IFNEX09DOiAwDQogIDQuNDkgQm9vdCBtb2RlOiBORVRXT1JLICgwMikgb3JkZXIgZjENCg==",
+      "bytes": 772,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "\u0000\n  4.15 PCIe scan 00001de4:00000001\r\n  4.15 RP1_CHIP_INFO 20001927\r\n\r\n  4.15 RPi: BOOTLOADER release VERSION:2226a853 DATE: 2025/12/08 TIME: 19:29:54\r\n  4.16 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 4163749\r\n  4.19 usb_pd_init status 0\r\n  4.26 XHCI-STOP\r\n  4.26 xHC0 ver: 272 HCS: 03000440 140000f1 07ff000a HCC: 0240fe6d\r\n  4.26 USBSTS 1\r\n  4.27 xHC0 ver: 272 HCS: 03000440 140000f1 07ff000a HCC: 0240fe6d\r\n  4.27 xHC0 ports 3 slots 64 intrs 4\r\n  4.28 XHCI-STOP\r\n  4.28 xHC1 ver: 272 HCS: 03000440 140000f1 07ff000a HCC: 0240fe6d\r\n  4.29 USBSTS 1\r\n  4.29 xHC1 ver: 272 HCS: 03000440 140000f1 07ff000a HCC: 0240fe6d\r\n  4.30 xHC1 ports 3 slots 64 intrs 4\r\n  4.34 SD_OC: 0\r\n  4.49 Boot mode: NETWORK (02) order f1\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    }
+  ],
+  "talos_serial_drain": {
+    "contract_version": "pi5-capture-transaction-v2",
+    "attempts": 2,
+    "total_bytes": 772,
+    "final_cursor": 4194304,
+    "empty_before_power": true,
+    "rule": "pre-power serial drain must reach an empty /serial/read response before saturated direct-read output can be treated as fresh"
+  }
+}

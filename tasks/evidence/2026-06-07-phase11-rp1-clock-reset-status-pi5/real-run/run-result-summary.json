@@ -1,0 +1,18 @@
+{
+  "capture_exit": 0,
+  "join_exit": 1,
+  "suggested": "identity-join-mismatch",
+  "identity_allowed": false,
+  "join_classification": "capture-staging-blocked",
+  "rejection_reasons": [
+    "serial-drain-not-empty-before-power",
+    "saturated-direct-read-without-empty-pre-power-drain"
+  ],
+  "marker_occurrences": 320,
+  "expected_fetch_count": 2,
+  "expected_fetch_byte_match_count": 2,
+  "expected_fetch_bytes": 47280,
+  "tftp_stable": true,
+  "final_tree": "3e64059ed440eaf48f096d8e2e4113609dbfe9f78444955003547515439c3704",
+  "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+}

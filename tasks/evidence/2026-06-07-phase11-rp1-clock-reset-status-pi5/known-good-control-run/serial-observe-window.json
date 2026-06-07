@@ -1,0 +1,32 @@
+{
+  "action": "serial read",
+  "base64": "bGUNClRBTE9TOiBycDEtY2xvY2stbWFuYWdlci1zdGF0dXMtcmVzdWx0IGNvbnRyYWN0PXBoYXNlMTEtcnAxLWNsb2NrLXJlc2V0LXN0YXR1cy1zb3VyY2UtY29udHJhY3QtdjEgdGFyZ2V0PXJwMS1jbG9jay1tYW5hZ2VyLXN0YXR1cy1yZWFkIGNsb2NrLW1hbmFnZXItYmFzZT0weDFmMDAwMTgwMDAgcGxsLXN5cy1jcy1hZGRyZXNzPTB4MWYwMDAyMDAwMCByYXc9MHhkZWFkZGVhZCBjbGstc3lzLWN0cmwtYWRkcmVzcz0weDFmMDAwMTgwMTQgcmF3PTB4ZGVhZGRlYWQgY2xrLXN5cy1kaXYtaW50LWFkZHJlc3M9MHgxZjAwMDE4MDE4IHJhdz0weGRlYWRkZWFkIGNsay1zeXMtc2VsLWFkZHJlc3M9MHgxZjAwMDE4MDIwIHJhdz0weGRlYWRkZWFkIGNsay1zbG93LXN5cy1jdHJsLWFkZHJlc3M9MHgxZjAwMDE4MDI0IHJhdz0weGRlYWRkZWFkIGNsay11YXJ0LWN0cmwtYWRkcmVzcz0weDFmMDAwMTgwNTQgcmF3PTB4ZGVhZGRlYWQgY2xrLXVhcnQtZGl2LWludC1hZGRyZXNzPTB4MWYwMDAxODA1OCByYXc9MHhkZWFkZGVhZCBjbGstdWFydC1zZWwtYWRkcmVzcz0weDFmMDAwMTgwNjAgcmF3PTB4ZGVhZGRlYWQgcGxsLXN5cy1sb2NrPXRy9Q==",
+  "bytes": 589,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "le\r\nTALOS: rp1-clock-manager-status-result contract=phase11-rp1-clock-reset-status-source-contract-v1 target=rp1-clock-manager-status-read clock-manager-base=0x1f00018000 pll-sys-cs-address=0x1f00020000 raw=0xdeaddead clk-sys-ctrl-address=0x1f00018014 raw=0xdeaddead clk-sys-div-int-address=0x1f00018018 raw=0xdeaddead clk-sys-sel-address=0x1f00018020 raw=0xdeaddead clk-slow-sys-ctrl-address=0x1f00018024 raw=0xdeaddead clk-uart-ctrl-address=0x1f00018054 raw=0xdeaddead clk-uart-div-int-address=0x1f00018058 raw=0xdeaddead clk-uart-sel-address=0x1f00018060 raw=0xdeaddead pll-sys-lock=tr�",
+  "truncated": false,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 110,
+    "elapsed_seconds": 1,
+    "settle_ms": 1000,
+    "max_bytes": 327680,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 589,
+    "required_marker": "TALOS:",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": true,
+    "has_firmware_network": false,
+    "firmware_network_occurrences": 0,
+    "required_marker_occurrences": 1
+  }
+}
