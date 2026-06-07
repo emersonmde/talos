@@ -1,0 +1,131 @@
+{
+  "taskId": "phase11-rp1-clock-reset-status-closeout-20260607",
+  "status": "accepted",
+  "classification": "rp1-clock-manager-status-frontier-closed",
+  "evidenceLevel": [
+    "static reconciliation",
+    "docs validation",
+    "git diff checks"
+  ],
+  "sourceContract": {
+    "taskId": "phase11-rp1-clock-reset-status-source-contract-20260607",
+    "classification": "accepted-source-contract",
+    "commit": "d4415389cf33f922a08883e27ea5915d9cf6887f",
+    "contractId": "phase11-rp1-clock-reset-status-source-contract-v1",
+    "target": "rp1-clock-manager-status-read",
+    "allowedReads": [
+      "PLL_SYS_CS @ 0x1f00020000",
+      "CLK_SYS_CTRL @ 0x1f00018014",
+      "CLK_SYS_DIV_INT @ 0x1f00018018",
+      "CLK_SYS_SEL @ 0x1f00018020",
+      "CLK_SLOW_SYS_CTRL @ 0x1f00018024",
+      "CLK_UART_CTRL @ 0x1f00018054",
+      "CLK_UART_DIV_INT @ 0x1f00018058",
+      "CLK_UART_SEL @ 0x1f00018060"
+    ],
+    "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-source-contract/evidence-map.json"
+  },
+  "localStaticCore": {
+    "taskId": "phase11-rp1-clock-reset-status-core-20260607",
+    "classification": "accepted-local-static-clock-reset-status-core",
+    "commit": "39dfd6c56266761750da17c1ad5da61fc3186510",
+    "realArchiveSha256": "22d7592ef17ff5641e724d5b9ebcb3496071cb9237e22adadc915358079d268d",
+    "realKernelSha256": "4267655039e0882377407302f012c610f0b011a23507c1a6aabcbd515f83dd8b",
+    "realKernelSizeBytes": 47280,
+    "controlArchiveSha256": "9fff700d3f1f324954e29d0179e6695b118f0e4bd68d10318cdb968fabf99e55",
+    "controlKernelSha256": "d0f3150df81a78f1a9bc7960390256d8162ec49ca92348604ac64ab7336ddbab",
+    "controlKernelSizeBytes": 47120,
+    "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-core/evidence-map.json"
+  },
+  "controlProof": {
+    "taskId": "phase11-rp1-clock-reset-status-control-pi5-20260607",
+    "classification": "no-mmio-clock-reset-status-control-visible",
+    "commit": "86cb47cac3a278c26f40b9b24b3475137db4f9de",
+    "selectedTreeHash": "eeb71c0bfc3cbd259a18c5f53403555628a5cf8f3273d764cab80656087dbb66",
+    "expectedFetchBytes": 47120,
+    "expectedFetchCount": 2,
+    "marker": "TALOS: rp1-clock-manager-status-control",
+    "markerOccurrences": 49,
+    "identityJoin": "capture-transaction-v2-ready",
+    "identityJoinRejectionReasons": [],
+    "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-control-pi5/evidence-map.json"
+  },
+  "realProof": {
+    "taskId": "phase11-rp1-clock-reset-status-pi5-20260607",
+    "classification": "rp1-clock-manager-status-visible",
+    "commit": "de7bac557ffe049e26b787698914a1e6a5803b1e",
+    "acceptedRun": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-pi5/real-rerun-after-kg",
+    "selectedTreeHash": "3e64059ed440eaf48f096d8e2e4113609dbfe9f78444955003547515439c3704",
+    "expectedFetchBytes": 47280,
+    "expectedFetchCount": 2,
+    "marker": "TALOS: rp1-clock-manager-status-result",
+    "markerOccurrences": 320,
+    "identityJoin": "capture-transaction-v2-ready",
+    "identityJoinRejectionReasons": [],
+    "reportedFields": {
+      "pllSysLock": true,
+      "clkSysEnabled": true,
+      "clkUartEnabled": true
+    },
+    "originalTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "finalOriginalTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-pi5/evidence-map.json"
+  },
+  "acceptedClaims": [
+    "the source-backed read-only RP1 clock manager status contract is closed as the current accepted frontier",
+    "the no-MMIO/no-RP1/no-GIC control output path was proven before accepting the real diagnostic",
+    "the real Pi 5 diagnostic reported PLL_SYS locked, CLK_SYS enabled, and CLK_UART enabled through the contracted read-only snapshot",
+    "the accepted real proof passed pi5-capture-transaction-v2 identity join with stable pre-restore TFTP and final restore to the original boot tree"
+  ],
+  "unacceptedClaims": [
+    "RP1 clock/reset writes",
+    "reset-controller writes",
+    "clock/reset ownership",
+    "GPIO ownership",
+    "GPIO event generation",
+    "interrupt delivery",
+    "GIC acknowledgement",
+    "ISR or handler ownership",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "summary": "Closed the source/core/control/real proof chain as an accepted read-only RP1 clock manager status frontier."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Retained the paired no-MMIO/no-RP1/no-GIC control proof before accepting the real Pi 5 diagnostic."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Retained first-run rejection, known-good/control triage, decisive rerun, identity join, stable TFTP, and restore proof."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Updated roadmap and project contract docs for the accepted read-only clock manager status frontier."
+    },
+    {
+      "disposition": "deferred",
+      "summary": "Clock/reset writes, GPIO ownership retries, and interrupt-delivery work require supervisor planning with a new source contract."
+    },
+    {
+      "disposition": "not-an-issue",
+      "summary": "Visible clock status values are not treated as proof of clock/reset ownership."
+    }
+  ],
+  "validation": {
+    "staticInspection": "pass",
+    "gitDiffCheck": "pass",
+    "mdbookBuild": "pass",
+    "gitDiffCachedCheck": "pass"
+  },
+  "nextAction": "No explicit worker-owned task remains; planningNeeded=true for supervisor planning of the next Milestone 11.2 feature slice. Clock/reset writes, GPIO ownership retries, and interrupt-delivery work require a new source contract and acceptance criteria."
+}

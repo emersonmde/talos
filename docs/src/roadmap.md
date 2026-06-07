@@ -7758,6 +7758,43 @@ generation, interrupt delivery, GIC acknowledgement, handler ownership,
 DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
 Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-clock-reset-status-core-20260607 is accepted as
+accepted-local-static-clock-reset-status-core. It adds the real
+rpi5_rp1_clock_manager_status_read diagnostic and paired
+rpi5_rp1_clock_manager_status_no_mmio_control candidate. The real candidate
+performs only the eight contracted read-only clock manager loads and reports
+TALOS: rp1-clock-manager-status-result; the control preserves the output shape
+with no RP1 clock/reset, GPIO/RIO/pads, MSI-X/PCIe/MIP, or GIC MMIO address
+construction. No hardware behavior is accepted by this task.
+
+phase11-rp1-clock-reset-status-control-pi5-20260607 accepted the
+no-MMIO/no-RP1/no-GIC clock/reset/status control path as
+no-mmio-clock-reset-status-control-visible. The run selected tree
+eeb71c0bfc3cbd259a18c5f53403555628a5cf8f3273d764cab80656087dbb66, retained
+two 47,120-byte candidate TFTP fetches, passed v2 identity join with no
+rejection reasons, retained 49 control markers, and restored to the pre-run
+tree. This accepts only the simulated/control output and capture path.
+
+phase11-rp1-clock-reset-status-pi5-20260607 accepted the real read-only clock
+manager status diagnostic as rp1-clock-manager-status-visible. After
+serial-drain/capture triage, the accepted rerun selected tree
+3e64059ed440eaf48f096d8e2e4113609dbfe9f78444955003547515439c3704, retained
+two 47,280-byte candidate TFTP fetches, passed v2 identity join with no
+rejection reasons, retained 320 result markers, and reported
+pll-sys-lock=true, clk-sys-enabled=true, and clk-uart-enabled=true. The lab was
+restored to the original pre-run tree after the accepted rerun.
+
+phase11-rp1-clock-reset-status-closeout-20260607 closes the chain as
+rp1-clock-manager-status-frontier-closed. The accepted frontier is only the
+source-backed clock manager status contract, local real/control candidate
+split, no-MMIO/no-RP1/no-GIC control proof, and real Pi 5 read-only status
+visibility proof. Clock/reset writes or ownership, GPIO ownership, event
+generation, interrupt delivery, GIC acknowledgement, handler ownership,
+DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
+Milestone 11.3, and phase transition remain unaccepted. Supervisor planning is
+required for the next Milestone 11.2 feature slice; this closeout does not
+create a worker-owned follow-up task.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

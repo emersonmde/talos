@@ -402,6 +402,52 @@ interrupt delivery, handler ownership, DMA/cache, storage, generated-root,
 networking, SSH, broader PCIe enumeration, Milestone 11.3, and phase
 transition remain unaccepted.
 
+phase11-rp1-clock-reset-status-core-20260607 accepts the local/static
+diagnostic pair for that contract only. The real candidate performs the eight
+contracted read-only clock manager loads and repeats TALOS:
+rp1-clock-manager-status-result with decoded PLL_SYS/CLK_SYS/CLK_UART fields.
+The paired control repeats TALOS: rp1-clock-manager-status-control with the
+same output shape while constructing no RP1 clock/reset, GPIO/RIO/pads,
+MSI-X/PCIe/MIP, or GIC MMIO address. No Pi 5 hardware behavior is accepted by
+the local/static core.
+
+phase11-rp1-clock-reset-status-control-pi5-20260607 accepts only the serialized
+Pi 5 no-MMIO/no-RP1/no-GIC control output/capture path. The accepted control
+run selected tree
+eeb71c0bfc3cbd259a18c5f53403555628a5cf8f3273d764cab80656087dbb66, retained
+two served 47,120-byte da591740/kernel_2712.img TFTP fetches, passed the v2
+identity join with no rejection reasons, retained 49 TALOS:
+rp1-clock-manager-status-control markers, and restored to tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This
+proves only the simulated/control output and capture path before the real
+diagnostic.
+
+phase11-rp1-clock-reset-status-pi5-20260607 accepts the selected real read-only
+RP1 clock manager status boundary on Pi 5. After a first candidate run and
+known-good/control run were rejected by serial-drain/capture freshness evidence,
+the accepted diagnostic rerun selected tree
+3e64059ed440eaf48f096d8e2e4113609dbfe9f78444955003547515439c3704, retained
+two served 47,280-byte da591740/kernel_2712.img TFTP fetches, passed the v2
+identity join with no rejection reasons, retained 320 TALOS:
+rp1-clock-manager-status-result records, and restored the lab to the original
+pre-run tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The
+visible result reported pll-sys-lock=true, clk-sys-enabled=true,
+clk-uart-enabled=true, and classification
+rp1-clock-manager-status-visible.
+
+phase11-rp1-clock-reset-status-closeout-20260607 closes that chain as
+rp1-clock-manager-status-frontier-closed. The accepted frontier is limited to
+the source-backed clock manager status contract, the local real/control
+candidate split, the paired no-MMIO/no-RP1/no-GIC control output proof, and
+the real Pi 5 read-only visibility proof. RP1 clock/reset writes, reset
+ownership, GPIO ownership, event generation, interrupt delivery, GIC
+acknowledgement, handler ownership, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe enumeration, Milestone 11.3, and phase
+transition remain unaccepted. Future clock/reset writes, GPIO ownership
+retries, or interrupt-delivery work require supervisor planning with a new
+source contract and acceptance criteria.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware
