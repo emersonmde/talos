@@ -7440,6 +7440,18 @@ generated-root, networking, SSH, broader PCIe enumeration, Milestone 11.2
 implementation, and phase transition remain unaccepted until that source
 contract and later proof tasks satisfy their own gates.
 
+phase11-rp1-irq-clock-gpio-source-contract-20260607 is accepted as
+phase11-rp1-irq-clock-gpio-contract-v1. It retains Raspberry Pi Linux
+`rpi-6.12.y` source references for RP1 GPIO/pads, RP1 interrupt IDs/MSI-X
+routing, and RP1 clock/reset assumptions, then selects exactly one next
+diagnostic: the read-only `rp1-gpio14-status-read`, a single 32-bit volatile
+load from CPU physical `0x1f000d0070` for RP1 IO_BANK0 GPIO14 STATUS. The
+paired no-MMIO control must be accepted before any real Pi 5 diagnostic proof.
+GPIO/pin-control ownership, pad writes, interrupt enablement or delivery,
+clock/reset programming, DMA/cache, storage, generated-root, networking, SSH,
+broader PCIe enumeration, and Pi 5 hardware behavior for this diagnostic remain
+unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

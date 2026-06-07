@@ -1,0 +1,50 @@
+{
+  "taskId": "phase11-rp1-irq-clock-gpio-source-contract-20260607",
+  "classification": "accepted-source-contract",
+  "evidenceLevel": "static source/doc inspection",
+  "contractId": "phase11-rp1-irq-clock-gpio-contract-v1",
+  "selectedDiagnostic": {
+    "name": "rp1-gpio14-status-read",
+    "operation": "read-only",
+    "address": "0x1f000d0070",
+    "widthBits": 32,
+    "source": "RP1 IO_BANK0 GPIO14 STATUS",
+    "rp1BusCalculation": "0xc040000000 + 0x0d0000 + (14 * 8) + 0x0 = 0xc0400d0070",
+    "cpuPhysicalCalculation": "0x1f00000000 + 0x0d0070 = 0x1f000d0070"
+  },
+  "retainedEvidence": [
+    {"path": "tasks/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract.md", "kind": "task record"},
+    {"path": "docs/src/project/phase11-rp1-irq-clock-gpio-contract.md", "kind": "accepted contract doc"},
+    {"path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/source-reference-notes.md", "kind": "source-reference notes"},
+    {"path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/rp1-mfd.h", "kind": "Raspberry Pi Linux rpi-6.12.y dt-binding"},
+    {"path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/rp1-clock.h", "kind": "Raspberry Pi Linux rpi-6.12.y dt-binding"},
+    {"path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/pinctrl-rp1.c", "kind": "Raspberry Pi Linux rpi-6.12.y pinctrl/GPIO source"},
+    {"path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/clk-rp1.c", "kind": "Raspberry Pi Linux rpi-6.12.y clock source"},
+    {"path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/mfd-rp1.c", "kind": "Raspberry Pi Linux rpi-6.12.y RP1 MFD/MSI-X source"}
+  ],
+  "acceptedClaims": [
+    "Source references identify RP1 GPIO/pads, interrupt IDs and routing, and clock/reset assumptions for the first Milestone 11.2 slice.",
+    "The next exact diagnostic is the read-only rp1-gpio14-status-read at CPU physical 0x1f000d0070.",
+    "A no-MMIO control must be accepted before the real Pi 5 GPIO status proof."
+  ],
+  "unacceptedClaims": [
+    "RP1 GPIO ownership",
+    "pin-control or pad writes",
+    "interrupt enablement or delivery",
+    "clock/reset programming",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Pi 5 hardware behavior for this diagnostic"
+  ],
+  "validation": [
+    {"gate": "Static source/doc inspection with retained notes", "result": "pass", "evidence": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/source-reference-notes.md"},
+    {"gate": "git diff --check", "result": "pass"},
+    {"gate": "/home/node/.cargo/bin/mdbook build", "result": "pass"},
+    {"gate": "git diff --cached --check", "result": "pass"}
+  ],
+  "commit": "recorded in talos-supervisor-state.json after acceptance commit"
+}
