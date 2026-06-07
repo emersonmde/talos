@@ -368,6 +368,21 @@ ownership, broad GPIO ownership, clock/reset programming, DMA/cache, storage,
 generated-root, networking, SSH, broader PCIe enumeration, Milestone 11.3, and
 phase transition remain unaccepted.
 
+phase11-rp1-gpio-owned-event-discriminator-closeout-20260607 closes that
+chain as gpio16-owned-event-preflight-blocked-frontier-closed. The accepted
+frontier is limited to the source-backed GPIO16 discriminator contract, the
+local real/control candidate split, the paired no-MMIO/no-RP1/no-GIC control
+output proof, and the real Pi 5 blocker proof. Same-shaped GPIO16
+event-discriminator hardware reruns are blocked unless a future supervisor
+task supplies a different discriminator or source-backed ownership/function
+acceptance criteria that avoid the observed GPIO16 fsel 13 / unknown-function
+blocker. GPIO16 event generation, interrupt pending generation, interrupt
+enablement or delivery, GIC acknowledgement, handler ownership, broad GPIO
+ownership, Talos-owned GPIO state, GPIO16 action writes on hardware,
+clock/reset programming, DMA/cache, storage, generated-root, networking, SSH,
+broader PCIe enumeration, Milestone 11.3, and phase transition remain
+unaccepted.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware

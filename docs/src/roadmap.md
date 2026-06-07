@@ -7730,6 +7730,16 @@ ownership, broad GPIO ownership, clocks and resets, DMA/cache, storage,
 generated-root, networking, SSH, broader PCIe, Milestone 11.3, and phase
 transition remain unaccepted.
 
+phase11-rp1-gpio-owned-event-discriminator-closeout-20260607 closes the chain
+as gpio16-owned-event-preflight-blocked-frontier-closed. The accepted boundary
+is only the source-backed GPIO16 discriminator contract, the local
+real/control candidate split, the paired no-MMIO/no-RP1/no-GIC control proof,
+and the real Pi 5 blocker proof. Same-shaped GPIO16 event-discriminator
+hardware reruns are not progress without a different discriminator or new
+source-backed ownership/function acceptance criteria. Supervisor planning is
+required for the next Milestone 11.2 feature slice; this closeout does not
+create a worker-owned follow-up task or accept a phase transition.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

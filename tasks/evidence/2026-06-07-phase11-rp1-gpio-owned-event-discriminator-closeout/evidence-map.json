@@ -1,0 +1,141 @@
+{
+  "task": "phase11-rp1-gpio-owned-event-discriminator-closeout-20260607",
+  "status": "accepted",
+  "classification": "gpio16-owned-event-preflight-blocked-frontier-closed",
+  "evidenceLevel": [
+    "static inspection",
+    "source contract reconciliation",
+    "local/static core reconciliation",
+    "lab-controller API evidence review",
+    "serial hardware boot/output evidence review",
+    "stable same-cursor TFTP evidence review",
+    "v2 identity join evidence review",
+    "restore proof review",
+    "docs validation",
+    "git diff checks"
+  ],
+  "inputs": {
+    "sourceContract": {
+      "task": "phase11-rp1-gpio-owned-event-discriminator-source-contract-20260607",
+      "classification": "accepted-source-contract",
+      "commit": "4776a5cb923d3821491354484a0fa840e4870648",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-source-contract/evidence-map.json"
+    },
+    "diagnosticCore": {
+      "task": "phase11-rp1-gpio-owned-event-discriminator-core-20260607",
+      "classification": "accepted-local-static-gpio16-owned-event-discriminator-core",
+      "commit": "90acfb04c480dd22d4d4d7bff1693c41c1f24908",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-core/evidence-map.json"
+    },
+    "noMmioControl": {
+      "task": "phase11-rp1-gpio-owned-event-discriminator-control-pi5-20260607",
+      "classification": "no-mmio-gpio16-owned-event-discriminator-control-visible",
+      "commit": "95b5f07572beb2f59656b81c2d1241db477e4b5b",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-control-pi5/evidence-map.json"
+    },
+    "realDiagnostic": {
+      "task": "phase11-rp1-gpio-owned-event-discriminator-pi5-20260607",
+      "classification": "gpio16-owned-event-preflight-blocked-pin-function",
+      "commit": "04017bc3c92c30702c0c4cb93e0226e089b37f3e",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-pi5/evidence-map.json"
+    }
+  },
+  "acceptedFrontier": {
+    "name": "gpio16-owned-event-preflight-blocked-frontier-closed",
+    "contractId": "phase11-rp1-gpio-owned-event-discriminator-source-contract-v1",
+    "target": "rp1-gpio16-owned-level-high-event-discriminator",
+    "operationClass": "bounded GPIO16 event/source-status preflight with exact restore, blocked before action writes",
+    "pin": "GPIO16",
+    "gpio16BitMask": "0x00010000",
+    "allowedReads": [
+      "GPIO16_STATUS @ 0x1f000d0080",
+      "GPIO16_CTRL @ 0x1f000d0084",
+      "IO_BANK0_INTE @ 0x1f000d011c",
+      "IO_BANK0_INTS @ 0x1f000d0124",
+      "RIO0_OUT @ 0x1f000e0000",
+      "RIO0_OE @ 0x1f000e0004",
+      "RIO0_IN @ 0x1f000e0008",
+      "GPIO16_PAD @ 0x1f000f0044",
+      "GICD_ISENABLER5 @ 0x107fff9114",
+      "GICD_ISPENDR5 @ 0x107fff9214",
+      "GICD_ISACTIVER5 @ 0x107fff9314",
+      "GICC_HPPIR @ 0x107fffa018"
+    ],
+    "observedStatus": {
+      "gpio16Funcsel": 13,
+      "gpio16FuncName": "unknown",
+      "actionSkipped": true,
+      "classification": "gpio16-owned-event-preflight-blocked-pin-function"
+    },
+    "marker": "TALOS: rp1-gpio16-owned-event-discriminator-result",
+    "acceptedRerunMarkerOccurrences": 38,
+    "acceptedRerunSelectedTreeHash": "348b127402b41ca3115ed09aa2e55cc2dce837dc04a7e4770f0143bd17e4c61c",
+    "acceptedRerunExpectedFetchPath": "da591740/kernel_2712.img",
+    "acceptedRerunExpectedFetchBytes": 52056,
+    "acceptedRerunExpectedFetchCount": 2,
+    "identityJoin": "passed with no rejection reasons",
+    "restore": "post-run restore returned the lab to the pre-run boot tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "acceptedClaims": [
+    "source-backed GPIO16 event/source-status discriminator register identity",
+    "local/static real candidate implements only the contracted GPIO16 discriminator and restore path",
+    "paired no-MMIO/no-RP1/no-GIC control candidate constructs no forbidden RP1/GIC/MSI-X/PCIe/MIP/GPIO/RIO/pad/clock-reset MMIO path",
+    "no-MMIO/no-RP1/no-GIC control output shape is visible on Pi 5 under v2 identity join",
+    "real GPIO16 discriminator output is visible on Pi 5 under v2 identity join",
+    "later GPIO16 event-generation work is blocked because the preflight observed fsel 13 / unknown function before action writes"
+  ],
+  "unacceptedClaims": [
+    "GPIO16 event generation",
+    "interrupt pending generation",
+    "interrupt enablement",
+    "interrupt delivery",
+    "IAR or EOIR acknowledgement",
+    "ISR or handler ownership",
+    "broad GPIO driver ownership",
+    "Talos-owned GPIO state",
+    "GPIO16 action writes on hardware",
+    "clock/reset programming",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "summary": "Closed source/core/control/real proof chain as a GPIO16 event-discriminator blocker frontier with retained identity-joined Pi 5 evidence."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Recorded paired no-MMIO/no-RP1/no-GIC control proof as satisfied before the real Pi 5 blocker proof."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Retained rejected first real run, known-good control, and decisive rerun as capture hygiene evidence while accepting only the decisive identity-joined rerun."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Updated roadmap and project contract docs for the accepted blocker frontier."
+    },
+    {
+      "disposition": "deferred",
+      "summary": "Event-generation or pending-generation retry requires new supervisor planning around a different discriminator or source-backed ownership/function strategy."
+    },
+    {
+      "disposition": "not-an-issue",
+      "summary": "The accepted result is a contract blocker classification, not interrupt delivery evidence or proof that Talos owns GPIO16."
+    }
+  ],
+  "nextAction": "Set planningNeeded=true for supervisor planning of the next Milestone 11.2 feature slice; do not create same-shaped GPIO16 event-discriminator hardware rerun tasks without a different discriminator or new acceptance criteria.",
+  "validation": {
+    "staticInspection": "passed",
+    "gitDiffCheck": "pass",
+    "mdbookBuild": "pass",
+    "gitDiffCachedCheck": "pass"
+  },
+  "commit": null
+}
