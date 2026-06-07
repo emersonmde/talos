@@ -185,6 +185,21 @@ generated-root, networking, SSH, broader PCIe enumeration, Milestone 11.3, and
 phase transition remain unaccepted. Supervisor planning is required for the
 next Milestone 11.2 feature slice.
 
+phase11-rp1-gpio-bank-source-status-contract-20260607 accepts the next narrow
+source contract only. The selected diagnostic target is
+`rp1-io-bank0-source-status-read`: a read-only/non-destructive GPIO bank
+source-status snapshot for RP1 IO_BANK0 before any GPIO event generation,
+interrupt enablement, or delivery work. The primary allowed read is IO_BANK0
+`INTS` at CPU physical `0x1f000d0124`; the companion allowed read is
+IO_BANK0 `INTE` at CPU physical `0x1f000d011c`. Both are 32-bit volatile
+loads. Bank0 covers GPIO0 through GPIO27, and GPIO14 is bit mask
+`0x00004000`. Retained Linux source reads `INTS` in the chained GPIO IRQ
+handler and acknowledges events separately through GPIO `CTRL` IRQRESET
+writes, so this source contract treats the snapshot as read-only and forbids
+the acknowledgement path. The paired control must preserve the output shape
+while constructing no RP1 GPIO/RIO/pads/clock/reset, MSI-X/PCIe/MIP, or GIC
+MMIO address.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware

@@ -7579,6 +7579,21 @@ acknowledgement, handler ownership, GPIO ownership, pin-control behavior,
 clocks and resets, DMA/cache, storage, generated-root, networking, SSH,
 broader PCIe, Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-gpio-bank-source-status-contract-20260607 is accepted as
+phase11-rp1-gpio-bank-source-status-contract-v1. It selects the next
+read-only/non-destructive RP1 IO_BANK0 source-status diagnostic before any
+GPIO event generation, interrupt enablement, or delivery work. The allowed
+snapshot is limited to IO_BANK0 INTS at `0x1f000d0124` and IO_BANK0 INTE at
+`0x1f000d011c`, both 32-bit volatile loads. Bank0 covers GPIO0 through
+GPIO27, GPIO14 is bit mask `0x00004000`, and Linux source acknowledges GPIO
+events through separate GPIO CTRL IRQRESET writes, which this contract
+forbids. The paired control must construct no RP1 GPIO/RIO/pads/clock/reset,
+MSI-X/PCIe/MIP, or GIC MMIO path before any real Pi 5 proof. This accepts only
+a source contract, not GPIO event generation, pending generation, interrupt
+enablement or delivery, IAR/EOIR acknowledgement, handler ownership, GPIO
+ownership, clock/reset programming, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe, Milestone 11.3, or phase transition.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

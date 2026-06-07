@@ -1,0 +1,138 @@
+{
+  "taskId": "phase11-rp1-gpio-bank-source-status-contract-20260607",
+  "status": "accepted",
+  "classification": "accepted-source-contract",
+  "evidenceLevel": [
+    "static source inspection",
+    "static documentation inspection"
+  ],
+  "acceptedContract": {
+    "id": "phase11-rp1-gpio-bank-source-status-contract-v1",
+    "target": "rp1-io-bank0-source-status-read",
+    "operationClass": "read-only/non-destructive",
+    "sourceHwirq": 0,
+    "bank": 0,
+    "bankGpios": "GPIO0..GPIO27",
+    "gpio14BitMask": "0x00004000",
+    "allowedReads": [
+      {
+        "name": "IO_BANK0_INTS",
+        "offset": "0x0124",
+        "address": "0x1f_000d_0124",
+        "widthBits": 32,
+        "role": "primary source-status register"
+      },
+      {
+        "name": "IO_BANK0_INTE",
+        "offset": "0x011c",
+        "address": "0x1f_000d_011c",
+        "widthBits": 32,
+        "role": "companion enable-mask status register"
+      }
+    ]
+  },
+  "sourceReferences": [
+    {
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "claims": [
+        "RP1 bus 0xc0_400d_0000 translates to CPU physical 0x1f_000d_0000",
+        "GIC-visible route status frontier is closed before this next source slice"
+      ]
+    },
+    {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/pinctrl-rp1.c",
+      "claims": [
+        "bank0 min_gpio=0 and num_gpios=28",
+        "bank0 inte_offset=0x011c and ints_offset=0x0124",
+        "rp1_gpio_irq_handler reads bank->ints_offset before separate IRQRESET acknowledgement writes",
+        "rp1_gpio_irq_config writes INTE set/clear aliases; this contract permits no such writes"
+      ]
+    },
+    {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/rp1-mfd.h",
+      "claims": [
+        "RP1_IO_BANK0_BASE = 0x0d0000",
+        "RP1_INT_IO_BANK0 = 0"
+      ]
+    },
+    {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-closeout/evidence-map.json",
+      "claims": [
+        "GIC-visible route status frontier is accepted and closed",
+        "Interrupt delivery and handler ownership remain unaccepted"
+      ]
+    }
+  ],
+  "reportFields": [
+    "contract",
+    "target",
+    "bank",
+    "bank-gpios",
+    "source-hwirq",
+    "ints-address",
+    "inte-address",
+    "width",
+    "inte-raw",
+    "ints-raw",
+    "gpio14-enabled",
+    "gpio14-source-status",
+    "source-status-nonzero-mask",
+    "classification"
+  ],
+  "classifications": [
+    "gpio-bank-source-status-visible",
+    "gpio-bank-source-status-bus-fault-or-trap-visible",
+    "candidate-fetch-without-gpio-bank-source-status-marker",
+    "capture-staging-blocked",
+    "staging/build-blocker"
+  ],
+  "forbiddenOperations": [
+    "GPIO INTE writes",
+    "GPIO CTRL writes",
+    "GPIO IRQRESET acknowledgement",
+    "GPIO event generation",
+    "RP1 RIO/pads/clock/reset MMIO",
+    "MSI-X writes or reads outside the accepted prior evidence",
+    "PCIe config/MSI/MIP MMIO",
+    "GIC reads or writes",
+    "GICC_IAR read",
+    "GICC_EOIR write",
+    "interrupt unmasking",
+    "ISR installation",
+    "GPIO ownership or pin-control changes"
+  ],
+  "acceptedClaims": [
+    "source-backed IO_BANK0 INTS source-status offset and address",
+    "read-only companion IO_BANK0 INTE offset and address",
+    "one read-only/non-destructive GPIO bank source-status diagnostic shape",
+    "paired no-MMIO/no-RP1/no-GIC control requirements"
+  ],
+  "unacceptedClaims": [
+    "GPIO event generation",
+    "interrupt pending generation",
+    "interrupt enablement",
+    "parent interrupt delivery",
+    "CPU interface delivery",
+    "GIC acknowledgement",
+    "ISR or handler ownership",
+    "GPIO ownership",
+    "pin-control state",
+    "pad writes",
+    "clock/reset programming",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "validation": {
+    "staticInspection": "source-reference-notes.md",
+    "gitDiffCheck": "pass",
+    "mdbookBuild": "pass",
+    "gitDiffCachedCheck": "pass"
+  },
+  "commit": null
+}
