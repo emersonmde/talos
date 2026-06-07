@@ -955,17 +955,40 @@ MMIO. Interrupt enablement, ISR installation, delivery, GPIO ownership,
 clock/reset programming, DMA/cache, storage, generated-root, networking, SSH,
 broader PCIe, Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-interrupt-routing-diagnostic-core-20260607 implements that source
+contract as a local/static diagnostic pair. The real candidate performs exactly
+one 32-bit volatile load from `0x1f00108008` and reports the source-predicted
+IO_BANK0 hwirq, MSI-X vector, and GIC route only if the load returns. The
+paired no-MMIO/no-enable control preserves the same terminal output shape with
+`address=not-constructed` and `classification=simulated/control`, constructs
+no forbidden RP1/MSI-X/PCIe/MIP/GIC address, and performs zero forbidden MMIO
+loads or stores. No hardware behavior is accepted by this local/static core.
+
+phase11-rp1-interrupt-routing-no-mmio-control-pi5-20260607 accepts only the
+serialized Pi 5 no-MMIO/no-enable control output/capture path. The accepted
+rerun selected tree
+`c4d59ab46368e4f79f59b10543d54cf6b2198e86f57b7a2e0bfdf8c2313dc1ae`,
+retained two served 46,520-byte `da591740/kernel_2712.img` TFTP fetches,
+passed the v2 identity join with no rejection reasons, and retained 990
+occurrences of `TALOS: rp1-interrupt-routing-control`. This proves only that
+the simulated/control no-MMIO output shape is visible through the repaired
+capture path before the real diagnostic. Real RP1 MSIX_CFG read behavior,
+interrupt routing, interrupt delivery, GPIO ownership, pin-control, clocks,
+resets, DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
+Milestone 11.3, and phase transition remain unaccepted.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when
 `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read`,
 `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read_delayed_marker`,
-`TALOS_BOOT_SCENARIO=rpi5_rp1_final_preload_marker_hold`, or
+`TALOS_BOOT_SCENARIO=rpi5_rp1_final_preload_marker_hold`,
 `TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_read_hold_control`,
-`TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_tail_stable_result`, or
-`TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_tail_stable_no_mmio_control` is
-selected. The
-original path branches directly from `rust_entry`, reports
+`TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_tail_stable_result`,
+`TALOS_BOOT_SCENARIO=rpi5_rp1_uart0_fr_tail_stable_no_mmio_control`,
+`TALOS_BOOT_SCENARIO=rpi5_rp1_interrupt_routing_msix_cfg_read`, or
+`TALOS_BOOT_SCENARIO=rpi5_rp1_interrupt_routing_no_mmio_control` is selected.
+The original path branches directly from `rust_entry`, reports
 `rpi5-rp1-uart0-fr-read: start` and
 `rpi5-rp1-uart0-fr-read: pre-mmio-read` through the UART10 early-serial
 helper, flushes UART10, then reads exactly `RP1_UART0_FR`
@@ -984,6 +1007,12 @@ the returned read-value/classification text into a repeated terminal marker so
 a saturated serial window can retain the result if the load returns. The
 tail-stable no-MMIO control path shares the repeated result-output shape with
 an explicit simulated/control classification and no RP1 address construction.
+The interrupt-routing result path performs the accepted single
+read-only/no-enable MSIX_CFG(0) load and then repeats the returned routing
+fields. The
+interrupt-routing no-MMIO/no-enable control path shares that repeated output
+shape with address=not-constructed, simulated/control classification, and no
+forbidden RP1/MSI-X/PCIe/MIP/GIC address construction or MMIO.
 The pre-load and hold-control markers are discriminators for the next
 serialized proof: if hardware reaches a pre-read marker but not the read-value
 line, the result is an at-or-after-load no-return/trap boundary, not a mapping
@@ -1030,6 +1059,17 @@ Artifact helpers:
   scripts/rpi5-rp1-uart0-fr-tail-stable-no-mmio-control-review.sh build and
   inspect the no-RP1-MMIO tail-stable control archive required before the RP1
   hardware proof.
+- scripts/rpi5-rp1-interrupt-routing-msix-cfg-read-image.sh,
+  scripts/rpi5-rp1-interrupt-routing-msix-cfg-read-boot-tree.sh,
+  scripts/rpi5-rp1-interrupt-routing-msix-cfg-read-archive.sh, and
+  scripts/rpi5-rp1-interrupt-routing-msix-cfg-read-review.sh build and inspect
+  the real read-only/no-enable interrupt-routing diagnostic archive.
+- scripts/rpi5-rp1-interrupt-routing-no-mmio-control-image.sh,
+  scripts/rpi5-rp1-interrupt-routing-no-mmio-control-boot-tree.sh,
+  scripts/rpi5-rp1-interrupt-routing-no-mmio-control-archive.sh, and
+  scripts/rpi5-rp1-interrupt-routing-no-mmio-control-review.sh build and
+  inspect the no-MMIO/no-enable interrupt-routing control archive required
+  before the real diagnostic hardware proof.
 
 ## Deferred Work
 

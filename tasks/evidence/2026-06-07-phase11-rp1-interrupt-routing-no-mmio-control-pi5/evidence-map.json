@@ -1,0 +1,138 @@
+{
+  "task": "phase11-rp1-interrupt-routing-no-mmio-control-pi5-20260607",
+  "status": "accepted",
+  "classification": "no-mmio-interrupt-routing-control-visible",
+  "accepted": [
+    "Pi 5 fetched the selected no-MMIO/no-enable interrupt-routing control candidate as da591740/kernel_2712.img",
+    "accepted candidate rerun passed pi5-capture-transaction-v2 identity join with no rejection reasons",
+    "serial hardware output retained repeated TALOS: rp1-interrupt-routing-control markers from the selected candidate",
+    "stable pre-restore TFTP evidence retained two served 46520-byte candidate kernel fetches",
+    "final restore returned the lab to the pre-run boot tree"
+  ],
+  "notAccepted": [
+    "real RP1 interrupt-routing MSIX_CFG read behavior",
+    "GPIO ownership or pin-control behavior",
+    "pad writes",
+    "interrupt enablement or delivery",
+    "MSI-X enable or IACK writes",
+    "PCIe MSI delivery",
+    "GIC delivery",
+    "clock/reset programming",
+    "DMA/cache behavior",
+    "storage or generated-root behavior",
+    "networking or SSH",
+    "broader PCIe behavior",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-07-phase11-rp1-interrupt-routing-no-mmio-control-pi5.md",
+    "classification": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-no-mmio-control-pi5/classification.json",
+    "firstRun": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-no-mmio-control-pi5/control-run",
+    "rejectedCandidateRun": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-no-mmio-control-pi5/control-rerun-after-preflight-fix",
+    "knownGoodControlRun": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-no-mmio-control-pi5/known-good-control-run",
+    "acceptedCandidateRerun": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-no-mmio-control-pi5/control-rerun-after-kg",
+    "contractDoc": "docs/src/project/phase11-rp1-pcie-map-contract.md"
+  },
+  "controlCandidate": {
+    "archive": "target/talos-rpi5-rp1-interrupt-routing-no-mmio-control-core.tar.gz",
+    "archiveSha256Line": "df030dd8c696e9cb5f3bd8a28abaa3fc6584d2d540811e29b2c37b3bf156668c  target/talos-rpi5-rp1-interrupt-routing-no-mmio-control-core.tar.gz",
+    "kernelSizeBytes": 46520,
+    "marker": "TALOS: rp1-interrupt-routing-control",
+    "outputClassification": "simulated/control"
+  },
+  "firstRun": {
+    "path": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-no-mmio-control-pi5/control-run",
+    "classification": "preflight-staging-publication-mismatch",
+    "cause": "local evidence script used a non-matching tar member path, recording expected_fetch_bytes=0; capture exited before power-cycle",
+    "captureExit": 1,
+    "identityExit": 2,
+    "preflight": {
+      "expected_tree_hash": "c4d59ab46368e4f79f59b10543d54cf6b2198e86f57b7a2e0bfdf8c2313dc1ae",
+      "observed_tree_hash": "c4d59ab46368e4f79f59b10543d54cf6b2198e86f57b7a2e0bfdf8c2313dc1ae",
+      "expected_kernel": "kernel_2712.img",
+      "observed_effective_kernel": "kernel_2712.img",
+      "expected_fetch": "da591740/kernel_2712.img",
+      "expected_fetch_bytes": 0,
+      "observed_fetch_bytes": 46520,
+      "tree_matches": true,
+      "effective_kernel_matches": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": false,
+      "staging_publication_mismatch": true
+    },
+    "postManualRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "triage": {
+    "rejectedCandidateRun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-no-mmio-control-pi5/control-rerun-after-preflight-fix",
+      "classification": "capture-staging-blocked",
+      "identityJoinAllowed": false,
+      "rejection_reasons": [
+        "serial-drain-not-empty-before-power",
+        "saturated-direct-read-without-empty-pre-power-drain"
+      ],
+      "markerOccurrences": 990,
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 2
+    },
+    "knownGoodControlRun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-no-mmio-control-pi5/known-good-control-run",
+      "marker": "rpi5-production-timer-preemption: PASS",
+      "classification": "capture-staging-blocked",
+      "identityJoinAllowed": false,
+      "rejection_reasons": [
+        "serial-drain-not-empty-before-power",
+        "saturated-direct-read-without-empty-pre-power-drain"
+      ],
+      "markerOccurrences": 1,
+      "expectedFetchCount": 2
+    },
+    "acceptedCandidateRerun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-no-mmio-control-pi5/control-rerun-after-kg",
+      "identityJoinAllowed": true,
+      "rejection_reasons": [],
+      "markerOccurrences": 990,
+      "expectedFetchCount": 2,
+      "tftpEventCount": 13,
+      "expectedFetchEvents": [
+        {
+          "bytes": 46520,
+          "client_ip": "10.42.1.4",
+          "client_mac": "88:a2:9e:ae:c8:7f",
+          "filename": "da591740/kernel_2712.img",
+          "line": "Jun  7 06:29:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+          "status": "served"
+        },
+        {
+          "bytes": 46520,
+          "client_ip": "10.42.1.4",
+          "client_mac": "88:a2:9e:ae:c8:7f",
+          "filename": "da591740/kernel_2712.img",
+          "line": "Jun  7 06:29:10 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+          "status": "served"
+        }
+      ],
+      "selectedTreeHash": "c4d59ab46368e4f79f59b10543d54cf6b2198e86f57b7a2e0bfdf8c2313dc1ae",
+      "effectiveKernel": "kernel_2712.img",
+      "expectedFetchPath": "da591740/kernel_2712.img",
+      "expectedFetchBytes": 46520,
+      "postCaptureRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "postFinalRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "postFinalRestoreEffectiveKernel": "kernel_2712.img"
+    }
+  },
+  "validation": {
+    "staticArchiveIdentityCheck": "passed",
+    "labControllerPi5HardwareRun": "passed on accepted candidate rerun",
+    "identityJoin": "passed on accepted candidate rerun",
+    "stableSameCursorTftp": "passed",
+    "serialHardwareOutput": "passed",
+    "knownGoodControlAndCandidateRerun": "run and retained after rejected candidate evidence",
+    "restoreProof": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  },
+  "nextAction": "Mechanically promote phase11-rp1-interrupt-routing-diagnostic-pi5-20260607 on a future worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive."
+}

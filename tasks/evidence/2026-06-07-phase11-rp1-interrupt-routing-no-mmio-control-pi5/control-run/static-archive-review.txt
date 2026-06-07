@@ -1,0 +1,9 @@
+candidate_archive=target/talos-rpi5-rp1-interrupt-routing-no-mmio-control-core.tar.gz
+candidate_archive_sha256=df030dd8c696e9cb5f3bd8a28abaa3fc6584d2d540811e29b2c37b3bf156668c
+kernel_2712_sha256=114c1e76a54f30c6f49f39d2418c0974b52a8af63b74ccf99f034b1f7df6a154
+kernel_2712_size=46520
+header_image_size=46520
+text_offset=0
+flags=12
+control_marker=TALOS: rp1-interrupt-routing-control
+forbidden_interrupt_routing_strings_absent=true
