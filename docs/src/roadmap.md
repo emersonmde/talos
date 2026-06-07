@@ -7715,6 +7715,21 @@ lab to the pre-run production-timer boot tree. This accepts only the
 simulated/control output path; real GPIO16 event/source-status behavior remains
 queued behind its own serialized hardware proof.
 
+phase11-rp1-gpio-owned-event-discriminator-pi5-20260607 accepts the real Pi 5
+GPIO16 event discriminator run as
+gpio16-owned-event-preflight-blocked-pin-function. After the first candidate
+run was rejected by non-empty pre-power serial drain evidence, the worker ran a
+known-good control and reran the same candidate without code changes. The
+accepted rerun passed the v2 identity join, retained two stable 52,056-byte
+candidate fetches, retained 38 real result markers, and restored the lab to the
+pre-run production-timer boot tree. The result reported GPIO16 fsel 13 /
+unknown function, so the diagnostic skipped all accepted GPIO16 action writes.
+This accepts only the pin-function preflight blocker; GPIO16 event generation,
+interrupt pending generation, interrupt delivery, GIC acknowledgement, handler
+ownership, broad GPIO ownership, clocks and resets, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe, Milestone 11.3, and phase
+transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

@@ -350,6 +350,24 @@ tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
 This accepts only the simulated/control output path; real GPIO16 event/source
 status behavior remains gated on the separate real Pi 5 diagnostic task.
 
+phase11-rp1-gpio-owned-event-discriminator-pi5-20260607 accepts the real Pi 5
+GPIO16 event discriminator run as
+gpio16-owned-event-preflight-blocked-pin-function. After an initial
+serial-drain-rejected candidate run and a known-good control, the accepted
+candidate rerun selected boot tree
+348b127402b41ca3115ed09aa2e55cc2dce837dc04a7e4770f0143bd17e4c61c, fetched
+the 52,056-byte da591740/kernel_2712.img twice in stable pre-restore TFTP
+evidence, passed the v2 identity join with no rejection reasons, retained 38
+TALOS: rp1-gpio16-owned-event-discriminator-result markers, and restored to
+tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The
+result markers report GPIO16 fsel 13 / unknown function, so the diagnostic
+skipped the accepted action writes and restore writes. This accepts only the
+GPIO16 pin-function preflight blocker; GPIO16 event generation, interrupt
+pending generation, interrupt delivery, GIC acknowledgement, handler
+ownership, broad GPIO ownership, clock/reset programming, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe enumeration, Milestone 11.3, and
+phase transition remain unaccepted.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware

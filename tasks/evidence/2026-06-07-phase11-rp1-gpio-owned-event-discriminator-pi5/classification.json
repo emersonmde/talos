@@ -1,0 +1,33 @@
+{
+  "taskId": "phase11-rp1-gpio-owned-event-discriminator-pi5-20260607",
+  "status": "accepted",
+  "classification": "gpio16-owned-event-preflight-blocked-pin-function",
+  "evidenceLevel": [
+    "static archive inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "TFTP stable same-cursor evidence",
+    "pi5-capture-transaction-v2 identity join",
+    "restore proof"
+  ],
+  "acceptedRun": {
+    "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-pi5/real-rerun-after-kg",
+    "selectedTreeHash": "348b127402b41ca3115ed09aa2e55cc2dce837dc04a7e4770f0143bd17e4c61c",
+    "effectiveKernel": "kernel_2712.img",
+    "expectedFetch": "da591740/kernel_2712.img",
+    "expectedFetchBytes": 52056,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "serialMarkerOccurrences": 38,
+    "identityJoin": "capture-transaction-v2-ready",
+    "identityJoinRejectionReasons": [],
+    "terminalClassification": "gpio16-owned-event-preflight-blocked-pin-function",
+    "preflight": {
+      "gpio16Funcsel": 13,
+      "gpio16FuncName": "unknown",
+      "actionSkipped": true,
+      "restoreAttempted": false
+    },
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  }
+}
