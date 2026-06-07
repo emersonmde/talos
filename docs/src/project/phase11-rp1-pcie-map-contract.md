@@ -941,6 +941,20 @@ ownership, clocks/resets, interrupts, DMA/cache, storage, generated-root,
 networking, SSH, broader PCIe enumeration, and Milestone 11.2 implementation
 remain unaccepted until later tasks supply their own source contract and proof.
 
+phase11-rp1-interrupt-routing-source-contract-20260607 accepts the next
+Milestone 11.2 source contract only. The selected diagnostic target is
+`rp1-io-bank0-msix-cfg-read`: a read-only/no-enable 32-bit volatile load from
+RP1 `RP1_PCIE_APBS` `MSIX_CFG(0)` at CPU physical `0x1f00108008`. Source
+inspection ties this to `RP1_INT_IO_BANK0 = 0`, the `rp1_gpio` bank0 parent
+interrupt, Linux's RP1 irqdomain/MSI-X vector path, and the BCM2712
+`pcie2`/`mip0` route that predicts GIC SPI 128 / INTID 160 for MSI vector 0.
+That GIC route remains a source-backed assumption, not accepted hardware
+delivery. The required paired control must preserve the output shape while
+performing no RP1 GPIO/RIO/PADS/clock/reset/MSI-X, PCIe config/MSI/MIP, or GIC
+MMIO. Interrupt enablement, ISR installation, delivery, GPIO ownership,
+clock/reset programming, DMA/cache, storage, generated-root, networking, SSH,
+broader PCIe, Milestone 11.3, and phase transition remain unaccepted.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

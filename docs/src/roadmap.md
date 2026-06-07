@@ -7491,8 +7491,21 @@ gpio14-status-read-frontier-closed. The accepted frontier is limited to that
 one read-only GPIO14 STATUS load and its v2 identity-joined Pi 5 result
 evidence. Same-shaped GPIO14 STATUS hardware reruns are blocked unless a future
 supervisor task supplies a different discriminator or new acceptance criteria.
-No explicit worker-owned task remains after this closeout; supervisor planning
-is required before the next Milestone 11.2 interrupt-routing source contract.
+At closeout time, no explicit worker-owned task remained; supervisor planning
+was required before the next Milestone 11.2 interrupt-routing source contract.
+
+phase11-rp1-interrupt-routing-source-contract-20260607 is accepted as
+phase11-rp1-interrupt-routing-source-contract-v1. It retains Raspberry Pi
+Linux RP1 interrupt-domain/MSI-X behavior, GPIO bank0 parent interrupt
+identity, and BCM2712 pcie2/MIP0/GIC source routing assumptions. The selected
+next diagnostic is the read-only/no-enable `rp1-io-bank0-msix-cfg-read`, a
+single 32-bit volatile load from RP1 `MSIX_CFG(0)` at CPU physical
+`0x1f00108008`; source inspection predicts RP1 hwirq 0 through PCI MSI-X
+vector 0 and MIP0 MSI vector 0 to GIC SPI 128 / INTID 160. That route remains
+unaccepted hardware behavior. The paired no-MMIO/no-enable control must pass
+before any real Pi 5 proof. Interrupt enablement/delivery, GPIO ownership,
+clock/reset programming, DMA/cache, storage, generated-root, networking, SSH,
+broader PCIe, Milestone 11.3, and phase transition remain unaccepted.
 
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 

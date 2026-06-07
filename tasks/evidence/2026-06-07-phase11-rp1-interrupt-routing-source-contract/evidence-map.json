@@ -1,0 +1,94 @@
+{
+  "taskId": "phase11-rp1-interrupt-routing-source-contract-20260607",
+  "status": "accepted",
+  "classification": "accepted-source-contract",
+  "evidenceLevel": [
+    "static source inspection",
+    "static documentation inspection"
+  ],
+  "acceptedContract": {
+    "id": "phase11-rp1-interrupt-routing-source-contract-v1",
+    "target": "rp1-io-bank0-msix-cfg-read",
+    "operationClass": "read-only/no-enable",
+    "sourceHwirq": 0,
+    "predictedPciMsixVector": 0,
+    "predictedGicSpi": 128,
+    "predictedGicIntid": 160,
+    "address": "0x1f00108008",
+    "widthBits": 32
+  },
+  "sourceReferences": [
+    {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/rp1-mfd.h",
+      "claims": [
+        "RP1_INT_IO_BANK0 = 0",
+        "RP1_INT_END = 61"
+      ]
+    },
+    {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/mfd-rp1.c",
+      "claims": [
+        "RP1 allocates one PCI MSI-X vector per hwirq",
+        "RP1 irqdomain maps hwirqs through pci_irq_vector",
+        "MSIX_CFG(0) is RP1_PCIE_APBS + 0x8",
+        "MSIX_CFG bits are enable/test/iack/iack_en",
+        "level-high sources use IACK_EN and post-handler IACK"
+      ]
+    },
+    {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/pinctrl-rp1.c",
+      "claims": [
+        "GPIO bank parent IRQ dispatch reads INTS",
+        "GPIO child enable requires INTE writes and CTRL event bits",
+        "selected diagnostic does not enable or clear GPIO events"
+      ]
+    },
+    {
+      "path": "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/rp1.dtsi",
+      "claims": [
+        "rp1 is an interrupt controller",
+        "rp1_gpio uses IO_BANK0/1/2 level-high parent interrupts"
+      ]
+    },
+    {
+      "path": "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/bcm2712.dtsi",
+      "claims": [
+        "pcie2 msi-parent is mip0",
+        "mip0 maps MSI entries to GIC SPI 128..191",
+        "source-predicted hwirq 0 route is GIC SPI 128 / INTID 160"
+      ]
+    }
+  ],
+  "validation": {
+    "staticInspection": "source-reference-notes.md",
+    "gitDiffCheck": "pass",
+    "mdbookBuild": "pass",
+    "gitDiffCachedCheck": "pass"
+  },
+  "acceptedClaims": [
+    "source-backed RP1 IO_BANK0 hwirq identity",
+    "source-backed RP1 MSI-X/irqdomain behavior",
+    "source-backed BCM2712 pcie2/MIP0/GIC routing assumptions",
+    "one read-only/no-enable next diagnostic shape",
+    "paired no-MMIO/no-enable control requirements"
+  ],
+  "unacceptedClaims": [
+    "real interrupt state",
+    "GPIO ownership",
+    "pin-control state",
+    "interrupt enablement",
+    "MSI-X delivery",
+    "PCIe MSI delivery",
+    "GIC delivery",
+    "clock/reset programming",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "commit": null
+}

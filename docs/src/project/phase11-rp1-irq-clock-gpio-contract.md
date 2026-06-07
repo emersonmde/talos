@@ -95,3 +95,33 @@ Unaccepted: real RP1 GPIO14 STATUS read behavior, bus-fault/trap behavior,
 GPIO/pin-control ownership or writes, pad writes, interrupt enablement/routing
 proof/delivery, clock/reset programming, DMA/cache, storage, generated-root,
 networking, SSH, broader PCIe, Milestone 11.3, and phase transition.
+
+## Interrupt-Routing Source Contract
+
+Accepted by `phase11-rp1-interrupt-routing-source-contract-20260607`:
+`phase11-rp1-interrupt-routing-source-contract-v1` is the first
+source-backed routing contract after the GPIO14 STATUS read frontier. It
+selects exactly one next diagnostic target:
+`rp1-io-bank0-msix-cfg-read`, a read-only/no-enable 32-bit volatile load from
+RP1 `RP1_PCIE_APBS` `MSIX_CFG(0)` at CPU physical `0x1f00108008`.
+
+Source references identify `RP1_INT_IO_BANK0 = 0`, the `rp1_gpio` bank0
+parent interrupt, Linux's RP1 irqdomain/MSI-X vector path, and the BCM2712
+`pcie2`/`mip0` MSI route. Source inspection predicts hwirq 0 maps through
+PCI MSI-X vector 0 and MIP0 MSI vector 0 to GIC SPI 128 / INTID 160, but this
+remains an unaccepted routing assumption until a later hardware proof.
+
+The next diagnostic may report only the contract id, target, hwirq, predicted
+MSI-X vector, predicted GIC SPI/INTID, address, width, raw MSI-X config value,
+decoded enable/test/IACK/IACK_EN bits, and one of the bounded routing
+classifications. It must not write GPIO `INTE`, GPIO `CTRL`, MSI-X
+`ENABLE`/`IACK`, PCIe MSI, MIP, or GIC registers, install an ISR, or unmask
+interrupts.
+
+The required paired control must preserve the same output shape while
+constructing no RP1 GPIO/RIO/PADS/clock/reset/MSI-X address, no PCIe
+config/MSI/MIP/GIC address, and performing no volatile load/store to those
+paths. Accepted claims are source-contract only; interrupt enablement,
+interrupt delivery, GPIO ownership, clock/reset programming, DMA/cache,
+storage, generated-root, networking, SSH, broader PCIe, Milestone 11.3, and
+phase transition remain unaccepted.
