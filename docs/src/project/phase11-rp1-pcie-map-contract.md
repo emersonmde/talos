@@ -38,6 +38,7 @@ Relevant translated addresses:
 | RP1 UART0 PL011 base | `0xc0_4003_0000` | `0x1f_0003_0000` | 32-bit MMIO | Parent block only |
 | RP1 UART0 PL011 flag register | `0xc0_4003_0018` | `0x1f_0003_0018` | 32-bit read | First diagnostic target |
 | RP1 GPIO bank0 control base | `0xc0_400d_0000` | `0x1f_000d_0000` | 32-bit MMIO | Documented only |
+| RP1 IO_BANK0 GPIO14 STATUS | `0xc0_400d_0070` | `0x1f_000d_0070` | 32-bit read | First Milestone 11.2 status diagnostic |
 | RP1 pads bank0 base | `0xc0_400f_0000` | `0x1f_000f_0000` | 32-bit MMIO | Documented only |
 
 ## Firmware-State Assumptions
@@ -66,6 +67,25 @@ The diagnostic should report:
 - enough serial text to tie the output to the candidate artifact in the later Pi 5 proof task.
 
 The accepted local core may add build/static/archive-review evidence only. The serialized Pi 5 proof remains a separate task that must acquire `hardwareTestLock`, capture candidate identity, serial cursor, TFTP delta, and restore evidence.
+
+## Milestone 11.2 GPIO14 STATUS Boundary
+
+`phase11-rp1-gpio-status-repaired-proof-pi5-20260607` accepts the first
+read-only GPIO/status diagnostic boundary. The decisive candidate rerun staged
+tree `cb7827b07a3822370fc610dfd18a8ab580cea31a47c4559e41a242975976f83a`,
+retained two 46,336-byte `da591740/kernel_2712.img` TFTP fetches, passed the
+v2 identity join with final selected-tree identity, and restored the lab to
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10`. Serial
+retained 390 `TALOS: gpio14-status-result` records for contract
+`phase11-rp1-irq-clock-gpio-contract-v1`, target `rp1-gpio14-status-read`,
+address `0x1f000d0070`, width 32, raw `0xdeaddead`, and
+`classification=diagnostic-result-visible`.
+
+This accepts only the one read-only GPIO14 STATUS load and its observable
+result shape. It does not accept GPIO ownership, pin-control or pad writes,
+clock/reset programming, interrupt enablement or delivery, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe enumeration, Milestone 11.3, or
+phase transition.
 
 ## Pi 5 Proof Status
 

@@ -1,0 +1,8 @@
+candidate_archive=target/talos-rpi5-rp1-gpio14-status-read-core.tar.gz
+candidate_archive_sha256=7bc21b39a5d0150221a244701285d733c8faef4e153085a49a34b5069c1fecea
+kernel_2712_sha256=e95dbb1cf6e3296bc29832c69115afadf78622c0995c4734638dd249f8867efc
+kernel_2712_size=46336
+header_image_size=46336
+text_offset=0
+flags=12
+result_marker=TALOS: gpio14-status-result

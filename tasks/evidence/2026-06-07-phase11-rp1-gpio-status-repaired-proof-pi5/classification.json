@@ -1,0 +1,103 @@
+{
+  "task": "phase11-rp1-gpio-status-repaired-proof-pi5-20260607",
+  "status": "accepted",
+  "classification": "gpio14-status-result-identity-joined",
+  "acceptedRun": "proof-rerun-after-kg",
+  "firstRun": {
+    "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-repaired-proof-pi5/proof-run",
+    "classification": "capture-staging-blocked",
+    "note": "visible diagnostic output was retained, but identity join rejected the run because pre-power serial drain never reached empty while prior no-MMIO control output was still streaming; retained as compromised evidence only",
+    "summary": {
+      "capture_exit": 0,
+      "identity_join_exit": 1,
+      "join_classification": "capture-staging-blocked",
+      "rejection_reasons": [
+        "serial-drain-not-empty-before-power",
+        "saturated-direct-read-without-empty-pre-power-drain"
+      ],
+      "result_marker_occurrences": 390,
+      "before_load_occurrences": 0,
+      "diagnostic_visible_occurrences": 390,
+      "bus_fault_occurrences": 0,
+      "expected_fetch_count": 2,
+      "expected_fetch_bytes": 46336,
+      "selected_tree": "cb7827b07a3822370fc610dfd18a8ab580cea31a47c4559e41a242975976f83a",
+      "final_selected_tree_staged": true,
+      "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "suggested": "identity-join-mismatch",
+      "serial_capture_mode": "read",
+      "serial_window_bytes": 136072,
+      "tftp_event_count": 13
+    }
+  },
+  "triage": {
+    "knownGoodControlRun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-repaired-proof-pi5/known-good-control-run",
+      "marker": "rpi5-production-timer-preemption: PASS",
+      "note": "ran after the compromised first proof to reset serial/runtime state; it retained known-good PASS output but the join still rejected the pre-power drain because the prior diagnostic loop was streaming before power cycle",
+      "summary": {
+        "capture_exit": 0,
+        "identity_join_exit": 1,
+        "join_classification": "capture-staging-blocked",
+        "rejection_reasons": [
+          "serial-drain-not-empty-before-power",
+          "saturated-direct-read-without-empty-pre-power-drain"
+        ],
+        "pass_marker_occurrences": 1,
+        "expected_fetch_count": 2,
+        "expected_fetch_bytes": 104136,
+        "selected_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+        "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+        "suggested": "identity-join-mismatch",
+        "serial_capture_mode": "read",
+        "serial_window_bytes": 7264,
+        "tftp_event_count": 13
+      }
+    },
+    "candidateRerun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-repaired-proof-pi5/proof-rerun-after-kg",
+      "marker": "TALOS: gpio14-status-result",
+      "summary": {
+        "capture_exit": 0,
+        "identity_join_exit": 0,
+        "join_classification": "capture-transaction-v2-ready",
+        "rejection_reasons": [],
+        "result_marker_occurrences": 390,
+        "before_load_occurrences": 0,
+        "diagnostic_visible_occurrences": 390,
+        "raw_deaddead_occurrences": 390,
+        "expected_fetch_count": 2,
+        "expected_fetch_bytes": 46336,
+        "selected_tree": "cb7827b07a3822370fc610dfd18a8ab580cea31a47c4559e41a242975976f83a",
+        "final_selected_tree_staged": true,
+        "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+        "suggested": "post-handoff-marker-visible",
+        "serial_capture_mode": "read",
+        "serial_window_bytes": 135545,
+        "tftp_event_count": 13
+      }
+    }
+  },
+  "acceptedClaims": [
+    "The repaired/audited pi5-capture-transaction-v2 path joined the real GPIO14 STATUS candidate rerun with empty pre-power serial drain, selected candidate TFTP fetch evidence, final selected-tree identity, visible diagnostic result output, and restore proof.",
+    "The accepted rerun retained two 46336-byte da591740/kernel_2712.img TFTP fetches and 390 TALOS: gpio14-status-result markers.",
+    "The retained result lines report contract phase11-rp1-irq-clock-gpio-contract-v1, target rp1-gpio14-status-read, address 0x1f000d0070, width 32, raw 0xdeaddead, and classification=diagnostic-result-visible.",
+    "The lab was restored to the pre-run known-good tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10."
+  ],
+  "notAccepted": [
+    "GPIO ownership or pin-control writes",
+    "pad writes",
+    "interrupt enablement or delivery",
+    "clock/reset programming",
+    "DMA/cache",
+    "storage/generated-root/networking/SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "finalLabStatus": {
+    "tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effectiveKernel": "kernel_2712.img"
+  },
+  "commit": null
+}

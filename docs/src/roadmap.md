@@ -7468,6 +7468,22 @@ networking, SSH, broader PCIe, Milestone 11.3, and phase transition remain
 unaccepted. Same-shaped GPIO14 STATUS hardware reruns are blocked pending
 supervisor planning for a different discriminator or capture/staging repair.
 
+phase11-pi5-capture-identity-repaired-control-pi5-20260607 then accepted the
+repaired capture/identity path on the GPIO14 no-MMIO control, mechanically
+unblocking the single queued real diagnostic rerun. The repaired proof
+phase11-rp1-gpio-status-repaired-proof-pi5-20260607 is accepted as
+gpio14-status-result-identity-joined. The decisive rerun passed the v2 identity
+join for tree cb7827b07a3822370fc610dfd18a8ab580cea31a47c4559e41a242975976f83a,
+retained two 46,336-byte da591740/kernel_2712.img fetches, final selected-tree
+identity, restore proof, and 390 TALOS: gpio14-status-result records carrying
+contract phase11-rp1-irq-clock-gpio-contract-v1, target rp1-gpio14-status-read,
+address 0x1f000d0070, raw 0xdeaddead, and
+classification=diagnostic-result-visible. This accepts only the read-only
+GPIO14 STATUS diagnostic boundary. GPIO ownership, pad writes, interrupt
+delivery, clock/reset programming, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe, Milestone 11.3, and phase transition remain
+unaccepted pending the queued closeout.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

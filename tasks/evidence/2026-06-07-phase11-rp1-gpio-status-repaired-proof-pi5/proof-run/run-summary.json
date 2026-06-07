@@ -1,0 +1,22 @@
+{
+  "capture_exit": 0,
+  "identity_join_exit": 1,
+  "join_classification": "capture-staging-blocked",
+  "rejection_reasons": [
+    "serial-drain-not-empty-before-power",
+    "saturated-direct-read-without-empty-pre-power-drain"
+  ],
+  "result_marker_occurrences": 390,
+  "before_load_occurrences": 0,
+  "diagnostic_visible_occurrences": 390,
+  "bus_fault_occurrences": 0,
+  "expected_fetch_count": 2,
+  "expected_fetch_bytes": 46336,
+  "selected_tree": "cb7827b07a3822370fc610dfd18a8ab580cea31a47c4559e41a242975976f83a",
+  "final_selected_tree_staged": true,
+  "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "suggested": "identity-join-mismatch",
+  "serial_capture_mode": "read",
+  "serial_window_bytes": 136072,
+  "tftp_event_count": 13
+}

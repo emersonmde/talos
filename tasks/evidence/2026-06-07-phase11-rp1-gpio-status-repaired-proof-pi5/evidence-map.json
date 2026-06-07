@@ -1,0 +1,28 @@
+{
+  "task": "phase11-rp1-gpio-status-repaired-proof-pi5-20260607",
+  "status": "accepted",
+  "classification": "gpio14-status-result-identity-joined",
+  "evidence": {
+    "classification": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-repaired-proof-pi5/classification.json",
+    "staticArchiveReview": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-repaired-proof-pi5/static-archive-review.txt",
+    "publication": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-repaired-proof-pi5/publication-response.json",
+    "firstRun": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-repaired-proof-pi5/proof-run",
+    "knownGoodControlRun": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-repaired-proof-pi5/known-good-control-run",
+    "acceptedCandidateRerun": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-repaired-proof-pi5/proof-rerun-after-kg",
+    "finalLabStatus": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-repaired-proof-pi5/final-lab-status.json"
+  },
+  "acceptedRun": "proof-rerun-after-kg",
+  "validation": {
+    "staticArchiveIdentityCheck": "passed against accepted diagnostic evidence",
+    "labControllerPi5HardwareRun": "passed on accepted candidate rerun",
+    "repairedIdentityJoin": "passed on accepted candidate rerun",
+    "stableSameCursorTftp": "passed; two selected 46336-byte candidate fetches retained",
+    "serialHardwareOutput": "passed; 390 TALOS: gpio14-status-result markers retained with raw 0xdeaddead",
+    "knownGoodControlAndCandidateRerun": "run after compromised first proof",
+    "restoreProof": "passed; final lab status returned to pre-run tree",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  },
+  "commit": null
+}
