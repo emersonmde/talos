@@ -1,0 +1,8 @@
+candidate_archive=target/talos-rpi5-rp1-clock-adc-ctrl-enable-toggle-core.tar.gz
+candidate_archive_sha256=4d1119458c9d9caaacb6cdadcc1f5c1a1d3e87d8e538d4dcc4d3abbe47574c30
+kernel_2712_sha256=61a47b90c5ee98e7d3c4ebb934cc57c4a87e68a8944fb1563b83a357b1bae7ca
+kernel_2712_size=47512
+header_image_size=47512
+text_offset=0
+flags=12
+result_marker=TALOS: rp1-clock-adc-ctrl-enable-toggle-result

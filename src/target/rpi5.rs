@@ -227,6 +227,8 @@ pub const RP1_CLK_UART_DIV_INT: usize = RP1_CLOCK_MANAGER_BASE + 0x58;
 pub const RP1_CLK_UART_SEL: usize = RP1_CLOCK_MANAGER_BASE + 0x60;
 #[allow(dead_code)]
 pub const RP1_CLK_ADC_CTRL: usize = RP1_CLOCK_MANAGER_BASE + 0x144;
+#[allow(dead_code)]
+pub const RP1_CLK_CTRL_ENABLE: u32 = 1 << 11;
 #[cfg(any(
     talos_boot_scenario = "rpi5_timer_irq",
     talos_boot_scenario = "rpi5_timer_preemption",
@@ -12581,6 +12583,7 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_gpio_bank_source_status_read",
         talos_boot_scenario = "rpi5_rp1_clock_manager_status_read",
         talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_write_restore",
+        talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle",
         talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
         talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator"
     )
@@ -12592,7 +12595,10 @@ fn read_rp1_reg_u32(addr: usize) -> u32 {
 
 #[cfg(all(
     talos_target_rpi5_bcm2712,
-    talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_write_restore"
+    any(
+        talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_write_restore",
+        talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle"
+    )
 ))]
 fn write_rp1_reg_u32_ordered(addr: usize, value: u32) {
     let reg = addr as *mut u32;
@@ -13350,6 +13356,120 @@ pub fn run_rp1_clock_adc_ctrl_write_restore_no_mmio_control() -> ! {
             SIMULATED_RAW_VALUE,
         );
         write_early_static(" post-eq-pre=true restore-eq-pre=true");
+        write_early_static(" retained-gpio14-blocker=fsel13 retained-gpio16-blocker=fsel13");
+        write_early_static(" classification=simulated/control\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle")]
+pub fn run_rp1_clock_adc_ctrl_enable_toggle() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-clock-adc-enable-toggle-source-contract-v1";
+    const TARGET: &str = "rp1-clk-adc-ctrl-enable-bit-toggle-restore";
+    const REGISTER_NAME: &str = "CLK_ADC_CTRL";
+    const SOURCE_OFFSET: u64 = 0x144;
+
+    write_early_static("rpi5-rp1-clock-adc-ctrl-enable-toggle: start\n");
+    write_early_static("rpi5-rp1-clock-adc-ctrl-enable-toggle: before-rp1-clock-enable-toggle\n");
+    wait_uart10_empty_early_phase();
+
+    let pre_raw = read_rp1_reg_u32(RP1_CLK_ADC_CTRL);
+    let transition_raw = pre_raw ^ RP1_CLK_CTRL_ENABLE;
+    write_rp1_reg_u32_ordered(RP1_CLK_ADC_CTRL, transition_raw);
+    let post_raw = read_rp1_reg_u32(RP1_CLK_ADC_CTRL);
+    write_rp1_reg_u32_ordered(RP1_CLK_ADC_CTRL, pre_raw);
+    let restore_raw = read_rp1_reg_u32(RP1_CLK_ADC_CTRL);
+
+    let one_bit_transition =
+        transition_raw != pre_raw && (transition_raw ^ pre_raw) == RP1_CLK_CTRL_ENABLE;
+    let post_delta_is_transition_mask = (post_raw ^ pre_raw) == RP1_CLK_CTRL_ENABLE;
+    let post_enable_flipped = ((post_raw ^ pre_raw) & RP1_CLK_CTRL_ENABLE) != 0;
+    let restore_matches_pre = restore_raw == pre_raw;
+    let classification = if post_delta_is_transition_mask && restore_matches_pre {
+        "rp1-clock-adc-ctrl-enable-toggle-restored"
+    } else if restore_matches_pre {
+        "rp1-clock-adc-ctrl-enable-toggle-mismatch-restored"
+    } else {
+        "rp1-clock-adc-ctrl-enable-toggle-restore-failed"
+    };
+
+    loop {
+        write_early_static("TALOS: rp1-clock-adc-ctrl-enable-toggle-result contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_early_static(" register=");
+        write_early_static(REGISTER_NAME);
+        write_early_static(" clock-manager-base=");
+        write_early_hex_u64(RP1_CLOCK_MANAGER_BASE as u64);
+        write_early_static(" source-offset=");
+        write_early_hex_u64(SOURCE_OFFSET);
+        write_early_static(" address=");
+        write_early_hex_u64(RP1_CLK_ADC_CTRL as u64);
+        write_early_static(" width=32 transition-mask=");
+        write_early_hex_u64(RP1_CLK_CTRL_ENABLE as u64);
+        write_clock_adc_ctrl_enable_toggle_values(pre_raw, transition_raw, post_raw, restore_raw);
+        write_early_static(" one-bit-transition=");
+        write_bool(one_bit_transition);
+        write_early_static(" post-enable-flipped=");
+        write_bool(post_enable_flipped);
+        write_early_static(" post-delta-is-transition-mask=");
+        write_bool(post_delta_is_transition_mask);
+        write_early_static(" restore-eq-pre=");
+        write_bool(restore_matches_pre);
+        write_early_static(
+            " retained-idempotent-proof=rp1-clock-adc-ctrl-idempotent-write-restored",
+        );
+        write_early_static(" retained-gpio14-blocker=fsel13 retained-gpio16-blocker=fsel13");
+        write_early_static(" classification=");
+        write_early_static(classification);
+        write_early_static("\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle_no_mmio_control")]
+pub fn run_rp1_clock_adc_ctrl_enable_toggle_no_mmio_control() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-clock-adc-enable-toggle-source-contract-v1";
+    const TARGET: &str = "rp1-clk-adc-ctrl-enable-bit-toggle-restore";
+    const REGISTER_NAME: &str = "CLK_ADC_CTRL";
+    const SOURCE_OFFSET: u64 = 0x144;
+    const SIMULATED_PRE_RAW: u32 = 0;
+    const SIMULATED_TRANSITION_RAW: u32 = RP1_CLK_CTRL_ENABLE;
+    const SIMULATED_POST_RAW: u32 = RP1_CLK_CTRL_ENABLE;
+    const SIMULATED_RESTORE_RAW: u32 = 0;
+
+    write_early_static("rpi5-rp1-clock-adc-ctrl-enable-toggle-control: start\n");
+    write_early_static(
+        "rpi5-rp1-clock-adc-ctrl-enable-toggle-control: no-rp1-clock-reset-gpio-rio-pads-msix-pcie-mip-gic-mmio\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-clock-adc-ctrl-enable-toggle-control contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_early_static(" register=");
+        write_early_static(REGISTER_NAME);
+        write_early_static(" clock-manager-base=not-constructed");
+        write_early_static(" source-offset=");
+        write_early_hex_u64(SOURCE_OFFSET);
+        write_early_static(" address=not-constructed width=32 transition-mask=");
+        write_early_hex_u64(RP1_CLK_CTRL_ENABLE as u64);
+        write_clock_adc_ctrl_enable_toggle_values(
+            SIMULATED_PRE_RAW,
+            SIMULATED_TRANSITION_RAW,
+            SIMULATED_POST_RAW,
+            SIMULATED_RESTORE_RAW,
+        );
+        write_early_static(" one-bit-transition=true");
+        write_early_static(" post-enable-flipped=true");
+        write_early_static(" post-delta-is-transition-mask=true");
+        write_early_static(" restore-eq-pre=true");
+        write_early_static(
+            " retained-idempotent-proof=rp1-clock-adc-ctrl-idempotent-write-restored",
+        );
         write_early_static(" retained-gpio14-blocker=fsel13 retained-gpio16-blocker=fsel13");
         write_early_static(" classification=simulated/control\n");
         wait_uart10_empty_early_phase();
@@ -14188,7 +14308,9 @@ fn write_clock_adc_ctrl_raw_triplet(pre_raw: u32, post_raw: u32, restore_raw: u3
 
 #[cfg(any(
     talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_write_restore",
-    talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_write_restore_no_mmio_control"
+    talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_write_restore_no_mmio_control",
+    talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle",
+    talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle_no_mmio_control"
 ))]
 fn write_clock_adc_ctrl_fields(
     enable_field: &str,
@@ -14202,6 +14324,34 @@ fn write_clock_adc_ctrl_fields(
     write_early_hex_u64(((value >> 5) & 0x1f) as u64);
     write_early_static(source_field);
     write_early_hex_u64((value & 0x3) as u64);
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle",
+    talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle_no_mmio_control"
+))]
+fn write_clock_adc_ctrl_enable_toggle_values(
+    pre_raw: u32,
+    transition_raw: u32,
+    post_raw: u32,
+    restore_raw: u32,
+) {
+    write_early_static(" pre-raw=");
+    write_early_hex_u64(pre_raw as u64);
+    write_clock_adc_ctrl_fields(" pre-enable=", " pre-auxsrc=", " pre-source=", pre_raw);
+    write_early_static(" transition-raw=");
+    write_early_hex_u64(transition_raw as u64);
+    write_early_static(" post-raw=");
+    write_early_hex_u64(post_raw as u64);
+    write_clock_adc_ctrl_fields(" post-enable=", " post-auxsrc=", " post-source=", post_raw);
+    write_early_static(" restore-raw=");
+    write_early_hex_u64(restore_raw as u64);
+    write_clock_adc_ctrl_fields(
+        " restore-enable=",
+        " restore-auxsrc=",
+        " restore-source=",
+        restore_raw,
+    );
 }
 
 #[cfg(any(
@@ -14396,6 +14546,8 @@ fn gpio14_ownership_preflight_classification(
     talos_boot_scenario = "rpi5_rp1_clock_manager_status_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_write_restore",
     talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_write_restore_no_mmio_control",
+    talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle",
+    talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator",
@@ -14569,6 +14721,7 @@ mod tests {
         assert_eq!(RP1_CLK_UART_DIV_INT, 0x1f_0001_8058);
         assert_eq!(RP1_CLK_UART_SEL, 0x1f_0001_8060);
         assert_eq!(RP1_CLK_ADC_CTRL, 0x1f_0001_8144);
+        assert_eq!(RP1_CLK_CTRL_ENABLE, 0x0000_0800);
         assert_eq!(RP1_UART0_BASE, RP1_UART0_PCIE2_BASE);
     }
 }

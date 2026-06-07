@@ -56,6 +56,8 @@
             talos_boot_scenario = "rpi5_rp1_clock_manager_status_no_mmio_control",
             talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_write_restore",
             talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_write_restore_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle",
+            talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle_no_mmio_control",
             talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
             talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control",
             talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator",
@@ -449,6 +451,24 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
 
     #[cfg(all(
         talos_target_rpi5_bcm2712,
+        talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle"
+    ))]
+    {
+        let _ = dtb_pa;
+        target::rpi5::run_rp1_clock_adc_ctrl_enable_toggle();
+    }
+
+    #[cfg(all(
+        talos_target_rpi5_bcm2712,
+        talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle_no_mmio_control"
+    ))]
+    {
+        let _ = dtb_pa;
+        target::rpi5::run_rp1_clock_adc_ctrl_enable_toggle_no_mmio_control();
+    }
+
+    #[cfg(all(
+        talos_target_rpi5_bcm2712,
         talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read"
     ))]
     {
@@ -516,6 +536,8 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
             talos_boot_scenario = "rpi5_rp1_clock_manager_status_no_mmio_control",
             talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
             talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle",
+            talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle_no_mmio_control",
             talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator",
             talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator_no_mmio_control",
             talos_boot_scenario = "rpi5_rp1_handoff_reset",
