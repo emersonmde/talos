@@ -207,6 +207,24 @@ pub const RP1_IO_BANK0_INTS: usize = 0x1f_000d_0124;
 pub const RP1_IO_BANK0_MSIX_CFG: usize = 0x1f_0010_8008;
 #[allow(dead_code)]
 pub const RP1_GPIO16_PAD: usize = 0x1f_000f_0044;
+#[allow(dead_code)]
+pub const RP1_CLOCK_MANAGER_BASE: usize = 0x1f_0001_8000;
+#[allow(dead_code)]
+pub const RP1_PLL_SYS_CS: usize = 0x1f_0002_0000;
+#[allow(dead_code)]
+pub const RP1_CLK_SYS_CTRL: usize = RP1_CLOCK_MANAGER_BASE + 0x14;
+#[allow(dead_code)]
+pub const RP1_CLK_SYS_DIV_INT: usize = RP1_CLOCK_MANAGER_BASE + 0x18;
+#[allow(dead_code)]
+pub const RP1_CLK_SYS_SEL: usize = RP1_CLOCK_MANAGER_BASE + 0x20;
+#[allow(dead_code)]
+pub const RP1_CLK_SLOW_SYS_CTRL: usize = RP1_CLOCK_MANAGER_BASE + 0x24;
+#[allow(dead_code)]
+pub const RP1_CLK_UART_CTRL: usize = RP1_CLOCK_MANAGER_BASE + 0x54;
+#[allow(dead_code)]
+pub const RP1_CLK_UART_DIV_INT: usize = RP1_CLOCK_MANAGER_BASE + 0x58;
+#[allow(dead_code)]
+pub const RP1_CLK_UART_SEL: usize = RP1_CLOCK_MANAGER_BASE + 0x60;
 #[cfg(any(
     talos_boot_scenario = "rpi5_timer_irq",
     talos_boot_scenario = "rpi5_timer_preemption",
@@ -12559,6 +12577,7 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_gpio14_status_read",
         talos_boot_scenario = "rpi5_rp1_interrupt_routing_msix_cfg_read",
         talos_boot_scenario = "rpi5_rp1_gpio_bank_source_status_read",
+        talos_boot_scenario = "rpi5_rp1_clock_manager_status_read",
         talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
         talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator"
     )
@@ -13131,6 +13150,101 @@ pub fn run_rp1_gpio_bank_source_status_no_mmio_control() -> ! {
         write_early_dec_u64(BANK_LAST_GPIO);
         write_early_static(" inte-address=not-constructed ints-address=not-constructed");
         write_gpio_bank_source_status_bits(SIMULATED_RAW_VALUE, SIMULATED_RAW_VALUE, GPIO14_MASK);
+        write_early_static(" classification=simulated/control\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_clock_manager_status_read")]
+pub fn run_rp1_clock_manager_status_read() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-clock-reset-status-source-contract-v1";
+    const TARGET: &str = "rp1-clock-manager-status-read";
+
+    write_early_static("rpi5-rp1-clock-manager-status-read: start\n");
+    write_early_static("rpi5-rp1-clock-manager-status-read: before-rp1-clock-loads\n");
+    wait_uart10_empty_early_phase();
+
+    let pll_sys_cs = read_rp1_reg_u32(RP1_PLL_SYS_CS);
+    let clk_sys_ctrl = read_rp1_reg_u32(RP1_CLK_SYS_CTRL);
+    let clk_sys_div_int = read_rp1_reg_u32(RP1_CLK_SYS_DIV_INT);
+    let clk_sys_sel = read_rp1_reg_u32(RP1_CLK_SYS_SEL);
+    let clk_slow_sys_ctrl = read_rp1_reg_u32(RP1_CLK_SLOW_SYS_CTRL);
+    let clk_uart_ctrl = read_rp1_reg_u32(RP1_CLK_UART_CTRL);
+    let clk_uart_div_int = read_rp1_reg_u32(RP1_CLK_UART_DIV_INT);
+    let clk_uart_sel = read_rp1_reg_u32(RP1_CLK_UART_SEL);
+
+    loop {
+        write_early_static("TALOS: rp1-clock-manager-status-result contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_early_static(" clock-manager-base=");
+        write_early_hex_u64(RP1_CLOCK_MANAGER_BASE as u64);
+        write_clock_status_register(" pll-sys-cs", RP1_PLL_SYS_CS, pll_sys_cs);
+        write_clock_status_register(" clk-sys-ctrl", RP1_CLK_SYS_CTRL, clk_sys_ctrl);
+        write_clock_status_register(" clk-sys-div-int", RP1_CLK_SYS_DIV_INT, clk_sys_div_int);
+        write_clock_status_register(" clk-sys-sel", RP1_CLK_SYS_SEL, clk_sys_sel);
+        write_clock_status_register(
+            " clk-slow-sys-ctrl",
+            RP1_CLK_SLOW_SYS_CTRL,
+            clk_slow_sys_ctrl,
+        );
+        write_clock_status_register(" clk-uart-ctrl", RP1_CLK_UART_CTRL, clk_uart_ctrl);
+        write_clock_status_register(" clk-uart-div-int", RP1_CLK_UART_DIV_INT, clk_uart_div_int);
+        write_clock_status_register(" clk-uart-sel", RP1_CLK_UART_SEL, clk_uart_sel);
+        write_clock_manager_status_bits(
+            pll_sys_cs,
+            clk_sys_ctrl,
+            clk_sys_div_int,
+            clk_sys_sel,
+            clk_slow_sys_ctrl,
+            clk_uart_ctrl,
+            clk_uart_div_int,
+            clk_uart_sel,
+        );
+        write_early_static(" retained-gpio14-blocker=fsel13 retained-gpio16-blocker=fsel13");
+        write_early_static(" classification=rp1-clock-manager-status-visible\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_clock_manager_status_no_mmio_control")]
+pub fn run_rp1_clock_manager_status_no_mmio_control() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-clock-reset-status-source-contract-v1";
+    const TARGET: &str = "rp1-clock-manager-status-read";
+    const SIMULATED_RAW_VALUE: u32 = 0;
+
+    write_early_static("rpi5-rp1-clock-manager-status-control: start\n");
+    write_early_static(
+        "rpi5-rp1-clock-manager-status-control: no-rp1-clock-reset-gpio-rio-pads-msix-pcie-mip-gic-mmio\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-clock-manager-status-control contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_early_static(" clock-manager-base=not-constructed");
+        write_clock_status_control_register(" pll-sys-cs", SIMULATED_RAW_VALUE);
+        write_clock_status_control_register(" clk-sys-ctrl", SIMULATED_RAW_VALUE);
+        write_clock_status_control_register(" clk-sys-div-int", SIMULATED_RAW_VALUE);
+        write_clock_status_control_register(" clk-sys-sel", SIMULATED_RAW_VALUE);
+        write_clock_status_control_register(" clk-slow-sys-ctrl", SIMULATED_RAW_VALUE);
+        write_clock_status_control_register(" clk-uart-ctrl", SIMULATED_RAW_VALUE);
+        write_clock_status_control_register(" clk-uart-div-int", SIMULATED_RAW_VALUE);
+        write_clock_status_control_register(" clk-uart-sel", SIMULATED_RAW_VALUE);
+        write_clock_manager_status_bits(
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+        );
+        write_early_static(" retained-gpio14-blocker=fsel13 retained-gpio16-blocker=fsel13");
         write_early_static(" classification=simulated/control\n");
         wait_uart10_empty_early_phase();
     }
@@ -13885,6 +13999,66 @@ fn write_gpio_bank_source_status_bits(inte: u32, ints: u32, gpio14_mask: u32) {
     write_bool(ints != 0);
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_clock_manager_status_read")]
+fn write_clock_status_register(name: &str, address: usize, value: u32) {
+    write_early_static(name);
+    write_early_static("-address=");
+    write_early_hex_u64(address as u64);
+    write_early_static(" raw=");
+    write_early_hex_u64(value as u64);
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_clock_manager_status_no_mmio_control")]
+fn write_clock_status_control_register(name: &str, value: u32) {
+    write_early_static(name);
+    write_early_static("-address=not-constructed raw=");
+    write_early_hex_u64(value as u64);
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_clock_manager_status_read",
+    talos_boot_scenario = "rpi5_rp1_clock_manager_status_no_mmio_control"
+))]
+fn write_clock_manager_status_bits(
+    pll_sys_cs: u32,
+    clk_sys_ctrl: u32,
+    clk_sys_div_int: u32,
+    clk_sys_sel: u32,
+    clk_slow_sys_ctrl: u32,
+    clk_uart_ctrl: u32,
+    clk_uart_div_int: u32,
+    clk_uart_sel: u32,
+) {
+    write_early_static(" pll-sys-lock=");
+    write_bool(pll_sys_cs & (1 << 31) != 0);
+    write_early_static(" pll-sys-refdiv=");
+    write_early_hex_u64((pll_sys_cs & 0x3f) as u64);
+    write_early_static(" clk-sys-enabled=");
+    write_bool(clk_sys_ctrl & (1 << 11) != 0);
+    write_early_static(" clk-sys-source=");
+    write_early_hex_u64((clk_sys_ctrl & 0x3) as u64);
+    write_early_static(" clk-sys-auxsrc=");
+    write_early_hex_u64(((clk_sys_ctrl >> 5) & 0x1f) as u64);
+    write_early_static(" clk-sys-div-int-decoded=");
+    write_early_hex_u64(clk_sys_div_int as u64);
+    write_early_static(" clk-sys-sel-decoded=");
+    write_early_hex_u64(clk_sys_sel as u64);
+    write_early_static(" clk-slow-sys-enabled=");
+    write_bool(clk_slow_sys_ctrl & (1 << 11) != 0);
+    write_early_static(" clk-slow-sys-source=");
+    write_early_hex_u64((clk_slow_sys_ctrl & 0x3) as u64);
+    write_early_static(" clk-uart-enabled=");
+    write_bool(clk_uart_ctrl & (1 << 11) != 0);
+    write_early_static(" clk-uart-source=");
+    write_early_hex_u64((clk_uart_ctrl & 0x3) as u64);
+    write_early_static(" clk-uart-auxsrc=");
+    write_early_hex_u64(((clk_uart_ctrl >> 5) & 0x1f) as u64);
+    write_early_static(" clk-uart-div-int-decoded=");
+    write_early_hex_u64(clk_uart_div_int as u64);
+    write_early_static(" clk-uart-sel-decoded=");
+    write_early_hex_u64(clk_uart_sel as u64);
+}
+
 #[cfg(any(
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control"
@@ -14073,6 +14247,8 @@ fn gpio14_ownership_preflight_classification(
     talos_boot_scenario = "rpi5_rp1_gic_visible_route_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gpio_bank_source_status_read",
     talos_boot_scenario = "rpi5_rp1_gpio_bank_source_status_no_mmio_control",
+    talos_boot_scenario = "rpi5_rp1_clock_manager_status_read",
+    talos_boot_scenario = "rpi5_rp1_clock_manager_status_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator",
@@ -14236,6 +14412,15 @@ mod tests {
         assert_eq!(RP1_RIO0_IN, 0x1f_000e_0008);
         assert_eq!(RP1_IO_BANK0_INTE, 0x1f_000d_011c);
         assert_eq!(RP1_IO_BANK0_INTS, 0x1f_000d_0124);
+        assert_eq!(RP1_CLOCK_MANAGER_BASE, 0x1f_0001_8000);
+        assert_eq!(RP1_PLL_SYS_CS, 0x1f_0002_0000);
+        assert_eq!(RP1_CLK_SYS_CTRL, 0x1f_0001_8014);
+        assert_eq!(RP1_CLK_SYS_DIV_INT, 0x1f_0001_8018);
+        assert_eq!(RP1_CLK_SYS_SEL, 0x1f_0001_8020);
+        assert_eq!(RP1_CLK_SLOW_SYS_CTRL, 0x1f_0001_8024);
+        assert_eq!(RP1_CLK_UART_CTRL, 0x1f_0001_8054);
+        assert_eq!(RP1_CLK_UART_DIV_INT, 0x1f_0001_8058);
+        assert_eq!(RP1_CLK_UART_SEL, 0x1f_0001_8060);
         assert_eq!(RP1_UART0_BASE, RP1_UART0_PCIE2_BASE);
     }
 }

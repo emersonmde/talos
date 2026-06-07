@@ -1,0 +1,596 @@
+  202d98: d65f03c0     	ret
+
+0000000000202d9c <rust_entry>:
+  202d9c: d10043ff     	sub	sp, sp, #0x10
+  202da0: f90007e0     	str	x0, [sp, #0x8]
+  202da4: 9400051d     	bl	0x204218 <talos::target::rpi5::run_rp1_clock_manager_status_no_mmio_control>
+
+0000000000202da8 <core::ub_checks::check_language_ub>:
+  202da8: d10083ff     	sub	sp, sp, #0x20
+  202dac: f9000bfe     	str	x30, [sp, #0x10]
+  202db0: 9400000d     	bl	0x202de4 <core::ub_checks::check_language_ub::runtime>
+  202db4: 370000a0     	tbnz	w0, #0x0, 0x202dc8 <core::ub_checks::check_language_ub+0x20>
+  202db8: 14000001     	b	0x202dbc <core::ub_checks::check_language_ub+0x14>
+  202dbc: 2a1f03e8     	mov	w8, wzr
+  202dc0: 39003fe8     	strb	w8, [sp, #0xf]
+  202dc4: 14000004     	b	0x202dd4 <core::ub_checks::check_language_ub+0x2c>
+  202dc8: 52800028     	mov	w8, #0x1                // =1
+  202dcc: 39003fe8     	strb	w8, [sp, #0xf]
+  202dd0: 14000001     	b	0x202dd4 <core::ub_checks::check_language_ub+0x2c>
+  202dd4: 39403fe0     	ldrb	w0, [sp, #0xf]
+  202dd8: f9400bfe     	ldr	x30, [sp, #0x10]
+  202ddc: 910083ff     	add	sp, sp, #0x20
+  202de0: d65f03c0     	ret
+
+0000000000202de4 <core::ub_checks::check_language_ub::runtime>:
+  202de4: 52800020     	mov	w0, #0x1                // =1
+  202de8: d65f03c0     	ret
+
+0000000000202dec <<usize>::checked_add>:
+  202dec: d10103ff     	sub	sp, sp, #0x40
+  202df0: f90007e1     	str	x1, [sp, #0x8]
+  202df4: f9000be0     	str	x0, [sp, #0x10]
+  202df8: f90017e0     	str	x0, [sp, #0x28]
+  202dfc: f9001be1     	str	x1, [sp, #0x30]
+  202e00: 8b010008     	add	x8, x0, x1
+  202e04: eb000108     	subs	x8, x8, x0
+  202e08: 1a9f27e8     	cset	w8, lo
+  202e0c: 3900ffe8     	strb	w8, [sp, #0x3f]
+  202e10: 540000a3     	b.lo	0x202e24 <<usize>::checked_add+0x38>
+  202e14: 14000001     	b	0x202e18 <<usize>::checked_add+0x2c>
+  202e18: 2a1f03e8     	mov	w8, wzr
+  202e1c: 3900fbe8     	strb	w8, [sp, #0x3e]
+  202e20: 14000004     	b	0x202e30 <<usize>::checked_add+0x44>
+  202e24: 52800028     	mov	w8, #0x1                // =1
+  202e28: 3900fbe8     	strb	w8, [sp, #0x3e]
+  202e2c: 14000001     	b	0x202e30 <<usize>::checked_add+0x44>
+  202e30: 3940fbe8     	ldrb	w8, [sp, #0x3e]
+  202e34: 37000128     	tbnz	w8, #0x0, 0x202e58 <<usize>::checked_add+0x6c>
+  202e38: 14000001     	b	0x202e3c <<usize>::checked_add+0x50>
+  202e3c: f9400be8     	ldr	x8, [sp, #0x10]
+  202e40: f94007e9     	ldr	x9, [sp, #0x8]
+  202e44: 8b090108     	add	x8, x8, x9
+  202e48: f90013e8     	str	x8, [sp, #0x20]
+  202e4c: 52800028     	mov	w8, #0x1                // =1
+  202e50: f9000fe8     	str	x8, [sp, #0x18]
+  202e54: 14000004     	b	0x202e64 <<usize>::checked_add+0x78>
+  202e58: aa1f03e8     	mov	x8, xzr
+  202e5c: f9000fe8     	str	x8, [sp, #0x18]
+  202e60: 14000001     	b	0x202e64 <<usize>::checked_add+0x78>
+  202e64: f9400fe0     	ldr	x0, [sp, #0x18]
+  202e68: f94013e1     	ldr	x1, [sp, #0x20]
+  202e6c: 910103ff     	add	sp, sp, #0x40
+  202e70: d65f03c0     	ret
+
+0000000000202e74 <<usize>::checked_mul>:
+  202e74: d10183ff     	sub	sp, sp, #0x60
+  202e78: f90013e0     	str	x0, [sp, #0x20]
+  202e7c: f90017e1     	str	x1, [sp, #0x28]
+  202e80: f90023e0     	str	x0, [sp, #0x40]
+  202e84: f90027e1     	str	x1, [sp, #0x48]
+  202e88: 9bc17c09     	umulh	x9, x0, x1
+  202e8c: aa1f03e8     	mov	x8, xzr
+  202e90: eb090108     	subs	x8, x8, x9
+  202e94: 1a9f07e8     	cset	w8, ne
+  202e98: 9b017c09     	mul	x9, x0, x1
+  202e9c: f9002be9     	str	x9, [sp, #0x50]
+  202ea0: 390177e8     	strb	w8, [sp, #0x5d]
+  202ea4: aa0903ea     	mov	x10, x9
+  202ea8: f90007ea     	str	x10, [sp, #0x8]
+  202eac: f9001be9     	str	x9, [sp, #0x30]
+  202eb0: 3900ffe8     	strb	w8, [sp, #0x3f]
+  202eb4: 39017fe8     	strb	w8, [sp, #0x5f]
+  202eb8: 370000a8     	tbnz	w8, #0x0, 0x202ecc <<usize>::checked_mul+0x58>
+  202ebc: 14000001     	b	0x202ec0 <<usize>::checked_mul+0x4c>
+  202ec0: 2a1f03e8     	mov	w8, wzr
+  202ec4: 39017be8     	strb	w8, [sp, #0x5e]
+  202ec8: 14000004     	b	0x202ed8 <<usize>::checked_mul+0x64>
+  202ecc: 52800028     	mov	w8, #0x1                // =1
+  202ed0: 39017be8     	strb	w8, [sp, #0x5e]
+  202ed4: 14000001     	b	0x202ed8 <<usize>::checked_mul+0x64>
+  202ed8: 39417be8     	ldrb	w8, [sp, #0x5e]
+  202edc: 370000e8     	tbnz	w8, #0x0, 0x202ef8 <<usize>::checked_mul+0x84>
+  202ee0: 14000001     	b	0x202ee4 <<usize>::checked_mul+0x70>
+  202ee4: f94007e8     	ldr	x8, [sp, #0x8]
+  202ee8: f9000fe8     	str	x8, [sp, #0x18]
+  202eec: 52800028     	mov	w8, #0x1                // =1
+  202ef0: f9000be8     	str	x8, [sp, #0x10]
+  202ef4: 14000004     	b	0x202f04 <<usize>::checked_mul+0x90>
+  202ef8: aa1f03e8     	mov	x8, xzr
+  202efc: f9000be8     	str	x8, [sp, #0x10]
+  202f00: 14000001     	b	0x202f04 <<usize>::checked_mul+0x90>
+  202f04: f9400be0     	ldr	x0, [sp, #0x10]
+  202f08: f9400fe1     	ldr	x1, [sp, #0x18]
+  202f0c: 910183ff     	add	sp, sp, #0x60
+  202f10: d65f03c0     	ret
+
+0000000000202f14 <<core::slice::iter::Iter<u8> as core::iter::traits::iterator::Iterator>::copied::<u8>>:
+  202f14: d10083ff     	sub	sp, sp, #0x20
+  202f18: f9000bfe     	str	x30, [sp, #0x10]
+  202f1c: f90003e0     	str	x0, [sp]
+  202f20: f90007e1     	str	x1, [sp, #0x8]
+  202f24: 940002c8     	bl	0x203a44 <<core::iter::adapters::copied::Copied<core::slice::iter::Iter<u8>>>::new>
+  202f28: f9400bfe     	ldr	x30, [sp, #0x10]
+  202f2c: 910083ff     	add	sp, sp, #0x20
+  202f30: d65f03c0     	ret
+
+0000000000202f34 <core::sync::atomic::atomic_add::<u64, u64>>:
+  202f34: d10243ff     	sub	sp, sp, #0x90
+  202f38: f9002fe1     	str	x1, [sp, #0x58]
+  202f3c: f90033e0     	str	x0, [sp, #0x60]
+  202f40: 12001c48     	and	w8, w2, #0xff
+  202f44: f9003fe0     	str	x0, [sp, #0x78]
+  202f48: f90043e1     	str	x1, [sp, #0x80]
+  202f4c: 39023fe2     	strb	w2, [sp, #0x8f]
+  202f50: 2a0203e9     	mov	w9, w2
+  202f54: 92401d29     	and	x9, x9, #0xff
+  202f58: f90037e9     	str	x9, [sp, #0x68]
+  202f5c: 34000208     	cbz	w8, 0x202f9c <core::sync::atomic::atomic_add::<u64, u64>+0x68>
+  202f60: 14000001     	b	0x202f64 <core::sync::atomic::atomic_add::<u64, u64>+0x30>
+  202f64: f94037e8     	ldr	x8, [sp, #0x68]
+  202f68: f1000508     	subs	x8, x8, #0x1
+  202f6c: 54000420     	b.eq	0x202ff0 <core::sync::atomic::atomic_add::<u64, u64>+0xbc>
+  202f70: 14000001     	b	0x202f74 <core::sync::atomic::atomic_add::<u64, u64>+0x40>
+  202f74: f94037e8     	ldr	x8, [sp, #0x68]
+  202f78: f1000908     	subs	x8, x8, #0x2
+  202f7c: 54000640     	b.eq	0x203044 <core::sync::atomic::atomic_add::<u64, u64>+0x110>
+  202f80: 14000001     	b	0x202f84 <core::sync::atomic::atomic_add::<u64, u64>+0x50>
+  202f84: f94037e8     	ldr	x8, [sp, #0x68]
+  202f88: f1000d08     	subs	x8, x8, #0x3
+  202f8c: 54000860     	b.eq	0x203098 <core::sync::atomic::atomic_add::<u64, u64>+0x164>
+  202f90: 14000001     	b	0x202f94 <core::sync::atomic::atomic_add::<u64, u64>+0x60>
+  202f94: 14000056     	b	0x2030ec <core::sync::atomic::atomic_add::<u64, u64>+0x1b8>
+  202f98: d4200020     	brk	#0x1
+  202f9c: f94033e8     	ldr	x8, [sp, #0x60]
+  202fa0: f9400108     	ldr	x8, [x8]
+  202fa4: f9002be8     	str	x8, [sp, #0x50]
+  202fa8: 14000001     	b	0x202fac <core::sync::atomic::atomic_add::<u64, u64>+0x78>
+  202fac: f9402be9     	ldr	x9, [sp, #0x50]
+  202fb0: f94033eb     	ldr	x11, [sp, #0x60]
+  202fb4: f9402fe8     	ldr	x8, [sp, #0x58]
+  202fb8: 8b08012c     	add	x12, x9, x8
+  202fbc: c85ffd68     	ldaxr	x8, [x11]
+  202fc0: eb09011f     	cmp	x8, x9
+  202fc4: 54000061     	b.ne	0x202fd0 <core::sync::atomic::atomic_add::<u64, u64>+0x9c>
+  202fc8: c80afd6c     	stlxr	w10, x12, [x11]
+  202fcc: 35ffff8a     	cbnz	w10, 0x202fbc <core::sync::atomic::atomic_add::<u64, u64>+0x88>
+  202fd0: eb090109     	subs	x9, x8, x9
+  202fd4: f90027e8     	str	x8, [sp, #0x48]
+  202fd8: f9002be8     	str	x8, [sp, #0x50]
+  202fdc: 54fffe81     	b.ne	0x202fac <core::sync::atomic::atomic_add::<u64, u64>+0x78>
+  202fe0: 14000001     	b	0x202fe4 <core::sync::atomic::atomic_add::<u64, u64>+0xb0>
+  202fe4: f94027e8     	ldr	x8, [sp, #0x48]
+  202fe8: f9003be8     	str	x8, [sp, #0x70]
+  202fec: 14000055     	b	0x203140 <core::sync::atomic::atomic_add::<u64, u64>+0x20c>
+  202ff0: f94033e8     	ldr	x8, [sp, #0x60]
+  202ff4: f9400108     	ldr	x8, [x8]
+  202ff8: f90023e8     	str	x8, [sp, #0x40]
+  202ffc: 14000001     	b	0x203000 <core::sync::atomic::atomic_add::<u64, u64>+0xcc>
+  203000: f94023e9     	ldr	x9, [sp, #0x40]
+  203004: f94033eb     	ldr	x11, [sp, #0x60]
+  203008: f9402fe8     	ldr	x8, [sp, #0x58]
+  20300c: 8b08012c     	add	x12, x9, x8
+  203010: c85ffd68     	ldaxr	x8, [x11]
+  203014: eb09011f     	cmp	x8, x9
+  203018: 54000061     	b.ne	0x203024 <core::sync::atomic::atomic_add::<u64, u64>+0xf0>
+  20301c: c80afd6c     	stlxr	w10, x12, [x11]
+  203020: 35ffff8a     	cbnz	w10, 0x203010 <core::sync::atomic::atomic_add::<u64, u64>+0xdc>
+  203024: eb090109     	subs	x9, x8, x9
+  203028: f9001fe8     	str	x8, [sp, #0x38]
+  20302c: f90023e8     	str	x8, [sp, #0x40]
+  203030: 54fffe81     	b.ne	0x203000 <core::sync::atomic::atomic_add::<u64, u64>+0xcc>
+  203034: 14000001     	b	0x203038 <core::sync::atomic::atomic_add::<u64, u64>+0x104>
+  203038: f9401fe8     	ldr	x8, [sp, #0x38]
+  20303c: f9003be8     	str	x8, [sp, #0x70]
+  203040: 14000040     	b	0x203140 <core::sync::atomic::atomic_add::<u64, u64>+0x20c>
+  203044: f94033e8     	ldr	x8, [sp, #0x60]
+  203048: f9400108     	ldr	x8, [x8]
+  20304c: f9001be8     	str	x8, [sp, #0x30]
+  203050: 14000001     	b	0x203054 <core::sync::atomic::atomic_add::<u64, u64>+0x120>
+  203054: f9401be9     	ldr	x9, [sp, #0x30]
+  203058: f94033eb     	ldr	x11, [sp, #0x60]
+  20305c: f9402fe8     	ldr	x8, [sp, #0x58]
+  203060: 8b08012c     	add	x12, x9, x8
+  203064: c85ffd68     	ldaxr	x8, [x11]
+  203068: eb09011f     	cmp	x8, x9
+  20306c: 54000061     	b.ne	0x203078 <core::sync::atomic::atomic_add::<u64, u64>+0x144>
+  203070: c80afd6c     	stlxr	w10, x12, [x11]
+  203074: 35ffff8a     	cbnz	w10, 0x203064 <core::sync::atomic::atomic_add::<u64, u64>+0x130>
+  203078: eb090109     	subs	x9, x8, x9
+  20307c: f90017e8     	str	x8, [sp, #0x28]
+  203080: f9001be8     	str	x8, [sp, #0x30]
+  203084: 54fffe81     	b.ne	0x203054 <core::sync::atomic::atomic_add::<u64, u64>+0x120>
+  203088: 14000001     	b	0x20308c <core::sync::atomic::atomic_add::<u64, u64>+0x158>
+  20308c: f94017e8     	ldr	x8, [sp, #0x28]
+  203090: f9003be8     	str	x8, [sp, #0x70]
+  203094: 1400002b     	b	0x203140 <core::sync::atomic::atomic_add::<u64, u64>+0x20c>
+  203098: f94033e8     	ldr	x8, [sp, #0x60]
+  20309c: f9400108     	ldr	x8, [x8]
+  2030a0: f90013e8     	str	x8, [sp, #0x20]
+  2030a4: 14000001     	b	0x2030a8 <core::sync::atomic::atomic_add::<u64, u64>+0x174>
+  2030a8: f94013e9     	ldr	x9, [sp, #0x20]
+  2030ac: f94033eb     	ldr	x11, [sp, #0x60]
+  2030b0: f9402fe8     	ldr	x8, [sp, #0x58]
+  2030b4: 8b08012c     	add	x12, x9, x8
+  2030b8: c85ffd68     	ldaxr	x8, [x11]
+  2030bc: eb09011f     	cmp	x8, x9
+  2030c0: 54000061     	b.ne	0x2030cc <core::sync::atomic::atomic_add::<u64, u64>+0x198>
+  2030c4: c80afd6c     	stlxr	w10, x12, [x11]
+  2030c8: 35ffff8a     	cbnz	w10, 0x2030b8 <core::sync::atomic::atomic_add::<u64, u64>+0x184>
+  2030cc: eb090109     	subs	x9, x8, x9
+  2030d0: f9000fe8     	str	x8, [sp, #0x18]
+  2030d4: f90013e8     	str	x8, [sp, #0x20]
+  2030d8: 54fffe81     	b.ne	0x2030a8 <core::sync::atomic::atomic_add::<u64, u64>+0x174>
+  2030dc: 14000001     	b	0x2030e0 <core::sync::atomic::atomic_add::<u64, u64>+0x1ac>
+  2030e0: f9400fe8     	ldr	x8, [sp, #0x18]
+  2030e4: f9003be8     	str	x8, [sp, #0x70]
+--
+  204208: 97fffeb9     	bl	0x203cec <talos::target::rpi5::write_early_hex_u64>
+  20420c: f94013fe     	ldr	x30, [sp, #0x20]
+  204210: 9100c3ff     	add	sp, sp, #0x30
+  204214: d65f03c0     	ret
+
+0000000000204218 <talos::target::rpi5::run_rp1_clock_manager_status_no_mmio_control>:
+  204218: d100c3ff     	sub	sp, sp, #0x30
+  20421c: f90013fe     	str	x30, [sp, #0x20]
+  204220: d28d9720     	mov	x0, #0x6cb9             // =27833
+  204224: f2a00420     	movk	x0, #0x21, lsl #16
+  204228: f2c00000     	movk	x0, #0x0, lsl #32
+  20422c: f2e00000     	movk	x0, #0x0, lsl #48
+  204230: 528005a8     	mov	w8, #0x2d               // =45
+  204234: 2a0803e1     	mov	w1, w8
+  204238: 97fffe7b     	bl	0x203c24 <talos::target::rpi5::write_early_static>
+  20423c: d28d9cc0     	mov	x0, #0x6ce6             // =27878
+  204240: f2a00420     	movk	x0, #0x21, lsl #16
+  204244: f2c00000     	movk	x0, #0x0, lsl #32
+  204248: f2e00000     	movk	x0, #0x0, lsl #48
+  20424c: 52800be8     	mov	w8, #0x5f               // =95
+  204250: 2a0803e1     	mov	w1, w8
+  204254: 97fffe74     	bl	0x203c24 <talos::target::rpi5::write_early_static>
+  204258: 97ffff20     	bl	0x203ed8 <talos::target::rpi5::wait_uart10_empty_early_phase>
+  20425c: 14000001     	b	0x204260 <talos::target::rpi5::run_rp1_clock_manager_status_no_mmio_control+0x48>
+  204260: d28da8a0     	mov	x0, #0x6d45             // =27973
+  204264: f2a00420     	movk	x0, #0x21, lsl #16
+  204268: f2c00000     	movk	x0, #0x0, lsl #32
+  20426c: f2e00000     	movk	x0, #0x0, lsl #48
+  204270: 52800628     	mov	w8, #0x31               // =49
+  204274: 2a0803e1     	mov	w1, w8
+  204278: f90007e1     	str	x1, [sp, #0x8]
+  20427c: 97fffe6a     	bl	0x203c24 <talos::target::rpi5::write_early_static>
+  204280: f94007e1     	ldr	x1, [sp, #0x8]
+  204284: d28daec0     	mov	x0, #0x6d76             // =28022
+  204288: f2a00420     	movk	x0, #0x21, lsl #16
+  20428c: f2c00000     	movk	x0, #0x0, lsl #32
+  204290: f2e00000     	movk	x0, #0x0, lsl #48
+  204294: 97fffe64     	bl	0x203c24 <talos::target::rpi5::write_early_static>
+  204298: d28db600     	mov	x0, #0x6db0             // =28080
+  20429c: f2a00420     	movk	x0, #0x21, lsl #16
+  2042a0: f2c00000     	movk	x0, #0x0, lsl #32
+  2042a4: f2e00000     	movk	x0, #0x0, lsl #48
+  2042a8: 52800108     	mov	w8, #0x8                // =8
+  2042ac: 2a0803e1     	mov	w1, w8
+  2042b0: 97fffe5d     	bl	0x203c24 <talos::target::rpi5::write_early_static>
+  2042b4: d28db700     	mov	x0, #0x6db8             // =28088
+  2042b8: f2a00420     	movk	x0, #0x21, lsl #16
+  2042bc: f2c00000     	movk	x0, #0x0, lsl #32
+  2042c0: f2e00000     	movk	x0, #0x0, lsl #48
+  2042c4: 528003a8     	mov	w8, #0x1d               // =29
+  2042c8: 2a0803e1     	mov	w1, w8
+  2042cc: 97fffe56     	bl	0x203c24 <talos::target::rpi5::write_early_static>
+  2042d0: d28dbaa0     	mov	x0, #0x6dd5             // =28117
+  2042d4: f2a00420     	movk	x0, #0x21, lsl #16
+  2042d8: f2c00000     	movk	x0, #0x0, lsl #32
+  2042dc: f2e00000     	movk	x0, #0x0, lsl #48
+  2042e0: 52800468     	mov	w8, #0x23               // =35
+  2042e4: 2a0803e1     	mov	w1, w8
+  2042e8: 97fffe4f     	bl	0x203c24 <talos::target::rpi5::write_early_static>
+  2042ec: d28dbf00     	mov	x0, #0x6df8             // =28152
+  2042f0: f2a00420     	movk	x0, #0x21, lsl #16
+  2042f4: f2c00000     	movk	x0, #0x0, lsl #32
+  2042f8: f2e00000     	movk	x0, #0x0, lsl #48
+  2042fc: 52800168     	mov	w8, #0xb                // =11
+  204300: 2a0803e1     	mov	w1, w8
+  204304: 2a1f03e2     	mov	w2, wzr
+  204308: b9001fe2     	str	w2, [sp, #0x1c]
+  20430c: 97ffffae     	bl	0x2041c4 <talos::target::rpi5::write_clock_status_control_register>
+  204310: b9401fe2     	ldr	w2, [sp, #0x1c]
+  204314: d28dc060     	mov	x0, #0x6e03             // =28163
+  204318: f2a00420     	movk	x0, #0x21, lsl #16
+  20431c: f2c00000     	movk	x0, #0x0, lsl #32
+  204320: f2e00000     	movk	x0, #0x0, lsl #48
+  204324: 528001a8     	mov	w8, #0xd                // =13
+  204328: 2a0803e1     	mov	w1, w8
+  20432c: f9000be1     	str	x1, [sp, #0x10]
+  204330: 97ffffa5     	bl	0x2041c4 <talos::target::rpi5::write_clock_status_control_register>
+  204334: b9401fe2     	ldr	w2, [sp, #0x1c]
+  204338: d28ca380     	mov	x0, #0x651c             // =25884
+  20433c: f2a00420     	movk	x0, #0x21, lsl #16
+  204340: f2c00000     	movk	x0, #0x0, lsl #32
+  204344: f2e00000     	movk	x0, #0x0, lsl #48
+  204348: 52800208     	mov	w8, #0x10               // =16
+  20434c: 2a0803e1     	mov	w1, w8
+  204350: 97ffff9d     	bl	0x2041c4 <talos::target::rpi5::write_clock_status_control_register>
+  204354: b9401fe2     	ldr	w2, [sp, #0x1c]
+  204358: d28dc200     	mov	x0, #0x6e10             // =28176
+  20435c: f2a00420     	movk	x0, #0x21, lsl #16
+  204360: f2c00000     	movk	x0, #0x0, lsl #32
+  204364: f2e00000     	movk	x0, #0x0, lsl #48
+  204368: 52800188     	mov	w8, #0xc                // =12
+  20436c: 2a0803e1     	mov	w1, w8
+  204370: 97ffff95     	bl	0x2041c4 <talos::target::rpi5::write_clock_status_control_register>
+  204374: b9401fe2     	ldr	w2, [sp, #0x1c]
+  204378: d28dc380     	mov	x0, #0x6e1c             // =28188
+  20437c: f2a00420     	movk	x0, #0x21, lsl #16
+  204380: f2c00000     	movk	x0, #0x0, lsl #32
+  204384: f2e00000     	movk	x0, #0x0, lsl #48
+  204388: 52800248     	mov	w8, #0x12               // =18
+  20438c: 2a0803e1     	mov	w1, w8
+  204390: 97ffff8d     	bl	0x2041c4 <talos::target::rpi5::write_clock_status_control_register>
+  204394: b9401fe2     	ldr	w2, [sp, #0x1c]
+  204398: d28dc5c0     	mov	x0, #0x6e2e             // =28206
+  20439c: f2a00420     	movk	x0, #0x21, lsl #16
+  2043a0: f2c00000     	movk	x0, #0x0, lsl #32
+  2043a4: f2e00000     	movk	x0, #0x0, lsl #48
+  2043a8: 528001c8     	mov	w8, #0xe                // =14
+  2043ac: 2a0803e1     	mov	w1, w8
+  2043b0: 97ffff85     	bl	0x2041c4 <talos::target::rpi5::write_clock_status_control_register>
+  2043b4: b9401fe2     	ldr	w2, [sp, #0x1c]
+  2043b8: d28dc780     	mov	x0, #0x6e3c             // =28220
+  2043bc: f2a00420     	movk	x0, #0x21, lsl #16
+  2043c0: f2c00000     	movk	x0, #0x0, lsl #32
+  2043c4: f2e00000     	movk	x0, #0x0, lsl #48
+  2043c8: 52800228     	mov	w8, #0x11               // =17
+  2043cc: 2a0803e1     	mov	w1, w8
+  2043d0: 97ffff7d     	bl	0x2041c4 <talos::target::rpi5::write_clock_status_control_register>
+  2043d4: f9400be1     	ldr	x1, [sp, #0x10]
+  2043d8: b9401fe2     	ldr	w2, [sp, #0x1c]
+  2043dc: d28dc9a0     	mov	x0, #0x6e4d             // =28237
+  2043e0: f2a00420     	movk	x0, #0x21, lsl #16
+  2043e4: f2c00000     	movk	x0, #0x0, lsl #32
+  2043e8: f2e00000     	movk	x0, #0x0, lsl #48
+  2043ec: 97ffff76     	bl	0x2041c4 <talos::target::rpi5::write_clock_status_control_register>
+  2043f0: b9401fe7     	ldr	w7, [sp, #0x1c]
+  2043f4: 2a0703e0     	mov	w0, w7
+  2043f8: 2a0703e1     	mov	w1, w7
+  2043fc: 2a0703e2     	mov	w2, w7
+  204400: 2a0703e3     	mov	w3, w7
+  204404: 2a0703e4     	mov	w4, w7
+  204408: 2a0703e5     	mov	w5, w7
+  20440c: 2a0703e6     	mov	w6, w7
+  204410: 97fffebe     	bl	0x203f08 <talos::target::rpi5::write_clock_manager_status_bits>
+  204414: d28dcb40     	mov	x0, #0x6e5a             // =28250
+  204418: f2a00420     	movk	x0, #0x21, lsl #16
+  20441c: f2c00000     	movk	x0, #0x0, lsl #32
+  204420: f2e00000     	movk	x0, #0x0, lsl #48
+  204424: 528007c8     	mov	w8, #0x3e               // =62
+  204428: 2a0803e1     	mov	w1, w8
+  20442c: 97fffdfe     	bl	0x203c24 <talos::target::rpi5::write_early_static>
+  204430: d28dd300     	mov	x0, #0x6e98             // =28312
+  204434: f2a00420     	movk	x0, #0x21, lsl #16
+  204438: f2c00000     	movk	x0, #0x0, lsl #32
+  20443c: f2e00000     	movk	x0, #0x0, lsl #48
+  204440: 52800448     	mov	w8, #0x22               // =34
+  204444: 2a0803e1     	mov	w1, w8
+  204448: 97fffdf7     	bl	0x203c24 <talos::target::rpi5::write_early_static>
+  20444c: 97fffea3     	bl	0x203ed8 <talos::target::rpi5::wait_uart10_empty_early_phase>
+  204450: 17ffff84     	b	0x204260 <talos::target::rpi5::run_rp1_clock_manager_status_no_mmio_control+0x48>
+
+0000000000204454 <talos::runtime_console::write_default_console_output::<talos::pl011::Pl011>>:
+  204454: d10203ff     	sub	sp, sp, #0x80
+  204458: f9003bfe     	str	x30, [sp, #0x70]
+  20445c: f90013e2     	str	x2, [sp, #0x20]
+  204460: f9000fe1     	str	x1, [sp, #0x18]
+  204464: f90007e8     	str	x8, [sp, #0x8]
+  204468: f9002be1     	str	x1, [sp, #0x50]
+  20446c: f9002fe2     	str	x2, [sp, #0x58]
+  204470: f9400008     	ldr	x8, [x0]
+  204474: f9400409     	ldr	x9, [x0, #0x8]
+  204478: f90037e9     	str	x9, [sp, #0x68]
+  20447c: f90033e8     	str	x8, [sp, #0x60]
+  204480: 9100a3e8     	add	x8, sp, #0x28
+  204484: f9000be8     	str	x8, [sp, #0x10]
+  204488: 910183e0     	add	x0, sp, #0x60
+  20448c: 9400005d     	bl	0x204600 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011>>::new>
+  204490: f94007e8     	ldr	x8, [sp, #0x8]
+  204494: f9400be0     	ldr	x0, [sp, #0x10]
+  204498: f9400fe1     	ldr	x1, [sp, #0x18]
+  20449c: f94013e2     	ldr	x2, [sp, #0x20]
+  2044a0: 94000012     	bl	0x2044e8 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011>>::write_kernel_args>
+  2044a4: f9403bfe     	ldr	x30, [sp, #0x70]
+  2044a8: 910203ff     	add	sp, sp, #0x80
+  2044ac: d65f03c0     	ret
+
+00000000002044b0 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011>>::with_device>:
+  2044b0: d10043ff     	sub	sp, sp, #0x10
+  2044b4: aa0803e9     	mov	x9, x8
+  2044b8: f90003e0     	str	x0, [sp]
+  2044bc: f90007e1     	str	x1, [sp, #0x8]
+  2044c0: f9000120     	str	x0, [x9]
+  2044c4: f9000521     	str	x1, [x9, #0x8]
+  2044c8: f9400048     	ldr	x8, [x2]
+  2044cc: f940044a     	ldr	x10, [x2, #0x8]
+  2044d0: f900112a     	str	x10, [x9, #0x20]
+  2044d4: f9000d28     	str	x8, [x9, #0x18]
+  2044d8: aa1f03e8     	mov	x8, xzr
+  2044dc: f9000928     	str	x8, [x9, #0x10]
+  2044e0: 910043ff     	add	sp, sp, #0x10
+  2044e4: d65f03c0     	ret
+
+00000000002044e8 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011>>::write_kernel_args>:
+  2044e8: d10243ff     	sub	sp, sp, #0x90
+  2044ec: f90043fe     	str	x30, [sp, #0x80]
+  2044f0: f90003e0     	str	x0, [sp]
+  2044f4: f90007e8     	str	x8, [sp, #0x8]
+  2044f8: f9000be1     	str	x1, [sp, #0x10]
+  2044fc: f9000fe2     	str	x2, [sp, #0x18]
+  204500: f90037e0     	str	x0, [sp, #0x68]
+  204504: aa1f03e8     	mov	x8, xzr
+  204508: f9000808     	str	x8, [x0, #0x10]
+  20450c: 910043e0     	add	x0, sp, #0x10
+  204510: 97fffd75     	bl	0x203ae4 <<core::fmt::Arguments>::as_str>
+  204514: f90017e0     	str	x0, [sp, #0x28]
+  204518: f9001be1     	str	x1, [sp, #0x30]
+  20451c: f94017e8     	ldr	x8, [sp, #0x28]
+  204520: b4000148     	cbz	x8, 0x204548 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011>>::write_kernel_args+0x60>
+  204524: 14000001     	b	0x204528 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011>>::write_kernel_args+0x40>
+  204528: f94003e0     	ldr	x0, [sp]
+  20452c: f94017e1     	ldr	x1, [sp, #0x28]
+  204530: f9401be2     	ldr	x2, [sp, #0x30]
+  204534: f9003be1     	str	x1, [sp, #0x70]
+  204538: f9003fe2     	str	x2, [sp, #0x78]
+  20453c: 94000042     	bl	0x204644 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_str>
+  204540: 39009fe0     	strb	w0, [sp, #0x27]
+  204544: 14000007     	b	0x204560 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011>>::write_kernel_args+0x78>
+  204548: f94003e0     	ldr	x0, [sp]
+  20454c: f9400be1     	ldr	x1, [sp, #0x10]
+  204550: f9400fe2     	ldr	x2, [sp, #0x18]
+  204554: 940000ae     	bl	0x20480c <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_fmt>
+  204558: 39009fe0     	strb	w0, [sp, #0x27]
+  20455c: 14000001     	b	0x204560 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011>>::write_kernel_args+0x78>
+  204560: 91009fe0     	add	x0, sp, #0x27
+  204564: 97fffd25     	bl	0x2039f8 <<core::result::Result<(), core::fmt::Error>>::is_ok>
+  204568: 37000260     	tbnz	w0, #0x0, 0x2045b4 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011>>::write_kernel_args+0xcc>
+  20456c: 14000001     	b	0x204570 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011>>::write_kernel_args+0x88>
+  204570: f94007e9     	ldr	x9, [sp, #0x8]
+  204574: f94003e8     	ldr	x8, [sp]
+  204578: f940010b     	ldr	x11, [x8]
+  20457c: f940050a     	ldr	x10, [x8, #0x8]
+  204580: f9400908     	ldr	x8, [x8, #0x10]
+  204584: f9002beb     	str	x11, [sp, #0x50]
+  204588: f9002fea     	str	x10, [sp, #0x58]
+  20458c: f90033e8     	str	x8, [sp, #0x60]
+  204590: f9402be8     	ldr	x8, [sp, #0x50]
+  204594: f9402fea     	ldr	x10, [sp, #0x58]
+  204598: f94033eb     	ldr	x11, [sp, #0x60]
+  20459c: f9000d2b     	str	x11, [x9, #0x18]
+  2045a0: f900092a     	str	x10, [x9, #0x10]
+  2045a4: f9000528     	str	x8, [x9, #0x8]
+  2045a8: 52800028     	mov	w8, #0x1                // =1
+  2045ac: f9000128     	str	x8, [x9]
+  2045b0: 14000011     	b	0x2045f4 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011>>::write_kernel_args+0x10c>
+  2045b4: f94003e8     	ldr	x8, [sp]
+  2045b8: f9400100     	ldr	x0, [x8]
+  2045bc: f9400501     	ldr	x1, [x8, #0x8]
+  2045c0: f9400902     	ldr	x2, [x8, #0x10]
+  2045c4: 9100e3e8     	add	x8, sp, #0x38
+  2045c8: 97fff28e     	bl	0x201000 <<talos::runtime_console::ConsoleWriteResult>::complete>
+  2045cc: f94007e9     	ldr	x9, [sp, #0x8]
+  2045d0: f9401fe8     	ldr	x8, [sp, #0x38]
+  2045d4: f94023ea     	ldr	x10, [sp, #0x40]
+  2045d8: f94027eb     	ldr	x11, [sp, #0x48]
+  2045dc: f9000d2b     	str	x11, [x9, #0x18]
+  2045e0: f900092a     	str	x10, [x9, #0x10]
+  2045e4: f9000528     	str	x8, [x9, #0x8]
+  2045e8: aa1f03e8     	mov	x8, xzr
+  2045ec: f9000128     	str	x8, [x9]
+  2045f0: 14000001     	b	0x2045f4 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011>>::write_kernel_args+0x10c>
+  2045f4: f94043fe     	ldr	x30, [sp, #0x80]
+  2045f8: 910243ff     	add	sp, sp, #0x90
+  2045fc: d65f03c0     	ret
+
+0000000000204600 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011>>::new>:
+  204600: d10083ff     	sub	sp, sp, #0x20
+  204604: f9000bfe     	str	x30, [sp, #0x10]
+  204608: f9400009     	ldr	x9, [x0]
+  20460c: f940040a     	ldr	x10, [x0, #0x8]
+  204610: f90007ea     	str	x10, [sp, #0x8]
+  204614: f90003e9     	str	x9, [sp]
+  204618: d28c9d80     	mov	x0, #0x64ec             // =25836
+  20461c: f2a00420     	movk	x0, #0x21, lsl #16
+  204620: f2c00000     	movk	x0, #0x0, lsl #32
+  204624: f2e00000     	movk	x0, #0x0, lsl #48
+  204628: 52800209     	mov	w9, #0x10               // =16
+  20462c: 2a0903e1     	mov	w1, w9
+  204630: 910003e2     	mov	x2, sp
+  204634: 97ffff9f     	bl	0x2044b0 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011>>::with_device>
+  204638: f9400bfe     	ldr	x30, [sp, #0x10]
+  20463c: 910083ff     	add	sp, sp, #0x20
+  204640: d65f03c0     	ret
+
+0000000000204644 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_str>:
+  204644: d10203ff     	sub	sp, sp, #0x80
+  204648: f9003bfe     	str	x30, [sp, #0x70]
+  20464c: f9000be2     	str	x2, [sp, #0x10]
+  204650: aa0103e8     	mov	x8, x1
+  204654: f9400be1     	ldr	x1, [sp, #0x10]
+  204658: f9000fe8     	str	x8, [sp, #0x18]
+  20465c: aa0003e8     	mov	x8, x0
+  204660: f9400fe0     	ldr	x0, [sp, #0x18]
+  204664: f90013e8     	str	x8, [sp, #0x20]
+  204668: f90027e8     	str	x8, [sp, #0x48]
+  20466c: f9002be0     	str	x0, [sp, #0x50]
+  204670: f9002fe1     	str	x1, [sp, #0x58]
+  204674: f9400908     	ldr	x8, [x8, #0x10]
+  204678: f90017e8     	str	x8, [sp, #0x28]
+  20467c: 97fff41d     	bl	0x2016f0 <<str>::len>
+  204680: aa0003e1     	mov	x1, x0
+  204684: f94017e0     	ldr	x0, [sp, #0x28]
+  204688: 97fff9d9     	bl	0x202dec <<usize>::checked_add>
+  20468c: f9001fe0     	str	x0, [sp, #0x38]
+  204690: f90023e1     	str	x1, [sp, #0x40]
+  204694: f9401fe8     	ldr	x8, [sp, #0x38]
+  204698: f1000508     	subs	x8, x8, #0x1
+  20469c: 540001c1     	b.ne	0x2046d4 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_str+0x90>
+  2046a0: 14000001     	b	0x2046a4 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_str+0x60>
+  2046a4: f9400be2     	ldr	x2, [sp, #0x10]
+  2046a8: f9400fe1     	ldr	x1, [sp, #0x18]
+  2046ac: f94013e8     	ldr	x8, [sp, #0x20]
+  2046b0: f94023e9     	ldr	x9, [sp, #0x40]
+  2046b4: aa0903ea     	mov	x10, x9
+  2046b8: f90007ea     	str	x10, [sp, #0x8]
+  2046bc: f90037e9     	str	x9, [sp, #0x68]
+  2046c0: 91006100     	add	x0, x8, #0x18
+  2046c4: 97fff7ec     	bl	0x202674 <<talos::pl011::Pl011 as talos::runtime_console::ConsoleBackend>::write_str>
+  2046c8: 940034a5     	bl	0x21195c <<core::result::Result<(), core::fmt::Error> as core::ops::try_trait::Try>::branch>
+  2046cc: 370000a0     	tbnz	w0, #0x0, 0x2046e0 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_str+0x9c>
+  2046d0: 1400000b     	b	0x2046fc <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_str+0xb8>
+  2046d4: 52800028     	mov	w8, #0x1                // =1
+  2046d8: 3900dfe8     	strb	w8, [sp, #0x37]
+  2046dc: 1400000e     	b	0x204714 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_str+0xd0>
+  2046e0: d28dd800     	mov	x0, #0x6ec0             // =28352
+  2046e4: f2a00420     	movk	x0, #0x21, lsl #16
+  2046e8: f2c00000     	movk	x0, #0x0, lsl #32
+  2046ec: f2e00000     	movk	x0, #0x0, lsl #48
+  2046f0: 940034ae     	bl	0x2119a8 <<core::result::Result<(), core::fmt::Error> as core::ops::try_trait::FromResidual<core::result::Result<core::convert::Infallible, core::fmt::Error>>>::from_residual>
+  2046f4: 3900dfe0     	strb	w0, [sp, #0x37]
+  2046f8: 14000007     	b	0x204714 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_str+0xd0>
+  2046fc: f94007e8     	ldr	x8, [sp, #0x8]
+  204700: f94013e9     	ldr	x9, [sp, #0x20]
+  204704: f9000928     	str	x8, [x9, #0x10]
+  204708: 2a1f03e8     	mov	w8, wzr
+  20470c: 3900dfe8     	strb	w8, [sp, #0x37]
+  204710: 14000001     	b	0x204714 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_str+0xd0>
+  204714: 3940dfe0     	ldrb	w0, [sp, #0x37]
+  204718: f9403bfe     	ldr	x30, [sp, #0x70]
+  20471c: 910203ff     	add	sp, sp, #0x80
+  204720: d65f03c0     	ret
+
+0000000000204724 <<&mut talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write::write_fmt::SpecWriteFmt>::spec_write_fmt>:
+  204724: d10183ff     	sub	sp, sp, #0x60
+  204728: f9002bfe     	str	x30, [sp, #0x50]
+  20472c: f90007e0     	str	x0, [sp, #0x8]
+  204730: f9000be1     	str	x1, [sp, #0x10]
+  204734: f9000fe2     	str	x2, [sp, #0x18]
+  204738: f9001fe0     	str	x0, [sp, #0x38]
+  20473c: 910043e0     	add	x0, sp, #0x10
+  204740: 97fffccf     	bl	0x203a7c <<core::fmt::Arguments>::as_statically_known_str>
+  204744: f90017e0     	str	x0, [sp, #0x28]
+  204748: f9001be1     	str	x1, [sp, #0x30]
+  20474c: f94017e8     	ldr	x8, [sp, #0x28]
+  204750: b4000148     	cbz	x8, 0x204778 <<&mut talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write::write_fmt::SpecWriteFmt>::spec_write_fmt+0x54>
+  204754: 14000001     	b	0x204758 <<&mut talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write::write_fmt::SpecWriteFmt>::spec_write_fmt+0x34>
+  204758: f94007e0     	ldr	x0, [sp, #0x8]
+  20475c: f94017e1     	ldr	x1, [sp, #0x28]
+  204760: f9401be2     	ldr	x2, [sp, #0x30]
+  204764: f90023e1     	str	x1, [sp, #0x40]
+  204768: f90027e2     	str	x2, [sp, #0x48]
+  20476c: 97ffffb6     	bl	0x204644 <<talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write>::write_str>
+  204770: 39009fe0     	strb	w0, [sp, #0x27]
+  204774: 1400000b     	b	0x2047a0 <<&mut talos::runtime_console::RuntimeConsole<talos::pl011::Pl011> as core::fmt::Write::write_fmt::SpecWriteFmt>::spec_write_fmt+0x7c>
+  204778: f94007e0     	ldr	x0, [sp, #0x8]
+  20477c: f9400be2     	ldr	x2, [sp, #0x10]
+  204780: f9400fe3     	ldr	x3, [sp, #0x18]
+  204784: d28ddb01     	mov	x1, #0x6ed8             // =28376
+  204788: f2a00421     	movk	x1, #0x21, lsl #16
+  20478c: f2c00001     	movk	x1, #0x0, lsl #32
+  204790: f2e00001     	movk	x1, #0x0, lsl #48

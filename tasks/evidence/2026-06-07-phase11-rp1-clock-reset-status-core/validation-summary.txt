@@ -1,0 +1,17 @@
+Validation summary: phase11-rp1-clock-reset-status-core-20260607
+
+- cargo fmt --all -- --check: pass.
+- cargo -Zjson-target-spec test --quiet: pass.
+- Archive build/review:
+  scripts/rpi5-rp1-clock-manager-status-read-archive.sh and
+  scripts/rpi5-rp1-clock-manager-status-no-mmio-control-archive.sh produced
+  local/static candidate archives.
+- Archive review:
+  scripts/rpi5-rp1-clock-manager-status-read-review.sh and
+  scripts/rpi5-rp1-clock-manager-status-no-mmio-control-review.sh passed.
+- Static disassembly/source inspection: pass. Real candidate constructs the
+  accepted RP1 clock manager read addresses only; control candidate constructs
+  no forbidden RP1 clock/reset/GPIO/RIO/pads/MSI-X/PCIe/MIP/GIC MMIO address.
+- git diff --check: pass.
+- mdbook build: not run; no docs/src files were touched.
+- git diff --cached --check: pass.

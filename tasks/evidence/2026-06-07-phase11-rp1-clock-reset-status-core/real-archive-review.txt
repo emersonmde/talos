@@ -1,0 +1,8 @@
+candidate_archive=target/talos-rpi5-rp1-clock-manager-status-read-core.tar.gz
+candidate_archive_sha256=22d7592ef17ff5641e724d5b9ebcb3496071cb9237e22adadc915358079d268d
+kernel_2712_sha256=4267655039e0882377407302f012c610f0b011a23507c1a6aabcbd515f83dd8b
+kernel_2712_size=47280
+header_image_size=47280
+text_offset=0
+flags=12
+result_marker=TALOS: rp1-clock-manager-status-result
