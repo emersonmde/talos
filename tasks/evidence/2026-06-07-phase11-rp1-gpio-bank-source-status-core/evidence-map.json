@@ -1,0 +1,95 @@
+{
+  "taskId": "phase11-rp1-gpio-bank-source-status-core-20260607",
+  "status": "accepted",
+  "classification": "accepted-local-static-gpio-bank-source-status-core",
+  "evidenceLevel": "static/archive inspection + fmt/lint/typecheck + unit tests",
+  "claims": [
+    "real candidate implements only the accepted read-only IO_BANK0 INTE and INTS source-status snapshot",
+    "real candidate emits TALOS: rp1-gpio-bank-source-status-result with the accepted report fields and classification gpio-bank-source-status-visible",
+    "control candidate constructs no forbidden RP1 GPIO/RIO/pads/clock/reset/MSI-X/PCIe/MIP/GIC MMIO address and performs zero forbidden MMIO loads/stores",
+    "control candidate emits TALOS: rp1-gpio-bank-source-status-control with the same field shape, not-constructed address fields, zero raw values, and simulated/control classification",
+    "no Pi 5 hardware behavior is accepted by this task"
+  ],
+  "sourceContract": {
+    "task": "tasks/2026-06-07-phase11-rp1-gpio-bank-source-status-contract.md",
+    "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-contract/evidence-map.json",
+    "contractId": "phase11-rp1-gpio-bank-source-status-contract-v1",
+    "target": "rp1-io-bank0-source-status-read",
+    "allowedReads": [
+      "IO_BANK0_INTE @ 0x1f000d011c, 32-bit volatile load",
+      "IO_BANK0_INTS @ 0x1f000d0124, 32-bit volatile load"
+    ]
+  },
+  "implementation": {
+    "sourceFiles": [
+      "build.rs",
+      "src/main.rs",
+      "src/target/rpi5.rs"
+    ],
+    "scripts": [
+      "scripts/rpi5-rp1-gpio-bank-source-status-read-image.sh",
+      "scripts/rpi5-rp1-gpio-bank-source-status-read-boot-tree.sh",
+      "scripts/rpi5-rp1-gpio-bank-source-status-read-archive.sh",
+      "scripts/rpi5-rp1-gpio-bank-source-status-read-review.sh",
+      "scripts/rpi5-rp1-gpio-bank-source-status-no-mmio-control-image.sh",
+      "scripts/rpi5-rp1-gpio-bank-source-status-no-mmio-control-boot-tree.sh",
+      "scripts/rpi5-rp1-gpio-bank-source-status-no-mmio-control-archive.sh",
+      "scripts/rpi5-rp1-gpio-bank-source-status-no-mmio-control-review.sh"
+    ]
+  },
+  "realCandidate": {
+    "archive": "target/talos-rpi5-rp1-gpio-bank-source-status-read-core.tar.gz",
+    "archiveSha256": "52b71d101dce9884499bc94fcb3cce2121f5ec065881087b77ff6748e4e4a82b",
+    "kernel2712Sha256": "54f57ef743fb1bc3e760dc6f13f5d6a9485efb71027834b13f32194cd24228cf",
+    "kernel2712Size": 46904,
+    "marker": "TALOS: rp1-gpio-bank-source-status-result",
+    "classification": "gpio-bank-source-status-visible",
+    "review": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-core/real-archive-review.txt",
+    "strings": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-core/real-candidate-strings.txt",
+    "assembly": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-core/real-gpio-bank-source-status-asm.txt"
+  },
+  "controlCandidate": {
+    "archive": "target/talos-rpi5-rp1-gpio-bank-source-status-no-mmio-control-core.tar.gz",
+    "archiveSha256": "e3115c88b4d172df85169f95da399b18f41c5e827caaae08ac49aa2bd5a63a6f",
+    "kernel2712Sha256": "e90c3508db01f03bf1572c8b42ac99111010c8e41077320ddb59f23b7ee67597",
+    "kernel2712Size": 46832,
+    "marker": "TALOS: rp1-gpio-bank-source-status-control",
+    "classification": "simulated/control",
+    "forbiddenStringsAbsent": true,
+    "review": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-core/control-archive-review.txt",
+    "strings": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-core/control-candidate-strings.txt",
+    "assembly": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-core/control-gpio-bank-source-status-asm.txt"
+  },
+  "validation": [
+    "cargo fmt --all -- --check",
+    "cargo -Zjson-target-spec test --quiet",
+    "scripts/rpi5-rp1-gpio-bank-source-status-read-review.sh target/talos-rpi5-rp1-gpio-bank-source-status-read-core.tar.gz",
+    "scripts/rpi5-rp1-gpio-bank-source-status-no-mmio-control-review.sh target/talos-rpi5-rp1-gpio-bank-source-status-no-mmio-control-core.tar.gz",
+    "static source/string/disassembly inspection",
+    "git diff --check",
+    "git diff --cached --check"
+  ],
+  "validationSummary": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-core/validation-summary.txt",
+  "staticInspection": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-core/static-inspection.md",
+  "acceptedClaims": "Local/static real candidate, local/static no-MMIO/no-RP1/no-GIC control candidate, and archive/static boundary only.",
+  "rejectedClaims": [
+    "Pi 5 hardware behavior",
+    "GPIO event generation",
+    "interrupt pending generation",
+    "interrupt enablement or delivery",
+    "GIC IAR/EOIR acknowledgement",
+    "ISR or handler ownership",
+    "GPIO ownership",
+    "pin-control or pad writes",
+    "clock/reset programming",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "nextAction": "Promote phase11-rp1-gpio-bank-source-status-control-pi5-20260607 after this task is accepted and committed and hardwareTestLock remains unlocked/restored."
+}

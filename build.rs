@@ -183,6 +183,16 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "rpi5_rp1_gpio_bank_source_status_read",
+        implied_values: &[],
+        asm_defines: &[],
+    },
+    BootScenario {
+        value: "rpi5_rp1_gpio_bank_source_status_no_mmio_control",
+        implied_values: &[],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "rpi5_rp1_entry_control",
         implied_values: &[],
         asm_defines: &[],

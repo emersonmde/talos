@@ -1,0 +1,2 @@
+52b71d101dce9884499bc94fcb3cce2121f5ec065881087b77ff6748e4e4a82b  target/talos-rpi5-rp1-gpio-bank-source-status-read-core.tar.gz
+e3115c88b4d172df85169f95da399b18f41c5e827caaae08ac49aa2bd5a63a6f  target/talos-rpi5-rp1-gpio-bank-source-status-no-mmio-control-core.tar.gz

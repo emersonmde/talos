@@ -172,6 +172,10 @@ pub const RP1_UART0_GPIO15_CTRL: usize = 0x1f_000d_007c;
 #[allow(dead_code)]
 pub const RP1_GPIO14_STATUS: usize = 0x1f_000d_0070;
 #[allow(dead_code)]
+pub const RP1_IO_BANK0_INTE: usize = 0x1f_000d_011c;
+#[allow(dead_code)]
+pub const RP1_IO_BANK0_INTS: usize = 0x1f_000d_0124;
+#[allow(dead_code)]
 pub const RP1_IO_BANK0_MSIX_CFG: usize = 0x1f_0010_8008;
 #[cfg(any(
     talos_boot_scenario = "rpi5_timer_irq",
@@ -12519,7 +12523,8 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_uart0_fr_read_hold_control",
         talos_boot_scenario = "rpi5_rp1_uart0_fr_tail_stable_result",
         talos_boot_scenario = "rpi5_rp1_gpio14_status_read",
-        talos_boot_scenario = "rpi5_rp1_interrupt_routing_msix_cfg_read"
+        talos_boot_scenario = "rpi5_rp1_interrupt_routing_msix_cfg_read",
+        talos_boot_scenario = "rpi5_rp1_gpio_bank_source_status_read"
     )
 ))]
 fn read_rp1_reg_u32(addr: usize) -> u32 {
@@ -13018,6 +13023,83 @@ pub fn run_rp1_gic_visible_route_no_mmio_control() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_gpio_bank_source_status_read")]
+pub fn run_rp1_gpio_bank_source_status_read() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-gpio-bank-source-status-contract-v1";
+    const SOURCE_HWIRQ: u64 = 0;
+    const BANK: u64 = 0;
+    const BANK_FIRST_GPIO: u64 = 0;
+    const BANK_GPIO_COUNT: u64 = 28;
+    const BANK_LAST_GPIO: u64 = 27;
+    const GPIO14_MASK: u32 = 1 << 14;
+
+    write_early_static("rpi5-rp1-gpio-bank-source-status-read: start\n");
+    write_early_static("rpi5-rp1-gpio-bank-source-status-read: before-rp1-loads\n");
+    wait_uart10_empty_early_phase();
+
+    let inte = read_rp1_reg_u32(RP1_IO_BANK0_INTE);
+    let ints = read_rp1_reg_u32(RP1_IO_BANK0_INTS);
+
+    loop {
+        write_early_static("TALOS: rp1-gpio-bank-source-status-result contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=rp1-io-bank0-source-status-read source-hwirq=");
+        write_early_dec_u64(SOURCE_HWIRQ);
+        write_early_static(" bank=");
+        write_early_dec_u64(BANK);
+        write_early_static(" bank-first-gpio=");
+        write_early_dec_u64(BANK_FIRST_GPIO);
+        write_early_static(" bank-gpio-count=");
+        write_early_dec_u64(BANK_GPIO_COUNT);
+        write_early_static(" bank-last-gpio=");
+        write_early_dec_u64(BANK_LAST_GPIO);
+        write_early_static(" inte-address=");
+        write_early_hex_u64(RP1_IO_BANK0_INTE as u64);
+        write_early_static(" ints-address=");
+        write_early_hex_u64(RP1_IO_BANK0_INTS as u64);
+        write_gpio_bank_source_status_bits(inte, ints, GPIO14_MASK);
+        write_early_static(" classification=gpio-bank-source-status-visible\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_gpio_bank_source_status_no_mmio_control")]
+pub fn run_rp1_gpio_bank_source_status_no_mmio_control() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-gpio-bank-source-status-contract-v1";
+    const SOURCE_HWIRQ: u64 = 0;
+    const BANK: u64 = 0;
+    const BANK_FIRST_GPIO: u64 = 0;
+    const BANK_GPIO_COUNT: u64 = 28;
+    const BANK_LAST_GPIO: u64 = 27;
+    const GPIO14_MASK: u32 = 1 << 14;
+    const SIMULATED_RAW_VALUE: u32 = 0;
+
+    write_early_static("rpi5-rp1-gpio-bank-source-status-control: start\n");
+    write_early_static(
+        "rpi5-rp1-gpio-bank-source-status-control: no-rp1-gpio-rio-pads-clock-reset-msix-pcie-mip-gic-mmio\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-gpio-bank-source-status-control contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=rp1-io-bank0-source-status-read source-hwirq=");
+        write_early_dec_u64(SOURCE_HWIRQ);
+        write_early_static(" bank=");
+        write_early_dec_u64(BANK);
+        write_early_static(" bank-first-gpio=");
+        write_early_dec_u64(BANK_FIRST_GPIO);
+        write_early_static(" bank-gpio-count=");
+        write_early_dec_u64(BANK_GPIO_COUNT);
+        write_early_static(" bank-last-gpio=");
+        write_early_dec_u64(BANK_LAST_GPIO);
+        write_early_static(" inte-address=not-constructed ints-address=not-constructed");
+        write_gpio_bank_source_status_bits(SIMULATED_RAW_VALUE, SIMULATED_RAW_VALUE, GPIO14_MASK);
+        write_early_static(" classification=simulated/control\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
 #[cfg(any(
     talos_boot_scenario = "rpi5_rp1_gpio14_status_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_status_no_mmio_control"
@@ -13084,12 +13166,35 @@ fn write_gic_route_status_bits(
 }
 
 #[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_gpio_bank_source_status_read",
+    talos_boot_scenario = "rpi5_rp1_gpio_bank_source_status_no_mmio_control"
+))]
+fn write_gpio_bank_source_status_bits(inte: u32, ints: u32, gpio14_mask: u32) {
+    write_early_static(" width=32 inte-raw=");
+    write_early_hex_u64(inte as u64);
+    write_early_static(" ints-raw=");
+    write_early_hex_u64(ints as u64);
+    write_early_static(" gpio14-mask=");
+    write_early_hex_u64(gpio14_mask as u64);
+    write_early_static(" gpio14-enabled=");
+    write_bool(inte & gpio14_mask != 0);
+    write_early_static(" gpio14-source-status=");
+    write_bool(ints & gpio14_mask != 0);
+    write_early_static(" source-status-mask=");
+    write_early_hex_u64(ints as u64);
+    write_early_static(" source-status-nonzero=");
+    write_bool(ints != 0);
+}
+
+#[cfg(any(
     talos_boot_scenario = "rpi5_rp1_gpio14_status_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_status_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_interrupt_routing_msix_cfg_read",
     talos_boot_scenario = "rpi5_rp1_interrupt_routing_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gic_visible_route_status_read",
-    talos_boot_scenario = "rpi5_rp1_gic_visible_route_no_mmio_control"
+    talos_boot_scenario = "rpi5_rp1_gic_visible_route_no_mmio_control",
+    talos_boot_scenario = "rpi5_rp1_gpio_bank_source_status_read",
+    talos_boot_scenario = "rpi5_rp1_gpio_bank_source_status_no_mmio_control"
 ))]
 fn write_bool(value: bool) {
     if value {
@@ -13244,6 +13349,8 @@ mod tests {
         assert_eq!(RP1_GPIO14_STATUS, 0x1f_000d_0070);
         assert_eq!(RP1_UART0_GPIO14_CTRL, 0x1f_000d_0074);
         assert_eq!(RP1_UART0_GPIO15_CTRL, 0x1f_000d_007c);
+        assert_eq!(RP1_IO_BANK0_INTE, 0x1f_000d_011c);
+        assert_eq!(RP1_IO_BANK0_INTS, 0x1f_000d_0124);
         assert_eq!(RP1_UART0_BASE, RP1_UART0_PCIE2_BASE);
     }
 }
