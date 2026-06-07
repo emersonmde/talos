@@ -7813,6 +7813,49 @@ generation, interrupt delivery, GIC acknowledgement, handler ownership,
 DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
 Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-clock-reset-write-restore-core-20260607 is accepted as
+accepted-local-static-clock-adc-ctrl-write-restore-core. It adds the real
+rpi5_rp1_clock_adc_ctrl_write_restore diagnostic and paired
+rpi5_rp1_clock_adc_ctrl_write_restore_no_mmio_control candidate. The real
+candidate performs only the contracted CLK_ADC_CTRL pre-read, idempotent
+write-back, post-read, restore-write, and restore-read sequence and reports
+TALOS: rp1-clock-adc-ctrl-write-restore-result; the control preserves the
+output shape with no RP1 clock/reset, GPIO/RIO/pads, MSI-X/PCIe/MIP, or GIC
+MMIO address construction. No hardware behavior is accepted by this task.
+
+phase11-rp1-clock-reset-write-restore-control-pi5-20260607 accepted the
+no-MMIO/no-RP1/no-GIC clock ADC control path as
+no-mmio-clock-adc-ctrl-write-restore-control-visible. After
+serial-drain/capture triage, the accepted rerun selected tree
+94775dea793b4493ad2cdbdfd3bd6e8882362d10d440a0fadb1ed9296ab27f8e, retained
+two 46,888-byte candidate TFTP fetches, passed v2 identity join with no
+rejection reasons, retained 108 control markers, and restored to the pre-run
+tree. This accepts only the simulated/control output and capture path.
+
+phase11-rp1-clock-reset-write-restore-pi5-20260607 accepted the real
+CLK_ADC_CTRL idempotent write/readback/restore diagnostic as
+rp1-clock-adc-ctrl-idempotent-write-restored. After serial-drain/capture
+triage, the accepted rerun selected tree
+3ea80fee925c554e0e65141bbd18174ab661b3e5ac6a73b82d7c130ca7adb709, retained
+two 47,232-byte candidate TFTP fetches, passed v2 identity join with no
+rejection reasons, retained 102 result markers, and reported
+pre-raw=0xdeaddead, post-raw=0xdeaddead, restore-raw=0xdeaddead,
+post-eq-pre=true, and restore-eq-pre=true. The lab was restored to the
+original pre-run tree after the accepted rerun.
+
+phase11-rp1-clock-reset-write-restore-closeout-20260607 closes the chain as
+rp1-clock-adc-ctrl-write-restore-frontier-closed. The accepted frontier is
+only the source-backed CLK_ADC_CTRL idempotent write/readback/restore contract,
+local real/control candidate split, no-MMIO/no-RP1/no-GIC control proof, and
+real Pi 5 proof that the selected write-back and restore-read preserved the
+pre-read raw value for this run. Broad clock/reset ownership, non-idempotent
+clock programming, reset-controller writes, GPIO ownership, event generation,
+interrupt delivery, GIC acknowledgement, handler ownership, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe, Milestone 11.3, and phase
+transition remain unaccepted. Supervisor planning is required for the next
+Milestone 11.2 feature slice; this closeout does not create a worker-owned
+follow-up task.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

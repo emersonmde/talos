@@ -1,0 +1,161 @@
+{
+  "task": "phase11-rp1-clock-reset-write-restore-closeout-20260607",
+  "status": "accepted",
+  "classification": "rp1-clock-adc-ctrl-write-restore-frontier-closed",
+  "evidenceLevel": [
+    "static inspection",
+    "source contract reconciliation",
+    "local/static core reconciliation",
+    "lab-controller API evidence review",
+    "serial hardware boot/output evidence review",
+    "stable same-cursor TFTP evidence review",
+    "v2 identity join evidence review",
+    "restore proof review",
+    "docs validation",
+    "git diff checks"
+  ],
+  "inputs": {
+    "sourceContract": {
+      "task": "phase11-rp1-clock-reset-write-restore-source-contract-20260607",
+      "classification": "accepted-source-contract",
+      "commit": "7a8f5e726a0b43ab740cb82817c2c75877db5909",
+      "contractId": "phase11-rp1-clock-reset-write-restore-source-contract-v1",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-source-contract/evidence-map.json"
+    },
+    "diagnosticCore": {
+      "task": "phase11-rp1-clock-reset-write-restore-core-20260607",
+      "classification": "accepted-local-static-clock-adc-ctrl-write-restore-core",
+      "commit": "d8280863d781df2ee072bd93ecd0d24a1942c06f",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-core/evidence-map.json"
+    },
+    "noMmioControl": {
+      "task": "phase11-rp1-clock-reset-write-restore-control-pi5-20260607",
+      "classification": "no-mmio-clock-adc-ctrl-write-restore-control-visible",
+      "commit": "77a4ac8fd98d94011e000204dd4ed48017586ab9",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-control-pi5/evidence-map.json"
+    },
+    "realDiagnostic": {
+      "task": "phase11-rp1-clock-reset-write-restore-pi5-20260607",
+      "classification": "rp1-clock-adc-ctrl-idempotent-write-restored",
+      "commit": "da7070869b66bb492f1147703f7bd5472861a1f0",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-pi5/evidence-map.json"
+    }
+  },
+  "acceptedFrontier": {
+    "name": "rp1-clock-adc-ctrl-write-restore-frontier-closed",
+    "contractId": "phase11-rp1-clock-reset-write-restore-source-contract-v1",
+    "target": "rp1-clk-adc-ctrl-idempotent-write-restore",
+    "operationClass": "bounded idempotent RP1 clock-manager write/readback/restore",
+    "register": "CLK_ADC_CTRL",
+    "address": "0x1f00018144",
+    "width": 32,
+    "allowedOperations": [
+      "pre-read CLK_ADC_CTRL",
+      "write pre-read raw value back to CLK_ADC_CTRL",
+      "post-read CLK_ADC_CTRL",
+      "restore-write pre-read raw value to CLK_ADC_CTRL",
+      "restore-read CLK_ADC_CTRL"
+    ],
+    "realCandidate": {
+      "archive": "target/talos-rpi5-rp1-clock-adc-ctrl-write-restore-core.tar.gz",
+      "archiveSha256": "64175bff01b53efdb3ab71219e24e7c9740e34a0f82bcbe31c4fc65e51e74add",
+      "kernel2712Sha256": "19f2485cd3078e68cf29596b46493d11ba9911016ef6bafc9747d3cb0515a252",
+      "kernelSizeBytes": 47232
+    },
+    "controlProof": {
+      "selectedTreeHash": "94775dea793b4493ad2cdbdfd3bd6e8882362d10d440a0fadb1ed9296ab27f8e",
+      "expectedFetchBytes": 46888,
+      "expectedFetchCount": 2,
+      "marker": "TALOS: rp1-clock-adc-ctrl-write-restore-control",
+      "markerOccurrences": 108,
+      "identityJoin": "passed with no rejection reasons"
+    },
+    "realProof": {
+      "acceptedRun": "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-pi5/real-rerun-after-kg",
+      "selectedTreeHash": "3ea80fee925c554e0e65141bbd18174ab661b3e5ac6a73b82d7c130ca7adb709",
+      "expectedFetchBytes": 47232,
+      "expectedFetchCount": 2,
+      "marker": "TALOS: rp1-clock-adc-ctrl-write-restore-result",
+      "markerOccurrences": 102,
+      "identityJoin": "passed with no rejection reasons",
+      "restore": "post-run restore returned the lab to the pre-run boot tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "operationResult": {
+        "preRaw": "0xdeaddead",
+        "postRaw": "0xdeaddead",
+        "restoreRaw": "0xdeaddead",
+        "preEnable": true,
+        "postEnable": true,
+        "restoreEnable": true,
+        "preAuxsrc": "0x15",
+        "postAuxsrc": "0x15",
+        "restoreAuxsrc": "0x15",
+        "preSource": "0x1",
+        "postSource": "0x1",
+        "restoreSource": "0x1",
+        "postEqPre": true,
+        "restoreEqPre": true,
+        "classification": "rp1-clock-adc-ctrl-idempotent-write-restored"
+      }
+    }
+  },
+  "acceptedClaims": [
+    "source-backed CLK_ADC_CTRL idempotent write/readback/restore register identity and operation sequence",
+    "local/static real candidate implements only the contracted CLK_ADC_CTRL write/readback/restore path",
+    "paired no-MMIO/no-RP1/no-GIC control candidate constructs no forbidden RP1/GIC/MSI-X/PCIe/MIP/GPIO/RIO/pad/clock-reset MMIO path",
+    "no-MMIO/no-RP1/no-GIC control output shape is visible on Pi 5 under v2 identity join",
+    "real CLK_ADC_CTRL idempotent write/readback/restore output is visible on Pi 5 under v2 identity join",
+    "post-read and restore-read raw values equal the pre-read raw value for the selected run"
+  ],
+  "unacceptedClaims": [
+    "broad RP1 clock/reset ownership",
+    "non-idempotent clock enable, disable, divider, source, PLL, or reset-controller programming",
+    "GPIO ownership",
+    "GPIO event generation",
+    "interrupt pending generation",
+    "interrupt delivery",
+    "IAR or EOIR acknowledgement",
+    "ISR or handler ownership",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "summary": "Closed source/core/control/real proof chain as an accepted reversible CLK_ADC_CTRL idempotent write/readback/restore frontier with retained identity-joined Pi 5 evidence."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Recorded paired no-MMIO/no-RP1/no-GIC control proof as satisfied before the real Pi 5 proof."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Retained rejected first real run, known-good control, decisive rerun, identity join, stable TFTP, and restore proof while accepting only the decisive identity-joined rerun."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Updated roadmap and project contract docs for the accepted reversible clock-manager write/restore frontier."
+    },
+    {
+      "disposition": "deferred",
+      "summary": "GPIO ownership retry, interrupt-delivery work, non-idempotent clock/reset operations, reset-controller paths, and broad RP1 clock/reset ownership require supervisor planning with new acceptance criteria."
+    },
+    {
+      "disposition": "not-an-issue",
+      "summary": "The observed 0xdeaddead raw value is retained only as the value preserved by this selected idempotent write/restore proof."
+    }
+  ],
+  "nextAction": "Set planningNeeded=true for supervisor planning of the next Milestone 11.2 feature slice; do not create same-shaped clock/reset write/restore hardware rerun tasks, GPIO ownership retries, interrupt-delivery tasks, or non-idempotent clock/reset tasks without a new source contract and acceptance criteria.",
+  "validation": {
+    "staticInspection": "passed",
+    "gitDiffCheck": "pass",
+    "mdbookBuild": "pass",
+    "gitDiffCachedCheck": "pass"
+  },
+  "commit": null
+}

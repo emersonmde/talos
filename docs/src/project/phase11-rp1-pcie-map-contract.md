@@ -511,6 +511,21 @@ GIC acknowledgement, handler ownership, DMA/cache, storage, generated-root,
 networking, SSH, broader PCIe enumeration, Milestone 11.3, and phase
 transition remain unaccepted.
 
+phase11-rp1-clock-reset-write-restore-closeout-20260607 closes that chain as
+rp1-clock-adc-ctrl-write-restore-frontier-closed. The accepted frontier is
+limited to the source-backed CLK_ADC_CTRL idempotent write/readback/restore
+contract, the local real/control candidate split, the paired no-MMIO/no-RP1/
+no-GIC control output proof, and the real Pi 5 proof that the selected
+write-back and restore-read returned the pre-read raw value for this run. This
+is the first accepted reversible RP1 clock-manager write/restore boundary, but
+it does not accept broad clock/reset ownership, non-idempotent clock
+programming, reset-controller writes, GPIO ownership, event generation,
+interrupt delivery, GIC acknowledgement, handler ownership, DMA/cache,
+storage, generated-root, networking, SSH, broader PCIe enumeration, Milestone
+11.3, or phase transition. A future GPIO ownership retry, interrupt-delivery
+slice, or broader clock/reset step requires supervisor planning with a new
+source contract and acceptance criteria.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware
