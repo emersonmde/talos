@@ -1,0 +1,8 @@
+candidate_archive=target/talos-rpi5-rp1-interrupt-routing-msix-cfg-read-core.tar.gz
+candidate_archive_sha256=09c5f12dcf9a6d52d4ba265e2a6cfcb1c2797a278e342e59f08edba8a27de00b
+kernel_2712_sha256=f076867595f93b71632c09b058d55177e9814f195bc6e102e63725c26d153748
+kernel_2712_size=46648
+header_image_size=46648
+text_offset=0
+flags=12
+result_marker=TALOS: rp1-interrupt-routing-result

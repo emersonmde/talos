@@ -1,0 +1,43 @@
+Assembly review: phase11-rp1-interrupt-routing-diagnostic-core-20260607
+
+Evidence level: static disassembly/source inspection.
+
+Inputs:
+
+- Real candidate assembly:
+  tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-core/rp1-interrupt-routing-msix-cfg-read-asm.txt
+- No-MMIO/no-enable control assembly:
+  tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-core/control-interrupt-routing-asm.txt
+
+Real candidate:
+
+- The selected function constructs the contracted RP1 IO_BANK0 MSIX_CFG(0)
+  physical address in x19:
+  - mov x19, #0x8008
+  - movk x19, #0x10, lsl #16
+  - movk x19, #0x1f, lsl #32
+- It performs exactly one contracted RP1 volatile load:
+  - ldr w22, [x19]
+- The later x0 0x1f00108008 construction is for printing the accepted target
+  address in the terminal marker, not for an additional MMIO access.
+- The retained ldr w10, [x9, #0x18] instructions use x9 = 0x107d001000 and
+  are UART10 FR polling in wait_uart10_empty_early_phase.
+
+No-MMIO/no-enable control:
+
+- The selected function does not construct 0x1f00108008, 0x1f000d0070,
+  0x1f000e0008, 0x1f000f003c, 0x107fff9000, or 0x107fffa000.
+- It has no read_rp1_reg_u32 call and no ldr/str from a constructed RP1
+  interrupt, GPIO, RIO, pad, clock/reset, MSI-X, PCIe config, MIP, or GIC
+  address.
+- The only MMIO-looking loads in the selected control function are
+  ldr w10, [x9, #0x18] with x9 = 0x107d001000, which is UART10 FR polling for
+  serial flush behavior.
+
+Disposition:
+
+- fixed: real candidate performs the one contracted 32-bit MSIX_CFG(0) read.
+- fixed: no-MMIO/no-enable control preserves the serial output shape without
+  the contracted RP1/MSI-X/PCIe/GIC address or forbidden MMIO.
+- not-an-issue: UART10 polling loads are required for serial output and are not
+  RP1 interrupt/GPIO/pads/RIO/clock/reset/MSI-X/PCIe/GIC MMIO.

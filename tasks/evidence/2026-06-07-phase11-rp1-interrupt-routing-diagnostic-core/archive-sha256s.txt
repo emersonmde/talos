@@ -1,0 +1,2 @@
+09c5f12dcf9a6d52d4ba265e2a6cfcb1c2797a278e342e59f08edba8a27de00b  target/talos-rpi5-rp1-interrupt-routing-msix-cfg-read-core.tar.gz
+df030dd8c696e9cb5f3bd8a28abaa3fc6584d2d540811e29b2c37b3bf156668c  target/talos-rpi5-rp1-interrupt-routing-no-mmio-control-core.tar.gz

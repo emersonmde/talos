@@ -170,6 +170,8 @@ pub const RP1_UART0_GPIO14_CTRL: usize = 0x1f_000d_0074;
 pub const RP1_UART0_GPIO15_CTRL: usize = 0x1f_000d_007c;
 #[allow(dead_code)]
 pub const RP1_GPIO14_STATUS: usize = 0x1f_000d_0070;
+#[allow(dead_code)]
+pub const RP1_IO_BANK0_MSIX_CFG: usize = 0x1f_0010_8008;
 #[cfg(any(
     talos_boot_scenario = "rpi5_timer_irq",
     talos_boot_scenario = "rpi5_timer_preemption",
@@ -9113,6 +9115,30 @@ pub fn write_early_hex_u64(value: u64) {
     wait_uart10_empty_early_phase();
 }
 
+#[cfg(talos_target_rpi5_bcm2712)]
+fn write_early_dec_u64(mut value: u64) {
+    let mut digits = [0u8; 20];
+    let mut len = 0usize;
+
+    if value == 0 {
+        write_uart10_byte_early_phase(b'0');
+        wait_uart10_empty_early_phase();
+        return;
+    }
+
+    while value != 0 {
+        digits[len] = b'0' + (value % 10) as u8;
+        value /= 10;
+        len += 1;
+    }
+
+    while len != 0 {
+        len -= 1;
+        write_uart10_byte_early_phase(digits[len]);
+    }
+    wait_uart10_empty_early_phase();
+}
+
 #[cfg(talos_boot_scenario = "rpi5_el0_trap_proof")]
 pub fn run_el0_trap_proof() -> ! {
     crate::println!(
@@ -12489,7 +12515,8 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_uart0_fr_read_delayed_marker",
         talos_boot_scenario = "rpi5_rp1_uart0_fr_read_hold_control",
         talos_boot_scenario = "rpi5_rp1_uart0_fr_tail_stable_result",
-        talos_boot_scenario = "rpi5_rp1_gpio14_status_read"
+        talos_boot_scenario = "rpi5_rp1_gpio14_status_read",
+        talos_boot_scenario = "rpi5_rp1_interrupt_routing_msix_cfg_read"
     )
 ))]
 fn read_rp1_reg_u32(addr: usize) -> u32 {
@@ -12808,6 +12835,73 @@ pub fn run_rp1_gpio14_status_no_mmio_control() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_interrupt_routing_msix_cfg_read")]
+pub fn run_rp1_interrupt_routing_msix_cfg_read() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-interrupt-routing-source-contract-v1";
+    const HWIRQ: u64 = 0;
+    const MSIX_VECTOR: u64 = 0;
+    const GIC_SPI: u64 = 128;
+    const GIC_INTID: u64 = 160;
+
+    write_early_static("rpi5-rp1-interrupt-routing-msix-cfg-read: start\n");
+    write_early_static("rpi5-rp1-interrupt-routing-msix-cfg-read: before-rp1-load\n");
+    wait_uart10_empty_early_phase();
+
+    let value = read_rp1_reg_u32(RP1_IO_BANK0_MSIX_CFG);
+
+    loop {
+        write_early_static("TALOS: rp1-interrupt-routing-result contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=rp1-io-bank0-msix-cfg-read hwirq=");
+        write_early_dec_u64(HWIRQ);
+        write_early_static(" predicted-msix-vector=");
+        write_early_dec_u64(MSIX_VECTOR);
+        write_early_static(" predicted-gic-spi=");
+        write_early_dec_u64(GIC_SPI);
+        write_early_static(" predicted-gic-intid=");
+        write_early_dec_u64(GIC_INTID);
+        write_early_static(" address=");
+        write_early_hex_u64(RP1_IO_BANK0_MSIX_CFG as u64);
+        write_early_static(" width=32 raw=");
+        write_early_hex_u64(value as u64);
+        write_msix_cfg_bits(value);
+        write_early_static(" classification=routing-msix-cfg-visible\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_interrupt_routing_no_mmio_control")]
+pub fn run_rp1_interrupt_routing_no_mmio_control() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-interrupt-routing-source-contract-v1";
+    const HWIRQ: u64 = 0;
+    const MSIX_VECTOR: u64 = 0;
+    const GIC_SPI: u64 = 128;
+    const GIC_INTID: u64 = 160;
+    const SIMULATED_RAW_VALUE: u32 = 0;
+
+    write_early_static("rpi5-rp1-interrupt-routing-control: start\n");
+    write_early_static("rpi5-rp1-interrupt-routing-control: no-rp1-msix-pcie-gic-mmio\n");
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-interrupt-routing-control contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=rp1-io-bank0-msix-cfg-read hwirq=");
+        write_early_dec_u64(HWIRQ);
+        write_early_static(" predicted-msix-vector=");
+        write_early_dec_u64(MSIX_VECTOR);
+        write_early_static(" predicted-gic-spi=");
+        write_early_dec_u64(GIC_SPI);
+        write_early_static(" predicted-gic-intid=");
+        write_early_dec_u64(GIC_INTID);
+        write_early_static(" address=not-constructed width=32 raw=");
+        write_early_hex_u64(SIMULATED_RAW_VALUE as u64);
+        write_msix_cfg_bits(SIMULATED_RAW_VALUE);
+        write_early_static(" classification=simulated/control\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
 #[cfg(any(
     talos_boot_scenario = "rpi5_rp1_gpio14_status_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_status_no_mmio_control"
@@ -12832,8 +12926,25 @@ fn write_gpio_status_bits(value: u32) {
 }
 
 #[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_interrupt_routing_msix_cfg_read",
+    talos_boot_scenario = "rpi5_rp1_interrupt_routing_no_mmio_control"
+))]
+fn write_msix_cfg_bits(value: u32) {
+    write_early_static(" enable=");
+    write_bool(value & 1 != 0);
+    write_early_static(" test=");
+    write_bool(value & (1 << 1) != 0);
+    write_early_static(" iack=");
+    write_bool(value & (1 << 2) != 0);
+    write_early_static(" iack-en=");
+    write_bool(value & (1 << 3) != 0);
+}
+
+#[cfg(any(
     talos_boot_scenario = "rpi5_rp1_gpio14_status_read",
-    talos_boot_scenario = "rpi5_rp1_gpio14_status_no_mmio_control"
+    talos_boot_scenario = "rpi5_rp1_gpio14_status_no_mmio_control",
+    talos_boot_scenario = "rpi5_rp1_interrupt_routing_msix_cfg_read",
+    talos_boot_scenario = "rpi5_rp1_interrupt_routing_no_mmio_control"
 ))]
 fn write_bool(value: bool) {
     if value {

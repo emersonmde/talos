@@ -1,0 +1,90 @@
+{
+  "task": "phase11-rp1-interrupt-routing-diagnostic-core-20260607",
+  "status": "accepted",
+  "classification": "local-static-interrupt-routing-core-accepted",
+  "accepted": [
+    "rpi5_rp1_interrupt_routing_msix_cfg_read branches directly from rust_entry",
+    "real candidate performs exactly one 32-bit volatile load from 0x1f00108008",
+    "real candidate repeatedly emits TALOS: rp1-interrupt-routing-result with contract id, target, hwirq, predicted MSI-X/GIC fields, address, width, raw value, decoded MSIX_CFG bits, and routing-msix-cfg-visible classification after a returned load",
+    "rpi5_rp1_interrupt_routing_no_mmio_control branches directly from rust_entry",
+    "no-MMIO/no-enable control candidate constructs no forbidden RP1 interrupt/GPIO/pads/RIO/clock/reset/MSI-X/PCIe-config/MIP/GIC address and performs zero forbidden MMIO loads/stores",
+    "no-MMIO/no-enable control candidate repeatedly emits TALOS: rp1-interrupt-routing-control with the same field shape, address=not-constructed, raw value 0, decoded bits, and simulated/control classification",
+    "both non-published Pi 5 candidate archives passed task-owned archive review"
+  ],
+  "notAccepted": [
+    "Pi 5 hardware execution",
+    "visible no-MMIO/no-enable control serial output",
+    "visible RP1 interrupt-routing serial output",
+    "GPIO ownership or pin-control behavior",
+    "pad writes",
+    "interrupt enablement or delivery",
+    "MSI-X enable/IACK writes",
+    "PCIe MSI delivery",
+    "GIC delivery",
+    "clock/reset programming",
+    "DMA/cache behavior",
+    "storage or generated-root behavior",
+    "networking or SSH",
+    "broader PCIe behavior",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-core.md",
+    "staticInspection": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-core/static-inspection.md",
+    "assemblyReview": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-core/assembly-review.txt",
+    "validationSummary": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-core/validation-summary.txt",
+    "rp1ArchiveReview": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-core/rp1-archive-review.txt",
+    "controlArchiveReview": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-core/control-archive-review.txt",
+    "rp1Assembly": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-core/rp1-interrupt-routing-msix-cfg-read-asm.txt",
+    "controlAssembly": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-core/control-interrupt-routing-asm.txt",
+    "rp1CandidateArchive": "target/talos-rpi5-rp1-interrupt-routing-msix-cfg-read-core.tar.gz",
+    "controlCandidateArchive": "target/talos-rpi5-rp1-interrupt-routing-no-mmio-control-core.tar.gz"
+  },
+  "rp1Candidate": {
+    "archive": "target/talos-rpi5-rp1-interrupt-routing-msix-cfg-read-core.tar.gz",
+    "archiveSha256": "09c5f12dcf9a6d52d4ba265e2a6cfcb1c2797a278e342e59f08edba8a27de00b",
+    "kernelSha256": "f076867595f93b71632c09b058d55177e9814f195bc6e102e63725c26d153748",
+    "kernelSizeBytes": 46648,
+    "textOffset": 0,
+    "headerImageSize": 46648,
+    "flags": 12,
+    "magic": "ARMd",
+    "marker": "TALOS: rp1-interrupt-routing-result",
+    "contractId": "phase11-rp1-interrupt-routing-source-contract-v1",
+    "target": "rp1-io-bank0-msix-cfg-read",
+    "address": "0x1f00108008",
+    "widthBits": 32,
+    "assemblyReview": {
+      "rp1VolatileLoadCount": 1,
+      "rp1AddressConstructionForLoadCount": 1
+    }
+  },
+  "controlCandidate": {
+    "archive": "target/talos-rpi5-rp1-interrupt-routing-no-mmio-control-core.tar.gz",
+    "archiveSha256": "df030dd8c696e9cb5f3bd8a28abaa3fc6584d2d540811e29b2c37b3bf156668c",
+    "kernelSha256": "114c1e76a54f30c6f49f39d2418c0974b52a8af63b74ccf99f034b1f7df6a154",
+    "kernelSizeBytes": 46520,
+    "textOffset": 0,
+    "headerImageSize": 46520,
+    "flags": 12,
+    "magic": "ARMd",
+    "marker": "TALOS: rp1-interrupt-routing-control",
+    "classification": "simulated/control",
+    "assemblyReview": {
+      "forbiddenMmioLoadStoreCount": 0,
+      "forbiddenAddressConstructionCount": 0,
+      "readRp1RegReferences": 0
+    }
+  },
+  "validation": {
+    "cargoFmt": "passed",
+    "cargoTestQuiet": "passed",
+    "archiveReview": "passed",
+    "staticAssemblyInspection": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "not run; no docs/src files touched",
+    "gitDiffCachedCheck": "passed"
+  },
+  "nextAction": "Mechanically promote phase11-rp1-interrupt-routing-no-mmio-control-pi5-20260607 on a future worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive."
+}

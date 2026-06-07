@@ -46,6 +46,8 @@
             talos_boot_scenario = "rpi5_rp1_uart0_fr_tail_stable_no_mmio_control",
             talos_boot_scenario = "rpi5_rp1_gpio14_status_read",
             talos_boot_scenario = "rpi5_rp1_gpio14_status_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_interrupt_routing_msix_cfg_read",
+            talos_boot_scenario = "rpi5_rp1_interrupt_routing_no_mmio_control",
             talos_boot_scenario = "rpi5_rp1_handoff_reset",
             talos_boot_scenario = "rpi5_rp1_post_handoff_marker_reset",
             talos_boot_scenario = "rpi5_rust_entry_uart10_marker_loop",
@@ -345,6 +347,24 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
 
     #[cfg(all(
         talos_target_rpi5_bcm2712,
+        talos_boot_scenario = "rpi5_rp1_interrupt_routing_msix_cfg_read"
+    ))]
+    {
+        let _ = dtb_pa;
+        target::rpi5::run_rp1_interrupt_routing_msix_cfg_read();
+    }
+
+    #[cfg(all(
+        talos_target_rpi5_bcm2712,
+        talos_boot_scenario = "rpi5_rp1_interrupt_routing_no_mmio_control"
+    ))]
+    {
+        let _ = dtb_pa;
+        target::rpi5::run_rp1_interrupt_routing_no_mmio_control();
+    }
+
+    #[cfg(all(
+        talos_target_rpi5_bcm2712,
         talos_boot_scenario = "rpi5_rp1_entry_control"
     ))]
     {
@@ -366,6 +386,8 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
             talos_boot_scenario = "rpi5_rp1_uart0_fr_tail_stable_no_mmio_control",
             talos_boot_scenario = "rpi5_rp1_gpio14_status_read",
             talos_boot_scenario = "rpi5_rp1_gpio14_status_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_interrupt_routing_msix_cfg_read",
+            talos_boot_scenario = "rpi5_rp1_interrupt_routing_no_mmio_control",
             talos_boot_scenario = "rpi5_rp1_handoff_reset",
             talos_boot_scenario = "rpi5_rp1_post_handoff_marker_reset",
             talos_boot_scenario = "rpi5_rust_entry_uart10_marker_loop"

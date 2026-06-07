@@ -1,0 +1,16 @@
+Validation summary: phase11-rp1-interrupt-routing-diagnostic-core-20260607
+
+- fmt/lint/typecheck: cargo fmt --all -- --check passed.
+- unit tests: cargo -Zjson-target-spec test --quiet passed.
+- artifact build helpers:
+  rpi5-rp1-interrupt-routing-msix-cfg-read and
+  rpi5-rp1-interrupt-routing-no-mmio-control archive helpers passed.
+- archive review helpers:
+  scripts/rpi5-rp1-interrupt-routing-msix-cfg-read-review.sh and
+  scripts/rpi5-rp1-interrupt-routing-no-mmio-control-review.sh passed.
+- static disassembly/source inspection: passed; real candidate has one
+  contracted MSIX_CFG(0) load, control has zero forbidden RP1/MSI-X/PCIe/GIC
+  loads/stores and no forbidden address construction.
+- git diff --check: passed.
+- mdbook build: not run; no docs/src files touched.
+- git diff --cached --check: passed.
