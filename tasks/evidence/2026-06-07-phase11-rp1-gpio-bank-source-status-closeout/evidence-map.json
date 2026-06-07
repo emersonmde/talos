@@ -1,0 +1,134 @@
+{
+  "task": "phase11-rp1-gpio-bank-source-status-closeout-20260607",
+  "status": "accepted",
+  "classification": "gpio-bank-source-status-frontier-closed",
+  "evidenceLevel": [
+    "static inspection",
+    "source contract reconciliation",
+    "local/static core reconciliation",
+    "lab-controller API evidence review",
+    "serial hardware boot/output evidence review",
+    "stable same-cursor TFTP evidence review",
+    "v2 identity join evidence review",
+    "restore proof review",
+    "docs validation",
+    "git diff checks"
+  ],
+  "inputs": {
+    "sourceContract": {
+      "task": "phase11-rp1-gpio-bank-source-status-contract-20260607",
+      "classification": "accepted-source-contract",
+      "commit": "6061676",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-contract/evidence-map.json"
+    },
+    "diagnosticCore": {
+      "task": "phase11-rp1-gpio-bank-source-status-core-20260607",
+      "classification": "accepted-local-static-gpio-bank-source-status-core",
+      "commit": "6bf01f202827bf60cd4a8888c644843892600ee1",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-core/evidence-map.json"
+    },
+    "noMmioControl": {
+      "task": "phase11-rp1-gpio-bank-source-status-control-pi5-20260607",
+      "classification": "no-mmio-gpio-bank-source-status-control-visible",
+      "commit": "fe50dd794ec475d214ec9cd264bc91ab07b52906",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-control-pi5/evidence-map.json"
+    },
+    "realDiagnostic": {
+      "task": "phase11-rp1-gpio-bank-source-status-pi5-20260607",
+      "classification": "gpio-bank-source-status-visible",
+      "commit": "6c94567ced617fe2b1b8e0238dc0d8388d0394a6",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-pi5/evidence-map.json"
+    }
+  },
+  "acceptedFrontier": {
+    "name": "gpio-bank-source-status-frontier-closed",
+    "contractId": "phase11-rp1-gpio-bank-source-status-contract-v1",
+    "target": "rp1-io-bank0-source-status-read",
+    "operationClass": "read-only/non-destructive",
+    "sourceHwirq": 0,
+    "bank": 0,
+    "bankGpios": "GPIO0..GPIO27",
+    "gpio14BitMask": "0x00004000",
+    "allowedReads": [
+      "IO_BANK0_INTS @ 0x1f000d0124",
+      "IO_BANK0_INTE @ 0x1f000d011c"
+    ],
+    "observedStatus": {
+      "inteRaw": "0xdeaddead",
+      "intsRaw": "0xdeaddead",
+      "gpio14Enabled": true,
+      "gpio14SourceStatus": true,
+      "sourceStatusMask": "0xdeaddead",
+      "sourceStatusNonzero": true
+    },
+    "marker": "TALOS: rp1-gpio-bank-source-status-result",
+    "acceptedRerunMarkerOccurrences": 269,
+    "acceptedRerunSelectedTreeHash": "84ee89db45d5298e49f44c74e6a18b9c07ce2c146879f677aceace6ad252ea0f",
+    "acceptedRerunExpectedFetchPath": "da591740/kernel_2712.img",
+    "acceptedRerunExpectedFetchBytes": 46904,
+    "acceptedRerunExpectedFetchCount": 2,
+    "identityJoin": "passed with no rejection reasons",
+    "restore": "post-run restore returned the lab to the pre-run boot tree"
+  },
+  "acceptedClaims": [
+    "source-backed RP1 IO_BANK0 INTE/INTS register identity",
+    "local/static real candidate performs only the contracted read-only IO_BANK0 INTE/INTS loads",
+    "paired no-MMIO/no-RP1/no-GIC control candidate constructs no forbidden RP1 GPIO/RIO/pads/clock/reset/MSI-X/PCIe/MIP/GIC MMIO path",
+    "no-MMIO/no-RP1/no-GIC control output shape is visible on Pi 5 under v2 identity join",
+    "real read-only GPIO bank source-status result is visible on Pi 5 under v2 identity join"
+  ],
+  "unacceptedClaims": [
+    "GPIO event generation",
+    "interrupt pending generation beyond the read-only snapshot",
+    "interrupt enablement",
+    "interrupt delivery",
+    "IAR or EOIR acknowledgement",
+    "ISR or handler ownership",
+    "GPIO ownership",
+    "pin-control behavior",
+    "pad writes",
+    "clock/reset programming",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "summary": "Closed source/core/control/real proof chain as an accepted read-only GPIO bank source-status frontier."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Recorded paired no-MMIO/no-RP1/no-GIC control proof as satisfied before the real diagnostic proof."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Retained rejected first real run, known-good control, and decisive rerun as capture hygiene evidence while accepting only the decisive identity-joined rerun."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Updated roadmap and project contract docs for the accepted frontier."
+    },
+    {
+      "disposition": "deferred",
+      "summary": "GPIO event generation, pending generation beyond the read-only snapshot, delivery, IAR/EOIR acknowledgement, handler ownership, GPIO ownership, pin-control, clock/reset, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone 11.3, and phase transition remain future work."
+    },
+    {
+      "disposition": "not-an-issue",
+      "summary": "Raw 0xdeaddead INTE/INTS values are treated only as visible read-only diagnostic snapshot data, not as proof of event generation, delivery, GPIO ownership, or handler ownership."
+    }
+  ],
+  "nextAction": "Set planningNeeded=true for supervisor planning of the next Milestone 11.2 feature slice; do not create a same-shaped GPIO bank source-status rerun task.",
+  "validation": {
+    "staticInspection": "passed",
+    "gitDiffCheck": "pass",
+    "mdbookBuild": "pass",
+    "gitDiffCachedCheck": "pass"
+  },
+  "commit": null
+}
