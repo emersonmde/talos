@@ -1,0 +1,123 @@
+{
+  "task": "phase11-rp1-gpio-bank-source-status-control-pi5-20260607",
+  "status": "accepted",
+  "classification": "no-mmio-gpio-bank-source-status-control-visible",
+  "generatedAt": "2026-06-07T09:35:07.731Z",
+  "evidenceLevel": [
+    "static archive identity inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "stable same-cursor TFTP evidence",
+    "pi5-capture-transaction-v2 identity join",
+    "restore proof",
+    "git diff checks"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-07-phase11-rp1-gpio-bank-source-status-control-pi5.md",
+    "classification": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-control-pi5/classification.json",
+    "firstRun": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-control-pi5/control-run",
+    "knownGoodControlRun": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-control-pi5/known-good-control-run",
+    "acceptedCandidateRerun": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-control-pi5/control-rerun-after-kg",
+    "lockRelease": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-control-pi5/lock-release.json"
+  },
+  "sourceEvidence": {
+    "contract": "tasks/2026-06-07-phase11-rp1-gpio-bank-source-status-contract.md",
+    "core": "tasks/2026-06-07-phase11-rp1-gpio-bank-source-status-core.md",
+    "coreEvidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-core/evidence-map.json"
+  },
+  "controlCandidate": {
+    "archive": "target/talos-rpi5-rp1-gpio-bank-source-status-no-mmio-control-core.tar.gz",
+    "archiveSha256": "e3115c88b4d172df85169f95da399b18f41c5e827caaae08ac49aa2bd5a63a6f",
+    "kernel2712Sha256": "e90c3508db01f03bf1572c8b42ac99111010c8e41077320ddb59f23b7ee67597",
+    "kernelSizeBytes": 46832,
+    "marker": "TALOS: rp1-gpio-bank-source-status-control",
+    "outputClassification": "simulated/control",
+    "reviewArchiveSha256": "e3115c88b4d172df85169f95da399b18f41c5e827caaae08ac49aa2bd5a63a6f",
+    "reviewKernel2712Sha256": "e90c3508db01f03bf1572c8b42ac99111010c8e41077320ddb59f23b7ee67597",
+    "reviewKernel2712Size": 46832
+  },
+  "accepted": [
+    "Pi 5 fetched the selected no-MMIO/no-RP1/no-GIC GPIO bank source-status control candidate as da591740/kernel_2712.img",
+    "accepted candidate rerun passed pi5-capture-transaction-v2 identity join with no rejection reasons",
+    "serial hardware output retained 1615 occurrences of TALOS: rp1-gpio-bank-source-status-control from the selected candidate",
+    "stable pre-restore TFTP evidence retained 2 served 46832-byte candidate kernel fetches",
+    "restore returned the lab to the pre-run boot tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  ],
+  "notAccepted": [
+    "real RP1 GPIO bank source-status behavior",
+    "GPIO event generation",
+    "interrupt pending generation or delivery",
+    "IAR/EOIR acknowledgement",
+    "ISR or handler ownership",
+    "GPIO ownership",
+    "pin-control behavior",
+    "GIC/RP1/MSI-X/PCIe/MIP/GPIO/RIO/pads/clock/reset MMIO behavior",
+    "DMA/cache behavior",
+    "storage or generated-root behavior",
+    "networking or SSH",
+    "broader PCIe behavior",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "runs": {
+    "firstRun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-control-pi5/control-run",
+      "classification": "capture-staging-blocked",
+      "identityJoinAllowed": false,
+      "suggestedClassification": "identity-join-mismatch",
+      "rejection_reasons": [
+        "serial-drain-not-empty-before-power",
+        "saturated-direct-read-without-empty-pre-power-drain"
+      ],
+      "markerOccurrences": 1615,
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 2,
+      "tftpEventCount": 13,
+      "selectedTreeHash": "e019422689f6b124b39167ef8cb8c63b918bbfb008e0b60313666f4d1efec9a8",
+      "expectedFetchBytes": 46832,
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "knownGoodControlRun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-control-pi5/known-good-control-run",
+      "marker": "rpi5-production-timer-preemption: PASS",
+      "classification": "capture-staging-blocked",
+      "identityJoinAllowed": false,
+      "rejection_reasons": [
+        "serial-drain-not-empty-before-power",
+        "saturated-direct-read-without-empty-pre-power-drain"
+      ],
+      "markerOccurrences": 1,
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 2,
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "acceptedCandidateRerun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-bank-source-status-control-pi5/control-rerun-after-kg",
+      "identityJoinAllowed": true,
+      "rejection_reasons": [],
+      "markerOccurrences": 1615,
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 2,
+      "tftpEventCount": 13,
+      "selectedTreeHash": "e019422689f6b124b39167ef8cb8c63b918bbfb008e0b60313666f4d1efec9a8",
+      "effectiveKernel": "kernel_2712.img",
+      "expectedFetchPath": "da591740/kernel_2712.img",
+      "expectedFetchBytes": 46832,
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "validation": {
+    "staticArchiveIdentityCheck": "passed",
+    "labControllerPi5HardwareRun": "passed on accepted candidate rerun",
+    "identityJoin": "passed on accepted candidate rerun",
+    "stableSameCursorTftp": "passed",
+    "serialHardwareOutput": "passed",
+    "knownGoodControlAndCandidateRerun": "run and retained after rejected candidate evidence",
+    "restoreProof": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "not-run-no-docs-src-touched",
+    "gitDiffCachedCheck": "passed"
+  },
+  "nextAction": "Mechanically promote phase11-rp1-gpio-bank-source-status-pi5-20260607 on a future worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive.",
+  "commit": null
+}

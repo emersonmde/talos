@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-06-07T09:32:41.116Z",
+  "taskId": "phase11-rp1-gpio-bank-source-status-control-pi5-20260607",
+  "action": "release-hardwareTestLock",
+  "previous": {
+    "locked": true,
+    "owner": "worker",
+    "taskId": "phase11-rp1-gpio-bank-source-status-control-pi5-20260607",
+    "acquiredAt": "2026-06-07T09:20:23.273Z",
+    "releasedAt": null,
+    "restored": false,
+    "note": "Locked for serialized GPIO bank source-status no-MMIO/no-RP1/no-GIC Pi 5 control proof."
+  },
+  "restored": true,
+  "note": "Released after GPIO bank source-status no-MMIO/no-RP1/no-GIC control proof; capture restore returned lab to pre-run tree."
+}

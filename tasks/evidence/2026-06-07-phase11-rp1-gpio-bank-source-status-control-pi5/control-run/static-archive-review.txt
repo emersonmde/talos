@@ -1,0 +1,9 @@
+candidate_archive=target/talos-rpi5-rp1-gpio-bank-source-status-no-mmio-control-core.tar.gz
+candidate_archive_sha256=e3115c88b4d172df85169f95da399b18f41c5e827caaae08ac49aa2bd5a63a6f
+kernel_2712_sha256=e90c3508db01f03bf1572c8b42ac99111010c8e41077320ddb59f23b7ee67597
+kernel_2712_size=46832
+header_image_size=46832
+text_offset=0
+flags=12
+control_marker=TALOS: rp1-gpio-bank-source-status-control
+forbidden_gpio_bank_source_status_strings_absent=true
