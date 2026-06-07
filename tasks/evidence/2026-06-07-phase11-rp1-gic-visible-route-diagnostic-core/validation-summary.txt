@@ -1,0 +1,16 @@
+Validation summary: phase11-rp1-gic-visible-route-diagnostic-core-20260607
+
+- fmt/lint/typecheck: cargo fmt --all -- --check passed.
+- unit tests: cargo -Zjson-target-spec test --quiet passed.
+- artifact build helpers:
+  rpi5-rp1-gic-visible-route-status-read and
+  rpi5-rp1-gic-visible-route-no-mmio-control archive helpers passed.
+- archive review helpers:
+  scripts/rpi5-rp1-gic-visible-route-status-read-review.sh and
+  scripts/rpi5-rp1-gic-visible-route-no-mmio-control-review.sh passed.
+- static disassembly/source inspection: passed; real candidate uses only the
+  four accepted GICv2 read-only status reads, and control candidate constructs
+  no forbidden GIC/RP1/MSI-X/PCIe/MIP/GPIO/pads/RIO/clock/reset MMIO address.
+- git diff --check: passed.
+- mdbook build: not run; no docs/src files touched.
+- git diff --cached --check: passed.

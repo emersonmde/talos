@@ -1,0 +1,2 @@
+6cd353262326572afb217cfe1a348199cf4be20e5bd24cf54d41527100b12f4a  target/talos-rpi5-rp1-gic-visible-route-status-read-core.tar.gz
+37360a3f30c3f60af9c2e497caff498e3a85328c39f9fc90953a088df4d6b56a  target/talos-rpi5-rp1-gic-visible-route-no-mmio-control-core.tar.gz

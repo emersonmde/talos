@@ -1,0 +1,110 @@
+{
+  "taskId": "phase11-rp1-gic-visible-route-diagnostic-core-20260607",
+  "status": "accepted",
+  "classification": "accepted-local-static-gic-visible-route-core",
+  "evidenceLevel": [
+    "static source inspection",
+    "static archive inspection",
+    "strings inspection",
+    "disassembly inspection",
+    "fmt/lint/typecheck",
+    "unit tests"
+  ],
+  "sourceContract": {
+    "task": "tasks/2026-06-07-phase11-rp1-gic-visible-route-source-contract.md",
+    "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-source-contract/evidence-map.json",
+    "commit": "19c9542cfe0463b3f5afd7ae94c2d6f28c0866a7"
+  },
+  "sourceChanges": [
+    "build.rs",
+    "src/main.rs",
+    "src/target/rpi5.rs",
+    "scripts/rpi5-rp1-gic-visible-route-status-read-image.sh",
+    "scripts/rpi5-rp1-gic-visible-route-status-read-boot-tree.sh",
+    "scripts/rpi5-rp1-gic-visible-route-status-read-archive.sh",
+    "scripts/rpi5-rp1-gic-visible-route-status-read-review.sh",
+    "scripts/rpi5-rp1-gic-visible-route-no-mmio-control-image.sh",
+    "scripts/rpi5-rp1-gic-visible-route-no-mmio-control-boot-tree.sh",
+    "scripts/rpi5-rp1-gic-visible-route-no-mmio-control-archive.sh",
+    "scripts/rpi5-rp1-gic-visible-route-no-mmio-control-review.sh"
+  ],
+  "realCandidate": {
+    "scenario": "rpi5_rp1_gic_visible_route_status_read",
+    "marker": "TALOS: rp1-gic-route-status-result",
+    "classification": "gic-route-status-visible",
+    "archive": "target/talos-rpi5-rp1-gic-visible-route-status-read-core.tar.gz",
+    "archiveSha256": "6cd353262326572afb217cfe1a348199cf4be20e5bd24cf54d41527100b12f4a",
+    "kernel2712Sha256": "cf499fb46542395bddd00b5232bc6f19b35298b15d08fd731a0008d73a969137",
+    "kernel2712SizeBytes": 47816,
+    "allowedReads": [
+      "GICD_ISENABLER5 @ 0x10_7fff_9114",
+      "GICD_ISPENDR5 @ 0x10_7fff_9214",
+      "GICD_ISACTIVER5 @ 0x10_7fff_9314",
+      "GICC_HPPIR @ 0x10_7fff_a018"
+    ],
+    "review": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-diagnostic-core/real-archive-review.txt",
+    "strings": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-diagnostic-core/real-candidate-strings.txt",
+    "assembly": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-diagnostic-core/real-gic-visible-route-asm.txt"
+  },
+  "controlCandidate": {
+    "scenario": "rpi5_rp1_gic_visible_route_no_mmio_control",
+    "marker": "TALOS: rp1-gic-route-status-control",
+    "classification": "simulated/control",
+    "archive": "target/talos-rpi5-rp1-gic-visible-route-no-mmio-control-core.tar.gz",
+    "archiveSha256": "37360a3f30c3f60af9c2e497caff498e3a85328c39f9fc90953a088df4d6b56a",
+    "kernel2712Sha256": "85b21994d20d539ec62ef99142e6589ef7bab3bf5070b8399b76fa84bfe262c5",
+    "kernel2712SizeBytes": 47040,
+    "forbiddenAddressStringsAbsent": true,
+    "notConstructedFields": [
+      "gicd-base",
+      "gicc-base",
+      "bit-mask",
+      "isenabler-address",
+      "ispendr-address",
+      "isactiver-address",
+      "hppir-address"
+    ],
+    "review": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-diagnostic-core/control-archive-review.txt",
+    "strings": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-diagnostic-core/control-candidate-strings.txt",
+    "assembly": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-diagnostic-core/control-gic-visible-route-asm.txt"
+  },
+  "acceptedClaims": [
+    "local/static real candidate implements only the accepted read-only/no-ack GIC-visible route status reads",
+    "local/static control candidate preserves output shape while constructing no forbidden GIC/RP1/MSI-X/PCIe/MIP/GPIO/pads/RIO/clock/reset MMIO address",
+    "real and control candidate archive identity and boundary are retained"
+  ],
+  "unacceptedClaims": [
+    "Pi 5 hardware behavior",
+    "real interrupt pending state",
+    "interrupt delivery",
+    "CPU interface delivery",
+    "GIC acknowledgement",
+    "ISR or handler ownership",
+    "GPIO ownership",
+    "pin-control state",
+    "interrupt enablement",
+    "MSI-X delivery",
+    "PCIe MSI delivery",
+    "clock/reset programming",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "validation": {
+    "cargoFmtCheck": "pass",
+    "cargoJsonTargetSpecTestQuiet": "pass",
+    "realArchiveReview": "pass",
+    "controlArchiveReview": "pass",
+    "staticInspection": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-diagnostic-core/static-inspection.md",
+    "gitDiffCheck": "pass",
+    "mdbookBuild": "not-run-no-docs-src-touched",
+    "gitDiffCachedCheck": "pass"
+  },
+  "nextAction": "Promote phase11-rp1-gic-visible-route-no-mmio-control-pi5-20260607 after this task is accepted and committed and hardwareTestLock remains unlocked/restored.",
+  "commit": null
+}

@@ -19,7 +19,8 @@ use crate::arch::aarch64::generic_timer;
     talos_boot_scenario = "rpi5_timer_irq",
     talos_boot_scenario = "rpi5_timer_preemption",
     talos_boot_scenario = "rpi5_cross_core_ipi_delivery",
-    talos_boot_scenario = "rpi5_remote_wakeup_request"
+    talos_boot_scenario = "rpi5_remote_wakeup_request",
+    talos_boot_scenario = "rpi5_rp1_gic_visible_route_status_read"
 ))]
 use crate::arch::aarch64::{
     self,
@@ -176,14 +177,16 @@ pub const RP1_IO_BANK0_MSIX_CFG: usize = 0x1f_0010_8008;
     talos_boot_scenario = "rpi5_timer_irq",
     talos_boot_scenario = "rpi5_timer_preemption",
     talos_boot_scenario = "rpi5_cross_core_ipi_delivery",
-    talos_boot_scenario = "rpi5_remote_wakeup_request"
+    talos_boot_scenario = "rpi5_remote_wakeup_request",
+    talos_boot_scenario = "rpi5_rp1_gic_visible_route_status_read"
 ))]
 const GICD_BASE: usize = 0x10_7fff_9000;
 #[cfg(any(
     talos_boot_scenario = "rpi5_timer_irq",
     talos_boot_scenario = "rpi5_timer_preemption",
     talos_boot_scenario = "rpi5_cross_core_ipi_delivery",
-    talos_boot_scenario = "rpi5_remote_wakeup_request"
+    talos_boot_scenario = "rpi5_remote_wakeup_request",
+    talos_boot_scenario = "rpi5_rp1_gic_visible_route_status_read"
 ))]
 const GICC_BASE: usize = 0x10_7fff_a000;
 #[cfg(any(
@@ -12902,6 +12905,119 @@ pub fn run_rp1_interrupt_routing_no_mmio_control() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_gic_visible_route_status_read")]
+pub fn run_rp1_gic_visible_route_status_read() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-gic-visible-route-source-contract-v1";
+    const HWIRQ: u64 = 0;
+    const MSIX_VECTOR: u64 = 0;
+    const GIC_SPI: u64 = 128;
+    const GIC_INTID: u32 = 160;
+    const BANK: u64 = 5;
+    const BIT_MASK: u32 = 0x0000_0001;
+    const GICD_ISENABLER5: usize = GICD_BASE + 0x114;
+    const GICD_ISPENDR5: usize = GICD_BASE + 0x214;
+    const GICD_ISACTIVER5: usize = GICD_BASE + 0x314;
+    const GICC_HPPIR: usize = GICC_BASE + 0x18;
+
+    write_early_static("rpi5-rp1-gic-visible-route-status-read: start\n");
+    write_early_static("rpi5-rp1-gic-visible-route-status-read: before-gic-loads\n");
+    wait_uart10_empty_early_phase();
+
+    let gic = GicV2::new(GICD_BASE, GICC_BASE);
+    let (isenabler, ispendr, isactiver, hppir) = unsafe {
+        (
+            gic.enable_bits(GIC_INTID),
+            gic.pending_bits(GIC_INTID),
+            gic.active_bits(GIC_INTID),
+            gic.highest_pending(),
+        )
+    };
+    let hppir_intid = hppir & 0x3ff;
+
+    loop {
+        write_early_static("TALOS: rp1-gic-route-status-result contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=rp1-io-bank0-gic-route-status-read hwirq=");
+        write_early_dec_u64(HWIRQ);
+        write_early_static(" predicted-msix-vector=");
+        write_early_dec_u64(MSIX_VECTOR);
+        write_early_static(" predicted-gic-spi=");
+        write_early_dec_u64(GIC_SPI);
+        write_early_static(" predicted-gic-intid=");
+        write_early_dec_u64(GIC_INTID as u64);
+        write_early_static(" gicd-base=");
+        write_early_hex_u64(GICD_BASE as u64);
+        write_early_static(" gicc-base=");
+        write_early_hex_u64(GICC_BASE as u64);
+        write_early_static(" bank=");
+        write_early_dec_u64(BANK);
+        write_early_static(" bit-mask=");
+        write_early_hex_u64(BIT_MASK as u64);
+        write_early_static(" isenabler-address=");
+        write_early_hex_u64(GICD_ISENABLER5 as u64);
+        write_early_static(" ispendr-address=");
+        write_early_hex_u64(GICD_ISPENDR5 as u64);
+        write_early_static(" isactiver-address=");
+        write_early_hex_u64(GICD_ISACTIVER5 as u64);
+        write_early_static(" hppir-address=");
+        write_early_hex_u64(GICC_HPPIR as u64);
+        write_gic_route_status_bits(isenabler, ispendr, isactiver, hppir, BIT_MASK);
+        write_early_static(" hppir-intid=");
+        write_early_dec_u64(hppir_intid as u64);
+        write_early_static(" hppir-spurious=");
+        write_bool(hppir_intid == SPURIOUS_INTID);
+        write_early_static(" hppir-target-match=");
+        write_bool(hppir_intid == GIC_INTID);
+        write_early_static(" classification=gic-route-status-visible\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_gic_visible_route_no_mmio_control")]
+pub fn run_rp1_gic_visible_route_no_mmio_control() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-gic-visible-route-source-contract-v1";
+    const HWIRQ: u64 = 0;
+    const MSIX_VECTOR: u64 = 0;
+    const GIC_SPI: u64 = 128;
+    const GIC_INTID: u64 = 160;
+    const BANK: u64 = 5;
+    const SIMULATED_RAW_VALUE: u32 = 0;
+
+    write_early_static("rpi5-rp1-gic-visible-route-control: start\n");
+    write_early_static(
+        "rpi5-rp1-gic-visible-route-control: no-gic-rp1-msix-pcie-mip-gpio-pads-rio-clock-reset-mmio\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-gic-route-status-control contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=rp1-io-bank0-gic-route-status-read hwirq=");
+        write_early_dec_u64(HWIRQ);
+        write_early_static(" predicted-msix-vector=");
+        write_early_dec_u64(MSIX_VECTOR);
+        write_early_static(" predicted-gic-spi=");
+        write_early_dec_u64(GIC_SPI);
+        write_early_static(" predicted-gic-intid=");
+        write_early_dec_u64(GIC_INTID);
+        write_early_static(" gicd-base=not-constructed gicc-base=not-constructed bank=");
+        write_early_dec_u64(BANK);
+        write_early_static(
+            " bit-mask=not-constructed isenabler-address=not-constructed ispendr-address=not-constructed isactiver-address=not-constructed hppir-address=not-constructed",
+        );
+        write_gic_route_status_bits(
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+            SIMULATED_RAW_VALUE,
+            1,
+        );
+        write_early_static(" hppir-intid=0 hppir-spurious=false hppir-target-match=false");
+        write_early_static(" classification=simulated/control\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
 #[cfg(any(
     talos_boot_scenario = "rpi5_rp1_gpio14_status_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_status_no_mmio_control"
@@ -12941,10 +13057,39 @@ fn write_msix_cfg_bits(value: u32) {
 }
 
 #[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_gic_visible_route_status_read",
+    talos_boot_scenario = "rpi5_rp1_gic_visible_route_no_mmio_control"
+))]
+fn write_gic_route_status_bits(
+    isenabler: u32,
+    ispendr: u32,
+    isactiver: u32,
+    hppir: u32,
+    bit_mask: u32,
+) {
+    write_early_static(" isenabler-raw=");
+    write_early_hex_u64(isenabler as u64);
+    write_early_static(" ispendr-raw=");
+    write_early_hex_u64(ispendr as u64);
+    write_early_static(" isactiver-raw=");
+    write_early_hex_u64(isactiver as u64);
+    write_early_static(" intid-enabled=");
+    write_bool(isenabler & bit_mask != 0);
+    write_early_static(" intid-pending=");
+    write_bool(ispendr & bit_mask != 0);
+    write_early_static(" intid-active=");
+    write_bool(isactiver & bit_mask != 0);
+    write_early_static(" hppir-raw=");
+    write_early_hex_u64(hppir as u64);
+}
+
+#[cfg(any(
     talos_boot_scenario = "rpi5_rp1_gpio14_status_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_status_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_interrupt_routing_msix_cfg_read",
-    talos_boot_scenario = "rpi5_rp1_interrupt_routing_no_mmio_control"
+    talos_boot_scenario = "rpi5_rp1_interrupt_routing_no_mmio_control",
+    talos_boot_scenario = "rpi5_rp1_gic_visible_route_status_read",
+    talos_boot_scenario = "rpi5_rp1_gic_visible_route_no_mmio_control"
 ))]
 fn write_bool(value: bool) {
     if value {

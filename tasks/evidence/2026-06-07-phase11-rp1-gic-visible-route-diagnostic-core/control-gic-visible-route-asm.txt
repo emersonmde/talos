@@ -1,0 +1,176 @@
+0000000000201704 <talos::target::rpi5::run_rp1_gic_visible_route_no_mmio_control>:
+  201704: d10283ff     	sub	sp, sp, #0xa0
+  201708: a9047bfd     	stp	x29, x30, [sp, #0x40]
+  20170c: a9056ffc     	stp	x28, x27, [sp, #0x50]
+  201710: a90667fa     	stp	x26, x25, [sp, #0x60]
+  201714: a9075ff8     	stp	x24, x23, [sp, #0x70]
+  201718: a90857f6     	stp	x22, x21, [sp, #0x80]
+  20171c: a9094ff4     	stp	x20, x19, [sp, #0x90]
+  201720: d28f7040     	mov	x0, #0x7b82             // =31618
+  201724: 52800541     	mov	w1, #0x2a               // =42
+  201728: f2a00400     	movk	x0, #0x20, lsl #16
+  20172c: f2c00000     	movk	x0, #0x0, lsl #32
+  201730: f2e00000     	movk	x0, #0x0, lsl #48
+  201734: 97ffff4c     	bl	0x201464 <talos::target::rpi5::write_early_static>
+  201738: d28f7580     	mov	x0, #0x7bac             // =31660
+  20173c: 52800b81     	mov	w1, #0x5c               // =92
+  201740: f2a00400     	movk	x0, #0x20, lsl #16
+  201744: f2c00000     	movk	x0, #0x0, lsl #32
+  201748: f2e00000     	movk	x0, #0x0, lsl #48
+  20174c: 97ffff46     	bl	0x201464 <talos::target::rpi5::write_early_static>
+  201750: d2820009     	mov	x9, #0x1000             // =4096
+  201754: f2afa009     	movk	x9, #0x7d00, lsl #16
+  201758: f2c00209     	movk	x9, #0x10, lsl #32
+  20175c: d2a00415     	mov	x21, #0x200000          // =2097152
+  201760: b940192a     	ldr	w10, [x9, #0x18]
+  201764: 3738006a     	tbnz	w10, #0x7, 0x201770 <talos::target::rpi5::run_rp1_gic_visible_route_no_mmio_control+0x6c>
+  201768: f10006b5     	subs	x21, x21, #0x1
+  20176c: 54ffffa1     	b.ne	0x201760 <talos::target::rpi5::run_rp1_gic_visible_route_no_mmio_control+0x5c>
+  201770: d5033f9f     	dsb	sy
+  201774: d28f8108     	mov	x8, #0x7c08             // =31752
+  201778: d28f92cb     	mov	x11, #0x7c96            // =31894
+  20177c: d28f86a9     	mov	x9, #0x7c35             // =31797
+  201780: f2a00408     	movk	x8, #0x20, lsl #16
+  201784: d28f8caa     	mov	x10, #0x7c65            // =31845
+  201788: f2a00409     	movk	x9, #0x20, lsl #16
+  20178c: f2c00008     	movk	x8, #0x0, lsl #32
+  201790: d28f95ac     	mov	x12, #0x7cad            // =31917
+  201794: f2c00009     	movk	x9, #0x0, lsl #32
+  201798: f2e00008     	movk	x8, #0x0, lsl #48
+  20179c: d28fa1fb     	mov	x27, #0x7d0f            // =32015
+  2017a0: f2e00009     	movk	x9, #0x0, lsl #48
+  2017a4: d28f641c     	mov	x28, #0x7b20            // =31520
+  2017a8: d28f65fd     	mov	x29, #0x7b2f            // =31535
+  2017ac: a90323e9     	stp	x9, x8, [sp, #0x30]
+  2017b0: d28f9808     	mov	x8, #0x7cc0             // =31936
+  2017b4: d28f9aa9     	mov	x9, #0x7cd5             // =31957
+  2017b8: d28f6793     	mov	x19, #0x7b3c            // =31548
+  2017bc: d28f6974     	mov	x20, #0x7b4b            // =31563
+  2017c0: d28f6b56     	mov	x22, #0x7b5a            // =31578
+  2017c4: d28f6d37     	mov	x23, #0x7b69            // =31593
+  2017c8: d28f6ef8     	mov	x24, #0x7b77            // =31607
+  2017cc: d28fb559     	mov	x25, #0x7daa            // =32170
+  2017d0: d28fbcda     	mov	x26, #0x7de6            // =32230
+  2017d4: f2a0040a     	movk	x10, #0x20, lsl #16
+  2017d8: f2a0040b     	movk	x11, #0x20, lsl #16
+  2017dc: f2a0040c     	movk	x12, #0x20, lsl #16
+  2017e0: f2a00408     	movk	x8, #0x20, lsl #16
+  2017e4: f2a00409     	movk	x9, #0x20, lsl #16
+  2017e8: f2a0041b     	movk	x27, #0x20, lsl #16
+  2017ec: f2a0041c     	movk	x28, #0x20, lsl #16
+  2017f0: f2a0041d     	movk	x29, #0x20, lsl #16
+  2017f4: f2a00413     	movk	x19, #0x20, lsl #16
+  2017f8: f2a00414     	movk	x20, #0x20, lsl #16
+  2017fc: f2a00416     	movk	x22, #0x20, lsl #16
+  201800: f2a00417     	movk	x23, #0x20, lsl #16
+  201804: f2a00418     	movk	x24, #0x20, lsl #16
+  201808: f2a00419     	movk	x25, #0x20, lsl #16
+  20180c: f2a0041a     	movk	x26, #0x20, lsl #16
+  201810: f2c0000a     	movk	x10, #0x0, lsl #32
+  201814: f2c0000b     	movk	x11, #0x0, lsl #32
+  201818: f2c0000c     	movk	x12, #0x0, lsl #32
+  20181c: f2c00008     	movk	x8, #0x0, lsl #32
+  201820: f2c00009     	movk	x9, #0x0, lsl #32
+  201824: f2c0001b     	movk	x27, #0x0, lsl #32
+  201828: f2c0001c     	movk	x28, #0x0, lsl #32
+  20182c: f2c0001d     	movk	x29, #0x0, lsl #32
+  201830: f2c00013     	movk	x19, #0x0, lsl #32
+  201834: f2c00014     	movk	x20, #0x0, lsl #32
+  201838: f2c00016     	movk	x22, #0x0, lsl #32
+  20183c: f2c00017     	movk	x23, #0x0, lsl #32
+  201840: f2c00018     	movk	x24, #0x0, lsl #32
+  201844: f2c00019     	movk	x25, #0x0, lsl #32
+  201848: f2c0001a     	movk	x26, #0x0, lsl #32
+  20184c: f2e0000a     	movk	x10, #0x0, lsl #48
+  201850: f2e0000b     	movk	x11, #0x0, lsl #48
+  201854: f2e0000c     	movk	x12, #0x0, lsl #48
+  201858: f2e00008     	movk	x8, #0x0, lsl #48
+  20185c: f2e00009     	movk	x9, #0x0, lsl #48
+  201860: f2e0001b     	movk	x27, #0x0, lsl #48
+  201864: f2e0001c     	movk	x28, #0x0, lsl #48
+  201868: f2e0001d     	movk	x29, #0x0, lsl #48
+  20186c: f2e00013     	movk	x19, #0x0, lsl #48
+  201870: f2e00014     	movk	x20, #0x0, lsl #48
+  201874: f2e00016     	movk	x22, #0x0, lsl #48
+  201878: f2e00017     	movk	x23, #0x0, lsl #48
+  20187c: f2e00018     	movk	x24, #0x0, lsl #48
+  201880: f2e00019     	movk	x25, #0x0, lsl #48
+  201884: f2e0001a     	movk	x26, #0x0, lsl #48
+  201888: a9022beb     	stp	x11, x10, [sp, #0x20]
+  20188c: a90133e8     	stp	x8, x12, [sp, #0x10]
+  201890: f90007e9     	str	x9, [sp, #0x8]
+  201894: f9401fe0     	ldr	x0, [sp, #0x38]
+  201898: 528005a1     	mov	w1, #0x2d               // =45
+  20189c: 97fffef2     	bl	0x201464 <talos::target::rpi5::write_early_static>
+  2018a0: f9401be0     	ldr	x0, [sp, #0x30]
+  2018a4: 52800601     	mov	w1, #0x30               // =48
+  2018a8: 97fffeef     	bl	0x201464 <talos::target::rpi5::write_early_static>
+  2018ac: f94017e0     	ldr	x0, [sp, #0x28]
+  2018b0: 52800621     	mov	w1, #0x31               // =49
+  2018b4: 97fffeec     	bl	0x201464 <talos::target::rpi5::write_early_static>
+  2018b8: aa1f03e0     	mov	x0, xzr
+  2018bc: 97ffff1f     	bl	0x201538 <talos::target::rpi5::write_early_dec_u64 (.llvm.8018614142084830118)>
+  2018c0: f94013e0     	ldr	x0, [sp, #0x20]
+  2018c4: 528002e1     	mov	w1, #0x17               // =23
+  2018c8: 97fffee7     	bl	0x201464 <talos::target::rpi5::write_early_static>
+  2018cc: aa1f03e0     	mov	x0, xzr
+  2018d0: 97ffff1a     	bl	0x201538 <talos::target::rpi5::write_early_dec_u64 (.llvm.8018614142084830118)>
+  2018d4: f9400fe0     	ldr	x0, [sp, #0x18]
+  2018d8: 52800261     	mov	w1, #0x13               // =19
+  2018dc: 97fffee2     	bl	0x201464 <talos::target::rpi5::write_early_static>
+  2018e0: 52801000     	mov	w0, #0x80               // =128
+  2018e4: 97ffff15     	bl	0x201538 <talos::target::rpi5::write_early_dec_u64 (.llvm.8018614142084830118)>
+  2018e8: f9400be0     	ldr	x0, [sp, #0x10]
+  2018ec: 528002a1     	mov	w1, #0x15               // =21
+  2018f0: 97fffedd     	bl	0x201464 <talos::target::rpi5::write_early_static>
+  2018f4: 52801400     	mov	w0, #0xa0               // =160
+  2018f8: 97ffff10     	bl	0x201538 <talos::target::rpi5::write_early_dec_u64 (.llvm.8018614142084830118)>
+  2018fc: f94007e0     	ldr	x0, [sp, #0x8]
+  201900: 52800741     	mov	w1, #0x3a               // =58
+  201904: 97fffed8     	bl	0x201464 <talos::target::rpi5::write_early_static>
+  201908: 528000a0     	mov	w0, #0x5                // =5
+  20190c: 97ffff0b     	bl	0x201538 <talos::target::rpi5::write_early_dec_u64 (.llvm.8018614142084830118)>
+  201910: aa1b03e0     	mov	x0, x27
+  201914: 52801361     	mov	w1, #0x9b               // =155
+  201918: 97fffed3     	bl	0x201464 <talos::target::rpi5::write_early_static>
+  20191c: aa1c03e0     	mov	x0, x28
+  201920: 94000027     	bl	0x2019bc <OUTLINED_FUNCTION_0>
+  201924: 94000028     	bl	0x2019c4 <OUTLINED_FUNCTION_1>
+  201928: aa1d03e0     	mov	x0, x29
+  20192c: 528001a1     	mov	w1, #0xd                // =13
+  201930: 97fffecd     	bl	0x201464 <talos::target::rpi5::write_early_static>
+  201934: 94000024     	bl	0x2019c4 <OUTLINED_FUNCTION_1>
+  201938: aa1303e0     	mov	x0, x19
+  20193c: 94000020     	bl	0x2019bc <OUTLINED_FUNCTION_0>
+  201940: 94000021     	bl	0x2019c4 <OUTLINED_FUNCTION_1>
+  201944: aa1403e0     	mov	x0, x20
+  201948: 9400001d     	bl	0x2019bc <OUTLINED_FUNCTION_0>
+  20194c: 97fffec0     	bl	0x20144c <talos::target::rpi5::write_bool (.llvm.8018614142084830118)>
+  201950: aa1603e0     	mov	x0, x22
+  201954: 9400001a     	bl	0x2019bc <OUTLINED_FUNCTION_0>
+  201958: 97fffebd     	bl	0x20144c <talos::target::rpi5::write_bool (.llvm.8018614142084830118)>
+  20195c: aa1703e0     	mov	x0, x23
+  201960: 528001c1     	mov	w1, #0xe                // =14
+  201964: 97fffec0     	bl	0x201464 <talos::target::rpi5::write_early_static>
+  201968: 97fffeb9     	bl	0x20144c <talos::target::rpi5::write_bool (.llvm.8018614142084830118)>
+  20196c: aa1803e0     	mov	x0, x24
+  201970: 52800161     	mov	w1, #0xb                // =11
+  201974: 97fffebc     	bl	0x201464 <talos::target::rpi5::write_early_static>
+  201978: 94000013     	bl	0x2019c4 <OUTLINED_FUNCTION_1>
+  20197c: aa1903e0     	mov	x0, x25
+  201980: 52800781     	mov	w1, #0x3c               // =60
+  201984: 97fffeb8     	bl	0x201464 <talos::target::rpi5::write_early_static>
+  201988: aa1a03e0     	mov	x0, x26
+  20198c: 52800441     	mov	w1, #0x22               // =34
+  201990: 97fffeb5     	bl	0x201464 <talos::target::rpi5::write_early_static>
+  201994: d2820009     	mov	x9, #0x1000             // =4096
+  201998: f2afa009     	movk	x9, #0x7d00, lsl #16
+  20199c: f2c00209     	movk	x9, #0x10, lsl #32
+  2019a0: d2a00415     	mov	x21, #0x200000          // =2097152
+  2019a4: b940192a     	ldr	w10, [x9, #0x18]
+  2019a8: 3738006a     	tbnz	w10, #0x7, 0x2019b4 <talos::target::rpi5::run_rp1_gic_visible_route_no_mmio_control+0x2b0>
+  2019ac: f10006b5     	subs	x21, x21, #0x1
+  2019b0: 54ffffa1     	b.ne	0x2019a4 <talos::target::rpi5::run_rp1_gic_visible_route_no_mmio_control+0x2a0>
+  2019b4: d5033f9f     	dsb	sy
+  2019b8: 17ffffb7     	b	0x201894 <talos::target::rpi5::run_rp1_gic_visible_route_no_mmio_control+0x190>
+
