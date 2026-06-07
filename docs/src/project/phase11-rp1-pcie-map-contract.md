@@ -339,6 +339,17 @@ event-generation retry, clock/reset programming, DMA/cache, storage,
 generated-root, networking, SSH, broader PCIe enumeration, Milestone 11.3, or
 a phase transition.
 
+phase11-rp1-gpio-owned-event-discriminator-control-pi5-20260607 accepts the
+paired no-MMIO/no-RP1/no-GIC control output shape as visible on Pi 5. The
+accepted rerun selected boot tree
+a2cd628f8fed4b70b726c6659f2788762922334289f1d90eef60e61e01963e46, fetched
+the 49,480-byte da591740/kernel_2712.img twice in stable pre-restore TFTP
+evidence, passed the v2 identity join with no rejection reasons, retained 40
+TALOS: rp1-gpio16-owned-event-discriminator-control markers, and restored to
+tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+This accepts only the simulated/control output path; real GPIO16 event/source
+status behavior remains gated on the separate real Pi 5 diagnostic task.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware

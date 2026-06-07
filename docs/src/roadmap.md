@@ -7706,6 +7706,15 @@ ownership, broad GPIO ownership, GPIO14 event-generation retry, clocks and
 resets, DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
 Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-gpio-owned-event-discriminator-control-pi5-20260607 accepts the
+paired no-MMIO/no-RP1/no-GIC control output shape as visible on Pi 5. After an
+initial serial-drain-rejected candidate run and a known-good control, the
+accepted candidate rerun passed the v2 identity join, retained two stable
+49,480-byte candidate fetches, retained 40 control markers, and restored the
+lab to the pre-run production-timer boot tree. This accepts only the
+simulated/control output path; real GPIO16 event/source-status behavior remains
+queued behind its own serialized hardware proof.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

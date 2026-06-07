@@ -1,0 +1,72 @@
+{
+  "taskId": "phase11-rp1-gpio-owned-event-discriminator-control-pi5-20260607",
+  "status": "accepted",
+  "classification": "no-mmio-gpio16-owned-event-discriminator-control-visible",
+  "acceptedRun": "control-rerun-after-kg",
+  "outputClassification": "simulated/control",
+  "acceptedClaims": [
+    "the no-MMIO/no-RP1/no-GIC GPIO16 event discriminator control output shape is visible on Pi 5",
+    "the accepted candidate rerun passed the pi5-capture-transaction-v2 identity join",
+    "stable same-cursor TFTP evidence retained two served 49,480-byte candidate fetches before restore",
+    "the lab was restored to the pre-run production-timer boot tree before hardware lock release"
+  ],
+  "unacceptedClaims": [
+    "real RP1 GPIO16 event generation",
+    "real RP1 source-status behavior",
+    "interrupt delivery",
+    "GIC IAR/EOIR acknowledgement",
+    "ISR or handler ownership",
+    "broad GPIO driver ownership",
+    "clock/reset programming",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "candidate": {
+    "archive": "target/talos-rpi5-rp1-gpio16-owned-event-discriminator-no-mmio-control-core.tar.gz",
+    "archiveSha256": "b1968a1ff0fa4652f9a156ca48a17958f9b99bda54326fa589deaa74a8576c3f",
+    "kernelSha256": "8e5f3a6a3c58b23a5e707b2b112e852a706da8c3752748b2a14d82d567a35e80",
+    "kernelSize": 49480,
+    "marker": "TALOS: rp1-gpio16-owned-event-discriminator-control"
+  },
+  "acceptedIdentity": {
+    "selectedTreeHash": "a2cd628f8fed4b70b726c6659f2788762922334289f1d90eef60e61e01963e46",
+    "effectiveKernel": "kernel_2712.img",
+    "expectedFetch": "da591740/kernel_2712.img",
+    "expectedFetchBytes": 49480,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "serialMarkerOccurrences": 40,
+    "prePowerSerialDrainEmpty": true,
+    "identityJoin": "capture-transaction-v2-ready",
+    "rejectionReasons": []
+  },
+  "triage": {
+    "firstCandidateRun": {
+      "classification": "capture-staging-blocked",
+      "reason": "serial-drain-not-empty-before-power",
+      "candidateFetchCount": 2,
+      "serialMarkerOccurrences": 40
+    },
+    "knownGoodControl": {
+      "classification": "capture-staging-blocked",
+      "reason": "serial-drain-not-empty-before-power",
+      "expectedFetchCount": 2,
+      "requiredMarker": "rpi5-production-timer-preemption: PASS",
+      "requiredMarkerOccurrences": 1
+    },
+    "candidateRerun": {
+      "classification": "capture-transaction-v2-ready",
+      "rejectionReasons": []
+    }
+  },
+  "restore": {
+    "snapshot": "pre-gpio16-owned-control-rerun-154550",
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  }
+}

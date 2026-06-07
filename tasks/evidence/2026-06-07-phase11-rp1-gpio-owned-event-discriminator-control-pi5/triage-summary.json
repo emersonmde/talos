@@ -1,0 +1,23 @@
+{
+  "known_good": {
+    "capture_exit": 0,
+    "identity_exit": 1,
+    "marker_occurrences": 1,
+    "expected_fetch_count": 2,
+    "rejection_reasons": [
+      "serial-drain-not-empty-before-power",
+      "saturated-direct-read-without-empty-pre-power-drain"
+    ]
+  },
+  "candidate_rerun": {
+    "capture_exit": 0,
+    "identity_exit": 0,
+    "identity_allowed": true,
+    "rejection_reasons": [],
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "marker_occurrences": 40,
+    "selected_tree": "a2cd628f8fed4b70b726c6659f2788762922334289f1d90eef60e61e01963e46"
+  },
+  "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+}

@@ -1,0 +1,115 @@
+{
+  "taskId": "phase11-rp1-gpio-owned-event-discriminator-control-pi5-20260607",
+  "status": "accepted",
+  "classification": "no-mmio-gpio16-owned-event-discriminator-control-visible",
+  "evidenceLevel": [
+    "static archive inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "TFTP stable same-cursor evidence",
+    "pi5-capture-transaction-v2 identity join",
+    "restore proof"
+  ],
+  "dependencies": {
+    "coreTask": {
+      "taskId": "phase11-rp1-gpio-owned-event-discriminator-core-20260607",
+      "classification": "accepted-local-static-gpio16-owned-event-discriminator-core",
+      "commit": "90acfb04c480dd22d4d4d7bff1693c41c1f24908"
+    }
+  },
+  "candidateArtifacts": {
+    "controlArchive": "target/talos-rpi5-rp1-gpio16-owned-event-discriminator-no-mmio-control-core.tar.gz",
+    "controlArchiveSha256": "b1968a1ff0fa4652f9a156ca48a17958f9b99bda54326fa589deaa74a8576c3f",
+    "controlKernelSha256": "8e5f3a6a3c58b23a5e707b2b112e852a706da8c3752748b2a14d82d567a35e80",
+    "controlKernelSize": 49480,
+    "controlMarker": "TALOS: rp1-gpio16-owned-event-discriminator-control"
+  },
+  "acceptedRun": {
+    "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-control-pi5/control-rerun-after-kg",
+    "selectedTreeHash": "a2cd628f8fed4b70b726c6659f2788762922334289f1d90eef60e61e01963e46",
+    "effectiveKernel": "kernel_2712.img",
+    "expectedFetch": "da591740/kernel_2712.img",
+    "expectedFetchBytes": 49480,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "serialMarkerOccurrences": 40,
+    "identityJoin": "capture-transaction-v2-ready",
+    "identityJoinRejectionReasons": [],
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "triageEvidence": {
+    "firstCandidateRun": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-control-pi5/control-run",
+    "knownGoodControl": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-control-pi5/known-good-control-run",
+    "triageSummary": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-control-pi5/triage-summary.json"
+  },
+  "retainedEvidence": {
+    "taskRecord": "tasks/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-control-pi5.md",
+    "classification": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-control-pi5/classification.json",
+    "staticArchiveReview": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-control-pi5/static-archive-review.txt",
+    "publicationResponse": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-control-pi5/control-rerun-after-kg/publication-response.json",
+    "captureSummary": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-control-pi5/control-rerun-after-kg/capture-invariant-summary.json",
+    "identityJoin": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-control-pi5/control-rerun-after-kg/identity-join.json",
+    "stableTftpDelta": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-control-pi5/control-rerun-after-kg/tftp-delta-stable-pre-restore.json",
+    "serialWindow": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-control-pi5/control-rerun-after-kg/serial-observe-window.json",
+    "restoreStatus": "tasks/evidence/2026-06-07-phase11-rp1-gpio-owned-event-discriminator-control-pi5/control-rerun-after-kg/post-restore-status.json"
+  },
+  "acceptedClaims": [
+    "no-MMIO/no-RP1/no-GIC GPIO16 event discriminator control output shape is visible on Pi 5",
+    "accepted candidate rerun passed pi5-capture-transaction-v2 identity join with no rejection reasons",
+    "stable pre-restore TFTP evidence retained candidate fetch identity before restore",
+    "hardware lock was released only after restore"
+  ],
+  "unacceptedClaims": [
+    "real RP1 GPIO16 event generation",
+    "real RP1 source-status behavior",
+    "interrupt delivery",
+    "GIC acknowledgement",
+    "ISR or handler ownership",
+    "broad GPIO ownership",
+    "clock/reset programming",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "summary": "Acquired and released hardwareTestLock around serialized Pi 5 control work."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Retained static archive identity and forbidden MMIO string absence for the selected control candidate."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Retained the first candidate run as capture-staging-blocked and completed known-good-control plus candidate-rerun triage."
+    },
+    {
+      "disposition": "deferred",
+      "summary": "Real GPIO16 event discriminator proof remains queued."
+    },
+    {
+      "disposition": "not-an-issue",
+      "summary": "No RP1 GPIO/GIC behavior is inferred from the no-MMIO simulated control."
+    }
+  ],
+  "validation": {
+    "staticArchiveIdentityCheck": "pass",
+    "labControllerSerializedPi5Run": "pass on accepted candidate rerun",
+    "pi5CaptureTransactionV2IdentityJoin": "pass on accepted candidate rerun",
+    "stableSameCursorTftpEvidence": "pass",
+    "serialHardwareBootOutput": "pass: 40 control marker occurrences",
+    "inconclusiveRunTriage": "pass: known-good control and candidate rerun retained",
+    "restoreProof": "pass",
+    "gitDiffCheck": "pass",
+    "mdbookBuild": "pass",
+    "gitDiffCachedCheck": "pass"
+  },
+  "nextAction": "Promote phase11-rp1-gpio-owned-event-discriminator-pi5-20260607 on the next worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive; acquire hardwareTestLock only inside that real hardware task.",
+  "commit": "recorded in talos-supervisor-state.json after commit"
+}
