@@ -546,6 +546,22 @@ ownership, reset-controller writes, GPIO ownership, event generation,
 interrupt delivery, handler ownership, DMA/cache, storage, generated-root,
 networking, SSH, broader PCIe, Milestone 11.3, or a phase transition.
 
+phase11-rp1-clock-adc-enable-toggle-pi5-20260607 completed the paired control
+and real Pi 5 proof chain for that contract. The accepted real rerun published
+candidate tree 7024bb54a9446c681d4a8b9c80372fe52a4d4f93b7939f299a8eb2d7199a697a,
+retained two 47,512-byte da591740/kernel_2712.img TFTP fetches, retained 78
+identity-joined result markers, and restored the lab to tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The
+terminal classification is rp1-clock-adc-ctrl-enable-toggle-mismatch-restored:
+Talos attempted the contracted 0x800 enable-bit transition and restored the
+observed pre-read raw value, but the post-read still matched pre-read rather
+than the requested transition value. This is accepted as a precise
+mismatch-restored blocker, not as successful non-idempotent clock ownership.
+Successful enable-bit transition ownership, broad clock/reset ownership, GPIO
+ownership, event generation, interrupt delivery, handler ownership, DMA/cache,
+storage, generated-root, networking, SSH, broader PCIe, Milestone 11.3, and a
+phase transition remain unaccepted.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware

@@ -1,0 +1,32 @@
+{
+  "action": "tftp logs",
+  "ok": true,
+  "tftp": {
+    "cursor_end": 4248431,
+    "cursor_start": 4248265,
+    "events": [
+      {
+        "bytes": 118,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/config.txt",
+        "line": "Jun  7 23:25:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4",
+        "status": "served"
+      }
+    ],
+    "lines": [
+      "Jun  7 23:25:01 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "Jun  7 23:25:01 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to 10.42.1.4"
+    ],
+    "log": "/state/tftp.log",
+    "log_size": 4248431,
+    "tail_mode": false,
+    "truncated": false
+  },
+  "talos_tftp_stability": {
+    "stable": true,
+    "reason": "stable",
+    "stable_samples": 3,
+    "required_samples": 3
+  }
+}
