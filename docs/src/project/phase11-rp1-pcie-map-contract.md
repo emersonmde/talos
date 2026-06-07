@@ -238,6 +238,23 @@ clock/reset programming, DMA/cache, storage, generated-root, networking, SSH,
 broader PCIe enumeration, Milestone 11.3, and phase transition remain
 unaccepted.
 
+phase11-rp1-gpio-event-latch-source-contract-20260607 is accepted as
+source-contract-blocked. Retained RP1/Linux source identifies the GPIO14 event
+configuration path: GPIO14 CTRL CLR can clear raw event enables, GPIO14 CTRL
+SET can write IRQRESET and raw event-enable bits, and IO_BANK0 INTE set/clear
+aliases can change the GPIO14 source-enable bit. The exact retained addresses
+are GPIO14 STATUS at 0x1f000d0070, GPIO14 CTRL at 0x1f000d0074, GPIO14 CTRL
+SET at 0x1f000d2074, GPIO14 CTRL CLR at 0x1f000d3074, IO_BANK0 INTE SET at
+0x1f000d211c, IO_BANK0 INTE CLR at 0x1f000d311c, and IO_BANK0 INTS at
+0x1f000d0124. No event-latch or pending-generation diagnostic is accepted
+because retained evidence does not prove GPIO14 ownership, deterministic event
+generation without pinmux/RIO/pad changes, parent-route masking, or exact
+restore semantics for a failed partial run. GPIO14 CTRL writes, IO_BANK0 INTE
+writes, IRQRESET acknowledgement, interrupt unmasking or delivery, handler
+ownership, GPIO ownership, pin-control/pad behavior, clock/reset programming,
+DMA/cache, storage, generated-root, networking, SSH, broader PCIe enumeration,
+Milestone 11.3, and phase transition remain unaccepted.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware

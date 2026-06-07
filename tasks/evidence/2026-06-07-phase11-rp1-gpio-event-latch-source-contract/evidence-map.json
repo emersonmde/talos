@@ -1,0 +1,61 @@
+{
+  "taskId": "phase11-rp1-gpio-event-latch-source-contract-20260607",
+  "classification": "source-contract-blocked",
+  "evidenceLevel": "static source/doc inspection + docs validation + git diff checks",
+  "acceptedClaims": [
+    "Retained source evidence identifies the GPIO14 CTRL event-enable/IRQRESET path and IO_BANK0 INTE source-enable path.",
+    "No safe bounded GPIO14 event-latch or pending-generation discriminator is accepted from retained evidence.",
+    "Follow-up implementation tasks depending on accepted-source-contract remain blocked."
+  ],
+  "rejectedClaims": [
+    "GPIO event generation",
+    "interrupt pending generation beyond the prior read-only snapshot",
+    "interrupt enablement or delivery",
+    "GIC acknowledgement",
+    "ISR or handler ownership",
+    "GPIO ownership",
+    "pin-control or pad behavior",
+    "clock/reset programming",
+    "hardware behavior",
+    "Milestone 11.3 or phase transition"
+  ],
+  "sourceReferences": [
+    {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/pinctrl-rp1.c",
+      "lines": "45-52",
+      "notes": "SET/CLR aliases and GPIO STATUS/CTRL plus IO_BANK0 INTE/INTS offsets."
+    },
+    {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/pinctrl-rp1.c",
+      "lines": "54-82",
+      "notes": "GPIO event status, event-enable, and IRQRESET bit definitions."
+    },
+    {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/pinctrl-rp1.c",
+      "lines": "805-845",
+      "notes": "Linux reads bank INTS, writes GPIO CTRL IRQRESET for active pins, and writes bank INTE set/clear aliases."
+    },
+    {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/pinctrl-rp1.c",
+      "lines": "865-905",
+      "notes": "Linux event-type programming clears raw event enables, writes IRQRESET, then sets selected raw event-enable bits."
+    },
+    {
+      "path": "tasks/2026-06-07-phase11-rp1-gpio-bank-source-status-closeout.md",
+      "notes": "Accepted prior read-only IO_BANK0 INTE/INTS frontier and retained unaccepted GPIO event generation/pending-generation claims."
+    }
+  ],
+  "artifacts": [
+    "tasks/2026-06-07-phase11-rp1-gpio-event-latch-source-contract.md",
+    "tasks/evidence/2026-06-07-phase11-rp1-gpio-event-latch-source-contract/source-reference-notes.md",
+    "docs/src/project/phase11-rp1-pcie-map-contract.md",
+    "docs/src/roadmap.md"
+  ],
+  "validation": {
+    "staticInspection": "pass",
+    "gitDiffCheck": "pass",
+    "mdbookBuild": "pass",
+    "gitDiffCachedCheck": "pass"
+  },
+  "commit": null
+}

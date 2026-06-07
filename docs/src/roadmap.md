@@ -7625,6 +7625,21 @@ acknowledgement, handler ownership, GPIO ownership, pin-control behavior,
 clocks and resets, DMA/cache, storage, generated-root, networking, SSH,
 broader PCIe, Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-gpio-event-latch-source-contract-20260607 is accepted as
+source-contract-blocked. Retained RP1/Linux source identifies the GPIO14 event
+configuration path through GPIO14 CTRL event-enable/IRQRESET writes and IO_BANK0
+INTE source-enable writes, but it does not justify a safe bounded diagnostic
+that deliberately changes GPIO14 event or pending state while GPIO14 may remain
+firmware-owned as UART0 TXD. No local/static core, no-write control, or Pi 5
+event-latch proof is authorized from this blocker. A future supervisor-planned
+task must first define GPIO ownership, parent-route masking, exact restore
+semantics, and a deterministic event source. GPIO event generation, interrupt
+pending generation beyond the prior read-only snapshot, interrupt enablement or
+delivery, IAR/EOIR acknowledgement, handler ownership, GPIO ownership,
+pin-control behavior, clocks and resets, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe, Milestone 11.3, and phase transition remain
+unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
