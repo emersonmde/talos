@@ -1,0 +1,28 @@
+{
+  "task": "phase11-rp1-clock-adc-enable-toggle-control-pi5-20260607",
+  "status": "accepted",
+  "classification": "no-mmio-clock-adc-ctrl-enable-toggle-control-visible",
+  "acceptedRun": "tasks/evidence/2026-06-07-phase11-rp1-clock-adc-enable-toggle-control-pi5/control-rerun-after-kg",
+  "identityJoinAllowed": true,
+  "rejectionReasons": [],
+  "selectedTreeHash": "37d1a4225602da70e0f1aba12047a77f5ab8644a9eba23854d31d05afdd068d1",
+  "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "marker": "TALOS: rp1-clock-adc-ctrl-enable-toggle-control",
+  "markerOccurrences": 84,
+  "expectedFetchPath": "da591740/kernel_2712.img",
+  "expectedFetchBytes": 47240,
+  "expectedFetchCount": 2,
+  "expectedFetchByteMatchCount": 2,
+  "acceptedClaims": [
+    "no-MMIO/no-RP1/no-GIC CLK_ADC_CTRL enable-toggle control output and capture path is visible on Pi 5",
+    "the selected candidate identity, TFTP fetches, serial markers, final pre-restore identity, and restore proof join under pi5-capture-transaction-v2"
+  ],
+  "rejectedClaims": [
+    "real RP1 CLK_ADC_CTRL enable-bit transition behavior",
+    "RP1 clock/reset ownership or writes",
+    "GPIO ownership or event generation",
+    "interrupt delivery or GIC acknowledgement",
+    "ISR or handler ownership",
+    "DMA/cache, storage, generated-root, networking, SSH, broader PCIe behavior, Milestone 11.3, or phase transition"
+  ]
+}
