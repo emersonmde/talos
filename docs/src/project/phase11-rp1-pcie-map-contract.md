@@ -172,6 +172,19 @@ ownership, pin-control behavior, clock/reset programming, DMA/cache, storage,
 generated-root, networking, SSH, broader PCIe enumeration, Milestone 11.3, and
 phase transition remain unaccepted.
 
+phase11-rp1-gic-visible-route-closeout-20260607 reconciles that chain as
+gic-visible-route-status-frontier-closed. The accepted frontier is limited to
+the source-backed RP1 IO_BANK0 route identity, selected read-only/no-ack GICv2
+status snapshot for INTID 160, paired no-MMIO/no-GIC/no-RP1 control proof, and
+real Pi 5 visibility proof. Same-shaped GIC-visible route status hardware
+reruns are not progress unless a future supervisor task supplies a different
+discriminator or new acceptance criteria. Interrupt pending generation,
+delivery, IAR/EOIR acknowledgement, ISR/handler ownership, GPIO ownership,
+pin-control behavior, pad writes, clock/reset programming, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe enumeration, Milestone 11.3, and
+phase transition remain unaccepted. Supervisor planning is required for the
+next Milestone 11.2 feature slice.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware

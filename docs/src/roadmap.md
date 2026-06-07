@@ -7565,6 +7565,20 @@ Interrupt delivery, handler ownership, GPIO ownership, pin-control behavior,
 clocks/resets, DMA/cache, storage, generated-root, networking, SSH, broader
 PCIe, Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-gic-visible-route-closeout-20260607 reconciles the source
+contract, local/static core, no-MMIO/no-GIC/no-RP1 Pi 5 control, and real
+Pi 5 diagnostic proof as gic-visible-route-status-frontier-closed. The
+accepted frontier is limited to the source-backed RP1 IO_BANK0 route identity,
+selected read-only/no-ack GICv2 status snapshot for INTID 160, paired control
+proof, and real Pi 5 visibility proof. Same-shaped GIC-visible route status
+hardware reruns are blocked unless a future supervisor task supplies a
+different discriminator or new acceptance criteria. No explicit worker-owned
+task remains; supervisor planning is required for the next Milestone 11.2
+feature slice. Interrupt pending generation, delivery, IAR/EOIR
+acknowledgement, handler ownership, GPIO ownership, pin-control behavior,
+clocks and resets, DMA/cache, storage, generated-root, networking, SSH,
+broader PCIe, Milestone 11.3, and phase transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
