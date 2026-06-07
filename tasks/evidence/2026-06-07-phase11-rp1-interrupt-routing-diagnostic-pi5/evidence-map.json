@@ -1,0 +1,100 @@
+{
+  "task": "phase11-rp1-interrupt-routing-diagnostic-pi5-20260607",
+  "status": "accepted",
+  "classification": "routing-msix-cfg-visible",
+  "accepted": [
+    "Pi 5 fetched the selected real interrupt-routing diagnostic candidate as da591740/kernel_2712.img",
+    "accepted candidate rerun passed pi5-capture-transaction-v2 identity join with no rejection reasons",
+    "serial hardware output retained repeated TALOS: rp1-interrupt-routing-result markers from the selected candidate",
+    "stable pre-restore TFTP evidence retained two served 46648-byte candidate kernel fetches",
+    "diagnostic output reported raw 0xdeaddead and classification=routing-msix-cfg-visible for the accepted MSIX_CFG(0) read boundary",
+    "final restore returned the lab to the pre-run boot tree"
+  ],
+  "notAccepted": [
+    "broader interrupt delivery or handler ownership",
+    "GPIO ownership or pin-control behavior",
+    "pad writes",
+    "clock/reset programming",
+    "DMA/cache behavior",
+    "storage or generated-root behavior",
+    "networking or SSH",
+    "broader PCIe behavior",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-pi5.md",
+    "classification": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-pi5/classification.json",
+    "firstDiagnosticRun": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-pi5/diagnostic-run",
+    "knownGoodControlRun": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-pi5/known-good-control-run",
+    "acceptedCandidateRerun": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-pi5/diagnostic-rerun-after-kg",
+    "contractDoc": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+    "roadmap": "docs/src/roadmap.md"
+  },
+  "diagnosticCandidate": {
+    "archive": "target/talos-rpi5-rp1-interrupt-routing-msix-cfg-read-core.tar.gz",
+    "archiveSha256Line": "09c5f12dcf9a6d52d4ba265e2a6cfcb1c2797a278e342e59f08edba8a27de00b  target/talos-rpi5-rp1-interrupt-routing-msix-cfg-read-core.tar.gz",
+    "kernelSizeBytes": 46648,
+    "marker": "TALOS: rp1-interrupt-routing-result",
+    "outputClassification": "routing-msix-cfg-visible",
+    "raw": "0xdeaddead",
+    "decoded": {
+      "enable": true,
+      "test": false,
+      "iack": true,
+      "iack_en": true
+    }
+  },
+  "triage": {
+    "firstDiagnosticRun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-pi5/diagnostic-run",
+      "classification": "capture-staging-blocked",
+      "identityJoinAllowed": false,
+      "rejection_reasons": [
+        "serial-drain-not-empty-before-power",
+        "saturated-direct-read-without-empty-pre-power-drain"
+      ],
+      "markerOccurrences": 969,
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 2
+    },
+    "knownGoodControlRun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-pi5/known-good-control-run",
+      "marker": "rpi5-production-timer-preemption: PASS",
+      "classification": "capture-staging-blocked",
+      "identityJoinAllowed": false,
+      "rejection_reasons": [
+        "serial-drain-not-empty-before-power",
+        "saturated-direct-read-without-empty-pre-power-drain"
+      ],
+      "markerOccurrences": 1,
+      "expectedFetchCount": 2
+    },
+    "acceptedCandidateRerun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-pi5/diagnostic-rerun-after-kg",
+      "identityJoinAllowed": true,
+      "rejection_reasons": [],
+      "markerOccurrences": 970,
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 2,
+      "selectedTreeHash": "63800845c9837b3d57153051583b269070b028412bcd57ea9c55a5f9e56a2304",
+      "effectiveKernel": "kernel_2712.img",
+      "expectedFetchPath": "da591740/kernel_2712.img",
+      "expectedFetchBytes": 46648,
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "validation": {
+    "staticArchiveIdentityCheck": "passed",
+    "labControllerPi5HardwareRun": "passed on accepted candidate rerun",
+    "identityJoin": "passed on accepted candidate rerun",
+    "stableSameCursorTftp": "passed",
+    "serialHardwareOutput": "passed",
+    "knownGoodControlAndCandidateRerun": "run and retained after rejected candidate evidence",
+    "restoreProof": "passed",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  },
+  "nextAction": "Mechanically promote phase11-rp1-interrupt-routing-diagnostic-closeout-20260607 on a future worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive."
+}

@@ -7507,6 +7507,22 @@ before any real Pi 5 proof. Interrupt enablement/delivery, GPIO ownership,
 clock/reset programming, DMA/cache, storage, generated-root, networking, SSH,
 broader PCIe, Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-interrupt-routing-no-mmio-control-pi5-20260607 accepted the paired
+no-MMIO/no-enable output shape as visible on Pi 5. The subsequent real
+diagnostic proof phase11-rp1-interrupt-routing-diagnostic-pi5-20260607 is
+accepted as routing-msix-cfg-visible. The decisive rerun passed the v2 identity
+join for tree `63800845c9837b3d57153051583b269070b028412bcd57ea9c55a5f9e56a2304`,
+retained two 46,648-byte `da591740/kernel_2712.img` fetches, final
+selected-tree identity, restore proof, and 970
+`TALOS: rp1-interrupt-routing-result` records carrying contract
+phase11-rp1-interrupt-routing-source-contract-v1, target
+rp1-io-bank0-msix-cfg-read, address `0x1f00108008`, raw `0xdeaddead`, and
+classification=routing-msix-cfg-visible. This accepts only the selected
+read-only/no-enable MSIX_CFG(0) diagnostic boundary. Interrupt delivery,
+handler ownership, GPIO ownership, pin-control behavior, clocks/resets,
+DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
+Milestone 11.3, and phase transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

@@ -977,6 +977,24 @@ interrupt routing, interrupt delivery, GPIO ownership, pin-control, clocks,
 resets, DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
 Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-interrupt-routing-diagnostic-pi5-20260607 accepts the selected
+real read-only/no-enable interrupt-routing diagnostic boundary on Pi 5. After a
+first candidate run and known-good control were rejected by non-empty
+pre-power serial drain evidence, the accepted diagnostic rerun selected tree
+`63800845c9837b3d57153051583b269070b028412bcd57ea9c55a5f9e56a2304`,
+retained two served 46,648-byte `da591740/kernel_2712.img` TFTP fetches,
+passed the v2 identity join with no rejection reasons, and retained 970
+occurrences of `TALOS: rp1-interrupt-routing-result`. The visible result
+reported contract `phase11-rp1-interrupt-routing-source-contract-v1`, target
+`rp1-io-bank0-msix-cfg-read`, hwirq 0, predicted MSI-X vector 0, predicted
+GIC SPI 128 / INTID 160, address `0x1f00108008`, width 32, raw
+`0xdeaddead`, enable=true, test=false, iack=true, iack-en=true, and
+classification=routing-msix-cfg-visible. This accepts only that MSIX_CFG(0)
+read/result boundary. Interrupt delivery, handler ownership, GPIO ownership,
+pin-control behavior, pad writes, clock/reset programming, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe, Milestone 11.3, and phase
+transition remain unaccepted.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

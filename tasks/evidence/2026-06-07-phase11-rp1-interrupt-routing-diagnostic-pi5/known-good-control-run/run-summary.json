@@ -1,0 +1,103 @@
+{
+  "runLabel": "phase11-rp1-interrupt-routing-diagnostic-pi5-20260607/known-good-control-run",
+  "captureExit": 0,
+  "identityExit": 1,
+  "identityJoinAllowed": false,
+  "rejection_reasons": [
+    "serial-drain-not-empty-before-power",
+    "saturated-direct-read-without-empty-pre-power-drain"
+  ],
+  "marker": "rpi5-production-timer-preemption: PASS",
+  "markerOccurrences": 1,
+  "expectedFetchCount": 2,
+  "expectedFetchByteMatchCount": 2,
+  "expectedFetchEvents": [
+    {
+      "bytes": 104136,
+      "client_ip": "10.42.1.4",
+      "client_mac": "88:a2:9e:ae:c8:7f",
+      "filename": "da591740/kernel_2712.img",
+      "line": "Jun  7 06:48:12 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "status": "served"
+    },
+    {
+      "bytes": 104136,
+      "client_ip": "10.42.1.4",
+      "client_mac": "88:a2:9e:ae:c8:7f",
+      "filename": "da591740/kernel_2712.img",
+      "line": "Jun  7 06:48:13 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "status": "served"
+    }
+  ],
+  "proofRunIdentity": {
+    "selected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 104136,
+    "serial": {
+      "pre_power_drain": {
+        "attempts": 16,
+        "total_bytes": 182528,
+        "final_cursor": 4194304,
+        "empty_before_power": false
+      },
+      "cursor_file": 4194304,
+      "window_cursor_start": 4194304,
+      "window_cursor_end": 4194304,
+      "window_bytes": 6935,
+      "response_bytes": 6935,
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+    },
+    "tftp": {
+      "cursor_file": 4192874,
+      "delta_cursor_start": 4192874,
+      "delta_cursor_end": 4194225,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        104136,
+        104136
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 104136
+    },
+    "restore": {
+      "snapshot_name": "pre-interrupt-routing-known-good-control-run-064730",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "serialWindow": {
+    "requested_timeout_seconds": 110,
+    "elapsed_seconds": 26,
+    "settle_ms": 1000,
+    "max_bytes": 327680,
+    "observe_attempts": 7,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 6935,
+    "required_marker": "rpi5-production-timer-preemption: PASS",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": true,
+    "has_firmware_network": true,
+    "firmware_network_occurrences": 2,
+    "required_marker_occurrences": 1
+  },
+  "tftpStability": {
+    "stable": true,
+    "reason": "stable",
+    "stable_samples": 3,
+    "required_samples": 3
+  }
+}
