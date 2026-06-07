@@ -1,0 +1,260 @@
+{
+  "contract_version": "pi5-capture-identity-join-retained-fixtures-v1",
+  "fixture_count": 3,
+  "passed": true,
+  "fixtures": [
+    {
+      "name": "marker-visible-rejected",
+      "evidence_dir": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-pi5/diagnostic-rerun-selected-tree",
+      "exit_code": 1,
+      "expected": {
+        "allowed": false,
+        "classification": "capture-staging-blocked",
+        "rejection_reasons": [
+          "serial-drain-not-empty-before-power",
+          "saturated-direct-read-without-empty-pre-power-drain",
+          "tftp-expected-fetch-byte-mismatch",
+          "final-pre-restore-selected-tree-mismatch",
+          "final-pre-restore-expected-fetch-byte-mismatch"
+        ],
+        "empty_before_power": false,
+        "final_selected_tree": false,
+        "fetch_byte_count": 46336,
+        "tftp_fetch_count": 2
+      },
+      "stderr": "",
+      "result": {
+        "contract_version": "pi5-capture-transaction-v2",
+        "run_label": "phase11-rp1-gpio-status-diagnostic-pi5-20260607/diagnostic-rerun-selected-tree",
+        "summary_label": "phase11-rp1-gpio-status-diagnostic-pi5-20260607/diagnostic-rerun-selected-tree",
+        "decisive_rp1_hardware_classification_allowed": false,
+        "classification": "capture-staging-blocked",
+        "rejection_reasons": [
+          "serial-drain-not-empty-before-power",
+          "saturated-direct-read-without-empty-pre-power-drain",
+          "tftp-expected-fetch-byte-mismatch",
+          "final-pre-restore-selected-tree-mismatch",
+          "final-pre-restore-expected-fetch-byte-mismatch"
+        ],
+        "proof_run_identity": {
+          "selected_tree_hash": "cb7827b07a3822370fc610dfd18a8ab580cea31a47c4559e41a242975976f83a",
+          "effective_kernel": "kernel_2712.img",
+          "expected_fetch_path": "da591740/kernel_2712.img",
+          "expected_fetch_byte_count": 46336,
+          "serial": {
+            "pre_power_drain": {
+              "attempts": 16,
+              "total_bytes": 33232,
+              "final_cursor": 4194304,
+              "empty_before_power": false
+            },
+            "cursor_file": 4194304,
+            "window_cursor_start": 4194304,
+            "window_cursor_end": 4194304,
+            "window_bytes": 168936,
+            "response_bytes": 168936,
+            "capture_mode": "read",
+            "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+          },
+          "tftp": {
+            "cursor_file": 4173960,
+            "delta_cursor_start": 4173960,
+            "delta_cursor_end": 4175311,
+            "stable": true,
+            "event_count": 13,
+            "expected_fetch_count": 2,
+            "expected_fetch_byte_match_count": 0,
+            "expected_fetch_bytes_seen": [
+              104136,
+              104136
+            ]
+          },
+          "final_pre_restore": {
+            "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+            "effective_kernel": "kernel_2712.img",
+            "selected_tree_still_staged": false,
+            "expected_fetch_present": true,
+            "expected_fetch_bytes": 104136
+          },
+          "restore": {
+            "snapshot_name": "pre-gpio14-diagnostic-rerun-023410",
+            "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+          }
+        },
+        "rule": "missing or mismatched candidate identity, pre-power serial-drain, serial-window, TFTP, or final identity fields prevent decisive hardware classification"
+      },
+      "checks": {
+        "exit_code_matches": true,
+        "allowed_matches": true,
+        "classification_matches": true,
+        "reasons_match": true,
+        "empty_before_power_matches": true,
+        "final_selected_tree_matches": true,
+        "expected_fetch_byte_count_matches": true,
+        "tftp_expected_fetch_count_matches": true
+      },
+      "passed": true
+    },
+    {
+      "name": "clean-candidate-rerun",
+      "evidence_dir": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-pi5/diagnostic-rerun-after-kg",
+      "exit_code": 1,
+      "expected": {
+        "allowed": false,
+        "classification": "capture-staging-blocked",
+        "rejection_reasons": [
+          "expected-fetch-not-observed-in-tftp-delta"
+        ],
+        "empty_before_power": true,
+        "final_selected_tree": true,
+        "fetch_byte_count": 46336,
+        "tftp_fetch_count": 0
+      },
+      "stderr": "",
+      "result": {
+        "contract_version": "pi5-capture-transaction-v2",
+        "run_label": "phase11-rp1-gpio-status-diagnostic-pi5-20260607/diagnostic-rerun-after-kg",
+        "summary_label": "",
+        "decisive_rp1_hardware_classification_allowed": false,
+        "classification": "capture-staging-blocked",
+        "rejection_reasons": [
+          "expected-fetch-not-observed-in-tftp-delta"
+        ],
+        "proof_run_identity": {
+          "selected_tree_hash": "cb7827b07a3822370fc610dfd18a8ab580cea31a47c4559e41a242975976f83a",
+          "effective_kernel": "kernel_2712.img",
+          "expected_fetch_path": "da591740/kernel_2712.img",
+          "expected_fetch_byte_count": 46336,
+          "serial": {
+            "pre_power_drain": {
+              "attempts": 1,
+              "total_bytes": 0,
+              "final_cursor": 4194304,
+              "empty_before_power": true
+            },
+            "cursor_file": 4194304,
+            "window_cursor_start": 4194304,
+            "window_cursor_end": 4194304,
+            "window_bytes": 708,
+            "response_bytes": 708,
+            "capture_mode": "read",
+            "observe_contract": "direct-read-after-empty-pre-power-drain"
+          },
+          "tftp": {
+            "cursor_file": 4178013,
+            "delta_cursor_start": 4178013,
+            "delta_cursor_end": 4178013,
+            "stable": true,
+            "event_count": 0,
+            "expected_fetch_count": 0,
+            "expected_fetch_byte_match_count": 0,
+            "expected_fetch_bytes_seen": []
+          },
+          "final_pre_restore": {
+            "tree_hash": "cb7827b07a3822370fc610dfd18a8ab580cea31a47c4559e41a242975976f83a",
+            "effective_kernel": "kernel_2712.img",
+            "selected_tree_still_staged": true,
+            "expected_fetch_present": true,
+            "expected_fetch_bytes": 46336
+          },
+          "restore": {
+            "snapshot_name": "pre-gpio14-diagnostic-rerun-kg-024128",
+            "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+          }
+        },
+        "rule": "missing or mismatched candidate identity, pre-power serial-drain, serial-window, TFTP, or final identity fields prevent decisive hardware classification"
+      },
+      "checks": {
+        "exit_code_matches": true,
+        "allowed_matches": true,
+        "classification_matches": true,
+        "reasons_match": true,
+        "empty_before_power_matches": true,
+        "final_selected_tree_matches": true,
+        "expected_fetch_byte_count_matches": true,
+        "tftp_expected_fetch_count_matches": true
+      },
+      "passed": true
+    },
+    {
+      "name": "no-mmio-control",
+      "evidence_dir": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-no-mmio-control-pi5/control-rerun-after-kg",
+      "exit_code": 0,
+      "expected": {
+        "allowed": true,
+        "classification": "capture-transaction-v2-ready",
+        "rejection_reasons": [],
+        "empty_before_power": true,
+        "final_selected_tree": true,
+        "fetch_byte_count": 46160,
+        "tftp_fetch_count": 2
+      },
+      "stderr": "",
+      "result": {
+        "contract_version": "pi5-capture-transaction-v2",
+        "run_label": "phase11-rp1-gpio-status-no-mmio-control-pi5-20260607/control-rerun-after-kg",
+        "summary_label": "phase11-rp1-gpio-status-no-mmio-control-pi5-20260607/control-rerun-after-kg",
+        "decisive_rp1_hardware_classification_allowed": true,
+        "classification": "capture-transaction-v2-ready",
+        "rejection_reasons": [],
+        "proof_run_identity": {
+          "selected_tree_hash": "99b1f8b2d7295da435bc82236fe0192f9dd9aade64e877508335cc2014d356fc",
+          "effective_kernel": "kernel_2712.img",
+          "expected_fetch_path": "da591740/kernel_2712.img",
+          "expected_fetch_byte_count": 46160,
+          "serial": {
+            "pre_power_drain": {
+              "attempts": 1,
+              "total_bytes": 0,
+              "final_cursor": 4194304,
+              "empty_before_power": true
+            },
+            "cursor_file": 4194304,
+            "window_cursor_start": 4194304,
+            "window_cursor_end": 4194304,
+            "window_bytes": 266617,
+            "response_bytes": 266617,
+            "capture_mode": "read",
+            "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+          },
+          "tftp": {
+            "cursor_file": 4171258,
+            "delta_cursor_start": 4171258,
+            "delta_cursor_end": 4172609,
+            "stable": true,
+            "event_count": 13,
+            "expected_fetch_count": 2,
+            "expected_fetch_byte_match_count": 2,
+            "expected_fetch_bytes_seen": [
+              46160,
+              46160
+            ]
+          },
+          "final_pre_restore": {
+            "tree_hash": "99b1f8b2d7295da435bc82236fe0192f9dd9aade64e877508335cc2014d356fc",
+            "effective_kernel": "kernel_2712.img",
+            "selected_tree_still_staged": true,
+            "expected_fetch_present": true,
+            "expected_fetch_bytes": 46160
+          },
+          "restore": {
+            "snapshot_name": "pre-gpio14-no-mmio-rerun-021916",
+            "post_restore_tree_hash": "99b1f8b2d7295da435bc82236fe0192f9dd9aade64e877508335cc2014d356fc"
+          }
+        },
+        "rule": "missing or mismatched candidate identity, pre-power serial-drain, serial-window, TFTP, or final identity fields prevent decisive hardware classification"
+      },
+      "checks": {
+        "exit_code_matches": true,
+        "allowed_matches": true,
+        "classification_matches": true,
+        "reasons_match": true,
+        "empty_before_power_matches": true,
+        "final_selected_tree_matches": true,
+        "expected_fetch_byte_count_matches": true,
+        "tftp_expected_fetch_count_matches": true
+      },
+      "passed": true
+    }
+  ]
+}

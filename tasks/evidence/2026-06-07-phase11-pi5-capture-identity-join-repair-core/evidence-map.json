@@ -1,0 +1,106 @@
+{
+  "task": "phase11-pi5-capture-identity-join-repair-core-20260607",
+  "status": "accepted",
+  "classification": "capture-identity-join-no-change-needed",
+  "evidenceLevel": "retained-evidence replay/regression fixture + static inspection",
+  "inputs": {
+    "realDiagnosticCloseout": {
+      "task": "tasks/2026-06-07-phase11-rp1-irq-clock-gpio-diagnostic-closeout.md",
+      "classification": "capture-staging-blocked",
+      "commit": "7675527df9bf8e2b793748895044d4ceac19b54a"
+    },
+    "markerVisibleRejectedRun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-pi5/diagnostic-rerun-selected-tree",
+      "expectedFetchBytes": 46336,
+      "expectedTftpFetchCount": 2,
+      "expectedFinalSelectedTree": false,
+      "expectedEmptyBeforePower": false,
+      "expectedClassification": "capture-staging-blocked"
+    },
+    "cleanCandidateRerun": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-pi5/diagnostic-rerun-after-kg",
+      "expectedFetchBytes": 46336,
+      "expectedTftpFetchCount": 0,
+      "expectedFinalSelectedTree": true,
+      "expectedEmptyBeforePower": true,
+      "expectedClassification": "capture-staging-blocked"
+    },
+    "noMmioControlProof": {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-no-mmio-control-pi5/control-rerun-after-kg",
+      "expectedFetchBytes": 46160,
+      "expectedTftpFetchCount": 2,
+      "expectedFinalSelectedTree": true,
+      "expectedEmptyBeforePower": true,
+      "expectedClassification": "capture-transaction-v2-ready"
+    }
+  },
+  "artifacts": {
+    "fixtureScript": "scripts/rpi5-capture-identity-join-retained-fixtures.sh",
+    "fixtureReplay": "tasks/evidence/2026-06-07-phase11-pi5-capture-identity-join-repair-core/retained-fixture-replay.json",
+    "classification": "tasks/evidence/2026-06-07-phase11-pi5-capture-identity-join-repair-core/classification.json"
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Added deterministic retained-evidence replay fixtures for the GPIO14 marker-visible rejection, clean candidate rerun, and accepted no-MMIO control proof."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The replay fixture asserts empty versus non-empty pre-power serial drain, selected-tree identity, expected kernel byte count, final pre-restore identity, and same-cursor TFTP fetch count."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "The existing v2 identity join correctly rejects marker-visible GPIO14 output when serial freshness, TFTP bytes, and final selected-tree identity do not join."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "The clean candidate rerun fails only the candidate-tied TFTP requirement; no runtime source change follows from retained evidence."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "A serialized no-MMIO control rerun remains required before the real GPIO14 repaired proof task can run."
+    }
+  ],
+  "acceptedClaims": [
+    "The retained v2 identity join contract remains intact and needs no relaxation.",
+    "The no-MMIO control proof remains capture-transaction-v2-ready under deterministic replay.",
+    "The marker-visible GPIO14 run and clean candidate rerun remain blocker evidence, not accepted RP1 GPIO14 STATUS behavior.",
+    "The repaired/audited proof chain is ready for the queued no-MMIO control rerun."
+  ],
+  "unacceptedClaims": [
+    "real RP1 GPIO14 STATUS read behavior",
+    "bus-fault or trap behavior",
+    "GPIO ownership",
+    "pin-control or pad writes",
+    "interrupt enablement or delivery",
+    "clock/reset programming",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "validation": [
+    {
+      "gate": "scripts/rpi5-capture-identity-join-retained-fixtures.sh",
+      "result": "pass"
+    },
+    {
+      "gate": "bash -n scripts/rpi5-capture-identity-join-retained-fixtures.sh scripts/rpi5-proof-identity-join-check.sh scripts/rpi5-capture-invariant-proof-bundle.sh",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "nextAction": "Mechanically promote phase11-pi5-capture-identity-repaired-control-pi5-20260607 on the next worker wake if hardwareTestLock remains unlocked/restored.",
+  "commit": "recorded in talos-supervisor-state.json after acceptance commit"
+}

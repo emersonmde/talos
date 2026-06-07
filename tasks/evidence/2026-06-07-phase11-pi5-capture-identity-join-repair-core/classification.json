@@ -1,0 +1,8 @@
+{
+  "task": "phase11-pi5-capture-identity-join-repair-core-20260607",
+  "status": "accepted",
+  "classification": "capture-identity-join-no-change-needed",
+  "evidenceLevel": "retained-evidence replay/regression fixture + static inspection",
+  "hardwareRun": false,
+  "result": "The pi5-capture-transaction-v2 identity join already rejects the retained marker-visible GPIO14 run, rejects the clean candidate rerun only for missing candidate-tied TFTP, and accepts the retained no-MMIO control proof. No acceptance criteria were relaxed."
+}
