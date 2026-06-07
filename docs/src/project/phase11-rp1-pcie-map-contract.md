@@ -871,6 +871,22 @@ mapped/read-value, bus-fault/trap, firmware-state, GPIO, interrupts,
 DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
 11.2, or a phase transition.
 
+phase11-rp1-uart0-fr-tail-stable-result-pi5-20260606 accepts the queued RP1
+tail-stable result proof as mapped-read-value-tail-stable. After an
+inconclusive first capture and a passing known-good control, the decisive
+candidate rerun selected tree
+`0e187f9f73118c237337b25d85e57c51dbf18a18bf87ab0d3850c63291b153eb`, fetched
+the 45,800-byte `da591740/kernel_2712.img` twice, passed the v2 identity join
+with an empty pre-power serial drain, preserved final selected-tree identity,
+and restored to
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10`. The
+serial window retained 1,498 occurrences of
+`TALOS: fr-tail-stable-result contract=phase11-rp1-pcie-map-contract-v1 target=rp1-uart0-fr-read address=0x1f00030018 width=32 raw=0xdeaddead classification=mapped/read-value`.
+This accepts only the first read-only RP1 UART0 FR mapped/read-value diagnostic
+boundary. GPIO/pin-control ownership, RP1 clocks/resets, interrupts,
+DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
+11.2, and phase transition remain unaccepted.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

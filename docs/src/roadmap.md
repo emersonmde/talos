@@ -7406,6 +7406,21 @@ mapped/read-value, bus-fault/trap, firmware-state behavior, GPIO, interrupts,
 DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
 11.2, and phase transition remain unaccepted.
 
+phase11-rp1-uart0-fr-tail-stable-result-pi5-20260606 accepts the RP1
+tail-stable result proof as mapped-read-value-tail-stable. The decisive
+candidate rerun passed the v2 identity join for selected tree
+0e187f9f73118c237337b25d85e57c51dbf18a18bf87ab0d3850c63291b153eb, two
+45,800-byte da591740/kernel_2712.img fetches, empty pre-power serial drain,
+final selected-tree identity, restore to
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10, and 1,498
+occurrences of TALOS: fr-tail-stable-result carrying contract
+phase11-rp1-pcie-map-contract-v1, target rp1-uart0-fr-read, address
+0x1f00030018, width 32, raw 0xdeaddead, and classification
+mapped/read-value. This accepts only the first read-only RP1 UART0 FR
+mapped/read-value diagnostic boundary. GPIO/pin-control ownership, RP1
+clocks/resets, interrupts, DMA/cache, storage, generated-root, networking,
+SSH, broader PCIe, Milestone 11.2, and phase transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

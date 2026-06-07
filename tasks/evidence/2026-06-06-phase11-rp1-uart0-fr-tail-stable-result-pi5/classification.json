@@ -1,0 +1,49 @@
+{
+  "task": "phase11-rp1-uart0-fr-tail-stable-result-pi5-20260606",
+  "classification": "mapped-read-value-tail-stable",
+  "acceptedRun": "result-rerun-after-kg",
+  "archiveSha256": "521ea4e092321f19e414020303f4127aaf5f076095bd636bf2578cc452959541",
+  "selectedTreeHash": "0e187f9f73118c237337b25d85e57c51dbf18a18bf87ab0d3850c63291b153eb",
+  "expectedFetchPath": "da591740/kernel_2712.img",
+  "expectedFetchBytes": 45800,
+  "tftpExpectedFetchCount": 2,
+  "serialMarker": "TALOS: fr-tail-stable-result",
+  "serialMarkerOccurrences": 1498,
+  "rawValue": "0xdeaddead",
+  "contractLine": "TALOS: fr-tail-stable-result contract=phase11-rp1-pcie-map-contract-v1 target=rp1-uart0-fr-read address=0x1f00030018 width=32 raw=0xdeaddead classification=mapped/read-value",
+  "identityJoinAllowed": true,
+  "identityJoinRejectionReasons": [],
+  "finalPreRestoreTreeHash": "0e187f9f73118c237337b25d85e57c51dbf18a18bf87ab0d3850c63291b153eb",
+  "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "knownGoodControl": {
+    "run": "known-good-control-run",
+    "identityJoinAllowed": true,
+    "expectedFetchBytes": 104136,
+    "marker": "rpi5-production-timer-preemption: PASS",
+    "markerOccurrences": 1
+  },
+  "inconclusiveFirstRun": {
+    "run": "result-run",
+    "classification": "capture-staging-blocked",
+    "identityJoinAllowed": false,
+    "rejectionReasons": [
+      "serial-drain-not-empty-before-power",
+      "saturated-direct-read-without-empty-pre-power-drain",
+      "final-pre-restore-selected-tree-mismatch",
+      "final-pre-restore-expected-fetch-byte-mismatch"
+    ],
+    "markerOccurrences": 1056,
+    "note": "Retained as triage evidence only; overlapping/dirty capture had non-empty pre-power drain and final pre-restore selected-tree mismatch."
+  },
+  "notAccepted": [
+    "GPIO or pin-control ownership",
+    "RP1 clocks/resets",
+    "interrupts",
+    "DMA/cache behavior",
+    "storage or generated-root behavior",
+    "networking or SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.2",
+    "phase transition"
+  ]
+}

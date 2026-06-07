@@ -1,0 +1,14 @@
+{
+  "archive": "target/talos-rpi5-rp1-uart0-fr-tail-stable-result-core.tar.gz",
+  "archiveSha256": "521ea4e092321f19e414020303f4127aaf5f076095bd636bf2578cc452959541",
+  "selectedTreeHash": "0e187f9f73118c237337b25d85e57c51dbf18a18bf87ab0d3850c63291b153eb",
+  "effectiveKernel": "kernel_2712.img",
+  "expectedFetch": "da591740/kernel_2712.img",
+  "expectedFetchBytes": 45800,
+  "selectedFetch": {
+    "bytes": 45800,
+    "mtime": 1780792360,
+    "name": "da591740/kernel_2712.img"
+  },
+  "publishOk": true
+}

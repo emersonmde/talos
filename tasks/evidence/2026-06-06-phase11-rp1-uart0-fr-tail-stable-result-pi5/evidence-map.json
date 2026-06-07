@@ -1,0 +1,84 @@
+{
+  "task": "phase11-rp1-uart0-fr-tail-stable-result-pi5-20260606",
+  "status": "accepted",
+  "classification": "mapped-read-value-tail-stable",
+  "accepted": [
+    "The RP1 tail-stable candidate archive was published under hardwareTestLock.",
+    "The decisive candidate rerun passed pi5-capture-transaction-v2 identity join with no rejection reasons.",
+    "Stable pre-restore TFTP retained two selected-candidate 45,800-byte da591740/kernel_2712.img fetches.",
+    "Final pre-restore identity still matched the selected RP1 candidate tree.",
+    "Serial retained repeated TALOS: fr-tail-stable-result contract lines with raw=0xdeaddead and classification=mapped/read-value.",
+    "The pre-run boot tree was restored before hardwareTestLock release."
+  ],
+  "notAccepted": [
+    "GPIO or pin-control ownership",
+    "RP1 clocks/resets",
+    "interrupts",
+    "DMA/cache behavior",
+    "storage or generated-root behavior",
+    "networking or SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.2",
+    "phase transition"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-pi5.md",
+    "classification": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-pi5/classification.json",
+    "decisiveRun": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-pi5/result-rerun-after-kg/",
+    "knownGoodControl": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-pi5/known-good-control-run/",
+    "inconclusiveFirstRun": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-pi5/result-run/",
+    "validationLogs": {
+      "gitDiffCheck": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-pi5/git-diff-check.log",
+      "mdbookBuild": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-pi5/mdbook-build.log",
+      "gitDiffCachedCheck": "tasks/evidence/2026-06-06-phase11-rp1-uart0-fr-tail-stable-result-pi5/git-diff-cached-check.log"
+    }
+  },
+  "decisiveRun": {
+    "directory": "result-rerun-after-kg",
+    "archiveSha256": "521ea4e092321f19e414020303f4127aaf5f076095bd636bf2578cc452959541",
+    "selectedTreeHash": "0e187f9f73118c237337b25d85e57c51dbf18a18bf87ab0d3850c63291b153eb",
+    "expectedFetchPath": "da591740/kernel_2712.img",
+    "expectedFetchBytes": 45800,
+    "tftpExpectedFetchCount": 2,
+    "tftpExpectedFetchByteMatchCount": 2,
+    "serialMarkerOccurrences": 1498,
+    "rawValue": "0xdeaddead",
+    "identityJoinAllowed": true,
+    "rejectionReasons": [],
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "triage": {
+    "firstRun": {
+      "directory": "result-run",
+      "classification": "capture-staging-blocked",
+      "identityJoinAllowed": false,
+      "rejectionReasons": [
+        "serial-drain-not-empty-before-power",
+        "saturated-direct-read-without-empty-pre-power-drain",
+        "final-pre-restore-selected-tree-mismatch",
+        "final-pre-restore-expected-fetch-byte-mismatch"
+      ],
+      "disposition": "retained as capture-staging-blocked triage evidence"
+    },
+    "knownGoodControl": {
+      "directory": "known-good-control-run",
+      "identityJoinAllowed": true,
+      "expectedFetchBytes": 104136,
+      "marker": "rpi5-production-timer-preemption: PASS",
+      "markerOccurrences": 1,
+      "disposition": "passed proof-chain readiness before candidate rerun"
+    }
+  },
+  "validation": {
+    "staticArchiveIdentityCheck": "passed",
+    "labApiPreflightAndPostRestore": "passed",
+    "pi5CaptureTransactionV2IdentityJoin": "passed on decisive candidate rerun",
+    "stableSameCursorTftpBeforeRestore": "passed on decisive candidate rerun",
+    "serialHardwareBootOutput": "passed; repeated mapped/read-value tail-stable marker retained",
+    "knownGoodControlAndCandidateRerunAfterInconclusiveEvidence": "run and retained",
+    "gitDiffCheck": "passed",
+    "mdbookBuild": "passed",
+    "gitDiffCachedCheck": "passed"
+  },
+  "nextAction": "Promote phase11-rp1-uart0-fr-tail-stable-result-closeout-20260606 on a future worker wake if hardwareTestLock remains unlocked/restored."
+}
