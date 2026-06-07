@@ -7452,6 +7452,22 @@ clock/reset programming, DMA/cache, storage, generated-root, networking, SSH,
 broader PCIe enumeration, and Pi 5 hardware behavior for this diagnostic remain
 unaccepted.
 
+phase11-rp1-gpio-status-no-mmio-control-pi5-20260607 accepted the paired
+no-MMIO output shape as visible on Pi 5. The accepted rerun passed the v2
+identity join, retained two 46,160-byte selected candidate TFTP fetches,
+retained repeated TALOS: gpio14-status-control output, and restored the lab to
+the pre-run boot tree. phase11-rp1-gpio-status-diagnostic-pi5-20260607 and
+phase11-rp1-irq-clock-gpio-diagnostic-closeout-20260607 then closed the first
+real GPIO14 STATUS proof as capture-staging-blocked. A marker-visible run
+retained 483 TALOS: gpio14-status-result occurrences, but the v2 identity join
+rejected it due to serial-drain, TFTP byte, and final selected-tree mismatches;
+the required known-good control and candidate rerun were retained. Real RP1
+GPIO14 STATUS behavior, bus-fault/trap behavior, GPIO ownership, pad writes,
+interrupt delivery, clock/reset programming, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe, Milestone 11.3, and phase transition remain
+unaccepted. Same-shaped GPIO14 STATUS hardware reruns are blocked pending
+supervisor planning for a different discriminator or capture/staging repair.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

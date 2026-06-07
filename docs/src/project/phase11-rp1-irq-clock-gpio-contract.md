@@ -59,10 +59,39 @@ Accepted by phase11-rp1-gpio-status-no-mmio-control-pi5-20260607: the no-MMIO co
 
 This proof accepts only control output-shape visibility and proof-chain readiness. It does not accept real RP1 GPIO/status, interrupt, clock/reset, or broader hardware behavior.
 
+## Real Diagnostic Proof
+
+phase11-rp1-gpio-status-diagnostic-pi5-20260607 is accepted as
+capture-staging-blocked. The real diagnostic archive matched the accepted
+local/static SHA-256
+7bc21b39a5d0150221a244701285d733c8faef4e153085a49a34b5069c1fecea, and lab
+publication selected boot tree
+cb7827b07a3822370fc610dfd18a8ab580cea31a47c4559e41a242975976f83a with a
+46,336-byte da591740/kernel_2712.img. A marker-visible candidate run retained
+483 TALOS: gpio14-status-result occurrences, but the pi5-capture-transaction-v2
+identity join rejected it due to non-empty pre-power serial drain, expected
+TFTP byte mismatch, final selected-tree mismatch, and final expected-fetch byte
+mismatch. The required known-good control and candidate rerun were retained.
+The final candidate rerun had empty pre-power serial drain and final
+selected-tree identity, but no candidate-tied TFTP fetch and no diagnostic
+marker, then restored the lab to the pre-run boot tree.
+
+This result accepts only the blocker classification for the first real GPIO14
+STATUS proof attempt. Same-shaped GPIO14 STATUS hardware reruns require
+supervisor planning for a different discriminator or capture/staging repair.
+
 ## Accepted Boundary
 
 Accepted by `phase11-rp1-irq-clock-gpio-source-contract-20260607`: source-backed GPIO14 status target and address translation, source-backed interrupt path notes for later work, source-backed clock/reset assumptions for this read-only slice, and no-MMIO control requirement before real hardware proof.
 
 Accepted by phase11-rp1-gpio-status-no-mmio-control-pi5-20260607: Pi 5 visibility of the paired no-MMIO GPIO14 status control output shape and proof-chain readiness for the real diagnostic proof.
 
-Unaccepted: real RP1 GPIO14 STATUS read behavior, GPIO/pin-control ownership or writes, pad writes, interrupt enablement/routing proof/delivery, clock/reset programming, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, and any Pi 5 hardware result for the real GPIO status diagnostic.
+Accepted by phase11-rp1-gpio-status-diagnostic-pi5-20260607 and
+phase11-rp1-irq-clock-gpio-diagnostic-closeout-20260607: the first real Pi 5
+GPIO14 STATUS proof attempt is capture-staging-blocked with retained
+known-good-control, candidate-rerun, and restore evidence.
+
+Unaccepted: real RP1 GPIO14 STATUS read behavior, bus-fault/trap behavior,
+GPIO/pin-control ownership or writes, pad writes, interrupt enablement/routing
+proof/delivery, clock/reset programming, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe, Milestone 11.3, and phase transition.

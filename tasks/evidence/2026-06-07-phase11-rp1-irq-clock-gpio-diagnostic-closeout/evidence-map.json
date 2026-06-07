@@ -1,0 +1,131 @@
+{
+  "task": "phase11-rp1-irq-clock-gpio-diagnostic-closeout-20260607",
+  "status": "accepted",
+  "classification": "capture-staging-blocked",
+  "evidenceLevel": "static inspection + docs validation",
+  "inputs": {
+    "sourceContract": {
+      "task": "tasks/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract.md",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/evidence-map.json",
+      "classification": "accepted-source-contract",
+      "contractId": "phase11-rp1-irq-clock-gpio-contract-v1",
+      "diagnostic": "rp1-gpio14-status-read",
+      "address": "0x1f000d0070"
+    },
+    "diagnosticCore": {
+      "task": "tasks/2026-06-07-phase11-rp1-gpio-status-diagnostic-core.md",
+      "evidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-core/evidence-map.json",
+      "classification": "local-static-gpio14-status-core-accepted",
+      "rp1ArchiveSha256": "7bc21b39a5d0150221a244701285d733c8faef4e153085a49a34b5069c1fecea",
+      "rp1KernelSizeBytes": 46336,
+      "controlArchiveSha256": "0f3b084d686a12d101b5f43d6f8b264a57eee7241790e6ab87577454dd6ac611",
+      "controlKernelSizeBytes": 46160
+    },
+    "noMmioControlPi5": {
+      "task": "tasks/2026-06-07-phase11-rp1-gpio-status-no-mmio-control-pi5.md",
+      "classification": "no-mmio-gpio-status-control-visible",
+      "classificationJson": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-no-mmio-control-pi5/classification.json",
+      "acceptedRun": "control-rerun-after-kg",
+      "identityJoinAllowed": true,
+      "marker": "TALOS: gpio14-status-control",
+      "markerOccurrences": 795,
+      "expectedFetchBytes": 46160,
+      "expectedFetchCount": 2,
+      "finalRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "realDiagnosticPi5": {
+      "task": "tasks/2026-06-07-phase11-rp1-gpio-status-diagnostic-pi5.md",
+      "classification": "capture-staging-blocked",
+      "classificationJson": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-pi5/classification.json",
+      "archiveSha256": "7bc21b39a5d0150221a244701285d733c8faef4e153085a49a34b5069c1fecea",
+      "selectedTreeHash": "cb7827b07a3822370fc610dfd18a8ab580cea31a47c4559e41a242975976f83a",
+      "expectedFetchBytes": 46336,
+      "markerVisibleRejectedRun": {
+        "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-pi5/diagnostic-rerun-selected-tree",
+        "markerOccurrences": 483,
+        "identityJoinAllowed": false,
+        "rejectionReasons": [
+          "serial-drain-not-empty-before-power",
+          "saturated-direct-read-without-empty-pre-power-drain",
+          "tftp-expected-fetch-byte-mismatch",
+          "final-pre-restore-selected-tree-mismatch",
+          "final-pre-restore-expected-fetch-byte-mismatch"
+        ]
+      },
+      "candidateRerunAfterKnownGood": {
+        "path": "tasks/evidence/2026-06-07-phase11-rp1-gpio-status-diagnostic-pi5/diagnostic-rerun-after-kg",
+        "drainEmptyBeforePower": true,
+        "markerOccurrences": 0,
+        "tftpEventCount": 0,
+        "expectedFetchCount": 0,
+        "finalPreRestoreTreeHash": "cb7827b07a3822370fc610dfd18a8ab580cea31a47c4559e41a242975976f83a",
+        "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      }
+    }
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Reconciled source, local/static, no-MMIO control, and real diagnostic blocker evidence into one accepted closeout boundary."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Recorded no-MMIO control visibility and proof-chain readiness without accepting real RP1 GPIO/status behavior."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Recorded marker-visible real diagnostic output as rejected capture-staging evidence because the v2 identity join failed."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Further Milestone 11.2 progress requires supervisor planning for a different discriminator or capture/staging repair."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "The read-only GPIO14 STATUS diagnostic does not claim GPIO ownership or pinmux control."
+    }
+  ],
+  "acceptedClaims": [
+    "The source-backed GPIO14 STATUS contract and no-MMIO control requirement are accepted.",
+    "The local/static diagnostic and control artifacts satisfy the contract.",
+    "The no-MMIO Pi 5 control output shape is visible and identity-joined.",
+    "The real Pi 5 diagnostic attempt is accepted only as capture-staging-blocked.",
+    "Known-good triage, candidate rerun, and restore evidence were retained."
+  ],
+  "unacceptedClaims": [
+    "real RP1 GPIO14 STATUS read behavior",
+    "bus-fault or trap behavior",
+    "GPIO ownership",
+    "pin-control or pad writes",
+    "interrupt enablement or delivery",
+    "clock/reset programming",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "broader PCIe enumeration",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "nextAction": "Set planningNeeded=true for supervisor planning; same-shaped GPIO14 STATUS hardware reruns remain blocked until a different discriminator or capture/staging repair is explicitly queued.",
+  "validation": [
+    {
+      "gate": "Static inspection of source contract, core, no-MMIO control, and Pi 5 diagnostic evidence",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "commit": "recorded in talos-supervisor-state.json after acceptance commit"
+}
