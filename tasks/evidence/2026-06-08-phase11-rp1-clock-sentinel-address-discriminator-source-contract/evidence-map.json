@@ -1,0 +1,102 @@
+{
+  "task": "phase11-rp1-clock-sentinel-address-discriminator-source-contract-20260608",
+  "status": "accepted",
+  "classification": "accepted-source-contract",
+  "generatedAt": "2026-06-08T03:02:00Z",
+  "evidenceLevel": [
+    "static inspection",
+    "source evidence reconciliation",
+    "docs validation",
+    "git diff checks"
+  ],
+  "retainedSources": [
+    "docs/src/project/phase11-rp1-pcie-map-contract.md",
+    "docs/src/roadmap.md",
+    "tasks/2026-06-07-phase11-rp1-clock-write-effect-discriminator-closeout.md",
+    "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-closeout/evidence-map.json",
+    "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/classification.json",
+    "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-source-contract/source-reference-notes.md",
+    "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-status-pi5/classification.json",
+    "tasks/evidence/2026-06-07-phase11-rp1-clock-reset-write-restore-pi5/classification.json",
+    "tasks/evidence/2026-06-07-phase11-rp1-clock-adc-enable-toggle-pi5/classification.json",
+    "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/rp1.dtsi",
+    "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/clk-rp1.c",
+    "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/mfd-rp1.c",
+    "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/rp1-mfd.h",
+    "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/rp1-clock.h"
+  ],
+  "retainedSentinelEvidence": {
+    "closeoutClassification": "rp1-clock-adc-window-readback-sentinel-frontier-closed",
+    "realProofClassification": "rp1-clock-adc-window-readback-sentinel",
+    "clockWindowRaw": {
+      "clkSysCtrl": "0xdeaddead",
+      "clkUartCtrl": "0xdeaddead",
+      "adcCtrlFirst": "0xdeaddead",
+      "adcCtrlSecond": "0xdeaddead",
+      "adcDivInt": "0xdeaddead",
+      "adcSel": "0xdeaddead"
+    },
+    "acceptedBoundary": "read-only repeated 0xdeaddead sentinel/result boundary",
+    "sameShapedRerunsBlocked": true
+  },
+  "sourceFacts": {
+    "rp1CpuBase": "0x1f00000000",
+    "rp1BusBase": "0xc040000000",
+    "rp1SysinfoBase": "0x000000",
+    "rp1ClockManagerBaseOffset": "0x018000",
+    "sysinfoChipIdOffset": "0x000000",
+    "sysinfoPlatformOffset": "0x000004",
+    "clkAdcCtrlOffset": "0x018144",
+    "expectedFirmwareChipId": "0x20001927",
+    "linuxMfdProbeFact": "mfd-rp1.c reads SYSINFO_CHIP_ID and SYSINFO_PLATFORM through rp1_reg_read during RP1 probe and rejects unexpected chip identity"
+  },
+  "selectedContract": {
+    "contract": "phase11-rp1-clock-sentinel-address-discriminator-source-contract-v1",
+    "target": "rp1-sysinfo-vs-clock-sentinel-read",
+    "operation": "read-only SYSINFO identity vs retained clock-window sentinel comparison",
+    "allowedReads": [
+      "SYSINFO_CHIP_ID at 0x1f00000000",
+      "SYSINFO_PLATFORM at 0x1f00000004",
+      "CLK_ADC_CTRL at 0x1f00018144"
+    ],
+    "allowedWrites": [],
+    "restoreRequired": false
+  },
+  "expectedInvariants": [
+    "SYSINFO_CHIP_ID equal to 0x20001927 distinguishes a live RP1 identity decode from the retained 0xdeaddead clock-window sentinel",
+    "SYSINFO_CHIP_ID equal to 0xdeaddead localizes the blocker to the broader SYSINFO/address-decode path rather than the ADC clock-register window alone",
+    "CLK_ADC_CTRL is retained only as read-only sentinel comparator context"
+  ],
+  "classifications": [
+    "rp1-sysinfo-live-clock-window-sentinel",
+    "rp1-sysinfo-and-clock-window-sentinel",
+    "rp1-sysinfo-live-clock-window-non-sentinel",
+    "rp1-sysinfo-unexpected-chip-id",
+    "rp1-sysinfo-address-decode-blocked",
+    "rp1-sysinfo-clock-sentinel-inconclusive-capture",
+    "no-mmio-sysinfo-clock-sentinel-control-visible",
+    "staging/build-blocker"
+  ],
+  "acceptedClaims": [
+    "one source-backed next discriminator is accepted: a read-only SYSINFO identity vs retained clock-window sentinel comparison",
+    "the discriminator is qualitatively different from same-shaped CLK_ADC_CTRL enable-toggle/idempotent-write/ADC-window reruns",
+    "the paired control must preserve output shape while constructing no RP1 SYSINFO/GIC/MSI-X/PCIe/MIP/GPIO/pads/RIO/clock-reset MMIO address"
+  ],
+  "rejectedClaims": [
+    "successful non-idempotent CLK_ADC_CTRL enable-bit transition ownership",
+    "broad RP1 clock/reset ownership",
+    "clock/reset writes, divider/source/PLL/frequency-counter/reset-controller writes",
+    "GPIO ownership or event generation",
+    "interrupt delivery or GIC acknowledgement",
+    "ISR or handler ownership",
+    "DMA/cache, storage, generated-root, networking, SSH, broader PCIe behavior, Milestone 11.3, or phase transition"
+  ],
+  "validation": [
+    "static inspection of accepted Phase 11 closeout evidence and docs/src/project/phase11-rp1-pcie-map-contract.md",
+    "static inspection of retained Raspberry Pi Linux RP1 MFD/clock/device-tree sources and current Talos RP1 diagnostic helpers",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check"
+  ],
+  "nextAction": "Promote phase11-rp1-clock-sentinel-address-discriminator-core-20260608 after commit; implement only the accepted read-only SYSINFO-vs-clock-sentinel discriminator and paired no-MMIO/no-RP1/no-GIC control."
+}

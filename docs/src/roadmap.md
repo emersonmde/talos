@@ -7982,6 +7982,25 @@ DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
 for the next Milestone 11.2 feature slice; this closeout does not create a
 worker-owned follow-up task.
 
+phase11-rp1-clock-sentinel-address-discriminator-source-contract-20260608 is
+accepted as
+phase11-rp1-clock-sentinel-address-discriminator-source-contract-v1. It selects
+one read-only SYSINFO identity versus retained clock-window sentinel
+discriminator before any further RP1 clock writes, GPIO ownership retry, or
+interrupt-delivery work. The accepted target is
+rp1-sysinfo-vs-clock-sentinel-read, limited to 32-bit loads from
+SYSINFO_CHIP_ID at 0x1f00000000, SYSINFO_PLATFORM at 0x1f00000004, and
+CLK_ADC_CTRL at 0x1f00018144. A live SYSINFO chip id matching retained Pi 5
+firmware identity 0x20001927 while CLK_ADC_CTRL remains 0xdeaddead would
+separate RP1 identity/address decode from the clock-window sentinel. SYSINFO
+also returning 0xdeaddead would localize the blocker to the broader
+SYSINFO/address-decode path. The paired no-MMIO/no-RP1/no-GIC control must
+pass before any real Pi 5 proof. This source contract does not accept runtime
+or hardware behavior, broad RP1 clock/reset ownership, clock/reset writes,
+GPIO ownership, event generation, interrupt delivery, handler ownership,
+DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
+11.3, or a phase transition.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

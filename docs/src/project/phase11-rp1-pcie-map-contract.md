@@ -660,6 +660,26 @@ GPIO ownership, event generation, interrupt delivery, DMA/cache, storage,
 generated-root, networking, SSH, broader PCIe, Milestone 11.3, and phase
 transition remain unaccepted.
 
+phase11-rp1-clock-sentinel-address-discriminator-source-contract-20260608
+accepts the next source contract as
+phase11-rp1-clock-sentinel-address-discriminator-source-contract-v1. It
+selects one read-only discriminator, rp1-sysinfo-vs-clock-sentinel-read, to
+distinguish a live RP1 SYSINFO identity/address-decode path from the retained
+clock-window sentinel before any further clock writes, GPIO ownership retry,
+or interrupt-delivery work. The allowed 32-bit reads are SYSINFO_CHIP_ID at
+0x1f00000000, SYSINFO_PLATFORM at 0x1f00000004, and CLK_ADC_CTRL at
+0x1f00018144. The expected chip identity is 0x20001927 from retained Pi 5
+firmware logs and Linux RP1 MFD source context; CLK_ADC_CTRL remains only the
+retained sentinel comparator. The report must expose the raw values,
+chip-id/sentinel/equality booleans, retained ADC-window sentinel context, and
+one terminal classification from the accepted vocabulary. No writes or restore
+operations are selected. The paired no-MMIO/no-RP1/no-GIC control must pass
+before any real Pi 5 proof. This accepts only the source contract for a
+read-only SYSINFO-vs-clock-sentinel discriminator; broad RP1 clock/reset
+ownership, clock/reset writes, GPIO ownership, event generation, interrupt
+delivery, handler ownership, DMA/cache, storage, generated-root, networking,
+SSH, broader PCIe, Milestone 11.3, and phase transition remain unaccepted.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware
