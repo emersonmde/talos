@@ -1,0 +1,96 @@
+{
+  "taskId": "phase11-rp1-bridge-config-preflight-source-contract-20260608",
+  "classification": "accepted-source-contract",
+  "evidence": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-08-phase11-rp1-bridge-config-preflight-source-contract.md",
+      "type": "static source-contract record"
+    },
+    {
+      "label": "source reference notes",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-config-preflight-source-contract/source-reference-notes.md",
+      "type": "static inspection"
+    },
+    {
+      "label": "retained Broadcom STB PCIe source",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-source-contract/pcie-brcmstb.c",
+      "type": "retained source evidence"
+    },
+    {
+      "label": "retained Raspberry Pi device-tree sources",
+      "path": "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/",
+      "type": "retained source evidence"
+    },
+    {
+      "label": "accepted PCIe2 host-link closeout",
+      "path": "tasks/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-closeout.md",
+      "type": "accepted task record"
+    },
+    {
+      "label": "accepted endpoint config identity closeout",
+      "path": "tasks/2026-06-08-phase11-rp1-endpoint-config-identity-closeout.md",
+      "type": "accepted task record"
+    },
+    {
+      "label": "project contract update",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "type": "documentation"
+    },
+    {
+      "label": "roadmap update",
+      "path": "docs/src/roadmap.md",
+      "type": "documentation"
+    }
+  ],
+  "selectedContract": {
+    "contractId": "phase11-rp1-bridge-config-preflight-source-contract-v1",
+    "target": "pcie2-bridge-misc-ctrl-preflight-read",
+    "allowedReads": [
+      {
+        "name": "PCIE_MISC_PCIE_STATUS",
+        "address": "0x1000124068",
+        "offset": "0x4068",
+        "width": 32
+      },
+      {
+        "name": "PCIE_MISC_MISC_CTRL",
+        "address": "0x1000124008",
+        "offset": "0x4008",
+        "width": 32
+      }
+    ],
+    "allowedWrites": [],
+    "acceptedClassifications": [
+      "pcie2-bridge-preflight-ready",
+      "pcie2-bridge-preflight-incomplete",
+      "pcie2-bridge-preflight-sentinel",
+      "pcie2-bridge-preflight-link-down-skip",
+      "pcie2-bridge-preflight-inconclusive-capture",
+      "no-mmio-pcie2-bridge-preflight-control-visible",
+      "staging/build-blocker"
+    ]
+  },
+  "validation": [
+    {
+      "gate": "static inspection",
+      "result": "pass",
+      "level": "static inspection"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass",
+      "level": "whitespace check"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass",
+      "level": "docs build"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "pass",
+      "level": "staged whitespace check"
+    }
+  ]
+}

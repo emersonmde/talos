@@ -1726,6 +1726,29 @@ interrupt delivery, DMA/cache, storage, generated-root, networking, SSH,
 Milestone 11.3, and phase transition remain unaccepted. Supervisor planning is
 required for the next Milestone 11.2 frontier.
 
+phase11-rp1-bridge-config-preflight-source-contract-20260608 accepts
+phase11-rp1-bridge-config-preflight-source-contract-v1. The selected target is
+pcie2-bridge-misc-ctrl-preflight-read: read the already accepted PCIe2
+host-link status register at 0x1000124068, then read exactly one 32-bit dword
+from BCM2712 pcie2 PCIE_MISC_MISC_CTRL at CPU physical 0x1000124008. Retained
+Broadcom STB PCIe setup source uses that register to set SCB_ACCESS_EN,
+CFG_READ_UR_MODE, max burst size, RCB_MPS_MODE, and RCB_64B_MODE before
+inbound-window setup, root-complex class setup, and outbound-window
+programming.
+
+The accepted classifications are pcie2-bridge-preflight-ready,
+pcie2-bridge-preflight-incomplete, pcie2-bridge-preflight-sentinel,
+pcie2-bridge-preflight-link-down-skip,
+pcie2-bridge-preflight-inconclusive-capture,
+no-mmio-pcie2-bridge-preflight-control-visible, and staging/build-blocker.
+The paired control must preserve output shape while constructing no BCM2712
+PCIe, RP1 peripheral/SYSINFO/clock/GPIO/MSI-X, MIP, GIC, DMA, or other MMIO
+address. This source contract does not retry EXT_CFG_INDEX/EXT_CFG_DATA, and
+it does not accept runtime or hardware behavior, expected RP1 vendor/device
+visibility, endpoint ownership, broad RP1 mapping, endpoint configuration
+mutation, BAR discovery or programming, bridge setup, interrupt delivery,
+DMA/cache, networking, SSH, Milestone 11.3, or phase transition.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

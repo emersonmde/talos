@@ -8124,6 +8124,21 @@ delivery, DMA/cache, storage, generated-root, networking, SSH, Milestone 11.3,
 and phase transition remain unaccepted. Supervisor planning is required for
 the next Milestone 11.2 frontier.
 
+phase11-rp1-bridge-config-preflight-source-contract-20260608 accepts
+phase11-rp1-bridge-config-preflight-source-contract-v1. It selects one
+read-only BCM2712 PCIe2 bridge/config preflight discriminator before any
+endpoint config retry, BAR work, bridge setup, or RP1 ownership claim. The
+accepted target is pcie2-bridge-misc-ctrl-preflight-read: read the accepted
+host-link status register at 0x1000124068, then read PCIE_MISC_MISC_CTRL at
+0x1000124008 and decode the source-defined SCB_ACCESS_EN, CFG_READ_UR_MODE,
+RCB_MPS_MODE, RCB_64B_MODE, and max-burst fields. This source contract is
+qualitatively different from the all-ones endpoint config identity attempt
+because it performs no EXT_CFG_INDEX write and no EXT_CFG_DATA access. A
+ready-shaped result would justify later supervisor planning only; it does not
+accept endpoint ownership, broad RP1 mapping, bridge setup, BAR discovery or
+programming, interrupt delivery, DMA/cache, networking, SSH, Milestone 11.3,
+or phase transition.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
