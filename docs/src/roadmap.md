@@ -7941,6 +7941,17 @@ reset-controller writes, GPIO ownership, event generation, interrupt delivery,
 handler ownership, DMA/cache, storage, generated-root, networking, SSH,
 broader PCIe, Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-clock-write-effect-discriminator-core-20260607 is accepted as the
+local/static implementation of that discriminator and paired control. The next
+hardware step, phase11-rp1-clock-write-effect-discriminator-control-pi5-20260607,
+is also accepted as no-mmio-clock-adc-window-coherence-control-visible: after
+an inconclusive first candidate run, a production-timer known-good control
+passed the v2 identity join, and the unchanged candidate rerun retained two
+matching 47,360-byte TFTP fetches, 52 control markers, final selected-tree
+identity, and restore proof. This accepts only the no-MMIO/no-RP1/no-GIC
+control output/capture path; the real ADC clock-window coherence Pi 5 proof is
+the next mechanically gated task.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

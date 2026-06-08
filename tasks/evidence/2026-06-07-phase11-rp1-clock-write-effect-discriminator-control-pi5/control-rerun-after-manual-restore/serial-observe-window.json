@@ -1,0 +1,32 @@
+{
+  "action": "serial read",
+  "base64": "cmUtcmF3PTB4ZGVhZGRlYWQgcmV0YWluZWQtZW5hYmxlLXRvZ2dsZS10cmFuc2l0aW9uLXJhdz0weGRlYWRkNmFkIHJldGFpbmVkLWVuYWJsZS10b2dnbGUtcG9zdC1yYXc9MHhkZWFkZGVhZCByZXRhaW5lZC1lbmFibGUtdG9nZ2xlLXJlc3RvcmUtcmF3PTB4ZGVhZGRlYWQgcmV0YWluZWQtZW5hYmxlLXRvZ2dsZS1yZXN0b3JlLWVxLXByZT10cnVlIGNsYXNzaWZpY2F0aW9uPW5vLW1taW8tY2xvY2stYWRjLXdpbmRvdy1jb2hlcmVuY2UtY29udHJvbC12aXNpYmxlDQpUQUxPUzogcnAxLWNsb2NrLWFkYy13aW5kb3ctY29oZXJlbmNlLWNvbnRyb2wgY29udHJhY3Q9cGhhc2UxMS1ycDEtY2xvY2std3JpdGUtZWZmZWN0LWRpc2NyaW1pbmF0b3Itc291cmNlLWNvbnRyYWN0LXYxIHRhcmdldD1ycDEtY2xrLWFkYy13aW5kb3ctY29oZXJlbmNlLXJlYWQgY2xvY2stbWFuYWdlci1iYXNlPW5vdC1jb25zdHJ1Y3RlZCBjbGstc3lzLWN0cmwtc291cmNlLW9mZnNldD0weDE0IGFkZHJlc3M9bm90LWNvbnN0cnVjdGVkIHdpZHRoPTMyIHJhdz0weDgwMCBjbGstdWFydC1jdHJsLXNvdXJjZS1vZmZzZXQ9MHg1NCBhZGRyZXNzPW5vdC1jb25zdHJ1Y3T/",
+  "bytes": 591,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "re-raw=0xdeaddead retained-enable-toggle-transition-raw=0xdeadd6ad retained-enable-toggle-post-raw=0xdeaddead retained-enable-toggle-restore-raw=0xdeaddead retained-enable-toggle-restore-eq-pre=true classification=no-mmio-clock-adc-window-coherence-control-visible\r\nTALOS: rp1-clock-adc-window-coherence-control contract=phase11-rp1-clock-write-effect-discriminator-source-contract-v1 target=rp1-clk-adc-window-coherence-read clock-manager-base=not-constructed clk-sys-ctrl-source-offset=0x14 address=not-constructed width=32 raw=0x800 clk-uart-ctrl-source-offset=0x54 address=not-construct�",
+  "truncated": false,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 90,
+    "elapsed_seconds": 1,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 591,
+    "required_marker": "TALOS: rp1-clock-adc-window-coherence-control",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": true,
+    "has_firmware_network": false,
+    "firmware_network_occurrences": 0,
+    "required_marker_occurrences": 1
+  }
+}

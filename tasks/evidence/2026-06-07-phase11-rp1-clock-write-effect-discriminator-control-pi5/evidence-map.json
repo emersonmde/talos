@@ -1,0 +1,98 @@
+{
+  "task": "phase11-rp1-clock-write-effect-discriminator-control-pi5-20260607",
+  "status": "accepted",
+  "classification": "no-mmio-clock-adc-window-coherence-control-visible",
+  "generatedAt": "2026-06-08T02:11:00Z",
+  "evidenceLevel": [
+    "static archive identity inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "stable same-cursor TFTP evidence",
+    "pi5-capture-transaction-v2 identity join",
+    "restore proof",
+    "known-good control after inconclusive first run",
+    "git diff checks",
+    "docs validation"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-07-phase11-rp1-clock-write-effect-discriminator-control-pi5.md",
+    "classification": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-control-pi5/classification.json",
+    "firstControlRun": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-control-pi5/control-rerun-after-manual-restore",
+    "knownGoodControlRun": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-control-pi5/known-good-control-after-inconclusive",
+    "acceptedControlRerun": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-control-pi5/control-rerun-after-kg"
+  },
+  "sourceAndCore": {
+    "sourceContractTask": "tasks/2026-06-07-phase11-rp1-clock-write-effect-discriminator-source-contract.md",
+    "sourceContractCommit": "db2f6bc2e372f5bfe6a8b8d9c1e56cdada7bd97f",
+    "coreTask": "tasks/2026-06-07-phase11-rp1-clock-write-effect-discriminator-core.md",
+    "coreCommit": "be78fc2c9b4f2ddb80911e4ace0d6caf453fe2d7"
+  },
+  "controlCandidate": {
+    "archive": "target/talos-rpi5-rp1-clock-adc-window-coherence-no-mmio-control-core.tar.gz",
+    "archiveSha256": "d9a62977cb33b9c6b27525096951773575f18c53b1efbf3e3b143479058b3b88",
+    "kernel2712Sha256": "f7038e4debc3f73d32937989a68ec5ade6e8e2c613c7e5fe0e351f4722f3acd0",
+    "kernelSizeBytes": 47360,
+    "marker": "TALOS: rp1-clock-adc-window-coherence-control",
+    "outputClassification": "no-mmio-clock-adc-window-coherence-control-visible",
+    "staticArchiveReview": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-control-pi5/control-rerun-after-kg/static-archive-review.txt"
+  },
+  "acceptedRun": {
+    "path": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-control-pi5/control-rerun-after-kg",
+    "selectedTreeHash": "326db32f8082eb83f24df752d81611b77a2a270ff539a7af27adb91b0ef89412",
+    "preRunTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "identityAllowed": true,
+    "rejectionReasons": [],
+    "markerOccurrences": 52,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 47360,
+    "serialCaptureMode": "read",
+    "serialObserveContract": "deadline-loop-direct-read-after-saturated-cursor",
+    "tftpStable": true
+  },
+  "inconclusiveFirstRun": {
+    "path": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-control-pi5/control-rerun-after-manual-restore",
+    "classification": "capture-staging-blocked",
+    "rejectionReasons": [
+      "serial-drain-not-empty-before-power",
+      "saturated-direct-read-without-empty-pre-power-drain",
+      "expected-fetch-not-observed-in-tftp-delta"
+    ],
+    "markerOccurrences": 1,
+    "expectedFetchCount": 0,
+    "expectedFetchByteMatchCount": 0
+  },
+  "knownGoodControl": {
+    "path": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-control-pi5/known-good-control-after-inconclusive",
+    "classification": "capture-transaction-v2-ready",
+    "rejectionReasons": [],
+    "selectedTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 104136
+  },
+  "validation": [
+    "scripts/rpi5-rp1-clock-adc-window-coherence-no-mmio-control-review.sh target/talos-rpi5-rp1-clock-adc-window-coherence-no-mmio-control-core.tar.gz",
+    "lab-controller API status/boot-files/snapshot/publish/power-cycle/restore",
+    "scripts/rpi5-capture-invariant-proof-bundle.sh with marker TALOS: rp1-clock-adc-window-coherence-control",
+    "scripts/rpi5-proof-identity-join-check.sh --evidence-dir tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-control-pi5/control-rerun-after-kg",
+    "known-good control after inconclusive first run",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check"
+  ],
+  "acceptedClaims": [
+    "no-MMIO/no-RP1/no-GIC ADC clock-window coherence control output and capture path is visible on Pi 5",
+    "the selected candidate identity, TFTP fetches, serial markers, final pre-restore identity, and restore proof join under pi5-capture-transaction-v2"
+  ],
+  "rejectedClaims": [
+    "real RP1 ADC clock-window coherence behavior",
+    "RP1 clock/reset reads or writes",
+    "GPIO ownership or event generation",
+    "interrupt delivery or GIC acknowledgement",
+    "ISR or handler ownership",
+    "DMA/cache, storage, generated-root, networking, SSH, broader PCIe behavior, Milestone 11.3, or phase transition"
+  ],
+  "nextAction": "Promote phase11-rp1-clock-write-effect-discriminator-pi5-20260607 on the next worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive."
+}

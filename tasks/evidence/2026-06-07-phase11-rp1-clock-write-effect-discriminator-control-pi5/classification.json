@@ -1,0 +1,22 @@
+{
+  "task": "phase11-rp1-clock-write-effect-discriminator-control-pi5-20260607",
+  "status": "accepted",
+  "classification": "no-mmio-clock-adc-window-coherence-control-visible",
+  "acceptedClaims": [
+    "no-MMIO/no-RP1/no-GIC ADC clock-window coherence control output and capture path is visible on Pi 5",
+    "the selected candidate identity, TFTP fetches, serial markers, final pre-restore identity, and restore proof join under pi5-capture-transaction-v2"
+  ],
+  "rejectedClaims": [
+    "real RP1 ADC clock-window coherence behavior",
+    "RP1 clock/reset reads or writes",
+    "GPIO ownership or event generation",
+    "interrupt delivery or GIC acknowledgement",
+    "ISR or handler ownership",
+    "DMA/cache, storage, generated-root, networking, SSH, broader PCIe behavior, Milestone 11.3, or phase transition"
+  ],
+  "evidence": {
+    "acceptedRun": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-control-pi5/control-rerun-after-kg",
+    "identityJoin": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-control-pi5/control-rerun-after-kg/identity-join-report.json",
+    "staticArchiveReview": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-control-pi5/control-rerun-after-kg/static-archive-review.txt"
+  }
+}

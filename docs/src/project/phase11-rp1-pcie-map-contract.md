@@ -612,6 +612,18 @@ GPIO ownership, event generation, interrupt delivery, DMA/cache, storage,
 generated-root, networking, SSH, broader PCIe, Milestone 11.3, or phase
 transition.
 
+phase11-rp1-clock-write-effect-discriminator-control-pi5-20260607 accepts the
+paired no-MMIO/no-RP1/no-GIC Pi 5 control proof. The accepted rerun staged tree
+326db32f8082eb83f24df752d81611b77a2a270ff539a7af27adb91b0ef89412 with a
+47,360-byte da591740/kernel_2712.img, retained two matching TFTP fetches,
+52 occurrences of TALOS: rp1-clock-adc-window-coherence-control, final
+pre-restore selected-tree identity, and restored the lab to tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This
+accepts only the control output/capture path; real RP1 clock/reset behavior,
+clock/reset reads or writes, GPIO ownership, event generation, interrupt
+delivery, DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
+Milestone 11.3, and phase transition remain unaccepted.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware
