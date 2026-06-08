@@ -1,0 +1,117 @@
+{
+  "taskId": "phase11-rp1-endpoint-config-identity-closeout-20260608",
+  "classification": "rp1-endpoint-config-id-all-ones-frontier-closed",
+  "evidenceLevel": [
+    "static inspection",
+    "documentation reconciliation",
+    "git diff checks",
+    "mdbook build"
+  ],
+  "evidence": [
+    {
+      "label": "closeout task record",
+      "path": "tasks/2026-06-08-phase11-rp1-endpoint-config-identity-closeout.md",
+      "type": "static closeout"
+    },
+    {
+      "label": "accepted source contract",
+      "path": "tasks/2026-06-08-phase11-rp1-endpoint-config-identity-source-contract.md",
+      "type": "static source contract",
+      "classification": "accepted-source-contract"
+    },
+    {
+      "label": "accepted local/static core",
+      "path": "tasks/2026-06-08-phase11-rp1-endpoint-config-identity-core.md",
+      "type": "fmt/lint/unit/static archive inspection",
+      "classification": "accepted-local-static-endpoint-config-identity-core"
+    },
+    {
+      "label": "accepted no-MMIO/no-RP1/no-GIC control proof",
+      "path": "tasks/2026-06-08-phase11-rp1-endpoint-config-identity-control-pi5.md",
+      "type": "serial hardware boot/output, lab-controller API, TFTP evidence, restore proof",
+      "classification": "no-mmio-rp1-endpoint-config-id-control-visible"
+    },
+    {
+      "label": "accepted real Pi 5 proof",
+      "path": "tasks/2026-06-08-phase11-rp1-endpoint-config-identity-pi5.md",
+      "type": "serial hardware boot/output, lab-controller API, TFTP evidence, restore proof",
+      "classification": "rp1-endpoint-config-id-all-ones"
+    },
+    {
+      "label": "control classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-endpoint-config-identity-control-pi5/classification.json",
+      "type": "classification record"
+    },
+    {
+      "label": "real classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-endpoint-config-identity-pi5/classification.json",
+      "type": "classification record"
+    },
+    {
+      "label": "updated roadmap",
+      "path": "docs/src/roadmap.md",
+      "type": "documentation"
+    },
+    {
+      "label": "updated RP1/PCIe map contract",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "type": "documentation"
+    }
+  ],
+  "acceptedFrontier": {
+    "sourceContract": "phase11-rp1-endpoint-config-identity-source-contract-v1",
+    "controlClassification": "no-mmio-rp1-endpoint-config-id-control-visible",
+    "realClassification": "rp1-endpoint-config-id-all-ones",
+    "closeoutClassification": "rp1-endpoint-config-id-all-ones-frontier-closed",
+    "acceptedRealRun": {
+      "selectedTreeHash": "7e66c8cef268d7a94843c0d8e230f89c25161053f0b326a8375c0b6f4ca97d42",
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "expectedFetchBytes": 48456,
+      "expectedFetchCount": 2,
+      "markerOccurrences": 135,
+      "rawStatus": "0x3e0b0",
+      "dlActive": true,
+      "phyLinkUp": true,
+      "indexValue": "0x00100000",
+      "rawConfig": "0xffffffff",
+      "vendorId": "0xffff",
+      "deviceId": "0xffff",
+      "rawConfigIsAllOnes": true
+    },
+    "acceptedControlRun": {
+      "selectedTreeHash": "def5349a2a9d4a323457f473e0371e0ed1b19a52b418df516634cfc001b88280",
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "expectedFetchBytes": 47608,
+      "expectedFetchCount": 2,
+      "markerOccurrences": 66
+    }
+  },
+  "acceptedClaims": [
+    "the endpoint config identity discriminator reaches the accepted PCIe2 host-link-up precondition on Pi 5",
+    "the accepted controller selector write to EXT_CFG_INDEX was performed before the read-only config-data access",
+    "EXT_CFG_DATA + 0 for BDF 0002:01:00.0 offset 0 returns all ones under the accepted source-contract sequence",
+    "the no-MMIO/no-RP1/no-GIC control output shape and capture path are visible on Pi 5",
+    "the selected candidate identity, TFTP fetches, serial markers, final pre-restore identity, and restore proof join under pi5-capture-transaction-v2"
+  ],
+  "rejectedClaims": [
+    "expected RP1 vendor/device visibility",
+    "endpoint ownership",
+    "broad RP1 mapping",
+    "endpoint configuration mutation",
+    "BAR programming or discovery",
+    "bridge setup",
+    "PERST/link-control changes",
+    "interrupt delivery",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "blockedReruns": [
+    "Same-shaped endpoint config identity hardware reruns are not progress unless a future supervisor task supplies a different discriminator or new acceptance criteria."
+  ],
+  "nextAction": "No worker-owned follow-up task is created by this closeout. Set planningNeeded=true for supervisor planning of a different Milestone 11.2 frontier if work should continue."
+}

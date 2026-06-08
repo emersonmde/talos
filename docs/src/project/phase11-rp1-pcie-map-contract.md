@@ -1713,6 +1713,19 @@ endpoint ownership, broad RP1 mapping, endpoint configuration mutation, bridge
 setup, interrupt delivery, DMA/cache, networking, SSH, Milestone 11.3, and a
 phase transition remain unaccepted.
 
+phase11-rp1-endpoint-config-identity-closeout-20260608 reconciles that chain
+as `rp1-endpoint-config-id-all-ones-frontier-closed`. The accepted frontier is
+limited to the source-backed bounded endpoint config identity attempt, paired
+no-MMIO/no-RP1/no-GIC control proof, and real Pi 5 all-ones config-data result
+under identity-joined evidence. Same-shaped endpoint config identity hardware
+reruns are not progress unless a future supervisor task supplies a different
+discriminator or new acceptance criteria. Expected RP1 vendor/device
+visibility, endpoint ownership, broad RP1 mapping, endpoint configuration
+mutation, BAR programming or discovery, bridge setup, PERST/link-control,
+interrupt delivery, DMA/cache, storage, generated-root, networking, SSH,
+Milestone 11.3, and phase transition remain unaccepted. Supervisor planning is
+required for the next Milestone 11.2 frontier.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when
