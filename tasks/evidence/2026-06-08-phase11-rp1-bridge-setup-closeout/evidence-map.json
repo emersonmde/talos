@@ -1,0 +1,126 @@
+{
+  "taskId": "phase11-rp1-bridge-setup-closeout-20260608",
+  "classification": "pcie2-bridge-setup-state-incomplete-frontier-closed",
+  "evidenceLevel": [
+    "static inspection",
+    "documentation reconciliation",
+    "git diff checks",
+    "mdbook build"
+  ],
+  "evidence": [
+    {
+      "label": "closeout task record",
+      "path": "tasks/2026-06-08-phase11-rp1-bridge-setup-closeout.md",
+      "type": "static closeout"
+    },
+    {
+      "label": "accepted source contract",
+      "path": "tasks/2026-06-08-phase11-rp1-bridge-setup-source-contract.md",
+      "type": "static source contract",
+      "classification": "accepted-source-contract"
+    },
+    {
+      "label": "accepted local/static core",
+      "path": "tasks/2026-06-08-phase11-rp1-bridge-setup-core.md",
+      "type": "fmt/lint/unit/static archive inspection",
+      "classification": "accepted-local-static-bridge-setup-core"
+    },
+    {
+      "label": "accepted no-MMIO/no-PCIe/no-RP1/no-GIC control proof",
+      "path": "tasks/2026-06-08-phase11-rp1-bridge-setup-control-pi5.md",
+      "type": "serial hardware boot/output, lab-controller API, TFTP evidence, restore proof",
+      "classification": "no-mmio-pcie2-bridge-setup-state-control-visible"
+    },
+    {
+      "label": "accepted real Pi 5 proof",
+      "path": "tasks/2026-06-08-phase11-rp1-bridge-setup-pi5.md",
+      "type": "serial hardware boot/output, lab-controller API, TFTP evidence, restore proof",
+      "classification": "pcie2-bridge-setup-state-incomplete"
+    },
+    {
+      "label": "control classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-control-pi5/classification.json",
+      "type": "classification record"
+    },
+    {
+      "label": "real classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-pi5/classification.json",
+      "type": "classification record"
+    },
+    {
+      "label": "updated roadmap",
+      "path": "docs/src/roadmap.md",
+      "type": "documentation"
+    },
+    {
+      "label": "updated RP1/PCIe map contract",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "type": "documentation"
+    }
+  ],
+  "acceptedFrontier": {
+    "sourceContract": "phase11-rp1-bridge-setup-source-contract-v1",
+    "controlClassification": "no-mmio-pcie2-bridge-setup-state-control-visible",
+    "realClassification": "pcie2-bridge-setup-state-incomplete",
+    "closeoutClassification": "pcie2-bridge-setup-state-incomplete-frontier-closed",
+    "acceptedRealRun": {
+      "selectedTreeHash": "9fbdcb57cd60519737902b9e3b85799e2479abffd8911a9ca887015a7f0f625a",
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "expectedFetchBytes": 50736,
+      "expectedFetchCount": 2,
+      "markerOccurrences": 90,
+      "rawStatus": "0x3e0b0",
+      "dlActive": true,
+      "phyLinkUp": true,
+      "miscCtrlRaw": "0xa8003000",
+      "scbAccessEn": true,
+      "cfgReadUrMode": true,
+      "rootComplexClassRaw": "0x30060400",
+      "classCode": "0x060400",
+      "win0Lo": "0x80000000",
+      "win0Hi": "0x0",
+      "win0BaseLimit": "0x3ff00000",
+      "win0BaseHi": "0x1c",
+      "win0LimitHi": "0x1c",
+      "outboundWindow0Matches": false
+    },
+    "acceptedControlRun": {
+      "selectedTreeHash": "2a45a5ba915f03e515c2e4a3e0aca891d25c0d99c37af10b6b6a11d5e1722e95",
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "expectedFetchBytes": 49496,
+      "expectedFetchCount": 2,
+      "markerOccurrences": 30
+    }
+  },
+  "acceptedClaims": [
+    "the bridge/setup-state discriminator ran on Pi 5 under identity-joined evidence",
+    "PCIE_MISC_PCIE_STATUS and PCIE_MISC_MISC_CTRL are visible with link/preflight predicates true",
+    "PCIE_RC_CFG_PRIV1_ID_VAL3 reports root-complex class code 0x060400",
+    "outbound window 0 setup-state registers are visible",
+    "the visible outbound window 0 values do not match the source-expected PCIe 0 -> CPU 0x1f_0000_0000 shape",
+    "the no-MMIO/no-PCIe/no-RP1/no-GIC control output shape and capture path are visible on Pi 5",
+    "the selected candidate identity, TFTP fetches, serial markers, final pre-restore identity, and restore proof join under capture-transaction-v2"
+  ],
+  "rejectedClaims": [
+    "pcie2-bridge-setup-state-visible",
+    "expected RP1 vendor/device visibility",
+    "endpoint ownership",
+    "broad RP1 mapping",
+    "BAR discovery or programming",
+    "bridge setup writes",
+    "PERST/link-control changes",
+    "interrupt delivery",
+    "GPIO/clock ownership",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "blockedReruns": [
+    "Same-shaped endpoint config identity and same-shaped bridge/setup-state hardware reruns remain closed unless a future supervisor task supplies a different discriminator or new acceptance criteria."
+  ],
+  "nextAction": "No worker-owned follow-up task is created by this closeout. Set planningNeeded=true for supervisor planning of the next Milestone 11.2 frontier if work should continue."
+}

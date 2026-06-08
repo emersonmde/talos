@@ -8216,6 +8216,25 @@ endpoint ownership, broad RP1 mapping, BAR discovery or programming, bridge
 setup writes, PERST/link-control, interrupt delivery, DMA/cache, storage,
 generated-root, networking, SSH, Milestone 11.3, or phase transition.
 
+phase11-rp1-bridge-setup-closeout-20260608 accepts the closeout as
+pcie2-bridge-setup-state-incomplete-frontier-closed. The accepted frontier is
+limited to the source-backed read-only bridge/setup-state discriminator, the
+paired no-MMIO/no-PCIe/no-RP1/no-GIC control proof, and the real Pi 5
+pcie2-bridge-setup-state-incomplete result under identity-joined evidence. It
+accepts visible link/preflight state, root-complex class code 0x060400, and
+visible outbound window 0 registers, but the retained window values do not
+match the source-expected PCIe 0 -> CPU 0x1f_0000_0000 shape.
+
+This closeout does not accept pcie2-bridge-setup-state-visible, expected RP1
+vendor/device visibility, endpoint ownership, broad RP1 mapping, BAR discovery
+or programming, bridge setup writes, PERST/link-control, interrupt delivery,
+GPIO/clock ownership, DMA/cache, storage, generated-root, networking, SSH,
+Milestone 11.3, or phase transition. Same-shaped endpoint config identity and
+same-shaped bridge/setup-state hardware reruns remain closed unless a future
+supervisor task supplies a different discriminator or new acceptance criteria.
+The worker creates no follow-up task from this closeout; supervisor planning is
+required for the next Milestone 11.2 frontier.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

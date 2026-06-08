@@ -1840,6 +1840,25 @@ endpoint ownership, broad RP1 mapping, BAR discovery or programming, bridge
 setup writes, PERST/link-control, interrupt delivery, DMA/cache, networking,
 SSH, Milestone 11.3, or phase transition.
 
+phase11-rp1-bridge-setup-closeout-20260608 accepts
+pcie2-bridge-setup-state-incomplete-frontier-closed. The accepted frontier is
+limited to the source-backed read-only bridge/setup-state discriminator, the
+paired no-MMIO/no-PCIe/no-RP1/no-GIC control proof, and the real Pi 5
+pcie2-bridge-setup-state-incomplete result. It accepts visible link/preflight
+state, root-complex class code 0x060400, and visible outbound window 0
+registers while keeping the source-expected visible setup-state claim
+unaccepted because the outbound window values do not match PCIe 0 -> CPU
+0x1f_0000_0000.
+
+This closeout does not accept expected RP1 vendor/device visibility, endpoint
+ownership, broad RP1 mapping, BAR discovery or programming, bridge setup
+writes, PERST/link-control, interrupt delivery, GPIO/clock ownership,
+DMA/cache, networking, SSH, Milestone 11.3, or phase transition. Same-shaped
+endpoint config identity and same-shaped bridge/setup-state hardware reruns
+remain closed unless a future supervisor task supplies a different
+discriminator or new acceptance criteria. Supervisor planning is required for
+the next Milestone 11.2 frontier.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when
