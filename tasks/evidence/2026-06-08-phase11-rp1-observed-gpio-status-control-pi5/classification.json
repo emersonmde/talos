@@ -1,0 +1,58 @@
+{
+  "task_id": "phase11-rp1-observed-gpio-status-control-pi5-20260608",
+  "classification": "capture-staging-blocked",
+  "accepted": false,
+  "blocker": {
+    "type": "serial-freshness-contract",
+    "rejection_reasons": [
+      "serial-drain-not-empty-before-power",
+      "saturated-direct-read-without-empty-pre-power-drain"
+    ],
+    "rule": "pi5-capture-transaction-v2 requires an empty pre-power serial drain before saturated direct-read output can support decisive hardware classification"
+  },
+  "candidate_run": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5/control-run",
+    "identity_classification": "capture-staging-blocked",
+    "selected_tree_hash": "133f2a9b4a4c5c21b206d8f9eb8eba4ffe41f787a69b33bced0ea164a8cf83ab",
+    "expected_fetch_byte_count": 48952,
+    "expected_fetch_count": 2,
+    "expected_fetch_bytes_seen": [
+      48952,
+      48952
+    ],
+    "marker": "TALOS: rp1-observed-gpio-status-control",
+    "marker_occurrences": 41,
+    "control_classification_occurrences": 41,
+    "serial_pre_power_drain_empty": false,
+    "final_selected_tree_still_staged": true,
+    "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "known_good_after_inconclusive": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5/known-good-control-after-inconclusive",
+    "identity_classification": "capture-staging-blocked",
+    "selected_tree_hash": "407d10f6ed4457e89f9023f769c00920a4ebbe0f42ca65b0165b8db014140697",
+    "expected_fetch_byte_count": 104136,
+    "expected_fetch_count": 2,
+    "expected_fetch_bytes_seen": [
+      104136,
+      104136
+    ],
+    "marker": "rpi5-production-timer-preemption: PASS",
+    "marker_occurrences": 1,
+    "serial_pre_power_drain_empty": false,
+    "final_selected_tree_still_staged": true,
+    "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "accepted_claims": [
+    "The candidate archive published and was fetched twice with the expected 48952-byte da591740/kernel_2712.img before restore.",
+    "The candidate serial window contained the task-owned no-MMIO control marker and terminal control classification text.",
+    "The known-good archive published and was fetched twice with the expected 104136-byte da591740/kernel_2712.img before restore.",
+    "Both runs restored the lab to the baseline tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10."
+  ],
+  "rejected_claims": [
+    "The no-MMIO observed GPIO status control proof is not accepted because v2 serial freshness failed.",
+    "No real observed-aperture GPIO14 read was performed.",
+    "No RP1 endpoint ownership, broad RP1 mapping, interrupt delivery, GPIO ownership, DMA/cache, networking, SSH, Milestone 11.3, or phase transition is accepted."
+  ],
+  "next_action": "Supervisor planning is required to repair or re-plan the saturated serial drain/freshness blocker before a later control proof can be mechanically unblocked."
+}
