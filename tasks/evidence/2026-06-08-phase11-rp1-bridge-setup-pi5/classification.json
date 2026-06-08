@@ -1,0 +1,120 @@
+{
+  "task_id": "phase11-rp1-bridge-setup-pi5-20260608",
+  "classification": "pcie2-bridge-setup-state-incomplete",
+  "evidence_level": [
+    "serial hardware boot/output",
+    "TFTP evidence",
+    "lab-controller API",
+    "identity join",
+    "restore proof",
+    "known-good control after inconclusive capture"
+  ],
+  "source_contract": "phase11-rp1-bridge-setup-source-contract-v1",
+  "accepted_run": {
+    "run": "real-rerun-after-clean-kg",
+    "capture_exit": 0,
+    "identity_exit": 0,
+    "summary_classification": "post-handoff-marker-visible",
+    "identity_classification": "capture-transaction-v2-ready",
+    "decisive": true,
+    "rejection_reasons": [],
+    "serial_marker_occurrences": 90,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "selected_tree_hash": "9fbdcb57cd60519737902b9e3b85799e2479abffd8911a9ca887015a7f0f625a",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "triage_runs": {
+    "initial_real_run": {
+      "run": "real-run",
+      "capture_exit": 0,
+      "identity_exit": 1,
+      "summary_classification": "identity-join-mismatch",
+      "identity_classification": "capture-staging-blocked",
+      "decisive": false,
+      "rejection_reasons": [
+        "serial-drain-not-empty-before-power",
+        "saturated-direct-read-without-empty-pre-power-drain"
+      ],
+      "serial_marker_occurrences": 90,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "selected_tree_hash": "9fbdcb57cd60519737902b9e3b85799e2479abffd8911a9ca887015a7f0f625a",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "known_good_after_inconclusive": {
+      "run": "known-good-control-after-inconclusive",
+      "capture_exit": 0,
+      "identity_exit": 1,
+      "summary_classification": "identity-join-mismatch",
+      "identity_classification": "capture-staging-blocked",
+      "decisive": false,
+      "rejection_reasons": [
+        "serial-drain-not-empty-before-power",
+        "saturated-direct-read-without-empty-pre-power-drain"
+      ],
+      "serial_marker_occurrences": 1,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "selected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "known_good_after_serial_drain": {
+      "run": "known-good-control-after-serial-drain",
+      "capture_exit": 0,
+      "identity_exit": 0,
+      "summary_classification": "post-handoff-marker-visible",
+      "identity_classification": "capture-transaction-v2-ready",
+      "decisive": true,
+      "rejection_reasons": [],
+      "serial_marker_occurrences": 1,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "selected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "observed_registers": {
+    "status_raw": "0x3e0b0",
+    "misc_ctrl_raw": "0xa8003000",
+    "rc_class_raw": "0x30060400",
+    "class_code": "0x60400",
+    "win0_lo_raw": "0x80000000",
+    "win0_hi_raw": "0x0",
+    "win0_base_limit_raw": "0x3ff00000",
+    "win0_base_hi_raw": "0x1c",
+    "win0_limit_hi_raw": "0x1c"
+  },
+  "decoded": {
+    "pcie_base_is_zero": false,
+    "cpu_base_low_matches": true,
+    "cpu_limit_low_matches": false,
+    "cpu_base_high_matches": false,
+    "cpu_limit_high_matches": false,
+    "outbound_window0_matches": false
+  },
+  "accepted_claims": [
+    "The committed real bridge/setup-state candidate ran on Pi 5 with capture-transaction-v2-ready identity join.",
+    "PCIE_MISC_PCIE_STATUS and PCIE_MISC_MISC_CTRL are visible with link/preflight predicates true.",
+    "PCIE_RC_CFG_PRIV1_ID_VAL3 reports class code 0x060400.",
+    "Outbound window 0 setup state is visible but does not match the source-expected PCIe 0 -> CPU 0x1f_0000_0000 shape.",
+    "The terminal hardware classification is pcie2-bridge-setup-state-incomplete."
+  ],
+  "not_accepted": [
+    "pcie2-bridge-setup-state-visible",
+    "expected RP1 vendor/device visibility",
+    "endpoint ownership",
+    "broad RP1 mapping",
+    "BAR discovery or programming",
+    "bridge setup writes",
+    "PERST/link-control",
+    "interrupt delivery",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ]
+}

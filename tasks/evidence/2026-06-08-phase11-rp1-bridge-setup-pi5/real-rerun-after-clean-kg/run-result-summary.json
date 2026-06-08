@@ -1,0 +1,14 @@
+{
+  "run": "real-rerun-after-clean-kg",
+  "capture_exit": 0,
+  "identity_exit": 0,
+  "summary_classification": "post-handoff-marker-visible",
+  "identity_classification": "capture-transaction-v2-ready",
+  "decisive": true,
+  "rejection_reasons": [],
+  "serial_marker_occurrences": 90,
+  "expected_fetch_count": 2,
+  "expected_fetch_byte_match_count": 2,
+  "selected_tree_hash": "9fbdcb57cd60519737902b9e3b85799e2479abffd8911a9ca887015a7f0f625a",
+  "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+}

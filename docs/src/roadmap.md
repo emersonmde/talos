@@ -8192,6 +8192,30 @@ discovery or programming, bridge setup writes, PERST/link-control, interrupt
 delivery, DMA/cache, storage, generated-root, networking, SSH, Milestone 11.3,
 or phase transition.
 
+phase11-rp1-bridge-setup-pi5-20260608 accepts the real Pi 5
+bridge/setup-state proof as pcie2-bridge-setup-state-incomplete. The accepted
+rerun published only target/talos-rpi5-rp1-bridge-setup-state-read-core.tar.gz,
+selected boot tree 9fbdcb57cd60519737902b9e3b85799e2479abffd8911a9ca887015a7f0f625a,
+retained two 50,736-byte da591740/kernel_2712.img TFTP fetches, passed
+capture-transaction-v2-ready identity join, retained 90 occurrences of
+TALOS: rp1-bridge-setup-state-result, and restored the lab to tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. Serial
+hardware output showed link/preflight predicates true, PCIE_MISC_MISC_CTRL
+0xa8003000, root-complex class code 0x060400, and visible outbound-window
+registers, but the window did not match the source-expected PCIe 0 -> CPU
+0x1f_0000_0000 shape: win0_lo=0x80000000, base_limit=0x3ff00000,
+base_hi=0x1c, and limit_hi=0x1c. The first real run and first known-good
+control were retained as capture-staging-blocked because the pre-power serial
+drain was not empty; after a bounded manual drain, the known-good
+production-timer control and unchanged real rerun passed identity join.
+
+This accepts only the identity-joined incomplete bridge/setup-state hardware
+classification and capture/restore evidence. It does not accept
+pcie2-bridge-setup-state-visible, expected RP1 vendor/device visibility,
+endpoint ownership, broad RP1 mapping, BAR discovery or programming, bridge
+setup writes, PERST/link-control, interrupt delivery, DMA/cache, storage,
+generated-root, networking, SSH, Milestone 11.3, or phase transition.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

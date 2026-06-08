@@ -1,0 +1,97 @@
+{
+  "task_id": "phase11-rp1-bridge-setup-pi5-20260608",
+  "classification": "pcie2-bridge-setup-state-incomplete",
+  "evidence": [
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-pi5/classification.json",
+      "type": "serial hardware boot/output, TFTP evidence, identity join, restore proof"
+    },
+    {
+      "label": "accepted real rerun",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-pi5/real-rerun-after-clean-kg",
+      "type": "serial hardware boot/output, lab-controller API, TFTP evidence, identity join"
+    },
+    {
+      "label": "initial real run",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-pi5/real-run",
+      "type": "inconclusive capture triage evidence"
+    },
+    {
+      "label": "known-good control after inconclusive",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-pi5/known-good-control-after-inconclusive",
+      "type": "known-good control, inconclusive capture triage evidence"
+    },
+    {
+      "label": "manual serial drain",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-pi5/manual-serial-drain-before-clean-kg-summary.json",
+      "type": "lab-controller API"
+    },
+    {
+      "label": "clean known-good control",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-pi5/known-good-control-after-serial-drain",
+      "type": "known-good control, identity join"
+    },
+    {
+      "label": "accepted result line",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-pi5/accepted-result-line.txt",
+      "type": "serial hardware boot/output"
+    },
+    {
+      "label": "final lab status",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-pi5/final-lab-status.json",
+      "type": "lab-controller API restore proof"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "scripts/rpi5-rp1-bridge-setup-state-read-review.sh target/talos-rpi5-rp1-bridge-setup-state-read-core.tar.gz",
+      "level": "static archive inspection",
+      "result": "pass"
+    },
+    {
+      "gate": "Serialized Pi 5 lab run under hardwareTestLock",
+      "level": "serial hardware boot/output",
+      "result": "pass"
+    },
+    {
+      "gate": "pi5-capture-transaction-v2 identity join on accepted real rerun",
+      "level": "identity join",
+      "result": "pass"
+    },
+    {
+      "gate": "stable same-cursor TFTP delta before restore",
+      "level": "TFTP evidence",
+      "result": "pass"
+    },
+    {
+      "gate": "post-run boot restore proof",
+      "level": "lab-controller API",
+      "result": "pass"
+    }
+  ],
+  "accepted_claims": [
+    "The committed real bridge/setup-state candidate ran on Pi 5 with capture-transaction-v2-ready identity join.",
+    "PCIE_MISC_PCIE_STATUS and PCIE_MISC_MISC_CTRL are visible with link/preflight predicates true.",
+    "PCIE_RC_CFG_PRIV1_ID_VAL3 reports class code 0x060400.",
+    "Outbound window 0 setup state is visible but does not match the source-expected PCIe 0 -> CPU 0x1f_0000_0000 shape.",
+    "The terminal hardware classification is pcie2-bridge-setup-state-incomplete."
+  ],
+  "not_accepted": [
+    "pcie2-bridge-setup-state-visible",
+    "expected RP1 vendor/device visibility",
+    "endpoint ownership",
+    "broad RP1 mapping",
+    "BAR discovery or programming",
+    "bridge setup writes",
+    "PERST/link-control",
+    "interrupt delivery",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ]
+}

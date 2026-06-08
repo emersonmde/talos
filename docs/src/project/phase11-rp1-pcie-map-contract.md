@@ -1814,6 +1814,32 @@ BAR discovery or programming, bridge setup writes, PERST/link-control,
 interrupt delivery, DMA/cache, networking, SSH, Milestone 11.3, or phase
 transition.
 
+phase11-rp1-bridge-setup-pi5-20260608 accepts the real Pi 5
+bridge/setup-state proof as pcie2-bridge-setup-state-incomplete. The accepted
+rerun used target/talos-rpi5-rp1-bridge-setup-state-read-core.tar.gz, selected
+boot tree 9fbdcb57cd60519737902b9e3b85799e2479abffd8911a9ca887015a7f0f625a,
+retained two 50,736-byte da591740/kernel_2712.img TFTP fetches, passed
+capture-transaction-v2-ready identity join, and restored the lab to tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The
+identity-joined serial output retained 90 bridge/setup-state result markers.
+It reported PCIE_MISC_PCIE_STATUS=0x3e0b0 with pcie_port, dl_active, and
+phylinkup true; PCIE_MISC_MISC_CTRL=0xa8003000 with SCB_ACCESS_EN and
+CFG_READ_UR_MODE true; and PCIE_RC_CFG_PRIV1_ID_VAL3=0x30060400 with class
+code 0x060400.
+
+The same output proves that outbound window 0 is visible but not in the
+source-expected PCIe 0 -> CPU 0x1f_0000_0000 shape. The accepted values are
+win0_lo=0x80000000, win0_hi=0x0, win0_base_limit=0x3ff00000,
+win0_base_hi=0x1c, and win0_limit_hi=0x1c. The decoded result has
+pcie_base_is_zero=false, cpu_base_low_matches=true,
+cpu_limit_low_matches=false, cpu_base_high_matches=false,
+cpu_limit_high_matches=false, and outbound_window0_matches=false. This accepts
+only the incomplete setup-state classification. It does not accept
+pcie2-bridge-setup-state-visible, expected RP1 vendor/device visibility,
+endpoint ownership, broad RP1 mapping, BAR discovery or programming, bridge
+setup writes, PERST/link-control, interrupt delivery, DMA/cache, networking,
+SSH, Milestone 11.3, or phase transition.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when
