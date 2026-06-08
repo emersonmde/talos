@@ -1,0 +1,7 @@
+{
+  "action": "known-good control no-op publication",
+  "boot": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "expected_fetch_bytes": 104136
+  }
+}

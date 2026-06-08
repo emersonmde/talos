@@ -1,0 +1,1 @@
+target/talos-rpi5-rp1-bridge-config-preflight-read-core.tar.gz

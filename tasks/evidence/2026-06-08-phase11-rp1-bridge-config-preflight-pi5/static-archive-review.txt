@@ -1,0 +1,8 @@
+candidate_archive=target/talos-rpi5-rp1-bridge-config-preflight-read-core.tar.gz
+candidate_archive_sha256=f2736728a40db884b2e6ac8984a86c801bb8376ee4064d2e67380a3969140a2b
+kernel_2712_sha256=1595ebd3d2d13005c3e48e0dd019c54058c5ff0762e4f997e141a7ef57a733b6
+kernel_2712_size=48000
+header_image_size=48000
+text_offset=0
+flags=12
+result_marker=TALOS: rp1-bridge-config-preflight-result

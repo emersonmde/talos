@@ -1749,6 +1749,25 @@ visibility, endpoint ownership, broad RP1 mapping, endpoint configuration
 mutation, BAR discovery or programming, bridge setup, interrupt delivery,
 DMA/cache, networking, SSH, Milestone 11.3, or phase transition.
 
+phase11-rp1-bridge-config-preflight-pi5-20260608 accepts the real Pi 5 result
+as pcie2-bridge-preflight-ready. After initial capture-staging-blocked
+candidate and known-good evidence caused by a non-empty saturated serial
+drain, a bounded drain plus known-good control passed the v2 identity join,
+and the unchanged candidate rerun passed with selected tree
+e66d21ac433225c19dfa63c09a577c8ab6828ebfdf5a437b57efc5fe0e7f260a, two
+served 48,000-byte da591740/kernel_2712.img fetches, and restore to
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. Serial
+output retained 123 result markers. The report reached the link-up
+precondition with PCIE_MISC_PCIE_STATUS=0x3e0b0, then read
+PCIE_MISC_MISC_CTRL=0xa8003000 with scb-access-en=true,
+cfg-read-ur-mode=true, rcb-mps-mode=false, rcb-64b-mode=false,
+max-burst-size=0x0, and misc-ctrl-is-sentinel=false. This accepts only the
+bridge/config preflight readiness boundary; endpoint ownership, expected RP1
+vendor/device visibility, broad RP1 mapping, endpoint configuration mutation,
+BAR discovery or programming, bridge setup, PERST/link-control, interrupt
+delivery, DMA/cache, storage, generated-root, networking, SSH, Milestone 11.3,
+and phase transition remain unaccepted.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

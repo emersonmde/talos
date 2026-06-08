@@ -1,0 +1,102 @@
+{
+  "task": "phase11-rp1-bridge-config-preflight-pi5-20260608",
+  "status": "accepted",
+  "classification": "pcie2-bridge-preflight-ready",
+  "generatedAt": "2026-06-08T11:27:00Z",
+  "contract": "phase11-rp1-bridge-config-preflight-source-contract-v1",
+  "target": "pcie2-bridge-misc-ctrl-preflight-read",
+  "candidate": {
+    "archive": "target/talos-rpi5-rp1-bridge-config-preflight-read-core.tar.gz",
+    "archiveSha256": "f2736728a40db884b2e6ac8984a86c801bb8376ee4064d2e67380a3969140a2b",
+    "kernel2712Sha256": "1595ebd3d2d13005c3e48e0dd019c54058c5ff0762e4f997e141a7ef57a733b6",
+    "kernelSizeBytes": 48000,
+    "marker": "TALOS: rp1-bridge-config-preflight-result"
+  },
+  "acceptedRun": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-config-preflight-pi5/candidate-rerun-after-clean-kg",
+    "selectedTreeHash": "e66d21ac433225c19dfa63c09a577c8ab6828ebfdf5a437b57efc5fe0e7f260a",
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "identityAllowed": true,
+    "rejectionReasons": [],
+    "markerOccurrences": 123,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 48000
+  },
+  "report": {
+    "pcie2ControllerBase": "0x1000120000",
+    "statusRegister": "PCIE_MISC_PCIE_STATUS",
+    "statusAddress": "0x1000124068",
+    "statusRaw": "0x3e0b0",
+    "pciePort": true,
+    "dlActive": true,
+    "phyLinkUp": true,
+    "linkInL23": false,
+    "statusIsDeadDead": false,
+    "preflightRegister": "PCIE_MISC_MISC_CTRL",
+    "preflightAddress": "0x1000124008",
+    "miscCtrlRaw": "0xa8003000",
+    "scbAccessEn": true,
+    "cfgReadUrMode": true,
+    "rcbMpsMode": false,
+    "rcb64bMode": false,
+    "maxBurstSize": "0x0",
+    "miscCtrlIsSentinel": false,
+    "retainedEndpointConfigClassification": "rp1-endpoint-config-id-all-ones"
+  },
+  "inconclusiveEvidence": {
+    "initialCandidate": {
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-config-preflight-pi5/candidate-run",
+      "joinClassification": "capture-staging-blocked",
+      "rejectionReasons": [
+        "serial-drain-not-empty-before-power",
+        "saturated-direct-read-without-empty-pre-power-drain"
+      ],
+      "markerOccurrences": 123,
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 2
+    },
+    "knownGoodBeforeManualDrain": {
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-config-preflight-pi5/known-good-control-after-inconclusive",
+      "joinClassification": "capture-staging-blocked",
+      "rejectionReasons": [
+        "serial-drain-not-empty-before-power",
+        "saturated-direct-read-without-empty-pre-power-drain"
+      ],
+      "markerOccurrences": 1,
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 2
+    }
+  },
+  "knownGoodControl": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-config-preflight-pi5/known-good-control-after-serial-drain",
+    "classification": "capture-transaction-v2-ready",
+    "rejectionReasons": [],
+    "markerOccurrences": 1,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 104136
+  },
+  "acceptedClaims": [
+    "BCM2712 PCIe2 host link remains visible/link-up under identity-joined Pi 5 evidence",
+    "PCIE_MISC_MISC_CTRL is visible and non-sentinel at 0xa8003000",
+    "SCB_ACCESS_EN and CFG_READ_UR_MODE are set, satisfying pcie2-bridge-preflight-ready"
+  ],
+  "rejectedClaims": [
+    "endpoint ownership",
+    "expected RP1 vendor/device visibility",
+    "broad RP1 mapping",
+    "endpoint configuration mutation",
+    "BAR discovery or programming",
+    "bridge setup",
+    "PERST or link-control change",
+    "interrupt delivery",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ]
+}
