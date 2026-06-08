@@ -1,0 +1,88 @@
+{
+  "task": "phase11-rp1-endpoint-config-identity-pi5-20260608",
+  "status": "accepted",
+  "classification": "rp1-endpoint-config-id-all-ones",
+  "generatedAt": "2026-06-08T08:45:00Z",
+  "evidenceLevel": [
+    "static archive identity inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "stable same-cursor TFTP evidence",
+    "pi5-capture-transaction-v2 identity join",
+    "restore proof",
+    "known-good control after inconclusive candidate evidence",
+    "docs validation",
+    "git diff checks"
+  ],
+  "acceptedRun": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-endpoint-config-identity-pi5/candidate-rerun-after-kg",
+    "selectedTreeHash": "7e66c8cef268d7a94843c0d8e230f89c25161053f0b326a8375c0b6f4ca97d42",
+    "preRunTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "identityAllowed": true,
+    "rejectionReasons": [],
+    "markerOccurrences": 135,
+    "classificationOccurrences": 135,
+    "rawStatus": "0x3e0b0",
+    "pciePort": true,
+    "dlActive": true,
+    "phyLinkUp": true,
+    "linkInL23": false,
+    "statusIsDeadDead": false,
+    "indexValue": "0x00100000",
+    "rawConfig": "0xffffffff",
+    "vendorId": "0xffff",
+    "deviceId": "0xffff",
+    "expectedVendorId": "0x1de4",
+    "expectedDeviceId": "0x0001",
+    "vendorDeviceMatch": false,
+    "rawConfigIsAllOnes": true,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 48456,
+    "serialCaptureMode": "read",
+    "serialObserveContract": "deadline-loop-direct-read-after-saturated-cursor",
+    "tftpStable": true
+  },
+  "inconclusiveFirstCandidateCapture": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-endpoint-config-identity-pi5/candidate-run",
+    "classification": "capture-staging-blocked",
+    "rejectionReasons": [
+      "expected-fetch-not-observed-in-tftp-delta"
+    ],
+    "selectedTreeHash": "7e66c8cef268d7a94843c0d8e230f89c25161053f0b326a8375c0b6f4ca97d42",
+    "expectedFetchCount": 0,
+    "serialHadRequiredMarker": true
+  },
+  "knownGoodControl": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-endpoint-config-identity-pi5/known-good-control-after-inconclusive",
+    "classification": "capture-transaction-v2-ready",
+    "rejectionReasons": [],
+    "selectedTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 104136
+  },
+  "acceptedClaims": [
+    "the endpoint config identity discriminator reaches the accepted PCIe2 host-link-up precondition on Pi 5",
+    "EXT_CFG_DATA + 0 for BDF 0002:01:00.0 offset 0 returns all ones under the accepted source-contract sequence",
+    "the selected candidate identity, TFTP fetches, serial markers, final pre-restore identity, and restore proof join under pi5-capture-transaction-v2"
+  ],
+  "rejectedClaims": [
+    "expected RP1 vendor/device visibility",
+    "endpoint ownership",
+    "broad RP1 mapping",
+    "endpoint configuration mutation",
+    "BAR programming or discovery",
+    "bridge setup",
+    "interrupt delivery",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "nextAction": "Promote phase11-rp1-endpoint-config-identity-closeout-20260608 on the next worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive."
+}

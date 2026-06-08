@@ -8097,6 +8097,20 @@ ownership, endpoint configuration mutation, BAR programming, bridge setup,
 interrupt delivery, DMA/cache, networking, SSH, Milestone 11.3, and phase
 transition remain unaccepted.
 
+phase11-rp1-endpoint-config-identity-pi5-20260608 is accepted as
+rp1-endpoint-config-id-all-ones. The real Pi 5 proof passed the
+pi5-capture-transaction-v2 identity join with selected tree
+7e66c8cef268d7a94843c0d8e230f89c25161053f0b326a8375c0b6f4ca97d42, two
+served 48,456-byte candidate kernel fetches, and restore to
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. Serial
+retained 135 result markers showing PCIE_MISC_PCIE_STATUS raw=0x3e0b0 with
+link up, the accepted EXT_CFG_INDEX selector write, and EXT_CFG_DATA + 0
+returning 0xffffffff for BDF 0002:01:00.0 offset 0. This accepts only the
+all-ones endpoint config identity frontier; expected RP1 vendor/device
+visibility, endpoint ownership, broad RP1 mapping, endpoint configuration
+mutation, bridge setup, interrupt delivery, DMA/cache, networking, SSH,
+Milestone 11.3, and phase transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

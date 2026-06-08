@@ -1698,6 +1698,21 @@ GIC, or DMA MMIO address. Endpoint config writes, BAR discovery beyond offset
 0, bridge setup, PERST/link-control changes, interrupt delivery, DMA/cache,
 networking, SSH, Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-endpoint-config-identity-pi5-20260608 accepts the real Pi 5
+result as `rp1-endpoint-config-id-all-ones`. The accepted run passed
+`pi5-capture-transaction-v2` with selected tree
+`7e66c8cef268d7a94843c0d8e230f89c25161053f0b326a8375c0b6f4ca97d42`, two
+served 48,456-byte candidate kernel fetches, and restore to
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10`.
+Serial output retained 135 result markers. The report reached the link-up
+precondition with `PCIE_MISC_PCIE_STATUS=0x3e0b0`, wrote `0x00100000` to
+`EXT_CFG_INDEX`, and read `EXT_CFG_DATA + 0` as `0xffffffff`
+(`vendor-id=0xffff`, `device-id=0xffff`). This accepts the all-ones
+endpoint config identity frontier only; expected RP1 vendor/device visibility,
+endpoint ownership, broad RP1 mapping, endpoint configuration mutation, bridge
+setup, interrupt delivery, DMA/cache, networking, SSH, Milestone 11.3, and a
+phase transition remain unaccepted.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when
