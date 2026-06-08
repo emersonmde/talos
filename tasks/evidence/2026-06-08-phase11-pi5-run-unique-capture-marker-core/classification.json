@@ -1,0 +1,32 @@
+{
+  "task_id": "phase11-pi5-run-unique-capture-marker-core-20260608",
+  "classification": "run-unique-capture-marker-contract-accepted",
+  "accepted_status": "accepted",
+  "hardware_run": false,
+  "contract": {
+    "version": "pi5-capture-transaction-run-unique-v1",
+    "base_contract": "pi5-capture-transaction-v3",
+    "accepted_freshness_rule": "V3 identity/freshness plus a required serial marker containing a task-owned capture-nonce value",
+    "nonce_source": "TALOS_CAPTURE_NONCE build environment for the staged observed GPIO status archive",
+    "constant_marker_failure_rejected": "tasks/evidence/2026-06-08-phase11-pi5-run-unique-capture-marker-core/stale-constant-marker-rejected.json"
+  },
+  "claims": {
+    "accepted": [
+      "The observed GPIO status runtime can carry a task-owned capture nonce in result/control markers without changing the GPIO/RP1 source contract.",
+      "The run-unique replay checker rejects constant-marker retained evidence and accepts a synthetic run-unique marker fixture when V3 identity checks pass.",
+      "The next hardware control procedure is mechanical and must name the nonce source, pre-power absence check, post-power presence check, selected-tree/TFTP/final-identity checks, and restore proof."
+    ],
+    "not_accepted": [
+      "GPIO14 STATUS/CTRL visibility",
+      "GPIO ownership",
+      "event generation",
+      "interrupt pending or delivery",
+      "endpoint ownership",
+      "broad RP1 mapping",
+      "DMA/cache",
+      "networking or SSH",
+      "Milestone 11.3",
+      "phase transition"
+    ]
+  }
+}

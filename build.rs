@@ -915,7 +915,12 @@ fn main() {
     println!("cargo:rerun-if-changed=linker.ld");
     println!("cargo:rerun-if-changed=linker-rpi5.ld");
     println!("cargo:rerun-if-env-changed=TALOS_BOOT_SCENARIO");
+    println!("cargo:rerun-if-env-changed=TALOS_CAPTURE_NONCE");
     println!("cargo:rerun-if-changed={GENERATED_ROOT_MANIFEST}");
+    if let Ok(nonce) = env::var("TALOS_CAPTURE_NONCE") {
+        validate_capture_nonce(&nonce);
+        println!("cargo:rustc-env=TALOS_CAPTURE_NONCE={nonce}");
+    }
 
     let target = env::var("TARGET").expect("TARGET is set by Cargo");
     let scenario = selected_boot_scenario();
@@ -979,6 +984,18 @@ fn register_check_cfgs() {
 
 fn emit_scenario_cfg(value: &str) {
     println!("cargo:rustc-cfg=talos_boot_scenario=\"{value}\"");
+}
+
+fn validate_capture_nonce(nonce: &str) {
+    if nonce.len() > 64 {
+        panic!("TALOS_CAPTURE_NONCE must be 64 characters or fewer");
+    }
+    if !nonce
+        .bytes()
+        .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'_' | b'.' | b':' | b'-'))
+    {
+        panic!("TALOS_CAPTURE_NONCE may contain only A-Z, a-z, 0-9, _, ., :, and -");
+    }
 }
 
 fn generate_initramfs_manifest(out_dir: &PathBuf) {

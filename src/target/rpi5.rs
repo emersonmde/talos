@@ -14506,7 +14506,9 @@ pub fn run_rp1_observed_gpio_status_read() -> ! {
     let classification = classify_observed_gpio_status_pair(gpio14_status, gpio14_ctrl);
 
     loop {
-        write_early_static("TALOS: rp1-observed-gpio-status-result contract=");
+        write_early_static("TALOS: rp1-observed-gpio-status-result");
+        write_observed_gpio_status_capture_nonce();
+        write_early_static(" contract=");
         write_early_static(CONTRACT_ID);
         write_early_static(" target=");
         write_early_static(TARGET);
@@ -14545,7 +14547,9 @@ pub fn run_rp1_observed_gpio_status_no_mmio_control() -> ! {
     wait_uart10_empty_early_phase();
 
     loop {
-        write_early_static("TALOS: rp1-observed-gpio-status-control contract=");
+        write_early_static("TALOS: rp1-observed-gpio-status-control");
+        write_observed_gpio_status_capture_nonce();
+        write_early_static(" contract=");
         write_early_static(CONTRACT_ID);
         write_early_static(" target=");
         write_early_static(TARGET);
@@ -16617,6 +16621,19 @@ fn write_observed_aperture_classification_vocabulary() {
     write_early_static("observed-aperture-rp1-uart0-fr-inconclusive-capture,");
     write_early_static("no-mmio-observed-aperture-control-visible,");
     write_early_static("staging/build-blocker");
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_observed_gpio_status_read",
+    talos_boot_scenario = "rpi5_rp1_observed_gpio_status_no_mmio_control"
+))]
+fn write_observed_gpio_status_capture_nonce() {
+    if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
+        if !nonce.is_empty() {
+            write_early_static(" capture-nonce=");
+            write_early_static(nonce);
+        }
+    }
 }
 
 #[cfg(any(

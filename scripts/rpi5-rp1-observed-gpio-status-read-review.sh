@@ -1,13 +1,22 @@
 #!/bin/sh
 set -eu
 
-if [ "$#" -ne 1 ]; then
-    echo "usage: $0 <candidate-archive.tar.gz>" >&2
+if [ "$#" -ne 1 ] && [ "$#" -ne 3 ]; then
+    echo "usage: $0 <candidate-archive.tar.gz> [--capture-nonce NONCE]" >&2
     exit 2
 fi
 
 ARCHIVE="$1"
 RESULT_MARKER="TALOS: rp1-observed-gpio-status-result"
+CAPTURE_NONCE=
+
+if [ "$#" -eq 3 ]; then
+    if [ "$2" != "--capture-nonce" ] || [ -z "$3" ]; then
+        echo "usage: $0 <candidate-archive.tar.gz> [--capture-nonce NONCE]" >&2
+        exit 2
+    fi
+    CAPTURE_NONCE="$3"
+fi
 
 ./scripts/rpi5-archive-review.sh "$ARCHIVE" >/dev/null
 
@@ -89,6 +98,17 @@ for required in \
     fi
 done
 
+if [ -n "$CAPTURE_NONCE" ]; then
+    if ! grep -Fq -- " capture-nonce=" "$kernel_strings"; then
+        echo "kernel image missing observed GPIO status result capture nonce label" >&2
+        exit 1
+    fi
+    if ! grep -Fq -- "$CAPTURE_NONCE" "$kernel_strings"; then
+        echo "kernel image missing observed GPIO status result capture nonce: $CAPTURE_NONCE" >&2
+        exit 1
+    fi
+fi
+
 for forbidden in \
     "TALOS: rp1-observed-gpio-status-control" \
     "rpi5-rp1-observed-gpio-status-control: no-bcm2712-pcie-rp1-mip-gic-gpio-rio-pads-clock-reset-dma-mmio" \
@@ -123,3 +143,6 @@ printf 'header_image_size=%s\n' "$header_image_size"
 printf 'text_offset=%s\n' "$text_offset"
 printf 'flags=%s\n' "$flags"
 printf 'result_marker=%s\n' "$RESULT_MARKER"
+if [ -n "$CAPTURE_NONCE" ]; then
+    printf 'capture_nonce=%s\n' "$CAPTURE_NONCE"
+fi

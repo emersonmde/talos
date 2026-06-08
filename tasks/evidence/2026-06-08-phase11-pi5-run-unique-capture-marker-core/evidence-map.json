@@ -1,0 +1,113 @@
+{
+  "task_id": "phase11-pi5-run-unique-capture-marker-core-20260608",
+  "classification": "run-unique-capture-marker-contract-accepted",
+  "evidence": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-08-phase11-pi5-run-unique-capture-marker-core.md",
+      "type": "task record"
+    },
+    {
+      "label": "static problem analysis",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-run-unique-capture-marker-core/static-problem-analysis.md",
+      "type": "static inspection"
+    },
+    {
+      "label": "run-unique replay checker",
+      "path": "scripts/rpi5-proof-identity-join-run-unique-check.sh",
+      "type": "repository-side capture helper"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-run-unique-capture-marker-core/classification.json",
+      "type": "accepted repair classification"
+    },
+    {
+      "label": "constant marker rejection replay",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-run-unique-capture-marker-core/stale-constant-marker-rejected.json",
+      "type": "negative retained fixture replay"
+    },
+    {
+      "label": "run-unique synthetic pass replay",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-run-unique-capture-marker-core/run-unique-synthetic-pass.json",
+      "type": "task-owned synthetic fixture replay"
+    },
+    {
+      "label": "run-unique synthetic fixture",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-run-unique-capture-marker-core/fixtures/run-unique-synthetic-pass/",
+      "type": "retained fixture"
+    },
+    {
+      "label": "control archive review with nonce",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-run-unique-capture-marker-core/control-archive-review.txt",
+      "type": "image/archive inspection"
+    },
+    {
+      "label": "read archive review with nonce",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-run-unique-capture-marker-core/read-archive-review.txt",
+      "type": "image/archive inspection"
+    },
+    {
+      "label": "runtime nonce strings",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-run-unique-capture-marker-core/control-runtime-nonce-strings.txt",
+      "type": "image/archive inspection"
+    },
+    {
+      "label": "read runtime nonce strings",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-run-unique-capture-marker-core/read-runtime-nonce-strings.txt",
+      "type": "image/archive inspection"
+    },
+    {
+      "label": "lab-controller documentation update",
+      "path": "docs/src/project/lab-controller.md",
+      "type": "documentation"
+    },
+    {
+      "label": "RP1/PCIe map contract update",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "type": "documentation"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "Static inspection of v3 control blocker evidence, v3 known-good proof, lab-controller serial docs, capture-invariant helper, v3 checker, and observed GPIO status archive review scripts",
+      "result": "passed"
+    },
+    {
+      "gate": "bash -n on touched shell scripts",
+      "result": "passed"
+    },
+    {
+      "gate": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet",
+      "result": "passed"
+    },
+    {
+      "gate": "task-owned fixture/dry-run validation",
+      "result": "passed"
+    },
+    {
+      "gate": "observed GPIO status archive review with nonce",
+      "result": "passed"
+    },
+    {
+      "gate": "jq empty on evidence-map/classification JSON",
+      "result": "passed"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "passed"
+    }
+  ]
+}

@@ -388,6 +388,47 @@ scripts/rpi5-proof-identity-join-v3-check.sh \
   --label <proof-label>
 ~~~
 
+If a same-shaped proof has already failed V3 because the constant required
+marker was present before power, the next retry must use a run-unique marker.
+For the observed GPIO14 STATUS/CTRL diagnostic, generate one nonce per staged
+archive, embed it at build time, and use that exact marker for the capture:
+
+~~~bash
+nonce="$(date -u +%Y%m%dT%H%M%SZ)-$(git rev-parse --short HEAD)"
+TALOS_CAPTURE_NONCE="$nonce" \
+  scripts/rpi5-rp1-observed-gpio-status-no-mmio-control-archive.sh \
+  <pi-firmware-boot-source> \
+  target/talos-rpi5-rp1-observed-gpio-status-no-mmio-control.tar.gz
+
+scripts/rpi5-rp1-observed-gpio-status-no-mmio-control-review.sh \
+  target/talos-rpi5-rp1-observed-gpio-status-no-mmio-control.tar.gz \
+  --capture-nonce "$nonce"
+
+scripts/rpi5-capture-invariant-proof-bundle.sh \
+  --evidence-dir tasks/evidence/<task-id>/<run-dir> \
+  --restore-snapshot <pre-run-snapshot-name> \
+  --label <proof-label> \
+  --expected-tree-hash <post-publish-tree-hash> \
+  --expected-fetch da591740/kernel_2712.img \
+  --expected-fetch-bytes <candidate-kernel-bytes> \
+  --serial-marker "TALOS: rp1-observed-gpio-status-control capture-nonce=$nonce" \
+  --serial-drain-attempts 96 \
+  --serial-drain-read-timeout 1 \
+  --serial-drain-settle-ms 100 \
+  --serial-drain-max-bytes 65536
+
+scripts/rpi5-proof-identity-join-run-unique-check.sh \
+  --evidence-dir tasks/evidence/<task-id>/<run-dir> \
+  --label <proof-label> \
+  --nonce "$nonce"
+~~~
+
+The run-unique checker keeps V3's selected-tree, TFTP, final-identity, and
+restore checks, then rejects any proof whose required marker lacks the embedded
+`capture-nonce=` value. This is still a capture-freshness discriminator only;
+it does not accept GPIO ownership, event generation, interrupt delivery, broad
+RP1 mapping, or any phase transition.
+
 V3 keeps the v2 selected-tree, effective-kernel, expected-fetch, TFTP, final
 pre-restore, and restore checks. It only changes the saturated serial freshness
 gate: a non-empty bounded pre-power drain may be accepted when the serial window
