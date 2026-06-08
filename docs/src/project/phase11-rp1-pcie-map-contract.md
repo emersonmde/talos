@@ -695,6 +695,22 @@ clock/reset ownership. Clock/reset writes, GPIO ownership, event generation,
 interrupt delivery, DMA/cache, storage, generated-root, networking, SSH,
 broader PCIe, Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-clock-sentinel-address-discriminator-closeout-20260608 closes the
+SYSINFO-vs-clock-window discriminator chain as
+rp1-sysinfo-and-clock-window-sentinel-frontier-closed. The closeout reconciles
+the source contract, local/static core, no-MMIO/no-RP1/no-GIC control proof,
+real Pi 5 proof, restore evidence, and evidence maps. The accepted frontier
+is limited to the read-only SYSINFO/address-decode sentinel boundary:
+SYSINFO_CHIP_ID, SYSINFO_PLATFORM, and CLK_ADC_CTRL all returned 0xdeaddead
+under identity-joined Pi 5 evidence. This boundary may inform future
+supervisor planning for a different address/decode discriminator, GPIO
+ownership retry, interrupt-delivery slice, or broader clock/reset step, but it
+does not itself authorize any new write or feature transition. Live RP1
+SYSINFO identity, broad RP1 clock/reset ownership, clock/reset writes,
+GPIO ownership, event generation, interrupt delivery, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe, Milestone 11.3, and phase
+transition remain unaccepted.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware

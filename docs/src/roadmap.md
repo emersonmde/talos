@@ -8017,6 +8017,20 @@ interrupt delivery, handler ownership, DMA/cache, storage, generated-root,
 networking, SSH, broader PCIe, Milestone 11.3, and phase transition remain
 unaccepted.
 
+phase11-rp1-clock-sentinel-address-discriminator-closeout-20260608 is
+accepted as rp1-sysinfo-and-clock-window-sentinel-frontier-closed. The closeout
+reconciles the source contract, local/static core, no-MMIO/no-RP1/no-GIC
+control proof, real Pi 5 proof, restore evidence, and evidence maps into one
+accepted frontier. The accepted boundary is only the read-only
+SYSINFO/address-decode sentinel result: SYSINFO_CHIP_ID, SYSINFO_PLATFORM, and
+CLK_ADC_CTRL all returned 0xdeaddead under identity-joined Pi 5 evidence.
+Live RP1 SYSINFO identity, broad RP1 clock/reset ownership, any new
+clock/reset write, GPIO ownership, event generation, interrupt delivery,
+handler ownership, DMA/cache, storage, generated-root, networking, SSH,
+broader PCIe, Milestone 11.3, and phase transition remain unaccepted.
+Supervisor planning is required for the next Milestone 11.2 feature slice;
+this closeout does not create a worker-owned follow-up task.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

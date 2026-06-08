@@ -1,0 +1,111 @@
+{
+  "task": "phase11-rp1-clock-sentinel-address-discriminator-closeout-20260608",
+  "status": "accepted",
+  "classification": "rp1-sysinfo-and-clock-window-sentinel-frontier-closed",
+  "generatedAt": "2026-06-08T04:08:00Z",
+  "evidenceLevel": [
+    "static inspection",
+    "evidence-map reconciliation",
+    "docs validation",
+    "git diff checks"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-closeout.md",
+    "staticReconciliationNotes": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-closeout/static-reconciliation-notes.md",
+    "sourceContractTask": "tasks/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-source-contract.md",
+    "sourceContractEvidenceMap": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-source-contract/evidence-map.json",
+    "coreTask": "tasks/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-core.md",
+    "coreEvidenceMap": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-core/evidence-map.json",
+    "controlTask": "tasks/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-control-pi5.md",
+    "controlEvidenceMap": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-control-pi5/evidence-map.json",
+    "realTask": "tasks/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-pi5.md",
+    "realEvidenceMap": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-pi5/evidence-map.json",
+    "realClassification": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-pi5/classification.json"
+  },
+  "acceptedChain": {
+    "sourceContract": {
+      "task": "phase11-rp1-clock-sentinel-address-discriminator-source-contract-20260608",
+      "commit": "2b5176eaba20ef1182cac09702fa073351201cb5",
+      "classification": "accepted-source-contract",
+      "contract": "phase11-rp1-clock-sentinel-address-discriminator-source-contract-v1",
+      "target": "rp1-sysinfo-vs-clock-sentinel-read",
+      "selectedOperations": [
+        "read SYSINFO_CHIP_ID at 0x1f00000000",
+        "read SYSINFO_PLATFORM at 0x1f00000004",
+        "read CLK_ADC_CTRL at 0x1f00018144"
+      ],
+      "writesSelected": false
+    },
+    "core": {
+      "task": "phase11-rp1-clock-sentinel-address-discriminator-core-20260608",
+      "commit": "665236b4bf35478e30da984221f76526473a746a",
+      "classification": "accepted-local-static-sysinfo-clock-sentinel-core",
+      "realArchiveSha256": "f60e5899e994c4be98ccd3ac826b5c88f271db968056aff6afb9c1cf705fe42a",
+      "controlArchiveSha256": "e5d19fde6321e19684ee8d8e5970baf88e2eaeed0bf9e3252e8ed64958d51041"
+    },
+    "controlProof": {
+      "task": "phase11-rp1-clock-sentinel-address-discriminator-control-pi5-20260608",
+      "commit": "06896cbd07e04e3bace61881af170e6603bf613b",
+      "classification": "no-mmio-sysinfo-clock-sentinel-control-visible",
+      "acceptedRun": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-control-pi5/control-rerun-after-kg",
+      "selectedTreeHash": "499b836e2dfbd94d9301dfcb90d9625cd90e6e7507ba8070413ce8b36c5c551e",
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "identityAllowed": true,
+      "expectedFetchByteMatchCount": 2,
+      "expectedFetchBytes": 47288,
+      "markerOccurrences": 60
+    },
+    "realProof": {
+      "task": "phase11-rp1-clock-sentinel-address-discriminator-pi5-20260608",
+      "commit": "dd03a4b93339355e0988c3dd2cb0167f249d873f",
+      "classification": "rp1-sysinfo-and-clock-window-sentinel",
+      "acceptedRun": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-pi5/candidate-rerun-after-kg",
+      "selectedTreeHash": "22c13cf75878b9f1776d9ae00b760457df45a508b915c3032f4ac792693a74a4",
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "identityAllowed": true,
+      "expectedFetchByteMatchCount": 2,
+      "expectedFetchBytes": 47776,
+      "markerOccurrences": 62,
+      "rawValues": {
+        "sysinfoChipId": "0xdeaddead",
+        "sysinfoPlatform": "0xdeaddead",
+        "clkAdcCtrl": "0xdeaddead"
+      },
+      "decoded": {
+        "chipIdMatchesExpected": false,
+        "chipIdIsDeaddead": true,
+        "platformIsDeaddead": true,
+        "adcCtrlIsDeaddead": true,
+        "sysinfoPairEqual": true,
+        "sysinfoVsAdcSame": true
+      }
+    }
+  },
+  "acceptedClaims": [
+    "the source-backed read-only SYSINFO identity versus retained clock-window sentinel discriminator is implemented locally and visible on Pi 5",
+    "the real Pi 5 output is a broader SYSINFO/address-decode sentinel boundary where SYSINFO_CHIP_ID, SYSINFO_PLATFORM, and CLK_ADC_CTRL all returned 0xdeaddead",
+    "candidate identity, same-run TFTP fetches, serial markers, final selected-tree identity, and restore proof join under pi5-capture-transaction-v2",
+    "the chain is closed as rp1-sysinfo-and-clock-window-sentinel-frontier-closed"
+  ],
+  "rejectedClaims": [
+    "live RP1 SYSINFO chip identity",
+    "broad RP1 clock/reset ownership or any new RP1 clock/reset write",
+    "successful non-idempotent clock ownership",
+    "divider/source/PLL/frequency-counter/reset-controller writes",
+    "GPIO ownership or event generation",
+    "interrupt delivery or GIC acknowledgement",
+    "ISR or handler ownership",
+    "DMA/cache, storage, generated-root, networking, SSH, broader PCIe behavior, Milestone 11.3, or phase transition"
+  ],
+  "retainedRisks": [
+    "same-shaped SYSINFO-vs-clock-window sentinel hardware reruns remain blocked without future supervisor planning",
+    "future GPIO ownership retry, interrupt-delivery slice, broader clock/reset step, or different address/decode discriminator needs explicit supervisor decomposition and acceptance gates"
+  ],
+  "validation": [
+    "static inspection of source contract, core, control proof, real proof, restore evidence, and evidence maps",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check"
+  ],
+  "nextAction": "Supervisor planning is required for the next Milestone 11.2 feature slice; this closeout does not create a worker-owned follow-up task."
+}
