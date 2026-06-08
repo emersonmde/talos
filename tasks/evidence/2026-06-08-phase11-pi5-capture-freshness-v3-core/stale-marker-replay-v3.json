@@ -1,0 +1,68 @@
+{
+  "contract_version": "pi5-capture-transaction-v3",
+  "base_contract_version": "pi5-capture-transaction-v2",
+  "run_label": "stale-marker-fixture",
+  "summary_label": "",
+  "decisive_rp1_hardware_classification_allowed": false,
+  "classification": "capture-staging-blocked",
+  "rejection_reasons": [
+    "v3-serial-freshness-not-proven",
+    "required-marker-present-before-power"
+  ],
+  "v3_serial_freshness": {
+    "rule": "empty pre-power drain, or saturated direct-read with required marker absent from all pre-power drain responses and present after power",
+    "empty_pre_power": false,
+    "saturated_direct_read": true,
+    "required_marker": "TALOS: rp1-observed-gpio-status-result",
+    "pre_power_marker_count": 1,
+    "post_power_marker_count": 1,
+    "fresh_marker_differential": false,
+    "serial_freshness_ok": false
+  },
+  "proof_run_identity": {
+    "selected_tree_hash": "fixture-tree",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 49656,
+    "serial": {
+      "pre_power_drain": {
+        "attempts": 96,
+        "total_bytes": 74,
+        "final_cursor": 4194304,
+        "empty_before_power": false,
+        "discriminator": "bounded-drain-exhausted-before-power"
+      },
+      "cursor_file": null,
+      "window_cursor_start": 4194304,
+      "window_cursor_end": 4194304,
+      "window_bytes": 76,
+      "response_bytes": 76,
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+    },
+    "tftp": {
+      "cursor_file": null,
+      "delta_cursor_start": 100,
+      "delta_cursor_end": 101,
+      "stable": true,
+      "event_count": 1,
+      "expected_fetch_count": 1,
+      "expected_fetch_byte_match_count": 1,
+      "expected_fetch_bytes_seen": [
+        49656
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "fixture-tree",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 49656
+    },
+    "restore": {
+      "snapshot_name": "fixture-restore",
+      "post_restore_tree_hash": "fixture-baseline"
+    }
+  },
+  "rule": "missing or mismatched candidate identity, v3 serial freshness, TFTP, final identity, or restore fields prevent decisive RP1 hardware classification"
+}

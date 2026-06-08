@@ -1,0 +1,59 @@
+{
+  "task_id": "phase11-pi5-capture-freshness-v3-core-20260608",
+  "classification": "capture-transaction-v3-contract-accepted",
+  "accepted_status": "accepted",
+  "hardware_run": false,
+  "contract": {
+    "version": "pi5-capture-transaction-v3",
+    "base_contract": "pi5-capture-transaction-v2",
+    "accepted_freshness_rule": "empty pre-power drain, or saturated direct-read with required marker absent from all pre-power drain responses and present after power",
+    "unchanged_checks": [
+      "selected tree identity",
+      "effective kernel identity",
+      "expected fetch path and byte count",
+      "stable same-cursor TFTP delta",
+      "final pre-restore selected-tree identity",
+      "restore identity"
+    ],
+    "rejected_failure_class": "required marker present before power and visible again after power"
+  },
+  "retained_replay": {
+    "known_good": {
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-capture-freshness-v3-core/known-good-retained-v3-replay.json",
+      "classification": "capture-transaction-v3-ready",
+      "purpose": "fixture replay only; not a replacement for the queued v3 known-good hardware task"
+    },
+    "real_candidate": {
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-capture-freshness-v3-core/real-retained-v3-fixture-replay.json",
+      "classification": "capture-transaction-v3-ready",
+      "purpose": "fixture replay only; this task does not retroactively accept GPIO14 STATUS/CTRL visibility"
+    },
+    "stale_marker": {
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-capture-freshness-v3-core/stale-marker-replay-v3.json",
+      "classification": "capture-staging-blocked",
+      "rejection_reasons": [
+        "v3-serial-freshness-not-proven",
+        "required-marker-present-before-power"
+      ]
+    }
+  },
+  "claims": {
+    "accepted": [
+      "The v3 replay contract is ready for the queued known-good/control/real hardware tasks.",
+      "The same saturated stale-marker replay class is rejected by marker-differential evidence.",
+      "The next hardware retry procedure must retain v3 checker output before accepting marker-visible serial."
+    ],
+    "not_accepted": [
+      "GPIO14 STATUS/CTRL visibility",
+      "GPIO ownership",
+      "event generation",
+      "interrupt pending or delivery",
+      "endpoint ownership",
+      "broad RP1 mapping",
+      "DMA/cache",
+      "networking or SSH",
+      "Milestone 11.3",
+      "phase transition"
+    ]
+  }
+}

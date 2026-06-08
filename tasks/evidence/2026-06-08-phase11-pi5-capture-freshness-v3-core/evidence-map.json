@@ -1,0 +1,86 @@
+{
+  "task_id": "phase11-pi5-capture-freshness-v3-core-20260608",
+  "classification": "capture-transaction-v3-contract-accepted",
+  "evidence": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-08-phase11-pi5-capture-freshness-v3-core.md",
+      "type": "task record"
+    },
+    {
+      "label": "static problem analysis",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-capture-freshness-v3-core/static-problem-analysis.md",
+      "type": "static inspection"
+    },
+    {
+      "label": "v3 replay checker",
+      "path": "scripts/rpi5-proof-identity-join-v3-check.sh",
+      "type": "repository-side capture helper"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-capture-freshness-v3-core/classification.json",
+      "type": "accepted repair classification"
+    },
+    {
+      "label": "known-good retained v3 replay",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-capture-freshness-v3-core/known-good-retained-v3-replay.json",
+      "type": "retained fixture replay"
+    },
+    {
+      "label": "real retained fixture replay",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-capture-freshness-v3-core/real-retained-v3-fixture-replay.json",
+      "type": "retained fixture replay, not hardware acceptance"
+    },
+    {
+      "label": "stale-marker rejection fixture",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-capture-freshness-v3-core/stale-marker-replay-v3.json",
+      "type": "negative retained fixture replay"
+    },
+    {
+      "label": "v3 known-good procedure dry run",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-capture-freshness-v3-core/v3-known-good-procedure-dry-run.json",
+      "type": "no-hardware dry run"
+    },
+    {
+      "label": "lab-controller documentation update",
+      "path": "docs/src/project/lab-controller.md",
+      "type": "documentation"
+    },
+    {
+      "label": "RP1/PCIe map contract update",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "type": "documentation"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "Static inspection of observed GPIO status blocker evidence, known-good control evidence, prior repair evidence, and pi5-capture-transaction-v2",
+      "result": "passed"
+    },
+    {
+      "gate": "bash -n on touched and relied-upon shell scripts",
+      "result": "passed"
+    },
+    {
+      "gate": "task-owned retained fixture/dry-run validation",
+      "result": "passed"
+    },
+    {
+      "gate": "jq empty on evidence-map/classification/replay/dry-run JSON",
+      "result": "passed"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "passed"
+    }
+  ]
+}

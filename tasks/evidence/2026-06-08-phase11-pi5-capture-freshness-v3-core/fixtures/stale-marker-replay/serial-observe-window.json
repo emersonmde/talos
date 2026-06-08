@@ -1,0 +1,19 @@
+{
+  "action": "serial observe window",
+  "ok": true,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "bytes": 76,
+  "text": "post power line: TALOS: rp1-observed-gpio-status-result after power",
+  "truncated": false,
+  "talos_serial_window": {
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 76,
+    "required_marker": "TALOS: rp1-observed-gpio-status-result",
+    "has_required_marker": true,
+    "required_marker_occurrences": 1
+  }
+}

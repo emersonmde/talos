@@ -376,6 +376,27 @@ serial cursor is saturated and the helper falls back to direct read, the
 direct-read output is decisive only if `serial-drain-before-power.json` proves
 the pre-power `/serial/read` drain reached an empty device-buffer read.
 
+The `pi5-capture-transaction-v3` replay checker is a narrower successor for
+the observed GPIO14 STATUS/CTRL capture-freshness blocker, where both the real
+candidate and a known-good control exhausted the bounded pre-power drain while
+retaining matching TFTP/final-identity evidence. Use the same proof-bundle
+helper and bounded drain parameters, then replay the retained files through:
+
+~~~bash
+scripts/rpi5-proof-identity-join-v3-check.sh \
+  --evidence-dir tasks/evidence/<task-id>/<run-dir> \
+  --label <proof-label>
+~~~
+
+V3 keeps the v2 selected-tree, effective-kernel, expected-fetch, TFTP, final
+pre-restore, and restore checks. It only changes the saturated serial freshness
+gate: a non-empty bounded pre-power drain may be accepted when the serial window
+used `deadline-loop-direct-read-after-saturated-cursor`, the required marker is
+absent from every retained pre-power drain response, and that same marker is
+present after power. If the required marker is already present before power, V3
+classifies the run as `capture-staging-blocked`; marker-visible direct-read
+serial is not enough by itself.
+
 The Phase 11 capture-transaction v2 closeout accepts this proof-chain boundary
 as ready for the queued RP1 UART0 FR-read hold-control v2 proof only after a
 no-RP1-MMIO sentinel joined selected-tree identity, empty pre-power serial

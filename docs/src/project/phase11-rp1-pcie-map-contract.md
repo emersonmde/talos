@@ -2005,6 +2005,20 @@ identity, bridge/setup-state, 0x1f RP1 peripheral, 0x1c UART0 FR, and real
 supervisor task supplies a different discriminator or new acceptance criteria.
 Supervisor planning is required for the next Milestone 11.2 frontier.
 
+phase11-pi5-capture-freshness-v3-core-20260608 accepts a first-class
+`pi5-capture-transaction-v3` replay contract for the saturated serial blocker.
+V3 keeps the selected-tree, expected-fetch, TFTP, final-pre-restore, and
+restore identity checks from v2, but permits a non-empty bounded pre-power drain
+only when the saturated direct-read serial window contains the required marker
+after power and that marker is absent from every retained pre-power drain
+response. A synthetic stale-marker replay is rejected as
+`capture-staging-blocked`. This changes the same-shaped rerun policy only by
+requiring the queued v3 known-good/control/real tasks to pass that marker
+differential before any marker-visible GPIO14 STATUS/CTRL output can be
+considered; it does not retroactively accept GPIO14 STATUS/CTRL visibility,
+GPIO ownership, interrupts, endpoint ownership, broad RP1 mapping, DMA/cache,
+networking, SSH, Milestone 11.3, or a phase transition.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when
