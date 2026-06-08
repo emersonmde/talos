@@ -8376,6 +8376,46 @@ supervisor task supplies a different discriminator or new acceptance criteria.
 The worker creates no follow-up task from this closeout; supervisor planning
 is required for the next Milestone 11.2 frontier.
 
+phase11-pi5-run-unique-capture-marker-core-20260608 accepts
+pi5-capture-transaction-run-unique-v1 as a stronger capture freshness
+discriminator after the constant-marker V3 retry policy rejected stale
+same-shaped evidence. The diagnostic runtime can embed a task-owned
+TALOS_CAPTURE_NONCE into observed GPIO status control/result markers, and the
+checker requires the exact capture-nonce marker while preserving V3 selected
+tree, TFTP, final identity, and restore checks. This is a capture contract
+only and does not accept GPIO14 STATUS/CTRL visibility.
+
+phase11-rp1-observed-gpio-status-run-unique-control-pi5-20260608 accepts the
+paired no-MMIO/no-RP1/no-GIC run-unique control proof. The control selected
+tree 2e0fbbdc8da0ec3066ddc4b74949887c8bcf80c70ac6c4a68edffb5dca6f5173,
+retained empty-read-before-power, observed nonce
+ru20260608T195401Z-f84941d7 after power, retained two 49,072-byte candidate
+TFTP fetches, kept final identity on the selected tree, and restored the lab
+to a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This
+accepts only the control output/capture path; real GPIO14 STATUS/CTRL
+visibility remains unaccepted.
+
+phase11-rp1-observed-gpio-status-run-unique-pi5-20260608 completed as
+capture-staging-blocked. The primary real candidate retained nonce-bearing
+marker-visible GPIO14 STATUS/CTRL values, but TFTP/final identity matched the
+baseline tree: observed fetches were 104,136 bytes while the selected
+candidate expected 49,776-byte fetches. A clean same-shaped retry with a fresh
+nonce also remained blocked after a 1,095,168-byte non-empty pre-power drain,
+missing required marker after power, and baseline-sized TFTP fetches. The
+marker-visible values remain retained evidence only.
+
+phase11-rp1-observed-gpio-status-run-unique-closeout-20260608 accepts the
+run-unique chain as observed-gpio-status-run-unique-capture-blocked-frontier-closed.
+The accepted frontier is limited to the source/evidence-backed GPIO14
+STATUS/CTRL observed-aperture contract, local/static core, serial-drain repair
+procedure, run-unique capture marker contract, run-unique no-MMIO control, and
+committed real Pi 5 capture-staging blocker. It does not accept GPIO14
+STATUS/CTRL visibility, GPIO ownership, event generation, interrupt
+pending/delivery, GIC acknowledgement, endpoint ownership, broad RP1 mapping,
+pad/RIO/clock/reset ownership, DMA/cache, storage, generated-root, networking,
+SSH, Milestone 11.3, or phase transition. No worker-owned follow-up task is
+created; supervisor planning is required for the next Milestone 11.2 frontier.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

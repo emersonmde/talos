@@ -1,0 +1,111 @@
+{
+  "taskId": "phase11-rp1-observed-gpio-status-run-unique-closeout-20260608",
+  "classification": "observed-gpio-status-run-unique-capture-blocked-frontier-closed",
+  "evidenceLevel": [
+    "static inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "git diff checks",
+    "mdbook build"
+  ],
+  "evidence": [
+    {
+      "label": "closeout task record",
+      "path": "tasks/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-closeout.md",
+      "type": "static closeout"
+    },
+    {
+      "label": "static reconciliation",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-closeout/static-reconciliation.md",
+      "type": "static inspection"
+    },
+    {
+      "label": "closeout classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-closeout/classification.json",
+      "type": "classification record"
+    },
+    {
+      "label": "accepted source contract",
+      "path": "tasks/2026-06-08-phase11-rp1-observed-gpio-status-source-contract.md",
+      "type": "static source/evidence contract",
+      "classification": "accepted-observed-gpio-status-source-contract"
+    },
+    {
+      "label": "accepted local/static core",
+      "path": "tasks/2026-06-08-phase11-rp1-observed-gpio-status-core.md",
+      "type": "fmt/lint/unit/static archive inspection",
+      "classification": "accepted-local-static-observed-gpio-status-core"
+    },
+    {
+      "label": "accepted run-unique capture-marker core",
+      "path": "tasks/2026-06-08-phase11-pi5-run-unique-capture-marker-core.md",
+      "type": "static inspection, retained fixture replay, archive inspection",
+      "classification": "run-unique-capture-marker-contract-accepted"
+    },
+    {
+      "label": "accepted run-unique no-MMIO control proof",
+      "path": "tasks/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-control-pi5.md",
+      "type": "lab-controller API, serial hardware boot/output, TFTP evidence, restore proof, run-unique checker replay",
+      "classification": "no-mmio-observed-gpio-status-run-unique-control-visible"
+    },
+    {
+      "label": "real run-unique Pi 5 completed blocker",
+      "path": "tasks/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-pi5.md",
+      "type": "lab-controller API, serial hardware boot/output, TFTP evidence, restore proof, rejected run-unique identity join",
+      "classification": "capture-staging-blocked"
+    },
+    {
+      "label": "run-unique core classification",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-run-unique-capture-marker-core/classification.json",
+      "type": "classification record"
+    },
+    {
+      "label": "run-unique control classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-control-pi5/classification.json",
+      "type": "classification record"
+    },
+    {
+      "label": "run-unique real blocker classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-pi5/classification.json",
+      "type": "classification record"
+    },
+    {
+      "label": "run-unique real checker output",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-pi5/run-unique-check.json",
+      "type": "run-unique freshness replay"
+    },
+    {
+      "label": "updated roadmap",
+      "path": "docs/src/roadmap.md",
+      "type": "documentation"
+    },
+    {
+      "label": "updated RP1/PCIe map contract",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "type": "documentation"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "Static inspection of v2/v3 blocker evidence, run-unique core/control/real proof or blocker, restore evidence, and evidence maps",
+      "result": "passed"
+    },
+    {
+      "gate": "jq empty on retained evidence-map/classification JSON",
+      "result": "passed"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "passed"
+    }
+  ],
+  "nextAction": "No worker-owned follow-up task is created by this closeout. Set planningNeeded=true for supervisor planning of the next Milestone 11.2 frontier if work should continue."
+}

@@ -2033,6 +2033,48 @@ GPIO14 STATUS/CTRL visibility, GPIO ownership, interrupts, endpoint ownership,
 broad RP1 mapping, DMA/cache, networking, SSH, Milestone 11.3, or a phase
 transition.
 
+phase11-rp1-observed-gpio-status-run-unique-control-pi5-20260608 accepts only
+the paired no-MMIO/no-RP1/no-GIC run-unique control proof as
+no-mmio-observed-gpio-status-run-unique-control-visible. The accepted control
+used capture nonce ru20260608T195401Z-f84941d7, selected tree
+2e0fbbdc8da0ec3066ddc4b74949887c8bcf80c70ac6c4a68edffb5dca6f5173, retained
+empty-read-before-power, observed the nonce-bearing control marker after power,
+retained two 49,072-byte da591740/kernel_2712.img TFTP fetches, kept final
+pre-restore identity on the selected tree, and restored to
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This
+accepts only the control output/capture path; it does not accept real
+GPIO14 STATUS/CTRL visibility or any RP1/GPIO hardware behavior.
+
+phase11-rp1-observed-gpio-status-run-unique-pi5-20260608 completed as
+capture-staging-blocked. The primary real run used capture nonce
+ru20260608T2012Z-f84941d7 and retained 41 nonce-bearing result markers with
+gpio14-status-raw=0xabe3300, gpio14-ctrl-raw=0x84, ctrl-funcsel=4, and
+classification=observed-aperture-gpio14-status-ctrl-visible. The run-unique
+checker rejected the proof because TFTP and final pre-restore identity matched
+the restored baseline tree rather than the selected candidate tree: observed
+TFTP fetches were 104,136 bytes while the candidate expected 49,776-byte
+fetches. A clean same-shaped retry with capture nonce
+ru20260608T2025Z-f84941d7 also remained capture-staging-blocked after a
+1,095,168-byte non-empty pre-power drain, missing required marker after power,
+and baseline-sized TFTP fetches. The marker-visible GPIO14 STATUS/CTRL values
+remain retained evidence only; they are not accepted visibility.
+
+phase11-rp1-observed-gpio-status-run-unique-closeout-20260608 accepts this
+chain as observed-gpio-status-run-unique-capture-blocked-frontier-closed. The
+accepted frontier is limited to the observed GPIO14 STATUS/CTRL source
+contract, local/static real/control core, serial-drain repair procedure,
+run-unique capture marker contract, run-unique no-MMIO control proof, and
+committed real Pi 5 capture-staging blocker. It does not accept
+GPIO14 STATUS/CTRL visibility, GPIO ownership, event generation, interrupt
+pending/delivery, GIC acknowledgement, endpoint ownership, broad RP1 mapping,
+pad/RIO/clock/reset ownership, DMA/cache, storage, generated-root, networking,
+SSH, Milestone 11.3, or phase transition. Same-shaped endpoint config
+identity, bridge/setup-state, 0x1f RP1 peripheral, 0x1c UART0 FR, and real
+0x1c GPIO14 STATUS/CTRL hardware reruns remain closed unless a future
+supervisor task supplies a different discriminator, capture/staging repair, or
+new acceptance criteria. Supervisor planning is required for the next
+Milestone 11.2 frontier.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when
