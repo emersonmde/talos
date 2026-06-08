@@ -8360,6 +8360,22 @@ production-timer control failed the same repaired freshness discriminator, so
 the unchanged candidate was not rerun and same-shaped real GPIO14 STATUS/CTRL
 proof remains blocked pending supervisor planning.
 
+phase11-rp1-observed-gpio-status-closeout-20260608 accepts the chain as
+observed-gpio-status-capture-blocked-frontier-closed. The accepted frontier is
+limited to the source/evidence-backed GPIO14 STATUS/CTRL observed-aperture
+contract, the local/static real/control core, the serial-drain freshness repair
+procedure, the paired no-MMIO/no-RP1/no-GIC control proof, and the committed
+real Pi 5 capture-staging blocker. It does not accept observed 0x1c GPIO14
+STATUS/CTRL visibility, GPIO ownership, event generation, interrupt
+pending/delivery, GIC acknowledgement, endpoint ownership, broad RP1 mapping,
+pad/RIO/clock/reset ownership, DMA/cache, storage, generated-root, networking,
+SSH, Milestone 11.3, or phase transition. Same-shaped endpoint config
+identity, bridge/setup-state, 0x1f RP1 peripheral, 0x1c UART0 FR, and real
+0x1c GPIO14 STATUS/CTRL hardware reruns remain closed unless a future
+supervisor task supplies a different discriminator or new acceptance criteria.
+The worker creates no follow-up task from this closeout; supervisor planning
+is required for the next Milestone 11.2 frontier.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

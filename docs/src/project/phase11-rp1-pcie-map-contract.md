@@ -1990,6 +1990,21 @@ values remain retained evidence, not accepted visibility. Same-shaped real
 GPIO14 STATUS/CTRL reruns are blocked pending supervisor planning around the
 freshness blocker or a different accepted discriminator.
 
+phase11-rp1-observed-gpio-status-closeout-20260608 accepts that chain as
+observed-gpio-status-capture-blocked-frontier-closed. The accepted frontier is
+limited to the source/evidence-backed GPIO14 STATUS/CTRL observed-aperture
+contract, the local/static real/control core, the serial-drain freshness repair
+procedure, the paired no-MMIO/no-RP1/no-GIC control proof, and the committed
+real Pi 5 capture-staging blocker. It does not accept observed 0x1c GPIO14
+STATUS/CTRL visibility, GPIO ownership, event generation, interrupt
+pending/delivery, GIC acknowledgement, endpoint ownership, broad RP1 mapping,
+pad/RIO/clock/reset ownership, DMA/cache, storage, generated-root, networking,
+SSH, Milestone 11.3, or phase transition. Same-shaped endpoint config
+identity, bridge/setup-state, 0x1f RP1 peripheral, 0x1c UART0 FR, and real
+0x1c GPIO14 STATUS/CTRL hardware reruns remain closed unless a future
+supervisor task supplies a different discriminator or new acceptance criteria.
+Supervisor planning is required for the next Milestone 11.2 frontier.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

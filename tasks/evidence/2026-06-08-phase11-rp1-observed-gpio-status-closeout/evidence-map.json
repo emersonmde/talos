@@ -1,0 +1,169 @@
+{
+  "taskId": "phase11-rp1-observed-gpio-status-closeout-20260608",
+  "classification": "observed-gpio-status-capture-blocked-frontier-closed",
+  "evidenceLevel": [
+    "static inspection",
+    "documentation reconciliation",
+    "git diff checks",
+    "mdbook build"
+  ],
+  "evidence": [
+    {
+      "label": "closeout task record",
+      "path": "tasks/2026-06-08-phase11-rp1-observed-gpio-status-closeout.md",
+      "type": "static closeout"
+    },
+    {
+      "label": "static reconciliation",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-closeout/static-reconciliation.md",
+      "type": "static inspection"
+    },
+    {
+      "label": "accepted source contract",
+      "path": "tasks/2026-06-08-phase11-rp1-observed-gpio-status-source-contract.md",
+      "type": "static source/evidence contract",
+      "classification": "accepted-observed-gpio-status-source-contract"
+    },
+    {
+      "label": "accepted local/static core",
+      "path": "tasks/2026-06-08-phase11-rp1-observed-gpio-status-core.md",
+      "type": "fmt/lint/unit/static archive inspection",
+      "classification": "accepted-local-static-observed-gpio-status-core"
+    },
+    {
+      "label": "accepted serial-drain freshness repair",
+      "path": "tasks/2026-06-08-phase11-pi5-serial-drain-freshness-repair-core.md",
+      "type": "static inspection, no-hardware dry run, retained fixture replay",
+      "classification": "serial-drain-freshness-procedure-repaired"
+    },
+    {
+      "label": "accepted no-MMIO/no-RP1/no-GIC control proof",
+      "path": "tasks/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry.md",
+      "type": "serial hardware boot/output, lab-controller API, TFTP evidence, restore proof",
+      "classification": "no-mmio-observed-gpio-status-control-visible"
+    },
+    {
+      "label": "real Pi 5 completed blocker",
+      "path": "tasks/2026-06-08-phase11-rp1-observed-gpio-status-pi5.md",
+      "type": "serial hardware boot/output, lab-controller API, TFTP evidence, restore proof, rejected pi5-capture-transaction-v2 identity join",
+      "classification": "capture-staging-blocked"
+    },
+    {
+      "label": "repair classification",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-serial-drain-freshness-repair-core/classification.json",
+      "type": "classification record"
+    },
+    {
+      "label": "control classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/classification.json",
+      "type": "classification record"
+    },
+    {
+      "label": "real blocker classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-pi5/classification.json",
+      "type": "classification record"
+    },
+    {
+      "label": "updated roadmap",
+      "path": "docs/src/roadmap.md",
+      "type": "documentation"
+    },
+    {
+      "label": "updated RP1/PCIe map contract",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "type": "documentation"
+    }
+  ],
+  "acceptedFrontier": {
+    "sourceContract": "phase11-rp1-observed-gpio-status-source-contract-v1",
+    "repairClassification": "serial-drain-freshness-procedure-repaired",
+    "controlClassification": "no-mmio-observed-gpio-status-control-visible",
+    "realClassification": "capture-staging-blocked",
+    "closeoutClassification": "observed-gpio-status-capture-blocked-frontier-closed",
+    "selectedRealOperation": {
+      "observedCpuPhysicalAddresses": [
+        "0x1c000d0070",
+        "0x1c000d0074"
+      ],
+      "sourceRp1BusAddresses": [
+        "0xc0400d0070",
+        "0xc0400d0074"
+      ],
+      "width": "two 32-bit volatile loads"
+    },
+    "acceptedControlRun": {
+      "selectedTreeHash": "133f2a9b4a4c5c21b206d8f9eb8eba4ffe41f787a69b33bced0ea164a8cf83ab",
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "expectedFetchBytes": 48952,
+      "expectedFetchCount": 2,
+      "markerOccurrences": 41
+    },
+    "realBlockedRun": {
+      "selectedTreeHash": "52b5f11000b24f6f6d00ab1b9aaa4d62a4d4114486a0302ad593b713a08c2559",
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "expectedFetchBytes": 49656,
+      "expectedFetchCount": 2,
+      "markerOccurrences": 42,
+      "markerVisibleValues": {
+        "gpio14StatusRaw": "0xabe3300",
+        "gpio14CtrlRaw": "0x84",
+        "ctrlFuncsel": 4,
+        "classificationSeenInSerial": "observed-aperture-gpio14-status-ctrl-visible"
+      },
+      "rejectionReasons": [
+        "serial-drain-not-empty-before-power",
+        "saturated-direct-read-without-empty-pre-power-drain"
+      ],
+      "prePowerDrain": {
+        "attempts": 96,
+        "totalBytes": 1095168,
+        "emptyBeforePower": false
+      }
+    },
+    "knownGoodAfterRealInconclusive": {
+      "selectedTreeHash": "407d10f6ed4457e89f9023f769c00920a4ebbe0f42ca65b0165b8db014140697",
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "expectedFetchBytes": 104136,
+      "expectedFetchCount": 2,
+      "rejectionReasons": [
+        "serial-drain-not-empty-before-power",
+        "saturated-direct-read-without-empty-pre-power-drain"
+      ],
+      "prePowerDrain": {
+        "attempts": 96,
+        "totalBytes": 1095168,
+        "emptyBeforePower": false
+      }
+    }
+  },
+  "acceptedClaims": [
+    "the source contract for two read-only observed-aperture GPIO14 STATUS/CTRL loads is accepted",
+    "the local/static real and control candidates match the accepted source contract",
+    "the serial-drain freshness repair procedure is accepted without relaxing pi5-capture-transaction-v2",
+    "the paired no-MMIO/no-RP1/no-GIC control proof is accepted",
+    "the real Pi 5 run is accepted only as a committed capture-staging blocker",
+    "the marker-visible real serial values are retained evidence but non-decisive"
+  ],
+  "rejectedClaims": [
+    "observed 0x1c GPIO14 STATUS/CTRL visibility",
+    "GPIO ownership",
+    "event generation",
+    "interrupt pending generation",
+    "interrupt delivery",
+    "GIC acknowledgement",
+    "endpoint ownership",
+    "broad RP1 mapping",
+    "pad/RIO/clock/reset ownership",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "blockedReruns": [
+    "Same-shaped endpoint config identity, bridge/setup-state, 0x1f RP1 peripheral, 0x1c UART0 FR, and real 0x1c GPIO14 STATUS/CTRL hardware reruns remain closed unless a future supervisor task supplies a different discriminator or new acceptance criteria."
+  ],
+  "nextAction": "No worker-owned follow-up task is created by this closeout. Set planningNeeded=true for supervisor planning of the next Milestone 11.2 frontier if work should continue."
+}
