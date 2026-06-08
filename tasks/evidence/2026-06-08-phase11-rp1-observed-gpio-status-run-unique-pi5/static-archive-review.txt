@@ -1,0 +1,9 @@
+candidate_archive=target/talos-rpi5-rp1-observed-gpio-status-run-unique-real.tar.gz
+candidate_archive_sha256=fdf7becfc6a994430c795ff5bbae26ee8dc4890e0987081bdf2e94051d4ec93c
+kernel_2712_sha256=5a33a3987824266b5ad70d4e5357ed8ef0cb13e1aaf55106f707b0cb3d775abc
+kernel_2712_size=49776
+header_image_size=49776
+text_offset=0
+flags=12
+result_marker=TALOS: rp1-observed-gpio-status-result
+capture_nonce=ru20260608T2012Z-f84941d7

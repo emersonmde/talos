@@ -1,0 +1,19 @@
+{
+  "label": "phase11-run-unique-gpio-real",
+  "classification": "staging-publication-mismatch",
+  "reason": "pre-power-cycle boot identity did not match the expected staged tree",
+  "preflight_identity": {
+    "expected_tree_hash": "37e1259dc7d881008d37c0071e9efa5152042ade0fb87c78e5225f1addf4405d",
+    "observed_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "expected_kernel": "kernel_2712.img",
+    "observed_effective_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 49776,
+    "observed_fetch_bytes": 104136,
+    "tree_matches": false,
+    "effective_kernel_matches": true,
+    "expected_fetch_present": true,
+    "expected_fetch_bytes_match": false,
+    "staging_publication_mismatch": true
+  }
+}

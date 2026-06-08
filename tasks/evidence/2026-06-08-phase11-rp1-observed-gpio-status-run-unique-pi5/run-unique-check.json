@@ -1,0 +1,92 @@
+{
+  "contract_version": "pi5-capture-transaction-run-unique-v1",
+  "base_contract_version": "pi5-capture-transaction-v3",
+  "run_label": "phase11-run-unique-gpio-real",
+  "decisive_rp1_hardware_classification_allowed": false,
+  "classification": "capture-staging-blocked",
+  "rejection_reasons": [
+    "tftp-expected-fetch-byte-mismatch",
+    "final-pre-restore-selected-tree-mismatch",
+    "final-pre-restore-expected-fetch-byte-mismatch"
+  ],
+  "run_unique_serial_freshness": {
+    "rule": "v3 identity/freshness plus required marker containing a run-unique capture-nonce value",
+    "required_marker": "TALOS: rp1-observed-gpio-status-result capture-nonce=ru20260608T2012Z-f84941d7",
+    "expected_nonce": "ru20260608T2012Z-f84941d7",
+    "observed_nonce": "ru20260608T2012Z-f84941d7",
+    "run_unique_marker_ok": true
+  },
+  "base_v3": {
+    "contract_version": "pi5-capture-transaction-v3",
+    "base_contract_version": "pi5-capture-transaction-v2",
+    "run_label": "phase11-run-unique-gpio-real",
+    "summary_label": "",
+    "decisive_rp1_hardware_classification_allowed": false,
+    "classification": "capture-staging-blocked",
+    "rejection_reasons": [
+      "tftp-expected-fetch-byte-mismatch",
+      "final-pre-restore-selected-tree-mismatch",
+      "final-pre-restore-expected-fetch-byte-mismatch"
+    ],
+    "v3_serial_freshness": {
+      "rule": "empty pre-power drain, or saturated direct-read with required marker absent from all pre-power drain responses and present after power",
+      "empty_pre_power": true,
+      "saturated_direct_read": true,
+      "required_marker": "TALOS: rp1-observed-gpio-status-result capture-nonce=ru20260608T2012Z-f84941d7",
+      "pre_power_marker_count": -1,
+      "post_power_marker_count": 41,
+      "fresh_marker_differential": false,
+      "serial_freshness_ok": true
+    },
+    "proof_run_identity": {
+      "selected_tree_hash": "37e1259dc7d881008d37c0071e9efa5152042ade0fb87c78e5225f1addf4405d",
+      "effective_kernel": "kernel_2712.img",
+      "expected_fetch_path": "da591740/kernel_2712.img",
+      "expected_fetch_byte_count": 49776,
+      "serial": {
+        "pre_power_drain": {
+          "attempts": 1,
+          "total_bytes": 0,
+          "final_cursor": 4194304,
+          "empty_before_power": true,
+          "discriminator": "empty-read-before-power"
+        },
+        "cursor_file": 4194304,
+        "window_cursor_start": 4194304,
+        "window_cursor_end": 4194304,
+        "window_bytes": 67254,
+        "response_bytes": 67254,
+        "capture_mode": "read",
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+      },
+      "tftp": {
+        "cursor_file": 4347054,
+        "delta_cursor_start": 4347054,
+        "delta_cursor_end": 4348405,
+        "stable": true,
+        "event_count": 13,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 0,
+        "expected_fetch_bytes_seen": [
+          104136,
+          104136
+        ]
+      },
+      "final_pre_restore": {
+        "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+        "effective_kernel": "kernel_2712.img",
+        "selected_tree_still_staged": false,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes": 104136
+      },
+      "restore": {
+        "snapshot_name": "phase11-run-unique-gpio-real-pre-20260608T2012Z",
+        "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      }
+    },
+    "rule": "missing or mismatched candidate identity, v3 serial freshness, TFTP, final identity, or restore fields prevent decisive RP1 hardware classification"
+  },
+  "base_v3_exit": 1,
+  "base_v3_stderr": "",
+  "rule": "missing v3 proof or missing/mismatched run-unique capture nonce prevents decisive RP1 hardware classification"
+}

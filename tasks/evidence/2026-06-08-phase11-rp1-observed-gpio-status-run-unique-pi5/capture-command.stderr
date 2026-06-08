@@ -1,0 +1,1 @@
+jq: Bad JSON in --slurpfile tftp tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-pi5/real-run/tftp-delta-stable-pre-restore.json: Invalid literal at line 142, column 4

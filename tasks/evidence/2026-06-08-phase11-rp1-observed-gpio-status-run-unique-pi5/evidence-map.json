@@ -1,0 +1,97 @@
+{
+  "task_id": "phase11-rp1-observed-gpio-status-run-unique-pi5-20260608",
+  "classification": "capture-staging-blocked",
+  "evidence": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-pi5.md",
+      "type": "task record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-pi5/classification.json",
+      "type": "committed blocker classification"
+    },
+    {
+      "label": "run-unique checker output",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-pi5/run-unique-check.json",
+      "type": "run-unique freshness and identity replay"
+    },
+    {
+      "label": "primary real candidate bundle",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-pi5/real-run/",
+      "type": "lab-controller API, serial hardware boot/output, TFTP evidence, restore proof"
+    },
+    {
+      "label": "primary real candidate clean TFTP delta",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-pi5/real-run/tftp-delta-stable-pre-restore.json",
+      "type": "stable pre-restore TFTP evidence reconstructed from retained raw output"
+    },
+    {
+      "label": "primary raw corrupt TFTP capture",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-pi5/real-run/tftp-delta-stable-pre-restore.raw-corrupt.txt",
+      "type": "retained raw helper output"
+    },
+    {
+      "label": "final clean attempt archive review",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-pi5/static-final-archive-review.txt",
+      "type": "image/archive inspection"
+    },
+    {
+      "label": "final clean attempt blocker",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-pi5/real-run-final/",
+      "type": "lab-controller API pre-power serial/read 500 and restore proof"
+    },
+    {
+      "label": "final clean retry checker output",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-pi5/run-unique-final-check.json",
+      "type": "run-unique freshness replay"
+    },
+    {
+      "label": "final clean retry TFTP delta",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-pi5/real-run-final/tftp-delta-stable-pre-restore.json",
+      "type": "stable TFTP evidence"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "Lab API GET / before run and after restore",
+      "result": "passed; retained for primary and final attempts"
+    },
+    {
+      "gate": "Fresh serial cursor and TFTP cursor before power cycle",
+      "result": "passed for primary attempt"
+    },
+    {
+      "gate": "TFTP delta from GET /tftp/logs after run, captured before restore and checked for stability",
+      "result": "passed but rejected identity: two 104136-byte baseline fetches, expected 49776-byte candidate fetches"
+    },
+    {
+      "gate": "Accepted run-unique freshness checker/procedure from the core task",
+      "result": "ran; rejected for tftp-expected-fetch-byte-mismatch and final-pre-restore identity mismatch"
+    },
+    {
+      "gate": "Known-good/control and unchanged candidate rerun only if first candidate is inconclusive",
+      "result": "same-shaped fresh-nonce retry ran and was rejected by run-unique checker for saturated serial freshness, missing required marker after power, TFTP expected-fetch byte mismatch, and final selected-tree mismatch"
+    },
+    {
+      "gate": "jq empty on retained classification/evidence JSON",
+      "result": "pending"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pending"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "pending"
+    }
+  ],
+  "notes": {
+    "accepted_gpio14_status_ctrl_visibility": false,
+    "accepted_gpio_ownership": false,
+    "accepted_interrupt_delivery": false,
+    "accepted_broad_rp1_mapping": false,
+    "docs_src_touched": false
+  }
+}
