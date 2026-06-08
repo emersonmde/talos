@@ -1,0 +1,28 @@
+{
+  "task_id": "phase11-rp1-observed-gpio-status-after-staging-repair-pi5-20260608",
+  "evidence_dir": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-after-staging-repair-pi5",
+  "hardware": "Pi 5 serialized lab-controller run",
+  "nonce": "bti-real-20260608T213533Z-122908e4",
+  "artifacts": {
+    "archive": "target/talos-rpi5-rp1-observed-gpio-status-after-staging-repair-real.tar.gz",
+    "archive_sha256": "archive-sha256.txt",
+    "static_archive_review": "static-archive-review.txt",
+    "publish_archive": "publish-archive.json",
+    "staged_status": "staged-status.json",
+    "staged_boot_files": "staged-boot-files.json",
+    "capture_bundle": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-after-staging-repair-pi5/real-run",
+    "run_unique_check": "run-unique-check.json",
+    "boot_staging_identity_check": "boot-staging-identity-check.json",
+    "classification": "classification.json"
+  },
+  "validation": [
+    "image/archive inspection",
+    "candidate identity via lab API status/files before power",
+    "fresh serial drain/cursor evidence",
+    "stable TFTP delta proving expected candidate fetch path and byte count",
+    "final pre-restore selected-tree identity",
+    "restore proof",
+    "run-unique checker",
+    "boot-staging identity checker"
+  ]
+}

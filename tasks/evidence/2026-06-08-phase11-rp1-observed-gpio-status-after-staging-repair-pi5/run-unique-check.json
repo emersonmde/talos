@@ -1,0 +1,84 @@
+{
+  "contract_version": "pi5-capture-transaction-run-unique-v1",
+  "base_contract_version": "pi5-capture-transaction-v3",
+  "run_label": "phase11-bti-real-observed-gpio-status",
+  "decisive_rp1_hardware_classification_allowed": true,
+  "classification": "capture-transaction-run-unique-ready",
+  "rejection_reasons": [],
+  "run_unique_serial_freshness": {
+    "rule": "v3 identity/freshness plus required marker containing a run-unique capture-nonce value",
+    "required_marker": "TALOS: rp1-observed-gpio-status-result capture-nonce=bti-real-20260608T213533Z-122908e4",
+    "expected_nonce": "bti-real-20260608T213533Z-122908e4",
+    "observed_nonce": "bti-real-20260608T213533Z-122908e4",
+    "run_unique_marker_ok": true
+  },
+  "base_v3": {
+    "contract_version": "pi5-capture-transaction-v3",
+    "base_contract_version": "pi5-capture-transaction-v2",
+    "run_label": "phase11-bti-real-observed-gpio-status",
+    "summary_label": "phase11-bti-real-observed-gpio-status",
+    "decisive_rp1_hardware_classification_allowed": true,
+    "classification": "capture-transaction-v3-ready",
+    "rejection_reasons": [],
+    "v3_serial_freshness": {
+      "rule": "empty pre-power drain, or saturated direct-read with required marker absent from all pre-power drain responses and present after power",
+      "empty_pre_power": false,
+      "saturated_direct_read": true,
+      "required_marker": "TALOS: rp1-observed-gpio-status-result capture-nonce=bti-real-20260608T213533Z-122908e4",
+      "pre_power_marker_count": 0,
+      "post_power_marker_count": 38,
+      "fresh_marker_differential": true,
+      "serial_freshness_ok": true
+    },
+    "proof_run_identity": {
+      "selected_tree_hash": "5a499384497595de18d05f250fe146352d964953c9ff759642cc8d20384e0ea6",
+      "effective_kernel": "kernel_2712.img",
+      "expected_fetch_path": "da591740/kernel_2712.img",
+      "expected_fetch_byte_count": 49784,
+      "serial": {
+        "pre_power_drain": {
+          "attempts": 96,
+          "total_bytes": 1095168,
+          "final_cursor": 4194304,
+          "empty_before_power": false,
+          "discriminator": "bounded-drain-exhausted-before-power"
+        },
+        "cursor_file": 4194304,
+        "window_cursor_start": 4194304,
+        "window_cursor_end": 4194304,
+        "window_bytes": 70364,
+        "response_bytes": 70364,
+        "capture_mode": "read",
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+      },
+      "tftp": {
+        "cursor_file": 4351107,
+        "delta_cursor_start": 4351107,
+        "delta_cursor_end": 4352458,
+        "stable": true,
+        "event_count": 13,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 2,
+        "expected_fetch_bytes_seen": [
+          49784,
+          49784
+        ]
+      },
+      "final_pre_restore": {
+        "tree_hash": "5a499384497595de18d05f250fe146352d964953c9ff759642cc8d20384e0ea6",
+        "effective_kernel": "kernel_2712.img",
+        "selected_tree_still_staged": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes": 49784
+      },
+      "restore": {
+        "snapshot_name": "phase11-bti-real-pre-20260608T213533Z",
+        "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      }
+    },
+    "rule": "missing or mismatched candidate identity, v3 serial freshness, TFTP, final identity, or restore fields prevent decisive RP1 hardware classification"
+  },
+  "base_v3_exit": 0,
+  "base_v3_stderr": "",
+  "rule": "missing v3 proof or missing/mismatched run-unique capture nonce prevents decisive RP1 hardware classification"
+}

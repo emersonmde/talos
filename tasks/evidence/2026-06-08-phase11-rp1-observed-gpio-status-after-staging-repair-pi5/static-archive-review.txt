@@ -1,0 +1,9 @@
+candidate_archive=target/talos-rpi5-rp1-observed-gpio-status-after-staging-repair-real.tar.gz
+candidate_archive_sha256=530cb4bc6e26d334fe3e111f13e39e8c2538be07d067663db1a92d7ff111f202
+kernel_2712_sha256=42e6c39720bbf14ed895ac8a89d23b2752577ae892ba4703ec2b7c11dae1b9d8
+kernel_2712_size=49784
+header_image_size=49784
+text_offset=0
+flags=12
+result_marker=TALOS: rp1-observed-gpio-status-result
+capture_nonce=bti-real-20260608T213533Z-122908e4
