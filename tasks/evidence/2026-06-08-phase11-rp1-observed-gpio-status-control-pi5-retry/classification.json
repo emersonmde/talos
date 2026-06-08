@@ -1,0 +1,152 @@
+{
+  "task_id": "phase11-rp1-observed-gpio-status-control-pi5-retry-20260608",
+  "classification": "no-mmio-observed-gpio-status-control-visible",
+  "level": "lab-controller API + serial hardware boot/output + pi5-capture-transaction-v2 identity join + stable TFTP evidence + restore proof",
+  "accepted": true,
+  "summary": [
+    "Initial candidate capture had repaired empty pre-power serial drain but failed identity join because TFTP/final identity showed the restored known-good tree instead of the staged control tree.",
+    "Known-good production-timer control passed the repaired freshness and identity join gate.",
+    "Unchanged candidate rerun passed pi5-capture-transaction-v2 with no rejection reasons and retained the no-MMIO observed GPIO status control marker/output shape."
+  ],
+  "initial_candidate": {
+    "classification": "capture-staging-blocked",
+    "rejection_reasons": [
+      "tftp-expected-fetch-byte-mismatch",
+      "final-pre-restore-selected-tree-mismatch",
+      "final-pre-restore-expected-fetch-byte-mismatch"
+    ],
+    "serial_drain": {
+      "attempts": 1,
+      "total_bytes": 0,
+      "final_cursor": 4194304,
+      "empty_before_power": true
+    },
+    "tftp": {
+      "cursor_file": 4329491,
+      "delta_cursor_start": 4329491,
+      "delta_cursor_end": 4330842,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 0,
+      "expected_fetch_bytes_seen": [
+        104136,
+        104136
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": false,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 104136
+    },
+    "restore": {
+      "snapshot_name": "pre-observed-gpio-status-control-retry-1637",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "known_good_control_after_inconclusive": {
+    "classification": "capture-transaction-v2-ready",
+    "rejection_reasons": [],
+    "serial_drain": {
+      "attempts": 2,
+      "total_bytes": 2,
+      "final_cursor": 4194304,
+      "empty_before_power": true
+    },
+    "tftp": {
+      "cursor_file": 4332193,
+      "delta_cursor_start": 4332193,
+      "delta_cursor_end": 4333544,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        104136,
+        104136
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "407d10f6ed4457e89f9023f769c00920a4ebbe0f42ca65b0165b8db014140697",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 104136
+    },
+    "restore": {
+      "snapshot_name": "pre-observed-gpio-status-control-retry-kg-1645",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "accepted_candidate_rerun": {
+    "classification": "capture-transaction-v2-ready",
+    "rejection_reasons": [],
+    "selected_tree_hash": "133f2a9b4a4c5c21b206d8f9eb8eba4ffe41f787a69b33bced0ea164a8cf83ab",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 48952,
+    "serial_drain": {
+      "attempts": 1,
+      "total_bytes": 0,
+      "final_cursor": 4194304,
+      "empty_before_power": true
+    },
+    "serial_window": {
+      "pre_power_drain": {
+        "attempts": 1,
+        "total_bytes": 0,
+        "final_cursor": 4194304,
+        "empty_before_power": true
+      },
+      "cursor_file": 4194304,
+      "window_cursor_start": 4194304,
+      "window_cursor_end": 4194304,
+      "window_bytes": 74471,
+      "response_bytes": 74471,
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+    },
+    "tftp": {
+      "cursor_file": 4333544,
+      "delta_cursor_start": 4333544,
+      "delta_cursor_end": 4334895,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        48952,
+        48952
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "133f2a9b4a4c5c21b206d8f9eb8eba4ffe41f787a69b33bced0ea164a8cf83ab",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 48952
+    },
+    "restore": {
+      "snapshot_name": "pre-observed-gpio-status-control-retry-rerun-1648",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "marker_occurrences": 41,
+    "visible_classification": "no-mmio-observed-gpio-status-control-visible"
+  },
+  "not_accepted": [
+    "real observed-aperture GPIO14 STATUS/CTRL read",
+    "GPIO ownership",
+    "event generation",
+    "interrupt pending generation",
+    "interrupt delivery",
+    "endpoint ownership",
+    "broad RP1 mapping",
+    "pad/RIO/clock/reset ownership",
+    "DMA/cache",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ]
+}

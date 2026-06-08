@@ -1957,6 +1957,23 @@ generation, interrupt pending generation, interrupt delivery, endpoint
 ownership, broad RP1 mapping, pad/RIO/clock/reset ownership, DMA/cache,
 networking, SSH, Milestone 11.3, or phase transition.
 
+phase11-rp1-observed-gpio-status-control-pi5-retry-20260608 accepts the paired
+no-MMIO/no-RP1/no-GIC control proof as no-mmio-observed-gpio-status-control-visible.
+After an initial repaired-freshness candidate retry was rejected for a
+TFTP/final-identity mismatch, the known-good production-timer control passed
+pi5-capture-transaction-v2 with no rejection reasons. The unchanged candidate
+rerun then selected tree
+133f2a9b4a4c5c21b206d8f9eb8eba4ffe41f787a69b33bced0ea164a8cf83ab, retained an
+empty pre-power serial drain, observed two 48,952-byte
+da591740/kernel_2712.img TFTP fetches, retained 41 task-owned control markers,
+kept final pre-restore identity on the selected tree, and restored to
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This
+accepts only the paired control proof; the real observed GPIO14 STATUS/CTRL
+read, GPIO ownership, event generation, interrupt pending generation,
+interrupt delivery, endpoint ownership, broad RP1 mapping, pad/RIO/clock/reset
+ownership, DMA/cache, networking, SSH, Milestone 11.3, and phase transition
+remain unaccepted.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

@@ -1,0 +1,85 @@
+{
+  "task_id": "phase11-rp1-observed-gpio-status-control-pi5-retry-20260608",
+  "classification": "no-mmio-observed-gpio-status-control-visible",
+  "task_record": "tasks/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry.md",
+  "classification_file": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/classification.json",
+  "static_archive_review": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/candidate-rerun-after-known-good/static-archive-review.txt",
+    "archive": "target/talos-rpi5-rp1-observed-gpio-status-no-mmio-control-core.tar.gz",
+    "evidence_level": "static archive inspection"
+  },
+  "initial_candidate_run": {
+    "directory": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/control-run",
+    "capture_summary": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/capture-command-output.json",
+    "identity_join": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/identity-join.json",
+    "identity_join_exit": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/identity-join.exit",
+    "selected_tree_hash": "133f2a9b4a4c5c21b206d8f9eb8eba4ffe41f787a69b33bced0ea164a8cf83ab",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 48952,
+    "serial_drain_discriminator": "empty-read-before-power",
+    "rejection_reasons": [
+      "tftp-expected-fetch-byte-mismatch",
+      "final-pre-restore-selected-tree-mismatch",
+      "final-pre-restore-expected-fetch-byte-mismatch"
+    ],
+    "evidence_level": "serial hardware boot/output, lab-controller API, stable TFTP delta, restore proof"
+  },
+  "known_good_control_after_inconclusive": {
+    "directory": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/known-good-control-after-inconclusive",
+    "capture_summary": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/known-good-capture-command-output.json",
+    "identity_join": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/known-good-identity-join.json",
+    "identity_join_exit": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/known-good-identity-join.exit",
+    "selected_tree_hash": "407d10f6ed4457e89f9023f769c00920a4ebbe0f42ca65b0165b8db014140697",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 104136,
+    "serial_drain": {
+      "attempts": 2,
+      "total_bytes": 2,
+      "final_cursor": 4194304,
+      "empty_before_power": true
+    },
+    "rejection_reasons": [],
+    "evidence_level": "known-good serial hardware boot/output, lab-controller API, stable TFTP delta, restore proof"
+  },
+  "accepted_candidate_rerun": {
+    "directory": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/candidate-rerun-after-known-good",
+    "capture_summary": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/candidate-rerun-capture-command-output.json",
+    "identity_join": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/candidate-rerun-identity-join.json",
+    "identity_join_exit": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/candidate-rerun-identity-join.exit",
+    "selected_tree_hash": "133f2a9b4a4c5c21b206d8f9eb8eba4ffe41f787a69b33bced0ea164a8cf83ab",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 48952,
+    "expected_fetch_count": 2,
+    "serial_marker": "TALOS: rp1-observed-gpio-status-control",
+    "serial_marker_occurrences": 41,
+    "serial_drain": {
+      "attempts": 1,
+      "total_bytes": 0,
+      "final_cursor": 4194304,
+      "empty_before_power": true
+    },
+    "evidence_level": "serial hardware boot/output, lab-controller API, stable TFTP delta, restore proof, pi5-capture-transaction-v2 identity join"
+  },
+  "restore": {
+    "baseline_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "initial_candidate_restore_file": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/control-run/restore-snapshot.json",
+    "known_good_restore_file": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/known-good-control-after-inconclusive/restore-snapshot.json",
+    "accepted_rerun_restore_file": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/candidate-rerun-after-known-good/restore-snapshot.json"
+  },
+  "validation_gates": {
+    "lab_api_candidate_identity_check_before_power_cycle": true,
+    "fresh_serial_cursor_and_repaired_freshness_discriminator_captured_before_run": true,
+    "tftp_delta_captured_after_run": true,
+    "known_good_control_after_initial_inconclusive": true,
+    "unchanged_candidate_rerun_after_known_good_passed": true,
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check_before_commit": "passed"
+  },
+  "validation": {
+    "jq_empty": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/validation/jq-empty.log",
+    "git_diff_check": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/validation/git-diff-check.log",
+    "mdbook_build": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/validation/mdbook-build.log",
+    "git_diff_cached_check": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5-retry/validation/git-diff-cached-check.log"
+  }
+}
