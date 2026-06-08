@@ -1,0 +1,18 @@
+{
+  "capture_exit": 0,
+  "identity_exit": 0,
+  "marker": "TALOS: rp1-observed-aperture-result",
+  "summary_suggested_classification": "post-handoff-marker-visible",
+  "identity_classification": "capture-transaction-v2-ready",
+  "rejection_reasons": [],
+  "marker_occurrences": 69,
+  "expected_fetch_count": 2,
+  "expected_fetch_bytes_seen": [
+    47664,
+    47664
+  ],
+  "selected_tree_hash": "def82f95b6ee4440de8014a275cbdef3b1baa4d578d9773e30ff7f15cd2d8a87",
+  "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "serial_pre_power_drain_empty": true,
+  "final_selected_tree_still_staged": true
+}

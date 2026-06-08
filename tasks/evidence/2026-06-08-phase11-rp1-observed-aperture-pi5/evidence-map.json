@@ -1,0 +1,95 @@
+{
+  "task_id": "phase11-rp1-observed-aperture-pi5-20260608",
+  "classification": "observed-aperture-rp1-uart0-fr-visible",
+  "evidence": [
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-aperture-pi5/classification.json",
+      "type": "serial hardware boot/output, TFTP evidence, identity join, restore proof"
+    },
+    {
+      "label": "static archive review",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-aperture-pi5/static-archive-review.txt",
+      "type": "archive/static inspection"
+    },
+    {
+      "label": "candidate identity",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-aperture-pi5/candidate-identity.json",
+      "type": "archive/static inspection"
+    },
+    {
+      "label": "initial capture-staging-blocked real run",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-aperture-pi5/real-run",
+      "type": "serial hardware boot/output, lab-controller API, TFTP evidence, capture-staging-blocked triage"
+    },
+    {
+      "label": "known-good control after inconclusive",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-aperture-pi5/known-good-control-after-inconclusive",
+      "type": "known-good control, PASS marker, TFTP evidence, capture-staging-blocked serial-drain triage"
+    },
+    {
+      "label": "clean known-good control after inconclusive",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-aperture-pi5/known-good-control-clean-after-inconclusive",
+      "type": "known-good control, PASS marker, TFTP evidence, capture-staging-blocked serial-drain triage"
+    },
+    {
+      "label": "accepted unchanged candidate rerun after clean known-good triage",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-aperture-pi5/real-rerun-after-clean-kg",
+      "type": "serial hardware boot/output, lab-controller API, TFTP evidence, identity join, restore proof"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static archive review",
+      "level": "archive/static inspection",
+      "result": "passed"
+    },
+    {
+      "gate": "initial candidate hardware capture",
+      "level": "serial hardware boot/output",
+      "result": "capture-staging-blocked",
+      "reason": "identity join rejected non-empty pre-power serial drain, saturated direct-read freshness, TFTP byte mismatch, and final pre-restore identity mismatch"
+    },
+    {
+      "gate": "known-good controls after inconclusive",
+      "level": "serial hardware boot/output and TFTP evidence",
+      "result": "ran-with-pass-marker-and-tftp-but-identity-blocked",
+      "reason": "known-good controls emitted PASS and two 104,136-byte TFTP fetches, but the continuously emitting production-timer baseline prevented an empty pre-power serial drain"
+    },
+    {
+      "gate": "unchanged candidate rerun after known-good triage",
+      "level": "serial hardware boot/output and identity join",
+      "result": "passed"
+    },
+    {
+      "gate": "restore proof",
+      "level": "lab-controller API",
+      "result": "passed"
+    }
+  ],
+  "accepted_run": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-aperture-pi5/real-rerun-after-clean-kg",
+    "identity_classification": "capture-transaction-v2-ready",
+    "rejection_reasons": [],
+    "marker": "TALOS: rp1-observed-aperture-result",
+    "marker_occurrences": 69,
+    "raw": "0x187",
+    "raw_is_pl011_fr_shaped": true,
+    "expected_fetch_count": 2,
+    "expected_fetch_bytes_seen": [47664, 47664],
+    "selected_tree_hash": "def82f95b6ee4440de8014a275cbdef3b1baa4d578d9773e30ff7f15cd2d8a87",
+    "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "serial_pre_power_drain_empty": true,
+    "final_selected_tree_still_staged": true
+  },
+  "claims": {
+    "accepted": [
+      "The selected one-read observed aperture at 0x1c00030018 is visible on Pi 5 and returns raw=0x187.",
+      "The returned value is PL011-FR-shaped under the local mask and is not sentinel/all-ones/zero.",
+      "The capture path restored the lab to the pre-run tree after the accepted manual powered run."
+    ],
+    "rejected": [
+      "No endpoint ownership, broad RP1 mapping, UART ownership, interrupt delivery, GPIO/clock ownership, DMA/cache, networking, SSH, Milestone 11.3, or phase transition is accepted."
+    ]
+  }
+}

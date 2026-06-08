@@ -1890,6 +1890,26 @@ Same-shaped endpoint config identity, same-shaped bridge/setup-state, and
 same-shaped 0x1f RP1 hardware reruns remain closed unless a future supervisor
 task supplies a different discriminator or new acceptance criteria.
 
+phase11-rp1-observed-aperture-pi5-20260608 accepts the real Pi 5
+observed-aperture proof as observed-aperture-rp1-uart0-fr-visible. After an
+initial capture-staging-blocked candidate run and known-good-control triage,
+the accepted unchanged rerun published only
+target/talos-rpi5-rp1-observed-aperture-read-core.tar.gz, selected boot tree
+def82f95b6ee4440de8014a275cbdef3b1baa4d578d9773e30ff7f15cd2d8a87, retained
+two 47,664-byte da591740/kernel_2712.img TFTP fetches, passed the
+pi5-capture-transaction-v2 identity join with no rejection reasons, retained
+69 TALOS: rp1-observed-aperture-result records, and restored the lab to tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The
+visible result read observed CPU physical address 0x1c00030018 and reported
+raw=0x187, raw-is-deaddead=false, raw-is-all-ones=false, raw-is-zero=false,
+raw-is-pl011-fr-shaped=true, and
+classification=observed-aperture-rp1-uart0-fr-visible.
+
+This accepts only the selected one-read observed aperture and its report
+shape. It does not accept endpoint ownership, broad RP1 mapping, UART
+ownership, interrupt delivery, GPIO/clock ownership, DMA/cache, storage,
+generated-root, networking, SSH, Milestone 11.3, or phase transition.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

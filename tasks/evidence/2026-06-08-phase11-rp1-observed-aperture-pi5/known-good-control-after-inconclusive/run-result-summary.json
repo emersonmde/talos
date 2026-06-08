@@ -1,0 +1,21 @@
+{
+  "capture_exit": 0,
+  "identity_exit": 1,
+  "marker": "rpi5-production-timer-preemption: PASS",
+  "summary_suggested_classification": "identity-join-mismatch",
+  "identity_classification": "capture-staging-blocked",
+  "rejection_reasons": [
+    "serial-drain-not-empty-before-power",
+    "saturated-direct-read-without-empty-pre-power-drain"
+  ],
+  "marker_occurrences": 1,
+  "expected_fetch_count": 2,
+  "expected_fetch_bytes_seen": [
+    104136,
+    104136
+  ],
+  "selected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "serial_pre_power_drain_empty": false,
+  "final_selected_tree_still_staged": true
+}

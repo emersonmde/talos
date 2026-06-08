@@ -1,0 +1,8 @@
+candidate_archive=target/talos-rpi5-rp1-observed-aperture-read-core.tar.gz
+candidate_archive_sha256=fc9a83e043195d07d5940a2ac1a6aca77eb6cfd69168b8a32947779f351f50a8
+kernel_2712_sha256=4b6064d5c23d905fc903ff6ac599e7283121c188366cbd635b7fd92d5ac5e2c0
+kernel_2712_size=47664
+header_image_size=47664
+text_offset=0
+flags=12
+result_marker=TALOS: rp1-observed-aperture-result
