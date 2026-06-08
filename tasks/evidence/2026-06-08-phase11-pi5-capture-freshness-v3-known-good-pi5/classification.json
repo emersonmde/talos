@@ -1,0 +1,68 @@
+{
+  "task_id": "phase11-pi5-capture-freshness-v3-known-good-pi5-20260608",
+  "classification": "capture-transaction-v3-known-good-ready",
+  "status": "accepted",
+  "accepted_claims": [
+    "Known-good production-timer control passed pi5-capture-transaction-v3 identity and freshness gates.",
+    "Pre-power serial drain was empty before power.",
+    "Post-power serial output included the required production-timer PASS marker.",
+    "TFTP evidence retained stable expected known-good kernel fetches before restore.",
+    "Lab restore returned to the production-timer tree."
+  ],
+  "rejected_claims": [
+    "Observed GPIO14 STATUS/CTRL visibility",
+    "GPIO ownership",
+    "GPIO event generation",
+    "interrupt pending or delivery",
+    "GIC acknowledgement",
+    "endpoint ownership",
+    "broad RP1 mapping",
+    "DMA/cache",
+    "storage",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "v3_check": {
+    "path": "tasks/evidence/2026-06-08-phase11-pi5-capture-freshness-v3-known-good-pi5/local2-v3-check.json",
+    "contract_version": "pi5-capture-transaction-v3",
+    "classification": "capture-transaction-v3-ready",
+    "rejection_reasons": [],
+    "decisive_rp1_hardware_classification_allowed": true,
+    "serial_freshness_ok": true,
+    "empty_pre_power": true,
+    "fresh_marker_differential_required": false
+  },
+  "identity": {
+    "selected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 104136
+  },
+  "serial": {
+    "cursor_before_power": 4194304,
+    "pre_power_drain_attempts": 1,
+    "pre_power_drain_total_bytes": 0,
+    "pre_power_empty_before_power": true,
+    "post_power_required_marker": "rpi5-production-timer-preemption: PASS",
+    "post_power_required_marker_count": 1,
+    "post_power_response_bytes": 6680
+  },
+  "tftp": {
+    "cursor_before_power": 4338948,
+    "delta_cursor_end": 4340299,
+    "stable": true,
+    "event_count": 13,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "expected_fetch_bytes_seen": [
+      104136,
+      104136
+    ]
+  },
+  "restore": {
+    "snapshot_name": "phase11-v3-known-good-local2-pre-20260608T1826Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  }
+}
