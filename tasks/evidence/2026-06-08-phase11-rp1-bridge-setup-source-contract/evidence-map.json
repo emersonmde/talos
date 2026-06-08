@@ -1,0 +1,178 @@
+{
+  "taskId": "phase11-rp1-bridge-setup-source-contract-20260608",
+  "classification": "accepted-source-contract",
+  "evidenceLevel": [
+    "static inspection",
+    "documentation reconciliation",
+    "git diff checks",
+    "mdbook build"
+  ],
+  "sourceContract": {
+    "id": "phase11-rp1-bridge-setup-source-contract-v1",
+    "target": "pcie2-bridge-setup-state-read",
+    "operation": "read-only BCM2712 PCIe2 bridge setup-state snapshot",
+    "registers": [
+      {
+        "name": "PCIE_MISC_PCIE_STATUS",
+        "offset": "0x4068",
+        "address": "0x1000124068",
+        "width": 32,
+        "decode": [
+          "pcie_port=0x80",
+          "dl_active=0x20",
+          "phylinkup=0x10",
+          "link_in_l23=0x40"
+        ]
+      },
+      {
+        "name": "PCIE_MISC_MISC_CTRL",
+        "offset": "0x4008",
+        "address": "0x1000124008",
+        "width": 32,
+        "decode": [
+          "SCB_ACCESS_EN=0x1000",
+          "CFG_READ_UR_MODE=0x2000"
+        ]
+      },
+      {
+        "name": "PCIE_RC_CFG_PRIV1_ID_VAL3",
+        "offset": "0x043c",
+        "address": "0x100012043c",
+        "width": 32,
+        "decode": [
+          "CLASS_CODE_MASK=0x00ffffff",
+          "expected_class_code=0x060400"
+        ]
+      },
+      {
+        "name": "PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LO",
+        "offset": "0x400c",
+        "address": "0x100012400c",
+        "width": 32,
+        "expected": "0x00000000"
+      },
+      {
+        "name": "PCIE_MISC_CPU_2_PCIE_MEM_WIN0_HI",
+        "offset": "0x4010",
+        "address": "0x1000124010",
+        "width": 32,
+        "expected": "0x00000000"
+      },
+      {
+        "name": "PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT",
+        "offset": "0x4070",
+        "address": "0x1000124070",
+        "width": 32,
+        "decode": [
+          "BASE_MASK=0x0000fff0 expected field value 0x00000000",
+          "LIMIT_MASK=0xfff00000 expected field value 0xfff00000"
+        ]
+      },
+      {
+        "name": "PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_HI",
+        "offset": "0x4080",
+        "address": "0x1000124080",
+        "width": 32,
+        "decode": [
+          "BASE_HI_MASK=0x000000ff expected value 0x0000001f"
+        ]
+      },
+      {
+        "name": "PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI",
+        "offset": "0x4084",
+        "address": "0x1000124084",
+        "width": 32,
+        "decode": [
+          "LIMIT_HI_MASK=0x000000ff expected value 0x0000001f"
+        ]
+      }
+    ],
+    "allowedClassifications": [
+      "pcie2-bridge-setup-state-visible",
+      "pcie2-bridge-setup-state-incomplete",
+      "pcie2-bridge-setup-state-sentinel",
+      "pcie2-bridge-setup-state-link-down-skip",
+      "pcie2-bridge-setup-state-inconclusive-capture",
+      "no-mmio-pcie2-bridge-setup-state-control-visible",
+      "staging/build-blocker"
+    ],
+    "pairedControl": "same output shape, no BCM2712 PCIe, RP1, MIP, GIC, DMA, or other MMIO address construction, no volatile load/store",
+    "restoreRequired": false
+  },
+  "evidence": [
+    {
+      "label": "bridge/setup source contract task record",
+      "path": "tasks/2026-06-08-phase11-rp1-bridge-setup-source-contract.md",
+      "type": "static source contract",
+      "classification": "accepted-source-contract"
+    },
+    {
+      "label": "retained Broadcom STB PCIe source",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-source-contract/pcie-brcmstb.c",
+      "type": "source reference",
+      "notes": [
+        "PCIE_RC_CFG_PRIV1_ID_VAL3 offset 0x043c and class mask 0x00ffffff",
+        "brcm_pcie_setup() writes class code 0x060400",
+        "brcm_pcie_set_outbound_win() programs WIN0 LO/HI and BASE_LIMIT/BASE_HI/LIMIT_HI"
+      ]
+    },
+    {
+      "label": "retained BCM2712 pcie2 device tree",
+      "path": "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/bcm2712.dtsi",
+      "type": "source reference",
+      "notes": [
+        "pcie2 controller base 0x10_0012_0000",
+        "linux,pci-domain 2",
+        "non-prefetchable PCIe 0x00_0000_0000 to CPU 0x1f_0000_0000 window"
+      ]
+    },
+    {
+      "label": "retained Pi 5 RP1 pcie2 binding",
+      "path": "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/bcm2712-rpi-5-b.dts",
+      "type": "source reference",
+      "notes": [
+        "rp1_target binds to pcie2 and status okay",
+        "RP1 bus 0xc0_4000_0000 maps to PCIe 0x00_0000_0000"
+      ]
+    },
+    {
+      "label": "accepted bridge/config preflight closeout",
+      "path": "tasks/2026-06-08-phase11-rp1-bridge-config-preflight-closeout.md",
+      "type": "accepted predecessor evidence",
+      "classification": "pcie2-bridge-preflight-ready-frontier-closed"
+    },
+    {
+      "label": "updated roadmap",
+      "path": "docs/src/roadmap.md",
+      "type": "documentation"
+    },
+    {
+      "label": "updated RP1/PCIe map contract",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "type": "documentation"
+    }
+  ],
+  "acceptedClaims": [
+    "phase11-rp1-bridge-setup-source-contract-v1 selects only a read-only setup-state snapshot",
+    "the selected register set is tied to retained Broadcom STB PCIe setup source and retained BCM2712/RP1 device-tree window sources",
+    "the selected operation does not write controller, bridge, endpoint, RP1, GIC, or DMA state"
+  ],
+  "rejectedClaims": [
+    "runtime implementation",
+    "hardware behavior",
+    "endpoint config retry",
+    "expected RP1 vendor/device visibility",
+    "endpoint ownership",
+    "broad RP1 mapping",
+    "BAR discovery or programming",
+    "bridge setup writes",
+    "PERST/link-control changes",
+    "interrupt delivery",
+    "DMA/cache",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "nextAction": "Promote phase11-rp1-bridge-setup-core-20260608 only after this accepted source contract is committed and no supervisor intervention is active."
+}

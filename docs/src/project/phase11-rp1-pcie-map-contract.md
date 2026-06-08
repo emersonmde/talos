@@ -1780,6 +1780,40 @@ networking, SSH, Milestone 11.3, or phase transition. The worker creates no
 follow-up task from this closeout; supervisor planning is required for the
 next Milestone 11.2 frontier.
 
+phase11-rp1-bridge-setup-source-contract-20260608 accepts
+phase11-rp1-bridge-setup-source-contract-v1. The selected target is
+pcie2-bridge-setup-state-read: a read-only BCM2712 PCIe2 setup-state snapshot
+after the accepted bridge/config preflight ready result. The allowed reads are
+PCIE_MISC_PCIE_STATUS at 0x1000124068, PCIE_MISC_MISC_CTRL at 0x1000124008,
+PCIE_RC_CFG_PRIV1_ID_VAL3 at 0x100012043c, and outbound window 0 registers
+PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LO/HI at 0x100012400c/0x1000124010,
+PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT at 0x1000124070,
+PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_HI at 0x1000124080, and
+PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI at 0x1000124084.
+
+Retained Broadcom STB PCIe setup source writes root-complex class code
+0x060400 through PCIE_RC_CFG_PRIV1_ID_VAL3 and programs outbound window 0
+through brcm_pcie_set_outbound_win() after the MISC_CTRL setup path. Retained
+BCM2712/RP1 device-tree sources tie pcie2 to controller base 0x10_0012_0000
+and the non-prefetchable PCIe 0x00_0000_0000 to CPU 0x1f_0000_0000 window
+that carries RP1 bus 0xc0_4000_0000. The source-expected visible setup shape
+is class code 0x060400, pcie outbound base 0, CPU base-low field 0,
+limit-low field 0xfff00000, base-high 0x1f, and limit-high 0x1f.
+
+The accepted classifications are pcie2-bridge-setup-state-visible,
+pcie2-bridge-setup-state-incomplete, pcie2-bridge-setup-state-sentinel,
+pcie2-bridge-setup-state-link-down-skip,
+pcie2-bridge-setup-state-inconclusive-capture,
+no-mmio-pcie2-bridge-setup-state-control-visible, and staging/build-blocker.
+The paired control must preserve output shape while constructing no BCM2712
+PCIe, RP1 peripheral/SYSINFO/clock/GPIO/MSI-X, MIP, GIC, DMA, or other MMIO
+address. This source contract accepts only a read-only setup-state contract;
+it does not accept runtime or hardware behavior, endpoint config retry,
+expected RP1 vendor/device visibility, endpoint ownership, broad RP1 mapping,
+BAR discovery or programming, bridge setup writes, PERST/link-control,
+interrupt delivery, DMA/cache, networking, SSH, Milestone 11.3, or phase
+transition.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

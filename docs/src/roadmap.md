@@ -8171,6 +8171,27 @@ generated-root, networking, SSH, Milestone 11.3, or phase transition. The
 worker creates no follow-up task from this closeout; supervisor planning is
 required for the next Milestone 11.2 frontier.
 
+phase11-rp1-bridge-setup-source-contract-20260608 accepts the next bounded
+source contract, phase11-rp1-bridge-setup-source-contract-v1. It selects a
+read-only BCM2712 PCIe2 setup-state snapshot after the accepted
+bridge/config-preflight ready result. The selected target is
+pcie2-bridge-setup-state-read: read PCIE_MISC_PCIE_STATUS and
+PCIE_MISC_MISC_CTRL as the accepted link/preflight predicates, then read
+PCIE_RC_CFG_PRIV1_ID_VAL3 and outbound window 0 LO/HI, BASE_LIMIT, BASE_HI,
+and LIMIT_HI. Retained Broadcom STB PCIe source writes class code 0x060400
+through PCIE_RC_CFG_PRIV1_ID_VAL3 and programs outbound window 0 from the
+host bridge windows; retained BCM2712/RP1 device-tree sources tie pcie2 to
+the non-prefetchable PCIe 0 -> CPU 0x1f_0000_0000 window that carries the RP1
+bus mapping.
+
+This accepts only the source contract and paired no-MMIO/no-PCIe/no-RP1/
+no-GIC control requirement for a read-only setup-state discriminator. It does
+not accept runtime or hardware behavior, endpoint config retry, expected RP1
+vendor/device visibility, endpoint ownership, broad RP1 mapping, BAR
+discovery or programming, bridge setup writes, PERST/link-control, interrupt
+delivery, DMA/cache, storage, generated-root, networking, SSH, Milestone 11.3,
+or phase transition.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
