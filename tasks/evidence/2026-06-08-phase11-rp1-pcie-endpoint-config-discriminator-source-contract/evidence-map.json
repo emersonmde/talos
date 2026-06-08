@@ -1,0 +1,67 @@
+{
+  "taskId": "phase11-rp1-pcie-endpoint-config-discriminator-source-contract-20260608",
+  "classification": "accepted-source-contract",
+  "contractId": "phase11-rp1-pcie-endpoint-config-discriminator-source-contract-v1",
+  "evidence": [
+    {
+      "kind": "static inspection",
+      "path": "tasks/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-source-contract.md",
+      "description": "Accepted source contract defining pcie2-host-link-status-read."
+    },
+    {
+      "kind": "static inspection",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-source-contract/source-reference-notes.md",
+      "description": "Source references and findings with disposition."
+    },
+    {
+      "kind": "retained source",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-source-contract/pcie-brcmstb.c",
+      "description": "Broadcom STB PCIe host driver source used for PCIE_MISC_PCIE_STATUS and link/config access rules."
+    },
+    {
+      "kind": "retained source",
+      "path": "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/bcm2712.dtsi",
+      "description": "Raspberry Pi Linux BCM2712 device tree source defining pcie2 base and PCIe window."
+    },
+    {
+      "kind": "retained source",
+      "path": "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/bcm2712-rpi-5-b.dts",
+      "description": "Raspberry Pi 5 device tree source defining RP1 child ranges under pcie2."
+    }
+  ],
+  "acceptedOperations": [
+    {
+      "name": "PCIE_MISC_PCIE_STATUS",
+      "address": "0x1000124068",
+      "widthBits": 32,
+      "access": "volatile little-endian load"
+    }
+  ],
+  "forbiddenOperations": [
+    "PCIe writes",
+    "endpoint config-space index/data cycles",
+    "PERST or link-control changes",
+    "bridge/window setup",
+    "MSI/MIP/GIC operations",
+    "RP1 peripheral/SYSINFO/clock/GPIO/GIC operations",
+    "DMA/cache operations"
+  ],
+  "validation": [
+    {
+      "gate": "Static inspection of accepted Phase 11 records, roadmap, project contract, retained Linux sources, and Talos helpers",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "pass"
+    }
+  ]
+}

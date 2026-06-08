@@ -8031,6 +8031,27 @@ broader PCIe, Milestone 11.3, and phase transition remain unaccepted.
 Supervisor planning is required for the next Milestone 11.2 feature slice;
 this closeout does not create a worker-owned follow-up task.
 
+phase11-rp1-pcie-endpoint-config-discriminator-source-contract-20260608 is
+accepted as
+phase11-rp1-pcie-endpoint-config-discriminator-source-contract-v1. It selects
+one read-only BCM2712 PCIe2 host-link status discriminator before any endpoint
+config access, PCIe writes, GPIO ownership retry, or interrupt-delivery work.
+The accepted target is pcie2-host-link-status-read, limited to a 32-bit load
+from PCIE_MISC_PCIE_STATUS at 0x1000124068. Source inspection ties this to
+pcie2 controller base 0x10_0012_0000 and Broadcom STB PCIe status offset
+0x4068; the retained RP1 SYSINFO/clock-window sentinel remains comparator
+context only. A non-sentinel host status with DL_ACTIVE and PHYLINKUP set
+would separate visible PCIe2 host/link state from the retained RP1-window
+0xdeaddead boundary. A link-down or sentinel host status blocks endpoint/config
+claims until a later supervisor-planned discriminator. Direct endpoint config
+probing is rejected in this source contract because the retained driver uses
+an EXT_CFG_INDEX write and warns that config access without link-up can abort.
+The paired no-MMIO/no-RP1/no-GIC control must pass before any real Pi 5 proof.
+This source contract does not accept runtime or hardware behavior, endpoint
+config access, broad RP1 mapping, endpoint ownership, PCIe writes,
+clock/reset ownership, GPIO ownership, event generation, interrupt delivery,
+DMA/cache, networking, SSH, Milestone 11.3, or phase transition.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

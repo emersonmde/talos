@@ -1606,6 +1606,37 @@ pin-control behavior, pad writes, clock/reset programming, DMA/cache, storage,
 generated-root, networking, SSH, broader PCIe, Milestone 11.3, and phase
 transition remain unaccepted.
 
+## Milestone 11.2 PCIe2 Host-Link Status Boundary
+
+phase11-rp1-pcie-endpoint-config-discriminator-source-contract-20260608
+accepts
+phase11-rp1-pcie-endpoint-config-discriminator-source-contract-v1. The
+selected target is `pcie2-host-link-status-read`: a single read-only 32-bit
+volatile load from BCM2712 pcie2 `PCIE_MISC_PCIE_STATUS` at CPU physical
+`0x1000124068`. Source inspection ties this address to Linux `bcm2712.dtsi`
+pcie2 register base `0x10_0012_0000` plus the Broadcom STB PCIe driver status
+offset `0x4068`.
+
+The accepted status fields are `pcie_port` bit `0x80`, `dl_active` bit
+`0x20`, `phylinkup` bit `0x10`, `link_in_l23` bit `0x40`, and
+`status_is_deaddead`. A non-sentinel status with `dl_active=true` and
+`phylinkup=true` separates visible PCIe2 host/link state from the retained RP1
+SYSINFO/clock-window sentinel and classifies as
+`pcie2-host-link-up-rp1-window-sentinel`. A non-sentinel status without both
+link-up bits classifies as `pcie2-host-status-visible-link-down`. A
+`0xdeaddead` status classifies as `pcie2-host-status-sentinel`.
+
+The contract rejects direct endpoint config-space probing in this source-only
+slice because the Broadcom STB PCIe driver gates endpoint config access on
+link-up and uses an `EXT_CFG_INDEX` write before reading `EXT_CFG_DATA`; the
+same driver notes config access without link-up can cause a CPU abort. The
+paired control must preserve output shape while constructing no BCM2712 PCIe,
+RP1 peripheral/SYSINFO/clock/GPIO/MSI-X, MIP, or GIC MMIO address. This
+source contract does not accept runtime behavior, hardware behavior, live
+endpoint config access, broad RP1 mapping, endpoint ownership, PCIe writes,
+clock/reset ownership, GPIO ownership, event generation, interrupt delivery,
+DMA/cache, networking, SSH, Milestone 11.3, or phase transition.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when
