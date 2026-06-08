@@ -224,6 +224,24 @@ pub const PCIE_MISC_PCIE_STATUS: usize = PCIE2_CONTROLLER_BASE + 0x4068;
 #[allow(dead_code)]
 pub const PCIE_MISC_PCIE_STATUS_OFFSET: u64 = 0x4068;
 #[allow(dead_code)]
+pub const PCIE_EXT_CFG_DATA: usize = PCIE2_CONTROLLER_BASE + 0x8000;
+#[allow(dead_code)]
+pub const PCIE_EXT_CFG_DATA_OFFSET: u64 = 0x8000;
+#[allow(dead_code)]
+pub const PCIE_EXT_CFG_INDEX: usize = PCIE2_CONTROLLER_BASE + 0x9000;
+#[allow(dead_code)]
+pub const PCIE_EXT_CFG_INDEX_OFFSET: u64 = 0x9000;
+#[allow(dead_code)]
+pub const RP1_ENDPOINT_CONFIG_INDEX_VALUE: u32 = 0x0010_0000;
+#[allow(dead_code)]
+pub const RP1_ENDPOINT_CONFIG_OFFSET: u64 = 0;
+#[allow(dead_code)]
+pub const RP1_ENDPOINT_CONFIG_BDF: &str = "0002:01:00.0";
+#[allow(dead_code)]
+pub const RP1_ENDPOINT_EXPECTED_VENDOR_ID: u32 = 0x1de4;
+#[allow(dead_code)]
+pub const RP1_ENDPOINT_EXPECTED_DEVICE_ID: u32 = 0x0001;
+#[allow(dead_code)]
 pub const PCIE_STATUS_PORT: u32 = 0x80;
 #[allow(dead_code)]
 pub const PCIE_STATUS_DL_ACTIVE: u32 = 0x20;
@@ -12614,6 +12632,7 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_read",
         talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_read",
         talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
+        talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",
         talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
         talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator"
     )
@@ -13860,6 +13879,161 @@ pub fn run_rp1_pcie2_host_link_status_no_mmio_control() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read")]
+pub fn run_rp1_endpoint_config_identity_read() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-endpoint-config-identity-source-contract-v1";
+    const TARGET: &str = "rp1-endpoint-config-vendor-device-read";
+    const STATUS_REGISTER_NAME: &str = "PCIE_MISC_PCIE_STATUS";
+    const INDEX_REGISTER_NAME: &str = "EXT_CFG_INDEX";
+    const DATA_REGISTER_NAME: &str = "EXT_CFG_DATA";
+
+    write_early_static("rpi5-rp1-endpoint-config-identity-read: start\n");
+    write_early_static("rpi5-rp1-endpoint-config-identity-read: before-precondition-load\n");
+    wait_uart10_empty_early_phase();
+
+    let status = read_rp1_reg_u32(PCIE_MISC_PCIE_STATUS);
+    let pcie_port = status & PCIE_STATUS_PORT != 0;
+    let dl_active = status & PCIE_STATUS_DL_ACTIVE != 0;
+    let phylinkup = status & PCIE_STATUS_PHYLINKUP != 0;
+    let link_in_l23 = status & PCIE_STATUS_LINK_IN_L23 != 0;
+    let status_is_deaddead = status == 0xdead_dead;
+    let link_ready = dl_active && phylinkup && !status_is_deaddead;
+    let (raw_config, index_write_performed) = if link_ready {
+        write_early_static("rpi5-rp1-endpoint-config-identity-read: before-ext-cfg-index-write\n");
+        write_pcie_ext_cfg_index(RP1_ENDPOINT_CONFIG_INDEX_VALUE);
+        write_early_static("rpi5-rp1-endpoint-config-identity-read: before-ext-cfg-data-load\n");
+        wait_uart10_empty_early_phase();
+        (read_rp1_reg_u32(PCIE_EXT_CFG_DATA), true)
+    } else {
+        (0, false)
+    };
+    let vendor_id = raw_config & 0xffff;
+    let device_id = (raw_config >> 16) & 0xffff;
+    let vendor_device_match = vendor_id == RP1_ENDPOINT_EXPECTED_VENDOR_ID
+        && device_id == RP1_ENDPOINT_EXPECTED_DEVICE_ID;
+    let raw_config_is_all_ones = raw_config == 0xffff_ffff;
+    let raw_config_is_zero = raw_config == 0;
+    let raw_config_is_deaddead = raw_config == 0xdead_dead;
+    let classification = classify_rp1_endpoint_config_identity(
+        status_is_deaddead,
+        dl_active,
+        phylinkup,
+        raw_config_is_all_ones,
+        raw_config_is_zero,
+        raw_config_is_deaddead,
+        vendor_device_match,
+    );
+
+    loop {
+        write_early_static("TALOS: rp1-endpoint-config-identity-result contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_endpoint_config_identity_common_fields(
+            Some(PCIE2_CONTROLLER_BASE as u64),
+            STATUS_REGISTER_NAME,
+            PCIE_MISC_PCIE_STATUS_OFFSET,
+            Some(PCIE_MISC_PCIE_STATUS as u64),
+            status,
+            pcie_port,
+            dl_active,
+            phylinkup,
+            link_in_l23,
+            status_is_deaddead,
+            RP1_ENDPOINT_CONFIG_BDF,
+            RP1_ENDPOINT_CONFIG_OFFSET,
+            INDEX_REGISTER_NAME,
+            PCIE_EXT_CFG_INDEX_OFFSET,
+            Some(PCIE_EXT_CFG_INDEX as u64),
+            RP1_ENDPOINT_CONFIG_INDEX_VALUE,
+            index_write_performed,
+            DATA_REGISTER_NAME,
+            PCIE_EXT_CFG_DATA_OFFSET,
+            Some(PCIE_EXT_CFG_DATA as u64),
+            raw_config,
+            vendor_id,
+            device_id,
+            vendor_device_match,
+            raw_config_is_all_ones,
+            raw_config_is_zero,
+            raw_config_is_deaddead,
+        );
+        write_early_static(" classification=");
+        write_early_static(classification);
+        write_early_static("\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_no_mmio_control")]
+pub fn run_rp1_endpoint_config_identity_no_mmio_control() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-endpoint-config-identity-source-contract-v1";
+    const TARGET: &str = "rp1-endpoint-config-vendor-device-read";
+    const STATUS_REGISTER_NAME: &str = "PCIE_MISC_PCIE_STATUS";
+    const INDEX_REGISTER_NAME: &str = "EXT_CFG_INDEX";
+    const DATA_REGISTER_NAME: &str = "EXT_CFG_DATA";
+    const SIMULATED_STATUS: u32 = PCIE_STATUS_PORT | PCIE_STATUS_DL_ACTIVE | PCIE_STATUS_PHYLINKUP;
+    const SIMULATED_RAW_CONFIG: u32 =
+        (RP1_ENDPOINT_EXPECTED_DEVICE_ID << 16) | RP1_ENDPOINT_EXPECTED_VENDOR_ID;
+
+    write_early_static("rpi5-rp1-endpoint-config-identity-control: start\n");
+    write_early_static(
+        "rpi5-rp1-endpoint-config-identity-control: no-bcm2712-pcie-rp1-sysinfo-clock-gpio-msix-mip-gic-dma-mmio\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    let pcie_port = SIMULATED_STATUS & PCIE_STATUS_PORT != 0;
+    let dl_active = SIMULATED_STATUS & PCIE_STATUS_DL_ACTIVE != 0;
+    let phylinkup = SIMULATED_STATUS & PCIE_STATUS_PHYLINKUP != 0;
+    let link_in_l23 = SIMULATED_STATUS & PCIE_STATUS_LINK_IN_L23 != 0;
+    let status_is_deaddead = SIMULATED_STATUS == 0xdead_dead;
+    let vendor_id = SIMULATED_RAW_CONFIG & 0xffff;
+    let device_id = (SIMULATED_RAW_CONFIG >> 16) & 0xffff;
+    let vendor_device_match = vendor_id == RP1_ENDPOINT_EXPECTED_VENDOR_ID
+        && device_id == RP1_ENDPOINT_EXPECTED_DEVICE_ID;
+    let raw_config_is_all_ones = SIMULATED_RAW_CONFIG == 0xffff_ffff;
+    let raw_config_is_zero = SIMULATED_RAW_CONFIG == 0;
+    let raw_config_is_deaddead = SIMULATED_RAW_CONFIG == 0xdead_dead;
+
+    loop {
+        write_early_static("TALOS: rp1-endpoint-config-identity-control contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_endpoint_config_identity_common_fields(
+            None,
+            STATUS_REGISTER_NAME,
+            PCIE_MISC_PCIE_STATUS_OFFSET,
+            None,
+            SIMULATED_STATUS,
+            pcie_port,
+            dl_active,
+            phylinkup,
+            link_in_l23,
+            status_is_deaddead,
+            RP1_ENDPOINT_CONFIG_BDF,
+            RP1_ENDPOINT_CONFIG_OFFSET,
+            INDEX_REGISTER_NAME,
+            PCIE_EXT_CFG_INDEX_OFFSET,
+            None,
+            RP1_ENDPOINT_CONFIG_INDEX_VALUE,
+            false,
+            DATA_REGISTER_NAME,
+            PCIE_EXT_CFG_DATA_OFFSET,
+            None,
+            SIMULATED_RAW_CONFIG,
+            vendor_id,
+            device_id,
+            vendor_device_match,
+            raw_config_is_all_ones,
+            raw_config_is_zero,
+            raw_config_is_deaddead,
+        );
+        write_early_static(" classification=no-mmio-rp1-endpoint-config-id-control-visible\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
 #[cfg(talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read")]
 pub fn run_rp1_gpio14_ownership_route_preflight_read() -> ! {
     const CONTRACT_ID: &str = "phase11-rp1-gpio-ownership-restore-source-contract-v1";
@@ -14993,6 +15167,151 @@ fn write_retained_rp1_window_sentinel_context(classification: &str) {
     write_early_static(" retained-rp1-window-sentinel=true");
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read")]
+fn write_pcie_ext_cfg_index(value: u32) {
+    let reg = PCIE_EXT_CFG_INDEX as *mut u32;
+    unsafe {
+        core::ptr::write_volatile(reg, value);
+        core::arch::asm!("dsb sy", options(nostack, preserves_flags));
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",
+    talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_no_mmio_control"
+))]
+fn classify_rp1_endpoint_config_identity(
+    status_is_deaddead: bool,
+    dl_active: bool,
+    phylinkup: bool,
+    raw_config_is_all_ones: bool,
+    raw_config_is_zero: bool,
+    raw_config_is_deaddead: bool,
+    vendor_device_match: bool,
+) -> &'static str {
+    if status_is_deaddead {
+        "rp1-endpoint-config-id-inconclusive-capture"
+    } else if !(dl_active && phylinkup) {
+        "rp1-endpoint-config-link-down-skip"
+    } else if raw_config_is_deaddead {
+        "rp1-endpoint-config-id-sentinel"
+    } else if raw_config_is_all_ones {
+        "rp1-endpoint-config-id-all-ones"
+    } else if raw_config_is_zero {
+        "rp1-endpoint-config-id-zero"
+    } else if vendor_device_match {
+        "rp1-endpoint-config-id-visible"
+    } else {
+        "rp1-endpoint-config-id-unexpected"
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",
+    talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_no_mmio_control"
+))]
+#[allow(clippy::too_many_arguments)]
+fn write_endpoint_config_identity_common_fields(
+    controller_base: Option<u64>,
+    status_register_name: &str,
+    status_source_offset: u64,
+    status_address: Option<u64>,
+    status_raw: u32,
+    pcie_port: bool,
+    dl_active: bool,
+    phylinkup: bool,
+    link_in_l23: bool,
+    status_is_deaddead: bool,
+    bdf: &str,
+    config_offset: u64,
+    index_register_name: &str,
+    index_source_offset: u64,
+    index_address: Option<u64>,
+    index_value: u32,
+    index_write_performed: bool,
+    data_register_name: &str,
+    data_source_offset: u64,
+    data_address: Option<u64>,
+    raw_config: u32,
+    vendor_id: u32,
+    device_id: u32,
+    vendor_device_match: bool,
+    raw_config_is_all_ones: bool,
+    raw_config_is_zero: bool,
+    raw_config_is_deaddead: bool,
+) {
+    write_early_static(" pcie2-controller-base=");
+    write_optional_hex_or_not_constructed(controller_base);
+    write_early_static(" pci-domain=2 precondition-register=");
+    write_early_static(status_register_name);
+    write_early_static(" precondition-source-offset=");
+    write_early_hex_u64(status_source_offset);
+    write_early_static(" precondition-address=");
+    write_optional_hex_or_not_constructed(status_address);
+    write_early_static(" precondition-width=32 precondition-raw=");
+    write_early_hex_u64(status_raw as u64);
+    write_early_static(" pcie-port=");
+    write_bool(pcie_port);
+    write_early_static(" dl-active=");
+    write_bool(dl_active);
+    write_early_static(" phylinkup=");
+    write_bool(phylinkup);
+    write_early_static(" link-in-l23=");
+    write_bool(link_in_l23);
+    write_early_static(" status-is-deaddead=");
+    write_bool(status_is_deaddead);
+    write_early_static(" config-bdf=");
+    write_early_static(bdf);
+    write_early_static(" config-offset=");
+    write_early_hex_u64(config_offset);
+    write_early_static(" index-register=");
+    write_early_static(index_register_name);
+    write_early_static(" index-source-offset=");
+    write_early_hex_u64(index_source_offset);
+    write_early_static(" index-address=");
+    write_optional_hex_or_not_constructed(index_address);
+    write_early_static(" index-value=");
+    write_early_hex_u64(index_value as u64);
+    write_early_static(" index-write-performed=");
+    write_bool(index_write_performed);
+    write_early_static(" data-register=");
+    write_early_static(data_register_name);
+    write_early_static(" data-source-offset=");
+    write_early_hex_u64(data_source_offset);
+    write_early_static(" data-address=");
+    write_optional_hex_or_not_constructed(data_address);
+    write_early_static(" width=32 raw-config=");
+    write_early_hex_u64(raw_config as u64);
+    write_early_static(" vendor-id=");
+    write_early_hex_u64(vendor_id as u64);
+    write_early_static(" device-id=");
+    write_early_hex_u64(device_id as u64);
+    write_early_static(" expected-vendor-id=");
+    write_early_hex_u64(RP1_ENDPOINT_EXPECTED_VENDOR_ID as u64);
+    write_early_static(" expected-device-id=");
+    write_early_hex_u64(RP1_ENDPOINT_EXPECTED_DEVICE_ID as u64);
+    write_early_static(" vendor-device-match=");
+    write_bool(vendor_device_match);
+    write_early_static(" raw-config-is-all-ones=");
+    write_bool(raw_config_is_all_ones);
+    write_early_static(" raw-config-is-zero=");
+    write_bool(raw_config_is_zero);
+    write_early_static(" raw-config-is-deaddead=");
+    write_bool(raw_config_is_deaddead);
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",
+    talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_no_mmio_control"
+))]
+fn write_optional_hex_or_not_constructed(value: Option<u64>) {
+    if let Some(value) = value {
+        write_early_hex_u64(value);
+    } else {
+        write_early_static("not-constructed");
+    }
+}
+
 #[cfg(any(
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control"
@@ -15193,6 +15512,8 @@ fn gpio14_ownership_preflight_classification(
     talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
     talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_no_mmio_control",
+    talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",
+    talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator",
@@ -15364,6 +15685,15 @@ mod tests {
         assert_eq!(PCIE2_CONTROLLER_BASE, 0x10_0012_0000);
         assert_eq!(PCIE_MISC_PCIE_STATUS_OFFSET, 0x4068);
         assert_eq!(PCIE_MISC_PCIE_STATUS, 0x10_0012_4068);
+        assert_eq!(PCIE_EXT_CFG_DATA_OFFSET, 0x8000);
+        assert_eq!(PCIE_EXT_CFG_DATA, 0x10_0012_8000);
+        assert_eq!(PCIE_EXT_CFG_INDEX_OFFSET, 0x9000);
+        assert_eq!(PCIE_EXT_CFG_INDEX, 0x10_0012_9000);
+        assert_eq!(RP1_ENDPOINT_CONFIG_INDEX_VALUE, 0x0010_0000);
+        assert_eq!(RP1_ENDPOINT_CONFIG_OFFSET, 0);
+        assert_eq!(RP1_ENDPOINT_CONFIG_BDF, "0002:01:00.0");
+        assert_eq!(RP1_ENDPOINT_EXPECTED_VENDOR_ID, 0x1de4);
+        assert_eq!(RP1_ENDPOINT_EXPECTED_DEVICE_ID, 0x0001);
         assert_eq!(PCIE_STATUS_PORT, 0x80);
         assert_eq!(PCIE_STATUS_DL_ACTIVE, 0x20);
         assert_eq!(PCIE_STATUS_PHYLINKUP, 0x10);

@@ -1,0 +1,8 @@
+candidate_archive=target/talos-rpi5-rp1-endpoint-config-identity-read-core.tar.gz
+candidate_archive_sha256=f3f158bb9e319b36d39188619c8c8372611ad9451945bcf7be4f741411092d1a
+kernel_2712_sha256=d8d679cc74a10b954c7723bc665842d12a07120612eac6d8e14bb8d171a68cea
+kernel_2712_size=48456
+header_image_size=48456
+text_offset=0
+flags=12
+result_marker=TALOS: rp1-endpoint-config-identity-result

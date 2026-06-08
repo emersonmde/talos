@@ -1,0 +1,81 @@
+{
+  "taskId": "phase11-rp1-endpoint-config-identity-core-20260608",
+  "classification": "accepted-local-static-endpoint-config-identity-core",
+  "contract": "phase11-rp1-endpoint-config-identity-source-contract-v1",
+  "evidenceLevel": "local-static-archive-inspection",
+  "hardwareRun": false,
+  "artifacts": {
+    "real": {
+      "archive": "target/talos-rpi5-rp1-endpoint-config-identity-read-core.tar.gz",
+      "archiveSha256": "f3f158bb9e319b36d39188619c8c8372611ad9451945bcf7be4f741411092d1a",
+      "kernelSha256": "d8d679cc74a10b954c7723bc665842d12a07120612eac6d8e14bb8d171a68cea",
+      "kernelSizeBytes": 48456,
+      "resultMarker": "TALOS: rp1-endpoint-config-identity-result",
+      "reviewOutput": "tasks/evidence/2026-06-08-phase11-rp1-endpoint-config-identity-core/real-archive-review.txt"
+    },
+    "control": {
+      "archive": "target/talos-rpi5-rp1-endpoint-config-identity-no-mmio-control-core.tar.gz",
+      "archiveSha256": "53617447da04e045f09a9eaa3e10a4205046b2e73fe3a54b58263b097cba975e",
+      "kernelSha256": "853f553f44457c848f28a8c977c5d821541c9509d7c83ab74e9911c1717849ba",
+      "kernelSizeBytes": 47608,
+      "resultMarker": "TALOS: rp1-endpoint-config-identity-control",
+      "reviewOutput": "tasks/evidence/2026-06-08-phase11-rp1-endpoint-config-identity-core/control-archive-review.txt"
+    }
+  },
+  "validation": [
+    {
+      "kind": "fmt/lint",
+      "command": "cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "kind": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "result": "pass"
+    },
+    {
+      "kind": "static/archive inspection",
+      "command": "scripts/rpi5-rp1-endpoint-config-identity-read-review.sh target/talos-rpi5-rp1-endpoint-config-identity-read-core.tar.gz",
+      "result": "pass"
+    },
+    {
+      "kind": "static/archive inspection",
+      "command": "scripts/rpi5-rp1-endpoint-config-identity-no-mmio-control-review.sh target/talos-rpi5-rp1-endpoint-config-identity-no-mmio-control-core.tar.gz",
+      "result": "pass"
+    },
+    {
+      "kind": "diff check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "kind": "docs",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "not-run",
+      "reason": "no docs/src files touched"
+    },
+    {
+      "kind": "cached diff check",
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "acceptedClaims": [
+    "real candidate performs only the accepted status-read, conditional EXT_CFG_INDEX write, and single EXT_CFG_DATA offset-0 read",
+    "control candidate preserves output shape while constructing no forbidden MMIO address",
+    "static/archive evidence distinguishes the real and control artifacts at the accepted diagnostic boundary only"
+  ],
+  "unacceptedClaims": [
+    "hardware behavior",
+    "endpoint ownership",
+    "endpoint configuration mutation",
+    "BAR programming or discovery beyond offset 0 identity",
+    "bridge setup",
+    "interrupt delivery",
+    "DMA/cache",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ]
+}
