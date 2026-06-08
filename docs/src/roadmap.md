@@ -8344,6 +8344,22 @@ interrupt delivery, endpoint ownership, broad RP1 mapping, pad/RIO/clock/reset
 ownership, DMA/cache, networking, SSH, Milestone 11.3, and phase transition
 remain unaccepted.
 
+phase11-rp1-observed-gpio-status-pi5-20260608 completed as
+capture-staging-blocked. The real candidate selected tree
+52b5f11000b24f6f6d00ab1b9aaa4d62a4d4114486a0302ad593b713a08c2559, retained
+two 49,656-byte da591740/kernel_2712.img TFTP fetches, kept final
+selected-tree identity, and restored to
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. Serial
+output contained 42 task-owned result markers with marker-visible
+gpio14-status-raw=0xabe3300, gpio14-ctrl-raw=0x84, ctrl-funcsel=4, and
+classification=observed-aperture-gpio14-status-ctrl-visible. That result is
+not accepted because pi5-capture-transaction-v2 rejected the run for the
+repaired serial freshness gate: 96 pre-power drain attempts read 1,095,168
+bytes and never reached empty-read-before-power. The required known-good
+production-timer control failed the same repaired freshness discriminator, so
+the unchanged candidate was not rerun and same-shaped real GPIO14 STATUS/CTRL
+proof remains blocked pending supervisor planning.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

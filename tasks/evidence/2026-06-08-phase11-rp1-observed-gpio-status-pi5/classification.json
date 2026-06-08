@@ -1,0 +1,143 @@
+{
+  "task_id": "phase11-rp1-observed-gpio-status-pi5-20260608",
+  "classification": "capture-staging-blocked",
+  "completed_status": "completed-blocker",
+  "accepted_visibility": false,
+  "blocker": "real candidate and known-good control failed the same repaired pre-power serial freshness discriminator",
+  "real_candidate": {
+    "directory": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-pi5/real-run",
+    "capture_summary": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-pi5/capture-command-output.json",
+    "identity_join": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-pi5/identity-join.json",
+    "identity_join_exit": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-pi5/identity-join.exit",
+    "marker": "TALOS: rp1-observed-gpio-status-result",
+    "marker_occurrences": 42,
+    "marker_visible_values": {
+      "gpio14_status_raw": "0xabe3300",
+      "gpio14_ctrl_raw": "0x84",
+      "ctrl_funcsel": 4,
+      "classification_seen_in_serial": "observed-aperture-gpio14-status-ctrl-visible"
+    },
+    "rejection_reasons": [
+      "serial-drain-not-empty-before-power",
+      "saturated-direct-read-without-empty-pre-power-drain"
+    ],
+    "proof_run_identity": {
+      "selected_tree_hash": "52b5f11000b24f6f6d00ab1b9aaa4d62a4d4114486a0302ad593b713a08c2559",
+      "effective_kernel": "kernel_2712.img",
+      "expected_fetch_path": "da591740/kernel_2712.img",
+      "expected_fetch_byte_count": 49656,
+      "serial": {
+        "pre_power_drain": {
+          "attempts": 96,
+          "total_bytes": 1095168,
+          "final_cursor": 4194304,
+          "empty_before_power": false
+        },
+        "cursor_file": 4194304,
+        "window_cursor_start": 4194304,
+        "window_cursor_end": 4194304,
+        "window_bytes": 74890,
+        "response_bytes": 74890,
+        "capture_mode": "read",
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+      },
+      "tftp": {
+        "cursor_file": 4334895,
+        "delta_cursor_start": 4334895,
+        "delta_cursor_end": 4336246,
+        "stable": true,
+        "event_count": 13,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 2,
+        "expected_fetch_bytes_seen": [
+          49656,
+          49656
+        ]
+      },
+      "final_pre_restore": {
+        "tree_hash": "52b5f11000b24f6f6d00ab1b9aaa4d62a4d4114486a0302ad593b713a08c2559",
+        "effective_kernel": "kernel_2712.img",
+        "selected_tree_still_staged": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes": 49656
+      },
+      "restore": {
+        "snapshot_name": "pre-observed-gpio-status-real-1700",
+        "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      }
+    }
+  },
+  "known_good_control_after_inconclusive": {
+    "directory": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-pi5/known-good-control-after-inconclusive",
+    "capture_summary": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-pi5/known-good-capture-command-output.json",
+    "identity_join": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-pi5/known-good-identity-join.json",
+    "identity_join_exit": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-pi5/known-good-identity-join.exit",
+    "rejection_reasons": [
+      "serial-drain-not-empty-before-power",
+      "saturated-direct-read-without-empty-pre-power-drain"
+    ],
+    "proof_run_identity": {
+      "selected_tree_hash": "407d10f6ed4457e89f9023f769c00920a4ebbe0f42ca65b0165b8db014140697",
+      "effective_kernel": "kernel_2712.img",
+      "expected_fetch_path": "da591740/kernel_2712.img",
+      "expected_fetch_byte_count": 104136,
+      "serial": {
+        "pre_power_drain": {
+          "attempts": 96,
+          "total_bytes": 1095168,
+          "final_cursor": 4194304,
+          "empty_before_power": false
+        },
+        "cursor_file": 4194304,
+        "window_cursor_start": 4194304,
+        "window_cursor_end": 4194304,
+        "window_bytes": 7674,
+        "response_bytes": 7674,
+        "capture_mode": "read",
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+      },
+      "tftp": {
+        "cursor_file": 4336246,
+        "delta_cursor_start": 4336246,
+        "delta_cursor_end": 4337597,
+        "stable": true,
+        "event_count": 13,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 2,
+        "expected_fetch_bytes_seen": [
+          104136,
+          104136
+        ]
+      },
+      "final_pre_restore": {
+        "tree_hash": "407d10f6ed4457e89f9023f769c00920a4ebbe0f42ca65b0165b8db014140697",
+        "effective_kernel": "kernel_2712.img",
+        "selected_tree_still_staged": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes": 104136
+      },
+      "restore": {
+        "snapshot_name": "pre-observed-gpio-status-real-known-good-1707",
+        "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      }
+    }
+  },
+  "decision": {
+    "unchanged_candidate_rerun_after_known_good": false,
+    "reason": "task policy stops as completed-blocker when candidate and known-good retry fail the same repaired freshness discriminator"
+  },
+  "restore": {
+    "real_post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "known_good_post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "claims": {
+    "accepted": [
+      "The real candidate and known-good control both retained matching TFTP/final identity and restore proof but failed the repaired pre-power serial freshness gate.",
+      "The real candidate serial output is retained as marker-visible but non-decisive evidence."
+    ],
+    "rejected": [
+      "GPIO14 STATUS/CTRL visibility is not accepted.",
+      "GPIO ownership, event generation, interrupt pending/delivery, endpoint ownership, broad RP1 mapping, DMA/cache, networking, SSH, Milestone 11.3, and phase transition remain unaccepted."
+    ]
+  }
+}

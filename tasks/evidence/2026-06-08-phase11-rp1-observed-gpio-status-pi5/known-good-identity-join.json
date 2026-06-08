@@ -1,0 +1,57 @@
+{
+  "contract_version": "pi5-capture-transaction-v2",
+  "run_label": "observed-gpio-status-real-known-good",
+  "summary_label": "observed-gpio-status-real-known-good",
+  "decisive_rp1_hardware_classification_allowed": false,
+  "classification": "capture-staging-blocked",
+  "rejection_reasons": [
+    "serial-drain-not-empty-before-power",
+    "saturated-direct-read-without-empty-pre-power-drain"
+  ],
+  "proof_run_identity": {
+    "selected_tree_hash": "407d10f6ed4457e89f9023f769c00920a4ebbe0f42ca65b0165b8db014140697",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 104136,
+    "serial": {
+      "pre_power_drain": {
+        "attempts": 96,
+        "total_bytes": 1095168,
+        "final_cursor": 4194304,
+        "empty_before_power": false
+      },
+      "cursor_file": 4194304,
+      "window_cursor_start": 4194304,
+      "window_cursor_end": 4194304,
+      "window_bytes": 7674,
+      "response_bytes": 7674,
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+    },
+    "tftp": {
+      "cursor_file": 4336246,
+      "delta_cursor_start": 4336246,
+      "delta_cursor_end": 4337597,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        104136,
+        104136
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "407d10f6ed4457e89f9023f769c00920a4ebbe0f42ca65b0165b8db014140697",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 104136
+    },
+    "restore": {
+      "snapshot_name": "pre-observed-gpio-status-real-known-good-1707",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "rule": "missing or mismatched candidate identity, pre-power serial-drain, serial-window, TFTP, or final identity fields prevent decisive hardware classification"
+}

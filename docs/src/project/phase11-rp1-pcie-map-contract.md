@@ -1974,6 +1974,22 @@ interrupt delivery, endpoint ownership, broad RP1 mapping, pad/RIO/clock/reset
 ownership, DMA/cache, networking, SSH, Milestone 11.3, and phase transition
 remain unaccepted.
 
+phase11-rp1-observed-gpio-status-pi5-20260608 completed as
+capture-staging-blocked. The real candidate selected tree
+52b5f11000b24f6f6d00ab1b9aaa4d62a4d4114486a0302ad593b713a08c2559, observed
+two 49,656-byte da591740/kernel_2712.img TFTP fetches, retained 42 task-owned
+result markers, and emitted marker-visible values gpio14-status-raw=0xabe3300,
+gpio14-ctrl-raw=0x84, ctrl-funcsel=4, and
+classification=observed-aperture-gpio14-status-ctrl-visible. The v2 identity
+join rejected that run because the repaired pre-power serial drain exhausted
+96 attempts, read 1,095,168 bytes, and did not reach empty-read-before-power.
+The required known-good production-timer control failed the same repaired
+freshness discriminator despite matching TFTP/final identity evidence, so the
+unchanged real candidate was not rerun. The marker-visible GPIO14 STATUS/CTRL
+values remain retained evidence, not accepted visibility. Same-shaped real
+GPIO14 STATUS/CTRL reruns are blocked pending supervisor planning around the
+freshness blocker or a different accepted discriminator.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when
