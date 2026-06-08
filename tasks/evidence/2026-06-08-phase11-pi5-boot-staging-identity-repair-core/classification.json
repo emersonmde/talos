@@ -1,0 +1,45 @@
+{
+  "task_id": "phase11-pi5-boot-staging-identity-repair-core-20260608",
+  "classification": "boot-staging-identity-discriminator-accepted",
+  "status": "accepted",
+  "contract": {
+    "version": "pi5-boot-staging-identity-v1",
+    "helper": "scripts/rpi5-boot-staging-identity-check.sh",
+    "accepted_rule": "serial and RP1 output are not considered until selected tree, expected TFTP fetch bytes, final pre-restore identity, and restore identity join to one candidate boot tree"
+  },
+  "retained_replays": {
+    "accepted_control": {
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-boot-staging-identity-repair-core/control-staging-identity-check.json",
+      "classification": "boot-staging-identity-ready"
+    },
+    "primary_real_run": {
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-boot-staging-identity-repair-core/real-run-staging-identity-check.json",
+      "classification": "boot-staging-identity-blocked",
+      "expected_rejections": [
+        "tftp-expected-fetch-byte-mismatch",
+        "final-pre-restore-selected-tree-mismatch",
+        "final-pre-restore-is-baseline",
+        "final-pre-restore-expected-fetch-byte-mismatch"
+      ]
+    },
+    "clean_real_retry": {
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-boot-staging-identity-repair-core/real-run-final-staging-identity-check.json",
+      "classification": "boot-staging-identity-blocked",
+      "expected_rejections": [
+        "tftp-expected-fetch-byte-mismatch",
+        "final-pre-restore-selected-tree-mismatch",
+        "final-pre-restore-is-baseline",
+        "final-pre-restore-expected-fetch-byte-mismatch"
+      ]
+    }
+  },
+  "next_hardware_procedure": "Run a no-RP1/no-MMIO known-good staging control through rpi5-boot-staging-identity-check.sh before any same-shaped real observed GPIO14 STATUS/CTRL retry.",
+  "accepted_claims": [
+    "The retained control proof passes the staging identity discriminator.",
+    "The retained real run and clean retry are classified as baseline-served boot-staging blockers.",
+    "The next hardware procedure has a mechanical staging discriminator that rejects the same selected-tree/TFTP/final-identity mismatch."
+  ],
+  "rejected_claims": [
+    "No GPIO14 STATUS/CTRL visibility, GPIO ownership, interrupt delivery, broad RP1 mapping, DMA/cache, networking, SSH, Milestone 11.3, or phase transition is accepted."
+  ]
+}

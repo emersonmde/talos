@@ -429,6 +429,23 @@ restore checks, then rejects any proof whose required marker lacks the embedded
 it does not accept GPIO ownership, event generation, interrupt delivery, broad
 RP1 mapping, or any phase transition.
 
+Before accepting any marker-visible run-unique serial output, also replay the
+same retained bundle through the boot-staging identity discriminator:
+
+~~~bash
+scripts/rpi5-boot-staging-identity-check.sh \
+  --evidence-dir tasks/evidence/<task-id>/<run-dir> \
+  --baseline-tree-hash <pre-run-restored-tree-hash>
+~~~
+
+The staging discriminator ignores serial and RP1 output. It only accepts when
+the selected pre-power tree, expected `da591740/kernel_2712.img` fetch bytes,
+stable pre-restore TFTP delta, final pre-restore tree, and restore identity all
+join to the same candidate tree. If TFTP serves the baseline-sized kernel or
+the final pre-restore status has returned to the baseline tree, classify the
+run as `boot-staging-identity-blocked` and run a no-RP1/no-MMIO known-good
+staging control before retrying a real RP1/GPIO candidate.
+
 V3 keeps the v2 selected-tree, effective-kernel, expected-fetch, TFTP, final
 pre-restore, and restore checks. It only changes the saturated serial freshness
 gate: a non-empty bounded pre-power drain may be accepted when the serial window

@@ -1,0 +1,46 @@
+{
+  "task_id": "phase11-pi5-boot-staging-identity-repair-core-20260608",
+  "classification": "boot-staging-identity-discriminator-accepted",
+  "evidence": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-08-phase11-pi5-boot-staging-identity-repair-core.md",
+      "type": "task record"
+    },
+    {
+      "label": "static problem analysis",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-boot-staging-identity-repair-core/static-problem-analysis.md",
+      "type": "static inspection"
+    },
+    {
+      "label": "boot staging identity helper",
+      "path": "scripts/rpi5-boot-staging-identity-check.sh",
+      "type": "repository helper"
+    },
+    {
+      "label": "accepted control replay",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-boot-staging-identity-repair-core/control-staging-identity-check.json",
+      "type": "retained replay"
+    },
+    {
+      "label": "primary real run replay",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-boot-staging-identity-repair-core/real-run-staging-identity-check.json",
+      "type": "retained replay"
+    },
+    {
+      "label": "clean real retry replay",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-boot-staging-identity-repair-core/real-run-final-staging-identity-check.json",
+      "type": "retained replay"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-boot-staging-identity-repair-core/classification.json",
+      "type": "accepted classification"
+    },
+    {
+      "label": "lab-controller procedure update",
+      "path": "docs/src/project/lab-controller.md",
+      "type": "documentation"
+    }
+  ]
+}
