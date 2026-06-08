@@ -170,6 +170,18 @@ pub const RP1_GPIO14_OBSERVED_APERTURE_STATUS: usize = 0x1c_000d_0070;
 #[allow(dead_code)]
 pub const RP1_GPIO14_OBSERVED_APERTURE_CTRL: usize = 0x1c_000d_0074;
 #[allow(dead_code)]
+pub const RP1_IO_BANK0_OBSERVED_APERTURE_INTE: usize = 0x1c_000d_011c;
+#[allow(dead_code)]
+pub const RP1_IO_BANK0_OBSERVED_APERTURE_INTS: usize = 0x1c_000d_0124;
+#[allow(dead_code)]
+pub const RP1_RIO0_OBSERVED_APERTURE_OUT: usize = 0x1c_000e_0000;
+#[allow(dead_code)]
+pub const RP1_RIO0_OBSERVED_APERTURE_OE: usize = 0x1c_000e_0004;
+#[allow(dead_code)]
+pub const RP1_RIO0_OBSERVED_APERTURE_IN: usize = 0x1c_000e_0008;
+#[allow(dead_code)]
+pub const RP1_GPIO14_OBSERVED_APERTURE_PAD: usize = 0x1c_000f_003c;
+#[allow(dead_code)]
 pub const RP1_UART0_GPIO14_PAD: usize = 0x1f_000f_003c;
 #[allow(dead_code)]
 pub const RP1_UART0_GPIO15_PAD: usize = 0x1f_000f_0040;
@@ -14571,8 +14583,8 @@ pub fn run_rp1_observed_gpio_status_no_mmio_control() -> ! {
 
 #[cfg(talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read")]
 pub fn run_rp1_gpio14_ownership_route_preflight_read() -> ! {
-    const CONTRACT_ID: &str = "phase11-rp1-gpio-ownership-restore-source-contract-v1";
-    const TARGET: &str = "rp1-gpio14-ownership-route-preflight-read";
+    const CONTRACT_ID: &str = "phase11-rp1-observed-gpio-ownership-route-source-contract-v1";
+    const TARGET: &str = "rp1-gpio14-ownership-route-observed-aperture-preflight-read";
     const PIN: &str = "GPIO14";
     const GPIO14_MASK: u32 = 1 << 14;
     const GIC_INTID: u32 = 160;
@@ -14585,14 +14597,14 @@ pub fn run_rp1_gpio14_ownership_route_preflight_read() -> ! {
     write_early_static("rpi5-rp1-gpio14-ownership-route-preflight-read: before-read-only-loads\n");
     wait_uart10_empty_early_phase();
 
-    let gpio14_status = read_rp1_reg_u32(RP1_GPIO14_STATUS);
-    let gpio14_ctrl = read_rp1_reg_u32(RP1_UART0_GPIO14_CTRL);
-    let io_bank0_inte = read_rp1_reg_u32(RP1_IO_BANK0_INTE);
-    let io_bank0_ints = read_rp1_reg_u32(RP1_IO_BANK0_INTS);
-    let rio_out = read_rp1_reg_u32(RP1_RIO0_OUT);
-    let rio_oe = read_rp1_reg_u32(RP1_RIO0_OE);
-    let rio_in = read_rp1_reg_u32(RP1_RIO0_IN);
-    let pad = read_rp1_reg_u32(RP1_UART0_GPIO14_PAD);
+    let gpio14_status = read_rp1_reg_u32(RP1_GPIO14_OBSERVED_APERTURE_STATUS);
+    let gpio14_ctrl = read_rp1_reg_u32(RP1_GPIO14_OBSERVED_APERTURE_CTRL);
+    let io_bank0_inte = read_rp1_reg_u32(RP1_IO_BANK0_OBSERVED_APERTURE_INTE);
+    let io_bank0_ints = read_rp1_reg_u32(RP1_IO_BANK0_OBSERVED_APERTURE_INTS);
+    let rio_out = read_rp1_reg_u32(RP1_RIO0_OBSERVED_APERTURE_OUT);
+    let rio_oe = read_rp1_reg_u32(RP1_RIO0_OBSERVED_APERTURE_OE);
+    let rio_in = read_rp1_reg_u32(RP1_RIO0_OBSERVED_APERTURE_IN);
+    let pad = read_rp1_reg_u32(RP1_GPIO14_OBSERVED_APERTURE_PAD);
 
     let gic = GicV2::new(GICD_BASE, GICC_BASE);
     let (gicd_isenabler5, gicd_ispendr5, gicd_isactiver5, gicc_hppir) = unsafe {
@@ -14608,6 +14620,11 @@ pub fn run_rp1_gpio14_ownership_route_preflight_read() -> ! {
         gpio14_status,
         gpio14_ctrl,
         io_bank0_inte,
+        io_bank0_ints,
+        rio_out,
+        rio_oe,
+        rio_in,
+        pad,
         gicd_isenabler5,
         gicd_ispendr5,
         gicd_isactiver5,
@@ -14626,21 +14643,21 @@ pub fn run_rp1_gpio14_ownership_route_preflight_read() -> ! {
         write_early_static(" gpio14-bit-mask=");
         write_early_hex_u64(GPIO14_MASK as u64);
         write_early_static(" gpio14-status-address=");
-        write_early_hex_u64(RP1_GPIO14_STATUS as u64);
+        write_early_hex_u64(RP1_GPIO14_OBSERVED_APERTURE_STATUS as u64);
         write_early_static(" gpio14-ctrl-address=");
-        write_early_hex_u64(RP1_UART0_GPIO14_CTRL as u64);
+        write_early_hex_u64(RP1_GPIO14_OBSERVED_APERTURE_CTRL as u64);
         write_early_static(" io-bank0-inte-address=");
-        write_early_hex_u64(RP1_IO_BANK0_INTE as u64);
+        write_early_hex_u64(RP1_IO_BANK0_OBSERVED_APERTURE_INTE as u64);
         write_early_static(" io-bank0-ints-address=");
-        write_early_hex_u64(RP1_IO_BANK0_INTS as u64);
+        write_early_hex_u64(RP1_IO_BANK0_OBSERVED_APERTURE_INTS as u64);
         write_early_static(" rio-out-address=");
-        write_early_hex_u64(RP1_RIO0_OUT as u64);
+        write_early_hex_u64(RP1_RIO0_OBSERVED_APERTURE_OUT as u64);
         write_early_static(" rio-oe-address=");
-        write_early_hex_u64(RP1_RIO0_OE as u64);
+        write_early_hex_u64(RP1_RIO0_OBSERVED_APERTURE_OE as u64);
         write_early_static(" rio-in-address=");
-        write_early_hex_u64(RP1_RIO0_IN as u64);
+        write_early_hex_u64(RP1_RIO0_OBSERVED_APERTURE_IN as u64);
         write_early_static(" pad-address=");
-        write_early_hex_u64(RP1_UART0_GPIO14_PAD as u64);
+        write_early_hex_u64(RP1_GPIO14_OBSERVED_APERTURE_PAD as u64);
         write_early_static(" gicd-isenabler5-address=");
         write_early_hex_u64(GICD_ISENABLER5 as u64);
         write_early_static(" gicd-ispendr5-address=");
@@ -14674,8 +14691,8 @@ pub fn run_rp1_gpio14_ownership_route_preflight_read() -> ! {
 
 #[cfg(talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control")]
 pub fn run_rp1_gpio14_ownership_route_preflight_no_mmio_control() -> ! {
-    const CONTRACT_ID: &str = "phase11-rp1-gpio-ownership-restore-source-contract-v1";
-    const TARGET: &str = "rp1-gpio14-ownership-route-preflight-read";
+    const CONTRACT_ID: &str = "phase11-rp1-observed-gpio-ownership-route-source-contract-v1";
+    const TARGET: &str = "rp1-gpio14-ownership-route-observed-aperture-preflight-read";
     const PIN: &str = "GPIO14";
     const GPIO14_MASK: u32 = 1 << 14;
     const SIMULATED_RAW_VALUE: u32 = 0;
@@ -14715,7 +14732,9 @@ pub fn run_rp1_gpio14_ownership_route_preflight_no_mmio_control() -> ! {
             SIMULATED_HPPIR_INTID,
             GPIO14_MASK,
         );
-        write_early_static(" classification=simulated/control\n");
+        write_early_static(
+            " classification=no-mmio-observed-gpio14-ownership-route-control-visible\n",
+        );
         wait_uart10_empty_early_phase();
     }
 }
@@ -16469,6 +16488,11 @@ fn gpio14_ownership_preflight_classification(
     gpio14_status: u32,
     gpio14_ctrl: u32,
     io_bank0_inte: u32,
+    io_bank0_ints: u32,
+    rio_out: u32,
+    rio_oe: u32,
+    rio_in: u32,
+    pad: u32,
     gicd_isenabler5: u32,
     gicd_ispendr5: u32,
     gicd_isactiver5: u32,
@@ -16480,8 +16504,24 @@ fn gpio14_ownership_preflight_classification(
     let raw_event_enable = (gpio14_ctrl >> 20) & 0xf;
     let filtered_event_enable = (gpio14_ctrl >> 24) & 0xf;
     let status_event_mask = (gpio14_status >> 20) & 0xff;
-    if funcsel != 5 {
-        "gpio14-ownership-preflight-blocked-non-gpio-function"
+    let rp1_reads = [
+        gpio14_status,
+        gpio14_ctrl,
+        io_bank0_inte,
+        io_bank0_ints,
+        rio_out,
+        rio_oe,
+        rio_in,
+        pad,
+    ];
+    if rp1_reads.iter().all(|&raw| raw == 0xdead_dead) {
+        "observed-gpio14-ownership-preflight-sentinel"
+    } else if rp1_reads.iter().all(|&raw| raw == 0xffff_ffff) {
+        "observed-gpio14-ownership-preflight-all-ones"
+    } else if rp1_reads.iter().all(|&raw| raw == 0) {
+        "observed-gpio14-ownership-preflight-zero"
+    } else if funcsel != 5 {
+        "observed-gpio14-ownership-preflight-blocked-non-gpio-function"
     } else if (gicd_isenabler5 & 1) != 0
         || (gicd_ispendr5 & 1) != 0
         || (gicd_isactiver5 & 1) != 0
@@ -16492,10 +16532,11 @@ fn gpio14_ownership_preflight_classification(
         || filtered_event_enable != 0
         || status_event_mask != 0
         || (io_bank0_inte & gpio14_mask) != 0
+        || (io_bank0_ints & gpio14_mask) != 0
     {
-        "gpio14-ownership-preflight-blocked-existing-event-or-enable-state"
+        "observed-gpio14-ownership-preflight-blocked-route-or-source-state"
     } else {
-        "gpio14-ownership-route-preflight-visible"
+        "observed-gpio14-ownership-route-preflight-visible"
     }
 }
 

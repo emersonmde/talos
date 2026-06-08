@@ -1,0 +1,18 @@
+{
+  "task_id": "phase11-rp1-observed-gpio-ownership-route-core-20260608",
+  "classification": "accepted-local-static-observed-gpio14-ownership-route-core",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "fmt/lint/typecheck",
+    "unit tests",
+    "archive inspection",
+    "docs build"
+  ],
+  "hardware_run": false,
+  "hardware_test_lock_acquired": false,
+  "accepted_claims": [
+    "real local/static candidate uses only the accepted observed-aperture GPIO14 ownership/route preflight read set",
+    "paired local/static control preserves output shape without constructing forbidden RP1/GIC MMIO addresses"
+  ]
+}

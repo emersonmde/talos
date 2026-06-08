@@ -27,9 +27,9 @@ for required in \
     "rpi5-rp1-gpio14-ownership-route-preflight-read: start" \
     "rpi5-rp1-gpio14-ownership-route-preflight-read: before-read-only-loads" \
     "$RESULT_MARKER" \
-    "phase11-rp1-gpio-ownership-restore-source-contract-v1" \
+    "phase11-rp1-observed-gpio-ownership-route-source-contract-v1" \
     "target=" \
-    "rp1-gpio14-ownership-route-preflight-read" \
+    "rp1-gpio14-ownership-route-observed-aperture-preflight-read" \
     "pin=GPIO14" \
     "gpio14-bit-mask=" \
     "gpio14-status-address=" \
@@ -81,6 +81,7 @@ done
 for forbidden in \
     "TALOS: rp1-gpio14-ownership-route-preflight-control" \
     "classification=simulated/control" \
+    "phase11-rp1-gpio-ownership-restore-source-contract-v1" \
     "GICC_IAR" \
     "GICC_EOIR"; do
     if grep -Fq "$forbidden" "$kernel_strings"; then

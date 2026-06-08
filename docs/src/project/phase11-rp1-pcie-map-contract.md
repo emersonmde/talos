@@ -2151,6 +2151,20 @@ interrupt pending/delivery, GIC acknowledgement, handler ownership,
 GPIO/RIO/pad/INTE writes, parent-route masking writes, DMA/cache, networking,
 SSH, Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-observed-gpio-ownership-route-core-20260608 implements that
+observed-aperture contract as a local/static real candidate plus paired
+no-MMIO/no-RP1/no-GIC control. The real candidate branches from the early Rust
+entry path, emits the task-owned start/pre-read markers, performs only the
+selected 32-bit volatile loads from 0x1c000d0070, 0x1c000d0074,
+0x1c000d011c, 0x1c000d0124, 0x1c000e0000, 0x1c000e0004, 0x1c000e0008,
+0x1c000f003c, and the accepted read-only GIC status inputs for INTID 160, then
+repeats the task-owned terminal result marker. The paired control emits the
+same field shape with not-constructed address fields and
+no-mmio-observed-gpio14-ownership-route-control-visible while constructing no
+RP1 GPIO/RIO/pads/clock/reset, MSI-X/PCIe/MIP, or GIC MMIO address. This is
+local/static core evidence only; Pi 5 control and real proofs remain queued
+separately.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

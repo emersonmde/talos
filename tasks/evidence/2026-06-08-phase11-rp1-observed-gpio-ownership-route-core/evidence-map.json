@@ -1,0 +1,125 @@
+{
+  "task_id": "phase11-rp1-observed-gpio-ownership-route-core-20260608",
+  "classification": "accepted-local-static-observed-gpio14-ownership-route-core",
+  "evidence_level": [
+    "static inspection",
+    "fmt/lint/typecheck",
+    "unit tests",
+    "archive inspection",
+    "docs build"
+  ],
+  "source_contract": "phase11-rp1-observed-gpio-ownership-route-source-contract-v1",
+  "accepted_boundary": {
+    "real_candidate": "rpi5_rp1_gpio14_ownership_route_preflight_read",
+    "control_candidate": "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control",
+    "real_marker": "TALOS: rp1-gpio14-ownership-route-preflight-result",
+    "control_marker": "TALOS: rp1-gpio14-ownership-route-preflight-control",
+    "allowed_real_operations": [
+      "32-bit volatile read of GPIO14 STATUS at observed CPU physical address 0x1c000d0070",
+      "32-bit volatile read of GPIO14 CTRL at observed CPU physical address 0x1c000d0074",
+      "32-bit volatile read of IO_BANK0 INTE at observed CPU physical address 0x1c000d011c",
+      "32-bit volatile read of IO_BANK0 INTS at observed CPU physical address 0x1c000d0124",
+      "32-bit volatile read of RIO0 OUT at observed CPU physical address 0x1c000e0000",
+      "32-bit volatile read of RIO0 OE at observed CPU physical address 0x1c000e0004",
+      "32-bit volatile read of RIO0 IN at observed CPU physical address 0x1c000e0008",
+      "32-bit volatile read of GPIO14 pad control at observed CPU physical address 0x1c000f003c",
+      "read-only GICD_ISENABLER5, GICD_ISPENDR5, GICD_ISACTIVER5, and GICC_HPPIR status inputs for INTID 160"
+    ],
+    "forbidden_operations": [
+      "GPIO14 CTRL, SET, or CLR writes",
+      "IO_BANK0 INTE writes",
+      "GPIO IRQRESET acknowledgement writes",
+      "RIO OUT/OE writes",
+      "pad writes",
+      "GIC IAR/EOIR acknowledgement",
+      "interrupt unmasking or delivery claim",
+      "event generation"
+    ],
+    "control_boundary": "same report shape with not-constructed address fields, simulated zero raw values, no RP1 GPIO/RIO/pads/clock/reset, MSI-X/PCIe/MIP, GIC, DMA, or other forbidden MMIO address construction"
+  },
+  "artifacts": {
+    "real_archive": {
+      "path": "target/talos-rpi5-rp1-observed-gpio14-ownership-route-preflight-read-core.tar.gz",
+      "sha256": "fd605773116d65caa532307226af2fbc0ca92d747cf09f499031d923abec81e3",
+      "kernel_sha256": "fe08c6380936a9cd97d6bdbb8ca7ed755075fab5b3b04634c26267be4fdfbee6",
+      "kernel_size": 50496,
+      "marker": "TALOS: rp1-gpio14-ownership-route-preflight-result",
+      "review": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-ownership-route-core/real-archive-review.txt"
+    },
+    "control_archive": {
+      "path": "target/talos-rpi5-rp1-observed-gpio14-ownership-route-preflight-no-mmio-control-core.tar.gz",
+      "sha256": "cca7afb1108926e5bc8c706e353236151423b4f4e73ce1856060adc7f0c6fae0",
+      "kernel_sha256": "c44ef9845753726644323a0f1e460eae95dd89837d7656fe6ac591ce63427793",
+      "kernel_size": 48432,
+      "marker": "TALOS: rp1-gpio14-ownership-route-preflight-control",
+      "review": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-ownership-route-core/control-archive-review.txt"
+    }
+  },
+  "validation": [
+    {
+      "gate": "cargo fmt --all -- --check",
+      "level": "fmt/lint",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet",
+      "level": "unit tests",
+      "result": "pass",
+      "note": "ran after exporting /opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin onto PATH"
+    },
+    {
+      "gate": "bash -n scripts/rpi5-rp1-gpio14-ownership-route-preflight-read-review.sh scripts/rpi5-rp1-gpio14-ownership-route-preflight-no-mmio-control-review.sh",
+      "level": "shell syntax",
+      "result": "pass"
+    },
+    {
+      "gate": "scripts/rpi5-rp1-gpio14-ownership-route-preflight-read-review.sh",
+      "level": "archive/static inspection",
+      "result": "pass"
+    },
+    {
+      "gate": "scripts/rpi5-rp1-gpio14-ownership-route-preflight-no-mmio-control-review.sh",
+      "level": "archive/static inspection",
+      "result": "pass"
+    },
+    {
+      "gate": "jq empty tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-ownership-route-core/evidence-map.json tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-ownership-route-core/classification.json",
+      "level": "evidence JSON parse",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "level": "diff whitespace",
+      "result": "pass"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "level": "docs build",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "level": "staged diff whitespace",
+      "result": "pass"
+    }
+  ],
+  "not_accepted": [
+    "Pi 5 hardware behavior",
+    "boot archive publication to the lab",
+    "hardwareTestLock acquisition",
+    "GPIO ownership",
+    "event generation",
+    "interrupt pending generation",
+    "interrupt delivery",
+    "GIC acknowledgement",
+    "handler ownership",
+    "GPIO/RIO/pad/INTE writes",
+    "parent-route masking writes",
+    "DMA/cache",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "commit": null
+}

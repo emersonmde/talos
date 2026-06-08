@@ -27,8 +27,8 @@ for required in \
     "rpi5-rp1-gpio14-ownership-route-preflight-control: start" \
     "rpi5-rp1-gpio14-ownership-route-preflight-control: no-rp1-gpio-rio-pads-clock-reset-msix-pcie-mip-gic-mmio" \
     "$CONTROL_MARKER" \
-    "phase11-rp1-gpio-ownership-restore-source-contract-v1" \
-    "target=rp1-gpio14-ownership-route-preflight-read" \
+    "phase11-rp1-observed-gpio-ownership-route-source-contract-v1" \
+    "target=rp1-gpio14-ownership-route-observed-aperture-preflight-read" \
     "pin=GPIO14" \
     "gpio14-bit-mask=" \
     "gpio14-status-address=not-constructed" \
@@ -62,7 +62,7 @@ for required in \
     "intid160-pending=" \
     "intid160-active=" \
     "hppir-intid=" \
-    "classification=simulated/control"; do
+    "classification=no-mmio-observed-gpio14-ownership-route-control-visible"; do
     if ! grep -Fq "$required" "$kernel_strings"; then
         echo "kernel image missing GPIO14 ownership preflight no-MMIO control string: $required" >&2
         exit 1
@@ -72,6 +72,17 @@ done
 for forbidden in \
     "rpi5-rp1-gpio14-ownership-route-preflight-read: before-read-only-loads" \
     "TALOS: rp1-gpio14-ownership-route-preflight-result" \
+    "phase11-rp1-gpio-ownership-restore-source-contract-v1" \
+    "target=rp1-gpio14-ownership-route-preflight-read" \
+    "classification=simulated/control" \
+    "0x1c000d0070" \
+    "0x1c000d0074" \
+    "0x1c000d011c" \
+    "0x1c000d0124" \
+    "0x1c000e0000" \
+    "0x1c000e0004" \
+    "0x1c000e0008" \
+    "0x1c000f003c" \
     "0x1f000d0070" \
     "0x1f000d0074" \
     "0x1f000d011c" \
