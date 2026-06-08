@@ -1,0 +1,105 @@
+{
+  "task_id": "phase11-rp1-observed-gpio-status-core-20260608",
+  "classification": "accepted-local-static-observed-gpio-status-core",
+  "evidence_level": [
+    "static inspection",
+    "fmt/lint/typecheck",
+    "unit tests",
+    "archive inspection"
+  ],
+  "source_contract": "phase11-rp1-observed-gpio-status-source-contract-v1",
+  "accepted_boundary": {
+    "real_candidate": "rpi5_rp1_observed_gpio_status_read",
+    "control_candidate": "rpi5_rp1_observed_gpio_status_no_mmio_control",
+    "allowed_real_operations": [
+      "32-bit volatile read of RP1 GPIO14 STATUS from observed CPU physical address 0x1c000d0070",
+      "32-bit volatile read of RP1 GPIO14 CTRL from observed CPU physical address 0x1c000d0074"
+    ],
+    "control_boundary": "same report shape and classification vocabulary, no constructed BCM2712 PCIe, RP1 peripheral/SYSINFO/GPIO/RIO/pads/clock/reset/MSI-X, MIP, GIC, DMA, or other forbidden MMIO address"
+  },
+  "artifacts": {
+    "real_archive": {
+      "path": "target/talos-rpi5-rp1-observed-gpio-status-read-core.tar.gz",
+      "sha256": "48ce03225e1f0e8eba6fadd9e976c110729c8fed1e23338eee9c06f42635dc2d",
+      "kernel_sha256": "c66497ccc7b2001152616254872d3ff187ab8953e0786595eb2f7ab4069dbae1",
+      "kernel_size": 49656,
+      "marker": "TALOS: rp1-observed-gpio-status-result",
+      "review": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-core/real-archive-review.txt"
+    },
+    "control_archive": {
+      "path": "target/talos-rpi5-rp1-observed-gpio-status-no-mmio-control-core.tar.gz",
+      "sha256": "39976936b2415be637d4ded0ab7b36c23bd9df2abb0061d4ccb5370a9e22a325",
+      "kernel_sha256": "8b211565dbe7d7f8138e9785eb0b7e8b74acd0010b195a45745eedd7e9c65d93",
+      "kernel_size": 48952,
+      "marker": "TALOS: rp1-observed-gpio-status-control",
+      "review": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-core/control-archive-review.txt"
+    }
+  },
+  "validation": [
+    {
+      "gate": "cargo fmt --all -- --check",
+      "level": "fmt/lint",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet",
+      "level": "unit tests",
+      "result": "pass",
+      "note": "423 no_std tests passed after exporting /opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin onto PATH"
+    },
+    {
+      "gate": "scripts/rpi5-rp1-observed-gpio-status-read-review.sh",
+      "level": "archive/static inspection",
+      "result": "pass"
+    },
+    {
+      "gate": "scripts/rpi5-rp1-observed-gpio-status-no-mmio-control-review.sh",
+      "level": "archive/static inspection",
+      "result": "pass"
+    },
+    {
+      "gate": "jq empty tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-core/evidence-map.json",
+      "level": "evidence JSON parse",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "level": "diff whitespace",
+      "result": "pass"
+    },
+    {
+      "gate": "mdbook build",
+      "level": "docs build",
+      "result": "not-run",
+      "note": "No docs/src files were touched by this core task."
+    },
+    {
+      "gate": "git diff --cached --check",
+      "level": "staged diff whitespace",
+      "result": "pass"
+    }
+  ],
+  "not_accepted": [
+    "Pi 5 hardware behavior",
+    "boot archive publication to the lab",
+    "hardwareTestLock acquisition",
+    "endpoint ownership",
+    "broad RP1 mapping",
+    "endpoint configuration retry",
+    "BAR discovery or programming",
+    "bridge setup writes",
+    "PERST or link-control changes",
+    "GPIO, RIO, pads, clock, or reset writes",
+    "interrupt enablement",
+    "interrupt delivery",
+    "GIC acknowledgement",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "commit": null
+}

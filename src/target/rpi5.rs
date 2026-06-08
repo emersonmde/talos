@@ -166,6 +166,10 @@ pub const RP1_UART0_FR: usize = RP1_UART0_BASE + 0x18;
 #[allow(dead_code)]
 pub const RP1_UART0_OBSERVED_APERTURE_FR: usize = RP1_UART0_FIRMWARE_BASE + 0x18;
 #[allow(dead_code)]
+pub const RP1_GPIO14_OBSERVED_APERTURE_STATUS: usize = 0x1c_000d_0070;
+#[allow(dead_code)]
+pub const RP1_GPIO14_OBSERVED_APERTURE_CTRL: usize = 0x1c_000d_0074;
+#[allow(dead_code)]
 pub const RP1_UART0_GPIO14_PAD: usize = 0x1f_000f_003c;
 #[allow(dead_code)]
 pub const RP1_UART0_GPIO15_PAD: usize = 0x1f_000f_0040;
@@ -12694,6 +12698,7 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_read",
         talos_boot_scenario = "rpi5_rp1_bridge_setup_state_read",
         talos_boot_scenario = "rpi5_rp1_observed_aperture_read",
+        talos_boot_scenario = "rpi5_rp1_observed_gpio_status_read",
         talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
         talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator"
     )
@@ -14469,6 +14474,93 @@ pub fn run_rp1_observed_aperture_no_mmio_control() -> ! {
         write_observed_aperture_retained_bridge_context();
         write_observed_aperture_classification_vocabulary();
         write_early_static(" classification=no-mmio-observed-aperture-control-visible\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_observed_gpio_status_read")]
+pub fn run_rp1_observed_gpio_status_read() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-observed-gpio-status-source-contract-v1";
+    const TARGET: &str = "rp1-gpio14-status-ctrl-observed-aperture-read";
+    const STATUS_SOURCE_RP1_BUS_ADDRESS: &str = "0xc0400d0070";
+    const CTRL_SOURCE_RP1_BUS_ADDRESS: &str = "0xc0400d0074";
+    const STATUS_OBSERVED_CPU_PHYSICAL_ADDRESS: &str = "0x1c000d0070";
+    const CTRL_OBSERVED_CPU_PHYSICAL_ADDRESS: &str = "0x1c000d0074";
+    const STATUS_REGISTER_OFFSET: &str = "0x70";
+    const CTRL_REGISTER_OFFSET: &str = "0x74";
+
+    write_early_static("rpi5-rp1-observed-gpio-status-read: start contract=");
+    write_early_static(CONTRACT_ID);
+    write_early_static("\n");
+    write_early_static(
+        "rpi5-rp1-observed-gpio-status-read: before-gpio14-status-ctrl-loads addresses=",
+    );
+    write_early_static(STATUS_OBSERVED_CPU_PHYSICAL_ADDRESS);
+    write_early_static(",");
+    write_early_static(CTRL_OBSERVED_CPU_PHYSICAL_ADDRESS);
+    write_early_static("\n");
+    wait_uart10_empty_early_phase();
+
+    let gpio14_status = read_rp1_reg_u32(RP1_GPIO14_OBSERVED_APERTURE_STATUS);
+    let gpio14_ctrl = read_rp1_reg_u32(RP1_GPIO14_OBSERVED_APERTURE_CTRL);
+    let classification = classify_observed_gpio_status_pair(gpio14_status, gpio14_ctrl);
+
+    loop {
+        write_early_static("TALOS: rp1-observed-gpio-status-result contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_observed_gpio_status_fields(
+            STATUS_SOURCE_RP1_BUS_ADDRESS,
+            CTRL_SOURCE_RP1_BUS_ADDRESS,
+            STATUS_OBSERVED_CPU_PHYSICAL_ADDRESS,
+            CTRL_OBSERVED_CPU_PHYSICAL_ADDRESS,
+            STATUS_REGISTER_OFFSET,
+            CTRL_REGISTER_OFFSET,
+            gpio14_status,
+            gpio14_ctrl,
+        );
+        write_observed_gpio_status_classification_vocabulary();
+        write_early_static(" classification=");
+        write_early_static(classification);
+        write_early_static("\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_observed_gpio_status_no_mmio_control")]
+pub fn run_rp1_observed_gpio_status_no_mmio_control() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-observed-gpio-status-source-contract-v1";
+    const TARGET: &str = "rp1-gpio14-status-ctrl-observed-aperture-read";
+    const NOT_CONSTRUCTED: &str = "not-constructed";
+    const SIMULATED_STATUS_RAW: u32 = 0x0010_0000;
+    const SIMULATED_CTRL_RAW: u32 = 0x0040_0004;
+
+    write_early_static("rpi5-rp1-observed-gpio-status-control: start contract=");
+    write_early_static(CONTRACT_ID);
+    write_early_static("\n");
+    write_early_static(
+        "rpi5-rp1-observed-gpio-status-control: no-bcm2712-pcie-rp1-mip-gic-gpio-rio-pads-clock-reset-dma-mmio\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-observed-gpio-status-control contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_observed_gpio_status_fields(
+            NOT_CONSTRUCTED,
+            NOT_CONSTRUCTED,
+            NOT_CONSTRUCTED,
+            NOT_CONSTRUCTED,
+            NOT_CONSTRUCTED,
+            NOT_CONSTRUCTED,
+            SIMULATED_STATUS_RAW,
+            SIMULATED_CTRL_RAW,
+        );
+        write_observed_gpio_status_classification_vocabulary();
+        write_early_static(" classification=no-mmio-observed-gpio-status-control-visible\n");
         wait_uart10_empty_early_phase();
     }
 }
@@ -16432,6 +16524,8 @@ fn gpio14_ownership_preflight_classification(
     talos_boot_scenario = "rpi5_rp1_bridge_setup_state_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_observed_aperture_read",
     talos_boot_scenario = "rpi5_rp1_observed_aperture_no_mmio_control",
+    talos_boot_scenario = "rpi5_rp1_observed_gpio_status_read",
+    talos_boot_scenario = "rpi5_rp1_observed_gpio_status_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator",
@@ -16522,6 +16616,126 @@ fn write_observed_aperture_classification_vocabulary() {
     write_early_static("observed-aperture-rp1-uart0-fr-no-return-or-trap,");
     write_early_static("observed-aperture-rp1-uart0-fr-inconclusive-capture,");
     write_early_static("no-mmio-observed-aperture-control-visible,");
+    write_early_static("staging/build-blocker");
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_observed_gpio_status_read",
+    talos_boot_scenario = "rpi5_rp1_observed_gpio_status_no_mmio_control"
+))]
+fn classify_observed_gpio_status_pair(gpio14_status: u32, gpio14_ctrl: u32) -> &'static str {
+    if gpio14_status == 0xdead_dead && gpio14_ctrl == 0xdead_dead {
+        "observed-aperture-gpio14-status-ctrl-sentinel"
+    } else if gpio14_status == 0xffff_ffff && gpio14_ctrl == 0xffff_ffff {
+        "observed-aperture-gpio14-status-ctrl-all-ones"
+    } else if gpio14_status == 0 && gpio14_ctrl == 0 {
+        "observed-aperture-gpio14-status-ctrl-zero"
+    } else {
+        "observed-aperture-gpio14-status-ctrl-visible"
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_observed_gpio_status_read",
+    talos_boot_scenario = "rpi5_rp1_observed_gpio_status_no_mmio_control"
+))]
+fn write_observed_gpio_status_fields(
+    status_source_rp1_bus_address: &str,
+    ctrl_source_rp1_bus_address: &str,
+    status_observed_cpu_physical_address: &str,
+    ctrl_observed_cpu_physical_address: &str,
+    status_register_offset: &str,
+    ctrl_register_offset: &str,
+    gpio14_status: u32,
+    gpio14_ctrl: u32,
+) {
+    write_early_static(" status-source-rp1-bus-address=");
+    write_early_static(status_source_rp1_bus_address);
+    write_early_static(" ctrl-source-rp1-bus-address=");
+    write_early_static(ctrl_source_rp1_bus_address);
+    write_early_static(" status-observed-cpu-physical-address=");
+    write_early_static(status_observed_cpu_physical_address);
+    write_early_static(" ctrl-observed-cpu-physical-address=");
+    write_early_static(ctrl_observed_cpu_physical_address);
+    write_early_static(" status-register-offset=");
+    write_early_static(status_register_offset);
+    write_early_static(" ctrl-register-offset=");
+    write_early_static(ctrl_register_offset);
+    write_early_static(" width=32 gpio14-status-raw=");
+    write_early_hex_u64(gpio14_status as u64);
+    write_early_static(" gpio14-ctrl-raw=");
+    write_early_hex_u64(gpio14_ctrl as u64);
+    write_early_static(" status-raw-falling=");
+    write_bool(gpio14_status & (1 << 20) != 0);
+    write_early_static(" status-raw-rising=");
+    write_bool(gpio14_status & (1 << 21) != 0);
+    write_early_static(" status-raw-low=");
+    write_bool(gpio14_status & (1 << 22) != 0);
+    write_early_static(" status-raw-high=");
+    write_bool(gpio14_status & (1 << 23) != 0);
+    write_early_static(" status-filtered-falling=");
+    write_bool(gpio14_status & (1 << 24) != 0);
+    write_early_static(" status-filtered-rising=");
+    write_bool(gpio14_status & (1 << 25) != 0);
+    write_early_static(" status-filtered-low=");
+    write_bool(gpio14_status & (1 << 26) != 0);
+    write_early_static(" status-filtered-high=");
+    write_bool(gpio14_status & (1 << 27) != 0);
+    write_early_static(" ctrl-funcsel=");
+    write_early_dec_u64((gpio14_ctrl & 0x1f) as u64);
+    write_early_static(" ctrl-outover=");
+    write_early_dec_u64(((gpio14_ctrl >> 12) & 0x3) as u64);
+    write_early_static(" ctrl-oeover=");
+    write_early_dec_u64(((gpio14_ctrl >> 14) & 0x3) as u64);
+    write_early_static(" ctrl-inover=");
+    write_early_dec_u64(((gpio14_ctrl >> 16) & 0x3) as u64);
+    write_early_static(" ctrl-irqover=");
+    write_early_dec_u64(((gpio14_ctrl >> 28) & 0x3) as u64);
+    write_early_static(" ctrl-raw-falling-enabled=");
+    write_bool(gpio14_ctrl & (1 << 20) != 0);
+    write_early_static(" ctrl-raw-rising-enabled=");
+    write_bool(gpio14_ctrl & (1 << 21) != 0);
+    write_early_static(" ctrl-raw-low-enabled=");
+    write_bool(gpio14_ctrl & (1 << 22) != 0);
+    write_early_static(" ctrl-raw-high-enabled=");
+    write_bool(gpio14_ctrl & (1 << 23) != 0);
+    write_early_static(" ctrl-filtered-falling-enabled=");
+    write_bool(gpio14_ctrl & (1 << 24) != 0);
+    write_early_static(" ctrl-filtered-rising-enabled=");
+    write_bool(gpio14_ctrl & (1 << 25) != 0);
+    write_early_static(" ctrl-filtered-low-enabled=");
+    write_bool(gpio14_ctrl & (1 << 26) != 0);
+    write_early_static(" ctrl-filtered-high-enabled=");
+    write_bool(gpio14_ctrl & (1 << 27) != 0);
+    write_early_static(" status-raw-is-deaddead=");
+    write_bool(gpio14_status == 0xdead_dead);
+    write_early_static(" status-raw-is-all-ones=");
+    write_bool(gpio14_status == 0xffff_ffff);
+    write_early_static(" status-raw-is-zero=");
+    write_bool(gpio14_status == 0);
+    write_early_static(" ctrl-raw-is-deaddead=");
+    write_bool(gpio14_ctrl == 0xdead_dead);
+    write_early_static(" ctrl-raw-is-all-ones=");
+    write_bool(gpio14_ctrl == 0xffff_ffff);
+    write_early_static(" ctrl-raw-is-zero=");
+    write_bool(gpio14_ctrl == 0);
+    write_early_static(" retained-observed-uart0-fr-raw=0x187");
+    write_early_static(" retained-observed-uart0-fr-pl011-fr-shaped=true");
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_observed_gpio_status_read",
+    talos_boot_scenario = "rpi5_rp1_observed_gpio_status_no_mmio_control"
+))]
+fn write_observed_gpio_status_classification_vocabulary() {
+    write_early_static(" classification-vocabulary=");
+    write_early_static("observed-aperture-gpio14-status-ctrl-visible,");
+    write_early_static("observed-aperture-gpio14-status-ctrl-sentinel,");
+    write_early_static("observed-aperture-gpio14-status-ctrl-all-ones,");
+    write_early_static("observed-aperture-gpio14-status-ctrl-zero,");
+    write_early_static("observed-aperture-gpio14-status-ctrl-no-return-or-trap,");
+    write_early_static("observed-aperture-gpio14-status-ctrl-inconclusive-capture,");
+    write_early_static("no-mmio-observed-gpio-status-control-visible,");
     write_early_static("staging/build-blocker");
 }
 
@@ -16665,6 +16879,9 @@ mod tests {
         assert_eq!(RP1_UART0_PCIE2_BASE, 0x1f_0003_0000);
         assert_eq!(RP1_UART0_FIRMWARE_BASE, 0x1c_0003_0000);
         assert_eq!(RP1_UART0_FR, 0x1f_0003_0018);
+        assert_eq!(RP1_UART0_OBSERVED_APERTURE_FR, 0x1c_0003_0018);
+        assert_eq!(RP1_GPIO14_OBSERVED_APERTURE_STATUS, 0x1c_000d_0070);
+        assert_eq!(RP1_GPIO14_OBSERVED_APERTURE_CTRL, 0x1c_000d_0074);
         assert_eq!(RP1_UART0_GPIO14_PAD, 0x1f_000f_003c);
         assert_eq!(RP1_UART0_GPIO15_PAD, 0x1f_000f_0040);
         assert_eq!(RP1_GPIO14_STATUS, 0x1f_000d_0070);
