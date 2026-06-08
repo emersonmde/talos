@@ -680,6 +680,21 @@ ownership, clock/reset writes, GPIO ownership, event generation, interrupt
 delivery, handler ownership, DMA/cache, storage, generated-root, networking,
 SSH, broader PCIe, Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-clock-sentinel-address-discriminator-pi5-20260608 accepts the real
+Pi 5 proof as rp1-sysinfo-and-clock-window-sentinel. The accepted rerun
+published only the committed read-only SYSINFO-vs-clock-sentinel candidate as
+tree 22c13cf75878b9f1776d9ae00b760457df45a508b915c3032f4ac792693a74a4;
+TFTP retained two 47,776-byte da591740/kernel_2712.img fetches; serial
+retained 62 result markers; and the pi5-capture-transaction-v2 identity join
+passed with no rejection reasons before restore to tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The Talos
+reads reported SYSINFO_CHIP_ID=0xdeaddead, SYSINFO_PLATFORM=0xdeaddead, and
+CLK_ADC_CTRL=0xdeaddead, so the accepted frontier is a broader
+SYSINFO/address-decode sentinel boundary, not live RP1 SYSINFO identity or
+clock/reset ownership. Clock/reset writes, GPIO ownership, event generation,
+interrupt delivery, DMA/cache, storage, generated-root, networking, SSH,
+broader PCIe, Milestone 11.3, and phase transition remain unaccepted.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware

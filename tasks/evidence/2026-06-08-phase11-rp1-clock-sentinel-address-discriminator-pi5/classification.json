@@ -1,0 +1,34 @@
+{
+  "task": "phase11-rp1-clock-sentinel-address-discriminator-pi5-20260608",
+  "status": "accepted",
+  "classification": "rp1-sysinfo-and-clock-window-sentinel",
+  "generatedAt": "2026-06-08T03:47:36Z",
+  "sourceContract": "phase11-rp1-clock-sentinel-address-discriminator-source-contract-v1",
+  "evidenceAllowsHardwareClassification": true,
+  "identityJoinRejectionReasons": [],
+  "output": {
+    "marker": "TALOS: rp1-sysinfo-clock-sentinel-result",
+    "markerOccurrences": 62,
+    "sysinfoChipIdRaw": "0xdeaddead",
+    "sysinfoPlatformRaw": "0xdeaddead",
+    "clkAdcCtrlRaw": "0xdeaddead",
+    "expectedChipId": "0x20001927",
+    "chipIdMatchesExpected": false,
+    "chipIdIsDeaddead": true,
+    "platformIsDeaddead": true,
+    "adcCtrlIsDeaddead": true,
+    "sysinfoPairEqual": true,
+    "sysinfoVsAdcSame": true,
+    "retainedAdcWindowClassification": "rp1-clock-adc-window-readback-sentinel"
+  },
+  "acceptedClaim": "The accepted read-only SYSINFO identity/address-decode discriminator returns the same 0xdeaddead sentinel shape as the retained CLK_ADC_CTRL clock-window comparator on Pi 5.",
+  "rejectedClaims": [
+    "live RP1 SYSINFO chip identity",
+    "broad RP1 clock/reset ownership",
+    "clock/reset writes",
+    "GPIO ownership or event generation",
+    "interrupt delivery or GIC acknowledgement",
+    "ISR or handler ownership",
+    "DMA/cache, storage, generated-root, networking, SSH, broader PCIe behavior, Milestone 11.3, or phase transition"
+  ]
+}

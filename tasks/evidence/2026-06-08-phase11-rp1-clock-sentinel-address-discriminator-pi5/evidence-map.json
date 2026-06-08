@@ -1,0 +1,100 @@
+{
+  "task": "phase11-rp1-clock-sentinel-address-discriminator-pi5-20260608",
+  "status": "accepted",
+  "classification": "rp1-sysinfo-and-clock-window-sentinel",
+  "generatedAt": "2026-06-08T03:47:36Z",
+  "evidenceLevel": [
+    "static archive identity inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "stable same-cursor TFTP evidence",
+    "pi5-capture-transaction-v2 identity join",
+    "restore proof",
+    "known-good control after inconclusive first run",
+    "git diff checks",
+    "docs validation"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-pi5.md",
+    "classification": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-pi5/classification.json",
+    "firstCandidateRun": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-pi5/candidate-run",
+    "knownGoodControlRun": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-pi5/known-good-control-after-inconclusive",
+    "acceptedCandidateRerun": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-pi5/candidate-rerun-after-kg"
+  },
+  "sourceAndCore": {
+    "sourceContractTask": "tasks/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-source-contract.md",
+    "sourceContractCommit": "2b5176eaba20ef1182cac09702fa073351201cb5",
+    "coreTask": "tasks/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-core.md",
+    "coreCommit": "665236b4bf35478e30da984221f76526473a746a",
+    "controlTask": "tasks/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-control-pi5.md",
+    "controlCommit": "06896cbd07e04e3bace61881af170e6603bf613b"
+  },
+  "realCandidate": {
+    "archive": "target/talos-rpi5-rp1-sysinfo-clock-sentinel-read-core.tar.gz",
+    "archiveSha256": "f60e5899e994c4be98ccd3ac826b5c88f271db968056aff6afb9c1cf705fe42a",
+    "kernel2712Sha256": "b61eb83442ee5bd332da0de8e53b42c63d4b9950a5a9b81db5f1abfc26bf1794",
+    "kernelSizeBytes": 47776,
+    "marker": "TALOS: rp1-sysinfo-clock-sentinel-result",
+    "outputClassification": "rp1-sysinfo-and-clock-window-sentinel",
+    "staticArchiveReview": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-pi5/static-archive-review.txt"
+  },
+  "acceptedRun": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-pi5/candidate-rerun-after-kg",
+    "selectedTreeHash": "22c13cf75878b9f1776d9ae00b760457df45a508b915c3032f4ac792693a74a4",
+    "preRunTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "identityAllowed": true,
+    "rejectionReasons": [],
+    "markerOccurrences": 62,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 47776,
+    "serialCaptureMode": "read",
+    "serialObserveContract": "deadline-loop-direct-read-after-saturated-cursor",
+    "tftpStable": true
+  },
+  "inconclusiveFirstRun": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-pi5/candidate-run",
+    "classification": "capture-staging-blocked",
+    "rejectionReasons": [
+      "serial-drain-not-empty-before-power",
+      "saturated-direct-read-without-empty-pre-power-drain"
+    ],
+    "markerOccurrences": 62,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2
+  },
+  "knownGoodControl": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-pi5/known-good-control-after-inconclusive",
+    "classification": "capture-staging-blocked",
+    "rejectionReasons": [
+      "serial-drain-not-empty-before-power",
+      "saturated-direct-read-without-empty-pre-power-drain"
+    ],
+    "selectedTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 104136
+  },
+  "validation": [
+    "scripts/rpi5-rp1-sysinfo-clock-sentinel-read-review.sh target/talos-rpi5-rp1-sysinfo-clock-sentinel-read-core.tar.gz",
+    "lab-controller API status/boot-files/snapshot/publish/power-cycle/restore",
+    "scripts/rpi5-capture-invariant-proof-bundle.sh with marker TALOS: rp1-sysinfo-clock-sentinel-result",
+    "scripts/rpi5-proof-identity-join-check.sh --evidence-dir tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-pi5/candidate-rerun-after-kg",
+    "known-good control after inconclusive first run",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check"
+  ],
+  "acceptedClaims": "The accepted read-only SYSINFO identity/address-decode discriminator returns the same 0xdeaddead sentinel shape as the retained CLK_ADC_CTRL clock-window comparator on Pi 5.",
+  "rejectedClaims": [
+    "live RP1 SYSINFO chip identity",
+    "broad RP1 clock/reset ownership",
+    "clock/reset writes",
+    "GPIO ownership or event generation",
+    "interrupt delivery or GIC acknowledgement",
+    "ISR or handler ownership",
+    "DMA/cache, storage, generated-root, networking, SSH, broader PCIe behavior, Milestone 11.3, or phase transition"
+  ],
+  "nextAction": "Promote phase11-rp1-clock-sentinel-address-discriminator-closeout-20260608 on the next worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive."
+}

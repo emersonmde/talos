@@ -8001,6 +8001,22 @@ GPIO ownership, event generation, interrupt delivery, handler ownership,
 DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
 11.3, or a phase transition.
 
+phase11-rp1-clock-sentinel-address-discriminator-pi5-20260608 is accepted as
+rp1-sysinfo-and-clock-window-sentinel. The accepted real rerun published only
+the committed read-only SYSINFO-vs-clock-sentinel candidate as tree
+22c13cf75878b9f1776d9ae00b760457df45a508b915c3032f4ac792693a74a4, retained two
+47,776-byte da591740/kernel_2712.img TFTP fetches, retained 62 result markers,
+passed the pi5-capture-transaction-v2 identity join with no rejection reasons,
+and restored the lab to tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The Talos
+read-only loads reported SYSINFO_CHIP_ID=0xdeaddead, SYSINFO_PLATFORM=0xdeaddead,
+and CLK_ADC_CTRL=0xdeaddead, so the new frontier is a broader
+SYSINFO/address-decode sentinel boundary rather than live RP1 SYSINFO identity
+or clock/reset ownership. Clock/reset writes, GPIO ownership, event generation,
+interrupt delivery, handler ownership, DMA/cache, storage, generated-root,
+networking, SSH, broader PCIe, Milestone 11.3, and phase transition remain
+unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
