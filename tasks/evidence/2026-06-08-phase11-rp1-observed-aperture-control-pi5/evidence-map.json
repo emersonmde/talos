@@ -1,0 +1,82 @@
+{
+  "task_id": "phase11-rp1-observed-aperture-control-pi5-20260608",
+  "classification": "no-mmio-observed-aperture-control-visible",
+  "evidence": [
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-aperture-control-pi5/classification.json",
+      "type": "serial hardware boot/output, TFTP evidence, identity join, restore proof"
+    },
+    {
+      "label": "static archive review",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-aperture-control-pi5/static-archive-review.txt",
+      "type": "archive/static inspection"
+    },
+    {
+      "label": "initial candidate capture",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-aperture-control-pi5/control-run",
+      "type": "serial hardware boot/output, lab-controller API, TFTP evidence, capture-staging-blocked triage"
+    },
+    {
+      "label": "known-good control after inconclusive candidate",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-aperture-control-pi5/known-good-control-after-inconclusive",
+      "type": "known-good control, identity join"
+    },
+    {
+      "label": "accepted unchanged candidate rerun",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-aperture-control-pi5/control-rerun-after-kg",
+      "type": "serial hardware boot/output, lab-controller API, TFTP evidence, identity join, restore proof"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static archive review",
+      "level": "archive/static inspection",
+      "result": "passed"
+    },
+    {
+      "gate": "initial candidate hardware capture",
+      "level": "serial hardware boot/output",
+      "result": "capture-staging-blocked",
+      "reason": "serial-drain-not-empty-before-power and expected-fetch-not-observed-in-tftp-delta"
+    },
+    {
+      "gate": "known-good control after inconclusive",
+      "level": "serial hardware boot/output and identity join",
+      "result": "passed"
+    },
+    {
+      "gate": "unchanged candidate rerun",
+      "level": "serial hardware boot/output and identity join",
+      "result": "passed"
+    }
+  ],
+  "accepted_run": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-aperture-control-pi5/control-rerun-after-kg",
+    "identity_classification": "capture-transaction-v2-ready",
+    "rejection_reasons": [],
+    "marker": "TALOS: rp1-observed-aperture-control",
+    "marker_occurrences": 72,
+    "expected_fetch_count": 2,
+    "expected_fetch_bytes_seen": [
+      47344,
+      47344
+    ],
+    "selected_tree_hash": "5e646c783c95672121fc135a41acc5e0c7e87424ea4694b8e952fa5c8b22ece2",
+    "expected_fetch_byte_count": 47344,
+    "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "serial_pre_power_drain_empty": true,
+    "final_selected_tree_still_staged": true
+  },
+  "claims": {
+    "accepted": [
+      "The no-MMIO observed-aperture control output shape is visible on Pi 5 with pi5-capture-transaction-v2-ready identity join.",
+      "The control constructs no forbidden BCM2712 PCIe, RP1, MIP, GIC, GPIO, clock/reset, DMA, or other tested MMIO address.",
+      "The control emits the accepted contract fields and no real observed-aperture result marker."
+    ],
+    "rejected": [
+      "No real observed-aperture read was performed.",
+      "No RP1 endpoint ownership, broad RP1 mapping, interrupt delivery, GPIO/clock ownership, DMA/cache, networking, SSH, Milestone 11.3, or phase transition is accepted."
+    ]
+  }
+}

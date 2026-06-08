@@ -1,0 +1,49 @@
+{
+  "task_id": "phase11-rp1-observed-aperture-control-pi5-20260608",
+  "classification": "no-mmio-observed-aperture-control-visible",
+  "accepted_run": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-aperture-control-pi5/control-rerun-after-kg",
+    "identity_classification": "capture-transaction-v2-ready",
+    "rejection_reasons": [],
+    "marker": "TALOS: rp1-observed-aperture-control",
+    "marker_occurrences": 72,
+    "expected_fetch_count": 2,
+    "expected_fetch_bytes_seen": [
+      47344,
+      47344
+    ],
+    "selected_tree_hash": "5e646c783c95672121fc135a41acc5e0c7e87424ea4694b8e952fa5c8b22ece2",
+    "expected_fetch_byte_count": 47344,
+    "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "serial_pre_power_drain_empty": true,
+    "final_selected_tree_still_staged": true
+  },
+  "initial_candidate_run": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-aperture-control-pi5/control-run",
+    "suggested_classification": "identity-join-mismatch",
+    "identity_allowed": false,
+    "rejection_reasons": [
+      "serial-drain-not-empty-before-power",
+      "expected-fetch-not-observed-in-tftp-delta"
+    ],
+    "marker_occurrences": 1,
+    "expected_fetch_count": 0
+  },
+  "known_good_after_inconclusive": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-aperture-control-pi5/known-good-control-after-inconclusive",
+    "identity_classification": "capture-transaction-v2-ready",
+    "rejection_reasons": [],
+    "expected_fetch_byte_count": 104136,
+    "expected_fetch_count": 2,
+    "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "accepted_claims": [
+    "The no-MMIO observed-aperture control output shape is visible on Pi 5 with pi5-capture-transaction-v2-ready identity join.",
+    "The control constructs no forbidden BCM2712 PCIe, RP1, MIP, GIC, GPIO, clock/reset, DMA, or other tested MMIO address.",
+    "The control emits the accepted contract fields and no real observed-aperture result marker."
+  ],
+  "rejected_claims": [
+    "No real observed-aperture read was performed.",
+    "No RP1 endpoint ownership, broad RP1 mapping, interrupt delivery, GPIO/clock ownership, DMA/cache, networking, SSH, Milestone 11.3, or phase transition is accepted."
+  ]
+}

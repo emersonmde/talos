@@ -1,0 +1,11 @@
+{
+  "run": "control-rerun-after-kg",
+  "identity_classification": "capture-transaction-v2-ready",
+  "rejection_reasons": [],
+  "suggested_classification": "post-handoff-marker-visible",
+  "marker_count": 73,
+  "expected_fetch_count": 2,
+  "expected_fetch_byte_match_count": 2,
+  "final_selected_tree": true,
+  "restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+}

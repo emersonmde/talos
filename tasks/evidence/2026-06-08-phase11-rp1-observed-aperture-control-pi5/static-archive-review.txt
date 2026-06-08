@@ -1,0 +1,8 @@
+candidate_archive=target/talos-rpi5-rp1-observed-aperture-no-mmio-control-core.tar.gz
+candidate_archive_sha256=27c94fbcec820c0afdc9ec43d7e155a1aae92e1663297f8f2c27d96c1faf8d2e
+kernel_2712_sha256=7903a41314b8b4cbb72aac40b4c95b5d0c242cf76fe745b27a51127dc3ff36be
+kernel_2712_size=47344
+header_image_size=47344
+text_offset=0
+flags=12
+control_marker=TALOS: rp1-observed-aperture-control
