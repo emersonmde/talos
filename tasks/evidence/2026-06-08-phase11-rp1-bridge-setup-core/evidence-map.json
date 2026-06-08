@@ -1,0 +1,95 @@
+{
+  "task_id": "phase11-rp1-bridge-setup-core-20260608",
+  "classification": "accepted-local-static-bridge-setup-core",
+  "evidence_level": [
+    "static inspection",
+    "fmt/lint/typecheck",
+    "unit tests",
+    "archive inspection"
+  ],
+  "source_contract": "phase11-rp1-bridge-setup-source-contract-v1",
+  "accepted_boundary": {
+    "real_candidate": "rpi5_rp1_bridge_setup_state_read",
+    "control_candidate": "rpi5_rp1_bridge_setup_state_no_mmio_control",
+    "allowed_real_operations": [
+      "32-bit volatile read of PCIE_MISC_PCIE_STATUS at 0x1000124068",
+      "32-bit volatile read of PCIE_MISC_MISC_CTRL at 0x1000124008",
+      "32-bit volatile read of PCIE_RC_CFG_PRIV1_ID_VAL3 at 0x100012043c",
+      "32-bit volatile read of PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LO at 0x100012400c",
+      "32-bit volatile read of PCIE_MISC_CPU_2_PCIE_MEM_WIN0_HI at 0x1000124010",
+      "32-bit volatile read of PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT at 0x1000124070",
+      "32-bit volatile read of PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_HI at 0x1000124080",
+      "32-bit volatile read of PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI at 0x1000124084"
+    ],
+    "control_boundary": "same report shape and classification vocabulary, no constructed BCM2712 PCIe, RP1, MIP, GIC, GPIO, clock/reset, DMA, or other MMIO address"
+  },
+  "artifacts": {
+    "real_archive": {
+      "path": "target/talos-rpi5-rp1-bridge-setup-state-read-core.tar.gz",
+      "sha256": "2ed822cd0b2e6491da6a6d9447456d83228a694358326b7a15a5ab663f251d17",
+      "kernel_sha256": "8a1c6a6cd64ecbc1228a4eda56a0cecbea041590c12bb0b60ba2674e0ac5a71b",
+      "kernel_size": 50736,
+      "marker": "TALOS: rp1-bridge-setup-state-result",
+      "review": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-core/real-archive-review.txt"
+    },
+    "control_archive": {
+      "path": "target/talos-rpi5-rp1-bridge-setup-state-no-mmio-control-core.tar.gz",
+      "sha256": "2173cad5a63e41b0ceb704eed480cd3f5278cce7adce600d3a2c624bd81390b4",
+      "kernel_sha256": "a741904c5c7a75b1f9db0ea811c1f9adc79ff4bfb7a4d05e655ce2e5eaaf2d10",
+      "kernel_size": 49496,
+      "marker": "TALOS: rp1-bridge-setup-state-control",
+      "review": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-core/control-archive-review.txt"
+    }
+  },
+  "validation": [
+    {
+      "gate": "cargo fmt --all -- --check",
+      "level": "fmt/lint",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet",
+      "level": "unit tests",
+      "result": "pass",
+      "note": "passed after exporting /opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin onto PATH"
+    },
+    {
+      "gate": "scripts/rpi5-rp1-bridge-setup-state-read-review.sh",
+      "level": "archive/static inspection",
+      "result": "pass"
+    },
+    {
+      "gate": "scripts/rpi5-rp1-bridge-setup-state-no-mmio-control-review.sh",
+      "level": "archive/static inspection",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "level": "diff whitespace",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "level": "staged diff whitespace",
+      "result": "pass"
+    }
+  ],
+  "not_accepted": [
+    "Pi 5 hardware behavior",
+    "boot archive publication",
+    "hardwareTestLock acquisition",
+    "source-contract expansion",
+    "endpoint configuration retry",
+    "endpoint ownership",
+    "BAR discovery or programming",
+    "bridge setup writes",
+    "interrupt delivery",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ]
+}

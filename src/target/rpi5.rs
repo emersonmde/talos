@@ -228,6 +228,30 @@ pub const PCIE_MISC_MISC_CTRL: usize = PCIE2_CONTROLLER_BASE + 0x4008;
 #[allow(dead_code)]
 pub const PCIE_MISC_MISC_CTRL_OFFSET: u64 = 0x4008;
 #[allow(dead_code)]
+pub const PCIE_RC_CFG_PRIV1_ID_VAL3: usize = PCIE2_CONTROLLER_BASE + 0x043c;
+#[allow(dead_code)]
+pub const PCIE_RC_CFG_PRIV1_ID_VAL3_OFFSET: u64 = 0x043c;
+#[allow(dead_code)]
+pub const PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LO: usize = PCIE2_CONTROLLER_BASE + 0x400c;
+#[allow(dead_code)]
+pub const PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LO_OFFSET: u64 = 0x400c;
+#[allow(dead_code)]
+pub const PCIE_MISC_CPU_2_PCIE_MEM_WIN0_HI: usize = PCIE2_CONTROLLER_BASE + 0x4010;
+#[allow(dead_code)]
+pub const PCIE_MISC_CPU_2_PCIE_MEM_WIN0_HI_OFFSET: u64 = 0x4010;
+#[allow(dead_code)]
+pub const PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT: usize = PCIE2_CONTROLLER_BASE + 0x4070;
+#[allow(dead_code)]
+pub const PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT_OFFSET: u64 = 0x4070;
+#[allow(dead_code)]
+pub const PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_HI: usize = PCIE2_CONTROLLER_BASE + 0x4080;
+#[allow(dead_code)]
+pub const PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_HI_OFFSET: u64 = 0x4080;
+#[allow(dead_code)]
+pub const PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI: usize = PCIE2_CONTROLLER_BASE + 0x4084;
+#[allow(dead_code)]
+pub const PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI_OFFSET: u64 = 0x4084;
+#[allow(dead_code)]
 pub const PCIE_EXT_CFG_DATA: usize = PCIE2_CONTROLLER_BASE + 0x8000;
 #[allow(dead_code)]
 pub const PCIE_EXT_CFG_DATA_OFFSET: u64 = 0x8000;
@@ -265,6 +289,22 @@ pub const PCIE_MISC_CTRL_CFG_READ_UR_MODE: u32 = 0x2000;
 pub const PCIE_MISC_CTRL_MAX_BURST_SIZE_MASK: u32 = 0x30_0000;
 #[allow(dead_code)]
 pub const PCIE_MISC_CTRL_MAX_BURST_SIZE_SHIFT: u32 = 20;
+#[allow(dead_code)]
+pub const PCIE_RC_CLASS_CODE_MASK: u32 = 0x00ff_ffff;
+#[allow(dead_code)]
+pub const PCIE_RC_EXPECTED_BRIDGE_CLASS_CODE: u32 = 0x0006_0400;
+#[allow(dead_code)]
+pub const PCIE_WIN0_BASE_LOW_MASK: u32 = 0x0000_fff0;
+#[allow(dead_code)]
+pub const PCIE_WIN0_BASE_LOW_EXPECTED: u32 = 0x0000_0000;
+#[allow(dead_code)]
+pub const PCIE_WIN0_LIMIT_LOW_MASK: u32 = 0xfff0_0000;
+#[allow(dead_code)]
+pub const PCIE_WIN0_LIMIT_LOW_EXPECTED: u32 = 0xfff0_0000;
+#[allow(dead_code)]
+pub const PCIE_WIN0_HIGH_MASK: u32 = 0x0000_00ff;
+#[allow(dead_code)]
+pub const PCIE_WIN0_HIGH_EXPECTED: u32 = 0x0000_001f;
 #[allow(dead_code)]
 pub const RP1_PLL_SYS_CS: usize = 0x1f_0002_0000;
 #[allow(dead_code)]
@@ -12650,6 +12690,7 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
         talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",
         talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_read",
+        talos_boot_scenario = "rpi5_rp1_bridge_setup_state_read",
         talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
         talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator"
     )
@@ -14193,6 +14234,172 @@ pub fn run_rp1_bridge_config_preflight_no_mmio_control() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_bridge_setup_state_read")]
+pub fn run_rp1_bridge_setup_state_read() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-bridge-setup-source-contract-v1";
+    const TARGET: &str = "pcie2-bridge-setup-state-read";
+    const STATUS_REGISTER_NAME: &str = "PCIE_MISC_PCIE_STATUS";
+    const PREFLIGHT_REGISTER_NAME: &str = "PCIE_MISC_MISC_CTRL";
+    const RC_CLASS_REGISTER_NAME: &str = "PCIE_RC_CFG_PRIV1_ID_VAL3";
+    const WIN0_LO_REGISTER_NAME: &str = "PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LO";
+    const WIN0_HI_REGISTER_NAME: &str = "PCIE_MISC_CPU_2_PCIE_MEM_WIN0_HI";
+    const WIN0_BASE_LIMIT_REGISTER_NAME: &str = "PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT";
+    const WIN0_BASE_HI_REGISTER_NAME: &str = "PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_HI";
+    const WIN0_LIMIT_HI_REGISTER_NAME: &str = "PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI";
+    const RETAINED_ENDPOINT_CONFIG_CLASSIFICATION: &str = "rp1-endpoint-config-id-all-ones";
+
+    write_early_static("rpi5-rp1-bridge-setup-state-read: start\n");
+    write_early_static("rpi5-rp1-bridge-setup-state-read: before-status-load\n");
+    wait_uart10_empty_early_phase();
+    let status = read_rp1_reg_u32(PCIE_MISC_PCIE_STATUS);
+    write_early_static("rpi5-rp1-bridge-setup-state-read: before-misc-ctrl-load\n");
+    wait_uart10_empty_early_phase();
+    let misc_ctrl = read_rp1_reg_u32(PCIE_MISC_MISC_CTRL);
+    write_early_static("rpi5-rp1-bridge-setup-state-read: before-rc-class-load\n");
+    wait_uart10_empty_early_phase();
+    let rc_class = read_rp1_reg_u32(PCIE_RC_CFG_PRIV1_ID_VAL3);
+    write_early_static("rpi5-rp1-bridge-setup-state-read: before-win0-loads\n");
+    wait_uart10_empty_early_phase();
+    let win0_lo = read_rp1_reg_u32(PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LO);
+    let win0_hi = read_rp1_reg_u32(PCIE_MISC_CPU_2_PCIE_MEM_WIN0_HI);
+    let win0_base_limit = read_rp1_reg_u32(PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT);
+    let win0_base_hi = read_rp1_reg_u32(PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_HI);
+    let win0_limit_hi = read_rp1_reg_u32(PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI);
+
+    let decoded = BridgeSetupState::from_raw(
+        status,
+        misc_ctrl,
+        rc_class,
+        win0_lo,
+        win0_hi,
+        win0_base_limit,
+        win0_base_hi,
+        win0_limit_hi,
+    );
+
+    loop {
+        write_early_static("TALOS: rp1-bridge-setup-state-result contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_bridge_setup_state_common_fields(
+            Some(PCIE2_CONTROLLER_BASE as u64),
+            STATUS_REGISTER_NAME,
+            PCIE_MISC_PCIE_STATUS_OFFSET,
+            Some(PCIE_MISC_PCIE_STATUS as u64),
+            PREFLIGHT_REGISTER_NAME,
+            PCIE_MISC_MISC_CTRL_OFFSET,
+            Some(PCIE_MISC_MISC_CTRL as u64),
+            RC_CLASS_REGISTER_NAME,
+            PCIE_RC_CFG_PRIV1_ID_VAL3_OFFSET,
+            Some(PCIE_RC_CFG_PRIV1_ID_VAL3 as u64),
+            WIN0_LO_REGISTER_NAME,
+            PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LO_OFFSET,
+            Some(PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LO as u64),
+            WIN0_HI_REGISTER_NAME,
+            PCIE_MISC_CPU_2_PCIE_MEM_WIN0_HI_OFFSET,
+            Some(PCIE_MISC_CPU_2_PCIE_MEM_WIN0_HI as u64),
+            WIN0_BASE_LIMIT_REGISTER_NAME,
+            PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT_OFFSET,
+            Some(PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT as u64),
+            WIN0_BASE_HI_REGISTER_NAME,
+            PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_HI_OFFSET,
+            Some(PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_HI as u64),
+            WIN0_LIMIT_HI_REGISTER_NAME,
+            PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI_OFFSET,
+            Some(PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI as u64),
+            &decoded,
+            RETAINED_ENDPOINT_CONFIG_CLASSIFICATION,
+        );
+        write_bridge_setup_state_classification_vocabulary();
+        write_early_static(" classification=");
+        write_early_static(decoded.classification);
+        write_early_static("\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_bridge_setup_state_no_mmio_control")]
+pub fn run_rp1_bridge_setup_state_no_mmio_control() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-bridge-setup-source-contract-v1";
+    const TARGET: &str = "pcie2-bridge-setup-state-read";
+    const STATUS_REGISTER_NAME: &str = "PCIE_MISC_PCIE_STATUS";
+    const PREFLIGHT_REGISTER_NAME: &str = "PCIE_MISC_MISC_CTRL";
+    const RC_CLASS_REGISTER_NAME: &str = "PCIE_RC_CFG_PRIV1_ID_VAL3";
+    const WIN0_LO_REGISTER_NAME: &str = "PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LO";
+    const WIN0_HI_REGISTER_NAME: &str = "PCIE_MISC_CPU_2_PCIE_MEM_WIN0_HI";
+    const WIN0_BASE_LIMIT_REGISTER_NAME: &str = "PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT";
+    const WIN0_BASE_HI_REGISTER_NAME: &str = "PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_HI";
+    const WIN0_LIMIT_HI_REGISTER_NAME: &str = "PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI";
+    const RETAINED_ENDPOINT_CONFIG_CLASSIFICATION: &str = "rp1-endpoint-config-id-all-ones";
+    const SIMULATED_STATUS: u32 = PCIE_STATUS_PORT | PCIE_STATUS_DL_ACTIVE | PCIE_STATUS_PHYLINKUP;
+    const SIMULATED_MISC_CTRL: u32 = PCIE_MISC_CTRL_SCB_ACCESS_EN | PCIE_MISC_CTRL_CFG_READ_UR_MODE;
+    const SIMULATED_RC_CLASS: u32 = PCIE_RC_EXPECTED_BRIDGE_CLASS_CODE;
+    const SIMULATED_WIN0_LO: u32 = 0;
+    const SIMULATED_WIN0_HI: u32 = 0;
+    const SIMULATED_WIN0_BASE_LIMIT: u32 =
+        PCIE_WIN0_BASE_LOW_EXPECTED | PCIE_WIN0_LIMIT_LOW_EXPECTED;
+    const SIMULATED_WIN0_BASE_HI: u32 = PCIE_WIN0_HIGH_EXPECTED;
+    const SIMULATED_WIN0_LIMIT_HI: u32 = PCIE_WIN0_HIGH_EXPECTED;
+
+    write_early_static("rpi5-rp1-bridge-setup-state-control: start\n");
+    write_early_static(
+        "rpi5-rp1-bridge-setup-state-control: no-bcm2712-pcie-rp1-msix-mip-gic-gpio-clock-reset-dma-mmio\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    let mut decoded = BridgeSetupState::from_raw(
+        SIMULATED_STATUS,
+        SIMULATED_MISC_CTRL,
+        SIMULATED_RC_CLASS,
+        SIMULATED_WIN0_LO,
+        SIMULATED_WIN0_HI,
+        SIMULATED_WIN0_BASE_LIMIT,
+        SIMULATED_WIN0_BASE_HI,
+        SIMULATED_WIN0_LIMIT_HI,
+    );
+    decoded.classification = "no-mmio-pcie2-bridge-setup-state-control-visible";
+
+    loop {
+        write_early_static("TALOS: rp1-bridge-setup-state-control contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_bridge_setup_state_common_fields(
+            None,
+            STATUS_REGISTER_NAME,
+            PCIE_MISC_PCIE_STATUS_OFFSET,
+            None,
+            PREFLIGHT_REGISTER_NAME,
+            PCIE_MISC_MISC_CTRL_OFFSET,
+            None,
+            RC_CLASS_REGISTER_NAME,
+            PCIE_RC_CFG_PRIV1_ID_VAL3_OFFSET,
+            None,
+            WIN0_LO_REGISTER_NAME,
+            PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LO_OFFSET,
+            None,
+            WIN0_HI_REGISTER_NAME,
+            PCIE_MISC_CPU_2_PCIE_MEM_WIN0_HI_OFFSET,
+            None,
+            WIN0_BASE_LIMIT_REGISTER_NAME,
+            PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT_OFFSET,
+            None,
+            WIN0_BASE_HI_REGISTER_NAME,
+            PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_HI_OFFSET,
+            None,
+            WIN0_LIMIT_HI_REGISTER_NAME,
+            PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI_OFFSET,
+            None,
+            &decoded,
+            RETAINED_ENDPOINT_CONFIG_CLASSIFICATION,
+        );
+        write_bridge_setup_state_classification_vocabulary();
+        write_early_static(" classification=no-mmio-pcie2-bridge-setup-state-control-visible\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
 #[cfg(talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read")]
 pub fn run_rp1_gpio14_ownership_route_preflight_read() -> ! {
     const CONTRACT_ID: &str = "phase11-rp1-gpio-ownership-restore-source-contract-v1";
@@ -15391,6 +15598,187 @@ fn classify_pcie2_bridge_config_preflight(
 }
 
 #[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_bridge_setup_state_read",
+    talos_boot_scenario = "rpi5_rp1_bridge_setup_state_no_mmio_control"
+))]
+struct BridgeSetupState {
+    status_raw: u32,
+    pcie_port: bool,
+    dl_active: bool,
+    phylinkup: bool,
+    link_in_l23: bool,
+    status_is_deaddead: bool,
+    misc_ctrl_raw: u32,
+    scb_access_en: bool,
+    cfg_read_ur_mode: bool,
+    misc_ctrl_is_sentinel: bool,
+    rc_class_raw: u32,
+    class_code: u32,
+    class_code_is_pcie_bridge: bool,
+    win0_lo_raw: u32,
+    win0_hi_raw: u32,
+    win0_base_limit_raw: u32,
+    win0_base_hi_raw: u32,
+    win0_limit_hi_raw: u32,
+    pcie_base_is_zero: bool,
+    cpu_base_low_matches: bool,
+    cpu_limit_low_matches: bool,
+    cpu_base_high_matches: bool,
+    cpu_limit_high_matches: bool,
+    outbound_window0_matches: bool,
+    classification: &'static str,
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_bridge_setup_state_read",
+    talos_boot_scenario = "rpi5_rp1_bridge_setup_state_no_mmio_control"
+))]
+impl BridgeSetupState {
+    fn from_raw(
+        status_raw: u32,
+        misc_ctrl_raw: u32,
+        rc_class_raw: u32,
+        win0_lo_raw: u32,
+        win0_hi_raw: u32,
+        win0_base_limit_raw: u32,
+        win0_base_hi_raw: u32,
+        win0_limit_hi_raw: u32,
+    ) -> Self {
+        let pcie_port = status_raw & PCIE_STATUS_PORT != 0;
+        let dl_active = status_raw & PCIE_STATUS_DL_ACTIVE != 0;
+        let phylinkup = status_raw & PCIE_STATUS_PHYLINKUP != 0;
+        let link_in_l23 = status_raw & PCIE_STATUS_LINK_IN_L23 != 0;
+        let status_is_deaddead = status_raw == 0xdead_dead;
+        let scb_access_en = misc_ctrl_raw & PCIE_MISC_CTRL_SCB_ACCESS_EN != 0;
+        let cfg_read_ur_mode = misc_ctrl_raw & PCIE_MISC_CTRL_CFG_READ_UR_MODE != 0;
+        let misc_ctrl_is_sentinel =
+            misc_ctrl_raw == 0xdead_dead || misc_ctrl_raw == 0xffff_ffff || misc_ctrl_raw == 0;
+        let class_code = rc_class_raw & PCIE_RC_CLASS_CODE_MASK;
+        let class_code_is_pcie_bridge = class_code == PCIE_RC_EXPECTED_BRIDGE_CLASS_CODE;
+        let class_register_is_sentinel =
+            rc_class_raw == 0xdead_dead || rc_class_raw == 0xffff_ffff || rc_class_raw == 0;
+        let pcie_base_is_zero = win0_lo_raw == 0 && win0_hi_raw == 0;
+        let cpu_base_low_matches =
+            win0_base_limit_raw & PCIE_WIN0_BASE_LOW_MASK == PCIE_WIN0_BASE_LOW_EXPECTED;
+        let cpu_limit_low_matches =
+            win0_base_limit_raw & PCIE_WIN0_LIMIT_LOW_MASK == PCIE_WIN0_LIMIT_LOW_EXPECTED;
+        let cpu_base_high_matches =
+            win0_base_hi_raw & PCIE_WIN0_HIGH_MASK == PCIE_WIN0_HIGH_EXPECTED;
+        let cpu_limit_high_matches =
+            win0_limit_hi_raw & PCIE_WIN0_HIGH_MASK == PCIE_WIN0_HIGH_EXPECTED;
+        let outbound_window0_matches = pcie_base_is_zero
+            && cpu_base_low_matches
+            && cpu_limit_low_matches
+            && cpu_base_high_matches
+            && cpu_limit_high_matches;
+        let outbound_window0_is_sentinel = bridge_setup_window0_is_sentinel(
+            win0_lo_raw,
+            win0_hi_raw,
+            win0_base_limit_raw,
+            win0_base_hi_raw,
+            win0_limit_hi_raw,
+        );
+        let classification = classify_pcie2_bridge_setup_state(
+            status_is_deaddead,
+            dl_active,
+            phylinkup,
+            misc_ctrl_is_sentinel,
+            scb_access_en,
+            cfg_read_ur_mode,
+            class_register_is_sentinel,
+            class_code_is_pcie_bridge,
+            outbound_window0_is_sentinel,
+            outbound_window0_matches,
+        );
+
+        Self {
+            status_raw,
+            pcie_port,
+            dl_active,
+            phylinkup,
+            link_in_l23,
+            status_is_deaddead,
+            misc_ctrl_raw,
+            scb_access_en,
+            cfg_read_ur_mode,
+            misc_ctrl_is_sentinel,
+            rc_class_raw,
+            class_code,
+            class_code_is_pcie_bridge,
+            win0_lo_raw,
+            win0_hi_raw,
+            win0_base_limit_raw,
+            win0_base_hi_raw,
+            win0_limit_hi_raw,
+            pcie_base_is_zero,
+            cpu_base_low_matches,
+            cpu_limit_low_matches,
+            cpu_base_high_matches,
+            cpu_limit_high_matches,
+            outbound_window0_matches,
+            classification,
+        }
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_bridge_setup_state_read",
+    talos_boot_scenario = "rpi5_rp1_bridge_setup_state_no_mmio_control"
+))]
+fn classify_pcie2_bridge_setup_state(
+    status_is_deaddead: bool,
+    dl_active: bool,
+    phylinkup: bool,
+    misc_ctrl_is_sentinel: bool,
+    scb_access_en: bool,
+    cfg_read_ur_mode: bool,
+    class_register_is_sentinel: bool,
+    class_code_is_pcie_bridge: bool,
+    outbound_window0_is_sentinel: bool,
+    outbound_window0_matches: bool,
+) -> &'static str {
+    if status_is_deaddead {
+        "pcie2-bridge-setup-state-inconclusive-capture"
+    } else if !(dl_active && phylinkup) {
+        "pcie2-bridge-setup-state-link-down-skip"
+    } else if misc_ctrl_is_sentinel || class_register_is_sentinel || outbound_window0_is_sentinel {
+        "pcie2-bridge-setup-state-sentinel"
+    } else if scb_access_en
+        && cfg_read_ur_mode
+        && class_code_is_pcie_bridge
+        && outbound_window0_matches
+    {
+        "pcie2-bridge-setup-state-visible"
+    } else {
+        "pcie2-bridge-setup-state-incomplete"
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_bridge_setup_state_read",
+    talos_boot_scenario = "rpi5_rp1_bridge_setup_state_no_mmio_control"
+))]
+fn bridge_setup_window0_is_sentinel(
+    win0_lo: u32,
+    win0_hi: u32,
+    win0_base_limit: u32,
+    win0_base_hi: u32,
+    win0_limit_hi: u32,
+) -> bool {
+    let lo_sentinel = win0_lo == 0xdead_dead || win0_lo == 0xffff_ffff;
+    let hi_sentinel = win0_hi == 0xdead_dead || win0_hi == 0xffff_ffff;
+    let base_limit_sentinel = win0_base_limit == 0xdead_dead
+        || win0_base_limit == 0xffff_ffff
+        || (win0_base_limit & PCIE_WIN0_LIMIT_LOW_MASK) == 0;
+    let base_hi_sentinel =
+        win0_base_hi == 0xdead_dead || win0_base_hi == 0xffff_ffff || win0_base_hi == 0;
+    let limit_hi_sentinel =
+        win0_limit_hi == 0xdead_dead || win0_limit_hi == 0xffff_ffff || win0_limit_hi == 0;
+
+    lo_sentinel || hi_sentinel || base_limit_sentinel || base_hi_sentinel || limit_hi_sentinel
+}
+
+#[cfg(any(
     talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_read",
     talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_no_mmio_control"
 ))]
@@ -15469,6 +15857,187 @@ fn write_bridge_config_preflight_common_fields(
 fn write_bridge_config_preflight_classification_vocabulary() {
     write_early_static(
         " classification-vocabulary=pcie2-bridge-preflight-ready,pcie2-bridge-preflight-incomplete,pcie2-bridge-preflight-sentinel,pcie2-bridge-preflight-link-down-skip,pcie2-bridge-preflight-inconclusive-capture,no-mmio-pcie2-bridge-preflight-control-visible,staging/build-blocker",
+    );
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_bridge_setup_state_read",
+    talos_boot_scenario = "rpi5_rp1_bridge_setup_state_no_mmio_control"
+))]
+#[allow(clippy::too_many_arguments)]
+fn write_bridge_setup_state_common_fields(
+    controller_base: Option<u64>,
+    status_register_name: &str,
+    status_source_offset: u64,
+    status_address: Option<u64>,
+    preflight_register_name: &str,
+    preflight_source_offset: u64,
+    preflight_address: Option<u64>,
+    rc_class_register_name: &str,
+    rc_class_source_offset: u64,
+    rc_class_address: Option<u64>,
+    win0_lo_register_name: &str,
+    win0_lo_source_offset: u64,
+    win0_lo_address: Option<u64>,
+    win0_hi_register_name: &str,
+    win0_hi_source_offset: u64,
+    win0_hi_address: Option<u64>,
+    win0_base_limit_register_name: &str,
+    win0_base_limit_source_offset: u64,
+    win0_base_limit_address: Option<u64>,
+    win0_base_hi_register_name: &str,
+    win0_base_hi_source_offset: u64,
+    win0_base_hi_address: Option<u64>,
+    win0_limit_hi_register_name: &str,
+    win0_limit_hi_source_offset: u64,
+    win0_limit_hi_address: Option<u64>,
+    decoded: &BridgeSetupState,
+    retained_endpoint_config_classification: &str,
+) {
+    write_early_static(" pcie2-controller-base=");
+    write_optional_hex_or_not_constructed(controller_base);
+    write_early_static(" status-register=");
+    write_early_static(status_register_name);
+    write_early_static(" status-source-offset=");
+    write_early_hex_u64(status_source_offset);
+    write_early_static(" status-address=");
+    write_optional_hex_or_not_constructed(status_address);
+    write_early_static(" status-width=32 status-raw=");
+    write_early_hex_u64(decoded.status_raw as u64);
+    write_early_static(" pcie-port=");
+    write_bool(decoded.pcie_port);
+    write_early_static(" dl-active=");
+    write_bool(decoded.dl_active);
+    write_early_static(" phylinkup=");
+    write_bool(decoded.phylinkup);
+    write_early_static(" link-in-l23=");
+    write_bool(decoded.link_in_l23);
+    write_early_static(" status-is-deaddead=");
+    write_bool(decoded.status_is_deaddead);
+    write_early_static(" preflight-register=");
+    write_early_static(preflight_register_name);
+    write_early_static(" preflight-source-offset=");
+    write_early_hex_u64(preflight_source_offset);
+    write_early_static(" preflight-address=");
+    write_optional_hex_or_not_constructed(preflight_address);
+    write_early_static(" preflight-width=32 misc-ctrl-raw=");
+    write_early_hex_u64(decoded.misc_ctrl_raw as u64);
+    write_early_static(" scb-access-en=");
+    write_bool(decoded.scb_access_en);
+    write_early_static(" cfg-read-ur-mode=");
+    write_bool(decoded.cfg_read_ur_mode);
+    write_early_static(" misc-ctrl-is-sentinel=");
+    write_bool(decoded.misc_ctrl_is_sentinel);
+    write_early_static(" rc-class-register=");
+    write_early_static(rc_class_register_name);
+    write_early_static(" rc-class-source-offset=");
+    write_early_hex_u64(rc_class_source_offset);
+    write_early_static(" rc-class-address=");
+    write_optional_hex_or_not_constructed(rc_class_address);
+    write_early_static(" rc-class-width=32 rc-class-raw=");
+    write_early_hex_u64(decoded.rc_class_raw as u64);
+    write_early_static(" class-code=");
+    write_early_hex_u64(decoded.class_code as u64);
+    write_early_static(" class-code-is-pcie-bridge=");
+    write_bool(decoded.class_code_is_pcie_bridge);
+    write_bridge_setup_win0_register(
+        " win0-lo-register=",
+        win0_lo_register_name,
+        " win0-lo-source-offset=",
+        win0_lo_source_offset,
+        " win0-lo-address=",
+        win0_lo_address,
+        " win0-lo-width=32 win0-lo-raw=",
+        decoded.win0_lo_raw,
+    );
+    write_bridge_setup_win0_register(
+        " win0-hi-register=",
+        win0_hi_register_name,
+        " win0-hi-source-offset=",
+        win0_hi_source_offset,
+        " win0-hi-address=",
+        win0_hi_address,
+        " win0-hi-width=32 win0-hi-raw=",
+        decoded.win0_hi_raw,
+    );
+    write_bridge_setup_win0_register(
+        " win0-base-limit-register=",
+        win0_base_limit_register_name,
+        " win0-base-limit-source-offset=",
+        win0_base_limit_source_offset,
+        " win0-base-limit-address=",
+        win0_base_limit_address,
+        " win0-base-limit-width=32 win0-base-limit-raw=",
+        decoded.win0_base_limit_raw,
+    );
+    write_bridge_setup_win0_register(
+        " win0-base-hi-register=",
+        win0_base_hi_register_name,
+        " win0-base-hi-source-offset=",
+        win0_base_hi_source_offset,
+        " win0-base-hi-address=",
+        win0_base_hi_address,
+        " win0-base-hi-width=32 win0-base-hi-raw=",
+        decoded.win0_base_hi_raw,
+    );
+    write_bridge_setup_win0_register(
+        " win0-limit-hi-register=",
+        win0_limit_hi_register_name,
+        " win0-limit-hi-source-offset=",
+        win0_limit_hi_source_offset,
+        " win0-limit-hi-address=",
+        win0_limit_hi_address,
+        " win0-limit-hi-width=32 win0-limit-hi-raw=",
+        decoded.win0_limit_hi_raw,
+    );
+    write_early_static(" pcie-base-is-zero=");
+    write_bool(decoded.pcie_base_is_zero);
+    write_early_static(" cpu-base-low-matches=");
+    write_bool(decoded.cpu_base_low_matches);
+    write_early_static(" cpu-limit-low-matches=");
+    write_bool(decoded.cpu_limit_low_matches);
+    write_early_static(" cpu-base-high-matches=");
+    write_bool(decoded.cpu_base_high_matches);
+    write_early_static(" cpu-limit-high-matches=");
+    write_bool(decoded.cpu_limit_high_matches);
+    write_early_static(" outbound-window0-matches=");
+    write_bool(decoded.outbound_window0_matches);
+    write_early_static(" retained-endpoint-config-classification=");
+    write_early_static(retained_endpoint_config_classification);
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_bridge_setup_state_read",
+    talos_boot_scenario = "rpi5_rp1_bridge_setup_state_no_mmio_control"
+))]
+#[allow(clippy::too_many_arguments)]
+fn write_bridge_setup_win0_register(
+    register_label: &str,
+    register_name: &str,
+    offset_label: &str,
+    source_offset: u64,
+    address_label: &str,
+    address: Option<u64>,
+    raw_label: &str,
+    raw: u32,
+) {
+    write_early_static(register_label);
+    write_early_static(register_name);
+    write_early_static(offset_label);
+    write_early_hex_u64(source_offset);
+    write_early_static(address_label);
+    write_optional_hex_or_not_constructed(address);
+    write_early_static(raw_label);
+    write_early_hex_u64(raw as u64);
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_bridge_setup_state_read",
+    talos_boot_scenario = "rpi5_rp1_bridge_setup_state_no_mmio_control"
+))]
+fn write_bridge_setup_state_classification_vocabulary() {
+    write_early_static(
+        " classification-vocabulary=pcie2-bridge-setup-state-visible,pcie2-bridge-setup-state-incomplete,pcie2-bridge-setup-state-sentinel,pcie2-bridge-setup-state-link-down-skip,pcie2-bridge-setup-state-inconclusive-capture,no-mmio-pcie2-bridge-setup-state-control-visible,staging/build-blocker",
     );
 }
 
@@ -15570,7 +16139,9 @@ fn write_endpoint_config_identity_common_fields(
     talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",
     talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_read",
-    talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_no_mmio_control"
+    talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_no_mmio_control",
+    talos_boot_scenario = "rpi5_rp1_bridge_setup_state_read",
+    talos_boot_scenario = "rpi5_rp1_bridge_setup_state_no_mmio_control"
 ))]
 fn write_optional_hex_or_not_constructed(value: Option<u64>) {
     if let Some(value) = value {
@@ -15784,6 +16355,8 @@ fn gpio14_ownership_preflight_classification(
     talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_read",
     talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_no_mmio_control",
+    talos_boot_scenario = "rpi5_rp1_bridge_setup_state_read",
+    talos_boot_scenario = "rpi5_rp1_bridge_setup_state_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator",
@@ -15955,6 +16528,20 @@ mod tests {
         assert_eq!(PCIE2_CONTROLLER_BASE, 0x10_0012_0000);
         assert_eq!(PCIE_MISC_PCIE_STATUS_OFFSET, 0x4068);
         assert_eq!(PCIE_MISC_PCIE_STATUS, 0x10_0012_4068);
+        assert_eq!(PCIE_MISC_MISC_CTRL_OFFSET, 0x4008);
+        assert_eq!(PCIE_MISC_MISC_CTRL, 0x10_0012_4008);
+        assert_eq!(PCIE_RC_CFG_PRIV1_ID_VAL3_OFFSET, 0x043c);
+        assert_eq!(PCIE_RC_CFG_PRIV1_ID_VAL3, 0x10_0012_043c);
+        assert_eq!(PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LO_OFFSET, 0x400c);
+        assert_eq!(PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LO, 0x10_0012_400c);
+        assert_eq!(PCIE_MISC_CPU_2_PCIE_MEM_WIN0_HI_OFFSET, 0x4010);
+        assert_eq!(PCIE_MISC_CPU_2_PCIE_MEM_WIN0_HI, 0x10_0012_4010);
+        assert_eq!(PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT_OFFSET, 0x4070);
+        assert_eq!(PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_LIMIT, 0x10_0012_4070);
+        assert_eq!(PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_HI_OFFSET, 0x4080);
+        assert_eq!(PCIE_MISC_CPU_2_PCIE_MEM_WIN0_BASE_HI, 0x10_0012_4080);
+        assert_eq!(PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI_OFFSET, 0x4084);
+        assert_eq!(PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI, 0x10_0012_4084);
         assert_eq!(PCIE_EXT_CFG_DATA_OFFSET, 0x8000);
         assert_eq!(PCIE_EXT_CFG_DATA, 0x10_0012_8000);
         assert_eq!(PCIE_EXT_CFG_INDEX_OFFSET, 0x9000);
