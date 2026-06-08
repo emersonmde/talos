@@ -1,0 +1,88 @@
+{
+  "task_id": "phase11-rp1-bridge-config-preflight-core-20260608",
+  "classification": "accepted-local-static-bridge-config-preflight-core",
+  "evidence_level": [
+    "static inspection",
+    "fmt/lint/typecheck",
+    "unit tests",
+    "archive inspection"
+  ],
+  "source_contract": "phase11-rp1-bridge-config-preflight-source-contract-v1",
+  "accepted_boundary": {
+    "real_candidate": "rpi5_rp1_bridge_config_preflight_read",
+    "control_candidate": "rpi5_rp1_bridge_config_preflight_no_mmio_control",
+    "allowed_real_operations": [
+      "32-bit volatile read of PCIE_MISC_PCIE_STATUS at 0x1000124068",
+      "32-bit volatile read of PCIE_MISC_MISC_CTRL at 0x1000124008"
+    ],
+    "control_boundary": "same report shape and classification vocabulary, no constructed BCM2712 PCIe, RP1, MIP, GIC, GPIO, clock/reset, DMA, or other MMIO address"
+  },
+  "artifacts": {
+    "real_archive": {
+      "path": "target/talos-rpi5-rp1-bridge-config-preflight-read-core.tar.gz",
+      "sha256": "f2736728a40db884b2e6ac8984a86c801bb8376ee4064d2e67380a3969140a2b",
+      "kernel_sha256": "1595ebd3d2d13005c3e48e0dd019c54058c5ff0762e4f997e141a7ef57a733b6",
+      "kernel_size": 48000,
+      "marker": "TALOS: rp1-bridge-config-preflight-result",
+      "review": "tasks/evidence/2026-06-08-phase11-rp1-bridge-config-preflight-core/real-archive-review.txt"
+    },
+    "control_archive": {
+      "path": "target/talos-rpi5-rp1-bridge-config-preflight-no-mmio-control-core.tar.gz",
+      "sha256": "392aa7cc0a2ce4e102dfdee92b07c2c351766aa29f4d8446085b110ac8b15bad",
+      "kernel_sha256": "8250aa5124d06190ba3d95d3cfd9e9fbedce9ab2c2af7040c4b0d37e11c4d262",
+      "kernel_size": 47504,
+      "marker": "TALOS: rp1-bridge-config-preflight-control",
+      "review": "tasks/evidence/2026-06-08-phase11-rp1-bridge-config-preflight-core/control-archive-review.txt"
+    }
+  },
+  "validation": [
+    {
+      "gate": "cargo fmt --all -- --check",
+      "level": "fmt/lint",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet",
+      "level": "unit tests",
+      "result": "pass",
+      "note": "passed after exporting /opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin onto PATH"
+    },
+    {
+      "gate": "scripts/rpi5-rp1-bridge-config-preflight-read-review.sh",
+      "level": "archive/static inspection",
+      "result": "pass"
+    },
+    {
+      "gate": "scripts/rpi5-rp1-bridge-config-preflight-no-mmio-control-review.sh",
+      "level": "archive/static inspection",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "level": "diff whitespace",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "level": "staged diff whitespace",
+      "result": "pass"
+    }
+  ],
+  "not_accepted": [
+    "Pi 5 hardware behavior",
+    "boot archive publication",
+    "hardwareTestLock acquisition",
+    "endpoint configuration mutation",
+    "BAR discovery or programming",
+    "bridge setup",
+    "endpoint ownership",
+    "interrupt delivery",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ]
+}
