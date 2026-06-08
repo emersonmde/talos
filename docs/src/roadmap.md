@@ -8280,6 +8280,23 @@ broad RP1 mapping, UART ownership, interrupt delivery, GPIO/clock ownership,
 DMA/cache, storage, generated-root, networking, SSH, Milestone 11.3, and
 phase transition remain unaccepted.
 
+phase11-rp1-observed-aperture-closeout-20260608 accepts the closeout as
+observed-aperture-rp1-uart0-fr-visible-frontier-closed. The accepted frontier
+is limited to the source/evidence-backed observed-aperture discriminator, the
+paired no-MMIO/no-PCIe/no-RP1/no-GIC control proof, and the real Pi 5 visible
+result under identity-joined evidence. It accepts that one selected read from
+observed CPU physical address 0x1c00030018 returned raw=0x187,
+raw-is-pl011-fr-shaped=true, and not sentinel/all-ones/zero.
+
+This closeout does not accept endpoint ownership, broad RP1 mapping, UART
+ownership, interrupt delivery, GPIO/clock ownership, DMA/cache, storage,
+generated-root, networking, SSH, Milestone 11.3, or phase transition.
+Same-shaped endpoint config identity, bridge/setup-state, 0x1f RP1
+peripheral, and 0x1c observed-aperture hardware reruns remain closed unless a
+future supervisor task supplies a different discriminator or new acceptance
+criteria. The worker creates no follow-up task from this closeout; supervisor
+planning is required for the next Milestone 11.2 frontier.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

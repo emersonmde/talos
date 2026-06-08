@@ -1910,6 +1910,24 @@ shape. It does not accept endpoint ownership, broad RP1 mapping, UART
 ownership, interrupt delivery, GPIO/clock ownership, DMA/cache, storage,
 generated-root, networking, SSH, Milestone 11.3, or phase transition.
 
+phase11-rp1-observed-aperture-closeout-20260608 accepts
+observed-aperture-rp1-uart0-fr-visible-frontier-closed. The accepted frontier
+is limited to the source/evidence-backed observed-aperture discriminator, the
+paired no-MMIO/no-PCIe/no-RP1/no-GIC control proof, and the real Pi 5
+observed-aperture-rp1-uart0-fr-visible result. The only accepted hardware
+operation is the selected one-read observed aperture at CPU physical
+0x1c00030018; it returned raw=0x187, raw-is-pl011-fr-shaped=true, and not
+sentinel/all-ones/zero under identity-joined evidence.
+
+This closeout does not accept endpoint ownership, broad RP1 mapping, UART
+ownership, interrupt delivery, GPIO/clock ownership, DMA/cache, storage,
+generated-root, networking, SSH, Milestone 11.3, or phase transition.
+Same-shaped endpoint config identity, same-shaped bridge/setup-state,
+same-shaped 0x1f RP1 peripheral, and same-shaped 0x1c observed-aperture
+hardware reruns remain closed unless a future supervisor task supplies a
+different discriminator or new acceptance criteria. Supervisor planning is
+required for the next Milestone 11.2 frontier.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when
