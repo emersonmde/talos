@@ -1,0 +1,16 @@
+{
+  "task": "phase11-rp1-bridge-config-preflight-control-pi5-20260608",
+  "marker": "TALOS: rp1-bridge-config-preflight-control",
+  "captureExit": 0,
+  "joinExit": 1,
+  "joinAllowed": false,
+  "rejectionReasons": [
+    "serial-drain-not-empty-before-power",
+    "saturated-direct-read-without-empty-pre-power-drain"
+  ],
+  "markerOccurrences": 60,
+  "expectedFetchCount": 2,
+  "expectedFetchByteMatchCount": 2,
+  "selectedTreeHash": "f4269bd6ed53338820122d469e56922f4741c3e0d191843090fc3eaef6819646",
+  "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+}

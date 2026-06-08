@@ -1,0 +1,59 @@
+{
+  "task": "phase11-rp1-bridge-config-preflight-control-pi5-20260608",
+  "status": "accepted",
+  "classification": "no-mmio-pcie2-bridge-preflight-control-visible",
+  "acceptedRun": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-config-preflight-control-pi5/control-rerun-after-kg",
+    "selectedTreeHash": "f4269bd6ed53338820122d469e56922f4741c3e0d191843090fc3eaef6819646",
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "identityAllowed": true,
+    "rejectionReasons": [],
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 47504,
+    "serialMarker": "TALOS: rp1-bridge-config-preflight-control",
+    "serialMarkerOccurrences": 60
+  },
+  "triageAfterInitialInconclusive": {
+    "initialCandidateCapture": {
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-config-preflight-control-pi5/control-run",
+      "classification": "capture-staging-blocked",
+      "rejectionReasons": [
+        "serial-drain-not-empty-before-power",
+        "saturated-direct-read-without-empty-pre-power-drain"
+      ],
+      "selectedTreeHash": "f4269bd6ed53338820122d469e56922f4741c3e0d191843090fc3eaef6819646",
+      "expectedFetchBytes": 47504
+    },
+    "knownGoodControl": {
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-config-preflight-control-pi5/known-good-control-after-inconclusive",
+      "identityAllowed": true,
+      "rejectionReasons": [],
+      "selectedTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "expectedFetchBytes": 104136
+    }
+  },
+  "acceptedClaims": [
+    "no-MMIO/no-PCIe/no-RP1/no-GIC bridge/config preflight control output and capture path is visible on Pi 5",
+    "the selected control candidate identity, TFTP fetches, serial markers, final pre-restore identity, and restore proof join under pi5-capture-transaction-v2"
+  ],
+  "rejectedClaims": [
+    "real PCIE_MISC_MISC_CTRL bridge/config preflight behavior",
+    "endpoint configuration mutation",
+    "BAR programming",
+    "bridge setup",
+    "PERST or link-control change",
+    "interrupt enablement or delivery",
+    "GIC acknowledgement",
+    "ISR installation",
+    "RP1 clock/reset writes",
+    "GPIO/RIO/pad writes",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ]
+}

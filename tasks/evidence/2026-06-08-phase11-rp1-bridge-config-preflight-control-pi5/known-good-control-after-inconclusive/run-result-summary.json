@@ -1,0 +1,13 @@
+{
+  "label": "bridge-config-preflight-known-good-control",
+  "marker": "rpi5-production-timer-preemption: PASS",
+  "captureExit": 0,
+  "joinExit": 0,
+  "joinAllowed": true,
+  "rejectionReasons": [],
+  "markerOccurrences": 1,
+  "expectedFetchCount": 2,
+  "expectedFetchByteMatchCount": 2,
+  "selectedTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+}

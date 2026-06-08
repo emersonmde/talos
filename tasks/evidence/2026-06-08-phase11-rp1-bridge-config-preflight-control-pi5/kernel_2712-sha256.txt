@@ -1,0 +1,1 @@
+8250aa5124d06190ba3d95d3cfd9e9fbedce9ab2c2af7040c4b0d37e11c4d262  target/tmp/bridge-config-control-hw-static.rwBxCJ/kernel_2712.img

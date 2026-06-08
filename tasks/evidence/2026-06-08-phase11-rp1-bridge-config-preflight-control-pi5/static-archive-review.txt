@@ -1,0 +1,8 @@
+candidate_archive=target/talos-rpi5-rp1-bridge-config-preflight-no-mmio-control-core.tar.gz
+candidate_archive_sha256=392aa7cc0a2ce4e102dfdee92b07c2c351766aa29f4d8446085b110ac8b15bad
+kernel_2712_sha256=8250aa5124d06190ba3d95d3cfd9e9fbedce9ab2c2af7040c4b0d37e11c4d262
+kernel_2712_size=47504
+header_image_size=47504
+text_offset=0
+flags=12
+control_marker=TALOS: rp1-bridge-config-preflight-control
