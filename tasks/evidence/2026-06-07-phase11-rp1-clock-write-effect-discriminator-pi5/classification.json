@@ -1,0 +1,21 @@
+{
+  "task": "phase11-rp1-clock-write-effect-discriminator-pi5-20260607",
+  "status": "accepted",
+  "classification": "rp1-clock-adc-window-readback-sentinel",
+  "acceptedClaims": [
+    "read-only ADC clock-window coherence discriminator output and capture path is visible on Pi 5",
+    "CLK_SYS_CTRL, CLK_UART_CTRL, two ordered CLK_ADC_CTRL reads, CLK_ADC_DIV_INT, and CLK_ADC_SEL all returned the retained 0xdeaddead sentinel in this selected proof",
+    "identity, TFTP fetches, serial markers, final pre-restore selected-tree identity, and restore proof join under pi5-capture-transaction-v2"
+  ],
+  "rejectedClaims": [
+    "successful clock write effect or non-idempotent clock ownership",
+    "general RP1 clock/reset ownership or any new clock/reset write",
+    "GPIO ownership, event generation, interrupt delivery, DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone 11.3, or phase transition"
+  ],
+  "evidence": {
+    "acceptedRun": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/real-rerun-after-kg",
+    "identityJoin": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/real-rerun-after-kg/identity-join-report.json",
+    "resultExtract": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/real-rerun-after-kg/result-extract.json",
+    "staticArchiveReview": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/real-rerun-after-kg/static-archive-review.txt"
+  }
+}

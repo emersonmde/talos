@@ -1,0 +1,246 @@
+{
+  "task": "phase11-rp1-clock-write-effect-discriminator-pi5-20260607",
+  "status": "accepted",
+  "classification": "rp1-clock-adc-window-readback-sentinel",
+  "generatedAt": "2026-06-08T02:35:00Z",
+  "evidenceLevel": [
+    "static archive review",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "stable same-cursor TFTP evidence",
+    "pi5-capture-transaction-v2 identity join",
+    "restore proof",
+    "known-good control after inconclusive first capture",
+    "git diff checks",
+    "docs validation"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5.md",
+    "classification": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/classification.json",
+    "firstRealRun": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/real-run",
+    "knownGoodControlRun": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/known-good-control-after-inconclusive",
+    "acceptedRealRerun": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/real-rerun-after-kg",
+    "resultExtract": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/real-rerun-after-kg/result-extract.json"
+  },
+  "sourceAndCore": {
+    "sourceContractTask": "tasks/2026-06-07-phase11-rp1-clock-write-effect-discriminator-source-contract.md",
+    "sourceContractCommit": "db2f6bc2e372f5bfe6a8b8d9c1e56cdada7bd97f",
+    "coreTask": "tasks/2026-06-07-phase11-rp1-clock-write-effect-discriminator-core.md",
+    "coreCommit": "be78fc2c9b4f2ddb80911e4ace0d6caf453fe2d7",
+    "controlTask": "tasks/2026-06-07-phase11-rp1-clock-write-effect-discriminator-control-pi5.md",
+    "controlCommit": "08efd29b1c19c629074f7af647019b65fba9e2ff"
+  },
+  "realCandidate": {
+    "archive": "target/talos-rpi5-rp1-clock-adc-window-coherence-read-core.tar.gz",
+    "archiveSha256": "5b49611443a8548f044d93ab066343a3e20b9d7a83f627d27e18c09843183112",
+    "kernel2712Sha256": "b88cbb89c3b2cfb35ae6e1a74dc871b5721ce77a5ef790a78f575415daa7bc3f",
+    "kernelSizeBytes": 48056,
+    "marker": "TALOS: rp1-clock-adc-window-coherence-result",
+    "outputClassification": "rp1-clock-adc-window-readback-sentinel",
+    "staticArchiveReview": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/real-rerun-after-kg/static-archive-review.txt"
+  },
+  "acceptedRun": {
+    "path": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/real-rerun-after-kg",
+    "selectedTreeHash": "f93e47c1d5b68dd243c795d3323cc04249c0b62cda22c3ccb003593c56232902",
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "identityAllowed": true,
+    "rejectionReasons": [],
+    "markerOccurrences": 52,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 48056,
+    "serialCaptureMode": "read",
+    "serialObserveContract": "deadline-loop-direct-read-after-saturated-cursor",
+    "result": {
+      "classification": "rp1-clock-adc-window-readback-sentinel",
+      "contract": "phase11-rp1-clock-write-effect-discriminator-source-contract-v1",
+      "target": "rp1-clk-adc-window-coherence-read",
+      "operationSequence": [
+        {
+          "name": "CLK_SYS_CTRL",
+          "offset": "0x14",
+          "address": "0x1f00018014",
+          "width": 32,
+          "raw": "0xdeaddead"
+        },
+        {
+          "name": "CLK_UART_CTRL",
+          "offset": "0x54",
+          "address": "0x1f00018054",
+          "width": 32,
+          "raw": "0xdeaddead"
+        },
+        {
+          "name": "CLK_ADC_CTRL first",
+          "offset": "0x144",
+          "address": "0x1f00018144",
+          "width": 32,
+          "raw": "0xdeaddead"
+        },
+        {
+          "name": "local ordering barrier"
+        },
+        {
+          "name": "CLK_ADC_CTRL second",
+          "offset": "0x144",
+          "address": "0x1f00018144",
+          "width": 32,
+          "raw": "0xdeaddead"
+        },
+        {
+          "name": "CLK_ADC_DIV_INT",
+          "offset": "0x148",
+          "address": "0x1f00018148",
+          "width": 32,
+          "raw": "0xdeaddead"
+        },
+        {
+          "name": "CLK_ADC_SEL",
+          "offset": "0x150",
+          "address": "0x1f00018150",
+          "width": 32,
+          "raw": "0xdeaddead"
+        }
+      ],
+      "decoded": {
+        "clkSysEnable": true,
+        "clkUartEnable": true,
+        "adcCtrlFirstEnable": true,
+        "adcCtrlFirstAuxsrc": "0x15",
+        "adcCtrlFirstSource": "0x1",
+        "adcCtrlSecondEnable": true,
+        "adcCtrlSecondAuxsrc": "0x15",
+        "adcCtrlSecondSource": "0x1",
+        "adcCtrlStable": true,
+        "adcWindowAllEqual": true,
+        "adcWindowAllDeadDead": true,
+        "adcSelZero": false,
+        "adcSelOneHot": false,
+        "adcSelMultiBit": true
+      },
+      "retainedEnableToggleContext": {
+        "preRaw": "0xdeaddead",
+        "transitionRaw": "0xdeadd6ad",
+        "postRaw": "0xdeaddead",
+        "restoreRaw": "0xdeaddead",
+        "restoreEqPre": true
+      },
+      "rawSerialResultLinePath": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/real-rerun-after-kg/result-line.txt",
+      "rawSerialResultLine": "TALOS: rp1-clock-adc-window-coherence-result contract=phase11-rp1-clock-write-effect-discriminator-source-contract-v1 target=rp1-clk-adc-window-coherence-read clock-manager-base=0x1f00018000 clk-sys-ctrl-source-offset=0x14 address=0x1f00018014 width=32 raw=0xdeaddead clk-uart-ctrl-source-offset=0x54 address=0x1f00018054 width=32 raw=0xdeaddead adc-ctrl-first-source-offset=0x144 address=0x1f00018144 width=32 raw=0xdeaddead adc-ctrl-second-source-offset=0x144 address=0x1f00018144 width=32 raw=0xdeaddead adc-div-int-source-offset=0x148 address=0x1f00018148 width=32 raw=0xdeaddead adc-sel-source-offset=0x150 address=0x1f00018150 width=32 raw=0xdeaddead clk-sys-enable=true clk-uart-enable=true adc-ctrl-first-enable=true adc-ctrl-first-auxsrc=0x15 adc-ctrl-first-source=0x1 adc-ctrl-second-enable=true adc-ctrl-second-auxsrc=0x15 adc-ctrl-second-source=0x1 adc-ctrl-stable=true adc-window-all-equal=true adc-window-all-deaddead=true adc-sel-zero=false adc-sel-one-hot=false adc-sel-multi-bit=true retained-enable-toggle-pre-raw=0xdeaddead retained-enable-toggle-transition-raw=0xdeadd6ad retained-enable-toggle-post-raw=0xdeaddead retained-enable-toggle-restore-raw=0xdeaddead retained-enable-toggle-restore-eq-pre=true classification=rp1-clock-adc-window-readback-sentinel",
+      "acceptedRunSummary": {
+        "runDir": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/real-rerun-after-kg",
+        "archive": "target/talos-rpi5-rp1-clock-adc-window-coherence-read-core.tar.gz",
+        "marker": "TALOS: rp1-clock-adc-window-coherence-result",
+        "captureExit": 0,
+        "identityExit": 0,
+        "identityAllowed": true,
+        "identityClassification": "capture-transaction-v2-ready",
+        "rejectionReasons": [],
+        "suggestedClassification": "post-handoff-marker-visible",
+        "markerOccurrences": 52,
+        "selectedTreeHash": "f93e47c1d5b68dd243c795d3323cc04249c0b62cda22c3ccb003593c56232902",
+        "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+        "expectedFetchCount": 2,
+        "expectedFetchByteMatchCount": 2,
+        "expectedFetchBytes": 48056,
+        "serialCaptureMode": "read",
+        "serialObserveContract": "deadline-loop-direct-read-after-saturated-cursor"
+      },
+      "identityJoin": {
+        "allowed": true,
+        "rejectionReasons": [],
+        "proofRunIdentity": {
+          "selected_tree_hash": "f93e47c1d5b68dd243c795d3323cc04249c0b62cda22c3ccb003593c56232902",
+          "effective_kernel": "kernel_2712.img",
+          "expected_fetch_path": "da591740/kernel_2712.img",
+          "expected_fetch_byte_count": 48056,
+          "serial": {
+            "pre_power_drain": {
+              "attempts": 1,
+              "total_bytes": 0,
+              "final_cursor": 4194304,
+              "empty_before_power": true
+            },
+            "cursor_file": 4194304,
+            "window_cursor_start": 4194304,
+            "window_cursor_end": 4194304,
+            "window_bytes": 70007,
+            "response_bytes": 70007,
+            "capture_mode": "read",
+            "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+          },
+          "tftp": {
+            "cursor_file": 4260590,
+            "delta_cursor_start": 4260590,
+            "delta_cursor_end": 4261941,
+            "stable": true,
+            "event_count": 13,
+            "expected_fetch_count": 2,
+            "expected_fetch_byte_match_count": 2,
+            "expected_fetch_bytes_seen": [
+              48056,
+              48056
+            ]
+          },
+          "final_pre_restore": {
+            "tree_hash": "f93e47c1d5b68dd243c795d3323cc04249c0b62cda22c3ccb003593c56232902",
+            "effective_kernel": "kernel_2712.img",
+            "selected_tree_still_staged": true,
+            "expected_fetch_present": true,
+            "expected_fetch_bytes": 48056
+          },
+          "restore": {
+            "snapshot_name": "phase11-clock-adc-window-real-rerun-after-kg-pre-20260608T022642Z",
+            "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+          }
+        }
+      }
+    }
+  },
+  "inconclusiveFirstRun": {
+    "path": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/real-run",
+    "classification": "capture-staging-blocked",
+    "rejectionReasons": [
+      "preflight-staging-publication-mismatch",
+      "preflight-expected-fetch-byte-mismatch",
+      "serial-drain-not-empty-before-power",
+      "saturated-direct-read-without-empty-pre-power-drain",
+      "final-pre-restore-selected-tree-mismatch"
+    ],
+    "note": "The first capture retained real-result marker output but is not accepted because the repeated capture attempt polluted the preflight/selected-tree identity; known-good control and unchanged candidate rerun were required before acceptance."
+  },
+  "knownGoodControl": {
+    "path": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/known-good-control-after-inconclusive",
+    "classification": "capture-transaction-v2-ready",
+    "rejectionReasons": [],
+    "selectedTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 104136,
+    "markerOccurrences": 1
+  },
+  "validation": [
+    "scripts/rpi5-rp1-clock-adc-window-coherence-read-review.sh target/talos-rpi5-rp1-clock-adc-window-coherence-read-core.tar.gz",
+    "lab-controller API status/boot-files/snapshot/publish/power-cycle/restore",
+    "scripts/rpi5-capture-invariant-proof-bundle.sh with marker TALOS: rp1-clock-adc-window-coherence-result",
+    "scripts/rpi5-proof-identity-join-check.sh --evidence-dir tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/real-rerun-after-kg",
+    "known-good control after inconclusive first capture",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check"
+  ],
+  "acceptedClaims": [
+    "the selected read-only ADC clock-window coherence discriminator output is visible on Pi 5",
+    "the operation sequence returned repeated 0xdeaddead sentinel raw values across the selected clock-manager window",
+    "the selected candidate identity, TFTP fetches, serial markers, final pre-restore identity, and restore proof join under pi5-capture-transaction-v2"
+  ],
+  "rejectedClaims": [
+    "successful non-idempotent clock ownership",
+    "broad RP1 clock/reset ownership or any RP1 clock/reset write",
+    "GPIO ownership or event generation",
+    "interrupt delivery or GIC acknowledgement",
+    "ISR or handler ownership",
+    "DMA/cache, storage, generated-root, networking, SSH, broader PCIe behavior, Milestone 11.3, or phase transition"
+  ],
+  "nextAction": "Promote phase11-rp1-clock-write-effect-discriminator-closeout-20260607 on the next worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive."
+}

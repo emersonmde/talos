@@ -624,6 +624,26 @@ clock/reset reads or writes, GPIO ownership, event generation, interrupt
 delivery, DMA/cache, storage, generated-root, networking, SSH, broader PCIe,
 Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-clock-write-effect-discriminator-pi5-20260607 accepts the selected
+real read-only ADC clock-window coherence result on Pi 5 as
+rp1-clock-adc-window-readback-sentinel. After an inconclusive first capture, a
+known-good production-timer control passed the v2 identity join, and the
+unchanged real candidate rerun staged tree
+f93e47c1d5b68dd243c795d3323cc04249c0b62cda22c3ccb003593c56232902 with a
+48,056-byte da591740/kernel_2712.img, retained two matching TFTP fetches,
+52 occurrences of TALOS: rp1-clock-adc-window-coherence-result, final
+pre-restore selected-tree identity, and restored the lab to tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The
+accepted output reported CLK_SYS_CTRL, CLK_UART_CTRL, two ordered CLK_ADC_CTRL
+reads, CLK_ADC_DIV_INT, and CLK_ADC_SEL all returning 0xdeaddead, with
+adc-ctrl-stable=true, adc-window-all-equal=true,
+adc-window-all-deaddead=true, and retained enable-toggle restore equality. This
+accepts only the selected read-only sentinel/result boundary; successful
+non-idempotent clock ownership, broad RP1 clock/reset ownership, any new
+clock/reset write, GPIO ownership, event generation, interrupt delivery,
+DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
+11.3, and phase transition remain unaccepted.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware

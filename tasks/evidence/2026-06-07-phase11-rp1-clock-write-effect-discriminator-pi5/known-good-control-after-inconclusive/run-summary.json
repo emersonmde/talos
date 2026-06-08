@@ -1,0 +1,15 @@
+{
+  "runDir": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/known-good-control-after-inconclusive",
+  "marker": "rpi5-production-timer-preemption: PASS",
+  "captureExit": 0,
+  "identityExit": 0,
+  "identityAllowed": true,
+  "identityClassification": "capture-transaction-v2-ready",
+  "rejectionReasons": [],
+  "markerOccurrences": 1,
+  "selectedTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "expectedFetchCount": 2,
+  "expectedFetchByteMatchCount": 2,
+  "expectedFetchBytes": 104136
+}

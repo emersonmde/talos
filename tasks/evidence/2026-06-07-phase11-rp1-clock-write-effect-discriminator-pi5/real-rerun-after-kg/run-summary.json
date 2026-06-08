@@ -1,0 +1,19 @@
+{
+  "runDir": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/real-rerun-after-kg",
+  "archive": "target/talos-rpi5-rp1-clock-adc-window-coherence-read-core.tar.gz",
+  "marker": "TALOS: rp1-clock-adc-window-coherence-result",
+  "captureExit": 0,
+  "identityExit": 0,
+  "identityAllowed": true,
+  "identityClassification": "capture-transaction-v2-ready",
+  "rejectionReasons": [],
+  "suggestedClassification": "post-handoff-marker-visible",
+  "markerOccurrences": 52,
+  "selectedTreeHash": "f93e47c1d5b68dd243c795d3323cc04249c0b62cda22c3ccb003593c56232902",
+  "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "expectedFetchCount": 2,
+  "expectedFetchByteMatchCount": 2,
+  "expectedFetchBytes": 48056,
+  "serialCaptureMode": "read",
+  "serialObserveContract": "deadline-loop-direct-read-after-saturated-cursor"
+}

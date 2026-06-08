@@ -1,0 +1,60 @@
+{
+  "contract_version": "pi5-capture-transaction-v2",
+  "run_label": "phase11-rp1-clock-write-effect-discriminator-pi5-real-run",
+  "summary_label": "phase11-rp1-clock-write-effect-discriminator-pi5-real-run",
+  "decisive_rp1_hardware_classification_allowed": false,
+  "classification": "capture-staging-blocked",
+  "rejection_reasons": [
+    "preflight-staging-publication-mismatch",
+    "preflight-expected-fetch-byte-mismatch",
+    "serial-drain-not-empty-before-power",
+    "saturated-direct-read-without-empty-pre-power-drain",
+    "final-pre-restore-selected-tree-mismatch"
+  ],
+  "proof_run_identity": {
+    "selected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 48056,
+    "serial": {
+      "pre_power_drain": {
+        "attempts": 16,
+        "total_bytes": 182528,
+        "final_cursor": 4194304,
+        "empty_before_power": false
+      },
+      "cursor_file": 4194304,
+      "window_cursor_start": 4194304,
+      "window_cursor_end": 4194304,
+      "window_bytes": 74094,
+      "response_bytes": 74094,
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+    },
+    "tftp": {
+      "cursor_file": 4256537,
+      "delta_cursor_start": 4256537,
+      "delta_cursor_end": 4257888,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        48056,
+        48056
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "f93e47c1d5b68dd243c795d3323cc04249c0b62cda22c3ccb003593c56232902",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": false,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 48056
+    },
+    "restore": {
+      "snapshot_name": "phase11-clock-adc-window-real-pre-20260608T022235Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "rule": "missing or mismatched candidate identity, pre-power serial-drain, serial-window, TFTP, or final identity fields prevent decisive hardware classification"
+}

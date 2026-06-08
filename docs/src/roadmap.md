@@ -7952,6 +7952,22 @@ identity, and restore proof. This accepts only the no-MMIO/no-RP1/no-GIC
 control output/capture path; the real ADC clock-window coherence Pi 5 proof is
 the next mechanically gated task.
 
+phase11-rp1-clock-write-effect-discriminator-pi5-20260607 is accepted as
+rp1-clock-adc-window-readback-sentinel. After an inconclusive first capture, a
+production-timer known-good control passed the v2 identity join, and the
+unchanged real candidate rerun retained two matching 48,056-byte TFTP fetches,
+52 result markers, final selected-tree identity, and restore proof. The
+accepted output reported CLK_SYS_CTRL, CLK_UART_CTRL, two ordered CLK_ADC_CTRL
+reads, CLK_ADC_DIV_INT, and CLK_ADC_SEL all returning 0xdeaddead, with
+adc-ctrl-stable=true, adc-window-all-equal=true, and
+adc-window-all-deaddead=true. This accepts only the selected read-only
+sentinel/result boundary; successful non-idempotent clock ownership, broad
+clock/reset ownership, any new clock/reset write, GPIO ownership, event
+generation, interrupt delivery, handler ownership, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe, Milestone 11.3, and phase
+transition remain unaccepted. The closeout task is the next mechanically gated
+task.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
