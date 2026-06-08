@@ -8159,6 +8159,18 @@ configuration mutation, BAR discovery or programming, bridge setup,
 PERST/link-control, interrupt delivery, DMA/cache, storage, generated-root,
 networking, SSH, Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-bridge-config-preflight-closeout-20260608 accepts the closeout as
+pcie2-bridge-preflight-ready-frontier-closed. The accepted frontier is limited
+to the read-only source-backed bridge/config preflight discriminator, the
+paired no-MMIO/no-PCIe/no-RP1/no-GIC control proof, and the real Pi 5
+pcie2-bridge-preflight-ready result under identity-joined evidence. It does
+not accept expected RP1 vendor/device visibility, endpoint ownership, broad
+RP1 mapping, endpoint configuration mutation, BAR discovery or programming,
+bridge setup, PERST/link-control, interrupt delivery, DMA/cache, storage,
+generated-root, networking, SSH, Milestone 11.3, or phase transition. The
+worker creates no follow-up task from this closeout; supervisor planning is
+required for the next Milestone 11.2 frontier.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

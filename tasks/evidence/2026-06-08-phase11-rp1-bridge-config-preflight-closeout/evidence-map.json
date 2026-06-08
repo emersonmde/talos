@@ -1,0 +1,120 @@
+{
+  "taskId": "phase11-rp1-bridge-config-preflight-closeout-20260608",
+  "classification": "pcie2-bridge-preflight-ready-frontier-closed",
+  "evidenceLevel": [
+    "static inspection",
+    "documentation reconciliation",
+    "git diff checks",
+    "mdbook build"
+  ],
+  "evidence": [
+    {
+      "label": "closeout task record",
+      "path": "tasks/2026-06-08-phase11-rp1-bridge-config-preflight-closeout.md",
+      "type": "static closeout"
+    },
+    {
+      "label": "accepted source contract",
+      "path": "tasks/2026-06-08-phase11-rp1-bridge-config-preflight-source-contract.md",
+      "type": "static source contract",
+      "classification": "accepted-source-contract"
+    },
+    {
+      "label": "accepted local/static core",
+      "path": "tasks/2026-06-08-phase11-rp1-bridge-config-preflight-core.md",
+      "type": "fmt/lint/unit/static archive inspection",
+      "classification": "accepted-local-static-bridge-config-preflight-core"
+    },
+    {
+      "label": "accepted no-MMIO/no-PCIe/no-RP1/no-GIC control proof",
+      "path": "tasks/2026-06-08-phase11-rp1-bridge-config-preflight-control-pi5.md",
+      "type": "serial hardware boot/output, lab-controller API, TFTP evidence, restore proof",
+      "classification": "no-mmio-pcie2-bridge-preflight-control-visible"
+    },
+    {
+      "label": "accepted real Pi 5 proof",
+      "path": "tasks/2026-06-08-phase11-rp1-bridge-config-preflight-pi5.md",
+      "type": "serial hardware boot/output, lab-controller API, TFTP evidence, restore proof",
+      "classification": "pcie2-bridge-preflight-ready"
+    },
+    {
+      "label": "control classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-config-preflight-control-pi5/classification.json",
+      "type": "classification record"
+    },
+    {
+      "label": "real classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-config-preflight-pi5/classification.json",
+      "type": "classification record"
+    },
+    {
+      "label": "updated roadmap",
+      "path": "docs/src/roadmap.md",
+      "type": "documentation"
+    },
+    {
+      "label": "updated RP1/PCIe map contract",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "type": "documentation"
+    }
+  ],
+  "acceptedFrontier": {
+    "sourceContract": "phase11-rp1-bridge-config-preflight-source-contract-v1",
+    "controlClassification": "no-mmio-pcie2-bridge-preflight-control-visible",
+    "realClassification": "pcie2-bridge-preflight-ready",
+    "closeoutClassification": "pcie2-bridge-preflight-ready-frontier-closed",
+    "acceptedRealRun": {
+      "selectedTreeHash": "e66d21ac433225c19dfa63c09a577c8ab6828ebfdf5a437b57efc5fe0e7f260a",
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "expectedFetchBytes": 48000,
+      "expectedFetchCount": 2,
+      "markerOccurrences": 123,
+      "rawStatus": "0x3e0b0",
+      "dlActive": true,
+      "phyLinkUp": true,
+      "preflightRegister": "PCIE_MISC_MISC_CTRL",
+      "preflightRaw": "0xa8003000",
+      "scbAccessEn": true,
+      "cfgReadUrMode": true,
+      "rcbMpsMode": false,
+      "rcb64bMode": false,
+      "maxBurstSize": "0x0",
+      "miscCtrlIsSentinel": false
+    },
+    "acceptedControlRun": {
+      "selectedTreeHash": "f4269bd6ed53338820122d469e56922f4741c3e0d191843090fc3eaef6819646",
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "expectedFetchBytes": 47504,
+      "expectedFetchCount": 2,
+      "markerOccurrences": 60
+    }
+  },
+  "acceptedClaims": [
+    "the bridge/config preflight discriminator reaches the accepted PCIe2 host-link-up precondition on Pi 5",
+    "PCIE_MISC_MISC_CTRL is visible and non-sentinel at 0xa8003000",
+    "SCB_ACCESS_EN and CFG_READ_UR_MODE are set under identity-joined Pi 5 evidence",
+    "the no-MMIO/no-PCIe/no-RP1/no-GIC control output shape and capture path are visible on Pi 5",
+    "the selected candidate identity, TFTP fetches, serial markers, final pre-restore identity, and restore proof join under pi5-capture-transaction-v2"
+  ],
+  "rejectedClaims": [
+    "expected RP1 vendor/device visibility",
+    "endpoint ownership",
+    "broad RP1 mapping",
+    "endpoint configuration mutation",
+    "BAR programming or discovery",
+    "bridge setup",
+    "PERST/link-control changes",
+    "interrupt delivery",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "blockedReruns": [
+    "Same-shaped endpoint config identity hardware reruns remain closed unless a future supervisor task supplies a different discriminator or new acceptance criteria."
+  ],
+  "nextAction": "No worker-owned follow-up task is created by this closeout. Set planningNeeded=true for supervisor planning of the next Milestone 11.2 frontier if work should continue."
+}
