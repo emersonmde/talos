@@ -1,0 +1,82 @@
+{
+  "taskId": "phase11-rp1-endpoint-config-identity-source-contract-20260608",
+  "classification": "accepted-source-contract",
+  "evidence": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-08-phase11-rp1-endpoint-config-identity-source-contract.md",
+      "type": "static source contract"
+    },
+    {
+      "label": "source reference notes",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-endpoint-config-identity-source-contract/source-reference-notes.md",
+      "type": "static source inspection"
+    },
+    {
+      "label": "accepted PCIe2 host-link closeout",
+      "path": "tasks/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-closeout.md",
+      "type": "accepted predecessor evidence"
+    },
+    {
+      "label": "retained Broadcom STB PCIe config-access source",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-source-contract/pcie-brcmstb.c",
+      "type": "static source inspection"
+    },
+    {
+      "label": "retained Raspberry Pi Linux device-tree sources",
+      "path": "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/",
+      "type": "static source inspection"
+    },
+    {
+      "label": "Linux mainline RP1 PCI ID source",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/master/drivers/misc/rp1/rp1_pci.c",
+      "type": "static public source inspection"
+    },
+    {
+      "label": "Linux mainline PCI ID definitions",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/master/include/linux/pci_ids.h",
+      "type": "static public source inspection"
+    },
+    {
+      "label": "updated Phase 11 RP1/PCIe contract docs",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "type": "documentation"
+    },
+    {
+      "label": "updated roadmap",
+      "path": "docs/src/roadmap.md",
+      "type": "documentation"
+    }
+  ],
+  "acceptedContract": {
+    "contractId": "phase11-rp1-endpoint-config-identity-source-contract-v1",
+    "target": "rp1-endpoint-config-vendor-device-read",
+    "domain": 2,
+    "bus": 1,
+    "device": 0,
+    "function": 0,
+    "offset": "0x0",
+    "preconditionStatusAddress": "0x1000124068",
+    "indexRegisterAddress": "0x1000129000",
+    "indexValue": "0x00100000",
+    "dataRegisterAddress": "0x1000128000",
+    "widthBits": 32,
+    "expectedVendorId": "0x1de4",
+    "expectedDeviceId": "0x0001"
+  },
+  "forbiddenClaims": [
+    "runtime behavior",
+    "hardware behavior",
+    "broad RP1 mapping",
+    "endpoint ownership",
+    "endpoint configuration mutation",
+    "BAR programming",
+    "bridge setup",
+    "interrupt delivery",
+    "DMA/cache",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ]
+}

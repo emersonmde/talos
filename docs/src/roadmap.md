@@ -8083,6 +8083,20 @@ generated-root, networking, SSH, Milestone 11.3, and phase transition remain
 unaccepted. Supervisor planning is required for the next Milestone 11.2
 feature slice; this closeout creates no worker-owned follow-up task.
 
+phase11-rp1-endpoint-config-identity-source-contract-20260608 accepts the next
+bounded source contract,
+phase11-rp1-endpoint-config-identity-source-contract-v1. The selected target is
+`rp1-endpoint-config-vendor-device-read`: after checking the accepted PCIe2
+host-link status precondition, write controller selector `0x00100000` to
+pcie2 `EXT_CFG_INDEX` at `0x1000129000`, then read one 32-bit config dword
+from `EXT_CFG_DATA + 0` at `0x1000128000` for BDF 0002:01:00.0 offset 0. The
+expected RP1 vendor/device identity is `0x1de4:0x0001`. This accepts only the
+source contract and paired no-MMIO/no-RP1/no-GIC control requirement for an
+endpoint config identity read; hardware behavior, broad RP1 mapping, endpoint
+ownership, endpoint configuration mutation, BAR programming, bridge setup,
+interrupt delivery, DMA/cache, networking, SSH, Milestone 11.3, and phase
+transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

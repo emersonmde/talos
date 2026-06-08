@@ -1673,6 +1673,31 @@ generated-root, networking, SSH, Milestone 11.3, and phase transition remain
 unaccepted. Supervisor planning is required for the next Milestone 11.2
 feature slice.
 
+phase11-rp1-endpoint-config-identity-source-contract-20260608 accepts
+phase11-rp1-endpoint-config-identity-source-contract-v1. The selected target
+is `rp1-endpoint-config-vendor-device-read`: after confirming the accepted
+PCIe2 host-link precondition through `PCIE_MISC_PCIE_STATUS`, write exactly
+`0x00100000` to BCM2712 pcie2 `EXT_CFG_INDEX` at CPU physical
+`0x1000129000`, then read exactly one 32-bit dword from `EXT_CFG_DATA + 0` at
+CPU physical `0x1000128000`. The selected BDF/offset is domain 2, bus 1,
+device 0, function 0, offset `0x0`; the expected RP1 identity is vendor
+`0x1de4`, device `0x0001`.
+
+The source contract treats the `EXT_CFG_INDEX` write as a bounded controller
+target selector for the following read-only config-data access, not as
+endpoint configuration mutation, BAR programming, bridge setup, or
+restore-owned state. The accepted classifications are
+`rp1-endpoint-config-id-visible`, `rp1-endpoint-config-id-unexpected`,
+`rp1-endpoint-config-id-all-ones`, `rp1-endpoint-config-id-zero`,
+`rp1-endpoint-config-id-sentinel`, `rp1-endpoint-config-link-down-skip`,
+`rp1-endpoint-config-id-inconclusive-capture`,
+`no-mmio-rp1-endpoint-config-id-control-visible`, and
+`staging/build-blocker`. The paired control must preserve output shape while
+constructing no BCM2712 PCIe, RP1 peripheral/SYSINFO/clock/GPIO/MSI-X, MIP,
+GIC, or DMA MMIO address. Endpoint config writes, BAR discovery beyond offset
+0, bridge setup, PERST/link-control changes, interrupt delivery, DMA/cache,
+networking, SSH, Milestone 11.3, and phase transition remain unaccepted.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when
