@@ -1,0 +1,4 @@
+f60e5899e994c4be98ccd3ac826b5c88f271db968056aff6afb9c1cf705fe42a  target/talos-rpi5-rp1-sysinfo-clock-sentinel-read-core.tar.gz
+e5d19fde6321e19684ee8d8e5970baf88e2eaeed0bf9e3252e8ed64958d51041  target/talos-rpi5-rp1-sysinfo-clock-sentinel-no-mmio-control-core.tar.gz
+b61eb83442ee5bd332da0de8e53b42c63d4b9950a5a9b81db5f1abfc26bf1794  target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-rp1-sysinfo-clock-sentinel-read.img
+1aa668c7b0665a0f1148f7bd48435a324f80aad0347e6971a1efc8538ddd150c  target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-rp1-sysinfo-clock-sentinel-no-mmio-control.img

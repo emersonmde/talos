@@ -1,0 +1,140 @@
+{
+  "task": "phase11-rp1-clock-sentinel-address-discriminator-core-20260608",
+  "status": "accepted",
+  "classification": "accepted-local-static-sysinfo-clock-sentinel-core",
+  "generatedAt": "2026-06-08T03:37:00Z",
+  "evidenceLevel": [
+    "fmt/lint/typecheck",
+    "unit tests",
+    "image/archive inspection",
+    "static source/string inspection",
+    "git diff checks"
+  ],
+  "sourceContract": {
+    "task": "phase11-rp1-clock-sentinel-address-discriminator-source-contract-20260608",
+    "commit": "2b5176eaba20ef1182cac09702fa073351201cb5",
+    "contract": "phase11-rp1-clock-sentinel-address-discriminator-source-contract-v1",
+    "target": "rp1-sysinfo-vs-clock-sentinel-read",
+    "allowedReads": [
+      "SYSINFO_CHIP_ID at 0x1f00000000",
+      "SYSINFO_PLATFORM at 0x1f00000004",
+      "CLK_ADC_CTRL at 0x1f00018144"
+    ],
+    "forbiddenWrites": true
+  },
+  "changedFiles": [
+    "build.rs",
+    "src/main.rs",
+    "src/target/rpi5.rs",
+    "scripts/rpi5-rp1-sysinfo-clock-sentinel-read-image.sh",
+    "scripts/rpi5-rp1-sysinfo-clock-sentinel-read-boot-tree.sh",
+    "scripts/rpi5-rp1-sysinfo-clock-sentinel-read-archive.sh",
+    "scripts/rpi5-rp1-sysinfo-clock-sentinel-read-review.sh",
+    "scripts/rpi5-rp1-sysinfo-clock-sentinel-no-mmio-control-image.sh",
+    "scripts/rpi5-rp1-sysinfo-clock-sentinel-no-mmio-control-boot-tree.sh",
+    "scripts/rpi5-rp1-sysinfo-clock-sentinel-no-mmio-control-archive.sh",
+    "scripts/rpi5-rp1-sysinfo-clock-sentinel-no-mmio-control-review.sh",
+    "tasks/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-core.md",
+    "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-core/evidence-map.json",
+    "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-core/read-archive-review.txt",
+    "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-core/control-archive-review.txt",
+    "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-core/artifact-sha256.txt"
+  ],
+  "realCandidate": {
+    "scenario": "rpi5_rp1_sysinfo_clock_sentinel_read",
+    "marker": "TALOS: rp1-sysinfo-clock-sentinel-result",
+    "archive": "target/talos-rpi5-rp1-sysinfo-clock-sentinel-read-core.tar.gz",
+    "archiveSha256": "f60e5899e994c4be98ccd3ac826b5c88f271db968056aff6afb9c1cf705fe42a",
+    "kernelSha256": "b61eb83442ee5bd332da0de8e53b42c63d4b9950a5a9b81db5f1abfc26bf1794",
+    "kernelSize": 47776,
+    "reviewOutput": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-core/read-archive-review.txt",
+    "allowedOperations": [
+      "32-bit volatile load SYSINFO_CHIP_ID",
+      "32-bit volatile load SYSINFO_PLATFORM",
+      "32-bit volatile load CLK_ADC_CTRL"
+    ],
+    "acceptedClassificationsReported": [
+      "rp1-sysinfo-live-clock-window-sentinel",
+      "rp1-sysinfo-and-clock-window-sentinel",
+      "rp1-sysinfo-live-clock-window-non-sentinel",
+      "rp1-sysinfo-unexpected-chip-id",
+      "rp1-sysinfo-address-decode-blocked"
+    ]
+  },
+  "controlCandidate": {
+    "scenario": "rpi5_rp1_sysinfo_clock_sentinel_no_mmio_control",
+    "marker": "TALOS: rp1-sysinfo-clock-sentinel-control",
+    "archive": "target/talos-rpi5-rp1-sysinfo-clock-sentinel-no-mmio-control-core.tar.gz",
+    "archiveSha256": "e5d19fde6321e19684ee8d8e5970baf88e2eaeed0bf9e3252e8ed64958d51041",
+    "kernelSha256": "1aa668c7b0665a0f1148f7bd48435a324f80aad0347e6971a1efc8538ddd150c",
+    "kernelSize": 47288,
+    "reviewOutput": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-core/control-archive-review.txt",
+    "forbiddenAddressStringsAbsent": [
+      "0x1f00000000",
+      "0x1f00000004",
+      "0x1f00018000",
+      "0x1f00018144",
+      "0x1f000d0070",
+      "0x1f000d0080",
+      "0x107fff9000",
+      "0x107fffa000"
+    ],
+    "classification": "no-mmio-sysinfo-clock-sentinel-control-visible"
+  },
+  "validation": [
+    {
+      "gate": "cargo fmt --all -- --check",
+      "level": "fmt",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet",
+      "level": "unit tests",
+      "result": "pass",
+      "tests": 423
+    },
+    {
+      "gate": "scripts/rpi5-rp1-sysinfo-clock-sentinel-read-review.sh",
+      "level": "image/archive inspection",
+      "result": "pass",
+      "output": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-core/read-archive-review.txt"
+    },
+    {
+      "gate": "scripts/rpi5-rp1-sysinfo-clock-sentinel-no-mmio-control-review.sh",
+      "level": "image/archive inspection",
+      "result": "pass",
+      "output": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-core/control-archive-review.txt"
+    },
+    {
+      "gate": "git diff --check",
+      "level": "diff hygiene",
+      "result": "pass"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "level": "docs validation",
+      "result": "not-run",
+      "reason": "No docs/src files were touched."
+    },
+    {
+      "gate": "git diff --cached --check",
+      "level": "staged diff hygiene",
+      "result": "pass"
+    }
+  ],
+  "acceptedClaims": [
+    "local/static real candidate implements only the accepted read-only SYSINFO identity vs retained clock-window sentinel discriminator",
+    "local/static control candidate preserves output shape while constructing no forbidden RP1/GIC/MSI-X/PCIe/MIP/GPIO/pads/RIO/clock-reset MMIO address",
+    "archive/static boundary is ready for a later serialized Pi 5 no-MMIO control proof"
+  ],
+  "rejectedClaims": [
+    "Pi 5 hardware behavior",
+    "broad RP1 clock/reset ownership",
+    "clock/reset writes",
+    "GPIO ownership or event generation",
+    "interrupt delivery or GIC acknowledgement",
+    "ISR or handler ownership",
+    "DMA/cache, storage, generated-root, networking, SSH, broader PCIe behavior, Milestone 11.3, or phase transition"
+  ],
+  "nextAction": "Promote phase11-rp1-clock-sentinel-address-discriminator-control-pi5-20260608 only after this task is committed and hardwareTestLock remains unlocked/restored."
+}

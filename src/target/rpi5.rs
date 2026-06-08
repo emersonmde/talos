@@ -208,6 +208,14 @@ pub const RP1_IO_BANK0_MSIX_CFG: usize = 0x1f_0010_8008;
 #[allow(dead_code)]
 pub const RP1_GPIO16_PAD: usize = 0x1f_000f_0044;
 #[allow(dead_code)]
+pub const RP1_SYSINFO_BASE: usize = 0x1f_0000_0000;
+#[allow(dead_code)]
+pub const RP1_SYSINFO_CHIP_ID: usize = RP1_SYSINFO_BASE;
+#[allow(dead_code)]
+pub const RP1_SYSINFO_PLATFORM: usize = RP1_SYSINFO_BASE + 0x4;
+#[allow(dead_code)]
+pub const RP1_EXPECTED_CHIP_ID: u32 = 0x2000_1927;
+#[allow(dead_code)]
 pub const RP1_CLOCK_MANAGER_BASE: usize = 0x1f_0001_8000;
 #[allow(dead_code)]
 pub const RP1_PLL_SYS_CS: usize = 0x1f_0002_0000;
@@ -12589,6 +12597,7 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_write_restore",
         talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle",
         talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_read",
+        talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_read",
         talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
         talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator"
     )
@@ -13616,6 +13625,141 @@ pub fn run_rp1_clock_adc_window_coherence_no_mmio_control() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_read")]
+pub fn run_rp1_sysinfo_clock_sentinel_read() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-clock-sentinel-address-discriminator-source-contract-v1";
+    const TARGET: &str = "rp1-sysinfo-vs-clock-sentinel-read";
+    const RETAINED_ADC_WINDOW_CLASSIFICATION: &str = "rp1-clock-adc-window-readback-sentinel";
+    const RETAINED_ADC_WINDOW_RAW: u32 = 0xdead_dead;
+
+    write_early_static("rpi5-rp1-sysinfo-clock-sentinel-read: start\n");
+    write_early_static("rpi5-rp1-sysinfo-clock-sentinel-read: before-read-only-loads\n");
+    wait_uart10_empty_early_phase();
+
+    let sysinfo_chip_id = read_rp1_reg_u32(RP1_SYSINFO_CHIP_ID);
+    let sysinfo_platform = read_rp1_reg_u32(RP1_SYSINFO_PLATFORM);
+    let clk_adc_ctrl = read_rp1_reg_u32(RP1_CLK_ADC_CTRL);
+
+    let chip_id_matches_expected = sysinfo_chip_id == RP1_EXPECTED_CHIP_ID;
+    let chip_id_is_deaddead = sysinfo_chip_id == RETAINED_ADC_WINDOW_RAW;
+    let platform_is_deaddead = sysinfo_platform == RETAINED_ADC_WINDOW_RAW;
+    let adc_ctrl_is_deaddead = clk_adc_ctrl == RETAINED_ADC_WINDOW_RAW;
+    let sysinfo_pair_equal = sysinfo_chip_id == sysinfo_platform;
+    let sysinfo_vs_adc_same = sysinfo_chip_id == clk_adc_ctrl;
+    let classification = classify_sysinfo_clock_sentinel(
+        chip_id_matches_expected,
+        chip_id_is_deaddead,
+        platform_is_deaddead,
+        adc_ctrl_is_deaddead,
+    );
+
+    loop {
+        write_early_static("TALOS: rp1-sysinfo-clock-sentinel-result contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_early_static(" sysinfo-base=");
+        write_early_hex_u64(RP1_SYSINFO_BASE as u64);
+        write_early_static(" clock-manager-base=");
+        write_early_hex_u64(RP1_CLOCK_MANAGER_BASE as u64);
+        write_sysinfo_clock_sentinel_register(
+            " sysinfo-chip-id",
+            0x0,
+            RP1_SYSINFO_CHIP_ID,
+            sysinfo_chip_id,
+        );
+        write_sysinfo_clock_sentinel_register(
+            " sysinfo-platform",
+            0x4,
+            RP1_SYSINFO_PLATFORM,
+            sysinfo_platform,
+        );
+        write_sysinfo_clock_sentinel_register(
+            " clk-adc-ctrl",
+            0x18144,
+            RP1_CLK_ADC_CTRL,
+            clk_adc_ctrl,
+        );
+        write_sysinfo_clock_sentinel_booleans(
+            chip_id_matches_expected,
+            chip_id_is_deaddead,
+            platform_is_deaddead,
+            adc_ctrl_is_deaddead,
+            sysinfo_pair_equal,
+            sysinfo_vs_adc_same,
+        );
+        write_retained_adc_window_sentinel_context(
+            RETAINED_ADC_WINDOW_CLASSIFICATION,
+            RETAINED_ADC_WINDOW_RAW,
+        );
+        write_early_static(" classification=");
+        write_early_static(classification);
+        write_early_static("\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_no_mmio_control")]
+pub fn run_rp1_sysinfo_clock_sentinel_no_mmio_control() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-clock-sentinel-address-discriminator-source-contract-v1";
+    const TARGET: &str = "rp1-sysinfo-vs-clock-sentinel-read";
+    const RETAINED_ADC_WINDOW_CLASSIFICATION: &str = "rp1-clock-adc-window-readback-sentinel";
+    const RETAINED_ADC_WINDOW_RAW: u32 = 0xdead_dead;
+    const SIMULATED_SYSINFO_CHIP_ID: u32 = RP1_EXPECTED_CHIP_ID;
+    const SIMULATED_SYSINFO_PLATFORM: u32 = 0;
+    const SIMULATED_CLK_ADC_CTRL: u32 = RETAINED_ADC_WINDOW_RAW;
+
+    write_early_static("rpi5-rp1-sysinfo-clock-sentinel-control: start\n");
+    write_early_static(
+        "rpi5-rp1-sysinfo-clock-sentinel-control: no-rp1-sysinfo-clock-reset-gpio-rio-pads-msix-pcie-mip-gic-mmio\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    let chip_id_matches_expected = SIMULATED_SYSINFO_CHIP_ID == RP1_EXPECTED_CHIP_ID;
+    let chip_id_is_deaddead = SIMULATED_SYSINFO_CHIP_ID == RETAINED_ADC_WINDOW_RAW;
+    let platform_is_deaddead = SIMULATED_SYSINFO_PLATFORM == RETAINED_ADC_WINDOW_RAW;
+    let adc_ctrl_is_deaddead = SIMULATED_CLK_ADC_CTRL == RETAINED_ADC_WINDOW_RAW;
+    let sysinfo_pair_equal = SIMULATED_SYSINFO_CHIP_ID == SIMULATED_SYSINFO_PLATFORM;
+    let sysinfo_vs_adc_same = SIMULATED_SYSINFO_CHIP_ID == SIMULATED_CLK_ADC_CTRL;
+
+    loop {
+        write_early_static("TALOS: rp1-sysinfo-clock-sentinel-control contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_early_static(" sysinfo-base=not-constructed clock-manager-base=not-constructed");
+        write_sysinfo_clock_sentinel_control_register(
+            " sysinfo-chip-id",
+            0x0,
+            SIMULATED_SYSINFO_CHIP_ID,
+        );
+        write_sysinfo_clock_sentinel_control_register(
+            " sysinfo-platform",
+            0x4,
+            SIMULATED_SYSINFO_PLATFORM,
+        );
+        write_sysinfo_clock_sentinel_control_register(
+            " clk-adc-ctrl",
+            0x18144,
+            SIMULATED_CLK_ADC_CTRL,
+        );
+        write_sysinfo_clock_sentinel_booleans(
+            chip_id_matches_expected,
+            chip_id_is_deaddead,
+            platform_is_deaddead,
+            adc_ctrl_is_deaddead,
+            sysinfo_pair_equal,
+            sysinfo_vs_adc_same,
+        );
+        write_retained_adc_window_sentinel_context(
+            RETAINED_ADC_WINDOW_CLASSIFICATION,
+            RETAINED_ADC_WINDOW_RAW,
+        );
+        write_early_static(" classification=no-mmio-sysinfo-clock-sentinel-control-visible\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
 #[cfg(talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read")]
 pub fn run_rp1_gpio14_ownership_route_preflight_read() -> ! {
     const CONTRACT_ID: &str = "phase11-rp1-gpio-ownership-restore-source-contract-v1";
@@ -14580,6 +14724,103 @@ fn write_prior_adc_enable_toggle_context(
 }
 
 #[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_read",
+    talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_no_mmio_control"
+))]
+fn classify_sysinfo_clock_sentinel(
+    chip_id_matches_expected: bool,
+    chip_id_is_deaddead: bool,
+    platform_is_deaddead: bool,
+    adc_ctrl_is_deaddead: bool,
+) -> &'static str {
+    if chip_id_matches_expected && adc_ctrl_is_deaddead {
+        "rp1-sysinfo-live-clock-window-sentinel"
+    } else if chip_id_matches_expected {
+        "rp1-sysinfo-live-clock-window-non-sentinel"
+    } else if chip_id_is_deaddead && platform_is_deaddead && adc_ctrl_is_deaddead {
+        "rp1-sysinfo-and-clock-window-sentinel"
+    } else if chip_id_is_deaddead {
+        "rp1-sysinfo-address-decode-blocked"
+    } else {
+        "rp1-sysinfo-unexpected-chip-id"
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_read")]
+fn write_sysinfo_clock_sentinel_register(
+    name: &str,
+    source_offset: u64,
+    address: usize,
+    value: u32,
+) {
+    write_early_static(name);
+    write_early_static("-source-offset=");
+    write_early_hex_u64(source_offset);
+    write_early_static(" address=");
+    write_early_hex_u64(address as u64);
+    write_early_static(" width=32 raw=");
+    write_early_hex_u64(value as u64);
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_no_mmio_control")]
+fn write_sysinfo_clock_sentinel_control_register(name: &str, source_offset: u64, value: u32) {
+    write_early_static(name);
+    write_early_static("-source-offset=");
+    write_early_hex_u64(source_offset);
+    write_early_static(" address=not-constructed width=32 raw=");
+    write_early_hex_u64(value as u64);
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_read",
+    talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_no_mmio_control"
+))]
+fn write_sysinfo_clock_sentinel_booleans(
+    chip_id_matches_expected: bool,
+    chip_id_is_deaddead: bool,
+    platform_is_deaddead: bool,
+    adc_ctrl_is_deaddead: bool,
+    sysinfo_pair_equal: bool,
+    sysinfo_vs_adc_same: bool,
+) {
+    write_early_static(" expected-chip-id=");
+    write_early_hex_u64(RP1_EXPECTED_CHIP_ID as u64);
+    write_early_static(" chip-id-matches-expected=");
+    write_bool(chip_id_matches_expected);
+    write_early_static(" chip-id-is-deaddead=");
+    write_bool(chip_id_is_deaddead);
+    write_early_static(" platform-is-deaddead=");
+    write_bool(platform_is_deaddead);
+    write_early_static(" adc-ctrl-is-deaddead=");
+    write_bool(adc_ctrl_is_deaddead);
+    write_early_static(" sysinfo-pair-equal=");
+    write_bool(sysinfo_pair_equal);
+    write_early_static(" sysinfo-vs-adc-same=");
+    write_bool(sysinfo_vs_adc_same);
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_read",
+    talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_no_mmio_control"
+))]
+fn write_retained_adc_window_sentinel_context(classification: &str, raw: u32) {
+    write_early_static(" retained-adc-window-classification=");
+    write_early_static(classification);
+    write_early_static(" retained-adc-window-clk-sys-ctrl-raw=");
+    write_early_hex_u64(raw as u64);
+    write_early_static(" retained-adc-window-clk-uart-ctrl-raw=");
+    write_early_hex_u64(raw as u64);
+    write_early_static(" retained-adc-window-adc-ctrl-first-raw=");
+    write_early_hex_u64(raw as u64);
+    write_early_static(" retained-adc-window-adc-ctrl-second-raw=");
+    write_early_hex_u64(raw as u64);
+    write_early_static(" retained-adc-window-adc-div-int-raw=");
+    write_early_hex_u64(raw as u64);
+    write_early_static(" retained-adc-window-adc-sel-raw=");
+    write_early_hex_u64(raw as u64);
+}
+
+#[cfg(any(
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control"
 ))]
@@ -14775,6 +15016,8 @@ fn gpio14_ownership_preflight_classification(
     talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_read",
     talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_no_mmio_control",
+    talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_read",
+    talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator",
@@ -14938,6 +15181,10 @@ mod tests {
         assert_eq!(RP1_RIO0_IN, 0x1f_000e_0008);
         assert_eq!(RP1_IO_BANK0_INTE, 0x1f_000d_011c);
         assert_eq!(RP1_IO_BANK0_INTS, 0x1f_000d_0124);
+        assert_eq!(RP1_SYSINFO_BASE, 0x1f_0000_0000);
+        assert_eq!(RP1_SYSINFO_CHIP_ID, 0x1f_0000_0000);
+        assert_eq!(RP1_SYSINFO_PLATFORM, 0x1f_0000_0004);
+        assert_eq!(RP1_EXPECTED_CHIP_ID, 0x2000_1927);
         assert_eq!(RP1_CLOCK_MANAGER_BASE, 0x1f_0001_8000);
         assert_eq!(RP1_PLL_SYS_CS, 0x1f_0002_0000);
         assert_eq!(RP1_CLK_SYS_CTRL, 0x1f_0001_8014);

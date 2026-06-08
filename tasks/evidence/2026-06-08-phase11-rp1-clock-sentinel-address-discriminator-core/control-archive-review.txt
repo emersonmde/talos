@@ -1,0 +1,8 @@
+candidate_archive=target/talos-rpi5-rp1-sysinfo-clock-sentinel-no-mmio-control-core.tar.gz
+candidate_archive_sha256=e5d19fde6321e19684ee8d8e5970baf88e2eaeed0bf9e3252e8ed64958d51041
+kernel_2712_sha256=1aa668c7b0665a0f1148f7bd48435a324f80aad0347e6971a1efc8538ddd150c
+kernel_2712_size=47288
+header_image_size=47288
+text_offset=0
+flags=12
+control_marker=TALOS: rp1-sysinfo-clock-sentinel-control

@@ -1,0 +1,8 @@
+candidate_archive=target/talos-rpi5-rp1-sysinfo-clock-sentinel-read-core.tar.gz
+candidate_archive_sha256=f60e5899e994c4be98ccd3ac826b5c88f271db968056aff6afb9c1cf705fe42a
+kernel_2712_sha256=b61eb83442ee5bd332da0de8e53b42c63d4b9950a5a9b81db5f1abfc26bf1794
+kernel_2712_size=47776
+header_image_size=47776
+text_offset=0
+flags=12
+result_marker=TALOS: rp1-sysinfo-clock-sentinel-result
