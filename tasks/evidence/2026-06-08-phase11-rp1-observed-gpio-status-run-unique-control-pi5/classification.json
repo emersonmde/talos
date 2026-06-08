@@ -1,0 +1,26 @@
+{
+  "task_id": "phase11-rp1-observed-gpio-status-run-unique-control-pi5-20260608",
+  "classification": "no-mmio-observed-gpio-status-run-unique-control-visible",
+  "proof_contract_classification": "capture-transaction-run-unique-ready",
+  "run_label": "phase11-run-unique-gpio-control",
+  "capture_nonce": "ru20260608T195401Z-f84941d7",
+  "run_unique_check_exit": 0,
+  "decisive_control_path_allowed": true,
+  "rejection_reasons": [],
+  "required_marker": "TALOS: rp1-observed-gpio-status-control capture-nonce=ru20260608T195401Z-f84941d7",
+  "pre_power_marker_count": 0,
+  "post_power_marker_count": 37,
+  "selected_tree_hash": "2e0fbbdc8da0ec3066ddc4b74949887c8bcf80c70ac6c4a68edffb5dca6f5173",
+  "expected_fetch_path": "da591740/kernel_2712.img",
+  "expected_fetch_byte_count": 49072,
+  "final_pre_restore_tree_hash": "2e0fbbdc8da0ec3066ddc4b74949887c8bcf80c70ac6c4a68edffb5dca6f5173",
+  "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "non_claims": [
+    "no RP1/GPIO hardware behavior accepted from no-MMIO control",
+    "no GPIO ownership",
+    "no event generation",
+    "no interrupt delivery",
+    "no broad RP1 mapping",
+    "no phase transition"
+  ]
+}

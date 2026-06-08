@@ -1,0 +1,93 @@
+{
+  "task_id": "phase11-rp1-observed-gpio-status-run-unique-control-pi5-20260608",
+  "classification": "no-mmio-observed-gpio-status-run-unique-control-visible",
+  "evidence": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-control-pi5.md",
+      "type": "task record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-control-pi5/classification.json",
+      "type": "accepted control proof classification"
+    },
+    {
+      "label": "capture nonce",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-control-pi5/capture-nonce.txt",
+      "type": "run-unique marker source"
+    },
+    {
+      "label": "static archive review",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-control-pi5/static-archive-review.txt",
+      "type": "image/archive inspection"
+    },
+    {
+      "label": "published archive metadata",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-control-pi5/publish-archive.json",
+      "type": "lab-controller API"
+    },
+    {
+      "label": "capture proof bundle",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-control-pi5/control-run/",
+      "type": "lab-controller API, serial hardware boot/output, TFTP evidence, restore proof"
+    },
+    {
+      "label": "capture summary",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-control-pi5/control-run/capture-invariant-summary.json",
+      "type": "hardware capture summary"
+    },
+    {
+      "label": "run-unique checker output",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-control-pi5/run-unique-check.json",
+      "type": "run-unique freshness replay"
+    },
+    {
+      "label": "restore proof",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-run-unique-control-pi5/control-run/post-restore-status.json",
+      "type": "lab-controller API restore identity"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "Lab API GET /status before run and after restore",
+      "result": "passed"
+    },
+    {
+      "gate": "Fresh serial cursor and TFTP cursor before power cycle",
+      "result": "passed"
+    },
+    {
+      "gate": "TFTP delta from GET /tftp/logs after run, captured before restore and checked for stability",
+      "result": "passed"
+    },
+    {
+      "gate": "Accepted run-unique freshness checker/procedure from the core task",
+      "result": "passed"
+    },
+    {
+      "gate": "Known-good control and unchanged rerun only if first run is inconclusive",
+      "result": "not run; first run was decisive"
+    },
+    {
+      "gate": "jq empty on retained classification/evidence JSON",
+      "result": "passed"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "passed"
+    }
+  ],
+  "notes": {
+    "capture_nonce": "ru20260608T195401Z-f84941d7",
+    "selected_tree_hash": "2e0fbbdc8da0ec3066ddc4b74949887c8bcf80c70ac6c4a68edffb5dca6f5173",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 49072,
+    "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "no_docs_src_touched": true
+  }
+}
