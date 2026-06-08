@@ -1,0 +1,1 @@
+TALOS: rp1-observed-gpio-status-control capture-nonce=bti20260608T212440Z-122908e4

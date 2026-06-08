@@ -1,0 +1,116 @@
+{
+  "task_id": "phase11-pi5-boot-staging-identity-known-good-control-pi5-20260608",
+  "classification": "known-good-boot-staging-identity-control-ready",
+  "evidence": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-08-phase11-pi5-boot-staging-identity-known-good-control-pi5.md",
+      "type": "task record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-boot-staging-identity-known-good-control-pi5/classification.json",
+      "type": "accepted control proof classification"
+    },
+    {
+      "label": "capture nonce",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-boot-staging-identity-known-good-control-pi5/capture-nonce.txt",
+      "type": "task-owned marker source"
+    },
+    {
+      "label": "static archive review",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-boot-staging-identity-known-good-control-pi5/static-archive-review.txt",
+      "type": "image/archive inspection"
+    },
+    {
+      "label": "published archive metadata",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-boot-staging-identity-known-good-control-pi5/publish-archive.json",
+      "type": "lab-controller API"
+    },
+    {
+      "label": "capture proof bundle",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-boot-staging-identity-known-good-control-pi5/control-run/",
+      "type": "lab-controller API, serial hardware boot/output, TFTP evidence, restore proof"
+    },
+    {
+      "label": "capture summary",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-boot-staging-identity-known-good-control-pi5/control-run/capture-invariant-summary.json",
+      "type": "hardware capture summary"
+    },
+    {
+      "label": "run-unique checker output",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-boot-staging-identity-known-good-control-pi5/run-unique-check.json",
+      "type": "run-unique freshness replay"
+    },
+    {
+      "label": "boot-staging identity checker output",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-boot-staging-identity-known-good-control-pi5/boot-staging-identity-check.json",
+      "type": "boot-staging identity replay"
+    },
+    {
+      "label": "restore proof",
+      "path": "tasks/evidence/2026-06-08-phase11-pi5-boot-staging-identity-known-good-control-pi5/control-run/post-restore-status.json",
+      "type": "lab-controller API restore identity"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "Image/archive review for the known-good/no-RP1 control archive",
+      "result": "passed"
+    },
+    {
+      "gate": "Serialized Pi 5 lab run under hardwareTestLock",
+      "result": "passed"
+    },
+    {
+      "gate": "Candidate identity via lab API GET /status before power",
+      "result": "passed"
+    },
+    {
+      "gate": "Fresh serial cursor/drain evidence",
+      "result": "passed"
+    },
+    {
+      "gate": "TFTP delta proving expected candidate fetch path and byte count",
+      "result": "passed"
+    },
+    {
+      "gate": "Final pre-restore identity check",
+      "result": "passed"
+    },
+    {
+      "gate": "Restore proof to the pre-run tree",
+      "result": "passed"
+    },
+    {
+      "gate": "Run accepted repaired checker/procedure and retain JSON output",
+      "result": "passed"
+    },
+    {
+      "gate": "jq empty on evidence-map, classification, checker, and retained JSON artifacts",
+      "result": "passed"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build if docs/src files are touched",
+      "result": "not run; no docs/src files touched"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "passed"
+    }
+  ],
+  "notes": {
+    "capture_nonce": "bti20260608T212440Z-122908e4",
+    "selected_tree_hash": "35a30932a7f8e76d8cfa657b7419ec1d5e7e8ce450c5ae898c32e957636734f1",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 49072,
+    "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "run_unique_classification": "capture-transaction-run-unique-ready",
+    "boot_staging_identity_classification": "boot-staging-identity-ready",
+    "no_docs_src_touched": true
+  }
+}

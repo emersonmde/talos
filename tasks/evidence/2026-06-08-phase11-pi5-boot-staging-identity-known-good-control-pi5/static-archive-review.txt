@@ -1,0 +1,10 @@
+candidate_archive=target/talos-rpi5-boot-staging-identity-known-good-control.tar.gz
+candidate_archive_sha256=afa18de874112ae30b5853df01092fea02d8e4faab94fd19f8d65af1f5801da9
+kernel_2712_sha256=9ea23d2f71689ed17538d97838e8bfa238fc483496924518ac40f2cc2cc99c76
+kernel_2712_size=49072
+header_image_size=49072
+text_offset=0
+flags=12
+control_marker=TALOS: rp1-observed-gpio-status-control
+capture_nonce=bti20260608T212440Z-122908e4
+forbidden_observed_gpio_status_strings_absent=true
