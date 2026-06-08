@@ -1,0 +1,88 @@
+{
+  "taskId": "phase11-rp1-pcie-endpoint-config-discriminator-core-20260608",
+  "classification": "accepted-local-static-pcie2-host-link-status-core",
+  "sourceContract": {
+    "taskId": "phase11-rp1-pcie-endpoint-config-discriminator-source-contract-20260608",
+    "classification": "accepted-source-contract",
+    "commit": "b2a1f1d50d56ba5307516ff762bd4f11569dd767",
+    "contractId": "phase11-rp1-pcie-endpoint-config-discriminator-source-contract-v1",
+    "target": "pcie2-host-link-status-read"
+  },
+  "implementation": {
+    "sourceFiles": [
+      "build.rs",
+      "src/main.rs",
+      "src/target/rpi5.rs"
+    ],
+    "scripts": [
+      "scripts/rpi5-rp1-pcie2-host-link-status-read-image.sh",
+      "scripts/rpi5-rp1-pcie2-host-link-status-read-boot-tree.sh",
+      "scripts/rpi5-rp1-pcie2-host-link-status-read-archive.sh",
+      "scripts/rpi5-rp1-pcie2-host-link-status-read-review.sh",
+      "scripts/rpi5-rp1-pcie2-host-link-status-no-mmio-control-image.sh",
+      "scripts/rpi5-rp1-pcie2-host-link-status-no-mmio-control-boot-tree.sh",
+      "scripts/rpi5-rp1-pcie2-host-link-status-no-mmio-control-archive.sh",
+      "scripts/rpi5-rp1-pcie2-host-link-status-no-mmio-control-review.sh"
+    ]
+  },
+  "realCandidate": {
+    "archive": "target/talos-rpi5-rp1-pcie2-host-link-status-read-core.tar.gz",
+    "archiveSha256": "4b4e22a86c6ae77dc71431a174240a872faa6a0ef33ddebd533832e96dbbf293",
+    "kernel2712Sha256": "8bedf0ad171c2679ac944c58c84f7b84d02903369f5449ce4bc4f0afffca28b9",
+    "kernel2712Size": 46880,
+    "marker": "TALOS: rp1-pcie2-host-link-status-result",
+    "review": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-core/read-archive-review.txt",
+    "allowedOperation": "one 32-bit volatile load from PCIE_MISC_PCIE_STATUS at 0x1000124068"
+  },
+  "controlCandidate": {
+    "archive": "target/talos-rpi5-rp1-pcie2-host-link-status-no-mmio-control-core.tar.gz",
+    "archiveSha256": "90e9d5f038faa5350b983647b781d21bb561f3bfa1b45329cd0e6bd70df99558",
+    "kernel2712Sha256": "b85ca45e09ccb32f2776ad3ba0faac55b765ca37f9bfbaafb9b30e555f5463ae",
+    "kernel2712Size": 46672,
+    "marker": "TALOS: rp1-pcie2-host-link-status-control",
+    "review": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-core/control-archive-review.txt",
+    "boundary": "same report shape with not-constructed address fields and no forbidden MMIO address construction"
+  },
+  "validation": [
+    {
+      "gate": "cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet",
+      "result": "pass",
+      "testCount": 423
+    },
+    {
+      "gate": "scripts/rpi5-rp1-pcie2-host-link-status-read-review.sh",
+      "result": "pass"
+    },
+    {
+      "gate": "scripts/rpi5-rp1-pcie2-host-link-status-no-mmio-control-review.sh",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "nonAcceptedClaims": [
+    "Pi 5 hardware behavior",
+    "endpoint config-space access",
+    "broad RP1 mapping",
+    "endpoint ownership",
+    "PCIe writes",
+    "interrupt delivery",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ]
+}

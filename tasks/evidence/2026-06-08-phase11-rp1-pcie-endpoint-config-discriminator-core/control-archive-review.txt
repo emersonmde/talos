@@ -1,0 +1,8 @@
+candidate_archive=target/talos-rpi5-rp1-pcie2-host-link-status-no-mmio-control-core.tar.gz
+candidate_archive_sha256=90e9d5f038faa5350b983647b781d21bb561f3bfa1b45329cd0e6bd70df99558
+kernel_2712_sha256=b85ca45e09ccb32f2776ad3ba0faac55b765ca37f9bfbaafb9b30e555f5463ae
+kernel_2712_size=46672
+header_image_size=46672
+text_offset=0
+flags=12
+control_marker=TALOS: rp1-pcie2-host-link-status-control

@@ -218,6 +218,20 @@ pub const RP1_EXPECTED_CHIP_ID: u32 = 0x2000_1927;
 #[allow(dead_code)]
 pub const RP1_CLOCK_MANAGER_BASE: usize = 0x1f_0001_8000;
 #[allow(dead_code)]
+pub const PCIE2_CONTROLLER_BASE: usize = 0x10_0012_0000;
+#[allow(dead_code)]
+pub const PCIE_MISC_PCIE_STATUS: usize = PCIE2_CONTROLLER_BASE + 0x4068;
+#[allow(dead_code)]
+pub const PCIE_MISC_PCIE_STATUS_OFFSET: u64 = 0x4068;
+#[allow(dead_code)]
+pub const PCIE_STATUS_PORT: u32 = 0x80;
+#[allow(dead_code)]
+pub const PCIE_STATUS_DL_ACTIVE: u32 = 0x20;
+#[allow(dead_code)]
+pub const PCIE_STATUS_PHYLINKUP: u32 = 0x10;
+#[allow(dead_code)]
+pub const PCIE_STATUS_LINK_IN_L23: u32 = 0x40;
+#[allow(dead_code)]
 pub const RP1_PLL_SYS_CS: usize = 0x1f_0002_0000;
 #[allow(dead_code)]
 pub const RP1_CLK_SYS_CTRL: usize = RP1_CLOCK_MANAGER_BASE + 0x14;
@@ -9191,6 +9205,7 @@ pub fn write_early_hex_u64(value: u64) {
 }
 
 #[cfg(talos_target_rpi5_bcm2712)]
+#[allow(dead_code)]
 fn write_early_dec_u64(mut value: u64) {
     let mut digits = [0u8; 20];
     let mut len = 0usize;
@@ -12598,6 +12613,7 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle",
         talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_read",
         talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_read",
+        talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
         talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
         talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator"
     )
@@ -13760,6 +13776,90 @@ pub fn run_rp1_sysinfo_clock_sentinel_no_mmio_control() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read")]
+pub fn run_rp1_pcie2_host_link_status_read() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-pcie-endpoint-config-discriminator-source-contract-v1";
+    const TARGET: &str = "pcie2-host-link-status-read";
+    const REGISTER_NAME: &str = "PCIE_MISC_PCIE_STATUS";
+    const RETAINED_SYSINFO_CLOCK_SENTINEL_CLASSIFICATION: &str =
+        "rp1-sysinfo-and-clock-window-sentinel";
+
+    write_early_static("rpi5-rp1-pcie2-host-link-status-read: start\n");
+    write_early_static("rpi5-rp1-pcie2-host-link-status-read: before-read-only-load\n");
+    wait_uart10_empty_early_phase();
+
+    let status = read_rp1_reg_u32(PCIE_MISC_PCIE_STATUS);
+    let pcie_port = status & PCIE_STATUS_PORT != 0;
+    let dl_active = status & PCIE_STATUS_DL_ACTIVE != 0;
+    let phylinkup = status & PCIE_STATUS_PHYLINKUP != 0;
+    let link_in_l23 = status & PCIE_STATUS_LINK_IN_L23 != 0;
+    let status_is_deaddead = status == 0xdead_dead;
+    let classification = classify_pcie2_host_link_status(status_is_deaddead, dl_active, phylinkup);
+
+    loop {
+        write_early_static("TALOS: rp1-pcie2-host-link-status-result contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_early_static(" pcie2-controller-base=");
+        write_early_hex_u64(PCIE2_CONTROLLER_BASE as u64);
+        write_pcie2_host_link_status_register(REGISTER_NAME, PCIE_MISC_PCIE_STATUS, status);
+        write_pcie2_host_link_status_booleans(
+            pcie_port,
+            dl_active,
+            phylinkup,
+            link_in_l23,
+            status_is_deaddead,
+        );
+        write_retained_rp1_window_sentinel_context(RETAINED_SYSINFO_CLOCK_SENTINEL_CLASSIFICATION);
+        write_early_static(" classification=");
+        write_early_static(classification);
+        write_early_static("\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_no_mmio_control")]
+pub fn run_rp1_pcie2_host_link_status_no_mmio_control() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-pcie-endpoint-config-discriminator-source-contract-v1";
+    const TARGET: &str = "pcie2-host-link-status-read";
+    const REGISTER_NAME: &str = "PCIE_MISC_PCIE_STATUS";
+    const RETAINED_SYSINFO_CLOCK_SENTINEL_CLASSIFICATION: &str =
+        "rp1-sysinfo-and-clock-window-sentinel";
+    const SIMULATED_STATUS: u32 = PCIE_STATUS_PORT | PCIE_STATUS_DL_ACTIVE | PCIE_STATUS_PHYLINKUP;
+
+    write_early_static("rpi5-rp1-pcie2-host-link-status-control: start\n");
+    write_early_static(
+        "rpi5-rp1-pcie2-host-link-status-control: no-bcm2712-pcie-rp1-msix-mip-gic-gpio-clock-reset-dma-mmio\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    let pcie_port = SIMULATED_STATUS & PCIE_STATUS_PORT != 0;
+    let dl_active = SIMULATED_STATUS & PCIE_STATUS_DL_ACTIVE != 0;
+    let phylinkup = SIMULATED_STATUS & PCIE_STATUS_PHYLINKUP != 0;
+    let link_in_l23 = SIMULATED_STATUS & PCIE_STATUS_LINK_IN_L23 != 0;
+    let status_is_deaddead = SIMULATED_STATUS == 0xdead_dead;
+
+    loop {
+        write_early_static("TALOS: rp1-pcie2-host-link-status-control contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_early_static(" pcie2-controller-base=not-constructed");
+        write_pcie2_host_link_status_control_register(REGISTER_NAME, SIMULATED_STATUS);
+        write_pcie2_host_link_status_booleans(
+            pcie_port,
+            dl_active,
+            phylinkup,
+            link_in_l23,
+            status_is_deaddead,
+        );
+        write_retained_rp1_window_sentinel_context(RETAINED_SYSINFO_CLOCK_SENTINEL_CLASSIFICATION);
+        write_early_static(" classification=no-mmio-pcie2-host-link-status-control-visible\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
 #[cfg(talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read")]
 pub fn run_rp1_gpio14_ownership_route_preflight_read() -> ! {
     const CONTRACT_ID: &str = "phase11-rp1-gpio-ownership-restore-source-contract-v1";
@@ -14821,6 +14921,79 @@ fn write_retained_adc_window_sentinel_context(classification: &str, raw: u32) {
 }
 
 #[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
+    talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_no_mmio_control"
+))]
+fn classify_pcie2_host_link_status(
+    status_is_deaddead: bool,
+    dl_active: bool,
+    phylinkup: bool,
+) -> &'static str {
+    if status_is_deaddead {
+        "pcie2-host-status-sentinel"
+    } else if dl_active && phylinkup {
+        "pcie2-host-link-up-rp1-window-sentinel"
+    } else {
+        "pcie2-host-status-visible-link-down"
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read")]
+fn write_pcie2_host_link_status_register(name: &str, address: usize, value: u32) {
+    write_early_static(" register=");
+    write_early_static(name);
+    write_early_static(" source-offset=");
+    write_early_hex_u64(PCIE_MISC_PCIE_STATUS_OFFSET);
+    write_early_static(" address=");
+    write_early_hex_u64(address as u64);
+    write_early_static(" width=32 raw=");
+    write_early_hex_u64(value as u64);
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_no_mmio_control")]
+fn write_pcie2_host_link_status_control_register(name: &str, value: u32) {
+    write_early_static(" register=");
+    write_early_static(name);
+    write_early_static(" source-offset=");
+    write_early_hex_u64(PCIE_MISC_PCIE_STATUS_OFFSET);
+    write_early_static(" address=not-constructed width=32 raw=");
+    write_early_hex_u64(value as u64);
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
+    talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_no_mmio_control"
+))]
+fn write_pcie2_host_link_status_booleans(
+    pcie_port: bool,
+    dl_active: bool,
+    phylinkup: bool,
+    link_in_l23: bool,
+    status_is_deaddead: bool,
+) {
+    write_early_static(" pcie-port=");
+    write_bool(pcie_port);
+    write_early_static(" dl-active=");
+    write_bool(dl_active);
+    write_early_static(" phylinkup=");
+    write_bool(phylinkup);
+    write_early_static(" link-in-l23=");
+    write_bool(link_in_l23);
+    write_early_static(" status-is-deaddead=");
+    write_bool(status_is_deaddead);
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
+    talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_no_mmio_control"
+))]
+fn write_retained_rp1_window_sentinel_context(classification: &str) {
+    write_early_static(" retained-sysinfo-clock-sentinel-classification=");
+    write_early_static(classification);
+    write_early_static(" retained-rp1-window-sentinel=true");
+}
+
+#[cfg(any(
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control"
 ))]
@@ -15018,6 +15191,8 @@ fn gpio14_ownership_preflight_classification(
     talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_read",
     talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_no_mmio_control",
+    talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
+    talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator",
@@ -15186,6 +15361,13 @@ mod tests {
         assert_eq!(RP1_SYSINFO_PLATFORM, 0x1f_0000_0004);
         assert_eq!(RP1_EXPECTED_CHIP_ID, 0x2000_1927);
         assert_eq!(RP1_CLOCK_MANAGER_BASE, 0x1f_0001_8000);
+        assert_eq!(PCIE2_CONTROLLER_BASE, 0x10_0012_0000);
+        assert_eq!(PCIE_MISC_PCIE_STATUS_OFFSET, 0x4068);
+        assert_eq!(PCIE_MISC_PCIE_STATUS, 0x10_0012_4068);
+        assert_eq!(PCIE_STATUS_PORT, 0x80);
+        assert_eq!(PCIE_STATUS_DL_ACTIVE, 0x20);
+        assert_eq!(PCIE_STATUS_PHYLINKUP, 0x10);
+        assert_eq!(PCIE_STATUS_LINK_IN_L23, 0x40);
         assert_eq!(RP1_PLL_SYS_CS, 0x1f_0002_0000);
         assert_eq!(RP1_CLK_SYS_CTRL, 0x1f_0001_8014);
         assert_eq!(RP1_CLK_SYS_DIV_INT, 0x1f_0001_8018);

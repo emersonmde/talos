@@ -62,6 +62,8 @@
             talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_no_mmio_control",
             talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_read",
             talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
+            talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_no_mmio_control",
             talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
             talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control",
             talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator",
@@ -509,6 +511,24 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
 
     #[cfg(all(
         talos_target_rpi5_bcm2712,
+        talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read"
+    ))]
+    {
+        let _ = dtb_pa;
+        target::rpi5::run_rp1_pcie2_host_link_status_read();
+    }
+
+    #[cfg(all(
+        talos_target_rpi5_bcm2712,
+        talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_no_mmio_control"
+    ))]
+    {
+        let _ = dtb_pa;
+        target::rpi5::run_rp1_pcie2_host_link_status_no_mmio_control();
+    }
+
+    #[cfg(all(
+        talos_target_rpi5_bcm2712,
         talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read"
     ))]
     {
@@ -582,6 +602,8 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
             talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_no_mmio_control",
             talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_read",
             talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
+            talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_no_mmio_control",
             talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator",
             talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator_no_mmio_control",
             talos_boot_scenario = "rpi5_rp1_handoff_reset",

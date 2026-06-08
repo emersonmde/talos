@@ -1,0 +1,2 @@
+4b4e22a86c6ae77dc71431a174240a872faa6a0ef33ddebd533832e96dbbf293  target/talos-rpi5-rp1-pcie2-host-link-status-read-core.tar.gz
+90e9d5f038faa5350b983647b781d21bb561f3bfa1b45329cd0e6bd70df99558  target/talos-rpi5-rp1-pcie2-host-link-status-no-mmio-control-core.tar.gz
