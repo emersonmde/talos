@@ -578,6 +578,27 @@ interrupt delivery, handler ownership, DMA/cache, storage, generated-root,
 networking, SSH, broader PCIe, Milestone 11.3, and phase transition remain
 unaccepted.
 
+phase11-rp1-clock-write-effect-discriminator-source-contract-20260607 accepts
+the next source contract as
+phase11-rp1-clock-write-effect-discriminator-source-contract-v1. It selects one
+read-only discriminator, rp1-clk-adc-window-coherence-read, to explain the
+retained CLK_ADC_CTRL enable-toggle mismatch before any further RP1 clock
+writes. The allowed 32-bit reads are CLK_SYS_CTRL at 0x1f00018014,
+CLK_UART_CTRL at 0x1f00018054, two ordered reads of CLK_ADC_CTRL at
+0x1f00018144, CLK_ADC_DIV_INT at 0x1f00018148, and CLK_ADC_SEL at
+0x1f00018150. The report must retain the prior mismatch context
+(pre_raw=0xdeaddead, transition_raw=0xdeadd6ad, post_raw=0xdeaddead,
+restore_raw=0xdeaddead) and expose ADC CTRL stability, ADC window repeated
+sentinel state, ADC selector shape, and clk_sys/clk_uart guard fields. No
+writes or restore operations are selected. The paired no-MMIO/no-RP1/no-GIC
+control must pass before any real Pi 5 proof. This accepts only the source
+contract for a read-only ADC clock-window coherence discriminator; successful
+non-idempotent clock ownership, broad clock/reset ownership,
+divider/source/PLL/frequency-counter/reset-controller writes, GPIO ownership,
+event generation, interrupt delivery, handler ownership, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe, Milestone 11.3, and phase
+transition remain unaccepted.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware

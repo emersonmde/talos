@@ -7926,6 +7926,21 @@ DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
 for the next Milestone 11.2 feature slice; this closeout does not create a
 worker-owned follow-up task.
 
+phase11-rp1-clock-write-effect-discriminator-source-contract-20260607 is
+accepted as phase11-rp1-clock-write-effect-discriminator-source-contract-v1.
+It selects one read-only rp1-clk-adc-window-coherence-read discriminator
+before any further RP1 clock writes. The allowed reads are CLK_SYS_CTRL,
+CLK_UART_CTRL, two ordered CLK_ADC_CTRL reads, CLK_ADC_DIV_INT, and
+CLK_ADC_SEL; no writes or restore operation are selected. The report must
+retain the prior 0xdeaddead/0xdeadd6ad mismatch-restored context and expose
+ADC CTRL stability, ADC window repeated-sentinel state, ADC selector shape,
+and clk_sys/clk_uart guard fields. The paired no-MMIO/no-RP1/no-GIC control
+must pass before any real Pi 5 proof. Successful non-idempotent clock
+ownership, broad clock/reset ownership, divider/source/PLL/frequency-counter/
+reset-controller writes, GPIO ownership, event generation, interrupt delivery,
+handler ownership, DMA/cache, storage, generated-root, networking, SSH,
+broader PCIe, Milestone 11.3, and phase transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
