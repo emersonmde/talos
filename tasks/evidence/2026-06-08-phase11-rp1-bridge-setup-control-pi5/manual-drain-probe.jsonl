@@ -1,0 +1,10 @@
+{"i":1,"bytes":1984,"cursor":4194304,"text_prefix":"ted preflight-width=32 misc-ctrl-raw=0x3000 scb-access-en=true cfg-read-ur-mode="}
+{"i":2,"bytes":3472,"cursor":4194304,"text_prefix":"cpu-limit-high-matches=true outbound-window0-matches=true retained-endpoint-conf"}
+{"i":3,"bytes":496,"cursor":4194304,"text_prefix":"gister=PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LO win0-lo-source-offset=0x400c win0-lo-add"}
+{"i":4,"bytes":7444,"cursor":4194304,"text_prefix":" misc-ctrl-is-sentinel=false rc-class-register=PCIE_RC_CFG_PRIV1_ID_VAL3 rc-clas"}
+{"i":5,"bytes":0,"cursor":4194304,"text_prefix":""}
+{"i":6,"bytes":0,"cursor":4194304,"text_prefix":""}
+{"i":7,"bytes":0,"cursor":4194304,"text_prefix":""}
+{"i":8,"bytes":0,"cursor":4194304,"text_prefix":""}
+{"i":9,"bytes":0,"cursor":4194304,"text_prefix":""}
+{"i":10,"bytes":23,"cursor":4194304,"text_prefix":"  2.98 RP1 FW: load 1\r\n"}

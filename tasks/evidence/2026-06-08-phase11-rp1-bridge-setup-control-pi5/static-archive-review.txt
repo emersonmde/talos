@@ -1,0 +1,8 @@
+candidate_archive=target/talos-rpi5-rp1-bridge-setup-state-no-mmio-control-core.tar.gz
+candidate_archive_sha256=2173cad5a63e41b0ceb704eed480cd3f5278cce7adce600d3a2c624bd81390b4
+kernel_2712_sha256=a741904c5c7a75b1f9db0ea811c1f9adc79ff4bfb7a4d05e655ce2e5eaaf2d10
+kernel_2712_size=49496
+header_image_size=49496
+text_offset=0
+flags=12
+control_marker=TALOS: rp1-bridge-setup-state-control

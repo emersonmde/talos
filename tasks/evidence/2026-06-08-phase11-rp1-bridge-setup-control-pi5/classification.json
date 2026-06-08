@@ -1,0 +1,69 @@
+{
+  "task": "phase11-rp1-bridge-setup-control-pi5-20260608",
+  "status": "accepted",
+  "classification": "no-mmio-pcie2-bridge-setup-state-control-visible",
+  "acceptedRun": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-control-pi5/control-rerun-after-clean-kg",
+    "identityJoinClassification": "capture-transaction-v2-ready",
+    "identityAllowed": true,
+    "rejectionReasons": [],
+    "selectedTreeHash": "2a45a5ba915f03e515c2e4a3e0aca891d25c0d99c37af10b6b6a11d5e1722e95",
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effectiveKernel": "kernel_2712.img",
+    "expectedFetchPath": "da591740/kernel_2712.img",
+    "expectedFetchBytes": 49496,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "marker": "TALOS: rp1-bridge-setup-state-control",
+    "markerOccurrences": 30,
+    "outputClassification": "no-mmio-pcie2-bridge-setup-state-control-visible"
+  },
+  "triage": {
+    "initialCandidate": {
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-control-pi5/control-run",
+      "classification": "capture-staging-blocked",
+      "rejectionReasons": [
+        "serial-drain-not-empty-before-power",
+        "saturated-direct-read-without-empty-pre-power-drain"
+      ],
+      "expectedFetchBytes": 49496,
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 2
+    },
+    "knownGoodAfterInconclusive": {
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-control-pi5/known-good-control-after-inconclusive",
+      "expectedFetchBytes": 104136
+    },
+    "knownGoodAfterSerialDrain": {
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-control-pi5/known-good-control-after-serial-drain",
+      "classification": "capture-transaction-v2-ready",
+      "identityAllowed": true,
+      "rejectionReasons": [],
+      "expectedFetchBytes": 104136,
+      "expectedFetchCount": 2,
+      "expectedFetchByteMatchCount": 2
+    }
+  },
+  "acceptedClaims": [
+    "no-MMIO/no-PCIe/no-RP1/no-GIC bridge/setup-state control output and capture path is visible on Pi 5",
+    "the selected candidate identity, TFTP fetches, serial markers, final pre-restore identity, and restore proof join under pi5-capture-transaction-v2"
+  ],
+  "rejectedClaims": [
+    "real PCIE_MISC_PCIE_STATUS behavior",
+    "real PCIE_MISC_MISC_CTRL behavior",
+    "real root-complex class-code behavior",
+    "real outbound-window behavior",
+    "endpoint visibility",
+    "endpoint ownership",
+    "BAR discovery or programming",
+    "bridge setup writes",
+    "interrupt enablement or delivery",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ]
+}

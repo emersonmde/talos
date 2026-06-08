@@ -1,0 +1,102 @@
+{
+  "task": "phase11-rp1-bridge-setup-control-pi5-20260608",
+  "status": "accepted",
+  "classification": "no-mmio-pcie2-bridge-setup-state-control-visible",
+  "generatedAt": "2026-06-08T12:42:00Z",
+  "evidenceLevel": [
+    "static archive identity inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "stable same-cursor TFTP evidence",
+    "pi5-capture-transaction-v2 identity join",
+    "known-good control after inconclusive candidate evidence",
+    "restore proof",
+    "git diff checks"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-08-phase11-rp1-bridge-setup-control-pi5.md",
+    "classification": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-control-pi5/classification.json",
+    "initialCandidateCapture": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-control-pi5/control-run",
+    "knownGoodControlAfterInconclusive": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-control-pi5/known-good-control-after-inconclusive",
+    "knownGoodAfterManualDrain": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-control-pi5/known-good-control-after-serial-drain",
+    "acceptedControlRerun": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-control-pi5/control-rerun-after-clean-kg"
+  },
+  "sourceAndCore": {
+    "sourceContractTask": "tasks/2026-06-08-phase11-rp1-bridge-setup-source-contract.md",
+    "sourceContractCommit": "35f9bc883f656f85953dcbb493632ccbd0343896",
+    "coreTask": "tasks/2026-06-08-phase11-rp1-bridge-setup-core.md",
+    "coreCommit": "1bd4da6a88cf5cb1b062cc0d5aa1811a51714065"
+  },
+  "controlCandidate": {
+    "archive": "target/talos-rpi5-rp1-bridge-setup-state-no-mmio-control-core.tar.gz",
+    "archiveSha256": "2173cad5a63e41b0ceb704eed480cd3f5278cce7adce600d3a2c624bd81390b4",
+    "kernel2712Sha256": "a741904c5c7a75b1f9db0ea811c1f9adc79ff4bfb7a4d05e655ce2e5eaaf2d10",
+    "kernelSizeBytes": 49496,
+    "marker": "TALOS: rp1-bridge-setup-state-control",
+    "outputClassification": "no-mmio-pcie2-bridge-setup-state-control-visible",
+    "staticArchiveReview": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-control-pi5/static-archive-review.txt"
+  },
+  "acceptedRun": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-control-pi5/control-rerun-after-clean-kg",
+    "selectedTreeHash": "2a45a5ba915f03e515c2e4a3e0aca891d25c0d99c37af10b6b6a11d5e1722e95",
+    "preRunTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "identityAllowed": true,
+    "rejectionReasons": [],
+    "markerOccurrences": 30,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 49496,
+    "serialCaptureMode": "read",
+    "serialObserveContract": "deadline-loop-direct-read-after-saturated-cursor",
+    "tftpStable": true
+  },
+  "inconclusiveInitialCandidateCapture": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-control-pi5/control-run",
+    "classification": "capture-staging-blocked",
+    "reason": "pre-power serial drain was non-empty at a saturated cursor, so no decisive hardware classification was accepted from the initial candidate capture",
+    "selectedTreeHash": "2a45a5ba915f03e515c2e4a3e0aca891d25c0d99c37af10b6b6a11d5e1722e95",
+    "expectedFetchBytes": 49496
+  },
+  "knownGoodControl": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-control-pi5/known-good-control-after-serial-drain",
+    "classification": "capture-transaction-v2-ready",
+    "rejectionReasons": [],
+    "selectedTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 104136
+  },
+  "validation": [
+    "scripts/rpi5-rp1-bridge-setup-state-no-mmio-control-review.sh target/talos-rpi5-rp1-bridge-setup-state-no-mmio-control-core.tar.gz",
+    "lab-controller API status/boot-files/snapshot/publish/power-cycle/restore",
+    "scripts/rpi5-capture-invariant-proof-bundle.sh with marker TALOS: rp1-bridge-setup-state-control",
+    "scripts/rpi5-proof-identity-join-check.sh --evidence-dir tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-control-pi5/control-rerun-after-clean-kg",
+    "known-good control and unchanged candidate rerun after inconclusive evidence",
+    "git diff --check",
+    "git diff --cached --check"
+  ],
+  "acceptedClaims": [
+    "no-MMIO/no-PCIe/no-RP1/no-GIC bridge/setup-state control output and capture path is visible on Pi 5",
+    "the selected candidate identity, TFTP fetches, serial markers, final pre-restore identity, and restore proof join under pi5-capture-transaction-v2"
+  ],
+  "rejectedClaims": [
+    "real PCIE_MISC_PCIE_STATUS bridge/setup-state behavior",
+    "real PCIE_MISC_MISC_CTRL bridge/setup-state behavior",
+    "real root-complex class-code behavior",
+    "real outbound-window behavior",
+    "endpoint visibility",
+    "endpoint ownership",
+    "BAR discovery or programming",
+    "bridge setup writes",
+    "interrupt enablement or delivery",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "nextAction": "Promote phase11-rp1-bridge-setup-pi5-20260608 on the next worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive."
+}
