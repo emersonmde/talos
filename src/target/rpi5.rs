@@ -228,6 +228,10 @@ pub const RP1_CLK_UART_SEL: usize = RP1_CLOCK_MANAGER_BASE + 0x60;
 #[allow(dead_code)]
 pub const RP1_CLK_ADC_CTRL: usize = RP1_CLOCK_MANAGER_BASE + 0x144;
 #[allow(dead_code)]
+pub const RP1_CLK_ADC_DIV_INT: usize = RP1_CLOCK_MANAGER_BASE + 0x148;
+#[allow(dead_code)]
+pub const RP1_CLK_ADC_SEL: usize = RP1_CLOCK_MANAGER_BASE + 0x150;
+#[allow(dead_code)]
 pub const RP1_CLK_CTRL_ENABLE: u32 = 1 << 11;
 #[cfg(any(
     talos_boot_scenario = "rpi5_timer_irq",
@@ -12584,6 +12588,7 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_clock_manager_status_read",
         talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_write_restore",
         talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle",
+        talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_read",
         talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
         talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator"
     )
@@ -12604,6 +12609,16 @@ fn write_rp1_reg_u32_ordered(addr: usize, value: u32) {
     let reg = addr as *mut u32;
     unsafe {
         core::ptr::write_volatile(reg, value);
+        core::arch::asm!("dsb sy", options(nostack, preserves_flags));
+    }
+}
+
+#[cfg(all(
+    talos_target_rpi5_bcm2712,
+    talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_read"
+))]
+fn rp1_clock_window_ordering_barrier() {
+    unsafe {
         core::arch::asm!("dsb sy", options(nostack, preserves_flags));
     }
 }
@@ -13472,6 +13487,131 @@ pub fn run_rp1_clock_adc_ctrl_enable_toggle_no_mmio_control() -> ! {
         );
         write_early_static(" retained-gpio14-blocker=fsel13 retained-gpio16-blocker=fsel13");
         write_early_static(" classification=simulated/control\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_read")]
+pub fn run_rp1_clock_adc_window_coherence_read() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-clock-write-effect-discriminator-source-contract-v1";
+    const TARGET: &str = "rp1-clk-adc-window-coherence-read";
+    const PRIOR_PRE_RAW: u32 = 0xdead_dead;
+    const PRIOR_TRANSITION_RAW: u32 = 0xdead_d6ad;
+    const PRIOR_POST_RAW: u32 = 0xdead_dead;
+    const PRIOR_RESTORE_RAW: u32 = 0xdead_dead;
+
+    write_early_static("rpi5-rp1-clock-adc-window-coherence-read: start\n");
+    write_early_static("rpi5-rp1-clock-adc-window-coherence-read: before-rp1-clock-window-loads\n");
+    wait_uart10_empty_early_phase();
+
+    let clk_sys_ctrl = read_rp1_reg_u32(RP1_CLK_SYS_CTRL);
+    let clk_uart_ctrl = read_rp1_reg_u32(RP1_CLK_UART_CTRL);
+    let adc_ctrl_first = read_rp1_reg_u32(RP1_CLK_ADC_CTRL);
+    rp1_clock_window_ordering_barrier();
+    let adc_ctrl_second = read_rp1_reg_u32(RP1_CLK_ADC_CTRL);
+    let adc_div_int = read_rp1_reg_u32(RP1_CLK_ADC_DIV_INT);
+    let adc_sel = read_rp1_reg_u32(RP1_CLK_ADC_SEL);
+
+    let clk_sys_enabled = clk_sys_ctrl & RP1_CLK_CTRL_ENABLE != 0;
+    let clk_uart_enabled = clk_uart_ctrl & RP1_CLK_CTRL_ENABLE != 0;
+    let adc_ctrl_stable = adc_ctrl_first == adc_ctrl_second;
+    let adc_window_all_equal = adc_ctrl_second == adc_div_int && adc_div_int == adc_sel;
+    let adc_window_all_deaddead = adc_ctrl_second == PRIOR_PRE_RAW
+        && adc_div_int == PRIOR_PRE_RAW
+        && adc_sel == PRIOR_PRE_RAW;
+    let classification = if !clk_sys_enabled {
+        "rp1-clock-adc-window-blocked-missing-clock-manager"
+    } else if !clk_uart_enabled {
+        "rp1-clock-adc-window-blocked-uart-clock-disabled"
+    } else if !adc_ctrl_stable {
+        "rp1-clock-adc-window-unstable-readback"
+    } else if adc_window_all_equal || adc_window_all_deaddead {
+        "rp1-clock-adc-window-readback-sentinel"
+    } else {
+        "rp1-clock-adc-window-coherent-read"
+    };
+
+    loop {
+        write_early_static("TALOS: rp1-clock-adc-window-coherence-result contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_early_static(" clock-manager-base=");
+        write_early_hex_u64(RP1_CLOCK_MANAGER_BASE as u64);
+        write_adc_window_register(" clk-sys-ctrl", 0x14, RP1_CLK_SYS_CTRL, clk_sys_ctrl);
+        write_adc_window_register(" clk-uart-ctrl", 0x54, RP1_CLK_UART_CTRL, clk_uart_ctrl);
+        write_adc_window_register(" adc-ctrl-first", 0x144, RP1_CLK_ADC_CTRL, adc_ctrl_first);
+        write_adc_window_register(" adc-ctrl-second", 0x144, RP1_CLK_ADC_CTRL, adc_ctrl_second);
+        write_adc_window_register(" adc-div-int", 0x148, RP1_CLK_ADC_DIV_INT, adc_div_int);
+        write_adc_window_register(" adc-sel", 0x150, RP1_CLK_ADC_SEL, adc_sel);
+        write_early_static(" clk-sys-enable=");
+        write_bool(clk_sys_enabled);
+        write_early_static(" clk-uart-enable=");
+        write_bool(clk_uart_enabled);
+        write_adc_ctrl_window_fields(" adc-ctrl-first", adc_ctrl_first);
+        write_adc_ctrl_window_fields(" adc-ctrl-second", adc_ctrl_second);
+        write_adc_window_booleans(
+            adc_ctrl_stable,
+            adc_window_all_equal,
+            adc_window_all_deaddead,
+            adc_sel,
+        );
+        write_prior_adc_enable_toggle_context(
+            PRIOR_PRE_RAW,
+            PRIOR_TRANSITION_RAW,
+            PRIOR_POST_RAW,
+            PRIOR_RESTORE_RAW,
+        );
+        write_early_static(" classification=");
+        write_early_static(classification);
+        write_early_static("\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_no_mmio_control")]
+pub fn run_rp1_clock_adc_window_coherence_no_mmio_control() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-clock-write-effect-discriminator-source-contract-v1";
+    const TARGET: &str = "rp1-clk-adc-window-coherence-read";
+    const SIMULATED_CLK_SYS_CTRL: u32 = RP1_CLK_CTRL_ENABLE;
+    const SIMULATED_CLK_UART_CTRL: u32 = RP1_CLK_CTRL_ENABLE;
+    const SIMULATED_ADC_CTRL: u32 = 0;
+    const SIMULATED_ADC_DIV_INT: u32 = 1;
+    const SIMULATED_ADC_SEL: u32 = 1;
+    const PRIOR_PRE_RAW: u32 = 0xdead_dead;
+    const PRIOR_TRANSITION_RAW: u32 = 0xdead_d6ad;
+    const PRIOR_POST_RAW: u32 = 0xdead_dead;
+    const PRIOR_RESTORE_RAW: u32 = 0xdead_dead;
+
+    write_early_static("rpi5-rp1-clock-adc-window-coherence-control: start\n");
+    write_early_static(
+        "rpi5-rp1-clock-adc-window-coherence-control: no-rp1-clock-reset-gpio-rio-pads-msix-pcie-mip-gic-mmio\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-clock-adc-window-coherence-control contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_early_static(" clock-manager-base=not-constructed");
+        write_adc_window_control_register(" clk-sys-ctrl", 0x14, SIMULATED_CLK_SYS_CTRL);
+        write_adc_window_control_register(" clk-uart-ctrl", 0x54, SIMULATED_CLK_UART_CTRL);
+        write_adc_window_control_register(" adc-ctrl-first", 0x144, SIMULATED_ADC_CTRL);
+        write_adc_window_control_register(" adc-ctrl-second", 0x144, SIMULATED_ADC_CTRL);
+        write_adc_window_control_register(" adc-div-int", 0x148, SIMULATED_ADC_DIV_INT);
+        write_adc_window_control_register(" adc-sel", 0x150, SIMULATED_ADC_SEL);
+        write_early_static(" clk-sys-enable=true clk-uart-enable=true");
+        write_adc_ctrl_window_fields(" adc-ctrl-first", SIMULATED_ADC_CTRL);
+        write_adc_ctrl_window_fields(" adc-ctrl-second", SIMULATED_ADC_CTRL);
+        write_adc_window_booleans(true, false, false, SIMULATED_ADC_SEL);
+        write_prior_adc_enable_toggle_context(
+            PRIOR_PRE_RAW,
+            PRIOR_TRANSITION_RAW,
+            PRIOR_POST_RAW,
+            PRIOR_RESTORE_RAW,
+        );
+        write_early_static(" classification=no-mmio-clock-adc-window-coherence-control-visible\n");
         wait_uart10_empty_early_phase();
     }
 }
@@ -14354,6 +14494,91 @@ fn write_clock_adc_ctrl_enable_toggle_values(
     );
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_read")]
+fn write_adc_window_register(name: &str, source_offset: u64, address: usize, value: u32) {
+    write_early_static(name);
+    write_early_static("-source-offset=");
+    write_early_hex_u64(source_offset);
+    write_early_static(" address=");
+    write_early_hex_u64(address as u64);
+    write_early_static(" width=32 raw=");
+    write_early_hex_u64(value as u64);
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_no_mmio_control")]
+fn write_adc_window_control_register(name: &str, source_offset: u64, value: u32) {
+    write_early_static(name);
+    write_early_static("-source-offset=");
+    write_early_hex_u64(source_offset);
+    write_early_static(" address=not-constructed width=32 raw=");
+    write_early_hex_u64(value as u64);
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_read",
+    talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_no_mmio_control"
+))]
+fn write_adc_ctrl_window_fields(prefix: &str, value: u32) {
+    write_early_static(prefix);
+    write_early_static("-enable=");
+    write_bool(value & RP1_CLK_CTRL_ENABLE != 0);
+    write_early_static(prefix);
+    write_early_static("-auxsrc=");
+    write_early_hex_u64(((value >> 5) & 0x1f) as u64);
+    write_early_static(prefix);
+    write_early_static("-source=");
+    write_early_hex_u64((value & 0x3) as u64);
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_read",
+    talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_no_mmio_control"
+))]
+fn write_adc_window_booleans(
+    adc_ctrl_stable: bool,
+    adc_window_all_equal: bool,
+    adc_window_all_deaddead: bool,
+    adc_sel: u32,
+) {
+    let adc_sel_zero = adc_sel == 0;
+    let adc_sel_one_hot = adc_sel != 0 && (adc_sel & (adc_sel - 1)) == 0;
+    let adc_sel_multi_bit = adc_sel.count_ones() > 1;
+
+    write_early_static(" adc-ctrl-stable=");
+    write_bool(adc_ctrl_stable);
+    write_early_static(" adc-window-all-equal=");
+    write_bool(adc_window_all_equal);
+    write_early_static(" adc-window-all-deaddead=");
+    write_bool(adc_window_all_deaddead);
+    write_early_static(" adc-sel-zero=");
+    write_bool(adc_sel_zero);
+    write_early_static(" adc-sel-one-hot=");
+    write_bool(adc_sel_one_hot);
+    write_early_static(" adc-sel-multi-bit=");
+    write_bool(adc_sel_multi_bit);
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_read",
+    talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_no_mmio_control"
+))]
+fn write_prior_adc_enable_toggle_context(
+    prior_pre_raw: u32,
+    prior_transition_raw: u32,
+    prior_post_raw: u32,
+    prior_restore_raw: u32,
+) {
+    write_early_static(" retained-enable-toggle-pre-raw=");
+    write_early_hex_u64(prior_pre_raw as u64);
+    write_early_static(" retained-enable-toggle-transition-raw=");
+    write_early_hex_u64(prior_transition_raw as u64);
+    write_early_static(" retained-enable-toggle-post-raw=");
+    write_early_hex_u64(prior_post_raw as u64);
+    write_early_static(" retained-enable-toggle-restore-raw=");
+    write_early_hex_u64(prior_restore_raw as u64);
+    write_early_static(" retained-enable-toggle-restore-eq-pre=true");
+}
+
 #[cfg(any(
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control"
@@ -14548,6 +14773,8 @@ fn gpio14_ownership_preflight_classification(
     talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_write_restore_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle",
     talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle_no_mmio_control",
+    talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_read",
+    talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator",
@@ -14721,6 +14948,8 @@ mod tests {
         assert_eq!(RP1_CLK_UART_DIV_INT, 0x1f_0001_8058);
         assert_eq!(RP1_CLK_UART_SEL, 0x1f_0001_8060);
         assert_eq!(RP1_CLK_ADC_CTRL, 0x1f_0001_8144);
+        assert_eq!(RP1_CLK_ADC_DIV_INT, 0x1f_0001_8148);
+        assert_eq!(RP1_CLK_ADC_SEL, 0x1f_0001_8150);
         assert_eq!(RP1_CLK_CTRL_ENABLE, 0x0000_0800);
         assert_eq!(RP1_UART0_BASE, RP1_UART0_PCIE2_BASE);
     }

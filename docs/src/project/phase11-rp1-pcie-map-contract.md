@@ -599,6 +599,19 @@ event generation, interrupt delivery, handler ownership, DMA/cache, storage,
 generated-root, networking, SSH, broader PCIe, Milestone 11.3, and phase
 transition remain unaccepted.
 
+phase11-rp1-clock-write-effect-discriminator-core-20260607 accepts the
+local/static implementation of that read-only ADC clock-window discriminator.
+The real candidate emits TALOS: rp1-clock-adc-window-coherence-result with the
+accepted ordered reads, guard fields, ADC window raw/decoded fields, retained
+enable-toggle mismatch context, and terminal classifications. The paired
+control emits TALOS: rp1-clock-adc-window-coherence-control with the same
+output shape while constructing no RP1 clock/reset, GPIO/RIO/pads,
+MSI-X/PCIe/MIP, or GIC MMIO address. This accepts no Pi 5 hardware behavior
+and does not accept any RP1 clock/reset write, broad clock/reset ownership,
+GPIO ownership, event generation, interrupt delivery, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe, Milestone 11.3, or phase
+transition.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware

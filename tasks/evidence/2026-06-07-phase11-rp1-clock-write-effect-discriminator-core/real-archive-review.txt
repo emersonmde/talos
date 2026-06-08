@@ -1,0 +1,8 @@
+candidate_archive=target/talos-rpi5-rp1-clock-adc-window-coherence-read-core.tar.gz
+candidate_archive_sha256=5b49611443a8548f044d93ab066343a3e20b9d7a83f627d27e18c09843183112
+kernel_2712_sha256=b88cbb89c3b2cfb35ae6e1a74dc871b5721ce77a5ef790a78f575415daa7bc3f
+kernel_2712_size=48056
+header_image_size=48056
+text_offset=0
+flags=12
+result_marker=TALOS: rp1-clock-adc-window-coherence-result

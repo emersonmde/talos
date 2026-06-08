@@ -1,0 +1,128 @@
+{
+  "task": "phase11-rp1-clock-write-effect-discriminator-core-20260607",
+  "status": "accepted",
+  "classification": "accepted-local-static-clock-adc-window-coherence-core",
+  "scope": "local/static core implementation only; no Pi 5 hardware run and no hardware behavior accepted",
+  "sourceContract": {
+    "task": "phase11-rp1-clock-write-effect-discriminator-source-contract-20260607",
+    "commit": "db2f6bc2e372f5bfe6a8b8d9c1e56cdada7bd97f",
+    "contractId": "phase11-rp1-clock-write-effect-discriminator-source-contract-v1",
+    "target": "rp1-clk-adc-window-coherence-read",
+    "operationSequence": [
+      "read CLK_SYS_CTRL at 0x1f00018014",
+      "read CLK_UART_CTRL at 0x1f00018054",
+      "read CLK_ADC_CTRL at 0x1f00018144",
+      "local ordering barrier",
+      "read CLK_ADC_CTRL at 0x1f00018144 again",
+      "read CLK_ADC_DIV_INT at 0x1f00018148",
+      "read CLK_ADC_SEL at 0x1f00018150"
+    ],
+    "allowedWrites": []
+  },
+  "changedFiles": [
+    "build.rs",
+    "src/main.rs",
+    "src/target/rpi5.rs",
+    "scripts/rpi5-rp1-clock-adc-window-coherence-read-image.sh",
+    "scripts/rpi5-rp1-clock-adc-window-coherence-no-mmio-control-image.sh",
+    "scripts/rpi5-rp1-clock-adc-window-coherence-read-boot-tree.sh",
+    "scripts/rpi5-rp1-clock-adc-window-coherence-no-mmio-control-boot-tree.sh",
+    "scripts/rpi5-rp1-clock-adc-window-coherence-read-archive.sh",
+    "scripts/rpi5-rp1-clock-adc-window-coherence-no-mmio-control-archive.sh",
+    "scripts/rpi5-rp1-clock-adc-window-coherence-read-review.sh",
+    "scripts/rpi5-rp1-clock-adc-window-coherence-no-mmio-control-review.sh",
+    "docs/src/project/phase11-rp1-pcie-map-contract.md",
+    "tasks/2026-06-07-phase11-rp1-clock-write-effect-discriminator-core.md",
+    "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-core/real-archive-review.txt",
+    "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-core/control-archive-review.txt",
+    "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-core/real-candidate-strings.txt",
+    "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-core/control-candidate-strings.txt",
+    "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-core/evidence-map.json"
+  ],
+  "realCandidate": {
+    "scenario": "rpi5_rp1_clock_adc_window_coherence_read",
+    "archive": "target/talos-rpi5-rp1-clock-adc-window-coherence-read-core.tar.gz",
+    "archiveSha256": "5b49611443a8548f044d93ab066343a3e20b9d7a83f627d27e18c09843183112",
+    "kernel2712Sha256": "b88cbb89c3b2cfb35ae6e1a74dc871b5721ce77a5ef790a78f575415daa7bc3f",
+    "kernel2712Size": 48056,
+    "resultMarker": "TALOS: rp1-clock-adc-window-coherence-result",
+    "review": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-core/real-archive-review.txt",
+    "strings": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-core/real-candidate-strings.txt"
+  },
+  "controlCandidate": {
+    "scenario": "rpi5_rp1_clock_adc_window_coherence_no_mmio_control",
+    "archive": "target/talos-rpi5-rp1-clock-adc-window-coherence-no-mmio-control-core.tar.gz",
+    "archiveSha256": "d9a62977cb33b9c6b27525096951773575f18c53b1efbf3e3b143479058b3b88",
+    "kernel2712Sha256": "f7038e4debc3f73d32937989a68ec5ade6e8e2c613c7e5fe0e351f4722f3acd0",
+    "kernel2712Size": 47360,
+    "controlMarker": "TALOS: rp1-clock-adc-window-coherence-control",
+    "review": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-core/control-archive-review.txt",
+    "strings": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-core/control-candidate-strings.txt",
+    "forbiddenMmioConstruction": "review script checks not-constructed address fields and absence of forbidden RP1/GIC/MSI-X/PCIe/MIP/GPIO/pads/RIO/clock-reset address strings"
+  },
+  "validation": [
+    {
+      "gate": "cargo fmt --all -- --check",
+      "level": "fmt/lint",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet",
+      "level": "unit tests under QEMU runner",
+      "result": "pass"
+    },
+    {
+      "gate": "scripts/rpi5-rp1-clock-adc-window-coherence-read-review.sh target/talos-rpi5-rp1-clock-adc-window-coherence-read-core.tar.gz",
+      "level": "static archive/string inspection",
+      "result": "pass"
+    },
+    {
+      "gate": "scripts/rpi5-rp1-clock-adc-window-coherence-no-mmio-control-review.sh target/talos-rpi5-rp1-clock-adc-window-coherence-no-mmio-control-core.tar.gz",
+      "level": "static archive/string inspection",
+      "result": "pass"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "level": "docs validation",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "level": "diff whitespace",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "level": "staged diff whitespace",
+      "result": "pass"
+    }
+  ],
+  "acceptedClaims": [
+    "local/static real candidate implements only the source-contracted read-only ADC clock-window coherence boundary",
+    "local/static no-MMIO/no-RP1/no-GIC control candidate preserves output shape without constructing forbidden MMIO address fields",
+    "candidate archives have retained Image shape and marker evidence"
+  ],
+  "unacceptedClaims": [
+    "Pi 5 hardware behavior",
+    "RP1 clock/reset writes or broad RP1 clock/reset ownership",
+    "GPIO ownership or event generation",
+    "interrupt delivery or handler ownership",
+    "DMA/cache, storage, generated-root, networking, SSH, broader PCIe enumeration",
+    "Milestone 11.3 or phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "summary": "Implemented real and control boot scenarios, image/archive/review scripts, and local/static evidence for the accepted ADC clock-window coherence read contract."
+    },
+    {
+      "disposition": "deferred",
+      "summary": "Pi 5 control and real hardware proofs remain queued behind this accepted local/static core."
+    },
+    {
+      "disposition": "not-an-issue",
+      "summary": "UART10 FR polling loads remain as the existing serial flush path and are outside the forbidden RP1/GIC/MSI-X/PCIe/MIP/GPIO/pads/RIO/clock-reset paths."
+    }
+  ],
+  "nextAction": "Promote phase11-rp1-clock-write-effect-discriminator-control-pi5-20260607 on the next worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive; acquire hardwareTestLock only inside that task."
+}
