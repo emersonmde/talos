@@ -1,0 +1,45 @@
+{
+  "task_id": "phase11-rp1-observed-gpio-status-after-staging-repair-closeout-20260608",
+  "evidence_dir": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-after-staging-repair-closeout",
+  "hardware": "No new hardware run; static closeout over retained Pi 5 evidence",
+  "artifacts": {
+    "task_record": "tasks/2026-06-08-phase11-rp1-observed-gpio-status-after-staging-repair-closeout.md",
+    "classification": "classification.json",
+    "boot_staging_repair_record": "tasks/2026-06-08-phase11-pi5-boot-staging-identity-repair-core.md",
+    "known_good_control_record": "tasks/2026-06-08-phase11-pi5-boot-staging-identity-known-good-control-pi5.md",
+    "real_observed_gpio_status_record": "tasks/2026-06-08-phase11-rp1-observed-gpio-status-after-staging-repair-pi5.md",
+    "boot_staging_repair_evidence": "tasks/evidence/2026-06-08-phase11-pi5-boot-staging-identity-repair-core/evidence-map.json",
+    "known_good_control_evidence": "tasks/evidence/2026-06-08-phase11-pi5-boot-staging-identity-known-good-control-pi5/evidence-map.json",
+    "real_observed_gpio_status_evidence": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-after-staging-repair-pi5/evidence-map.json",
+    "roadmap": "docs/src/roadmap.md",
+    "rp1_pcie_map_contract": "docs/src/project/phase11-rp1-pcie-map-contract.md"
+  },
+  "accepted_claims": [
+    "read-only observed GPIO14 STATUS/CTRL visibility under the repaired boot-staging identity procedure",
+    "paired no-MMIO/no-RP1/no-GIC control output/capture path under the same repaired procedure"
+  ],
+  "rejected_claims": [
+    "GPIO ownership",
+    "event generation",
+    "interrupt pending generation",
+    "interrupt delivery",
+    "GIC acknowledgement",
+    "endpoint ownership",
+    "broad RP1 mapping",
+    "pad/RIO/clock/reset ownership",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "validation": [
+    "static inspection of repair, control, real proof/blocker, restore evidence, and evidence maps",
+    "jq empty on retained evidence-map/classification JSON",
+    "git diff --check",
+    "mdbook build because docs/src files changed",
+    "git diff --cached --check before commit"
+  ]
+}

@@ -2075,6 +2075,49 @@ supervisor task supplies a different discriminator, capture/staging repair, or
 new acceptance criteria. Supervisor planning is required for the next
 Milestone 11.2 frontier.
 
+phase11-pi5-boot-staging-identity-repair-core-20260608 accepts the boot-staging
+identity discriminator that gates the next GPIO14 STATUS/CTRL retry. The
+checker ignores serial/RP1 output and requires selected-tree identity, expected
+TFTP fetch bytes, final pre-restore selected-tree identity, and restore proof.
+It explains the prior blocked run by retaining marker-visible serial text while
+rejecting baseline TFTP/final identity, and it rejects the clean retry for the
+same baseline identity class. This procedure repair does not change the
+GPIO/RP1 source contract or accept any new hardware behavior by itself.
+
+phase11-pi5-boot-staging-identity-known-good-control-pi5-20260608 accepts the
+paired no-MMIO/no-RP1/no-GIC known-good control under that repaired procedure.
+The control selected tree
+35a30932a7f8e76d8cfa657b7419ec1d5e7e8ce450c5ae898c32e957636734f1, retained
+two 49,072-byte candidate TFTP fetches, kept final pre-restore identity on the
+selected tree, passed both the run-unique and boot-staging identity checkers,
+and restored the lab to
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This
+accepts only the control output/capture path.
+
+phase11-rp1-observed-gpio-status-after-staging-repair-pi5-20260608 accepts the
+real Pi 5 read-only observed GPIO14 STATUS/CTRL visibility proof under the
+repaired boot-staging identity procedure. The real candidate selected tree
+5a499384497595de18d05f250fe146352d964953c9ff759642cc8d20384e0ea6, retained
+two 49,784-byte candidate TFTP fetches, kept final pre-restore identity on the
+selected tree, retained 38 task-owned result markers, reported
+gpio14-status-raw=0xabe3300, gpio14-ctrl-raw=0x84, ctrl-funcsel=4, passed both
+the run-unique and boot-staging identity checkers, and restored the lab to
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+
+phase11-rp1-observed-gpio-status-after-staging-repair-closeout-20260608 closes
+that chain as observed-gpio14-status-ctrl-visible-frontier-closed. The accepted
+frontier is limited to the observed GPIO14 STATUS/CTRL source contract,
+local/static real/control core, serial-drain repair, run-unique capture marker
+contract, boot-staging identity discriminator, paired no-MMIO/no-RP1/no-GIC
+control proof, and real read-only observed GPIO14 STATUS/CTRL visibility proof.
+GPIO ownership, event generation, interrupt pending/delivery, GIC
+acknowledgement, endpoint ownership, broad RP1 mapping, pad/RIO/clock/reset
+ownership, DMA/cache, storage, generated-root, networking, SSH, Milestone 11.3,
+and phase transition remain unaccepted. Same-shaped GPIO14 STATUS/CTRL hardware
+reruns are closed unless future supervisor planning supplies a different
+discriminator or new acceptance criteria; supervisor planning is required for
+the next Milestone 11.2 feature slice.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

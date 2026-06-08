@@ -8416,6 +8416,48 @@ pad/RIO/clock/reset ownership, DMA/cache, storage, generated-root, networking,
 SSH, Milestone 11.3, or phase transition. No worker-owned follow-up task is
 created; supervisor planning is required for the next Milestone 11.2 frontier.
 
+phase11-pi5-boot-staging-identity-repair-core-20260608 accepts
+pi5-boot-staging-identity-v1 as the next staging discriminator. It explains the
+prior retained marker-visible GPIO14 STATUS/CTRL text as non-decisive because
+TFTP/final identity matched the baseline tree, and it requires selected-tree
+identity, expected TFTP fetch bytes, final pre-restore selected-tree identity,
+and restore proof before serial output can support a hardware claim.
+
+phase11-pi5-boot-staging-identity-known-good-control-pi5-20260608 accepts the
+no-MMIO/no-RP1/no-GIC known-good control under that repaired procedure. The
+control selected tree
+35a30932a7f8e76d8cfa657b7419ec1d5e7e8ce450c5ae898c32e957636734f1, retained
+two 49,072-byte candidate TFTP fetches, kept final pre-restore identity on the
+selected tree, passed the run-unique and boot-staging identity checkers, and
+restored the lab to
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This
+accepts only the control output/capture path.
+
+phase11-rp1-observed-gpio-status-after-staging-repair-pi5-20260608 accepts the
+real Pi 5 read-only observed GPIO14 STATUS/CTRL visibility proof. The candidate
+selected tree
+5a499384497595de18d05f250fe146352d964953c9ff759642cc8d20384e0ea6, retained
+two 49,784-byte candidate TFTP fetches, kept final pre-restore identity on the
+selected tree, retained 38 task-owned result markers, reported
+gpio14-status-raw=0xabe3300, gpio14-ctrl-raw=0x84, ctrl-funcsel=4, passed the
+run-unique and boot-staging identity checkers, and restored the lab to
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+
+phase11-rp1-observed-gpio-status-after-staging-repair-closeout-20260608 accepts
+the chain as observed-gpio14-status-ctrl-visible-frontier-closed. The accepted
+frontier is limited to the source/evidence-backed GPIO14 STATUS/CTRL
+observed-aperture contract, local/static real/control core, serial-drain
+repair, run-unique capture marker contract, boot-staging identity
+discriminator, no-MMIO/no-RP1/no-GIC control proof, and real read-only observed
+GPIO14 STATUS/CTRL visibility proof. It does not accept GPIO ownership, event
+generation, interrupt pending/delivery, GIC acknowledgement, endpoint
+ownership, broad RP1 mapping, pad/RIO/clock/reset ownership, DMA/cache,
+storage, generated-root, networking, SSH, Milestone 11.3, or phase transition.
+Same-shaped GPIO14 STATUS/CTRL hardware reruns are closed unless future
+supervisor planning supplies a different discriminator or new acceptance
+criteria. The worker creates no follow-up task from this closeout; supervisor
+planning is required for the next Milestone 11.2 feature slice.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

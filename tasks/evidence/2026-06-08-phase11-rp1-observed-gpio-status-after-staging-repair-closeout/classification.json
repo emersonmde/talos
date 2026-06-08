@@ -1,0 +1,45 @@
+{
+  "task_id": "phase11-rp1-observed-gpio-status-after-staging-repair-closeout-20260608",
+  "classification": "observed-gpio14-status-ctrl-visible-frontier-closed",
+  "status": "accepted",
+  "accepted_frontier": [
+    "observed GPIO14 STATUS/CTRL source contract",
+    "local/static real/control core",
+    "serial-drain freshness repair",
+    "run-unique capture marker contract",
+    "boot-staging identity discriminator",
+    "paired no-MMIO/no-RP1/no-GIC known-good control proof",
+    "real Pi 5 read-only observed GPIO14 STATUS/CTRL visibility proof"
+  ],
+  "accepted_claims": [
+    {
+      "claim": "read-only observed GPIO14 STATUS/CTRL visibility",
+      "evidence": "phase11-rp1-observed-gpio-status-after-staging-repair-pi5-20260608",
+      "classification": "observed-gpio14-status-ctrl-visible-after-staging-repair"
+    }
+  ],
+  "rejected_claims": [
+    "GPIO ownership",
+    "event generation",
+    "interrupt pending generation",
+    "interrupt delivery",
+    "GIC acknowledgement",
+    "endpoint ownership",
+    "broad RP1 mapping",
+    "pad/RIO/clock/reset ownership",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "same_shaped_retry_policy": "Closed unless future supervisor planning supplies a different discriminator or new acceptance criteria.",
+  "next_action": "Set planningNeeded=true for supervisor planning of the next Milestone 11.2 feature slice; no worker-owned next task remains.",
+  "commits_reconciled": {
+    "boot_staging_identity_repair": "122908e47777630d2f984a821be88da3b5f9126a",
+    "known_good_control": "e05f0cd21a00f1e5246caa12ca1b076aa58317a5",
+    "real_observed_gpio_status_after_staging_repair": "41afe96f9d12aeee3b8805f15ed1cf274263d3ed"
+  }
+}
