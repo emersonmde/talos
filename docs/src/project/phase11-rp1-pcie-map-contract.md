@@ -1928,6 +1928,35 @@ hardware reruns remain closed unless a future supervisor task supplies a
 different discriminator or new acceptance criteria. Supervisor planning is
 required for the next Milestone 11.2 frontier.
 
+phase11-rp1-observed-gpio-status-source-contract-20260608 accepts
+phase11-rp1-observed-gpio-status-source-contract-v1. The selected target is
+rp1-gpio14-status-ctrl-observed-aperture-read: two read-only 32-bit volatile
+loads from observed CPU physical addresses 0x1c_000d_0070 and 0x1c_000d_0074.
+Retained RP1 Linux source identifies those registers as IO_BANK0 GPIO14 STATUS
+and CTRL: IO_BANK0 base 0xc0_400d_0000 plus GPIO14 offset 14 * 8 and register
+offsets 0x0/0x4. The source-expected 0x1f comparators remain blocked for
+same-shaped reruns; the selected addresses use only the accepted observed 0x1c
+aperture from the UART0 FR proof without accepting broad RP1 mapping.
+
+The accepted classifications are observed-aperture-gpio14-status-ctrl-visible,
+observed-aperture-gpio14-status-ctrl-sentinel,
+observed-aperture-gpio14-status-ctrl-all-ones,
+observed-aperture-gpio14-status-ctrl-zero,
+observed-aperture-gpio14-status-ctrl-no-return-or-trap,
+observed-aperture-gpio14-status-ctrl-inconclusive-capture,
+no-mmio-observed-gpio-status-control-visible, and staging/build-blocker. The
+paired control must preserve the output shape while constructing no BCM2712
+PCIe, RP1 peripheral/SYSINFO/GPIO/RIO/pads/clock/reset/MSI-X, MIP, GIC, DMA,
+or other MMIO address. IO_BANK0 INTE/INTS are not selected for this contract
+because they are not acceptance-critical to the per-pin observed-aperture
+STATUS/CTRL discriminator.
+
+This contract accepts only the source/evidence-backed read-only observed
+GPIO14 STATUS/CTRL contract. It does not accept GPIO ownership, event
+generation, interrupt pending generation, interrupt delivery, endpoint
+ownership, broad RP1 mapping, pad/RIO/clock/reset ownership, DMA/cache,
+networking, SSH, Milestone 11.3, or phase transition.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

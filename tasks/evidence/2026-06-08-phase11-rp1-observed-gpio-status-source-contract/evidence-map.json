@@ -1,0 +1,101 @@
+{
+  "taskId": "phase11-rp1-observed-gpio-status-source-contract-20260608",
+  "classification": "accepted-observed-gpio-status-source-contract",
+  "evidenceLevel": "static source/evidence inspection",
+  "contractId": "phase11-rp1-observed-gpio-status-source-contract-v1",
+  "selectedDiagnostic": {
+    "name": "rp1-gpio14-status-ctrl-observed-aperture-read",
+    "operation": "read-only",
+    "addresses": [
+      {
+        "name": "GPIO14 STATUS",
+        "observedCpuPhysical": "0x1c000d0070",
+        "sourceExpectedComparator": "0x1f000d0070",
+        "rp1Bus": "0xc0400d0070",
+        "widthBits": 32,
+        "source": "RP1 IO_BANK0 GPIO14 STATUS"
+      },
+      {
+        "name": "GPIO14 CTRL",
+        "observedCpuPhysical": "0x1c000d0074",
+        "sourceExpectedComparator": "0x1f000d0074",
+        "rp1Bus": "0xc0400d0074",
+        "widthBits": 32,
+        "source": "RP1 IO_BANK0 GPIO14 CTRL"
+      }
+    ],
+    "rp1BusCalculation": "0xc0400d0000 + (14 * 8) + {0x0,0x4} = 0xc0400d0070/0xc0400d0074",
+    "observedCpuPhysicalCalculation": "observed 0x1c aperture + 0x000d0070/0x000d0074 = 0x1c000d0070/0x1c000d0074"
+  },
+  "retainedEvidence": [
+    {
+      "path": "tasks/2026-06-08-phase11-rp1-observed-gpio-status-source-contract.md",
+      "kind": "task record"
+    },
+    {
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-source-contract/source-evidence-excerpts.md",
+      "kind": "static source/evidence excerpts"
+    },
+    {
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "kind": "project contract update"
+    },
+    {
+      "path": "docs/src/roadmap.md",
+      "kind": "roadmap update"
+    },
+    {
+      "path": "tasks/2026-06-08-phase11-rp1-observed-aperture-closeout.md",
+      "kind": "accepted observed-aperture closeout input"
+    },
+    {
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/pinctrl-rp1.c",
+      "kind": "Raspberry Pi Linux rpi-6.12.y pinctrl/GPIO source"
+    }
+  ],
+  "acceptedClaims": [
+    "The next exact diagnostic is the read-only observed-aperture GPIO14 STATUS/CTRL pair at CPU physical 0x1c000d0070 and 0x1c000d0074.",
+    "The selected diagnostic is qualitatively different from closed endpoint, bridge/setup, 0x1f GPIO/status, 0x1f GPIO bank source-status, and 0x1c UART0 FR reruns.",
+    "The paired control must preserve output shape while constructing no forbidden RP1/PCIe/MIP/GIC/GPIO/RIO/pads/clock/reset/DMA MMIO address."
+  ],
+  "unacceptedClaims": [
+    "GPIO ownership",
+    "GPIO event generation",
+    "interrupt pending generation",
+    "interrupt enablement or delivery",
+    "endpoint ownership",
+    "broad RP1 mapping",
+    "pad/RIO/clock/reset ownership",
+    "DMA/cache behavior",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "validation": [
+    {
+      "gate": "Static inspection of retained RP1/Linux source snippets and accepted observed-aperture/previous GPIO evidence",
+      "result": "pass",
+      "evidence": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-source-contract/source-evidence-excerpts.md"
+    },
+    {
+      "gate": "jq empty on evidence-map JSON",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "commit": "recorded in talos-supervisor-state.json after acceptance commit"
+}

@@ -8297,6 +8297,35 @@ future supervisor task supplies a different discriminator or new acceptance
 criteria. The worker creates no follow-up task from this closeout; supervisor
 planning is required for the next Milestone 11.2 frontier.
 
+phase11-rp1-observed-gpio-status-source-contract-20260608 accepts the next
+bounded source/evidence contract,
+phase11-rp1-observed-gpio-status-source-contract-v1. It selects a
+qualitatively different observed-aperture GPIO14 preflight rather than a
+same-shaped endpoint config, bridge/setup-state, 0x1f RP1 peripheral, 0x1f
+GPIO/status, 0x1f GPIO bank source-status, or 0x1c UART0 FR hardware rerun.
+The selected target is rp1-gpio14-status-ctrl-observed-aperture-read: two
+read-only 32-bit volatile loads from IO_BANK0 GPIO14 STATUS and CTRL at
+observed CPU physical addresses 0x1c_000d_0070 and 0x1c_000d_0074.
+
+Retained RP1 Linux source backs the register identity: IO_BANK0 base
+0xc0_400d_0000 plus GPIO14 offset 14 * 8 gives STATUS/CTRL at RP1 bus
+0xc0_400d_0070/0xc0_400d_0074. The accepted source-expected 0x1f comparators
+remain blocked for same-shaped reruns. IO_BANK0 INTE/INTS are not selected in
+this contract because the immediate discriminator is per-pin observed-aperture
+STATUS/CTRL visibility, not interrupt source-status or event delivery.
+
+The accepted classifications are observed-aperture-gpio14-status-ctrl-visible,
+observed-aperture-gpio14-status-ctrl-sentinel,
+observed-aperture-gpio14-status-ctrl-all-ones,
+observed-aperture-gpio14-status-ctrl-zero,
+observed-aperture-gpio14-status-ctrl-no-return-or-trap,
+observed-aperture-gpio14-status-ctrl-inconclusive-capture,
+no-mmio-observed-gpio-status-control-visible, and staging/build-blocker. This
+accepts only the source contract; GPIO ownership, event generation, interrupt
+pending generation, interrupt delivery, endpoint ownership, broad RP1 mapping,
+pad/RIO/clock/reset ownership, DMA/cache, networking, SSH, Milestone 11.3, and
+phase transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
