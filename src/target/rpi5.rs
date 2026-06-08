@@ -164,6 +164,8 @@ pub const RP1_UART0_BASE: usize = RP1_UART0_PCIE2_BASE;
 #[allow(dead_code)]
 pub const RP1_UART0_FR: usize = RP1_UART0_BASE + 0x18;
 #[allow(dead_code)]
+pub const RP1_UART0_OBSERVED_APERTURE_FR: usize = RP1_UART0_FIRMWARE_BASE + 0x18;
+#[allow(dead_code)]
 pub const RP1_UART0_GPIO14_PAD: usize = 0x1f_000f_003c;
 #[allow(dead_code)]
 pub const RP1_UART0_GPIO15_PAD: usize = 0x1f_000f_0040;
@@ -12691,6 +12693,7 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",
         talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_read",
         talos_boot_scenario = "rpi5_rp1_bridge_setup_state_read",
+        talos_boot_scenario = "rpi5_rp1_observed_aperture_read",
         talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
         talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator"
     )
@@ -14396,6 +14399,76 @@ pub fn run_rp1_bridge_setup_state_no_mmio_control() -> ! {
         );
         write_bridge_setup_state_classification_vocabulary();
         write_early_static(" classification=no-mmio-pcie2-bridge-setup-state-control-visible\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_observed_aperture_read")]
+pub fn run_rp1_observed_aperture_read() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-observed-aperture-source-contract-v1";
+    const TARGET: &str = "rp1-uart0-fr-observed-aperture-read";
+    const SOURCE_RP1_BUS_ADDRESS: &str = "0xc040030018";
+    const OBSERVED_CPU_PHYSICAL_ADDRESS: &str = "0x1c00030018";
+    const REGISTER_OFFSET: &str = "0x18";
+
+    write_early_static("rpi5-rp1-observed-aperture-read: start contract=");
+    write_early_static(CONTRACT_ID);
+    write_early_static("\n");
+    write_early_static("rpi5-rp1-observed-aperture-read: before-rp1-fr-load\n");
+    wait_uart10_empty_early_phase();
+
+    let raw = read_rp1_reg_u32(RP1_UART0_OBSERVED_APERTURE_FR);
+    let classification = classify_observed_aperture_raw(raw);
+
+    loop {
+        write_early_static("TALOS: rp1-observed-aperture-result contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_observed_aperture_fields(
+            SOURCE_RP1_BUS_ADDRESS,
+            OBSERVED_CPU_PHYSICAL_ADDRESS,
+            REGISTER_OFFSET,
+            raw,
+        );
+        write_observed_aperture_retained_bridge_context();
+        write_observed_aperture_classification_vocabulary();
+        write_early_static(" classification=");
+        write_early_static(classification);
+        write_early_static("\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_observed_aperture_no_mmio_control")]
+pub fn run_rp1_observed_aperture_no_mmio_control() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-observed-aperture-source-contract-v1";
+    const TARGET: &str = "rp1-uart0-fr-observed-aperture-read";
+    const NOT_CONSTRUCTED: &str = "not-constructed";
+    const SIMULATED_RAW_VALUE: u32 = 0x0000_0090;
+
+    write_early_static("rpi5-rp1-observed-aperture-control: start contract=");
+    write_early_static(CONTRACT_ID);
+    write_early_static("\n");
+    write_early_static(
+        "rpi5-rp1-observed-aperture-control: no-bcm2712-pcie-rp1-mip-gic-gpio-clock-reset-dma-mmio\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-observed-aperture-control contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_observed_aperture_fields(
+            NOT_CONSTRUCTED,
+            NOT_CONSTRUCTED,
+            NOT_CONSTRUCTED,
+            SIMULATED_RAW_VALUE,
+        );
+        write_observed_aperture_retained_bridge_context();
+        write_observed_aperture_classification_vocabulary();
+        write_early_static(" classification=no-mmio-observed-aperture-control-visible\n");
         wait_uart10_empty_early_phase();
     }
 }
@@ -16357,6 +16430,8 @@ fn gpio14_ownership_preflight_classification(
     talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_bridge_setup_state_read",
     talos_boot_scenario = "rpi5_rp1_bridge_setup_state_no_mmio_control",
+    talos_boot_scenario = "rpi5_rp1_observed_aperture_read",
+    talos_boot_scenario = "rpi5_rp1_observed_aperture_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
     talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator",
@@ -16368,6 +16443,86 @@ fn write_bool(value: bool) {
     } else {
         write_early_static("false");
     }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_observed_aperture_read",
+    talos_boot_scenario = "rpi5_rp1_observed_aperture_no_mmio_control"
+))]
+fn classify_observed_aperture_raw(raw: u32) -> &'static str {
+    if raw == 0xdead_dead {
+        "observed-aperture-rp1-uart0-fr-sentinel"
+    } else if raw == 0xffff_ffff {
+        "observed-aperture-rp1-uart0-fr-all-ones"
+    } else if raw == 0 {
+        "observed-aperture-rp1-uart0-fr-zero"
+    } else {
+        "observed-aperture-rp1-uart0-fr-visible"
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_observed_aperture_read",
+    talos_boot_scenario = "rpi5_rp1_observed_aperture_no_mmio_control"
+))]
+fn observed_aperture_raw_is_pl011_fr_shaped(raw: u32) -> bool {
+    raw & !0x1ff == 0
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_observed_aperture_read",
+    talos_boot_scenario = "rpi5_rp1_observed_aperture_no_mmio_control"
+))]
+fn write_observed_aperture_fields(
+    source_rp1_bus_address: &str,
+    observed_cpu_physical_address: &str,
+    register_offset: &str,
+    raw: u32,
+) {
+    write_early_static(" source-rp1-bus-address=");
+    write_early_static(source_rp1_bus_address);
+    write_early_static(" observed-cpu-physical-address=");
+    write_early_static(observed_cpu_physical_address);
+    write_early_static(" register-offset=");
+    write_early_static(register_offset);
+    write_early_static(" width=32 raw=");
+    write_early_hex_u64(raw as u64);
+    write_early_static(" raw-is-deaddead=");
+    write_bool(raw == 0xdead_dead);
+    write_early_static(" raw-is-all-ones=");
+    write_bool(raw == 0xffff_ffff);
+    write_early_static(" raw-is-zero=");
+    write_bool(raw == 0);
+    write_early_static(" raw-is-pl011-fr-shaped=");
+    write_bool(observed_aperture_raw_is_pl011_fr_shaped(raw));
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_observed_aperture_read",
+    talos_boot_scenario = "rpi5_rp1_observed_aperture_no_mmio_control"
+))]
+fn write_observed_aperture_retained_bridge_context() {
+    write_early_static(" retained-bridge-win0-lo=0x80000000");
+    write_early_static(" retained-bridge-win0-base-limit=0x3ff00000");
+    write_early_static(" retained-bridge-win0-base-hi=0x1c");
+    write_early_static(" retained-bridge-win0-limit-hi=0x1c");
+    write_early_static(" retained-bridge-outbound-window0-matches=false");
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_observed_aperture_read",
+    talos_boot_scenario = "rpi5_rp1_observed_aperture_no_mmio_control"
+))]
+fn write_observed_aperture_classification_vocabulary() {
+    write_early_static(" classification-vocabulary=");
+    write_early_static("observed-aperture-rp1-uart0-fr-visible,");
+    write_early_static("observed-aperture-rp1-uart0-fr-sentinel,");
+    write_early_static("observed-aperture-rp1-uart0-fr-all-ones,");
+    write_early_static("observed-aperture-rp1-uart0-fr-zero,");
+    write_early_static("observed-aperture-rp1-uart0-fr-no-return-or-trap,");
+    write_early_static("observed-aperture-rp1-uart0-fr-inconclusive-capture,");
+    write_early_static("no-mmio-observed-aperture-control-visible,");
+    write_early_static("staging/build-blocker");
 }
 
 #[cfg(not(talos_target_rpi5_bcm2712))]

@@ -1,0 +1,92 @@
+{
+  "task_id": "phase11-rp1-observed-aperture-core-20260608",
+  "classification": "accepted-local-static-observed-aperture-core",
+  "evidence_level": [
+    "static inspection",
+    "fmt/lint/typecheck",
+    "unit tests",
+    "archive inspection"
+  ],
+  "source_contract": "phase11-rp1-observed-aperture-source-contract-v1",
+  "accepted_boundary": {
+    "real_candidate": "rpi5_rp1_observed_aperture_read",
+    "control_candidate": "rpi5_rp1_observed_aperture_no_mmio_control",
+    "allowed_real_operations": [
+      "32-bit volatile read of RP1 UART0 PL011 FR from observed CPU physical address 0x1c00030018"
+    ],
+    "control_boundary": "same report shape and classification vocabulary, no constructed BCM2712 PCIe, RP1 peripheral/SYSINFO/clock/GPIO/MSI-X, MIP, GIC, DMA, or other forbidden MMIO address"
+  },
+  "artifacts": {
+    "real_archive": {
+      "path": "target/talos-rpi5-rp1-observed-aperture-read-core.tar.gz",
+      "sha256": "4b6511582239f8d991b8da5383ae3cc61b03ccfd961c57b4b7123e3e8b55a5ae",
+      "kernel_sha256": "4b6064d5c23d905fc903ff6ac599e7283121c188366cbd635b7fd92d5ac5e2c0",
+      "kernel_size": 47664,
+      "marker": "TALOS: rp1-observed-aperture-result",
+      "review": "tasks/evidence/2026-06-08-phase11-rp1-observed-aperture-core/real-archive-review.txt"
+    },
+    "control_archive": {
+      "path": "target/talos-rpi5-rp1-observed-aperture-no-mmio-control-core.tar.gz",
+      "sha256": "27c94fbcec820c0afdc9ec43d7e155a1aae92e1663297f8f2c27d96c1faf8d2e",
+      "kernel_sha256": "7903a41314b8b4cbb72aac40b4c95b5d0c242cf76fe745b27a51127dc3ff36be",
+      "kernel_size": 47344,
+      "marker": "TALOS: rp1-observed-aperture-control",
+      "review": "tasks/evidence/2026-06-08-phase11-rp1-observed-aperture-core/control-archive-review.txt"
+    }
+  },
+  "validation": [
+    {
+      "gate": "cargo fmt --all -- --check",
+      "level": "fmt/lint",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet",
+      "level": "unit tests",
+      "result": "pass",
+      "note": "423 no_std tests passed after exporting /opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin onto PATH"
+    },
+    {
+      "gate": "scripts/rpi5-rp1-observed-aperture-read-review.sh",
+      "level": "archive/static inspection",
+      "result": "pass"
+    },
+    {
+      "gate": "scripts/rpi5-rp1-observed-aperture-no-mmio-control-review.sh",
+      "level": "archive/static inspection",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "level": "diff whitespace",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "level": "staged diff whitespace",
+      "result": "pass"
+    }
+  ],
+  "not_accepted": [
+    "Pi 5 hardware behavior",
+    "boot archive publication to the lab",
+    "hardwareTestLock acquisition",
+    "endpoint configuration retry",
+    "same-shaped 0x1f RP1 rerun",
+    "same-shaped bridge/setup rerun",
+    "BAR discovery or programming",
+    "bridge setup writes",
+    "PERST or link-control changes",
+    "GPIO/pad/clock/reset writes",
+    "interrupt delivery",
+    "GIC acknowledgement",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "commit": null
+}
