@@ -1637,6 +1637,26 @@ endpoint config access, broad RP1 mapping, endpoint ownership, PCIe writes,
 clock/reset ownership, GPIO ownership, event generation, interrupt delivery,
 DMA/cache, networking, SSH, Milestone 11.3, or phase transition.
 
+phase11-rp1-pcie-endpoint-config-discriminator-pi5-20260608 accepts the real
+Pi 5 proof as pcie2-host-link-up-rp1-window-sentinel. The accepted rerun
+published only target/talos-rpi5-rp1-pcie2-host-link-status-read-core.tar.gz
+as selected tree
+6d1fa1cd754adf38a023909651bcdc40b6ed08a06b559e79859f545886a59393, retained
+two served 46,880-byte da591740/kernel_2712.img TFTP fetches, passed the
+pi5-capture-transaction-v2 identity join with no rejection reasons, retained
+120 occurrences of TALOS: rp1-pcie2-host-link-status-result, and restored the
+lab to tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+
+The visible status report was raw=0x3e0b0, pcie-port=true, dl-active=true,
+phylinkup=true, link-in-l23=false, status-is-deaddead=false, and
+retained-rp1-window-sentinel=true. This accepts only that the BCM2712 PCIe2
+host-link/status register is visible and link-up while the retained RP1
+SYSINFO/clock-window path remains sentinel-shaped. It does not accept endpoint
+config-space access, broad RP1 mapping, endpoint ownership, PCIe writes,
+interrupt delivery, DMA/cache, networking, SSH, Milestone 11.3, or phase
+transition.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

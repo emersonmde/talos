@@ -8052,6 +8052,23 @@ config access, broad RP1 mapping, endpoint ownership, PCIe writes,
 clock/reset ownership, GPIO ownership, event generation, interrupt delivery,
 DMA/cache, networking, SSH, Milestone 11.3, or phase transition.
 
+phase11-rp1-pcie-endpoint-config-discriminator-pi5-20260608 is accepted as
+pcie2-host-link-up-rp1-window-sentinel. After an inconclusive first candidate
+capture and known-good control triage, the accepted real rerun published only
+the committed read-only PCIE_MISC_PCIE_STATUS candidate as tree
+6d1fa1cd754adf38a023909651bcdc40b6ed08a06b559e79859f545886a59393, retained
+two 46,880-byte da591740/kernel_2712.img TFTP fetches, retained 120 result
+markers, passed the pi5-capture-transaction-v2 identity join with no rejection
+reasons, and restored the lab to tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The
+read-only host status was raw=0x3e0b0 with pcie_port=true, dl_active=true,
+phylinkup=true, link_in_l23=false, and status_is_deaddead=false. This accepts
+only visible/link-up PCIe2 host status while the retained RP1
+SYSINFO/clock-window sentinel remains comparator context. Endpoint config
+access, broad RP1 mapping, endpoint ownership, PCIe writes, interrupt delivery,
+DMA/cache, storage, generated-root, networking, SSH, Milestone 11.3, and phase
+transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
