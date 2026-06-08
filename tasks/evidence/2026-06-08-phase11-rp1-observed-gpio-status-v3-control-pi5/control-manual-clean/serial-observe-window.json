@@ -1,0 +1,32 @@
+{
+  "action": "serial read",
+  "base64": "LG9ic2VydmVkLWFwZXJ0dXJlLWdwaW8xNC1zdGF0dXMtY3RybC16ZXJvLG9ic2VydmVkLWFwZXJ0dXJlLWdwaW8xNC1zdGF0dXMtY3RybC1uby1yZXR1cm4tb3ItdHJhcCxvYnNlcnZlZC1hcGVydHVyZS1ncGlvMTQtc3RhdHVzLWN0cmwtaW5jb25jbHVzaXZlLWNhcHR1cmUsbm8tbW1pby1vYnNlcnZlZC1ncGlvLXN0YXR1cy1jb250cm9sLXZpc2libGUsc3RhZ2luZy9idWlsZC1ibG9ja2VyIGNsYXNzaWZpY2F0aW9uPW5vLW1taW8tb2JzZXJ2ZWQtZ3Bpby1zdGF0dXMtY29udHJvbC12aXNpYmxlDQpUQUxPUzogcnAxLW9ic2VydmVkLWdwaW8tc3RhdHVzLWNvbnRyb2wgY29udHJhY3Q9cGhhc2UxMS1ycDEtb2JzZXJ2ZWQtZ3Bpby1zdGF0dXMtc291cmNlLWNvbnRyYWN0LXYxIHRhcmdldD1ycDEtZ3BpbzE0LXN0YXR1cy1jdHJsLW9ic2VydmVkLWFwZXJ0dXJlLXJlYWQgc3RhdHVzLXNvdXJjZS1ycDEtYnVzLWFkZHJlc3M9bm90LWNvbnN0cnVjdGVkIGN0cmwtc291cmNlLQ==",
+  "bytes": 496,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": ",observed-aperture-gpio14-status-ctrl-zero,observed-aperture-gpio14-status-ctrl-no-return-or-trap,observed-aperture-gpio14-status-ctrl-inconclusive-capture,no-mmio-observed-gpio-status-control-visible,staging/build-blocker classification=no-mmio-observed-gpio-status-control-visible\r\nTALOS: rp1-observed-gpio-status-control contract=phase11-rp1-observed-gpio-status-source-contract-v1 target=rp1-gpio14-status-ctrl-observed-aperture-read status-source-rp1-bus-address=not-constructed ctrl-source-",
+  "truncated": false,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 90,
+    "elapsed_seconds": 1,
+    "settle_ms": 1000,
+    "max_bytes": 196608,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 496,
+    "required_marker": "TALOS: rp1-observed-gpio-status-control",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": true,
+    "has_firmware_network": false,
+    "firmware_network_occurrences": 0,
+    "required_marker_occurrences": 1
+  }
+}

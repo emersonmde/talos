@@ -1,0 +1,10 @@
+{
+  "action": "serial read",
+  "base64": "dXMtYWRkcmVzcz1ub3QtY29uc3RydWN0ZWQgc3RhdHVzLW9ic2VydmVkLWNwdS1waHlzaWNhbC1hZGRyZXNzPW5vdC1jb25zdHJ1Y3RlZCBjdHJsLW9ic2VydmVkLWNwdS1waHlzaWNhbC1hZGRyZXNzPW5vdC1jb25zdHJ1Y3RlZCBzdGF0dXMtcmVnaXN0ZXItb2Zmc2V0PW5vdC1jb25zdHJ1Y3RlZCBjdHJsLXJlZ2lzdGVyLW9mZnNldD1ub3QtY29uc3RydWN0ZWQgd2lkdGg9MzIgZ3BpbzE0LXN0YXR1cy1yYXc9MHgxMDAwMDAgZ3BpbzE0LWN0cmwtcmF3PTB4NDAwMDA0IHN0YXR1cy1yYXctZmFsbGluZz10cnVlIHN0YXR1cy1yYXctcmlzaW5nPWZhbHNlIHN0YXR1cy1yYXctbG93PWZhbHNlIHN0YXR1cy1yYXctaGlnaD1mYWxzZSBzdGF0dXMtZmlsdGVyZWQtZmFsbGluZz1mYWxzZSBzdGF0dXMtZmlsdGVyZWQtcmlzaW5nPWZhbHNlIHN0YXR1cy1maWx0ZXJlZC1sb3c9ZmFsc2Ugc3RhdHVzLWZpbHRlcmVkLWhpZ2g9ZmFsc2UgY3RybC1mdW5jc2VsPTQgY3RybC1vdXRvdg==",
+  "bytes": 496,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "us-address=not-constructed status-observed-cpu-physical-address=not-constructed ctrl-observed-cpu-physical-address=not-constructed status-register-offset=not-constructed ctrl-register-offset=not-constructed width=32 gpio14-status-raw=0x100000 gpio14-ctrl-raw=0x400004 status-raw-falling=true status-raw-rising=false status-raw-low=false status-raw-high=false status-filtered-falling=false status-filtered-rising=false status-filtered-low=false status-filtered-high=false ctrl-funcsel=4 ctrl-outov",
+  "truncated": false
+}

@@ -1,0 +1,41 @@
+{
+  "task_id": "phase11-rp1-observed-gpio-status-v3-control-pi5-20260608",
+  "status": "completed-blocker",
+  "classification": "capture-staging-blocked",
+  "accepted_control_visible": false,
+  "decisive_evidence": {
+    "run": "control-rerun-clean",
+    "v3_check": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-v3-control-pi5/clean-v3-check.json",
+    "contract_version": "pi5-capture-transaction-v3",
+    "rejection_reasons": [
+      "v3-serial-freshness-not-proven",
+      "required-marker-present-before-power"
+    ],
+    "selected_tree_hash": "133f2a9b4a4c5c21b206d8f9eb8eba4ffe41f787a69b33bced0ea164a8cf83ab",
+    "expected_fetch_bytes": 48952,
+    "observed_tftp_fetch_bytes": [
+      48952,
+      48952
+    ],
+    "final_pre_restore_tree_hash": "133f2a9b4a4c5c21b206d8f9eb8eba4ffe41f787a69b33bced0ea164a8cf83ab",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "serial_evidence": {
+    "empty_pre_power": false,
+    "pre_power_drain_attempts": 96,
+    "pre_power_drain_total_bytes": 1045568,
+    "pre_power_control_marker_count": 616,
+    "post_power_control_marker_count": 36,
+    "capture_mode": "read",
+    "serial_freshness_ok": false
+  },
+  "diagnostic_context": {
+    "manual_recovery_v3_check": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-v3-control-pi5/manual-clean-v3-check.json",
+    "manual_recovery_reason_not_decisive": "The later manual recovery run happened after the staged tree had returned to baseline, so its TFTP/final identity mismatch is retained only as recovery context."
+  },
+  "claims": {
+    "no_mmio_control_marker_visible": true,
+    "no_rp1_gpio_behavior_accepted": true,
+    "real_observed_gpio14_status_ctrl_unblocked": false
+  }
+}

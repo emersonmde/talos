@@ -1,0 +1,20 @@
+{
+  "archive": "target/talos-rpi5-rp1-observed-gpio-status-no-mmio-control-core.tar.gz",
+  "expected_tree_hash": "133f2a9b4a4c5c21b206d8f9eb8eba4ffe41f787a69b33bced0ea164a8cf83ab",
+  "expected_fetch": "da591740/kernel_2712.img",
+  "expected_fetch_bytes": 48952,
+  "capture_exit": 0,
+  "v3_exit": 1,
+  "v3_classification": "capture-staging-blocked",
+  "v3_rejection_reasons": [
+    "v3-serial-freshness-not-proven",
+    "required-marker-present-before-power"
+  ],
+  "marker_count": 36,
+  "expected_fetch_count": 2,
+  "expected_fetch_byte_match_count": 2,
+  "final_selected_tree": true,
+  "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "summary_suggested_classification": "identity-join-mismatch",
+  "accepted": false
+}

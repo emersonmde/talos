@@ -1,0 +1,83 @@
+{
+  "task_id": "phase11-rp1-observed-gpio-status-v3-control-pi5-20260608",
+  "status": "completed-blocker",
+  "classification": "capture-staging-blocked",
+  "evidence": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-08-phase11-rp1-observed-gpio-status-v3-control-pi5.md",
+      "type": "task record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-v3-control-pi5/classification.json",
+      "type": "classification"
+    },
+    {
+      "label": "static archive review",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-v3-control-pi5/static-archive-review.txt",
+      "type": "static inspection"
+    },
+    {
+      "label": "archive SHA-256",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-v3-control-pi5/archive-sha256.txt",
+      "type": "image/archive inspection"
+    },
+    {
+      "label": "decisive clean raw run",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-v3-control-pi5/control-rerun-clean/",
+      "type": "lab-controller API, serial hardware boot/output, TFTP delta, restore proof"
+    },
+    {
+      "label": "decisive v3 identity/freshness join",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-v3-control-pi5/clean-v3-check.json",
+      "type": "pi5-capture-transaction-v3"
+    },
+    {
+      "label": "manual recovery diagnostic context",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-v3-control-pi5/control-manual-clean/",
+      "type": "diagnostic context"
+    },
+    {
+      "label": "post partial-staging restore proof",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-v3-control-pi5/clean-post-restore-after-partial-staging-status.json",
+      "type": "lab-controller API restore proof"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static archive inspection",
+      "result": "passed",
+      "evidence": "static-archive-review.txt"
+    },
+    {
+      "gate": "fresh serial cursor and TFTP cursor before power cycle",
+      "result": "retained",
+      "evidence": "control-rerun-clean/serial-cursor-before-power.txt and control-rerun-clean/tftp-cursor-before-power.txt"
+    },
+    {
+      "gate": "serial hardware boot/output",
+      "result": "marker visible but stale marker present before power",
+      "evidence": "control-rerun-clean/serial-observe-window.json and clean-v3-check.json"
+    },
+    {
+      "gate": "TFTP delta",
+      "result": "stable and matched staged control tree",
+      "evidence": "control-rerun-clean/tftp-delta-stable-pre-restore.json"
+    },
+    {
+      "gate": "pi5-capture-transaction-v3",
+      "result": "failed with capture-staging-blocked",
+      "evidence": "clean-v3-check.json"
+    },
+    {
+      "gate": "restore proof",
+      "result": "restored to baseline production-timer tree",
+      "evidence": "control-rerun-clean/post-restore-status.json"
+    }
+  ],
+  "notes": [
+    "GET / returned unknown endpoint on this lab controller; /status was retained for lab status evidence.",
+    "The decisive blocker is v3 serial freshness, not TFTP/final identity, for the clean retained run."
+  ]
+}

@@ -1,0 +1,9 @@
+candidate_archive=target/talos-rpi5-rp1-observed-gpio-status-no-mmio-control-core.tar.gz
+candidate_archive_sha256=ab73a7095683420bbed9cf86da1819f41fc6b0ce77b0b190c458d917dce6334d
+kernel_2712_sha256=8b211565dbe7d7f8138e9785eb0b7e8b74acd0010b195a45745eedd7e9c65d93
+kernel_2712_size=48952
+header_image_size=48952
+text_offset=0
+flags=12
+control_marker=TALOS: rp1-observed-gpio-status-control
+forbidden_observed_gpio_status_strings_absent=true
