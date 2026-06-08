@@ -1,0 +1,103 @@
+{
+  "task": "phase11-rp1-pcie-endpoint-config-discriminator-control-pi5-20260608",
+  "status": "accepted",
+  "classification": "no-mmio-pcie2-host-link-status-control-visible",
+  "generatedAt": "2026-06-08T06:18:00Z",
+  "evidenceLevel": [
+    "static archive identity inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "stable same-cursor TFTP evidence",
+    "pi5-capture-transaction-v2 identity join",
+    "restore proof",
+    "known-good control after inconclusive candidate evidence",
+    "git diff checks"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-control-pi5.md",
+    "classification": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-control-pi5/classification.json",
+    "initialCandidateCapture": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-control-pi5/control-run",
+    "knownGoodControlRun": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-control-pi5/known-good-control-after-inconclusive",
+    "acceptedControlRerun": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-control-pi5/control-rerun-after-kg"
+  },
+  "sourceAndCore": {
+    "sourceContractTask": "tasks/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-source-contract.md",
+    "sourceContractCommit": "b2a1f1d50d56ba5307516ff762bd4f11569dd767",
+    "coreTask": "tasks/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-core.md",
+    "coreCommit": "a6e5d0dacfc7a1334cb653ddb691d6e4e2246579"
+  },
+  "controlCandidate": {
+    "archive": "target/talos-rpi5-rp1-pcie2-host-link-status-no-mmio-control-core.tar.gz",
+    "archiveSha256": "90e9d5f038faa5350b983647b781d21bb561f3bfa1b45329cd0e6bd70df99558",
+    "kernel2712Sha256": "b85ca45e09ccb32f2776ad3ba0faac55b765ca37f9bfbaafb9b30e555f5463ae",
+    "kernelSizeBytes": 46672,
+    "marker": "TALOS: rp1-pcie2-host-link-status-control",
+    "outputClassification": "no-mmio-pcie2-host-link-status-control-visible",
+    "staticArchiveReview": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-control-pi5/static-archive-review.txt"
+  },
+  "acceptedRun": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-control-pi5/control-rerun-after-kg",
+    "selectedTreeHash": "6a9df112f442b9d296a684dc7eaabac9a0fcc50ce19d96cca8d65bfddbe8813f",
+    "preRunTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "identityAllowed": true,
+    "rejectionReasons": [],
+    "markerOccurrences": 118,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 46672,
+    "serialCaptureMode": "read",
+    "serialObserveContract": "deadline-loop-direct-read-after-saturated-cursor",
+    "tftpStable": true
+  },
+  "inconclusiveInitialCandidateCapture": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-control-pi5/control-run",
+    "classification": "capture-staging-blocked",
+    "rejectionReasons": [
+      "serial-drain-not-empty-before-power",
+      "saturated-direct-read-without-empty-pre-power-drain",
+      "expected-fetch-not-observed-in-tftp-delta",
+      "final-pre-restore-selected-tree-mismatch",
+      "final-pre-restore-expected-fetch-byte-mismatch"
+    ],
+    "markerOccurrences": 2,
+    "expectedFetchCount": 0,
+    "expectedFetchByteMatchCount": 0
+  },
+  "knownGoodControl": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-control-pi5/known-good-control-after-inconclusive",
+    "classification": "capture-transaction-v2-ready",
+    "rejectionReasons": [],
+    "selectedTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 104136
+  },
+  "validation": [
+    "scripts/rpi5-rp1-pcie2-host-link-status-no-mmio-control-review.sh target/talos-rpi5-rp1-pcie2-host-link-status-no-mmio-control-core.tar.gz",
+    "lab-controller API status/boot-files/snapshot/publish/power-cycle/restore",
+    "scripts/rpi5-capture-invariant-proof-bundle.sh with marker TALOS: rp1-pcie2-host-link-status-control",
+    "scripts/rpi5-proof-identity-join-check.sh --evidence-dir tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-control-pi5/control-rerun-after-kg",
+    "known-good control after inconclusive candidate evidence",
+    "git diff --check",
+    "git diff --cached --check"
+  ],
+  "acceptedClaims": [
+    "no-MMIO/no-RP1/no-GIC PCIe2 host-link-status control output and capture path is visible on Pi 5",
+    "the selected candidate identity, TFTP fetches, serial markers, final pre-restore identity, and restore proof join under pi5-capture-transaction-v2"
+  ],
+  "rejectedClaims": [
+    "real RP1 endpoint/config/decode behavior",
+    "broad RP1 mapping or endpoint ownership",
+    "PCIe writes",
+    "interrupt delivery",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "nextAction": "Promote phase11-rp1-pcie-endpoint-config-discriminator-pi5-20260608 on the next worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive."
+}

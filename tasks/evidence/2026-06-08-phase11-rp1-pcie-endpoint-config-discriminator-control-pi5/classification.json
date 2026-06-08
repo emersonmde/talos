@@ -1,0 +1,31 @@
+{
+  "taskId": "phase11-rp1-pcie-endpoint-config-discriminator-control-pi5-20260608",
+  "status": "accepted",
+  "classification": "no-mmio-pcie2-host-link-status-control-visible",
+  "acceptedRun": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-control-pi5/control-rerun-after-kg",
+  "selectedTreeHash": "6a9df112f442b9d296a684dc7eaabac9a0fcc50ce19d96cca8d65bfddbe8813f",
+  "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "expectedFetchPath": "da591740/kernel_2712.img",
+  "expectedFetchBytes": 46672,
+  "identityJoinAllowed": true,
+  "identityJoinRejectionReasons": [],
+  "marker": "TALOS: rp1-pcie2-host-link-status-control",
+  "markerOccurrences": 118,
+  "acceptedClaims": [
+    "no-MMIO/no-RP1/no-GIC PCIe2 host-link-status control output and capture path is visible on Pi 5",
+    "the selected candidate identity, TFTP fetches, serial markers, final pre-restore identity, and restore proof join under pi5-capture-transaction-v2"
+  ],
+  "rejectedClaims": [
+    "real RP1 endpoint/config/decode behavior",
+    "broad RP1 mapping or endpoint ownership",
+    "PCIe writes",
+    "interrupt delivery",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ]
+}

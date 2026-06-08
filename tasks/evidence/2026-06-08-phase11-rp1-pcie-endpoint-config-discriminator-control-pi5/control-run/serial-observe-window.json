@@ -1,0 +1,32 @@
+{
+  "action": "serial read",
+  "base64": "MCBwY2llLXBvcnQ9dHJ1ZSBkbC1hY3RpdmU9dHJ1ZSBwaHlsaW5rdXA9dHJ1ZSBsaW5rLWluLWwyMz1mYWxzZSBzdGF0dXMtaXMtZGVhZGRlYWQ9ZmFsc2UgcmV0YWluZWQtc3lzaW5mby1jbG9jay1zZW50aW5lbC1jbGFzc2lmaWNhdGlvbj1ycDEtc3lzaW5mby1hbmQtY2xvY2std2luZG93LXNlbnRpbmVsIHJldGFpbmVkLXJwMS13aW5kb3ctc2VudGluZWw9dHJ1ZSBjbGFzc2lmaWNhdGlvbj1uby1tbWlvLXBjaWUyLWhvc3QtbGluay1zdGF0dXMtY29udHJvbC12aXNpYmxlDQpUQUxPUzogcnAxLXBjaWUyLWhvc3QtbGluay1zdGF0dXMtY29udHJvbCBjb250cmFjdD1waGFzZTExLXJwMS1wY2llLWVuZHBvaW50LWNvbmZpZy1kaXNjcmltaW5hdG9yLXNvdXJjZS1jb250cmFjdC12MSB0YXJnZXQ9cGNpZTItaG9zdC1saW5rLXN0YXR1cy1yZWFkIHBjaWUyLWNvbnRyb2xsZXItYmFzZT1ub3QtY29uc3RydWN0ZWQgcmVnaXN0ZXI9UENJRV9NSVNDX1BDSUVfU1RBVFVTIHNvdXJjZS1vZmZzZXQ9MHg0MDY4IGFkZHJlc3M9bm90LWNvbnN0cnVjdGVkIHdpZHRoPTMyIHJhdz0weGIwIHBjaWUtcG9ydD10cnVlIGRsLWFjdGl2ZT10cnVlIHBoeWxpbmt1cD10cnVlIGxpbmstaW4tbDIzPWZhbHNlIHN0YXR1cy1pcy1kZWFkZGVhZD1mYWxzZSByZXRhaW5lZC1zeXNpbmZvLWNsb2NrLXNlbnRpbmVsLWNsYXNzaWZpY2F0aW9uPXJwMS1zeXNpbmZvLWFuZC1jbG9jay13aW5kb3ctc2VudGluZWwgcmV0YWluZWQtcnAxLXdpbmRvdy1zZW50aW5lbD10cnVlIGNsYXNzaWZpY2F0aW9uPW5vLW1taW8tcGNpZTItaG9zdC1saW5rLXN0YXR1cy1jb250cm9sLXZpc2libGUNClRBTE9TOiBycDEtcGNpZTItaG9zdC1saW5rLXN0YXR1cy1jb250cm9sIGNvbnRyYWN0PXBoYXNlMTEtcnAxLXBjaWUtZW5kcG9pbnQtY29uZmlnLWRpc2NyaW1pbmF0b3Itc291cmNlLWNvbnRyYWN0LXYxIHRhcmdldD1wY2llMi1ob3N0LWxpbmstc3RhdHVzLXJlYWQgcGNpZTItY29udHJvbGxlci1iYXNlPW5vdC1jb25zdPI=",
+  "bytes": 1010,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "0 pcie-port=true dl-active=true phylinkup=true link-in-l23=false status-is-deaddead=false retained-sysinfo-clock-sentinel-classification=rp1-sysinfo-and-clock-window-sentinel retained-rp1-window-sentinel=true classification=no-mmio-pcie2-host-link-status-control-visible\r\nTALOS: rp1-pcie2-host-link-status-control contract=phase11-rp1-pcie-endpoint-config-discriminator-source-contract-v1 target=pcie2-host-link-status-read pcie2-controller-base=not-constructed register=PCIE_MISC_PCIE_STATUS source-offset=0x4068 address=not-constructed width=32 raw=0xb0 pcie-port=true dl-active=true phylinkup=true link-in-l23=false status-is-deaddead=false retained-sysinfo-clock-sentinel-classification=rp1-sysinfo-and-clock-window-sentinel retained-rp1-window-sentinel=true classification=no-mmio-pcie2-host-link-status-control-visible\r\nTALOS: rp1-pcie2-host-link-status-control contract=phase11-rp1-pcie-endpoint-config-discriminator-source-contract-v1 target=pcie2-host-link-status-read pcie2-controller-base=not-const�",
+  "truncated": false,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 90,
+    "elapsed_seconds": 1,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 1010,
+    "required_marker": "TALOS: rp1-pcie2-host-link-status-control",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": true,
+    "has_firmware_network": false,
+    "firmware_network_occurrences": 0,
+    "required_marker_occurrences": 2
+  }
+}
