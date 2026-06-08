@@ -1,0 +1,42 @@
+{
+  "task_id": "phase11-rp1-observed-gpio-ownership-route-source-contract-20260608",
+  "contract": "phase11-rp1-observed-gpio-ownership-route-source-contract-v1",
+  "target": "rp1-gpio14-ownership-route-observed-aperture-preflight-read",
+  "status": "accepted",
+  "classification": "accepted-observed-gpio14-ownership-route-source-contract",
+  "accepted_classifications": [
+    "observed-gpio14-ownership-route-preflight-visible",
+    "observed-gpio14-ownership-preflight-blocked-non-gpio-function",
+    "observed-gpio14-ownership-preflight-blocked-route-or-source-state",
+    "observed-gpio14-ownership-preflight-sentinel",
+    "observed-gpio14-ownership-preflight-all-ones",
+    "observed-gpio14-ownership-preflight-zero",
+    "observed-gpio14-ownership-preflight-no-return-or-trap",
+    "observed-gpio14-ownership-preflight-inconclusive-capture",
+    "no-mmio-observed-gpio14-ownership-route-control-visible",
+    "staging/build-blocker"
+  ],
+  "read_only": true,
+  "writes_forbidden": true,
+  "accepted_claims": [
+    "source-backed observed-aperture register identity",
+    "read-only report shape",
+    "classification boundary",
+    "paired no-MMIO/no-RP1/no-GIC control requirement"
+  ],
+  "not_accepted": [
+    "GPIO ownership",
+    "event generation",
+    "interrupt pending generation",
+    "interrupt delivery",
+    "GIC acknowledgement",
+    "handler ownership",
+    "GPIO/RIO/pad/INTE writes",
+    "parent-route masking writes",
+    "DMA/cache",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ]
+}

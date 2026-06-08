@@ -2118,6 +2118,39 @@ reruns are closed unless future supervisor planning supplies a different
 discriminator or new acceptance criteria; supervisor planning is required for
 the next Milestone 11.2 feature slice.
 
+phase11-rp1-observed-gpio-ownership-route-source-contract-20260608 accepts the
+next read-only observed-aperture preflight contract:
+phase11-rp1-observed-gpio-ownership-route-source-contract-v1. The selected
+target is rp1-gpio14-ownership-route-observed-aperture-preflight-read. It uses
+the accepted observed GPIO14 STATUS/CTRL visibility as a prerequisite, then
+adds only ownership-adjacent read-only status fields before any write or event
+generation attempt.
+
+The allowed RP1 observed-aperture reads are GPIO14 STATUS/CTRL at
+0x1c000d0070/0x1c000d0074, IO_BANK0 INTE/INTS at
+0x1c000d011c/0x1c000d0124, RIO0 OUT/OE/IN at
+0x1c000e0000/0x1c000e0004/0x1c000e0008, and GPIO14 pad control at
+0x1c000f003c. The parent-route inputs remain the accepted read-only INTID 160
+GIC status registers: GICD_ISENABLER5 at 0x107fff9114, GICD_ISPENDR5 at
+0x107fff9214, GICD_ISACTIVER5 at 0x107fff9314, and GICC_HPPIR at
+0x107fffa018. The source-expected 0x1f ownership/route preflight remains
+retained context only; this frontier is explicitly the observed 0x1c aperture.
+
+The accepted classifications are observed-gpio14-ownership-route-preflight-visible,
+observed-gpio14-ownership-preflight-blocked-non-gpio-function,
+observed-gpio14-ownership-preflight-blocked-route-or-source-state,
+observed-gpio14-ownership-preflight-sentinel,
+observed-gpio14-ownership-preflight-all-ones,
+observed-gpio14-ownership-preflight-zero,
+observed-gpio14-ownership-preflight-no-return-or-trap,
+observed-gpio14-ownership-preflight-inconclusive-capture,
+no-mmio-observed-gpio14-ownership-route-control-visible, and
+staging/build-blocker. This accepts only a source contract and paired
+no-MMIO/no-RP1/no-GIC control requirement. GPIO ownership, event generation,
+interrupt pending/delivery, GIC acknowledgement, handler ownership,
+GPIO/RIO/pad/INTE writes, parent-route masking writes, DMA/cache, networking,
+SSH, Milestone 11.3, and phase transition remain unaccepted.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when
