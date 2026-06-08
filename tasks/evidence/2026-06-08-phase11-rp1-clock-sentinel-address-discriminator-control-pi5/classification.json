@@ -1,0 +1,24 @@
+{
+  "task": "phase11-rp1-clock-sentinel-address-discriminator-control-pi5-20260608",
+  "classification": "no-mmio-sysinfo-clock-sentinel-control-visible",
+  "accepted": true,
+  "evidenceLevel": "serial hardware boot/output + lab-controller API + pi5-capture-transaction-v2 identity join",
+  "selectedTreeHash": "499b836e2dfbd94d9301dfcb90d9625cd90e6e7507ba8070413ce8b36c5c551e",
+  "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "expectedFetchBytes": 47288,
+  "expectedFetchCount": 2,
+  "expectedFetchByteMatchCount": 2,
+  "marker": "TALOS: rp1-sysinfo-clock-sentinel-control",
+  "markerOccurrences": 60,
+  "rejectionReasons": [],
+  "acceptedClaims": [
+    "no-MMIO/no-RP1/no-GIC SYSINFO clock-sentinel control output visible on Pi 5",
+    "capture identity joined selected tree, TFTP fetches, serial output, final pre-restore identity, and restore proof"
+  ],
+  "rejectedClaims": [
+    "real RP1 SYSINFO or clock-window behavior",
+    "RP1 clock/reset ownership",
+    "GPIO/event/interrupt behavior",
+    "Milestone 11.3 or phase transition"
+  ]
+}

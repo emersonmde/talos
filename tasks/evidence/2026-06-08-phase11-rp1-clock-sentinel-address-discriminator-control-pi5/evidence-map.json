@@ -1,0 +1,98 @@
+{
+  "task": "phase11-rp1-clock-sentinel-address-discriminator-control-pi5-20260608",
+  "status": "accepted",
+  "classification": "no-mmio-sysinfo-clock-sentinel-control-visible",
+  "generatedAt": "2026-06-08T03:30:32Z",
+  "evidenceLevel": [
+    "static archive identity inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "stable same-cursor TFTP evidence",
+    "pi5-capture-transaction-v2 identity join",
+    "restore proof",
+    "known-good control after inconclusive first run",
+    "git diff checks"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-control-pi5.md",
+    "classification": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-control-pi5/classification.json",
+    "firstControlRun": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-control-pi5/control-run",
+    "knownGoodControlRun": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-control-pi5/known-good-control-after-inconclusive",
+    "acceptedControlRerun": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-control-pi5/control-rerun-after-kg"
+  },
+  "sourceAndCore": {
+    "sourceContractTask": "tasks/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-source-contract.md",
+    "sourceContractCommit": "2b5176eaba20ef1182cac09702fa073351201cb5",
+    "coreTask": "tasks/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-core.md",
+    "coreCommit": "665236b4bf35478e30da984221f76526473a746a"
+  },
+  "controlCandidate": {
+    "archive": "target/talos-rpi5-rp1-sysinfo-clock-sentinel-no-mmio-control-core.tar.gz",
+    "archiveSha256": "e5477921b8e5f927a26f9d5f107597c86930980b6ada822449d5a768b96fea21",
+    "kernel2712Sha256": "1aa668c7b0665a0f1148f7bd48435a324f80aad0347e6971a1efc8538ddd150c",
+    "kernelSizeBytes": 47288,
+    "marker": "TALOS: rp1-sysinfo-clock-sentinel-control",
+    "outputClassification": "no-mmio-sysinfo-clock-sentinel-control-visible",
+    "staticArchiveReview": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-control-pi5/static-archive-review.txt"
+  },
+  "acceptedRun": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-control-pi5/control-rerun-after-kg",
+    "selectedTreeHash": "499b836e2dfbd94d9301dfcb90d9625cd90e6e7507ba8070413ce8b36c5c551e",
+    "preRunTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "identityAllowed": true,
+    "rejectionReasons": [],
+    "markerOccurrences": 60,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 47288,
+    "serialCaptureMode": "read",
+    "serialObserveContract": "deadline-loop-direct-read-after-saturated-cursor",
+    "tftpStable": true
+  },
+  "inconclusiveFirstRun": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-control-pi5/control-run",
+    "classification": "capture-staging-blocked",
+    "rejectionReasons": [
+      "serial-drain-not-empty-before-power",
+      "saturated-direct-read-without-empty-pre-power-drain"
+    ],
+    "markerOccurrences": 60,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2
+  },
+  "knownGoodControl": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-control-pi5/known-good-control-after-inconclusive",
+    "classification": "capture-staging-blocked",
+    "rejectionReasons": [
+      "serial-drain-not-empty-before-power",
+      "saturated-direct-read-without-empty-pre-power-drain"
+    ],
+    "selectedTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 104136
+  },
+  "validation": [
+    "scripts/rpi5-rp1-sysinfo-clock-sentinel-no-mmio-control-review.sh target/talos-rpi5-rp1-sysinfo-clock-sentinel-no-mmio-control-core.tar.gz",
+    "lab-controller API status/boot-files/snapshot/publish/power-cycle/restore",
+    "scripts/rpi5-capture-invariant-proof-bundle.sh with marker TALOS: rp1-sysinfo-clock-sentinel-control",
+    "scripts/rpi5-proof-identity-join-check.sh --evidence-dir tasks/evidence/2026-06-08-phase11-rp1-clock-sentinel-address-discriminator-control-pi5/control-rerun-after-kg",
+    "known-good control after inconclusive first run",
+    "git diff --check",
+    "git diff --cached --check"
+  ],
+  "acceptedClaims": [
+    "no-MMIO/no-RP1/no-GIC SYSINFO clock-sentinel control output and capture path is visible on Pi 5",
+    "the selected candidate identity, TFTP fetches, serial markers, final pre-restore identity, and restore proof join under pi5-capture-transaction-v2"
+  ],
+  "rejectedClaims": [
+    "real RP1 SYSINFO or clock-window behavior",
+    "RP1 clock/reset reads or writes",
+    "GPIO ownership or event generation",
+    "interrupt delivery or GIC acknowledgement",
+    "ISR or handler ownership",
+    "DMA/cache, storage, generated-root, networking, SSH, broader PCIe behavior, Milestone 11.3, or phase transition"
+  ],
+  "nextAction": "Promote phase11-rp1-clock-sentinel-address-discriminator-pi5-20260608 on the next worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive."
+}
