@@ -1,0 +1,116 @@
+{
+  "task": "phase11-rp1-clock-write-effect-discriminator-closeout-20260607",
+  "status": "accepted",
+  "classification": "rp1-clock-adc-window-readback-sentinel-frontier-closed",
+  "generatedAt": "2026-06-08T02:45:00Z",
+  "evidenceLevel": [
+    "static inspection",
+    "evidence-map reconciliation",
+    "docs validation",
+    "git diff checks"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-07-phase11-rp1-clock-write-effect-discriminator-closeout.md",
+    "staticReconciliationNotes": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-closeout/static-reconciliation-notes.md",
+    "sourceContractTask": "tasks/2026-06-07-phase11-rp1-clock-write-effect-discriminator-source-contract.md",
+    "sourceContractEvidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-source-contract/evidence-map.json",
+    "coreTask": "tasks/2026-06-07-phase11-rp1-clock-write-effect-discriminator-core.md",
+    "coreEvidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-core/evidence-map.json",
+    "controlTask": "tasks/2026-06-07-phase11-rp1-clock-write-effect-discriminator-control-pi5.md",
+    "controlEvidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-control-pi5/evidence-map.json",
+    "realTask": "tasks/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5.md",
+    "realEvidenceMap": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/evidence-map.json"
+  },
+  "acceptedChain": {
+    "sourceContract": {
+      "task": "phase11-rp1-clock-write-effect-discriminator-source-contract-20260607",
+      "commit": "db2f6bc2e372f5bfe6a8b8d9c1e56cdada7bd97f",
+      "classification": "accepted-source-contract",
+      "contract": "phase11-rp1-clock-write-effect-discriminator-source-contract-v1",
+      "target": "rp1-clk-adc-window-coherence-read",
+      "selectedOperations": [
+        "read CLK_SYS_CTRL at 0x1f00018014",
+        "read CLK_UART_CTRL at 0x1f00018054",
+        "read CLK_ADC_CTRL at 0x1f00018144",
+        "local ordering barrier",
+        "read CLK_ADC_CTRL at 0x1f00018144",
+        "read CLK_ADC_DIV_INT at 0x1f00018148",
+        "read CLK_ADC_SEL at 0x1f00018150"
+      ],
+      "writesSelected": false
+    },
+    "core": {
+      "task": "phase11-rp1-clock-write-effect-discriminator-core-20260607",
+      "commit": "be78fc2c9b4f2ddb80911e4ace0d6caf453fe2d7",
+      "classification": "accepted-local-static-clock-adc-window-coherence-core",
+      "realArchiveSha256": "5b49611443a8548f044d93ab066343a3e20b9d7a83f627d27e18c09843183112",
+      "controlArchiveSha256": "d9a62977cb33b9c6b27525096951773575f18c53b1efbf3e3b143479058b3b88"
+    },
+    "controlProof": {
+      "task": "phase11-rp1-clock-write-effect-discriminator-control-pi5-20260607",
+      "commit": "08efd29b1c19c629074f7af647019b65fba9e2ff",
+      "classification": "no-mmio-clock-adc-window-coherence-control-visible",
+      "acceptedRun": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-control-pi5/control-rerun-after-kg",
+      "selectedTreeHash": "326db32f8082eb83f24df752d81611b77a2a270ff539a7af27adb91b0ef89412",
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "identityAllowed": true,
+      "expectedFetchByteMatchCount": 2,
+      "expectedFetchBytes": 47360,
+      "markerOccurrences": 52
+    },
+    "realProof": {
+      "task": "phase11-rp1-clock-write-effect-discriminator-pi5-20260607",
+      "commit": "224e6e02c5eb044d4b32f1c6358af20eb2a12924",
+      "classification": "rp1-clock-adc-window-readback-sentinel",
+      "acceptedRun": "tasks/evidence/2026-06-07-phase11-rp1-clock-write-effect-discriminator-pi5/real-rerun-after-kg",
+      "selectedTreeHash": "f93e47c1d5b68dd243c795d3323cc04249c0b62cda22c3ccb003593c56232902",
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "identityAllowed": true,
+      "expectedFetchByteMatchCount": 2,
+      "expectedFetchBytes": 48056,
+      "markerOccurrences": 52,
+      "rawWindow": {
+        "clkSysCtrl": "0xdeaddead",
+        "clkUartCtrl": "0xdeaddead",
+        "adcCtrlFirst": "0xdeaddead",
+        "adcCtrlSecond": "0xdeaddead",
+        "adcDivInt": "0xdeaddead",
+        "adcSel": "0xdeaddead"
+      },
+      "decoded": {
+        "adcCtrlStable": true,
+        "adcWindowAllEqual": true,
+        "adcWindowAllDeadDead": true,
+        "adcSelZero": false,
+        "adcSelOneHot": false,
+        "adcSelMultiBit": true
+      }
+    }
+  },
+  "acceptedClaims": [
+    "the source-backed read-only ADC clock-window coherence discriminator is implemented locally and visible on Pi 5",
+    "the real Pi 5 output is a repeated 0xdeaddead sentinel boundary across the selected clock-manager window",
+    "candidate identity, same-run TFTP fetches, serial markers, final selected-tree identity, and restore proof join under pi5-capture-transaction-v2",
+    "the chain is closed as rp1-clock-adc-window-readback-sentinel-frontier-closed"
+  ],
+  "rejectedClaims": [
+    "successful non-idempotent RP1 clock ownership",
+    "broad RP1 clock/reset ownership or any new RP1 clock/reset write",
+    "divider/source/PLL/frequency-counter/reset-controller writes",
+    "GPIO ownership or event generation",
+    "interrupt delivery or GIC acknowledgement",
+    "ISR or handler ownership",
+    "DMA/cache, storage, generated-root, networking, SSH, broader PCIe behavior, Milestone 11.3, or phase transition"
+  ],
+  "retainedRisks": [
+    "same-shaped CLK_ADC_CTRL enable-bit transition hardware reruns remain blocked without future supervisor planning",
+    "future GPIO ownership retry, interrupt-delivery slice, or broader clock/reset step needs explicit supervisor decomposition and acceptance gates"
+  ],
+  "validation": [
+    "static inspection of source contract, core, control proof, real proof, restore evidence, and evidence maps",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check"
+  ],
+  "nextAction": "Supervisor planning is required for the next Milestone 11.2 feature slice; this closeout does not create a worker-owned follow-up task."
+}

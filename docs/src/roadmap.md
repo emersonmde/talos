@@ -7965,8 +7965,22 @@ sentinel/result boundary; successful non-idempotent clock ownership, broad
 clock/reset ownership, any new clock/reset write, GPIO ownership, event
 generation, interrupt delivery, handler ownership, DMA/cache, storage,
 generated-root, networking, SSH, broader PCIe, Milestone 11.3, and phase
-transition remain unaccepted. The closeout task is the next mechanically gated
-task.
+transition remain unaccepted.
+
+phase11-rp1-clock-write-effect-discriminator-closeout-20260607 is accepted as
+rp1-clock-adc-window-readback-sentinel-frontier-closed. The closeout reconciles
+the source contract, local/static core, no-MMIO/no-RP1/no-GIC control proof,
+real Pi 5 proof, restore evidence, and evidence maps into one accepted
+frontier. The accepted boundary is only the read-only ADC clock-window
+coherence sentinel/result: the selected clock-manager window returned repeated
+0xdeaddead values across CLK_SYS_CTRL, CLK_UART_CTRL, two ordered CLK_ADC_CTRL
+reads, CLK_ADC_DIV_INT, and CLK_ADC_SEL. Successful non-idempotent clock
+ownership, broad clock/reset ownership, any new clock/reset write,
+GPIO ownership, event generation, interrupt delivery, handler ownership,
+DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
+11.3, and phase transition remain unaccepted. Supervisor planning is required
+for the next Milestone 11.2 feature slice; this closeout does not create a
+worker-owned follow-up task.
 
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 

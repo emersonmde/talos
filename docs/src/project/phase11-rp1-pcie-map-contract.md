@@ -644,6 +644,22 @@ clock/reset write, GPIO ownership, event generation, interrupt delivery,
 DMA/cache, storage, generated-root, networking, SSH, broader PCIe, Milestone
 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-clock-write-effect-discriminator-closeout-20260607 accepts the
+chain closeout as rp1-clock-adc-window-readback-sentinel-frontier-closed. The
+closeout reconciles the source contract, local/static core, no-MMIO/no-RP1/
+no-GIC control proof, real Pi 5 proof, restore evidence, and evidence maps.
+The accepted frontier is limited to the read-only ADC clock-window coherence
+sentinel/result: the selected clock-manager window returned repeated
+0xdeaddead values across CLK_SYS_CTRL, CLK_UART_CTRL, two ordered
+CLK_ADC_CTRL reads, CLK_ADC_DIV_INT, and CLK_ADC_SEL. This boundary may inform
+future supervisor planning for a GPIO ownership retry, interrupt-delivery
+slice, or broader clock/reset step, but it does not itself authorize any new
+write. Successful non-idempotent clock ownership, broad RP1 clock/reset
+ownership, divider/source/PLL/frequency-counter/reset-controller writes,
+GPIO ownership, event generation, interrupt delivery, DMA/cache, storage,
+generated-root, networking, SSH, broader PCIe, Milestone 11.3, and phase
+transition remain unaccepted.
+
 ## Pi 5 Proof Status
 
 `phase11-rp1-register-read-pi5-proof-20260605` completed with a hardware
