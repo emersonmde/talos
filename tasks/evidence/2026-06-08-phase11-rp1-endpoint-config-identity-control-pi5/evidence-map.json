@@ -1,0 +1,100 @@
+{
+  "task": "phase11-rp1-endpoint-config-identity-control-pi5-20260608",
+  "status": "accepted",
+  "classification": "no-mmio-rp1-endpoint-config-id-control-visible",
+  "generatedAt": "2026-06-08T08:25:00Z",
+  "evidenceLevel": [
+    "static archive identity inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "stable same-cursor TFTP evidence",
+    "pi5-capture-transaction-v2 identity join",
+    "restore proof",
+    "known-good control after inconclusive candidate evidence",
+    "git diff checks"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-08-phase11-rp1-endpoint-config-identity-control-pi5.md",
+    "classification": "tasks/evidence/2026-06-08-phase11-rp1-endpoint-config-identity-control-pi5/classification.json",
+    "initialCandidateCapture": "tasks/evidence/2026-06-08-phase11-rp1-endpoint-config-identity-control-pi5/control-run-concurrent-capture-corrupt",
+    "knownGoodControlRun": "tasks/evidence/2026-06-08-phase11-rp1-endpoint-config-identity-control-pi5/known-good-control-after-inconclusive",
+    "acceptedControlRerun": "tasks/evidence/2026-06-08-phase11-rp1-endpoint-config-identity-control-pi5/control-rerun-after-kg"
+  },
+  "sourceAndCore": {
+    "sourceContractTask": "tasks/2026-06-08-phase11-rp1-endpoint-config-identity-source-contract.md",
+    "sourceContractCommit": "9b6d46a1678b20c842eccafc368a0fd3a52dd0bd",
+    "coreTask": "tasks/2026-06-08-phase11-rp1-endpoint-config-identity-core.md",
+    "coreCommit": "adf46529196cbbde6e6424c2c3d0a55e0089b4e5"
+  },
+  "controlCandidate": {
+    "archive": "target/talos-rpi5-rp1-endpoint-config-identity-no-mmio-control-core.tar.gz",
+    "archiveSha256": "53617447da04e045f09a9eaa3e10a4205046b2e73fe3a54b58263b097cba975e",
+    "kernel2712Sha256": "853f553f44457c848f28a8c977c5d821541c9509d7c83ab74e9911c1717849ba",
+    "kernelSizeBytes": 47608,
+    "marker": "TALOS: rp1-endpoint-config-identity-control",
+    "outputClassification": "no-mmio-rp1-endpoint-config-id-control-visible",
+    "staticArchiveReview": "tasks/evidence/2026-06-08-phase11-rp1-endpoint-config-identity-control-pi5/static-archive-review.txt"
+  },
+  "acceptedRun": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-endpoint-config-identity-control-pi5/control-rerun-after-kg",
+    "selectedTreeHash": "def5349a2a9d4a323457f473e0371e0ed1b19a52b418df516634cfc001b88280",
+    "preRunTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "identityAllowed": true,
+    "rejectionReasons": [],
+    "markerOccurrences": 66,
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 47608,
+    "serialCaptureMode": "read",
+    "serialObserveContract": "deadline-loop-direct-read-after-saturated-cursor",
+    "tftpStable": true
+  },
+  "inconclusiveInitialCandidateCapture": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-endpoint-config-identity-control-pi5/control-run-concurrent-capture-corrupt",
+    "classification": "capture-staging-blocked",
+    "reason": "overlapping capture attempts produced concatenated serial-observe-window JSON; no decisive hardware classification accepted",
+    "selectedTreeHash": "def5349a2a9d4a323457f473e0371e0ed1b19a52b418df516634cfc001b88280",
+    "expectedFetchBytes": 47608
+  },
+  "knownGoodControl": {
+    "path": "tasks/evidence/2026-06-08-phase11-rp1-endpoint-config-identity-control-pi5/known-good-control-after-inconclusive",
+    "classification": "capture-staging-blocked",
+    "rejectionReasons": [
+      "serial-drain-not-empty-before-power",
+      "saturated-direct-read-without-empty-pre-power-drain"
+    ],
+    "selectedTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "expectedFetchCount": 2,
+    "expectedFetchByteMatchCount": 2,
+    "expectedFetchBytes": 104136
+  },
+  "validation": [
+    "scripts/rpi5-rp1-endpoint-config-identity-no-mmio-control-review.sh target/talos-rpi5-rp1-endpoint-config-identity-no-mmio-control-core.tar.gz",
+    "lab-controller API status/boot-files/snapshot/publish/power-cycle/restore",
+    "scripts/rpi5-capture-invariant-proof-bundle.sh with marker TALOS: rp1-endpoint-config-identity-control",
+    "scripts/rpi5-proof-identity-join-check.sh --evidence-dir tasks/evidence/2026-06-08-phase11-rp1-endpoint-config-identity-control-pi5/control-rerun-after-kg",
+    "known-good control after inconclusive candidate evidence",
+    "git diff --check",
+    "git diff --cached --check"
+  ],
+  "acceptedClaims": [
+    "no-MMIO/no-RP1/no-GIC endpoint config identity control output and capture path is visible on Pi 5",
+    "the selected candidate identity, TFTP fetches, serial markers, final pre-restore identity, and restore proof join under pi5-capture-transaction-v2"
+  ],
+  "rejectedClaims": [
+    "real endpoint config behavior",
+    "broad RP1 mapping or endpoint ownership",
+    "endpoint configuration mutation",
+    "bridge setup",
+    "interrupt delivery",
+    "DMA/cache",
+    "storage",
+    "generated-root",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "nextAction": "Promote phase11-rp1-endpoint-config-identity-pi5-20260608 on the next worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive."
+}

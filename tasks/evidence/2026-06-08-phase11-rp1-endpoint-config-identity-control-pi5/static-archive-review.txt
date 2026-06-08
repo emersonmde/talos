@@ -1,0 +1,8 @@
+candidate_archive=target/talos-rpi5-rp1-endpoint-config-identity-no-mmio-control-core.tar.gz
+candidate_archive_sha256=53617447da04e045f09a9eaa3e10a4205046b2e73fe3a54b58263b097cba975e
+kernel_2712_sha256=853f553f44457c848f28a8c977c5d821541c9509d7c83ab74e9911c1717849ba
+kernel_2712_size=47608
+header_image_size=47608
+text_offset=0
+flags=12
+control_marker=TALOS: rp1-endpoint-config-identity-control

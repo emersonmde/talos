@@ -1,0 +1,1 @@
+jq: Bad JSON in --slurpfile serial tasks/evidence/2026-06-08-phase11-rp1-endpoint-config-identity-control-pi5/control-run/serial-observe-window.json: Invalid numeric literal at line 33, column 5
