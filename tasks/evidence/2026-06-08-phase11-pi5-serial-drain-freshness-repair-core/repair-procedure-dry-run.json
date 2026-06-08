@@ -1,0 +1,63 @@
+{
+  "dry_run": true,
+  "hardware_actions": [],
+  "would_write": {
+    "evidence_dir": "tasks/evidence/2026-06-08-phase11-pi5-serial-drain-freshness-repair-core/dry-run",
+    "pre_status": "pre-status.json",
+    "pre_boot_files": "pre-boot-files.json",
+    "pre_snapshots": "pre-snapshots.json",
+    "serial_drain_before_power": "serial-drain-before-power.json",
+    "serial_read_empty_before_power": "serial-read-empty-before-power.json",
+    "tftp_cursor_before_power": "tftp-cursor-before-power.json",
+    "power_cycle": "power-cycle.json",
+    "serial_observe_window": "serial-observe-window.json",
+    "tftp_delta_stable_pre_restore": "tftp-delta-stable-pre-restore.json",
+    "final_pre_restore_status": "final-pre-restore-status.json",
+    "final_pre_restore_boot_files": "final-pre-restore-boot-files.json",
+    "restore_snapshot": "restore-snapshot.json",
+    "post_restore_status": "post-restore-status.json",
+    "post_restore_boot_files": "post-restore-boot-files.json",
+    "summary": "capture-invariant-summary.json"
+  },
+  "contract": {
+    "label": "phase11-rp1-observed-gpio-status-control-pi5-retry-20260608/control-retry",
+    "restore_snapshot": "phase11-rp1-observed-gpio-status-control-pre-retry",
+    "expected_tree_hash": "133f2a9b4a4c5c21b206d8f9eb8eba4ffe41f787a69b33bced0ea164a8cf83ab",
+    "expected_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": "48952",
+    "proof_run_identity_contract": {
+      "version": "pi5-capture-transaction-v2",
+      "shared_run_label": "phase11-rp1-observed-gpio-status-control-pi5-retry-20260608/control-retry",
+      "required_fields": [
+        "selected_tree_hash",
+        "effective_kernel",
+        "expected_fetch_path",
+        "expected_fetch_byte_count",
+        "pre_power_serial_drain_empty",
+        "serial_cursor_and_window",
+        "tftp_cursor_and_stable_delta",
+        "final_pre_restore_identity",
+        "restore_identity"
+      ],
+      "rejection_rule": "missing or mismatched candidate identity, serial-drain, serial-window, TFTP, or final identity fields prevent decisive hardware classification"
+    },
+    "serial_marker": "TALOS: rp1-observed-gpio-status-control",
+    "pre_power_serial_drain_contract": {
+      "discriminator": "empty-read-or-bounded-drain-exhausted",
+      "attempts": 96,
+      "read_timeout_seconds": 1,
+      "settle_ms": 100,
+      "max_bytes_per_read": 65536,
+      "acceptance_rule": "decisive saturated direct-read serial requires an empty pre-power /serial/read response"
+    },
+    "serial_observe_contract": "serial-window-helper-auto-observe-or-direct-read",
+    "saturated_cursor_fallback": "direct-/serial/read when the saved cursor is at TALOS_SERIAL_CURSOR_SATURATION_LIMIT",
+    "tftp_contract": "stable-same-cursor-delta-before-restore",
+    "serial_timeout_seconds": 90,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "tftp_timeout_seconds": 90,
+    "stable_samples": 3
+  }
+}

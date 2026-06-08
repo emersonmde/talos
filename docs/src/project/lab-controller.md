@@ -346,6 +346,16 @@ consume retained bytes. Its summary suggests only the
 capture/observability classification; the task record remains responsible for
 accepting or rejecting the feature boundary.
 
+When a retained candidate and known-good control both fail only because the
+pre-power serial drain did not reach an empty read, the next retry must make
+that freshness discriminator explicit instead of repeating the default fixed
+drain. Pass bounded drain options such as
+`--serial-drain-attempts 96 --serial-drain-read-timeout 1 --serial-drain-settle-ms 100 --serial-drain-max-bytes 65536`
+and retain the dry-run/proof-bundle metadata. A retry may accept saturated
+direct-read serial only when `serial-drain-before-power.json` records
+`discriminator=empty-read-before-power`; `bounded-drain-exhausted-before-power`
+is still a capture-chain blocker, not hardware behavior.
+
 Before a proof task accepts a decisive RP1 hardware classification from that
 bundle, replay the retained files through:
 

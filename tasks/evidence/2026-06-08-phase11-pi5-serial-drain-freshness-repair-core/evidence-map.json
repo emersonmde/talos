@@ -1,0 +1,47 @@
+{
+  "task_id": "phase11-pi5-serial-drain-freshness-repair-core-20260608",
+  "classification": "serial-drain-freshness-procedure-repaired",
+  "task_record": "tasks/2026-06-08-phase11-pi5-serial-drain-freshness-repair-core.md",
+  "classification_file": "tasks/evidence/2026-06-08-phase11-pi5-serial-drain-freshness-repair-core/classification.json",
+  "static_problem_analysis": {
+    "path": "tasks/evidence/2026-06-08-phase11-pi5-serial-drain-freshness-repair-core/static-problem-analysis.md",
+    "evidence_level": "static inspection"
+  },
+  "blocker_inputs": {
+    "candidate_identity_join": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5/identity-join.json",
+    "known_good_identity_join": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5/known-good-identity-join.json",
+    "observed_gpio_status_control_task": "tasks/2026-06-08-phase11-rp1-observed-gpio-status-control-pi5.md",
+    "evidence_level": "static inspection of retained lab-controller API, serial hardware boot/output, stable TFTP delta, and restore proof"
+  },
+  "changed_helper": {
+    "path": "scripts/rpi5-capture-invariant-proof-bundle.sh",
+    "change": "pre-power serial drain bounds are configurable and retained in dry-run/proof-bundle metadata",
+    "evidence_level": "static inspection and bash syntax check"
+  },
+  "documentation": {
+    "path": "docs/src/project/lab-controller.md",
+    "change": "documents bounded serial-drain retry procedure and blocker classification",
+    "evidence_level": "mdbook build"
+  },
+  "procedure_dry_run": {
+    "path": "tasks/evidence/2026-06-08-phase11-pi5-serial-drain-freshness-repair-core/repair-procedure-dry-run.json",
+    "drain_discriminator": "empty-read-or-bounded-drain-exhausted",
+    "attempts": 96,
+    "read_timeout_seconds": 1,
+    "settle_ms": 100,
+    "max_bytes_per_read": 65536,
+    "evidence_level": "no-hardware dry run"
+  },
+  "retained_fixture_replay": {
+    "path": "tasks/evidence/2026-06-08-phase11-pi5-serial-drain-freshness-repair-core/retained-fixture-replay.json",
+    "passed": true,
+    "fixture_count": 3,
+    "evidence_level": "retained fixture replay"
+  },
+  "validation": {
+    "bash_n": "tasks/evidence/2026-06-08-phase11-pi5-serial-drain-freshness-repair-core/bash-n.log",
+    "git_diff_check": "tasks/evidence/2026-06-08-phase11-pi5-serial-drain-freshness-repair-core/git-diff-check.log",
+    "mdbook_build": "tasks/evidence/2026-06-08-phase11-pi5-serial-drain-freshness-repair-core/mdbook-build.log",
+    "git_diff_cached_check": "tasks/evidence/2026-06-08-phase11-pi5-serial-drain-freshness-repair-core/git-diff-cached-check.log"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "task_id": "phase11-pi5-serial-drain-freshness-repair-core-20260608",
+  "classification": "serial-drain-freshness-procedure-repaired",
+  "accepted": true,
+  "hardware_run_performed": false,
+  "repair": {
+    "type": "capture-helper-procedure",
+    "helper": "scripts/rpi5-capture-invariant-proof-bundle.sh",
+    "new_options": [
+      "--serial-drain-attempts",
+      "--serial-drain-read-timeout",
+      "--serial-drain-settle-ms",
+      "--serial-drain-max-bytes"
+    ],
+    "accepted_retry_drain_bounds": {
+      "attempts": 96,
+      "read_timeout_seconds": 1,
+      "settle_ms": 100,
+      "max_bytes_per_read": 65536
+    },
+    "required_discriminator": "empty-read-before-power",
+    "blocker_discriminator": "bounded-drain-exhausted-before-power"
+  },
+  "accepted_claims": [
+    "The candidate and known-good observed GPIO status control blocker is a capture freshness blocker, not RP1 GPIO behavior.",
+    "The v2 identity join still rejects saturated direct-read serial unless pre-power /serial/read reached an empty response.",
+    "The next hardware retry has a mechanical empty-read-or-bounded-drain-exhausted discriminator with retained drain bounds."
+  ],
+  "rejected_claims": [
+    "No no-MMIO observed GPIO status control proof is accepted by this repair-core task.",
+    "No real observed-aperture GPIO14 read is accepted by this repair-core task.",
+    "No RP1 endpoint ownership, broad RP1 mapping, GPIO ownership, interrupt delivery, DMA/cache, networking, SSH, Milestone 11.3, or phase transition is accepted."
+  ],
+  "next_action": "The worker may promote phase11-rp1-observed-gpio-status-control-pi5-retry-20260608 on a later wake if hardwareTestLock remains unlocked/restored, using the documented bounded drain procedure without relaxing pi5-capture-transaction-v2."
+}

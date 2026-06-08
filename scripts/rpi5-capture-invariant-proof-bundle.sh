@@ -10,6 +10,10 @@ usage: rpi5-capture-invariant-proof-bundle.sh [--dry-run]
        [--expected-fetch PATH]
        [--expected-fetch-bytes BYTES]
        [--serial-marker TEXT]
+       [--serial-drain-attempts COUNT]
+       [--serial-drain-read-timeout SECONDS]
+       [--serial-drain-settle-ms MS]
+       [--serial-drain-max-bytes BYTES]
        [--serial-timeout SECONDS]
        [--settle-ms MS]
        [--max-bytes BYTES]
@@ -33,6 +37,10 @@ EXPECTED_KERNEL="kernel_2712.img"
 EXPECTED_FETCH="da591740/kernel_2712.img"
 EXPECTED_FETCH_BYTES=
 SERIAL_MARKER="rpi5-rp1-post-handoff-marker-reset"
+SERIAL_DRAIN_ATTEMPTS=16
+SERIAL_DRAIN_READ_TIMEOUT=1
+SERIAL_DRAIN_SETTLE_MS=100
+SERIAL_DRAIN_MAX_BYTES=65536
 SERIAL_TIMEOUT=90
 SETTLE_MS=1000
 MAX_BYTES=65536
@@ -77,6 +85,22 @@ while [ "$#" -gt 0 ]; do
             SERIAL_MARKER="${2:-}"
             shift 2
             ;;
+        --serial-drain-attempts)
+            SERIAL_DRAIN_ATTEMPTS="${2:-}"
+            shift 2
+            ;;
+        --serial-drain-read-timeout)
+            SERIAL_DRAIN_READ_TIMEOUT="${2:-}"
+            shift 2
+            ;;
+        --serial-drain-settle-ms)
+            SERIAL_DRAIN_SETTLE_MS="${2:-}"
+            shift 2
+            ;;
+        --serial-drain-max-bytes)
+            SERIAL_DRAIN_MAX_BYTES="${2:-}"
+            shift 2
+            ;;
         --serial-timeout)
             SERIAL_TIMEOUT="${2:-}"
             shift 2
@@ -114,6 +138,31 @@ if [ -z "$EVIDENCE_DIR" ] || [ -z "$RESTORE_SNAPSHOT" ] || [ -z "$LABEL" ]; then
     exit 2
 fi
 
+validate_positive_uint() {
+    name="$1"
+    value="$2"
+    case "$value" in
+        ''|*[!0-9]*)
+            echo "$name must be a positive integer" >&2
+            exit 2
+            ;;
+        0)
+            echo "$name must be a positive integer" >&2
+            exit 2
+            ;;
+    esac
+}
+
+validate_positive_uint --serial-drain-attempts "$SERIAL_DRAIN_ATTEMPTS"
+validate_positive_uint --serial-drain-read-timeout "$SERIAL_DRAIN_READ_TIMEOUT"
+validate_positive_uint --serial-drain-settle-ms "$SERIAL_DRAIN_SETTLE_MS"
+validate_positive_uint --serial-drain-max-bytes "$SERIAL_DRAIN_MAX_BYTES"
+validate_positive_uint --serial-timeout "$SERIAL_TIMEOUT"
+validate_positive_uint --settle-ms "$SETTLE_MS"
+validate_positive_uint --max-bytes "$MAX_BYTES"
+validate_positive_uint --tftp-timeout "$TFTP_TIMEOUT"
+validate_positive_uint --stable-samples "$STABLE_SAMPLES"
+
 if [ "$DRY_RUN" = true ]; then
     jq -n \
         --arg evidence_dir "$EVIDENCE_DIR" \
@@ -124,6 +173,10 @@ if [ "$DRY_RUN" = true ]; then
         --arg expected_fetch "$EXPECTED_FETCH" \
         --arg expected_fetch_bytes "$EXPECTED_FETCH_BYTES" \
         --arg serial_marker "$SERIAL_MARKER" \
+        --argjson serial_drain_attempts "$SERIAL_DRAIN_ATTEMPTS" \
+        --argjson serial_drain_read_timeout "$SERIAL_DRAIN_READ_TIMEOUT" \
+        --argjson serial_drain_settle_ms "$SERIAL_DRAIN_SETTLE_MS" \
+        --argjson serial_drain_max_bytes "$SERIAL_DRAIN_MAX_BYTES" \
         --argjson serial_timeout "$SERIAL_TIMEOUT" \
         --argjson settle_ms "$SETTLE_MS" \
         --argjson max_bytes "$MAX_BYTES" \
@@ -173,6 +226,14 @@ if [ "$DRY_RUN" = true ]; then
                   rejection_rule: "missing or mismatched candidate identity, serial-drain, serial-window, TFTP, or final identity fields prevent decisive hardware classification"
               },
               serial_marker: $serial_marker,
+              pre_power_serial_drain_contract: {
+                  discriminator: "empty-read-or-bounded-drain-exhausted",
+                  attempts: $serial_drain_attempts,
+                  read_timeout_seconds: $serial_drain_read_timeout,
+                  settle_ms: $serial_drain_settle_ms,
+                  max_bytes_per_read: $serial_drain_max_bytes,
+                  acceptance_rule: "decisive saturated direct-read serial requires an empty pre-power /serial/read response"
+              },
               serial_observe_contract: "serial-window-helper-auto-observe-or-direct-read",
               saturated_cursor_fallback: "direct-/serial/read when the saved cursor is at TALOS_SERIAL_CURSOR_SATURATION_LIMIT",
               tftp_contract: "stable-same-cursor-delta-before-restore",
@@ -240,9 +301,14 @@ drain_total_bytes=0
 drain_empty=false
 drain_cursor=0
 
-while [ "$drain_attempts" -lt 16 ]; do
+while [ "$drain_attempts" -lt "$SERIAL_DRAIN_ATTEMPTS" ]; do
+    drain_payload="$(jq -n \
+        --argjson timeout_seconds "$SERIAL_DRAIN_READ_TIMEOUT" \
+        --argjson settle_ms "$SERIAL_DRAIN_SETTLE_MS" \
+        --argjson max_bytes "$SERIAL_DRAIN_MAX_BYTES" \
+        '{timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}')"
     curl -fsS -X POST -H 'Content-Type: application/json' \
-        --data '{"timeout_seconds":1,"settle_ms":100,"max_bytes":65536}' \
+        --data "$drain_payload" \
         "${API_BASE}/serial/read" > "$serial_drain_last"
     cat "$serial_drain_last" >> "$serial_drain_tmp"
     printf '\n' >> "$serial_drain_tmp"
@@ -259,9 +325,13 @@ done
 cp "$serial_drain_last" "$EVIDENCE_DIR/serial-read-empty-before-power.json"
 jq -s \
     --argjson attempts "$drain_attempts" \
+    --argjson attempt_limit "$SERIAL_DRAIN_ATTEMPTS" \
     --argjson total_bytes "$drain_total_bytes" \
     --argjson final_cursor "$drain_cursor" \
     --argjson empty_before_power "$drain_empty" \
+    --argjson read_timeout_seconds "$SERIAL_DRAIN_READ_TIMEOUT" \
+    --argjson settle_ms "$SERIAL_DRAIN_SETTLE_MS" \
+    --argjson max_bytes_per_read "$SERIAL_DRAIN_MAX_BYTES" \
     '{
         action: "serial drain before power",
         ok: true,
@@ -269,9 +339,14 @@ jq -s \
         talos_serial_drain: {
             contract_version: "pi5-capture-transaction-v2",
             attempts: $attempts,
+            attempt_limit: $attempt_limit,
+            read_timeout_seconds: $read_timeout_seconds,
+            settle_ms: $settle_ms,
+            max_bytes_per_read: $max_bytes_per_read,
             total_bytes: $total_bytes,
             final_cursor: $final_cursor,
             empty_before_power: $empty_before_power,
+            discriminator: (if $empty_before_power then "empty-read-before-power" else "bounded-drain-exhausted-before-power" end),
             rule: "pre-power serial drain must reach an empty /serial/read response before saturated direct-read output can be treated as fresh"
         }
     }' "$serial_drain_tmp" > "$EVIDENCE_DIR/serial-drain-before-power.json"
@@ -398,9 +473,14 @@ jq -n \
              serial: {
                  pre_power_drain: {
                      attempts: ($sd.attempts // null),
+                     attempt_limit: ($sd.attempt_limit // null),
+                     read_timeout_seconds: ($sd.read_timeout_seconds // null),
+                     settle_ms: ($sd.settle_ms // null),
+                     max_bytes_per_read: ($sd.max_bytes_per_read // null),
                      total_bytes: ($sd.total_bytes // null),
                      final_cursor: ($sd.final_cursor // null),
-                     empty_before_power: ($sd.empty_before_power // false)
+                     empty_before_power: ($sd.empty_before_power // false),
+                     discriminator: ($sd.discriminator // null)
                  },
                  cursor_start: ($serial[0].cursor_start // null),
                  cursor_end: ($serial[0].cursor_end // null),
