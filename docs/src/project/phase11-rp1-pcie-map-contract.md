@@ -1859,6 +1859,37 @@ remain closed unless a future supervisor task supplies a different
 discriminator or new acceptance criteria. Supervisor planning is required for
 the next Milestone 11.2 frontier.
 
+phase11-rp1-observed-aperture-source-contract-20260608 accepts
+phase11-rp1-observed-aperture-source-contract-v1. The selected target is
+rp1-uart0-fr-observed-aperture-read: one read-only 32-bit volatile load from
+the RP1 UART0 PL011 flag register at observed CPU physical 0x1c_0003_0018.
+The source target remains the RP1 UART0 PL011 flag register: retained
+rp1.dtsi declares UART0 at RP1 bus 0xc0_4003_0000, and the selected register
+is the PL011 FR offset 0x18. The observed CPU address comes from retained
+first-light and decision-log evidence for firmware-preserved RP1 UART0 at
+0x1c_0003_0000 plus the accepted bridge/setup-state mismatch that observed
+window 0 CPU high fields of 0x1c instead of the source-expected 0x1f.
+
+The accepted classifications are
+observed-aperture-rp1-uart0-fr-visible,
+observed-aperture-rp1-uart0-fr-sentinel,
+observed-aperture-rp1-uart0-fr-all-ones,
+observed-aperture-rp1-uart0-fr-zero,
+observed-aperture-rp1-uart0-fr-no-return-or-trap,
+observed-aperture-rp1-uart0-fr-inconclusive-capture,
+no-mmio-observed-aperture-control-visible, and staging/build-blocker. The
+paired control must preserve the output shape while constructing no BCM2712
+PCIe, RP1 peripheral/SYSINFO/clock/GPIO/MSI-X, MIP, GIC, DMA, or other MMIO
+address, including neither 0x1c_0003_0018 nor 0x1f_0003_0018.
+
+This contract accepts only the source/evidence-backed observed-aperture
+discriminator. It does not accept live RP1 ownership, endpoint ownership,
+broad RP1 mapping, UART ownership, interrupt delivery, GPIO/clock ownership,
+DMA/cache, networking, SSH, Milestone 11.3, or phase transition.
+Same-shaped endpoint config identity, same-shaped bridge/setup-state, and
+same-shaped 0x1f RP1 hardware reruns remain closed unless a future supervisor
+task supplies a different discriminator or new acceptance criteria.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

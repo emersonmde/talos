@@ -8235,6 +8235,33 @@ supervisor task supplies a different discriminator or new acceptance criteria.
 The worker creates no follow-up task from this closeout; supervisor planning is
 required for the next Milestone 11.2 frontier.
 
+phase11-rp1-observed-aperture-source-contract-20260608 accepts the next
+bounded source/evidence contract,
+phase11-rp1-observed-aperture-source-contract-v1. It answers the accepted
+bridge/setup-state blocker by selecting a qualitatively different observed
+aperture read instead of a same-shaped endpoint config, 0x1f RP1 peripheral,
+or bridge/setup-state rerun. The selected target is
+rp1-uart0-fr-observed-aperture-read: one 32-bit volatile read from the RP1
+UART0 PL011 flag register at observed CPU physical 0x1c_0003_0018. Retained
+rp1.dtsi source backs the UART0 PL011 block and FR offset; retained
+first-light/decision evidence records 0x1c_0003_0000 as the
+firmware-preserved RP1 UART0 mapping; the accepted bridge/setup proof
+observed outbound-window CPU high fields of 0x1c while rejecting the
+source-expected 0x1f visible setup-state claim.
+
+The accepted classifications are observed-aperture-rp1-uart0-fr-visible,
+observed-aperture-rp1-uart0-fr-sentinel,
+observed-aperture-rp1-uart0-fr-all-ones,
+observed-aperture-rp1-uart0-fr-zero,
+observed-aperture-rp1-uart0-fr-no-return-or-trap,
+observed-aperture-rp1-uart0-fr-inconclusive-capture,
+no-mmio-observed-aperture-control-visible, and staging/build-blocker. The
+paired control must preserve output shape while constructing no BCM2712 PCIe,
+RP1, MIP, GIC, GPIO, clock/reset, DMA, or other MMIO address. This accepts
+only the contract boundary; live RP1 ownership, endpoint ownership, broad RP1
+mapping, UART ownership, interrupt delivery, GPIO/clock ownership, DMA/cache,
+networking, SSH, Milestone 11.3, and phase transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

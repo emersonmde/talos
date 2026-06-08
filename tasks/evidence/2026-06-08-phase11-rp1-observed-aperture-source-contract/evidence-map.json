@@ -1,0 +1,126 @@
+{
+  "taskId": "phase11-rp1-observed-aperture-source-contract-20260608",
+  "classification": "accepted-observed-aperture-source-contract",
+  "contractId": "phase11-rp1-observed-aperture-source-contract-v1",
+  "createdAt": "2026-06-08T13:23:00Z",
+  "evidence": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-08-phase11-rp1-observed-aperture-source-contract.md",
+      "type": "task record",
+      "classification": "accepted-observed-aperture-source-contract"
+    },
+    {
+      "label": "accepted bridge/setup closeout",
+      "path": "tasks/2026-06-08-phase11-rp1-bridge-setup-closeout.md",
+      "type": "static inspection",
+      "classification": "pcie2-bridge-setup-state-incomplete-frontier-closed"
+    },
+    {
+      "label": "accepted bridge/setup hardware classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-bridge-setup-pi5/classification.json",
+      "type": "serial hardware boot/output classification, static reuse",
+      "classification": "pcie2-bridge-setup-state-incomplete"
+    },
+    {
+      "label": "retained RP1 UART0 source inspection",
+      "path": "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/source-inspection-notes.md",
+      "type": "static source inspection"
+    },
+    {
+      "label": "retained RP1 device-tree source",
+      "path": "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/rp1.dtsi",
+      "type": "static source inspection"
+    },
+    {
+      "label": "retained 0x1c first-light evidence",
+      "path": "tasks/2026-05-18-phase-2-pi5-first-light.md",
+      "type": "historical task evidence"
+    },
+    {
+      "label": "retained 0x1c decision log",
+      "path": "docs/src/decisions/README.md",
+      "type": "decision log"
+    },
+    {
+      "label": "updated RP1/PCIe map contract",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "type": "architecture/project documentation"
+    },
+    {
+      "label": "updated roadmap",
+      "path": "docs/src/roadmap.md",
+      "type": "roadmap documentation"
+    }
+  ],
+  "selectedContract": {
+    "target": "rp1-uart0-fr-observed-aperture-read",
+    "sourceTarget": "RP1 UART0 PL011 flag register",
+    "sourceRp1BusAddress": "0xc0_4003_0018",
+    "observedCpuPhysicalAddress": "0x1c_0003_0018",
+    "widthBits": 32,
+    "operation": "one volatile little-endian read"
+  },
+  "sourceAndEvidenceBasis": {
+    "rp1Dtsi": "RP1 UART0 is a PL011 block at RP1 bus 0xc0_4003_0000; PL011 FR offset is 0x18.",
+    "priorSourceExpectedWindow": "BCM2712/RP1 source contract used pcie2 PCIe 0 -> CPU 0x1f_0000_0000.",
+    "retainedFirmwarePreservedMapping": "First-light task and 2026-05-19 decision log retain 0x1c_0003_0000 as firmware-preserved RP1 UART0 mapping.",
+    "acceptedBridgeSetupMismatch": {
+      "win0Lo": "0x80000000",
+      "win0Hi": "0x0",
+      "win0BaseLimit": "0x3ff00000",
+      "win0BaseHi": "0x1c",
+      "win0LimitHi": "0x1c",
+      "outboundWindow0Matches": false
+    }
+  },
+  "acceptedClassifications": [
+    "observed-aperture-rp1-uart0-fr-visible",
+    "observed-aperture-rp1-uart0-fr-sentinel",
+    "observed-aperture-rp1-uart0-fr-all-ones",
+    "observed-aperture-rp1-uart0-fr-zero",
+    "observed-aperture-rp1-uart0-fr-no-return-or-trap",
+    "observed-aperture-rp1-uart0-fr-inconclusive-capture",
+    "no-mmio-observed-aperture-control-visible",
+    "staging/build-blocker"
+  ],
+  "acceptedClaims": [
+    "the next question is whether a different observed RP1 CPU aperture explains the accepted 0x1f sentinel/all-ones behavior and outbound-window mismatch",
+    "the selected discriminator is qualitatively different from blocked same-shaped 0x1f RP1, endpoint config identity, and bridge/setup-state reruns",
+    "the only real operation selected by the contract is one 32-bit volatile read from 0x1c_0003_0018",
+    "the paired control must preserve output shape while constructing no BCM2712 PCIe, RP1, MIP, GIC, GPIO, clock/reset, DMA, or other MMIO address"
+  ],
+  "rejectedClaims": [
+    "live RP1 ownership",
+    "endpoint ownership",
+    "broad RP1 mapping",
+    "UART ownership",
+    "interrupt delivery",
+    "GPIO/clock ownership",
+    "DMA/cache",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "validation": [
+    {
+      "gate": "Static source/evidence inspection",
+      "result": "passed",
+      "evidence": "task record source/evidence reconciliation"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "passed"
+    }
+  ],
+  "commit": null
+}
