@@ -1,0 +1,104 @@
+{
+  "task": "phase11-rp1-pcie-endpoint-config-discriminator-closeout-20260608",
+  "status": "accepted",
+  "classification": "pcie2-host-link-up-rp1-window-sentinel-frontier-closed",
+  "generatedAt": "2026-06-08T06:55:00Z",
+  "evidenceLevel": [
+    "static inspection",
+    "evidence-map reconciliation",
+    "docs validation",
+    "git diff checks"
+  ],
+  "artifacts": {
+    "taskRecord": "tasks/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-closeout.md",
+    "staticReconciliationNotes": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-closeout/static-reconciliation-notes.md",
+    "sourceContractTask": "tasks/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-source-contract.md",
+    "sourceContractEvidenceMap": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-source-contract/evidence-map.json",
+    "coreTask": "tasks/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-core.md",
+    "coreEvidenceMap": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-core/evidence-map.json",
+    "controlTask": "tasks/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-control-pi5.md",
+    "controlEvidenceMap": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-control-pi5/evidence-map.json",
+    "realTask": "tasks/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-pi5.md",
+    "realEvidenceMap": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-pi5/evidence-map.json",
+    "realClassification": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-pi5/classification.json"
+  },
+  "acceptedChain": {
+    "sourceContract": {
+      "task": "phase11-rp1-pcie-endpoint-config-discriminator-source-contract-20260608",
+      "commit": "b2a1f1d50d56ba5307516ff762bd4f11569dd767",
+      "classification": "accepted-source-contract",
+      "contract": "phase11-rp1-pcie-endpoint-config-discriminator-source-contract-v1",
+      "target": "pcie2-host-link-status-read",
+      "selectedOperations": [
+        "read PCIE_MISC_PCIE_STATUS at 0x1000124068"
+      ],
+      "writesSelected": false
+    },
+    "core": {
+      "task": "phase11-rp1-pcie-endpoint-config-discriminator-core-20260608",
+      "commit": "a6e5d0dacfc7a1334cb653ddb691d6e4e2246579",
+      "classification": "accepted-local-static-pcie2-host-link-status-core",
+      "realArchiveSha256": "4b4e22a86c6ae77dc71431a174240a872faa6a0ef33ddebd533832e96dbbf293",
+      "controlArchiveSha256": "90e9d5f038faa5350b983647b781d21bb561f3bfa1b45329cd0e6bd70df99558"
+    },
+    "controlProof": {
+      "task": "phase11-rp1-pcie-endpoint-config-discriminator-control-pi5-20260608",
+      "commit": "c9b38d8fec5e6005e0acecb5140cbd2f7fc6e138",
+      "classification": "no-mmio-pcie2-host-link-status-control-visible",
+      "acceptedRun": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-control-pi5/control-rerun-after-kg",
+      "selectedTreeHash": "6a9df112f442b9d296a684dc7eaabac9a0fcc50ce19d96cca8d65bfddbe8813f",
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "identityAllowed": true,
+      "expectedFetchByteMatchCount": 2,
+      "expectedFetchBytes": 46672,
+      "markerOccurrences": 118
+    },
+    "realProof": {
+      "task": "phase11-rp1-pcie-endpoint-config-discriminator-pi5-20260608",
+      "commit": "9db67d2b2a6ae65684f52f43b6017d03edc93067",
+      "classification": "pcie2-host-link-up-rp1-window-sentinel",
+      "acceptedRun": "tasks/evidence/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-pi5/candidate-rerun-after-kg",
+      "selectedTreeHash": "6d1fa1cd754adf38a023909651bcdc40b6ed08a06b559e79859f545886a59393",
+      "postRestoreTreeHash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "identityAllowed": true,
+      "expectedFetchByteMatchCount": 2,
+      "expectedFetchBytes": 46880,
+      "markerOccurrences": 120,
+      "rawStatus": "0x3e0b0",
+      "decoded": {
+        "pciePort": true,
+        "dlActive": true,
+        "phyLinkUp": true,
+        "linkInL23": false,
+        "statusIsDeadDead": false,
+        "retainedRp1WindowSentinel": true
+      }
+    }
+  },
+  "acceptedClaims": [
+    "the source-backed read-only PCIe2 host-link status discriminator is implemented locally and visible on Pi 5",
+    "PCIE_MISC_PCIE_STATUS returns non-sentinel raw=0x3e0b0 with DL_ACTIVE and PHYLINKUP set",
+    "the proof separates visible BCM2712 PCIe2 host/link state from the retained RP1 SYSINFO/clock-window sentinel context",
+    "candidate identity, same-run TFTP fetches, serial markers, final selected-tree identity, and restore proof join under pi5-capture-transaction-v2",
+    "the chain is closed as pcie2-host-link-up-rp1-window-sentinel-frontier-closed"
+  ],
+  "rejectedClaims": [
+    "endpoint config-space access",
+    "broad RP1 mapping or endpoint ownership",
+    "PCIe writes, bridge setup, PERST/link-control changes, MSI/MIP/GIC operations, or bus mastering",
+    "interrupt delivery or ISR/handler ownership",
+    "clock/reset ownership, GPIO ownership, or event generation",
+    "DMA/cache, storage, generated-root, networking, SSH, Milestone 11.3, or phase transition"
+  ],
+  "retainedRisks": [
+    "same-shaped PCIe2 host-link status hardware reruns remain blocked without future supervisor planning",
+    "endpoint config-space access or broader RP1 mapping discrimination needs explicit supervisor decomposition and acceptance gates"
+  ],
+  "validation": [
+    "static inspection of source contract, core, control proof, real proof, restore evidence, and evidence maps",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check"
+  ],
+  "nextAction": "Supervisor planning is required for the next Milestone 11.2 feature slice; this closeout does not create a worker-owned follow-up task."
+}

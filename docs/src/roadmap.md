@@ -8069,6 +8069,20 @@ access, broad RP1 mapping, endpoint ownership, PCIe writes, interrupt delivery,
 DMA/cache, storage, generated-root, networking, SSH, Milestone 11.3, and phase
 transition remain unaccepted.
 
+phase11-rp1-pcie-endpoint-config-discriminator-closeout-20260608 is accepted
+as pcie2-host-link-up-rp1-window-sentinel-frontier-closed. The closeout
+reconciles the accepted source contract, local/static core, no-MMIO/no-RP1/
+no-GIC control proof, real Pi 5 proof, restore evidence, and retained risks.
+The frontier is limited to visible/link-up BCM2712 PCIe2 host status while the
+retained RP1 SYSINFO/clock-window path remains sentinel-shaped. Same-shaped
+PCIe2 host-link status reruns are not progress without a different
+discriminator or new acceptance criteria. Endpoint config-space access, broad
+RP1 mapping, endpoint ownership, PCIe writes, bridge setup, PERST/link-control
+changes, MSI/MIP/GIC operations, interrupt delivery, DMA/cache, storage,
+generated-root, networking, SSH, Milestone 11.3, and phase transition remain
+unaccepted. Supervisor planning is required for the next Milestone 11.2
+feature slice; this closeout creates no worker-owned follow-up task.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

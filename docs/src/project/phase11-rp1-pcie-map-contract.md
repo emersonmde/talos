@@ -1657,6 +1657,22 @@ config-space access, broad RP1 mapping, endpoint ownership, PCIe writes,
 interrupt delivery, DMA/cache, networking, SSH, Milestone 11.3, or phase
 transition.
 
+phase11-rp1-pcie-endpoint-config-discriminator-closeout-20260608 reconciles
+that chain as pcie2-host-link-up-rp1-window-sentinel-frontier-closed. The
+accepted frontier is limited to the source-backed PCIe2 host-link status
+identity, selected read-only PCIE_MISC_PCIE_STATUS snapshot, paired
+no-MMIO/no-RP1/no-GIC control proof, and real Pi 5 visibility/link-up proof.
+The retained RP1 SYSINFO/clock-window sentinel remains comparator context, not
+a broad mapping claim. Same-shaped PCIe2 host-link status hardware reruns are
+not progress unless a future supervisor task supplies a different
+discriminator or new acceptance criteria. Endpoint config-space access, broad
+RP1 mapping, endpoint ownership, PCIe writes, bridge setup, PERST/link-control
+changes, MSI/MIP/GIC operations, interrupt delivery, ISR/handler ownership,
+clock/reset ownership, GPIO ownership, event generation, DMA/cache, storage,
+generated-root, networking, SSH, Milestone 11.3, and phase transition remain
+unaccepted. Supervisor planning is required for the next Milestone 11.2
+feature slice.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when
