@@ -1,0 +1,88 @@
+{
+  "task_id": "phase11-rp1-observed-gpio-ownership-route-closeout-20260608",
+  "classification": "observed-gpio14-ownership-route-preflight-non-gpio-blocker-frontier-closed",
+  "evidence": [
+    {
+      "label": "source contract task record",
+      "path": "tasks/2026-06-08-phase11-rp1-observed-gpio-ownership-route-source-contract.md",
+      "type": "static inspection"
+    },
+    {
+      "label": "source contract classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-ownership-route-source-contract/classification.json",
+      "type": "accepted source contract"
+    },
+    {
+      "label": "local/static core task record",
+      "path": "tasks/2026-06-08-phase11-rp1-observed-gpio-ownership-route-core.md",
+      "type": "static implementation and archive inspection"
+    },
+    {
+      "label": "local/static core classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-ownership-route-core/classification.json",
+      "type": "accepted local/static classification"
+    },
+    {
+      "label": "no-MMIO control task record",
+      "path": "tasks/2026-06-08-phase11-rp1-observed-gpio-ownership-route-control-pi5.md",
+      "type": "Pi 5 control proof"
+    },
+    {
+      "label": "no-MMIO control classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-ownership-route-control-pi5/classification.json",
+      "type": "accepted Pi 5 control classification"
+    },
+    {
+      "label": "real preflight task record",
+      "path": "tasks/2026-06-08-phase11-rp1-observed-gpio-ownership-route-pi5.md",
+      "type": "Pi 5 real read-only preflight proof"
+    },
+    {
+      "label": "real preflight classification",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-ownership-route-pi5/classification.json",
+      "type": "accepted Pi 5 non-GPIO-function blocker classification"
+    },
+    {
+      "label": "real preflight marker excerpt",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-ownership-route-pi5/marker-first-line.txt",
+      "type": "serial hardware boot/output excerpt"
+    },
+    {
+      "label": "real preflight restore proof",
+      "path": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-ownership-route-pi5/real-run/post-restore-status.json",
+      "type": "lab-controller API restore proof"
+    },
+    {
+      "label": "project contract update",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "type": "documentation reconciliation"
+    },
+    {
+      "label": "roadmap update",
+      "path": "docs/src/roadmap.md",
+      "type": "documentation reconciliation"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static inspection of source/core/control/real evidence and evidence maps",
+      "result": "passed"
+    },
+    {
+      "gate": "jq empty on retained evidence-map/classification JSON",
+      "result": "passed"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "gate": "mdbook build",
+      "result": "passed"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "passed"
+    }
+  ]
+}

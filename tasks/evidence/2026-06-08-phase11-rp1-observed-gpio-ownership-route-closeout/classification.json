@@ -1,0 +1,46 @@
+{
+  "task_id": "phase11-rp1-observed-gpio-ownership-route-closeout-20260608",
+  "classification": "observed-gpio14-ownership-route-preflight-non-gpio-blocker-frontier-closed",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "mdbook build"
+  ],
+  "accepted_frontier": [
+    "read-only observed-aperture GPIO14 ownership/route source contract",
+    "local/static real and no-MMIO control candidates",
+    "Pi 5 no-MMIO control output proof",
+    "Pi 5 real read-only preflight visibility and non-GPIO-function classification"
+  ],
+  "accepted_claims": [
+    "observed 0x1c GPIO14 ownership/route preflight report is visible on Pi 5",
+    "GPIO14 reports FUNCSEL=4 / uart0 in the accepted preflight",
+    "INTID160 route status is not enabled, pending, or active in the accepted preflight",
+    "HPPIR reports spurious 1023 in the accepted preflight"
+  ],
+  "rejected_claims": [
+    "GPIO ownership",
+    "event generation readiness",
+    "interrupt pending generation",
+    "interrupt delivery",
+    "IAR/EOIR acknowledgement",
+    "handler ownership",
+    "broad RP1 mapping",
+    "GPIO/RIO/pad/INTE/CTRL writes",
+    "parent-route masking writes",
+    "clock/reset programming",
+    "DMA/cache",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "GPIO14 is muxed to UART0, so write-backed GPIO event work needs supervisor planning",
+    "same-shaped ownership/route preflight reruns are not progress without new acceptance criteria"
+  ],
+  "next_action": "supervisor planning required for the next Milestone 11.2 frontier",
+  "planning_needed": true
+}

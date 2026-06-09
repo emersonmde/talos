@@ -2165,6 +2165,37 @@ RP1 GPIO/RIO/pads/clock/reset, MSI-X/PCIe/MIP, or GIC MMIO address. This is
 local/static core evidence only; Pi 5 control and real proofs remain queued
 separately.
 
+phase11-rp1-observed-gpio-ownership-route-control-pi5-20260608 accepts the
+paired no-MMIO/no-RP1/no-GIC control output path on Pi 5. The proof retained
+selected-tree identity, V3/run-unique/boot-staging checker success, two
+48,528-byte candidate TFTP fetches, final selected-tree identity, and restore
+to the baseline boot tree. It accepts only the control capture and output
+shape; it does not accept GPIO/RP1/GIC/PCIe hardware behavior.
+
+phase11-rp1-observed-gpio-ownership-route-pi5-20260608 accepts the real
+read-only observed-aperture GPIO14 ownership/route preflight visibility as
+observed-gpio14-ownership-preflight-blocked-non-gpio-function. The decisive
+capture retained selected tree
+e6ded87c576967c770223930463864fc081443467d6e00fbe108f29fa9e33fd2, two
+50,496-byte da591740/kernel_2712.img TFTP fetches, final selected-tree
+identity, V3 and boot-staging checker success, marker-visible output, and
+restore to the baseline tree. The result reported GPIO14 CTRL raw 0x84,
+FUNCSEL=4 / uart0, IO_BANK0 INTE/INTS clear, RIO IN GPIO14 true, pad raw
+0x56, GIC INTID160 not enabled/pending/active, and HPPIR spurious 1023.
+
+phase11-rp1-observed-gpio-ownership-route-closeout-20260608 closes this
+frontier as
+observed-gpio14-ownership-route-preflight-non-gpio-blocker-frontier-closed.
+The accepted claim is limited to the source contract, local/static
+implementation, no-MMIO control proof, and real read-only preflight
+classification that GPIO14 is currently muxed to UART0. GPIO ownership, event
+generation readiness, interrupt pending generation, interrupt delivery,
+IAR/EOIR acknowledgement, handler ownership, broad RP1 mapping,
+GPIO/RIO/pad/INTE/CTRL writes, parent-route masking writes, clock/reset
+programming, DMA/cache, networking, SSH, Milestone 11.3, and phase transition
+remain unaccepted. Same-shaped preflight reruns are not progress without
+future supervisor planning around materially different acceptance criteria.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

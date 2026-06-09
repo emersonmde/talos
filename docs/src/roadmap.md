@@ -8491,6 +8491,36 @@ generation, interrupt pending/delivery, GIC acknowledgement, handler
 ownership, GPIO/RIO/pad/INTE writes, parent-route masking writes, DMA/cache,
 networking, SSH, Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-observed-gpio-ownership-route-core-20260608 implements that
+contract as the local/static real candidate and paired no-MMIO/no-RP1/no-GIC
+control. phase11-rp1-observed-gpio-ownership-route-control-pi5-20260608
+accepts the paired control output path on Pi 5 with decisive V3/run-unique and
+boot-staging identity evidence, two 48,528-byte candidate TFTP fetches, final
+selected-tree identity, and restore proof; no GPIO/RP1/GIC/PCIe hardware
+behavior is accepted from the control.
+
+phase11-rp1-observed-gpio-ownership-route-pi5-20260608 accepts the real
+read-only observed-aperture preflight visibility as
+observed-gpio14-ownership-preflight-blocked-non-gpio-function. The accepted
+Pi 5 run retained selected tree
+e6ded87c576967c770223930463864fc081443467d6e00fbe108f29fa9e33fd2, two
+50,496-byte da591740/kernel_2712.img TFTP fetches, final selected-tree
+identity, V3 and boot-staging checker success, marker-visible output, and
+restore to the baseline tree. The result reported GPIO14 FUNCSEL=4 / uart0,
+IO_BANK0 INTE/INTS clear, INTID160 not enabled/pending/active, and HPPIR
+spurious 1023.
+
+phase11-rp1-observed-gpio-ownership-route-closeout-20260608 closes the chain
+as observed-gpio14-ownership-route-preflight-non-gpio-blocker-frontier-closed.
+The accepted frontier is limited to the source contract, local/static
+implementation, control proof, and real read-only preflight classification
+that GPIO14 is currently muxed to UART0. GPIO ownership, event generation,
+interrupt pending generation, interrupt delivery, GIC acknowledgement, handler
+ownership, broad RP1 mapping, GPIO/RIO/pad/INTE/CTRL writes, DMA/cache,
+networking, SSH, Milestone 11.3, and phase transition remain unaccepted.
+Supervisor planning is required for the next Milestone 11.2 frontier before
+any write-backed GPIO event or interrupt-delivery work.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
