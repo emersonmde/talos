@@ -329,6 +329,19 @@ mechanically required by this source contract; future hardware work, if
 planned, must use candidate identity, fresh serial cursor, TFTP delta,
 known-good control, then candidate rerun after any inconclusive run.
 
+phase11-rp1-dma-cache-sync-plan-core-20260609 implements that bounded
+local/static sync-plan core in src/dma_cache.rs. The accepted frontier is
+limited to DmaCacheSyncBoundary, DmaCacheSyncOperation, DmaCacheSyncPlan,
+evidence formatting, accepted descriptor-evidence validation, deterministic
+rejection cases, and 64-byte cache-line range planning. Focused tests prove
+valid ToDevice/before, FromDevice/after, and Bidirectional/shared plans plus
+rejected overflow, unsupported cacheability/IOMMU, unsupported
+direction/boundary, zero-length, non-accepted classification, and evidence
+mismatch inputs. This accepts no executed cache maintenance for driver buffers,
+live barrier ordering, working DMA, DMA channel programming, RP1 MMIO writes,
+descriptor rings, Ethernet, storage, networking, SSH, hardware validation, or
+Milestone 11.3 completion by implication.
+
 phase11-rp1-gpio-event-latch-source-contract-20260607 is accepted as
 source-contract-blocked. Retained RP1/Linux source identifies the GPIO14 event
 configuration path: GPIO14 CTRL CLR can clear raw event enables, GPIO14 CTRL

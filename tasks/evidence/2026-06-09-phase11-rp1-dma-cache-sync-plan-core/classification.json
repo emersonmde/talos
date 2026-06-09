@@ -1,0 +1,42 @@
+{
+  "task_id": "phase11-rp1-dma-cache-sync-plan-core-20260609",
+  "classification": "rp1-dma-cache-sync-plan-core-local-static-accepted",
+  "evidence_level": [
+    "static inspection",
+    "local/static implementation review",
+    "fmt/lint/typecheck",
+    "unit tests",
+    "jq JSON checks",
+    "documentation build",
+    "git diff checks"
+  ],
+  "accepted_claims": [
+    "phase11-rp1-dma-cache-sync-plan-contract-v1 local/static vocabulary exists in src/dma_cache.rs",
+    "DmaCacheSyncPlan is derived from accepted DmaBufferDescriptor plus accepted descriptor evidence",
+    "ToDevice before device ownership maps to clean-to-point-of-coherency",
+    "FromDevice after device ownership maps to invalidate-from-point-of-coherency",
+    "Bidirectional shared synchronization maps to clean-invalidate-to-point-of-coherency",
+    "64-byte cache-line coverage uses retained BCM2712 cache-line source evidence",
+    "sync-plan evidence emits contract/source ids, line-aligned CPU range, CPU/RP1 addresses, descriptor fields, owner transition, IOMMU classification, rejected runtime claims, and local/static classification"
+  ],
+  "rejected_claims": [
+    "executed cache maintenance for driver buffers",
+    "live barrier ordering for a driver path",
+    "working DMA behavior",
+    "RP1 MMIO writes",
+    "DMA channel programming",
+    "descriptor rings",
+    "interrupt completion path",
+    "Ethernet or storage driver readiness",
+    "networking or SSH",
+    "Pi 5 hardware validation",
+    "Milestone 11.3 completion by implication"
+  ],
+  "retained_risks": [
+    "No runtime cache-maintenance instructions are accepted for driver buffers.",
+    "No DMA-safe allocator or pinning policy beyond accepted descriptor validation is accepted.",
+    "No hardware proof is required or claimed by this local/static task.",
+    "Future hardware tasks must serialize on hardwareTestLock and use candidate identity, fresh serial cursor, TFTP delta, known-good control, then candidate rerun after any inconclusive run."
+  ],
+  "next_action": "Mechanically promote phase11-rp1-dma-cache-sync-plan-closeout-20260609 on the next worker wake."
+}

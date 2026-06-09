@@ -8768,6 +8768,22 @@ mechanically required by this source contract. The next objective boundary is a
 local/static cache-sync-plan core, but no explicit worker-owned task exists yet;
 supervisor planning is required before implementation continues.
 
+phase11-rp1-dma-cache-sync-plan-core-20260609 accepts the bounded
+local/static sync-plan core as
+rp1-dma-cache-sync-plan-core-local-static-accepted. The accepted frontier is
+limited to DmaCacheSyncBoundary, DmaCacheSyncOperation, DmaCacheSyncPlan,
+evidence formatting, accepted descriptor-evidence validation, deterministic
+rejection cases, and source-backed 64-byte cache-line coverage. Focused tests
+prove valid ToDevice/before, FromDevice/after, and Bidirectional/shared plans
+plus rejected overflow, unsupported cacheability/IOMMU, unsupported
+direction/boundary, zero-length, non-accepted classification, and evidence
+mismatch inputs. Executed cache maintenance for driver buffers, live barrier
+ordering, working DMA behavior, RP1 MMIO writes, DMA channel programming,
+descriptor rings, interrupt completion, Ethernet, storage, networking, SSH,
+hardware validation, Milestone 12 work, and Milestone 11.3 completion by
+implication remain unaccepted. The mechanically unblocked next task is the
+queued sync-plan closeout checkpoint.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
