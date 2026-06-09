@@ -1,13 +1,22 @@
 #!/bin/sh
 set -eu
 
-if [ "$#" -ne 1 ]; then
-    echo "usage: $0 <candidate-archive.tar.gz>" >&2
+if [ "$#" -ne 1 ] && [ "$#" -ne 3 ]; then
+    echo "usage: $0 <candidate-archive.tar.gz> [--capture-nonce NONCE]" >&2
     exit 2
 fi
 
 ARCHIVE="$1"
 MARKER="TALOS: rp1-dma-cache-small-diagnostic-visibility-candidate"
+CAPTURE_NONCE=
+
+if [ "$#" -eq 3 ]; then
+    if [ "$2" != "--capture-nonce" ] || [ -z "$3" ]; then
+        echo "usage: $0 <candidate-archive.tar.gz> [--capture-nonce NONCE]" >&2
+        exit 2
+    fi
+    CAPTURE_NONCE="$3"
+fi
 
 ./scripts/rpi5-archive-review.sh "$ARCHIVE" >/dev/null
 
@@ -70,6 +79,17 @@ for required in \
     fi
 done
 
+if [ -n "$CAPTURE_NONCE" ]; then
+    if ! grep -Fq -- " capture-nonce=" "$kernel_strings"; then
+        echo "kernel image missing DMA cache visibility candidate capture nonce label" >&2
+        exit 1
+    fi
+    if ! grep -Fq -- "$CAPTURE_NONCE" "$kernel_strings"; then
+        echo "kernel image missing DMA cache visibility candidate capture nonce: $CAPTURE_NONCE" >&2
+        exit 1
+    fi
+fi
+
 for forbidden in \
     "TALOS: rp1-dma-cache-small-diagnostic-visibility-control" \
     "classification=no-plan-rp1-dma-small-diagnostic-visibility-control" \
@@ -97,4 +117,7 @@ printf 'header_image_size=%s\n' "$header_image_size"
 printf 'text_offset=%s\n' "$text_offset"
 printf 'flags=%s\n' "$flags"
 printf 'candidate_marker=%s\n' "$MARKER"
+if [ -n "$CAPTURE_NONCE" ]; then
+    printf 'capture_nonce=%s\n' "$CAPTURE_NONCE"
+fi
 printf 'forbidden_dma_visibility_candidate_runtime_strings_absent=true\n'

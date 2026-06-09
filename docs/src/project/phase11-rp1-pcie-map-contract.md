@@ -2983,6 +2983,23 @@ writes, channel ownership, descriptor rings, transfer completion, interrupt
 completion, hardware/device completion, Ethernet, storage, networking, SSH,
 Milestone 11.3 completion, or a phase transition.
 
+phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry-20260609 accepts
+the paired Pi 5 visibility/control proof under the repaired run-unique serial
+freshness discriminator. The no-plan control staged tree
+3813289a7df48f04313329b90073683fb07eb0188b719290a862af587f86739b,
+retained 48,704-byte da591740/kernel_2712.img fetches, proved nonce absence
+before power and presence after power, passed boot-staging identity, and
+restored to the baseline tree. The candidate staged tree
+f0b229ab1da582050f68af75b1de9953e9010b2cc4443ff3ee0002789e7572b2,
+retained 49,968-byte da591740/kernel_2712.img fetches, proved its distinct
+nonce absence before power and presence after power, passed boot-staging
+identity, and restored to the baseline tree. This accepts only visibility of
+the accepted local/static small diagnostic plan report and paired no-plan
+control output; live DMA, RP1 MMIO writes, channel ownership, descriptor
+rings, transfer completion, interrupt completion, hardware/device completion,
+Ethernet, storage, networking, SSH, Milestone 11.3 completion, and phase
+transition remain unaccepted.
+
 ## Deferred Work
 
 - PCIe enumeration and BAR discovery for general external devices.

@@ -9027,6 +9027,22 @@ SSH, Milestone 11.3 completion, or phase transition is accepted. Same-shaped
 hardware visibility/control retries are closed unless future scope changes the
 freshness discriminator or acceptance criteria.
 
+phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry-20260609 accepts
+the paired Pi 5 visibility/control proof using the repaired run-unique
+freshness discriminator. The no-plan control retained selected tree
+3813289a7df48f04313329b90073683fb07eb0188b719290a862af587f86739b, 48,704-byte
+da591740/kernel_2712.img fetches, nonce absence before power and presence
+after power, boot-staging checker success, and restore to the baseline tree.
+The candidate retained selected tree
+f0b229ab1da582050f68af75b1de9953e9010b2cc4443ff3ee0002789e7572b2, 49,968-byte
+da591740/kernel_2712.img fetches, distinct nonce absence before power and
+presence after power, boot-staging checker success, and restore to the
+baseline tree. This accepts only candidate/control visibility of the accepted
+local/static small diagnostic plan report path. Live DMA, RP1 MMIO writes,
+channel ownership, descriptor rings, transfer completion, interrupt
+completion, hardware/device completion, Ethernet/storage, networking, SSH,
+Milestone 11.3 completion, and phase transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

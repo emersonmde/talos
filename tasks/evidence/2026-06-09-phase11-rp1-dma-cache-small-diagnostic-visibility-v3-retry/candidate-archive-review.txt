@@ -1,0 +1,10 @@
+candidate_archive=tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry/candidate-archive.tar.gz
+candidate_archive_sha256=17aafd737d44654b51bd35da1b14113e0c37475552235900e758911cf9b28a82
+kernel_2712_sha256=d46844db2747fa9457844acf66b473f63d3dca345bb7e306bd284f82ba49d60a
+kernel_2712_size=49968
+header_image_size=49968
+text_offset=0
+flags=12
+candidate_marker=TALOS: rp1-dma-cache-small-diagnostic-visibility-candidate
+capture_nonce=dma-vis-v3-candidate-20260609T211037Z-8d1ce237
+forbidden_dma_visibility_candidate_runtime_strings_absent=true

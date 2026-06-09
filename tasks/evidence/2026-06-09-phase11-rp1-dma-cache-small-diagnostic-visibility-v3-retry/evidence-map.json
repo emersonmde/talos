@@ -1,0 +1,72 @@
+{
+  "task_id": "phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry-20260609",
+  "classification": "rp1-dma-cache-small-diagnostic-visibility-v3-proof-accepted",
+  "evidence": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry.md",
+      "evidence_level": "static inspection and implementation/hardware record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry/classification.json",
+      "evidence_level": "accepted hardware proof classification"
+    },
+    {
+      "label": "hardware summary",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry/hardware-run-summary.json",
+      "evidence_level": "lab-controller API and replay summary"
+    },
+    {
+      "label": "candidate archive review",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry/candidate-archive-review.txt",
+      "evidence_level": "archive inspection"
+    },
+    {
+      "label": "control archive review",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry/control-archive-review.txt",
+      "evidence_level": "archive inspection"
+    },
+    {
+      "label": "control capture summary",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry/control-run/capture-invariant-summary.json",
+      "evidence_level": "serial hardware boot/output, TFTP, final identity, restore"
+    },
+    {
+      "label": "control run-unique check",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry/control-run/run-unique-check.json",
+      "evidence_level": "run-unique replay"
+    },
+    {
+      "label": "control boot-staging check",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry/control-run/boot-staging-check.json",
+      "evidence_level": "boot-staging identity replay"
+    },
+    {
+      "label": "candidate capture summary",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry/candidate-run/capture-invariant-summary.json",
+      "evidence_level": "serial hardware boot/output, TFTP, final identity, restore"
+    },
+    {
+      "label": "candidate run-unique check",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry/candidate-run/run-unique-check.json",
+      "evidence_level": "run-unique replay"
+    },
+    {
+      "label": "candidate boot-staging check",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry/candidate-run/boot-staging-check.json",
+      "evidence_level": "boot-staging identity replay"
+    },
+    {
+      "label": "implementation",
+      "paths": [
+        "src/target/rpi5.rs",
+        "scripts/rpi5-rp1-dma-cache-small-diagnostic-visibility-candidate-image.sh",
+        "scripts/rpi5-rp1-dma-cache-small-diagnostic-visibility-control-image.sh",
+        "scripts/rpi5-rp1-dma-cache-small-diagnostic-visibility-candidate-review.sh",
+        "scripts/rpi5-rp1-dma-cache-small-diagnostic-visibility-control-review.sh"
+      ],
+      "evidence_level": "source implementation"
+    }
+  ]
+}

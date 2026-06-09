@@ -14313,6 +14313,7 @@ pub fn run_rp1_dma_cache_small_diagnostic_visibility_candidate() -> ! {
 
     loop {
         write_early_static("TALOS: rp1-dma-cache-small-diagnostic-visibility-candidate");
+        write_dma_cache_small_diagnostic_visibility_capture_nonce();
         write_dma_cache_small_diagnostic_visibility_common("candidate");
         write_early_static(
             " small-diagnostic-plan-contract-id=phase11-rp1-dma-cache-small-diagnostic-plan-contract-v1",
@@ -14386,6 +14387,7 @@ pub fn run_rp1_dma_cache_small_diagnostic_visibility_no_plan_control() -> ! {
 
     loop {
         write_early_static("TALOS: rp1-dma-cache-small-diagnostic-visibility-control");
+        write_dma_cache_small_diagnostic_visibility_capture_nonce();
         write_dma_cache_small_diagnostic_visibility_common("no-plan-control");
         write_early_static(" small-diagnostic-plan-contract-id=none");
         write_early_static(" driver-diagnostic-envelope-contract-id=none");
@@ -14427,6 +14429,19 @@ fn write_dma_cache_small_diagnostic_visibility_common(report_kind: &str) {
     write_early_static(
         " hardware-proof-boundary-classification=hardware-proof-limited-to-plan-visibility-control-output",
     );
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_dma_cache_small_diagnostic_visibility_candidate",
+    talos_boot_scenario = "rpi5_rp1_dma_cache_small_diagnostic_visibility_no_plan_control"
+))]
+fn write_dma_cache_small_diagnostic_visibility_capture_nonce() {
+    if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
+        if !nonce.is_empty() {
+            write_early_static(" capture-nonce=");
+            write_early_static(nonce);
+        }
+    }
 }
 
 #[cfg(any(

@@ -1,0 +1,19 @@
+{
+  "baseline_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "restore_snapshot": "talos-rp1-dma-vis-v3-retry-20260609T211201Z",
+  "control": {
+    "tree_hash": "3813289a7df48f04313329b90073683fb07eb0188b719290a862af587f86739b",
+    "nonce": "dma-vis-v3-control-20260609T211037Z-8d1ce237",
+    "capture_exit": 0,
+    "run_unique_exit": 0,
+    "boot_staging_exit": 0
+  },
+  "candidate": {
+    "tree_hash": "f0b229ab1da582050f68af75b1de9953e9010b2cc4443ff3ee0002789e7572b2",
+    "nonce": "dma-vis-v3-candidate-20260609T211037Z-8d1ce237",
+    "capture_exit": 0,
+    "run_unique_exit": 0,
+    "boot_staging_exit": 0
+  },
+  "post_hardware_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+}

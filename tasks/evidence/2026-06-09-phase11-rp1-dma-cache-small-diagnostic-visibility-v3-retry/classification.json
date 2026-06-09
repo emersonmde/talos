@@ -1,0 +1,61 @@
+{
+  "task_id": "phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry-20260609",
+  "classification": "rp1-dma-cache-small-diagnostic-visibility-v3-proof-accepted",
+  "status": "accepted",
+  "evidence_level": "serial hardware boot/output with lab-controller API identity, TFTP, run-unique replay, boot-staging replay, and restore proof",
+  "accepted_claims": [
+    "candidate Pi 5 serial output shows the accepted local/static RP1 DMA small-diagnostic plan visibility report",
+    "paired no-plan control Pi 5 serial output uses the same report path while withholding accepted plan evidence",
+    "candidate and control serial freshness are current-run under the run-unique capture-nonce discriminator",
+    "candidate and control selected-tree identity, expected TFTP fetch bytes, final pre-restore identity, and restore gates passed"
+  ],
+  "rejected_claims": [
+    "live DMA",
+    "RP1 MMIO writes",
+    "RP1 DMA channel ownership",
+    "DMA channel programming",
+    "descriptor-ring construction",
+    "descriptor-ring ownership",
+    "transfer completion",
+    "interrupt completion",
+    "hardware/device completion",
+    "Ethernet readiness",
+    "storage readiness",
+    "networking",
+    "SSH",
+    "Milestone 11.3 completion",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "no live RP1 DMA transfer has run",
+    "no descriptor-ring layout or ownership has been accepted",
+    "no RP1 DMA channel ownership has been accepted",
+    "no transfer-completion or interrupt-completion policy has been accepted",
+    "IOMMU runtime policy and DMA-safe allocation/pinning remain deferred",
+    "device-specific consumers remain deferred"
+  ],
+  "hardware": {
+    "baseline_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "restore_snapshot": "talos-rp1-dma-vis-v3-retry-20260609T211201Z",
+    "post_hardware_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "control": {
+      "tree_hash": "3813289a7df48f04313329b90073683fb07eb0188b719290a862af587f86739b",
+      "kernel_sha256": "5bad74366a4e510940e25424beda0dedfce5598574dab8f1bb4590d2e51489d1",
+      "kernel_bytes": 48704,
+      "capture_nonce": "dma-vis-v3-control-20260609T211037Z-8d1ce237",
+      "run_unique_exit": 0,
+      "boot_staging_exit": 0,
+      "post_power_nonce_count": 29
+    },
+    "candidate": {
+      "tree_hash": "f0b229ab1da582050f68af75b1de9953e9010b2cc4443ff3ee0002789e7572b2",
+      "kernel_sha256": "d46844db2747fa9457844acf66b473f63d3dca345bb7e306bd284f82ba49d60a",
+      "kernel_bytes": 49968,
+      "capture_nonce": "dma-vis-v3-candidate-20260609T211037Z-8d1ce237",
+      "run_unique_exit": 0,
+      "boot_staging_exit": 0,
+      "post_power_nonce_count": 20
+    }
+  },
+  "next_action": "Promote phase11-rp1-dma-cache-small-diagnostic-visibility-v3-closeout-20260609 on the next worker wake."
+}
