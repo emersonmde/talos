@@ -386,6 +386,23 @@ descriptor rings, or add Ethernet, storage, networking, SSH, hardware
 validation, Milestone 12 work, or Milestone 11.3 completion. The next queued
 boundary is the maintenance-sequence closeout checkpoint.
 
+phase11-rp1-dma-cache-maintenance-sequence-closeout-20260609 closes that
+local/static sequence frontier as
+rp1-dma-cache-maintenance-sequence-local-static-frontier-closed. The accepted
+checkpoint is limited to static clean, invalidate, clean+invalidate, and dsb sy
+vocabulary derived from accepted sync-plan evidence, with descriptor/sync-plan
+identity, line coverage, rejected runtime claims, and focused unit-test
+evidence preserved. Same-shaped local/static sequence retries are closed unless
+a later supervisor task supplies materially different runtime/execution scope,
+source evidence, or acceptance criteria. Executed cache maintenance, live
+barrier ordering, working DMA behavior, RP1 MMIO, DMA channel programming,
+descriptor rings, coherent/non-cacheable/IOMMU-backed driver policy, DMA-safe
+allocation beyond descriptor validation, Ethernet, storage, networking, SSH,
+hardware validation, Milestone 12 work, and Milestone 11.3 completion remain
+unaccepted. The next guarded boundary is a runtime/execution-contract task; it
+must not execute cache maintenance or run hardware unless its own accepted
+scope explicitly authorizes that work.
+
 phase11-rp1-gpio-event-latch-source-contract-20260607 is accepted as
 source-contract-blocked. Retained RP1/Linux source identifies the GPIO14 event
 configuration path: GPIO14 CTRL CLR can clear raw event enables, GPIO14 CTRL

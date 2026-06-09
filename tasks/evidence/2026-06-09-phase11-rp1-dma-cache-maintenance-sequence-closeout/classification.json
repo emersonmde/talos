@@ -1,0 +1,52 @@
+{
+  "task_id": "phase11-rp1-dma-cache-maintenance-sequence-closeout-20260609",
+  "classification": "rp1-dma-cache-maintenance-sequence-local-static-frontier-closed",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "mdbook build"
+  ],
+  "accepted_frontier": [
+    "phase11-rp1-dma-cache-maintenance-sequence-contract-v1 vocabulary in src/dma_cache.rs",
+    "static clean, invalidate, and clean-invalidate instruction vocabulary derived only from accepted DmaCacheSyncPlanEvidence",
+    "static DataSynchronizationBarrierSy barrier shape retained as source evidence only",
+    "sequence evidence preserving descriptor and sync-plan identity, line coverage, addresses, direction, cacheability, owner transition, IOMMU classification, rejected runtime claims, and local/static classification",
+    "deterministic rejection of non-accepted sync-plan classification, descriptor/sync-plan mismatches, zero covered length, cache-line mismatch, range overflow, unsupported runtime claims, and unsupported operations",
+    "focused local/static unit tests for valid and rejected maintenance-sequence cases"
+  ],
+  "accepted_claims": [
+    "the local/static maintenance-sequence core is the accepted prerequisite evidence for the next guarded runtime/execution-contract boundary",
+    "same-shaped local/static maintenance-sequence retries are closed unless a future supervisor task supplies materially different source evidence, runtime/execution scope, or acceptance criteria",
+    "networking and SSH remain blocked until later explicit tasks accept runtime cache maintenance, DMA behavior, and driver prerequisites"
+  ],
+  "rejected_claims": [
+    "executed cache maintenance for driver buffers",
+    "live barrier ordering for a driver path",
+    "working DMA behavior",
+    "RP1 MMIO writes",
+    "DMA channel programming",
+    "DMA descriptor rings",
+    "cache-coherent driver policy",
+    "non-cacheable DMA mapping policy",
+    "IOMMU-backed driver policy",
+    "DMA-safe allocation or pinning beyond accepted descriptor validation",
+    "Ethernet readiness",
+    "storage readiness",
+    "networking",
+    "SSH",
+    "hardware validation",
+    "Milestone 12 progress",
+    "Milestone 11.3 completion by implication"
+  ],
+  "retained_risks": [
+    "actual dc/dsb cache-maintenance instruction execution for driver buffers remains unimplemented and unvalidated",
+    "barrier ordering remains source/static evidence only until a live runtime boundary is explicitly accepted",
+    "DMA-safe allocation and pinning remain unaccepted beyond descriptor validation",
+    "coherent, non-cacheable, and IOMMU-backed policies remain rejected until a later task supplies mapping, policy, and evidence",
+    "hardware proof remains unavailable until a later explicit task serializes on hardwareTestLock"
+  ],
+  "same_shaped_retry_policy": "closed for local/static clean, invalidate, clean-invalidate, and dsb sy sequence derivation from the same accepted sync-plan evidence",
+  "next_action": "Mechanically promote phase11-rp1-dma-cache-runtime-execution-contract-20260609 on the next worker wake; keep it contract-only unless its own accepted scope explicitly authorizes runtime implementation."
+}

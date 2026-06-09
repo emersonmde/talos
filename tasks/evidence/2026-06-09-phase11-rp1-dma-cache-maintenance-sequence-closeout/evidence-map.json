@@ -1,0 +1,102 @@
+{
+  "task_id": "phase11-rp1-dma-cache-maintenance-sequence-closeout-20260609",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-maintenance-sequence-closeout.md",
+      "evidence_level": "static inspection and documentation reconciliation"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-maintenance-sequence-closeout/classification.json",
+      "evidence_level": "accepted closeout classification"
+    },
+    {
+      "label": "accepted maintenance-sequence core",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-maintenance-sequence-core.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "maintenance-sequence core classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-maintenance-sequence-core/classification.json",
+      "evidence_level": "accepted local/static classification"
+    },
+    {
+      "label": "maintenance-sequence core evidence map",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-maintenance-sequence-core/evidence-map.json",
+      "evidence_level": "artifact map"
+    },
+    {
+      "label": "accepted driver-adjacent diagnostic contract",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-driver-adjacent-diagnostic-contract.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted sync-plan closeout",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-sync-plan-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted substrate closeout",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-substrate-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "maintenance-sequence implementation",
+      "path": "src/dma_cache.rs",
+      "evidence_level": "static inspection of local/static implementation and tests"
+    },
+    {
+      "label": "SMP cache helper source evidence",
+      "path": "src/smp.rs",
+      "evidence_level": "static inspection as instruction/barrier-shape evidence only"
+    },
+    {
+      "label": "memory architecture",
+      "path": "docs/src/architecture/memory.md",
+      "evidence_level": "static inspection of retained DMA/cache non-contract wording"
+    },
+    {
+      "label": "project contract update",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "evidence_level": "documentation reconciliation"
+    },
+    {
+      "label": "roadmap update",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "documentation reconciliation"
+    }
+  ],
+  "validation": [
+    {
+      "label": "jq classification",
+      "command": "jq empty tasks/evidence/2026-06-09-phase11-rp1-dma-cache-maintenance-sequence-closeout/classification.json",
+      "result": "passed",
+      "evidence_level": "JSON syntax check"
+    },
+    {
+      "label": "jq evidence map",
+      "command": "jq empty tasks/evidence/2026-06-09-phase11-rp1-dma-cache-maintenance-sequence-closeout/evidence-map.json",
+      "result": "passed",
+      "evidence_level": "JSON syntax check"
+    },
+    {
+      "label": "git diff check",
+      "command": "git diff --check",
+      "result": "passed",
+      "evidence_level": "diff hygiene"
+    },
+    {
+      "label": "mdbook",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed",
+      "evidence_level": "documentation build"
+    },
+    {
+      "label": "staged diff check",
+      "command": "git diff --cached --check",
+      "result": "passed",
+      "evidence_level": "diff hygiene"
+    }
+  ]
+}

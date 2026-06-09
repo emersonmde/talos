@@ -8831,6 +8831,24 @@ hardware validation, Milestone 12 work, and Milestone 11.3 completion by
 implication remain unaccepted. The next queued boundary is the
 maintenance-sequence closeout checkpoint.
 
+phase11-rp1-dma-cache-maintenance-sequence-closeout-20260609 accepts the
+maintenance-sequence checkpoint as
+rp1-dma-cache-maintenance-sequence-local-static-frontier-closed. This
+reconciles the source contract, implementation, tests, evidence, docs, and
+retained risks into one accepted local/static frontier: static clean,
+invalidate, clean+invalidate, and dsb sy vocabulary derived only from accepted
+DmaCacheSyncPlanEvidence, preserving descriptor/sync-plan identity, line
+coverage, rejected runtime claims, and local/static classification. Same-shaped
+local/static sequence retries are closed unless a later supervisor task
+supplies materially different runtime/execution scope, source evidence, or
+acceptance criteria. Executed cache maintenance for driver buffers, live
+barrier ordering, working DMA behavior, RP1 MMIO writes, DMA channel
+programming, descriptor rings, coherent/non-cacheable/IOMMU-backed policy,
+DMA-safe allocation beyond descriptor validation, Ethernet, storage,
+networking, SSH, hardware validation, Milestone 12 work, and Milestone 11.3
+completion by implication remain unaccepted. The mechanically unblocked next
+task is the queued runtime/execution-contract boundary.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
