@@ -14875,6 +14875,7 @@ pub fn run_rp1_gpio16_owned_event_discriminator_no_mmio_control() -> ! {
         write_early_static(TARGET);
         write_early_static(" pin=");
         write_early_static(PIN);
+        write_gpio16_ownership_event_capture_nonce();
         write_early_static(" bank=IO_BANK0 gpio16-bit-mask=");
         write_early_hex_u64(GPIO16_MASK as u64);
         write_early_static(
@@ -14885,6 +14886,16 @@ pub fn run_rp1_gpio16_owned_event_discriminator_no_mmio_control() -> ! {
             " classification=no-mmio-observed-gpio16-ownership-event-control-visible\n",
         );
         wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator_no_mmio_control")]
+fn write_gpio16_ownership_event_capture_nonce() {
+    if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
+        if !nonce.is_empty() {
+            write_early_static(" capture-nonce=");
+            write_early_static(nonce);
+        }
     }
 }
 

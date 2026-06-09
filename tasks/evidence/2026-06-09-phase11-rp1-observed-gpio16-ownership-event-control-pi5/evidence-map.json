@@ -1,0 +1,127 @@
+{
+  "task_id": "phase11-rp1-observed-gpio16-ownership-event-control-pi5-20260609",
+  "status": "completed-blocker",
+  "classification": "capture-staging-blocked",
+  "evidence": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5.md",
+      "type": "static task record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5/classification.json",
+      "type": "accepted blocker classification"
+    },
+    {
+      "label": "static archive review",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5/static-archive-review.txt",
+      "type": "image/archive inspection"
+    },
+    {
+      "label": "published archive metadata",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5/publish-archive.json",
+      "type": "lab-controller API"
+    },
+    {
+      "label": "capture bundle",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5/control-run",
+      "type": "lab-controller API, serial hardware boot/output, TFTP delta, final identity, restore proof"
+    },
+    {
+      "label": "run-unique checker",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5/run-unique-check.json",
+      "type": "checker replay"
+    },
+    {
+      "label": "boot-staging identity checker",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5/boot-staging-identity-check.json",
+      "type": "checker replay"
+    },
+    {
+      "label": "restore proof",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5/control-run/post-restore-status.json",
+      "type": "lab-controller API"
+    }
+  ],
+  "validation_gates": [
+    {
+      "gate": "Image/archive review for the control archive",
+      "result": "passed",
+      "evidence": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5/static-archive-review.txt"
+    },
+    {
+      "gate": "Serialized Pi 5 lab run under hardwareTestLock",
+      "result": "completed-blocker",
+      "evidence": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5/control-run/capture-invariant-summary.json"
+    },
+    {
+      "gate": "Candidate identity via lab API before power",
+      "result": "passed",
+      "evidence": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5/control-run/preflight-identity.json"
+    },
+    {
+      "gate": "Fresh serial cursor/drain evidence",
+      "result": "blocked",
+      "evidence": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5/control-run/serial-drain-before-power.json"
+    },
+    {
+      "gate": "TFTP delta proving expected candidate fetch path and byte count",
+      "result": "passed",
+      "evidence": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5/control-run/tftp-delta-stable-pre-restore.json"
+    },
+    {
+      "gate": "Final pre-restore identity check",
+      "result": "passed",
+      "evidence": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5/control-run/final-pre-restore-status.json"
+    },
+    {
+      "gate": "Restore proof to the pre-run tree",
+      "result": "passed",
+      "evidence": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5/control-run/post-restore-status.json"
+    },
+    {
+      "gate": "Run accepted capture/staging checker and retain JSON output",
+      "result": "completed-blocker",
+      "evidence": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5/run-unique-check.json"
+    },
+    {
+      "gate": "jq empty on retained JSON artifacts",
+      "result": "passed",
+      "evidence": "local validation command"
+    },
+    {
+      "gate": "cargo fmt --all -- --check",
+      "result": "passed",
+      "evidence": "local validation command"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet",
+      "result": "passed",
+      "evidence": "local validation command"
+    },
+    {
+      "gate": "bash -n on touched shell scripts",
+      "result": "passed",
+      "evidence": "local validation command"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "passed",
+      "evidence": "local validation command"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "passed",
+      "evidence": "local validation command"
+    }
+  ],
+  "accepted_claims": [
+    "The GPIO16 no-MMIO control archive and marker nonce adjustment are locally/static valid.",
+    "The Pi 5 lab run retained decisive boot-staging identity, expected TFTP fetch bytes, final identity, and restore evidence."
+  ],
+  "rejected_claims": [
+    "No GPIO16 no-MMIO control output visibility was accepted because the required marker was absent after power.",
+    "No RP1/GPIO/GIC/PCIe hardware behavior, GPIO ownership, event generation, interrupt delivery, broad RP1 mapping, DMA/cache, networking, SSH, Milestone 11.3, or phase transition is accepted."
+  ]
+}

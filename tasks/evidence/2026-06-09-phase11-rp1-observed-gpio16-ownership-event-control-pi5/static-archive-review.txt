@@ -1,0 +1,9 @@
+candidate_archive=target/talos-rpi5-rp1-gpio16-owned-event-discriminator-no-mmio-control-pi5.tar.gz
+candidate_archive_sha256=bd2aeb4a3c5a83b518d4bc5575fc125ed7f96f9f50767dc3e1c6a3d911f17f13
+kernel_2712_sha256=cadd699a609432750ddf218e46c4babb88b9f0ed83d4f64731f16d6eb9b8d806
+kernel_2712_size=48744
+header_image_size=48744
+text_offset=0
+flags=12
+control_marker=TALOS: rp1-gpio16-owned-event-discriminator-control
+forbidden_gpio16_event_mmio_strings_absent=true
