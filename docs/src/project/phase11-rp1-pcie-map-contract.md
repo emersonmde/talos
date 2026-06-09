@@ -3027,13 +3027,31 @@ accepted report path. This checkpoint does not accept live DMA, RP1 MMIO
 writes, channel ownership, descriptor-ring construction or ownership, transfer
 completion, interrupt completion, hardware/device completion, Ethernet or
 storage readiness, networking, SSH, Milestone 12 work, or a phase transition.
-No mechanically unblocked follow-up task remains in the accepted Milestone 11.3
-slice; supervisor planning is required before descriptor-ring/channel-ownership,
-live DMA, Phase 12, networking, or later work starts.
+The next explicit checkpoint is the Phase 11 hardware-substrate closeout before
+any Phase 12 research, descriptor-ring/channel-ownership, live DMA,
+networking, or later work starts.
+
+## Phase 11 Hardware Substrate Closeout
+
+phase11-rp1-hardware-substrate-closeout-20260609 closes Phase 11 as
+rp1-hardware-substrate-phase11-frontier-closed. The accepted frontier is
+limited to substrate/research facts: source-backed RP1/PCIe address and
+host-link evidence, retained endpoint/bridge blockers, the accepted Milestone
+11.2 interrupt/clock/GPIO blocker checkpoint, and the accepted Milestone 11.3
+DMA/cache documented/local-static/visibility frontier.
+
+This closeout permits only the exact source-only Phase 12.1 Ethernet inventory
+task, phase12-rp1-ethernet-source-inventory-20260609. It does not accept live
+DMA, RP1 MMIO/DMA programming, descriptor-ring construction or ownership, RP1
+DMA channel ownership, transfer completion, interrupt completion, clock/reset
+ownership, GPIO/event ownership, Ethernet or storage readiness, packet I/O,
+networking, sockets, SSH, or Phase 12 implementation by implication.
 
 ## Deferred Work
 
 - PCIe enumeration and BAR discovery for general external devices.
 - Talos-owned RP1 reset, clock, GPIO, pinctrl, UART initialization, and interrupt routing.
-- DMA addressability, cache maintenance, IOMMU policy, Ethernet, networking, SSH, storage drivers, and writable persistent filesystems.
+- Live DMA transfers, descriptor rings, DMA channel ownership, IOMMU runtime
+  policy, Ethernet, networking, SSH, storage drivers, and writable persistent
+  filesystems.
 - Any fix for the Phase 10 Pi 5 generated-root firmware-initramfs overlap blocker.

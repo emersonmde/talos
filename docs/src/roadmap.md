@@ -9070,10 +9070,22 @@ accepted report path. This checkpoint does not accept live DMA, RP1 MMIO
 writes, channel ownership, descriptor-ring construction or ownership, transfer
 completion, interrupt completion, hardware/device completion,
 Ethernet/storage readiness, networking, SSH, Milestone 12 work, Phase 12
-planning, or a phase transition. No explicit mechanically unblocked follow-up
-task remains in this milestone slice; supervisor planning is required before
-descriptor-ring/channel-ownership, live DMA, Phase 12, networking, or later
-work starts.
+planning, or a phase transition. The explicit follow-up is the Phase 11
+hardware-substrate closeout checkpoint before any Phase 12 research,
+descriptor-ring/channel-ownership, live DMA, networking, or later work starts.
+
+phase11-rp1-hardware-substrate-closeout-20260609 accepts Phase 11 as
+rp1-hardware-substrate-phase11-frontier-closed. The closed frontier is limited
+to substrate/research facts: RP1/PCIe address/path and host-link visibility
+with retained endpoint/bridge blockers, the accepted Milestone 11.2
+interrupt/clock/GPIO blocker checkpoint, and the accepted Milestone 11.3
+DMA/cache documented/local-static/visibility frontier. The checkpoint selects
+phase12-rp1-ethernet-source-inventory-20260609 as the exact next task and
+allows only source-only Phase 12.1 Ethernet research. Live DMA, RP1 MMIO/DMA
+programming, descriptor-ring construction or ownership, channel ownership,
+transfer completion, interrupt completion, clock/reset ownership,
+GPIO/event ownership, Ethernet/storage readiness, packet I/O, networking,
+sockets, SSH, and Phase 12 implementation remain unaccepted.
 
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 

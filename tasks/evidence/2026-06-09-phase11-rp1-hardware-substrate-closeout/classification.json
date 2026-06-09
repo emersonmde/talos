@@ -1,0 +1,62 @@
+{
+  "task_id": "phase11-rp1-hardware-substrate-closeout-20260609",
+  "classification": "rp1-hardware-substrate-phase11-frontier-closed",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "documentation reconciliation",
+    "accepted serial hardware boot/output evidence from referenced Phase 11 task records",
+    "accepted lab-controller API/TFTP/restore evidence from referenced Phase 11 task records",
+    "jq JSON checks",
+    "mdbook build"
+  ],
+  "accepted_claims": [
+    "Phase 11 is closed as a substrate/research frontier for source-only Phase 12.1 Ethernet inventory",
+    "RP1/PCIe address/path, host-link visibility, and retained endpoint/bridge blockers are documented",
+    "Milestone 11.2 source-backed interrupt-route documentation and serial-captured interrupt/clock/GPIO blockers are accepted",
+    "Milestone 11.3 documented DMA buffer ownership and cache-maintenance rules are accepted at the local/static and visibility/control frontier",
+    "The next exact task is phase12-rp1-ethernet-source-inventory-20260609"
+  ],
+  "rejected_claims": [
+    "live DMA",
+    "RP1 MMIO programming",
+    "RP1 DMA channel programming",
+    "descriptor-ring construction",
+    "descriptor-ring ownership",
+    "RP1 DMA channel ownership",
+    "transfer completion",
+    "interrupt completion",
+    "clock/reset ownership",
+    "GPIO/event ownership",
+    "Ethernet readiness",
+    "storage readiness",
+    "packet I/O",
+    "network stack",
+    "sockets",
+    "SSH",
+    "Phase 12 implementation"
+  ],
+  "retained_risks": [
+    "endpoint config identity remains all-ones",
+    "bridge setup remains incomplete",
+    "no live RP1 DMA transfer has run",
+    "no descriptor-ring layout or ownership has been accepted",
+    "no transfer-completion or interrupt-completion policy has been accepted",
+    "GPIO/event ownership and interrupt delivery remain blocked by accepted function/clock/status evidence",
+    "clock/reset ownership remains unaccepted",
+    "Ethernet/storage DMA consumers remain deferred"
+  ],
+  "selected_next_action": "phase12-rp1-ethernet-source-inventory-20260609",
+  "next_action_limits": [
+    "source-only research",
+    "no Ethernet driver implementation",
+    "no hardware run",
+    "no RP1 MMIO/DMA programming",
+    "no descriptor rings",
+    "no packet I/O",
+    "no networking stack",
+    "no sockets",
+    "no SSH"
+  ],
+  "planning_needed": false
+}

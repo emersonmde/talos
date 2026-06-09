@@ -1,0 +1,43 @@
+{
+  "task": "phase11-rp1-hardware-substrate-closeout-20260609",
+  "status": "accepted",
+  "classification": "rp1-hardware-substrate-phase11-frontier-closed",
+  "task_record": "tasks/2026-06-09-phase11-rp1-hardware-substrate-closeout.md",
+  "classification_json": "tasks/evidence/2026-06-09-phase11-rp1-hardware-substrate-closeout/classification.json",
+  "inputs": {
+    "phase11_project_contract": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+    "roadmap": "docs/src/roadmap.md",
+    "milestone_112_closeout": {
+      "task": "phase11-rp1-irq-clock-gpio-milestone-closeout-20260609",
+      "path": "tasks/2026-06-09-phase11-rp1-irq-clock-gpio-milestone-closeout.md",
+      "classification": "tasks/evidence/2026-06-09-phase11-rp1-irq-clock-gpio-milestone-closeout/classification.json",
+      "evidence_map": "tasks/evidence/2026-06-09-phase11-rp1-irq-clock-gpio-milestone-closeout/evidence-map.json"
+    },
+    "milestone_113_closeout": {
+      "task": "phase11-rp1-dma-cache-milestone-11-3-closeout-20260609",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-milestone-11-3-closeout.md",
+      "classification": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-milestone-11-3-closeout/classification.json",
+      "evidence_map": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-milestone-11-3-closeout/evidence-map.json"
+    },
+    "representative_mapping_frontiers": [
+      "tasks/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-closeout.md",
+      "tasks/2026-06-08-phase11-rp1-endpoint-config-identity-closeout.md",
+      "tasks/2026-06-08-phase11-rp1-bridge-setup-closeout.md",
+      "tasks/2026-06-08-phase11-rp1-observed-aperture-closeout.md"
+    ],
+    "recent_git_history": "git log --oneline -12"
+  },
+  "accepted_checkpoint": {
+    "phase": "Phase 11: RP1, PCIe, DMA, and Hardware Substrate",
+    "classification": "rp1-hardware-substrate-phase11-frontier-closed",
+    "next_task": "phase12-rp1-ethernet-source-inventory-20260609",
+    "next_task_boundary": "source-only Phase 12.1 Ethernet inventory"
+  },
+  "validation": {
+    "static_inspection": "passed",
+    "jq_json_checks": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  }
+}
