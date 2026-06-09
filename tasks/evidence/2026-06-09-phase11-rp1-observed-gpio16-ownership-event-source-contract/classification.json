@@ -1,0 +1,108 @@
+{
+  "task_id": "phase11-rp1-observed-gpio16-ownership-event-source-contract-20260609",
+  "contract": "phase11-rp1-observed-gpio16-ownership-event-source-contract-v1",
+  "target": "rp1-gpio16-ownership-event-observed-aperture-preflight-read",
+  "status": "accepted",
+  "classification": "accepted-observed-gpio16-ownership-event-source-contract",
+  "accepted_classifications": [
+    "observed-gpio16-ownership-event-preflight-visible",
+    "observed-gpio16-ownership-preflight-blocked-non-gpio-function",
+    "observed-gpio16-ownership-preflight-blocked-route-or-source-state",
+    "observed-gpio16-ownership-preflight-sentinel",
+    "observed-gpio16-ownership-preflight-all-ones",
+    "observed-gpio16-ownership-preflight-zero",
+    "observed-gpio16-ownership-preflight-no-return-or-trap",
+    "observed-gpio16-ownership-preflight-inconclusive-capture",
+    "no-mmio-observed-gpio16-ownership-event-control-visible",
+    "staging/build-blocker"
+  ],
+  "read_only": true,
+  "writes_forbidden": true,
+  "gpio_pin": "GPIO16",
+  "gpio16_bit_mask": "0x00010000",
+  "observed_aperture_reads": [
+    {
+      "name": "GPIO16 STATUS",
+      "address": "0x1c000d0080",
+      "width": "u32"
+    },
+    {
+      "name": "GPIO16 CTRL",
+      "address": "0x1c000d0084",
+      "width": "u32"
+    },
+    {
+      "name": "IO_BANK0 INTE",
+      "address": "0x1c000d011c",
+      "width": "u32"
+    },
+    {
+      "name": "IO_BANK0 INTS",
+      "address": "0x1c000d0124",
+      "width": "u32"
+    },
+    {
+      "name": "RIO0 OUT",
+      "address": "0x1c000e0000",
+      "width": "u32"
+    },
+    {
+      "name": "RIO0 OE",
+      "address": "0x1c000e0004",
+      "width": "u32"
+    },
+    {
+      "name": "RIO0 IN",
+      "address": "0x1c000e0008",
+      "width": "u32"
+    },
+    {
+      "name": "GPIO16 pad control",
+      "address": "0x1c000f0044",
+      "width": "u32"
+    },
+    {
+      "name": "GICD_ISENABLER5",
+      "address": "0x107fff9114",
+      "width": "u32"
+    },
+    {
+      "name": "GICD_ISPENDR5",
+      "address": "0x107fff9214",
+      "width": "u32"
+    },
+    {
+      "name": "GICD_ISACTIVER5",
+      "address": "0x107fff9314",
+      "width": "u32"
+    },
+    {
+      "name": "GICC_HPPIR",
+      "address": "0x107fffa018",
+      "width": "u32"
+    }
+  ],
+  "accepted_claims": [
+    "source-backed observed-aperture register identity",
+    "read-only report shape",
+    "classification boundary",
+    "paired no-MMIO/no-RP1/no-GIC control requirement",
+    "GPIO16 is a safer non-console preflight candidate than GPIO14 after GPIO14 classified as UART0"
+  ],
+  "not_accepted": [
+    "GPIO ownership",
+    "event generation",
+    "interrupt pending generation",
+    "interrupt delivery",
+    "GIC acknowledgement",
+    "handler ownership",
+    "GPIO/RIO/pad/INTE/CTRL writes",
+    "GPIO14 ownership changes",
+    "parent-route masking writes",
+    "DMA/cache",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ]
+}

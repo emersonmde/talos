@@ -2196,6 +2196,43 @@ programming, DMA/cache, networking, SSH, Milestone 11.3, and phase transition
 remain unaccepted. Same-shaped preflight reruns are not progress without
 future supervisor planning around materially different acceptance criteria.
 
+phase11-rp1-observed-gpio16-ownership-event-source-contract-20260609 accepts
+the next source-only GPIO16 observed-aperture ownership/event preflight
+contract,
+phase11-rp1-observed-gpio16-ownership-event-source-contract-v1. The selected
+target is rp1-gpio16-ownership-event-observed-aperture-preflight-read. This is
+read-only and qualitatively different from the prior source-expected 0x1f
+GPIO16 event discriminator: it uses the accepted observed 0x1c RP1 aperture,
+performs no GPIO/RIO/pad/INTE/CTRL writes, generates no event, and accepts no
+restore or delivery claim. GPIO16 is selected because GPIO14 is currently muxed
+to UART0 in the accepted observed-aperture preflight, while retained source
+names GPIO16 as a generic GPIO16 line, retained fixed board consumers do not
+reference it, the debug UART is uart10, and prior Talos RP1 UART0 usage is
+confined to GPIO14/GPIO15.
+
+Allowed read-only loads are GPIO16 STATUS/CTRL at
+0x1c000d0080/0x1c000d0084, IO_BANK0 INTE/INTS at
+0x1c000d011c/0x1c000d0124, RIO0 OUT/OE/IN at
+0x1c000e0000/0x1c000e0004/0x1c000e0008, GPIO16 pad control at 0x1c000f0044,
+and the accepted read-only INTID 160 GIC route status registers at
+0x107fff9114, 0x107fff9214, 0x107fff9314, and 0x107fffa018. The report must
+decode GPIO16 function, bank source-enable/source-status, RIO state, pad state,
+and parent route status. Accepted classifications are
+observed-gpio16-ownership-event-preflight-visible,
+observed-gpio16-ownership-preflight-blocked-non-gpio-function,
+observed-gpio16-ownership-preflight-blocked-route-or-source-state,
+observed-gpio16-ownership-preflight-sentinel,
+observed-gpio16-ownership-preflight-all-ones,
+observed-gpio16-ownership-preflight-zero,
+observed-gpio16-ownership-preflight-no-return-or-trap,
+observed-gpio16-ownership-preflight-inconclusive-capture,
+no-mmio-observed-gpio16-ownership-event-control-visible, and
+staging/build-blocker. This accepts only the source contract and paired
+control requirement; GPIO ownership, event generation, interrupt pending
+generation, interrupt delivery, GIC acknowledgement, handler ownership,
+GPIO/RIO/pad/INTE/CTRL writes, GPIO14 ownership changes, DMA/cache,
+networking, SSH, Milestone 11.3, and phase transition remain unaccepted.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

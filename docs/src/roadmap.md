@@ -8521,6 +8521,40 @@ networking, SSH, Milestone 11.3, and phase transition remain unaccepted.
 Supervisor planning is required for the next Milestone 11.2 frontier before
 any write-backed GPIO event or interrupt-delivery work.
 
+phase11-rp1-observed-gpio16-ownership-event-source-contract-20260609 accepts
+the next bounded source/evidence contract,
+phase11-rp1-observed-gpio16-ownership-event-source-contract-v1. It is a
+read-only observed-aperture GPIO16 ownership/event preflight after GPIO14 was
+classified as UART0, not a same-shaped GPIO14 rerun and not a retry of the
+prior source-expected 0x1f GPIO16 event discriminator. The selected target is
+rp1-gpio16-ownership-event-observed-aperture-preflight-read.
+
+Allowed read-only loads are GPIO16 STATUS/CTRL at
+0x1c_000d_0080/0x1c_000d_0084, IO_BANK0 INTE/INTS at
+0x1c_000d_011c/0x1c_000d_0124, RIO0 OUT/OE/IN at
+0x1c_000e_0000/0x1c_000e_0004/0x1c_000e_0008, GPIO16 pad control at
+0x1c_000f_0044, and the accepted read-only INTID 160 GIC route status
+registers at 0x10_7fff_9114, 0x10_7fff_9214, 0x10_7fff_9314, and
+0x10_7fff_a018. The report must decode GPIO16 function, bank
+source-enable/source-status, RIO state, pad state, and parent route status.
+
+The accepted classifications are
+observed-gpio16-ownership-event-preflight-visible,
+observed-gpio16-ownership-preflight-blocked-non-gpio-function,
+observed-gpio16-ownership-preflight-blocked-route-or-source-state,
+observed-gpio16-ownership-preflight-sentinel,
+observed-gpio16-ownership-preflight-all-ones,
+observed-gpio16-ownership-preflight-zero,
+observed-gpio16-ownership-preflight-no-return-or-trap,
+observed-gpio16-ownership-preflight-inconclusive-capture,
+no-mmio-observed-gpio16-ownership-event-control-visible, and
+staging/build-blocker. This accepts only the read-only observed-aperture source
+contract and paired control requirement. GPIO ownership, event generation,
+interrupt pending/delivery, GIC acknowledgement, handler ownership,
+GPIO/RIO/pad/INTE/CTRL writes, GPIO14 ownership changes, parent-route masking
+writes, DMA/cache, networking, SSH, Milestone 11.3, and phase transition
+remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
