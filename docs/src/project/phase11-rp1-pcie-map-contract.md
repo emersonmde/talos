@@ -342,6 +342,21 @@ live barrier ordering, working DMA, DMA channel programming, RP1 MMIO writes,
 descriptor rings, Ethernet, storage, networking, SSH, hardware validation, or
 Milestone 11.3 completion by implication.
 
+phase11-rp1-dma-cache-sync-plan-closeout-20260609 closes that frontier as
+rp1-dma-cache-sync-plan-local-static-frontier-closed. The accepted checkpoint
+is limited to the local/static sync-plan contract, evidence-backed derivation
+from accepted DmaBufferDescriptor inputs, direction/boundary operation
+selection, source-backed 64-byte cache-line coverage, deterministic rejection
+cases, and focused unit-test evidence. Executed cache maintenance, live
+barrier ordering, working DMA, descriptor rings, DMA channel programming,
+coherent/non-cacheable/IOMMU-backed policy, DMA-safe allocation beyond
+descriptor validation, Ethernet, storage, networking, SSH, hardware
+validation, Milestone 12 work, and Milestone 11.3 completion remain
+unaccepted. The next mechanically objective boundary is the queued
+driver-adjacent diagnostic/source-contract task; it must remain a
+source-contract task unless a later accepted task explicitly authorizes
+runtime or hardware work.
+
 phase11-rp1-gpio-event-latch-source-contract-20260607 is accepted as
 source-contract-blocked. Retained RP1/Linux source identifies the GPIO14 event
 configuration path: GPIO14 CTRL CLR can clear raw event enables, GPIO14 CTRL

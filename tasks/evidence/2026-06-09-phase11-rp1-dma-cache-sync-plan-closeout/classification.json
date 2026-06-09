@@ -1,0 +1,51 @@
+{
+  "task_id": "phase11-rp1-dma-cache-sync-plan-closeout-20260609",
+  "classification": "rp1-dma-cache-sync-plan-local-static-frontier-closed",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "mdbook build"
+  ],
+  "accepted_frontier": [
+    "phase11-rp1-dma-cache-sync-plan-contract-v1 vocabulary in src/dma_cache.rs",
+    "DmaCacheSyncPlan derivation only from accepted DmaBufferDescriptor evidence",
+    "direction and ownership-boundary operation selection for clean, invalidate, and clean-invalidate plans",
+    "source-backed 64-byte cache-line coverage and line-aligned CPU range evidence",
+    "deterministic rejection of zero length, overflow, unsupported cacheability/IOMMU, unsupported direction/boundary, non-accepted descriptor classification, and descriptor-evidence mismatch inputs",
+    "focused local/static unit tests for valid and rejected sync-plan cases"
+  ],
+  "accepted_claims": [
+    "the local/static sync-plan core is the accepted prerequisite evidence for the next driver-adjacent diagnostic/source-contract boundary",
+    "networking and SSH remain blocked until later explicit tasks accept runtime cache maintenance, DMA behavior, and driver prerequisites"
+  ],
+  "rejected_claims": [
+    "executed cache maintenance for driver buffers",
+    "live barrier ordering for a driver path",
+    "working DMA behavior",
+    "RP1 MMIO writes",
+    "DMA channel programming",
+    "DMA descriptor rings",
+    "interrupt completion path",
+    "cache-coherent driver policy",
+    "non-cacheable DMA mapping policy",
+    "IOMMU-backed driver policy",
+    "DMA-safe allocation or pinning beyond accepted descriptor validation",
+    "RP1 Ethernet readiness",
+    "storage readiness",
+    "networking",
+    "SSH",
+    "hardware validation",
+    "Milestone 12 progress",
+    "Milestone 11.3 completion by implication"
+  ],
+  "retained_risks": [
+    "actual cache-maintenance instruction use for driver buffers remains unimplemented and unvalidated",
+    "barrier ordering remains source evidence only until a live runtime boundary is explicitly planned",
+    "DMA-safe allocation and pinning remain unaccepted beyond descriptor validation",
+    "coherent, non-cacheable, and IOMMU-backed policies remain rejected until a later task supplies mapping, policy, and evidence",
+    "driver-adjacent diagnostics still require a future source-contract boundary before any hardware or runtime task"
+  ],
+  "next_action": "Mechanically promote phase11-rp1-dma-cache-driver-adjacent-diagnostic-contract-20260609 on the next worker wake."
+}

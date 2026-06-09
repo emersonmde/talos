@@ -8784,6 +8784,20 @@ hardware validation, Milestone 12 work, and Milestone 11.3 completion by
 implication remain unaccepted. The mechanically unblocked next task is the
 queued sync-plan closeout checkpoint.
 
+phase11-rp1-dma-cache-sync-plan-closeout-20260609 accepts the sync-plan
+checkpoint as rp1-dma-cache-sync-plan-local-static-frontier-closed. This
+reconciles the source contract, implementation, tests, evidence, docs, and
+retained risks into one accepted local/static frontier: sync-plan vocabulary,
+accepted descriptor-evidence derivation, direction/boundary operation
+selection, source-backed 64-byte cache-line coverage, deterministic rejection
+cases, and focused unit-test evidence. Executed cache maintenance for driver
+buffers, live barrier ordering, working DMA behavior, DMA/RP1 MMIO
+programming, descriptor rings, coherent/non-cacheable/IOMMU-backed policy,
+DMA-safe allocation beyond descriptor validation, Ethernet, storage,
+networking, SSH, hardware validation, Milestone 12 work, and Milestone 11.3
+completion by implication remain unaccepted. The mechanically unblocked next
+task is the queued driver-adjacent diagnostic/source-contract boundary.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
