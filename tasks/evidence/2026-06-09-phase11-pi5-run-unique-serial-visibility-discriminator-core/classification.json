@@ -1,0 +1,66 @@
+{
+  "task_id": "phase11-pi5-run-unique-serial-visibility-discriminator-core-20260609",
+  "status": "accepted",
+  "classification": "run-unique-serial-visibility-discriminator-repaired",
+  "source_blocker_evidence": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5/control-run",
+  "invariant": {
+    "expected": "selected candidate identity, stable expected TFTP fetches, final selected-tree identity, restore proof, and current-run serial visibility",
+    "discriminator": "capture-nonce token absent before power and present after power",
+    "stale_output_rule": "stale retained serial cannot satisfy a proof when the nonce token is absent after power or present before power"
+  },
+  "replay_results": {
+    "nonce_token_present": {
+      "exit": 0,
+      "allowed": true,
+      "rejection_reasons": []
+    },
+    "marker_absent_after_power": {
+      "exit": 1,
+      "allowed": false,
+      "rejection_reasons": [
+        "v3-serial-freshness-not-proven",
+        "required-marker-not-present-after-power",
+        "run-unique-capture-nonce-not-present-after-power"
+      ]
+    },
+    "stale_before_power": {
+      "exit": 1,
+      "allowed": false,
+      "rejection_reasons": [
+        "v3-serial-freshness-not-proven",
+        "required-marker-not-present-after-power",
+        "run-unique-capture-nonce-present-before-power"
+      ]
+    },
+    "staging_mismatch": {
+      "exit": 1,
+      "allowed": false,
+      "rejection_reasons": [
+        "final-pre-restore-selected-tree-mismatch"
+      ]
+    }
+  },
+  "validation": [
+    "static inspection",
+    "task-owned fixture replay",
+    "bash -n",
+    "jq JSON checks",
+    "git diff --check",
+    "mdbook build",
+    "git diff --cached --check"
+  ],
+  "accepted_claims": [
+    "local/static checker repair",
+    "fixture replay discriminator behavior",
+    "next hardware retry policy"
+  ],
+  "rejected_claims": [
+    "GPIO16 no-MMIO control hardware behavior from the prior run",
+    "GPIO/RP1/GIC/PCIe hardware behavior",
+    "GPIO ownership",
+    "event generation",
+    "interrupt delivery",
+    "Milestone 11.3",
+    "phase transition"
+  ]
+}

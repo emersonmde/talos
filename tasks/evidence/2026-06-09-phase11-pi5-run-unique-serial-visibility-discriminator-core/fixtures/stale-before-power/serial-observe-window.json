@@ -1,0 +1,13 @@
+{
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "bytes": 452,
+  "text": "TALOS: rp1-gpio14-ownership-route-preflight-result classification=observed-gpio14-ownership-preflight-blocked-non-gpio-function\\nTALOS: rp1-gpio16-owned-event-discriminator-control contract=phase11-rp1-observed-gpio16-ownership-event-source-contract-v1 target=rp1-gpio16-ownership-event-observed-aperture-preflight-read pin=GPIO16 capture-nonce=gpio16ctl20260609T030329Z-c2a7c390 classification=no-mmio-observed-gpio16-ownership-event-control-visible\\n",
+  "talos_serial_window": {
+    "required_marker": "TALOS: rp1-gpio16-owned-event-discriminator-control capture-nonce=gpio16ctl20260609T030329Z-c2a7c390",
+    "capture_mode": "read",
+    "start_cursor_saturated": true,
+    "response_bytes": 452,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+  }
+}

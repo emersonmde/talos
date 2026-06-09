@@ -1,0 +1,7 @@
+{
+  "label": "2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5",
+  "expected": {
+    "fetch": "da591740/kernel_2712.img",
+    "fetch_bytes": 48744
+  }
+}

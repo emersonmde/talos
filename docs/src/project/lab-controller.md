@@ -391,7 +391,7 @@ scripts/rpi5-proof-identity-join-v3-check.sh \
 If a same-shaped proof has already failed V3 because the constant required
 marker was present before power, the next retry must use a run-unique marker.
 For the observed GPIO14 STATUS/CTRL diagnostic, generate one nonce per staged
-archive, embed it at build time, and use that exact marker for the capture:
+archive, embed it at build time, and include that nonce in the capture marker:
 
 ~~~bash
 nonce="$(date -u +%Y%m%dT%H%M%SZ)-$(git rev-parse --short HEAD)"
@@ -411,7 +411,7 @@ scripts/rpi5-capture-invariant-proof-bundle.sh \
   --expected-tree-hash <post-publish-tree-hash> \
   --expected-fetch da591740/kernel_2712.img \
   --expected-fetch-bytes <candidate-kernel-bytes> \
-  --serial-marker "TALOS: rp1-observed-gpio-status-control capture-nonce=$nonce" \
+  --serial-marker "capture-nonce=$nonce" \
   --serial-drain-attempts 96 \
   --serial-drain-read-timeout 1 \
   --serial-drain-settle-ms 100 \
@@ -424,10 +424,12 @@ scripts/rpi5-proof-identity-join-run-unique-check.sh \
 ~~~
 
 The run-unique checker keeps V3's selected-tree, TFTP, final-identity, and
-restore checks, then rejects any proof whose required marker lacks the embedded
-`capture-nonce=` value. This is still a capture-freshness discriminator only;
-it does not accept GPIO ownership, event generation, interrupt delivery, broad
-RP1 mapping, or any phase transition.
+restore checks, then requires the run-unique `capture-nonce=` token to be absent
+from all retained pre-power serial drain responses and present in the post-power
+serial window. Exact marker matching may still pass, but field ordering inside
+the Talos marker line is not part of the freshness contract. This is still a
+capture-freshness discriminator only; it does not accept GPIO ownership, event
+generation, interrupt delivery, broad RP1 mapping, or any phase transition.
 
 Before accepting any marker-visible run-unique serial output, also replay the
 same retained bundle through the boot-staging identity discriminator:

@@ -1,0 +1,13 @@
+{
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "bytes": 129,
+  "text": "TALOS: rp1-gpio14-ownership-route-preflight-result classification=observed-gpio14-ownership-preflight-blocked-non-gpio-function\\n",
+  "talos_serial_window": {
+    "required_marker": "TALOS: rp1-gpio16-owned-event-discriminator-control capture-nonce=gpio16ctl20260609T030329Z-c2a7c390",
+    "capture_mode": "read",
+    "start_cursor_saturated": true,
+    "response_bytes": 129,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+  }
+}

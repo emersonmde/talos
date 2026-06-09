@@ -1,0 +1,40 @@
+{
+  "task_record": "tasks/2026-06-09-phase11-pi5-run-unique-serial-visibility-discriminator-core.md",
+  "blocker_analysis": "tasks/evidence/2026-06-09-phase11-pi5-run-unique-serial-visibility-discriminator-core/blocker-analysis.md",
+  "classification": "tasks/evidence/2026-06-09-phase11-pi5-run-unique-serial-visibility-discriminator-core/classification.json",
+  "replay_outputs": [
+    {
+      "case": "nonce-token-present",
+      "path": "tasks/evidence/2026-06-09-phase11-pi5-run-unique-serial-visibility-discriminator-core/nonce-token-present.json",
+      "expected_exit": 0
+    },
+    {
+      "case": "marker-absent-after-power",
+      "path": "tasks/evidence/2026-06-09-phase11-pi5-run-unique-serial-visibility-discriminator-core/marker-absent-after-power.json",
+      "expected_exit": 1
+    },
+    {
+      "case": "stale-before-power",
+      "path": "tasks/evidence/2026-06-09-phase11-pi5-run-unique-serial-visibility-discriminator-core/stale-before-power.json",
+      "expected_exit": 1
+    },
+    {
+      "case": "staging-mismatch",
+      "path": "tasks/evidence/2026-06-09-phase11-pi5-run-unique-serial-visibility-discriminator-core/staging-mismatch.json",
+      "expected_exit": 1
+    }
+  ],
+  "touched_scripts": [
+    "scripts/rpi5-proof-identity-join-run-unique-check.sh"
+  ],
+  "docs_updated": [
+    "docs/src/project/lab-controller.md",
+    "docs/src/project/phase11-rp1-pcie-map-contract.md",
+    "docs/src/roadmap.md"
+  ],
+  "source_evidence": [
+    "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5/control-run",
+    "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5/run-unique-check.json",
+    "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5/boot-staging-identity-check.json"
+  ]
+}

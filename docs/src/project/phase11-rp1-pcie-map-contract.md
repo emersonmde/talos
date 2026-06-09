@@ -2024,14 +2024,14 @@ constant-marker V3 retry policy for the next observed GPIO14 STATUS/CTRL proof
 attempt. The diagnostic runtime may now embed a task-owned
 `TALOS_CAPTURE_NONCE` into the observed GPIO status result/control marker, and
 the accepted replay procedure must use
-`pi5-capture-transaction-run-unique-v1`: V3 plus a required marker containing
-that exact `capture-nonce=` value. Constant-marker V2/V3 retries remain
-capture-staging-blocked after the clean V3 control showed the control marker
-present 616 times before power. The run-unique change is only a serial
-freshness primitive; it does not change the GPIO/RP1 source contract or accept
-GPIO14 STATUS/CTRL visibility, GPIO ownership, interrupts, endpoint ownership,
-broad RP1 mapping, DMA/cache, networking, SSH, Milestone 11.3, or a phase
-transition.
+`pi5-capture-transaction-run-unique-v1`: V3 plus a run-unique
+`capture-nonce=` token that is absent before power and present after power.
+Constant-marker V2/V3 retries remain capture-staging-blocked after the clean V3
+control showed the control marker present 616 times before power. The
+run-unique change is only a serial freshness primitive; it does not change the
+GPIO/RP1 source contract or accept GPIO14 STATUS/CTRL visibility, GPIO
+ownership, interrupts, endpoint ownership, broad RP1 mapping, DMA/cache,
+networking, SSH, Milestone 11.3, or a phase transition.
 
 phase11-rp1-observed-gpio-status-run-unique-control-pi5-20260608 accepts only
 the paired no-MMIO/no-RP1/no-GIC run-unique control proof as

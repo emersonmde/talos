@@ -1,0 +1,17 @@
+{
+  "responses": [
+    {
+      "text": "",
+      "bytes": 0,
+      "cursor": 4194304
+    }
+  ],
+  "talos_serial_drain": {
+    "contract_version": "pi5-capture-transaction-v2",
+    "attempts": 16,
+    "total_bytes": 182528,
+    "final_cursor": 4194304,
+    "empty_before_power": false,
+    "discriminator": "bounded-drain-exhausted-before-power"
+  }
+}

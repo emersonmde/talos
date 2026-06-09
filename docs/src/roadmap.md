@@ -8566,6 +8566,18 @@ fields and constructs no RP1 or GIC MMIO address. This accepts only
 local/static/archive evidence; Pi 5 control and real proofs remain queued
 before any hardware behavior, GPIO ownership, or event/readiness claim.
 
+phase11-pi5-run-unique-serial-visibility-discriminator-core-20260609 repairs
+the local/static run-unique checker after the GPIO16 no-MMIO control blocker.
+The blocker had decisive staging/TFTP/final/restore evidence, stale GPIO14
+serial still visible, and no exact required-marker match, but the post-power
+serial window did contain the task-owned `capture-nonce=` token while pre-power
+drain output did not. The accepted discriminator keeps the selected-tree, TFTP,
+final-identity, and restore gates, then treats the run-unique nonce token as the
+current-run serial visibility proof. Stale-before-power, absent-after-power, and
+staging-mismatch fixtures remain rejected. This accepts only the checker repair
+and replay behavior; the next serialized GPIO16 no-MMIO control proof still
+must run before any real GPIO16 Pi 5 preflight or hardware behavior claim.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
