@@ -1,0 +1,49 @@
+{
+  "task_id": "phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry-20260609",
+  "classification": "no-mmio-observed-gpio16-ownership-event-control-visible",
+  "status": "accepted",
+  "evidence_level": [
+    "image/archive inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "stable TFTP delta",
+    "restore proof",
+    "replay checker"
+  ],
+  "artifacts": {
+    "task_record": "tasks/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry.md",
+    "classification": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/classification.json",
+    "archive_path": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/archive-path.txt",
+    "archive_sha256": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/archive-sha256.txt",
+    "static_archive_review": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/static-archive-review.txt",
+    "capture_nonce": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/capture-nonce.txt",
+    "required_marker": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/required-marker.txt",
+    "pre_run_status": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/pre-run-status.json",
+    "pre_run_boot_files": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/pre-run-boot-files.json",
+    "pre_run_snapshot": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/pre-run-snapshot.json",
+    "publish_archive": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/publish-archive.json",
+    "staged_status": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/staged-status.json",
+    "staged_boot_files": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/staged-boot-files.json",
+    "capture_bundle": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/control-retry-run/",
+    "capture_summary": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/control-retry-run/capture-invariant-summary.json",
+    "serial_drain_before_power": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/control-retry-run/serial-drain-before-power.json",
+    "serial_observe_window": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/control-retry-run/serial-observe-window.json",
+    "tftp_delta_stable_pre_restore": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/control-retry-run/tftp-delta-stable-pre-restore.json",
+    "final_pre_restore_status": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/control-retry-run/final-pre-restore-status.json",
+    "final_pre_restore_boot_files": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/control-retry-run/final-pre-restore-boot-files.json",
+    "restore_snapshot": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/control-retry-run/restore-snapshot.json",
+    "post_restore_status": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/control-retry-run/post-restore-status.json",
+    "run_unique_check": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/run-unique-check.json",
+    "boot_staging_identity_check": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry/boot-staging-identity-check.json"
+  },
+  "accepted_claims": [
+    "The no-MMIO GPIO16 control archive constructed no forbidden GPIO16/RP1/GIC/PCIe/MMIO addresses.",
+    "The Pi 5 selected and fetched the expected nonce-bearing control archive over TFTP.",
+    "The run-unique nonce token was absent before power and present after power.",
+    "The lab boot tree was restored to the pre-run baseline after capture."
+  ],
+  "rejected_claims": [
+    "No GPIO ownership, event generation, interrupt delivery, handler ownership, RP1 write, GIC behavior, PCIe behavior, DMA/cache, or phase transition is accepted by this control proof."
+  ],
+  "next_action": "Promote phase11-rp1-observed-gpio16-ownership-event-pi5-20260609 only if hardwareTestLock remains unlocked/restored."
+}

@@ -1,0 +1,30 @@
+{
+  "task_id": "phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry-20260609",
+  "classification": "no-mmio-observed-gpio16-ownership-event-control-visible",
+  "status": "accepted",
+  "accepted_control_proof": true,
+  "no_gpio_rp1_gic_pcie_behavior_accepted": true,
+  "capture_nonce": "gpio16ctlretry20260609T045148Z-5781e788",
+  "archive": "target/talos-rpi5-rp1-gpio16-owned-event-discriminator-no-mmio-control-pi5-retry.tar.gz",
+  "expected": {
+    "tree_hash": "cdb35bef8b7fbd5b68df9c76a58fbb410e20522d46aed6b77319002b0be6bd19",
+    "fetch_path": "da591740/kernel_2712.img",
+    "fetch_bytes": 48744
+  },
+  "exits": {
+    "capture_command": 0,
+    "run_unique_check": 0,
+    "boot_staging_identity_check": 0
+  },
+  "run_unique_classification": "capture-transaction-run-unique-ready",
+  "run_unique_rejection_reasons": [],
+  "boot_identity_classification": "boot-staging-identity-ready",
+  "boot_identity_rejection_reasons": [],
+  "capture_summary_suggested_classification": "identity-join-mismatch",
+  "restore": {
+    "pre_run_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "restored_to_pre_run_tree": true
+  },
+  "evidence_level": "image/archive inspection, lab-controller API, serial hardware boot/output, stable TFTP delta, restore proof, replay checker"
+}
