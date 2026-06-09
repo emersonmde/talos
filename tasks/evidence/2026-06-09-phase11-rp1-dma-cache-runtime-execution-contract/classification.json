@@ -1,0 +1,61 @@
+{
+  "task_id": "phase11-rp1-dma-cache-runtime-execution-contract-20260609",
+  "classification": "rp1-dma-cache-runtime-execution-contract-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "mdbook build"
+  ],
+  "selected_contract": "phase11-rp1-dma-cache-maintenance-executor-contract-v1",
+  "accepted_claims": [
+    "the next runtime boundary is a bounded maintenance-executor contract that may consume only accepted DmaCacheMaintenanceSequenceEvidence",
+    "future runtime execution must preserve descriptor, sync-plan, and maintenance-sequence evidence identity before any cache-maintenance instruction dispatch",
+    "the only selected future operation vocabulary is dc cvac, dc ivac, dc civac, and final dsb sy as named by accepted sequence evidence",
+    "networking and SSH remain blocked until later explicit tasks accept runtime cache maintenance, DMA behavior, and driver prerequisites"
+  ],
+  "rejected_claims": [
+    "executed cache maintenance for driver buffers",
+    "live barrier ordering for a driver path",
+    "working DMA behavior",
+    "RP1 MMIO writes",
+    "DMA channel programming",
+    "DMA descriptor rings",
+    "interrupt completion",
+    "general driver DMA API",
+    "cache-coherent driver policy",
+    "non-cacheable DMA mapping policy",
+    "IOMMU-backed driver policy",
+    "DMA-safe allocation or pinning beyond accepted descriptor validation",
+    "Ethernet readiness",
+    "storage readiness",
+    "networking",
+    "SSH",
+    "hardware validation",
+    "Milestone 12 progress",
+    "Milestone 11.3 completion by implication"
+  ],
+  "retained_risks": [
+    "actual dc/dsb cache-maintenance instruction execution for driver buffers remains unimplemented and unvalidated",
+    "barrier ordering remains unproven for a live driver path",
+    "DMA-safe allocation and pinning remain unaccepted beyond descriptor validation",
+    "coherent, non-cacheable, and IOMMU-backed policies remain rejected until a later task supplies mapping, policy, and evidence",
+    "hardware proof remains unavailable until a later explicit task serializes on hardwareTestLock"
+  ],
+  "future_validation_strategy": [
+    "static inspection of accepted descriptor, sync-plan, maintenance-sequence, SMP, and memory architecture evidence",
+    "cargo fmt and focused unit tests for evidence validation, line coverage, operation dispatch, and rejected-input formatting",
+    "source/disassembly or archive inspection if architecture-gated assembly is added",
+    "jq JSON checks and git diff checks",
+    "mdbook build if docs are touched"
+  ],
+  "inconclusive_run_triage_required_before_future_hardware": [
+    "candidate identity",
+    "fresh serial cursor",
+    "TFTP delta",
+    "known-good control",
+    "candidate rerun"
+  ],
+  "next_action": "Set planningNeeded=true for supervisor planning of a bounded phase11-rp1-dma-cache-maintenance-executor-core task; do not create the task in this worker wake."
+}

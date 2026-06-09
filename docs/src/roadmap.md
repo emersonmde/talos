@@ -8849,6 +8849,23 @@ networking, SSH, hardware validation, Milestone 12 work, and Milestone 11.3
 completion by implication remain unaccepted. The mechanically unblocked next
 task is the queued runtime/execution-contract boundary.
 
+phase11-rp1-dma-cache-runtime-execution-contract-20260609 accepts the next
+contract boundary as rp1-dma-cache-runtime-execution-contract-accepted. The
+selected future boundary is
+phase11-rp1-dma-cache-maintenance-executor-contract-v1: an architecture-gated
+runtime executor contract that may consume only accepted
+DmaCacheMaintenanceSequenceEvidence after validating the accepted descriptor,
+sync-plan, and maintenance-sequence evidence chain. This is the smallest useful
+runtime cache-maintenance boundary before driver DMA evaluation, but it remains
+contract-only. Executed cache maintenance for driver buffers, live barrier
+ordering, working DMA behavior, RP1 MMIO writes, DMA channel programming,
+descriptor rings, interrupt completion, coherent/non-cacheable/IOMMU-backed
+policy, DMA-safe allocation beyond descriptor validation, Ethernet, storage,
+networking, SSH, hardware validation, Milestone 12 work, and Milestone 11.3
+completion by implication remain unaccepted. No explicit worker-owned
+follow-up task exists yet; supervisor planning is required before a bounded
+maintenance-executor core implementation continues.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

@@ -1,0 +1,85 @@
+{
+  "task_id": "phase11-rp1-dma-cache-runtime-execution-contract-20260609",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-runtime-execution-contract.md",
+      "evidence_level": "static inspection and documentation reconciliation"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-runtime-execution-contract/classification.json",
+      "evidence_level": "accepted source/static contract classification"
+    },
+    {
+      "label": "accepted maintenance-sequence closeout",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-maintenance-sequence-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted maintenance-sequence closeout classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-maintenance-sequence-closeout/classification.json",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted maintenance-sequence core",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-maintenance-sequence-core.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "implementation source evidence",
+      "path": "src/dma_cache.rs",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "instruction/barrier source evidence",
+      "path": "src/smp.rs",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "memory architecture boundary",
+      "path": "docs/src/architecture/memory.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "project contract update",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "evidence_level": "documentation reconciliation"
+    },
+    {
+      "label": "roadmap update",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "documentation reconciliation"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static inspection",
+      "level": "static inspection",
+      "result": "passed",
+      "summary": "Reviewed accepted maintenance-sequence closeout/core, descriptor and sync-plan retained evidence, src/dma_cache.rs, src/smp.rs, and memory/project/roadmap docs."
+    },
+    {
+      "gate": "jq empty",
+      "level": "JSON syntax",
+      "result": "passed",
+      "summary": "classification.json and evidence-map.json passed jq empty."
+    },
+    {
+      "gate": "git diff --check",
+      "level": "diff inspection",
+      "result": "passed"
+    },
+    {
+      "gate": "mdbook build",
+      "level": "documentation build",
+      "result": "passed",
+      "summary": "/home/node/.cargo/bin/mdbook build completed with the existing large search-index warning."
+    },
+    {
+      "gate": "git diff --cached --check",
+      "level": "staged diff inspection",
+      "result": "passed"
+    }
+  ]
+}

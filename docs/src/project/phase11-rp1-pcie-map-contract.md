@@ -2737,6 +2737,28 @@ not execute cache maintenance, claim live barrier ordering, program DMA/RP1
 MMIO, create descriptor rings, start Ethernet/storage/networking/SSH work, or
 accept Milestone 11.3 completion by implication.
 
+phase11-rp1-dma-cache-maintenance-sequence-core-20260609 implements that
+local/static maintenance-sequence core in src/dma_cache.rs, and
+phase11-rp1-dma-cache-maintenance-sequence-closeout-20260609 closes the
+accepted local/static sequence frontier. The accepted frontier is limited to
+static dc cvac, dc ivac, dc civac, and dsb sy vocabulary derived only from
+accepted DmaCacheSyncPlanEvidence while preserving descriptor/sync-plan
+identity, line coverage, rejected runtime claims, and local/static
+classification.
+
+phase11-rp1-dma-cache-runtime-execution-contract-20260609 accepts the next
+contract boundary as phase11-rp1-dma-cache-maintenance-executor-contract-v1: a
+future architecture-gated runtime executor contract that may consume only
+accepted DmaCacheMaintenanceSequenceEvidence. The contract requires future
+execution work to validate the accepted descriptor, sync-plan, and
+maintenance-sequence evidence chain before dispatching dc cvac, dc ivac,
+dc civac, and a final dsb sy. This is contract-only and does not accept
+executed cache maintenance, live barrier ordering, working DMA, RP1 MMIO
+writes, DMA channel programming, descriptor rings, Ethernet, storage,
+networking, SSH, hardware validation, Milestone 12 work, or Milestone 11.3
+completion by implication. Supervisor planning is required before any
+maintenance-executor core implementation continues.
+
 ## Deferred Work
 
 - PCIe enumeration and BAR discovery for general external devices.
