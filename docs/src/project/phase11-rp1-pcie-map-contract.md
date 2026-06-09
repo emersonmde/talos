@@ -430,6 +430,21 @@ interrupt completion, Ethernet, storage, networking, SSH, hardware validation,
 Milestone 12 work, or Milestone 11.3 completion by implication. The next queued
 boundary is the maintenance-executor closeout checkpoint.
 
+phase11-rp1-dma-cache-maintenance-executor-closeout-20260609 closes that
+executor frontier as rp1-dma-cache-maintenance-executor-frontier-closed. The
+accepted checkpoint reconciles the descriptor, sync-plan, maintenance-sequence,
+and architecture-gated executor evidence chain, and it records that the
+documented DMA buffer ownership/cache-maintenance-rule requirement for
+Milestone 11.3 is partially satisfied. It does not accept a small DMA or
+driver-adjacent diagnostic, driver DMA completion, RP1 MMIO writes, DMA channel
+programming, descriptor rings, interrupt completion, Ethernet, storage,
+networking, SSH, hardware validation, Milestone 12 work, or Milestone 11.3
+completion by implication. Same-shaped maintenance-executor retries are closed
+unless a later supervisor task supplies materially different driver-adjacent
+runtime scope, source evidence, hardware evidence, or acceptance criteria. The
+next mechanically objective boundary is the queued driver-adjacent
+runtime/source-contract task, not hardware or DMA-capable driver execution.
+
 phase11-rp1-gpio-event-latch-source-contract-20260607 is accepted as
 source-contract-blocked. Retained RP1/Linux source identifies the GPIO14 event
 configuration path: GPIO14 CTRL CLR can clear raw event enables, GPIO14 CTRL
@@ -2785,6 +2800,20 @@ writes, DMA channel programming, descriptor rings, Ethernet, storage,
 networking, SSH, hardware validation, Milestone 12 work, or Milestone 11.3
 completion by implication. Supervisor planning is required before any
 maintenance-executor core implementation continues.
+
+phase11-rp1-dma-cache-maintenance-executor-core-20260609 implements that
+contract as a bounded architecture-gated executor in src/dma_cache.rs, and
+phase11-rp1-dma-cache-maintenance-executor-closeout-20260609 closes the
+accepted executor frontier. The accepted chain now documents and implements
+descriptor validation, cache-sync planning, maintenance-sequence derivation,
+and executor evidence for cacheable low-tail buffers with source-unassigned
+RP1 DMA/IOMMU classification. This partially satisfies the Milestone 11.3
+documented DMA buffer ownership/cache-maintenance-rule requirement, but it
+does not accept a small DMA or driver-adjacent diagnostic, DMA completion, RP1
+MMIO or DMA programming, descriptor rings, interrupt completion, Ethernet,
+storage, networking, SSH, hardware validation, Milestone 12 work, or
+Milestone 11.3 completion by implication. The next boundary remains a bounded
+driver-adjacent runtime/source contract before any DMA-capable diagnostic.
 
 ## Deferred Work
 

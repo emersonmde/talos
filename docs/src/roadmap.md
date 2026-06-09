@@ -8882,6 +8882,22 @@ Ethernet, storage, networking, SSH, hardware validation, Milestone 12 work, and
 Milestone 11.3 completion by implication remain unaccepted. The next queued
 boundary is the maintenance-executor closeout checkpoint.
 
+phase11-rp1-dma-cache-maintenance-executor-closeout-20260609 accepts the
+executor checkpoint as rp1-dma-cache-maintenance-executor-frontier-closed. The
+accepted frontier remains limited to the descriptor, sync-plan,
+maintenance-sequence, and architecture-gated executor evidence chain for
+cacheable low-tail buffers with source-unassigned RP1 DMA/IOMMU
+classification. The Milestone 11.3 documented DMA buffer ownership and
+cache-maintenance rules requirement is partially satisfied by that chain, but
+Milestone 11.3 is not complete: no small DMA or driver-adjacent diagnostic,
+driver DMA completion, RP1 MMIO/DMA programming, descriptor rings, interrupt
+completion, Ethernet, storage, networking, SSH, hardware validation, or
+Milestone 12 work is accepted. Same-shaped maintenance-executor retries are
+closed unless a future supervisor task supplies materially different
+driver-adjacent runtime scope, source evidence, hardware evidence, or
+acceptance criteria. The next mechanically objective boundary is the queued
+driver-adjacent runtime/source-contract task.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
