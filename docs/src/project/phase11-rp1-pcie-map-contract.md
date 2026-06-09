@@ -500,9 +500,41 @@ controller identity at RP1 bus 0xc0_40188000 / CPU physical 0x1f_0018_8000,
 while still rejecting channel programming, descriptor-ring construction,
 transfer completion, interrupt completion, hardware/device completion,
 Ethernet, storage, networking, SSH, hardware validation, Milestone 12 work,
-Milestone 11.3 completion, and phase transition. No explicit queued follow-up
-exists; supervisor planning is required for any bounded local/static
-small-diagnostic plan core.
+Milestone 11.3 completion, and phase transition. That source-contract task
+required supervisor planning before any bounded local/static small-diagnostic
+plan core.
+
+phase11-rp1-dma-cache-small-diagnostic-plan-core-20260609 implements that
+contract as a local/static plan core in src/dma_cache.rs. The accepted frontier
+constructs and formats evidence from accepted
+DmaCacheDriverDiagnosticEnvelopeEvidence plus retained RP1 DMA controller
+source facts, preserving the source contract id, envelope contract id,
+descriptor/sync-plan/maintenance-sequence/executor identities, RP1 DMA
+compatible string, RP1 bus base, translated CPU physical base, channel count,
+target count, interrupt and clock names, CPU/RP1 buffer addresses, descriptor
+length, cache line coverage, direction, cacheability, owner transition, IOMMU
+classification, rejected runtime claims, unresolved diagnostic gaps, and
+local/static classification. Validators reject non-accepted envelope evidence,
+missing prerequisite identities, missing rejected completion claims, missing
+unresolved gaps, unsupported cacheability/IOMMU claims, zero channel count,
+invalid translated controller base, RP1 channel ownership, descriptor-ring
+readiness, transfer completion, interrupt completion, hardware/device
+completion, Ethernet/storage readiness, networking, and SSH. This does not
+accept Pi 5 hardware validation, RP1 MMIO/DMA programming, descriptor rings,
+transfer completion, interrupt completion, Ethernet, storage, networking, SSH,
+Milestone 11.3 completion, or a phase transition.
+
+phase11-rp1-dma-cache-small-diagnostic-plan-closeout-20260609 closes the
+local/static plan frontier as
+rp1-dma-cache-small-diagnostic-plan-frontier-closed. Same-shaped local/static
+small diagnostic plan retries are closed unless future scope supplies
+materially different source, runtime, hardware, or acceptance evidence. The
+next mechanically objective boundary is the guarded hardware-proof
+source-contract task, which is contract-only and does not authorize a Pi 5
+run, hardwareTestLock acquisition, live DMA, RP1 MMIO writes, DMA channel
+programming, descriptor rings, transfer completion, interrupt completion,
+Ethernet, storage, networking, SSH, Milestone 11.3 completion, or a phase
+transition.
 
 phase11-rp1-gpio-event-latch-source-contract-20260607 is accepted as
 source-contract-blocked. Retained RP1/Linux source identifies the GPIO14 event
@@ -2887,6 +2919,17 @@ diagnostic source-contract boundary. That selection does not accept a small DMA
 diagnostic implementation, RP1 MMIO/DMA programming, descriptor rings,
 interrupt completion, hardware validation, networking, SSH, Milestone 11.3
 completion, or phase transition.
+
+phase11-rp1-dma-cache-small-diagnostic-source-contract-20260609,
+phase11-rp1-dma-cache-small-diagnostic-plan-core-20260609, and
+phase11-rp1-dma-cache-small-diagnostic-plan-closeout-20260609 carry that
+boundary through a local/static plan and checkpoint. The accepted plan
+connects the cache-maintained low-tail diagnostic envelope to retained rp1_dma
+controller source facts, but it still does not accept channel ownership,
+descriptor rings, transfer or interrupt completion, hardware validation,
+Ethernet, storage, networking, SSH, Milestone 11.3 completion, or phase
+transition. The next boundary remains contract-only before any hardware proof
+or live DMA behavior is considered.
 
 ## Deferred Work
 

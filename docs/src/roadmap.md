@@ -8954,8 +8954,37 @@ buffer envelope to the source-backed rp1_dma controller identity without
 claiming channel programming, descriptor-ring readiness, transfer completion,
 interrupt completion, hardware/device completion, Ethernet, storage,
 networking, SSH, hardware validation, Milestone 12 work, Milestone 11.3
-completion, or a phase transition. No explicit queued follow-up exists;
-supervisor planning is required before any plan-core implementation continues.
+completion, or a phase transition. That source-contract task required
+supervisor planning before any plan-core implementation could continue.
+
+phase11-rp1-dma-cache-small-diagnostic-plan-core-20260609 accepts the bounded
+local/static plan core as
+rp1-dma-cache-small-diagnostic-plan-core-local-static-accepted. src/dma_cache.rs
+now constructs and formats RP1 DMA small diagnostic plan evidence from accepted
+DmaCacheDriverDiagnosticEnvelopeEvidence plus retained rp1_dma controller
+source facts. The evidence preserves the source contract id, envelope contract
+id, descriptor/sync-plan/maintenance-sequence/executor identities, RP1 DMA
+compatible string, RP1 bus base, translated CPU physical base, channel count,
+target count, interrupt and clock names, CPU/RP1 buffer addresses, descriptor
+length, cache line coverage, direction, cacheability, owner transition, IOMMU
+classification, rejected runtime claims, unresolved diagnostic gaps, and
+local/static classification. Validators reject invalid envelope/source inputs
+and premature runtime/device readiness claims. No Pi 5 hardware validation,
+RP1 MMIO/DMA programming, DMA channel ownership, descriptor rings, transfer
+completion, interrupt completion, Ethernet, storage, networking, SSH,
+Milestone 12 work, Milestone 11.3 completion, or phase transition is accepted.
+
+phase11-rp1-dma-cache-small-diagnostic-plan-closeout-20260609 closes the
+local/static plan frontier as
+rp1-dma-cache-small-diagnostic-plan-frontier-closed. Same-shaped local/static
+small diagnostic plan retries are closed unless a future supervisor task
+supplies materially different source evidence, runtime evidence, hardware
+evidence, or acceptance criteria. The next bounded boundary is the guarded
+hardware-proof source-contract task, which is contract-only and must not run
+hardware, publish boot archives, acquire hardwareTestLock, program RP1 MMIO or
+DMA channels, create descriptor rings, claim transfer or interrupt completion,
+implement Ethernet, storage, networking, SSH, accept Milestone 11.3 completion,
+or create a phase transition.
 
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
