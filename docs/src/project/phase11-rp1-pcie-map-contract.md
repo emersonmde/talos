@@ -2291,6 +2291,43 @@ reruns are not progress unless a future supervisor task supplies materially
 different acceptance criteria or a new discriminator. Supervisor planning is
 required for the next Milestone 11.2 feature slice.
 
+phase11-rp1-clock-reset-dependency-source-contract-20260609 accepts the next
+source-only clock/reset dependency preflight contract,
+phase11-rp1-clock-reset-dependency-source-contract-v1. The selected target is
+rp1-observed-clock-reset-dependency-preflight-read. It uses source-backed
+SYSINFO and clock-manager offsets through the observed 0x1c RP1 aperture
+because the accepted observed GPIO14/GPIO16 preflights used that aperture,
+while the retained source-expected 0x1f SYSINFO-vs-clock discriminator closed
+on a broader 0xdeaddead sentinel boundary.
+
+Allowed read-only loads are SYSINFO_CHIP_ID and SYSINFO_PLATFORM at
+0x1c00000000/0x1c00000004, PLL_SYS_CS at 0x1c00020000, CLK_SYS_CTRL,
+CLK_SYS_DIV_INT, and CLK_SYS_SEL at
+0x1c00018014/0x1c00018018/0x1c00018020, CLK_SLOW_SYS_CTRL at 0x1c00018024,
+and CLK_UART_CTRL, CLK_UART_DIV_INT, and CLK_UART_SEL at
+0x1c00018054/0x1c00018058/0x1c00018060. The report must include raw values,
+expected_chip_id=0x20001927, decoded chip-id/sentinel booleans, PLL_SYS lock,
+CLK_SYS/CLK_SLOW_SYS/CLK_UART enable bits, selected clock sentinel booleans,
+retained GPIO14/GPIO16 blocker context, retained 0x1f SYSINFO/clock sentinel
+context, reset_status_source=none-selected-read-only, and a terminal
+classification. No reset-controller read is selected because retained Linux
+source exposes reset_control_reset as a reset operation, not a safe read-only
+reset-status register.
+
+Accepted classifications are observed-clock-reset-dependency-visible,
+observed-clock-reset-dependency-blocked-sysinfo-sentinel,
+observed-clock-reset-dependency-blocked-clock-manager-sentinel,
+observed-clock-reset-dependency-blocked-system-clock-disabled,
+observed-clock-reset-dependency-blocked-uart-clock-disabled,
+observed-clock-reset-dependency-no-return-or-trap,
+observed-clock-reset-dependency-inconclusive-capture,
+no-mmio-clock-reset-dependency-control-visible, and staging/build-blocker.
+This accepts only the source contract and paired no-MMIO/no-RP1/no-GIC/no-PCIe
+control requirement. It does not accept live RP1 identity, runtime behavior,
+hardware behavior, clock/reset ownership, clock/reset writes, GPIO function
+changes, event generation, interrupt delivery, DMA/cache, networking, SSH,
+Milestone 11.3, or phase transition.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

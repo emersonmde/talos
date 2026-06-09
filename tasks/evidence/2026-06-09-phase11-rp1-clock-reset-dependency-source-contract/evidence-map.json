@@ -1,0 +1,53 @@
+{
+  "task_id": "phase11-rp1-clock-reset-dependency-source-contract-20260609",
+  "classification": "accepted-observed-clock-reset-dependency-source-contract",
+  "evidence": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-09-phase11-rp1-clock-reset-dependency-source-contract.md",
+      "type": "source contract"
+    },
+    {
+      "label": "source/register evidence",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-clock-reset-dependency-source-contract/source-register-evidence.md",
+      "type": "static source inspection"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-clock-reset-dependency-source-contract/classification.json",
+      "type": "accepted source contract classification"
+    },
+    {
+      "label": "project contract update",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "type": "documentation reconciliation"
+    },
+    {
+      "label": "roadmap update",
+      "path": "docs/src/roadmap.md",
+      "type": "documentation reconciliation"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static inspection of retained Linux/RP1/BCM2712 source and accepted Phase 11 evidence maps",
+      "result": "passed"
+    },
+    {
+      "gate": "jq empty on task-owned evidence-map/classification JSON",
+      "result": "passed"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "gate": "mdbook build",
+      "result": "passed"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "passed"
+    }
+  ]
+}

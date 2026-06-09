@@ -8612,6 +8612,25 @@ ownership, DMA/cache, networking, SSH, Milestone 11.3, and phase transition
 remain unaccepted. Supervisor planning is required for the next Milestone 11.2
 feature slice.
 
+phase11-rp1-clock-reset-dependency-source-contract-20260609 accepts the next
+source-only Milestone 11.2 contract,
+phase11-rp1-clock-reset-dependency-source-contract-v1. It selects a read-only
+observed-aperture identity and clock-manager dependency preflight before any
+Talos-owned RP1 GPIO, event, or driver setup work. Allowed loads are
+SYSINFO_CHIP_ID/SYSINFO_PLATFORM at 0x1c00000000/0x1c00000004, PLL_SYS_CS at
+0x1c00020000, CLK_SYS_CTRL/DIV_INT/SEL at
+0x1c00018014/0x1c00018018/0x1c00018020, CLK_SLOW_SYS_CTRL at 0x1c00018024, and
+CLK_UART_CTRL/DIV_INT/SEL at 0x1c00018054/0x1c00018058/0x1c00018060. The
+contract uses the accepted observed 0x1c RP1 aperture and retains the 0x1f
+SYSINFO/clock sentinel closeout as comparator context only. No reset-controller
+read is selected because retained Linux source exposes reset_control_reset, not
+a bounded safe read-only reset-status register. This accepts only a source
+contract and paired no-MMIO control requirement; live RP1 identity, clock/reset
+ownership, clock/reset writes, GPIO function changes, event generation,
+interrupt delivery, DMA/cache, networking, SSH, Milestone 11.3, and phase
+transition remain unaccepted. The local/static core task is mechanically
+unblocked after the committed source contract.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

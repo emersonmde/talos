@@ -1,0 +1,94 @@
+{
+  "task_id": "phase11-rp1-clock-reset-dependency-source-contract-20260609",
+  "classification": "accepted-observed-clock-reset-dependency-source-contract",
+  "status": "accepted",
+  "evidence_level": [
+    "static source inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "mdbook build"
+  ],
+  "contract_id": "phase11-rp1-clock-reset-dependency-source-contract-v1",
+  "target": "rp1-observed-clock-reset-dependency-preflight-read",
+  "allowed_reads": [
+    {
+      "name": "SYSINFO_CHIP_ID",
+      "address": "0x1c00000000",
+      "width": 32
+    },
+    {
+      "name": "SYSINFO_PLATFORM",
+      "address": "0x1c00000004",
+      "width": 32
+    },
+    {
+      "name": "PLL_SYS_CS",
+      "address": "0x1c00020000",
+      "width": 32
+    },
+    {
+      "name": "CLK_SYS_CTRL",
+      "address": "0x1c00018014",
+      "width": 32
+    },
+    {
+      "name": "CLK_SYS_DIV_INT",
+      "address": "0x1c00018018",
+      "width": 32
+    },
+    {
+      "name": "CLK_SYS_SEL",
+      "address": "0x1c00018020",
+      "width": 32
+    },
+    {
+      "name": "CLK_SLOW_SYS_CTRL",
+      "address": "0x1c00018024",
+      "width": 32
+    },
+    {
+      "name": "CLK_UART_CTRL",
+      "address": "0x1c00018054",
+      "width": 32
+    },
+    {
+      "name": "CLK_UART_DIV_INT",
+      "address": "0x1c00018058",
+      "width": 32
+    },
+    {
+      "name": "CLK_UART_SEL",
+      "address": "0x1c00018060",
+      "width": 32
+    }
+  ],
+  "accepted_classifications": [
+    "observed-clock-reset-dependency-visible",
+    "observed-clock-reset-dependency-blocked-sysinfo-sentinel",
+    "observed-clock-reset-dependency-blocked-clock-manager-sentinel",
+    "observed-clock-reset-dependency-blocked-system-clock-disabled",
+    "observed-clock-reset-dependency-blocked-uart-clock-disabled",
+    "observed-clock-reset-dependency-no-return-or-trap",
+    "observed-clock-reset-dependency-inconclusive-capture",
+    "no-mmio-clock-reset-dependency-control-visible",
+    "staging/build-blocker"
+  ],
+  "rejected_claims": [
+    "runtime behavior",
+    "hardware behavior",
+    "live RP1 identity",
+    "clock/reset ownership",
+    "clock/reset writes",
+    "GPIO ownership",
+    "GPIO function changes",
+    "event generation",
+    "interrupt delivery",
+    "handler ownership",
+    "DMA/cache",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "next_action": "phase11-rp1-clock-reset-dependency-core-20260609 is mechanically unblocked after this committed source contract"
+}
