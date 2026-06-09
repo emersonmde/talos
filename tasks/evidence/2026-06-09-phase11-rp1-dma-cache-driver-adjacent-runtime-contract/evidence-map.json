@@ -1,0 +1,97 @@
+{
+  "task_id": "phase11-rp1-dma-cache-driver-adjacent-runtime-contract-20260609",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-driver-adjacent-runtime-contract.md",
+      "evidence_level": "static inspection and documentation reconciliation"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-driver-adjacent-runtime-contract/classification.json",
+      "evidence_level": "accepted contract classification"
+    },
+    {
+      "label": "accepted maintenance-executor closeout",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-maintenance-executor-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted maintenance-executor closeout classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-maintenance-executor-closeout/classification.json",
+      "evidence_level": "accepted closeout classification"
+    },
+    {
+      "label": "accepted maintenance-executor core",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-maintenance-executor-core.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted maintenance-executor core classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-maintenance-executor-core/classification.json",
+      "evidence_level": "accepted executor classification"
+    },
+    {
+      "label": "accepted runtime/execution contract",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-runtime-execution-contract.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "maintenance-executor implementation",
+      "path": "src/dma_cache.rs",
+      "evidence_level": "static inspection of accepted executor evidence vocabulary"
+    },
+    {
+      "label": "SMP cache helper comparison",
+      "path": "src/smp.rs",
+      "evidence_level": "static inspection as instruction/barrier-shape comparison"
+    },
+    {
+      "label": "memory architecture",
+      "path": "docs/src/architecture/memory.md",
+      "evidence_level": "static inspection of retained DMA/cache boundary wording"
+    },
+    {
+      "label": "project contract update",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "evidence_level": "documentation reconciliation"
+    },
+    {
+      "label": "roadmap update",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "documentation reconciliation"
+    }
+  ],
+  "validation": [
+    {
+      "label": "jq classification",
+      "command": "jq empty tasks/evidence/2026-06-09-phase11-rp1-dma-cache-driver-adjacent-runtime-contract/classification.json",
+      "result": "passed",
+      "evidence_level": "JSON syntax check"
+    },
+    {
+      "label": "jq evidence map",
+      "command": "jq empty tasks/evidence/2026-06-09-phase11-rp1-dma-cache-driver-adjacent-runtime-contract/evidence-map.json",
+      "result": "passed",
+      "evidence_level": "JSON syntax check"
+    },
+    {
+      "label": "git diff check",
+      "command": "git diff --check",
+      "result": "passed",
+      "evidence_level": "diff hygiene"
+    },
+    {
+      "label": "mdbook",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed",
+      "evidence_level": "documentation build"
+    },
+    {
+      "label": "staged diff check",
+      "command": "git diff --cached --check",
+      "result": "passed",
+      "evidence_level": "diff hygiene"
+    }
+  ]
+}

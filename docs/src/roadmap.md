@@ -8898,6 +8898,21 @@ driver-adjacent runtime scope, source evidence, hardware evidence, or
 acceptance criteria. The next mechanically objective boundary is the queued
 driver-adjacent runtime/source-contract task.
 
+phase11-rp1-dma-cache-driver-adjacent-runtime-contract-20260609 accepts the
+next driver-adjacent contract as
+rp1-dma-cache-driver-adjacent-runtime-contract-accepted. The selected boundary
+is phase11-rp1-dma-cache-driver-diagnostic-envelope-contract-v1: a local/static
+diagnostic envelope that may consume only accepted maintenance-executor
+evidence, preserve the descriptor/sync-plan/maintenance-sequence/executor
+identity chain, and keep the remaining RP1 DMA channel, descriptor-ring,
+interrupt-completion, IOMMU/runtime-policy, allocation/pinning, hardware-proof,
+and device-consumer gaps explicit. This is not a small DMA diagnostic
+implementation and does not accept driver DMA completion, RP1 MMIO writes, DMA
+channel programming, descriptor rings, interrupt completion, Ethernet, storage,
+networking, SSH, hardware validation, Milestone 12 work, Milestone 11.3
+completion, or a phase transition. The next bounded implementation requires
+supervisor planning.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

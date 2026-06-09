@@ -445,6 +445,22 @@ runtime scope, source evidence, hardware evidence, or acceptance criteria. The
 next mechanically objective boundary is the queued driver-adjacent
 runtime/source-contract task, not hardware or DMA-capable driver execution.
 
+phase11-rp1-dma-cache-driver-adjacent-runtime-contract-20260609 accepts
+phase11-rp1-dma-cache-driver-diagnostic-envelope-contract-v1 as the next
+driver-adjacent contract boundary. The accepted frontier is a local/static
+diagnostic envelope that may consume only accepted
+DmaCacheMaintenanceExecutorEvidence and preserve the descriptor, sync-plan,
+maintenance-sequence, and executor evidence identities while naming the
+unresolved RP1 DMA channel ownership, descriptor-ring layout/ownership,
+transfer completion, interrupt policy, IOMMU/runtime policy, allocation and
+pinning, hardware-proof, and device-consumer gaps. This does not accept a small
+DMA or driver-adjacent diagnostic implementation, driver DMA completion, RP1
+MMIO writes, DMA channel programming, descriptor rings, interrupt completion,
+Ethernet, storage, networking, SSH, hardware validation, Milestone 12 work, or
+Milestone 11.3 completion. The next implementation boundary requires
+supervisor planning and must remain local/static unless explicit future scope
+authorizes hardware or runtime DMA behavior.
+
 phase11-rp1-gpio-event-latch-source-contract-20260607 is accepted as
 source-contract-blocked. Retained RP1/Linux source identifies the GPIO14 event
 configuration path: GPIO14 CTRL CLR can clear raw event enables, GPIO14 CTRL

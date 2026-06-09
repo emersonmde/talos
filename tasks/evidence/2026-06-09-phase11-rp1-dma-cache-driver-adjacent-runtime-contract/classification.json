@@ -1,0 +1,56 @@
+{
+  "task_id": "phase11-rp1-dma-cache-driver-adjacent-runtime-contract-20260609",
+  "classification": "rp1-dma-cache-driver-adjacent-runtime-contract-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "mdbook build"
+  ],
+  "selected_contract": "phase11-rp1-dma-cache-driver-diagnostic-envelope-contract-v1",
+  "accepted_prerequisites": [
+    "phase11-rp1-dma-cache-substrate-contract-v1 descriptor evidence",
+    "phase11-rp1-dma-cache-sync-plan-contract-v1 sync-plan evidence",
+    "phase11-rp1-dma-cache-maintenance-sequence-contract-v1 sequence evidence",
+    "phase11-rp1-dma-cache-maintenance-executor-contract-v1 executor evidence",
+    "runtime-execution-dma-cache-maintenance-executor-visible classification",
+    "cacheable low-tail buffer evidence with source-unassigned-rp1-dma IOMMU classification"
+  ],
+  "accepted_claims": [
+    "the next useful driver-adjacent boundary is a local/static diagnostic envelope consuming accepted executor evidence",
+    "future diagnostic-envelope work must preserve descriptor, sync-plan, maintenance-sequence, and executor identity before any DMA-capable diagnostic",
+    "remaining DMA diagnostic gaps are explicit: RP1 channel ownership, descriptor-ring layout and ownership, transfer completion, interrupt policy, IOMMU/runtime policy, allocation/pinning, hardware proof, and a device-specific consumer",
+    "the Milestone 11.3 documented DMA buffer ownership/cache-maintenance rules requirement remains partially satisfied, not complete"
+  ],
+  "rejected_claims": [
+    "small DMA or driver-adjacent diagnostic implementation",
+    "driver DMA completion",
+    "RP1 MMIO writes",
+    "DMA channel programming",
+    "DMA descriptor rings",
+    "interrupt completion",
+    "general driver DMA API",
+    "cache-coherent driver policy",
+    "non-cacheable DMA mapping policy",
+    "IOMMU-backed driver policy",
+    "DMA-safe allocation or pinning beyond accepted descriptor validation",
+    "Ethernet readiness",
+    "storage readiness",
+    "networking",
+    "SSH",
+    "hardware validation",
+    "Milestone 12 progress",
+    "Milestone 11.3 completion by implication",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "no live DMA completion path has consumed executor evidence",
+    "no RP1 DMA channel or descriptor-ring ownership has been accepted",
+    "no interrupt-completion path exists",
+    "DMA-safe allocation and pinning remain unaccepted beyond descriptor validation",
+    "coherent, non-cacheable, and IOMMU-backed policies remain rejected until a later task supplies mapping, policy, and evidence",
+    "no device-specific consumer or hardware proof exists"
+  ],
+  "next_action": "Set planningNeeded=true for supervisor planning of a bounded phase11-rp1-dma-cache-driver-diagnostic-envelope-core task; do not create it in this worker run."
+}
