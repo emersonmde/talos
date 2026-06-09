@@ -1,0 +1,47 @@
+{
+  "task_id": "phase11-rp1-dma-cache-substrate-closeout-20260609",
+  "classification": "rp1-dma-cache-substrate-local-static-frontier-closed",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "mdbook build"
+  ],
+  "accepted_frontier": [
+    "local/static DMA/cache substrate vocabulary",
+    "RP1 RAM-window and peripheral-window translation helpers derived from retained dma-ranges evidence",
+    "pure descriptor validation for alignment, length, owned-span containment, translation, high/reserved-memory rejection, and forbidden cacheability/IOMMU claims",
+    "local/static evidence fields for contract/source ids, CPU/RP1 addresses, direction, cacheability, owner, IOMMU classification, validation results, and classification",
+    "focused unit tests for valid and rejected descriptor inputs"
+  ],
+  "accepted_claims": [
+    "the local/static substrate core is the accepted prerequisite evidence for the next driver-adjacent source contract",
+    "networking and SSH remain blocked until later explicit tasks accept remaining DMA/cache prerequisites"
+  ],
+  "rejected_claims": [
+    "working DMA behavior",
+    "DMA engine programming",
+    "DMA descriptor rings",
+    "executed cache maintenance for driver buffers",
+    "cache-coherent driver policy",
+    "non-cacheable DMA mapping policy",
+    "IOMMU-backed driver policy",
+    "DMA-safe allocation or pinning beyond pure descriptor validation",
+    "RP1 Ethernet readiness",
+    "storage readiness",
+    "networking",
+    "SSH",
+    "hardware validation",
+    "Milestone 12 progress",
+    "Milestone 11.3 completion by implication"
+  ],
+  "retained_risks": [
+    "actual cache-maintenance instruction use for driver buffers remains unimplemented and unvalidated",
+    "IOMMU implications remain source-limited until a later policy task",
+    "DMA-safe allocation and pinning remain unaccepted beyond descriptor validation",
+    "CPU-visible address alias/equality policy remains evidence-only and must be decided before non-identity or high-memory buffers are consumed",
+    "driver-adjacent hardware diagnostics still require a future contract and, if hardware becomes necessary, candidate identity, fresh serial cursor, TFTP delta, known-good control, then candidate rerun"
+  ],
+  "next_action": "Mechanically promote phase11-rp1-dma-cache-driver-adjacent-source-contract-20260609 on the next worker wake."
+}

@@ -8734,6 +8734,22 @@ validation, Milestone 12 work, and Milestone 11.3 completion by implication
 remain unaccepted. The mechanically unblocked next task is the queued
 DMA/cache substrate closeout checkpoint.
 
+phase11-rp1-dma-cache-substrate-closeout-20260609 accepts the local/static
+DMA/cache substrate checkpoint as
+rp1-dma-cache-substrate-local-static-frontier-closed. The accepted frontier is
+limited to the source inventory, contract, local/static descriptor vocabulary,
+RP1 dma-ranges-derived translation helpers, pure validators, evidence fields,
+and focused unit tests already accepted by the substrate core. This does not
+accept working DMA, descriptor rings, executed cache maintenance,
+cache-coherent/non-cacheable/IOMMU-backed driver policy, DMA-safe allocation or
+pinning beyond descriptor validation, RP1 Ethernet readiness, storage
+readiness, networking, SSH, hardware validation, Milestone 12 work, or
+Milestone 11.3 completion by implication. CPU-visible address alias/equality
+policy remains evidence-only before any future driver consumes non-identity or
+high-memory buffers. The mechanically unblocked next task is the queued
+driver-adjacent DMA/cache source contract, which remains source-contract work
+only.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

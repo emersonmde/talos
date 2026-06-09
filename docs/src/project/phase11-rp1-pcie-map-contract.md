@@ -2583,6 +2583,40 @@ The next accepted contract must therefore name DMA-safe buffer ownership,
 address translation, cache clean/invalidate direction, alignment, lifetime, and
 driver evidence fields before any DMA-capable RP1 driver is evaluated.
 
+## DMA/Cache Substrate Contract and Core
+
+phase11-rp1-dma-cache-contract-20260609 accepts the local/static
+phase11-rp1-dma-cache-substrate-contract-v1. The accepted boundary names
+buffer, memory, address, cache, and future driver ownership fields; RP1
+dma-ranges-derived RAM/peripheral translation paths; direction-specific
+cache-maintenance semantics; and explicit IOMMU classification. It does not
+accept executed cache maintenance, coherent or non-cacheable DMA policy, IOMMU
+policy, DMA programming, Ethernet, storage, networking, SSH, or hardware
+validation.
+
+phase11-rp1-dma-cache-substrate-core-20260609 implements that contract as a
+local/static core in src/dma_cache.rs. The accepted implementation exposes
+descriptor/cache/address/IOMMU vocabulary, pure validators, RP1 RAM-window and
+peripheral-window translation helpers, and evidence fields for the retained
+contract/source ids, CPU/RP1 addresses, length, alignment, direction,
+cacheability, owner, IOMMU classification, validation results, and
+classification. The tests cover one valid low-tail bootstrap-bump-owned RP1
+RAM-window descriptor and rejected alignment, ownership-span, high-memory,
+reserved-memory, translation, cacheability, and IOMMU inputs.
+
+phase11-rp1-dma-cache-substrate-closeout-20260609 closes this as a
+local/static frontier only. Working DMA behavior, descriptor rings, DMA channel
+programming, executed cache maintenance for driver buffers,
+cache-coherent/non-cacheable/IOMMU-backed driver policy, DMA-safe allocation or
+pinning beyond descriptor validation, RP1 Ethernet readiness, storage
+readiness, networking, SSH, hardware validation, Milestone 12 work, and
+Milestone 11.3 completion by implication remain unaccepted. CPU-visible address
+alias/equality policy remains evidence-only before any future driver consumes
+non-identity or high-memory buffers. The next mechanically unblocked boundary
+is a driver-adjacent DMA/cache source contract; it must remain contract work
+unless a later accepted task explicitly selects implementation or hardware
+proof.
+
 ## Deferred Work
 
 - PCIe enumeration and BAR discovery for general external devices.
