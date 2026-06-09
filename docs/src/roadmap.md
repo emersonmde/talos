@@ -9013,6 +9013,20 @@ writes, channel ownership, descriptor rings, transfer completion, interrupt
 completion, hardware/device completion, Ethernet, storage, networking, SSH,
 Milestone 11.3 completion, or a phase transition.
 
+phase11-rp1-dma-cache-small-diagnostic-visibility-pi5-20260609 and
+phase11-rp1-dma-cache-small-diagnostic-visibility-proof-closeout-20260609 close
+the first Pi 5 visibility/control proof as
+rp1-dma-cache-small-diagnostic-visibility-proof-control-freshness-blocked. The
+candidate rerun accepted only serial-visible plan report output with clean
+identity, stable matching TFTP evidence, and restore proof. The paired no-plan
+control and known-good control remained marker-visible but were rejected by
+serial-drain-not-empty-before-power, so no full paired control proof, live DMA,
+RP1 MMIO write, channel ownership, descriptor ring, transfer completion,
+interrupt completion, hardware/device completion, Ethernet/storage, networking,
+SSH, Milestone 11.3 completion, or phase transition is accepted. Same-shaped
+hardware visibility/control retries are closed unless future scope changes the
+freshness discriminator or acceptance criteria.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

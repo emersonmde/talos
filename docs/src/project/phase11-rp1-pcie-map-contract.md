@@ -2967,6 +2967,22 @@ ownership, descriptor rings, transfer completion, interrupt completion,
 device-consumer behavior, Ethernet, storage, networking, SSH, Milestone 11.3
 completion, and phase transition remain unaccepted.
 
+phase11-rp1-dma-cache-small-diagnostic-visibility-pi5-20260609 and
+phase11-rp1-dma-cache-small-diagnostic-visibility-proof-closeout-20260609
+close the first serialized Pi 5 visibility/control proof as
+rp1-dma-cache-small-diagnostic-visibility-proof-control-freshness-blocked. The
+candidate rerun produced the accepted plan visibility report over serial with
+clean pi5-capture-transaction-v2 identity, stable matching TFTP fetches, and
+restore proof. The paired no-plan control and known-good control remained
+marker-visible but were rejected by serial-drain-not-empty-before-power, so the
+full paired proof is not accepted. Same-shaped hardware visibility/control
+retries are closed unless future scope supplies a changed freshness
+discriminator or changed acceptance criteria for saturated/non-empty pre-power
+serial drain evidence. This checkpoint does not accept live DMA, RP1 MMIO
+writes, channel ownership, descriptor rings, transfer completion, interrupt
+completion, hardware/device completion, Ethernet, storage, networking, SSH,
+Milestone 11.3 completion, or a phase transition.
+
 ## Deferred Work
 
 - PCIe enumeration and BAR discovery for general external devices.

@@ -1,0 +1,16 @@
+{
+  "task_id": "phase11-rp1-dma-cache-small-diagnostic-visibility-proof-closeout-20260609",
+  "classification": "rp1-dma-cache-small-diagnostic-visibility-proof-control-freshness-blocked",
+  "task_record": "tasks/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-proof-closeout.md",
+  "classification_json": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-proof-closeout/classification.json",
+  "source_pi5_task": "tasks/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5.md",
+  "source_pi5_classification": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/classification.json",
+  "source_pi5_evidence_map": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/evidence-map.json",
+  "source_pi5_hardware_summary": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/hardware-run-summary.json",
+  "candidate_rerun": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/candidate-rerun/capture-invariant-summary.json",
+  "control_rerun2": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/control-rerun2/capture-invariant-summary.json",
+  "known_good_control": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/known-good-control/capture-invariant-summary.json",
+  "restore_evidence": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/lab-status-after-control-rerun2-restore.json",
+  "project_contract_doc": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+  "roadmap": "docs/src/roadmap.md"
+}
