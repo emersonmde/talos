@@ -1,0 +1,57 @@
+{
+  "task_id": "phase11-rp1-dma-cache-driver-adjacent-source-contract-20260609",
+  "classification": "rp1-dma-cache-driver-adjacent-source-contract-accepted",
+  "status": "accepted",
+  "contract_id": "phase11-rp1-dma-cache-sync-plan-contract-v1",
+  "evidence_level": [
+    "static inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "mdbook build"
+  ],
+  "selected_boundary": {
+    "kind": "local-static-cache-synchronization-plan",
+    "next_objective_task": "phase11-rp1-dma-cache-sync-plan-core",
+    "why_driver_adjacent": "The boundary defines the CPU/device cache synchronization handoff a future RP1 driver needs before consuming accepted DMA buffer descriptors.",
+    "why_not_networking_or_storage": "The boundary has no RP1 MMIO path, DMA channel programming, descriptor ring, interrupt completion, Ethernet protocol, block protocol, networking, or SSH behavior."
+  },
+  "accepted_prerequisites": [
+    "phase11-rp1-dma-cache-substrate-closeout-20260609 accepted",
+    "DmaBufferDescriptor produced by phase11-rp1-dma-cache-substrate-contract-v1 validation",
+    "CacheableRequiresMaintenance cacheability only",
+    "source-unassigned-rp1-dma IOMMU classification only",
+    "RP1 bus address taken from accepted descriptor evidence rather than recomputed by drivers",
+    "64-byte cache-line coverage names retained BCM2712 source evidence"
+  ],
+  "accepted_claims": [
+    "a source-backed local/static cache synchronization plan contract is the next driver-adjacent boundary",
+    "the next implementation can be pure local/static plan derivation and unit tests",
+    "future hardware proof is not mechanically required by this contract"
+  ],
+  "rejected_claims": [
+    "working DMA behavior",
+    "executed cache maintenance for driver buffers",
+    "DMA engine programming",
+    "DMA descriptor rings",
+    "general driver DMA API",
+    "cache-coherent driver policy",
+    "non-cacheable DMA mapping policy",
+    "IOMMU-backed driver policy",
+    "DMA-safe allocation or pinning beyond accepted descriptor validation",
+    "RP1 Ethernet readiness",
+    "storage readiness",
+    "networking",
+    "SSH",
+    "hardware validation",
+    "Milestone 12 progress",
+    "Milestone 11.3 completion by implication"
+  ],
+  "retained_risks": [
+    "actual cache-maintenance instructions for driver buffers remain unimplemented and unvalidated",
+    "live barrier ordering remains unaccepted outside existing proof-bounded SMP helpers",
+    "IOMMU implications remain source-limited until a later policy task",
+    "DMA-safe allocation and pinning remain unaccepted beyond descriptor validation",
+    "hardware diagnostics still require future supervisor planning plus candidate identity, fresh serial cursor, TFTP delta, known-good control, then candidate rerun if hardware becomes necessary"
+  ],
+  "next_action": "Set planningNeeded=true for supervisor planning of a bounded local/static phase11-rp1-dma-cache-sync-plan-core task."
+}

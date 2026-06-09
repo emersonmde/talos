@@ -301,6 +301,34 @@ DMA-safe allocation beyond descriptor validation, Ethernet, storage,
 networking, SSH, hardware validation, or Milestone 11.3 completion by
 implication.
 
+phase11-rp1-dma-cache-substrate-closeout-20260609 closes the accepted
+local/static descriptor substrate frontier. It reconciles the source inventory,
+contract, implementation, tests, evidence, and docs while preserving the limits
+above: no working DMA, descriptor rings, executed cache maintenance,
+cache-coherent/non-cacheable/IOMMU-backed policy, DMA-safe allocation beyond
+descriptor validation, Ethernet, storage, networking, SSH, hardware validation,
+or Milestone 11.3 completion by implication. The accepted next source-contract
+boundary is driver-adjacent cache synchronization planning, not runtime DMA
+behavior.
+
+phase11-rp1-dma-cache-driver-adjacent-source-contract-20260609 accepts
+phase11-rp1-dma-cache-sync-plan-contract-v1 as the next local/static
+driver-adjacent contract. A future implementation may derive a
+DmaCacheSyncPlan only from an accepted DmaBufferDescriptor, selecting clean
+before device ownership, invalidate after device ownership, or
+clean+invalidate for shared bidirectional synchronization boundaries. The plan
+must carry descriptor identity, operation, sync boundary, source-backed
+64-byte cache-line coverage, line-aligned CPU range, CPU/RP1 addresses,
+direction, cacheability, owner transition, IOMMU classification, and rejected
+runtime claims. Existing SMP cache helpers remain source evidence for
+instruction shape and ordering only; this contract does not accept executed
+cache maintenance for driver buffers, barriers in a live driver path, RP1 MMIO,
+DMA channel programming, descriptor rings, Ethernet, storage, networking, SSH,
+hardware validation, or Milestone 11.3 completion. No Pi 5 hardware proof is
+mechanically required by this source contract; future hardware work, if
+planned, must use candidate identity, fresh serial cursor, TFTP delta,
+known-good control, then candidate rerun after any inconclusive run.
+
 phase11-rp1-gpio-event-latch-source-contract-20260607 is accepted as
 source-contract-blocked. Retained RP1/Linux source identifies the GPIO14 event
 configuration path: GPIO14 CTRL CLR can clear raw event enables, GPIO14 CTRL
@@ -2612,10 +2640,16 @@ pinning beyond descriptor validation, RP1 Ethernet readiness, storage
 readiness, networking, SSH, hardware validation, Milestone 12 work, and
 Milestone 11.3 completion by implication remain unaccepted. CPU-visible address
 alias/equality policy remains evidence-only before any future driver consumes
-non-identity or high-memory buffers. The next mechanically unblocked boundary
-is a driver-adjacent DMA/cache source contract; it must remain contract work
-unless a later accepted task explicitly selects implementation or hardware
-proof.
+non-identity or high-memory buffers.
+
+phase11-rp1-dma-cache-driver-adjacent-source-contract-20260609 accepts the
+next contract boundary as local/static cache synchronization planning derived
+from accepted descriptor evidence. It names the operation and ownership
+boundary vocabulary, source-backed 64-byte cache-line range coverage, evidence
+fields, and validation strategy for a future cache-sync-plan core. The contract
+does not accept executed cache maintenance, live barriers, DMA programming,
+driver behavior, hardware proof, networking, SSH, or Milestone 11.3 completion;
+supervisor planning is required before implementation continues.
 
 ## Deferred Work
 

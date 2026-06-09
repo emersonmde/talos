@@ -8750,6 +8750,24 @@ high-memory buffers. The mechanically unblocked next task is the queued
 driver-adjacent DMA/cache source contract, which remains source-contract work
 only.
 
+phase11-rp1-dma-cache-driver-adjacent-source-contract-20260609 accepts
+phase11-rp1-dma-cache-sync-plan-contract-v1 as
+rp1-dma-cache-driver-adjacent-source-contract-accepted. The accepted frontier
+is a local/static cache synchronization plan derived only from an accepted
+DmaBufferDescriptor, with operation selection tied to descriptor direction and
+CPU/device ownership boundary, source-backed 64-byte cache-line coverage,
+planned CPU range, CPU/RP1 addresses, cacheability, owner transition, IOMMU
+classification, and rejected runtime claims. Existing SMP cache helpers remain
+instruction-shape evidence only. Executed cache maintenance for driver buffers,
+live barrier ordering, working DMA behavior, descriptor rings, RP1 MMIO, DMA
+channel programming, cache-coherent/non-cacheable/IOMMU-backed driver policy,
+DMA-safe allocation beyond descriptor validation, Ethernet, storage,
+networking, SSH, hardware validation, Milestone 12 work, and Milestone 11.3
+completion by implication remain unaccepted. No Pi 5 hardware proof is
+mechanically required by this source contract. The next objective boundary is a
+local/static cache-sync-plan core, but no explicit worker-owned task exists yet;
+supervisor planning is required before implementation continues.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
