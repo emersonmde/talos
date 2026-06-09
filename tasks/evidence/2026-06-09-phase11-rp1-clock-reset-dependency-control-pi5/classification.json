@@ -1,0 +1,48 @@
+{
+  "task_id": "phase11-rp1-clock-reset-dependency-control-pi5-20260609",
+  "status": "accepted",
+  "classification": "no-mmio-clock-reset-dependency-control-visible",
+  "nonce": "clockresetctl20260609T064728Z-1bb93ad1",
+  "label": "phase11-clock-reset-dependency-control-pi5",
+  "archive": "target/talos-rpi5-rp1-clock-reset-dependency-no-mmio-control-pi5.tar.gz",
+  "archive_sha256": "d525093ab3f0e4447bd3d682947c9732889d1c96f418d1b2b2b1c1997336bdba",
+  "staged_tree_hash": "3f48e70435914a0ca3deb160c517a32205643c3fbd9547d407387895ae417aba",
+  "expected_fetch": "da591740/kernel_2712.img",
+  "expected_fetch_bytes": 48640,
+  "exits": {
+    "capture": 0,
+    "run_unique_check": 0,
+    "boot_staging_identity_check": 0
+  },
+  "run_unique": {
+    "classification": "capture-transaction-run-unique-ready",
+    "rejection_reasons": [],
+    "pre_power_nonce_count": 0,
+    "post_power_nonce_count": 30
+  },
+  "boot_staging_identity": {
+    "classification": "boot-staging-identity-ready",
+    "rejection_reasons": [],
+    "selected_tree_hash": "3f48e70435914a0ca3deb160c517a32205643c3fbd9547d407387895ae417aba",
+    "expected_fetch_count": 2,
+    "expected_fetch_bytes_seen": [
+      48640,
+      48640
+    ]
+  },
+  "restore": {
+    "snapshot_name": "phase11-clock-reset-dependency-control-pre-20260609T064728Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "restored_to_pre_run_tree": true
+  },
+  "accepted_claims": [
+    "The no-MMIO clock/reset dependency control archive constructed no forbidden RP1, clock/reset, GPIO, GIC, PCIe/MIP, DMA, or other MMIO addresses.",
+    "The Pi 5 selected and fetched the expected nonce-bearing control archive over TFTP.",
+    "The run-unique nonce token was absent before power and present after power.",
+    "The lab boot tree was restored to the pre-run baseline after capture."
+  ],
+  "rejected_claims": [
+    "No RP1, clock/reset, GPIO, GIC, PCIe, DMA, hardware behavior, write path, event generation, interrupt delivery, Milestone 11.3, or phase transition is accepted from this no-MMIO control proof."
+  ],
+  "evidence_level": "image/archive inspection, lab-controller API, serial hardware boot/output, stable TFTP delta, restore proof, replay checker"
+}
