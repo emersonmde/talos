@@ -3012,6 +3012,25 @@ completion, interrupt completion, hardware/device completion, Ethernet,
 storage, networking, SSH, Milestone 12 work, and phase transition remain
 unaccepted.
 
+phase11-rp1-dma-cache-milestone-11-3-closeout-20260609 closes the DMA/IOMMU
+and cache-maintenance milestone as
+rp1-dma-cache-milestone-11-3-frontier-closed. The accepted frontier satisfies
+the roadmap requirement for documented DMA buffer ownership and
+cache-maintenance rules through the retained source inventory, substrate
+contract/core, cache-sync plan, static maintenance sequence, and
+architecture-gated maintenance executor evidence chain. It satisfies the
+small DMA or driver-adjacent diagnostic requirement only at the accepted
+driver-adjacent/local-static and Pi 5 visibility/control levels: the diagnostic
+envelope and small diagnostic plan exist before networking depends on DMA, and
+the run-unique hardware proof shows candidate/control visibility of that
+accepted report path. This checkpoint does not accept live DMA, RP1 MMIO
+writes, channel ownership, descriptor-ring construction or ownership, transfer
+completion, interrupt completion, hardware/device completion, Ethernet or
+storage readiness, networking, SSH, Milestone 12 work, or a phase transition.
+No mechanically unblocked follow-up task remains in the accepted Milestone 11.3
+slice; supervisor planning is required before descriptor-ring/channel-ownership,
+live DMA, Phase 12, networking, or later work starts.
+
 ## Deferred Work
 
 - PCIe enumeration and BAR discovery for general external devices.

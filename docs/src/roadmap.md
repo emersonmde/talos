@@ -9056,6 +9056,25 @@ ownership, descriptor rings, transfer completion, interrupt completion,
 hardware/device completion, Ethernet/storage, networking, SSH, Milestone 12
 work, and phase transition remain unaccepted.
 
+phase11-rp1-dma-cache-milestone-11-3-closeout-20260609 accepts the Milestone
+11.3 DMA/IOMMU/cache-maintenance checkpoint as
+rp1-dma-cache-milestone-11-3-frontier-closed. The documented DMA buffer
+ownership and cache-maintenance rule criterion is satisfied by the accepted
+source inventory, substrate contract/core, cache-sync plan, static maintenance
+sequence, and architecture-gated executor chain in src/dma_cache.rs. The small
+DMA or driver-adjacent diagnostic criterion is satisfied only at the accepted
+driver-adjacent/local-static and Pi 5 visibility/control levels: the diagnostic
+envelope and local/static small diagnostic plan exist before networking depends
+on DMA, and the run-unique Pi 5 proof shows candidate/control visibility of the
+accepted report path. This checkpoint does not accept live DMA, RP1 MMIO
+writes, channel ownership, descriptor-ring construction or ownership, transfer
+completion, interrupt completion, hardware/device completion,
+Ethernet/storage readiness, networking, SSH, Milestone 12 work, Phase 12
+planning, or a phase transition. No explicit mechanically unblocked follow-up
+task remains in this milestone slice; supervisor planning is required before
+descriptor-ring/channel-ownership, live DMA, Phase 12, networking, or later
+work starts.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
@@ -9070,6 +9089,10 @@ Acceptance criteria:
   evidence.
 
 Milestone 11.3: DMA, IOMMU, and Cache Maintenance
+
+Status: accepted checkpoint
+phase11-rp1-dma-cache-milestone-11-3-closeout-20260609, limited to the
+documented/local-static/visibility frontier and retained risks above.
 
 - Determine RP1 DMA addressability, dma-ranges, IOMMU behavior, and
   cache-coherency requirements.
