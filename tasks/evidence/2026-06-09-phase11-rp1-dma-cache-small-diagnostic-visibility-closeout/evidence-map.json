@@ -1,0 +1,73 @@
+{
+  "task_id": "phase11-rp1-dma-cache-small-diagnostic-visibility-closeout-20260609",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-closeout.md",
+      "evidence_level": "static inspection and closeout record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-closeout/classification.json",
+      "evidence_level": "accepted checkpoint classification"
+    },
+    {
+      "label": "accepted hardware-proof contract",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-hardware-proof-contract.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted visibility core",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-core.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted visibility core classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-core/classification.json",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted visibility implementation",
+      "path": "src/dma_cache.rs",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "project contract doc",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "evidence_level": "documentation reconciliation"
+    },
+    {
+      "label": "roadmap",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "documentation reconciliation"
+    },
+    {
+      "label": "json checks",
+      "command": "jq empty on task-owned evidence-map/classification JSON",
+      "result": "passed",
+      "evidence_level": "JSON checks"
+    },
+    {
+      "label": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed",
+      "evidence_level": "documentation build"
+    },
+    {
+      "label": "diff check",
+      "command": "git diff --check",
+      "result": "passed",
+      "evidence_level": "diff check"
+    },
+    {
+      "label": "staged diff check",
+      "command": "git diff --cached --check",
+      "result": "passed",
+      "evidence_level": "diff check"
+    }
+  ],
+  "hardware": {
+    "status": "not-run-not-in-scope",
+    "hardwareTestLock": "not-acquired"
+  }
+}

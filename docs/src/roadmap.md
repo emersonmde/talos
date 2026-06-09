@@ -8998,6 +8998,21 @@ DMA, RP1 MMIO writes, channel ownership, descriptor rings, transfer
 completion, interrupt completion, hardware/device completion, Ethernet,
 storage, networking, SSH, Milestone 11.3 completion, or a phase transition.
 
+phase11-rp1-dma-cache-small-diagnostic-visibility-core-20260609 and
+phase11-rp1-dma-cache-small-diagnostic-visibility-closeout-20260609 close the
+local/static visibility-report frontier as
+rp1-dma-cache-small-diagnostic-visibility-frontier-closed. The accepted code
+constructs candidate visibility evidence from accepted plan evidence and a
+paired no-plan control through the same report contract/source path while
+withholding accepted plan fields. Same-shaped local/static visibility retries
+are closed unless future scope supplies materially different source, runtime,
+hardware, or acceptance evidence. The next selected boundary is the guarded
+serialized Pi 5 plan visibility/control proof; it must acquire
+hardwareTestLock before staging and still must not accept live DMA, RP1 MMIO
+writes, channel ownership, descriptor rings, transfer completion, interrupt
+completion, hardware/device completion, Ethernet, storage, networking, SSH,
+Milestone 11.3 completion, or a phase transition.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

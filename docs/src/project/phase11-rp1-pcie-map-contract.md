@@ -2953,6 +2953,20 @@ channel ownership, descriptor rings, transfer completion, interrupt
 completion, device-consumer behavior, Ethernet, storage, networking, SSH,
 Milestone 11.3 completion, and phase transition remain unaccepted.
 
+phase11-rp1-dma-cache-small-diagnostic-visibility-core-20260609 and
+phase11-rp1-dma-cache-small-diagnostic-visibility-closeout-20260609 accept
+only the local/static visibility report frontier. src/dma_cache.rs now
+constructs a candidate report from accepted DmaCacheSmallDiagnosticPlanEvidence
+and a paired no-plan control report through the same report contract/source
+path while withholding accepted plan evidence. Same-shaped local/static
+visibility retries are closed unless future scope supplies materially different
+source, runtime, hardware, or acceptance evidence. The selected next boundary
+is the serialized Pi 5 plan visibility/control proof already queued for
+hardwareTestLock-serialized execution. Live RP1 DMA, RP1 MMIO writes, channel
+ownership, descriptor rings, transfer completion, interrupt completion,
+device-consumer behavior, Ethernet, storage, networking, SSH, Milestone 11.3
+completion, and phase transition remain unaccepted.
+
 ## Deferred Work
 
 - PCIe enumeration and BAR discovery for general external devices.
