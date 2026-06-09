@@ -1,0 +1,69 @@
+{
+  "task_id": "phase11-rp1-dma-cache-small-diagnostic-visibility-core-20260609",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-core.md",
+      "evidence_level": "static inspection and implementation record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-core/classification.json",
+      "evidence_level": "accepted local/static visibility report classification"
+    },
+    {
+      "label": "implementation",
+      "path": "src/dma_cache.rs",
+      "evidence_level": "local implementation and unit tests"
+    },
+    {
+      "label": "accepted hardware-proof contract",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-hardware-proof-contract.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted plan core",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-plan-core.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted plan closeout",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-plan-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "format check",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed",
+      "evidence_level": "fmt/lint/typecheck"
+    },
+    {
+      "label": "focused unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet dma_cache",
+      "result": "passed with Talos QEMU path configured; custom runner executed 456 tests",
+      "evidence_level": "unit tests via QEMU substitute"
+    },
+    {
+      "label": "json checks",
+      "command": "jq empty on task-owned evidence-map/classification JSON",
+      "result": "passed",
+      "evidence_level": "JSON checks"
+    },
+    {
+      "label": "diff check",
+      "command": "git diff --check",
+      "result": "passed",
+      "evidence_level": "diff check"
+    },
+    {
+      "label": "staged diff check",
+      "command": "git diff --cached --check",
+      "result": "passed",
+      "evidence_level": "diff check"
+    }
+  ],
+  "hardware": {
+    "status": "not-run-not-in-scope",
+    "hardwareTestLock": "not-acquired"
+  }
+}

@@ -8,8 +8,12 @@ pub const DMA_CACHE_MAINTENANCE_EXECUTOR_CONTRACT_ID: &str =
     "phase11-rp1-dma-cache-maintenance-executor-contract-v1";
 pub const DMA_CACHE_DRIVER_DIAGNOSTIC_ENVELOPE_CONTRACT_ID: &str =
     "phase11-rp1-dma-cache-driver-diagnostic-envelope-contract-v1";
+pub const DMA_CACHE_SMALL_DIAGNOSTIC_SOURCE_CONTRACT_ID: &str =
+    "phase11-rp1-dma-cache-small-diagnostic-source-contract-20260609";
 pub const DMA_CACHE_SMALL_DIAGNOSTIC_PLAN_CONTRACT_ID: &str =
     "phase11-rp1-dma-cache-small-diagnostic-plan-contract-v1";
+pub const DMA_CACHE_SMALL_DIAGNOSTIC_VISIBILITY_REPORT_CONTRACT_ID: &str =
+    "phase11-rp1-dma-cache-small-diagnostic-visibility-report-contract-v1";
 pub const DMA_CACHE_SOURCE_INVENTORY_ID: &str = "phase11-rp1-dma-cache-source-inventory-20260609";
 pub const DMA_LOCAL_STATIC_CLASSIFICATION: &str = "local-static-dma-cache-contract-visible";
 pub const DMA_SYNC_PLAN_LOCAL_STATIC_CLASSIFICATION: &str =
@@ -22,6 +26,12 @@ pub const DMA_DRIVER_DIAGNOSTIC_ENVELOPE_LOCAL_STATIC_CLASSIFICATION: &str =
     "local-static-dma-cache-driver-diagnostic-envelope-visible";
 pub const DMA_SMALL_DIAGNOSTIC_PLAN_LOCAL_STATIC_CLASSIFICATION: &str =
     "local-static-rp1-dma-small-diagnostic-plan-visible";
+pub const DMA_SMALL_DIAGNOSTIC_VISIBILITY_CANDIDATE_CLASSIFICATION: &str =
+    "local-static-rp1-dma-small-diagnostic-plan-visibility-candidate";
+pub const DMA_SMALL_DIAGNOSTIC_VISIBILITY_CONTROL_CLASSIFICATION: &str =
+    "no-plan-rp1-dma-small-diagnostic-visibility-control";
+pub const DMA_SMALL_DIAGNOSTIC_HARDWARE_PROOF_BOUNDARY_CLASSIFICATION: &str =
+    "hardware-proof-limited-to-plan-visibility-control-output";
 pub const DMA_REJECTED_INPUT_CLASSIFICATION: &str = "contract-rejected-input";
 pub const DMA_STAGING_BLOCKER_CLASSIFICATION: &str = "staging/build-blocker";
 pub const RP1_DMA_SOURCE_UNASSIGNED_IOMMU: &str = "source-unassigned-rp1-dma";
@@ -57,6 +67,42 @@ pub const DMA_DRIVER_DIAGNOSTIC_UNRESOLVED_GAPS: &[&str] = &[
     "dma-safe-allocation-and-pinning",
     "hardware-proof",
     "device-specific-consumer",
+];
+
+pub const DMA_SMALL_DIAGNOSTIC_VISIBILITY_REJECTED_HARDWARE_CLAIMS: &[&str] = &[
+    "Pi 5 hardware validation by this local/static task",
+    "boot archive publication by this local/static task",
+    "hardwareTestLock acquisition by this local/static task",
+    "RP1 MMIO writes",
+    "RP1 DMA channel ownership",
+    "DMA channel programming",
+    "descriptor-ring construction",
+    "descriptor-ring ownership",
+    "transfer completion",
+    "interrupt completion",
+    "hardware or device completion",
+    "Ethernet readiness",
+    "storage readiness",
+    "networking",
+    "SSH",
+    "cache-coherent driver policy",
+    "non-cacheable DMA mapping policy",
+    "IOMMU-backed runtime policy",
+    "DMA-safe allocation or pinning beyond accepted descriptor validation",
+    "Milestone 12 progress",
+    "Milestone 11.3 completion by implication",
+    "phase transition",
+];
+
+pub const DMA_SMALL_DIAGNOSTIC_VISIBILITY_RETAINED_RISKS: &[&str] = &[
+    "No RP1 DMA channel ownership has been accepted",
+    "No descriptor-ring layout or ownership has been accepted",
+    "No transfer-completion or interrupt policy exists",
+    "IOMMU/runtime policy remains source-unassigned",
+    "DMA-safe allocation and pinning remain unaccepted beyond descriptor validation",
+    "No live hardware DMA proof has been accepted",
+    "No device-specific consumer has been selected",
+    "Ethernet, storage, networking, and SSH remain explicitly out of scope",
 ];
 
 pub const RP1_RAM_WINDOW_SOURCE: &str = "rp1-dma-ranges-ram-window";
@@ -734,6 +780,153 @@ impl DmaCacheSmallDiagnosticPlanError {
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum DmaCacheSmallDiagnosticVisibilityReportKind {
+    Candidate,
+    NoPlanControl,
+}
+
+impl DmaCacheSmallDiagnosticVisibilityReportKind {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::Candidate => "candidate",
+            Self::NoPlanControl => "no-plan-control",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct DmaCacheSmallDiagnosticVisibilityReportInput {
+    pub kind: DmaCacheSmallDiagnosticVisibilityReportKind,
+    pub plan_evidence: Option<DmaCacheSmallDiagnosticPlanEvidence>,
+    pub claims_rp1_mmio_writes: bool,
+    pub claims_rp1_channel_ownership: bool,
+    pub claims_dma_channel_programming: bool,
+    pub claims_descriptor_ring_ready: bool,
+    pub claims_transfer_completion: bool,
+    pub claims_interrupt_completion: bool,
+    pub claims_hardware_device_completion: bool,
+    pub claims_ethernet_ready: bool,
+    pub claims_storage_ready: bool,
+    pub claims_networking: bool,
+    pub claims_ssh: bool,
+    pub claims_milestone_11_3_completion: bool,
+    pub claims_phase_transition: bool,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct DmaCacheSmallDiagnosticVisibilityReport {
+    pub kind: DmaCacheSmallDiagnosticVisibilityReportKind,
+    pub plan_evidence: Option<DmaCacheSmallDiagnosticPlanEvidence>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct DmaCacheSmallDiagnosticVisibilityReportEvidence {
+    pub visibility_report_contract_id: &'static str,
+    pub source_contract_id: &'static str,
+    pub report_kind: &'static str,
+    pub small_diagnostic_plan_contract_id: Option<&'static str>,
+    pub driver_diagnostic_envelope_contract_id: Option<&'static str>,
+    pub executor_contract_id: Option<&'static str>,
+    pub maintenance_sequence_contract_id: Option<&'static str>,
+    pub sync_plan_contract_id: Option<&'static str>,
+    pub descriptor_contract_id: Option<&'static str>,
+    pub descriptor_source_inventory_id: Option<&'static str>,
+    pub rp1_dma_compatible: Option<&'static str>,
+    pub rp1_dma_controller_rp1_bus_base: Option<u64>,
+    pub rp1_dma_controller_cpu_physical_base: Option<u64>,
+    pub rp1_dma_channel_count: Option<u32>,
+    pub rp1_dma_target_count: Option<u32>,
+    pub rp1_dma_interrupt_name: Option<&'static str>,
+    pub rp1_dma_clock_names: Option<&'static [&'static str]>,
+    pub cpu_physical: Option<u64>,
+    pub cpu_visible: Option<u64>,
+    pub rp1_bus_address: Option<u64>,
+    pub descriptor_length: Option<u64>,
+    pub cache_line_source: Option<&'static str>,
+    pub cache_line_size: Option<u64>,
+    pub line_aligned_cpu_start: Option<u64>,
+    pub covered_length: Option<u64>,
+    pub line_count: Option<u64>,
+    pub direction: Option<&'static str>,
+    pub cacheability: Option<&'static str>,
+    pub owner_transition: Option<&'static str>,
+    pub iommu_classification: Option<&'static str>,
+    pub prerequisite_rejected_runtime_claims: Option<&'static [&'static str]>,
+    pub executor_rejected_runtime_claims: Option<&'static [&'static str]>,
+    pub unresolved_dma_diagnostic_gaps: Option<&'static [&'static str]>,
+    pub hardware_proof_boundary_classification: &'static str,
+    pub rejected_hardware_claims: &'static [&'static str],
+    pub retained_risks: &'static [&'static str],
+    pub claims_rp1_mmio_writes: bool,
+    pub claims_rp1_channel_ownership: bool,
+    pub claims_dma_channel_programming: bool,
+    pub claims_descriptor_ring_ready: bool,
+    pub claims_transfer_completion: bool,
+    pub claims_interrupt_completion: bool,
+    pub claims_hardware_device_completion: bool,
+    pub claims_ethernet_ready: bool,
+    pub claims_storage_ready: bool,
+    pub claims_networking: bool,
+    pub claims_ssh: bool,
+    pub claims_milestone_11_3_completion: bool,
+    pub claims_phase_transition: bool,
+    pub classification: &'static str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum DmaCacheSmallDiagnosticVisibilityReportError {
+    CandidateMissingPlanEvidence,
+    ControlCarriesPlanEvidence,
+    NonAcceptedPlanClassification,
+    MissingPrerequisiteIdentity,
+    MissingRejectedRuntimeClaims,
+    MissingUnresolvedDiagnosticGaps,
+    UnsupportedCacheabilityClaim,
+    UnsupportedIommuClaim,
+    Rp1MmioWriteClaim,
+    Rp1ChannelOwnershipClaim,
+    DmaChannelProgrammingClaim,
+    DescriptorRingReadinessClaim,
+    TransferCompletionClaim,
+    InterruptCompletionClaim,
+    HardwareDeviceCompletionClaim,
+    EthernetReadinessClaim,
+    StorageReadinessClaim,
+    NetworkingClaim,
+    SshClaim,
+    Milestone113CompletionClaim,
+    PhaseTransitionClaim,
+}
+
+impl DmaCacheSmallDiagnosticVisibilityReportError {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::CandidateMissingPlanEvidence => "candidate-missing-plan-evidence",
+            Self::ControlCarriesPlanEvidence => "control-carries-plan-evidence",
+            Self::NonAcceptedPlanClassification => "non-accepted-plan-classification",
+            Self::MissingPrerequisiteIdentity => "missing-prerequisite-identity",
+            Self::MissingRejectedRuntimeClaims => "missing-rejected-runtime-claims",
+            Self::MissingUnresolvedDiagnosticGaps => "missing-unresolved-diagnostic-gaps",
+            Self::UnsupportedCacheabilityClaim => "unsupported-cacheability-claim",
+            Self::UnsupportedIommuClaim => "unsupported-iommu-claim",
+            Self::Rp1MmioWriteClaim => "rp1-mmio-write-claim",
+            Self::Rp1ChannelOwnershipClaim => "rp1-channel-ownership-claim",
+            Self::DmaChannelProgrammingClaim => "dma-channel-programming-claim",
+            Self::DescriptorRingReadinessClaim => "descriptor-ring-readiness-claim",
+            Self::TransferCompletionClaim => "transfer-completion-claim",
+            Self::InterruptCompletionClaim => "interrupt-completion-claim",
+            Self::HardwareDeviceCompletionClaim => "hardware-device-completion-claim",
+            Self::EthernetReadinessClaim => "ethernet-readiness-claim",
+            Self::StorageReadinessClaim => "storage-readiness-claim",
+            Self::NetworkingClaim => "networking-claim",
+            Self::SshClaim => "ssh-claim",
+            Self::Milestone113CompletionClaim => "milestone-11-3-completion-claim",
+            Self::PhaseTransitionClaim => "phase-transition-claim",
+        }
+    }
+}
+
 pub fn validate_dma_buffer_descriptor(
     request: DmaBufferRequest,
     accepted_owned_span: EarlyPageFrameSpan,
@@ -1125,6 +1318,51 @@ pub fn dma_cache_small_diagnostic_plan_evidence(
 
 pub fn rejected_dma_cache_small_diagnostic_plan_evidence(
     error: DmaCacheSmallDiagnosticPlanError,
+) -> (&'static str, &'static str) {
+    (DMA_REJECTED_INPUT_CLASSIFICATION, error.name())
+}
+
+pub fn build_dma_cache_small_diagnostic_visibility_report(
+    input: DmaCacheSmallDiagnosticVisibilityReportInput,
+) -> Result<DmaCacheSmallDiagnosticVisibilityReport, DmaCacheSmallDiagnosticVisibilityReportError> {
+    validate_small_diagnostic_visibility_rejected_claims(input)?;
+
+    match (input.kind, input.plan_evidence) {
+        (DmaCacheSmallDiagnosticVisibilityReportKind::Candidate, Some(plan_evidence)) => {
+            validate_small_diagnostic_visibility_plan_evidence(plan_evidence)?;
+            Ok(DmaCacheSmallDiagnosticVisibilityReport {
+                kind: input.kind,
+                plan_evidence: Some(plan_evidence),
+            })
+        }
+        (DmaCacheSmallDiagnosticVisibilityReportKind::Candidate, None) => {
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::CandidateMissingPlanEvidence)
+        }
+        (DmaCacheSmallDiagnosticVisibilityReportKind::NoPlanControl, None) => {
+            Ok(DmaCacheSmallDiagnosticVisibilityReport {
+                kind: input.kind,
+                plan_evidence: None,
+            })
+        }
+        (DmaCacheSmallDiagnosticVisibilityReportKind::NoPlanControl, Some(_)) => {
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::ControlCarriesPlanEvidence)
+        }
+    }
+}
+
+pub fn dma_cache_small_diagnostic_visibility_report_evidence(
+    report: DmaCacheSmallDiagnosticVisibilityReport,
+) -> DmaCacheSmallDiagnosticVisibilityReportEvidence {
+    match report.plan_evidence {
+        Some(plan) => {
+            dma_cache_small_diagnostic_visibility_candidate_evidence(report.kind.name(), plan)
+        }
+        None => dma_cache_small_diagnostic_visibility_control_evidence(report.kind.name()),
+    }
+}
+
+pub fn rejected_dma_cache_small_diagnostic_visibility_report_evidence(
+    error: DmaCacheSmallDiagnosticVisibilityReportError,
 ) -> (&'static str, &'static str) {
     (DMA_REJECTED_INPUT_CLASSIFICATION, error.name())
 }
@@ -1589,6 +1827,215 @@ fn validate_rp1_dma_controller_source(
     Ok(())
 }
 
+fn validate_small_diagnostic_visibility_rejected_claims(
+    input: DmaCacheSmallDiagnosticVisibilityReportInput,
+) -> Result<(), DmaCacheSmallDiagnosticVisibilityReportError> {
+    if input.claims_rp1_mmio_writes {
+        return Err(DmaCacheSmallDiagnosticVisibilityReportError::Rp1MmioWriteClaim);
+    }
+    if input.claims_rp1_channel_ownership {
+        return Err(DmaCacheSmallDiagnosticVisibilityReportError::Rp1ChannelOwnershipClaim);
+    }
+    if input.claims_dma_channel_programming {
+        return Err(DmaCacheSmallDiagnosticVisibilityReportError::DmaChannelProgrammingClaim);
+    }
+    if input.claims_descriptor_ring_ready {
+        return Err(DmaCacheSmallDiagnosticVisibilityReportError::DescriptorRingReadinessClaim);
+    }
+    if input.claims_transfer_completion {
+        return Err(DmaCacheSmallDiagnosticVisibilityReportError::TransferCompletionClaim);
+    }
+    if input.claims_interrupt_completion {
+        return Err(DmaCacheSmallDiagnosticVisibilityReportError::InterruptCompletionClaim);
+    }
+    if input.claims_hardware_device_completion {
+        return Err(DmaCacheSmallDiagnosticVisibilityReportError::HardwareDeviceCompletionClaim);
+    }
+    if input.claims_ethernet_ready {
+        return Err(DmaCacheSmallDiagnosticVisibilityReportError::EthernetReadinessClaim);
+    }
+    if input.claims_storage_ready {
+        return Err(DmaCacheSmallDiagnosticVisibilityReportError::StorageReadinessClaim);
+    }
+    if input.claims_networking {
+        return Err(DmaCacheSmallDiagnosticVisibilityReportError::NetworkingClaim);
+    }
+    if input.claims_ssh {
+        return Err(DmaCacheSmallDiagnosticVisibilityReportError::SshClaim);
+    }
+    if input.claims_milestone_11_3_completion {
+        return Err(DmaCacheSmallDiagnosticVisibilityReportError::Milestone113CompletionClaim);
+    }
+    if input.claims_phase_transition {
+        return Err(DmaCacheSmallDiagnosticVisibilityReportError::PhaseTransitionClaim);
+    }
+    Ok(())
+}
+
+fn validate_small_diagnostic_visibility_plan_evidence(
+    evidence: DmaCacheSmallDiagnosticPlanEvidence,
+) -> Result<(), DmaCacheSmallDiagnosticVisibilityReportError> {
+    if evidence.classification != DMA_SMALL_DIAGNOSTIC_PLAN_LOCAL_STATIC_CLASSIFICATION {
+        return Err(DmaCacheSmallDiagnosticVisibilityReportError::NonAcceptedPlanClassification);
+    }
+    if evidence.small_diagnostic_plan_contract_id != DMA_CACHE_SMALL_DIAGNOSTIC_PLAN_CONTRACT_ID
+        || evidence.driver_diagnostic_envelope_contract_id
+            != DMA_CACHE_DRIVER_DIAGNOSTIC_ENVELOPE_CONTRACT_ID
+        || evidence.executor_contract_id != DMA_CACHE_MAINTENANCE_EXECUTOR_CONTRACT_ID
+        || evidence.maintenance_sequence_contract_id != DMA_CACHE_MAINTENANCE_SEQUENCE_CONTRACT_ID
+        || evidence.sync_plan_contract_id != DMA_CACHE_SYNC_PLAN_CONTRACT_ID
+        || evidence.descriptor_contract_id != DMA_CACHE_SUBSTRATE_CONTRACT_ID
+        || evidence.descriptor_source_inventory_id != DMA_CACHE_SOURCE_INVENTORY_ID
+    {
+        return Err(DmaCacheSmallDiagnosticVisibilityReportError::MissingPrerequisiteIdentity);
+    }
+    if evidence.cacheability != DmaCacheability::CacheableRequiresMaintenance.name() {
+        return Err(DmaCacheSmallDiagnosticVisibilityReportError::UnsupportedCacheabilityClaim);
+    }
+    if evidence.iommu_classification != RP1_DMA_SOURCE_UNASSIGNED_IOMMU {
+        return Err(DmaCacheSmallDiagnosticVisibilityReportError::UnsupportedIommuClaim);
+    }
+    if evidence.prerequisite_rejected_runtime_claims != DMA_SYNC_PLAN_REJECTED_RUNTIME_CLAIMS
+        || evidence.executor_rejected_runtime_claims
+            != DMA_MAINTENANCE_EXECUTOR_REJECTED_RUNTIME_CLAIMS
+    {
+        return Err(DmaCacheSmallDiagnosticVisibilityReportError::MissingRejectedRuntimeClaims);
+    }
+    if evidence.unresolved_dma_diagnostic_gaps != DMA_DRIVER_DIAGNOSTIC_UNRESOLVED_GAPS {
+        return Err(DmaCacheSmallDiagnosticVisibilityReportError::MissingUnresolvedDiagnosticGaps);
+    }
+    if evidence.claims_rp1_channel_ownership
+        || evidence.claims_descriptor_ring_ready
+        || evidence.claims_transfer_completion
+        || evidence.claims_interrupt_completion
+        || evidence.claims_hardware_device_completion
+        || evidence.claims_ethernet_ready
+        || evidence.claims_storage_ready
+        || evidence.claims_networking
+        || evidence.claims_ssh
+    {
+        return Err(DmaCacheSmallDiagnosticVisibilityReportError::MissingRejectedRuntimeClaims);
+    }
+    Ok(())
+}
+
+fn dma_cache_small_diagnostic_visibility_candidate_evidence(
+    report_kind: &'static str,
+    plan: DmaCacheSmallDiagnosticPlanEvidence,
+) -> DmaCacheSmallDiagnosticVisibilityReportEvidence {
+    DmaCacheSmallDiagnosticVisibilityReportEvidence {
+        visibility_report_contract_id: DMA_CACHE_SMALL_DIAGNOSTIC_VISIBILITY_REPORT_CONTRACT_ID,
+        source_contract_id: DMA_CACHE_SMALL_DIAGNOSTIC_SOURCE_CONTRACT_ID,
+        report_kind,
+        small_diagnostic_plan_contract_id: Some(plan.small_diagnostic_plan_contract_id),
+        driver_diagnostic_envelope_contract_id: Some(plan.driver_diagnostic_envelope_contract_id),
+        executor_contract_id: Some(plan.executor_contract_id),
+        maintenance_sequence_contract_id: Some(plan.maintenance_sequence_contract_id),
+        sync_plan_contract_id: Some(plan.sync_plan_contract_id),
+        descriptor_contract_id: Some(plan.descriptor_contract_id),
+        descriptor_source_inventory_id: Some(plan.descriptor_source_inventory_id),
+        rp1_dma_compatible: Some(plan.rp1_dma_compatible),
+        rp1_dma_controller_rp1_bus_base: Some(plan.rp1_dma_controller_rp1_bus_base),
+        rp1_dma_controller_cpu_physical_base: Some(plan.rp1_dma_controller_cpu_physical_base),
+        rp1_dma_channel_count: Some(plan.rp1_dma_channel_count),
+        rp1_dma_target_count: Some(plan.rp1_dma_target_count),
+        rp1_dma_interrupt_name: Some(plan.rp1_dma_interrupt_name),
+        rp1_dma_clock_names: Some(plan.rp1_dma_clock_names),
+        cpu_physical: Some(plan.cpu_physical),
+        cpu_visible: Some(plan.cpu_visible),
+        rp1_bus_address: Some(plan.rp1_bus_address),
+        descriptor_length: Some(plan.descriptor_length),
+        cache_line_source: Some(plan.cache_line_source),
+        cache_line_size: Some(plan.cache_line_size),
+        line_aligned_cpu_start: Some(plan.line_aligned_cpu_start),
+        covered_length: Some(plan.covered_length),
+        line_count: Some(plan.line_count),
+        direction: Some(plan.direction),
+        cacheability: Some(plan.cacheability),
+        owner_transition: Some(plan.owner_transition),
+        iommu_classification: Some(plan.iommu_classification),
+        prerequisite_rejected_runtime_claims: Some(plan.prerequisite_rejected_runtime_claims),
+        executor_rejected_runtime_claims: Some(plan.executor_rejected_runtime_claims),
+        unresolved_dma_diagnostic_gaps: Some(plan.unresolved_dma_diagnostic_gaps),
+        hardware_proof_boundary_classification:
+            DMA_SMALL_DIAGNOSTIC_HARDWARE_PROOF_BOUNDARY_CLASSIFICATION,
+        rejected_hardware_claims: DMA_SMALL_DIAGNOSTIC_VISIBILITY_REJECTED_HARDWARE_CLAIMS,
+        retained_risks: DMA_SMALL_DIAGNOSTIC_VISIBILITY_RETAINED_RISKS,
+        claims_rp1_mmio_writes: false,
+        claims_rp1_channel_ownership: false,
+        claims_dma_channel_programming: false,
+        claims_descriptor_ring_ready: false,
+        claims_transfer_completion: false,
+        claims_interrupt_completion: false,
+        claims_hardware_device_completion: false,
+        claims_ethernet_ready: false,
+        claims_storage_ready: false,
+        claims_networking: false,
+        claims_ssh: false,
+        claims_milestone_11_3_completion: false,
+        claims_phase_transition: false,
+        classification: DMA_SMALL_DIAGNOSTIC_VISIBILITY_CANDIDATE_CLASSIFICATION,
+    }
+}
+
+fn dma_cache_small_diagnostic_visibility_control_evidence(
+    report_kind: &'static str,
+) -> DmaCacheSmallDiagnosticVisibilityReportEvidence {
+    DmaCacheSmallDiagnosticVisibilityReportEvidence {
+        visibility_report_contract_id: DMA_CACHE_SMALL_DIAGNOSTIC_VISIBILITY_REPORT_CONTRACT_ID,
+        source_contract_id: DMA_CACHE_SMALL_DIAGNOSTIC_SOURCE_CONTRACT_ID,
+        report_kind,
+        small_diagnostic_plan_contract_id: None,
+        driver_diagnostic_envelope_contract_id: None,
+        executor_contract_id: None,
+        maintenance_sequence_contract_id: None,
+        sync_plan_contract_id: None,
+        descriptor_contract_id: None,
+        descriptor_source_inventory_id: None,
+        rp1_dma_compatible: None,
+        rp1_dma_controller_rp1_bus_base: None,
+        rp1_dma_controller_cpu_physical_base: None,
+        rp1_dma_channel_count: None,
+        rp1_dma_target_count: None,
+        rp1_dma_interrupt_name: None,
+        rp1_dma_clock_names: None,
+        cpu_physical: None,
+        cpu_visible: None,
+        rp1_bus_address: None,
+        descriptor_length: None,
+        cache_line_source: None,
+        cache_line_size: None,
+        line_aligned_cpu_start: None,
+        covered_length: None,
+        line_count: None,
+        direction: None,
+        cacheability: None,
+        owner_transition: None,
+        iommu_classification: None,
+        prerequisite_rejected_runtime_claims: None,
+        executor_rejected_runtime_claims: None,
+        unresolved_dma_diagnostic_gaps: None,
+        hardware_proof_boundary_classification:
+            DMA_SMALL_DIAGNOSTIC_HARDWARE_PROOF_BOUNDARY_CLASSIFICATION,
+        rejected_hardware_claims: DMA_SMALL_DIAGNOSTIC_VISIBILITY_REJECTED_HARDWARE_CLAIMS,
+        retained_risks: DMA_SMALL_DIAGNOSTIC_VISIBILITY_RETAINED_RISKS,
+        claims_rp1_mmio_writes: false,
+        claims_rp1_channel_ownership: false,
+        claims_dma_channel_programming: false,
+        claims_descriptor_ring_ready: false,
+        claims_transfer_completion: false,
+        claims_interrupt_completion: false,
+        claims_hardware_device_completion: false,
+        claims_ethernet_ready: false,
+        claims_storage_ready: false,
+        claims_networking: false,
+        claims_ssh: false,
+        claims_milestone_11_3_completion: false,
+        claims_phase_transition: false,
+        classification: DMA_SMALL_DIAGNOSTIC_VISIBILITY_CONTROL_CLASSIFICATION,
+    }
+}
+
 #[cfg(target_arch = "aarch64")]
 fn dispatch_dma_cache_maintenance_instruction(
     instruction: DmaCacheMaintenanceInstruction,
@@ -1736,6 +2183,32 @@ mod tests {
             claims_storage_ready: false,
             claims_networking: false,
             claims_ssh: false,
+        }
+    }
+
+    fn accepted_small_diagnostic_plan_evidence() -> DmaCacheSmallDiagnosticPlanEvidence {
+        let plan = build_dma_cache_small_diagnostic_plan(accepted_small_diagnostic_plan_input())
+            .expect("valid small diagnostic plan input");
+        dma_cache_small_diagnostic_plan_evidence(plan)
+    }
+
+    fn accepted_visibility_candidate_input() -> DmaCacheSmallDiagnosticVisibilityReportInput {
+        DmaCacheSmallDiagnosticVisibilityReportInput {
+            kind: DmaCacheSmallDiagnosticVisibilityReportKind::Candidate,
+            plan_evidence: Some(accepted_small_diagnostic_plan_evidence()),
+            claims_rp1_mmio_writes: false,
+            claims_rp1_channel_ownership: false,
+            claims_dma_channel_programming: false,
+            claims_descriptor_ring_ready: false,
+            claims_transfer_completion: false,
+            claims_interrupt_completion: false,
+            claims_hardware_device_completion: false,
+            claims_ethernet_ready: false,
+            claims_storage_ready: false,
+            claims_networking: false,
+            claims_ssh: false,
+            claims_milestone_11_3_completion: false,
+            claims_phase_transition: false,
         }
     }
 
@@ -2884,6 +3357,400 @@ mod tests {
                 DMA_REJECTED_INPUT_CLASSIFICATION,
                 "descriptor-ring-readiness-claim"
             )
+        );
+    }
+
+    #[test_case]
+    fn small_diagnostic_visibility_report_formats_candidate_plan_evidence() {
+        let report = build_dma_cache_small_diagnostic_visibility_report(
+            accepted_visibility_candidate_input(),
+        )
+        .expect("valid visibility candidate input");
+        let evidence = dma_cache_small_diagnostic_visibility_report_evidence(report);
+
+        assert_eq!(
+            evidence.visibility_report_contract_id,
+            DMA_CACHE_SMALL_DIAGNOSTIC_VISIBILITY_REPORT_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.source_contract_id,
+            DMA_CACHE_SMALL_DIAGNOSTIC_SOURCE_CONTRACT_ID
+        );
+        assert_eq!(evidence.report_kind, "candidate");
+        assert_eq!(
+            evidence.small_diagnostic_plan_contract_id,
+            Some(DMA_CACHE_SMALL_DIAGNOSTIC_PLAN_CONTRACT_ID)
+        );
+        assert_eq!(
+            evidence.driver_diagnostic_envelope_contract_id,
+            Some(DMA_CACHE_DRIVER_DIAGNOSTIC_ENVELOPE_CONTRACT_ID)
+        );
+        assert_eq!(
+            evidence.executor_contract_id,
+            Some(DMA_CACHE_MAINTENANCE_EXECUTOR_CONTRACT_ID)
+        );
+        assert_eq!(
+            evidence.maintenance_sequence_contract_id,
+            Some(DMA_CACHE_MAINTENANCE_SEQUENCE_CONTRACT_ID)
+        );
+        assert_eq!(
+            evidence.sync_plan_contract_id,
+            Some(DMA_CACHE_SYNC_PLAN_CONTRACT_ID)
+        );
+        assert_eq!(
+            evidence.descriptor_contract_id,
+            Some(DMA_CACHE_SUBSTRATE_CONTRACT_ID)
+        );
+        assert_eq!(
+            evidence.descriptor_source_inventory_id,
+            Some(DMA_CACHE_SOURCE_INVENTORY_ID)
+        );
+        assert_eq!(
+            evidence.rp1_dma_compatible,
+            Some(RP1_DMA_CONTROLLER_COMPATIBLE)
+        );
+        assert_eq!(
+            evidence.rp1_dma_controller_rp1_bus_base,
+            Some(RP1_DMA_CONTROLLER_BUS_BASE)
+        );
+        assert_eq!(
+            evidence.rp1_dma_controller_cpu_physical_base,
+            Some(RP1_DMA_CONTROLLER_CPU_BASE)
+        );
+        assert_eq!(evidence.rp1_dma_channel_count, Some(8));
+        assert_eq!(evidence.rp1_dma_target_count, Some(64));
+        assert_eq!(
+            evidence.rp1_dma_interrupt_name,
+            Some(RP1_DMA_INTERRUPT_NAME)
+        );
+        assert_eq!(evidence.rp1_dma_clock_names, Some(RP1_DMA_CLOCK_NAMES));
+        assert_eq!(evidence.cpu_physical, Some(0x2f02_0000));
+        assert_eq!(evidence.cpu_visible, Some(0x2f02_0000));
+        assert_eq!(evidence.rp1_bus_address, Some(0x10_2f02_0000));
+        assert_eq!(evidence.descriptor_length, Some(0x2000));
+        assert_eq!(evidence.cache_line_source, Some(BCM2712_CACHE_LINE_SOURCE));
+        assert_eq!(evidence.cache_line_size, Some(64));
+        assert_eq!(evidence.line_aligned_cpu_start, Some(0x2f02_0000));
+        assert_eq!(evidence.covered_length, Some(0x2000));
+        assert_eq!(evidence.line_count, Some(128));
+        assert_eq!(evidence.direction, Some("to-device"));
+        assert_eq!(
+            evidence.cacheability,
+            Some("cacheable-requires-maintenance")
+        );
+        assert_eq!(evidence.owner_transition, Some("cpu-to-device"));
+        assert_eq!(
+            evidence.iommu_classification,
+            Some(RP1_DMA_SOURCE_UNASSIGNED_IOMMU)
+        );
+        assert_eq!(
+            evidence.prerequisite_rejected_runtime_claims,
+            Some(DMA_SYNC_PLAN_REJECTED_RUNTIME_CLAIMS)
+        );
+        assert_eq!(
+            evidence.executor_rejected_runtime_claims,
+            Some(DMA_MAINTENANCE_EXECUTOR_REJECTED_RUNTIME_CLAIMS)
+        );
+        assert_eq!(
+            evidence.unresolved_dma_diagnostic_gaps,
+            Some(DMA_DRIVER_DIAGNOSTIC_UNRESOLVED_GAPS)
+        );
+        assert_eq!(
+            evidence.hardware_proof_boundary_classification,
+            DMA_SMALL_DIAGNOSTIC_HARDWARE_PROOF_BOUNDARY_CLASSIFICATION
+        );
+        assert_eq!(
+            evidence.rejected_hardware_claims,
+            DMA_SMALL_DIAGNOSTIC_VISIBILITY_REJECTED_HARDWARE_CLAIMS
+        );
+        assert_eq!(
+            evidence.retained_risks,
+            DMA_SMALL_DIAGNOSTIC_VISIBILITY_RETAINED_RISKS
+        );
+        assert!(!evidence.claims_rp1_mmio_writes);
+        assert!(!evidence.claims_rp1_channel_ownership);
+        assert!(!evidence.claims_dma_channel_programming);
+        assert!(!evidence.claims_descriptor_ring_ready);
+        assert!(!evidence.claims_transfer_completion);
+        assert!(!evidence.claims_interrupt_completion);
+        assert!(!evidence.claims_hardware_device_completion);
+        assert!(!evidence.claims_ethernet_ready);
+        assert!(!evidence.claims_storage_ready);
+        assert!(!evidence.claims_networking);
+        assert!(!evidence.claims_ssh);
+        assert!(!evidence.claims_milestone_11_3_completion);
+        assert!(!evidence.claims_phase_transition);
+        assert_eq!(
+            evidence.classification,
+            DMA_SMALL_DIAGNOSTIC_VISIBILITY_CANDIDATE_CLASSIFICATION
+        );
+    }
+
+    #[test_case]
+    fn small_diagnostic_visibility_report_formats_no_plan_control() {
+        let report = build_dma_cache_small_diagnostic_visibility_report(
+            DmaCacheSmallDiagnosticVisibilityReportInput {
+                kind: DmaCacheSmallDiagnosticVisibilityReportKind::NoPlanControl,
+                plan_evidence: None,
+                ..accepted_visibility_candidate_input()
+            },
+        )
+        .expect("valid no-plan control input");
+        let evidence = dma_cache_small_diagnostic_visibility_report_evidence(report);
+
+        assert_eq!(
+            evidence.visibility_report_contract_id,
+            DMA_CACHE_SMALL_DIAGNOSTIC_VISIBILITY_REPORT_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.source_contract_id,
+            DMA_CACHE_SMALL_DIAGNOSTIC_SOURCE_CONTRACT_ID
+        );
+        assert_eq!(evidence.report_kind, "no-plan-control");
+        assert_eq!(evidence.small_diagnostic_plan_contract_id, None);
+        assert_eq!(evidence.driver_diagnostic_envelope_contract_id, None);
+        assert_eq!(evidence.executor_contract_id, None);
+        assert_eq!(evidence.maintenance_sequence_contract_id, None);
+        assert_eq!(evidence.sync_plan_contract_id, None);
+        assert_eq!(evidence.descriptor_contract_id, None);
+        assert_eq!(evidence.descriptor_source_inventory_id, None);
+        assert_eq!(evidence.rp1_dma_compatible, None);
+        assert_eq!(evidence.rp1_dma_controller_rp1_bus_base, None);
+        assert_eq!(evidence.rp1_dma_controller_cpu_physical_base, None);
+        assert_eq!(evidence.rp1_dma_channel_count, None);
+        assert_eq!(evidence.rp1_dma_target_count, None);
+        assert_eq!(evidence.rp1_dma_interrupt_name, None);
+        assert_eq!(evidence.rp1_dma_clock_names, None);
+        assert_eq!(evidence.cpu_physical, None);
+        assert_eq!(evidence.cpu_visible, None);
+        assert_eq!(evidence.rp1_bus_address, None);
+        assert_eq!(evidence.descriptor_length, None);
+        assert_eq!(evidence.cache_line_source, None);
+        assert_eq!(evidence.cache_line_size, None);
+        assert_eq!(evidence.line_aligned_cpu_start, None);
+        assert_eq!(evidence.covered_length, None);
+        assert_eq!(evidence.line_count, None);
+        assert_eq!(evidence.direction, None);
+        assert_eq!(evidence.cacheability, None);
+        assert_eq!(evidence.owner_transition, None);
+        assert_eq!(evidence.iommu_classification, None);
+        assert_eq!(evidence.prerequisite_rejected_runtime_claims, None);
+        assert_eq!(evidence.executor_rejected_runtime_claims, None);
+        assert_eq!(evidence.unresolved_dma_diagnostic_gaps, None);
+        assert_eq!(
+            evidence.hardware_proof_boundary_classification,
+            DMA_SMALL_DIAGNOSTIC_HARDWARE_PROOF_BOUNDARY_CLASSIFICATION
+        );
+        assert_eq!(
+            evidence.rejected_hardware_claims,
+            DMA_SMALL_DIAGNOSTIC_VISIBILITY_REJECTED_HARDWARE_CLAIMS
+        );
+        assert_eq!(
+            evidence.classification,
+            DMA_SMALL_DIAGNOSTIC_VISIBILITY_CONTROL_CLASSIFICATION
+        );
+    }
+
+    #[test_case]
+    fn small_diagnostic_visibility_report_rejects_shape_and_plan_bypass() {
+        let input = accepted_visibility_candidate_input();
+
+        assert_eq!(
+            build_dma_cache_small_diagnostic_visibility_report(
+                DmaCacheSmallDiagnosticVisibilityReportInput {
+                    plan_evidence: None,
+                    ..input
+                }
+            ),
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::CandidateMissingPlanEvidence)
+        );
+        assert_eq!(
+            build_dma_cache_small_diagnostic_visibility_report(
+                DmaCacheSmallDiagnosticVisibilityReportInput {
+                    kind: DmaCacheSmallDiagnosticVisibilityReportKind::NoPlanControl,
+                    ..input
+                }
+            ),
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::ControlCarriesPlanEvidence)
+        );
+        assert_eq!(
+            build_dma_cache_small_diagnostic_visibility_report(
+                DmaCacheSmallDiagnosticVisibilityReportInput {
+                    plan_evidence: Some(DmaCacheSmallDiagnosticPlanEvidence {
+                        classification: DMA_REJECTED_INPUT_CLASSIFICATION,
+                        ..accepted_small_diagnostic_plan_evidence()
+                    }),
+                    ..input
+                }
+            ),
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::NonAcceptedPlanClassification)
+        );
+        assert_eq!(
+            build_dma_cache_small_diagnostic_visibility_report(
+                DmaCacheSmallDiagnosticVisibilityReportInput {
+                    plan_evidence: Some(DmaCacheSmallDiagnosticPlanEvidence {
+                        executor_contract_id: "wrong-executor-contract",
+                        ..accepted_small_diagnostic_plan_evidence()
+                    }),
+                    ..input
+                }
+            ),
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::MissingPrerequisiteIdentity)
+        );
+        assert_eq!(
+            build_dma_cache_small_diagnostic_visibility_report(
+                DmaCacheSmallDiagnosticVisibilityReportInput {
+                    plan_evidence: Some(DmaCacheSmallDiagnosticPlanEvidence {
+                        prerequisite_rejected_runtime_claims: &[
+                            "executed-driver-buffer-cache-maintenance"
+                        ],
+                        ..accepted_small_diagnostic_plan_evidence()
+                    }),
+                    ..input
+                }
+            ),
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::MissingRejectedRuntimeClaims)
+        );
+        assert_eq!(
+            build_dma_cache_small_diagnostic_visibility_report(
+                DmaCacheSmallDiagnosticVisibilityReportInput {
+                    plan_evidence: Some(DmaCacheSmallDiagnosticPlanEvidence {
+                        unresolved_dma_diagnostic_gaps: &["rp1-dma-channel-ownership"],
+                        ..accepted_small_diagnostic_plan_evidence()
+                    }),
+                    ..input
+                }
+            ),
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::MissingUnresolvedDiagnosticGaps)
+        );
+    }
+
+    #[test_case]
+    fn small_diagnostic_visibility_report_rejects_overclaims() {
+        let input = accepted_visibility_candidate_input();
+
+        assert_eq!(
+            build_dma_cache_small_diagnostic_visibility_report(
+                DmaCacheSmallDiagnosticVisibilityReportInput {
+                    claims_rp1_mmio_writes: true,
+                    ..input
+                }
+            ),
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::Rp1MmioWriteClaim)
+        );
+        assert_eq!(
+            build_dma_cache_small_diagnostic_visibility_report(
+                DmaCacheSmallDiagnosticVisibilityReportInput {
+                    claims_rp1_channel_ownership: true,
+                    ..input
+                }
+            ),
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::Rp1ChannelOwnershipClaim)
+        );
+        assert_eq!(
+            build_dma_cache_small_diagnostic_visibility_report(
+                DmaCacheSmallDiagnosticVisibilityReportInput {
+                    claims_dma_channel_programming: true,
+                    ..input
+                }
+            ),
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::DmaChannelProgrammingClaim)
+        );
+        assert_eq!(
+            build_dma_cache_small_diagnostic_visibility_report(
+                DmaCacheSmallDiagnosticVisibilityReportInput {
+                    claims_descriptor_ring_ready: true,
+                    ..input
+                }
+            ),
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::DescriptorRingReadinessClaim)
+        );
+        assert_eq!(
+            build_dma_cache_small_diagnostic_visibility_report(
+                DmaCacheSmallDiagnosticVisibilityReportInput {
+                    claims_transfer_completion: true,
+                    ..input
+                }
+            ),
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::TransferCompletionClaim)
+        );
+        assert_eq!(
+            build_dma_cache_small_diagnostic_visibility_report(
+                DmaCacheSmallDiagnosticVisibilityReportInput {
+                    claims_interrupt_completion: true,
+                    ..input
+                }
+            ),
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::InterruptCompletionClaim)
+        );
+        assert_eq!(
+            build_dma_cache_small_diagnostic_visibility_report(
+                DmaCacheSmallDiagnosticVisibilityReportInput {
+                    claims_hardware_device_completion: true,
+                    ..input
+                }
+            ),
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::HardwareDeviceCompletionClaim)
+        );
+        assert_eq!(
+            build_dma_cache_small_diagnostic_visibility_report(
+                DmaCacheSmallDiagnosticVisibilityReportInput {
+                    claims_ethernet_ready: true,
+                    ..input
+                }
+            ),
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::EthernetReadinessClaim)
+        );
+        assert_eq!(
+            build_dma_cache_small_diagnostic_visibility_report(
+                DmaCacheSmallDiagnosticVisibilityReportInput {
+                    claims_storage_ready: true,
+                    ..input
+                }
+            ),
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::StorageReadinessClaim)
+        );
+        assert_eq!(
+            build_dma_cache_small_diagnostic_visibility_report(
+                DmaCacheSmallDiagnosticVisibilityReportInput {
+                    claims_networking: true,
+                    ..input
+                }
+            ),
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::NetworkingClaim)
+        );
+        assert_eq!(
+            build_dma_cache_small_diagnostic_visibility_report(
+                DmaCacheSmallDiagnosticVisibilityReportInput {
+                    claims_ssh: true,
+                    ..input
+                }
+            ),
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::SshClaim)
+        );
+        assert_eq!(
+            build_dma_cache_small_diagnostic_visibility_report(
+                DmaCacheSmallDiagnosticVisibilityReportInput {
+                    claims_milestone_11_3_completion: true,
+                    ..input
+                }
+            ),
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::Milestone113CompletionClaim)
+        );
+        assert_eq!(
+            build_dma_cache_small_diagnostic_visibility_report(
+                DmaCacheSmallDiagnosticVisibilityReportInput {
+                    claims_phase_transition: true,
+                    ..input
+                }
+            ),
+            Err(DmaCacheSmallDiagnosticVisibilityReportError::PhaseTransitionClaim)
+        );
+        assert_eq!(
+            rejected_dma_cache_small_diagnostic_visibility_report_evidence(
+                DmaCacheSmallDiagnosticVisibilityReportError::PhaseTransitionClaim
+            ),
+            (DMA_REJECTED_INPUT_CLASSIFICATION, "phase-transition-claim")
         );
     }
 
