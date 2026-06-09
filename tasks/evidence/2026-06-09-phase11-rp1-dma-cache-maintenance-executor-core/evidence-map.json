@@ -1,0 +1,65 @@
+{
+  "task_id": "phase11-rp1-dma-cache-maintenance-executor-core-20260609",
+  "evidence": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-maintenance-executor-core.md",
+      "evidence_level": "static inspection and implementation summary"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-maintenance-executor-core/classification.json",
+      "evidence_level": "accepted executor classification"
+    },
+    {
+      "label": "executor implementation",
+      "path": "src/dma_cache.rs",
+      "evidence_level": "local implementation and architecture-gated source inspection"
+    },
+    {
+      "label": "instruction/barrier source comparison",
+      "path": "src/smp.rs",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "runtime execution contract",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-runtime-execution-contract.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "maintenance sequence evidence chain",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-maintenance-sequence-core.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "memory architecture update",
+      "path": "docs/src/architecture/memory.md",
+      "evidence_level": "documentation reconciliation"
+    },
+    {
+      "label": "project contract update",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "evidence_level": "documentation reconciliation"
+    },
+    {
+      "label": "roadmap update",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "documentation reconciliation"
+    },
+    {
+      "label": "cargo fmt",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "label": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "result": "passed"
+    },
+    {
+      "label": "mdbook",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    }
+  ]
+}

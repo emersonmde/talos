@@ -1,0 +1,45 @@
+{
+  "task_id": "phase11-rp1-dma-cache-maintenance-executor-core-20260609",
+  "classification": "rp1-dma-cache-maintenance-executor-core-accepted",
+  "accepted_claims": [
+    "phase11-rp1-dma-cache-maintenance-executor-contract-v1 is implemented in src/dma_cache.rs as an architecture-gated executor boundary",
+    "executor input must be accepted DmaCacheMaintenanceSequenceEvidence with descriptor, sync-plan, and maintenance-sequence identity preserved",
+    "executor validation rejects wrong contract ids/classification, wrong cacheability/IOMMU identity, missing prerequisite rejected-runtime-claims identity, zero line coverage, line-range mismatch, overflow, and unsupported operation/instruction/barrier vocabulary",
+    "accepted dispatch vocabulary maps clean to dc cvac, invalidate to dc ivac, clean+invalidate to dc civac, followed by dsb sy",
+    "executor evidence records contract ids, operation, instruction, barrier, line coverage, CPU/RP1 addresses, direction, cacheability, owner transition, IOMMU classification, prerequisite rejected runtime claims, executor rejected claims, and runtime-execution classification"
+  ],
+  "rejected_claims": [
+    "Pi 5 hardware validation",
+    "boot archive publication",
+    "hardwareTestLock acquisition",
+    "driver DMA completion",
+    "RP1 MMIO writes",
+    "DMA channel programming",
+    "descriptor rings",
+    "interrupt completion",
+    "Ethernet or storage driver readiness",
+    "networking or SSH readiness",
+    "coherent, non-cacheable, or IOMMU-backed runtime policy",
+    "DMA-safe allocation expansion or high-memory pinning",
+    "Milestone 12 work",
+    "Milestone 11.3 completion by implication",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "No hardware proof was run for live cache-maintenance ordering",
+    "No RP1 DMA channel or descriptor-ring ownership has been accepted",
+    "No interrupt-completion or driver DMA completion path exists",
+    "No coherent, non-cacheable, or IOMMU-backed policy exists",
+    "No DMA-safe allocation expansion beyond accepted descriptor validation exists"
+  ],
+  "evidence_level": [
+    "static inspection",
+    "architecture-gated source inspection",
+    "fmt/lint/typecheck",
+    "unit tests",
+    "JSON checks",
+    "documentation build",
+    "git diff checks"
+  ],
+  "next_action": "Mechanically promote phase11-rp1-dma-cache-maintenance-executor-closeout-20260609 on the next worker wake; do not run hardware, publish boot archives, program RP1 MMIO or DMA channels, create descriptor rings, implement Ethernet/storage/networking/SSH, or accept Milestone 11.3 by implication."
+}

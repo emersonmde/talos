@@ -403,6 +403,33 @@ unaccepted. The next guarded boundary is a runtime/execution-contract task; it
 must not execute cache maintenance or run hardware unless its own accepted
 scope explicitly authorizes that work.
 
+phase11-rp1-dma-cache-runtime-execution-contract-20260609 accepts
+phase11-rp1-dma-cache-maintenance-executor-contract-v1 as the next bounded
+runtime/execution boundary. The contract requires any future executor to
+consume only accepted DmaCacheMaintenanceSequenceEvidence, preserve descriptor,
+sync-plan, and maintenance-sequence identity, validate 64-byte line coverage
+and rejected-runtime-claim identity, dispatch only dc cvac, dc ivac, dc civac,
+and a final dsb sy, and emit runtime-execution evidence. This is not Ethernet,
+storage, networking, SSH, RP1 DMA channel programming, descriptor-ring work,
+interrupt completion, hardware validation, or Milestone 11.3 completion.
+
+phase11-rp1-dma-cache-maintenance-executor-core-20260609 implements that
+bounded executor core in src/dma_cache.rs. The accepted frontier is limited to
+an architecture-gated dispatch boundary that validates accepted maintenance
+sequence evidence before line-by-line cache maintenance and final ordering
+barrier dispatch. The executor rejects wrong contract ids/classification,
+wrong cacheability or IOMMU identity, missing prerequisite rejected-runtime
+claims, zero or mismatched line coverage, range overflow, and unsupported
+operation, instruction, or barrier vocabulary. It returns evidence for the
+executor contract, prerequisite contract ids, operation, instruction, barrier,
+line coverage, CPU/RP1 addresses, direction, cacheability, owner transition,
+IOMMU classification, prerequisite rejected-runtime claims, executor rejected
+claims, and runtime-execution classification. It does not accept driver DMA
+completion, RP1 MMIO writes, DMA channel programming, descriptor rings,
+interrupt completion, Ethernet, storage, networking, SSH, hardware validation,
+Milestone 12 work, or Milestone 11.3 completion by implication. The next queued
+boundary is the maintenance-executor closeout checkpoint.
+
 phase11-rp1-gpio-event-latch-source-contract-20260607 is accepted as
 source-contract-blocked. Retained RP1/Linux source identifies the GPIO14 event
 configuration path: GPIO14 CTRL CLR can clear raw event enables, GPIO14 CTRL

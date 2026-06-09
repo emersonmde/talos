@@ -8862,9 +8862,25 @@ ordering, working DMA behavior, RP1 MMIO writes, DMA channel programming,
 descriptor rings, interrupt completion, coherent/non-cacheable/IOMMU-backed
 policy, DMA-safe allocation beyond descriptor validation, Ethernet, storage,
 networking, SSH, hardware validation, Milestone 12 work, and Milestone 11.3
-completion by implication remain unaccepted. No explicit worker-owned
-follow-up task exists yet; supervisor planning is required before a bounded
-maintenance-executor core implementation continues.
+completion by implication remain unaccepted.
+
+phase11-rp1-dma-cache-maintenance-executor-core-20260609 accepts the bounded
+architecture-gated maintenance-executor core as
+rp1-dma-cache-maintenance-executor-core-accepted. src/dma_cache.rs now exposes
+phase11-rp1-dma-cache-maintenance-executor-contract-v1, validates accepted
+DmaCacheMaintenanceSequenceEvidence identity before dispatch, maps the accepted
+operation vocabulary to dc cvac, dc ivac, dc civac, and a final dsb sy
+boundary, and returns runtime-execution evidence while preserving prerequisite
+descriptor, sync-plan, sequence, line-coverage, CPU/RP1 address, cacheability,
+owner-transition, IOMMU, and rejected-claims fields. Focused unit tests cover
+the accepted clean/invalidate/clean+invalidate vocabularies and rejected
+contract/classification bypass, cacheability/IOMMU mismatch, missing
+rejected-claims identity, zero/mismatched line coverage, overflow, and
+unsupported operation/instruction/barrier inputs. Driver DMA completion, RP1
+MMIO writes, DMA channel programming, descriptor rings, interrupt completion,
+Ethernet, storage, networking, SSH, hardware validation, Milestone 12 work, and
+Milestone 11.3 completion by implication remain unaccepted. The next queued
+boundary is the maintenance-executor closeout checkpoint.
 
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 

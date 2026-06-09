@@ -202,19 +202,31 @@ policy, and validation evidence instead of treating DTB discovery as permission
 to allocate.
 
 The accepted data-cache-enabled state is likewise an early-kernel execution
-boundary, not a driver DMA coherency contract. Device MMIO remains mapped as
-Device-nGnRE, but Talos has not accepted:
+boundary, not a complete driver DMA coherency contract. Device MMIO remains
+mapped as Device-nGnRE. Phase 11 now accepts a bounded RP1 DMA/cache substrate:
+descriptor validation for the accepted low-tail owned span, local/static
+sync-plan and maintenance-sequence evidence, and an architecture-gated executor
+that consumes only accepted `DmaCacheMaintenanceSequenceEvidence` before
+dispatching `dc cvac`, `dc ivac`, `dc civac`, and a final `dsb sy`
+boundary.
+
+That executor is not a general driver DMA API and does not accept:
 
 - DMA-safe buffer allocation or pinning.
-- RP1/PCIe addressability, `dma-ranges`, or IOMMU policy.
-- Cache clean/invalidate APIs for driver-owned buffers.
+- RP1 DMA channel programming, descriptor rings, interrupt completion, or
+  working DMA behavior.
+- IOMMU-backed, coherent, or non-cacheable driver policy.
+- Cache clean/invalidate APIs for arbitrary driver-owned buffers or raw
+  driver-supplied addresses.
 - Cacheable versus non-cacheable DMA mapping rules.
 - Ownership rules for allocator metadata under driver DMA pressure.
+- Hardware validation or Milestone 11.3 completion.
 
-Until those pieces are designed and validated, Phase 4 interrupt/timer work must
-assume only the accepted low identity-mapped allocator span is available for
-ordinary kernel allocations, and no driver may infer DMA safety from the current
-cache-enabled boot status.
+Until those pieces are designed and validated, Phase 4 interrupt/timer work and
+future driver work must assume only the accepted low identity-mapped allocator
+span is available for ordinary kernel allocations. No driver may infer broad
+DMA safety from the current cache-enabled boot status or bypass the accepted
+descriptor, sync-plan, maintenance-sequence, and executor evidence chain.
 
 Talos now zeroes and populates those four pages with a deterministic stage-1
 4 KiB translation skeleton, but still does not enable translation:
