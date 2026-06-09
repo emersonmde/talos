@@ -1,0 +1,52 @@
+{
+  "task_id": "phase11-rp1-observed-gpio16-ownership-event-pi5-20260609",
+  "status": "accepted",
+  "classification": "observed-gpio16-ownership-preflight-blocked-non-gpio-function",
+  "evidence_level": [
+    "image/archive inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "TFTP evidence",
+    "restore proof",
+    "capture/staging checker replay"
+  ],
+  "archive": {
+    "path": "target/task-evidence/2026-06-09-gpio16-real-pi5/gpio16-real.tar.gz",
+    "sha256": "ae8f97043e61976bcc64dbebd48ae90cbd352d2ad1aeb245a6be3723247cb680"
+  },
+  "selected": {
+    "tree_hash": "908eadd18fab1ba826d2dba92125649383a4857ed39ea18af125feb721a637c3",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 50640
+  },
+  "marker": {
+    "required": "TALOS: rp1-gpio16-owned-event-discriminator-result",
+    "first_line": "TALOS: rp1-gpio16-owned-event-discriminator-result contract=phase11-rp1-observed-gpio16-ownership-event-source-contract-v1 target=rp1-gpio16-ownership-event-observed-aperture-preflight-read pin=GPIO16 bank=IO_BANK0 gpio16-bit-mask=0x10000 gpio16-status-address=0x1c000d0080 gpio16-ctrl-address=0x1c000d0084 io-bank0-inte-address=0x1c000d011c io-bank0-ints-address=0x1c000d0124 rio-out-address=0x1c000e0000 rio-oe-address=0x1c000e0004 rio-in-address=0x1c000e0008 pad-address=0x1c000f0044 gicd-isenabler5-address=0x107fff9114 gicd-ispendr5-address=0x107fff9214 gicd-isactiver5-address=0x107fff9314 gicc-hppir-address=0x107fffa018 width=32 gpio16-status-raw=0x4400000 gpio16-ctrl-raw=0x9f gpio16-funcsel=31 gpio16-func-name=unknown gpio16-outover=0 gpio16-oeover=0 gpio16-inover=0 gpio16-raw-event-enable-mask=0x0 gpio16-filtered-event-enable-mask=0x0 gpio16-status-event-mask=0x44 gpio16-status-raw-high=false io-bank0-inte-raw=0x0 io-bank0-ints-raw=0x0 gpio16-enabled=false gpio16-source-status=false rio-out-raw=0x0 rio-oe-raw=0x0 rio-in-raw=0x4000 rio-out-gpio16=false rio-oe-gpio16=false rio-in-gpio16=false pad-raw=0x96 pad-input-enable=false pad-output-disable=true pad-pull=0x1 pad-drive=0x1 pad-schmitt=true pad-slew=false gicd-isenabler5-raw=0x0 gicd-ispendr5-raw=0x0 gicd-isactiver5-raw=0x0 gicc-hppir-raw=0x3ff intid160-enabled=false intid160-pending=false intid160-active=false hppir-intid=1023 classification=observed-gpio16-ownership-preflight-blocked-non-gpio-function"
+  },
+  "v3": {
+    "decisive": true,
+    "classification": "capture-transaction-v3-ready",
+    "rejection_reasons": []
+  },
+  "boot_staging": {
+    "classification": "boot-staging-identity-ready",
+    "rejection_reasons": []
+  },
+  "capture_summary_classification": null,
+  "accepted_claims": [
+    "selected read-only GPIO16 ownership/event preflight visibility/classification"
+  ],
+  "not_accepted": [
+    "GPIO ownership",
+    "GPIO/RIO/pad/INTE/CTRL writes",
+    "event generation",
+    "interrupt delivery",
+    "handler ownership",
+    "broad RP1 mapping",
+    "DMA/cache",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ]
+}

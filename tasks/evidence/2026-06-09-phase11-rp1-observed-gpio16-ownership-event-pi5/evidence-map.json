@@ -1,0 +1,116 @@
+{
+  "task_id": "phase11-rp1-observed-gpio16-ownership-event-pi5-20260609",
+  "status": "accepted",
+  "classification": "observed-gpio16-ownership-preflight-blocked-non-gpio-function",
+  "evidence": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-pi5.md",
+      "type": "task record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-pi5/classification.json",
+      "type": "read-only preflight classification"
+    },
+    {
+      "label": "static archive review",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-pi5/static-archive-review.txt",
+      "type": "image/archive inspection"
+    },
+    {
+      "label": "published archive metadata",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-pi5/publish-archive.json",
+      "type": "lab-controller API"
+    },
+    {
+      "label": "capture proof bundle",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-pi5/real-run/",
+      "type": "lab-controller API, serial hardware boot/output, TFTP evidence, restore proof"
+    },
+    {
+      "label": "capture summary",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-pi5/real-run/capture-invariant-summary.json",
+      "type": "hardware capture summary"
+    },
+    {
+      "label": "V3 checker output",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-pi5/v3-check.json",
+      "type": "capture freshness replay"
+    },
+    {
+      "label": "boot-staging identity checker output",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-pi5/boot-staging-identity-check.json",
+      "type": "boot-staging identity replay"
+    },
+    {
+      "label": "marker-visible preflight output",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-pi5/marker-first-line.txt",
+      "type": "serial hardware boot/output excerpt"
+    },
+    {
+      "label": "restore proof",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-pi5/real-run/post-restore-status.json",
+      "type": "lab-controller API restore identity"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "Image/archive review for the real preflight archive",
+      "result": "passed"
+    },
+    {
+      "gate": "Serialized Pi 5 lab run under hardwareTestLock",
+      "result": "passed"
+    },
+    {
+      "gate": "Candidate identity via lab API before power",
+      "result": "passed"
+    },
+    {
+      "gate": "Fresh serial cursor/drain evidence",
+      "result": "passed with V3 marker-differential freshness"
+    },
+    {
+      "gate": "TFTP delta proving expected candidate fetch path and byte count",
+      "result": "passed"
+    },
+    {
+      "gate": "Final pre-restore selected-tree identity check",
+      "result": "passed"
+    },
+    {
+      "gate": "Restore proof to the pre-run tree",
+      "result": "passed"
+    },
+    {
+      "gate": "Run accepted capture/staging checker and retain JSON output",
+      "result": "passed"
+    },
+    {
+      "gate": "jq empty on evidence-map, classification, checker, and retained JSON artifacts",
+      "result": "passed"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "gate": "mdbook build if docs/src files are touched",
+      "result": "not run; no docs/src files touched"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "passed"
+    }
+  ],
+  "notes": {
+    "selected_tree_hash": "908eadd18fab1ba826d2dba92125649383a4857ed39ea18af125feb721a637c3",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 50640,
+    "v3_classification": "capture-transaction-v3-ready",
+    "boot_staging_identity_classification": "boot-staging-identity-ready",
+    "preflight_result_classification": "observed-gpio16-ownership-preflight-blocked-non-gpio-function",
+    "no_docs_src_touched": true
+  }
+}

@@ -1,0 +1,9 @@
+candidate_archive=target/task-evidence/2026-06-09-gpio16-real-pi5/gpio16-real.tar.gz
+candidate_archive_sha256=ae8f97043e61976bcc64dbebd48ae90cbd352d2ad1aeb245a6be3723247cb680
+kernel_2712_sha256=77db209655acd8f14c4cb63c3689f97d4198d6ba5adb96faf236c03423ce2760
+kernel_2712_size=50640
+header_image_size=50640
+text_offset=0
+flags=12
+result_marker=TALOS: rp1-gpio16-owned-event-discriminator-result
+forbidden_gpio16_control_strings_absent=true
