@@ -1,0 +1,69 @@
+{
+  "task_id": "phase11-rp1-dma-cache-small-diagnostic-source-contract-20260609",
+  "classification": "rp1-dma-cache-small-diagnostic-source-contract-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "mdbook build",
+    "git diff checks"
+  ],
+  "selected_contract": "phase11-rp1-dma-cache-small-diagnostic-plan-contract-v1",
+  "smallest_diagnostic_question": "Can Talos construct an evidence-backed plan for one RP1 AXI DMA diagnostic using an accepted cache-maintained low-tail buffer envelope and the source-backed rp1_dma controller identity, while still rejecting channel programming, descriptor-ring construction, transfer completion, interrupt completion, and hardware/device completion?",
+  "accepted_prerequisites": [
+    "phase11-rp1-dma-cache-driver-diagnostic-envelope-contract-v1 accepted with local-static-dma-cache-driver-diagnostic-envelope-visible classification",
+    "accepted envelope evidence preserves descriptor, sync-plan, maintenance-sequence, and executor contract identities and source ids",
+    "accepted envelope evidence records CPU/RP1 addresses, descriptor length, line coverage, direction, cacheability, owner transition, IOMMU classification, prerequisite rejected claims, executor rejected claims, unresolved diagnostic gaps, and local/static classification",
+    "retained source evidence names rp1_dma as snps,axi-dma-1.01a at RP1 bus 0xc0_40188000, translated to CPU physical 0x1f_0018_8000, with 8 channels and 64 targets"
+  ],
+  "accepted_claims": [
+    "the next small DMA diagnostic boundary is source-contract work for a local/static diagnostic plan",
+    "a future plan core may consume accepted DmaCacheDriverDiagnosticEnvelopeEvidence plus retained RP1 DMA controller source facts",
+    "networking and SSH remain blocked until later explicit tasks accept DMA-capable driver diagnostics and runtime DMA prerequisites",
+    "future Pi 5 hardware proof, if supervisor-planned, must serialize on hardwareTestLock and run inconclusive-run triage before code changes after any inconclusive run"
+  ],
+  "rejected_claims": [
+    "small DMA diagnostic implementation",
+    "driver DMA completion",
+    "hardware or device completion",
+    "RP1 DMA channel ownership",
+    "RP1 DMA channel programming",
+    "RP1 MMIO writes",
+    "DMA descriptor rings",
+    "transfer completion",
+    "interrupt completion",
+    "Ethernet readiness",
+    "storage readiness",
+    "networking",
+    "SSH",
+    "cache-coherent driver policy",
+    "non-cacheable DMA mapping policy",
+    "IOMMU-backed runtime policy",
+    "DMA-safe allocation or pinning beyond accepted descriptor validation",
+    "hardware validation",
+    "Milestone 12 progress",
+    "Milestone 11.3 completion by implication",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "no RP1 DMA channel ownership has been accepted",
+    "no descriptor-ring layout or ownership has been accepted",
+    "no transfer-completion or interrupt policy exists",
+    "IOMMU/runtime policy remains source-unassigned",
+    "DMA-safe allocation and pinning remain unaccepted beyond descriptor validation",
+    "no hardware proof or device-specific consumer exists",
+    "retained source evidence names DMA consumers but does not choose a Talos device consumer"
+  ],
+  "hardware_requirements_before_future_proof": [
+    "acquire hardwareTestLock",
+    "capture candidate identity",
+    "capture fresh serial cursor",
+    "capture TFTP delta",
+    "capture artifact digest",
+    "record classification",
+    "capture restore evidence",
+    "run candidate identity, fresh serial cursor, TFTP delta, known-good control, then candidate rerun before code changes after any inconclusive Pi 5 run"
+  ],
+  "next_action": "Set planningNeeded=true for supervisor planning of a bounded phase11-rp1-dma-cache-small-diagnostic-plan-core task derived from phase11-rp1-dma-cache-small-diagnostic-plan-contract-v1; do not infer authorization for hardware, RP1 MMIO/DMA programming, descriptor rings, networking, SSH, Milestone 11.3 completion, or phase transition."
+}

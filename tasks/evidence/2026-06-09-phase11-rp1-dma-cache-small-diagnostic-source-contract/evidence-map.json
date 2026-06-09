@@ -1,0 +1,70 @@
+{
+  "task_id": "phase11-rp1-dma-cache-small-diagnostic-source-contract-20260609",
+  "evidence": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-source-contract.md",
+      "evidence_level": "static inspection and documentation reconciliation"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-source-contract/classification.json",
+      "evidence_level": "accepted source-contract classification"
+    },
+    {
+      "label": "accepted envelope closeout",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-driver-diagnostic-envelope-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted envelope closeout classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-driver-diagnostic-envelope-closeout/classification.json",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted envelope core",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-driver-diagnostic-envelope-core.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "diagnostic envelope implementation",
+      "path": "src/dma_cache.rs",
+      "evidence_level": "static inspection of local/static implementation and focused tests"
+    },
+    {
+      "label": "retained RP1 source evidence",
+      "path": "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/rp1.dtsi",
+      "evidence_level": "static inspection of rp1_dma controller and DMA consumer source facts"
+    },
+    {
+      "label": "retained Pi 5 RP1 mapping source evidence",
+      "path": "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/bcm2712-rpi-5-b.dts",
+      "evidence_level": "static inspection of RP1 ranges and dma-ranges"
+    },
+    {
+      "label": "project contract update",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "evidence_level": "documentation reconciliation"
+    },
+    {
+      "label": "roadmap update",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "documentation reconciliation"
+    },
+    {
+      "label": "json checks",
+      "command": "jq empty on task-owned evidence-map/classification JSON",
+      "result": "passed"
+    },
+    {
+      "label": "mdbook",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "label": "diff checks",
+      "command": "git diff --check and git diff --cached --check",
+      "result": "passed"
+    }
+  ]
+}

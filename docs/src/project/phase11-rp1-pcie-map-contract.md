@@ -491,6 +491,19 @@ Milestone 12 work, Milestone 11.3 completion, or phase transition. The next
 boundary remains source-contract work unless explicit future scope authorizes
 implementation or hardware proof.
 
+phase11-rp1-dma-cache-small-diagnostic-source-contract-20260609 accepts
+phase11-rp1-dma-cache-small-diagnostic-plan-contract-v1 as the next guarded
+source contract. The selected diagnostic question is whether Talos can build an
+evidence-backed plan for one RP1 AXI DMA diagnostic using accepted
+DmaCacheDriverDiagnosticEnvelopeEvidence and the source-backed rp1_dma
+controller identity at RP1 bus 0xc0_40188000 / CPU physical 0x1f_0018_8000,
+while still rejecting channel programming, descriptor-ring construction,
+transfer completion, interrupt completion, hardware/device completion,
+Ethernet, storage, networking, SSH, hardware validation, Milestone 12 work,
+Milestone 11.3 completion, and phase transition. No explicit queued follow-up
+exists; supervisor planning is required for any bounded local/static
+small-diagnostic plan core.
+
 phase11-rp1-gpio-event-latch-source-contract-20260607 is accepted as
 source-contract-blocked. Retained RP1/Linux source identifies the GPIO14 event
 configuration path: GPIO14 CTRL CLR can clear raw event enables, GPIO14 CTRL

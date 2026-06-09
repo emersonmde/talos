@@ -8943,6 +8943,20 @@ Ethernet, storage, networking, SSH, hardware validation, Milestone 12 work,
 Milestone 11.3 completion, or a phase transition. The next boundary remains
 source-contract work.
 
+phase11-rp1-dma-cache-small-diagnostic-source-contract-20260609 accepts the
+next guarded source contract as
+rp1-dma-cache-small-diagnostic-source-contract-accepted. The selected future
+boundary is phase11-rp1-dma-cache-small-diagnostic-plan-contract-v1: a
+local/static diagnostic plan that may consume only accepted
+DmaCacheDriverDiagnosticEnvelopeEvidence plus retained RP1 DMA controller source
+facts. It asks whether Talos can connect the accepted cache-maintained low-tail
+buffer envelope to the source-backed rp1_dma controller identity without
+claiming channel programming, descriptor-ring readiness, transfer completion,
+interrupt completion, hardware/device completion, Ethernet, storage,
+networking, SSH, hardware validation, Milestone 12 work, Milestone 11.3
+completion, or a phase transition. No explicit queued follow-up exists;
+supervisor planning is required before any plan-core implementation continues.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
