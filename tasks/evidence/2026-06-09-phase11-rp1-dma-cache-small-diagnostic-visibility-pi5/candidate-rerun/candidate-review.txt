@@ -1,0 +1,9 @@
+candidate_archive=target/talos-rpi5-rp1-dma-cache-small-diagnostic-visibility-candidate.tar.gz
+candidate_archive_sha256=729d15fd56285cfd59c1f406aaf80f930dd92f167456ba9bec0aba4a04ff6926
+kernel_2712_sha256=05ba4badca3f7e2ec59968574002161ed6b15fb34b57f64b0cc1ff708a9df691
+kernel_2712_size=49864
+header_image_size=49864
+text_offset=0
+flags=12
+candidate_marker=TALOS: rp1-dma-cache-small-diagnostic-visibility-candidate
+forbidden_dma_visibility_candidate_runtime_strings_absent=true

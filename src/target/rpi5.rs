@@ -14303,6 +14303,151 @@ fn write_clock_reset_dependency_capture_nonce() {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_dma_cache_small_diagnostic_visibility_candidate")]
+pub fn run_rp1_dma_cache_small_diagnostic_visibility_candidate() -> ! {
+    write_early_static("rpi5-rp1-dma-cache-small-diagnostic-visibility-candidate: start\n");
+    write_early_static(
+        "rpi5-rp1-dma-cache-small-diagnostic-visibility-candidate: no-rp1-mmio-no-dma-channel-programming-no-descriptor-ring\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-dma-cache-small-diagnostic-visibility-candidate");
+        write_dma_cache_small_diagnostic_visibility_common("candidate");
+        write_early_static(
+            " small-diagnostic-plan-contract-id=phase11-rp1-dma-cache-small-diagnostic-plan-contract-v1",
+        );
+        write_early_static(
+            " driver-diagnostic-envelope-contract-id=phase11-rp1-dma-cache-driver-diagnostic-envelope-contract-v1",
+        );
+        write_early_static(
+            " executor-contract-id=phase11-rp1-dma-cache-maintenance-executor-contract-v1",
+        );
+        write_early_static(
+            " maintenance-sequence-contract-id=phase11-rp1-dma-cache-maintenance-sequence-contract-v1",
+        );
+        write_early_static(" sync-plan-contract-id=phase11-rp1-dma-cache-sync-plan-contract-v1");
+        write_early_static(" descriptor-contract-id=phase11-rp1-dma-cache-substrate-contract-v1");
+        write_early_static(
+            " descriptor-source-inventory-id=phase11-rp1-dma-cache-source-inventory-20260609",
+        );
+        write_early_static(" rp1-dma-compatible=snps,axi-dma-1.01a");
+        write_early_static(" rp1-dma-controller-rp1-bus-base=");
+        write_early_hex_u64(0xc0_4018_8000);
+        write_early_static(" rp1-dma-controller-cpu-physical-base=");
+        write_early_hex_u64(0x1f_0018_8000);
+        write_early_static(" rp1-dma-channel-count=8 rp1-dma-target-count=64");
+        write_early_static(" rp1-dma-interrupt-name=RP1_INT_DMA");
+        write_early_static(" rp1-dma-clock-names=RP1_CLK_DMA,RP1_CLK_SYS");
+        write_early_static(" cpu-physical=");
+        write_early_hex_u64(0x2f02_0000);
+        write_early_static(" cpu-visible=");
+        write_early_hex_u64(0x2f02_0000);
+        write_early_static(" rp1-bus-address=");
+        write_early_hex_u64(0x10_2f02_0000);
+        write_early_static(" descriptor-length=");
+        write_early_hex_u64(0x2000);
+        write_early_static(
+            " cache-line-source=bcm2712-dcache-l2-cache-line-size cache-line-size=64",
+        );
+        write_early_static(" line-aligned-cpu-start=");
+        write_early_hex_u64(0x2f02_0000);
+        write_early_static(" covered-length=");
+        write_early_hex_u64(0x2000);
+        write_early_static(" line-count=128 direction=to-device");
+        write_early_static(
+            " cacheability=cacheable-requires-maintenance owner-transition=cpu-to-device",
+        );
+        write_early_static(" iommu-classification=source-unassigned-rp1-dma");
+        write_early_static(
+            " prerequisite-rejected-runtime-claims=executed-driver-buffer-cache-maintenance,live-barrier-ordering,rp1-mmio-writes,dma-channel-programming,descriptor-rings,ethernet-storage-networking-ssh,milestone-11-3-completion",
+        );
+        write_early_static(
+            " executor-rejected-runtime-claims=driver-dma-completion,rp1-mmio-writes,dma-channel-programming,descriptor-rings,interrupt-completion,ethernet-storage-networking-ssh,hardware-validation,milestone-11-3-completion",
+        );
+        write_early_static(
+            " unresolved-dma-diagnostic-gaps=rp1-dma-channel-ownership,descriptor-ring-layout-and-ownership,transfer-completion-and-interrupt-policy,iommu-runtime-policy,dma-safe-allocation-and-pinning,hardware-proof,device-specific-consumer",
+        );
+        write_dma_cache_small_diagnostic_visibility_rejections();
+        write_early_static(
+            " classification=local-static-rp1-dma-small-diagnostic-plan-visibility-candidate\n",
+        );
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_dma_cache_small_diagnostic_visibility_no_plan_control")]
+pub fn run_rp1_dma_cache_small_diagnostic_visibility_no_plan_control() -> ! {
+    write_early_static("rpi5-rp1-dma-cache-small-diagnostic-visibility-control: start\n");
+    write_early_static(
+        "rpi5-rp1-dma-cache-small-diagnostic-visibility-control: no-plan-no-rp1-mmio-no-dma-channel-programming-no-descriptor-ring\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-dma-cache-small-diagnostic-visibility-control");
+        write_dma_cache_small_diagnostic_visibility_common("no-plan-control");
+        write_early_static(" small-diagnostic-plan-contract-id=none");
+        write_early_static(" driver-diagnostic-envelope-contract-id=none");
+        write_early_static(" executor-contract-id=none maintenance-sequence-contract-id=none");
+        write_early_static(" sync-plan-contract-id=none descriptor-contract-id=none");
+        write_early_static(" descriptor-source-inventory-id=none rp1-dma-compatible=none");
+        write_early_static(" rp1-dma-controller-rp1-bus-base=none");
+        write_early_static(" rp1-dma-controller-cpu-physical-base=none");
+        write_early_static(" rp1-dma-channel-count=none rp1-dma-target-count=none");
+        write_early_static(" rp1-dma-interrupt-name=none rp1-dma-clock-names=none");
+        write_early_static(" cpu-physical=none cpu-visible=none rp1-bus-address=none");
+        write_early_static(" descriptor-length=none cache-line-source=none cache-line-size=none");
+        write_early_static(" line-aligned-cpu-start=none covered-length=none line-count=none");
+        write_early_static(" direction=none cacheability=none owner-transition=none");
+        write_early_static(" iommu-classification=none");
+        write_early_static(" prerequisite-rejected-runtime-claims=none");
+        write_early_static(
+            " executor-rejected-runtime-claims=none unresolved-dma-diagnostic-gaps=none",
+        );
+        write_dma_cache_small_diagnostic_visibility_rejections();
+        write_early_static(" classification=no-plan-rp1-dma-small-diagnostic-visibility-control\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_dma_cache_small_diagnostic_visibility_candidate",
+    talos_boot_scenario = "rpi5_rp1_dma_cache_small_diagnostic_visibility_no_plan_control"
+))]
+fn write_dma_cache_small_diagnostic_visibility_common(report_kind: &str) {
+    write_early_static(
+        " visibility-report-contract-id=phase11-rp1-dma-cache-small-diagnostic-visibility-report-contract-v1",
+    );
+    write_early_static(
+        " source-contract-id=phase11-rp1-dma-cache-small-diagnostic-source-contract-20260609",
+    );
+    write_early_static(" report-kind=");
+    write_early_static(report_kind);
+    write_early_static(
+        " hardware-proof-boundary-classification=hardware-proof-limited-to-plan-visibility-control-output",
+    );
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_dma_cache_small_diagnostic_visibility_candidate",
+    talos_boot_scenario = "rpi5_rp1_dma_cache_small_diagnostic_visibility_no_plan_control"
+))]
+fn write_dma_cache_small_diagnostic_visibility_rejections() {
+    write_early_static(
+        " rejected-runtime-hardware-claims=rp1-mmio-writes,rp1-dma-channel-ownership,dma-channel-programming,descriptor-ring-construction,descriptor-ring-ownership,transfer-completion,interrupt-completion,hardware-device-completion,ethernet-readiness,storage-readiness,networking,ssh,milestone-11-3-completion,phase-transition",
+    );
+    write_early_static(
+        " retained-risks=no-rp1-dma-channel-ownership,no-descriptor-ring-layout-or-ownership,no-transfer-completion-or-interrupt-policy,source-unassigned-rp1-dma,no-live-hardware-dma-proof,no-device-specific-consumer",
+    );
+    write_early_static(" claims-rp1-mmio-writes=false claims-rp1-channel-ownership=false");
+    write_early_static(" claims-dma-channel-programming=false claims-descriptor-ring-ready=false");
+    write_early_static(" claims-transfer-completion=false claims-interrupt-completion=false");
+    write_early_static(" claims-hardware-device-completion=false claims-ethernet-ready=false");
+    write_early_static(" claims-storage-ready=false claims-networking=false claims-ssh=false");
+    write_early_static(" claims-milestone-11-3-completion=false claims-phase-transition=false");
+}
+
 #[cfg(talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read")]
 pub fn run_rp1_pcie2_host_link_status_read() -> ! {
     const CONTRACT_ID: &str = "phase11-rp1-pcie-endpoint-config-discriminator-source-contract-v1";

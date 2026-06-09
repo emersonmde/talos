@@ -1,0 +1,28 @@
+{
+  "task_id": "phase11-rp1-dma-cache-small-diagnostic-visibility-pi5-20260609",
+  "classification": "rp1-dma-cache-small-diagnostic-visibility-pi5-control-freshness-blocked",
+  "task_record": "tasks/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5.md",
+  "classification_json": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/classification.json",
+  "hardware_summary": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/hardware-run-summary.json",
+  "pre_run": {
+    "status": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/lab-status-before-lock-run.json",
+    "boot_files": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/boot-files-before-lock-run.json",
+    "snapshots": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/boot-snapshots-before-lock-run.json",
+    "snapshot": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/pre-run-snapshot.json"
+  },
+  "archive_reviews": {
+    "candidate": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/archive-review/candidate-review.txt",
+    "control": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/archive-review/control-review.txt"
+  },
+  "runs": {
+    "candidate_initial": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/candidate/capture-invariant-summary.json",
+    "control_initial": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/control/capture-invariant-summary.json",
+    "known_good_control": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/known-good-control/capture-invariant-summary.json",
+    "candidate_rerun": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/candidate-rerun/capture-invariant-summary.json",
+    "control_rerun": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/control-rerun/capture-invariant-summary.json",
+    "control_rerun2": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/control-rerun2/capture-invariant-summary.json"
+  },
+  "restore": {
+    "after_control_rerun2": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-pi5/lab-status-after-control-rerun2-restore.json"
+  }
+}
