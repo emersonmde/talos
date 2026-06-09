@@ -1,0 +1,70 @@
+{
+  "task_id": "phase11-rp1-dma-cache-small-diagnostic-plan-core-20260609",
+  "classification": "rp1-dma-cache-small-diagnostic-plan-core-local-static-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "local implementation",
+    "fmt/lint/typecheck",
+    "unit tests",
+    "JSON checks",
+    "git diff checks"
+  ],
+  "implemented_contract": "phase11-rp1-dma-cache-small-diagnostic-plan-contract-v1",
+  "accepted_claims": [
+    "src/dma_cache.rs constructs local/static RP1 DMA small diagnostic plan evidence from accepted DmaCacheDriverDiagnosticEnvelopeEvidence plus retained RP1 DMA source facts",
+    "plan evidence preserves envelope, executor, maintenance-sequence, sync-plan, descriptor, and source-inventory identities",
+    "plan evidence records RP1 DMA source compatible string, RP1 bus base, translated CPU physical base, channel count, target count, source interrupt name, and source clock names",
+    "plan evidence records CPU/RP1 buffer addresses, descriptor length, cache line coverage, direction, cacheability, owner transition, IOMMU classification, rejected runtime claim identities, unresolved diagnostic gaps, and local/static classification",
+    "validators deterministically reject non-accepted envelope evidence, missing prerequisite identities, missing rejected completion claims, missing unresolved gaps, unsupported cacheability or IOMMU claims, zero channel count, invalid translated controller base, and premature runtime/device readiness claims"
+  ],
+  "rejected_claims": [
+    "Pi 5 hardware validation",
+    "boot archive publication",
+    "hardwareTestLock acquisition",
+    "RP1 MMIO writes",
+    "RP1 DMA channel ownership",
+    "DMA channel programming",
+    "descriptor-ring construction",
+    "descriptor-ring ownership",
+    "transfer completion",
+    "interrupt completion",
+    "hardware or device completion",
+    "Ethernet readiness",
+    "storage readiness",
+    "networking",
+    "SSH",
+    "cache-coherent driver policy",
+    "non-cacheable DMA mapping policy",
+    "IOMMU-backed runtime policy",
+    "DMA-safe allocation or pinning beyond accepted descriptor validation",
+    "Milestone 12 progress",
+    "Milestone 11.3 completion by implication",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "No RP1 DMA channel ownership has been accepted",
+    "No descriptor-ring layout or ownership has been accepted",
+    "No transfer-completion or interrupt policy exists",
+    "IOMMU/runtime policy remains source-unassigned",
+    "DMA-safe allocation and pinning remain unaccepted beyond descriptor validation",
+    "No hardware proof or device-specific consumer exists",
+    "retained source evidence names DMA consumers but does not choose a Talos device consumer"
+  ],
+  "validation": {
+    "cargo_fmt_check": "passed",
+    "cargo_dma_cache_tests": {
+      "command": "cargo -Zjson-target-spec test --quiet dma_cache",
+      "result": "passed",
+      "test_count": 452,
+      "new_focused_tests": [
+        "small_diagnostic_plan_formats_accepted_envelope_and_rp1_dma_source_facts",
+        "small_diagnostic_plan_rejects_non_accepted_envelope_and_missing_prerequisites",
+        "small_diagnostic_plan_rejects_controller_source_and_policy_claims",
+        "small_diagnostic_plan_rejects_completion_and_driver_readiness_claims"
+      ]
+    },
+    "hardware": "not-run-not-in-scope"
+  },
+  "next_action": "Mechanically promote phase11-rp1-dma-cache-small-diagnostic-plan-closeout-20260609 after this task is accepted and committed; do not infer hardware proof, DMA programming, descriptor rings, networking, SSH, Milestone 11.3 completion, or phase transition."
+}
