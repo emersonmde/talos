@@ -238,6 +238,54 @@ clock/reset programming, DMA/cache, storage, generated-root, networking, SSH,
 broader PCIe enumeration, Milestone 11.3, and phase transition remain
 unaccepted.
 
+## Milestone 11.3 DMA/Cache Substrate Contract
+
+phase11-rp1-dma-cache-source-inventory-20260609 accepts the source/static
+inventory needed before any RP1 DMA-capable driver, Ethernet, storage,
+networking, or SSH work. It records retained source facts for RP1 dma-ranges,
+the Synopsys AXI DMA controller shape, selected iommu5 attachments, and Talos'
+current DMA/cache ownership gaps. The accepted source inventory does not accept
+working DMA behavior, DMA engine programming, IOMMU policy, cache-coherent
+driver policy, DMA-safe buffers, high-memory allocation, hardware validation,
+networking, SSH, or Milestone 11.3 completion by implication.
+
+phase11-rp1-dma-cache-contract-20260609 accepts
+phase11-rp1-dma-cache-substrate-contract-v1 as the local/static contract for
+the next implementation boundary. The contract defines these required
+ownership boundaries before any driver consumes DMA:
+
+- a single owner for each DMA buffer descriptor;
+- memory limited to already accepted kernel-owned physical spans;
+- explicit CPU physical, CPU visible, RP1 bus, length, alignment, and
+  dma-ranges path fields;
+- cache state transitions named by direction before ownership crosses the
+  CPU/device boundary;
+- drivers consuming prepared descriptors rather than declaring arbitrary memory
+  DMA-safe.
+
+The accepted minimal API surface is limited to pure local/static data and
+validation: DMA direction, cacheability, address path, buffer descriptor,
+alignment and range validators, translation overflow checks, forbidden-claim
+checks, and evidence formatter fields. Existing SMP cache-line helpers remain
+source evidence for instruction shape and ordering only; they are not accepted
+as a driver DMA API.
+
+The required evidence output for the next local/static core must identify
+contract phase11-rp1-dma-cache-substrate-contract-v1, source inventory
+phase11-rp1-dma-cache-source-inventory-20260609, CPU/RP1 addresses, length,
+alignment, address path, direction, cacheability, IOMMU classification, and
+validator results. Classification is local/static only, using
+local-static-dma-cache-contract-visible, contract-rejected-input, or
+staging/build-blocker.
+
+This contract explicitly keeps networking, SSH, real DMA device work, Ethernet,
+storage, DMA descriptor rings, cache-maintenance execution for driver buffers,
+IOMMU programming or bypass policy, hardware validation, and Milestone 11.3
+acceptance by implication blocked until later explicit tasks implement and
+validate the substrate. Because the worker cannot create the follow-up task,
+the accepted next action is supervisor planning for a bounded local/static
+DMA/cache substrate core.
+
 phase11-rp1-gpio-event-latch-source-contract-20260607 is accepted as
 source-contract-blocked. Retained RP1/Linux source identifies the GPIO14 event
 configuration path: GPIO14 CTRL CLR can clear raw event enables, GPIO14 CTRL

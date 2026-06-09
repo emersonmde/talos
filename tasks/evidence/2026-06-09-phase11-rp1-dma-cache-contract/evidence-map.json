@@ -1,0 +1,58 @@
+{
+  "task_id": "phase11-rp1-dma-cache-contract-20260609",
+  "classification": "rp1-dma-cache-substrate-contract-accepted",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-contract.md",
+      "evidence_level": "static inspection and documentation reconciliation"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-contract/classification.json",
+      "evidence_level": "accepted contract classification"
+    },
+    {
+      "label": "project contract update",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "evidence_level": "documentation reconciliation"
+    },
+    {
+      "label": "roadmap update",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "documentation reconciliation"
+    }
+  ],
+  "validation_gates": [
+    {
+      "label": "static inspection",
+      "result": "passed",
+      "evidence_level": "static inspection of accepted source inventory and Talos memory/cache architecture"
+    },
+    {
+      "label": "jq classification",
+      "command": "jq empty tasks/evidence/2026-06-09-phase11-rp1-dma-cache-contract/classification.json",
+      "result": "passed"
+    },
+    {
+      "label": "jq evidence map",
+      "command": "jq empty tasks/evidence/2026-06-09-phase11-rp1-dma-cache-contract/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "label": "git diff check",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "label": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "label": "staged diff check",
+      "command": "git diff --cached --check",
+      "result": "passed"
+    }
+  ]
+}

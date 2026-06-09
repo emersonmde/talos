@@ -1,0 +1,71 @@
+{
+  "task_id": "phase11-rp1-dma-cache-contract-20260609",
+  "classification": "rp1-dma-cache-substrate-contract-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "mdbook build"
+  ],
+  "accepted_frontier": [
+    "local/static DMA buffer descriptor contract",
+    "RP1 dma-ranges-derived address translation contract fields",
+    "direction-specific cache-maintenance semantics as contract fields",
+    "IOMMU classification evidence boundary",
+    "validator and evidence-output requirements for a later local/static substrate core"
+  ],
+  "ownership_boundaries": [
+    "single owner per DMA buffer descriptor",
+    "memory limited to already accepted kernel-owned physical spans",
+    "CPU physical, CPU visible, RP1 bus, length, alignment, and dma-ranges path carried explicitly",
+    "cache ownership transferred only through named direction-specific synchronization boundaries",
+    "drivers consume prepared descriptors rather than declaring arbitrary memory DMA-safe"
+  ],
+  "api_surface": [
+    "DmaDirection",
+    "DmaCacheability",
+    "DmaAddressPath",
+    "DmaBufferDescriptor",
+    "pure validators for alignment, owned-span containment, translation overflow, and forbidden claims",
+    "evidence formatter fields for local/static validation"
+  ],
+  "accepted_assumptions": [
+    "first implementation is local/static only",
+    "low-tail bootstrap-bump-owned span is ordinary allocation source but not DMA-safe without descriptor proof",
+    "source dma-ranges define RP1-facing translation paths",
+    "existing SMP cache helpers are not a driver DMA API",
+    "rp1_dma IOMMU classification remains source-unassigned in retained evidence"
+  ],
+  "accepted_claims": [
+    "the next implementation boundary is mechanically objective as a local/static substrate core",
+    "networking and SSH remain blocked until the substrate is implemented and validated",
+    "real DMA device work remains blocked until a later explicit hardware-validation task"
+  ],
+  "rejected_claims": [
+    "working DMA behavior",
+    "DMA engine programming",
+    "DMA descriptor-ring ownership",
+    "executed cache maintenance for driver buffers",
+    "cache-coherent driver policy",
+    "non-cacheable DMA mapping policy",
+    "IOMMU programming or bypass policy",
+    "DMA-safe allocation or pinning beyond pure descriptor validation",
+    "RP1 Ethernet readiness",
+    "storage readiness",
+    "networking",
+    "SSH",
+    "Milestone 12 progress",
+    "hardware validation",
+    "Milestone 11.3 acceptance by implication"
+  ],
+  "retained_risks": [
+    "supervisor must instantiate the next local/static implementation task before the worker can continue",
+    "high memory remains discovered but unowned",
+    "actual cache-maintenance instruction use for driver buffers remains unimplemented and unvalidated",
+    "IOMMU implications remain source-limited until a later policy task",
+    "driver-adjacent hardware diagnostics remain blocked until the substrate core is accepted"
+  ],
+  "next_action": "planningNeeded=true; supervisor should plan a bounded local/static phase11-rp1-dma-cache-substrate-core implementation task from this contract",
+  "planning_needed": true
+}

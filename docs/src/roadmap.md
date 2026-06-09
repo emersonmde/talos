@@ -8701,6 +8701,22 @@ validation, and Milestone 11.3 acceptance by implication remain unaccepted. The
 mechanically unblocked next task is the queued local/static DMA/cache substrate
 contract.
 
+phase11-rp1-dma-cache-contract-20260609 accepts the local/static
+phase11-rp1-dma-cache-substrate-contract-v1 as
+rp1-dma-cache-substrate-contract-accepted. The accepted frontier is limited to
+ownership boundaries, pure API/evidence fields, and validator requirements for
+DMA buffer descriptors, RP1 dma-ranges-derived address translation,
+direction-specific cache-maintenance semantics, and explicit IOMMU
+classification. Existing SMP cache helpers remain source evidence only and are
+not accepted as a driver DMA API. Working DMA behavior, DMA engine programming,
+descriptor rings, executed cache maintenance for driver buffers,
+cache-coherent/non-cacheable/IOMMU-backed driver policy, DMA-safe allocation or
+pinning, RP1 Ethernet readiness, storage readiness, networking, SSH, hardware
+validation, Milestone 12 work, and Milestone 11.3 completion by implication
+remain unaccepted. The contract makes a local/static DMA/cache substrate core
+mechanically objective, but no worker-owned follow-up task exists yet;
+supervisor planning is required before implementation continues.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
