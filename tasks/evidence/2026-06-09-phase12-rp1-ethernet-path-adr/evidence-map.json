@@ -1,0 +1,32 @@
+{
+  "task": "phase12-rp1-ethernet-path-adr-20260609",
+  "status": "accepted",
+  "classification": "rp1-ethernet-direct-gem-path-selected-source-adr",
+  "task_record": "tasks/2026-06-09-phase12-rp1-ethernet-path-adr.md",
+  "classification_json": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-path-adr/classification.json",
+  "inputs": {
+    "source_inventory_task": "tasks/2026-06-09-phase12-rp1-ethernet-source-inventory.md",
+    "source_inventory_classification": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/classification.json",
+    "source_inventory_evidence_map": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/evidence-map.json",
+    "rp1_dtsi": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1.dtsi",
+    "pi5_dts": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-bcm2712-rpi-5-b.dts",
+    "macb_binding": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-cdns-macb.yaml",
+    "macb_driver": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-macb_main.c",
+    "phase11_closeout": "tasks/2026-06-09-phase11-rp1-hardware-substrate-closeout.md",
+    "phase12_project_note": "docs/src/project/phase12-networking-ssh.md",
+    "roadmap": "docs/src/roadmap.md",
+    "adr_index": "docs/src/decisions/README.md"
+  },
+  "decision": {
+    "selected_path": "Direct RP1 Cadence GEM path staged behind substrate proofs",
+    "precise_blocker": "Explicit read-only GEM MMIO source-contract diagnostic is required before implementation",
+    "mechanically_unblocked_worker_task": null
+  },
+  "validation": {
+    "static_inspection": "passed",
+    "jq_json_checks": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  }
+}

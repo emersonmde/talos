@@ -12,6 +12,37 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-09 - Phase 12 RP1 Ethernet Direct GEM Path Selected
+
+- Status: accepted as a source-grounded Phase 12.1 path-selection ADR. No
+  Ethernet driver, hardware run, RP1 MMIO/DMA programming, descriptor rings,
+  packet I/O, network stack, sockets, SSH, or Phase 12.2 work was added.
+- Context: The accepted source inventory identifies RP1 Ethernet as
+  `raspberrypi,rp1-gem` / `cdns,macb` at RP1 bus `0xc0_40100000`, with source
+  CPU physical translation `0x1f00100000`, `RP1_INT_ETH`, RP1 Ethernet clocks,
+  RGMII PHY mode, and PHY reset through RP1 GPIO32. The same inventory records
+  Linux MACB/GEM dependencies on DMA descriptor rings, packet buffers,
+  MDIO/PHY reset, phylink, clocks, interrupts, and completion handling.
+- Decision: Select the direct RP1 Cadence GEM path, staged behind
+  hardware-substrate proofs before any driver or packet behavior. The first
+  precise blocker is broad RP1 Ethernet MMIO readiness at the GEM register
+  window. A future explicit task must define a harmless read-only GEM/MMIO
+  source contract with paired no-Ethernet/no-MMIO control evidence before
+  implementation or hardware work starts.
+- Evidence level: static inspection, source inspection, documentation
+  reconciliation, JSON checks, diff checks, and mdbook build. Evidence is
+  retained under
+  tasks/evidence/2026-06-09-phase12-rp1-ethernet-path-adr/.
+- Consequences: Immediate direct-driver work, no_std driver reuse, and simpler
+  non-RP1 transport are all deferred. No worker-owned follow-up task is
+  mechanically unblocked by this ADR; supervisor planning must create the next
+  bounded source-contract diagnostic task.
+- Alternatives considered: immediate Cadence GEM driver implementation
+  rejected because it depends on unaccepted MMIO, DMA, descriptors,
+  interrupts, clocks, and PHY reset; no_std driver reuse deferred until those
+  substrate boundaries are proven; simpler non-RP1 transport deferred because
+  it bypasses the explicit RP1 Ethernet milestone.
+
 ## 2026-06-05 - Pi 5 Generated-Root Boot Transport Blocked by Initramfs Range Overlap
 
 - Status: completed as a source-backed hardware blocker for

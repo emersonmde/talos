@@ -1,0 +1,59 @@
+{
+  "task_id": "phase12-rp1-ethernet-path-adr-20260609",
+  "classification": "rp1-ethernet-direct-gem-path-selected-source-adr",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "source inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "git diff checks",
+    "mdbook build"
+  ],
+  "selected_path": "Direct RP1 Cadence GEM path, staged through hardware-substrate proofs before driver or packet behavior",
+  "precise_blocker": "No accepted broad RP1 Ethernet MMIO readiness at the source-translated GEM register window; supervisor planning is required for an explicit read-only GEM source-contract diagnostic before implementation",
+  "accepted_claims": [
+    "Phase 12.1 keeps RP1 Ethernet as the target hardware path",
+    "The initial direct GEM path must start with substrate proof, not packet driver implementation",
+    "Linux MACB/GEM source is design input for dependencies and tradeoffs, not accepted Talos runtime behavior",
+    "No std/no_std driver reuse is deferred until Talos proves the required hardware and driver substrate boundaries",
+    "A simpler non-RP1 transport is deferred because it would not answer the RP1 Ethernet research milestone"
+  ],
+  "rejected_claims": [
+    "Ethernet driver readiness",
+    "live RP1 Ethernet MMIO readiness",
+    "RP1 MMIO/DMA programming",
+    "descriptor-ring construction",
+    "descriptor-ring ownership",
+    "DMA channel ownership",
+    "transfer completion",
+    "interrupt completion",
+    "clock/reset ownership",
+    "PHY reset ownership",
+    "packet TX/RX",
+    "network stack",
+    "sockets",
+    "SSH",
+    "Phase 12.2 implementation",
+    "imported driver logic as accepted Talos runtime behavior"
+  ],
+  "retained_risks": [
+    "endpoint config identity remains all-ones",
+    "bridge setup and outbound windows remain incomplete",
+    "broad RP1 Ethernet MMIO is not hardware-proven",
+    "GPIO32 PHY reset ownership is unaccepted",
+    "clock/reset ownership for RP1 Ethernet is unaccepted",
+    "descriptor-ring and packet-buffer ownership are unaccepted",
+    "RP1 Ethernet IOMMU policy remains source-unassigned",
+    "no live RP1 DMA transfer or interrupt completion has been accepted"
+  ],
+  "alternatives": {
+    "direct_driver_now": "rejected because it depends on unaccepted MMIO, DMA, descriptor, interrupt, clock, and PHY behavior",
+    "nostd_driver_reuse_now": "deferred until substrate boundaries are proven",
+    "simpler_non_rp1_transport": "deferred because it bypasses the explicit RP1 Ethernet milestone",
+    "read_only_gem_visibility_diagnostic": "selected as the next kind of work, pending supervisor-planned explicit task"
+  },
+  "selected_next_action": "supervisor planning required for a bounded Phase 12.1 RP1 Ethernet MMIO source-contract diagnostic",
+  "mechanically_unblocked_worker_task": null,
+  "planning_needed": true
+}

@@ -25,3 +25,21 @@ descriptor-ring ownership, RP1 DMA channel ownership, transfer completion,
 interrupt completion, GPIO32 PHY reset ownership, clock/reset ownership, packet
 I/O, network stack behavior, sockets, SSH, or Phase 12.2 work. The next
 bounded step is a path-selection ADR/design note before any implementation.
+
+## Path Selection ADR
+
+phase12-rp1-ethernet-path-adr-20260609 selects the direct RP1 Cadence GEM path
+as the Phase 12.1 target, but only after staged hardware-substrate proofs. The
+decision rejects immediate driver work because the accepted Linux MACB/GEM
+source path depends on unaccepted Ethernet MMIO, DMA descriptors and packet
+buffers, ring-base programming, MDIO/PHY reset, clocks, interrupts, and
+completion handling.
+
+The ADR defers no_std driver reuse until Talos proves the required hardware and
+driver substrate boundaries. It also defers a simpler non-RP1 transport because
+that would not retire the explicit RP1 Ethernet research unknowns. The next
+program step requires supervisor planning for a bounded read-only RP1
+GEM/Ethernet MMIO source-contract diagnostic with paired no-Ethernet/no-MMIO
+control evidence. No Ethernet implementation, packet I/O, network stack,
+sockets, SSH, live DMA, descriptor rings, or Phase 12.2 work is accepted by
+the ADR.
