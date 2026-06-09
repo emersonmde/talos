@@ -14711,6 +14711,7 @@ pub fn run_rp1_gpio14_ownership_route_preflight_no_mmio_control() -> ! {
         write_early_static(TARGET);
         write_early_static(" pin=");
         write_early_static(PIN);
+        write_gpio14_ownership_route_capture_nonce();
         write_early_static(" gpio14-bit-mask=");
         write_early_hex_u64(GPIO14_MASK as u64);
         write_early_static(
@@ -14736,6 +14737,16 @@ pub fn run_rp1_gpio14_ownership_route_preflight_no_mmio_control() -> ! {
             " classification=no-mmio-observed-gpio14-ownership-route-control-visible\n",
         );
         wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control")]
+fn write_gpio14_ownership_route_capture_nonce() {
+    if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
+        if !nonce.is_empty() {
+            write_early_static(" capture-nonce=");
+            write_early_static(nonce);
+        }
     }
 }
 

@@ -1,0 +1,6 @@
+{
+  "endpoint": "/",
+  "status": "not-supported",
+  "note": "Supplementary GET / identity endpoint was attempted; deployed lab API identity evidence is retained via /status and /boot/files.",
+  "stderr": "curl: (22) The requested URL returned error: 404"
+}

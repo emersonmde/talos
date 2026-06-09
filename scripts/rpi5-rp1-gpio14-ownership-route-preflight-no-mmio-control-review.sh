@@ -1,13 +1,22 @@
 #!/bin/sh
 set -eu
 
-if [ "$#" -ne 1 ]; then
-    echo "usage: $0 <candidate-archive.tar.gz>" >&2
+if [ "$#" -ne 1 ] && [ "$#" -ne 3 ]; then
+    echo "usage: $0 <candidate-archive.tar.gz> [--capture-nonce NONCE]" >&2
     exit 2
 fi
 
 ARCHIVE="$1"
 CONTROL_MARKER="TALOS: rp1-gpio14-ownership-route-preflight-control"
+CAPTURE_NONCE=
+
+if [ "$#" -eq 3 ]; then
+    if [ "$2" != "--capture-nonce" ] || [ -z "$3" ]; then
+        echo "usage: $0 <candidate-archive.tar.gz> [--capture-nonce NONCE]" >&2
+        exit 2
+    fi
+    CAPTURE_NONCE="$3"
+fi
 
 ./scripts/rpi5-archive-review.sh "$ARCHIVE" >/dev/null
 
@@ -68,6 +77,17 @@ for required in \
         exit 1
     fi
 done
+
+if [ -n "$CAPTURE_NONCE" ]; then
+    if ! grep -Fq -- " capture-nonce=" "$kernel_strings"; then
+        echo "kernel image missing GPIO14 ownership preflight control capture nonce label" >&2
+        exit 1
+    fi
+    if ! grep -Fq -- "$CAPTURE_NONCE" "$kernel_strings"; then
+        echo "kernel image missing GPIO14 ownership preflight control capture nonce: $CAPTURE_NONCE" >&2
+        exit 1
+    fi
+fi
 
 for forbidden in \
     "rpi5-rp1-gpio14-ownership-route-preflight-read: before-read-only-loads" \
