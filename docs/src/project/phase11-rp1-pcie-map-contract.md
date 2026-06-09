@@ -2491,6 +2491,35 @@ Artifact helpers:
   inspect the no-MMIO/no-enable interrupt-routing control archive required
   before the real diagnostic hardware proof.
 
+## DMA/Cache Source Inventory
+
+The accepted DMA/cache source inventory is
+phase11-rp1-dma-cache-source-inventory-20260609. It is source/static evidence
+only and does not implement DMA, cache maintenance, Ethernet, networking, SSH,
+storage, or hardware proof.
+
+The retained Raspberry Pi Linux sources establish these contract inputs:
+
+- bcm2712.dtsi gives pcie2 a 4 MiB 32-bit non-prefetchable DMA window at PCIe
+  00_00000000 to CPU physical 0x1f_0000_0000, a 64 GiB RAM-facing
+  prefetchable DMA window at PCIe 10_00000000 to CPU physical 0x0, and a 4 KiB
+  MIP0 window at PCIe ff_ffff_f000.
+- bcm2712-rpi-5-b.dts maps RP1 0xc0_40000000..0xc0_4040ffff to PCIe
+  00_00000000 and records RP1 inbound dma-ranges for RAM-facing
+  0x10_00000000/0x0_00000000 paths plus the RP1 peripheral-facing
+  0xc0_40000000 path.
+- rp1.dtsi exposes rp1_dma as Synopsys AXI DMA snps,axi-dma-1.01a at RP1 bus
+  0xc0_40188000, with 8 channels, one master, 64 targets, 128-bit data width,
+  per-channel block size 0x40000, and AXI burst limits.
+- bcm2712-rpi-5-b.dts attaches iommu5 to selected display/camera RP1 bus
+  masters, but not to rp1_dma or rp1_eth in the retained source evidence.
+- Linux coherent_pool=1M bootargs are context only; they are not Talos evidence
+  for coherent allocation, cache maintenance, or DMA-safe buffers.
+
+The next accepted contract must therefore name DMA-safe buffer ownership,
+address translation, cache clean/invalidate direction, alignment, lifetime, and
+driver evidence fields before any DMA-capable RP1 driver is evaluated.
+
 ## Deferred Work
 
 - PCIe enumeration and BAR discovery for general external devices.

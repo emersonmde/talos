@@ -1,0 +1,49 @@
+{
+  "task_id": "phase11-rp1-dma-cache-source-inventory-20260609",
+  "classification": "rp1-dma-cache-source-inventory-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "mdbook build"
+  ],
+  "accepted_frontier": [
+    "source-backed RP1 dma-ranges addressability inventory",
+    "source-backed RP1 DMA controller identity and shape",
+    "source-backed IOMMU attachment inventory for selected RP1 bus masters",
+    "Talos DMA/cache ownership and API gap inventory",
+    "next contract boundary selected for local/static DMA/cache substrate"
+  ],
+  "accepted_claims": [
+    "RP1 inbound RAM-facing DMA paths are described by retained dma-ranges source evidence",
+    "RP1 peripheral-facing DMA path is described by retained dma-ranges source evidence",
+    "RP1 DMA controller source evidence names snps,axi-dma-1.01a with 8 channels and 64 targets",
+    "retained source evidence attaches iommu5 to selected display/camera RP1 bus masters but not to rp1_dma or rp1_eth",
+    "current Talos memory/cache architecture lacks accepted DMA-safe buffer ownership and driver cache-maintenance APIs",
+    "networking and SSH remain blocked until DMA/cache prerequisites are explicitly accepted"
+  ],
+  "rejected_claims": [
+    "working DMA behavior",
+    "DMA engine programming",
+    "cache-coherent driver policy",
+    "IOMMU programming or bypass policy",
+    "DMA-safe buffer allocation or pinning",
+    "RP1 Ethernet readiness",
+    "networking",
+    "SSH",
+    "storage driver readiness",
+    "Milestone 12 progress",
+    "Milestone 11.3 acceptance by implication",
+    "hardware validation"
+  ],
+  "retained_risks": [
+    "source dma-ranges must be converted into an explicit Talos address-translation contract before any DMA-capable driver",
+    "cache clean/invalidate helpers exist only for secondary-core publication and must not be reused as a general DMA API without a new contract",
+    "high memory remains discovered but unowned and cannot be used for DMA buffers without a later ownership and mapping task",
+    "iommu5 implications remain limited to the selected source-named bus masters until a later IOMMU policy task",
+    "Linux coherent_pool bootarg remains context only and does not define Talos coherent allocation behavior"
+  ],
+  "next_action": "mechanically promote phase11-rp1-dma-cache-contract-20260609",
+  "planning_needed": false
+}

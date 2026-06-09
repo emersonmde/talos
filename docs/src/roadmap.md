@@ -8686,6 +8686,21 @@ dependency reruns are not progress without new supervisor-planned
 discriminators or acceptance criteria. The mechanically unblocked next task is
 the queued DMA/cache source inventory, which is source inspection only.
 
+phase11-rp1-dma-cache-source-inventory-20260609 accepts a source/static
+Milestone 11.3 inventory as rp1-dma-cache-source-inventory-accepted. The
+accepted frontier is limited to retained Raspberry Pi Linux dma-ranges, RP1 DMA
+controller identity, selected iommu5 attachment inventory, and Talos DMA/cache
+ownership/API gaps. It records that rp1_dma is a Synopsys AXI DMA controller
+with 8 channels and 64 targets, that RP1 inbound RAM and peripheral
+addressability depends on source dma-ranges, that existing Talos cache-line
+helpers are only secondary-core publication utilities, and that the low-tail
+allocator span is not a DMA-safe buffer contract. DMA behavior, DMA engine
+programming, IOMMU policy, cache-coherent driver policy, high-memory
+allocation, Ethernet, storage, networking, SSH, Milestone 12 work, hardware
+validation, and Milestone 11.3 acceptance by implication remain unaccepted. The
+mechanically unblocked next task is the queued local/static DMA/cache substrate
+contract.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
