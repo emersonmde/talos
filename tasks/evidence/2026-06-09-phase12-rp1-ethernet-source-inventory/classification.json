@@ -1,0 +1,68 @@
+{
+  "task_id": "phase12-rp1-ethernet-source-inventory-20260609",
+  "classification": "rp1-ethernet-source-inventory-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "source inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "git diff checks",
+    "mdbook build"
+  ],
+  "accepted_claims": [
+    "RP1 Ethernet source identity is raspberrypi,rp1-gem and cdns,macb",
+    "RP1 Ethernet source register window is RP1 bus 0xc0_40100000 length 0x4000 with source CPU physical translation 0x1f00100000",
+    "RP1 Ethernet source interrupt is RP1_INT_ETH, defined as 6 in the fetched RP1 mfd binding",
+    "RP1 Ethernet source clocks are pclk, hclk, tsu_clk, and tx_clk backed by RP1_CLK_SYS, RP1_CLK_SYS, RP1_CLK_ETH_TSU, and RP1_CLK_ETH",
+    "Pi 5 source enables rp1_eth, uses phy-mode rgmii-id, phy-handle phy1, PHY address 1, and PHY reset through RP1 GPIO32 active-low",
+    "Linux MACB/GEM source path depends on clocks, phylink, MDIO/PHY reset, DMA descriptors, ring base programming, interrupts, and packet-buffer ownership",
+    "The exact next task is phase12-rp1-ethernet-path-adr-20260609"
+  ],
+  "rejected_claims": [
+    "Ethernet driver readiness",
+    "live RP1 Ethernet MMIO access",
+    "packet TX/RX",
+    "descriptor-ring construction",
+    "descriptor-ring ownership",
+    "RP1 DMA channel ownership",
+    "live DMA",
+    "transfer completion",
+    "interrupt completion",
+    "network stack",
+    "sockets",
+    "SSH",
+    "Phase 12.2 implementation",
+    "hardware-proven Ethernet MMIO at the source-translated CPU physical address"
+  ],
+  "retained_risks": [
+    "endpoint config identity remains all-ones",
+    "bridge setup and outbound windows remain incomplete",
+    "broad RP1 Ethernet MMIO is not hardware-proven",
+    "GPIO32 PHY reset ownership is unaccepted",
+    "clock/reset ownership for RP1 Ethernet is unaccepted",
+    "descriptor-ring and packet-buffer ownership are unaccepted",
+    "RP1 Ethernet IOMMU policy remains source-unassigned",
+    "no live RP1 DMA transfer or interrupt completion has been accepted"
+  ],
+  "future_diagnostic_questions": [
+    "Can a harmless RP1 GEM register read be proven with a paired no-MMIO/no-Ethernet control after bridge/outbound blockers are resolved?",
+    "Which RP1 clock/reset bits gate RP1_CLK_ETH, RP1_CLK_ETH_TSU, and tx_clk without enabling packet I/O?",
+    "Can GPIO32 PHY reset ownership be observed independently of packet I/O?",
+    "What DMA address-width and descriptor-ring mode does RP1 GEM expose once live MMIO reads are accepted?"
+  ],
+  "selected_next_action": "phase12-rp1-ethernet-path-adr-20260609",
+  "next_action_limits": [
+    "path-selection ADR/design note only",
+    "no Ethernet implementation",
+    "no hardware run",
+    "no RP1 MMIO/DMA programming",
+    "no descriptor rings",
+    "no packet I/O",
+    "no networking stack",
+    "no sockets",
+    "no SSH",
+    "no Phase 12.2 work"
+  ],
+  "planning_needed": false
+}

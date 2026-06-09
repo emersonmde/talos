@@ -1,0 +1,58 @@
+{
+  "task": "phase12-rp1-ethernet-source-inventory-20260609",
+  "status": "accepted",
+  "classification": "rp1-ethernet-source-inventory-accepted",
+  "task_record": "tasks/2026-06-09-phase12-rp1-ethernet-source-inventory.md",
+  "classification_json": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/classification.json",
+  "inputs": {
+    "phase11_closeout": "tasks/2026-06-09-phase11-rp1-hardware-substrate-closeout.md",
+    "phase11_closeout_classification": "tasks/evidence/2026-06-09-phase11-rp1-hardware-substrate-closeout/classification.json",
+    "phase11_project_contract": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+    "phase12_project_note": "docs/src/project/phase12-networking-ssh.md",
+    "roadmap": "docs/src/roadmap.md",
+    "retained_rp1_dtsi": "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/rp1.dtsi",
+    "retained_pi5_dts": "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/bcm2712-rpi-5-b.dts",
+    "source_sha256sums": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/sha256sums.txt"
+  },
+  "fetched_sources": {
+    "raspberrypi_linux_branch": "rpi-6.12.y",
+    "rp1_dtsi": {
+      "url": "https://raw.githubusercontent.com/raspberrypi/linux/rpi-6.12.y/arch/arm64/boot/dts/broadcom/rp1.dtsi",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1.dtsi"
+    },
+    "pi5_dts": {
+      "url": "https://raw.githubusercontent.com/raspberrypi/linux/rpi-6.12.y/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-bcm2712-rpi-5-b.dts"
+    },
+    "macb_binding": {
+      "url": "https://raw.githubusercontent.com/raspberrypi/linux/rpi-6.12.y/Documentation/devicetree/bindings/net/cdns,macb.yaml",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-cdns-macb.yaml"
+    },
+    "macb_driver": {
+      "url": "https://raw.githubusercontent.com/raspberrypi/linux/rpi-6.12.y/drivers/net/ethernet/cadence/macb_main.c",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-macb_main.c"
+    },
+    "rp1_mfd_bindings": {
+      "url": "https://raw.githubusercontent.com/raspberrypi/linux/rpi-6.12.y/include/dt-bindings/mfd/rp1.h",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1-mfd.h"
+    },
+    "rp1_clock_bindings": {
+      "url": "https://raw.githubusercontent.com/raspberrypi/linux/rpi-6.12.y/include/dt-bindings/clock/rp1.h",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1-clock.h"
+    }
+  },
+  "accepted_checkpoint": {
+    "phase": "Phase 12: Networking and SSH Development Access",
+    "milestone": "Milestone 12.1: RP1 Ethernet Research Spike",
+    "classification": "rp1-ethernet-source-inventory-accepted",
+    "next_task": "phase12-rp1-ethernet-path-adr-20260609",
+    "next_task_boundary": "path-selection ADR/design note only"
+  },
+  "validation": {
+    "static_inspection": "passed",
+    "jq_json_checks": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  }
+}

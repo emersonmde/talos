@@ -1,0 +1,6 @@
+8e454c1af9fd4e87e05d03ca2de029c217917a6e1ae997e9d61c1bd63ba4e214  tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1-mfd.h
+ab2e7f4a041f99853d10fc33ebd63ea310885b9ea0f2c96213326ccdbc55b4ae  tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-cdns-macb.yaml
+ab3fe239e9a62742d035187ec50f65ec769cff002788f0e12b2afcad0bbaf460  tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1.dtsi
+ba427771249297a45ef7978a390ba3c4bcdb0f526e32f035e200fcc074f01c69  tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1-clock.h
+d4a662bd482e54723c11d53818cb8fe738c09da365a774536d61a641878babbd  tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-bcm2712-rpi-5-b.dts
+e95c133ad4674b722c01fe530ac315e72dae323908448c68925d0b975816de79  tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-macb_main.c

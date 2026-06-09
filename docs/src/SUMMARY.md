@@ -191,6 +191,7 @@
 - [Phase 10 Pi 5 Generated-Root Boot Transport Contract](project/phase10-pi5-generated-root-boot-transport-contract.md)
 - [Phase 11 RP1/PCIe Map Contract](project/phase11-rp1-pcie-map-contract.md)
 - [Phase 11 RP1 IRQ/Clock/GPIO Contract](project/phase11-rp1-irq-clock-gpio-contract.md)
+- [Phase 12 Networking and SSH](project/phase12-networking-ssh.md)
 - [Agent Task Template](project/agent-task-template.md)
 
 # Architecture
