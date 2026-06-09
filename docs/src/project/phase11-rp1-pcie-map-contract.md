@@ -2233,6 +2233,20 @@ generation, interrupt delivery, GIC acknowledgement, handler ownership,
 GPIO/RIO/pad/INTE/CTRL writes, GPIO14 ownership changes, DMA/cache,
 networking, SSH, Milestone 11.3, and phase transition remain unaccepted.
 
+phase11-rp1-observed-gpio16-ownership-event-core-20260609 accepts the
+local/static implementation of that read-only observed-aperture GPIO16
+preflight contract. The retained GPIO16 discriminator scenarios now emit the
+accepted observed-aperture contract id and target, perform no GPIO/RIO/pad/
+INTE/CTRL writes, no IRQRESET, and no action/restore sequence. The real
+candidate reads only GPIO16 STATUS/CTRL at 0x1c000d0080/0x1c000d0084,
+IO_BANK0 INTE/INTS at 0x1c000d011c/0x1c000d0124, RIO0 OUT/OE/IN at
+0x1c000e0000/0x1c000e0004/0x1c000e0008, GPIO16 pad control at 0x1c000f0044,
+and the accepted read-only INTID 160 GIC route status registers. The paired
+control emits the same report shape with not-constructed address fields and
+constructs no RP1 or GIC MMIO address. This is local/static evidence only; Pi 5
+control and real proofs remain queued before any hardware behavior or GPIO
+ownership/event claim can be accepted.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

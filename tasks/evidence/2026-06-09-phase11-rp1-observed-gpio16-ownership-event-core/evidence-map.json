@@ -1,0 +1,123 @@
+{
+  "task_id": "phase11-rp1-observed-gpio16-ownership-event-core-20260609",
+  "classification": "accepted-local-static-observed-gpio16-ownership-event-core",
+  "evidence_level": [
+    "static inspection",
+    "fmt/lint/typecheck",
+    "unit tests",
+    "archive inspection"
+  ],
+  "source_contract": "phase11-rp1-observed-gpio16-ownership-event-source-contract-v1",
+  "accepted_boundary": {
+    "real_candidate": "rpi5_rp1_gpio16_owned_event_discriminator",
+    "control_candidate": "rpi5_rp1_gpio16_owned_event_discriminator_no_mmio_control",
+    "real_marker": "TALOS: rp1-gpio16-owned-event-discriminator-result",
+    "control_marker": "TALOS: rp1-gpio16-owned-event-discriminator-control",
+    "allowed_real_operations": [
+      "32-bit volatile read of GPIO16 STATUS at observed CPU physical address 0x1c000d0080",
+      "32-bit volatile read of GPIO16 CTRL at observed CPU physical address 0x1c000d0084",
+      "32-bit volatile read of IO_BANK0 INTE at observed CPU physical address 0x1c000d011c",
+      "32-bit volatile read of IO_BANK0 INTS at observed CPU physical address 0x1c000d0124",
+      "32-bit volatile read of RIO0 OUT at observed CPU physical address 0x1c000e0000",
+      "32-bit volatile read of RIO0 OE at observed CPU physical address 0x1c000e0004",
+      "32-bit volatile read of RIO0 IN at observed CPU physical address 0x1c000e0008",
+      "32-bit volatile read of GPIO16 pad control at observed CPU physical address 0x1c000f0044",
+      "read-only GICD_ISENABLER5, GICD_ISPENDR5, GICD_ISACTIVER5, and GICC_HPPIR status inputs for INTID 160"
+    ],
+    "forbidden_operations": [
+      "GPIO16 CTRL, SET, or CLR writes",
+      "IO_BANK0 INTE writes",
+      "GPIO IRQRESET acknowledgement writes",
+      "RIO OUT/OE writes",
+      "pad writes",
+      "GIC IAR/EOIR acknowledgement",
+      "interrupt unmasking or delivery claim",
+      "event generation"
+    ],
+    "control_boundary": "same report shape with not-constructed address fields, simulated zero raw values, no RP1 GPIO/RIO/pads/clock/reset, MSI-X/PCIe/MIP, GIC, DMA, or other forbidden MMIO address construction"
+  },
+  "artifacts": {
+    "real_archive": {
+      "path": "target/task-evidence/2026-06-09-gpio16-core/gpio16-real.tar.gz",
+      "sha256": "87f43945d5ac6c704cf194053c187ed07751c3e82e0d6e15088a760262bbe60b",
+      "kernel_sha256": "77db209655acd8f14c4cb63c3689f97d4198d6ba5adb96faf236c03423ce2760",
+      "kernel_size": 50640,
+      "marker": "TALOS: rp1-gpio16-owned-event-discriminator-result",
+      "review": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-core/real-archive-review.txt"
+    },
+    "control_archive": {
+      "path": "target/task-evidence/2026-06-09-gpio16-core/gpio16-control.tar.gz",
+      "sha256": "e2c65e3a5c97ebdd00793cb009e37f3c262744e5c6482f3756d3a813bbf5f559",
+      "kernel_sha256": "be5a41097b310aeca0c60f3fb43381d1362b6fc07cfa298230ff5dc909f151f9",
+      "kernel_size": 48640,
+      "marker": "TALOS: rp1-gpio16-owned-event-discriminator-control",
+      "review": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-core/control-archive-review.txt"
+    }
+  },
+  "validation": [
+    {
+      "gate": "cargo fmt --all -- --check",
+      "level": "fmt/lint",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet",
+      "level": "unit tests",
+      "result": "pass"
+    },
+    {
+      "gate": "bash -n touched GPIO16 image/boot-tree/archive/review scripts",
+      "level": "shell syntax",
+      "result": "pass"
+    },
+    {
+      "gate": "scripts/rpi5-rp1-gpio16-owned-event-discriminator-review.sh",
+      "level": "archive/static inspection",
+      "result": "pass"
+    },
+    {
+      "gate": "scripts/rpi5-rp1-gpio16-owned-event-discriminator-no-mmio-control-review.sh",
+      "level": "archive/static inspection",
+      "result": "pass"
+    },
+    {
+      "gate": "jq empty evidence-map/classification JSON",
+      "level": "evidence JSON parse",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "level": "diff whitespace",
+      "result": "pass"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "level": "docs build",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "level": "staged diff whitespace",
+      "result": "pass"
+    }
+  ],
+  "not_accepted": [
+    "Pi 5 hardware behavior",
+    "boot archive publication to the lab",
+    "hardwareTestLock acquisition",
+    "GPIO ownership",
+    "event generation",
+    "interrupt pending generation",
+    "interrupt delivery",
+    "GIC acknowledgement",
+    "handler ownership",
+    "GPIO/RIO/pad/INTE writes",
+    "parent-route masking writes",
+    "DMA/cache",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "commit": null
+}

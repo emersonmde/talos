@@ -8555,6 +8555,17 @@ GPIO/RIO/pad/INTE/CTRL writes, GPIO14 ownership changes, parent-route masking
 writes, DMA/cache, networking, SSH, Milestone 11.3, and phase transition
 remain unaccepted.
 
+phase11-rp1-observed-gpio16-ownership-event-core-20260609 accepts the
+local/static real/control implementation of that read-only observed-aperture
+GPIO16 preflight. The real candidate reads only the accepted observed GPIO16
+STATUS/CTRL, IO_BANK0 INTE/INTS, RIO0 OUT/OE/IN, GPIO16 pad, and read-only
+INTID 160 GIC route status registers; it performs no GPIO/RIO/pad/INTE/CTRL
+writes, no IRQRESET, no event generation, and no action/restore sequence. The
+paired no-MMIO control preserves the report shape with not-constructed address
+fields and constructs no RP1 or GIC MMIO address. This accepts only
+local/static/archive evidence; Pi 5 control and real proofs remain queued
+before any hardware behavior, GPIO ownership, or event/readiness claim.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

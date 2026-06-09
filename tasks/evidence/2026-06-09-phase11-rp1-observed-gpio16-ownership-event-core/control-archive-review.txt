@@ -1,0 +1,9 @@
+candidate_archive=target/task-evidence/2026-06-09-gpio16-core/gpio16-control.tar.gz
+candidate_archive_sha256=e2c65e3a5c97ebdd00793cb009e37f3c262744e5c6482f3756d3a813bbf5f559
+kernel_2712_sha256=be5a41097b310aeca0c60f3fb43381d1362b6fc07cfa298230ff5dc909f151f9
+kernel_2712_size=48640
+header_image_size=48640
+text_offset=0
+flags=12
+control_marker=TALOS: rp1-gpio16-owned-event-discriminator-control
+forbidden_gpio16_event_mmio_strings_absent=true

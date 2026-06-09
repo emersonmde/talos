@@ -27,8 +27,8 @@ for required in \
     "rpi5-rp1-gpio16-owned-event-discriminator-control: start" \
     "rpi5-rp1-gpio16-owned-event-discriminator-control: no-rp1-gpio-rio-pads-clock-reset-msix-pcie-mip-gic-mmio" \
     "$CONTROL_MARKER" \
-    "phase11-rp1-gpio-owned-event-discriminator-source-contract-v1" \
-    "rp1-gpio16-owned-level-high-event-discriminator" \
+    "phase11-rp1-observed-gpio16-ownership-event-source-contract-v1" \
+    "rp1-gpio16-ownership-event-observed-aperture-preflight-read" \
     "pin=GPIO16" \
     "gpio16-bit-mask=" \
     "gpio16-status-address=not-constructed" \
@@ -43,15 +43,36 @@ for required in \
     "gicd-ispendr5-address=not-constructed" \
     "gicd-isactiver5-address=not-constructed" \
     "gicc-hppir-address=not-constructed" \
-    "-gpio16-status-raw=" \
-    " pre" \
-    " post" \
-    " restore" \
-    "action-skipped=" \
-    "restore-attempted=" \
+    "width=32" \
+    "gpio16-status-raw=" \
+    "gpio16-ctrl-raw=" \
+    "gpio16-funcsel=" \
+    "gpio16-func-name=" \
+    "gpio16-outover=" \
+    "gpio16-oeover=" \
+    "gpio16-inover=" \
+    "gpio16-raw-event-enable-mask=" \
+    "gpio16-filtered-event-enable-mask=" \
+    "gpio16-status-event-mask=" \
+    "io-bank0-inte-raw=" \
+    "io-bank0-ints-raw=" \
+    "rio-out-raw=" \
+    "rio-oe-raw=" \
+    "rio-in-raw=" \
+    "pad-raw=" \
+    "pad-input-enable=" \
+    "pad-output-disable=" \
+    "gicd-isenabler5-raw=" \
+    "gicd-ispendr5-raw=" \
+    "gicd-isactiver5-raw=" \
+    "gicc-hppir-raw=" \
+    "intid160-enabled=" \
+    "intid160-pending=" \
+    "intid160-active=" \
+    "hppir-intid=" \
     "true" \
     "false" \
-    "classification=simulated/control"; do
+    "classification=no-mmio-observed-gpio16-ownership-event-control-visible"; do
     if ! grep -Fq -- "$required" "$kernel_strings"; then
         echo "kernel image missing GPIO16 no-MMIO control string: $required" >&2
         exit 1
@@ -60,6 +81,11 @@ done
 
 for forbidden in \
     "TALOS: rp1-gpio16-owned-event-discriminator-result" \
+    "classification=simulated/control" \
+    "phase11-rp1-gpio-owned-event-discriminator-source-contract-v1" \
+    "rp1-gpio16-owned-level-high-event-discriminator" \
+    "action-skipped=" \
+    "restore-attempted=" \
     "0x1f000d0080" \
     "0x1f000d0084" \
     "0x1f000d2084" \
@@ -72,6 +98,14 @@ for forbidden in \
     "0x1f000e0004" \
     "0x1f000e0008" \
     "0x1f000f0044" \
+    "0x1c000d0080" \
+    "0x1c000d0084" \
+    "0x1c000d011c" \
+    "0x1c000d0124" \
+    "0x1c000e0000" \
+    "0x1c000e0004" \
+    "0x1c000e0008" \
+    "0x1c000f0044" \
     "0x107fff9114" \
     "0x107fff9214" \
     "0x107fff9314" \

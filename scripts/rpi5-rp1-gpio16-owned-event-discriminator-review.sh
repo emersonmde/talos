@@ -25,10 +25,10 @@ strings "$extract_dir/kernel_2712.img" >"$kernel_strings"
 
 for required in \
     "rpi5-rp1-gpio16-owned-event-discriminator: start" \
-    "rpi5-rp1-gpio16-owned-event-discriminator: before-preflight-loads" \
+    "rpi5-rp1-gpio16-owned-event-discriminator: before-read-only-observed-aperture-loads" \
     "$RESULT_MARKER" \
-    "phase11-rp1-gpio-owned-event-discriminator-source-contract-v1" \
-    "rp1-gpio16-owned-level-high-event-discriminator" \
+    "phase11-rp1-observed-gpio16-ownership-event-source-contract-v1" \
+    "rp1-gpio16-ownership-event-observed-aperture-preflight-read" \
     "pin=GPIO16" \
     "gpio16-bit-mask=" \
     "gpio16-status-address=" \
@@ -43,13 +43,33 @@ for required in \
     "gicd-ispendr5-address=" \
     "gicd-isactiver5-address=" \
     "gicc-hppir-address=" \
-    "-gpio16-status-raw=" \
-    " pre" \
-    " post" \
-    " restore" \
-    "action-io-bank0-inte-clear=" \
-    "action-level-high-enable=" \
-    "restore-attempted=" \
+    "width=32" \
+    "gpio16-status-raw=" \
+    "gpio16-ctrl-raw=" \
+    "gpio16-funcsel=" \
+    "gpio16-func-name=" \
+    "gpio16-outover=" \
+    "gpio16-oeover=" \
+    "gpio16-inover=" \
+    "gpio16-raw-event-enable-mask=" \
+    "gpio16-filtered-event-enable-mask=" \
+    "gpio16-status-event-mask=" \
+    "io-bank0-inte-raw=" \
+    "io-bank0-ints-raw=" \
+    "rio-out-raw=" \
+    "rio-oe-raw=" \
+    "rio-in-raw=" \
+    "pad-raw=" \
+    "pad-input-enable=" \
+    "pad-output-disable=" \
+    "gicd-isenabler5-raw=" \
+    "gicd-ispendr5-raw=" \
+    "gicd-isactiver5-raw=" \
+    "gicc-hppir-raw=" \
+    "intid160-enabled=" \
+    "intid160-pending=" \
+    "intid160-active=" \
+    "hppir-intid=" \
     "classification="; do
     if ! grep -Fq -- "$required" "$kernel_strings"; then
         echo "kernel image missing GPIO16 event discriminator string: $required" >&2
@@ -60,6 +80,11 @@ done
 for forbidden in \
     "TALOS: rp1-gpio16-owned-event-discriminator-control" \
     "classification=simulated/control" \
+    "phase11-rp1-gpio-owned-event-discriminator-source-contract-v1" \
+    "rp1-gpio16-owned-level-high-event-discriminator" \
+    "action-io-bank0-inte-clear=" \
+    "action-level-high-enable=" \
+    "restore-attempted=" \
     "GPIO14" \
     "GPIO15" \
     "GICC_IAR" \

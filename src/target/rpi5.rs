@@ -170,6 +170,10 @@ pub const RP1_GPIO14_OBSERVED_APERTURE_STATUS: usize = 0x1c_000d_0070;
 #[allow(dead_code)]
 pub const RP1_GPIO14_OBSERVED_APERTURE_CTRL: usize = 0x1c_000d_0074;
 #[allow(dead_code)]
+pub const RP1_GPIO16_OBSERVED_APERTURE_STATUS: usize = 0x1c_000d_0080;
+#[allow(dead_code)]
+pub const RP1_GPIO16_OBSERVED_APERTURE_CTRL: usize = 0x1c_000d_0084;
+#[allow(dead_code)]
 pub const RP1_IO_BANK0_OBSERVED_APERTURE_INTE: usize = 0x1c_000d_011c;
 #[allow(dead_code)]
 pub const RP1_IO_BANK0_OBSERVED_APERTURE_INTS: usize = 0x1c_000d_0124;
@@ -181,6 +185,8 @@ pub const RP1_RIO0_OBSERVED_APERTURE_OE: usize = 0x1c_000e_0004;
 pub const RP1_RIO0_OBSERVED_APERTURE_IN: usize = 0x1c_000e_0008;
 #[allow(dead_code)]
 pub const RP1_GPIO14_OBSERVED_APERTURE_PAD: usize = 0x1c_000f_003c;
+#[allow(dead_code)]
+pub const RP1_GPIO16_OBSERVED_APERTURE_PAD: usize = 0x1c_000f_0044;
 #[allow(dead_code)]
 pub const RP1_UART0_GPIO14_PAD: usize = 0x1f_000f_003c;
 #[allow(dead_code)]
@@ -14797,8 +14803,8 @@ impl Gpio16EventDiscriminatorSnapshot {
 
 #[cfg(talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator")]
 pub fn run_rp1_gpio16_owned_event_discriminator() -> ! {
-    const CONTRACT_ID: &str = "phase11-rp1-gpio-owned-event-discriminator-source-contract-v1";
-    const TARGET: &str = "rp1-gpio16-owned-level-high-event-discriminator";
+    const CONTRACT_ID: &str = "phase11-rp1-observed-gpio16-ownership-event-source-contract-v1";
+    const TARGET: &str = "rp1-gpio16-ownership-event-observed-aperture-preflight-read";
     const PIN: &str = "GPIO16";
     const GPIO16_MASK: u32 = 1 << 16;
     const GIC_INTID: u32 = 160;
@@ -14806,112 +14812,16 @@ pub fn run_rp1_gpio16_owned_event_discriminator() -> ! {
     const GICD_ISPENDR5: usize = GICD_BASE + 0x214;
     const GICD_ISACTIVER5: usize = GICD_BASE + 0x314;
     const GICC_HPPIR: usize = GICC_BASE + 0x18;
-    const CTRL_FUNCSEL_MASK: u32 = 0x0000_001f;
-    const CTRL_OUTOVER_MASK: u32 = 0x0000_3000;
-    const CTRL_OEOVER_MASK: u32 = 0x0000_c000;
-    const CTRL_INOVER_MASK: u32 = 0x0003_0000;
-    const CTRL_RAW_EVENT_ENABLE_MASK: u32 = 0x00f0_0000;
-    const CTRL_FILTERED_EVENT_ENABLE_MASK: u32 = 0x0f00_0000;
-    const CTRL_IRQRESET: u32 = 1 << 28;
-    const CTRL_IRQEN_HIGH: u32 = 1 << 23;
-    const PAD_INPUT_ENABLE: u32 = 1 << 6;
-    const PAD_OUTPUT_DISABLE: u32 = 1 << 7;
 
     write_early_static("rpi5-rp1-gpio16-owned-event-discriminator: start\n");
-    write_early_static("rpi5-rp1-gpio16-owned-event-discriminator: before-preflight-loads\n");
+    write_early_static(
+        "rpi5-rp1-gpio16-owned-event-discriminator: before-read-only-observed-aperture-loads\n",
+    );
     wait_uart10_empty_early_phase();
 
     let preflight = read_gpio16_event_discriminator_snapshot(GIC_INTID);
-    let parent_route_blocked = gpio16_parent_route_blocked(&preflight, GIC_INTID);
-    let pin_function_blocked = !gpio16_ownership_funcsel_compatible(preflight.gpio16_ctrl);
-    let mut action_skipped = true;
-    let mut wrote_io_bank0_inte_clear = false;
-    let mut wrote_pad_update = false;
-    let mut wrote_ctrl_update = false;
-    let mut wrote_rio_low = false;
-    let mut wrote_event_enable_clear = false;
-    let mut wrote_irqreset = false;
-    let mut wrote_level_high_enable = false;
-    let mut wrote_io_bank0_inte_set = false;
-    let mut wrote_rio_high = false;
-    let mut restore_attempted = false;
-    let mut post_action = preflight;
-    let mut post_restore = preflight;
-    let mut classification = if parent_route_blocked {
-        "gpio16-owned-event-preflight-blocked-parent-route"
-    } else if pin_function_blocked {
-        "gpio16-owned-event-preflight-blocked-pin-function"
-    } else {
-        "gpio16-owned-event-preflight-blocked-missing-status-transition"
-    };
-
-    if !parent_route_blocked && !pin_function_blocked {
-        action_skipped = false;
-        let pad_target = (preflight.pad | PAD_INPUT_ENABLE) & !PAD_OUTPUT_DISABLE;
-        let ctrl_target = (preflight.gpio16_ctrl
-            & !(CTRL_FUNCSEL_MASK
-                | CTRL_OUTOVER_MASK
-                | CTRL_OEOVER_MASK
-                | CTRL_INOVER_MASK
-                | CTRL_RAW_EVENT_ENABLE_MASK
-                | CTRL_FILTERED_EVENT_ENABLE_MASK))
-            | 5;
-
-        write_rp1_reg_flush(RP1_IO_BANK0_INTE_CLR, GPIO16_MASK);
-        wrote_io_bank0_inte_clear = true;
-        write_rp1_reg_flush(RP1_GPIO16_PAD, pad_target);
-        wrote_pad_update = true;
-        write_rp1_reg_flush(RP1_GPIO16_CTRL, ctrl_target);
-        wrote_ctrl_update = true;
-        write_rp1_reg_flush(RP1_RIO0_OUT_CLR, GPIO16_MASK);
-        write_rp1_reg_flush(RP1_RIO0_OE_SET, GPIO16_MASK);
-        wrote_rio_low = true;
-        write_rp1_reg_flush(RP1_GPIO16_CTRL_CLR, CTRL_RAW_EVENT_ENABLE_MASK);
-        wrote_event_enable_clear = true;
-        write_rp1_reg_flush(RP1_GPIO16_CTRL_SET, CTRL_IRQRESET);
-        wrote_irqreset = true;
-        write_rp1_reg_flush(RP1_GPIO16_CTRL_SET, CTRL_IRQEN_HIGH);
-        wrote_level_high_enable = true;
-        write_rp1_reg_flush(RP1_IO_BANK0_INTE_SET, GPIO16_MASK);
-        wrote_io_bank0_inte_set = true;
-        write_rp1_reg_flush(RP1_RIO0_OUT_SET, GPIO16_MASK);
-        wrote_rio_high = true;
-
-        post_action = read_gpio16_event_discriminator_snapshot(GIC_INTID);
-
-        write_rp1_reg_flush(RP1_IO_BANK0_INTE_CLR, GPIO16_MASK);
-        write_rp1_reg_flush(RP1_RIO0_OUT_CLR, GPIO16_MASK);
-        write_rp1_reg_flush(RP1_GPIO16_CTRL_SET, CTRL_IRQRESET);
-        write_rp1_reg_flush(RP1_GPIO16_CTRL, preflight.gpio16_ctrl);
-        restore_rio_bit(
-            RP1_RIO0_OUT_SET,
-            RP1_RIO0_OUT_CLR,
-            preflight.rio_out,
-            GPIO16_MASK,
-        );
-        restore_rio_bit(
-            RP1_RIO0_OE_SET,
-            RP1_RIO0_OE_CLR,
-            preflight.rio_oe,
-            GPIO16_MASK,
-        );
-        write_rp1_reg_flush(RP1_GPIO16_PAD, preflight.pad);
-        restore_rio_bit(
-            RP1_IO_BANK0_INTE_SET,
-            RP1_IO_BANK0_INTE_CLR,
-            preflight.io_bank0_inte,
-            GPIO16_MASK,
-        );
-        restore_attempted = true;
-        post_restore = read_gpio16_event_discriminator_snapshot(GIC_INTID);
-
-        classification = gpio16_event_discriminator_classification(
-            preflight,
-            post_action,
-            post_restore,
-            GPIO16_MASK,
-        );
-    }
+    let classification =
+        gpio16_observed_ownership_event_preflight_classification(preflight, GPIO16_MASK, GIC_INTID);
 
     loop {
         write_early_static("TALOS: rp1-gpio16-owned-event-discriminator-result contract=");
@@ -14923,35 +14833,20 @@ pub fn run_rp1_gpio16_owned_event_discriminator() -> ! {
         write_early_static(" bank=IO_BANK0 gpio16-bit-mask=");
         write_early_hex_u64(GPIO16_MASK as u64);
         write_gpio16_event_discriminator_addresses(
-            RP1_GPIO16_STATUS,
-            RP1_GPIO16_CTRL,
-            RP1_IO_BANK0_INTE,
-            RP1_IO_BANK0_INTS,
-            RP1_RIO0_OUT,
-            RP1_RIO0_OE,
-            RP1_RIO0_IN,
-            RP1_GPIO16_PAD,
+            RP1_GPIO16_OBSERVED_APERTURE_STATUS,
+            RP1_GPIO16_OBSERVED_APERTURE_CTRL,
+            RP1_IO_BANK0_OBSERVED_APERTURE_INTE,
+            RP1_IO_BANK0_OBSERVED_APERTURE_INTS,
+            RP1_RIO0_OBSERVED_APERTURE_OUT,
+            RP1_RIO0_OBSERVED_APERTURE_OE,
+            RP1_RIO0_OBSERVED_APERTURE_IN,
+            RP1_GPIO16_OBSERVED_APERTURE_PAD,
             GICD_ISENABLER5,
             GICD_ISPENDR5,
             GICD_ISACTIVER5,
             GICC_HPPIR,
         );
-        write_gpio16_event_discriminator_snapshot(" pre", preflight, GPIO16_MASK);
-        write_gpio16_event_discriminator_actions(
-            action_skipped,
-            wrote_io_bank0_inte_clear,
-            wrote_pad_update,
-            wrote_ctrl_update,
-            wrote_rio_low,
-            wrote_event_enable_clear,
-            wrote_irqreset,
-            wrote_level_high_enable,
-            wrote_io_bank0_inte_set,
-            wrote_rio_high,
-            restore_attempted,
-        );
-        write_gpio16_event_discriminator_snapshot(" post", post_action, GPIO16_MASK);
-        write_gpio16_event_discriminator_snapshot(" restore", post_restore, GPIO16_MASK);
+        write_gpio16_ownership_event_preflight_fields(preflight, GPIO16_MASK);
         write_early_static(" classification=");
         write_early_static(classification);
         write_early_static("\n");
@@ -14961,8 +14856,8 @@ pub fn run_rp1_gpio16_owned_event_discriminator() -> ! {
 
 #[cfg(talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator_no_mmio_control")]
 pub fn run_rp1_gpio16_owned_event_discriminator_no_mmio_control() -> ! {
-    const CONTRACT_ID: &str = "phase11-rp1-gpio-owned-event-discriminator-source-contract-v1";
-    const TARGET: &str = "rp1-gpio16-owned-level-high-event-discriminator";
+    const CONTRACT_ID: &str = "phase11-rp1-observed-gpio16-ownership-event-source-contract-v1";
+    const TARGET: &str = "rp1-gpio16-ownership-event-observed-aperture-preflight-read";
     const PIN: &str = "GPIO16";
     const GPIO16_MASK: u32 = 1 << 16;
     const SNAPSHOT: Gpio16EventDiscriminatorSnapshot = Gpio16EventDiscriminatorSnapshot::zero();
@@ -14985,27 +14880,24 @@ pub fn run_rp1_gpio16_owned_event_discriminator_no_mmio_control() -> ! {
         write_early_static(
             " gpio16-status-address=not-constructed gpio16-ctrl-address=not-constructed io-bank0-inte-address=not-constructed io-bank0-ints-address=not-constructed rio-out-address=not-constructed rio-oe-address=not-constructed rio-in-address=not-constructed pad-address=not-constructed gicd-isenabler5-address=not-constructed gicd-ispendr5-address=not-constructed gicd-isactiver5-address=not-constructed gicc-hppir-address=not-constructed",
         );
-        write_gpio16_event_discriminator_snapshot(" pre", SNAPSHOT, GPIO16_MASK);
-        write_gpio16_event_discriminator_actions(
-            true, false, false, false, false, false, false, false, false, false, false,
+        write_gpio16_ownership_event_preflight_fields(SNAPSHOT, GPIO16_MASK);
+        write_early_static(
+            " classification=no-mmio-observed-gpio16-ownership-event-control-visible\n",
         );
-        write_gpio16_event_discriminator_snapshot(" post", SNAPSHOT, GPIO16_MASK);
-        write_gpio16_event_discriminator_snapshot(" restore", SNAPSHOT, GPIO16_MASK);
-        write_early_static(" classification=simulated/control\n");
         wait_uart10_empty_early_phase();
     }
 }
 
 #[cfg(talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator")]
 fn read_gpio16_event_discriminator_snapshot(gic_intid: u32) -> Gpio16EventDiscriminatorSnapshot {
-    let gpio16_status = read_rp1_reg_u32(RP1_GPIO16_STATUS);
-    let gpio16_ctrl = read_rp1_reg_u32(RP1_GPIO16_CTRL);
-    let io_bank0_inte = read_rp1_reg_u32(RP1_IO_BANK0_INTE);
-    let io_bank0_ints = read_rp1_reg_u32(RP1_IO_BANK0_INTS);
-    let rio_out = read_rp1_reg_u32(RP1_RIO0_OUT);
-    let rio_oe = read_rp1_reg_u32(RP1_RIO0_OE);
-    let rio_in = read_rp1_reg_u32(RP1_RIO0_IN);
-    let pad = read_rp1_reg_u32(RP1_GPIO16_PAD);
+    let gpio16_status = read_rp1_reg_u32(RP1_GPIO16_OBSERVED_APERTURE_STATUS);
+    let gpio16_ctrl = read_rp1_reg_u32(RP1_GPIO16_OBSERVED_APERTURE_CTRL);
+    let io_bank0_inte = read_rp1_reg_u32(RP1_IO_BANK0_OBSERVED_APERTURE_INTE);
+    let io_bank0_ints = read_rp1_reg_u32(RP1_IO_BANK0_OBSERVED_APERTURE_INTS);
+    let rio_out = read_rp1_reg_u32(RP1_RIO0_OBSERVED_APERTURE_OUT);
+    let rio_oe = read_rp1_reg_u32(RP1_RIO0_OBSERVED_APERTURE_OE);
+    let rio_in = read_rp1_reg_u32(RP1_RIO0_OBSERVED_APERTURE_IN);
+    let pad = read_rp1_reg_u32(RP1_GPIO16_OBSERVED_APERTURE_PAD);
     let gic = GicV2::new(GICD_BASE, GICC_BASE);
     let (gicd_isenabler5, gicd_ispendr5, gicd_isactiver5, gicc_hppir) = unsafe {
         (
@@ -15035,50 +14927,46 @@ fn read_gpio16_event_discriminator_snapshot(gic_intid: u32) -> Gpio16EventDiscri
 }
 
 #[cfg(talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator")]
-fn restore_rio_bit(set_address: usize, clr_address: usize, snapshot: u32, mask: u32) {
-    if snapshot & mask != 0 {
-        write_rp1_reg_flush(set_address, mask);
-    } else {
-        write_rp1_reg_flush(clr_address, mask);
-    }
-}
-
-#[cfg(talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator")]
-fn gpio16_parent_route_blocked(
-    snapshot: &Gpio16EventDiscriminatorSnapshot,
-    gic_intid: u32,
-) -> bool {
-    snapshot.gicd_isenabler5 & 1 != 0
-        || snapshot.gicd_ispendr5 & 1 != 0
-        || snapshot.gicd_isactiver5 & 1 != 0
-        || snapshot.hppir_intid == gic_intid
-}
-
-#[cfg(talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator")]
-fn gpio16_ownership_funcsel_compatible(gpio16_ctrl: u32) -> bool {
-    matches!(gpio16_funcsel(gpio16_ctrl), 5 | 6)
-}
-
-#[cfg(talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator")]
-fn gpio16_event_discriminator_classification(
-    preflight: Gpio16EventDiscriminatorSnapshot,
-    post_action: Gpio16EventDiscriminatorSnapshot,
-    post_restore: Gpio16EventDiscriminatorSnapshot,
+fn gpio16_observed_ownership_event_preflight_classification(
+    snapshot: Gpio16EventDiscriminatorSnapshot,
     gpio16_mask: u32,
+    gic_intid: u32,
 ) -> &'static str {
-    if post_restore.gpio16_ctrl != preflight.gpio16_ctrl
-        || post_restore.pad != preflight.pad
-        || (post_restore.io_bank0_inte ^ preflight.io_bank0_inte) & gpio16_mask != 0
-        || (post_restore.rio_out ^ preflight.rio_out) & gpio16_mask != 0
-        || (post_restore.rio_oe ^ preflight.rio_oe) & gpio16_mask != 0
+    let raw_event_enable = (snapshot.gpio16_ctrl >> 20) & 0xf;
+    let filtered_event_enable = (snapshot.gpio16_ctrl >> 24) & 0xf;
+    let status_event_mask = (snapshot.gpio16_status >> 20) & 0xff;
+    let rp1_reads = [
+        snapshot.gpio16_status,
+        snapshot.gpio16_ctrl,
+        snapshot.io_bank0_inte,
+        snapshot.io_bank0_ints,
+        snapshot.rio_out,
+        snapshot.rio_oe,
+        snapshot.rio_in,
+        snapshot.pad,
+    ];
+
+    if rp1_reads.iter().all(|&raw| raw == 0xdead_dead) {
+        "observed-gpio16-ownership-preflight-sentinel"
+    } else if rp1_reads.iter().all(|&raw| raw == 0xffff_ffff) {
+        "observed-gpio16-ownership-preflight-all-ones"
+    } else if rp1_reads.iter().all(|&raw| raw == 0) {
+        "observed-gpio16-ownership-preflight-zero"
+    } else if gpio16_funcsel(snapshot.gpio16_ctrl) != 5 {
+        "observed-gpio16-ownership-preflight-blocked-non-gpio-function"
+    } else if (snapshot.gicd_isenabler5 & 1) != 0
+        || (snapshot.gicd_ispendr5 & 1) != 0
+        || (snapshot.gicd_isactiver5 & 1) != 0
+        || snapshot.hppir_intid == gic_intid
+        || raw_event_enable != 0
+        || filtered_event_enable != 0
+        || status_event_mask != 0
+        || (snapshot.io_bank0_inte & gpio16_mask) != 0
+        || (snapshot.io_bank0_ints & gpio16_mask) != 0
     {
-        "gpio16-owned-event-preflight-blocked-restore-mismatch"
-    } else if (post_action.gpio16_status & (1 << 23) != 0)
-        || (post_action.io_bank0_ints & gpio16_mask != 0)
-    {
-        "gpio16-owned-level-high-event-discriminator-visible"
+        "observed-gpio16-ownership-preflight-blocked-route-or-source-state"
     } else {
-        "gpio16-owned-event-preflight-blocked-missing-status-transition"
+        "observed-gpio16-ownership-event-preflight-visible"
     }
 }
 
@@ -15130,136 +15018,82 @@ fn write_gpio16_event_discriminator_addresses(
     talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator",
     talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator_no_mmio_control"
 ))]
-fn write_gpio16_event_discriminator_snapshot(
-    prefix: &str,
+fn write_gpio16_ownership_event_preflight_fields(
     snapshot: Gpio16EventDiscriminatorSnapshot,
     gpio16_mask: u32,
 ) {
-    write_early_static(prefix);
-    write_early_static("-gpio16-status-raw=");
+    write_early_static(" width=32 gpio16-status-raw=");
     write_early_hex_u64(snapshot.gpio16_status as u64);
-    write_early_static(prefix);
-    write_early_static("-gpio16-ctrl-raw=");
+    write_early_static(" gpio16-ctrl-raw=");
     write_early_hex_u64(snapshot.gpio16_ctrl as u64);
-    write_early_static(prefix);
-    write_early_static("-gpio16-funcsel=");
+    write_early_static(" gpio16-funcsel=");
     write_early_dec_u64(gpio16_funcsel(snapshot.gpio16_ctrl) as u64);
-    write_early_static(prefix);
-    write_early_static("-gpio16-func-name=");
+    write_early_static(" gpio16-func-name=");
     write_early_static(gpio16_func_name(snapshot.gpio16_ctrl));
-    write_early_static(prefix);
-    write_early_static("-gpio16-raw-event-enable-mask=");
+    write_early_static(" gpio16-outover=");
+    write_early_dec_u64(((snapshot.gpio16_ctrl >> 12) & 0x3) as u64);
+    write_early_static(" gpio16-oeover=");
+    write_early_dec_u64(((snapshot.gpio16_ctrl >> 14) & 0x3) as u64);
+    write_early_static(" gpio16-inover=");
+    write_early_dec_u64(((snapshot.gpio16_ctrl >> 16) & 0x3) as u64);
+    write_early_static(" gpio16-raw-event-enable-mask=");
     write_early_hex_u64(((snapshot.gpio16_ctrl >> 20) & 0xf) as u64);
-    write_early_static(prefix);
-    write_early_static("-gpio16-status-event-mask=");
+    write_early_static(" gpio16-filtered-event-enable-mask=");
+    write_early_hex_u64(((snapshot.gpio16_ctrl >> 24) & 0xf) as u64);
+    write_early_static(" gpio16-status-event-mask=");
     write_early_hex_u64(((snapshot.gpio16_status >> 20) & 0xff) as u64);
-    write_early_static(prefix);
-    write_early_static("-gpio16-status-raw-high=");
+    write_early_static(" gpio16-status-raw-high=");
     write_bool(snapshot.gpio16_status & (1 << 23) != 0);
-    write_early_static(prefix);
-    write_early_static("-io-bank0-inte-raw=");
+    write_early_static(" io-bank0-inte-raw=");
     write_early_hex_u64(snapshot.io_bank0_inte as u64);
-    write_early_static(prefix);
-    write_early_static("-io-bank0-ints-raw=");
+    write_early_static(" io-bank0-ints-raw=");
     write_early_hex_u64(snapshot.io_bank0_ints as u64);
-    write_early_static(prefix);
-    write_early_static("-gpio16-enabled=");
+    write_early_static(" gpio16-enabled=");
     write_bool(snapshot.io_bank0_inte & gpio16_mask != 0);
-    write_early_static(prefix);
-    write_early_static("-gpio16-source-status=");
+    write_early_static(" gpio16-source-status=");
     write_bool(snapshot.io_bank0_ints & gpio16_mask != 0);
-    write_early_static(prefix);
-    write_early_static("-rio-out-raw=");
+    write_early_static(" rio-out-raw=");
     write_early_hex_u64(snapshot.rio_out as u64);
-    write_early_static(prefix);
-    write_early_static("-rio-oe-raw=");
+    write_early_static(" rio-oe-raw=");
     write_early_hex_u64(snapshot.rio_oe as u64);
-    write_early_static(prefix);
-    write_early_static("-rio-in-raw=");
+    write_early_static(" rio-in-raw=");
     write_early_hex_u64(snapshot.rio_in as u64);
-    write_early_static(prefix);
-    write_early_static("-rio-out-gpio16=");
+    write_early_static(" rio-out-gpio16=");
     write_bool(snapshot.rio_out & gpio16_mask != 0);
-    write_early_static(prefix);
-    write_early_static("-rio-oe-gpio16=");
+    write_early_static(" rio-oe-gpio16=");
     write_bool(snapshot.rio_oe & gpio16_mask != 0);
-    write_early_static(prefix);
-    write_early_static("-rio-in-gpio16=");
+    write_early_static(" rio-in-gpio16=");
     write_bool(snapshot.rio_in & gpio16_mask != 0);
-    write_early_static(prefix);
-    write_early_static("-pad-raw=");
+    write_early_static(" pad-raw=");
     write_early_hex_u64(snapshot.pad as u64);
-    write_early_static(prefix);
-    write_early_static("-pad-input-enable=");
+    write_early_static(" pad-input-enable=");
     write_bool(snapshot.pad & (1 << 6) != 0);
-    write_early_static(prefix);
-    write_early_static("-pad-output-disable=");
+    write_early_static(" pad-output-disable=");
     write_bool(snapshot.pad & (1 << 7) != 0);
-    write_early_static(prefix);
-    write_early_static("-gicd-isenabler5-raw=");
+    write_early_static(" pad-pull=");
+    write_early_hex_u64(((snapshot.pad >> 2) & 0x3) as u64);
+    write_early_static(" pad-drive=");
+    write_early_hex_u64(((snapshot.pad >> 4) & 0x3) as u64);
+    write_early_static(" pad-schmitt=");
+    write_bool(snapshot.pad & (1 << 1) != 0);
+    write_early_static(" pad-slew=");
+    write_bool(snapshot.pad & 1 != 0);
+    write_early_static(" gicd-isenabler5-raw=");
     write_early_hex_u64(snapshot.gicd_isenabler5 as u64);
-    write_early_static(prefix);
-    write_early_static("-gicd-ispendr5-raw=");
+    write_early_static(" gicd-ispendr5-raw=");
     write_early_hex_u64(snapshot.gicd_ispendr5 as u64);
-    write_early_static(prefix);
-    write_early_static("-gicd-isactiver5-raw=");
+    write_early_static(" gicd-isactiver5-raw=");
     write_early_hex_u64(snapshot.gicd_isactiver5 as u64);
-    write_early_static(prefix);
-    write_early_static("-gicc-hppir-raw=");
+    write_early_static(" gicc-hppir-raw=");
     write_early_hex_u64(snapshot.gicc_hppir as u64);
-    write_early_static(prefix);
-    write_early_static("-hppir-intid=");
-    write_early_dec_u64(snapshot.hppir_intid as u64);
-    write_early_static(prefix);
-    write_early_static("-intid160-enabled=");
+    write_early_static(" intid160-enabled=");
     write_bool(snapshot.gicd_isenabler5 & 1 != 0);
-    write_early_static(prefix);
-    write_early_static("-intid160-pending=");
+    write_early_static(" intid160-pending=");
     write_bool(snapshot.gicd_ispendr5 & 1 != 0);
-    write_early_static(prefix);
-    write_early_static("-intid160-active=");
+    write_early_static(" intid160-active=");
     write_bool(snapshot.gicd_isactiver5 & 1 != 0);
-}
-
-#[cfg(any(
-    talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator",
-    talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator_no_mmio_control"
-))]
-fn write_gpio16_event_discriminator_actions(
-    skipped: bool,
-    io_bank0_inte_clear: bool,
-    pad_update: bool,
-    ctrl_update: bool,
-    rio_low: bool,
-    event_enable_clear: bool,
-    irqreset: bool,
-    level_high_enable: bool,
-    io_bank0_inte_set: bool,
-    rio_high: bool,
-    restore_attempted: bool,
-) {
-    write_early_static(" action-skipped=");
-    write_bool(skipped);
-    write_early_static(" action-io-bank0-inte-clear=");
-    write_bool(io_bank0_inte_clear);
-    write_early_static(" action-pad-update=");
-    write_bool(pad_update);
-    write_early_static(" action-ctrl-update=");
-    write_bool(ctrl_update);
-    write_early_static(" action-rio-low=");
-    write_bool(rio_low);
-    write_early_static(" action-event-enable-clear=");
-    write_bool(event_enable_clear);
-    write_early_static(" action-irqreset=");
-    write_bool(irqreset);
-    write_early_static(" action-level-high-enable=");
-    write_bool(level_high_enable);
-    write_early_static(" action-io-bank0-inte-set=");
-    write_bool(io_bank0_inte_set);
-    write_early_static(" action-rio-high=");
-    write_bool(rio_high);
-    write_early_static(" restore-attempted=");
-    write_bool(restore_attempted);
+    write_early_static(" hppir-intid=");
+    write_early_dec_u64(snapshot.hppir_intid as u64);
 }
 
 #[cfg(any(

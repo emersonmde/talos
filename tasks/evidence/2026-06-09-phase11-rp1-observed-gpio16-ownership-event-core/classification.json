@@ -1,0 +1,58 @@
+{
+  "task_id": "phase11-rp1-observed-gpio16-ownership-event-core-20260609",
+  "classification": "accepted-local-static-observed-gpio16-ownership-event-core",
+  "status": "accepted",
+  "source_contract": "phase11-rp1-observed-gpio16-ownership-event-source-contract-v1",
+  "target": "rp1-gpio16-ownership-event-observed-aperture-preflight-read",
+  "read_only": true,
+  "hardware_run": false,
+  "real_candidate": {
+    "scenario": "rpi5_rp1_gpio16_owned_event_discriminator",
+    "marker": "TALOS: rp1-gpio16-owned-event-discriminator-result",
+    "allowed_reads": [
+      "0x1c000d0080",
+      "0x1c000d0084",
+      "0x1c000d011c",
+      "0x1c000d0124",
+      "0x1c000e0000",
+      "0x1c000e0004",
+      "0x1c000e0008",
+      "0x1c000f0044",
+      "0x107fff9114",
+      "0x107fff9214",
+      "0x107fff9314",
+      "0x107fffa018"
+    ],
+    "forbidden_writes": true
+  },
+  "control_candidate": {
+    "scenario": "rpi5_rp1_gpio16_owned_event_discriminator_no_mmio_control",
+    "marker": "TALOS: rp1-gpio16-owned-event-discriminator-control",
+    "classification": "no-mmio-observed-gpio16-ownership-event-control-visible",
+    "constructs_forbidden_mmio": false
+  },
+  "accepted_claims": [
+    "local/static real candidate implements the accepted read-only observed-aperture GPIO16 preflight read set and report fields",
+    "local/static no-MMIO control preserves the report shape with not-constructed address fields",
+    "archive review helpers distinguish the real and control candidates and reject retained write-backed output strings"
+  ],
+  "not_accepted": [
+    "Pi 5 hardware behavior",
+    "boot archive publication to the lab",
+    "hardwareTestLock acquisition",
+    "GPIO ownership",
+    "event generation",
+    "interrupt pending generation",
+    "interrupt delivery",
+    "GIC acknowledgement",
+    "handler ownership",
+    "GPIO/RIO/pad/INTE/CTRL writes",
+    "GPIO14 ownership changes",
+    "DMA/cache",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "commit": null
+}
