@@ -8930,6 +8930,19 @@ RP1 MMIO or DMA programming, descriptor rings, interrupt completion, Ethernet,
 storage, networking, SSH, hardware validation, Milestone 12 work, Milestone
 11.3 completion, or phase transition is accepted.
 
+phase11-rp1-dma-cache-driver-diagnostic-envelope-closeout-20260609 accepts the
+envelope checkpoint as
+rp1-dma-cache-driver-diagnostic-envelope-frontier-closed. Same-shaped
+local/static envelope retries are closed unless a future supervisor task
+supplies materially different runtime or hardware evidence, source scope, or
+acceptance criteria. The accepted envelope is sufficient to plan the guarded
+small DMA diagnostic source-contract boundary, but this does not accept a small
+DMA diagnostic implementation, driver DMA completion, hardware/device
+completion, RP1 MMIO/DMA programming, descriptor rings, interrupt completion,
+Ethernet, storage, networking, SSH, hardware validation, Milestone 12 work,
+Milestone 11.3 completion, or a phase transition. The next boundary remains
+source-contract work.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

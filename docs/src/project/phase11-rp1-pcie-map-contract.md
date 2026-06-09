@@ -477,6 +477,20 @@ not accept Pi 5 hardware validation, RP1 MMIO/DMA programming, descriptor
 rings, interrupt completion, Ethernet, storage, networking, SSH, Milestone 12
 work, Milestone 11.3 completion, or phase transition by implication.
 
+phase11-rp1-dma-cache-driver-diagnostic-envelope-closeout-20260609 closes the
+local/static envelope frontier as
+rp1-dma-cache-driver-diagnostic-envelope-frontier-closed. Same-shaped
+local/static envelope retries are closed unless a future supervisor task
+supplies materially different runtime or hardware evidence, source scope, or
+acceptance criteria. The accepted envelope is sufficient to plan the guarded
+small DMA diagnostic source-contract boundary, but it still does not accept a
+small DMA diagnostic implementation, driver DMA completion, hardware/device
+completion, RP1 MMIO writes, DMA channel programming, descriptor rings,
+interrupt completion, Ethernet, storage, networking, SSH, hardware validation,
+Milestone 12 work, Milestone 11.3 completion, or phase transition. The next
+boundary remains source-contract work unless explicit future scope authorizes
+implementation or hardware proof.
+
 phase11-rp1-gpio-event-latch-source-contract-20260607 is accepted as
 source-contract-blocked. Retained RP1/Linux source identifies the GPIO14 event
 configuration path: GPIO14 CTRL CLR can clear raw event enables, GPIO14 CTRL
@@ -2854,6 +2868,12 @@ maintenance-executor evidence only, preserves all prerequisite identities and
 rejected runtime claims, and keeps unresolved DMA channel, descriptor-ring,
 interrupt/completion, IOMMU/runtime-policy, allocation/pinning, hardware-proof,
 and device-consumer gaps explicit before any future DMA-capable diagnostic.
+phase11-rp1-dma-cache-driver-diagnostic-envelope-closeout-20260609 closes
+same-shaped local/static envelope retries and selects the guarded small DMA
+diagnostic source-contract boundary. That selection does not accept a small DMA
+diagnostic implementation, RP1 MMIO/DMA programming, descriptor rings,
+interrupt completion, hardware validation, networking, SSH, Milestone 11.3
+completion, or phase transition.
 
 ## Deferred Work
 
