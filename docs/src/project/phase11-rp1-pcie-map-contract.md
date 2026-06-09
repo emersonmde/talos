@@ -536,6 +536,19 @@ programming, descriptor rings, transfer completion, interrupt completion,
 Ethernet, storage, networking, SSH, Milestone 11.3 completion, or a phase
 transition.
 
+phase11-rp1-dma-cache-small-diagnostic-hardware-proof-contract-20260609 accepts
+the guarded future hardware-proof boundary only as plan visibility/control
+output. A future Pi 5 proof may show that the accepted local/static small
+diagnostic plan evidence is visible and distinguishable on the real target,
+paired with a no-plan/control output path, but it must not claim live DMA,
+channel ownership, descriptor rings, transfer completion, interrupt
+completion, hardware/device completion, Ethernet, storage, networking, SSH,
+Milestone 11.3 completion, or a phase transition. Any future proof requires
+separate supervisor planning, hardwareTestLock serialization, candidate
+identity, artifact digest, fresh serial cursor, TFTP delta, paired control,
+restore evidence, and inconclusive-run triage before code changes after an
+inconclusive run.
+
 phase11-rp1-gpio-event-latch-source-contract-20260607 is accepted as
 source-contract-blocked. Retained RP1/Linux source identifies the GPIO14 event
 configuration path: GPIO14 CTRL CLR can clear raw event enables, GPIO14 CTRL
@@ -2930,6 +2943,15 @@ descriptor rings, transfer or interrupt completion, hardware validation,
 Ethernet, storage, networking, SSH, Milestone 11.3 completion, or phase
 transition. The next boundary remains contract-only before any hardware proof
 or live DMA behavior is considered.
+
+phase11-rp1-dma-cache-small-diagnostic-hardware-proof-contract-20260609 keeps
+that boundary contract-only. It allows only a future supervisor-planned Pi 5
+plan visibility/control proof with hardwareTestLock serialization, candidate
+identity, artifact digest, fresh serial cursor, TFTP delta, paired control,
+restore evidence, and inconclusive-run triage requirements. Live RP1 DMA,
+channel ownership, descriptor rings, transfer completion, interrupt
+completion, device-consumer behavior, Ethernet, storage, networking, SSH,
+Milestone 11.3 completion, and phase transition remain unaccepted.
 
 ## Deferred Work
 

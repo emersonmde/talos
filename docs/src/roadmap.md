@@ -8986,6 +8986,18 @@ DMA channels, create descriptor rings, claim transfer or interrupt completion,
 implement Ethernet, storage, networking, SSH, accept Milestone 11.3 completion,
 or create a phase transition.
 
+phase11-rp1-dma-cache-small-diagnostic-hardware-proof-contract-20260609 accepts
+the guarded future proof boundary only as plan visibility/control output. Any
+future Pi 5 proof must be separately supervisor-planned, serialized through
+hardwareTestLock, and limited to showing that accepted local/static small
+diagnostic plan evidence is visible and distinguishable from a paired no-plan
+control output on the real target. It must capture candidate identity,
+artifact digest, fresh serial cursor, TFTP delta, paired control, restore
+evidence, and inconclusive-run triage requirements. This does not accept live
+DMA, RP1 MMIO writes, channel ownership, descriptor rings, transfer
+completion, interrupt completion, hardware/device completion, Ethernet,
+storage, networking, SSH, Milestone 11.3 completion, or a phase transition.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

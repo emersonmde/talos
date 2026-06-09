@@ -1,0 +1,79 @@
+{
+  "task_id": "phase11-rp1-dma-cache-small-diagnostic-hardware-proof-contract-20260609",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-hardware-proof-contract.md",
+      "evidence_level": "static inspection and documentation reconciliation"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-hardware-proof-contract/classification.json",
+      "evidence_level": "accepted source-contract classification"
+    },
+    {
+      "label": "accepted source contract",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-source-contract.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted source contract classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-source-contract/classification.json",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted plan core",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-plan-core.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted plan core classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-plan-core/classification.json",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted plan closeout",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-plan-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted plan closeout classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-plan-closeout/classification.json",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "implementation frontier",
+      "path": "src/dma_cache.rs",
+      "evidence_level": "static inspection of accepted local/static plan implementation and tests"
+    },
+    {
+      "label": "project contract update",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "evidence_level": "documentation reconciliation"
+    },
+    {
+      "label": "roadmap update",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "documentation reconciliation"
+    },
+    {
+      "label": "json checks",
+      "command": "jq empty on task-owned evidence-map/classification JSON",
+      "result": "passed"
+    },
+    {
+      "label": "mdbook",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "label": "diff checks",
+      "command": "git diff --check and git diff --cached --check",
+      "result": "passed"
+    }
+  ],
+  "hardware": {
+    "run": false,
+    "reason": "Not in scope; task accepts only a future hardware-proof source contract."
+  }
+}

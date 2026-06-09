@@ -1,0 +1,81 @@
+{
+  "task_id": "phase11-rp1-dma-cache-small-diagnostic-hardware-proof-contract-20260609",
+  "classification": "rp1-dma-cache-small-diagnostic-hardware-proof-contract-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "mdbook build",
+    "git diff checks"
+  ],
+  "future_proof_allowance": "limited-to-plan-visibility-control-output",
+  "reason": "Accepted evidence constructs and formats local/static RP1 DMA small diagnostic plan evidence, but no RP1 DMA channel ownership, descriptor-ring layout, transfer-completion policy, interrupt-completion policy, runtime IOMMU policy, allocation/pinning expansion, hardware proof, or device-specific consumer has been accepted.",
+  "allowed_future_proof_claims": [
+    "accepted small diagnostic plan evidence is visible on Pi 5 serial output",
+    "candidate output is distinguishable from a paired no-plan/control output",
+    "hardware evidence is limited to plan visibility/control output",
+    "hardwareTestLock serialization and restore evidence are captured by the future task"
+  ],
+  "required_hardware_evidence_if_future_task_runs": [
+    "hardwareTestLock owner, task id, acquisition time, release time, and restore status",
+    "lab API candidate identity with effective kernel/tree fields before the run",
+    "kernel artifact digest and staged boot tree identity",
+    "fresh serial cursor and post-run serial output",
+    "TFTP delta for candidate and paired control",
+    "candidate serial records naming plan contract id, source contract id, local/static classification, hardware-proof boundary classification, and rejected runtime/hardware claims",
+    "paired-control serial records proving the output path without accepted plan evidence",
+    "restore evidence after the run",
+    "classification JSON labeled as serial hardware boot/output and rejecting live-DMA claims"
+  ],
+  "inconclusive_run_triage_before_code_changes": [
+    "candidate identity",
+    "fresh serial cursor",
+    "TFTP delta",
+    "known-good control",
+    "candidate rerun"
+  ],
+  "accepted_claims": [
+    "the accepted plan closeout selected this guarded contract-only boundary",
+    "future Pi 5 proof is allowed only as plan visibility/control output if separately supervisor-planned",
+    "future candidate output must expose accepted plan evidence fields without RP1 MMIO writes or DMA programming",
+    "future paired control must preserve the reporting path without accepted plan evidence",
+    "future hardware work must serialize on hardwareTestLock and capture restore evidence"
+  ],
+  "rejected_claims": [
+    "Pi 5 hardware validation by this task",
+    "boot archive publication by this task",
+    "hardwareTestLock acquisition by this task",
+    "RP1 MMIO writes",
+    "RP1 DMA channel ownership",
+    "DMA channel programming",
+    "descriptor-ring construction",
+    "descriptor-ring ownership",
+    "transfer completion",
+    "interrupt completion",
+    "hardware or device completion",
+    "Ethernet readiness",
+    "storage readiness",
+    "networking",
+    "SSH",
+    "cache-coherent driver policy",
+    "non-cacheable DMA mapping policy",
+    "IOMMU-backed runtime policy",
+    "DMA-safe allocation or pinning beyond accepted descriptor validation",
+    "Milestone 12 progress",
+    "Milestone 11.3 completion by implication",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "No RP1 DMA channel ownership has been accepted",
+    "No descriptor-ring layout or ownership has been accepted",
+    "No transfer-completion or interrupt policy exists",
+    "IOMMU/runtime policy remains source-unassigned",
+    "DMA-safe allocation and pinning remain unaccepted beyond descriptor validation",
+    "No live hardware DMA proof has been accepted",
+    "No device-specific consumer has been selected",
+    "Ethernet, storage, networking, and SSH remain explicitly out of scope"
+  ],
+  "hardware": "not-run-not-in-scope",
+  "next_action": "No explicit queued follow-up task exists. Set planningNeeded=true for supervisor planning of a bounded small diagnostic plan visibility/control proof or checkpoint; do not infer authorization for RP1 MMIO/DMA programming, descriptor rings, transfer completion, interrupt completion, Ethernet/storage/networking/SSH, Milestone 11.3 completion, or phase transition."
+}
