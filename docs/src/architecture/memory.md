@@ -222,11 +222,22 @@ That executor is not a general driver DMA API and does not accept:
 - Ownership rules for allocator metadata under driver DMA pressure.
 - Hardware validation or Milestone 11.3 completion.
 
+The next accepted layer is a local/static driver-diagnostic envelope that may
+consume only accepted DmaCacheMaintenanceExecutorEvidence. It preserves the
+descriptor, sync-plan, maintenance-sequence, and executor identity chain while
+recording unresolved RP1 DMA channel ownership, descriptor-ring
+layout/ownership, transfer-completion and interrupt policy, IOMMU/runtime
+policy, DMA-safe allocation or pinning, hardware-proof, and device-consumer
+gaps. The envelope still does not allocate DMA buffers, program RP1 DMA, build
+descriptor rings, handle interrupts, prove hardware completion, or complete
+Milestone 11.3.
+
 Until those pieces are designed and validated, Phase 4 interrupt/timer work and
 future driver work must assume only the accepted low identity-mapped allocator
 span is available for ordinary kernel allocations. No driver may infer broad
 DMA safety from the current cache-enabled boot status or bypass the accepted
-descriptor, sync-plan, maintenance-sequence, and executor evidence chain.
+descriptor, sync-plan, maintenance-sequence, executor, and driver-diagnostic
+envelope evidence chain.
 
 Talos now zeroes and populates those four pages with a deterministic stage-1
 4 KiB translation skeleton, but still does not enable translation:

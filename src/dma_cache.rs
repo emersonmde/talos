@@ -6,6 +6,8 @@ pub const DMA_CACHE_MAINTENANCE_SEQUENCE_CONTRACT_ID: &str =
     "phase11-rp1-dma-cache-maintenance-sequence-contract-v1";
 pub const DMA_CACHE_MAINTENANCE_EXECUTOR_CONTRACT_ID: &str =
     "phase11-rp1-dma-cache-maintenance-executor-contract-v1";
+pub const DMA_CACHE_DRIVER_DIAGNOSTIC_ENVELOPE_CONTRACT_ID: &str =
+    "phase11-rp1-dma-cache-driver-diagnostic-envelope-contract-v1";
 pub const DMA_CACHE_SOURCE_INVENTORY_ID: &str = "phase11-rp1-dma-cache-source-inventory-20260609";
 pub const DMA_LOCAL_STATIC_CLASSIFICATION: &str = "local-static-dma-cache-contract-visible";
 pub const DMA_SYNC_PLAN_LOCAL_STATIC_CLASSIFICATION: &str =
@@ -14,6 +16,8 @@ pub const DMA_MAINTENANCE_SEQUENCE_LOCAL_STATIC_CLASSIFICATION: &str =
     "local-static-dma-cache-maintenance-sequence-visible";
 pub const DMA_MAINTENANCE_EXECUTOR_RUNTIME_CLASSIFICATION: &str =
     "runtime-execution-dma-cache-maintenance-executor-visible";
+pub const DMA_DRIVER_DIAGNOSTIC_ENVELOPE_LOCAL_STATIC_CLASSIFICATION: &str =
+    "local-static-dma-cache-driver-diagnostic-envelope-visible";
 pub const DMA_REJECTED_INPUT_CLASSIFICATION: &str = "contract-rejected-input";
 pub const DMA_STAGING_BLOCKER_CLASSIFICATION: &str = "staging/build-blocker";
 pub const RP1_DMA_SOURCE_UNASSIGNED_IOMMU: &str = "source-unassigned-rp1-dma";
@@ -39,6 +43,16 @@ pub const DMA_MAINTENANCE_EXECUTOR_REJECTED_RUNTIME_CLAIMS: &[&str] = &[
     "ethernet-storage-networking-ssh",
     "hardware-validation",
     "milestone-11-3-completion",
+];
+
+pub const DMA_DRIVER_DIAGNOSTIC_UNRESOLVED_GAPS: &[&str] = &[
+    "rp1-dma-channel-ownership",
+    "descriptor-ring-layout-and-ownership",
+    "transfer-completion-and-interrupt-policy",
+    "iommu-runtime-policy",
+    "dma-safe-allocation-and-pinning",
+    "hardware-proof",
+    "device-specific-consumer",
 ];
 
 pub const RP1_RAM_WINDOW_SOURCE: &str = "rp1-dma-ranges-ram-window";
@@ -508,6 +522,85 @@ pub struct DmaCacheMaintenanceExecutorEvidence {
     pub classification: &'static str,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct DmaCacheDriverDiagnosticEnvelopeInput {
+    pub executor_evidence: DmaCacheMaintenanceExecutorEvidence,
+    pub claims_driver_dma_completion: bool,
+    pub claims_hardware_device_completion: bool,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct DmaCacheDriverDiagnosticEnvelope {
+    pub executor_evidence: DmaCacheMaintenanceExecutorEvidence,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct DmaCacheDriverDiagnosticEnvelopeEvidence {
+    pub driver_diagnostic_envelope_contract_id: &'static str,
+    pub executor_contract_id: &'static str,
+    pub maintenance_sequence_contract_id: &'static str,
+    pub sync_plan_contract_id: &'static str,
+    pub descriptor_contract_id: &'static str,
+    pub descriptor_source_inventory_id: &'static str,
+    pub operation: &'static str,
+    pub instruction: &'static str,
+    pub instruction_mnemonic: &'static str,
+    pub barrier: &'static str,
+    pub barrier_mnemonic: &'static str,
+    pub cache_line_source: &'static str,
+    pub cache_line_size: u64,
+    pub line_aligned_cpu_start: u64,
+    pub covered_length: u64,
+    pub line_count: u64,
+    pub cpu_physical: u64,
+    pub cpu_visible: u64,
+    pub rp1_bus_address: u64,
+    pub descriptor_length: u64,
+    pub direction: &'static str,
+    pub cacheability: &'static str,
+    pub owner_transition: &'static str,
+    pub iommu_classification: &'static str,
+    pub prerequisite_rejected_runtime_claims: &'static [&'static str],
+    pub executor_rejected_runtime_claims: &'static [&'static str],
+    pub unresolved_dma_diagnostic_gaps: &'static [&'static str],
+    pub claims_driver_dma_completion: bool,
+    pub claims_hardware_device_completion: bool,
+    pub classification: &'static str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum DmaCacheDriverDiagnosticEnvelopeError {
+    DriverDmaCompletionClaim,
+    HardwareDeviceCompletionClaim,
+    MissingPrerequisiteIdentity,
+    NonAcceptedExecutorClassification,
+    MissingRejectedRuntimeClaimsIdentity,
+    ZeroLineCoverage,
+    LineRangeMismatch,
+    RangeOverflow,
+    UnsupportedCacheabilityClaim,
+    UnsupportedIommuClaim,
+}
+
+impl DmaCacheDriverDiagnosticEnvelopeError {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::DriverDmaCompletionClaim => "driver-dma-completion-claim",
+            Self::HardwareDeviceCompletionClaim => "hardware-device-completion-claim",
+            Self::MissingPrerequisiteIdentity => "missing-prerequisite-identity",
+            Self::NonAcceptedExecutorClassification => "non-accepted-executor-classification",
+            Self::MissingRejectedRuntimeClaimsIdentity => {
+                "missing-rejected-runtime-claims-identity"
+            }
+            Self::ZeroLineCoverage => "zero-line-coverage",
+            Self::LineRangeMismatch => "line-range-mismatch",
+            Self::RangeOverflow => "range-overflow",
+            Self::UnsupportedCacheabilityClaim => "unsupported-cacheability-claim",
+            Self::UnsupportedIommuClaim => "unsupported-iommu-claim",
+        }
+    }
+}
+
 pub fn validate_dma_buffer_descriptor(
     request: DmaBufferRequest,
     accepted_owned_span: EarlyPageFrameSpan,
@@ -763,6 +856,66 @@ pub fn rejected_dma_cache_maintenance_executor_evidence(
     (DMA_REJECTED_INPUT_CLASSIFICATION, error.name())
 }
 
+pub fn build_dma_cache_driver_diagnostic_envelope(
+    input: DmaCacheDriverDiagnosticEnvelopeInput,
+) -> Result<DmaCacheDriverDiagnosticEnvelope, DmaCacheDriverDiagnosticEnvelopeError> {
+    if input.claims_driver_dma_completion {
+        return Err(DmaCacheDriverDiagnosticEnvelopeError::DriverDmaCompletionClaim);
+    }
+    if input.claims_hardware_device_completion {
+        return Err(DmaCacheDriverDiagnosticEnvelopeError::HardwareDeviceCompletionClaim);
+    }
+    validate_driver_diagnostic_executor_evidence(input.executor_evidence)?;
+
+    Ok(DmaCacheDriverDiagnosticEnvelope {
+        executor_evidence: input.executor_evidence,
+    })
+}
+
+pub fn dma_cache_driver_diagnostic_envelope_evidence(
+    envelope: DmaCacheDriverDiagnosticEnvelope,
+) -> DmaCacheDriverDiagnosticEnvelopeEvidence {
+    let executor = envelope.executor_evidence;
+    DmaCacheDriverDiagnosticEnvelopeEvidence {
+        driver_diagnostic_envelope_contract_id: DMA_CACHE_DRIVER_DIAGNOSTIC_ENVELOPE_CONTRACT_ID,
+        executor_contract_id: executor.executor_contract_id,
+        maintenance_sequence_contract_id: executor.maintenance_sequence_contract_id,
+        sync_plan_contract_id: executor.sync_plan_contract_id,
+        descriptor_contract_id: executor.descriptor_contract_id,
+        descriptor_source_inventory_id: executor.descriptor_source_inventory_id,
+        operation: executor.operation,
+        instruction: executor.instruction,
+        instruction_mnemonic: executor.instruction_mnemonic,
+        barrier: executor.barrier,
+        barrier_mnemonic: executor.barrier_mnemonic,
+        cache_line_source: executor.cache_line_source,
+        cache_line_size: executor.cache_line_size,
+        line_aligned_cpu_start: executor.line_aligned_cpu_start,
+        covered_length: executor.covered_length,
+        line_count: executor.line_count,
+        cpu_physical: executor.cpu_physical,
+        cpu_visible: executor.cpu_visible,
+        rp1_bus_address: executor.rp1_bus_address,
+        descriptor_length: executor.descriptor_length,
+        direction: executor.direction,
+        cacheability: executor.cacheability,
+        owner_transition: executor.owner_transition,
+        iommu_classification: executor.iommu_classification,
+        prerequisite_rejected_runtime_claims: executor.prerequisite_rejected_runtime_claims,
+        executor_rejected_runtime_claims: executor.rejected_runtime_claims,
+        unresolved_dma_diagnostic_gaps: DMA_DRIVER_DIAGNOSTIC_UNRESOLVED_GAPS,
+        claims_driver_dma_completion: false,
+        claims_hardware_device_completion: false,
+        classification: DMA_DRIVER_DIAGNOSTIC_ENVELOPE_LOCAL_STATIC_CLASSIFICATION,
+    }
+}
+
+pub fn rejected_dma_cache_driver_diagnostic_envelope_evidence(
+    error: DmaCacheDriverDiagnosticEnvelopeError,
+) -> (&'static str, &'static str) {
+    (DMA_REJECTED_INPUT_CLASSIFICATION, error.name())
+}
+
 pub fn translate_rp1_bus_address(
     path: DmaAddressPath,
     cpu_physical: u64,
@@ -898,13 +1051,6 @@ fn validate_accepted_sync_plan_evidence(
     if evidence.rejected_runtime_claims != DMA_SYNC_PLAN_REJECTED_RUNTIME_CLAIMS {
         return Err(DmaCacheMaintenanceSequenceError::UnsupportedRuntimeClaims);
     }
-    if evidence.cache_line_source != BCM2712_CACHE_LINE_SOURCE
-        || evidence.cache_line_size != BCM2712_DMA_CACHE_LINE_SIZE
-        || evidence.line_aligned_cpu_start & (BCM2712_DMA_CACHE_LINE_SIZE - 1) != 0
-        || evidence.covered_length & (BCM2712_DMA_CACHE_LINE_SIZE - 1) != 0
-    {
-        return Err(DmaCacheMaintenanceSequenceError::CacheLineMismatch);
-    }
     if evidence.covered_length == 0 {
         return Err(DmaCacheMaintenanceSequenceError::ZeroCoveredLength);
     }
@@ -912,6 +1058,13 @@ fn validate_accepted_sync_plan_evidence(
         .line_aligned_cpu_start
         .checked_add(evidence.covered_length)
         .ok_or(DmaCacheMaintenanceSequenceError::RangeOverflow)?;
+    if evidence.cache_line_source != BCM2712_CACHE_LINE_SOURCE
+        || evidence.cache_line_size != BCM2712_DMA_CACHE_LINE_SIZE
+        || evidence.line_aligned_cpu_start & (BCM2712_DMA_CACHE_LINE_SIZE - 1) != 0
+        || evidence.covered_length & (BCM2712_DMA_CACHE_LINE_SIZE - 1) != 0
+    {
+        return Err(DmaCacheMaintenanceSequenceError::CacheLineMismatch);
+    }
     validate_sync_plan_operation_identity(evidence)?;
     Ok(())
 }
@@ -1063,6 +1216,61 @@ fn validate_maintenance_sequence_operation_identity(
     }
 }
 
+fn validate_driver_diagnostic_executor_evidence(
+    evidence: DmaCacheMaintenanceExecutorEvidence,
+) -> Result<(), DmaCacheDriverDiagnosticEnvelopeError> {
+    if evidence.executor_contract_id != DMA_CACHE_MAINTENANCE_EXECUTOR_CONTRACT_ID
+        || evidence.maintenance_sequence_contract_id != DMA_CACHE_MAINTENANCE_SEQUENCE_CONTRACT_ID
+        || evidence.sync_plan_contract_id != DMA_CACHE_SYNC_PLAN_CONTRACT_ID
+        || evidence.descriptor_contract_id != DMA_CACHE_SUBSTRATE_CONTRACT_ID
+        || evidence.descriptor_source_inventory_id != DMA_CACHE_SOURCE_INVENTORY_ID
+    {
+        return Err(DmaCacheDriverDiagnosticEnvelopeError::MissingPrerequisiteIdentity);
+    }
+    if evidence.classification != DMA_MAINTENANCE_EXECUTOR_RUNTIME_CLASSIFICATION {
+        return Err(DmaCacheDriverDiagnosticEnvelopeError::NonAcceptedExecutorClassification);
+    }
+    if evidence.cacheability != DmaCacheability::CacheableRequiresMaintenance.name() {
+        return Err(DmaCacheDriverDiagnosticEnvelopeError::UnsupportedCacheabilityClaim);
+    }
+    if evidence.iommu_classification != RP1_DMA_SOURCE_UNASSIGNED_IOMMU {
+        return Err(DmaCacheDriverDiagnosticEnvelopeError::UnsupportedIommuClaim);
+    }
+    if evidence.prerequisite_rejected_runtime_claims != DMA_SYNC_PLAN_REJECTED_RUNTIME_CLAIMS
+        || evidence.rejected_runtime_claims != DMA_MAINTENANCE_EXECUTOR_REJECTED_RUNTIME_CLAIMS
+    {
+        return Err(DmaCacheDriverDiagnosticEnvelopeError::MissingRejectedRuntimeClaimsIdentity);
+    }
+    validate_driver_diagnostic_line_coverage(evidence)
+}
+
+fn validate_driver_diagnostic_line_coverage(
+    evidence: DmaCacheMaintenanceExecutorEvidence,
+) -> Result<(), DmaCacheDriverDiagnosticEnvelopeError> {
+    if evidence.cache_line_source != BCM2712_CACHE_LINE_SOURCE
+        || evidence.cache_line_size != BCM2712_DMA_CACHE_LINE_SIZE
+        || evidence.line_aligned_cpu_start & (BCM2712_DMA_CACHE_LINE_SIZE - 1) != 0
+        || evidence.covered_length & (BCM2712_DMA_CACHE_LINE_SIZE - 1) != 0
+    {
+        return Err(DmaCacheDriverDiagnosticEnvelopeError::LineRangeMismatch);
+    }
+    if evidence.line_count == 0 || evidence.covered_length == 0 {
+        return Err(DmaCacheDriverDiagnosticEnvelopeError::ZeroLineCoverage);
+    }
+    let expected_covered_length = evidence
+        .line_count
+        .checked_mul(evidence.cache_line_size)
+        .ok_or(DmaCacheDriverDiagnosticEnvelopeError::RangeOverflow)?;
+    if expected_covered_length != evidence.covered_length {
+        return Err(DmaCacheDriverDiagnosticEnvelopeError::LineRangeMismatch);
+    }
+    evidence
+        .line_aligned_cpu_start
+        .checked_add(evidence.covered_length)
+        .ok_or(DmaCacheDriverDiagnosticEnvelopeError::RangeOverflow)?;
+    Ok(())
+}
+
 #[cfg(target_arch = "aarch64")]
 fn dispatch_dma_cache_maintenance_instruction(
     instruction: DmaCacheMaintenanceInstruction,
@@ -1167,6 +1375,27 @@ mod tests {
             derive_dma_cache_maintenance_sequence(accepted_sync_plan_evidence(direction, boundary))
                 .expect("valid sequence");
         dma_cache_maintenance_sequence_evidence(sequence)
+    }
+
+    fn accepted_executor_evidence(
+        direction: DmaDirection,
+        boundary: DmaCacheSyncBoundary,
+    ) -> DmaCacheMaintenanceExecutorEvidence {
+        execute_dma_cache_maintenance_sequence(accepted_maintenance_sequence_evidence(
+            direction, boundary,
+        ))
+        .expect("valid executor input")
+    }
+
+    fn accepted_driver_diagnostic_envelope_input() -> DmaCacheDriverDiagnosticEnvelopeInput {
+        DmaCacheDriverDiagnosticEnvelopeInput {
+            executor_evidence: accepted_executor_evidence(
+                DmaDirection::ToDevice,
+                DmaCacheSyncBoundary::BeforeDeviceOwnership,
+            ),
+            claims_driver_dma_completion: false,
+            claims_hardware_device_completion: false,
+        }
     }
 
     #[test_case]
@@ -1846,6 +2075,213 @@ mod tests {
             (
                 DMA_REJECTED_INPUT_CLASSIFICATION,
                 "unsupported-barrier-vocabulary"
+            )
+        );
+    }
+
+    #[test_case]
+    fn driver_diagnostic_envelope_formats_accepted_executor_evidence() {
+        let envelope =
+            build_dma_cache_driver_diagnostic_envelope(accepted_driver_diagnostic_envelope_input())
+                .expect("valid diagnostic envelope input");
+        let evidence = dma_cache_driver_diagnostic_envelope_evidence(envelope);
+
+        assert_eq!(
+            evidence.driver_diagnostic_envelope_contract_id,
+            DMA_CACHE_DRIVER_DIAGNOSTIC_ENVELOPE_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.executor_contract_id,
+            DMA_CACHE_MAINTENANCE_EXECUTOR_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.maintenance_sequence_contract_id,
+            DMA_CACHE_MAINTENANCE_SEQUENCE_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.sync_plan_contract_id,
+            DMA_CACHE_SYNC_PLAN_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.descriptor_contract_id,
+            DMA_CACHE_SUBSTRATE_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.descriptor_source_inventory_id,
+            DMA_CACHE_SOURCE_INVENTORY_ID
+        );
+        assert_eq!(evidence.operation, "clean-to-point-of-coherency");
+        assert_eq!(evidence.instruction, "clean-by-virtual-address-to-poc");
+        assert_eq!(evidence.instruction_mnemonic, "dc cvac");
+        assert_eq!(evidence.barrier, "data-synchronization-barrier-sy");
+        assert_eq!(evidence.barrier_mnemonic, "dsb sy");
+        assert_eq!(evidence.cache_line_source, BCM2712_CACHE_LINE_SOURCE);
+        assert_eq!(evidence.cache_line_size, 64);
+        assert_eq!(evidence.line_aligned_cpu_start, 0x2f02_0000);
+        assert_eq!(evidence.covered_length, 0x2000);
+        assert_eq!(evidence.line_count, 128);
+        assert_eq!(evidence.cpu_physical, 0x2f02_0000);
+        assert_eq!(evidence.cpu_visible, 0x2f02_0000);
+        assert_eq!(evidence.rp1_bus_address, 0x10_2f02_0000);
+        assert_eq!(evidence.descriptor_length, 0x2000);
+        assert_eq!(evidence.direction, "to-device");
+        assert_eq!(evidence.cacheability, "cacheable-requires-maintenance");
+        assert_eq!(evidence.owner_transition, "cpu-to-device");
+        assert_eq!(
+            evidence.iommu_classification,
+            RP1_DMA_SOURCE_UNASSIGNED_IOMMU
+        );
+        assert_eq!(
+            evidence.prerequisite_rejected_runtime_claims,
+            DMA_SYNC_PLAN_REJECTED_RUNTIME_CLAIMS
+        );
+        assert_eq!(
+            evidence.executor_rejected_runtime_claims,
+            DMA_MAINTENANCE_EXECUTOR_REJECTED_RUNTIME_CLAIMS
+        );
+        assert_eq!(
+            evidence.unresolved_dma_diagnostic_gaps,
+            DMA_DRIVER_DIAGNOSTIC_UNRESOLVED_GAPS
+        );
+        assert!(!evidence.claims_driver_dma_completion);
+        assert!(!evidence.claims_hardware_device_completion);
+        assert_eq!(
+            evidence.classification,
+            DMA_DRIVER_DIAGNOSTIC_ENVELOPE_LOCAL_STATIC_CLASSIFICATION
+        );
+    }
+
+    #[test_case]
+    fn driver_diagnostic_envelope_rejects_non_accepted_executor_and_missing_prerequisites() {
+        let input = accepted_driver_diagnostic_envelope_input();
+
+        assert_eq!(
+            build_dma_cache_driver_diagnostic_envelope(DmaCacheDriverDiagnosticEnvelopeInput {
+                executor_evidence: DmaCacheMaintenanceExecutorEvidence {
+                    classification: DMA_REJECTED_INPUT_CLASSIFICATION,
+                    ..input.executor_evidence
+                },
+                ..input
+            }),
+            Err(DmaCacheDriverDiagnosticEnvelopeError::NonAcceptedExecutorClassification)
+        );
+        assert_eq!(
+            build_dma_cache_driver_diagnostic_envelope(DmaCacheDriverDiagnosticEnvelopeInput {
+                executor_evidence: DmaCacheMaintenanceExecutorEvidence {
+                    descriptor_contract_id: "wrong-descriptor-contract",
+                    ..input.executor_evidence
+                },
+                ..input
+            }),
+            Err(DmaCacheDriverDiagnosticEnvelopeError::MissingPrerequisiteIdentity)
+        );
+    }
+
+    #[test_case]
+    fn driver_diagnostic_envelope_rejects_line_coverage_overflow_and_completion_claims() {
+        let input = accepted_driver_diagnostic_envelope_input();
+
+        assert_eq!(
+            build_dma_cache_driver_diagnostic_envelope(DmaCacheDriverDiagnosticEnvelopeInput {
+                executor_evidence: DmaCacheMaintenanceExecutorEvidence {
+                    line_count: 0,
+                    ..input.executor_evidence
+                },
+                ..input
+            }),
+            Err(DmaCacheDriverDiagnosticEnvelopeError::ZeroLineCoverage)
+        );
+        assert_eq!(
+            build_dma_cache_driver_diagnostic_envelope(DmaCacheDriverDiagnosticEnvelopeInput {
+                executor_evidence: DmaCacheMaintenanceExecutorEvidence {
+                    covered_length: 64,
+                    ..input.executor_evidence
+                },
+                ..input
+            }),
+            Err(DmaCacheDriverDiagnosticEnvelopeError::LineRangeMismatch)
+        );
+        assert_eq!(
+            build_dma_cache_driver_diagnostic_envelope(DmaCacheDriverDiagnosticEnvelopeInput {
+                executor_evidence: DmaCacheMaintenanceExecutorEvidence {
+                    line_aligned_cpu_start: u64::MAX - 0x3f,
+                    covered_length: 0x40,
+                    line_count: 1,
+                    ..input.executor_evidence
+                },
+                ..input
+            }),
+            Err(DmaCacheDriverDiagnosticEnvelopeError::RangeOverflow)
+        );
+        assert_eq!(
+            build_dma_cache_driver_diagnostic_envelope(DmaCacheDriverDiagnosticEnvelopeInput {
+                claims_driver_dma_completion: true,
+                ..input
+            }),
+            Err(DmaCacheDriverDiagnosticEnvelopeError::DriverDmaCompletionClaim)
+        );
+        assert_eq!(
+            build_dma_cache_driver_diagnostic_envelope(DmaCacheDriverDiagnosticEnvelopeInput {
+                claims_hardware_device_completion: true,
+                ..input
+            }),
+            Err(DmaCacheDriverDiagnosticEnvelopeError::HardwareDeviceCompletionClaim)
+        );
+    }
+
+    #[test_case]
+    fn driver_diagnostic_envelope_rejects_unsupported_claims_and_missing_rejected_claims() {
+        let input = accepted_driver_diagnostic_envelope_input();
+
+        assert_eq!(
+            build_dma_cache_driver_diagnostic_envelope(DmaCacheDriverDiagnosticEnvelopeInput {
+                executor_evidence: DmaCacheMaintenanceExecutorEvidence {
+                    cacheability: "non-cacheable-mapping-unaccepted",
+                    ..input.executor_evidence
+                },
+                ..input
+            }),
+            Err(DmaCacheDriverDiagnosticEnvelopeError::UnsupportedCacheabilityClaim)
+        );
+        assert_eq!(
+            build_dma_cache_driver_diagnostic_envelope(DmaCacheDriverDiagnosticEnvelopeInput {
+                executor_evidence: DmaCacheMaintenanceExecutorEvidence {
+                    iommu_classification: "unknown-iommu-unaccepted",
+                    ..input.executor_evidence
+                },
+                ..input
+            }),
+            Err(DmaCacheDriverDiagnosticEnvelopeError::UnsupportedIommuClaim)
+        );
+        assert_eq!(
+            build_dma_cache_driver_diagnostic_envelope(DmaCacheDriverDiagnosticEnvelopeInput {
+                executor_evidence: DmaCacheMaintenanceExecutorEvidence {
+                    prerequisite_rejected_runtime_claims: &[
+                        "executed-driver-buffer-cache-maintenance"
+                    ],
+                    ..input.executor_evidence
+                },
+                ..input
+            }),
+            Err(DmaCacheDriverDiagnosticEnvelopeError::MissingRejectedRuntimeClaimsIdentity)
+        );
+        assert_eq!(
+            build_dma_cache_driver_diagnostic_envelope(DmaCacheDriverDiagnosticEnvelopeInput {
+                executor_evidence: DmaCacheMaintenanceExecutorEvidence {
+                    rejected_runtime_claims: &["driver-dma-completion"],
+                    ..input.executor_evidence
+                },
+                ..input
+            }),
+            Err(DmaCacheDriverDiagnosticEnvelopeError::MissingRejectedRuntimeClaimsIdentity)
+        );
+        assert_eq!(
+            rejected_dma_cache_driver_diagnostic_envelope_evidence(
+                DmaCacheDriverDiagnosticEnvelopeError::HardwareDeviceCompletionClaim
+            ),
+            (
+                DMA_REJECTED_INPUT_CLASSIFICATION,
+                "hardware-device-completion-claim"
             )
         );
     }

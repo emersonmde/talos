@@ -8913,6 +8913,23 @@ networking, SSH, hardware validation, Milestone 12 work, Milestone 11.3
 completion, or a phase transition. The next bounded implementation requires
 supervisor planning.
 
+phase11-rp1-dma-cache-driver-diagnostic-envelope-core-20260609 accepts that
+bounded local/static envelope core as
+rp1-dma-cache-driver-diagnostic-envelope-core-accepted. src/dma_cache.rs now
+exposes DmaCacheDriverDiagnosticEnvelope input and evidence vocabulary that
+consumes only accepted DmaCacheMaintenanceExecutorEvidence, preserves the
+descriptor, sync-plan, maintenance-sequence, and executor evidence identities,
+and records unresolved RP1 DMA channel ownership, descriptor-ring
+layout/ownership, transfer-completion/interrupt policy, IOMMU/runtime policy,
+DMA-safe allocation/pinning, hardware-proof, and device-consumer gaps.
+Validators reject non-accepted executor classification, missing prerequisite
+ids, invalid line coverage or overflow, unsupported cacheability/IOMMU claims,
+missing rejected-runtime-claim identity, and any driver DMA or hardware/device
+completion claim. This remains source/local evidence only: no Pi 5 hardware,
+RP1 MMIO or DMA programming, descriptor rings, interrupt completion, Ethernet,
+storage, networking, SSH, hardware validation, Milestone 12 work, Milestone
+11.3 completion, or phase transition is accepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

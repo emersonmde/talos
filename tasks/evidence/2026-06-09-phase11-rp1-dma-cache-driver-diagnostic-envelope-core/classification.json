@@ -1,0 +1,47 @@
+{
+  "task_id": "phase11-rp1-dma-cache-driver-diagnostic-envelope-core-20260609",
+  "classification": "rp1-dma-cache-driver-diagnostic-envelope-core-accepted",
+  "accepted_claims": [
+    "phase11-rp1-dma-cache-driver-diagnostic-envelope-contract-v1 is implemented in src/dma_cache.rs as a local/static diagnostic-envelope boundary",
+    "DmaCacheDriverDiagnosticEnvelope input consumes accepted DmaCacheMaintenanceExecutorEvidence and does not accept raw driver addresses",
+    "envelope evidence preserves descriptor, sync-plan, maintenance-sequence, and executor contract identities and source ids",
+    "envelope evidence records CPU/RP1 addresses, descriptor length, line coverage, direction, cacheability, owner transition, IOMMU classification, prerequisite rejected claims, executor rejected claims, unresolved diagnostic gaps, and local/static classification",
+    "validators reject non-accepted executor classification, missing prerequisite ids, invalid line coverage or overflow, unsupported cacheability/IOMMU claims, missing rejected-runtime-claim identity, and driver DMA or hardware/device completion claims"
+  ],
+  "rejected_claims": [
+    "Pi 5 hardware validation",
+    "boot archive publication",
+    "hardwareTestLock acquisition",
+    "driver DMA completion",
+    "hardware or device completion",
+    "RP1 MMIO writes",
+    "DMA channel programming",
+    "descriptor-ring construction",
+    "interrupt completion",
+    "Ethernet or storage driver readiness",
+    "networking or SSH readiness",
+    "coherent, non-cacheable, or IOMMU-backed runtime policy",
+    "DMA-safe allocation or pinning expansion",
+    "Milestone 12 work",
+    "Milestone 11.3 completion by implication",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "No RP1 DMA channel ownership has been accepted",
+    "No descriptor-ring layout or ownership has been accepted",
+    "No transfer completion or interrupt policy has been accepted",
+    "No IOMMU runtime policy has been accepted",
+    "No DMA-safe allocation or pinning expansion exists",
+    "No hardware proof or device-specific consumer exists"
+  ],
+  "evidence_level": [
+    "static inspection",
+    "local implementation",
+    "fmt/lint/typecheck",
+    "unit tests",
+    "JSON checks",
+    "documentation build",
+    "git diff checks"
+  ],
+  "next_action": "Mechanically promote phase11-rp1-dma-cache-driver-diagnostic-envelope-closeout-20260609 on the next worker wake; do not run hardware, publish boot archives, program RP1 MMIO or DMA channels, create descriptor rings, implement Ethernet/storage/networking/SSH, or accept Milestone 11.3 completion by implication."
+}

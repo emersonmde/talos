@@ -461,6 +461,22 @@ Milestone 11.3 completion. The next implementation boundary requires
 supervisor planning and must remain local/static unless explicit future scope
 authorizes hardware or runtime DMA behavior.
 
+phase11-rp1-dma-cache-driver-diagnostic-envelope-core-20260609 implements
+that contract as a local/static diagnostic-envelope core in src/dma_cache.rs.
+The accepted frontier exposes DmaCacheDriverDiagnosticEnvelope input/evidence
+vocabulary that consumes only accepted DmaCacheMaintenanceExecutorEvidence,
+preserves descriptor, sync-plan, maintenance-sequence, and executor
+identities, and carries the unresolved RP1 DMA channel, descriptor-ring,
+transfer-completion/interrupt, IOMMU/runtime-policy, allocation/pinning,
+hardware-proof, and device-consumer gaps forward. The validators reject
+non-accepted executor classification, missing prerequisite identities, bad
+line coverage or overflow, unsupported cacheability/IOMMU claims, missing
+rejected-runtime-claim identity, and any claim of driver DMA completion or
+hardware/device completion. This remains source/local evidence only and does
+not accept Pi 5 hardware validation, RP1 MMIO/DMA programming, descriptor
+rings, interrupt completion, Ethernet, storage, networking, SSH, Milestone 12
+work, Milestone 11.3 completion, or phase transition by implication.
+
 phase11-rp1-gpio-event-latch-source-contract-20260607 is accepted as
 source-contract-blocked. Retained RP1/Linux source identifies the GPIO14 event
 configuration path: GPIO14 CTRL CLR can clear raw event enables, GPIO14 CTRL
@@ -2830,6 +2846,14 @@ MMIO or DMA programming, descriptor rings, interrupt completion, Ethernet,
 storage, networking, SSH, hardware validation, Milestone 12 work, or
 Milestone 11.3 completion by implication. The next boundary remains a bounded
 driver-adjacent runtime/source contract before any DMA-capable diagnostic.
+
+phase11-rp1-dma-cache-driver-adjacent-runtime-contract-20260609 and
+phase11-rp1-dma-cache-driver-diagnostic-envelope-core-20260609 move that
+boundary to a local/static diagnostic envelope. The envelope consumes accepted
+maintenance-executor evidence only, preserves all prerequisite identities and
+rejected runtime claims, and keeps unresolved DMA channel, descriptor-ring,
+interrupt/completion, IOMMU/runtime-policy, allocation/pinning, hardware-proof,
+and device-consumer gaps explicit before any future DMA-capable diagnostic.
 
 ## Deferred Work
 
