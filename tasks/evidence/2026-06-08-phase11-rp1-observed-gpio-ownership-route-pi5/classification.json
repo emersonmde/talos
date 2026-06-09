@@ -1,0 +1,25 @@
+{
+  "task_id": "phase11-rp1-observed-gpio-ownership-route-pi5-20260608",
+  "classification": "observed-gpio14-ownership-preflight-blocked-non-gpio-function",
+  "archive_sha256": "fd605773116d65caa532307226af2fbc0ca92d747cf09f499031d923abec81e3",
+  "expected_tree_hash": "e6ded87c576967c770223930463864fc081443467d6e00fbe108f29fa9e33fd2",
+  "expected_fetch_bytes": 50496,
+  "v3_classification": "capture-transaction-v3-ready",
+  "staging_classification": "boot-staging-identity-ready",
+  "serial_marker_excerpt": "TALOS: rp1-gpio14-ownership-route-preflight-result contract=phase11-rp1-observed-gpio-ownership-route-source-contract-v1 target=rp1-gpio14-ownership-route-observed-aperture-preflight-read pin=GPIO14 gpio14-bit-mask=0x4000 gpio14-status-address=0x1c000d0070 gpio14-ctrl-address=0x1c000d0074 io-bank0-inte-address=0x1c000d011c io-bank0-ints-address=0x1c000d0124 rio-out-address=0x1c000e0000 rio-oe-address=0x1c000e0004 rio-in-address=0x1c000e0008 pad-address=0x1c000f003c gicd-isenabler5-address=0x107fff9114 gicd-ispendr5-address=0x107fff9214 gicd-isactiver5-address=0x107fff9314 gicc-hppir-address=0x107fffa018 width=32 gpio14-status-raw=0xabe3300 gpio14-ctrl-raw=0x84 gpio14-funcsel=4 gpio14-func-name=uart0 gpio14-outover=0 gpio14-oeover=0 gpio14-inover=0 gpio14-raw-event-enable-mask=0x0 gpio14-filtered-event-enable-mask=0x0 gpio14-status-event-mask=0xab io-bank0-inte-raw=0x0 io-bank0-ints-raw=0x0 rio-out-raw=0x0 rio-oe-raw=0x0 rio-in-raw=0x4000 rio-out-gpio14=false rio-oe-gpio14=false rio-in-gpio14=true pad-raw=0x56 pad-input-enable=true pad-output-disable=false pad-pull=0x1 pad-drive=0x1 pad-schmitt=true pad-slew=false gicd-isenabler5-raw=0x0 gicd-ispendr5-raw=0x0 gicd-isactiver5-raw=0x0 gicc-hppir-raw=0x3ff intid160-enabled=false intid160-pending=false intid160-active=false hppir-intid=1023 classification=observed-gpio14-ownership-preflight-blocked-non-gpio-function",
+  "accepted_claims": [
+    "read-only observed-aperture GPIO14 ownership/route preflight visibility",
+    "GPIO14 function is UART0 in this preflight",
+    "parent route/status source is not enabled or pending for INTID160 in this preflight"
+  ],
+  "rejected_claims": [
+    "GPIO ownership",
+    "event generation readiness",
+    "interrupt delivery",
+    "handler ownership",
+    "broad RP1 mapping",
+    "DMA/cache",
+    "networking or SSH",
+    "Milestone 11.3 or phase transition"
+  ]
+}

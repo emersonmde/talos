@@ -1,0 +1,76 @@
+{
+  "v3": {
+    "classification": "capture-transaction-v3-ready",
+    "serial": {
+      "rule": "empty pre-power drain, or saturated direct-read with required marker absent from all pre-power drain responses and present after power",
+      "empty_pre_power": false,
+      "saturated_direct_read": true,
+      "required_marker": "TALOS: rp1-gpio14-ownership-route-preflight-result",
+      "pre_power_marker_count": 0,
+      "post_power_marker_count": 142,
+      "fresh_marker_differential": true,
+      "serial_freshness_ok": true
+    },
+    "tftp": {
+      "cursor_file": 4353809,
+      "delta_cursor_start": 4353809,
+      "delta_cursor_end": 4355160,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        50496,
+        50496
+      ]
+    },
+    "final": {
+      "tree_hash": "e6ded87c576967c770223930463864fc081443467d6e00fbe108f29fa9e33fd2",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 50496
+    },
+    "restore": {
+      "snapshot_name": "phase11-gpio14-own-route-real-pre-20260609T0035Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "staging": {
+    "contract_version": "pi5-boot-staging-identity-v1",
+    "staging_identity_decisive": true,
+    "classification": "boot-staging-identity-ready",
+    "rejection_reasons": [],
+    "baseline_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "selected": {
+      "tree_hash": "e6ded87c576967c770223930463864fc081443467d6e00fbe108f29fa9e33fd2",
+      "effective_kernel": "kernel_2712.img",
+      "expected_fetch_path": "da591740/kernel_2712.img",
+      "expected_fetch_byte_count": 50496
+    },
+    "tftp": {
+      "cursor_file": 4353809,
+      "delta_cursor_start": 4353809,
+      "delta_cursor_end": 4355160,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        50496,
+        50496
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "e6ded87c576967c770223930463864fc081443467d6e00fbe108f29fa9e33fd2",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 50496
+    },
+    "restore": {
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "rule": "candidate serial output is not decisive unless selected-tree identity, expected TFTP fetch bytes, final pre-restore identity, and restore identity all match one staged boot tree"
+  }
+}

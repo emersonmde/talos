@@ -1,0 +1,11 @@
+{
+  "v3_classification": "capture-transaction-v3-ready",
+  "v3_allowed": true,
+  "v3_rejections": [],
+  "staging_classification": "boot-staging-identity-ready",
+  "staging_decisive": true,
+  "staging_rejections": [],
+  "suggested_classification": "identity-join-mismatch",
+  "marker_present": true,
+  "accepted_candidate_identity": true
+}
