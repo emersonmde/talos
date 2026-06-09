@@ -1,0 +1,73 @@
+{
+  "task_id": "phase11-rp1-dma-cache-substrate-core-20260609",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-substrate-core.md",
+      "evidence_level": "static inspection and local/static implementation record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-substrate-core/classification.json",
+      "evidence_level": "accepted local/static classification"
+    },
+    {
+      "label": "local/static substrate core",
+      "path": "src/dma_cache.rs",
+      "evidence_level": "local/static implementation and unit tests"
+    },
+    {
+      "label": "module registration",
+      "path": "src/main.rs",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "project contract update",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "evidence_level": "documentation reconciliation"
+    },
+    {
+      "label": "roadmap update",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "documentation reconciliation"
+    }
+  ],
+  "validation": [
+    {
+      "label": "cargo fmt",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed after applying rustfmt formatting",
+      "evidence_level": "fmt/lint/typecheck"
+    },
+    {
+      "label": "cargo test",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "result": "passed",
+      "evidence_level": "unit tests"
+    },
+    {
+      "label": "jq classification",
+      "command": "jq empty tasks/evidence/2026-06-09-phase11-rp1-dma-cache-substrate-core/classification.json",
+      "result": "passed",
+      "evidence_level": "JSON syntax check"
+    },
+    {
+      "label": "jq evidence map",
+      "command": "jq empty tasks/evidence/2026-06-09-phase11-rp1-dma-cache-substrate-core/evidence-map.json",
+      "result": "passed",
+      "evidence_level": "JSON syntax check"
+    },
+    {
+      "label": "mdbook",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed",
+      "evidence_level": "documentation build"
+    },
+    {
+      "label": "git diff checks",
+      "command": "git diff --check && git diff --cached --check",
+      "result": "passed",
+      "evidence_level": "diff hygiene"
+    }
+  ]
+}

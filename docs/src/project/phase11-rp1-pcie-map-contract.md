@@ -286,6 +286,21 @@ validate the substrate. Because the worker cannot create the follow-up task,
 the accepted next action is supervisor planning for a bounded local/static
 DMA/cache substrate core.
 
+phase11-rp1-dma-cache-substrate-core-20260609 implements that bounded
+local/static core in src/dma_cache.rs. The accepted frontier is limited to the
+descriptor vocabulary, RP1 RAM/peripheral address-translation helpers,
+validator surface, and evidence structs for
+phase11-rp1-dma-cache-substrate-contract-v1. The validators reject zero-length,
+unaligned, overflow, owned-span escape, high-memory, reserved-memory,
+coherent/non-cacheable, and unsupported IOMMU claims against the accepted
+bootstrap-bump-owned low-tail span. Focused tests prove one valid RP1
+RAM-window descriptor and rejected invalid inputs. This accepts no working DMA,
+DMA engine programming, descriptor rings, cache-maintenance execution for
+driver buffers, cache-coherent/non-cacheable/IOMMU-backed policy,
+DMA-safe allocation beyond descriptor validation, Ethernet, storage,
+networking, SSH, hardware validation, or Milestone 11.3 completion by
+implication.
+
 phase11-rp1-gpio-event-latch-source-contract-20260607 is accepted as
 source-contract-blocked. Retained RP1/Linux source identifies the GPIO14 event
 configuration path: GPIO14 CTRL CLR can clear raw event enables, GPIO14 CTRL

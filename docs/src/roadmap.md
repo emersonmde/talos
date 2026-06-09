@@ -8717,6 +8717,23 @@ remain unaccepted. The contract makes a local/static DMA/cache substrate core
 mechanically objective, but no worker-owned follow-up task exists yet;
 supervisor planning is required before implementation continues.
 
+phase11-rp1-dma-cache-substrate-core-20260609 accepts the bounded
+local/static substrate core as
+rp1-dma-cache-substrate-core-local-static-accepted. The accepted frontier is
+limited to descriptor/cache/address/IOMMU vocabulary, RP1 RAM/peripheral
+translation helpers, pure validators for the accepted low-tail owned span, and
+evidence fields for the contract/source ids, CPU/RP1 addresses, alignment,
+direction, cacheability, IOMMU classification, and validation results. Focused
+tests prove one valid RP1 RAM-window descriptor plus rejected alignment,
+ownership-span, high-memory, reserved-memory, translation, cacheability, and
+IOMMU inputs. Working DMA behavior, DMA engine programming, descriptor rings,
+executed cache maintenance for driver buffers, cache-coherent/non-cacheable or
+IOMMU-backed driver policy, DMA-safe allocation beyond descriptor validation,
+RP1 Ethernet readiness, storage readiness, networking, SSH, hardware
+validation, Milestone 12 work, and Milestone 11.3 completion by implication
+remain unaccepted. The mechanically unblocked next task is the queued
+DMA/cache substrate closeout checkpoint.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

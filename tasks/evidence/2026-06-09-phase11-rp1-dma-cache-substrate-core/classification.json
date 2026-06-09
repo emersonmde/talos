@@ -1,0 +1,50 @@
+{
+  "task_id": "phase11-rp1-dma-cache-substrate-core-20260609",
+  "classification": "rp1-dma-cache-substrate-core-local-static-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "local/static implementation review",
+    "fmt/lint/typecheck",
+    "unit tests",
+    "jq JSON checks",
+    "mdbook build"
+  ],
+  "accepted_frontier": [
+    "local/static DMA direction/cacheability/address-path/descriptor/IOMMU vocabulary",
+    "pure descriptor validators for alignment, length, owned-span containment, RP1 translation, and forbidden claims",
+    "RP1 RAM-window and peripheral-window address translation helpers derived from retained dma-ranges evidence",
+    "local/static descriptor evidence surface with contract/source ids and validation fields",
+    "focused unit tests for valid and rejected descriptor inputs"
+  ],
+  "accepted_claims": [
+    "a valid low-tail bootstrap-bump-owned RP1 RAM-window descriptor can be represented and validated locally",
+    "high-memory and pre-owned-span reserved-memory descriptor inputs are rejected by the local/static substrate",
+    "coherent, non-cacheable, and unsupported IOMMU claims are explicit rejected claims",
+    "networking and SSH remain blocked until later explicit tasks accept the remaining DMA/cache prerequisites"
+  ],
+  "rejected_claims": [
+    "working DMA behavior",
+    "DMA engine programming",
+    "DMA descriptor rings",
+    "executed cache maintenance for driver buffers",
+    "cache-coherent driver policy",
+    "non-cacheable DMA mapping policy",
+    "IOMMU programming or bypass policy",
+    "DMA-safe allocation or pinning beyond pure descriptor validation",
+    "RP1 Ethernet readiness",
+    "storage readiness",
+    "networking",
+    "SSH",
+    "hardware validation",
+    "Milestone 12 progress",
+    "Milestone 11.3 completion by implication"
+  ],
+  "retained_risks": [
+    "actual cache-maintenance instruction use for driver buffers remains unimplemented and unvalidated",
+    "IOMMU implications remain source-limited until a later policy task",
+    "DMA-safe allocation/pinning remains unaccepted beyond descriptor validation",
+    "driver-adjacent hardware diagnostics remain blocked until closeout selects the next boundary"
+  ],
+  "next_action": "Mechanically promote phase11-rp1-dma-cache-substrate-closeout-20260609 on the next worker wake."
+}

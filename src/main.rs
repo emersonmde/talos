@@ -149,6 +149,8 @@ mod device_tree;
 )]
 mod diagnostic_command;
 mod diagnostics;
+#[cfg_attr(not(test), allow(dead_code))]
+mod dma_cache;
 mod early_format;
 #[cfg_attr(not(test), allow(dead_code))]
 mod initial_process_launch;
