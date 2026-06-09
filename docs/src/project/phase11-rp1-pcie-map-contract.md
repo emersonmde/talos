@@ -2247,6 +2247,50 @@ constructs no RP1 or GIC MMIO address. This is local/static evidence only; Pi 5
 control and real proofs remain queued before any hardware behavior or GPIO
 ownership/event claim can be accepted.
 
+phase11-pi5-run-unique-serial-visibility-discriminator-core-20260609 accepts
+the local/static repair that makes the run-unique nonce token the current-run
+serial visibility discriminator when saturated pre-power serial contains stale
+older markers. The repaired checker still requires selected-tree identity,
+expected TFTP bytes, final identity, and restore gates before accepting a Pi 5
+capture.
+
+phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry-20260609 accepts
+the paired no-MMIO GPIO16 control output proof as visible on Pi 5 after that
+repair. The accepted run staged tree
+cdb35bef8b7fbd5b68df9c76a58fbb410e20522d46aed6b77319002b0be6bd19,
+retained two 48,744-byte da591740/kernel_2712.img fetches, proved the
+task-owned nonce absent before power and present after power, passed the
+boot-staging identity checker, and restored to the baseline tree. This accepts
+only the control output/capture path; no GPIO/RP1/GIC/PCIe hardware behavior
+is accepted from the control.
+
+phase11-rp1-observed-gpio16-ownership-event-pi5-20260609 accepts the real
+read-only GPIO16 ownership/event preflight as
+observed-gpio16-ownership-preflight-blocked-non-gpio-function. The accepted
+run staged tree
+908eadd18fab1ba826d2dba92125649383a4857ed39ea18af125feb721a637c3, retained
+two 50,640-byte da591740/kernel_2712.img fetches, passed V3 and boot-staging
+identity checks, retained marker-visible output, and restored to the baseline
+tree. The result reported GPIO16 FUNCSEL=31 / unknown, IO_BANK0 INTE/INTS
+clear for GPIO16, RIO GPIO16 OUT/OE/IN false, pad input disabled, pad output
+disabled, INTID160 not enabled/pending/active, and HPPIR spurious 1023. This
+accepts only selected read-only GPIO16 preflight visibility/classification.
+
+phase11-rp1-observed-gpio16-ownership-event-closeout-20260609 closes the chain
+as
+observed-gpio16-ownership-event-preflight-non-gpio-blocker-frontier-closed.
+The accepted frontier is limited to the source-backed read-only GPIO16
+ownership/event preflight contract, local/static real/control implementation,
+repaired no-MMIO control proof, and real Pi 5 non-GPIO-function blocker
+classification. GPIO ownership, event generation readiness, interrupt pending
+generation, interrupt delivery, IAR/EOIR acknowledgement, handler ownership,
+broad RP1 mapping, GPIO/RIO/pad/INTE/CTRL writes, parent-route masking writes,
+clock/reset programming, DMA/cache, networking, SSH, Milestone 11.3, and phase
+transition remain unaccepted. Same-shaped GPIO16 ownership/event preflight
+reruns are not progress unless a future supervisor task supplies materially
+different acceptance criteria or a new discriminator. Supervisor planning is
+required for the next Milestone 11.2 feature slice.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when

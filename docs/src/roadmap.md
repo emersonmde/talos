@@ -8578,6 +8578,40 @@ staging-mismatch fixtures remain rejected. This accepts only the checker repair
 and replay behavior; the next serialized GPIO16 no-MMIO control proof still
 must run before any real GPIO16 Pi 5 preflight or hardware behavior claim.
 
+phase11-rp1-observed-gpio16-ownership-event-control-pi5-retry-20260609 accepts
+the paired no-MMIO GPIO16 control output proof as visible on Pi 5 under the
+repaired run-unique discriminator. The accepted run staged tree
+cdb35bef8b7fbd5b68df9c76a58fbb410e20522d46aed6b77319002b0be6bd19, retained
+two 48,744-byte da591740/kernel_2712.img fetches, proved the task-owned nonce
+absent before power and present after power, passed boot-staging identity, and
+restored to the baseline tree. No GPIO/RP1/GIC/PCIe hardware behavior is
+accepted from this control.
+
+phase11-rp1-observed-gpio16-ownership-event-pi5-20260609 accepts the real
+read-only GPIO16 ownership/event preflight as
+observed-gpio16-ownership-preflight-blocked-non-gpio-function. The accepted
+run staged tree
+908eadd18fab1ba826d2dba92125649383a4857ed39ea18af125feb721a637c3, retained
+two 50,640-byte da591740/kernel_2712.img fetches, passed V3 and boot-staging
+identity checks, retained marker-visible output, and restored to the baseline
+tree. The result reported GPIO16 FUNCSEL=31 / unknown, IO_BANK0 INTE/INTS
+clear for GPIO16, RIO GPIO16 OUT/OE/IN false, pad input disabled, pad output
+disabled, INTID160 not enabled/pending/active, and HPPIR spurious 1023. This
+accepts only selected read-only GPIO16 preflight visibility/classification, not
+GPIO ownership, event generation, interrupt delivery, or a phase transition.
+
+phase11-rp1-observed-gpio16-ownership-event-closeout-20260609 closes this
+chain as
+observed-gpio16-ownership-event-preflight-non-gpio-blocker-frontier-closed.
+The accepted frontier is limited to the source contract, local/static
+implementation, repaired no-MMIO control proof, and real read-only GPIO16
+non-GPIO-function blocker classification. Same-shaped GPIO16 preflight reruns
+are not progress without new acceptance criteria or a new discriminator. GPIO
+function changes, write-backed event setup, interrupt-delivery work, broad RP1
+ownership, DMA/cache, networking, SSH, Milestone 11.3, and phase transition
+remain unaccepted. Supervisor planning is required for the next Milestone 11.2
+feature slice.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

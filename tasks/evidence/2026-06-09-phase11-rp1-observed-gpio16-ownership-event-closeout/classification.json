@@ -1,0 +1,50 @@
+{
+  "task_id": "phase11-rp1-observed-gpio16-ownership-event-closeout-20260609",
+  "classification": "observed-gpio16-ownership-event-preflight-non-gpio-blocker-frontier-closed",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "mdbook build"
+  ],
+  "accepted_frontier": [
+    "read-only observed-aperture GPIO16 ownership/event source contract",
+    "local/static real and no-MMIO control candidates",
+    "Pi 5 no-MMIO control retry output proof under run-unique serial visibility",
+    "Pi 5 real read-only GPIO16 preflight visibility and non-GPIO-function classification"
+  ],
+  "accepted_claims": [
+    "observed 0x1c GPIO16 ownership/event preflight report is visible on Pi 5",
+    "GPIO16 reports FUNCSEL=31 / unknown in the accepted preflight",
+    "IO_BANK0 INTE/INTS GPIO16 source-enable/source-status bits are clear in the accepted preflight",
+    "RIO GPIO16 OUT/OE/IN bits are false in the accepted preflight",
+    "GPIO16 pad input is disabled and output is disabled in the accepted preflight",
+    "INTID160 route status is not enabled, pending, or active in the accepted preflight",
+    "HPPIR reports spurious 1023 in the accepted preflight"
+  ],
+  "rejected_claims": [
+    "GPIO ownership",
+    "event generation readiness",
+    "interrupt pending generation",
+    "interrupt delivery",
+    "IAR/EOIR acknowledgement",
+    "handler ownership",
+    "broad RP1 mapping",
+    "GPIO/RIO/pad/INTE/CTRL writes",
+    "parent-route masking writes",
+    "clock/reset programming",
+    "DMA/cache",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "GPIO16 is not currently a GPIO-owned event-generation target under the observed aperture",
+    "same-shaped GPIO16 ownership/event preflight reruns are not progress without new acceptance criteria",
+    "future GPIO function changes, write-backed event setup, or interrupt-delivery work require supervisor planning"
+  ],
+  "next_action": "supervisor planning required for the next Milestone 11.2 frontier",
+  "planning_needed": true
+}
