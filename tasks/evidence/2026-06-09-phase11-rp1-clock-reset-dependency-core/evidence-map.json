@@ -1,0 +1,75 @@
+{
+  "task_id": "phase11-rp1-clock-reset-dependency-core-20260609",
+  "classification": "accepted-local-static-clock-reset-dependency-core",
+  "evidence_level": [
+    "static inspection",
+    "archive/static inspection",
+    "fmt/lint/typecheck",
+    "unit tests",
+    "shell syntax",
+    "jq JSON checks",
+    "git diff checks"
+  ],
+  "source_contract": {
+    "task": "phase11-rp1-clock-reset-dependency-source-contract-20260609",
+    "commit": "9ceef926874d1805db8939fa1a47c65e68b6ca85",
+    "path": "tasks/2026-06-09-phase11-rp1-clock-reset-dependency-source-contract.md"
+  },
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-09-phase11-rp1-clock-reset-dependency-core.md",
+      "evidence_level": "static implementation review"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-clock-reset-dependency-core/classification.json",
+      "evidence_level": "accepted local/static classification"
+    },
+    {
+      "label": "static implementation review",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-clock-reset-dependency-core/static-implementation-review.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "real archive review",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-clock-reset-dependency-core/real-archive-review.txt",
+      "evidence_level": "archive/static inspection"
+    },
+    {
+      "label": "control archive review",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-clock-reset-dependency-core/control-archive-review.txt",
+      "evidence_level": "archive/static inspection"
+    },
+    {
+      "label": "source boot tree",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-clock-reset-dependency-core/source-dir.txt",
+      "evidence_level": "archive input identity"
+    }
+  ],
+  "real_candidate": {
+    "archive": "target/task-evidence/2026-06-09-clock-reset-core/clock-reset-real.tar.gz",
+    "archive_sha256": "a06485f7ed24daaff5b15c794275191c90e2e2c0f677ce4f26b0447446537478",
+    "kernel_sha256": "424bb780ec1c9775cba990bdbe1525c200e0d7e4a27744ece490fc86127cd9bd",
+    "kernel_size": 49496,
+    "marker": "TALOS: rp1-clock-reset-dependency-result"
+  },
+  "control_candidate": {
+    "archive": "target/task-evidence/2026-06-09-clock-reset-core/clock-reset-control.tar.gz",
+    "archive_sha256": "b4dbe94bf5872f230f9128f024b71a9e357f6e603a5bc2627c0ad23ede99197a",
+    "kernel_sha256": "aeaae258e6d3de5084a3a6553893a920afb9c079b7311cf5aa6669179a179fe4",
+    "kernel_size": 48520,
+    "marker": "TALOS: rp1-clock-reset-dependency-control"
+  },
+  "validation": {
+    "cargo_fmt_check": "passed",
+    "cargo_json_target_spec_test_quiet": "passed",
+    "bash_n_task_scripts": "passed",
+    "real_archive_review": "passed",
+    "control_archive_review": "passed",
+    "jq_json": "passed",
+    "git_diff_check": "passed",
+    "git_diff_cached_check": "passed"
+  },
+  "commit": null
+}

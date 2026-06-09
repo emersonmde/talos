@@ -238,9 +238,17 @@ pub const RP1_SYSINFO_CHIP_ID: usize = RP1_SYSINFO_BASE;
 #[allow(dead_code)]
 pub const RP1_SYSINFO_PLATFORM: usize = RP1_SYSINFO_BASE + 0x4;
 #[allow(dead_code)]
+pub const RP1_SYSINFO_OBSERVED_APERTURE_BASE: usize = 0x1c_0000_0000;
+#[allow(dead_code)]
+pub const RP1_SYSINFO_OBSERVED_APERTURE_CHIP_ID: usize = RP1_SYSINFO_OBSERVED_APERTURE_BASE;
+#[allow(dead_code)]
+pub const RP1_SYSINFO_OBSERVED_APERTURE_PLATFORM: usize = RP1_SYSINFO_OBSERVED_APERTURE_BASE + 0x4;
+#[allow(dead_code)]
 pub const RP1_EXPECTED_CHIP_ID: u32 = 0x2000_1927;
 #[allow(dead_code)]
 pub const RP1_CLOCK_MANAGER_BASE: usize = 0x1f_0001_8000;
+#[allow(dead_code)]
+pub const RP1_CLOCK_MANAGER_OBSERVED_APERTURE_BASE: usize = 0x1c_0001_8000;
 #[allow(dead_code)]
 pub const PCIE2_CONTROLLER_BASE: usize = 0x10_0012_0000;
 #[allow(dead_code)]
@@ -332,19 +340,42 @@ pub const PCIE_WIN0_HIGH_EXPECTED: u32 = 0x0000_001f;
 #[allow(dead_code)]
 pub const RP1_PLL_SYS_CS: usize = 0x1f_0002_0000;
 #[allow(dead_code)]
+pub const RP1_PLL_SYS_OBSERVED_APERTURE_CS: usize = 0x1c_0002_0000;
+#[allow(dead_code)]
 pub const RP1_CLK_SYS_CTRL: usize = RP1_CLOCK_MANAGER_BASE + 0x14;
+#[allow(dead_code)]
+pub const RP1_CLK_SYS_OBSERVED_APERTURE_CTRL: usize =
+    RP1_CLOCK_MANAGER_OBSERVED_APERTURE_BASE + 0x14;
 #[allow(dead_code)]
 pub const RP1_CLK_SYS_DIV_INT: usize = RP1_CLOCK_MANAGER_BASE + 0x18;
 #[allow(dead_code)]
+pub const RP1_CLK_SYS_OBSERVED_APERTURE_DIV_INT: usize =
+    RP1_CLOCK_MANAGER_OBSERVED_APERTURE_BASE + 0x18;
+#[allow(dead_code)]
 pub const RP1_CLK_SYS_SEL: usize = RP1_CLOCK_MANAGER_BASE + 0x20;
+#[allow(dead_code)]
+pub const RP1_CLK_SYS_OBSERVED_APERTURE_SEL: usize =
+    RP1_CLOCK_MANAGER_OBSERVED_APERTURE_BASE + 0x20;
 #[allow(dead_code)]
 pub const RP1_CLK_SLOW_SYS_CTRL: usize = RP1_CLOCK_MANAGER_BASE + 0x24;
 #[allow(dead_code)]
+pub const RP1_CLK_SLOW_SYS_OBSERVED_APERTURE_CTRL: usize =
+    RP1_CLOCK_MANAGER_OBSERVED_APERTURE_BASE + 0x24;
+#[allow(dead_code)]
 pub const RP1_CLK_UART_CTRL: usize = RP1_CLOCK_MANAGER_BASE + 0x54;
+#[allow(dead_code)]
+pub const RP1_CLK_UART_OBSERVED_APERTURE_CTRL: usize =
+    RP1_CLOCK_MANAGER_OBSERVED_APERTURE_BASE + 0x54;
 #[allow(dead_code)]
 pub const RP1_CLK_UART_DIV_INT: usize = RP1_CLOCK_MANAGER_BASE + 0x58;
 #[allow(dead_code)]
+pub const RP1_CLK_UART_OBSERVED_APERTURE_DIV_INT: usize =
+    RP1_CLOCK_MANAGER_OBSERVED_APERTURE_BASE + 0x58;
+#[allow(dead_code)]
 pub const RP1_CLK_UART_SEL: usize = RP1_CLOCK_MANAGER_BASE + 0x60;
+#[allow(dead_code)]
+pub const RP1_CLK_UART_OBSERVED_APERTURE_SEL: usize =
+    RP1_CLOCK_MANAGER_OBSERVED_APERTURE_BASE + 0x60;
 #[allow(dead_code)]
 pub const RP1_CLK_ADC_CTRL: usize = RP1_CLOCK_MANAGER_BASE + 0x144;
 #[allow(dead_code)]
@@ -12711,6 +12742,7 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle",
         talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_read",
         talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_read",
+        talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_read",
         talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
         talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",
         talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_read",
@@ -13876,6 +13908,398 @@ pub fn run_rp1_sysinfo_clock_sentinel_no_mmio_control() -> ! {
         );
         write_early_static(" classification=no-mmio-sysinfo-clock-sentinel-control-visible\n");
         wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_read",
+    talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_no_mmio_control"
+))]
+#[derive(Clone, Copy)]
+struct ClockResetDependencySnapshot {
+    sysinfo_chip_id: u32,
+    sysinfo_platform: u32,
+    pll_sys_cs: u32,
+    clk_sys_ctrl: u32,
+    clk_sys_div_int: u32,
+    clk_sys_sel: u32,
+    clk_slow_sys_ctrl: u32,
+    clk_uart_ctrl: u32,
+    clk_uart_div_int: u32,
+    clk_uart_sel: u32,
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_read",
+    talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_no_mmio_control"
+))]
+impl ClockResetDependencySnapshot {
+    const fn zero() -> Self {
+        Self {
+            sysinfo_chip_id: 0,
+            sysinfo_platform: 0,
+            pll_sys_cs: 0,
+            clk_sys_ctrl: 0,
+            clk_sys_div_int: 0,
+            clk_sys_sel: 0,
+            clk_slow_sys_ctrl: 0,
+            clk_uart_ctrl: 0,
+            clk_uart_div_int: 0,
+            clk_uart_sel: 0,
+        }
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_read")]
+pub fn run_rp1_clock_reset_dependency_read() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-clock-reset-dependency-source-contract-v1";
+    const TARGET: &str = "rp1-observed-clock-reset-dependency-preflight-read";
+
+    write_early_static("rpi5-rp1-clock-reset-dependency-read: start\n");
+    write_early_static("rpi5-rp1-clock-reset-dependency-read: before-read-only-loads\n");
+    wait_uart10_empty_early_phase();
+
+    let snapshot = read_clock_reset_dependency_snapshot();
+    let classification = clock_reset_dependency_classification(snapshot);
+
+    loop {
+        write_early_static("TALOS: rp1-clock-reset-dependency-result contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_clock_reset_dependency_bases(
+            "0x1c00000000",
+            RP1_SYSINFO_OBSERVED_APERTURE_BASE,
+            RP1_CLOCK_MANAGER_OBSERVED_APERTURE_BASE,
+        );
+        write_clock_reset_dependency_real_registers(snapshot);
+        write_clock_reset_dependency_report_fields(snapshot);
+        write_clock_reset_dependency_retained_context();
+        write_clock_reset_dependency_classification_vocabulary();
+        write_early_static(" classification=");
+        write_early_static(classification);
+        write_early_static("\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_no_mmio_control")]
+pub fn run_rp1_clock_reset_dependency_no_mmio_control() -> ! {
+    const CONTRACT_ID: &str = "phase11-rp1-clock-reset-dependency-source-contract-v1";
+    const TARGET: &str = "rp1-observed-clock-reset-dependency-preflight-read";
+    const SNAPSHOT: ClockResetDependencySnapshot = ClockResetDependencySnapshot::zero();
+
+    write_early_static("rpi5-rp1-clock-reset-dependency-control: start\n");
+    write_early_static(
+        "rpi5-rp1-clock-reset-dependency-control: no-rp1-gpio-clock-reset-msix-pcie-mip-gic-dma-mmio\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-clock-reset-dependency-control contract=");
+        write_early_static(CONTRACT_ID);
+        write_early_static(" target=");
+        write_early_static(TARGET);
+        write_clock_reset_dependency_capture_nonce();
+        write_clock_reset_dependency_bases("not-constructed", 0, 0);
+        write_clock_reset_dependency_control_registers(SNAPSHOT);
+        write_clock_reset_dependency_report_fields(SNAPSHOT);
+        write_clock_reset_dependency_retained_context();
+        write_clock_reset_dependency_classification_vocabulary();
+        write_early_static(" classification=no-mmio-clock-reset-dependency-control-visible\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_read")]
+fn read_clock_reset_dependency_snapshot() -> ClockResetDependencySnapshot {
+    ClockResetDependencySnapshot {
+        sysinfo_chip_id: read_rp1_reg_u32(RP1_SYSINFO_OBSERVED_APERTURE_CHIP_ID),
+        sysinfo_platform: read_rp1_reg_u32(RP1_SYSINFO_OBSERVED_APERTURE_PLATFORM),
+        pll_sys_cs: read_rp1_reg_u32(RP1_PLL_SYS_OBSERVED_APERTURE_CS),
+        clk_sys_ctrl: read_rp1_reg_u32(RP1_CLK_SYS_OBSERVED_APERTURE_CTRL),
+        clk_sys_div_int: read_rp1_reg_u32(RP1_CLK_SYS_OBSERVED_APERTURE_DIV_INT),
+        clk_sys_sel: read_rp1_reg_u32(RP1_CLK_SYS_OBSERVED_APERTURE_SEL),
+        clk_slow_sys_ctrl: read_rp1_reg_u32(RP1_CLK_SLOW_SYS_OBSERVED_APERTURE_CTRL),
+        clk_uart_ctrl: read_rp1_reg_u32(RP1_CLK_UART_OBSERVED_APERTURE_CTRL),
+        clk_uart_div_int: read_rp1_reg_u32(RP1_CLK_UART_OBSERVED_APERTURE_DIV_INT),
+        clk_uart_sel: read_rp1_reg_u32(RP1_CLK_UART_OBSERVED_APERTURE_SEL),
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_read",
+    talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_no_mmio_control"
+))]
+fn clock_reset_dependency_classification(snapshot: ClockResetDependencySnapshot) -> &'static str {
+    if snapshot.sysinfo_chip_id == 0xdead_dead || snapshot.sysinfo_platform == 0xdead_dead {
+        "observed-clock-reset-dependency-blocked-sysinfo-sentinel"
+    } else if clock_reset_dependency_any_clock_deaddead(snapshot) {
+        "observed-clock-reset-dependency-blocked-clock-manager-sentinel"
+    } else if snapshot.clk_sys_ctrl & RP1_CLK_CTRL_ENABLE == 0
+        || snapshot.clk_slow_sys_ctrl & RP1_CLK_CTRL_ENABLE == 0
+    {
+        "observed-clock-reset-dependency-blocked-system-clock-disabled"
+    } else if snapshot.clk_uart_ctrl & RP1_CLK_CTRL_ENABLE == 0 {
+        "observed-clock-reset-dependency-blocked-uart-clock-disabled"
+    } else {
+        "observed-clock-reset-dependency-visible"
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_read",
+    talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_no_mmio_control"
+))]
+fn clock_reset_dependency_any_clock_deaddead(snapshot: ClockResetDependencySnapshot) -> bool {
+    snapshot.pll_sys_cs == 0xdead_dead
+        || snapshot.clk_sys_ctrl == 0xdead_dead
+        || snapshot.clk_sys_div_int == 0xdead_dead
+        || snapshot.clk_sys_sel == 0xdead_dead
+        || snapshot.clk_slow_sys_ctrl == 0xdead_dead
+        || snapshot.clk_uart_ctrl == 0xdead_dead
+        || snapshot.clk_uart_div_int == 0xdead_dead
+        || snapshot.clk_uart_sel == 0xdead_dead
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_read",
+    talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_no_mmio_control"
+))]
+fn clock_reset_dependency_all_clock_deaddead(snapshot: ClockResetDependencySnapshot) -> bool {
+    snapshot.pll_sys_cs == 0xdead_dead
+        && snapshot.clk_sys_ctrl == 0xdead_dead
+        && snapshot.clk_sys_div_int == 0xdead_dead
+        && snapshot.clk_sys_sel == 0xdead_dead
+        && snapshot.clk_slow_sys_ctrl == 0xdead_dead
+        && snapshot.clk_uart_ctrl == 0xdead_dead
+        && snapshot.clk_uart_div_int == 0xdead_dead
+        && snapshot.clk_uart_sel == 0xdead_dead
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_read",
+    talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_no_mmio_control"
+))]
+fn write_clock_reset_dependency_bases(
+    observed_base: &str,
+    sysinfo_base: usize,
+    clock_manager_base: usize,
+) {
+    write_early_static(" observed-base=");
+    write_early_static(observed_base);
+    write_early_static(" sysinfo-base=");
+    if observed_base == "not-constructed" {
+        write_early_static("not-constructed");
+    } else {
+        write_early_hex_u64(sysinfo_base as u64);
+    }
+    write_early_static(" clock-manager-base=");
+    if observed_base == "not-constructed" {
+        write_early_static("not-constructed");
+    } else {
+        write_early_hex_u64(clock_manager_base as u64);
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_read")]
+fn write_clock_reset_dependency_real_registers(snapshot: ClockResetDependencySnapshot) {
+    write_clock_reset_dependency_register(
+        " sysinfo-chip-id",
+        0x000000,
+        RP1_SYSINFO_OBSERVED_APERTURE_CHIP_ID,
+        snapshot.sysinfo_chip_id,
+    );
+    write_clock_reset_dependency_register(
+        " sysinfo-platform",
+        0x000004,
+        RP1_SYSINFO_OBSERVED_APERTURE_PLATFORM,
+        snapshot.sysinfo_platform,
+    );
+    write_clock_reset_dependency_register(
+        " pll-sys-cs",
+        0x020000,
+        RP1_PLL_SYS_OBSERVED_APERTURE_CS,
+        snapshot.pll_sys_cs,
+    );
+    write_clock_reset_dependency_register(
+        " clk-sys-ctrl",
+        0x018014,
+        RP1_CLK_SYS_OBSERVED_APERTURE_CTRL,
+        snapshot.clk_sys_ctrl,
+    );
+    write_clock_reset_dependency_register(
+        " clk-sys-div-int",
+        0x018018,
+        RP1_CLK_SYS_OBSERVED_APERTURE_DIV_INT,
+        snapshot.clk_sys_div_int,
+    );
+    write_clock_reset_dependency_register(
+        " clk-sys-sel",
+        0x018020,
+        RP1_CLK_SYS_OBSERVED_APERTURE_SEL,
+        snapshot.clk_sys_sel,
+    );
+    write_clock_reset_dependency_register(
+        " clk-slow-sys-ctrl",
+        0x018024,
+        RP1_CLK_SLOW_SYS_OBSERVED_APERTURE_CTRL,
+        snapshot.clk_slow_sys_ctrl,
+    );
+    write_clock_reset_dependency_register(
+        " clk-uart-ctrl",
+        0x018054,
+        RP1_CLK_UART_OBSERVED_APERTURE_CTRL,
+        snapshot.clk_uart_ctrl,
+    );
+    write_clock_reset_dependency_register(
+        " clk-uart-div-int",
+        0x018058,
+        RP1_CLK_UART_OBSERVED_APERTURE_DIV_INT,
+        snapshot.clk_uart_div_int,
+    );
+    write_clock_reset_dependency_register(
+        " clk-uart-sel",
+        0x018060,
+        RP1_CLK_UART_OBSERVED_APERTURE_SEL,
+        snapshot.clk_uart_sel,
+    );
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_no_mmio_control")]
+fn write_clock_reset_dependency_control_registers(snapshot: ClockResetDependencySnapshot) {
+    write_clock_reset_dependency_control_register(
+        " sysinfo-chip-id",
+        0x000000,
+        snapshot.sysinfo_chip_id,
+    );
+    write_clock_reset_dependency_control_register(
+        " sysinfo-platform",
+        0x000004,
+        snapshot.sysinfo_platform,
+    );
+    write_clock_reset_dependency_control_register(" pll-sys-cs", 0x020000, snapshot.pll_sys_cs);
+    write_clock_reset_dependency_control_register(" clk-sys-ctrl", 0x018014, snapshot.clk_sys_ctrl);
+    write_clock_reset_dependency_control_register(
+        " clk-sys-div-int",
+        0x018018,
+        snapshot.clk_sys_div_int,
+    );
+    write_clock_reset_dependency_control_register(" clk-sys-sel", 0x018020, snapshot.clk_sys_sel);
+    write_clock_reset_dependency_control_register(
+        " clk-slow-sys-ctrl",
+        0x018024,
+        snapshot.clk_slow_sys_ctrl,
+    );
+    write_clock_reset_dependency_control_register(
+        " clk-uart-ctrl",
+        0x018054,
+        snapshot.clk_uart_ctrl,
+    );
+    write_clock_reset_dependency_control_register(
+        " clk-uart-div-int",
+        0x018058,
+        snapshot.clk_uart_div_int,
+    );
+    write_clock_reset_dependency_control_register(" clk-uart-sel", 0x018060, snapshot.clk_uart_sel);
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_read")]
+fn write_clock_reset_dependency_register(
+    name: &str,
+    source_offset: u64,
+    address: usize,
+    value: u32,
+) {
+    write_early_static(name);
+    write_early_static("-source-offset=");
+    write_early_hex_u64(source_offset);
+    write_early_static(" address=");
+    write_early_hex_u64(address as u64);
+    write_early_static(" width=32 raw=");
+    write_early_hex_u64(value as u64);
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_no_mmio_control")]
+fn write_clock_reset_dependency_control_register(name: &str, source_offset: u64, value: u32) {
+    write_early_static(name);
+    write_early_static("-source-offset=");
+    write_early_hex_u64(source_offset);
+    write_early_static(" address=not-constructed width=32 raw=");
+    write_early_hex_u64(value as u64);
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_read",
+    talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_no_mmio_control"
+))]
+fn write_clock_reset_dependency_report_fields(snapshot: ClockResetDependencySnapshot) {
+    let any_clock_deaddead = clock_reset_dependency_any_clock_deaddead(snapshot);
+    let all_clock_deaddead = clock_reset_dependency_all_clock_deaddead(snapshot);
+
+    write_early_static(" expected-chip-id=");
+    write_early_hex_u64(RP1_EXPECTED_CHIP_ID as u64);
+    write_early_static(" chip-id-matches-expected=");
+    write_bool(snapshot.sysinfo_chip_id == RP1_EXPECTED_CHIP_ID);
+    write_early_static(" chip-id-is-deaddead=");
+    write_bool(snapshot.sysinfo_chip_id == 0xdead_dead);
+    write_early_static(" platform-is-deaddead=");
+    write_bool(snapshot.sysinfo_platform == 0xdead_dead);
+    write_early_static(" pll-sys-locked=");
+    write_bool(snapshot.pll_sys_cs & (1 << 31) != 0);
+    write_early_static(" clk-sys-enabled=");
+    write_bool(snapshot.clk_sys_ctrl & RP1_CLK_CTRL_ENABLE != 0);
+    write_early_static(" clk-slow-sys-enabled=");
+    write_bool(snapshot.clk_slow_sys_ctrl & RP1_CLK_CTRL_ENABLE != 0);
+    write_early_static(" clk-uart-enabled=");
+    write_bool(snapshot.clk_uart_ctrl & RP1_CLK_CTRL_ENABLE != 0);
+    write_early_static(" any-selected-clock-deaddead=");
+    write_bool(any_clock_deaddead);
+    write_early_static(" all-selected-clock-deaddead=");
+    write_bool(all_clock_deaddead);
+    write_early_static(" reset-status-source=none-selected-read-only");
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_read",
+    talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_no_mmio_control"
+))]
+fn write_clock_reset_dependency_retained_context() {
+    write_early_static(
+        " retained-gpio14-blocker=observed-gpio14-ownership-preflight-blocked-non-gpio-function",
+    );
+    write_early_static(
+        " retained-gpio16-blocker=observed-gpio16-ownership-preflight-blocked-non-gpio-function",
+    );
+    write_early_static(
+        " retained-0x1f-sysinfo-clock-sentinel=rp1-sysinfo-and-clock-window-sentinel",
+    );
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_read",
+    talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_no_mmio_control"
+))]
+fn write_clock_reset_dependency_classification_vocabulary() {
+    write_early_static(" classification-vocabulary=");
+    write_early_static("observed-clock-reset-dependency-visible,");
+    write_early_static("observed-clock-reset-dependency-blocked-sysinfo-sentinel,");
+    write_early_static("observed-clock-reset-dependency-blocked-clock-manager-sentinel,");
+    write_early_static("observed-clock-reset-dependency-blocked-system-clock-disabled,");
+    write_early_static("observed-clock-reset-dependency-blocked-uart-clock-disabled,");
+    write_early_static("observed-clock-reset-dependency-no-return-or-trap,");
+    write_early_static("observed-clock-reset-dependency-inconclusive-capture,");
+    write_early_static("no-mmio-clock-reset-dependency-control-visible,");
+    write_early_static("staging/build-blocker");
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_no_mmio_control")]
+fn write_clock_reset_dependency_capture_nonce() {
+    if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
+        if !nonce.is_empty() {
+            write_early_static(" capture-nonce=");
+            write_early_static(nonce);
+        }
     }
 }
 
@@ -16415,6 +16839,8 @@ fn gpio14_ownership_preflight_classification(
     talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_read",
     talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_no_mmio_control",
+    talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_read",
+    talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
     talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",
@@ -16809,8 +17235,20 @@ mod tests {
         assert_eq!(RP1_SYSINFO_BASE, 0x1f_0000_0000);
         assert_eq!(RP1_SYSINFO_CHIP_ID, 0x1f_0000_0000);
         assert_eq!(RP1_SYSINFO_PLATFORM, 0x1f_0000_0004);
+        assert_eq!(RP1_SYSINFO_OBSERVED_APERTURE_BASE, 0x1c_0000_0000);
+        assert_eq!(RP1_SYSINFO_OBSERVED_APERTURE_CHIP_ID, 0x1c_0000_0000);
+        assert_eq!(RP1_SYSINFO_OBSERVED_APERTURE_PLATFORM, 0x1c_0000_0004);
         assert_eq!(RP1_EXPECTED_CHIP_ID, 0x2000_1927);
         assert_eq!(RP1_CLOCK_MANAGER_BASE, 0x1f_0001_8000);
+        assert_eq!(RP1_CLOCK_MANAGER_OBSERVED_APERTURE_BASE, 0x1c_0001_8000);
+        assert_eq!(RP1_PLL_SYS_OBSERVED_APERTURE_CS, 0x1c_0002_0000);
+        assert_eq!(RP1_CLK_SYS_OBSERVED_APERTURE_CTRL, 0x1c_0001_8014);
+        assert_eq!(RP1_CLK_SYS_OBSERVED_APERTURE_DIV_INT, 0x1c_0001_8018);
+        assert_eq!(RP1_CLK_SYS_OBSERVED_APERTURE_SEL, 0x1c_0001_8020);
+        assert_eq!(RP1_CLK_SLOW_SYS_OBSERVED_APERTURE_CTRL, 0x1c_0001_8024);
+        assert_eq!(RP1_CLK_UART_OBSERVED_APERTURE_CTRL, 0x1c_0001_8054);
+        assert_eq!(RP1_CLK_UART_OBSERVED_APERTURE_DIV_INT, 0x1c_0001_8058);
+        assert_eq!(RP1_CLK_UART_OBSERVED_APERTURE_SEL, 0x1c_0001_8060);
         assert_eq!(PCIE2_CONTROLLER_BASE, 0x10_0012_0000);
         assert_eq!(PCIE_MISC_PCIE_STATUS_OFFSET, 0x4068);
         assert_eq!(PCIE_MISC_PCIE_STATUS, 0x10_0012_4068);

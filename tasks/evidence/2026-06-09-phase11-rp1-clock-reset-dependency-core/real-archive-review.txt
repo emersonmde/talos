@@ -1,0 +1,9 @@
+candidate_archive=target/task-evidence/2026-06-09-clock-reset-core/clock-reset-real.tar.gz
+candidate_archive_sha256=a06485f7ed24daaff5b15c794275191c90e2e2c0f677ce4f26b0447446537478
+kernel_2712_sha256=424bb780ec1c9775cba990bdbe1525c200e0d7e4a27744ece490fc86127cd9bd
+kernel_2712_size=49496
+header_image_size=49496
+text_offset=0
+flags=12
+result_marker=TALOS: rp1-clock-reset-dependency-result
+forbidden_clock_reset_dependency_control_strings_absent=true

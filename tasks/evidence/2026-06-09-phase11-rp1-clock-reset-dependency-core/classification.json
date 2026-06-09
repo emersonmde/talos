@@ -1,0 +1,56 @@
+{
+  "task_id": "phase11-rp1-clock-reset-dependency-core-20260609",
+  "classification": "accepted-local-static-clock-reset-dependency-core",
+  "status": "accepted",
+  "source_contract": "phase11-rp1-clock-reset-dependency-source-contract-v1",
+  "target": "rp1-observed-clock-reset-dependency-preflight-read",
+  "read_only": true,
+  "hardware_run": false,
+  "real_candidate": {
+    "scenario": "rpi5_rp1_clock_reset_dependency_read",
+    "marker": "TALOS: rp1-clock-reset-dependency-result",
+    "allowed_reads": [
+      "0x1c00000000",
+      "0x1c00000004",
+      "0x1c00020000",
+      "0x1c00018014",
+      "0x1c00018018",
+      "0x1c00018020",
+      "0x1c00018024",
+      "0x1c00018054",
+      "0x1c00018058",
+      "0x1c00018060"
+    ],
+    "forbidden_writes": true
+  },
+  "control_candidate": {
+    "scenario": "rpi5_rp1_clock_reset_dependency_no_mmio_control",
+    "marker": "TALOS: rp1-clock-reset-dependency-control",
+    "classification": "no-mmio-clock-reset-dependency-control-visible",
+    "constructs_forbidden_mmio": false
+  },
+  "accepted_claims": [
+    "local/static real candidate implements the accepted read-only observed-aperture SYSINFO and clock-manager dependency preflight read set and report fields",
+    "local/static no-MMIO control preserves the report shape with not-constructed address fields",
+    "archive review helpers distinguish the real and control candidates and reject retained write-backed clock/GPIO diagnostic markers"
+  ],
+  "not_accepted": [
+    "Pi 5 hardware behavior",
+    "boot archive publication to the lab",
+    "hardwareTestLock acquisition",
+    "live RP1 identity",
+    "clock/reset ownership",
+    "clock/reset writes",
+    "GPIO ownership",
+    "GPIO function changes",
+    "event generation",
+    "interrupt delivery",
+    "handler ownership",
+    "DMA/cache",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "commit": null
+}
