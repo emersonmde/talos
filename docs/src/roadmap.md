@@ -8798,6 +8798,23 @@ networking, SSH, hardware validation, Milestone 12 work, and Milestone 11.3
 completion by implication remain unaccepted. The mechanically unblocked next
 task is the queued driver-adjacent diagnostic/source-contract boundary.
 
+phase11-rp1-dma-cache-driver-adjacent-diagnostic-contract-20260609 accepts the
+next driver-adjacent source contract as
+rp1-dma-cache-driver-adjacent-diagnostic-contract-accepted. The accepted
+frontier is phase11-rp1-dma-cache-maintenance-sequence-contract-v1: a
+local/static instruction/barrier sequence derived only from accepted
+DmaCacheSyncPlanEvidence. The contract names static clean, invalidate, and
+clean+invalidate cache-line operation vocabulary, a source-backed dsb sy
+barrier shape, 64-byte line coverage, descriptor and sync-plan identity,
+rejected runtime claims, and local/static classification. Existing SMP cache
+helpers remain instruction/barrier-shape evidence only. Executed cache
+maintenance for driver buffers, live barrier ordering, working DMA behavior,
+RP1 MMIO writes, DMA channel programming, descriptor rings, Ethernet, storage,
+networking, SSH, hardware validation, Milestone 12 work, and Milestone 11.3
+completion by implication remain unaccepted. The next objective boundary is a
+local/static cache-maintenance-sequence core, but no explicit worker-owned task
+exists yet; supervisor planning is required before implementation continues.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

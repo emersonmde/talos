@@ -1,0 +1,52 @@
+{
+  "task_id": "phase11-rp1-dma-cache-driver-adjacent-diagnostic-contract-20260609",
+  "classification": "rp1-dma-cache-driver-adjacent-diagnostic-contract-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "mdbook build"
+  ],
+  "selected_contract": "phase11-rp1-dma-cache-maintenance-sequence-contract-v1",
+  "accepted_frontier": [
+    "local/static cache-maintenance instruction-sequence contract derived only from accepted DmaCacheSyncPlanEvidence",
+    "source-backed mapping from sync operations to static cache-maintenance instruction and barrier vocabulary",
+    "descriptor and sync-plan evidence remain prerequisites before any future runtime cache-maintenance work",
+    "future implementation remains local/static with no hardware, RP1 MMIO, DMA programming, descriptor rings, Ethernet, storage, networking, or SSH"
+  ],
+  "accepted_claims": [
+    "the next useful DMA/cache capability is a local/static instruction/barrier sequence derived from accepted sync-plan evidence",
+    "this boundary is driver-adjacent because it names the cache-maintenance sequence a future driver would need before and after device ownership",
+    "networking and SSH remain blocked until later explicit tasks accept runtime cache maintenance, working DMA behavior, and driver prerequisites"
+  ],
+  "rejected_claims": [
+    "executed cache maintenance for driver buffers",
+    "live barrier ordering for a driver path",
+    "working DMA behavior",
+    "RP1 MMIO writes",
+    "DMA channel programming",
+    "DMA descriptor rings",
+    "interrupt completion path",
+    "cache-coherent driver policy",
+    "non-cacheable DMA mapping policy",
+    "IOMMU-backed driver policy",
+    "DMA-safe allocation or pinning beyond accepted descriptor validation",
+    "RP1 Ethernet readiness",
+    "storage readiness",
+    "networking",
+    "SSH",
+    "hardware validation",
+    "Milestone 12 progress",
+    "Milestone 11.3 completion by implication"
+  ],
+  "retained_risks": [
+    "actual cache-maintenance instruction execution for driver buffers remains unimplemented and unvalidated",
+    "barrier ordering remains source evidence only until a live runtime boundary is explicitly planned and accepted",
+    "clean+invalidate instruction sequencing remains a local/static contract target, not runtime behavior",
+    "DMA-safe allocation and pinning remain unaccepted beyond descriptor validation",
+    "coherent, non-cacheable, and IOMMU-backed policies remain rejected until a later task supplies mapping, policy, and evidence",
+    "future hardware tasks must serialize on hardwareTestLock and use candidate identity, fresh serial cursor, TFTP delta, known-good control, then candidate rerun after any inconclusive run"
+  ],
+  "next_action": "Set planningNeeded=true for supervisor planning of a bounded local/static phase11-rp1-dma-cache-maintenance-sequence-core task."
+}

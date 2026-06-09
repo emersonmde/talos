@@ -1,0 +1,77 @@
+{
+  "task_id": "phase11-rp1-dma-cache-driver-adjacent-diagnostic-contract-20260609",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-driver-adjacent-diagnostic-contract.md",
+      "evidence_level": "static inspection and documentation reconciliation"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-driver-adjacent-diagnostic-contract/classification.json",
+      "evidence_level": "accepted source-contract classification"
+    },
+    {
+      "label": "accepted sync-plan closeout",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-sync-plan-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted sync-plan core",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-sync-plan-core.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "local/static sync-plan source",
+      "path": "src/dma_cache.rs",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "SMP cache instruction-shape source evidence",
+      "path": "src/smp.rs",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "memory architecture boundary",
+      "path": "docs/src/architecture/memory.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "BCM2712 cache-line source evidence",
+      "path": "tasks/evidence/2026-06-05-phase11-rp1-pcie-map-source-contract/bcm2712.dtsi",
+      "evidence_level": "retained source inspection"
+    },
+    {
+      "label": "project contract update",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "evidence_level": "documentation reconciliation"
+    },
+    {
+      "label": "roadmap update",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "documentation reconciliation"
+    }
+  ],
+  "validation": [
+    {
+      "command": "jq empty tasks/evidence/2026-06-09-phase11-rp1-dma-cache-driver-adjacent-diagnostic-contract/classification.json tasks/evidence/2026-06-09-phase11-rp1-dma-cache-driver-adjacent-diagnostic-contract/evidence-map.json",
+      "evidence_level": "jq JSON checks",
+      "result": "passed"
+    },
+    {
+      "command": "git diff --check",
+      "evidence_level": "diff check",
+      "result": "passed"
+    },
+    {
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "evidence_level": "documentation build",
+      "result": "passed"
+    },
+    {
+      "command": "git diff --cached --check",
+      "evidence_level": "staged diff check",
+      "result": "passed"
+    }
+  ]
+}

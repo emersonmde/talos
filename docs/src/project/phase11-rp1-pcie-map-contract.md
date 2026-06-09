@@ -357,6 +357,22 @@ driver-adjacent diagnostic/source-contract task; it must remain a
 source-contract task unless a later accepted task explicitly authorizes
 runtime or hardware work.
 
+phase11-rp1-dma-cache-driver-adjacent-diagnostic-contract-20260609 accepts
+phase11-rp1-dma-cache-maintenance-sequence-contract-v1 as the next
+local/static driver-adjacent boundary. The accepted frontier is limited to a
+future instruction/barrier sequence derived only from accepted
+DmaCacheSyncPlanEvidence: static vocabulary for clean, invalidate, and
+clean+invalidate cache-line operations, a source-backed dsb sy barrier shape,
+64-byte line coverage, descriptor and sync-plan identity, rejected runtime
+claims, and local/static classification. Existing SMP cache helpers remain
+instruction/barrier-shape evidence only. Executed cache maintenance for driver
+buffers, live barrier ordering, working DMA, RP1 MMIO, DMA channel
+programming, descriptor rings, Ethernet, storage, networking, SSH, hardware
+validation, Milestone 12 work, and Milestone 11.3 completion remain
+unaccepted. The next objective boundary is a local/static
+cache-maintenance-sequence core, but no explicit worker-owned task exists yet;
+supervisor planning is required before implementation continues.
+
 phase11-rp1-gpio-event-latch-source-contract-20260607 is accepted as
 source-contract-blocked. Retained RP1/Linux source identifies the GPIO14 event
 configuration path: GPIO14 CTRL CLR can clear raw event enables, GPIO14 CTRL
@@ -2678,6 +2694,18 @@ fields, and validation strategy for a future cache-sync-plan core. The contract
 does not accept executed cache maintenance, live barriers, DMA programming,
 driver behavior, hardware proof, networking, SSH, or Milestone 11.3 completion;
 supervisor planning is required before implementation continues.
+
+phase11-rp1-dma-cache-sync-plan-core-20260609 implements that bounded
+local/static sync-plan core in src/dma_cache.rs, and
+phase11-rp1-dma-cache-sync-plan-closeout-20260609 closes the accepted
+sync-plan frontier. phase11-rp1-dma-cache-driver-adjacent-diagnostic-contract-20260609
+then accepts the next source-contract boundary as local/static cache-maintenance
+instruction sequencing derived only from accepted sync-plan evidence. The next
+implementation frontier may define static instruction/barrier vocabulary and
+evidence for clean, invalidate, and clean+invalidate line coverage, but it must
+not execute cache maintenance, claim live barrier ordering, program DMA/RP1
+MMIO, create descriptor rings, start Ethernet/storage/networking/SSH work, or
+accept Milestone 11.3 completion by implication.
 
 ## Deferred Work
 
