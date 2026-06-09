@@ -9043,6 +9043,19 @@ channel ownership, descriptor rings, transfer completion, interrupt
 completion, hardware/device completion, Ethernet/storage, networking, SSH,
 Milestone 11.3 completion, and phase transition remain unaccepted.
 
+phase11-rp1-dma-cache-small-diagnostic-visibility-v3-closeout-20260609 closes
+the run-unique visibility/control hardware proof frontier as
+rp1-dma-cache-small-diagnostic-visibility-v3-frontier-closed. Same-shaped
+visibility/control hardware retries are closed unless future supervisor scope
+supplies materially different source evidence, runtime evidence, hardware
+evidence, freshness requirements, or acceptance criteria. The selected next
+checkpoint is
+phase11-rp1-dma-cache-milestone-11-3-closeout-20260609, limited to accepted
+Milestone 11.3 evidence and retained risks. Live DMA, RP1 MMIO writes, channel
+ownership, descriptor rings, transfer completion, interrupt completion,
+hardware/device completion, Ethernet/storage, networking, SSH, Milestone 12
+work, and phase transition remain unaccepted.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

@@ -1,0 +1,18 @@
+{
+  "task_id": "phase11-rp1-dma-cache-small-diagnostic-visibility-v3-closeout-20260609",
+  "classification": "rp1-dma-cache-small-diagnostic-visibility-v3-frontier-closed",
+  "task_record": "tasks/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-closeout.md",
+  "classification_json": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-closeout/classification.json",
+  "source_retry_task": "tasks/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry.md",
+  "source_retry_classification": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry/classification.json",
+  "source_retry_evidence_map": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry/evidence-map.json",
+  "source_retry_hardware_summary": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry/hardware-run-summary.json",
+  "control_capture_summary": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry/control-run/capture-invariant-summary.json",
+  "control_run_unique_check": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry/control-run/run-unique-check.json",
+  "control_boot_staging_check": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry/control-run/boot-staging-check.json",
+  "candidate_capture_summary": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry/candidate-run/capture-invariant-summary.json",
+  "candidate_run_unique_check": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry/candidate-run/run-unique-check.json",
+  "candidate_boot_staging_check": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry/candidate-run/boot-staging-check.json",
+  "project_contract_doc": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+  "roadmap": "docs/src/roadmap.md"
+}

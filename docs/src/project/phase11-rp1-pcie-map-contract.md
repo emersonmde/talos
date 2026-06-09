@@ -3000,6 +3000,18 @@ rings, transfer completion, interrupt completion, hardware/device completion,
 Ethernet, storage, networking, SSH, Milestone 11.3 completion, and phase
 transition remain unaccepted.
 
+phase11-rp1-dma-cache-small-diagnostic-visibility-v3-closeout-20260609 closes
+that run-unique visibility/control proof as
+rp1-dma-cache-small-diagnostic-visibility-v3-frontier-closed. Same-shaped
+visibility/control hardware retries are closed unless future supervisor scope
+supplies materially different source evidence, runtime evidence, hardware
+evidence, freshness requirements, or acceptance criteria. The next checkpoint
+is the queued Milestone 11.3 closeout over accepted evidence and retained risks
+only; live DMA, RP1 MMIO writes, channel ownership, descriptor rings, transfer
+completion, interrupt completion, hardware/device completion, Ethernet,
+storage, networking, SSH, Milestone 12 work, and phase transition remain
+unaccepted.
+
 ## Deferred Work
 
 - PCIe enumeration and BAR discovery for general external devices.

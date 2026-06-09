@@ -1,0 +1,70 @@
+{
+  "task_id": "phase11-rp1-dma-cache-small-diagnostic-visibility-v3-closeout-20260609",
+  "classification": "rp1-dma-cache-small-diagnostic-visibility-v3-frontier-closed",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "serial hardware boot/output from accepted v3 retry",
+    "lab-controller API identity and restore evidence from accepted v3 retry",
+    "run-unique replay evidence from accepted v3 retry",
+    "boot-staging identity replay from accepted v3 retry",
+    "documentation reconciliation"
+  ],
+  "accepted_claims": [
+    "paired no-plan control Pi 5 serial output uses the same report path while withholding accepted plan evidence",
+    "candidate Pi 5 serial output shows the accepted local/static RP1 DMA small-diagnostic plan visibility report",
+    "candidate and control serial freshness are current-run under distinct run-unique capture nonces",
+    "candidate and control selected-tree identity, expected TFTP fetches, final identity, boot-staging replay, and restore gates passed",
+    "same-shaped visibility/control hardware retries are closed unless future supervisor scope changes evidence or acceptance criteria"
+  ],
+  "rejected_claims": [
+    "live DMA",
+    "RP1 MMIO writes",
+    "RP1 DMA channel ownership",
+    "DMA channel programming",
+    "descriptor-ring construction",
+    "descriptor-ring ownership",
+    "transfer completion",
+    "interrupt completion",
+    "hardware/device completion",
+    "Ethernet readiness",
+    "storage readiness",
+    "networking",
+    "SSH",
+    "Milestone 11.3 completion by implication",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "no live RP1 DMA transfer has run",
+    "no descriptor-ring layout or ownership has been accepted",
+    "no RP1 DMA channel ownership has been accepted",
+    "no transfer-completion or interrupt-completion policy has been accepted",
+    "IOMMU runtime policy and DMA-safe allocation/pinning remain deferred",
+    "device-specific consumers remain deferred"
+  ],
+  "same_shaped_retry_policy": "closed unless future supervisor scope supplies materially different source evidence, runtime evidence, hardware evidence, freshness requirements, or acceptance criteria",
+  "source_retry": {
+    "task_id": "phase11-rp1-dma-cache-small-diagnostic-visibility-v3-retry-20260609",
+    "classification": "rp1-dma-cache-small-diagnostic-visibility-v3-proof-accepted",
+    "commit": "577beab4acacfbaba51d4f400b36d7ea2cc33524"
+  },
+  "hardware": {
+    "baseline_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "post_hardware_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "control": {
+      "tree_hash": "3813289a7df48f04313329b90073683fb07eb0188b719290a862af587f86739b",
+      "kernel_sha256": "5bad74366a4e510940e25424beda0dedfce5598574dab8f1bb4590d2e51489d1",
+      "kernel_bytes": 48704,
+      "capture_nonce": "dma-vis-v3-control-20260609T211037Z-8d1ce237",
+      "post_power_nonce_count": 29
+    },
+    "candidate": {
+      "tree_hash": "f0b229ab1da582050f68af75b1de9953e9010b2cc4443ff3ee0002789e7572b2",
+      "kernel_sha256": "d46844db2747fa9457844acf66b473f63d3dca345bb7e306bd284f82ba49d60a",
+      "kernel_bytes": 49968,
+      "capture_nonce": "dma-vis-v3-candidate-20260609T211037Z-8d1ce237",
+      "post_power_nonce_count": 20
+    }
+  },
+  "next_action": "Mechanically promote phase11-rp1-dma-cache-milestone-11-3-closeout-20260609 on the next worker wake."
+}
