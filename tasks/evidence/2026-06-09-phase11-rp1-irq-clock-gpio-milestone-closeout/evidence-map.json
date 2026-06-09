@@ -1,0 +1,59 @@
+{
+  "task": "phase11-rp1-irq-clock-gpio-milestone-closeout-20260609",
+  "status": "accepted",
+  "classification": "rp1-irq-clock-gpio-milestone-112-blocker-checkpoint-accepted",
+  "evidence_level": [
+    "static inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "mdbook build",
+    "git diff checks"
+  ],
+  "inputs": {
+    "interrupt_route_closeout": {
+      "task": "phase11-rp1-interrupt-routing-diagnostic-closeout-20260607",
+      "path": "tasks/2026-06-07-phase11-rp1-interrupt-routing-diagnostic-closeout.md"
+    },
+    "gic_visible_route_closeout": {
+      "task": "phase11-rp1-gic-visible-route-closeout-20260607",
+      "path": "tasks/2026-06-07-phase11-rp1-gic-visible-route-closeout.md",
+      "evidence_map": "tasks/evidence/2026-06-07-phase11-rp1-gic-visible-route-closeout/evidence-map.json"
+    },
+    "gpio_bank_source_status_closeout": {
+      "task": "phase11-rp1-gpio-bank-source-status-closeout-20260607",
+      "path": "tasks/2026-06-07-phase11-rp1-gpio-bank-source-status-closeout.md"
+    },
+    "gpio14_observed_ownership_route_closeout": {
+      "task": "phase11-rp1-observed-gpio-ownership-route-closeout-20260608",
+      "path": "tasks/2026-06-08-phase11-rp1-observed-gpio-ownership-route-closeout.md",
+      "classification": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-ownership-route-closeout/classification.json",
+      "evidence_map": "tasks/evidence/2026-06-08-phase11-rp1-observed-gpio-ownership-route-closeout/evidence-map.json"
+    },
+    "gpio16_observed_ownership_event_closeout": {
+      "task": "phase11-rp1-observed-gpio16-ownership-event-closeout-20260609",
+      "path": "tasks/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-closeout.md",
+      "classification": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-closeout/classification.json",
+      "evidence_map": "tasks/evidence/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-closeout/evidence-map.json"
+    },
+    "clock_reset_dependency_closeout": {
+      "task": "phase11-rp1-clock-reset-dependency-closeout-20260609",
+      "path": "tasks/2026-06-09-phase11-rp1-clock-reset-dependency-closeout.md",
+      "classification": "tasks/evidence/2026-06-09-phase11-rp1-clock-reset-dependency-closeout/classification.json",
+      "evidence_map": "tasks/evidence/2026-06-09-phase11-rp1-clock-reset-dependency-closeout/evidence-map.json"
+    },
+    "project_contract": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+    "roadmap": "docs/src/roadmap.md"
+  },
+  "accepted_checkpoint": {
+    "milestone": "Milestone 11.2: RP1 Interrupts, Clocks, and GPIO",
+    "acceptance_basis": "captured blocker evidence with serial hardware output",
+    "next_task": "phase11-rp1-dma-cache-source-inventory-20260609"
+  },
+  "validation": {
+    "static_inspection": "passed",
+    "jq_json_checks": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  }
+}

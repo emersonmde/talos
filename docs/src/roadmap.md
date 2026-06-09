@@ -8667,6 +8667,25 @@ unaccepted. Same-shaped dependency preflight reruns are not progress without
 new acceptance criteria or a new discriminator. Supervisor planning is
 required for the next Milestone 11.2 feature slice.
 
+phase11-rp1-irq-clock-gpio-milestone-closeout-20260609 accepts the Milestone
+11.2 checkpoint as
+rp1-irq-clock-gpio-milestone-112-blocker-checkpoint-accepted. The accepted
+checkpoint reconciles source-backed interrupt routing, GIC-visible INTID 160
+read-only status, GPIO bank source-status, GPIO14 UART0 function blocker,
+GPIO16 FUNCSEL=31 / unknown blocker, and observed SYSINFO/clock-manager
+system-clock-disabled blocker evidence. The Milestone 11.2 acceptance
+condition is satisfied by captured blockers with serial/lab/TFTP/restore
+evidence, not by a working write-backed GPIO/status-LED diagnostic or
+interrupt-delivery proof. GPIO ownership, GPIO/RIO/pad/INTE/CTRL writes,
+event generation, interrupt pending generation, interrupt delivery,
+IAR/EOIR acknowledgement, handler ownership, clock/reset ownership,
+clock/reset writes, DMA/cache behavior, networking, SSH, Milestone 11.3
+behavior, and phase transition remain unaccepted. Same-shaped GPIO14, GPIO16,
+GIC route-status, GPIO bank source-status, and SYSINFO/clock-manager
+dependency reruns are not progress without new supervisor-planned
+discriminators or acceptance criteria. The mechanically unblocked next task is
+the queued DMA/cache source inventory, which is source inspection only.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.

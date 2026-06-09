@@ -1,0 +1,61 @@
+{
+  "task_id": "phase11-rp1-irq-clock-gpio-milestone-closeout-20260609",
+  "classification": "rp1-irq-clock-gpio-milestone-112-blocker-checkpoint-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "mdbook build"
+  ],
+  "accepted_frontier": [
+    "source-backed RP1 IO_BANK0 route identity to GIC SPI 128 / INTID 160",
+    "read-only/no-ack GIC-visible INTID 160 status snapshot",
+    "read-only IO_BANK0 source-status snapshot",
+    "observed-aperture GPIO14 non-GPIO-function blocker",
+    "observed-aperture GPIO16 non-GPIO-function blocker",
+    "read-only SYSINFO and clock-manager dependency system-clock-disabled blocker"
+  ],
+  "accepted_claims": [
+    "Milestone 11.2 interrupt routing is documented with source references",
+    "Milestone 11.2 minimal diagnostics captured blockers with serial hardware evidence",
+    "GPIO14 is currently muxed to UART0 in the accepted observed-aperture preflight",
+    "GPIO16 is not in an accepted GPIO function in the accepted observed-aperture preflight",
+    "INTID 160 status is visible only as clear/spurious read-only status in the accepted GIC-visible route snapshot",
+    "selected system-clock enable bits were false in the accepted observed 0x1c clock/reset dependency snapshot"
+  ],
+  "roadmap_milestone_112_acceptance": {
+    "interrupt_routing_documented_with_source_references": true,
+    "minimal_diagnostic_worked": false,
+    "blocker_captured_with_serial_evidence": true,
+    "acceptance_basis": "captured blocker evidence"
+  },
+  "rejected_claims": [
+    "GPIO ownership",
+    "event generation readiness",
+    "interrupt pending generation",
+    "interrupt delivery",
+    "IAR/EOIR acknowledgement",
+    "ISR or handler ownership",
+    "broad RP1 mapping",
+    "GPIO/RIO/pad/INTE/CTRL writes",
+    "parent-route masking writes",
+    "clock/reset ownership",
+    "reset-controller ownership",
+    "clock/reset writes",
+    "DMA/cache behavior",
+    "networking",
+    "SSH",
+    "Milestone 11.3 behavior",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "GPIO14 STATUS/ownership/route reruns require a new discriminator or acceptance criteria for the UART0/FUNCSEL=4 blocker",
+    "GPIO16 ownership/event reruns require a new source-backed function or ownership discriminator beyond FUNCSEL=31 / unknown",
+    "GIC-visible route status reruns require a different contract and must not reinterpret clear/spurious status as delivery",
+    "GPIO bank INTE/INTS source-status reruns require an event-generation or ownership contract that changes acceptance",
+    "observed SYSINFO/clock-manager dependency snapshot reruns require materially different acceptance criteria or a new discriminator for the system-clock-disabled blocker"
+  ],
+  "next_action": "mechanically promote phase11-rp1-dma-cache-source-inventory-20260609",
+  "planning_needed": false
+}

@@ -2378,6 +2378,25 @@ preflight reruns are not progress unless a future supervisor task supplies
 materially different acceptance criteria or a new discriminator. Supervisor
 planning is required for the next Milestone 11.2 feature slice.
 
+phase11-rp1-irq-clock-gpio-milestone-closeout-20260609 accepts the Milestone
+11.2 checkpoint as
+rp1-irq-clock-gpio-milestone-112-blocker-checkpoint-accepted. The checkpoint
+reconciles the accepted interrupt-route documentation, GIC-visible INTID 160
+read-only status snapshot, GPIO bank source-status snapshot, GPIO14 UART0
+function blocker, GPIO16 FUNCSEL=31 / unknown blocker, and observed
+SYSINFO/clock-manager system-clock-disabled blocker. The roadmap acceptance
+condition is satisfied by captured blocker evidence with serial hardware
+output, not by a working write-backed GPIO/status-LED diagnostic or interrupt
+delivery. GPIO ownership, GPIO/RIO/pad/INTE/CTRL writes, event generation,
+interrupt pending generation, interrupt delivery, IAR/EOIR acknowledgement,
+handler ownership, clock/reset ownership, clock/reset writes, DMA/cache
+behavior, networking, SSH, Milestone 11.3 behavior, and phase transition
+remain unaccepted. Same-shaped GPIO14, GPIO16, GIC route-status, GPIO bank
+source-status, and SYSINFO/clock-manager dependency reruns are not progress
+without new supervisor-planned discriminators or acceptance criteria. The next
+accepted direction is the queued DMA/cache source inventory only; it does not
+implement DMA/cache or authorize DMA-capable driver work.
+
 ## Diagnostic Core Implementation
 
 The local diagnostic core is compiled only when
