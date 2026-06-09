@@ -1,0 +1,53 @@
+{
+  "task_id": "phase11-rp1-clock-reset-dependency-closeout-20260609",
+  "classification": "clock-reset-dependency-preflight-system-clock-blocker-frontier-closed",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "mdbook build"
+  ],
+  "accepted_frontier": [
+    "read-only observed-aperture RP1 SYSINFO and clock-manager dependency source contract",
+    "local/static real and no-MMIO control candidates",
+    "Pi 5 no-MMIO control output proof under run-unique serial visibility",
+    "Pi 5 real read-only clock/reset dependency visibility and system-clock-disabled classification"
+  ],
+  "accepted_claims": [
+    "observed 0x1c RP1 SYSINFO and selected clock-manager dependency preflight report is visible on Pi 5",
+    "SYSINFO_CHIP_ID matched 0x20001927 in the accepted preflight",
+    "selected clock-manager reads did not return the 0xdead_dead sentinel in the accepted preflight",
+    "PLL_SYS reported locked in the accepted preflight",
+    "CLK_SYS and CLK_SLOW_SYS enable bits were false in the accepted preflight",
+    "CLK_UART enable bit was true in the accepted preflight"
+  ],
+  "rejected_claims": [
+    "clock/reset ownership",
+    "reset-controller ownership",
+    "clock/reset writes",
+    "GPIO ownership",
+    "GPIO function changes",
+    "event generation readiness",
+    "interrupt pending generation",
+    "interrupt delivery",
+    "IAR/EOIR acknowledgement",
+    "handler ownership",
+    "broad RP1 mapping",
+    "GPIO/RIO/pad/INTE/CTRL writes",
+    "endpoint config retry",
+    "bridge setup writes",
+    "DMA/cache",
+    "networking",
+    "SSH",
+    "Milestone 11.3",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "selected system clock enable bits were false in the accepted read-only dependency snapshot",
+    "same-shaped clock/reset dependency preflight reruns are not progress without new acceptance criteria",
+    "future clock/reset writes, GPIO function changes, write-backed event setup, or interrupt-delivery work require supervisor planning"
+  ],
+  "next_action": "supervisor planning required for the next Milestone 11.2 frontier",
+  "planning_needed": true
+}

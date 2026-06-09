@@ -8631,6 +8631,42 @@ interrupt delivery, DMA/cache, networking, SSH, Milestone 11.3, and phase
 transition remain unaccepted. The local/static core task is mechanically
 unblocked after the committed source contract.
 
+phase11-rp1-clock-reset-dependency-core-20260609 implements that contract as
+local/static real and paired no-MMIO control candidates. The real candidate
+performs only the accepted observed-aperture SYSINFO and clock-manager loads
+and emits the stable dependency report; the control preserves the report shape
+while constructing no RP1, GPIO, clock/reset, PCIe/MIP, GIC, DMA, or other
+forbidden MMIO address.
+
+phase11-rp1-clock-reset-dependency-control-pi5-20260609 accepts the paired
+no-MMIO control output path as no-mmio-clock-reset-dependency-control-visible.
+The proof retained selected tree
+3f48e70435914a0ca3deb160c517a32205643c3fbd9547d407387895ae417aba, two
+48,640-byte da591740/kernel_2712.img fetches, nonce-visible serial output,
+boot-staging checker success, final selected-tree identity, and restore to the
+baseline tree. This accepts only the control output/capture path.
+
+phase11-rp1-clock-reset-dependency-pi5-20260609 accepts the real read-only
+preflight as observed-clock-reset-dependency-blocked-system-clock-disabled.
+The proof retained selected tree
+ef7b62b81d097a52bda724d2173c982fa512e2b6541541514abebd6d8db1422f, two
+49,496-byte da591740/kernel_2712.img fetches, V3 and boot-staging identity
+checker success, marker-visible output, and restore to the baseline tree. The
+result reported expected chip identity, PLL_SYS locked, CLK_UART enabled, no
+selected clock sentinel, and CLK_SYS/CLK_SLOW_SYS enable bits false.
+
+phase11-rp1-clock-reset-dependency-closeout-20260609 closes that chain as
+clock-reset-dependency-preflight-system-clock-blocker-frontier-closed. The
+accepted frontier is limited to the source-backed read-only SYSINFO and
+clock-manager dependency contract, local/static implementation, no-MMIO
+control proof, and real Pi 5 system-clock-disabled blocker classification.
+Clock/reset ownership, reset-controller ownership, clock/reset writes, GPIO
+ownership, GPIO function changes, event generation, interrupt delivery,
+DMA/cache, networking, SSH, Milestone 11.3, and phase transition remain
+unaccepted. Same-shaped dependency preflight reruns are not progress without
+new acceptance criteria or a new discriminator. Supervisor planning is
+required for the next Milestone 11.2 feature slice.
+
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 
 - Trace RP1 interrupt delivery into the BCM2712/GIC path.
