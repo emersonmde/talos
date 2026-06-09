@@ -369,9 +369,22 @@ instruction/barrier-shape evidence only. Executed cache maintenance for driver
 buffers, live barrier ordering, working DMA, RP1 MMIO, DMA channel
 programming, descriptor rings, Ethernet, storage, networking, SSH, hardware
 validation, Milestone 12 work, and Milestone 11.3 completion remain
-unaccepted. The next objective boundary is a local/static
-cache-maintenance-sequence core, but no explicit worker-owned task exists yet;
-supervisor planning is required before implementation continues.
+unaccepted.
+
+phase11-rp1-dma-cache-maintenance-sequence-core-20260609 implements that
+bounded local/static sequence layer in src/dma_cache.rs. The accepted frontier
+is limited to static CleanByVirtualAddressToPoC,
+InvalidateByVirtualAddressFromPoC, and CleanInvalidateByVirtualAddressToPoC
+instruction vocabulary, the source-backed DataSynchronizationBarrierSy shape,
+line-count derivation from accepted DmaCacheSyncPlanEvidence, preservation of
+descriptor/sync-plan identity, and focused rejection of non-accepted sync-plan
+classification, descriptor/sync-plan mismatches, zero covered length,
+cache-line mismatch, range overflow, and unsupported runtime claims. The code
+emits local/static evidence only; it does not execute dc/dsb instructions,
+claim live barrier ordering, program RP1 MMIO or DMA channels, create
+descriptor rings, or add Ethernet, storage, networking, SSH, hardware
+validation, Milestone 12 work, or Milestone 11.3 completion. The next queued
+boundary is the maintenance-sequence closeout checkpoint.
 
 phase11-rp1-gpio-event-latch-source-contract-20260607 is accepted as
 source-contract-blocked. Retained RP1/Linux source identifies the GPIO14 event

@@ -2,10 +2,14 @@ use crate::memory_map::EarlyPageFrameSpan;
 
 pub const DMA_CACHE_SUBSTRATE_CONTRACT_ID: &str = "phase11-rp1-dma-cache-substrate-contract-v1";
 pub const DMA_CACHE_SYNC_PLAN_CONTRACT_ID: &str = "phase11-rp1-dma-cache-sync-plan-contract-v1";
+pub const DMA_CACHE_MAINTENANCE_SEQUENCE_CONTRACT_ID: &str =
+    "phase11-rp1-dma-cache-maintenance-sequence-contract-v1";
 pub const DMA_CACHE_SOURCE_INVENTORY_ID: &str = "phase11-rp1-dma-cache-source-inventory-20260609";
 pub const DMA_LOCAL_STATIC_CLASSIFICATION: &str = "local-static-dma-cache-contract-visible";
 pub const DMA_SYNC_PLAN_LOCAL_STATIC_CLASSIFICATION: &str =
     "local-static-dma-cache-sync-plan-visible";
+pub const DMA_MAINTENANCE_SEQUENCE_LOCAL_STATIC_CLASSIFICATION: &str =
+    "local-static-dma-cache-maintenance-sequence-visible";
 pub const DMA_REJECTED_INPUT_CLASSIFICATION: &str = "contract-rejected-input";
 pub const DMA_STAGING_BLOCKER_CLASSIFICATION: &str = "staging/build-blocker";
 pub const RP1_DMA_SOURCE_UNASSIGNED_IOMMU: &str = "source-unassigned-rp1-dma";
@@ -317,6 +321,115 @@ pub struct DmaCacheSyncPlanEvidence {
     pub classification: &'static str,
 }
 
+#[allow(dead_code)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum DmaCacheMaintenanceInstruction {
+    CleanByVirtualAddressToPoC,
+    InvalidateByVirtualAddressFromPoC,
+    CleanInvalidateByVirtualAddressToPoC,
+}
+
+impl DmaCacheMaintenanceInstruction {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::CleanByVirtualAddressToPoC => "clean-by-virtual-address-to-poc",
+            Self::InvalidateByVirtualAddressFromPoC => "invalidate-by-virtual-address-from-poc",
+            Self::CleanInvalidateByVirtualAddressToPoC => {
+                "clean-invalidate-by-virtual-address-to-poc"
+            }
+        }
+    }
+
+    pub const fn instruction(self) -> &'static str {
+        match self {
+            Self::CleanByVirtualAddressToPoC => "dc cvac",
+            Self::InvalidateByVirtualAddressFromPoC => "dc ivac",
+            Self::CleanInvalidateByVirtualAddressToPoC => "dc civac",
+        }
+    }
+}
+
+#[allow(dead_code)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum DmaCacheMaintenanceBarrier {
+    DataSynchronizationBarrierSy,
+}
+
+impl DmaCacheMaintenanceBarrier {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::DataSynchronizationBarrierSy => "data-synchronization-barrier-sy",
+        }
+    }
+
+    pub const fn instruction(self) -> &'static str {
+        match self {
+            Self::DataSynchronizationBarrierSy => "dsb sy",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum DmaCacheMaintenanceSequenceError {
+    ZeroCoveredLength,
+    CacheLineMismatch,
+    RangeOverflow,
+    NonAcceptedSyncPlanClassification,
+    DescriptorEvidenceMismatch,
+    UnsupportedRuntimeClaims,
+    UnsupportedSyncOperation,
+}
+
+impl DmaCacheMaintenanceSequenceError {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::ZeroCoveredLength => "zero-covered-length",
+            Self::CacheLineMismatch => "cache-line-mismatch",
+            Self::RangeOverflow => "range-overflow",
+            Self::NonAcceptedSyncPlanClassification => "non-accepted-sync-plan-classification",
+            Self::DescriptorEvidenceMismatch => "descriptor-evidence-mismatch",
+            Self::UnsupportedRuntimeClaims => "unsupported-runtime-claims",
+            Self::UnsupportedSyncOperation => "unsupported-sync-operation",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct DmaCacheMaintenanceSequence {
+    pub sync_plan: DmaCacheSyncPlanEvidence,
+    pub instruction: DmaCacheMaintenanceInstruction,
+    pub barrier: DmaCacheMaintenanceBarrier,
+    pub line_count: u64,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct DmaCacheMaintenanceSequenceEvidence {
+    pub maintenance_sequence_contract_id: &'static str,
+    pub sync_plan_contract_id: &'static str,
+    pub descriptor_contract_id: &'static str,
+    pub descriptor_source_inventory_id: &'static str,
+    pub operation: &'static str,
+    pub instruction: &'static str,
+    pub instruction_mnemonic: &'static str,
+    pub barrier: &'static str,
+    pub barrier_mnemonic: &'static str,
+    pub cache_line_source: &'static str,
+    pub cache_line_size: u64,
+    pub line_aligned_cpu_start: u64,
+    pub covered_length: u64,
+    pub line_count: u64,
+    pub cpu_physical: u64,
+    pub cpu_visible: u64,
+    pub rp1_bus_address: u64,
+    pub descriptor_length: u64,
+    pub direction: &'static str,
+    pub cacheability: &'static str,
+    pub owner_transition: &'static str,
+    pub iommu_classification: &'static str,
+    pub rejected_runtime_claims: &'static [&'static str],
+    pub classification: &'static str,
+}
+
 pub fn validate_dma_buffer_descriptor(
     request: DmaBufferRequest,
     accepted_owned_span: EarlyPageFrameSpan,
@@ -455,6 +568,61 @@ pub fn rejected_dma_cache_sync_plan_evidence(
     (DMA_REJECTED_INPUT_CLASSIFICATION, error.name())
 }
 
+pub fn derive_dma_cache_maintenance_sequence(
+    sync_plan_evidence: DmaCacheSyncPlanEvidence,
+) -> Result<DmaCacheMaintenanceSequence, DmaCacheMaintenanceSequenceError> {
+    validate_accepted_sync_plan_evidence(sync_plan_evidence)?;
+    let instruction = derive_dma_cache_maintenance_instruction(sync_plan_evidence.operation)?;
+    let line_count = sync_plan_evidence
+        .covered_length
+        .checked_div(sync_plan_evidence.cache_line_size)
+        .ok_or(DmaCacheMaintenanceSequenceError::CacheLineMismatch)?;
+
+    Ok(DmaCacheMaintenanceSequence {
+        sync_plan: sync_plan_evidence,
+        instruction,
+        barrier: DmaCacheMaintenanceBarrier::DataSynchronizationBarrierSy,
+        line_count,
+    })
+}
+
+pub fn dma_cache_maintenance_sequence_evidence(
+    sequence: DmaCacheMaintenanceSequence,
+) -> DmaCacheMaintenanceSequenceEvidence {
+    DmaCacheMaintenanceSequenceEvidence {
+        maintenance_sequence_contract_id: DMA_CACHE_MAINTENANCE_SEQUENCE_CONTRACT_ID,
+        sync_plan_contract_id: sequence.sync_plan.sync_plan_contract_id,
+        descriptor_contract_id: sequence.sync_plan.descriptor_contract_id,
+        descriptor_source_inventory_id: sequence.sync_plan.descriptor_source_inventory_id,
+        operation: sequence.sync_plan.operation,
+        instruction: sequence.instruction.name(),
+        instruction_mnemonic: sequence.instruction.instruction(),
+        barrier: sequence.barrier.name(),
+        barrier_mnemonic: sequence.barrier.instruction(),
+        cache_line_source: sequence.sync_plan.cache_line_source,
+        cache_line_size: sequence.sync_plan.cache_line_size,
+        line_aligned_cpu_start: sequence.sync_plan.line_aligned_cpu_start,
+        covered_length: sequence.sync_plan.covered_length,
+        line_count: sequence.line_count,
+        cpu_physical: sequence.sync_plan.cpu_physical,
+        cpu_visible: sequence.sync_plan.cpu_visible,
+        rp1_bus_address: sequence.sync_plan.rp1_bus_address,
+        descriptor_length: sequence.sync_plan.descriptor_length,
+        direction: sequence.sync_plan.direction,
+        cacheability: sequence.sync_plan.cacheability,
+        owner_transition: sequence.sync_plan.owner_transition,
+        iommu_classification: sequence.sync_plan.iommu_classification,
+        rejected_runtime_claims: sequence.sync_plan.rejected_runtime_claims,
+        classification: DMA_MAINTENANCE_SEQUENCE_LOCAL_STATIC_CLASSIFICATION,
+    }
+}
+
+pub fn rejected_dma_cache_maintenance_sequence_evidence(
+    error: DmaCacheMaintenanceSequenceError,
+) -> (&'static str, &'static str) {
+    (DMA_REJECTED_INPUT_CLASSIFICATION, error.name())
+}
+
 pub fn translate_rp1_bus_address(
     path: DmaAddressPath,
     cpu_physical: u64,
@@ -572,6 +740,81 @@ fn validate_accepted_descriptor_evidence(
     Ok(())
 }
 
+fn validate_accepted_sync_plan_evidence(
+    evidence: DmaCacheSyncPlanEvidence,
+) -> Result<(), DmaCacheMaintenanceSequenceError> {
+    if evidence.sync_plan_contract_id != DMA_CACHE_SYNC_PLAN_CONTRACT_ID
+        || evidence.classification != DMA_SYNC_PLAN_LOCAL_STATIC_CLASSIFICATION
+    {
+        return Err(DmaCacheMaintenanceSequenceError::NonAcceptedSyncPlanClassification);
+    }
+    if evidence.descriptor_contract_id != DMA_CACHE_SUBSTRATE_CONTRACT_ID
+        || evidence.descriptor_source_inventory_id != DMA_CACHE_SOURCE_INVENTORY_ID
+        || evidence.cacheability != DmaCacheability::CacheableRequiresMaintenance.name()
+        || evidence.iommu_classification != RP1_DMA_SOURCE_UNASSIGNED_IOMMU
+    {
+        return Err(DmaCacheMaintenanceSequenceError::DescriptorEvidenceMismatch);
+    }
+    if evidence.rejected_runtime_claims != DMA_SYNC_PLAN_REJECTED_RUNTIME_CLAIMS {
+        return Err(DmaCacheMaintenanceSequenceError::UnsupportedRuntimeClaims);
+    }
+    if evidence.cache_line_source != BCM2712_CACHE_LINE_SOURCE
+        || evidence.cache_line_size != BCM2712_DMA_CACHE_LINE_SIZE
+        || evidence.line_aligned_cpu_start & (BCM2712_DMA_CACHE_LINE_SIZE - 1) != 0
+        || evidence.covered_length & (BCM2712_DMA_CACHE_LINE_SIZE - 1) != 0
+    {
+        return Err(DmaCacheMaintenanceSequenceError::CacheLineMismatch);
+    }
+    if evidence.covered_length == 0 {
+        return Err(DmaCacheMaintenanceSequenceError::ZeroCoveredLength);
+    }
+    evidence
+        .line_aligned_cpu_start
+        .checked_add(evidence.covered_length)
+        .ok_or(DmaCacheMaintenanceSequenceError::RangeOverflow)?;
+    validate_sync_plan_operation_identity(evidence)?;
+    Ok(())
+}
+
+fn derive_dma_cache_maintenance_instruction(
+    operation: &'static str,
+) -> Result<DmaCacheMaintenanceInstruction, DmaCacheMaintenanceSequenceError> {
+    match operation {
+        "clean-to-point-of-coherency" => {
+            Ok(DmaCacheMaintenanceInstruction::CleanByVirtualAddressToPoC)
+        }
+        "invalidate-from-point-of-coherency" => {
+            Ok(DmaCacheMaintenanceInstruction::InvalidateByVirtualAddressFromPoC)
+        }
+        "clean-invalidate-to-point-of-coherency" => {
+            Ok(DmaCacheMaintenanceInstruction::CleanInvalidateByVirtualAddressToPoC)
+        }
+        _ => Err(DmaCacheMaintenanceSequenceError::UnsupportedSyncOperation),
+    }
+}
+
+fn validate_sync_plan_operation_identity(
+    evidence: DmaCacheSyncPlanEvidence,
+) -> Result<(), DmaCacheMaintenanceSequenceError> {
+    match (
+        evidence.operation,
+        evidence.direction,
+        evidence.owner_transition,
+    ) {
+        ("clean-to-point-of-coherency", "to-device", "cpu-to-device")
+        | ("invalidate-from-point-of-coherency", "from-device", "device-to-cpu")
+        | ("clean-invalidate-to-point-of-coherency", "bidirectional", "shared-cpu-device") => {
+            Ok(())
+        }
+        ("clean-to-point-of-coherency", _, _)
+        | ("invalidate-from-point-of-coherency", _, _)
+        | ("clean-invalidate-to-point-of-coherency", _, _) => {
+            Err(DmaCacheMaintenanceSequenceError::DescriptorEvidenceMismatch)
+        }
+        _ => Err(DmaCacheMaintenanceSequenceError::UnsupportedSyncOperation),
+    }
+}
+
 const fn align_down(value: u64, alignment: u64) -> u64 {
     value & !(alignment - 1)
 }
@@ -618,6 +861,16 @@ mod tests {
             ..valid_request()
         };
         validate_dma_buffer_descriptor(request, accepted_owned_span()).expect("valid")
+    }
+
+    fn accepted_sync_plan_evidence(
+        direction: DmaDirection,
+        boundary: DmaCacheSyncBoundary,
+    ) -> DmaCacheSyncPlanEvidence {
+        let descriptor = accepted_descriptor(direction);
+        let plan = plan_dma_cache_sync(descriptor, dma_descriptor_evidence(descriptor), boundary)
+            .expect("valid sync plan");
+        dma_cache_sync_plan_evidence(plan)
     }
 
     #[test_case]
@@ -898,6 +1151,187 @@ mod tests {
                 DmaCacheSyncBoundary::BeforeDeviceOwnership,
             ),
             Err(DmaCacheSyncPlanError::DescriptorEvidenceMismatch)
+        );
+    }
+
+    #[test_case]
+    fn maintenance_sequence_derives_clean_instruction_barrier_and_evidence() {
+        let sync_evidence = accepted_sync_plan_evidence(
+            DmaDirection::ToDevice,
+            DmaCacheSyncBoundary::BeforeDeviceOwnership,
+        );
+        let sequence =
+            derive_dma_cache_maintenance_sequence(sync_evidence).expect("valid sequence");
+
+        assert_eq!(
+            sequence.instruction,
+            DmaCacheMaintenanceInstruction::CleanByVirtualAddressToPoC
+        );
+        assert_eq!(
+            sequence.barrier,
+            DmaCacheMaintenanceBarrier::DataSynchronizationBarrierSy
+        );
+        assert_eq!(sequence.line_count, 128);
+
+        let evidence = dma_cache_maintenance_sequence_evidence(sequence);
+        assert_eq!(
+            evidence.maintenance_sequence_contract_id,
+            DMA_CACHE_MAINTENANCE_SEQUENCE_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.sync_plan_contract_id,
+            DMA_CACHE_SYNC_PLAN_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.descriptor_contract_id,
+            DMA_CACHE_SUBSTRATE_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.descriptor_source_inventory_id,
+            DMA_CACHE_SOURCE_INVENTORY_ID
+        );
+        assert_eq!(evidence.operation, "clean-to-point-of-coherency");
+        assert_eq!(evidence.instruction, "clean-by-virtual-address-to-poc");
+        assert_eq!(evidence.instruction_mnemonic, "dc cvac");
+        assert_eq!(evidence.barrier, "data-synchronization-barrier-sy");
+        assert_eq!(evidence.barrier_mnemonic, "dsb sy");
+        assert_eq!(evidence.cache_line_source, BCM2712_CACHE_LINE_SOURCE);
+        assert_eq!(evidence.cache_line_size, 64);
+        assert_eq!(evidence.line_aligned_cpu_start, 0x2f02_0000);
+        assert_eq!(evidence.covered_length, 0x2000);
+        assert_eq!(evidence.line_count, 128);
+        assert_eq!(evidence.cpu_physical, 0x2f02_0000);
+        assert_eq!(evidence.cpu_visible, 0x2f02_0000);
+        assert_eq!(evidence.rp1_bus_address, 0x10_2f02_0000);
+        assert_eq!(evidence.descriptor_length, 0x2000);
+        assert_eq!(evidence.direction, "to-device");
+        assert_eq!(evidence.cacheability, "cacheable-requires-maintenance");
+        assert_eq!(evidence.owner_transition, "cpu-to-device");
+        assert_eq!(
+            evidence.iommu_classification,
+            RP1_DMA_SOURCE_UNASSIGNED_IOMMU
+        );
+        assert_eq!(
+            evidence.rejected_runtime_claims,
+            DMA_SYNC_PLAN_REJECTED_RUNTIME_CLAIMS
+        );
+        assert_eq!(
+            evidence.classification,
+            DMA_MAINTENANCE_SEQUENCE_LOCAL_STATIC_CLASSIFICATION
+        );
+    }
+
+    #[test_case]
+    fn maintenance_sequence_derives_invalidate_and_clean_invalidate_instructions() {
+        let invalidate = derive_dma_cache_maintenance_sequence(accepted_sync_plan_evidence(
+            DmaDirection::FromDevice,
+            DmaCacheSyncBoundary::AfterDeviceOwnership,
+        ))
+        .expect("valid invalidate sequence");
+        let clean_invalidate = derive_dma_cache_maintenance_sequence(accepted_sync_plan_evidence(
+            DmaDirection::Bidirectional,
+            DmaCacheSyncBoundary::SharedSynchronizationBoundary,
+        ))
+        .expect("valid clean+invalidate sequence");
+
+        assert_eq!(
+            dma_cache_maintenance_sequence_evidence(invalidate).instruction_mnemonic,
+            "dc ivac"
+        );
+        assert_eq!(
+            dma_cache_maintenance_sequence_evidence(clean_invalidate).instruction_mnemonic,
+            "dc civac"
+        );
+    }
+
+    #[test_case]
+    fn maintenance_sequence_rejects_zero_mismatch_overflow_and_runtime_claims() {
+        let evidence = accepted_sync_plan_evidence(
+            DmaDirection::ToDevice,
+            DmaCacheSyncBoundary::BeforeDeviceOwnership,
+        );
+
+        assert_eq!(
+            derive_dma_cache_maintenance_sequence(DmaCacheSyncPlanEvidence {
+                covered_length: 0,
+                ..evidence
+            }),
+            Err(DmaCacheMaintenanceSequenceError::ZeroCoveredLength)
+        );
+        assert_eq!(
+            derive_dma_cache_maintenance_sequence(DmaCacheSyncPlanEvidence {
+                cache_line_size: 32,
+                ..evidence
+            }),
+            Err(DmaCacheMaintenanceSequenceError::CacheLineMismatch)
+        );
+        assert_eq!(
+            derive_dma_cache_maintenance_sequence(DmaCacheSyncPlanEvidence {
+                line_aligned_cpu_start: 0x2f02_0001,
+                ..evidence
+            }),
+            Err(DmaCacheMaintenanceSequenceError::CacheLineMismatch)
+        );
+        assert_eq!(
+            derive_dma_cache_maintenance_sequence(DmaCacheSyncPlanEvidence {
+                line_aligned_cpu_start: u64::MAX - 0x10,
+                covered_length: 0x40,
+                ..evidence
+            }),
+            Err(DmaCacheMaintenanceSequenceError::RangeOverflow)
+        );
+        assert_eq!(
+            derive_dma_cache_maintenance_sequence(DmaCacheSyncPlanEvidence {
+                rejected_runtime_claims: &["executed-driver-buffer-cache-maintenance"],
+                ..evidence
+            }),
+            Err(DmaCacheMaintenanceSequenceError::UnsupportedRuntimeClaims)
+        );
+    }
+
+    #[test_case]
+    fn maintenance_sequence_rejects_non_accepted_sync_plan_and_descriptor_mismatch() {
+        let evidence = accepted_sync_plan_evidence(
+            DmaDirection::ToDevice,
+            DmaCacheSyncBoundary::BeforeDeviceOwnership,
+        );
+
+        assert_eq!(
+            derive_dma_cache_maintenance_sequence(DmaCacheSyncPlanEvidence {
+                classification: DMA_REJECTED_INPUT_CLASSIFICATION,
+                ..evidence
+            }),
+            Err(DmaCacheMaintenanceSequenceError::NonAcceptedSyncPlanClassification)
+        );
+        assert_eq!(
+            derive_dma_cache_maintenance_sequence(DmaCacheSyncPlanEvidence {
+                descriptor_contract_id: "wrong-descriptor-contract",
+                ..evidence
+            }),
+            Err(DmaCacheMaintenanceSequenceError::DescriptorEvidenceMismatch)
+        );
+        assert_eq!(
+            derive_dma_cache_maintenance_sequence(DmaCacheSyncPlanEvidence {
+                direction: "from-device",
+                ..evidence
+            }),
+            Err(DmaCacheMaintenanceSequenceError::DescriptorEvidenceMismatch)
+        );
+        assert_eq!(
+            derive_dma_cache_maintenance_sequence(DmaCacheSyncPlanEvidence {
+                operation: "unsupported-operation",
+                ..evidence
+            }),
+            Err(DmaCacheMaintenanceSequenceError::UnsupportedSyncOperation)
+        );
+        assert_eq!(
+            rejected_dma_cache_maintenance_sequence_evidence(
+                DmaCacheMaintenanceSequenceError::UnsupportedRuntimeClaims
+            ),
+            (
+                DMA_REJECTED_INPUT_CLASSIFICATION,
+                "unsupported-runtime-claims"
+            )
         );
     }
 

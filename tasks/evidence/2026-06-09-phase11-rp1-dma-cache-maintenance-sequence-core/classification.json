@@ -1,0 +1,71 @@
+{
+  "task_id": "phase11-rp1-dma-cache-maintenance-sequence-core-20260609",
+  "classification": "rp1-dma-cache-maintenance-sequence-core-local-static-accepted",
+  "accepted_claims": [
+    "phase11-rp1-dma-cache-maintenance-sequence-contract-v1 is implemented as a pure local/static source boundary in src/dma_cache.rs",
+    "DmaCacheMaintenanceInstruction statically names CleanByVirtualAddressToPoC, InvalidateByVirtualAddressFromPoC, and CleanInvalidateByVirtualAddressToPoC",
+    "DmaCacheMaintenanceBarrier statically names DataSynchronizationBarrierSy",
+    "sequence evidence preserves accepted descriptor and sync-plan identities, line coverage, direction, cacheability, owner transition, IOMMU classification, rejected runtime claims, and local/static classification",
+    "pure validators reject non-accepted sync-plan classification, descriptor/sync-plan mismatches, zero covered length, cache-line mismatch, range overflow, unsupported runtime claims, and unsupported operations",
+    "focused unit tests cover valid clean, invalidate, clean+invalidate sequences and required rejection cases"
+  ],
+  "rejected_claims": [
+    "executed cache maintenance for driver buffers",
+    "live barrier ordering for a driver path",
+    "working DMA behavior",
+    "RP1 MMIO writes or DMA channel programming",
+    "descriptor rings",
+    "Ethernet or storage driver behavior",
+    "networking or SSH",
+    "Pi 5 hardware validation",
+    "Milestone 12 work",
+    "Milestone 11.3 completion by implication"
+  ],
+  "retained_risks": [
+    "runtime execution contract for dc/dsb cache maintenance remains unaccepted",
+    "driver-buffer ownership timing and live barrier ordering remain unaccepted",
+    "coherent, non-cacheable, and IOMMU-backed policy remain unaccepted",
+    "DMA-safe allocation beyond descriptor validation remains unaccepted",
+    "hardware proof remains unplanned until a later explicit task serializes on hardwareTestLock"
+  ],
+  "validation": [
+    {
+      "gate": "static inspection",
+      "level": "static inspection",
+      "result": "passed",
+      "summary": "Reviewed accepted driver-adjacent diagnostic contract, sync-plan closeout/core evidence, src/dma_cache.rs, src/smp.rs, and docs/src/architecture/memory.md."
+    },
+    {
+      "gate": "cargo fmt --all -- --check",
+      "level": "fmt/lint/typecheck",
+      "result": "passed"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet",
+      "level": "unit tests",
+      "result": "passed",
+      "summary": "Full no_std test suite passed, including new dma_cache maintenance-sequence cases."
+    },
+    {
+      "gate": "jq empty",
+      "level": "JSON syntax",
+      "result": "passed"
+    },
+    {
+      "gate": "git diff --check",
+      "level": "diff inspection",
+      "result": "passed"
+    },
+    {
+      "gate": "mdbook build",
+      "level": "documentation build",
+      "result": "passed"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "level": "staged diff inspection",
+      "result": "passed"
+    }
+  ],
+  "next_action": "Mechanically promote phase11-rp1-dma-cache-maintenance-sequence-closeout-20260609 on the next worker wake; do not accept executed cache maintenance, live barrier ordering, working DMA, descriptor rings, Ethernet, storage, networking, SSH, hardware validation, or Milestone 11.3 completion by implication."
+}

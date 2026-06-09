@@ -8811,9 +8811,25 @@ helpers remain instruction/barrier-shape evidence only. Executed cache
 maintenance for driver buffers, live barrier ordering, working DMA behavior,
 RP1 MMIO writes, DMA channel programming, descriptor rings, Ethernet, storage,
 networking, SSH, hardware validation, Milestone 12 work, and Milestone 11.3
-completion by implication remain unaccepted. The next objective boundary is a
-local/static cache-maintenance-sequence core, but no explicit worker-owned task
-exists yet; supervisor planning is required before implementation continues.
+completion by implication remain unaccepted.
+
+phase11-rp1-dma-cache-maintenance-sequence-core-20260609 accepts the
+local/static maintenance-sequence core as
+rp1-dma-cache-maintenance-sequence-core-local-static-accepted. The accepted
+frontier is the pure derivation of static clean, invalidate, and
+clean+invalidate instruction vocabulary plus a source-backed dsb sy barrier
+shape from accepted DmaCacheSyncPlanEvidence. The evidence preserves
+descriptor and sync-plan identity, 64-byte line coverage, line count,
+CPU/RP1 addresses, direction, cacheability, owner transition, IOMMU
+classification, rejected runtime claims, and local/static classification.
+The validator rejects non-accepted sync-plan classification,
+descriptor/sync-plan mismatches, zero covered length, cache-line mismatch,
+range overflow, and unsupported runtime claims. Executed cache maintenance for
+driver buffers, live barrier ordering, working DMA behavior, RP1 MMIO writes,
+DMA channel programming, descriptor rings, Ethernet, storage, networking, SSH,
+hardware validation, Milestone 12 work, and Milestone 11.3 completion by
+implication remain unaccepted. The next queued boundary is the
+maintenance-sequence closeout checkpoint.
 
 Milestone 11.2: RP1 Interrupts, Clocks, and GPIO
 

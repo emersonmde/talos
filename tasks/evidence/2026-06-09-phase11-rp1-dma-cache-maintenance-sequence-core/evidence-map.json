@@ -1,0 +1,87 @@
+{
+  "task_id": "phase11-rp1-dma-cache-maintenance-sequence-core-20260609",
+  "evidence": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-maintenance-sequence-core.md",
+      "evidence_level": "static inspection and validation summary"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-dma-cache-maintenance-sequence-core/classification.json",
+      "evidence_level": "accepted local/static classification"
+    },
+    {
+      "label": "implementation",
+      "path": "src/dma_cache.rs",
+      "evidence_level": "local/static implementation and unit tests"
+    },
+    {
+      "label": "source instruction shape",
+      "path": "src/smp.rs",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "memory architecture boundary",
+      "path": "docs/src/architecture/memory.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted driver-adjacent diagnostic contract",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-driver-adjacent-diagnostic-contract.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted sync-plan core",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-sync-plan-core.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted sync-plan closeout",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-sync-plan-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "project contract update",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "evidence_level": "documentation reconciliation"
+    },
+    {
+      "label": "roadmap update",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "documentation reconciliation"
+    }
+  ],
+  "commands": [
+    {
+      "command": "cargo fmt --all -- --check",
+      "evidence_level": "fmt/lint/typecheck",
+      "result": "passed"
+    },
+    {
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "evidence_level": "unit tests",
+      "result": "passed"
+    },
+    {
+      "command": "jq empty tasks/evidence/2026-06-09-phase11-rp1-dma-cache-maintenance-sequence-core/classification.json tasks/evidence/2026-06-09-phase11-rp1-dma-cache-maintenance-sequence-core/evidence-map.json",
+      "evidence_level": "JSON syntax",
+      "result": "passed"
+    },
+    {
+      "command": "git diff --check",
+      "evidence_level": "diff inspection",
+      "result": "passed"
+    },
+    {
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "evidence_level": "documentation build",
+      "result": "passed"
+    },
+    {
+      "command": "git diff --cached --check",
+      "evidence_level": "staged diff inspection",
+      "result": "passed"
+    }
+  ]
+}
