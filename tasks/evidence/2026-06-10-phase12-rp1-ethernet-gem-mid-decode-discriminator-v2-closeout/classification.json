@@ -1,0 +1,63 @@
+{
+  "task_id": "phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-closeout-20260610",
+  "classification": "rp1-ethernet-gem-mid-decode-discriminator-v2-frontier-closed",
+  "evidence_level": "static inspection",
+  "accepted_proof_task": "phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof-20260610",
+  "accepted_proof_commit": "112c39e4f736a734d441aff63d0a17fb4541ceb3",
+  "accepted_candidate_result": "observed-rp1-positive-control-gem-mid-0x1f-window-sentinel",
+  "candidate": {
+    "nonce": "gemdisc-v2-candidate-20260610T051645Z-b4d146e9",
+    "selected_tree_hash": "99ba865fff0ce6829f0525fb0a20580205e8e12f5deab91139acf45d2d9f15b1",
+    "kernel_2712_sha256": "255c89d8680b5fd6afff028e5a9aad402aecb3836021d2bc71391c574e7eecc8",
+    "kernel_2712_size": 49176,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "serial_marker_occurrences": 62,
+    "observed_sysinfo_chip_id_raw": "0x20001927",
+    "observed_gem_mid_raw": "0xdeaddead"
+  },
+  "control": {
+    "nonce": "gemdisc-v2-control-20260610T051645Z-b4d146e9",
+    "selected_tree_hash": "4a52e74fb0e9007d4689053c7296cdc6722e354fff78827f958f8c85870d6494",
+    "kernel_2712_sha256": "10b962002346cf08972d215d071a3c760a2eea0fac8aa485d5560d3682e20af3",
+    "kernel_2712_size": 48432,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "serial_marker_occurrences": 64,
+    "accepted_result": "no-mmio-no-ethernet-rp1-ethernet-gem-mid-decode-discriminator-control"
+  },
+  "same_shaped_retry_policy": "closed-unless-future-supervisor-scope-supplies-materially-different-discriminator-bridge-window-evidence-or-acceptance-criteria",
+  "accepted_claims": [
+    "repaired-capture-chain-v4-decisive-for-this-discriminator",
+    "same-run-rp1-sysinfo-positive-control-visible",
+    "translated-0x1f-gem-mid-retains-0xdeaddead-sentinel",
+    "paired-no-mmio-no-ethernet-control-visible"
+  ],
+  "rejected_claims": [
+    "live-gem-visibility",
+    "broad-live-ethernet-mmio-readiness",
+    "ethernet-driver-readiness",
+    "rp1-mmio-dma-programming",
+    "descriptor-rings",
+    "dma-ownership",
+    "transfer-completion",
+    "interrupt-completion",
+    "clock-reset-ownership",
+    "phy-reset-ownership",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "retained_risks": [
+    "pci-rp1-bridge-or-address-window-enablement-unaccepted",
+    "ethernet-clock-reset-and-phy-mdio-ownership-unaccepted",
+    "live-gem-visibility-unaccepted",
+    "packet-io-networking-sockets-ssh-out-of-scope"
+  ],
+  "planning_needed": true,
+  "planning_reason": "No queued follow-up task is mechanically objective from the retained 0x1f GEM MID sentinel. Supervisor planning is required for a different bounded discriminator or bridge/address-window dependency slice with explicit acceptance criteria.",
+  "nextAction": "Supervisor planning required before any further Phase 12.1 work."
+}

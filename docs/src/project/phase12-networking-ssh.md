@@ -191,3 +191,19 @@ visibility. PCIe/RP1 bridge or address-window enablement, Ethernet
 clock/reset, PHY/MDIO ownership, interrupts, DMA, descriptor rings, packet
 I/O, networking, sockets, SSH, Phase 12.2, and phase transition work remain
 unaccepted.
+
+## GEM MID Decode Discriminator V2 Closeout
+
+phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-closeout-20260610 closes
+same-shaped GEM MID decode-discriminator hardware retries. The accepted v2
+proof repaired the capture chain and decisively classified the current
+candidate/control pair, but the hardware frontier remains the translated
+0x1f001000fc GEM MID sentinel: same-run SYSINFO_CHIP_ID is visible at
+0x1c00000000 as 0x20001927, while MACB_MID remains 0xdeaddead.
+
+The next useful Phase 12.1 step requires supervisor planning around a
+different bounded discriminator or a bridge/address-window dependency slice
+with explicit acceptance criteria. This closeout does not accept live GEM
+visibility, broad Ethernet MMIO readiness, Ethernet driver readiness, packet
+I/O, DMA, descriptor rings, interrupts, networking, sockets, SSH, Phase 12.2,
+or a phase transition.

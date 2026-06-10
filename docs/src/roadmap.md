@@ -9171,6 +9171,15 @@ Ethernet MMIO targets. This accepts the repaired capture path and the retained
 readiness, Ethernet driver readiness, packet I/O, DMA/descriptors, interrupts,
 networking, sockets, SSH, Phase 12.2, or a phase transition.
 
+phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-closeout-20260610 closes
+same-shaped GEM MID decode-discriminator hardware retries. The accepted
+frontier is now: the repaired capture chain is decisive for this discriminator,
+same-run RP1 SYSINFO_CHIP_ID is visible at `0x1c00000000` as `0x20001927`,
+and translated `MACB_MID` at `0x1f001000fc` remains `0xdeaddead`. No queued
+follow-up is mechanically objective from that sentinel result alone; supervisor
+planning is required for a different bounded discriminator or bridge/window
+dependency slice before more Phase 12.1 work.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
