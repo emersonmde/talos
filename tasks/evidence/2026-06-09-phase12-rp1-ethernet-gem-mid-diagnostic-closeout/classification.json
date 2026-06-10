@@ -1,0 +1,75 @@
+{
+  "task_id": "phase12-rp1-ethernet-gem-mid-diagnostic-closeout-20260609",
+  "classification": "rp1-ethernet-gem-mid-diagnostic-closeout-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "git diff checks",
+    "mdbook build"
+  ],
+  "closed_local_static_frontier": {
+    "source_contract_task": "phase12-rp1-ethernet-gem-mid-source-contract-20260609",
+    "source_contract_commit": "a2df8161ac22f06a56ce7e5ea0535078bac7590f",
+    "diagnostic_core_task": "phase12-rp1-ethernet-gem-mid-diagnostic-core-20260609",
+    "diagnostic_core_commit": "a6ec4578b2f48860c5e2aa79fdb4de74d1f73904",
+    "candidate_target": {
+      "controller": "rp1_eth",
+      "register": "MACB_MID",
+      "offset": "0x00fc",
+      "rp1_bus_target": "0xc0_401000fc",
+      "cpu_physical_target": "0x1f001000fc",
+      "width_bits": 32,
+      "endianness": "little-endian",
+      "access": "read-only volatile load"
+    },
+    "control_classification": "no-ethernet-no-mmio-rp1-ethernet-gem-mid-control",
+    "hardware_proof_boundary_classification": "hardware-proof-limited-to-gem-mid-visibility-control-output"
+  },
+  "accepted_claims": [
+    "The GEM MID source contract and local/static diagnostic core are reconciled",
+    "The local/static frontier is closed before hardware publication or proof",
+    "The queued Pi 5 proof is mechanically selected as a serialized visibility/control proof only",
+    "No hardware or live Ethernet MMIO claim is made by this closeout"
+  ],
+  "selected_next_action": {
+    "task_id": "phase12-rp1-ethernet-gem-mid-pi5-proof-20260609",
+    "selection": "mechanically_selected",
+    "required_scope": "serialized Pi 5 GEM MID visibility/control proof",
+    "hardware_lock_required": true,
+    "selection_reason": [
+      "accepted source contract is committed",
+      "accepted diagnostic core is committed",
+      "closeout reconciles the candidate/control boundary",
+      "queued Pi 5 proof has explicit dependencies, acceptance criteria, validation gates, docs, evidence requirements, scope, non-goals, and hardwareTestLock requirements",
+      "hardwareTestLock is unlocked in supervisor state"
+    ]
+  },
+  "rejected_claims": [
+    "Ethernet driver readiness",
+    "live broad RP1 Ethernet MMIO readiness",
+    "RP1 MMIO writes",
+    "RP1 DMA programming",
+    "descriptor rings",
+    "DMA ownership",
+    "transfer completion",
+    "interrupt completion",
+    "clock/reset ownership",
+    "PHY reset ownership",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition",
+    "hardware validation by this static closeout"
+  ],
+  "retained_risks": [
+    "The source-translated CPU physical GEM MID address remains not hardware-proven",
+    "Endpoint config identity, bridge setup, and outbound window behavior remain retained Phase 11 risks",
+    "Clock/reset and PHY reset ownership remain unaccepted",
+    "Packet path, descriptors, DMA, and interrupts remain outside this contract"
+  ],
+  "next_action": "Mechanically promote phase12-rp1-ethernet-gem-mid-pi5-proof-20260609 on the next worker wake only as a serialized Pi 5 visibility/control proof with hardwareTestLock acquisition and candidate/control evidence capture. Do not start Ethernet implementation, broad MMIO readiness work, descriptor rings, DMA, interrupts, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase transition."
+}

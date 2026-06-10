@@ -74,3 +74,16 @@ The diagnostic core is not a hardware proof. Live GEM visibility, broad
 Ethernet MMIO readiness, RP1 MMIO/DMA programming, descriptors, interrupts,
 clock/reset ownership, PHY reset ownership, packet I/O, networking, sockets,
 SSH, and Phase 12.2 remain unaccepted until later explicit tasks.
+
+## GEM MID Diagnostic Closeout
+
+phase12-rp1-ethernet-gem-mid-diagnostic-closeout-20260609 closes the
+local/static GEM MID report frontier before hardware publication. The
+checkpoint reconciles the accepted source contract and diagnostic core,
+retains the no-Ethernet/no-MMIO paired control boundary, and selects the
+queued serialized Pi 5 visibility/control proof as the next bounded step.
+
+The closeout does not accept live GEM visibility, broad Ethernet MMIO
+readiness, Ethernet driver readiness, RP1 MMIO/DMA programming, descriptor
+rings, interrupt completion, clock/reset ownership, PHY reset ownership,
+packet I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
