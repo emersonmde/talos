@@ -1,0 +1,66 @@
+{
+  "task_id": "phase12-pi5-runtime-readiness-evidence-retention-core-20260610",
+  "classification": "pi5-runtime-readiness-primary-retention-core-accepted",
+  "task_record": "tasks/2026-06-10-phase12-pi5-runtime-readiness-evidence-retention-core.md",
+  "implementation": [
+    "scripts/rpi5-retain-runtime-readiness-primary.sh",
+    "scripts/rpi5-runtime-readiness-retention-guard.sh",
+    "docs/src/project/lab-controller.md"
+  ],
+  "source_evidence": [
+    "tasks/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof.md",
+    "tasks/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-closeout.md",
+    "tasks/2026-06-10-phase12-pi5-lab-serial-endpoint-readiness-followup.md",
+    "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/runtime-readiness-primary-summary.json",
+    "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/runtime-readiness.json"
+  ],
+  "task_evidence": {
+    "classification": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-evidence-retention-core/classification.json",
+    "retention_guard_output": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-evidence-retention-core/retention-guard-output.json",
+    "syntax_check": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-evidence-retention-core/sh-n-runtime-readiness-retention.log",
+    "json_validation": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-evidence-retention-core/jq-empty.log",
+    "diff_check": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-evidence-retention-core/git-diff-check.log",
+    "docs_build": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-evidence-retention-core/mdbook-build.log",
+    "staged_diff_check": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-evidence-retention-core/git-diff-cached-check.log"
+  },
+  "retention_contract": {
+    "primary_artifact_suffix": "runtime-readiness-primary.json",
+    "summary_artifact_suffix": "runtime-readiness-primary-summary.json",
+    "status_artifact_suffix": "runtime-readiness-primary.status",
+    "overwrite_policy": "refuse existing primary, summary, or status path",
+    "followup_artifact_policy": "follow-up direct-read or endpoint artifacts must be separately named and cannot satisfy or erase the primary readiness evidence gate"
+  },
+  "validation": [
+    {
+      "command": "sh -n scripts/rpi5-observe-runtime-readiness.sh scripts/rpi5-retain-runtime-readiness-primary.sh scripts/rpi5-runtime-readiness-retention-guard.sh",
+      "result": "passed",
+      "evidence_level": "shell syntax"
+    },
+    {
+      "command": "TMPDIR=/opt/strider/openclaw/current/workspace/tmp scripts/rpi5-runtime-readiness-retention-guard.sh",
+      "result": "passed",
+      "evidence_level": "focused local retention guard"
+    },
+    {
+      "command": "jq empty on task-owned JSON",
+      "result": "passed",
+      "evidence_level": "JSON validation"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "evidence_level": "diff hygiene"
+    },
+    {
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed",
+      "evidence_level": "docs build"
+    },
+    {
+      "command": "git diff --cached --check",
+      "result": "passed",
+      "evidence_level": "staged diff hygiene"
+    }
+  ],
+  "next_action": "Promote phase12-pi5-runtime-readiness-evidence-retention-closeout-20260610 on the next worker wake."
+}

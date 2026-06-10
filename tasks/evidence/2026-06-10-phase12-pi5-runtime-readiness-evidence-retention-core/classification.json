@@ -1,0 +1,45 @@
+{
+  "task_id": "phase12-pi5-runtime-readiness-evidence-retention-core-20260610",
+  "classification": "pi5-runtime-readiness-primary-retention-core-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "source/docs implementation",
+    "shell syntax check",
+    "focused local retention guard",
+    "JSON contract inspection",
+    "docs build"
+  ],
+  "accepted_claims": [
+    "primary runtime-readiness helper output is retained under a run-label-qualified artifact path",
+    "same-run-label primary helper artifacts, summaries, and status files are not overwritten",
+    "derived runtime-readiness summaries consume the retained primary artifact",
+    "follow-up direct-read or endpoint discriminator artifacts must be separately named and cannot replace the primary readiness artifact",
+    "focused local guard demonstrates overwrite prevention before hardware retry"
+  ],
+  "rejected_claims": [
+    "valid known-good Talos readiness",
+    "GPIO32 write/restore authorization",
+    "PHY reset assertion or deassertion proof",
+    "MDIO or PHY ownership",
+    "Ethernet driver readiness",
+    "DMA or descriptor ownership",
+    "interrupt completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "validation": {
+    "static_inspection": "passed",
+    "shell_syntax": "passed",
+    "retention_guard": "passed",
+    "json_checks": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  },
+  "next_action": "Promote phase12-pi5-runtime-readiness-evidence-retention-closeout-20260610 on the next worker wake."
+}

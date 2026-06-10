@@ -307,7 +307,22 @@ burst before the later TFTP/kernel/readiness output appears.
 scripts/rpi5-observe-runtime-readiness.sh "$serial_cursor" 75 1000 65536
 ~~~
 
-Retain the helper JSON and check `talos_runtime_readiness.observe_contract`.
+For accepted evidence, retain the primary helper JSON through the repository
+wrapper so a later follow-up read cannot replace it:
+
+~~~bash
+scripts/rpi5-retain-runtime-readiness-primary.sh \
+    "$evidence_dir" "$run_label" "$serial_cursor" 75 1000 65536
+~~~
+
+The wrapper writes run-label-qualified immutable artifacts:
+`$run_label-runtime-readiness-primary.json`,
+`$run_label-runtime-readiness-primary-summary.json`, and
+`$run_label-runtime-readiness-primary.status`. It refuses to overwrite any of
+those paths. Follow-up direct-read or endpoint discriminator evidence must use
+separately named artifacts and cannot satisfy or erase the primary readiness
+gate. Check the summary only as a derivative of the retained primary JSON, then
+check `talos_runtime_readiness.observe_contract` in that primary artifact.
 For unsaturated cursors the contract remains
 `deadline-loop-accumulated-from-fresh-cursor`. If the saved cursor is already
 at the lab controller retention cap, the helper switches to direct

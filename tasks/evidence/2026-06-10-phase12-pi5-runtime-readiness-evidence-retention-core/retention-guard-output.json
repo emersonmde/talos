@@ -1,0 +1,10 @@
+{
+  "classification": "runtime-readiness-primary-retention-overwrite-prevented",
+  "retained_primary_artifact": "/opt/strider/openclaw/current/workspace/tmp/tmp.Gx1Jl0O8QV/evidence/retention-guard-run-runtime-readiness-primary.json",
+  "retained_summary_artifact": "/opt/strider/openclaw/current/workspace/tmp/tmp.Gx1Jl0O8QV/evidence/retention-guard-run-runtime-readiness-primary-summary.json",
+  "retained_status_artifact": "/opt/strider/openclaw/current/workspace/tmp/tmp.Gx1Jl0O8QV/evidence/retention-guard-run-runtime-readiness-primary.status",
+  "first_stdout": "/opt/strider/openclaw/current/workspace/tmp/tmp.Gx1Jl0O8QV/first.stdout",
+  "second_stderr": "/opt/strider/openclaw/current/workspace/tmp/tmp.Gx1Jl0O8QV/second.stderr",
+  "helper_invocations": 1,
+  "overwrite_attempt_exit_code": 3
+}
