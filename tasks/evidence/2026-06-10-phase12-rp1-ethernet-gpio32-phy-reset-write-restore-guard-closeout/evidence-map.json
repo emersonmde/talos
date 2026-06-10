@@ -1,0 +1,70 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-closeout-20260610",
+  "classification": "rp1-ethernet-gpio32-phy-reset-write-restore-guard-frontier-closed",
+  "evidence_level": "static inspection",
+  "artifacts": [
+    {
+      "label": "closeout task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "closeout classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-closeout/classification.json",
+      "evidence_level": "structured classification"
+    },
+    {
+      "label": "source contract task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-source-contract.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "source contract classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-source-contract/classification.json",
+      "evidence_level": "structured classification"
+    },
+    {
+      "label": "guard core task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-core.md",
+      "evidence_level": "static inspection and implementation record"
+    },
+    {
+      "label": "guard core classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-core/classification.json",
+      "evidence_level": "structured classification"
+    },
+    {
+      "label": "guard core evidence map",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-core/evidence-map.json",
+      "evidence_level": "artifact map"
+    },
+    {
+      "label": "project phase doc",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "evidence_level": "documentation"
+    }
+  ],
+  "validation": [
+    {
+      "command": "jq empty tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-closeout/classification.json tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-closeout/evidence-map.json",
+      "result": "passed",
+      "evidence_level": "JSON validation"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "evidence_level": "diff whitespace check"
+    },
+    {
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed",
+      "evidence_level": "documentation build"
+    },
+    {
+      "command": "git diff --cached --check",
+      "result": "passed",
+      "evidence_level": "staged diff whitespace check"
+    }
+  ],
+  "commit": "recorded-in-supervisor-state-after-acceptance"
+}

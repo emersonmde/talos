@@ -814,3 +814,24 @@ This guard core does not run hardware, acquire hardwareTestLock, publish a
 boot archive, perform a volatile store, assert/deassert PHY reset, or accept
 Ethernet driver readiness. The next bounded step is the static guard closeout
 before any serialized Pi 5 proof can be authorized.
+
+## RP1 Ethernet GPIO32 PHY-Reset Write/Restore Guard Closeout
+
+phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-closeout-20260610
+closes the local/static GPIO32 / ETH_RST_N write/restore report frontier as
+rp1-ethernet-gpio32-phy-reset-write-restore-guard-frontier-closed.
+Same-shaped local/static report retries are closed for this candidate/control
+pair. The accepted source contract and guard core now define the exact target
+identity, no-write preconditions, restore baseline fields, operation order,
+paired no-GPIO-write/no-Ethernet control, allowed classifications, rejected
+claims, and evidence artifacts needed by the next proof.
+
+The selected next boundary is the serialized Pi 5 candidate/control
+write/restore proof. That proof must acquire hardwareTestLock before archive
+publication, staging, power cycling, or any runtime GPIO/RIO/pad/MMIO write,
+and it must join selected-tree identity, expected TFTP fetches, fresh serial
+markers, final pre-restore identity, restore proof, classification JSON, and
+evidence map in one retained capture-chain transaction. This closeout does not
+accept MDIO/PHY ownership, Ethernet driver readiness, interrupts,
+DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase
+transition.

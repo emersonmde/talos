@@ -1,0 +1,39 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-closeout-20260610",
+  "classification": "rp1-ethernet-gpio32-phy-reset-write-restore-guard-frontier-closed",
+  "evidence_level": "static inspection",
+  "accepted_claims": [
+    "local/static GPIO32 PHY-reset write/restore guard report core is reconciled and closed",
+    "candidate report preserves the exact GPIO32/ETH_RST_N target identity, no-write preconditions, restore baseline fields, operation order, blocked classifications, future proof classifications, rejected claims, retained risks, and source evidence",
+    "paired control uses the same report path while constructing no writable GPIO32/RIO/pad/MMIO target and withholding candidate-only GPIO32/ETH_RST_N write/restore facts",
+    "focused tests support only local/static candidate, control, blocked/no-write construction, and deterministic rejection of forbidden claims",
+    "same-shaped local/static report retries are closed for this candidate/control pair",
+    "the queued serialized Pi 5 candidate/control write/restore proof is mechanically objective if hardwareTestLock remains unlocked"
+  ],
+  "rejected_claims": [
+    "runtime GPIO/RIO/pad/MMIO write or hardware restore proof",
+    "PHY reset assertion or deassertion on Pi 5",
+    "MDIO transactions or PHY ownership",
+    "Ethernet driver readiness",
+    "interrupt ownership or completion",
+    "DMA, descriptor rings, or transfer completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "The accepted guard core is local/static and does not prove Pi 5 hardware readback or restore behavior.",
+    "The first hardware proof may classify no-write if GPIO32 function, route, pad, event, baseline, or capture-chain preconditions are unsafe or inconclusive.",
+    "A successful hardware proof would prove only the selected GPIO32/ETH_RST_N store/readback/restore boundary, not MDIO/PHY ownership or Ethernet packet readiness.",
+    "Future hardware proof must capture selected-tree identity, expected TFTP fetches, fresh serial markers, final pre-restore identity, restore proof, archive reviews, classification JSON, evidence map, and capture summary."
+  ],
+  "source_contract_commit": "e44d5d1f80104f8058a446fd7bfae8a988255eb3",
+  "guard_core_commit": "78716ed2caadb22ad1b172831fd64c8b22d3a3d8",
+  "hardware_test_lock_required_for_next_action": true,
+  "same_shaped_retry_policy": "closed-for-this-local-static-candidate-control-pair",
+  "next_action": "Mechanically promote phase12-rp1-ethernet-gpio32-phy-reset-write-restore-pi5-proof-20260610 on the next worker wake if hardwareTestLock remains unlocked; acquire hardwareTestLock before archive publication, staging, power cycling, or any runtime GPIO/RIO/pad/MMIO write and keep the proof bounded to candidate/control GPIO32/ETH_RST_N write/restore or accepted blocked/no-write evidence.",
+  "commit": "recorded-in-supervisor-state-after-acceptance"
+}
