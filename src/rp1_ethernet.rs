@@ -1573,10 +1573,7 @@ mod tests {
             evidence.rejected_runtime_claims,
             RP1_ETHERNET_GEM_MID_REJECTED_RUNTIME_CLAIMS
         );
-        assert_eq!(
-            evidence.retained_risks,
-            RP1_ETHERNET_OBSERVED_WINDOW_RETAINED_RISKS
-        );
+        assert_eq!(evidence.retained_risks, RP1_ETHERNET_GEM_MID_RETAINED_RISKS);
         assert_eq!(
             evidence.classification,
             RP1_ETHERNET_GEM_MID_CONTROL_CLASSIFICATION

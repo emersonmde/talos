@@ -1,0 +1,63 @@
+{
+  "task_id": "phase12-rp1-ethernet-observed-window-discriminator-pi5-proof-20260610",
+  "classification": "observed-window-macb-mid-visible",
+  "status": "accepted",
+  "evidence_level": [
+    "image/archive inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "TFTP/capture evidence",
+    "restore proof"
+  ],
+  "accepted_claims": [
+    "candidate/control capture-chain-v4 identity joins are ready",
+    "observed-window MACB_MID read at 0x1c001000fc returned raw 0x70109 with SYSINFO positive-control 0x20001927",
+    "paired no-MMIO/no-Ethernet control retained marker freshness without constructing MMIO targets",
+    "boot tree restored after the proof"
+  ],
+  "candidate": {
+    "classification": "observed-window-macb-mid-visible",
+    "raw": "0x70109",
+    "idnum": "0x7",
+    "rev": "0x109",
+    "positive_control_raw": "0x20001927",
+    "marker_occurrences": 27,
+    "tftp_expected_fetch_count": 2,
+    "selected_tree_hash": "ad4f367e43716532623b3d9cbcd0ad4f71a326be5672b1ca11301e37a7d1811a",
+    "expected_fetch_bytes": 49576
+  },
+  "control": {
+    "classification": "no-mmio-no-ethernet-rp1-ethernet-observed-window-control",
+    "marker_occurrences": 28,
+    "tftp_expected_fetch_count": 2,
+    "selected_tree_hash": "7a8775ea4c75e222f77d99d5d6bae1538a0f7fb67ef3026830373bab833d94c3",
+    "expected_fetch_bytes": 48848
+  },
+  "restore": {
+    "final_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "da591740_kernel_2712_bytes": 104136
+  },
+  "rejected_claims": [
+    "Ethernet driver readiness",
+    "broad Ethernet MMIO readiness",
+    "RP1 MMIO writes",
+    "DMA",
+    "descriptor rings",
+    "interrupts",
+    "clock/reset ownership",
+    "PHY/MDIO ownership",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "Observed-window MACB_MID visibility is read-only identity evidence only",
+    "Clock/reset and PHY/MDIO ownership remain unaccepted",
+    "Descriptor rings, DMA, interrupts, packet I/O, networking, sockets, and SSH remain out of scope"
+  ],
+  "next_action": "Mechanically promote phase12-rp1-ethernet-observed-window-discriminator-proof-closeout-20260610 on the next worker wake."
+}

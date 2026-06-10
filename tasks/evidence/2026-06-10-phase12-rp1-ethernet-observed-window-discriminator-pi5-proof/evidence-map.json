@@ -1,0 +1,25 @@
+{
+  "task_id": "phase12-rp1-ethernet-observed-window-discriminator-pi5-proof-20260610",
+  "artifacts": {
+    "task_record": "tasks/2026-06-10-phase12-rp1-ethernet-observed-window-discriminator-pi5-proof.md",
+    "classification": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-observed-window-discriminator-pi5-proof/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-observed-window-discriminator-pi5-proof/evidence-map.json",
+    "capture_summary": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-observed-window-discriminator-pi5-proof/capture-summary.json",
+    "archive_review_dir": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-observed-window-discriminator-pi5-proof/archive-review",
+    "candidate_run_dir": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-observed-window-discriminator-pi5-proof/candidate-run",
+    "control_run_dir": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-observed-window-discriminator-pi5-proof/control-run",
+    "pre_run_snapshot": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-observed-window-discriminator-pi5-proof/pre-run-snapshot-create.json",
+    "final_restore": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-observed-window-discriminator-pi5-proof/final-post-restore-boot-files.json"
+  },
+  "validation": [
+    "static inspection",
+    "cargo fmt --all -- --check",
+    "cargo -Zjson-target-spec test --quiet rp1_ethernet",
+    "candidate/control archive review scripts",
+    "serialized Pi 5 candidate/control proof with capture-chain-v4 identity joins",
+    "jq empty on task-owned JSON",
+    "git diff --check",
+    "mdbook build",
+    "git diff --cached --check"
+  ]
+}

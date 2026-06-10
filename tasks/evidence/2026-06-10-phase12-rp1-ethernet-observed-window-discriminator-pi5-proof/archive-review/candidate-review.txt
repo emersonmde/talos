@@ -1,0 +1,10 @@
+candidate_archive=target/talos-rpi5-rp1-ethernet-observed-window-discriminator-candidate-boot.tar.gz
+candidate_archive_sha256=065c4b85a27395530c06fd9e7cada2e19b8e39fd49a338514643d652b006ee83
+kernel_2712_sha256=33e69c22bc39ed9b247ecac7a8dedf3b7ba59031f3a24aab66df35a7124916cf
+kernel_2712_size=49576
+header_image_size=49576
+text_offset=0
+flags=12
+candidate_marker=TALOS: rp1-ethernet-observed-window-discriminator-candidate
+capture_nonce=obswin-candidate-20260610T070042Z-fd93002b
+forbidden_rp1_ethernet_observed_window_discriminator_candidate_runtime_strings_absent=true

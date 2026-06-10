@@ -268,3 +268,18 @@ or a precise staging/capture blocker. It still does not accept broad Ethernet
 MMIO readiness, Ethernet driver readiness, RP1 MMIO writes, DMA, descriptor
 rings, interrupts, clock/reset/PHY/MDIO ownership, packet I/O, networking,
 sockets, SSH, Phase 12.2, or a phase transition.
+
+## Observed-Window GEM MID Pi 5 Proof
+
+phase12-rp1-ethernet-observed-window-discriminator-pi5-proof-20260610 accepts
+the serialized Pi 5 proof as observed-window-macb-mid-visible. The candidate
+joined capture-chain-v4 selected-tree, TFTP, run-unique serial freshness, final
+pre-restore identity, and restore gates, then read SYSINFO_CHIP_ID at
+0x1c00000000 as 0x20001927 and observed-window MACB_MID at 0x1c001000fc as raw
+0x70109, idnum 0x7, rev 0x109. The paired no-MMIO/no-Ethernet control retained
+the same capture-chain gates without constructing MMIO targets.
+
+This is a read-only identity discriminator only. It does not accept Ethernet
+driver readiness, broad Ethernet MMIO readiness, RP1 MMIO writes, DMA,
+descriptor rings, interrupts, clock/reset/PHY/MDIO ownership, packet I/O,
+networking, sockets, SSH, Phase 12.2, or a phase transition.
