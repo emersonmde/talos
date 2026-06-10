@@ -137,3 +137,21 @@ proof. Ethernet driver readiness, broad Ethernet MMIO readiness, RP1 MMIO/DMA
 programming, descriptor rings, interrupts, clock/reset ownership, PHY reset
 ownership, packet I/O, networking, sockets, SSH, Phase 12.2, and phase
 transition work remain unaccepted.
+
+## GEM MID Decode Discriminator Closeout
+
+phase12-rp1-ethernet-gem-mid-decode-discriminator-closeout-20260610 closes the
+local/static discriminator checkpoint and selects the serialized Pi 5 proof as
+the next bounded task. The selected candidate archive must capture the same-run
+observed RP1 `SYSINFO_CHIP_ID` positive-control load at `0x1c00000000`
+alongside the translated `MACB_MID` target at `0x1f001000fc`. The paired
+control must use the same reporting path while constructing neither observed
+RP1 nor Ethernet MMIO targets.
+
+The closeout only authorizes a later serialized proof with hardwareTestLock
+ownership, candidate/control identity, fresh serial cursor, TFTP delta, serial
+transcript, final pre-restore identity, restore proof, and task-owned
+classification/evidence JSON. It does not accept live GEM visibility, broad
+Ethernet MMIO readiness, Ethernet driver readiness, RP1 MMIO/DMA programming,
+descriptor rings, interrupts, clock/reset ownership, PHY reset ownership,
+packet I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
