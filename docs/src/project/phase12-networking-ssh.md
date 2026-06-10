@@ -495,3 +495,28 @@ PHY/MDIO/GPIO32 scope and acceptance criteria. This closeout does not accept
 clock/reset ownership, RP1 MMIO or clock/reset writes, Ethernet driver
 readiness, GPIO32/PHY reset ownership, MDIO/PHY, DMA, descriptors, interrupts,
 packet I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
+
+## RP1 Ethernet Clock/Reset Write-Target Source Contract
+
+phase12-rp1-ethernet-clock-reset-write-target-source-contract-20260610 accepts
+the next source/static write-backed clock/reset slice. The selected
+Ethernet-private target is CLK_ETH_TSU_CTRL for RP1_CLK_ETH_TSU / rp1_eth
+tsu_clk. The Talos register address is 0x1c00018134, derived from the accepted
+observed RP1 base 0x1c00000000, clock-manager base offset 0x018000, and
+retained Linux CLK_ETH_TSU_CTRL offset 0x00134.
+
+The future candidate operation is limited to a 32-bit little-endian volatile
+pre-read, writing the pre-read raw value back, post-read, restore-write of the
+same pre-read raw value, and restore-read. The full raw value, enable bit 11,
+auxsource bits 9:5, source bits, and reserved bits must remain preserved. The
+paired control must use the same report path while constructing no writable RP1
+clock target and performing no volatile load/store to RP1 clock, Ethernet,
+reset, GPIO, MDIO, DMA, descriptor, interrupt, PCIe/MIP, GIC, or packet paths.
+
+This contract explicitly rejects shared RP1_CLK_SYS pclk/hclk writes,
+CLK_ETH_CTRL, divider/source/PLL/frequency-counter/GPCLK output-enable writes,
+reset-controller ownership, GPIO32/PHY reset ownership, MDIO/PHY, DMA,
+descriptors, interrupts, packet I/O, networking, sockets, SSH, Phase 12.2, and
+phase transition. It selects the local/static write/restore report core as the
+next bounded follow-up; no hardware action or runtime write is accepted by the
+source contract itself.

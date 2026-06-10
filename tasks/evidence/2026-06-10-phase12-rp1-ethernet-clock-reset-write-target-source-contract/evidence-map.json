@@ -1,0 +1,101 @@
+{
+  "task_id": "phase12-rp1-ethernet-clock-reset-write-target-source-contract-20260610",
+  "classification": "rp1-ethernet-clock-reset-write-target-source-contract-accepted",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-clock-reset-write-target-source-contract.md",
+      "evidence_level": "static inspection and source contract record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-write-target-source-contract/classification.json",
+      "evidence_level": "structured classification"
+    },
+    {
+      "label": "evidence map",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-write-target-source-contract/evidence-map.json",
+      "evidence_level": "artifact map"
+    },
+    {
+      "label": "accepted read-only baseline closeout",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-clock-reset-readonly-baseline-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted read-only baseline proof",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-clock-reset-readonly-baseline-pi5-proof.md",
+      "evidence_level": "serial hardware boot/output summary inspection"
+    },
+    {
+      "label": "accepted clock/reset ownership contract",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-clock-reset-ownership-contract.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted clock/reset guard core",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-clock-reset-guard-core.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "retained rp1_eth device tree source",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1.dtsi",
+      "evidence_level": "source line inspection",
+      "notes": "Lines 24-59 define clocks@18000 and assigned RP1_CLK_ETH_TSU; lines 999-1009 define rp1_eth clocks and names."
+    },
+    {
+      "label": "retained RP1 clock ids",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1-clock.h",
+      "evidence_level": "source line inspection",
+      "notes": "Defines RP1_CLK_ETH as 16 and RP1_CLK_ETH_TSU as 29."
+    },
+    {
+      "label": "retained clock manager implementation",
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/clk-rp1.c",
+      "evidence_level": "source line inspection",
+      "notes": "Lines 119-121 define CLK_ETH_TSU_CTRL/DIV_INT/SEL; lines 1033-1067 define clock on/off write behavior; lines 2079-2097 register clk_eth_tsu."
+    },
+    {
+      "label": "accepted observed-aperture address rule",
+      "path": "tasks/2026-06-09-phase11-rp1-clock-reset-dependency-source-contract.md",
+      "evidence_level": "static inspection",
+      "notes": "Accepted observed RP1 base 0x1c00000000 plus source offset for visible clock-manager reads."
+    },
+    {
+      "label": "project doc",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "evidence_level": "documentation update"
+    },
+    {
+      "label": "roadmap",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "documentation update"
+    }
+  ],
+  "validation": [
+    {
+      "label": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-write-target-source-contract/classification.json tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-write-target-source-contract/evidence-map.json",
+      "result": "passed",
+      "evidence_level": "JSON validation"
+    },
+    {
+      "label": "diff check",
+      "command": "git diff --check",
+      "result": "passed",
+      "evidence_level": "diff whitespace check"
+    },
+    {
+      "label": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed",
+      "evidence_level": "documentation build"
+    },
+    {
+      "label": "staged diff check",
+      "command": "git diff --cached --check",
+      "result": "passed",
+      "evidence_level": "staged diff whitespace check"
+    }
+  ]
+}

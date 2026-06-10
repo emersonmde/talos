@@ -9335,6 +9335,22 @@ Ethernet driver readiness, PHY/MDIO/GPIO32 ownership, DMA, descriptors,
 interrupts, packet I/O, networking, sockets, SSH, Phase 12.2, and phase
 transition remain unaccepted.
 
+phase12-rp1-ethernet-clock-reset-write-target-source-contract-20260610 accepts
+the next bounded source/static write-target contract. It selects exactly one
+Ethernet-private clock-manager register: CLK_ETH_TSU_CTRL for
+RP1_CLK_ETH_TSU / rp1_eth tsu_clk. The Talos register address is
+0x1c00018134, derived from observed RP1 base 0x1c00000000, clock-manager base
+offset 0x018000, and retained Linux CLK_ETH_TSU_CTRL offset 0x00134. The only
+future real-candidate write is idempotent: pre-read the 32-bit raw value,
+write that same pre_raw back, post-read, restore-write pre_raw, and
+restore-read. The contract preserves the full raw value, enable bit, auxsource
+bits, source bits, and reserved bits; rejects shared RP1_CLK_SYS pclk/hclk
+writes, CLK_ETH_CTRL, div/sel/PLL/frequency-counter and GPCLK output-enable
+writes, reset-controller, GPIO32/PHY reset, MDIO/PHY, DMA, descriptors,
+interrupts, packet I/O, networking, sockets, SSH, Phase 12.2, and phase
+transition; and selects only the local/static write/restore core as the next
+follow-up.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
