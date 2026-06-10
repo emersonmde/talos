@@ -698,3 +698,20 @@ This contract does not accept GPIO ownership, PHY reset assertion/deassertion,
 MDIO/PHY ownership, runtime Ethernet readiness, RP1 MMIO/GPIO/RIO/pad/INTE/
 CTRL writes, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase
 transition.
+
+phase12-rp1-ethernet-gpio32-phy-reset-preflight-core-20260610 accepts that
+local/static report surface in `src/rp1_ethernet.rs`. The candidate report
+preserves the GPIO32 source contract id, accepted input frontier, `rp1_eth`
+and `phy1` identities, `rp1_gpio` line 32 / ETH_RST_N route, active-low
+logical assertion/deassertion mapping, 5 ms source reset duration, Linux MACB
+MDIO reset hook relationship, Phase 11 GPIO constraints, future write/restore
+safety invariants, rejected claims, and retained risks. The paired control
+uses the same report path while constructing no GPIO32/ETH_RST_N/PHY-reset
+target and withholding candidate-only facts.
+
+The accepted evidence remains fmt/unit-test/static only: no hardware run, no
+boot archive publication, no hardwareTestLock, no runtime RP1 MMIO/GPIO/RIO/
+pad write, no PHY reset assertion/deassertion, no MDIO/PHY ownership, no
+Ethernet driver readiness, no packet I/O, no networking, no SSH, no Phase
+12.2, and no phase transition. The next bounded follow-up is the local/static
+preflight closeout, not hardware proof by implication.

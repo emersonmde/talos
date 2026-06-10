@@ -1,0 +1,68 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-preflight-core-20260610",
+  "inputs": [
+    {
+      "kind": "accepted_source_contract",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-source-contract.md",
+      "commit": "278b754ff3a8f589429cd91aaadc3085db6e7b90"
+    }
+  ],
+  "implementation": [
+    {
+      "path": "src/rp1_ethernet.rs",
+      "evidence": "local/static GPIO32 PHY-reset preflight candidate and paired-control report surface"
+    }
+  ],
+  "documentation": [
+    {
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-preflight-core.md",
+      "evidence": "task record with findings, validation, and next action"
+    },
+    {
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "evidence": "Phase 12 frontier note for accepted local/static preflight core"
+    },
+    {
+      "path": "docs/src/roadmap.md",
+      "evidence": "roadmap frontier note for accepted local/static preflight core"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static inspection",
+      "result": "passed",
+      "summary": "Inspected accepted source contract and touched Rust source."
+    },
+    {
+      "gate": "cargo fmt --all",
+      "result": "passed"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet rp1_ethernet_gpio32_phy_reset_preflight",
+      "result": "passed",
+      "summary": "486 no_std tests passed with QEMU 9.2.0 on PATH; includes accepted GPIO32 PHY-reset candidate, accepted control, and deterministic rejection coverage."
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed",
+      "summary": "HTML book written under book/; search-index size warning was informational."
+    }
+  ],
+  "non_goals_preserved": [
+    "no Pi 5 hardware run",
+    "no boot archive publication",
+    "no hardwareTestLock acquisition",
+    "no RP1 GPIO/RIO/pad/MMIO write",
+    "no PHY reset assertion or deassertion",
+    "no MDIO",
+    "no DMA",
+    "no descriptors",
+    "no interrupts",
+    "no packet I/O",
+    "no networking",
+    "no sockets",
+    "no SSH",
+    "no Phase 12.2",
+    "no phase transition"
+  ]
+}

@@ -9480,6 +9480,17 @@ runtime Ethernet readiness, RP1 MMIO/GPIO/RIO/pad/INTE/CTRL writes, packet
 I/O, networking, sockets, SSH, Phase 12.2, and phase transition remain
 unaccepted.
 
+phase12-rp1-ethernet-gpio32-phy-reset-preflight-core-20260610 accepts that
+local/static candidate/control report surface only. The candidate preserves
+the GPIO32 source contract id, accepted input frontier, rp1_eth/phy1 identity,
+rp1_gpio line 32 / ETH_RST_N route, active-low logical assertion/deassertion
+mapping, 5 ms duration, Linux MACB MDIO reset hook relationship, Phase 11 GPIO
+constraints, future write/restore invariants, rejected claims, and retained
+risks. The paired control withholds candidate-only GPIO32/PHY-reset facts on
+the same report path. No hardware run, hardwareTestLock, RP1 MMIO/GPIO/RIO/
+pad write, PHY reset assertion/deassertion, MDIO/PHY ownership, packet I/O,
+networking, sockets, SSH, Phase 12.2, or phase transition is accepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
