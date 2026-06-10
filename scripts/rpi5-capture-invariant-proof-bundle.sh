@@ -186,6 +186,8 @@ if [ "$DRY_RUN" = true ]; then
           hardware_actions: [],
           would_write: {
               evidence_dir: $evidence_dir,
+              pre_root_endpoint: "pre-root-endpoint.json",
+              pre_root_endpoint_body: "pre-root-endpoint-body.txt",
               pre_root: "pre-root.json",
               pre_status: "pre-status.json",
               pre_boot_files: "pre-boot-files.json",
@@ -196,16 +198,21 @@ if [ "$DRY_RUN" = true ]; then
               power_cycle: "power-cycle.json",
               serial_observe_window: "serial-observe-window.json",
               tftp_delta_stable_pre_restore: "tftp-delta-stable-pre-restore.json",
+              final_pre_restore_root_endpoint: "final-pre-restore-root-endpoint.json",
+              final_pre_restore_root_endpoint_body: "final-pre-restore-root-endpoint-body.txt",
               final_pre_restore_root: "final-pre-restore-root.json",
               final_pre_restore_status: "final-pre-restore-status.json",
               final_pre_restore_boot_files: "final-pre-restore-boot-files.json",
               restore_snapshot: "restore-snapshot.json",
+              post_restore_root_endpoint: "post-restore-root-endpoint.json",
+              post_restore_root_endpoint_body: "post-restore-root-endpoint-body.txt",
               post_restore_root: "post-restore-root.json",
               post_restore_status: "post-restore-status.json",
               post_restore_boot_files: "post-restore-boot-files.json",
               summary: "capture-invariant-summary.json"
           },
           contract: {
+              capture_chain_contract_version: "pi5-capture-chain-v4",
               "label": $proof_label,
               restore_snapshot: $restore_snapshot,
               expected_tree_hash: $expected_tree_hash,
@@ -217,6 +224,7 @@ if [ "$DRY_RUN" = true ]; then
                   shared_run_label: $proof_label,
                   required_fields: [
                       "selected_tree_hash",
+                      "selected_tree_identity_source",
                       "effective_kernel",
                       "expected_fetch_path",
                       "expected_fetch_byte_count",
@@ -226,6 +234,7 @@ if [ "$DRY_RUN" = true ]; then
                       "final_pre_restore_identity",
                       "restore_identity"
                   ],
+                  endpoint_fallback_rule: "GET / is optional endpoint-semantics evidence; /boot/files is the authoritative selected-tree identity source when GET / is unavailable",
                   rejection_rule: "missing or mismatched candidate identity, serial-drain, serial-window, TFTP, or final identity fields prevent decisive hardware classification"
               },
               serial_marker: $serial_marker,
@@ -251,6 +260,47 @@ fi
 
 mkdir -p "$EVIDENCE_DIR"
 
+capture_root_endpoint() {
+    endpoint_file="$1"
+    meta_file="$2"
+    body_tmp="$(mktemp)"
+    code_tmp="$(mktemp)"
+    if curl -sS -o "$body_tmp" -w '%{http_code}' "${API_BASE}/" > "$code_tmp"; then
+        curl_exit=0
+    else
+        curl_exit=$?
+    fi
+    http_code="$(cat "$code_tmp")"
+    cp "$body_tmp" "$endpoint_file"
+    jq -n \
+        --arg endpoint "GET /" \
+        --arg http_code "$http_code" \
+        --argjson curl_exit "$curl_exit" \
+        --rawfile body "$body_tmp" \
+        '{
+            endpoint: $endpoint,
+            curl_exit: $curl_exit,
+            http_code: (if ($http_code | test("^[0-9]+$")) then ($http_code | tonumber) else null end),
+            body_bytes: ($body | length),
+            usable_for_selected_tree_identity:
+                ($curl_exit == 0
+                 and ($http_code | test("^2[0-9][0-9]$"))
+                 and (($body | fromjson? | .boot.tree_hash? // "") != "")),
+            selected_tree_identity_source: "/boot/files",
+            fallback_used:
+                (($curl_exit != 0)
+                 or (($http_code | test("^2[0-9][0-9]$")) | not)
+                 or (($body | fromjson? | .boot.tree_hash? // "") == "")),
+            fallback_reason:
+                (if $curl_exit != 0 then "root-endpoint-curl-failed"
+                 elif (($http_code | test("^2[0-9][0-9]$")) | not) then "root-endpoint-http-non-2xx"
+                 elif (($body | fromjson? | .boot.tree_hash? // "") == "") then "root-endpoint-missing-boot-tree"
+                 else null end)
+        }' > "$meta_file"
+    rm -f "$body_tmp" "$code_tmp"
+}
+
+capture_root_endpoint "$EVIDENCE_DIR/pre-root-endpoint-body.txt" "$EVIDENCE_DIR/pre-root-endpoint.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/pre-root.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/pre-status.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/pre-boot-files.json"
@@ -263,6 +313,7 @@ jq -n \
     --arg expected_fetch_bytes "$EXPECTED_FETCH_BYTES" \
     --slurpfile status "$EVIDENCE_DIR/pre-status.json" \
     --slurpfile files "$EVIDENCE_DIR/pre-boot-files.json" \
+    --slurpfile root_endpoint "$EVIDENCE_DIR/pre-root-endpoint.json" \
     '(($expected_fetch_bytes | tonumber?) // null) as $expected_bytes
      | ($status[0].boot.tree_hash // null) as $tree_hash
      | ($status[0].boot.effective_kernel // null) as $effective_kernel
@@ -275,6 +326,8 @@ jq -n \
          expected_fetch: $expected_fetch,
          expected_fetch_bytes: $expected_bytes,
          observed_fetch_bytes: ($fetch.bytes // null),
+         selected_tree_identity_source: "/boot/files",
+         root_endpoint: $root_endpoint[0],
          tree_matches: ($expected_tree_hash == "" or $tree_hash == $expected_tree_hash),
          effective_kernel_matches: ($effective_kernel == $expected_kernel),
          expected_fetch_present: ($fetch != null),
@@ -379,9 +432,11 @@ set -e
 printf '%s\n' "$tftp_exit" > "$EVIDENCE_DIR/tftp-delta-stable-pre-restore.exit"
 
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/final-pre-restore-status.json"
+capture_root_endpoint "$EVIDENCE_DIR/final-pre-restore-root-endpoint-body.txt" "$EVIDENCE_DIR/final-pre-restore-root-endpoint.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/final-pre-restore-root.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/final-pre-restore-boot-files.json"
 curl -fsS -X POST "${API_BASE}/boot/restore?name=${RESTORE_SNAPSHOT}" > "$EVIDENCE_DIR/restore-snapshot.json"
+capture_root_endpoint "$EVIDENCE_DIR/post-restore-root-endpoint-body.txt" "$EVIDENCE_DIR/post-restore-root-endpoint.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/post-restore-root.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/post-restore-status.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/post-restore-boot-files.json"
@@ -456,6 +511,7 @@ jq -n \
              tftp_delta_stable_pre_restore: $tftp_exit
          },
          preflight_identity: $preflight[0],
+         capture_chain_contract_version: "pi5-capture-chain-v4",
          final_pre_restore_identity: {
              tree_hash: $final_tree_hash,
              effective_kernel: $final_kernel,

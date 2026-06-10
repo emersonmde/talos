@@ -109,9 +109,19 @@ while :; do
          | (map((.bytes // ((.text // "") | length)) | tonumber) | add) as $response_bytes
          | ($text | contains("TALOS: kernel_main")) as $has_kernel_main
          | ($text | contains($marker)) as $has_marker
+         | (($marker | capture("capture-nonce=(?<nonce>[A-Za-z0-9_.:-]+)")? // {}) | .nonce // "") as $marker_nonce
+         | (if $marker_nonce == "" then "" else ("capture-nonce=" + $marker_nonce) end) as $nonce_token
          | ($text | contains("NETWORK")) as $has_firmware_network
          | (if $text == "" then 0 else (($text | split("NETWORK") | length) - 1) end) as $firmware_network_occurrences
          | (if $text == "" then 0 else (($text | split($marker) | length) - 1) end) as $marker_occurrences
+         | (if $nonce_token == "" then 0 else (($text | split($nonce_token) | length) - 1) end) as $nonce_occurrences
+         | ($text | index($marker)) as $marker_index
+         | (if $marker_index == null then ""
+            else ($text[
+                (if ($marker_index - 80) < 0 then 0 else ($marker_index - 80) end):
+                ($marker_index + ($marker | length) + 160)
+            ])
+            end) as $marker_excerpt
          | (if $capture_mode == "read" then $response_bytes else ($cursor_end - $cursor_start) end) as $window_bytes
          | $last + {
              cursor_start: $cursor_start,
@@ -137,7 +147,11 @@ while :; do
                  has_required_marker: $has_marker,
                  has_firmware_network: $has_firmware_network,
                  firmware_network_occurrences: $firmware_network_occurrences,
-                 required_marker_occurrences: $marker_occurrences
+                 required_marker_occurrences: $marker_occurrences,
+                 marker_nonce: (if $marker_nonce == "" then null else $marker_nonce end),
+                 nonce_token: (if $nonce_token == "" then null else $nonce_token end),
+                 nonce_token_occurrences: $nonce_occurrences,
+                 required_marker_excerpt: $marker_excerpt
              }}' "$responses_file")"
 
     if printf '%s' "$annotated" |
@@ -186,7 +200,11 @@ if [ -z "$annotated" ]; then
               has_required_marker: false,
               has_firmware_network: false,
               firmware_network_occurrences: 0,
-              required_marker_occurrences: 0
+              required_marker_occurrences: 0,
+              marker_nonce: null,
+              nonce_token: null,
+              nonce_token_occurrences: 0,
+              required_marker_excerpt: ""
           }}')"
 fi
 

@@ -1,0 +1,41 @@
+{
+  "classification": "pi5-capture-chain-repair-core-local-static-accepted",
+  "task_id": "phase12-pi5-capture-chain-repair-core-20260610",
+  "accepted_helper_repair": "pi5-capture-chain-v4",
+  "evidence_level": "local/static helper and replay fixture validation",
+  "accepted_claims": [
+    "/boot/files selected-tree identity fallback after GET / 404",
+    "expected TFTP byte replay",
+    "final pre-restore selected-tree replay",
+    "run-unique serial marker freshness",
+    "direct serial marker retention",
+    "candidate/control marker expectations"
+  ],
+  "rejected_claims": [
+    "Pi 5 hardware rerun",
+    "live GEM visibility",
+    "Ethernet driver readiness",
+    "RP1 MMIO/DMA programming",
+    "descriptor rings",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "validation": {
+    "bash_n": "passed",
+    "fixture_replay": "passed",
+    "capture_bundle_dry_run": "passed",
+    "jq_empty": "passed",
+    "git_diff_check": "passed",
+    "staged_diff_check": "passed"
+  },
+  "retained_risks": [
+    "Hardware rerun remains blocked until closeout accepts the v4 capture-chain repair",
+    "Translated 0x1f RP1 window sentinel remains unproven",
+    "Bridge/window enablement and Ethernet clock/reset/PHY ownership remain unaccepted"
+  ],
+  "nextAction": "phase12-pi5-capture-chain-repair-closeout-20260610"
+}

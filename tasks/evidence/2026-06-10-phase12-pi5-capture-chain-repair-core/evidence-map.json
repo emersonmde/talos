@@ -1,0 +1,45 @@
+{
+  "task_id": "phase12-pi5-capture-chain-repair-core-20260610",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-10-phase12-pi5-capture-chain-repair-core.md",
+      "evidence_level": "static inspection and implementation record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-capture-chain-repair-core/classification.json",
+      "evidence_level": "accepted local/static classification"
+    },
+    {
+      "label": "retained fixture replay",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-capture-chain-repair-core/retained-fixture-replay.json",
+      "evidence_level": "local/static replay fixtures"
+    },
+    {
+      "label": "capture bundle dry-run",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-capture-chain-repair-core/capture-bundle-dry-run.json",
+      "evidence_level": "local/static helper dry-run"
+    },
+    {
+      "label": "capture bundle helper",
+      "path": "scripts/rpi5-capture-invariant-proof-bundle.sh",
+      "evidence_level": "helper implementation"
+    },
+    {
+      "label": "serial observe helper",
+      "path": "scripts/rpi5-observe-serial-window.sh",
+      "evidence_level": "helper implementation"
+    },
+    {
+      "label": "v4 checker",
+      "path": "scripts/rpi5-proof-identity-join-v4-check.sh",
+      "evidence_level": "checker implementation"
+    },
+    {
+      "label": "v4 retained fixtures",
+      "path": "scripts/rpi5-capture-chain-v4-retained-fixtures.sh",
+      "evidence_level": "fixture replay implementation"
+    }
+  ]
+}
