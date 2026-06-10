@@ -1,0 +1,8 @@
+{
+  "task_id": "phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof-20260610",
+  "run_label": "known-good-runtime-readiness-v2-20260610T2332Z",
+  "hardware_lock": {
+    "owner": "worker",
+    "acquired_at": "2026-06-10T23:32:33Z"
+  }
+}

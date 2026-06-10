@@ -1,0 +1,10 @@
+{
+  "hardware_lock": {
+    "owner": "worker",
+    "released_at": "2026-06-10T23:34:33Z",
+    "restored": true,
+    "note": "No boot tree restore was required; final status/files matched pre-power known-good identity.",
+    "final_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "final_effective_kernel": "kernel_2712.img"
+  }
+}

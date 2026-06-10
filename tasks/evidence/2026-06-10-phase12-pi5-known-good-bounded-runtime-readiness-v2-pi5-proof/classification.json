@@ -1,0 +1,66 @@
+{
+  "task_id": "phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof-20260610",
+  "classification": "known-good-fetch-pass-marker-observed-helper-readiness-unaccepted",
+  "accepted_valid_known_good_talos_readiness": false,
+  "run_label": "known-good-runtime-readiness-v2-20260610T2332Z",
+  "retained_primary_artifact": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof/known-good-runtime-readiness-v2-20260610T2332Z-runtime-readiness-primary.json",
+  "retained_primary_summary": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof/known-good-runtime-readiness-v2-20260610T2332Z-runtime-readiness-primary-summary.json",
+  "retained_primary_status": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof/known-good-runtime-readiness-v2-20260610T2332Z-runtime-readiness-primary.status",
+  "evidence_level": "serial hardware boot/output plus lab-controller API and stable TFTP delta",
+  "pre_identity": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "configured_kernel": "kernel_2712.img"
+  },
+  "final_identity": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "configured_kernel": "kernel_2712.img"
+  },
+  "final_identity_stable": true,
+  "power_cycle_ok": true,
+  "runtime_readiness": {
+    "requested_timeout_seconds": 75,
+    "elapsed_seconds": 75,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 7,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 6847,
+    "required_kernel_marker": "TALOS: kernel_main",
+    "required_success_marker": "rpi5-production-timer-preemption: PASS",
+    "prompt_marker": "talos>",
+    "has_kernel_main": false,
+    "has_required_success_marker": true,
+    "has_prompt_marker": false,
+    "valid_known_good_talos_readiness": false,
+    "classification": "known-good-fetch-observed-without-talos-readiness"
+  },
+  "tftp_stability": {
+    "stable": true,
+    "reason": "stable",
+    "stable_samples": 3,
+    "required_samples": 3
+  },
+  "tftp_event_count": 13,
+  "expected_known_good_kernel_fetch_count": 2,
+  "blocker": {
+    "classification": "known-good-fetch-pass-marker-observed-helper-readiness-unaccepted",
+    "reason": "The retained primary helper artifact observed stable known-good TFTP fetches and the rpi5-production-timer-preemption PASS marker, but the helper contract did not set valid_known_good_talos_readiness because TALOS: kernel_main was not retained in the serial window. This task is not authorized to reinterpret helper output as valid readiness."
+  },
+  "nextAction": "Promote phase12-pi5-known-good-bounded-runtime-readiness-v2-closeout-20260610 on the next worker wake. Do not promote GPIO32 v2 because valid-known-good-talos-readiness remains unaccepted.",
+  "rejected_claims": [
+    "GPIO32 write/restore v2 authorization",
+    "PHY reset behavior",
+    "Ethernet driver behavior",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ]
+}
