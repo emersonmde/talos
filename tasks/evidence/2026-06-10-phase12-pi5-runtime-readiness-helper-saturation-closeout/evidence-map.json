@@ -1,0 +1,51 @@
+{
+  "task_id": "phase12-pi5-runtime-readiness-helper-saturation-closeout-20260610",
+  "classification": "pi5-runtime-readiness-helper-saturation-closeout-accepted",
+  "task_record": "tasks/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-closeout.md",
+  "source_evidence": [
+    "tasks/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core.md",
+    "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core/classification.json",
+    "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core/evidence-map.json",
+    "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core/static-inspection.md",
+    "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core/non-saturated-observe-output.json",
+    "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core/non-saturated-observe-validation.log",
+    "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core/saturated-direct-read-output.json",
+    "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core/saturated-direct-read-validation.log",
+    "docs/src/project/lab-controller.md",
+    "scripts/rpi5-observe-runtime-readiness.sh",
+    "git commit 5c3a93afdbad9cc5f8cfb1459a3b7941c77f0692"
+  ],
+  "task_evidence": {
+    "classification": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-closeout/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-closeout/evidence-map.json"
+  },
+  "validation": [
+    {
+      "command": "static inspection of helper repair task record, classification/evidence JSON, validation logs, docs diff, and git history",
+      "result": "passed",
+      "evidence_level": "static inspection"
+    },
+    {
+      "command": "jq empty tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-closeout/classification.json tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-closeout/evidence-map.json",
+      "result": "passed",
+      "evidence_level": "JSON validation"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "evidence_level": "diff hygiene"
+    },
+    {
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "not run; no docs/src files touched by closeout",
+      "evidence_level": "docs build conditional"
+    },
+    {
+      "command": "git diff --cached --check",
+      "result": "passed",
+      "evidence_level": "staged diff hygiene"
+    }
+  ],
+  "selected_next_task": "phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof-20260610",
+  "next_action": "Promote phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof-20260610 on the next worker wake if hardwareTestLock remains unlocked and supervisorIntervention is inactive."
+}

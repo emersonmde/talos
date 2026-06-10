@@ -1,0 +1,42 @@
+{
+  "task_id": "phase12-pi5-runtime-readiness-helper-saturation-closeout-20260610",
+  "classification": "pi5-runtime-readiness-helper-saturation-closeout-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "git history inspection",
+    "JSON validation",
+    "diff hygiene"
+  ],
+  "accepted_claims": [
+    "runtime-readiness helper saturation repair is accepted and committed",
+    "closeout accepts only the helper/capture contract repair checkpoint",
+    "phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof-20260610 is selected as the next mechanically unblocked proof when hardwareTestLock is unlocked",
+    "GPIO32 write/restore v2 remains held until valid-known-good-talos-readiness is accepted under the repaired helper contract"
+  ],
+  "rejected_claims": [
+    "Pi 5 hardware runtime readiness",
+    "GPIO32 write/restore success",
+    "PHY reset assertion/deassertion proof",
+    "MDIO or PHY ownership",
+    "Ethernet driver readiness",
+    "DMA or descriptor ownership",
+    "interrupt completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "validation": {
+    "static_inspection": "passed",
+    "json_checks": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "not_run_no_docs_src_touched",
+    "git_diff_cached_check": "passed"
+  },
+  "same_shaped_retry_policy": "same-shaped GPIO32 hardware readiness retries remain held until the bounded known-good runtime-readiness closeout accepts valid-known-good-talos-readiness under the repaired helper contract",
+  "selected_next_task": "phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof-20260610",
+  "next_action": "Promote the bounded known-good runtime-readiness Pi 5 proof on the next worker wake if hardwareTestLock remains unlocked and supervisorIntervention is inactive."
+}
