@@ -1,0 +1,84 @@
+{
+  "task_id": "phase12-rp1-ethernet-clock-reset-guard-core-20260610",
+  "classification": "rp1-ethernet-clock-reset-guard-core-local-static-accepted",
+  "artifacts": [
+    {
+      "label": "implementation",
+      "path": "src/rp1_ethernet.rs",
+      "evidence_level": "local/static implementation"
+    },
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-clock-reset-guard-core.md",
+      "evidence_level": "task record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-guard-core/classification.json",
+      "evidence_level": "structured classification"
+    },
+    {
+      "label": "accepted clock/reset ownership contract",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-clock-reset-ownership-contract.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted prerequisite ownership proof closeout",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-prereq-ownership-proof-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "rp1_eth source node",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1.dtsi",
+      "evidence_level": "retained Linux source excerpt"
+    },
+    {
+      "label": "RP1 clock IDs",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1-clock.h",
+      "evidence_level": "retained Linux source excerpt"
+    },
+    {
+      "label": "Cadence MACB clock source",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-macb_main.c",
+      "evidence_level": "retained Linux source excerpt"
+    },
+    {
+      "label": "Cadence MACB binding",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-cdns-macb.yaml",
+      "evidence_level": "retained Linux source excerpt"
+    }
+  ],
+  "validation": [
+    {
+      "label": "fmt check",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "label": "focused tests",
+      "command": "cargo -Zjson-target-spec test --quiet ethernet_clock_reset",
+      "result": "passed with QEMU path configured; 476 no_std tests passed"
+    },
+    {
+      "label": "json validation",
+      "command": "jq empty tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-guard-core/evidence-map.json tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-guard-core/classification.json",
+      "result": "passed"
+    },
+    {
+      "label": "diff check",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "label": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "not run; no docs/src files were touched"
+    },
+    {
+      "label": "staged diff check",
+      "command": "git diff --cached --check",
+      "result": "passed"
+    }
+  ],
+  "commit": "recorded-in-supervisor-state-after-acceptance"
+}

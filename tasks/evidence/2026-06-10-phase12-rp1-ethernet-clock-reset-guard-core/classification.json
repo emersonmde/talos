@@ -1,0 +1,51 @@
+{
+  "task_id": "phase12-rp1-ethernet-clock-reset-guard-core-20260610",
+  "classification": "rp1-ethernet-clock-reset-guard-core-local-static-accepted",
+  "evidence_level": [
+    "local/static implementation",
+    "static inspection",
+    "fmt",
+    "QEMU-backed no_std tests",
+    "JSON validation",
+    "diff checks"
+  ],
+  "accepted_claims": [
+    "deterministic candidate clock/reset guard report construction",
+    "paired no-clock-reset/no-Ethernet control report construction",
+    "source-backed pclk/hclk/tsu_clk/tx_clk names and IDs carried as local/static metadata",
+    "pclk and hclk retained as shared RP1_CLK_SYS inputs that are not owned or transitioned",
+    "retained Pi 5 rp1_eth reset-controller absence carried as a no-target policy",
+    "observed-window MACB_MID identity retained as context-only metadata",
+    "validators reject guard-contract bypasses and forbidden ownership/readiness/downstream claims"
+  ],
+  "rejected_claims": [
+    "Ethernet driver readiness",
+    "broad Ethernet MMIO readiness",
+    "RP1 MMIO writes",
+    "clock/reset writes",
+    "clock/reset ownership",
+    "RP1_CLK_SYS transition through pclk or hclk",
+    "reset-controller ownership",
+    "GPIO32 or PHY reset ownership",
+    "MDIO transactions or PHY ownership",
+    "interrupt delivery or completion",
+    "DMA or descriptor rings",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition",
+    "hardware proof"
+  ],
+  "retained_risks": [
+    "clock source facts are not Talos ownership",
+    "shared RP1_CLK_SYS pclk/hclk require stricter safety than Ethernet-private clocks",
+    "tx_clk and tsu_clk require a future source contract for exact register targets and restore semantics before hardware writes",
+    "retained Pi 5 rp1_eth source supplies no accepted reset-controller target",
+    "PHY reset remains a separate GPIO32/MDIO ownership task",
+    "guard-core is local/static only and must not be treated as hardware evidence"
+  ],
+  "next_action": "phase12-rp1-ethernet-clock-reset-guard-closeout-20260610",
+  "commit": "recorded-in-supervisor-state-after-acceptance"
+}
