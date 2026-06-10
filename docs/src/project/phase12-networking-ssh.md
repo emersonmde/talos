@@ -749,3 +749,16 @@ effective kernel kernel_2712.img and da591740/kernel_2712.img at 104136 bytes.
 This proof does not accept GPIO ownership, PHY reset assertion/deassertion,
 MDIO/PHY ownership, GPIO/RIO/pad/MMIO writes, Ethernet driver readiness,
 packet I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
+
+phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-proof-closeout-20260610
+closes the read-only GPIO32 PHY-reset preflight proof frontier as
+rp1-ethernet-gpio32-phy-reset-readonly-preflight-frontier-closed.
+Same-shaped GPIO32 PHY-reset read-only preflight hardware retries are closed
+for this candidate/control pair. A future task must provide materially
+different scope and explicit acceptance criteria, such as GPIO32 write/restore
+ownership with restore proof, MDIO/PHY ownership, interrupt completion,
+DMA/descriptor ownership, or packet I/O. This closeout does not select such a
+task and does not accept GPIO ownership, PHY reset assertion/deassertion,
+MDIO/PHY ownership, RP1 GPIO/RIO/pad/MMIO writes, Ethernet driver readiness,
+DMA, descriptors, interrupts, packet I/O, networking, sockets, SSH, Phase
+12.2, or a phase transition.

@@ -9526,6 +9526,16 @@ This proof does not accept GPIO ownership, PHY reset assertion/deassertion,
 MDIO/PHY ownership, GPIO/RIO/pad/MMIO writes, Ethernet driver readiness,
 packet I/O, networking, sockets, SSH, Phase 12.2, or phase transition.
 
+phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-proof-closeout-20260610
+closes the read-only GPIO32 PHY-reset preflight proof frontier as
+rp1-ethernet-gpio32-phy-reset-readonly-preflight-frontier-closed. Same-shaped
+GPIO32 PHY-reset read-only preflight hardware retries are closed for this
+candidate/control pair. No mechanically objective write-backed PHY reset,
+MDIO/PHY, interrupt, DMA/descriptor, packet I/O, networking, socket, SSH,
+Phase 12.2, or phase-transition follow-up is selected from this read-only
+proof alone; supervisor planning is required for the next explicit Phase 12.1
+ownership slice.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

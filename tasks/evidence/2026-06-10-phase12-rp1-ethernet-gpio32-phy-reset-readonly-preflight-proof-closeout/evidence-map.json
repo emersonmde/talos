@@ -1,0 +1,49 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-proof-closeout-20260610",
+  "evidence_level": "static inspection of accepted proof evidence, task records, documentation, and git history",
+  "artifacts": [
+    {
+      "label": "closeout task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-proof-closeout.md"
+    },
+    {
+      "label": "closeout classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-proof-closeout/classification.json"
+    },
+    {
+      "label": "proof task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof.md"
+    },
+    {
+      "label": "proof classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof/classification.json"
+    },
+    {
+      "label": "proof evidence map",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof/evidence-map.json"
+    },
+    {
+      "label": "proof capture summary",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof/capture-summary.json"
+    },
+    {
+      "label": "project doc",
+      "path": "docs/src/project/phase12-networking-ssh.md"
+    },
+    {
+      "label": "roadmap",
+      "path": "docs/src/roadmap.md"
+    },
+    {
+      "label": "git proof commit",
+      "commit": "01febe03c282f64062d908b542ce89a782f3e30e"
+    }
+  ],
+  "validation": [
+    "static inspection of proof task/evidence/docs/git history",
+    "jq empty on closeout evidence-map/classification JSON",
+    "git diff --check",
+    "mdbook build",
+    "git diff --cached --check"
+  ]
+}

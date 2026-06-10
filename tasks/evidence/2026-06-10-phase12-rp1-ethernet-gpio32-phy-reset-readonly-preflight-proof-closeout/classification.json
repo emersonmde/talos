@@ -1,0 +1,50 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-proof-closeout-20260610",
+  "classification": "rp1-ethernet-gpio32-phy-reset-readonly-preflight-frontier-closed",
+  "evidence_level": "static inspection",
+  "accepted_claims": [
+    "GPIO32 PHY-reset read-only preflight visibility/control proof frontier is reconciled and closed",
+    "candidate/control capture-chain-v4 proof evidence remains accepted for source-backed read-only GPIO32/ETH_RST_N preflight report output only",
+    "candidate serial output retained the accepted GPIO32/ETH_RST_N preflight facts and classification rp1-ethernet-gpio32-phy-reset-readonly-preflight-report-visible",
+    "paired no-GPIO/no-Ethernet control used the same capture/report path while withholding candidate-only GPIO32/PHY-reset facts",
+    "same-shaped GPIO32 PHY-reset read-only preflight hardware retries are closed for this candidate/control pair"
+  ],
+  "rejected_claims": [
+    "GPIO ownership",
+    "PHY reset assertion/deassertion",
+    "MDIO or PHY ownership",
+    "RP1 GPIO/RIO/pad/MMIO writes",
+    "Ethernet driver readiness",
+    "DMA, descriptor rings, transfer completion, or interrupt completion",
+    "packet I/O, networking, sockets, SSH, Phase 12.2, or phase transition"
+  ],
+  "retained_risks": [
+    "the accepted proof is read-only and does not prove Talos can safely drive or restore GPIO32/ETH_RST_N",
+    "Phase 11 GPIO frontiers have not accepted GPIO32 ownership or write/restore authority",
+    "MDIO/PHY ownership remains unaccepted",
+    "a write-backed PHY reset task still requires supervisor-planned scope, GPIO32 write/restore safety gates, rollback behavior, and explicit hardware acceptance criteria"
+  ],
+  "proof_commit": "01febe03c282f64062d908b542ce89a782f3e30e",
+  "candidate": {
+    "selected_tree_hash": "25933d095429b5b91ab2185caa1e5c2ce586346452d838a853dbebacea5c4ba7",
+    "expected_fetch_byte_count": 49528,
+    "serial_marker_occurrences": 21,
+    "hardware_classification": "rp1-ethernet-gpio32-phy-reset-readonly-preflight-report-visible"
+  },
+  "control": {
+    "selected_tree_hash": "ddd753ab2040cdadde6a6b665b24a96886db2377be76bac006806ea035907bda",
+    "expected_fetch_byte_count": 48688,
+    "serial_marker_occurrences": 29,
+    "hardware_classification": "no-gpio-no-ethernet-rp1-ethernet-gpio32-phy-reset-control"
+  },
+  "final_post_restore": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "da591740_kernel_2712_bytes": 104136
+  },
+  "same_shaped_retry_policy": "closed-for-this-candidate-control-pair",
+  "planning_needed": true,
+  "planning_reason": "No mechanically objective write-backed PHY reset or other Phase 12.1 ownership slice follows from this read-only GPIO32 preflight proof alone; the next slice needs supervisor-planned scope and acceptance criteria for GPIO32 write/restore safety, MDIO/PHY ownership, interrupt completion, DMA/descriptor ownership, packet I/O, or another explicit dependency.",
+  "next_action": "Supervisor planning required for the next explicit Phase 12.1 ownership slice.",
+  "commit": "recorded-in-supervisor-state-after-acceptance"
+}
