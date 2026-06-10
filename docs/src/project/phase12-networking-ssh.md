@@ -599,3 +599,14 @@ descriptors, interrupts, packet I/O, networking, sockets, SSH, Phase 12.2, and
 phase transition. It selects only the local/static CLK_ETH_CTRL write/restore
 core as the next bounded follow-up; no hardware action or runtime write is
 accepted by the source contract itself.
+
+phase12-rp1-ethernet-clk-eth-ctrl-write-restore-core-20260610 accepts that
+local/static report surface in src/rp1_ethernet.rs. The candidate report
+preserves the CLK_ETH_CTRL contract identity, 0x1c00018064 target address,
+pre-read-raw-only operation order, preserved fields, rejected claims, retained
+risks, and future proof vocabulary. The paired control uses the same report
+path while constructing no writable target and withholding candidate-only
+CLK_ETH_CTRL facts. The accepted evidence remains fmt/unit-test/static only:
+no hardware run, no boot archive publication, no hardwareTestLock, no runtime
+RP1 MMIO write, no shared-clock ownership, no Ethernet driver readiness, no
+packet I/O, no networking, no SSH, no Phase 12.2, and no phase transition.

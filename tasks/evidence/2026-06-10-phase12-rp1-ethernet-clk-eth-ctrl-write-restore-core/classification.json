@@ -1,0 +1,46 @@
+{
+  "task_id": "phase12-rp1-ethernet-clk-eth-ctrl-write-restore-core-20260610",
+  "classification": "rp1-ethernet-clk-eth-ctrl-write-restore-core-local-static-accepted",
+  "evidence_level": [
+    "static inspection",
+    "fmt",
+    "focused unit tests"
+  ],
+  "hardware": {
+    "pi5_run": false,
+    "hardware_test_lock_acquired": false,
+    "boot_archive_published": false,
+    "runtime_rp1_mmio_write_performed": false
+  },
+  "selected_target": {
+    "contract_id": "phase12-rp1-ethernet-clk-eth-ctrl-write-target-source-contract-v1",
+    "source_task_id": "phase12-rp1-ethernet-clk-eth-ctrl-source-contract-20260610",
+    "target": "rp1-ethernet-clk-eth-ctrl-idempotent-write-restore",
+    "clock_name": "tx_clk",
+    "clock_id": 16,
+    "register": "CLK_ETH_CTRL",
+    "observed_rp1_base": "0x1c00000000",
+    "source_offset": "0x018064",
+    "talos_register_address": "0x1c00018064",
+    "width_bits": 32,
+    "allowed_write_value": "pre-read-raw-value-only"
+  },
+  "reports": {
+    "candidate_classification": "rp1-ethernet-clk-eth-ctrl-write-restore-candidate-local-static",
+    "control_classification": "no-clk-eth-ctrl-write-no-ethernet-rp1-ethernet-control",
+    "boundary_classification": "hardware-proof-limited-to-clk-eth-ctrl-idempotent-write-restore-control-output"
+  },
+  "rejected_claims": [
+    "source-contract bypass",
+    "shared RP1_CLK_SYS pclk/hclk write",
+    "CLK_ETH_TSU_CTRL same-shaped retry",
+    "non-idempotent CLK_ETH_CTRL transition",
+    "reset-controller ownership",
+    "GPIO32/PHY reset",
+    "MDIO/PHY ownership",
+    "DMA/descriptors/interrupts/packet I/O/networking/sockets/SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "accepted": true
+}

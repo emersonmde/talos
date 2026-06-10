@@ -22,6 +22,12 @@ pub const RP1_ETHERNET_CLOCK_RESET_WRITE_TARGET_SOURCE_TASK_ID: &str =
     "phase12-rp1-ethernet-clock-reset-write-target-source-contract-20260610";
 pub const RP1_ETHERNET_CLOCK_RESET_WRITE_RESTORE_REPORT_CONTRACT_ID: &str =
     "phase12-rp1-ethernet-clock-reset-write-restore-report-contract-v1";
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_TARGET_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-clk-eth-ctrl-write-target-source-contract-v1";
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_TARGET_SOURCE_TASK_ID: &str =
+    "phase12-rp1-ethernet-clk-eth-ctrl-source-contract-20260610";
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_REPORT_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-clk-eth-ctrl-write-restore-report-contract-v1";
 pub const RP1_ETHERNET_GEM_MID_CANDIDATE_CLASSIFICATION: &str =
     "local-static-rp1-ethernet-gem-mid-candidate";
 pub const RP1_ETHERNET_GEM_MID_CONTROL_CLASSIFICATION: &str =
@@ -44,6 +50,10 @@ pub const RP1_ETHERNET_CLOCK_RESET_WRITE_RESTORE_CANDIDATE_CLASSIFICATION: &str 
     "rp1-ethernet-clk-eth-tsu-ctrl-write-restore-candidate-local-static";
 pub const RP1_ETHERNET_CLOCK_RESET_WRITE_RESTORE_CONTROL_CLASSIFICATION: &str =
     "no-clock-write-no-ethernet-rp1-ethernet-write-restore-control";
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_CANDIDATE_CLASSIFICATION: &str =
+    "rp1-ethernet-clk-eth-ctrl-write-restore-candidate-local-static";
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_CONTROL_CLASSIFICATION: &str =
+    "no-clk-eth-ctrl-write-no-ethernet-rp1-ethernet-control";
 pub const RP1_ETHERNET_GEM_MID_HARDWARE_PROOF_BOUNDARY_CLASSIFICATION: &str =
     "hardware-proof-limited-to-gem-mid-visibility-control-output";
 pub const RP1_ETHERNET_GEM_MID_DECODE_DISCRIMINATOR_HARDWARE_PROOF_BOUNDARY_CLASSIFICATION: &str =
@@ -56,6 +66,8 @@ pub const RP1_ETHERNET_CLOCK_RESET_GUARD_BOUNDARY_CLASSIFICATION: &str =
     "local-static-clock-reset-guard-report-only";
 pub const RP1_ETHERNET_CLOCK_RESET_WRITE_RESTORE_BOUNDARY_CLASSIFICATION: &str =
     "hardware-proof-limited-to-clk-eth-tsu-ctrl-idempotent-write-restore-control-output";
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_BOUNDARY_CLASSIFICATION: &str =
+    "hardware-proof-limited-to-clk-eth-ctrl-idempotent-write-restore-control-output";
 pub const RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION: &str = "contract-rejected-input";
 
 pub const RP1_ETHERNET_COMPATIBLE: &[&str] = &["raspberrypi,rp1-gem", "cdns,macb"];
@@ -121,6 +133,20 @@ pub const RP1_ETHERNET_CLOCK_RESET_WRITE_RESTORE_WIDTH_BITS: u32 = 32;
 pub const RP1_ETHERNET_CLOCK_RESET_WRITE_RESTORE_ALLOWED_WRITE_VALUE: &str =
     "pre-read-raw-value-only";
 pub const RP1_ETHERNET_CLOCK_RESET_WRITE_RESTORE_ACCESS: &str =
+    "32-bit little-endian volatile load/store";
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_TARGET: &str =
+    "rp1-ethernet-clk-eth-ctrl-idempotent-write-restore";
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_CLOCK_NAME: &str = "tx_clk";
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_CLOCK_ID: u32 = 16;
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_REGISTER: &str = "CLK_ETH_CTRL";
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_SOURCE_BLOCK: &str = "RP1 clocks@18000";
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_SOURCE_OFFSET: u64 = 0x018064;
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_CPU_PHYSICAL_TARGET: u64 =
+    RP1_ETHERNET_OBSERVED_RP1_BASE + RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_SOURCE_OFFSET;
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_WIDTH_BITS: u32 = 32;
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_ALLOWED_WRITE_VALUE: &str =
+    "pre-read-raw-value-only";
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_ACCESS: &str =
     "32-bit little-endian volatile load/store";
 pub const RP1_ETHERNET_RESET_CONTROLLER_POLICY_CLASSIFICATION: &str =
     "no-accepted-rp1-eth-reset-controller-target";
@@ -326,6 +352,77 @@ pub const RP1_ETHERNET_CLOCK_RESET_WRITE_RESTORE_FUTURE_CLASSIFICATIONS: &[&str]
     "rp1-ethernet-clk-eth-tsu-ctrl-inconclusive-capture",
     "no-clock-write-no-ethernet-rp1-ethernet-write-restore-control",
     "staging/build-blocker",
+];
+
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_PRESERVED_FIELDS: &[&str] = &[
+    "full 32-bit raw CLK_ETH_CTRL value",
+    "CLK_CTRL_ENABLE bit 11",
+    "CLK_CTRL_AUXSRC bits 9:5",
+    "clock source bits starting at bit 0",
+    "reserved or currently undocumented bits",
+];
+
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_OPERATION_SEQUENCE: &[&str] = &[
+    "pre-read CLK_ETH_CTRL and retain pre_raw",
+    "write pre_raw back to CLK_ETH_CTRL",
+    "post-read CLK_ETH_CTRL and retain post_raw",
+    "restore-write pre_raw back to CLK_ETH_CTRL",
+    "restore-read CLK_ETH_CTRL and retain restore_raw",
+];
+
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_SAFETY_INVARIANTS: &[&str] = &[
+    "do not disable, gate, or transition RP1_CLK_SYS through pclk or hclk",
+    "do not write CLK_ETH_TSU_CTRL, divider, select, PLL, frequency-counter, or GPCLK output-enable registers",
+    "do not use reset-controller writes without a separate accepted target and restore contract",
+    "do not assert or deassert GPIO32 PHY reset",
+    "do not perform MDIO transactions",
+    "do not infer DMA, descriptors, interrupts, packet I/O, networking, sockets, SSH, Phase 12.2, or phase transition",
+];
+
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_REJECTED_RUNTIME_CLAIMS: &[&str] = &[
+    "Ethernet driver readiness",
+    "broad Ethernet MMIO readiness",
+    "unscoped RP1 MMIO writes",
+    "RP1_CLK_SYS pclk/hclk write or transition",
+    "CLK_ETH_TSU_CTRL same-shaped retry",
+    "non-idempotent CLK_ETH_CTRL transition",
+    "reset-controller ownership",
+    "GPIO32 ownership or PHY reset assertion/deassertion",
+    "MDIO transactions or PHY ownership",
+    "interrupt delivery, handler ownership, or completion",
+    "DMA, descriptor rings, channel ownership, or transfer completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition",
+];
+
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_RETAINED_RISKS: &[&str] = &[
+    "The selected idempotent write/restore proves only one Ethernet-private tx_clk clock-manager store/readback boundary",
+    "Shared RP1_CLK_SYS pclk/hclk ownership remains unaccepted",
+    "CLK_ETH_TSU_CTRL is a separate accepted proof and is not retried by this target",
+    "PHY reset remains GPIO32/MDIO-owned and outside this task",
+    "A future Pi 5 proof must still capture identity, TFTP, serial freshness, final identity, and restore evidence",
+];
+
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_FUTURE_CLASSIFICATIONS: &[&str] = &[
+    "rp1-ethernet-clk-eth-ctrl-idempotent-write-restored",
+    "rp1-ethernet-clk-eth-ctrl-idempotent-write-mismatch-restored",
+    "rp1-ethernet-clk-eth-ctrl-idempotent-write-restore-failed",
+    "rp1-ethernet-clk-eth-ctrl-blocked-missing-clock-manager",
+    "rp1-ethernet-clk-eth-ctrl-inconclusive-capture",
+    "no-clk-eth-ctrl-write-no-ethernet-rp1-ethernet-control",
+    "staging/build-blocker",
+];
+
+pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_SOURCE_EVIDENCE: &[&str] = &[
+    "tasks/2026-06-10-phase12-rp1-ethernet-clk-eth-ctrl-source-contract.md",
+    "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1.dtsi",
+    "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1-clock.h",
+    "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/clk-rp1.c",
+    "tasks/2026-06-10-phase12-rp1-ethernet-clock-reset-write-restore-proof-closeout.md",
 ];
 
 pub const RP1_ETHERNET_GEM_MID_DECODE_DISCRIMINATOR_EXPECTED_CLASSIFICATIONS: &[&str] = &[
@@ -994,6 +1091,81 @@ pub struct Rp1EthernetClockResetWriteRestoreReportEvidence {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetClkEthCtrlWriteRestoreReportInput {
+    pub kind: Rp1EthernetClockResetWriteRestoreReportKind,
+    pub target_contract: Option<Rp1EthernetClockResetWriteTargetContractEvidence>,
+    pub claims_ethernet_ready: bool,
+    pub claims_broad_mmio_ready: bool,
+    pub claims_unscoped_rp1_mmio_writes: bool,
+    pub claims_shared_clock_write: bool,
+    pub claims_tsu_same_shape_retry: bool,
+    pub claims_non_idempotent_transition: bool,
+    pub claims_reset_controller_ownership: bool,
+    pub claims_gpio32_phy_reset_ownership: bool,
+    pub claims_mdio_phy_ownership: bool,
+    pub claims_interrupt_ownership: bool,
+    pub claims_dma_descriptor_ownership: bool,
+    pub claims_packet_io: bool,
+    pub claims_networking: bool,
+    pub claims_sockets: bool,
+    pub claims_ssh: bool,
+    pub claims_phase_12_2: bool,
+    pub claims_phase_transition: bool,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetClkEthCtrlWriteRestoreReport {
+    pub kind: Rp1EthernetClockResetWriteRestoreReportKind,
+    pub target_contract: Option<Rp1EthernetClockResetWriteTargetContractEvidence>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetClkEthCtrlWriteRestoreReportEvidence {
+    pub report_contract_id: &'static str,
+    pub target_contract_id: &'static str,
+    pub source_task_id: &'static str,
+    pub report_kind: &'static str,
+    pub target: Option<&'static str>,
+    pub clock_name: Option<&'static str>,
+    pub clock_id: Option<u32>,
+    pub register: Option<&'static str>,
+    pub source_block: Option<&'static str>,
+    pub observed_rp1_base: Option<u64>,
+    pub source_offset: Option<u64>,
+    pub cpu_physical_target: Option<u64>,
+    pub width_bits: Option<u32>,
+    pub access: Option<&'static str>,
+    pub allowed_write_value: Option<&'static str>,
+    pub preserved_fields: Option<&'static [&'static str]>,
+    pub operation_sequence: Option<&'static [&'static str]>,
+    pub safety_invariants: Option<&'static [&'static str]>,
+    pub post_eq_pre_required: Option<bool>,
+    pub restore_eq_pre_required: Option<bool>,
+    pub future_proof_classifications: &'static [&'static str],
+    pub hardware_proof_boundary_classification: &'static str,
+    pub rejected_runtime_claims: &'static [&'static str],
+    pub retained_risks: &'static [&'static str],
+    pub claims_ethernet_ready: bool,
+    pub claims_broad_mmio_ready: bool,
+    pub claims_unscoped_rp1_mmio_writes: bool,
+    pub claims_shared_clock_write: bool,
+    pub claims_tsu_same_shape_retry: bool,
+    pub claims_non_idempotent_transition: bool,
+    pub claims_reset_controller_ownership: bool,
+    pub claims_gpio32_phy_reset_ownership: bool,
+    pub claims_mdio_phy_ownership: bool,
+    pub claims_interrupt_ownership: bool,
+    pub claims_dma_descriptor_ownership: bool,
+    pub claims_packet_io: bool,
+    pub claims_networking: bool,
+    pub claims_sockets: bool,
+    pub claims_ssh: bool,
+    pub claims_phase_12_2: bool,
+    pub claims_phase_transition: bool,
+    pub classification: &'static str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Rp1EthernetGemMidDiagnosticReportError {
     CandidateMissingSourceContract,
     ControlCarriesEthernetMmioTarget,
@@ -1149,6 +1321,63 @@ pub enum Rp1EthernetClockResetWriteRestoreReportError {
     SshClaim,
     Phase122Claim,
     PhaseTransitionClaim,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Rp1EthernetClkEthCtrlWriteRestoreReportError {
+    CandidateMissingTargetContract,
+    ControlCarriesWriteTargetFacts,
+    TargetContractIdentityMismatch,
+    TargetContractTargetMismatch,
+    TargetContractFieldMismatch,
+    MissingSourceEvidence,
+    EthernetReadinessClaim,
+    BroadMmioReadinessClaim,
+    UnscopedRp1MmioWritesClaim,
+    SharedClockWriteClaim,
+    TsuSameShapeRetryClaim,
+    NonIdempotentTransitionClaim,
+    ResetControllerOwnershipClaim,
+    Gpio32PhyResetOwnershipClaim,
+    MdioPhyOwnershipClaim,
+    InterruptOwnershipClaim,
+    DmaDescriptorOwnershipClaim,
+    PacketIoClaim,
+    NetworkingClaim,
+    SocketsClaim,
+    SshClaim,
+    Phase122Claim,
+    PhaseTransitionClaim,
+}
+
+impl Rp1EthernetClkEthCtrlWriteRestoreReportError {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::CandidateMissingTargetContract => "candidate-missing-target-contract",
+            Self::ControlCarriesWriteTargetFacts => "control-carries-write-target-facts",
+            Self::TargetContractIdentityMismatch => "target-contract-identity-mismatch",
+            Self::TargetContractTargetMismatch => "target-contract-target-mismatch",
+            Self::TargetContractFieldMismatch => "target-contract-field-mismatch",
+            Self::MissingSourceEvidence => "missing-source-evidence",
+            Self::EthernetReadinessClaim => "ethernet-readiness-claim",
+            Self::BroadMmioReadinessClaim => "broad-mmio-readiness-claim",
+            Self::UnscopedRp1MmioWritesClaim => "unscoped-rp1-mmio-writes-claim",
+            Self::SharedClockWriteClaim => "shared-clock-write-claim",
+            Self::TsuSameShapeRetryClaim => "clk-eth-tsu-ctrl-same-shaped-retry-claim",
+            Self::NonIdempotentTransitionClaim => "non-idempotent-transition-claim",
+            Self::ResetControllerOwnershipClaim => "reset-controller-ownership-claim",
+            Self::Gpio32PhyResetOwnershipClaim => "gpio32-phy-reset-ownership-claim",
+            Self::MdioPhyOwnershipClaim => "mdio-phy-ownership-claim",
+            Self::InterruptOwnershipClaim => "interrupt-ownership-claim",
+            Self::DmaDescriptorOwnershipClaim => "dma-descriptor-ownership-claim",
+            Self::PacketIoClaim => "packet-io-claim",
+            Self::NetworkingClaim => "networking-claim",
+            Self::SocketsClaim => "sockets-claim",
+            Self::SshClaim => "ssh-claim",
+            Self::Phase122Claim => "phase-12-2-claim",
+            Self::PhaseTransitionClaim => "phase-transition-claim",
+        }
+    }
 }
 
 impl Rp1EthernetClockResetWriteRestoreReportError {
@@ -1458,6 +1687,31 @@ pub const fn rp1_ethernet_clock_reset_write_target_contract_evidence()
         safety_invariants: RP1_ETHERNET_CLOCK_RESET_WRITE_RESTORE_SAFETY_INVARIANTS,
         future_proof_classifications: RP1_ETHERNET_CLOCK_RESET_WRITE_RESTORE_FUTURE_CLASSIFICATIONS,
         source_evidence: RP1_ETHERNET_PREREQ_OWNERSHIP_SOURCE_EVIDENCE,
+    }
+}
+
+pub const fn rp1_ethernet_clk_eth_ctrl_write_target_contract_evidence()
+-> Rp1EthernetClockResetWriteTargetContractEvidence {
+    Rp1EthernetClockResetWriteTargetContractEvidence {
+        contract_id: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_TARGET_CONTRACT_ID,
+        source_task_id: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_TARGET_SOURCE_TASK_ID,
+        target: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_TARGET,
+        clock_name: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_CLOCK_NAME,
+        clock_id: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_CLOCK_ID,
+        register: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_REGISTER,
+        source_block: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_SOURCE_BLOCK,
+        observed_rp1_base: RP1_ETHERNET_OBSERVED_RP1_BASE,
+        source_offset: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_SOURCE_OFFSET,
+        cpu_physical_target: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_CPU_PHYSICAL_TARGET,
+        width_bits: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_WIDTH_BITS,
+        access: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_ACCESS,
+        allowed_write_value: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_ALLOWED_WRITE_VALUE,
+        preserved_fields: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_PRESERVED_FIELDS,
+        operation_sequence: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_OPERATION_SEQUENCE,
+        safety_invariants: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_SAFETY_INVARIANTS,
+        future_proof_classifications:
+            RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_FUTURE_CLASSIFICATIONS,
+        source_evidence: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_SOURCE_EVIDENCE,
     }
 }
 
@@ -1816,6 +2070,52 @@ pub fn rejected_rp1_ethernet_clock_reset_write_restore_report_evidence(
     (RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION, error.name())
 }
 
+pub fn build_rp1_ethernet_clk_eth_ctrl_write_restore_report(
+    input: Rp1EthernetClkEthCtrlWriteRestoreReportInput,
+) -> Result<Rp1EthernetClkEthCtrlWriteRestoreReport, Rp1EthernetClkEthCtrlWriteRestoreReportError> {
+    validate_rp1_ethernet_clk_eth_ctrl_write_restore_rejected_claims(input)?;
+
+    match (input.kind, input.target_contract) {
+        (Rp1EthernetClockResetWriteRestoreReportKind::Candidate, Some(target_contract)) => {
+            validate_rp1_ethernet_clk_eth_ctrl_write_target_contract(target_contract)?;
+            Ok(Rp1EthernetClkEthCtrlWriteRestoreReport {
+                kind: input.kind,
+                target_contract: Some(target_contract),
+            })
+        }
+        (Rp1EthernetClockResetWriteRestoreReportKind::Candidate, None) => {
+            Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::CandidateMissingTargetContract)
+        }
+        (Rp1EthernetClockResetWriteRestoreReportKind::NoClockWriteNoEthernetControl, None) => {
+            Ok(Rp1EthernetClkEthCtrlWriteRestoreReport {
+                kind: input.kind,
+                target_contract: None,
+            })
+        }
+        (Rp1EthernetClockResetWriteRestoreReportKind::NoClockWriteNoEthernetControl, Some(_)) => {
+            Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::ControlCarriesWriteTargetFacts)
+        }
+    }
+}
+
+pub fn rp1_ethernet_clk_eth_ctrl_write_restore_report_evidence(
+    report: Rp1EthernetClkEthCtrlWriteRestoreReport,
+) -> Rp1EthernetClkEthCtrlWriteRestoreReportEvidence {
+    match report.target_contract {
+        Some(target_contract) => rp1_ethernet_clk_eth_ctrl_write_restore_candidate_evidence(
+            report.kind.name(),
+            target_contract,
+        ),
+        None => rp1_ethernet_clk_eth_ctrl_write_restore_control_evidence(report.kind.name()),
+    }
+}
+
+pub fn rejected_rp1_ethernet_clk_eth_ctrl_write_restore_report_evidence(
+    error: Rp1EthernetClkEthCtrlWriteRestoreReportError,
+) -> (&'static str, &'static str) {
+    (RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION, error.name())
+}
+
 fn validate_rp1_ethernet_gem_mid_rejected_claims(
     input: Rp1EthernetGemMidDiagnosticReportInput,
 ) -> Result<(), Rp1EthernetGemMidDiagnosticReportError> {
@@ -2128,6 +2428,63 @@ fn validate_rp1_ethernet_clock_reset_write_restore_rejected_claims(
     Ok(())
 }
 
+fn validate_rp1_ethernet_clk_eth_ctrl_write_restore_rejected_claims(
+    input: Rp1EthernetClkEthCtrlWriteRestoreReportInput,
+) -> Result<(), Rp1EthernetClkEthCtrlWriteRestoreReportError> {
+    if input.claims_ethernet_ready {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::EthernetReadinessClaim);
+    }
+    if input.claims_broad_mmio_ready {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::BroadMmioReadinessClaim);
+    }
+    if input.claims_unscoped_rp1_mmio_writes {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::UnscopedRp1MmioWritesClaim);
+    }
+    if input.claims_shared_clock_write {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::SharedClockWriteClaim);
+    }
+    if input.claims_tsu_same_shape_retry {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::TsuSameShapeRetryClaim);
+    }
+    if input.claims_non_idempotent_transition {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::NonIdempotentTransitionClaim);
+    }
+    if input.claims_reset_controller_ownership {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::ResetControllerOwnershipClaim);
+    }
+    if input.claims_gpio32_phy_reset_ownership {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::Gpio32PhyResetOwnershipClaim);
+    }
+    if input.claims_mdio_phy_ownership {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::MdioPhyOwnershipClaim);
+    }
+    if input.claims_interrupt_ownership {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::InterruptOwnershipClaim);
+    }
+    if input.claims_dma_descriptor_ownership {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::DmaDescriptorOwnershipClaim);
+    }
+    if input.claims_packet_io {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::PacketIoClaim);
+    }
+    if input.claims_networking {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::NetworkingClaim);
+    }
+    if input.claims_sockets {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::SocketsClaim);
+    }
+    if input.claims_ssh {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::SshClaim);
+    }
+    if input.claims_phase_12_2 {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::Phase122Claim);
+    }
+    if input.claims_phase_transition {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::PhaseTransitionClaim);
+    }
+    Ok(())
+}
+
 fn validate_rp1_ethernet_gem_mid_source_contract(
     evidence: Rp1EthernetGemMidSourceContractEvidence,
 ) -> Result<(), Rp1EthernetGemMidDiagnosticReportError> {
@@ -2291,6 +2648,44 @@ fn validate_rp1_ethernet_clock_reset_write_target_contract(
     }
     if evidence.source_evidence != RP1_ETHERNET_PREREQ_OWNERSHIP_SOURCE_EVIDENCE {
         return Err(Rp1EthernetClockResetWriteRestoreReportError::MissingSourceEvidence);
+    }
+    Ok(())
+}
+
+fn validate_rp1_ethernet_clk_eth_ctrl_write_target_contract(
+    evidence: Rp1EthernetClockResetWriteTargetContractEvidence,
+) -> Result<(), Rp1EthernetClkEthCtrlWriteRestoreReportError> {
+    if evidence.contract_id != RP1_ETHERNET_CLK_ETH_CTRL_WRITE_TARGET_CONTRACT_ID
+        || evidence.source_task_id != RP1_ETHERNET_CLK_ETH_CTRL_WRITE_TARGET_SOURCE_TASK_ID
+        || evidence.target != RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_TARGET
+    {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::TargetContractIdentityMismatch);
+    }
+    if evidence.clock_name != RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_CLOCK_NAME
+        || evidence.clock_id != RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_CLOCK_ID
+        || evidence.register != RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_REGISTER
+        || evidence.source_block != RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_SOURCE_BLOCK
+        || evidence.observed_rp1_base != RP1_ETHERNET_OBSERVED_RP1_BASE
+        || evidence.source_offset != RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_SOURCE_OFFSET
+        || evidence.cpu_physical_target
+            != RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_CPU_PHYSICAL_TARGET
+    {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::TargetContractTargetMismatch);
+    }
+    if evidence.width_bits != RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_WIDTH_BITS
+        || evidence.access != RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_ACCESS
+        || evidence.allowed_write_value
+            != RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_ALLOWED_WRITE_VALUE
+        || evidence.preserved_fields != RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_PRESERVED_FIELDS
+        || evidence.operation_sequence != RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_OPERATION_SEQUENCE
+        || evidence.safety_invariants != RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_SAFETY_INVARIANTS
+        || evidence.future_proof_classifications
+            != RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_FUTURE_CLASSIFICATIONS
+    {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::TargetContractFieldMismatch);
+    }
+    if evidence.source_evidence != RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_SOURCE_EVIDENCE {
+        return Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::MissingSourceEvidence);
     }
     Ok(())
 }
@@ -3001,6 +3396,108 @@ fn rp1_ethernet_clock_reset_write_restore_control_evidence(
     }
 }
 
+fn rp1_ethernet_clk_eth_ctrl_write_restore_candidate_evidence(
+    report_kind: &'static str,
+    target_contract: Rp1EthernetClockResetWriteTargetContractEvidence,
+) -> Rp1EthernetClkEthCtrlWriteRestoreReportEvidence {
+    Rp1EthernetClkEthCtrlWriteRestoreReportEvidence {
+        report_contract_id: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_REPORT_CONTRACT_ID,
+        target_contract_id: target_contract.contract_id,
+        source_task_id: target_contract.source_task_id,
+        report_kind,
+        target: Some(target_contract.target),
+        clock_name: Some(target_contract.clock_name),
+        clock_id: Some(target_contract.clock_id),
+        register: Some(target_contract.register),
+        source_block: Some(target_contract.source_block),
+        observed_rp1_base: Some(target_contract.observed_rp1_base),
+        source_offset: Some(target_contract.source_offset),
+        cpu_physical_target: Some(target_contract.cpu_physical_target),
+        width_bits: Some(target_contract.width_bits),
+        access: Some(target_contract.access),
+        allowed_write_value: Some(target_contract.allowed_write_value),
+        preserved_fields: Some(target_contract.preserved_fields),
+        operation_sequence: Some(target_contract.operation_sequence),
+        safety_invariants: Some(target_contract.safety_invariants),
+        post_eq_pre_required: Some(true),
+        restore_eq_pre_required: Some(true),
+        future_proof_classifications: target_contract.future_proof_classifications,
+        hardware_proof_boundary_classification:
+            RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_BOUNDARY_CLASSIFICATION,
+        rejected_runtime_claims: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_REJECTED_RUNTIME_CLAIMS,
+        retained_risks: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_RETAINED_RISKS,
+        claims_ethernet_ready: false,
+        claims_broad_mmio_ready: false,
+        claims_unscoped_rp1_mmio_writes: false,
+        claims_shared_clock_write: false,
+        claims_tsu_same_shape_retry: false,
+        claims_non_idempotent_transition: false,
+        claims_reset_controller_ownership: false,
+        claims_gpio32_phy_reset_ownership: false,
+        claims_mdio_phy_ownership: false,
+        claims_interrupt_ownership: false,
+        claims_dma_descriptor_ownership: false,
+        claims_packet_io: false,
+        claims_networking: false,
+        claims_sockets: false,
+        claims_ssh: false,
+        claims_phase_12_2: false,
+        claims_phase_transition: false,
+        classification: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_CANDIDATE_CLASSIFICATION,
+    }
+}
+
+fn rp1_ethernet_clk_eth_ctrl_write_restore_control_evidence(
+    report_kind: &'static str,
+) -> Rp1EthernetClkEthCtrlWriteRestoreReportEvidence {
+    Rp1EthernetClkEthCtrlWriteRestoreReportEvidence {
+        report_contract_id: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_REPORT_CONTRACT_ID,
+        target_contract_id: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_TARGET_CONTRACT_ID,
+        source_task_id: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_TARGET_SOURCE_TASK_ID,
+        report_kind,
+        target: None,
+        clock_name: None,
+        clock_id: None,
+        register: None,
+        source_block: None,
+        observed_rp1_base: None,
+        source_offset: None,
+        cpu_physical_target: None,
+        width_bits: None,
+        access: None,
+        allowed_write_value: None,
+        preserved_fields: None,
+        operation_sequence: None,
+        safety_invariants: None,
+        post_eq_pre_required: None,
+        restore_eq_pre_required: None,
+        future_proof_classifications:
+            RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_FUTURE_CLASSIFICATIONS,
+        hardware_proof_boundary_classification:
+            RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_BOUNDARY_CLASSIFICATION,
+        rejected_runtime_claims: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_REJECTED_RUNTIME_CLAIMS,
+        retained_risks: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_RETAINED_RISKS,
+        claims_ethernet_ready: false,
+        claims_broad_mmio_ready: false,
+        claims_unscoped_rp1_mmio_writes: false,
+        claims_shared_clock_write: false,
+        claims_tsu_same_shape_retry: false,
+        claims_non_idempotent_transition: false,
+        claims_reset_controller_ownership: false,
+        claims_gpio32_phy_reset_ownership: false,
+        claims_mdio_phy_ownership: false,
+        claims_interrupt_ownership: false,
+        claims_dma_descriptor_ownership: false,
+        claims_packet_io: false,
+        claims_networking: false,
+        claims_sockets: false,
+        claims_ssh: false,
+        claims_phase_12_2: false,
+        claims_phase_transition: false,
+        classification: RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_CONTROL_CLASSIFICATION,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -3132,6 +3629,31 @@ mod tests {
             claims_unscoped_rp1_mmio_writes: false,
             claims_rp1_clk_sys_transition: false,
             claims_clk_eth_ctrl_write: false,
+            claims_reset_controller_ownership: false,
+            claims_gpio32_phy_reset_ownership: false,
+            claims_mdio_phy_ownership: false,
+            claims_interrupt_ownership: false,
+            claims_dma_descriptor_ownership: false,
+            claims_packet_io: false,
+            claims_networking: false,
+            claims_sockets: false,
+            claims_ssh: false,
+            claims_phase_12_2: false,
+            claims_phase_transition: false,
+        }
+    }
+
+    fn accepted_ethernet_clk_eth_ctrl_write_restore_input()
+    -> Rp1EthernetClkEthCtrlWriteRestoreReportInput {
+        Rp1EthernetClkEthCtrlWriteRestoreReportInput {
+            kind: Rp1EthernetClockResetWriteRestoreReportKind::Candidate,
+            target_contract: Some(rp1_ethernet_clk_eth_ctrl_write_target_contract_evidence()),
+            claims_ethernet_ready: false,
+            claims_broad_mmio_ready: false,
+            claims_unscoped_rp1_mmio_writes: false,
+            claims_shared_clock_write: false,
+            claims_tsu_same_shape_retry: false,
+            claims_non_idempotent_transition: false,
             claims_reset_controller_ownership: false,
             claims_gpio32_phy_reset_ownership: false,
             claims_mdio_phy_ownership: false,
@@ -5121,6 +5643,240 @@ mod tests {
         assert_eq!(
             rejected_rp1_ethernet_clock_reset_write_restore_report_evidence(
                 Rp1EthernetClockResetWriteRestoreReportError::PhaseTransitionClaim
+            ),
+            (
+                RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION,
+                "phase-transition-claim"
+            )
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_clk_eth_ctrl_write_restore_formats_candidate_report() {
+        let report = build_rp1_ethernet_clk_eth_ctrl_write_restore_report(
+            accepted_ethernet_clk_eth_ctrl_write_restore_input(),
+        )
+        .expect("valid CLK_ETH_CTRL write/restore candidate input");
+        let evidence = rp1_ethernet_clk_eth_ctrl_write_restore_report_evidence(report);
+
+        assert_eq!(
+            evidence.report_contract_id,
+            RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_REPORT_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.target_contract_id,
+            RP1_ETHERNET_CLK_ETH_CTRL_WRITE_TARGET_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.source_task_id,
+            RP1_ETHERNET_CLK_ETH_CTRL_WRITE_TARGET_SOURCE_TASK_ID
+        );
+        assert_eq!(evidence.report_kind, "candidate");
+        assert_eq!(
+            evidence.target,
+            Some(RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_TARGET)
+        );
+        assert_eq!(
+            evidence.clock_name,
+            Some(RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_CLOCK_NAME)
+        );
+        assert_eq!(evidence.clock_id, Some(16));
+        assert_eq!(
+            evidence.register,
+            Some(RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_REGISTER)
+        );
+        assert_eq!(evidence.observed_rp1_base, Some(0x1c_0000_0000));
+        assert_eq!(evidence.source_offset, Some(0x018064));
+        assert_eq!(evidence.cpu_physical_target, Some(0x1c_0001_8064));
+        assert_eq!(evidence.width_bits, Some(32));
+        assert_eq!(
+            evidence.allowed_write_value,
+            Some(RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_ALLOWED_WRITE_VALUE)
+        );
+        assert_eq!(
+            evidence.preserved_fields,
+            Some(RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_PRESERVED_FIELDS)
+        );
+        assert_eq!(
+            evidence.operation_sequence,
+            Some(RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_OPERATION_SEQUENCE)
+        );
+        assert_eq!(evidence.post_eq_pre_required, Some(true));
+        assert_eq!(evidence.restore_eq_pre_required, Some(true));
+        assert_eq!(
+            evidence.future_proof_classifications,
+            RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_FUTURE_CLASSIFICATIONS
+        );
+        assert_eq!(
+            evidence.hardware_proof_boundary_classification,
+            RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_BOUNDARY_CLASSIFICATION
+        );
+        assert_eq!(
+            evidence.rejected_runtime_claims,
+            RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_REJECTED_RUNTIME_CLAIMS
+        );
+        assert_eq!(
+            evidence.retained_risks,
+            RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_RETAINED_RISKS
+        );
+        assert!(!evidence.claims_ethernet_ready);
+        assert!(!evidence.claims_broad_mmio_ready);
+        assert!(!evidence.claims_unscoped_rp1_mmio_writes);
+        assert!(!evidence.claims_shared_clock_write);
+        assert!(!evidence.claims_tsu_same_shape_retry);
+        assert!(!evidence.claims_non_idempotent_transition);
+        assert!(!evidence.claims_reset_controller_ownership);
+        assert!(!evidence.claims_gpio32_phy_reset_ownership);
+        assert!(!evidence.claims_mdio_phy_ownership);
+        assert!(!evidence.claims_interrupt_ownership);
+        assert!(!evidence.claims_dma_descriptor_ownership);
+        assert!(!evidence.claims_packet_io);
+        assert!(!evidence.claims_networking);
+        assert!(!evidence.claims_sockets);
+        assert!(!evidence.claims_ssh);
+        assert!(!evidence.claims_phase_12_2);
+        assert!(!evidence.claims_phase_transition);
+        assert_eq!(
+            evidence.classification,
+            RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_CANDIDATE_CLASSIFICATION
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_clk_eth_ctrl_write_restore_formats_paired_control() {
+        let report = build_rp1_ethernet_clk_eth_ctrl_write_restore_report(
+            Rp1EthernetClkEthCtrlWriteRestoreReportInput {
+                kind: Rp1EthernetClockResetWriteRestoreReportKind::NoClockWriteNoEthernetControl,
+                target_contract: None,
+                ..accepted_ethernet_clk_eth_ctrl_write_restore_input()
+            },
+        )
+        .expect("valid CLK_ETH_CTRL write/restore control input");
+        let evidence = rp1_ethernet_clk_eth_ctrl_write_restore_report_evidence(report);
+
+        assert_eq!(
+            evidence.report_contract_id,
+            RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_REPORT_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.target_contract_id,
+            RP1_ETHERNET_CLK_ETH_CTRL_WRITE_TARGET_CONTRACT_ID
+        );
+        assert_eq!(evidence.report_kind, "no-clock-write-no-ethernet-control");
+        assert_eq!(evidence.target, None);
+        assert_eq!(evidence.clock_name, None);
+        assert_eq!(evidence.clock_id, None);
+        assert_eq!(evidence.register, None);
+        assert_eq!(evidence.observed_rp1_base, None);
+        assert_eq!(evidence.source_offset, None);
+        assert_eq!(evidence.cpu_physical_target, None);
+        assert_eq!(evidence.allowed_write_value, None);
+        assert_eq!(evidence.preserved_fields, None);
+        assert_eq!(evidence.operation_sequence, None);
+        assert_eq!(evidence.safety_invariants, None);
+        assert_eq!(evidence.post_eq_pre_required, None);
+        assert_eq!(evidence.restore_eq_pre_required, None);
+        assert_eq!(
+            evidence.classification,
+            RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_CONTROL_CLASSIFICATION
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_clk_eth_ctrl_write_restore_rejects_shape_and_overclaims() {
+        let input = accepted_ethernet_clk_eth_ctrl_write_restore_input();
+
+        assert_eq!(
+            build_rp1_ethernet_clk_eth_ctrl_write_restore_report(
+                Rp1EthernetClkEthCtrlWriteRestoreReportInput {
+                    target_contract: None,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::CandidateMissingTargetContract)
+        );
+        assert_eq!(
+            build_rp1_ethernet_clk_eth_ctrl_write_restore_report(
+                Rp1EthernetClkEthCtrlWriteRestoreReportInput {
+                    kind:
+                        Rp1EthernetClockResetWriteRestoreReportKind::NoClockWriteNoEthernetControl,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::ControlCarriesWriteTargetFacts)
+        );
+        assert_eq!(
+            build_rp1_ethernet_clk_eth_ctrl_write_restore_report(
+                Rp1EthernetClkEthCtrlWriteRestoreReportInput {
+                    target_contract: Some(Rp1EthernetClockResetWriteTargetContractEvidence {
+                        register: "CLK_ETH_TSU_CTRL",
+                        ..rp1_ethernet_clk_eth_ctrl_write_target_contract_evidence()
+                    }),
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::TargetContractTargetMismatch)
+        );
+        assert_eq!(
+            build_rp1_ethernet_clk_eth_ctrl_write_restore_report(
+                Rp1EthernetClkEthCtrlWriteRestoreReportInput {
+                    target_contract: Some(Rp1EthernetClockResetWriteTargetContractEvidence {
+                        allowed_write_value: "enable-bit-toggle",
+                        ..rp1_ethernet_clk_eth_ctrl_write_target_contract_evidence()
+                    }),
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::TargetContractFieldMismatch)
+        );
+        assert_eq!(
+            build_rp1_ethernet_clk_eth_ctrl_write_restore_report(
+                Rp1EthernetClkEthCtrlWriteRestoreReportInput {
+                    claims_shared_clock_write: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::SharedClockWriteClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_clk_eth_ctrl_write_restore_report(
+                Rp1EthernetClkEthCtrlWriteRestoreReportInput {
+                    claims_tsu_same_shape_retry: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::TsuSameShapeRetryClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_clk_eth_ctrl_write_restore_report(
+                Rp1EthernetClkEthCtrlWriteRestoreReportInput {
+                    claims_non_idempotent_transition: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::NonIdempotentTransitionClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_clk_eth_ctrl_write_restore_report(
+                Rp1EthernetClkEthCtrlWriteRestoreReportInput {
+                    claims_dma_descriptor_ownership: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::DmaDescriptorOwnershipClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_clk_eth_ctrl_write_restore_report(
+                Rp1EthernetClkEthCtrlWriteRestoreReportInput {
+                    claims_phase_transition: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetClkEthCtrlWriteRestoreReportError::PhaseTransitionClaim)
+        );
+        assert_eq!(
+            rejected_rp1_ethernet_clk_eth_ctrl_write_restore_report_evidence(
+                Rp1EthernetClkEthCtrlWriteRestoreReportError::PhaseTransitionClaim
             ),
             (
                 RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION,

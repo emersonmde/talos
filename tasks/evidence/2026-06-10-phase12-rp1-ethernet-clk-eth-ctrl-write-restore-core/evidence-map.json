@@ -1,0 +1,68 @@
+{
+  "task_id": "phase12-rp1-ethernet-clk-eth-ctrl-write-restore-core-20260610",
+  "inputs": [
+    {
+      "kind": "accepted_source_contract",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-clk-eth-ctrl-source-contract.md",
+      "commit": "fc12771db08a5837d304ecf6e8ed254e1f456db0"
+    },
+    {
+      "kind": "accepted_tsu_proof_closeout_context",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-clock-reset-write-restore-proof-closeout.md",
+      "commit": "7fced20c614f677a41def1b27bf76f3ed49ba5c8"
+    }
+  ],
+  "implementation": [
+    {
+      "path": "src/rp1_ethernet.rs",
+      "evidence": "local/static CLK_ETH_CTRL candidate and paired-control write-restore report surface"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static inspection",
+      "result": "passed",
+      "summary": "Inspected accepted source contract, retained source evidence references, TSU proof closeout context, and touched Rust source."
+    },
+    {
+      "gate": "cargo fmt --all",
+      "result": "passed"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet ethernet_clock_reset",
+      "result": "passed",
+      "summary": "483 no_std tests passed with QEMU 9.2.0 on PATH; includes accepted CLK_ETH_CTRL candidate, accepted control, and deterministic rejection coverage."
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed",
+      "summary": "HTML book written under book/; search-index size warning was informational."
+    },
+    {
+      "gate": "TALOS_BOOT_SCENARIO candidate/control compile checks",
+      "result": "not-run",
+      "summary": "Conditional gate did not apply because this task did not add or change candidate/control boot scenarios."
+    }
+  ],
+  "non_goals_preserved": [
+    "no Pi 5 hardware run",
+    "no boot archive publication",
+    "no hardwareTestLock acquisition",
+    "no RP1 MMIO write",
+    "no non-idempotent clock transition",
+    "no RP1_CLK_SYS pclk/hclk write",
+    "no CLK_ETH_TSU_CTRL same-shaped retry",
+    "no reset-controller write",
+    "no GPIO32/PHY reset",
+    "no MDIO",
+    "no DMA",
+    "no descriptors",
+    "no interrupts",
+    "no packet I/O",
+    "no networking",
+    "no sockets",
+    "no SSH",
+    "no Phase 12.2",
+    "no phase transition"
+  ]
+}
