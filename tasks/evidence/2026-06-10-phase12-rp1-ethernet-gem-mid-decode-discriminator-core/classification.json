@@ -1,0 +1,63 @@
+{
+  "task_id": "phase12-rp1-ethernet-gem-mid-decode-discriminator-core-20260610",
+  "classification": "rp1-ethernet-gem-mid-decode-discriminator-local-static-accepted",
+  "evidence_level": "local-static-rust-report-construction-and-focused-unit-tests",
+  "selected_by": "phase12-rp1-ethernet-gem-mid-blocker-reconciliation-closeout-20260610",
+  "candidate_shape": {
+    "same_run_required": true,
+    "changed_from_gem_mid_only_proof": true,
+    "observed_positive_control": {
+      "register": "SYSINFO_CHIP_ID",
+      "cpu_physical_target": "0x1c00000000",
+      "width_bits": 32,
+      "expected_value": "0x20001927",
+      "access": "read-only volatile load"
+    },
+    "ethernet_target": {
+      "controller": "rp1_eth",
+      "compatible": ["raspberrypi,rp1-gem", "cdns,macb"],
+      "register": "MACB_MID",
+      "rp1_bus_target": "0xc0401000fc",
+      "cpu_physical_target": "0x1f001000fc",
+      "width_bits": 32
+    },
+    "expected_candidate_classifications": [
+      "observed-rp1-positive-control-gem-mid-0x1f-window-sentinel",
+      "observed-rp1-positive-control-and-gem-mid-visible",
+      "observed-rp1-positive-control-sentinel",
+      "staging/build-blocker"
+    ]
+  },
+  "control_shape": {
+    "classification": "no-mmio-no-ethernet-rp1-ethernet-gem-mid-decode-discriminator-control",
+    "observed_positive_control_target": "not-constructed",
+    "ethernet_mmio_target": "not-constructed"
+  },
+  "rejected_claims": [
+    "ethernet-driver-readiness",
+    "broad-live-ethernet-mmio-readiness",
+    "rp1-mmio-dma-programming",
+    "descriptor-rings",
+    "dma-ownership",
+    "transfer-completion",
+    "interrupt-completion",
+    "clock-reset-ownership",
+    "phy-reset-ownership",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "retained_risks": [
+    "translated-0x1f-rp1-window-sentinel-source-remains-unproven",
+    "pcie2-bridge-or-window-enable-state-remains-unaccepted",
+    "ethernet-clock-reset-dependency-remains-unaccepted",
+    "no-live-gem-identity",
+    "no-broad-ethernet-mmio-readiness",
+    "no-phy-reset-or-mdio-ownership",
+    "no-packet-io"
+  ],
+  "next_action": "Promote phase12-rp1-ethernet-gem-mid-decode-discriminator-closeout-20260610 on the next worker wake; no hardware action is authorized by this local/static core."
+}

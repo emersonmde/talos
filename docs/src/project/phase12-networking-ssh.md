@@ -120,3 +120,20 @@ observed RP1 `SYSINFO_CHIP_ID` at `0x1c00000000` as the positive control plus
 This still rejects live GEM visibility, broad Ethernet MMIO readiness, Ethernet
 driver readiness, packet I/O, DMA, interrupts, clock/reset ownership, PHY reset
 ownership, networking, sockets, SSH, Phase 12.2, and phase transition work.
+
+## GEM MID Decode Discriminator Core
+
+phase12-rp1-ethernet-gem-mid-decode-discriminator-core-20260610 accepts only
+the local/static report construction for that changed discriminator. The
+candidate report requires the same-run observed RP1 `SYSINFO_CHIP_ID`
+positive-control target at `0x1c00000000`, expected value `0x20001927`, plus
+the source-backed `MACB_MID` target at `0x1f001000fc`. The paired control uses
+the same report contract but constructs neither the observed RP1 target nor
+the Ethernet MMIO target.
+
+This core does not run hardware or accept live GEM visibility. It only makes a
+later hardware proof mechanically different from the accepted GEM MID-only
+proof. Ethernet driver readiness, broad Ethernet MMIO readiness, RP1 MMIO/DMA
+programming, descriptor rings, interrupts, clock/reset ownership, PHY reset
+ownership, packet I/O, networking, sockets, SSH, Phase 12.2, and phase
+transition work remain unaccepted.
