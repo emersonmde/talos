@@ -1,0 +1,70 @@
+{
+  "task_id": "phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof-20260610",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof.md",
+      "evidence_level": "hardware proof task record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof/classification.json",
+      "evidence_level": "accepted hardware classification"
+    },
+    {
+      "label": "capture summary",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof/capture-summary.json",
+      "evidence_level": "candidate/control capture-chain-v4 summary"
+    },
+    {
+      "label": "candidate archive review",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof/archive-review/candidate-review.txt",
+      "evidence_level": "image/archive inspection"
+    },
+    {
+      "label": "control archive review",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof/archive-review/control-review.txt",
+      "evidence_level": "image/archive inspection"
+    },
+    {
+      "label": "candidate identity join",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof/candidate-run/identity-join-v4-check.json",
+      "evidence_level": "repaired capture-chain replay"
+    },
+    {
+      "label": "control identity join",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof/control-run/identity-join-v4-check.json",
+      "evidence_level": "repaired capture-chain replay"
+    },
+    {
+      "label": "candidate serial window",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof/candidate-run/serial-observe-window.json",
+      "evidence_level": "serial hardware output"
+    },
+    {
+      "label": "control serial window",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof/control-run/serial-observe-window.json",
+      "evidence_level": "serial hardware output"
+    },
+    {
+      "label": "candidate TFTP delta",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof/candidate-run/tftp-delta-stable-pre-restore.json",
+      "evidence_level": "TFTP/capture evidence"
+    },
+    {
+      "label": "control TFTP delta",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof/control-run/tftp-delta-stable-pre-restore.json",
+      "evidence_level": "TFTP/capture evidence"
+    },
+    {
+      "label": "pre-run snapshot",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof/pre-run-snapshot-create.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "final restore",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof/final-restore-snapshot.json",
+      "evidence_level": "post-run restore evidence"
+    }
+  ]
+}

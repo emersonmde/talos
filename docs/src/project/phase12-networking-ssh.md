@@ -173,3 +173,21 @@ supervisor planning for capture-chain repair or a different bounded acceptance
 slice before any same-shaped Pi 5 retry. Ethernet driver readiness, packet
 I/O, DMA, interrupts, networking, sockets, SSH, Phase 12.2, and phase
 transition work remain unaccepted.
+
+## GEM MID Decode Discriminator V2 Pi 5 Proof
+
+phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof-20260610
+accepts the repaired pi5-capture-chain-v4 hardware proof as
+observed-rp1-positive-control-gem-mid-0x1f-window-sentinel. The candidate and
+paired no-MMIO/no-Ethernet control both joined selected-tree identity, expected
+TFTP fetch bytes, run-unique serial marker freshness, final pre-restore
+identity, and restore evidence. The candidate observed SYSINFO_CHIP_ID at
+0x1c00000000 as 0x20001927 and translated MACB_MID at 0x1f001000fc as
+0xdeaddead.
+
+This closes the capture-chain blocker but preserves the hardware blocker: the
+accepted result is still the translated 0x1f GEM MID sentinel, not live GEM
+visibility. PCIe/RP1 bridge or address-window enablement, Ethernet
+clock/reset, PHY/MDIO ownership, interrupts, DMA, descriptor rings, packet
+I/O, networking, sockets, SSH, Phase 12.2, and phase transition work remain
+unaccepted.

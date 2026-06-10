@@ -9158,6 +9158,19 @@ discriminator is a local/static same-run report with observed
 `SYSINFO_CHIP_ID` at `0x1c00000000` as positive control plus `MACB_MID` at
 `0x1f001000fc`, paired with a no-MMIO/no-Ethernet control.
 
+phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof-20260610
+accepts the repaired pi5-capture-chain-v4 serialized hardware proof as
+`observed-rp1-positive-control-gem-mid-0x1f-window-sentinel`. Candidate and
+control evidence now join selected-tree identity, expected TFTP fetch bytes,
+run-unique serial markers, final pre-restore identity, and restore proof. The
+candidate observed `SYSINFO_CHIP_ID` at `0x1c00000000` as `0x20001927`
+and translated `MACB_MID` at `0x1f001000fc` as `0xdeaddead`; the paired
+control retained the no-MMIO/no-Ethernet marker without constructing RP1 or
+Ethernet MMIO targets. This accepts the repaired capture path and the retained
+`0x1f` sentinel result, not live GEM visibility, broad Ethernet MMIO
+readiness, Ethernet driver readiness, packet I/O, DMA/descriptors, interrupts,
+networking, sockets, SSH, Phase 12.2, or a phase transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

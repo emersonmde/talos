@@ -1,0 +1,70 @@
+{
+  "task_id": "phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof-20260610",
+  "classification": "observed-rp1-positive-control-gem-mid-0x1f-window-sentinel",
+  "evidence_level": [
+    "image/archive inspection",
+    "lab-controller API",
+    "serial hardware output",
+    "TFTP/capture evidence",
+    "post-run restore evidence"
+  ],
+  "capture_chain_contract_version": "pi5-capture-chain-v4",
+  "hardware_lock": {
+    "acquired": true,
+    "released_after_restore": true,
+    "restore_snapshot": "pre-gem-mid-decode-discriminator-v2-proof-20260610T0516Z",
+    "final_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "candidate": {
+    "nonce": "gemdisc-v2-candidate-20260610T051645Z-b4d146e9",
+    "archive_sha256": "a26c7a6f71ed886bc58cc4d0e07d599c194fb81c5f4eb473fbaed650f8c367d4",
+    "kernel_2712_sha256": "255c89d8680b5fd6afff028e5a9aad402aecb3836021d2bc71391c574e7eecc8",
+    "kernel_2712_size": 49176,
+    "selected_tree_hash": "99ba865fff0ce6829f0525fb0a20580205e8e12f5deab91139acf45d2d9f15b1",
+    "identity_join_classification": "capture-chain-v4-ready",
+    "decisive_rp1_hardware_classification_allowed": true,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "serial_marker_occurrences": 62,
+    "observed_sysinfo_chip_id_raw": "0x20001927",
+    "observed_gem_mid_raw": "0xdeaddead",
+    "accepted_result": "observed-rp1-positive-control-gem-mid-0x1f-window-sentinel"
+  },
+  "control": {
+    "nonce": "gemdisc-v2-control-20260610T051645Z-b4d146e9",
+    "archive_sha256": "fe8e3867ddb635a0efbaf34f0bcdc00529be50cda74deb726a05ac574bb49f8d",
+    "kernel_2712_sha256": "10b962002346cf08972d215d071a3c760a2eea0fac8aa485d5560d3682e20af3",
+    "kernel_2712_size": 48432,
+    "selected_tree_hash": "4a52e74fb0e9007d4689053c7296cdc6722e354fff78827f958f8c85870d6494",
+    "identity_join_classification": "capture-chain-v4-ready",
+    "decisive_rp1_hardware_classification_allowed": true,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "serial_marker_occurrences": 64,
+    "accepted_result": "no-mmio-no-ethernet-rp1-ethernet-gem-mid-decode-discriminator-control"
+  },
+  "rejected_claims": [
+    "live-gem-visibility",
+    "broad-live-ethernet-mmio-readiness",
+    "ethernet-driver-readiness",
+    "rp1-mmio-dma-programming",
+    "descriptor-rings",
+    "dma-ownership",
+    "transfer-completion",
+    "interrupt-completion",
+    "clock-reset-ownership",
+    "phy-reset-ownership",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "retained_risks": [
+    "pci-rp1-bridge-or-window-enablement-unaccepted",
+    "ethernet-clock-reset-and-phy-mdio-ownership-unaccepted",
+    "packet-io-networking-sockets-ssh-out-of-scope"
+  ],
+  "next_action": "Promote phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-closeout-20260610 on the next worker wake."
+}
