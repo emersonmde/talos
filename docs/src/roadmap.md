@@ -9236,6 +9236,17 @@ ownership, MDIO transactions, interrupt delivery/completion, DMA, descriptor
 rings, packet I/O, networking, sockets, SSH, Phase 12.2, and phase transition
 remain unaccepted.
 
+phase12-rp1-ethernet-prereq-ownership-report-core-20260610 accepts the
+local/static report-core implementation selected by that source contract. The
+candidate report preserves source-backed prerequisite metadata for rp1_eth
+clocks, RP1_INT_ETH, RGMII-ID phy1, RP1 GPIO32 active-low reset, PHY/MDIO
+policy, DMA/descriptor dependency policy, and context-only observed-window
+MACB_MID identity. The paired control withholds candidate-only prerequisite
+facts and carries no-ownership-no-ethernet-rp1-ethernet-prereq-control. This
+is not hardware evidence and does not accept Ethernet readiness, RP1 MMIO
+writes, clock/reset/GPIO/PHY/MDIO ownership, DMA, descriptor rings, packet
+I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

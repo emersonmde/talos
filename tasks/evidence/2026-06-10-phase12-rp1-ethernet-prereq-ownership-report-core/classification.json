@@ -1,0 +1,45 @@
+{
+  "task_id": "phase12-rp1-ethernet-prereq-ownership-report-core-20260610",
+  "classification": "rp1-ethernet-prereq-ownership-report-core-accepted",
+  "evidence_level": [
+    "local/static implementation",
+    "static inspection",
+    "fmt",
+    "QEMU-backed no_std tests",
+    "JSON validation",
+    "docs validation",
+    "diff checks"
+  ],
+  "accepted_claims": [
+    "deterministic candidate prerequisite ownership report construction",
+    "paired no-ownership/no-Ethernet prerequisite control report construction",
+    "source-backed rp1_eth clock, interrupt, PHY reset, PHY/MDIO, and DMA/descriptor prerequisite metadata",
+    "observed-window MACB_MID identity retained as context-only metadata",
+    "validators reject source-shape bypasses and forbidden ownership/readiness claims"
+  ],
+  "rejected_claims": [
+    "Ethernet driver readiness",
+    "broad Ethernet MMIO readiness",
+    "RP1 MMIO writes",
+    "clock/reset ownership or writes",
+    "GPIO32 ownership or PHY reset assertion/deassertion",
+    "MDIO transactions or PHY ownership",
+    "interrupt delivery, handler ownership, or completion",
+    "DMA, descriptor rings, channel ownership, or transfer completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition",
+    "hardware proof"
+  ],
+  "retained_risks": [
+    "observed-window MACB_MID identity does not prove clocks, PHY, MDIO, DMA, interrupts, or packet behavior",
+    "source facts identify required prerequisites but not Talos ownership",
+    "report-core is local/static only and must not be treated as hardware evidence",
+    "any later hardware proof is limited to report visibility unless future scope supplies different acceptance criteria"
+  ],
+  "next_action": "phase12-rp1-ethernet-prereq-ownership-report-closeout-20260610",
+  "commit": "pending"
+}

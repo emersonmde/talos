@@ -328,3 +328,14 @@ accept Ethernet driver readiness, broad Ethernet MMIO readiness, RP1 MMIO
 writes, clock/reset ownership, GPIO32 or PHY reset ownership, MDIO
 transactions, interrupt delivery/completion, DMA, descriptor rings, packet
 I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
+
+phase12-rp1-ethernet-prereq-ownership-report-core-20260610 implements that
+local/static report surface. The candidate report preserves the contract id,
+source task id, observed-window MACB_MID identity context, rp1_eth source
+window, RP1_INT_ETH 6, pclk/hclk/tsu_clk/tx_clk clock names and clock ids,
+RGMII-ID phy1, RP1 GPIO32 active-low reset duration, PHY/MDIO policy, and
+DMA/descriptor dependency policy. The paired control uses the same reporting
+path while withholding candidate-only Ethernet prerequisite facts and carrying
+no-ownership-no-ethernet-rp1-ethernet-prereq-control. This remains
+local/static evidence only and does not accept hardware/runtime ownership,
+packet I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
