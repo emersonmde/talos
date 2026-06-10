@@ -1,0 +1,50 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof-20260610",
+  "classification": "rp1-ethernet-gpio32-phy-reset-readonly-preflight-visible-with-control",
+  "evidence_level": "serial hardware boot/output",
+  "accepted_claims": [
+    "Pi 5 candidate/control capture-chain-v4 proof accepted only read-only GPIO32 PHY-reset preflight visibility/control output.",
+    "Candidate serial output contains the accepted GPIO32/ETH_RST_N read-only preflight report fields.",
+    "Paired control serial output uses the same path while withholding candidate-only GPIO32/PHY-reset facts.",
+    "Final lab boot tree was restored to the prior accepted baseline."
+  ],
+  "rejected_claims": [
+    "GPIO ownership",
+    "PHY reset assertion/deassertion",
+    "MDIO/PHY ownership",
+    "GPIO/RIO/pad/MMIO writes",
+    "Ethernet driver readiness",
+    "DMA or descriptor readiness",
+    "interrupt completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "GPIO32/ETH_RST_N source and preflight visibility do not prove Talos can safely drive or restore the line.",
+    "Phase 11 GPIO frontiers have not accepted GPIO32 ownership or write/restore authority.",
+    "MDIO/PHY ownership remains unaccepted.",
+    "A write-backed PHY reset task still requires separate supervisor planning and acceptance criteria."
+  ],
+  "candidate": {
+    "selected_tree_hash": "25933d095429b5b91ab2185caa1e5c2ce586346452d838a853dbebacea5c4ba7",
+    "expected_fetch_byte_count": 49528,
+    "serial_marker_occurrences": 21,
+    "hardware_classification": "rp1-ethernet-gpio32-phy-reset-readonly-preflight-report-visible"
+  },
+  "control": {
+    "selected_tree_hash": "ddd753ab2040cdadde6a6b665b24a96886db2377be76bac006806ea035907bda",
+    "expected_fetch_byte_count": 48688,
+    "serial_marker_occurrences": 29,
+    "hardware_classification": "no-gpio-no-ethernet-rp1-ethernet-gpio32-phy-reset-control"
+  },
+  "final_post_restore": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "da591740_kernel_2712_bytes": 104136
+  },
+  "next_action": "Mechanically promote phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-proof-closeout-20260610 on the next worker wake."
+}

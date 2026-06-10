@@ -1,0 +1,10 @@
+candidate_archive=target/talos-rpi5-rp1-ethernet-gpio32-phy-reset-preflight-candidate.tar.gz
+candidate_archive_sha256=1bb11f9024e3652b6f99214c578990fc135a14b13606884bf9df2d316e37eb89
+kernel_2712_sha256=17ca70a5a5429e8fe2aa35a74e298e28307a8d9d62a467601a44d3a084ef97bc
+kernel_2712_size=49528
+header_image_size=49528
+text_offset=0
+flags=12
+candidate_marker=TALOS: rp1-ethernet-gpio32-phy-reset-preflight-candidate
+capture_nonce=gpio32-phy-reset-candidate-20260610T1608Z
+forbidden_gpio32_phy_reset_candidate_runtime_strings_absent=true

@@ -1,0 +1,80 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof-20260610",
+  "evidence_level": "image/archive inspection, lab-controller API, serial hardware boot/output, TFTP/capture evidence, capture-chain-v4 replay, and restore proof",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof.md"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof/classification.json"
+    },
+    {
+      "label": "capture summary",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof/capture-summary.json"
+    },
+    {
+      "label": "candidate archive review",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof/archive-review/candidate-review.txt"
+    },
+    {
+      "label": "control archive review",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof/archive-review/control-review.txt"
+    },
+    {
+      "label": "candidate identity join",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof/candidate-run/identity-join-v4-check.json"
+    },
+    {
+      "label": "candidate serial",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof/candidate-run/serial-observe-window.json"
+    },
+    {
+      "label": "candidate tftp",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof/candidate-run/tftp-delta-stable-pre-restore.json"
+    },
+    {
+      "label": "control identity join",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof/control-run/identity-join-v4-check.json"
+    },
+    {
+      "label": "control serial",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof/control-run/serial-observe-window.json"
+    },
+    {
+      "label": "control tftp",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof/control-run/tftp-delta-stable-pre-restore.json"
+    },
+    {
+      "label": "final restore status",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof/final-post-restore-status.json"
+    },
+    {
+      "label": "source",
+      "path": "src/target/rpi5.rs"
+    },
+    {
+      "label": "entry dispatch",
+      "path": "src/main.rs"
+    },
+    {
+      "label": "scenario allowlist",
+      "path": "build.rs"
+    },
+    {
+      "label": "scripts",
+      "path": "scripts/rpi5-rp1-ethernet-gpio32-phy-reset-preflight-*"
+    }
+  ],
+  "validation": [
+    "cargo fmt --all -- --check",
+    "cargo -Zjson-target-spec check --quiet --target targets/aarch64-talos-rpi5-bcm2712.json",
+    "candidate/control archive review scripts",
+    "rpi5-proof-identity-join-v4-check.sh for candidate and control",
+    "jq empty on task-owned JSON",
+    "git diff --check",
+    "mdbook build",
+    "git diff --cached --check"
+  ]
+}

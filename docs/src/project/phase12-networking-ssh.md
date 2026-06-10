@@ -725,3 +725,27 @@ candidate/control capture requirements. This closeout does not select a
 write-backed GPIO32 reset task and does not accept GPIO ownership, PHY reset
 assertion/deassertion, MDIO/PHY ownership, packet I/O, networking, SSH, Phase
 12.2, or a phase transition.
+
+phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof-20260610
+accepts the serialized Pi 5 read-only preflight visibility/control proof as
+rp1-ethernet-gpio32-phy-reset-readonly-preflight-visible-with-control. The
+candidate joined capture-chain-v4 selected-tree identity
+25933d095429b5b91ab2185caa1e5c2ce586346452d838a853dbebacea5c4ba7, two
+matching TFTP fetches of da591740/kernel_2712.img at 49528 bytes, run-unique
+serial freshness, final pre-restore identity, and restore proof. Its serial
+line retained the accepted GPIO32 / ETH_RST_N preflight fields and
+classification
+rp1-ethernet-gpio32-phy-reset-readonly-preflight-report-visible.
+
+The paired no-GPIO/no-Ethernet control joined selected-tree identity
+ddd753ab2040cdadde6a6b665b24a96886db2377be76bac006806ea035907bda, two
+matching TFTP fetches at 48688 bytes, run-unique serial freshness, final
+identity, and restore proof while withholding candidate-only GPIO32/PHY-reset
+facts with classification
+no-gpio-no-ethernet-rp1-ethernet-gpio32-phy-reset-control. Final restore
+returned the lab boot tree to
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 with
+effective kernel kernel_2712.img and da591740/kernel_2712.img at 104136 bytes.
+This proof does not accept GPIO ownership, PHY reset assertion/deassertion,
+MDIO/PHY ownership, GPIO/RIO/pad/MMIO writes, Ethernet driver readiness,
+packet I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.

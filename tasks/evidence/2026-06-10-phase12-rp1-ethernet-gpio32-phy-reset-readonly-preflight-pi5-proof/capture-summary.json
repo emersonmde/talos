@@ -1,0 +1,79 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof-20260610",
+  "classification": "rp1-ethernet-gpio32-phy-reset-readonly-preflight-visible-with-control",
+  "evidence_level": "serial hardware boot/output",
+  "candidate": {
+    "label": "gpio32-phy-reset-preflight-candidate",
+    "selected_tree_hash": "25933d095429b5b91ab2185caa1e5c2ce586346452d838a853dbebacea5c4ba7",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 49528,
+    "identity_join": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": []
+    },
+    "serial_marker_occurrences": 21,
+    "nonce_occurrences": 21,
+    "hardware_classification": "rp1-ethernet-gpio32-phy-reset-readonly-preflight-report-visible",
+    "archive_review": [
+      "candidate_archive=target/talos-rpi5-rp1-ethernet-gpio32-phy-reset-preflight-candidate.tar.gz",
+      "candidate_archive_sha256=1bb11f9024e3652b6f99214c578990fc135a14b13606884bf9df2d316e37eb89",
+      "kernel_2712_sha256=17ca70a5a5429e8fe2aa35a74e298e28307a8d9d62a467601a44d3a084ef97bc",
+      "kernel_2712_size=49528",
+      "header_image_size=49528",
+      "text_offset=0",
+      "flags=12",
+      "candidate_marker=TALOS: rp1-ethernet-gpio32-phy-reset-preflight-candidate",
+      "capture_nonce=gpio32-phy-reset-candidate-20260610T1608Z",
+      "forbidden_gpio32_phy_reset_candidate_runtime_strings_absent=true"
+    ]
+  },
+  "control": {
+    "label": "gpio32-phy-reset-preflight-control",
+    "selected_tree_hash": "ddd753ab2040cdadde6a6b665b24a96886db2377be76bac006806ea035907bda",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 48688,
+    "identity_join": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": []
+    },
+    "serial_marker_occurrences": 29,
+    "nonce_occurrences": 29,
+    "hardware_classification": "no-gpio-no-ethernet-rp1-ethernet-gpio32-phy-reset-control",
+    "archive_review": [
+      "control_archive=target/talos-rpi5-rp1-ethernet-gpio32-phy-reset-preflight-control.tar.gz",
+      "control_archive_sha256=264ed64e4629ad2f6477b2af6cc8c9b900ba7b0987cbd1d174a56592584e729f",
+      "kernel_2712_sha256=a68ebcf7a7e0c7c2165a110e60d336d5453d1c49d8df9406223f5f4260394673",
+      "kernel_2712_size=48688",
+      "header_image_size=48688",
+      "text_offset=0",
+      "flags=12",
+      "control_marker=TALOS: rp1-ethernet-gpio32-phy-reset-preflight-control",
+      "capture_nonce=gpio32-phy-reset-control-20260610T1608Z",
+      "forbidden_gpio32_phy_reset_control_runtime_strings_absent=true"
+    ]
+  },
+  "final_post_restore": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "da591740_kernel_2712_bytes": 104136
+  },
+  "rejected_claims": [
+    "GPIO ownership",
+    "PHY reset assertion/deassertion",
+    "MDIO/PHY ownership",
+    "GPIO/RIO/pad/MMIO writes",
+    "Ethernet driver readiness",
+    "DMA or descriptor readiness",
+    "interrupt completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ]
+}
