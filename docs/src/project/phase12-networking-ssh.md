@@ -520,3 +520,18 @@ descriptors, interrupts, packet I/O, networking, sockets, SSH, Phase 12.2, and
 phase transition. It selects the local/static write/restore report core as the
 next bounded follow-up; no hardware action or runtime write is accepted by the
 source contract itself.
+
+phase12-rp1-ethernet-clock-reset-write-restore-core-20260610 and its closeout
+accept only the local/static candidate/control report surface for the selected
+CLK_ETH_TSU_CTRL write/restore target. The candidate preserves the exact
+0x1c00018134 target, pre-read-raw-only write rule, operation sequence,
+preserved fields, safety invariants, retained risks, and future proof
+classification set; the paired control uses the same output path while
+withholding writable target construction and candidate-only facts. The next
+bounded task is the serialized Pi 5 candidate/control write/restore proof with
+hardwareTestLock, selected-tree identity, expected TFTP fetches, fresh serial
+markers, final pre-restore identity, restore verification, archive reviews,
+classification JSON, evidence map, and capture summary. Broad clock/reset
+ownership, shared-clock ownership, reset-controller, GPIO32/PHY, MDIO, DMA,
+descriptors, interrupts, packet I/O, networking, sockets, SSH, Phase 12.2, and
+phase transition remain unaccepted.

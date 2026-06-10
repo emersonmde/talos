@@ -1,0 +1,41 @@
+{
+  "task_id": "phase12-rp1-ethernet-clock-reset-write-restore-closeout-20260610",
+  "classification": "rp1-ethernet-clock-reset-write-restore-core-frontier-closed",
+  "evidence_level": "static inspection",
+  "accepted_claims": [
+    "local/static CLK_ETH_TSU_CTRL write/restore report core is reconciled and closed",
+    "candidate report preserves the exact selected target at 0x1c00018134, allowed pre-read raw write value, operation sequence, preserved fields, safety invariants, retained risks, and future proof classifications",
+    "paired control uses the same report path while withholding writable target construction and candidate-only clock/reset facts",
+    "focused tests and compile checks support only local/static candidate/control report construction and rejection of forbidden claims",
+    "same-shaped local/static report retries are closed for this candidate/control pair"
+  ],
+  "rejected_claims": [
+    "runtime RP1 MMIO write or hardware restore proof",
+    "broad clock/reset ownership",
+    "shared RP1_CLK_SYS ownership or pclk/hclk transition",
+    "CLK_ETH_CTRL ownership",
+    "reset-controller ownership",
+    "GPIO32 or PHY reset ownership",
+    "MDIO or PHY ownership",
+    "DMA, descriptor rings, transfer completion, or interrupt completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "The accepted core is local/static and does not prove Pi 5 hardware readback or restore behavior.",
+    "The selected idempotent target proves only one Ethernet-private clock-manager store/readback boundary once hardware-proven.",
+    "CLK_ETH_CTRL remains unselected and requires separate acceptance criteria.",
+    "PHY reset remains GPIO32/MDIO-owned and outside this task.",
+    "Future hardware proof must capture selected-tree identity, expected TFTP fetches, fresh serial markers, final pre-restore identity, restore proof, archive reviews, classification JSON, evidence map, and capture summary."
+  ],
+  "source_contract_commit": "c16b209a4fd75199306ec0cf1655c0e5e2e9fbf2",
+  "core_commit": "26f4ba1e5563abf2bea2b2a649824b8eba05b980",
+  "hardware_test_lock_required_for_next_action": true,
+  "same_shaped_retry_policy": "closed-for-this-local-static-candidate-control-pair",
+  "next_action": "Mechanically promote phase12-rp1-ethernet-clock-reset-write-restore-pi5-proof-20260610 on the next worker wake if hardwareTestLock remains unlocked; acquire hardwareTestLock before archive publication, staging, or power cycling and keep the proof bounded to candidate/control CLK_ETH_TSU_CTRL write/restore evidence.",
+  "commit": "recorded-in-supervisor-state-after-acceptance"
+}
