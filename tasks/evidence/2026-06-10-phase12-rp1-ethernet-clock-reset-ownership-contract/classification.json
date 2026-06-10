@@ -1,0 +1,40 @@
+{
+  "task": "phase12-rp1-ethernet-clock-reset-ownership-contract-20260610",
+  "status": "accepted",
+  "classification": "rp1-ethernet-clock-reset-ownership-contract-accepted",
+  "evidence_level": "static inspection",
+  "accepted_claims": [
+    "accepted input frontier is observed-window MACB_MID identity plus prerequisite report visibility/control output",
+    "pclk and hclk map to shared RP1_CLK_SYS id 12 and must not be disabled or transitioned by an Ethernet ownership task",
+    "tsu_clk maps to RP1_CLK_ETH_TSU id 29 and tx_clk maps to RP1_CLK_ETH id 16 as source facts only",
+    "retained Pi 5 rp1_eth node supplies no accepted reset-controller write target",
+    "PHY reset through RP1 GPIO32 active low is separate GPIO/MDIO ownership",
+    "future write-backed ownership requires read-only baseline, exact register/source contract, readback, restore, and paired control evidence",
+    "next mechanically objective follow-up is the local/static clock-reset guard core"
+  ],
+  "rejected_claims": [
+    "Ethernet driver readiness",
+    "broad Ethernet MMIO readiness",
+    "RP1 MMIO writes",
+    "clock/reset writes or ownership",
+    "RP1_CLK_SYS transition through pclk or hclk",
+    "reset-controller ownership",
+    "GPIO32 or PHY reset ownership",
+    "MDIO transactions or PHY ownership",
+    "interrupt delivery or completion",
+    "DMA or descriptor rings",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "clock source facts are not Talos ownership",
+    "shared RP1_CLK_SYS pclk/hclk require stricter safety than Ethernet-private clocks",
+    "tx_clk and tsu_clk require a future source contract for exact register targets and restore semantics before hardware writes",
+    "PHY reset must remain a separate GPIO32/MDIO ownership task"
+  ],
+  "next_action": "phase12-rp1-ethernet-clock-reset-guard-core-20260610"
+}

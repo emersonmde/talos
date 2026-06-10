@@ -1,0 +1,71 @@
+{
+  "task": "phase12-rp1-ethernet-clock-reset-ownership-contract-20260610",
+  "classification": "rp1-ethernet-clock-reset-ownership-contract-accepted",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-clock-reset-ownership-contract.md",
+      "evidence_level": "static inspection record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-ownership-contract/classification.json",
+      "evidence_level": "structured classification"
+    },
+    {
+      "label": "accepted prerequisite proof closeout",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-prereq-ownership-proof-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted prerequisite Pi 5 proof",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-prereq-ownership-pi5-proof.md",
+      "evidence_level": "serial hardware boot/output record"
+    },
+    {
+      "label": "accepted prerequisite source contract",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-prereq-ownership-source-contract.md",
+      "evidence_level": "static source contract"
+    },
+    {
+      "label": "rp1_eth source node",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1.dtsi",
+      "evidence_level": "retained Linux source excerpt"
+    },
+    {
+      "label": "Pi 5 rp1_eth enablement",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-bcm2712-rpi-5-b.dts",
+      "evidence_level": "retained Linux source excerpt"
+    },
+    {
+      "label": "RP1 clock IDs",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1-clock.h",
+      "evidence_level": "retained Linux source excerpt"
+    },
+    {
+      "label": "Cadence MACB clock/reset source",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-macb_main.c",
+      "evidence_level": "retained Linux source excerpt"
+    },
+    {
+      "label": "Cadence MACB binding",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-cdns-macb.yaml",
+      "evidence_level": "retained Linux source excerpt"
+    },
+    {
+      "label": "Phase 11 clock/reset frontier",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "evidence_level": "architecture doc"
+    },
+    {
+      "label": "Phase 12 doc",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "evidence_level": "architecture doc"
+    },
+    {
+      "label": "roadmap",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "program roadmap"
+    }
+  ]
+}

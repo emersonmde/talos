@@ -397,3 +397,27 @@ Ethernet driver readiness, broad Ethernet MMIO readiness, RP1 MMIO writes,
 clock/reset ownership, GPIO32/PHY reset ownership, MDIO/PHY ownership,
 interrupt delivery/completion, DMA, descriptor rings, packet I/O, networking,
 sockets, SSH, Phase 12.2, or a phase transition.
+
+## RP1 Ethernet Clock/Reset Ownership Contract
+
+phase12-rp1-ethernet-clock-reset-ownership-contract-20260610 defines the next
+clock/reset ownership slice as a contract only. The accepted input frontier is
+observed-window MACB_MID identity plus prerequisite report visibility/control
+output. It does not reinterpret that report as runtime ownership.
+
+The contract identifies the exact source/API surfaces for the next guard:
+rp1_eth clock names pclk, hclk, tsu_clk, and tx_clk; clock ids
+RP1_CLK_SYS 12 for pclk/hclk, RP1_CLK_ETH_TSU 29 for tsu_clk, and
+RP1_CLK_ETH 16 for tx_clk; Linux macb_clk_init as the source enable path; and
+the retained Pi 5 rp1_eth node's lack of an accepted reset-controller target.
+PHY reset through RP1 GPIO32 remains GPIO/MDIO ownership, not clock/reset
+ownership.
+
+Any future write-backed ownership task must first prove a read-only baseline,
+map the selected clock id to an exact Talos register target and restore
+sequence, avoid disabling or transitioning shared RP1_CLK_SYS through pclk or
+hclk, use pre-read/post-read/restore-read evidence, and keep PHY/MDIO,
+interrupts, DMA, descriptors, packets, networking, sockets, SSH, Phase 12.2,
+and phase transition out of scope. The selected follow-up is only a
+local/static clock-reset guard core with a paired no-clock-reset/no-Ethernet
+control.

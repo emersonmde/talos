@@ -9271,6 +9271,20 @@ ownership or implementation slice before any runtime prerequisite ownership,
 Ethernet driver work, RP1 MMIO writes, DMA, descriptor rings, interrupts,
 packet I/O, networking, sockets, SSH, Phase 12.2, or phase-transition work.
 
+phase12-rp1-ethernet-clock-reset-ownership-contract-20260610 accepts the next
+bounded clock/reset ownership contract after supervisor planning. The accepted
+input frontier is still observed-window MACB_MID identity plus prerequisite
+report visibility/control output. The contract names pclk/hclk/tsu_clk/tx_clk,
+their RP1 clock IDs, Linux macb_clk_init enable behavior, the shared-clock
+safety rule for RP1_CLK_SYS pclk/hclk, and the absence of an accepted Pi 5
+rp1_eth reset-controller target. It requires a read-only baseline and exact
+future register/restore contract before any write-backed ownership, keeps PHY
+reset in the GPIO32/MDIO slice, and selects only the local/static clock-reset
+guard core as the next bounded follow-up. Ethernet driver readiness, broad
+Ethernet MMIO readiness, clock/reset writes or ownership, PHY/MDIO, DMA,
+descriptors, interrupts, packet I/O, networking, sockets, SSH, Phase 12.2, and
+phase transition remain unaccepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
