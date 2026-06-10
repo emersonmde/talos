@@ -1,0 +1,37 @@
+{
+  "task": "phase12-rp1-ethernet-gem-mid-source-contract-20260609",
+  "status": "accepted",
+  "classification": "rp1-ethernet-gem-mid-source-contract-accepted",
+  "task_record": "tasks/2026-06-09-phase12-rp1-ethernet-gem-mid-source-contract.md",
+  "classification_json": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-source-contract/classification.json",
+  "retained_source": {
+    "rp1_dtsi": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1.dtsi",
+    "macb_main": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-macb_main.c",
+    "macb_header": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-source-contract/source/linux-rpi-6.12-macb.h",
+    "source_url": "https://raw.githubusercontent.com/raspberrypi/linux/rpi-6.12.y/drivers/net/ethernet/cadence/macb.h"
+  },
+  "inputs": {
+    "source_inventory_task": "tasks/2026-06-09-phase12-rp1-ethernet-source-inventory.md",
+    "source_inventory_classification": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/classification.json",
+    "path_adr_task": "tasks/2026-06-09-phase12-rp1-ethernet-path-adr.md",
+    "path_adr_classification": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-path-adr/classification.json",
+    "phase11_closeout": "tasks/2026-06-09-phase11-rp1-hardware-substrate-closeout.md",
+    "phase12_project_note": "docs/src/project/phase12-networking-ssh.md",
+    "roadmap": "docs/src/roadmap.md"
+  },
+  "source_contract": {
+    "register": "MACB_MID",
+    "offset": "0x00fc",
+    "rp1_bus_target": "0xc0_401000fc",
+    "source_cpu_physical_target": "0x1f001000fc",
+    "width_bits": 32,
+    "endianness": "little-endian"
+  },
+  "validation": {
+    "static_inspection": "passed",
+    "jq_json_checks": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  }
+}

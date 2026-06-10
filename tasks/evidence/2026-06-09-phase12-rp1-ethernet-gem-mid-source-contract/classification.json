@@ -1,0 +1,78 @@
+{
+  "task_id": "phase12-rp1-ethernet-gem-mid-source-contract-20260609",
+  "classification": "rp1-ethernet-gem-mid-source-contract-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "source inspection",
+    "documentation reconciliation",
+    "jq JSON checks",
+    "git diff checks",
+    "mdbook build"
+  ],
+  "source_contract": {
+    "contract_id": "phase12-rp1-ethernet-gem-mid-source-contract-20260609",
+    "target_name": "RP1 Ethernet Cadence MACB/GEM MID register",
+    "compatible": [
+      "raspberrypi,rp1-gem",
+      "cdns,macb"
+    ],
+    "rp1_bus_base": "0xc0_40100000",
+    "rp1_bus_target": "0xc0_401000fc",
+    "source_cpu_physical_base": "0x1f00100000",
+    "source_cpu_physical_target": "0x1f001000fc",
+    "register": "MACB_MID",
+    "offset": "0x00fc",
+    "width_bits": 32,
+    "access": "read-only volatile load for the future diagnostic contract",
+    "endianness": "little-endian",
+    "fields": {
+      "IDNUM": {
+        "offset": 16,
+        "size": 12
+      },
+      "REV": {
+        "offset": 0,
+        "size": 16
+      }
+    }
+  },
+  "paired_control_requirements": [
+    "Use the same future report/serial path as the candidate",
+    "Withhold Ethernet MMIO target construction",
+    "Carry explicit no-Ethernet/no-MMIO control classification",
+    "Reject any visible GEM MID value as control evidence"
+  ],
+  "accepted_claims": [
+    "The exact future read-only diagnostic target is MACB_MID offset 0x00fc",
+    "The source RP1 bus target is 0xc0_401000fc",
+    "The source-translated CPU physical target is 0x1f001000fc",
+    "A future diagnostic may describe only a 32-bit little-endian volatile load contract paired with a no-Ethernet/no-MMIO control",
+    "The retained MACB header defines MACB_MID plus IDNUM and REV bitfields"
+  ],
+  "rejected_claims": [
+    "Ethernet driver readiness",
+    "live broad RP1 Ethernet MMIO readiness",
+    "RP1 MMIO writes",
+    "RP1 DMA programming",
+    "descriptor rings",
+    "DMA ownership",
+    "transfer completion",
+    "interrupt completion",
+    "clock/reset ownership",
+    "PHY reset ownership",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "hardware validation by this source-only task"
+  ],
+  "retained_risks": [
+    "The source-translated CPU physical GEM MID address is not hardware-proven by this task",
+    "Endpoint config identity, bridge setup, and outbound window behavior remain retained Phase 11 risks",
+    "Clock/reset and PHY reset ownership remain unaccepted",
+    "Packet path, descriptors, DMA, and interrupts remain outside this contract"
+  ],
+  "next_action": "Mechanically promote phase12-rp1-ethernet-gem-mid-diagnostic-core-20260609 on the next worker wake. The core may construct candidate/control reports for this source contract only; it must not run hardware or claim live Ethernet MMIO readiness."
+}

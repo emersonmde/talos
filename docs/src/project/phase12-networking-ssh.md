@@ -43,3 +43,20 @@ GEM/Ethernet MMIO source-contract diagnostic with paired no-Ethernet/no-MMIO
 control evidence. No Ethernet implementation, packet I/O, network stack,
 sockets, SSH, live DMA, descriptor rings, or Phase 12.2 work is accepted by
 the ADR.
+
+## GEM MID Source Contract
+
+phase12-rp1-ethernet-gem-mid-source-contract-20260609 accepts the source-only
+contract for the first bounded GEM visibility diagnostic. The exact future
+candidate target is MACB_MID at offset 0x00fc from rp1_eth, producing source
+RP1 bus address 0xc0_401000fc and source-translated CPU physical address
+0x1f001000fc. The contract is limited to a 32-bit little-endian volatile load
+in a future diagnostic, paired with a no-Ethernet/no-MMIO control report that
+withholds the Ethernet MMIO target.
+
+Retained Raspberry Pi Linux source evidence defines the rp1_eth base at
+0xc0_40100000, MACB_MID at 0x00fc, and the IDNUM and REV fields inside MID.
+This remains source evidence only: live broad RP1 Ethernet MMIO readiness, RP1
+MMIO writes, DMA, descriptor rings, interrupts, clock/reset ownership, PHY
+reset ownership, packet I/O, networking, sockets, SSH, and Phase 12.2 remain
+unaccepted.

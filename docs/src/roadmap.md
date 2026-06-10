@@ -9123,18 +9123,22 @@ Goal: reach Talos over the network and make the system usable without serial.
 
 Milestone 12.1: RP1 Ethernet Research Spike
 
-Status: source inventory and path ADR accepted in
+Status: source inventory, path ADR, and GEM MID source contract accepted in
 phase12-rp1-ethernet-source-inventory-20260609 and
-phase12-rp1-ethernet-path-adr-20260609. The accepted inventory is source-only:
-RP1 Ethernet is `raspberrypi,rp1-gem` / `cdns,macb` at RP1 bus
+phase12-rp1-ethernet-path-adr-20260609, with source contract
+phase12-rp1-ethernet-gem-mid-source-contract-20260609. The accepted inventory
+is source-only: RP1 Ethernet is `raspberrypi,rp1-gem` / `cdns,macb` at RP1 bus
 `0xc0_40100000` with source CPU physical translation `0x1f00100000`,
 `RP1_INT_ETH`, RP1 Ethernet clocks, RGMII PHY mode, and PHY reset through RP1
 GPIO32. The accepted ADR chooses the direct RP1 Cadence GEM path, staged
-behind hardware-substrate proofs rather than immediate driver work. Ethernet
-driver readiness, live MMIO, descriptor rings, packet I/O, networking, sockets,
-SSH, and Phase 12.2 implementation remain unaccepted. Supervisor planning is
-required for an explicit read-only RP1 GEM/Ethernet MMIO source-contract
-diagnostic before any implementation or hardware run.
+behind hardware-substrate proofs rather than immediate driver work. The
+accepted source contract names exactly one future read-only target: `MACB_MID`
+offset `0x00fc`, source RP1 bus `0xc0_401000fc`, source CPU physical
+`0x1f001000fc`, width 32, little-endian volatile load, paired with a
+no-Ethernet/no-MMIO control. Ethernet driver readiness, live MMIO, descriptor
+rings, packet I/O, networking, sockets, SSH, and Phase 12.2 implementation
+remain unaccepted. Next work is local/static report construction for this
+source contract before any hardware run.
 
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
