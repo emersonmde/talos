@@ -12748,6 +12748,7 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_visibility_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_decode_discriminator_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_observed_window_discriminator_candidate",
+        talos_boot_scenario = "rpi5_rp1_ethernet_prereq_ownership_candidate",
         talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
         talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",
         talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_read",
@@ -14711,6 +14712,105 @@ pub fn run_rp1_ethernet_observed_window_discriminator_no_mmio_control() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_prereq_ownership_candidate")]
+pub fn run_rp1_ethernet_prereq_ownership_candidate() -> ! {
+    write_early_static("rpi5-rp1-ethernet-prereq-ownership-candidate: start\n");
+    write_early_static(
+        "rpi5-rp1-ethernet-prereq-ownership-candidate: static-prerequisite-report-no-mmio-writes\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-ethernet-prereq-ownership-candidate");
+        write_rp1_ethernet_prereq_ownership_capture_nonce();
+        write_rp1_ethernet_prereq_ownership_common("candidate");
+        write_early_static(
+            " selected-prerequisite=rp1-ethernet-clock-reset-phy-mdio-dma-ownership-report",
+        );
+        write_early_static(" observed-window-macb-mid-context-cpu-physical-target=");
+        write_early_hex_u64(RP1_ETHERNET_OBSERVED_WINDOW_GEM_MID as u64);
+        write_early_static(" observed-window-macb-mid-context-raw=");
+        write_early_hex_u64(0x0007_0109);
+        write_early_static(" observed-window-macb-mid-context-idnum=");
+        write_early_hex_u64(0x7);
+        write_early_static(" observed-window-macb-mid-context-rev=");
+        write_early_hex_u64(0x109);
+        write_early_static(
+            " observed-window-macb-mid-context-role=context-only-not-broad-ethernet-mmio-readiness",
+        );
+        write_early_static(" compatible=raspberrypi,rp1-gem,cdns,macb controller=rp1_eth");
+        write_early_static(" rp1-bus-base=");
+        write_early_hex_u64(0xc0_4010_0000);
+        write_early_static(" rp1-bus-window-size=");
+        write_early_hex_u64(0x4000);
+        write_early_static(" translated-comparator-cpu-physical-base=");
+        write_early_hex_u64(0x1f_0010_0000);
+        write_early_static(" translated-comparator-macb-mid-target=");
+        write_early_hex_u64(0x1f_0010_00fc);
+        write_early_static(" translated-comparator-role=comparator-sentinel-only");
+        write_early_static(" interrupt-name=RP1_INT_ETH interrupt-number=6");
+        write_early_static(" clock-names=pclk,hclk,tsu_clk,tx_clk clock-ids=12,12,29,16");
+        write_early_static(" clock-sources=RP1_CLK_SYS,RP1_CLK_SYS,RP1_CLK_ETH_TSU,RP1_CLK_ETH");
+        write_early_static(" clock-policy-classification=no-clock-reset-ownership");
+        write_early_static(" phy-mode=rgmii-id phy-handle=phy1 phy-node=ethernet-phy@1 phy-reg=");
+        write_early_hex_u64(0x1);
+        write_early_static(" phy-reset-gpio=32 phy-reset-active-low=true phy-reset-duration-ms=5");
+        write_early_static(" phy-mdio-policy-classification=no-phy-reset-or-mdio-ownership");
+        write_early_static(
+            " dma-descriptor-policy-classification=no-live-dma-or-descriptor-ownership",
+        );
+        write_early_static(
+            " cadence-rp1-config=gigabit,hardware-clock-change,jumbo,ptp,dma-burst-length-16",
+        );
+        write_rp1_ethernet_prereq_ownership_rejections();
+        write_early_static(" classification=rp1-ethernet-prereq-ownership-report-visible\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_prereq_ownership_no_mmio_control")]
+pub fn run_rp1_ethernet_prereq_ownership_no_mmio_control() -> ! {
+    write_early_static("rpi5-rp1-ethernet-prereq-ownership-control: start\n");
+    write_early_static(
+        "rpi5-rp1-ethernet-prereq-ownership-control: no-ownership-no-ethernet-no-mmio-target-construction\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-ethernet-prereq-ownership-control");
+        write_rp1_ethernet_prereq_ownership_capture_nonce();
+        write_rp1_ethernet_prereq_ownership_common("no-ownership-no-ethernet-control");
+        write_early_static(" selected-prerequisite=none");
+        write_early_static(" observed-window-macb-mid-context-cpu-physical-target=not-constructed");
+        write_early_static(" observed-window-macb-mid-context-raw=none");
+        write_early_static(" observed-window-macb-mid-context-idnum=none");
+        write_early_static(" observed-window-macb-mid-context-rev=none");
+        write_early_static(" observed-window-macb-mid-context-role=none");
+        write_early_static(" compatible=none controller=none");
+        write_early_static(" rp1-bus-base=none rp1-bus-window-size=none");
+        write_early_static(" translated-comparator-cpu-physical-base=none");
+        write_early_static(" translated-comparator-macb-mid-target=not-constructed");
+        write_early_static(" translated-comparator-role=none");
+        write_early_static(" interrupt-name=none interrupt-number=none");
+        write_early_static(" clock-names=none clock-ids=none clock-sources=none");
+        write_early_static(" clock-policy-classification=no-clock-reset-ownership");
+        write_early_static(" phy-mode=none phy-handle=none phy-node=none phy-reg=none");
+        write_early_static(
+            " phy-reset-gpio=none phy-reset-active-low=false phy-reset-duration-ms=none",
+        );
+        write_early_static(" phy-mdio-policy-classification=no-phy-reset-or-mdio-ownership");
+        write_early_static(
+            " dma-descriptor-policy-classification=no-live-dma-or-descriptor-ownership",
+        );
+        write_early_static(" cadence-rp1-config=none");
+        write_rp1_ethernet_prereq_ownership_rejections();
+        write_early_static(
+            " classification=no-ownership-no-ethernet-rp1-ethernet-prereq-control\n",
+        );
+        wait_uart10_empty_early_phase();
+    }
+}
+
 #[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_decode_discriminator_candidate")]
 fn classify_rp1_ethernet_gem_mid_decode_discriminator(
     sysinfo_matches_expected: bool,
@@ -14910,6 +15010,57 @@ fn write_rp1_ethernet_observed_window_discriminator_rejections() {
     write_early_static(" claims-interrupt-completion=false claims-clock-reset-ownership=false");
     write_early_static(" claims-phy-ownership=false claims-packet-io=false");
     write_early_static(" claims-networking=false claims-sockets=false claims-ssh=false");
+    write_early_static(" claims-phase-12-2=false claims-phase-transition=false");
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_prereq_ownership_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_prereq_ownership_no_mmio_control"
+))]
+fn write_rp1_ethernet_prereq_ownership_common(report_kind: &str) {
+    write_early_static(
+        " prereq-ownership-contract-id=phase12-rp1-ethernet-prereq-ownership-contract-v1",
+    );
+    write_early_static(
+        " source-task-id=phase12-rp1-ethernet-prereq-ownership-source-contract-20260610",
+    );
+    write_early_static(" report-kind=");
+    write_early_static(report_kind);
+    write_early_static(
+        " hardware-proof-boundary-classification=hardware-proof-limited-to-prereq-ownership-report-visibility-control-output",
+    );
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_prereq_ownership_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_prereq_ownership_no_mmio_control"
+))]
+fn write_rp1_ethernet_prereq_ownership_capture_nonce() {
+    if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
+        if !nonce.is_empty() {
+            write_early_static(" capture-nonce=");
+            write_early_static(nonce);
+        }
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_prereq_ownership_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_prereq_ownership_no_mmio_control"
+))]
+fn write_rp1_ethernet_prereq_ownership_rejections() {
+    write_early_static(
+        " rejected-runtime-hardware-claims=ethernet-driver-readiness,broad-ethernet-mmio-readiness,rp1-mmio-writes,clock-reset-ownership-or-writes,gpio32-ownership-or-phy-reset,mdio-transactions-or-phy-ownership,interrupt-delivery-handler-ownership-or-completion,dma-descriptor-rings-channel-ownership-or-transfer-completion,packet-io,networking,sockets,ssh,phase-12-2,phase-transition",
+    );
+    write_early_static(
+        " retained-risks=observed-window-macb-mid-identity-does-not-prove-prerequisites,source-facts-not-talos-ownership,report-visibility-not-hardware-ownership,no-packet-io-no-network-stack",
+    );
+    write_early_static(" claims-ethernet-ready=false claims-broad-mmio-ready=false");
+    write_early_static(" claims-rp1-mmio-writes=false claims-clock-reset-ownership=false");
+    write_early_static(" claims-gpio32-phy-reset-ownership=false claims-mdio-phy-ownership=false");
+    write_early_static(" claims-interrupt-ownership=false claims-dma-descriptor-ownership=false");
+    write_early_static(" claims-packet-io=false claims-networking=false");
+    write_early_static(" claims-sockets=false claims-ssh=false");
     write_early_static(" claims-phase-12-2=false claims-phase-transition=false");
 }
 
@@ -17507,6 +17658,8 @@ fn gpio14_ownership_preflight_classification(
     talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_decode_discriminator_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_ethernet_observed_window_discriminator_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_observed_window_discriminator_no_mmio_control",
+    talos_boot_scenario = "rpi5_rp1_ethernet_prereq_ownership_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_prereq_ownership_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
     talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",

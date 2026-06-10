@@ -358,3 +358,24 @@ accept Ethernet driver readiness, broad Ethernet MMIO readiness, RP1 MMIO
 writes, clock/reset ownership, GPIO32 or PHY reset ownership, MDIO
 transactions, interrupt delivery/completion, DMA, descriptor rings, packet
 I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
+
+## RP1 Ethernet Prerequisite Ownership Pi 5 Proof
+
+phase12-rp1-ethernet-prereq-ownership-pi5-proof-20260610 accepts the
+serialized Pi 5 proof as
+rp1-ethernet-prereq-ownership-report-visibility-control-output. The candidate
+and control capture-chain-v4 identity joins passed. The candidate serial output
+printed the accepted prerequisite report fields, including context-only
+observed-window MACB_MID identity, RP1_INT_ETH, pclk/hclk/tsu_clk/tx_clk,
+RGMII-ID phy1, GPIO32 PHY reset metadata, PHY/MDIO policy, DMA/descriptor
+policy, rejected claims, and classification
+rp1-ethernet-prereq-ownership-report-visible. The paired control used the same
+report path while withholding candidate-only prerequisite facts and classifying
+no-ownership-no-ethernet-rp1-ethernet-prereq-control.
+
+This proof accepts report visibility/control output only. It does not accept
+hardware/runtime prerequisite ownership, Ethernet driver readiness, broad
+Ethernet MMIO readiness, RP1 MMIO writes, clock/reset writes or ownership,
+GPIO32/PHY reset ownership, MDIO/PHY ownership, interrupt delivery/completion,
+DMA, descriptor rings, packet I/O, networking, sockets, SSH, Phase 12.2, or a
+phase transition.

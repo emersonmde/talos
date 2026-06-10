@@ -1,0 +1,10 @@
+control_archive=target/talos-rpi5-rp1-ethernet-prereq-ownership-control-boot.tar.gz
+control_archive_sha256=9ca77355646466f3321b0c485379eb3ee4e5829d9f40fc25a1b4729592acd600
+kernel_2712_sha256=1eed20ef9c9e07e979c9454055b3ca888b25e726ef44aaa70c644f9c1a94ed78
+kernel_2712_size=48856
+header_image_size=48856
+text_offset=0
+flags=12
+control_marker=TALOS: rp1-ethernet-prereq-ownership-control
+capture_nonce=prereq-control-20260610T082202Z
+forbidden_rp1_ethernet_prereq_ownership_control_runtime_strings_absent=true

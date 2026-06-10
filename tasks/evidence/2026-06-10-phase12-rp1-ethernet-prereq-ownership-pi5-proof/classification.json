@@ -1,0 +1,57 @@
+{
+  "classification": "rp1-ethernet-prereq-ownership-report-visibility-control-output",
+  "task_id": "phase12-rp1-ethernet-prereq-ownership-pi5-proof-20260610",
+  "evidence_level": "serial hardware boot/output",
+  "accepted_claims": [
+    "candidate prerequisite ownership report output was visible on Pi 5 serial with run-unique nonce prereq-candidate-20260610T082202Z",
+    "paired no-ownership/no-Ethernet control report output was visible on Pi 5 serial with run-unique nonce prereq-control-20260610T082202Z",
+    "candidate and control selected-tree identity, expected TFTP fetch bytes, run-unique serial marker freshness, final pre-restore identity, and restore proof joined under capture-chain-v4",
+    "hardwareTestLock was acquired before publication/power cycling and the boot tree was restored afterward"
+  ],
+  "rejected_claims": [
+    "Ethernet driver readiness",
+    "broad Ethernet MMIO readiness",
+    "RP1 MMIO writes",
+    "clock/reset writes or ownership",
+    "GPIO32 ownership or PHY reset assertion/deassertion",
+    "MDIO transactions or PHY ownership",
+    "interrupt delivery, handler ownership, or completion",
+    "DMA, descriptor rings, channel ownership, or transfer completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition"
+  ],
+  "candidate": {
+    "archive_sha256": "3105fbac5e165c540581cd20fbd98738f3d314313ff001661bb3f50e6c5e68c9",
+    "kernel_2712_sha256": "03e86850218b1cefb10aecc1cfced68fc30a63e9d59b2c1f2cff40558a6e9e3f",
+    "kernel_2712_size": 49176,
+    "selected_tree_hash": "66338c41dd7e1166d1ae5222387bee653c18eb5722b69b75183dac5bd935d149",
+    "serial_marker_occurrences": 25,
+    "tftp_expected_fetch_count": 2,
+    "identity_join_v4_passed": true,
+    "terminal_serial_classification": "rp1-ethernet-prereq-ownership-report-visible"
+  },
+  "control": {
+    "archive_sha256": "9ca77355646466f3321b0c485379eb3ee4e5829d9f40fc25a1b4729592acd600",
+    "kernel_2712_sha256": "1eed20ef9c9e07e979c9454055b3ca888b25e726ef44aaa70c644f9c1a94ed78",
+    "kernel_2712_size": 48856,
+    "selected_tree_hash": "bdbb7caef7f11abbd56b4104009048c97a9bfcc37be509c15e962bb516f7b24f",
+    "serial_marker_occurrences": 28,
+    "tftp_expected_fetch_count": 2,
+    "identity_join_v4_passed": true,
+    "terminal_serial_classification": "no-ownership-no-ethernet-rp1-ethernet-prereq-control"
+  },
+  "restore": {
+    "snapshot": "pre-prereq-ownership-proof-20260610T082202Z",
+    "final_post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "restored": true
+  },
+  "notes": [
+    "capture-invariant-summary.json retains the legacy serial-drain-not-empty-before-power suggestion, but the repaired identity-join-v4 replay passed for both candidate and control using run-unique nonce freshness, selected-tree identity, TFTP, final identity, and restore gates.",
+    "This proof accepts report visibility/control output only; it does not accept hardware or runtime ownership of the reported prerequisites."
+  ],
+  "commit": "pending"
+}
