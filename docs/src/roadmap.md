@@ -9285,6 +9285,25 @@ Ethernet MMIO readiness, clock/reset writes or ownership, PHY/MDIO, DMA,
 descriptors, interrupts, packet I/O, networking, sockets, SSH, Phase 12.2, and
 phase transition remain unaccepted.
 
+phase12-rp1-ethernet-clock-reset-guard-core-20260610 accepts local/static
+candidate/control guard report construction only. The candidate carries
+observed-window MACB_MID identity as context, pclk/hclk/tsu_clk/tx_clk source
+facts, RP1 clock IDs, shared-clock policy, read-only baseline requirements,
+future write-backed invariants, rejected claims, and retained risks; the paired
+control uses the same report path while withholding candidate-only clock/reset
+facts. Validators reject runtime ownership, writes, hardware readiness, and
+downstream Ethernet or phase claims.
+
+phase12-rp1-ethernet-clock-reset-guard-closeout-20260610 closes the
+local/static guard frontier. Same-shaped local/static guard retries are closed
+for this candidate/control pair, and the next selected bounded task is the
+serialized read-only clock/reset baseline Pi 5 proof. That proof may classify
+only read-only baseline visibility/current-state, a precise sentinel/fault or
+staging/capture blocker with identity retained, or a paired control result. It
+does not authorize clock/reset ownership, RP1 MMIO or clock/reset writes,
+GPIO32/PHY reset ownership, MDIO/PHY, DMA, descriptors, interrupts, packet I/O,
+networking, sockets, SSH, Phase 12.2, or a phase transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

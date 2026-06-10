@@ -421,3 +421,39 @@ interrupts, DMA, descriptors, packets, networking, sockets, SSH, Phase 12.2,
 and phase transition out of scope. The selected follow-up is only a
 local/static clock-reset guard core with a paired no-clock-reset/no-Ethernet
 control.
+
+## RP1 Ethernet Clock/Reset Guard Core
+
+phase12-rp1-ethernet-clock-reset-guard-core-20260610 accepts the local/static
+guard report construction selected by the ownership contract. The candidate
+preserves observed-window MACB_MID identity only as context, source-backed
+pclk/hclk/tsu_clk/tx_clk clock names and RP1 clock IDs, shared-clock policy for
+RP1_CLK_SYS, absence of an accepted Pi 5 rp1_eth reset-controller target,
+read-only baseline requirements, future write-backed invariants, rejected
+claims, and retained risks.
+
+The paired control uses the same report path while withholding candidate-only
+Ethernet clock/reset facts and carrying
+no-clock-reset-no-ethernet-rp1-ethernet-clock-reset-guard-control. Validators
+reject guard-contract bypasses and forbidden runtime, hardware, ownership,
+downstream Ethernet, and phase claims. This remains local/static evidence only
+and does not accept hardware visibility, clock/reset ownership, RP1 MMIO or
+clock/reset writes, GPIO32/PHY reset ownership, MDIO/PHY, DMA, descriptors,
+interrupts, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase
+transition.
+
+## RP1 Ethernet Clock/Reset Guard Closeout
+
+phase12-rp1-ethernet-clock-reset-guard-closeout-20260610 closes the
+local/static guard frontier. The accepted boundary is candidate/control guard
+report construction only; same-shaped local/static guard retries are closed
+for this candidate/control pair unless future scope supplies materially
+different evidence or acceptance criteria.
+
+The selected next task is the serialized read-only clock/reset baseline Pi 5
+proof. That proof may only classify read-only baseline visibility/current
+state, a precise sentinel/fault/blocker with identity retained, or a precise
+staging/capture blocker. It must not accept clock/reset ownership, RP1 MMIO or
+clock/reset writes, Ethernet driver readiness, GPIO32/PHY reset ownership,
+MDIO/PHY, DMA, descriptors, interrupts, packet I/O, networking, sockets, SSH,
+Phase 12.2, or a phase transition.

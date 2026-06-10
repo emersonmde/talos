@@ -1,0 +1,47 @@
+{
+  "task_id": "phase12-rp1-ethernet-clock-reset-guard-closeout-20260610",
+  "classification": "rp1-ethernet-clock-reset-guard-frontier-closed",
+  "evidence_level": [
+    "static inspection",
+    "JSON validation",
+    "documentation build",
+    "diff checks"
+  ],
+  "accepted_claims": [
+    "accepted local/static guard-core evidence reconciled",
+    "same-shaped local/static guard retries are closed for this candidate/control pair",
+    "candidate/control guard report construction remains the accepted boundary",
+    "queued read-only baseline Pi 5 proof is mechanically objective as the next bounded task"
+  ],
+  "rejected_claims": [
+    "hardware visibility proof",
+    "Ethernet driver readiness",
+    "broad Ethernet MMIO readiness",
+    "RP1 MMIO writes",
+    "clock/reset writes",
+    "clock/reset ownership",
+    "RP1_CLK_SYS transition through pclk or hclk",
+    "reset-controller ownership",
+    "GPIO32 or PHY reset ownership",
+    "MDIO transactions or PHY ownership",
+    "interrupt delivery or completion",
+    "DMA or descriptor rings",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "clock source facts are still metadata, not Talos runtime ownership",
+    "read-only baseline proof may expose a precise visibility result or blocker, not write-backed ownership",
+    "shared RP1_CLK_SYS pclk/hclk must not be transitioned by an Ethernet task",
+    "tx_clk and tsu_clk still need exact register and restore contracts before writes",
+    "Pi 5 rp1_eth reset-controller target remains unaccepted",
+    "PHY reset remains a separate GPIO32/MDIO ownership task"
+  ],
+  "same_shaped_retry_policy": "same-shaped local/static guard retries closed unless future scope supplies materially different evidence or acceptance criteria",
+  "next_action": "phase12-rp1-ethernet-clock-reset-readonly-baseline-pi5-proof-20260610",
+  "commit": "recorded-in-supervisor-state-after-acceptance"
+}
