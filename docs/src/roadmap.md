@@ -9212,6 +9212,16 @@ identity evidence only and does not accept Ethernet driver readiness, broad
 Ethernet MMIO readiness, RP1 MMIO writes, DMA, descriptor rings, interrupts,
 packet I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
 
+phase12-rp1-ethernet-observed-window-discriminator-proof-closeout-20260610
+closes that observed-window discriminator proof frontier. Same-shaped
+observed-window hardware retries are closed for this candidate/control pair;
+the accepted boundary is only the read-only MACB_MID identity result with
+paired no-MMIO/no-Ethernet control evidence. No explicit queued follow-up is
+mechanically objective from this closeout alone, so supervisor planning is
+required for the next bounded Phase 12.1 prerequisite or ownership slice before
+any Ethernet driver, RP1 MMIO write, DMA, descriptor-ring, interrupt, packet
+I/O, networking, sockets, SSH, Phase 12.2, or phase-transition work.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

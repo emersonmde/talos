@@ -283,3 +283,19 @@ This is a read-only identity discriminator only. It does not accept Ethernet
 driver readiness, broad Ethernet MMIO readiness, RP1 MMIO writes, DMA,
 descriptor rings, interrupts, clock/reset/PHY/MDIO ownership, packet I/O,
 networking, sockets, SSH, Phase 12.2, or a phase transition.
+
+## Observed-Window GEM MID Proof Closeout
+
+phase12-rp1-ethernet-observed-window-discriminator-proof-closeout-20260610
+closes the observed-window discriminator proof frontier. The accepted boundary
+is the read-only identity result only: SYSINFO_CHIP_ID at 0x1c00000000 returned
+0x20001927 and observed-window MACB_MID at 0x1c001000fc returned raw 0x70109,
+idnum 0x7, rev 0x109, with a paired no-MMIO/no-Ethernet control.
+
+Same-shaped observed-window candidate/control hardware retries are closed for
+this pair. A future Phase 12.1 task must be supervisor-planned with explicit
+scope and acceptance criteria, such as a source-backed ownership contract for
+the next Ethernet prerequisite. This closeout does not accept Ethernet driver
+readiness, broad Ethernet MMIO readiness, RP1 MMIO writes, DMA, descriptor
+rings, interrupts, clock/reset/PHY/MDIO ownership, packet I/O, networking,
+sockets, SSH, Phase 12.2, or a phase transition.

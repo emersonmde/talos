@@ -1,0 +1,56 @@
+{
+  "task_id": "phase12-rp1-ethernet-observed-window-discriminator-proof-closeout-20260610",
+  "classification": "rp1-ethernet-observed-window-discriminator-proof-frontier-closed",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "task-owned JSON",
+    "docs validation"
+  ],
+  "accepted_claims": [
+    "observed-window discriminator proof is decisive for the accepted candidate/control pair",
+    "read-only observed-window MACB_MID identity at 0x1c001000fc returned raw 0x70109 with idnum 0x7 and rev 0x109",
+    "SYSINFO positive control at 0x1c00000000 returned 0x20001927",
+    "paired no-MMIO/no-Ethernet control proved the reporting path without constructing MMIO targets",
+    "same-shaped observed-window hardware retries are closed for this candidate/control pair"
+  ],
+  "proof_commit": "205cdeff97a3ec17f5f4efa8eb4ed53498313299",
+  "candidate": {
+    "classification": "observed-window-macb-mid-visible",
+    "sysinfo_chip_id_address": "0x1c00000000",
+    "sysinfo_chip_id_raw": "0x20001927",
+    "observed_window_macb_mid_address": "0x1c001000fc",
+    "observed_window_macb_mid_raw": "0x70109",
+    "idnum": "0x7",
+    "rev": "0x109"
+  },
+  "control": {
+    "classification": "no-mmio-no-ethernet-rp1-ethernet-observed-window-control",
+    "mmio_targets_constructed": false
+  },
+  "same_shaped_retry_policy": "closed-for-observed-window-candidate-control-pair",
+  "planning_needed": true,
+  "planning_reason": "Observed-window MACB_MID visible-read frontier is closed; no explicit queued mechanically unblocked follow-up task exists. Supervisor planning is required for the next bounded Phase 12.1 prerequisite or ownership slice.",
+  "rejected_claims": [
+    "Ethernet driver readiness",
+    "broad Ethernet MMIO readiness",
+    "RP1 MMIO writes",
+    "DMA",
+    "descriptor rings",
+    "interrupts",
+    "clock/reset ownership",
+    "PHY/MDIO ownership",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "MACB_MID visibility is read-only identity evidence only",
+    "Clock/reset and PHY/MDIO ownership remain unaccepted",
+    "DMA, descriptor rings, interrupts, packet I/O, networking, sockets, and SSH remain out of scope"
+  ],
+  "next_action": "Supervisor planning required before any further Phase 12.1 work."
+}
