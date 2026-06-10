@@ -103,3 +103,20 @@ descriptor rings, transfer completion, interrupt completion, clock/reset
 ownership, PHY reset ownership, packet I/O, networking, sockets, SSH, Phase
 12.2, and phase transition work rejected. The next step requires supervisor
 planning around the GEM MID address-decode or bridge-enable dependency.
+
+## GEM MID Blocker Reconciliation
+
+phase12-rp1-ethernet-gem-mid-blocker-reconciliation-20260610 refines the
+`0xdeaddead` result as
+`rp1-ethernet-gem-mid-retained-0x1f-window-sentinel`. Retained source evidence
+still supports the source translation to `0x1f001000fc`; the stronger clue is
+that Phase 11 had already retained `0xdeaddead` through the translated
+`0x1f` RP1 aperture while observed `0x1c` RP1 sysinfo/clock/GPIO reads were
+visible.
+
+The selected next discriminator is a local/static same-run report shape:
+observed RP1 `SYSINFO_CHIP_ID` at `0x1c00000000` as the positive control plus
+`MACB_MID` at `0x1f001000fc`, with a paired no-MMIO/no-Ethernet control.
+This still rejects live GEM visibility, broad Ethernet MMIO readiness, Ethernet
+driver readiness, packet I/O, DMA, interrupts, clock/reset ownership, PHY reset
+ownership, networking, sockets, SSH, Phase 12.2, and phase transition work.

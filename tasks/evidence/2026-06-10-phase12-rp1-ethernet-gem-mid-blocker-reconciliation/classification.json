@@ -1,0 +1,108 @@
+{
+  "task_id": "phase12-rp1-ethernet-gem-mid-blocker-reconciliation-20260610",
+  "status": "accepted",
+  "classification": "rp1-ethernet-gem-mid-retained-0x1f-window-sentinel",
+  "evidence_level": [
+    "static inspection",
+    "source inspection",
+    "task-record reconciliation"
+  ],
+  "accepted_gem_mid_proof": {
+    "task_id": "phase12-rp1-ethernet-gem-mid-pi5-proof-20260609",
+    "commit": "41116dc167166679c8f0ec89fac3ae39d49f6cd7",
+    "candidate_address": "0x1f001000fc",
+    "candidate_raw": "0xdeaddead",
+    "control_classification": "no-ethernet-no-mmio-rp1-ethernet-gem-mid-control",
+    "control_path_visible": true
+  },
+  "phase11_boundaries_considered": [
+    {
+      "task": "phase11-rp1-pcie-endpoint-config-discriminator-source-contract-20260608",
+      "relevance": "Retains accepted 0x1f translated-RP1 SYSINFO/clock-window sentinel evidence where SYSINFO_CHIP_ID, SYSINFO_PLATFORM, and CLK_ADC_CTRL returned 0xdeaddead."
+    },
+    {
+      "task": "phase11-rp1-clock-reset-dependency-pi5-20260609",
+      "relevance": "Observed 0x1c RP1 sysinfo and selected clock-manager reads were visible; SYSINFO_CHIP_ID was 0x20001927 and selected clock reads were not 0xdeaddead."
+    },
+    {
+      "task": "phase11-rp1-observed-gpio16-ownership-event-closeout-20260609",
+      "relevance": "Observed 0x1c GPIO/RIO/pad/source read-only fields were visible enough to classify GPIO16 as non-GPIO-function, not an aperture-wide sentinel."
+    }
+  ],
+  "explanations": [
+    {
+      "name": "source-translation-error",
+      "disposition": "not-an-issue",
+      "supporting_evidence": [
+        "rp1_eth reg is 0xc0_40100000 in retained Linux rp1.dtsi",
+        "Pi 5 RP1 ranges map RP1 bus 0xc0_40000000 to CPU physical 0x1f_0000_0000",
+        "MACB_MID is offset 0x00fc in retained macb.h",
+        "Talos src/rp1_ethernet.rs constants match 0x1f001000fc"
+      ],
+      "contradicting_evidence": [
+        "No retained source or Talos constant inspected in this task points MACB_MID to a different source address."
+      ]
+    },
+    {
+      "name": "translated-0x1f-rp1-window-sentinel",
+      "disposition": "fixed",
+      "supporting_evidence": [
+        "GEM MID returned 0xdeaddead at 0x1f001000fc",
+        "Earlier Phase 11 retained 0x1f SYSINFO/clock-window reads returning 0xdeaddead",
+        "Observed 0x1c RP1 sysinfo/clock/GPIO boundaries have produced visible, non-sentinel fields"
+      ],
+      "unproven_assumptions": [
+        "Whether the sentinel is produced by bridge/window setup, endpoint decode, firmware state, or an RP1-visible-but-guarded region remains unproven."
+      ]
+    },
+    {
+      "name": "ethernet-clock-reset-dependency",
+      "disposition": "deferred",
+      "supporting_evidence": [
+        "rp1_eth depends on RP1_CLK_SYS, RP1_CLK_ETH_TSU, and RP1_CLK_ETH in retained Linux sources",
+        "Accepted observed clock/reset proof reported clk-sys-enabled=false"
+      ],
+      "contradicting_evidence": [
+        "The same proof showed observed 0x1c sysinfo and selected clock-manager reads visible and not sentinel",
+        "The GEM MID result matches the broader translated 0x1f sentinel pattern, not an Ethernet-local positive or trap result"
+      ],
+      "unproven_assumptions": [
+        "Whether enabling clocks would change MACB_MID read behavior is not accepted and would require later explicit write/restore gates."
+      ]
+    }
+  ],
+  "selected_next_action": {
+    "follow_up": "phase12-rp1-ethernet-gem-mid-decode-discriminator-core-20260610",
+    "kind": "local-static-discriminator-core",
+    "shape": "same-run read-only observed RP1 SYSINFO_CHIP_ID positive control at 0x1c00000000 plus GEM MID at 0x1f001000fc, with paired no-MMIO/no-Ethernet control",
+    "reason": "This is the smallest changed discriminator that distinguishes visible observed RP1 aperture from the retained translated 0x1f GEM MID sentinel without hardware in this task."
+  },
+  "rejected_claims": [
+    "ethernet-driver-readiness",
+    "broad-live-ethernet-mmio-readiness",
+    "rp1-mmio-dma-programming",
+    "descriptor-rings",
+    "dma-ownership",
+    "transfer-completion",
+    "interrupt-completion",
+    "clock-reset-ownership",
+    "phy-reset-ownership",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition",
+    "same-shaped-gem-mid-only-hardware-rerun"
+  ],
+  "retained_risks": [
+    "translated-0x1f-rp1-window-sentinel-source-remains-unproven",
+    "pcie2-bridge-or-window-enable-state-remains-unaccepted",
+    "ethernet-clock-reset-dependency-remains-unaccepted",
+    "no-live-gem-identity",
+    "no-broad-ethernet-mmio-readiness",
+    "no-phy-reset-or-mdio-ownership",
+    "no-packet-io"
+  ],
+  "next_action": "Promote phase12-rp1-ethernet-gem-mid-blocker-reconciliation-closeout-20260610 on the next worker wake so it can select the local/static discriminator core explicitly."
+}

@@ -9146,11 +9146,17 @@ The accepted closeout selects a serialized Pi 5 GEM MID visibility/control
 proof as the next bounded step. The accepted Pi 5 proof showed the control
 report path is visible without constructing Ethernet MMIO, but the candidate
 read returned `raw=0xdeaddead` at `0x1f001000fc`, classified as
-`rp1-ethernet-gem-mid-blocked-address-decode-sentinel`. Live GEM visibility,
-Ethernet driver readiness, broad live MMIO, descriptor rings, packet I/O,
-networking, sockets, SSH, and Phase 12.2 implementation remain unaccepted;
-the next step requires supervisor planning around the GEM MID address-decode
-or bridge-enable dependency.
+`rp1-ethernet-gem-mid-blocked-address-decode-sentinel`. The accepted blocker
+reconciliation refines that as
+`rp1-ethernet-gem-mid-retained-0x1f-window-sentinel`: retained sources still
+support the `0x1f001000fc` translation, while accepted Phase 11 evidence
+shows `0xdeaddead` on translated `0x1f` RP1 reads and visible observed
+`0x1c` RP1 sysinfo/clock/GPIO reads. Live GEM visibility, Ethernet driver
+readiness, broad live MMIO, descriptor rings, packet I/O, networking, sockets,
+SSH, and Phase 12.2 implementation remain unaccepted. The next selected
+discriminator is a local/static same-run report with observed
+`SYSINFO_CHIP_ID` at `0x1c00000000` as positive control plus `MACB_MID` at
+`0x1f001000fc`, paired with a no-MMIO/no-Ethernet control.
 
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.

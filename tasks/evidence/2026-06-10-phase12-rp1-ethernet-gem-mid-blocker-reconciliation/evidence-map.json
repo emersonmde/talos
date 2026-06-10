@@ -1,0 +1,98 @@
+{
+  "task_id": "phase12-rp1-ethernet-gem-mid-blocker-reconciliation-20260610",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gem-mid-blocker-reconciliation.md",
+      "evidence_level": "task-record reconciliation"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-blocker-reconciliation/classification.json",
+      "evidence_level": "classification JSON"
+    },
+    {
+      "label": "accepted GEM MID Pi 5 proof task record",
+      "path": "tasks/2026-06-09-phase12-rp1-ethernet-gem-mid-pi5-proof.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted GEM MID Pi 5 proof classification",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-pi5-proof/classification.json",
+      "evidence_level": "hardware-proof classification inspection"
+    },
+    {
+      "label": "accepted PCIe endpoint/config discriminator source contract",
+      "path": "tasks/2026-06-08-phase11-rp1-pcie-endpoint-config-discriminator-source-contract.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted clock/reset dependency Pi 5 proof",
+      "path": "tasks/2026-06-09-phase11-rp1-clock-reset-dependency-pi5.md",
+      "evidence_level": "hardware-proof task-record inspection"
+    },
+    {
+      "label": "accepted clock/reset dependency classification",
+      "path": "tasks/evidence/2026-06-09-phase11-rp1-clock-reset-dependency-pi5/classification.json",
+      "evidence_level": "hardware-proof classification inspection"
+    },
+    {
+      "label": "accepted GPIO16 observed-aperture closeout",
+      "path": "tasks/2026-06-09-phase11-rp1-observed-gpio16-ownership-event-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "retained RP1 device tree source",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1.dtsi",
+      "evidence_level": "source inspection"
+    },
+    {
+      "label": "retained Pi 5 RP1 ranges source",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-bcm2712-rpi-5-b.dts",
+      "evidence_level": "source inspection"
+    },
+    {
+      "label": "retained MACB MID source",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-source-contract/source/linux-rpi-6.12-macb.h",
+      "evidence_level": "source inspection"
+    },
+    {
+      "label": "Talos GEM MID contract code",
+      "path": "src/rp1_ethernet.rs",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "Talos RP1 address/reporting code",
+      "path": "src/target/rpi5.rs",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "Phase 12 architecture note",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "evidence_level": "documentation update"
+    },
+    {
+      "label": "roadmap",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "documentation update"
+    }
+  ],
+  "validation": [
+    {
+      "command": "jq empty tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-blocker-reconciliation/evidence-map.json tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-blocker-reconciliation/classification.json",
+      "result": "passed"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "command": "git diff --cached --check",
+      "result": "passed"
+    }
+  ]
+}
