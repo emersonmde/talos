@@ -1,0 +1,82 @@
+{
+  "task_id": "phase12-rp1-ethernet-observed-window-discriminator-core-20260610",
+  "classification": "rp1-ethernet-observed-window-discriminator-local-static-accepted",
+  "evidence_level": "local_static_rust_report_construction",
+  "contract_id": "phase12-rp1-ethernet-observed-window-discriminator-contract-v1",
+  "observed_window_contract_id": "phase12-rp1-ethernet-observed-window-contract-v1",
+  "source_contract_id": "phase12-rp1-ethernet-gem-mid-source-contract-20260609",
+  "candidate_report": {
+    "classification": "local-static-rp1-ethernet-observed-window-gem-mid-candidate",
+    "positive_control": {
+      "register": "SYSINFO_CHIP_ID",
+      "cpu_physical_target": "0x1c00000000",
+      "expected_value": "0x20001927"
+    },
+    "observed_window_target": {
+      "controller": "rp1_eth",
+      "register": "MACB_MID",
+      "register_offset": "0x00fc",
+      "source_offset_from_observed_rp1_base": "0x001000fc",
+      "observed_rp1_base": "0x1c00000000",
+      "cpu_physical_target": "0x1c001000fc",
+      "width_bits": 32,
+      "endianness": "little-endian",
+      "access": "read-only volatile load"
+    },
+    "translated_window_comparator": {
+      "cpu_physical_target": "0x1f001000fc",
+      "role": "comparator-sentinel-only"
+    },
+    "hardware_proof_boundary_classification": "hardware-proof-limited-to-observed-window-gem-mid-discriminator-control-output"
+  },
+  "control_report": {
+    "classification": "no-mmio-no-ethernet-rp1-ethernet-observed-window-control",
+    "constructs_sysinfo_target": false,
+    "constructs_observed_window_target": false,
+    "constructs_translated_comparator_target": false,
+    "constructs_ethernet_mmio_target": false
+  },
+  "accepted_claims": [
+    "local-static-observed-window-report-construction",
+    "candidate-target-0x1c001000fc-preserved",
+    "translated-comparator-0x1f001000fc-preserved-as-sentinel-only",
+    "sysinfo-positive-control-0x1c00000000-0x20001927-preserved",
+    "paired-no-mmio-no-ethernet-control-construction"
+  ],
+  "rejected_claims": [
+    "live-gem-visibility",
+    "broad-ethernet-mmio-readiness",
+    "ethernet-driver-readiness",
+    "rp1-mmio-writes",
+    "rp1-dma-programming",
+    "descriptor-rings",
+    "dma-ownership",
+    "transfer-completion",
+    "interrupt-completion",
+    "clock-reset-ownership",
+    "phy-reset-ownership",
+    "mdio-ownership",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "retained_risks": [
+    "observed-window-target-may-still-return-sentinel-or-fault",
+    "pci-rp1-bridge-or-address-window-ownership-unaccepted",
+    "ethernet-clock-reset-and-phy-mdio-ownership-unaccepted",
+    "future-hardware-proof-requires-capture-chain-v4-style-evidence"
+  ],
+  "validation": [
+    "static-inspection",
+    "cargo-fmt-check",
+    "focused-rp1-ethernet-tests",
+    "jq-json-check",
+    "git-diff-check",
+    "mdbook-build",
+    "staged-diff-check"
+  ],
+  "nextAction": "Mechanically promote phase12-rp1-ethernet-observed-window-discriminator-closeout-20260610 on the next worker wake if dependencies remain satisfied."
+}

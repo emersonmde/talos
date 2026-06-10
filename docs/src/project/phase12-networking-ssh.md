@@ -228,3 +228,22 @@ live GEM visibility, broad Ethernet MMIO readiness, Ethernet driver readiness,
 RP1 MMIO writes, DMA, descriptor rings, interrupts, clock/reset ownership,
 PHY/MDIO ownership, packet I/O, networking, sockets, SSH, Phase 12.2, or a
 phase transition.
+
+## Observed-Window GEM MID Discriminator Core
+
+phase12-rp1-ethernet-observed-window-discriminator-core-20260610 accepts the
+local/static report construction for the observed-window contract. The
+candidate report preserves the source contract id, SYSINFO_CHIP_ID positive
+control at `0x1c00000000` / `0x20001927`, observed-window `MACB_MID` target
+`0x1c001000fc`, translated-window comparator `0x1f001000fc`, rp1_eth/MACB_MID
+identity, rejected claims, retained risks, and the hardware-proof boundary
+classification.
+
+The paired control uses the same discriminator report path while constructing
+no SYSINFO, observed-window, translated-comparator, or Ethernet MMIO target and
+carries classification
+`no-mmio-no-ethernet-rp1-ethernet-observed-window-control`. This remains a
+local/static implementation only; it does not accept live GEM visibility,
+broad Ethernet MMIO readiness, Ethernet driver readiness, RP1 MMIO writes,
+DMA, descriptor rings, interrupts, clock/reset/PHY/MDIO ownership, packet I/O,
+networking, sockets, SSH, Phase 12.2, or a phase transition.
