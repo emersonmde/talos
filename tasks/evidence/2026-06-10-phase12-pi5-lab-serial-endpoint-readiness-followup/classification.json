@@ -1,0 +1,75 @@
+{
+  "task_id": "phase12-pi5-lab-serial-endpoint-readiness-followup-20260610",
+  "run_label": "serial-endpoint-readiness-followup-20260610T222700Z",
+  "classification": "serial-endpoints-readable-current-device-buffer-empty",
+  "accepted_readiness": false,
+  "authorizes_gpio32_v2": false,
+  "evidence_level": "lab-controller API no-power serial endpoint/control discriminator plus static inspection of committed readiness blocker evidence",
+  "source_closeout": {
+    "task_id": "phase12-pi5-known-good-bounded-runtime-readiness-closeout-20260610",
+    "commit": "91c05e4a2c0336b501a39c92b1c712859906eac9",
+    "classification": "known-good-readiness-evidence-retention-blocker-closeout-accepted",
+    "selected_next_task": "phase12-pi5-lab-serial-endpoint-readiness-followup-20260610"
+  },
+  "identity": {
+    "expected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "pre_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "post_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "pre_effective_kernel": "kernel_2712.img",
+    "post_effective_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 104136,
+    "observed_expected_fetch_bytes": 104136,
+    "identity_stable": true
+  },
+  "endpoint_discriminator": {
+    "type": "no-power-saturated-cursor-observe-vs-direct-read",
+    "serial_observe_request": {
+      "cursor": 4194304,
+      "timeout_seconds": 3,
+      "settle_ms": 100,
+      "max_bytes": 65536
+    },
+    "serial_observe_result": {
+      "ok": true,
+      "action": "serial observe",
+      "cursor_start": 4194304,
+      "cursor_end": 4194304,
+      "bytes": 0,
+      "text_len": 0,
+      "truncated": null
+    },
+    "serial_direct_read_request": {
+      "timeout_seconds": 3,
+      "settle_ms": 100,
+      "max_bytes": 65536
+    },
+    "serial_direct_read_result": {
+      "ok": true,
+      "action": "serial read",
+      "cursor": 4194304,
+      "bytes": 0,
+      "text_len": 0,
+      "truncated": null
+    }
+  },
+  "conclusion": {
+    "remaining_problem": "runtime-readiness-not-accepted-from-retained-evidence",
+    "serial_endpoint_readability": "readable",
+    "current_device_buffer": "empty",
+    "note": "The no-power discriminator found both /serial/observe from the saturated cursor and direct /serial/read reachable and returning ok with zero bytes under the same restored known-good identity. Together with the accepted source proof primary summary, this points away from an unavailable lab serial endpoint and leaves valid readiness unaccepted because the raw primary helper artifact was overwritten and the retained current serial buffer is empty."
+  },
+  "rejected_claims": [
+    "valid-known-good-talos-readiness",
+    "GPIO32 write/restore v2 authorization",
+    "PHY reset behavior",
+    "Ethernet driver behavior",
+    "packet I/O",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "same_shaped_retry_policy": "GPIO32 write/restore v2 remains held. The serial endpoint follow-up closes this no-power endpoint discriminator; any further readiness recovery needs supervisor planning with a changed evidence-retention/readiness contract rather than a same-shaped GPIO32 retry.",
+  "nextAction": "Supervisor planning required. Do not promote GPIO32 v2 because valid-known-good-talos-readiness remains unaccepted; do not repeat the same no-power saturated-cursor endpoint discriminator without changed acceptance criteria or a changed serial/readiness evidence contract."
+}

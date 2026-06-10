@@ -1,0 +1,75 @@
+{
+  "task_id": "phase12-pi5-lab-serial-endpoint-readiness-followup-20260610",
+  "evidence": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-10-phase12-pi5-lab-serial-endpoint-readiness-followup.md",
+      "evidence_level": "task closeout record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-lab-serial-endpoint-readiness-followup/classification.json",
+      "evidence_level": "lab-controller endpoint discriminator classification"
+    },
+    {
+      "label": "endpoint discriminator summary",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-lab-serial-endpoint-readiness-followup/endpoint-discriminator-summary.json",
+      "evidence_level": "lab-controller API no-power serial endpoint/control summary"
+    },
+    {
+      "label": "lab health",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-lab-serial-endpoint-readiness-followup/lab-health.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "pre endpoint status",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-lab-serial-endpoint-readiness-followup/pre-endpoint-status.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "pre endpoint boot files",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-lab-serial-endpoint-readiness-followup/pre-endpoint-boot-files.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "saturated cursor observe request",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-lab-serial-endpoint-readiness-followup/serial-observe-request.json",
+      "evidence_level": "lab-controller API request"
+    },
+    {
+      "label": "saturated cursor observe response",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-lab-serial-endpoint-readiness-followup/serial-observe-from-saturated-cursor.json",
+      "evidence_level": "lab-controller API serial observe"
+    },
+    {
+      "label": "direct read request",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-lab-serial-endpoint-readiness-followup/serial-direct-read-request.json",
+      "evidence_level": "lab-controller API request"
+    },
+    {
+      "label": "direct read response",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-lab-serial-endpoint-readiness-followup/serial-direct-read-after-observe.json",
+      "evidence_level": "lab-controller API serial read"
+    },
+    {
+      "label": "post endpoint status",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-lab-serial-endpoint-readiness-followup/post-endpoint-status.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "source readiness closeout classification",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-closeout/classification.json",
+      "evidence_level": "static closeout classification"
+    },
+    {
+      "label": "source proof primary summary",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/runtime-readiness-primary-summary.json",
+      "evidence_level": "derived primary helper summary"
+    },
+    {
+      "label": "source proof overwritten raw helper",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/runtime-readiness.json",
+      "evidence_level": "retained raw helper artifact after overwrite"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "run_label": "serial-endpoint-readiness-followup-20260610T222700Z",
+  "lab_health_ok": true,
+  "restored_identity": {
+    "expected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "pre_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "post_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "pre_effective_kernel": "kernel_2712.img",
+    "post_effective_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 104136,
+    "observed_expected_fetch_bytes": 104136,
+    "identity_stable": true
+  },
+  "discriminator": {
+    "type": "no-power-saturated-cursor-observe-vs-direct-read",
+    "serial_observe_request": {
+      "cursor": 4194304,
+      "timeout_seconds": 3,
+      "settle_ms": 100,
+      "max_bytes": 65536
+    },
+    "serial_observe_result": {
+      "ok": true,
+      "action": "serial observe",
+      "cursor_start": 4194304,
+      "cursor_end": 4194304,
+      "bytes": 0,
+      "text_len": 0,
+      "truncated": null
+    },
+    "serial_direct_read_request": {
+      "timeout_seconds": 3,
+      "settle_ms": 100,
+      "max_bytes": 65536
+    },
+    "serial_direct_read_result": {
+      "ok": true,
+      "action": "serial read",
+      "cursor": 4194304,
+      "bytes": 0,
+      "text_len": 0,
+      "truncated": null
+    }
+  },
+  "interpretation": "serial-endpoints-readable-current-device-buffer-empty",
+  "accepted_readiness": false,
+  "authorizes_gpio32_v2": false
+}
