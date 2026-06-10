@@ -1,0 +1,75 @@
+{
+  "task_id": "phase12-rp1-ethernet-clock-reset-write-restore-core-20260610",
+  "inputs": [
+    {
+      "kind": "accepted_source_contract",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-clock-reset-write-target-source-contract.md",
+      "commit": "c16b209a4fd75199306ec0cf1655c0e5e2e9fbf2"
+    }
+  ],
+  "implementation": [
+    {
+      "path": "src/rp1_ethernet.rs",
+      "evidence": "local/static candidate and paired-control write-restore report surface"
+    },
+    {
+      "path": "build.rs",
+      "evidence": "registered future candidate/control boot scenarios"
+    },
+    {
+      "path": "src/main.rs",
+      "evidence": "routed future candidate/control boot scenarios"
+    },
+    {
+      "path": "src/target/rpi5.rs",
+      "evidence": "compiled candidate/control serial report emitters for future hardware proof"
+    },
+    {
+      "path": "scripts/rpi5-rp1-ethernet-clock-reset-write-restore-candidate-image.sh",
+      "evidence": "future local image helper, syntax-checked only"
+    },
+    {
+      "path": "scripts/rpi5-rp1-ethernet-clock-reset-write-restore-control-image.sh",
+      "evidence": "future local image helper, syntax-checked only"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "cargo fmt --all",
+      "result": "passed after formatting"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet ethernet_clock_reset",
+      "result": "passed",
+      "summary": "480 no_std tests passed with QEMU 9.2.0 on PATH"
+    },
+    {
+      "gate": "TALOS_BOOT_SCENARIO=rpi5_rp1_ethernet_clock_reset_write_restore_candidate cargo -Zjson-target-spec check --target targets/aarch64-talos-rpi5-bcm2712.json --quiet",
+      "result": "passed"
+    },
+    {
+      "gate": "TALOS_BOOT_SCENARIO=rpi5_rp1_ethernet_clock_reset_write_restore_no_mmio_control cargo -Zjson-target-spec check --target targets/aarch64-talos-rpi5-bcm2712.json --quiet",
+      "result": "passed"
+    }
+  ],
+  "non_goals_preserved": [
+    "no Pi 5 hardware run",
+    "no boot archive publication",
+    "no hardwareTestLock acquisition",
+    "no unscoped RP1 MMIO writes",
+    "no RP1_CLK_SYS pclk/hclk transition",
+    "no CLK_ETH_CTRL write",
+    "no reset-controller writes",
+    "no GPIO32/PHY reset",
+    "no MDIO",
+    "no DMA",
+    "no descriptors",
+    "no interrupts",
+    "no packet I/O",
+    "no networking",
+    "no sockets",
+    "no SSH",
+    "no Phase 12.2",
+    "no phase transition"
+  ]
+}

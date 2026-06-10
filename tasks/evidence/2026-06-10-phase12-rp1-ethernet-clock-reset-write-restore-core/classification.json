@@ -1,0 +1,35 @@
+{
+  "task_id": "phase12-rp1-ethernet-clock-reset-write-restore-core-20260610",
+  "classification": "rp1-ethernet-clock-reset-write-restore-core-accepted",
+  "evidence_level": [
+    "static inspection",
+    "fmt",
+    "focused unit tests",
+    "rpi5 boot-scenario compile checks",
+    "script syntax"
+  ],
+  "hardware": {
+    "pi5_run": false,
+    "hardware_test_lock_acquired": false,
+    "boot_archive_published": false,
+    "runtime_rp1_mmio_write_performed": false
+  },
+  "selected_target": {
+    "contract_id": "phase12-rp1-ethernet-clock-reset-write-target-source-contract-v1",
+    "target": "rp1-ethernet-clk-eth-tsu-ctrl-idempotent-write-restore",
+    "clock_name": "tsu_clk",
+    "clock_id": 29,
+    "register": "CLK_ETH_TSU_CTRL",
+    "observed_rp1_base": "0x1c00000000",
+    "source_offset": "0x018134",
+    "talos_register_address": "0x1c00018134",
+    "width_bits": 32,
+    "allowed_write_value": "pre-read-raw-value-only"
+  },
+  "reports": {
+    "candidate_classification": "rp1-ethernet-clk-eth-tsu-ctrl-write-restore-candidate-local-static",
+    "control_classification": "no-clock-write-no-ethernet-rp1-ethernet-write-restore-control",
+    "boundary_classification": "hardware-proof-limited-to-clk-eth-tsu-ctrl-idempotent-write-restore-control-output"
+  },
+  "accepted": true
+}
