@@ -1,0 +1,56 @@
+{
+  "task_id": "phase12-pi5-lab-known-good-power-cycle-recovery-closeout-20260610",
+  "evidence_level": "static inspection of accepted lab-controller API evidence, TFTP/capture evidence, serial hardware output, task records, and git history",
+  "artifacts": [
+    {
+      "label": "closeout task record",
+      "path": "tasks/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery-closeout.md"
+    },
+    {
+      "label": "closeout classification",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery-closeout/classification.json"
+    },
+    {
+      "label": "recovery task record",
+      "path": "tasks/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery.md"
+    },
+    {
+      "label": "recovery classification",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/classification.json"
+    },
+    {
+      "label": "recovery evidence map",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/evidence-map.json"
+    },
+    {
+      "label": "recovery capture summary",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/capture-summary.json"
+    },
+    {
+      "label": "recovery pre-power status",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/known-good-recovery-run/pre-power-status.json"
+    },
+    {
+      "label": "recovery TFTP delta",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/known-good-recovery-run/tftp-delta-after-power-from-pre-cursor.json"
+    },
+    {
+      "label": "recovery serial observe",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/known-good-recovery-run/serial-observe-after-power.json"
+    },
+    {
+      "label": "recovery final status",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/known-good-recovery-run/final-status.json"
+    },
+    {
+      "label": "accepted recovery commit",
+      "commit": "f241d15330551fa97c163d0828977027aee30844"
+    }
+  ],
+  "validation": [
+    "static inspection of recovery task/evidence/git history",
+    "jq empty on closeout evidence-map/classification JSON",
+    "git diff --check",
+    "git diff --cached --check"
+  ]
+}
