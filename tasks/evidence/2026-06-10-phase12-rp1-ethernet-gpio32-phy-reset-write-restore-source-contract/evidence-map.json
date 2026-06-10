@@ -1,0 +1,103 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-source-contract-20260610",
+  "classification": "rp1-ethernet-gpio32-phy-reset-write-restore-source-contract-accepted",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-source-contract.md",
+      "evidence_level": "static inspection and source contract record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-source-contract/classification.json",
+      "evidence_level": "structured classification"
+    },
+    {
+      "label": "evidence map",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-source-contract/evidence-map.json",
+      "evidence_level": "artifact map"
+    },
+    {
+      "label": "accepted GPIO32 read-only preflight proof closeout",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-proof-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted GPIO32 source contract",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-source-contract.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted Phase 11 GPIO frontier",
+      "path": "tasks/2026-06-09-phase11-rp1-irq-clock-gpio-milestone-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "Phase 11 GPIO source notes",
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/source-reference-notes.md",
+      "evidence_level": "static inspection",
+      "notes": "Records RP1 GPIO/RIO/PADS source offsets, status/control pair derivation, and no-MMIO control requirements."
+    },
+    {
+      "label": "retained Linux pinctrl source",
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/pinctrl-rp1.c",
+      "evidence_level": "source line inspection",
+      "notes": "Defines RP1 GPIO bank layout, GPIO STATUS/CTRL offsets and fields, RIO OUT/OE/IN offsets, pad fields, GPIO function value, bank-local bit behavior, RIO write paths, and GPIO32 function table."
+    },
+    {
+      "label": "retained Linux RP1 MFD source",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1-mfd.h",
+      "evidence_level": "source line inspection",
+      "notes": "Defines RP1_IO_BANK0/1/2, RP1_SYS_RIO0/1/2, RP1_PADS_BANK0/1/2, and RP1_PADS_ETH base offsets."
+    },
+    {
+      "label": "retained RP1 device tree source",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1.dtsi",
+      "evidence_level": "source line inspection",
+      "notes": "Defines rp1_gpio reg ranges for IO_BANK, RIO, and PADS, GPIO ranges, bank interrupts, GPIO32 SD1 pinctrl context, and rp1_eth identity."
+    },
+    {
+      "label": "retained Pi 5 board source",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-bcm2712-rpi-5-b.dts",
+      "evidence_level": "source line inspection",
+      "notes": "Defines rp1_eth phy-reset-gpios as rp1_gpio 32 GPIO_ACTIVE_LOW and phy-reset-duration 5."
+    },
+    {
+      "label": "retained Linux MACB source",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-macb_main.c",
+      "evidence_level": "source line inspection",
+      "notes": "Defines macb_mdio_reset assertion/deassertion sequence and phy-reset GPIO acquisition."
+    },
+    {
+      "label": "project doc",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "evidence_level": "documentation update"
+    }
+  ],
+  "validation": [
+    {
+      "label": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-source-contract/classification.json tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-source-contract/evidence-map.json",
+      "result": "passed",
+      "evidence_level": "JSON validation"
+    },
+    {
+      "label": "diff check",
+      "command": "git diff --check",
+      "result": "passed",
+      "evidence_level": "diff whitespace check"
+    },
+    {
+      "label": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed",
+      "evidence_level": "documentation build"
+    },
+    {
+      "label": "staged diff check",
+      "command": "git diff --cached --check",
+      "result": "passed",
+      "evidence_level": "staged diff whitespace check"
+    }
+  ]
+}

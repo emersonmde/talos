@@ -1,0 +1,122 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-source-contract-20260610",
+  "classification": "rp1-ethernet-gpio32-phy-reset-write-restore-source-contract-accepted",
+  "evidence_level": "static inspection",
+  "accepted_claims": [
+    "Selected a source-backed GPIO32 / ETH_RST_N write/restore contract after accepted read-only preflight visibility.",
+    "GPIO32 is RP1 GPIO bank1, bank-local bit 4.",
+    "Observed-aperture GPIO32 STATUS and CTRL addresses are 0x1c000d4020 and 0x1c000d4024.",
+    "Observed-aperture RIO1 OUT, OE, and IN addresses are 0x1c000e4000, 0x1c000e4004, and 0x1c000e4008, with bit 4 selected for GPIO32.",
+    "Observed-aperture GPIO32 pad address is 0x1c000f4014 and is retained as relevant precondition/restore state.",
+    "Active-low ETH_RST_N assertion maps to raw output low for GPIO32 bank1 bit 4; deassertion maps to raw output high; source reset duration is 5 ms.",
+    "A future candidate must no-write on sentinel/all-ones/unsafe reads, unsafe function/route state, unexpected event/interrupt state, missing restore baseline, or inconclusive capture-chain evidence.",
+    "Selected the local/static GPIO32 write/restore guard core as the next bounded follow-up."
+  ],
+  "rejected_claims": [
+    "runtime implementation",
+    "Pi 5 hardware proof",
+    "GPIO/RIO/pad/MMIO write in this task",
+    "PHY reset assertion/deassertion in this task",
+    "broad GPIO framework",
+    "generic pinctrl ownership",
+    "function-change ownership",
+    "pad write ownership without later explicit scope",
+    "interrupt/event ownership",
+    "MDIO/PHY ownership",
+    "Ethernet driver readiness",
+    "broad Ethernet MMIO readiness",
+    "clock/reset ownership",
+    "DMA or descriptor readiness",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "selected_target": {
+    "contract_id": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-source-contract-v1",
+    "gpio_controller": "rp1_gpio",
+    "signal": "ETH_RST_N",
+    "gpio_line": 32,
+    "bank": "bank1",
+    "bank_local_bit": 4,
+    "source_io_bank1_base": "0xc0400d4000",
+    "observed_io_bank1_base": "0x1c000d4000",
+    "gpio32_status": {
+      "source_address": "0xc0400d4020",
+      "observed_address": "0x1c000d4020",
+      "width_bits": 32,
+      "access": "volatile load"
+    },
+    "gpio32_ctrl": {
+      "source_address": "0xc0400d4024",
+      "observed_address": "0x1c000d4024",
+      "width_bits": 32,
+      "access": "volatile load/store in future task only"
+    },
+    "rio1_out": {
+      "source_address": "0xc0400e4000",
+      "observed_address": "0x1c000e4000",
+      "bit": 4
+    },
+    "rio1_oe": {
+      "source_address": "0xc0400e4004",
+      "observed_address": "0x1c000e4004",
+      "bit": 4
+    },
+    "rio1_in": {
+      "source_address": "0xc0400e4008",
+      "observed_address": "0x1c000e4008",
+      "bit": 4
+    },
+    "gpio32_pad": {
+      "source_address": "0xc0400f4014",
+      "observed_address": "0x1c000f4014",
+      "width_bits": 32,
+      "access": "volatile load; store only if later task explicitly scopes pad restore"
+    },
+    "active_low": true,
+    "assertion_raw_bit_value": 0,
+    "deassertion_raw_bit_value": 1,
+    "reset_duration_ms": 5
+  },
+  "no_write_blockers": [
+    "sentinel/all-ones/all-zero/fault/inconclusive selected register reads",
+    "GPIO32 CTRL FUNCSEL is not GPIO function value 5 without a later explicit function-change scope",
+    "GPIO32 CTRL override fields make raw RIO OUT/OE path unsafe or ambiguous",
+    "GPIO32 CTRL IRQ enable bits or event/interrupt state would make this an interrupt/event task",
+    "pad state makes output drive unsafe without an explicit pad write/restore scope",
+    "missing complete restore baseline for every written register",
+    "candidate/control capture-chain identity or restore evidence is inconclusive"
+  ],
+  "future_candidate_sequence": [
+    "capture GPIO32 STATUS, GPIO32 CTRL, RIO1 OUT/OE/IN, and required pad baseline",
+    "check all no-write preconditions before any store",
+    "assert active-low ETH_RST_N through GPIO32 bank1 bit 4 only",
+    "wait 5 ms",
+    "deassert ETH_RST_N through GPIO32 bank1 bit 4 only",
+    "restore every touched field to captured baseline",
+    "read back restore state and accept only if restore equals baseline"
+  ],
+  "future_proof_classifications": [
+    "rp1-ethernet-gpio32-phy-reset-write-restored",
+    "rp1-ethernet-gpio32-phy-reset-write-assertion-mismatch-restored",
+    "rp1-ethernet-gpio32-phy-reset-write-deassertion-mismatch-restored",
+    "rp1-ethernet-gpio32-phy-reset-write-restore-failed",
+    "rp1-ethernet-gpio32-phy-reset-blocked-sentinel-read",
+    "rp1-ethernet-gpio32-phy-reset-blocked-unsafe-function",
+    "rp1-ethernet-gpio32-phy-reset-blocked-unexpected-event-state",
+    "rp1-ethernet-gpio32-phy-reset-blocked-missing-restore-baseline",
+    "rp1-ethernet-gpio32-phy-reset-inconclusive-capture",
+    "no-gpio-write-no-ethernet-rp1-ethernet-gpio32-phy-reset-control",
+    "staging/build-blocker"
+  ],
+  "retained_risks": [
+    "The first hardware run may classify no-write if GPIO32 is not already in a safe GPIO route or if pad/override state is unsafe.",
+    "A successful GPIO32 write/restore would prove only the selected reset-line store/readback/restore boundary, not MDIO/PHY ownership or Ethernet packet readiness.",
+    "Pad state may require a later explicit write/restore scope if readback shows output drive is disabled or unsafe.",
+    "Hardware proof still needs candidate/control identity, TFTP evidence, serial freshness, final identity, restore evidence, and task-owned JSON."
+  ],
+  "next_action": "Mechanically promote phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-core-20260610 on the next worker wake if dependencies remain satisfied; keep it local/static with no hardware run or runtime GPIO write."
+}

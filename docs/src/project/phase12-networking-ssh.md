@@ -762,3 +762,31 @@ task and does not accept GPIO ownership, PHY reset assertion/deassertion,
 MDIO/PHY ownership, RP1 GPIO/RIO/pad/MMIO writes, Ethernet driver readiness,
 DMA, descriptors, interrupts, packet I/O, networking, sockets, SSH, Phase
 12.2, or a phase transition.
+
+## RP1 Ethernet GPIO32 PHY-Reset Write/Restore Source Contract
+
+phase12-rp1-ethernet-gpio32-phy-reset-write-restore-source-contract-20260610
+accepts the source/docs/evidence contract for a future bounded GPIO32 /
+ETH_RST_N write/restore ownership proof. GPIO32 is RP1 GPIO bank1,
+bank-local bit 4. The observed-aperture targets are GPIO32 STATUS at
+0x1c000d4020, GPIO32 CTRL at 0x1c000d4024, RIO1 OUT/OE/IN at
+0x1c000e4000/0x1c000e4004/0x1c000e4008, and GPIO32 pad state at
+0x1c000f4014. Active-low ETH_RST_N assertion maps to raw GPIO32 output low,
+deassertion maps to raw output high, and the retained source duration remains
+5 ms.
+
+The future candidate is allowed only after a local/static guard and later
+serialized proof are explicitly queued. It must capture all touched register
+baselines, no-write on sentinel/all-ones/unsafe/inconclusive reads, unsafe
+function or route state, unexpected event/interrupt state, missing restore
+baseline, or capture-chain uncertainty, then assert, wait, deassert, restore
+every touched field to baseline, and verify restore readback. The paired
+control must use the same report path while constructing no GPIO32/RIO/pad
+writable target and performing no volatile store.
+
+This contract selects the local/static GPIO32 write/restore guard core as the
+next bounded follow-up. It does not implement or run hardware, does not accept
+GPIO ownership, function-change ownership, pad-write ownership, PHY reset
+assertion/deassertion, MDIO/PHY ownership, interrupt/event ownership, Ethernet
+driver readiness, broad Ethernet MMIO readiness, DMA, descriptors, packet I/O,
+networking, sockets, SSH, Phase 12.2, or a phase transition.
