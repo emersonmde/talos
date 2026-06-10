@@ -9260,6 +9260,17 @@ hardware/runtime prerequisite ownership, Ethernet readiness, RP1 MMIO writes,
 clock/reset/GPIO/PHY/MDIO ownership, DMA, descriptor rings, packet I/O,
 networking, sockets, SSH, Phase 12.2, or a phase transition.
 
+phase12-rp1-ethernet-prereq-ownership-proof-closeout-20260610 closes the
+prerequisite report visibility frontier. Same-shaped report visibility hardware
+retries are closed for this candidate/control pair: the accepted proof shows
+only that the candidate prerequisite metadata and paired no-ownership/
+no-Ethernet control report path are visible under capture-chain-v4. No explicit
+queued follow-up is mechanically objective from report visibility alone, so
+supervisor planning is required for the next bounded Phase 12.1 prerequisite
+ownership or implementation slice before any runtime prerequisite ownership,
+Ethernet driver work, RP1 MMIO writes, DMA, descriptor rings, interrupts,
+packet I/O, networking, sockets, SSH, Phase 12.2, or phase-transition work.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

@@ -379,3 +379,21 @@ Ethernet MMIO readiness, RP1 MMIO writes, clock/reset writes or ownership,
 GPIO32/PHY reset ownership, MDIO/PHY ownership, interrupt delivery/completion,
 DMA, descriptor rings, packet I/O, networking, sockets, SSH, Phase 12.2, or a
 phase transition.
+
+## RP1 Ethernet Prerequisite Ownership Proof Closeout
+
+phase12-rp1-ethernet-prereq-ownership-proof-closeout-20260610 closes the
+prerequisite report visibility frontier. The accepted boundary remains only
+that the candidate/control report path is visible on Pi 5 serial under
+capture-chain-v4: the candidate prints the source-backed prerequisite metadata
+and the paired no-ownership/no-Ethernet control withholds candidate-only
+facts.
+
+Same-shaped prerequisite report visibility hardware retries are closed for
+this candidate/control pair. A future Phase 12.1 task must be
+supervisor-planned with different explicit scope and acceptance criteria before
+any runtime prerequisite ownership is attempted. This closeout does not accept
+Ethernet driver readiness, broad Ethernet MMIO readiness, RP1 MMIO writes,
+clock/reset ownership, GPIO32/PHY reset ownership, MDIO/PHY ownership,
+interrupt delivery/completion, DMA, descriptor rings, packet I/O, networking,
+sockets, SSH, Phase 12.2, or a phase transition.

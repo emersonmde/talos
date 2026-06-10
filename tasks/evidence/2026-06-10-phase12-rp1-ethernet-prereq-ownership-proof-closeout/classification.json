@@ -1,0 +1,67 @@
+{
+  "task_id": "phase12-rp1-ethernet-prereq-ownership-proof-closeout-20260610",
+  "classification": "rp1-ethernet-prereq-ownership-report-visibility-frontier-closed",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "task-owned JSON",
+    "docs validation"
+  ],
+  "accepted_claims": [
+    "prerequisite ownership report visibility proof is decisive for the accepted candidate/control pair",
+    "candidate report output was visible on Pi 5 serial with the accepted prerequisite metadata fields",
+    "paired no-ownership/no-Ethernet control proved the same report path while withholding candidate-only prerequisite facts",
+    "candidate and control selected-tree identity, expected TFTP fetch bytes, run-unique serial marker freshness, final pre-restore identity, and restore proof joined under capture-chain-v4",
+    "same-shaped prerequisite report visibility hardware retries are closed for this candidate/control pair"
+  ],
+  "proof_commit": "01af4b5ab78b5af836ec4527b1de783f525548db",
+  "metadata_commit": "cfc4ed93cd0a3d47ee6b0fc8a26c2b3be45f0960",
+  "candidate": {
+    "classification": "rp1-ethernet-prereq-ownership-report-visible",
+    "serial_marker_occurrences": 25,
+    "selected_tree_hash": "66338c41dd7e1166d1ae5222387bee653c18eb5722b69b75183dac5bd935d149",
+    "kernel_2712_sha256": "03e86850218b1cefb10aecc1cfced68fc30a63e9d59b2c1f2cff40558a6e9e3f",
+    "kernel_2712_size": 49176,
+    "identity_join_v4_passed": true
+  },
+  "control": {
+    "classification": "no-ownership-no-ethernet-rp1-ethernet-prereq-control",
+    "serial_marker_occurrences": 28,
+    "selected_tree_hash": "bdbb7caef7f11abbd56b4104009048c97a9bfcc37be509c15e962bb516f7b24f",
+    "kernel_2712_sha256": "1eed20ef9c9e07e979c9454055b3ca888b25e726ef44aaa70c644f9c1a94ed78",
+    "kernel_2712_size": 48856,
+    "identity_join_v4_passed": true
+  },
+  "restore": {
+    "snapshot": "pre-prereq-ownership-proof-20260610T082202Z",
+    "final_post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "restored": true
+  },
+  "same_shaped_retry_policy": "closed-for-prerequisite-report-visibility-candidate-control-pair",
+  "planning_needed": true,
+  "planning_reason": "Prerequisite report visibility/control frontier is closed; no explicit queued mechanically unblocked follow-up task exists. Supervisor planning is required for the next bounded Phase 12.1 prerequisite ownership or implementation slice.",
+  "rejected_claims": [
+    "Ethernet driver readiness",
+    "broad Ethernet MMIO readiness",
+    "RP1 MMIO writes",
+    "clock/reset writes or ownership",
+    "GPIO32 ownership or PHY reset assertion/deassertion",
+    "MDIO transactions or PHY ownership",
+    "interrupt delivery, handler ownership, or completion",
+    "DMA",
+    "descriptor rings",
+    "channel ownership or transfer completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "Report visibility is not prerequisite ownership",
+    "Clock/reset and PHY/MDIO ownership remain unaccepted",
+    "DMA, descriptor rings, interrupts, packet I/O, networking, sockets, and SSH remain out of scope"
+  ],
+  "next_action": "Supervisor planning required before any further Phase 12.1 work."
+}
