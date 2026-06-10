@@ -1,0 +1,44 @@
+{
+  "task_id": "phase12-pi5-runtime-readiness-evidence-retention-closeout-20260610",
+  "classification": "pi5-runtime-readiness-primary-retention-closeout-accepted",
+  "accepted_retention_contract": {
+    "source_task_id": "phase12-pi5-runtime-readiness-evidence-retention-core-20260610",
+    "source_commit": "884d760a066b84c6ea279b7c671873c2d5cba184",
+    "primary_artifact_suffix": "runtime-readiness-primary.json",
+    "summary_artifact_suffix": "runtime-readiness-primary-summary.json",
+    "status_artifact_suffix": "runtime-readiness-primary.status",
+    "overwrite_policy": "refuse-existing-primary-summary-or-status",
+    "summary_policy": "derive-from-retained-primary-artifact",
+    "followup_artifact_policy": "follow-up direct-read or endpoint artifacts must be separately named and cannot satisfy or erase the primary readiness evidence gate"
+  },
+  "selected_next_task": "phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof-20260610",
+  "selected_next_action": "Mechanically promote phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof-20260610 on the next worker wake if hardwareTestLock remains unlocked and supervisorIntervention is inactive.",
+  "changed_discriminator": "The next readiness proof must retain immutable run-label-qualified primary helper artifacts instead of using the prior mutable raw helper path.",
+  "accepted_readiness": false,
+  "authorizes_gpio32_v2": false,
+  "rejected_claims": [
+    "valid-known-good-talos-readiness",
+    "GPIO32 write/restore v2 authorization",
+    "PHY reset behavior",
+    "Ethernet driver readiness",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "A serialized Pi 5 proof still has to demonstrate valid-known-good-talos-readiness under hardwareTestLock.",
+    "GPIO32 write/restore v2 remains blocked until the v2 readiness closeout accepts valid-known-good-talos-readiness.",
+    "The accepted retention contract protects primary artifact identity; it does not by itself prove runtime readiness."
+  ],
+  "validation": {
+    "static_inspection": "passed",
+    "json_checks": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "not run; no docs/src files touched by closeout",
+    "git_diff_cached_check": "passed"
+  },
+  "nextAction": "Mechanically promote phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof-20260610 on the next worker wake if hardwareTestLock remains unlocked and supervisorIntervention is inactive. Do not promote GPIO32 v2 from this closeout."
+}
