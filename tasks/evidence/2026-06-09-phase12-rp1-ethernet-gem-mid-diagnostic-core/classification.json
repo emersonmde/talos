@@ -1,0 +1,91 @@
+{
+  "task_id": "phase12-rp1-ethernet-gem-mid-diagnostic-core-20260609",
+  "classification": "rp1-ethernet-gem-mid-diagnostic-core-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "local/static implementation",
+    "fmt check",
+    "QEMU-backed no_std tests",
+    "jq JSON checks",
+    "git diff checks",
+    "mdbook build"
+  ],
+  "report_contract": {
+    "contract_id": "phase12-rp1-ethernet-gem-mid-diagnostic-report-contract-v1",
+    "source_contract_id": "phase12-rp1-ethernet-gem-mid-source-contract-20260609",
+    "candidate_classification": "local-static-rp1-ethernet-gem-mid-candidate",
+    "control_classification": "no-ethernet-no-mmio-rp1-ethernet-gem-mid-control",
+    "hardware_proof_boundary_classification": "hardware-proof-limited-to-gem-mid-visibility-control-output"
+  },
+  "candidate_report": {
+    "controller": "rp1_eth",
+    "compatible": [
+      "raspberrypi,rp1-gem",
+      "cdns,macb"
+    ],
+    "register": "MACB_MID",
+    "offset": "0x00fc",
+    "rp1_bus_base": "0xc0_40100000",
+    "cpu_physical_base": "0x1f00100000",
+    "rp1_bus_target": "0xc0_401000fc",
+    "cpu_physical_target": "0x1f001000fc",
+    "width_bits": 32,
+    "endianness": "little-endian",
+    "access": "read-only volatile load",
+    "fields": {
+      "IDNUM": {
+        "offset": 16,
+        "size": 12
+      },
+      "REV": {
+        "offset": 0,
+        "size": 16
+      }
+    }
+  },
+  "control_report": {
+    "report_kind": "no-ethernet-no-mmio-control",
+    "carries_source_contract_id": true,
+    "withholds_ethernet_mmio_target_fields": true,
+    "rejects_visible_gem_mid_value_as_control_evidence": true
+  },
+  "accepted_claims": [
+    "Local/static candidate report construction preserves the exact accepted GEM MID source target",
+    "Local/static control report construction uses the same report contract while withholding Ethernet MMIO target fields",
+    "Rejected-input evidence is deterministic",
+    "Focused tests cover candidate, control, source-contract bypass, and overclaim rejection cases"
+  ],
+  "rejected_runtime_claims": [
+    "Ethernet driver readiness",
+    "live broad RP1 Ethernet MMIO readiness",
+    "RP1 MMIO writes",
+    "RP1 DMA programming",
+    "descriptor rings",
+    "DMA ownership",
+    "transfer completion",
+    "interrupt completion",
+    "clock/reset ownership",
+    "PHY reset ownership",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition",
+    "hardware validation by this local/static task"
+  ],
+  "retained_risks": [
+    "The source-translated CPU physical GEM MID address remains not hardware-proven",
+    "Endpoint config identity, bridge setup, and outbound window behavior remain retained Phase 11 risks",
+    "Clock/reset and PHY reset ownership remain unaccepted",
+    "Packet path, descriptors, DMA, and interrupts remain outside this contract"
+  ],
+  "focused_test_summary": {
+    "command": "cargo -Zjson-target-spec test --quiet rp1_ethernet",
+    "environment": "QEMU_SYSTEM_AARCH64 from /opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin via PATH",
+    "result": "passed",
+    "observed_summary": "test result: ok. 460 passed"
+  },
+  "next_action": "Mechanically promote phase12-rp1-ethernet-gem-mid-diagnostic-closeout-20260609 on the next worker wake. The closeout must reconcile this local/static report core before any hardware proof; do not run hardware or claim live Ethernet MMIO readiness from this task."
+}

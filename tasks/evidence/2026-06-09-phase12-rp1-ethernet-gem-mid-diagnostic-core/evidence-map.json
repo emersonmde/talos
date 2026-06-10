@@ -1,0 +1,61 @@
+{
+  "task": "phase12-rp1-ethernet-gem-mid-diagnostic-core-20260609",
+  "status": "accepted",
+  "classification": "rp1-ethernet-gem-mid-diagnostic-core-accepted",
+  "task_record": "tasks/2026-06-09-phase12-rp1-ethernet-gem-mid-diagnostic-core.md",
+  "classification_json": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-diagnostic-core/classification.json",
+  "implementation": {
+    "module": "src/rp1_ethernet.rs",
+    "module_registration": "src/main.rs"
+  },
+  "source_inputs": {
+    "source_contract_task": "tasks/2026-06-09-phase12-rp1-ethernet-gem-mid-source-contract.md",
+    "source_contract_classification": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-source-contract/classification.json",
+    "source_contract_evidence_map": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-source-contract/evidence-map.json",
+    "rp1_dtsi": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1.dtsi",
+    "macb_main": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-macb_main.c",
+    "macb_header": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-source-contract/source/linux-rpi-6.12-macb.h"
+  },
+  "docs": {
+    "phase12_project_note": "docs/src/project/phase12-networking-ssh.md",
+    "roadmap": "docs/src/roadmap.md"
+  },
+  "validation": [
+    {
+      "gate": "static inspection",
+      "result": "passed",
+      "evidence_level": "static inspection of accepted source contract and touched source modules"
+    },
+    {
+      "gate": "cargo fmt --all -- --check",
+      "result": "passed",
+      "evidence_level": "fmt check"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet rp1_ethernet",
+      "result": "passed",
+      "evidence_level": "QEMU-backed no_std test run"
+    },
+    {
+      "gate": "jq empty on task-owned evidence JSON",
+      "result": "passed",
+      "evidence_level": "JSON validation"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "passed",
+      "evidence_level": "diff whitespace check"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed",
+      "evidence_level": "documentation build"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "passed",
+      "evidence_level": "staged diff whitespace check"
+    }
+  ],
+  "next_task": "phase12-rp1-ethernet-gem-mid-diagnostic-closeout-20260609"
+}

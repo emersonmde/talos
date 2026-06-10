@@ -60,3 +60,17 @@ This remains source evidence only: live broad RP1 Ethernet MMIO readiness, RP1
 MMIO writes, DMA, descriptor rings, interrupts, clock/reset ownership, PHY
 reset ownership, packet I/O, networking, sockets, SSH, and Phase 12.2 remain
 unaccepted.
+
+## GEM MID Diagnostic Core
+
+phase12-rp1-ethernet-gem-mid-diagnostic-core-20260609 accepts the local/static
+report construction for the GEM MID source contract. The candidate report
+preserves the accepted rp1_eth/MACB_MID target, source evidence, rejected
+claims, retained risks, and hardware-proof boundary classification. The paired
+control uses the same report contract while withholding Ethernet MMIO target
+fields and carrying no-ethernet-no-mmio-rp1-ethernet-gem-mid-control.
+
+The diagnostic core is not a hardware proof. Live GEM visibility, broad
+Ethernet MMIO readiness, RP1 MMIO/DMA programming, descriptors, interrupts,
+clock/reset ownership, PHY reset ownership, packet I/O, networking, sockets,
+SSH, and Phase 12.2 remain unaccepted until later explicit tasks.

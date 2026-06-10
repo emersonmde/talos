@@ -185,6 +185,8 @@ mod process_install;
 mod process_page_table_materialization;
 #[cfg_attr(not(test), allow(dead_code))]
 mod program_loader;
+#[cfg_attr(not(test), allow(dead_code))]
+mod rp1_ethernet;
 mod runtime_console;
 // Phase 6.1 accepts per-core ownership before boot-time hardware use.
 #[cfg_attr(not(test), allow(dead_code))]
