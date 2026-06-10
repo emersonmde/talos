@@ -1,0 +1,55 @@
+{
+  "task_id": "phase12-pi5-known-good-bounded-runtime-readiness-closeout-20260610",
+  "evidence": [
+    {
+      "label": "closeout task record",
+      "path": "tasks/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-closeout.md",
+      "evidence_level": "static closeout record"
+    },
+    {
+      "label": "closeout classification",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-closeout/classification.json",
+      "evidence_level": "static closeout classification"
+    },
+    {
+      "label": "source proof task record",
+      "path": "tasks/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof.md",
+      "evidence_level": "serial hardware proof/blocker record"
+    },
+    {
+      "label": "source proof classification",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/classification.json",
+      "evidence_level": "serial hardware proof classification"
+    },
+    {
+      "label": "source proof evidence map",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/evidence-map.json",
+      "evidence_level": "artifact map"
+    },
+    {
+      "label": "primary runtime readiness summary",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/runtime-readiness-primary-summary.json",
+      "evidence_level": "derived primary helper summary"
+    },
+    {
+      "label": "overwritten runtime readiness raw JSON",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/runtime-readiness.json",
+      "evidence_level": "retained raw helper artifact after follow-up overwrite"
+    },
+    {
+      "label": "stable TFTP delta",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/tftp-delta.json",
+      "evidence_level": "stable lab-controller TFTP delta"
+    },
+    {
+      "label": "final status",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/final-status.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "phase 12 architecture/project note",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "evidence_level": "documentation"
+    }
+  ]
+}

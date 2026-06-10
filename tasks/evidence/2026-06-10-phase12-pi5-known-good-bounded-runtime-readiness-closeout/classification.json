@@ -1,0 +1,37 @@
+{
+  "task_id": "phase12-pi5-known-good-bounded-runtime-readiness-closeout-20260610",
+  "classification": "known-good-readiness-evidence-retention-blocker-closeout-accepted",
+  "accepted_readiness": false,
+  "authorizes_gpio32_v2": false,
+  "selected_next_task": "phase12-pi5-lab-serial-endpoint-readiness-followup-20260610",
+  "evidence_level": "static closeout over committed serial hardware proof/blocker evidence",
+  "source_proof": {
+    "task_id": "phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof-20260610",
+    "commit": "7c9c6127711ff0e2ff655be1f086ede1d445d8f9",
+    "classification": "known-good-readiness-raw-helper-artifact-overwritten",
+    "run_label": "known-good-runtime-readiness-20260610T215810Z"
+  },
+  "accepted_blocker": {
+    "kind": "repaired-helper-serial-readiness-evidence-retention-blocker",
+    "details": [
+      "Restored known-good tree identity matched before and after the run.",
+      "Stable TFTP delta included the expected 104136-byte da591740/kernel_2712.img fetches.",
+      "The repaired helper selected direct-read-after-saturated-cursor rather than unqualified cursor-observe-only readiness.",
+      "The raw primary runtime-readiness helper JSON was overwritten by a follow-up direct read.",
+      "The retained raw runtime-readiness JSON classified saturated-cursor-capture-blocked and does not satisfy valid-known-good-talos-readiness."
+    ]
+  },
+  "rejected_claims": [
+    "valid-known-good-talos-readiness",
+    "GPIO32 write/restore v2 authorization",
+    "PHY reset behavior",
+    "Ethernet driver behavior",
+    "packet I/O",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "same_shaped_retry_policy": "GPIO32 write/restore v2 remains held. The only selected follow-up is the queued serial endpoint readiness discriminator because it changes the evidence question from GPIO32 behavior to retained serial/readiness capture integrity.",
+  "nextAction": "Mechanically promote phase12-pi5-lab-serial-endpoint-readiness-followup-20260610 on the next worker wake if hardwareTestLock remains unlocked and supervisorIntervention is inactive. Do not promote GPIO32 v2."
+}

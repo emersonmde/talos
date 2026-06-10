@@ -872,3 +872,31 @@ This checkpoint does not accept GPIO32 ownership, PHY reset
 assertion/deassertion, MDIO/PHY ownership, RP1 GPIO/RIO/pad/MMIO writes,
 Ethernet driver readiness, interrupts, DMA/descriptors, packet I/O,
 networking, sockets, SSH, Phase 12.2, or a phase transition.
+
+phase12-pi5-runtime-readiness-helper-saturation-core-20260610 repairs the
+known-good runtime-readiness helper contract at the saturated 4 MiB serial
+cursor boundary. Saturated cursors now route to bounded direct serial reads or
+an explicit saturated-cursor capture blocker instead of an unqualified empty
+cursor-observe-only readiness classification. The helper still accepts valid
+known-good Talos readiness only when the configured readiness markers are
+present.
+
+phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof-20260610 confirms
+that restored-tree identity and TFTP fetches recovered for the known-good
+tree, including two 104136-byte da591740/kernel_2712.img fetches, but it
+does not accept valid known-good Talos readiness. The primary derived helper
+summary saw the downstream production-timer PASS marker under the repaired
+direct-read contract, but the raw primary helper JSON was overwritten by a
+follow-up read and the retained raw helper artifact classifies as
+saturated-cursor-capture-blocked.
+
+phase12-pi5-known-good-bounded-runtime-readiness-closeout-20260610 therefore
+closes this checkpoint as
+known-good-readiness-evidence-retention-blocker-closeout-accepted. GPIO32
+write/restore v2 remains held; the selected next boundary is the queued serial
+endpoint readiness follow-up, which must resolve whether the remaining blocker
+is serial endpoint/capture readability, restored-tree runtime output absence,
+or lab/human intervention. This closeout does not accept GPIO32 ownership, PHY
+reset assertion/deassertion, MDIO/PHY ownership, RP1 GPIO/RIO/pad/MMIO writes,
+Ethernet driver readiness, interrupts, DMA/descriptors, packet I/O,
+networking, sockets, SSH, Phase 12.2, or a phase transition.
