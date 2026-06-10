@@ -625,3 +625,32 @@ This closeout does not accept runtime RP1 MMIO writes, hardware readback,
 broad clock/reset ownership, shared-clock ownership, reset-controller
 ownership, GPIO32/PHY reset, MDIO/PHY, DMA, descriptors, interrupts, packet
 I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
+
+phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof-20260610 accepts
+the serialized Pi 5 CLK_ETH_CTRL write/restore proof as
+rp1-ethernet-clk-eth-ctrl-idempotent-write-restored-with-control. The accepted
+candidate rerun joined capture-chain-v4 selected-tree identity
+8d71d54345a64913e451969b9303cd7df351baa64950dffd2fca890897cf05b3, two
+matching TFTP fetches of da591740/kernel_2712.img at 50040 bytes, run-unique
+serial nonce freshness, final pre-restore identity, and restore proof. The
+candidate serial reported CLK_ETH_CTRL at 0x1c00018064 with pre_raw
+0x10000800, post_raw 0x10000800, restore_raw 0x10000800, post_eq_pre=true,
+restore_eq_pre=true, and classification
+rp1-ethernet-clk-eth-ctrl-idempotent-write-restored. The paired control joined
+selected-tree identity 5c5144ce68c0537b39dcb216b2ae1343c9197ac7deb310f5c7bcc811efe31d40,
+two matching TFTP fetches at 49464 bytes, run-unique serial freshness, final
+identity, and restore proof while withholding writable CLK_ETH_CTRL target
+construction with classification
+no-clock-write-no-ethernet-rp1-ethernet-clk-eth-ctrl-control.
+
+The proof retains two non-acceptance candidate attempts: a short-window
+inconclusive capture and a staging-blocked attempt whose preflight and serial
+marker showed the candidate but whose TFTP/final identity rejoined the
+baseline tree. The paired control and unchanged candidate rerun completed the
+required inconclusive-run triage. Final restore returned the lab boot tree to
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 with
+effective kernel kernel_2712.img and da591740/kernel_2712.img at 104136 bytes.
+This proof does not accept broad clock/reset ownership, shared-clock
+ownership, reset-controller ownership, GPIO32/PHY reset, MDIO/PHY, DMA,
+descriptors, interrupts, packet I/O, networking, sockets, SSH, Phase 12.2, or
+a phase transition.

@@ -1,0 +1,95 @@
+{
+  "task_id": "phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof-20260610",
+  "classification": "rp1-ethernet-clk-eth-ctrl-idempotent-write-restored-with-control",
+  "evidence_level": "serial hardware boot/output",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof.md",
+      "evidence_level": "task record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof/classification.json",
+      "evidence_level": "accepted hardware classification"
+    },
+    {
+      "label": "capture summary",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof/capture-summary.json",
+      "evidence_level": "summary"
+    },
+    {
+      "label": "candidate accepted rerun",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof/candidate-rerun",
+      "evidence_level": "serial hardware boot/output"
+    },
+    {
+      "label": "candidate identity join",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof/candidate-rerun/identity-join-v4-check.json",
+      "evidence_level": "capture-chain-v4 replay"
+    },
+    {
+      "label": "control run",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof/control-run",
+      "evidence_level": "serial hardware boot/output"
+    },
+    {
+      "label": "control identity join",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof/control-run/identity-join-v4-check.json",
+      "evidence_level": "capture-chain-v4 replay"
+    },
+    {
+      "label": "archive reviews",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof/archive-review",
+      "evidence_level": "image/archive inspection"
+    },
+    {
+      "label": "retained staging-blocked candidate attempt",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof/candidate-run-staging-blocked",
+      "evidence_level": "retained non-acceptance hardware evidence"
+    },
+    {
+      "label": "retained short inconclusive candidate attempt",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof/candidate-run-short-inconclusive",
+      "evidence_level": "retained non-acceptance hardware evidence"
+    },
+    {
+      "label": "final restore",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof/final-post-restore-boot-files.json",
+      "evidence_level": "lab-controller API restore proof"
+    }
+  ],
+  "validation": [
+    {
+      "command": "cargo fmt --all -- --check",
+      "result": "passed",
+      "evidence_level": "fmt"
+    },
+    {
+      "command": "TALOS_BOOT_SCENARIO=rpi5_rp1_ethernet_clk_eth_ctrl_write_restore_candidate cargo -Zjson-target-spec check --target targets/aarch64-talos-rpi5-bcm2712.json --quiet",
+      "result": "passed",
+      "evidence_level": "typecheck"
+    },
+    {
+      "command": "TALOS_BOOT_SCENARIO=rpi5_rp1_ethernet_clk_eth_ctrl_write_restore_no_mmio_control cargo -Zjson-target-spec check --target targets/aarch64-talos-rpi5-bcm2712.json --quiet",
+      "result": "passed",
+      "evidence_level": "typecheck"
+    },
+    {
+      "command": "bash -n scripts/rpi5-rp1-ethernet-clk-eth-ctrl-write-restore-*.sh",
+      "result": "passed",
+      "evidence_level": "shell syntax"
+    },
+    {
+      "command": "candidate/control archive review scripts",
+      "result": "passed",
+      "evidence_level": "image/archive inspection"
+    },
+    {
+      "command": "serialized Pi 5 candidate/control capture under hardwareTestLock",
+      "result": "passed after retained short inconclusive and staging-blocked candidate attempts",
+      "evidence_level": "serial hardware boot/output"
+    }
+  ],
+  "next_action": "Mechanically promote phase12-rp1-ethernet-clk-eth-ctrl-write-restore-proof-closeout-20260610 on the next worker wake."
+}

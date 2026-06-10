@@ -1,0 +1,71 @@
+{
+  "task_id": "phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof-20260610",
+  "classification": "rp1-ethernet-clk-eth-ctrl-idempotent-write-restored-with-control",
+  "evidence_level": [
+    "image/archive inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "TFTP/capture evidence",
+    "capture-chain-v4 replay",
+    "restore proof"
+  ],
+  "accepted_claims": [
+    "Candidate CLK_ETH_CTRL Pi 5 rerun joined selected-tree identity, expected TFTP fetches, run-unique serial freshness, final pre-restore identity, and restore evidence.",
+    "Candidate serial reported CLK_ETH_CTRL at 0x1c00018064 with pre_raw 0x10000800, post_raw 0x10000800, restore_raw 0x10000800, post_eq_pre=true, restore_eq_pre=true, and classification rp1-ethernet-clk-eth-ctrl-idempotent-write-restored.",
+    "Paired control joined selected-tree identity, expected TFTP fetches, run-unique serial freshness, final pre-restore identity, and restore evidence while constructing no writable CLK_ETH_CTRL target.",
+    "Final lab boot tree was restored to a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 with effective kernel kernel_2712.img."
+  ],
+  "rejected_claims": [
+    "broad clock/reset ownership",
+    "shared-clock ownership",
+    "reset-controller ownership",
+    "GPIO32/PHY reset ownership",
+    "MDIO/PHY ownership",
+    "DMA or descriptor readiness",
+    "interrupt delivery or completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "candidate": {
+    "label": "eth-clk-ctrl-write-restore-candidate-rerun",
+    "nonce": "eth-clk-ctrl-write-candidate-rerun-20260610T145000Z",
+    "selected_tree_hash": "8d71d54345a64913e451969b9303cd7df351baa64950dffd2fca890897cf05b3",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 50040,
+    "identity_join": "capture-chain-v4-ready",
+    "serial_classification": "rp1-ethernet-clk-eth-ctrl-idempotent-write-restored",
+    "register": "CLK_ETH_CTRL",
+    "address": "0x1c00018064",
+    "pre_raw": "0x10000800",
+    "post_raw": "0x10000800",
+    "restore_raw": "0x10000800",
+    "post_eq_pre": true,
+    "restore_eq_pre": true
+  },
+  "control": {
+    "label": "eth-clk-ctrl-write-restore-control",
+    "nonce": "eth-clk-ctrl-write-control-20260610T143800Z",
+    "selected_tree_hash": "5c5144ce68c0537b39dcb216b2ae1343c9197ac7deb310f5c7bcc811efe31d40",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 49464,
+    "identity_join": "capture-chain-v4-ready",
+    "serial_classification": "no-clock-write-no-ethernet-rp1-ethernet-clk-eth-ctrl-control"
+  },
+  "retained_non_acceptance_evidence": [
+    {
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof/candidate-run-short-inconclusive",
+      "disposition": "deferred",
+      "reason": "short-window accidental capture; restored and not used for acceptance"
+    },
+    {
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof/candidate-run-staging-blocked",
+      "disposition": "deferred",
+      "reason": "candidate serial marker was visible, but TFTP and final pre-restore identity rejoined the baseline tree; paired control and unchanged candidate rerun completed the required triage"
+    }
+  ],
+  "next_action": "Mechanically promote phase12-rp1-ethernet-clk-eth-ctrl-write-restore-proof-closeout-20260610 on the next worker wake."
+}

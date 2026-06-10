@@ -1,0 +1,79 @@
+{
+  "task_id": "phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof-20260610",
+  "classification": "rp1-ethernet-clk-eth-ctrl-idempotent-write-restored-with-control",
+  "evidence_level": "serial hardware boot/output",
+  "candidate": {
+    "label": "eth-clk-ctrl-write-restore-candidate-rerun",
+    "selected_tree_hash": "8d71d54345a64913e451969b9303cd7df351baa64950dffd2fca890897cf05b3",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 50040,
+    "identity_join": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": []
+    },
+    "hardware_classification": "rp1-ethernet-clk-eth-ctrl-idempotent-write-restored",
+    "observed_register": {
+      "address": "0x1c00018064",
+      "pre_raw": "0x10000800",
+      "post_raw": "0x10000800",
+      "restore_raw": "0x10000800",
+      "post_eq_pre": true,
+      "restore_eq_pre": true
+    },
+    "restore": {
+      "snapshot_name": "pre-eth-clk-ctrl-write-restore-proof-20260610T143800Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "control": {
+    "label": "eth-clk-ctrl-write-restore-control",
+    "selected_tree_hash": "5c5144ce68c0537b39dcb216b2ae1343c9197ac7deb310f5c7bcc811efe31d40",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 49464,
+    "identity_join": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": []
+    },
+    "hardware_classification": "no-clock-write-no-ethernet-rp1-ethernet-clk-eth-ctrl-control",
+    "restore": {
+      "snapshot_name": "pre-eth-clk-ctrl-write-restore-proof-20260610T143800Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "final_post_restore": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "da591740_kernel_2712_bytes": 104136
+  },
+  "inconclusive_attempts": [
+    {
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof/candidate-run-short-inconclusive",
+      "disposition": "deferred",
+      "reason": "short-window accidental capture; retained as inconclusive evidence and not used for acceptance"
+    },
+    {
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof/candidate-run-staging-blocked",
+      "disposition": "deferred",
+      "reason": "candidate preflight and serial marker were present, but TFTP/final identity rejoined the restored baseline"
+    }
+  ],
+  "rejected_claims": [
+    "broad clock/reset ownership",
+    "shared-clock ownership",
+    "reset-controller ownership",
+    "GPIO32/PHY reset ownership",
+    "MDIO/PHY ownership",
+    "DMA or descriptor readiness",
+    "interrupt completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ]
+}

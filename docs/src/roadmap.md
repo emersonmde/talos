@@ -9431,6 +9431,28 @@ clock/reset ownership, shared-clock ownership, reset-controller,
 GPIO32/PHY, MDIO, DMA, descriptors, interrupts, packet I/O, networking,
 sockets, SSH, Phase 12.2, and phase transition remain unaccepted.
 
+phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof-20260610 accepts
+the serialized Pi 5 CLK_ETH_CTRL write/restore proof as
+rp1-ethernet-clk-eth-ctrl-idempotent-write-restored-with-control. The accepted
+candidate rerun joined selected-tree identity
+8d71d54345a64913e451969b9303cd7df351baa64950dffd2fca890897cf05b3,
+expected TFTP fetches of da591740/kernel_2712.img at 50040 bytes, run-unique
+serial freshness, final identity, and restore proof. Candidate serial reported
+CLK_ETH_CTRL at 0x1c00018064 with pre_raw/post_raw/restore_raw all
+0x10000800, post_eq_pre=true, restore_eq_pre=true, and classification
+rp1-ethernet-clk-eth-ctrl-idempotent-write-restored. The paired control joined
+selected-tree identity
+5c5144ce68c0537b39dcb216b2ae1343c9197ac7deb310f5c7bcc811efe31d40,
+expected TFTP fetches at 49464 bytes, run-unique serial freshness, final
+identity, and restore proof while constructing no writable target. A
+staging-blocked candidate attempt and a short-window inconclusive attempt are
+retained as non-acceptance evidence; the control plus unchanged candidate
+rerun completed the required triage. Final restore returned the lab boot tree
+to a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+Broad clock/reset ownership, shared-clock ownership, reset-controller,
+GPIO32/PHY, MDIO, DMA, descriptors, interrupts, packet I/O, networking,
+sockets, SSH, Phase 12.2, and phase transition remain unaccepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

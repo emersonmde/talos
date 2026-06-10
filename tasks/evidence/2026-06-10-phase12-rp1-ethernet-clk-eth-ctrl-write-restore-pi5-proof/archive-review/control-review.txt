@@ -1,0 +1,10 @@
+control_archive=target/talos-rpi5-rp1-ethernet-clk-eth-ctrl-write-restore-control.tar.gz
+control_archive_sha256=c5ef9c26f849b7a475978c0728e488e25f58a0bdf09211ef04b2bc7a02a4b2a5
+kernel_2712_sha256=d97734361646bbcda6041aeaef0f6fa9ac627bd90e735204df2da7803e63877b
+kernel_2712_size=49464
+header_image_size=49464
+text_offset=0
+flags=12
+control_marker=TALOS: rp1-ethernet-clk-eth-ctrl-write-restore-control
+capture_nonce=eth-clk-ctrl-write-control-20260610T143800Z
+forbidden_rp1_ethernet_clk_eth_ctrl_write_restore_control_runtime_strings_absent=true
