@@ -1,0 +1,44 @@
+{
+  "classification": "pi5-capture-chain-repair-closeout-accepted",
+  "task_id": "phase12-pi5-capture-chain-repair-closeout-20260610",
+  "evidence_level": "static inspection and local/static replay evidence",
+  "accepted_repair": "pi5-capture-chain-v4",
+  "selected_next_task": "phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof-20260610",
+  "repaired_capture_chain_gates": [
+    "GET / endpoint evidence with /boot/files selected-tree identity fallback",
+    "selected tree hash, effective kernel, expected fetch path, and expected fetch bytes",
+    "stable TFTP delta with expected served byte count",
+    "final pre-restore selected-tree and expected fetch identity",
+    "run-unique serial nonce freshness",
+    "direct serial marker retention after saturated cursor",
+    "paired control marker retention"
+  ],
+  "retained_risks": [
+    "0x1f translated RP1 window sentinel remains unproven",
+    "PCIe/RP1 bridge or address-window enablement remains unaccepted",
+    "Ethernet clock/reset and PHY/MDIO ownership remain unaccepted",
+    "future hardware run may still produce an inconclusive capture or precise blocker"
+  ],
+  "rejected_claims": [
+    "Pi 5 hardware run in closeout",
+    "boot archive publication in closeout",
+    "live GEM visibility",
+    "Ethernet driver readiness",
+    "RP1 MMIO/DMA programming",
+    "descriptor rings",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "validation": {
+    "static_inspection": "passed",
+    "fixture_rerun": "passed",
+    "jq_empty": "passed",
+    "git_diff_check": "passed",
+    "staged_diff_check": "passed"
+  },
+  "nextAction": "phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof-20260610"
+}

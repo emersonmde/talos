@@ -1,0 +1,40 @@
+{
+  "task_id": "phase12-pi5-capture-chain-repair-closeout-20260610",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-10-phase12-pi5-capture-chain-repair-closeout.md",
+      "evidence_level": "static inspection and closeout decision record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-capture-chain-repair-closeout/classification.json",
+      "evidence_level": "accepted closeout classification"
+    },
+    {
+      "label": "retained fixture rerun",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-capture-chain-repair-closeout/retained-fixture-rerun.json",
+      "evidence_level": "local/static replay fixtures"
+    },
+    {
+      "label": "accepted repair core task",
+      "path": "tasks/2026-06-10-phase12-pi5-capture-chain-repair-core.md",
+      "evidence_level": "accepted implementation record"
+    },
+    {
+      "label": "accepted repair core classification",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-capture-chain-repair-core/classification.json",
+      "evidence_level": "accepted helper repair classification"
+    },
+    {
+      "label": "accepted GEM MID decode-discriminator blocker",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof.md",
+      "evidence_level": "serial hardware output and capture-chain blocker record"
+    },
+    {
+      "label": "v4 checker",
+      "path": "scripts/rpi5-proof-identity-join-v4-check.sh",
+      "evidence_level": "local/static checker implementation"
+    }
+  ]
+}
