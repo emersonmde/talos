@@ -9415,6 +9415,22 @@ GPIO32/PHY reset, MDIO/PHY, DMA, descriptors, interrupts, packet I/O,
 networking, sockets, SSH, Phase 12.2, and phase transition; and it selects
 only the local/static CLK_ETH_CTRL write/restore core as the next follow-up.
 
+phase12-rp1-ethernet-clk-eth-ctrl-write-restore-core-20260610 and
+phase12-rp1-ethernet-clk-eth-ctrl-write-restore-closeout-20260610 accept the
+local/static CLK_ETH_CTRL candidate/control report surface only. The core
+records the exact 0x1c00018064 target, pre-read-raw-only write rule,
+write/readback/restore/readback sequence, preserved-field inventory, safety
+invariants, retained risks, paired no-clock-write/no-Ethernet control, and
+deterministic rejections for shared-clock/runtime/downstream claims. The
+closeout closes same-shaped local/static retries and selects the serialized
+Pi 5 candidate/control write/restore proof as the next bounded task, with
+hardwareTestLock, selected-tree identity, expected TFTP fetches, fresh serial
+markers, final pre-restore identity, restore verification, archive reviews,
+classification JSON, evidence map, and capture summary required. Runtime
+clock/reset ownership, shared-clock ownership, reset-controller,
+GPIO32/PHY, MDIO, DMA, descriptors, interrupts, packet I/O, networking,
+sockets, SSH, Phase 12.2, and phase transition remain unaccepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

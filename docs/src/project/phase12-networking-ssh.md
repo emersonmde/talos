@@ -610,3 +610,18 @@ CLK_ETH_CTRL facts. The accepted evidence remains fmt/unit-test/static only:
 no hardware run, no boot archive publication, no hardwareTestLock, no runtime
 RP1 MMIO write, no shared-clock ownership, no Ethernet driver readiness, no
 packet I/O, no networking, no SSH, no Phase 12.2, and no phase transition.
+
+phase12-rp1-ethernet-clk-eth-ctrl-write-restore-closeout-20260610 closes the
+local/static CLK_ETH_CTRL report frontier as
+rp1-ethernet-clk-eth-ctrl-write-restore-core-frontier-closed. Same-shaped
+local/static CLK_ETH_CTRL write/restore report retries are closed for this
+candidate/control pair. The closeout selects the serialized Pi 5
+candidate/control proof as the next bounded task because the accepted
+contract/core and queued proof already define the exact target, paired
+control, capture gates, restore requirements, allowed classifications, and
+task-owned evidence artifacts.
+
+This closeout does not accept runtime RP1 MMIO writes, hardware readback,
+broad clock/reset ownership, shared-clock ownership, reset-controller
+ownership, GPIO32/PHY reset, MDIO/PHY, DMA, descriptors, interrupts, packet
+I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.

@@ -1,0 +1,42 @@
+{
+  "task_id": "phase12-rp1-ethernet-clk-eth-ctrl-write-restore-closeout-20260610",
+  "classification": "rp1-ethernet-clk-eth-ctrl-write-restore-core-frontier-closed",
+  "evidence_level": "static inspection",
+  "accepted_claims": [
+    "local/static CLK_ETH_CTRL write/restore report core is reconciled and closed",
+    "candidate report preserves the exact selected target at 0x1c00018064, allowed pre-read raw write value, operation sequence, preserved fields, safety invariants, retained risks, and future proof classifications",
+    "paired control uses the same report path while withholding writable target construction and candidate-only CLK_ETH_CTRL facts",
+    "focused tests support only local/static candidate/control report construction and rejection of forbidden claims",
+    "same-shaped local/static CLK_ETH_CTRL report retries are closed for this candidate/control pair"
+  ],
+  "rejected_claims": [
+    "runtime RP1 MMIO write or hardware restore proof",
+    "broad clock/reset ownership",
+    "shared RP1_CLK_SYS ownership or pclk/hclk transition",
+    "CLK_ETH_TSU_CTRL same-shaped retry",
+    "non-idempotent CLK_ETH_CTRL transition",
+    "reset-controller ownership",
+    "GPIO32 or PHY reset ownership",
+    "MDIO or PHY ownership",
+    "DMA, descriptor rings, transfer completion, or interrupt completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "The accepted core is local/static and does not prove Pi 5 hardware readback or restore behavior.",
+    "The selected idempotent target proves only one Ethernet-private transmit-clock control store/readback boundary once hardware-proven.",
+    "Broad clock/reset ownership remains unaccepted even if a later idempotent write/restore proof passes.",
+    "PHY reset remains GPIO32/MDIO-owned and outside this task.",
+    "Future hardware proof must capture selected-tree identity, expected TFTP fetches, fresh serial markers, final pre-restore identity, restore proof, archive reviews, classification JSON, evidence map, and capture summary."
+  ],
+  "source_contract_commit": "fc12771db08a5837d304ecf6e8ed254e1f456db0",
+  "core_commit": "e8cc2925bcb3f43286c0dbb07296c9abf59f4026",
+  "hardware_test_lock_required_for_next_action": true,
+  "same_shaped_retry_policy": "closed-for-this-local-static-clk-eth-ctrl-candidate-control-pair",
+  "next_action": "Mechanically promote phase12-rp1-ethernet-clk-eth-ctrl-write-restore-pi5-proof-20260610 on the next worker wake if hardwareTestLock remains unlocked; acquire hardwareTestLock before archive publication, staging, or power cycling and keep the proof bounded to candidate/control CLK_ETH_CTRL write/restore evidence.",
+  "commit": "recorded-in-supervisor-state-after-acceptance"
+}
