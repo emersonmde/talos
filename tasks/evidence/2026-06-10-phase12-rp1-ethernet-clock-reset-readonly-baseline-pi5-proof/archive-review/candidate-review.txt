@@ -1,0 +1,10 @@
+candidate_archive=tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-readonly-baseline-pi5-proof/archive-review/candidate.tar.gz
+candidate_archive_sha256=5f9cc0471df6ac0946361eb6d30b5c429bba3e63347f7eca95ca9cb08110f1b4
+kernel_2712_sha256=180ca39b3dbdf18f7780d2e55061fe5f2e9b634ccfdbaabd49b45311c1d6e539
+kernel_2712_size=50056
+header_image_size=50056
+text_offset=0
+flags=12
+candidate_marker=TALOS: rp1-ethernet-clock-reset-readonly-baseline-candidate
+capture_nonce=clock-reset-candidate-20260610T103100Z
+forbidden_rp1_ethernet_clock_reset_baseline_candidate_runtime_strings_absent=true

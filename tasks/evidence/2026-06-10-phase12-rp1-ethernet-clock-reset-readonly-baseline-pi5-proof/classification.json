@@ -1,0 +1,54 @@
+{
+  "task_id": "phase12-rp1-ethernet-clock-reset-readonly-baseline-pi5-proof-20260610",
+  "classification": "rp1-ethernet-clock-reset-readonly-baseline-report-visibility-control-output",
+  "evidence_level": "serial hardware boot/output",
+  "accepted_claims": [
+    "candidate clock/reset read-only baseline report path visible on Pi 5 serial",
+    "candidate serial retained observed-window MACB_MID context and selected pclk/hclk/tsu_clk/tx_clk baseline facts",
+    "paired control used the same capture/report path while withholding candidate-only clock/reset baseline facts",
+    "candidate/control capture-chain-v4 joins passed selected-tree identity, TFTP byte identity, run-unique serial nonce freshness, final pre-restore identity, and restore proof"
+  ],
+  "rejected_claims": [
+    "clock/reset ownership",
+    "clock/reset writes",
+    "RP1 MMIO writes",
+    "RP1_CLK_SYS transition",
+    "reset-controller ownership",
+    "GPIO32 or PHY reset ownership",
+    "MDIO or PHY ownership",
+    "DMA, descriptor rings, transfer completion, or interrupt completion",
+    "packet I/O, networking, sockets, SSH, Phase 12.2, or phase transition"
+  ],
+  "retained_risks": [
+    "clock source facts are not Talos ownership",
+    "shared RP1_CLK_SYS pclk/hclk require separate shared-clock safety before writes",
+    "tx_clk and tsu_clk still require exact register target and restore semantics before writes",
+    "retained Pi 5 rp1_eth source supplies no accepted reset-controller target",
+    "PHY reset remains a separate GPIO32/MDIO ownership task"
+  ],
+  "candidate": {
+    "tree_hash": "047815dc8bfde65c28be5d4a5844eb5bf83c4dc60749d7a9c76c8dce402599c3",
+    "expected_fetch_bytes": 50056,
+    "marker_occurrences": 19,
+    "nonce": "capture-nonce=clock-reset-candidate-20260610T103100Z",
+    "pre_power_nonce_occurrences": 0,
+    "identity_join_classification": "capture-chain-v4-ready",
+    "rejection_reasons": []
+  },
+  "control": {
+    "tree_hash": "16745426bc0d0f1cc2b1844f48d6e656a8c900afb6fcca42caee5553afc7f4fd",
+    "expected_fetch_bytes": 49176,
+    "marker_occurrences": 25,
+    "nonce": "capture-nonce=clock-reset-control-rerun-20260610T105000Z",
+    "pre_power_nonce_occurrences": 0,
+    "identity_join_classification": "capture-chain-v4-ready",
+    "rejection_reasons": []
+  },
+  "final_restore": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "expected_restored_kernel_bytes": 104136
+  },
+  "next_action": "Supervisor planning required for the next explicit Phase 12.1 clock/reset ownership slice; do not infer write-backed ownership from this proof.",
+  "commit": "recorded-in-supervisor-state-after-acceptance"
+}

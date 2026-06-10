@@ -1,0 +1,95 @@
+{
+  "task_id": "phase12-rp1-ethernet-clock-reset-readonly-baseline-pi5-proof-20260610",
+  "classification": "rp1-ethernet-clock-reset-readonly-baseline-report-visibility-control-output",
+  "evidence_level": "serial hardware boot/output",
+  "artifacts": [
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-readonly-baseline-pi5-proof/classification.json",
+      "evidence_level": "structured classification"
+    },
+    {
+      "label": "capture summary",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-readonly-baseline-pi5-proof/capture-summary.json",
+      "evidence_level": "capture-chain-v4 summary"
+    },
+    {
+      "label": "candidate archive review",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-readonly-baseline-pi5-proof/archive-review/candidate-review.txt",
+      "evidence_level": "image/archive inspection"
+    },
+    {
+      "label": "control archive review",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-readonly-baseline-pi5-proof/archive-review/control-review.txt",
+      "evidence_level": "image/archive inspection"
+    },
+    {
+      "label": "candidate identity join",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-readonly-baseline-pi5-proof/candidate-run/identity-join-v4-check.json",
+      "evidence_level": "capture-chain-v4 replay"
+    },
+    {
+      "label": "control identity join",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-readonly-baseline-pi5-proof/control-run/identity-join-v4-check.json",
+      "evidence_level": "capture-chain-v4 replay"
+    },
+    {
+      "label": "candidate serial output",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-readonly-baseline-pi5-proof/candidate-run/serial-observe-window.json",
+      "evidence_level": "serial hardware boot/output"
+    },
+    {
+      "label": "control serial output",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-readonly-baseline-pi5-proof/control-run/serial-observe-window.json",
+      "evidence_level": "serial hardware boot/output"
+    },
+    {
+      "label": "final restore identity",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-readonly-baseline-pi5-proof/final-post-restore-boot-files.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "runtime source",
+      "path": "src/target/rpi5.rs",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "boot scenario dispatch",
+      "path": "src/main.rs",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "boot scenario registry",
+      "path": "build.rs",
+      "evidence_level": "static inspection"
+    }
+  ],
+  "validation": [
+    {
+      "command": "cargo fmt --all -- --check",
+      "result": "passed",
+      "evidence_level": "fmt check"
+    },
+    {
+      "command": "cargo -Zjson-target-spec test --quiet rp1_ethernet",
+      "result": "passed",
+      "evidence_level": "unit tests"
+    },
+    {
+      "command": "bash -n scripts/rpi5-rp1-ethernet-clock-reset-readonly-baseline-*.sh",
+      "result": "passed",
+      "evidence_level": "shell syntax"
+    },
+    {
+      "command": "candidate/control archive review scripts",
+      "result": "passed",
+      "evidence_level": "image/archive inspection"
+    },
+    {
+      "command": "serialized Pi 5 candidate/control capture under hardwareTestLock",
+      "result": "passed",
+      "evidence_level": "serial hardware boot/output"
+    }
+  ],
+  "commit": "recorded-in-supervisor-state-after-acceptance"
+}

@@ -9304,6 +9304,23 @@ does not authorize clock/reset ownership, RP1 MMIO or clock/reset writes,
 GPIO32/PHY reset ownership, MDIO/PHY, DMA, descriptors, interrupts, packet I/O,
 networking, sockets, SSH, Phase 12.2, or a phase transition.
 
+phase12-rp1-ethernet-clock-reset-readonly-baseline-pi5-proof-20260610 accepts
+the serialized Pi 5 read-only baseline report proof as
+rp1-ethernet-clock-reset-readonly-baseline-report-visibility-control-output.
+Candidate/control capture-chain-v4 joins passed. The candidate selected tree
+047815dc8bfde65c28be5d4a5844eb5bf83c4dc60749d7a9c76c8dce402599c3 fetched
+da591740/kernel_2712.img at 50056 bytes and retained 19 run-unique serial
+markers with observed-window MACB_MID context 0x1c001000fc/raw 0x70109/idnum
+0x7/rev 0x109 plus pclk/hclk/tsu_clk/tx_clk baseline facts. The paired control
+selected tree 16745426bc0d0f1cc2b1844f48d6e656a8c900afb6fcca42caee5553afc7f4fd
+fetched da591740/kernel_2712.img at 49176 bytes and retained 25 run-unique
+serial markers while withholding candidate-only clock/reset facts. The lab boot
+tree was restored to
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This proof
+accepts report visibility/control output only; it does not accept clock/reset
+ownership, writes, reset-controller ownership, PHY/MDIO, DMA, packet I/O,
+networking, SSH, Phase 12.2, or a phase transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

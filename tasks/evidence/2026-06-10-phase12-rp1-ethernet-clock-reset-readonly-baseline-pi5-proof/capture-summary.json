@@ -1,0 +1,117 @@
+{
+  "task_id": "phase12-rp1-ethernet-clock-reset-readonly-baseline-pi5-proof-20260610",
+  "classification": "rp1-ethernet-clock-reset-readonly-baseline-report-visibility-control-output",
+  "evidence_level": "serial hardware boot/output",
+  "candidate": {
+    "label": "clock-reset-baseline-candidate",
+    "expected": {
+      "selected_tree_hash": "047815dc8bfde65c28be5d4a5844eb5bf83c4dc60749d7a9c76c8dce402599c3",
+      "effective_kernel": "kernel_2712.img",
+      "expected_fetch_path": "da591740/kernel_2712.img",
+      "expected_fetch_byte_count": 50056,
+      "tftp": {
+        "cursor_file": 4394339,
+        "delta_cursor_start": 4394339,
+        "delta_cursor_end": 4395690,
+        "stable": true,
+        "event_count": 13,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 2,
+        "expected_fetch_bytes_seen": [
+          50056,
+          50056
+        ]
+      },
+      "final_pre_restore": {
+        "tree_hash": "047815dc8bfde65c28be5d4a5844eb5bf83c4dc60749d7a9c76c8dce402599c3",
+        "effective_kernel": "kernel_2712.img",
+        "selected_tree_still_staged": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes": 50056
+      },
+      "restore": {
+        "snapshot_name": "pre-clock-reset-baseline-proof-20260610T104300Z",
+        "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      }
+    },
+    "serial": {
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+      "cursor_file": 4194304,
+      "cursor_start": 4194304,
+      "cursor_end": 4194304,
+      "response_bytes": 70567,
+      "required_marker": "TALOS: rp1-ethernet-clock-reset-readonly-baseline-candidate capture-nonce=clock-reset-candidate-20260610T103100Z",
+      "required_marker_occurrences": 19,
+      "required_marker_excerpt": "false classification=rp1-ethernet-clock-reset-readonly-baseline-report-visible\r\nTALOS: rp1-ethernet-clock-reset-readonly-baseline-candidate capture-nonce=clock-reset-candidate-20260610T103100Z clock-reset-guard-contract-id=phase12-rp1-ethernet-clock-reset-guard-contract-v1 ownership-contract-task-id=phase12-rp1-ethernet-clock-reset-ownership-contract",
+      "nonce_token": "capture-nonce=clock-reset-candidate-20260610T103100Z",
+      "nonce_token_occurrences": 19,
+      "pre_power_nonce_occurrences": 0,
+      "empty_pre_power": false,
+      "nonce_fresh": true,
+      "serial_freshness_ok": true
+    },
+    "identity_join": {
+      "classification": "capture-chain-v4-ready",
+      "rejection_reasons": []
+    }
+  },
+  "control": {
+    "label": "clock-reset-baseline-control",
+    "expected": {
+      "selected_tree_hash": "16745426bc0d0f1cc2b1844f48d6e656a8c900afb6fcca42caee5553afc7f4fd",
+      "effective_kernel": "kernel_2712.img",
+      "expected_fetch_path": "da591740/kernel_2712.img",
+      "expected_fetch_byte_count": 49176,
+      "tftp": {
+        "cursor_file": 4398392,
+        "delta_cursor_start": 4398392,
+        "delta_cursor_end": 4399743,
+        "stable": true,
+        "event_count": 13,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 2,
+        "expected_fetch_bytes_seen": [
+          49176,
+          49176
+        ]
+      },
+      "final_pre_restore": {
+        "tree_hash": "16745426bc0d0f1cc2b1844f48d6e656a8c900afb6fcca42caee5553afc7f4fd",
+        "effective_kernel": "kernel_2712.img",
+        "selected_tree_still_staged": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes": 49176
+      },
+      "restore": {
+        "snapshot_name": "pre-clock-reset-baseline-proof-20260610T104300Z",
+        "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      }
+    },
+    "serial": {
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+      "cursor_file": 4194304,
+      "cursor_start": 4194304,
+      "cursor_end": 4194304,
+      "response_bytes": 70386,
+      "required_marker": "TALOS: rp1-ethernet-clock-reset-readonly-baseline-control capture-nonce=clock-reset-control-rerun-20260610T105000Z",
+      "required_marker_occurrences": 25,
+      "required_marker_excerpt": "ication=no-clock-reset-no-ethernet-rp1-ethernet-clock-reset-baseline-control\r\nTALOS: rp1-ethernet-clock-reset-readonly-baseline-control capture-nonce=clock-reset-control-rerun-20260610T105000Z clock-reset-guard-contract-id=phase12-rp1-ethernet-clock-reset-guard-contract-v1 ownership-contract-task-id=phase12-rp1-ethernet-clock-reset-ownership-contract-2",
+      "nonce_token": "capture-nonce=clock-reset-control-rerun-20260610T105000Z",
+      "nonce_token_occurrences": 25,
+      "pre_power_nonce_occurrences": 0,
+      "empty_pre_power": false,
+      "nonce_fresh": true,
+      "serial_freshness_ok": true
+    },
+    "identity_join": {
+      "classification": "capture-chain-v4-ready",
+      "rejection_reasons": []
+    }
+  },
+  "final_post_restore": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img"
+  }
+}
