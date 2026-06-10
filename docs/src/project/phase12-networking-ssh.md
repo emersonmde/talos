@@ -713,5 +713,15 @@ The accepted evidence remains fmt/unit-test/static only: no hardware run, no
 boot archive publication, no hardwareTestLock, no runtime RP1 MMIO/GPIO/RIO/
 pad write, no PHY reset assertion/deassertion, no MDIO/PHY ownership, no
 Ethernet driver readiness, no packet I/O, no networking, no SSH, no Phase
-12.2, and no phase transition. The next bounded follow-up is the local/static
-preflight closeout, not hardware proof by implication.
+12.2, and no phase transition.
+
+phase12-rp1-ethernet-gpio32-phy-reset-preflight-closeout-20260610 closes the
+local/static preflight frontier as
+rp1-ethernet-gpio32-phy-reset-preflight-frontier-closed. Same-shaped
+local/static GPIO32 PHY-reset preflight report retries are closed for this
+candidate/control pair. The next bounded follow-up is only the serialized
+read-only Pi 5 preflight proof, gated by hardwareTestLock and the existing
+candidate/control capture requirements. This closeout does not select a
+write-backed GPIO32 reset task and does not accept GPIO ownership, PHY reset
+assertion/deassertion, MDIO/PHY ownership, packet I/O, networking, SSH, Phase
+12.2, or a phase transition.

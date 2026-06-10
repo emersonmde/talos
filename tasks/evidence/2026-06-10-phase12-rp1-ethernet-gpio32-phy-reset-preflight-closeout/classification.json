@@ -1,0 +1,45 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-preflight-closeout-20260610",
+  "classification": "rp1-ethernet-gpio32-phy-reset-preflight-frontier-closed",
+  "evidence_level": [
+    "static inspection",
+    "task evidence reconciliation",
+    "documentation reconciliation"
+  ],
+  "accepted_frontier": {
+    "source_contract_id": "phase12-rp1-ethernet-gpio32-phy-reset-source-contract-v1",
+    "source_task_id": "phase12-rp1-ethernet-gpio32-phy-reset-source-contract-20260610",
+    "preflight_core_task_id": "phase12-rp1-ethernet-gpio32-phy-reset-preflight-core-20260610",
+    "report_contract_id": "phase12-rp1-ethernet-gpio32-phy-reset-preflight-report-contract-v1",
+    "candidate_classification": "rp1-ethernet-gpio32-phy-reset-preflight-candidate-local-static",
+    "control_classification": "no-gpio-no-ethernet-rp1-ethernet-gpio32-phy-reset-control",
+    "same_shaped_local_static_report_retries_closed": true
+  },
+  "hardware": {
+    "pi5_run": false,
+    "hardware_test_lock_acquired": false,
+    "boot_archive_published": false,
+    "runtime_rp1_mmio_write_performed": false,
+    "gpio_write_performed": false,
+    "phy_reset_asserted_or_deasserted": false,
+    "mdio_transaction_performed": false
+  },
+  "selected_next_action": {
+    "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-pi5-proof-20260610",
+    "mechanically_objective": true,
+    "runtime_serialization_gate": "hardwareTestLock",
+    "proof_boundary": "read-only GPIO32 PHY-reset preflight candidate/control visibility only"
+  },
+  "rejected_claims": [
+    "hardware visibility by local/static implication",
+    "GPIO ownership",
+    "PHY reset assertion or deassertion",
+    "MDIO/PHY ownership",
+    "runtime GPIO/RIO/pad/MMIO writes",
+    "Ethernet driver readiness",
+    "DMA/descriptors/interrupts/packet I/O/networking/sockets/SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "accepted": true
+}

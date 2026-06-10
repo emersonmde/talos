@@ -1,0 +1,73 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-preflight-closeout-20260610",
+  "classification": "rp1-ethernet-gpio32-phy-reset-preflight-frontier-closed",
+  "artifacts": [
+    {
+      "label": "closeout task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-preflight-closeout.md",
+      "evidence_level": "static inspection and closeout record"
+    },
+    {
+      "label": "closeout classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-preflight-closeout/classification.json",
+      "evidence_level": "accepted closeout classification"
+    },
+    {
+      "label": "source contract task",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-source-contract.md",
+      "commit": "278b754ff3a8f589429cd91aaadc3085db6e7b90",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "preflight core task",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-preflight-core.md",
+      "commit": "af6ab83de7ce6ef7569ea632bac30b80bda06d2b",
+      "evidence_level": "static inspection, fmt, and focused unit tests"
+    },
+    {
+      "label": "preflight core classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-preflight-core/classification.json",
+      "evidence_level": "accepted local/static report classification"
+    },
+    {
+      "label": "preflight core evidence map",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-preflight-core/evidence-map.json",
+      "evidence_level": "artifact map"
+    },
+    {
+      "label": "project documentation",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "evidence_level": "documentation reconciliation"
+    },
+    {
+      "label": "roadmap",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "roadmap reconciliation"
+    },
+    {
+      "label": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-preflight-closeout/classification.json tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-preflight-closeout/evidence-map.json",
+      "result": "passed",
+      "evidence_level": "static JSON validation"
+    },
+    {
+      "label": "diff check",
+      "command": "git diff --check",
+      "result": "passed",
+      "evidence_level": "static diff validation"
+    },
+    {
+      "label": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed",
+      "evidence_level": "documentation build"
+    },
+    {
+      "label": "staged diff check",
+      "command": "git diff --cached --check",
+      "result": "passed",
+      "evidence_level": "static staged diff validation"
+    }
+  ],
+  "accepted": true
+}

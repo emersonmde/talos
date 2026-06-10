@@ -9491,6 +9491,18 @@ the same report path. No hardware run, hardwareTestLock, RP1 MMIO/GPIO/RIO/
 pad write, PHY reset assertion/deassertion, MDIO/PHY ownership, packet I/O,
 networking, sockets, SSH, Phase 12.2, or phase transition is accepted.
 
+phase12-rp1-ethernet-gpio32-phy-reset-preflight-closeout-20260610 closes the
+local/static preflight frontier as
+rp1-ethernet-gpio32-phy-reset-preflight-frontier-closed. Same-shaped
+local/static GPIO32 PHY-reset preflight report retries are closed for this
+candidate/control pair. The next bounded follow-up is only the serialized
+read-only Pi 5 preflight proof with hardwareTestLock serialization,
+candidate/control identity joins, TFTP/serial freshness, final identity,
+restore proof, and task-owned JSON. GPIO ownership, PHY reset
+assertion/deassertion, MDIO/PHY ownership, runtime GPIO/RIO/pad/MMIO writes,
+packet I/O, networking, sockets, SSH, Phase 12.2, and phase transition remain
+unaccepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
