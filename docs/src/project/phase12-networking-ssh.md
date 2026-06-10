@@ -570,3 +570,32 @@ completion, DMA/descriptor ownership, or packet I/O scope. This closeout does
 not accept broad clock/reset ownership, shared-clock ownership, CLK_ETH_CTRL,
 reset-controller, GPIO32/PHY reset, MDIO/PHY, DMA, descriptors, interrupts,
 packet I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
+
+## RP1 Ethernet CLK_ETH_CTRL Source Contract
+
+phase12-rp1-ethernet-clk-eth-ctrl-source-contract-20260610 accepts the next
+source/static Ethernet-private clock target contract. The selected target is
+CLK_ETH_CTRL for RP1_CLK_ETH / rp1_eth tx_clk. The Talos register address is
+0x1c00018064, derived from the accepted observed RP1 base 0x1c00000000,
+clock-manager base offset 0x018000, and retained Linux CLK_ETH_CTRL offset
+0x00064.
+
+The future candidate operation is limited to a 32-bit little-endian volatile
+pre-read, writing the pre-read raw value back, post-read, restore-write of the
+same pre-read raw value, and restore-read. The full raw value, enable bit 11,
+auxsource bits 9:5, source bits, and reserved bits must remain preserved. This
+is materially different from the accepted CLK_ETH_TSU_CTRL proof because it
+selects the direct rp1_eth transmit clock control register instead of the
+timestamp-unit control register.
+
+The paired control must use the same report path while constructing no
+writable RP1 clock target and performing no volatile load/store to RP1 clock,
+Ethernet, reset, GPIO, MDIO, DMA, descriptor, interrupt, PCIe/MIP, GIC, or
+packet paths. This contract explicitly rejects shared RP1_CLK_SYS pclk/hclk
+writes, same-shaped TSU retries, non-idempotent field transitions,
+divider/source/PLL/frequency-counter/GPCLK output-enable writes,
+reset-controller ownership, GPIO32/PHY reset ownership, MDIO/PHY, DMA,
+descriptors, interrupts, packet I/O, networking, sockets, SSH, Phase 12.2, and
+phase transition. It selects only the local/static CLK_ETH_CTRL write/restore
+core as the next bounded follow-up; no hardware action or runtime write is
+accepted by the source contract itself.

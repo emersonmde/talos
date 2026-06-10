@@ -1,0 +1,64 @@
+{
+  "task_id": "phase12-rp1-ethernet-clk-eth-ctrl-source-contract-20260610",
+  "classification": "rp1-ethernet-clk-eth-ctrl-source-contract-accepted",
+  "evidence_level": "static inspection",
+  "accepted_claims": [
+    "Selected one Ethernet-private clock-manager write/restore target: CLK_ETH_CTRL for RP1_CLK_ETH / tx_clk.",
+    "Selected Talos register address is observed-aperture CPU physical 0x1c00018064, derived from observed RP1 base 0x1c00000000 plus clock-manager offset 0x018000 and CLK_ETH_CTRL offset 0x00064.",
+    "Allowed future operation is pre-read, idempotent write of pre_raw, post-read, restore-write of pre_raw, and restore-read of the 32-bit little-endian control register.",
+    "The future proof must preserve the full 32-bit raw value, CLK_CTRL_ENABLE bit 11, CLK_CTRL_AUXSRC bits 9:5, source bits, and reserved bits.",
+    "Paired control must use the same report path while constructing no writable RP1 clock-manager target and performing no volatile load/store to RP1 clock/reset or downstream paths.",
+    "The target is materially different from the accepted CLK_ETH_TSU_CTRL proof because it selects RP1_CLK_ETH / tx_clk rather than RP1_CLK_ETH_TSU / tsu_clk."
+  ],
+  "rejected_claims": [
+    "broad clock/reset ownership",
+    "runtime Ethernet driver readiness",
+    "broad Ethernet MMIO readiness",
+    "RP1_CLK_SYS pclk/hclk writes or transitions",
+    "same-shaped CLK_ETH_TSU_CTRL retry",
+    "divider/source/PLL/frequency-counter/GPCLK output-enable writes",
+    "non-idempotent clock transition",
+    "reset-controller ownership",
+    "GPIO32/PHY reset ownership",
+    "MDIO/PHY ownership",
+    "DMA or descriptor readiness",
+    "interrupt delivery or completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "selected_target": {
+    "contract_id": "phase12-rp1-ethernet-clk-eth-ctrl-source-contract-v1",
+    "target": "rp1-ethernet-clk-eth-ctrl-idempotent-write-restore",
+    "clock_name": "tx_clk",
+    "clock_id_name": "RP1_CLK_ETH",
+    "clock_id": 16,
+    "register": "CLK_ETH_CTRL",
+    "observed_rp1_base": "0x1c00000000",
+    "source_offset": "0x018064",
+    "talos_register_address": "0x1c00018064",
+    "width_bits": 32,
+    "endianness": "little-endian",
+    "access": "volatile load/store",
+    "allowed_write_value": "pre_raw only"
+  },
+  "future_proof_classifications": [
+    "rp1-ethernet-clk-eth-ctrl-idempotent-write-restored",
+    "rp1-ethernet-clk-eth-ctrl-idempotent-write-mismatch-restored",
+    "rp1-ethernet-clk-eth-ctrl-idempotent-write-restore-failed",
+    "rp1-ethernet-clk-eth-ctrl-blocked-missing-clock-manager",
+    "rp1-ethernet-clk-eth-ctrl-inconclusive-capture",
+    "no-clock-write-no-ethernet-rp1-ethernet-clk-eth-ctrl-control",
+    "staging/build-blocker"
+  ],
+  "retained_risks": [
+    "The target proves only one Ethernet-private tx clock-manager store/readback boundary, not broad Ethernet clock ownership.",
+    "The selected address depends on the accepted observed 0x1c RP1 aperture and still needs serialized hardware proof with identity, TFTP, serial freshness, final identity, and restore evidence.",
+    "Non-idempotent CLK_ETH_CTRL field transitions remain unaccepted.",
+    "PHY reset remains GPIO32/MDIO-owned and separate from this clock/reset task."
+  ],
+  "next_action": "Mechanically promote phase12-rp1-ethernet-clk-eth-ctrl-write-restore-core-20260610 on the next worker wake if dependencies remain satisfied; no hardware action or runtime write is authorized by this source contract."
+}
