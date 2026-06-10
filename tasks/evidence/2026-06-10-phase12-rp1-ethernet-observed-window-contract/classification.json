@@ -1,0 +1,75 @@
+{
+  "task_id": "phase12-rp1-ethernet-observed-window-contract-20260610",
+  "classification": "rp1-ethernet-observed-window-contract-accepted",
+  "evidence_level": "static inspection",
+  "accepted_v2_closeout_commit": "32f8196fb58f9bf1a9b5cbf162fe648a97d6ecae",
+  "contract_id": "phase12-rp1-ethernet-observed-window-contract-v1",
+  "source_contract_id": "phase12-rp1-ethernet-gem-mid-source-contract-20260609",
+  "observed_window_candidate": {
+    "controller": "rp1_eth",
+    "compatible": [
+      "raspberrypi,rp1-gem",
+      "cdns,macb"
+    ],
+    "register": "MACB_MID",
+    "source_register_offset": "0x00fc",
+    "source_offset_from_observed_rp1_base": "0x001000fc",
+    "observed_rp1_base": "0x1c00000000",
+    "cpu_physical_target": "0x1c001000fc",
+    "width_bits": 32,
+    "endianness": "little-endian",
+    "access": "volatile-read-only-load"
+  },
+  "translated_window_comparator": {
+    "cpu_physical_target": "0x1f001000fc",
+    "accepted_v2_raw": "0xdeaddead",
+    "role": "comparator-sentinel-only"
+  },
+  "positive_control": {
+    "register": "SYSINFO_CHIP_ID",
+    "cpu_physical_target": "0x1c00000000",
+    "accepted_v2_raw": "0x20001927",
+    "expected": "0x20001927"
+  },
+  "paired_control_boundary": {
+    "classification": "no-mmio-no-ethernet-rp1-ethernet-observed-window-control",
+    "constructs_observed_rp1_target": false,
+    "constructs_translated_comparator_target": false,
+    "constructs_ethernet_mmio_target": false
+  },
+  "material_difference_from_closed_retry": "Candidate target changes from translated-window MACB_MID at 0x1f001000fc to observed-window MACB_MID at 0x1c001000fc while retaining 0x1f001000fc only as comparator/sentinel.",
+  "accepted_claims": [
+    "observed-window-source-evidence-contract",
+    "observed-window-candidate-target-0x1c001000fc-defined",
+    "translated-window-comparator-0x1f001000fc-retained-as-sentinel-only",
+    "sysinfo-positive-control-0x1c00000000-0x20001927-retained",
+    "paired-no-mmio-no-ethernet-control-boundary-defined"
+  ],
+  "rejected_claims": [
+    "live-gem-visibility",
+    "broad-ethernet-mmio-readiness",
+    "ethernet-driver-readiness",
+    "rp1-mmio-writes",
+    "rp1-dma-programming",
+    "descriptor-rings",
+    "dma-ownership",
+    "transfer-completion",
+    "interrupt-completion",
+    "clock-reset-ownership",
+    "phy-reset-ownership",
+    "mdio-ownership",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "retained_risks": [
+    "observed-window-target-may-still-return-sentinel-or-fault",
+    "pci-rp1-bridge-or-address-window-ownership-unaccepted",
+    "ethernet-clock-reset-and-phy-mdio-ownership-unaccepted",
+    "future-hardware-proof-requires-capture-chain-v4-style-evidence"
+  ],
+  "nextAction": "Mechanically promote phase12-rp1-ethernet-observed-window-discriminator-core-20260610 on the next worker wake."
+}

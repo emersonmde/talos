@@ -9180,6 +9180,16 @@ follow-up is mechanically objective from that sentinel result alone; supervisor
 planning is required for a different bounded discriminator or bridge/window
 dependency slice before more Phase 12.1 work.
 
+phase12-rp1-ethernet-observed-window-contract-20260610 accepts that different
+bounded discriminator as a source/evidence contract. The observed-window
+candidate target is `MACB_MID` at `0x1c001000fc`, computed from observed RP1
+base `0x1c00000000` plus the retained rp1_eth/MACB_MID offset `0x001000fc`.
+The translated target `0x1f001000fc` remains only a comparator/sentinel, and
+the paired control must construct no observed RP1, translated comparator, or
+Ethernet MMIO target. This is not live GEM visibility, broad Ethernet MMIO
+readiness, Ethernet driver readiness, RP1 MMIO writes, DMA/descriptors,
+interrupts, networking, sockets, SSH, Phase 12.2, or a phase transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

@@ -1,0 +1,60 @@
+{
+  "task_id": "phase12-rp1-ethernet-observed-window-contract-20260610",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-observed-window-contract.md",
+      "evidence_level": "static contract task record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-observed-window-contract/classification.json",
+      "evidence_level": "static contract classification"
+    },
+    {
+      "label": "accepted v2 closeout",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-closeout.md",
+      "evidence_level": "static closeout task record"
+    },
+    {
+      "label": "accepted v2 closeout classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-closeout/classification.json",
+      "evidence_level": "static closeout classification"
+    },
+    {
+      "label": "accepted v2 closeout evidence map",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-closeout/evidence-map.json",
+      "evidence_level": "artifact map"
+    },
+    {
+      "label": "accepted v2 proof",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof.md",
+      "evidence_level": "accepted hardware proof task record"
+    },
+    {
+      "label": "retained rp1_eth source",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1.dtsi",
+      "evidence_level": "retained source evidence"
+    },
+    {
+      "label": "retained MACB_MID source",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-source-contract/source/linux-rpi-6.12-macb.h",
+      "evidence_level": "retained source evidence"
+    },
+    {
+      "label": "phase12 networking doc",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "evidence_level": "architecture documentation"
+    },
+    {
+      "label": "phase11 RP1/PCIe map contract",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "evidence_level": "architecture documentation"
+    },
+    {
+      "label": "roadmap",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "roadmap documentation"
+    }
+  ]
+}

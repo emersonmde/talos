@@ -207,3 +207,24 @@ with explicit acceptance criteria. This closeout does not accept live GEM
 visibility, broad Ethernet MMIO readiness, Ethernet driver readiness, packet
 I/O, DMA, descriptor rings, interrupts, networking, sockets, SSH, Phase 12.2,
 or a phase transition.
+
+## Observed-Window GEM MID Contract
+
+phase12-rp1-ethernet-observed-window-contract-20260610 defines the next
+materially different read-only discriminator. It preserves the accepted v2
+proof facts that SYSINFO_CHIP_ID is visible at the observed RP1 base
+`0x1c00000000` as `0x20001927`, while translated-window `MACB_MID` at
+`0x1f001000fc` remains the retained `0xdeaddead` sentinel.
+
+The new candidate target is observed-window `MACB_MID` at `0x1c001000fc`,
+computed as observed RP1 base `0x1c00000000` plus the retained
+rp1_eth/MACB_MID source offset `0x001000fc`. The prior translated target
+`0x1f001000fc` is retained only as a comparator/sentinel. The paired control
+must use the same report path while constructing no observed RP1 target,
+translated comparator, or Ethernet MMIO target.
+
+This contract remains source/evidence-only and read-only. It does not accept
+live GEM visibility, broad Ethernet MMIO readiness, Ethernet driver readiness,
+RP1 MMIO writes, DMA, descriptor rings, interrupts, clock/reset ownership,
+PHY/MDIO ownership, packet I/O, networking, sockets, SSH, Phase 12.2, or a
+phase transition.
