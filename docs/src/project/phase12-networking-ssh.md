@@ -299,3 +299,32 @@ the next Ethernet prerequisite. This closeout does not accept Ethernet driver
 readiness, broad Ethernet MMIO readiness, RP1 MMIO writes, DMA, descriptor
 rings, interrupts, clock/reset/PHY/MDIO ownership, packet I/O, networking,
 sockets, SSH, Phase 12.2, or a phase transition.
+
+## RP1 Ethernet Prerequisite Ownership Contract
+
+phase12-rp1-ethernet-prereq-ownership-source-contract-20260610 accepts the
+next source-backed prerequisite boundary after observed-window MACB_MID
+identity. The selected prerequisite is a local/static ownership report for the
+Ethernet clocks, reset/PHY/MDIO route, interrupt dependency, and
+DMA/descriptor dependency before any driver or packet path.
+
+The contract preserves observed-window MACB_MID at 0x1c001000fc as identity
+context only. It reconciles retained Linux source facts: rp1_eth uses
+RP1_INT_ETH 6; clocks pclk/hclk/tsu_clk/tx_clk map to RP1_CLK_SYS,
+RP1_CLK_SYS, RP1_CLK_ETH_TSU, and RP1_CLK_ETH; RP1_CLK_SYS is 12,
+RP1_CLK_ETH is 16, and RP1_CLK_ETH_TSU is 29; Pi 5 enables phy1 at address 1
+with RGMII-ID mode and RP1 GPIO32 active-low PHY reset for 5 ms; the Linux
+MACB path enables clocks, may toggle the PHY reset GPIO through MDIO reset,
+performs MDIO transactions, programs DMA descriptor ring bases, and uses
+interrupt/completion handling.
+
+The selected follow-up is local/static report construction only. It selects no
+new hardware read field and no write-backed ownership claim, because the next
+material prerequisites are clock/reset, GPIO32 PHY reset, MDIO/PHY,
+interrupt-completion, DMA, and descriptor-ring ownership, all still unaccepted
+by Phase 11 frontiers. The paired control must use the same report path while
+withholding the accepted Ethernet prerequisite facts. This contract does not
+accept Ethernet driver readiness, broad Ethernet MMIO readiness, RP1 MMIO
+writes, clock/reset ownership, GPIO32 or PHY reset ownership, MDIO
+transactions, interrupt delivery/completion, DMA, descriptor rings, packet
+I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.

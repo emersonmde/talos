@@ -1,0 +1,160 @@
+{
+  "task_id": "phase12-rp1-ethernet-prereq-ownership-source-contract-20260610",
+  "classification": "rp1-ethernet-prereq-ownership-source-contract-accepted",
+  "evidence_level": "static inspection",
+  "accepted_observed_window_closeout_commit": "6d1dd2647e03b467261b3518d6350f4c4ffd9661",
+  "contract_id": "phase12-rp1-ethernet-prereq-ownership-contract-v1",
+  "selected_prerequisite": "rp1-ethernet-clock-reset-phy-mdio-dma-ownership-report",
+  "accepted_identity_context": {
+    "role": "context-only-not-broad-ethernet-readiness",
+    "sysinfo_chip_id": {
+      "cpu_physical_target": "0x1c00000000",
+      "raw": "0x20001927"
+    },
+    "observed_window_macb_mid": {
+      "cpu_physical_target": "0x1c001000fc",
+      "raw": "0x70109",
+      "idnum": "0x7",
+      "rev": "0x109"
+    },
+    "translated_window_comparator": {
+      "cpu_physical_target": "0x1f001000fc",
+      "role": "sentinel-only",
+      "accepted_raw": "0xdeaddead"
+    }
+  },
+  "source_facts": {
+    "controller": "rp1_eth",
+    "compatible": [
+      "raspberrypi,rp1-gem",
+      "cdns,macb"
+    ],
+    "rp1_bus_window": {
+      "base": "0xc040100000",
+      "size": "0x4000"
+    },
+    "interrupt": {
+      "name": "RP1_INT_ETH",
+      "id": 6
+    },
+    "clocks": [
+      {
+        "clock_name": "pclk",
+        "rp1_clock": "RP1_CLK_SYS",
+        "id": 12
+      },
+      {
+        "clock_name": "hclk",
+        "rp1_clock": "RP1_CLK_SYS",
+        "id": 12
+      },
+      {
+        "clock_name": "tsu_clk",
+        "rp1_clock": "RP1_CLK_ETH_TSU",
+        "id": 29
+      },
+      {
+        "clock_name": "tx_clk",
+        "rp1_clock": "RP1_CLK_ETH",
+        "id": 16
+      }
+    ],
+    "phy": {
+      "mode": "rgmii-id",
+      "handle": "phy1",
+      "node": "ethernet-phy@1",
+      "reg": "0x1",
+      "reset_gpio": "rp1_gpio32",
+      "reset_active_low": true,
+      "reset_duration_ms": 5
+    },
+    "macb_rp1_config": {
+      "gigabit": true,
+      "clock_hardware_change": true,
+      "jumbo": true,
+      "ptp": true,
+      "dma_burst_length": 16
+    },
+    "linux_runtime_dependencies": [
+      "clock-prepare-enable",
+      "phy-reset-gpio-toggle",
+      "mdio-transactions",
+      "dma-descriptor-rings",
+      "packet-buffers",
+      "interrupts-and-completions",
+      "phylink"
+    ]
+  },
+  "phase11_frontier_reconciliation": {
+    "clock_reset": "read-only/status-frontier-only-no-clock-reset-ownership",
+    "gpio": "no-gpio32-ownership-no-phy-reset-toggle",
+    "interrupts": "route/status-frontier-only-no-delivery-or-completion",
+    "dma_cache": "local-static-ownership-rules-only-no-live-dma-or-descriptor-rings"
+  },
+  "future_candidate_report": {
+    "classification": "rp1-ethernet-prereq-ownership-candidate-local-static",
+    "constructs_new_mmio_targets": false,
+    "performs_loads": false,
+    "performs_stores": false,
+    "required_fields": [
+      "contract-id",
+      "source-contract-id",
+      "accepted-identity-context-context-only",
+      "controller-compatible-register-window",
+      "rp1-int-eth-id",
+      "clock-names-and-ids",
+      "no-clock-reset-ownership-classification",
+      "phy-mode-phy1-gpio32-reset-facts",
+      "no-phy-reset-or-mdio-ownership-classification",
+      "no-live-dma-or-descriptor-ownership-classification",
+      "rejected-runtime-hardware-claims",
+      "retained-risks"
+    ]
+  },
+  "paired_control_boundary": {
+    "classification": "no-ownership-no-ethernet-rp1-ethernet-prereq-control",
+    "withholds_ethernet_prereq_facts": true,
+    "constructs_new_mmio_targets": false,
+    "performs_loads": false,
+    "performs_stores": false
+  },
+  "accepted_claims": [
+    "rp1-ethernet-prereq-ownership-source-contract-defined",
+    "observed-window-macb-mid-retained-as-identity-context-only",
+    "rp1-eth-clock-reset-phy-mdio-dma-prereqs-reconciled-with-phase11-frontiers",
+    "local-static-prereq-ownership-report-core-selected",
+    "paired-no-ownership-no-ethernet-control-boundary-defined"
+  ],
+  "rejected_claims": [
+    "ethernet-driver-readiness",
+    "broad-ethernet-mmio-readiness",
+    "rp1-mmio-writes",
+    "clock-reset-ownership",
+    "clock-reset-writes",
+    "gpio32-ownership",
+    "phy-reset-assertion-deassertion",
+    "mdio-transactions",
+    "phy-ownership",
+    "interrupt-delivery",
+    "interrupt-completion",
+    "dma",
+    "descriptor-rings",
+    "channel-ownership",
+    "transfer-completion",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "retained_risks": [
+    "observed-window-macb-mid-identity-is-not-packet-path",
+    "clock-reset-and-reset-controller-ownership-unaccepted",
+    "gpio32-phy-reset-and-mdio-ownership-unaccepted",
+    "ethernet-interrupt-completion-unaccepted",
+    "live-dma-and-descriptor-ring-ownership-unaccepted",
+    "future-hardware-proof-limited-to-report-visibility-unless-replanned"
+  ],
+  "nextAction": "Mechanically promote phase12-rp1-ethernet-prereq-ownership-report-core-20260610 on the next worker wake."
+}

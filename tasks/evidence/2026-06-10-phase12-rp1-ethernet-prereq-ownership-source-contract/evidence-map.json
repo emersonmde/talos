@@ -1,0 +1,90 @@
+{
+  "task_id": "phase12-rp1-ethernet-prereq-ownership-source-contract-20260610",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-prereq-ownership-source-contract.md",
+      "evidence_level": "static contract task record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-prereq-ownership-source-contract/classification.json",
+      "evidence_level": "static contract classification"
+    },
+    {
+      "label": "accepted observed-window proof closeout",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-observed-window-discriminator-proof-closeout.md",
+      "evidence_level": "static closeout task record"
+    },
+    {
+      "label": "phase12 source inventory",
+      "path": "tasks/2026-06-09-phase12-rp1-ethernet-source-inventory.md",
+      "evidence_level": "static source inventory"
+    },
+    {
+      "label": "phase12 path ADR",
+      "path": "tasks/2026-06-09-phase12-rp1-ethernet-path-adr.md",
+      "evidence_level": "static design note"
+    },
+    {
+      "label": "retained rp1 ethernet device tree",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1.dtsi",
+      "evidence_level": "retained source evidence"
+    },
+    {
+      "label": "retained pi5 ethernet device tree",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-bcm2712-rpi-5-b.dts",
+      "evidence_level": "retained source evidence"
+    },
+    {
+      "label": "retained macb binding",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-cdns-macb.yaml",
+      "evidence_level": "retained source evidence"
+    },
+    {
+      "label": "retained macb driver source",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-macb_main.c",
+      "evidence_level": "retained source evidence"
+    },
+    {
+      "label": "retained rp1 interrupt constants",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1-mfd.h",
+      "evidence_level": "retained source evidence"
+    },
+    {
+      "label": "retained rp1 clock constants",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1-clock.h",
+      "evidence_level": "retained source evidence"
+    },
+    {
+      "label": "phase11 irq clock gpio closeout",
+      "path": "tasks/2026-06-09-phase11-rp1-irq-clock-gpio-milestone-closeout.md",
+      "evidence_level": "accepted static closeout"
+    },
+    {
+      "label": "phase11 dma cache closeout",
+      "path": "tasks/2026-06-09-phase11-rp1-dma-cache-milestone-11-3-closeout.md",
+      "evidence_level": "accepted static closeout"
+    },
+    {
+      "label": "phase11 hardware substrate closeout",
+      "path": "tasks/2026-06-09-phase11-rp1-hardware-substrate-closeout.md",
+      "evidence_level": "accepted static closeout"
+    },
+    {
+      "label": "phase12 networking doc",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "evidence_level": "architecture documentation"
+    },
+    {
+      "label": "phase11 RP1/PCIe map contract",
+      "path": "docs/src/project/phase11-rp1-pcie-map-contract.md",
+      "evidence_level": "architecture documentation"
+    },
+    {
+      "label": "roadmap",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "roadmap documentation"
+    }
+  ]
+}

@@ -9222,6 +9222,20 @@ required for the next bounded Phase 12.1 prerequisite or ownership slice before
 any Ethernet driver, RP1 MMIO write, DMA, descriptor-ring, interrupt, packet
 I/O, networking, sockets, SSH, Phase 12.2, or phase-transition work.
 
+phase12-rp1-ethernet-prereq-ownership-source-contract-20260610 accepts that
+next ownership slice as a source-backed contract. It preserves observed-window
+MACB_MID visibility only as identity context, then reconciles rp1_eth source
+facts for RP1_INT_ETH, pclk/hclk/tsu_clk/tx_clk, RP1 clock ids, RGMII-ID PHY
+mode, phy1, RP1 GPIO32 active-low PHY reset, MDIO/PHY handling, interrupt
+completion, DMA, and descriptor-ring dependencies against accepted Phase 11
+frontiers. The selected follow-up is local/static candidate/control ownership
+report construction; no new hardware read or write-backed ownership claim is
+selected by this contract. Ethernet driver readiness, broad Ethernet MMIO
+readiness, RP1 MMIO writes, clock/reset ownership, GPIO32 or PHY reset
+ownership, MDIO transactions, interrupt delivery/completion, DMA, descriptor
+rings, packet I/O, networking, sockets, SSH, Phase 12.2, and phase transition
+remain unaccepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
