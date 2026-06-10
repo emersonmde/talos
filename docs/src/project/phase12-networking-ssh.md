@@ -835,3 +835,28 @@ evidence map in one retained capture-chain transaction. This closeout does not
 accept MDIO/PHY ownership, Ethernet driver readiness, interrupts,
 DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase
 transition.
+
+## RP1 Ethernet GPIO32 PHY-Reset Write/Restore Proof Closeout
+
+phase12-rp1-ethernet-gpio32-phy-reset-write-restore-pi5-proof-20260610 is
+closed as a committed lab-power-cycle-no-fetch blocker, not as a GPIO32 /
+ETH_RST_N ownership proof. The candidate and paired no-MMIO/no-GPIO control
+archives passed static review and reached selected-tree identity, but the
+candidate retained no accepted marker with zero sampled TFTP events. The
+paired control then produced zero TFTP events and only NUL+newline serial
+output after successful /power/cycle.
+
+The restored known-good control tree also produced zero TFTP events and only
+NUL+newline serial output after /power/cycle, and the final boot tree was
+restored to a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+with effective kernel kernel_2712.img and da591740/kernel_2712.img at 104136
+bytes before hardwareTestLock release. Therefore
+phase12-rp1-ethernet-gpio32-phy-reset-write-restore-proof-closeout-20260610
+holds same-shaped GPIO32 write/restore hardware retries until known-good
+power-cycle TFTP and serial output recover, or a separate lab-recovery task is
+planned.
+
+This checkpoint does not accept GPIO32 ownership, PHY reset
+assertion/deassertion, MDIO/PHY ownership, RP1 GPIO/RIO/pad/MMIO writes,
+Ethernet driver readiness, interrupts, DMA/descriptors, packet I/O,
+networking, sockets, SSH, Phase 12.2, or a phase transition.

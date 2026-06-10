@@ -1,0 +1,59 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-proof-closeout-20260610",
+  "classification": "rp1-ethernet-gpio32-phy-reset-write-restore-lab-power-cycle-no-fetch-frontier-held",
+  "evidence_level": "static inspection",
+  "accepted_claims": [
+    "GPIO32 PHY-reset write/restore proof blocker is reconciled and closed as a lab-power-cycle-no-fetch checkpoint",
+    "candidate/control archive reviews and selected-tree identity evidence were retained before the blocker",
+    "no-MMIO control and restored known-good control both produced zero TFTP events and only NUL+newline serial output after successful power cycles",
+    "final lab boot tree was restored before hardwareTestLock release",
+    "same-shaped GPIO32 write/restore hardware retries are held until known-good power-cycle TFTP and serial output recover or a separate lab-recovery task is planned"
+  ],
+  "rejected_claims": [
+    "GPIO32 PHY reset write/restore success",
+    "GPIO32 ownership",
+    "PHY reset assertion/deassertion proof",
+    "MDIO or PHY ownership",
+    "RP1 GPIO/RIO/pad/MMIO write ownership",
+    "Ethernet driver readiness",
+    "DMA, descriptor rings, transfer completion, or interrupt completion",
+    "packet I/O, networking, sockets, SSH, Phase 12.2, or phase transition"
+  ],
+  "retained_risks": [
+    "lab power/boot capture currently cannot prove even restored known-good TFTP fetch and serial output after power cycle",
+    "candidate GPIO32 write/restore result remains ambiguous because the control and known-good boot evidence gates failed",
+    "future GPIO32 write/restore retry requires recovered known-good boot evidence or a separately planned lab-recovery task",
+    "MDIO/PHY ownership, interrupt completion, DMA/descriptor ownership, packet I/O, networking, sockets, SSH, and Phase 12.2 remain outside the accepted frontier"
+  ],
+  "proof_commit": "14e79fa9c8ce86f10e339b6dfd73452d0d08b9ab",
+  "proof_blocker_classification": "rp1-ethernet-gpio32-phy-reset-write-restore-lab-power-cycle-no-fetch-blocker",
+  "candidate": {
+    "selected_tree_hash": "365f273586277e9bc6ac886a1e65f1fa9d6209a940ba305db33950e558d9c413",
+    "expected_fetch_byte_count": 51536,
+    "accepted_marker_retained": false,
+    "tftp_events_after_power": 0
+  },
+  "control": {
+    "selected_tree_hash": "fcb0ecc1006c4015e35f8dc6faa720d330018a2c0ce2f23f75241d00858d3a02",
+    "expected_fetch_byte_count": 49560,
+    "serial_text": "\u0000\n",
+    "marker_visible": false,
+    "tftp_events_after_power": 0
+  },
+  "known_good_control": {
+    "selected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "expected_fetch_byte_count": 104136,
+    "serial_text": "\u0000\n",
+    "tftp_events_after_power": 0
+  },
+  "final_post_restore": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "da591740_kernel_2712_bytes": 104136
+  },
+  "same_shaped_retry_policy": "held-until-known-good-power-cycle-tftp-and-serial-recover-or-lab-recovery-task-planned",
+  "planning_needed": true,
+  "planning_reason": "The GPIO32 write/restore proof is blocked at the lab power/boot capture layer; no non-hardware follow-up is mechanically objective from this checkpoint, and same-shaped hardware retry is not meaningful until restored known-good power cycling again produces TFTP fetches and expected serial output or a separate lab-recovery task is planned.",
+  "next_action": "Supervisor planning required for the next explicit Phase 12.1 slice or a separate lab-recovery task.",
+  "commit": "recorded-in-supervisor-state-after-acceptance"
+}

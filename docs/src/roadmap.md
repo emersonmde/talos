@@ -9536,6 +9536,45 @@ Phase 12.2, or phase-transition follow-up is selected from this read-only
 proof alone; supervisor planning is required for the next explicit Phase 12.1
 ownership slice.
 
+phase12-rp1-ethernet-gpio32-phy-reset-write-restore-source-contract-20260610
+accepts the source/docs/evidence contract for a bounded future GPIO32 /
+ETH_RST_N write/restore proof. GPIO32 is RP1 GPIO bank1 bit 4, with
+observed-aperture GPIO32 STATUS/CTRL, RIO1 OUT/OE/IN, and pad-state targets.
+The contract keeps active-low assertion as raw GPIO32 output low, deassertion
+as raw output high, and requires baseline capture, no-write preconditions,
+restore of every touched field, and paired no-GPIO/no-Ethernet control before
+any serialized write proof.
+
+phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-core-20260610 and
+phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-closeout-20260610
+accept only the local/static GPIO32 / ETH_RST_N write/restore guard frontier.
+The guard records target identity, no-write preconditions, restore baseline
+fields, operation order, blocked/no-write classifications, rejected claims,
+retained risks, and paired no-GPIO-write/no-Ethernet control. It does not run
+hardware, acquire hardwareTestLock, publish boot archives, perform volatile
+stores, assert/deassert PHY reset, or accept GPIO/PHY/MDIO/Ethernet ownership.
+
+phase12-rp1-ethernet-gpio32-phy-reset-write-restore-pi5-proof-20260610 is
+blocked as
+rp1-ethernet-gpio32-phy-reset-write-restore-lab-power-cycle-no-fetch-blocker.
+Candidate and control archives passed static review and reached selected-tree
+identity, but the candidate retained no accepted marker and zero sampled TFTP
+events. The paired no-MMIO/no-GPIO control produced zero TFTP events and only
+NUL+newline serial output after successful /power/cycle. The restored
+known-good control produced the same zero TFTP events and NUL+newline serial
+output, so the blocker is at the lab power/boot capture layer rather than an
+accepted GPIO32 write/restore result.
+
+phase12-rp1-ethernet-gpio32-phy-reset-write-restore-proof-closeout-20260610
+holds that blocker frontier as
+rp1-ethernet-gpio32-phy-reset-write-restore-lab-power-cycle-no-fetch-frontier-held.
+Same-shaped GPIO32 write/restore hardware retries are not authorized until
+restored known-good power cycling again produces TFTP fetches and expected
+serial output, or a separate lab-recovery task is planned. GPIO32 ownership,
+PHY reset assertion/deassertion, MDIO/PHY ownership, RP1 GPIO/RIO/pad/MMIO
+writes, Ethernet driver readiness, interrupts, DMA/descriptors, packet I/O,
+networking, sockets, SSH, Phase 12.2, and phase transition remain unaccepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
