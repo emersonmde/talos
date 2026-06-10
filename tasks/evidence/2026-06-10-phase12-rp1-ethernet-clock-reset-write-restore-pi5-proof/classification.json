@@ -1,0 +1,45 @@
+{
+  "task_id": "phase12-rp1-ethernet-clock-reset-write-restore-pi5-proof-20260610",
+  "status": "accepted",
+  "classification": "rp1-ethernet-clk-eth-tsu-ctrl-idempotent-write-restored-with-control",
+  "evidence_level": "image/archive inspection, lab-controller API, serial hardware boot/output, TFTP/capture evidence, capture-chain-v4 replay, and restore proof",
+  "accepted_claims": [
+    "The selected Ethernet-private CLK_ETH_TSU_CTRL idempotent pre_raw write/readback/restore sequence was observed on Pi 5 serial.",
+    "Candidate capture-chain-v4 joined selected boot tree, expected da591740/kernel_2712.img TFTP fetches, fresh nonce-bearing serial marker, final pre-restore identity, and restore proof.",
+    "Paired control used the same capture/report path while withholding writable clock target construction and candidate-only facts."
+  ],
+  "rejected_claims": [
+    "broad clock/reset ownership",
+    "shared-clock ownership",
+    "reset-controller ownership",
+    "GPIO32/PHY reset ownership",
+    "MDIO/PHY ownership",
+    "DMA or descriptor readiness",
+    "interrupt completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "This proves only one idempotent CLK_ETH_TSU_CTRL write/restore path, not broad clock/reset ownership.",
+    "CLK_ETH_CTRL, GPIO32/PHY reset, MDIO/PHY, interrupts, DMA, descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, and phase transition remain future work."
+  ],
+  "candidate_identity_join": {
+    "classification": "capture-chain-v4-ready",
+    "allowed": true,
+    "rejection_reasons": []
+  },
+  "control_identity_join": {
+    "classification": "capture-chain-v4-ready",
+    "allowed": true,
+    "rejection_reasons": []
+  },
+  "final_post_restore": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img"
+  },
+  "next_action": "Mechanically promote phase12-rp1-ethernet-clock-reset-write-restore-proof-closeout-20260610 on the next worker wake. The closeout must reconcile this exact proof without broadening to clock/reset ownership, shared-clock ownership, reset-controller/GPIO32/PHY/MDIO/DMA/descriptor/interrupt/packet/network/socket/SSH readiness, Phase 12.2, or a phase transition."
+}

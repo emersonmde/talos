@@ -1,0 +1,147 @@
+{
+  "task_id": "phase12-rp1-ethernet-clock-reset-write-restore-pi5-proof-20260610",
+  "classification": "rp1-ethernet-clk-eth-tsu-ctrl-idempotent-write-restored-with-control",
+  "evidence_level": "serial hardware boot/output",
+  "candidate": {
+    "label": "eth-tsu-write-restore-candidate-rerun",
+    "selected_tree_hash": "a8c5f9b18e4443887fa7a834d8ee22691f49c0c5b7f7122cfe7ed36d064377a2",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 49704,
+    "tftp": {
+      "cursor_file": 4402445,
+      "delta_cursor_start": 4402445,
+      "delta_cursor_end": 4403796,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        49704,
+        49704
+      ]
+    },
+    "serial": {
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+      "cursor_file": 4194304,
+      "cursor_start": 4194304,
+      "cursor_end": 4194304,
+      "response_bytes": 135915,
+      "required_marker": "TALOS: rp1-ethernet-clock-reset-write-restore-candidate capture-nonce=eth-tsu-write-candidate-rerun-20260610T131800Z",
+      "required_marker_occurrences": 51,
+      "required_marker_excerpt": "false classification=rp1-ethernet-clk-eth-tsu-ctrl-idempotent-write-restored\r\nTALOS: rp1-ethernet-clock-reset-write-restore-candidate capture-nonce=eth-tsu-write-candidate-rerun-20260610T131800Z write-restore-report-contract-id=phase12-rp1-ethernet-clock-reset-write-restore-report-contract-v1 target-contract-id=phase12-rp1-ethernet-clock-reset-write-targ",
+      "nonce_token": "capture-nonce=eth-tsu-write-candidate-rerun-20260610T131800Z",
+      "nonce_token_occurrences": 51,
+      "pre_power_nonce_occurrences": 0,
+      "empty_pre_power": false,
+      "nonce_fresh": true,
+      "serial_freshness_ok": true
+    },
+    "final_pre_restore": {
+      "tree_hash": "a8c5f9b18e4443887fa7a834d8ee22691f49c0c5b7f7122cfe7ed36d064377a2",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 49704
+    },
+    "restore": {
+      "snapshot_name": "pre-eth-tsu-write-restore-proof-20260610T130700Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "identity_join": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": []
+    },
+    "hardware_classification": "rp1-ethernet-clk-eth-tsu-ctrl-idempotent-write-restored",
+    "observed_register": {
+      "address": "0x1c00018134",
+      "pre_raw": "0x10000800",
+      "post_raw": "0x10000800",
+      "restore_raw": "0x10000800",
+      "post_eq_pre": true,
+      "restore_eq_pre": true
+    }
+  },
+  "control": {
+    "label": "eth-tsu-write-restore-control",
+    "selected_tree_hash": "457859469383c34f4d3c241f46c164f0ab560e81cb275154cde4e7ad5152f458",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 49120,
+    "tftp": {
+      "cursor_file": 4401094,
+      "delta_cursor_start": 4401094,
+      "delta_cursor_end": 4402445,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        49120,
+        49120
+      ]
+    },
+    "serial": {
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+      "cursor_file": 4194304,
+      "cursor_start": 4194304,
+      "cursor_end": 4194304,
+      "response_bytes": 88648,
+      "required_marker": "TALOS: rp1-ethernet-clock-reset-write-restore-control capture-nonce=eth-tsu-write-control-20260610T130000Z",
+      "required_marker_occurrences": 32,
+      "required_marker_excerpt": "e classification=no-clock-write-no-ethernet-rp1-ethernet-write-restore-control\r\nTALOS: rp1-ethernet-clock-reset-write-restore-control capture-nonce=eth-tsu-write-control-20260610T130000Z write-restore-report-contract-id=phase12-rp1-ethernet-clock-reset-write-restore-report-contract-v1 target-contract-id=phase12-rp1-ethernet-clock-reset-write-ta",
+      "nonce_token": "capture-nonce=eth-tsu-write-control-20260610T130000Z",
+      "nonce_token_occurrences": 34,
+      "pre_power_nonce_occurrences": 0,
+      "empty_pre_power": true,
+      "nonce_fresh": true,
+      "serial_freshness_ok": true
+    },
+    "final_pre_restore": {
+      "tree_hash": "457859469383c34f4d3c241f46c164f0ab560e81cb275154cde4e7ad5152f458",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 49120
+    },
+    "restore": {
+      "snapshot_name": "pre-eth-tsu-write-restore-proof-20260610T130700Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "identity_join": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": []
+    },
+    "hardware_classification": "no-clock-write-no-ethernet-rp1-ethernet-write-restore-control"
+  },
+  "final_post_restore": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img"
+  },
+  "inconclusive_attempts": [
+    {
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-write-restore-pi5-proof/candidate-run-overlap-inconclusive",
+      "disposition": "deferred",
+      "reason": "operator-overlapped capture attempt; retained as inconclusive evidence and not used for acceptance"
+    }
+  ],
+  "rejected_claims": [
+    "broad clock/reset ownership",
+    "shared-clock ownership",
+    "reset-controller ownership",
+    "GPIO32/PHY reset ownership",
+    "MDIO/PHY ownership",
+    "DMA or descriptor readiness",
+    "interrupt completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ]
+}

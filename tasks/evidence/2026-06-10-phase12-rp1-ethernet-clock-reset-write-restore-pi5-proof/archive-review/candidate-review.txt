@@ -1,0 +1,10 @@
+candidate_archive=target/talos-rpi5-rp1-ethernet-clock-reset-write-restore-candidate-boot.tar.gz
+candidate_archive_sha256=3776a08f311327070379793416d40790946f465184a07dc5d923a6f3a5525170
+kernel_2712_sha256=492b1921d8dbbf0d8f5fba87cb4e4a6b14d6ae37a1eb3193e0deed59e074503f
+kernel_2712_size=49696
+header_image_size=49696
+text_offset=0
+flags=12
+candidate_marker=TALOS: rp1-ethernet-clock-reset-write-restore-candidate
+capture_nonce=eth-tsu-write-candidate-20260610T130000Z
+forbidden_rp1_ethernet_clock_reset_write_restore_candidate_runtime_strings_absent=true

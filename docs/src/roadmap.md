@@ -9367,6 +9367,24 @@ clock/reset ownership, shared-clock ownership, CLK_ETH_CTRL, reset-controller,
 GPIO32/PHY, MDIO, DMA, descriptors, interrupts, packet I/O, networking,
 sockets, SSH, Phase 12.2, and phase transition remain unaccepted.
 
+phase12-rp1-ethernet-clock-reset-write-restore-pi5-proof-20260610 accepts the
+serialized Pi 5 candidate/control proof for the exact CLK_ETH_TSU_CTRL target.
+The candidate capture-chain-v4 proof joined selected tree
+a8c5f9b18e4443887fa7a834d8ee22691f49c0c5b7f7122cfe7ed36d064377a2, two
+matching da591740/kernel_2712.img TFTP fetches at 49704 bytes, fresh serial
+nonce output, final pre-restore identity, and restore proof. Serial reported
+pre_raw/post_raw/restore_raw all 0x10000800 with post_eq_pre=true and
+restore_eq_pre=true, classified
+rp1-ethernet-clk-eth-tsu-ctrl-idempotent-write-restored. The paired control
+joined tree 457859469383c34f4d3c241f46c164f0ab560e81cb275154cde4e7ad5152f458,
+two matching TFTP fetches at 49120 bytes, fresh serial nonce output, final
+identity, and restore proof, classified
+no-clock-write-no-ethernet-rp1-ethernet-write-restore-control. The accepted
+frontier is one idempotent Ethernet-private clock write/restore proof only;
+broad clock/reset ownership, shared-clock ownership, reset-controller,
+GPIO32/PHY, MDIO, DMA, descriptors, interrupts, packet I/O, networking,
+sockets, SSH, Phase 12.2, and phase transition remain unaccepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

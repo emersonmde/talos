@@ -535,3 +535,17 @@ classification JSON, evidence map, and capture summary. Broad clock/reset
 ownership, shared-clock ownership, reset-controller, GPIO32/PHY, MDIO, DMA,
 descriptors, interrupts, packet I/O, networking, sockets, SSH, Phase 12.2, and
 phase transition remain unaccepted.
+
+phase12-rp1-ethernet-clock-reset-write-restore-pi5-proof-20260610 accepts the
+serialized Pi 5 candidate/control proof for that exact target only. The
+candidate reported CLK_ETH_TSU_CTRL at 0x1c00018134 with pre_raw,
+post_raw, and restore_raw all 0x10000800, post_eq_pre=true, restore_eq_pre=true,
+and classification rp1-ethernet-clk-eth-tsu-ctrl-idempotent-write-restored.
+The paired control used the same capture/report path and classified as
+no-clock-write-no-ethernet-rp1-ethernet-write-restore-control. Capture-chain-v4
+joined selected boot-tree identity, expected TFTP fetches, fresh serial nonce
+markers, final pre-restore identity, and restore proof for both runs. This
+accepts one idempotent Ethernet-private clock register write/restore proof; it
+does not accept broad clock/reset ownership, shared-clock ownership,
+reset-controller, GPIO32/PHY reset, MDIO/PHY, DMA, descriptors, interrupts,
+packet I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
