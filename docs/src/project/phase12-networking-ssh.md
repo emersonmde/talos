@@ -654,3 +654,24 @@ This proof does not accept broad clock/reset ownership, shared-clock
 ownership, reset-controller ownership, GPIO32/PHY reset, MDIO/PHY, DMA,
 descriptors, interrupts, packet I/O, networking, sockets, SSH, Phase 12.2, or
 a phase transition.
+
+## RP1 Ethernet CLK_ETH_CTRL Write-Restore Proof Closeout
+
+phase12-rp1-ethernet-clk-eth-ctrl-write-restore-proof-closeout-20260610 closes
+the CLK_ETH_CTRL proof frontier as
+rp1-ethernet-clk-eth-ctrl-write-restore-frontier-closed. The accepted boundary
+remains exactly one Ethernet-private CLK_ETH_CTRL idempotent
+write/readback/restore proof with a paired no-clock-write control. It does not
+reinterpret that result as broad clock/reset ownership, shared-clock
+ownership, or Ethernet driver readiness.
+
+Same-shaped CLK_ETH_CTRL idempotent write/restore hardware retries are closed
+for this candidate/control pair. A future Phase 12.1 task must be
+supervisor-planned with materially different explicit scope and acceptance
+criteria, such as a functional non-idempotent field transition with restore
+proof, shared-clock safety, reset-controller evidence, GPIO32/PHY reset
+ownership, MDIO/PHY ownership, interrupt completion, DMA/descriptor ownership,
+or packet I/O scope. This closeout does not accept broad clock/reset
+ownership, shared-clock ownership, reset-controller, GPIO32/PHY reset, MDIO,
+DMA, descriptors, interrupts, packet I/O, networking, sockets, SSH, Phase
+12.2, or a phase transition.
