@@ -53,5 +53,5 @@
     "capture-invariant-summary.json retains the legacy serial-drain-not-empty-before-power suggestion, but the repaired identity-join-v4 replay passed for both candidate and control using run-unique nonce freshness, selected-tree identity, TFTP, final identity, and restore gates.",
     "This proof accepts report visibility/control output only; it does not accept hardware or runtime ownership of the reported prerequisites."
   ],
-  "commit": "pending"
+  "commit": "01af4b5ab78b5af836ec4527b1de783f525548db"
 }
