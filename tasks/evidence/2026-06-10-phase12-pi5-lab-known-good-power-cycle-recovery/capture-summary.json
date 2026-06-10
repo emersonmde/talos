@@ -1,0 +1,73 @@
+{
+  "task_id": "phase12-pi5-lab-known-good-power-cycle-recovery-20260610",
+  "run": "known-good-recovery-run",
+  "result": "accepted",
+  "classification": "known-good-power-cycle-tftp-recovered-serial-silent-blocker",
+  "pre_power_identity": {
+    "endpoint": "GET /status",
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_2712_bytes": 104136
+  },
+  "cursors": {
+    "serial_cursor_before_power": 4194304,
+    "tftp_cursor_before_power": 4418657
+  },
+  "power_cycle_ok": true,
+  "final_identity": {
+    "endpoint": "GET /status",
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_2712_bytes": 104136
+  },
+  "tftp": {
+    "cursor": null,
+    "cursor_end": 4420008,
+    "log_size": 4420008,
+    "event_count": 13,
+    "known_good_kernel_fetches": 2,
+    "da591740_kernel_fetch_bytes": [
+      104136,
+      104136
+    ],
+    "last_lines": [
+      "Jun 10 20:07:50 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+      "Jun 10 20:07:50 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "Jun 10 20:07:50 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "Jun 10 20:07:51 dnsmasq-tftp[1]: error 0 Early terminate received from 10.42.1.4",
+      "Jun 10 20:07:51 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "Jun 10 20:07:51 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to 10.42.1.4",
+      "Jun 10 20:07:51 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to 10.42.1.4",
+      "Jun 10 20:07:51 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to 10.42.1.4",
+      "Jun 10 20:07:51 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to 10.42.1.4",
+      "Jun 10 20:07:51 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to 10.42.1.4",
+      "Jun 10 20:07:51 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for 10.42.1.4",
+      "Jun 10 20:07:51 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4"
+    ]
+  },
+  "serial": {
+    "bytes": 0,
+    "cursor_start": 4194304,
+    "cursor_end": 4194304,
+    "contains_talos_marker": false,
+    "contains_expected_known_good_output": false,
+    "text_excerpt": ""
+  },
+  "rejected_claims": [
+    "GPIO32 PHY reset write/restore success",
+    "GPIO32 ownership",
+    "PHY reset assertion/deassertion proof",
+    "MDIO/PHY ownership",
+    "Ethernet driver readiness",
+    "interrupt completion",
+    "DMA/descriptor ownership",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition",
+    "same-shaped GPIO32 retry authorization"
+  ],
+  "next_action": "Close out the lab recovery result as TFTP recovered but expected known-good Talos serial output absent; do not rerun GPIO32 write/restore until supervisor accepts a follow-up discriminator for serial-silent known-good boot evidence."
+}

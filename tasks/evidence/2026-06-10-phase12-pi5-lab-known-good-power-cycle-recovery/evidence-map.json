@@ -1,0 +1,20 @@
+{
+  "task_id": "phase12-pi5-lab-known-good-power-cycle-recovery-20260610",
+  "classification": "known-good-power-cycle-tftp-recovered-serial-silent-blocker",
+  "task_record": "tasks/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery.md",
+  "classification_json": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/classification.json",
+  "capture_summary": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/capture-summary.json",
+  "run_directory": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/known-good-recovery-run/",
+  "pre_power_identity": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/known-good-recovery-run/pre-power-status.json",
+  "pre_power_boot_files": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/known-good-recovery-run/pre-power-boot-files.json",
+  "root_endpoint_semantics": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/known-good-recovery-run/pre-power-root-endpoint.json",
+  "serial_cursor_before_power": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/known-good-recovery-run/serial-cursor-before-power.txt",
+  "tftp_cursor_before_power": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/known-good-recovery-run/tftp-cursor-before-power.txt",
+  "serial_peek_before_power": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/known-good-recovery-run/serial-peek-before-power.json",
+  "tftp_tail_before_power": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/known-good-recovery-run/tftp-tail-before-power.json",
+  "power_cycle": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/known-good-recovery-run/power-cycle.json",
+  "serial_after_power": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/known-good-recovery-run/serial-observe-after-power.json",
+  "tftp_delta_after_power": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/known-good-recovery-run/tftp-delta-after-power-from-pre-cursor.json",
+  "final_identity": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/known-good-recovery-run/final-status.json",
+  "final_boot_files": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/known-good-recovery-run/final-boot-files.json"
+}

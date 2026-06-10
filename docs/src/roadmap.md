@@ -9575,6 +9575,19 @@ PHY reset assertion/deassertion, MDIO/PHY ownership, RP1 GPIO/RIO/pad/MMIO
 writes, Ethernet driver readiness, interrupts, DMA/descriptors, packet I/O,
 networking, sockets, SSH, Phase 12.2, and phase transition remain unaccepted.
 
+phase12-pi5-lab-known-good-power-cycle-recovery-20260610 accepts a narrower
+lab recovery blocker as
+known-good-power-cycle-tftp-recovered-serial-silent-blocker. The pre-power and
+final `GET /status` identity matched the restored known-good tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 with
+effective kernel kernel_2712.img and da591740/kernel_2712.img at 104136 bytes.
+The authorized known-good power cycle returned ok=true and recovered TFTP
+evidence from fresh cursor 4418657 with 13 events and two 104136-byte
+da591740/kernel_2712.img fetches, but serial observe from fresh cursor 4194304
+captured 0 bytes and no expected Talos output. Same-shaped GPIO32
+write/restore retries remain held until a bounded serial-silent known-good
+boot discriminator or another explicit recovery gate is accepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

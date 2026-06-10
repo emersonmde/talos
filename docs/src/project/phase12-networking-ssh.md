@@ -856,6 +856,18 @@ holds same-shaped GPIO32 write/restore hardware retries until known-good
 power-cycle TFTP and serial output recover, or a separate lab-recovery task is
 planned.
 
+phase12-pi5-lab-known-good-power-cycle-recovery-20260610 narrows that blocker:
+the restored known-good boot tree still matched
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 with
+effective kernel kernel_2712.img and da591740/kernel_2712.img at 104136 bytes,
+and the authorized known-good power cycle recovered TFTP fetches with 13
+events including two 104136-byte da591740/kernel_2712.img transfers. Serial
+observe from fresh cursor 4194304 captured 0 bytes and no expected Talos
+output, so the accepted recovery classification is
+known-good-power-cycle-tftp-recovered-serial-silent-blocker. Same-shaped
+GPIO32 write/restore retries remain held until a bounded serial-silent
+known-good boot discriminator or another explicit recovery gate is accepted.
+
 This checkpoint does not accept GPIO32 ownership, PHY reset
 assertion/deassertion, MDIO/PHY ownership, RP1 GPIO/RIO/pad/MMIO writes,
 Ethernet driver readiness, interrupts, DMA/descriptors, packet I/O,
