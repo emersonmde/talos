@@ -1,0 +1,10 @@
+candidate_archive=target/talos-rpi5-rp1-ethernet-gem-mid-visibility-candidate-boot.tar.gz
+candidate_archive_sha256=96fd243a2f8697c68af5fb9ff9a013012c29abf9d344b5b68892173a336088a5
+kernel_2712_sha256=2633afdf72186bc4c205f12b4748d0719f2d492257079aa6d03a48540ed03025
+kernel_2712_size=48456
+header_image_size=48456
+text_offset=0
+flags=12
+candidate_marker=TALOS: rp1-ethernet-gem-mid-visibility-candidate
+capture_nonce=gemmid20260610T0038Z-candidate
+forbidden_rp1_ethernet_gem_mid_candidate_runtime_strings_absent=true

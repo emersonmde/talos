@@ -9124,12 +9124,14 @@ Goal: reach Talos over the network and make the system usable without serial.
 Milestone 12.1: RP1 Ethernet Research Spike
 
 Status: source inventory, path ADR, GEM MID source contract, local/static GEM
-MID diagnostic report core, and diagnostic closeout accepted in
+MID diagnostic report core, diagnostic closeout, and serialized GEM MID Pi 5
+proof accepted in
 phase12-rp1-ethernet-source-inventory-20260609 and
 phase12-rp1-ethernet-path-adr-20260609, with source contract
 phase12-rp1-ethernet-gem-mid-source-contract-20260609 and report core
 phase12-rp1-ethernet-gem-mid-diagnostic-core-20260609 and closeout
-phase12-rp1-ethernet-gem-mid-diagnostic-closeout-20260609. The accepted
+phase12-rp1-ethernet-gem-mid-diagnostic-closeout-20260609, followed by
+phase12-rp1-ethernet-gem-mid-pi5-proof-20260609. The accepted
 inventory is source-only: RP1 Ethernet is `raspberrypi,rp1-gem` /
 `cdns,macb` at RP1 bus `0xc0_40100000` with source CPU physical translation
 `0x1f00100000`, `RP1_INT_ETH`, RP1 Ethernet clocks, RGMII PHY mode, and PHY
@@ -9141,9 +9143,14 @@ physical `0x1f001000fc`, width 32, little-endian volatile load. The accepted
 local/static report core constructs a candidate report for that contract and a
 paired no-Ethernet/no-MMIO control that withholds Ethernet MMIO target fields.
 The accepted closeout selects a serialized Pi 5 GEM MID visibility/control
-proof as the next bounded step. Ethernet driver readiness, broad live MMIO,
-descriptor rings, packet I/O, networking, sockets, SSH, and Phase 12.2
-implementation remain unaccepted.
+proof as the next bounded step. The accepted Pi 5 proof showed the control
+report path is visible without constructing Ethernet MMIO, but the candidate
+read returned `raw=0xdeaddead` at `0x1f001000fc`, classified as
+`rp1-ethernet-gem-mid-blocked-address-decode-sentinel`. Live GEM visibility,
+Ethernet driver readiness, broad live MMIO, descriptor rings, packet I/O,
+networking, sockets, SSH, and Phase 12.2 implementation remain unaccepted;
+the next step requires supervisor planning around the GEM MID address-decode
+or bridge-enable dependency.
 
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.

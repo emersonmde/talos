@@ -1,0 +1,82 @@
+{
+  "task_id": "phase12-rp1-ethernet-gem-mid-pi5-proof-20260609",
+  "classification": "rp1-ethernet-gem-mid-blocked-address-decode-sentinel",
+  "accepted": true,
+  "evidence_level": [
+    "static inspection",
+    "image/archive/disassembly inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "TFTP delta",
+    "restore proof"
+  ],
+  "hardware_lock": {
+    "acquired": true,
+    "owner": "worker",
+    "task_id": "phase12-rp1-ethernet-gem-mid-pi5-proof-20260609",
+    "restored": true,
+    "released_in_state": true
+  },
+  "control_result": {
+    "run": "control-rerun",
+    "classification": "no-ethernet-no-mmio-rp1-ethernet-gem-mid-control",
+    "tree_hash": "dcac966fee3fd21eba83cc449bea85ef1490bc249c825e79d867c6b27095d93f",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 47808,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "required_marker_occurrences": 80,
+    "identity_join_decisive": true,
+    "mmio_target_constructed": false
+  },
+  "candidate_result": {
+    "run": "candidate-rerun2",
+    "classification": "rp1-ethernet-gem-mid-blocked-address-decode-sentinel",
+    "tree_hash": "2bd494d3f06429c3ff2724c6ec9bd27082e8338244e6d9ee655d08aa12d424c3",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 48456,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "required_marker_occurrences": 78,
+    "identity_join_decisive": true,
+    "macb_mid_cpu_physical": "0x1f001000fc",
+    "raw": "0xdeaddead",
+    "idnum": "0xead",
+    "rev": "0xdead",
+    "raw_is_deaddead": true
+  },
+  "restore": {
+    "snapshot": "pre-gem-mid-proof-20260610T0038Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "final_lab_status": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-pi5-proof/final-lab-status-before-lock-release.json"
+  },
+  "rejected_claims": [
+    "ethernet-driver-readiness",
+    "broad-live-ethernet-mmio-readiness",
+    "rp1-mmio-dma-programming",
+    "descriptor-rings",
+    "dma-ownership",
+    "transfer-completion",
+    "interrupt-completion",
+    "clock-reset-ownership",
+    "phy-reset-ownership",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "retained_risks": [
+    "no-clock-reset-ownership",
+    "no-phy-reset-ownership",
+    "no-descriptor-ring-layout-or-ownership",
+    "no-live-dma-proof",
+    "no-packet-io",
+    "no-network-stack",
+    "gem-mid-address-decode-or-bridge-enable-dependency"
+  ],
+  "next_action": "Set planningNeeded for supervisor planning around the GEM MID address-decode/bridge-enable dependency before any Ethernet driver, DMA, interrupt, packet I/O, networking, sockets, SSH, Phase 12.2, or phase transition work."
+}

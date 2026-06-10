@@ -1,0 +1,83 @@
+{
+  "task_id": "phase12-rp1-ethernet-gem-mid-pi5-proof-20260609",
+  "classification": "rp1-ethernet-gem-mid-blocked-address-decode-sentinel",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-09-phase12-rp1-ethernet-gem-mid-pi5-proof.md",
+      "evidence_level": "static inspection and hardware proof record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-pi5-proof/classification.json",
+      "evidence_level": "classification JSON"
+    },
+    {
+      "label": "candidate archive review",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-pi5-proof/archive-review/candidate-review.txt",
+      "evidence_level": "image/archive/disassembly inspection"
+    },
+    {
+      "label": "control archive review",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-pi5-proof/archive-review/control-review.txt",
+      "evidence_level": "image/archive/disassembly inspection"
+    },
+    {
+      "label": "candidate decisive rerun summary",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-pi5-proof/candidate-rerun2/capture-invariant-summary.json",
+      "evidence_level": "lab-controller API, TFTP delta, serial hardware boot/output, restore proof"
+    },
+    {
+      "label": "candidate decisive rerun serial",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-pi5-proof/candidate-rerun2/serial-observe-window.json",
+      "evidence_level": "serial hardware boot/output"
+    },
+    {
+      "label": "candidate decisive rerun TFTP delta",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-pi5-proof/candidate-rerun2/tftp-delta-stable-pre-restore.json",
+      "evidence_level": "TFTP delta"
+    },
+    {
+      "label": "control decisive rerun summary",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-pi5-proof/control-rerun/capture-invariant-summary.json",
+      "evidence_level": "lab-controller API, TFTP delta, serial hardware boot/output, restore proof"
+    },
+    {
+      "label": "control decisive rerun serial",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-pi5-proof/control-rerun/serial-observe-window.json",
+      "evidence_level": "serial hardware boot/output"
+    },
+    {
+      "label": "control decisive rerun TFTP delta",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-pi5-proof/control-rerun/tftp-delta-stable-pre-restore.json",
+      "evidence_level": "TFTP delta"
+    },
+    {
+      "label": "final lab status before lock release",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-pi5-proof/final-lab-status-before-lock-release.json",
+      "evidence_level": "lab-controller API restore proof"
+    }
+  ],
+  "validation": [
+    {
+      "label": "json checks",
+      "command": "jq empty tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-pi5-proof/evidence-map.json tasks/evidence/2026-06-09-phase12-rp1-ethernet-gem-mid-pi5-proof/classification.json",
+      "result": "passed"
+    },
+    {
+      "label": "diff check",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "label": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "label": "staged diff check",
+      "command": "git diff --cached --check",
+      "result": "passed"
+    }
+  ]
+}

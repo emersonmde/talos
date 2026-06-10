@@ -87,3 +87,19 @@ The closeout does not accept live GEM visibility, broad Ethernet MMIO
 readiness, Ethernet driver readiness, RP1 MMIO/DMA programming, descriptor
 rings, interrupt completion, clock/reset ownership, PHY reset ownership,
 packet I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
+
+## GEM MID Pi 5 Proof
+
+phase12-rp1-ethernet-gem-mid-pi5-proof-20260609 accepts the serialized Pi 5
+visibility/control proof as a precise blocker. The no-Ethernet/no-MMIO
+control proved the serial reporting path without constructing the Ethernet
+MMIO target. The candidate reached the bounded `MACB_MID` read at CPU physical
+`0x1f001000fc`, but the read returned `raw=0xdeaddead`, classified as
+`rp1-ethernet-gem-mid-blocked-address-decode-sentinel`.
+
+This is not live GEM visibility and does not accept broad Ethernet MMIO
+readiness. It keeps Ethernet driver readiness, RP1 MMIO/DMA programming,
+descriptor rings, transfer completion, interrupt completion, clock/reset
+ownership, PHY reset ownership, packet I/O, networking, sockets, SSH, Phase
+12.2, and phase transition work rejected. The next step requires supervisor
+planning around the GEM MID address-decode or bridge-enable dependency.
