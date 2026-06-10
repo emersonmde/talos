@@ -1,0 +1,43 @@
+{
+  "task_id": "phase12-rp1-ethernet-prereq-ownership-report-closeout-20260610",
+  "classification": "rp1-ethernet-prereq-ownership-report-closeout-accepted",
+  "evidence_level": [
+    "static inspection",
+    "JSON validation",
+    "docs validation",
+    "diff checks"
+  ],
+  "accepted_claims": [
+    "local/static prerequisite ownership candidate report construction is reconciled against the source contract",
+    "paired no-ownership/no-Ethernet prerequisite control report construction remains the accepted control path",
+    "source-backed rp1_eth clock, interrupt, PHY reset, PHY/MDIO, and DMA/descriptor metadata remain accepted only as inert report facts",
+    "observed-window MACB_MID identity remains accepted only as context metadata",
+    "same-shaped local/static report retries are closed for this candidate/control pair"
+  ],
+  "rejected_claims": [
+    "Ethernet driver readiness",
+    "broad Ethernet MMIO readiness",
+    "RP1 MMIO writes",
+    "clock/reset ownership or writes",
+    "GPIO32 ownership or PHY reset assertion/deassertion",
+    "MDIO transactions or PHY ownership",
+    "interrupt delivery, handler ownership, or completion",
+    "DMA, descriptor rings, channel ownership, or transfer completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition",
+    "hardware ownership or runtime prerequisite ownership"
+  ],
+  "retained_risks": [
+    "observed-window MACB_MID identity does not prove clocks, PHY, MDIO, DMA, interrupts, or packet behavior",
+    "source facts identify required prerequisites but not Talos ownership",
+    "report-core evidence is local/static only and is not hardware proof",
+    "selected serialized proof can prove only report visibility/control output unless future scope supplies different acceptance criteria"
+  ],
+  "same_shaped_retry_policy": "closed for the accepted local/static prerequisite ownership report candidate/control pair unless future scope supplies materially different evidence, a different report contract, or different acceptance criteria",
+  "next_action": "phase12-rp1-ethernet-prereq-ownership-pi5-proof-20260610",
+  "commit": "pending"
+}

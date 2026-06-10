@@ -339,3 +339,22 @@ path while withholding candidate-only Ethernet prerequisite facts and carrying
 no-ownership-no-ethernet-rp1-ethernet-prereq-control. This remains
 local/static evidence only and does not accept hardware/runtime ownership,
 packet I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
+
+## RP1 Ethernet Prerequisite Ownership Report Closeout
+
+phase12-rp1-ethernet-prereq-ownership-report-closeout-20260610 closes the
+local/static prerequisite ownership report frontier. The accepted boundary is
+candidate/control report construction only: the candidate carries source-backed
+rp1_eth clock, interrupt, PHY reset, PHY/MDIO, DMA/descriptor dependency
+metadata plus observed-window MACB_MID identity context, while the paired
+control uses the same report path and withholds candidate-only Ethernet
+prerequisite facts.
+
+Same-shaped local/static report retries are closed for this candidate/control
+pair unless future scope supplies materially different evidence or acceptance
+criteria. The closeout selects the serialized Pi 5 prerequisite proof as the
+next bounded task, limited to report visibility/control output. It does not
+accept Ethernet driver readiness, broad Ethernet MMIO readiness, RP1 MMIO
+writes, clock/reset ownership, GPIO32 or PHY reset ownership, MDIO
+transactions, interrupt delivery/completion, DMA, descriptor rings, packet
+I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
