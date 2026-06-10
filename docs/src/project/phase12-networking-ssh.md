@@ -790,3 +790,27 @@ GPIO ownership, function-change ownership, pad-write ownership, PHY reset
 assertion/deassertion, MDIO/PHY ownership, interrupt/event ownership, Ethernet
 driver readiness, broad Ethernet MMIO readiness, DMA, descriptors, packet I/O,
 networking, sockets, SSH, Phase 12.2, or a phase transition.
+
+## RP1 Ethernet GPIO32 PHY-Reset Write/Restore Guard Core
+
+phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-core-20260610
+accepts the local/static report surface in src/rp1_ethernet.rs. The candidate
+report carries the exact GPIO32 / ETH_RST_N target identity, no-write
+preconditions, restore-baseline fields, operation order, blocked/no-write
+classifications, allowed future proof classifications, rejected claims, and
+retained risks from the accepted source contract.
+
+The paired control uses the same report construction path while carrying no
+writable GPIO32/RIO/pad/MMIO target facts and classifies as
+no-gpio-write-no-ethernet-rp1-ethernet-gpio32-phy-reset-control. A
+blocked/no-write report kind is also accepted for explicit precondition
+failures such as sentinel reads, unsafe function state, unexpected event
+state, missing restore baseline, or capture-chain inconclusive evidence. The
+guard validators reject missing restore baseline, non-GPIO32 writes, MDIO/PHY
+overclaims, interrupt/DMA/descriptor/packet/network/socket/SSH claims, Phase
+12.2, and phase transition.
+
+This guard core does not run hardware, acquire hardwareTestLock, publish a
+boot archive, perform a volatile store, assert/deassert PHY reset, or accept
+Ethernet driver readiness. The next bounded step is the static guard closeout
+before any serialized Pi 5 proof can be authorized.

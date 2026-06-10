@@ -1,0 +1,62 @@
+{
+  "taskId": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-core-20260610",
+  "artifacts": [
+    {
+      "label": "implementation",
+      "path": "src/rp1_ethernet.rs",
+      "evidenceLevel": "local/static implementation and focused tests"
+    },
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-core.md",
+      "evidenceLevel": "static inspection"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-core/classification.json",
+      "evidenceLevel": "structured classification"
+    },
+    {
+      "label": "accepted source contract",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-source-contract.md",
+      "evidenceLevel": "static inspection"
+    },
+    {
+      "label": "project docs",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "evidenceLevel": "documentation update"
+    }
+  ],
+  "validation": [
+    {
+      "command": "cargo fmt --all",
+      "result": "passed",
+      "evidenceLevel": "fmt"
+    },
+    {
+      "command": ". \"$HOME/.cargo/env\" && export TMPDIR=/opt/strider/openclaw/current/workspace/tmp && export PATH=/opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin:$PATH && cargo -Zjson-target-spec test --quiet rp1_ethernet",
+      "result": "passed; 489 no_std tests",
+      "evidenceLevel": "unit tests / QEMU substitute"
+    },
+    {
+      "command": "jq empty tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-core/classification.json tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-core/evidence-map.json",
+      "result": "passed",
+      "evidenceLevel": "JSON validation"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "evidenceLevel": "diff whitespace check"
+    },
+    {
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed",
+      "evidenceLevel": "documentation build"
+    },
+    {
+      "command": "git diff --cached --check",
+      "result": "passed",
+      "evidenceLevel": "staged diff whitespace check"
+    }
+  ]
+}

@@ -34,6 +34,12 @@ pub const RP1_ETHERNET_GPIO32_PHY_RESET_SOURCE_TASK_ID: &str =
     "phase12-rp1-ethernet-gpio32-phy-reset-source-contract-20260610";
 pub const RP1_ETHERNET_GPIO32_PHY_RESET_PREFLIGHT_REPORT_CONTRACT_ID: &str =
     "phase12-rp1-ethernet-gpio32-phy-reset-preflight-report-contract-v1";
+pub const RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_GUARD_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-source-contract-v1";
+pub const RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_SOURCE_TASK_ID: &str =
+    "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-source-contract-20260610";
+pub const RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_REPORT_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-report-contract-v1";
 pub const RP1_ETHERNET_GEM_MID_CANDIDATE_CLASSIFICATION: &str =
     "local-static-rp1-ethernet-gem-mid-candidate";
 pub const RP1_ETHERNET_GEM_MID_CONTROL_CLASSIFICATION: &str =
@@ -64,6 +70,10 @@ pub const RP1_ETHERNET_GPIO32_PHY_RESET_PREFLIGHT_CANDIDATE_CLASSIFICATION: &str
     "rp1-ethernet-gpio32-phy-reset-preflight-candidate-local-static";
 pub const RP1_ETHERNET_GPIO32_PHY_RESET_PREFLIGHT_CONTROL_CLASSIFICATION: &str =
     "no-gpio-no-ethernet-rp1-ethernet-gpio32-phy-reset-control";
+pub const RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_CANDIDATE_CLASSIFICATION: &str =
+    "rp1-ethernet-gpio32-phy-reset-write-restore-guard-candidate-local-static";
+pub const RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_CONTROL_CLASSIFICATION: &str =
+    "no-gpio-write-no-ethernet-rp1-ethernet-gpio32-phy-reset-control";
 pub const RP1_ETHERNET_GEM_MID_HARDWARE_PROOF_BOUNDARY_CLASSIFICATION: &str =
     "hardware-proof-limited-to-gem-mid-visibility-control-output";
 pub const RP1_ETHERNET_GEM_MID_DECODE_DISCRIMINATOR_HARDWARE_PROOF_BOUNDARY_CLASSIFICATION: &str =
@@ -80,6 +90,8 @@ pub const RP1_ETHERNET_CLK_ETH_CTRL_WRITE_RESTORE_BOUNDARY_CLASSIFICATION: &str 
     "hardware-proof-limited-to-clk-eth-ctrl-idempotent-write-restore-control-output";
 pub const RP1_ETHERNET_GPIO32_PHY_RESET_PREFLIGHT_BOUNDARY_CLASSIFICATION: &str =
     "hardware-proof-limited-to-gpio32-phy-reset-readonly-preflight-control-output";
+pub const RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_BOUNDARY_CLASSIFICATION: &str =
+    "hardware-proof-limited-to-gpio32-phy-reset-write-restore-control-output";
 pub const RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION: &str = "contract-rejected-input";
 
 pub const RP1_ETHERNET_COMPATIBLE: &[&str] = &["raspberrypi,rp1-gem", "cdns,macb"];
@@ -176,6 +188,29 @@ pub const RP1_ETHERNET_PHY_RESET_LOGICAL_DEASSERTION: &str =
     "Linux logical value 0 deasserts reset and drives active-low ETH_RST_N physically high";
 pub const RP1_ETHERNET_PHY_RESET_DURATION_MS: u32 = 5;
 pub const RP1_ETHERNET_PHY_RESET_MDIO_HOOK_RELATIONSHIP: &str = "macb_mdio_reset is installed as the MDIO bus reset hook and asserts then deasserts phy_reset_gpio";
+pub const RP1_ETHERNET_GPIO32_BANK: &str = "bank1";
+pub const RP1_ETHERNET_GPIO32_BANK_LOCAL_BIT: u32 = 4;
+pub const RP1_ETHERNET_GPIO32_IO_BANK1_SOURCE_BASE: u64 = 0xc0_400d_4000;
+pub const RP1_ETHERNET_GPIO32_IO_BANK1_OBSERVED_BASE: u64 = 0x1c_000d_4000;
+pub const RP1_ETHERNET_GPIO32_STATUS_SOURCE_TARGET: u64 = 0xc0_400d_4020;
+pub const RP1_ETHERNET_GPIO32_STATUS_OBSERVED_TARGET: u64 = 0x1c_000d_4020;
+pub const RP1_ETHERNET_GPIO32_CTRL_SOURCE_TARGET: u64 = 0xc0_400d_4024;
+pub const RP1_ETHERNET_GPIO32_CTRL_OBSERVED_TARGET: u64 = 0x1c_000d_4024;
+pub const RP1_ETHERNET_GPIO32_RIO1_OUT_SOURCE_TARGET: u64 = 0xc0_400e_4000;
+pub const RP1_ETHERNET_GPIO32_RIO1_OUT_OBSERVED_TARGET: u64 = 0x1c_000e_4000;
+pub const RP1_ETHERNET_GPIO32_RIO1_OE_SOURCE_TARGET: u64 = 0xc0_400e_4004;
+pub const RP1_ETHERNET_GPIO32_RIO1_OE_OBSERVED_TARGET: u64 = 0x1c_000e_4004;
+pub const RP1_ETHERNET_GPIO32_RIO1_IN_SOURCE_TARGET: u64 = 0xc0_400e_4008;
+pub const RP1_ETHERNET_GPIO32_RIO1_IN_OBSERVED_TARGET: u64 = 0x1c_000e_4008;
+pub const RP1_ETHERNET_GPIO32_PAD_SOURCE_TARGET: u64 = 0xc0_400f_4014;
+pub const RP1_ETHERNET_GPIO32_PAD_OBSERVED_TARGET: u64 = 0x1c_000f_4014;
+pub const RP1_ETHERNET_GPIO32_WRITE_RESTORE_WIDTH_BITS: u32 = 32;
+pub const RP1_ETHERNET_GPIO32_WRITE_RESTORE_ACCESS: &str =
+    "32-bit little-endian volatile load/store only in future hardware proof";
+pub const RP1_ETHERNET_GPIO32_ASSERTION_RAW_OUTPUT: &str =
+    "drive GPIO32 bank1 bit 4 raw output low";
+pub const RP1_ETHERNET_GPIO32_DEASSERTION_RAW_OUTPUT: &str =
+    "drive GPIO32 bank1 bit 4 raw output high";
 pub const RP1_ETHERNET_PHY_MDIO_POLICY_CLASSIFICATION: &str = "no-phy-reset-or-mdio-ownership";
 pub const RP1_ETHERNET_DMA_DESCRIPTOR_POLICY_CLASSIFICATION: &str =
     "no-live-dma-or-descriptor-ownership";
@@ -495,12 +530,93 @@ pub const RP1_ETHERNET_GPIO32_PHY_RESET_FUTURE_WRITE_RESTORE_INVARIANTS: &[&str]
     "classify assertion mismatch, deassertion mismatch, restore failure, staging/capture blocker, and source-contract blocker separately",
 ];
 
+pub const RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_PRECONDITIONS: &[&str] = &[
+    "selected GPIO32 STATUS/CTRL, RIO OUT/OE/IN, and required pad reads are visible and non-sentinel",
+    "GPIO32 CTRL FUNCSEL remains accepted GPIO function value 5",
+    "GPIO32 CTRL OUTOVER/OEOVER/INOVER fields do not bypass the raw RIO OUT/OE path",
+    "GPIO32 CTRL IRQ enable bits 20-27 and IRQRESET bit 28 do not make the task an interrupt/event task",
+    "pad OUT_DISABLE/IN_ENABLE state is safe for the accepted write scope",
+    "complete restore baseline exists for every register or bit the candidate would write",
+    "candidate/control identity, selected-tree/TFTP, serial freshness, final identity, and restore evidence can be joined",
+];
+
+pub const RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_BASELINE_FIELDS: &[&str] = &[
+    "GPIO32 STATUS raw value",
+    "GPIO32 CTRL raw value",
+    "RIO1 OUT raw value and bank-local bit 4",
+    "RIO1 OE raw value and bank-local bit 4",
+    "RIO1 IN raw value and bank-local bit 4",
+    "GPIO32 pad raw value",
+];
+
+pub const RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_OPERATION_SEQUENCE: &[&str] = &[
+    "capture baseline raw values for GPIO32 STATUS, GPIO32 CTRL, RIO1 OUT, RIO1 OE, RIO1 IN, and GPIO32 pad",
+    "check no-write preconditions before any store",
+    "assert active-low ETH_RST_N by output-enabling GPIO32 bank1 bit 4 and driving raw output low",
+    "wait source-backed 5 ms reset duration",
+    "deassert ETH_RST_N by driving GPIO32 bank1 bit 4 raw output high",
+    "restore every touched register or bit to captured baseline",
+    "read back every touched field and classify success only when restore equals baseline",
+];
+
+pub const RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_BLOCKED_CLASSIFICATIONS: &[&str] = &[
+    "rp1-ethernet-gpio32-phy-reset-blocked-sentinel-read",
+    "rp1-ethernet-gpio32-phy-reset-blocked-unsafe-function",
+    "rp1-ethernet-gpio32-phy-reset-blocked-unexpected-event-state",
+    "rp1-ethernet-gpio32-phy-reset-blocked-missing-restore-baseline",
+    "rp1-ethernet-gpio32-phy-reset-inconclusive-capture",
+];
+
+pub const RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_FUTURE_CLASSIFICATIONS: &[&str] = &[
+    "rp1-ethernet-gpio32-phy-reset-write-restored",
+    "rp1-ethernet-gpio32-phy-reset-write-assertion-mismatch-restored",
+    "rp1-ethernet-gpio32-phy-reset-write-deassertion-mismatch-restored",
+    "rp1-ethernet-gpio32-phy-reset-write-restore-failed",
+    "rp1-ethernet-gpio32-phy-reset-blocked-sentinel-read",
+    "rp1-ethernet-gpio32-phy-reset-blocked-unsafe-function",
+    "rp1-ethernet-gpio32-phy-reset-blocked-unexpected-event-state",
+    "rp1-ethernet-gpio32-phy-reset-blocked-missing-restore-baseline",
+    "rp1-ethernet-gpio32-phy-reset-inconclusive-capture",
+    "no-gpio-write-no-ethernet-rp1-ethernet-gpio32-phy-reset-control",
+    "staging/build-blocker",
+];
+
+pub const RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_REJECTED_RUNTIME_CLAIMS: &[&str] = &[
+    "Ethernet driver readiness",
+    "broad Ethernet MMIO readiness",
+    "non-GPIO32 writes",
+    "MDIO transactions or PHY ownership",
+    "interrupt delivery, handler ownership, or completion",
+    "DMA, descriptor rings, channel ownership, or transfer completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition",
+];
+
+pub const RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_RETAINED_RISKS: &[&str] = &[
+    "The guard surface is local/static and does not prove GPIO32 can be safely driven on Pi 5",
+    "A future hardware proof may still block before writing if preconditions or capture-chain joins fail",
+    "MDIO/PHY register ownership remains separate from GPIO32 ETH_RST_N assertion/deassertion",
+    "Ethernet driver, interrupt, DMA, descriptor, packet, networking, socket, SSH, and Phase 12.2 behavior remain unaccepted",
+];
+
 pub const RP1_ETHERNET_GPIO32_PHY_RESET_SOURCE_EVIDENCE: &[&str] = &[
     "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-source-contract.md",
     "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1.dtsi",
     "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-bcm2712-rpi-5-b.dts",
     "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-cdns-macb.yaml",
     "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-macb_main.c",
+    "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/source-reference-notes.md",
+];
+
+pub const RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_SOURCE_EVIDENCE: &[&str] = &[
+    "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-source-contract.md",
+    "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-readonly-preflight-proof-closeout.md",
+    "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-source-contract.md",
+    "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-bcm2712-rpi-5-b.dts",
     "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/source-reference-notes.md",
 ];
 
@@ -1364,6 +1480,146 @@ pub struct Rp1EthernetGpio32PhyResetPreflightReportEvidence {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetGpio32PhyResetWriteRestoreGuardContractEvidence {
+    pub guard_contract_id: &'static str,
+    pub source_contract_id: &'static str,
+    pub source_task_id: &'static str,
+    pub report_source_task_id: &'static str,
+    pub gpio_controller: &'static str,
+    pub gpio_line: u32,
+    pub reset_route: &'static str,
+    pub bank: &'static str,
+    pub bank_local_bit: u32,
+    pub io_bank1_source_base: u64,
+    pub io_bank1_observed_base: u64,
+    pub gpio32_status_source_target: u64,
+    pub gpio32_status_observed_target: u64,
+    pub gpio32_ctrl_source_target: u64,
+    pub gpio32_ctrl_observed_target: u64,
+    pub rio1_out_source_target: u64,
+    pub rio1_out_observed_target: u64,
+    pub rio1_oe_source_target: u64,
+    pub rio1_oe_observed_target: u64,
+    pub rio1_in_source_target: u64,
+    pub rio1_in_observed_target: u64,
+    pub gpio32_pad_source_target: u64,
+    pub gpio32_pad_observed_target: u64,
+    pub width_bits: u32,
+    pub access: &'static str,
+    pub active_low: bool,
+    pub assertion_raw_output: &'static str,
+    pub deassertion_raw_output: &'static str,
+    pub reset_duration_ms: u32,
+    pub no_write_preconditions: &'static [&'static str],
+    pub restore_baseline_fields: &'static [&'static str],
+    pub operation_sequence: &'static [&'static str],
+    pub blocked_no_write_classifications: &'static [&'static str],
+    pub future_proof_classifications: &'static [&'static str],
+    pub source_evidence: &'static [&'static str],
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Rp1EthernetGpio32PhyResetWriteRestoreGuardReportKind {
+    Candidate,
+    BlockedNoWrite,
+    NoGpioWriteNoEthernetControl,
+}
+
+impl Rp1EthernetGpio32PhyResetWriteRestoreGuardReportKind {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::Candidate => "candidate",
+            Self::BlockedNoWrite => "blocked-no-write",
+            Self::NoGpioWriteNoEthernetControl => "no-gpio-write-no-ethernet-control",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetGpio32PhyResetWriteRestoreGuardReportInput {
+    pub kind: Rp1EthernetGpio32PhyResetWriteRestoreGuardReportKind,
+    pub guard_contract: Option<Rp1EthernetGpio32PhyResetWriteRestoreGuardContractEvidence>,
+    pub blocked_no_write_classification: Option<&'static str>,
+    pub claims_ethernet_ready: bool,
+    pub claims_broad_mmio_ready: bool,
+    pub claims_non_gpio32_write: bool,
+    pub claims_mdio_phy_ownership: bool,
+    pub claims_interrupt_ownership: bool,
+    pub claims_dma_descriptor_ownership: bool,
+    pub claims_packet_io: bool,
+    pub claims_networking: bool,
+    pub claims_sockets: bool,
+    pub claims_ssh: bool,
+    pub claims_phase_12_2: bool,
+    pub claims_phase_transition: bool,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetGpio32PhyResetWriteRestoreGuardReport {
+    pub kind: Rp1EthernetGpio32PhyResetWriteRestoreGuardReportKind,
+    pub guard_contract: Option<Rp1EthernetGpio32PhyResetWriteRestoreGuardContractEvidence>,
+    pub blocked_no_write_classification: Option<&'static str>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetGpio32PhyResetWriteRestoreGuardReportEvidence {
+    pub report_contract_id: &'static str,
+    pub guard_contract_id: &'static str,
+    pub source_contract_id: &'static str,
+    pub source_task_id: &'static str,
+    pub report_source_task_id: &'static str,
+    pub report_kind: &'static str,
+    pub gpio_controller: Option<&'static str>,
+    pub gpio_line: Option<u32>,
+    pub reset_route: Option<&'static str>,
+    pub bank: Option<&'static str>,
+    pub bank_local_bit: Option<u32>,
+    pub io_bank1_source_base: Option<u64>,
+    pub io_bank1_observed_base: Option<u64>,
+    pub gpio32_status_source_target: Option<u64>,
+    pub gpio32_status_observed_target: Option<u64>,
+    pub gpio32_ctrl_source_target: Option<u64>,
+    pub gpio32_ctrl_observed_target: Option<u64>,
+    pub rio1_out_source_target: Option<u64>,
+    pub rio1_out_observed_target: Option<u64>,
+    pub rio1_oe_source_target: Option<u64>,
+    pub rio1_oe_observed_target: Option<u64>,
+    pub rio1_in_source_target: Option<u64>,
+    pub rio1_in_observed_target: Option<u64>,
+    pub gpio32_pad_source_target: Option<u64>,
+    pub gpio32_pad_observed_target: Option<u64>,
+    pub width_bits: Option<u32>,
+    pub access: Option<&'static str>,
+    pub active_low: Option<bool>,
+    pub assertion_raw_output: Option<&'static str>,
+    pub deassertion_raw_output: Option<&'static str>,
+    pub reset_duration_ms: Option<u32>,
+    pub no_write_preconditions: Option<&'static [&'static str]>,
+    pub restore_baseline_fields: Option<&'static [&'static str]>,
+    pub operation_sequence: Option<&'static [&'static str]>,
+    pub blocked_no_write_classifications: &'static [&'static str],
+    pub future_proof_classifications: &'static [&'static str],
+    pub blocked_no_write_classification: Option<&'static str>,
+    pub hardware_proof_boundary_classification: &'static str,
+    pub rejected_runtime_claims: &'static [&'static str],
+    pub retained_risks: &'static [&'static str],
+    pub source_evidence: Option<&'static [&'static str]>,
+    pub claims_ethernet_ready: bool,
+    pub claims_broad_mmio_ready: bool,
+    pub claims_non_gpio32_write: bool,
+    pub claims_mdio_phy_ownership: bool,
+    pub claims_interrupt_ownership: bool,
+    pub claims_dma_descriptor_ownership: bool,
+    pub claims_packet_io: bool,
+    pub claims_networking: bool,
+    pub claims_sockets: bool,
+    pub claims_ssh: bool,
+    pub claims_phase_12_2: bool,
+    pub claims_phase_transition: bool,
+    pub classification: &'static str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Rp1EthernetGemMidDiagnosticReportError {
     CandidateMissingSourceContract,
     ControlCarriesEthernetMmioTarget,
@@ -1570,6 +1826,61 @@ pub enum Rp1EthernetGpio32PhyResetPreflightReportError {
     SshClaim,
     Phase122Claim,
     PhaseTransitionClaim,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError {
+    CandidateMissingGuardContract,
+    BlockedMissingGuardContract,
+    BlockedMissingClassification,
+    BlockedClassificationNotAllowed,
+    ControlCarriesGpioWriteFacts,
+    GuardContractIdentityMismatch,
+    GuardContractTargetMismatch,
+    GuardContractFieldMismatch,
+    MissingRestoreBaseline,
+    MissingSourceEvidence,
+    EthernetReadinessClaim,
+    BroadMmioReadinessClaim,
+    NonGpio32WriteClaim,
+    MdioPhyOwnershipClaim,
+    InterruptOwnershipClaim,
+    DmaDescriptorOwnershipClaim,
+    PacketIoClaim,
+    NetworkingClaim,
+    SocketsClaim,
+    SshClaim,
+    Phase122Claim,
+    PhaseTransitionClaim,
+}
+
+impl Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::CandidateMissingGuardContract => "candidate-missing-guard-contract",
+            Self::BlockedMissingGuardContract => "blocked-missing-guard-contract",
+            Self::BlockedMissingClassification => "blocked-missing-classification",
+            Self::BlockedClassificationNotAllowed => "blocked-classification-not-allowed",
+            Self::ControlCarriesGpioWriteFacts => "control-carries-gpio-write-facts",
+            Self::GuardContractIdentityMismatch => "guard-contract-identity-mismatch",
+            Self::GuardContractTargetMismatch => "guard-contract-target-mismatch",
+            Self::GuardContractFieldMismatch => "guard-contract-field-mismatch",
+            Self::MissingRestoreBaseline => "missing-restore-baseline",
+            Self::MissingSourceEvidence => "missing-source-evidence",
+            Self::EthernetReadinessClaim => "ethernet-readiness-claim",
+            Self::BroadMmioReadinessClaim => "broad-mmio-readiness-claim",
+            Self::NonGpio32WriteClaim => "non-gpio32-write-claim",
+            Self::MdioPhyOwnershipClaim => "mdio-phy-ownership-claim",
+            Self::InterruptOwnershipClaim => "interrupt-ownership-claim",
+            Self::DmaDescriptorOwnershipClaim => "dma-descriptor-ownership-claim",
+            Self::PacketIoClaim => "packet-io-claim",
+            Self::NetworkingClaim => "networking-claim",
+            Self::SocketsClaim => "sockets-claim",
+            Self::SshClaim => "ssh-claim",
+            Self::Phase122Claim => "phase-12-2-claim",
+            Self::PhaseTransitionClaim => "phase-transition-claim",
+        }
+    }
 }
 
 impl Rp1EthernetGpio32PhyResetPreflightReportError {
@@ -1992,6 +2303,49 @@ pub const fn rp1_ethernet_gpio32_phy_reset_source_contract_evidence()
         future_write_restore_invariants:
             RP1_ETHERNET_GPIO32_PHY_RESET_FUTURE_WRITE_RESTORE_INVARIANTS,
         source_evidence: RP1_ETHERNET_GPIO32_PHY_RESET_SOURCE_EVIDENCE,
+    }
+}
+
+pub const fn rp1_ethernet_gpio32_phy_reset_write_restore_guard_contract_evidence()
+-> Rp1EthernetGpio32PhyResetWriteRestoreGuardContractEvidence {
+    Rp1EthernetGpio32PhyResetWriteRestoreGuardContractEvidence {
+        guard_contract_id: RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_GUARD_CONTRACT_ID,
+        source_contract_id: RP1_ETHERNET_GPIO32_PHY_RESET_SOURCE_CONTRACT_ID,
+        source_task_id: RP1_ETHERNET_GPIO32_PHY_RESET_SOURCE_TASK_ID,
+        report_source_task_id: RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_SOURCE_TASK_ID,
+        gpio_controller: RP1_ETHERNET_PHY_RESET_GPIO_CONTROLLER,
+        gpio_line: RP1_ETHERNET_PHY_RESET_GPIO,
+        reset_route: RP1_ETHERNET_PHY_RESET_ROUTE,
+        bank: RP1_ETHERNET_GPIO32_BANK,
+        bank_local_bit: RP1_ETHERNET_GPIO32_BANK_LOCAL_BIT,
+        io_bank1_source_base: RP1_ETHERNET_GPIO32_IO_BANK1_SOURCE_BASE,
+        io_bank1_observed_base: RP1_ETHERNET_GPIO32_IO_BANK1_OBSERVED_BASE,
+        gpio32_status_source_target: RP1_ETHERNET_GPIO32_STATUS_SOURCE_TARGET,
+        gpio32_status_observed_target: RP1_ETHERNET_GPIO32_STATUS_OBSERVED_TARGET,
+        gpio32_ctrl_source_target: RP1_ETHERNET_GPIO32_CTRL_SOURCE_TARGET,
+        gpio32_ctrl_observed_target: RP1_ETHERNET_GPIO32_CTRL_OBSERVED_TARGET,
+        rio1_out_source_target: RP1_ETHERNET_GPIO32_RIO1_OUT_SOURCE_TARGET,
+        rio1_out_observed_target: RP1_ETHERNET_GPIO32_RIO1_OUT_OBSERVED_TARGET,
+        rio1_oe_source_target: RP1_ETHERNET_GPIO32_RIO1_OE_SOURCE_TARGET,
+        rio1_oe_observed_target: RP1_ETHERNET_GPIO32_RIO1_OE_OBSERVED_TARGET,
+        rio1_in_source_target: RP1_ETHERNET_GPIO32_RIO1_IN_SOURCE_TARGET,
+        rio1_in_observed_target: RP1_ETHERNET_GPIO32_RIO1_IN_OBSERVED_TARGET,
+        gpio32_pad_source_target: RP1_ETHERNET_GPIO32_PAD_SOURCE_TARGET,
+        gpio32_pad_observed_target: RP1_ETHERNET_GPIO32_PAD_OBSERVED_TARGET,
+        width_bits: RP1_ETHERNET_GPIO32_WRITE_RESTORE_WIDTH_BITS,
+        access: RP1_ETHERNET_GPIO32_WRITE_RESTORE_ACCESS,
+        active_low: RP1_ETHERNET_PHY_RESET_ACTIVE_LOW,
+        assertion_raw_output: RP1_ETHERNET_GPIO32_ASSERTION_RAW_OUTPUT,
+        deassertion_raw_output: RP1_ETHERNET_GPIO32_DEASSERTION_RAW_OUTPUT,
+        reset_duration_ms: RP1_ETHERNET_PHY_RESET_DURATION_MS,
+        no_write_preconditions: RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_PRECONDITIONS,
+        restore_baseline_fields: RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_BASELINE_FIELDS,
+        operation_sequence: RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_OPERATION_SEQUENCE,
+        blocked_no_write_classifications:
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_BLOCKED_CLASSIFICATIONS,
+        future_proof_classifications:
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_FUTURE_CLASSIFICATIONS,
+        source_evidence: RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_SOURCE_EVIDENCE,
     }
 }
 
@@ -2443,6 +2797,100 @@ pub fn rejected_rp1_ethernet_gpio32_phy_reset_preflight_report_evidence(
     (RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION, error.name())
 }
 
+pub fn build_rp1_ethernet_gpio32_phy_reset_write_restore_guard_report(
+    input: Rp1EthernetGpio32PhyResetWriteRestoreGuardReportInput,
+) -> Result<
+    Rp1EthernetGpio32PhyResetWriteRestoreGuardReport,
+    Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError,
+> {
+    validate_rp1_ethernet_gpio32_phy_reset_write_restore_rejected_claims(input)?;
+
+    match (
+        input.kind,
+        input.guard_contract,
+        input.blocked_no_write_classification,
+    ) {
+        (
+            Rp1EthernetGpio32PhyResetWriteRestoreGuardReportKind::Candidate,
+            Some(guard_contract),
+            None,
+        ) => {
+            validate_rp1_ethernet_gpio32_phy_reset_write_restore_guard_contract(guard_contract)?;
+            Ok(Rp1EthernetGpio32PhyResetWriteRestoreGuardReport {
+                kind: input.kind,
+                guard_contract: Some(guard_contract),
+                blocked_no_write_classification: None,
+            })
+        }
+        (Rp1EthernetGpio32PhyResetWriteRestoreGuardReportKind::Candidate, None, _) => Err(
+            Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::CandidateMissingGuardContract,
+        ),
+        (Rp1EthernetGpio32PhyResetWriteRestoreGuardReportKind::Candidate, Some(_), Some(_)) => Err(
+            Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::BlockedClassificationNotAllowed,
+        ),
+        (
+            Rp1EthernetGpio32PhyResetWriteRestoreGuardReportKind::BlockedNoWrite,
+            Some(guard_contract),
+            Some(blocked_no_write_classification),
+        ) => {
+            validate_rp1_ethernet_gpio32_phy_reset_write_restore_guard_contract(guard_contract)?;
+            validate_rp1_ethernet_gpio32_phy_reset_write_restore_blocked_classification(
+                blocked_no_write_classification,
+            )?;
+            Ok(Rp1EthernetGpio32PhyResetWriteRestoreGuardReport {
+                kind: input.kind,
+                guard_contract: Some(guard_contract),
+                blocked_no_write_classification: Some(blocked_no_write_classification),
+            })
+        }
+        (Rp1EthernetGpio32PhyResetWriteRestoreGuardReportKind::BlockedNoWrite, None, _) => {
+            Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::BlockedMissingGuardContract)
+        }
+        (Rp1EthernetGpio32PhyResetWriteRestoreGuardReportKind::BlockedNoWrite, Some(_), None) => {
+            Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::BlockedMissingClassification)
+        }
+        (
+            Rp1EthernetGpio32PhyResetWriteRestoreGuardReportKind::NoGpioWriteNoEthernetControl,
+            None,
+            None,
+        ) => Ok(Rp1EthernetGpio32PhyResetWriteRestoreGuardReport {
+            kind: input.kind,
+            guard_contract: None,
+            blocked_no_write_classification: None,
+        }),
+        (
+            Rp1EthernetGpio32PhyResetWriteRestoreGuardReportKind::NoGpioWriteNoEthernetControl,
+            _,
+            _,
+        ) => {
+            Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::ControlCarriesGpioWriteFacts)
+        }
+    }
+}
+
+pub fn rp1_ethernet_gpio32_phy_reset_write_restore_guard_report_evidence(
+    report: Rp1EthernetGpio32PhyResetWriteRestoreGuardReport,
+) -> Rp1EthernetGpio32PhyResetWriteRestoreGuardReportEvidence {
+    match report.guard_contract {
+        Some(guard_contract) => {
+            rp1_ethernet_gpio32_phy_reset_write_restore_guard_candidate_evidence(
+                report.kind.name(),
+                guard_contract,
+                report.blocked_no_write_classification,
+            )
+        }
+        None => {
+            rp1_ethernet_gpio32_phy_reset_write_restore_guard_control_evidence(report.kind.name())
+        }
+    }
+}
+
+pub fn rejected_rp1_ethernet_gpio32_phy_reset_write_restore_guard_report_evidence(
+    error: Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError,
+) -> (&'static str, &'static str) {
+    (RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION, error.name())
+}
+
 fn validate_rp1_ethernet_gem_mid_rejected_claims(
     input: Rp1EthernetGemMidDiagnosticReportInput,
 ) -> Result<(), Rp1EthernetGemMidDiagnosticReportError> {
@@ -2863,6 +3311,50 @@ fn validate_rp1_ethernet_gpio32_phy_reset_preflight_rejected_claims(
     Ok(())
 }
 
+fn validate_rp1_ethernet_gpio32_phy_reset_write_restore_rejected_claims(
+    input: Rp1EthernetGpio32PhyResetWriteRestoreGuardReportInput,
+) -> Result<(), Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError> {
+    if input.claims_ethernet_ready {
+        return Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::EthernetReadinessClaim);
+    }
+    if input.claims_broad_mmio_ready {
+        return Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::BroadMmioReadinessClaim);
+    }
+    if input.claims_non_gpio32_write {
+        return Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::NonGpio32WriteClaim);
+    }
+    if input.claims_mdio_phy_ownership {
+        return Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::MdioPhyOwnershipClaim);
+    }
+    if input.claims_interrupt_ownership {
+        return Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::InterruptOwnershipClaim);
+    }
+    if input.claims_dma_descriptor_ownership {
+        return Err(
+            Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::DmaDescriptorOwnershipClaim,
+        );
+    }
+    if input.claims_packet_io {
+        return Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::PacketIoClaim);
+    }
+    if input.claims_networking {
+        return Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::NetworkingClaim);
+    }
+    if input.claims_sockets {
+        return Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::SocketsClaim);
+    }
+    if input.claims_ssh {
+        return Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::SshClaim);
+    }
+    if input.claims_phase_12_2 {
+        return Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::Phase122Claim);
+    }
+    if input.claims_phase_transition {
+        return Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::PhaseTransitionClaim);
+    }
+    Ok(())
+}
+
 fn validate_rp1_ethernet_gem_mid_source_contract(
     evidence: Rp1EthernetGemMidSourceContractEvidence,
 ) -> Result<(), Rp1EthernetGemMidDiagnosticReportError> {
@@ -3106,6 +3598,86 @@ fn validate_rp1_ethernet_gpio32_phy_reset_source_contract(
         return Err(Rp1EthernetGpio32PhyResetPreflightReportError::MissingSourceEvidence);
     }
     Ok(())
+}
+
+fn validate_rp1_ethernet_gpio32_phy_reset_write_restore_guard_contract(
+    evidence: Rp1EthernetGpio32PhyResetWriteRestoreGuardContractEvidence,
+) -> Result<(), Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError> {
+    if evidence.guard_contract_id != RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_GUARD_CONTRACT_ID
+        || evidence.source_contract_id != RP1_ETHERNET_GPIO32_PHY_RESET_SOURCE_CONTRACT_ID
+        || evidence.source_task_id != RP1_ETHERNET_GPIO32_PHY_RESET_SOURCE_TASK_ID
+        || evidence.report_source_task_id
+            != RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_SOURCE_TASK_ID
+        || evidence.gpio_controller != RP1_ETHERNET_PHY_RESET_GPIO_CONTROLLER
+        || evidence.gpio_line != RP1_ETHERNET_PHY_RESET_GPIO
+        || evidence.reset_route != RP1_ETHERNET_PHY_RESET_ROUTE
+    {
+        return Err(
+            Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::GuardContractIdentityMismatch,
+        );
+    }
+    if evidence.bank != RP1_ETHERNET_GPIO32_BANK
+        || evidence.bank_local_bit != RP1_ETHERNET_GPIO32_BANK_LOCAL_BIT
+        || evidence.io_bank1_source_base != RP1_ETHERNET_GPIO32_IO_BANK1_SOURCE_BASE
+        || evidence.io_bank1_observed_base != RP1_ETHERNET_GPIO32_IO_BANK1_OBSERVED_BASE
+        || evidence.gpio32_status_source_target != RP1_ETHERNET_GPIO32_STATUS_SOURCE_TARGET
+        || evidence.gpio32_status_observed_target != RP1_ETHERNET_GPIO32_STATUS_OBSERVED_TARGET
+        || evidence.gpio32_ctrl_source_target != RP1_ETHERNET_GPIO32_CTRL_SOURCE_TARGET
+        || evidence.gpio32_ctrl_observed_target != RP1_ETHERNET_GPIO32_CTRL_OBSERVED_TARGET
+        || evidence.rio1_out_source_target != RP1_ETHERNET_GPIO32_RIO1_OUT_SOURCE_TARGET
+        || evidence.rio1_out_observed_target != RP1_ETHERNET_GPIO32_RIO1_OUT_OBSERVED_TARGET
+        || evidence.rio1_oe_source_target != RP1_ETHERNET_GPIO32_RIO1_OE_SOURCE_TARGET
+        || evidence.rio1_oe_observed_target != RP1_ETHERNET_GPIO32_RIO1_OE_OBSERVED_TARGET
+        || evidence.rio1_in_source_target != RP1_ETHERNET_GPIO32_RIO1_IN_SOURCE_TARGET
+        || evidence.rio1_in_observed_target != RP1_ETHERNET_GPIO32_RIO1_IN_OBSERVED_TARGET
+        || evidence.gpio32_pad_source_target != RP1_ETHERNET_GPIO32_PAD_SOURCE_TARGET
+        || evidence.gpio32_pad_observed_target != RP1_ETHERNET_GPIO32_PAD_OBSERVED_TARGET
+    {
+        return Err(
+            Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::GuardContractTargetMismatch,
+        );
+    }
+    if evidence.width_bits != RP1_ETHERNET_GPIO32_WRITE_RESTORE_WIDTH_BITS
+        || evidence.access != RP1_ETHERNET_GPIO32_WRITE_RESTORE_ACCESS
+        || evidence.active_low != RP1_ETHERNET_PHY_RESET_ACTIVE_LOW
+        || evidence.assertion_raw_output != RP1_ETHERNET_GPIO32_ASSERTION_RAW_OUTPUT
+        || evidence.deassertion_raw_output != RP1_ETHERNET_GPIO32_DEASSERTION_RAW_OUTPUT
+        || evidence.reset_duration_ms != RP1_ETHERNET_PHY_RESET_DURATION_MS
+        || evidence.no_write_preconditions
+            != RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_PRECONDITIONS
+        || evidence.operation_sequence
+            != RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_OPERATION_SEQUENCE
+        || evidence.blocked_no_write_classifications
+            != RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_BLOCKED_CLASSIFICATIONS
+        || evidence.future_proof_classifications
+            != RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_FUTURE_CLASSIFICATIONS
+    {
+        return Err(
+            Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::GuardContractFieldMismatch,
+        );
+    }
+    if evidence.restore_baseline_fields
+        != RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_BASELINE_FIELDS
+    {
+        return Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::MissingRestoreBaseline);
+    }
+    if evidence.source_evidence != RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_SOURCE_EVIDENCE {
+        return Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::MissingSourceEvidence);
+    }
+    Ok(())
+}
+
+fn validate_rp1_ethernet_gpio32_phy_reset_write_restore_blocked_classification(
+    classification: &'static str,
+) -> Result<(), Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError> {
+    if RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_BLOCKED_CLASSIFICATIONS
+        .iter()
+        .any(|allowed| *allowed == classification)
+    {
+        Ok(())
+    } else {
+        Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::BlockedClassificationNotAllowed)
+    }
 }
 
 fn validate_rp1_ethernet_gem_mid_source_contract_for_decode_discriminator(
@@ -4023,6 +4595,137 @@ fn rp1_ethernet_gpio32_phy_reset_preflight_control_evidence(
     }
 }
 
+fn rp1_ethernet_gpio32_phy_reset_write_restore_guard_candidate_evidence(
+    report_kind: &'static str,
+    guard_contract: Rp1EthernetGpio32PhyResetWriteRestoreGuardContractEvidence,
+    blocked_no_write_classification: Option<&'static str>,
+) -> Rp1EthernetGpio32PhyResetWriteRestoreGuardReportEvidence {
+    Rp1EthernetGpio32PhyResetWriteRestoreGuardReportEvidence {
+        report_contract_id: RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_REPORT_CONTRACT_ID,
+        guard_contract_id: guard_contract.guard_contract_id,
+        source_contract_id: guard_contract.source_contract_id,
+        source_task_id: guard_contract.source_task_id,
+        report_source_task_id: guard_contract.report_source_task_id,
+        report_kind,
+        gpio_controller: Some(guard_contract.gpio_controller),
+        gpio_line: Some(guard_contract.gpio_line),
+        reset_route: Some(guard_contract.reset_route),
+        bank: Some(guard_contract.bank),
+        bank_local_bit: Some(guard_contract.bank_local_bit),
+        io_bank1_source_base: Some(guard_contract.io_bank1_source_base),
+        io_bank1_observed_base: Some(guard_contract.io_bank1_observed_base),
+        gpio32_status_source_target: Some(guard_contract.gpio32_status_source_target),
+        gpio32_status_observed_target: Some(guard_contract.gpio32_status_observed_target),
+        gpio32_ctrl_source_target: Some(guard_contract.gpio32_ctrl_source_target),
+        gpio32_ctrl_observed_target: Some(guard_contract.gpio32_ctrl_observed_target),
+        rio1_out_source_target: Some(guard_contract.rio1_out_source_target),
+        rio1_out_observed_target: Some(guard_contract.rio1_out_observed_target),
+        rio1_oe_source_target: Some(guard_contract.rio1_oe_source_target),
+        rio1_oe_observed_target: Some(guard_contract.rio1_oe_observed_target),
+        rio1_in_source_target: Some(guard_contract.rio1_in_source_target),
+        rio1_in_observed_target: Some(guard_contract.rio1_in_observed_target),
+        gpio32_pad_source_target: Some(guard_contract.gpio32_pad_source_target),
+        gpio32_pad_observed_target: Some(guard_contract.gpio32_pad_observed_target),
+        width_bits: Some(guard_contract.width_bits),
+        access: Some(guard_contract.access),
+        active_low: Some(guard_contract.active_low),
+        assertion_raw_output: Some(guard_contract.assertion_raw_output),
+        deassertion_raw_output: Some(guard_contract.deassertion_raw_output),
+        reset_duration_ms: Some(guard_contract.reset_duration_ms),
+        no_write_preconditions: Some(guard_contract.no_write_preconditions),
+        restore_baseline_fields: Some(guard_contract.restore_baseline_fields),
+        operation_sequence: Some(guard_contract.operation_sequence),
+        blocked_no_write_classifications: guard_contract.blocked_no_write_classifications,
+        future_proof_classifications: guard_contract.future_proof_classifications,
+        blocked_no_write_classification,
+        hardware_proof_boundary_classification:
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_BOUNDARY_CLASSIFICATION,
+        rejected_runtime_claims:
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_REJECTED_RUNTIME_CLAIMS,
+        retained_risks: RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_RETAINED_RISKS,
+        source_evidence: Some(guard_contract.source_evidence),
+        claims_ethernet_ready: false,
+        claims_broad_mmio_ready: false,
+        claims_non_gpio32_write: false,
+        claims_mdio_phy_ownership: false,
+        claims_interrupt_ownership: false,
+        claims_dma_descriptor_ownership: false,
+        claims_packet_io: false,
+        claims_networking: false,
+        claims_sockets: false,
+        claims_ssh: false,
+        claims_phase_12_2: false,
+        claims_phase_transition: false,
+        classification: blocked_no_write_classification
+            .unwrap_or(RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_CANDIDATE_CLASSIFICATION),
+    }
+}
+
+fn rp1_ethernet_gpio32_phy_reset_write_restore_guard_control_evidence(
+    report_kind: &'static str,
+) -> Rp1EthernetGpio32PhyResetWriteRestoreGuardReportEvidence {
+    Rp1EthernetGpio32PhyResetWriteRestoreGuardReportEvidence {
+        report_contract_id: RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_REPORT_CONTRACT_ID,
+        guard_contract_id: RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_GUARD_CONTRACT_ID,
+        source_contract_id: RP1_ETHERNET_GPIO32_PHY_RESET_SOURCE_CONTRACT_ID,
+        source_task_id: RP1_ETHERNET_GPIO32_PHY_RESET_SOURCE_TASK_ID,
+        report_source_task_id: RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_SOURCE_TASK_ID,
+        report_kind,
+        gpio_controller: None,
+        gpio_line: None,
+        reset_route: None,
+        bank: None,
+        bank_local_bit: None,
+        io_bank1_source_base: None,
+        io_bank1_observed_base: None,
+        gpio32_status_source_target: None,
+        gpio32_status_observed_target: None,
+        gpio32_ctrl_source_target: None,
+        gpio32_ctrl_observed_target: None,
+        rio1_out_source_target: None,
+        rio1_out_observed_target: None,
+        rio1_oe_source_target: None,
+        rio1_oe_observed_target: None,
+        rio1_in_source_target: None,
+        rio1_in_observed_target: None,
+        gpio32_pad_source_target: None,
+        gpio32_pad_observed_target: None,
+        width_bits: None,
+        access: None,
+        active_low: None,
+        assertion_raw_output: None,
+        deassertion_raw_output: None,
+        reset_duration_ms: None,
+        no_write_preconditions: None,
+        restore_baseline_fields: None,
+        operation_sequence: None,
+        blocked_no_write_classifications:
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_BLOCKED_CLASSIFICATIONS,
+        future_proof_classifications:
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_FUTURE_CLASSIFICATIONS,
+        blocked_no_write_classification: None,
+        hardware_proof_boundary_classification:
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_BOUNDARY_CLASSIFICATION,
+        rejected_runtime_claims:
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_REJECTED_RUNTIME_CLAIMS,
+        retained_risks: RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_RETAINED_RISKS,
+        source_evidence: None,
+        claims_ethernet_ready: false,
+        claims_broad_mmio_ready: false,
+        claims_non_gpio32_write: false,
+        claims_mdio_phy_ownership: false,
+        claims_interrupt_ownership: false,
+        claims_dma_descriptor_ownership: false,
+        claims_packet_io: false,
+        claims_networking: false,
+        claims_sockets: false,
+        claims_ssh: false,
+        claims_phase_12_2: false,
+        claims_phase_transition: false,
+        classification: RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_CONTROL_CLASSIFICATION,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -4205,6 +4908,29 @@ mod tests {
             claims_runtime_writes: false,
             claims_ethernet_ready: false,
             claims_broad_mmio_ready: false,
+            claims_interrupt_ownership: false,
+            claims_dma_descriptor_ownership: false,
+            claims_packet_io: false,
+            claims_networking: false,
+            claims_sockets: false,
+            claims_ssh: false,
+            claims_phase_12_2: false,
+            claims_phase_transition: false,
+        }
+    }
+
+    fn accepted_gpio32_phy_reset_write_restore_guard_input()
+    -> Rp1EthernetGpio32PhyResetWriteRestoreGuardReportInput {
+        Rp1EthernetGpio32PhyResetWriteRestoreGuardReportInput {
+            kind: Rp1EthernetGpio32PhyResetWriteRestoreGuardReportKind::Candidate,
+            guard_contract: Some(
+                rp1_ethernet_gpio32_phy_reset_write_restore_guard_contract_evidence(),
+            ),
+            blocked_no_write_classification: None,
+            claims_ethernet_ready: false,
+            claims_broad_mmio_ready: false,
+            claims_non_gpio32_write: false,
+            claims_mdio_phy_ownership: false,
             claims_interrupt_ownership: false,
             claims_dma_descriptor_ownership: false,
             claims_packet_io: false,
@@ -6676,6 +7402,298 @@ mod tests {
         assert_eq!(
             rejected_rp1_ethernet_gpio32_phy_reset_preflight_report_evidence(
                 Rp1EthernetGpio32PhyResetPreflightReportError::PhaseTransitionClaim
+            ),
+            (
+                RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION,
+                "phase-transition-claim"
+            )
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_gpio32_phy_reset_write_restore_guard_formats_candidate_report() {
+        let report = build_rp1_ethernet_gpio32_phy_reset_write_restore_guard_report(
+            accepted_gpio32_phy_reset_write_restore_guard_input(),
+        )
+        .expect("valid GPIO32 PHY-reset write/restore guard candidate input");
+        let evidence = rp1_ethernet_gpio32_phy_reset_write_restore_guard_report_evidence(report);
+
+        assert_eq!(
+            evidence.report_contract_id,
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_REPORT_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.guard_contract_id,
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_GUARD_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.source_contract_id,
+            RP1_ETHERNET_GPIO32_PHY_RESET_SOURCE_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.report_source_task_id,
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_SOURCE_TASK_ID
+        );
+        assert_eq!(evidence.report_kind, "candidate");
+        assert_eq!(
+            evidence.gpio_controller,
+            Some(RP1_ETHERNET_PHY_RESET_GPIO_CONTROLLER)
+        );
+        assert_eq!(evidence.gpio_line, Some(32));
+        assert_eq!(evidence.reset_route, Some(RP1_ETHERNET_PHY_RESET_ROUTE));
+        assert_eq!(evidence.bank, Some("bank1"));
+        assert_eq!(evidence.bank_local_bit, Some(4));
+        assert_eq!(evidence.io_bank1_source_base, Some(0xc0_400d_4000));
+        assert_eq!(evidence.io_bank1_observed_base, Some(0x1c_000d_4000));
+        assert_eq!(evidence.gpio32_status_observed_target, Some(0x1c_000d_4020));
+        assert_eq!(evidence.gpio32_ctrl_observed_target, Some(0x1c_000d_4024));
+        assert_eq!(evidence.rio1_out_observed_target, Some(0x1c_000e_4000));
+        assert_eq!(evidence.rio1_oe_observed_target, Some(0x1c_000e_4004));
+        assert_eq!(evidence.rio1_in_observed_target, Some(0x1c_000e_4008));
+        assert_eq!(evidence.gpio32_pad_observed_target, Some(0x1c_000f_4014));
+        assert_eq!(evidence.width_bits, Some(32));
+        assert_eq!(evidence.active_low, Some(true));
+        assert_eq!(
+            evidence.assertion_raw_output,
+            Some(RP1_ETHERNET_GPIO32_ASSERTION_RAW_OUTPUT)
+        );
+        assert_eq!(
+            evidence.deassertion_raw_output,
+            Some(RP1_ETHERNET_GPIO32_DEASSERTION_RAW_OUTPUT)
+        );
+        assert_eq!(evidence.reset_duration_ms, Some(5));
+        assert_eq!(
+            evidence.no_write_preconditions,
+            Some(RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_PRECONDITIONS)
+        );
+        assert_eq!(
+            evidence.restore_baseline_fields,
+            Some(RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_BASELINE_FIELDS)
+        );
+        assert_eq!(
+            evidence.operation_sequence,
+            Some(RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_OPERATION_SEQUENCE)
+        );
+        assert_eq!(
+            evidence.blocked_no_write_classifications,
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_BLOCKED_CLASSIFICATIONS
+        );
+        assert_eq!(
+            evidence.future_proof_classifications,
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_FUTURE_CLASSIFICATIONS
+        );
+        assert_eq!(evidence.blocked_no_write_classification, None);
+        assert_eq!(
+            evidence.hardware_proof_boundary_classification,
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_BOUNDARY_CLASSIFICATION
+        );
+        assert_eq!(
+            evidence.rejected_runtime_claims,
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_REJECTED_RUNTIME_CLAIMS
+        );
+        assert_eq!(
+            evidence.retained_risks,
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_RETAINED_RISKS
+        );
+        assert_eq!(
+            evidence.source_evidence,
+            Some(RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_SOURCE_EVIDENCE)
+        );
+        assert!(!evidence.claims_non_gpio32_write);
+        assert!(!evidence.claims_mdio_phy_ownership);
+        assert!(!evidence.claims_interrupt_ownership);
+        assert!(!evidence.claims_dma_descriptor_ownership);
+        assert!(!evidence.claims_phase_12_2);
+        assert!(!evidence.claims_phase_transition);
+        assert_eq!(
+            evidence.classification,
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_CANDIDATE_CLASSIFICATION
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_gpio32_phy_reset_write_restore_guard_formats_control_and_blocked() {
+        let control = build_rp1_ethernet_gpio32_phy_reset_write_restore_guard_report(
+            Rp1EthernetGpio32PhyResetWriteRestoreGuardReportInput {
+                kind: Rp1EthernetGpio32PhyResetWriteRestoreGuardReportKind::NoGpioWriteNoEthernetControl,
+                guard_contract: None,
+                ..accepted_gpio32_phy_reset_write_restore_guard_input()
+            },
+        )
+        .expect("valid GPIO32 PHY-reset write/restore control input");
+        let control_evidence =
+            rp1_ethernet_gpio32_phy_reset_write_restore_guard_report_evidence(control);
+
+        assert_eq!(
+            control_evidence.report_kind,
+            "no-gpio-write-no-ethernet-control"
+        );
+        assert_eq!(control_evidence.gpio_controller, None);
+        assert_eq!(control_evidence.gpio_line, None);
+        assert_eq!(control_evidence.gpio32_ctrl_observed_target, None);
+        assert_eq!(control_evidence.rio1_out_observed_target, None);
+        assert_eq!(control_evidence.restore_baseline_fields, None);
+        assert_eq!(control_evidence.source_evidence, None);
+        assert_eq!(
+            control_evidence.classification,
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_CONTROL_CLASSIFICATION
+        );
+
+        let blocked_classification =
+            "rp1-ethernet-gpio32-phy-reset-blocked-missing-restore-baseline";
+        let blocked = build_rp1_ethernet_gpio32_phy_reset_write_restore_guard_report(
+            Rp1EthernetGpio32PhyResetWriteRestoreGuardReportInput {
+                kind: Rp1EthernetGpio32PhyResetWriteRestoreGuardReportKind::BlockedNoWrite,
+                blocked_no_write_classification: Some(blocked_classification),
+                ..accepted_gpio32_phy_reset_write_restore_guard_input()
+            },
+        )
+        .expect("valid GPIO32 PHY-reset blocked/no-write input");
+        let blocked_evidence =
+            rp1_ethernet_gpio32_phy_reset_write_restore_guard_report_evidence(blocked);
+
+        assert_eq!(blocked_evidence.report_kind, "blocked-no-write");
+        assert_eq!(
+            blocked_evidence.blocked_no_write_classification,
+            Some(blocked_classification)
+        );
+        assert_eq!(blocked_evidence.classification, blocked_classification);
+        assert_eq!(
+            blocked_evidence.gpio32_status_observed_target,
+            Some(0x1c_000d_4020)
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_gpio32_phy_reset_write_restore_guard_rejects_shape_and_overclaims() {
+        let input = accepted_gpio32_phy_reset_write_restore_guard_input();
+
+        assert_eq!(
+            build_rp1_ethernet_gpio32_phy_reset_write_restore_guard_report(
+                Rp1EthernetGpio32PhyResetWriteRestoreGuardReportInput {
+                    guard_contract: None,
+                    ..input
+                }
+            ),
+            Err(
+                Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::CandidateMissingGuardContract
+            )
+        );
+        assert_eq!(
+            build_rp1_ethernet_gpio32_phy_reset_write_restore_guard_report(
+                Rp1EthernetGpio32PhyResetWriteRestoreGuardReportInput {
+                    kind: Rp1EthernetGpio32PhyResetWriteRestoreGuardReportKind::NoGpioWriteNoEthernetControl,
+                    ..input
+                }
+            ),
+            Err(
+                Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::ControlCarriesGpioWriteFacts
+            )
+        );
+        assert_eq!(
+            build_rp1_ethernet_gpio32_phy_reset_write_restore_guard_report(
+                Rp1EthernetGpio32PhyResetWriteRestoreGuardReportInput {
+                    guard_contract: Some(
+                        Rp1EthernetGpio32PhyResetWriteRestoreGuardContractEvidence {
+                            gpio_line: 33,
+                            ..rp1_ethernet_gpio32_phy_reset_write_restore_guard_contract_evidence()
+                        },
+                    ),
+                    ..input
+                }
+            ),
+            Err(
+                Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::GuardContractIdentityMismatch
+            )
+        );
+        assert_eq!(
+            build_rp1_ethernet_gpio32_phy_reset_write_restore_guard_report(
+                Rp1EthernetGpio32PhyResetWriteRestoreGuardReportInput {
+                    guard_contract: Some(
+                        Rp1EthernetGpio32PhyResetWriteRestoreGuardContractEvidence {
+                            gpio32_ctrl_observed_target: 0x1f_000d_4024,
+                            ..rp1_ethernet_gpio32_phy_reset_write_restore_guard_contract_evidence()
+                        },
+                    ),
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::GuardContractTargetMismatch)
+        );
+        assert_eq!(
+            build_rp1_ethernet_gpio32_phy_reset_write_restore_guard_report(
+                Rp1EthernetGpio32PhyResetWriteRestoreGuardReportInput {
+                    guard_contract: Some(
+                        Rp1EthernetGpio32PhyResetWriteRestoreGuardContractEvidence {
+                            restore_baseline_fields: &[],
+                            ..rp1_ethernet_gpio32_phy_reset_write_restore_guard_contract_evidence()
+                        },
+                    ),
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::MissingRestoreBaseline)
+        );
+        assert_eq!(
+            build_rp1_ethernet_gpio32_phy_reset_write_restore_guard_report(
+                Rp1EthernetGpio32PhyResetWriteRestoreGuardReportInput {
+                    kind: Rp1EthernetGpio32PhyResetWriteRestoreGuardReportKind::BlockedNoWrite,
+                    blocked_no_write_classification: Some("rp1-ethernet-gpio32-phy-reset-write-restored"),
+                    ..input
+                }
+            ),
+            Err(
+                Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::BlockedClassificationNotAllowed
+            )
+        );
+        assert_eq!(
+            build_rp1_ethernet_gpio32_phy_reset_write_restore_guard_report(
+                Rp1EthernetGpio32PhyResetWriteRestoreGuardReportInput {
+                    claims_non_gpio32_write: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::NonGpio32WriteClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_gpio32_phy_reset_write_restore_guard_report(
+                Rp1EthernetGpio32PhyResetWriteRestoreGuardReportInput {
+                    claims_mdio_phy_ownership: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::MdioPhyOwnershipClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_gpio32_phy_reset_write_restore_guard_report(
+                Rp1EthernetGpio32PhyResetWriteRestoreGuardReportInput {
+                    claims_interrupt_ownership: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::InterruptOwnershipClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_gpio32_phy_reset_write_restore_guard_report(
+                Rp1EthernetGpio32PhyResetWriteRestoreGuardReportInput {
+                    claims_dma_descriptor_ownership: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::DmaDescriptorOwnershipClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_gpio32_phy_reset_write_restore_guard_report(
+                Rp1EthernetGpio32PhyResetWriteRestoreGuardReportInput {
+                    claims_phase_12_2: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::Phase122Claim)
+        );
+        assert_eq!(
+            rejected_rp1_ethernet_gpio32_phy_reset_write_restore_guard_report_evidence(
+                Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::PhaseTransitionClaim
             ),
             (
                 RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION,

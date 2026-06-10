@@ -1,0 +1,33 @@
+{
+  "taskId": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-core-20260610",
+  "classification": "rp1-ethernet-gpio32-phy-reset-write-restore-guard-core-local-static-accepted",
+  "evidenceLevel": [
+    "static inspection",
+    "fmt",
+    "unit tests / QEMU substitute",
+    "JSON validation",
+    "diff whitespace check",
+    "documentation build"
+  ],
+  "acceptedClaims": [
+    "local/static GPIO32 PHY-reset write/restore guard report construction",
+    "candidate report includes exact GPIO32 STATUS/CTRL, RIO1 OUT/OE/IN, and pad targets",
+    "paired control report constructs no writable GPIO32/RIO/pad/MMIO target",
+    "blocked/no-write report classifications are explicit and bounded",
+    "validators reject missing restore baseline, non-GPIO32 writes, MDIO/PHY overclaims, interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, and phase transition"
+  ],
+  "rejectedClaims": [
+    "Pi 5 hardware proof",
+    "runtime GPIO/RIO/pad/MMIO writes",
+    "PHY reset assertion or deassertion",
+    "MDIO transactions or PHY ownership",
+    "Ethernet driver readiness",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "nextAction": "Promote the static guard closeout task if dependencies remain satisfied; do not run hardware in the closeout."
+}
