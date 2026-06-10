@@ -9321,6 +9321,20 @@ accepts report visibility/control output only; it does not accept clock/reset
 ownership, writes, reset-controller ownership, PHY/MDIO, DMA, packet I/O,
 networking, SSH, Phase 12.2, or a phase transition.
 
+phase12-rp1-ethernet-clock-reset-readonly-baseline-closeout-20260610 closes
+the read-only baseline proof frontier as
+rp1-ethernet-clock-reset-readonly-baseline-frontier-closed. Same-shaped
+read-only baseline report visibility hardware retries are closed for this
+candidate/control pair. Report visibility/control output alone does not make a
+write-backed clock/reset ownership task mechanically objective, so supervisor
+planning is required for the next explicit Phase 12.1 clock/reset ownership
+slice with source-backed register/restore, shared-clock safety,
+reset-controller, GPIO32/PHY, MDIO/PHY, interrupt, or DMA/descriptor
+acceptance criteria. Clock/reset ownership, RP1 MMIO or clock/reset writes,
+Ethernet driver readiness, PHY/MDIO/GPIO32 ownership, DMA, descriptors,
+interrupts, packet I/O, networking, sockets, SSH, Phase 12.2, and phase
+transition remain unaccepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

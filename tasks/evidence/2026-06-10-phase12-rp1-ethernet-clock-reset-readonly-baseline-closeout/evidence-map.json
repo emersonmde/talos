@@ -1,0 +1,70 @@
+{
+  "task_id": "phase12-rp1-ethernet-clock-reset-readonly-baseline-closeout-20260610",
+  "classification": "rp1-ethernet-clock-reset-readonly-baseline-frontier-closed",
+  "evidence_level": "static inspection",
+  "artifacts": [
+    {
+      "label": "closeout task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-clock-reset-readonly-baseline-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "closeout classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-readonly-baseline-closeout/classification.json",
+      "evidence_level": "structured classification"
+    },
+    {
+      "label": "proof task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-clock-reset-readonly-baseline-pi5-proof.md",
+      "evidence_level": "serial hardware boot/output and implementation record"
+    },
+    {
+      "label": "proof classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-readonly-baseline-pi5-proof/classification.json",
+      "evidence_level": "structured classification"
+    },
+    {
+      "label": "proof capture summary",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-readonly-baseline-pi5-proof/capture-summary.json",
+      "evidence_level": "capture-chain-v4 summary"
+    },
+    {
+      "label": "proof evidence map",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-readonly-baseline-pi5-proof/evidence-map.json",
+      "evidence_level": "artifact map"
+    },
+    {
+      "label": "project phase doc",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "evidence_level": "documentation"
+    },
+    {
+      "label": "roadmap",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "documentation"
+    }
+  ],
+  "validation": [
+    {
+      "command": "jq empty tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-readonly-baseline-closeout/classification.json tasks/evidence/2026-06-10-phase12-rp1-ethernet-clock-reset-readonly-baseline-closeout/evidence-map.json",
+      "result": "passed",
+      "evidence_level": "JSON validation"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "evidence_level": "diff whitespace check"
+    },
+    {
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed",
+      "evidence_level": "documentation build"
+    },
+    {
+      "command": "git diff --cached --check",
+      "result": "passed",
+      "evidence_level": "staged diff whitespace check"
+    }
+  ],
+  "commit": "recorded-in-supervisor-state-after-acceptance"
+}

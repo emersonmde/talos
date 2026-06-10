@@ -476,3 +476,22 @@ a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This proof
 accepts report visibility/control output only; it does not accept clock/reset
 ownership, writes, reset-controller ownership, PHY/MDIO, DMA, packet I/O,
 networking, SSH, Phase 12.2, or a phase transition.
+
+## RP1 Ethernet Clock/Reset Read-Only Baseline Closeout
+
+phase12-rp1-ethernet-clock-reset-readonly-baseline-closeout-20260610 closes
+the read-only baseline proof frontier. The accepted boundary remains only the
+candidate/control report visibility proof: the candidate prints the
+observed-window MACB_MID identity context plus selected pclk/hclk/tsu_clk and
+tx_clk baseline facts, while the paired control uses the same report/capture
+path and withholds candidate-only clock/reset facts.
+
+Same-shaped read-only baseline report visibility hardware retries are closed
+for this candidate/control pair. Report visibility alone does not make a
+write-backed ownership task mechanically objective; the next Phase 12.1
+clock/reset ownership slice requires supervisor planning with explicit
+source-backed register/restore, shared-clock safety, reset-controller, or
+PHY/MDIO/GPIO32 scope and acceptance criteria. This closeout does not accept
+clock/reset ownership, RP1 MMIO or clock/reset writes, Ethernet driver
+readiness, GPIO32/PHY reset ownership, MDIO/PHY, DMA, descriptors, interrupts,
+packet I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.

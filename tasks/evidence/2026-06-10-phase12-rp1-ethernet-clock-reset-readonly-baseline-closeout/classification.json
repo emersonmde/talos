@@ -1,0 +1,36 @@
+{
+  "task_id": "phase12-rp1-ethernet-clock-reset-readonly-baseline-closeout-20260610",
+  "classification": "rp1-ethernet-clock-reset-readonly-baseline-frontier-closed",
+  "evidence_level": "static inspection",
+  "accepted_claims": [
+    "read-only clock/reset baseline report visibility/control output frontier is reconciled and closed",
+    "candidate/control capture-chain-v4 proof evidence remains accepted as report visibility/control output only",
+    "candidate retained observed-window MACB_MID identity context and selected pclk/hclk/tsu_clk/tx_clk baseline facts",
+    "paired control used the same capture/report path while withholding candidate-only clock/reset baseline facts",
+    "same-shaped read-only baseline report visibility hardware retries are closed for this candidate/control pair"
+  ],
+  "rejected_claims": [
+    "clock/reset ownership",
+    "clock/reset writes",
+    "RP1 MMIO writes",
+    "RP1_CLK_SYS transition or shared-clock ownership",
+    "reset-controller ownership",
+    "GPIO32 or PHY reset ownership",
+    "MDIO or PHY ownership",
+    "DMA, descriptor rings, transfer completion, or interrupt completion",
+    "packet I/O, networking, sockets, SSH, Phase 12.2, or phase transition"
+  ],
+  "retained_risks": [
+    "report visibility does not identify exact write-backed register targets or restore semantics",
+    "pclk/hclk share RP1_CLK_SYS and need separate shared-clock safety before any writes",
+    "tx_clk and tsu_clk need source-backed register target and restore contracts before ownership",
+    "retained Pi 5 rp1_eth source still supplies no accepted reset-controller target",
+    "PHY reset remains a separate GPIO32/MDIO ownership slice"
+  ],
+  "proof_commit": "d37b18ad12aa0f3763f54444068e175525a52662",
+  "same_shaped_retry_policy": "closed-for-this-candidate-control-pair",
+  "planning_needed": true,
+  "planning_reason": "No mechanically objective write-backed clock/reset ownership follow-up is selected from report visibility/control output alone; the next Phase 12.1 slice needs supervisor-planned source-backed register/restore, shared-clock safety, reset-controller, GPIO32/PHY, MDIO/PHY, interrupt, or DMA/descriptor acceptance criteria.",
+  "next_action": "Supervisor planning required for the next explicit Phase 12.1 clock/reset ownership slice.",
+  "commit": "recorded-in-supervisor-state-after-acceptance"
+}
