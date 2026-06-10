@@ -1,0 +1,28 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-pi5-proof-20260610",
+  "classification": "rp1-ethernet-gpio32-phy-reset-write-restore-lab-power-cycle-no-fetch-blocker",
+  "candidate": {
+    "archive_review": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-pi5-proof/archive-review/candidate-review.txt",
+    "preflight_identity": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-pi5-proof/candidate-run/preflight-identity.json",
+    "inconclusive_tftp_delta": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-pi5-proof/candidate-run/tftp-delta-after-inconclusive.json",
+    "restore": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-pi5-proof/candidate-run/restore-snapshot-after-inconclusive.json"
+  },
+  "control": {
+    "archive_review": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-pi5-proof/archive-review/control-review.txt",
+    "manual_run": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-pi5-proof/control-run-manual/",
+    "serial": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-pi5-proof/control-run-manual/serial-read-after-power.json",
+    "tftp": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-pi5-proof/control-run-manual/tftp-delta-pre-restore.json"
+  },
+  "known_good_control": {
+    "run": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-pi5-proof/known-good-control/",
+    "serial": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-pi5-proof/known-good-control/serial-read-after-power.json",
+    "tftp": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-pi5-proof/known-good-control/tftp-delta-pre-restore.json"
+  },
+  "final_restore": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-pi5-proof/final-post-restore-boot-files.json",
+  "source_changes": [
+    "build.rs",
+    "src/main.rs",
+    "src/target/rpi5.rs",
+    "scripts/rpi5-rp1-ethernet-gpio32-phy-reset-write-restore-*"
+  ]
+}
