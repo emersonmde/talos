@@ -1,0 +1,91 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-source-contract-20260610",
+  "classification": "rp1-ethernet-gpio32-phy-reset-source-contract-accepted",
+  "evidence_level": "static inspection",
+  "accepted_claims": [
+    "Selected the next source-backed GPIO32/ETH_RST_N prerequisite boundary as a local/static read-only preflight report contract only.",
+    "Retained Pi 5 device-tree source identifies rp1_eth phy-reset-gpios as rp1_gpio line 32 with GPIO_ACTIVE_LOW polarity and phy-reset-duration 5 ms.",
+    "Linux MACB source obtains the optional phy-reset GPIO as GPIOD_OUT_LOW, installs macb_mdio_reset as the MDIO bus reset hook, asserts the logical reset value 1, sleeps phy_reset_ms, then deasserts logical value 0.",
+    "For the active-low ETH_RST_N route, logical assertion value 1 corresponds to physical low and logical deassertion value 0 corresponds to physical high.",
+    "Accepted Phase 11 GPIO frontiers leave GPIO ownership, function changes, RIO/pad/INTE/CTRL writes, event generation, and GPIO write/restore authority unaccepted.",
+    "The selected follow-up is phase12-rp1-ethernet-gpio32-phy-reset-preflight-core-20260610, limited to local/static candidate/control report construction."
+  ],
+  "rejected_claims": [
+    "GPIO ownership",
+    "PHY reset assertion/deassertion",
+    "MDIO transactions or PHY ownership",
+    "runtime Ethernet driver readiness",
+    "broad Ethernet MMIO readiness",
+    "RP1 MMIO writes",
+    "GPIO/RIO/pad/INTE/CTRL writes",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "selected_contract": {
+    "contract_id": "phase12-rp1-ethernet-gpio32-phy-reset-source-contract-v1",
+    "selected_prerequisite": "rp1-ethernet-gpio32-phy-reset-readonly-preflight",
+    "controller": "rp1_eth",
+    "compatible": [
+      "raspberrypi,rp1-gem",
+      "cdns,macb"
+    ],
+    "phy_mode": "rgmii-id",
+    "phy_handle": "phy1",
+    "phy_node": "ethernet-phy@1",
+    "phy_reg": "0x1",
+    "gpio_controller": "rp1_gpio",
+    "gpio_line": 32,
+    "signal": "ETH_RST_N",
+    "active_low": true,
+    "logical_assertion_value": 1,
+    "physical_assertion": "low",
+    "logical_deassertion_value": 0,
+    "physical_deassertion": "high",
+    "reset_duration_ms": 5,
+    "linux_hook": "macb_mdio_reset installed as mii_bus->reset",
+    "selected_talos_access": "local/static read-only preflight report construction only",
+    "hardware_access_selected": "none"
+  },
+  "preflight_followup": {
+    "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-preflight-core-20260610",
+    "candidate_classification": "rp1-ethernet-gpio32-phy-reset-preflight-candidate-local-static",
+    "control_classification": "no-gpio-no-ethernet-rp1-ethernet-gpio32-phy-reset-control",
+    "rejected_input_classification": "contract-rejected-input",
+    "candidate_fields": [
+      "source contract id and source task id",
+      "accepted observed-window MACB_MID identity context",
+      "accepted prerequisite and clock proof closeouts",
+      "rp1_eth controller and compatible strings",
+      "PHY mode, handle, node, and reg",
+      "rp1_gpio line 32 / ETH_RST_N route",
+      "active-low polarity and logical/physical assertion mapping",
+      "5 ms reset duration",
+      "Linux MACB MDIO reset hook relationship",
+      "Phase 11 GPIO constraints",
+      "rejected claims and retained risks"
+    ],
+    "control_requirements": [
+      "same report path",
+      "withhold candidate-only GPIO32/ETH_RST_N/PHY-reset facts",
+      "construct no GPIO/RIO/pad/MMIO/MDIO/Ethernet target"
+    ]
+  },
+  "future_write_restore_safety_invariants": [
+    "A future write-backed reset task must be separately planned and must not be inferred from this source contract.",
+    "Future write-backed scope needs accepted GPIO32 ownership or a precise pre-state/restore contract.",
+    "Future write-backed scope needs hardware-visible GPIO function, RIO OUT/OE/IN, pad state, and output-enable evidence before assertion.",
+    "Future write-backed scope needs active-low logical-to-physical polarity handling, bounded assertion duration, deassertion, restore, and post-restore readback evidence.",
+    "Future write-backed scope needs a paired no-GPIO/no-Ethernet control and precise failure classifications."
+  ],
+  "retained_risks": [
+    "GPIO32/ETH_RST_N source facts do not prove Talos can safely drive or restore the line.",
+    "Phase 11 GPIO frontiers have not accepted ownership or write/restore authority for GPIO32.",
+    "Linux ties the reset sequence to MDIO bus reset, while Talos still lacks accepted MDIO/PHY ownership.",
+    "A later hardware proof still needs candidate/control identity, serial freshness, TFTP delta, final identity, restore evidence, and task-owned JSON."
+  ],
+  "next_action": "Mechanically promote phase12-rp1-ethernet-gpio32-phy-reset-preflight-core-20260610 on the next worker wake; keep scope local/static and do not run hardware or perform GPIO/PHY/MDIO writes."
+}

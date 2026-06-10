@@ -9465,6 +9465,21 @@ shared-clock ownership, reset-controller, GPIO32/PHY, MDIO, DMA, descriptors,
 interrupts, packet I/O, networking, sockets, SSH, Phase 12.2, and phase
 transition remain unaccepted.
 
+phase12-rp1-ethernet-gpio32-phy-reset-source-contract-20260610 accepts the
+next source/static GPIO32 / ETH_RST_N prerequisite boundary after supervisor
+planning. Retained Pi 5 source identifies `phy-reset-gpios = <&rp1_gpio 32
+GPIO_ACTIVE_LOW>` and `phy-reset-duration = <5>` for `rp1_eth`; retained Linux
+MACB source obtains the optional `"phy-reset"` GPIO, installs
+`macb_mdio_reset` as the MDIO bus reset hook, asserts logical value 1, sleeps
+5 ms, and deasserts logical value 0. Because the route is active-low, logical
+assertion maps to physical ETH_RST_N low and logical deassertion maps to
+physical high. The selected follow-up is only a local/static read-only
+GPIO32 PHY-reset preflight report core with a paired no-GPIO/no-Ethernet
+control. GPIO ownership, PHY reset assertion/deassertion, MDIO/PHY ownership,
+runtime Ethernet readiness, RP1 MMIO/GPIO/RIO/pad/INTE/CTRL writes, packet
+I/O, networking, sockets, SSH, Phase 12.2, and phase transition remain
+unaccepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

@@ -1,0 +1,117 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-source-contract-20260610",
+  "classification": "rp1-ethernet-gpio32-phy-reset-source-contract-accepted",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-source-contract.md",
+      "evidence_level": "static inspection and source contract record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-source-contract/classification.json",
+      "evidence_level": "structured classification"
+    },
+    {
+      "label": "evidence map",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-source-contract/evidence-map.json",
+      "evidence_level": "artifact map"
+    },
+    {
+      "label": "accepted observed-window proof closeout",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-observed-window-discriminator-proof-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted prerequisite proof closeout",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-prereq-ownership-proof-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted CLK_ETH_TSU_CTRL proof closeout",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-clock-reset-write-restore-proof-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted CLK_ETH_CTRL proof closeout",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-clk-eth-ctrl-write-restore-proof-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted Phase 11 GPIO frontier",
+      "path": "tasks/2026-06-09-phase11-rp1-irq-clock-gpio-milestone-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "retained rp1_eth source",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1.dtsi",
+      "evidence_level": "source line inspection",
+      "notes": "Lines 999-1015 define rp1_eth, compatible strings, RGMII-ID mode, clocks, interrupt, and disabled base node."
+    },
+    {
+      "label": "retained Pi 5 board source",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-bcm2712-rpi-5-b.dts",
+      "evidence_level": "source line inspection",
+      "notes": "Lines 169-180 enable rp1_eth, set phy-handle phy1, phy-reset-gpios rp1_gpio 32 GPIO_ACTIVE_LOW, phy-reset-duration 5, and ethernet-phy@1 reg 1."
+    },
+    {
+      "label": "retained Linux MACB source",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-macb_main.c",
+      "evidence_level": "source line inspection",
+      "notes": "Lines 500-508 implement macb_mdio_reset; lines 1074-1085 install it as mii_bus->reset; lines 5407-5420 acquire phy-reset GPIO and duration."
+    },
+    {
+      "label": "retained MACB binding",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-cdns-macb.yaml",
+      "evidence_level": "source line inspection",
+      "notes": "Lines 94-97 define phy-mode/phy-handle properties; lines 156-163 allow reset-gpios on PHY children."
+    },
+    {
+      "label": "Phase 11 GPIO source notes",
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/source-reference-notes.md",
+      "evidence_level": "static inspection",
+      "notes": "Records RP1 GPIO/RIO/PADS source offsets and no-MMIO control requirements."
+    },
+    {
+      "label": "project doc",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "evidence_level": "documentation update"
+    },
+    {
+      "label": "Phase 11 GPIO contract doc",
+      "path": "docs/src/project/phase11-rp1-irq-clock-gpio-contract.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "roadmap",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "documentation update"
+    }
+  ],
+  "validation": [
+    {
+      "label": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-source-contract/classification.json tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-source-contract/evidence-map.json",
+      "result": "passed",
+      "evidence_level": "JSON validation"
+    },
+    {
+      "label": "diff check",
+      "command": "git diff --check",
+      "result": "passed",
+      "evidence_level": "diff whitespace check"
+    },
+    {
+      "label": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed",
+      "evidence_level": "documentation build"
+    },
+    {
+      "label": "staged diff check",
+      "command": "git diff --cached --check",
+      "result": "passed",
+      "evidence_level": "staged diff whitespace check"
+    }
+  ]
+}

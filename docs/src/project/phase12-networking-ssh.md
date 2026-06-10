@@ -675,3 +675,26 @@ or packet I/O scope. This closeout does not accept broad clock/reset
 ownership, shared-clock ownership, reset-controller, GPIO32/PHY reset, MDIO,
 DMA, descriptors, interrupts, packet I/O, networking, sockets, SSH, Phase
 12.2, or a phase transition.
+
+## RP1 Ethernet GPIO32 PHY-Reset Source Contract
+
+phase12-rp1-ethernet-gpio32-phy-reset-source-contract-20260610 accepts the
+next source/static GPIO32 / ETH_RST_N prerequisite boundary. Retained Pi 5
+device-tree source identifies `rp1_eth` `phy-reset-gpios` as `rp1_gpio` line
+32 with `GPIO_ACTIVE_LOW` polarity and `phy-reset-duration = <5>`. Retained
+Linux MACB source obtains the optional `"phy-reset"` GPIO as `GPIOD_OUT_LOW`,
+installs `macb_mdio_reset` as the MDIO bus reset hook, asserts logical value
+1, sleeps for the configured duration, then deasserts logical value 0. Because
+the route is active-low, logical assertion drives ETH_RST_N physically low and
+logical deassertion drives it physically high.
+
+The selected follow-up is only a local/static read-only GPIO32 PHY-reset
+preflight report core with a paired no-GPIO/no-Ethernet control. Candidate
+fields must preserve the source contract id, observed-window MACB_MID identity
+context, accepted prerequisite and clock proof closeouts, `rp1_eth`/`phy1`
+identity, GPIO32/ETH_RST_N polarity and duration facts, Linux MDIO reset hook
+relationship, Phase 11 GPIO constraints, rejected claims, and retained risks.
+This contract does not accept GPIO ownership, PHY reset assertion/deassertion,
+MDIO/PHY ownership, runtime Ethernet readiness, RP1 MMIO/GPIO/RIO/pad/INTE/
+CTRL writes, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase
+transition.
