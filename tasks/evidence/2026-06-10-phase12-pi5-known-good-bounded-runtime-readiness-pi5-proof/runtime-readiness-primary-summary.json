@@ -1,0 +1,24 @@
+{
+  "run_label": "known-good-runtime-readiness-20260610T215810Z",
+  "readiness": {
+    "requested_timeout_seconds": 75,
+    "elapsed_seconds": 75,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 7,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 7046,
+    "required_kernel_marker": "TALOS: kernel_main",
+    "required_success_marker": "rpi5-production-timer-preemption: PASS",
+    "prompt_marker": "talos>",
+    "has_kernel_main": false,
+    "has_required_success_marker": true,
+    "has_prompt_marker": false,
+    "valid_known_good_talos_readiness": false,
+    "classification": "known-good-fetch-observed-without-talos-readiness"
+  },
+  "note": "Derived from the first retained helper output before runtime-readiness.json was accidentally overwritten by a later direct-read follow-up. This summary is useful context but is not treated as the raw helper JSON required to accept valid-known-good-talos-readiness."
+}

@@ -1,0 +1,72 @@
+{
+  "task_id": "phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof-20260610",
+  "run_label": "known-good-runtime-readiness-20260610T215810Z",
+  "classification": "known-good-readiness-raw-helper-artifact-overwritten",
+  "accepted_readiness": false,
+  "authorizes_gpio32_v2": false,
+  "evidence_level": "serial hardware boot/output plus lab-controller API and stable TFTP delta",
+  "evidence_integrity": {
+    "raw_runtime_readiness_json_is_primary": false,
+    "note": "The primary helper fields survive in run-summary/runtime-readiness-primary-summary, but runtime-readiness.json was overwritten by an accidental follow-up direct-read after the primary summary was generated. Treat this as a precise evidence-retention blocker, not valid readiness.",
+    "primary_summary_path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/runtime-readiness-primary-summary.json",
+    "overwritten_raw_path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/runtime-readiness.json"
+  },
+  "identity": {
+    "expected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "pre_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "final_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "pre_effective_kernel": "kernel_2712.img",
+    "final_effective_kernel": "kernel_2712.img",
+    "pre_configured_kernel": "kernel_2712.img",
+    "final_configured_kernel": "kernel_2712.img",
+    "expected_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 104136,
+    "pre_expected_fetch_bytes": 104136,
+    "boot_files_expected_fetch_bytes": 104136
+  },
+  "tftp": {
+    "wait_exit_status": 0,
+    "stable": true,
+    "reason": "stable",
+    "event_count": 13,
+    "expected_fetch_count": 2
+  },
+  "primary_serial_summary": {
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "start_cursor_saturated": true,
+    "response_bytes": 7046,
+    "has_kernel_main": false,
+    "has_required_success_marker": true,
+    "valid_known_good_talos_readiness": false,
+    "helper_classification": "known-good-fetch-observed-without-talos-readiness"
+  },
+  "overwritten_followup_serial": {
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "start_cursor_saturated": true,
+    "response_bytes": 0,
+    "has_kernel_main": false,
+    "has_required_success_marker": false,
+    "valid_known_good_talos_readiness": false,
+    "helper_classification": "saturated-cursor-capture-blocked"
+  },
+  "rejected_claims": [
+    "valid-known-good-talos-readiness",
+    "GPIO32 write/restore v2 authorization",
+    "PHY reset behavior",
+    "Ethernet driver behavior",
+    "packet I/O",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "The raw primary runtime-readiness helper JSON was overwritten by a follow-up helper read.",
+    "The primary derived summary showed the downstream production-timer PASS marker but lacked kernel_main and is not sufficient by itself to satisfy the raw-helper evidence gate.",
+    "TFTP and boot identity recovered, so the remaining issue is evidence-retention/runtime-readiness proof integrity rather than boot-file publication."
+  ],
+  "nextAction": "Run the queued closeout; do not promote GPIO32 v2 because this proof records a precise evidence-retention blocker rather than valid-known-good-talos-readiness."
+}

@@ -1,0 +1,105 @@
+{
+  "task_id": "phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof-20260610",
+  "evidence": [
+    {
+      "label": "run label",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/run-label.txt",
+      "evidence_level": "run identity"
+    },
+    {
+      "label": "pre-power status",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/pre-power-status.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "pre-power boot files",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/pre-power-boot-files.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "pre-power boot snapshots",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/pre-power-boot-snapshots.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "fresh serial cursor",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/fresh-serial-cursor.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "fresh tftp cursor",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/fresh-tftp-cursor.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "joined fresh cursors",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/fresh-cursors.json",
+      "evidence_level": "run identity"
+    },
+    {
+      "label": "power cycle response",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/power-cycle-response.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "runtime readiness helper output",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/runtime-readiness.json",
+      "evidence_level": "serial hardware boot/output via repaired helper"
+    },
+    {
+      "label": "stable tftp delta",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/tftp-delta.json",
+      "evidence_level": "stable lab-controller TFTP delta"
+    },
+    {
+      "label": "final status",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/final-status.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "final boot files",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/final-boot-files.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "final boot snapshots",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/final-boot-snapshots.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "final tftp tail",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/final-tftp-tail.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "run command summary",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/run-command-summary.json",
+      "evidence_level": "command status summary"
+    },
+    {
+      "label": "run summary",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/run-summary.json",
+      "evidence_level": "derived summary"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/classification.json",
+      "evidence_level": "proof classification"
+    },
+    {
+      "label": "primary runtime readiness summary",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/runtime-readiness-primary-summary.json",
+      "evidence_level": "derived summary of primary helper output"
+    },
+    {
+      "label": "runtime readiness follow-up overwrite output",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/runtime-readiness.json",
+      "evidence_level": "follow-up serial hardware read after primary summary"
+    },
+    {
+      "label": "runtime readiness helper exit status",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-pi5-proof/runtime-readiness.status",
+      "evidence_level": "follow-up command exit status"
+    }
+  ]
+}
