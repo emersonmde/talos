@@ -900,3 +900,21 @@ or lab/human intervention. This closeout does not accept GPIO32 ownership, PHY
 reset assertion/deassertion, MDIO/PHY ownership, RP1 GPIO/RIO/pad/MMIO writes,
 Ethernet driver readiness, interrupts, DMA/descriptors, packet I/O,
 networking, sockets, SSH, Phase 12.2, or a phase transition.
+
+phase12-pi5-runtime-readiness-evidence-retention-core-20260610 repairs the
+primary runtime-readiness artifact retention path so follow-up serial reads
+cannot overwrite the primary helper JSON. The follow-up v2 known-good readiness
+proof retains the primary helper artifact under a run-label-qualified path and
+derives the summary from that artifact. The run again proves stable restored
+known-good identity and TFTP fetches, and it observes
+rpi5-production-timer-preemption: PASS, but the retained helper artifact does
+not contain TALOS: kernel_main and therefore still does not accept
+valid-known-good-talos-readiness.
+
+phase12-pi5-known-good-bounded-runtime-readiness-v2-closeout-20260610 closes
+that v2 proof as
+known-good-fetch-pass-marker-observed-helper-readiness-unaccepted-closeout.
+GPIO32 write/restore v2 remains blocked because its valid-known-good readiness
+dependency is still unsatisfied. Same-shaped GPIO32 or known-good runtime
+readiness hardware retries require supervisor planning with a changed
+discriminator or changed readiness contract.

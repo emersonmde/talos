@@ -9588,6 +9588,18 @@ captured 0 bytes and no expected Talos output. Same-shaped GPIO32
 write/restore retries remain held until a bounded serial-silent known-good
 boot discriminator or another explicit recovery gate is accepted.
 
+phase12-pi5-runtime-readiness-evidence-retention-core-20260610 repairs the
+primary runtime-readiness artifact retention path so follow-up serial reads
+cannot overwrite the primary helper JSON. The changed-discriminator v2
+known-good readiness proof retained the primary helper artifact, stable
+restored known-good identity, stable TFTP fetches, and the production-timer
+PASS marker. It still does not accept valid-known-good-talos-readiness because
+the retained helper artifact lacks TALOS: kernel_main. Therefore
+phase12-pi5-known-good-bounded-runtime-readiness-v2-closeout-20260610 holds
+GPIO32 write/restore v2 and same-shaped known-good readiness retries until
+supervisor planning supplies a changed discriminator or changed readiness
+contract.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

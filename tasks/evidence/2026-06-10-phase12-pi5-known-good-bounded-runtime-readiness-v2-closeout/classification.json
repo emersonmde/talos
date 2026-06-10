@@ -1,0 +1,53 @@
+{
+  "task_id": "phase12-pi5-known-good-bounded-runtime-readiness-v2-closeout-20260610",
+  "classification": "known-good-fetch-pass-marker-observed-helper-readiness-unaccepted-closeout",
+  "accepted_valid_known_good_talos_readiness": false,
+  "authorizes_gpio32_v2": false,
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "The v2 proof retained immutable primary helper evidence and stable known-good TFTP/final identity, but the repaired helper did not classify the retained primary artifact as valid known-good Talos readiness because TALOS: kernel_main was absent from the retained serial window.",
+  "evidence_level": "static closeout over committed serial hardware proof/blocker evidence",
+  "source_proof": {
+    "task_id": "phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof-20260610",
+    "commit": "30648dcb73b2b98de00ebc6b0395da1855617dff",
+    "classification": "known-good-fetch-pass-marker-observed-helper-readiness-unaccepted",
+    "run_label": "known-good-runtime-readiness-v2-20260610T2332Z"
+  },
+  "retained_primary_artifact": {
+    "raw_json": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof/known-good-runtime-readiness-v2-20260610T2332Z-runtime-readiness-primary.json",
+    "summary_json": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof/known-good-runtime-readiness-v2-20260610T2332Z-runtime-readiness-primary-summary.json",
+    "status_artifact": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof/known-good-runtime-readiness-v2-20260610T2332Z-runtime-readiness-primary.status",
+    "derived_from_retained_primary_artifact": true,
+    "overwrite_policy": "refuse-existing-primary-summary-or-status"
+  },
+  "accepted_evidence": {
+    "final_identity_stable": true,
+    "stable_tftp_delta": true,
+    "expected_known_good_kernel_fetch_count": 2,
+    "observed_success_marker": "rpi5-production-timer-preemption: PASS",
+    "response_bytes": 6847
+  },
+  "readiness_blocker": {
+    "helper_classification": "known-good-fetch-observed-without-talos-readiness",
+    "required_missing_marker": "TALOS: kernel_main",
+    "valid_known_good_talos_readiness": false,
+    "reason": "The closeout is not authorized to reinterpret a PASS marker as valid known-good Talos readiness when the repaired helper contract did not set valid_known_good_talos_readiness."
+  },
+  "same_shaped_retry_policy": "GPIO32 write/restore v2 and same-shaped known-good readiness hardware retries remain held until supervisor planning supplies a changed discriminator or changed readiness contract.",
+  "rejected_claims": [
+    "valid-known-good-talos-readiness",
+    "GPIO32 write/restore v2 authorization",
+    "PHY reset assertion/deassertion",
+    "MDIO/PHY ownership",
+    "Ethernet driver behavior",
+    "DMA/descriptors",
+    "interrupts",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "nextAction": "Supervisor planning required. Do not promote GPIO32 v2 and do not rerun same-shaped GPIO32 or known-good readiness hardware proofs without a changed discriminator or changed readiness contract."
+}

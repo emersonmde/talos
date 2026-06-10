@@ -1,0 +1,60 @@
+{
+  "task_id": "phase12-pi5-known-good-bounded-runtime-readiness-v2-closeout-20260610",
+  "artifacts": [
+    {
+      "label": "closeout task record",
+      "path": "tasks/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-closeout.md",
+      "evidence_level": "static closeout record"
+    },
+    {
+      "label": "closeout classification",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-closeout/classification.json",
+      "evidence_level": "structured closeout classification"
+    },
+    {
+      "label": "source proof task record",
+      "path": "tasks/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof.md",
+      "evidence_level": "serial hardware proof/blocker record"
+    },
+    {
+      "label": "source proof classification",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof/classification.json",
+      "evidence_level": "serial hardware boot/output plus lab-controller API and stable TFTP delta"
+    },
+    {
+      "label": "source proof evidence map",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof/evidence-map.json",
+      "evidence_level": "artifact map"
+    },
+    {
+      "label": "source proof capture summary",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof/capture-summary.json",
+      "evidence_level": "classification support"
+    },
+    {
+      "label": "retained primary helper JSON",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof/known-good-runtime-readiness-v2-20260610T2332Z-runtime-readiness-primary.json",
+      "evidence_level": "serial hardware boot/output"
+    },
+    {
+      "label": "retained primary summary",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof/known-good-runtime-readiness-v2-20260610T2332Z-runtime-readiness-primary-summary.json",
+      "evidence_level": "derived retained-primary summary"
+    },
+    {
+      "label": "stable TFTP delta",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof/tftp-delta-stable.json",
+      "evidence_level": "lab-controller API stable TFTP delta"
+    },
+    {
+      "label": "final status",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof/final-status.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "hardware lock released",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof/hardware-lock-released.json",
+      "evidence_level": "durable state and local evidence"
+    }
+  ]
+}
