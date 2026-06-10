@@ -1,0 +1,34 @@
+{
+  "task_id": "phase12-rp1-ethernet-clock-reset-write-restore-proof-closeout-20260610",
+  "classification": "rp1-ethernet-clk-eth-tsu-ctrl-write-restore-frontier-closed",
+  "evidence_level": "static inspection",
+  "accepted_claims": [
+    "CLK_ETH_TSU_CTRL idempotent write/readback/restore proof frontier is reconciled and closed",
+    "candidate/control capture-chain-v4 proof evidence remains accepted for the exact selected Ethernet-private clock register only",
+    "candidate preserved pre_raw, post_raw, and restore_raw 0x10000800 at 0x1c00018134 under the accepted pre-read-raw-only write contract",
+    "paired control used the same capture/report path while withholding writable clock target construction and candidate-only facts",
+    "same-shaped CLK_ETH_TSU_CTRL idempotent write/restore hardware retries are closed for this candidate/control pair"
+  ],
+  "rejected_claims": [
+    "broad clock/reset ownership",
+    "shared-clock ownership or RP1_CLK_SYS pclk/hclk writes",
+    "CLK_ETH_CTRL ownership",
+    "reset-controller ownership",
+    "GPIO32 or PHY reset ownership",
+    "MDIO or PHY ownership",
+    "DMA, descriptor rings, transfer completion, or interrupt completion",
+    "packet I/O, networking, sockets, SSH, Phase 12.2, or phase transition"
+  ],
+  "retained_risks": [
+    "the accepted write is idempotent and does not prove functional clock transitions",
+    "shared RP1_CLK_SYS pclk/hclk writes remain forbidden without separate safety criteria",
+    "CLK_ETH_CTRL, reset-controller, GPIO32/PHY reset, and MDIO/PHY ownership remain unproven",
+    "interrupt, DMA, descriptor, packet, networking, socket, and SSH behavior remain future work"
+  ],
+  "proof_commit": "76edd28400da10a73e32af5e85cf872f7125de17",
+  "same_shaped_retry_policy": "closed-for-this-candidate-control-pair",
+  "planning_needed": true,
+  "planning_reason": "No mechanically objective next Phase 12.1 ownership slice follows from this exact idempotent CLK_ETH_TSU_CTRL write/restore proof alone; the next slice needs supervisor-planned scope and acceptance criteria for a different clock/reset, GPIO32/PHY, MDIO/PHY, interrupt, DMA, descriptor, or packet dependency.",
+  "next_action": "Supervisor planning required for the next explicit Phase 12.1 ownership slice.",
+  "commit": "recorded-in-supervisor-state-after-acceptance"
+}

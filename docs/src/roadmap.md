@@ -9385,6 +9385,18 @@ broad clock/reset ownership, shared-clock ownership, reset-controller,
 GPIO32/PHY, MDIO, DMA, descriptors, interrupts, packet I/O, networking,
 sockets, SSH, Phase 12.2, and phase transition remain unaccepted.
 
+phase12-rp1-ethernet-clock-reset-write-restore-proof-closeout-20260610 closes
+that proof frontier as
+rp1-ethernet-clk-eth-tsu-ctrl-write-restore-frontier-closed. Same-shaped
+CLK_ETH_TSU_CTRL idempotent write/restore hardware retries are closed for this
+candidate/control pair. The proof does not make a next ownership slice
+mechanically objective by itself, so supervisor planning is required for any
+different Phase 12.1 register, reset, GPIO32/PHY, MDIO/PHY, interrupt, DMA,
+descriptor, or packet dependency. Broad clock/reset ownership, shared-clock
+ownership, CLK_ETH_CTRL, reset-controller, GPIO32/PHY, MDIO, DMA, descriptors,
+interrupts, packet I/O, networking, sockets, SSH, Phase 12.2, and phase
+transition remain unaccepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
