@@ -1,0 +1,62 @@
+{
+  "task": "phase12-pi5-capture-chain-repair-contract-20260610",
+  "status": "accepted",
+  "classification": "pi5-capture-chain-repair-contract-accepted",
+  "failure_class": "capture-chain identity/replay contract gap",
+  "existing_artifacts_reclassifiable": false,
+  "reclassification_reason": "Retained candidate/control artifacts do not join selected preflight tree, expected TFTP fetch bytes, final pre-restore selected-tree identity, restore identity, and paired control serial marker evidence into one decisive transaction.",
+  "retained_evidence": {
+    "root_endpoint_probe": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/root-endpoint-probe.txt",
+    "candidate_full_summary": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/candidate-full-run/capture-invariant-summary.json",
+    "candidate_direct_serial": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/candidate-full-run/direct-serial-window-after-observe-stop.json",
+    "candidate_debug_summary": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/candidate-debug-run/capture-invariant-summary.json",
+    "control_direct_serial": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/control-direct-run/direct-serial-window-after-observe-stop.json",
+    "control_direct_tftp": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/control-direct-run/tftp-delta-stable-pre-restore.json",
+    "control_direct_final_identity": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/control-direct-run/final-pre-restore-boot-files.json",
+    "final_restore_identity": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/final-lab-root-before-lock-release.json"
+  },
+  "observed_blockers": [
+    "GET / returned 404; /boot/files is the available boot identity endpoint",
+    "candidate-full-run observed TFTP fetch bytes 104136 for da591740/kernel_2712.img instead of expected 49152",
+    "candidate-full-run final-pre-restore tree did not match selected preflight tree",
+    "candidate-debug-run lacked expected TFTP fetch evidence and had non-empty pre-power drain",
+    "control-direct-run retained no control serial marker"
+  ],
+  "repair_contract": {
+    "name": "pi5-capture-chain-v4",
+    "implementation_scope": "local/static helper and replay-checker behavior only",
+    "required_capabilities": [
+      "endpoint fallback from GET / to /boot/files with explicit endpoint evidence",
+      "selected-tree identity source derived from /boot/files preflight/final/restore fields",
+      "TFTP and final identity replay with expected fetch byte list and selected-tree status",
+      "run-unique nonce freshness for saturated direct-read serial capture",
+      "direct serial marker retention with marker excerpts, occurrence counts, capture mode, cursor fields, and response byte counts",
+      "candidate/control summaries with run label, report kind, identity, TFTP, final, restore, serial, freshness, rejection, and boundary fields"
+    ]
+  },
+  "rejected_claims": [
+    "live GEM visibility",
+    "broad Ethernet MMIO readiness",
+    "Ethernet driver readiness",
+    "RP1 MMIO/DMA programming",
+    "descriptor rings",
+    "DMA ownership",
+    "transfer completion",
+    "interrupt completion",
+    "clock/reset ownership",
+    "PHY reset ownership",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "translated 0x1f RP1 window sentinel remains unproven",
+    "PCIe/RP1 bridge or window enablement remains unaccepted",
+    "Ethernet clock/reset and PHY/MDIO ownership remain unaccepted",
+    "same-shaped Pi 5 hardware retry remains blocked until repair core and closeout are accepted"
+  ],
+  "nextAction": "phase12-pi5-capture-chain-repair-core-20260610"
+}

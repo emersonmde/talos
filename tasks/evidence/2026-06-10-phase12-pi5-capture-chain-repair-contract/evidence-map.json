@@ -1,0 +1,76 @@
+{
+  "task": "phase12-pi5-capture-chain-repair-contract-20260610",
+  "classification": "pi5-capture-chain-repair-contract-accepted",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-10-phase12-pi5-capture-chain-repair-contract.md",
+      "evidence_level": "static contract record"
+    },
+    {
+      "label": "accepted blocker task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted blocker classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/classification.json",
+      "evidence_level": "accepted blocker classification"
+    },
+    {
+      "label": "root endpoint probe",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/root-endpoint-probe.txt",
+      "evidence_level": "lab-controller API endpoint inspection"
+    },
+    {
+      "label": "candidate full capture summary",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/candidate-full-run/capture-invariant-summary.json",
+      "evidence_level": "retained capture-chain replay evidence"
+    },
+    {
+      "label": "candidate direct serial window",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/candidate-full-run/direct-serial-window-after-observe-stop.json",
+      "evidence_level": "serial hardware output"
+    },
+    {
+      "label": "candidate debug capture summary",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/candidate-debug-run/capture-invariant-summary.json",
+      "evidence_level": "retained capture-chain replay evidence"
+    },
+    {
+      "label": "control direct serial window",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/control-direct-run/direct-serial-window-after-observe-stop.json",
+      "evidence_level": "serial hardware output and capture-chain evidence"
+    },
+    {
+      "label": "control direct TFTP delta",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/control-direct-run/tftp-delta-stable-pre-restore.json",
+      "evidence_level": "TFTP/capture-chain evidence"
+    },
+    {
+      "label": "control direct final identity",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/control-direct-run/final-pre-restore-boot-files.json",
+      "evidence_level": "lab-controller API boot/files identity"
+    },
+    {
+      "label": "capture bundle helper",
+      "path": "scripts/rpi5-capture-invariant-proof-bundle.sh",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "serial observe helper",
+      "path": "scripts/rpi5-observe-serial-window.sh",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "identity join checker",
+      "path": "scripts/rpi5-proof-identity-join-check.sh",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "run-unique checker",
+      "path": "scripts/rpi5-proof-identity-join-run-unique-check.sh",
+      "evidence_level": "static inspection"
+    }
+  ]
+}
