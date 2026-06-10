@@ -1,0 +1,74 @@
+{
+  "task_id": "phase12-pi5-runtime-readiness-helper-saturation-core-20260610",
+  "classification": "pi5-runtime-readiness-helper-saturation-core-accepted",
+  "task_record": "tasks/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core.md",
+  "implementation": [
+    "scripts/rpi5-observe-runtime-readiness.sh",
+    "docs/src/project/lab-controller.md"
+  ],
+  "source_evidence": [
+    "tasks/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery-closeout.md",
+    "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/capture-summary.json",
+    "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/known-good-recovery-run/serial-observe-after-power.json",
+    "tasks/2026-06-06-phase11-serial-cursor-saturation-repair-core.md",
+    "scripts/rpi5-observe-serial-window.sh"
+  ],
+  "task_evidence": {
+    "static_inspection": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core/static-inspection.md",
+    "classification": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core/classification.json",
+    "syntax_check": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core/sh-n-rpi5-observe-runtime-readiness.log",
+    "stub_curl": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core/stub-curl.sh",
+    "non_saturated_output": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core/non-saturated-observe-output.json",
+    "non_saturated_validation": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core/non-saturated-observe-validation.log",
+    "saturated_output": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core/saturated-direct-read-output.json",
+    "saturated_validation": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core/saturated-direct-read-validation.log",
+    "json_validation": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core/jq-empty.log",
+    "diff_check": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core/git-diff-check.log",
+    "docs_build": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core/mdbook-build.log",
+    "staged_diff_check": "tasks/evidence/2026-06-10-phase12-pi5-runtime-readiness-helper-saturation-core/git-diff-cached-check.log"
+  },
+  "saturated_cursor_source": {
+    "serial_cursor_before_power": 4194304,
+    "source": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/capture-summary.json",
+    "serial_observe_bytes": 0,
+    "serial_observe_source": "tasks/evidence/2026-06-10-phase12-pi5-lab-known-good-power-cycle-recovery/known-good-recovery-run/serial-observe-after-power.json"
+  },
+  "validation": [
+    {
+      "command": "sh -n scripts/rpi5-observe-runtime-readiness.sh",
+      "result": "passed",
+      "evidence_level": "shell syntax"
+    },
+    {
+      "command": "focused stub validation for non-saturated observe mode",
+      "result": "passed",
+      "evidence_level": "stub validation"
+    },
+    {
+      "command": "focused stub validation for saturated direct-read fallback",
+      "result": "passed",
+      "evidence_level": "stub validation"
+    },
+    {
+      "command": "jq empty on task-owned JSON",
+      "result": "passed",
+      "evidence_level": "JSON validation"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "evidence_level": "diff hygiene"
+    },
+    {
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed",
+      "evidence_level": "docs build"
+    },
+    {
+      "command": "git diff --cached --check",
+      "result": "passed",
+      "evidence_level": "staged diff hygiene"
+    }
+  ],
+  "next_action": "Promote phase12-pi5-runtime-readiness-helper-saturation-closeout-20260610 on the next worker wake."
+}

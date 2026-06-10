@@ -307,10 +307,16 @@ burst before the later TFTP/kernel/readiness output appears.
 scripts/rpi5-observe-runtime-readiness.sh "$serial_cursor" 75 1000 65536
 ~~~
 
-Retain the helper JSON and check
-`talos_runtime_readiness.observe_contract=deadline-loop-accumulated-from-fresh-cursor`
-for known-good runtime-readiness proofs. A settled first firmware burst is not
-the full readiness window.
+Retain the helper JSON and check `talos_runtime_readiness.observe_contract`.
+For unsaturated cursors the contract remains
+`deadline-loop-accumulated-from-fresh-cursor`. If the saved cursor is already
+at the lab controller retention cap, the helper switches to direct
+`/serial/read` and records
+`deadline-loop-direct-read-after-saturated-cursor`,
+`start_cursor_saturated=true`, and `response_bytes`. An empty saturated
+direct-read result is `saturated-cursor-capture-blocked`, not an unqualified
+known-good runtime-readiness miss. A settled first firmware burst is not the
+full readiness window.
 
 For capture-invariant proof bundles that call
 `scripts/rpi5-observe-serial-window.sh`, the default auto mode switches from

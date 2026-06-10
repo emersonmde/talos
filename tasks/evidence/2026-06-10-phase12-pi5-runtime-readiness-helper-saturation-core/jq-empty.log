@@ -1,0 +1,2 @@
+$ jq empty task-owned JSON
+passed

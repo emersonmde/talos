@@ -1,0 +1,28 @@
+{
+  "ok": true,
+  "cursor_start": 100,
+  "cursor_end": 220,
+  "bytes": 120,
+  "text": "RP1 FW: load 0\nTALOS: kernel_main\nrpi5-production-timer-preemption: PASS\ntalos> ",
+  "truncated": false,
+  "talos_runtime_readiness": {
+    "requested_timeout_seconds": 5,
+    "elapsed_seconds": 1,
+    "settle_ms": 1,
+    "max_bytes": 4096,
+    "observe_attempts": 2,
+    "observe_contract": "deadline-loop-accumulated-from-fresh-cursor",
+    "capture_mode": "observe",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": false,
+    "response_bytes": 120,
+    "required_kernel_marker": "TALOS: kernel_main",
+    "required_success_marker": "rpi5-production-timer-preemption: PASS",
+    "prompt_marker": "talos>",
+    "has_kernel_main": true,
+    "has_required_success_marker": true,
+    "has_prompt_marker": true,
+    "valid_known_good_talos_readiness": true,
+    "classification": "valid-known-good-talos-readiness"
+  }
+}

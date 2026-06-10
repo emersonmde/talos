@@ -1,0 +1,45 @@
+{
+  "task_id": "phase12-pi5-runtime-readiness-helper-saturation-core-20260610",
+  "classification": "pi5-runtime-readiness-helper-saturation-core-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "source/docs implementation",
+    "shell syntax check",
+    "focused stub validation",
+    "JSON contract inspection"
+  ],
+  "accepted_claims": [
+    "runtime-readiness helper preserves unsaturated deadline-loop observe behavior",
+    "runtime-readiness helper auto-selects direct serial read for saturated saved cursors",
+    "runtime-readiness JSON records observe/read contract, capture mode, saturation state, response bytes, markers, attempts, bytes, text, and readiness classification",
+    "valid-known-good-talos-readiness remains gated on TALOS: kernel_main plus the accepted success marker",
+    "saturated zero-byte direct-read output is classified as saturated-cursor-capture-blocked"
+  ],
+  "rejected_claims": [
+    "Pi 5 hardware runtime readiness",
+    "GPIO32 write/restore success",
+    "PHY reset assertion/deassertion proof",
+    "MDIO or PHY ownership",
+    "Ethernet driver readiness",
+    "DMA or descriptor ownership",
+    "interrupt completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "validation": {
+    "static_inspection": "passed",
+    "shell_syntax": "passed",
+    "non_saturated_stub_validation": "passed",
+    "saturated_stub_validation": "passed",
+    "json_checks": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  },
+  "next_action": "Promote phase12-pi5-runtime-readiness-helper-saturation-closeout-20260610 on the next worker wake."
+}

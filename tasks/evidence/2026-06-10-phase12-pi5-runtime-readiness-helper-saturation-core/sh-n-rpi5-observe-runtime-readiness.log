@@ -1,0 +1,2 @@
+$ sh -n scripts/rpi5-observe-runtime-readiness.sh
+passed

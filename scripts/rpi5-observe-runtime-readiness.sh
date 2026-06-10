@@ -12,6 +12,37 @@ TIMEOUT_SECONDS="${2:-75}"
 SETTLE_MS="${3:-1000}"
 MAX_BYTES="${4:-65536}"
 REQUIRED_MARKER="${TALOS_READINESS_REQUIRED_MARKER:-rpi5-production-timer-preemption: PASS}"
+CAPTURE_MODE="${TALOS_SERIAL_CAPTURE_MODE:-auto}"
+SATURATION_LIMIT="${TALOS_SERIAL_CURSOR_SATURATION_LIMIT:-4194304}"
+
+case "$SERIAL_CURSOR" in
+    ''|*[!0-9]*)
+        echo "serial_cursor must be a non-empty numeric /serial cursor" >&2
+        exit 2
+        ;;
+esac
+
+case "$CAPTURE_MODE" in
+    auto|observe|read)
+        ;;
+    *)
+        echo "TALOS_SERIAL_CAPTURE_MODE must be auto, observe, or read" >&2
+        exit 2
+        ;;
+esac
+
+case "$SATURATION_LIMIT" in
+    ''|*[!0-9]*)
+        echo "TALOS_SERIAL_CURSOR_SATURATION_LIMIT must be numeric" >&2
+        exit 2
+        ;;
+esac
+
+if [ "$CAPTURE_MODE" = "auto" ] && [ "$SERIAL_CURSOR" -ge "$SATURATION_LIMIT" ]; then
+    CAPTURE_MODE=read
+elif [ "$CAPTURE_MODE" = "auto" ]; then
+    CAPTURE_MODE=observe
+fi
 
 start_epoch="$(date +%s)"
 attempts=0
@@ -29,16 +60,28 @@ while :; do
         break
     fi
 
-    payload="$(jq -n \
-        --argjson cursor "$observe_cursor" \
-        --argjson timeout_seconds "$remaining_seconds" \
-        --argjson settle_ms "$SETTLE_MS" \
-        --argjson max_bytes "$MAX_BYTES" \
-        '{cursor: $cursor, timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}')"
+    if [ "$CAPTURE_MODE" = "read" ]; then
+        payload="$(jq -n \
+            --argjson timeout_seconds "$remaining_seconds" \
+            --argjson settle_ms "$SETTLE_MS" \
+            --argjson max_bytes "$MAX_BYTES" \
+            '{timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}')"
 
-    response="$(curl -fsS -X POST -H 'Content-Type: application/json' \
-        --data "$payload" \
-        "${API_BASE}/serial/observe")"
+        response="$(curl -fsS -X POST -H 'Content-Type: application/json' \
+            --data "$payload" \
+            "${API_BASE}/serial/read")"
+    else
+        payload="$(jq -n \
+            --argjson cursor "$observe_cursor" \
+            --argjson timeout_seconds "$remaining_seconds" \
+            --argjson settle_ms "$SETTLE_MS" \
+            --argjson max_bytes "$MAX_BYTES" \
+            '{cursor: $cursor, timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}')"
+
+        response="$(curl -fsS -X POST -H 'Content-Type: application/json' \
+            --data "$payload" \
+            "${API_BASE}/serial/observe")"
+    fi
 
     attempts=$((attempts + 1))
     printf '%s\n' "$response" >> "$responses_file"
@@ -58,16 +101,20 @@ while :; do
         --argjson settle_ms "$SETTLE_MS" \
         --argjson max_bytes "$MAX_BYTES" \
         --argjson attempts "$attempts" \
+        --arg capture_mode "$CAPTURE_MODE" \
+        --argjson saturation_limit "$SATURATION_LIMIT" \
         '(if length == 0 then {} else .[-1] end) as $last
          | (map(.text // "") | add) as $text
+         | (map((.bytes // ((.text // "") | length)) | tonumber) | add) as $response_bytes
          | ($text | contains("TALOS: kernel_main")) as $has_kernel_main
          | ($text | contains($required_marker)) as $has_required_marker
          | ($text | contains("talos>")) as $has_prompt
          | ($has_kernel_main and $has_required_marker) as $ready
+         | (if $capture_mode == "read" then $response_bytes else ($cursor_end - $cursor_start) end) as $window_bytes
          | $last + {
              cursor_start: $cursor_start,
              cursor_end: $cursor_end,
-             bytes: ($cursor_end - $cursor_start),
+             bytes: $window_bytes,
              text: $text,
              truncated: (any(.[]; .truncated == true)),
              talos_runtime_readiness: {
@@ -76,7 +123,11 @@ while :; do
                  settle_ms: $settle_ms,
                  max_bytes: $max_bytes,
                  observe_attempts: $attempts,
-                 observe_contract: "deadline-loop-accumulated-from-fresh-cursor",
+                 observe_contract: (if $capture_mode == "read" then "deadline-loop-direct-read-after-saturated-cursor" else "deadline-loop-accumulated-from-fresh-cursor" end),
+                 capture_mode: $capture_mode,
+                 saturation_limit: $saturation_limit,
+                 start_cursor_saturated: ($cursor_start >= $saturation_limit),
+                 response_bytes: $response_bytes,
                  required_kernel_marker: "TALOS: kernel_main",
                  required_success_marker: $required_marker,
                  prompt_marker: "talos>",
@@ -84,7 +135,11 @@ while :; do
                  has_required_success_marker: $has_required_marker,
                  has_prompt_marker: $has_prompt,
                  valid_known_good_talos_readiness: $ready,
-                 classification: (if $ready then "valid-known-good-talos-readiness" else "known-good-fetch-observed-without-talos-readiness" end)
+                 classification: (
+                     if $ready then "valid-known-good-talos-readiness"
+                     elif $capture_mode == "read" and $response_bytes == 0 then "saturated-cursor-capture-blocked"
+                     else "known-good-fetch-observed-without-talos-readiness"
+                     end)
              }}' "$responses_file")"
 
     if printf '%s' "$annotated" |
@@ -107,13 +162,20 @@ if [ -z "$annotated" ]; then
         --argjson requested_timeout_seconds "$TIMEOUT_SECONDS" \
         --argjson settle_ms "$SETTLE_MS" \
         --argjson max_bytes "$MAX_BYTES" \
+        --argjson cursor_start "$SERIAL_CURSOR" \
+        --arg capture_mode "$CAPTURE_MODE" \
+        --argjson saturation_limit "$SATURATION_LIMIT" \
         '{talos_runtime_readiness: {
             requested_timeout_seconds: $requested_timeout_seconds,
             elapsed_seconds: 0,
             settle_ms: $settle_ms,
             max_bytes: $max_bytes,
             observe_attempts: 0,
-            observe_contract: "deadline-loop-accumulated-from-fresh-cursor",
+            observe_contract: (if $capture_mode == "read" then "deadline-loop-direct-read-after-saturated-cursor" else "deadline-loop-accumulated-from-fresh-cursor" end),
+            capture_mode: $capture_mode,
+            saturation_limit: $saturation_limit,
+            start_cursor_saturated: ($cursor_start >= $saturation_limit),
+            response_bytes: 0,
             required_kernel_marker: "TALOS: kernel_main",
             required_success_marker: $required_marker,
             prompt_marker: "talos>",
@@ -121,7 +183,7 @@ if [ -z "$annotated" ]; then
             has_required_success_marker: false,
             has_prompt_marker: false,
             valid_known_good_talos_readiness: false,
-            classification: "known-good-fetch-observed-without-talos-readiness"
+            classification: (if $capture_mode == "read" then "saturated-cursor-capture-blocked" else "known-good-fetch-observed-without-talos-readiness" end)
         }}')"
 fi
 
