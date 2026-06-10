@@ -1,0 +1,41 @@
+{
+  "task": "phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof-20260610",
+  "classification": "rp1-ethernet-gem-mid-decode-discriminator-capture-chain-blocked",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof.md",
+      "evidence_level": "task record"
+    },
+    {
+      "label": "candidate archive review",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/archive-review/candidate-review.txt",
+      "evidence_level": "image/archive/disassembly inspection"
+    },
+    {
+      "label": "control archive review",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/archive-review/control-review.txt",
+      "evidence_level": "image/archive/disassembly inspection"
+    },
+    {
+      "label": "candidate direct serial window",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/candidate-full-run/direct-serial-window-after-observe-stop.json",
+      "evidence_level": "serial hardware output"
+    },
+    {
+      "label": "candidate debug capture blocker",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/candidate-debug-run/capture-invariant-summary.json",
+      "evidence_level": "TFTP/capture-chain evidence"
+    },
+    {
+      "label": "control direct capture blocker",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/control-direct-run/direct-serial-window-after-observe-stop.json",
+      "evidence_level": "serial hardware output and capture-chain evidence"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/classification.json",
+      "evidence_level": "accepted blocker classification"
+    }
+  ]
+}

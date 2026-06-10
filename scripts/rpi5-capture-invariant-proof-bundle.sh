@@ -186,6 +186,7 @@ if [ "$DRY_RUN" = true ]; then
           hardware_actions: [],
           would_write: {
               evidence_dir: $evidence_dir,
+              pre_root: "pre-root.json",
               pre_status: "pre-status.json",
               pre_boot_files: "pre-boot-files.json",
               pre_snapshots: "pre-snapshots.json",
@@ -195,9 +196,11 @@ if [ "$DRY_RUN" = true ]; then
               power_cycle: "power-cycle.json",
               serial_observe_window: "serial-observe-window.json",
               tftp_delta_stable_pre_restore: "tftp-delta-stable-pre-restore.json",
+              final_pre_restore_root: "final-pre-restore-root.json",
               final_pre_restore_status: "final-pre-restore-status.json",
               final_pre_restore_boot_files: "final-pre-restore-boot-files.json",
               restore_snapshot: "restore-snapshot.json",
+              post_restore_root: "post-restore-root.json",
               post_restore_status: "post-restore-status.json",
               post_restore_boot_files: "post-restore-boot-files.json",
               summary: "capture-invariant-summary.json"
@@ -248,7 +251,8 @@ fi
 
 mkdir -p "$EVIDENCE_DIR"
 
-curl -fsS "${API_BASE}/status" > "$EVIDENCE_DIR/pre-status.json"
+curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/pre-root.json"
+curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/pre-status.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/pre-boot-files.json"
 curl -fsS "${API_BASE}/boot/snapshots" > "$EVIDENCE_DIR/pre-snapshots.json"
 
@@ -374,10 +378,12 @@ tftp_exit="$?"
 set -e
 printf '%s\n' "$tftp_exit" > "$EVIDENCE_DIR/tftp-delta-stable-pre-restore.exit"
 
-curl -fsS "${API_BASE}/status" > "$EVIDENCE_DIR/final-pre-restore-status.json"
+curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/final-pre-restore-status.json"
+curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/final-pre-restore-root.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/final-pre-restore-boot-files.json"
 curl -fsS -X POST "${API_BASE}/boot/restore?name=${RESTORE_SNAPSHOT}" > "$EVIDENCE_DIR/restore-snapshot.json"
-curl -fsS "${API_BASE}/status" > "$EVIDENCE_DIR/post-restore-status.json"
+curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/post-restore-root.json"
+curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/post-restore-status.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/post-restore-boot-files.json"
 
 jq -n \

@@ -155,3 +155,21 @@ classification/evidence JSON. It does not accept live GEM visibility, broad
 Ethernet MMIO readiness, Ethernet driver readiness, RP1 MMIO/DMA programming,
 descriptor rings, interrupts, clock/reset ownership, PHY reset ownership,
 packet I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
+
+## GEM MID Decode Discriminator Pi 5 Proof
+
+phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof-20260610 accepts
+only a precise capture-chain blocker. The selected candidate archive was
+published under hardwareTestLock and serial output showed the changed
+discriminator line: observed RP1 SYSINFO_CHIP_ID returned 0x20001927, while
+translated MACB_MID at 0x1f001000fc returned 0xdeaddead, yielding
+observed-rp1-positive-control-gem-mid-0x1f-window-sentinel.
+
+That serial line is not accepted as live GEM visibility or Ethernet readiness.
+The retained capture did not join into one decisive transaction with stable
+TFTP/final-identity/control-marker evidence, and this lab API exposed boot
+identity through /boot/files while GET / returned 404. The next step requires
+supervisor planning for capture-chain repair or a different bounded acceptance
+slice before any same-shaped Pi 5 retry. Ethernet driver readiness, packet
+I/O, DMA, interrupts, networking, sockets, SSH, Phase 12.2, and phase
+transition work remain unaccepted.

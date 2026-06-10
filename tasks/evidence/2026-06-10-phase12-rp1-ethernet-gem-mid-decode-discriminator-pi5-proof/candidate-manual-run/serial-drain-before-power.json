@@ -1,0 +1,16 @@
+{
+  "action": "serial drain before power",
+  "ok": true,
+  "talos_serial_drain": {
+    "contract_version": "pi5-capture-transaction-v2",
+    "attempts": 70,
+    "attempt_limit": 96,
+    "read_timeout_seconds": 1,
+    "settle_ms": 100,
+    "max_bytes_per_read": 65536,
+    "total_bytes": 769296,
+    "final_cursor": 4194304,
+    "empty_before_power": true,
+    "discriminator": "empty-read-before-power"
+  }
+}

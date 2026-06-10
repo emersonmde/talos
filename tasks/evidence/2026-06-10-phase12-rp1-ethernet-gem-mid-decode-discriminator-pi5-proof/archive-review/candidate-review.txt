@@ -1,0 +1,10 @@
+candidate_archive=target/talos-rpi5-rp1-ethernet-gem-mid-decode-discriminator-candidate-boot.tar.gz
+candidate_archive_sha256=2c9911fa85b101b6a9239b3d5375f58944bd2c3a2d4d1b3afa71d40ae8f95793
+kernel_2712_sha256=b8f9416c328c8bf59f14ec47f8067b303e72cbb4b2e42c6a61df5b546cce9790
+kernel_2712_size=49152
+header_image_size=49152
+text_offset=0
+flags=12
+candidate_marker=TALOS: rp1-ethernet-gem-mid-decode-discriminator-candidate
+capture_nonce=gemdisc-20260610T0349Z
+forbidden_rp1_ethernet_gem_mid_decode_discriminator_candidate_runtime_strings_absent=true

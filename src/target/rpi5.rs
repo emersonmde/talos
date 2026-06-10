@@ -12744,6 +12744,7 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_read",
         talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_read",
         talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_visibility_candidate",
+        talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_decode_discriminator_candidate",
         talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
         talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",
         talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_read",
@@ -14490,6 +14491,130 @@ pub fn run_rp1_ethernet_gem_mid_visibility_no_mmio_control() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_decode_discriminator_candidate")]
+pub fn run_rp1_ethernet_gem_mid_decode_discriminator_candidate() -> ! {
+    const MACB_MID: usize = 0x1f_0010_00fc;
+
+    write_early_static("rpi5-rp1-ethernet-gem-mid-decode-discriminator-candidate: start\n");
+    write_early_static(
+        "rpi5-rp1-ethernet-gem-mid-decode-discriminator-candidate: before-observed-sysinfo-and-gem-mid-read-only-volatile-loads\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    let observed_sysinfo_chip_id = read_rp1_reg_u32(RP1_SYSINFO_OBSERVED_APERTURE_CHIP_ID);
+    let raw = read_rp1_reg_u32(MACB_MID);
+    let idnum = (raw >> 16) & 0x0fff;
+    let rev = raw & 0xffff;
+    let sysinfo_matches_expected = observed_sysinfo_chip_id == RP1_EXPECTED_CHIP_ID;
+    let sysinfo_is_deaddead = observed_sysinfo_chip_id == 0xdead_dead;
+    let gem_mid_is_deaddead = raw == 0xdead_dead;
+    let classification = classify_rp1_ethernet_gem_mid_decode_discriminator(
+        sysinfo_matches_expected,
+        sysinfo_is_deaddead,
+        gem_mid_is_deaddead,
+        raw,
+    );
+
+    loop {
+        write_early_static("TALOS: rp1-ethernet-gem-mid-decode-discriminator-candidate");
+        write_rp1_ethernet_gem_mid_decode_discriminator_capture_nonce();
+        write_rp1_ethernet_gem_mid_decode_discriminator_common("candidate");
+        write_early_static(" same-run-required=true changed-from-gem-mid-only-proof=true");
+        write_early_static(" observed-positive-control-register=SYSINFO_CHIP_ID");
+        write_early_static(" observed-positive-control-cpu-physical-target=");
+        write_early_hex_u64(RP1_SYSINFO_OBSERVED_APERTURE_CHIP_ID as u64);
+        write_early_static(" observed-positive-control-expected=");
+        write_early_hex_u64(RP1_EXPECTED_CHIP_ID as u64);
+        write_early_static(" observed-positive-control-raw=");
+        write_early_hex_u64(observed_sysinfo_chip_id as u64);
+        write_early_static(" observed-positive-control-matches-expected=");
+        write_bool(sysinfo_matches_expected);
+        write_early_static(" observed-positive-control-is-deaddead=");
+        write_bool(sysinfo_is_deaddead);
+        write_early_static(" compatible=raspberrypi,rp1-gem,cdns,macb");
+        write_early_static(" controller=rp1_eth register=MACB_MID");
+        write_early_static(" rp1-bus-base=");
+        write_early_hex_u64(0xc0_4010_0000);
+        write_early_static(" cpu-physical-base=");
+        write_early_hex_u64(0x1f_0010_0000);
+        write_early_static(" offset=");
+        write_early_hex_u64(0x00fc);
+        write_early_static(" rp1-bus-target=");
+        write_early_hex_u64(0xc0_4010_00fc);
+        write_early_static(" cpu-physical-target=");
+        write_early_hex_u64(MACB_MID as u64);
+        write_early_static(" width=32 endianness=little-endian access=read-only-volatile-load");
+        write_early_static(" raw=");
+        write_early_hex_u64(raw as u64);
+        write_early_static(" idnum=");
+        write_early_hex_u64(idnum as u64);
+        write_early_static(" rev=");
+        write_early_hex_u64(rev as u64);
+        write_early_static(" raw-is-zero=");
+        write_bool(raw == 0);
+        write_early_static(" raw-is-all-ones=");
+        write_bool(raw == 0xffff_ffff);
+        write_early_static(" raw-is-deaddead=");
+        write_bool(gem_mid_is_deaddead);
+        write_rp1_ethernet_gem_mid_decode_discriminator_rejections();
+        write_early_static(" classification=");
+        write_early_static(classification);
+        write_early_static("\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_decode_discriminator_no_mmio_control")]
+pub fn run_rp1_ethernet_gem_mid_decode_discriminator_no_mmio_control() -> ! {
+    write_early_static("rpi5-rp1-ethernet-gem-mid-decode-discriminator-control: start\n");
+    write_early_static(
+        "rpi5-rp1-ethernet-gem-mid-decode-discriminator-control: no-observed-rp1-no-ethernet-no-mmio-target-construction\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-ethernet-gem-mid-decode-discriminator-control");
+        write_rp1_ethernet_gem_mid_decode_discriminator_capture_nonce();
+        write_rp1_ethernet_gem_mid_decode_discriminator_common("no-mmio-no-ethernet-control");
+        write_early_static(" same-run-required=true changed-from-gem-mid-only-proof=true");
+        write_early_static(" observed-positive-control-register=none");
+        write_early_static(" observed-positive-control-cpu-physical-target=not-constructed");
+        write_early_static(" observed-positive-control-expected=none");
+        write_early_static(" observed-positive-control-raw=none");
+        write_early_static(" observed-positive-control-matches-expected=false");
+        write_early_static(" observed-positive-control-is-deaddead=false");
+        write_early_static(" compatible=none controller=none register=MACB_MID");
+        write_early_static(" rp1-bus-base=none cpu-physical-base=none offset=none");
+        write_early_static(" rp1-bus-target=none cpu-physical-target=not-constructed");
+        write_early_static(" width=32 endianness=little-endian access=not-constructed");
+        write_early_static(" raw=none idnum=none rev=none");
+        write_early_static(" raw-is-zero=false raw-is-all-ones=false raw-is-deaddead=false");
+        write_rp1_ethernet_gem_mid_decode_discriminator_rejections();
+        write_early_static(
+            " classification=no-mmio-no-ethernet-rp1-ethernet-gem-mid-decode-discriminator-control\n",
+        );
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_decode_discriminator_candidate")]
+fn classify_rp1_ethernet_gem_mid_decode_discriminator(
+    sysinfo_matches_expected: bool,
+    sysinfo_is_deaddead: bool,
+    gem_mid_is_deaddead: bool,
+    gem_mid_raw: u32,
+) -> &'static str {
+    if sysinfo_matches_expected && gem_mid_is_deaddead {
+        "observed-rp1-positive-control-gem-mid-0x1f-window-sentinel"
+    } else if sysinfo_matches_expected && gem_mid_raw != 0 && gem_mid_raw != 0xffff_ffff {
+        "observed-rp1-positive-control-and-gem-mid-visible"
+    } else if sysinfo_is_deaddead {
+        "observed-rp1-positive-control-sentinel"
+    } else {
+        "inconclusive-capture"
+    }
+}
+
 #[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_visibility_candidate")]
 fn classify_rp1_ethernet_gem_mid(raw: u32) -> &'static str {
     if raw == 0xdead_dead {
@@ -14537,6 +14662,55 @@ fn write_rp1_ethernet_gem_mid_capture_nonce() {
     talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_visibility_no_mmio_control"
 ))]
 fn write_rp1_ethernet_gem_mid_rejections() {
+    write_early_static(
+        " rejected-runtime-hardware-claims=ethernet-driver-readiness,broad-live-ethernet-mmio-readiness,rp1-mmio-dma-programming,descriptor-rings,dma-ownership,transfer-completion,interrupt-completion,clock-reset-ownership,phy-reset-ownership,packet-io,networking,sockets,ssh,phase-12-2,phase-transition",
+    );
+    write_early_static(
+        " retained-risks=no-clock-reset-ownership,no-phy-reset-ownership,no-descriptor-ring-layout-or-ownership,no-live-dma-proof,no-packet-io,no-network-stack",
+    );
+    write_early_static(" claims-ethernet-ready=false claims-broad-mmio-ready=false");
+    write_early_static(" claims-rp1-mmio-dma-programming=false claims-descriptor-rings=false");
+    write_early_static(" claims-dma-ownership=false claims-transfer-completion=false");
+    write_early_static(" claims-interrupt-completion=false claims-clock-reset-ownership=false");
+    write_early_static(" claims-phy-ownership=false claims-packet-io=false");
+    write_early_static(" claims-networking=false claims-sockets=false claims-ssh=false");
+    write_early_static(" claims-phase-12-2=false claims-phase-transition=false");
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_decode_discriminator_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_decode_discriminator_no_mmio_control"
+))]
+fn write_rp1_ethernet_gem_mid_decode_discriminator_common(report_kind: &str) {
+    write_early_static(
+        " decode-discriminator-report-contract-id=phase12-rp1-ethernet-gem-mid-decode-discriminator-contract-v1",
+    );
+    write_early_static(" source-contract-id=phase12-rp1-ethernet-gem-mid-source-contract-20260609");
+    write_early_static(" report-kind=");
+    write_early_static(report_kind);
+    write_early_static(
+        " hardware-proof-boundary-classification=hardware-proof-limited-to-observed-sysinfo-gem-mid-discriminator-control-output",
+    );
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_decode_discriminator_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_decode_discriminator_no_mmio_control"
+))]
+fn write_rp1_ethernet_gem_mid_decode_discriminator_capture_nonce() {
+    if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
+        if !nonce.is_empty() {
+            write_early_static(" capture-nonce=");
+            write_early_static(nonce);
+        }
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_decode_discriminator_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_decode_discriminator_no_mmio_control"
+))]
+fn write_rp1_ethernet_gem_mid_decode_discriminator_rejections() {
     write_early_static(
         " rejected-runtime-hardware-claims=ethernet-driver-readiness,broad-live-ethernet-mmio-readiness,rp1-mmio-dma-programming,descriptor-rings,dma-ownership,transfer-completion,interrupt-completion,clock-reset-ownership,phy-reset-ownership,packet-io,networking,sockets,ssh,phase-12-2,phase-transition",
     );
@@ -17142,6 +17316,8 @@ fn gpio14_ownership_preflight_classification(
     talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_visibility_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_visibility_no_mmio_control",
+    talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_decode_discriminator_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_decode_discriminator_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
     talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",

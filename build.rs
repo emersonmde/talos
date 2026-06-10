@@ -273,6 +273,16 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "rpi5_rp1_ethernet_gem_mid_decode_discriminator_candidate",
+        implied_values: &[],
+        asm_defines: &[],
+    },
+    BootScenario {
+        value: "rpi5_rp1_ethernet_gem_mid_decode_discriminator_no_mmio_control",
+        implied_values: &[],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "rpi5_rp1_pcie2_host_link_status_read",
         implied_values: &[],
         asm_defines: &[],

@@ -1,0 +1,51 @@
+{
+  "task": "phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof-20260610",
+  "status": "accepted",
+  "classification": "rp1-ethernet-gem-mid-decode-discriminator-capture-chain-blocked",
+  "candidate_observed": {
+    "marker": "TALOS: rp1-ethernet-gem-mid-decode-discriminator-candidate",
+    "observed_positive_control_raw": "0x20001927",
+    "observed_positive_control_matches_expected": true,
+    "gem_mid_raw": "0xdeaddead",
+    "candidate_classification": "observed-rp1-positive-control-gem-mid-0x1f-window-sentinel",
+    "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/candidate-full-run/direct-serial-window-after-observe-stop.json"
+  },
+  "accepted_blocker": {
+    "summary": "Candidate serial output showed the changed discriminator result, but the evidence did not join into one decisive capture transaction. Control hardware marker visibility also stopped at the serial-observe capture boundary.",
+    "reasons": [
+      "GET / returned 404 on this lab API instance; /boot/files retained boot identity instead",
+      "generic capture bundle stopped before complete serial/TFTP/final-identity replay on full candidate/control attempts",
+      "candidate debug replay was identity-join rejected with missing expected TFTP fetch and final identity mismatch",
+      "candidate manual retry stopped during serial drain after an empty /serial/read response file",
+      "control direct retry stopped at serial observe with no retained control marker"
+    ]
+  },
+  "archive_reviews": {
+    "candidate": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/archive-review/candidate-review.txt",
+    "control": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/archive-review/control-review.txt"
+  },
+  "snapshot": {
+    "name": "pre-gem-mid-decode-discriminator-proof-20260610T0402Z",
+    "created": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/pre-run-snapshot-create.json",
+    "final_restore_identity": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof/final-lab-root-before-lock-release.json"
+  },
+  "rejected_claims": [
+    "live GEM visibility",
+    "broad Ethernet MMIO readiness",
+    "Ethernet driver readiness",
+    "RP1 MMIO/DMA programming",
+    "descriptor rings",
+    "DMA ownership",
+    "transfer completion",
+    "interrupt completion",
+    "clock/reset ownership",
+    "PHY reset ownership",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "nextAction": "Supervisor planning required for a capture-chain repair or a different bounded acceptance slice. Do not retry the same-shaped hardware proof, implement Ethernet behavior, or start Phase 12.2 from this blocker."
+}
