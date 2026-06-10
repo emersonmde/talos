@@ -1789,7 +1789,10 @@ mod tests {
             evidence.rejected_runtime_claims,
             RP1_ETHERNET_GEM_MID_REJECTED_RUNTIME_CLAIMS
         );
-        assert_eq!(evidence.retained_risks, RP1_ETHERNET_GEM_MID_RETAINED_RISKS);
+        assert_eq!(
+            evidence.retained_risks,
+            RP1_ETHERNET_OBSERVED_WINDOW_RETAINED_RISKS
+        );
         assert!(!evidence.claims_ethernet_ready);
         assert!(!evidence.claims_broad_mmio_ready);
         assert!(!evidence.claims_rp1_mmio_dma_programming);

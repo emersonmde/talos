@@ -9190,6 +9190,19 @@ Ethernet MMIO target. This is not live GEM visibility, broad Ethernet MMIO
 readiness, Ethernet driver readiness, RP1 MMIO writes, DMA/descriptors,
 interrupts, networking, sockets, SSH, Phase 12.2, or a phase transition.
 
+phase12-rp1-ethernet-observed-window-discriminator-core-20260610 and closeout
+phase12-rp1-ethernet-observed-window-discriminator-closeout-20260610 accept
+the local/static observed-window candidate/control report surface and select
+the serialized Pi 5 proof as the next bounded task. The proof must acquire
+hardwareTestLock and join candidate/control evidence through selected-tree
+identity, expected TFTP fetch bytes, run-unique serial marker freshness, final
+pre-restore identity, restore proof, and task-owned JSON. It may classify only
+an observed-window visible read, observed-window sentinel/fault with SYSINFO
+positive-control retained, or a precise staging/capture blocker, and still
+does not accept broad Ethernet readiness, driver readiness, packet I/O, DMA,
+descriptor rings, interrupts, networking, sockets, SSH, Phase 12.2, or a phase
+transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

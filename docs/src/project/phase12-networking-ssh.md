@@ -247,3 +247,24 @@ local/static implementation only; it does not accept live GEM visibility,
 broad Ethernet MMIO readiness, Ethernet driver readiness, RP1 MMIO writes,
 DMA, descriptor rings, interrupts, clock/reset/PHY/MDIO ownership, packet I/O,
 networking, sockets, SSH, Phase 12.2, or a phase transition.
+
+## Observed-Window GEM MID Discriminator Closeout
+
+phase12-rp1-ethernet-observed-window-discriminator-closeout-20260610
+reconciles the accepted contract and local/static report core without
+expanding acceptance to hardware visibility or Ethernet readiness. The
+checkpoint preserves candidate reporting for SYSINFO_CHIP_ID at
+0x1c00000000 / 0x20001927, observed-window MACB_MID at 0x1c001000fc, and
+translated-window comparator 0x1f001000fc, plus the paired no-MMIO/no-Ethernet
+control path.
+
+The checkpoint selects the serialized Pi 5 observed-window proof as the next
+bounded task. That proof must acquire hardwareTestLock and join
+candidate/control evidence through selected-tree identity, expected TFTP fetch
+bytes, run-unique serial marker freshness, final pre-restore identity, restore
+proof, and task-owned JSON. It may classify only an observed-window visible
+read, an observed-window sentinel/fault with SYSINFO positive-control retained,
+or a precise staging/capture blocker. It still does not accept broad Ethernet
+MMIO readiness, Ethernet driver readiness, RP1 MMIO writes, DMA, descriptor
+rings, interrupts, clock/reset/PHY/MDIO ownership, packet I/O, networking,
+sockets, SSH, Phase 12.2, or a phase transition.

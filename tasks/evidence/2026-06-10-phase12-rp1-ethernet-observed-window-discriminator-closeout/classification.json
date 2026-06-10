@@ -1,0 +1,71 @@
+{
+  "task_id": "phase12-rp1-ethernet-observed-window-discriminator-closeout-20260610",
+  "classification": "rp1-ethernet-observed-window-discriminator-closeout-accepted",
+  "evidence_level": "static inspection plus focused unit test correction",
+  "accepted_contract_task": "phase12-rp1-ethernet-observed-window-contract-20260610",
+  "accepted_contract_commit": "be5371ef16e20d9274384093f3846011a5677ec8",
+  "accepted_core_task": "phase12-rp1-ethernet-observed-window-discriminator-core-20260610",
+  "accepted_core_commit": "160c1a90c170742859835ba96a8790f112115d5e",
+  "selected_next_task": "phase12-rp1-ethernet-observed-window-discriminator-pi5-proof-20260610",
+  "proof_readiness": "ready",
+  "candidate_report": {
+    "classification": "local-static-rp1-ethernet-observed-window-gem-mid-candidate",
+    "sysinfo_positive_control_target": "0x1c00000000",
+    "sysinfo_positive_control_expected_value": "0x20001927",
+    "observed_window_macb_mid_target": "0x1c001000fc",
+    "translated_window_comparator_target": "0x1f001000fc",
+    "translated_window_comparator_role": "comparator-sentinel-only",
+    "hardware_proof_boundary_classification": "hardware-proof-limited-to-observed-window-gem-mid-discriminator-control-output"
+  },
+  "control_report": {
+    "classification": "no-mmio-no-ethernet-rp1-ethernet-observed-window-control",
+    "constructs_sysinfo_target": false,
+    "constructs_observed_window_target": false,
+    "constructs_translated_comparator_target": false,
+    "constructs_ethernet_mmio_target": false
+  },
+  "hardware_proof_requirements": [
+    "hardwareTestLock-owner-task-acquire-release-restore",
+    "candidate-lab-api-identity-and-selected-tree",
+    "fresh-serial-cursor-before-candidate-and-control",
+    "candidate-control-tftp-delta",
+    "candidate-control-joined-identity",
+    "final-pre-restore-identity",
+    "restore-proof",
+    "task-owned-classification-and-evidence-map-json"
+  ],
+  "allowed_proof_result_classes": [
+    "observed-window-macb-mid-visible-read",
+    "observed-window-sentinel-or-fault-with-sysinfo-positive-control-retained",
+    "precise-staging-or-capture-blocker"
+  ],
+  "accepted_claims": [
+    "local-static-observed-window-discriminator-core-reconciled",
+    "focused-test-risk-assertion-corrected",
+    "serialized-read-only-observed-window-pi5-proof-selected"
+  ],
+  "rejected_claims": [
+    "live-gem-visibility",
+    "broad-ethernet-mmio-readiness",
+    "ethernet-driver-readiness",
+    "rp1-mmio-writes",
+    "rp1-dma-programming",
+    "descriptor-rings",
+    "interrupts",
+    "clock-reset-ownership",
+    "phy-mdio-ownership",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "retained_risks": [
+    "observed-window-target-may-still-return-sentinel-or-fault",
+    "pci-rp1-bridge-or-address-window-ownership-unaccepted",
+    "ethernet-clock-reset-and-phy-mdio-ownership-unaccepted",
+    "single-read-only-discriminator-is-not-broad-ethernet-readiness"
+  ],
+  "nextAction": "Mechanically promote phase12-rp1-ethernet-observed-window-discriminator-pi5-proof-20260610 on the next worker wake if hardwareTestLock remains unlocked."
+}

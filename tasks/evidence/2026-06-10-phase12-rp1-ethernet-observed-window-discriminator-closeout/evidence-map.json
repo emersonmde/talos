@@ -1,0 +1,52 @@
+{
+  "task_id": "phase12-rp1-ethernet-observed-window-discriminator-closeout-20260610",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-observed-window-discriminator-closeout.md",
+      "evidence_level": "static closeout task record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-observed-window-discriminator-closeout/classification.json",
+      "evidence_level": "static closeout classification"
+    },
+    {
+      "label": "accepted observed-window contract",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-observed-window-contract.md",
+      "evidence_level": "accepted source/evidence contract"
+    },
+    {
+      "label": "accepted observed-window discriminator core",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-observed-window-discriminator-core.md",
+      "evidence_level": "accepted local/static implementation"
+    },
+    {
+      "label": "implementation and focused tests",
+      "path": "src/rp1_ethernet.rs",
+      "evidence_level": "local/static source and unit tests"
+    },
+    {
+      "label": "project doc",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "evidence_level": "architecture documentation"
+    },
+    {
+      "label": "roadmap",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "roadmap documentation"
+    },
+    {
+      "label": "focused test command",
+      "command": "cargo -Zjson-target-spec test --quiet rp1_ethernet",
+      "result": "passed",
+      "evidence_level": "unit tests"
+    },
+    {
+      "label": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed",
+      "evidence_level": "docs validation"
+    }
+  ]
+}
