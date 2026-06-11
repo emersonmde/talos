@@ -1,0 +1,153 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof-20260610",
+  "classification": "rp1-ethernet-gpio32-phy-reset-blocked-unexpected-event-state",
+  "evidence_level": "static archive/image inspection, lab-controller API, serial hardware boot/output, stable TFTP delta, and restore proof",
+  "accepted_gpio32_write_restore": false,
+  "accepted_boundary": "candidate/control evidence accepted only as a precise blocked/no-write result; no GPIO32 ownership or PHY reset assertion/deassertion success is accepted",
+  "pre_run": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "configured_kernel": "kernel_2712.img"
+  },
+  "candidate": {
+    "capture_nonce": "gpio32-write-v2-candidate-20260611T013204Z",
+    "archive_review": "candidate_archive=tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/archives/candidate.tar.gz\ncandidate_archive_sha256=730e1986ed3278016d09e7699590e11778aefd645bb6386aac6c5b4899b664d2\nkernel_2712_sha256=c5c874eab5c7bf76a4d5d24306c98aa67eb0bb1b374708aa4c8aa621c555225c\nkernel_2712_size=51536\nheader_image_size=51536\ntext_offset=0\nflags=12\n",
+    "selected_tree_hash": "37ce442ce6984499087c555a11593f41c8199f19935b92f9979c40ce2593c2f9",
+    "effective_kernel": "kernel_2712.img",
+    "serial_window": {
+      "requested_timeout_seconds": 90,
+      "elapsed_seconds": 31,
+      "settle_ms": 1000,
+      "max_bytes": 65536,
+      "observe_attempts": 6,
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+      "capture_mode": "read",
+      "saturation_limit": 4194304,
+      "start_cursor_saturated": true,
+      "response_bytes": 70009,
+      "required_marker": "TALOS: rp1-ethernet-gpio32-phy-reset-write-restore-candidate capture-nonce=gpio32-write-v2-candidate-20260611T013204Z",
+      "kernel_marker": "TALOS: kernel_main",
+      "firmware_network_marker": "NETWORK",
+      "has_kernel_main": false,
+      "has_required_marker": true,
+      "has_firmware_network": true,
+      "firmware_network_occurrences": 2,
+      "required_marker_occurrences": 22,
+      "marker_nonce": "gpio32-write-v2-candidate-20260611T013204Z",
+      "nonce_token": "capture-nonce=gpio32-write-v2-candidate-20260611T013204Z",
+      "nonce_token_occurrences": 22,
+      "required_marker_excerpt": "se classification=rp1-ethernet-gpio32-phy-reset-blocked-unexpected-event-state\r\nTALOS: rp1-ethernet-gpio32-phy-reset-write-restore-candidate capture-nonce=gpio32-write-v2-candidate-20260611T013204Z write-restore-report-contract-id=phase12-rp1-ethernet-gpio32-phy-reset-write-restore-report-contract-v1 source-contract-id=phase12-rp1-ethernet-gpio32-phy-rese"
+    },
+    "tftp_event_count": 13,
+    "tftp_stability": {
+      "stable": true,
+      "reason": "stable",
+      "stable_samples": 3,
+      "required_samples": 3
+    },
+    "classifications_observed": [
+      "classification=hardware-proof-limited-to-gpio32-phy-reset-write-restore-control-output",
+      "classification=rp1-ethernet-gpio32-phy-reset-blocked-unexpected-event-state"
+    ],
+    "writes_performed_observed": [
+      "writes-performed=false"
+    ],
+    "observed_state": {
+      "baseline_status": [
+        "baseline-status=0xabe3300"
+      ],
+      "baseline_ctrl": [
+        "baseline-ctrl=0x85"
+      ],
+      "baseline_out": [
+        "baseline-out=0x10"
+      ],
+      "baseline_oe": [
+        "baseline-oe=0x10"
+      ],
+      "baseline_in": [
+        "baseline-in=0x12"
+      ],
+      "event_bits": [
+        "event-bits=0xab00000"
+      ],
+      "touched_fields": [
+        "touched-fields=RIO1_OUT.bit4,RIO1_OE.bit4"
+      ]
+    }
+  },
+  "control": {
+    "capture_nonce": "gpio32-write-v2-control-20260611T013204Z",
+    "archive_review": "control_archive=tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/archives/control.tar.gz\ncontrol_archive_sha256=652109230a338db3b2bc5b2cc2dff9e4e3dc49ef9dbc98d1748d21fd00e4f743\nkernel_2712_sha256=cb155f165238e683ab351fb0a6865d5e5563519566980b38722b66dd9a99f49f\nkernel_2712_size=49560\nheader_image_size=49560\ntext_offset=0\nflags=12\n",
+    "selected_tree_hash": "8abf03022ad41ca3e1de9d59c845cf186eed62a3736938e04292b90a203da9b8",
+    "effective_kernel": "kernel_2712.img",
+    "serial_window": {
+      "requested_timeout_seconds": 90,
+      "elapsed_seconds": 31,
+      "settle_ms": 1000,
+      "max_bytes": 65536,
+      "observe_attempts": 7,
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+      "capture_mode": "read",
+      "saturation_limit": 4194304,
+      "start_cursor_saturated": true,
+      "response_bytes": 70659,
+      "required_marker": "TALOS: rp1-ethernet-gpio32-phy-reset-write-restore-control capture-nonce=gpio32-write-v2-control-20260611T013204Z",
+      "kernel_marker": "TALOS: kernel_main",
+      "firmware_network_marker": "NETWORK",
+      "has_kernel_main": false,
+      "has_required_marker": true,
+      "has_firmware_network": true,
+      "firmware_network_occurrences": 2,
+      "required_marker_occurrences": 21,
+      "marker_nonce": "gpio32-write-v2-control-20260611T013204Z",
+      "nonce_token": "capture-nonce=gpio32-write-v2-control-20260611T013204Z",
+      "nonce_token_occurrences": 21,
+      "required_marker_excerpt": "assification=no-gpio-write-no-ethernet-rp1-ethernet-gpio32-phy-reset-control\r\nTALOS: rp1-ethernet-gpio32-phy-reset-write-restore-control capture-nonce=gpio32-write-v2-control-20260611T013204Z write-restore-report-contract-id=phase12-rp1-ethernet-gpio32-phy-reset-write-restore-report-contract-v1 source-contract-id=phase12-rp1-ethernet-gpio32-phy-reset-"
+    },
+    "tftp_event_count": 13,
+    "tftp_stability": {
+      "stable": true,
+      "reason": "stable",
+      "stable_samples": 3,
+      "required_samples": 3
+    },
+    "classifications_observed": [
+      "classification=hardware-proof-limited-to-gpio32-phy-reset-write-restore-control-output",
+      "classification=no-gpio-write-no-ethernet-rp1-ethernet-gpio32-phy-reset-control"
+    ],
+    "writes_performed_observed": [
+      "writes-performed=false"
+    ]
+  },
+  "final_restore": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "configured_kernel": "kernel_2712.img"
+  },
+  "hardware_lock": {
+    "locked": false,
+    "owner": "worker",
+    "taskId": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof-20260610",
+    "acquiredAt": "2026-06-11T01:33:22Z",
+    "releasedAt": "2026-06-11T01:36:05Z",
+    "restored": true,
+    "note": "Released after GPIO32 write/restore v2 Pi 5 proof restored the pre-run snapshot and retained final status/files evidence. Candidate and control both produced serial/TFTP evidence; candidate classified blocked-unexpected-event-state with writes-performed=false."
+  },
+  "rejected_claims": [
+    "GPIO32 write/restore success",
+    "GPIO32 ownership",
+    "PHY reset assertion/deassertion proof",
+    "MDIO/PHY ownership",
+    "Ethernet driver readiness",
+    "DMA/descriptors",
+    "interrupt completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "next_action": "Mechanically promote phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout-20260610 on the next worker wake. Close out the precise blocked/no-write result before any same-shaped GPIO32 write/restore rerun or any MDIO/PHY follow-up."
+}

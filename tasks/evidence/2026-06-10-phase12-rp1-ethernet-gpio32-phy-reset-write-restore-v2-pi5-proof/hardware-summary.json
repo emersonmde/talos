@@ -1,0 +1,12 @@
+{
+  "candidate_has_marker": true,
+  "candidate_marker_occurrences": 22,
+  "candidate_nonce_occurrences": 22,
+  "candidate_tftp_events": 13,
+  "control_has_marker": true,
+  "control_marker_occurrences": 21,
+  "control_nonce_occurrences": 21,
+  "control_tftp_events": 13,
+  "final_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "final_effective_kernel": "kernel_2712.img"
+}

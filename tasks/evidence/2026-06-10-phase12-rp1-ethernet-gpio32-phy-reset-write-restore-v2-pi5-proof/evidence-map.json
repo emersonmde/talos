@@ -1,0 +1,86 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof-20260610",
+  "classification": "rp1-ethernet-gpio32-phy-reset-blocked-unexpected-event-state",
+  "evidence": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof.md",
+      "evidence_level": "task record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/classification.json",
+      "evidence_level": "classification over serial hardware boot/output and lab-controller API"
+    },
+    {
+      "label": "capture summary",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/capture-summary.json",
+      "evidence_level": "artifact summary"
+    },
+    {
+      "label": "candidate archive review",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/archive-review/candidate-review.txt",
+      "evidence_level": "static archive/image inspection"
+    },
+    {
+      "label": "control archive review",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/archive-review/control-review.txt",
+      "evidence_level": "static archive/image inspection"
+    },
+    {
+      "label": "candidate serial window",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/candidate-run/serial-window.json",
+      "evidence_level": "serial hardware boot/output"
+    },
+    {
+      "label": "candidate TFTP delta",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/candidate-run/tftp-delta.json",
+      "evidence_level": "lab-controller API stable TFTP delta"
+    },
+    {
+      "label": "candidate selected-tree status",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/candidate-run/post-stage-status.json",
+      "evidence_level": "lab-controller API boot identity"
+    },
+    {
+      "label": "control serial window",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/control-run/serial-window.json",
+      "evidence_level": "serial hardware boot/output"
+    },
+    {
+      "label": "control TFTP delta",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/control-run/tftp-delta.json",
+      "evidence_level": "lab-controller API stable TFTP delta"
+    },
+    {
+      "label": "control selected-tree status",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/control-run/post-stage-status.json",
+      "evidence_level": "lab-controller API boot identity"
+    },
+    {
+      "label": "final restore status",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/restore/final-status.json",
+      "evidence_level": "lab-controller API restore proof"
+    },
+    {
+      "label": "hardware lock released",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/hardware-lock-released.json",
+      "evidence_level": "durable state and local evidence"
+    }
+  ],
+  "rejected_claims": [
+    "GPIO32 write/restore success",
+    "GPIO32 ownership",
+    "PHY reset assertion/deassertion proof",
+    "MDIO/PHY ownership",
+    "Ethernet driver readiness",
+    "DMA/descriptors",
+    "interrupt completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ]
+}

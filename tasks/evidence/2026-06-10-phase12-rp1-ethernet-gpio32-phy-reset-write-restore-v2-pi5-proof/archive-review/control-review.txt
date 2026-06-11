@@ -1,0 +1,7 @@
+control_archive=tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/archives/control.tar.gz
+control_archive_sha256=652109230a338db3b2bc5b2cc2dff9e4e3dc49ef9dbc98d1748d21fd00e4f743
+kernel_2712_sha256=cb155f165238e683ab351fb0a6865d5e5563519566980b38722b66dd9a99f49f
+kernel_2712_size=49560
+header_image_size=49560
+text_offset=0
+flags=12

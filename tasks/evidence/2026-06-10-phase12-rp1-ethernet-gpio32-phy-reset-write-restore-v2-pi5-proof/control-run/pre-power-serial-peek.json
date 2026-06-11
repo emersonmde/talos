@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "aHktcmVzZXQtd3JpdGUtcmVzdG9yZS1jb250cm9sLW91dHB1dCB0YXJnZXQ9cnAxLWV0aGVybmV0LWdwaW8zMi1ldGgtcnN0LW4td3JpdGUtcmVzdG9yZSBncGlvLWNvbnRyb2xsZXI9cnAxX2dwaW8gZ3Bpby1saW5lPTMyIHNpZ25hbD1FVEhfUlNUX04gYmFuaz1iYW5rMSBiYW5rLWxvY2FsLWJpdD00IGFjdGl2ZS1sb3c9dHJ1ZSByZXNldC1kdXJhdGlvbi1tcz01IGdwaW8zMi1zdGF0dXMtYWRkcmVzcz0weDFjMDAwZDQwMjAgZ3BpbzMyLWN0cmwtYWRkcmVzcz0weDFjMDAwZDQwMjQgcmlvMS1vdXQtYWRkcmVzcz0weDFjMDAwZTQwMDAgcmlvMS1vZS1hZGRyZXNzPTB4MWMwMDBlNDAwNCByaW8xLWluLWFkZHJlc3M9MHgxYzAwMGU0MDA4IGdwaW8zMi1wYWQtYWRkcmVzcz0weDFjMDAwZjQwMTQgYmFzZWxpbmUtc3RhdHVzPTB4YWJlMzMwMCBiYXNlbGluZS1jdHJsPTB4ODUgYmFzZWxpbmUtb3V0PTB4MTAgYmFzZWxpbmUtb2U9MHgxMCBiYXNlbGluZS1pbj0weDEyIGJhc2VsaW4=",
+  "bytes": 500,
+  "cursor": 4194304,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "hy-reset-write-restore-control-output target=rp1-ethernet-gpio32-eth-rst-n-write-restore gpio-controller=rp1_gpio gpio-line=32 signal=ETH_RST_N bank=bank1 bank-local-bit=4 active-low=true reset-duration-ms=5 gpio32-status-address=0x1c000d4020 gpio32-ctrl-address=0x1c000d4024 rio1-out-address=0x1c000e4000 rio1-oe-address=0x1c000e4004 rio1-in-address=0x1c000e4008 gpio32-pad-address=0x1c000f4014 baseline-status=0xabe3300 baseline-ctrl=0x85 baseline-out=0x10 baseline-oe=0x10 baseline-in=0x12 baselin"
+}

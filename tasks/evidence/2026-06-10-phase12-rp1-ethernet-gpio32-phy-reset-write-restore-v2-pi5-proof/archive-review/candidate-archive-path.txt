@@ -1,0 +1,1 @@
+tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/archives/candidate.tar.gz
