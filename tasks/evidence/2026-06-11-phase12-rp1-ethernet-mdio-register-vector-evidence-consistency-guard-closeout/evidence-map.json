@@ -1,0 +1,39 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-closeout-20260611",
+  "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-closeout.md",
+  "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-closeout/classification.json",
+  "inspected_inputs": {
+    "guard_core_task_record": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core.md",
+    "guard_core_classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core/classification.json",
+    "guard_core_evidence_map": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core/evidence-map.json",
+    "guard_implementation": "scripts/rpi5-evidence-consistency-guard.sh",
+    "negative_guard_output": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core/negative-contradictory-register-vector-guard-output.json",
+    "positive_guard_output": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core/positive-retained-capture-chain-v4-guard-output.json",
+    "negative_exit": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core/negative-contradictory-register-vector-guard.exit",
+    "positive_exit": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core/positive-retained-capture-chain-v4-guard.exit",
+    "guard_core_jq_validation": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core/jq-empty.txt",
+    "guard_core_diff_validation": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core/git-diff-check.txt"
+  },
+  "validation_outputs": {
+    "jq_empty": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-closeout/jq-empty.txt",
+    "git_diff_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-closeout/git-diff-check.txt",
+    "staged_diff_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-closeout/git-diff-cached-check.txt"
+  },
+  "accepted_claims": [
+    "mdio-register-vector-evidence-consistency-guard-closeout-accepted",
+    "prior contradictory register-vector retry is mechanically rejected by guard output",
+    "retained positive capture-chain-v4 proof passes the guard",
+    "guarded Pi 5 retry is the only selected follow-up"
+  ],
+  "rejected_claims": [
+    "accepted prior register-vector serial values as hardware proof",
+    "same-shaped unguarded register-vector retry",
+    "broad MDIO or PHY ownership",
+    "Ethernet behavior",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "next_action": "Promote the guarded Pi 5 retry only after this closeout is accepted and committed."
+}

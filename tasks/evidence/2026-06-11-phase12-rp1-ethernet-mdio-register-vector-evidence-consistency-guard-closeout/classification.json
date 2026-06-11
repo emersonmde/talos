@@ -1,0 +1,63 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-closeout-20260611",
+  "status": "accepted",
+  "classification": "mdio-register-vector-evidence-consistency-guard-closeout-accepted",
+  "evidence_level": [
+    "static inspection",
+    "task-owned JSON evidence inspection",
+    "retained guard output inspection"
+  ],
+  "guard_contract": "pi5-evidence-consistency-guard-v1",
+  "closed_out_guard_core": {
+    "task_id": "phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core-20260611",
+    "commit": "5d4894fad3cda0338a2586988c43960875075146",
+    "classification": "mdio-register-vector-evidence-consistency-guard-accepted"
+  },
+  "guard_invariant": "candidate/control capture-chain-v4 JSON is authoritative; task markdown, aggregate classification JSON, capture-summary JSON, and evidence-map accepted claims must not claim capture-chain-v4 readiness or matching identity/freshness when v4 JSON blocks it",
+  "negative_control": {
+    "source_task": "phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery-20260611",
+    "classification": "evidence-consistency-blocked",
+    "consistent": false,
+    "candidate_v4_classification": "capture-staging-blocked",
+    "candidate_v4_allowed": false,
+    "control_v4_classification": "capture-chain-v4-ready",
+    "control_v4_allowed": true,
+    "rejection_reasons": [
+      "aggregate-claims-candidate-ready-overclaim",
+      "task-markdown-candidate-ready-overclaim"
+    ],
+    "disposition": "fixed: previous aggregate/task markdown readiness overclaim is now mechanically rejectable"
+  },
+  "positive_control": {
+    "source_task": "phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof-20260610",
+    "classification": "evidence-consistency-ready",
+    "consistent": true,
+    "candidate_v4_classification": "capture-chain-v4-ready",
+    "candidate_v4_allowed": true,
+    "control_v4_classification": "capture-chain-v4-ready",
+    "control_v4_allowed": true,
+    "rejection_reasons": [],
+    "disposition": "fixed: retained valid capture-chain-v4 proof shape passes the guard"
+  },
+  "accepted_claims": [
+    "The evidence-consistency guard invariant is accepted as the proof boundary for guarded register-vector retries.",
+    "The prior contradictory register-vector retry remains blocked and its serial values remain unaccepted as current-run hardware proof.",
+    "The next mechanically objective task is only the already queued guarded Pi 5 retry, requiring guard output to agree with candidate/control v4 JSON and aggregate evidence before acceptance."
+  ],
+  "rejected_claims": [
+    "accepted current-run candidate register-vector hardware proof from the prior contradictory retry",
+    "same-shaped unguarded register-vector retry",
+    "broad MDIO or PHY ownership",
+    "Ethernet driver behavior",
+    "interrupt completion",
+    "DMA descriptor/channel ownership or transfer completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "same_shaped_retry_policy": "same-shaped unguarded register-vector retries remain closed; only the queued guarded Pi 5 retry is selected, and it must include agreeing v4 JSON, aggregate JSON, capture summary, evidence map, guard output, and task markdown before accepting proof or blocker evidence",
+  "next_action": "Mechanically promote phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard-20260611 on the next worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention is inactive."
+}
