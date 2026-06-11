@@ -1,0 +1,72 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-event-state-discriminator-core-20260611",
+  "classification": "rp1-ethernet-gpio32-event-state-discriminator-local-static-accepted",
+  "evidence_level": "local/static implementation and focused unit tests",
+  "accepted_claims": [
+    "candidate report preserves accepted GPIO32 event-state source contract and v2 blocked/no-write lineage",
+    "candidate report includes GPIO32 STATUS, CTRL, RIO1 OUT/OE/IN, pad target identity, source-backed STATUS event bit names, raw selected values, event bits, source-decoding status, and rejected claims",
+    "paired control preserves the report path while carrying no GPIO32/RIO/pad/MMIO target facts and no raw GPIO values",
+    "validators reject event clearing, GPIO/RIO/pad/MMIO writes, GPIO32 ownership, PHY reset assertion/deassertion, GPIO32 write/restore retry, MDIO/PHY ownership, Ethernet readiness, interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, and phase transition"
+  ],
+  "rejected_claims": [
+    "Pi 5 hardware evidence",
+    "boot archive publication",
+    "hardwareTestLock acquisition",
+    "GPIO/RIO/pad/MMIO writes",
+    "event clearing",
+    "GPIO32 ownership",
+    "GPIO32 write/restore retry or success",
+    "PHY reset assertion or deassertion",
+    "MDIO/PHY ownership",
+    "Ethernet driver readiness",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "v2_lineage": {
+    "proof_task_id": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof-20260610",
+    "closeout_task_id": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout-20260610",
+    "commit": "0127984a1938cf050e2a6757f9f116f78976cf5e",
+    "classification": "rp1-ethernet-gpio32-phy-reset-blocked-unexpected-event-state",
+    "writes_performed": false,
+    "baseline_status": "0x0abe3300",
+    "baseline_ctrl": "0x00000085",
+    "baseline_rio1_out": "0x00000010",
+    "baseline_rio1_oe": "0x00000010",
+    "baseline_rio1_in": "0x00000012",
+    "event_bits": "0x0ab00000"
+  },
+  "source_decoding": {
+    "status_event_mask": "0x0ff00000",
+    "source_backed_names": [
+      "bit20-raw-falling",
+      "bit21-raw-rising",
+      "bit22-raw-low",
+      "bit23-raw-high",
+      "bit24-filtered-falling",
+      "bit25-filtered-rising",
+      "bit26-filtered-low",
+      "bit27-filtered-high"
+    ],
+    "source_unresolved_semantics": [
+      "stale",
+      "clearable",
+      "firmware-owned",
+      "harmless",
+      "safe-to-ignore"
+    ]
+  },
+  "validation": {
+    "cargo_fmt_check": "passed",
+    "cargo_test": "cargo -Zjson-target-spec test --quiet rp1_ethernet passed with 492 no_std tests",
+    "jq": "passed",
+    "git_diff_check": "passed",
+    "git_diff_cached_check": "passed",
+    "mdbook": "not run; docs/src was not touched"
+  },
+  "next_action": "Promote phase12-rp1-ethernet-gpio32-event-state-discriminator-closeout-20260611 on the next worker wake if dependencies remain satisfied."
+}

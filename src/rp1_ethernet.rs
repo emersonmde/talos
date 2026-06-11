@@ -4726,6 +4726,755 @@ fn rp1_ethernet_gpio32_phy_reset_write_restore_guard_control_evidence(
     }
 }
 
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-gpio32-event-state-source-contract-v1";
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_SOURCE_TASK_ID: &str =
+    "phase12-rp1-ethernet-gpio32-event-state-source-contract-20260611";
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_REPORT_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-gpio32-event-state-readonly-discriminator-report-v1";
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_WRITE_RESTORE_V2_PROOF_TASK_ID: &str =
+    "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof-20260610";
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_WRITE_RESTORE_V2_CLOSEOUT_TASK_ID: &str =
+    "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout-20260610";
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_WRITE_RESTORE_V2_COMMIT: &str =
+    "0127984a1938cf050e2a6757f9f116f78976cf5e";
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_V2_BLOCKER_CLASSIFICATION: &str =
+    "rp1-ethernet-gpio32-phy-reset-blocked-unexpected-event-state";
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_CANDIDATE_CLASSIFICATION: &str =
+    "rp1-ethernet-gpio32-event-state-blocked-event-state";
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_CONTROL_CLASSIFICATION: &str =
+    "no-gpio-no-ethernet-rp1-ethernet-gpio32-event-state-control";
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_BOUNDARY_CLASSIFICATION: &str =
+    "hardware-proof-limited-to-gpio32-readonly-event-state-control-output";
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_MASK: u32 = 0x0ff0_0000;
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_STATUS_RAW: u32 = 0x0abe_3300;
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_CTRL_RAW: u32 = 0x0000_0085;
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_RIO1_OUT_RAW: u32 = 0x0000_0010;
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_RIO1_OE_RAW: u32 = 0x0000_0010;
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_RIO1_IN_RAW: u32 = 0x0000_0012;
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_EVENT_BITS: u32 = 0x0ab0_0000;
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_WRITES_PERFORMED: bool = false;
+
+pub const RP1_ETHERNET_GPIO32_STATUS_SOURCE_EVENT_BIT_NAMES: &[&str] = &[
+    "bit20-raw-falling",
+    "bit21-raw-rising",
+    "bit22-raw-low",
+    "bit23-raw-high",
+    "bit24-filtered-falling",
+    "bit25-filtered-rising",
+    "bit26-filtered-low",
+    "bit27-filtered-high",
+];
+
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_CLASSIFICATIONS: &[&str] = &[
+    "rp1-ethernet-gpio32-event-state-clear-precondition",
+    "rp1-ethernet-gpio32-event-state-blocked-event-state",
+    "rp1-ethernet-gpio32-event-state-source-unresolved-event-state",
+    "rp1-ethernet-gpio32-event-state-inconclusive-capture",
+    "no-gpio-no-ethernet-rp1-ethernet-gpio32-event-state-control",
+    "staging/build-blocker",
+];
+
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_REJECTED_RUNTIME_CLAIMS: &[&str] = &[
+    "event clearing",
+    "GPIO, RIO, pad, or MMIO writes",
+    "GPIO32 ownership",
+    "PHY reset assertion or deassertion",
+    "GPIO32 write/restore retry or success",
+    "MDIO transactions or PHY ownership",
+    "Ethernet driver readiness",
+    "interrupt delivery, handler ownership, or completion",
+    "DMA, descriptor rings, channel ownership, or transfer completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition",
+];
+
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_RETAINED_RISKS: &[&str] = &[
+    "The v2 write/restore proof remains blocked before any write by unexpected GPIO32 event bits",
+    "Read-only event-state discrimination does not authorize event clearing or GPIO32 write/restore",
+    "Retained RP1 source names STATUS event bits but does not prove stale, clearable, firmware-owned, harmless, or safe-to-ignore semantics",
+    "A future Pi 5 proof still needs candidate/control identity, serial freshness, TFTP delta, final identity, and restore or no-restore evidence",
+];
+
+pub const RP1_ETHERNET_GPIO32_EVENT_STATE_SOURCE_EVIDENCE: &[&str] = &[
+    "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-source-contract.md",
+    "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof.md",
+    "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout.md",
+    "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-source-contract.md",
+    "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-core.md",
+    "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/pinctrl-rp1.c",
+];
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Rp1EthernetGpio32EventStateSourceDecodingStatus {
+    SourceBackedBits20To27,
+    SourceUnresolved,
+    CaptureChainInconclusive,
+}
+
+impl Rp1EthernetGpio32EventStateSourceDecodingStatus {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::SourceBackedBits20To27 => "source-backed-bits-20-27",
+            Self::SourceUnresolved => "source-unresolved",
+            Self::CaptureChainInconclusive => "capture-chain-inconclusive",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetGpio32EventStateSourceContractEvidence {
+    pub contract_id: &'static str,
+    pub source_task_id: &'static str,
+    pub write_restore_source_contract_id: &'static str,
+    pub write_restore_guard_contract_id: &'static str,
+    pub v2_proof_task_id: &'static str,
+    pub v2_closeout_task_id: &'static str,
+    pub v2_commit: &'static str,
+    pub v2_classification: &'static str,
+    pub v2_writes_performed: bool,
+    pub gpio_controller: &'static str,
+    pub gpio_line: u32,
+    pub reset_route: &'static str,
+    pub bank: &'static str,
+    pub bank_local_bit: u32,
+    pub active_low: bool,
+    pub gpio32_status_observed_target: u64,
+    pub gpio32_ctrl_observed_target: u64,
+    pub rio1_out_observed_target: u64,
+    pub rio1_oe_observed_target: u64,
+    pub rio1_in_observed_target: u64,
+    pub gpio32_pad_observed_target: u64,
+    pub status_event_mask: u32,
+    pub source_event_bit_names: &'static [&'static str],
+    pub accepted_v2_status_raw: u32,
+    pub accepted_v2_ctrl_raw: u32,
+    pub accepted_v2_rio1_out_raw: u32,
+    pub accepted_v2_rio1_oe_raw: u32,
+    pub accepted_v2_rio1_in_raw: u32,
+    pub accepted_v2_event_bits: u32,
+    pub source_evidence: &'static [&'static str],
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Rp1EthernetGpio32EventStateDiscriminatorReportKind {
+    Candidate,
+    NoGpioNoEthernetControl,
+}
+
+impl Rp1EthernetGpio32EventStateDiscriminatorReportKind {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::Candidate => "candidate",
+            Self::NoGpioNoEthernetControl => "no-gpio-no-ethernet-control",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetGpio32EventStateDiscriminatorReportInput {
+    pub kind: Rp1EthernetGpio32EventStateDiscriminatorReportKind,
+    pub source_contract: Option<Rp1EthernetGpio32EventStateSourceContractEvidence>,
+    pub status_raw: Option<u32>,
+    pub ctrl_raw: Option<u32>,
+    pub rio1_out_raw: Option<u32>,
+    pub rio1_oe_raw: Option<u32>,
+    pub rio1_in_raw: Option<u32>,
+    pub pad_raw: Option<u32>,
+    pub source_decoding_status: Rp1EthernetGpio32EventStateSourceDecodingStatus,
+    pub event_state_classification: &'static str,
+    pub claims_event_clearing: bool,
+    pub claims_gpio_rio_pad_mmio_write: bool,
+    pub claims_gpio32_ownership: bool,
+    pub claims_phy_reset_assertion: bool,
+    pub claims_phy_reset_deassertion: bool,
+    pub claims_gpio32_write_restore_retry: bool,
+    pub claims_mdio_phy_ownership: bool,
+    pub claims_ethernet_ready: bool,
+    pub claims_interrupt_ownership: bool,
+    pub claims_dma_descriptor_ownership: bool,
+    pub claims_packet_io: bool,
+    pub claims_networking: bool,
+    pub claims_sockets: bool,
+    pub claims_ssh: bool,
+    pub claims_phase_12_2: bool,
+    pub claims_phase_transition: bool,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetGpio32EventStateDiscriminatorReport {
+    pub kind: Rp1EthernetGpio32EventStateDiscriminatorReportKind,
+    pub source_contract: Option<Rp1EthernetGpio32EventStateSourceContractEvidence>,
+    pub status_raw: Option<u32>,
+    pub ctrl_raw: Option<u32>,
+    pub rio1_out_raw: Option<u32>,
+    pub rio1_oe_raw: Option<u32>,
+    pub rio1_in_raw: Option<u32>,
+    pub pad_raw: Option<u32>,
+    pub source_decoding_status: Rp1EthernetGpio32EventStateSourceDecodingStatus,
+    pub event_state_classification: &'static str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetGpio32EventStateDiscriminatorReportEvidence {
+    pub report_contract_id: &'static str,
+    pub event_state_contract_id: &'static str,
+    pub source_task_id: &'static str,
+    pub write_restore_source_contract_id: &'static str,
+    pub write_restore_guard_contract_id: &'static str,
+    pub report_kind: &'static str,
+    pub v2_proof_task_id: Option<&'static str>,
+    pub v2_closeout_task_id: Option<&'static str>,
+    pub v2_commit: Option<&'static str>,
+    pub v2_classification: Option<&'static str>,
+    pub v2_writes_performed: Option<bool>,
+    pub gpio_controller: Option<&'static str>,
+    pub gpio_line: Option<u32>,
+    pub reset_route: Option<&'static str>,
+    pub bank: Option<&'static str>,
+    pub bank_local_bit: Option<u32>,
+    pub active_low: Option<bool>,
+    pub gpio32_status_observed_target: Option<u64>,
+    pub gpio32_ctrl_observed_target: Option<u64>,
+    pub rio1_out_observed_target: Option<u64>,
+    pub rio1_oe_observed_target: Option<u64>,
+    pub rio1_in_observed_target: Option<u64>,
+    pub gpio32_pad_observed_target: Option<u64>,
+    pub status_raw: Option<u32>,
+    pub ctrl_raw: Option<u32>,
+    pub rio1_out_raw: Option<u32>,
+    pub rio1_oe_raw: Option<u32>,
+    pub rio1_in_raw: Option<u32>,
+    pub pad_raw: Option<u32>,
+    pub status_event_mask: Option<u32>,
+    pub event_bits: Option<u32>,
+    pub source_event_bit_names: Option<&'static [&'static str]>,
+    pub source_decoding_status: &'static str,
+    pub allowed_classifications: &'static [&'static str],
+    pub hardware_proof_boundary_classification: &'static str,
+    pub rejected_runtime_claims: &'static [&'static str],
+    pub retained_risks: &'static [&'static str],
+    pub source_evidence: Option<&'static [&'static str]>,
+    pub claims_event_clearing: bool,
+    pub claims_gpio_rio_pad_mmio_write: bool,
+    pub claims_gpio32_ownership: bool,
+    pub claims_phy_reset_assertion: bool,
+    pub claims_phy_reset_deassertion: bool,
+    pub claims_gpio32_write_restore_retry: bool,
+    pub claims_mdio_phy_ownership: bool,
+    pub claims_ethernet_ready: bool,
+    pub claims_interrupt_ownership: bool,
+    pub claims_dma_descriptor_ownership: bool,
+    pub claims_packet_io: bool,
+    pub claims_networking: bool,
+    pub claims_sockets: bool,
+    pub claims_ssh: bool,
+    pub claims_phase_12_2: bool,
+    pub claims_phase_transition: bool,
+    pub classification: &'static str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Rp1EthernetGpio32EventStateDiscriminatorReportError {
+    CandidateMissingSourceContract,
+    CandidateMissingSelectedReads,
+    ControlCarriesGpioTargetFacts,
+    SourceContractIdentityMismatch,
+    SourceContractTargetMismatch,
+    SourceContractV2LineageMismatch,
+    MissingSourceEvidence,
+    EventStateClassificationNotAllowed,
+    EventStateClassificationMismatch,
+    EventClearingClaim,
+    GpioRioPadMmioWriteClaim,
+    Gpio32OwnershipClaim,
+    PhyResetAssertionClaim,
+    PhyResetDeassertionClaim,
+    Gpio32WriteRestoreRetryClaim,
+    MdioPhyOwnershipClaim,
+    EthernetReadinessClaim,
+    InterruptOwnershipClaim,
+    DmaDescriptorOwnershipClaim,
+    PacketIoClaim,
+    NetworkingClaim,
+    SocketsClaim,
+    SshClaim,
+    Phase122Claim,
+    PhaseTransitionClaim,
+}
+
+impl Rp1EthernetGpio32EventStateDiscriminatorReportError {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::CandidateMissingSourceContract => "candidate-missing-source-contract",
+            Self::CandidateMissingSelectedReads => "candidate-missing-selected-reads",
+            Self::ControlCarriesGpioTargetFacts => "control-carries-gpio-target-facts",
+            Self::SourceContractIdentityMismatch => "source-contract-identity-mismatch",
+            Self::SourceContractTargetMismatch => "source-contract-target-mismatch",
+            Self::SourceContractV2LineageMismatch => "source-contract-v2-lineage-mismatch",
+            Self::MissingSourceEvidence => "missing-source-evidence",
+            Self::EventStateClassificationNotAllowed => "event-state-classification-not-allowed",
+            Self::EventStateClassificationMismatch => "event-state-classification-mismatch",
+            Self::EventClearingClaim => "event-clearing-claim",
+            Self::GpioRioPadMmioWriteClaim => "gpio-rio-pad-mmio-write-claim",
+            Self::Gpio32OwnershipClaim => "gpio32-ownership-claim",
+            Self::PhyResetAssertionClaim => "phy-reset-assertion-claim",
+            Self::PhyResetDeassertionClaim => "phy-reset-deassertion-claim",
+            Self::Gpio32WriteRestoreRetryClaim => "gpio32-write-restore-retry-claim",
+            Self::MdioPhyOwnershipClaim => "mdio-phy-ownership-claim",
+            Self::EthernetReadinessClaim => "ethernet-readiness-claim",
+            Self::InterruptOwnershipClaim => "interrupt-ownership-claim",
+            Self::DmaDescriptorOwnershipClaim => "dma-descriptor-ownership-claim",
+            Self::PacketIoClaim => "packet-io-claim",
+            Self::NetworkingClaim => "networking-claim",
+            Self::SocketsClaim => "sockets-claim",
+            Self::SshClaim => "ssh-claim",
+            Self::Phase122Claim => "phase-12-2-claim",
+            Self::PhaseTransitionClaim => "phase-transition-claim",
+        }
+    }
+}
+
+pub const fn rp1_ethernet_gpio32_event_state_source_contract_evidence()
+-> Rp1EthernetGpio32EventStateSourceContractEvidence {
+    Rp1EthernetGpio32EventStateSourceContractEvidence {
+        contract_id: RP1_ETHERNET_GPIO32_EVENT_STATE_CONTRACT_ID,
+        source_task_id: RP1_ETHERNET_GPIO32_EVENT_STATE_SOURCE_TASK_ID,
+        write_restore_source_contract_id:
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_GUARD_CONTRACT_ID,
+        write_restore_guard_contract_id:
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_REPORT_CONTRACT_ID,
+        v2_proof_task_id: RP1_ETHERNET_GPIO32_EVENT_STATE_WRITE_RESTORE_V2_PROOF_TASK_ID,
+        v2_closeout_task_id: RP1_ETHERNET_GPIO32_EVENT_STATE_WRITE_RESTORE_V2_CLOSEOUT_TASK_ID,
+        v2_commit: RP1_ETHERNET_GPIO32_EVENT_STATE_WRITE_RESTORE_V2_COMMIT,
+        v2_classification: RP1_ETHERNET_GPIO32_EVENT_STATE_V2_BLOCKER_CLASSIFICATION,
+        v2_writes_performed: RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_WRITES_PERFORMED,
+        gpio_controller: RP1_ETHERNET_PHY_RESET_GPIO_CONTROLLER,
+        gpio_line: RP1_ETHERNET_PHY_RESET_GPIO,
+        reset_route: RP1_ETHERNET_PHY_RESET_ROUTE,
+        bank: RP1_ETHERNET_GPIO32_BANK,
+        bank_local_bit: RP1_ETHERNET_GPIO32_BANK_LOCAL_BIT,
+        active_low: RP1_ETHERNET_PHY_RESET_ACTIVE_LOW,
+        gpio32_status_observed_target: RP1_ETHERNET_GPIO32_STATUS_OBSERVED_TARGET,
+        gpio32_ctrl_observed_target: RP1_ETHERNET_GPIO32_CTRL_OBSERVED_TARGET,
+        rio1_out_observed_target: RP1_ETHERNET_GPIO32_RIO1_OUT_OBSERVED_TARGET,
+        rio1_oe_observed_target: RP1_ETHERNET_GPIO32_RIO1_OE_OBSERVED_TARGET,
+        rio1_in_observed_target: RP1_ETHERNET_GPIO32_RIO1_IN_OBSERVED_TARGET,
+        gpio32_pad_observed_target: RP1_ETHERNET_GPIO32_PAD_OBSERVED_TARGET,
+        status_event_mask: RP1_ETHERNET_GPIO32_EVENT_STATE_MASK,
+        source_event_bit_names: RP1_ETHERNET_GPIO32_STATUS_SOURCE_EVENT_BIT_NAMES,
+        accepted_v2_status_raw: RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_STATUS_RAW,
+        accepted_v2_ctrl_raw: RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_CTRL_RAW,
+        accepted_v2_rio1_out_raw: RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_RIO1_OUT_RAW,
+        accepted_v2_rio1_oe_raw: RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_RIO1_OE_RAW,
+        accepted_v2_rio1_in_raw: RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_RIO1_IN_RAW,
+        accepted_v2_event_bits: RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_EVENT_BITS,
+        source_evidence: RP1_ETHERNET_GPIO32_EVENT_STATE_SOURCE_EVIDENCE,
+    }
+}
+
+pub fn build_rp1_ethernet_gpio32_event_state_discriminator_report(
+    input: Rp1EthernetGpio32EventStateDiscriminatorReportInput,
+) -> Result<
+    Rp1EthernetGpio32EventStateDiscriminatorReport,
+    Rp1EthernetGpio32EventStateDiscriminatorReportError,
+> {
+    validate_rp1_ethernet_gpio32_event_state_rejected_claims(input)?;
+    validate_rp1_ethernet_gpio32_event_state_classification(input)?;
+
+    match (input.kind, input.source_contract) {
+        (Rp1EthernetGpio32EventStateDiscriminatorReportKind::Candidate, Some(source_contract)) => {
+            validate_rp1_ethernet_gpio32_event_state_source_contract(source_contract)?;
+            if input.source_decoding_status
+                != Rp1EthernetGpio32EventStateSourceDecodingStatus::CaptureChainInconclusive
+                && (input.status_raw.is_none()
+                    || input.ctrl_raw.is_none()
+                    || input.rio1_out_raw.is_none()
+                    || input.rio1_oe_raw.is_none()
+                    || input.rio1_in_raw.is_none()
+                    || input.pad_raw.is_none())
+            {
+                return Err(
+                    Rp1EthernetGpio32EventStateDiscriminatorReportError::CandidateMissingSelectedReads,
+                );
+            }
+            Ok(Rp1EthernetGpio32EventStateDiscriminatorReport {
+                kind: input.kind,
+                source_contract: Some(source_contract),
+                status_raw: input.status_raw,
+                ctrl_raw: input.ctrl_raw,
+                rio1_out_raw: input.rio1_out_raw,
+                rio1_oe_raw: input.rio1_oe_raw,
+                rio1_in_raw: input.rio1_in_raw,
+                pad_raw: input.pad_raw,
+                source_decoding_status: input.source_decoding_status,
+                event_state_classification: input.event_state_classification,
+            })
+        }
+        (Rp1EthernetGpio32EventStateDiscriminatorReportKind::Candidate, None) => {
+            Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::CandidateMissingSourceContract)
+        }
+        (Rp1EthernetGpio32EventStateDiscriminatorReportKind::NoGpioNoEthernetControl, None)
+            if input.status_raw.is_none()
+                && input.ctrl_raw.is_none()
+                && input.rio1_out_raw.is_none()
+                && input.rio1_oe_raw.is_none()
+                && input.rio1_in_raw.is_none()
+                && input.pad_raw.is_none()
+                && input.source_decoding_status
+                    == Rp1EthernetGpio32EventStateSourceDecodingStatus::CaptureChainInconclusive
+                && input.event_state_classification
+                    == RP1_ETHERNET_GPIO32_EVENT_STATE_CONTROL_CLASSIFICATION =>
+        {
+            Ok(Rp1EthernetGpio32EventStateDiscriminatorReport {
+                kind: input.kind,
+                source_contract: None,
+                status_raw: None,
+                ctrl_raw: None,
+                rio1_out_raw: None,
+                rio1_oe_raw: None,
+                rio1_in_raw: None,
+                pad_raw: None,
+                source_decoding_status: input.source_decoding_status,
+                event_state_classification: input.event_state_classification,
+            })
+        }
+        (Rp1EthernetGpio32EventStateDiscriminatorReportKind::NoGpioNoEthernetControl, _) => {
+            Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::ControlCarriesGpioTargetFacts)
+        }
+    }
+}
+
+pub fn rp1_ethernet_gpio32_event_state_discriminator_report_evidence(
+    report: Rp1EthernetGpio32EventStateDiscriminatorReport,
+) -> Rp1EthernetGpio32EventStateDiscriminatorReportEvidence {
+    match report.source_contract {
+        Some(source_contract) => rp1_ethernet_gpio32_event_state_candidate_evidence(
+            report.kind.name(),
+            source_contract,
+            report.status_raw,
+            report.ctrl_raw,
+            report.rio1_out_raw,
+            report.rio1_oe_raw,
+            report.rio1_in_raw,
+            report.pad_raw,
+            report.source_decoding_status,
+            report.event_state_classification,
+        ),
+        None => rp1_ethernet_gpio32_event_state_control_evidence(report.kind.name()),
+    }
+}
+
+pub fn rejected_rp1_ethernet_gpio32_event_state_discriminator_report_evidence(
+    error: Rp1EthernetGpio32EventStateDiscriminatorReportError,
+) -> (&'static str, &'static str) {
+    (RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION, error.name())
+}
+
+fn validate_rp1_ethernet_gpio32_event_state_rejected_claims(
+    input: Rp1EthernetGpio32EventStateDiscriminatorReportInput,
+) -> Result<(), Rp1EthernetGpio32EventStateDiscriminatorReportError> {
+    if input.claims_event_clearing {
+        return Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::EventClearingClaim);
+    }
+    if input.claims_gpio_rio_pad_mmio_write {
+        return Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::GpioRioPadMmioWriteClaim);
+    }
+    if input.claims_gpio32_ownership {
+        return Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::Gpio32OwnershipClaim);
+    }
+    if input.claims_phy_reset_assertion {
+        return Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::PhyResetAssertionClaim);
+    }
+    if input.claims_phy_reset_deassertion {
+        return Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::PhyResetDeassertionClaim);
+    }
+    if input.claims_gpio32_write_restore_retry {
+        return Err(
+            Rp1EthernetGpio32EventStateDiscriminatorReportError::Gpio32WriteRestoreRetryClaim,
+        );
+    }
+    if input.claims_mdio_phy_ownership {
+        return Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::MdioPhyOwnershipClaim);
+    }
+    if input.claims_ethernet_ready {
+        return Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::EthernetReadinessClaim);
+    }
+    if input.claims_interrupt_ownership {
+        return Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::InterruptOwnershipClaim);
+    }
+    if input.claims_dma_descriptor_ownership {
+        return Err(
+            Rp1EthernetGpio32EventStateDiscriminatorReportError::DmaDescriptorOwnershipClaim,
+        );
+    }
+    if input.claims_packet_io {
+        return Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::PacketIoClaim);
+    }
+    if input.claims_networking {
+        return Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::NetworkingClaim);
+    }
+    if input.claims_sockets {
+        return Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::SocketsClaim);
+    }
+    if input.claims_ssh {
+        return Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::SshClaim);
+    }
+    if input.claims_phase_12_2 {
+        return Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::Phase122Claim);
+    }
+    if input.claims_phase_transition {
+        return Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::PhaseTransitionClaim);
+    }
+    Ok(())
+}
+
+fn validate_rp1_ethernet_gpio32_event_state_classification(
+    input: Rp1EthernetGpio32EventStateDiscriminatorReportInput,
+) -> Result<(), Rp1EthernetGpio32EventStateDiscriminatorReportError> {
+    if !RP1_ETHERNET_GPIO32_EVENT_STATE_CLASSIFICATIONS.contains(&input.event_state_classification)
+    {
+        return Err(
+            Rp1EthernetGpio32EventStateDiscriminatorReportError::EventStateClassificationNotAllowed,
+        );
+    }
+    if input.kind == Rp1EthernetGpio32EventStateDiscriminatorReportKind::NoGpioNoEthernetControl {
+        return Ok(());
+    }
+
+    let expected = match input.source_decoding_status {
+        Rp1EthernetGpio32EventStateSourceDecodingStatus::SourceBackedBits20To27 => {
+            match input.status_raw {
+                Some(status_raw) if status_raw & RP1_ETHERNET_GPIO32_EVENT_STATE_MASK == 0 => {
+                    "rp1-ethernet-gpio32-event-state-clear-precondition"
+                }
+                Some(_) => RP1_ETHERNET_GPIO32_EVENT_STATE_CANDIDATE_CLASSIFICATION,
+                None => "rp1-ethernet-gpio32-event-state-inconclusive-capture",
+            }
+        }
+        Rp1EthernetGpio32EventStateSourceDecodingStatus::SourceUnresolved => {
+            "rp1-ethernet-gpio32-event-state-source-unresolved-event-state"
+        }
+        Rp1EthernetGpio32EventStateSourceDecodingStatus::CaptureChainInconclusive => {
+            "rp1-ethernet-gpio32-event-state-inconclusive-capture"
+        }
+    };
+    if input.event_state_classification != expected {
+        return Err(
+            Rp1EthernetGpio32EventStateDiscriminatorReportError::EventStateClassificationMismatch,
+        );
+    }
+    Ok(())
+}
+
+fn validate_rp1_ethernet_gpio32_event_state_source_contract(
+    source_contract: Rp1EthernetGpio32EventStateSourceContractEvidence,
+) -> Result<(), Rp1EthernetGpio32EventStateDiscriminatorReportError> {
+    if source_contract.contract_id != RP1_ETHERNET_GPIO32_EVENT_STATE_CONTRACT_ID
+        || source_contract.source_task_id != RP1_ETHERNET_GPIO32_EVENT_STATE_SOURCE_TASK_ID
+        || source_contract.write_restore_source_contract_id
+            != RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_GUARD_CONTRACT_ID
+        || source_contract.write_restore_guard_contract_id
+            != RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_REPORT_CONTRACT_ID
+        || source_contract.gpio_controller != RP1_ETHERNET_PHY_RESET_GPIO_CONTROLLER
+        || source_contract.gpio_line != RP1_ETHERNET_PHY_RESET_GPIO
+        || source_contract.reset_route != RP1_ETHERNET_PHY_RESET_ROUTE
+        || source_contract.bank != RP1_ETHERNET_GPIO32_BANK
+        || source_contract.bank_local_bit != RP1_ETHERNET_GPIO32_BANK_LOCAL_BIT
+        || source_contract.active_low != RP1_ETHERNET_PHY_RESET_ACTIVE_LOW
+    {
+        return Err(
+            Rp1EthernetGpio32EventStateDiscriminatorReportError::SourceContractIdentityMismatch,
+        );
+    }
+    if source_contract.gpio32_status_observed_target != RP1_ETHERNET_GPIO32_STATUS_OBSERVED_TARGET
+        || source_contract.gpio32_ctrl_observed_target != RP1_ETHERNET_GPIO32_CTRL_OBSERVED_TARGET
+        || source_contract.rio1_out_observed_target != RP1_ETHERNET_GPIO32_RIO1_OUT_OBSERVED_TARGET
+        || source_contract.rio1_oe_observed_target != RP1_ETHERNET_GPIO32_RIO1_OE_OBSERVED_TARGET
+        || source_contract.rio1_in_observed_target != RP1_ETHERNET_GPIO32_RIO1_IN_OBSERVED_TARGET
+        || source_contract.gpio32_pad_observed_target != RP1_ETHERNET_GPIO32_PAD_OBSERVED_TARGET
+        || source_contract.status_event_mask != RP1_ETHERNET_GPIO32_EVENT_STATE_MASK
+        || source_contract.source_event_bit_names
+            != RP1_ETHERNET_GPIO32_STATUS_SOURCE_EVENT_BIT_NAMES
+    {
+        return Err(
+            Rp1EthernetGpio32EventStateDiscriminatorReportError::SourceContractTargetMismatch,
+        );
+    }
+    if source_contract.v2_proof_task_id
+        != RP1_ETHERNET_GPIO32_EVENT_STATE_WRITE_RESTORE_V2_PROOF_TASK_ID
+        || source_contract.v2_closeout_task_id
+            != RP1_ETHERNET_GPIO32_EVENT_STATE_WRITE_RESTORE_V2_CLOSEOUT_TASK_ID
+        || source_contract.v2_commit != RP1_ETHERNET_GPIO32_EVENT_STATE_WRITE_RESTORE_V2_COMMIT
+        || source_contract.v2_classification
+            != RP1_ETHERNET_GPIO32_EVENT_STATE_V2_BLOCKER_CLASSIFICATION
+        || source_contract.v2_writes_performed
+            != RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_WRITES_PERFORMED
+        || source_contract.accepted_v2_status_raw
+            != RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_STATUS_RAW
+        || source_contract.accepted_v2_ctrl_raw
+            != RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_CTRL_RAW
+        || source_contract.accepted_v2_rio1_out_raw
+            != RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_RIO1_OUT_RAW
+        || source_contract.accepted_v2_rio1_oe_raw
+            != RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_RIO1_OE_RAW
+        || source_contract.accepted_v2_rio1_in_raw
+            != RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_RIO1_IN_RAW
+        || source_contract.accepted_v2_event_bits
+            != RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_EVENT_BITS
+    {
+        return Err(
+            Rp1EthernetGpio32EventStateDiscriminatorReportError::SourceContractV2LineageMismatch,
+        );
+    }
+    if source_contract.source_evidence.is_empty() {
+        return Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::MissingSourceEvidence);
+    }
+    Ok(())
+}
+
+fn rp1_ethernet_gpio32_event_state_candidate_evidence(
+    report_kind: &'static str,
+    source_contract: Rp1EthernetGpio32EventStateSourceContractEvidence,
+    status_raw: Option<u32>,
+    ctrl_raw: Option<u32>,
+    rio1_out_raw: Option<u32>,
+    rio1_oe_raw: Option<u32>,
+    rio1_in_raw: Option<u32>,
+    pad_raw: Option<u32>,
+    source_decoding_status: Rp1EthernetGpio32EventStateSourceDecodingStatus,
+    event_state_classification: &'static str,
+) -> Rp1EthernetGpio32EventStateDiscriminatorReportEvidence {
+    Rp1EthernetGpio32EventStateDiscriminatorReportEvidence {
+        report_contract_id: RP1_ETHERNET_GPIO32_EVENT_STATE_REPORT_CONTRACT_ID,
+        event_state_contract_id: source_contract.contract_id,
+        source_task_id: source_contract.source_task_id,
+        write_restore_source_contract_id: source_contract.write_restore_source_contract_id,
+        write_restore_guard_contract_id: source_contract.write_restore_guard_contract_id,
+        report_kind,
+        v2_proof_task_id: Some(source_contract.v2_proof_task_id),
+        v2_closeout_task_id: Some(source_contract.v2_closeout_task_id),
+        v2_commit: Some(source_contract.v2_commit),
+        v2_classification: Some(source_contract.v2_classification),
+        v2_writes_performed: Some(source_contract.v2_writes_performed),
+        gpio_controller: Some(source_contract.gpio_controller),
+        gpio_line: Some(source_contract.gpio_line),
+        reset_route: Some(source_contract.reset_route),
+        bank: Some(source_contract.bank),
+        bank_local_bit: Some(source_contract.bank_local_bit),
+        active_low: Some(source_contract.active_low),
+        gpio32_status_observed_target: Some(source_contract.gpio32_status_observed_target),
+        gpio32_ctrl_observed_target: Some(source_contract.gpio32_ctrl_observed_target),
+        rio1_out_observed_target: Some(source_contract.rio1_out_observed_target),
+        rio1_oe_observed_target: Some(source_contract.rio1_oe_observed_target),
+        rio1_in_observed_target: Some(source_contract.rio1_in_observed_target),
+        gpio32_pad_observed_target: Some(source_contract.gpio32_pad_observed_target),
+        status_raw,
+        ctrl_raw,
+        rio1_out_raw,
+        rio1_oe_raw,
+        rio1_in_raw,
+        pad_raw,
+        status_event_mask: Some(source_contract.status_event_mask),
+        event_bits: status_raw.map(|raw| raw & source_contract.status_event_mask),
+        source_event_bit_names: Some(source_contract.source_event_bit_names),
+        source_decoding_status: source_decoding_status.name(),
+        allowed_classifications: RP1_ETHERNET_GPIO32_EVENT_STATE_CLASSIFICATIONS,
+        hardware_proof_boundary_classification:
+            RP1_ETHERNET_GPIO32_EVENT_STATE_BOUNDARY_CLASSIFICATION,
+        rejected_runtime_claims: RP1_ETHERNET_GPIO32_EVENT_STATE_REJECTED_RUNTIME_CLAIMS,
+        retained_risks: RP1_ETHERNET_GPIO32_EVENT_STATE_RETAINED_RISKS,
+        source_evidence: Some(source_contract.source_evidence),
+        claims_event_clearing: false,
+        claims_gpio_rio_pad_mmio_write: false,
+        claims_gpio32_ownership: false,
+        claims_phy_reset_assertion: false,
+        claims_phy_reset_deassertion: false,
+        claims_gpio32_write_restore_retry: false,
+        claims_mdio_phy_ownership: false,
+        claims_ethernet_ready: false,
+        claims_interrupt_ownership: false,
+        claims_dma_descriptor_ownership: false,
+        claims_packet_io: false,
+        claims_networking: false,
+        claims_sockets: false,
+        claims_ssh: false,
+        claims_phase_12_2: false,
+        claims_phase_transition: false,
+        classification: event_state_classification,
+    }
+}
+
+fn rp1_ethernet_gpio32_event_state_control_evidence(
+    report_kind: &'static str,
+) -> Rp1EthernetGpio32EventStateDiscriminatorReportEvidence {
+    Rp1EthernetGpio32EventStateDiscriminatorReportEvidence {
+        report_contract_id: RP1_ETHERNET_GPIO32_EVENT_STATE_REPORT_CONTRACT_ID,
+        event_state_contract_id: RP1_ETHERNET_GPIO32_EVENT_STATE_CONTRACT_ID,
+        source_task_id: RP1_ETHERNET_GPIO32_EVENT_STATE_SOURCE_TASK_ID,
+        write_restore_source_contract_id:
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_GUARD_CONTRACT_ID,
+        write_restore_guard_contract_id:
+            RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_REPORT_CONTRACT_ID,
+        report_kind,
+        v2_proof_task_id: None,
+        v2_closeout_task_id: None,
+        v2_commit: None,
+        v2_classification: None,
+        v2_writes_performed: None,
+        gpio_controller: None,
+        gpio_line: None,
+        reset_route: None,
+        bank: None,
+        bank_local_bit: None,
+        active_low: None,
+        gpio32_status_observed_target: None,
+        gpio32_ctrl_observed_target: None,
+        rio1_out_observed_target: None,
+        rio1_oe_observed_target: None,
+        rio1_in_observed_target: None,
+        gpio32_pad_observed_target: None,
+        status_raw: None,
+        ctrl_raw: None,
+        rio1_out_raw: None,
+        rio1_oe_raw: None,
+        rio1_in_raw: None,
+        pad_raw: None,
+        status_event_mask: None,
+        event_bits: None,
+        source_event_bit_names: None,
+        source_decoding_status:
+            Rp1EthernetGpio32EventStateSourceDecodingStatus::CaptureChainInconclusive.name(),
+        allowed_classifications: RP1_ETHERNET_GPIO32_EVENT_STATE_CLASSIFICATIONS,
+        hardware_proof_boundary_classification:
+            RP1_ETHERNET_GPIO32_EVENT_STATE_BOUNDARY_CLASSIFICATION,
+        rejected_runtime_claims: RP1_ETHERNET_GPIO32_EVENT_STATE_REJECTED_RUNTIME_CLAIMS,
+        retained_risks: RP1_ETHERNET_GPIO32_EVENT_STATE_RETAINED_RISKS,
+        source_evidence: None,
+        claims_event_clearing: false,
+        claims_gpio_rio_pad_mmio_write: false,
+        claims_gpio32_ownership: false,
+        claims_phy_reset_assertion: false,
+        claims_phy_reset_deassertion: false,
+        claims_gpio32_write_restore_retry: false,
+        claims_mdio_phy_ownership: false,
+        claims_ethernet_ready: false,
+        claims_interrupt_ownership: false,
+        claims_dma_descriptor_ownership: false,
+        claims_packet_io: false,
+        claims_networking: false,
+        claims_sockets: false,
+        claims_ssh: false,
+        claims_phase_12_2: false,
+        claims_phase_transition: false,
+        classification: RP1_ETHERNET_GPIO32_EVENT_STATE_CONTROL_CLASSIFICATION,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -4931,6 +5680,39 @@ mod tests {
             claims_broad_mmio_ready: false,
             claims_non_gpio32_write: false,
             claims_mdio_phy_ownership: false,
+            claims_interrupt_ownership: false,
+            claims_dma_descriptor_ownership: false,
+            claims_packet_io: false,
+            claims_networking: false,
+            claims_sockets: false,
+            claims_ssh: false,
+            claims_phase_12_2: false,
+            claims_phase_transition: false,
+        }
+    }
+
+    fn accepted_gpio32_event_state_discriminator_input()
+    -> Rp1EthernetGpio32EventStateDiscriminatorReportInput {
+        Rp1EthernetGpio32EventStateDiscriminatorReportInput {
+            kind: Rp1EthernetGpio32EventStateDiscriminatorReportKind::Candidate,
+            source_contract: Some(rp1_ethernet_gpio32_event_state_source_contract_evidence()),
+            status_raw: Some(RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_STATUS_RAW),
+            ctrl_raw: Some(RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_CTRL_RAW),
+            rio1_out_raw: Some(RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_RIO1_OUT_RAW),
+            rio1_oe_raw: Some(RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_RIO1_OE_RAW),
+            rio1_in_raw: Some(RP1_ETHERNET_GPIO32_EVENT_STATE_ACCEPTED_V2_RIO1_IN_RAW),
+            pad_raw: Some(0),
+            source_decoding_status:
+                Rp1EthernetGpio32EventStateSourceDecodingStatus::SourceBackedBits20To27,
+            event_state_classification: RP1_ETHERNET_GPIO32_EVENT_STATE_CANDIDATE_CLASSIFICATION,
+            claims_event_clearing: false,
+            claims_gpio_rio_pad_mmio_write: false,
+            claims_gpio32_ownership: false,
+            claims_phy_reset_assertion: false,
+            claims_phy_reset_deassertion: false,
+            claims_gpio32_write_restore_retry: false,
+            claims_mdio_phy_ownership: false,
+            claims_ethernet_ready: false,
             claims_interrupt_ownership: false,
             claims_dma_descriptor_ownership: false,
             claims_packet_io: false,
@@ -7694,6 +8476,261 @@ mod tests {
         assert_eq!(
             rejected_rp1_ethernet_gpio32_phy_reset_write_restore_guard_report_evidence(
                 Rp1EthernetGpio32PhyResetWriteRestoreGuardReportError::PhaseTransitionClaim
+            ),
+            (
+                RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION,
+                "phase-transition-claim"
+            )
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_gpio32_event_state_formats_candidate_report() {
+        let report = build_rp1_ethernet_gpio32_event_state_discriminator_report(
+            accepted_gpio32_event_state_discriminator_input(),
+        )
+        .expect("valid GPIO32 event-state discriminator candidate input");
+        let evidence = rp1_ethernet_gpio32_event_state_discriminator_report_evidence(report);
+
+        assert_eq!(
+            evidence.report_contract_id,
+            RP1_ETHERNET_GPIO32_EVENT_STATE_REPORT_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.event_state_contract_id,
+            RP1_ETHERNET_GPIO32_EVENT_STATE_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.source_task_id,
+            RP1_ETHERNET_GPIO32_EVENT_STATE_SOURCE_TASK_ID
+        );
+        assert_eq!(evidence.report_kind, "candidate");
+        assert_eq!(
+            evidence.v2_proof_task_id,
+            Some(RP1_ETHERNET_GPIO32_EVENT_STATE_WRITE_RESTORE_V2_PROOF_TASK_ID)
+        );
+        assert_eq!(
+            evidence.v2_classification,
+            Some(RP1_ETHERNET_GPIO32_EVENT_STATE_V2_BLOCKER_CLASSIFICATION)
+        );
+        assert_eq!(evidence.v2_writes_performed, Some(false));
+        assert_eq!(
+            evidence.gpio_controller,
+            Some(RP1_ETHERNET_PHY_RESET_GPIO_CONTROLLER)
+        );
+        assert_eq!(evidence.gpio_line, Some(32));
+        assert_eq!(evidence.reset_route, Some(RP1_ETHERNET_PHY_RESET_ROUTE));
+        assert_eq!(evidence.bank, Some("bank1"));
+        assert_eq!(evidence.bank_local_bit, Some(4));
+        assert_eq!(evidence.active_low, Some(true));
+        assert_eq!(evidence.gpio32_status_observed_target, Some(0x1c_000d_4020));
+        assert_eq!(evidence.gpio32_ctrl_observed_target, Some(0x1c_000d_4024));
+        assert_eq!(evidence.rio1_out_observed_target, Some(0x1c_000e_4000));
+        assert_eq!(evidence.rio1_oe_observed_target, Some(0x1c_000e_4004));
+        assert_eq!(evidence.rio1_in_observed_target, Some(0x1c_000e_4008));
+        assert_eq!(evidence.gpio32_pad_observed_target, Some(0x1c_000f_4014));
+        assert_eq!(evidence.status_raw, Some(0x0abe_3300));
+        assert_eq!(evidence.ctrl_raw, Some(0x85));
+        assert_eq!(evidence.rio1_out_raw, Some(0x10));
+        assert_eq!(evidence.rio1_oe_raw, Some(0x10));
+        assert_eq!(evidence.rio1_in_raw, Some(0x12));
+        assert_eq!(evidence.event_bits, Some(0x0ab0_0000));
+        assert_eq!(
+            evidence.source_event_bit_names,
+            Some(RP1_ETHERNET_GPIO32_STATUS_SOURCE_EVENT_BIT_NAMES)
+        );
+        assert_eq!(evidence.source_decoding_status, "source-backed-bits-20-27");
+        assert_eq!(
+            evidence.classification,
+            RP1_ETHERNET_GPIO32_EVENT_STATE_CANDIDATE_CLASSIFICATION
+        );
+        assert_eq!(
+            evidence.hardware_proof_boundary_classification,
+            RP1_ETHERNET_GPIO32_EVENT_STATE_BOUNDARY_CLASSIFICATION
+        );
+        assert_eq!(
+            evidence.rejected_runtime_claims,
+            RP1_ETHERNET_GPIO32_EVENT_STATE_REJECTED_RUNTIME_CLAIMS
+        );
+        assert!(!evidence.claims_event_clearing);
+        assert!(!evidence.claims_gpio_rio_pad_mmio_write);
+        assert!(!evidence.claims_gpio32_ownership);
+        assert!(!evidence.claims_gpio32_write_restore_retry);
+        assert!(!evidence.claims_phase_transition);
+    }
+
+    #[test_case]
+    fn rp1_ethernet_gpio32_event_state_formats_control_and_source_unresolved() {
+        let control = build_rp1_ethernet_gpio32_event_state_discriminator_report(
+            Rp1EthernetGpio32EventStateDiscriminatorReportInput {
+                kind: Rp1EthernetGpio32EventStateDiscriminatorReportKind::NoGpioNoEthernetControl,
+                source_contract: None,
+                status_raw: None,
+                ctrl_raw: None,
+                rio1_out_raw: None,
+                rio1_oe_raw: None,
+                rio1_in_raw: None,
+                pad_raw: None,
+                source_decoding_status:
+                    Rp1EthernetGpio32EventStateSourceDecodingStatus::CaptureChainInconclusive,
+                event_state_classification: RP1_ETHERNET_GPIO32_EVENT_STATE_CONTROL_CLASSIFICATION,
+                ..accepted_gpio32_event_state_discriminator_input()
+            },
+        )
+        .expect("valid GPIO32 event-state control input");
+        let control_evidence =
+            rp1_ethernet_gpio32_event_state_discriminator_report_evidence(control);
+
+        assert_eq!(control_evidence.report_kind, "no-gpio-no-ethernet-control");
+        assert_eq!(control_evidence.gpio_controller, None);
+        assert_eq!(control_evidence.gpio_line, None);
+        assert_eq!(control_evidence.gpio32_status_observed_target, None);
+        assert_eq!(control_evidence.status_raw, None);
+        assert_eq!(control_evidence.event_bits, None);
+        assert_eq!(control_evidence.source_event_bit_names, None);
+        assert_eq!(control_evidence.source_evidence, None);
+        assert_eq!(
+            control_evidence.classification,
+            RP1_ETHERNET_GPIO32_EVENT_STATE_CONTROL_CLASSIFICATION
+        );
+
+        let source_unresolved = build_rp1_ethernet_gpio32_event_state_discriminator_report(
+            Rp1EthernetGpio32EventStateDiscriminatorReportInput {
+                source_decoding_status:
+                    Rp1EthernetGpio32EventStateSourceDecodingStatus::SourceUnresolved,
+                event_state_classification:
+                    "rp1-ethernet-gpio32-event-state-source-unresolved-event-state",
+                ..accepted_gpio32_event_state_discriminator_input()
+            },
+        )
+        .expect("valid source-unresolved event-state input");
+        let source_unresolved_evidence =
+            rp1_ethernet_gpio32_event_state_discriminator_report_evidence(source_unresolved);
+
+        assert_eq!(
+            source_unresolved_evidence.source_decoding_status,
+            "source-unresolved"
+        );
+        assert_eq!(
+            source_unresolved_evidence.classification,
+            "rp1-ethernet-gpio32-event-state-source-unresolved-event-state"
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_gpio32_event_state_rejects_shape_and_overclaims() {
+        let input = accepted_gpio32_event_state_discriminator_input();
+
+        assert_eq!(
+            build_rp1_ethernet_gpio32_event_state_discriminator_report(
+                Rp1EthernetGpio32EventStateDiscriminatorReportInput {
+                    source_contract: None,
+                    ..input
+                }
+            ),
+            Err(
+                Rp1EthernetGpio32EventStateDiscriminatorReportError::CandidateMissingSourceContract
+            )
+        );
+        assert_eq!(
+            build_rp1_ethernet_gpio32_event_state_discriminator_report(
+                Rp1EthernetGpio32EventStateDiscriminatorReportInput {
+                    kind:
+                        Rp1EthernetGpio32EventStateDiscriminatorReportKind::NoGpioNoEthernetControl,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::ControlCarriesGpioTargetFacts)
+        );
+        assert_eq!(
+            build_rp1_ethernet_gpio32_event_state_discriminator_report(
+                Rp1EthernetGpio32EventStateDiscriminatorReportInput {
+                    source_contract: Some(Rp1EthernetGpio32EventStateSourceContractEvidence {
+                        gpio_line: 33,
+                        ..rp1_ethernet_gpio32_event_state_source_contract_evidence()
+                    },),
+                    ..input
+                }
+            ),
+            Err(
+                Rp1EthernetGpio32EventStateDiscriminatorReportError::SourceContractIdentityMismatch
+            )
+        );
+        assert_eq!(
+            build_rp1_ethernet_gpio32_event_state_discriminator_report(
+                Rp1EthernetGpio32EventStateDiscriminatorReportInput {
+                    source_contract: Some(
+                        Rp1EthernetGpio32EventStateSourceContractEvidence {
+                            accepted_v2_event_bits: 0,
+                            ..rp1_ethernet_gpio32_event_state_source_contract_evidence()
+                        },
+                    ),
+                    ..input
+                }
+            ),
+            Err(
+                Rp1EthernetGpio32EventStateDiscriminatorReportError::SourceContractV2LineageMismatch
+            )
+        );
+        assert_eq!(
+            build_rp1_ethernet_gpio32_event_state_discriminator_report(
+                Rp1EthernetGpio32EventStateDiscriminatorReportInput {
+                    status_raw: Some(0),
+                    ..input
+                }
+            ),
+            Err(
+                Rp1EthernetGpio32EventStateDiscriminatorReportError::EventStateClassificationMismatch
+            )
+        );
+        assert_eq!(
+            build_rp1_ethernet_gpio32_event_state_discriminator_report(
+                Rp1EthernetGpio32EventStateDiscriminatorReportInput {
+                    claims_event_clearing: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::EventClearingClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_gpio32_event_state_discriminator_report(
+                Rp1EthernetGpio32EventStateDiscriminatorReportInput {
+                    claims_gpio_rio_pad_mmio_write: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::GpioRioPadMmioWriteClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_gpio32_event_state_discriminator_report(
+                Rp1EthernetGpio32EventStateDiscriminatorReportInput {
+                    claims_gpio32_write_restore_retry: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::Gpio32WriteRestoreRetryClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_gpio32_event_state_discriminator_report(
+                Rp1EthernetGpio32EventStateDiscriminatorReportInput {
+                    claims_mdio_phy_ownership: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::MdioPhyOwnershipClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_gpio32_event_state_discriminator_report(
+                Rp1EthernetGpio32EventStateDiscriminatorReportInput {
+                    claims_dma_descriptor_ownership: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetGpio32EventStateDiscriminatorReportError::DmaDescriptorOwnershipClaim)
+        );
+        assert_eq!(
+            rejected_rp1_ethernet_gpio32_event_state_discriminator_report_evidence(
+                Rp1EthernetGpio32EventStateDiscriminatorReportError::PhaseTransitionClaim
             ),
             (
                 RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION,

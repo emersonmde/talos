@@ -1,0 +1,66 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-event-state-discriminator-core-20260611",
+  "classification": "rp1-ethernet-gpio32-event-state-discriminator-local-static-accepted",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-discriminator-core.md",
+      "evidence_level": "static implementation record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-discriminator-core/classification.json",
+      "evidence_level": "local/static classification"
+    },
+    {
+      "label": "implementation",
+      "path": "src/rp1_ethernet.rs",
+      "evidence_level": "local/static report implementation and focused unit tests"
+    },
+    {
+      "label": "accepted event-state source contract",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-source-contract.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted v2 proof",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof.md",
+      "evidence_level": "static inspection of accepted serial hardware boot/output proof"
+    },
+    {
+      "label": "accepted v2 closeout",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "fmt",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed",
+      "evidence_level": "fmt/lint"
+    },
+    {
+      "label": "focused tests",
+      "command": "cargo -Zjson-target-spec test --quiet rp1_ethernet",
+      "result": "passed with 492 no_std tests",
+      "evidence_level": "unit tests"
+    },
+    {
+      "label": "json validation",
+      "command": "jq empty tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-discriminator-core/classification.json tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-discriminator-core/evidence-map.json",
+      "result": "passed",
+      "evidence_level": "jq JSON validation"
+    },
+    {
+      "label": "diff hygiene",
+      "command": "git diff --check",
+      "result": "passed",
+      "evidence_level": "diff hygiene"
+    },
+    {
+      "label": "staged diff hygiene",
+      "command": "git diff --cached --check",
+      "result": "passed",
+      "evidence_level": "staged diff hygiene"
+    }
+  ]
+}
