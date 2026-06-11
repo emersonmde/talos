@@ -1,0 +1,2 @@
+target/tmp/lab-tftp-root-reconciliation-extract.sN6mJq/kernel_2712.img 47816
+target/tmp/lab-tftp-root-reconciliation-extract.sN6mJq/da591740/kernel_2712.img 47816

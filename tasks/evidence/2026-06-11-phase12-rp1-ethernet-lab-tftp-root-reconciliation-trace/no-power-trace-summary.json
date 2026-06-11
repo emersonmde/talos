@@ -1,0 +1,17 @@
+{
+  "contract_version": "phase12-lab-tftp-root-reconciliation-summary-v1",
+  "no_power_cycle_performed": true,
+  "baseline_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "post_publish_tree_hash": "48571aa9965e5d2926d2ca5f9651fae90eb5923f63bb651237203442f101bf77",
+  "post_publish_effective_kernel": "kernel_2712.img",
+  "expected_fetch": "da591740/kernel_2712.img",
+  "archive_expected_fetch_bytes": 47816,
+  "post_publish_expected_fetch_bytes": 47816,
+  "api_visible_publish_changed_tree": true,
+  "api_visible_fetch_matches_archive_size": true,
+  "tftp_delta_event_count_after_publish_without_power": 0,
+  "tftp_delta_events_after_publish_without_power": [],
+  "restore_snapshot": "phase12-lab-tftp-root-reconciliation-baseline-20260611",
+  "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "restore_returned_to_baseline_tree": true
+}

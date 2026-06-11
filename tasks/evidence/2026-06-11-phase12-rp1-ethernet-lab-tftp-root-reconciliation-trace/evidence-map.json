@@ -1,0 +1,107 @@
+{
+  "contract_version": "phase12-lab-tftp-root-reconciliation-evidence-map-v1",
+  "task_id": "phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace-20260611",
+  "artifacts": [
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace/classification.json",
+      "evidence_level": "static inspection + lab-controller API"
+    },
+    {
+      "label": "no-power trace summary",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace/no-power-trace-summary.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "baseline status",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace/baseline-status.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "baseline boot files",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace/baseline-boot-files.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "baseline snapshot create",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace/baseline-snapshot-create.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "archive identity",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace/archive-identity.json",
+      "evidence_level": "image/archive inspection"
+    },
+    {
+      "label": "archive file list",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace/archive-file-list.tsv",
+      "evidence_level": "image/archive inspection"
+    },
+    {
+      "label": "archive kernel sha256",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace/archive-kernel-sha256.txt",
+      "evidence_level": "image/archive inspection"
+    },
+    {
+      "label": "archive sentinel strings",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace/archive-sentinel-strings.txt",
+      "evidence_level": "image/archive inspection"
+    },
+    {
+      "label": "publish response",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace/publish-response.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "post-publish status",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace/post-publish-status.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "post-publish boot files",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace/post-publish-boot-files.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "TFTP cursor before publish",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace/tftp-cursor-before-publish.txt",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "TFTP delta after publish without power",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace/tftp-delta-after-publish-no-power.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "restore baseline snapshot",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace/restore-baseline-snapshot.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "post-restore status",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace/post-restore-status.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "post-restore boot files",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace/post-restore-boot-files.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "TFTP delta after restore without power",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace/tftp-delta-after-restore-no-power.json",
+      "evidence_level": "lab-controller API"
+    }
+  ],
+  "evidence_levels": [
+    "static inspection",
+    "image/archive inspection",
+    "lab-controller API"
+  ],
+  "no_hardware_evidence_levels": [
+    "serial hardware boot/output",
+    "repeated hardware run",
+    "QEMU/substitute"
+  ],
+  "next_path": "Block for lab-service/root-cache reconciliation; current repository checks already quarantine API-visible identity alone."
+}

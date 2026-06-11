@@ -1,0 +1,76 @@
+{
+  "contract_version": "phase12-lab-tftp-root-reconciliation-classification-v1",
+  "task_id": "phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace-20260611",
+  "classification": "lab-api-service-blocked-live-tftp-root-unobservable",
+  "accepted_trace": false,
+  "precise_blocker": true,
+  "no_power_cycle_performed": true,
+  "hardwareTestLock": {
+    "acquired_for_publication": true,
+    "restored_before_release": true,
+    "baseline_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "publication_path": {
+    "archive_scenario": "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_control",
+    "archive_runtime_claims": {
+      "mdio": false,
+      "ethernet": false,
+      "mmio_target_construction": false,
+      "hardware_power_cycle": false
+    },
+    "expected_fetch": "da591740/kernel_2712.img",
+    "archive_expected_fetch_bytes": 47816,
+    "baseline_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "post_publish_tree_hash": "48571aa9965e5d2926d2ca5f9651fae90eb5923f63bb651237203442f101bf77",
+    "post_publish_effective_kernel": "kernel_2712.img",
+    "api_visible_publish_changed_tree": true,
+    "api_visible_fetch_matches_archive_size": true
+  },
+  "tftp_observation": {
+    "no_power_fetch_event_count_after_publish": 0,
+    "no_power_fetch_events_after_publish": [],
+    "no_power_fetch_event_count_after_restore": 0,
+    "direct_live_tftp_root_endpoint_available_in_lab_api": false,
+    "notes": [
+      "No power-cycle was performed, so no Pi TFTP fetch was induced.",
+      "The deployed lab API exposes /status, /boot/files, /boot/archive, /boot/restore, and /tftp/logs, but no read-only endpoint that hashes or lists the actual dnsmasq-served root/cache independently of the API-visible boot tree."
+    ]
+  },
+  "helper_review_findings": [
+    {
+      "finding": "rpi5-proof-identity-join-v4-check does not accept API-visible /boot/files identity by itself.",
+      "disposition": "not-an-issue",
+      "evidence": "Static inspection: scripts/rpi5-proof-identity-join-v4-check.sh requires same-power-cycle TFTP-served bytes, final pre-restore identity, restore proof, and serial freshness."
+    },
+    {
+      "finding": "The staging sentinel archive helper builds root and da591740/ copies with a no-MDIO/no-Ethernet/no-MMIO-target scenario.",
+      "disposition": "not-an-issue",
+      "evidence": "Archive strings and post-publish /boot/files show da591740/kernel_2712.img at the archive byte count."
+    },
+    {
+      "finding": "Repository helpers cannot prove actual dnsmasq-served root/cache state without either a hardware fetch or a lab-service endpoint exposing that serving root.",
+      "disposition": "deferred",
+      "evidence": "No-power /tftp/logs delta after publish had zero events; lab-controller docs expose logs but not live served-root hashing."
+    }
+  ],
+  "acceptance": {
+    "task_record_lists_findings": true,
+    "lock_acquisition_release_restore_recorded": true,
+    "no_hardware_power_cycle_or_serial_transaction": true,
+    "api_visible_boot_tree_and_boot_file_entries_distinguished": true,
+    "tftp_log_cursor_behavior_recorded": true,
+    "live_tftp_root_evidence": "unavailable-via-current-lab-api-without-hardware-fetch",
+    "next_mechanically_valid_path": "lab-service blocker requiring Matthew/operator input: expose or repair a read-only lab API check of the actual dnsmasq-served TFTP root/cache, or authorize operator-level inspection; do not retry MDIO/register-vector hardware from API-visible identity alone."
+  },
+  "rejected_claims": [
+    "root-reconciled-ready",
+    "repository-helper-assumption-fixed",
+    "minimal-hardware-sentinel-proof-ready",
+    "register-vector-man-data-values",
+    "ethernet-behavior",
+    "networking",
+    "ssh",
+    "phase-transition"
+  ]
+}

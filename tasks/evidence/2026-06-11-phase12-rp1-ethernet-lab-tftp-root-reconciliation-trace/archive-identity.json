@@ -1,0 +1,17 @@
+{
+  "contract_version": "phase12-lab-tftp-root-reconciliation-archive-v1",
+  "source_dir": "target/tmp/after-mpe-boot-source",
+  "archive_path_removed_after_publish": "target/tmp/phase12-lab-tftp-root-reconciliation-sentinel.tar.gz",
+  "scenario": "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_control",
+  "runtime_claims": {
+    "mdio": false,
+    "ethernet": false,
+    "mmio_target_construction": false,
+    "hardware_power_cycle": false
+  },
+  "expected_fetch": "da591740/kernel_2712.img",
+  "capture_nonce": "lab-tftp-root-trace-20260611T2153Z",
+  "kernel_sizes_text": "target/tmp/lab-tftp-root-reconciliation-extract.sN6mJq/kernel_2712.img 47816\ntarget/tmp/lab-tftp-root-reconciliation-extract.sN6mJq/da591740/kernel_2712.img 47816\n",
+  "kernel_sha256_text": "7d23270df4688d3820df129ee35e03f08478c006a0f4fd47eaf15c017e183b90  target/tmp/lab-tftp-root-reconciliation-extract.sN6mJq/kernel_2712.img\n7d23270df4688d3820df129ee35e03f08478c006a0f4fd47eaf15c017e183b90  target/tmp/lab-tftp-root-reconciliation-extract.sN6mJq/da591740/kernel_2712.img\n",
+  "file_list_tsv": "bcm2712-rpi-5-b.dtb\t78679\ncmdline.txt\t81\nconfig.txt\t118\nda591740/bcm2712-rpi-5-b.dtb\t78679\nda591740/cmdline.txt\t81\nda591740/config.txt\t118\nda591740/kernel8.img\t47816\nda591740/kernel_2712.img\t47816\nda591740/overlays/bcm2712d0.dtbo\t1363\nda591740/overlays/overlay_map.dtb\t5971\nda591740/overlays/uart0-pi5.dtbo\t1071\nkernel8.img\t47816\nkernel_2712.img\t47816\noverlays/bcm2712d0.dtbo\t1363\noverlays/overlay_map.dtb\t5971\noverlays/uart0-pi5.dtbo\t1071\n"
+}
