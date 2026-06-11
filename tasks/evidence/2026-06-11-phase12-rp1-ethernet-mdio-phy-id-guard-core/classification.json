@@ -1,0 +1,75 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-phy-id-guard-core-20260611",
+  "classification": "rp1-ethernet-mdio-phy-id-guard-core-local-static-accepted",
+  "evidence_level": "local/static implementation plus focused unit tests",
+  "implementation": {
+    "source_file": "src/rp1_ethernet.rs",
+    "source_contract_id": "phase12-rp1-ethernet-mdio-phy-id-source-contract-v1",
+    "report_contract_id": "phase12-rp1-ethernet-mdio-phy-id-guard-report-contract-v1",
+    "candidate_classification": "rp1-ethernet-mdio-phy-id-guard-candidate-local-static",
+    "control_classification": "no-mdio-no-ethernet-rp1-ethernet-mdio-phy-id-control"
+  },
+  "accepted_guard": {
+    "selected_discriminator": "rp1-ethernet-mdio-clause22-phy1-physid1-physid2",
+    "controller": "rp1_eth",
+    "compatible": [
+      "raspberrypi,rp1-gem",
+      "cdns,macb"
+    ],
+    "phy_handle": "phy1",
+    "phy_node": "ethernet-phy@1",
+    "phy_address": 1,
+    "phy_id_registers": {
+      "MII_PHYSID1": "0x02",
+      "MII_PHYSID2": "0x03"
+    },
+    "observed_identity_target": "0x1c001000fc",
+    "translated_comparator_target": "0x1f001000fc",
+    "ncr_observed_target": "0x1c00000000",
+    "nsr_observed_target": "0x1c00000008",
+    "man_observed_target": "0x1c00000034",
+    "ncr_mpe_bit": 4,
+    "nsr_idle_bit": 2,
+    "man_data_bits": "15:0",
+    "physid1_man_frame": "0x600a0000",
+    "physid2_man_frame": "0x600e0000",
+    "ncr_mpe_write_allowed": false,
+    "runtime_mdio_transaction_performed": false
+  },
+  "control_behavior": {
+    "uses_same_report_path": true,
+    "withholds_mdio_phy_ethernet_target_facts": true,
+    "constructs_mdio_target_or_man_frame": false,
+    "performs_ncr_nsr_man_volatile_load_or_store": false
+  },
+  "rejected_claims": [
+    "runtime MDIO transaction by local/static guard",
+    "MDIO ownership beyond selected PHY-ID discriminator",
+    "NCR.MPE write permission",
+    "GPIO32/PHY reset ownership",
+    "Ethernet driver readiness",
+    "broad Ethernet MMIO readiness",
+    "interrupt completion",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "NCR.MPE may be clear and must block the first candidate without a write",
+    "GPIO32 and ETH_RST_N remain unowned and may leave PHY reset state unresolved",
+    "visible PHY ID reads would prove only the selected management transaction",
+    "link, MAC, DMA, interrupt, packet, socket, SSH, and Phase 12.2 readiness remain unaccepted"
+  ],
+  "hardware": {
+    "hardwareTestLock_acquired": false,
+    "pi5_run": false,
+    "runtime_mdio_transaction": false,
+    "ncr_mpe_write": false,
+    "gpio32_phy_reset_write": false
+  },
+  "next_action": "phase12-rp1-ethernet-mdio-phy-id-guard-closeout-20260611"
+}
