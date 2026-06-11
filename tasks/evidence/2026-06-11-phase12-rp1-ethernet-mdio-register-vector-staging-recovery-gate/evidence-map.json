@@ -1,0 +1,28 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-staging-recovery-gate-20260611",
+  "evidence_level": [
+    "static inspection",
+    "image/archive inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "stable pre-restore TFTP delta"
+  ],
+  "files": {
+    "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-recovery-gate/classification.json",
+    "capture_summary": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-recovery-gate/capture-summary.json",
+    "staging_identity_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-recovery-gate/candidate-staging-run/staging-identity-check.json",
+    "capture_chain_summary": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-recovery-gate/candidate-staging-run/capture-invariant-summary.json",
+    "publication": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-recovery-gate/candidate-staging-run/publication.json",
+    "tftp_delta": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-recovery-gate/candidate-staging-run/tftp-delta-stable-pre-restore.json",
+    "serial_window": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-recovery-gate/candidate-staging-run/serial-observe-window.json",
+    "restore": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-recovery-gate/candidate-staging-run/restore-snapshot.json",
+    "archive_review": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-recovery-gate/archive-review/candidate-static-review.txt",
+    "archive_sha256": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-recovery-gate/candidate-archive-sha256.txt"
+  },
+  "validation": {
+    "jq_empty": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "not required; no docs/src files touched",
+    "git_diff_cached_check": "passed"
+  }
+}

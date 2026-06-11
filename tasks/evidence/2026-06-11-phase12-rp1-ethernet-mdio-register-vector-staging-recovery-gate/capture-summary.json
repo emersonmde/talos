@@ -1,0 +1,22 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-staging-recovery-gate-20260611",
+  "summary": "Recovery gate accepted selected-tree staging identity durability for the register-vector candidate archive.",
+  "classification": "boot-staging-identity-ready",
+  "selected_tree_hash": "3b004386594d5e81bb93c5b0a8a3f2c1822dfa26b46ce2c51e544b7b5715d845",
+  "baseline_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "final_pre_restore_tree_hash": "3b004386594d5e81bb93c5b0a8a3f2c1822dfa26b46ce2c51e544b7b5715d845",
+  "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "expected_fetch_path": "da591740/kernel_2712.img",
+  "expected_fetch_byte_count": 52344,
+  "expected_fetch_count": 2,
+  "expected_fetch_byte_match_count": 2,
+  "tftp_event_count": 13,
+  "tftp_stable": true,
+  "serial_marker_visible": true,
+  "serial_marker_occurrences": 19,
+  "capture_chain_v4_rp1_classification_allowed": false,
+  "capture_chain_v4_rejection_reasons": [
+    "serial-drain-not-empty-before-power"
+  ],
+  "restore_completed": true
+}

@@ -1,0 +1,8 @@
+candidate_archive=target/tmp/talos-rpi5-rp1-ethernet-mdio-register-vector-staging-recovery-candidate.tar.gz
+candidate_archive_sha256=14742f705bd1e0793788f893675177a790e70c69ec438807d85e0547bd9bc54c
+kernel_2712_sha256=8ea46c53c4f80e01dec5f83db493f2465d0ed0e01353d4d0eb7f3c3048d766d3
+kernel_2712_size=52344
+header_image_size=52344
+text_offset=0
+flags=12
+forbidden_mdio_register_vector_candidate_runtime_strings_absent=true

@@ -1,0 +1,71 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-staging-recovery-gate-20260611",
+  "classification": "boot-staging-identity-ready",
+  "evidence_level": [
+    "lab-controller API",
+    "serial hardware boot/output",
+    "stable pre-restore TFTP delta",
+    "boot archive publication/restore evidence"
+  ],
+  "accepted_claims": [
+    "selected register-vector boot tree survived publication through power cycle",
+    "expected da591740/kernel_2712.img TFTP fetches matched selected kernel byte count",
+    "final pre-restore boot identity remained the selected tree",
+    "post-run restore returned to baseline tree"
+  ],
+  "rejected_claims": [
+    "no MDIO register-vector hardware value acceptance in this recovery gate",
+    "no broad MDIO/PHY ownership",
+    "no Ethernet behavior, packet I/O, networking, sockets, SSH, Phase 12.2, or phase transition"
+  ],
+  "mismatch_locus": "previous blocked proof mismatch is not reproduced by the recovery gate; selected-tree identity survived publish-to-power-to-TFTP/final identity, so the prior publication-to-power mismatch is classified as stale capture-chain/bookkeeping or superseded lab publication state rather than current lab-controller publish/restore behavior",
+  "staging_identity": {
+    "contract_version": "pi5-boot-staging-identity-v1",
+    "staging_identity_decisive": true,
+    "classification": "boot-staging-identity-ready",
+    "rejection_reasons": [],
+    "baseline_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "selected": {
+      "tree_hash": "3b004386594d5e81bb93c5b0a8a3f2c1822dfa26b46ce2c51e544b7b5715d845",
+      "effective_kernel": "kernel_2712.img",
+      "expected_fetch_path": "da591740/kernel_2712.img",
+      "expected_fetch_byte_count": 52344
+    },
+    "tftp": {
+      "cursor_file": 4460538,
+      "delta_cursor_start": 4460538,
+      "delta_cursor_end": 4461889,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        52344,
+        52344
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "3b004386594d5e81bb93c5b0a8a3f2c1822dfa26b46ce2c51e544b7b5715d845",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 52344
+    },
+    "restore": {
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "rule": "candidate serial output is not decisive unless selected-tree identity, expected TFTP fetch bytes, final pre-restore identity, and restore identity all match one staged boot tree"
+  },
+  "capture_identity_join_rejection_reasons": [
+    "serial-drain-not-empty-before-power"
+  ],
+  "note": "Full capture-chain v4 still rejects decisive RP1 hardware classification because pre-power serial drain was non-empty; this task only accepts boot-staging identity durability and does not accept register-vector hardware data.",
+  "publication": {
+    "tree_hash": "3b004386594d5e81bb93c5b0a8a3f2c1822dfa26b46ce2c51e544b7b5715d845",
+    "effective_kernel": "kernel_2712.img"
+  },
+  "restore": {
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "archive_sha256": "14742f705bd1e0793788f893675177a790e70c69ec438807d85e0547bd9bc54c  target/tmp/talos-rpi5-rp1-ethernet-mdio-register-vector-staging-recovery-candidate.tar.gz"
+}
