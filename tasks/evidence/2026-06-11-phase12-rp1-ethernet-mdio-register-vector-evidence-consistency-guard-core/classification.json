@@ -1,0 +1,45 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core-20260611",
+  "status": "accepted",
+  "classification": "mdio-register-vector-evidence-consistency-guard-accepted",
+  "evidence_level": [
+    "local/static evidence-consistency guard",
+    "retained task-owned JSON replay"
+  ],
+  "guard_contract": "pi5-evidence-consistency-guard-v1",
+  "negative_control": {
+    "source_task": "phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery-20260611",
+    "exit_code": 1,
+    "classification": "evidence-consistency-blocked",
+    "consistent": false,
+    "rejection_reasons": [
+      "aggregate-claims-candidate-ready-overclaim",
+      "task-markdown-candidate-ready-overclaim"
+    ],
+    "candidate_v4_classification": "capture-staging-blocked",
+    "candidate_v4_allowed": false,
+    "control_v4_classification": "capture-chain-v4-ready",
+    "control_v4_allowed": true
+  },
+  "positive_control": {
+    "source_task": "phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof-20260610",
+    "exit_code": 0,
+    "classification": "evidence-consistency-ready",
+    "consistent": true,
+    "rejection_reasons": [],
+    "candidate_v4_classification": "capture-chain-v4-ready",
+    "candidate_v4_allowed": true,
+    "control_v4_classification": "capture-chain-v4-ready",
+    "control_v4_allowed": true
+  },
+  "accepted_claims": [
+    "scripts/rpi5-evidence-consistency-guard.sh makes candidate/control v4 JSON authoritative for capture-chain readiness.",
+    "The guard rejects the contradictory register-vector retry because aggregate accepted claims and task markdown overclaim candidate readiness while candidate v4 JSON is capture-staging-blocked.",
+    "The guard accepts a retained positive capture-chain-v4 proof where candidate/control v4 JSON, aggregate JSON, capture summary, evidence map, and task markdown agree."
+  ],
+  "rejected_claims": [
+    "acceptance of the contradictory register-vector serial values as hardware proof",
+    "runtime Ethernet, MDIO, PHY, MMIO, DMA, descriptor-ring, interrupt, packet I/O, networking, sockets, SSH, Phase 12.2, or phase transition work"
+  ],
+  "future_validation_requirement": "Future Pi 5 proof acceptance must run the guard over task-owned candidate/control v4 JSON, aggregate classification, capture-summary, evidence-map, and task markdown; a candidate/control v4 disagreement or markdown/aggregate readiness overclaim is a blocker."
+}

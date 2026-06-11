@@ -1,0 +1,26 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core-20260611",
+  "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core.md",
+  "implementation": "scripts/rpi5-evidence-consistency-guard.sh",
+  "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core/classification.json",
+  "negative_control": {
+    "source_task_record": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery.md",
+    "source_evidence_dir": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery",
+    "guard_output": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core/negative-contradictory-register-vector-guard-output.json",
+    "exit_code": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core/negative-contradictory-register-vector-guard.exit",
+    "stderr": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core/negative-contradictory-register-vector-guard.stderr"
+  },
+  "positive_control": {
+    "source_task_record": "tasks/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof.md",
+    "source_evidence_dir": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-v2-pi5-proof",
+    "guard_output": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core/positive-retained-capture-chain-v4-guard-output.json",
+    "exit_code": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core/positive-retained-capture-chain-v4-guard.exit",
+    "stderr": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core/positive-retained-capture-chain-v4-guard.stderr"
+  },
+  "validation_outputs": {
+    "jq_empty": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core/jq-empty.txt",
+    "shell_syntax": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core/shell-syntax.txt",
+    "git_diff_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core/git-diff-check.txt",
+    "staged_diff_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-evidence-consistency-guard-core/git-diff-cached-check.txt"
+  }
+}

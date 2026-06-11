@@ -1,0 +1,127 @@
+{
+  "contract_version": "pi5-evidence-consistency-guard-v1",
+  "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery.md",
+  "evidence_dir": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery",
+  "authoritative_inputs": {
+    "candidate_v4_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/candidate-run/v4-check.json",
+    "control_v4_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/control-run/v4-check.json"
+  },
+  "candidate": {
+    "v4": {
+      "classification": "capture-staging-blocked",
+      "allowed": false,
+      "rejection_reasons": [
+        "run-unique-serial-freshness-not-proven",
+        "run-unique-capture-nonce-present-before-power",
+        "run-unique-capture-nonce-not-present-after-power",
+        "required-marker-not-present-after-power",
+        "tftp-expected-fetch-byte-mismatch",
+        "final-pre-restore-selected-tree-mismatch",
+        "final-pre-restore-expected-fetch-byte-mismatch"
+      ],
+      "selected_tree_hash": "b901be8a925e644ffc3f932d258ed7413522f95a8a36a3df7c8ae5182ee745fc",
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 0,
+      "final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "serial_marker_occurrences": 0,
+      "serial_freshness_ok": false
+    },
+    "aggregate_classification": {
+      "classification": "capture-staging-blocked",
+      "allowed": false,
+      "rejection_reasons": [
+        "run-unique-serial-freshness-not-proven",
+        "run-unique-capture-nonce-present-before-power",
+        "run-unique-capture-nonce-not-present-after-power",
+        "required-marker-not-present-after-power",
+        "tftp-expected-fetch-byte-mismatch",
+        "final-pre-restore-selected-tree-mismatch",
+        "final-pre-restore-expected-fetch-byte-mismatch"
+      ],
+      "selected_tree_hash": "b901be8a925e644ffc3f932d258ed7413522f95a8a36a3df7c8ae5182ee745fc",
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 0,
+      "final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "serial_marker_occurrences": 0,
+      "serial_freshness_ok": false
+    },
+    "capture_summary": {
+      "classification": "capture-staging-blocked",
+      "allowed": false,
+      "rejection_reasons": [
+        "run-unique-serial-freshness-not-proven",
+        "run-unique-capture-nonce-present-before-power",
+        "run-unique-capture-nonce-not-present-after-power",
+        "required-marker-not-present-after-power",
+        "tftp-expected-fetch-byte-mismatch",
+        "final-pre-restore-selected-tree-mismatch",
+        "final-pre-restore-expected-fetch-byte-mismatch"
+      ],
+      "selected_tree_hash": "b901be8a925e644ffc3f932d258ed7413522f95a8a36a3df7c8ae5182ee745fc",
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 0,
+      "final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "serial_marker_occurrences": 0,
+      "serial_freshness_ok": false
+    }
+  },
+  "control": {
+    "v4": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": [],
+      "selected_tree_hash": "6b44308801a677b59beb1f5c3a951f6b2ff2e7e531c2671cbeb51ee2b49e92f6",
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "final_pre_restore_tree_hash": "6b44308801a677b59beb1f5c3a951f6b2ff2e7e531c2671cbeb51ee2b49e92f6",
+      "serial_marker_occurrences": 20,
+      "serial_freshness_ok": true
+    },
+    "aggregate_classification": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": [],
+      "selected_tree_hash": "6b44308801a677b59beb1f5c3a951f6b2ff2e7e531c2671cbeb51ee2b49e92f6",
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "final_pre_restore_tree_hash": "6b44308801a677b59beb1f5c3a951f6b2ff2e7e531c2671cbeb51ee2b49e92f6",
+      "serial_marker_occurrences": 20,
+      "serial_freshness_ok": true
+    },
+    "capture_summary": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": [],
+      "selected_tree_hash": "6b44308801a677b59beb1f5c3a951f6b2ff2e7e531c2671cbeb51ee2b49e92f6",
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "final_pre_restore_tree_hash": "6b44308801a677b59beb1f5c3a951f6b2ff2e7e531c2671cbeb51ee2b49e92f6",
+      "serial_marker_occurrences": 20,
+      "serial_freshness_ok": true
+    }
+  },
+  "accepted_claims_checked": [
+    "Candidate/control capture-chain-v4 proof is ready with selected-tree identity, expected TFTP fetch bytes, run-unique serial freshness, final pre-restore identity, and restore evidence.",
+    "Candidate observed corrected-target PHY1 register vector BMCR=0x1000 BMSR=0x7949 PHYSID1=0x600d PHYSID2=0x84a2 ANAR=0x1e1 ANLPAR=0x0.",
+    "Candidate performed no NCR write and only wrote selected MAN frames after NCR.MPE was observed set.",
+    "Control proved no MDIO target, no MAN frame, no runtime MDIO transaction, no volatile target access, and no touched fields through the same reporting path.",
+    "Candidate/control capture-chain-v4 proof is ready with selected-tree identity, expected TFTP fetch bytes, run-unique serial freshness, final pre-restore identity, and restore evidence.",
+    "Candidate observed corrected-target PHY1 register vector BMCR=0x1000 BMSR=0x7949 PHYSID1=0x600d PHYSID2=0x84a2 ANAR=0x1e1 ANLPAR=0x0.",
+    "Candidate performed no NCR write and only wrote selected MAN frames after NCR.MPE was observed set.",
+    "Control proved no MDIO target, no MAN frame, no runtime MDIO transaction, no volatile target access, and no touched fields through the same reporting path.",
+    "mdio-phy1-register-vector-visible",
+    "no-mdio-no-ethernet paired control",
+    "capture-chain-v4 candidate/control identity and freshness ready"
+  ],
+  "task_markdown_claims": {
+    "candidate_section_ready_overclaim": true,
+    "control_section_ready_overclaim": true
+  },
+  "consistent": false,
+  "classification": "evidence-consistency-blocked",
+  "rejection_reasons": [
+    "aggregate-claims-candidate-ready-overclaim",
+    "task-markdown-candidate-ready-overclaim"
+  ],
+  "rule": "candidate/control v4 JSON is authoritative; task markdown, aggregate classification JSON, capture summary, and evidence map accepted claims must not claim capture-chain-v4 readiness or matching identity/freshness when v4 JSON blocks it"
+}
