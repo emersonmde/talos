@@ -9723,6 +9723,19 @@ SSH, Phase 12.2, or phase transition require supervisor planning with a
 qualitatively different discriminator or explicit source-backed ownership
 contract.
 
+phase12-rp1-ethernet-mdio-mpe-enable-source-contract-20260611 accepts a
+source/docs/evidence NCR.MPE enable/readback/restore contract. The selected
+future target is MACB/GEM NCR at observed-window 0x1c00100000, MPE bit 4,
+mask 0x00000010. A future candidate may only pre-read NCR, write
+pre_raw | 0x00000010, read back MPE set state, restore-write exact pre_raw,
+and restore-read exact pre_raw; the paired control constructs no target and
+performs no volatile load/store. This contract accepts no hardware write
+success, MAN write, PHY-ID read, broad MDIO/PHY ownership, PHY reset/GPIO32
+ownership, Ethernet driver behavior, interrupts, DMA/descriptors, packet I/O,
+networking, sockets, SSH, Phase 12.2, or phase transition. Same-shaped
+MDIO PHY-ID retries remain closed until separate NCR.MPE ownership is
+accepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

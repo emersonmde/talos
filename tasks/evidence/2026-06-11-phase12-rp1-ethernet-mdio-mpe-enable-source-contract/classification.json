@@ -1,0 +1,88 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-mpe-enable-source-contract-20260611",
+  "classification": "rp1-ethernet-mdio-mpe-enable-source-contract-accepted",
+  "evidence_level": "static inspection of accepted MDIO PHY-ID proof/closeout records, retained Raspberry Pi Linux MACB/RP1 source evidence, rp1_ethernet source, Phase 12 docs, roadmap, git history, and task-owned JSON",
+  "selected_contract": {
+    "contract_id": "phase12-rp1-ethernet-mdio-mpe-enable-source-contract-v1",
+    "selected_operation": "rp1-ethernet-mdio-mpe-enable-set-readback-restore",
+    "controller": "rp1_eth",
+    "compatible": [
+      "raspberrypi,rp1-gem",
+      "cdns,macb"
+    ],
+    "register": "MACB/GEM NCR",
+    "source_rp1_bus_target": "0xc040100000",
+    "observed_window_target": "0x1c00100000",
+    "offset": "0x0000",
+    "width": "32-bit little-endian volatile load/store",
+    "mpe_bit": 4,
+    "mpe_mask": "0x00000010",
+    "write_value_rule": "pre_raw | 0x00000010",
+    "restore_baseline": "pre_raw",
+    "restore_invariant": "restore_raw == pre_raw"
+  },
+  "source_evidence": [
+    {
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-macb_main.c",
+      "lines": "macb_mii_init writes MACB_BIT(MPE) to NCR before MII bus allocation"
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-macb.h",
+      "lines": "MACB_NCR offset 0x0000 and MACB_MPE_OFFSET 4"
+    },
+    {
+      "path": "src/rp1_ethernet.rs",
+      "lines": "accepted observed-window MACB_MID context at 0x1c001000fc and rp1_eth source offset 0x00100000"
+    }
+  ],
+  "precondition_handling": [
+    "candidate must prove capture identity, source contract identity, and non-inconclusive NCR pre-read before any write",
+    "candidate may start from MPE clear or already set; accepted result depends on post-read and restore-read evidence",
+    "if target identity, source contract, serial/TFTP freshness, or pre-read is inconclusive, perform no write and classify a precise blocker"
+  ],
+  "allowed_future_classifications": [
+    "rp1-ethernet-mdio-mpe-enable-set-readback-restored",
+    "rp1-ethernet-mdio-mpe-enable-already-set-restored",
+    "rp1-ethernet-mdio-mpe-enable-readback-mismatch-restored",
+    "rp1-ethernet-mdio-mpe-enable-restore-failed",
+    "rp1-ethernet-mdio-mpe-enable-blocked-target-inconclusive",
+    "precise-staging-capture-blocker",
+    "no-mdio-no-ethernet-rp1-ethernet-mdio-mpe-enable-control"
+  ],
+  "paired_control": {
+    "classification": "no-mdio-no-ethernet-rp1-ethernet-mdio-mpe-enable-control",
+    "requirements": [
+      "same reporting path",
+      "construct no NCR target and no candidate write value",
+      "perform no volatile load/store to NCR, NSR, MAN, GPIO32, RIO, pad, clock/reset, DMA, interrupt, packet, or network paths",
+      "withhold candidate-only raw values and set/readback/restore booleans"
+    ]
+  },
+  "same_shaped_mdio_phy_id_retry_policy": {
+    "status": "closed",
+    "reason": "same-shaped PHY-ID retries remain closed until separate NCR.MPE write/readback/restore ownership is accepted"
+  },
+  "rejected_claims": [
+    "runtime NCR.MPE write/readback/restore success by this task",
+    "MAN writes",
+    "runtime MDIO transaction",
+    "PHY-ID reads",
+    "broad MDIO/PHY ownership",
+    "PHY reset or GPIO32 ownership",
+    "Ethernet driver readiness",
+    "interrupt delivery/completion",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "future proof may classify target-inconclusive if MACB/GEM NCR visibility is not capture-clean at 0x1c00100000",
+    "setting MPE may be necessary but not sufficient for visible PHY-ID reads",
+    "GPIO32/ETH_RST_N, PHY reset state, link state, DMA/descriptors, interrupts, packet I/O, sockets, SSH, and Phase 12.2 readiness remain unaccepted"
+  ],
+  "next_action": "mechanically promote phase12-rp1-ethernet-mdio-mpe-enable-guard-core-20260611 on the next worker wake if dependencies remain satisfied"
+}

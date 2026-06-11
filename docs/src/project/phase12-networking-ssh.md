@@ -1172,3 +1172,20 @@ interrupt, DMA/descriptor, packet I/O, networking, socket, SSH, Phase 12.2, or
 phase-transition work requires supervisor planning with a qualitatively
 different discriminator or explicit source-backed ownership contract. This
 closeout does not accept those claims or select a follow-up task.
+
+phase12-rp1-ethernet-mdio-mpe-enable-source-contract-20260611 accepts the
+source/docs/evidence contract for the smallest NCR.MPE enable/readback/restore
+prerequisite. The selected target is MACB/GEM NCR at observed-window
+0x1c00100000, derived from rp1_eth offset 0x00100000 and MACB_NCR offset
+0x0000, with MPE bit 4 and mask 0x00000010. A future candidate may only
+pre-read NCR, write pre_raw | 0x00000010, read back MPE set state,
+restore-write exact pre_raw, and restore-read exact pre_raw. The paired
+control must use the same reporting path while constructing no NCR target and
+performing no volatile load/store.
+
+This contract does not run hardware and does not accept runtime MPE write
+success, MAN writes, PHY-ID reads, broad MDIO/PHY ownership, PHY reset/GPIO32
+ownership, Ethernet driver readiness, interrupts, DMA/descriptors, packet I/O,
+networking, sockets, SSH, Phase 12.2, or a phase transition. Same-shaped
+MDIO PHY-ID retries remain closed until this distinct NCR.MPE ownership path is
+separately implemented and accepted.

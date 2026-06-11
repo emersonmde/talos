@@ -1,0 +1,98 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-mpe-enable-source-contract-20260611",
+  "classification": "rp1-ethernet-mdio-mpe-enable-source-contract-accepted",
+  "inputs": [
+    {
+      "kind": "accepted-task",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract.md",
+      "notes": "Prior PHY-ID source contract and same-shaped retry boundary."
+    },
+    {
+      "kind": "accepted-hardware-proof",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof.md",
+      "notes": "No-write candidate/control proof closed by MPE-clear precondition; no NCR/MAN/GPIO32 write occurred."
+    },
+    {
+      "kind": "accepted-closeout",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-proof-closeout.md",
+      "notes": "Same-shaped PHY-ID retries closed until NCR.MPE write ownership is separately accepted."
+    },
+    {
+      "kind": "proof-json",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof/classification.json",
+      "notes": "Candidate/control classification, no-write evidence, and rejected claims."
+    },
+    {
+      "kind": "source",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-macb_main.c",
+      "notes": "macb_mii_init management-port enable source."
+    },
+    {
+      "kind": "source",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-macb.h",
+      "notes": "MACB_NCR offset and MPE bit definition."
+    },
+    {
+      "kind": "source",
+      "path": "src/rp1_ethernet.rs",
+      "notes": "Accepted rp1_eth source identity and observed-window MACB_MID context."
+    },
+    {
+      "kind": "docs",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "notes": "Phase 12 accepted frontier and MDIO/PHY-ID boundary."
+    },
+    {
+      "kind": "docs",
+      "path": "docs/src/roadmap.md",
+      "notes": "Roadmap frontier for Milestone 12.1."
+    }
+  ],
+  "outputs": [
+    {
+      "kind": "task-record",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-source-contract.md",
+      "notes": "Accepted source-backed NCR.MPE enable/readback/restore contract."
+    },
+    {
+      "kind": "classification",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-source-contract/classification.json",
+      "notes": "Accepted contract fields, allowed future classifications, rejected claims, retained risks, and nextAction."
+    },
+    {
+      "kind": "evidence-map",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-source-contract/evidence-map.json",
+      "notes": "Input/output evidence map for this source contract."
+    },
+    {
+      "kind": "docs",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "notes": "Accepted frontier updated with NCR.MPE source contract."
+    },
+    {
+      "kind": "docs",
+      "path": "docs/src/roadmap.md",
+      "notes": "Roadmap updated with NCR.MPE source contract frontier."
+    }
+  ],
+  "validation": [
+    {
+      "level": "static inspection",
+      "commands": [
+        "rg -n '\\bMPE\\b|MACB_NCR|NCR|MAN|macb_mii_init|MDIO' retained source/docs/tasks",
+        "sed inspections of macb_mii_init, macb.h, prior source contracts, Phase 12 docs, and roadmap"
+      ],
+      "result": "passed"
+    },
+    {
+      "level": "fmt/lint/typecheck",
+      "commands": [
+        "jq empty tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-source-contract/classification.json tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-source-contract/evidence-map.json",
+        "git diff --check",
+        "/home/node/.cargo/bin/mdbook build",
+        "git diff --cached --check"
+      ],
+      "result": "passed"
+    }
+  ]
+}
