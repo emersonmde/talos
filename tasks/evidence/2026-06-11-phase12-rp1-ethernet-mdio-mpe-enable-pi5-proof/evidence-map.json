@@ -1,0 +1,45 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof-20260611",
+  "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/classification.json",
+  "capture_summary": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/capture-summary.json",
+  "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof.md",
+  "source_and_runtime": [
+    "build.rs",
+    "src/main.rs",
+    "src/target/rpi5.rs"
+  ],
+  "archive_scripts": [
+    "scripts/rpi5-rp1-ethernet-mdio-mpe-enable-candidate-image.sh",
+    "scripts/rpi5-rp1-ethernet-mdio-mpe-enable-candidate-boot-tree.sh",
+    "scripts/rpi5-rp1-ethernet-mdio-mpe-enable-candidate-archive.sh",
+    "scripts/rpi5-rp1-ethernet-mdio-mpe-enable-candidate-review.sh",
+    "scripts/rpi5-rp1-ethernet-mdio-mpe-enable-control-image.sh",
+    "scripts/rpi5-rp1-ethernet-mdio-mpe-enable-control-boot-tree.sh",
+    "scripts/rpi5-rp1-ethernet-mdio-mpe-enable-control-archive.sh",
+    "scripts/rpi5-rp1-ethernet-mdio-mpe-enable-control-review.sh"
+  ],
+  "archive_reviews": {
+    "candidate": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/archive-review/candidate-rerun4-review.txt",
+    "control": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/archive-review/control-rerun5-review.txt"
+  },
+  "accepted_candidate": {
+    "run_dir": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/candidate-rerun4",
+    "archive": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/candidate-rerun4-archive.tar.gz",
+    "v4_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/candidate-rerun4/v4-check.json",
+    "serial": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/candidate-rerun4/serial-observe-window.json",
+    "tftp": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/candidate-rerun4/tftp-delta-stable-pre-restore.json",
+    "restore": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/candidate-rerun4/restore-snapshot.json"
+  },
+  "accepted_control": {
+    "run_dir": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/control-rerun5",
+    "archive": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/control-rerun5-archive.tar.gz",
+    "v4_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/control-rerun5/v4-check.json",
+    "serial": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/control-rerun5/serial-observe-window.json",
+    "tftp": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/control-rerun5/tftp-delta-stable-pre-restore.json",
+    "restore": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/control-rerun5/restore-snapshot.json"
+  },
+  "final_restore_checks": [
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/post-candidate-rerun4-boot-files.json",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/post-control-rerun5-boot-files.json"
+  ]
+}

@@ -1,0 +1,9 @@
+f03ae9cc90e336499b18ce62c9d18743999e6ec9431535a035653e46a71216a7  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/candidate-archive.tar.gz
+9e6c027e1ef62318ae48d8af617c7fa18c889d0742f0d7d62a4357570cf41b6b  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/candidate-rerun2-archive.tar.gz
+dca5d2c177d855b2c2f5362ce684fe16a74c6b729ed1e6c949231a6b1154a753  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/candidate-rerun3-archive.tar.gz
+99734a1c9ee1dc4ed877efe171337d2455a8b3c1894115f01c6c2bca7fb85dfd  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/candidate-rerun4-archive.tar.gz
+4bd431fc88f4cabf61842fd7bc3ea8e08469d91bf5a4a9430837efbf9e146971  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/control-archive.tar.gz
+4567f00343038e08b65e3d8d0e4fbbbcd675440b31f0b44a24dea9fb1f1043c2  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/control-rerun2-archive.tar.gz
+1b8cb44cc146c673ec4e54c794eadb9465e8e66adf4beb24e66bcec60f507927  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/control-rerun3-archive.tar.gz
+238242d3fd72d395edceeb155a24ce2baaff634f04f2161825ab2ac5655c9bc8  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/control-rerun4-archive.tar.gz
+a45c79994a97423ab6bc4259efdeb7532baed5ff83d36f6333ca2452eaba9d14  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/control-rerun5-archive.tar.gz

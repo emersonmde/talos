@@ -9736,6 +9736,18 @@ networking, sockets, SSH, Phase 12.2, or phase transition. Same-shaped
 MDIO PHY-ID retries remain closed until separate NCR.MPE ownership is
 accepted.
 
+phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof-20260611 accepts the serialized
+Pi 5 NCR.MPE proof as rp1-ethernet-mdio-mpe-enable-already-set-restored.
+Candidate-rerun4 and paired control-rerun5 passed capture-chain-v4 with
+selected-tree identity, run-unique serial markers, stable TFTP deltas, final
+pre-restore identity, and restore evidence. The candidate observed NCR 0x10 at
+0x1c00100000 and performed only the accepted set/readback/restore sequence:
+pre_raw 0x10, write_value 0x10, post_raw 0x10, restore_raw 0x10,
+restore_eq_pre=true, with no MAN writes and no PHY-ID reads. This accepts no
+broad MDIO/PHY ownership, PHY reset/GPIO32 ownership, Ethernet driver
+behavior, interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH,
+Phase 12.2, or phase transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

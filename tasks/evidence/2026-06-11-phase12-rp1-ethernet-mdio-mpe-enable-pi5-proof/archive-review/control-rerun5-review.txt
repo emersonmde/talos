@@ -1,0 +1,8 @@
+control_archive=tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/control-rerun5-archive.tar.gz
+control_archive_sha256=a45c79994a97423ab6bc4259efdeb7532baed5ff83d36f6333ca2452eaba9d14
+kernel_2712_sha256=8aaf45a814fd932aa3e3d2f1b99a9d01ce3ec147c24e667a9b956c232f851543
+kernel_2712_size=48896
+header_image_size=48896
+text_offset=0
+flags=12
+forbidden_mdio_mpe_enable_control_runtime_strings_absent=true

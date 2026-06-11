@@ -1,0 +1,25 @@
+{
+  "expected_tree_hash": "93ff149fdd7a5565f6b6a4b5a92c054ed02879cb32ccc5b6443eb2a0e606653c",
+  "observed_tree_hash": "93ff149fdd7a5565f6b6a4b5a92c054ed02879cb32ccc5b6443eb2a0e606653c",
+  "expected_kernel": "kernel_2712.img",
+  "observed_effective_kernel": "kernel_2712.img",
+  "expected_fetch": "da591740/kernel_2712.img",
+  "expected_fetch_bytes": 48896,
+  "observed_fetch_bytes": 48896,
+  "selected_tree_identity_source": "/boot/files",
+  "root_endpoint": {
+    "endpoint": "GET /",
+    "curl_exit": 0,
+    "http_code": 404,
+    "body_bytes": 55,
+    "usable_for_selected_tree_identity": false,
+    "selected_tree_identity_source": "/boot/files",
+    "fallback_used": true,
+    "fallback_reason": "root-endpoint-http-non-2xx"
+  },
+  "tree_matches": true,
+  "effective_kernel_matches": true,
+  "expected_fetch_present": true,
+  "expected_fetch_bytes_match": true,
+  "staging_publication_mismatch": false
+}

@@ -1,0 +1,29 @@
+{
+  "action": "serial observe",
+  "base64": "",
+  "bytes": 0,
+  "cursor_end": 4194304,
+  "cursor_start": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 90,
+    "elapsed_seconds": null,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 1,
+    "observe_contract": "direct-lab-api-serial-observe",
+    "capture_mode": "observe",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 0,
+    "required_marker": "TALOS: rp1-ethernet-mdio-mpe-enable-control",
+    "has_required_marker": false,
+    "required_marker_occurrences": -1,
+    "nonce_token": "capture-nonce=mdio-mpe-control-rerun3-20260611T1045Z",
+    "nonce_token_occurrences": -1,
+    "required_marker_excerpt": ""
+  }
+}

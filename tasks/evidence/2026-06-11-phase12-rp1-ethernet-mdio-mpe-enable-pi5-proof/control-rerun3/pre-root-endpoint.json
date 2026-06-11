@@ -1,0 +1,9 @@
+{
+  "endpoint": "GET /",
+  "http_code": 404,
+  "body_bytes": 55,
+  "usable_for_selected_tree_identity": false,
+  "selected_tree_identity_source": "/boot/files",
+  "fallback_used": true,
+  "fallback_reason": "root-endpoint-http-non-2xx"
+}

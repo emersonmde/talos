@@ -1,0 +1,94 @@
+{
+  "contract_version": "pi5-capture-chain-v4",
+  "base_contracts": [
+    "pi5-capture-transaction-v2",
+    "pi5-capture-transaction-v3",
+    "pi5-capture-transaction-run-unique-v1"
+  ],
+  "run_label": "mdio-mpe-control-rerun2-20260611T1035Z",
+  "report_kind": "control",
+  "decisive_rp1_hardware_classification_allowed": false,
+  "classification": "capture-staging-blocked",
+  "rejection_reasons": [
+    "missing-run-unique-capture-nonce",
+    "required-marker-not-present-after-power",
+    "required-control-marker-not-retained",
+    "tftp-expected-fetch-byte-mismatch",
+    "final-pre-restore-selected-tree-mismatch",
+    "final-pre-restore-expected-fetch-byte-mismatch"
+  ],
+  "endpoint_identity": {
+    "root_endpoint": {
+      "endpoint": "GET /",
+      "curl_exit": 0,
+      "http_code": 404,
+      "body_bytes": 55,
+      "usable_for_selected_tree_identity": false,
+      "selected_tree_identity_source": "/boot/files",
+      "fallback_used": true,
+      "fallback_reason": "root-endpoint-http-non-2xx"
+    },
+    "selected_tree_identity_source": "/boot/files",
+    "fallback_used": true
+  },
+  "proof_run_identity": {
+    "selected_tree_hash": "6dab49c4083211256608253a0bbccdc9b04fbd9093a722bec29a90b1e3a55ee6",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 48904,
+    "tftp": {
+      "cursor_file": 4448379,
+      "delta_cursor_start": 4448379,
+      "delta_cursor_end": 4449730,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 0,
+      "expected_fetch_bytes_seen": [
+        104136,
+        104136
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": false,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 104136
+    },
+    "restore": {
+      "snapshot_name": "pre-mdio-mpe-enable-rerun2-20260611T1035Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "serial_capture": {
+    "capture_mode": "read",
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "cursor_file": 4194304,
+    "cursor_start": 4194304,
+    "cursor_end": 4194304,
+    "response_bytes": 5992,
+    "required_marker": "TALOS: rp1-ethernet-mdio-mpe-enable-control",
+    "required_marker_occurrences": 0,
+    "required_marker_excerpt": "",
+    "nonce_token": null,
+    "nonce_token_occurrences": 0,
+    "pre_power_nonce_occurrences": 0,
+    "empty_pre_power": true,
+    "nonce_fresh": false,
+    "serial_freshness_ok": true
+  },
+  "claim_boundary": {
+    "accepted_if_ready": "capture-chain identity/freshness only",
+    "rejected_runtime_claims": [
+      "live-gem-visibility",
+      "ethernet-driver-readiness",
+      "rp1-mmio-dma-programming",
+      "packet-io",
+      "networking",
+      "ssh",
+      "phase-transition"
+    ]
+  },
+  "rule": "missing /boot/files identity, expected TFTP fetch bytes, final selected-tree identity, run-unique marker freshness, direct serial marker retention, or paired control marker prevents decisive RP1 hardware classification"
+}

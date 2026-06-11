@@ -1216,3 +1216,20 @@ success, runtime RP1 MMIO access, MAN writes, PHY-ID reads, broad MDIO/PHY
 ownership, PHY reset/GPIO32 ownership, Ethernet driver behavior, interrupts,
 DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase
 transition.
+
+phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof-20260611 accepts the serialized
+Pi 5 NCR.MPE proof as rp1-ethernet-mdio-mpe-enable-already-set-restored.
+Candidate-rerun4 and paired control-rerun5 passed capture-chain-v4 with
+selected-tree identity, run-unique serial markers, stable TFTP deltas, final
+pre-restore identity, and restore evidence. The candidate observed MACB_MID
+context 0x70109 at 0x1c001000fc and NCR 0x10 at 0x1c00100000, then performed
+only the accepted NCR.MPE set/readback/restore sequence: pre_raw 0x10,
+write_value 0x10, post_raw 0x10, restore_raw 0x10, restore_eq_pre=true. The
+paired control constructed no NCR/MPE target and performed no volatile
+load/store, MAN write, or PHY-ID read.
+
+This proof accepts only the NCR.MPE write/readback/restore boundary. It does
+not accept MAN transactions, visible PHY-ID reads, broad MDIO/PHY ownership,
+PHY reset/GPIO32 ownership, Ethernet driver behavior, interrupts,
+DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase
+transition.

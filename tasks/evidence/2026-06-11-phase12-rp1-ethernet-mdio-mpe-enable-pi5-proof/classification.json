@@ -1,0 +1,80 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof-20260611",
+  "classification": "rp1-ethernet-mdio-mpe-enable-already-set-restored",
+  "evidence_level": [
+    "static archive review",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "TFTP delta",
+    "capture-chain-v4 replay"
+  ],
+  "candidate": {
+    "run": "candidate-rerun4",
+    "capture_chain_v4": "capture-chain-v4-ready",
+    "selected_tree_hash": "189e08f726e10ebc42c5fe198c84ac8e6fed80cf5e7a763ab02faa8be0eeee7b",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 49792,
+    "serial_nonce": "mpe-candidate-rerun4-20260611T1055Z",
+    "serial_nonce_fresh": true,
+    "observed_window_macb_mid_context_target": "0x1c001000fc",
+    "observed_window_macb_mid_context_raw": "0x70109",
+    "ncr_observed_target": "0x1c00100000",
+    "ncr_offset": "0x0",
+    "ncr_mpe_bit": 4,
+    "ncr_mpe_mask": "0x00000010",
+    "pre_raw": "0x10",
+    "write_value": "0x10",
+    "post_raw": "0x10",
+    "restore_raw": "0x10",
+    "pre_mpe_set": true,
+    "post_mpe_set": true,
+    "restore_eq_pre": true,
+    "ncr_mpe_write_performed": true,
+    "ncr_restore_write_performed": true,
+    "man_writes_performed": false,
+    "phy_id_reads_performed": false,
+    "touched_fields": [
+      "MACB/GEM_NCR.MPE"
+    ],
+    "classification": "rp1-ethernet-mdio-mpe-enable-already-set-restored"
+  },
+  "control": {
+    "run": "control-rerun5",
+    "capture_chain_v4": "capture-chain-v4-ready",
+    "selected_tree_hash": "93ff149fdd7a5565f6b6a4b5a92c054ed02879cb32ccc5b6443eb2a0e606653c",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 48896,
+    "serial_nonce": "mpe-control-rerun5-20260611T1058Z",
+    "serial_nonce_fresh": true,
+    "target": "none",
+    "ncr_observed_target": "not-constructed",
+    "ncr_mpe_write_performed": false,
+    "ncr_restore_write_performed": false,
+    "man_writes_performed": false,
+    "phy_id_reads_performed": false,
+    "touched_fields": [],
+    "classification": "no-mdio-no-ethernet-rp1-ethernet-mdio-mpe-enable-control"
+  },
+  "restore": {
+    "candidate_post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "control_post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "hardware_test_lock_released": true
+  },
+  "rejected_claims": [
+    "MAN writes",
+    "PHY-ID reads",
+    "broad MDIO/PHY ownership",
+    "PHY reset or GPIO32 ownership",
+    "Ethernet driver readiness",
+    "broad Ethernet MMIO readiness",
+    "interrupt completion",
+    "DMA descriptor rings or transfer completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "next_action": "Close out the accepted NCR.MPE write/readback/restore proof before any same-shaped retry or MDIO PHY-ID follow-up."
+}

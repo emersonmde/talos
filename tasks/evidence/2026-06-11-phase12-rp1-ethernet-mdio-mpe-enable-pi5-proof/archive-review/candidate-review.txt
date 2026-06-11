@@ -1,0 +1,8 @@
+candidate_archive=tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/candidate-archive.tar.gz
+candidate_archive_sha256=f03ae9cc90e336499b18ce62c9d18743999e6ec9431535a035653e46a71216a7
+kernel_2712_sha256=958eecf3f1cd21b07c6b7b86a6d1f05b1bf54cc1e11df2c0b1edb40c4b7ac359
+kernel_2712_size=49792
+header_image_size=49792
+text_offset=0
+flags=12
+forbidden_mdio_mpe_enable_candidate_runtime_strings_absent=true

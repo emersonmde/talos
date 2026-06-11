@@ -1,0 +1,59 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof-20260611",
+  "capture_chain_contract": "pi5-capture-chain-v4",
+  "accepted_runs": {
+    "candidate": "candidate-rerun4",
+    "control": "control-rerun5"
+  },
+  "candidate": {
+    "capture_bundle_exit": 0,
+    "v4_check_exit": 0,
+    "classification": "capture-chain-v4-ready",
+    "rejection_reasons": [],
+    "selected_tree_hash": "189e08f726e10ebc42c5fe198c84ac8e6fed80cf5e7a763ab02faa8be0eeee7b",
+    "expected_fetch_bytes": 49792,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "serial_required_marker_occurrences": 25,
+    "serial_nonce_occurrences": 25,
+    "pre_power_nonce_occurrences": 0,
+    "serial_freshness_ok": true,
+    "final_pre_restore_selected_tree_still_staged": true,
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "control": {
+    "capture_bundle_exit": 0,
+    "v4_check_exit": 0,
+    "classification": "capture-chain-v4-ready",
+    "rejection_reasons": [],
+    "selected_tree_hash": "93ff149fdd7a5565f6b6a4b5a92c054ed02879cb32ccc5b6443eb2a0e606653c",
+    "expected_fetch_bytes": 48896,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "serial_required_marker_occurrences": 26,
+    "serial_nonce_occurrences": 26,
+    "pre_power_nonce_occurrences": 0,
+    "serial_freshness_ok": true,
+    "final_pre_restore_selected_tree_still_staged": true,
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "superseded_runs": [
+    {
+      "run": "candidate-run",
+      "reason": "run-unique freshness rejected because the nonce was present before power"
+    },
+    {
+      "run": "control-rerun2",
+      "reason": "staging contaminated by restored baseline fetches"
+    },
+    {
+      "run": "control-rerun3",
+      "reason": "staging contaminated by restored baseline fetches"
+    },
+    {
+      "run": "candidate-rerun3",
+      "reason": "not accepted because orchestration did not retain a complete capture-chain bundle before restore; candidate-rerun4 supersedes it"
+    }
+  ],
+  "restore_confirmed": true
+}
