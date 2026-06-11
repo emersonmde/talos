@@ -1,0 +1,97 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-mpe-enable-guard-closeout-20260611",
+  "classification": "rp1-ethernet-mdio-mpe-enable-guard-static-frontier-closed",
+  "evidence_level": "static inspection of accepted source contract, guard core, task evidence, source, docs, and git history",
+  "accepted_source_contract": {
+    "task_id": "phase12-rp1-ethernet-mdio-mpe-enable-source-contract-20260611",
+    "contract_id": "phase12-rp1-ethernet-mdio-mpe-enable-source-contract-v1",
+    "commit": "1aee12300a342c8a7ef9aef482d7bc4063b3d982"
+  },
+  "accepted_guard_core": {
+    "task_id": "phase12-rp1-ethernet-mdio-mpe-enable-guard-core-20260611",
+    "report_contract_id": "phase12-rp1-ethernet-mdio-mpe-enable-guard-report-contract-v1",
+    "classification": "rp1-ethernet-mdio-mpe-enable-guard-core-accepted",
+    "commit": "8bfe896d3b5ed15da1eeb45cd6c8fefe5f3ba6d7"
+  },
+  "accepted_guard": {
+    "candidate_classification": "rp1-ethernet-mdio-mpe-enable-guard-candidate-local-static",
+    "control_classification": "no-mdio-no-ethernet-rp1-ethernet-mdio-mpe-enable-control",
+    "closeout_classification": "rp1-ethernet-mdio-mpe-enable-guard-static-frontier-closed",
+    "selected_operation": "rp1-ethernet-mdio-mpe-enable-set-readback-restore",
+    "controller": "rp1_eth",
+    "compatible": [
+      "raspberrypi,rp1-gem",
+      "cdns,macb"
+    ],
+    "register": "MACB/GEM NCR",
+    "source_target": "0xc040100000",
+    "observed_target": "0x1c00100000",
+    "offset": "0x0000",
+    "width": "32-bit little-endian volatile load/store",
+    "mpe_bit": 4,
+    "mpe_mask": "0x00000010",
+    "write_rule": "pre_raw | 0x00000010",
+    "restore_baseline": "exact pre_raw",
+    "restore_invariant": "restore_raw must equal pre_raw",
+    "runtime_ncr_write_performed": false,
+    "man_write_performed": false,
+    "phy_id_read_performed": false
+  },
+  "same_shaped_local_static_guard_retries": "closed-for-this-candidate-control-pair",
+  "selected_next_task": "phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof-20260611",
+  "selected_proof_gates": {
+    "hardwareTestLock_required": true,
+    "candidate_control_identity_required": true,
+    "archive_review_required": true,
+    "fresh_serial_cursor_and_transcript_required": true,
+    "tftp_delta_required": true,
+    "final_pre_restore_identity_required": true,
+    "lab_boot_restore_evidence_required": true,
+    "capture_summary_required": true,
+    "task_owned_classification_and_evidence_map_required": true,
+    "allowed_classifications": [
+      "rp1-ethernet-mdio-mpe-enable-set-readback-restored",
+      "rp1-ethernet-mdio-mpe-enable-already-set-restored",
+      "rp1-ethernet-mdio-mpe-enable-readback-mismatch-restored",
+      "rp1-ethernet-mdio-mpe-enable-restore-failed",
+      "rp1-ethernet-mdio-mpe-enable-blocked-target-inconclusive",
+      "precise-staging-capture-blocker",
+      "no-mdio-no-ethernet-rp1-ethernet-mdio-mpe-enable-control"
+    ]
+  },
+  "rejected_claims": [
+    "hardware evidence accepted by closeout",
+    "runtime NCR.MPE write by closeout",
+    "runtime RP1 MMIO access by closeout",
+    "MAN writes",
+    "PHY-ID reads",
+    "broad MDIO or PHY ownership",
+    "PHY reset ownership",
+    "GPIO32 ownership or action",
+    "Ethernet driver readiness",
+    "interrupt completion",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "future NCR.MPE proof may classify target-inconclusive if the observed-window NCR target is not capture-clean",
+    "future NCR.MPE proof may fail restore and must retain precise evidence before release",
+    "MPE ownership does not prove MAN transaction, visible PHY-ID, PHY reset, link, MAC, DMA, interrupt, packet, socket, SSH, or Phase 12.2 readiness",
+    "same-shaped MDIO PHY-ID retries remain closed until NCR.MPE write/restore ownership is separately accepted"
+  ],
+  "hardware": {
+    "hardwareTestLock_acquired": false,
+    "pi5_run": false,
+    "runtime_rp1_mmio_write": false,
+    "ncr_write": false,
+    "man_write": false,
+    "phy_id_read": false,
+    "gpio32_phy_reset_write": false
+  },
+  "next_action": "phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof-20260611"
+}

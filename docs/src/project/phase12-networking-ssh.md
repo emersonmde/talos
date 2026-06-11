@@ -1189,3 +1189,30 @@ ownership, Ethernet driver readiness, interrupts, DMA/descriptors, packet I/O,
 networking, sockets, SSH, Phase 12.2, or a phase transition. Same-shaped
 MDIO PHY-ID retries remain closed until this distinct NCR.MPE ownership path is
 separately implemented and accepted.
+
+phase12-rp1-ethernet-mdio-mpe-enable-guard-core-20260611 accepts the
+local/static NCR.MPE enable guard report surface for that source contract. The
+candidate report preserves source contract id
+phase12-rp1-ethernet-mdio-mpe-enable-source-contract-v1, guard report contract
+id phase12-rp1-ethernet-mdio-mpe-enable-guard-report-contract-v1, observed
+MACB/GEM NCR target 0x1c00100000, MPE bit 4, mask 0x00000010, write rule
+pre_raw | 0x00000010, exact pre_raw restore invariant, allowed future proof
+classifications, rejected claims, retained risks, and source evidence. The
+paired control uses the same report path while constructing no NCR/MPE target
+and no write intent.
+
+phase12-rp1-ethernet-mdio-mpe-enable-guard-closeout-20260611 closes the
+local/static NCR.MPE guard frontier as
+rp1-ethernet-mdio-mpe-enable-guard-static-frontier-closed. Same-shaped
+local/static guard retries are closed for this candidate/control pair. The
+checkpoint selects only the serialized Pi 5 NCR.MPE set/readback/restore proof,
+which must acquire hardwareTestLock and preserve candidate/control identity,
+archive review output, fresh serial cursor/output, TFTP delta, final
+pre-restore identity, lab boot restore evidence, capture summary,
+classification JSON, and evidence map.
+
+This guard closeout does not accept hardware evidence, runtime NCR.MPE write
+success, runtime RP1 MMIO access, MAN writes, PHY-ID reads, broad MDIO/PHY
+ownership, PHY reset/GPIO32 ownership, Ethernet driver behavior, interrupts,
+DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase
+transition.
