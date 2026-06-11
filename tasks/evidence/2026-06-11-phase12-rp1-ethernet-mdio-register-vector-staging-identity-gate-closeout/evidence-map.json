@@ -1,0 +1,30 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-closeout-20260611",
+  "evidence_level": [
+    "static inspection",
+    "task-owned fixture replay review",
+    "jq JSON validation"
+  ],
+  "sources": {
+    "gate_core_commit": "da183c68dee4deea773ec7c0285fea351610fb5f",
+    "gate_core_task": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-core.md",
+    "gate_script": "scripts/rpi5-staging-identity-gate-v1-check.sh",
+    "candidate_gate_output": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-core/candidate-gate-output.json",
+    "control_gate_output": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-core/control-gate-output.json",
+    "gate_core_classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-core/classification.json",
+    "gate_core_evidence_map": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-core/evidence-map.json"
+  },
+  "produced": {
+    "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-closeout.md",
+    "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-closeout/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-closeout/evidence-map.json"
+  },
+  "validation": {
+    "static_inspection": "passed: reviewed gate task record, candidate/control gate outputs, classification/evidence-map JSON, gate script, and git history",
+    "jq_empty": "passed: jq empty on task-owned closeout classification and evidence-map JSON",
+    "git_diff_check": "passed",
+    "docs_build": "not required; docs/src files were not touched",
+    "staged_diff_check": "passed: git diff --cached --check"
+  },
+  "next_action": "phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof-20260611"
+}

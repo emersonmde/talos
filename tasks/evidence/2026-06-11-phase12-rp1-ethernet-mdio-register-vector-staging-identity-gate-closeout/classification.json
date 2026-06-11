@@ -1,0 +1,69 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-closeout-20260611",
+  "classification": "staging-identity-gate-closeout-accepted",
+  "evidence_level": [
+    "static inspection",
+    "task-owned fixture replay review",
+    "jq JSON validation"
+  ],
+  "gate_core": {
+    "task_id": "phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-core-20260611",
+    "commit": "da183c68dee4deea773ec7c0285fea351610fb5f",
+    "classification": "staging-identity-gate-core-accepted"
+  },
+  "candidate_fixture": {
+    "gate_classification": "selected-tree-identity-blocked",
+    "staging_identity_ready": false,
+    "first_failing_rejection_reason": "tftp-expected-fetch-byte-mismatch",
+    "first_failing_invariant": "expected-fetch-byte-mismatch",
+    "selected_tree_hash": "dd4ad2732e2dea9b9d86017fed7e52e107f968fc5c5c1f925ef9e40b41a3bdbc",
+    "expected_fetch_byte_count": 52352,
+    "observed_tftp_expected_fetch_count": 2,
+    "observed_tftp_expected_fetch_byte_match_count": 0,
+    "observed_tftp_expected_fetch_bytes_seen": [
+      104136,
+      104136
+    ],
+    "final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "serial_freshness_ok": true
+  },
+  "control_fixture": {
+    "gate_classification": "selected-tree-identity-ready",
+    "staging_identity_ready": true,
+    "first_failing_rejection_reason": null,
+    "first_failing_invariant": null,
+    "selected_tree_hash": "db5f356f5ca4eed9ca21c232ea40a7ff6dfb2f7520337c08695ee0223129238d",
+    "expected_fetch_byte_count": 50112,
+    "observed_tftp_expected_fetch_count": 2,
+    "observed_tftp_expected_fetch_byte_match_count": 2,
+    "observed_tftp_expected_fetch_bytes_seen": [
+      50112,
+      50112
+    ],
+    "final_pre_restore_tree_hash": "db5f356f5ca4eed9ca21c232ea40a7ff6dfb2f7520337c08695ee0223129238d",
+    "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "serial_freshness_ok": true
+  },
+  "accepted_claims": [
+    "gate evidence reconciled without expanding beyond staging identity durability",
+    "negative fixture evidence exists and rejects the prior guarded v2 candidate mismatch",
+    "positive fixture evidence exists and accepts the paired no-MDIO/no-Ethernet reporting-path control",
+    "queued staging sentinel Pi 5 proof is selected as the next bounded task"
+  ],
+  "rejected_claims": [
+    "register-vector-man-data-values",
+    "broad-mdio-phy-ownership",
+    "phy-absence",
+    "phy-reset-gpio32-ownership",
+    "ethernet-behavior",
+    "dma-descriptors",
+    "packet-io",
+    "networking",
+    "ssh",
+    "phase12-2",
+    "phase-transition"
+  ],
+  "same_shaped_retry_policy": "same-shaped register-vector hardware retries remain closed unless the serialized staging sentinel proof later accepts selected-tree identity durability",
+  "next_action": "Mechanically promote phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof-20260611 on the next worker wake if hardwareTestLock remains unlocked/restored and supervisorIntervention remains inactive."
+}
