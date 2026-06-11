@@ -1,0 +1,98 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-phy-id-guard-closeout-20260611",
+  "classification": "rp1-ethernet-mdio-phy-id-guard-static-frontier-closed",
+  "evidence_level": "static inspection of accepted source contract, guard core, task evidence, source, docs, and git history",
+  "accepted_source_contract": {
+    "task_id": "phase12-rp1-ethernet-mdio-phy-id-source-contract-20260611",
+    "contract_id": "phase12-rp1-ethernet-mdio-phy-id-source-contract-v1"
+  },
+  "accepted_guard_core": {
+    "task_id": "phase12-rp1-ethernet-mdio-phy-id-guard-core-20260611",
+    "report_contract_id": "phase12-rp1-ethernet-mdio-phy-id-guard-report-contract-v1",
+    "classification": "rp1-ethernet-mdio-phy-id-guard-core-local-static-accepted",
+    "commit": "5c4a04c5432108f768b87795d478fbb2afc2e863"
+  },
+  "accepted_guard": {
+    "candidate_classification": "rp1-ethernet-mdio-phy-id-guard-candidate-local-static",
+    "control_classification": "no-mdio-no-ethernet-rp1-ethernet-mdio-phy-id-control",
+    "closeout_classification": "rp1-ethernet-mdio-phy-id-guard-static-frontier-closed",
+    "selected_discriminator": "rp1-ethernet-mdio-clause22-phy1-physid1-physid2",
+    "controller": "rp1_eth",
+    "compatible": [
+      "raspberrypi,rp1-gem",
+      "cdns,macb"
+    ],
+    "phy_handle": "phy1",
+    "phy_node": "ethernet-phy@1",
+    "phy_address": 1,
+    "phy_id_registers": {
+      "MII_PHYSID1": "0x02",
+      "MII_PHYSID2": "0x03"
+    },
+    "observed_identity_target": "0x1c001000fc",
+    "translated_comparator_target": "0x1f001000fc",
+    "ncr_observed_target": "0x1c00000000",
+    "nsr_observed_target": "0x1c00000008",
+    "man_observed_target": "0x1c00000034",
+    "ncr_mpe_bit": 4,
+    "nsr_idle_bit": 2,
+    "man_data_bits": "15:0",
+    "physid1_man_frame": "0x600a0000",
+    "physid2_man_frame": "0x600e0000",
+    "ncr_mpe_write_allowed": false,
+    "runtime_mdio_transaction_performed": false,
+    "man_restore_write_required": false
+  },
+  "same_shaped_local_static_guard_retries": "closed-for-this-candidate-control-pair",
+  "selected_next_task": "phase12-rp1-ethernet-mdio-phy-id-pi5-proof-20260611",
+  "selected_proof_gates": {
+    "hardwareTestLock_required": true,
+    "candidate_control_identity_required": true,
+    "boot_archive_digest_required": true,
+    "fresh_serial_cursor_and_transcript_required": true,
+    "tftp_delta_required": true,
+    "final_pre_restore_identity_required": true,
+    "lab_boot_restore_evidence_required": true,
+    "task_owned_classification_and_evidence_map_required": true,
+    "allowed_classifications": [
+      "mdio-phy1-physid-visible",
+      "mdio-phy1-physid-timeout",
+      "mdio-phy1-physid-source-contract-violated-blocker",
+      "precise-staging-capture-blocker",
+      "no-mdio-no-ethernet-rp1-ethernet-mdio-phy-id-control"
+    ]
+  },
+  "rejected_claims": [
+    "hardware evidence accepted by closeout",
+    "runtime MDIO transaction by closeout",
+    "MDIO ownership beyond selected PHY-ID discriminator",
+    "NCR.MPE ownership or write permission",
+    "PHY reset ownership",
+    "GPIO32 ownership, event clearing, write/restore retry, or reset success",
+    "Ethernet driver readiness",
+    "broad Ethernet MMIO readiness",
+    "interrupt completion",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "NCR.MPE may be clear and must block the first candidate without a write",
+    "GPIO32 and ETH_RST_N remain unowned and may leave PHY reset state unresolved",
+    "future MDIO PHY-ID proof may time out or hit capture/staging blockers",
+    "visible PHY ID reads would prove only the selected management transaction",
+    "link, MAC, DMA, interrupt, packet, socket, SSH, and Phase 12.2 readiness remain unaccepted"
+  ],
+  "hardware": {
+    "hardwareTestLock_acquired": false,
+    "pi5_run": false,
+    "runtime_mdio_transaction": false,
+    "ncr_mpe_write": false,
+    "gpio32_phy_reset_write": false
+  },
+  "next_action": "phase12-rp1-ethernet-mdio-phy-id-pi5-proof-20260611"
+}
