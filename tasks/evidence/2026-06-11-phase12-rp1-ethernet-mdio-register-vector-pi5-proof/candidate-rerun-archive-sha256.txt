@@ -1,0 +1,1 @@
+65e9e9033d8d08984b377ae43d2ae8bc136d4a131ec4997de25d82015b9fb040  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof/candidate-rerun-archive.tar.gz

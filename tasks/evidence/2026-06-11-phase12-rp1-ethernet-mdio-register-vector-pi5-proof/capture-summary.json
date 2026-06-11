@@ -1,0 +1,33 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-pi5-proof-20260611",
+  "status": "blocked",
+  "hardware_lock_acquired": true,
+  "hardware_lock_release_condition": "Released after current boot files showed restored baseline kernel_2712.img size 104136.",
+  "archive_reviews": {
+    "candidate": "pass",
+    "control": "pass",
+    "candidate_rerun": "pass"
+  },
+  "candidate_first_attempt": {
+    "publication_expected_kernel_2712_bytes": 52352,
+    "serial_marker_seen": true,
+    "serial_register_vector_visible": true,
+    "capture_chain_v4_classification": "capture-staging-blocked",
+    "accepted": false
+  },
+  "candidate_rerun": {
+    "publication_expected_kernel_2712_bytes": 52352,
+    "post_power_tftp_kernel_2712_bytes": 104136,
+    "post_power_current_kernel_2712_bytes": 104136,
+    "capture_chain_v4_classification": "capture-staging-blocked",
+    "accepted": false
+  },
+  "control": {
+    "hardware_run_performed": false,
+    "reason": "Candidate publication-to-power-cycle identity mismatch blocked meaningful paired acceptance evidence."
+  },
+  "final_lab_state": {
+    "restored_baseline_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "kernel_2712_bytes": 104136
+  }
+}

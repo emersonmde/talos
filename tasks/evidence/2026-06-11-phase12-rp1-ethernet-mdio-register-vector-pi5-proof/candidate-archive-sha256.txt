@@ -1,0 +1,1 @@
+607912063e29021e6d280c056e63987ea016180b95a25128909e74d35442bf22  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof/candidate-archive.tar.gz
