@@ -94,6 +94,8 @@
             talos_boot_scenario = "rpi5_rp1_ethernet_mdio_mpe_enable_no_mdio_control",
             talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_candidate",
             talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_no_mdio_control",
+            talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate",
+            talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_control",
             talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
             talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_no_mmio_control",
             talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",
@@ -855,6 +857,24 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
     {
         let _ = dtb_pa;
         target::rpi5::run_rp1_ethernet_mdio_register_vector_no_mdio_control();
+    }
+
+    #[cfg(all(
+        talos_target_rpi5_bcm2712,
+        talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate"
+    ))]
+    {
+        let _ = dtb_pa;
+        target::rpi5::run_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate();
+    }
+
+    #[cfg(all(
+        talos_target_rpi5_bcm2712,
+        talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_control"
+    ))]
+    {
+        let _ = dtb_pa;
+        target::rpi5::run_rp1_ethernet_mdio_register_vector_staging_sentinel_control();
     }
 
     #[cfg(all(

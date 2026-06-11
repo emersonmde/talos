@@ -1,0 +1,8 @@
+candidate_archive=tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/candidate-archive.tar.gz
+candidate_archive_sha256=3b8e94338838be7e1a4636e22efb4d700d6c77e487ee6fea248aa72575b95bf5
+kernel_2712_sha256=645557e7b408fce11410a4d57a9a064cacb6e20f60985d95a16c9e9fb9feea53
+kernel_2712_size=47832
+header_image_size=47832
+text_offset=0
+flags=12
+forbidden_staging_sentinel_candidate_runtime_strings_absent=true

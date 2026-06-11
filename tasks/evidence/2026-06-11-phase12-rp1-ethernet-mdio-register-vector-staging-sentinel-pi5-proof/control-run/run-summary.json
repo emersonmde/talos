@@ -1,0 +1,98 @@
+{
+  "kind": "control",
+  "run_label": "staging-sentinel-control-20260611T1905Z",
+  "exits": {
+    "capture_bundle": 0,
+    "capture_chain_v4": 0,
+    "staging_identity_gate": 0
+  },
+  "v4": {
+    "classification": "capture-chain-v4-ready",
+    "rejection_reasons": [],
+    "selected": "9d9b3cdb7b1f230d9cd2bf0c04b7c32dd98b53dd8ec7de77e99860c5b231908d",
+    "tftp": {
+      "cursor_file": 4469995,
+      "delta_cursor_start": 4469995,
+      "delta_cursor_end": 4471346,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        47824,
+        47824
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "9d9b3cdb7b1f230d9cd2bf0c04b7c32dd98b53dd8ec7de77e99860c5b231908d",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 47824
+    },
+    "restore": {
+      "snapshot_name": "pre-mdio-regvec-staging-sentinel-20260611T1905Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "serial_capture": {
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+      "cursor_file": 4194304,
+      "cursor_start": 4194304,
+      "cursor_end": 4194304,
+      "response_bytes": 136285,
+      "required_marker": "TALOS: rp1-ethernet-mdio-register-vector-staging-sentinel-control capture-nonce=staging-sentinel-control-20260611T1905Z",
+      "required_marker_occurrences": 84,
+      "required_marker_excerpt": "-mdio-no-ethernet-rp1-ethernet-mdio-register-vector-staging-sentinel-control\r\nTALOS: rp1-ethernet-mdio-register-vector-staging-sentinel-control capture-nonce=staging-sentinel-control-20260611T1905Z staging-sentinel-contract-id=phase12-rp1-ethernet-mdio-register-vector-staging-identity-sentinel-v1 selected-discriminator=rp1-ethernet-mdio-register-vector-stag",
+      "nonce_token": "capture-nonce=staging-sentinel-control-20260611T1905Z",
+      "nonce_token_occurrences": 84,
+      "pre_power_nonce_occurrences": 0,
+      "empty_pre_power": false,
+      "nonce_fresh": true,
+      "serial_freshness_ok": true
+    }
+  },
+  "gate": {
+    "classification": "selected-tree-identity-ready",
+    "first_failing_invariant": null,
+    "rejection_reasons": [],
+    "selected": {
+      "tree_hash": "9d9b3cdb7b1f230d9cd2bf0c04b7c32dd98b53dd8ec7de77e99860c5b231908d",
+      "effective_kernel": "kernel_2712.img",
+      "expected_fetch_path": "da591740/kernel_2712.img",
+      "expected_fetch_byte_count": 47824
+    },
+    "tftp": {
+      "cursor_file": 4469995,
+      "delta_cursor_start": 4469995,
+      "delta_cursor_end": 4471346,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        47824,
+        47824
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "9d9b3cdb7b1f230d9cd2bf0c04b7c32dd98b53dd8ec7de77e99860c5b231908d",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 47824
+    },
+    "restore": {
+      "snapshot_name": "pre-mdio-regvec-staging-sentinel-20260611T1905Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "serial_freshness": {
+      "serial_freshness_ok": true,
+      "nonce_fresh": true,
+      "empty_pre_power": false,
+      "required_marker_occurrences": 84,
+      "nonce_token_occurrences": 84,
+      "pre_power_nonce_occurrences": 0
+    }
+  }
+}

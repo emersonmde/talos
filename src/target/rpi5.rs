@@ -16070,6 +16070,46 @@ pub fn run_rp1_ethernet_mdio_register_vector_no_mdio_control() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate")]
+pub fn run_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate() -> ! {
+    write_early_static(
+        "rpi5-rp1-ethernet-mdio-register-vector-staging-sentinel-candidate: start\n",
+    );
+    write_early_static(
+        "rpi5-rp1-ethernet-mdio-register-vector-staging-sentinel-candidate: no-mdio-no-ethernet-no-mmio-target-construction\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-ethernet-mdio-register-vector-staging-sentinel-candidate");
+        write_rp1_ethernet_mdio_register_vector_staging_sentinel_capture_nonce();
+        write_rp1_ethernet_mdio_register_vector_staging_sentinel_common("candidate");
+        write_early_static(
+            " classification=no-mdio-no-ethernet-rp1-ethernet-mdio-register-vector-staging-sentinel-candidate\n",
+        );
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_control")]
+pub fn run_rp1_ethernet_mdio_register_vector_staging_sentinel_control() -> ! {
+    write_early_static("rpi5-rp1-ethernet-mdio-register-vector-staging-sentinel-control: start\n");
+    write_early_static(
+        "rpi5-rp1-ethernet-mdio-register-vector-staging-sentinel-control: no-mdio-no-ethernet-no-mmio-target-construction\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-ethernet-mdio-register-vector-staging-sentinel-control");
+        write_rp1_ethernet_mdio_register_vector_staging_sentinel_capture_nonce();
+        write_rp1_ethernet_mdio_register_vector_staging_sentinel_common("control");
+        write_early_static(
+            " classification=no-mdio-no-ethernet-rp1-ethernet-mdio-register-vector-staging-sentinel-control\n",
+        );
+        wait_uart10_empty_early_phase();
+    }
+}
+
 #[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_decode_discriminator_candidate")]
 pub fn run_rp1_ethernet_gem_mid_decode_discriminator_candidate() -> ! {
     const MACB_MID: usize = 0x1f_0010_00fc;
@@ -17512,6 +17552,57 @@ fn write_rp1_ethernet_mdio_register_vector_rejections(runtime_mdio_transaction: 
     write_early_static(" claims-interrupt-completion=false claims-dma-descriptor-ownership=false");
     write_early_static(" claims-packet-io=false claims-networking=false claims-sockets=false");
     write_early_static(" claims-ssh=false claims-phase-12-2=false claims-phase-transition=false");
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_control"
+))]
+fn write_rp1_ethernet_mdio_register_vector_staging_sentinel_common(report_kind: &str) {
+    write_early_static(
+        " staging-sentinel-contract-id=phase12-rp1-ethernet-mdio-register-vector-staging-identity-sentinel-v1",
+    );
+    write_early_static(
+        " selected-discriminator=rp1-ethernet-mdio-register-vector-staging-identity-only",
+    );
+    write_early_static(
+        " purpose=prove-publish-power-tftp-final-selected-tree-durability-before-register-vector-retry",
+    );
+    write_early_static(" report-kind=");
+    write_early_static(report_kind);
+    write_early_static(" target=none controller=none compatible=none");
+    write_early_static(" phy-handle=none phy-node=none phy-address=none");
+    write_early_static(" rp1-mmio-targets-constructed=false");
+    write_early_static(" ncr-write-performed=false man-write-performed=false");
+    write_early_static(" gpio32-phy-reset-action=false ethernet-action=false");
+    write_early_static(" hardware-proof-boundary-classification=staging-identity-durability-only");
+    write_early_static(
+        " allowed-classifications=selected-tree-identity-ready,selected-tree-identity-blocked",
+    );
+    write_early_static(
+        " rejected-runtime-hardware-claims=register-vector-man-data-values,broad-mdio-or-phy-ownership,phy-absence,phy-reset-ownership,ethernet-behavior,interrupts,dma-descriptors,packet-io,networking,sockets,ssh,phase-12-2,phase-transition",
+    );
+    write_early_static(" claims-runtime-mdio-transaction=false");
+    write_early_static(" claims-ncr-write-executed=false claims-man-write-executed=false");
+    write_early_static(" claims-mdio-phy-ownership=false claims-phy-absence=false");
+    write_early_static(" claims-gpio32-phy-reset-ownership=false");
+    write_early_static(" claims-ethernet-ready=false claims-interrupt-completion=false");
+    write_early_static(" claims-dma-descriptor-ownership=false claims-packet-io=false");
+    write_early_static(" claims-networking=false claims-sockets=false claims-ssh=false");
+    write_early_static(" claims-phase-12-2=false claims-phase-transition=false");
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_control"
+))]
+fn write_rp1_ethernet_mdio_register_vector_staging_sentinel_capture_nonce() {
+    if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
+        if !nonce.is_empty() {
+            write_early_static(" capture-nonce=");
+            write_early_static(nonce);
+        }
+    }
 }
 
 #[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_gpio32_event_clear_candidate")]
@@ -20173,6 +20264,8 @@ fn gpio14_ownership_preflight_classification(
     talos_boot_scenario = "rpi5_rp1_ethernet_mdio_mpe_enable_no_mdio_control",
     talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_no_mdio_control",
+    talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_control",
     talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
     talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",

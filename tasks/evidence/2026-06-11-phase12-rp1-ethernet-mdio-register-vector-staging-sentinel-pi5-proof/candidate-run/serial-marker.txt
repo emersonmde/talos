@@ -1,0 +1,1 @@
+TALOS: rp1-ethernet-mdio-register-vector-staging-sentinel-candidate capture-nonce=staging-sentinel-candidate-20260611T1905Z

@@ -1,0 +1,1 @@
+e1921ccfb604501c1017b93cb9b152b3447f31072e10d4b1d46b7f0465eb79c2  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/control-archive.tar.gz

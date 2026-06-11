@@ -1,0 +1,1 @@
+TALOS: rp1-ethernet-mdio-register-vector-staging-sentinel-control capture-nonce=staging-sentinel-control-20260611T1905Z

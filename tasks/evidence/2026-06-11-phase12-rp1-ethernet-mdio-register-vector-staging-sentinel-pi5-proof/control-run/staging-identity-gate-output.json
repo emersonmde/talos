@@ -1,0 +1,74 @@
+{
+  "contract_version": "pi5-staging-identity-gate-v1",
+  "source_contract_version": "pi5-capture-chain-v4",
+  "run_label": "staging-sentinel-control-20260611T1905Z",
+  "report_kind": "control",
+  "expected_label": "staging-sentinel-control-20260611T1905Z",
+  "staging_identity_ready": true,
+  "classification": "selected-tree-identity-ready",
+  "first_failing_rejection_reason": null,
+  "first_failing_invariant": null,
+  "capture_chain_v4": {
+    "classification": "capture-chain-v4-ready",
+    "first_failing_rejection_reason": null,
+    "rejection_reasons": [],
+    "agrees_with_gate_first_failure": true,
+    "agrees_with_gate_readiness": true
+  },
+  "rejection_reasons": [],
+  "selected": {
+    "tree_hash": "9d9b3cdb7b1f230d9cd2bf0c04b7c32dd98b53dd8ec7de77e99860c5b231908d",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 47824
+  },
+  "tftp": {
+    "cursor_file": 4469995,
+    "delta_cursor_start": 4469995,
+    "delta_cursor_end": 4471346,
+    "stable": true,
+    "event_count": 13,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "expected_fetch_bytes_seen": [
+      47824,
+      47824
+    ]
+  },
+  "final_pre_restore": {
+    "tree_hash": "9d9b3cdb7b1f230d9cd2bf0c04b7c32dd98b53dd8ec7de77e99860c5b231908d",
+    "effective_kernel": "kernel_2712.img",
+    "selected_tree_still_staged": true,
+    "expected_fetch_present": true,
+    "expected_fetch_bytes": 47824
+  },
+  "restore": {
+    "snapshot_name": "pre-mdio-regvec-staging-sentinel-20260611T1905Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "serial_freshness": {
+    "serial_freshness_ok": true,
+    "nonce_fresh": true,
+    "empty_pre_power": false,
+    "required_marker_occurrences": 84,
+    "nonce_token_occurrences": 84,
+    "pre_power_nonce_occurrences": 0
+  },
+  "evidence_consistency": {
+    "guard_supplied": false,
+    "classification": null
+  },
+  "claim_boundary": {
+    "accepted_if_ready": "staging identity durability and reporting-path freshness only",
+    "rejected_runtime_claims": [
+      "register-vector-man-data-values",
+      "broad-mdio-phy-ownership",
+      "phy-absence",
+      "ethernet-behavior",
+      "networking",
+      "ssh",
+      "phase-transition"
+    ]
+  },
+  "rule": "future hardware proof evidence is not decisive unless selected-tree identity survives TFTP fetch byte/count checks, final pre-restore identity, restore proof, serial freshness, and evidence-consistency checks"
+}
