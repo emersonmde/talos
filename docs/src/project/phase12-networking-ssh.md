@@ -1341,8 +1341,27 @@ repetition can reconfirm the selected MAN transaction and 0xffff/0xffff
 MAN.DATA return boundary, but cannot prove PHY responsiveness, ETH_RST_N/GPIO32
 ownership, link state, Ethernet driver behavior, or broad MDIO/PHY ownership.
 
-No explicit bounded follow-up remains mechanically objective from this
-closeout. Supervisor planning is required before any PHY reset
-assertion/deassertion, post-reset MDIO discriminator, broad MDIO/PHY ownership,
-Ethernet driver implementation, DMA/descriptors, interrupts, packet I/O,
-networking, sockets, SSH, Phase 12.2, or phase transition work starts.
+phase12-rp1-ethernet-mdio-register-vector-source-contract-20260611 accepts the
+source/docs/evidence contract for a qualitatively different corrected-target
+MDIO discriminator after the accepted 0xffff/0xffff PHYSID-only return. The
+selected future candidate is a no-NCR-write, no-reset Clause 22 register
+vector for rp1_eth phy1 / ethernet-phy@1 address 1. It preserves MACB_MID
+context 0x1c001000fc, corrected NCR/NSR/MAN targets
+0x1c00100000/0x1c00100008/0x1c00100034, and the MPE precondition that
+corrected NCR bit 4 must already be set before any MAN write.
+
+The selected vector is BMCR 0x00, BMSR 0x01, PHYSID1 0x02, PHYSID2 0x03,
+ANAR 0x04, and ANLPAR 0x05. Source-backed Clause 22 MAN frame construction
+includes SOF=1, READ=2, PHYA=1, REGA, and CODE=2, yielding frames
+0x60820000, 0x60860000, 0x608a0000, 0x608e0000, 0x60920000, and 0x60960000.
+The prior accepted after-MPE proof remains bounded to its recorded selected
+MAN.DATA return values and is not broadened into broad PHY1 responsiveness.
+
+The future proof may classify a visible mixed vector, a global all-ones vector,
+a PHYSID-only all-ones mixed vector, a timeout, a precondition blocker, a
+capture blocker, or the paired no-MDIO/no-Ethernet control. An all-ones vector
+would be evidence for the selected register-vector return only; it does not
+prove PHY absence, PHY reset ownership, link state, usable Ethernet, broad
+MDIO/PHY ownership, Ethernet driver behavior, DMA/descriptors, packet I/O,
+networking, sockets, SSH, Phase 12.2, or a phase transition. The next bounded
+step is only the local/static register-vector guard core.

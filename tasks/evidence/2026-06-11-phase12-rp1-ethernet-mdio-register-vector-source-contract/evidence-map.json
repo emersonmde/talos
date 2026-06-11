@@ -1,0 +1,112 @@
+{
+  "taskId": "phase12-rp1-ethernet-mdio-register-vector-source-contract-20260611",
+  "classification": "rp1-ethernet-mdio-register-vector-source-contract-accepted",
+  "inputs": [
+    {
+      "type": "task record",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof.md",
+      "summary": "Accepted corrected-target after-MPE PHY-ID proof record."
+    },
+    {
+      "type": "task record",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-proof-closeout.md",
+      "summary": "Accepted closeout for the 0xffff/0xffff after-MPE PHY-ID frontier."
+    },
+    {
+      "type": "classification JSON",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof/classification.json",
+      "summary": "Accepted proof classification consumed for boundary and rejected claims."
+    },
+    {
+      "type": "evidence map JSON",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof/evidence-map.json",
+      "summary": "Accepted proof evidence lineage consumed for source contract."
+    },
+    {
+      "type": "capture summary JSON",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof/capture-summary.json",
+      "summary": "Accepted candidate/control capture-chain-v4 summary consumed for corrected targets and MAN.DATA boundary."
+    },
+    {
+      "type": "classification JSON",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-proof-closeout/classification.json",
+      "summary": "Accepted closeout classification consumed for same-shaped retry closure."
+    },
+    {
+      "type": "source reference",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-macb.h",
+      "summary": "MACB/GEM register offsets, MAN bitfields, Clause 22 constants, and bitfield macros."
+    },
+    {
+      "type": "source reference",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-uapi-linux-mii.h",
+      "summary": "MII BMCR, BMSR, PHYSID1, PHYSID2, ADVERTISE, and LPA register numbers."
+    },
+    {
+      "type": "source reference",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-macb_main.c",
+      "summary": "Linux macb_mdio_read_c22 source showing SOF/RW/PHYA/REGA/CODE frame construction and DATA extraction."
+    },
+    {
+      "type": "docs",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "summary": "Phase 12 accepted frontier and current boundary documentation."
+    },
+    {
+      "type": "roadmap",
+      "path": "docs/src/roadmap.md",
+      "summary": "Roadmap accepted frontier and next-task wording."
+    }
+  ],
+  "outputs": [
+    {
+      "type": "task record",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-source-contract.md",
+      "summary": "Accepted source contract for the corrected-target MDIO register-vector discriminator."
+    },
+    {
+      "type": "classification JSON",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-source-contract/classification.json",
+      "summary": "Machine-readable accepted boundary, future classifications, rejected claims, retained risks, and nextAction."
+    },
+    {
+      "type": "evidence map JSON",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-source-contract/evidence-map.json",
+      "summary": "Task-owned input/output evidence mapping and validation summary."
+    },
+    {
+      "type": "docs update",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "summary": "Recorded the accepted source contract and bounded next guard-core task."
+    },
+    {
+      "type": "roadmap update",
+      "path": "docs/src/roadmap.md",
+      "summary": "Recorded the accepted source contract and bounded next guard-core task."
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static inspection",
+      "status": "passed",
+      "summary": "Inspected accepted after-MPE proof closeout, proof classification/evidence-map/capture-summary JSON, Phase 12 docs, roadmap, retained MACB/GEM Clause 22 source references, and git history."
+    },
+    {
+      "gate": "jq empty on task-owned classification/evidence-map JSON",
+      "status": "passed"
+    },
+    {
+      "gate": "git diff --check",
+      "status": "passed"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "status": "passed"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "status": "passed"
+    }
+  ],
+  "commit": null
+}

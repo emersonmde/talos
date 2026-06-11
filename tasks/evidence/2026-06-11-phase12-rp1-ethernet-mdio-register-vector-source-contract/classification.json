@@ -1,0 +1,126 @@
+{
+  "taskId": "phase12-rp1-ethernet-mdio-register-vector-source-contract-20260611",
+  "status": "accepted",
+  "classification": "rp1-ethernet-mdio-register-vector-source-contract-accepted",
+  "evidenceLevel": "static inspection",
+  "acceptedContractId": "phase12-rp1-ethernet-mdio-register-vector-source-contract-v1",
+  "acceptedBoundary": {
+    "kind": "source-docs-evidence-contract",
+    "controller": "rp1_eth / raspberrypi,rp1-gem / cdns,macb",
+    "phySourceIdentity": "phy1 / ethernet-phy@1 / reg 0x1",
+    "phyAddress": 1,
+    "macbMidContext": {
+      "address": "0x1c001000fc",
+      "expectedRaw": "0x70109"
+    },
+    "correctedTargets": {
+      "ncr": "0x1c00100000",
+      "nsr": "0x1c00100008",
+      "man": "0x1c00100034"
+    },
+    "mpePrecondition": "corrected NCR bit 4 must already be set; otherwise no NCR write and no MAN write",
+    "ncrWritePermission": false,
+    "gpio32PhyResetPermission": false,
+    "selectedRegisterVector": [
+      {
+        "register": "0x00",
+        "sourceName": "MII_BMCR",
+        "manFrame": "0x60820000"
+      },
+      {
+        "register": "0x01",
+        "sourceName": "MII_BMSR",
+        "manFrame": "0x60860000"
+      },
+      {
+        "register": "0x02",
+        "sourceName": "MII_PHYSID1",
+        "manFrame": "0x608a0000"
+      },
+      {
+        "register": "0x03",
+        "sourceName": "MII_PHYSID2",
+        "manFrame": "0x608e0000"
+      },
+      {
+        "register": "0x04",
+        "sourceName": "MII_ADVERTISE / ANAR",
+        "manFrame": "0x60920000"
+      },
+      {
+        "register": "0x05",
+        "sourceName": "MII_LPA / ANLPAR",
+        "manFrame": "0x60960000"
+      }
+    ],
+    "manFrameConstruction": "(SOF 1 << 30) | (READ 2 << 28) | (PHYA 1 << 23) | (REGA register << 18) | (CODE 2 << 16)",
+    "polling": "bounded corrected NSR.IDLE bit 2 before and after each MAN write",
+    "dataExtraction": "MAN.DATA bits 15:0 after post-read idle",
+    "pairedControl": "same reporting path, no MDIO target, no MAN frame, no volatile load/store"
+  },
+  "allowedFutureProofClassifications": [
+    "mdio-phy1-register-vector-visible",
+    "mdio-phy1-register-vector-global-all-ones-visible",
+    "mdio-phy1-register-vector-physid-only-all-ones-mixed-visible",
+    "mdio-phy1-register-vector-timeout",
+    "mdio-phy1-register-vector-precondition-blocker",
+    "precise-staging-capture-blocker",
+    "no-mdio-no-ethernet-rp1-ethernet-mdio-register-vector-control"
+  ],
+  "qualitativeDifference": "Selects a six-register Clause 22 vector to distinguish global all-ones/no-response behavior from PHY-ID-only evidence instead of repeating the same-shaped PHYSID1/PHYSID2-only hardware proof.",
+  "rejectedClaims": [
+    "runtime register-vector evidence by this task",
+    "NCR write permission",
+    "GPIO32/PHY reset action",
+    "PHY absence from an all-ones vector",
+    "PHY reset ownership",
+    "link state",
+    "broad MDIO/PHY ownership",
+    "Ethernet driver readiness",
+    "interrupt delivery/completion",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retainedRisks": [
+    "Future proof may classify a precondition blocker if corrected NCR.MPE is clear.",
+    "A global all-ones vector does not prove PHY absence, reset state, link state, or usable Ethernet.",
+    "A mixed vector proves only selected MAN.DATA read visibility, not packet I/O or networking readiness.",
+    "GPIO32/ETH_RST_N, PHY reset state, DMA/descriptors, interrupts, sockets, SSH, and Phase 12.2 remain unaccepted."
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "summary": "Selected source-backed six-register Clause 22 vector after accepted after-MPE PHY-ID 0xffff/0xffff result."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Preserved corrected observed-window MACB/GEM target set and MPE precondition."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Reconciled exact MAN frame construction for phy1 address 1 using source-backed PHYA bits while keeping prior proof bounded to its recorded selected frames."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Defined paired no-MDIO/no-Ethernet control and bounded future classifications."
+    },
+    {
+      "disposition": "deferred",
+      "summary": "Local/static guard implementation, Pi 5 proof, actual register-vector evidence, PHY reset/GPIO32 ownership, broad MDIO/PHY ownership, Ethernet behavior, packet I/O, networking, SSH, and Phase 12.2 remain future tasks."
+    },
+    {
+      "disposition": "not-an-issue",
+      "summary": "No hardwareTestLock acquisition was required for source/docs/evidence-only work."
+    },
+    {
+      "disposition": "removed",
+      "summary": "No obsolete implementation, docs, or evidence was removed."
+    }
+  ],
+  "nextAction": "Mechanically promote phase12-rp1-ethernet-mdio-register-vector-guard-core-20260611 on the next worker wake if dependencies remain satisfied; keep it local/static only."
+}

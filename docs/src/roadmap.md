@@ -9819,11 +9819,26 @@ the accepted proof already establishes the selected MAN transaction and
 responsiveness, PHY reset/GPIO32 ownership, link state, Ethernet driver
 behavior, or broad MDIO/PHY ownership.
 
-No explicit bounded follow-up remains mechanically objective from this
-closeout. Supervisor planning is required before any PHY reset
-assertion/deassertion, post-reset MDIO discriminator, broad MDIO/PHY ownership,
-Ethernet driver implementation, DMA/descriptors, interrupts, packet I/O,
-networking, sockets, SSH, Phase 12.2, or phase transition work starts.
+phase12-rp1-ethernet-mdio-register-vector-source-contract-20260611 accepts a
+source/docs/evidence contract for a qualitatively different corrected-target
+MDIO discriminator after the accepted 0xffff/0xffff PHYSID-only return. The
+selected future candidate is a no-NCR-write, no-reset Clause 22 register
+vector for rp1_eth phy1 / ethernet-phy@1 address 1, using corrected
+NCR/NSR/MAN targets 0x1c00100000/0x1c00100008/0x1c00100034 and preserving the
+MPE precondition that corrected NCR bit 4 must already be set before any MAN
+write.
+
+The selected vector is BMCR 0x00, BMSR 0x01, PHYSID1 0x02, PHYSID2 0x03,
+ANAR 0x04, and ANLPAR 0x05. Source-backed Clause 22 MAN frame construction
+includes PHYA=1, yielding frames 0x60820000, 0x60860000, 0x608a0000,
+0x608e0000, 0x60920000, and 0x60960000. The future proof may classify a
+visible mixed vector, a global all-ones vector, a PHYSID-only all-ones mixed
+vector, timeout, precondition blocker, capture blocker, or paired control.
+An all-ones vector does not prove PHY absence, PHY reset ownership, link
+state, usable Ethernet, broad MDIO/PHY ownership, Ethernet driver behavior,
+DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase
+transition. The next bounded step is only the local/static register-vector
+guard core.
 
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
