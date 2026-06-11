@@ -1427,3 +1427,30 @@ criteria. This closeout accepts no register-vector MAN.DATA values, PHY
 absence, broad MDIO/PHY ownership, PHY reset/GPIO32 ownership, Ethernet driver
 behavior, interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH,
 Phase 12.2, or phase transition.
+
+phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-core-20260611
+and
+phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-closeout-20260611
+accept the local/static staging identity gate used to reject the guarded v2
+candidate mismatch and accept the guarded v2 control fixture as selected-tree
+identity ready. The gate does not weaken future hardware acceptance: any
+register-vector retry still requires selected-tree identity, expected TFTP
+bytes, final pre-restore identity, restore proof, and task-owned aggregate
+evidence consistency.
+
+phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof-20260611
+accepts selected-tree identity durability for a no-MDIO/no-Ethernet staging
+sentinel candidate-shaped archive and paired control. The candidate selected
+tree a804458a439c20200a14b8d338341dca427ed7faba6bc7fb2c875049de586cc0 and
+control selected tree 9d9b3cdb7b1f230d9cd2bf0c04b7c32dd98b53dd8ec7de77e99860c5b231908d
+both survived publication, power, matching TFTP fetches, final pre-restore
+identity, and restore proof with true serial freshness.
+
+phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-closeout-20260611
+closes that staging sentinel frontier as
+selected-tree-identity-durability-accepted and selects only the queued
+guarded register-vector v3 proof as the next bounded hardware task. The
+sentinel proof accepts no register-vector MAN.DATA values, PHY absence, broad
+MDIO/PHY ownership, PHY reset/GPIO32 ownership, Ethernet behavior, interrupts,
+DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, or phase
+transition.

@@ -1,0 +1,62 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-closeout-20260611",
+  "status": "accepted",
+  "classification": "selected-tree-identity-durability-accepted",
+  "reconciled_task": "phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof-20260611",
+  "reconciled_commit": "73650da806da726fbccb1b1b4b5989c3a4a0a7e0",
+  "authoritative_inputs": {
+    "sentinel_task_record": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof.md",
+    "sentinel_classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/classification.json",
+    "sentinel_capture_summary": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/capture-summary.json",
+    "sentinel_evidence_map": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/evidence-map.json",
+    "candidate_v4": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/candidate-run/v4-check.json",
+    "control_v4": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/control-run/v4-check.json",
+    "candidate_staging_identity_gate": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/candidate-run/staging-identity-gate-output.json",
+    "control_staging_identity_gate": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/control-run/staging-identity-gate-output.json",
+    "final_lab_status": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/final-lab-status.json"
+  },
+  "hardware_evidence_reviewed": [
+    {
+      "label": "candidate archive review",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/archive-review/candidate-static-review.txt"
+    },
+    {
+      "label": "control archive review",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/archive-review/control-static-review.txt"
+    },
+    {
+      "label": "candidate TFTP delta",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/candidate-run/tftp-delta-stable-pre-restore.json"
+    },
+    {
+      "label": "candidate final pre-restore identity",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/candidate-run/final-pre-restore-status.json"
+    },
+    {
+      "label": "control TFTP delta",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/control-run/tftp-delta-stable-pre-restore.json"
+    },
+    {
+      "label": "control final pre-restore identity",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/control-run/final-pre-restore-status.json"
+    },
+    {
+      "label": "final lab restore state",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/final-lab-status.json"
+    }
+  ],
+  "closeout_artifacts": {
+    "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-closeout/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-closeout/evidence-map.json",
+    "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-closeout.md"
+  },
+  "validation": [
+    "static inspection of sentinel proof task record, candidate/control gate output, candidate/control v4 JSON, capture/classification/evidence-map JSON, Phase 12 docs, roadmap, and git history",
+    "jq empty on task-owned classification/evidence-map JSON",
+    "git diff --check",
+    "mdbook build because docs/src files were touched",
+    "git diff --cached --check before commit"
+  ],
+  "next_action": "phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity-20260611",
+  "commit_hash": "recorded-in-supervisor-state-after-commit"
+}

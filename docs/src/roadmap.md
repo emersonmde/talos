@@ -9872,6 +9872,25 @@ criteria. No register-vector MAN.DATA values, PHY absence claim, broad
 MDIO/PHY ownership, PHY reset/GPIO32 ownership, Ethernet behavior,
 networking, sockets, SSH, Phase 12.2, or phase transition is accepted.
 
+phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-core-20260611
+and
+phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-closeout-20260611
+accept a local/static staging identity gate that rejects the guarded v2
+candidate mismatch and accepts the guarded v2 control fixture as selected-tree
+identity ready without weakening later hardware proof requirements.
+
+phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof-20260611
+and
+phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-closeout-20260611
+accept selected-tree identity durability for a no-MDIO/no-Ethernet
+candidate-shaped staging sentinel and paired control, closing that frontier as
+selected-tree-identity-durability-accepted. The selected next bounded
+task is only the guarded register-vector v3 proof, which must still pass
+staging identity, evidence-consistency, serial/TFTP/final identity, and
+restore gates before any selected MAN.DATA values can be accepted. Broad
+MDIO/PHY ownership, PHY absence, Ethernet behavior, networking, sockets, SSH,
+Phase 12.2, and phase transition remain unaccepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

@@ -1,0 +1,73 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-closeout-20260611",
+  "status": "accepted",
+  "classification": "selected-tree-identity-durability-accepted",
+  "evidence_level": [
+    "static inspection",
+    "capture-chain-v4 replay review",
+    "staging identity gate review",
+    "lab-controller API evidence review",
+    "serial hardware boot/output evidence review",
+    "stable TFTP delta evidence review",
+    "restore evidence review"
+  ],
+  "reconciled_task": {
+    "task_id": "phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof-20260611",
+    "status": "accepted",
+    "classification": "selected-tree-identity-durability-accepted",
+    "commit": "73650da806da726fbccb1b1b4b5989c3a4a0a7e0"
+  },
+  "selected_tree_identity_durability_accepted": true,
+  "first_failing_invariant": null,
+  "candidate": {
+    "capture_chain_v4": "capture-chain-v4-ready",
+    "staging_identity_gate": "selected-tree-identity-ready",
+    "selected_tree_hash": "a804458a439c20200a14b8d338341dca427ed7faba6bc7fb2c875049de586cc0",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 47832,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "final_pre_restore_tree_hash": "a804458a439c20200a14b8d338341dca427ed7faba6bc7fb2c875049de586cc0",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "serial_freshness_ok": true,
+    "pre_power_nonce_occurrences": 0,
+    "nonce_token_occurrences": 83
+  },
+  "control": {
+    "capture_chain_v4": "capture-chain-v4-ready",
+    "staging_identity_gate": "selected-tree-identity-ready",
+    "selected_tree_hash": "9d9b3cdb7b1f230d9cd2bf0c04b7c32dd98b53dd8ec7de77e99860c5b231908d",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 47824,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "final_pre_restore_tree_hash": "9d9b3cdb7b1f230d9cd2bf0c04b7c32dd98b53dd8ec7de77e99860c5b231908d",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "serial_freshness_ok": true,
+    "pre_power_nonce_occurrences": 0,
+    "nonce_token_occurrences": 84
+  },
+  "accepted_claims": [
+    "The no-MDIO/no-Ethernet candidate-shaped staging sentinel preserved selected-tree identity through publish-to-power-to-TFTP/final identity and restore proof.",
+    "The paired no-MDIO/no-Ethernet control preserved selected-tree identity through publish-to-power-to-TFTP/final identity and restore proof.",
+    "The sentinel proof mechanically unblocks the queued register-vector v3 proof's staging-identity dependency only."
+  ],
+  "rejected_claims": [
+    "RP1 MDIO register-vector MAN.DATA values",
+    "NCR writes",
+    "MAN writes",
+    "GPIO32 or PHY reset ownership",
+    "PHY absence",
+    "broad MDIO or PHY ownership",
+    "Ethernet behavior",
+    "interrupt completion",
+    "DMA descriptors or transfer completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "next_action": "Mechanically promote phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity-20260611 on the next worker wake if dependencies remain satisfied, hardwareTestLock is unlocked/restored, and supervisorIntervention remains inactive."
+}
