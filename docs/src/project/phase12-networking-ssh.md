@@ -1043,3 +1043,28 @@ assertion/deassertion, MDIO/PHY ownership, Ethernet driver behavior,
 interrupt completion, DMA/descriptors, packet I/O, networking, sockets, SSH,
 Phase 12.2, or a phase transition. The next bounded step is only the
 local/static event-clear guard core.
+
+phase12-rp1-ethernet-gpio32-event-clear-guard-core-20260611 accepts the
+local/static event-clear guard report surface for that source contract. The
+candidate report preserves the exact GPIO32 CTRL SET-alias IRQRESET target
+0x1c000d6024, write value 0x10000000, STATUS event mask 0x0ff00000,
+accepted event bits 0x0ab00000, pre-read and post-read requirements,
+forbidden writes, accepted event-state lineage, rejected claims, retained
+risks, and source evidence. The paired control uses the same report path while
+withholding GPIO32/RIO/pad/MMIO target facts and classifying as
+no-gpio-no-ethernet-rp1-ethernet-gpio32-event-clear-control.
+
+phase12-rp1-ethernet-gpio32-event-clear-guard-closeout-20260611 closes the
+local/static event-clear guard frontier as
+rp1-ethernet-gpio32-event-clear-guard-static-frontier-closed. Same-shaped
+local/static guard retries are closed for this candidate/control pair. The
+checkpoint selects only the serialized Pi 5 event-clear proof, which must
+acquire hardwareTestLock before archive publication, staging, power action, or
+the guarded event-clear attempt and must preserve candidate/control identity,
+TFTP, serial freshness, final identity, restore proof, and task-owned JSON.
+
+This guard closeout does not accept hardware evidence, event clearing, GPIO32
+ownership, GPIO32 write/restore retry or success, PHY reset
+assertion/deassertion, MDIO/PHY ownership, Ethernet driver behavior,
+interrupt completion, DMA/descriptors, packet I/O, networking, sockets, SSH,
+Phase 12.2, or a phase transition.

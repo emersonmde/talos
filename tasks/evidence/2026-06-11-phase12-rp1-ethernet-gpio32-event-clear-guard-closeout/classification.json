@@ -1,0 +1,65 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-event-clear-guard-closeout-20260611",
+  "classification": "rp1-ethernet-gpio32-event-clear-guard-static-frontier-closed",
+  "evidence_level": "static inspection of accepted source contract, guard core, task evidence, source, docs, and git history",
+  "accepted_source_contract": {
+    "task_id": "phase12-rp1-ethernet-gpio32-event-clear-source-contract-20260611",
+    "contract_id": "phase12-rp1-ethernet-gpio32-event-clear-source-contract-v1",
+    "commit": "9718df3a399877435bdf1419155c86153b9cf06e"
+  },
+  "accepted_guard_core": {
+    "task_id": "phase12-rp1-ethernet-gpio32-event-clear-guard-core-20260611",
+    "report_contract_id": "phase12-rp1-ethernet-gpio32-event-clear-guard-report-contract-v1",
+    "classification": "rp1-ethernet-gpio32-event-clear-guard-core-accepted",
+    "commit": "da56e003"
+  },
+  "accepted_guard": {
+    "candidate_classification": "rp1-ethernet-gpio32-event-clear-guard-candidate-local-static",
+    "control_classification": "no-gpio-no-ethernet-rp1-ethernet-gpio32-event-clear-control",
+    "closeout_classification": "rp1-ethernet-gpio32-event-clear-guard-static-frontier-closed",
+    "clear_source_target": "0xc0400d6024",
+    "clear_observed_target": "0x1c000d6024",
+    "write_value": "0x10000000",
+    "write_value_name": "RP1_GPIO_CTRL_IRQRESET",
+    "status_event_mask": "0x0ff00000",
+    "accepted_event_bits": "0x0ab00000",
+    "accepted_status_raw": "0x0abe3300",
+    "accepted_ctrl_raw": "0x00000085",
+    "accepted_rio1_out_raw": "0x00000010",
+    "accepted_rio1_oe_raw": "0x00000010",
+    "accepted_rio1_in_raw": "0x00000012"
+  },
+  "same_shaped_local_static_guard_retries": "closed-for-this-candidate-control-pair",
+  "selected_next_task": "phase12-rp1-ethernet-gpio32-event-clear-pi5-proof-20260611",
+  "rejected_claims": [
+    "hardware evidence accepted by closeout",
+    "event clear executed by closeout",
+    "volatile MMIO execution by closeout",
+    "GPIO32 ownership",
+    "GPIO32 write/restore retry or success",
+    "PHY reset assertion or deassertion",
+    "MDIO/PHY ownership",
+    "Ethernet driver readiness",
+    "interrupt completion",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "future event-clear proof may classify persistent/source-owned event state",
+    "future event-clear proof may hit capture/staging blockers",
+    "event clear does not imply GPIO32 write/restore ownership",
+    "event clear does not imply PHY reset, MDIO/PHY, Ethernet, packet, networking, socket, or SSH readiness"
+  ],
+  "hardware": {
+    "hardwareTestLock_acquired": false,
+    "pi5_run": false,
+    "event_clear_performed": false,
+    "volatile_mmio_execution": false
+  },
+  "next_action": "phase12-rp1-ethernet-gpio32-event-clear-pi5-proof-20260611"
+}

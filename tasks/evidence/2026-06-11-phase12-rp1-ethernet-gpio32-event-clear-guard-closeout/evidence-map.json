@@ -1,0 +1,77 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-event-clear-guard-closeout-20260611",
+  "evidence": [
+    {
+      "label": "accepted source contract",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-source-contract.md",
+      "evidence_level": "static source contract"
+    },
+    {
+      "label": "accepted guard core task record",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-guard-core.md",
+      "evidence_level": "local/static implementation task record"
+    },
+    {
+      "label": "accepted guard core classification",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-guard-core/classification.json",
+      "evidence_level": "classification"
+    },
+    {
+      "label": "accepted guard core evidence map",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-guard-core/evidence-map.json",
+      "evidence_level": "artifact map"
+    },
+    {
+      "label": "implementation surface",
+      "path": "src/rp1_ethernet.rs",
+      "evidence_level": "static source inspection"
+    },
+    {
+      "label": "project docs",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "evidence_level": "documentation"
+    },
+    {
+      "label": "closeout classification",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-guard-closeout/classification.json",
+      "evidence_level": "classification"
+    },
+    {
+      "label": "closeout task record",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-guard-closeout.md",
+      "evidence_level": "task record"
+    }
+  ],
+  "validation": [
+    {
+      "label": "static inspection",
+      "result": "accepted source contract, guard core task record, guard core classification/evidence JSON, focused tests, touched source, project docs, and git history reviewed"
+    },
+    {
+      "label": "json validation",
+      "command": "jq empty tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-guard-closeout/classification.json tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-guard-closeout/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "label": "diff check",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "label": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "label": "staged diff check",
+      "command": "git diff --cached --check",
+      "result": "passed"
+    }
+  ],
+  "hardware": {
+    "hardwareTestLock_acquired": false,
+    "pi5_run": false,
+    "event_clear_performed": false,
+    "volatile_mmio_execution": false
+  }
+}
