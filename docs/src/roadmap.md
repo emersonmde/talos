@@ -9600,6 +9600,38 @@ GPIO32 write/restore v2 and same-shaped known-good readiness retries until
 supervisor planning supplies a changed discriminator or changed readiness
 contract.
 
+phase12-pi5-known-good-bounded-runtime-readiness-v3-closeout-20260611 accepts
+valid-known-good-talos-readiness-v3 under the changed readiness contract:
+stable known-good boot identity, stable TFTP evidence, and the
+rpi5-production-timer-preemption: PASS marker are retained in the primary
+serial artifact. TALOS: kernel_main absence is v3 metadata, not a rejection.
+This only mechanically unlocked the already queued GPIO32 write/restore v2
+proof; it did not accept GPIO32 ownership, PHY reset behavior, MDIO/PHY,
+Ethernet driver behavior, packet I/O, networking, sockets, SSH, Phase 12.2, or
+a phase transition.
+
+phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof-20260610 is
+accepted as
+rp1-ethernet-gpio32-phy-reset-blocked-unexpected-event-state. Candidate and
+paired no-GPIO/no-MMIO control both retained selected-tree identity,
+run-unique serial markers, stable 13-event TFTP deltas, and final restore
+proof, closing the earlier lab no-fetch blocker for this v2 attempt. The
+candidate did not perform GPIO32/RIO/pad writes; it reported
+writes-performed=false after observing baseline-status=0xabe3300,
+baseline-ctrl=0x85, baseline-out=0x10, baseline-oe=0x10, baseline-in=0x12,
+and event-bits=0xab00000.
+
+phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout-20260610
+closes that proof frontier as
+rp1-ethernet-gpio32-phy-reset-write-restore-v2-blocked-no-write-frontier-closed.
+Same-shaped GPIO32 write/restore hardware retries are closed for this
+candidate/control pair; any future GPIO32 follow-up needs supervisor planning
+for a qualitatively different event-state/source-clearance or pre-write
+ownership discriminator. GPIO32 ownership, PHY reset assertion/deassertion,
+MDIO/PHY ownership, Ethernet driver behavior, interrupts, DMA/descriptors,
+packet I/O, networking, sockets, SSH, Phase 12.2, and phase transition remain
+unaccepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

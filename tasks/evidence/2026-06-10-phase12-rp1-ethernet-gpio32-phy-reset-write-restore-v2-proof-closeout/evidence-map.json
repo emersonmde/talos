@@ -1,0 +1,72 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout-20260610",
+  "classification": "rp1-ethernet-gpio32-phy-reset-write-restore-v2-blocked-no-write-frontier-closed",
+  "evidence_level": "static inspection",
+  "evidence": [
+    {
+      "label": "closeout task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout.md",
+      "evidence_level": "task record"
+    },
+    {
+      "label": "closeout classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout/classification.json",
+      "evidence_level": "classification"
+    },
+    {
+      "label": "v3 readiness closeout",
+      "path": "tasks/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "v2 proof task record",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof.md",
+      "evidence_level": "task record"
+    },
+    {
+      "label": "v2 proof classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/classification.json",
+      "evidence_level": "serial hardware boot/output plus lab-controller API stable TFTP delta"
+    },
+    {
+      "label": "v2 proof evidence map",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/evidence-map.json",
+      "evidence_level": "artifact map"
+    },
+    {
+      "label": "v2 proof capture summary",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/capture-summary.json",
+      "evidence_level": "artifact summary"
+    },
+    {
+      "label": "candidate serial window",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/candidate-run/serial-window.json",
+      "evidence_level": "serial hardware boot/output"
+    },
+    {
+      "label": "candidate stable TFTP delta",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/candidate-run/tftp-delta.json",
+      "evidence_level": "lab-controller API stable TFTP delta"
+    },
+    {
+      "label": "control serial window",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/control-run/serial-window.json",
+      "evidence_level": "serial hardware boot/output"
+    },
+    {
+      "label": "control stable TFTP delta",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/control-run/tftp-delta.json",
+      "evidence_level": "lab-controller API stable TFTP delta"
+    },
+    {
+      "label": "final restore status",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/restore/final-status.json",
+      "evidence_level": "lab-controller API restore proof"
+    },
+    {
+      "label": "proof commit",
+      "commit": "4300e6bc54883c1ec8c4020abd068ee8277ed637",
+      "evidence_level": "git history"
+    }
+  ]
+}

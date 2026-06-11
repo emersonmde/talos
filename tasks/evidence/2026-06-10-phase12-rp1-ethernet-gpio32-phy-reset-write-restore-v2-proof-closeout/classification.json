@@ -1,0 +1,78 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout-20260610",
+  "classification": "rp1-ethernet-gpio32-phy-reset-write-restore-v2-blocked-no-write-frontier-closed",
+  "evidence_level": "static inspection",
+  "accepted_claims": [
+    "GPIO32 PHY-reset write/restore v2 proof is reconciled and closed as a precise blocked/no-write checkpoint",
+    "accepted v3 known-good readiness unlocked the v2 proof before execution",
+    "candidate/control archive reviews, selected-tree identities, serial markers, stable TFTP deltas, and final restore proof were retained",
+    "candidate did not perform GPIO32/RIO/pad writes because unexpected GPIO32 event state tripped the no-write guard",
+    "paired control preserved the same report path while withholding GPIO write/MMIO target facts",
+    "final lab boot tree was restored before hardwareTestLock release",
+    "same-shaped GPIO32 write/restore hardware retries are closed for this candidate/control pair unless a qualitatively different discriminator is planned"
+  ],
+  "rejected_claims": [
+    "GPIO32 PHY reset write/restore success",
+    "GPIO32 ownership",
+    "PHY reset assertion/deassertion proof",
+    "MDIO or PHY ownership",
+    "RP1 GPIO/RIO/pad/MMIO write ownership",
+    "Ethernet driver readiness",
+    "DMA, descriptor rings, transfer completion, or interrupt completion",
+    "packet I/O, networking, sockets, SSH, Phase 12.2, or phase transition"
+  ],
+  "retained_risks": [
+    "candidate GPIO32 write/restore remains blocked by unexpected event state before any write",
+    "future GPIO32 work requires a new supervisor-planned discriminator for event-state/source-clearance or equivalent pre-write ownership conditions",
+    "MDIO/PHY ownership, interrupt completion, DMA/descriptor ownership, packet I/O, networking, sockets, SSH, and Phase 12.2 remain outside the accepted frontier"
+  ],
+  "readiness_dependency": {
+    "task_id": "phase12-pi5-known-good-bounded-runtime-readiness-v3-closeout-20260611",
+    "commit": "9fb316e220ad3cdc22cd35ac7398df319853f294",
+    "classification": "valid-known-good-talos-readiness-v3-closeout",
+    "accepted_valid_known_good_talos_readiness_v3": true
+  },
+  "proof": {
+    "task_id": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof-20260610",
+    "commit": "4300e6bc54883c1ec8c4020abd068ee8277ed637",
+    "classification": "rp1-ethernet-gpio32-phy-reset-blocked-unexpected-event-state",
+    "accepted_gpio32_write_restore": false,
+    "candidate": {
+      "selected_tree_hash": "37ce442ce6984499087c555a11593f41c8199f19935b92f9979c40ce2593c2f9",
+      "capture_nonce": "gpio32-write-v2-candidate-20260611T013204Z",
+      "required_marker_occurrences": 22,
+      "tftp_event_count": 13,
+      "tftp_stable": true,
+      "writes_performed_observed": false,
+      "observed_state": {
+        "baseline_status": "0xabe3300",
+        "baseline_ctrl": "0x85",
+        "baseline_out": "0x10",
+        "baseline_oe": "0x10",
+        "baseline_in": "0x12",
+        "event_bits": "0xab00000",
+        "touched_fields": "RIO1_OUT.bit4,RIO1_OE.bit4"
+      }
+    },
+    "control": {
+      "selected_tree_hash": "8abf03022ad41ca3e1de9d59c845cf186eed62a3736938e04292b90a203da9b8",
+      "capture_nonce": "gpio32-write-v2-control-20260611T013204Z",
+      "required_marker_occurrences": 21,
+      "tftp_event_count": 13,
+      "tftp_stable": true,
+      "classification": "no-gpio-write-no-ethernet-rp1-ethernet-gpio32-phy-reset-control",
+      "writes_performed_observed": false
+    },
+    "final_restore": {
+      "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "effective_kernel": "kernel_2712.img",
+      "configured_kernel": "kernel_2712.img",
+      "hardware_lock_released": true
+    }
+  },
+  "same_shaped_retry_policy": "closed-for-this-candidate-control-pair-requires-qualitatively-different-discriminator",
+  "planning_needed": true,
+  "planning_reason": "The GPIO32 write/restore v2 proof has a precise blocked/no-write result caused by unexpected GPIO32 event state before any write; no queued next task defines the qualitatively different discriminator or ownership precondition needed for another attempt.",
+  "next_action": "Supervisor planning required for a different bounded Phase 12.1 discriminator before any GPIO32 write/restore rerun or MDIO/PHY follow-up.",
+  "commit": "recorded-in-supervisor-state-after-acceptance"
+}

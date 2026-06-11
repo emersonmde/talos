@@ -918,3 +918,34 @@ GPIO32 write/restore v2 remains blocked because its valid-known-good readiness
 dependency is still unsatisfied. Same-shaped GPIO32 or known-good runtime
 readiness hardware retries require supervisor planning with a changed
 discriminator or changed readiness contract.
+
+phase12-pi5-known-good-bounded-runtime-readiness-v3-closeout-20260611 accepts
+valid-known-good-talos-readiness-v3 under the changed readiness contract. The
+accepted proof retains stable known-good boot identity, stable TFTP evidence,
+and the rpi5-production-timer-preemption: PASS marker in the primary serial
+artifact. The absence of TALOS: kernel_main is recorded as v3 metadata rather
+than a rejection. This closeout mechanically selected only the already queued
+GPIO32 / ETH_RST_N write/restore v2 proof; it did not accept GPIO32 ownership,
+PHY reset behavior, MDIO/PHY ownership, Ethernet driver behavior, packet I/O,
+networking, sockets, SSH, Phase 12.2, or a phase transition.
+
+phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof-20260610 is
+accepted only as a precise blocked/no-write hardware result. The candidate and
+paired no-GPIO/no-MMIO control both retained selected-tree identity, run-unique
+serial markers, stable 13-event TFTP deltas, and final restore proof, so the
+earlier lab no-fetch blocker is closed for this v2 attempt. The candidate did
+not perform the GPIO32 write/restore sequence: it reported
+writes-performed=false after observing baseline-status=0xabe3300,
+baseline-ctrl=0x85, baseline-out=0x10, baseline-oe=0x10, baseline-in=0x12,
+and event-bits=0xab00000.
+
+phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout-20260610
+closes that proof frontier as
+rp1-ethernet-gpio32-phy-reset-write-restore-v2-blocked-no-write-frontier-closed.
+Same-shaped GPIO32 write/restore hardware retries are closed for this
+candidate/control pair. A future GPIO32 follow-up requires supervisor planning
+for a qualitatively different discriminator, such as event-state/source
+clearance or equivalent pre-write ownership conditions. GPIO32 ownership, PHY
+reset assertion/deassertion, MDIO/PHY ownership, Ethernet driver behavior,
+interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2,
+and phase transition remain unaccepted.
