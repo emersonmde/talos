@@ -1,0 +1,26 @@
+{
+  "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof.md",
+  "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/classification.json",
+  "capture_summary": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/capture-summary.json",
+  "archive_review": {
+    "candidate": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/archive-review/candidate-rerun-review.txt",
+    "control": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/archive-review/control-rerun-review.txt"
+  },
+  "candidate_run": {
+    "directory": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/candidate-rerun",
+    "v4_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/candidate-rerun/v4-check.json",
+    "serial_marker_lines": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/candidate-rerun/serial-marker-lines.txt",
+    "tftp_delta": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/candidate-rerun/tftp-delta-stable-pre-restore.json",
+    "restore": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/candidate-rerun/restore-snapshot.json"
+  },
+  "control_run": {
+    "directory": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/control-rerun",
+    "v4_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/control-rerun/v4-check.json",
+    "serial_marker_lines": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/control-rerun/serial-marker-lines.txt",
+    "tftp_delta": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/control-rerun/tftp-delta-stable-pre-restore.json",
+    "restore": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/control-rerun/restore-snapshot.json"
+  },
+  "recovery_evidence": {
+    "manual_restore_after_aborted_overlap": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/manual-restore-after-overlap-status.json"
+  }
+}

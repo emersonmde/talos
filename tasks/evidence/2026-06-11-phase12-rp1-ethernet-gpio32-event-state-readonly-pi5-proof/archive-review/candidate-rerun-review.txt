@@ -1,0 +1,8 @@
+candidate_archive=target/talos-rpi5-rp1-ethernet-gpio32-event-state-candidate-rerun.tar.gz
+candidate_archive_sha256=eff94a29f3986a23467b48612ebf7baee1cff781c5b0543fdc7caea78f7590fc
+kernel_2712_sha256=6708037037e3151c2f608e71fa12320a11243c893c41e6117855cb1e16dc41a3
+kernel_2712_size=50008
+header_image_size=50008
+text_offset=0
+flags=12
+forbidden_gpio32_event_state_candidate_runtime_strings_absent=true

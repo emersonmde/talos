@@ -1,0 +1,12 @@
+{
+  "candidate_v4_exit": 0,
+  "candidate_classification": "capture-chain-v4-ready",
+  "candidate_allowed": true,
+  "candidate_rejection_reasons": [],
+  "control_v4_exit": 0,
+  "control_classification": "capture-chain-v4-ready",
+  "control_allowed": true,
+  "control_rejection_reasons": [],
+  "final_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "final_effective_kernel": "kernel_2712.img"
+}

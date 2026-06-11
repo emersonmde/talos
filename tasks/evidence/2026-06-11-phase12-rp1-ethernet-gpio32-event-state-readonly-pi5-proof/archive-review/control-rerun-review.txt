@@ -1,0 +1,8 @@
+control_archive=target/talos-rpi5-rp1-ethernet-gpio32-event-state-control-rerun.tar.gz
+control_archive_sha256=ffe3a4b31d35f948eef38d48a7555d11c7a2aa4019250316b9a6c80ea5117f2c
+kernel_2712_sha256=82a677fe064ce18982bf919da9e222fbc7d915cd63c0ae360e85942dedfe4667
+kernel_2712_size=49496
+header_image_size=49496
+text_offset=0
+flags=12
+forbidden_gpio32_event_state_control_runtime_strings_absent=true

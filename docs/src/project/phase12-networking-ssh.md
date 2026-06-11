@@ -269,6 +269,23 @@ MMIO readiness, Ethernet driver readiness, RP1 MMIO writes, DMA, descriptor
 rings, interrupts, clock/reset/PHY/MDIO ownership, packet I/O, networking,
 sockets, SSH, Phase 12.2, or a phase transition.
 
+phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof-20260611 accepts
+the serialized read-only Pi 5 discriminator proof as
+rp1-ethernet-gpio32-event-state-readonly-pi5-proof-accepted. The candidate
+reported GPIO32 STATUS 0x0abe3300, CTRL 0x85, RIO1 OUT/OE 0x10, RIO1 IN
+0x12, pad 0x56, source-backed event bits 0x0ab00000, writes-performed=false,
+and event-clear-performed=false, classifying as
+rp1-ethernet-gpio32-event-state-blocked-event-state. The paired control used
+the same capture-chain-v4 path with no GPIO32/RIO/pad/MMIO target facts and
+classified as no-gpio-no-ethernet-rp1-ethernet-gpio32-event-state-control.
+Both retained selected-tree identity, run-unique serial output, stable TFTP
+delta, final pre-restore identity, and restore evidence with v4 checker
+classification capture-chain-v4-ready. This proof remains read-only evidence;
+it does not accept event clearing, GPIO32 ownership, PHY reset, GPIO32
+write/restore retry or success, MDIO/PHY ownership, Ethernet driver behavior,
+interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2,
+or a phase transition.
+
 ## Observed-Window GEM MID Pi 5 Proof
 
 phase12-rp1-ethernet-observed-window-discriminator-pi5-proof-20260610 accepts

@@ -1,0 +1,1 @@
+target/talos-rpi5-rp1-ethernet-gpio32-event-state-candidate.tar.gz

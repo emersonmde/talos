@@ -1,0 +1,87 @@
+{
+  "contract_version": "pi5-capture-chain-v4",
+  "base_contracts": [
+    "pi5-capture-transaction-v2",
+    "pi5-capture-transaction-v3",
+    "pi5-capture-transaction-run-unique-v1"
+  ],
+  "run_label": "rp1-ethernet-gpio32-event-state-candidate-rerun",
+  "report_kind": "candidate",
+  "decisive_rp1_hardware_classification_allowed": true,
+  "classification": "capture-chain-v4-ready",
+  "rejection_reasons": [],
+  "endpoint_identity": {
+    "root_endpoint": {
+      "endpoint": "GET /",
+      "curl_exit": 0,
+      "http_code": 404,
+      "body_bytes": 55,
+      "usable_for_selected_tree_identity": false,
+      "selected_tree_identity_source": "/boot/files",
+      "fallback_used": true,
+      "fallback_reason": "root-endpoint-http-non-2xx"
+    },
+    "selected_tree_identity_source": "/boot/files",
+    "fallback_used": true
+  },
+  "proof_run_identity": {
+    "selected_tree_hash": "c503471de806a790b5f72b05ea0972b998ba087db3111ee6b782c358db3e7bda",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 50008,
+    "tftp": {
+      "cursor_file": 4428114,
+      "delta_cursor_start": 4428114,
+      "delta_cursor_end": 4429465,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        50008,
+        50008
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "c503471de806a790b5f72b05ea0972b998ba087db3111ee6b782c358db3e7bda",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 50008
+    },
+    "restore": {
+      "snapshot_name": "phase12-gpio32-event-state-pre-20260611T0252Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "serial_capture": {
+    "capture_mode": "read",
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "cursor_file": 4194304,
+    "cursor_start": 4194304,
+    "cursor_end": 4194304,
+    "response_bytes": 70557,
+    "required_marker": "capture-nonce=20260611T0256Z-3400ca0e-candidate-rerun",
+    "required_marker_occurrences": 21,
+    "required_marker_excerpt": "t-state-blocked-event-state\r\nTALOS: rp1-ethernet-gpio32-event-state-candidate capture-nonce=20260611T0256Z-3400ca0e-candidate-rerun event-state-report-contract-id=phase12-rp1-ethernet-gpio32-event-state-readonly-discriminator-report-v1 event-state-contract-id=phase12-rp1-ethernet-gpio32-event",
+    "nonce_token": "capture-nonce=20260611T0256Z-3400ca0e-candidate-rerun",
+    "nonce_token_occurrences": 21,
+    "pre_power_nonce_occurrences": 0,
+    "empty_pre_power": false,
+    "nonce_fresh": true,
+    "serial_freshness_ok": true
+  },
+  "claim_boundary": {
+    "accepted_if_ready": "capture-chain identity/freshness only",
+    "rejected_runtime_claims": [
+      "live-gem-visibility",
+      "ethernet-driver-readiness",
+      "rp1-mmio-dma-programming",
+      "packet-io",
+      "networking",
+      "ssh",
+      "phase-transition"
+    ]
+  },
+  "rule": "missing /boot/files identity, expected TFTP fetch bytes, final selected-tree identity, run-unique marker freshness, direct serial marker retention, or paired control marker prevents decisive RP1 hardware classification"
+}

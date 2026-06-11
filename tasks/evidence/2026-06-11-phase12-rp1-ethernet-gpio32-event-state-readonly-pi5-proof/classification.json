@@ -1,0 +1,38 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof-20260611",
+  "classification": "rp1-ethernet-gpio32-event-state-readonly-pi5-proof-accepted",
+  "evidence_level": "serial hardware boot/output plus lab-controller API identity/TFTP/restore evidence",
+  "candidate": {
+    "report_classification": "rp1-ethernet-gpio32-event-state-blocked-event-state",
+    "status": "0xabe3300",
+    "ctrl": "0x85",
+    "rio1_out": "0x10",
+    "rio1_oe": "0x10",
+    "rio1_in": "0x12",
+    "pad": "0x56",
+    "status_event_mask": "0xff00000",
+    "event_bits": "0xab00000",
+    "source_decoding_status": "source-backed-bits-20-27",
+    "writes_performed": false,
+    "event_clear_performed": false,
+    "rejected_claims_retained": true
+  },
+  "control": {
+    "report_classification": "no-gpio-no-ethernet-rp1-ethernet-gpio32-event-state-control",
+    "target_facts_constructed": false,
+    "same_capture_path": true
+  },
+  "capture_chain": {
+    "candidate_v4_exit": 0,
+    "candidate_classification": "capture-chain-v4-ready",
+    "candidate_allowed": true,
+    "candidate_rejection_reasons": [],
+    "control_v4_exit": 0,
+    "control_classification": "capture-chain-v4-ready",
+    "control_allowed": true,
+    "control_rejection_reasons": [],
+    "final_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "final_effective_kernel": "kernel_2712.img"
+  },
+  "accepted_boundary": "read-only GPIO32 event-state discriminator proof only; no GPIO32 ownership, event clear, PHY reset, write/restore retry, MDIO/PHY, Ethernet driver, networking, SSH, or phase transition"
+}
