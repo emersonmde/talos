@@ -1,0 +1,8 @@
+candidate_archive=tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/candidate-archive.tar.gz
+candidate_archive_sha256=83d8babcf3385f2b127598b2ec7312b73cb4ecd7da94410f3ccb26eaaa0c7a97
+kernel_2712_sha256=d3dc85efc1507d6c99bd8add876cb0d62a74730b604dbaf031fd089a09f42505
+kernel_2712_size=52344
+header_image_size=52344
+text_offset=0
+flags=12
+forbidden_mdio_register_vector_candidate_runtime_strings_absent=true

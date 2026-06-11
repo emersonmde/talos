@@ -1,0 +1,52 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery-20260611",
+  "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery.md",
+  "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/classification.json",
+  "capture_summary": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/capture-summary.json",
+  "archive_reviews": {
+    "candidate": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/archive-review/candidate-static-review.txt",
+    "control": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/archive-review/control-static-review.txt"
+  },
+  "candidate": {
+    "archive": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/candidate-archive.tar.gz",
+    "archive_sha256": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/candidate-archive-sha256.txt",
+    "publication": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/candidate-run/publication.json",
+    "preflight_identity": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/candidate-run/preflight-identity.json",
+    "serial_output": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/candidate-run/serial-observe-window.json",
+    "serial_tail": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/candidate-run/serial-peek-after-candidate-restore.json",
+    "tftp_delta": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/candidate-run/tftp-delta-stable-pre-restore.json",
+    "capture_summary": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/candidate-run/capture-invariant-summary.json",
+    "v4_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/candidate-run/v4-check.json",
+    "restore": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/candidate-run/restore-snapshot.json"
+  },
+  "control": {
+    "archive": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/control-archive.tar.gz",
+    "archive_sha256": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/control-archive-sha256.txt",
+    "publication": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/control-run/publication.json",
+    "preflight_identity": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/control-run/preflight-identity.json",
+    "serial_output": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/control-run/serial-observe-window.json",
+    "serial_tail": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/control-run/serial-peek-after-control-restore.json",
+    "tftp_delta": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/control-run/tftp-delta-stable-pre-restore.json",
+    "capture_summary": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/control-run/capture-invariant-summary.json",
+    "v4_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/control-run/v4-check.json",
+    "restore": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/control-run/restore-snapshot.json"
+  },
+  "hardware_lock_and_restore": {
+    "restore_snapshot_create": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/restore-snapshot-create.json",
+    "final_lab_status": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/final-lab-status.json",
+    "final_lab_boot_files": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/final-lab-boot-files.json"
+  },
+  "accepted_claims": [
+    "mdio-phy1-register-vector-visible",
+    "no-mdio-no-ethernet paired control",
+    "capture-chain-v4 candidate/control identity and freshness ready"
+  ],
+  "rejected_claims": [
+    "broad MDIO or PHY ownership",
+    "Ethernet driver readiness",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ]
+}

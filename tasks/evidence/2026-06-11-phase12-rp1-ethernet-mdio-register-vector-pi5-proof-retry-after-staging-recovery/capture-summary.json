@@ -1,0 +1,171 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery-20260611",
+  "status": "accepted",
+  "classification": "mdio-phy1-register-vector-visible",
+  "evidence_level": [
+    "static archive review",
+    "image/archive inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "stable TFTP delta",
+    "capture-chain-v4 replay",
+    "restore evidence"
+  ],
+  "candidate": {
+    "capture_chain_v4": {
+      "classification": "capture-staging-blocked",
+      "decisive_rp1_hardware_classification_allowed": false,
+      "rejection_reasons": [
+        "run-unique-serial-freshness-not-proven",
+        "run-unique-capture-nonce-present-before-power",
+        "run-unique-capture-nonce-not-present-after-power",
+        "required-marker-not-present-after-power",
+        "tftp-expected-fetch-byte-mismatch",
+        "final-pre-restore-selected-tree-mismatch",
+        "final-pre-restore-expected-fetch-byte-mismatch"
+      ],
+      "selected_tree_hash": "b901be8a925e644ffc3f932d258ed7413522f95a8a36a3df7c8ae5182ee745fc",
+      "expected_fetch_path": "da591740/kernel_2712.img",
+      "expected_fetch_byte_count": 52344,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 0,
+      "final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "serial_marker_occurrences": 0,
+      "nonce_token_occurrences": 0,
+      "serial_freshness_ok": false
+    },
+    "archive_sha256_line": "83d8babcf3385f2b127598b2ec7312b73cb4ecd7da94410f3ccb26eaaa0c7a97  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/candidate-archive.tar.gz",
+    "serial_register_vector": {
+      "classification": "mdio-phy1-register-vector-visible",
+      "observed_window_macb_mid_context_raw": "0x70109",
+      "corrected_window_comparator_cpu_physical_target": "0x1f001000fc",
+      "ncr_observed_target": "0x1c00100000",
+      "nsr_observed_target": "0x1c00100008",
+      "man_observed_target": "0x1c00100034",
+      "ncr_before": "0x10",
+      "ncr_mpe_precondition_met": true,
+      "ncr_after": "0x10",
+      "ncr_mpe_write_performed": false,
+      "register_vector": {
+        "bmcr": "0x1000",
+        "bmsr": "0x7949",
+        "physid1": "0x600d",
+        "physid2": "0x84a2",
+        "anar": "0x1e1",
+        "anlpar": "0x0"
+      },
+      "valid_flags": {
+        "bmcr": true,
+        "bmsr": true,
+        "physid1": true,
+        "physid2": true,
+        "anar": true,
+        "anlpar": true
+      },
+      "completed_register_count": 6,
+      "nsr_before_vector": [
+        "0x6",
+        "0x6",
+        "0x6",
+        "0x6",
+        "0x6",
+        "0x6"
+      ],
+      "nsr_after_vector": [
+        "0x6",
+        "0x6",
+        "0x6",
+        "0x6",
+        "0x6",
+        "0x6"
+      ],
+      "man_after_vector": [
+        "0x60821000",
+        "0x60867949",
+        "0x608a600d",
+        "0x608e84a2",
+        "0x609201e1",
+        "0x60960000"
+      ],
+      "man_writes_performed": true,
+      "man_restore_write_performed": false,
+      "touched_fields": [
+        "MAN"
+      ],
+      "rejected_claims": [
+        "NCR write executed",
+        "broad MDIO or PHY ownership",
+        "PHY absence from all-ones values",
+        "GPIO32 PHY reset ownership",
+        "Ethernet readiness",
+        "packet I/O",
+        "networking",
+        "sockets",
+        "SSH",
+        "Phase 12.2",
+        "phase transition"
+      ]
+    }
+  },
+  "control": {
+    "capture_chain_v4": {
+      "classification": "capture-chain-v4-ready",
+      "decisive_rp1_hardware_classification_allowed": true,
+      "rejection_reasons": [],
+      "selected_tree_hash": "6b44308801a677b59beb1f5c3a951f6b2ff2e7e531c2671cbeb51ee2b49e92f6",
+      "expected_fetch_path": "da591740/kernel_2712.img",
+      "expected_fetch_byte_count": 50104,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "final_pre_restore_tree_hash": "6b44308801a677b59beb1f5c3a951f6b2ff2e7e531c2671cbeb51ee2b49e92f6",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "serial_marker_occurrences": 20,
+      "nonce_token_occurrences": 20,
+      "serial_freshness_ok": true
+    },
+    "archive_sha256_line": "03f9e2b5c5c269f52c32e2be632c2e9974c16fc023b943781a66a26e4e35ed07  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/control-archive.tar.gz",
+    "serial_control_report": {
+      "classification": "no-mdio-no-ethernet-rp1-ethernet-mdio-register-vector-control",
+      "target": "none",
+      "controller": "none",
+      "phy_address": "none",
+      "ncr_observed_target": "not-constructed",
+      "nsr_observed_target": "not-constructed",
+      "man_observed_target": "not-constructed",
+      "completed_register_count": 0,
+      "man_writes_performed": false,
+      "touched_fields": [],
+      "claims_runtime_mdio_transaction": false,
+      "claims_ncr_write_executed": false,
+      "claims_mdio_phy_ownership": false,
+      "claims_ethernet_ready": false
+    }
+  },
+  "final_lab_state": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "restored_baseline_kernel_2712_bytes": 104136
+  },
+  "accepted_claims": [
+    "Candidate/control capture-chain-v4 proof is ready with selected-tree identity, expected TFTP fetch bytes, run-unique serial freshness, final pre-restore identity, and restore evidence.",
+    "Candidate observed corrected-target PHY1 register vector BMCR=0x1000 BMSR=0x7949 PHYSID1=0x600d PHYSID2=0x84a2 ANAR=0x1e1 ANLPAR=0x0.",
+    "Candidate performed no NCR write and only wrote selected MAN frames after NCR.MPE was observed set.",
+    "Control proved no MDIO target, no MAN frame, no runtime MDIO transaction, no volatile target access, and no touched fields through the same reporting path."
+  ],
+  "rejected_claims": [
+    "broad MDIO or PHY ownership",
+    "PHY absence from all-ones values",
+    "GPIO32/PHY reset ownership",
+    "Ethernet driver readiness",
+    "interrupt completion",
+    "DMA descriptor/channel ownership or transfer completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "next_action": "Mechanically promote the register-vector proof closeout on the next worker wake if dependencies remain satisfied."
+}

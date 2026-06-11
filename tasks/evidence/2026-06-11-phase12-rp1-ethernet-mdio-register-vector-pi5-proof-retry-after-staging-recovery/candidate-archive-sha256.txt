@@ -1,0 +1,1 @@
+83d8babcf3385f2b127598b2ec7312b73cb4ecd7da94410f3ccb26eaaa0c7a97  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/candidate-archive.tar.gz
