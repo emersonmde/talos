@@ -1,0 +1,2 @@
+8cee414725a2c9c9e0c71d1812b1f02587add49f3c099a90d3f190c2a574cfa0  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-macb.h
+b0260b7f7d093788954660a8cdc3eda738673690604e7528db121c860c3905ae  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-uapi-linux-mii.h

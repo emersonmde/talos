@@ -9685,6 +9685,21 @@ prerequisite before packet I/O. Runtime MDIO transactions, PHY reset,
 Ethernet behavior, DMA/descriptors, interrupts, packet I/O, networking,
 sockets, SSH, Phase 12.2, and phase transition remain unaccepted.
 
+phase12-rp1-ethernet-mdio-phy-id-source-contract-20260611 accepts the
+source/docs/evidence contract for a paired Clause 22 PHY-ID discriminator on
+rp1_eth phy1 / ethernet-phy@1 address 1. The selected future registers are
+MII_PHYSID1 0x02 and MII_PHYSID2 0x03 through observed-window NCR
+0x1c00100000, NSR 0x1c00100008, and MAN 0x1c00100034. A future candidate
+must require NCR.MPE bit 4 already set or classify
+source-contract-violated-blocker without writing NCR, poll NSR.IDLE bit 2
+before and after each MAN write, use MAN frames 0x600a0000 and 0x600e0000,
+and extract results from MAN.DATA bits 15:0. The paired control must construct
+no MDIO target or MAN frame and perform no Ethernet MDIO volatile load/store.
+This contract accepts no runtime MDIO evidence, NCR.MPE write ownership,
+GPIO32/PHY reset success, broad MDIO/PHY ownership, Ethernet driver behavior,
+interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH,
+Phase 12.2, or phase transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

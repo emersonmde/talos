@@ -1,0 +1,46 @@
+{
+  "taskId": "phase12-rp1-ethernet-mdio-phy-id-source-contract-20260611",
+  "classification": "rp1-ethernet-mdio-phy-id-source-contract-accepted",
+  "evidenceLevel": "static inspection",
+  "acceptedSourceContractClaims": [
+    "selected discriminator is Clause 22 PHY-ID read for rp1_eth phy1 at address 1",
+    "selected PHY ID registers are MII_PHYSID1 0x02 and MII_PHYSID2 0x03",
+    "source RP1 Ethernet bus base is 0xc0_40100000 and observed-window base is 0x1c00100000",
+    "selected observed-window registers are NCR 0x1c00100000, NSR 0x1c00100008, and MAN 0x1c00100034",
+    "future candidate must require NCR.MPE bit 4 already set or classify source-contract-violated-blocker without writing NCR",
+    "future candidate must poll NSR.IDLE bit 2 before and after each MAN write",
+    "future candidate MAN frames are 0x600a0000 for PHYSID1 and 0x600e0000 for PHYSID2",
+    "future candidate extracts 16-bit result data from MAN.DATA bits 15:0",
+    "paired control preserves the same reporting path while constructing no MDIO target and performing no Ethernet MDIO volatile load/store"
+  ],
+  "rejectedRuntimeHardwareClaims": [
+    "runtime MDIO transaction evidence",
+    "MDIO ownership beyond the selected PHY-ID discriminator",
+    "NCR.MPE ownership or write permission",
+    "PHY reset ownership",
+    "GPIO32 ownership or GPIO32 event clearing",
+    "Ethernet driver readiness",
+    "interrupt delivery or completion",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "allowedFutureProofClassifications": [
+    "mdio-phy1-physid-visible",
+    "mdio-phy1-physid-timeout",
+    "mdio-phy1-physid-source-contract-violated-blocker",
+    "precise-staging-capture-blocker",
+    "no-mdio-no-ethernet-rp1-ethernet-mdio-phy-id-control"
+  ],
+  "retainedRisks": [
+    "NCR.MPE may be clear and requires a later explicit task before Talos writes it",
+    "GPIO32/ETH_RST_N remains unowned and may leave the PHY in reset or firmware-owned state",
+    "a visible PHY ID read would not prove full MDIO, PHY, link, MAC, DMA, interrupt, packet, or network readiness",
+    "timeout policy still needs a Talos-owned local/static guard before hardware"
+  ],
+  "nextAction": "Mechanically promote phase12-rp1-ethernet-mdio-phy-id-guard-core-20260611 on the next worker wake if dependencies remain satisfied."
+}

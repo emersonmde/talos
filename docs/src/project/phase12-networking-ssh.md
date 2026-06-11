@@ -1123,3 +1123,22 @@ I/O. It must not perform runtime MDIO transactions, assert/deassert PHY reset,
 retry GPIO32 event clear or write/restore, implement Ethernet behavior,
 program DMA or descriptors, handle interrupts, perform packet I/O, add
 networking, sockets, SSH, Phase 12.2, or create a phase transition.
+
+phase12-rp1-ethernet-mdio-phy-id-source-contract-20260611 accepts the
+source/docs/evidence contract for the smallest useful non-GPIO32 MDIO/PHY-ID
+discriminator. The selected future candidate is a paired Clause 22 PHY-ID read
+for rp1_eth phy1 / ethernet-phy@1 address 1, using MII_PHYSID1 register 0x02
+and MII_PHYSID2 register 0x03. The source-backed observed-window targets are
+NCR at 0x1c00100000, NSR at 0x1c00100008, and MAN at 0x1c00100034. A future
+candidate must require NCR.MPE bit 4 already set or classify
+source-contract-violated-blocker without writing NCR; it must poll NSR.IDLE
+bit 2 before and after each MAN write; and it must extract 16-bit results from
+MAN.DATA bits 15:0. The exact future MAN frames are 0x600a0000 for PHYSID1
+and 0x600e0000 for PHYSID2.
+
+The paired control must use the same reporting path while constructing no
+MDIO target or MAN frame and performing no Ethernet MDIO volatile load/store.
+This contract does not execute MDIO, does not accept NCR.MPE write ownership,
+does not require GPIO32/PHY reset success, and does not accept full MDIO/PHY
+ownership, Ethernet driver readiness, interrupts, DMA/descriptors, packet I/O,
+networking, sockets, SSH, Phase 12.2, or a phase transition.
