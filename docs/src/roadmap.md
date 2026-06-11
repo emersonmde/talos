@@ -9853,6 +9853,25 @@ does not accept hardware evidence yet, PHY absence from all-ones values, broad
 MDIO/PHY ownership, Ethernet behavior, packet I/O, networking, sockets, SSH,
 Phase 12.2, or a phase transition.
 
+phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard-20260611
+records the guarded Pi 5 register-vector retry as a precise capture/staging
+blocker. The candidate had fresh serial markers, but capture-chain-v4 rejected
+decisive hardware classification because the candidate selected tree expected
+two 52352-byte TFTP fetches while the observed fetches were two 104136-byte
+baseline fetches, and final pre-restore identity was the restored baseline
+tree. The paired no-MDIO/no-Ethernet control passed capture-chain-v4 and
+proves only the reporting path for this proof shape.
+
+phase12-rp1-ethernet-mdio-register-vector-proof-v2-closeout-20260611 closes
+the guarded register-vector proof frontier as
+rp1-ethernet-mdio-register-vector-guarded-v2-candidate-identity-mismatch-frontier-closed.
+Same-shaped guarded register-vector hardware retries are closed for this
+candidate/control pair unless a future task supplies a qualitatively different
+staging or power-cycle identity discriminator with explicit acceptance
+criteria. No register-vector MAN.DATA values, PHY absence claim, broad
+MDIO/PHY ownership, PHY reset/GPIO32 ownership, Ethernet behavior,
+networking, sockets, SSH, Phase 12.2, or phase transition is accepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

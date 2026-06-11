@@ -1,0 +1,90 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-proof-v2-closeout-20260611",
+  "status": "accepted",
+  "classification": "mdio-register-vector-guarded-v2-candidate-identity-mismatch-frontier-closed",
+  "evidence_level": [
+    "static inspection",
+    "capture-chain-v4 replay",
+    "evidence-consistency guard/check",
+    "lab-controller API evidence review",
+    "serial hardware boot/output evidence review",
+    "stable TFTP delta evidence review",
+    "restore evidence review"
+  ],
+  "reconciled_task": {
+    "task_id": "phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard-20260611",
+    "status": "blocked",
+    "classification": "mdio-register-vector-guarded-v2-candidate-identity-mismatch-blocker",
+    "commit": "a28a10b215af387cfd356733f5ee1f547565bb24"
+  },
+  "candidate": {
+    "v4_classification": "capture-staging-blocked",
+    "decisive_rp1_hardware_classification_allowed": false,
+    "first_failing_invariant": "tftp-expected-fetch-byte-mismatch",
+    "rejection_reasons": [
+      "tftp-expected-fetch-byte-mismatch",
+      "final-pre-restore-selected-tree-mismatch",
+      "final-pre-restore-expected-fetch-byte-mismatch"
+    ],
+    "selected_tree_hash": "dd4ad2732e2dea9b9d86017fed7e52e107f968fc5c5c1f925ef9e40b41a3bdbc",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 52352,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 0,
+    "expected_fetch_bytes_seen": [
+      104136,
+      104136
+    ],
+    "final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "serial_marker_occurrences": 37,
+    "serial_freshness_ok": true,
+    "accepted_register_vector_values": false
+  },
+  "control": {
+    "v4_classification": "capture-chain-v4-ready",
+    "decisive_rp1_hardware_classification_allowed": true,
+    "selected_tree_hash": "db5f356f5ca4eed9ca21c232ea40a7ff6dfb2f7520337c08695ee0223129238d",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 50112,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "final_pre_restore_tree_hash": "db5f356f5ca4eed9ca21c232ea40a7ff6dfb2f7520337c08695ee0223129238d",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "serial_marker_occurrences": 39,
+    "serial_freshness_ok": true,
+    "accepted_control_path": "no-mdio-no-ethernet-rp1-ethernet-mdio-register-vector-control"
+  },
+  "agreement": {
+    "task_markdown_agrees_with_candidate_v4": true,
+    "task_markdown_agrees_with_control_v4": true,
+    "aggregate_classification_agrees_with_v4": true,
+    "capture_summary_agrees_with_v4": true,
+    "evidence_map_agrees_with_v4": true,
+    "evidence_consistency_guard_agrees": true
+  },
+  "accepted_claims": [
+    "The guarded v2 candidate/control evidence is internally consistent and task-owned aggregate evidence agrees with candidate/control v4 JSON.",
+    "The candidate is a precise capture/staging blocker: serial freshness was observed, but TFTP bytes and final pre-restore identity joined the restored baseline rather than the selected candidate tree.",
+    "The paired control passed capture-chain-v4 and proves the no-MDIO/no-Ethernet reporting path for this proof shape.",
+    "The lab restore returned to baseline tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10."
+  ],
+  "rejected_claims": [
+    "candidate register-vector MAN.DATA values as hardware proof",
+    "candidate/control pair as accepted register-vector proof",
+    "PHY absence from all-ones values",
+    "broad MDIO or PHY ownership",
+    "GPIO32 or PHY reset ownership",
+    "Ethernet driver readiness",
+    "interrupt completion",
+    "DMA descriptor/channel ownership or transfer completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "same_shaped_retry_policy": "closed-until-qualitatively-different-staging-or-power-cycle-identity-discriminator",
+  "next_action": "Set planningNeeded=true for supervisor planning of the next bounded Phase 12.1 discriminator or a qualitatively different staging/power-cycle identity gate; do not promote broad MDIO/PHY ownership, Ethernet behavior, networking, SSH, Phase 12.2, or a phase transition."
+}

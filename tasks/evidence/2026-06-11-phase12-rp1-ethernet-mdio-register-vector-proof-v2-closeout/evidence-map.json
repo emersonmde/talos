@@ -1,0 +1,61 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-proof-v2-closeout-20260611",
+  "status": "accepted",
+  "classification": "mdio-register-vector-guarded-v2-candidate-identity-mismatch-frontier-closed",
+  "reconciled_task": "phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard-20260611",
+  "reconciled_commit": "a28a10b215af387cfd356733f5ee1f547565bb24",
+  "authoritative_inputs": {
+    "candidate_v4": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/candidate-run/v4-check.json",
+    "control_v4": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/control-run/v4-check.json",
+    "evidence_consistency_guard": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/evidence-consistency-guard-output.json"
+  },
+  "aggregate_evidence": {
+    "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard.md",
+    "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/classification.json",
+    "capture_summary": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/capture-summary.json",
+    "evidence_map": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/evidence-map.json"
+  },
+  "hardware_evidence_reviewed": [
+    {
+      "label": "candidate archive review",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/archive-review/candidate-static-review.txt"
+    },
+    {
+      "label": "control archive review",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/archive-review/control-static-review.txt"
+    },
+    {
+      "label": "candidate TFTP delta",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/candidate-run/tftp-delta-stable-pre-restore.json"
+    },
+    {
+      "label": "candidate final pre-restore identity",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/candidate-run/final-pre-restore-status.json"
+    },
+    {
+      "label": "control TFTP delta",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/control-run/tftp-delta-stable-pre-restore.json"
+    },
+    {
+      "label": "control final pre-restore identity",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/control-run/final-pre-restore-status.json"
+    },
+    {
+      "label": "final lab restore state",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/final-lab-status.json"
+    }
+  ],
+  "closeout_artifacts": {
+    "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-proof-v2-closeout/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-proof-v2-closeout/evidence-map.json",
+    "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-proof-v2-closeout.md"
+  },
+  "validation": [
+    "static inspection of guarded proof task record, candidate/control v4 JSON, guard output, capture/classification/evidence-map JSON, Phase 12 docs, roadmap, and git history",
+    "jq empty on task-owned classification/evidence-map JSON",
+    "git diff --check",
+    "mdbook build because docs/src files were touched",
+    "git diff --cached --check before commit"
+  ],
+  "commit_hash": "recorded-in-supervisor-state-after-commit"
+}

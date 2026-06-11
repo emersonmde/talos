@@ -1406,3 +1406,24 @@ runtime MDIO transaction success, register-vector MAN.DATA values, PHY
 absence from all-ones vectors, broad MDIO/PHY ownership, Ethernet driver
 behavior, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase
 transition.
+
+phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard-20260611
+records a guarded Pi 5 register-vector retry as a precise capture/staging
+blocker. The candidate serial marker was fresh, but capture-chain-v4 rejected
+decisive hardware classification because the selected candidate tree expected
+two 52352-byte TFTP fetches while the lab observed two 104136-byte baseline
+fetches and final pre-restore identity was the restored baseline tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The paired
+no-MDIO/no-Ethernet control passed capture-chain-v4 and proves only the
+reporting path for this proof shape.
+
+phase12-rp1-ethernet-mdio-register-vector-proof-v2-closeout-20260611 closes
+that guarded proof frontier as
+rp1-ethernet-mdio-register-vector-guarded-v2-candidate-identity-mismatch-frontier-closed.
+Same-shaped guarded register-vector hardware retries are closed for this
+candidate/control pair unless a future task supplies a qualitatively different
+staging or power-cycle identity discriminator with explicit acceptance
+criteria. This closeout accepts no register-vector MAN.DATA values, PHY
+absence, broad MDIO/PHY ownership, PHY reset/GPIO32 ownership, Ethernet driver
+behavior, interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH,
+Phase 12.2, or phase transition.
