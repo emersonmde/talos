@@ -1,0 +1,77 @@
+{
+  "task_id": "phase12-rp1-ethernet-clock-reset-prereq-closeout-20260611",
+  "classification": "rp1-ethernet-clock-reset-prereq-frontier-closed-mdio-phy-id-selected",
+  "evidence_level": "static inspection closeout over accepted Phase 12 task records, classification/evidence JSON, docs, roadmap, and git history",
+  "accepted_boundary": {
+    "observed_window_identity": {
+      "status": "accepted_read_only_context",
+      "target": "MACB_MID",
+      "address": "0x1c001000fc",
+      "raw": "0x70109",
+      "idnum": "0x7",
+      "rev": "0x109"
+    },
+    "prerequisite_report_visibility": {
+      "status": "accepted_report_visibility_control_output",
+      "accepted_only_as": "source-backed prerequisite metadata visibility with paired no-ownership/no-Ethernet control",
+      "runtime_ownership_accepted": false
+    },
+    "clock_reset_registers": [
+      {
+        "name": "CLK_ETH_TSU_CTRL",
+        "address": "0x1c00018134",
+        "accepted_only_as": "Ethernet-private idempotent write/readback/restore proof with paired no-clock-write control",
+        "pre_raw": "0x10000800",
+        "post_raw": "0x10000800",
+        "restore_raw": "0x10000800"
+      },
+      {
+        "name": "CLK_ETH_CTRL",
+        "address": "0x1c00018064",
+        "accepted_only_as": "Ethernet-private idempotent write/readback/restore proof with paired no-clock-write control",
+        "pre_raw": "0x10000800",
+        "post_raw": "0x10000800",
+        "restore_raw": "0x10000800"
+      }
+    ],
+    "gpio32_boundary": {
+      "status": "blocked",
+      "write_restore_v2": "blocked-no-write-frontier-closed",
+      "event_state": "blocked-event-state-frontier-closed",
+      "event_clear": "persistent-or-firmware-owned-frontier-closed",
+      "same_shaped_write_restore_retry": "closed",
+      "same_shaped_event_clear_retry": "closed"
+    }
+  },
+  "same_shaped_retry_policy": {
+    "clk_eth_tsu_ctrl_idempotent_write_restore": "closed",
+    "clk_eth_ctrl_idempotent_write_restore": "closed",
+    "gpio32_write_restore": "closed",
+    "gpio32_event_clear": "closed"
+  },
+  "rejected_claims": [
+    "broad clock/reset ownership",
+    "shared-clock ownership",
+    "reset-controller ownership",
+    "GPIO32 ownership",
+    "PHY reset assertion or deassertion",
+    "GPIO32 write/restore retry or success",
+    "runtime MDIO/PHY ownership",
+    "Ethernet driver readiness",
+    "interrupt completion",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "clock proofs are idempotent raw-value restore proofs only",
+    "GPIO32 / ETH_RST_N ownership remains blocked by event-state and event-clear evidence",
+    "MDIO/PHY ID remains unproven until a later source contract, local/static guard, and serialized Pi 5 proof explicitly accept more"
+  ],
+  "planning_needed": false,
+  "next_action": "Mechanically promote phase12-rp1-ethernet-mdio-phy-id-source-contract-20260611 on the next worker wake as source/docs/evidence contract work only, with no runtime MDIO transaction or Ethernet behavior."
+}

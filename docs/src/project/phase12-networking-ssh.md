@@ -1101,3 +1101,25 @@ Ethernet driver, interrupt, DMA/descriptor, packet I/O, networking, socket,
 SSH, Phase 12.2, or phase-transition work requires supervisor planning with a
 qualitatively different discriminator or explicit ownership contract. This
 closeout does not accept those claims.
+
+phase12-rp1-ethernet-clock-reset-prereq-closeout-20260611 reconciles the
+accepted clock/reset prerequisite frontier after the GPIO32 blocker evidence.
+The accepted boundary is exactly observed-window MACB_MID read-only identity
+context, prerequisite report visibility/control output, and two
+Ethernet-private idempotent write/readback/restore proofs: CLK_ETH_TSU_CTRL at
+0x1c00018134 and CLK_ETH_CTRL at 0x1c00018064, each with paired no-clock-write
+controls and pre/post/restore raw value 0x10000800. This checkpoint does not
+accept broad clock/reset ownership, shared-clock ownership, reset-controller
+ownership, GPIO32/PHY reset ownership, runtime MDIO/PHY ownership, Ethernet
+driver readiness, interrupts, DMA/descriptors, packet I/O, networking,
+sockets, SSH, Phase 12.2, or a phase transition.
+
+Same-shaped CLK_ETH_TSU_CTRL and CLK_ETH_CTRL idempotent write/restore retries
+remain closed, and same-shaped GPIO32 write/restore and event-clear retries
+remain closed. The selected next bounded Phase 12.1 task is only
+phase12-rp1-ethernet-mdio-phy-id-source-contract-20260611 as source/docs/
+evidence contract work for a distinct non-GPIO32 prerequisite before packet
+I/O. It must not perform runtime MDIO transactions, assert/deassert PHY reset,
+retry GPIO32 event clear or write/restore, implement Ethernet behavior,
+program DMA or descriptors, handle interrupts, perform packet I/O, add
+networking, sockets, SSH, Phase 12.2, or create a phase transition.

@@ -9654,6 +9654,37 @@ retry, PHY reset, MDIO/PHY ownership, Ethernet driver behavior,
 DMA/descriptors, interrupts, packet I/O, networking, sockets, SSH, Phase 12.2,
 and phase transition remain unaccepted.
 
+phase12-rp1-ethernet-gpio32-event-clear-pi5-proof-20260611 accepts the
+serialized Pi 5 event-clear discriminator proof as
+event-clear-persistent-or-firmware-owned-blocker. Candidate pre-state matched
+GPIO32 STATUS 0x0abe3300, CTRL 0x85, RIO1 OUT/OE 0x10, RIO1 IN 0x12, pad
+0x56, and event bits 0x0ab00000; it performed only GPIO32 CTRL SET IRQRESET
+write value 0x10000000; post-readback preserved CTRL/RIO/pad invariants while
+retaining event bits 0x08800000. The paired control used the same
+capture-chain-v4 reporting path with no GPIO32/RIO/pad/MMIO target
+construction.
+
+phase12-rp1-ethernet-gpio32-event-clear-proof-closeout-20260611 closes the
+event-clear frontier as
+rp1-ethernet-gpio32-event-clear-persistent-or-firmware-owned-frontier-closed.
+Same-shaped GPIO32 event-clear and write/restore retries remain closed for the
+accepted candidate/control pairs. GPIO32 ownership, PHY reset ownership,
+runtime MDIO/PHY ownership, Ethernet driver behavior, interrupts,
+DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, and phase
+transition remain unaccepted.
+
+phase12-rp1-ethernet-clock-reset-prereq-closeout-20260611 reconciles the
+accepted prerequisite frontier: observed-window MACB_MID identity remains
+read-only context; prerequisite ownership evidence remains report
+visibility/control output; CLK_ETH_TSU_CTRL at 0x1c00018134 and CLK_ETH_CTRL
+at 0x1c00018064 are accepted only as Ethernet-private idempotent
+write/readback/restore proofs with paired controls. The selected next bounded
+task is phase12-rp1-ethernet-mdio-phy-id-source-contract-20260611, limited to
+source/docs/evidence contract work for a distinct non-GPIO32 MDIO/PHY ID
+prerequisite before packet I/O. Runtime MDIO transactions, PHY reset,
+Ethernet behavior, DMA/descriptors, interrupts, packet I/O, networking,
+sockets, SSH, Phase 12.2, and phase transition remain unaccepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

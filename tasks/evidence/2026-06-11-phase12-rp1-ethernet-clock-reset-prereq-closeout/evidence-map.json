@@ -1,0 +1,23 @@
+{
+  "task_id": "phase12-rp1-ethernet-clock-reset-prereq-closeout-20260611",
+  "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-clock-reset-prereq-closeout.md",
+  "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-clock-reset-prereq-closeout/classification.json",
+  "accepted_observed_window_closeout": "tasks/2026-06-10-phase12-rp1-ethernet-observed-window-discriminator-proof-closeout.md",
+  "accepted_prereq_report_closeout": "tasks/2026-06-10-phase12-rp1-ethernet-prereq-ownership-proof-closeout.md",
+  "accepted_clk_eth_tsu_ctrl_closeout": "tasks/2026-06-10-phase12-rp1-ethernet-clock-reset-write-restore-proof-closeout.md",
+  "accepted_clk_eth_ctrl_closeout": "tasks/2026-06-10-phase12-rp1-ethernet-clk-eth-ctrl-write-restore-proof-closeout.md",
+  "accepted_gpio32_write_restore_v2_closeout": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout.md",
+  "accepted_gpio32_event_state_closeout": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-proof-closeout.md",
+  "accepted_gpio32_event_clear_closeout": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-proof-closeout.md",
+  "project_docs": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "validation": [
+    "static inspection of accepted Phase 12 task records, classification/evidence JSON, Phase 12 docs, roadmap, and git history",
+    "jq empty on task-owned classification/evidence-map JSON",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check"
+  ]
+}
