@@ -1,0 +1,104 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-phy-id-after-mpe-source-contract-20260611",
+  "classification": "rp1-ethernet-mdio-phy-id-after-mpe-source-contract-accepted",
+  "evidence_level": "static inspection",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-source-contract.md",
+      "evidence_level": "source contract record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-source-contract/classification.json",
+      "evidence_level": "accepted source contract classification"
+    },
+    {
+      "label": "accepted wrong-target no-write blocker",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof.md",
+      "evidence_level": "static inspection of serial hardware proof record"
+    },
+    {
+      "label": "wrong-target blocker classification",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof/classification.json",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "accepted NCR.MPE proof",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof.md",
+      "evidence_level": "static inspection of serial hardware proof record"
+    },
+    {
+      "label": "accepted NCR.MPE closeout",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-proof-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "NCR.MPE closeout classification",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-proof-closeout/classification.json",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "retained RP1 device-tree source",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1.dtsi",
+      "evidence_level": "source inspection"
+    },
+    {
+      "label": "retained Pi 5 device-tree source",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-bcm2712-rpi-5-b.dts",
+      "evidence_level": "source inspection"
+    },
+    {
+      "label": "retained MACB driver source",
+      "path": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-macb_main.c",
+      "evidence_level": "source inspection"
+    },
+    {
+      "label": "retained MACB register header",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-macb.h",
+      "evidence_level": "source inspection"
+    },
+    {
+      "label": "retained MII header",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-uapi-linux-mii.h",
+      "evidence_level": "source inspection"
+    },
+    {
+      "label": "local rp1 ethernet source",
+      "path": "src/rp1_ethernet.rs",
+      "evidence_level": "static source inspection"
+    },
+    {
+      "label": "Phase 12 docs",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "evidence_level": "documentation update"
+    },
+    {
+      "label": "roadmap",
+      "path": "docs/src/roadmap.md",
+      "evidence_level": "documentation update"
+    }
+  ],
+  "validation": [
+    {
+      "label": "json checks",
+      "command": "jq empty on task-owned classification/evidence-map JSON",
+      "result": "passed"
+    },
+    {
+      "label": "diff check",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "label": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "label": "staged diff check",
+      "command": "git diff --cached --check",
+      "result": "passed"
+    }
+  ]
+}

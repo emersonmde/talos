@@ -1,0 +1,108 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-phy-id-after-mpe-source-contract-20260611",
+  "classification": "rp1-ethernet-mdio-phy-id-after-mpe-source-contract-accepted",
+  "evidence_level": "static inspection of accepted MDIO PHY-ID no-write blocker, accepted NCR.MPE proof and closeout, retained Raspberry Pi Linux MACB/RP1 source evidence, rp1_ethernet source, Phase 12 docs, roadmap, git history, and task-owned JSON",
+  "selected_contract": {
+    "contract_id": "phase12-rp1-ethernet-mdio-phy-id-after-mpe-source-contract-v1",
+    "selected_discriminator": "rp1-ethernet-mdio-after-mpe-clause22-phy1-physid1-physid2",
+    "controller": "rp1_eth",
+    "compatible": [
+      "raspberrypi,rp1-gem",
+      "cdns,macb"
+    ],
+    "phy_source_identity": {
+      "phy_handle": "phy1",
+      "phy_node": "ethernet-phy@1",
+      "phy_address": 1
+    },
+    "observed_window_base": "0x1c00100000",
+    "macb_mid_context_target": "0x1c001000fc",
+    "macb_mid_context_raw": "0x70109",
+    "ncr_target": "0x1c00100000",
+    "nsr_target": "0x1c00100008",
+    "man_target": "0x1c00100034",
+    "ncr_mpe_bit": 4,
+    "ncr_write_permission": "forbidden-for-first-corrected-target-phy-id-proof",
+    "nsr_idle_bit": 2,
+    "phy_id_registers": {
+      "physid1": "MII_PHYSID1 0x02",
+      "physid2": "MII_PHYSID2 0x03"
+    },
+    "man_frames": {
+      "physid1": "0x600a0000",
+      "physid2": "0x600e0000"
+    },
+    "man_data_extraction": "bits 15:0 after post-read idle"
+  },
+  "prior_wrong_target_blocker": {
+    "task_id": "phase12-rp1-ethernet-mdio-phy-id-pi5-proof-20260611",
+    "classification": "mdio-phy1-physid-source-contract-violated-blocker",
+    "wrong_targets": {
+      "ncr": "0x1c00000000",
+      "nsr": "0x1c00000008",
+      "man": "0x1c00000034"
+    },
+    "disposition": "closed wrong-target no-write blocker; not accepted as runtime MDIO transaction evidence",
+    "man_writes_performed": false,
+    "phy_id_reads_performed": false,
+    "runtime_mdio_transaction": false
+  },
+  "accepted_mpe_frontier": {
+    "task_id": "phase12-rp1-ethernet-mdio-mpe-enable-proof-closeout-20260611",
+    "commit": "42ffd800b6658edbbfebfe8ee57c57e0f31e63de",
+    "classification": "rp1-ethernet-mdio-mpe-enable-ownership-frontier-closed",
+    "accepted_boundary": "NCR.MPE set/readback/restore at corrected target 0x1c00100000 plus paired no-MDIO control",
+    "man_writes_performed": false,
+    "phy_id_reads_performed": false
+  },
+  "future_candidate_gate": [
+    "pre-read corrected NCR at 0x1c00100000",
+    "require MPE bit 4 already set before any MAN write",
+    "if corrected MPE is clear, perform no NCR write and no MAN write, then classify mdio-phy1-physid-after-mpe-precondition-blocker",
+    "poll corrected NSR.IDLE bit 2 before and after each MAN write",
+    "extract MAN.DATA bits 15:0 for PHYSID1 and PHYSID2"
+  ],
+  "paired_control": {
+    "classification": "no-mdio-no-ethernet-rp1-ethernet-mdio-phy-id-after-mpe-control",
+    "requirements": [
+      "same reporting path",
+      "construct no MDIO target and no MAN frame",
+      "perform no volatile load/store to NCR, NSR, MAN, GPIO32, RIO, pad, clock/reset, DMA, interrupt, packet, or network paths",
+      "withhold candidate-only PHY address, PHY ID register, MAN frame, raw result, and result-valid fields"
+    ]
+  },
+  "allowed_future_classifications": [
+    "mdio-phy1-physid-after-mpe-visible",
+    "mdio-phy1-physid-after-mpe-timeout",
+    "mdio-phy1-physid-after-mpe-precondition-blocker",
+    "precise-staging-capture-blocker",
+    "no-mdio-no-ethernet-rp1-ethernet-mdio-phy-id-after-mpe-control"
+  ],
+  "same_shaped_retry_policy": {
+    "wrong_target_phy_id": "closed",
+    "ncr_mpe_set_readback_restore": "closed for accepted candidate/control pair",
+    "next_useful_discriminator": "corrected observed-window after-MPE PHY-ID proof gated by no-NCR-write MPE precondition"
+  },
+  "rejected_claims": [
+    "runtime MDIO transaction evidence by this task",
+    "NCR write permission in the first corrected-target PHY-ID proof",
+    "visible PHY-ID read evidence",
+    "broad MDIO/PHY ownership",
+    "PHY reset or GPIO32 ownership",
+    "Ethernet driver readiness",
+    "interrupt delivery/completion",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "corrected after-MPE proof may still classify a precondition blocker if corrected NCR.MPE is clear in the selected boot state",
+    "visible PHY-ID reads would prove only the selected management transaction boundary",
+    "GPIO32/ETH_RST_N, PHY reset state, link state, DMA/descriptors, interrupts, packet I/O, sockets, SSH, and Phase 12.2 readiness remain unaccepted"
+  ],
+  "next_action": "mechanically promote phase12-rp1-ethernet-mdio-phy-id-after-mpe-guard-core-20260611 on the next worker wake if dependencies remain satisfied"
+}

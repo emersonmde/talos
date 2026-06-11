@@ -1249,3 +1249,28 @@ control. MAN transactions, visible PHY-ID reads, runtime MDIO transaction
 success, PHY reset/GPIO32 ownership, Ethernet driver behavior, interrupts,
 DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, and phase
 transition remain unaccepted.
+
+phase12-rp1-ethernet-mdio-phy-id-after-mpe-source-contract-20260611 accepts
+the source/docs/evidence contract for a corrected-target after-MPE MDIO
+PHY-ID discriminator. It explicitly preserves the earlier PHY-ID proof as a
+closed wrong-target/no-write blocker: the prior NCR/NSR/MAN target set
+0x1c00000000/0x1c00000008/0x1c00000034 is not the accepted observed-window
+MACB/GEM target set and accepted no runtime MDIO transaction, MAN write, or
+PHY-ID read.
+
+The corrected future targets are observed-window NCR at 0x1c00100000, NSR at
+0x1c00100008, MAN at 0x1c00100034, and MACB_MID context at 0x1c001000fc. The
+selected future candidate is a no-NCR-write Clause 22 PHY-ID discriminator for
+phy1 / ethernet-phy@1 address 1, registers MII_PHYSID1 0x02 and MII_PHYSID2
+0x03, MAN frames 0x600a0000 and 0x600e0000, NSR.IDLE bit 2 polling before and
+after each MAN write, and MAN.DATA bits 15:0 extraction. If corrected NCR.MPE
+bit 4 is clear, the future proof must perform no NCR write and no MAN write,
+then classify a precise after-MPE precondition blocker.
+
+The paired control must use the same reporting path while constructing no MDIO
+target and no MAN frame and performing no volatile load/store. This contract
+does not run hardware and does not accept runtime MDIO transaction success,
+visible PHY-ID reads, NCR write permission for the first corrected-target
+proof, broad MDIO/PHY ownership, PHY reset/GPIO32 ownership, Ethernet driver
+readiness, interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH,
+Phase 12.2, or a phase transition.
