@@ -1,0 +1,63 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-core-20260611",
+  "classification": "staging-identity-gate-core-accepted",
+  "evidence_level": [
+    "static inspection",
+    "task-owned fixture replay",
+    "jq JSON validation"
+  ],
+  "contract_version": "pi5-staging-identity-gate-v1",
+  "candidate": {
+    "gate_classification": "selected-tree-identity-blocked",
+    "staging_identity_ready": false,
+    "first_failing_rejection_reason": "tftp-expected-fetch-byte-mismatch",
+    "first_failing_invariant": "expected-fetch-byte-mismatch",
+    "capture_chain_v4_first_failing_rejection_reason": "tftp-expected-fetch-byte-mismatch",
+    "agrees_with_capture_chain_v4_first_failure": true,
+    "selected_tree_hash": "dd4ad2732e2dea9b9d86017fed7e52e107f968fc5c5c1f925ef9e40b41a3bdbc",
+    "expected_fetch_byte_count": 52352,
+    "observed_tftp_expected_fetch_count": 2,
+    "observed_tftp_expected_fetch_byte_match_count": 0,
+    "observed_tftp_expected_fetch_bytes_seen": [
+      104136,
+      104136
+    ],
+    "final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "serial_freshness_ok": true
+  },
+  "control": {
+    "gate_classification": "selected-tree-identity-ready",
+    "staging_identity_ready": true,
+    "first_failing_rejection_reason": null,
+    "first_failing_invariant": null,
+    "agrees_with_capture_chain_v4_readiness": true,
+    "selected_tree_hash": "db5f356f5ca4eed9ca21c232ea40a7ff6dfb2f7520337c08695ee0223129238d",
+    "expected_fetch_byte_count": 50112,
+    "observed_tftp_expected_fetch_count": 2,
+    "observed_tftp_expected_fetch_byte_match_count": 2,
+    "observed_tftp_expected_fetch_bytes_seen": [
+      50112,
+      50112
+    ],
+    "final_pre_restore_tree_hash": "db5f356f5ca4eed9ca21c232ea40a7ff6dfb2f7520337c08695ee0223129238d",
+    "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "serial_freshness_ok": true
+  },
+  "accepted_claims": [
+    "local/static gate output shape",
+    "guarded v2 candidate fixture rejected on the same first v4 rejection reason: tftp-expected-fetch-byte-mismatch",
+    "guarded v2 paired control fixture accepted as selected-tree identity ready",
+    "gate preserves register-vector retry blocker behind closeout plus serialized staging sentinel proof"
+  ],
+  "rejected_claims": [
+    "register-vector-man-data-values",
+    "broad-mdio-phy-ownership",
+    "phy-absence",
+    "ethernet-behavior",
+    "networking",
+    "ssh",
+    "phase-transition"
+  ],
+  "next_action": "Mechanically promote phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-closeout-20260611 on the next worker wake if dependencies remain satisfied."
+}

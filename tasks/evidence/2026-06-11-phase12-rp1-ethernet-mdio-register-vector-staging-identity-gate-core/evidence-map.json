@@ -1,0 +1,34 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-core-20260611",
+  "evidence_level": [
+    "static inspection",
+    "task-owned fixture replay",
+    "jq JSON validation"
+  ],
+  "sources": {
+    "accepted_v2_closeout_commit": "cbd10c08e3489bff90aa6e800317fc79315d798f",
+    "guarded_v2_proof_commit": "a28a10b215af387cfd356733f5ee1f547565bb24",
+    "candidate_v4_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/candidate-run/v4-check.json",
+    "control_v4_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/control-run/v4-check.json",
+    "evidence_consistency_guard": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/evidence-consistency-guard-output.json"
+  },
+  "produced": {
+    "gate_script": "scripts/rpi5-staging-identity-gate-v1-check.sh",
+    "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-core.md",
+    "candidate_gate_output": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-core/candidate-gate-output.json",
+    "candidate_gate_exit": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-core/candidate-gate.exit",
+    "control_gate_output": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-core/control-gate-output.json",
+    "control_gate_exit": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-core/control-gate.exit",
+    "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-core/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-identity-gate-core/evidence-map.json"
+  },
+  "validation": {
+    "negative_fixture_replay": "candidate exit 1; selected-tree-identity-blocked; first_failing_rejection_reason tftp-expected-fetch-byte-mismatch",
+    "positive_fixture_replay": "control exit 0; selected-tree-identity-ready",
+    "jq_empty": "passed: jq empty on candidate/control gate output, classification, and evidence-map JSON",
+    "git_diff_check": "passed",
+    "staged_diff_check": "passed: git diff --cached --check",
+    "shell_syntax": "passed: sh -n scripts/rpi5-staging-identity-gate-v1-check.sh",
+    "docs_build": "not required; docs/src files were not touched"
+  }
+}
