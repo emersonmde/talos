@@ -1233,3 +1233,19 @@ not accept MAN transactions, visible PHY-ID reads, broad MDIO/PHY ownership,
 PHY reset/GPIO32 ownership, Ethernet driver behavior, interrupts,
 DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase
 transition.
+
+phase12-rp1-ethernet-mdio-mpe-enable-proof-closeout-20260611 closes the
+NCR.MPE proof frontier as
+rp1-ethernet-mdio-mpe-enable-ownership-frontier-closed. Same-shaped NCR.MPE
+set/readback/restore hardware retries are closed for this candidate/control
+pair: repeating the accepted already-set/restored boundary would not prove MAN
+transaction safety, PHY-ID visibility, PHY reset, broad MDIO/PHY ownership, or
+packet I/O. Future MDIO/PHY progress requires supervisor planning with a
+qualitatively different discriminator and explicit acceptance criteria.
+
+The accepted boundary remains exactly the candidate/control capture-chain-v4
+evidence for one NCR.MPE set/readback/restore sequence plus paired no-MDIO
+control. MAN transactions, visible PHY-ID reads, runtime MDIO transaction
+success, PHY reset/GPIO32 ownership, Ethernet driver behavior, interrupts,
+DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, and phase
+transition remain unaccepted.

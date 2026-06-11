@@ -1,0 +1,20 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-mpe-enable-proof-closeout-20260611",
+  "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-proof-closeout/classification.json",
+  "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-proof-closeout.md",
+  "accepted_proof": {
+    "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof.md",
+    "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/evidence-map.json",
+    "capture_summary": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/capture-summary.json",
+    "candidate_v4_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/candidate-rerun4/v4-check.json",
+    "control_v4_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/control-rerun5/v4-check.json"
+  },
+  "docs": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "git": {
+    "accepted_proof_commit": "1a395c7b51ccb1f809932971bf9906ef818a9498"
+  }
+}

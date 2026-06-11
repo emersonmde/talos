@@ -1,0 +1,77 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-mpe-enable-proof-closeout-20260611",
+  "classification": "rp1-ethernet-mdio-mpe-enable-ownership-frontier-closed",
+  "evidence_level": "static inspection of accepted serial hardware proof record, classification JSON, evidence map, capture summary, Phase 12 docs, roadmap, and git history",
+  "accepted_proof": {
+    "task_id": "phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof-20260611",
+    "commit": "1a395c7b51ccb1f809932971bf9906ef818a9498",
+    "classification": "rp1-ethernet-mdio-mpe-enable-already-set-restored",
+    "candidate": {
+      "run_dir": "candidate-rerun4",
+      "capture_chain_classification": "capture-chain-v4-ready",
+      "observed_window_macb_mid_context_raw": "0x70109",
+      "observed_window_macb_mid_context_cpu_physical_target": "0x1c001000fc",
+      "ncr_observed_target": "0x1c00100000",
+      "ncr_pre_raw": "0x10",
+      "ncr_write_value": "0x10",
+      "ncr_post_raw": "0x10",
+      "ncr_restore_raw": "0x10",
+      "ncr_mpe_bit": 4,
+      "ncr_mpe_pre_set": true,
+      "ncr_restore_eq_pre": true,
+      "ncr_mpe_write_performed": true,
+      "ncr_restore_write_performed": true,
+      "man_writes_performed": false,
+      "phy_id_reads_performed": false,
+      "touched_fields": [
+        "MACB/GEM_NCR.MPE"
+      ]
+    },
+    "control": {
+      "run_dir": "control-rerun5",
+      "capture_chain_classification": "capture-chain-v4-ready",
+      "classification": "no-mdio-no-ethernet-rp1-ethernet-mdio-mpe-enable-control",
+      "ncr_mpe_target_constructed": false,
+      "write_intent_constructed": false,
+      "volatile_load_store_performed": false,
+      "man_writes_performed": false,
+      "phy_id_reads_performed": false,
+      "touched_fields": []
+    }
+  },
+  "accepted_boundary": [
+    "candidate/control capture-chain-v4 identity and freshness evidence",
+    "bounded NCR.MPE set/readback/restore sequence",
+    "already-set NCR.MPE state restored exactly to pre-run value",
+    "paired no-MDIO/no-Ethernet control reporting path",
+    "lab restore and hardwareTestLock release already accepted by proof task"
+  ],
+  "same_shaped_retry_policy": {
+    "status": "closed",
+    "reason": "Repeating the same NCR.MPE set/readback/restore candidate/control pair can only reconfirm the already-set/restored boundary and cannot prove MAN transaction safety, PHY-ID visibility, PHY reset, broad MDIO/PHY ownership, Ethernet behavior, or packet I/O.",
+    "future_requirement": "Supervisor planning with a qualitatively different discriminator and explicit acceptance criteria before MAN transactions, PHY-ID retry, PHY reset, MDIO/PHY ownership, or Ethernet behavior."
+  },
+  "rejected_claims": [
+    "man-transaction-success",
+    "visible-phy-id-read-evidence",
+    "runtime-mdio-transaction-success",
+    "broad-mdio-or-phy-ownership",
+    "phy-reset-or-gpio32-ownership",
+    "ethernet-driver-readiness",
+    "interrupt-completion",
+    "dma-descriptors",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "retained_risks": [
+    "ncr-mpe-was-already-set-in-accepted-candidate-run",
+    "man-reads-and-phy-id-visibility-remain-unproven",
+    "gpio32-eth-rst-n-ownership-remains-unproven",
+    "future-mdio-progress-needs-supervisor-planning"
+  ],
+  "next_action": "Supervisor planning required for any future MAN transaction, PHY-ID retry, PHY reset, MDIO/PHY ownership, Ethernet driver, packet I/O, networking, sockets, SSH, Phase 12.2, or phase transition work."
+}
