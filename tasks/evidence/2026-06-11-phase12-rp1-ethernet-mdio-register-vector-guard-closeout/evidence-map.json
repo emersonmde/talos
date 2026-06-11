@@ -1,0 +1,68 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-guard-closeout-20260611",
+  "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-guard-closeout/classification.json",
+  "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-guard-closeout.md",
+  "accepted_source_contract": {
+    "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-source-contract.md",
+    "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-source-contract/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-source-contract/evidence-map.json",
+    "commit": "880901aca85ef98d90c6f0278ed6cdc94bbfd9d6"
+  },
+  "accepted_guard_core": {
+    "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-guard-core.md",
+    "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-guard-core/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-guard-core/evidence-map.json",
+    "implementation": "src/rp1_ethernet.rs",
+    "commit": "3087034c952d77943e0cb32030f9752fa9d599dd"
+  },
+  "docs": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "selected_next_task": "phase12-rp1-ethernet-mdio-register-vector-pi5-proof-20260611",
+  "validation": [
+    {
+      "level": "static inspection",
+      "commands_or_actions": [
+        "reviewed accepted register-vector source contract",
+        "reviewed accepted guard core task record and JSON evidence",
+        "reviewed rp1_ethernet register-vector source-contract constants, report structures, validators, candidate/control constructors, and focused tests",
+        "reviewed Phase 12 docs, roadmap, and git history"
+      ],
+      "result": "passed"
+    },
+    {
+      "level": "JSON checks",
+      "commands_or_actions": [
+        "jq empty tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-guard-closeout/classification.json tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-guard-closeout/evidence-map.json"
+      ],
+      "result": "passed"
+    },
+    {
+      "level": "diff check",
+      "commands_or_actions": [
+        "git diff --check"
+      ],
+      "result": "passed"
+    },
+    {
+      "level": "documentation build",
+      "commands_or_actions": [
+        "/home/node/.cargo/bin/mdbook build"
+      ],
+      "result": "passed"
+    },
+    {
+      "level": "staged diff check",
+      "commands_or_actions": [
+        "git diff --cached --check"
+      ],
+      "result": "passed"
+    }
+  ],
+  "notes": [
+    "No Pi 5 hardware run, boot archive publication, or hardwareTestLock acquisition was performed.",
+    "No runtime volatile load/store, NCR write, MAN write, register-vector read, PHY reset, or GPIO32 action was performed.",
+    "The next selected task is a serialized hardware proof with no-NCR-write MPE gating and no GPIO32/PHY reset action; no broader Ethernet readiness is accepted."
+  ]
+}

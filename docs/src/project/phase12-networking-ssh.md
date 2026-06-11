@@ -1384,3 +1384,25 @@ NCR write permission, PHY absence from all-ones vectors, broad MDIO/PHY
 ownership, PHY reset/GPIO32 ownership, Ethernet driver readiness, interrupts,
 DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase
 transition.
+
+phase12-rp1-ethernet-mdio-register-vector-guard-closeout-20260611 closes the
+local/static register-vector guard frontier as
+rp1-ethernet-mdio-register-vector-guard-static-frontier-closed. Same-shaped
+local/static guard retries are closed for this candidate/control pair: the
+accepted guard already fixes the corrected-target six-register report and
+paired no-MDIO/no-Ethernet control shape, and repetition would not prove MAN
+transaction safety, register-vector visibility, PHY reset ownership, broad
+MDIO/PHY ownership, Ethernet driver behavior, or packet I/O.
+
+The checkpoint selects only the serialized Pi 5 register-vector proof as the
+next bounded task. That proof must hold hardwareTestLock, preserve
+candidate/control identity, fresh serial cursor/output, TFTP delta, final
+pre-restore identity, restore proof, capture summary, classification JSON, and
+evidence map, and must perform standard inconclusive-run triage before code
+changes if staging evidence is not decisive. It may perform no NCR write and
+no GPIO32/PHY reset action; MAN writes are allowed only if corrected NCR.MPE
+bit 4 is already set. This guard closeout does not accept hardware evidence,
+runtime MDIO transaction success, register-vector MAN.DATA values, PHY
+absence from all-ones vectors, broad MDIO/PHY ownership, Ethernet driver
+behavior, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase
+transition.

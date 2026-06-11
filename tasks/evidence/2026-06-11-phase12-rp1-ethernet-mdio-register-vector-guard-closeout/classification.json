@@ -1,0 +1,118 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-guard-closeout-20260611",
+  "classification": "rp1-ethernet-mdio-register-vector-guard-static-frontier-closed",
+  "evidence_level": "static inspection of accepted source contract, accepted guard core, guard evidence JSON, touched rp1_ethernet source, Phase 12 docs, roadmap, and git history",
+  "accepted_inputs": {
+    "source_contract": {
+      "task_id": "phase12-rp1-ethernet-mdio-register-vector-source-contract-20260611",
+      "commit": "880901aca85ef98d90c6f0278ed6cdc94bbfd9d6",
+      "contract_id": "phase12-rp1-ethernet-mdio-register-vector-source-contract-v1"
+    },
+    "guard_core": {
+      "task_id": "phase12-rp1-ethernet-mdio-register-vector-guard-core-20260611",
+      "commit": "3087034c952d77943e0cb32030f9752fa9d599dd",
+      "classification": "rp1-ethernet-mdio-register-vector-guard-core-accepted"
+    },
+    "accepted_after_mpe_frontier": {
+      "task_id": "phase12-rp1-ethernet-mdio-phy-id-after-mpe-proof-closeout-20260611",
+      "classification": "rp1-ethernet-mdio-phy-id-after-mpe-visible-frontier-closed"
+    }
+  },
+  "accepted_boundary": {
+    "source_contract_id": "phase12-rp1-ethernet-mdio-register-vector-source-contract-v1",
+    "report_contract_id": "phase12-rp1-ethernet-mdio-register-vector-guard-report-contract-v1",
+    "selected_discriminator": "rp1-ethernet-mdio-after-mpe-clause22-phy1-register-vector",
+    "candidate_classification": "rp1-ethernet-mdio-register-vector-guard-candidate-local-static",
+    "control_classification": "no-mdio-no-ethernet-rp1-ethernet-mdio-register-vector-control",
+    "macb_mid_context_target": "0x1c001000fc",
+    "macb_mid_context_raw": "0x00070109",
+    "ncr_target": "0x1c00100000",
+    "nsr_target": "0x1c00100008",
+    "man_target": "0x1c00100034",
+    "phy_address": 1,
+    "selected_register_vector": [
+      {
+        "register": "0x00",
+        "source_name": "MII_BMCR",
+        "man_frame": "0x60820000"
+      },
+      {
+        "register": "0x01",
+        "source_name": "MII_BMSR",
+        "man_frame": "0x60860000"
+      },
+      {
+        "register": "0x02",
+        "source_name": "MII_PHYSID1",
+        "man_frame": "0x608a0000"
+      },
+      {
+        "register": "0x03",
+        "source_name": "MII_PHYSID2",
+        "man_frame": "0x608e0000"
+      },
+      {
+        "register": "0x04",
+        "source_name": "MII_ADVERTISE / ANAR",
+        "man_frame": "0x60920000"
+      },
+      {
+        "register": "0x05",
+        "source_name": "MII_LPA / ANLPAR",
+        "man_frame": "0x60960000"
+      }
+    ],
+    "mpe_precondition": "corrected NCR.MPE bit 4 must already be set before any MAN write",
+    "ncr_write_permission": false,
+    "gpio32_phy_reset_permission": false,
+    "poll_policy": "bounded NSR.IDLE bit 2 poll before and after each MAN write",
+    "result_extraction": "MAN.DATA bits 15:0",
+    "control_constructs_mdio_targets": false,
+    "control_constructs_man_frames": false,
+    "control_carries_register_vector_results": false,
+    "control_runtime_volatile_load_store_intent": false
+  },
+  "same_shaped_retry_policy": {
+    "status": "closed",
+    "reason": "The accepted local/static guard already fixes the corrected-target register-vector report and control shape; repeating it would not prove MAN transaction safety, register-vector visibility, PHY reset, broad MDIO/PHY ownership, Ethernet behavior, or packet I/O."
+  },
+  "selected_next_task": {
+    "task_id": "phase12-rp1-ethernet-mdio-register-vector-pi5-proof-20260611",
+    "requirements": [
+      "hardwareTestLock acquisition before lab publication or runtime MDIO interaction",
+      "no NCR write",
+      "no GPIO32 or PHY reset action",
+      "MAN writes only if corrected NCR.MPE bit 4 is already set",
+      "candidate/control selected-tree identity, fresh serial cursor/output, TFTP delta, final pre-restore identity, restore proof, capture summary, classification JSON, and evidence map",
+      "standard Pi 5 inconclusive-run triage before code changes if capture or staging evidence is inconclusive"
+    ]
+  },
+  "rejected_claims": [
+    "hardware-proof-by-closeout",
+    "runtime-rp1-mmio-access",
+    "ncr-write-permission-or-execution",
+    "man-write-without-corrected-ncr-mpe-precondition",
+    "visible-register-vector-read-evidence",
+    "runtime-mdio-transaction-success",
+    "phy-absence-from-all-ones",
+    "broad-mdio-or-phy-ownership",
+    "phy-reset-or-gpio32-ownership",
+    "ethernet-driver-readiness",
+    "interrupt-completion",
+    "dma-descriptors",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "retained_risks": [
+    "corrected-ncr-mpe-may-be-clear-and-must-block-man-writes",
+    "selected-register-vector-man-data-values-remain-unproven",
+    "all-ones-vector-would-not-prove-phy-absence-reset-link-or-usable-ethernet",
+    "gpio32-eth-rst-n-ownership-remains-unproven",
+    "link-mac-dma-interrupt-packet-socket-ssh-phase-12-2-readiness-remain-unaccepted"
+  ],
+  "next_action": "Mechanically promote phase12-rp1-ethernet-mdio-register-vector-pi5-proof-20260611 on the next worker wake if hardwareTestLock remains unlocked and supervisorIntervention is inactive."
+}

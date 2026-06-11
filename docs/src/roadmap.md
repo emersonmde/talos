@@ -9840,6 +9840,19 @@ DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase
 transition. The next bounded step is only the local/static register-vector
 guard core.
 
+phase12-rp1-ethernet-mdio-register-vector-guard-core-20260611 and
+phase12-rp1-ethernet-mdio-register-vector-guard-closeout-20260611 accept only
+the local/static corrected-target register-vector guard frontier. The accepted
+guard fixes the six-register report and paired no-MDIO/no-Ethernet control
+shape; same-shaped local/static guard retries are closed. The next bounded
+task is only the serialized Pi 5 register-vector proof with hardwareTestLock,
+candidate/control identity, fresh serial, TFTP, final identity, restore,
+capture/classification/evidence JSON, no NCR write, no GPIO32/PHY reset
+action, and MAN writes only after the corrected NCR.MPE precondition. This
+does not accept hardware evidence yet, PHY absence from all-ones values, broad
+MDIO/PHY ownership, Ethernet behavior, packet I/O, networking, sockets, SSH,
+Phase 12.2, or a phase transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
