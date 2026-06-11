@@ -1157,3 +1157,18 @@ proof accepts no visible PHY-ID read, runtime MDIO transaction, NCR.MPE write
 ownership, broad MDIO/PHY ownership, PHY reset ownership, Ethernet driver
 readiness, interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH,
 Phase 12.2, or phase transition.
+
+phase12-rp1-ethernet-mdio-phy-id-proof-closeout-20260611 closes that proof
+frontier as rp1-ethernet-mdio-phy-id-ncr-mpe-clear-frontier-closed.
+Same-shaped MDIO PHY-ID hardware retries are closed for this candidate/control
+pair because repeating the guarded no-write discriminator cannot make NCR.MPE
+set, prove visible PHY-ID reads, or grant NCR.MPE write ownership. The accepted
+boundary remains only the capture-chain-v4 no-write blocker: NCR.MPE bit 4 was
+clear, no NCR or MAN write occurred, claims-runtime-mdio-transaction=false, and
+touched-fields=none.
+
+Future NCR.MPE enablement, PHY reset, MDIO/PHY ownership, Ethernet driver,
+interrupt, DMA/descriptor, packet I/O, networking, socket, SSH, Phase 12.2, or
+phase-transition work requires supervisor planning with a qualitatively
+different discriminator or explicit source-backed ownership contract. This
+closeout does not accept those claims or select a follow-up task.

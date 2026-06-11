@@ -1,0 +1,68 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-phy-id-proof-closeout-20260611",
+  "classification": "rp1-ethernet-mdio-phy-id-ncr-mpe-clear-frontier-closed",
+  "evidence_level": "static inspection of accepted serial hardware proof record, classification JSON, evidence map, capture summary, Phase 12 docs, roadmap, and git history",
+  "accepted_proof": {
+    "task_id": "phase12-rp1-ethernet-mdio-phy-id-pi5-proof-20260611",
+    "commit": "508a1e1d2f0200c8e78581c9e600f3c7f310393e",
+    "classification": "mdio-phy1-physid-source-contract-violated-blocker",
+    "candidate": {
+      "run_dir": "candidate-rerun2",
+      "capture_chain_classification": "capture-chain-v4-ready",
+      "observed_window_macb_mid_context_raw": "0x70109",
+      "observed_window_macb_mid_context_cpu_physical_target": "0x1c001000fc",
+      "ncr_observed_target": "0x1c00000000",
+      "ncr_before": "0x20001927",
+      "ncr_mpe_bit": 4,
+      "ncr_mpe_precondition_met": false,
+      "ncr_mpe_write_performed": false,
+      "man_writes_performed": false,
+      "runtime_mdio_transaction": false,
+      "touched_fields": "none"
+    },
+    "control": {
+      "run_dir": "control-rerun2",
+      "capture_chain_classification": "capture-chain-v4-ready",
+      "classification": "no-mdio-no-ethernet-rp1-ethernet-mdio-phy-id-control",
+      "mdio_target_constructed": false,
+      "man_frame_constructed": false,
+      "man_writes_performed": false,
+      "runtime_mdio_transaction": false,
+      "touched_fields": "none"
+    }
+  },
+  "accepted_boundary": [
+    "candidate/control capture-chain-v4 identity and freshness evidence",
+    "no-write NCR.MPE-clear source-contract blocker",
+    "paired no-MDIO/no-Ethernet control reporting path",
+    "lab restore and hardwareTestLock release already accepted by proof task"
+  ],
+  "same_shaped_retry_policy": {
+    "status": "closed",
+    "reason": "Repeating the same guarded candidate/control pair cannot make NCR.MPE set, prove visible PHY-ID reads, or grant NCR.MPE write ownership.",
+    "future_requirement": "Supervisor planning with a qualitatively different discriminator or explicit source-backed ownership contract before MPE writes, PHY reset, MDIO/PHY ownership, or Ethernet behavior."
+  },
+  "rejected_claims": [
+    "visible-phy-id-read-evidence",
+    "runtime-mdio-transaction-success",
+    "ncr-mpe-write-ownership-or-permission",
+    "broad-mdio-or-phy-ownership",
+    "phy-reset-ownership",
+    "ethernet-driver-readiness",
+    "interrupt-completion",
+    "dma-descriptors",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "retained_risks": [
+    "ncr-mpe-clear-under-current-candidate-setup",
+    "mpe-enablement-source-remains-unplanned",
+    "gpio32-eth-rst-n-ownership-remains-unproven",
+    "future-mdio-progress-needs-supervisor-planning"
+  ],
+  "next_action": "Supervisor planning required for any future NCR.MPE enablement, PHY reset, MDIO/PHY ownership, Ethernet driver, packet I/O, networking, sockets, SSH, Phase 12.2, or phase transition work."
+}

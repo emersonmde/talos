@@ -1,0 +1,64 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-phy-id-proof-closeout-20260611",
+  "classification": "rp1-ethernet-mdio-phy-id-ncr-mpe-clear-frontier-closed",
+  "evidence_level": "static inspection",
+  "inspected_inputs": [
+    {
+      "kind": "accepted-proof-task",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof.md",
+      "notes": "Accepted proof record for candidate/control rerun2 and no-write NCR.MPE-clear blocker."
+    },
+    {
+      "kind": "proof-classification",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof/classification.json",
+      "notes": "Candidate/control capture-chain-v4 classifications, no-write fields, and rejected claims."
+    },
+    {
+      "kind": "proof-evidence-map",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof/evidence-map.json",
+      "notes": "Artifact map for archive review, serial, TFTP, identity, restore, and validation evidence."
+    },
+    {
+      "kind": "proof-capture-summary",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof/capture-summary.json",
+      "notes": "Candidate/control capture-chain-v4 summaries and no-write MDIO result."
+    },
+    {
+      "kind": "project-doc",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "notes": "Phase 12 accepted boundary and MDIO/PHY-ID proof wording."
+    },
+    {
+      "kind": "roadmap",
+      "path": "docs/src/roadmap.md",
+      "notes": "Milestone 12.1 status and retained boundaries."
+    },
+    {
+      "kind": "git-history",
+      "commit": "508a1e1d2f0200c8e78581c9e600f3c7f310393e",
+      "notes": "Accepted proof commit consumed by this closeout."
+    }
+  ],
+  "closeout_outputs": [
+    {
+      "kind": "task-record",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-proof-closeout.md"
+    },
+    {
+      "kind": "classification-json",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-proof-closeout/classification.json"
+    },
+    {
+      "kind": "evidence-map-json",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-proof-closeout/evidence-map.json"
+    }
+  ],
+  "validation": {
+    "static_inspection": "accepted proof record, proof JSON, capture summary, Phase 12 docs, roadmap, and git history reviewed",
+    "json_gate": "jq empty on proof and closeout classification/evidence JSON",
+    "diff_gate": "git diff --check",
+    "docs_gate": "/home/node/.cargo/bin/mdbook build",
+    "staged_diff_gate": "git diff --cached --check before commit"
+  },
+  "next_action": "Supervisor planning required; no mechanically objective follow-up is selected by this closeout."
+}

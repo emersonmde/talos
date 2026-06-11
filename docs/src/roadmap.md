@@ -9714,6 +9714,15 @@ ownership, PHY reset ownership, Ethernet driver behavior, interrupts,
 DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, or phase
 transition.
 
+phase12-rp1-ethernet-mdio-phy-id-proof-closeout-20260611 closes the proof
+frontier as rp1-ethernet-mdio-phy-id-ncr-mpe-clear-frontier-closed.
+Same-shaped MDIO PHY-ID hardware retries are closed for this candidate/control
+pair. Future NCR.MPE enablement, PHY reset, MDIO/PHY ownership, Ethernet
+driver behavior, interrupts, DMA/descriptors, packet I/O, networking, sockets,
+SSH, Phase 12.2, or phase transition require supervisor planning with a
+qualitatively different discriminator or explicit source-backed ownership
+contract.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
