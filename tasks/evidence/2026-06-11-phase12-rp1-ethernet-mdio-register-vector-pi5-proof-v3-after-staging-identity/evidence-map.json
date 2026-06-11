@@ -41,11 +41,24 @@
     {
       "label": "evidence consistency guard output",
       "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/evidence-consistency-guard-output.json"
+    },
+    {
+      "label": "supervisor intervention required-before-resume record",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/intervention-discriminator/required-before-resume.md"
+    },
+    {
+      "label": "supervisor intervention discriminator classification",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/intervention-discriminator/classification.json"
+    },
+    {
+      "label": "supervisor intervention late TFTP delta",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/intervention-discriminator/tftp-delta-after-power-late.json"
     }
   ],
   "accepted_claims": [
     "candidate/control proof is blocked by selected-tree staging identity mismatch",
-    "lab restored to baseline after hardware runs"
+    "lab restored to baseline after hardware runs",
+    "intervention discriminator shows lab API selected tree while actual TFTP served baseline-sized kernel"
   ],
   "rejected_claims": [
     "register-vector MAN.DATA values",

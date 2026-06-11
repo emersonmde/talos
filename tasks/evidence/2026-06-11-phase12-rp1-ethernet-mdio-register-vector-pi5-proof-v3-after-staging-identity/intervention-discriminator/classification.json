@@ -1,0 +1,91 @@
+{
+  "classification": "tftp-root-diverges-from-lab-api-selected-tree",
+  "status": "blocked",
+  "evidence_level": [
+    "static archive review",
+    "lab-controller API",
+    "TFTP log evidence",
+    "restore evidence"
+  ],
+  "archive": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/candidate-archive.tar.gz",
+  "no_mdio_source": "accepted staging sentinel candidate archive; static review retained forbidden_staging_sentinel_candidate_runtime_strings_absent=true",
+  "snapshot": null,
+  "archive_sha256": "3b8e94338838be7e1a4636e22efb4d700d6c77e487ee6fea248aa72575b95bf5",
+  "expected_kernel_2712_sha256": "645557e7b408fce11410a4d57a9a064cacb6e20f60985d95a16c9e9fb9feea53",
+  "expected_kernel_2712_bytes": 47832,
+  "pre_snapshot_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "publication_tree": "a804458a439c20200a14b8d338341dca427ed7faba6bc7fb2c875049de586cc0",
+  "pre_power_tree": "a804458a439c20200a14b8d338341dca427ed7faba6bc7fb2c875049de586cc0",
+  "pre_power_effective_kernel": "kernel_2712.img",
+  "pre_power_kernel_entries": [
+    {
+      "name": "da591740/kernel8.img",
+      "bytes": 47832
+    },
+    {
+      "name": "da591740/kernel_2712.img",
+      "bytes": 47832
+    },
+    {
+      "name": "kernel8.img",
+      "bytes": 47832
+    },
+    {
+      "name": "kernel_2712.img",
+      "bytes": 47832
+    }
+  ],
+  "tftp_delta_cursor": {
+    "cursor_start": 4480803,
+    "cursor_end": 4482154,
+    "event_count": 13
+  },
+  "tftp_served_kernel_entries": [
+    {
+      "filename": "da591740/kernel_2712.img",
+      "bytes": 104136,
+      "line": "Jun 11 20:07:36 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4"
+    },
+    {
+      "filename": "da591740/kernel_2712.img",
+      "bytes": 104136,
+      "line": "Jun 11 20:07:37 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4"
+    }
+  ],
+  "final_pre_restore_tree": "a804458a439c20200a14b8d338341dca427ed7faba6bc7fb2c875049de586cc0",
+  "final_pre_restore_effective_kernel": "kernel_2712.img",
+  "final_pre_restore_kernel_entries": [
+    {
+      "name": "da591740/kernel8.img",
+      "bytes": 47832
+    },
+    {
+      "name": "da591740/kernel_2712.img",
+      "bytes": 47832
+    },
+    {
+      "name": "kernel8.img",
+      "bytes": 47832
+    },
+    {
+      "name": "kernel_2712.img",
+      "bytes": 47832
+    }
+  ],
+  "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "invariant_result": "blocked",
+  "first_failing_invariant": "tftp-served-kernel-bytes-mismatch-while-lab-api-selected-tree-stayed-staged",
+  "conclusion": "The lab API-visible boot tree selected the 47,832-byte no-MDIO archive before power and remained selected at final pre-restore, but dnsmasq served 104,136-byte baseline da591740/kernel_2712.img during the power-cycle. The failing layer is between lab API boot-root reporting/publication and the actual TFTP-served root/cache, not MDIO/MAN runtime code.",
+  "rejected_claims": [
+    "register-vector MAN.DATA values",
+    "PHY absence",
+    "broad MDIO/PHY ownership",
+    "NCR/MAN/GPIO32 behavior",
+    "Ethernet behavior",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "nextAction": "Supervisor planning required. Quarantine staging sentinel selected-tree durability as insufficient for register-vector retries until lab API boot-root reporting and actual TFTP-served root/cache are reconciled."
+}

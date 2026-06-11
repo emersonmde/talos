@@ -1,0 +1,1 @@
+645557e7b408fce11410a4d57a9a064cacb6e20f60985d95a16c9e9fb9feea53  /opt/strider/openclaw/current/workspace/tmp/talos-intervention-discriminator.9uUlrW/kernel_2712.img

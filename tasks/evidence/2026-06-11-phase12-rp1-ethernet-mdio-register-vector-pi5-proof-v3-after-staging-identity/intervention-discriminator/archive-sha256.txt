@@ -1,0 +1,1 @@
+3b8e94338838be7e1a4636e22efb4d700d6c77e487ee6fea248aa72575b95bf5  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/candidate-archive.tar.gz

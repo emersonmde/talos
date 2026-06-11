@@ -170,3 +170,47 @@ sockets, SSH, Phase 12.2, or a phase transition.
 Supervisor planning required for a register-vector v3 proof closeout. Do not
 accept register-vector values or repeat this same hardware proof shape without
 resolving the selected-tree publication-to-power identity blocker.
+
+## Supervisor Intervention Discriminator
+
+After the supervisor paused same-shaped register-vector retries, this task ran
+a no-MDIO selected-tree publication-to-power discriminator.
+
+Classification: tftp-root-diverges-from-lab-api-selected-tree.
+
+Findings:
+
+- fixed: the required first-principles problem statement, selected-tree
+  invariant, contradiction map, unproven assumptions, two approaches, smallest
+  discriminator, and quarantine plan are recorded in
+  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/intervention-discriminator/required-before-resume.md.
+- fixed: pre-power lab API status and boot files selected the no-MDIO sentinel
+  candidate tree
+  a804458a439c20200a14b8d338341dca427ed7faba6bc7fb2c875049de586cc0 with
+  47,832-byte `kernel_2712.img` and
+  `da591740/kernel_2712.img`.
+- fixed: the single power-cycle TFTP delta later showed dnsmasq served
+  104,136-byte baseline `da591740/kernel_2712.img` twice during that same
+  selected-tree run.
+- fixed: final pre-restore lab API status still reported the selected no-MDIO
+  tree, so the mismatch is between the lab API-visible boot-root
+  publication/reporting path and the actual dnsmasq-served TFTP root/cache.
+- fixed: the lab was restored to baseline tree
+  a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 after the
+  discriminator.
+- deferred: supervisor planning is required before any helper quarantine,
+  lab-controller repair, register-vector retry, broad MDIO/PHY work, or proof
+  closeout.
+
+Additional evidence:
+
+- Intervention classification:
+  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/intervention-discriminator/classification.json.
+- Intervention evidence map:
+  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/intervention-discriminator/evidence-map.json.
+- Late TFTP delta:
+  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/intervention-discriminator/tftp-delta-after-power-late.json.
+
+Next action: supervisor planning required. Quarantine the prior staging
+sentinel selected-tree durability claim as insufficient for register-vector
+retries until the lab API/dnsmasq TFTP root mismatch is explained and fixed.

@@ -1,0 +1,34 @@
+{
+  "classification": "tftp-root-diverges-from-lab-api-selected-tree",
+  "status": "blocked",
+  "evidence_level": [
+    "static archive review",
+    "lab-controller API",
+    "TFTP log evidence",
+    "restore evidence"
+  ],
+  "accepted_claims": [
+    "pre-power lab API selected no-MDIO sentinel tree",
+    "final pre-restore lab API still selected no-MDIO sentinel tree",
+    "power-cycle TFTP logs served baseline-sized da591740/kernel_2712.img",
+    "lab restored to baseline tree"
+  ],
+  "first_failing_invariant": "tftp-served-kernel-bytes-mismatch-while-lab-api-selected-tree-stayed-staged",
+  "conclusion": "The lab API-visible boot tree selected the 47,832-byte no-MDIO archive before power and remained selected at final pre-restore, but dnsmasq served 104,136-byte baseline da591740/kernel_2712.img during the power-cycle. The failing layer is between lab API boot-root reporting/publication and the actual TFTP-served root/cache, not MDIO/MAN runtime code.",
+  "nextAction": "Supervisor planning required. Quarantine staging sentinel selected-tree durability as insufficient for register-vector retries until lab API boot-root reporting and actual TFTP-served root/cache are reconciled.",
+  "artifacts": {
+    "pre_snapshot_status": "pre-snapshot-status.json",
+    "pre_snapshot_boot_files": "pre-snapshot-boot-files.json",
+    "snapshot_create": "snapshot-create.json",
+    "publication": "publication.json",
+    "pre_power_status": "pre-power-status.json",
+    "pre_power_boot_files": "pre-power-boot-files.json",
+    "power_cycle": "power-cycle.json",
+    "tftp_delta_late": "tftp-delta-after-power-late.json",
+    "final_pre_restore_status": "final-pre-restore-status.json",
+    "final_pre_restore_boot_files": "final-pre-restore-boot-files.json",
+    "restore_snapshot": "restore-snapshot.json",
+    "post_restore_status": "post-restore-status.json",
+    "post_restore_boot_files": "post-restore-boot-files.json"
+  }
+}

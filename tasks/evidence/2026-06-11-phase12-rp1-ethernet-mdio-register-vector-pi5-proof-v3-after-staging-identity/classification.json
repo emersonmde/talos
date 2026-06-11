@@ -374,5 +374,12 @@
     }
   },
   "first_failing_invariant": "expected-fetch-byte-mismatch",
-  "nextAction": "Supervisor planning required for register-vector v3 proof closeout. Do not accept register-vector values or retry same-shaped hardware proof without resolving selected-tree publication-to-power mismatch evidence."
+  "nextAction": "Supervisor planning required. Do not accept register-vector values or retry same-shaped hardware proof until the lab API/dnsmasq TFTP root mismatch is explained and fixed.",
+  "supervisor_intervention_discriminator": {
+    "classification": "tftp-root-diverges-from-lab-api-selected-tree",
+    "first_failing_invariant": "tftp-served-kernel-bytes-mismatch-while-lab-api-selected-tree-stayed-staged",
+    "evidence": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/intervention-discriminator/classification.json",
+    "conclusion": "lab API /status and /boot/files reported the selected no-MDIO tree before power and at final pre-restore, while dnsmasq TFTP served 104136-byte baseline da591740/kernel_2712.img during the power-cycle",
+    "quarantine": "prior staging sentinel selected-tree durability is insufficient to unblock register-vector retries until lab API boot-root reporting and actual TFTP-served root/cache are reconciled"
+  }
 }
