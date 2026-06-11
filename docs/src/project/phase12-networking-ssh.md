@@ -1020,3 +1020,26 @@ does not accept hardware evidence, GPIO32 ownership, GPIO32 write/restore
 retry or success, PHY reset assertion/deassertion, MDIO/PHY ownership,
 Ethernet driver behavior, interrupts, DMA/descriptors, packet I/O, networking,
 sockets, SSH, Phase 12.2, or a phase transition.
+
+phase12-rp1-ethernet-gpio32-event-clear-source-contract-20260611 accepts the
+source-backed contract for a future GPIO32 event-clear discriminator. Retained
+RP1 pinctrl source clears latched events by writing RP1_GPIO_CTRL_IRQRESET
+(BIT(28), value 0x10000000) to the per-pin GPIO CTRL SET alias. For GPIO32,
+the selected future write target is observed address 0x1c000d6024, derived
+from GPIO32 CTRL observed address 0x1c000d4024 plus RP1_SET_OFFSET 0x2000.
+
+The contract is limited to a future guarded proof. Before that write, the
+candidate must re-read GPIO32 STATUS/CTRL, RIO1 OUT/OE/IN, and pad state,
+prove STATUS & 0x0ff00000 == 0x0ab00000, and preserve the accepted
+candidate/control evidence lineage from the read-only event-state proof. After
+the write, the proof must show STATUS event bits cleared or classify
+persistent/source-owned event state while preserving GPIO32 CTRL non-IRQRESET
+fields, RIO1 OUT/OE/IN, and pad state. The paired control must use the same
+report path while constructing no GPIO32/RIO/pad/MMIO target facts.
+
+This event-clear source contract does not accept hardware evidence, GPIO32
+ownership, GPIO32 write/restore retry or success, PHY reset
+assertion/deassertion, MDIO/PHY ownership, Ethernet driver behavior,
+interrupt completion, DMA/descriptors, packet I/O, networking, sockets, SSH,
+Phase 12.2, or a phase transition. The next bounded step is only the
+local/static event-clear guard core.

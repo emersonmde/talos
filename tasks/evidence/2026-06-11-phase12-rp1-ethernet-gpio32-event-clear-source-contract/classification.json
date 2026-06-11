@@ -1,0 +1,78 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-event-clear-source-contract-20260611",
+  "classification": "rp1-ethernet-gpio32-event-clear-source-contract-accepted",
+  "evidence_level": "static source inspection over accepted serial hardware event-state proof",
+  "accepted_contract": {
+    "contract_id": "phase12-rp1-ethernet-gpio32-event-clear-source-contract-v1",
+    "operation": "gpio32-ctrl-irqreset-set-alias-clear-latched-events",
+    "source_register": "GPIO32 CTRL SET alias",
+    "source_target": "0xc0400d6024",
+    "observed_target": "0x1c000d6024",
+    "width_bits": 32,
+    "endianness": "little-endian",
+    "access": "single volatile store in future guarded hardware proof only",
+    "write_value": "0x10000000",
+    "write_value_name": "RP1_GPIO_CTRL_IRQRESET",
+    "status_event_mask": "0x0ff00000",
+    "accepted_event_bits": "0x0ab00000",
+    "source_backed_event_bits": "bits 20-27"
+  },
+  "source_lineage": {
+    "event_state_proof_task": "phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof-20260611",
+    "event_state_proof_commit": "832f0153",
+    "event_state_closeout_task": "phase12-rp1-ethernet-gpio32-event-state-proof-closeout-20260611",
+    "event_state_closeout_commit": "920327ac25db3eb37fcd60e183ae95d22a7bef5a",
+    "candidate_status": "0x0abe3300",
+    "candidate_ctrl": "0x85",
+    "candidate_rio1_out": "0x10",
+    "candidate_rio1_oe": "0x10",
+    "candidate_rio1_in": "0x12",
+    "candidate_pad": "0x56",
+    "writes_performed": false,
+    "event_clear_performed": false
+  },
+  "required_pre_read_invariants": [
+    "selected reads for GPIO32 STATUS/CTRL, RIO1 OUT/OE/IN, and GPIO32 pad are present and non-sentinel",
+    "status & 0x0ff00000 == 0x0ab00000 before the selected write",
+    "GPIO32 CTRL FUNCSEL remains accepted GPIO function value 5",
+    "GPIO32 CTRL OUTOVER/OEOVER/INOVER do not bypass raw RIO OUT/OE handling",
+    "candidate/control identity, serial freshness, TFTP delta, final identity, and restore/no-restore evidence can be joined",
+    "no GPIO32 ownership, PHY reset, MDIO/PHY, interrupt completion, Ethernet, DMA, packet, networking, socket, SSH, Phase 12.2, or phase-transition claim"
+  ],
+  "required_post_read_invariants": [
+    "GPIO32 STATUS event bits clear or are classified as persistent/source-owned without broadening to GPIO32 ownership",
+    "GPIO32 CTRL non-IRQRESET fields match the pre-read value",
+    "RIO1 OUT, RIO1 OE, RIO1 IN, and GPIO32 pad match pre-read values",
+    "no downstream driver, packet, networking, SSH, or phase-transition claim"
+  ],
+  "same_shaped_retry_policy": {
+    "inherited_from": "phase12-rp1-ethernet-gpio32-event-state-proof-closeout-20260611",
+    "classification": "read-only event-state retries remain closed",
+    "next_discriminator": "source-backed GPIO32 CTRL IRQRESET event-clear guard/proof"
+  },
+  "rejected_claims": [
+    "hardware write by this task",
+    "event clearing authority outside the accepted future guard/proof",
+    "GPIO32 ownership",
+    "PHY reset assertion or deassertion",
+    "GPIO32 write/restore retry or success",
+    "non-GPIO32 GPIO/RIO/pad/MMIO writes",
+    "MDIO/PHY ownership",
+    "Ethernet driver readiness",
+    "interrupt ownership or completion",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "level event bits may reassert after IRQRESET if line state remains active",
+    "firmware or hardware may repopulate event bits after the clear",
+    "future proof may still classify persistent/source-owned event state or capture/staging blockers",
+    "GPIO32 write/restore ownership and PHY reset remain unaccepted"
+  ],
+  "selected_next_action": "phase12-rp1-ethernet-gpio32-event-clear-guard-core-20260611"
+}
