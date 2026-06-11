@@ -1,0 +1,9 @@
+{
+  "locked": true,
+  "owner": "worker",
+  "taskId": "phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof-20260611",
+  "acquiredAt": "2026-06-11T01:00:10Z",
+  "releasedAt": null,
+  "restored": false,
+  "note": "Acquired for serialized v3 known-good runtime-readiness proof known-good-runtime-readiness-v3-20260611T0100Z"
+}

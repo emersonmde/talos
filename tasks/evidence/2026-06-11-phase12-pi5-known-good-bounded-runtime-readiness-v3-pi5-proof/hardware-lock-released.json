@@ -1,0 +1,9 @@
+{
+  "locked": false,
+  "owner": "worker",
+  "taskId": "phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof-20260611",
+  "acquiredAt": "2026-06-11T01:00:10Z",
+  "releasedAt": "2026-06-11T01:03:40Z",
+  "restored": true,
+  "note": "Released after v3 known-good runtime-readiness proof. Final boot identity remained stable; no boot tree restore was required. Proof accepted valid-known-good-talos-readiness-v3 from retained primary serial hardware output joined with stable TFTP/status evidence."
+}

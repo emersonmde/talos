@@ -1,0 +1,55 @@
+{
+  "task_id": "phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof-20260611",
+  "classification": "valid-known-good-talos-readiness-v3",
+  "accepted_valid_known_good_talos_readiness_v3": true,
+  "run_label": "known-good-runtime-readiness-v3-20260611T0100Z",
+  "retained_primary_artifact": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/known-good-runtime-readiness-v3-20260611T0100Z-runtime-readiness-primary.json",
+  "evidence_level": "serial hardware boot/output plus lab-controller API and stable TFTP delta classified through accepted v3 contract",
+  "pre_identity": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "configured_kernel": "kernel_2712.img"
+  },
+  "final_identity": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "configured_kernel": "kernel_2712.img"
+  },
+  "final_identity_stable": true,
+  "power_cycle_ok": true,
+  "runtime_readiness_v3": {
+    "valid_known_good_talos_readiness_v3": true,
+    "classification": "valid-known-good-talos-readiness-v3",
+    "evidence_level": "local/static classification over retained serial hardware artifact plus lab-controller status and stable TFTP evidence",
+    "required_success_marker": "rpi5-production-timer-preemption: PASS",
+    "has_required_success_marker": true,
+    "has_kernel_main": false,
+    "kernel_main_policy": "metadata-only-not-required",
+    "stable_boot_identity": true,
+    "stable_tftp_delta": true,
+    "served_effective_kernel_fetch_count": 2
+  },
+  "tftp_stability": {
+    "stable": true,
+    "reason": "stable",
+    "stable_samples": 3,
+    "required_samples": 3
+  },
+  "tftp_event_count": 13,
+  "expected_known_good_kernel_fetch_count": 2,
+  "retained_risks": [
+    "TALOS: kernel_main absent from retained primary serial window; v3 records this as metadata rather than a mandatory readiness marker"
+  ],
+  "nextAction": "Mechanically promote phase12-pi5-known-good-bounded-runtime-readiness-v3-closeout-20260611 on the next worker wake. GPIO32 v2 remains locked until that closeout accepts valid-known-good-talos-readiness-v3 and explicitly selects it.",
+  "rejected_claims": [
+    "GPIO32 write/restore v2 authorization by proof alone",
+    "PHY reset behavior",
+    "Ethernet driver behavior",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ]
+}

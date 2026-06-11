@@ -1,0 +1,90 @@
+{
+  "task_id": "phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof-20260611",
+  "artifacts": [
+    {
+      "label": "hardware lock acquired",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/hardware-lock-acquired.json",
+      "evidence_level": "durable state and local evidence"
+    },
+    {
+      "label": "pre status",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/pre-status.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "pre boot files",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/pre-boot-files.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "pre boot snapshots",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/pre-boot-snapshots.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "serial cursor before power",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/serial-cursor-before-power.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "tftp cursor before power",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/tftp-cursor-before-power.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "power cycle",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/power-cycle.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "retained primary helper JSON",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/known-good-runtime-readiness-v3-20260611T0100Z-runtime-readiness-primary.json",
+      "evidence_level": "serial hardware boot/output"
+    },
+    {
+      "label": "retained primary summary",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/known-good-runtime-readiness-v3-20260611T0100Z-runtime-readiness-primary-summary.json",
+      "evidence_level": "derived retained-primary summary"
+    },
+    {
+      "label": "retained primary helper status",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/known-good-runtime-readiness-v3-20260611T0100Z-runtime-readiness-primary.status",
+      "evidence_level": "helper exit code"
+    },
+    {
+      "label": "stable TFTP delta",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/tftp-delta-stable.json",
+      "evidence_level": "lab-controller API stable TFTP delta"
+    },
+    {
+      "label": "final status",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/final-status.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "final boot files",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/final-boot-files.json",
+      "evidence_level": "lab-controller API"
+    },
+    {
+      "label": "v3 readiness classification",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/readiness-v3-classification.json",
+      "evidence_level": "accepted v3 local/static classifier over retained hardware artifact"
+    },
+    {
+      "label": "capture summary",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/capture-summary.json",
+      "evidence_level": "classification support"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/classification.json",
+      "evidence_level": "accepted proof classification"
+    },
+    {
+      "label": "hardware lock released",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/hardware-lock-released.json",
+      "evidence_level": "durable state and local evidence"
+    }
+  ]
+}

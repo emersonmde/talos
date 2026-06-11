@@ -1,0 +1,29 @@
+{
+  "run_label": "known-good-runtime-readiness-v3-20260611T0100Z",
+  "retained_primary_artifact": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/known-good-runtime-readiness-v3-20260611T0100Z-runtime-readiness-primary.json",
+  "status_artifact": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/known-good-runtime-readiness-v3-20260611T0100Z-runtime-readiness-primary.status",
+  "helper_exit_code": 1,
+  "derived_from_retained_primary_artifact": true,
+  "overwrite_policy": "refuse-existing-primary-summary-or-status",
+  "followup_artifact_policy": "follow-up direct-read or endpoint checks must use separately named artifacts and must not replace this primary artifact",
+  "talos_runtime_readiness": {
+    "requested_timeout_seconds": 75,
+    "elapsed_seconds": 75,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 7,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 6762,
+    "required_kernel_marker": "TALOS: kernel_main",
+    "required_success_marker": "rpi5-production-timer-preemption: PASS",
+    "prompt_marker": "talos>",
+    "has_kernel_main": false,
+    "has_required_success_marker": true,
+    "has_prompt_marker": false,
+    "valid_known_good_talos_readiness": false,
+    "classification": "known-good-fetch-observed-without-talos-readiness"
+  }
+}
