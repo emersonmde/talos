@@ -1,0 +1,72 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-event-state-discriminator-closeout-20260611",
+  "classification": "rp1-ethernet-gpio32-event-state-discriminator-static-frontier-closed",
+  "evidence_level": "static inspection closeout",
+  "accepted_claims": [
+    "accepted local/static GPIO32 event-state discriminator core is reconciled against the accepted source contract",
+    "candidate report shape preserves v2 blocked/no-write lineage, exact GPIO32 target identity, read-only event-state fields, source-decoding status, rejected claims, retained risks, and hardware-proof boundary classification",
+    "paired no-GPIO/no-Ethernet control uses the same report path while withholding GPIO32/RIO/pad/MMIO target facts and raw GPIO values",
+    "serialized read-only Pi 5 proof is mechanically selected as the next bounded task"
+  ],
+  "rejected_claims": [
+    "Pi 5 hardware evidence from this closeout",
+    "boot archive publication from this closeout",
+    "hardwareTestLock acquisition from this closeout",
+    "event clearing",
+    "GPIO/RIO/pad/MMIO writes",
+    "GPIO32 ownership",
+    "GPIO32 write/restore retry or success",
+    "PHY reset assertion or deassertion",
+    "MDIO/PHY ownership",
+    "Ethernet driver readiness",
+    "interrupt completion",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "source_contract": {
+    "task_id": "phase12-rp1-ethernet-gpio32-event-state-source-contract-20260611",
+    "classification": "rp1-ethernet-gpio32-event-state-source-contract-accepted",
+    "contract_id": "phase12-rp1-ethernet-gpio32-event-state-source-contract-v1"
+  },
+  "static_core": {
+    "task_id": "phase12-rp1-ethernet-gpio32-event-state-discriminator-core-20260611",
+    "classification": "rp1-ethernet-gpio32-event-state-discriminator-local-static-accepted",
+    "commit": "60f336f1cc418873aecf7bd295ebb58cf4e32579",
+    "candidate_report_shape": "accepted",
+    "control_report_shape": "accepted"
+  },
+  "source_decoding_boundary": {
+    "status_event_mask": "0x0ff00000",
+    "source_backed_bits": "20-27",
+    "source_unresolved_semantics": [
+      "stale",
+      "clearable",
+      "firmware-owned",
+      "harmless",
+      "safe-to-ignore"
+    ]
+  },
+  "next_action": {
+    "task_id": "phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof-20260611",
+    "classification": "mechanically-selected-serialized-readonly-pi5-proof",
+    "required_boundary": [
+      "acquire hardwareTestLock before archive publication, staging, power action, or lab run",
+      "retain candidate/control selected-tree identity, archive digest, run-unique serial marker, stable TFTP delta, final status/restore evidence, classification JSON, evidence map, and capture summary",
+      "perform no GPIO/RIO/pad/MMIO writes",
+      "perform no event clearing"
+    ]
+  },
+  "planning_needed": false,
+  "validation": {
+    "static_inspection": "accepted source contract, accepted static core, classification/evidence JSON, src/rp1_ethernet.rs, project docs, and git history reviewed",
+    "jq": "passed",
+    "git_diff_check": "passed",
+    "mdbook": "passed",
+    "git_diff_cached_check": "passed"
+  }
+}

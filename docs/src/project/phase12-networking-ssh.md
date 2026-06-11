@@ -976,3 +976,18 @@ This contract does not accept GPIO32 ownership, event clearing, PHY reset
 assertion/deassertion, MDIO/PHY ownership, Ethernet driver behavior,
 interrupt delivery/completion, DMA/descriptors, packet I/O, networking,
 sockets, SSH, Phase 12.2, or a phase transition.
+
+phase12-rp1-ethernet-gpio32-event-state-discriminator-closeout-20260611 closes
+the local/static discriminator frontier as
+rp1-ethernet-gpio32-event-state-discriminator-static-frontier-closed. The
+accepted core preserves candidate GPIO32 STATUS/CTRL, RIO1 OUT/OE/IN, pad
+target identity, v2 blocked/no-write lineage, source-backed STATUS event bits
+20-27, source-unresolved semantics for stale/clearable/owned/harmless
+interpretations, rejected claims, and the paired no-GPIO/no-Ethernet control
+path. The checkpoint selects only the serialized read-only Pi 5 proof, which
+must acquire hardwareTestLock before archive publication, staging, or power
+action and must not clear events or write GPIO/RIO/pad/MMIO. This closeout
+does not accept hardware evidence, GPIO32 ownership, GPIO32 write/restore
+retry or success, PHY reset assertion/deassertion, MDIO/PHY ownership,
+Ethernet driver behavior, interrupts, DMA/descriptors, packet I/O, networking,
+sockets, SSH, Phase 12.2, or a phase transition.
