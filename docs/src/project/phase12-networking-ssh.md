@@ -949,3 +949,30 @@ clearance or equivalent pre-write ownership conditions. GPIO32 ownership, PHY
 reset assertion/deassertion, MDIO/PHY ownership, Ethernet driver behavior,
 interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2,
 and phase transition remain unaccepted.
+
+## RP1 Ethernet GPIO32 Event-State Source Contract
+
+phase12-rp1-ethernet-gpio32-event-state-source-contract-20260611 accepts only
+the source/docs/evidence contract for a read-only GPIO32 event-state
+discriminator after the accepted GPIO32 write/restore v2 blocked/no-write
+result. The candidate preserves the v2 blocker lineage, exact GPIO32 /
+ETH_RST_N target identity, and observed-aperture read set: GPIO32 STATUS at
+0x1c000d4020, GPIO32 CTRL at 0x1c000d4024, RIO1 OUT/OE/IN at
+0x1c000e4000/0x1c000e4004/0x1c000e4008, and GPIO32 pad at 0x1c000f4014. No
+write, event clear, IRQRESET, INTE/CTRL mutation, RIO/pad mutation, PHY reset
+assertion/deassertion, or write/restore retry is accepted.
+
+Retained RP1 pinctrl source backs only GPIO STATUS event-state bit names for
+bits 20-27: raw falling/rising/low/high and filtered
+falling/rising/low/high. The follow-up discriminator must report any
+unretained stale/clearable/owned/harmless interpretation as
+source-unresolved-event-state rather than inferring it. The paired control
+must preserve the same report path while constructing no GPIO32/RIO/pad/MMIO
+target facts and classifying as
+no-gpio-no-ethernet-rp1-ethernet-gpio32-event-state-control.
+
+The next bounded step is only the local/static event-state discriminator core.
+This contract does not accept GPIO32 ownership, event clearing, PHY reset
+assertion/deassertion, MDIO/PHY ownership, Ethernet driver behavior,
+interrupt delivery/completion, DMA/descriptors, packet I/O, networking,
+sockets, SSH, Phase 12.2, or a phase transition.

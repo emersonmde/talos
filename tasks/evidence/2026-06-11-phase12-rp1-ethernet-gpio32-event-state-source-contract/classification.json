@@ -1,0 +1,134 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-event-state-source-contract-20260611",
+  "classification": "rp1-ethernet-gpio32-event-state-source-contract-accepted",
+  "evidence_level": "static inspection",
+  "accepted_claims": [
+    "source/docs/evidence contract for a read-only GPIO32 event-state discriminator",
+    "candidate report must preserve accepted GPIO32 write/restore v2 blocked/no-write lineage and exact GPIO32 target identity",
+    "candidate report may decode only source-backed GPIO STATUS event bits 20-27 from retained pinctrl-rp1.c",
+    "source-unresolved-event-state is required when retained source evidence does not prove stale, clearable, owned, harmless, or safe-to-ignore event semantics",
+    "paired control preserves the report path while constructing no GPIO32/RIO/pad/MMIO target facts",
+    "local/static discriminator core is the next mechanically selected follow-up"
+  ],
+  "rejected_claims": [
+    "event clearing",
+    "GPIO32 ownership",
+    "GPIO32 PHY reset assertion/deassertion",
+    "GPIO32 write/restore retry or success",
+    "MDIO or PHY ownership",
+    "RP1 GPIO/RIO/pad/MMIO write ownership",
+    "Ethernet driver readiness",
+    "interrupt delivery or completion",
+    "DMA, descriptor rings, transfer completion, or packet I/O",
+    "networking, sockets, SSH, Phase 12.2, or phase transition"
+  ],
+  "retained_risks": [
+    "candidate v2 write/restore remains blocked by unexpected GPIO32 event state before any write",
+    "read-only event-state evidence by itself does not authorize event clearing or GPIO32 write/restore",
+    "retained source evidence names STATUS event bits but does not prove stale/clearable/owned/harmless semantics for the observed event state",
+    "serialized Pi 5 proof still requires a later explicitly queued read-only hardware task"
+  ],
+  "source_contract": {
+    "contract_id": "phase12-rp1-ethernet-gpio32-event-state-source-contract-v1",
+    "name": "rp1-ethernet-gpio32-event-state-readonly-discriminator",
+    "line": "RP1 GPIO32 / ETH_RST_N",
+    "bank": "bank1",
+    "bank_local_bit": 4,
+    "operation": "read-only event-state discriminator; no event clear, no write, no PHY reset assertion/deassertion, and no ownership claim"
+  },
+  "v2_blocker_lineage": {
+    "proof_task_id": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof-20260610",
+    "proof_commit": "4300e6bc54883c1ec8c4020abd068ee8277ed637",
+    "proof_classification": "rp1-ethernet-gpio32-phy-reset-blocked-unexpected-event-state",
+    "closeout_task_id": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout-20260610",
+    "closeout_commit": "0127984a1938cf050e2a6757f9f116f78976cf5e",
+    "accepted_gpio32_write_restore": false,
+    "writes_performed_observed": false,
+    "observed_state": {
+      "baseline_status": "0xabe3300",
+      "baseline_ctrl": "0x85",
+      "baseline_out": "0x10",
+      "baseline_oe": "0x10",
+      "baseline_in": "0x12",
+      "event_bits": "0xab00000",
+      "touched_fields": "RIO1_OUT.bit4,RIO1_OE.bit4"
+    }
+  },
+  "allowed_candidate_reads": [
+    {
+      "name": "GPIO32 STATUS",
+      "address": "0x1c000d4020",
+      "width_bits": 32
+    },
+    {
+      "name": "GPIO32 CTRL",
+      "address": "0x1c000d4024",
+      "width_bits": 32
+    },
+    {
+      "name": "RIO1 OUT",
+      "address": "0x1c000e4000",
+      "width_bits": 32
+    },
+    {
+      "name": "RIO1 OE",
+      "address": "0x1c000e4004",
+      "width_bits": 32
+    },
+    {
+      "name": "RIO1 IN",
+      "address": "0x1c000e4008",
+      "width_bits": 32
+    },
+    {
+      "name": "GPIO32 pad",
+      "address": "0x1c000f4014",
+      "width_bits": 32
+    }
+  ],
+  "source_backed_status_bits": [
+    {
+      "bit": 20,
+      "name": "raw falling"
+    },
+    {
+      "bit": 21,
+      "name": "raw rising"
+    },
+    {
+      "bit": 22,
+      "name": "raw low"
+    },
+    {
+      "bit": 23,
+      "name": "raw high"
+    },
+    {
+      "bit": 24,
+      "name": "filtered falling"
+    },
+    {
+      "bit": 25,
+      "name": "filtered rising"
+    },
+    {
+      "bit": 26,
+      "name": "filtered low"
+    },
+    {
+      "bit": 27,
+      "name": "filtered high"
+    }
+  ],
+  "accepted_classifications": [
+    "rp1-ethernet-gpio32-event-state-clear-precondition",
+    "rp1-ethernet-gpio32-event-state-blocked-event-state",
+    "rp1-ethernet-gpio32-event-state-source-unresolved-event-state",
+    "rp1-ethernet-gpio32-event-state-inconclusive-capture",
+    "no-gpio-no-ethernet-rp1-ethernet-gpio32-event-state-control",
+    "staging/build-blocker"
+  ],
+  "control_requirement": "same report path, no GPIO32/RIO/pad/MMIO target facts, no volatile load/store, no candidate-only GPIO32/ETH_RST_N facts",
+  "planning_needed": false,
+  "next_action": "Promote phase12-rp1-ethernet-gpio32-event-state-discriminator-core-20260611 on the next worker wake if dependencies remain satisfied; keep that task local/static only with no hardware, event clear, GPIO/RIO/pad/MMIO write, or GPIO32 write/restore retry."
+}

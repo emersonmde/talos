@@ -1,0 +1,78 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-event-state-source-contract-20260611",
+  "classification": "rp1-ethernet-gpio32-event-state-source-contract-accepted",
+  "evidence_level": "static inspection",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-source-contract.md",
+      "evidence_level": "task record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-source-contract/classification.json",
+      "evidence_level": "static inspection classification"
+    },
+    {
+      "label": "source v2 proof task",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof.md",
+      "evidence_level": "serial hardware boot/output plus lab-controller API stable TFTP delta"
+    },
+    {
+      "label": "source v2 proof classification",
+      "path": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof/classification.json",
+      "evidence_level": "static inspection of accepted hardware classification"
+    },
+    {
+      "label": "source v2 proof closeout",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout.md",
+      "evidence_level": "static closeout inspection"
+    },
+    {
+      "label": "GPIO32 write/restore source contract",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-source-contract.md",
+      "evidence_level": "static source contract inspection"
+    },
+    {
+      "label": "GPIO32 write/restore guard core",
+      "path": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-guard-core.md",
+      "evidence_level": "static local implementation record inspection"
+    },
+    {
+      "label": "retained RP1 pinctrl source",
+      "path": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/pinctrl-rp1.c",
+      "evidence_level": "source reference"
+    },
+    {
+      "label": "Phase 12 project doc",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "evidence_level": "project documentation"
+    }
+  ],
+  "validation": [
+    {
+      "label": "json validation",
+      "command": "jq empty tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-source-contract/classification.json tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-source-contract/evidence-map.json",
+      "result": "passed",
+      "evidence_level": "jq JSON validation"
+    },
+    {
+      "label": "diff check",
+      "command": "git diff --check",
+      "result": "passed",
+      "evidence_level": "diff hygiene"
+    },
+    {
+      "label": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed",
+      "evidence_level": "docs validation"
+    },
+    {
+      "label": "staged diff check",
+      "command": "git diff --cached --check",
+      "result": "passed",
+      "evidence_level": "staged diff hygiene"
+    }
+  ]
+}
