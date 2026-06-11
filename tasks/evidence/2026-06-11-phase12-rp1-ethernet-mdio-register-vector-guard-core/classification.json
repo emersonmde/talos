@@ -1,0 +1,124 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-guard-core-20260611",
+  "classification": "rp1-ethernet-mdio-register-vector-guard-core-accepted",
+  "evidence_level": "local/static implementation, focused unit tests, JSON validation, diff hygiene, and git history",
+  "source_contract": {
+    "contract_id": "phase12-rp1-ethernet-mdio-register-vector-source-contract-v1",
+    "source_task_id": "phase12-rp1-ethernet-mdio-register-vector-source-contract-20260611",
+    "selected_discriminator": "rp1-ethernet-mdio-after-mpe-clause22-phy1-register-vector",
+    "purpose": "distinguish global all-ones/no-response behavior from PHY-ID-only evidence",
+    "macb_mid_context_target": "0x1c001000fc",
+    "macb_mid_context_raw": "0x00070109",
+    "ncr_target": "0x1c00100000",
+    "nsr_target": "0x1c00100008",
+    "man_target": "0x1c00100034",
+    "phy_address": 1,
+    "register_vector": [
+      {
+        "name": "MII_BMCR",
+        "register": "0x00",
+        "man_frame": "0x60820000"
+      },
+      {
+        "name": "MII_BMSR",
+        "register": "0x01",
+        "man_frame": "0x60860000"
+      },
+      {
+        "name": "MII_PHYSID1",
+        "register": "0x02",
+        "man_frame": "0x608a0000"
+      },
+      {
+        "name": "MII_PHYSID2",
+        "register": "0x03",
+        "man_frame": "0x608e0000"
+      },
+      {
+        "name": "MII_ADVERTISE / ANAR",
+        "register": "0x04",
+        "man_frame": "0x60920000"
+      },
+      {
+        "name": "MII_LPA / ANLPAR",
+        "register": "0x05",
+        "man_frame": "0x60960000"
+      }
+    ],
+    "man_frame_construction": "(SOF 1 << 30) | (READ 2 << 28) | (PHYA 1 << 23) | (REGA register << 18) | (CODE 2 << 16)",
+    "mpe_precondition": "corrected NCR.MPE bit 4 must already be set before any MAN write",
+    "poll_policy": "bounded NSR.IDLE bit 2 poll before and after each MAN write",
+    "result_extraction": "MAN.DATA bits 15:0"
+  },
+  "candidate_report": {
+    "report_contract_id": "phase12-rp1-ethernet-mdio-register-vector-guard-report-contract-v1",
+    "classification": "rp1-ethernet-mdio-register-vector-guard-candidate-local-static",
+    "constructs_mdio_targets": true,
+    "constructs_man_frames": true,
+    "runtime_volatile_load_store_intent": false,
+    "allowed_classifications": [
+      "mdio-phy1-register-vector-visible",
+      "mdio-phy1-register-vector-global-all-ones-visible",
+      "mdio-phy1-register-vector-physid-only-all-ones-mixed-visible",
+      "mdio-phy1-register-vector-timeout",
+      "mdio-phy1-register-vector-precondition-blocker",
+      "precise-staging-capture-blocker",
+      "no-mdio-no-ethernet-rp1-ethernet-mdio-register-vector-control"
+    ]
+  },
+  "control_report": {
+    "classification": "no-mdio-no-ethernet-rp1-ethernet-mdio-register-vector-control",
+    "same_report_path": true,
+    "constructs_mdio_targets": false,
+    "constructs_man_frames": false,
+    "runtime_volatile_load_store_intent": false,
+    "candidate_result_fields": false
+  },
+  "rejected_claims": [
+    "runtime volatile load/store evidence from local/static guard",
+    "NCR write permission or execution",
+    "MAN write without corrected NCR.MPE precondition",
+    "wrong 0x1c00000000-era MDIO register targets",
+    "unbounded NSR.IDLE polling",
+    "PHY absence from all-ones vector",
+    "broad MDIO or PHY ownership",
+    "PHY reset or GPIO32 action",
+    "Ethernet driver readiness",
+    "interrupt delivery, handler ownership, or completion",
+    "DMA, descriptor rings, channel ownership, or transfer completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "Corrected NCR.MPE may be clear in the selected boot state and must block MAN writes.",
+    "A global all-ones vector does not prove PHY absence, reset state, link state, or usable Ethernet.",
+    "A mixed vector proves only selected MAN.DATA read visibility, not packet I/O or networking readiness.",
+    "GPIO32/ETH_RST_N, PHY reset state, DMA/descriptors, interrupts, sockets, SSH, and Phase 12.2 remain unaccepted."
+  ],
+  "non_goals_confirmed": {
+    "pi5_hardware_run": false,
+    "boot_archive_publication": false,
+    "hardware_test_lock_acquired": false,
+    "runtime_mmio_load_store": false,
+    "ncr_write": false,
+    "man_write_on_hardware": false,
+    "phy_reset_or_gpio32_action": false,
+    "ethernet_driver_behavior": false,
+    "packet_io_networking_sockets_ssh": false,
+    "phase_transition": false
+  },
+  "validation": {
+    "static_inspection": "accepted register-vector source contract, accepted after-MPE proof closeout, existing MDIO guard surfaces, and touched src/rp1_ethernet.rs",
+    "fmt": "cargo fmt --all -- --check",
+    "focused_tests": "cargo -Zjson-target-spec test --quiet rp1_ethernet",
+    "json": "jq empty on task-owned classification/evidence-map JSON",
+    "diff_check": "git diff --check",
+    "docs": "/home/node/.cargo/bin/mdbook build",
+    "staged_diff_check": "git diff --cached --check before commit"
+  },
+  "next_action": "Mechanically promote phase12-rp1-ethernet-mdio-register-vector-guard-closeout-20260611 on the next worker wake if dependencies remain satisfied; do not run hardware or infer broader Ethernet readiness."
+}

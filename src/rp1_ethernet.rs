@@ -7855,6 +7855,630 @@ fn rp1_ethernet_mdio_mpe_enable_guard_control_evidence(
     }
 }
 
+pub const RP1_ETHERNET_MDIO_REGISTER_VECTOR_SOURCE_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-mdio-register-vector-source-contract-v1";
+pub const RP1_ETHERNET_MDIO_REGISTER_VECTOR_SOURCE_TASK_ID: &str =
+    "phase12-rp1-ethernet-mdio-register-vector-source-contract-20260611";
+pub const RP1_ETHERNET_MDIO_REGISTER_VECTOR_GUARD_REPORT_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-mdio-register-vector-guard-report-contract-v1";
+pub const RP1_ETHERNET_MDIO_REGISTER_VECTOR_SELECTED_DISCRIMINATOR: &str =
+    "rp1-ethernet-mdio-after-mpe-clause22-phy1-register-vector";
+pub const RP1_ETHERNET_MDIO_REGISTER_VECTOR_CANDIDATE_CLASSIFICATION: &str =
+    "rp1-ethernet-mdio-register-vector-guard-candidate-local-static";
+pub const RP1_ETHERNET_MDIO_REGISTER_VECTOR_CONTROL_CLASSIFICATION: &str =
+    "no-mdio-no-ethernet-rp1-ethernet-mdio-register-vector-control";
+pub const RP1_ETHERNET_MDIO_REGISTER_VECTOR_BOUNDARY_CLASSIFICATION: &str =
+    "hardware-proof-limited-to-corrected-target-mdio-register-vector-control-output";
+pub const RP1_ETHERNET_MDIO_REGISTER_VECTOR_PURPOSE: &str =
+    "distinguish global all-ones/no-response behavior from PHY-ID-only evidence";
+pub const RP1_ETHERNET_MDIO_REGISTER_VECTOR_REGISTER_NAMES: &[&str] = &[
+    "MII_BMCR",
+    "MII_BMSR",
+    "MII_PHYSID1",
+    "MII_PHYSID2",
+    "MII_ADVERTISE / ANAR",
+    "MII_LPA / ANLPAR",
+];
+pub const RP1_ETHERNET_MDIO_REGISTER_VECTOR_REGISTERS: &[u32] =
+    &[0x00, 0x01, 0x02, 0x03, 0x04, 0x05];
+pub const RP1_ETHERNET_MDIO_REGISTER_VECTOR_MAN_FRAMES: &[u32] = &[
+    0x6082_0000,
+    0x6086_0000,
+    0x608a_0000,
+    0x608e_0000,
+    0x6092_0000,
+    0x6096_0000,
+];
+pub const RP1_ETHERNET_MDIO_REGISTER_VECTOR_MAN_FRAME_CONSTRUCTION: &str =
+    "(SOF 1 << 30) | (READ 2 << 28) | (PHYA 1 << 23) | (REGA register << 18) | (CODE 2 << 16)";
+pub const RP1_ETHERNET_MDIO_REGISTER_VECTOR_OPERATION_ORDER: &[&str] = &[
+    "print candidate start marker and accepted input frontier",
+    "read observed-window MACB_MID context at 0x1c001000fc as context only",
+    "pre-read corrected NCR at 0x1c00100000",
+    "if corrected NCR.MPE bit 4 is clear classify a precondition blocker without writing",
+    "for each selected register, poll corrected NSR.IDLE bit 2 before the MAN write",
+    "write the exact corrected MAN Clause 22 read frame for that register",
+    "poll corrected NSR.IDLE bit 2 after the MAN write",
+    "read corrected MAN and extract DATA[15:0] into the ordered six-entry vector",
+    "classify only the selected register-vector discriminator outcome",
+];
+pub const RP1_ETHERNET_MDIO_REGISTER_VECTOR_ALLOWED_CLASSIFICATIONS: &[&str] = &[
+    "mdio-phy1-register-vector-visible",
+    "mdio-phy1-register-vector-global-all-ones-visible",
+    "mdio-phy1-register-vector-physid-only-all-ones-mixed-visible",
+    "mdio-phy1-register-vector-timeout",
+    "mdio-phy1-register-vector-precondition-blocker",
+    "precise-staging-capture-blocker",
+    "no-mdio-no-ethernet-rp1-ethernet-mdio-register-vector-control",
+];
+pub const RP1_ETHERNET_MDIO_REGISTER_VECTOR_REJECTED_RUNTIME_CLAIMS: &[&str] = &[
+    "runtime volatile load/store evidence from local/static guard",
+    "NCR write permission or execution",
+    "MAN write without corrected NCR.MPE precondition",
+    "wrong 0x1c00000000-era MDIO register targets",
+    "unbounded NSR.IDLE polling",
+    "PHY absence from all-ones vector",
+    "broad MDIO or PHY ownership",
+    "PHY reset or GPIO32 action",
+    "Ethernet driver readiness",
+    "interrupt delivery, handler ownership, or completion",
+    "DMA, descriptor rings, channel ownership, or transfer completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition",
+];
+pub const RP1_ETHERNET_MDIO_REGISTER_VECTOR_RETAINED_RISKS: &[&str] = &[
+    "Corrected NCR.MPE may be clear in the selected boot state and must block MAN writes",
+    "A global all-ones vector does not prove PHY absence, reset state, link state, or usable Ethernet",
+    "A mixed vector proves only selected MAN.DATA read visibility, not packet I/O or networking readiness",
+    "GPIO32/ETH_RST_N, PHY reset state, DMA/descriptors, interrupts, sockets, SSH, and Phase 12.2 remain unaccepted",
+];
+pub const RP1_ETHERNET_MDIO_REGISTER_VECTOR_SOURCE_EVIDENCE: &[&str] = &[
+    "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-source-contract.md",
+    "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof.md",
+    "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-proof-closeout.md",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-source-contract/classification.json",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof/capture-summary.json",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-macb.h",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-uapi-linux-mii.h",
+];
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetMdioRegisterVectorSourceContractEvidence {
+    pub contract_id: &'static str,
+    pub source_task_id: &'static str,
+    pub selected_discriminator: &'static str,
+    pub purpose: &'static str,
+    pub controller: &'static str,
+    pub compatible: &'static [&'static str],
+    pub phy_handle: &'static str,
+    pub phy_node: &'static str,
+    pub phy_address: u32,
+    pub macb_mid_context_target: u64,
+    pub macb_mid_context_raw: u32,
+    pub ncr_register: &'static str,
+    pub nsr_register: &'static str,
+    pub man_register: &'static str,
+    pub ncr_observed_target: u64,
+    pub nsr_observed_target: u64,
+    pub man_observed_target: u64,
+    pub register_names: &'static [&'static str],
+    pub registers: &'static [u32],
+    pub man_frames: &'static [u32],
+    pub man_frame_construction: &'static str,
+    pub ncr_mpe_bit: u8,
+    pub nsr_idle_bit: u8,
+    pub poll_policy: &'static str,
+    pub mpe_precondition: &'static str,
+    pub man_data_offset: u8,
+    pub man_data_size: u8,
+    pub result_extraction: &'static str,
+    pub operation_order: &'static [&'static str],
+    pub allowed_classifications: &'static [&'static str],
+    pub source_evidence: &'static [&'static str],
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Rp1EthernetMdioRegisterVectorGuardReportKind {
+    Candidate,
+    NoMdioNoEthernetControl,
+}
+
+impl Rp1EthernetMdioRegisterVectorGuardReportKind {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::Candidate => "candidate",
+            Self::NoMdioNoEthernetControl => "no-mdio-no-ethernet-control",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetMdioRegisterVectorGuardReportInput {
+    pub kind: Rp1EthernetMdioRegisterVectorGuardReportKind,
+    pub source_contract: Option<Rp1EthernetMdioRegisterVectorSourceContractEvidence>,
+    pub claims_runtime_volatile_load_store: bool,
+    pub claims_ncr_write: bool,
+    pub claims_missing_mpe_gating: bool,
+    pub claims_wrong_mdio_targets: bool,
+    pub claims_unbounded_polling: bool,
+    pub claims_man_write_without_mpe_precondition: bool,
+    pub claims_phy_absence_from_all_ones: bool,
+    pub claims_broad_mdio_phy_ownership: bool,
+    pub claims_gpio32_phy_reset_action: bool,
+    pub claims_ethernet_ready: bool,
+    pub claims_interrupt_completion: bool,
+    pub claims_dma_descriptor_ownership: bool,
+    pub claims_packet_io: bool,
+    pub claims_networking: bool,
+    pub claims_sockets: bool,
+    pub claims_ssh: bool,
+    pub claims_phase_12_2: bool,
+    pub claims_phase_transition: bool,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetMdioRegisterVectorGuardReport {
+    pub kind: Rp1EthernetMdioRegisterVectorGuardReportKind,
+    pub source_contract: Option<Rp1EthernetMdioRegisterVectorSourceContractEvidence>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetMdioRegisterVectorGuardReportEvidence {
+    pub report_contract_id: &'static str,
+    pub source_contract_id: &'static str,
+    pub source_task_id: &'static str,
+    pub report_kind: &'static str,
+    pub selected_discriminator: Option<&'static str>,
+    pub purpose: Option<&'static str>,
+    pub controller: Option<&'static str>,
+    pub compatible: Option<&'static [&'static str]>,
+    pub phy_handle: Option<&'static str>,
+    pub phy_node: Option<&'static str>,
+    pub phy_address: Option<u32>,
+    pub macb_mid_context_target: Option<u64>,
+    pub macb_mid_context_raw: Option<u32>,
+    pub ncr_register: Option<&'static str>,
+    pub nsr_register: Option<&'static str>,
+    pub man_register: Option<&'static str>,
+    pub ncr_observed_target: Option<u64>,
+    pub nsr_observed_target: Option<u64>,
+    pub man_observed_target: Option<u64>,
+    pub register_names: Option<&'static [&'static str]>,
+    pub registers: Option<&'static [u32]>,
+    pub man_frames: Option<&'static [u32]>,
+    pub man_frame_construction: Option<&'static str>,
+    pub ncr_mpe_bit: Option<u8>,
+    pub nsr_idle_bit: Option<u8>,
+    pub poll_policy: Option<&'static str>,
+    pub mpe_precondition: Option<&'static str>,
+    pub man_data_offset: Option<u8>,
+    pub man_data_size: Option<u8>,
+    pub result_extraction: Option<&'static str>,
+    pub operation_order: Option<&'static [&'static str]>,
+    pub allowed_classifications: &'static [&'static str],
+    pub boundary_classification: &'static str,
+    pub rejected_runtime_claims: &'static [&'static str],
+    pub retained_risks: &'static [&'static str],
+    pub source_evidence: Option<&'static [&'static str]>,
+    pub constructs_mdio_targets: bool,
+    pub constructs_man_frames: bool,
+    pub runtime_volatile_load_store_intent: bool,
+    pub claims_runtime_volatile_load_store: bool,
+    pub claims_ncr_write: bool,
+    pub claims_missing_mpe_gating: bool,
+    pub claims_wrong_mdio_targets: bool,
+    pub claims_unbounded_polling: bool,
+    pub claims_man_write_without_mpe_precondition: bool,
+    pub claims_phy_absence_from_all_ones: bool,
+    pub claims_broad_mdio_phy_ownership: bool,
+    pub claims_gpio32_phy_reset_action: bool,
+    pub claims_ethernet_ready: bool,
+    pub claims_interrupt_completion: bool,
+    pub claims_dma_descriptor_ownership: bool,
+    pub claims_packet_io: bool,
+    pub claims_networking: bool,
+    pub claims_sockets: bool,
+    pub claims_ssh: bool,
+    pub claims_phase_12_2: bool,
+    pub claims_phase_transition: bool,
+    pub classification: &'static str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Rp1EthernetMdioRegisterVectorGuardReportError {
+    CandidateMissingSourceContract,
+    ControlCarriesMdioTargetFacts,
+    SourceContractIdentityMismatch,
+    SourceContractTargetMismatch,
+    SourceContractFieldMismatch,
+    MissingSourceEvidence,
+    RuntimeVolatileLoadStoreClaim,
+    NcrWriteClaim,
+    MissingMpeGatingClaim,
+    WrongMdioTargetsClaim,
+    UnboundedPollingClaim,
+    ManWriteWithoutMpePreconditionClaim,
+    PhyAbsenceFromAllOnesClaim,
+    BroadMdioPhyOwnershipClaim,
+    Gpio32PhyResetActionClaim,
+    EthernetReadinessClaim,
+    InterruptCompletionClaim,
+    DmaDescriptorOwnershipClaim,
+    PacketIoClaim,
+    NetworkingClaim,
+    SocketsClaim,
+    SshClaim,
+    Phase122Claim,
+    PhaseTransitionClaim,
+}
+
+impl Rp1EthernetMdioRegisterVectorGuardReportError {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::CandidateMissingSourceContract => "candidate-missing-source-contract",
+            Self::ControlCarriesMdioTargetFacts => "control-carries-mdio-target-facts",
+            Self::SourceContractIdentityMismatch => "source-contract-identity-mismatch",
+            Self::SourceContractTargetMismatch => "source-contract-target-mismatch",
+            Self::SourceContractFieldMismatch => "source-contract-field-mismatch",
+            Self::MissingSourceEvidence => "missing-source-evidence",
+            Self::RuntimeVolatileLoadStoreClaim => "runtime-volatile-load-store-claim",
+            Self::NcrWriteClaim => "ncr-write-claim",
+            Self::MissingMpeGatingClaim => "missing-mpe-gating-claim",
+            Self::WrongMdioTargetsClaim => "wrong-mdio-targets-claim",
+            Self::UnboundedPollingClaim => "unbounded-polling-claim",
+            Self::ManWriteWithoutMpePreconditionClaim => "man-write-without-mpe-precondition-claim",
+            Self::PhyAbsenceFromAllOnesClaim => "phy-absence-from-all-ones-claim",
+            Self::BroadMdioPhyOwnershipClaim => "broad-mdio-phy-ownership-claim",
+            Self::Gpio32PhyResetActionClaim => "gpio32-phy-reset-action-claim",
+            Self::EthernetReadinessClaim => "ethernet-readiness-claim",
+            Self::InterruptCompletionClaim => "interrupt-completion-claim",
+            Self::DmaDescriptorOwnershipClaim => "dma-descriptor-ownership-claim",
+            Self::PacketIoClaim => "packet-io-claim",
+            Self::NetworkingClaim => "networking-claim",
+            Self::SocketsClaim => "sockets-claim",
+            Self::SshClaim => "ssh-claim",
+            Self::Phase122Claim => "phase-12-2-claim",
+            Self::PhaseTransitionClaim => "phase-transition-claim",
+        }
+    }
+}
+
+pub const fn rp1_ethernet_mdio_register_vector_source_contract_evidence()
+-> Rp1EthernetMdioRegisterVectorSourceContractEvidence {
+    Rp1EthernetMdioRegisterVectorSourceContractEvidence {
+        contract_id: RP1_ETHERNET_MDIO_REGISTER_VECTOR_SOURCE_CONTRACT_ID,
+        source_task_id: RP1_ETHERNET_MDIO_REGISTER_VECTOR_SOURCE_TASK_ID,
+        selected_discriminator: RP1_ETHERNET_MDIO_REGISTER_VECTOR_SELECTED_DISCRIMINATOR,
+        purpose: RP1_ETHERNET_MDIO_REGISTER_VECTOR_PURPOSE,
+        controller: RP1_ETHERNET_CONTROLLER_NAME,
+        compatible: RP1_ETHERNET_COMPATIBLE,
+        phy_handle: RP1_ETHERNET_PHY_HANDLE,
+        phy_node: RP1_ETHERNET_PHY_NODE,
+        phy_address: RP1_ETHERNET_PHY_REG,
+        macb_mid_context_target: RP1_ETHERNET_OBSERVED_WINDOW_GEM_MID_CPU_PHYSICAL_TARGET,
+        macb_mid_context_raw: RP1_ETHERNET_ACCEPTED_OBSERVED_MACB_MID_RAW,
+        ncr_register: RP1_ETHERNET_MDIO_PHY_ID_NCR_REGISTER,
+        nsr_register: RP1_ETHERNET_MDIO_PHY_ID_NSR_REGISTER,
+        man_register: RP1_ETHERNET_MDIO_PHY_ID_MAN_REGISTER,
+        ncr_observed_target: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_NCR_OBSERVED_TARGET,
+        nsr_observed_target: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_NSR_OBSERVED_TARGET,
+        man_observed_target: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_MAN_OBSERVED_TARGET,
+        register_names: RP1_ETHERNET_MDIO_REGISTER_VECTOR_REGISTER_NAMES,
+        registers: RP1_ETHERNET_MDIO_REGISTER_VECTOR_REGISTERS,
+        man_frames: RP1_ETHERNET_MDIO_REGISTER_VECTOR_MAN_FRAMES,
+        man_frame_construction: RP1_ETHERNET_MDIO_REGISTER_VECTOR_MAN_FRAME_CONSTRUCTION,
+        ncr_mpe_bit: RP1_ETHERNET_MDIO_PHY_ID_NCR_MPE_BIT,
+        nsr_idle_bit: RP1_ETHERNET_MDIO_PHY_ID_NSR_IDLE_BIT,
+        poll_policy: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_POLL_POLICY,
+        mpe_precondition: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_MPE_PRECONDITION,
+        man_data_offset: RP1_ETHERNET_MDIO_PHY_ID_MAN_DATA_OFFSET,
+        man_data_size: RP1_ETHERNET_MDIO_PHY_ID_MAN_DATA_SIZE,
+        result_extraction: RP1_ETHERNET_MDIO_PHY_ID_RESULT_EXTRACTION,
+        operation_order: RP1_ETHERNET_MDIO_REGISTER_VECTOR_OPERATION_ORDER,
+        allowed_classifications: RP1_ETHERNET_MDIO_REGISTER_VECTOR_ALLOWED_CLASSIFICATIONS,
+        source_evidence: RP1_ETHERNET_MDIO_REGISTER_VECTOR_SOURCE_EVIDENCE,
+    }
+}
+
+pub fn build_rp1_ethernet_mdio_register_vector_guard_report(
+    input: Rp1EthernetMdioRegisterVectorGuardReportInput,
+) -> Result<Rp1EthernetMdioRegisterVectorGuardReport, Rp1EthernetMdioRegisterVectorGuardReportError>
+{
+    validate_rp1_ethernet_mdio_register_vector_rejected_claims(input)?;
+
+    match (input.kind, input.source_contract) {
+        (Rp1EthernetMdioRegisterVectorGuardReportKind::Candidate, Some(source_contract)) => {
+            validate_rp1_ethernet_mdio_register_vector_source_contract(source_contract)?;
+            Ok(Rp1EthernetMdioRegisterVectorGuardReport {
+                kind: input.kind,
+                source_contract: Some(source_contract),
+            })
+        }
+        (Rp1EthernetMdioRegisterVectorGuardReportKind::Candidate, None) => {
+            Err(Rp1EthernetMdioRegisterVectorGuardReportError::CandidateMissingSourceContract)
+        }
+        (Rp1EthernetMdioRegisterVectorGuardReportKind::NoMdioNoEthernetControl, None) => {
+            Ok(Rp1EthernetMdioRegisterVectorGuardReport {
+                kind: input.kind,
+                source_contract: None,
+            })
+        }
+        (Rp1EthernetMdioRegisterVectorGuardReportKind::NoMdioNoEthernetControl, Some(_)) => {
+            Err(Rp1EthernetMdioRegisterVectorGuardReportError::ControlCarriesMdioTargetFacts)
+        }
+    }
+}
+
+pub fn rp1_ethernet_mdio_register_vector_guard_report_evidence(
+    report: Rp1EthernetMdioRegisterVectorGuardReport,
+) -> Rp1EthernetMdioRegisterVectorGuardReportEvidence {
+    match report.source_contract {
+        Some(source_contract) => rp1_ethernet_mdio_register_vector_guard_candidate_evidence(
+            report.kind.name(),
+            source_contract,
+        ),
+        None => rp1_ethernet_mdio_register_vector_guard_control_evidence(report.kind.name()),
+    }
+}
+
+pub fn rejected_rp1_ethernet_mdio_register_vector_guard_report_evidence(
+    error: Rp1EthernetMdioRegisterVectorGuardReportError,
+) -> (&'static str, &'static str) {
+    (RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION, error.name())
+}
+
+fn validate_rp1_ethernet_mdio_register_vector_rejected_claims(
+    input: Rp1EthernetMdioRegisterVectorGuardReportInput,
+) -> Result<(), Rp1EthernetMdioRegisterVectorGuardReportError> {
+    if input.claims_runtime_volatile_load_store {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::RuntimeVolatileLoadStoreClaim);
+    }
+    if input.claims_ncr_write {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::NcrWriteClaim);
+    }
+    if input.claims_missing_mpe_gating {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::MissingMpeGatingClaim);
+    }
+    if input.claims_wrong_mdio_targets {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::WrongMdioTargetsClaim);
+    }
+    if input.claims_unbounded_polling {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::UnboundedPollingClaim);
+    }
+    if input.claims_man_write_without_mpe_precondition {
+        return Err(
+            Rp1EthernetMdioRegisterVectorGuardReportError::ManWriteWithoutMpePreconditionClaim,
+        );
+    }
+    if input.claims_phy_absence_from_all_ones {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::PhyAbsenceFromAllOnesClaim);
+    }
+    if input.claims_broad_mdio_phy_ownership {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::BroadMdioPhyOwnershipClaim);
+    }
+    if input.claims_gpio32_phy_reset_action {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::Gpio32PhyResetActionClaim);
+    }
+    if input.claims_ethernet_ready {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::EthernetReadinessClaim);
+    }
+    if input.claims_interrupt_completion {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::InterruptCompletionClaim);
+    }
+    if input.claims_dma_descriptor_ownership {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::DmaDescriptorOwnershipClaim);
+    }
+    if input.claims_packet_io {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::PacketIoClaim);
+    }
+    if input.claims_networking {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::NetworkingClaim);
+    }
+    if input.claims_sockets {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::SocketsClaim);
+    }
+    if input.claims_ssh {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::SshClaim);
+    }
+    if input.claims_phase_12_2 {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::Phase122Claim);
+    }
+    if input.claims_phase_transition {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::PhaseTransitionClaim);
+    }
+    Ok(())
+}
+
+fn validate_rp1_ethernet_mdio_register_vector_source_contract(
+    source_contract: Rp1EthernetMdioRegisterVectorSourceContractEvidence,
+) -> Result<(), Rp1EthernetMdioRegisterVectorGuardReportError> {
+    if source_contract.contract_id != RP1_ETHERNET_MDIO_REGISTER_VECTOR_SOURCE_CONTRACT_ID
+        || source_contract.source_task_id != RP1_ETHERNET_MDIO_REGISTER_VECTOR_SOURCE_TASK_ID
+        || source_contract.selected_discriminator
+            != RP1_ETHERNET_MDIO_REGISTER_VECTOR_SELECTED_DISCRIMINATOR
+        || source_contract.purpose != RP1_ETHERNET_MDIO_REGISTER_VECTOR_PURPOSE
+        || source_contract.controller != RP1_ETHERNET_CONTROLLER_NAME
+        || source_contract.compatible != RP1_ETHERNET_COMPATIBLE
+        || source_contract.phy_handle != RP1_ETHERNET_PHY_HANDLE
+        || source_contract.phy_node != RP1_ETHERNET_PHY_NODE
+        || source_contract.phy_address != RP1_ETHERNET_PHY_REG
+    {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::SourceContractIdentityMismatch);
+    }
+    if source_contract.macb_mid_context_target
+        != RP1_ETHERNET_OBSERVED_WINDOW_GEM_MID_CPU_PHYSICAL_TARGET
+        || source_contract.macb_mid_context_raw != RP1_ETHERNET_ACCEPTED_OBSERVED_MACB_MID_RAW
+        || source_contract.ncr_observed_target
+            != RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_NCR_OBSERVED_TARGET
+        || source_contract.nsr_observed_target
+            != RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_NSR_OBSERVED_TARGET
+        || source_contract.man_observed_target
+            != RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_MAN_OBSERVED_TARGET
+    {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::SourceContractTargetMismatch);
+    }
+    if source_contract.ncr_register != RP1_ETHERNET_MDIO_PHY_ID_NCR_REGISTER
+        || source_contract.nsr_register != RP1_ETHERNET_MDIO_PHY_ID_NSR_REGISTER
+        || source_contract.man_register != RP1_ETHERNET_MDIO_PHY_ID_MAN_REGISTER
+        || source_contract.register_names != RP1_ETHERNET_MDIO_REGISTER_VECTOR_REGISTER_NAMES
+        || source_contract.registers != RP1_ETHERNET_MDIO_REGISTER_VECTOR_REGISTERS
+        || source_contract.man_frames != RP1_ETHERNET_MDIO_REGISTER_VECTOR_MAN_FRAMES
+        || source_contract.man_frame_construction
+            != RP1_ETHERNET_MDIO_REGISTER_VECTOR_MAN_FRAME_CONSTRUCTION
+        || source_contract.ncr_mpe_bit != RP1_ETHERNET_MDIO_PHY_ID_NCR_MPE_BIT
+        || source_contract.nsr_idle_bit != RP1_ETHERNET_MDIO_PHY_ID_NSR_IDLE_BIT
+        || source_contract.poll_policy != RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_POLL_POLICY
+        || source_contract.mpe_precondition != RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_MPE_PRECONDITION
+        || source_contract.man_data_offset != RP1_ETHERNET_MDIO_PHY_ID_MAN_DATA_OFFSET
+        || source_contract.man_data_size != RP1_ETHERNET_MDIO_PHY_ID_MAN_DATA_SIZE
+        || source_contract.result_extraction != RP1_ETHERNET_MDIO_PHY_ID_RESULT_EXTRACTION
+        || source_contract.operation_order != RP1_ETHERNET_MDIO_REGISTER_VECTOR_OPERATION_ORDER
+        || source_contract.allowed_classifications
+            != RP1_ETHERNET_MDIO_REGISTER_VECTOR_ALLOWED_CLASSIFICATIONS
+    {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::SourceContractFieldMismatch);
+    }
+    if source_contract.source_evidence != RP1_ETHERNET_MDIO_REGISTER_VECTOR_SOURCE_EVIDENCE {
+        return Err(Rp1EthernetMdioRegisterVectorGuardReportError::MissingSourceEvidence);
+    }
+    Ok(())
+}
+
+fn rp1_ethernet_mdio_register_vector_guard_candidate_evidence(
+    report_kind: &'static str,
+    source_contract: Rp1EthernetMdioRegisterVectorSourceContractEvidence,
+) -> Rp1EthernetMdioRegisterVectorGuardReportEvidence {
+    Rp1EthernetMdioRegisterVectorGuardReportEvidence {
+        report_contract_id: RP1_ETHERNET_MDIO_REGISTER_VECTOR_GUARD_REPORT_CONTRACT_ID,
+        source_contract_id: source_contract.contract_id,
+        source_task_id: source_contract.source_task_id,
+        report_kind,
+        selected_discriminator: Some(source_contract.selected_discriminator),
+        purpose: Some(source_contract.purpose),
+        controller: Some(source_contract.controller),
+        compatible: Some(source_contract.compatible),
+        phy_handle: Some(source_contract.phy_handle),
+        phy_node: Some(source_contract.phy_node),
+        phy_address: Some(source_contract.phy_address),
+        macb_mid_context_target: Some(source_contract.macb_mid_context_target),
+        macb_mid_context_raw: Some(source_contract.macb_mid_context_raw),
+        ncr_register: Some(source_contract.ncr_register),
+        nsr_register: Some(source_contract.nsr_register),
+        man_register: Some(source_contract.man_register),
+        ncr_observed_target: Some(source_contract.ncr_observed_target),
+        nsr_observed_target: Some(source_contract.nsr_observed_target),
+        man_observed_target: Some(source_contract.man_observed_target),
+        register_names: Some(source_contract.register_names),
+        registers: Some(source_contract.registers),
+        man_frames: Some(source_contract.man_frames),
+        man_frame_construction: Some(source_contract.man_frame_construction),
+        ncr_mpe_bit: Some(source_contract.ncr_mpe_bit),
+        nsr_idle_bit: Some(source_contract.nsr_idle_bit),
+        poll_policy: Some(source_contract.poll_policy),
+        mpe_precondition: Some(source_contract.mpe_precondition),
+        man_data_offset: Some(source_contract.man_data_offset),
+        man_data_size: Some(source_contract.man_data_size),
+        result_extraction: Some(source_contract.result_extraction),
+        operation_order: Some(source_contract.operation_order),
+        allowed_classifications: RP1_ETHERNET_MDIO_REGISTER_VECTOR_ALLOWED_CLASSIFICATIONS,
+        boundary_classification: RP1_ETHERNET_MDIO_REGISTER_VECTOR_BOUNDARY_CLASSIFICATION,
+        rejected_runtime_claims: RP1_ETHERNET_MDIO_REGISTER_VECTOR_REJECTED_RUNTIME_CLAIMS,
+        retained_risks: RP1_ETHERNET_MDIO_REGISTER_VECTOR_RETAINED_RISKS,
+        source_evidence: Some(source_contract.source_evidence),
+        constructs_mdio_targets: true,
+        constructs_man_frames: true,
+        runtime_volatile_load_store_intent: false,
+        claims_runtime_volatile_load_store: false,
+        claims_ncr_write: false,
+        claims_missing_mpe_gating: false,
+        claims_wrong_mdio_targets: false,
+        claims_unbounded_polling: false,
+        claims_man_write_without_mpe_precondition: false,
+        claims_phy_absence_from_all_ones: false,
+        claims_broad_mdio_phy_ownership: false,
+        claims_gpio32_phy_reset_action: false,
+        claims_ethernet_ready: false,
+        claims_interrupt_completion: false,
+        claims_dma_descriptor_ownership: false,
+        claims_packet_io: false,
+        claims_networking: false,
+        claims_sockets: false,
+        claims_ssh: false,
+        claims_phase_12_2: false,
+        claims_phase_transition: false,
+        classification: RP1_ETHERNET_MDIO_REGISTER_VECTOR_CANDIDATE_CLASSIFICATION,
+    }
+}
+
+fn rp1_ethernet_mdio_register_vector_guard_control_evidence(
+    report_kind: &'static str,
+) -> Rp1EthernetMdioRegisterVectorGuardReportEvidence {
+    Rp1EthernetMdioRegisterVectorGuardReportEvidence {
+        report_contract_id: RP1_ETHERNET_MDIO_REGISTER_VECTOR_GUARD_REPORT_CONTRACT_ID,
+        source_contract_id: RP1_ETHERNET_MDIO_REGISTER_VECTOR_SOURCE_CONTRACT_ID,
+        source_task_id: RP1_ETHERNET_MDIO_REGISTER_VECTOR_SOURCE_TASK_ID,
+        report_kind,
+        selected_discriminator: None,
+        purpose: None,
+        controller: None,
+        compatible: None,
+        phy_handle: None,
+        phy_node: None,
+        phy_address: None,
+        macb_mid_context_target: None,
+        macb_mid_context_raw: None,
+        ncr_register: None,
+        nsr_register: None,
+        man_register: None,
+        ncr_observed_target: None,
+        nsr_observed_target: None,
+        man_observed_target: None,
+        register_names: None,
+        registers: None,
+        man_frames: None,
+        man_frame_construction: None,
+        ncr_mpe_bit: None,
+        nsr_idle_bit: None,
+        poll_policy: None,
+        mpe_precondition: None,
+        man_data_offset: None,
+        man_data_size: None,
+        result_extraction: None,
+        operation_order: None,
+        allowed_classifications: RP1_ETHERNET_MDIO_REGISTER_VECTOR_ALLOWED_CLASSIFICATIONS,
+        boundary_classification: RP1_ETHERNET_MDIO_REGISTER_VECTOR_BOUNDARY_CLASSIFICATION,
+        rejected_runtime_claims: RP1_ETHERNET_MDIO_REGISTER_VECTOR_REJECTED_RUNTIME_CLAIMS,
+        retained_risks: RP1_ETHERNET_MDIO_REGISTER_VECTOR_RETAINED_RISKS,
+        source_evidence: None,
+        constructs_mdio_targets: false,
+        constructs_man_frames: false,
+        runtime_volatile_load_store_intent: false,
+        claims_runtime_volatile_load_store: false,
+        claims_ncr_write: false,
+        claims_missing_mpe_gating: false,
+        claims_wrong_mdio_targets: false,
+        claims_unbounded_polling: false,
+        claims_man_write_without_mpe_precondition: false,
+        claims_phy_absence_from_all_ones: false,
+        claims_broad_mdio_phy_ownership: false,
+        claims_gpio32_phy_reset_action: false,
+        claims_ethernet_ready: false,
+        claims_interrupt_completion: false,
+        claims_dma_descriptor_ownership: false,
+        claims_packet_io: false,
+        claims_networking: false,
+        claims_sockets: false,
+        claims_ssh: false,
+        claims_phase_12_2: false,
+        claims_phase_transition: false,
+        classification: RP1_ETHERNET_MDIO_REGISTER_VECTOR_CONTROL_CLASSIFICATION,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -8190,6 +8814,32 @@ mod tests {
             claims_broad_mmio_ready: false,
             claims_dma_descriptor_ownership: false,
             claims_interrupt_completion: false,
+            claims_packet_io: false,
+            claims_networking: false,
+            claims_sockets: false,
+            claims_ssh: false,
+            claims_phase_12_2: false,
+            claims_phase_transition: false,
+        }
+    }
+
+    fn accepted_mdio_register_vector_guard_input() -> Rp1EthernetMdioRegisterVectorGuardReportInput
+    {
+        Rp1EthernetMdioRegisterVectorGuardReportInput {
+            kind: Rp1EthernetMdioRegisterVectorGuardReportKind::Candidate,
+            source_contract: Some(rp1_ethernet_mdio_register_vector_source_contract_evidence()),
+            claims_runtime_volatile_load_store: false,
+            claims_ncr_write: false,
+            claims_missing_mpe_gating: false,
+            claims_wrong_mdio_targets: false,
+            claims_unbounded_polling: false,
+            claims_man_write_without_mpe_precondition: false,
+            claims_phy_absence_from_all_ones: false,
+            claims_broad_mdio_phy_ownership: false,
+            claims_gpio32_phy_reset_action: false,
+            claims_ethernet_ready: false,
+            claims_interrupt_completion: false,
+            claims_dma_descriptor_ownership: false,
             claims_packet_io: false,
             claims_networking: false,
             claims_sockets: false,
@@ -12286,6 +12936,339 @@ mod tests {
         assert_eq!(
             rejected_rp1_ethernet_mdio_mpe_enable_guard_report_evidence(
                 Rp1EthernetMdioMpeEnableGuardReportError::PhaseTransitionClaim
+            ),
+            (
+                RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION,
+                "phase-transition-claim"
+            )
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_mdio_register_vector_guard_formats_candidate_report() {
+        let report = build_rp1_ethernet_mdio_register_vector_guard_report(
+            accepted_mdio_register_vector_guard_input(),
+        )
+        .expect("valid MDIO register-vector guard candidate input");
+        let evidence = rp1_ethernet_mdio_register_vector_guard_report_evidence(report);
+
+        assert_eq!(
+            evidence.report_contract_id,
+            RP1_ETHERNET_MDIO_REGISTER_VECTOR_GUARD_REPORT_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.source_contract_id,
+            RP1_ETHERNET_MDIO_REGISTER_VECTOR_SOURCE_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.source_task_id,
+            RP1_ETHERNET_MDIO_REGISTER_VECTOR_SOURCE_TASK_ID
+        );
+        assert_eq!(evidence.report_kind, "candidate");
+        assert_eq!(
+            evidence.selected_discriminator,
+            Some(RP1_ETHERNET_MDIO_REGISTER_VECTOR_SELECTED_DISCRIMINATOR)
+        );
+        assert_eq!(
+            evidence.purpose,
+            Some(RP1_ETHERNET_MDIO_REGISTER_VECTOR_PURPOSE)
+        );
+        assert_eq!(evidence.controller, Some(RP1_ETHERNET_CONTROLLER_NAME));
+        assert_eq!(evidence.compatible, Some(RP1_ETHERNET_COMPATIBLE));
+        assert_eq!(evidence.phy_handle, Some(RP1_ETHERNET_PHY_HANDLE));
+        assert_eq!(evidence.phy_node, Some(RP1_ETHERNET_PHY_NODE));
+        assert_eq!(evidence.phy_address, Some(1));
+        assert_eq!(evidence.macb_mid_context_target, Some(0x1c_0010_00fc));
+        assert_eq!(evidence.macb_mid_context_raw, Some(0x0007_0109));
+        assert_eq!(evidence.ncr_observed_target, Some(0x1c_0010_0000));
+        assert_eq!(evidence.nsr_observed_target, Some(0x1c_0010_0008));
+        assert_eq!(evidence.man_observed_target, Some(0x1c_0010_0034));
+        assert_eq!(
+            evidence.register_names,
+            Some(RP1_ETHERNET_MDIO_REGISTER_VECTOR_REGISTER_NAMES)
+        );
+        assert_eq!(
+            evidence.registers,
+            Some(RP1_ETHERNET_MDIO_REGISTER_VECTOR_REGISTERS)
+        );
+        assert_eq!(
+            evidence.man_frames,
+            Some(RP1_ETHERNET_MDIO_REGISTER_VECTOR_MAN_FRAMES)
+        );
+        assert_eq!(
+            evidence.man_frames.expect("candidate frames"),
+            &[
+                0x6082_0000,
+                0x6086_0000,
+                0x608a_0000,
+                0x608e_0000,
+                0x6092_0000,
+                0x6096_0000
+            ]
+        );
+        assert_eq!(evidence.ncr_mpe_bit, Some(4));
+        assert_eq!(evidence.nsr_idle_bit, Some(2));
+        assert_eq!(
+            evidence.poll_policy,
+            Some(RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_POLL_POLICY)
+        );
+        assert_eq!(
+            evidence.mpe_precondition,
+            Some(RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_MPE_PRECONDITION)
+        );
+        assert_eq!(evidence.man_data_offset, Some(0));
+        assert_eq!(evidence.man_data_size, Some(16));
+        assert_eq!(
+            evidence.allowed_classifications,
+            RP1_ETHERNET_MDIO_REGISTER_VECTOR_ALLOWED_CLASSIFICATIONS
+        );
+        assert_eq!(
+            evidence.boundary_classification,
+            RP1_ETHERNET_MDIO_REGISTER_VECTOR_BOUNDARY_CLASSIFICATION
+        );
+        assert_eq!(
+            evidence.rejected_runtime_claims,
+            RP1_ETHERNET_MDIO_REGISTER_VECTOR_REJECTED_RUNTIME_CLAIMS
+        );
+        assert_eq!(
+            evidence.retained_risks,
+            RP1_ETHERNET_MDIO_REGISTER_VECTOR_RETAINED_RISKS
+        );
+        assert_eq!(
+            evidence.source_evidence,
+            Some(RP1_ETHERNET_MDIO_REGISTER_VECTOR_SOURCE_EVIDENCE)
+        );
+        assert!(evidence.constructs_mdio_targets);
+        assert!(evidence.constructs_man_frames);
+        assert!(!evidence.runtime_volatile_load_store_intent);
+        assert!(!evidence.claims_ncr_write);
+        assert!(!evidence.claims_man_write_without_mpe_precondition);
+        assert!(!evidence.claims_phy_absence_from_all_ones);
+        assert!(!evidence.claims_broad_mdio_phy_ownership);
+        assert!(!evidence.claims_gpio32_phy_reset_action);
+        assert!(!evidence.claims_phase_transition);
+        assert_eq!(
+            evidence.classification,
+            RP1_ETHERNET_MDIO_REGISTER_VECTOR_CANDIDATE_CLASSIFICATION
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_mdio_register_vector_guard_formats_paired_control() {
+        let report = build_rp1_ethernet_mdio_register_vector_guard_report(
+            Rp1EthernetMdioRegisterVectorGuardReportInput {
+                kind: Rp1EthernetMdioRegisterVectorGuardReportKind::NoMdioNoEthernetControl,
+                source_contract: None,
+                ..accepted_mdio_register_vector_guard_input()
+            },
+        )
+        .expect("valid MDIO register-vector guard control input");
+        let evidence = rp1_ethernet_mdio_register_vector_guard_report_evidence(report);
+
+        assert_eq!(evidence.report_kind, "no-mdio-no-ethernet-control");
+        assert_eq!(evidence.selected_discriminator, None);
+        assert_eq!(evidence.purpose, None);
+        assert_eq!(evidence.controller, None);
+        assert_eq!(evidence.phy_address, None);
+        assert_eq!(evidence.macb_mid_context_target, None);
+        assert_eq!(evidence.ncr_observed_target, None);
+        assert_eq!(evidence.nsr_observed_target, None);
+        assert_eq!(evidence.man_observed_target, None);
+        assert_eq!(evidence.register_names, None);
+        assert_eq!(evidence.registers, None);
+        assert_eq!(evidence.man_frames, None);
+        assert_eq!(evidence.man_frame_construction, None);
+        assert_eq!(evidence.poll_policy, None);
+        assert_eq!(evidence.mpe_precondition, None);
+        assert_eq!(evidence.operation_order, None);
+        assert_eq!(evidence.source_evidence, None);
+        assert!(!evidence.constructs_mdio_targets);
+        assert!(!evidence.constructs_man_frames);
+        assert!(!evidence.runtime_volatile_load_store_intent);
+        assert_eq!(
+            evidence.classification,
+            RP1_ETHERNET_MDIO_REGISTER_VECTOR_CONTROL_CLASSIFICATION
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_mdio_register_vector_guard_rejects_shape_and_overclaims() {
+        let input = accepted_mdio_register_vector_guard_input();
+
+        assert_eq!(
+            build_rp1_ethernet_mdio_register_vector_guard_report(
+                Rp1EthernetMdioRegisterVectorGuardReportInput {
+                    source_contract: None,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioRegisterVectorGuardReportError::CandidateMissingSourceContract)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_register_vector_guard_report(
+                Rp1EthernetMdioRegisterVectorGuardReportInput {
+                    kind: Rp1EthernetMdioRegisterVectorGuardReportKind::NoMdioNoEthernetControl,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioRegisterVectorGuardReportError::ControlCarriesMdioTargetFacts)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_register_vector_guard_report(
+                Rp1EthernetMdioRegisterVectorGuardReportInput {
+                    source_contract: Some(Rp1EthernetMdioRegisterVectorSourceContractEvidence {
+                        phy_address: 2,
+                        ..rp1_ethernet_mdio_register_vector_source_contract_evidence()
+                    }),
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioRegisterVectorGuardReportError::SourceContractIdentityMismatch)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_register_vector_guard_report(
+                Rp1EthernetMdioRegisterVectorGuardReportInput {
+                    source_contract: Some(Rp1EthernetMdioRegisterVectorSourceContractEvidence {
+                        ncr_observed_target: 0x1c_0000_0000,
+                        ..rp1_ethernet_mdio_register_vector_source_contract_evidence()
+                    }),
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioRegisterVectorGuardReportError::SourceContractTargetMismatch)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_register_vector_guard_report(
+                Rp1EthernetMdioRegisterVectorGuardReportInput {
+                    source_contract: Some(Rp1EthernetMdioRegisterVectorSourceContractEvidence {
+                        man_frames: RP1_ETHERNET_MDIO_PHY_ID_PHY_ID_REGISTERS,
+                        ..rp1_ethernet_mdio_register_vector_source_contract_evidence()
+                    }),
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioRegisterVectorGuardReportError::SourceContractFieldMismatch)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_register_vector_guard_report(
+                Rp1EthernetMdioRegisterVectorGuardReportInput {
+                    claims_runtime_volatile_load_store: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioRegisterVectorGuardReportError::RuntimeVolatileLoadStoreClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_register_vector_guard_report(
+                Rp1EthernetMdioRegisterVectorGuardReportInput {
+                    claims_ncr_write: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioRegisterVectorGuardReportError::NcrWriteClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_register_vector_guard_report(
+                Rp1EthernetMdioRegisterVectorGuardReportInput {
+                    claims_missing_mpe_gating: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioRegisterVectorGuardReportError::MissingMpeGatingClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_register_vector_guard_report(
+                Rp1EthernetMdioRegisterVectorGuardReportInput {
+                    claims_wrong_mdio_targets: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioRegisterVectorGuardReportError::WrongMdioTargetsClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_register_vector_guard_report(
+                Rp1EthernetMdioRegisterVectorGuardReportInput {
+                    claims_unbounded_polling: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioRegisterVectorGuardReportError::UnboundedPollingClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_register_vector_guard_report(
+                Rp1EthernetMdioRegisterVectorGuardReportInput {
+                    claims_man_write_without_mpe_precondition: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioRegisterVectorGuardReportError::ManWriteWithoutMpePreconditionClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_register_vector_guard_report(
+                Rp1EthernetMdioRegisterVectorGuardReportInput {
+                    claims_phy_absence_from_all_ones: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioRegisterVectorGuardReportError::PhyAbsenceFromAllOnesClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_register_vector_guard_report(
+                Rp1EthernetMdioRegisterVectorGuardReportInput {
+                    claims_broad_mdio_phy_ownership: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioRegisterVectorGuardReportError::BroadMdioPhyOwnershipClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_register_vector_guard_report(
+                Rp1EthernetMdioRegisterVectorGuardReportInput {
+                    claims_gpio32_phy_reset_action: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioRegisterVectorGuardReportError::Gpio32PhyResetActionClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_register_vector_guard_report(
+                Rp1EthernetMdioRegisterVectorGuardReportInput {
+                    claims_ethernet_ready: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioRegisterVectorGuardReportError::EthernetReadinessClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_register_vector_guard_report(
+                Rp1EthernetMdioRegisterVectorGuardReportInput {
+                    claims_networking: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioRegisterVectorGuardReportError::NetworkingClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_register_vector_guard_report(
+                Rp1EthernetMdioRegisterVectorGuardReportInput {
+                    claims_ssh: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioRegisterVectorGuardReportError::SshClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_register_vector_guard_report(
+                Rp1EthernetMdioRegisterVectorGuardReportInput {
+                    claims_phase_12_2: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioRegisterVectorGuardReportError::Phase122Claim)
+        );
+        assert_eq!(
+            rejected_rp1_ethernet_mdio_register_vector_guard_report_evidence(
+                Rp1EthernetMdioRegisterVectorGuardReportError::PhaseTransitionClaim
             ),
             (
                 RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION,

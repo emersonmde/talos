@@ -1,0 +1,86 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-guard-core-20260611",
+  "classification": "rp1-ethernet-mdio-register-vector-guard-core-accepted",
+  "inputs": [
+    {
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-source-contract.md",
+      "notes": "Accepted corrected-target six-register MDIO register-vector source contract."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-source-contract/classification.json",
+      "notes": "Selected corrected NCR/NSR/MAN targets, MPE precondition, register vector, MAN frames, control shape, allowed classifications, rejected claims, and retained risks."
+    },
+    {
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof.md",
+      "notes": "Accepted after-MPE PHY-ID 0xffff/0xffff proof consumed as predecessor evidence."
+    },
+    {
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-proof-closeout.md",
+      "notes": "Closeout requiring a qualitatively different discriminator instead of same-shaped PHY-ID retry."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-macb.h",
+      "notes": "MACB NCR/NSR/MAN offsets and bit fields."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-uapi-linux-mii.h",
+      "notes": "MII_BMCR, MII_BMSR, MII_PHYSID1, MII_PHYSID2, MII_ADVERTISE, and MII_LPA register ids."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "src/rp1_ethernet.rs",
+      "notes": "Local/static register-vector source-contract constants, report structures, validators, candidate/control evidence constructors, and focused tests."
+    },
+    {
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-guard-core.md",
+      "notes": "Task record with findings, accepted guard surface, validation, acceptance check, and next action."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-guard-core/classification.json",
+      "notes": "Classification and accepted/rejected claim summary."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-guard-core/evidence-map.json",
+      "notes": "Input/output evidence map and validation summary."
+    },
+    {
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "notes": "Phase 12 accepted-frontier note for the register-vector guard core."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-guard-core/cargo-test-rp1-ethernet.txt",
+      "notes": "Focused rp1_ethernet test output."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-guard-core/mdbook-build.txt",
+      "notes": "Documentation build output."
+    }
+  ],
+  "validation": [
+    {
+      "level": "static inspection",
+      "commands_or_actions": [
+        "inspected accepted register-vector source contract, accepted after-MPE proof/closeout, existing MDIO guard code, and touched src/rp1_ethernet.rs"
+      ],
+      "result": "passed"
+    },
+    {
+      "level": "fmt/lint/typecheck",
+      "commands_or_actions": [
+        "cargo fmt --all -- --check",
+        "cargo -Zjson-target-spec test --quiet rp1_ethernet",
+        "jq empty tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-guard-core/classification.json tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-guard-core/evidence-map.json",
+        "git diff --check",
+        "/home/node/.cargo/bin/mdbook build",
+        "git diff --cached --check"
+      ],
+      "result": "passed"
+    }
+  ],
+  "notes": [
+    "No Pi 5 hardware run or hardwareTestLock acquisition was performed.",
+    "No runtime MMIO load/store, NCR write, MAN write on hardware, PHY reset, or GPIO32 action was performed.",
+    "The candidate report constructs future corrected MDIO target and MAN frame facts only; the control report withholds those fields and has no volatile access intent."
+  ]
+}

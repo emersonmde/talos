@@ -1365,3 +1365,22 @@ prove PHY absence, PHY reset ownership, link state, usable Ethernet, broad
 MDIO/PHY ownership, Ethernet driver behavior, DMA/descriptors, packet I/O,
 networking, sockets, SSH, Phase 12.2, or a phase transition. The next bounded
 step is only the local/static register-vector guard core.
+
+phase12-rp1-ethernet-mdio-register-vector-guard-core-20260611 accepts the
+local/static corrected-target MDIO register-vector guard report surface. The
+candidate report preserves source contract id
+phase12-rp1-ethernet-mdio-register-vector-source-contract-v1, report contract
+id phase12-rp1-ethernet-mdio-register-vector-guard-report-contract-v1, the
+selected six-register vector, exact PHYA=1 MAN frames, corrected
+NCR/NSR/MAN targets 0x1c00100000/0x1c00100008/0x1c00100034, the no-NCR-write
+MPE precondition, bounded NSR.IDLE polling, MAN.DATA extraction, rejected
+claims, retained risks, and hardware-proof boundary fields.
+
+The paired control uses the same report path while constructing no MDIO
+targets, no MAN frames, no candidate-only register-vector/result fields, and
+no volatile access intent. The guard core does not run hardware and does not
+accept runtime MDIO transaction success, register-vector MAN.DATA values,
+NCR write permission, PHY absence from all-ones vectors, broad MDIO/PHY
+ownership, PHY reset/GPIO32 ownership, Ethernet driver readiness, interrupts,
+DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase
+transition.
