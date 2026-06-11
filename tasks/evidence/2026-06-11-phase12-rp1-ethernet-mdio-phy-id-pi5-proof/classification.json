@@ -1,0 +1,227 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-phy-id-pi5-proof-20260611",
+  "classification": "mdio-phy1-physid-source-contract-violated-blocker",
+  "evidence_level": "serial hardware boot/output with capture-chain-v4 identity, TFTP, final identity, and restore evidence",
+  "accepted_candidate": {
+    "run_dir": "candidate-rerun2",
+    "capture_chain": {
+      "contract_version": "pi5-capture-chain-v4",
+      "base_contracts": [
+        "pi5-capture-transaction-v2",
+        "pi5-capture-transaction-v3",
+        "pi5-capture-transaction-run-unique-v1"
+      ],
+      "run_label": "mdio-phy-id-candidate-rerun2-20260611T0915Z",
+      "report_kind": "candidate",
+      "decisive_rp1_hardware_classification_allowed": true,
+      "classification": "capture-chain-v4-ready",
+      "rejection_reasons": [],
+      "endpoint_identity": {
+        "root_endpoint": {
+          "endpoint": "GET /",
+          "curl_exit": 0,
+          "http_code": 404,
+          "body_bytes": 55,
+          "usable_for_selected_tree_identity": false,
+          "selected_tree_identity_source": "/boot/files",
+          "fallback_used": true,
+          "fallback_reason": "root-endpoint-http-non-2xx"
+        },
+        "selected_tree_identity_source": "/boot/files",
+        "fallback_used": true
+      },
+      "proof_run_identity": {
+        "selected_tree_hash": "5bc71791d508809a451aead9ebe643de5114a0647e5a8fa8670dd16d24c694a7",
+        "effective_kernel": "kernel_2712.img",
+        "expected_fetch_path": "da591740/kernel_2712.img",
+        "expected_fetch_byte_count": 50120,
+        "tftp": {
+          "cursor_file": 4441624,
+          "delta_cursor_start": 4441624,
+          "delta_cursor_end": 4442975,
+          "stable": true,
+          "event_count": 13,
+          "expected_fetch_count": 2,
+          "expected_fetch_byte_match_count": 2,
+          "expected_fetch_bytes_seen": [
+            50120,
+            50120
+          ]
+        },
+        "final_pre_restore": {
+          "tree_hash": "5bc71791d508809a451aead9ebe643de5114a0647e5a8fa8670dd16d24c694a7",
+          "effective_kernel": "kernel_2712.img",
+          "selected_tree_still_staged": true,
+          "expected_fetch_present": true,
+          "expected_fetch_bytes": 50120
+        },
+        "restore": {
+          "snapshot_name": "mdio-phy-id-pre-20260611T0855Z",
+          "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+        }
+      },
+      "serial_capture": {
+        "capture_mode": "read",
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+        "cursor_file": 4194304,
+        "cursor_start": 4194304,
+        "cursor_end": 4194304,
+        "response_bytes": 136113,
+        "required_marker": "TALOS: rp1-ethernet-mdio-phy-id-candidate",
+        "required_marker_occurrences": 49,
+        "required_marker_excerpt": "nsition=false classification=mdio-phy1-physid-source-contract-violated-blocker\r\nTALOS: rp1-ethernet-mdio-phy-id-candidate capture-nonce=mdio-phyid-candidate-rerun2-20260611T0915Z mdio-phy-id-report-contract-id=phase12-rp1-ethernet-mdio-phy-id-guard-report-contract-v1 source-contra",
+        "nonce_token": "capture-nonce=mdio-phyid-candidate-rerun2-20260611T0915Z",
+        "nonce_token_occurrences": 49,
+        "pre_power_nonce_occurrences": 0,
+        "empty_pre_power": false,
+        "nonce_fresh": true,
+        "serial_freshness_ok": true
+      },
+      "claim_boundary": {
+        "accepted_if_ready": "capture-chain identity/freshness only",
+        "rejected_runtime_claims": [
+          "live-gem-visibility",
+          "ethernet-driver-readiness",
+          "rp1-mmio-dma-programming",
+          "packet-io",
+          "networking",
+          "ssh",
+          "phase-transition"
+        ]
+      },
+      "rule": "missing /boot/files identity, expected TFTP fetch bytes, final selected-tree identity, run-unique marker freshness, direct serial marker retention, or paired control marker prevents decisive RP1 hardware classification"
+    },
+    "serial_classification": "mdio-phy1-physid-source-contract-violated-blocker",
+    "observed_window_macb_mid_raw": "0x70109",
+    "ncr_before": "0x20001927",
+    "ncr_mpe_precondition_met": false,
+    "ncr_mpe_write_performed": false,
+    "man_writes_performed": false,
+    "runtime_mdio_transaction": false,
+    "touched_fields": "none",
+    "serial_marker_excerpt": "TALOS: rp1-ethernet-mdio-phy-id-candidate capture-nonce=mdio-phyid-candidate-rerun2-20260611T0915Z mdio-phy-id-report-contract-id=phase12-rp1-ethernet-mdio-phy-id-guard-report-contract-v1 source-contract-id=phase12-rp1-ethernet-mdio-phy-id-source-contract-v1 source-task-id=phase12-rp1-ethernet-mdio-phy-id-source-contract-20260611 report-kind=candidate hardware-proof-boundary-classification=hardware-proof-limited-to-mdio-phy-id-control-output target=rp1-ethernet-mdio-clause22-phy1-physid1-physid2 controller=rp1_eth compatible=raspberrypi,rp1-gem,cdns,macb phy-handle=phy1 phy-node=ethernet-phy@1 phy-address=1 observed-window-macb-mid-context-cpu-physical-target=0x1c001000fc observed-window-macb-mid-context-raw=0x70109 translated-window-comparator-cpu-physical-target=0x1f001000fc ncr-observed-target=0x1c00000000 nsr-observed-target=0x1c00000008 man-observed-target=0x1c00000034 ncr-mpe-bit=4 nsr-idle-bit=2 man-data-bits=15:0 ncr-before=0x20001927 ncr-mpe-precondition-met=false ncr-after=0x20001927 ncr-mpe-write-performed=false phy-id-registers=MII_PHYSID1:0x02,MII_PHYSID2:0x03 physid1-man-frame=0x600a0000 physid2-man-frame=0x600e0000 nsr-before-physid1=0x0 nsr-after-physid1=0x0 man-after-physid1=0x0 physid1=0x0 physid1-valid=false nsr-before-physid2=0x0 nsr-after-physid2=0x0 man-after-physid2=0x0 physid2=0x0 physid2-valid=false man-writes-performed=false man-restore-write-performed=false touched-fields=none allowed-classifications=mdio-phy1-physid-visible,mdio-phy1-physid-timeout,mdio-phy1-physid-source-contract-violated-blocker,precise-staging-capture-blocker,no-mdio-no-ethernet-rp1-ethernet-mdio-phy-id-control rejected-runtime-hardware-claims=ethernet-driver-readiness,broad-mdio-or-phy-ownership,ncr-mpe-ownership-or-write-permission,phy-reset-ownership,gpio32-ownership-event-clearing-write-restore-or-reset-success,interrupt-completion,dma-descriptor-rings-channel-ownership-or-transfer-completion,packet-io,networking,sockets,ssh,phase-12-2,phase-transition retained-risks=ncr-mpe-may-be-clear,gpio32-and-eth-rst-n-remain-unowned,visible-phy-id-proves-only-selected-management-transaction,no-link-mac-dma-interrupt-packet-socket-ssh-or-phase-12-2-readiness claims-runtime-mdio-transaction=false claims-mdio-phy-ownership=false claims-mpe-write-permission=false claims-gpio32-phy-reset-ownership=false claims-ethernet-ready=false claims-broad-mmio-ready=false claims-interrupt-completion=false claims-dma-descriptor-ownership=false claims-packet-io=false claims-networking=false claims-sockets=false claims-ssh=false claims-phase-12-2=false claims-phase-transition=false classification=mdio-phy1-physid-source-contract-violated-blocker\r\n"
+  },
+  "accepted_control": {
+    "run_dir": "control-rerun2",
+    "capture_chain": {
+      "contract_version": "pi5-capture-chain-v4",
+      "base_contracts": [
+        "pi5-capture-transaction-v2",
+        "pi5-capture-transaction-v3",
+        "pi5-capture-transaction-run-unique-v1"
+      ],
+      "run_label": "mdio-phy-id-control-rerun2-20260611T0915Z",
+      "report_kind": "control",
+      "decisive_rp1_hardware_classification_allowed": true,
+      "classification": "capture-chain-v4-ready",
+      "rejection_reasons": [],
+      "endpoint_identity": {
+        "root_endpoint": {
+          "endpoint": "GET /",
+          "curl_exit": 0,
+          "http_code": 404,
+          "body_bytes": 55,
+          "usable_for_selected_tree_identity": false,
+          "selected_tree_identity_source": "/boot/files",
+          "fallback_used": true,
+          "fallback_reason": "root-endpoint-http-non-2xx"
+        },
+        "selected_tree_identity_source": "/boot/files",
+        "fallback_used": true
+      },
+      "proof_run_identity": {
+        "selected_tree_hash": "e2045684027bf936386454a7a24b0debc9b70c12a3675cb2355e95feb016d546",
+        "effective_kernel": "kernel_2712.img",
+        "expected_fetch_path": "da591740/kernel_2712.img",
+        "expected_fetch_byte_count": 49192,
+        "tftp": {
+          "cursor_file": 4442975,
+          "delta_cursor_start": 4442975,
+          "delta_cursor_end": 4444326,
+          "stable": true,
+          "event_count": 13,
+          "expected_fetch_count": 2,
+          "expected_fetch_byte_match_count": 2,
+          "expected_fetch_bytes_seen": [
+            49192,
+            49192
+          ]
+        },
+        "final_pre_restore": {
+          "tree_hash": "e2045684027bf936386454a7a24b0debc9b70c12a3675cb2355e95feb016d546",
+          "effective_kernel": "kernel_2712.img",
+          "selected_tree_still_staged": true,
+          "expected_fetch_present": true,
+          "expected_fetch_bytes": 49192
+        },
+        "restore": {
+          "snapshot_name": "mdio-phy-id-pre-20260611T0855Z",
+          "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+        }
+      },
+      "serial_capture": {
+        "capture_mode": "read",
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+        "cursor_file": 4194304,
+        "cursor_start": 4194304,
+        "cursor_end": 4194304,
+        "response_bytes": 136023,
+        "required_marker": "TALOS: rp1-ethernet-mdio-phy-id-control",
+        "required_marker_occurrences": 50,
+        "required_marker_excerpt": "on=false classification=no-mdio-no-ethernet-rp1-ethernet-mdio-phy-id-control\r\nTALOS: rp1-ethernet-mdio-phy-id-control capture-nonce=mdio-phyid-control-rerun2-20260611T0915Z mdio-phy-id-report-contract-id=phase12-rp1-ethernet-mdio-phy-id-guard-report-contract-v1 source-contract-i",
+        "nonce_token": "capture-nonce=mdio-phyid-control-rerun2-20260611T0915Z",
+        "nonce_token_occurrences": 50,
+        "pre_power_nonce_occurrences": 0,
+        "empty_pre_power": false,
+        "nonce_fresh": true,
+        "serial_freshness_ok": true
+      },
+      "claim_boundary": {
+        "accepted_if_ready": "capture-chain identity/freshness only",
+        "rejected_runtime_claims": [
+          "live-gem-visibility",
+          "ethernet-driver-readiness",
+          "rp1-mmio-dma-programming",
+          "packet-io",
+          "networking",
+          "ssh",
+          "phase-transition"
+        ]
+      },
+      "rule": "missing /boot/files identity, expected TFTP fetch bytes, final selected-tree identity, run-unique marker freshness, direct serial marker retention, or paired control marker prevents decisive RP1 hardware classification"
+    },
+    "serial_classification": "no-mdio-no-ethernet-rp1-ethernet-mdio-phy-id-control",
+    "mdio_target_constructed": false,
+    "man_writes_performed": false,
+    "runtime_mdio_transaction": false,
+    "touched_fields": "none",
+    "serial_marker_excerpt": "TALOS: rp1-ethernet-mdio-phy-id-control capture-nonce=mdio-phyid-control-rerun2-20260611T0915Z mdio-phy-id-report-contract-id=phase12-rp1-ethernet-mdio-phy-id-guard-report-contract-v1 source-contract-id=phase12-rp1-ethernet-mdio-phy-id-source-contract-v1 source-task-id=phase12-rp1-ethernet-mdio-phy-id-source-contract-20260611 report-kind=no-mdio-no-ethernet-control hardware-proof-boundary-classification=hardware-proof-limited-to-mdio-phy-id-control-output target=none controller=none compatible=none phy-handle=none phy-node=none phy-address=none observed-window-macb-mid-context-cpu-physical-target=not-constructed observed-window-macb-mid-context-raw=withheld translated-window-comparator-cpu-physical-target=none ncr-observed-target=not-constructed nsr-observed-target=not-constructed man-observed-target=not-constructed ncr-mpe-bit=withheld nsr-idle-bit=withheld man-data-bits=withheld ncr-before=withheld ncr-mpe-precondition-met=false ncr-after=withheld ncr-mpe-write-performed=false phy-id-registers=withheld physid1-man-frame=withheld physid2-man-frame=withheld nsr-before-physid1=withheld nsr-after-physid1=withheld man-after-physid1=withheld physid1=withheld physid1-valid=false nsr-before-physid2=withheld nsr-after-physid2=withheld man-after-physid2=withheld physid2=withheld physid2-valid=false man-writes-performed=false man-restore-write-performed=false touched-fields=none allowed-classifications=mdio-phy1-physid-visible,mdio-phy1-physid-timeout,mdio-phy1-physid-source-contract-violated-blocker,precise-staging-capture-blocker,no-mdio-no-ethernet-rp1-ethernet-mdio-phy-id-control rejected-runtime-hardware-claims=ethernet-driver-readiness,broad-mdio-or-phy-ownership,ncr-mpe-ownership-or-write-permission,phy-reset-ownership,gpio32-ownership-event-clearing-write-restore-or-reset-success,interrupt-completion,dma-descriptor-rings-channel-ownership-or-transfer-completion,packet-io,networking,sockets,ssh,phase-12-2,phase-transition retained-risks=ncr-mpe-may-be-clear,gpio32-and-eth-rst-n-remain-unowned,visible-phy-id-proves-only-selected-management-transaction,no-link-mac-dma-interrupt-packet-socket-ssh-or-phase-12-2-readiness claims-runtime-mdio-transaction=false claims-mdio-phy-ownership=false claims-mpe-write-permission=false claims-gpio32-phy-reset-ownership=false claims-ethernet-ready=false claims-broad-mmio-ready=false claims-interrupt-completion=false claims-dma-descriptor-ownership=false claims-packet-io=false claims-networking=false claims-sockets=false claims-ssh=false claims-phase-12-2=false claims-phase-transition=false classification=no-mdio-no-ethernet-rp1-ethernet-mdio-phy-id-control\r\n"
+  },
+  "superseded_first_run": {
+    "reason": "first candidate/control run passed capture-chain-v4 but candidate report overclaimed runtime MDIO transaction and touched MAN when NCR.MPE precondition blocked writes; code/report was fixed and rerun2 is accepted evidence",
+    "candidate_run_dir": "candidate-run",
+    "control_run_dir": "control-run"
+  },
+  "final_lab_restore": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img"
+  },
+  "rejected_claims": [
+    "visible PHY-ID read",
+    "runtime MDIO transaction",
+    "NCR.MPE write ownership",
+    "broad MDIO/PHY ownership",
+    "PHY reset ownership",
+    "GPIO32 ownership or event clear/write-restore retry",
+    "Ethernet driver readiness",
+    "interrupt completion",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "next_action": "Promote phase12-rp1-ethernet-mdio-phy-id-proof-closeout-20260611 on the next worker wake if this proof is accepted and committed."
+}

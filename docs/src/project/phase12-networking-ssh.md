@@ -1129,7 +1129,7 @@ source/docs/evidence contract for the smallest useful non-GPIO32 MDIO/PHY-ID
 discriminator. The selected future candidate is a paired Clause 22 PHY-ID read
 for rp1_eth phy1 / ethernet-phy@1 address 1, using MII_PHYSID1 register 0x02
 and MII_PHYSID2 register 0x03. The source-backed observed-window targets are
-NCR at 0x1c00100000, NSR at 0x1c00100008, and MAN at 0x1c00100034. A future
+NCR at 0x1c00000000, NSR at 0x1c00000008, and MAN at 0x1c00000034. A future
 candidate must require NCR.MPE bit 4 already set or classify
 source-contract-violated-blocker without writing NCR; it must poll NSR.IDLE
 bit 2 before and after each MAN write; and it must extract 16-bit results from
@@ -1142,3 +1142,18 @@ This contract does not execute MDIO, does not accept NCR.MPE write ownership,
 does not require GPIO32/PHY reset success, and does not accept full MDIO/PHY
 ownership, Ethernet driver readiness, interrupts, DMA/descriptors, packet I/O,
 networking, sockets, SSH, Phase 12.2, or a phase transition.
+
+phase12-rp1-ethernet-mdio-phy-id-pi5-proof-20260611 accepts the serialized
+Pi 5 MDIO/PHY-ID proof as a no-write source-contract blocker. Candidate and
+paired no-MDIO control both passed capture-chain-v4 with selected-tree
+identity, run-unique serial markers, stable TFTP deltas, final pre-restore
+identity, and restore evidence. The candidate observed MACB_MID context
+0x70109 at 0x1c001000fc and NCR 0x20001927 at 0x1c00000000, but NCR.MPE bit
+4 was clear, so it classified as
+mdio-phy1-physid-source-contract-violated-blocker without writing NCR, MAN,
+or GPIO32/PHY reset state. The paired control constructed no MDIO target and
+classified as no-mdio-no-ethernet-rp1-ethernet-mdio-phy-id-control. This
+proof accepts no visible PHY-ID read, runtime MDIO transaction, NCR.MPE write
+ownership, broad MDIO/PHY ownership, PHY reset ownership, Ethernet driver
+readiness, interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH,
+Phase 12.2, or phase transition.

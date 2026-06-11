@@ -1,0 +1,8 @@
+candidate_archive=tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof/archive-review/candidate.tar.gz
+candidate_archive_sha256=3c6733b76cd59937bb8f214ddb02a765f69484c1c032cb16bcf6d2a6c66972b6
+kernel_2712_sha256=5874ffb925a5e3595398a38523b1bc6de07bc6d03ad99b61aed70c5f1d0ea34f
+kernel_2712_size=50064
+header_image_size=50064
+text_offset=0
+flags=12
+forbidden_mdio_phy_id_candidate_runtime_strings_absent=true

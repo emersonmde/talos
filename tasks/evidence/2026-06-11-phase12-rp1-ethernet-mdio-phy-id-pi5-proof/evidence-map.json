@@ -1,0 +1,42 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-phy-id-pi5-proof-20260611",
+  "artifacts": [
+    "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof.md",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof/classification.json",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof/capture-summary.json",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof/evidence-map.json",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof/archive-review/candidate-rerun2-review.txt",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof/archive-review/control-rerun2-review.txt",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof/candidate-rerun2/v4-check.json",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof/control-rerun2/v4-check.json",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof/candidate-rerun2/serial-marker-lines.first.txt",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof/control-rerun2/serial-marker-lines.first.txt",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof/final-lab-status-before-lock-release.json",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof/final-lab-boot-files-before-lock-release.json",
+    "scripts/rpi5-rp1-ethernet-mdio-phy-id-candidate-archive.sh",
+    "scripts/rpi5-rp1-ethernet-mdio-phy-id-control-archive.sh",
+    "scripts/rpi5-rp1-ethernet-mdio-phy-id-candidate-review.sh",
+    "scripts/rpi5-rp1-ethernet-mdio-phy-id-control-review.sh",
+    "src/main.rs",
+    "src/target/rpi5.rs",
+    "build.rs",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "evidence_levels": [
+    "static archive review",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "TFTP delta",
+    "capture-chain-v4 replay",
+    "documentation build"
+  ],
+  "accepted_runs": [
+    "candidate-rerun2",
+    "control-rerun2"
+  ],
+  "superseded_runs_retained": [
+    "candidate-run",
+    "control-run"
+  ]
+}

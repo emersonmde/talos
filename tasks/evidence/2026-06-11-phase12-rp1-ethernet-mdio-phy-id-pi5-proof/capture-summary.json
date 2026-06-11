@@ -1,0 +1,33 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-phy-id-pi5-proof-20260611",
+  "classification": "mdio-phy1-physid-source-contract-violated-blocker",
+  "candidate": {
+    "run_dir": "candidate-rerun2",
+    "capture_chain_classification": "capture-chain-v4-ready",
+    "selected_tree_hash": "5bc71791d508809a451aead9ebe643de5114a0647e5a8fa8670dd16d24c694a7",
+    "expected_fetch_byte_count": 50120,
+    "required_marker_occurrences": 49,
+    "serial_classification": "mdio-phy1-physid-source-contract-violated-blocker",
+    "ncr_before": "0x20001927",
+    "ncr_mpe_precondition_met": false,
+    "man_writes_performed": false,
+    "claims_runtime_mdio_transaction": false,
+    "touched_fields": "none"
+  },
+  "control": {
+    "run_dir": "control-rerun2",
+    "capture_chain_classification": "capture-chain-v4-ready",
+    "selected_tree_hash": "e2045684027bf936386454a7a24b0debc9b70c12a3675cb2355e95feb016d546",
+    "expected_fetch_byte_count": 49192,
+    "required_marker_occurrences": 50,
+    "serial_classification": "no-mdio-no-ethernet-rp1-ethernet-mdio-phy-id-control",
+    "man_writes_performed": false,
+    "claims_runtime_mdio_transaction": false,
+    "touched_fields": "none"
+  },
+  "hardware_lock": {
+    "acquired_at": "2026-06-11T08:55:00Z",
+    "released_at": "2026-06-11T09:25:00Z",
+    "restored": true
+  }
+}

@@ -9689,7 +9689,7 @@ phase12-rp1-ethernet-mdio-phy-id-source-contract-20260611 accepts the
 source/docs/evidence contract for a paired Clause 22 PHY-ID discriminator on
 rp1_eth phy1 / ethernet-phy@1 address 1. The selected future registers are
 MII_PHYSID1 0x02 and MII_PHYSID2 0x03 through observed-window NCR
-0x1c00100000, NSR 0x1c00100008, and MAN 0x1c00100034. A future candidate
+0x1c00000000, NSR 0x1c00000008, and MAN 0x1c00000034. A future candidate
 must require NCR.MPE bit 4 already set or classify
 source-contract-violated-blocker without writing NCR, poll NSR.IDLE bit 2
 before and after each MAN write, use MAN frames 0x600a0000 and 0x600e0000,
@@ -9699,6 +9699,20 @@ This contract accepts no runtime MDIO evidence, NCR.MPE write ownership,
 GPIO32/PHY reset success, broad MDIO/PHY ownership, Ethernet driver behavior,
 interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH,
 Phase 12.2, or phase transition.
+
+phase12-rp1-ethernet-mdio-phy-id-pi5-proof-20260611 accepts the serialized
+Pi 5 MDIO/PHY-ID proof as a no-write source-contract blocker. Candidate and
+paired control passed capture-chain-v4 with selected-tree identity,
+run-unique serial markers, stable TFTP deltas, final pre-restore identity,
+and restore evidence. Candidate observed MACB_MID context 0x70109 and NCR
+0x20001927, but NCR.MPE bit 4 was clear, so it classified as
+mdio-phy1-physid-source-contract-violated-blocker with man-writes-performed=false,
+claims-runtime-mdio-transaction=false, and touched-fields=none. The control
+classified as no-mdio-no-ethernet-rp1-ethernet-mdio-phy-id-control. The proof
+accepts no visible PHY-ID read, NCR.MPE write ownership, broad MDIO/PHY
+ownership, PHY reset ownership, Ethernet driver behavior, interrupts,
+DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, or phase
+transition.
 
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
