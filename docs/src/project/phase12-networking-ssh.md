@@ -1068,3 +1068,21 @@ ownership, GPIO32 write/restore retry or success, PHY reset
 assertion/deassertion, MDIO/PHY ownership, Ethernet driver behavior,
 interrupt completion, DMA/descriptors, packet I/O, networking, sockets, SSH,
 Phase 12.2, or a phase transition.
+
+phase12-rp1-ethernet-gpio32-event-clear-pi5-proof-20260611 accepts the
+serialized event-clear proof as an event-clear persistent/firmware-owned
+blocker. The candidate passed capture-chain-v4, matched the accepted pre-state
+STATUS 0x0abe3300, CTRL 0x85, RIO1 OUT/OE 0x10, RIO1 IN 0x12, pad 0x56, and
+event bits 0x0ab00000, then wrote only GPIO32 CTRL SET IRQRESET value
+0x10000000. Post-readback preserved CTRL/RIO/pad invariants but retained
+event bits 0x08800000, so event clearing did not prove ownership or clear the
+source-backed event state. The accepted paired control-rerun2 passed the same
+capture-chain-v4 path with no GPIO32/RIO/pad/MMIO target construction and no
+event clear.
+
+This proof accepts only the persistent/source-owned event-state blocker with
+no-reset/no-output invariants preserved. It does not accept GPIO32 ownership,
+PHY reset assertion/deassertion, GPIO32 write/restore retry or success,
+MDIO/PHY ownership, Ethernet driver behavior, interrupt completion,
+DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase
+transition.

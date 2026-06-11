@@ -1,0 +1,34 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-event-clear-pi5-proof-20260611",
+  "capture_chain": "pi5-capture-chain-v4",
+  "candidate": {
+    "label": "event-clear-candidate-20260611T0520Z",
+    "bundle": "candidate-run",
+    "v4_check": "capture-chain-v4-ready",
+    "expected_tree_hash": "8d4e5dacebe7ebbc467e52236d351f13511b74d44eb4be5a825e3b487bf2ed19",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 51128,
+    "tftp_expected_fetch_count": 2,
+    "run_unique_nonce": "eventclear-candidate-20260611T0500Z",
+    "classification": "event-clear-persistent-or-firmware-owned-blocker"
+  },
+  "control": {
+    "label": "event-clear-control-rerun2-20260611T0528Z",
+    "bundle": "control-rerun2",
+    "v4_check": "capture-chain-v4-ready",
+    "expected_tree_hash": "7bd3b8ac723d9559128f8c07fbd7436bf56481b961465ec3177a745527577b26",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 49616,
+    "tftp_expected_fetch_count": 2,
+    "run_unique_nonce": "eventclear-control-rerun2-20260611T0528Z",
+    "classification": "no-gpio-no-ethernet-rp1-ethernet-gpio32-event-clear-control"
+  },
+  "restore": {
+    "snapshot_name": "pre-event-clear-proof-20260611T0520Z",
+    "final_status": "post-final-restore-status.json"
+  },
+  "notes": [
+    "An earlier control attempt used a reused nonce and was rejected before acceptance; control-rerun2 supersedes it as the accepted paired control.",
+    "Candidate preserved CTRL/RIO/pad/output invariants after the selected IRQRESET write, but STATUS event bits persisted as 0x08800000."
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-event-clear-pi5-proof-20260611",
+  "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-pi5-proof.md",
+  "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-pi5-proof/classification.json",
+  "capture_summary": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-pi5-proof/capture-summary.json",
+  "candidate_bundle": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-pi5-proof/candidate-run",
+  "control_bundle": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-pi5-proof/control-rerun2",
+  "archive_review": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-pi5-proof/archive-review",
+  "restore_snapshot": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-pi5-proof/restore-snapshot-create.json",
+  "final_restore": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-pi5-proof/final-restore.json",
+  "post_restore_status": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-pi5-proof/post-final-restore-status.json",
+  "source_contract": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-source-contract.md",
+  "guard_core": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-guard-core.md",
+  "guard_closeout": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-guard-closeout.md",
+  "implementation": [
+    "src/target/rpi5.rs",
+    "src/main.rs",
+    "build.rs",
+    "scripts/rpi5-rp1-ethernet-gpio32-event-clear-candidate-archive.sh",
+    "scripts/rpi5-rp1-ethernet-gpio32-event-clear-control-archive.sh",
+    "scripts/rpi5-rp1-ethernet-gpio32-event-clear-candidate-review.sh",
+    "scripts/rpi5-rp1-ethernet-gpio32-event-clear-control-review.sh"
+  ],
+  "validation": [
+    "cargo fmt --all -- --check",
+    "cargo -Zjson-target-spec check --quiet --target targets/aarch64-talos-rpi5-bcm2712.json",
+    "candidate/control archive review scripts",
+    "candidate/control capture-chain-v4 checks",
+    "jq empty on task-owned JSON",
+    "git diff --check",
+    "mdbook build",
+    "git diff --cached --check"
+  ]
+}

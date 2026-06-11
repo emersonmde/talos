@@ -1,0 +1,61 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-event-clear-pi5-proof-20260611",
+  "classification": "event-clear-persistent-or-firmware-owned-blocker",
+  "evidence_level": "serial hardware boot/output plus lab-controller API identity, TFTP, archive, and restore evidence",
+  "candidate": {
+    "bundle": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-pi5-proof/candidate-run",
+    "capture_chain_v4": "capture-chain-v4-ready",
+    "serial_classification": "event-clear-persistent-or-firmware-owned-blocker",
+    "pre_status": "0x0abe3300",
+    "pre_ctrl": "0x85",
+    "pre_rio1_out": "0x10",
+    "pre_rio1_oe": "0x10",
+    "pre_rio1_in": "0x12",
+    "pre_pad": "0x56",
+    "pre_event_bits": "0x0ab00000",
+    "event_clear_write_value": "0x10000000",
+    "event_clear_performed": true,
+    "post_status": "0x088e3300",
+    "post_ctrl": "0x85",
+    "post_rio1_out": "0x10",
+    "post_rio1_oe": "0x10",
+    "post_rio1_in": "0x12",
+    "post_pad": "0x56",
+    "post_event_bits": "0x08800000",
+    "invariants": {
+      "ctrl_non_irqreset_preserved": true,
+      "rio1_out_preserved": true,
+      "rio1_oe_preserved": true,
+      "rio1_in_preserved": true,
+      "pad_preserved": true
+    }
+  },
+  "control": {
+    "bundle": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-pi5-proof/control-rerun2",
+    "capture_chain_v4": "capture-chain-v4-ready",
+    "serial_classification": "no-gpio-no-ethernet-rp1-ethernet-gpio32-event-clear-control",
+    "event_clear_performed": false,
+    "constructed_gpio32_rio_pad_mmio_targets": false,
+    "touched_fields": "none"
+  },
+  "restore": {
+    "snapshot_name": "pre-event-clear-proof-20260611T0520Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "rejected_claims": [
+    "GPIO32 ownership",
+    "PHY reset assertion or deassertion",
+    "GPIO32 write/restore retry or success",
+    "MDIO/PHY ownership",
+    "Ethernet driver readiness",
+    "interrupt completion",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "next_action": "Promote phase12-rp1-ethernet-gpio32-event-clear-proof-closeout-20260611 if mechanically unblocked; do not treat persistent/source-owned event state as GPIO32 or PHY reset ownership."
+}

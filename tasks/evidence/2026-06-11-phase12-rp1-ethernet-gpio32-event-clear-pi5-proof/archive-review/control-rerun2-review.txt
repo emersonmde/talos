@@ -1,0 +1,8 @@
+control_archive=target/talos-rpi5-rp1-ethernet-gpio32-event-clear-control-rerun2.tar.gz
+control_archive_sha256=19739cff86caceba6aa7fb6129a7621f250e55cc1e6a926c0c6fb94db877c379
+kernel_2712_sha256=caf3651e2e7afe878d9afe9b1ddb63cb4595d08aa3fff4fa2f95615ae5805068
+kernel_2712_size=49616
+header_image_size=49616
+text_offset=0
+flags=12
+forbidden_gpio32_event_clear_control_runtime_strings_absent=true
