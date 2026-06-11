@@ -1086,3 +1086,18 @@ PHY reset assertion/deassertion, GPIO32 write/restore retry or success,
 MDIO/PHY ownership, Ethernet driver behavior, interrupt completion,
 DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase
 transition.
+
+phase12-rp1-ethernet-gpio32-event-clear-proof-closeout-20260611 closes the
+event-clear proof frontier as
+rp1-ethernet-gpio32-event-clear-persistent-or-firmware-owned-frontier-closed.
+Same-shaped event-clear hardware retries are closed for this candidate/control
+pair. The accepted proof already showed the guarded IRQRESET write preserved
+CTRL/RIO/pad/no-output invariants while event bits persisted, so repeating the
+same write would not prove GPIO32 ownership, PHY reset ownership, or whether
+firmware owns or reasserts the event state.
+
+Future GPIO32 ownership, GPIO32 write/restore retry, PHY reset, MDIO/PHY,
+Ethernet driver, interrupt, DMA/descriptor, packet I/O, networking, socket,
+SSH, Phase 12.2, or phase-transition work requires supervisor planning with a
+qualitatively different discriminator or explicit ownership contract. This
+closeout does not accept those claims.

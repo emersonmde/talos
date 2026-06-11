@@ -1,0 +1,22 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-event-clear-proof-closeout-20260611",
+  "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-proof-closeout.md",
+  "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-proof-closeout/classification.json",
+  "accepted_proof_task": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-pi5-proof.md",
+  "accepted_proof_classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-pi5-proof/classification.json",
+  "accepted_proof_evidence_map": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-pi5-proof/evidence-map.json",
+  "accepted_proof_capture_summary": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-pi5-proof/capture-summary.json",
+  "accepted_candidate_bundle": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-pi5-proof/candidate-run",
+  "accepted_control_bundle": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-pi5-proof/control-rerun2",
+  "project_docs": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "validation": [
+    "static inspection of accepted proof task, proof JSON, capture summary, project docs, roadmap, and git history",
+    "jq empty on task-owned proof and closeout JSON",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check"
+  ]
+}

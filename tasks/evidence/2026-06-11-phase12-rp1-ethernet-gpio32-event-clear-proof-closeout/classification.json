@@ -1,0 +1,64 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-event-clear-proof-closeout-20260611",
+  "classification": "rp1-ethernet-gpio32-event-clear-persistent-or-firmware-owned-frontier-closed",
+  "evidence_level": "static inspection closeout over accepted serial hardware boot/output proof",
+  "accepted_boundary": {
+    "type": "GPIO32 event-clear discriminator with invariant preservation",
+    "proof_task": "phase12-rp1-ethernet-gpio32-event-clear-pi5-proof-20260611",
+    "proof_commit": "8a26bbbe",
+    "candidate_classification": "event-clear-persistent-or-firmware-owned-blocker",
+    "control_classification": "no-gpio-no-ethernet-rp1-ethernet-gpio32-event-clear-control",
+    "pre_status": "0x0abe3300",
+    "pre_ctrl": "0x85",
+    "pre_rio1_out": "0x10",
+    "pre_rio1_oe": "0x10",
+    "pre_rio1_in": "0x12",
+    "pre_pad": "0x56",
+    "pre_event_bits": "0x0ab00000",
+    "event_clear_write_value": "0x10000000",
+    "event_clear_performed": true,
+    "post_status": "0x088e3300",
+    "post_ctrl": "0x85",
+    "post_rio1_out": "0x10",
+    "post_rio1_oe": "0x10",
+    "post_rio1_in": "0x12",
+    "post_pad": "0x56",
+    "post_event_bits": "0x08800000",
+    "invariants_preserved": {
+      "ctrl_non_irqreset": true,
+      "rio1_out": true,
+      "rio1_oe": true,
+      "rio1_in": true,
+      "pad": true
+    }
+  },
+  "same_shaped_retry_policy": {
+    "classification": "closed",
+    "scope": "same GPIO32 event-clear candidate/control hardware retry",
+    "reason": "The accepted proof already retained capture-chain-v4 candidate/control evidence and showed persistent event bits after the guarded IRQRESET write while preserving invariants. Repeating the same write would not prove GPIO32 ownership, PHY reset ownership, or whether firmware owns or reasserts the event state."
+  },
+  "rejected_claims": [
+    "GPIO32 ownership",
+    "PHY reset assertion or deassertion",
+    "GPIO32 write/restore retry or success",
+    "MDIO/PHY ownership",
+    "Ethernet driver readiness",
+    "interrupt completion",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "event bits remain persistent or firmware-owned after the accepted clear attempt",
+    "firmware reassertion versus harmless latched state remains undecided",
+    "GPIO32 / ETH_RST_N ownership remains unproven",
+    "next follow-up requires supervisor planning for a qualitatively different ownership or source-state discriminator"
+  ],
+  "planning_needed": true,
+  "planning_reason": "Accepted event-clear proof closed the current event-clear discriminator frontier, but the persistent/firmware-owned blocker leaves no bounded GPIO32 ownership follow-up mechanically objective without supervisor planning.",
+  "next_action": "Supervisor planning required before any GPIO32 ownership, GPIO32 write/restore retry, PHY reset, MDIO/PHY, Ethernet driver, packet I/O, networking, SSH, Phase 12.2, or phase transition work."
+}
