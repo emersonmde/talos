@@ -1332,3 +1332,17 @@ broad MDIO/PHY ownership, link state, Ethernet driver behavior, interrupts,
 DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase
 transition. The visible 0xffff/0xffff result remains evidence for the selected
 transaction boundary only, not for a responsive PHY or usable Ethernet link.
+
+phase12-rp1-ethernet-mdio-phy-id-after-mpe-proof-closeout-20260611 closes the
+corrected-target after-MPE PHY-ID frontier as
+rp1-ethernet-mdio-phy-id-after-mpe-visible-frontier-closed. Same-shaped
+after-MPE PHY-ID hardware retries are closed for this candidate/control pair:
+repetition can reconfirm the selected MAN transaction and 0xffff/0xffff
+MAN.DATA return boundary, but cannot prove PHY responsiveness, ETH_RST_N/GPIO32
+ownership, link state, Ethernet driver behavior, or broad MDIO/PHY ownership.
+
+No explicit bounded follow-up remains mechanically objective from this
+closeout. Supervisor planning is required before any PHY reset
+assertion/deassertion, post-reset MDIO discriminator, broad MDIO/PHY ownership,
+Ethernet driver implementation, DMA/descriptors, interrupts, packet I/O,
+networking, sockets, SSH, Phase 12.2, or phase transition work starts.

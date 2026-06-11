@@ -1,0 +1,42 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-phy-id-after-mpe-proof-closeout-20260611",
+  "classification": "rp1-ethernet-mdio-phy-id-after-mpe-visible-frontier-closed",
+  "evidence_level": "static inspection of accepted after-MPE MDIO PHY-ID proof task record, classification/evidence JSON, capture summary, Phase 12 docs, roadmap, and git history",
+  "accepted_boundary": {
+    "candidate_classification": "mdio-phy1-physid-after-mpe-visible",
+    "control_classification": "no-mdio-no-ethernet-rp1-ethernet-mdio-phy-id-after-mpe-control",
+    "capture_chain_v4": "candidate and control ready",
+    "macb_mid_context_raw": "0x70109",
+    "ncr_before": "0x10",
+    "ncr_mpe_precondition_met": true,
+    "ncr_mpe_write_performed": false,
+    "man_writes_performed": true,
+    "physid1": "0xffff",
+    "physid2": "0xffff",
+    "accepted_claim": "selected corrected-target after-MPE MAN transaction and MAN.DATA return boundary only"
+  },
+  "same_shaped_retry_policy": "closed for this candidate/control pair; a repeat would not prove PHY responsiveness, PHY reset ownership, link state, Ethernet driver behavior, or broader MDIO/PHY ownership",
+  "rejected_claims": [
+    "PHY responsiveness",
+    "link state",
+    "PHY reset or GPIO32 ownership",
+    "broad MDIO or PHY ownership",
+    "Ethernet driver readiness",
+    "interrupt completion",
+    "DMA descriptors or transfer completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "0xffff/0xffff is a visible MAN.DATA return value for the selected transactions, not proof of a responsive PHY or usable link.",
+    "GPIO32 and ETH_RST_N remain unowned.",
+    "Future work needs a supervisor-planned qualitatively different discriminator or ownership prerequisite."
+  ],
+  "planning_needed": true,
+  "planning_reason": "Corrected-target after-MPE PHY-ID proof closeout is accepted, same-shaped retries are closed, and no explicit queued follow-up with acceptance criteria remains; the accepted 0xffff/0xffff return does not make PHY reset, broad MDIO/PHY ownership, Ethernet driver, packet I/O, networking, sockets, SSH, Phase 12.2, or phase transition work mechanically objective.",
+  "next_action": "Supervisor planning required for the next explicitly scoped Phase 12.1 prerequisite or ownership task."
+}

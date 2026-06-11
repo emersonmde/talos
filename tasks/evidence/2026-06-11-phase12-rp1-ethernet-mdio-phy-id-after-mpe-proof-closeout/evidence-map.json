@@ -1,0 +1,92 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-phy-id-after-mpe-proof-closeout-20260611",
+  "inputs": [
+    {
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof.md",
+      "notes": "Accepted serialized Pi 5 corrected-target after-MPE MDIO PHY-ID proof."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof/classification.json",
+      "notes": "Accepted proof classification with candidate/control boundary and retained risks."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof/evidence-map.json",
+      "notes": "Proof evidence map and validation summary."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof/capture-summary.json",
+      "notes": "Candidate/control capture summary."
+    },
+    {
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "notes": "Phase 12 frontier documentation inspected and updated with closeout boundary."
+    },
+    {
+      "path": "docs/src/roadmap.md",
+      "notes": "Roadmap inspected and updated with closeout boundary."
+    },
+    {
+      "path": "git history",
+      "notes": "Accepted proof commit eed28a2bb185d55f58180626dc4718af0fc6d54a inspected as predecessor."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-proof-closeout.md",
+      "notes": "Accepted closeout task record."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-proof-closeout/classification.json",
+      "notes": "Closeout classification, retry policy, retained risks, and planning-needed reason."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-proof-closeout/evidence-map.json",
+      "notes": "Closeout input/output and validation evidence map."
+    },
+    {
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "notes": "Updated with accepted closeout boundary and planning requirement."
+    },
+    {
+      "path": "docs/src/roadmap.md",
+      "notes": "Updated with accepted closeout boundary and planning requirement."
+    }
+  ],
+  "validation": [
+    {
+      "level": "static inspection",
+      "commands_or_actions": [
+        "Inspected accepted proof task record, proof classification/evidence-map/capture-summary JSON, Phase 12 docs, roadmap, and git history."
+      ],
+      "result": "passed"
+    },
+    {
+      "level": "JSON checks",
+      "commands_or_actions": [
+        "jq empty on proof and closeout classification/evidence-map JSON"
+      ],
+      "result": "passed"
+    },
+    {
+      "level": "diff check",
+      "commands_or_actions": [
+        "git diff --check"
+      ],
+      "result": "passed"
+    },
+    {
+      "level": "documentation build",
+      "commands_or_actions": [
+        "/home/node/.cargo/bin/mdbook build"
+      ],
+      "result": "passed"
+    },
+    {
+      "level": "staged diff check",
+      "commands_or_actions": [
+        "git diff --cached --check"
+      ],
+      "result": "passed"
+    }
+  ]
+}
