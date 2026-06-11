@@ -1,0 +1,32 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-proof-closeout-20260611",
+  "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-proof-closeout.md",
+  "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-proof-closeout/classification.json",
+  "inspected_inputs": {
+    "retry_task_record": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery.md",
+    "retry_classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/classification.json",
+    "retry_capture_summary": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/capture-summary.json",
+    "retry_evidence_map": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/evidence-map.json",
+    "candidate_v4_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/candidate-run/v4-check.json",
+    "candidate_capture_summary": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/candidate-run/capture-invariant-summary.json",
+    "control_v4_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-retry-after-staging-recovery/control-run/v4-check.json",
+    "phase12_doc": "docs/src/project/phase12-networking-ssh.md",
+    "roadmap": "docs/src/roadmap.md",
+    "git_commit": "09cdc499bc578935c05b72b18082f5ca6a2c0fb9"
+  },
+  "accepted_claims": [
+    "mdio-register-vector-retry-evidence-inconsistent-frontier-blocked",
+    "candidate JSON evidence is capture-staging-blocked",
+    "control JSON evidence is capture-chain-v4-ready"
+  ],
+  "rejected_claims": [
+    "accepted current-run candidate register-vector hardware proof",
+    "broad MDIO or PHY ownership",
+    "Ethernet driver readiness",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "next_action": "Supervisor planning required for a bounded recovery/retry or qualitatively different discriminator."
+}
