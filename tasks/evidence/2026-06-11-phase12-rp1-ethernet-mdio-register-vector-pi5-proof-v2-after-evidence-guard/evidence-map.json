@@ -1,0 +1,65 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard-20260611",
+  "status": "blocked",
+  "classification": "mdio-register-vector-guarded-v2-candidate-identity-mismatch-blocker",
+  "candidate": {
+    "v4_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/candidate-run/v4-check.json"
+  },
+  "control": {
+    "v4_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/control-run/v4-check.json"
+  },
+  "artifacts": [
+    {
+      "label": "pre-publication triage",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/pre-publication-triage.json"
+    },
+    {
+      "label": "candidate static archive review",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/archive-review/candidate-static-review.txt"
+    },
+    {
+      "label": "control static archive review",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/archive-review/control-static-review.txt"
+    },
+    {
+      "label": "candidate publication",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/candidate-run/publication.json"
+    },
+    {
+      "label": "candidate v4 check",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/candidate-run/v4-check.json"
+    },
+    {
+      "label": "control v4 check",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/control-run/v4-check.json"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/classification.json"
+    },
+    {
+      "label": "capture summary",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/capture-summary.json"
+    },
+    {
+      "label": "final lab restore state",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/final-lab-status.json"
+    }
+  ],
+  "rejected_claims": [
+    "candidate register-vector MAN.DATA values as hardware proof",
+    "candidate/control pair as accepted register-vector proof",
+    "broad MDIO or PHY ownership",
+    "PHY absence from all-ones values",
+    "GPIO32/PHY reset ownership",
+    "Ethernet driver readiness",
+    "interrupt completion",
+    "DMA descriptor/channel ownership or transfer completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ]
+}

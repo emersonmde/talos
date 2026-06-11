@@ -1,0 +1,8 @@
+candidate_archive=tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/candidate-archive.tar.gz
+candidate_archive_sha256=528608dfed1328a37dd47b6640382ef95a62346a84dd38802c89fceb3bae1840
+kernel_2712_sha256=53c5d28981ab8095df859ffd62674607ff7331aeb81dcc9b36d91535a112ddd8
+kernel_2712_size=52352
+header_image_size=52352
+text_offset=0
+flags=12
+forbidden_mdio_register_vector_candidate_runtime_strings_absent=true

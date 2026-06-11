@@ -1,0 +1,41 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard-20260611",
+  "triage_contract": "pre-publication-prior-inconclusive-run-triage",
+  "current_restore_state": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_2712_bytes": 104136
+  },
+  "prior_blocker": {
+    "candidate_classification": "capture-staging-blocked",
+    "candidate_allowed": false,
+    "candidate_rejection_reasons": [
+      "run-unique-serial-freshness-not-proven",
+      "run-unique-capture-nonce-present-before-power",
+      "run-unique-capture-nonce-not-present-after-power",
+      "required-marker-not-present-after-power",
+      "tftp-expected-fetch-byte-mismatch",
+      "final-pre-restore-selected-tree-mismatch",
+      "final-pre-restore-expected-fetch-byte-mismatch"
+    ],
+    "candidate_selected_tree_hash": "b901be8a925e644ffc3f932d258ed7413522f95a8a36a3df7c8ae5182ee745fc",
+    "candidate_expected_fetch_bytes": 52344,
+    "candidate_final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "candidate_serial_marker_occurrences": 0,
+    "control_classification": "capture-chain-v4-ready",
+    "control_allowed": true
+  },
+  "retry_expectations": {
+    "candidate_archive_sha256_line": "528608dfed1328a37dd47b6640382ef95a62346a84dd38802c89fceb3bae1840  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/candidate-archive.tar.gz",
+    "control_archive_sha256_line": "a6ccdf39e8f4dfeed52319973b2f48002105588664b1270c1d5514674ccc4856  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/control-archive.tar.gz",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "fresh_serial_cursor_source": "capture bundle serial drain before each power cycle",
+    "tftp_delta_source": "capture bundle stable same-cursor delta before each restore",
+    "control_identity_assumption": "paired no-MDIO/no-Ethernet archive must construct no target, no MAN frame, no volatile access, and no touched fields",
+    "restore_snapshot": "pre-mdio-regvec-guarded-v2-20260611T1737Z"
+  },
+  "tftp_tail_before_publication": {
+    "cursor_end": 4465942,
+    "event_count": 1
+  }
+}

@@ -1,0 +1,1 @@
+TALOS: rp1-ethernet-mdio-register-vector-candidate capture-nonce=guarded-v2-candidate-20260611T1730Z

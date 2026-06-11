@@ -1,0 +1,1 @@
+a6ccdf39e8f4dfeed52319973b2f48002105588664b1270c1d5514674ccc4856  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v2-after-evidence-guard/control-archive.tar.gz
