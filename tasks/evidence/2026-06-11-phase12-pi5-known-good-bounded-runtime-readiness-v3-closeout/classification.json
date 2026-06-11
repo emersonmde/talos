@@ -1,0 +1,69 @@
+{
+  "task_id": "phase12-pi5-known-good-bounded-runtime-readiness-v3-closeout-20260611",
+  "classification": "valid-known-good-talos-readiness-v3-closeout",
+  "accepted_valid_known_good_talos_readiness_v3": true,
+  "source_proof_task_id": "phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof-20260611",
+  "source_proof_commit": "a09cfaf3c0f555db65c91eae1c7084db60d0c323",
+  "source_proof_classification": "valid-known-good-talos-readiness-v3",
+  "run_label": "known-good-runtime-readiness-v3-20260611T0100Z",
+  "retained_primary_artifact": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/known-good-runtime-readiness-v3-20260611T0100Z-runtime-readiness-primary.json",
+  "retained_primary_summary": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/known-good-runtime-readiness-v3-20260611T0100Z-runtime-readiness-primary-summary.json",
+  "readiness_v3_classifier": {
+    "artifact": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/readiness-v3-classification.json",
+    "valid_known_good_talos_readiness_v3": true,
+    "classification": "valid-known-good-talos-readiness-v3",
+    "required_success_marker": "rpi5-production-timer-preemption: PASS",
+    "has_required_success_marker": true,
+    "has_kernel_main": false,
+    "kernel_main_policy": "metadata-only-not-required",
+    "stable_boot_identity": true,
+    "stable_tftp_delta": true,
+    "served_effective_kernel_fetch_count": 2
+  },
+  "boot_identity": {
+    "pre_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "final_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "configured_kernel": "kernel_2712.img",
+    "stable": true
+  },
+  "tftp_stability": {
+    "artifact": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/tftp-delta-stable.json",
+    "stable": true,
+    "stable_samples": 3,
+    "served_effective_kernel_fetch_count": 2
+  },
+  "hardware_lock_release": {
+    "artifact": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/hardware-lock-released.json",
+    "released": true,
+    "restored": true,
+    "final_identity_stable": true
+  },
+  "gpio32_v2_selection": {
+    "selected": true,
+    "selected_task_id": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof-20260610",
+    "guard_closeout_commit": "2fe07090fe0e69b82c6c0bbe2328a77879440fc5",
+    "guard_closeout_commit_verified": true,
+    "selection_reason": "valid-known-good-talos-readiness-v3 is accepted and the queued GPIO32 v2 dependency names the unchanged guard closeout commit",
+    "requires_hardware_lock_before_future_hardware_action": true
+  },
+  "retained_risks": [
+    "TALOS: kernel_main absent from retained primary serial window; v3 records this as metadata rather than a mandatory readiness marker",
+    "GPIO32 write/restore v2 remains unrun and must be serialized under hardwareTestLock"
+  ],
+  "rejected_claims": [
+    "GPIO32 write/restore success",
+    "PHY reset behavior",
+    "MDIO/PHY ownership",
+    "Ethernet driver behavior",
+    "DMA/descriptors",
+    "interrupts",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "nextAction": "Mechanically promote phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-pi5-proof-20260610 on the next worker wake if hardwareTestLock remains unlocked and supervisorIntervention remains inactive."
+}
