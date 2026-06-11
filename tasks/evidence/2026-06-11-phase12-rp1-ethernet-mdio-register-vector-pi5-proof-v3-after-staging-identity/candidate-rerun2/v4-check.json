@@ -1,0 +1,82 @@
+{
+  "contract_version": "pi5-capture-chain-v4",
+  "base_contracts": [
+    "pi5-capture-transaction-v2",
+    "pi5-capture-transaction-v3",
+    "pi5-capture-transaction-run-unique-v1"
+  ],
+  "run_label": "register-vector-v3-candidate-rerun2-20260611T2000Z",
+  "report_kind": "candidate",
+  "decisive_rp1_hardware_classification_allowed": false,
+  "classification": "capture-staging-blocked",
+  "rejection_reasons": [
+    "tftp-expected-fetch-byte-mismatch",
+    "final-pre-restore-selected-tree-mismatch",
+    "final-pre-restore-expected-fetch-byte-mismatch"
+  ],
+  "endpoint_identity": {
+    "root_endpoint": {},
+    "selected_tree_identity_source": "/boot/files",
+    "fallback_used": null
+  },
+  "proof_run_identity": {
+    "selected_tree_hash": "e81550ef7ba1252f10763a055d89c1f72b9cbc0b85bb60e512d0b7890bf0c724",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 52352,
+    "tftp": {
+      "cursor_file": 4479452,
+      "delta_cursor_start": 4479452,
+      "delta_cursor_end": 4480803,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 0,
+      "expected_fetch_bytes_seen": [
+        104136,
+        104136
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": false,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 104136
+    },
+    "restore": {
+      "snapshot_name": "pre-register-vector-v3-20260611T1934Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "serial_capture": {
+    "capture_mode": "read",
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "cursor_file": 4194304,
+    "cursor_start": 4194304,
+    "cursor_end": 4194304,
+    "response_bytes": 57040,
+    "required_marker": "TALOS: rp1-ethernet-mdio-register-vector-candidate capture-nonce=guarded-v3-candidate-rerun2-20260611T2000Z",
+    "required_marker_occurrences": 16,
+    "required_marker_excerpt": "claims-phase-transition=false classification=mdio-phy1-register-vector-visible\r\nTALOS: rp1-ethernet-mdio-register-vector-candidate capture-nonce=guarded-v3-candidate-rerun2-20260611T2000Z mdio-register-vector-report-contract-id=phase12-rp1-ethernet-mdio-register-vector-guard-report-contract-v1 source-contract-id=phase12-rp1-ethernet-mdio-registe",
+    "nonce_token": "capture-nonce=guarded-v3-candidate-rerun2-20260611T2000Z",
+    "nonce_token_occurrences": 16,
+    "pre_power_nonce_occurrences": 0,
+    "empty_pre_power": false,
+    "nonce_fresh": true,
+    "serial_freshness_ok": true
+  },
+  "claim_boundary": {
+    "accepted_if_ready": "capture-chain identity/freshness only",
+    "rejected_runtime_claims": [
+      "live-gem-visibility",
+      "ethernet-driver-readiness",
+      "rp1-mmio-dma-programming",
+      "packet-io",
+      "networking",
+      "ssh",
+      "phase-transition"
+    ]
+  },
+  "rule": "missing /boot/files identity, expected TFTP fetch bytes, final selected-tree identity, run-unique marker freshness, direct serial marker retention, or paired control marker prevents decisive RP1 hardware classification"
+}

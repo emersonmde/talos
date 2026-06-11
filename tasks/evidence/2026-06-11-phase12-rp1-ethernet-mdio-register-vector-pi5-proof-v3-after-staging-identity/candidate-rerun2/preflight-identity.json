@@ -1,0 +1,15 @@
+{
+  "expected_tree_hash": "e81550ef7ba1252f10763a055d89c1f72b9cbc0b85bb60e512d0b7890bf0c724",
+  "observed_tree_hash": "e81550ef7ba1252f10763a055d89c1f72b9cbc0b85bb60e512d0b7890bf0c724",
+  "expected_kernel": "kernel_2712.img",
+  "observed_effective_kernel": "kernel_2712.img",
+  "expected_fetch": "da591740/kernel_2712.img",
+  "expected_fetch_bytes": 52352,
+  "observed_fetch_bytes": 52352,
+  "selected_tree_identity_source": "/boot/files",
+  "tree_matches": true,
+  "effective_kernel_matches": true,
+  "expected_fetch_present": true,
+  "expected_fetch_bytes_match": true,
+  "staging_publication_mismatch": false
+}

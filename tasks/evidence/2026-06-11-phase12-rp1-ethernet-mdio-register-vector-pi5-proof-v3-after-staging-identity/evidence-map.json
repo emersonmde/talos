@@ -1,0 +1,56 @@
+{
+  "candidate": {
+    "v4_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/candidate-rerun2/v4-check.json",
+    "staging_identity_gate": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/candidate-rerun2/staging-identity-gate-output.json",
+    "archive_review": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/archive-review/candidate-rerun2-static-review.txt"
+  },
+  "control": {
+    "v4_check": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/control-rerun/v4-check.json",
+    "staging_identity_gate": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/control-rerun/staging-identity-gate-output.json",
+    "archive_review": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/archive-review/control-rerun-static-review.txt"
+  },
+  "artifacts": [
+    {
+      "label": "candidate rerun2 v4 check",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/candidate-rerun2/v4-check.json"
+    },
+    {
+      "label": "control rerun v4 check",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/control-rerun/v4-check.json"
+    },
+    {
+      "label": "candidate rerun2 staging identity gate",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/candidate-rerun2/staging-identity-gate-output.json"
+    },
+    {
+      "label": "control rerun staging identity gate",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/control-rerun/staging-identity-gate-output.json"
+    },
+    {
+      "label": "candidate rerun2 archive review",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/archive-review/candidate-rerun2-static-review.txt"
+    },
+    {
+      "label": "control rerun archive review",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/archive-review/control-rerun-static-review.txt"
+    },
+    {
+      "label": "final restored lab status",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/final-lab-status-after-emergency-restore.json"
+    },
+    {
+      "label": "evidence consistency guard output",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/evidence-consistency-guard-output.json"
+    }
+  ],
+  "accepted_claims": [
+    "candidate/control proof is blocked by selected-tree staging identity mismatch",
+    "lab restored to baseline after hardware runs"
+  ],
+  "rejected_claims": [
+    "register-vector MAN.DATA values",
+    "broad MDIO/PHY ownership",
+    "Ethernet/networking/SSH readiness",
+    "phase transition"
+  ]
+}

@@ -1,0 +1,1 @@
+c20e66ecd5508fff6517fc4eed2601005dfccc6275b6c6a1a2d3088764368ab0  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/control-archive.tar.gz

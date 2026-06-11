@@ -1,0 +1,82 @@
+{
+  "contract_version": "pi5-staging-identity-gate-v1",
+  "source_contract_version": "pi5-capture-chain-v4",
+  "run_label": "register-vector-v3-candidate-rerun2-20260611T2000Z",
+  "report_kind": "candidate",
+  "expected_label": "register-vector-v3-candidate-rerun2-20260611T2000Z",
+  "staging_identity_ready": false,
+  "classification": "selected-tree-identity-blocked",
+  "first_failing_rejection_reason": "tftp-expected-fetch-byte-mismatch",
+  "first_failing_invariant": "expected-fetch-byte-mismatch",
+  "capture_chain_v4": {
+    "classification": "capture-staging-blocked",
+    "first_failing_rejection_reason": "tftp-expected-fetch-byte-mismatch",
+    "rejection_reasons": [
+      "tftp-expected-fetch-byte-mismatch",
+      "final-pre-restore-selected-tree-mismatch",
+      "final-pre-restore-expected-fetch-byte-mismatch"
+    ],
+    "agrees_with_gate_first_failure": true,
+    "agrees_with_gate_readiness": true
+  },
+  "rejection_reasons": [
+    "tftp-expected-fetch-byte-mismatch",
+    "final-pre-restore-selected-tree-mismatch",
+    "final-pre-restore-expected-fetch-byte-mismatch"
+  ],
+  "selected": {
+    "tree_hash": "e81550ef7ba1252f10763a055d89c1f72b9cbc0b85bb60e512d0b7890bf0c724",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 52352
+  },
+  "tftp": {
+    "cursor_file": 4479452,
+    "delta_cursor_start": 4479452,
+    "delta_cursor_end": 4480803,
+    "stable": true,
+    "event_count": 13,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 0,
+    "expected_fetch_bytes_seen": [
+      104136,
+      104136
+    ]
+  },
+  "final_pre_restore": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "selected_tree_still_staged": false,
+    "expected_fetch_present": true,
+    "expected_fetch_bytes": 104136
+  },
+  "restore": {
+    "snapshot_name": "pre-register-vector-v3-20260611T1934Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "serial_freshness": {
+    "serial_freshness_ok": true,
+    "nonce_fresh": true,
+    "empty_pre_power": false,
+    "required_marker_occurrences": 16,
+    "nonce_token_occurrences": 16,
+    "pre_power_nonce_occurrences": 0
+  },
+  "evidence_consistency": {
+    "guard_supplied": false,
+    "classification": null
+  },
+  "claim_boundary": {
+    "accepted_if_ready": "staging identity durability and reporting-path freshness only",
+    "rejected_runtime_claims": [
+      "register-vector-man-data-values",
+      "broad-mdio-phy-ownership",
+      "phy-absence",
+      "ethernet-behavior",
+      "networking",
+      "ssh",
+      "phase-transition"
+    ]
+  },
+  "rule": "future hardware proof evidence is not decisive unless selected-tree identity survives TFTP fetch byte/count checks, final pre-restore identity, restore proof, serial freshness, and evidence-consistency checks"
+}

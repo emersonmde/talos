@@ -1,0 +1,8 @@
+candidate_archive=tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/candidate-rerun2-archive.tar.gz
+candidate_archive_sha256=f98b1944b1829f34fe465a62aeb1eb706d9e69387ec649a6d58d5606a5fdfcf8
+kernel_2712_sha256=4f330a963eb1d9a02b0b9e64ec1b7b1e77b2c9ab0c02e222c5b413565d254906
+kernel_2712_size=52352
+header_image_size=52352
+text_offset=0
+flags=12
+forbidden_mdio_register_vector_candidate_runtime_strings_absent=true
