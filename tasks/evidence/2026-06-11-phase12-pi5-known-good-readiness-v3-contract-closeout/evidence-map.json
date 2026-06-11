@@ -1,0 +1,50 @@
+{
+  "task_id": "phase12-pi5-known-good-readiness-v3-contract-closeout-20260611",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-11-phase12-pi5-known-good-readiness-v3-contract-closeout.md",
+      "evidence_level": "static closeout record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-readiness-v3-contract-closeout/classification.json",
+      "evidence_level": "static closeout classification"
+    },
+    {
+      "label": "source v3 contract core task",
+      "path": "tasks/2026-06-11-phase12-pi5-known-good-readiness-v3-contract-core.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "source v3 contract core classification",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-readiness-v3-contract-core/classification.json",
+      "evidence_level": "accepted local/static contract classification"
+    },
+    {
+      "label": "retained v2 primary classified under v3",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-readiness-v3-contract-core/retained-v2-v3-classification.json",
+      "evidence_level": "local/static classification over retained hardware artifact plus joined status/TFTP evidence"
+    },
+    {
+      "label": "fixture validation output",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-readiness-v3-contract-core/fixture-validation.json",
+      "evidence_level": "focused local fixture/guard validation"
+    },
+    {
+      "label": "v3 classifier script",
+      "path": "scripts/rpi5-known-good-readiness-v3-classify.sh",
+      "evidence_level": "source/script implementation"
+    },
+    {
+      "label": "v3 fixture validation script",
+      "path": "scripts/rpi5-known-good-readiness-v3-fixtures.sh",
+      "evidence_level": "focused local fixture validation"
+    },
+    {
+      "label": "source core commit",
+      "commit": "0e6f8eb4709cdffc18e0f407cb46e90dc77aa4a6",
+      "evidence_level": "git history"
+    }
+  ]
+}

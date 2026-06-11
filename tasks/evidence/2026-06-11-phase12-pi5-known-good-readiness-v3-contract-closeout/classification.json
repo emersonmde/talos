@@ -1,0 +1,79 @@
+{
+  "task_id": "phase12-pi5-known-good-readiness-v3-contract-closeout-20260611",
+  "classification": "known-good-readiness-v3-contract-closeout-accepted",
+  "accepted_v3_readiness_contract": true,
+  "selected_next_task": "phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof-20260611",
+  "selected_next_task_reason": "Changed-contract hardware proof is mechanically objective because the v3 contract core accepted immutable retained primary classification joined to stable identity/TFTP evidence and production success marker requirements.",
+  "valid_known_good_talos_readiness_v3_from_closeout_alone": false,
+  "gpio32_write_restore_v2_unlocked": false,
+  "source_core": {
+    "task_id": "phase12-pi5-known-good-readiness-v3-contract-core-20260611",
+    "commit": "0e6f8eb4709cdffc18e0f407cb46e90dc77aa4a6",
+    "classification": "known-good-readiness-v3-contract-core-local-static-accepted",
+    "accepted_v3_contract": true,
+    "retained_v2_primary_classification": "valid-known-good-talos-readiness-v3"
+  },
+  "contract_policy": {
+    "primary_artifact_policy": "retained-run-label-qualified-artifact-only",
+    "mutable_latest_artifact_policy": "rejected-by-wrapper",
+    "same_run_join_policy": "caller-provided retained primary, stable TFTP delta, and pre/final status tuple from one proof run",
+    "success_marker_policy": "required",
+    "kernel_main_policy": "metadata-only-not-required-for-v3-known-good-readiness",
+    "required_success_marker": "rpi5-production-timer-preemption: PASS"
+  },
+  "required_next_proof_boundary": {
+    "hardware_lock_required": true,
+    "immutable_primary_raw_json_required": true,
+    "derived_summary_classification_required": true,
+    "stable_tftp_delta_required": true,
+    "final_status_files_required": true,
+    "exact_run_label_required": true,
+    "accepted_readiness_gate": "valid-known-good-talos-readiness-v3 accepted only when the accepted v3 helper contract classifies the retained primary artifact as ready"
+  },
+  "retained_risks": [
+    "TALOS: kernel_main absence remains metadata/retained risk rather than a mandatory v3 readiness failure.",
+    "GPIO32 write/restore v2 remains blocked until the v3 hardware proof and v3 proof closeout accept valid-known-good-talos-readiness-v3."
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Accepted v3 contract provides the changed discriminator from the v2 helper by using same-run stable identity/TFTP evidence plus the production success marker."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Focused local fixture evidence covers retained v2 primary acceptance and deterministic rejection of missing success marker, missing identity/TFTP join, and primary overwrite paths."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Selected only the changed-contract v3 Pi 5 readiness proof as the next bounded hardware task."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "GPIO32 write/restore v2 remains held until a later v3 hardware proof and closeout accept valid-known-good-talos-readiness-v3."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No docs/src update was required because the accepted contract is task-owned and helper-script scoped."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No Pi 5 hardware run or hardwareTestLock acquisition was required for this static closeout."
+    }
+  ],
+  "rejected_claims": [
+    "valid known-good Talos readiness from this closeout alone",
+    "GPIO32 write/restore v2 authorization",
+    "PHY reset behavior",
+    "MDIO/PHY ownership",
+    "Ethernet driver behavior",
+    "DMA/descriptors",
+    "interrupts",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "nextAction": "Mechanically promote phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof-20260611 on the next worker wake if hardwareTestLock remains unlocked and supervisorIntervention remains inactive; do not promote GPIO32 v2 from this closeout."
+}
