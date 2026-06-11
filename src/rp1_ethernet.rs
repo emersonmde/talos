@@ -6811,6 +6811,627 @@ fn rp1_ethernet_mdio_phy_id_guard_control_evidence(
     }
 }
 
+pub const RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_SOURCE_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-mdio-phy-id-after-mpe-source-contract-v1";
+pub const RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_SOURCE_TASK_ID: &str =
+    "phase12-rp1-ethernet-mdio-phy-id-after-mpe-source-contract-20260611";
+pub const RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_GUARD_REPORT_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-mdio-phy-id-after-mpe-guard-report-contract-v1";
+pub const RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_SELECTED_DISCRIMINATOR: &str =
+    "rp1-ethernet-mdio-after-mpe-clause22-phy1-physid1-physid2";
+pub const RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_ACCEPTED_MPE_FRONTIER_TASK_ID: &str =
+    "phase12-rp1-ethernet-mdio-mpe-enable-proof-closeout-20260611";
+pub const RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_ACCEPTED_MPE_FRONTIER_CLASSIFICATION: &str =
+    "rp1-ethernet-mdio-mpe-enable-ownership-frontier-closed";
+pub const RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_CANDIDATE_CLASSIFICATION: &str =
+    "rp1-ethernet-mdio-phy-id-after-mpe-guard-candidate-local-static";
+pub const RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_CONTROL_CLASSIFICATION: &str =
+    "no-mdio-no-ethernet-rp1-ethernet-mdio-phy-id-after-mpe-control";
+pub const RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_BOUNDARY_CLASSIFICATION: &str =
+    "hardware-proof-limited-to-corrected-target-mdio-phy-id-after-mpe-control-output";
+pub const RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_OBSERVED_WINDOW_BASE: u64 = 0x1c_0010_0000;
+pub const RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_NCR_OBSERVED_TARGET: u64 =
+    RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_OBSERVED_WINDOW_BASE + RP1_ETHERNET_MDIO_PHY_ID_NCR_OFFSET;
+pub const RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_NSR_OBSERVED_TARGET: u64 =
+    RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_OBSERVED_WINDOW_BASE + RP1_ETHERNET_MDIO_PHY_ID_NSR_OFFSET;
+pub const RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_MAN_OBSERVED_TARGET: u64 =
+    RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_OBSERVED_WINDOW_BASE + RP1_ETHERNET_MDIO_PHY_ID_MAN_OFFSET;
+pub const RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_POLL_POLICY: &str =
+    "bounded NSR.IDLE bit 2 poll before and after each MAN write";
+pub const RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_MPE_PRECONDITION: &str =
+    "corrected NCR.MPE bit 4 must already be set before any MAN write";
+
+pub const RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_OPERATION_ORDER: &[&str] = &[
+    "print candidate start marker and accepted input frontier",
+    "read observed-window MACB_MID context at 0x1c001000fc as context only",
+    "pre-read corrected NCR at 0x1c00100000",
+    "if corrected NCR.MPE bit 4 is clear classify a precondition blocker without writing",
+    "poll corrected NSR.IDLE bit 2 before each MAN write",
+    "write corrected MAN frame 0x600a0000 for Clause 22 phy1 register 0x02",
+    "poll corrected NSR.IDLE bit 2 and extract MAN.DATA bits 15:0 as physid1",
+    "write corrected MAN frame 0x600e0000 for Clause 22 phy1 register 0x03",
+    "poll corrected NSR.IDLE bit 2 and extract MAN.DATA bits 15:0 as physid2",
+    "classify only the corrected-target after-MPE discriminator outcome",
+];
+
+pub const RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_ALLOWED_CLASSIFICATIONS: &[&str] = &[
+    "mdio-phy1-physid-after-mpe-visible",
+    "mdio-phy1-physid-after-mpe-timeout",
+    "mdio-phy1-physid-after-mpe-precondition-blocker",
+    "precise-staging-capture-blocker",
+    "no-mdio-no-ethernet-rp1-ethernet-mdio-phy-id-after-mpe-control",
+];
+
+pub const RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_REJECTED_RUNTIME_CLAIMS: &[&str] = &[
+    "NCR write permission or execution",
+    "MAN write without corrected NCR.MPE precondition",
+    "wrong 0x1c00000000-era MDIO register targets",
+    "unbounded NSR.IDLE polling",
+    "runtime volatile load/store evidence from local/static guard",
+    "broad MDIO or PHY ownership",
+    "PHY reset or GPIO32 action",
+    "Ethernet driver readiness",
+    "interrupt delivery, handler ownership, or completion",
+    "DMA, descriptor rings, channel ownership, or transfer completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition",
+];
+
+pub const RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_RETAINED_RISKS: &[&str] = &[
+    "Corrected NCR.MPE may be clear in the selected boot state and must block MAN writes",
+    "Visible PHY ID reads would prove only selected management transaction visibility",
+    "GPIO32 and ETH_RST_N remain unowned",
+    "Link, MAC, DMA, interrupt, packet, socket, SSH, and Phase 12.2 readiness remain unaccepted",
+];
+
+pub const RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_SOURCE_EVIDENCE: &[&str] = &[
+    "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-source-contract.md",
+    "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof.md",
+    "tasks/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-proof-closeout.md",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-source-contract/classification.json",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-pi5-proof/classification.json",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-macb.h",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-uapi-linux-mii.h",
+];
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetMdioPhyIdAfterMpeSourceContractEvidence {
+    pub contract_id: &'static str,
+    pub source_task_id: &'static str,
+    pub selected_discriminator: &'static str,
+    pub accepted_mpe_frontier_task_id: &'static str,
+    pub accepted_mpe_frontier_classification: &'static str,
+    pub controller: &'static str,
+    pub compatible: &'static [&'static str],
+    pub phy_handle: &'static str,
+    pub phy_node: &'static str,
+    pub phy_address: u32,
+    pub macb_mid_context_target: u64,
+    pub macb_mid_context_raw: u32,
+    pub ncr_register: &'static str,
+    pub nsr_register: &'static str,
+    pub man_register: &'static str,
+    pub ncr_observed_target: u64,
+    pub nsr_observed_target: u64,
+    pub man_observed_target: u64,
+    pub phy_id_register_names: &'static [&'static str],
+    pub phy_id_registers: &'static [u32],
+    pub physid1_man_frame: u32,
+    pub physid2_man_frame: u32,
+    pub ncr_mpe_bit: u8,
+    pub nsr_idle_bit: u8,
+    pub poll_policy: &'static str,
+    pub mpe_precondition: &'static str,
+    pub man_data_offset: u8,
+    pub man_data_size: u8,
+    pub result_extraction: &'static str,
+    pub operation_order: &'static [&'static str],
+    pub allowed_classifications: &'static [&'static str],
+    pub source_evidence: &'static [&'static str],
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Rp1EthernetMdioPhyIdAfterMpeGuardReportKind {
+    Candidate,
+    NoMdioNoEthernetControl,
+}
+
+impl Rp1EthernetMdioPhyIdAfterMpeGuardReportKind {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::Candidate => "candidate",
+            Self::NoMdioNoEthernetControl => "no-mdio-no-ethernet-control",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetMdioPhyIdAfterMpeGuardReportInput {
+    pub kind: Rp1EthernetMdioPhyIdAfterMpeGuardReportKind,
+    pub source_contract: Option<Rp1EthernetMdioPhyIdAfterMpeSourceContractEvidence>,
+    pub claims_runtime_volatile_load_store: bool,
+    pub claims_ncr_write: bool,
+    pub claims_missing_mpe_gating: bool,
+    pub claims_wrong_mdio_targets: bool,
+    pub claims_unbounded_polling: bool,
+    pub claims_man_write_without_mpe_precondition: bool,
+    pub claims_broad_mdio_phy_ownership: bool,
+    pub claims_gpio32_phy_reset_action: bool,
+    pub claims_ethernet_ready: bool,
+    pub claims_interrupt_completion: bool,
+    pub claims_dma_descriptor_ownership: bool,
+    pub claims_packet_io: bool,
+    pub claims_networking: bool,
+    pub claims_sockets: bool,
+    pub claims_ssh: bool,
+    pub claims_phase_12_2: bool,
+    pub claims_phase_transition: bool,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetMdioPhyIdAfterMpeGuardReport {
+    pub kind: Rp1EthernetMdioPhyIdAfterMpeGuardReportKind,
+    pub source_contract: Option<Rp1EthernetMdioPhyIdAfterMpeSourceContractEvidence>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetMdioPhyIdAfterMpeGuardReportEvidence {
+    pub report_contract_id: &'static str,
+    pub source_contract_id: &'static str,
+    pub source_task_id: &'static str,
+    pub report_kind: &'static str,
+    pub selected_discriminator: Option<&'static str>,
+    pub accepted_mpe_frontier_task_id: Option<&'static str>,
+    pub accepted_mpe_frontier_classification: Option<&'static str>,
+    pub controller: Option<&'static str>,
+    pub compatible: Option<&'static [&'static str]>,
+    pub phy_handle: Option<&'static str>,
+    pub phy_node: Option<&'static str>,
+    pub phy_address: Option<u32>,
+    pub macb_mid_context_target: Option<u64>,
+    pub macb_mid_context_raw: Option<u32>,
+    pub ncr_register: Option<&'static str>,
+    pub nsr_register: Option<&'static str>,
+    pub man_register: Option<&'static str>,
+    pub ncr_observed_target: Option<u64>,
+    pub nsr_observed_target: Option<u64>,
+    pub man_observed_target: Option<u64>,
+    pub phy_id_register_names: Option<&'static [&'static str]>,
+    pub phy_id_registers: Option<&'static [u32]>,
+    pub physid1_man_frame: Option<u32>,
+    pub physid2_man_frame: Option<u32>,
+    pub ncr_mpe_bit: Option<u8>,
+    pub nsr_idle_bit: Option<u8>,
+    pub poll_policy: Option<&'static str>,
+    pub mpe_precondition: Option<&'static str>,
+    pub man_data_offset: Option<u8>,
+    pub man_data_size: Option<u8>,
+    pub result_extraction: Option<&'static str>,
+    pub operation_order: Option<&'static [&'static str]>,
+    pub allowed_classifications: &'static [&'static str],
+    pub boundary_classification: &'static str,
+    pub rejected_runtime_claims: &'static [&'static str],
+    pub retained_risks: &'static [&'static str],
+    pub source_evidence: Option<&'static [&'static str]>,
+    pub constructs_mdio_targets: bool,
+    pub constructs_man_frames: bool,
+    pub runtime_volatile_load_store_intent: bool,
+    pub claims_runtime_volatile_load_store: bool,
+    pub claims_ncr_write: bool,
+    pub claims_missing_mpe_gating: bool,
+    pub claims_wrong_mdio_targets: bool,
+    pub claims_unbounded_polling: bool,
+    pub claims_man_write_without_mpe_precondition: bool,
+    pub claims_broad_mdio_phy_ownership: bool,
+    pub claims_gpio32_phy_reset_action: bool,
+    pub claims_ethernet_ready: bool,
+    pub claims_interrupt_completion: bool,
+    pub claims_dma_descriptor_ownership: bool,
+    pub claims_packet_io: bool,
+    pub claims_networking: bool,
+    pub claims_sockets: bool,
+    pub claims_ssh: bool,
+    pub claims_phase_12_2: bool,
+    pub claims_phase_transition: bool,
+    pub classification: &'static str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Rp1EthernetMdioPhyIdAfterMpeGuardReportError {
+    CandidateMissingSourceContract,
+    ControlCarriesMdioTargetFacts,
+    SourceContractIdentityMismatch,
+    SourceContractTargetMismatch,
+    SourceContractFieldMismatch,
+    MissingSourceEvidence,
+    RuntimeVolatileLoadStoreClaim,
+    NcrWriteClaim,
+    MissingMpeGatingClaim,
+    WrongMdioTargetsClaim,
+    UnboundedPollingClaim,
+    ManWriteWithoutMpePreconditionClaim,
+    BroadMdioPhyOwnershipClaim,
+    Gpio32PhyResetActionClaim,
+    EthernetReadinessClaim,
+    InterruptCompletionClaim,
+    DmaDescriptorOwnershipClaim,
+    PacketIoClaim,
+    NetworkingClaim,
+    SocketsClaim,
+    SshClaim,
+    Phase122Claim,
+    PhaseTransitionClaim,
+}
+
+impl Rp1EthernetMdioPhyIdAfterMpeGuardReportError {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::CandidateMissingSourceContract => "candidate-missing-source-contract",
+            Self::ControlCarriesMdioTargetFacts => "control-carries-mdio-target-facts",
+            Self::SourceContractIdentityMismatch => "source-contract-identity-mismatch",
+            Self::SourceContractTargetMismatch => "source-contract-target-mismatch",
+            Self::SourceContractFieldMismatch => "source-contract-field-mismatch",
+            Self::MissingSourceEvidence => "missing-source-evidence",
+            Self::RuntimeVolatileLoadStoreClaim => "runtime-volatile-load-store-claim",
+            Self::NcrWriteClaim => "ncr-write-claim",
+            Self::MissingMpeGatingClaim => "missing-mpe-gating-claim",
+            Self::WrongMdioTargetsClaim => "wrong-mdio-targets-claim",
+            Self::UnboundedPollingClaim => "unbounded-polling-claim",
+            Self::ManWriteWithoutMpePreconditionClaim => "man-write-without-mpe-precondition-claim",
+            Self::BroadMdioPhyOwnershipClaim => "broad-mdio-phy-ownership-claim",
+            Self::Gpio32PhyResetActionClaim => "gpio32-phy-reset-action-claim",
+            Self::EthernetReadinessClaim => "ethernet-readiness-claim",
+            Self::InterruptCompletionClaim => "interrupt-completion-claim",
+            Self::DmaDescriptorOwnershipClaim => "dma-descriptor-ownership-claim",
+            Self::PacketIoClaim => "packet-io-claim",
+            Self::NetworkingClaim => "networking-claim",
+            Self::SocketsClaim => "sockets-claim",
+            Self::SshClaim => "ssh-claim",
+            Self::Phase122Claim => "phase-12-2-claim",
+            Self::PhaseTransitionClaim => "phase-transition-claim",
+        }
+    }
+}
+
+pub const fn rp1_ethernet_mdio_phy_id_after_mpe_source_contract_evidence()
+-> Rp1EthernetMdioPhyIdAfterMpeSourceContractEvidence {
+    Rp1EthernetMdioPhyIdAfterMpeSourceContractEvidence {
+        contract_id: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_SOURCE_CONTRACT_ID,
+        source_task_id: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_SOURCE_TASK_ID,
+        selected_discriminator: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_SELECTED_DISCRIMINATOR,
+        accepted_mpe_frontier_task_id:
+            RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_ACCEPTED_MPE_FRONTIER_TASK_ID,
+        accepted_mpe_frontier_classification:
+            RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_ACCEPTED_MPE_FRONTIER_CLASSIFICATION,
+        controller: RP1_ETHERNET_CONTROLLER_NAME,
+        compatible: RP1_ETHERNET_COMPATIBLE,
+        phy_handle: RP1_ETHERNET_PHY_HANDLE,
+        phy_node: RP1_ETHERNET_PHY_NODE,
+        phy_address: RP1_ETHERNET_PHY_REG,
+        macb_mid_context_target: RP1_ETHERNET_OBSERVED_WINDOW_GEM_MID_CPU_PHYSICAL_TARGET,
+        macb_mid_context_raw: RP1_ETHERNET_ACCEPTED_OBSERVED_MACB_MID_RAW,
+        ncr_register: RP1_ETHERNET_MDIO_PHY_ID_NCR_REGISTER,
+        nsr_register: RP1_ETHERNET_MDIO_PHY_ID_NSR_REGISTER,
+        man_register: RP1_ETHERNET_MDIO_PHY_ID_MAN_REGISTER,
+        ncr_observed_target: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_NCR_OBSERVED_TARGET,
+        nsr_observed_target: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_NSR_OBSERVED_TARGET,
+        man_observed_target: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_MAN_OBSERVED_TARGET,
+        phy_id_register_names: RP1_ETHERNET_MDIO_PHY_ID_PHY_ID_REGISTER_NAMES,
+        phy_id_registers: RP1_ETHERNET_MDIO_PHY_ID_PHY_ID_REGISTERS,
+        physid1_man_frame: RP1_ETHERNET_MDIO_PHY_ID_PHYSID1_MAN_FRAME,
+        physid2_man_frame: RP1_ETHERNET_MDIO_PHY_ID_PHYSID2_MAN_FRAME,
+        ncr_mpe_bit: RP1_ETHERNET_MDIO_PHY_ID_NCR_MPE_BIT,
+        nsr_idle_bit: RP1_ETHERNET_MDIO_PHY_ID_NSR_IDLE_BIT,
+        poll_policy: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_POLL_POLICY,
+        mpe_precondition: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_MPE_PRECONDITION,
+        man_data_offset: RP1_ETHERNET_MDIO_PHY_ID_MAN_DATA_OFFSET,
+        man_data_size: RP1_ETHERNET_MDIO_PHY_ID_MAN_DATA_SIZE,
+        result_extraction: RP1_ETHERNET_MDIO_PHY_ID_RESULT_EXTRACTION,
+        operation_order: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_OPERATION_ORDER,
+        allowed_classifications: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_ALLOWED_CLASSIFICATIONS,
+        source_evidence: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_SOURCE_EVIDENCE,
+    }
+}
+
+pub fn build_rp1_ethernet_mdio_phy_id_after_mpe_guard_report(
+    input: Rp1EthernetMdioPhyIdAfterMpeGuardReportInput,
+) -> Result<Rp1EthernetMdioPhyIdAfterMpeGuardReport, Rp1EthernetMdioPhyIdAfterMpeGuardReportError> {
+    validate_rp1_ethernet_mdio_phy_id_after_mpe_rejected_claims(input)?;
+
+    match (input.kind, input.source_contract) {
+        (Rp1EthernetMdioPhyIdAfterMpeGuardReportKind::Candidate, Some(source_contract)) => {
+            validate_rp1_ethernet_mdio_phy_id_after_mpe_source_contract(source_contract)?;
+            Ok(Rp1EthernetMdioPhyIdAfterMpeGuardReport {
+                kind: input.kind,
+                source_contract: Some(source_contract),
+            })
+        }
+        (Rp1EthernetMdioPhyIdAfterMpeGuardReportKind::Candidate, None) => {
+            Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::CandidateMissingSourceContract)
+        }
+        (Rp1EthernetMdioPhyIdAfterMpeGuardReportKind::NoMdioNoEthernetControl, None) => {
+            Ok(Rp1EthernetMdioPhyIdAfterMpeGuardReport {
+                kind: input.kind,
+                source_contract: None,
+            })
+        }
+        (Rp1EthernetMdioPhyIdAfterMpeGuardReportKind::NoMdioNoEthernetControl, Some(_)) => {
+            Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::ControlCarriesMdioTargetFacts)
+        }
+    }
+}
+
+pub fn rp1_ethernet_mdio_phy_id_after_mpe_guard_report_evidence(
+    report: Rp1EthernetMdioPhyIdAfterMpeGuardReport,
+) -> Rp1EthernetMdioPhyIdAfterMpeGuardReportEvidence {
+    match report.source_contract {
+        Some(source_contract) => rp1_ethernet_mdio_phy_id_after_mpe_guard_candidate_evidence(
+            report.kind.name(),
+            source_contract,
+        ),
+        None => rp1_ethernet_mdio_phy_id_after_mpe_guard_control_evidence(report.kind.name()),
+    }
+}
+
+pub fn rejected_rp1_ethernet_mdio_phy_id_after_mpe_guard_report_evidence(
+    error: Rp1EthernetMdioPhyIdAfterMpeGuardReportError,
+) -> (&'static str, &'static str) {
+    (RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION, error.name())
+}
+
+fn validate_rp1_ethernet_mdio_phy_id_after_mpe_rejected_claims(
+    input: Rp1EthernetMdioPhyIdAfterMpeGuardReportInput,
+) -> Result<(), Rp1EthernetMdioPhyIdAfterMpeGuardReportError> {
+    if input.claims_runtime_volatile_load_store {
+        return Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::RuntimeVolatileLoadStoreClaim);
+    }
+    if input.claims_ncr_write {
+        return Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::NcrWriteClaim);
+    }
+    if input.claims_missing_mpe_gating {
+        return Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::MissingMpeGatingClaim);
+    }
+    if input.claims_wrong_mdio_targets {
+        return Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::WrongMdioTargetsClaim);
+    }
+    if input.claims_unbounded_polling {
+        return Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::UnboundedPollingClaim);
+    }
+    if input.claims_man_write_without_mpe_precondition {
+        return Err(
+            Rp1EthernetMdioPhyIdAfterMpeGuardReportError::ManWriteWithoutMpePreconditionClaim,
+        );
+    }
+    if input.claims_broad_mdio_phy_ownership {
+        return Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::BroadMdioPhyOwnershipClaim);
+    }
+    if input.claims_gpio32_phy_reset_action {
+        return Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::Gpio32PhyResetActionClaim);
+    }
+    if input.claims_ethernet_ready {
+        return Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::EthernetReadinessClaim);
+    }
+    if input.claims_interrupt_completion {
+        return Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::InterruptCompletionClaim);
+    }
+    if input.claims_dma_descriptor_ownership {
+        return Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::DmaDescriptorOwnershipClaim);
+    }
+    if input.claims_packet_io {
+        return Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::PacketIoClaim);
+    }
+    if input.claims_networking {
+        return Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::NetworkingClaim);
+    }
+    if input.claims_sockets {
+        return Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::SocketsClaim);
+    }
+    if input.claims_ssh {
+        return Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::SshClaim);
+    }
+    if input.claims_phase_12_2 {
+        return Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::Phase122Claim);
+    }
+    if input.claims_phase_transition {
+        return Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::PhaseTransitionClaim);
+    }
+    Ok(())
+}
+
+fn validate_rp1_ethernet_mdio_phy_id_after_mpe_source_contract(
+    source_contract: Rp1EthernetMdioPhyIdAfterMpeSourceContractEvidence,
+) -> Result<(), Rp1EthernetMdioPhyIdAfterMpeGuardReportError> {
+    if source_contract.contract_id != RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_SOURCE_CONTRACT_ID
+        || source_contract.source_task_id != RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_SOURCE_TASK_ID
+        || source_contract.selected_discriminator
+            != RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_SELECTED_DISCRIMINATOR
+        || source_contract.accepted_mpe_frontier_task_id
+            != RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_ACCEPTED_MPE_FRONTIER_TASK_ID
+        || source_contract.accepted_mpe_frontier_classification
+            != RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_ACCEPTED_MPE_FRONTIER_CLASSIFICATION
+        || source_contract.controller != RP1_ETHERNET_CONTROLLER_NAME
+        || source_contract.compatible != RP1_ETHERNET_COMPATIBLE
+        || source_contract.phy_handle != RP1_ETHERNET_PHY_HANDLE
+        || source_contract.phy_node != RP1_ETHERNET_PHY_NODE
+        || source_contract.phy_address != RP1_ETHERNET_PHY_REG
+    {
+        return Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::SourceContractIdentityMismatch);
+    }
+    if source_contract.macb_mid_context_target
+        != RP1_ETHERNET_OBSERVED_WINDOW_GEM_MID_CPU_PHYSICAL_TARGET
+        || source_contract.macb_mid_context_raw != RP1_ETHERNET_ACCEPTED_OBSERVED_MACB_MID_RAW
+        || source_contract.ncr_observed_target
+            != RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_NCR_OBSERVED_TARGET
+        || source_contract.nsr_observed_target
+            != RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_NSR_OBSERVED_TARGET
+        || source_contract.man_observed_target
+            != RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_MAN_OBSERVED_TARGET
+    {
+        return Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::SourceContractTargetMismatch);
+    }
+    if source_contract.ncr_register != RP1_ETHERNET_MDIO_PHY_ID_NCR_REGISTER
+        || source_contract.nsr_register != RP1_ETHERNET_MDIO_PHY_ID_NSR_REGISTER
+        || source_contract.man_register != RP1_ETHERNET_MDIO_PHY_ID_MAN_REGISTER
+        || source_contract.phy_id_register_names != RP1_ETHERNET_MDIO_PHY_ID_PHY_ID_REGISTER_NAMES
+        || source_contract.phy_id_registers != RP1_ETHERNET_MDIO_PHY_ID_PHY_ID_REGISTERS
+        || source_contract.physid1_man_frame != RP1_ETHERNET_MDIO_PHY_ID_PHYSID1_MAN_FRAME
+        || source_contract.physid2_man_frame != RP1_ETHERNET_MDIO_PHY_ID_PHYSID2_MAN_FRAME
+        || source_contract.ncr_mpe_bit != RP1_ETHERNET_MDIO_PHY_ID_NCR_MPE_BIT
+        || source_contract.nsr_idle_bit != RP1_ETHERNET_MDIO_PHY_ID_NSR_IDLE_BIT
+        || source_contract.poll_policy != RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_POLL_POLICY
+        || source_contract.mpe_precondition != RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_MPE_PRECONDITION
+        || source_contract.man_data_offset != RP1_ETHERNET_MDIO_PHY_ID_MAN_DATA_OFFSET
+        || source_contract.man_data_size != RP1_ETHERNET_MDIO_PHY_ID_MAN_DATA_SIZE
+        || source_contract.result_extraction != RP1_ETHERNET_MDIO_PHY_ID_RESULT_EXTRACTION
+        || source_contract.operation_order != RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_OPERATION_ORDER
+        || source_contract.allowed_classifications
+            != RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_ALLOWED_CLASSIFICATIONS
+    {
+        return Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::SourceContractFieldMismatch);
+    }
+    if source_contract.source_evidence != RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_SOURCE_EVIDENCE {
+        return Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::MissingSourceEvidence);
+    }
+    Ok(())
+}
+
+fn rp1_ethernet_mdio_phy_id_after_mpe_guard_candidate_evidence(
+    report_kind: &'static str,
+    source_contract: Rp1EthernetMdioPhyIdAfterMpeSourceContractEvidence,
+) -> Rp1EthernetMdioPhyIdAfterMpeGuardReportEvidence {
+    Rp1EthernetMdioPhyIdAfterMpeGuardReportEvidence {
+        report_contract_id: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_GUARD_REPORT_CONTRACT_ID,
+        source_contract_id: source_contract.contract_id,
+        source_task_id: source_contract.source_task_id,
+        report_kind,
+        selected_discriminator: Some(source_contract.selected_discriminator),
+        accepted_mpe_frontier_task_id: Some(source_contract.accepted_mpe_frontier_task_id),
+        accepted_mpe_frontier_classification: Some(
+            source_contract.accepted_mpe_frontier_classification,
+        ),
+        controller: Some(source_contract.controller),
+        compatible: Some(source_contract.compatible),
+        phy_handle: Some(source_contract.phy_handle),
+        phy_node: Some(source_contract.phy_node),
+        phy_address: Some(source_contract.phy_address),
+        macb_mid_context_target: Some(source_contract.macb_mid_context_target),
+        macb_mid_context_raw: Some(source_contract.macb_mid_context_raw),
+        ncr_register: Some(source_contract.ncr_register),
+        nsr_register: Some(source_contract.nsr_register),
+        man_register: Some(source_contract.man_register),
+        ncr_observed_target: Some(source_contract.ncr_observed_target),
+        nsr_observed_target: Some(source_contract.nsr_observed_target),
+        man_observed_target: Some(source_contract.man_observed_target),
+        phy_id_register_names: Some(source_contract.phy_id_register_names),
+        phy_id_registers: Some(source_contract.phy_id_registers),
+        physid1_man_frame: Some(source_contract.physid1_man_frame),
+        physid2_man_frame: Some(source_contract.physid2_man_frame),
+        ncr_mpe_bit: Some(source_contract.ncr_mpe_bit),
+        nsr_idle_bit: Some(source_contract.nsr_idle_bit),
+        poll_policy: Some(source_contract.poll_policy),
+        mpe_precondition: Some(source_contract.mpe_precondition),
+        man_data_offset: Some(source_contract.man_data_offset),
+        man_data_size: Some(source_contract.man_data_size),
+        result_extraction: Some(source_contract.result_extraction),
+        operation_order: Some(source_contract.operation_order),
+        allowed_classifications: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_ALLOWED_CLASSIFICATIONS,
+        boundary_classification: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_BOUNDARY_CLASSIFICATION,
+        rejected_runtime_claims: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_REJECTED_RUNTIME_CLAIMS,
+        retained_risks: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_RETAINED_RISKS,
+        source_evidence: Some(source_contract.source_evidence),
+        constructs_mdio_targets: true,
+        constructs_man_frames: true,
+        runtime_volatile_load_store_intent: false,
+        claims_runtime_volatile_load_store: false,
+        claims_ncr_write: false,
+        claims_missing_mpe_gating: false,
+        claims_wrong_mdio_targets: false,
+        claims_unbounded_polling: false,
+        claims_man_write_without_mpe_precondition: false,
+        claims_broad_mdio_phy_ownership: false,
+        claims_gpio32_phy_reset_action: false,
+        claims_ethernet_ready: false,
+        claims_interrupt_completion: false,
+        claims_dma_descriptor_ownership: false,
+        claims_packet_io: false,
+        claims_networking: false,
+        claims_sockets: false,
+        claims_ssh: false,
+        claims_phase_12_2: false,
+        claims_phase_transition: false,
+        classification: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_CANDIDATE_CLASSIFICATION,
+    }
+}
+
+fn rp1_ethernet_mdio_phy_id_after_mpe_guard_control_evidence(
+    report_kind: &'static str,
+) -> Rp1EthernetMdioPhyIdAfterMpeGuardReportEvidence {
+    Rp1EthernetMdioPhyIdAfterMpeGuardReportEvidence {
+        report_contract_id: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_GUARD_REPORT_CONTRACT_ID,
+        source_contract_id: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_SOURCE_CONTRACT_ID,
+        source_task_id: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_SOURCE_TASK_ID,
+        report_kind,
+        selected_discriminator: None,
+        accepted_mpe_frontier_task_id: None,
+        accepted_mpe_frontier_classification: None,
+        controller: None,
+        compatible: None,
+        phy_handle: None,
+        phy_node: None,
+        phy_address: None,
+        macb_mid_context_target: None,
+        macb_mid_context_raw: None,
+        ncr_register: None,
+        nsr_register: None,
+        man_register: None,
+        ncr_observed_target: None,
+        nsr_observed_target: None,
+        man_observed_target: None,
+        phy_id_register_names: None,
+        phy_id_registers: None,
+        physid1_man_frame: None,
+        physid2_man_frame: None,
+        ncr_mpe_bit: None,
+        nsr_idle_bit: None,
+        poll_policy: None,
+        mpe_precondition: None,
+        man_data_offset: None,
+        man_data_size: None,
+        result_extraction: None,
+        operation_order: None,
+        allowed_classifications: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_ALLOWED_CLASSIFICATIONS,
+        boundary_classification: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_BOUNDARY_CLASSIFICATION,
+        rejected_runtime_claims: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_REJECTED_RUNTIME_CLAIMS,
+        retained_risks: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_RETAINED_RISKS,
+        source_evidence: None,
+        constructs_mdio_targets: false,
+        constructs_man_frames: false,
+        runtime_volatile_load_store_intent: false,
+        claims_runtime_volatile_load_store: false,
+        claims_ncr_write: false,
+        claims_missing_mpe_gating: false,
+        claims_wrong_mdio_targets: false,
+        claims_unbounded_polling: false,
+        claims_man_write_without_mpe_precondition: false,
+        claims_broad_mdio_phy_ownership: false,
+        claims_gpio32_phy_reset_action: false,
+        claims_ethernet_ready: false,
+        claims_interrupt_completion: false,
+        claims_dma_descriptor_ownership: false,
+        claims_packet_io: false,
+        claims_networking: false,
+        claims_sockets: false,
+        claims_ssh: false,
+        claims_phase_12_2: false,
+        claims_phase_transition: false,
+        classification: RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_CONTROL_CLASSIFICATION,
+    }
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Rp1EthernetMdioMpeEnableSourceContractEvidence {
     pub contract_id: &'static str,
@@ -7519,6 +8140,31 @@ mod tests {
             claims_gpio32_phy_reset_ownership: false,
             claims_ethernet_ready: false,
             claims_broad_mmio_ready: false,
+            claims_interrupt_completion: false,
+            claims_dma_descriptor_ownership: false,
+            claims_packet_io: false,
+            claims_networking: false,
+            claims_sockets: false,
+            claims_ssh: false,
+            claims_phase_12_2: false,
+            claims_phase_transition: false,
+        }
+    }
+
+    fn accepted_mdio_phy_id_after_mpe_guard_input() -> Rp1EthernetMdioPhyIdAfterMpeGuardReportInput
+    {
+        Rp1EthernetMdioPhyIdAfterMpeGuardReportInput {
+            kind: Rp1EthernetMdioPhyIdAfterMpeGuardReportKind::Candidate,
+            source_contract: Some(rp1_ethernet_mdio_phy_id_after_mpe_source_contract_evidence()),
+            claims_runtime_volatile_load_store: false,
+            claims_ncr_write: false,
+            claims_missing_mpe_gating: false,
+            claims_wrong_mdio_targets: false,
+            claims_unbounded_polling: false,
+            claims_man_write_without_mpe_precondition: false,
+            claims_broad_mdio_phy_ownership: false,
+            claims_gpio32_phy_reset_action: false,
+            claims_ethernet_ready: false,
             claims_interrupt_completion: false,
             claims_dma_descriptor_ownership: false,
             claims_packet_io: false,
@@ -11060,6 +11706,315 @@ mod tests {
         assert_eq!(
             rejected_rp1_ethernet_mdio_phy_id_guard_report_evidence(
                 Rp1EthernetMdioPhyIdGuardReportError::PhaseTransitionClaim
+            ),
+            (
+                RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION,
+                "phase-transition-claim"
+            )
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_mdio_phy_id_after_mpe_guard_formats_candidate_report() {
+        let report = build_rp1_ethernet_mdio_phy_id_after_mpe_guard_report(
+            accepted_mdio_phy_id_after_mpe_guard_input(),
+        )
+        .expect("valid corrected-target after-MPE guard candidate input");
+        let evidence = rp1_ethernet_mdio_phy_id_after_mpe_guard_report_evidence(report);
+
+        assert_eq!(
+            evidence.report_contract_id,
+            RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_GUARD_REPORT_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.source_contract_id,
+            RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_SOURCE_CONTRACT_ID
+        );
+        assert_eq!(evidence.report_kind, "candidate");
+        assert_eq!(
+            evidence.selected_discriminator,
+            Some(RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_SELECTED_DISCRIMINATOR)
+        );
+        assert_eq!(
+            evidence.accepted_mpe_frontier_classification,
+            Some(RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_ACCEPTED_MPE_FRONTIER_CLASSIFICATION)
+        );
+        assert_eq!(evidence.controller, Some(RP1_ETHERNET_CONTROLLER_NAME));
+        assert_eq!(evidence.phy_handle, Some("phy1"));
+        assert_eq!(evidence.phy_node, Some("ethernet-phy@1"));
+        assert_eq!(evidence.phy_address, Some(1));
+        assert_eq!(evidence.macb_mid_context_target, Some(0x1c_0010_00fc));
+        assert_eq!(
+            evidence.macb_mid_context_raw,
+            Some(RP1_ETHERNET_ACCEPTED_OBSERVED_MACB_MID_RAW)
+        );
+        assert_eq!(evidence.ncr_register, Some("NCR"));
+        assert_eq!(evidence.nsr_register, Some("NSR"));
+        assert_eq!(evidence.man_register, Some("MAN"));
+        assert_eq!(evidence.ncr_observed_target, Some(0x1c_0010_0000));
+        assert_eq!(evidence.nsr_observed_target, Some(0x1c_0010_0008));
+        assert_eq!(evidence.man_observed_target, Some(0x1c_0010_0034));
+        assert_eq!(
+            evidence.phy_id_register_names,
+            Some(RP1_ETHERNET_MDIO_PHY_ID_PHY_ID_REGISTER_NAMES)
+        );
+        assert_eq!(
+            evidence.phy_id_registers,
+            Some(RP1_ETHERNET_MDIO_PHY_ID_PHY_ID_REGISTERS)
+        );
+        assert_eq!(evidence.physid1_man_frame, Some(0x600a_0000));
+        assert_eq!(evidence.physid2_man_frame, Some(0x600e_0000));
+        assert_eq!(evidence.ncr_mpe_bit, Some(4));
+        assert_eq!(evidence.nsr_idle_bit, Some(2));
+        assert_eq!(
+            evidence.poll_policy,
+            Some(RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_POLL_POLICY)
+        );
+        assert_eq!(
+            evidence.mpe_precondition,
+            Some(RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_MPE_PRECONDITION)
+        );
+        assert_eq!(evidence.result_extraction, Some("MAN.DATA bits 15:0"));
+        assert_eq!(
+            evidence.operation_order,
+            Some(RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_OPERATION_ORDER)
+        );
+        assert_eq!(
+            evidence.allowed_classifications,
+            RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_ALLOWED_CLASSIFICATIONS
+        );
+        assert_eq!(
+            evidence.boundary_classification,
+            RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_BOUNDARY_CLASSIFICATION
+        );
+        assert_eq!(
+            evidence.rejected_runtime_claims,
+            RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_REJECTED_RUNTIME_CLAIMS
+        );
+        assert_eq!(
+            evidence.retained_risks,
+            RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_RETAINED_RISKS
+        );
+        assert_eq!(
+            evidence.source_evidence,
+            Some(RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_SOURCE_EVIDENCE)
+        );
+        assert!(evidence.constructs_mdio_targets);
+        assert!(evidence.constructs_man_frames);
+        assert!(!evidence.runtime_volatile_load_store_intent);
+        assert!(!evidence.claims_ncr_write);
+        assert!(!evidence.claims_missing_mpe_gating);
+        assert!(!evidence.claims_wrong_mdio_targets);
+        assert!(!evidence.claims_man_write_without_mpe_precondition);
+        assert!(!evidence.claims_gpio32_phy_reset_action);
+        assert!(!evidence.claims_ethernet_ready);
+        assert!(!evidence.claims_networking);
+        assert!(!evidence.claims_ssh);
+        assert!(!evidence.claims_phase_12_2);
+        assert!(!evidence.claims_phase_transition);
+        assert_eq!(
+            evidence.classification,
+            RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_CANDIDATE_CLASSIFICATION
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_mdio_phy_id_after_mpe_guard_formats_paired_control() {
+        let report = build_rp1_ethernet_mdio_phy_id_after_mpe_guard_report(
+            Rp1EthernetMdioPhyIdAfterMpeGuardReportInput {
+                kind: Rp1EthernetMdioPhyIdAfterMpeGuardReportKind::NoMdioNoEthernetControl,
+                source_contract: None,
+                ..accepted_mdio_phy_id_after_mpe_guard_input()
+            },
+        )
+        .expect("valid corrected-target after-MPE control input");
+        let evidence = rp1_ethernet_mdio_phy_id_after_mpe_guard_report_evidence(report);
+
+        assert_eq!(evidence.report_kind, "no-mdio-no-ethernet-control");
+        assert_eq!(evidence.selected_discriminator, None);
+        assert_eq!(evidence.accepted_mpe_frontier_task_id, None);
+        assert_eq!(evidence.controller, None);
+        assert_eq!(evidence.phy_address, None);
+        assert_eq!(evidence.macb_mid_context_target, None);
+        assert_eq!(evidence.ncr_observed_target, None);
+        assert_eq!(evidence.nsr_observed_target, None);
+        assert_eq!(evidence.man_observed_target, None);
+        assert_eq!(evidence.phy_id_registers, None);
+        assert_eq!(evidence.physid1_man_frame, None);
+        assert_eq!(evidence.physid2_man_frame, None);
+        assert_eq!(evidence.poll_policy, None);
+        assert_eq!(evidence.mpe_precondition, None);
+        assert_eq!(evidence.operation_order, None);
+        assert_eq!(evidence.source_evidence, None);
+        assert!(!evidence.constructs_mdio_targets);
+        assert!(!evidence.constructs_man_frames);
+        assert!(!evidence.runtime_volatile_load_store_intent);
+        assert_eq!(
+            evidence.classification,
+            RP1_ETHERNET_MDIO_PHY_ID_AFTER_MPE_CONTROL_CLASSIFICATION
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_mdio_phy_id_after_mpe_guard_rejects_shape_and_overclaims() {
+        let input = accepted_mdio_phy_id_after_mpe_guard_input();
+
+        assert_eq!(
+            build_rp1_ethernet_mdio_phy_id_after_mpe_guard_report(
+                Rp1EthernetMdioPhyIdAfterMpeGuardReportInput {
+                    source_contract: None,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::CandidateMissingSourceContract)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_phy_id_after_mpe_guard_report(
+                Rp1EthernetMdioPhyIdAfterMpeGuardReportInput {
+                    kind: Rp1EthernetMdioPhyIdAfterMpeGuardReportKind::NoMdioNoEthernetControl,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::ControlCarriesMdioTargetFacts)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_phy_id_after_mpe_guard_report(
+                Rp1EthernetMdioPhyIdAfterMpeGuardReportInput {
+                    source_contract: Some(Rp1EthernetMdioPhyIdAfterMpeSourceContractEvidence {
+                        phy_address: 2,
+                        ..rp1_ethernet_mdio_phy_id_after_mpe_source_contract_evidence()
+                    }),
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::SourceContractIdentityMismatch)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_phy_id_after_mpe_guard_report(
+                Rp1EthernetMdioPhyIdAfterMpeGuardReportInput {
+                    source_contract: Some(Rp1EthernetMdioPhyIdAfterMpeSourceContractEvidence {
+                        ncr_observed_target: 0x1c_0000_0000,
+                        ..rp1_ethernet_mdio_phy_id_after_mpe_source_contract_evidence()
+                    }),
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::SourceContractTargetMismatch)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_phy_id_after_mpe_guard_report(
+                Rp1EthernetMdioPhyIdAfterMpeGuardReportInput {
+                    source_contract: Some(Rp1EthernetMdioPhyIdAfterMpeSourceContractEvidence {
+                        operation_order: RP1_ETHERNET_MDIO_PHY_ID_OPERATION_ORDER,
+                        ..rp1_ethernet_mdio_phy_id_after_mpe_source_contract_evidence()
+                    }),
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::SourceContractFieldMismatch)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_phy_id_after_mpe_guard_report(
+                Rp1EthernetMdioPhyIdAfterMpeGuardReportInput {
+                    claims_runtime_volatile_load_store: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::RuntimeVolatileLoadStoreClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_phy_id_after_mpe_guard_report(
+                Rp1EthernetMdioPhyIdAfterMpeGuardReportInput {
+                    claims_ncr_write: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::NcrWriteClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_phy_id_after_mpe_guard_report(
+                Rp1EthernetMdioPhyIdAfterMpeGuardReportInput {
+                    claims_missing_mpe_gating: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::MissingMpeGatingClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_phy_id_after_mpe_guard_report(
+                Rp1EthernetMdioPhyIdAfterMpeGuardReportInput {
+                    claims_wrong_mdio_targets: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::WrongMdioTargetsClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_phy_id_after_mpe_guard_report(
+                Rp1EthernetMdioPhyIdAfterMpeGuardReportInput {
+                    claims_unbounded_polling: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::UnboundedPollingClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_phy_id_after_mpe_guard_report(
+                Rp1EthernetMdioPhyIdAfterMpeGuardReportInput {
+                    claims_man_write_without_mpe_precondition: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::ManWriteWithoutMpePreconditionClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_phy_id_after_mpe_guard_report(
+                Rp1EthernetMdioPhyIdAfterMpeGuardReportInput {
+                    claims_gpio32_phy_reset_action: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::Gpio32PhyResetActionClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_phy_id_after_mpe_guard_report(
+                Rp1EthernetMdioPhyIdAfterMpeGuardReportInput {
+                    claims_ethernet_ready: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::EthernetReadinessClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_phy_id_after_mpe_guard_report(
+                Rp1EthernetMdioPhyIdAfterMpeGuardReportInput {
+                    claims_networking: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::NetworkingClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_phy_id_after_mpe_guard_report(
+                Rp1EthernetMdioPhyIdAfterMpeGuardReportInput {
+                    claims_ssh: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::SshClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_phy_id_after_mpe_guard_report(
+                Rp1EthernetMdioPhyIdAfterMpeGuardReportInput {
+                    claims_phase_12_2: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioPhyIdAfterMpeGuardReportError::Phase122Claim)
+        );
+        assert_eq!(
+            rejected_rp1_ethernet_mdio_phy_id_after_mpe_guard_report_evidence(
+                Rp1EthernetMdioPhyIdAfterMpeGuardReportError::PhaseTransitionClaim
             ),
             (
                 RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION,

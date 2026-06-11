@@ -1,0 +1,80 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-phy-id-after-mpe-guard-core-20260611",
+  "classification": "rp1-ethernet-mdio-phy-id-after-mpe-guard-core-accepted",
+  "inputs": [
+    {
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-source-contract.md",
+      "notes": "Accepted corrected-target after-MPE source contract."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-source-contract/classification.json",
+      "notes": "Selected corrected NCR/NSR/MAN targets, MPE precondition, MAN frames, control shape, allowed classifications, rejected claims, and retained risks."
+    },
+    {
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-proof-closeout.md",
+      "notes": "Accepted NCR.MPE ownership frontier consumed as source context without granting NCR write permission here."
+    },
+    {
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-pi5-proof.md",
+      "notes": "Accepted prior no-write blocker retained as closed wrong-target evidence."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-macb.h",
+      "notes": "MACB NCR/NSR/MAN offsets and bit fields."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-uapi-linux-mii.h",
+      "notes": "MII_PHYSID1 and MII_PHYSID2 register ids."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "src/rp1_ethernet.rs",
+      "notes": "Local/static after-MPE source-contract constants, report structures, validators, candidate/control evidence constructors, and focused tests."
+    },
+    {
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-guard-core.md",
+      "notes": "Task record with findings, accepted guard surface, validation, and next action."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-guard-core/classification.json",
+      "notes": "Classification and accepted/rejected claim summary."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-guard-core/evidence-map.json",
+      "notes": "Input/output evidence map and validation summary."
+    }
+  ],
+  "validation": [
+    {
+      "level": "static inspection",
+      "commands_or_actions": [
+        "inspected accepted after-MPE source contract, prior MDIO PHY-ID blocker records, accepted NCR.MPE proof closeout, existing MDIO guard code, and touched src/rp1_ethernet.rs"
+      ],
+      "result": "passed"
+    },
+    {
+      "level": "fmt/lint/typecheck",
+      "commands_or_actions": [
+        "cargo fmt --all -- --check",
+        "cargo -Zjson-target-spec test --quiet rp1_ethernet",
+        "jq empty tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-guard-core/classification.json tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-guard-core/evidence-map.json",
+        "git diff --check",
+        "git diff --cached --check"
+      ],
+      "result": "passed"
+    },
+    {
+      "level": "documentation build",
+      "commands_or_actions": [
+        "not run"
+      ],
+      "result": "not required because no docs/src files were touched"
+    }
+  ],
+  "notes": [
+    "No Pi 5 hardware run or hardwareTestLock acquisition was performed.",
+    "No runtime MMIO load/store, NCR write, MAN write, PHY-ID read, PHY reset, or GPIO32 action was performed.",
+    "The candidate report constructs future corrected MDIO target and MAN frame facts only; the control report withholds those fields and has no volatile access intent."
+  ]
+}
