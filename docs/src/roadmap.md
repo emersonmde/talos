@@ -9798,6 +9798,18 @@ ownership, Ethernet driver behavior, DMA/descriptors, packet I/O, networking,
 sockets, SSH, Phase 12.2, and phase transition remain unaccepted by the guard
 core and closeout.
 
+phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof-20260611 accepts the
+serialized Pi 5 corrected-target after-MPE MDIO PHY-ID proof as
+mdio-phy1-physid-after-mpe-visible. Candidate/control capture-chain-v4 passed
+with selected-tree identity, run-unique serial markers, stable TFTP deltas,
+final pre-restore identity, and restore evidence. Candidate observed corrected
+NCR 0x10 at 0x1c00100000, performed no NCR write, then wrote only the accepted
+PHYSID1/PHYSID2 MAN frames after the MPE gate passed. MAN.DATA returned
+physid1 0xffff and physid2 0xffff. This accepts only the selected MAN
+transaction and MAN.DATA return boundary; broad MDIO/PHY ownership, PHY reset,
+link state, Ethernet driver behavior, packet I/O, networking, sockets, SSH,
+Phase 12.2, and phase transition remain unaccepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

@@ -1,0 +1,55 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof-20260611",
+  "classification": "mdio-phy1-physid-after-mpe-visible",
+  "evidence_level": "static archive review, lab-controller API identity/restore evidence, serial hardware boot/output, TFTP delta, and capture-chain-v4 replay",
+  "candidate": {
+    "capture_chain_v4": "capture-chain-v4-ready",
+    "selected_tree_hash": "dfc8c2e98d53c87651b34bfb1105f4d309244670586fe0d690e38218073f9315",
+    "classification": "mdio-phy1-physid-after-mpe-visible",
+    "macb_mid_context_raw": "0x70109",
+    "ncr_before": "0x10",
+    "ncr_after": "0x10",
+    "ncr_mpe_precondition_met": true,
+    "ncr_mpe_write_performed": false,
+    "man_writes_performed": true,
+    "physid1": "0xffff",
+    "physid1_valid": true,
+    "physid2": "0xffff",
+    "physid2_valid": true,
+    "touched_fields": "MAN",
+    "claims_runtime_mdio_transaction": true
+  },
+  "control": {
+    "capture_chain_v4": "capture-chain-v4-ready",
+    "selected_tree_hash": "9102e7c8ab4010ccb9d42a77b17b982d0cf1c47ca8bc15c1855a28e08b857960",
+    "classification": "no-mdio-no-ethernet-rp1-ethernet-mdio-phy-id-after-mpe-control",
+    "constructs_mdio_target": false,
+    "man_writes_performed": false,
+    "touched_fields": "none",
+    "claims_runtime_mdio_transaction": false
+  },
+  "final_restore": {
+    "restored_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "restored_to_pre_run_snapshot": true
+  },
+  "rejected_claims": [
+    "NCR write permission or execution",
+    "broad MDIO or PHY ownership",
+    "PHY reset or GPIO32 ownership",
+    "Ethernet driver readiness",
+    "interrupt delivery or completion",
+    "DMA descriptors or transfer completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "PHY ID values 0xffff/0xffff prove only the selected MAN.DATA return boundary, not a responsive PHY, link state, or PHY reset ownership.",
+    "GPIO32 and ETH_RST_N remain unowned.",
+    "Link, MAC, DMA, interrupts, packet I/O, sockets, SSH, and Phase 12.2 readiness remain unaccepted."
+  ],
+  "next_action": "Mechanically promote phase12-rp1-ethernet-mdio-phy-id-after-mpe-proof-closeout-20260611 on the next worker wake if this proof is accepted and committed."
+}

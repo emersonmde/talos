@@ -1,0 +1,100 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof-20260611",
+  "inputs": [
+    {
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-guard-closeout.md",
+      "notes": "Accepted static checkpoint selecting this serialized Pi 5 proof."
+    },
+    {
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-guard-core.md",
+      "notes": "Accepted corrected-target report surface."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "build.rs",
+      "notes": "After-MPE boot scenarios registered."
+    },
+    {
+      "path": "src/main.rs",
+      "notes": "After-MPE boot scenarios dispatched."
+    },
+    {
+      "path": "src/target/rpi5.rs",
+      "notes": "Corrected-target after-MPE candidate/control runtime proof output."
+    },
+    {
+      "path": "scripts/rpi5-rp1-ethernet-mdio-phy-id-after-mpe-candidate-archive.sh",
+      "notes": "Candidate archive builder."
+    },
+    {
+      "path": "scripts/rpi5-rp1-ethernet-mdio-phy-id-after-mpe-control-archive.sh",
+      "notes": "Control archive builder."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof/candidate-archive.tar.gz",
+      "notes": "Candidate boot archive."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof/control-archive.tar.gz",
+      "notes": "Control boot archive."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof/candidate-run/v4-check.json",
+      "notes": "Candidate capture-chain-v4 replay."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof/control-run/v4-check.json",
+      "notes": "Control capture-chain-v4 replay."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof/final-lab-status-before-lock-release.json",
+      "notes": "Final restored lab boot identity before hardware lock release."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof/classification.json",
+      "notes": "Accepted proof classification."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof/capture-summary.json",
+      "notes": "Capture summary."
+    }
+  ],
+  "validation": [
+    {
+      "level": "static archive review",
+      "commands_or_actions": [
+        "candidate/control archive review scripts"
+      ],
+      "result": "passed"
+    },
+    {
+      "level": "serial hardware boot/output",
+      "commands_or_actions": [
+        "candidate/control serialized Pi 5 capture under hardwareTestLock"
+      ],
+      "result": "candidate and control markers retained"
+    },
+    {
+      "level": "lab-controller API",
+      "commands_or_actions": [
+        "snapshot, publish, power-cycle, final identity, restore"
+      ],
+      "result": "passed"
+    },
+    {
+      "level": "capture-chain-v4 replay",
+      "commands_or_actions": [
+        "scripts/rpi5-proof-identity-join-v4-check.sh for candidate/control"
+      ],
+      "result": "passed"
+    },
+    {
+      "level": "JSON checks",
+      "commands_or_actions": [
+        "jq empty on task-owned JSON"
+      ],
+      "result": "pending final validation"
+    }
+  ]
+}

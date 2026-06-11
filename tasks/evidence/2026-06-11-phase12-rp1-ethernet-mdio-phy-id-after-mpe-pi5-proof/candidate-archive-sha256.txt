@@ -1,0 +1,1 @@
+5efeb8ec9311453fd94603f80f1d6f8f4e15b02d464c8725bdbf87eb4d07bdf5  tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof/candidate-archive.tar.gz

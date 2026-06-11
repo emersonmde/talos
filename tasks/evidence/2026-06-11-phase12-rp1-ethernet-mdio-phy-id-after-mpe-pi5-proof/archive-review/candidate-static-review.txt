@@ -1,0 +1,8 @@
+candidate_archive=tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof/candidate-archive.tar.gz
+candidate_archive_sha256=5efeb8ec9311453fd94603f80f1d6f8f4e15b02d464c8725bdbf87eb4d07bdf5
+kernel_2712_sha256=4c6adcadfeebe06056cded1c6ddd6b647bbcac43348af2c39050ebba6abc17cb
+kernel_2712_size=50456
+header_image_size=50456
+text_offset=0
+flags=12
+forbidden_mdio_phy_id_after_mpe_candidate_runtime_strings_absent=true

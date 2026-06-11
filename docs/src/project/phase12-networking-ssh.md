@@ -1313,3 +1313,22 @@ accept hardware evidence, runtime RP1 MMIO access, visible PHY-ID reads, broad
 MDIO/PHY ownership, PHY reset/GPIO32 ownership, Ethernet driver behavior,
 interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH,
 Phase 12.2, or a phase transition.
+
+phase12-rp1-ethernet-mdio-phy-id-after-mpe-pi5-proof-20260611 accepts the
+serialized Pi 5 corrected-target after-MPE MDIO PHY-ID proof as
+mdio-phy1-physid-after-mpe-visible. Candidate and paired control passed
+capture-chain-v4 with selected-tree identity, run-unique serial markers,
+stable TFTP deltas, final pre-restore identity, and restore evidence. The
+candidate observed MACB_MID context 0x70109 at 0x1c001000fc and corrected
+NCR 0x10 at 0x1c00100000, performed no NCR write, then wrote only the accepted
+PHYSID1/PHYSID2 MAN frames after the MPE gate passed. MAN.DATA returned
+physid1 0xffff and physid2 0xffff with both valid flags true. The paired
+control constructed no MDIO target or MAN frame and performed no volatile
+load/store.
+
+This proof accepts only the selected corrected-target MAN transaction and
+MAN.DATA return boundary. It does not accept PHY reset/GPIO32 ownership,
+broad MDIO/PHY ownership, link state, Ethernet driver behavior, interrupts,
+DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase
+transition. The visible 0xffff/0xffff result remains evidence for the selected
+transaction boundary only, not for a responsive PHY or usable Ethernet link.
