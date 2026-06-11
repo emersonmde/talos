@@ -1,0 +1,83 @@
+{
+  "task_id": "phase12-pi5-known-good-readiness-v3-contract-core-20260611",
+  "classification": "known-good-readiness-v3-contract-core-local-static-accepted",
+  "accepted_v3_contract": true,
+  "accepted_retained_v2_primary_under_v3_contract": true,
+  "valid_known_good_talos_readiness_v3_from_retained_v2_fixture": true,
+  "evidence_level": "local/static helper contract and fixture validation over retained serial hardware artifact plus lab-controller status and stable TFTP evidence",
+  "contract_policy": {
+    "primary_artifact_policy": "retained-run-label-qualified-artifact-only",
+    "mutable_latest_artifact_policy": "rejected-by-wrapper",
+    "same_run_join_policy": "caller-provided retained primary, stable TFTP delta, and pre/final status tuple from one proof run",
+    "success_marker_policy": "required",
+    "kernel_main_policy": "metadata-only-not-required-for-v3-known-good-readiness",
+    "required_success_marker": "rpi5-production-timer-preemption: PASS"
+  },
+  "retained_v2_checks": {
+    "has_required_success_marker": true,
+    "has_kernel_main_metadata": false,
+    "stable_boot_identity": true,
+    "pre_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "final_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "stable_tftp_delta": true,
+    "served_effective_kernel_fetch_count": 2,
+    "retained_primary_cursor_window": true,
+    "tftp_cursor_window": true
+  },
+  "retained_risks": [
+    "TALOS: kernel_main absent from retained primary serial window; v3 records this as metadata rather than a mandatory readiness marker"
+  ],
+  "fixture_validation": {
+    "retained_v2_primary_with_joined_identity_tftp": "valid-known-good-talos-readiness-v3",
+    "missing_success_marker_rejection": [
+      "missing-production-success-marker"
+    ],
+    "missing_identity_tftp_join_rejection": [
+      "missing-or-unstable-boot-identity-join",
+      "missing-stable-tftp-delta"
+    ],
+    "primary_artifact_overwrite_prevention": "runtime-readiness-primary-retention-overwrite-prevented"
+  },
+  "helper_scripts": [
+    "scripts/rpi5-known-good-readiness-v3-classify.sh",
+    "scripts/rpi5-known-good-readiness-v3-fixtures.sh",
+    "scripts/rpi5-runtime-readiness-retention-guard.sh"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Added v3 classifier that accepts only retained run-label-qualified primary artifacts joined with stable boot identity, stable TFTP delta, served effective-kernel fetches, and the production success marker."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "TALOS: kernel_main is recorded as metadata/retained risk instead of a mandatory known-good readiness marker in the v3 contract."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Added fixture coverage for retained v2 primary acceptance, missing success marker rejection, missing identity/TFTP join rejection, and retained-primary overwrite prevention."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No Pi 5 hardware run or hardwareTestLock acquisition was required; this task is source/script/evidence-workflow only."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No docs/src update was required because the accepted contract is task-owned and helper-script scoped."
+    }
+  ],
+  "nextAction": "Mechanically promote phase12-pi5-known-good-readiness-v3-contract-closeout-20260611 on the next worker wake; do not run hardware from the core task.",
+  "rejected_claims": [
+    "GPIO32 write/restore authorization by classifier alone",
+    "PHY reset behavior",
+    "Ethernet driver behavior",
+    "DMA/descriptors",
+    "interrupts",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ]
+}

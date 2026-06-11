@@ -1,0 +1,1 @@
+bash -n scripts/rpi5-known-good-readiness-v3-classify.sh scripts/rpi5-known-good-readiness-v3-fixtures.sh: passed

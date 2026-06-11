@@ -1,0 +1,65 @@
+{
+  "task_id": "phase12-pi5-known-good-readiness-v3-contract-core-20260611",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-11-phase12-pi5-known-good-readiness-v3-contract-core.md",
+      "evidence_level": "static inspection and implementation record"
+    },
+    {
+      "label": "v3 classifier script",
+      "path": "scripts/rpi5-known-good-readiness-v3-classify.sh",
+      "evidence_level": "source/script implementation"
+    },
+    {
+      "label": "v3 fixture validation script",
+      "path": "scripts/rpi5-known-good-readiness-v3-fixtures.sh",
+      "evidence_level": "focused local fixture validation"
+    },
+    {
+      "label": "bash syntax log",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-readiness-v3-contract-core/bash-n.log",
+      "evidence_level": "shell syntax validation"
+    },
+    {
+      "label": "retained v2 primary classified under v3",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-readiness-v3-contract-core/retained-v2-v3-classification.json",
+      "evidence_level": "local/static classification over retained hardware artifact plus joined status/TFTP evidence"
+    },
+    {
+      "label": "fixture validation output",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-readiness-v3-contract-core/fixture-validation.json",
+      "evidence_level": "focused local fixture/guard validation"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-11-phase12-pi5-known-good-readiness-v3-contract-core/classification.json",
+      "evidence_level": "accepted local/static contract classification"
+    },
+    {
+      "label": "source v2 proof task",
+      "path": "tasks/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "source v2 closeout task",
+      "path": "tasks/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-closeout.md",
+      "evidence_level": "static inspection"
+    },
+    {
+      "label": "source retained primary artifact",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof/known-good-runtime-readiness-v2-20260610T2332Z-runtime-readiness-primary.json",
+      "evidence_level": "serial hardware boot/output retained artifact"
+    },
+    {
+      "label": "source stable TFTP delta",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof/tftp-delta-stable.json",
+      "evidence_level": "lab-controller API stable TFTP delta"
+    },
+    {
+      "label": "source pre/final status",
+      "path": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof/pre-status.json and final-status.json",
+      "evidence_level": "lab-controller API boot identity"
+    }
+  ]
+}

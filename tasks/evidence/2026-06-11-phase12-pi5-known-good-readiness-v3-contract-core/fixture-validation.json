@@ -1,0 +1,14 @@
+{
+  "classification": "known-good-readiness-v3-fixtures-pass",
+  "cases": {
+    "retained_v2_primary_with_joined_identity_tftp": "valid-known-good-talos-readiness-v3",
+    "missing_success_marker_rejection": [
+      "missing-production-success-marker"
+    ],
+    "missing_identity_tftp_join_rejection": [
+      "missing-or-unstable-boot-identity-join",
+      "missing-stable-tftp-delta"
+    ],
+    "primary_artifact_overwrite_prevention": "runtime-readiness-primary-retention-overwrite-prevented"
+  }
+}
