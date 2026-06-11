@@ -1,0 +1,27 @@
+{
+  "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-proof-closeout.md",
+  "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-proof-closeout/classification.json",
+  "accepted_proof": {
+    "task_record": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof.md",
+    "classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/evidence-map.json",
+    "capture_summary": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/capture-summary.json",
+    "candidate_rerun": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/candidate-rerun",
+    "control_rerun": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/control-rerun",
+    "archive_review": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof/archive-review",
+    "commit": "832f0153"
+  },
+  "static_inputs": {
+    "source_contract": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-source-contract.md",
+    "static_core": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-discriminator-core.md",
+    "static_closeout": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-discriminator-closeout.md",
+    "project_doc": "docs/src/project/phase12-networking-ssh.md",
+    "roadmap": "docs/src/roadmap.md"
+  },
+  "validation": {
+    "jq": "jq empty on proof and closeout classification/evidence-map/capture-summary JSON",
+    "diff_check": "git diff --check",
+    "docs_build": "/home/node/.cargo/bin/mdbook build",
+    "staged_diff_check": "git diff --cached --check"
+  }
+}

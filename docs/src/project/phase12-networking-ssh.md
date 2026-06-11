@@ -286,6 +286,18 @@ write/restore retry or success, MDIO/PHY ownership, Ethernet driver behavior,
 interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2,
 or a phase transition.
 
+phase12-rp1-ethernet-gpio32-event-state-proof-closeout-20260611 closes that
+read-only proof frontier as
+rp1-ethernet-gpio32-event-state-proof-blocked-event-state-frontier-closed.
+Same-shaped read-only event-state candidate/control hardware retries are
+closed for this pair because repeating the accepted report would not decide
+whether the source-backed event bits are stale, clearable, firmware-owned,
+harmless, or safe to ignore. Any future GPIO32 follow-up requires supervisor
+planning for a qualitatively different event-state/source-clearance or
+ownership discriminator before event clearing, GPIO/RIO/pad/MMIO writes,
+GPIO32 write/restore retry, PHY reset, MDIO/PHY, Ethernet driver behavior,
+packet I/O, networking, SSH, Phase 12.2, or phase transition work.
+
 ## Observed-Window GEM MID Pi 5 Proof
 
 phase12-rp1-ethernet-observed-window-discriminator-pi5-proof-20260610 accepts

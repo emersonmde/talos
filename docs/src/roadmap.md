@@ -9632,6 +9632,28 @@ MDIO/PHY ownership, Ethernet driver behavior, interrupts, DMA/descriptors,
 packet I/O, networking, sockets, SSH, Phase 12.2, and phase transition remain
 unaccepted.
 
+phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof-20260611 accepts
+the read-only GPIO32 event-state discriminator proof as
+rp1-ethernet-gpio32-event-state-readonly-pi5-proof-accepted. Candidate and
+paired no-GPIO/no-Ethernet control both retained selected-tree identity,
+archive digest, run-unique serial evidence, stable TFTP deltas, final
+pre-restore identity, and restore proof under capture-chain-v4. Candidate
+reported GPIO32 STATUS 0x0abe3300, CTRL 0x85, RIO1 OUT/OE 0x10, RIO1 IN
+0x12, pad 0x56, source-backed event bits 0x0ab00000, writes-performed=false,
+and event-clear-performed=false, classifying as
+rp1-ethernet-gpio32-event-state-blocked-event-state.
+
+phase12-rp1-ethernet-gpio32-event-state-proof-closeout-20260611 closes that
+proof frontier as
+rp1-ethernet-gpio32-event-state-proof-blocked-event-state-frontier-closed.
+Same-shaped read-only event-state hardware retries are closed for this
+candidate/control pair. Any follow-up needs supervisor planning for a
+qualitatively different event-state/source-clearance or ownership
+discriminator; event clearing, GPIO/RIO/pad/MMIO writes, GPIO32 write/restore
+retry, PHY reset, MDIO/PHY ownership, Ethernet driver behavior,
+DMA/descriptors, interrupts, packet I/O, networking, sockets, SSH, Phase 12.2,
+and phase transition remain unaccepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

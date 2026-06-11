@@ -1,0 +1,53 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-event-state-proof-closeout-20260611",
+  "classification": "rp1-ethernet-gpio32-event-state-proof-blocked-event-state-frontier-closed",
+  "evidence_level": "static inspection closeout over accepted serial hardware boot/output proof",
+  "accepted_boundary": {
+    "type": "read-only GPIO32 event-state discriminator",
+    "proof_task": "phase12-rp1-ethernet-gpio32-event-state-readonly-pi5-proof-20260611",
+    "proof_commit": "832f0153",
+    "candidate_classification": "rp1-ethernet-gpio32-event-state-blocked-event-state",
+    "control_classification": "no-gpio-no-ethernet-rp1-ethernet-gpio32-event-state-control",
+    "status": "0x0abe3300",
+    "ctrl": "0x85",
+    "rio1_out": "0x10",
+    "rio1_oe": "0x10",
+    "rio1_in": "0x12",
+    "pad": "0x56",
+    "event_bits": "0x0ab00000",
+    "source_decoding_status": "source-backed-bits-20-27",
+    "writes_performed": false,
+    "event_clear_performed": false
+  },
+  "same_shaped_retry_policy": {
+    "classification": "closed",
+    "scope": "same read-only GPIO32 event-state candidate/control hardware retry",
+    "reason": "The accepted proof already retained capture-chain-v4 candidate/control evidence. Repeating the same read-only report would not resolve whether event bits are stale, clearable, firmware-owned, harmless, or safe to ignore."
+  },
+  "rejected_claims": [
+    "event clearing authority",
+    "GPIO/RIO/pad/MMIO writes",
+    "GPIO32 ownership",
+    "GPIO32 write/restore retry or success",
+    "PHY reset assertion or deassertion",
+    "MDIO/PHY ownership",
+    "Ethernet driver readiness",
+    "interrupt completion",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "event-bit semantics remain source-unresolved",
+    "safe event-clear sequence is unaccepted",
+    "GPIO32 PHY reset writes remain blocked",
+    "next follow-up requires supervisor planning for a qualitatively different discriminator or ownership contract"
+  ],
+  "planning_needed": true,
+  "planning_reason": "Accepted read-only proof closed the current blocked-event-state frontier, but no explicit queued follow-up is mechanically objective without supervisor planning for event-state/source-clearance or a different ownership discriminator.",
+  "next_action": "Supervisor planning required before any event clearing, GPIO/RIO/pad/MMIO write, GPIO32 write/restore retry, PHY reset, MDIO/PHY, Ethernet driver, packet I/O, networking, SSH, Phase 12.2, or phase transition work."
+}
