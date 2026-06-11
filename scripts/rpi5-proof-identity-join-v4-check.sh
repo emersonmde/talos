@@ -7,9 +7,11 @@ usage: rpi5-proof-identity-join-v4-check.sh --evidence-dir DIR
        [--label LABEL] [--report-kind candidate|control] [--nonce NONCE]
 
 Replays a retained Pi 5 proof bundle without hardware and checks the repaired
-pi5-capture-chain-v4 contract: /boot/files selected-tree identity, stable TFTP
-fetch identity, final pre-restore identity, run-unique serial freshness, direct
-serial marker retention, and candidate/control marker expectations.
+pi5-capture-chain-v4 contract: /boot/files selected-tree identity, same-power-
+cycle stable TFTP-served kernel byte identity, final pre-restore identity,
+run-unique serial freshness, direct serial marker retention, and
+candidate/control marker expectations. API-visible /boot/files identity is not
+sufficient by itself.
 EOF
 }
 
@@ -216,7 +218,12 @@ output="$(jq -n \
         endpoint_identity: {
             root_endpoint: $root,
             selected_tree_identity_source: ($preflight[0].selected_tree_identity_source // "/boot/files"),
-            fallback_used: ($root.fallback_used // null)
+            fallback_used: ($root.fallback_used // null),
+            trust_boundary: {
+                api_visible_boot_files_sufficient: false,
+                requires_same_power_cycle_tftp_served_kernel_byte_agreement: true,
+                requires_final_pre_restore_identity: true
+            }
         },
         proof_run_identity: {
             selected_tree_hash: $selected_tree_hash,
@@ -274,7 +281,7 @@ output="$(jq -n \
                 "phase-transition"
             ]
         },
-        rule: "missing /boot/files identity, expected TFTP fetch bytes, final selected-tree identity, run-unique marker freshness, direct serial marker retention, or paired control marker prevents decisive RP1 hardware classification"
+        rule: "missing /boot/files identity, same-power-cycle expected TFTP-served kernel bytes, final selected-tree identity, run-unique marker freshness, direct serial marker retention, or paired control marker prevents decisive RP1 hardware classification; API-visible /boot/files identity alone is not sufficient"
       }
     ')"
 

@@ -97,12 +97,41 @@ writes, GPIO32/PHY reset, broad MDIO/PHY ownership, PHY absence, Ethernet
 behavior, interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH,
 Phase 12.2, or a phase transition.
 
+## Quarantine Addendum
+
+The later
+phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity-20260611
+intervention discriminator supersedes this closeout as an unblocker for
+register-vector retries. The sentinel's retained candidate/control evidence is
+still historical evidence for those two no-MDIO/no-Ethernet sentinel boots, but
+it is quarantined as insufficient to prove the lab publication path for a later
+register-vector retry.
+
+Required current boundary: a future hardware proof cannot rely on API-visible
+/status or /boot/files selected-tree identity alone. It must show same-power-
+cycle TFTP-served kernel byte agreement and final pre-restore identity for the
+specific candidate/control run before runtime serial evidence can become
+decisive.
+
+Quarantined as a mechanical unblocker:
+
+- this closeout's original next selection of
+  phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity-20260611;
+- the accepted claim that the staging sentinel by itself mechanically unblocks
+  register-vector retry staging identity;
+- any helper interpretation that treats API-visible boot files as sufficient
+  selected-tree identity without matching same-power-cycle TFTP-served bytes.
+
+The authoritative later blocker is
+tftp-root-diverges-from-lab-api-selected-tree: the lab API reported the
+47,832-byte sentinel selected tree before power and at final pre-restore while
+dnsmasq served the 104,136-byte baseline kernel during that same power cycle.
+
 ## Next Selection
 
-The queued
+Superseded by the quarantine addendum: the queued
 phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity-20260611
-task is mechanically unblocked by this closeout only because the sentinel proof
-accepted selected-tree identity durability for both candidate and control.
+task must not be considered mechanically unblocked by this closeout alone.
 
 That v3 proof remains bounded by its own acceptance criteria: it must acquire
 hardwareTestLock, preserve candidate/control identity, run the staging identity
@@ -151,11 +180,13 @@ Ethernet behavior, networking, SSH, Phase 12.2, and phase transition claims.
 
 - Findings list with dispositions: satisfied.
 - Closeout reconciles candidate/control sentinel evidence without expanding
-  beyond staging identity durability: satisfied.
-- Because selected-tree identity durability is accepted, nextAction explicitly
-  selects
+  beyond staging identity durability: satisfied historically, now quarantined
+  as a register-vector retry unblocker by the addendum above.
+- Because selected-tree identity durability is accepted, nextAction originally
+  selected
   phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity-20260611:
-  satisfied.
+  superseded by the later tftp-root-diverges-from-lab-api-selected-tree
+  discriminator and no longer satisfied as a current unblocker.
 - Staging is not blocked or inconclusive, so planningNeeded does not need to
   be set by this task: satisfied.
 - Accepted checkpoint committed before follow-up starts: satisfied by the
@@ -163,9 +194,8 @@ Ethernet behavior, networking, SSH, Phase 12.2, and phase transition claims.
 
 ## Next Action
 
-Mechanically promote
-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity-20260611
-on the next worker wake if dependencies remain satisfied, hardwareTestLock is
-unlocked/restored, and supervisorIntervention remains inactive. Do not start
-broad MDIO/PHY ownership, Ethernet behavior, networking, SSH, Phase 12.2, or a
-phase transition from this closeout.
+Do not mechanically promote register-vector retries from this closeout. Run the
+root-recovery queue that starts with
+phase12-rp1-ethernet-mdio-staging-identity-quarantine-core-20260611, then the
+publication/TFTP-root reconciliation trace, before supervisor planning for any
+fresh guarded register-vector retry.

@@ -1,0 +1,59 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-staging-identity-quarantine-core-20260611",
+  "status": "accepted",
+  "classification": "mdio-staging-identity-quarantine-accepted",
+  "reviewed_paths": [
+    {
+      "path": "scripts/rpi5-staging-identity-gate-v1-check.sh",
+      "disposition": "fixed",
+      "note": "Output now records that API-visible status/boot-files identity alone is insufficient and same-power-cycle TFTP-served byte agreement is required."
+    },
+    {
+      "path": "scripts/rpi5-proof-identity-join-v4-check.sh",
+      "disposition": "fixed",
+      "note": "Endpoint identity output now records the same trust boundary."
+    },
+    {
+      "path": "scripts/rpi5-evidence-consistency-guard.sh",
+      "disposition": "not-an-issue",
+      "note": "Already treats v4 JSON as authoritative and rejects ready overclaims when v4 blocks."
+    },
+    {
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-closeout.md",
+      "disposition": "fixed",
+      "note": "Added quarantine addendum and superseded the original retry selection."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-closeout/classification.json",
+      "disposition": "fixed",
+      "note": "Classification now records quarantine scope and future acceptance requirements."
+    },
+    {
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-closeout/evidence-map.json",
+      "disposition": "fixed",
+      "note": "Evidence map now links the later TFTP-root divergence blocker and no longer selects the v3 register-vector proof as next action."
+    },
+    {
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity.md",
+      "disposition": "not-an-issue",
+      "note": "Already records the tftp-root-diverges-from-lab-api-selected-tree blocker and quarantine next action."
+    }
+  ],
+  "authoritative_inputs": {
+    "staging_sentinel_closeout": "tasks/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-closeout.md",
+    "staging_sentinel_closeout_classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-closeout/classification.json",
+    "staging_sentinel_closeout_evidence_map": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-closeout/evidence-map.json",
+    "intervention_discriminator_classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/intervention-discriminator/classification.json",
+    "intervention_discriminator_evidence_map": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/intervention-discriminator/evidence-map.json"
+  },
+  "validation": [
+    "static inspection of task records, retained evidence JSON, and helper scripts",
+    "rpi5-capture-chain-v4 retained fixtures",
+    "staging identity gate replay over retained candidate/control evidence",
+    "jq empty on new and edited JSON evidence",
+    "git diff --check",
+    "git diff --cached --check before commit"
+  ],
+  "next_action": "phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace-20260611",
+  "commit_hash": "recorded-in-supervisor-state-after-commit"
+}

@@ -1,0 +1,49 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-staging-identity-quarantine-core-20260611",
+  "status": "accepted",
+  "classification": "mdio-staging-identity-quarantine-accepted",
+  "evidence_level": [
+    "static inspection",
+    "retained evidence review",
+    "script contract inspection",
+    "JSON validation",
+    "diff checks"
+  ],
+  "quarantined_evidence": {
+    "task_id": "phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-closeout-20260611",
+    "previous_classification": "selected-tree-identity-durability-accepted",
+    "current_classification": "selected-tree-identity-durability-quarantined-for-register-vector-retries",
+    "no_longer_mechanically_unblocks": "phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity-20260611"
+  },
+  "triggering_blocker": {
+    "task_id": "phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity-20260611",
+    "classification": "tftp-root-diverges-from-lab-api-selected-tree",
+    "commit": "dcce69779c88a58005160fdeebd0e59e5a35322f",
+    "first_failing_invariant": "tftp-served-kernel-bytes-mismatch-while-lab-api-selected-tree-stayed-staged"
+  },
+  "accepted_claims": [
+    "The prior staging sentinel closeout is quarantined as insufficient to unblock register-vector retries.",
+    "Future runtime hardware acceptance requires same-power-cycle TFTP-served kernel byte agreement plus final pre-restore identity before serial runtime evidence can be decisive.",
+    "The local replay helper outputs now expose the API-visible-identity trust boundary."
+  ],
+  "rejected_claims": [
+    "register-vector MAN.DATA values",
+    "PHY absence",
+    "broad MDIO/PHY ownership",
+    "GPIO32 or PHY reset ownership",
+    "Ethernet behavior",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition",
+    "deployed lab-controller service repair"
+  ],
+  "required_for_future_runtime_acceptance": [
+    "same-power-cycle TFTP-served kernel byte agreement",
+    "final pre-restore selected-tree identity",
+    "restore proof",
+    "serial freshness",
+    "evidence consistency"
+  ],
+  "next_action": "Promote phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace-20260611 on the next worker wake if dependencies remain satisfied."
+}

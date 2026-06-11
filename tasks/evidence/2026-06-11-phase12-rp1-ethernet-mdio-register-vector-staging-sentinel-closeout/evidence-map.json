@@ -1,7 +1,7 @@
 {
   "task_id": "phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-closeout-20260611",
   "status": "accepted",
-  "classification": "selected-tree-identity-durability-accepted",
+  "classification": "selected-tree-identity-durability-quarantined-for-register-vector-retries",
   "reconciled_task": "phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof-20260611",
   "reconciled_commit": "73650da806da726fbccb1b1b4b5989c3a4a0a7e0",
   "authoritative_inputs": {
@@ -13,7 +13,22 @@
     "control_v4": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/control-run/v4-check.json",
     "candidate_staging_identity_gate": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/candidate-run/staging-identity-gate-output.json",
     "control_staging_identity_gate": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/control-run/staging-identity-gate-output.json",
-    "final_lab_status": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/final-lab-status.json"
+    "final_lab_status": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-pi5-proof/final-lab-status.json",
+    "later_tftp_root_divergence_classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/intervention-discriminator/classification.json",
+    "later_tftp_root_divergence_evidence_map": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity/intervention-discriminator/evidence-map.json"
+  },
+  "quarantine": {
+    "active": true,
+    "scope": "register-vector retry unblocker only",
+    "reason": "lab API-visible selected tree diverged from actual dnsmasq-served TFTP kernel bytes in later retained evidence",
+    "no_longer_mechanically_unblocks": "phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity-20260611",
+    "future_hardware_acceptance_requires": [
+      "same-power-cycle TFTP-served kernel byte agreement",
+      "final pre-restore selected-tree identity",
+      "restore proof",
+      "serial freshness",
+      "evidence consistency"
+    ]
   },
   "hardware_evidence_reviewed": [
     {
@@ -57,6 +72,6 @@
     "mdbook build because docs/src files were touched",
     "git diff --cached --check before commit"
   ],
-  "next_action": "phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity-20260611",
+  "next_action": "phase12-rp1-ethernet-lab-tftp-root-reconciliation-trace-20260611 after quarantine core acceptance",
   "commit_hash": "recorded-in-supervisor-state-after-commit"
 }

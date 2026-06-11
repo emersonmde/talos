@@ -1,7 +1,7 @@
 {
   "task_id": "phase12-rp1-ethernet-mdio-register-vector-staging-sentinel-closeout-20260611",
   "status": "accepted",
-  "classification": "selected-tree-identity-durability-accepted",
+  "classification": "selected-tree-identity-durability-quarantined-for-register-vector-retries",
   "evidence_level": [
     "static inspection",
     "capture-chain-v4 replay review",
@@ -18,6 +18,23 @@
     "commit": "73650da806da726fbccb1b1b4b5989c3a4a0a7e0"
   },
   "selected_tree_identity_durability_accepted": true,
+  "quarantine": {
+    "active": true,
+    "scope": "register-vector retry unblocker only",
+    "reason": "Later retained evidence classified tftp-root-diverges-from-lab-api-selected-tree: lab API-visible selected tree stayed staged while dnsmasq served baseline-sized TFTP kernel bytes during the same power cycle.",
+    "insufficient_unblockers": [
+      "API-visible /status selected-tree identity alone",
+      "API-visible /boot/files selected-tree identity alone",
+      "the staging sentinel closeout by itself as a register-vector retry dependency"
+    ],
+    "required_for_future_runtime_acceptance": [
+      "same-power-cycle TFTP-served kernel byte agreement",
+      "final pre-restore identity matching the selected tree",
+      "restore proof",
+      "serial freshness",
+      "evidence consistency"
+    ]
+  },
   "first_failing_invariant": null,
   "candidate": {
     "capture_chain_v4": "capture-chain-v4-ready",
@@ -50,7 +67,7 @@
   "accepted_claims": [
     "The no-MDIO/no-Ethernet candidate-shaped staging sentinel preserved selected-tree identity through publish-to-power-to-TFTP/final identity and restore proof.",
     "The paired no-MDIO/no-Ethernet control preserved selected-tree identity through publish-to-power-to-TFTP/final identity and restore proof.",
-    "The sentinel proof mechanically unblocks the queued register-vector v3 proof's staging-identity dependency only."
+    "The sentinel proof remains historical no-MDIO/no-Ethernet evidence but is quarantined as insufficient to mechanically unblock register-vector retries."
   ],
   "rejected_claims": [
     "RP1 MDIO register-vector MAN.DATA values",
@@ -69,5 +86,5 @@
     "Phase 12.2",
     "phase transition"
   ],
-  "next_action": "Mechanically promote phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v3-after-staging-identity-20260611 on the next worker wake if dependencies remain satisfied, hardwareTestLock is unlocked/restored, and supervisorIntervention remains inactive."
+  "next_action": "Do not mechanically promote register-vector retries from this closeout. Continue the root-recovery queue beginning with phase12-rp1-ethernet-mdio-staging-identity-quarantine-core-20260611."
 }

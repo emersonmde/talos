@@ -8,8 +8,10 @@ usage: rpi5-staging-identity-gate-v1-check.sh --v4-check FILE
 
 Replays retained pi5-capture-chain-v4 JSON and checks only the staging
 identity durability fields needed before another register-vector hardware
-proof: selected tree, expected TFTP fetch bytes/count, final pre-restore
-identity, restore identity, and run-unique serial freshness.
+proof: selected tree, same-power-cycle TFTP-served kernel byte/count
+agreement, final pre-restore identity, restore identity, and run-unique serial
+freshness. API-visible /status or /boot/files identity is not sufficient by
+itself.
 EOF
 }
 
@@ -167,6 +169,12 @@ output="$(jq -n \
           guard_supplied: (($guard_doc | length) != 0),
           classification: ($guard_doc.classification // null)
         },
+        trust_boundary: {
+          api_visible_boot_files_sufficient: false,
+          requires_same_power_cycle_tftp_served_kernel_byte_agreement: true,
+          requires_final_pre_restore_identity: true,
+          quarantine_reason: "lab API-visible selected-tree identity has diverged from actual dnsmasq-served TFTP bytes in retained MDIO register-vector evidence"
+        },
         claim_boundary: {
           accepted_if_ready: "staging identity durability and reporting-path freshness only",
           rejected_runtime_claims: [
@@ -179,7 +187,7 @@ output="$(jq -n \
             "phase-transition"
           ]
         },
-        rule: "future hardware proof evidence is not decisive unless selected-tree identity survives TFTP fetch byte/count checks, final pre-restore identity, restore proof, serial freshness, and evidence-consistency checks"
+        rule: "future hardware proof evidence is not decisive unless selected-tree identity survives same-power-cycle TFTP-served kernel byte/count checks, final pre-restore identity, restore proof, serial freshness, and evidence-consistency checks; API-visible /status or /boot/files identity alone is not sufficient"
       }
     ')"
 
