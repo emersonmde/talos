@@ -9773,6 +9773,31 @@ reads, broad MDIO/PHY ownership, PHY reset/GPIO32 ownership, Ethernet driver
 behavior, interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH,
 Phase 12.2, and phase transition remain unaccepted.
 
+phase12-rp1-ethernet-mdio-phy-id-after-mpe-guard-core-20260611 accepts the
+local/static corrected-target after-MPE MDIO PHY-ID guard report surface. The
+candidate preserves the source contract, accepted NCR.MPE frontier, MACB_MID
+context 0x1c001000fc, corrected NCR/NSR/MAN targets
+0x1c00100000/0x1c00100008/0x1c00100034, PHY address 1, PHYSID1/PHYSID2
+register ids, MAN frames 0x600a0000 and 0x600e0000, no-NCR-write MPE
+precondition, bounded NSR.IDLE polling, MAN.DATA extraction, rejected claims,
+retained risks, and hardware-proof boundary fields. The paired control uses
+the same reporting path while constructing no MDIO targets, no MAN frames, and
+no volatile access intent.
+
+phase12-rp1-ethernet-mdio-phy-id-after-mpe-guard-closeout-20260611 closes the
+local/static after-MPE guard frontier as
+rp1-ethernet-mdio-phy-id-after-mpe-guard-static-frontier-closed. Same-shaped
+local/static guard retries are closed, and the checkpoint selects only the
+serialized Pi 5 corrected-target after-MPE PHY-ID proof. That proof must
+acquire hardwareTestLock, write no NCR, write MAN only if corrected NCR.MPE
+bit 4 is already set, and preserve candidate/control identity, archive/static
+review, serial freshness, TFTP, final identity, restore, capture summary,
+classification JSON, and evidence map. Hardware evidence, runtime MDIO
+success, visible PHY-ID reads, broad MDIO/PHY ownership, PHY reset/GPIO32
+ownership, Ethernet driver behavior, DMA/descriptors, packet I/O, networking,
+sockets, SSH, Phase 12.2, and phase transition remain unaccepted by the guard
+core and closeout.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

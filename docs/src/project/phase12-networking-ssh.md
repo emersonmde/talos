@@ -1274,3 +1274,42 @@ visible PHY-ID reads, NCR write permission for the first corrected-target
 proof, broad MDIO/PHY ownership, PHY reset/GPIO32 ownership, Ethernet driver
 readiness, interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH,
 Phase 12.2, or a phase transition.
+
+phase12-rp1-ethernet-mdio-phy-id-after-mpe-guard-core-20260611 accepts the
+local/static corrected-target after-MPE MDIO PHY-ID guard report surface. The
+candidate report preserves source contract id
+phase12-rp1-ethernet-mdio-phy-id-after-mpe-source-contract-v1, report contract
+id phase12-rp1-ethernet-mdio-phy-id-after-mpe-guard-report-contract-v1,
+accepted MPE frontier
+rp1-ethernet-mdio-mpe-enable-ownership-frontier-closed, MACB_MID context
+0x1c001000fc, corrected NCR/NSR/MAN targets 0x1c00100000/0x1c00100008/
+0x1c00100034, PHY address 1, PHYSID1/PHYSID2 MAN frames 0x600a0000 and
+0x600e0000, no-NCR-write MPE precondition, bounded NSR.IDLE polling,
+MAN.DATA extraction, rejected claims, retained risks, and hardware-proof
+boundary fields.
+
+The paired control uses the same report path while constructing no MDIO
+targets, no MAN frames, no candidate-only result fields, and no volatile
+access intent. The guard core does not run hardware and does not accept
+runtime MDIO transaction success, visible PHY-ID reads, NCR write permission,
+broad MDIO/PHY ownership, PHY reset/GPIO32 ownership, Ethernet driver
+readiness, interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH,
+Phase 12.2, or a phase transition.
+
+phase12-rp1-ethernet-mdio-phy-id-after-mpe-guard-closeout-20260611 closes the
+local/static after-MPE guard frontier as
+rp1-ethernet-mdio-phy-id-after-mpe-guard-static-frontier-closed. Same-shaped
+local/static guard retries are closed for this candidate/control pair. The
+checkpoint selects only the serialized Pi 5 corrected-target after-MPE PHY-ID
+proof, which must acquire hardwareTestLock and preserve candidate/control
+selected-tree identity, archive review output, fresh serial cursor/output,
+run-unique serial markers, TFTP delta, final pre-restore identity, restore
+evidence, capture summary, classification JSON, and evidence map.
+
+The selected proof may not write NCR. It may write MAN only if corrected
+NCR.MPE bit 4 is already set; if that precondition fails, it must perform no
+NCR or MAN write and classify a precise blocker. This guard closeout does not
+accept hardware evidence, runtime RP1 MMIO access, visible PHY-ID reads, broad
+MDIO/PHY ownership, PHY reset/GPIO32 ownership, Ethernet driver behavior,
+interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH,
+Phase 12.2, or a phase transition.
