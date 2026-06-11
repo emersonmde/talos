@@ -6216,6 +6216,80 @@ pub const RP1_ETHERNET_MDIO_PHY_ID_SOURCE_EVIDENCE: &[&str] = &[
     "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-uapi-linux-mii.h",
 ];
 
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_SOURCE_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-mdio-mpe-enable-source-contract-v1";
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_SOURCE_TASK_ID: &str =
+    "phase12-rp1-ethernet-mdio-mpe-enable-source-contract-20260611";
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_GUARD_REPORT_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-mdio-mpe-enable-guard-report-contract-v1";
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_SELECTED_OPERATION: &str =
+    "rp1-ethernet-mdio-mpe-enable-set-readback-restore";
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_CANDIDATE_CLASSIFICATION: &str =
+    "rp1-ethernet-mdio-mpe-enable-guard-candidate-local-static";
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_CONTROL_CLASSIFICATION: &str =
+    "no-mdio-no-ethernet-rp1-ethernet-mdio-mpe-enable-control";
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_BOUNDARY_CLASSIFICATION: &str =
+    "hardware-proof-limited-to-ncr-mpe-enable-write-restore-control-output";
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_REGISTER: &str = "MACB/GEM NCR";
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_SOURCE_OFFSET: u64 = 0x0010_0000;
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_NCR_OFFSET: u64 = 0x0000;
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_OBSERVED_TARGET: u64 =
+    RP1_ETHERNET_OBSERVED_RP1_BASE + RP1_ETHERNET_MDIO_MPE_ENABLE_SOURCE_OFFSET;
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_WIDTH_BITS: u32 = 32;
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_MPE_BIT: u8 = 4;
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_MPE_MASK: u32 = 1 << RP1_ETHERNET_MDIO_MPE_ENABLE_MPE_BIT;
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_WRITE_RULE: &str = "pre_raw | 0x00000010";
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_RESTORE_INVARIANT: &str = "restore_raw must equal pre_raw";
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_OPERATION_ORDER: &[&str] = &[
+    "print candidate start marker and accepted input frontier",
+    "read observed-window MACB_MID context only",
+    "pre-read MACB/GEM NCR at 0x1c00100000 and retain pre_raw",
+    "write pre_raw | 0x00000010 to MACB/GEM NCR",
+    "read back MACB/GEM NCR and retain post_raw",
+    "restore-write pre_raw to MACB/GEM NCR",
+    "restore-read MACB/GEM NCR and require restore_raw equals pre_raw",
+    "classify only NCR.MPE write/readback/restore ownership",
+];
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_ALLOWED_CLASSIFICATIONS: &[&str] = &[
+    "rp1-ethernet-mdio-mpe-enable-set-readback-restored",
+    "rp1-ethernet-mdio-mpe-enable-already-set-restored",
+    "rp1-ethernet-mdio-mpe-enable-readback-mismatch-restored",
+    "rp1-ethernet-mdio-mpe-enable-restore-failed",
+    "rp1-ethernet-mdio-mpe-enable-blocked-target-inconclusive",
+    "precise-staging-capture-blocker",
+    "no-mdio-no-ethernet-rp1-ethernet-mdio-mpe-enable-control",
+];
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_REJECTED_RUNTIME_CLAIMS: &[&str] = &[
+    "MAN writes",
+    "PHY-ID reads",
+    "broad MDIO or PHY ownership",
+    "PHY reset ownership",
+    "GPIO32 ownership or action",
+    "Ethernet driver readiness",
+    "broad Ethernet MMIO readiness beyond selected NCR target",
+    "DMA or descriptor ownership",
+    "interrupt completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition",
+];
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_RETAINED_RISKS: &[&str] = &[
+    "The guard surface is local/static and does not prove the NCR target is hardware-visible",
+    "NCR.MPE set/readback/restore may still block on Pi 5 target visibility or restore evidence",
+    "MPE ownership does not prove MAN transaction, PHY-ID, PHY reset, link, MAC, DMA, interrupt, packet, socket, SSH, or Phase 12.2 readiness",
+    "Same-shaped MDIO PHY-ID retries remain closed until NCR.MPE write/restore ownership is separately accepted",
+];
+pub const RP1_ETHERNET_MDIO_MPE_ENABLE_SOURCE_EVIDENCE: &[&str] = &[
+    "tasks/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-source-contract.md",
+    "tasks/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-proof-closeout.md",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-mpe-enable-source-contract/classification.json",
+    "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-macb_main.c",
+    "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-macb.h",
+];
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Rp1EthernetMdioPhyIdSourceContractEvidence {
     pub contract_id: &'static str,
@@ -6737,6 +6811,429 @@ fn rp1_ethernet_mdio_phy_id_guard_control_evidence(
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetMdioMpeEnableSourceContractEvidence {
+    pub contract_id: &'static str,
+    pub source_task_id: &'static str,
+    pub selected_operation: &'static str,
+    pub controller: &'static str,
+    pub compatible: &'static [&'static str],
+    pub observed_identity_target: u64,
+    pub register: &'static str,
+    pub source_offset: u64,
+    pub ncr_offset: u64,
+    pub observed_target: u64,
+    pub width_bits: u32,
+    pub mpe_bit: u8,
+    pub mpe_mask: u32,
+    pub write_rule: &'static str,
+    pub restore_invariant: &'static str,
+    pub operation_order: &'static [&'static str],
+    pub allowed_classifications: &'static [&'static str],
+    pub source_evidence: &'static [&'static str],
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Rp1EthernetMdioMpeEnableGuardReportKind {
+    Candidate,
+    NoMdioNoEthernetControl,
+}
+
+impl Rp1EthernetMdioMpeEnableGuardReportKind {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::Candidate => "candidate",
+            Self::NoMdioNoEthernetControl => "no-mdio-no-ethernet-control",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetMdioMpeEnableGuardReportInput {
+    pub kind: Rp1EthernetMdioMpeEnableGuardReportKind,
+    pub source_contract: Option<Rp1EthernetMdioMpeEnableSourceContractEvidence>,
+    pub claims_runtime_ncr_write_executed: bool,
+    pub claims_man_write: bool,
+    pub claims_phy_id_read: bool,
+    pub claims_broad_mdio_phy_ownership: bool,
+    pub claims_phy_reset_ownership: bool,
+    pub claims_gpio32_ownership: bool,
+    pub claims_ethernet_ready: bool,
+    pub claims_broad_mmio_ready: bool,
+    pub claims_dma_descriptor_ownership: bool,
+    pub claims_interrupt_completion: bool,
+    pub claims_packet_io: bool,
+    pub claims_networking: bool,
+    pub claims_sockets: bool,
+    pub claims_ssh: bool,
+    pub claims_phase_12_2: bool,
+    pub claims_phase_transition: bool,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetMdioMpeEnableGuardReport {
+    pub kind: Rp1EthernetMdioMpeEnableGuardReportKind,
+    pub source_contract: Option<Rp1EthernetMdioMpeEnableSourceContractEvidence>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetMdioMpeEnableGuardReportEvidence {
+    pub report_contract_id: &'static str,
+    pub source_contract_id: &'static str,
+    pub source_task_id: &'static str,
+    pub report_kind: &'static str,
+    pub selected_operation: Option<&'static str>,
+    pub controller: Option<&'static str>,
+    pub compatible: Option<&'static [&'static str]>,
+    pub observed_identity_target: Option<u64>,
+    pub register: Option<&'static str>,
+    pub source_offset: Option<u64>,
+    pub ncr_offset: Option<u64>,
+    pub observed_target: Option<u64>,
+    pub width_bits: Option<u32>,
+    pub mpe_bit: Option<u8>,
+    pub mpe_mask: Option<u32>,
+    pub write_rule: Option<&'static str>,
+    pub restore_invariant: Option<&'static str>,
+    pub operation_order: Option<&'static [&'static str]>,
+    pub allowed_classifications: &'static [&'static str],
+    pub boundary_classification: &'static str,
+    pub rejected_runtime_claims: &'static [&'static str],
+    pub retained_risks: &'static [&'static str],
+    pub source_evidence: Option<&'static [&'static str]>,
+    pub candidate_write_intent: bool,
+    pub claims_runtime_ncr_write_executed: bool,
+    pub claims_man_write: bool,
+    pub claims_phy_id_read: bool,
+    pub claims_broad_mdio_phy_ownership: bool,
+    pub claims_phy_reset_ownership: bool,
+    pub claims_gpio32_ownership: bool,
+    pub claims_ethernet_ready: bool,
+    pub claims_broad_mmio_ready: bool,
+    pub claims_dma_descriptor_ownership: bool,
+    pub claims_interrupt_completion: bool,
+    pub claims_packet_io: bool,
+    pub claims_networking: bool,
+    pub claims_sockets: bool,
+    pub claims_ssh: bool,
+    pub claims_phase_12_2: bool,
+    pub claims_phase_transition: bool,
+    pub classification: &'static str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Rp1EthernetMdioMpeEnableGuardReportError {
+    CandidateMissingSourceContract,
+    ControlCarriesNcrMpeTargetFacts,
+    SourceContractIdentityMismatch,
+    SourceContractTargetMismatch,
+    SourceContractFieldMismatch,
+    MissingSourceEvidence,
+    RuntimeNcrWriteExecutedClaim,
+    ManWriteClaim,
+    PhyIdReadClaim,
+    BroadMdioPhyOwnershipClaim,
+    PhyResetOwnershipClaim,
+    Gpio32OwnershipClaim,
+    EthernetReadinessClaim,
+    BroadMmioReadinessClaim,
+    DmaDescriptorOwnershipClaim,
+    InterruptCompletionClaim,
+    PacketIoClaim,
+    NetworkingClaim,
+    SocketsClaim,
+    SshClaim,
+    Phase122Claim,
+    PhaseTransitionClaim,
+}
+
+impl Rp1EthernetMdioMpeEnableGuardReportError {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::CandidateMissingSourceContract => "candidate-missing-source-contract",
+            Self::ControlCarriesNcrMpeTargetFacts => "control-carries-ncr-mpe-target-facts",
+            Self::SourceContractIdentityMismatch => "source-contract-identity-mismatch",
+            Self::SourceContractTargetMismatch => "source-contract-target-mismatch",
+            Self::SourceContractFieldMismatch => "source-contract-field-mismatch",
+            Self::MissingSourceEvidence => "missing-source-evidence",
+            Self::RuntimeNcrWriteExecutedClaim => "runtime-ncr-write-executed-claim",
+            Self::ManWriteClaim => "man-write-claim",
+            Self::PhyIdReadClaim => "phy-id-read-claim",
+            Self::BroadMdioPhyOwnershipClaim => "broad-mdio-phy-ownership-claim",
+            Self::PhyResetOwnershipClaim => "phy-reset-ownership-claim",
+            Self::Gpio32OwnershipClaim => "gpio32-ownership-claim",
+            Self::EthernetReadinessClaim => "ethernet-readiness-claim",
+            Self::BroadMmioReadinessClaim => "broad-mmio-readiness-claim",
+            Self::DmaDescriptorOwnershipClaim => "dma-descriptor-ownership-claim",
+            Self::InterruptCompletionClaim => "interrupt-completion-claim",
+            Self::PacketIoClaim => "packet-io-claim",
+            Self::NetworkingClaim => "networking-claim",
+            Self::SocketsClaim => "sockets-claim",
+            Self::SshClaim => "ssh-claim",
+            Self::Phase122Claim => "phase-12-2-claim",
+            Self::PhaseTransitionClaim => "phase-transition-claim",
+        }
+    }
+}
+
+pub const fn rp1_ethernet_mdio_mpe_enable_source_contract_evidence()
+-> Rp1EthernetMdioMpeEnableSourceContractEvidence {
+    Rp1EthernetMdioMpeEnableSourceContractEvidence {
+        contract_id: RP1_ETHERNET_MDIO_MPE_ENABLE_SOURCE_CONTRACT_ID,
+        source_task_id: RP1_ETHERNET_MDIO_MPE_ENABLE_SOURCE_TASK_ID,
+        selected_operation: RP1_ETHERNET_MDIO_MPE_ENABLE_SELECTED_OPERATION,
+        controller: RP1_ETHERNET_CONTROLLER_NAME,
+        compatible: RP1_ETHERNET_COMPATIBLE,
+        observed_identity_target: RP1_ETHERNET_OBSERVED_WINDOW_GEM_MID_CPU_PHYSICAL_TARGET,
+        register: RP1_ETHERNET_MDIO_MPE_ENABLE_REGISTER,
+        source_offset: RP1_ETHERNET_MDIO_MPE_ENABLE_SOURCE_OFFSET,
+        ncr_offset: RP1_ETHERNET_MDIO_MPE_ENABLE_NCR_OFFSET,
+        observed_target: RP1_ETHERNET_MDIO_MPE_ENABLE_OBSERVED_TARGET,
+        width_bits: RP1_ETHERNET_MDIO_MPE_ENABLE_WIDTH_BITS,
+        mpe_bit: RP1_ETHERNET_MDIO_MPE_ENABLE_MPE_BIT,
+        mpe_mask: RP1_ETHERNET_MDIO_MPE_ENABLE_MPE_MASK,
+        write_rule: RP1_ETHERNET_MDIO_MPE_ENABLE_WRITE_RULE,
+        restore_invariant: RP1_ETHERNET_MDIO_MPE_ENABLE_RESTORE_INVARIANT,
+        operation_order: RP1_ETHERNET_MDIO_MPE_ENABLE_OPERATION_ORDER,
+        allowed_classifications: RP1_ETHERNET_MDIO_MPE_ENABLE_ALLOWED_CLASSIFICATIONS,
+        source_evidence: RP1_ETHERNET_MDIO_MPE_ENABLE_SOURCE_EVIDENCE,
+    }
+}
+
+pub fn build_rp1_ethernet_mdio_mpe_enable_guard_report(
+    input: Rp1EthernetMdioMpeEnableGuardReportInput,
+) -> Result<Rp1EthernetMdioMpeEnableGuardReport, Rp1EthernetMdioMpeEnableGuardReportError> {
+    validate_rp1_ethernet_mdio_mpe_enable_rejected_claims(input)?;
+
+    match (input.kind, input.source_contract) {
+        (Rp1EthernetMdioMpeEnableGuardReportKind::Candidate, Some(source_contract)) => {
+            validate_rp1_ethernet_mdio_mpe_enable_source_contract(source_contract)?;
+            Ok(Rp1EthernetMdioMpeEnableGuardReport {
+                kind: input.kind,
+                source_contract: Some(source_contract),
+            })
+        }
+        (Rp1EthernetMdioMpeEnableGuardReportKind::Candidate, None) => {
+            Err(Rp1EthernetMdioMpeEnableGuardReportError::CandidateMissingSourceContract)
+        }
+        (Rp1EthernetMdioMpeEnableGuardReportKind::NoMdioNoEthernetControl, None) => {
+            Ok(Rp1EthernetMdioMpeEnableGuardReport {
+                kind: input.kind,
+                source_contract: None,
+            })
+        }
+        (Rp1EthernetMdioMpeEnableGuardReportKind::NoMdioNoEthernetControl, Some(_)) => {
+            Err(Rp1EthernetMdioMpeEnableGuardReportError::ControlCarriesNcrMpeTargetFacts)
+        }
+    }
+}
+
+pub fn rp1_ethernet_mdio_mpe_enable_guard_report_evidence(
+    report: Rp1EthernetMdioMpeEnableGuardReport,
+) -> Rp1EthernetMdioMpeEnableGuardReportEvidence {
+    match report.source_contract {
+        Some(source_contract) => rp1_ethernet_mdio_mpe_enable_guard_candidate_evidence(
+            report.kind.name(),
+            source_contract,
+        ),
+        None => rp1_ethernet_mdio_mpe_enable_guard_control_evidence(report.kind.name()),
+    }
+}
+
+pub fn rejected_rp1_ethernet_mdio_mpe_enable_guard_report_evidence(
+    error: Rp1EthernetMdioMpeEnableGuardReportError,
+) -> (&'static str, &'static str) {
+    (RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION, error.name())
+}
+
+fn validate_rp1_ethernet_mdio_mpe_enable_rejected_claims(
+    input: Rp1EthernetMdioMpeEnableGuardReportInput,
+) -> Result<(), Rp1EthernetMdioMpeEnableGuardReportError> {
+    if input.claims_runtime_ncr_write_executed {
+        return Err(Rp1EthernetMdioMpeEnableGuardReportError::RuntimeNcrWriteExecutedClaim);
+    }
+    if input.claims_man_write {
+        return Err(Rp1EthernetMdioMpeEnableGuardReportError::ManWriteClaim);
+    }
+    if input.claims_phy_id_read {
+        return Err(Rp1EthernetMdioMpeEnableGuardReportError::PhyIdReadClaim);
+    }
+    if input.claims_broad_mdio_phy_ownership {
+        return Err(Rp1EthernetMdioMpeEnableGuardReportError::BroadMdioPhyOwnershipClaim);
+    }
+    if input.claims_phy_reset_ownership {
+        return Err(Rp1EthernetMdioMpeEnableGuardReportError::PhyResetOwnershipClaim);
+    }
+    if input.claims_gpio32_ownership {
+        return Err(Rp1EthernetMdioMpeEnableGuardReportError::Gpio32OwnershipClaim);
+    }
+    if input.claims_ethernet_ready {
+        return Err(Rp1EthernetMdioMpeEnableGuardReportError::EthernetReadinessClaim);
+    }
+    if input.claims_broad_mmio_ready {
+        return Err(Rp1EthernetMdioMpeEnableGuardReportError::BroadMmioReadinessClaim);
+    }
+    if input.claims_dma_descriptor_ownership {
+        return Err(Rp1EthernetMdioMpeEnableGuardReportError::DmaDescriptorOwnershipClaim);
+    }
+    if input.claims_interrupt_completion {
+        return Err(Rp1EthernetMdioMpeEnableGuardReportError::InterruptCompletionClaim);
+    }
+    if input.claims_packet_io {
+        return Err(Rp1EthernetMdioMpeEnableGuardReportError::PacketIoClaim);
+    }
+    if input.claims_networking {
+        return Err(Rp1EthernetMdioMpeEnableGuardReportError::NetworkingClaim);
+    }
+    if input.claims_sockets {
+        return Err(Rp1EthernetMdioMpeEnableGuardReportError::SocketsClaim);
+    }
+    if input.claims_ssh {
+        return Err(Rp1EthernetMdioMpeEnableGuardReportError::SshClaim);
+    }
+    if input.claims_phase_12_2 {
+        return Err(Rp1EthernetMdioMpeEnableGuardReportError::Phase122Claim);
+    }
+    if input.claims_phase_transition {
+        return Err(Rp1EthernetMdioMpeEnableGuardReportError::PhaseTransitionClaim);
+    }
+    Ok(())
+}
+
+fn validate_rp1_ethernet_mdio_mpe_enable_source_contract(
+    source_contract: Rp1EthernetMdioMpeEnableSourceContractEvidence,
+) -> Result<(), Rp1EthernetMdioMpeEnableGuardReportError> {
+    if source_contract.contract_id != RP1_ETHERNET_MDIO_MPE_ENABLE_SOURCE_CONTRACT_ID
+        || source_contract.source_task_id != RP1_ETHERNET_MDIO_MPE_ENABLE_SOURCE_TASK_ID
+        || source_contract.selected_operation != RP1_ETHERNET_MDIO_MPE_ENABLE_SELECTED_OPERATION
+        || source_contract.controller != RP1_ETHERNET_CONTROLLER_NAME
+        || source_contract.compatible != RP1_ETHERNET_COMPATIBLE
+    {
+        return Err(Rp1EthernetMdioMpeEnableGuardReportError::SourceContractIdentityMismatch);
+    }
+    if source_contract.observed_identity_target
+        != RP1_ETHERNET_OBSERVED_WINDOW_GEM_MID_CPU_PHYSICAL_TARGET
+        || source_contract.register != RP1_ETHERNET_MDIO_MPE_ENABLE_REGISTER
+        || source_contract.source_offset != RP1_ETHERNET_MDIO_MPE_ENABLE_SOURCE_OFFSET
+        || source_contract.ncr_offset != RP1_ETHERNET_MDIO_MPE_ENABLE_NCR_OFFSET
+        || source_contract.observed_target != RP1_ETHERNET_MDIO_MPE_ENABLE_OBSERVED_TARGET
+    {
+        return Err(Rp1EthernetMdioMpeEnableGuardReportError::SourceContractTargetMismatch);
+    }
+    if source_contract.width_bits != RP1_ETHERNET_MDIO_MPE_ENABLE_WIDTH_BITS
+        || source_contract.mpe_bit != RP1_ETHERNET_MDIO_MPE_ENABLE_MPE_BIT
+        || source_contract.mpe_mask != RP1_ETHERNET_MDIO_MPE_ENABLE_MPE_MASK
+        || source_contract.write_rule != RP1_ETHERNET_MDIO_MPE_ENABLE_WRITE_RULE
+        || source_contract.restore_invariant != RP1_ETHERNET_MDIO_MPE_ENABLE_RESTORE_INVARIANT
+        || source_contract.operation_order != RP1_ETHERNET_MDIO_MPE_ENABLE_OPERATION_ORDER
+        || source_contract.allowed_classifications
+            != RP1_ETHERNET_MDIO_MPE_ENABLE_ALLOWED_CLASSIFICATIONS
+    {
+        return Err(Rp1EthernetMdioMpeEnableGuardReportError::SourceContractFieldMismatch);
+    }
+    if source_contract.source_evidence != RP1_ETHERNET_MDIO_MPE_ENABLE_SOURCE_EVIDENCE {
+        return Err(Rp1EthernetMdioMpeEnableGuardReportError::MissingSourceEvidence);
+    }
+    Ok(())
+}
+
+fn rp1_ethernet_mdio_mpe_enable_guard_candidate_evidence(
+    report_kind: &'static str,
+    source_contract: Rp1EthernetMdioMpeEnableSourceContractEvidence,
+) -> Rp1EthernetMdioMpeEnableGuardReportEvidence {
+    Rp1EthernetMdioMpeEnableGuardReportEvidence {
+        report_contract_id: RP1_ETHERNET_MDIO_MPE_ENABLE_GUARD_REPORT_CONTRACT_ID,
+        source_contract_id: source_contract.contract_id,
+        source_task_id: source_contract.source_task_id,
+        report_kind,
+        selected_operation: Some(source_contract.selected_operation),
+        controller: Some(source_contract.controller),
+        compatible: Some(source_contract.compatible),
+        observed_identity_target: Some(source_contract.observed_identity_target),
+        register: Some(source_contract.register),
+        source_offset: Some(source_contract.source_offset),
+        ncr_offset: Some(source_contract.ncr_offset),
+        observed_target: Some(source_contract.observed_target),
+        width_bits: Some(source_contract.width_bits),
+        mpe_bit: Some(source_contract.mpe_bit),
+        mpe_mask: Some(source_contract.mpe_mask),
+        write_rule: Some(source_contract.write_rule),
+        restore_invariant: Some(source_contract.restore_invariant),
+        operation_order: Some(source_contract.operation_order),
+        allowed_classifications: RP1_ETHERNET_MDIO_MPE_ENABLE_ALLOWED_CLASSIFICATIONS,
+        boundary_classification: RP1_ETHERNET_MDIO_MPE_ENABLE_BOUNDARY_CLASSIFICATION,
+        rejected_runtime_claims: RP1_ETHERNET_MDIO_MPE_ENABLE_REJECTED_RUNTIME_CLAIMS,
+        retained_risks: RP1_ETHERNET_MDIO_MPE_ENABLE_RETAINED_RISKS,
+        source_evidence: Some(source_contract.source_evidence),
+        candidate_write_intent: true,
+        claims_runtime_ncr_write_executed: false,
+        claims_man_write: false,
+        claims_phy_id_read: false,
+        claims_broad_mdio_phy_ownership: false,
+        claims_phy_reset_ownership: false,
+        claims_gpio32_ownership: false,
+        claims_ethernet_ready: false,
+        claims_broad_mmio_ready: false,
+        claims_dma_descriptor_ownership: false,
+        claims_interrupt_completion: false,
+        claims_packet_io: false,
+        claims_networking: false,
+        claims_sockets: false,
+        claims_ssh: false,
+        claims_phase_12_2: false,
+        claims_phase_transition: false,
+        classification: RP1_ETHERNET_MDIO_MPE_ENABLE_CANDIDATE_CLASSIFICATION,
+    }
+}
+
+fn rp1_ethernet_mdio_mpe_enable_guard_control_evidence(
+    report_kind: &'static str,
+) -> Rp1EthernetMdioMpeEnableGuardReportEvidence {
+    Rp1EthernetMdioMpeEnableGuardReportEvidence {
+        report_contract_id: RP1_ETHERNET_MDIO_MPE_ENABLE_GUARD_REPORT_CONTRACT_ID,
+        source_contract_id: RP1_ETHERNET_MDIO_MPE_ENABLE_SOURCE_CONTRACT_ID,
+        source_task_id: RP1_ETHERNET_MDIO_MPE_ENABLE_SOURCE_TASK_ID,
+        report_kind,
+        selected_operation: None,
+        controller: None,
+        compatible: None,
+        observed_identity_target: None,
+        register: None,
+        source_offset: None,
+        ncr_offset: None,
+        observed_target: None,
+        width_bits: None,
+        mpe_bit: None,
+        mpe_mask: None,
+        write_rule: None,
+        restore_invariant: None,
+        operation_order: None,
+        allowed_classifications: RP1_ETHERNET_MDIO_MPE_ENABLE_ALLOWED_CLASSIFICATIONS,
+        boundary_classification: RP1_ETHERNET_MDIO_MPE_ENABLE_BOUNDARY_CLASSIFICATION,
+        rejected_runtime_claims: RP1_ETHERNET_MDIO_MPE_ENABLE_REJECTED_RUNTIME_CLAIMS,
+        retained_risks: RP1_ETHERNET_MDIO_MPE_ENABLE_RETAINED_RISKS,
+        source_evidence: None,
+        candidate_write_intent: false,
+        claims_runtime_ncr_write_executed: false,
+        claims_man_write: false,
+        claims_phy_id_read: false,
+        claims_broad_mdio_phy_ownership: false,
+        claims_phy_reset_ownership: false,
+        claims_gpio32_ownership: false,
+        claims_ethernet_ready: false,
+        claims_broad_mmio_ready: false,
+        claims_dma_descriptor_ownership: false,
+        claims_interrupt_completion: false,
+        claims_packet_io: false,
+        claims_networking: false,
+        claims_sockets: false,
+        claims_ssh: false,
+        claims_phase_12_2: false,
+        claims_phase_transition: false,
+        classification: RP1_ETHERNET_MDIO_MPE_ENABLE_CONTROL_CLASSIFICATION,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -7024,6 +7521,29 @@ mod tests {
             claims_broad_mmio_ready: false,
             claims_interrupt_completion: false,
             claims_dma_descriptor_ownership: false,
+            claims_packet_io: false,
+            claims_networking: false,
+            claims_sockets: false,
+            claims_ssh: false,
+            claims_phase_12_2: false,
+            claims_phase_transition: false,
+        }
+    }
+
+    fn accepted_mdio_mpe_enable_guard_input() -> Rp1EthernetMdioMpeEnableGuardReportInput {
+        Rp1EthernetMdioMpeEnableGuardReportInput {
+            kind: Rp1EthernetMdioMpeEnableGuardReportKind::Candidate,
+            source_contract: Some(rp1_ethernet_mdio_mpe_enable_source_contract_evidence()),
+            claims_runtime_ncr_write_executed: false,
+            claims_man_write: false,
+            claims_phy_id_read: false,
+            claims_broad_mdio_phy_ownership: false,
+            claims_phy_reset_ownership: false,
+            claims_gpio32_ownership: false,
+            claims_ethernet_ready: false,
+            claims_broad_mmio_ready: false,
+            claims_dma_descriptor_ownership: false,
+            claims_interrupt_completion: false,
             claims_packet_io: false,
             claims_networking: false,
             claims_sockets: false,
@@ -10540,6 +11060,277 @@ mod tests {
         assert_eq!(
             rejected_rp1_ethernet_mdio_phy_id_guard_report_evidence(
                 Rp1EthernetMdioPhyIdGuardReportError::PhaseTransitionClaim
+            ),
+            (
+                RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION,
+                "phase-transition-claim"
+            )
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_mdio_mpe_enable_guard_formats_candidate_report() {
+        let report =
+            build_rp1_ethernet_mdio_mpe_enable_guard_report(accepted_mdio_mpe_enable_guard_input())
+                .expect("valid MDIO MPE enable guard candidate input");
+        let evidence = rp1_ethernet_mdio_mpe_enable_guard_report_evidence(report);
+
+        assert_eq!(
+            evidence.report_contract_id,
+            RP1_ETHERNET_MDIO_MPE_ENABLE_GUARD_REPORT_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.source_contract_id,
+            RP1_ETHERNET_MDIO_MPE_ENABLE_SOURCE_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.source_task_id,
+            RP1_ETHERNET_MDIO_MPE_ENABLE_SOURCE_TASK_ID
+        );
+        assert_eq!(evidence.report_kind, "candidate");
+        assert_eq!(
+            evidence.selected_operation,
+            Some(RP1_ETHERNET_MDIO_MPE_ENABLE_SELECTED_OPERATION)
+        );
+        assert_eq!(evidence.controller, Some(RP1_ETHERNET_CONTROLLER_NAME));
+        assert_eq!(evidence.compatible, Some(RP1_ETHERNET_COMPATIBLE));
+        assert_eq!(evidence.observed_identity_target, Some(0x1c_0010_00fc));
+        assert_eq!(
+            evidence.register,
+            Some(RP1_ETHERNET_MDIO_MPE_ENABLE_REGISTER)
+        );
+        assert_eq!(evidence.source_offset, Some(0x0010_0000));
+        assert_eq!(evidence.ncr_offset, Some(0));
+        assert_eq!(evidence.observed_target, Some(0x1c_0010_0000));
+        assert_eq!(evidence.width_bits, Some(32));
+        assert_eq!(evidence.mpe_bit, Some(4));
+        assert_eq!(evidence.mpe_mask, Some(0x10));
+        assert_eq!(
+            evidence.write_rule,
+            Some(RP1_ETHERNET_MDIO_MPE_ENABLE_WRITE_RULE)
+        );
+        assert_eq!(
+            evidence.restore_invariant,
+            Some(RP1_ETHERNET_MDIO_MPE_ENABLE_RESTORE_INVARIANT)
+        );
+        assert_eq!(
+            evidence.operation_order,
+            Some(RP1_ETHERNET_MDIO_MPE_ENABLE_OPERATION_ORDER)
+        );
+        assert_eq!(
+            evidence.allowed_classifications,
+            RP1_ETHERNET_MDIO_MPE_ENABLE_ALLOWED_CLASSIFICATIONS
+        );
+        assert_eq!(
+            evidence.boundary_classification,
+            RP1_ETHERNET_MDIO_MPE_ENABLE_BOUNDARY_CLASSIFICATION
+        );
+        assert_eq!(
+            evidence.rejected_runtime_claims,
+            RP1_ETHERNET_MDIO_MPE_ENABLE_REJECTED_RUNTIME_CLAIMS
+        );
+        assert_eq!(
+            evidence.retained_risks,
+            RP1_ETHERNET_MDIO_MPE_ENABLE_RETAINED_RISKS
+        );
+        assert_eq!(
+            evidence.source_evidence,
+            Some(RP1_ETHERNET_MDIO_MPE_ENABLE_SOURCE_EVIDENCE)
+        );
+        assert!(evidence.candidate_write_intent);
+        assert!(!evidence.claims_runtime_ncr_write_executed);
+        assert!(!evidence.claims_man_write);
+        assert!(!evidence.claims_phy_id_read);
+        assert!(!evidence.claims_broad_mdio_phy_ownership);
+        assert!(!evidence.claims_phy_reset_ownership);
+        assert!(!evidence.claims_gpio32_ownership);
+        assert!(!evidence.claims_ethernet_ready);
+        assert!(!evidence.claims_dma_descriptor_ownership);
+        assert!(!evidence.claims_interrupt_completion);
+        assert!(!evidence.claims_phase_transition);
+        assert_eq!(
+            evidence.classification,
+            RP1_ETHERNET_MDIO_MPE_ENABLE_CANDIDATE_CLASSIFICATION
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_mdio_mpe_enable_guard_formats_paired_control() {
+        let report = build_rp1_ethernet_mdio_mpe_enable_guard_report(
+            Rp1EthernetMdioMpeEnableGuardReportInput {
+                kind: Rp1EthernetMdioMpeEnableGuardReportKind::NoMdioNoEthernetControl,
+                source_contract: None,
+                ..accepted_mdio_mpe_enable_guard_input()
+            },
+        )
+        .expect("valid MDIO MPE enable guard control input");
+        let evidence = rp1_ethernet_mdio_mpe_enable_guard_report_evidence(report);
+
+        assert_eq!(evidence.report_kind, "no-mdio-no-ethernet-control");
+        assert_eq!(evidence.selected_operation, None);
+        assert_eq!(evidence.controller, None);
+        assert_eq!(evidence.compatible, None);
+        assert_eq!(evidence.observed_identity_target, None);
+        assert_eq!(evidence.register, None);
+        assert_eq!(evidence.source_offset, None);
+        assert_eq!(evidence.ncr_offset, None);
+        assert_eq!(evidence.observed_target, None);
+        assert_eq!(evidence.mpe_bit, None);
+        assert_eq!(evidence.mpe_mask, None);
+        assert_eq!(evidence.write_rule, None);
+        assert_eq!(evidence.restore_invariant, None);
+        assert_eq!(evidence.operation_order, None);
+        assert_eq!(evidence.source_evidence, None);
+        assert!(!evidence.candidate_write_intent);
+        assert!(!evidence.claims_runtime_ncr_write_executed);
+        assert_eq!(
+            evidence.classification,
+            RP1_ETHERNET_MDIO_MPE_ENABLE_CONTROL_CLASSIFICATION
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_mdio_mpe_enable_guard_rejects_shape_and_overclaims() {
+        let input = accepted_mdio_mpe_enable_guard_input();
+
+        assert_eq!(
+            build_rp1_ethernet_mdio_mpe_enable_guard_report(
+                Rp1EthernetMdioMpeEnableGuardReportInput {
+                    source_contract: None,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioMpeEnableGuardReportError::CandidateMissingSourceContract)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_mpe_enable_guard_report(
+                Rp1EthernetMdioMpeEnableGuardReportInput {
+                    kind: Rp1EthernetMdioMpeEnableGuardReportKind::NoMdioNoEthernetControl,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioMpeEnableGuardReportError::ControlCarriesNcrMpeTargetFacts)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_mpe_enable_guard_report(
+                Rp1EthernetMdioMpeEnableGuardReportInput {
+                    source_contract: Some(Rp1EthernetMdioMpeEnableSourceContractEvidence {
+                        selected_operation: "same-shaped-mdio-phy-id-retry",
+                        ..rp1_ethernet_mdio_mpe_enable_source_contract_evidence()
+                    }),
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioMpeEnableGuardReportError::SourceContractIdentityMismatch)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_mpe_enable_guard_report(
+                Rp1EthernetMdioMpeEnableGuardReportInput {
+                    source_contract: Some(Rp1EthernetMdioMpeEnableSourceContractEvidence {
+                        observed_target: 0x1c_0000_0000,
+                        ..rp1_ethernet_mdio_mpe_enable_source_contract_evidence()
+                    }),
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioMpeEnableGuardReportError::SourceContractTargetMismatch)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_mpe_enable_guard_report(
+                Rp1EthernetMdioMpeEnableGuardReportInput {
+                    source_contract: Some(Rp1EthernetMdioMpeEnableSourceContractEvidence {
+                        mpe_mask: 0x20,
+                        ..rp1_ethernet_mdio_mpe_enable_source_contract_evidence()
+                    }),
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioMpeEnableGuardReportError::SourceContractFieldMismatch)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_mpe_enable_guard_report(
+                Rp1EthernetMdioMpeEnableGuardReportInput {
+                    claims_runtime_ncr_write_executed: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioMpeEnableGuardReportError::RuntimeNcrWriteExecutedClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_mpe_enable_guard_report(
+                Rp1EthernetMdioMpeEnableGuardReportInput {
+                    claims_man_write: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioMpeEnableGuardReportError::ManWriteClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_mpe_enable_guard_report(
+                Rp1EthernetMdioMpeEnableGuardReportInput {
+                    claims_phy_id_read: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioMpeEnableGuardReportError::PhyIdReadClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_mpe_enable_guard_report(
+                Rp1EthernetMdioMpeEnableGuardReportInput {
+                    claims_broad_mdio_phy_ownership: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioMpeEnableGuardReportError::BroadMdioPhyOwnershipClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_mpe_enable_guard_report(
+                Rp1EthernetMdioMpeEnableGuardReportInput {
+                    claims_phy_reset_ownership: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioMpeEnableGuardReportError::PhyResetOwnershipClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_mpe_enable_guard_report(
+                Rp1EthernetMdioMpeEnableGuardReportInput {
+                    claims_gpio32_ownership: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioMpeEnableGuardReportError::Gpio32OwnershipClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_mpe_enable_guard_report(
+                Rp1EthernetMdioMpeEnableGuardReportInput {
+                    claims_ethernet_ready: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioMpeEnableGuardReportError::EthernetReadinessClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_mpe_enable_guard_report(
+                Rp1EthernetMdioMpeEnableGuardReportInput {
+                    claims_dma_descriptor_ownership: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioMpeEnableGuardReportError::DmaDescriptorOwnershipClaim)
+        );
+        assert_eq!(
+            build_rp1_ethernet_mdio_mpe_enable_guard_report(
+                Rp1EthernetMdioMpeEnableGuardReportInput {
+                    claims_phase_12_2: true,
+                    ..input
+                }
+            ),
+            Err(Rp1EthernetMdioMpeEnableGuardReportError::Phase122Claim)
+        );
+        assert_eq!(
+            rejected_rp1_ethernet_mdio_mpe_enable_guard_report_evidence(
+                Rp1EthernetMdioMpeEnableGuardReportError::PhaseTransitionClaim
             ),
             (
                 RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION,

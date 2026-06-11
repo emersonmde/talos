@@ -1,0 +1,83 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-mpe-enable-guard-core-20260611",
+  "classification": "rp1-ethernet-mdio-mpe-enable-guard-core-accepted",
+  "evidence_level": "local/static implementation, focused unit tests, JSON validation, diff hygiene, and git history",
+  "source_contract": {
+    "contract_id": "phase12-rp1-ethernet-mdio-mpe-enable-source-contract-v1",
+    "source_task_id": "phase12-rp1-ethernet-mdio-mpe-enable-source-contract-20260611",
+    "selected_operation": "rp1-ethernet-mdio-mpe-enable-set-readback-restore",
+    "register": "MACB/GEM NCR",
+    "observed_target": "0x1c00100000",
+    "mpe_bit": 4,
+    "mpe_mask": "0x00000010",
+    "write_rule": "pre_raw | 0x00000010",
+    "restore_invariant": "restore_raw must equal pre_raw"
+  },
+  "candidate_report": {
+    "report_contract_id": "phase12-rp1-ethernet-mdio-mpe-enable-guard-report-contract-v1",
+    "classification": "rp1-ethernet-mdio-mpe-enable-guard-candidate-local-static",
+    "candidate_write_intent": true,
+    "runtime_ncr_write_executed": false,
+    "allowed_classifications": [
+      "rp1-ethernet-mdio-mpe-enable-set-readback-restored",
+      "rp1-ethernet-mdio-mpe-enable-already-set-restored",
+      "rp1-ethernet-mdio-mpe-enable-readback-mismatch-restored",
+      "rp1-ethernet-mdio-mpe-enable-restore-failed",
+      "rp1-ethernet-mdio-mpe-enable-blocked-target-inconclusive",
+      "precise-staging-capture-blocker",
+      "no-mdio-no-ethernet-rp1-ethernet-mdio-mpe-enable-control"
+    ]
+  },
+  "control_report": {
+    "classification": "no-mdio-no-ethernet-rp1-ethernet-mdio-mpe-enable-control",
+    "same_report_path": true,
+    "ncr_mpe_target_constructed": false,
+    "candidate_write_intent": false,
+    "runtime_ncr_write_executed": false
+  },
+  "rejected_claims": [
+    "runtime NCR write execution by this local/static task",
+    "MAN writes",
+    "PHY-ID reads",
+    "broad MDIO or PHY ownership",
+    "PHY reset ownership",
+    "GPIO32 ownership or action",
+    "Ethernet driver readiness",
+    "broad Ethernet MMIO readiness beyond selected NCR target",
+    "DMA or descriptor ownership",
+    "interrupt completion",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "The guard surface is local/static and does not prove the NCR target is hardware-visible.",
+    "NCR.MPE set/readback/restore may still block on Pi 5 target visibility or restore evidence.",
+    "MPE ownership does not prove MAN transaction, PHY-ID, PHY reset, link, MAC, DMA, interrupt, packet, socket, SSH, or Phase 12.2 readiness.",
+    "Same-shaped MDIO PHY-ID retries remain closed until NCR.MPE write/restore ownership is separately accepted."
+  ],
+  "non_goals_confirmed": {
+    "pi5_hardware_run": false,
+    "hardware_test_lock_acquired": false,
+    "runtime_rp1_mmio_write": false,
+    "man_write": false,
+    "phy_id_read": false,
+    "phy_reset_or_gpio32_action": false,
+    "ethernet_driver_behavior": false,
+    "packet_io_networking_sockets_ssh": false,
+    "phase_transition": false
+  },
+  "validation": {
+    "static_inspection": "accepted source contract and touched src/rp1_ethernet.rs",
+    "fmt": "cargo fmt --all -- --check",
+    "focused_tests": "cargo -Zjson-target-spec test --quiet rp1_ethernet",
+    "json": "jq empty on task-owned classification/evidence-map JSON",
+    "diff_check": "git diff --check",
+    "docs": "not required; no docs/src files touched",
+    "staged_diff_check": "git diff --cached --check before commit"
+  },
+  "next_action": "Mechanically promote phase12-rp1-ethernet-mdio-mpe-enable-guard-closeout-20260611 on the next worker wake if dependencies remain satisfied; do not run hardware or infer broader Ethernet readiness."
+}
