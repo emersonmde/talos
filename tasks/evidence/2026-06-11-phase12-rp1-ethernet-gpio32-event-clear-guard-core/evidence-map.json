@@ -1,0 +1,66 @@
+{
+  "task_id": "phase12-rp1-ethernet-gpio32-event-clear-guard-core-20260611",
+  "evidence": [
+    {
+      "label": "implementation",
+      "path": "src/rp1_ethernet.rs",
+      "evidence_level": "local/static implementation"
+    },
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-guard-core.md",
+      "evidence_level": "task record"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-guard-core/classification.json",
+      "evidence_level": "classification"
+    },
+    {
+      "label": "accepted event-clear source contract",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-source-contract.md",
+      "evidence_level": "static source contract"
+    },
+    {
+      "label": "accepted event-state proof closeout",
+      "path": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-proof-closeout.md",
+      "evidence_level": "static inspection of accepted serial hardware proof closeout"
+    }
+  ],
+  "validation": [
+    {
+      "label": "static inspection",
+      "result": "accepted event-clear source contract and touched source module inspected"
+    },
+    {
+      "label": "fmt",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "label": "focused tests",
+      "command": "cargo -Zjson-target-spec test --quiet gpio32",
+      "result": "passed"
+    },
+    {
+      "label": "json validation",
+      "command": "jq empty tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-guard-core/classification.json tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-guard-core/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "label": "diff check",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "label": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "not run - no docs/src files touched"
+    },
+    {
+      "label": "staged diff check",
+      "command": "git diff --cached --check",
+      "result": "passed"
+    }
+  ]
+}
