@@ -1495,3 +1495,15 @@ usability beyond decoded register state, PHY configuration writes, PHY
 reset/GPIO32 action, broad MDIO/PHY ownership, Ethernet driver behavior,
 interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2,
 or a phase transition.
+
+phase12-rp1-ethernet-phy1-status-diagnostic-closeout-20260614 closes the
+accepted PHY1 status diagnostic frontier as
+rp1-ethernet-phy1-status-diagnostic-frontier-closed. The accepted boundary is
+only the visible corrected-target PHY1 Clause 22 raw vector and decoded
+register-state fields under capture-chain-v4, boot-staging identity,
+same-power-cycle TFTP byte agreement, final pre-restore identity, serial
+freshness, and restore evidence. The selected follow-up is only
+phase12-rp1-ethernet-phy1-link-readiness-source-contract-20260614, a source
+contract for one exact next discriminator; it does not authorize PHY
+configuration, reset/GPIO32 action, broad MDIO/PHY ownership, packet I/O,
+networking, SSH, Phase 12.2, or a phase transition.

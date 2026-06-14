@@ -1,0 +1,24 @@
+{
+  "task_id": "phase12-rp1-ethernet-phy1-status-diagnostic-closeout-20260614",
+  "classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-closeout/classification.json",
+  "task_record": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-closeout.md",
+  "proof": {
+    "task_record": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof.md",
+    "classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof/evidence-map.json",
+    "candidate_v4_check": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof/candidate-run/v4-check.json",
+    "control_v4_check": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof/control-run/v4-check.json",
+    "candidate_staging_identity_gate": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof/candidate-run/staging-identity-gate-output.json",
+    "control_staging_identity_gate": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof/control-run/staging-identity-gate-output.json",
+    "candidate_serial_window": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof/candidate-run/serial-observe-window.json",
+    "control_serial_window": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof/control-run/serial-observe-window.json",
+    "candidate_tftp_delta": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof/candidate-run/tftp-delta-stable-pre-restore.json",
+    "control_tftp_delta": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof/control-run/tftp-delta-stable-pre-restore.json",
+    "candidate_final_pre_restore": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof/candidate-run/final-pre-restore-status.json",
+    "control_final_pre_restore": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof/control-run/final-pre-restore-status.json",
+    "final_lab_status": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof/final-lab-status.json"
+  },
+  "next_action": {
+    "selected_task": "phase12-rp1-ethernet-phy1-link-readiness-source-contract-20260614"
+  }
+}

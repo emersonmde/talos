@@ -1,0 +1,53 @@
+{
+  "classification": "rp1-ethernet-phy1-status-diagnostic-frontier-closed",
+  "status": "accepted",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "capture-chain-v4 replay review",
+    "boot-staging identity gate review",
+    "lab-controller API evidence review",
+    "serial hardware boot/output evidence review",
+    "stable same-cursor TFTP delta evidence review",
+    "restore evidence review"
+  ],
+  "proof_task": "phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof-20260614",
+  "proof_commit": "c9eafe7df7f269c8c46120322c1981caa144031d",
+  "closed_frontier": "rp1-ethernet-phy1-status-diagnostic-frontier-closed",
+  "accepted_claims": [
+    "visible corrected-target PHY1 Clause 22 status diagnostic values",
+    "BMCR 0x1000, BMSR 0x7949, PHYSID1 0x600d, PHYSID2 0x84a2, ANAR 0x01e1, ANLPAR 0x0000",
+    "decoded BMCR reset=false loopback=false speed=10M autoneg-enable=true",
+    "decoded BMSR link-status=false autoneg-complete=false autoneg-ability=true",
+    "decoded PHY ID OUI 0x180361 model 0x0a revision 0x02",
+    "decoded ANAR 10/100 half/full advertisement and empty ANLPAR",
+    "candidate/control capture-chain-v4 and boot-staging identity with same-power-cycle TFTP byte agreement, final pre-restore identity, serial freshness, and restore proof",
+    "paired control used same report path with no MDIO target, no MAN frame, and no runtime MDIO transaction"
+  ],
+  "rejected_claims": [
+    "link readiness",
+    "link usability beyond decoded register state",
+    "PHY configuration writes",
+    "autonegotiation restart",
+    "link forcing",
+    "PHY reset/GPIO32 ownership",
+    "broad MDIO/PHY ownership",
+    "Ethernet driver behavior",
+    "interrupts",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "BMSR link-status=false and autoneg-complete=false do not prove link readiness or link usability",
+    "visible decoded status does not prove PHY configuration, PHY reset/GPIO32 ownership, or broad MDIO/PHY ownership",
+    "visible decoded status does not prove Ethernet driver behavior, DMA/descriptors, packet I/O, networking, sockets, SSH, or Phase 12.2 readiness"
+  ],
+  "next_action": {
+    "selected_task": "phase12-rp1-ethernet-phy1-link-readiness-source-contract-20260614",
+    "reason": "The accepted diagnostic exposes live PHY1 status fields, including link-status=false and autoneg-complete=false, so the next bounded step is a source/task evidence contract that selects one exact link-readiness discriminator without authorizing implementation or hardware proof yet."
+  }
+}
