@@ -1,0 +1,62 @@
+{
+  "classification": "rp1-ethernet-phy1-autoneg-restart-capture-staging-blocker-frontier-closed",
+  "status": "accepted",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "static archive/image review",
+    "lab-controller API evidence review",
+    "serial hardware boot/output evidence review",
+    "stable same-cursor TFTP delta evidence review",
+    "capture-chain-v4 replay review",
+    "boot-staging identity replay review",
+    "known-good baseline triage review",
+    "restore proof review"
+  ],
+  "proof_task": "phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof-20260614",
+  "proof_commit": "84fc42a1747186a3eb14e4d4f69ecbc3464c5ed9",
+  "source_contract_task": "phase12-rp1-ethernet-phy1-autoneg-restart-source-contract-20260614",
+  "guard_core_task": "phase12-rp1-ethernet-phy1-autoneg-restart-guard-core-20260614",
+  "closed_frontier": "rp1-ethernet-phy1-autoneg-restart-capture-staging-blocker-frontier-closed",
+  "accepted_claims": [
+    "candidate archive/static review passed for the guarded PHY1 autoneg restart scenario",
+    "candidate /boot/files selected-tree identity was recorded before power",
+    "candidate hardware capture was rejected as capture-staging-blocked before runtime BMCR write evidence could be accepted",
+    "same-power-cycle TFTP served baseline-sized 104136-byte kernel_2712.img fetches instead of the selected candidate 52360-byte kernel",
+    "final pre-restore identity was baseline tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 rather than selected candidate tree 6bf7d36a3f07426f450fd8a4def73b9cc8bbbc5b730ba50503fd0ee8f41609e1",
+    "known-good baseline triage power succeeded but produced no fresh TFTP events",
+    "lab restore evidence returned to baseline tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  ],
+  "blocked_claims": [
+    "runtime PHY1 BMCR write evidence",
+    "autonegotiation restart success or failure",
+    "link-ready or link-still-not-ready runtime classification",
+    "physical/operator-precondition classification from this candidate",
+    "paired control hardware result for this proof shape"
+  ],
+  "rejected_claims": [
+    "PHY configuration ownership",
+    "GPIO32/PHY reset ownership",
+    "MACB writes",
+    "NCR writes",
+    "link forcing",
+    "Ethernet readiness",
+    "DMA/descriptors",
+    "interrupts",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "the capture path must reconcile /boot/files selected-tree identity with same-power-cycle TFTP bytes and final pre-restore identity before another hardware retry can be decisive",
+    "known-good baseline triage produced no fresh TFTP events, so a same-shaped rerun would not currently create durable progress",
+    "the accepted PHY1 link-not-ready frontier and MACB_NSR_LINK=false frontier remain input evidence only",
+    "GPIO32/PHY reset and PHY configuration ownership remain unaccepted"
+  ],
+  "next_action": {
+    "planning_needed": true,
+    "reason": "The accepted autoneg restart proof closed as a capture-staging blocker. No explicit queued follow-up defines a mechanically objective capture-layer recovery, paired-control run, or next Phase 12.1 discriminator with acceptance criteria and evidence gates."
+  }
+}

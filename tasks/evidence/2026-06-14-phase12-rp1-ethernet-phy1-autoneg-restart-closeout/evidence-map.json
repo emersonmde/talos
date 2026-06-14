@@ -1,0 +1,97 @@
+{
+  "task_id": "phase12-rp1-ethernet-phy1-autoneg-restart-closeout-20260614",
+  "classification": "rp1-ethernet-phy1-autoneg-restart-capture-staging-blocker-frontier-closed",
+  "proof_task": "phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof-20260614",
+  "proof_commit": "84fc42a1747186a3eb14e4d4f69ecbc3464c5ed9",
+  "evidence": [
+    {
+      "label": "closeout task record",
+      "path": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-closeout.md",
+      "level": "task evidence"
+    },
+    {
+      "label": "closeout classification",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-closeout/classification.json",
+      "level": "task-owned JSON evidence"
+    },
+    {
+      "label": "closeout evidence map",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-closeout/evidence-map.json",
+      "level": "task-owned JSON evidence"
+    },
+    {
+      "label": "source contract task",
+      "path": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-source-contract.md",
+      "level": "task evidence"
+    },
+    {
+      "label": "guard core task",
+      "path": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-guard-core.md",
+      "level": "task evidence"
+    },
+    {
+      "label": "proof task record",
+      "path": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof.md",
+      "level": "task evidence"
+    },
+    {
+      "label": "proof classification",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/classification.json",
+      "level": "task-owned JSON evidence"
+    },
+    {
+      "label": "proof capture summary",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/capture-summary.json",
+      "level": "task-owned JSON evidence"
+    },
+    {
+      "label": "proof evidence map",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/evidence-map.json",
+      "level": "task-owned JSON evidence"
+    },
+    {
+      "label": "candidate selected /boot/files identity",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/candidate-run/preflight-identity.json",
+      "level": "lab-controller API"
+    },
+    {
+      "label": "candidate serial window missing run-unique marker",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/candidate-run/serial-observe-window.json",
+      "level": "serial hardware boot/output"
+    },
+    {
+      "label": "candidate TFTP served baseline bytes",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/candidate-run/tftp-delta-stable-pre-restore.json",
+      "level": "stable same-cursor TFTP delta"
+    },
+    {
+      "label": "candidate capture-chain-v4 rejected",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/candidate-run/v4-check.json",
+      "level": "capture-chain-v4 replay"
+    },
+    {
+      "label": "candidate boot-staging identity rejected",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/candidate-run/boot-staging-identity.json",
+      "level": "boot-staging identity replay"
+    },
+    {
+      "label": "known-good baseline no fresh TFTP after power",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/triage-known-good-baseline/classification.json",
+      "level": "lab-controller API"
+    },
+    {
+      "label": "final restored lab status",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/final-lab-status.json",
+      "level": "restore proof"
+    }
+  ],
+  "accepted_claims": [
+    "guarded PHY1 autoneg restart proof reached a precise capture-staging blocker",
+    "no runtime BMCR write evidence or autoneg restart result is accepted",
+    "same-shaped hardware retry requires supervisor planning and a capture-layer discriminator"
+  ],
+  "next_action": {
+    "planning_needed": true,
+    "reason": "Supervisor planning is required before any next bounded Phase 12.1 task."
+  }
+}

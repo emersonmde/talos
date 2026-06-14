@@ -10051,6 +10051,39 @@ contract does not accept runtime BMCR write evidence, GPIO32/PHY reset
 ownership, MACB writes, link forcing, packet I/O, networking, sockets, SSH,
 Phase 12.2, or a phase transition.
 
+phase12-rp1-ethernet-phy1-autoneg-restart-guard-core-20260614 accepts the
+local/static guard and report surface for that bounded PHY1 autoneg-restart
+candidate/control pair. The candidate report permits only one corrected-target
+PHY1 BMCR write value, pre_bmcr | BMCR_ANENABLE | BMCR_ANRESTART, after NCR.MPE
+and BMCR_ISOLATE preconditions; the paired control constructs no MDIO/MAN/MACB
+target and performs no volatile load/store. This guard core does not accept
+hardware evidence, runtime BMCR write success, link recovery, PHY reset
+ownership, packet I/O, networking, SSH, Phase 12.2, or a phase transition.
+
+phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof-20260614 accepts the
+serialized Pi 5 proof only as a precise capture-staging blocker. Candidate
+publication was visible through /boot/files as selected tree
+6bf7d36a3f07426f450fd8a4def73b9cc8bbbc5b730ba50503fd0ee8f41609e1 with
+expected da591740/kernel_2712.img size 52360 bytes, but same-power-cycle TFTP
+served four 104136-byte baseline fetches and final pre-restore identity was
+baseline tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+Capture-chain-v4 and boot-staging identity both rejected the candidate, and
+known-good baseline triage produced no fresh TFTP events after power. The lab
+was restored to the baseline tree. No runtime PHY1 BMCR write evidence,
+autonegotiation restart success/failure, link readiness, Ethernet readiness,
+packet I/O, networking, SSH, Phase 12.2, or phase transition is accepted.
+
+phase12-rp1-ethernet-phy1-autoneg-restart-closeout-20260614 closes the guarded
+autoneg-restart proof frontier as
+rp1-ethernet-phy1-autoneg-restart-capture-staging-blocker-frontier-closed. The
+closed frontier preserves the source/guard work as available but not
+hardware-accepted runtime progress until the capture path can prove selected
+tree identity for a fresh run. No explicit queued mechanically objective
+follow-up exists after this closeout, so supervisor planning is required before
+any capture-layer recovery, paired-control hardware run, PHY configuration,
+GPIO32/PHY reset action, packet I/O, networking, SSH, Phase 12.2, or phase
+transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
