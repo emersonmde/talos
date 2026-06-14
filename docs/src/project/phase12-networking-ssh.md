@@ -1742,3 +1742,14 @@ selected next task is
 phase12-rp1-ethernet-post-autoneg-status-source-checkpoint-20260614, limited to
 choosing one future read-only status proof or recording why no such follow-up is
 safe.
+
+phase12-rp1-ethernet-post-autoneg-status-source-checkpoint-20260614 accepts
+that no mechanically safe same-frontier read-only post-autoneg status proof is
+selected. The accepted v2 proof already retained the bounded post-write BMCR,
+double-BMSR, ANAR, ANLPAR, and passive MACB_NSR status fields named by the
+current contracts, and those values stayed link-not-ready. Another immediate
+read-only status proof would be same-shaped unless supervisor planning defines
+a distinct source-backed discriminator, timing model, or external precondition.
+The checkpoint keeps GPIO32/PHY reset ownership, packet I/O, networking, SSH,
+Phase 12.2, and phase transition rejected and requires supervisor planning for
+the next bounded Phase 12.1 task.

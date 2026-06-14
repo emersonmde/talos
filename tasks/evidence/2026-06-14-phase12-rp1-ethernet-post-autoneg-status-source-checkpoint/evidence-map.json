@@ -1,0 +1,30 @@
+{
+  "task_id": "phase12-rp1-ethernet-post-autoneg-status-source-checkpoint-20260614",
+  "classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-post-autoneg-status-source-checkpoint/classification.json",
+  "task_record": "tasks/2026-06-14-phase12-rp1-ethernet-post-autoneg-status-source-checkpoint.md",
+  "dependencies": {
+    "v2_closeout_task": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-closeout.md",
+    "v2_closeout_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-closeout/classification.json",
+    "v2_closeout_evidence_map": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-closeout/evidence-map.json",
+    "v2_proof_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/classification.json",
+    "v2_proof_evidence_map": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/evidence-map.json"
+  },
+  "source_and_prior_frontier": {
+    "autoneg_restart_source_contract": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-source-contract.md",
+    "autoneg_restart_guard_core": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-guard-core.md",
+    "phy1_status_diagnostic_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof/classification.json",
+    "bmsr_double_sample_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-pi5-proof/classification.json",
+    "macb_nsr_link_readonly_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/classification.json",
+    "gpio32_write_restore_v2_closeout_classification": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout/classification.json",
+    "gpio32_event_clear_closeout_classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-proof-closeout/classification.json"
+  },
+  "docs": {
+    "phase12": "docs/src/project/phase12-networking-ssh.md",
+    "roadmap": "docs/src/roadmap.md"
+  },
+  "selected_next_task": {
+    "id": null,
+    "status": "none-selected-planning-needed",
+    "reason": "Accepted v2 already includes the bounded post-autoneg status reads available under current contracts."
+  }
+}

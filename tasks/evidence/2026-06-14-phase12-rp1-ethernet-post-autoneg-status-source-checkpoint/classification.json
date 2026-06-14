@@ -1,0 +1,92 @@
+{
+  "task_id": "phase12-rp1-ethernet-post-autoneg-status-source-checkpoint-20260614",
+  "classification": "rp1-ethernet-post-autoneg-status-source-checkpoint-no-safe-readonly-follow-up",
+  "status": "accepted",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "task-owned JSON evidence"
+  ],
+  "dependency": {
+    "v2_closeout_task": "phase12-rp1-ethernet-phy1-autoneg-restart-v2-closeout-20260614",
+    "v2_closeout_commit": "1852f57b8da7fad6e7e20e7429cb0f6f912fa205",
+    "v2_closeout_classification": "rp1-ethernet-phy1-autoneg-restart-v2-link-not-ready-frontier-closed",
+    "selected_next_task": "phase12-rp1-ethernet-post-autoneg-status-source-checkpoint-20260614"
+  },
+  "accepted_boundary": {
+    "v2_candidate_post_restart_status": {
+      "bmcr_write_value": "0x1200",
+      "bmcr_write_count": 1,
+      "post_bmcr": "0x1000",
+      "post_bmsr_first": "0x7949",
+      "post_bmsr_second": "0x7949",
+      "post_bmsr_link_status": false,
+      "post_bmsr_autoneg_complete": false,
+      "post_anar": "0x01e1",
+      "post_anlpar": "0x0000",
+      "post_anlpar_nonzero": false,
+      "passive_macb_nsr_raw": "0x00000006",
+      "passive_macb_nsr_link": false
+    },
+    "capture_identity": "candidate/control capture-chain-v4, boot-staging identity, TFTP byte agreement, final pre-restore identity, serial freshness, and restore evidence passed in the accepted v2 proof",
+    "control_boundary": "paired control constructed no MDIO/MAN/MACB target and performed no volatile Ethernet access"
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "The accepted v2 proof already retained the bounded post-write BMCR, double-BMSR, ANAR, ANLPAR, and passive MACB_NSR status fields."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Those post-write status values match the earlier accepted PHY-side and MAC-side link-not-ready frontier."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No hardwareTestLock was acquired because this checkpoint is static evidence work."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "A delayed or otherwise distinct post-autoneg status proof needs supervisor planning with explicit timing/source/evidence gates."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No source, helper, task, or evidence files were removed."
+    }
+  ],
+  "selected_next_task": null,
+  "selected_next_task_reason": "No mechanically safe future read-only status proof is selected because the accepted v2 proof already contains the bounded post-autoneg BMCR/BMSR/ANAR/ANLPAR/MACB_NSR status reads named by the current contracts. A future proof would need a distinct planned discriminator, timing model, or precondition before worker promotion.",
+  "rejected_follow_ups": [
+    "same-shaped immediate BMCR/BMSR/ANAR/ANLPAR status read",
+    "same-shaped passive MACB_NSR_LINK read",
+    "fresh BMCR autoneg-restart retry from this checkpoint",
+    "GPIO32/PHY reset path from this checkpoint",
+    "packet I/O",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "rejected_claims": [
+    "link-readiness",
+    "ethernet-readiness",
+    "physical-carrier-diagnosis",
+    "operator-cabling-diagnosis",
+    "phy-reset-ownership",
+    "gpio32-action",
+    "broad-phy-configuration-ownership",
+    "macb-write",
+    "ncr-write",
+    "link-forcing",
+    "packet-io",
+    "dma-descriptors",
+    "interrupt-completion",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "next_action": {
+    "planning_needed": true,
+    "reason": "No explicit queued mechanically unblocked follow-up remains after this checkpoint; supervisor must select the next bounded Phase 12.1 task before worker execution continues."
+  }
+}
