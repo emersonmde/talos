@@ -1,0 +1,49 @@
+{
+  "task_id": "phase12-rp1-ethernet-capture-staging-recovery-closeout-20260614",
+  "status": "accepted",
+  "classification": "capture-staging-recovery-closeout-accepted",
+  "capture_staging_status": "recovered-for-minimal-sentinel",
+  "minimal_sentinel_task_id": "phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof-20260614",
+  "minimal_sentinel_classification": "capture-staging-minimal-sentinel-proof-accepted",
+  "minimal_sentinel_commit": "29a3df756942d60683b04937697fdec5c66ef406",
+  "control": {
+    "selected_tree_hash": "9e3442962d40beff3b31668065df4f5d8ac37ee770fa3c4bba725d049bc78db3",
+    "expected_fetch_byte_count": 47832,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "serial_freshness_ok": true,
+    "final_pre_restore_selected_tree": true
+  },
+  "candidate_rerun": {
+    "selected_tree_hash": "520785f412ba93da8c25577e5f5e4635ffba02b2969fbf3e02a346e97e061799",
+    "expected_fetch_byte_count": 47848,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "serial_freshness_ok": true,
+    "final_pre_restore_selected_tree": true
+  },
+  "post_restore": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_2712_bytes": 104136
+  },
+  "accepted_boundary": "capture-staging selected-tree/TFTP/final-identity freshness for one minimal no-MDIO/no-Ethernet candidate/control pair",
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "no-explicit-queued-follow-up-after-capture-staging-recovery-closeout",
+  "rejected_claims": [
+    "autoneg restart",
+    "runtime BMCR write",
+    "MDIO register vector",
+    "MACB_NSR read",
+    "GPIO32/PHY reset ownership",
+    "Ethernet link readiness",
+    "packet I/O",
+    "DMA/descriptors",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "task_id": "phase12-rp1-ethernet-capture-staging-recovery-closeout-20260614",
+  "evidence_dir": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-capture-staging-recovery-closeout",
+  "classification": "capture-staging-recovery-closeout-accepted",
+  "key_artifacts": {
+    "closeout_task": "../../2026-06-14-phase12-rp1-ethernet-capture-staging-recovery-closeout.md",
+    "classification": "classification.json",
+    "recurrence_checkpoint": "../../2026-06-14-phase12-rp1-ethernet-capture-staging-recurrence-checkpoint.md",
+    "minimal_sentinel_task": "../../2026-06-14-phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof.md",
+    "minimal_sentinel_classification": "../2026-06-14-phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof/classification.json",
+    "minimal_sentinel_evidence_map": "../2026-06-14-phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof/evidence-map.json",
+    "candidate_v4": "../2026-06-14-phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof/candidate-run/v4-check.json",
+    "candidate_gate": "../2026-06-14-phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof/candidate-run/staging-identity-gate-output.json",
+    "candidate_tftp_delta": "../2026-06-14-phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof/candidate-run/tftp-delta-stable-pre-restore.json",
+    "candidate_serial_window": "../2026-06-14-phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof/candidate-run/serial-observe-window.json",
+    "control_v4": "../2026-06-14-phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof/control-run/v4-check.json",
+    "control_gate": "../2026-06-14-phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof/control-run/staging-identity-gate-output.json",
+    "control_tftp_delta": "../2026-06-14-phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof/control-run/tftp-delta-stable-pre-restore.json",
+    "control_serial_window": "../2026-06-14-phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof/control-run/serial-observe-window.json",
+    "final_lab_status": "../2026-06-14-phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof/final-lab-status-before-release.json"
+  },
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "no-explicit-queued-follow-up-after-capture-staging-recovery-closeout",
+  "acceptance_boundary": {
+    "accepted": "capture-staging selected-tree/TFTP/final-identity freshness recovered for one minimal no-MDIO/no-Ethernet candidate/control pair",
+    "not_accepted": [
+      "autoneg restart",
+      "runtime BMCR write",
+      "MDIO register vector",
+      "MACB_NSR read",
+      "GPIO32/PHY reset ownership",
+      "Ethernet link readiness",
+      "packet I/O",
+      "DMA/descriptors",
+      "networking",
+      "sockets",
+      "SSH",
+      "Phase 12.2",
+      "phase transition"
+    ]
+  }
+}

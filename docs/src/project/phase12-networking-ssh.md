@@ -1684,3 +1684,15 @@ identity, and restore to baseline. This does not accept autonegotiation
 restart, BMCR writes, MDIO register vectors, MACB_NSR reads, GPIO32/PHY reset
 action, link readiness, packet I/O, networking, SSH, Phase 12.2, or a phase
 transition; the next bounded task is the capture-staging recovery closeout.
+
+phase12-rp1-ethernet-capture-staging-recovery-closeout-20260614 closes the
+capture-staging recovery frontier as
+rp1-ethernet-capture-staging-minimal-sentinel-recovered-frontier-closed. The
+closed frontier accepts only selected-tree/TFTP/final-identity freshness for
+one minimal no-MDIO/no-Ethernet candidate/control sentinel pair; it does not
+accept runtime autonegotiation restart, BMCR writes, MDIO register vectors,
+MACB_NSR reads, GPIO32/PHY reset ownership, link readiness, packet I/O,
+networking, sockets, SSH, Phase 12.2, or a phase transition. No explicit
+queued mechanically objective follow-up exists after this closeout, so
+supervisor planning is required before any fresh autoneg retry or broader
+Ethernet work.

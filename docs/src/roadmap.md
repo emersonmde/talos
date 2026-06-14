@@ -10107,6 +10107,15 @@ not accept autonegotiation restart, BMCR writes, MDIO register vectors,
 MACB_NSR reads, GPIO32/PHY reset action, link readiness, packet I/O,
 networking, SSH, Phase 12.2, or a phase transition.
 
+phase12-rp1-ethernet-capture-staging-recovery-closeout-20260614 closes the
+capture-staging recovery frontier as
+rp1-ethernet-capture-staging-minimal-sentinel-recovered-frontier-closed. The
+closeout records recovery only for the minimal no-MDIO/no-Ethernet
+candidate/control selected-tree/TFTP/final-identity boundary, preserves the
+rejected autoneg/link/GPIO32/packet/networking/SSH/Phase 12.2 claims, and sets
+supervisor planning-needed because no explicit queued follow-up exists after
+this closeout.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
