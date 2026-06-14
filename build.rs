@@ -433,6 +433,16 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "rpi5_rp1_ethernet_macb_nsr_link_readonly_candidate",
+        implied_values: &[],
+        asm_defines: &[],
+    },
+    BootScenario {
+        value: "rpi5_rp1_ethernet_macb_nsr_link_readonly_no_mmio_control",
+        implied_values: &[],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate",
         implied_values: &[],
         asm_defines: &[],

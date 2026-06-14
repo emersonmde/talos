@@ -1,0 +1,31 @@
+{
+  "task_id": "phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof-20260614",
+  "classification": "macb-nsr-link-readonly-link-clear",
+  "candidate": {
+    "capture_chain_v4": {
+      "classification": "capture-chain-v4-ready",
+      "decisive_rp1_hardware_classification_allowed": true,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "final_pre_restore_tree_hash": "937e30a34797c672f393e6cd7f4c4b12c6b1a0ea1e5b97c8c6afbbc8788a3522",
+      "serial_marker_occurrences": 23,
+      "serial_freshness_ok": true
+    }
+  },
+  "control": {
+    "capture_chain_v4": {
+      "classification": "capture-chain-v4-ready",
+      "decisive_rp1_hardware_classification_allowed": true,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "final_pre_restore_tree_hash": "ff82cf02034aa877cf5907a8456be504e966109a6a9ac51992e23a9b79457c70",
+      "serial_marker_occurrences": 23,
+      "serial_freshness_ok": true
+    }
+  },
+  "accepted_claims": [
+    "candidate performs read-only volatile 32-bit MACB_NSR observation at 0x1c00100008 and decodes bit 0 only",
+    "candidate classified MACB_NSR_LINK clear without accepting link recovery or Ethernet readiness",
+    "control proves the same report path with no MACB_NSR target construction and no Ethernet volatile load/store"
+  ]
+}

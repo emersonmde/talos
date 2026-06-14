@@ -1,0 +1,8 @@
+candidate_archive=tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/candidate-boot.tar.gz
+candidate_archive_sha256=88cfaf976d346ed0f248c05246dd051928c7b940052325a372d81c43b70887c2
+kernel_2712_sha256=141e5da1e899502137e2838b11bc7c9740d75d2dd185709647338238c626a377
+kernel_2712_size=49728
+header_image_size=49728
+text_offset=0
+flags=12
+forbidden_macb_nsr_link_candidate_runtime_strings_absent=true

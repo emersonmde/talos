@@ -12779,6 +12779,7 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_phy1_status_diagnostic_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_phy1_bmsr_double_sample_link_readiness_candidate",
+        talos_boot_scenario = "rpi5_rp1_ethernet_macb_nsr_link_readonly_candidate",
         talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
         talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",
         talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_read",
@@ -16542,6 +16543,108 @@ pub fn run_rp1_ethernet_phy1_bmsr_double_sample_link_readiness_no_mdio_control()
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_macb_nsr_link_readonly_candidate")]
+pub fn run_rp1_ethernet_macb_nsr_link_readonly_candidate() -> ! {
+    const MACB_MID_CONTEXT: usize = 0x1c_0010_00fc;
+    const MACB_NSR: usize = 0x1c_0010_0008;
+    const MACB_NSR_LINK: u32 = 1 << 0;
+
+    write_early_static("rpi5-rp1-ethernet-macb-nsr-link-readonly-candidate: start\n");
+    write_early_static(
+        "rpi5-rp1-ethernet-macb-nsr-link-readonly-candidate: before-readonly-observed-window-macb-nsr-link-read\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    let macb_mid_context = read_rp1_reg_u32(MACB_MID_CONTEXT);
+    let macb_nsr_raw = read_rp1_reg_u32(MACB_NSR);
+    let nsr_link = macb_nsr_raw & MACB_NSR_LINK != 0;
+    let classification = if nsr_link {
+        "macb-nsr-link-readonly-link-set"
+    } else {
+        "macb-nsr-link-readonly-link-clear"
+    };
+
+    loop {
+        write_early_static("TALOS: rp1-ethernet-macb-nsr-link-readonly-candidate");
+        write_rp1_ethernet_macb_nsr_link_readonly_capture_nonce();
+        write_rp1_ethernet_macb_nsr_link_readonly_common("candidate");
+        write_early_static(" target=rp1-ethernet-macb-nsr-link-readonly");
+        write_early_static(" controller=rp1_eth compatible=raspberrypi,rp1-gem,cdns,macb");
+        write_early_static(" observed-window-rp1-eth-base=0x1c00100000");
+        write_early_static(" observed-window-macb-mid-context-cpu-physical-target=");
+        write_early_hex_u64(MACB_MID_CONTEXT as u64);
+        write_early_static(" observed-window-macb-mid-context-raw=");
+        write_early_hex_u64(macb_mid_context as u64);
+        write_early_static(" macb-nsr-target=");
+        write_early_hex_u64(MACB_NSR as u64);
+        write_early_static(" macb-nsr-offset=0x0008 macb-nsr-link-bit=0");
+        write_early_static(" macb-nsr-raw=");
+        write_early_hex_u64(macb_nsr_raw as u64);
+        write_early_static(" macb-nsr-link=");
+        write_bool(nsr_link);
+        write_early_static(" macb-nsr-result-valid=true");
+        write_early_static(" accepted-phy1-bmcr=0x1000");
+        write_early_static(" accepted-phy1-bmsr-first=0x7949");
+        write_early_static(" accepted-phy1-bmsr-second=0x7949");
+        write_early_static(" accepted-phy1-anar=0x01e1 accepted-phy1-anlpar=0x0000");
+        write_early_static(
+            " accepted-corrected-target-mdio-boundary=read-only-clause22-phy1-frontier-closed",
+        );
+        write_early_static(
+            " retained-gpio32-blockers=gpio32-write-restore-v2-no-write,event-clear-persistent-or-firmware-owned",
+        );
+        write_early_static(" macb-read-performed=true macb-write-performed=false");
+        write_early_static(" mdio-target-constructed=false man-frame-constructed=false");
+        write_early_static(" phy-config-write-performed=false phy-reset-or-gpio32-action=false");
+        write_early_static(" dma-descriptor-action=false packet-io-performed=false");
+        write_rp1_ethernet_macb_nsr_link_readonly_rejections(true);
+        write_early_static(" classification=");
+        write_early_static(classification);
+        write_early_static("\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_macb_nsr_link_readonly_no_mmio_control")]
+pub fn run_rp1_ethernet_macb_nsr_link_readonly_no_mmio_control() -> ! {
+    write_early_static("rpi5-rp1-ethernet-macb-nsr-link-readonly-control: start\n");
+    write_early_static(
+        "rpi5-rp1-ethernet-macb-nsr-link-readonly-control: no-mmio-no-ethernet-no-macb-nsr-target-construction\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-ethernet-macb-nsr-link-readonly-control");
+        write_rp1_ethernet_macb_nsr_link_readonly_capture_nonce();
+        write_rp1_ethernet_macb_nsr_link_readonly_common("no-mmio-no-ethernet-control");
+        write_early_static(" target=none controller=none compatible=none");
+        write_early_static(" observed-window-rp1-eth-base=withheld");
+        write_early_static(" observed-window-macb-mid-context-cpu-physical-target=not-constructed");
+        write_early_static(" observed-window-macb-mid-context-raw=withheld");
+        write_early_static(" macb-nsr-target=not-constructed");
+        write_early_static(" macb-nsr-offset=withheld macb-nsr-link-bit=withheld");
+        write_early_static(" macb-nsr-raw=withheld macb-nsr-link=withheld");
+        write_early_static(" macb-nsr-result-valid=false");
+        write_early_static(" accepted-phy1-bmcr=0x1000");
+        write_early_static(" accepted-phy1-bmsr-first=0x7949");
+        write_early_static(" accepted-phy1-bmsr-second=0x7949");
+        write_early_static(" accepted-phy1-anar=0x01e1 accepted-phy1-anlpar=0x0000");
+        write_early_static(
+            " accepted-corrected-target-mdio-boundary=read-only-clause22-phy1-frontier-closed",
+        );
+        write_early_static(
+            " retained-gpio32-blockers=gpio32-write-restore-v2-no-write,event-clear-persistent-or-firmware-owned",
+        );
+        write_early_static(" macb-read-performed=false macb-write-performed=false");
+        write_early_static(" mdio-target-constructed=false man-frame-constructed=false");
+        write_early_static(" phy-config-write-performed=false phy-reset-or-gpio32-action=false");
+        write_early_static(" dma-descriptor-action=false packet-io-performed=false");
+        write_rp1_ethernet_macb_nsr_link_readonly_rejections(false);
+        write_early_static(" classification=no-mmio-no-ethernet-macb-nsr-link-control\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
 #[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate")]
 pub fn run_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate() -> ! {
     write_early_static(
@@ -18272,6 +18375,66 @@ fn write_rp1_ethernet_phy1_bmsr_double_sample_link_readiness_rejections(
     write_early_static(" claims-interrupt-completion=false claims-dma-descriptor-ownership=false");
     write_early_static(" claims-packet-io=false claims-networking=false claims-sockets=false");
     write_early_static(" claims-ssh=false claims-phase-12-2=false claims-phase-transition=false");
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_macb_nsr_link_readonly_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_macb_nsr_link_readonly_no_mmio_control"
+))]
+fn write_rp1_ethernet_macb_nsr_link_readonly_common(report_kind: &str) {
+    write_early_static(
+        " macb-nsr-link-readonly-contract-id=phase12-rp1-ethernet-macb-nsr-link-readonly-contract-v1",
+    );
+    write_early_static(" task-id=phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof-20260614");
+    write_early_static(
+        " source-contract-task-id=phase12-rp1-ethernet-macb-nsr-link-readonly-source-contract-20260614",
+    );
+    write_early_static(" accepted-frontier=rp1-ethernet-phy1-link-not-ready-frontier-closed");
+    write_early_static(" selected-discriminator=rp1-ethernet-macb-nsr-link-readonly");
+    write_early_static(" report-kind=");
+    write_early_static(report_kind);
+    write_early_static(
+        " hardware-proof-boundary-classification=hardware-proof-limited-to-macb-nsr-link-readonly-control-output",
+    );
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_macb_nsr_link_readonly_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_macb_nsr_link_readonly_no_mmio_control"
+))]
+fn write_rp1_ethernet_macb_nsr_link_readonly_capture_nonce() {
+    if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
+        if !nonce.is_empty() {
+            write_early_static(" capture-nonce=");
+            write_early_static(nonce);
+        }
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_macb_nsr_link_readonly_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_macb_nsr_link_readonly_no_mmio_control"
+))]
+fn write_rp1_ethernet_macb_nsr_link_readonly_rejections(runtime_macb_nsr_read: bool) {
+    write_early_static(
+        " allowed-classifications=macb-nsr-link-readonly-link-set,macb-nsr-link-readonly-link-clear,macb-nsr-link-readonly-precondition-blocker,macb-nsr-link-readonly-capture-blocker,no-mmio-no-ethernet-macb-nsr-link-control",
+    );
+    write_early_static(
+        " rejected-runtime-hardware-claims=macb-write-ownership,mdio-or-phy-access,phy-configuration-write,bmcr-write,autonegotiation-restart,link-forcing,phy-reset-or-gpio32-action,dma-descriptors,interrupt-completion,packet-io,networking,sockets,ssh,phase-12-2,phase-transition",
+    );
+    write_early_static(
+        " retained-risks=macb-nsr-link-is-only-mac-side-comparator-at-selected-instant,phy1-bmsr-link-not-ready-frontier-remains,gpio32-reset-and-phy-configuration-remain-unaccepted,no-packet-dma-interrupt-socket-ssh-or-phase-12-2-readiness",
+    );
+    write_early_static(" claims-runtime-macb-nsr-read=");
+    write_bool(runtime_macb_nsr_read);
+    write_early_static(" claims-macb-write-ownership=false claims-macb-write-executed=false");
+    write_early_static(" claims-mdio-or-phy-access=false claims-phy-config-write=false");
+    write_early_static(" claims-bmcr-write=false claims-autoneg-restart=false");
+    write_early_static(" claims-link-forcing=false claims-phy-reset-or-gpio32-action=false");
+    write_early_static(" claims-ethernet-ready=false claims-interrupt-completion=false");
+    write_early_static(" claims-dma-descriptor-ownership=false claims-packet-io=false");
+    write_early_static(" claims-networking=false claims-sockets=false claims-ssh=false");
+    write_early_static(" claims-phase-12-2=false claims-phase-transition=false");
 }
 
 #[cfg(any(
@@ -20988,6 +21151,8 @@ fn gpio14_ownership_preflight_classification(
     talos_boot_scenario = "rpi5_rp1_ethernet_phy1_status_diagnostic_no_mdio_control",
     talos_boot_scenario = "rpi5_rp1_ethernet_phy1_bmsr_double_sample_link_readiness_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_phy1_bmsr_double_sample_link_readiness_no_mdio_control",
+    talos_boot_scenario = "rpi5_rp1_ethernet_macb_nsr_link_readonly_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_macb_nsr_link_readonly_no_mmio_control",
     talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_control",
     talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",

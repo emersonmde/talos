@@ -10012,6 +10012,20 @@ planning, and accepts no hardware action, MACB writes, MDIO transactions, PHY
 configuration writes, BMCR writes, GPIO32/PHY reset action, packet I/O,
 networking, sockets, SSH, Phase 12.2, or phase transition.
 
+phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof-20260614 accepts the
+passive MAC-side MACB_NSR_LINK read-only proof as
+macb-nsr-link-readonly-link-clear. Candidate/control capture-chain-v4 and
+boot-staging identity checks both passed with selected-tree identity, matching
+same-power-cycle TFTP fetch bytes, final pre-restore identity, serial
+freshness, and restore evidence. The candidate read MACB_NSR at
+0x1c00100008 as 0x6 and decoded NSR_LINK bit 0 as false; the paired control
+constructed no MACB_NSR target and performed no Ethernet volatile load/store.
+This accepts only the selected MAC-side comparator value at the selected
+instant; it does not accept link recovery, Ethernet readiness, MACB writes,
+MDIO/PHY access, PHY configuration writes, BMCR writes, autonegotiation
+restart, link forcing, PHY reset/GPIO32 action, DMA/descriptors, interrupts,
+packet I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

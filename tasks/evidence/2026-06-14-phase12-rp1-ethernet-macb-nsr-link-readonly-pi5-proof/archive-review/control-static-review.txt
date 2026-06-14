@@ -1,0 +1,8 @@
+control_archive=tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/control-boot.tar.gz
+control_archive_sha256=9da94e4d2f98297a87269c2822b6ea02bd52343930ae588fbfc9477a75b31d79
+kernel_2712_sha256=06babf44184aed7bed0772507e77d7dcdbfdb43a6d756a285f0d77e5ec010086
+kernel_2712_size=49480
+header_image_size=49480
+text_offset=0
+flags=12
+forbidden_macb_nsr_link_control_runtime_strings_absent=true

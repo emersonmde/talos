@@ -1,0 +1,107 @@
+{
+  "task_id": "phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof-20260614",
+  "classification": "macb-nsr-link-readonly-link-clear",
+  "evidence": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof.md",
+      "level": "task evidence"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/classification.json",
+      "level": "task-owned JSON evidence"
+    },
+    {
+      "label": "evidence map",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/evidence-map.json",
+      "level": "task-owned JSON evidence"
+    },
+    {
+      "label": "capture summary",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/capture-summary.json",
+      "level": "task-owned JSON evidence"
+    },
+    {
+      "label": "candidate archive review",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/archive-review/candidate-static-review.txt",
+      "level": "static archive/image review"
+    },
+    {
+      "label": "control archive review",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/archive-review/control-static-review.txt",
+      "level": "static archive/image review"
+    },
+    {
+      "label": "candidate serial/window bundle",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/candidate-run/serial-observe-window.json",
+      "level": "serial hardware boot/output"
+    },
+    {
+      "label": "control serial/window bundle",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/control-run/serial-observe-window.json",
+      "level": "serial hardware boot/output"
+    },
+    {
+      "label": "candidate same-power-cycle TFTP delta",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/candidate-run/tftp-delta-stable-pre-restore.json",
+      "level": "stable same-cursor TFTP delta"
+    },
+    {
+      "label": "control same-power-cycle TFTP delta",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/control-run/tftp-delta-stable-pre-restore.json",
+      "level": "stable same-cursor TFTP delta"
+    },
+    {
+      "label": "candidate capture-chain-v4 check",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/candidate-run/v4-check.json",
+      "level": "capture-chain-v4 replay"
+    },
+    {
+      "label": "control capture-chain-v4 check",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/control-run/v4-check.json",
+      "level": "capture-chain-v4 replay"
+    },
+    {
+      "label": "candidate boot-staging identity",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/candidate-run/boot-staging-identity.json",
+      "level": "boot-staging identity replay"
+    },
+    {
+      "label": "control boot-staging identity",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/control-run/boot-staging-identity.json",
+      "level": "boot-staging identity replay"
+    },
+    {
+      "label": "candidate restore evidence",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/candidate-run/restore-snapshot.json",
+      "level": "restore proof"
+    },
+    {
+      "label": "control restore evidence",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/control-run/restore-snapshot.json",
+      "level": "restore proof"
+    },
+    {
+      "label": "final lab status",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/final-lab-status.json",
+      "level": "restore proof"
+    },
+    {
+      "label": "evidence consistency guard",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/evidence-consistency-guard.json",
+      "level": "evidence-consistency guard"
+    }
+  ],
+  "candidate": {
+    "v4_check": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/candidate-run/v4-check.json"
+  },
+  "control": {
+    "v4_check": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/control-run/v4-check.json"
+  },
+  "accepted_claims": [
+    "candidate performs read-only volatile 32-bit MACB_NSR observation at 0x1c00100008 and decodes bit 0 only",
+    "candidate classified MACB_NSR_LINK clear without accepting link recovery or Ethernet readiness",
+    "control proves the same report path with no MACB_NSR target construction and no Ethernet volatile load/store"
+  ]
+}

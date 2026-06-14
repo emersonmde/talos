@@ -1583,3 +1583,17 @@ after this closeout, so supervisor planning is required for the next bounded
 Phase 12.1 task; the closeout does not authorize PHY configuration,
 PHY reset/GPIO32 action, broad MDIO/PHY ownership, Ethernet behavior, packet
 I/O, networking, SSH, Phase 12.2, or a phase transition.
+
+phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof-20260614 accepts the
+passive MAC-side MACB_NSR_LINK read-only proof as
+macb-nsr-link-readonly-link-clear. Candidate/control capture-chain-v4 and
+boot-staging identity checks both passed with selected-tree identity, matching
+same-power-cycle TFTP fetch bytes, final pre-restore identity, serial
+freshness, and restore evidence. The candidate read MACB_NSR at
+0x1c00100008 as 0x6 and decoded NSR_LINK bit 0 as false; the paired control
+constructed no MACB_NSR target and performed no Ethernet volatile load/store.
+This accepts only the selected MAC-side comparator value at the selected
+instant; it does not accept link recovery, Ethernet readiness, MACB writes,
+MDIO/PHY access, PHY configuration writes, BMCR writes, autonegotiation
+restart, link forcing, PHY reset/GPIO32 action, DMA/descriptors, interrupts,
+packet I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.

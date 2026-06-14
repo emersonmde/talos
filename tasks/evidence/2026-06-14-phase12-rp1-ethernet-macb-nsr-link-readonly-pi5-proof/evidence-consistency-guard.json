@@ -1,0 +1,98 @@
+{
+  "contract_version": "pi5-evidence-consistency-guard-v1",
+  "task_record": "tasks/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof.md",
+  "evidence_dir": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof",
+  "authoritative_inputs": {
+    "candidate_v4_check": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/candidate-run/v4-check.json",
+    "control_v4_check": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/control-run/v4-check.json"
+  },
+  "candidate": {
+    "v4": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": [],
+      "selected_tree_hash": "937e30a34797c672f393e6cd7f4c4b12c6b1a0ea1e5b97c8c6afbbc8788a3522",
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "final_pre_restore_tree_hash": "937e30a34797c672f393e6cd7f4c4b12c6b1a0ea1e5b97c8c6afbbc8788a3522",
+      "serial_marker_occurrences": 23,
+      "serial_freshness_ok": true
+    },
+    "aggregate_classification": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": [],
+      "selected_tree_hash": null,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "final_pre_restore_tree_hash": "937e30a34797c672f393e6cd7f4c4b12c6b1a0ea1e5b97c8c6afbbc8788a3522",
+      "serial_marker_occurrences": 23,
+      "serial_freshness_ok": true
+    },
+    "capture_summary": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": [],
+      "selected_tree_hash": null,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "final_pre_restore_tree_hash": "937e30a34797c672f393e6cd7f4c4b12c6b1a0ea1e5b97c8c6afbbc8788a3522",
+      "serial_marker_occurrences": 23,
+      "serial_freshness_ok": true
+    }
+  },
+  "control": {
+    "v4": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": [],
+      "selected_tree_hash": "ff82cf02034aa877cf5907a8456be504e966109a6a9ac51992e23a9b79457c70",
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "final_pre_restore_tree_hash": "ff82cf02034aa877cf5907a8456be504e966109a6a9ac51992e23a9b79457c70",
+      "serial_marker_occurrences": 23,
+      "serial_freshness_ok": true
+    },
+    "aggregate_classification": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": [],
+      "selected_tree_hash": null,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "final_pre_restore_tree_hash": "ff82cf02034aa877cf5907a8456be504e966109a6a9ac51992e23a9b79457c70",
+      "serial_marker_occurrences": 23,
+      "serial_freshness_ok": true
+    },
+    "capture_summary": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": [],
+      "selected_tree_hash": null,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "final_pre_restore_tree_hash": "ff82cf02034aa877cf5907a8456be504e966109a6a9ac51992e23a9b79457c70",
+      "serial_marker_occurrences": 23,
+      "serial_freshness_ok": true
+    }
+  },
+  "accepted_claims_checked": [
+    "candidate performs read-only volatile 32-bit MACB_NSR observation at 0x1c00100008 and decodes bit 0 only",
+    "candidate classified MACB_NSR_LINK clear without accepting link recovery or Ethernet readiness",
+    "control proves the same report path with no MACB_NSR target construction and no Ethernet volatile load/store",
+    "candidate performs read-only volatile 32-bit MACB_NSR observation at 0x1c00100008 and decodes bit 0 only",
+    "candidate classified MACB_NSR_LINK clear without accepting link recovery or Ethernet readiness",
+    "control proves the same report path with no MACB_NSR target construction and no Ethernet volatile load/store",
+    "candidate performs read-only volatile 32-bit MACB_NSR observation at 0x1c00100008 and decodes bit 0 only",
+    "candidate classified MACB_NSR_LINK clear without accepting link recovery or Ethernet readiness",
+    "control proves the same report path with no MACB_NSR target construction and no Ethernet volatile load/store"
+  ],
+  "task_markdown_claims": {
+    "candidate_section_ready_overclaim": true,
+    "control_section_ready_overclaim": true
+  },
+  "consistent": true,
+  "classification": "evidence-consistency-ready",
+  "rejection_reasons": [],
+  "rule": "candidate/control v4 JSON is authoritative; task markdown, aggregate classification JSON, capture summary, and evidence map accepted claims must not claim capture-chain-v4 readiness or matching identity/freshness when v4 JSON blocks it"
+}
