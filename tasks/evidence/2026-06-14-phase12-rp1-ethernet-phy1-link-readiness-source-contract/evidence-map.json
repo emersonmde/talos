@@ -1,0 +1,22 @@
+{
+  "task_id": "phase12-rp1-ethernet-phy1-link-readiness-source-contract-20260614",
+  "classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-link-readiness-source-contract/classification.json",
+  "task_record": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-link-readiness-source-contract.md",
+  "input_frontier": {
+    "closeout_task": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-closeout.md",
+    "closeout_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-closeout/classification.json",
+    "closeout_evidence_map": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-closeout/evidence-map.json",
+    "proof_task": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof.md",
+    "proof_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof/classification.json"
+  },
+  "source_references": {
+    "linux_mii_h": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-uapi-linux-mii.h",
+    "linux_macb_h": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-macb.h",
+    "linux_macb_main_c": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-macb_main.c",
+    "linux_phy_device_genphy_update_link_excerpt": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-link-readiness-source-contract/source/linux-v6.12-phy_device-genphy_update_link-excerpt.txt",
+    "talos_rp1_ethernet_constants": "src/rp1_ethernet.rs"
+  },
+  "selected_next_discriminator": "rp1-ethernet-phy1-bmsr-latch-low-double-sample-link-readiness",
+  "selected_future_task_id": "phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-pi5-proof-20260614",
+  "commit": null
+}

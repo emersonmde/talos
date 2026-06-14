@@ -1507,3 +1507,17 @@ phase12-rp1-ethernet-phy1-link-readiness-source-contract-20260614, a source
 contract for one exact next discriminator; it does not authorize PHY
 configuration, reset/GPIO32 action, broad MDIO/PHY ownership, packet I/O,
 networking, SSH, Phase 12.2, or a phase transition.
+
+phase12-rp1-ethernet-phy1-link-readiness-source-contract-20260614 accepts the
+source contract
+phase12-rp1-ethernet-phy1-bmsr-latch-low-double-sample-link-readiness-contract-v1.
+The selected future discriminator is a read-only corrected-target PHY1 BMCR
+read followed by two BMSR reads, using the second BMSR sample for
+BMSR_LSTATUS/BMSR_ANEGCOMPLETE classification because Linux v6.12
+genphy_update_link treats BMSR link status as latched low. The future
+candidate may construct only the selected BMCR/BMSR MAN read frames, with a
+paired no-MDIO/no-Ethernet control. This source contract accepts no runtime
+link-readiness proof, PHY configuration write, autonegotiation restart, link
+forcing, MACB NSR_LINK discriminator, GPIO32/PHY reset ownership, broad
+MDIO/PHY ownership, Ethernet driver behavior, interrupts, DMA/descriptors,
+packet I/O, networking, sockets, SSH, Phase 12.2, or phase transition.

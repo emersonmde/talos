@@ -9941,6 +9941,20 @@ contract for one exact next discriminator; it does not authorize PHY
 configuration, reset/GPIO32 action, broad MDIO/PHY ownership, packet I/O,
 networking, SSH, Phase 12.2, or a phase transition.
 
+phase12-rp1-ethernet-phy1-link-readiness-source-contract-20260614 accepts the
+source contract
+phase12-rp1-ethernet-phy1-bmsr-latch-low-double-sample-link-readiness-contract-v1.
+The selected future discriminator is a read-only corrected-target PHY1 BMCR
+read followed by two BMSR reads, using the second BMSR sample for
+BMSR_LSTATUS/BMSR_ANEGCOMPLETE classification because Linux v6.12
+genphy_update_link treats BMSR link status as latched low. The future
+candidate may construct only the selected BMCR/BMSR MAN read frames, with a
+paired no-MDIO/no-Ethernet control. This source contract accepts no runtime
+link-readiness proof, PHY configuration write, autonegotiation restart, link
+forcing, MACB NSR_LINK discriminator, GPIO32/PHY reset ownership, broad
+MDIO/PHY ownership, Ethernet driver behavior, interrupts, DMA/descriptors,
+packet I/O, networking, sockets, SSH, Phase 12.2, or phase transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

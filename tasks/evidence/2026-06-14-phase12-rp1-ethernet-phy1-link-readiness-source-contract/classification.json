@@ -1,0 +1,91 @@
+{
+  "classification": "rp1-ethernet-phy1-link-readiness-source-contract-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static source/task evidence inspection",
+    "task-owned JSON evidence"
+  ],
+  "selected_contract": "phase12-rp1-ethernet-phy1-bmsr-latch-low-double-sample-link-readiness-contract-v1",
+  "selected_next_discriminator": "rp1-ethernet-phy1-bmsr-latch-low-double-sample-link-readiness",
+  "input_frontier": {
+    "closeout_task": "phase12-rp1-ethernet-phy1-status-diagnostic-closeout-20260614",
+    "closeout_commit": "c3986efdfce45f5c6c1d76a631225d10cc17b1bf",
+    "accepted_status_vector": {
+      "bmcr": "0x1000",
+      "bmsr": "0x7949",
+      "physid1": "0x600d",
+      "physid2": "0x84a2",
+      "anar": "0x01e1",
+      "anlpar": "0x0000"
+    }
+  },
+  "reason": "The accepted status diagnostic has only one BMSR sample with link-status=false and autoneg-complete=false. Linux v6.12 genphy_update_link treats BMSR link status as latched low and reads BMSR again before classifying link/autoneg state, so the next objective discriminator is a read-only BMSR double-sample proof.",
+  "future_candidate_contract": {
+    "operation_boundary": "read-only corrected-target Clause 22 MDIO MAN reads",
+    "phy_address": 1,
+    "observed_window_base": "0x1c00100000",
+    "ncr_target": "0x1c00100000",
+    "nsr_target": "0x1c00100008",
+    "man_target": "0x1c00100034",
+    "ncr_write_permission": "forbidden",
+    "phy_configuration_write_permission": "forbidden",
+    "reset_or_gpio32_permission": "forbidden",
+    "selected_reads": [
+      {
+        "register": "MII_BMCR",
+        "register_number": "0x00",
+        "man_frame": "0x60820000",
+        "purpose": "reject BMCR_ANRESTART/reset/loopback blockers and retain BMCR_ANENABLE context"
+      },
+      {
+        "register": "MII_BMSR",
+        "register_number": "0x01",
+        "man_frame": "0x60860000",
+        "sample": "first",
+        "purpose": "clear or expose latched-low link status"
+      },
+      {
+        "register": "MII_BMSR",
+        "register_number": "0x01",
+        "man_frame": "0x60860000",
+        "sample": "second",
+        "purpose": "classify link/autoneg readiness from BMSR_LSTATUS and BMSR_ANEGCOMPLETE"
+      }
+    ],
+    "paired_control": "same reporting path, no MDIO target construction, no MAN frame construction, no volatile MDIO load/store"
+  },
+  "allowed_future_classifications": [
+    "mdio-phy1-bmsr-double-sample-link-ready",
+    "mdio-phy1-bmsr-double-sample-link-not-ready",
+    "mdio-phy1-bmsr-double-sample-bmcr-precondition-blocker",
+    "mdio-phy1-bmsr-double-sample-timeout",
+    "precise-staging-capture-blocker",
+    "no-mdio-no-ethernet-rp1-ethernet-phy1-link-readiness-control"
+  ],
+  "rejected_claims": [
+    "PHY configuration writes",
+    "autonegotiation restart",
+    "link forcing",
+    "PHY reset/GPIO32 ownership",
+    "MACB NSR_LINK as the selected discriminator",
+    "broad MDIO/PHY ownership",
+    "Ethernet driver behavior",
+    "interrupts",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "A read-only BMSR double-sample can prove only PHY1 link/autoneg register readiness or not-readiness at the selected instant.",
+    "Even a link-ready BMSR result would not prove MAC configuration, DMA/descriptors, interrupts, packet I/O, networking, sockets, SSH, or Phase 12.2 readiness.",
+    "GPIO32/PHY reset ownership and PHY configuration writes remain separate unaccepted frontiers."
+  ],
+  "next_action": {
+    "selected_task": "phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-pi5-proof-20260614",
+    "required_planning": "Supervisor must add an explicit queued proof task before implementation/hardware; this source contract does not create or authorize that task by itself."
+  }
+}
