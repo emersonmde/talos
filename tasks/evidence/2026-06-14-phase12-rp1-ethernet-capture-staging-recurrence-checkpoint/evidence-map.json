@@ -1,0 +1,100 @@
+{
+  "task_id": "phase12-rp1-ethernet-capture-staging-recurrence-checkpoint-20260614",
+  "classification": "capture-staging-recurrence-checkpoint-accepted",
+  "evidence": [
+    {
+      "level": "static/task evidence inspection",
+      "label": "autoneg restart proof task",
+      "path": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof.md"
+    },
+    {
+      "level": "task-owned JSON evidence",
+      "label": "autoneg restart proof classification",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/classification.json"
+    },
+    {
+      "level": "task-owned JSON evidence",
+      "label": "autoneg restart proof capture summary",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/capture-summary.json"
+    },
+    {
+      "level": "capture-chain-v4 replay review",
+      "label": "autoneg candidate capture-chain-v4 rejected",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/candidate-run/v4-check.json"
+    },
+    {
+      "level": "boot-staging identity replay review",
+      "label": "autoneg candidate boot-staging identity rejected",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/candidate-run/boot-staging-identity.json"
+    },
+    {
+      "level": "stable same-cursor TFTP delta evidence review",
+      "label": "autoneg candidate served baseline bytes",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/candidate-run/tftp-delta-stable-pre-restore.json"
+    },
+    {
+      "level": "lab-controller API evidence review",
+      "label": "autoneg known-good baseline no fresh TFTP",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/triage-known-good-baseline/classification.json"
+    },
+    {
+      "level": "static/task evidence inspection",
+      "label": "autoneg closeout task",
+      "path": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-closeout.md"
+    },
+    {
+      "level": "retained hardware proof comparator",
+      "label": "minimal sentinel served-root proof task",
+      "path": "tasks/2026-06-14-phase12-rp1-ethernet-lab-tftp-root-minimal-sentinel-pi5-proof.md"
+    },
+    {
+      "level": "retained hardware proof comparator",
+      "label": "minimal sentinel capture summary",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-lab-tftp-root-minimal-sentinel-pi5-proof/capture-summary.json"
+    },
+    {
+      "level": "retained hardware proof comparator",
+      "label": "v4 register-vector proof task",
+      "path": "tasks/2026-06-14-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v4-after-root-recovery.md"
+    },
+    {
+      "level": "retained hardware proof comparator",
+      "label": "v4 register-vector classification",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v4-after-root-recovery/classification.json"
+    },
+    {
+      "level": "static helper contract inspection",
+      "label": "capture-chain-v4 retained fixtures",
+      "path": "scripts/rpi5-capture-chain-v4-retained-fixtures.sh"
+    },
+    {
+      "level": "static helper contract inspection",
+      "label": "boot-staging identity check",
+      "path": "scripts/rpi5-boot-staging-identity-check.sh"
+    },
+    {
+      "level": "static helper contract inspection",
+      "label": "capture invariant proof bundle",
+      "path": "scripts/rpi5-capture-invariant-proof-bundle.sh"
+    },
+    {
+      "level": "static docs inspection",
+      "label": "lab-controller capture evidence contract",
+      "path": "docs/src/project/lab-controller.md"
+    },
+    {
+      "level": "task-owned JSON evidence",
+      "label": "checkpoint classification",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-capture-staging-recurrence-checkpoint/classification.json"
+    }
+  ],
+  "validation": {
+    "static_task_evidence_inspection": "passed",
+    "jq_empty": "passed",
+    "helper_replay_gate": "not-run-no-helper-code-changed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  },
+  "selected_next_task": "phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof-20260614"
+}

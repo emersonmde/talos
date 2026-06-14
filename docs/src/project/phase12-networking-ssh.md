@@ -1657,3 +1657,17 @@ follow-up exists after this closeout, so supervisor planning is required before
 any capture-layer recovery, paired-control hardware run, PHY configuration,
 GPIO32/PHY reset action, packet I/O, networking, SSH, Phase 12.2, or phase
 transition.
+
+phase12-rp1-ethernet-capture-staging-recurrence-checkpoint-20260614 accepts a
+non-hardware reconciliation of the autoneg capture-staging recurrence. The
+first failing invariant remains same-power-cycle TFTP-served bytes and final
+pre-restore identity not matching the selected autoneg candidate tree; the
+secondary unresolved invariant is that known-good baseline triage produced no
+fresh TFTP events. Accepted minimal-sentinel and v4 register-vector comparator
+proofs remain valid historical evidence that the identity path can work, but
+they do not unblock an autoneg retry after the later recurrence. No static
+capture/publication helper defect was found. The selected follow-up is the
+fresh minimal sentinel task
+phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof-20260614, with
+no MDIO, MACB, PHY, autonegotiation, GPIO32, packet I/O, networking, SSH,
+Phase 12.2, or phase transition claims.

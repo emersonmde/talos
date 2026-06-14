@@ -1,0 +1,82 @@
+{
+  "task_id": "phase12-rp1-ethernet-capture-staging-recurrence-checkpoint-20260614",
+  "classification": "capture-staging-recurrence-checkpoint-accepted",
+  "status": "accepted",
+  "accepted_runtime_autoneg_restart_evidence": false,
+  "first_failing_invariant": "same-power-cycle TFTP-served bytes and final pre-restore identity did not match the selected autoneg candidate tree",
+  "secondary_unresolved_invariant": "known-good baseline triage produced no fresh TFTP events, so current TFTP visibility for a same-shaped retry remained unproven",
+  "autoneg_blocker": {
+    "source_task": "phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof-20260614",
+    "classification": "phy1-autoneg-restart-capture-staging-blocked",
+    "selected_tree_hash": "6bf7d36a3f07426f450fd8a4def73b9cc8bbbc5b730ba50503fd0ee8f41609e1",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 52360,
+    "tftp_expected_fetch_count": 4,
+    "tftp_expected_fetch_byte_match_count": 0,
+    "tftp_expected_fetch_bytes_seen": [
+      104136,
+      104136,
+      104136,
+      104136
+    ],
+    "final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "serial_marker_occurrences": 0,
+    "capture_chain_v4": "capture-staging-blocked",
+    "boot_staging_identity": "boot-staging-identity-blocked",
+    "known_good_triage": "known-good-baseline-no-fresh-tftp-after-power"
+  },
+  "comparators": {
+    "root_recovery_minimal_sentinel": {
+      "task_id": "phase12-rp1-ethernet-lab-tftp-root-minimal-sentinel-pi5-proof-20260611",
+      "commit": "12605ec7263abfe7ffb46a766b4cbf5cd8c8e3e8",
+      "classification": "minimal-sentinel-served-root-proof-accepted",
+      "selected_tree_hash": "5dd6afef125a27bbb4e76423fbd189fe1dc020bc9cf2186e42bba7eae5581441",
+      "expected_fetch_byte_count": 47832,
+      "tftp_expected_fetch_count": 2,
+      "tftp_expected_fetch_byte_match_count": 2,
+      "final_selected_tree_identity": true,
+      "serial_nonce_fresh": true,
+      "restore_to_baseline": true
+    },
+    "v4_register_vector": {
+      "task_id": "phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v4-after-root-recovery-20260614",
+      "commit": "a4d203906e1b9ac5686342cff5c9ffb1bc1d909b",
+      "classification": "mdio-phy1-register-vector-visible",
+      "candidate_selected_tree_hash": "043744bcf578d7966c63600c3db0302e35e96ec631f6d535725c8e63002fd43d",
+      "candidate_expected_fetch_byte_count": 52352,
+      "candidate_tftp_expected_fetch_count": 2,
+      "candidate_tftp_expected_fetch_byte_match_count": 2,
+      "candidate_final_selected_tree_identity": true,
+      "candidate_serial_nonce_fresh": true,
+      "control_selected_tree_identity_ready": true,
+      "restore_to_baseline": true
+    }
+  },
+  "helper_static_inspection": {
+    "capture_chain_v4_gate_rejects_api_only_identity": true,
+    "boot_staging_identity_requires_tftp_byte_agreement": true,
+    "boot_staging_identity_requires_final_pre_restore_identity": true,
+    "proof_bundle_records_pre_power_identity_tftp_final_restore": true,
+    "repair_core_selected": false,
+    "repair_core_not_selected_reason": "No static helper or publication defect was identified; retained gates correctly accepted prior good evidence and rejected the autoneg recurrence."
+  },
+  "selected_next_task": "phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof-20260614",
+  "selected_next_task_reason": "Fresh minimal sentinel is the smallest preplanned discriminator for current live selected-tree/TFTP/final-identity freshness without MDIO, MACB, PHY, autonegotiation, GPIO32, packet I/O, networking, SSH, or Phase 12.2 behavior.",
+  "rejected_claims": [
+    "runtime PHY1 BMCR write evidence",
+    "autonegotiation restart success or failure",
+    "link readiness",
+    "physical link partner readiness",
+    "GPIO32/PHY reset ownership",
+    "Ethernet readiness",
+    "DMA/descriptors",
+    "interrupts",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "docs_updated": true
+}
