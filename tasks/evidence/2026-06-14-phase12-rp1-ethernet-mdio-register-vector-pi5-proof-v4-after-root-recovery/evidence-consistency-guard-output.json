@@ -1,0 +1,98 @@
+{
+  "contract_version": "pi5-evidence-consistency-guard-v1",
+  "task_record": "tasks/2026-06-14-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v4-after-root-recovery.md",
+  "evidence_dir": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v4-after-root-recovery",
+  "authoritative_inputs": {
+    "candidate_v4_check": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v4-after-root-recovery/candidate-run/v4-check.json",
+    "control_v4_check": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v4-after-root-recovery/control-run/v4-check.json"
+  },
+  "candidate": {
+    "v4": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": [],
+      "selected_tree_hash": "043744bcf578d7966c63600c3db0302e35e96ec631f6d535725c8e63002fd43d",
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "final_pre_restore_tree_hash": "043744bcf578d7966c63600c3db0302e35e96ec631f6d535725c8e63002fd43d",
+      "serial_marker_occurrences": 19,
+      "serial_freshness_ok": true
+    },
+    "aggregate_classification": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": [],
+      "selected_tree_hash": "043744bcf578d7966c63600c3db0302e35e96ec631f6d535725c8e63002fd43d",
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "final_pre_restore_tree_hash": "043744bcf578d7966c63600c3db0302e35e96ec631f6d535725c8e63002fd43d",
+      "serial_marker_occurrences": 19,
+      "serial_freshness_ok": true
+    },
+    "capture_summary": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": [],
+      "selected_tree_hash": "043744bcf578d7966c63600c3db0302e35e96ec631f6d535725c8e63002fd43d",
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "final_pre_restore_tree_hash": "043744bcf578d7966c63600c3db0302e35e96ec631f6d535725c8e63002fd43d",
+      "serial_marker_occurrences": 19,
+      "serial_freshness_ok": true
+    }
+  },
+  "control": {
+    "v4": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": [],
+      "selected_tree_hash": "0a8aab5b6103bf42c28b7d202ef1022b94c443a08879641c89ef481c59e516a8",
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "final_pre_restore_tree_hash": "0a8aab5b6103bf42c28b7d202ef1022b94c443a08879641c89ef481c59e516a8",
+      "serial_marker_occurrences": 20,
+      "serial_freshness_ok": true
+    },
+    "aggregate_classification": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": [],
+      "selected_tree_hash": "0a8aab5b6103bf42c28b7d202ef1022b94c443a08879641c89ef481c59e516a8",
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "final_pre_restore_tree_hash": "0a8aab5b6103bf42c28b7d202ef1022b94c443a08879641c89ef481c59e516a8",
+      "serial_marker_occurrences": 20,
+      "serial_freshness_ok": true
+    },
+    "capture_summary": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": [],
+      "selected_tree_hash": "0a8aab5b6103bf42c28b7d202ef1022b94c443a08879641c89ef481c59e516a8",
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "final_pre_restore_tree_hash": "0a8aab5b6103bf42c28b7d202ef1022b94c443a08879641c89ef481c59e516a8",
+      "serial_marker_occurrences": 20,
+      "serial_freshness_ok": true
+    }
+  },
+  "accepted_claims_checked": [
+    "candidate/control capture-chain-v4 and staging identity gates are ready with same-power-cycle TFTP-served byte agreement",
+    "candidate visible six-register PHY1 Clause 22 vector: BMCR 0x1000, BMSR 0x7949, PHYSID1 0x600d, PHYSID2 0x84a2, ANAR 0x01e1, ANLPAR 0x0000",
+    "paired control ran the same reporting path with no MDIO target and no runtime MDIO transaction",
+    "candidate/control capture-chain-v4 and staging identity gates are ready with same-power-cycle TFTP-served byte agreement",
+    "candidate visible six-register PHY1 Clause 22 vector: BMCR 0x1000, BMSR 0x7949, PHYSID1 0x600d, PHYSID2 0x84a2, ANAR 0x01e1, ANLPAR 0x0000",
+    "paired control ran the same reporting path with no MDIO target and no runtime MDIO transaction",
+    "candidate/control capture-chain-v4 and staging identity gates are ready with same-power-cycle TFTP-served byte agreement",
+    "candidate visible six-register PHY1 Clause 22 vector: BMCR 0x1000, BMSR 0x7949, PHYSID1 0x600d, PHYSID2 0x84a2, ANAR 0x01e1, ANLPAR 0x0000",
+    "paired control ran the same reporting path with no MDIO target and no runtime MDIO transaction"
+  ],
+  "task_markdown_claims": {
+    "candidate_section_ready_overclaim": true,
+    "control_section_ready_overclaim": true
+  },
+  "consistent": true,
+  "classification": "evidence-consistency-ready",
+  "rejection_reasons": [],
+  "rule": "candidate/control v4 JSON is authoritative; task markdown, aggregate classification JSON, capture summary, and evidence map accepted claims must not claim capture-chain-v4 readiness or matching identity/freshness when v4 JSON blocks it"
+}

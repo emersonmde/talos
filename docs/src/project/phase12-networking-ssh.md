@@ -1454,3 +1454,18 @@ sentinel proof accepts no register-vector MAN.DATA values, PHY absence, broad
 MDIO/PHY ownership, PHY reset/GPIO32 ownership, Ethernet behavior, interrupts,
 DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, or phase
 transition.
+
+phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v4-after-root-recovery-20260614
+accepts the guarded register-vector Pi 5 proof after the served-root/root
+recovery closeout. Candidate and paired no-MDIO/no-Ethernet control both
+passed capture-chain-v4 and boot-staging identity with same-power-cycle TFTP
+served byte agreement and final pre-restore identity on the selected tree.
+
+The candidate accepted result is mdio-phy1-register-vector-visible for the
+selected Clause 22 PHY1 vector only: BMCR 0x1000, BMSR 0x7949, PHYSID1
+0x600d, PHYSID2 0x84a2, ANAR 0x01e1, and ANLPAR 0x0000. Corrected NCR.MPE was
+already set, no NCR write was performed, and the paired control constructed no
+MDIO target or MAN frame. This does not accept PHY absence, PHY reset/GPIO32
+ownership, broad MDIO/PHY ownership, link state, Ethernet driver behavior,
+interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2,
+or a phase transition.

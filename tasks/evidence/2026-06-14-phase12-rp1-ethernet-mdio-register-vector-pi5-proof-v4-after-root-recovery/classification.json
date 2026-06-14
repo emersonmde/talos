@@ -1,0 +1,419 @@
+{
+  "classification": "mdio-phy1-register-vector-visible",
+  "status": "accepted",
+  "evidence_level": [
+    "static archive review",
+    "image/archive inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "stable same-cursor TFTP delta",
+    "capture-chain-v4 replay",
+    "staging identity gate",
+    "evidence-consistency guard",
+    "restore evidence"
+  ],
+  "accepted_claims": [
+    "candidate/control capture-chain-v4 and staging identity gates are ready with same-power-cycle TFTP-served byte agreement",
+    "candidate visible six-register PHY1 Clause 22 vector: BMCR 0x1000, BMSR 0x7949, PHYSID1 0x600d, PHYSID2 0x84a2, ANAR 0x01e1, ANLPAR 0x0000",
+    "paired control ran the same reporting path with no MDIO target and no runtime MDIO transaction"
+  ],
+  "rejected_claims": [
+    "PHY absence",
+    "broad MDIO/PHY ownership",
+    "NCR write permission/execution",
+    "GPIO32/PHY reset ownership",
+    "Ethernet behavior",
+    "interrupts",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "candidate": {
+    "capture_chain_v4": {
+      "contract_version": "pi5-capture-chain-v4",
+      "base_contracts": [
+        "pi5-capture-transaction-v2",
+        "pi5-capture-transaction-v3",
+        "pi5-capture-transaction-run-unique-v1"
+      ],
+      "run_label": "register-vector-v4-candidate-20260614T0203Z",
+      "report_kind": "candidate",
+      "decisive_rp1_hardware_classification_allowed": true,
+      "classification": "capture-chain-v4-ready",
+      "rejection_reasons": [],
+      "endpoint_identity": {
+        "root_endpoint": {
+          "endpoint": "GET /",
+          "curl_exit": 0,
+          "http_code": 404,
+          "body_bytes": 55,
+          "usable_for_selected_tree_identity": false,
+          "selected_tree_identity_source": "/boot/files",
+          "fallback_used": true,
+          "fallback_reason": "root-endpoint-http-non-2xx"
+        },
+        "selected_tree_identity_source": "/boot/files",
+        "fallback_used": true,
+        "trust_boundary": {
+          "api_visible_boot_files_sufficient": false,
+          "requires_same_power_cycle_tftp_served_kernel_byte_agreement": true,
+          "requires_final_pre_restore_identity": true
+        }
+      },
+      "proof_run_identity": {
+        "selected_tree_hash": "043744bcf578d7966c63600c3db0302e35e96ec631f6d535725c8e63002fd43d",
+        "effective_kernel": "kernel_2712.img",
+        "expected_fetch_path": "da591740/kernel_2712.img",
+        "expected_fetch_byte_count": 52352,
+        "tftp": {
+          "cursor_file": 4483505,
+          "delta_cursor_start": 4483505,
+          "delta_cursor_end": 4484856,
+          "stable": true,
+          "event_count": 13,
+          "expected_fetch_count": 2,
+          "expected_fetch_byte_match_count": 2,
+          "expected_fetch_bytes_seen": [
+            52352,
+            52352
+          ]
+        },
+        "final_pre_restore": {
+          "tree_hash": "043744bcf578d7966c63600c3db0302e35e96ec631f6d535725c8e63002fd43d",
+          "effective_kernel": "kernel_2712.img",
+          "selected_tree_still_staged": true,
+          "expected_fetch_present": true,
+          "expected_fetch_bytes": 52352
+        },
+        "restore": {
+          "snapshot_name": "pre-register-vector-v4-20260614T0203Z",
+          "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+        }
+      },
+      "serial_capture": {
+        "capture_mode": "read",
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+        "cursor_file": 4194304,
+        "cursor_start": 4194304,
+        "cursor_end": 4194304,
+        "response_bytes": 70666,
+        "required_marker": "TALOS: rp1-ethernet-mdio-register-vector-candidate capture-nonce=guarded-v4-candidate-20260614T0203Z",
+        "required_marker_occurrences": 19,
+        "required_marker_excerpt": "aims-phase-transition=false classification=mdio-phy1-register-vector-visible\r\nTALOS: rp1-ethernet-mdio-register-vector-candidate capture-nonce=guarded-v4-candidate-20260614T0203Z mdio-register-vector-report-contract-id=phase12-rp1-ethernet-mdio-register-vector-guard-report-contract-v1 source-contract-id=phase12-rp1-ethernet-mdio-register-",
+        "nonce_token": "capture-nonce=guarded-v4-candidate-20260614T0203Z",
+        "nonce_token_occurrences": 19,
+        "pre_power_nonce_occurrences": 0,
+        "empty_pre_power": false,
+        "nonce_fresh": true,
+        "serial_freshness_ok": true
+      },
+      "claim_boundary": {
+        "accepted_if_ready": "capture-chain identity/freshness only",
+        "rejected_runtime_claims": [
+          "live-gem-visibility",
+          "ethernet-driver-readiness",
+          "rp1-mmio-dma-programming",
+          "packet-io",
+          "networking",
+          "ssh",
+          "phase-transition"
+        ]
+      },
+      "rule": "missing /boot/files identity, same-power-cycle expected TFTP-served kernel bytes, final selected-tree identity, run-unique marker freshness, direct serial marker retention, or paired control marker prevents decisive RP1 hardware classification; API-visible /boot/files identity alone is not sufficient"
+    },
+    "staging_identity_gate": {
+      "contract_version": "pi5-boot-staging-identity-v1",
+      "staging_identity_decisive": true,
+      "classification": "boot-staging-identity-ready",
+      "rejection_reasons": [],
+      "baseline_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "selected": {
+        "tree_hash": "043744bcf578d7966c63600c3db0302e35e96ec631f6d535725c8e63002fd43d",
+        "effective_kernel": "kernel_2712.img",
+        "expected_fetch_path": "da591740/kernel_2712.img",
+        "expected_fetch_byte_count": 52352
+      },
+      "tftp": {
+        "cursor_file": 4483505,
+        "delta_cursor_start": 4483505,
+        "delta_cursor_end": 4484856,
+        "stable": true,
+        "event_count": 13,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 2,
+        "expected_fetch_bytes_seen": [
+          52352,
+          52352
+        ]
+      },
+      "final_pre_restore": {
+        "tree_hash": "043744bcf578d7966c63600c3db0302e35e96ec631f6d535725c8e63002fd43d",
+        "effective_kernel": "kernel_2712.img",
+        "selected_tree_still_staged": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes": 52352
+      },
+      "restore": {
+        "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      },
+      "rule": "candidate serial output is not decisive unless selected-tree identity, expected TFTP fetch bytes, final pre-restore identity, and restore identity all match one staged boot tree"
+    },
+    "mdio_register_vector": {
+      "classification": "mdio-phy1-register-vector-visible",
+      "ncr_before": "0x10",
+      "ncr_mpe_precondition_met": true,
+      "ncr_mpe_write_performed": false,
+      "registers": [
+        {
+          "name": "MII_BMCR",
+          "reg": "0x00",
+          "man_frame": "0x60820000",
+          "data": "0x1000",
+          "valid": true
+        },
+        {
+          "name": "MII_BMSR",
+          "reg": "0x01",
+          "man_frame": "0x60860000",
+          "data": "0x7949",
+          "valid": true
+        },
+        {
+          "name": "MII_PHYSID1",
+          "reg": "0x02",
+          "man_frame": "0x608a0000",
+          "data": "0x600d",
+          "valid": true
+        },
+        {
+          "name": "MII_PHYSID2",
+          "reg": "0x03",
+          "man_frame": "0x608e0000",
+          "data": "0x84a2",
+          "valid": true
+        },
+        {
+          "name": "MII_ADVERTISE_ANAR",
+          "reg": "0x04",
+          "man_frame": "0x60920000",
+          "data": "0x1e1",
+          "valid": true
+        },
+        {
+          "name": "MII_LPA_ANLPAR",
+          "reg": "0x05",
+          "man_frame": "0x60960000",
+          "data": "0x0",
+          "valid": true
+        }
+      ],
+      "completed_register_count": 6,
+      "nsr_before_vector": [
+        "0x6",
+        "0x6",
+        "0x6",
+        "0x6",
+        "0x6",
+        "0x6"
+      ],
+      "nsr_after_vector": [
+        "0x6",
+        "0x6",
+        "0x6",
+        "0x6",
+        "0x6",
+        "0x6"
+      ],
+      "man_after_vector": [
+        "0x60821000",
+        "0x60867949",
+        "0x608a600d",
+        "0x608e84a2",
+        "0x609201e1",
+        "0x60960000"
+      ],
+      "man_writes_performed": true,
+      "man_restore_write_performed": false,
+      "touched_fields": "MAN",
+      "rejected_runtime_claims": [
+        "ethernet-driver-readiness",
+        "broad-mdio-or-phy-ownership",
+        "ncr-write-permission-or-execution",
+        "man-write-without-corrected-ncr-mpe-precondition",
+        "phy-absence-from-all-ones",
+        "phy-reset-ownership",
+        "gpio32-ownership-event-clearing-write-restore-or-reset-success",
+        "interrupt-completion",
+        "dma-descriptor-rings-channel-ownership-or-transfer-completion",
+        "packet-io",
+        "networking",
+        "sockets",
+        "ssh",
+        "phase-12-2",
+        "phase-transition"
+      ],
+      "retained_risks": [
+        "corrected-ncr-mpe-may-be-clear",
+        "all-ones-vector-is-not-phy-absence-proof",
+        "gpio32-and-eth-rst-n-remain-unowned",
+        "no-link-mac-dma-interrupt-packet-socket-ssh-or-phase-12-2-readiness"
+      ],
+      "claims": {
+        "runtime_mdio_transaction": true,
+        "mdio_phy_ownership": false,
+        "ncr_write_executed": false,
+        "phy_absence_from_all_ones": false,
+        "ethernet_ready": false,
+        "networking": false,
+        "ssh": false,
+        "phase_12_2": false,
+        "phase_transition": false
+      }
+    }
+  },
+  "control": {
+    "capture_chain_v4": {
+      "contract_version": "pi5-capture-chain-v4",
+      "base_contracts": [
+        "pi5-capture-transaction-v2",
+        "pi5-capture-transaction-v3",
+        "pi5-capture-transaction-run-unique-v1"
+      ],
+      "run_label": "register-vector-v4-control-20260614T0203Z",
+      "report_kind": "control",
+      "decisive_rp1_hardware_classification_allowed": true,
+      "classification": "capture-chain-v4-ready",
+      "rejection_reasons": [],
+      "endpoint_identity": {
+        "root_endpoint": {
+          "endpoint": "GET /",
+          "curl_exit": 0,
+          "http_code": 404,
+          "body_bytes": 55,
+          "usable_for_selected_tree_identity": false,
+          "selected_tree_identity_source": "/boot/files",
+          "fallback_used": true,
+          "fallback_reason": "root-endpoint-http-non-2xx"
+        },
+        "selected_tree_identity_source": "/boot/files",
+        "fallback_used": true,
+        "trust_boundary": {
+          "api_visible_boot_files_sufficient": false,
+          "requires_same_power_cycle_tftp_served_kernel_byte_agreement": true,
+          "requires_final_pre_restore_identity": true
+        }
+      },
+      "proof_run_identity": {
+        "selected_tree_hash": "0a8aab5b6103bf42c28b7d202ef1022b94c443a08879641c89ef481c59e516a8",
+        "effective_kernel": "kernel_2712.img",
+        "expected_fetch_path": "da591740/kernel_2712.img",
+        "expected_fetch_byte_count": 50112,
+        "tftp": {
+          "cursor_file": 4484856,
+          "delta_cursor_start": 4484856,
+          "delta_cursor_end": 4486207,
+          "stable": true,
+          "event_count": 13,
+          "expected_fetch_count": 2,
+          "expected_fetch_byte_match_count": 2,
+          "expected_fetch_bytes_seen": [
+            50112,
+            50112
+          ]
+        },
+        "final_pre_restore": {
+          "tree_hash": "0a8aab5b6103bf42c28b7d202ef1022b94c443a08879641c89ef481c59e516a8",
+          "effective_kernel": "kernel_2712.img",
+          "selected_tree_still_staged": true,
+          "expected_fetch_present": true,
+          "expected_fetch_bytes": 50112
+        },
+        "restore": {
+          "snapshot_name": "pre-register-vector-v4-20260614T0203Z",
+          "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+        }
+      },
+      "serial_capture": {
+        "capture_mode": "read",
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+        "cursor_file": 4194304,
+        "cursor_start": 4194304,
+        "cursor_end": 4194304,
+        "response_bytes": 70324,
+        "required_marker": "TALOS: rp1-ethernet-mdio-register-vector-control capture-nonce=guarded-v4-control-20260614T0203Z",
+        "required_marker_occurrences": 20,
+        "required_marker_excerpt": "classification=no-mdio-no-ethernet-rp1-ethernet-mdio-register-vector-control\r\nTALOS: rp1-ethernet-mdio-register-vector-control capture-nonce=guarded-v4-control-20260614T0203Z mdio-register-vector-report-contract-id=phase12-rp1-ethernet-mdio-register-vector-guard-report-contract-v1 source-contract-id=phase12-rp1-ethernet-mdio-register-",
+        "nonce_token": "capture-nonce=guarded-v4-control-20260614T0203Z",
+        "nonce_token_occurrences": 20,
+        "pre_power_nonce_occurrences": 0,
+        "empty_pre_power": false,
+        "nonce_fresh": true,
+        "serial_freshness_ok": true
+      },
+      "claim_boundary": {
+        "accepted_if_ready": "capture-chain identity/freshness only",
+        "rejected_runtime_claims": [
+          "live-gem-visibility",
+          "ethernet-driver-readiness",
+          "rp1-mmio-dma-programming",
+          "packet-io",
+          "networking",
+          "ssh",
+          "phase-transition"
+        ]
+      },
+      "rule": "missing /boot/files identity, same-power-cycle expected TFTP-served kernel bytes, final selected-tree identity, run-unique marker freshness, direct serial marker retention, or paired control marker prevents decisive RP1 hardware classification; API-visible /boot/files identity alone is not sufficient"
+    },
+    "staging_identity_gate": {
+      "contract_version": "pi5-boot-staging-identity-v1",
+      "staging_identity_decisive": true,
+      "classification": "boot-staging-identity-ready",
+      "rejection_reasons": [],
+      "baseline_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "selected": {
+        "tree_hash": "0a8aab5b6103bf42c28b7d202ef1022b94c443a08879641c89ef481c59e516a8",
+        "effective_kernel": "kernel_2712.img",
+        "expected_fetch_path": "da591740/kernel_2712.img",
+        "expected_fetch_byte_count": 50112
+      },
+      "tftp": {
+        "cursor_file": 4484856,
+        "delta_cursor_start": 4484856,
+        "delta_cursor_end": 4486207,
+        "stable": true,
+        "event_count": 13,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 2,
+        "expected_fetch_bytes_seen": [
+          50112,
+          50112
+        ]
+      },
+      "final_pre_restore": {
+        "tree_hash": "0a8aab5b6103bf42c28b7d202ef1022b94c443a08879641c89ef481c59e516a8",
+        "effective_kernel": "kernel_2712.img",
+        "selected_tree_still_staged": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes": 50112
+      },
+      "restore": {
+        "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      },
+      "rule": "candidate serial output is not decisive unless selected-tree identity, expected TFTP fetch bytes, final pre-restore identity, and restore identity all match one staged boot tree"
+    },
+    "no_mdio_control": {
+      "classification": "no-mdio-no-ethernet-rp1-ethernet-mdio-register-vector-control",
+      "claims_runtime_mdio_transaction": false,
+      "completed_register_count": 0,
+      "touched_fields": "none"
+    }
+  },
+  "final_lab": {
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img"
+  }
+}

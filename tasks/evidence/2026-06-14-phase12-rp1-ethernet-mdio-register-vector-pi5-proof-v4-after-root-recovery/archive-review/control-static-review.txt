@@ -1,0 +1,8 @@
+control_archive=tasks/evidence/2026-06-14-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v4-after-root-recovery/control-archive.tar.gz
+control_archive_sha256=b6bf4c52d5809722c21e7741cd705d0d4afc08f395603834a2ec25f83aef228e
+kernel_2712_sha256=73058002ab3aaaaf255eee051df5233a451a791ee955fd5fa410c75ad59bda1d
+kernel_2712_size=50112
+header_image_size=50112
+text_offset=0
+flags=12
+forbidden_mdio_register_vector_control_runtime_strings_absent=true

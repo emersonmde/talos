@@ -9891,6 +9891,18 @@ restore gates before any selected MAN.DATA values can be accepted. Broad
 MDIO/PHY ownership, PHY absence, Ethernet behavior, networking, sockets, SSH,
 Phase 12.2, and phase transition remain unaccepted.
 
+phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v4-after-root-recovery-20260614
+accepts the guarded register-vector Pi 5 proof after served-root recovery as
+mdio-phy1-register-vector-visible. Candidate/control capture-chain-v4 and
+boot-staging identity both passed with selected-tree identity, matching
+same-power-cycle TFTP fetch bytes, final pre-restore identity, and restore
+evidence. The accepted candidate vector is BMCR 0x1000, BMSR 0x7949, PHYSID1
+0x600d, PHYSID2 0x84a2, ANAR 0x01e1, and ANLPAR 0x0000; the paired control
+constructed no MDIO target or MAN frame. PHY absence, PHY reset/GPIO32
+ownership, broad MDIO/PHY ownership, link state, Ethernet behavior,
+interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2,
+and phase transition remain unaccepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
