@@ -1,0 +1,112 @@
+{
+  "task_id": "phase12-rp1-ethernet-phy1-link-not-ready-recovery-source-checkpoint-20260614",
+  "classification": "rp1-ethernet-phy1-link-not-ready-recovery-source-checkpoint-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "public source excerpt inspection"
+  ],
+  "accepted_boundary": {
+    "phy1_link_not_ready": {
+      "bmcr": "0x1000",
+      "bmsr_first": "0x7949",
+      "bmsr_second": "0x7949",
+      "anar": "0x01e1",
+      "anlpar": "0x0000",
+      "bmcr_reset": false,
+      "bmcr_loopback": false,
+      "bmcr_autoneg_restart": false,
+      "bmsr_second_link_status": false,
+      "bmsr_second_autoneg_complete": false,
+      "classification": "mdio-phy1-bmsr-double-sample-link-not-ready"
+    },
+    "corrected_target_mdio_boundary": "selected read-only Clause 22 MAN read transactions only",
+    "gpio32_blockers_accounted_for": [
+      "gpio32-phy-reset-write-restore-v2-blocked-no-write-frontier-closed",
+      "gpio32-event-clear-persistent-or-firmware-owned-frontier-closed"
+    ]
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Accepted PHY1 link-not-ready result is explained by BMCR 0x1000, BMSR first/second 0x7949, ANAR 0x01e1, and ANLPAR 0x0000."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Prior GPIO32 write/restore and event-clear blockers prevent selecting reset or GPIO32 writes as the next mechanical step."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Raspberry Pi Linux source maps MACB NSR_LINK to a read-only fixed-state link observation at MACB_NSR bit 0."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Same-shaped BMSR retry is rejected because the existing proof already double-sampled BMSR under the accepted capture chain."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "PHY configuration writes, BMCR/autonegotiation writes, GPIO32 reset, packet I/O, networking, SSH, and Phase 12.2 remain future explicitly planned tasks."
+    }
+  ],
+  "selected_next_task": {
+    "id": "phase12-rp1-ethernet-macb-nsr-link-readonly-source-contract-20260614",
+    "reason": "Smallest qualitatively different passive discriminator after PHY BMSR link-not-ready; compares the MACB NSR_LINK view without PHY/GPIO/MACB writes.",
+    "allowed_operations": [
+      "source/docs/evidence contract work only",
+      "define future read-only 32-bit MACB_NSR reads at observed-window 0x1c00100008",
+      "decode bit 0 as NSR_LINK",
+      "define paired no-MMIO/no-Ethernet control",
+      "require capture-chain-v4 and boot-staging identity for any later Pi 5 proof"
+    ],
+    "non_goals": [
+      "no hardware action in this checkpoint",
+      "no MACB writes",
+      "no PHY configuration write",
+      "no BMCR write",
+      "no autonegotiation restart",
+      "no link forcing",
+      "no GPIO32/PHY reset action",
+      "no packet I/O",
+      "no networking",
+      "no SSH",
+      "no Phase 12.2",
+      "no phase transition"
+    ],
+    "validation_gates": [
+      "static/source evidence inspection",
+      "jq empty on task-owned JSON evidence",
+      "git diff --check",
+      "mdbook build if docs/src files are touched",
+      "git diff --cached --check before commit"
+    ],
+    "evidence_required": [
+      "MACB_NSR and MACB_NSR_LINK source evidence",
+      "macb_get_pcs_fixed_state source excerpt",
+      "accepted PHY1 link-not-ready proof and closeout evidence",
+      "accepted corrected-target MDIO/vector frontier",
+      "accepted GPIO32 no-write and event-clear blockers"
+    ]
+  },
+  "rejected_claims": [
+    "PHY configuration writes",
+    "PHY reset/GPIO32 action",
+    "BMCR write",
+    "autonegotiation restart",
+    "link forcing",
+    "MACB write ownership",
+    "broad MDIO/PHY ownership",
+    "Ethernet driver readiness",
+    "interrupts",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "next_action": {
+    "planning_needed": true,
+    "reason": "Worker selected one objective next task boundary but may not create taskQueue entries; supervisor should queue or revise the selected MACB NSR_LINK source contract."
+  }
+}

@@ -138,6 +138,25 @@ programming, descriptor rings, interrupts, clock/reset ownership, PHY reset
 ownership, packet I/O, networking, sockets, SSH, Phase 12.2, and phase
 transition work remain unaccepted.
 
+## PHY1 Link-Not-Ready Recovery Checkpoint
+
+phase12-rp1-ethernet-phy1-link-not-ready-recovery-source-checkpoint-20260614
+accepts a source/evidence checkpoint after the read-only PHY1 BMSR
+double-sample proof classified link-not-ready. The checkpoint accounts for
+BMCR 0x1000, BMSR first/second 0x7949, ANAR 0x01e1, ANLPAR 0x0000, the
+corrected-target MDIO read boundary, and the prior GPIO32 no-write and
+persistent-or-firmware-owned event-clear blockers.
+
+The selected next objective task id for supervisor planning is
+phase12-rp1-ethernet-macb-nsr-link-readonly-source-contract-20260614. That
+task is only a source/docs/evidence contract for a future read-only MACB_NSR
+NSR_LINK comparator at observed-window address 0x1c00100008 with a paired
+no-MMIO/no-Ethernet control. Same-shaped BMSR retries are not progress from
+the accepted link-not-ready proof, and this checkpoint does not authorize
+hardware action, MACB writes, PHY configuration writes, BMCR writes,
+autonegotiation restart, link forcing, GPIO32/PHY reset action, packet I/O,
+networking, sockets, SSH, Phase 12.2, or a phase transition.
+
 ## GEM MID Decode Discriminator Closeout
 
 phase12-rp1-ethernet-gem-mid-decode-discriminator-closeout-20260610 closes the

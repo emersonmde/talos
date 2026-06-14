@@ -1,0 +1,27 @@
+{
+  "task_id": "phase12-rp1-ethernet-phy1-link-not-ready-recovery-source-checkpoint-20260614",
+  "classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-link-not-ready-recovery-source-checkpoint/classification.json",
+  "task_record": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-link-not-ready-recovery-source-checkpoint.md",
+  "source": {
+    "generic_phy_link_readiness": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-link-readiness-source-contract/source/linux-v6.12-phy_device-genphy_update_link-excerpt.txt",
+    "macb_nsr_link": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-link-not-ready-recovery-source-checkpoint/source/linux-rpi-6.12-macb-nsr-link-excerpt.txt",
+    "retained_macb_register_definitions": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-macb.h"
+  },
+  "accepted_frontier": {
+    "bmsr_double_sample_proof_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-pi5-proof/classification.json",
+    "bmsr_double_sample_closeout_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-closeout/classification.json",
+    "phy1_status_diagnostic_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof/classification.json",
+    "corrected_target_mdio_register_vector_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v4-after-root-recovery/classification.json",
+    "gpio32_write_restore_v2_closeout_classification": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout/classification.json",
+    "gpio32_event_clear_closeout_classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-proof-closeout/classification.json",
+    "clock_reset_prereq_closeout_classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-clock-reset-prereq-closeout/classification.json"
+  },
+  "docs": {
+    "phase12": "docs/src/project/phase12-networking-ssh.md",
+    "roadmap": "docs/src/roadmap.md"
+  },
+  "selected_next_task": {
+    "id": "phase12-rp1-ethernet-macb-nsr-link-readonly-source-contract-20260614",
+    "status": "selected-for-supervisor-planning"
+  }
+}

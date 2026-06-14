@@ -9983,6 +9983,20 @@ Phase 12.1 task; the closeout does not authorize PHY configuration,
 PHY reset/GPIO32 action, broad MDIO/PHY ownership, Ethernet behavior, packet
 I/O, networking, SSH, Phase 12.2, or a phase transition.
 
+phase12-rp1-ethernet-phy1-link-not-ready-recovery-source-checkpoint-20260614
+accepts the recovery/source checkpoint after the PHY1 link-not-ready frontier.
+It reconciles BMCR 0x1000, BMSR first/second 0x7949, ANAR 0x01e1, ANLPAR
+0x0000, the corrected-target MDIO read boundary, and the GPIO32 no-write plus
+persistent-or-firmware-owned event-clear blockers. Same-shaped BMSR retries
+are rejected. The selected next objective task id for supervisor planning is
+phase12-rp1-ethernet-macb-nsr-link-readonly-source-contract-20260614, a
+source/docs/evidence contract for a future passive MACB_NSR read at
+0x1c00100008 decoding bit 0 as NSR_LINK with a paired no-MMIO/no-Ethernet
+control. This checkpoint does not authorize hardware action, MACB writes,
+PHY configuration writes, BMCR writes, autonegotiation restart, link forcing,
+GPIO32/PHY reset action, packet I/O, networking, sockets, SSH, Phase 12.2, or
+a phase transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
