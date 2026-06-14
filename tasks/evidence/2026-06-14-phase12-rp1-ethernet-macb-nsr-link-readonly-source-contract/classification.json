@@ -1,0 +1,104 @@
+{
+  "classification": "rp1-ethernet-macb-nsr-link-readonly-source-contract-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static/source evidence inspection",
+    "task-owned JSON evidence"
+  ],
+  "selected_contract": "phase12-rp1-ethernet-macb-nsr-link-readonly-contract-v1",
+  "selected_next_discriminator": "rp1-ethernet-macb-nsr-link-readonly",
+  "input_frontier": {
+    "checkpoint_task": "phase12-rp1-ethernet-phy1-link-not-ready-recovery-source-checkpoint-20260614",
+    "checkpoint_commit": "3ff94737e1e7267ea3f91e618d58a38da3ab1bf5",
+    "bmsr_closeout_commit": "18a8bbdd55cff8d57bd2262b770dc183c37f2ecd",
+    "accepted_phy1_link_not_ready_vector": {
+      "bmcr": "0x1000",
+      "bmsr_first": "0x7949",
+      "bmsr_second": "0x7949",
+      "anar": "0x01e1",
+      "anlpar": "0x0000",
+      "bmcr_reset": false,
+      "bmcr_loopback": false,
+      "bmcr_autoneg_restart": false,
+      "bmsr_second_link_status": false,
+      "bmsr_second_autoneg_complete": false
+    },
+    "corrected_target_mdio_boundary": "accepted read-only Clause 22 PHY1 MAN transactions only; no broad MDIO/PHY ownership or PHY configuration writes",
+    "gpio32_blockers": [
+      "GPIO32 PHY-reset write/restore v2 stopped before writes because unexpected event-state was present",
+      "GPIO32 event-clear proof classified event bits as persistent or firmware-owned after guarded clear"
+    ]
+  },
+  "source_facts": {
+    "macb_nsr_offset": "0x0008",
+    "macb_nsr_link_bit": 0,
+    "observed_rp1_eth_base": "0x1c00100000",
+    "macb_nsr_target": "0x1c00100008",
+    "macb_get_pcs_fixed_state_mapping": "state->link = (macb_readl(bp, NSR) & MACB_BIT(NSR_LINK)) != 0"
+  },
+  "future_candidate_contract": {
+    "operation_boundary": "read-only volatile 32-bit MACB_NSR observation",
+    "macb_nsr_target": "0x1c00100008",
+    "decode": "nsr_link = (macb_nsr & 0x00000001) != 0",
+    "macb_write_permission": "forbidden",
+    "mdio_transaction_permission": "forbidden",
+    "phy_configuration_write_permission": "forbidden",
+    "reset_or_gpio32_permission": "forbidden",
+    "packet_io_permission": "forbidden",
+    "paired_control": "same reporting path, no MMIO target construction, no Ethernet volatile load/store"
+  },
+  "allowed_future_classifications": [
+    "macb-nsr-link-readonly-link-set",
+    "macb-nsr-link-readonly-link-clear",
+    "macb-nsr-link-readonly-precondition-blocker",
+    "macb-nsr-link-readonly-capture-blocker",
+    "no-mmio-no-ethernet-macb-nsr-link-control"
+  ],
+  "future_pi5_proof_gates": [
+    "inconclusive-run triage before code changes: candidate identity, fresh serial cursor, TFTP delta, known-good control when appropriate, candidate rerun",
+    "cargo fmt --all -- --check",
+    "cargo -Zjson-target-spec test --quiet",
+    "static archive/image review before hardware publication",
+    "serialized Pi 5 candidate/control proof with hardwareTestLock",
+    "lab-controller API candidate identity, fresh serial cursor, TFTP delta, final pre-restore identity, snapshot/restore, and post-restore identity evidence",
+    "capture-chain-v4 replay for candidate and control",
+    "boot-staging identity gate for candidate and control",
+    "same-power-cycle TFTP byte agreement for candidate and control",
+    "evidence-consistency guard over task markdown, classification, capture, and evidence map outputs",
+    "jq empty on task-owned JSON evidence",
+    "git diff --check",
+    "mdbook build if docs/src files are touched",
+    "git diff --cached --check before commit"
+  ],
+  "rejected_claims": [
+    "runtime MACB_NSR evidence",
+    "link recovery",
+    "link usability beyond the future MACB_NSR comparator bit",
+    "PHY configuration writes",
+    "BMCR writes",
+    "autonegotiation restart",
+    "link forcing",
+    "PHY reset/GPIO32 ownership",
+    "broad MDIO/PHY ownership",
+    "MACB write ownership",
+    "Ethernet driver behavior",
+    "interrupts",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "A future MACB_NSR proof can prove only the MAC-side NSR_LINK comparator at the selected instant.",
+    "If MACB_NSR_LINK is clear and PHY1 BMSR remains link-not-ready, a later supervisor-planned physical-link/operator or reset-ownership decision may be needed.",
+    "If MACB_NSR_LINK is set while PHY1 BMSR is link-not-ready, a later task must reconcile MAC/PHY disagreement before packet or network stack work.",
+    "GPIO32/PHY reset ownership and PHY configuration writes remain separate unaccepted frontiers."
+  ],
+  "next_action": {
+    "selected_task": "phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof-20260614",
+    "required_planning": "Supervisor must add an explicit queued proof task before implementation/hardware; this source contract does not create or authorize that task by itself."
+  }
+}

@@ -157,6 +157,21 @@ hardware action, MACB writes, PHY configuration writes, BMCR writes,
 autonegotiation restart, link forcing, GPIO32/PHY reset action, packet I/O,
 networking, sockets, SSH, Phase 12.2, or a phase transition.
 
+phase12-rp1-ethernet-macb-nsr-link-readonly-source-contract-20260614 accepts
+the source contract
+phase12-rp1-ethernet-macb-nsr-link-readonly-contract-v1. Retained Raspberry
+Pi Linux source defines MACB_NSR at offset 0x0008, NSR_LINK as bit 0, and
+macb_get_pcs_fixed_state() as a read-only NSR_LINK to phylink state mapping.
+With the accepted observed-window rp1_eth base 0x1c00100000, the future
+read-only target is 0x1c00100008. The future candidate may only volatile-read
+MACB_NSR and decode bit 0, with a paired no-MMIO/no-Ethernet control. This
+contract accounts for the accepted PHY1 link-not-ready vector and GPIO32
+blockers, and it selects only
+phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof-20260614 for supervisor
+planning; it does not authorize hardware action, MACB writes, MDIO
+transactions, PHY configuration writes, BMCR writes, GPIO32/PHY reset action,
+packet I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
+
 ## GEM MID Decode Discriminator Closeout
 
 phase12-rp1-ethernet-gem-mid-decode-discriminator-closeout-20260610 closes the

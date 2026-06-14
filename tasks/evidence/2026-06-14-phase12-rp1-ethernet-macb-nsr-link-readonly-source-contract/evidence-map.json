@@ -1,0 +1,27 @@
+{
+  "task_id": "phase12-rp1-ethernet-macb-nsr-link-readonly-source-contract-20260614",
+  "classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-source-contract/classification.json",
+  "task_record": "tasks/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-source-contract.md",
+  "input_frontier": {
+    "checkpoint_task": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-link-not-ready-recovery-source-checkpoint.md",
+    "checkpoint_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-link-not-ready-recovery-source-checkpoint/classification.json",
+    "checkpoint_evidence_map": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-link-not-ready-recovery-source-checkpoint/evidence-map.json",
+    "bmsr_proof_task": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-pi5-proof.md",
+    "bmsr_proof_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-pi5-proof/classification.json",
+    "bmsr_closeout_task": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-closeout.md",
+    "bmsr_closeout_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-closeout/classification.json",
+    "phy1_status_diagnostic_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof/classification.json",
+    "mdio_register_vector_v4_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v4-after-root-recovery/classification.json",
+    "gpio32_write_restore_v2_closeout_classification": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout/classification.json",
+    "gpio32_event_clear_closeout_classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-proof-closeout/classification.json"
+  },
+  "source_references": {
+    "linux_rpi_6_12_macb_nsr_link_excerpt": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-source-contract/source/linux-rpi-6.12-macb-nsr-link-excerpt.txt",
+    "prior_retained_macb_nsr_link_excerpt": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-link-not-ready-recovery-source-checkpoint/source/linux-rpi-6.12-macb-nsr-link-excerpt.txt",
+    "phase12_doc": "docs/src/project/phase12-networking-ssh.md",
+    "roadmap": "docs/src/roadmap.md"
+  },
+  "selected_next_discriminator": "rp1-ethernet-macb-nsr-link-readonly",
+  "selected_future_task_id": "phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof-20260614",
+  "commit": null
+}

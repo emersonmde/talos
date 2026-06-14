@@ -1,0 +1,26 @@
+Source: https://raw.githubusercontent.com/raspberrypi/linux/rpi-6.12.y/drivers/net/ethernet/cadence/macb.h
+Source: https://raw.githubusercontent.com/raspberrypi/linux/rpi-6.12.y/drivers/net/ethernet/cadence/macb_main.c
+Fetched: 2026-06-14
+Purpose: retain the minimal Raspberry Pi Linux MACB source facts needed for a
+future passive NSR_LINK comparator after the accepted PHY1 link-not-ready
+frontier.
+
+Relevant macb.h excerpts:
+
+/* MACB register offsets */
+#define MACB_NSR		0x0008 /* Network Status */
+
+/* Bitfields in NSR */
+#define MACB_NSR_LINK_OFFSET	0 /* pcs_link_state */
+#define MACB_NSR_LINK_SIZE	1
+
+Relevant macb_main.c excerpt:
+
+static void macb_get_pcs_fixed_state(struct phylink_config *config,
+				     struct phylink_link_state *state)
+{
+	struct net_device *ndev = to_net_dev(config->dev);
+	struct macb *bp = netdev_priv(ndev);
+
+	state->link = (macb_readl(bp, NSR) & MACB_BIT(NSR_LINK)) != 0;
+}

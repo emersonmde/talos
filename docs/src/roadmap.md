@@ -9997,6 +9997,21 @@ PHY configuration writes, BMCR writes, autonegotiation restart, link forcing,
 GPIO32/PHY reset action, packet I/O, networking, sockets, SSH, Phase 12.2, or
 a phase transition.
 
+phase12-rp1-ethernet-macb-nsr-link-readonly-source-contract-20260614 accepts
+the passive MAC-side source contract
+phase12-rp1-ethernet-macb-nsr-link-readonly-contract-v1. Raspberry Pi Linux
+source defines MACB_NSR at offset 0x0008, NSR_LINK as bit 0, and
+macb_get_pcs_fixed_state() mapping MACB_NSR bit 0 to link state. With the
+accepted observed-window rp1_eth base 0x1c00100000, the future read-only
+target is 0x1c00100008. The selected future candidate may only volatile-read
+MACB_NSR and decode bit 0, with a paired no-MMIO/no-Ethernet control. The
+contract preserves the accepted PHY1 link-not-ready vector and GPIO32 blocker
+frontiers, selects only
+phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof-20260614 for supervisor
+planning, and accepts no hardware action, MACB writes, MDIO transactions, PHY
+configuration writes, BMCR writes, GPIO32/PHY reset action, packet I/O,
+networking, sockets, SSH, Phase 12.2, or phase transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
