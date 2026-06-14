@@ -1,0 +1,8 @@
+control_archive=tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-boot.tar.gz
+control_archive_sha256=d46466e48e22d9e711e6582eecec6986493a415987277486acc079795b645c92
+kernel_2712_sha256=c72920ed5796c4d54fa2ad470a0ef3198c3cd900b4771738a7fe28c5dc555fcd
+kernel_2712_size=49856
+header_image_size=49856
+text_offset=0
+flags=12
+forbidden_phy1_autoneg_restart_control_runtime_strings_absent=true

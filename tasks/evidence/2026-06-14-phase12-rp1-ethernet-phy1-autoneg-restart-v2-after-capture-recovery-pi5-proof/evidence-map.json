@@ -1,0 +1,36 @@
+{
+  "task_id": "phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof-20260614",
+  "classification": "phy1-autoneg-restart-write-observed-link-not-ready",
+  "candidate": {
+    "static_review": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/archive-review/candidate-static-review.txt",
+    "run_summary": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/candidate-run/run-summary.json",
+    "v4_check": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/candidate-run/v4-check.json",
+    "boot_staging_identity": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/candidate-run/boot-staging-identity.json",
+    "serial_window": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/candidate-run/serial-observe-window.json",
+    "tftp_delta": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/candidate-run/tftp-delta-stable-pre-restore.json",
+    "final_pre_restore_status": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/candidate-run/final-pre-restore-status.json",
+    "restore": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/candidate-run/restore-snapshot.json",
+    "generated_archive_path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/candidate-boot.tar.gz",
+    "archive_retained_in_git": false
+  },
+  "control": {
+    "static_review": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/archive-review/control-static-review.txt",
+    "run_summary": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/run-summary.json",
+    "v4_check": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/v4-check.json",
+    "boot_staging_identity": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/boot-staging-identity.json",
+    "serial_window": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/serial-observe-window.json",
+    "tftp_delta": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/tftp-delta-stable-pre-restore.json",
+    "final_pre_restore_status": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/final-pre-restore-status.json",
+    "restore": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/restore-snapshot.json",
+    "duplicate_trace": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/capture-rerun.trace.txt",
+    "generated_archive_path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-boot.tar.gz",
+    "archive_retained_in_git": false
+  },
+  "aggregate": {
+    "classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/classification.json",
+    "capture_summary": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/capture-summary.json",
+    "evidence_map": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/evidence-map.json",
+    "lab_preflight": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/lab-preflight/status-before-lock.json",
+    "final_lab_status": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/final-lab-status.json"
+  }
+}

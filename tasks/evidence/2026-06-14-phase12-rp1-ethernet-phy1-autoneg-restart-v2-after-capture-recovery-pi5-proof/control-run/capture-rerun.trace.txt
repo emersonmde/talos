@@ -1,0 +1,437 @@
++ set -eu
++ API_BASE=http://talos-lab-api:8080
++ DRY_RUN=false
++ EVIDENCE_DIR=
++ RESTORE_SNAPSHOT=
++ LABEL=
++ EXPECTED_TREE_HASH=
++ EXPECTED_KERNEL=kernel_2712.img
++ EXPECTED_FETCH=da591740/kernel_2712.img
++ EXPECTED_FETCH_BYTES=
++ SERIAL_MARKER=rpi5-rp1-post-handoff-marker-reset
++ SERIAL_DRAIN_ATTEMPTS=16
++ SERIAL_DRAIN_READ_TIMEOUT=1
++ SERIAL_DRAIN_SETTLE_MS=100
++ SERIAL_DRAIN_MAX_BYTES=65536
++ SERIAL_TIMEOUT=90
++ SETTLE_MS=1000
++ MAX_BYTES=65536
++ TFTP_TIMEOUT=90
++ STABLE_SAMPLES=3
++ [ 22 -gt 0 ]
++ EVIDENCE_DIR=tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run
++ shift 2
++ [ 20 -gt 0 ]
++ RESTORE_SNAPSHOT=autoneg-v2-pre-20260614T1545Z
++ shift 2
++ [ 18 -gt 0 ]
++ LABEL=phy1-autoneg-restart-v2-control
++ shift 2
++ [ 16 -gt 0 ]
++ EXPECTED_TREE_HASH=031da5edc1bb199f260358087e443def1e53fbb4fa1f33d212384d898aab5b56
++ shift 2
++ [ 14 -gt 0 ]
++ EXPECTED_KERNEL=kernel_2712.img
++ shift 2
++ [ 12 -gt 0 ]
++ EXPECTED_FETCH=da591740/kernel_2712.img
++ shift 2
++ [ 10 -gt 0 ]
++ EXPECTED_FETCH_BYTES=49856
++ shift 2
++ [ 8 -gt 0 ]
++ SERIAL_MARKER=TALOS: rp1-ethernet-phy1-autoneg-restart-control capture-nonce=control-v2-20260614T154228Z
++ shift 2
++ [ 6 -gt 0 ]
++ SERIAL_TIMEOUT=90
++ shift 2
++ [ 4 -gt 0 ]
++ TFTP_TIMEOUT=90
++ shift 2
++ [ 2 -gt 0 ]
++ STABLE_SAMPLES=3
++ shift 2
++ [ 0 -gt 0 ]
++ [ -z tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run ]
++ [ -z autoneg-v2-pre-20260614T1545Z ]
++ [ -z phy1-autoneg-restart-v2-control ]
++ validate_positive_uint --serial-drain-attempts 16
++ name=--serial-drain-attempts
++ value=16
++ validate_positive_uint --serial-drain-read-timeout 1
++ name=--serial-drain-read-timeout
++ value=1
++ validate_positive_uint --serial-drain-settle-ms 100
++ name=--serial-drain-settle-ms
++ value=100
++ validate_positive_uint --serial-drain-max-bytes 65536
++ name=--serial-drain-max-bytes
++ value=65536
++ validate_positive_uint --serial-timeout 90
++ name=--serial-timeout
++ value=90
++ validate_positive_uint --settle-ms 1000
++ name=--settle-ms
++ value=1000
++ validate_positive_uint --max-bytes 65536
++ name=--max-bytes
++ value=65536
++ validate_positive_uint --tftp-timeout 90
++ name=--tftp-timeout
++ value=90
++ validate_positive_uint --stable-samples 3
++ name=--stable-samples
++ value=3
++ [ false = true ]
++ mkdir -p tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run
++ capture_root_endpoint tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/pre-root-endpoint-body.txt tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/pre-root-endpoint.json
++ endpoint_file=tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/pre-root-endpoint-body.txt
++ meta_file=tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/pre-root-endpoint.json
++ mktemp
++ body_tmp=/tmp/tmp.dcEAoUCqqk
++ mktemp
++ code_tmp=/tmp/tmp.5TuwXTgbmX
++ curl -sS -o /tmp/tmp.dcEAoUCqqk -w %{http_code} http://talos-lab-api:8080/
++ curl_exit=0
++ cat /tmp/tmp.5TuwXTgbmX
++ http_code=404
++ cp /tmp/tmp.dcEAoUCqqk tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/pre-root-endpoint-body.txt
++ jq -n --arg endpoint GET / --arg http_code 404 --argjson curl_exit 0 --rawfile body /tmp/tmp.dcEAoUCqqk {
+            endpoint: $endpoint,
+            curl_exit: $curl_exit,
+            http_code: (if ($http_code | test("^[0-9]+$")) then ($http_code | tonumber) else null end),
+            body_bytes: ($body | length),
+            usable_for_selected_tree_identity:
+                ($curl_exit == 0
+                 and ($http_code | test("^2[0-9][0-9]$"))
+                 and (($body | fromjson? | .boot.tree_hash? // "") != "")),
+            selected_tree_identity_source: "/boot/files",
+            fallback_used:
+                (($curl_exit != 0)
+                 or (($http_code | test("^2[0-9][0-9]$")) | not)
+                 or (($body | fromjson? | .boot.tree_hash? // "") == "")),
+            fallback_reason:
+                (if $curl_exit != 0 then "root-endpoint-curl-failed"
+                 elif (($http_code | test("^2[0-9][0-9]$")) | not) then "root-endpoint-http-non-2xx"
+                 elif (($body | fromjson? | .boot.tree_hash? // "") == "") then "root-endpoint-missing-boot-tree"
+                 else null end)
+        }
++ rm -f /tmp/tmp.dcEAoUCqqk /tmp/tmp.5TuwXTgbmX
++ curl -fsS http://talos-lab-api:8080/boot/files
++ curl -fsS http://talos-lab-api:8080/boot/files
++ curl -fsS http://talos-lab-api:8080/boot/files
++ curl -fsS http://talos-lab-api:8080/boot/snapshots
++ jq -n --arg expected_tree_hash 031da5edc1bb199f260358087e443def1e53fbb4fa1f33d212384d898aab5b56 --arg expected_kernel kernel_2712.img --arg expected_fetch da591740/kernel_2712.img --arg expected_fetch_bytes 49856 --slurpfile status tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/pre-status.json --slurpfile files tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/pre-boot-files.json --slurpfile root_endpoint tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/pre-root-endpoint.json (($expected_fetch_bytes | tonumber?) // null) as $expected_bytes
+     | ($status[0].boot.tree_hash // null) as $tree_hash
+     | ($status[0].boot.effective_kernel // null) as $effective_kernel
+     | (($files[0].boot.files // []) | map(select(.name == $expected_fetch)) | first) as $fetch
+     | {
+         expected_tree_hash: $expected_tree_hash,
+         observed_tree_hash: $tree_hash,
+         expected_kernel: $expected_kernel,
+         observed_effective_kernel: $effective_kernel,
+         expected_fetch: $expected_fetch,
+         expected_fetch_bytes: $expected_bytes,
+         observed_fetch_bytes: ($fetch.bytes // null),
+         selected_tree_identity_source: "/boot/files",
+         root_endpoint: $root_endpoint[0],
+         tree_matches: ($expected_tree_hash == "" or $tree_hash == $expected_tree_hash),
+         effective_kernel_matches: ($effective_kernel == $expected_kernel),
+         expected_fetch_present: ($fetch != null),
+         expected_fetch_bytes_match: ($expected_bytes == null or ($fetch.bytes // null) == $expected_bytes),
+         staging_publication_mismatch:
+             (($expected_tree_hash != "" and $tree_hash != $expected_tree_hash)
+              or ($effective_kernel != $expected_kernel)
+              or ($fetch == null)
+              or ($expected_bytes != null and ($fetch.bytes // null) != $expected_bytes))
+       }
++ jq -e .staging_publication_mismatch tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/preflight-identity.json
++ mktemp
++ serial_drain_tmp=/tmp/tmp.jxIcQt8lQ7
++ mktemp
++ serial_drain_last=/tmp/tmp.WpwIAZbcMp
++ trap rm -f "$serial_drain_tmp" "$serial_drain_last" EXIT
++ drain_attempts=0
++ drain_total_bytes=0
++ drain_empty=false
++ drain_cursor=0
++ [ 0 -lt 16 ]
++ jq -n --argjson timeout_seconds 1 --argjson settle_ms 100 --argjson max_bytes 65536 {timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}
++ drain_payload={
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}
++ curl -fsS -X POST -H Content-Type: application/json --data {
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+} http://talos-lab-api:8080/serial/read
++ cat /tmp/tmp.WpwIAZbcMp
++ printf \n
++ drain_attempts=1
++ jq -r (.bytes // ((.text // "") | length)) /tmp/tmp.WpwIAZbcMp
++ drain_bytes=0
++ jq -r (.cursor // 0) /tmp/tmp.WpwIAZbcMp
++ drain_cursor=4194304
++ drain_total_bytes=0
++ [ 0 -eq 0 ]
++ drain_empty=true
++ break
++ cp /tmp/tmp.WpwIAZbcMp tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/serial-read-empty-before-power.json
++ jq -s --argjson attempts 1 --argjson attempt_limit 16 --argjson total_bytes 0 --argjson final_cursor 4194304 --argjson empty_before_power true --argjson read_timeout_seconds 1 --argjson settle_ms 100 --argjson max_bytes_per_read 65536 {
+        action: "serial drain before power",
+        ok: true,
+        responses: .,
+        talos_serial_drain: {
+            contract_version: "pi5-capture-transaction-v2",
+            attempts: $attempts,
+            attempt_limit: $attempt_limit,
+            read_timeout_seconds: $read_timeout_seconds,
+            settle_ms: $settle_ms,
+            max_bytes_per_read: $max_bytes_per_read,
+            total_bytes: $total_bytes,
+            final_cursor: $final_cursor,
+            empty_before_power: $empty_before_power,
+            discriminator: (if $empty_before_power then "empty-read-before-power" else "bounded-drain-exhausted-before-power" end),
+            rule: "pre-power serial drain must reach an empty /serial/read response before saturated direct-read output can be treated as fresh"
+        }
+    } /tmp/tmp.jxIcQt8lQ7
++ curl -fsS http://talos-lab-api:8080/tftp/logs?max_bytes=1048576&limit=1
++ jq -r .talos_serial_drain.final_cursor tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/serial-drain-before-power.json
++ serial_cursor=4194304
++ jq -r .tftp.cursor_end tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/tftp-cursor-before-power.json
++ tftp_cursor=4505642
++ printf %s\n 4194304
++ printf %s\n 4505642
++ curl -fsS -X POST http://talos-lab-api:8080/power/cycle
++ set +e
++ ./scripts/rpi5-observe-serial-window.sh 4194304 90 1000 65536 TALOS: rp1-ethernet-phy1-autoneg-restart-control capture-nonce=control-v2-20260614T154228Z
++ serial_exit=0
++ set -e
++ printf %s\n 0
++ set +e
++ ./scripts/rpi5-wait-tftp-delta.sh 4505642 90 3
++ tftp_exit=0
++ set -e
++ printf %s\n 0
++ curl -fsS http://talos-lab-api:8080/boot/files
++ capture_root_endpoint tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/final-pre-restore-root-endpoint-body.txt tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/final-pre-restore-root-endpoint.json
++ endpoint_file=tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/final-pre-restore-root-endpoint-body.txt
++ meta_file=tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/final-pre-restore-root-endpoint.json
++ mktemp
++ body_tmp=/tmp/tmp.JVwT0d2U5d
++ mktemp
++ code_tmp=/tmp/tmp.54RwdtHXK0
++ curl -sS -o /tmp/tmp.JVwT0d2U5d -w %{http_code} http://talos-lab-api:8080/
++ curl_exit=0
++ cat /tmp/tmp.54RwdtHXK0
++ http_code=404
++ cp /tmp/tmp.JVwT0d2U5d tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/final-pre-restore-root-endpoint-body.txt
++ jq -n --arg endpoint GET / --arg http_code 404 --argjson curl_exit 0 --rawfile body /tmp/tmp.JVwT0d2U5d {
+            endpoint: $endpoint,
+            curl_exit: $curl_exit,
+            http_code: (if ($http_code | test("^[0-9]+$")) then ($http_code | tonumber) else null end),
+            body_bytes: ($body | length),
+            usable_for_selected_tree_identity:
+                ($curl_exit == 0
+                 and ($http_code | test("^2[0-9][0-9]$"))
+                 and (($body | fromjson? | .boot.tree_hash? // "") != "")),
+            selected_tree_identity_source: "/boot/files",
+            fallback_used:
+                (($curl_exit != 0)
+                 or (($http_code | test("^2[0-9][0-9]$")) | not)
+                 or (($body | fromjson? | .boot.tree_hash? // "") == "")),
+            fallback_reason:
+                (if $curl_exit != 0 then "root-endpoint-curl-failed"
+                 elif (($http_code | test("^2[0-9][0-9]$")) | not) then "root-endpoint-http-non-2xx"
+                 elif (($body | fromjson? | .boot.tree_hash? // "") == "") then "root-endpoint-missing-boot-tree"
+                 else null end)
+        }
++ rm -f /tmp/tmp.JVwT0d2U5d /tmp/tmp.54RwdtHXK0
++ curl -fsS http://talos-lab-api:8080/boot/files
++ curl -fsS http://talos-lab-api:8080/boot/files
++ curl -fsS -X POST http://talos-lab-api:8080/boot/restore?name=autoneg-v2-pre-20260614T1545Z
++ capture_root_endpoint tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/post-restore-root-endpoint-body.txt tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/post-restore-root-endpoint.json
++ endpoint_file=tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/post-restore-root-endpoint-body.txt
++ meta_file=tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/post-restore-root-endpoint.json
++ mktemp
++ body_tmp=/tmp/tmp.zi9tXL8VH4
++ mktemp
++ code_tmp=/tmp/tmp.rvzQEaLraJ
++ curl -sS -o /tmp/tmp.zi9tXL8VH4 -w %{http_code} http://talos-lab-api:8080/
++ curl_exit=0
++ cat /tmp/tmp.rvzQEaLraJ
++ http_code=404
++ cp /tmp/tmp.zi9tXL8VH4 tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/post-restore-root-endpoint-body.txt
++ jq -n --arg endpoint GET / --arg http_code 404 --argjson curl_exit 0 --rawfile body /tmp/tmp.zi9tXL8VH4 {
+            endpoint: $endpoint,
+            curl_exit: $curl_exit,
+            http_code: (if ($http_code | test("^[0-9]+$")) then ($http_code | tonumber) else null end),
+            body_bytes: ($body | length),
+            usable_for_selected_tree_identity:
+                ($curl_exit == 0
+                 and ($http_code | test("^2[0-9][0-9]$"))
+                 and (($body | fromjson? | .boot.tree_hash? // "") != "")),
+            selected_tree_identity_source: "/boot/files",
+            fallback_used:
+                (($curl_exit != 0)
+                 or (($http_code | test("^2[0-9][0-9]$")) | not)
+                 or (($body | fromjson? | .boot.tree_hash? // "") == "")),
+            fallback_reason:
+                (if $curl_exit != 0 then "root-endpoint-curl-failed"
+                 elif (($http_code | test("^2[0-9][0-9]$")) | not) then "root-endpoint-http-non-2xx"
+                 elif (($body | fromjson? | .boot.tree_hash? // "") == "") then "root-endpoint-missing-boot-tree"
+                 else null end)
+        }
++ rm -f /tmp/tmp.zi9tXL8VH4 /tmp/tmp.rvzQEaLraJ
++ curl -fsS http://talos-lab-api:8080/boot/files
++ curl -fsS http://talos-lab-api:8080/boot/files
++ curl -fsS http://talos-lab-api:8080/boot/files
++ jq -n --arg proof_label phy1-autoneg-restart-v2-control --arg restore_snapshot autoneg-v2-pre-20260614T1545Z --arg expected_tree_hash 031da5edc1bb199f260358087e443def1e53fbb4fa1f33d212384d898aab5b56 --arg expected_kernel kernel_2712.img --arg expected_fetch da591740/kernel_2712.img --arg expected_fetch_bytes 49856 --argjson serial_exit 0 --argjson tftp_exit 0 --slurpfile preflight tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/preflight-identity.json --slurpfile drain tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/serial-drain-before-power.json --slurpfile serial tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/serial-observe-window.json --slurpfile tftp tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/tftp-delta-stable-pre-restore.json --slurpfile final_status tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/final-pre-restore-status.json --slurpfile final_files tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/final-pre-restore-boot-files.json --slurpfile restore tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/restore-snapshot.json --slurpfile post_restore tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/post-restore-status.json (($expected_fetch_bytes | tonumber?) // null) as $expected_bytes
+     | ($serial[0].talos_serial_window // {}) as $sw
+     | ($drain[0].talos_serial_drain // {}) as $sd
+     | ($tftp[0].talos_tftp_stability // {}) as $ts
+     | (($tftp[0].tftp.events // []) | map(select(.filename == $expected_fetch))) as $fetch_events
+     | ($fetch_events | map(select(.status == "served" and .bytes == $expected_bytes))) as $matching_fetch_events
+     | (($final_files[0].boot.files // []) | map(select(.name == $expected_fetch)) | first) as $final_fetch
+     | ($final_status[0].boot.tree_hash // null) as $final_tree_hash
+     | ($final_status[0].boot.effective_kernel // null) as $final_kernel
+     | ($post_restore[0].boot.tree_hash // null) as $post_restore_tree_hash
+     | ($preflight[0].staging_publication_mismatch // false) as $preflight_mismatch
+     | ($preflight[0].observed_tree_hash // null) as $selected_tree_hash
+     | ($expected_tree_hash == "" or $final_tree_hash == $expected_tree_hash) as $final_tree_ok
+     | ($selected_tree_hash != null and $final_tree_hash == $selected_tree_hash) as $final_selected_tree_ok
+     | ($expected_bytes == null or ($final_fetch.bytes // null) == $expected_bytes) as $final_bytes_ok
+     | (($ts.stable == true) and (($tftp[0].tftp.events // []) | length) == 0) as $stable_zero_tftp
+     | [
+         (if $proof_label == "" then "missing-run-label" else empty end),
+         (if $preflight_mismatch then "preflight-staging-publication-mismatch" else empty end),
+         (if (($selected_tree_hash // "") == "") then "missing-selected-tree-hash" else empty end),
+         (if ($preflight[0].effective_kernel_matches // false) != true then "effective-kernel-mismatch" else empty end),
+         (if ($preflight[0].expected_fetch_present // false) != true then "preflight-expected-fetch-missing" else empty end),
+         (if ($preflight[0].expected_fetch_bytes_match // false) != true then "preflight-expected-fetch-byte-mismatch" else empty end),
+         (if (($sd.contract_version // "") != "pi5-capture-transaction-v2") then "missing-v2-serial-drain-contract" else empty end),
+         (if ($sd.empty_before_power // false) != true then "serial-drain-not-empty-before-power" else empty end),
+         (if (($serial[0].cursor_start // null) == null) then "missing-serial-cursor-start" else empty end),
+         (if (($serial[0].cursor_end // null) == null) then "missing-serial-cursor-end" else empty end),
+         (if (($sw.capture_mode // "") == "") then "missing-serial-capture-mode" else empty end),
+         (if ($ts.stable // false) != true then "tftp-delta-not-stable" else empty end),
+         (if (($tftp[0].tftp.cursor_start // null) == null) then "missing-tftp-cursor-start" else empty end),
+         (if (($tftp[0].tftp.cursor_end // null) == null) then "missing-tftp-cursor-end" else empty end),
+         (if (($fetch_events | length) == 0) then "expected-fetch-not-observed-in-tftp-delta" else empty end),
+         (if (($fetch_events | length) > 0 and ($matching_fetch_events | length) != ($fetch_events | length)) then "tftp-expected-fetch-byte-mismatch" else empty end),
+         (if ($final_tree_ok != true) then "final-pre-restore-tree-mismatch" else empty end),
+         (if ($final_selected_tree_ok != true) then "final-pre-restore-selected-tree-mismatch" else empty end),
+         (if ($final_fetch == null) then "final-pre-restore-expected-fetch-missing" else empty end),
+         (if ($final_bytes_ok != true) then "final-pre-restore-expected-fetch-byte-mismatch" else empty end),
+         (if ($post_restore_tree_hash == null) then "missing-post-restore-tree-hash" else empty end)
+       ] as $identity_join_rejection_reasons
+     | {
+         "label": $proof_label,
+         restore_snapshot: $restore_snapshot,
+         expected: {
+             tree_hash: $expected_tree_hash,
+             effective_kernel: $expected_kernel,
+             fetch: $expected_fetch,
+             fetch_bytes: $expected_bytes
+         },
+         exits: {
+             serial_observe_window: $serial_exit,
+             tftp_delta_stable_pre_restore: $tftp_exit
+         },
+         preflight_identity: $preflight[0],
+         capture_chain_contract_version: "pi5-capture-chain-v4",
+         final_pre_restore_identity: {
+             tree_hash: $final_tree_hash,
+             effective_kernel: $final_kernel,
+             expected_tree_still_staged: $final_tree_ok,
+             expected_fetch_present: ($final_fetch != null),
+             expected_fetch_bytes_match: $final_bytes_ok
+         },
+         serial_window: $sw,
+         tftp_stability: $ts,
+         tftp_event_count: (($tftp[0].tftp.events // []) | length),
+         expected_fetch_count: ($fetch_events | length),
+         expected_fetch_byte_match_count: ($matching_fetch_events | length),
+         expected_fetch_events: $fetch_events,
+         proof_run_identity: {
+             contract_version: "pi5-capture-transaction-v2",
+             shared_run_label: $proof_label,
+             selected_tree_hash: $selected_tree_hash,
+             effective_kernel: ($preflight[0].observed_effective_kernel // null),
+             expected_fetch_path: $expected_fetch,
+             expected_fetch_byte_count: $expected_bytes,
+             serial: {
+                 pre_power_drain: {
+                     attempts: ($sd.attempts // null),
+                     attempt_limit: ($sd.attempt_limit // null),
+                     read_timeout_seconds: ($sd.read_timeout_seconds // null),
+                     settle_ms: ($sd.settle_ms // null),
+                     max_bytes_per_read: ($sd.max_bytes_per_read // null),
+                     total_bytes: ($sd.total_bytes // null),
+                     final_cursor: ($sd.final_cursor // null),
+                     empty_before_power: ($sd.empty_before_power // false),
+                     discriminator: ($sd.discriminator // null)
+                 },
+                 cursor_start: ($serial[0].cursor_start // null),
+                 cursor_end: ($serial[0].cursor_end // null),
+                 window_bytes: ($serial[0].bytes // null),
+                 response_bytes: ($sw.response_bytes // null),
+                 capture_mode: ($sw.capture_mode // null),
+                 observe_contract: ($sw.observe_contract // null),
+                 required_marker: ($sw.required_marker // null)
+             },
+             tftp: {
+                 cursor_start: ($tftp[0].tftp.cursor_start // null),
+                 cursor_end: ($tftp[0].tftp.cursor_end // null),
+                 stable: ($ts.stable // false),
+                 event_count: (($tftp[0].tftp.events // []) | length),
+                 expected_fetch_count: ($fetch_events | length),
+                 expected_fetch_byte_match_count: ($matching_fetch_events | length)
+             },
+             final_pre_restore: {
+                 tree_hash: $final_tree_hash,
+                 effective_kernel: $final_kernel,
+                 selected_tree_still_staged: $final_selected_tree_ok,
+                 expected_fetch_present: ($final_fetch != null),
+                 expected_fetch_bytes_match: $final_bytes_ok
+             },
+             restore: {
+                 snapshot_name: ($restore[0].archive.name // null),
+                 post_restore_tree_hash: $post_restore_tree_hash
+             }
+         },
+         identity_join_contract: {
+             contract_version: "pi5-capture-transaction-v2",
+             decisive_rp1_hardware_classification_allowed: (($identity_join_rejection_reasons | length) == 0),
+             rejection_reasons: $identity_join_rejection_reasons,
+             rejected_classification: (if (($identity_join_rejection_reasons | length) == 0) then null else "capture-staging-blocked" end),
+             rule: "missing or mismatched candidate identity, serial-window, or TFTP fields prevent decisive RP1 hardware classification"
+         },
+         restore: {
+             snapshot: $restore[0],
+             post_restore_tree_hash: $post_restore_tree_hash
+         },
+         suggested_classification:
+             (
+             if (($identity_join_rejection_reasons | length) > 0) then "identity-join-mismatch"
+             elif $preflight_mismatch then "staging-publication-mismatch"
+             elif ($sw.has_required_marker == true) then "post-handoff-marker-visible"
+             elif (($fetch_events | length) >= 2 and (($sw.firmware_network_occurrences // 0) >= 2)) then "reset-side-effect-without-visible-marker-candidate"
+             elif (($fetch_events | length) > 0) then "candidate-fetch-observed-without-marker"
+             elif ($stable_zero_tftp and ($sw.has_firmware_network == true) and $final_tree_ok and ($final_fetch != null) and $final_bytes_ok) then "tftp-capture-logging-blindness"
+             elif ($sw.has_firmware_network == true) then "serial-only-firmware-reboot"
+             else "still-blocked-without-fresh-boot-evidence"
+             end),
+         proof_contract: {
+             serial_observe_contract: ($sw.observe_contract // "deadline-loop-accumulated-from-fresh-cursor"),
+             serial_capture_mode: ($sw.capture_mode // "observe"),
+             serial_start_cursor_saturated: ($sw.start_cursor_saturated // false),
+             tftp_contract: "stable-same-cursor-delta-before-restore",
+             zero_event_tftp_meaningful_only_before_restore: true,
+             firmware_network_is_not_talos_entry: true
+         }
+       }
++ jq . tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/capture-invariant-summary.json
++ rm -f /tmp/tmp.jxIcQt8lQ7 /tmp/tmp.WpwIAZbcMp

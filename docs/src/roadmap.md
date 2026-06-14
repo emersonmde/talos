@@ -10084,6 +10084,23 @@ any capture-layer recovery, paired-control hardware run, PHY configuration,
 GPIO32/PHY reset action, packet I/O, networking, SSH, Phase 12.2, or phase
 transition.
 
+phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof-20260614
+accepts the guarded autoneg-restart v2 proof as
+phy1-autoneg-restart-write-observed-link-not-ready. Candidate/control
+capture-chain-v4 and boot-staging identity checks passed with selected-tree
+identity, matching same-power-cycle TFTP fetch bytes, final pre-restore
+identity, serial freshness, and restore evidence. The candidate reached the
+guarded corrected-target PHY1 BMCR discriminator: NCR.MPE was set, BMCR
+isolate was clear, exactly one BMCR write intent value 0x1200 was emitted,
+post-BMCR readback was 0x1000, post-BMSR samples remained 0x7949/0x7949,
+ANAR remained 0x01e1, ANLPAR remained 0x0000, and passive MACB_NSR remained
+0x6 / NSR_LINK=false. The paired control constructed no MDIO/MAN/MACB target
+and performed no volatile Ethernet access. This accepts only the bounded BMCR
+restart attempt and link-not-ready result; it does not accept link readiness,
+Ethernet readiness, PHY reset/GPIO32 ownership, MACB writes, NCR writes, link
+forcing, packet I/O, DMA/descriptors, interrupts, networking, sockets, SSH,
+Phase 12.2, or a phase transition.
+
 phase12-rp1-ethernet-capture-staging-recurrence-checkpoint-20260614 accepts a
 non-hardware checkpoint over the autoneg capture-staging recurrence. The
 checkpoint preserves the first failing invariant as selected-tree/TFTP/final

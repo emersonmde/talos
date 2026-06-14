@@ -1,0 +1,268 @@
+{
+  "task_id": "phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof-20260614",
+  "classification": "phy1-autoneg-restart-write-observed-link-not-ready",
+  "candidate": {
+    "capture_chain_v4": {
+      "classification": "capture-chain-v4-ready",
+      "decisive_rp1_hardware_classification_allowed": true,
+      "rejection_reasons": [],
+      "proof_run_identity": {
+        "selected_tree_hash": "c7e847e3ff587fc240ed4b493f42f393f7380c45f5c6b5573fe7c7e45db8f851",
+        "effective_kernel": "kernel_2712.img",
+        "expected_fetch_path": "da591740/kernel_2712.img",
+        "expected_fetch_byte_count": 52344,
+        "tftp": {
+          "cursor_file": 4504291,
+          "delta_cursor_start": 4504291,
+          "delta_cursor_end": 4505642,
+          "stable": true,
+          "event_count": 13,
+          "expected_fetch_count": 2,
+          "expected_fetch_byte_match_count": 2,
+          "expected_fetch_bytes_seen": [
+            52344,
+            52344
+          ]
+        },
+        "final_pre_restore": {
+          "tree_hash": "c7e847e3ff587fc240ed4b493f42f393f7380c45f5c6b5573fe7c7e45db8f851",
+          "effective_kernel": "kernel_2712.img",
+          "selected_tree_still_staged": true,
+          "expected_fetch_present": true,
+          "expected_fetch_bytes": 52344
+        },
+        "restore": {
+          "snapshot_name": "autoneg-v2-pre-20260614T1545Z",
+          "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+        }
+      },
+      "serial_capture": {
+        "capture_mode": "read",
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+        "cursor_file": 4194304,
+        "cursor_start": 4194304,
+        "cursor_end": 4194304,
+        "response_bytes": 70500,
+        "required_marker": "TALOS: rp1-ethernet-phy1-autoneg-restart-candidate capture-nonce=candidate-v2-20260614T154228Z",
+        "required_marker_occurrences": 19,
+        "required_marker_excerpt": " classification=phy1-autoneg-restart-physical-or-operator-precondition-blocker\r\nTALOS: rp1-ethernet-phy1-autoneg-restart-candidate capture-nonce=candidate-v2-20260614T154228Z phy1-autoneg-restart-contract-id=phase12-rp1-ethernet-phy1-autoneg-restart-contract-v1 task-id=phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof-20260614 gua",
+        "nonce_token": "capture-nonce=candidate-v2-20260614T154228Z",
+        "nonce_token_occurrences": 19,
+        "pre_power_nonce_occurrences": 0,
+        "empty_pre_power": false,
+        "nonce_fresh": true,
+        "serial_freshness_ok": true
+      }
+    },
+    "boot_staging_identity": {
+      "contract_version": "pi5-boot-staging-identity-v1",
+      "staging_identity_decisive": true,
+      "classification": "boot-staging-identity-ready",
+      "rejection_reasons": [],
+      "baseline_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "selected": {
+        "tree_hash": "c7e847e3ff587fc240ed4b493f42f393f7380c45f5c6b5573fe7c7e45db8f851",
+        "effective_kernel": "kernel_2712.img",
+        "expected_fetch_path": "da591740/kernel_2712.img",
+        "expected_fetch_byte_count": 52344
+      },
+      "tftp": {
+        "cursor_file": 4504291,
+        "delta_cursor_start": 4504291,
+        "delta_cursor_end": 4505642,
+        "stable": true,
+        "event_count": 13,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 2,
+        "expected_fetch_bytes_seen": [
+          52344,
+          52344
+        ]
+      },
+      "final_pre_restore": {
+        "tree_hash": "c7e847e3ff587fc240ed4b493f42f393f7380c45f5c6b5573fe7c7e45db8f851",
+        "effective_kernel": "kernel_2712.img",
+        "selected_tree_still_staged": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes": 52344
+      },
+      "restore": {
+        "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      },
+      "rule": "candidate serial output is not decisive unless selected-tree identity, expected TFTP fetch bytes, final pre-restore identity, and restore identity all match one staged boot tree"
+    },
+    "runtime_discriminator": {
+      "classification": "phy1-autoneg-restart-physical-or-operator-precondition-blocker",
+      "ncr_before": "0x10",
+      "ncr_mpe_precondition_met": true,
+      "ncr_after": "0x10",
+      "pre_bmcr": "0x1000",
+      "pre_bmsr": "0x7949",
+      "pre_anar": "0x01e1",
+      "pre_anlpar": "0x0000",
+      "bmcr_isolate_precondition_clear": true,
+      "bmcr_write_value": "0x1200",
+      "bmcr_write_count": 1,
+      "touched_fields": [
+        "BMCR_ANENABLE",
+        "BMCR_ANRESTART"
+      ],
+      "post_bmcr": "0x1000",
+      "post_bmsr_first": "0x7949",
+      "post_bmsr_second": "0x7949",
+      "post_anar": "0x01e1",
+      "post_anlpar": "0x0000",
+      "post_bmsr_link_status": false,
+      "post_bmsr_autoneg_complete": false,
+      "post_anlpar_nonzero": false,
+      "passive_macb_nsr_raw": "0x00000006",
+      "passive_macb_nsr_link": false,
+      "bmcr_write_performed": true,
+      "mdio_man_transactions_performed": true,
+      "macb_read_performed": true,
+      "macb_write_performed": false,
+      "phy_reset_or_gpio32_action": false,
+      "link_forcing": false
+    }
+  },
+  "control": {
+    "capture_chain_v4": {
+      "classification": "capture-chain-v4-ready",
+      "decisive_rp1_hardware_classification_allowed": true,
+      "rejection_reasons": [],
+      "proof_run_identity": {
+        "selected_tree_hash": "031da5edc1bb199f260358087e443def1e53fbb4fa1f33d212384d898aab5b56",
+        "effective_kernel": "kernel_2712.img",
+        "expected_fetch_path": "da591740/kernel_2712.img",
+        "expected_fetch_byte_count": 49856,
+        "tftp": {
+          "cursor_file": 4505642,
+          "delta_cursor_start": 4505642,
+          "delta_cursor_end": 4506993,
+          "stable": true,
+          "event_count": 13,
+          "expected_fetch_count": 2,
+          "expected_fetch_byte_match_count": 2,
+          "expected_fetch_bytes_seen": [
+            49856,
+            49856
+          ]
+        },
+        "final_pre_restore": {
+          "tree_hash": "031da5edc1bb199f260358087e443def1e53fbb4fa1f33d212384d898aab5b56",
+          "effective_kernel": "kernel_2712.img",
+          "selected_tree_still_staged": true,
+          "expected_fetch_present": true,
+          "expected_fetch_bytes": 49856
+        },
+        "restore": {
+          "snapshot_name": "autoneg-v2-pre-20260614T1545Z",
+          "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+        }
+      },
+      "serial_capture": {
+        "capture_mode": "read",
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+        "cursor_file": 4194304,
+        "cursor_start": 4194304,
+        "cursor_end": 4194304,
+        "response_bytes": 70088,
+        "required_marker": "TALOS: rp1-ethernet-phy1-autoneg-restart-control capture-nonce=control-v2-20260614T154228Z",
+        "required_marker_occurrences": 15,
+        "required_marker_excerpt": "ocket-ssh-or-phe classification=no-mdio-no-macb-phy1-autoneg-restart-control\r\nTALOS: rp1-ethernet-phy1-autoneg-restart-control capture-nonce=control-v2-20260614T154228Z phy1-autoneg-restart-contract-id=phase12-rp1-ethernet-phy1-autoneg-restart-contract-v1 task-id=phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof-20260614 guard",
+        "nonce_token": "capture-nonce=control-v2-20260614T154228Z",
+        "nonce_token_occurrences": 16,
+        "pre_power_nonce_occurrences": 0,
+        "empty_pre_power": true,
+        "nonce_fresh": true,
+        "serial_freshness_ok": true
+      }
+    },
+    "boot_staging_identity": {
+      "contract_version": "pi5-boot-staging-identity-v1",
+      "staging_identity_decisive": true,
+      "classification": "boot-staging-identity-ready",
+      "rejection_reasons": [],
+      "baseline_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "selected": {
+        "tree_hash": "031da5edc1bb199f260358087e443def1e53fbb4fa1f33d212384d898aab5b56",
+        "effective_kernel": "kernel_2712.img",
+        "expected_fetch_path": "da591740/kernel_2712.img",
+        "expected_fetch_byte_count": 49856
+      },
+      "tftp": {
+        "cursor_file": 4505642,
+        "delta_cursor_start": 4505642,
+        "delta_cursor_end": 4506993,
+        "stable": true,
+        "event_count": 13,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 2,
+        "expected_fetch_bytes_seen": [
+          49856,
+          49856
+        ]
+      },
+      "final_pre_restore": {
+        "tree_hash": "031da5edc1bb199f260358087e443def1e53fbb4fa1f33d212384d898aab5b56",
+        "effective_kernel": "kernel_2712.img",
+        "selected_tree_still_staged": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes": 49856
+      },
+      "restore": {
+        "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      },
+      "rule": "candidate serial output is not decisive unless selected-tree identity, expected TFTP fetch bytes, final pre-restore identity, and restore identity all match one staged boot tree"
+    },
+    "runtime_discriminator": {
+      "classification": "no-mdio-no-macb-phy1-autoneg-restart-control",
+      "target": "none",
+      "controller": "none",
+      "selected_reads": "withheld",
+      "bmcr_write_count": 0,
+      "touched_fields": [],
+      "bmcr_write_performed": false,
+      "mdio_man_transactions_performed": false,
+      "macb_read_performed": false,
+      "macb_write_performed": false,
+      "phy_reset_or_gpio32_action": false,
+      "link_forcing": false
+    },
+    "duplicate_run_disposition": {
+      "disposition": "deferred",
+      "note": "A traced rerun was accidentally started while the first control helper was still active. The retained control v4 and boot-staging identity gates are ready and lab restore is proven, but the aggregate capture helper exit is recorded as nonzero due to a duplicate restore/API collision. No additional runtime claim is accepted from the duplicate overlap."
+    }
+  },
+  "lab_restore": {
+    "candidate_post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "control_post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "final_observed_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "boundary": {
+    "accepted": [
+      "candidate selected-tree/TFTP/final-identity freshness recovered for this autoneg-restart v2 run",
+      "candidate executed exactly one corrected-target PHY1 BMCR write intent/value 0x1200",
+      "candidate post-read BMCR returned 0x1000, so BMCR_ANRESTART was not retained in the sampled post-read",
+      "candidate post BMSR samples remained 0x7949 with link-status=false and autoneg-complete=false",
+      "paired control constructed no MDIO/MAN/MACB target and performed no volatile Ethernet access"
+    ],
+    "rejected": [
+      "link-readiness",
+      "ethernet-readiness",
+      "phy-reset-ownership",
+      "gpio32-action",
+      "macb-write",
+      "ncr-write",
+      "link-forcing",
+      "packet-io",
+      "dma-descriptors",
+      "interrupt-completion",
+      "networking",
+      "sockets",
+      "ssh",
+      "phase-12-2",
+      "phase-transition"
+    ]
+  }
+}
