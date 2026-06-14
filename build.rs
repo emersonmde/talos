@@ -423,6 +423,16 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "rpi5_rp1_ethernet_phy1_bmsr_double_sample_link_readiness_candidate",
+        implied_values: &[],
+        asm_defines: &[],
+    },
+    BootScenario {
+        value: "rpi5_rp1_ethernet_phy1_bmsr_double_sample_link_readiness_no_mdio_control",
+        implied_values: &[],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate",
         implied_values: &[],
         asm_defines: &[],

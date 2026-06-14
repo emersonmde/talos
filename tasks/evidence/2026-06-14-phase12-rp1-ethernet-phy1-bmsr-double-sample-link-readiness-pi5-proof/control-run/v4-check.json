@@ -1,0 +1,89 @@
+{
+  "contract_version": "pi5-capture-transaction-run-unique-v1",
+  "base_contract_version": "pi5-capture-transaction-v3",
+  "run_label": "phy1-bmsr-double-control-20260614T0527Z",
+  "decisive_rp1_hardware_classification_allowed": true,
+  "classification": "capture-transaction-run-unique-ready",
+  "rejection_reasons": [],
+  "run_unique_serial_freshness": {
+    "rule": "v3 identity/freshness plus a run-unique capture-nonce token absent before power and present after power",
+    "required_marker": "capture-nonce=phy1-bmsr-double-control-20260614T0527Z",
+    "expected_nonce": "phy1-bmsr-double-control-20260614T0527Z",
+    "required_nonce": "phy1-bmsr-double-control-20260614T0527Z",
+    "nonce_token": "capture-nonce=phy1-bmsr-double-control-20260614T0527Z",
+    "marker_nonce": "phy1-bmsr-double-control-20260614T0527Z",
+    "pre_power_nonce_count": 0,
+    "post_power_nonce_count": 20,
+    "nonce_token_differential": true,
+    "run_unique_marker_ok": true
+  },
+  "base_v3": {
+    "contract_version": "pi5-capture-transaction-v3",
+    "base_contract_version": "pi5-capture-transaction-v2",
+    "run_label": "phy1-bmsr-double-control-20260614T0527Z",
+    "summary_label": "phy1-bmsr-double-control-20260614T0527Z",
+    "decisive_rp1_hardware_classification_allowed": true,
+    "classification": "capture-transaction-v3-ready",
+    "rejection_reasons": [],
+    "v3_serial_freshness": {
+      "rule": "empty pre-power drain, or saturated direct-read with required marker absent from all pre-power drain responses and present after power",
+      "empty_pre_power": false,
+      "saturated_direct_read": true,
+      "required_marker": "capture-nonce=phy1-bmsr-double-control-20260614T0527Z",
+      "pre_power_marker_count": 0,
+      "post_power_marker_count": 20,
+      "fresh_marker_differential": true,
+      "serial_freshness_ok": true
+    },
+    "proof_run_identity": {
+      "selected_tree_hash": "52c81ff4b8249df118da553e00c528eeaa83b25ab5a44ffb5468675fec31f749",
+      "effective_kernel": "kernel_2712.img",
+      "expected_fetch_path": "da591740/kernel_2712.img",
+      "expected_fetch_byte_count": 50112,
+      "serial": {
+        "pre_power_drain": {
+          "attempts": 96,
+          "total_bytes": 1095168,
+          "final_cursor": 4194304,
+          "empty_before_power": false,
+          "discriminator": "bounded-drain-exhausted-before-power"
+        },
+        "cursor_file": 4194304,
+        "window_cursor_start": 4194304,
+        "window_cursor_end": 4194304,
+        "window_bytes": 75348,
+        "response_bytes": 75348,
+        "capture_mode": "read",
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+      },
+      "tftp": {
+        "cursor_file": 4492132,
+        "delta_cursor_start": 4492132,
+        "delta_cursor_end": 4493483,
+        "stable": true,
+        "event_count": 13,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 2,
+        "expected_fetch_bytes_seen": [
+          50112,
+          50112
+        ]
+      },
+      "final_pre_restore": {
+        "tree_hash": "52c81ff4b8249df118da553e00c528eeaa83b25ab5a44ffb5468675fec31f749",
+        "effective_kernel": "kernel_2712.img",
+        "selected_tree_still_staged": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes": 50112
+      },
+      "restore": {
+        "snapshot_name": "pre-phy1-bmsr-double-20260614T0514Z",
+        "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      }
+    },
+    "rule": "missing or mismatched candidate identity, v3 serial freshness, TFTP, final identity, or restore fields prevent decisive RP1 hardware classification"
+  },
+  "base_v3_exit": 0,
+  "base_v3_stderr": "",
+  "rule": "missing v3 proof or missing/mismatched run-unique capture nonce prevents decisive RP1 hardware classification"
+}

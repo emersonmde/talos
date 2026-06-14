@@ -1,0 +1,8 @@
+control_archive=tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-pi5-proof/control-boot.tar.gz
+control_archive_sha256=32209d5fd3ad2d80923d30a139af9d227c4e39af84924b42c35887b069d64a49
+kernel_2712_sha256=224a1a603bc3ba67c16e0b19e878c504958825b864b541001260f01c0e69761a
+kernel_2712_size=50112
+header_image_size=50112
+text_offset=0
+flags=12
+forbidden_phy1_bmsr_double_sample_control_runtime_strings_absent=true

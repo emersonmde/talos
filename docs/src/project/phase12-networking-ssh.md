@@ -1521,3 +1521,18 @@ link-readiness proof, PHY configuration write, autonegotiation restart, link
 forcing, MACB NSR_LINK discriminator, GPIO32/PHY reset ownership, broad
 MDIO/PHY ownership, Ethernet driver behavior, interrupts, DMA/descriptors,
 packet I/O, networking, sockets, SSH, Phase 12.2, or phase transition.
+
+phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-pi5-proof-20260614
+accepts the read-only corrected-target PHY1 BMCR plus double-sampled BMSR
+link-readiness proof as mdio-phy1-bmsr-double-sample-link-not-ready.
+Candidate/control capture-chain run-unique and boot-staging identity checks
+both passed with selected-tree identity, matching same-power-cycle TFTP fetch
+bytes, final pre-restore identity, serial freshness, and restore evidence. The
+candidate read BMCR 0x1000, BMSR first 0x7949, and BMSR second 0x7949; BMCR
+reset, loopback, and autoneg-restart were false, while second-sample
+BMSR_LSTATUS and BMSR_ANEGCOMPLETE were false. The paired control constructed
+no MDIO target and no MAN frame. This accepts only the selected register-state
+link-not-ready discriminator; it does not accept PHY configuration writes,
+PHY reset/GPIO32 action, autonegotiation restart, link forcing, broad MDIO/PHY
+ownership, Ethernet driver behavior, interrupts, DMA/descriptors, packet I/O,
+networking, sockets, SSH, Phase 12.2, or a phase transition.

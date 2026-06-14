@@ -1,0 +1,30 @@
+{
+  "task_id": "phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-pi5-proof-20260614",
+  "classification": "mdio-phy1-bmsr-double-sample-link-not-ready",
+  "candidate": {
+    "capture_chain_v4": {
+      "classification": "capture-transaction-run-unique-ready",
+      "decisive_rp1_hardware_classification_allowed": true,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "final_pre_restore_tree_hash": "83efecf2cbf7135492907335fb4a00a54c7374768b3d4a87c774721f49c2d94a",
+      "serial_marker_occurrences": 18,
+      "serial_freshness_ok": true
+    }
+  },
+  "control": {
+    "capture_chain_v4": {
+      "classification": "capture-transaction-run-unique-ready",
+      "decisive_rp1_hardware_classification_allowed": true,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "final_pre_restore_tree_hash": "52c81ff4b8249df118da553e00c528eeaa83b25ab5a44ffb5468675fec31f749",
+      "serial_marker_occurrences": 20,
+      "serial_freshness_ok": true
+    }
+  },
+  "accepted_claims": [
+    "candidate link-readiness classified only from second BMSR sample",
+    "control proves no MDIO target and no MAN frame report path"
+  ]
+}

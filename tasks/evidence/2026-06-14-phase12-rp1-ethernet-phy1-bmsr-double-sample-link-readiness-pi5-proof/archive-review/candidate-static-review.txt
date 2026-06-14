@@ -1,0 +1,8 @@
+candidate_archive=tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-pi5-proof/candidate-boot.tar.gz
+candidate_archive_sha256=ae921b0cd82029e367fc5a27a1bbb1ac2220309bdeefcc1426f6e94ebd648676
+kernel_2712_sha256=0c29ff0cba5c1b9f35dc52d5cdff33fb65df2b3f08acd8846dfb2bec80ea18be
+kernel_2712_size=52536
+header_image_size=52536
+text_offset=0
+flags=12
+forbidden_phy1_bmsr_double_sample_candidate_runtime_strings_absent=true
