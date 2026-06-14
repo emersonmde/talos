@@ -9903,6 +9903,19 @@ ownership, broad MDIO/PHY ownership, link state, Ethernet behavior,
 interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2,
 and phase transition remain unaccepted.
 
+phase12-rp1-ethernet-mdio-register-vector-v4-closeout-20260614 closes the
+accepted v4 register-vector proof frontier as
+rp1-ethernet-mdio-register-vector-phy1-visible-frontier-closed. The accepted
+boundary remains only the selected corrected-target PHY1 Clause 22
+six-register MAN.DATA vector under capture-chain-v4, boot-staging identity,
+same-power-cycle TFTP byte agreement, final pre-restore identity, serial
+freshness, and restore evidence. No explicit queued mechanically objective
+follow-up exists after this closeout; supervisor planning is required before
+the next bounded Phase 12.1 task. PHY absence, PHY reset/GPIO32 ownership,
+broad MDIO/PHY ownership, link state, Ethernet driver behavior, interrupts,
+DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, and phase
+transition remain unaccepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

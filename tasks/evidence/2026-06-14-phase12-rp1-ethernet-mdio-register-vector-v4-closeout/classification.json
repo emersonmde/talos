@@ -1,0 +1,47 @@
+{
+  "classification": "mdio-phy1-register-vector-visible-frontier-closed",
+  "status": "accepted",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "capture-chain-v4 replay review",
+    "staging identity gate review",
+    "evidence-consistency guard review",
+    "lab-controller API evidence review",
+    "serial hardware boot/output evidence review",
+    "stable same-cursor TFTP delta evidence review",
+    "restore evidence review"
+  ],
+  "proof_task": "phase12-rp1-ethernet-mdio-register-vector-pi5-proof-v4-after-root-recovery-20260614",
+  "proof_commit": "a4d203906e1b9ac5686342cff5c9ffb1bc1d909b",
+  "closed_frontier": "rp1-ethernet-mdio-register-vector-phy1-visible-frontier-closed",
+  "accepted_claims": [
+    "selected corrected-target PHY1 Clause 22 six-register register-vector MAN.DATA boundary",
+    "BMCR 0x1000, BMSR 0x7949, PHYSID1 0x600d, PHYSID2 0x84a2, ANAR 0x01e1, ANLPAR 0x0000",
+    "candidate/control capture-chain-v4 and boot-staging identity with same-power-cycle TFTP byte agreement and final pre-restore identity",
+    "paired control used same report path with no MDIO target, no MAN frame, and no runtime MDIO transaction"
+  ],
+  "rejected_claims": [
+    "PHY absence",
+    "PHY reset/GPIO32 ownership",
+    "broad MDIO/PHY ownership",
+    "link state",
+    "Ethernet driver behavior",
+    "interrupts",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "future tasks still need explicit ownership gates for PHY reset/GPIO32",
+    "visible register-vector values do not prove broad MDIO/PHY ownership",
+    "visible register-vector values do not prove Ethernet link, DMA, packet I/O, networking, sockets, SSH, or Phase 12.2 readiness"
+  ],
+  "next_action": {
+    "planning_needed": true,
+    "reason": "No explicit queued mechanically objective follow-up task exists after the v4 register-vector closeout; supervisor must select the next bounded Phase 12.1 task and acceptance gates."
+  }
+}
