@@ -1,0 +1,34 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-root-recovery-closeout-20260611",
+  "classification": "root-recovery-closeout-accepted",
+  "records": [
+    {
+      "label": "root recovery closeout task record",
+      "path": "tasks/2026-06-14-phase12-rp1-ethernet-mdio-register-vector-root-recovery-closeout.md"
+    },
+    {
+      "label": "root recovery closeout classification",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-mdio-register-vector-root-recovery-closeout/classification.json"
+    },
+    {
+      "label": "minimal sentinel task record",
+      "path": "tasks/2026-06-14-phase12-rp1-ethernet-lab-tftp-root-minimal-sentinel-pi5-proof.md",
+      "commit": "12605ec7263abfe7ffb46a766b4cbf5cd8c8e3e8"
+    },
+    {
+      "label": "minimal sentinel capture summary",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-lab-tftp-root-minimal-sentinel-pi5-proof/capture-summary.json",
+      "commit": "12605ec7263abfe7ffb46a766b4cbf5cd8c8e3e8"
+    },
+    {
+      "label": "minimal sentinel selected-tree identity gate",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-lab-tftp-root-minimal-sentinel-pi5-proof/minimal-sentinel-run/staging-identity-gate-output.json",
+      "commit": "12605ec7263abfe7ffb46a766b4cbf5cd8c8e3e8"
+    },
+    {
+      "label": "minimal sentinel stable TFTP delta",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-lab-tftp-root-minimal-sentinel-pi5-proof/minimal-sentinel-run/tftp-delta-stable-pre-restore.json",
+      "commit": "12605ec7263abfe7ffb46a766b4cbf5cd8c8e3e8"
+    }
+  ]
+}

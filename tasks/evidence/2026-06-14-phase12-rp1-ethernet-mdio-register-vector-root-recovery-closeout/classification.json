@@ -1,0 +1,41 @@
+{
+  "task_id": "phase12-rp1-ethernet-mdio-register-vector-root-recovery-closeout-20260611",
+  "classification": "root-recovery-closeout-accepted",
+  "status": "accepted",
+  "accepted_at": "2026-06-14T01:40:00Z",
+  "evidence_level": [
+    "static task/evidence inspection"
+  ],
+  "operator_resolution": {
+    "recorded_in": "memory/talos-supervisor-state.json",
+    "planning_resolved_at": "2026-06-14T01:14:47Z",
+    "summary": "Matthew resolved the served-root observability hold: the lab is dedicated, no other TFTP service is serving, and the correct independent measurement is a Pi hardware fetch plus TFTP evidence from the lab API. The minimal sentinel Pi 5 proof was selected as the next discriminator."
+  },
+  "conditional_sentinel_result": {
+    "task_id": "phase12-rp1-ethernet-lab-tftp-root-minimal-sentinel-pi5-proof-20260611",
+    "classification": "minimal-sentinel-served-root-proof-accepted",
+    "commit": "12605ec7263abfe7ffb46a766b4cbf5cd8c8e3e8",
+    "selected_tree": "5dd6afef125a27bbb4e76423fbd189fe1dc020bc9cf2186e42bba7eae5581441",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 47832,
+    "observed_matching_fetches_before_restore": 2,
+    "serial_freshness_ok": true,
+    "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "boundary": {
+    "accepted": [
+      "operator resolution recorded",
+      "minimal sentinel selected-tree TFTP measurement accepted",
+      "root-recovery evidence ready for supervisor planning"
+    ],
+    "not_accepted": [
+      "MDIO register-vector retry",
+      "RP1 MAN.DATA behavior",
+      "GPIO32/PHY reset behavior",
+      "Ethernet runtime behavior",
+      "networking or SSH",
+      "Phase 12.2",
+      "phase transition"
+    ]
+  }
+}
