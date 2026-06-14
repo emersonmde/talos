@@ -1,0 +1,69 @@
+{
+  "label": "minimal-sentinel-candidate-20260614T0127Z",
+  "nonce": "minimal-sentinel-candidate-20260614T0127Z",
+  "marker": "TALOS: rp1-ethernet-mdio-register-vector-staging-sentinel-candidate capture-nonce=minimal-sentinel-candidate-20260614T0127Z",
+  "archive": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-lab-tftp-root-minimal-sentinel-pi5-proof/minimal-sentinel-candidate-archive.tar.gz",
+  "exits": {
+    "capture_bundle": 0,
+    "capture_chain_v4": 0,
+    "staging_identity_gate": 0
+  },
+  "v4": {
+    "classification": "capture-chain-v4-ready",
+    "rejection_reasons": [],
+    "selected_tree_hash": "5dd6afef125a27bbb4e76423fbd189fe1dc020bc9cf2186e42bba7eae5581441",
+    "expected_fetch_byte_count": 47832,
+    "tftp": {
+      "cursor_file": 4482154,
+      "delta_cursor_start": 4482154,
+      "delta_cursor_end": 4483505,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        47832,
+        47832
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "5dd6afef125a27bbb4e76423fbd189fe1dc020bc9cf2186e42bba7eae5581441",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 47832
+    },
+    "restore": {
+      "snapshot_name": "minimal-sentinel-pre-20260614T0127Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "serial_capture": {
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+      "cursor_file": 4194304,
+      "cursor_start": 4194304,
+      "cursor_end": 4194304,
+      "response_bytes": 135545,
+      "required_marker": "TALOS: rp1-ethernet-mdio-register-vector-staging-sentinel-candidate capture-nonce=minimal-sentinel-candidate-20260614T0127Z",
+      "required_marker_occurrences": 84,
+      "required_marker_excerpt": "-mdio-no-ethernet-rp1-ethernet-mdio-register-vector-staging-sentinel-candidate\r\nTALOS: rp1-ethernet-mdio-register-vector-staging-sentinel-candidate capture-nonce=minimal-sentinel-candidate-20260614T0127Z staging-sentinel-contract-id=phase12-rp1-ethernet-mdio-register-vector-staging-identity-sentinel-v1 selected-discriminator=rp1-ethernet-mdio-register-vector-st",
+      "nonce_token": "capture-nonce=minimal-sentinel-candidate-20260614T0127Z",
+      "nonce_token_occurrences": 84,
+      "pre_power_nonce_occurrences": 0,
+      "empty_pre_power": true,
+      "nonce_fresh": true,
+      "serial_freshness_ok": true
+    }
+  },
+  "gate": {
+    "classification": "selected-tree-identity-ready",
+    "first_failing_invariant": null,
+    "rejection_reasons": []
+  },
+  "final_lab_before_trap": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_2712_bytes": 104136
+  },
+  "classification": "minimal-sentinel-served-root-proof-accepted"
+}

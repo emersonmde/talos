@@ -1,0 +1,25 @@
+{
+  "task_id": "phase12-rp1-ethernet-lab-tftp-root-minimal-sentinel-pi5-proof-20260611",
+  "evidence_dir": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-lab-tftp-root-minimal-sentinel-pi5-proof",
+  "classification": "minimal-sentinel-served-root-proof-accepted",
+  "key_artifacts": {
+    "archive_review": "archive-review/minimal-sentinel-candidate-static-review.txt",
+    "capture_summary": "capture-summary.json",
+    "v4_check": "minimal-sentinel-run/v4-check.json",
+    "staging_identity_gate": "minimal-sentinel-run/staging-identity-gate-output.json",
+    "tftp_delta": "minimal-sentinel-run/tftp-delta-stable-pre-restore.json",
+    "serial_window": "minimal-sentinel-run/serial-observe-window.json",
+    "final_lab_status": "final-lab-status-before-trap.json"
+  },
+  "served_root_contract": "Pi hardware TFTP fetch from da591740/kernel_2712.img in stable same-cursor delta before restore is the served-root measurement selected by Matthew/operator resolution.",
+  "acceptance_boundary": {
+    "accepted": "served-root/TFTP measurement and selected-tree identity for one no-MDIO minimal sentinel",
+    "not_accepted": [
+      "MDIO/MAN register-vector retry",
+      "Ethernet behavior",
+      "networking",
+      "SSH",
+      "phase transition"
+    ]
+  }
+}

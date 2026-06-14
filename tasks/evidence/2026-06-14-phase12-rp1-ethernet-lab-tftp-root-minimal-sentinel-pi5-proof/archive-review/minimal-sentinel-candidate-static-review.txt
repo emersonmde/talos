@@ -1,0 +1,8 @@
+candidate_archive=tasks/evidence/2026-06-14-phase12-rp1-ethernet-lab-tftp-root-minimal-sentinel-pi5-proof/minimal-sentinel-candidate-archive.tar.gz
+candidate_archive_sha256=00f1dcb02a8e7aa9e174dd81f636bb9a116f321bc6eee360d751c7c471d1ef54
+kernel_2712_sha256=78c944f115e1786d1584c15e3676d2d2198244515aac90061566aa84f32cdc54
+kernel_2712_size=47832
+header_image_size=47832
+text_offset=0
+flags=12
+forbidden_staging_sentinel_candidate_runtime_strings_absent=true
