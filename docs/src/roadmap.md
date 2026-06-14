@@ -9909,12 +9909,25 @@ rp1-ethernet-mdio-register-vector-phy1-visible-frontier-closed. The accepted
 boundary remains only the selected corrected-target PHY1 Clause 22
 six-register MAN.DATA vector under capture-chain-v4, boot-staging identity,
 same-power-cycle TFTP byte agreement, final pre-restore identity, serial
-freshness, and restore evidence. No explicit queued mechanically objective
-follow-up exists after this closeout; supervisor planning is required before
-the next bounded Phase 12.1 task. PHY absence, PHY reset/GPIO32 ownership,
-broad MDIO/PHY ownership, link state, Ethernet driver behavior, interrupts,
-DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2, and phase
-transition remain unaccepted.
+freshness, and restore evidence. The selected follow-up is a bounded PHY1
+status diagnostic, not broader MDIO/PHY ownership, Ethernet behavior, packet
+I/O, networking, SSH, Phase 12.2, or a phase transition.
+
+phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof-20260614 accepts a
+visible PHY1 status diagnostic over the accepted corrected-target MDIO read
+boundary. Candidate/control capture-chain-v4 and boot-staging identity both
+passed with selected-tree identity, matching same-power-cycle TFTP fetch bytes,
+final pre-restore identity, serial freshness, and restore evidence. The
+candidate decoded BMCR 0x1000, BMSR 0x7949, PHYSID1 0x600d, PHYSID2 0x84a2,
+ANAR 0x01e1, and ANLPAR 0x0000 as BMCR reset=false, loopback=false,
+speed=10M, autoneg-enable=true; BMSR link-status=false,
+autoneg-complete=false, autoneg-ability=true; PHY ID OUI 0x180361, model 0x0a,
+revision 0x02; ANAR advertising 10/100 half/full; and empty ANLPAR. The paired
+control constructed no MDIO target and no MAN frame. This does not accept link
+usability beyond decoded register state, PHY configuration writes, PHY
+reset/GPIO32 action, broad MDIO/PHY ownership, Ethernet driver behavior,
+interrupts, DMA/descriptors, packet I/O, networking, sockets, SSH, Phase 12.2,
+or a phase transition.
 
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.

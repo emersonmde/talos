@@ -1,0 +1,8 @@
+control_archive=tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof/control-archive.tar.gz
+control_archive_sha256=c6b067da21498e25a3e2e32ed46ca3603bbffcf71926dcbb6edfcf88066f0d4b
+kernel_2712_sha256=ed9336a6d644b44a853672ee1b6a7f17e70ec78106331e44cc1575cf7bfe058e
+kernel_2712_size=49736
+header_image_size=49736
+text_offset=0
+flags=12
+forbidden_phy1_status_control_runtime_strings_absent=true

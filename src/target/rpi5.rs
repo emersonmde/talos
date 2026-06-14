@@ -12777,6 +12777,7 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_ethernet_mdio_phy_id_after_mpe_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_mdio_mpe_enable_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_candidate",
+        talos_boot_scenario = "rpi5_rp1_ethernet_phy1_status_diagnostic_candidate",
         talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
         talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",
         talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_read",
@@ -12804,7 +12805,8 @@ fn read_rp1_reg_u32(addr: usize) -> u32 {
         talos_boot_scenario = "rpi5_rp1_ethernet_mdio_phy_id_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_mdio_phy_id_after_mpe_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_mdio_mpe_enable_candidate",
-        talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_candidate"
+        talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_candidate",
+        talos_boot_scenario = "rpi5_rp1_ethernet_phy1_status_diagnostic_candidate"
     )
 ))]
 fn write_rp1_reg_u32_ordered(addr: usize, value: u32) {
@@ -16070,6 +16072,209 @@ pub fn run_rp1_ethernet_mdio_register_vector_no_mdio_control() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_phy1_status_diagnostic_candidate")]
+pub fn run_rp1_ethernet_phy1_status_diagnostic_candidate() -> ! {
+    const MACB_MID_CONTEXT: usize = 0x1c_0010_00fc;
+    const NCR: usize = 0x1c_0010_0000;
+    const NSR: usize = 0x1c_0010_0008;
+    const MAN: usize = 0x1c_0010_0034;
+    const NCR_MPE: u32 = 1 << 4;
+    const NSR_IDLE: u32 = 1 << 2;
+    const MAN_FRAMES: [u32; 6] = [
+        0x6082_0000,
+        0x6086_0000,
+        0x608a_0000,
+        0x608e_0000,
+        0x6092_0000,
+        0x6096_0000,
+    ];
+
+    write_early_static("rpi5-rp1-ethernet-phy1-status-diagnostic-candidate: start\n");
+    write_early_static(
+        "rpi5-rp1-ethernet-phy1-status-diagnostic-candidate: before-readonly-corrected-target-phy1-status-vector\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    let macb_mid_context = read_rp1_reg_u32(MACB_MID_CONTEXT);
+    let ncr_before = read_rp1_reg_u32(NCR);
+    let mut nsr_before = [0u32; 6];
+    let mut nsr_after = [0u32; 6];
+    let mut man_after = [0u32; 6];
+    let mut values = [0u32; 6];
+    let mut valid = [false; 6];
+    let mut man_writes_performed = false;
+    let mut completed_count = 0usize;
+
+    let classification = if ncr_before & NCR_MPE == 0 {
+        "mdio-phy1-status-diagnostic-precondition-blocker"
+    } else {
+        let mut timed_out = false;
+        let mut index = 0usize;
+        while index < MAN_FRAMES.len() {
+            if !poll_rp1_ethernet_phy1_status_diagnostic_idle(NSR, NSR_IDLE) {
+                nsr_before[index] = read_rp1_reg_u32(NSR);
+                timed_out = true;
+                break;
+            }
+            nsr_before[index] = read_rp1_reg_u32(NSR);
+            write_rp1_reg_u32_ordered(MAN, MAN_FRAMES[index]);
+            man_writes_performed = true;
+            if !poll_rp1_ethernet_phy1_status_diagnostic_idle(NSR, NSR_IDLE) {
+                nsr_after[index] = read_rp1_reg_u32(NSR);
+                man_after[index] = read_rp1_reg_u32(MAN);
+                timed_out = true;
+                break;
+            }
+            nsr_after[index] = read_rp1_reg_u32(NSR);
+            man_after[index] = read_rp1_reg_u32(MAN);
+            values[index] = man_after[index] & 0xffff;
+            valid[index] = true;
+            completed_count += 1;
+            index += 1;
+        }
+
+        if timed_out {
+            "mdio-phy1-status-diagnostic-timeout"
+        } else {
+            "mdio-phy1-status-diagnostic-visible"
+        }
+    };
+    let ncr_after = read_rp1_reg_u32(NCR);
+    let decoded = crate::rp1_ethernet::decode_rp1_ethernet_phy1_status(
+        crate::rp1_ethernet::Rp1EthernetPhy1StatusRawVector {
+            bmcr: values[0] as u16,
+            bmsr: values[1] as u16,
+            physid1: values[2] as u16,
+            physid2: values[3] as u16,
+            anar: values[4] as u16,
+            anlpar: values[5] as u16,
+        },
+    );
+
+    loop {
+        write_early_static("TALOS: rp1-ethernet-phy1-status-diagnostic-candidate");
+        write_rp1_ethernet_phy1_status_diagnostic_capture_nonce();
+        write_rp1_ethernet_phy1_status_diagnostic_common("candidate");
+        write_early_static(" target=rp1-ethernet-phy1-status-decode-from-accepted-register-vector");
+        write_early_static(" controller=rp1_eth compatible=raspberrypi,rp1-gem,cdns,macb");
+        write_early_static(" phy-handle=phy1 phy-node=ethernet-phy@1 phy-address=1");
+        write_early_static(" observed-window-macb-mid-context-cpu-physical-target=");
+        write_early_hex_u64(MACB_MID_CONTEXT as u64);
+        write_early_static(" observed-window-macb-mid-context-raw=");
+        write_early_hex_u64(macb_mid_context as u64);
+        write_early_static(" ncr-observed-target=");
+        write_early_hex_u64(NCR as u64);
+        write_early_static(" nsr-observed-target=");
+        write_early_hex_u64(NSR as u64);
+        write_early_static(" man-observed-target=");
+        write_early_hex_u64(MAN as u64);
+        write_early_static(" ncr-mpe-bit=4 nsr-idle-bit=2 man-data-bits=15:0");
+        write_early_static(" ncr-before=");
+        write_early_hex_u64(ncr_before as u64);
+        write_early_static(" ncr-mpe-precondition-met=");
+        write_bool(ncr_before & NCR_MPE != 0);
+        write_early_static(" ncr-after=");
+        write_early_hex_u64(ncr_after as u64);
+        write_early_static(" ncr-write-performed=false phy-config-write-performed=false");
+        write_early_static(
+            " register-vector=MII_BMCR:0x00,MII_BMSR:0x01,MII_PHYSID1:0x02,MII_PHYSID2:0x03,MII_ADVERTISE_ANAR:0x04,MII_LPA_ANLPAR:0x05",
+        );
+        write_early_static(" raw-bmcr=");
+        write_early_hex_u64(values[0] as u64);
+        write_early_static(" raw-bmsr=");
+        write_early_hex_u64(values[1] as u64);
+        write_early_static(" raw-physid1=");
+        write_early_hex_u64(values[2] as u64);
+        write_early_static(" raw-physid2=");
+        write_early_hex_u64(values[3] as u64);
+        write_early_static(" raw-anar=");
+        write_early_hex_u64(values[4] as u64);
+        write_early_static(" raw-anlpar=");
+        write_early_hex_u64(values[5] as u64);
+        write_early_static(" bmcr-valid=");
+        write_bool(valid[0]);
+        write_early_static(" bmsr-valid=");
+        write_bool(valid[1]);
+        write_early_static(" physid1-valid=");
+        write_bool(valid[2]);
+        write_early_static(" physid2-valid=");
+        write_bool(valid[3]);
+        write_early_static(" anar-valid=");
+        write_bool(valid[4]);
+        write_early_static(" anlpar-valid=");
+        write_bool(valid[5]);
+        write_rp1_ethernet_phy1_status_decoded_fields(decoded);
+        write_early_static(" completed-register-count=");
+        write_early_dec_u64(completed_count as u64);
+        write_early_static(" nsr-before-vector=");
+        write_hex_vector6(nsr_before);
+        write_early_static(" nsr-after-vector=");
+        write_hex_vector6(nsr_after);
+        write_early_static(" man-after-vector=");
+        write_hex_vector6(man_after);
+        write_early_static(" man-writes-performed=");
+        write_bool(man_writes_performed);
+        write_early_static(" man-restore-write-performed=false touched-fields=");
+        if man_writes_performed {
+            write_early_static("MAN");
+        } else {
+            write_early_static("none");
+        }
+        write_rp1_ethernet_phy1_status_diagnostic_rejections(man_writes_performed);
+        write_early_static(" classification=");
+        write_early_static(classification);
+        write_early_static("\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_phy1_status_diagnostic_no_mdio_control")]
+pub fn run_rp1_ethernet_phy1_status_diagnostic_no_mdio_control() -> ! {
+    write_early_static("rpi5-rp1-ethernet-phy1-status-diagnostic-control: start\n");
+    write_early_static(
+        "rpi5-rp1-ethernet-phy1-status-diagnostic-control: no-mdio-no-ethernet-no-mmio-target-construction\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-ethernet-phy1-status-diagnostic-control");
+        write_rp1_ethernet_phy1_status_diagnostic_capture_nonce();
+        write_rp1_ethernet_phy1_status_diagnostic_common("no-mdio-no-ethernet-control");
+        write_early_static(" target=none controller=none compatible=none");
+        write_early_static(" phy-handle=none phy-node=none phy-address=none");
+        write_early_static(" observed-window-macb-mid-context-cpu-physical-target=not-constructed");
+        write_early_static(" observed-window-macb-mid-context-raw=withheld");
+        write_early_static(" ncr-observed-target=not-constructed");
+        write_early_static(" nsr-observed-target=not-constructed");
+        write_early_static(" man-observed-target=not-constructed");
+        write_early_static(" ncr-mpe-bit=withheld nsr-idle-bit=withheld man-data-bits=withheld");
+        write_early_static(" ncr-before=withheld ncr-mpe-precondition-met=false");
+        write_early_static(
+            " ncr-after=withheld ncr-write-performed=false phy-config-write-performed=false",
+        );
+        write_early_static(
+            " register-vector=withheld raw-bmcr=withheld raw-bmsr=withheld raw-physid1=withheld raw-physid2=withheld raw-anar=withheld raw-anlpar=withheld",
+        );
+        write_early_static(
+            " bmcr-valid=false bmsr-valid=false physid1-valid=false physid2-valid=false anar-valid=false anlpar-valid=false",
+        );
+        write_early_static(
+            " decoded-bmcr=withheld decoded-bmsr=withheld decoded-phy-id=withheld decoded-anar=withheld decoded-anlpar=withheld",
+        );
+        write_early_static(" completed-register-count=0");
+        write_early_static(
+            " nsr-before-vector=withheld nsr-after-vector=withheld man-after-vector=withheld",
+        );
+        write_early_static(" man-writes-performed=false");
+        write_early_static(" man-restore-write-performed=false touched-fields=none");
+        write_rp1_ethernet_phy1_status_diagnostic_rejections(false);
+        write_early_static(
+            " classification=no-mdio-no-ethernet-rp1-ethernet-phy1-status-diagnostic-control\n",
+        );
+        wait_uart10_empty_early_phase();
+    }
+}
+
 #[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate")]
 pub fn run_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate() -> ! {
     write_early_static(
@@ -17301,7 +17506,10 @@ fn poll_rp1_ethernet_mdio_phy_id_after_mpe_idle(nsr: usize, idle_bit: u32) -> bo
     false
 }
 
-#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_candidate")]
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_phy1_status_diagnostic_candidate"
+))]
 fn poll_rp1_ethernet_mdio_register_vector_idle(nsr: usize, idle_bit: u32) -> bool {
     let mut remaining = 1_000_000u32;
     while remaining != 0 {
@@ -17311,6 +17519,11 @@ fn poll_rp1_ethernet_mdio_register_vector_idle(nsr: usize, idle_bit: u32) -> boo
         remaining -= 1;
     }
     false
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_phy1_status_diagnostic_candidate")]
+fn poll_rp1_ethernet_phy1_status_diagnostic_idle(nsr: usize, idle_bit: u32) -> bool {
+    poll_rp1_ethernet_mdio_register_vector_idle(nsr, idle_bit)
 }
 
 #[cfg(any(
@@ -17548,6 +17761,171 @@ fn write_rp1_ethernet_mdio_register_vector_rejections(runtime_mdio_transaction: 
     write_early_static(" claims-ncr-write-permission=false claims-ncr-write-executed=false");
     write_early_static(" claims-phy-absence-from-all-ones=false");
     write_early_static(" claims-gpio32-phy-reset-ownership=false");
+    write_early_static(" claims-ethernet-ready=false claims-broad-mmio-ready=false");
+    write_early_static(" claims-interrupt-completion=false claims-dma-descriptor-ownership=false");
+    write_early_static(" claims-packet-io=false claims-networking=false claims-sockets=false");
+    write_early_static(" claims-ssh=false claims-phase-12-2=false claims-phase-transition=false");
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_phy1_status_diagnostic_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_phy1_status_diagnostic_no_mdio_control"
+))]
+fn write_rp1_ethernet_phy1_status_diagnostic_common(report_kind: &str) {
+    write_early_static(
+        " phy1-status-diagnostic-report-contract-id=phase12-rp1-ethernet-phy1-status-diagnostic-report-contract-v1",
+    );
+    write_early_static(" task-id=phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof-20260614");
+    write_early_static(
+        " source-contract-id=phase12-rp1-ethernet-mdio-register-vector-source-contract-v1",
+    );
+    write_early_static(
+        " accepted-frontier=rp1-ethernet-mdio-register-vector-phy1-visible-frontier-closed",
+    );
+    write_early_static(
+        " selected-discriminator=rp1-ethernet-phy1-status-decode-from-accepted-register-vector",
+    );
+    write_early_static(" report-kind=");
+    write_early_static(report_kind);
+    write_early_static(
+        " hardware-proof-boundary-classification=hardware-proof-limited-to-phy1-status-decode-control-output",
+    );
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_phy1_status_diagnostic_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_phy1_status_diagnostic_no_mdio_control"
+))]
+fn write_rp1_ethernet_phy1_status_diagnostic_capture_nonce() {
+    if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
+        if !nonce.is_empty() {
+            write_early_static(" capture-nonce=");
+            write_early_static(nonce);
+        }
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_phy1_status_diagnostic_candidate")]
+fn write_hex_vector6(values: [u32; 6]) {
+    write_early_hex_u64(values[0] as u64);
+    write_early_static(",");
+    write_early_hex_u64(values[1] as u64);
+    write_early_static(",");
+    write_early_hex_u64(values[2] as u64);
+    write_early_static(",");
+    write_early_hex_u64(values[3] as u64);
+    write_early_static(",");
+    write_early_hex_u64(values[4] as u64);
+    write_early_static(",");
+    write_early_hex_u64(values[5] as u64);
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_phy1_status_diagnostic_candidate")]
+fn write_rp1_ethernet_phy1_status_decoded_fields(
+    decoded: crate::rp1_ethernet::Rp1EthernetPhy1StatusDecode,
+) {
+    write_early_static(" bmcr-reset=");
+    write_bool(decoded.bmcr.reset);
+    write_early_static(" bmcr-loopback=");
+    write_bool(decoded.bmcr.loopback);
+    write_early_static(" bmcr-speed-select-lsb-100=");
+    write_bool(decoded.bmcr.speed_select_lsb_100);
+    write_early_static(" bmcr-speed-select-msb-1000=");
+    write_bool(decoded.bmcr.speed_select_msb_1000);
+    write_early_static(" bmcr-speed=");
+    write_early_static(decoded.bmcr.speed_label);
+    write_early_static(" bmcr-autoneg-enable=");
+    write_bool(decoded.bmcr.autoneg_enable);
+    write_early_static(" bmcr-power-down=");
+    write_bool(decoded.bmcr.power_down);
+    write_early_static(" bmcr-isolate=");
+    write_bool(decoded.bmcr.isolate);
+    write_early_static(" bmcr-restart-autoneg=");
+    write_bool(decoded.bmcr.restart_autoneg);
+    write_early_static(" bmcr-duplex-full=");
+    write_bool(decoded.bmcr.duplex_full);
+    write_early_static(" bmsr-link-status=");
+    write_bool(decoded.bmsr.link_status);
+    write_early_static(" bmsr-autoneg-complete=");
+    write_bool(decoded.bmsr.autoneg_complete);
+    write_early_static(" bmsr-autoneg-ability=");
+    write_bool(decoded.bmsr.autoneg_ability);
+    write_early_static(" bmsr-extended-status=");
+    write_bool(decoded.bmsr.extended_status);
+    write_early_static(" bmsr-extended-capability=");
+    write_bool(decoded.bmsr.extended_capability);
+    write_early_static(" bmsr-capabilities=");
+    write_bool(decoded.bmsr.capable_10_half);
+    write_early_static(",");
+    write_bool(decoded.bmsr.capable_10_full);
+    write_early_static(",");
+    write_bool(decoded.bmsr.capable_100base_x_half);
+    write_early_static(",");
+    write_bool(decoded.bmsr.capable_100base_x_full);
+    write_early_static(",");
+    write_bool(decoded.bmsr.capable_100base_t4);
+    write_early_static(" phy-id-oui=");
+    write_early_hex_u64(decoded.phy_id.oui as u64);
+    write_early_static(" phy-id-model=");
+    write_early_hex_u64(decoded.phy_id.model as u64);
+    write_early_static(" phy-id-revision=");
+    write_early_hex_u64(decoded.phy_id.revision as u64);
+    write_early_static(" anar-selector=");
+    write_early_dec_u64(decoded.anar.selector as u64);
+    write_early_static(" anar-10hd=");
+    write_bool(decoded.anar.capable_10_half);
+    write_early_static(" anar-10fd=");
+    write_bool(decoded.anar.capable_10_full);
+    write_early_static(" anar-100tx-hd=");
+    write_bool(decoded.anar.capable_100_tx_half);
+    write_early_static(" anar-100tx-fd=");
+    write_bool(decoded.anar.capable_100_tx_full);
+    write_early_static(" anar-100t4=");
+    write_bool(decoded.anar.capable_100_t4);
+    write_early_static(" anar-pause=");
+    write_bool(decoded.anar.pause);
+    write_early_static(" anar-asym-pause=");
+    write_bool(decoded.anar.asym_pause);
+    write_early_static(" anlpar-selector=");
+    write_early_dec_u64(decoded.anlpar.selector as u64);
+    write_early_static(" anlpar-10hd=");
+    write_bool(decoded.anlpar.capable_10_half);
+    write_early_static(" anlpar-10fd=");
+    write_bool(decoded.anlpar.capable_10_full);
+    write_early_static(" anlpar-100tx-hd=");
+    write_bool(decoded.anlpar.capable_100_tx_half);
+    write_early_static(" anlpar-100tx-fd=");
+    write_bool(decoded.anlpar.capable_100_tx_full);
+    write_early_static(" anlpar-100t4=");
+    write_bool(decoded.anlpar.capable_100_t4);
+    write_early_static(" anlpar-pause=");
+    write_bool(decoded.anlpar.pause);
+    write_early_static(" anlpar-asym-pause=");
+    write_bool(decoded.anlpar.asym_pause);
+    write_early_static(" anlpar-acknowledge=");
+    write_bool(decoded.anlpar.acknowledge);
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_phy1_status_diagnostic_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_phy1_status_diagnostic_no_mdio_control"
+))]
+fn write_rp1_ethernet_phy1_status_diagnostic_rejections(runtime_mdio_transaction: bool) {
+    write_early_static(
+        " allowed-classifications=mdio-phy1-status-diagnostic-visible,mdio-phy1-status-diagnostic-timeout,mdio-phy1-status-diagnostic-precondition-blocker,precise-staging-capture-blocker,no-mdio-no-ethernet-rp1-ethernet-phy1-status-diagnostic-control",
+    );
+    write_early_static(
+        " rejected-runtime-hardware-claims=ncr-write-permission-or-execution,phy-configuration-write,phy-reset-or-gpio32-action,autonegotiation-restart,link-forcing,broad-mdio-or-phy-ownership,ethernet-driver-readiness,interrupt-completion,dma-descriptor-rings-channel-ownership-or-transfer-completion,packet-io,networking,sockets,ssh,phase-12-2,phase-transition",
+    );
+    write_early_static(
+        " retained-risks=decoded-link-and-autoneg-bits-are-register-state-only,gpio32-and-eth-rst-n-remain-unowned,no-phy-config-packet-dma-interrupt-socket-ssh-or-phase-12-2-readiness",
+    );
+    write_early_static(" claims-runtime-mdio-transaction=");
+    write_bool(runtime_mdio_transaction);
+    write_early_static(" claims-mdio-phy-ownership=false claims-phy-config-write=false");
+    write_early_static(" claims-ncr-write-permission=false claims-ncr-write-executed=false");
+    write_early_static(" claims-phy-reset-or-gpio32-action=false");
+    write_early_static(" claims-autoneg-restart=false claims-link-forcing=false");
     write_early_static(" claims-ethernet-ready=false claims-broad-mmio-ready=false");
     write_early_static(" claims-interrupt-completion=false claims-dma-descriptor-ownership=false");
     write_early_static(" claims-packet-io=false claims-networking=false claims-sockets=false");
@@ -20264,6 +20642,8 @@ fn gpio14_ownership_preflight_classification(
     talos_boot_scenario = "rpi5_rp1_ethernet_mdio_mpe_enable_no_mdio_control",
     talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_no_mdio_control",
+    talos_boot_scenario = "rpi5_rp1_ethernet_phy1_status_diagnostic_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_phy1_status_diagnostic_no_mdio_control",
     talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_control",
     talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",

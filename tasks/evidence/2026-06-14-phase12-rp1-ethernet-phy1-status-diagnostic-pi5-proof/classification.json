@@ -1,0 +1,92 @@
+{
+  "task_id": "phase12-rp1-ethernet-phy1-status-diagnostic-pi5-proof-20260614",
+  "classification": "mdio-phy1-status-diagnostic-visible",
+  "evidence_levels": [
+    "static archive review",
+    "unit tests",
+    "image/archive inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "stable same-cursor TFTP delta",
+    "capture-chain-v4 replay",
+    "boot-staging identity gate",
+    "restore proof"
+  ],
+  "accepted_boundary": "visible corrected-target PHY1 status diagnostic decoded from the accepted Clause 22 register vector",
+  "not_accepted": [
+    "PHY configuration writes",
+    "PHY reset or GPIO32 action",
+    "autonegotiation restart",
+    "link forcing",
+    "broad MDIO or PHY ownership",
+    "Ethernet driver readiness",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "candidate": {
+    "run_label": "phy1-status-diagnostic-candidate-rerun-20260614T0400Z",
+    "capture_chain": "capture-chain-v4-ready",
+    "selected_tree_hash": "39eeabec22164e31bb0290f05b4985fc6392d38a8703ca6725693621739b84b6",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 54008,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "final_pre_restore_tree_hash": "39eeabec22164e31bb0290f05b4985fc6392d38a8703ca6725693621739b84b6",
+    "serial_freshness_ok": true,
+    "classification": "mdio-phy1-status-diagnostic-visible",
+    "raw_vector": {
+      "bmcr": "0x1000",
+      "bmsr": "0x7949",
+      "physid1": "0x600d",
+      "physid2": "0x84a2",
+      "anar": "0x01e1",
+      "anlpar": "0x0000"
+    },
+    "decoded": {
+      "bmcr_reset": false,
+      "bmcr_loopback": false,
+      "bmcr_speed": "10M",
+      "bmcr_autoneg_enable": true,
+      "bmsr_link_status": false,
+      "bmsr_autoneg_complete": false,
+      "bmsr_autoneg_ability": true,
+      "phy_id_oui": "0x180361",
+      "phy_id_model": "0x0a",
+      "phy_id_revision": "0x02",
+      "anar_selector": 1,
+      "anar_10hd": true,
+      "anar_10fd": true,
+      "anar_100tx_hd": true,
+      "anar_100tx_fd": true,
+      "anlpar_selector": 0,
+      "anlpar_acknowledge": false
+    }
+  },
+  "control": {
+    "run_label": "phy1-status-diagnostic-control-rerun-20260614T0400Z",
+    "capture_chain": "capture-chain-v4-ready",
+    "selected_tree_hash": "3afdd601766c459afd88c33eb92b716bc797c0c51fbba8744efe8a985799d16d",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 49736,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "final_pre_restore_tree_hash": "3afdd601766c459afd88c33eb92b716bc797c0c51fbba8744efe8a985799d16d",
+    "serial_freshness_ok": true,
+    "classification": "no-mdio-no-ethernet-rp1-ethernet-phy1-status-diagnostic-control",
+    "constructed_mdio_target": false,
+    "constructed_man_frame": false,
+    "runtime_mdio_transaction": false
+  },
+  "restore": {
+    "snapshot_name": "pre-phy1-status-diagnostic-20260614T0336Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "notes": [
+    "candidate-run-confused-overlap is retained as non-acceptance evidence only; the accepted classification uses the clean 20260614T0400Z candidate/control reruns.",
+    "GET / returned 404 during this lab window, so selected-tree identity is taken from /boot/files and guarded by same-power-cycle TFTP byte agreement plus final pre-restore identity."
+  ]
+}

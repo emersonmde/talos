@@ -1,0 +1,25 @@
+{
+  "action": "tftp logs",
+  "ok": true,
+  "tftp": {
+    "cursor_end": 4486556,
+    "cursor_start": 3437980,
+    "events": [
+      {
+        "bytes": null,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/pieeprom.sig",
+        "line": "Jun 14 03:54:31 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4",
+        "status": "not_found"
+      }
+    ],
+    "lines": [
+      "Jun 14 03:54:31 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for 10.42.1.4"
+    ],
+    "log": "/state/tftp.log",
+    "log_size": 4486556,
+    "tail_mode": true,
+    "truncated": true
+  }
+}

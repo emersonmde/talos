@@ -7947,6 +7947,158 @@ pub const RP1_ETHERNET_MDIO_REGISTER_VECTOR_SOURCE_EVIDENCE: &[&str] = &[
 ];
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetPhy1StatusRawVector {
+    pub bmcr: u16,
+    pub bmsr: u16,
+    pub physid1: u16,
+    pub physid2: u16,
+    pub anar: u16,
+    pub anlpar: u16,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetPhy1BmcrStatus {
+    pub reset: bool,
+    pub loopback: bool,
+    pub speed_select_lsb_100: bool,
+    pub autoneg_enable: bool,
+    pub power_down: bool,
+    pub isolate: bool,
+    pub restart_autoneg: bool,
+    pub duplex_full: bool,
+    pub collision_test: bool,
+    pub speed_select_msb_1000: bool,
+    pub speed_label: &'static str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetPhy1BmsrStatus {
+    pub capable_100base_t4: bool,
+    pub capable_100base_x_full: bool,
+    pub capable_100base_x_half: bool,
+    pub capable_10_full: bool,
+    pub capable_10_half: bool,
+    pub extended_status: bool,
+    pub autoneg_complete: bool,
+    pub remote_fault: bool,
+    pub autoneg_ability: bool,
+    pub link_status: bool,
+    pub jabber_detect: bool,
+    pub extended_capability: bool,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetPhy1IdStatus {
+    pub oui: u32,
+    pub model: u8,
+    pub revision: u8,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetPhy1AdvertisementStatus {
+    pub selector: u8,
+    pub capable_10_half: bool,
+    pub capable_10_full: bool,
+    pub capable_100_tx_half: bool,
+    pub capable_100_tx_full: bool,
+    pub capable_100_t4: bool,
+    pub pause: bool,
+    pub asym_pause: bool,
+    pub remote_fault: bool,
+    pub acknowledge: bool,
+    pub next_page: bool,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetPhy1StatusDecode {
+    pub raw: Rp1EthernetPhy1StatusRawVector,
+    pub bmcr: Rp1EthernetPhy1BmcrStatus,
+    pub bmsr: Rp1EthernetPhy1BmsrStatus,
+    pub phy_id: Rp1EthernetPhy1IdStatus,
+    pub anar: Rp1EthernetPhy1AdvertisementStatus,
+    pub anlpar: Rp1EthernetPhy1AdvertisementStatus,
+}
+
+pub const fn decode_rp1_ethernet_phy1_status(
+    raw: Rp1EthernetPhy1StatusRawVector,
+) -> Rp1EthernetPhy1StatusDecode {
+    Rp1EthernetPhy1StatusDecode {
+        raw,
+        bmcr: decode_rp1_ethernet_phy1_bmcr(raw.bmcr),
+        bmsr: decode_rp1_ethernet_phy1_bmsr(raw.bmsr),
+        phy_id: decode_rp1_ethernet_phy1_id(raw.physid1, raw.physid2),
+        anar: decode_rp1_ethernet_phy1_advertisement(raw.anar),
+        anlpar: decode_rp1_ethernet_phy1_advertisement(raw.anlpar),
+    }
+}
+
+pub const fn decode_rp1_ethernet_phy1_bmcr(raw: u16) -> Rp1EthernetPhy1BmcrStatus {
+    let speed_select_lsb_100 = raw & (1 << 13) != 0;
+    let speed_select_msb_1000 = raw & (1 << 6) != 0;
+    Rp1EthernetPhy1BmcrStatus {
+        reset: raw & (1 << 15) != 0,
+        loopback: raw & (1 << 14) != 0,
+        speed_select_lsb_100,
+        autoneg_enable: raw & (1 << 12) != 0,
+        power_down: raw & (1 << 11) != 0,
+        isolate: raw & (1 << 10) != 0,
+        restart_autoneg: raw & (1 << 9) != 0,
+        duplex_full: raw & (1 << 8) != 0,
+        collision_test: raw & (1 << 7) != 0,
+        speed_select_msb_1000,
+        speed_label: match (speed_select_msb_1000, speed_select_lsb_100) {
+            (false, false) => "10M",
+            (false, true) => "100M",
+            (true, false) => "1000M",
+            (true, true) => "reserved",
+        },
+    }
+}
+
+pub const fn decode_rp1_ethernet_phy1_bmsr(raw: u16) -> Rp1EthernetPhy1BmsrStatus {
+    Rp1EthernetPhy1BmsrStatus {
+        capable_100base_t4: raw & (1 << 15) != 0,
+        capable_100base_x_full: raw & (1 << 14) != 0,
+        capable_100base_x_half: raw & (1 << 13) != 0,
+        capable_10_full: raw & (1 << 12) != 0,
+        capable_10_half: raw & (1 << 11) != 0,
+        extended_status: raw & (1 << 8) != 0,
+        autoneg_complete: raw & (1 << 5) != 0,
+        remote_fault: raw & (1 << 4) != 0,
+        autoneg_ability: raw & (1 << 3) != 0,
+        link_status: raw & (1 << 2) != 0,
+        jabber_detect: raw & (1 << 1) != 0,
+        extended_capability: raw & 1 != 0,
+    }
+}
+
+pub const fn decode_rp1_ethernet_phy1_id(physid1: u16, physid2: u16) -> Rp1EthernetPhy1IdStatus {
+    Rp1EthernetPhy1IdStatus {
+        oui: ((physid1 as u32) << 6) | (((physid2 as u32) >> 10) & 0x3f),
+        model: ((physid2 >> 4) & 0x3f) as u8,
+        revision: (physid2 & 0x0f) as u8,
+    }
+}
+
+pub const fn decode_rp1_ethernet_phy1_advertisement(
+    raw: u16,
+) -> Rp1EthernetPhy1AdvertisementStatus {
+    Rp1EthernetPhy1AdvertisementStatus {
+        selector: (raw & 0x1f) as u8,
+        capable_10_half: raw & (1 << 5) != 0,
+        capable_10_full: raw & (1 << 6) != 0,
+        capable_100_tx_half: raw & (1 << 7) != 0,
+        capable_100_tx_full: raw & (1 << 8) != 0,
+        capable_100_t4: raw & (1 << 9) != 0,
+        pause: raw & (1 << 10) != 0,
+        asym_pause: raw & (1 << 11) != 0,
+        remote_fault: raw & (1 << 13) != 0,
+        acknowledge: raw & (1 << 14) != 0,
+        next_page: raw & (1 << 15) != 0,
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Rp1EthernetMdioRegisterVectorSourceContractEvidence {
     pub contract_id: &'static str,
     pub source_task_id: &'static str,
@@ -13275,5 +13427,56 @@ mod tests {
                 "phase-transition-claim"
             )
         );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_phy1_status_decodes_accepted_v4_vector() {
+        let decoded = decode_rp1_ethernet_phy1_status(Rp1EthernetPhy1StatusRawVector {
+            bmcr: 0x1000,
+            bmsr: 0x7949,
+            physid1: 0x600d,
+            physid2: 0x84a2,
+            anar: 0x01e1,
+            anlpar: 0x0000,
+        });
+
+        assert_eq!(decoded.bmcr.speed_label, "10M");
+        assert!(!decoded.bmcr.reset);
+        assert!(!decoded.bmcr.loopback);
+        assert!(decoded.bmcr.autoneg_enable);
+        assert!(!decoded.bmcr.power_down);
+        assert!(!decoded.bmcr.isolate);
+        assert!(!decoded.bmcr.restart_autoneg);
+        assert!(!decoded.bmcr.duplex_full);
+        assert!(!decoded.bmcr.speed_select_lsb_100);
+        assert!(!decoded.bmcr.speed_select_msb_1000);
+
+        assert!(decoded.bmsr.capable_100base_x_full);
+        assert!(decoded.bmsr.capable_100base_x_half);
+        assert!(decoded.bmsr.capable_10_full);
+        assert!(decoded.bmsr.capable_10_half);
+        assert!(decoded.bmsr.extended_status);
+        assert!(!decoded.bmsr.autoneg_complete);
+        assert!(decoded.bmsr.autoneg_ability);
+        assert!(!decoded.bmsr.link_status);
+        assert!(decoded.bmsr.extended_capability);
+
+        assert_eq!(decoded.phy_id.oui, 0x180361);
+        assert_eq!(decoded.phy_id.model, 0x0a);
+        assert_eq!(decoded.phy_id.revision, 0x02);
+
+        assert_eq!(decoded.anar.selector, 1);
+        assert!(decoded.anar.capable_10_half);
+        assert!(decoded.anar.capable_10_full);
+        assert!(decoded.anar.capable_100_tx_half);
+        assert!(decoded.anar.capable_100_tx_full);
+        assert!(!decoded.anar.capable_100_t4);
+        assert!(!decoded.anar.pause);
+        assert!(!decoded.anar.asym_pause);
+        assert_eq!(decoded.anlpar.selector, 0);
+        assert!(!decoded.anlpar.capable_10_half);
+        assert!(!decoded.anlpar.capable_10_full);
+        assert!(!decoded.anlpar.capable_100_tx_half);
+        assert!(!decoded.anlpar.capable_100_tx_full);
     }
 }
