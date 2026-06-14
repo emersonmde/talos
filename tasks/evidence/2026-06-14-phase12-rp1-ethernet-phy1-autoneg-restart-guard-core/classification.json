@@ -1,0 +1,79 @@
+{
+  "classification": "phy1-autoneg-restart-guard-core-accepted",
+  "status": "accepted",
+  "task_id": "phase12-rp1-ethernet-phy1-autoneg-restart-guard-core-20260614",
+  "source_contract_commit": "4d1fd92bfa1e0286fc9869a91a6448ae937fa061",
+  "evidence_level": [
+    "static source inspection",
+    "fmt/lint/typecheck/unit test gates",
+    "task-owned static validator"
+  ],
+  "candidate_guard": {
+    "scenario": "rpi5_rp1_ethernet_phy1_autoneg_restart_candidate",
+    "corrected_target": "Clause 22 PHY1 BMCR register 0x00 through corrected MAN path",
+    "bmcr_write_frame_prefix": "0x50820000",
+    "allowed_write_value": "pre_bmcr | 0x1000 | 0x0200",
+    "allowed_touched_fields": [
+      "BMCR_ANENABLE",
+      "BMCR_ANRESTART"
+    ],
+    "preconditions": [
+      "corrected NCR.MPE is set",
+      "pre-read BMCR is available",
+      "BMCR_ISOLATE is clear"
+    ],
+    "write_count": "exactly one guarded BMCR write",
+    "post_readback_fields": [
+      "post BMCR",
+      "post BMSR first",
+      "post BMSR second",
+      "post ANAR",
+      "post ANLPAR",
+      "passive MACB_NSR_LINK"
+    ],
+    "rejected_claims_recorded": true
+  },
+  "control_guard": {
+    "scenario": "rpi5_rp1_ethernet_phy1_autoneg_restart_no_mdio_control",
+    "mdio_man_target_constructed": false,
+    "macb_target_constructed": false,
+    "volatile_load_store": false,
+    "candidate_only_fields": "withheld",
+    "classification": "no-mdio-no-macb-phy1-autoneg-restart-control"
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "summary": "added candidate/control boot scenarios and dispatch for the future guarded PHY1 autoneg restart proof"
+    },
+    {
+      "disposition": "fixed",
+      "summary": "candidate report path preserves accepted PHY1/MACB frontier context and emits pre/post BMCR, double BMSR, ANAR, ANLPAR, passive MACB_NSR_LINK, touched fields, and rejected-claim booleans"
+    },
+    {
+      "disposition": "fixed",
+      "summary": "candidate permits only the corrected-target PHY1 BMCR write value pre_bmcr | BMCR_ANENABLE | BMCR_ANRESTART after MPE and BMCR_ISOLATE preconditions"
+    },
+    {
+      "disposition": "fixed",
+      "summary": "control uses the same report surface while constructing no MDIO/MAN/MACB target, performing no volatile load/store, and withholding candidate-only fields"
+    },
+    {
+      "disposition": "deferred",
+      "summary": "Pi 5 hardware proof, boot publication, lab mutation, hardwareTestLock acquisition, and runtime classification remain the next queued task"
+    },
+    {
+      "disposition": "not-an-issue",
+      "summary": "no docs/src architecture update was required because the accepted guard core does not change the documented Phase 12 frontier"
+    },
+    {
+      "disposition": "removed",
+      "summary": "no obsolete implementation or evidence was removed"
+    }
+  ],
+  "next_action": {
+    "selected_task": "phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof-20260614",
+    "mechanically_unblocked_after_acceptance": true
+  },
+  "commit": null
+}

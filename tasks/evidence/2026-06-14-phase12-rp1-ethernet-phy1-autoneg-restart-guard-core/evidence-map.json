@@ -1,0 +1,29 @@
+{
+  "task_id": "phase12-rp1-ethernet-phy1-autoneg-restart-guard-core-20260614",
+  "classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-guard-core/classification.json",
+  "task_record": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-guard-core.md",
+  "source_contract_task": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-source-contract.md",
+  "source_contract_commit": "4d1fd92bfa1e0286fc9869a91a6448ae937fa061",
+  "implementation": {
+    "boot_scenarios": "build.rs",
+    "dispatch": "src/main.rs",
+    "runtime_report_surface": "src/target/rpi5.rs"
+  },
+  "static_review": {
+    "validator": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-guard-core/validate-autoneg-restart-guard.sh",
+    "output": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-guard-core/static-review.json"
+  },
+  "validation_gates": {
+    "cargo_fmt": "passed: cargo fmt --all -- --check",
+    "cargo_test": "passed: cargo -Zjson-target-spec test --quiet",
+    "scenario_build_candidate": "passed: RUSTFLAGS='--cfg talos_target_rpi5_bcm2712 --cfg talos_boot_scenario=\"rpi5_rp1_ethernet_phy1_autoneg_restart_candidate\"' cargo -Zjson-target-spec build --quiet --target targets/aarch64-talos-rpi5-bcm2712.json",
+    "scenario_build_control": "passed: RUSTFLAGS='--cfg talos_target_rpi5_bcm2712 --cfg talos_boot_scenario=\"rpi5_rp1_ethernet_phy1_autoneg_restart_no_mdio_control\"' cargo -Zjson-target-spec build --quiet --target targets/aarch64-talos-rpi5-bcm2712.json",
+    "shell_syntax": "passed: sh -n validate-autoneg-restart-guard.sh",
+    "static_validator": "passed: static-review.json",
+    "jq": "passed: jq empty on task-owned JSON evidence",
+    "git_diff_check": "passed: git diff --check",
+    "git_diff_cached_check": "passed: git diff --cached --check",
+    "mdbook_build": "not-run: docs/src unchanged"
+  },
+  "commit": null
+}

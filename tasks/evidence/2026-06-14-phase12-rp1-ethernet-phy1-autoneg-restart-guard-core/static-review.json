@@ -1,0 +1,30 @@
+{
+  "classification": "phy1-autoneg-restart-guard-core-static-review-passed",
+  "evidence_level": "task-owned static source review",
+  "candidate": {
+    "scenario_registered": true,
+    "dispatch_registered": true,
+    "corrected_target": "Clause 22 PHY1 BMCR register 0x00 through MAN prefix 0x50820000",
+    "allowed_write_value": "pre_bmcr | BMCR_ANENABLE | BMCR_ANRESTART",
+    "allowed_write_bits": ["BMCR_ANENABLE", "BMCR_ANRESTART"],
+    "write_count": "exactly one guarded write after MPE and BMCR_ISOLATE preconditions",
+    "post_fields": [
+      "post-bmcr",
+      "post-bmsr-first",
+      "post-bmsr-second",
+      "post-anar",
+      "post-anlpar",
+      "passive-macb-nsr-link"
+    ],
+    "rejected_claims_recorded": true
+  },
+  "control": {
+    "scenario_registered": true,
+    "dispatch_registered": true,
+    "target_constructed": false,
+    "mdio_man_transactions": false,
+    "macb_access": false,
+    "candidate_only_fields": "withheld",
+    "classification": "no-mdio-no-macb-phy1-autoneg-restart-control"
+  }
+}
