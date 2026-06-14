@@ -9970,6 +9970,19 @@ PHY reset/GPIO32 action, autonegotiation restart, link forcing, broad MDIO/PHY
 ownership, Ethernet driver behavior, interrupts, DMA/descriptors, packet I/O,
 networking, sockets, SSH, Phase 12.2, or a phase transition.
 
+phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-closeout-20260614
+closes the accepted BMSR double-sample discriminator frontier as
+rp1-ethernet-phy1-bmsr-double-sample-link-readiness-frontier-closed. The closed
+frontier accepts only the read-only corrected-target PHY1 BMCR plus
+double-sampled BMSR register-state result under capture-chain-v4,
+boot-staging identity, same-power-cycle TFTP byte agreement, final
+pre-restore identity, serial freshness, evidence-consistency-ready, and
+restore evidence. No explicit queued mechanically objective follow-up exists
+after this closeout, so supervisor planning is required for the next bounded
+Phase 12.1 task; the closeout does not authorize PHY configuration,
+PHY reset/GPIO32 action, broad MDIO/PHY ownership, Ethernet behavior, packet
+I/O, networking, SSH, Phase 12.2, or a phase transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

@@ -1536,3 +1536,16 @@ link-not-ready discriminator; it does not accept PHY configuration writes,
 PHY reset/GPIO32 action, autonegotiation restart, link forcing, broad MDIO/PHY
 ownership, Ethernet driver behavior, interrupts, DMA/descriptors, packet I/O,
 networking, sockets, SSH, Phase 12.2, or a phase transition.
+
+phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-closeout-20260614
+closes the accepted BMSR double-sample discriminator frontier as
+rp1-ethernet-phy1-bmsr-double-sample-link-readiness-frontier-closed. The closed
+frontier accepts only the read-only corrected-target PHY1 BMCR plus
+double-sampled BMSR register-state result under capture-chain-v4,
+boot-staging identity, same-power-cycle TFTP byte agreement, final
+pre-restore identity, serial freshness, evidence-consistency-ready, and
+restore evidence. No explicit queued mechanically objective follow-up exists
+after this closeout, so supervisor planning is required for the next bounded
+Phase 12.1 task; the closeout does not authorize PHY configuration,
+PHY reset/GPIO32 action, broad MDIO/PHY ownership, Ethernet behavior, packet
+I/O, networking, SSH, Phase 12.2, or a phase transition.

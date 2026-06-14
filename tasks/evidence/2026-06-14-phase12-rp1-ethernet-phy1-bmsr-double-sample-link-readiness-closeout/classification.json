@@ -1,0 +1,52 @@
+{
+  "classification": "rp1-ethernet-phy1-bmsr-double-sample-link-readiness-frontier-closed",
+  "status": "accepted",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "capture-chain-v4 replay review",
+    "boot-staging identity gate review",
+    "evidence-consistency guard review",
+    "lab-controller API evidence review",
+    "serial hardware boot/output evidence review",
+    "stable same-cursor TFTP delta evidence review",
+    "restore evidence review"
+  ],
+  "proof_task": "phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-pi5-proof-20260614",
+  "proof_commit": "1ae90c65565b3dc19dadf7eccf2cedf448caa4d1",
+  "closed_frontier": "rp1-ethernet-phy1-bmsr-double-sample-link-readiness-frontier-closed",
+  "accepted_claims": [
+    "read-only corrected-target PHY1 BMCR plus double-sampled BMSR link-readiness discriminator",
+    "candidate classification mdio-phy1-bmsr-double-sample-link-not-ready",
+    "candidate BMCR 0x1000 with reset=false loopback=false autoneg-restart=false",
+    "candidate first BMSR 0x7949 and second BMSR 0x7949",
+    "second-sample BMSR_LSTATUS=false and BMSR_ANEGCOMPLETE=false",
+    "candidate/control capture-chain-v4 and boot-staging identity with same-power-cycle TFTP byte agreement, final pre-restore identity, serial freshness, evidence-consistency-ready, and restore proof",
+    "paired control used the same report path with no MDIO target, no MAN frame, and no volatile Ethernet MDIO load/store"
+  ],
+  "rejected_claims": [
+    "PHY configuration writes",
+    "PHY reset/GPIO32 action",
+    "autonegotiation restart",
+    "link forcing",
+    "MACB NSR_LINK proof",
+    "broad MDIO/PHY ownership",
+    "Ethernet driver behavior",
+    "interrupts",
+    "DMA/descriptors",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "link-not-ready register state does not prove a usable Ethernet link",
+    "link-not-ready register state does not prove PHY configuration, PHY reset/GPIO32 ownership, or broad MDIO/PHY ownership",
+    "link-not-ready register state does not prove MACB NSR_LINK behavior, Ethernet driver behavior, DMA/descriptors, packet I/O, networking, sockets, SSH, or Phase 12.2 readiness"
+  ],
+  "next_action": {
+    "planning_needed": true,
+    "reason": "The accepted double-sample proof closes the selected read-only link-readiness discriminator as link-not-ready. No explicit queued follow-up after closeout defines the next bounded Phase 12.1 task, acceptance criteria, and evidence gates."
+  }
+}
