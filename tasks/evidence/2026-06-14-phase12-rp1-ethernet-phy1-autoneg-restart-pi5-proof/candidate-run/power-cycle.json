@@ -1,0 +1,15 @@
+{
+  "action": "power cycle",
+  "ok": true,
+  "unifi": {
+    "guard": {
+      "mode": "fixed-port",
+      "poe_state": "UP",
+      "port_idx": 8,
+      "switch_id": "99dd2845-8d30-3258-b27f-43295483fa7d",
+      "switch_name": "Weathertop"
+    },
+    "response": {}
+  },
+  "note": "Retained from direct POST /power/cycle retry after bundle write left an empty power-cycle.json; serial/TFTP cursors were captured before this successful power cycle."
+}

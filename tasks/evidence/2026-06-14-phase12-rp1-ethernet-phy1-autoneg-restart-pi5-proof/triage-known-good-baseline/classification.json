@@ -1,0 +1,13 @@
+{
+  "classification": "known-good-baseline-no-fresh-tftp-after-power",
+  "pre_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "pre_fetch_bytes": 104136,
+  "final_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "final_fetch_bytes": 104136,
+  "tftp_stable": true,
+  "tftp_expected_fetch_count": 0,
+  "tftp_expected_fetch_byte_match_count": 0,
+  "tftp_fetch_bytes_seen": [],
+  "staging_identity_ok": false,
+  "note": "Known-good baseline power succeeded but stable same-cursor TFTP delta had no events; candidate rerun is not attempted because the control does not prove fresh TFTP capture is currently observable."
+}

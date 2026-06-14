@@ -1,0 +1,62 @@
+{
+  "task_id": "phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof-20260614",
+  "classification": "phy1-autoneg-restart-capture-staging-blocked",
+  "evidence": [
+    {
+      "level": "static archive/image review",
+      "label": "candidate static review",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/archive-review/candidate-static-review.txt"
+    },
+    {
+      "level": "static archive/image review",
+      "label": "control static review",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/archive-review/control-static-review.txt"
+    },
+    {
+      "level": "lab-controller API",
+      "label": "candidate selected /boot/files identity",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/candidate-run/preflight-identity.json"
+    },
+    {
+      "level": "serial hardware boot/output",
+      "label": "candidate serial window missing run-unique marker",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/candidate-run/serial-observe-window.json"
+    },
+    {
+      "level": "stable same-cursor TFTP delta",
+      "label": "candidate TFTP served baseline bytes",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/candidate-run/tftp-delta-stable-pre-restore.json"
+    },
+    {
+      "level": "capture-chain-v4 replay",
+      "label": "candidate capture-chain-v4 rejected",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/candidate-run/v4-check.json"
+    },
+    {
+      "level": "boot-staging identity replay",
+      "label": "candidate boot-staging rejected",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/candidate-run/boot-staging-identity.json"
+    },
+    {
+      "level": "lab-controller API",
+      "label": "known-good baseline no fresh TFTP after power",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/triage-known-good-baseline/classification.json"
+    },
+    {
+      "level": "restore proof",
+      "label": "post-restore baseline identity",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/candidate-run/post-restore-status.json"
+    }
+  ],
+  "validation": {
+    "cargo_fmt": "passed",
+    "cargo_test": "passed",
+    "sh_n": "passed",
+    "static_archive_review": "passed",
+    "candidate_hardware": "capture-staging-blocked",
+    "known_good_triage": "known-good-baseline-no-fresh-tftp-after-power",
+    "jq_empty": "passed",
+    "git_diff_check": "passed",
+    "mdbook": "not-run-docs-src-not-touched"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "action": "boot archive publish",
+  "ok": true,
+  "archive": {
+    "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/candidate-boot.tar.gz"
+  },
+  "note": "Candidate archive was published by POST /boot/archive during endpoint verification; HTTP status was retained as 200 and post-publish /boot/files identity is retained separately."
+}

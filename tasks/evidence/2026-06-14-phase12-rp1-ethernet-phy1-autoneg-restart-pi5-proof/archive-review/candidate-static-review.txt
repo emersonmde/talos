@@ -1,0 +1,8 @@
+candidate_archive=tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-pi5-proof/candidate-boot.tar.gz
+candidate_archive_sha256=f255179a044954dba9881995a47fe3eb6aacaca4e2d94f1884bead1ac0d442e9
+kernel_2712_sha256=1a1a00c14a2c91045f1941c284a375e7e70ac7866e465e7a7b34e827acf2650f
+kernel_2712_size=52360
+header_image_size=52360
+text_offset=0
+flags=12
+forbidden_phy1_autoneg_restart_candidate_runtime_strings_absent=true

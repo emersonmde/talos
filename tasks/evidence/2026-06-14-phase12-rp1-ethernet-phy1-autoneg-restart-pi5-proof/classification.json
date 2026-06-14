@@ -1,0 +1,70 @@
+{
+  "classification": "phy1-autoneg-restart-capture-staging-blocked",
+  "status": "accepted-precise-blocker",
+  "accepted_runtime_autoneg_restart_evidence": false,
+  "blocker": {
+    "first_failing_invariant": "same-power-cycle TFTP and final pre-restore identity did not match selected candidate tree",
+    "candidate_capture_chain_v4": "capture-staging-blocked",
+    "candidate_rejection_reasons": [
+      "run-unique-capture-nonce-not-present-after-power",
+      "required-marker-not-present-after-power",
+      "tftp-expected-fetch-byte-mismatch",
+      "final-pre-restore-selected-tree-mismatch",
+      "final-pre-restore-expected-fetch-byte-mismatch"
+    ],
+    "boot_staging_identity": "boot-staging-identity-blocked",
+    "boot_staging_rejection_reasons": [
+      "tftp-expected-fetch-byte-mismatch",
+      "final-pre-restore-selected-tree-mismatch",
+      "final-pre-restore-is-baseline",
+      "final-pre-restore-expected-fetch-byte-mismatch"
+    ],
+    "known_good_triage": "known-good-baseline-no-fresh-tftp-after-power"
+  },
+  "candidate": {
+    "selected_tree_hash": "6bf7d36a3f07426f450fd8a4def73b9cc8bbbc5b730ba50503fd0ee8f41609e1",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 52360,
+    "tftp_expected_fetch_count": 4,
+    "tftp_expected_fetch_byte_match_count": 0,
+    "tftp_expected_fetch_bytes_seen": [
+      104136,
+      104136,
+      104136,
+      104136
+    ],
+    "final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "serial_marker_occurrences": 0,
+    "serial_nonce_fresh": false
+  },
+  "known_good_baseline": {
+    "classification": "known-good-baseline-no-fresh-tftp-after-power",
+    "pre_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "pre_fetch_bytes": 104136,
+    "final_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "final_fetch_bytes": 104136,
+    "tftp_stable": true,
+    "tftp_expected_fetch_count": 0,
+    "tftp_expected_fetch_byte_match_count": 0,
+    "tftp_fetch_bytes_seen": [],
+    "staging_identity_ok": false,
+    "note": "Known-good baseline power succeeded but stable same-cursor TFTP delta had no events; candidate rerun is not attempted because the control does not prove fresh TFTP capture is currently observable."
+  },
+  "restore": {
+    "final_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "final_fetch_bytes": 104136
+  },
+  "rejected_claims": [
+    "runtime PHY1 BMCR write evidence",
+    "autonegotiation restart success or failure",
+    "link readiness",
+    "Ethernet readiness",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "next_task": "phase12-rp1-ethernet-phy1-autoneg-restart-closeout-20260614"
+}
