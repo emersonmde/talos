@@ -10133,6 +10133,30 @@ rejected autoneg/link/GPIO32/packet/networking/SSH/Phase 12.2 claims, and sets
 supervisor planning-needed because no explicit queued follow-up exists after
 this closeout.
 
+phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof-20260614
+accepts the guarded autoneg-restart v2 discriminator as
+phy1-autoneg-restart-write-observed-link-not-ready. Candidate/control
+capture-chain-v4, boot-staging identity, same-power-cycle TFTP byte agreement,
+fresh serial marker, final pre-restore selected-tree identity, and restore
+proof all passed. The candidate performed one corrected-target PHY1 BMCR write
+intent value 0x1200, then read post-BMCR 0x1000, post-BMSR 0x7949/0x7949,
+ANAR 0x01e1, ANLPAR 0x0000, and passive MACB_NSR_LINK=false. The paired
+control constructed no MDIO/MAN/MACB target and performed no volatile Ethernet
+access. This proof does not accept link readiness, Ethernet readiness,
+GPIO32/PHY reset ownership, packet I/O, networking, SSH, Phase 12.2, or a
+phase transition; the next bounded task is the v2 closeout.
+
+phase12-rp1-ethernet-phy1-autoneg-restart-v2-closeout-20260614 closes the v2
+frontier as
+rp1-ethernet-phy1-autoneg-restart-v2-link-not-ready-frontier-closed. The
+closeout accepts only capture-fresh candidate/control identity, one guarded
+PHY1 BMCR autoneg-restart write intent, and link-not-ready post-read PHY/MAC
+status. It selects
+phase12-rp1-ethernet-post-autoneg-status-source-checkpoint-20260614 as the next
+bounded source/evidence checkpoint, without accepting operator/cabling
+diagnosis, GPIO32/PHY reset ownership, packet I/O, networking, SSH, Phase 12.2,
+or a phase transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

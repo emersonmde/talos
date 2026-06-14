@@ -1,0 +1,125 @@
+{
+  "task_id": "phase12-rp1-ethernet-phy1-autoneg-restart-v2-closeout-20260614",
+  "classification": "rp1-ethernet-phy1-autoneg-restart-v2-link-not-ready-frontier-closed",
+  "proof_task": "phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof-20260614",
+  "proof_commit": "802f77112168f5d6ea181c222019c21357deb1c0",
+  "evidence": [
+    {
+      "label": "closeout task record",
+      "path": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-closeout.md",
+      "level": "task evidence"
+    },
+    {
+      "label": "closeout classification",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-closeout/classification.json",
+      "level": "task-owned JSON evidence"
+    },
+    {
+      "label": "closeout evidence map",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-closeout/evidence-map.json",
+      "level": "task-owned JSON evidence"
+    },
+    {
+      "label": "v2 proof task record",
+      "path": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof.md",
+      "level": "task evidence"
+    },
+    {
+      "label": "v2 proof classification",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/classification.json",
+      "level": "task-owned JSON evidence"
+    },
+    {
+      "label": "v2 proof capture summary",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/capture-summary.json",
+      "level": "task-owned JSON evidence"
+    },
+    {
+      "label": "v2 proof evidence map",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/evidence-map.json",
+      "level": "task-owned JSON evidence"
+    },
+    {
+      "label": "candidate archive static review",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/archive-review/candidate-static-review.txt",
+      "level": "static archive/image review"
+    },
+    {
+      "label": "control archive static review",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/archive-review/control-static-review.txt",
+      "level": "static archive/image review"
+    },
+    {
+      "label": "candidate capture-chain-v4 ready",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/candidate-run/v4-check.json",
+      "level": "capture-chain-v4 replay"
+    },
+    {
+      "label": "candidate boot-staging identity ready",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/candidate-run/boot-staging-identity.json",
+      "level": "boot-staging identity replay"
+    },
+    {
+      "label": "candidate serial BMCR/autoneg discriminator output",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/candidate-run/serial-observe-window.json",
+      "level": "serial hardware boot/output"
+    },
+    {
+      "label": "candidate same-power-cycle TFTP delta",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/candidate-run/tftp-delta-stable-pre-restore.json",
+      "level": "stable same-cursor TFTP delta"
+    },
+    {
+      "label": "candidate final pre-restore identity",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/candidate-run/final-pre-restore-status.json",
+      "level": "lab-controller API"
+    },
+    {
+      "label": "control capture-chain-v4 ready",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/v4-check.json",
+      "level": "capture-chain-v4 replay"
+    },
+    {
+      "label": "control boot-staging identity ready",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/boot-staging-identity.json",
+      "level": "boot-staging identity replay"
+    },
+    {
+      "label": "control no-MDIO/no-MACB serial output",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/serial-observe-window.json",
+      "level": "serial hardware boot/output"
+    },
+    {
+      "label": "control same-power-cycle TFTP delta",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/tftp-delta-stable-pre-restore.json",
+      "level": "stable same-cursor TFTP delta"
+    },
+    {
+      "label": "control final pre-restore identity",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/control-run/final-pre-restore-status.json",
+      "level": "lab-controller API"
+    },
+    {
+      "label": "final restored lab status",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/final-lab-status.json",
+      "level": "restore proof"
+    }
+  ],
+  "accepted_claims": [
+    "capture-fresh candidate/control identity passed for the v2 autoneg-restart proof",
+    "candidate performed one guarded corrected-target PHY1 BMCR autoneg-restart write intent value 0x1200",
+    "candidate post-read PHY/MAC status remained link-not-ready",
+    "paired control used the same reporting path without MDIO/MAN/MACB target construction or volatile Ethernet access"
+  ],
+  "rejected_claims": [
+    "link readiness",
+    "Ethernet readiness",
+    "GPIO32/PHY reset ownership",
+    "packet I/O",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "selected_next_task": "phase12-rp1-ethernet-post-autoneg-status-source-checkpoint-20260614"
+}

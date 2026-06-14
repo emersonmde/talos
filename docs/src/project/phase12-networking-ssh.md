@@ -1713,3 +1713,32 @@ networking, sockets, SSH, Phase 12.2, or a phase transition. No explicit
 queued mechanically objective follow-up exists after this closeout, so
 supervisor planning is required before any fresh autoneg retry or broader
 Ethernet work.
+
+phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof-20260614
+accepts the guarded autoneg-restart v2 discriminator as
+phy1-autoneg-restart-write-observed-link-not-ready. The candidate selected tree
+c7e847e3ff587fc240ed4b493f42f393f7380c45f5c6b5573fe7c7e45db8f851 and paired
+control selected tree
+031da5edc1bb199f260358087e443def1e53fbb4fa1f33d212384d898aab5b56 passed
+capture-chain-v4, boot-staging identity, same-power-cycle TFTP byte agreement,
+fresh serial marker, final pre-restore selected-tree identity, and restore
+proof. The candidate reached the corrected-target PHY1 discriminator with
+NCR.MPE true, BMCR isolate clear, one BMCR write intent value 0x1200, post-BMCR
+0x1000, post-BMSR 0x7949/0x7949, ANAR 0x01e1, ANLPAR 0x0000, and passive
+MACB_NSR_LINK=false. The paired control constructed no MDIO/MAN/MACB target and
+performed no volatile Ethernet access. This does not accept link readiness,
+Ethernet readiness, GPIO32/PHY reset ownership, packet I/O, networking, SSH,
+Phase 12.2, or a phase transition; the next bounded task is the v2 closeout.
+
+phase12-rp1-ethernet-phy1-autoneg-restart-v2-closeout-20260614 closes the v2
+frontier as
+rp1-ethernet-phy1-autoneg-restart-v2-link-not-ready-frontier-closed. The
+closed frontier accepts capture-fresh candidate/control identity, one guarded
+corrected-target PHY1 BMCR autoneg-restart write intent, and link-not-ready
+post-read PHY/MAC status only. It preserves rejected link readiness, operator
+or cabling diagnosis, GPIO32/PHY reset ownership, broad PHY configuration,
+packet I/O, networking, SSH, Phase 12.2, and phase-transition claims. The
+selected next task is
+phase12-rp1-ethernet-post-autoneg-status-source-checkpoint-20260614, limited to
+choosing one future read-only status proof or recording why no such follow-up is
+safe.
