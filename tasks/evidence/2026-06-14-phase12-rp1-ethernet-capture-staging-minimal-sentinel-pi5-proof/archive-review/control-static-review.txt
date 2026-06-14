@@ -1,0 +1,8 @@
+control_archive=tasks/evidence/2026-06-14-phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof/control-archive.tar.gz
+control_archive_sha256=a34d1d741ec02ca1f2be19033b4dea4eaad9e99f6b8580deb33c7ac8ea27586c
+kernel_2712_sha256=19ce3177def05d6186f9120382ae9e64f56084d88c78925ab8bafce64010b43c
+kernel_2712_size=47832
+header_image_size=47832
+text_offset=0
+flags=12
+forbidden_staging_sentinel_control_runtime_strings_absent=true

@@ -1,0 +1,96 @@
+{
+  "contract_version": "pi5-capture-chain-v4",
+  "base_contracts": [
+    "pi5-capture-transaction-v2",
+    "pi5-capture-transaction-v3",
+    "pi5-capture-transaction-run-unique-v1"
+  ],
+  "run_label": "capture-minimal-sentinel-candidate-20260614T1436Z",
+  "report_kind": "candidate",
+  "decisive_rp1_hardware_classification_allowed": false,
+  "classification": "capture-staging-blocked",
+  "rejection_reasons": [
+    "tftp-expected-fetch-byte-mismatch",
+    "final-pre-restore-selected-tree-mismatch",
+    "final-pre-restore-expected-fetch-byte-mismatch"
+  ],
+  "endpoint_identity": {
+    "root_endpoint": {
+      "endpoint": "GET /",
+      "curl_exit": 0,
+      "http_code": 404,
+      "body_bytes": 55,
+      "usable_for_selected_tree_identity": false,
+      "selected_tree_identity_source": "/boot/files",
+      "fallback_used": true,
+      "fallback_reason": "root-endpoint-http-non-2xx"
+    },
+    "selected_tree_identity_source": "/boot/files",
+    "fallback_used": true,
+    "trust_boundary": {
+      "api_visible_boot_files_sufficient": false,
+      "requires_same_power_cycle_tftp_served_kernel_byte_agreement": true,
+      "requires_final_pre_restore_identity": true
+    }
+  },
+  "proof_run_identity": {
+    "selected_tree_hash": "e19e86c24df49e1a64a06fe1695a6f428326e1f15c2a118bb5386dd944f0aaf3",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 47840,
+    "tftp": {
+      "cursor_file": 4500238,
+      "delta_cursor_start": 4500238,
+      "delta_cursor_end": 4501589,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 0,
+      "expected_fetch_bytes_seen": [
+        104136,
+        104136
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": false,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 104136
+    },
+    "restore": {
+      "snapshot_name": "capture-minimal-sentinel-pre-20260614T1436Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "serial_capture": {
+    "capture_mode": "read",
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "cursor_file": 4194304,
+    "cursor_start": 4194304,
+    "cursor_end": 4194304,
+    "response_bytes": 135543,
+    "required_marker": "TALOS: rp1-ethernet-mdio-register-vector-staging-sentinel-candidate capture-nonce=capture-minimal-sentinel-candidate-20260614T1436Z",
+    "required_marker_occurrences": 83,
+    "required_marker_excerpt": "-mdio-no-ethernet-rp1-ethernet-mdio-register-vector-staging-sentinel-candidate\r\nTALOS: rp1-ethernet-mdio-register-vector-staging-sentinel-candidate capture-nonce=capture-minimal-sentinel-candidate-20260614T1436Z staging-sentinel-contract-id=phase12-rp1-ethernet-mdio-register-vector-staging-identity-sentinel-v1 selected-discriminator=rp1-ethernet-mdio-register-vector-st",
+    "nonce_token": "capture-nonce=capture-minimal-sentinel-candidate-20260614T1436Z",
+    "nonce_token_occurrences": 83,
+    "pre_power_nonce_occurrences": 0,
+    "empty_pre_power": true,
+    "nonce_fresh": true,
+    "serial_freshness_ok": true
+  },
+  "claim_boundary": {
+    "accepted_if_ready": "capture-chain identity/freshness only",
+    "rejected_runtime_claims": [
+      "live-gem-visibility",
+      "ethernet-driver-readiness",
+      "rp1-mmio-dma-programming",
+      "packet-io",
+      "networking",
+      "ssh",
+      "phase-transition"
+    ]
+  },
+  "rule": "missing /boot/files identity, same-power-cycle expected TFTP-served kernel bytes, final selected-tree identity, run-unique marker freshness, direct serial marker retention, or paired control marker prevents decisive RP1 hardware classification; API-visible /boot/files identity alone is not sufficient"
+}

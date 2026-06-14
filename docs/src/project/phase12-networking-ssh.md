@@ -1671,3 +1671,16 @@ fresh minimal sentinel task
 phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof-20260614, with
 no MDIO, MACB, PHY, autonegotiation, GPIO32, packet I/O, networking, SSH,
 Phase 12.2, or phase transition claims.
+
+phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof-20260614
+accepts current capture-staging freshness for a minimal no-MDIO/no-Ethernet
+candidate/control pair. The control selected tree
+9e3442962d40beff3b31668065df4f5d8ac37ee770fa3c4bba725d049bc78db3 with two
+matching 47832-byte TFTP fetches, and the candidate rerun selected tree
+520785f412ba93da8c25577e5f5e4635ffba02b2969fbf3e02a346e97e061799 with two
+matching 47848-byte TFTP fetches. Both passed capture-chain-v4 and the staging
+identity gate with fresh serial markers, final pre-restore selected-tree
+identity, and restore to baseline. This does not accept autonegotiation
+restart, BMCR writes, MDIO register vectors, MACB_NSR reads, GPIO32/PHY reset
+action, link readiness, packet I/O, networking, SSH, Phase 12.2, or a phase
+transition; the next bounded task is the capture-staging recovery closeout.

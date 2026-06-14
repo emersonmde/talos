@@ -1,0 +1,68 @@
+{
+  "kind": "candidate",
+  "label": "capture-minimal-sentinel-candidate-20260614T1436Z",
+  "nonce": "capture-minimal-sentinel-candidate-20260614T1436Z",
+  "marker": "TALOS: rp1-ethernet-mdio-register-vector-staging-sentinel-candidate capture-nonce=capture-minimal-sentinel-candidate-20260614T1436Z",
+  "disposition": "deferred-confounded-by-manual-restore-during-background-session",
+  "excluded_from_acceptance": true,
+  "v4": {
+    "classification": "capture-staging-blocked",
+    "rejection_reasons": [
+      "tftp-expected-fetch-byte-mismatch",
+      "final-pre-restore-selected-tree-mismatch",
+      "final-pre-restore-expected-fetch-byte-mismatch"
+    ],
+    "selected_tree_hash": "e19e86c24df49e1a64a06fe1695a6f428326e1f15c2a118bb5386dd944f0aaf3",
+    "expected_fetch_byte_count": 47840,
+    "tftp": {
+      "cursor_file": 4500238,
+      "delta_cursor_start": 4500238,
+      "delta_cursor_end": 4501589,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 0,
+      "expected_fetch_bytes_seen": [
+        104136,
+        104136
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": false,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 104136
+    },
+    "restore": {
+      "snapshot_name": "capture-minimal-sentinel-pre-20260614T1436Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "serial_capture": {
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+      "cursor_file": 4194304,
+      "cursor_start": 4194304,
+      "cursor_end": 4194304,
+      "response_bytes": 135543,
+      "required_marker": "TALOS: rp1-ethernet-mdio-register-vector-staging-sentinel-candidate capture-nonce=capture-minimal-sentinel-candidate-20260614T1436Z",
+      "required_marker_occurrences": 83,
+      "required_marker_excerpt": "-mdio-no-ethernet-rp1-ethernet-mdio-register-vector-staging-sentinel-candidate\r\nTALOS: rp1-ethernet-mdio-register-vector-staging-sentinel-candidate capture-nonce=capture-minimal-sentinel-candidate-20260614T1436Z staging-sentinel-contract-id=phase12-rp1-ethernet-mdio-register-vector-staging-identity-sentinel-v1 selected-discriminator=rp1-ethernet-mdio-register-vector-st",
+      "nonce_token": "capture-nonce=capture-minimal-sentinel-candidate-20260614T1436Z",
+      "nonce_token_occurrences": 83,
+      "pre_power_nonce_occurrences": 0,
+      "empty_pre_power": true,
+      "nonce_fresh": true,
+      "serial_freshness_ok": true
+    }
+  },
+  "gate": {
+    "classification": "selected-tree-identity-blocked",
+    "first_failing_invariant": "expected-fetch-byte-mismatch",
+    "rejection_reasons": [
+      "tftp-expected-fetch-byte-mismatch",
+      "final-pre-restore-selected-tree-mismatch",
+      "final-pre-restore-expected-fetch-byte-mismatch"
+    ]
+  }
+}

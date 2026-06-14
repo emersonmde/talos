@@ -1,0 +1,80 @@
+{
+  "contract_version": "pi5-staging-identity-gate-v1",
+  "source_contract_version": "pi5-capture-chain-v4",
+  "run_label": "capture-minimal-sentinel-candidate-rerun-20260614T1441Z",
+  "report_kind": "candidate",
+  "expected_label": "capture-minimal-sentinel-candidate-rerun-20260614T1441Z",
+  "staging_identity_ready": true,
+  "classification": "selected-tree-identity-ready",
+  "first_failing_rejection_reason": null,
+  "first_failing_invariant": null,
+  "capture_chain_v4": {
+    "classification": "capture-chain-v4-ready",
+    "first_failing_rejection_reason": null,
+    "rejection_reasons": [],
+    "agrees_with_gate_first_failure": true,
+    "agrees_with_gate_readiness": true
+  },
+  "rejection_reasons": [],
+  "selected": {
+    "tree_hash": "520785f412ba93da8c25577e5f5e4635ffba02b2969fbf3e02a346e97e061799",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 47848
+  },
+  "tftp": {
+    "cursor_file": 4502940,
+    "delta_cursor_start": 4502940,
+    "delta_cursor_end": 4504291,
+    "stable": true,
+    "event_count": 13,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "expected_fetch_bytes_seen": [
+      47848,
+      47848
+    ]
+  },
+  "final_pre_restore": {
+    "tree_hash": "520785f412ba93da8c25577e5f5e4635ffba02b2969fbf3e02a346e97e061799",
+    "effective_kernel": "kernel_2712.img",
+    "selected_tree_still_staged": true,
+    "expected_fetch_present": true,
+    "expected_fetch_bytes": 47848
+  },
+  "restore": {
+    "snapshot_name": "capture-minimal-sentinel-pre-20260614T1436Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "serial_freshness": {
+    "serial_freshness_ok": true,
+    "nonce_fresh": true,
+    "empty_pre_power": false,
+    "required_marker_occurrences": 83,
+    "nonce_token_occurrences": 83,
+    "pre_power_nonce_occurrences": 0
+  },
+  "evidence_consistency": {
+    "guard_supplied": false,
+    "classification": null
+  },
+  "trust_boundary": {
+    "api_visible_boot_files_sufficient": false,
+    "requires_same_power_cycle_tftp_served_kernel_byte_agreement": true,
+    "requires_final_pre_restore_identity": true,
+    "quarantine_reason": "lab API-visible selected-tree identity has diverged from actual dnsmasq-served TFTP bytes in retained MDIO register-vector evidence"
+  },
+  "claim_boundary": {
+    "accepted_if_ready": "staging identity durability and reporting-path freshness only",
+    "rejected_runtime_claims": [
+      "register-vector-man-data-values",
+      "broad-mdio-phy-ownership",
+      "phy-absence",
+      "ethernet-behavior",
+      "networking",
+      "ssh",
+      "phase-transition"
+    ]
+  },
+  "rule": "future hardware proof evidence is not decisive unless selected-tree identity survives same-power-cycle TFTP-served kernel byte/count checks, final pre-restore identity, restore proof, serial freshness, and evidence-consistency checks; API-visible /status or /boot/files identity alone is not sufficient"
+}

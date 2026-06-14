@@ -1,0 +1,1 @@
+tasks/evidence/2026-06-14-phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof/candidate-archive.tar.gz

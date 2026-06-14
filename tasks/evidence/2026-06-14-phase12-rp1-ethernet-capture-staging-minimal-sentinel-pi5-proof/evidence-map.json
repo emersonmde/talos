@@ -1,0 +1,37 @@
+{
+  "task_id": "phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof-20260614",
+  "evidence_dir": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof",
+  "classification": "capture-staging-minimal-sentinel-proof-accepted",
+  "key_artifacts": {
+    "classification": "classification.json",
+    "candidate_summary": "candidate-run/run-summary.json",
+    "control_summary": "control-run/run-summary.json",
+    "candidate_v4": "candidate-run/v4-check.json",
+    "control_v4": "control-run/v4-check.json",
+    "candidate_gate": "candidate-run/staging-identity-gate-output.json",
+    "control_gate": "control-run/staging-identity-gate-output.json",
+    "candidate_tftp_delta": "candidate-run/tftp-delta-stable-pre-restore.json",
+    "control_tftp_delta": "control-run/tftp-delta-stable-pre-restore.json",
+    "candidate_serial_window": "candidate-run/serial-observe-window.json",
+    "control_serial_window": "control-run/serial-observe-window.json",
+    "final_lab_status": "final-lab-status-before-release.json",
+    "confounded_aborted_candidate": "candidate-run-aborted-20260614T143813Z/"
+  },
+  "selected_next_task": "phase12-rp1-ethernet-capture-staging-recovery-closeout-20260614",
+  "acceptance_boundary": {
+    "accepted": "capture-staging selected-tree/TFTP/final-identity freshness for minimal no-MDIO candidate/control only",
+    "not_accepted": [
+      "autoneg restart",
+      "BMCR write",
+      "MDIO register vector",
+      "MACB_NSR read",
+      "GPIO32/PHY reset action",
+      "packet I/O",
+      "DMA/descriptors",
+      "networking",
+      "SSH",
+      "Phase 12.2",
+      "phase transition"
+    ]
+  }
+}

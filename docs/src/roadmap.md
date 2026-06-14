@@ -10096,6 +10096,17 @@ phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof-20260614.
 This does not accept runtime autonegotiation, link readiness, GPIO32/PHY reset
 ownership, packet I/O, networking, SSH, Phase 12.2, or a phase transition.
 
+phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof-20260614
+accepts current capture-staging freshness for one minimal no-MDIO/no-Ethernet
+candidate/control pair. The control path passed selected-tree identity with two
+matching 47832-byte TFTP fetches, and the candidate rerun passed with two
+matching 47848-byte TFTP fetches; both retained fresh serial markers, final
+pre-restore selected-tree identity, and restore evidence. The next bounded task
+is phase12-rp1-ethernet-capture-staging-recovery-closeout-20260614. This does
+not accept autonegotiation restart, BMCR writes, MDIO register vectors,
+MACB_NSR reads, GPIO32/PHY reset action, link readiness, packet I/O,
+networking, SSH, Phase 12.2, or a phase transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
