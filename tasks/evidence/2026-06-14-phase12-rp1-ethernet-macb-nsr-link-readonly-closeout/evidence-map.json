@@ -1,0 +1,82 @@
+{
+  "task_id": "phase12-rp1-ethernet-macb-nsr-link-readonly-closeout-20260614",
+  "classification": "rp1-ethernet-macb-nsr-link-readonly-frontier-closed",
+  "proof_task": "phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof-20260614",
+  "proof_commit": "53eb9f95e8c6b6dab81b89bfc189ef786283fc1e",
+  "evidence": [
+    {
+      "label": "closeout task record",
+      "path": "tasks/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-closeout.md",
+      "level": "task evidence"
+    },
+    {
+      "label": "closeout classification",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-closeout/classification.json",
+      "level": "task-owned JSON evidence"
+    },
+    {
+      "label": "closeout evidence map",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-closeout/evidence-map.json",
+      "level": "task-owned JSON evidence"
+    },
+    {
+      "label": "proof task record",
+      "path": "tasks/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof.md",
+      "level": "task evidence"
+    },
+    {
+      "label": "proof classification",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/classification.json",
+      "level": "task-owned JSON evidence"
+    },
+    {
+      "label": "proof evidence map",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/evidence-map.json",
+      "level": "task-owned JSON evidence"
+    },
+    {
+      "label": "proof capture summary",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/capture-summary.json",
+      "level": "task-owned JSON evidence"
+    },
+    {
+      "label": "candidate capture-chain-v4",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/candidate-run/v4-check.json",
+      "level": "capture-chain-v4 replay"
+    },
+    {
+      "label": "control capture-chain-v4",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/control-run/v4-check.json",
+      "level": "capture-chain-v4 replay"
+    },
+    {
+      "label": "candidate boot-staging identity",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/candidate-run/boot-staging-identity.json",
+      "level": "boot-staging identity replay"
+    },
+    {
+      "label": "control boot-staging identity",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/control-run/boot-staging-identity.json",
+      "level": "boot-staging identity replay"
+    },
+    {
+      "label": "evidence consistency guard",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/evidence-consistency-guard.json",
+      "level": "evidence-consistency guard"
+    },
+    {
+      "label": "final restored lab status",
+      "path": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof/final-lab-status.json",
+      "level": "restore proof"
+    }
+  ],
+  "accepted_claims": [
+    "read-only MACB_NSR bit-0 observation at 0x1c00100008",
+    "candidate classification macb-nsr-link-readonly-link-clear with MACB_NSR raw 0x6 and NSR_LINK=false",
+    "paired control proves the same report path with no MACB_NSR target and no Ethernet volatile load/store"
+  ],
+  "next_action": {
+    "planning_needed": true,
+    "reason": "Supervisor planning is required before any next bounded Phase 12.1 task."
+  }
+}

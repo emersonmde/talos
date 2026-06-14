@@ -10026,6 +10026,17 @@ MDIO/PHY access, PHY configuration writes, BMCR writes, autonegotiation
 restart, link forcing, PHY reset/GPIO32 action, DMA/descriptors, interrupts,
 packet I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
 
+phase12-rp1-ethernet-macb-nsr-link-readonly-closeout-20260614 closes the
+accepted MACB_NSR_LINK read-only frontier as
+rp1-ethernet-macb-nsr-link-readonly-frontier-closed. The closeout preserves
+the accepted MAC-side comparator result, the paired no-MMIO/no-Ethernet
+control, the PHY1 link-not-ready frontier, and the GPIO32 blocker context
+without accepting link recovery, Ethernet readiness, MACB writes, PHY
+configuration/reset, packet I/O, networking, sockets, SSH, Phase 12.2, or a
+phase transition. No explicit queued mechanically objective follow-up exists
+after this closeout, so supervisor planning is required for the next bounded
+Phase 12.1 task.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

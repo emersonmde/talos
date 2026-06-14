@@ -1,0 +1,54 @@
+{
+  "classification": "rp1-ethernet-macb-nsr-link-readonly-frontier-closed",
+  "status": "accepted",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "capture-chain-v4 replay review",
+    "boot-staging identity gate review",
+    "evidence-consistency guard review",
+    "lab-controller API evidence review",
+    "serial hardware boot/output evidence review",
+    "stable same-cursor TFTP delta evidence review",
+    "restore evidence review"
+  ],
+  "proof_task": "phase12-rp1-ethernet-macb-nsr-link-readonly-pi5-proof-20260614",
+  "proof_commit": "53eb9f95e8c6b6dab81b89bfc189ef786283fc1e",
+  "closed_frontier": "rp1-ethernet-macb-nsr-link-readonly-frontier-closed",
+  "accepted_claims": [
+    "read-only MACB_NSR bit-0 observation at 0x1c00100008",
+    "candidate classification macb-nsr-link-readonly-link-clear",
+    "candidate MACB_NSR raw 0x6 with NSR_LINK=false",
+    "candidate macb_read_performed=true and macb_write_performed=false",
+    "candidate/control capture-chain-v4 and boot-staging identity with same-power-cycle TFTP byte agreement, final pre-restore identity, serial freshness, evidence-consistency-ready, and restore proof",
+    "paired control used the same report path with no MACB_NSR target, no Ethernet volatile load/store, and withheld candidate-only target/raw/decode/result fields"
+  ],
+  "rejected_claims": [
+    "link recovery",
+    "Ethernet readiness",
+    "MACB writes",
+    "MDIO/PHY access",
+    "PHY configuration writes",
+    "BMCR writes",
+    "autonegotiation restart",
+    "link forcing",
+    "PHY reset/GPIO32 action",
+    "DMA/descriptors",
+    "interrupts",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "retained_risks": [
+    "MACB_NSR_LINK is only a MAC-side comparator at the selected instant",
+    "the accepted PHY1 BMSR link-not-ready frontier remains in force",
+    "GPIO32 reset and PHY configuration remain unaccepted",
+    "no packet DMA interrupt socket SSH or Phase 12.2 readiness is accepted"
+  ],
+  "next_action": {
+    "planning_needed": true,
+    "reason": "The accepted MACB_NSR_LINK proof closes the selected passive MAC-side comparator discriminator as link-clear. No explicit queued follow-up after closeout defines the next bounded Phase 12.1 task, acceptance criteria, and evidence gates."
+  }
+}

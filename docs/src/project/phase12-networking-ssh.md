@@ -1597,3 +1597,14 @@ instant; it does not accept link recovery, Ethernet readiness, MACB writes,
 MDIO/PHY access, PHY configuration writes, BMCR writes, autonegotiation
 restart, link forcing, PHY reset/GPIO32 action, DMA/descriptors, interrupts,
 packet I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
+
+phase12-rp1-ethernet-macb-nsr-link-readonly-closeout-20260614 closes the
+accepted MACB_NSR_LINK read-only frontier as
+rp1-ethernet-macb-nsr-link-readonly-frontier-closed. The closeout preserves
+the accepted MAC-side comparator result, the paired no-MMIO/no-Ethernet
+control, the PHY1 link-not-ready frontier, and the GPIO32 blocker context
+without accepting link recovery, Ethernet readiness, MACB writes, PHY
+configuration/reset, packet I/O, networking, sockets, SSH, Phase 12.2, or a
+phase transition. No explicit queued mechanically objective follow-up exists
+after this closeout, so supervisor planning is required for the next bounded
+Phase 12.1 task.
