@@ -1,0 +1,29 @@
+{
+  "task_id": "phase12-rp1-ethernet-phy1-autoneg-restart-source-contract-20260614",
+  "classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-source-contract/classification.json",
+  "task_record": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-source-contract.md",
+  "input_frontier": {
+    "mdio_register_vector_closeout": "tasks/2026-06-14-phase12-rp1-ethernet-mdio-register-vector-v4-closeout.md",
+    "mdio_register_vector_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-mdio-register-vector-v4-closeout/classification.json",
+    "bmsr_link_readiness_closeout": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-closeout.md",
+    "bmsr_link_readiness_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-closeout/classification.json",
+    "macb_nsr_link_closeout": "tasks/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-closeout.md",
+    "macb_nsr_link_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-closeout/classification.json",
+    "gpio32_write_restore_v2_closeout_classification": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout/classification.json",
+    "gpio32_event_clear_closeout_classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-proof-closeout/classification.json"
+  },
+  "source_references": {
+    "linux_mii_header": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-uapi-linux-mii.h",
+    "linux_phy_autoneg_restart_excerpt": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-source-contract/source/linux-v6.12-phy-autoneg-restart-excerpt.txt",
+    "linux_bmsr_double_sample_excerpt": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-link-readiness-source-contract/source/linux-v6.12-phy_device-genphy_update_link-excerpt.txt",
+    "phase12_doc": "docs/src/project/phase12-networking-ssh.md",
+    "roadmap": "docs/src/roadmap.md"
+  },
+  "selected_future_task_id": "phase12-rp1-ethernet-phy1-autoneg-restart-guard-core-20260614",
+  "evidence_level": [
+    "static source/docs/evidence inspection",
+    "rg/source reference capture",
+    "task-owned JSON evidence"
+  ],
+  "commit": null
+}

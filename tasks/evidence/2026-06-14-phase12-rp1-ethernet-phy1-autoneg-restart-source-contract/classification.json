@@ -1,0 +1,114 @@
+{
+  "classification": "rp1-ethernet-phy1-autoneg-restart-source-contract-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static source/docs/evidence inspection",
+    "rg/source reference capture",
+    "task-owned JSON evidence"
+  ],
+  "selected_contract": "phase12-rp1-ethernet-phy1-autoneg-restart-contract-v1",
+  "input_frontier": {
+    "mdio_register_vector_closeout_commit": "3d77fdd9e4d68e1cbbceaaa3ed8055900604752f",
+    "bmsr_link_readiness_closeout_commit": "18a8bbdd55cff8d57bd2262b770dc183c37f2ecd",
+    "macb_nsr_link_closeout_commit": "98210448192ece5514db66f8f766ea34e9d6e166",
+    "accepted_phy1_register_vector": {
+      "bmcr": "0x1000",
+      "bmsr_first": "0x7949",
+      "bmsr_second": "0x7949",
+      "anar": "0x01e1",
+      "anlpar": "0x0000",
+      "bmcr_autoneg_enable": true,
+      "bmcr_autoneg_restart": false,
+      "bmsr_link_status": false,
+      "bmsr_autoneg_complete": false
+    },
+    "accepted_macb_nsr": {
+      "raw": "0x00000006",
+      "nsr_link": false
+    },
+    "corrected_target_mdio_boundary": "accepted Clause 22 PHY1 MAN boundary only",
+    "gpio32_blockers": [
+      "gpio32-write-restore-v2-no-write",
+      "gpio32-event-clear-persistent-or-firmware-owned"
+    ]
+  },
+  "source_facts": {
+    "linux_mii_header": {
+      "mii_bmcr_register": "0x00",
+      "bmcr_anrestart": "0x0200",
+      "bmcr_anenable": "0x1000"
+    },
+    "linux_genphy_restart_aneg": "phy_modify(MII_BMCR, BMCR_ISOLATE, BMCR_ANENABLE | BMCR_ANRESTART)",
+    "linux_genphy_update_link": "BMCR_ANRESTART means autoneg is being started; BMSR is disregarded and link remains down until later status reads prove otherwise"
+  },
+  "future_candidate_contract": {
+    "operation_boundary": "corrected-target PHY1 Clause 22 MDIO/MAN only",
+    "preconditions": [
+      "pre-read BMCR is valid",
+      "BMCR_ANENABLE is already set or will be set by the guarded write",
+      "BMCR_ISOLATE is not set; this contract does not claim isolate recovery",
+      "no GPIO32/reset/MACB write ownership is required or claimed"
+    ],
+    "sequence": [
+      "pre-read BMCR",
+      "pre-read BMSR",
+      "pre-read ANAR",
+      "pre-read ANLPAR",
+      "perform exactly one guarded BMCR write setting BMCR_ANENABLE and BMCR_ANRESTART while preserving other pre-read BMCR bits",
+      "bounded post-readback of BMCR",
+      "bounded double-sampled BMSR post-read",
+      "bounded post-readback of ANAR",
+      "bounded post-readback of ANLPAR",
+      "passive MACB_NSR_LINK comparator read only after the BMCR restart/readback window"
+    ],
+    "paired_control": "same report surface, no MDIO/MAN/MACB target construction, no volatile load/store, and no candidate-only target/raw/decode/result-valid fields",
+    "restore_expectation": "future proof must leave the lab boot tree restored; no PHY reset or persistent PHY restore is claimed by this source contract"
+  },
+  "allowed_future_classifications": [
+    "phy1-autoneg-restart-link-ready",
+    "phy1-autoneg-restart-link-still-not-ready",
+    "phy1-autoneg-restart-physical-or-operator-precondition-blocker",
+    "phy1-autoneg-restart-precondition-blocker",
+    "phy1-autoneg-restart-capture-blocker",
+    "no-mdio-no-macb-phy1-autoneg-restart-control"
+  ],
+  "rejected_claims": [
+    "runtime BMCR write evidence",
+    "GPIO32/PHY reset ownership",
+    "MACB writes",
+    "link forcing",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "summary": "selected the next distinct recovery contract after passive PHY/MAC link-clear evidence: one guarded PHY1 BMCR autoneg-restart write plus bounded readback"
+    },
+    {
+      "disposition": "fixed",
+      "summary": "retained BMCR_ANENABLE/BMCR_ANRESTART source semantics and Linux link-update behavior that treats an in-progress restart as link down"
+    },
+    {
+      "disposition": "deferred",
+      "summary": "runtime guard implementation and Pi 5 proof remain separate queued tasks"
+    },
+    {
+      "disposition": "not-an-issue",
+      "summary": "no hardwareTestLock was acquired because this task is source/docs/evidence only"
+    },
+    {
+      "disposition": "removed",
+      "summary": "no obsolete implementation or evidence was removed"
+    }
+  ],
+  "next_action": {
+    "selected_task": "phase12-rp1-ethernet-phy1-autoneg-restart-guard-core-20260614",
+    "mechanically_unblocked_after_acceptance": true
+  },
+  "commit": null
+}

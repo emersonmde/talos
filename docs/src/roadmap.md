@@ -10037,6 +10037,20 @@ phase transition. No explicit queued mechanically objective follow-up exists
 after this closeout, so supervisor planning is required for the next bounded
 Phase 12.1 task.
 
+phase12-rp1-ethernet-phy1-autoneg-restart-source-contract-20260614 accepts
+the source-backed recovery contract for one future guarded corrected-target
+PHY1 BMCR autonegotiation restart. The contract preserves the accepted PHY1
+BMCR 0x1000, BMSR 0x7949/0x7949, ANAR 0x01e1, ANLPAR 0x0000, and MACB_NSR
+raw 0x6 / NSR_LINK=false frontier as input evidence only. Linux mii.h defines
+BMCR_ANENABLE as 0x1000 and BMCR_ANRESTART as 0x0200; Linux
+genphy_restart_aneg() sets BMCR_ANENABLE | BMCR_ANRESTART, and
+genphy_update_link() treats BMCR_ANRESTART as autoneg being started, so link
+must still be proven by later bounded status reads. The selected follow-up is
+phase12-rp1-ethernet-phy1-autoneg-restart-guard-core-20260614. This source
+contract does not accept runtime BMCR write evidence, GPIO32/PHY reset
+ownership, MACB writes, link forcing, packet I/O, networking, sockets, SSH,
+Phase 12.2, or a phase transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
