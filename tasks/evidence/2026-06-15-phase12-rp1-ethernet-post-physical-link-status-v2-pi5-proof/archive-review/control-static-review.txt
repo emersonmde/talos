@@ -1,0 +1,10 @@
+control_archive=tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-pi5-proof/control-boot.tar.gz
+control_archive_sha256=bf7657ff9e025ab61589e264f2c95e39f93955865a27f5ac1f885565f90ff1f1
+kernel_2712_sha256=c257592ab7a25f3c58852c076f4cbe6f37df7cfff1e160c00acaf495b841f7b8
+kernel_2712_bytes=51528
+kernel_header_text_offset=0
+kernel_header_image_size=51528
+kernel_header_flags=12
+required_marker=TALOS: rp1-ethernet-post-physical-link-status-control
+capture_nonce=postphys-v2-20260615T1610Z-control
+post_physical_link_status_control_static_review=passed

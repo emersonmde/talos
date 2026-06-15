@@ -10201,6 +10201,24 @@ MDIO/MAN/MACB targets and performs no volatile Ethernet access. The selected
 queued follow-up is
 phase12-rp1-ethernet-post-physical-link-status-v2-pi5-proof-20260615.
 
+phase12-rp1-ethernet-post-physical-link-status-v2-pi5-proof-20260615 accepts a
+serialized Pi 5 v2 status proof with candidate/control capture-chain-v4 and
+boot-staging identity both ready. The candidate retained two matching
+54488-byte `da591740/kernel_2712.img` TFTP fetches, fresh serial nonce output,
+final selected-tree identity, and restore proof, and classified the bounded
+status sample as post-physical-link-status-phy-not-ready: BMCR 0x1000, BMSR
+0x7949/0x7949, ANAR 0x01e1, ANLPAR 0x0000, MACB_NSR 0x00000006, BMSR link
+false, autoneg complete false, ANLPAR nonzero false, and MACB_NSR_LINK false.
+The candidate reports man-read-command-write-count=5, phy-configuration-write
+count=0, bmcr-write-count=0, macb-configuration-write-count=0, and no
+GPIO32/PHY reset action, link forcing, DMA/descriptors, packet I/O, networking,
+SSH, Phase 12.2, or phase transition. The paired control retained two matching
+51528-byte TFTP fetches and no-mdio-no-macb-post-physical-link-status-control
+with no MDIO/MAN/MACB target construction. The selected follow-up is the v2
+closeout; link-not-ready follow-up planning must remain source-grounded and
+must not ask Matthew to reconfirm the already accepted physical link
+precondition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
