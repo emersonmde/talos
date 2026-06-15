@@ -1,0 +1,100 @@
+{
+  "task_id": "phase12-rp1-ethernet-post-physical-link-status-man-read-accounting-core-20260615",
+  "status": "accepted",
+  "classification": "post-physical-link-status-man-read-accounting-contract-accepted",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "local report-surface implementation",
+    "static review-script validation",
+    "unit tests",
+    "task-owned JSON evidence"
+  ],
+  "accepted_contract_id": "phase12-rp1-ethernet-post-physical-link-status-contract-v2",
+  "selected_next_task": "phase12-rp1-ethernet-post-physical-link-status-v2-pi5-proof-20260615",
+  "allowed_man_read_commands": [
+    {
+      "label": "BMCR",
+      "phy": 1,
+      "register": "0x00",
+      "man_frame": "0x60820000"
+    },
+    {
+      "label": "BMSR-first",
+      "phy": 1,
+      "register": "0x01",
+      "man_frame": "0x60860000"
+    },
+    {
+      "label": "BMSR-second",
+      "phy": 1,
+      "register": "0x01",
+      "man_frame": "0x60860000"
+    },
+    {
+      "label": "ANAR",
+      "phy": 1,
+      "register": "0x04",
+      "man_frame": "0x60920000"
+    },
+    {
+      "label": "ANLPAR",
+      "phy": 1,
+      "register": "0x05",
+      "man_frame": "0x60960000"
+    }
+  ],
+  "candidate_accounting": {
+    "mdio_read_count": 5,
+    "man_read_command_write_count": 5,
+    "phy_configuration_write_count": 0,
+    "bmcr_write_count": 0,
+    "macb_read_count": 1,
+    "macb_configuration_write_count": 0,
+    "packet_io_performed": false
+  },
+  "static_archive_review": {
+    "candidate_archive": "target/tmp/post-physical-link-status-v2-candidate.tar.gz",
+    "candidate_archive_sha256": "6ddffa2cc1e7bed00185ade0b66445c0b39f21b187b5533f4b783c1e5e62bc74",
+    "candidate_kernel_2712_sha256": "468726bc68077ce62da35b677c8f961890f34299872fbbd674e51470aa7bd055",
+    "candidate_kernel_2712_bytes": 54392,
+    "control_archive": "target/tmp/post-physical-link-status-v2-control.tar.gz",
+    "control_archive_sha256": "2700fc93f5c74c2db8eb2ed8eeb4df3d4cd8fbc7c5d6fdcccc3414189c962604",
+    "control_kernel_2712_sha256": "fb9c6dff0a8046da0572e88ee07b0380f1a556c6b5960222930c7a0791134dda",
+    "control_kernel_2712_bytes": 51432
+  },
+  "control_accounting": {
+    "constructs_mdio_target": false,
+    "constructs_man_frames": false,
+    "constructs_macb_target": false,
+    "volatile_ethernet_access": false,
+    "man_read_command_write_count": 0,
+    "macb_read_count": 0
+  },
+  "rejected_claims": [
+    "phy-reset-ownership",
+    "gpio32-action",
+    "phy-configuration-write",
+    "bmcr-write",
+    "mac-configuration-write",
+    "autonegotiation-restart",
+    "link-forcing",
+    "packet-io",
+    "dma-descriptors",
+    "interrupt-completion",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "validation": {
+    "shell_syntax": "sh -n on post-physical link-status review scripts",
+    "rust_format": "cargo fmt --all -- --check",
+    "rust_tests": "cargo -Zjson-target-spec test --quiet",
+    "static_report_validators": "candidate/control archive review scripts",
+    "json": "jq empty on task-owned JSON evidence",
+    "diff": "git diff --check",
+    "docs": "mdbook build",
+    "staged_diff": "git diff --cached --check before commit"
+  }
+}

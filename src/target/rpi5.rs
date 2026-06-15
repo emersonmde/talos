@@ -17066,7 +17066,7 @@ pub fn run_rp1_ethernet_post_physical_link_status_candidate() -> ! {
         write_early_static("TALOS: rp1-ethernet-post-physical-link-status-candidate");
         write_rp1_ethernet_post_physical_link_status_capture_nonce();
         write_rp1_ethernet_post_physical_link_status_common("candidate");
-        write_early_static(" target=rp1-ethernet-post-physical-precondition-link-status");
+        write_early_static(" target=rp1-ethernet-post-physical-link-status-v2");
         write_early_static(" controller=rp1_eth compatible=raspberrypi,rp1-gem,cdns,macb");
         write_early_static(" phy-handle=phy1 phy-node=ethernet-phy@1 phy-address=1");
         write_early_static(" physical-link-precondition=confirmed");
@@ -17103,6 +17103,12 @@ pub fn run_rp1_ethernet_post_physical_link_status_candidate() -> ! {
         write_early_hex_u64(ncr_after as u64);
         write_early_static(
             " selected-reads=BMCR:0x00,BMSR-first:0x01,BMSR-second:0x01,ANAR:0x04,ANLPAR:0x05,MACB_NSR:0x0008",
+        );
+        write_early_static(
+            " selected-phy1-man-read-commands=BMCR:0x00:0x60820000,BMSR-first:0x01:0x60860000,BMSR-second:0x01:0x60860000,ANAR:0x04:0x60920000,ANLPAR:0x05:0x60960000",
+        );
+        write_early_static(
+            " man-read-command-constraints=clause22,phy1,read-op,selected-registers-only,ncr-mpe-precondition,nsr-idle-before-and-after",
         );
         write_early_static(" bmcr-raw=");
         write_early_hex_u64(bmcr_raw as u64);
@@ -17178,12 +17184,14 @@ pub fn run_rp1_ethernet_post_physical_link_status_candidate() -> ! {
         write_bool(macb_nsr_link);
         write_early_static(" mdio-read-count=");
         write_early_dec_u64(mdio_read_count as u64);
-        write_early_static(" mdio-write-count=0 macb-read-count=1 macb-write-count=0");
+        write_early_static(
+            " man-read-command-write-count=5 phy-configuration-write-count=0 bmcr-write-count=0 macb-read-count=1 macb-configuration-write-count=0",
+        );
         write_early_static(" bmcr-write-performed=false phy-config-write-performed=false");
         write_early_static(
             " phy-reset-or-gpio32-action=false link-forcing=false packet-io-performed=false",
         );
-        write_rp1_ethernet_post_physical_link_status_rejections(true, true);
+        write_rp1_ethernet_post_physical_link_status_rejections(true, true, true);
         write_early_static(" classification=");
         write_early_static(final_classification);
         write_early_static("\n");
@@ -17229,6 +17237,8 @@ pub fn run_rp1_ethernet_post_physical_link_status_no_mdio_macb_control() -> ! {
             " ncr-before=withheld ncr-mpe-precondition-met=false ncr-after=withheld",
         );
         write_early_static(" selected-reads=withheld");
+        write_early_static(" selected-phy1-man-read-commands=withheld");
+        write_early_static(" man-read-command-constraints=withheld");
         write_early_static(" bmcr-raw=withheld bmsr-first-raw=withheld bmsr-second-raw=withheld");
         write_early_static(" anar-raw=withheld anlpar-raw=withheld macb-nsr-raw=withheld");
         write_early_static(
@@ -17249,13 +17259,13 @@ pub fn run_rp1_ethernet_post_physical_link_status_no_mdio_macb_control() -> ! {
         );
         write_early_static(" anlpar-nonzero=withheld macb-nsr-link=withheld");
         write_early_static(
-            " mdio-read-count=0 mdio-write-count=0 macb-read-count=0 macb-write-count=0",
+            " mdio-read-count=0 man-read-command-write-count=0 phy-configuration-write-count=0 bmcr-write-count=0 macb-read-count=0 macb-configuration-write-count=0",
         );
         write_early_static(" bmcr-write-performed=false phy-config-write-performed=false");
         write_early_static(
             " phy-reset-or-gpio32-action=false link-forcing=false packet-io-performed=false",
         );
-        write_rp1_ethernet_post_physical_link_status_rejections(false, false);
+        write_rp1_ethernet_post_physical_link_status_rejections(false, false, false);
         write_early_static(" classification=no-mdio-no-macb-post-physical-link-status-control\n");
         wait_uart10_empty_early_phase();
     }
@@ -19193,24 +19203,25 @@ fn read_rp1_ethernet_post_physical_link_status_phy1_register(
 ))]
 fn write_rp1_ethernet_post_physical_link_status_common(report_kind: &str) {
     write_early_static(
-        " post-physical-link-status-contract-id=phase12-rp1-ethernet-post-physical-precondition-link-status-contract-v1",
+        " post-physical-link-status-contract-id=phase12-rp1-ethernet-post-physical-link-status-contract-v2",
     );
     write_early_static(
-        " task-id=phase12-rp1-ethernet-post-physical-precondition-link-status-pi5-proof-20260614",
+        " task-id=phase12-rp1-ethernet-post-physical-link-status-v2-pi5-proof-20260615",
     );
     write_early_static(
-        " source-contract-task-id=phase12-rp1-ethernet-post-physical-precondition-link-status-source-contract-20260614",
+        " source-contract-task-id=phase12-rp1-ethernet-post-physical-link-status-man-read-accounting-core-20260615",
+    );
+    write_early_static(
+        " prior-source-contract-task-id=phase12-rp1-ethernet-post-physical-precondition-link-status-source-contract-20260614",
     );
     write_early_static(
         " accepted-frontier=operator-confirmed-physical-link-and-v2-autoneg-status-frontier",
     );
-    write_early_static(
-        " selected-discriminator=rp1-ethernet-post-physical-precondition-link-status",
-    );
+    write_early_static(" selected-discriminator=rp1-ethernet-post-physical-link-status-v2");
     write_early_static(" report-kind=");
     write_early_static(report_kind);
     write_early_static(
-        " hardware-proof-boundary-classification=hardware-proof-limited-to-readonly-post-physical-link-status-output",
+        " hardware-proof-boundary-classification=hardware-proof-limited-to-bounded-clause22-man-read-command-and-passive-macb-nsr-status-output",
     );
 }
 
@@ -19234,23 +19245,29 @@ fn write_rp1_ethernet_post_physical_link_status_capture_nonce() {
 fn write_rp1_ethernet_post_physical_link_status_rejections(
     runtime_mdio_reads: bool,
     runtime_macb_read: bool,
+    runtime_man_read_command_writes: bool,
 ) {
+    write_early_static(
+        " bounded-runtime-hardware-claims=clause22-phy1-man-read-command-writes,passive-macb-nsr-read",
+    );
     write_early_static(
         " allowed-classifications=post-physical-link-status-link-ready,post-physical-link-status-phy-not-ready,post-physical-link-status-mac-not-ready,post-physical-link-status-phy-mac-disagreement,post-physical-link-status-capture-blocker,post-physical-link-status-source-precondition-blocker,no-mdio-no-macb-post-physical-link-status-control",
     );
     write_early_static(
-        " rejected-runtime-hardware-claims=phy-reset-ownership,gpio32-action,phy-configuration-write,bmcr-write,macb-write,autonegotiation-restart,link-forcing,packet-io,dma-descriptors,interrupt-completion,networking,sockets,ssh,phase-12-2,phase-transition",
+        " rejected-runtime-hardware-claims=phy-reset-ownership,gpio32-action,phy-configuration-write,bmcr-write,mac-configuration-write,autonegotiation-restart,link-forcing,packet-io,dma-descriptors,interrupt-completion,networking,sockets,ssh,phase-12-2,phase-transition",
     );
     write_early_static(
         " retained-risks=status-sample-is-only-phy-and-mac-register-state-at-selected-instant,gpio32-reset-and-phy-configuration-remain-unowned,no-packet-dma-interrupt-socket-ssh-or-phase-12-2-readiness",
     );
     write_early_static(" claims-runtime-mdio-reads=");
     write_bool(runtime_mdio_reads);
+    write_early_static(" claims-runtime-man-read-command-writes=");
+    write_bool(runtime_man_read_command_writes);
     write_early_static(" claims-runtime-macb-read=");
     write_bool(runtime_macb_read);
     write_early_static(" claims-mdio-phy-ownership=false claims-phy-config-write=false");
     write_early_static(" claims-bmcr-write=false claims-autoneg-restart=false");
-    write_early_static(" claims-macb-write=false claims-link-forcing=false");
+    write_early_static(" claims-mac-configuration-write=false claims-link-forcing=false");
     write_early_static(" claims-phy-reset-ownership=false claims-gpio32-action=false");
     write_early_static(" claims-ethernet-ready=false claims-packet-io=false");
     write_early_static(" claims-dma-descriptor-ownership=false claims-interrupt-completion=false");

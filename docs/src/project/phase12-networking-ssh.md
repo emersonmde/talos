@@ -191,6 +191,17 @@ required before any fresh link-status proof. This closeout still rejects PHY
 configuration, GPIO32/PHY reset action, packet I/O, networking, SSH, Phase
 12.2, and phase transition claims.
 
+phase12-rp1-ethernet-post-physical-link-status-man-read-accounting-core-20260615
+accepts the revised v2 report boundary for those PHY1 reads. The future
+candidate may issue only the five selected Clause 22 PHY1 MAN read-command
+stores for BMCR, BMSR first, BMSR second, ANAR, and ANLPAR, then passively read
+MACB_NSR. The report surface now records man-read-command-write-count separately
+from PHY configuration writes, BMCR writes, MAC configuration writes, GPIO32/PHY
+reset action, DMA, and packet I/O; the paired control still constructs no MDIO,
+MAN, or MACB target and performs no volatile Ethernet access. The selected
+queued follow-up is
+phase12-rp1-ethernet-post-physical-link-status-v2-pi5-proof-20260615.
+
 ## GEM MID Decode Discriminator Closeout
 
 phase12-rp1-ethernet-gem-mid-decode-discriminator-closeout-20260610 closes the
@@ -1796,5 +1807,15 @@ However, the source-contract gate failed because the candidate issued MACB MAN
 read-command transactions to perform the selected PHY1 reads while the accepted
 contract says no MAN writes and the report claims macb_write_count=0. The
 runtime phy-not-ready result is recorded but not accepted as a planning
-frontier until closeout reconciles the source-contract boundary. Packet I/O,
+frontier until a revised source-contract boundary is accepted. Packet I/O,
 networking, SSH, Phase 12.2, and phase transition remain rejected.
+
+phase12-rp1-ethernet-post-physical-link-status-man-read-accounting-core-20260615
+reconciles that boundary by accepting
+phase12-rp1-ethernet-post-physical-link-status-contract-v2. The v2 candidate
+surface distinguishes the five allowed MAN read-command stores from forbidden
+PHY configuration writes, BMCR writes, MAC configuration writes, GPIO32/PHY
+reset action, DMA, and packet I/O. The paired control still constructs no
+MDIO/MAN/MACB targets and performs no volatile Ethernet access. The selected
+queued follow-up is
+phase12-rp1-ethernet-post-physical-link-status-v2-pi5-proof-20260615.

@@ -1,0 +1,54 @@
+{
+  "task_id": "phase12-rp1-ethernet-post-physical-link-status-man-read-accounting-core-20260615",
+  "classification": "post-physical-link-status-man-read-accounting-contract-accepted",
+  "task_record": "tasks/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-man-read-accounting-core.md",
+  "classification_json": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-man-read-accounting-core/classification.json",
+  "prior_inputs": [
+    "tasks/2026-06-14-phase12-rp1-ethernet-post-physical-precondition-link-status-source-contract.md",
+    "tasks/2026-06-15-phase12-rp1-ethernet-post-physical-precondition-link-status-pi5-proof.md",
+    "tasks/2026-06-15-phase12-rp1-ethernet-post-physical-precondition-link-status-closeout.md",
+    "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-precondition-link-status-pi5-proof/classification.json",
+    "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-precondition-link-status-closeout/classification.json"
+  ],
+  "implementation": [
+    "src/target/rpi5.rs",
+    "scripts/rpi5-rp1-ethernet-post-physical-link-status-candidate-review.sh",
+    "scripts/rpi5-rp1-ethernet-post-physical-link-status-control-review.sh"
+  ],
+  "static_archive_review": {
+    "candidate_archive": "target/tmp/post-physical-link-status-v2-candidate.tar.gz",
+    "candidate_archive_sha256": "6ddffa2cc1e7bed00185ade0b66445c0b39f21b187b5533f4b783c1e5e62bc74",
+    "candidate_kernel_2712_sha256": "468726bc68077ce62da35b677c8f961890f34299872fbbd674e51470aa7bd055",
+    "candidate_kernel_2712_bytes": 54392,
+    "control_archive": "target/tmp/post-physical-link-status-v2-control.tar.gz",
+    "control_archive_sha256": "2700fc93f5c74c2db8eb2ed8eeb4df3d4cd8fbc7c5d6fdcccc3414189c962604",
+    "control_kernel_2712_sha256": "fb9c6dff0a8046da0572e88ee07b0380f1a556c6b5960222930c7a0791134dda",
+    "control_kernel_2712_bytes": 51432
+  },
+  "docs": [
+    "docs/src/roadmap.md",
+    "docs/src/project/phase12-networking-ssh.md"
+  ],
+  "accepted_boundary": {
+    "contract_id": "phase12-rp1-ethernet-post-physical-link-status-contract-v2",
+    "candidate_allowed_runtime_activity": [
+      "five bounded Clause 22 PHY1 MAN read-command writes",
+      "one passive MACB_NSR load"
+    ],
+    "candidate_forbidden_runtime_activity": [
+      "PHY configuration write",
+      "BMCR write",
+      "MAC configuration write",
+      "GPIO32/PHY reset action",
+      "link forcing",
+      "DMA/descriptors",
+      "packet I/O",
+      "networking",
+      "SSH",
+      "Phase 12.2",
+      "phase transition"
+    ],
+    "control_boundary": "no MDIO/MAN/MACB target construction and no volatile Ethernet access"
+  },
+  "next_action": "phase12-rp1-ethernet-post-physical-link-status-v2-pi5-proof-20260615"
+}
