@@ -1,0 +1,184 @@
+{
+  "task_id": "phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory-20260615",
+  "status": "accepted",
+  "classification": "post-physical-broadcom-phy-id-driver-source-inventory-bcm54213pe-source-contract-selected",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "retained public source excerpts with SHA-256 checksums",
+    "JSON evidence validation",
+    "diff checks",
+    "docs build"
+  ],
+  "phy_id_mapping": {
+    "physid1": "0x600d",
+    "physid2": "0x84a2",
+    "combined_id": "0x600d84a2",
+    "source_symbol": "PHY_ID_BCM54213PE",
+    "source_model": "Broadcom BCM54213PE",
+    "driver_table_mask": "0xffffffff",
+    "broadcom_oui_family": {
+      "mask": "0xfffffc00",
+      "value": "0x600d8400"
+    },
+    "mapping_status": "exact-source-backed-model-match"
+  },
+  "accepted_post_physical_frontier": {
+    "proof_task": "phase12-rp1-ethernet-post-physical-link-status-v2-pi5-proof-20260615",
+    "closeout_task": "phase12-rp1-ethernet-post-physical-link-status-v2-closeout-20260615",
+    "classification": "post-physical-link-status-phy-not-ready",
+    "status_sample": {
+      "bmcr": "0x1000",
+      "bmsr_first": "0x7949",
+      "bmsr_second": "0x7949",
+      "anar": "0x01e1",
+      "anlpar": "0x0000",
+      "macb_nsr": "0x00000006",
+      "bmsr_link_status": false,
+      "bmsr_autoneg_complete": false,
+      "anlpar_nonzero": false,
+      "macb_nsr_link": false
+    }
+  },
+  "driver_facts": {
+    "source_ref": "raspberrypi/linux rpi-6.12.y",
+    "driver_table": {
+      "path": "drivers/net/phy/broadcom.c",
+      "name": "Broadcom BCM54213PE",
+      "phy_id": "PHY_ID_BCM54213PE",
+      "phy_id_mask": "0xffffffff",
+      "config_init": "bcm54xx_config_init",
+      "config_intr": "bcm_phy_config_intr",
+      "handle_interrupt": "bcm_phy_handle_interrupt",
+      "suspend": "bcm54xx_suspend",
+      "resume": "bcm54xx_resume"
+    },
+    "config_path": [
+      "bcm54xx_config_init",
+      "case PHY_ID_BCM54213PE",
+      "bcm54213pe_config_init",
+      "bcm54210e_config_init",
+      "bcm54xx_config_clock_delay"
+    ],
+    "rpi5_source_context": {
+      "phy_mode": "rgmii-id",
+      "devicetree_quirks": [
+        "brcm,powerdown-enable",
+        "eee-broken-1000t",
+        "eee-broken-100tx"
+      ],
+      "reset_gpio": "RP1 GPIO32 active-low ETH_RST_N",
+      "reset_duration_ms": 5
+    },
+    "source_backed_behaviors": [
+      "RGMII RXC-RXD skew and GTXCLK internal delay are configured through Broadcom shadow/aux writes for rgmii-id mode.",
+      "brcm,powerdown-enable sets PHY_BRCM_AUTO_PWRDWN_ENABLE and feeds Broadcom SCR3/APD shadow adjustment.",
+      "EEE broken-mode properties are handled by Linux PHY core advertisement filtering.",
+      "Broadcom interrupts use ISR acknowledgement, IMR/ECR configuration, and phy_trigger_machine from the handler.",
+      "Suspend/resume includes BMCR power-down, IDDQ handling, genphy_resume, and Broadcom config reinitialization."
+    ]
+  },
+  "gpio32_blocker_reconciled": {
+    "checkpoint_task": "phase12-rp1-ethernet-post-physical-gpio32-reset-recovery-source-checkpoint-20260615",
+    "classification": "post-physical-gpio32-reset-recovery-source-checkpoint-blocked-persistent-event-state",
+    "event_bits_before_write_restore": "0x0ab00000",
+    "event_bits_after_irqreset_clear": "0x08800000",
+    "decision": "Exact PHY identification does not authorize GPIO32 reset action or weaken the no-write persistent-event-state blocker."
+  },
+  "candidate_discriminators": [
+    {
+      "name": "BCM54213PE config-init source/static contract",
+      "classification": "selected",
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-config-init-source-contract-20260615",
+      "reason": "Exact PHY model and Linux driver path provide a qualitatively distinct source inventory target, but only as a future source/static contract."
+    },
+    {
+      "name": "read-only Broadcom shadow/EEE/APD/RGMII-delay preflight",
+      "classification": "deferred",
+      "reason": "May be considered only after the selected source contract proves narrow read-only targets distinct from prior status samples."
+    },
+    {
+      "name": "GPIO32 reset recovery",
+      "classification": "blocked",
+      "reason": "Persistent-or-firmware-owned GPIO32 event state remains unresolved."
+    },
+    {
+      "name": "BMCR/BMSR/ANAR/ANLPAR/MACB_NSR sample retry",
+      "classification": "rejected",
+      "reason": "Repeats the accepted post-physical v2 status shape."
+    },
+    {
+      "name": "BMCR autoneg-restart retry",
+      "classification": "rejected",
+      "reason": "Repeats the accepted v2 link-not-ready recovery shape."
+    },
+    {
+      "name": "direct PHY/MAC configuration or packet/networking work",
+      "classification": "rejected",
+      "reason": "Outside this inventory scope and not source-contract accepted."
+    }
+  ],
+  "source_decision": {
+    "future_hardware_proof_selected": false,
+    "future_source_contract_selected": true,
+    "selected_source_contract_task_id": "phase12-rp1-ethernet-bcm54213pe-config-init-source-contract-20260615",
+    "planning_needed": true,
+    "planning_reason": "Supervisor must queue the selected BCM54213PE config-init source/static contract or choose an explicit alternate/pause; worker cannot create a task or authorize direct hardware from this inventory."
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Observed PHYSID1/PHYSID2 map exactly to Broadcom BCM54213PE."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "BCM54213PE source-backed Linux driver path includes RGMII delay, APD/powerdown, EEE, interrupt, and suspend/resume behavior."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Driver facts are reconciled with the accepted phy-not-ready status and GPIO32 persistent-event-state blocker."
+    },
+    {
+      "disposition": "blocked",
+      "finding": "GPIO32 reset recovery remains blocked by persistent or firmware-owned event state."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Any BCM54213PE register write or read-only preflight needs a later explicit source contract."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Accepted physical-link precondition remains accepted and is not re-asked."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No source, helper, task, or evidence files were removed."
+    }
+  ],
+  "rejected_claims": [
+    "link-readiness",
+    "gpio32-ownership",
+    "eth-rst-n-reset-assertion-or-deassertion",
+    "gpio32-event-clear-retry",
+    "gpio32-write-restore-retry-or-success",
+    "bmcr-write-or-autoneg-restart-retry",
+    "phy-configuration-write",
+    "macb-configuration-write",
+    "link-forcing",
+    "reset-controller-ownership",
+    "firmware-event-state-ownership",
+    "interrupt-delivery-completion-ownership",
+    "broad-mdio-phy-ownership",
+    "dma-descriptors",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "next_action": {
+    "planning_needed": true,
+    "selected_source_contract_task_id": "phase12-rp1-ethernet-bcm54213pe-config-init-source-contract-20260615",
+    "reason": "Supervisor must queue a source/static BCM54213PE config-init contract or explicit alternate/pause before any hardware, GPIO32, BMCR, PHY/MAC configuration, packet, networking, SSH, Phase 12.2, or phase-transition work."
+  }
+}

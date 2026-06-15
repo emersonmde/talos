@@ -1883,3 +1883,20 @@ distinct safe hardware discriminator; same-shaped status samples, GPIO32
 event-clear retry, GPIO32 write/restore retry, and BMCR autoneg-restart retry
 remain rejected. Supervisor planning is required for a new source-gathering
 task or explicit pause before any further Phase 12.1 hardware action.
+
+phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory-20260615 accepts
+the observed corrected-target PHY ID as an exact Broadcom BCM54213PE source
+match. PHYSID1 0x600d and PHYSID2 0x84a2 combine to 0x600d84a2; Raspberry Pi
+Linux rpi-6.12.y names that value PHY_ID_BCM54213PE, and the Broadcom driver
+table matches it as Broadcom BCM54213PE with phy_id_mask 0xffffffff. The
+driver inventory records source-backed BCM54213PE behavior for RGMII internal
+delay, APD/powerdown, EEE broken-mode handling, interrupt
+acknowledgement/configuration, and suspend/resume. This is qualitatively
+different from another passive status sample, GPIO32 event clear/write-restore
+attempt, or BMCR autoneg-restart retry, but it is still source/static evidence
+only. No hardware proof, GPIO32 action, BMCR write, PHY configuration, MACB
+configuration, packet I/O, networking, SSH, Phase 12.2, or phase transition is
+authorized. Supervisor planning is required to queue the selected
+source/static follow-up
+phase12-rp1-ethernet-bcm54213pe-config-init-source-contract-20260615 or an
+explicit alternate/pause.

@@ -1,0 +1,74 @@
+{
+  "task_id": "phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory-20260615",
+  "classification": "post-physical-broadcom-phy-id-driver-source-inventory-bcm54213pe-source-contract-selected",
+  "checkpoint": {
+    "task_record": "tasks/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory.md",
+    "classification": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory/evidence-map.json"
+  },
+  "new_source_excerpts": {
+    "brcmphy_ids_rgmii_apd": {
+      "source_url": "https://github.com/raspberrypi/linux/blob/rpi-6.12.y/include/linux/brcmphy.h",
+      "ref": "rpi-6.12.y",
+      "path": "include/linux/brcmphy.h",
+      "retained_excerpt": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory/source/linux-rpi-6.12-brcmphy-id-rgmii-apd-excerpt.txt",
+      "sha256": "3dad7039fc1094d87f9a2983ae35f20686c0223f5da40ac75e15d093993879fa"
+    },
+    "broadcom_bcm54213pe_driver": {
+      "source_url": "https://github.com/raspberrypi/linux/blob/rpi-6.12.y/drivers/net/phy/broadcom.c",
+      "ref": "rpi-6.12.y",
+      "path": "drivers/net/phy/broadcom.c",
+      "retained_excerpt": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory/source/linux-rpi-6.12-broadcom-bcm54213pe-driver-excerpt.txt",
+      "sha256": "20f73b9a856ce6fcef8f14432797696993a70bdc3706402b922b7a6cbef34ce6"
+    },
+    "bcm_phy_lib_interrupt_apd_eee": {
+      "source_url": "https://github.com/raspberrypi/linux/blob/rpi-6.12.y/drivers/net/phy/bcm-phy-lib.c",
+      "ref": "rpi-6.12.y",
+      "path": "drivers/net/phy/bcm-phy-lib.c",
+      "retained_excerpt": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory/source/linux-rpi-6.12-bcm-phy-lib-interrupt-apd-eee-excerpt.txt",
+      "sha256": "6081b1d5396d41a9ec4d87ded1734452f4bba83a9e17c01e6ade3cdc94a7950c"
+    },
+    "phy_device_eee_delay": {
+      "source_url": "https://github.com/raspberrypi/linux/blob/rpi-6.12.y/drivers/net/phy/phy_device.c",
+      "ref": "rpi-6.12.y",
+      "path": "drivers/net/phy/phy_device.c",
+      "retained_excerpt": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory/source/linux-rpi-6.12-phy-device-eee-delay-excerpt.txt",
+      "sha256": "a8f656ebde249e84c1cb43b897051c88c27d8902e20eb9ce56ca595b6261791e"
+    },
+    "sha256sums": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory/source/sha256sums.txt"
+  },
+  "inputs": {
+    "phy_power_strap_checkpoint_task": "tasks/2026-06-15-phase12-rp1-ethernet-phy-power-strap-source-checkpoint.md",
+    "phy_power_strap_checkpoint_classification": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-phy-power-strap-source-checkpoint/classification.json",
+    "post_physical_v2_closeout_task": "tasks/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-closeout.md",
+    "post_physical_v2_closeout_classification": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-closeout/classification.json",
+    "gpio32_reset_recovery_checkpoint_task": "tasks/2026-06-15-phase12-rp1-ethernet-post-physical-gpio32-reset-recovery-source-checkpoint.md",
+    "gpio32_reset_recovery_checkpoint_classification": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-gpio32-reset-recovery-source-checkpoint/classification.json",
+    "phy1_status_closeout_task": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-closeout.md",
+    "bmsr_double_sample_closeout_task": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-closeout.md",
+    "macb_nsr_link_closeout_task": "tasks/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-closeout.md",
+    "autoneg_restart_v2_closeout_task": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-closeout.md",
+    "retained_rpi5_dts": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-bcm2712-rpi-5-b.dts",
+    "retained_rp1_dtsi": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1.dtsi",
+    "retained_macb_source": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-macb_main.c"
+  },
+  "docs": {
+    "phase12": "docs/src/project/phase12-networking-ssh.md",
+    "roadmap": "docs/src/roadmap.md"
+  },
+  "validation": {
+    "json": [
+      "tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory/classification.json",
+      "tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory/evidence-map.json"
+    ],
+    "source_checksums": "sha256sum -c tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory/source/sha256sums.txt",
+    "diff_check": "git diff --check",
+    "docs": "mdbook build",
+    "staged_diff_check": "git diff --cached --check before commit"
+  },
+  "next_action": {
+    "planning_needed": true,
+    "selected_source_contract_task_id": "phase12-rp1-ethernet-bcm54213pe-config-init-source-contract-20260615",
+    "hardware_authorized": false
+  }
+}

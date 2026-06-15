@@ -1,0 +1,4 @@
+6081b1d5396d41a9ec4d87ded1734452f4bba83a9e17c01e6ade3cdc94a7950c  tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory/source/linux-rpi-6.12-bcm-phy-lib-interrupt-apd-eee-excerpt.txt
+3dad7039fc1094d87f9a2983ae35f20686c0223f5da40ac75e15d093993879fa  tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory/source/linux-rpi-6.12-brcmphy-id-rgmii-apd-excerpt.txt
+20f73b9a856ce6fcef8f14432797696993a70bdc3706402b922b7a6cbef34ce6  tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory/source/linux-rpi-6.12-broadcom-bcm54213pe-driver-excerpt.txt
+a8f656ebde249e84c1cb43b897051c88c27d8902e20eb9ce56ca595b6261791e  tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory/source/linux-rpi-6.12-phy-device-eee-delay-excerpt.txt

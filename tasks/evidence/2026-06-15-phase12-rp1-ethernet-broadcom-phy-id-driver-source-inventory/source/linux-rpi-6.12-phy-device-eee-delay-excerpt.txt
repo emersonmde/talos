@@ -1,0 +1,131 @@
+Source: https://github.com/raspberrypi/linux/blob/rpi-6.12.y/drivers/net/phy/phy_device.c
+Ref: rpi-6.12.y
+Path: drivers/net/phy/phy_device.c
+Sections: EEE broken-mode advertisement handling and phy_get_internal_delay behavior.
+
+ * genphy_config_eee_advert - disable unwanted eee mode advertisement
+ * @phydev: target phy_device struct
+ *
+ * Description: Writes MDIO_AN_EEE_ADV after disabling unsupported energy
+ *   efficent ethernet modes. Returns 0 if the PHY's advertisement hasn't
+ *   changed, and 1 if it has changed.
+ */
+int genphy_config_eee_advert(struct phy_device *phydev)
+{
+	int err;
+
+	/* Nothing to disable */
+	if (!phydev->eee_broken_modes)
+		return 0;
+
+	err = phy_modify_mmd_changed(phydev, MDIO_MMD_AN, MDIO_AN_EEE_ADV,
+				     phydev->eee_broken_modes, 0);
+	/* If the call failed, we assume that EEE is not supported */
+	return err < 0 ? 0 : err;
+}
+EXPORT_SYMBOL(genphy_config_eee_advert);
+static int phy_get_int_delay_property(struct device *dev, const char *name)
+{
+	s32 int_delay;
+	int ret;
+
+	ret = device_property_read_u32(dev, name, &int_delay);
+	if (ret)
+		return ret;
+
+	return int_delay;
+}
+#else
+static int phy_get_int_delay_property(struct device *dev, const char *name)
+{
+	return -EINVAL;
+}
+#endif
+
+/**
+ * phy_get_internal_delay - returns the index of the internal delay
+ * @phydev: phy_device struct
+ * @dev: pointer to the devices device struct
+ * @delay_values: array of delays the PHY supports
+ * @size: the size of the delay array
+ * @is_rx: boolean to indicate to get the rx internal delay
+ *
+ * Returns the index within the array of internal delay passed in.
+ * If the device property is not present then the interface type is checked
+ * if the interface defines use of internal delay then a 1 is returned otherwise
+ * a 0 is returned.
+ * The array must be in ascending order. If PHY does not have an ascending order
+ * array then size = 0 and the value of the delay property is returned.
+ * Return -EINVAL if the delay is invalid or cannot be found.
+ */
+s32 phy_get_internal_delay(struct phy_device *phydev, struct device *dev,
+			   const int *delay_values, int size, bool is_rx)
+{
+	s32 delay;
+	int i;
+
+	if (is_rx) {
+		delay = phy_get_int_delay_property(dev, "rx-internal-delay-ps");
+		if (delay < 0 && size == 0) {
+			if (phydev->interface == PHY_INTERFACE_MODE_RGMII_ID ||
+			    phydev->interface == PHY_INTERFACE_MODE_RGMII_RXID)
+				return 1;
+			else
+				return 0;
+		}
+
+	} else {
+		delay = phy_get_int_delay_property(dev, "tx-internal-delay-ps");
+		if (delay < 0 && size == 0) {
+			if (phydev->interface == PHY_INTERFACE_MODE_RGMII_ID ||
+			    phydev->interface == PHY_INTERFACE_MODE_RGMII_TXID)
+				return 1;
+			else
+				return 0;
+		}
+	}
+
+	if (delay < 0)
+		return delay;
+
+	if (size == 0)
+		return delay;
+
+	if (delay < delay_values[0] || delay > delay_values[size - 1]) {
+		phydev_err(phydev, "Delay %d is out of range\n", delay);
+		return -EINVAL;
+	}
+
+	if (delay == delay_values[0])
+		return 0;
+
+	for (i = 1; i < size; i++) {
+		if (delay == delay_values[i])
+			return i;
+
+		/* Find an approximate index by looking up the table */
+		if (delay > delay_values[i - 1] &&
+		    delay < delay_values[i]) {
+			if (delay - delay_values[i - 1] <
+			    delay_values[i] - delay)
+				return i - 1;
+			else
+				return i;
+		}
+	}
+
+	phydev_err(phydev, "error finding internal delay index for %d\n",
+		   delay);
+
+	return -EINVAL;
+}
+EXPORT_SYMBOL(phy_get_internal_delay);
+
+	/* Get the EEE modes we want to prohibit. We will ask
+	 * the PHY stop advertising these mode later on
+	 */
+	of_set_phy_eee_broken(phydev);
+
+	/* The Pause Frame bits indicate that the PHY can support passing
+	 * pause frames. During autonegotiation, the PHYs will determine if
+	 * they should allow pause frames to pass.  The MAC driver should then

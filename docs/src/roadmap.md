@@ -10253,6 +10253,18 @@ No further hardware proof is selected; supervisor planning is required for a
 new source-gathering task with explicit evidence requirements or an explicit
 pause before packet I/O, networking, SSH, Phase 12.2, or phase transition work.
 
+phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory-20260615 accepts
+post-physical-broadcom-phy-id-driver-source-inventory-bcm54213pe-source-contract-selected.
+The observed PHYSID1 0x600d / PHYSID2 0x84a2 combine to 0x600d84a2, which
+Raspberry Pi Linux rpi-6.12.y maps exactly to Broadcom BCM54213PE with driver
+table mask 0xffffffff. The inventory records BCM54213PE source-backed RGMII
+delay, APD/powerdown, EEE broken-mode, interrupt, and suspend/resume behavior,
+but it authorizes no hardware, GPIO32, BMCR, PHY/MACB configuration, packet,
+networking, SSH, Phase 12.2, or phase-transition work. Supervisor planning is
+required to queue the selected source/static contract
+phase12-rp1-ethernet-bcm54213pe-config-init-source-contract-20260615 or an
+explicit alternate/pause.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
