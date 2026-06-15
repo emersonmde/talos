@@ -10227,6 +10227,19 @@ autoneg status recovery discriminator or an explicit pause. The closeout keeps
 GPIO32/PHY reset ownership, PHY configuration, link forcing, DMA/descriptors,
 packet I/O, networking, SSH, Phase 12.2, and phase transition unaccepted.
 
+phase12-rp1-ethernet-post-physical-gpio32-reset-recovery-source-checkpoint-20260615
+accepts a static/source checkpoint over the post-physical phy-not-ready
+frontier and prior GPIO32 blockers. It records
+post-physical-gpio32-reset-recovery-source-checkpoint-blocked-persistent-event-state:
+the write/restore v2 path still stopped before GPIO/RIO/pad writes with event
+bits 0x0ab00000, and the accepted GPIO32 CTRL SET IRQRESET clear attempt left
+event bits 0x08800000 while preserving CTRL/RIO/pad invariants. Retained RP1
+source names the event bits and clear mechanism but does not justify treating
+the persistent bits as harmless for ETH_RST_N ownership, so no GPIO32
+reset-recovery proof is selected. Supervisor planning must choose a distinct
+source-grounded follow-up or pause before GPIO32 reset, PHY recovery writes,
+packet I/O, networking, SSH, Phase 12.2, or phase transition work.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

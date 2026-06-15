@@ -214,6 +214,19 @@ It does not reopen the accepted physical link precondition and does not accept
 PHY reset/GPIO32 ownership, PHY configuration, packet I/O, networking, SSH,
 Phase 12.2, or a phase transition.
 
+phase12-rp1-ethernet-post-physical-gpio32-reset-recovery-source-checkpoint-20260615
+reconciles that phy-not-ready frontier with the accepted GPIO32 write/restore,
+event-state, and event-clear evidence. The checkpoint does not select a GPIO32
+reset-recovery proof: write/restore v2 stopped before GPIO/RIO/pad writes with
+event bits 0x0ab00000, and the only accepted IRQRESET clear attempt preserved
+CTRL/RIO/pad invariants but left event bits 0x08800000. Retained RP1 pinctrl
+source names the event bits and IRQRESET clear mechanism, but does not prove
+the remaining bits are harmless for ETH_RST_N ownership or safe to ignore.
+The resulting blocker is persistent-or-firmware-owned GPIO32 event state.
+Supervisor planning is required for a distinct source-grounded follow-up or an
+explicit pause; GPIO32 reset recovery, packet I/O, networking, SSH, Phase 12.2,
+and phase transition remain unaccepted.
+
 ## GEM MID Decode Discriminator Closeout
 
 phase12-rp1-ethernet-gem-mid-decode-discriminator-closeout-20260610 closes the

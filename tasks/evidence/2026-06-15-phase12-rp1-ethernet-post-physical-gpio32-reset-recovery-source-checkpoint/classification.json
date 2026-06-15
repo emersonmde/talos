@@ -1,0 +1,108 @@
+{
+  "task_id": "phase12-rp1-ethernet-post-physical-gpio32-reset-recovery-source-checkpoint-20260615",
+  "status": "accepted",
+  "classification": "post-physical-gpio32-reset-recovery-source-checkpoint-blocked-persistent-event-state",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "JSON evidence validation",
+    "diff checks",
+    "docs build"
+  ],
+  "accepted_post_physical_frontier": {
+    "proof_task": "phase12-rp1-ethernet-post-physical-link-status-v2-pi5-proof-20260615",
+    "closeout_task": "phase12-rp1-ethernet-post-physical-link-status-v2-closeout-20260615",
+    "classification": "post-physical-link-status-phy-not-ready",
+    "physical_link_precondition": "confirmed",
+    "status_sample": {
+      "bmcr": "0x1000",
+      "bmsr_first": "0x7949",
+      "bmsr_second": "0x7949",
+      "anar": "0x01e1",
+      "anlpar": "0x0000",
+      "macb_nsr": "0x00000006",
+      "bmsr_link_status": false,
+      "bmsr_autoneg_complete": false,
+      "anlpar_nonzero": false,
+      "macb_nsr_link": false
+    }
+  },
+  "gpio32_evidence_reconciled": {
+    "write_restore_v2_closeout": {
+      "task": "phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout-20260610",
+      "classification": "rp1-ethernet-gpio32-phy-reset-write-restore-v2-blocked-no-write-frontier-closed",
+      "writes_performed": false,
+      "event_bits": "0x0ab00000"
+    },
+    "event_state_closeout": {
+      "task": "phase12-rp1-ethernet-gpio32-event-state-proof-closeout-20260611",
+      "classification": "rp1-ethernet-gpio32-event-state-proof-blocked-event-state-frontier-closed",
+      "source_backed_event_bits": "STATUS bits 20-27"
+    },
+    "event_clear_closeout": {
+      "task": "phase12-rp1-ethernet-gpio32-event-clear-proof-closeout-20260611",
+      "classification": "rp1-ethernet-gpio32-event-clear-persistent-or-firmware-owned-frontier-closed",
+      "clear_write_value": "0x10000000",
+      "post_clear_event_bits": "0x08800000",
+      "invariants_preserved": [
+        "GPIO32 CTRL non-IRQRESET fields",
+        "RIO1 OUT/OE/IN",
+        "GPIO32 pad"
+      ]
+    }
+  },
+  "source_decision": {
+    "gpio32_reset_recovery_proof_selected": false,
+    "blocker": "persistent-or-firmware-owned GPIO32 event state after accepted IRQRESET clear attempt",
+    "reason": "Current source/evidence keeps nonzero GPIO32 event state as a no-write precondition and provides no safe-ignore rule for ETH_RST_N ownership.",
+    "planning_needed": true
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Accepted post-physical status remains phy-not-ready after confirmed physical-link precondition."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "GPIO32 write/restore v2 remains a no-write frontier because event bits were present before any GPIO/RIO/pad writes."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Retained RP1 pinctrl source names STATUS event bits and IRQRESET clear semantics but does not prove persistent bits are harmless or ignorable for ETH_RST_N."
+    },
+    {
+      "disposition": "blocked",
+      "finding": "GPIO32 reset-recovery cannot be selected safely while accepted event-clear evidence remains persistent or firmware-owned."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Accepted physical-link precondition remains accepted and is not re-asked."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No source, helper, task, or evidence files were removed."
+    }
+  ],
+  "rejected_claims": [
+    "gpio32-ownership",
+    "eth-rst-n-reset-assertion-or-deassertion",
+    "gpio32-write-restore-retry-or-success",
+    "safe-ignore-persistent-gpio32-event-bits",
+    "phy-reset-ownership",
+    "phy-configuration-write",
+    "bmcr-write",
+    "macb-configuration-write",
+    "link-forcing",
+    "dma-descriptors",
+    "packet-io",
+    "interrupts",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "next_action": {
+    "planning_needed": true,
+    "reason": "Supervisor must select a distinct source-grounded Phase 12.1 follow-up or an explicit pause; worker may not start GPIO32 reset-recovery from the current persistent-event-state blocker."
+  }
+}

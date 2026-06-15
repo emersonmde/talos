@@ -1,0 +1,42 @@
+{
+  "task_id": "phase12-rp1-ethernet-post-physical-gpio32-reset-recovery-source-checkpoint-20260615",
+  "classification": "post-physical-gpio32-reset-recovery-source-checkpoint-blocked-persistent-event-state",
+  "checkpoint": {
+    "task_record": "tasks/2026-06-15-phase12-rp1-ethernet-post-physical-gpio32-reset-recovery-source-checkpoint.md",
+    "classification": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-gpio32-reset-recovery-source-checkpoint/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-gpio32-reset-recovery-source-checkpoint/evidence-map.json"
+  },
+  "inputs": {
+    "post_physical_v2_closeout_task": "tasks/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-closeout.md",
+    "post_physical_v2_closeout_classification": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-closeout/classification.json",
+    "post_physical_v2_closeout_evidence_map": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-closeout/evidence-map.json",
+    "gpio32_write_restore_v2_closeout_task": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout.md",
+    "gpio32_write_restore_v2_classification": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout/classification.json",
+    "gpio32_event_state_closeout_task": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-proof-closeout.md",
+    "gpio32_event_state_classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-proof-closeout/classification.json",
+    "gpio32_event_clear_closeout_task": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-proof-closeout.md",
+    "gpio32_event_clear_classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-proof-closeout/classification.json",
+    "gpio32_write_restore_source_contract": "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-source-contract.md",
+    "gpio32_event_state_source_contract": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-source-contract.md",
+    "gpio32_event_clear_source_contract": "tasks/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-source-contract.md",
+    "retained_rp1_pinctrl_source": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/pinctrl-rp1.c"
+  },
+  "docs": {
+    "phase12": "docs/src/project/phase12-networking-ssh.md",
+    "roadmap": "docs/src/roadmap.md"
+  },
+  "validation": {
+    "json": [
+      "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-gpio32-reset-recovery-source-checkpoint/classification.json",
+      "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-gpio32-reset-recovery-source-checkpoint/evidence-map.json",
+      "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-closeout/classification.json",
+      "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-closeout/evidence-map.json",
+      "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout/classification.json",
+      "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-state-proof-closeout/classification.json",
+      "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-proof-closeout/classification.json"
+    ],
+    "diff_check": "git diff --check",
+    "docs": "mdbook build",
+    "staged_diff_check": "git diff --cached --check before commit"
+  }
+}
