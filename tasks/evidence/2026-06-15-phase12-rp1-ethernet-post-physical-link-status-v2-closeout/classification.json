@@ -1,0 +1,97 @@
+{
+  "task_id": "phase12-rp1-ethernet-post-physical-link-status-v2-closeout-20260615",
+  "status": "accepted",
+  "classification": "post-physical-link-status-v2-closeout-phy-not-ready-frontier",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "JSON evidence validation",
+    "diff checks",
+    "docs build"
+  ],
+  "accepted_frontier": {
+    "proof_task": "phase12-rp1-ethernet-post-physical-link-status-v2-pi5-proof-20260615",
+    "proof_classification": "post-physical-link-status-phy-not-ready",
+    "proof_commit": "fc3bf273623cdbdadeb5c99ae1579037b141302e",
+    "contract_id": "phase12-rp1-ethernet-post-physical-link-status-contract-v2",
+    "physical_link_precondition": "confirmed"
+  },
+  "status_sample": {
+    "bmcr_raw": "0x1000",
+    "bmsr_first_raw": "0x7949",
+    "bmsr_second_raw": "0x7949",
+    "anar_raw": "0x1e1",
+    "anlpar_raw": "0x0",
+    "macb_nsr_raw": "0x6",
+    "bmsr_second_link_status": false,
+    "bmsr_second_autoneg_complete": false,
+    "anlpar_nonzero": false,
+    "macb_nsr_link": false,
+    "classification": "post-physical-link-status-phy-not-ready"
+  },
+  "accepted_boundary": {
+    "selected_phy1_man_read_commands": [
+      {
+        "name": "BMCR",
+        "register": "0x00",
+        "frame": "0x60820000"
+      },
+      {
+        "name": "BMSR-first",
+        "register": "0x01",
+        "frame": "0x60860000"
+      },
+      {
+        "name": "BMSR-second",
+        "register": "0x01",
+        "frame": "0x60860000"
+      },
+      {
+        "name": "ANAR",
+        "register": "0x04",
+        "frame": "0x60920000"
+      },
+      {
+        "name": "ANLPAR",
+        "register": "0x05",
+        "frame": "0x60960000"
+      }
+    ],
+    "mdio_read_count": 5,
+    "man_read_command_write_count": 5,
+    "phy_configuration_write_count": 0,
+    "bmcr_write_count": 0,
+    "macb_read_count": 1,
+    "macb_configuration_write_count": 0,
+    "control_constructed_mdio_man_macb_targets": false
+  },
+  "rejected_claims": [
+    "ethernet-driver-readiness",
+    "link-readiness",
+    "phy-reset-ownership",
+    "gpio32-action",
+    "phy-configuration-write",
+    "bmcr-write",
+    "mac-configuration-write",
+    "link-forcing",
+    "dma-descriptors",
+    "packet-io",
+    "interrupts",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "selected_next_action": {
+    "planning_needed": true,
+    "reason": "Accepted v2 proof reached a bounded phy-not-ready frontier; supervisor must plan one source-grounded PHY power/reset/strap/autoneg status recovery discriminator or an explicit pause.",
+    "must_not_request_physical_link_reconfirmation": true,
+    "must_not_start": [
+      "packet-io",
+      "networking",
+      "ssh",
+      "phase-12-2",
+      "phase-transition"
+    ]
+  }
+}

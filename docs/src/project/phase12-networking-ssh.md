@@ -202,6 +202,18 @@ MAN, or MACB target and performs no volatile Ethernet access. The selected
 queued follow-up is
 phase12-rp1-ethernet-post-physical-link-status-v2-pi5-proof-20260615.
 
+phase12-rp1-ethernet-post-physical-link-status-v2-closeout-20260615 accepts
+the v2 Pi 5 proof as a bounded phy-not-ready status frontier. The candidate
+kept the accepted v2 MAN read-command accounting boundary and reported BMCR
+0x1000, BMSR 0x7949/0x7949, ANAR 0x01e1, ANLPAR 0x0000, MACB_NSR 0x00000006,
+BMSR link false, autoneg complete false, ANLPAR nonzero false, and
+MACB_NSR_LINK false; the paired control constructed no MDIO/MAN/MACB targets.
+The closeout requires supervisor planning for one source-grounded PHY
+power/reset/strap/autoneg status recovery discriminator or an explicit pause.
+It does not reopen the accepted physical link precondition and does not accept
+PHY reset/GPIO32 ownership, PHY configuration, packet I/O, networking, SSH,
+Phase 12.2, or a phase transition.
+
 ## GEM MID Decode Discriminator Closeout
 
 phase12-rp1-ethernet-gem-mid-decode-discriminator-closeout-20260610 closes the

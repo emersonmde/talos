@@ -1,0 +1,30 @@
+{
+  "task_id": "phase12-rp1-ethernet-post-physical-link-status-v2-closeout-20260615",
+  "classification": "post-physical-link-status-v2-closeout-phy-not-ready-frontier",
+  "closeout": {
+    "task_record": "tasks/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-closeout.md",
+    "classification": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-closeout/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-closeout/evidence-map.json"
+  },
+  "inputs": {
+    "v2_proof_task": "tasks/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-pi5-proof.md",
+    "v2_proof_classification": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-pi5-proof/classification.json",
+    "v2_proof_evidence_map": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-pi5-proof/evidence-map.json",
+    "v2_proof_capture_summary": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-pi5-proof/capture-summary.json"
+  },
+  "docs": {
+    "phase12": "docs/src/project/phase12-networking-ssh.md",
+    "roadmap": "docs/src/roadmap.md"
+  },
+  "validation": {
+    "json": [
+      "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-closeout/classification.json",
+      "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-closeout/evidence-map.json",
+      "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-pi5-proof/classification.json",
+      "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-pi5-proof/evidence-map.json"
+    ],
+    "diff_check": "git diff --check",
+    "docs": "mdbook build",
+    "staged_diff_check": "git diff --cached --check before commit"
+  }
+}
