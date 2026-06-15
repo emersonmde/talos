@@ -1,0 +1,30 @@
+{
+  "task_id": "phase12-rp1-ethernet-post-physical-precondition-link-status-source-contract-20260614",
+  "classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-post-physical-precondition-link-status-source-contract/classification.json",
+  "task_record": "tasks/2026-06-14-phase12-rp1-ethernet-post-physical-precondition-link-status-source-contract.md",
+  "dependencies": {
+    "physical_link_precondition_state": "memory/talos-supervisor-state.json currentTask/evidence as of 2026-06-15T13:10:59Z",
+    "post_autoneg_checkpoint_task": "tasks/2026-06-14-phase12-rp1-ethernet-post-autoneg-status-source-checkpoint.md",
+    "post_autoneg_checkpoint_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-post-autoneg-status-source-checkpoint/classification.json",
+    "v2_autoneg_proof_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-after-capture-recovery-pi5-proof/classification.json",
+    "v2_autoneg_closeout": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-closeout.md"
+  },
+  "source_and_prior_frontier": {
+    "bmsr_double_sample_closeout": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-closeout.md",
+    "macb_nsr_link_source_contract": "tasks/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-source-contract.md",
+    "macb_nsr_link_closeout": "tasks/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-closeout.md",
+    "macb_nsr_link_source_excerpt": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-source-contract/source/linux-rpi-6.12-macb-nsr-link-excerpt.txt",
+    "linux_mii_source_excerpt": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-mdio-phy-id-source-contract/source/linux-rpi-6.12-uapi-linux-mii.h",
+    "gpio32_write_restore_v2_closeout_classification": "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-write-restore-v2-proof-closeout/classification.json",
+    "gpio32_event_clear_closeout_classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-gpio32-event-clear-proof-closeout/classification.json"
+  },
+  "docs": {
+    "phase12": "docs/src/project/phase12-networking-ssh.md",
+    "roadmap": "docs/src/roadmap.md"
+  },
+  "selected_next_task": {
+    "id": "phase12-rp1-ethernet-post-physical-precondition-link-status-pi5-proof-20260614",
+    "status": "queued",
+    "reason": "The physical-link precondition is confirmed and this contract defines the exact read-only PHY/MAC status fields, paired control, and hardware evidence gates."
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "task_id": "phase12-rp1-ethernet-post-physical-precondition-link-status-source-contract-20260614",
+  "classification": "rp1-ethernet-post-physical-precondition-link-status-source-contract-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "task-owned JSON evidence"
+  ],
+  "dependency": {
+    "physical_link_precondition_task": "phase12-rp1-ethernet-physical-link-precondition-operator-20260614",
+    "physical_link_precondition": "confirmed",
+    "physical_link_evidence_label": "Pi 5 physical Ethernet link/cabling/setup confirmed; TFTP boot/network/PoE path known-good",
+    "post_autoneg_checkpoint_task": "phase12-rp1-ethernet-post-autoneg-status-source-checkpoint-20260614",
+    "post_autoneg_checkpoint_commit": "4ff265e3c2742877d2c578e60f7e2adb2a0caff5"
+  },
+  "accepted_input_frontier": {
+    "v2_candidate_post_restart_status": {
+      "bmcr_write_value": "0x1200",
+      "bmcr_write_count": 1,
+      "post_bmcr": "0x1000",
+      "post_bmsr_first": "0x7949",
+      "post_bmsr_second": "0x7949",
+      "post_bmsr_link_status": false,
+      "post_bmsr_autoneg_complete": false,
+      "post_anar": "0x01e1",
+      "post_anlpar": "0x0000",
+      "post_anlpar_nonzero": false,
+      "passive_macb_nsr_link": false
+    },
+    "prior_readonly_frontiers": {
+      "bmsr_double_sample": "link-not-ready",
+      "macb_nsr_link": "link-clear"
+    },
+    "retained_gpio32_blockers": [
+      "write-restore-v2-no-write",
+      "event-clear-persistent-or-firmware-owned"
+    ]
+  },
+  "selected_contract": {
+    "id": "phase12-rp1-ethernet-post-physical-precondition-link-status-contract-v1",
+    "candidate_timing": "one bounded immediate sample window after boot marker and after confirmed physical-link precondition is recorded in task evidence",
+    "candidate_fields": {
+      "phy": [
+        "PHY1 BMCR register 0x00",
+        "PHY1 BMSR register 0x01 first sample",
+        "PHY1 BMSR register 0x01 second sample",
+        "PHY1 ANAR register 0x04",
+        "PHY1 ANLPAR register 0x05"
+      ],
+      "mac": [
+        "MACB_NSR at 0x1c00100008 with bit 0 decoded as NSR_LINK"
+      ]
+    },
+    "paired_control": "same report surface, no MDIO/MAN/MACB target construction, no Ethernet volatile load/store",
+    "writes_allowed": false,
+    "packet_io_allowed": false
+  },
+  "allowed_future_classifications": [
+    "post-physical-link-status-link-ready",
+    "post-physical-link-status-phy-not-ready",
+    "post-physical-link-status-mac-not-ready",
+    "post-physical-link-status-phy-mac-disagreement",
+    "post-physical-link-status-capture-blocker",
+    "post-physical-link-status-source-precondition-blocker",
+    "no-mdio-no-macb-post-physical-link-status-control"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "The operator physical-link confirmation makes one post-physical-precondition read-only status proof objective."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The exact future candidate fields are PHY1 BMCR, double-sampled BMSR, ANAR, ANLPAR, and passive MACB_NSR_LINK."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The paired control constructs no MDIO/MAN/MACB target and performs no volatile Ethernet access."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Guard/runtime implementation and Pi 5 hardware proof remain the queued follow-up task."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No hardwareTestLock was acquired because this task is static source/task evidence work."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No obsolete source, docs, task records, or helper scripts were removed."
+    }
+  ],
+  "selected_next_task": "phase12-rp1-ethernet-post-physical-precondition-link-status-pi5-proof-20260614",
+  "rejected_claims": [
+    "runtime-link-readiness-from-this-static-contract",
+    "phy-reset-ownership",
+    "gpio32-ownership",
+    "phy-configuration-writes",
+    "bmcr-writes",
+    "macb-writes",
+    "autonegotiation-restart",
+    "link-forcing",
+    "packet-io",
+    "dma-descriptors",
+    "interrupts",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "next_action": {
+    "selected_next_task": "phase12-rp1-ethernet-post-physical-precondition-link-status-pi5-proof-20260614",
+    "planning_needed": false,
+    "reason": "The next proof task is already queued and mechanically dependency-gated on this accepted source contract."
+  }
+}

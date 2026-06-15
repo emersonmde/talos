@@ -10166,6 +10166,17 @@ is selected; supervisor planning is required before any fresh discriminator,
 operator/physical precondition path, GPIO32/PHY reset work, packet I/O,
 networking, SSH, Phase 12.2, or phase transition.
 
+phase12-rp1-ethernet-post-physical-precondition-link-status-source-contract-20260614
+accepts a source/task evidence contract after operator confirmation that the Pi
+5 physical Ethernet link path is present. The selected future proof is bounded
+to one immediate read-only status sample window over PHY1 BMCR, double-sampled
+BMSR, ANAR, ANLPAR, and passive MACB_NSR_LINK, with a paired control that
+constructs no MDIO/MAN/MACB target and performs no volatile Ethernet access.
+This does not accept runtime link readiness, PHY reset ownership, PHY
+configuration, packet I/O, networking, SSH, Phase 12.2, or a phase transition;
+the selected queued follow-up is
+phase12-rp1-ethernet-post-physical-precondition-link-status-pi5-proof-20260614.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

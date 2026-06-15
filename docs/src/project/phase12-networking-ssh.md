@@ -1753,3 +1753,16 @@ a distinct source-backed discriminator, timing model, or external precondition.
 The checkpoint keeps GPIO32/PHY reset ownership, packet I/O, networking, SSH,
 Phase 12.2, and phase transition rejected and requires supervisor planning for
 the next bounded Phase 12.1 task.
+
+phase12-rp1-ethernet-post-physical-precondition-link-status-source-contract-20260614
+accepts the post-physical-precondition read-only status contract after operator
+confirmation that the Pi 5 physical Ethernet link path is present. The selected
+future proof may sample only corrected-target PHY1 BMCR, double-sampled BMSR,
+ANAR, ANLPAR, and passive MACB_NSR_LINK in one bounded immediate window after
+the boot marker and recorded physical-link precondition. The paired control
+must use the same report surface while constructing no MDIO/MAN/MACB target and
+performing no volatile Ethernet access. This source contract does not accept
+runtime link readiness, PHY reset ownership, PHY configuration, packet I/O,
+networking, SSH, Phase 12.2, or a phase transition; the selected queued
+follow-up is
+phase12-rp1-ethernet-post-physical-precondition-link-status-pi5-proof-20260614.
