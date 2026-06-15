@@ -10177,6 +10177,17 @@ configuration, packet I/O, networking, SSH, Phase 12.2, or a phase transition;
 the selected queued follow-up is
 phase12-rp1-ethernet-post-physical-precondition-link-status-pi5-proof-20260614.
 
+phase12-rp1-ethernet-post-physical-precondition-link-status-pi5-proof-20260614
+is blocked with committed post-physical-link-status-source-precondition-blocker
+evidence. Candidate/control capture identity, TFTP byte agreement, serial
+nonce freshness, final pre-restore identity, and restore proof passed, and the
+runtime candidate observed a phy-not-ready status sample. The runtime result is
+not accepted as the next planning frontier because the candidate used MACB MAN
+read-command transactions for PHY1 reads while the accepted source contract
+forbids MAN writes and reports macb_write_count=0. The queued closeout must
+reconcile that boundary before any follow-up is selected; packet I/O,
+networking, SSH, Phase 12.2, and phase transition remain rejected.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

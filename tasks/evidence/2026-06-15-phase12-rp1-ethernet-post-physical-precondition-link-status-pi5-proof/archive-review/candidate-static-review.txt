@@ -1,0 +1,10 @@
+candidate_archive=target/proofs/2026-06-15-post-physical-link-status/candidate.tar.gz
+candidate_archive_sha256=7d635de13d5dceb1b73f6af03701d9bb733e22c4c0f51c49736b7eee29b7296e
+kernel_2712_sha256=5e6e9a2d08daedd2b5a6c5bf59d36cc4c35866b1524f76245ef4867760bda6e2
+kernel_2712_bytes=53752
+kernel_header_text_offset=0
+kernel_header_image_size=53752
+kernel_header_flags=12
+required_marker=TALOS: rp1-ethernet-post-physical-link-status-candidate
+capture_nonce=postphys-20260615T1329Z-candidate
+post_physical_link_status_candidate_static_review=passed

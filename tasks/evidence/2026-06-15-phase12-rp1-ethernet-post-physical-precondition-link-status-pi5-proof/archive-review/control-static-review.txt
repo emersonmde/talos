@@ -1,0 +1,10 @@
+control_archive=target/proofs/2026-06-15-post-physical-link-status/control.tar.gz
+control_archive_sha256=7f2053b4233b5178226fecf965b496a9ce303658b39872705735ab05e516b13e
+kernel_2712_sha256=4e25ac12ba7f0f276b3c650e4cda3dcd5b6558bfdc7ae8063f07a072a68266a1
+kernel_2712_bytes=50960
+kernel_header_text_offset=0
+kernel_header_image_size=50960
+kernel_header_flags=12
+required_marker=TALOS: rp1-ethernet-post-physical-link-status-control
+capture_nonce=postphys-20260615T1329Z-control
+post_physical_link_status_control_static_review=passed

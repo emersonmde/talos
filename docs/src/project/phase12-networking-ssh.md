@@ -1766,3 +1766,16 @@ runtime link readiness, PHY reset ownership, PHY configuration, packet I/O,
 networking, SSH, Phase 12.2, or a phase transition; the selected queued
 follow-up is
 phase12-rp1-ethernet-post-physical-precondition-link-status-pi5-proof-20260614.
+
+phase12-rp1-ethernet-post-physical-precondition-link-status-pi5-proof-20260614
+is blocked as post-physical-link-status-source-precondition-blocker. The Pi 5
+candidate/control capture identity, same-power-cycle TFTP byte agreement,
+fresh serial nonces, final pre-restore identity, and restore evidence passed;
+the runtime candidate emitted BMCR 0x1000, BMSR 0x7949/0x7949, ANAR 0x01e1,
+ANLPAR 0x0000, MACB_NSR 0x00000006, and a runtime phy-not-ready result.
+However, the source-contract gate failed because the candidate issued MACB MAN
+read-command transactions to perform the selected PHY1 reads while the accepted
+contract says no MAN writes and the report claims macb_write_count=0. The
+runtime phy-not-ready result is recorded but not accepted as a planning
+frontier until closeout reconciles the source-contract boundary. Packet I/O,
+networking, SSH, Phase 12.2, and phase transition remain rejected.
