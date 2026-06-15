@@ -1,0 +1,53 @@
+{
+  "task_id": "phase12-rp1-ethernet-phy-power-strap-source-checkpoint-20260615",
+  "classification": "post-physical-phy-power-strap-source-checkpoint-no-distinct-discriminator",
+  "checkpoint": {
+    "task_record": "tasks/2026-06-15-phase12-rp1-ethernet-phy-power-strap-source-checkpoint.md",
+    "classification": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-phy-power-strap-source-checkpoint/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-phy-power-strap-source-checkpoint/evidence-map.json"
+  },
+  "inputs": {
+    "post_physical_v2_closeout_task": "tasks/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-closeout.md",
+    "post_physical_v2_closeout_classification": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-closeout/classification.json",
+    "post_physical_v2_closeout_evidence_map": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-closeout/evidence-map.json",
+    "gpio32_reset_recovery_checkpoint_task": "tasks/2026-06-15-phase12-rp1-ethernet-post-physical-gpio32-reset-recovery-source-checkpoint.md",
+    "gpio32_reset_recovery_checkpoint_classification": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-gpio32-reset-recovery-source-checkpoint/classification.json",
+    "gpio32_reset_recovery_checkpoint_evidence_map": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-gpio32-reset-recovery-source-checkpoint/evidence-map.json",
+    "phy1_status_closeout_task": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-closeout.md",
+    "phy1_status_closeout_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-closeout/classification.json",
+    "bmsr_double_sample_closeout_task": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-closeout.md",
+    "bmsr_double_sample_closeout_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-closeout/classification.json",
+    "macb_nsr_link_closeout_task": "tasks/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-closeout.md",
+    "macb_nsr_link_closeout_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-closeout/classification.json",
+    "autoneg_restart_v2_closeout_task": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-closeout.md",
+    "autoneg_restart_v2_closeout_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-closeout/classification.json",
+    "clock_reset_prereq_closeout_task": "tasks/2026-06-11-phase12-rp1-ethernet-clock-reset-prereq-closeout.md",
+    "clock_reset_prereq_closeout_classification": "tasks/evidence/2026-06-11-phase12-rp1-ethernet-clock-reset-prereq-closeout/classification.json",
+    "retained_rpi5_dts": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-bcm2712-rpi-5-b.dts",
+    "retained_rp1_dtsi": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-rp1.dtsi",
+    "retained_macb_source": "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-macb_main.c",
+    "retained_rp1_pinctrl_source": "tasks/evidence/2026-06-07-phase11-rp1-irq-clock-gpio-source-contract/pinctrl-rp1.c"
+  },
+  "docs": {
+    "phase12": "docs/src/project/phase12-networking-ssh.md",
+    "roadmap": "docs/src/roadmap.md"
+  },
+  "validation": {
+    "json": [
+      "tasks/evidence/2026-06-15-phase12-rp1-ethernet-phy-power-strap-source-checkpoint/classification.json",
+      "tasks/evidence/2026-06-15-phase12-rp1-ethernet-phy-power-strap-source-checkpoint/evidence-map.json",
+      "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-closeout/classification.json",
+      "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-closeout/evidence-map.json",
+      "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-gpio32-reset-recovery-source-checkpoint/classification.json",
+      "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-gpio32-reset-recovery-source-checkpoint/evidence-map.json",
+      "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-status-diagnostic-closeout/classification.json",
+      "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-bmsr-double-sample-link-readiness-closeout/classification.json",
+      "tasks/evidence/2026-06-14-phase12-rp1-ethernet-macb-nsr-link-readonly-closeout/classification.json",
+      "tasks/evidence/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-v2-closeout/classification.json",
+      "tasks/evidence/2026-06-11-phase12-rp1-ethernet-clock-reset-prereq-closeout/classification.json"
+    ],
+    "diff_check": "git diff --check",
+    "docs": "mdbook build",
+    "staged_diff_check": "git diff --cached --check before commit"
+  }
+}

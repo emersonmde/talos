@@ -10240,6 +10240,19 @@ reset-recovery proof is selected. Supervisor planning must choose a distinct
 source-grounded follow-up or pause before GPIO32 reset, PHY recovery writes,
 packet I/O, networking, SSH, Phase 12.2, or phase transition work.
 
+phase12-rp1-ethernet-phy-power-strap-source-checkpoint-20260615 accepts
+post-physical-phy-power-strap-source-checkpoint-no-distinct-discriminator.
+Retained Raspberry Pi/RP1/Linux source backs PHY1 at address 1, observed
+PHYSID1 0x600d / PHYSID2 0x84a2, GPIO32 active-low ETH_RST_N reset with 5 ms
+duration, `rgmii-id` mode, Broadcom powerdown/EEE quirks, the MACB MDIO reset
+hook, and phylink/MACB dependency facts. The checkpoint reconciles those facts
+with the accepted post-physical phy-not-ready status and persistent GPIO32
+event-state blocker, then rejects another same-shaped status sample, GPIO32
+event-clear retry, GPIO32 write/restore retry, or BMCR autoneg-restart retry.
+No further hardware proof is selected; supervisor planning is required for a
+new source-gathering task with explicit evidence requirements or an explicit
+pause before packet I/O, networking, SSH, Phase 12.2, or phase transition work.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

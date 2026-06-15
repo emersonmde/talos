@@ -1844,3 +1844,42 @@ reset action, DMA, and packet I/O. The paired control still constructs no
 MDIO/MAN/MACB targets and performs no volatile Ethernet access. The selected
 queued follow-up is
 phase12-rp1-ethernet-post-physical-link-status-v2-pi5-proof-20260615.
+
+phase12-rp1-ethernet-post-physical-link-status-v2-pi5-proof-20260615 accepts a
+serialized Pi 5 v2 status proof with decisive candidate/control capture-chain
+and boot-staging identity. The candidate reports the bounded status sample as
+post-physical-link-status-phy-not-ready: BMCR 0x1000, BMSR 0x7949/0x7949, ANAR
+0x01e1, ANLPAR 0x0000, MACB_NSR 0x00000006, BMSR link false, autoneg complete
+false, ANLPAR nonzero false, and MACB_NSR_LINK false. The proof accepts only
+that bounded status frontier and the five accounted MAN read-command stores;
+it does not accept GPIO32/PHY reset action, PHY configuration writes, BMCR
+writes, MACB configuration writes, DMA/descriptors, packet I/O, networking,
+SSH, Phase 12.2, or a phase transition.
+
+phase12-rp1-ethernet-post-physical-link-status-v2-closeout-20260615 accepts
+the v2 proof as the current post-physical phy-not-ready frontier. Follow-up
+planning must remain source-grounded around PHY power/reset/strap/autoneg
+status recovery or an explicit pause, and must not ask Matthew to reconfirm the
+already accepted physical-link precondition. Packet I/O, networking, SSH,
+Phase 12.2, and phase transition remain rejected.
+
+phase12-rp1-ethernet-post-physical-gpio32-reset-recovery-source-checkpoint-20260615
+accepts a static/source checkpoint over that phy-not-ready frontier and the
+prior GPIO32 blockers. GPIO32 write/restore v2 still stopped before
+GPIO/RIO/pad writes with event bits 0x0ab00000, and the accepted GPIO32 CTRL
+SET IRQRESET clear attempt left event bits 0x08800000 while preserving
+CTRL/RIO/pad invariants. Retained RP1 source names the event bits and clear
+mechanism but does not justify treating the persistent bits as harmless for
+ETH_RST_N ownership, so no GPIO32 reset-recovery proof is selected.
+
+phase12-rp1-ethernet-phy-power-strap-source-checkpoint-20260615 accepts the
+next static/source checkpoint as
+post-physical-phy-power-strap-source-checkpoint-no-distinct-discriminator. The
+retained source backs PHY1 at address 1, GPIO32 active-low ETH_RST_N reset with
+5 ms duration, `rgmii-id` mode, Broadcom powerdown/EEE quirks, the MACB MDIO
+reset hook, and phylink/MACB dependency facts. Those facts reconcile the
+accepted phy-not-ready and GPIO32 blocker frontier but do not identify a
+distinct safe hardware discriminator; same-shaped status samples, GPIO32
+event-clear retry, GPIO32 write/restore retry, and BMCR autoneg-restart retry
+remain rejected. Supervisor planning is required for a new source-gathering
+task or explicit pause before any further Phase 12.1 hardware action.
