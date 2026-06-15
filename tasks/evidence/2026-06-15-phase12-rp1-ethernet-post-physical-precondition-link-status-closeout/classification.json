@@ -1,0 +1,72 @@
+{
+  "task_id": "phase12-rp1-ethernet-post-physical-precondition-link-status-closeout-20260614",
+  "status": "accepted",
+  "classification": "post-physical-link-status-source-contract-revision-required",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "task-owned JSON evidence"
+  ],
+  "inputs": {
+    "source_contract_task": "tasks/2026-06-14-phase12-rp1-ethernet-post-physical-precondition-link-status-source-contract.md",
+    "source_contract_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-post-physical-precondition-link-status-source-contract/classification.json",
+    "proof_task": "tasks/2026-06-15-phase12-rp1-ethernet-post-physical-precondition-link-status-pi5-proof.md",
+    "proof_classification": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-precondition-link-status-pi5-proof/classification.json",
+    "proof_evidence_map": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-precondition-link-status-pi5-proof/evidence-map.json",
+    "proof_commit": "6a4ac5828f42990568a06825638229a864d2c645"
+  },
+  "proof_reconciliation": {
+    "capture_identity_decisive": true,
+    "runtime_result_retained_as_non_frontier_evidence": "post-physical-link-status-phy-not-ready",
+    "runtime_result_accepted_as_planning_frontier": false,
+    "reason": "The accepted source contract forbids MAN writes and retains macb_write_count=0, while the implemented corrected-target PHY1 reads require MACB MAN read-command transactions.",
+    "not_configuration_write": true,
+    "not_packet_io": true,
+    "not_dma": true,
+    "still_man_register_write": true
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Prior proof captured decisive candidate/control selected-tree, TFTP byte agreement, serial freshness, final identity, capture-chain, boot-staging, and restore evidence."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Prior proof retained the candidate runtime status values and paired no-MDIO/no-MACB control output."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Runtime phy-not-ready evidence is not an accepted frontier until a revised source contract or alternate discriminator explicitly handles MAN read-command transactions."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No obsolete source, task, evidence, helper, or docs files were removed."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No hardware restore action was needed in closeout because the proof task already restored the baseline tree before releasing hardwareTestLock."
+    }
+  ],
+  "rejected_claims": [
+    "accepted-link-ready",
+    "accepted-phy-not-ready-planning-frontier-under-existing-contract",
+    "phy-reset-ownership",
+    "gpio32-ownership",
+    "phy-configuration-writes",
+    "bmcr-writes",
+    "macb-configuration-writes",
+    "link-forcing",
+    "packet-io",
+    "dma-descriptors",
+    "interrupts",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "next_action": {
+    "planning_needed": true,
+    "selected_next_task": null,
+    "reason": "No queued worker task is mechanically unblocked. Supervisor planning must choose whether to revise the source contract to allow bounded MACB MAN read-command writes for Clause 22 reads, select a no-MAN alternate discriminator, or pause this path."
+  }
+}

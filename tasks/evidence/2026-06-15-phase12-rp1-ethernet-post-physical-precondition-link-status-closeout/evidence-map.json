@@ -1,0 +1,22 @@
+{
+  "task_id": "phase12-rp1-ethernet-post-physical-precondition-link-status-closeout-20260614",
+  "classification": "post-physical-link-status-source-contract-revision-required",
+  "inputs": {
+    "source_contract_task": "tasks/2026-06-14-phase12-rp1-ethernet-post-physical-precondition-link-status-source-contract.md",
+    "source_contract_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-post-physical-precondition-link-status-source-contract/classification.json",
+    "proof_task": "tasks/2026-06-15-phase12-rp1-ethernet-post-physical-precondition-link-status-pi5-proof.md",
+    "proof_classification": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-precondition-link-status-pi5-proof/classification.json",
+    "proof_evidence_map": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-precondition-link-status-pi5-proof/evidence-map.json",
+    "proof_capture_summary": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-precondition-link-status-pi5-proof/capture-summary.json"
+  },
+  "closeout": {
+    "task_record": "tasks/2026-06-15-phase12-rp1-ethernet-post-physical-precondition-link-status-closeout.md",
+    "classification": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-precondition-link-status-closeout/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-post-physical-precondition-link-status-closeout/evidence-map.json"
+  },
+  "state_handoff": {
+    "planning_needed": true,
+    "selected_next_task": null,
+    "reason": "Source contract revision or alternate discriminator planning is required before another worker-owned task."
+  }
+}

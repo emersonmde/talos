@@ -172,6 +172,25 @@ planning; it does not authorize hardware action, MACB writes, MDIO
 transactions, PHY configuration writes, BMCR writes, GPIO32/PHY reset action,
 packet I/O, networking, sockets, SSH, Phase 12.2, or a phase transition.
 
+## Post-Physical Link Status Closeout
+
+phase12-rp1-ethernet-post-physical-precondition-link-status-closeout-20260614
+accepts the post-physical link-status proof only as a source-contract revision
+blocker. The Pi 5 candidate/control run retained decisive selected-tree,
+same-power-cycle TFTP byte agreement, serial freshness, final identity,
+capture-chain-v4, boot-staging identity, and restore evidence. The candidate
+runtime report sampled BMCR 0x1000, BMSR 0x7949/0x7949, ANAR 0x01e1, ANLPAR
+0x0000, and MACB_NSR 0x00000006, which would otherwise indicate PHY/MAC link
+not ready after the confirmed physical-link precondition.
+
+That runtime result is not an accepted planning frontier because the accepted
+source contract forbids MAN writes while corrected-target PHY1 reads were
+performed through MACB MAN read-command transactions. A supervisor-planned
+source-contract revision, no-MAN alternate discriminator, or explicit pause is
+required before any fresh link-status proof. This closeout still rejects PHY
+configuration, GPIO32/PHY reset action, packet I/O, networking, SSH, Phase
+12.2, and phase transition claims.
+
 ## GEM MID Decode Discriminator Closeout
 
 phase12-rp1-ethernet-gem-mid-decode-discriminator-closeout-20260610 closes the
