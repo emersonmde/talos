@@ -1,0 +1,56 @@
+{
+  "task_id": "phase12-rp1-ethernet-bootinfo-report-serial-visibility-core-20260616",
+  "classification": "bootinfo-report-serial-visibility-core-local-static",
+  "evidence_level": "static/source inspection plus local/static tests and archive artifact review",
+  "selected_discriminator": "dual-stage-earliest-entry-and-post-bootinfo-report-path-serial-visibility",
+  "accepted_inputs": {
+    "boot_transport_sentinel_closeout": "bcm54213pe-boot-transport-sentinel-frontier-closed-kernel-serial-boundary",
+    "kernel_entry_serial_beacon_closeout": "kernel-entry-serial-beacon-frontier-closed-beacon-observed"
+  },
+  "boot_scenarios": {
+    "candidate": "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_candidate",
+    "control": "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_earliest_only_control"
+  },
+  "markers": {
+    "earliest_entry": "bootinfo-report-visibility-earliest-entry-marker",
+    "post_bootinfo_report_path": "bootinfo-report-visibility-post-bootinfo-report-path-marker"
+  },
+  "marker_positions": [
+    "earliest-entry marker emitted in boot::rpi5::kernel_main before target services and report_boot_identity consume BootInfo",
+    "post-BootInfo/report-path marker emitted after report_boot_identity reports BootInfo and service metadata"
+  ],
+  "static_artifact_review": {
+    "candidate_kernel_size": 71040,
+    "candidate_kernel_sha256": "3e0daad3093cc22943bebc29cdf09390381abd201fb5320d7fca607305939b9c",
+    "candidate_archive_sha256": "540b6b32f56a841caee24ade1f8ae26724dc46a2d5f72a7b94a479a879b61cff",
+    "control_kernel_size": 55016,
+    "control_kernel_sha256": "3f51358c50b7fd695c673c13ff61a5d80b3518b60d0054de6eb4482f3615b584",
+    "control_archive_sha256": "576ba0e576223970f0475bd9290c2b1fcad7b0ac1f27119a3221e28bf8c8686c"
+  },
+  "hardware_outcomes_selected_for_next_task": [
+    "no-selected-tftp",
+    "no-earliest-marker",
+    "earliest-marker-only",
+    "both-markers-observed",
+    "known-good-control-failed",
+    "staging-capture-inconclusive",
+    "restore-failed"
+  ],
+  "rejected_claims": [
+    "BCM54213PE register values",
+    "Ethernet readiness",
+    "link readiness",
+    "GPIO32 or PHY reset ownership",
+    "BMCR write",
+    "Broadcom shadow/MMD/AUX access",
+    "interrupt ownership",
+    "broad PHY or MAC configuration",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition"
+  ],
+  "next_task_selected": "phase12-rp1-ethernet-bootinfo-report-serial-visibility-pi5-proof-20260616"
+}

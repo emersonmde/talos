@@ -29,8 +29,23 @@ fn report_unavailable(line: &'static str) {
 pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
     target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::KernelMain);
 
+    #[cfg(any(
+        talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_candidate",
+        talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_earliest_only_control"
+    ))]
+    target::rpi5::write_rp1_ethernet_bootinfo_report_serial_visibility_earliest_marker();
+
+    #[cfg(
+        talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_earliest_only_control"
+    )]
+    target::rpi5::run_rp1_ethernet_bootinfo_report_serial_visibility_earliest_only_control();
+
     let services = target::services(boot_info);
     let dtb = report_boot_identity(boot_info, &services);
+
+    #[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_candidate")]
+    target::rpi5::run_rp1_ethernet_bootinfo_report_serial_visibility_candidate();
+
     let memory_phase = plan_boot_memory(&dtb);
 
     if let Some(memory_phase) = memory_phase {

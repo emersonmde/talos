@@ -1,0 +1,53 @@
+{
+  "task_id": "phase12-rp1-ethernet-bootinfo-report-serial-visibility-core-20260616",
+  "changed_paths": [
+    "build.rs",
+    "src/main.rs",
+    "src/boot/rpi5.rs",
+    "src/target/rpi5.rs",
+    "src/rp1_ethernet.rs",
+    "scripts/rpi5-rp1-ethernet-bootinfo-report-serial-visibility-candidate-image.sh",
+    "scripts/rpi5-rp1-ethernet-bootinfo-report-serial-visibility-control-image.sh",
+    "scripts/rpi5-rp1-ethernet-bootinfo-report-serial-visibility-candidate-boot-tree.sh",
+    "scripts/rpi5-rp1-ethernet-bootinfo-report-serial-visibility-control-boot-tree.sh",
+    "scripts/rpi5-rp1-ethernet-bootinfo-report-serial-visibility-candidate-archive.sh",
+    "scripts/rpi5-rp1-ethernet-bootinfo-report-serial-visibility-control-archive.sh",
+    "scripts/rpi5-rp1-ethernet-bootinfo-report-serial-visibility-candidate-review.sh",
+    "scripts/rpi5-rp1-ethernet-bootinfo-report-serial-visibility-control-review.sh",
+    "tasks/2026-06-16-phase12-rp1-ethernet-bootinfo-report-serial-visibility-core.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "validation": [
+    {
+      "level": "fmt/lint",
+      "command": "cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet rp1_ethernet_bootinfo_report_serial_visibility",
+      "result": "pass"
+    },
+    {
+      "level": "shell syntax",
+      "command": "sh -n scripts/rpi5-rp1-ethernet-bootinfo-report-serial-visibility-*.sh",
+      "result": "pass"
+    },
+    {
+      "level": "static artifact review",
+      "command": "candidate/control archive build plus review scripts with run-unique nonces",
+      "result": "pass"
+    }
+  ],
+  "artifact_reviews": {
+    "candidate_review": "target/phase12-bootinfo-report-serial-visibility/candidate-review.txt",
+    "control_review": "target/phase12-bootinfo-report-serial-visibility/control-review.txt",
+    "durable_summary": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bootinfo-report-serial-visibility-core/static-artifact-review.json"
+  },
+  "next_boundary": {
+    "task_id": "phase12-rp1-ethernet-bootinfo-report-serial-visibility-pi5-proof-20260616",
+    "status": "dependency-gated queued task selected after core acceptance",
+    "hardware_required": true
+  }
+}

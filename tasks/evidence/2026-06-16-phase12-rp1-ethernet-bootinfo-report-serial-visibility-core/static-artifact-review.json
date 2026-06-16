@@ -1,0 +1,45 @@
+{
+  "task_id": "phase12-rp1-ethernet-bootinfo-report-serial-visibility-core-20260616",
+  "review_level": "static artifact review",
+  "candidate": {
+    "archive": "target/phase12-bootinfo-report-serial-visibility/candidate.tar.gz",
+    "archive_sha256": "540b6b32f56a841caee24ade1f8ae26724dc46a2d5f72a7b94a479a879b61cff",
+    "kernel_2712_sha256": "3e0daad3093cc22943bebc29cdf09390381abd201fb5320d7fca607305939b9c",
+    "kernel_2712_size": 71040,
+    "header_image_size": 71040,
+    "text_offset": 0,
+    "flags": 12,
+    "capture_nonce": "bootinfo-report-core-candidate-20260616",
+    "required_markers_present": [
+      "bootinfo-report-visibility-earliest-entry-marker",
+      "bootinfo-report-visibility-post-bootinfo-report-path-marker"
+    ],
+    "forbidden_runtime_strings_absent": true
+  },
+  "control": {
+    "archive": "target/phase12-bootinfo-report-serial-visibility/control.tar.gz",
+    "archive_sha256": "576ba0e576223970f0475bd9290c2b1fcad7b0ac1f27119a3221e28bf8c8686c",
+    "kernel_2712_sha256": "3f51358c50b7fd695c673c13ff61a5d80b3518b60d0054de6eb4482f3615b584",
+    "kernel_2712_size": 55016,
+    "header_image_size": 55016,
+    "text_offset": 0,
+    "flags": 12,
+    "capture_nonce": "bootinfo-report-core-control-20260616",
+    "required_markers_present": [
+      "bootinfo-report-visibility-earliest-entry-marker"
+    ],
+    "forbidden_post_bootinfo_marker_absent": true,
+    "forbidden_runtime_strings_absent": true
+  },
+  "forbidden_claims_reviewed_absent": [
+    "selected BCM54213PE register values",
+    "MII_CTRL1000/MII_STAT1000 target facts",
+    "physid1/physid2 target facts",
+    "MDIO target construction",
+    "MAN frame construction",
+    "MACB target construction",
+    "GPIO32 or PHY target construction",
+    "volatile Ethernet access",
+    "BMCR write"
+  ]
+}

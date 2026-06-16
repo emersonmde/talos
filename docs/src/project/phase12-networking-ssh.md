@@ -2015,3 +2015,19 @@ readiness, GPIO32/PHY reset ownership, BMCR writes, Broadcom shadow/MMD/aux
 access, interrupt ownership, broad PHY/MAC configuration, packet I/O,
 networking, SSH, Phase 12.2, or a phase transition. Supervisor planning is
 required for one distinct Phase 12.1 follow-up or an explicit pause.
+
+phase12-rp1-ethernet-bootinfo-report-serial-visibility-core-20260616 accepts
+the local/static dual-stage BootInfo/report-path serial visibility
+discriminator as bootinfo-report-serial-visibility-core-local-static. The
+candidate and paired earliest-only control both emit a run-unique
+bootinfo-report-visibility-earliest-entry-marker before target services and
+report_boot_identity consume BootInfo. Only the candidate emits
+bootinfo-report-visibility-post-bootinfo-report-path-marker after
+report_boot_identity reports BootInfo and service metadata. Candidate/control
+static artifact review retained distinct archive and kernel hashes, proved the
+selected markers/nonces, and rejected BCM54213PE register values, MDIO/MAN,
+MACB, GPIO32/PHY target facts, volatile Ethernet access, BMCR writes, packet
+I/O, networking, SSH, Phase 12.2, and phase transition claims. The selected
+next boundary is the serialized Pi 5 proof that must classify no selected
+TFTP, no earliest marker, earliest marker only, both markers observed, or a
+precise capture/restore blocker without accepting Ethernet behavior.

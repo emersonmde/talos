@@ -10421,6 +10421,17 @@ link readiness, GPIO32 reset ownership, BMCR writes, Broadcom shadow/MMD/aux
 access, interrupt ownership, broad PHY/MAC configuration, packet I/O,
 networking, SSH, Phase 12.2, and phase transition remain rejected.
 
+phase12-rp1-ethernet-bootinfo-report-serial-visibility-core-20260616 accepts
+the local/static dual-stage BootInfo/report-path serial visibility core. The
+candidate/control pair distinguishes earliest Rust-entry marker visibility from
+post-BootInfo/report-path marker visibility without Ethernet, MDIO, MAN, MACB,
+GPIO32/PHY, packet, networking, SSH, Phase 12.2, or phase-transition target
+facts. Static artifact review proved the candidate contains both markers and
+the control contains only the earliest marker; both retain run-unique nonces
+and reject forbidden BCM54213PE/register/networking claims. The next bounded
+task is the serialized Pi 5 proof for no selected TFTP, no earliest marker,
+earliest marker only, both markers observed, or a precise blocker.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

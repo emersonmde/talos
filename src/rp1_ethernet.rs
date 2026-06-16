@@ -9832,6 +9832,322 @@ pub fn validate_rp1_ethernet_kernel_entry_serial_beacon_core_evidence(
     Ok(())
 }
 
+pub const RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CORE_TASK_ID: &str =
+    "phase12-rp1-ethernet-bootinfo-report-serial-visibility-core-20260616";
+pub const RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_PI5_PROOF_TASK_ID: &str =
+    "phase12-rp1-ethernet-bootinfo-report-serial-visibility-pi5-proof-20260616";
+pub const RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-bootinfo-report-serial-visibility-contract-v1";
+pub const RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CANDIDATE_BOOT_SCENARIO: &str =
+    "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_candidate";
+pub const RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CONTROL_BOOT_SCENARIO: &str =
+    "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_earliest_only_control";
+pub const RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CANDIDATE_ARCHIVE_HELPER: &str =
+    "scripts/rpi5-rp1-ethernet-bootinfo-report-serial-visibility-candidate-archive.sh";
+pub const RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CONTROL_ARCHIVE_HELPER: &str =
+    "scripts/rpi5-rp1-ethernet-bootinfo-report-serial-visibility-control-archive.sh";
+pub const RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_EARLIEST_MARKER: &str =
+    "bootinfo-report-visibility-earliest-entry-marker";
+pub const RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_POST_BOOTINFO_MARKER: &str =
+    "bootinfo-report-visibility-post-bootinfo-report-path-marker";
+pub const RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CANDIDATE_CLASSIFICATION: &str =
+    "bootinfo-report-serial-visibility-candidate-local-static";
+pub const RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CONTROL_CLASSIFICATION: &str =
+    "no-bootinfo-report-path-rp1-ethernet-serial-visibility-control";
+pub const RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_BOUNDARY_CLASSIFICATION: &str =
+    "bootinfo-report-serial-visibility-core-local-static";
+pub const RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_SELECTED_DISCRIMINATOR: &str =
+    "dual-stage-earliest-entry-and-post-bootinfo-report-path-serial-visibility";
+pub const RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_PURPOSE: &str = "discriminate earliest Rust-entry serial visibility from post-BootInfo/report-path serial visibility before Ethernet or MDIO behavior";
+pub const RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_MARKER_POSITIONS: &[&str] = &[
+    "earliest-entry marker emitted in boot::rpi5::kernel_main before target services and report_boot_identity consume BootInfo",
+    "post-BootInfo/report-path marker emitted after report_boot_identity reports BootInfo and service metadata",
+];
+pub const RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_HARDWARE_OUTCOMES: &[&str] = &[
+    "no-selected-tftp",
+    "no-earliest-marker",
+    "earliest-marker-only",
+    "both-markers-observed",
+    "known-good-control-failed",
+    "staging-capture-inconclusive",
+    "restore-failed",
+];
+pub const RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_REJECTED_CLAIMS: &[&str] = &[
+    "BCM54213PE register values",
+    "Ethernet readiness",
+    "link readiness",
+    "GPIO32 or PHY reset ownership",
+    "BMCR write",
+    "Broadcom shadow/MMD/AUX access",
+    "interrupt ownership",
+    "broad PHY or MAC configuration",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition",
+];
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetBootinfoReportSerialVisibilityCoreEvidence {
+    pub core_task_id: &'static str,
+    pub proof_task_id: &'static str,
+    pub contract_id: &'static str,
+    pub candidate_boot_scenario: &'static str,
+    pub control_boot_scenario: &'static str,
+    pub candidate_archive_helper: &'static str,
+    pub control_archive_helper: &'static str,
+    pub earliest_marker: &'static str,
+    pub post_bootinfo_marker: &'static str,
+    pub candidate_classification: &'static str,
+    pub control_classification: &'static str,
+    pub boundary_classification: &'static str,
+    pub selected_discriminator: &'static str,
+    pub purpose: &'static str,
+    pub marker_positions: &'static [&'static str],
+    pub hardware_outcomes: &'static [&'static str],
+    pub rejected_claims: &'static [&'static str],
+    pub candidate_emits_earliest_marker: bool,
+    pub candidate_emits_post_bootinfo_marker: bool,
+    pub control_emits_earliest_marker: bool,
+    pub control_emits_post_bootinfo_marker: bool,
+    pub constructs_ethernet_target_facts: bool,
+    pub constructs_mdio_targets: bool,
+    pub constructs_man_frames: bool,
+    pub constructs_macb_target: bool,
+    pub constructs_gpio32_or_phy_target: bool,
+    pub performs_volatile_ethernet_access: bool,
+    pub permits_bcm54213pe_register_claims: bool,
+    pub permits_link_readiness_claim: bool,
+    pub permits_packet_io: bool,
+    pub permits_networking: bool,
+    pub permits_ssh: bool,
+    pub permits_phase_12_2: bool,
+    pub permits_phase_transition: bool,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Rp1EthernetBootinfoReportSerialVisibilityCoreError {
+    ScenarioMismatch,
+    ArchiveHelperMismatch,
+    MarkerMismatch,
+    ClassificationMismatch,
+    DiscriminatorMismatch,
+    MarkerPositionsMismatch,
+    HardwareOutcomesMismatch,
+    RejectedClaimsMismatch,
+    CandidateMissingEarliestMarker,
+    CandidateMissingPostBootinfoMarker,
+    ControlMissingEarliestMarker,
+    ControlIncludesPostBootinfoMarker,
+    EthernetTargetFactsClaim,
+    MdioTargetClaim,
+    ManFrameClaim,
+    MacbTargetClaim,
+    Gpio32OrPhyTargetClaim,
+    VolatileEthernetAccessClaim,
+    Bcm54213peRegisterClaim,
+    LinkReadinessClaim,
+    PacketIoClaim,
+    NetworkingClaim,
+    SshClaim,
+    Phase122Claim,
+    PhaseTransitionClaim,
+}
+
+impl Rp1EthernetBootinfoReportSerialVisibilityCoreError {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::ScenarioMismatch => "scenario-mismatch",
+            Self::ArchiveHelperMismatch => "archive-helper-mismatch",
+            Self::MarkerMismatch => "marker-mismatch",
+            Self::ClassificationMismatch => "classification-mismatch",
+            Self::DiscriminatorMismatch => "discriminator-mismatch",
+            Self::MarkerPositionsMismatch => "marker-positions-mismatch",
+            Self::HardwareOutcomesMismatch => "hardware-outcomes-mismatch",
+            Self::RejectedClaimsMismatch => "rejected-claims-mismatch",
+            Self::CandidateMissingEarliestMarker => "candidate-missing-earliest-marker",
+            Self::CandidateMissingPostBootinfoMarker => "candidate-missing-post-bootinfo-marker",
+            Self::ControlMissingEarliestMarker => "control-missing-earliest-marker",
+            Self::ControlIncludesPostBootinfoMarker => "control-includes-post-bootinfo-marker",
+            Self::EthernetTargetFactsClaim => "ethernet-target-facts-claim",
+            Self::MdioTargetClaim => "mdio-target-claim",
+            Self::ManFrameClaim => "man-frame-claim",
+            Self::MacbTargetClaim => "macb-target-claim",
+            Self::Gpio32OrPhyTargetClaim => "gpio32-or-phy-target-claim",
+            Self::VolatileEthernetAccessClaim => "volatile-ethernet-access-claim",
+            Self::Bcm54213peRegisterClaim => "bcm54213pe-register-claim",
+            Self::LinkReadinessClaim => "link-readiness-claim",
+            Self::PacketIoClaim => "packet-io-claim",
+            Self::NetworkingClaim => "networking-claim",
+            Self::SshClaim => "ssh-claim",
+            Self::Phase122Claim => "phase-12-2-claim",
+            Self::PhaseTransitionClaim => "phase-transition-claim",
+        }
+    }
+}
+
+pub const fn rp1_ethernet_bootinfo_report_serial_visibility_core_evidence()
+-> Rp1EthernetBootinfoReportSerialVisibilityCoreEvidence {
+    Rp1EthernetBootinfoReportSerialVisibilityCoreEvidence {
+        core_task_id: RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CORE_TASK_ID,
+        proof_task_id: RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_PI5_PROOF_TASK_ID,
+        contract_id: RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CONTRACT_ID,
+        candidate_boot_scenario:
+            RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CANDIDATE_BOOT_SCENARIO,
+        control_boot_scenario: RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CONTROL_BOOT_SCENARIO,
+        candidate_archive_helper:
+            RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CANDIDATE_ARCHIVE_HELPER,
+        control_archive_helper:
+            RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CONTROL_ARCHIVE_HELPER,
+        earliest_marker: RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_EARLIEST_MARKER,
+        post_bootinfo_marker: RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_POST_BOOTINFO_MARKER,
+        candidate_classification:
+            RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CANDIDATE_CLASSIFICATION,
+        control_classification:
+            RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CONTROL_CLASSIFICATION,
+        boundary_classification:
+            RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_BOUNDARY_CLASSIFICATION,
+        selected_discriminator:
+            RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_SELECTED_DISCRIMINATOR,
+        purpose: RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_PURPOSE,
+        marker_positions: RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_MARKER_POSITIONS,
+        hardware_outcomes: RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_HARDWARE_OUTCOMES,
+        rejected_claims: RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_REJECTED_CLAIMS,
+        candidate_emits_earliest_marker: true,
+        candidate_emits_post_bootinfo_marker: true,
+        control_emits_earliest_marker: true,
+        control_emits_post_bootinfo_marker: false,
+        constructs_ethernet_target_facts: false,
+        constructs_mdio_targets: false,
+        constructs_man_frames: false,
+        constructs_macb_target: false,
+        constructs_gpio32_or_phy_target: false,
+        performs_volatile_ethernet_access: false,
+        permits_bcm54213pe_register_claims: false,
+        permits_link_readiness_claim: false,
+        permits_packet_io: false,
+        permits_networking: false,
+        permits_ssh: false,
+        permits_phase_12_2: false,
+        permits_phase_transition: false,
+    }
+}
+
+pub fn validate_rp1_ethernet_bootinfo_report_serial_visibility_core_evidence(
+    evidence: Rp1EthernetBootinfoReportSerialVisibilityCoreEvidence,
+) -> Result<(), Rp1EthernetBootinfoReportSerialVisibilityCoreError> {
+    if evidence.candidate_boot_scenario
+        != RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CANDIDATE_BOOT_SCENARIO
+        || evidence.control_boot_scenario
+            != RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CONTROL_BOOT_SCENARIO
+    {
+        return Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::ScenarioMismatch);
+    }
+    if evidence.candidate_archive_helper
+        != RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CANDIDATE_ARCHIVE_HELPER
+        || evidence.control_archive_helper
+            != RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CONTROL_ARCHIVE_HELPER
+    {
+        return Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::ArchiveHelperMismatch);
+    }
+    if evidence.earliest_marker != RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_EARLIEST_MARKER
+        || evidence.post_bootinfo_marker
+            != RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_POST_BOOTINFO_MARKER
+    {
+        return Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::MarkerMismatch);
+    }
+    if evidence.candidate_classification
+        != RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CANDIDATE_CLASSIFICATION
+        || evidence.control_classification
+            != RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CONTROL_CLASSIFICATION
+        || evidence.boundary_classification
+            != RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_BOUNDARY_CLASSIFICATION
+    {
+        return Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::ClassificationMismatch);
+    }
+    if evidence.selected_discriminator
+        != RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_SELECTED_DISCRIMINATOR
+    {
+        return Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::DiscriminatorMismatch);
+    }
+    if evidence.marker_positions != RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_MARKER_POSITIONS
+    {
+        return Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::MarkerPositionsMismatch);
+    }
+    if evidence.hardware_outcomes
+        != RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_HARDWARE_OUTCOMES
+    {
+        return Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::HardwareOutcomesMismatch);
+    }
+    if evidence.rejected_claims != RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_REJECTED_CLAIMS {
+        return Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::RejectedClaimsMismatch);
+    }
+    if !evidence.candidate_emits_earliest_marker {
+        return Err(
+            Rp1EthernetBootinfoReportSerialVisibilityCoreError::CandidateMissingEarliestMarker,
+        );
+    }
+    if !evidence.candidate_emits_post_bootinfo_marker {
+        return Err(
+            Rp1EthernetBootinfoReportSerialVisibilityCoreError::CandidateMissingPostBootinfoMarker,
+        );
+    }
+    if !evidence.control_emits_earliest_marker {
+        return Err(
+            Rp1EthernetBootinfoReportSerialVisibilityCoreError::ControlMissingEarliestMarker,
+        );
+    }
+    if evidence.control_emits_post_bootinfo_marker {
+        return Err(
+            Rp1EthernetBootinfoReportSerialVisibilityCoreError::ControlIncludesPostBootinfoMarker,
+        );
+    }
+    if evidence.constructs_ethernet_target_facts {
+        return Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::EthernetTargetFactsClaim);
+    }
+    if evidence.constructs_mdio_targets {
+        return Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::MdioTargetClaim);
+    }
+    if evidence.constructs_man_frames {
+        return Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::ManFrameClaim);
+    }
+    if evidence.constructs_macb_target {
+        return Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::MacbTargetClaim);
+    }
+    if evidence.constructs_gpio32_or_phy_target {
+        return Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::Gpio32OrPhyTargetClaim);
+    }
+    if evidence.performs_volatile_ethernet_access {
+        return Err(
+            Rp1EthernetBootinfoReportSerialVisibilityCoreError::VolatileEthernetAccessClaim,
+        );
+    }
+    if evidence.permits_bcm54213pe_register_claims {
+        return Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::Bcm54213peRegisterClaim);
+    }
+    if evidence.permits_link_readiness_claim {
+        return Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::LinkReadinessClaim);
+    }
+    if evidence.permits_packet_io {
+        return Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::PacketIoClaim);
+    }
+    if evidence.permits_networking {
+        return Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::NetworkingClaim);
+    }
+    if evidence.permits_ssh {
+        return Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::SshClaim);
+    }
+    if evidence.permits_phase_12_2 {
+        return Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::Phase122Claim);
+    }
+    if evidence.permits_phase_transition {
+        return Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::PhaseTransitionClaim);
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -15209,6 +15525,137 @@ mod tests {
         );
         assert_eq!(
             Rp1EthernetKernelEntrySerialBeaconCoreError::PhaseTransitionClaim.name(),
+            "phase-transition-claim"
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_bootinfo_report_serial_visibility_core_shapes_dual_stage_markers() {
+        let evidence = rp1_ethernet_bootinfo_report_serial_visibility_core_evidence();
+
+        assert_eq!(
+            evidence.core_task_id,
+            RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CORE_TASK_ID
+        );
+        assert_eq!(
+            evidence.proof_task_id,
+            RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_PI5_PROOF_TASK_ID
+        );
+        assert_eq!(
+            evidence.contract_id,
+            RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.candidate_boot_scenario,
+            RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CANDIDATE_BOOT_SCENARIO
+        );
+        assert_eq!(
+            evidence.control_boot_scenario,
+            RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_CONTROL_BOOT_SCENARIO
+        );
+        assert_eq!(
+            evidence.earliest_marker,
+            "bootinfo-report-visibility-earliest-entry-marker"
+        );
+        assert_eq!(
+            evidence.post_bootinfo_marker,
+            "bootinfo-report-visibility-post-bootinfo-report-path-marker"
+        );
+        assert_eq!(
+            evidence.selected_discriminator,
+            RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_SELECTED_DISCRIMINATOR
+        );
+        assert_eq!(
+            evidence.marker_positions,
+            RP1_ETHERNET_BOOTINFO_REPORT_SERIAL_VISIBILITY_MARKER_POSITIONS
+        );
+        assert!(evidence.candidate_emits_earliest_marker);
+        assert!(evidence.candidate_emits_post_bootinfo_marker);
+        assert!(evidence.control_emits_earliest_marker);
+        assert!(!evidence.control_emits_post_bootinfo_marker);
+        assert!(!evidence.constructs_ethernet_target_facts);
+        assert!(!evidence.constructs_mdio_targets);
+        assert!(!evidence.constructs_man_frames);
+        assert!(!evidence.constructs_macb_target);
+        assert!(!evidence.constructs_gpio32_or_phy_target);
+        assert!(!evidence.performs_volatile_ethernet_access);
+        assert!(!evidence.permits_bcm54213pe_register_claims);
+        assert!(!evidence.permits_link_readiness_claim);
+        assert!(!evidence.permits_packet_io);
+        assert!(!evidence.permits_networking);
+        assert!(!evidence.permits_ssh);
+        assert!(!evidence.permits_phase_12_2);
+        assert!(!evidence.permits_phase_transition);
+        assert_eq!(
+            validate_rp1_ethernet_bootinfo_report_serial_visibility_core_evidence(evidence),
+            Ok(())
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_bootinfo_report_serial_visibility_core_rejects_marker_and_claim_drift() {
+        let evidence = rp1_ethernet_bootinfo_report_serial_visibility_core_evidence();
+
+        assert_eq!(
+            validate_rp1_ethernet_bootinfo_report_serial_visibility_core_evidence(
+                Rp1EthernetBootinfoReportSerialVisibilityCoreEvidence {
+                    candidate_emits_post_bootinfo_marker: false,
+                    ..evidence
+                }
+            ),
+            Err(
+                Rp1EthernetBootinfoReportSerialVisibilityCoreError::CandidateMissingPostBootinfoMarker
+            )
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bootinfo_report_serial_visibility_core_evidence(
+                Rp1EthernetBootinfoReportSerialVisibilityCoreEvidence {
+                    control_emits_post_bootinfo_marker: true,
+                    ..evidence
+                }
+            ),
+            Err(
+                Rp1EthernetBootinfoReportSerialVisibilityCoreError::ControlIncludesPostBootinfoMarker
+            )
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bootinfo_report_serial_visibility_core_evidence(
+                Rp1EthernetBootinfoReportSerialVisibilityCoreEvidence {
+                    constructs_mdio_targets: true,
+                    ..evidence
+                }
+            ),
+            Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::MdioTargetClaim)
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bootinfo_report_serial_visibility_core_evidence(
+                Rp1EthernetBootinfoReportSerialVisibilityCoreEvidence {
+                    performs_volatile_ethernet_access: true,
+                    ..evidence
+                }
+            ),
+            Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::VolatileEthernetAccessClaim)
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bootinfo_report_serial_visibility_core_evidence(
+                Rp1EthernetBootinfoReportSerialVisibilityCoreEvidence {
+                    permits_bcm54213pe_register_claims: true,
+                    ..evidence
+                }
+            ),
+            Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::Bcm54213peRegisterClaim)
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bootinfo_report_serial_visibility_core_evidence(
+                Rp1EthernetBootinfoReportSerialVisibilityCoreEvidence {
+                    permits_networking: true,
+                    ..evidence
+                }
+            ),
+            Err(Rp1EthernetBootinfoReportSerialVisibilityCoreError::NetworkingClaim)
+        );
+        assert_eq!(
+            Rp1EthernetBootinfoReportSerialVisibilityCoreError::PhaseTransitionClaim.name(),
             "phase-transition-claim"
         );
     }

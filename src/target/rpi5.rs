@@ -12962,6 +12962,109 @@ pub fn run_rp1_ethernet_kernel_entry_serial_beacon() -> ! {
     }
 }
 
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_earliest_only_control"
+))]
+pub fn write_rp1_ethernet_bootinfo_report_serial_visibility_earliest_marker() {
+    write_early_static("TALOS: rp1-ethernet-bootinfo-report-serial-visibility");
+    write_rp1_ethernet_bootinfo_report_serial_visibility_capture_nonce();
+    write_rp1_ethernet_bootinfo_report_serial_visibility_common();
+    write_early_static(" marker-stage=earliest-entry");
+    write_early_static(" marker=bootinfo-report-visibility-earliest-entry-marker");
+    write_early_static(" emits-before-boot-info=true emits-after-boot-info=false");
+    write_early_static(" post-bootinfo-report-path-marker-visible=false");
+    write_early_static(" classification=bootinfo-report-serial-visibility-earliest-marker\n");
+    wait_uart10_empty_early_phase();
+}
+
+#[cfg(
+    talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_earliest_only_control"
+)]
+pub fn run_rp1_ethernet_bootinfo_report_serial_visibility_earliest_only_control() -> ! {
+    loop {
+        write_early_static("TALOS: rp1-ethernet-bootinfo-report-serial-visibility-control");
+        write_rp1_ethernet_bootinfo_report_serial_visibility_capture_nonce();
+        write_rp1_ethernet_bootinfo_report_serial_visibility_common();
+        write_early_static(" control-kind=earliest-only-before-bootinfo");
+        write_early_static(" marker-stage=control-stop-before-bootinfo");
+        write_early_static(" post-bootinfo-report-path-marker-visible=false");
+        write_early_static(
+            " classification=no-bootinfo-report-path-rp1-ethernet-serial-visibility-control\n",
+        );
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_candidate")]
+pub fn run_rp1_ethernet_bootinfo_report_serial_visibility_candidate() -> ! {
+    loop {
+        write_early_static("TALOS: rp1-ethernet-bootinfo-report-serial-visibility");
+        write_rp1_ethernet_bootinfo_report_serial_visibility_capture_nonce();
+        write_rp1_ethernet_bootinfo_report_serial_visibility_common();
+        write_early_static(" marker-stage=post-bootinfo-report-path");
+        write_early_static(" marker=bootinfo-report-visibility-post-bootinfo-report-path-marker");
+        write_early_static(" emits-before-boot-info=false emits-after-boot-info=true");
+        write_early_static(" post-bootinfo-report-path-marker-visible=true");
+        write_early_static(
+            " classification=bootinfo-report-serial-visibility-candidate-local-static\n",
+        );
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_earliest_only_control"
+))]
+fn write_rp1_ethernet_bootinfo_report_serial_visibility_common() {
+    write_early_static(
+        " contract-id=phase12-rp1-ethernet-bootinfo-report-serial-visibility-contract-v1",
+    );
+    write_early_static(
+        " core-task-id=phase12-rp1-ethernet-bootinfo-report-serial-visibility-core-20260616",
+    );
+    write_early_static(
+        " proof-task-id=phase12-rp1-ethernet-bootinfo-report-serial-visibility-pi5-proof-20260616",
+    );
+    write_early_static(
+        " selected-discriminator=dual-stage-earliest-entry-and-post-bootinfo-report-path-serial-visibility",
+    );
+    write_early_static(
+        " accepted-frontier=kernel-entry-serial-beacon-frontier-closed-beacon-observed",
+    );
+    write_early_static(" bootinfo-source=report_boot_identity");
+    write_early_static(" target=none controller=none compatible=none phy-model=none");
+    write_early_static(" selected-registers=none bcm54213pe-register-values=withheld");
+    write_early_static(" ethernet-target-facts-constructed=false");
+    write_early_static(" mdio-target-constructed=false man-frame-constructed=false");
+    write_early_static(" macb-target-constructed=false gpio32-or-phy-target-constructed=false");
+    write_early_static(" volatile-ethernet-access-performed=false");
+    write_early_static(" selector-write-performed=false bmcr-write-performed=false");
+    write_early_static(" broadcom-shadow-mmd-aux-access-performed=false");
+    write_early_static(" interrupt-ownership=false phy-or-mac-configuration=false");
+    write_early_static(" packet-io-performed=false networking-performed=false ssh-performed=false");
+    write_early_static(
+        " hardware-outcomes=no-selected-tftp,no-earliest-marker,earliest-marker-only,both-markers-observed,known-good-control-failed,staging-capture-inconclusive,restore-failed",
+    );
+    write_early_static(
+        " rejected-claims=bcm54213pe-register-values,ethernet-readiness,link-readiness,gpio32-phy-reset-ownership,bmcr-write,broadcom-shadow-mmd-aux-access,interrupt-ownership,phy-mac-configuration,packet-io,networking,sockets,ssh,phase-12-2,phase-transition",
+    );
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_earliest_only_control"
+))]
+fn write_rp1_ethernet_bootinfo_report_serial_visibility_capture_nonce() {
+    if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
+        if !nonce.is_empty() {
+            write_early_static(" capture-nonce=");
+            write_early_static(nonce);
+        }
+    }
+}
+
 #[cfg(talos_boot_scenario = "rpi5_rp1_uart0_fr_read")]
 pub fn run_rp1_uart0_fr_read_diagnostic() -> ! {
     const CONTRACT_ID: &str = "phase11-rp1-pcie-map-contract-v1";
