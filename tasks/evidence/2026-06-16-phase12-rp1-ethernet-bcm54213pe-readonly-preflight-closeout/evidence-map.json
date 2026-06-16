@@ -1,0 +1,86 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-closeout-20260616",
+  "source_inputs": [
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract.md",
+      "role": "accepted source/static read-only target selection"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/classification.json",
+      "role": "source-contract classification and selected/deferred/blocked/rejected surfaces"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/evidence-map.json",
+      "role": "source-contract evidence references"
+    },
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-report-core.md",
+      "role": "accepted local/static report-core outcome"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-report-core/classification.json",
+      "role": "report-core classification and validator evidence"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-report-core/evidence-map.json",
+      "role": "report-core implementation and validation evidence"
+    }
+  ],
+  "closeout_outputs": [
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-closeout.md",
+      "role": "closeout task record"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-closeout/classification.json",
+      "role": "closed-frontier classification"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-closeout/evidence-map.json",
+      "role": "closeout evidence map"
+    },
+    {
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "role": "Phase 12 closed-frontier documentation"
+    },
+    {
+      "path": "docs/src/roadmap.md",
+      "role": "roadmap closed-frontier documentation"
+    }
+  ],
+  "validation": [
+    {
+      "level": "static/task evidence inspection",
+      "command": "manual review of accepted source-contract and report-core tasks plus JSON evidence",
+      "result": "pass"
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-closeout/*.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff whitespace check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff whitespace check",
+      "command": "git diff --cached --check",
+      "result": "pass before commit"
+    }
+  ],
+  "hardware": {
+    "hardwareTestLock_acquired": false,
+    "pi5_hardware_run": false,
+    "boot_archive_publication": false,
+    "lab_mutation": false,
+    "volatile_ethernet_access": false
+  },
+  "next_action": "Set planningNeeded=true for supervisor planning of a later explicit candidate/control hardware-proof contract for MII_CTRL1000/MII_STAT1000 only, a separate source/static write-restore contract, or an explicit pause."
+}

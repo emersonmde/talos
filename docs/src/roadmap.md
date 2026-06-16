@@ -10293,6 +10293,19 @@ GPIO32 action, BMCR write, Broadcom shadow/MMD/aux access, PHY/MAC
 configuration, packet I/O, networking, SSH, Phase 12.2, and phase transition
 remain unauthorized.
 
+phase12-rp1-ethernet-bcm54213pe-readonly-preflight-report-core-20260616 and
+phase12-rp1-ethernet-bcm54213pe-readonly-preflight-closeout-20260616 accept
+bcm54213pe-readonly-preflight-frontier-closed-hardware-proof-planning-required.
+The closed local/static boundary is exactly PHY1 MII_CTRL1000 0x09 and PHY1
+MII_STAT1000 0x0a plus a no-MDIO/no-Ethernet control shape. The report
+validators reject hardware proof, volatile access, GPIO32 action, BMCR/PHY
+writes, Broadcom shadow/MMD/aux access, interrupt surfaces, PHY/MAC
+configuration, link-readiness, packet I/O, networking, SSH, Phase 12.2, and
+phase-transition claims. Supervisor planning is required before a later
+candidate/control hardware-proof contract, separate source/static
+write-restore contract, or explicit pause; this closeout authorizes no
+hardware, packet I/O, networking, SSH, Phase 12.2, or phase transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

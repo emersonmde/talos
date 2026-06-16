@@ -1931,3 +1931,20 @@ status and GPIO32 persistent-event-state blocker remain unchanged. No hardware
 proof, GPIO32 action, BMCR write, Broadcom shadow/MMD/aux access, PHY/MAC
 configuration, packet I/O, networking, SSH, Phase 12.2, or phase transition is
 authorized.
+
+phase12-rp1-ethernet-bcm54213pe-readonly-preflight-report-core-20260616 and
+phase12-rp1-ethernet-bcm54213pe-readonly-preflight-closeout-20260616 close the
+read-only preflight frontier as
+bcm54213pe-readonly-preflight-frontier-closed-hardware-proof-planning-required.
+The report core encodes only local/static candidate metadata for PHY1
+MII_CTRL1000 0x09 and MII_STAT1000 0x0a plus the paired
+no-MDIO/no-Ethernet control shape, and its validators reject hardware proof,
+volatile access, GPIO32 action, BMCR/PHY writes, Broadcom shadow/MMD/aux
+access, interrupt surfaces, PHY/MAC configuration, link-readiness, packet I/O,
+networking, SSH, Phase 12.2, and phase-transition claims. Any later use of the
+closed target set requires supervisor planning for an explicit
+candidate/control hardware-proof contract with candidate identity, fresh serial
+cursor, same-power-cycle TFTP delta, known-good control, candidate rerun on
+inconclusive evidence, hardwareTestLock, restore proof, and post-run forbidden
+claim review. The closeout itself authorizes no hardware run, write/restore
+surface, networking, SSH, Phase 12.2, or phase transition.

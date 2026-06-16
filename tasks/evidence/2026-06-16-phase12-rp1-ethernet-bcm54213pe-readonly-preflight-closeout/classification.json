@@ -1,0 +1,131 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-closeout-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-readonly-preflight-frontier-closed-hardware-proof-planning-required",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "accepted source-contract review",
+    "accepted local/static report-core review",
+    "JSON evidence validation",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_frontier": {
+    "name": "bcm54213pe-readonly-preflight-frontier-closed",
+    "selected_targets": [
+      {
+        "surface": "MII_CTRL1000",
+        "phy_addr": 1,
+        "register": "0x09",
+        "future_clause22_man_frame_metadata": "0x60a60000",
+        "status": "closed-local-static-report-boundary"
+      },
+      {
+        "surface": "MII_STAT1000",
+        "phy_addr": 1,
+        "register": "0x0a",
+        "future_clause22_man_frame_metadata": "0x60aa0000",
+        "status": "closed-local-static-report-boundary"
+      }
+    ],
+    "control_boundary": {
+      "classification": "no-mdio-no-ethernet-bcm54213pe-readonly-preflight-control",
+      "constructs_mdio_targets": false,
+      "constructs_man_frames": false,
+      "constructs_macb_target": false,
+      "constructs_gpio_target": false,
+      "runtime_volatile_access_intent": false
+    }
+  },
+  "retained_context": {
+    "phy_model": "Broadcom BCM54213PE",
+    "physid1": "0x600d",
+    "physid2": "0x84a2",
+    "post_physical_status": {
+      "bmcr": "0x1000",
+      "bmsr": "0x7949/0x7949",
+      "anar": "0x01e1",
+      "anlpar": "0x0000",
+      "macb_nsr": "0x00000006",
+      "bmsr_link_status": false,
+      "bmsr_autoneg_complete": false,
+      "anlpar_nonzero": false,
+      "macb_nsr_link": false
+    },
+    "gpio32_reset_recovery": "blocked-by-persistent-or-firmware-owned-event-state"
+  },
+  "next_boundary": {
+    "decision": "supervisor-planning-required",
+    "selected_planning_boundary": "later explicit candidate/control hardware-proof contract for MII_CTRL1000 and MII_STAT1000 only",
+    "alternate_supervisor_options": [
+      "separate source/static write-restore contract",
+      "explicit pause"
+    ],
+    "hardware_authorized_by_this_task": false,
+    "planning_needed": true,
+    "required_hardware_proof_preconditions": [
+      "candidate identity proof before power",
+      "fresh serial cursor before power",
+      "same-power-cycle TFTP delta for candidate and control",
+      "known-good no-MDIO/no-Ethernet control",
+      "candidate rerun if first candidate evidence is inconclusive",
+      "hardwareTestLock acquisition and release",
+      "restore proof to the pre-run baseline",
+      "post-run evidence review with forbidden claims rejected"
+    ]
+  },
+  "forbidden_claims": [
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition",
+    "link-readiness",
+    "ethernet-driver-readiness",
+    "gpio32-reset-ownership",
+    "bmcr-write-or-autoneg-retry",
+    "broadcom-shadow-mmd-aux-access",
+    "interrupt-ownership",
+    "broad-phy-configuration",
+    "macb-configuration"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Selected read-only preflight target set is closed to exactly PHY1 MII_CTRL1000 0x09 and PHY1 MII_STAT1000 0x0a."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Local/static report core encodes candidate metadata and paired no-MDIO/no-Ethernet control metadata without runtime volatile access."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Report-core validators reject forbidden hardware proof, volatile access, write/restore, packet/networking/SSH/Phase 12.2, and phase-transition claims."
+    },
+    {
+      "disposition": "selected",
+      "finding": "The next boundary is supervisor planning for a later explicit hardware-proof contract for MII_CTRL1000/MII_STAT1000 only."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "The hardware proof itself remains deferred and unauthorized by this closeout."
+    },
+    {
+      "disposition": "blocked",
+      "finding": "GPIO32 reset recovery remains blocked by accepted persistent or firmware-owned event-state evidence."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Packet I/O, networking, sockets, SSH, Phase 12.2, and phase transition remain rejected."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No source, helper, task, or evidence files were removed."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "The accepted physical Ethernet link precondition remains accepted and was not re-opened."
+    }
+  ]
+}
