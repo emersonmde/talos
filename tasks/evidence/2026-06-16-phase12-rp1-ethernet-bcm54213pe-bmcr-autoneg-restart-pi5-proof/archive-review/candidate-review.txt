@@ -1,0 +1,8 @@
+candidate_archive=target/tmp/bcm54213pe-bmcr-autoneg-restart-candidate-20260616T1415Z.tar.gz
+candidate_archive_sha256=cb83d8e42b5a55c704a8d8ef177c8371428b0f840dba69a37353c75fcb303250
+kernel_2712_sha256=0fdda0d6f95229340d69314628cd9940f156070953f2981c06502864cf1ae9de
+kernel_2712_size=53112
+header_image_size=53112
+text_offset=0
+flags=12
+forbidden_bcm54213pe_bmcr_autoneg_restart_candidate_runtime_strings_absent=true

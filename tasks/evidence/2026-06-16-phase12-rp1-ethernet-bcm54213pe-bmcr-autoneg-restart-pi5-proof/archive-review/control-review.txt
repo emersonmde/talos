@@ -1,0 +1,8 @@
+control_archive=target/tmp/bcm54213pe-bmcr-autoneg-restart-control-20260616T1415Z.tar.gz
+control_archive_sha256=4e4a95a71ccd03362849fd2cf749538b05fcdec38faca5c994517fa0e3baf127
+kernel_2712_sha256=c08dba25d9a6de3126589bb9220a90410cc09655ef9c2d1f85e32ca3d25fde3e
+kernel_2712_size=50192
+header_image_size=50192
+text_offset=0
+flags=12
+forbidden_bcm54213pe_bmcr_autoneg_restart_control_runtime_strings_absent=true

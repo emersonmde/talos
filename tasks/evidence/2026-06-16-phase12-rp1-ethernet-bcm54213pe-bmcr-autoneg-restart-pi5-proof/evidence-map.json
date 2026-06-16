@@ -1,0 +1,83 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-pi5-proof-20260616",
+  "classification": "bcm54213pe-bmcr-autoneg-restart-post-status-sampled",
+  "evidence": [
+    {
+      "level": "static archive/image review",
+      "paths": [
+        "archive-review/control-review.txt",
+        "archive-review/candidate-review.txt",
+        "control/archive.sha256",
+        "candidate/archive.sha256",
+        "control/kernel_2712.sha256",
+        "candidate/kernel_2712.sha256",
+        "control/kernel_2712.bytes",
+        "candidate/kernel_2712.bytes"
+      ]
+    },
+    {
+      "level": "lab-controller API",
+      "paths": [
+        "pre-snapshot-response.json",
+        "control-run/publish-archive.json",
+        "candidate-run/publish-archive.json",
+        "control-run/preflight-identity.json",
+        "candidate-run/preflight-identity.json",
+        "control-run/final-pre-restore-status.json",
+        "candidate-run/final-pre-restore-status.json",
+        "control-run/restore-snapshot.json",
+        "candidate-run/restore-snapshot.json",
+        "final-boot-files.json"
+      ]
+    },
+    {
+      "level": "same-power-cycle TFTP evidence",
+      "paths": [
+        "control-run/tftp-delta-stable-pre-restore.json",
+        "candidate-run/tftp-delta-stable-pre-restore.json"
+      ]
+    },
+    {
+      "level": "serial hardware boot/output",
+      "paths": [
+        "control-run/serial-observe-window.json",
+        "candidate-run/serial-observe-window.json"
+      ]
+    },
+    {
+      "level": "serial freshness guard v1 replay",
+      "paths": [
+        "control-run/serial-freshness-guard.json",
+        "candidate-run/serial-freshness-guard.json"
+      ]
+    },
+    {
+      "level": "summary",
+      "paths": [
+        "control-run/capture-invariant-summary.json",
+        "candidate-run/capture-invariant-summary.json",
+        "classification.json",
+        "capture-summary.json"
+      ]
+    }
+  ],
+  "acceptance": {
+    "hardware_lock_acquisition_release_required": true,
+    "control_decisive": true,
+    "candidate_decisive": true,
+    "no_candidate_rerun_performed": true,
+    "accepted_candidate_classification": "bcm54213pe-bmcr-autoneg-restart-post-status-sampled",
+    "rejected_claims_preserved": [
+      "GPIO32 reset ownership",
+      "Broadcom selector/config writes",
+      "interrupt ownership",
+      "link-ready acceptance",
+      "packet I/O",
+      "networking",
+      "sockets",
+      "SSH",
+      "Phase 12.2",
+      "phase transition"
+    ]
+  }
+}
