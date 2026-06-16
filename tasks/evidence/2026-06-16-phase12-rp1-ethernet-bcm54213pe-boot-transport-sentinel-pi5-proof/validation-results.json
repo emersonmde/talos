@@ -1,0 +1,31 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-pi5-proof-20260616",
+  "validation_results": [
+    {
+      "level": "fmt/lint/typecheck",
+      "command": "cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "level": "unit tests / QEMU substitute",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "result": "pass",
+      "tests_passed": 515
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-pi5-proof/*.json tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-pi5-proof/candidate/*.json tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-pi5-proof/control/*.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff whitespace check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    }
+  ]
+}

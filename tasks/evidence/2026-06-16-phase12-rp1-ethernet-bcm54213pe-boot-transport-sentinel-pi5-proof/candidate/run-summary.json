@@ -1,0 +1,81 @@
+{
+  "kind": "candidate",
+  "nonce": "bcm54213pe-sentinel-cand-20260616T0405Z",
+  "serial_marker": "capture-nonce=bcm54213pe-sentinel-cand-20260616T0405Z",
+  "endpoint_note": "/status and /boot/files retained; /status boot fields are sufficient selected-tree identity in this lab deployment.",
+  "expected": {
+    "tree_hash": "9eb5f67cb0cad1dd6e5af49ddf8c52455325417f5b7f998d1e07abdcb48bb02c",
+    "effective_kernel": "kernel_2712.img",
+    "fetch": "da591740/kernel_2712.img",
+    "fetch_bytes": 86744
+  },
+  "post_publish": {
+    "tree_hash": "9eb5f67cb0cad1dd6e5af49ddf8c52455325417f5b7f998d1e07abdcb48bb02c",
+    "effective_kernel": "kernel_2712.img",
+    "fetch_bytes": 86744,
+    "boot_files_http_code": 200,
+    "boot_files_ok": true
+  },
+  "serial": {
+    "exit": 1,
+    "drain_empty_before_power": false,
+    "cursor_start": 4194304,
+    "cursor_end": 4194304,
+    "has_marker": false,
+    "marker_occurrences": 0,
+    "nonce_occurrences": 0,
+    "response_bytes": 4873,
+    "has_firmware_network": true,
+    "has_kernel_main": false
+  },
+  "tftp": {
+    "exit": 0,
+    "stable": true,
+    "event_count": 13,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "events": [
+      {
+        "bytes": 86744,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "Jun 16 04:09:35 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 86744,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "Jun 16 04:09:36 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      }
+    ]
+  },
+  "final_pre_restore": {
+    "tree_hash": "9eb5f67cb0cad1dd6e5af49ddf8c52455325417f5b7f998d1e07abdcb48bb02c",
+    "effective_kernel": "kernel_2712.img",
+    "fetch_bytes": 86744
+  },
+  "restore": {
+    "snapshot_ok": true,
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "post_restore_fetch_bytes": 104136
+  },
+  "rejected_claims": [
+    "bcm54213pe-register-values",
+    "link-readiness",
+    "gpio32-phy-reset-ownership",
+    "bmcr-writes",
+    "broadcom-shadow-mmd-aux-access",
+    "interrupt-ownership",
+    "phy-mac-configuration",
+    "packet-io",
+    "networking",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "classification": "bcm54213pe-boot-transport-sentinel-candidate-fresh-tftp-no-sentinel-serial"
+}

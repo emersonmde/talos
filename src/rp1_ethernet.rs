@@ -8645,6 +8645,10 @@ pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_CANDIDATE_BOOT_SCENARIO: &s
     "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_candidate";
 pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_CONTROL_BOOT_SCENARIO: &str =
     "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_no_mdio_control";
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_BOOT_SCENARIOS: &[&str] = &[
+    RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_CANDIDATE_BOOT_SCENARIO,
+    RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_CONTROL_BOOT_SCENARIO,
+];
 pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_SELECTED_DISCRIMINATOR: &str =
     "bcm54213pe-phy1-mii-ctrl1000-stat1000-readonly-preflight";
 pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_CANDIDATE_CLASSIFICATION: &str =
@@ -9032,6 +9036,7 @@ pub const fn rp1_ethernet_bcm54213pe_readonly_preflight_hw_proof_core_evidence()
         source_task_id: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_SOURCE_TASK_ID,
         candidate_boot_scenario: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_CANDIDATE_BOOT_SCENARIO,
         control_boot_scenario: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_CONTROL_BOOT_SCENARIO,
+        boot_scenarios: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_BOOT_SCENARIOS,
         selected_discriminator: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_SELECTED_DISCRIMINATOR,
         selected_targets: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_SELECTED_TARGETS,
         register_names: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_REGISTER_NAMES,
@@ -9390,6 +9395,7 @@ pub struct Rp1EthernetBcm54213peBootTransportSentinelCoreEvidence {
     pub contract_id: &'static str,
     pub candidate_boot_scenario: &'static str,
     pub control_boot_scenario: &'static str,
+    pub boot_scenarios: &'static [&'static str],
     pub selected_discriminator: &'static str,
     pub purpose: &'static str,
     pub report_payloads: &'static [&'static str],

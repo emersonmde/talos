@@ -1,0 +1,29 @@
+{
+  "classification": "static-archive-review-before-publication",
+  "candidate": {
+    "nonce": "bcm54213pe-sentinel-cand-20260616T0405Z",
+    "archive_sha256": "1773094cf7e588823e864b447337ee20c387e6088ef528e8422f7ae5aa85f0ec  tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-pi5-proof/candidate-archive.tar.gz\n",
+    "kernel_sha256": "8893e450d953e5d27b5f0ae0f564757cefd19eb0b3d10476912cb4eeae10fc64  target/tmp/bcm54213pe-boot-transport-sentinel-candidate-boot-tree/kernel_2712.img\n",
+    "review": "archive=tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-pi5-proof/candidate-archive.tar.gz\nsha256=1773094cf7e588823e864b447337ee20c387e6088ef528e8422f7ae5aa85f0ec\nfile_count=19\nkernel_size=86744\nheader_image_size=86744\ntext_offset=0\nflags=12\nloader_diagnostic=false\ncircle_config_loader_diagnostic=false\nmanifest:\n  bcm2712-rpi-5-b.dtb\n  cmdline.txt\n  config.txt\n  da591740\n  da591740/bcm2712-rpi-5-b.dtb\n  da591740/cmdline.txt\n  da591740/config.txt\n  da591740/kernel8.img\n  da591740/kernel_2712.img\n  da591740/overlays\n  da591740/overlays/bcm2712d0.dtbo\n  da591740/overlays/overlay_map.dtb\n  da591740/overlays/uart0-pi5.dtbo\n  kernel8.img\n  kernel_2712.img\n  overlays\n  overlays/bcm2712d0.dtbo\n  overlays/overlay_map.dtb\n  overlays/uart0-pi5.dtbo\n"
+  },
+  "control": {
+    "nonce": "bcm54213pe-sentinel-ctrl-20260616T0405Z",
+    "archive_sha256": "9416e77ff893e57af6bac4bcd74c8f6ae8c86e37fc4c7a6eacf3aadf21757f99  tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-pi5-proof/control-archive.tar.gz\n",
+    "kernel_sha256": "8893e450d953e5d27b5f0ae0f564757cefd19eb0b3d10476912cb4eeae10fc64  target/tmp/bcm54213pe-boot-transport-sentinel-control-boot-tree/kernel_2712.img\n",
+    "review": "archive=tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-pi5-proof/control-archive.tar.gz\nsha256=9416e77ff893e57af6bac4bcd74c8f6ae8c86e37fc4c7a6eacf3aadf21757f99\nfile_count=19\nkernel_size=86744\nheader_image_size=86744\ntext_offset=0\nflags=12\nloader_diagnostic=false\ncircle_config_loader_diagnostic=false\nmanifest:\n  bcm2712-rpi-5-b.dtb\n  cmdline.txt\n  config.txt\n  da591740\n  da591740/bcm2712-rpi-5-b.dtb\n  da591740/cmdline.txt\n  da591740/config.txt\n  da591740/kernel8.img\n  da591740/kernel_2712.img\n  da591740/overlays\n  da591740/overlays/bcm2712d0.dtbo\n  da591740/overlays/overlay_map.dtb\n  da591740/overlays/uart0-pi5.dtbo\n  kernel8.img\n  kernel_2712.img\n  overlays\n  overlays/bcm2712d0.dtbo\n  overlays/overlay_map.dtb\n  overlays/uart0-pi5.dtbo\n"
+  },
+  "rejected_claims": [
+    "bcm54213pe-register-values",
+    "link-readiness",
+    "gpio32-phy-reset-ownership",
+    "bmcr-writes",
+    "broadcom-shadow-mmd-aux-access",
+    "interrupt-ownership",
+    "phy-mac-configuration",
+    "packet-io",
+    "networking",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ]
+}

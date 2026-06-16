@@ -1,0 +1,78 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-pi5-proof-20260616",
+  "evidence_level": "serial hardware boot/output plus lab-controller API and TFTP evidence",
+  "classification": "boot-transport-selected-tree-fresh-tftp-no-kernel-sentinel-serial",
+  "static_archive_review": "static-archive-review-before-publication",
+  "retained_files": {
+    "candidate": [
+      "candidate/run-summary.json",
+      "candidate/serial-observe-window.json",
+      "candidate/tftp-delta-stable-pre-restore.json",
+      "candidate/post-publish-status.json",
+      "candidate/final-pre-restore-status.json",
+      "candidate/post-restore-status.json"
+    ],
+    "control": [
+      "control/run-summary.json",
+      "control/serial-observe-window.json",
+      "control/tftp-delta-stable-pre-restore.json",
+      "control/post-publish-status.json",
+      "control/final-pre-restore-status.json",
+      "control/post-restore-status.json"
+    ],
+    "shared": [
+      "static-archive-review.json",
+      "capture-summary.json",
+      "classification.json",
+      "candidate/archive.sha256",
+      "control/archive.sha256"
+    ]
+  },
+  "validation_to_run": [
+    "cargo fmt --all -- --check",
+    "cargo -Zjson-target-spec test --quiet",
+    "jq empty on task-owned JSON evidence",
+    "git diff --check",
+    "mdbook build",
+    "git diff --cached --check"
+  ],
+  "rejected_claims": [
+    "bcm54213pe-register-values",
+    "link-readiness",
+    "gpio32-phy-reset-ownership",
+    "bmcr-writes",
+    "broadcom-shadow-mmd-aux-access",
+    "interrupt-ownership",
+    "phy-mac-configuration",
+    "packet-io",
+    "networking",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "archive_tarballs_retained": false,
+  "archive_tarballs_note": "Generated archive tarballs were removed after upload; SHA-256, kernel SHA-256, sizes, and static archive reviews are retained.",
+  "validation_results_file": "validation-results.json",
+  "validation_results": [
+    {
+      "command": "cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "result": "pass"
+    },
+    {
+      "command": "jq empty on task-owned JSON evidence",
+      "result": "pass"
+    },
+    {
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    }
+  ]
+}

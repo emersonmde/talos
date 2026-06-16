@@ -1967,3 +1967,20 @@ discriminator or pause. Link readiness, GPIO32/PHY reset ownership, BMCR
 writes, Broadcom shadow/MMD/aux access, interrupt ownership, broad PHY/MAC
 configuration, packet I/O, networking, SSH, Phase 12.2, and phase transition
 remain rejected.
+
+phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-core-20260616 and
+phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-pi5-proof-20260616
+accept boot-transport-selected-tree-fresh-tftp-no-kernel-sentinel-serial. The
+sentinel pair constructs no Ethernet, MDIO, MAN, MACB, GPIO32, PHY, packet,
+networking, SSH, or Phase 12.2 target facts. Serialized Pi 5 evidence shows
+both selected candidate/control boot trees remained selected through final
+pre-restore status and each produced two fresh 86,744-byte TFTP serves of
+da591740/kernel_2712.img after power-cycle. Fresh serial captured Raspberry Pi
+firmware NETWORK output, but neither sentinel image emitted its run nonce
+marker in the bounded window. This narrows the previous BCM54213PE candidate
+no-fresh-TFTP/no-serial blocker: selected-tree publication and TFTP fetch work
+for a no-MDIO/no-Ethernet sentinel, while fetched-kernel execution or sentinel
+serial emission remains unaccepted. BCM54213PE register values, link readiness,
+GPIO32/PHY reset ownership, BMCR writes, Broadcom shadow/MMD/aux access,
+interrupt ownership, broad PHY/MAC configuration, packet I/O, networking, SSH,
+Phase 12.2, and phase transition remain rejected.

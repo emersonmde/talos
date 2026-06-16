@@ -1,0 +1,20 @@
+{
+  "action": "serial drain before power",
+  "ok": true,
+  "talos_serial_drain": {
+    "contract_version": "pi5-capture-transaction-v2",
+    "attempts": 96,
+    "attempt_limit": 96,
+    "read_timeout_seconds": 1,
+    "settle_ms": 100,
+    "max_bytes_per_read": 65536,
+    "total_bytes": 1095168,
+    "final_cursor": 4194304,
+    "empty_before_power": false,
+    "discriminator": "bounded-drain-exhausted-before-power"
+  },
+  "responses_retained": false,
+  "responses_count": 96,
+  "first_response_excerpt": "e bmcr-write-performed=false broadcom-selector-write-performed=false phy-reset-or-gpio32-action=false phy-or-mac-configuration-performed=false packet-io-performed=false bounded-runtime-hardware-claims=clause22-phy1-mii-ctrl1000-stat1000-man-read-command-writes allowed-classifications=bcm54213pe-readonly-preflight-sampled,bcm54213pe-readonly-preflight-precondition-blocker,bcm54213pe-readonly-preflight-capture-blocker,no-mdio-no-ethernet-bcm54213pe-readonly-preflight-control rejected-runtime-hardw",
+  "last_response_excerpt": "b-mid-context-cpu-physical-target=0x1c001000fc observed-window-macb-mid-context-raw=0x70109 ncr-observed-target=0x1c00100000 nsr-observed-target=0x1c00100008 man-observed-target=0x1c00100034 ncr-before=0x10 ncr-mpe-precondition-met=true ncr-after=0x10 selected-registers=MII_CTRL1000:0x09,MII_STAT1000:0x0a ctrl1000-man-frame=0x60a60000 stat1000-man-frame=0x60aa0000 ctrl1000-raw=0x200 ctrl1000-valid=true stat1000-raw=0x0 stat1000-valid=true ctrl1000-advertise-1000-half=false ctrl1000-advertise-100"
+}

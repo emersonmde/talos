@@ -10351,6 +10351,20 @@ ownership, broad PHY/MAC configuration, packet I/O, networking, SSH, Phase
 12.2, and phase transition. The only selected follow-up is the queued serialized
 Pi 5 boot-transport sentinel proof.
 
+phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-pi5-proof-20260616
+accepts boot-transport-selected-tree-fresh-tftp-no-kernel-sentinel-serial.
+Candidate and control both retained selected-tree identity through final
+pre-restore status and each produced two fresh 86,744-byte TFTP serves of
+da591740/kernel_2712.img after power-cycle. Fresh serial captured firmware
+NETWORK output, but neither sentinel image emitted its run nonce marker in the
+bounded window. This narrows the prior BCM54213PE candidate
+no-fresh-TFTP/no-serial blocker to fetched-kernel execution or sentinel serial
+emission, not selected-tree publication or TFTP fetch. Register values, link
+readiness, GPIO32/PHY reset ownership, BMCR writes, Broadcom shadow/MMD/aux
+access, interrupt ownership, broad PHY/MAC configuration, packet I/O,
+networking, SSH, Phase 12.2, and phase transition remain rejected. The next
+queued task is only the boot-transport sentinel closeout.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

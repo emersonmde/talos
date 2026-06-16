@@ -1,0 +1,8 @@
+{
+  "url": "http://talos-lab-api:8080/boot/files",
+  "http_code": 200,
+  "curl_exit": 0,
+  "body_bytes": 72157,
+  "ok": true,
+  "body_retained_in_peer_file": true
+}
