@@ -1,0 +1,115 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-source-correction-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-rgmii-delay-tx-order-source-correction-proof-core-selected",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "accepted RGMII delay proof review",
+    "accepted TX selected-read proof review",
+    "JSON evidence validation",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_inputs": {
+    "post_tx_selected_read_source_checkpoint": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-post-tx-selected-read-source-checkpoint-20260616",
+      "commit": "4a11ee14eb3d912222d252af402aeadfdf1767e4",
+      "classification": "bcm54213pe-post-tx-selected-read-source-contract-correction-selected"
+    },
+    "tx_selected_read_pi5_proof": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof-20260616",
+      "classification": "tx-selected-register-read-visible",
+      "tx_selector_write_value": "0x0c00",
+      "tx_selected_read_raw": "0x0e00",
+      "tx_selected_read_data_masked": "0x0200",
+      "tx_selected_read_completed": true,
+      "tx_delay_write_count": "0x0",
+      "bmcr_write_count": "0x0"
+    },
+    "rgmii_delay_pi5_proof": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof-20260616",
+      "classification": "rgmii-delay-capture-blocker",
+      "rx_delay_write_readback_reached": true,
+      "rx_pre_raw": "0x71e7",
+      "rx_write_value": "0xf1e7",
+      "rx_readback_raw": "0x71e7",
+      "rx_readback_rgmii_skew_en": true,
+      "tx_fields_zero_due_to_current_source_gate": true,
+      "tx_selected_read_after_rx_directly_evidenced": false,
+      "tx_delay_write_count": "0x0",
+      "bmcr_write_count": "0x0"
+    }
+  },
+  "source_correction": {
+    "file": "src/target/rpi5.rs",
+    "function": "run_rp1_ethernet_bcm54213pe_rgmii_delay_candidate",
+    "finding": "classification starts as rgmii-delay-capture-blocker and is still that value after RX delay read/write/readback succeeds, so the later classification gate returns before attempting the TX selected-read branch",
+    "superseded_interpretation": "TX selected-register read failed after RX delay write/readback",
+    "corrected_interpretation": "RX delay write/readback reached hardware; TX selected-read after RX was not directly attempted by the accepted source path"
+  },
+  "selected_next_boundary": {
+    "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-core-20260616",
+    "classification_required": "bcm54213pe-rgmii-delay-tx-order-source-correction-proof-core-selected",
+    "type": "local-static-proof-core-source-control-flow-correction",
+    "hardware_authorized": false,
+    "summary": "Fix the RGMII delay candidate proof core so RX success advances to TX selector/read stage with explicit stage accounting and validators before any hardware rerun."
+  },
+  "required_follow_up_contract": {
+    "operation_order": [
+      "candidate/control emits contract marker and capture nonce",
+      "candidate checks accepted MACB NCR.MPE precondition",
+      "candidate performs RX AUX_CTL selector write 0x7007",
+      "candidate performs RX selected read 0x60e20000",
+      "candidate performs RX RMW write with WREN 0x8000 and RGMII_SKEW_EN 0x0100 if RX selected read succeeds",
+      "candidate performs RX selected readback and requires RGMII_SKEW_EN 0x0100",
+      "candidate performs TX SHD selector write 0x0c00 if RX readback succeeds",
+      "candidate performs TX selected read 0x60f20000",
+      "candidate applies SHD data mask 0x03ff and evaluates GTXCLK_EN 0x0200",
+      "candidate performs the selected TX write/readback policy if needed and records whether TX write was skipped as already-enabled or performed as idempotent",
+      "candidate performs BMCR restart 0x50821200 only after corrected RX and TX delay readback criteria are satisfied",
+      "candidate runs bounded convergence poll only after BMCR restart",
+      "control emits same report/rejection shape without MDIO, MAN, MACB, GPIO32, PHY, interrupt, packet, networking, or SSH target construction"
+    ],
+    "allowed_clause22_frames": [
+      "RX selector write: 0x50e20000 | 0x7007",
+      "RX selected read: 0x60e20000",
+      "RX RMW write: 0x50e20000 | rx_write_value",
+      "TX selector write: 0x50f20000 | 0x0c00",
+      "TX selected read: 0x60f20000",
+      "TX RMW write if selected: 0x50f20000 | tx_write_value",
+      "BMCR restart after corrected delay readbacks only: 0x50821200"
+    ],
+    "readback_masks": {
+      "rx_rgmii_skew_en": "0x0100",
+      "tx_gtxclk_en": "0x0200",
+      "tx_shd_data_mask": "0x03ff"
+    },
+    "allowed_terminal_hardware_classifications": [
+      "rgmii-delay-tx-order-link-ready-frontier",
+      "rgmii-delay-tx-order-timeout-link-not-ready",
+      "rgmii-delay-tx-order-rx-stage-blocker",
+      "rgmii-delay-tx-order-tx-selected-read-visible",
+      "rgmii-delay-tx-order-tx-stage-blocker",
+      "rgmii-delay-tx-order-readback-mismatch",
+      "rgmii-delay-tx-order-precondition-blocker",
+      "rgmii-delay-tx-order-capture-blocker",
+      "no-mdio-no-ethernet-bcm54213pe-rgmii-delay-tx-order-control"
+    ]
+  },
+  "rejected_claims": [
+    "hardware success from this static source correction",
+    "TX delay write/readback success",
+    "BMCR restart after corrected delay configuration",
+    "convergence polling after corrected delay configuration",
+    "link readiness",
+    "GPIO32/PHY reset ownership",
+    "interrupt ownership",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "next_action": "Mechanically promote phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-core-20260616 on the next worker wake if dependencies remain satisfied; do not run hardware from this source correction."
+}

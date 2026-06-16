@@ -10732,6 +10732,25 @@ write/readback success, BMCR restart after delay configuration, convergence
 polling, link readiness, packet I/O, networking, sockets, SSH, Phase 12.2, and
 phase transition remain rejected.
 
+phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-source-correction-20260616
+accepts
+bcm54213pe-rgmii-delay-tx-order-source-correction-proof-core-selected. Static
+source inspection corrects the prior blocker interpretation: the accepted RGMII
+delay candidate initializes classification to rgmii-delay-capture-blocker and
+keeps that sentinel after RX delay read/write/readback succeeds, so the source
+path returns the default blocker before attempting the TX selected-register read
+branch. The accepted hardware facts are therefore RX delay write/readback
+visibility plus the separate isolated TX selected-read visibility; TX
+selected-read failure after RX is not directly evidenced. The selected next
+boundary is the local/static
+phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-core-20260616 task,
+which must fix stage accounting so RX success advances to TX selector/read
+handling and must retain explicit frame/mask/classification validators before
+any Pi 5 rerun. Hardware success, TX delay write/readback success, BMCR restart
+after corrected delay configuration, convergence polling, link readiness,
+packet I/O, networking, sockets, SSH, Phase 12.2, and phase transition remain
+rejected.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

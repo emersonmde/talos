@@ -1,0 +1,49 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-source-correction-20260616",
+  "classification": "bcm54213pe-rgmii-delay-tx-order-source-correction-proof-core-selected",
+  "task_record": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-source-correction.md",
+  "classification_json": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-source-correction/classification.json",
+  "accepted_inputs": {
+    "post_tx_checkpoint": {
+      "task": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-post-tx-selected-read-source-checkpoint.md",
+      "classification": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-post-tx-selected-read-source-checkpoint/classification.json",
+      "commit": "4a11ee14eb3d912222d252af402aeadfdf1767e4"
+    },
+    "tx_selected_read_proof": {
+      "task": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof.md",
+      "classification": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof/classification.json",
+      "capture_summary": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof/capture-summary.json"
+    },
+    "tx_selected_read_closeout": {
+      "task": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-closeout.md",
+      "classification": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-closeout/classification.json"
+    },
+    "rgmii_delay_proof": {
+      "task": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof.md",
+      "classification": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof/classification.json",
+      "capture_summary": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof/capture-summary.json"
+    },
+    "rgmii_delay_closeout": {
+      "task": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-closeout.md",
+      "classification": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-closeout/classification.json"
+    }
+  },
+  "source_inspection": {
+    "talos_runtime_source": "src/target/rpi5.rs",
+    "talos_contract_source": "src/rp1_ethernet.rs",
+    "rgmii_delay_candidate_function": "run_rp1_ethernet_bcm54213pe_rgmii_delay_candidate",
+    "current_control_flow_disposition": "fixed-by-follow-up-boundary-selection",
+    "source_bug_summary": "default capture-blocker classification prevents the accepted RGMII delay candidate from advancing from successful RX stage into TX selected-read stage"
+  },
+  "linux_source_citations": [
+    "tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/source/linux-rpi-6.12-broadcom-bcm54213pe-config-contract-excerpt.txt",
+    "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/source/linux-rpi-6.12-bcm-phy-lib-selector-read-contract-excerpt.txt"
+  ],
+  "selected_next_boundary": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-core-20260616",
+  "validation": {
+    "jq_empty_task_owned_json": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  }
+}

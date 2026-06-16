@@ -2293,3 +2293,17 @@ that explains the RX-to-TX order/interlock question before any fresh hardware
 proof. TX delay write/readback success, BMCR restart after delay configuration,
 convergence polling, link readiness, packet I/O, networking, sockets, SSH,
 Phase 12.2, and phase transition remain rejected.
+
+phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-source-correction-20260616
+accepts
+bcm54213pe-rgmii-delay-tx-order-source-correction-proof-core-selected. Static
+source inspection corrects the accepted blocker interpretation before a fresh
+hardware attempt: the current RGMII delay candidate keeps its default
+rgmii-delay-capture-blocker sentinel after the RX delay read/write/readback
+stage succeeds, and that sentinel causes the source path to return before the
+TX selected-register read branch. The retained hardware evidence still proves
+RX delay write/readback and isolated TX selected-read visibility, but not TX
+selected-read failure after RX. The selected next boundary is a local/static
+proof core that fixes stage accounting, preserves Linux RX-then-TX order, names
+the exact Clause 22 frames and readback masks, and rejects packet/networking/SSH
+claims before any Pi 5 proof can be promoted.
