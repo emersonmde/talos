@@ -1,0 +1,98 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-closeout-20260616",
+  "source_inputs": [
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-closeout.md",
+      "role": "accepted BMCR/autoneg restart closeout and post-status link-not-ready baseline"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-closeout/classification.json",
+      "role": "closed BMCR/autoneg restart frontier classification"
+    },
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-core.md",
+      "role": "accepted local/static autoneg convergence proof-core task"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-core/classification.json",
+      "role": "convergence core contract, bounded poll count, candidate/control boundaries, and rejected claims"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-core/evidence-map.json",
+      "role": "convergence core implementation and validation map"
+    },
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-pi5-proof.md",
+      "role": "accepted serialized Pi 5 convergence proof task"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-pi5-proof/classification.json",
+      "role": "Pi 5 proof classification and accepted control/candidate summaries"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-pi5-proof/capture-summary.json",
+      "role": "control/candidate selected-tree, TFTP, serial freshness, terminal poll, and restore summary"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-pi5-proof/evidence-map.json",
+      "role": "retained convergence proof evidence references and validation map"
+    }
+  ],
+  "closeout_outputs": [
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-closeout.md",
+      "role": "autoneg convergence closeout task record"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-closeout/classification.json",
+      "role": "closed-frontier classification and next-boundary state"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-closeout/evidence-map.json",
+      "role": "closeout source, output, and validation map"
+    },
+    {
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "role": "Phase 12 closed convergence timeout frontier documentation"
+    },
+    {
+      "path": "docs/src/roadmap.md",
+      "role": "roadmap closed convergence timeout frontier documentation"
+    }
+  ],
+  "validation": [
+    {
+      "level": "static/task evidence inspection",
+      "command": "manual review of accepted BMCR restart closeout, convergence proof core, Pi 5 convergence proof task, and task-owned JSON evidence",
+      "result": "pass"
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-closeout/*.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff whitespace check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff whitespace check",
+      "command": "git diff --cached --check",
+      "result": "pass before commit"
+    }
+  ],
+  "hardware": {
+    "hardwareTestLock_acquired": false,
+    "pi5_hardware_run": false,
+    "boot_archive_publication": false,
+    "lab_mutation": false,
+    "volatile_ethernet_access": false
+  },
+  "next_action": "Mechanically promote phase12-rp1-ethernet-bcm54213pe-post-convergence-timeout-source-checkpoint-20260616 on the next worker wake if dependencies remain satisfied; do not promote link-ready packet-readiness, GPIO32/reset, Broadcom selector/config, interrupt, packet I/O, networking, SSH, Phase 12.2, or a phase transition from this closeout."
+}

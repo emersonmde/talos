@@ -1,0 +1,174 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-closeout-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-autoneg-convergence-frontier-closed-timeout-link-not-ready",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "accepted BMCR/autoneg restart closeout review",
+    "accepted convergence proof-core review",
+    "accepted serialized Pi 5 convergence proof review",
+    "JSON evidence validation",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_inputs": {
+    "bmcr_restart_closeout": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-closeout-20260616",
+      "commit": "0de9450e8e1c2d5f458d1c778f4f25e80860c0a2",
+      "classification": "bcm54213pe-bmcr-autoneg-restart-frontier-closed-post-status-link-not-ready-planning-required"
+    },
+    "convergence_core": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-core-20260616",
+      "classification": "bcm54213pe-autoneg-convergence-core-local-static",
+      "contract_id": "phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-proof-contract-v1",
+      "bmcr_write_frame": "0x50821200",
+      "bmcr_write_value": "0x1200",
+      "bounded_poll_samples": 8,
+      "control_constructs_target_facts": false
+    },
+    "pi5_proof": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-pi5-proof-20260616",
+      "commit": "055744c30d64bfa4a2f2516dfa7b0b6219358e64",
+      "classification": "bcm54213pe-autoneg-convergence-timeout-link-not-ready",
+      "control_classification": "no-mdio-no-ethernet-bcm54213pe-autoneg-convergence-control",
+      "serial_freshness_guard": "serial-freshness-guard-v1-ready",
+      "terminal_label_mismatch_fixed_before_acceptance": true
+    }
+  },
+  "frontier": {
+    "name": "bcm54213pe-autoneg-convergence-frontier-closed-timeout-link-not-ready",
+    "accepted": [
+      "candidate/control selected-tree identity joined with same-power-cycle TFTP byte serves",
+      "cursor-nonce serial freshness guard replay",
+      "final pre-restore identity and restore proof",
+      "paired no-MDIO/no-Ethernet control",
+      "one corrected-target PHY1 BMCR write frame 0x50821200 for value 0x1200",
+      "eight bounded convergence poll samples after the BMCR write",
+      "terminal BMCR 0x1000",
+      "terminal BMSR first/second 0x7949/0x7949",
+      "ANAR 0x01e1 and ANLPAR 0x0000",
+      "MII_CTRL1000 0x0200 and MII_STAT1000 0x0000",
+      "passive MACB_NSR 0x00000006 with MACB_NSR_LINK false",
+      "BMSR link false and autoneg-complete false",
+      "link-ready-terminal false"
+    ],
+    "deferred": [
+      "GPIO32/PHY reset ownership",
+      "Broadcom selector/config writes",
+      "interrupt ownership",
+      "broad PHY/MAC configuration",
+      "physical or link-partner state discriminator",
+      "packet I/O",
+      "networking",
+      "sockets",
+      "SSH",
+      "Phase 12.2",
+      "explicit pause or other Phase 12.1 boundary"
+    ],
+    "hardware_authorized_by_this_task": false,
+    "write_or_configuration_authorized_by_closeout": false,
+    "phase_transition_authorized": false
+  },
+  "control_summary": {
+    "selected_tree_hash": "c0cba209ffcf845d644f4e7461e3305aaed0fc6d5bb0edf2d798bb57f331e17b",
+    "kernel_bytes": 49712,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "serial_nonce_occurrences": 44,
+    "serial_freshness_proven": true,
+    "constructed_mdio_or_ethernet_target_facts": false
+  },
+  "candidate_summary": {
+    "selected_tree_hash": "a932c281bd02341694a1440eb1316b6ea6c582c814e1add9f1fef5e2727bafa4",
+    "kernel_bytes": 52248,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "serial_nonce_occurrences": 39,
+    "serial_freshness_proven": true,
+    "bmcr_write_frame": "0x50821200",
+    "bmcr_write_value": "0x1200",
+    "bmcr_write_count": 1,
+    "bounded_poll_samples": 8,
+    "terminal_sample": 8,
+    "poll_bmcr": "0x1000",
+    "poll_bmsr_first": "0x7949",
+    "poll_bmsr_second": "0x7949",
+    "poll_anar": "0x01e1",
+    "poll_anlpar": "0x0000",
+    "poll_ctrl1000": "0x0200",
+    "poll_stat1000": "0x0000",
+    "poll_bmsr_link_status": false,
+    "poll_bmsr_autoneg_complete": false,
+    "passive_macb_nsr_raw": "0x00000006",
+    "passive_macb_nsr_link": false,
+    "link_ready_terminal": false,
+    "macb_write_performed": false,
+    "phy_reset_or_gpio32_action": false,
+    "packet_io_performed": false
+  },
+  "restore_summary": {
+    "baseline_tree_after_restore": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "control_final_pre_restore_tree_hash": "c0cba209ffcf845d644f4e7461e3305aaed0fc6d5bb0edf2d798bb57f331e17b",
+    "candidate_final_pre_restore_tree_hash": "a932c281bd02341694a1440eb1316b6ea6c582c814e1add9f1fef5e2727bafa4"
+  },
+  "next_boundary": {
+    "decision": "promote-timeout-source-checkpoint-on-next-worker-wake",
+    "task_id": "phase12-rp1-ethernet-bcm54213pe-post-convergence-timeout-source-checkpoint-20260616",
+    "planning_needed": false,
+    "link_ready_checkpoint_unblocked": false,
+    "hardware_authorized_by_this_task": false
+  },
+  "forbidden_claims": [
+    "link-readiness",
+    "ethernet-driver-readiness",
+    "gpio32-phy-reset-ownership",
+    "broadcom-selector-config-writes",
+    "interrupt-ownership",
+    "broad-phy-configuration",
+    "macb-configuration",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "The BMCR/autoneg restart closeout established the single corrected-target restart write and immediate link-not-ready post-status baseline."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The convergence core added only a bounded eight-sample convergence poll and failed closed for broader claims."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The control retained the no-MDIO/no-Ethernet shape with selected-tree, TFTP, serial freshness, final identity, and restore evidence."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The candidate retained selected-tree, TFTP, serial freshness, final identity, and restore evidence, performed one BMCR write, and completed eight poll samples."
+    },
+    {
+      "disposition": "selected",
+      "finding": "The timeout source checkpoint is the only dependency-matched queued follow-up."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Reset/config/partner-state analysis, GPIO32/reset, Broadcom selector/config, interrupt ownership, PHY/MAC configuration, packet I/O, networking, SSH, and Phase 12.2 require separate source-grounded follow-up."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "No link readiness, Ethernet driver behavior, packet I/O, networking, SSH, Phase 12.2, or phase transition is accepted."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No task-owned source, script, docs, or evidence files were removed."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No new hardware run or triage was needed because the accepted proof evidence was decisive."
+    }
+  ]
+}
