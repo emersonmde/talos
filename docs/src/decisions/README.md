@@ -12,6 +12,46 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-16 - Phase 12 Serial Freshness Uses Cursor/Nonce Contract
+
+- Status: accepted as a source/static lab-contract decision. No Pi 5 hardware
+  run, boot archive publication, lab mutation, Ethernet/MMIO/MDIO/register
+  access, GPIO32/PHY reset, packet I/O, networking, SSH, Phase 12.2, or phase
+  transition was performed.
+- Context: The accepted BootInfo/report-path serial visibility proof retained
+  selected-tree identity, matching TFTP byte serves, marker output, final
+  pre-restore identity, and restore proof for both final control and candidate
+  runs, but the old capture-chain identity guard rejected both because the
+  128-attempt pre-power serial drain did not reach an empty /serial/read
+  response. Older lab docs already distinguish retained-tail peek, cursor-based
+  observe, and saturated-cursor direct-read fallback.
+- Decision: Accept
+  phase12-rp1-ethernet-serial-freshness-contract-v1. Empty pre-power drain
+  remains strong positive evidence, but cursor-nonce-post-power-freshness-v1 is
+  the stricter replacement for the old hard empty-drain gate in future
+  marker-only transport proofs. A proof with non-empty drain may classify
+  serial as fresh only if a run-unique marker/nonce is absent from the immediate
+  pre-power retained sample, present in post-power serial bound to the saved
+  cursor or saturated direct-read fallback for the same attempt, and joined to
+  stable TFTP delta, selected-tree identity, final pre-restore identity, and
+  restore proof.
+- Evidence level: static source/doc/task evidence inspection plus accepted
+  BootInfo/report-path proof and closeout evidence inspection. Task-owned
+  evidence is retained under
+  tasks/evidence/2026-06-16-phase12-rp1-ethernet-serial-freshness-contract/.
+- Consequences: The only selected follow-up is the local/static guard-core task
+  phase12-rp1-ethernet-serial-freshness-guard-core-20260616, which should update
+  helper/validator surfaces. The retained BootInfo/report-path marker counts are
+  not reinterpreted as decisive hardware proof, and no register-read retry,
+  Ethernet/link readiness, packet I/O, networking, SSH, Phase 12.2, or phase
+  transition is authorized.
+- Alternatives considered: repeat the same hardware proof with a larger drain
+  budget; keep empty-read-before-power as an absolute gate; or accept retained
+  marker counts despite non-empty drain. Repeating the proof would not change
+  the failing invariant, an absolute empty-drain gate blocks useful
+  run-unique nonce evidence, and accepting marker counts without cursor/nonce
+  freshness would overstate stale-backlog evidence.
+
 ## 2026-06-09 - Phase 12 RP1 Ethernet Direct GEM Path Selected
 
 - Status: accepted as a source-grounded Phase 12.1 path-selection ADR. No

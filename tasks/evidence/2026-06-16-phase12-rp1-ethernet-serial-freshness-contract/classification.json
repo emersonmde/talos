@@ -1,0 +1,116 @@
+{
+  "task_id": "phase12-rp1-ethernet-serial-freshness-contract-20260616",
+  "status": "accepted",
+  "classification": "serial-freshness-contract-cursor-nonce-replaces-empty-drain-hard-gate",
+  "contract_id": "phase12-rp1-ethernet-serial-freshness-contract-v1",
+  "freshness_invariant": "cursor-nonce-post-power-freshness-v1",
+  "evidence_level": [
+    "static source/doc/task evidence inspection",
+    "accepted BootInfo/report-path Pi 5 proof evidence inspection",
+    "accepted BootInfo/report-path closeout evidence inspection",
+    "JSON evidence validation",
+    "docs build",
+    "diff checks"
+  ],
+  "decision": {
+    "empty_drain": "supporting-positive-evidence-not-sole-hard-gate",
+    "replacement": "cursor/nonce freshness is the stricter required proof for future marker-only transport hardware runs",
+    "non_empty_drain_rejection": "hard rejection only when run-unique pre-power absence and post-power cursor/nonce freshness are missing or inconsistent"
+  },
+  "required_hardware_evidence_fields": [
+    "pre_power_peek_cursor",
+    "pre_power_retained_text_or_digest",
+    "pre_power_marker_nonce_absent",
+    "serial_drain_attempts",
+    "serial_drain_terminal_state",
+    "serial_drain_final_cursor",
+    "post_power_observe_cursor_start",
+    "post_power_observe_cursor_end",
+    "serial_capture_mode",
+    "start_cursor_saturated",
+    "observe_contract",
+    "observed_byte_range_or_response_bytes",
+    "required_marker",
+    "marker_occurrences_after_saved_cursor",
+    "run_unique_nonce",
+    "nonce_occurrences_after_saved_cursor",
+    "tftp_cursor_start",
+    "tftp_cursor_end",
+    "stable_tftp_delta_events",
+    "selected_tree_identity",
+    "expected_kernel_path",
+    "expected_kernel_bytes",
+    "final_pre_restore_identity",
+    "restore_proof"
+  ],
+  "acceptance_rules": [
+    "run_unique_nonce_absent_before_power",
+    "run_unique_nonce_present_after_power",
+    "post_power_capture_bound_to_saved_cursor_or_saturated_direct_read_fallback",
+    "stable_same_cursor_tftp_delta_before_restore_matches_selected_kernel",
+    "final_pre_restore_identity_matches_selected_tree",
+    "restore_proof_records_expected_baseline"
+  ],
+  "rejection_classes": [
+    "stale-backlog",
+    "cursor-mismatch",
+    "missing-marker",
+    "nonce-not-unique",
+    "selected-tree-tftp-mismatch",
+    "final-identity-mismatch",
+    "restore-failure",
+    "saturated-direct-read-without-nonce-proof",
+    "inconclusive-capture"
+  ],
+  "selected_next_task": "phase12-rp1-ethernet-serial-freshness-guard-core-20260616",
+  "next_task_constraints": {
+    "local_static_only": true,
+    "hardware_authorized": false,
+    "register_retry_authorized": false,
+    "purpose": "update capture helper/validator surface to emit and check serial freshness contract fields"
+  },
+  "rejected_claims": [
+    "BCM54213PE register values",
+    "link readiness",
+    "Ethernet readiness",
+    "GPIO32 or PHY reset ownership",
+    "BMCR or autoneg writes",
+    "Broadcom shadow/MMD/AUX access",
+    "interrupt ownership",
+    "packet I/O",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Named cursor-nonce-post-power-freshness-v1 as the required freshness invariant."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Defined required evidence fields for pre-power cursor/absence, drain state, post-power capture, TFTP, final identity, and restore proof."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Defined rejection classes for stale backlog, cursor mismatch, missing marker, nonce problems, identity mismatches, restore failure, saturated direct-read without nonce proof, and inconclusive capture."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Selected the queued local/static guard-core task as the only mechanically unblocked follow-up."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Retained BootInfo/report-path marker counts are not reinterpreted as decisive proof by this source/static contract."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No task-owned files or helper behavior were removed."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Non-empty pre-power drain is acceptable as evidence when run-unique post-power cursor/nonce freshness is otherwise proved."
+    }
+  ]
+}

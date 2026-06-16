@@ -1,0 +1,72 @@
+{
+  "task_id": "phase12-rp1-ethernet-serial-freshness-contract-20260616",
+  "classification": "serial-freshness-contract-cursor-nonce-replaces-empty-drain-hard-gate",
+  "evidence": [
+    {
+      "level": "static docs inspection",
+      "path": "docs/src/project/lab-controller.md",
+      "finding": "peek is retained-tail/cursor evidence and does not consume the log; read consumes available device bytes; observe returns bytes after a cursor; saturated cursor observe cannot prove no serial output."
+    },
+    {
+      "level": "static source inspection",
+      "path": "scripts/rpi5-observe-serial-window.sh",
+      "finding": "helper records cursor_start, cursor_end, capture mode, observe contract, saturation state, response bytes, marker counts, and nonce-token counts."
+    },
+    {
+      "level": "static source inspection",
+      "path": "scripts/rpi5-capture-invariant-proof-bundle.sh",
+      "finding": "helper currently records pre-power serial drain, final drain cursor, post-power serial window, stable TFTP delta, final identity, restore proof, and rejects decisive classification when empty_before_power is false."
+    },
+    {
+      "level": "accepted task evidence inspection",
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bootinfo-report-serial-visibility-pi5-proof/classification.json",
+      "finding": "final control/candidate runs retained selected-tree identity, matching TFTP fetches, marker output, final identity, and restore proof, but both were blocked by serial-drain-not-empty-before-power."
+    },
+    {
+      "level": "accepted closeout inspection",
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bootinfo-report-serial-visibility-closeout/classification.json",
+      "finding": "closeout selected a distinct serial drain/backlog freshness discriminator before any same-shaped retry."
+    },
+    {
+      "level": "contract output",
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-serial-freshness-contract/classification.json",
+      "finding": "cursor-nonce-post-power-freshness-v1 selected; guard-core follow-up selected."
+    }
+  ],
+  "validation": [
+    {
+      "level": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-16-phase12-rp1-ethernet-serial-freshness-contract/*.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff check",
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "forbidden_claims": [
+    "bcm54213pe-register-values",
+    "link-readiness",
+    "ethernet-readiness",
+    "gpio32-reset-ownership",
+    "bmcr-autoneg",
+    "broadcom-shadow-mmd-aux",
+    "interrupt-ownership",
+    "packet-io",
+    "networking",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ]
+}

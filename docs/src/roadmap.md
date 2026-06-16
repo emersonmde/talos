@@ -10459,6 +10459,20 @@ freshness discriminator, a source/static contract, or an explicit pause before
 any hardware retry or register-read retry. Ethernet/register/link/networking/
 SSH/Phase 12.2 claims remain rejected.
 
+phase12-rp1-ethernet-serial-freshness-contract-20260616 accepts
+serial-freshness-contract-cursor-nonce-replaces-empty-drain-hard-gate. The
+contract names cursor-nonce-post-power-freshness-v1: future marker-only
+transport proofs must show a run-unique marker/nonce absent from the immediate
+pre-power retained serial sample and present in post-power serial bound to the
+saved cursor, or to the saturated-cursor direct-read fallback for that same
+attempt. Empty pre-power drain remains strong support, but non-empty drain is
+not automatically decisive if the cursor/nonce, stable TFTP, selected-tree,
+final-identity, and restore-proof fields are all retained. The only selected
+follow-up is the queued local/static guard-core task
+phase12-rp1-ethernet-serial-freshness-guard-core-20260616. Hardware,
+register-read retry, Ethernet/link readiness, packet I/O, networking, SSH,
+Phase 12.2, and phase transition remain rejected.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

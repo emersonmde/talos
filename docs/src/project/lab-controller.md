@@ -377,6 +377,19 @@ direct-read serial only when `serial-drain-before-power.json` records
 `discriminator=empty-read-before-power`; `bounded-drain-exhausted-before-power`
 is still a capture-chain blocker, not hardware behavior.
 
+The Phase 12 serial freshness contract
+phase12-rp1-ethernet-serial-freshness-contract-v1 refines that rule for future
+marker-only transport proofs. Empty pre-power drain remains strong positive
+evidence, but cursor/nonce freshness is the stricter replacement for a hard
+empty-drain gate. If the drain remains non-empty, the proof must record a
+run-unique marker or nonce that is absent from the immediate pre-power retained
+sample, then present in post-power serial captured from the saved cursor or the
+saturated-cursor direct-read fallback for that same attempt. The same proof must
+still retain stable same-cursor TFTP delta before restore, selected-tree
+identity, final pre-restore identity, and restore proof. Without those fields,
+bounded-drain-exhausted-before-power remains a rejection class and cannot be
+used as Ethernet or register evidence.
+
 Before a proof task accepts a decisive RP1 hardware classification from that
 bundle, replay the retained files through:
 
