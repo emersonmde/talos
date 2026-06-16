@@ -10626,6 +10626,30 @@ ownership, Broadcom selector/config writes, interrupt ownership, PHY/MAC
 configuration, packet I/O, networking, sockets, SSH, Phase 12.2, and phase
 transition remain rejected.
 
+phase12-rp1-ethernet-bcm54213pe-post-convergence-timeout-source-checkpoint-20260616
+accepts
+bcm54213pe-post-convergence-timeout-rgmii-delay-source-contract-selected. The
+checkpoint reconciles the accepted convergence timeout terminal vector with the
+retained GPIO32 blocker, BCM54213PE config_init source, physical/partner-state
+context, and interrupt/status-only options. GPIO32 reset remains blocked by the
+accepted persistent-or-firmware-owned event-state frontier, MII_CTRL1000
+master-mode configuration is deferred because Linux gates it on
+PHY_BRCM_EN_MASTER_MODE, and interrupt/status-only work is deferred because ISR
+reads acknowledge pending interrupts while IMR/ECR writes require interrupt
+ownership. The selected next boundary for supervisor planning is a local/static
+BCM54213PE RGMII delay source contract:
+phase12-rp1-ethernet-bcm54213pe-rgmii-delay-source-contract-20260616. That
+future task should decide the exact source/static contract for the rgmii-id
+clock-delay path through MII_BCM54XX_AUX_CTL /
+MII_BCM54XX_AUXCTL_SHDWSEL_MISC, MII_BCM54XX_AUXCTL_MISC_WREN,
+MII_BCM54XX_AUXCTL_SHDWSEL_MISC_RGMII_SKEW_EN, BCM54810_SHD_CLK_CTL, and
+BCM54810_SHD_CLK_CTL_GTXCLK_EN before any hardware or write proof. No
+mechanically unblocked taskQueue item exists for that selected boundary in this
+worker wake, so supervisor planning is required. The link-ready packet-readiness
+checkpoint remains blocked, and GPIO32/PHY reset ownership, immediate Broadcom
+selector/config writes, interrupts, PHY/MAC configuration, packet I/O,
+networking, sockets, SSH, Phase 12.2, and phase transition remain rejected.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

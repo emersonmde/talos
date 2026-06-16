@@ -2190,3 +2190,19 @@ the link-ready packet-readiness checkpoint remains blocked. This closeout does
 not authorize GPIO32/PHY reset ownership, Broadcom selector/config writes,
 interrupt ownership, broad PHY/MAC configuration, packet I/O, networking,
 sockets, SSH, Phase 12.2, or a phase transition.
+
+phase12-rp1-ethernet-bcm54213pe-post-convergence-timeout-source-checkpoint-20260616
+selects the next timeout follow-up as
+bcm54213pe-post-convergence-timeout-rgmii-delay-source-contract-selected. It
+does not repeat the accepted BMCR restart/convergence timeout shape, and it
+does not weaken the GPIO32 persistent-event-state blocker. The checkpoint
+compares retained GPIO32 reset evidence, BCM54213PE config_init source,
+physical/partner-state context, and interrupt/status-only options, then selects
+only a supervisor-planned local/static BCM54213PE RGMII delay source contract
+for the rgmii-id config_init path. That future source contract should pin the
+MII_BCM54XX_AUX_CTL shadow MII_BCM54XX_AUXCTL_SHDWSEL_MISC path with WREN and
+RGMII_SKEW_EN, plus BCM54810_SHD_CLK_CTL with GTXCLK_EN, before any hardware
+or write proof. MII_CTRL1000 master-mode writes, APD/EEE/LED/WOL/suspend-resume
+paths, GPIO32/PHY reset, interrupt acknowledgement/masking, MACB configuration,
+packet I/O, networking, sockets, SSH, Phase 12.2, and phase transition remain
+rejected or deferred pending explicit supervisor planning.

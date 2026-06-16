@@ -1,0 +1,76 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-post-convergence-timeout-source-checkpoint-20260616",
+  "classification": "bcm54213pe-post-convergence-timeout-rgmii-delay-source-contract-selected",
+  "evidence": [
+    {
+      "level": "static/task evidence inspection",
+      "label": "accepted convergence closeout timeout frontier",
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-closeout.md",
+      "supports": [
+        "accepted one BMCR restart write plus eight bounded convergence polls",
+        "terminal link-not-ready and autoneg-incomplete runtime fact"
+      ]
+    },
+    {
+      "level": "static/task evidence inspection",
+      "label": "accepted convergence Pi 5 proof classification",
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-pi5-proof/classification.json",
+      "supports": [
+        "bcm54213pe-autoneg-convergence-timeout-link-not-ready",
+        "selected-tree identity, serial freshness, final identity, and restore evidence retained by closeout"
+      ]
+    },
+    {
+      "level": "static/source/task evidence inspection",
+      "label": "retained BCM54213PE config-init source contract",
+      "path": "tasks/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract.md",
+      "supports": [
+        "BCM54213PE dispatches through bcm54213pe_config_init and bcm54210e_config_init",
+        "rgmii-id clock-delay path uses Broadcom AUX/shadow selector surfaces",
+        "interrupt/APD/EEE/suspend-resume paths remain broader deferred surfaces"
+      ]
+    },
+    {
+      "level": "static/source inspection",
+      "label": "BCM54213PE config source excerpt",
+      "path": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/source/linux-rpi-6.12-broadcom-bcm54213pe-config-contract-excerpt.txt",
+      "supports": [
+        "bcm54xx_config_clock_delay sets RGMII_SKEW_EN for rgmii-id",
+        "bcm54xx_config_clock_delay sets BCM54810_SHD_CLK_CTL_GTXCLK_EN for rgmii-id",
+        "MII_CTRL1000 master-mode write is conditional on PHY_BRCM_EN_MASTER_MODE"
+      ]
+    },
+    {
+      "level": "static/task evidence inspection",
+      "label": "retained GPIO32 reset-recovery blocker",
+      "path": "tasks/2026-06-15-phase12-rp1-ethernet-post-physical-gpio32-reset-recovery-source-checkpoint.md",
+      "supports": [
+        "GPIO32 reset recovery remains blocked by persistent-or-firmware-owned event state",
+        "GPIO32 writes are not selected"
+      ]
+    }
+  ],
+  "selected_next_boundary": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-source-contract-20260616",
+  "selected_next_boundary_status": "requires-supervisor-planning",
+  "rejected_claims": [
+    "link readiness",
+    "Ethernet driver readiness",
+    "GPIO32/PHY reset ownership",
+    "BMCR/autoneg retry",
+    "immediate Broadcom selector/config write",
+    "interrupt ownership",
+    "PHY/MAC configuration",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "validation": {
+    "jq_empty": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  }
+}
