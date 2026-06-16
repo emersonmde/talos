@@ -192,6 +192,7 @@ if [ "$DRY_RUN" = true ]; then
               pre_status: "pre-status.json",
               pre_boot_files: "pre-boot-files.json",
               pre_snapshots: "pre-snapshots.json",
+              pre_power_serial_peek: "pre-power-serial-peek.json",
               serial_drain_before_power: "serial-drain-before-power.json",
               serial_read_empty_before_power: "serial-read-empty-before-power.json",
               tftp_cursor_before_power: "tftp-cursor-before-power.json",
@@ -228,8 +229,10 @@ if [ "$DRY_RUN" = true ]; then
                       "effective_kernel",
                       "expected_fetch_path",
                       "expected_fetch_byte_count",
+                      "pre_power_serial_peek_cursor",
+                      "pre_power_serial_retained_nonce_absence",
                       "pre_power_serial_drain_empty",
-                      "serial_cursor_and_window",
+                      "serial_cursor_nonce_freshness",
                       "tftp_cursor_and_stable_delta",
                       "final_pre_restore_identity",
                       "restore_identity"
@@ -244,8 +247,9 @@ if [ "$DRY_RUN" = true ]; then
                   read_timeout_seconds: $serial_drain_read_timeout,
                   settle_ms: $serial_drain_settle_ms,
                   max_bytes_per_read: $serial_drain_max_bytes,
-                  acceptance_rule: "decisive saturated direct-read serial requires an empty pre-power /serial/read response"
+                  acceptance_rule: "empty pre-power /serial/read is strong positive evidence; non-empty drain requires cursor-nonce-post-power-freshness-v1"
               },
+              serial_freshness_contract: "cursor-nonce-post-power-freshness-v1",
               serial_observe_contract: "serial-window-helper-auto-observe-or-direct-read",
               saturated_cursor_fallback: "direct-/serial/read when the saved cursor is at TALOS_SERIAL_CURSOR_SATURATION_LIMIT",
               tftp_contract: "stable-same-cursor-delta-before-restore",
@@ -350,6 +354,9 @@ if jq -e '.staging_publication_mismatch' "$EVIDENCE_DIR/preflight-identity.json"
     exit 1
 fi
 
+curl -fsS "${API_BASE}/serial/peek?max_bytes=${SERIAL_DRAIN_MAX_BYTES}&drain=true" \
+    > "$EVIDENCE_DIR/pre-power-serial-peek.json"
+
 serial_drain_tmp="$(mktemp)"
 serial_drain_last="$(mktemp)"
 trap 'rm -f "$serial_drain_tmp" "$serial_drain_last"' EXIT
@@ -404,7 +411,7 @@ jq -s \
             final_cursor: $final_cursor,
             empty_before_power: $empty_before_power,
             discriminator: (if $empty_before_power then "empty-read-before-power" else "bounded-drain-exhausted-before-power" end),
-            rule: "pre-power serial drain must reach an empty /serial/read response before saturated direct-read output can be treated as fresh"
+            rule: "empty pre-power /serial/read is strong positive evidence; non-empty drain requires cursor-nonce-post-power-freshness-v1"
         }
     }' "$serial_drain_tmp" > "$EVIDENCE_DIR/serial-drain-before-power.json"
 
@@ -451,6 +458,7 @@ jq -n \
     --argjson serial_exit "$serial_exit" \
     --argjson tftp_exit "$tftp_exit" \
     --slurpfile preflight "$EVIDENCE_DIR/preflight-identity.json" \
+    --slurpfile pre_power_peek "$EVIDENCE_DIR/pre-power-serial-peek.json" \
     --slurpfile drain "$EVIDENCE_DIR/serial-drain-before-power.json" \
     --slurpfile serial "$EVIDENCE_DIR/serial-observe-window.json" \
     --slurpfile tftp "$EVIDENCE_DIR/tftp-delta-stable-pre-restore.json" \
@@ -459,6 +467,7 @@ jq -n \
     --slurpfile restore "$EVIDENCE_DIR/restore-snapshot.json" \
     --slurpfile post_restore "$EVIDENCE_DIR/post-restore-status.json" \
     '(($expected_fetch_bytes | tonumber?) // null) as $expected_bytes
+     | ($pre_power_peek[0] // {}) as $pp
      | ($serial[0].talos_serial_window // {}) as $sw
      | ($drain[0].talos_serial_drain // {}) as $sd
      | ($tftp[0].talos_tftp_stability // {}) as $ts
@@ -474,6 +483,28 @@ jq -n \
      | ($selected_tree_hash != null and $final_tree_hash == $selected_tree_hash) as $final_selected_tree_ok
      | ($expected_bytes == null or ($final_fetch.bytes // null) == $expected_bytes) as $final_bytes_ok
      | (($ts.stable == true) and (($tftp[0].tftp.events // []) | length) == 0) as $stable_zero_tftp
+     | (($sw.required_marker // "") | tostring) as $required_marker
+     | (($sw.marker_nonce // "") | tostring) as $marker_nonce
+     | (if $marker_nonce == "" then "" else ("capture-nonce=" + $marker_nonce) end) as $nonce_token
+     | (($pp.text // "") | tostring) as $pre_power_retained_text
+     | (($serial[0].text // "") | tostring) as $post_power_serial_text
+     | (if $required_marker == "" then 0 else (($pre_power_retained_text | split($required_marker) | length) - 1) end) as $pre_power_marker_count
+     | (if $required_marker == "" then 0 else (($post_power_serial_text | split($required_marker) | length) - 1) end) as $post_power_marker_count
+     | (if $nonce_token == "" then 0 else (($pre_power_retained_text | split($nonce_token) | length) - 1) end) as $pre_power_nonce_count
+     | (if $nonce_token == "" then 0 else (($post_power_serial_text | split($nonce_token) | length) - 1) end) as $post_power_nonce_count
+     | (($pp.cursor // null) | tonumber?) as $pre_power_peek_cursor
+     | (($sd.final_cursor // null) | tonumber?) as $final_drain_cursor
+     | (($serial[0].cursor_start // null) | tonumber?) as $post_power_cursor_start
+     | (($serial[0].cursor_end // null) | tonumber?) as $post_power_cursor_end
+     | (($sw.capture_mode // "") == "read" and ($sw.start_cursor_saturated // false) == true) as $saturated_direct_read
+     | (($sw.capture_mode // "") == "observe") as $cursor_observe
+     | ($marker_nonce != "" and $pre_power_nonce_count == 0 and $post_power_nonce_count > 0) as $nonce_fresh
+     | ($required_marker != "" and $pre_power_marker_count == 0 and $post_power_marker_count > 0) as $marker_fresh
+     | ($cursor_observe and $final_drain_cursor != null and $post_power_cursor_start == $final_drain_cursor and $post_power_cursor_end != null and $post_power_cursor_end >= $post_power_cursor_start) as $observe_cursor_bound
+     | ($saturated_direct_read and ($sw.start_cursor_saturated // false) == true and (($sw.response_bytes // 0) > 0)) as $saturated_direct_read_bound
+     | ($observe_cursor_bound or $saturated_direct_read_bound) as $post_power_capture_bound
+     | ($nonce_fresh and $marker_fresh and $post_power_capture_bound) as $cursor_nonce_fresh
+     | (($sd.empty_before_power // false) == true or $cursor_nonce_fresh) as $serial_freshness_ok
      | [
          (if $proof_label == "" then "missing-run-label" else empty end),
          (if $preflight_mismatch then "preflight-staging-publication-mismatch" else empty end),
@@ -482,7 +513,7 @@ jq -n \
          (if ($preflight[0].expected_fetch_present // false) != true then "preflight-expected-fetch-missing" else empty end),
          (if ($preflight[0].expected_fetch_bytes_match // false) != true then "preflight-expected-fetch-byte-mismatch" else empty end),
          (if (($sd.contract_version // "") != "pi5-capture-transaction-v2") then "missing-v2-serial-drain-contract" else empty end),
-         (if ($sd.empty_before_power // false) != true then "serial-drain-not-empty-before-power" else empty end),
+         (if $serial_freshness_ok != true then "serial-freshness-v1-not-proven" else empty end),
          (if (($serial[0].cursor_start // null) == null) then "missing-serial-cursor-start" else empty end),
          (if (($serial[0].cursor_end // null) == null) then "missing-serial-cursor-end" else empty end),
          (if (($sw.capture_mode // "") == "") then "missing-serial-capture-mode" else empty end),
@@ -533,6 +564,12 @@ jq -n \
              expected_fetch_path: $expected_fetch,
              expected_fetch_byte_count: $expected_bytes,
              serial: {
+                 pre_power_peek: {
+                     cursor: $pre_power_peek_cursor,
+                     bytes: ($pp.bytes // null),
+                     required_marker_occurrences: $pre_power_marker_count,
+                     nonce_token_occurrences: $pre_power_nonce_count
+                 },
                  pre_power_drain: {
                      attempts: ($sd.attempts // null),
                      attempt_limit: ($sd.attempt_limit // null),
@@ -550,7 +587,17 @@ jq -n \
                  response_bytes: ($sw.response_bytes // null),
                  capture_mode: ($sw.capture_mode // null),
                  observe_contract: ($sw.observe_contract // null),
-                 required_marker: ($sw.required_marker // null)
+                 required_marker: ($sw.required_marker // null),
+                 freshness_contract: {
+                     contract_version: "cursor-nonce-post-power-freshness-v1",
+                     marker_nonce: (if $marker_nonce == "" then null else $marker_nonce end),
+                     nonce_token: (if $nonce_token == "" then null else $nonce_token end),
+                     marker_occurrences_after_saved_cursor: $post_power_marker_count,
+                     nonce_occurrences_after_saved_cursor: $post_power_nonce_count,
+                     post_power_capture_bound: $post_power_capture_bound,
+                     cursor_nonce_fresh: $cursor_nonce_fresh,
+                     serial_freshness_ok: $serial_freshness_ok
+                 }
              },
              tftp: {
                  cursor_start: ($tftp[0].tftp.cursor_start // null),
@@ -595,6 +642,7 @@ jq -n \
              else "still-blocked-without-fresh-boot-evidence"
              end),
          proof_contract: {
+             serial_freshness_contract: "cursor-nonce-post-power-freshness-v1",
              serial_observe_contract: ($sw.observe_contract // "deadline-loop-accumulated-from-fresh-cursor"),
              serial_capture_mode: ($sw.capture_mode // "observe"),
              serial_start_cursor_saturated: ($sw.start_cursor_saturated // false),

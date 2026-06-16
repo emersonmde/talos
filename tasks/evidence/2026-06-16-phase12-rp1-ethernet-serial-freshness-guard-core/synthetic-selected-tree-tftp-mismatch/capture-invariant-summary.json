@@ -1,0 +1,7 @@
+{
+  "label": "synthetic-selected-tree-tftp-mismatch",
+  "expected": {
+    "fetch": "da591740/kernel_2712.img",
+    "fetch_bytes": 12345
+  }
+}

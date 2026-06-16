@@ -1,0 +1,14 @@
+{
+  "expected_tree_hash": "tree-guard-core-synthetic",
+  "observed_tree_hash": "tree-guard-core-synthetic",
+  "expected_kernel": "kernel_2712.img",
+  "observed_effective_kernel": "kernel_2712.img",
+  "expected_fetch": "da591740/kernel_2712.img",
+  "expected_fetch_bytes": 12345,
+  "selected_tree_identity_source": "/boot/files",
+  "tree_matches": true,
+  "effective_kernel_matches": true,
+  "expected_fetch_present": true,
+  "expected_fetch_bytes_match": true,
+  "staging_publication_mismatch": false
+}

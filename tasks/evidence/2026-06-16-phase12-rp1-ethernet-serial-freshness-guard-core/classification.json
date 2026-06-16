@@ -1,0 +1,148 @@
+{
+  "task_id": "phase12-rp1-ethernet-serial-freshness-guard-core-20260616",
+  "status": "accepted",
+  "classification": "serial-freshness-guard-core-local-static-accepted",
+  "contract_id": "phase12-rp1-ethernet-serial-freshness-contract-v1",
+  "freshness_invariant": "cursor-nonce-post-power-freshness-v1",
+  "changed_paths": [
+    "scripts/rpi5-serial-freshness-guard-v1-check.sh",
+    "scripts/rpi5-capture-invariant-proof-bundle.sh",
+    "docs/src/project/lab-controller.md",
+    "docs/src/roadmap.md",
+    "tasks/2026-06-16-phase12-rp1-ethernet-serial-freshness-guard-core.md",
+    "tasks/evidence/2026-06-16-phase12-rp1-ethernet-serial-freshness-guard-core/"
+  ],
+  "guard_replay": {
+    "task_id": "phase12-rp1-ethernet-serial-freshness-guard-core-20260616",
+    "contract": "cursor-nonce-post-power-freshness-v1",
+    "cases": [
+      {
+        "case": "synthetic-cursor-fresh",
+        "exit_code": 0,
+        "classification": "serial-freshness-guard-v1-ready",
+        "serial_freshness_proven": true,
+        "rejection_reasons": []
+      },
+      {
+        "case": "synthetic-stale-backlog",
+        "exit_code": 1,
+        "classification": "serial-freshness-guard-v1-rejected",
+        "serial_freshness_proven": false,
+        "rejection_reasons": [
+          "stale-backlog"
+        ]
+      },
+      {
+        "case": "synthetic-cursor-mismatch",
+        "exit_code": 1,
+        "classification": "serial-freshness-guard-v1-rejected",
+        "serial_freshness_proven": false,
+        "rejection_reasons": [
+          "cursor-mismatch"
+        ]
+      },
+      {
+        "case": "synthetic-missing-marker",
+        "exit_code": 1,
+        "classification": "serial-freshness-guard-v1-rejected",
+        "serial_freshness_proven": false,
+        "rejection_reasons": [
+          "missing-marker"
+        ]
+      },
+      {
+        "case": "synthetic-selected-tree-tftp-mismatch",
+        "exit_code": 1,
+        "classification": "serial-freshness-guard-v1-rejected",
+        "serial_freshness_proven": false,
+        "rejection_reasons": [
+          "selected-tree-tftp-mismatch"
+        ]
+      },
+      {
+        "case": "synthetic-restore-failure",
+        "exit_code": 1,
+        "classification": "serial-freshness-guard-v1-rejected",
+        "serial_freshness_proven": false,
+        "rejection_reasons": [
+          "restore-failure"
+        ]
+      }
+    ]
+  },
+  "dry_run_contract_files": {
+    "evidence_dir": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-serial-freshness-guard-core/dry-run-contract",
+    "pre_root_endpoint": "pre-root-endpoint.json",
+    "pre_root_endpoint_body": "pre-root-endpoint-body.txt",
+    "pre_root": "pre-root.json",
+    "pre_status": "pre-status.json",
+    "pre_boot_files": "pre-boot-files.json",
+    "pre_snapshots": "pre-snapshots.json",
+    "pre_power_serial_peek": "pre-power-serial-peek.json",
+    "serial_drain_before_power": "serial-drain-before-power.json",
+    "serial_read_empty_before_power": "serial-read-empty-before-power.json",
+    "tftp_cursor_before_power": "tftp-cursor-before-power.json",
+    "power_cycle": "power-cycle.json",
+    "serial_observe_window": "serial-observe-window.json",
+    "tftp_delta_stable_pre_restore": "tftp-delta-stable-pre-restore.json",
+    "final_pre_restore_root_endpoint": "final-pre-restore-root-endpoint.json",
+    "final_pre_restore_root_endpoint_body": "final-pre-restore-root-endpoint-body.txt",
+    "final_pre_restore_root": "final-pre-restore-root.json",
+    "final_pre_restore_status": "final-pre-restore-status.json",
+    "final_pre_restore_boot_files": "final-pre-restore-boot-files.json",
+    "restore_snapshot": "restore-snapshot.json",
+    "post_restore_root_endpoint": "post-restore-root-endpoint.json",
+    "post_restore_root_endpoint_body": "post-restore-root-endpoint-body.txt",
+    "post_restore_root": "post-restore-root.json",
+    "post_restore_status": "post-restore-status.json",
+    "post_restore_boot_files": "post-restore-boot-files.json",
+    "summary": "capture-invariant-summary.json"
+  },
+  "selected_next_task": "phase12-rp1-ethernet-serial-freshness-pi5-proof-20260616",
+  "hardware_authorized": false,
+  "register_retry_authorized": false,
+  "rejected_claims": [
+    "BCM54213PE register values",
+    "link readiness",
+    "Ethernet readiness",
+    "GPIO32 or PHY reset ownership",
+    "BMCR or autoneg writes",
+    "Broadcom shadow/MMD/AUX access",
+    "interrupt ownership",
+    "packet I/O",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Added retained-evidence serial freshness guard for cursor-nonce-post-power-freshness-v1."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Capture bundle now emits pre-power serial peek and freshness summary fields."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Synthetic evidence accepts cursor-fresh and rejects stale/cursor/marker/TFTP/restore failures."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Docs and roadmap record the guard and selected Pi 5 proof boundary."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "No Ethernet/register/networking/Phase 12.2 claims accepted."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No task-owned source or docs were removed."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Non-empty drain can pass only with cursor/nonce freshness and identity join."
+    }
+  ]
+}

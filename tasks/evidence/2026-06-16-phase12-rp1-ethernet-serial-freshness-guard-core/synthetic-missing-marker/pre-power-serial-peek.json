@@ -1,0 +1,9 @@
+{
+  "action": "serial peek",
+  "ok": true,
+  "bytes": 17,
+  "text": "firmware backlog",
+  "encoding": "utf-8",
+  "cursor": 100,
+  "drained": true
+}

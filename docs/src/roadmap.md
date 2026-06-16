@@ -10473,6 +10473,18 @@ phase12-rp1-ethernet-serial-freshness-guard-core-20260616. Hardware,
 register-read retry, Ethernet/link readiness, packet I/O, networking, SSH,
 Phase 12.2, and phase transition remain rejected.
 
+phase12-rp1-ethernet-serial-freshness-guard-core-20260616 accepts the
+local/static guard core for cursor-nonce-post-power-freshness-v1. The
+capture-invariant bundle now records `pre-power-serial-peek.json`, emits
+serial freshness fields in `capture-invariant-summary.json`, and the new
+`scripts/rpi5-serial-freshness-guard-v1-check.sh` replay guard accepts a
+synthetic cursor-fresh bundle while rejecting stale backlog, cursor mismatch,
+missing marker, selected-tree/TFTP mismatch, and restore failure fixtures. The
+only selected follow-up is the dependency-gated serialized Pi 5 freshness proof
+phase12-rp1-ethernet-serial-freshness-pi5-proof-20260616. Hardware,
+register-read retry, Ethernet/link readiness, packet I/O, networking, SSH,
+Phase 12.2, and phase transition remain rejected.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

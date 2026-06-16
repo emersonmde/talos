@@ -1,0 +1,17 @@
+{
+  "tftp": {
+    "cursor_start": 900,
+    "cursor_end": 930,
+    "events": [
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 12345
+      }
+    ]
+  },
+  "talos_tftp_stability": {
+    "stable": true,
+    "samples": 3
+  }
+}

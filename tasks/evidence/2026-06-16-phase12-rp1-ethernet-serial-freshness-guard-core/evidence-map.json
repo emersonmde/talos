@@ -1,0 +1,67 @@
+{
+  "task_id": "phase12-rp1-ethernet-serial-freshness-guard-core-20260616",
+  "evidence": [
+    {
+      "level": "contract input",
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-serial-freshness-contract.md"
+    },
+    {
+      "level": "source change",
+      "path": "scripts/rpi5-serial-freshness-guard-v1-check.sh",
+      "finding": "new v1 serial freshness guard"
+    },
+    {
+      "level": "source change",
+      "path": "scripts/rpi5-capture-invariant-proof-bundle.sh",
+      "finding": "records pre-power serial peek and freshness fields"
+    },
+    {
+      "level": "synthetic validator replay",
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-serial-freshness-guard-core/validator-results.json"
+    },
+    {
+      "level": "dry-run metadata",
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-serial-freshness-guard-core/dry-run-contract.json"
+    },
+    {
+      "level": "docs",
+      "path": "docs/src/project/lab-controller.md"
+    },
+    {
+      "level": "roadmap",
+      "path": "docs/src/roadmap.md"
+    }
+  ],
+  "validation": [
+    {
+      "level": "shell syntax",
+      "command": "sh -n scripts/rpi5-serial-freshness-guard-v1-check.sh scripts/rpi5-capture-invariant-proof-bundle.sh",
+      "result": "pass"
+    },
+    {
+      "level": "dry-run metadata",
+      "command": "scripts/rpi5-capture-invariant-proof-bundle.sh --dry-run ...",
+      "result": "pass"
+    },
+    {
+      "level": "task-owned validator",
+      "command": "scripts/rpi5-serial-freshness-guard-v1-check.sh over retained synthetic fixtures",
+      "result": "pass"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty task-owned JSON",
+      "result": "pass"
+    },
+    {
+      "level": "diff check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    }
+  ]
+}

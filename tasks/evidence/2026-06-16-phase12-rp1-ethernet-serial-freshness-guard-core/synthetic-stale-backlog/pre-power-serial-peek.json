@@ -1,0 +1,9 @@
+{
+  "action": "serial peek",
+  "ok": true,
+  "bytes": 82,
+  "text": "firmware backlog\nrpi5-bootinfo-report-candidate capture-nonce=guardnonce-20260616\n",
+  "encoding": "utf-8",
+  "cursor": 100,
+  "drained": true
+}

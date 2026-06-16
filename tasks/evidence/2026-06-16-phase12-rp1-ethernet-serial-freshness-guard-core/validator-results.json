@@ -1,0 +1,58 @@
+{
+  "task_id": "phase12-rp1-ethernet-serial-freshness-guard-core-20260616",
+  "contract": "cursor-nonce-post-power-freshness-v1",
+  "cases": [
+    {
+      "case": "synthetic-cursor-fresh",
+      "exit_code": 0,
+      "classification": "serial-freshness-guard-v1-ready",
+      "serial_freshness_proven": true,
+      "rejection_reasons": []
+    },
+    {
+      "case": "synthetic-stale-backlog",
+      "exit_code": 1,
+      "classification": "serial-freshness-guard-v1-rejected",
+      "serial_freshness_proven": false,
+      "rejection_reasons": [
+        "stale-backlog"
+      ]
+    },
+    {
+      "case": "synthetic-cursor-mismatch",
+      "exit_code": 1,
+      "classification": "serial-freshness-guard-v1-rejected",
+      "serial_freshness_proven": false,
+      "rejection_reasons": [
+        "cursor-mismatch"
+      ]
+    },
+    {
+      "case": "synthetic-missing-marker",
+      "exit_code": 1,
+      "classification": "serial-freshness-guard-v1-rejected",
+      "serial_freshness_proven": false,
+      "rejection_reasons": [
+        "missing-marker"
+      ]
+    },
+    {
+      "case": "synthetic-selected-tree-tftp-mismatch",
+      "exit_code": 1,
+      "classification": "serial-freshness-guard-v1-rejected",
+      "serial_freshness_proven": false,
+      "rejection_reasons": [
+        "selected-tree-tftp-mismatch"
+      ]
+    },
+    {
+      "case": "synthetic-restore-failure",
+      "exit_code": 1,
+      "classification": "serial-freshness-guard-v1-rejected",
+      "serial_freshness_proven": false,
+      "rejection_reasons": [
+        "restore-failure"
+      ]
+    }
+  ]
+}

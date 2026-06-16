@@ -390,8 +390,27 @@ identity, final pre-restore identity, and restore proof. Without those fields,
 bounded-drain-exhausted-before-power remains a rejection class and cannot be
 used as Ethernet or register evidence.
 
+The capture-invariant bundle now records the retained pre-power serial sample as
+`pre-power-serial-peek.json` before the bounded `/serial/read` drain. For
+proofs that depend on cursor-nonce freshness, replay the retained bundle through:
+
+~~~bash
+scripts/rpi5-serial-freshness-guard-v1-check.sh \
+  --evidence-dir tasks/evidence/<task-id>/<run-dir> \
+  --label <proof-label> \
+  --nonce <run-unique-nonce>
+~~~
+
+Exit 0 means the bundle satisfies
+`cursor-nonce-post-power-freshness-v1` for serial/capture-chain identity only.
+Exit 1 records one or more rejection classes: stale backlog, cursor mismatch,
+missing marker, nonce-not-unique, selected-tree/TFTP mismatch, final identity
+mismatch, restore failure, saturated direct-read without nonce proof, or
+inconclusive capture. This guard does not accept BCM54213PE register values,
+link readiness, packet I/O, networking, SSH, Phase 12.2, or a phase transition.
+
 Before a proof task accepts a decisive RP1 hardware classification from that
-bundle, replay the retained files through:
+bundle under the older empty-drain contract, replay the retained files through:
 
 ~~~bash
 scripts/rpi5-proof-identity-join-check.sh \
@@ -399,8 +418,8 @@ scripts/rpi5-proof-identity-join-check.sh \
   --label <proof-label>
 ~~~
 
-The checker enforces the `pi5-capture-transaction-v2` contract for new proof
-bundles: one shared run label must tie the selected tree hash, effective
+The checker enforces the `pi5-capture-transaction-v2` contract for older
+empty-drain proof bundles: one shared run label must tie the selected tree hash, effective
 kernel, expected fetch path and byte count, an empty pre-power serial drain,
 serial cursor/window identity, stable TFTP cursor/delta identity, final
 pre-restore identity, and restore identity. Missing fields or byte mismatches
