@@ -10447,6 +10447,18 @@ retries are closed until a new discriminator addresses serial backlog/drain
 freshness. Ethernet/register/link/networking/SSH/Phase 12.2 claims remain
 rejected.
 
+phase12-rp1-ethernet-bootinfo-report-serial-visibility-closeout-20260616 closes
+the BootInfo/report-path serial visibility frontier as
+bootinfo-report-serial-visibility-frontier-closed-serial-drain-blocked. The
+frontier accepts the local/static dual-stage marker shape, selected-tree
+identity, matching TFTP byte serves, retained control/candidate marker counts,
+final identity, restore proof, and the precise first failing invariant
+serial-drain-not-empty-before-power. No queued follow-up remains mechanically
+unblocked; supervisor planning must select a distinct Phase 12.1 serial
+freshness discriminator, a source/static contract, or an explicit pause before
+any hardware retry or register-read retry. Ethernet/register/link/networking/
+SSH/Phase 12.2 claims remain rejected.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

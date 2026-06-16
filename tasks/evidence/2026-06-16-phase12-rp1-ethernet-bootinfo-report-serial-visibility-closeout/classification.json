@@ -1,0 +1,141 @@
+{
+  "task_id": "phase12-rp1-ethernet-bootinfo-report-serial-visibility-closeout-20260616",
+  "status": "accepted",
+  "classification": "bootinfo-report-serial-visibility-frontier-closed-serial-drain-blocked",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "accepted local/static core review",
+    "accepted serialized Pi 5 proof review",
+    "JSON evidence validation",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_inputs": {
+    "core": {
+      "task_id": "phase12-rp1-ethernet-bootinfo-report-serial-visibility-core-20260616",
+      "classification": "bootinfo-report-serial-visibility-core-local-static",
+      "candidate_boot_scenario": "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_candidate",
+      "control_boot_scenario": "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_earliest_only_control",
+      "earliest_marker": "bootinfo-report-visibility-earliest-entry-marker",
+      "post_bootinfo_report_path_marker": "bootinfo-report-visibility-post-bootinfo-report-path-marker",
+      "constructs_ethernet_target_facts": false,
+      "constructs_mdio_targets": false,
+      "constructs_man_frames": false,
+      "constructs_macb_target": false,
+      "constructs_gpio32_or_phy_target": false,
+      "runtime_volatile_ethernet_access_intent": false
+    },
+    "pi5_proof": {
+      "task_id": "phase12-rp1-ethernet-bootinfo-report-serial-visibility-pi5-proof-20260616",
+      "classification": "staging-capture-inconclusive",
+      "first_failing_invariant": "serial-drain-not-empty-before-power",
+      "no_same_shaped_retry_without_new_discriminator": true
+    }
+  },
+  "frontier": {
+    "name": "bootinfo-report-serial-visibility-frontier-closed-serial-drain-blocked",
+    "accepted": [
+      "local/static dual-stage BootInfo/report-path marker shape",
+      "candidate/control selected-tree identity through final pre-restore status",
+      "candidate/control matching same-power-cycle TFTP byte serves for da591740/kernel_2712.img",
+      "control earliest marker output without post-BootInfo marker output",
+      "candidate earliest marker output with post-BootInfo marker output",
+      "restore proof after final control and candidate runs",
+      "precise first failing invariant serial-drain-not-empty-before-power"
+    ],
+    "blocked": [
+      "decisive both-markers-observed hardware classification is blocked by pre-power serial drain never reaching an empty direct read"
+    ],
+    "deferred": [
+      "distinct serial drain/backlog freshness discriminator",
+      "any later BCM54213PE register-read retry selected by supervisor planning",
+      "any source/static contract needed to make a follow-up materially different"
+    ],
+    "same_shaped_retry_closed": true
+  },
+  "control_final": {
+    "selected_tree": "b886e168d26f69a943a98d77de87a40a7079938fa041aee8494e32cb98ea9178",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 55120,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "earliest_marker_occurrences": 71,
+    "post_bootinfo_marker_occurrences": 0,
+    "serial_drain_empty_before_power": false,
+    "identity_join_allowed": false,
+    "rejection_reasons": [
+      "serial-drain-not-empty-before-power"
+    ],
+    "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "candidate_final": {
+    "selected_tree": "38173e8bd614d6034e09e4944e0d5e92ad80dcebafb78b260897be7f74cc8c19",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 71168,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "earliest_marker_occurrences": 69,
+    "post_bootinfo_marker_occurrences": 68,
+    "serial_drain_empty_before_power": false,
+    "identity_join_allowed": false,
+    "rejection_reasons": [
+      "serial-drain-not-empty-before-power"
+    ],
+    "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "next_boundary": {
+    "decision": "supervisor-planning-required",
+    "planning_needed": true,
+    "planning_reason": "No queued mechanically unblocked follow-up exists after the accepted BootInfo/report-path serial visibility closeout; supervisor must select a distinct Phase 12.1 discriminator for serial drain/backlog freshness, a source/static contract, or an explicit pause.",
+    "hardware_authorized_by_this_task": false
+  },
+  "forbidden_claims": [
+    "bcm54213pe-register-values",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition",
+    "link-readiness",
+    "ethernet-driver-readiness",
+    "gpio32-reset-ownership",
+    "bmcr-write-or-autoneg-retry",
+    "broadcom-shadow-mmd-aux-access",
+    "interrupt-ownership",
+    "broad-phy-configuration",
+    "macb-configuration"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Core candidate/control scenarios mechanically distinguish earliest-entry marker output from post-BootInfo/report-path marker output."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Final control/candidate Pi 5 runs retained selected-tree identity, matching TFTP byte serves, marker output, final pre-restore identity, and restore proof."
+    },
+    {
+      "disposition": "blocked",
+      "finding": "Decisive hardware classification is blocked by serial-drain-not-empty-before-power."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Any distinct serial drain/backlog freshness discriminator requires supervisor planning."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Same-shaped retry and all Ethernet/register/link/networking/SSH/Phase 12.2 claims remain rejected."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No task-owned files were removed by closeout."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Retained marker output remains useful evidence even though the current capture contract withholds decisive classification."
+    }
+  ]
+}

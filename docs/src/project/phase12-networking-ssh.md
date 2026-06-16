@@ -2054,3 +2054,17 @@ values, link readiness, Ethernet readiness, GPIO32/PHY reset ownership, BMCR
 writes, Broadcom shadow/MMD/aux access, interrupt ownership, broad PHY/MAC
 configuration, packet I/O, networking, SSH, Phase 12.2, and phase transition
 remain rejected.
+
+phase12-rp1-ethernet-bootinfo-report-serial-visibility-closeout-20260616 closes
+that frontier as
+bootinfo-report-serial-visibility-frontier-closed-serial-drain-blocked. The
+closed evidence accepts the local/static dual-stage marker shape, final
+candidate/control selected-tree identity, matching same-power-cycle TFTP byte
+serves, separate earliest and post-BootInfo marker counts, final identity, and
+restore proof, while preserving serial-drain-not-empty-before-power as the first
+failing invariant. Same-shaped retries are closed until supervisor planning
+selects a distinct serial drain/backlog freshness discriminator, a source/static
+contract, or an explicit pause. BCM54213PE register values, link readiness,
+Ethernet readiness, GPIO32/PHY reset ownership, BMCR writes, Broadcom
+shadow/MMD/aux access, interrupt ownership, broad PHY/MAC configuration, packet
+I/O, networking, SSH, Phase 12.2, and phase transition remain rejected.
