@@ -10334,6 +10334,23 @@ BCM54213PE read-only preflight hardware retries are closed for this
 candidate/control pair unless a future supervisor-planned task supplies a
 distinct discriminator for the candidate power/network-fetch blocker.
 
+phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-core-20260616 accepts
+bcm54213pe-boot-transport-sentinel-core-local-static as that distinct
+discriminator's local/static core. It defines exactly two no-Ethernet/no-MDIO
+boot scenarios that differ only by selected boot identity/report payload and
+optional run nonce:
+rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_candidate and
+rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_control. The discriminator
+question is whether selected boot identity changes alone produce fresh TFTP
+fetches and serial output after power-cycle, independent of BCM54213PE
+register-read code. The sentinel core constructs no Ethernet, MDIO, MAN, MACB,
+GPIO32, PHY, packet, networking, SSH, or Phase 12.2 target facts, and it
+continues to reject BCM54213PE register values, link readiness, GPIO32/PHY
+reset ownership, BMCR writes, Broadcom shadow/MMD/aux access, interrupt
+ownership, broad PHY/MAC configuration, packet I/O, networking, SSH, Phase
+12.2, and phase transition. The only selected follow-up is the queued serialized
+Pi 5 boot-transport sentinel proof.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

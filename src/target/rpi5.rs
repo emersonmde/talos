@@ -17470,6 +17470,50 @@ pub fn run_rp1_ethernet_bcm54213pe_readonly_preflight_no_mdio_control() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_candidate")]
+pub fn run_rp1_ethernet_bcm54213pe_boot_transport_sentinel_candidate() -> ! {
+    write_early_static("rpi5-rp1-ethernet-bcm54213pe-boot-transport-sentinel-candidate: start\n");
+    write_early_static(
+        "rpi5-rp1-ethernet-bcm54213pe-boot-transport-sentinel-candidate: no-mdio-no-ethernet-no-target-construction\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-ethernet-bcm54213pe-boot-transport-sentinel-candidate");
+        write_rp1_ethernet_bcm54213pe_boot_transport_sentinel_capture_nonce();
+        write_rp1_ethernet_bcm54213pe_boot_transport_sentinel_common("candidate");
+        write_early_static(
+            " boot-report-payload=bcm54213pe-boot-transport-sentinel-candidate-payload-v1",
+        );
+        write_early_static(
+            " classification=bcm54213pe-boot-transport-sentinel-candidate-local-static\n",
+        );
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_control")]
+pub fn run_rp1_ethernet_bcm54213pe_boot_transport_sentinel_control() -> ! {
+    write_early_static("rpi5-rp1-ethernet-bcm54213pe-boot-transport-sentinel-control: start\n");
+    write_early_static(
+        "rpi5-rp1-ethernet-bcm54213pe-boot-transport-sentinel-control: no-mdio-no-ethernet-no-target-construction\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-ethernet-bcm54213pe-boot-transport-sentinel-control");
+        write_rp1_ethernet_bcm54213pe_boot_transport_sentinel_capture_nonce();
+        write_rp1_ethernet_bcm54213pe_boot_transport_sentinel_common("control");
+        write_early_static(
+            " boot-report-payload=bcm54213pe-boot-transport-sentinel-control-payload-v1",
+        );
+        write_early_static(
+            " classification=no-mdio-no-ethernet-bcm54213pe-boot-transport-sentinel-control\n",
+        );
+        wait_uart10_empty_early_phase();
+    }
+}
+
 #[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate")]
 pub fn run_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate() -> ! {
     write_early_static(
@@ -19574,6 +19618,66 @@ fn write_rp1_ethernet_bcm54213pe_readonly_preflight_rejections(
     write_early_static(" claims-packet-io=false claims-dma-descriptor-ownership=false");
     write_early_static(" claims-networking=false claims-sockets=false claims-ssh=false");
     write_early_static(" claims-phase-12-2=false claims-phase-transition=false");
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_control"
+))]
+fn write_rp1_ethernet_bcm54213pe_boot_transport_sentinel_common(report_kind: &str) {
+    write_early_static(
+        " boot-transport-sentinel-contract-id=phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-contract-v1",
+    );
+    write_early_static(
+        " selected-discriminator=selected-boot-identity-power-tftp-serial-transport-only",
+    );
+    write_early_static(
+        " purpose=discriminate-selected-tree-power-tftp-serial-transport-from-bcm54213pe-register-read-behavior",
+    );
+    write_early_static(" report-kind=");
+    write_early_static(report_kind);
+    write_early_static(" target=none controller=none compatible=none");
+    write_early_static(" phy-model=none phy-handle=none phy-node=none phy-address=none");
+    write_early_static(" selected-registers=none bcm54213pe-register-values=withheld");
+    write_early_static(" ethernet-target-facts-constructed=false");
+    write_early_static(" mdio-target-constructed=false man-frame-constructed=false");
+    write_early_static(" macb-target-constructed=false gpio32-or-phy-target-constructed=false");
+    write_early_static(" runtime-volatile-ethernet-access-intent=false");
+    write_early_static(" phy-register-write-performed=false bmcr-write-performed=false");
+    write_early_static(
+        " broadcom-selector-access-performed=false phy-reset-or-gpio32-action=false",
+    );
+    write_early_static(" interrupt-ownership=false phy-or-mac-configuration=false");
+    write_early_static(" packet-io-performed=false networking-performed=false ssh-performed=false");
+    write_early_static(
+        " boundary-classification=boot-transport-sentinel-no-ethernet-no-mdio-core-only",
+    );
+    write_early_static(
+        " allowed-classifications=bcm54213pe-boot-transport-sentinel-candidate-local-static,no-mdio-no-ethernet-bcm54213pe-boot-transport-sentinel-control,bcm54213pe-boot-transport-sentinel-core-blocker",
+    );
+    write_early_static(
+        " rejected-runtime-hardware-claims=bcm54213pe-register-values,runtime-volatile-ethernet-access,mdio-transaction,man-frame-construction,macb-target-construction,gpio32-or-phy-reset-target-construction,bmcr-write,broadcom-shadow-mmd-aux-access,interrupt-ownership,phy-mac-configuration,link-readiness,packet-io,networking,sockets,ssh,phase-12-2,phase-transition",
+    );
+    write_early_static(
+        " retained-risks=sentinel-success-proves-boot-transport-only,sentinel-failure-narrows-candidate-no-fresh-tftp-no-serial-blocker,register-values-remain-unaccepted,no-packet-network-ssh-phase-12-2-readiness",
+    );
+    write_early_static(" claims-bcm54213pe-register-values=false");
+    write_early_static(" claims-link-readiness=false claims-packet-io=false");
+    write_early_static(" claims-networking=false claims-sockets=false claims-ssh=false");
+    write_early_static(" claims-phase-12-2=false claims-phase-transition=false");
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_control"
+))]
+fn write_rp1_ethernet_bcm54213pe_boot_transport_sentinel_capture_nonce() {
+    if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
+        if !nonce.is_empty() {
+            write_early_static(" capture-nonce=");
+            write_early_static(nonce);
+        }
+    }
 }
 
 #[cfg(any(

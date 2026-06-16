@@ -1,0 +1,106 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-core-20260616",
+  "source_inputs": [
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-hw-proof-closeout.md",
+      "role": "accepted closeout preserving candidate no-fresh-TFTP/no-serial blocker"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-hw-proof-closeout/classification.json",
+      "role": "accepted blocker classification and rejected claims"
+    }
+  ],
+  "implemented_files": [
+    {
+      "path": "build.rs",
+      "changes": [
+        "registered boot transport sentinel candidate/control scenarios"
+      ]
+    },
+    {
+      "path": "src/main.rs",
+      "changes": [
+        "added RPi5 dispatch for boot transport sentinel candidate/control scenarios"
+      ]
+    },
+    {
+      "path": "src/rp1_ethernet.rs",
+      "changes": [
+        "added sentinel-core constants/evidence",
+        "added validator rejecting Ethernet/MDIO target facts and broader claims",
+        "added focused sentinel-core tests"
+      ]
+    },
+    {
+      "path": "src/target/rpi5.rs",
+      "changes": [
+        "added no-Ethernet/no-MDIO candidate/control sentinel serial reports",
+        "added optional TALOS_CAPTURE_NONCE reporting for later run uniqueness"
+      ]
+    },
+    {
+      "path": "docs/src/roadmap.md",
+      "changes": [
+        "recorded accepted sentinel-core boundary and queued Pi 5 proof"
+      ]
+    }
+  ],
+  "validation": [
+    {
+      "level": "fmt/lint/typecheck",
+      "command": "cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "level": "focused unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet rp1_ethernet_bcm54213pe_boot_transport_sentinel",
+      "result": "pass"
+    },
+    {
+      "level": "compile-only boot scenario",
+      "command": "TALOS_BOOT_SCENARIO=rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_candidate cargo -Zjson-target-spec build --quiet",
+      "result": "pass"
+    },
+    {
+      "level": "compile-only boot scenario",
+      "command": "TALOS_BOOT_SCENARIO=rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_control cargo -Zjson-target-spec build --quiet",
+      "result": "pass"
+    },
+    {
+      "level": "unit tests / QEMU substitute",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "environment": {
+        "TMPDIR": "/opt/strider/openclaw/current/workspace/tmp",
+        "PATH_prefix": "/opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin"
+      },
+      "result": "pass"
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-core/*.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff whitespace check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff whitespace check",
+      "command": "git diff --cached --check",
+      "result": "pass before commit"
+    }
+  ],
+  "hardware": {
+    "hardwareTestLock_acquired": false,
+    "pi5_hardware_run": false,
+    "boot_archive_publication": false,
+    "lab_mutation": false
+  },
+  "next_action": "Mechanically promote phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-pi5-proof-20260616 on the next worker wake if dependencies remain satisfied."
+}

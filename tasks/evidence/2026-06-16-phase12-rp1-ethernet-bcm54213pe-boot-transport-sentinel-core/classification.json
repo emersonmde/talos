@@ -1,0 +1,82 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-core-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-boot-transport-sentinel-core-local-static",
+  "evidence_level": [
+    "Rust local/static sentinel-core implementation",
+    "focused unit tests",
+    "candidate/control compile-only scenario builds",
+    "fmt/lint/typecheck",
+    "full no_std Rust tests through QEMU substitute",
+    "JSON evidence validation",
+    "diff checks",
+    "docs build"
+  ],
+  "accepted_input": {
+    "closeout_task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-hw-proof-closeout-20260616",
+    "closeout_commit": "8360c1e18068c56fd7877784324c9b5e65293821",
+    "blocker_classification": "bcm54213pe-readonly-preflight-hw-proof-frontier-closed-candidate-fetch-blocker"
+  },
+  "sentinel_core": {
+    "contract_id": "phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-contract-v1",
+    "candidate_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_candidate",
+    "control_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_control",
+    "candidate_report_payload": "bcm54213pe-boot-transport-sentinel-candidate-payload-v1",
+    "control_report_payload": "bcm54213pe-boot-transport-sentinel-control-payload-v1",
+    "selected_discriminator": "selected-boot-identity-power-tftp-serial-transport-only",
+    "discriminator_question": "Can selected boot identity changes alone produce fresh TFTP fetches and serial output after power-cycle, independent of BCM54213PE register-read code?"
+  },
+  "proof_shape": {
+    "constructs_ethernet_target_facts": false,
+    "constructs_mdio_targets": false,
+    "constructs_man_frames": false,
+    "constructs_macb_target": false,
+    "constructs_gpio32_or_phy_target": false,
+    "runtime_volatile_ethernet_access_intent": false,
+    "hardwareTestLock_acquired": false,
+    "pi5_hardware_run": false,
+    "boot_archive_publication": false,
+    "lab_mutation": false
+  },
+  "rejected_claims": [
+    "bcm54213pe-register-values",
+    "link-readiness",
+    "gpio32-phy-reset-ownership",
+    "bmcr-writes",
+    "broadcom-shadow-mmd-aux-access",
+    "interrupt-ownership",
+    "broad-phy-mac-configuration",
+    "packet-io",
+    "networking",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Candidate/control boot scenario names are registered in build.rs and src/main.rs."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "RPi5 sentinel output differs only by boot identity/report payload and constructs no Ethernet/MDIO target facts."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Local/static evidence validator rejects target facts and broader networking claims."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Serialized Pi 5 proof with hardwareTestLock, TFTP/serial capture, and restore proof remains queued separately."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Sentinel output is not BCM54213PE register evidence and does not imply Ethernet readiness."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No obsolete source, helper, task, or evidence files were removed."
+    }
+  ],
+  "next_task": "phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-pi5-proof-20260616"
+}

@@ -8915,6 +8915,7 @@ pub struct Rp1EthernetBcm54213peReadonlyPreflightHwProofCoreEvidence {
     pub source_task_id: &'static str,
     pub candidate_boot_scenario: &'static str,
     pub control_boot_scenario: &'static str,
+    pub boot_scenarios: &'static [&'static str],
     pub selected_discriminator: &'static str,
     pub selected_targets: &'static [&'static str],
     pub register_names: &'static [&'static str],
@@ -9316,6 +9317,264 @@ fn rp1_ethernet_bcm54213pe_readonly_preflight_control_evidence(
         claims_phase_transition: false,
         classification: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_CONTROL_CLASSIFICATION,
     }
+}
+
+pub const RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_CORE_TASK_ID: &str =
+    "phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-core-20260616";
+pub const RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_PI5_PROOF_TASK_ID: &str =
+    "phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-pi5-proof-20260616";
+pub const RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-contract-v1";
+pub const RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_CANDIDATE_BOOT_SCENARIO: &str =
+    "rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_candidate";
+pub const RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_CONTROL_BOOT_SCENARIO: &str =
+    "rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_control";
+pub const RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_SELECTED_DISCRIMINATOR: &str =
+    "selected-boot-identity-power-tftp-serial-transport-only";
+pub const RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_CANDIDATE_CLASSIFICATION: &str =
+    "bcm54213pe-boot-transport-sentinel-candidate-local-static";
+pub const RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_CONTROL_CLASSIFICATION: &str =
+    "no-mdio-no-ethernet-bcm54213pe-boot-transport-sentinel-control";
+pub const RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_BOUNDARY_CLASSIFICATION: &str =
+    "boot-transport-sentinel-no-ethernet-no-mdio-core-only";
+pub const RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_PURPOSE: &str =
+    "discriminate selected-tree power/TFTP/serial transport from BCM54213PE register-read behavior";
+pub const RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_SCENARIOS: &[&str] = &[
+    RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_CANDIDATE_BOOT_SCENARIO,
+    RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_CONTROL_BOOT_SCENARIO,
+];
+pub const RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_REPORT_PAYLOADS: &[&str] = &[
+    "bcm54213pe-boot-transport-sentinel-candidate-payload-v1",
+    "bcm54213pe-boot-transport-sentinel-control-payload-v1",
+];
+pub const RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_OPERATION_ORDER: &[&str] = &[
+    "local/static sentinel core only; perform no hardware access",
+    "candidate and control differ only by boot scenario identity and serial report payload",
+    "later hardware proof must provide a run-unique TALOS_CAPTURE_NONCE",
+    "both scenarios withhold Ethernet, MDIO, MAN, MACB, GPIO32, PHY, packet, network, and SSH target facts",
+    "later Pi 5 proof asks whether selected boot identity alone produces fresh TFTP fetches and serial output",
+];
+pub const RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_ALLOWED_CLASSIFICATIONS: &[&str] = &[
+    RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_CANDIDATE_CLASSIFICATION,
+    RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_CONTROL_CLASSIFICATION,
+    "bcm54213pe-boot-transport-sentinel-core-blocker",
+];
+pub const RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_REJECTED_RUNTIME_CLAIMS: &[&str] = &[
+    "BCM54213PE register values",
+    "runtime volatile Ethernet access",
+    "MDIO transaction or MAN frame construction",
+    "MACB target construction",
+    "GPIO32 or PHY reset target construction",
+    "BMCR write or Broadcom shadow/MMD/AUX access",
+    "interrupt ownership",
+    "broad PHY or MAC configuration",
+    "link readiness",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition",
+];
+pub const RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_RETAINED_RISKS: &[&str] = &[
+    "sentinel success would prove selected boot transport only, not BCM54213PE register readiness",
+    "sentinel failure would narrow the accepted candidate no-fresh-TFTP/no-serial blocker to boot transport or lab capture",
+    "MII_CTRL1000/MII_STAT1000 values remain unaccepted until a separate register-read proof succeeds",
+    "GPIO32 reset, Broadcom selector surfaces, packet I/O, networking, SSH, and Phase 12.2 remain unaccepted",
+];
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetBcm54213peBootTransportSentinelCoreEvidence {
+    pub core_task_id: &'static str,
+    pub proof_task_id: &'static str,
+    pub contract_id: &'static str,
+    pub candidate_boot_scenario: &'static str,
+    pub control_boot_scenario: &'static str,
+    pub selected_discriminator: &'static str,
+    pub purpose: &'static str,
+    pub report_payloads: &'static [&'static str],
+    pub operation_order: &'static [&'static str],
+    pub allowed_classifications: &'static [&'static str],
+    pub boundary_classification: &'static str,
+    pub rejected_runtime_claims: &'static [&'static str],
+    pub retained_risks: &'static [&'static str],
+    pub constructs_ethernet_target_facts: bool,
+    pub constructs_mdio_targets: bool,
+    pub constructs_man_frames: bool,
+    pub constructs_macb_target: bool,
+    pub constructs_gpio32_or_phy_target: bool,
+    pub runtime_volatile_ethernet_access_intent: bool,
+    pub permits_bcm54213pe_register_claims: bool,
+    pub permits_link_readiness_claim: bool,
+    pub permits_packet_io: bool,
+    pub permits_networking: bool,
+    pub permits_ssh: bool,
+    pub permits_phase_12_2: bool,
+    pub permits_phase_transition: bool,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Rp1EthernetBcm54213peBootTransportSentinelCoreError {
+    ScenarioShapeMismatch,
+    PayloadShapeMismatch,
+    OperationOrderMismatch,
+    AllowedClassificationsMismatch,
+    RejectedClaimsMismatch,
+    RetainedRisksMismatch,
+    EthernetTargetFactsClaim,
+    MdioTargetClaim,
+    ManFrameClaim,
+    MacbTargetClaim,
+    Gpio32OrPhyTargetClaim,
+    RuntimeVolatileEthernetAccessIntent,
+    Bcm54213peRegisterClaim,
+    LinkReadinessClaim,
+    PacketIoClaim,
+    NetworkingClaim,
+    SshClaim,
+    Phase122Claim,
+    PhaseTransitionClaim,
+}
+
+impl Rp1EthernetBcm54213peBootTransportSentinelCoreError {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::ScenarioShapeMismatch => "scenario-shape-mismatch",
+            Self::PayloadShapeMismatch => "payload-shape-mismatch",
+            Self::OperationOrderMismatch => "operation-order-mismatch",
+            Self::AllowedClassificationsMismatch => "allowed-classifications-mismatch",
+            Self::RejectedClaimsMismatch => "rejected-claims-mismatch",
+            Self::RetainedRisksMismatch => "retained-risks-mismatch",
+            Self::EthernetTargetFactsClaim => "ethernet-target-facts-claim",
+            Self::MdioTargetClaim => "mdio-target-claim",
+            Self::ManFrameClaim => "man-frame-claim",
+            Self::MacbTargetClaim => "macb-target-claim",
+            Self::Gpio32OrPhyTargetClaim => "gpio32-or-phy-target-claim",
+            Self::RuntimeVolatileEthernetAccessIntent => "runtime-volatile-ethernet-access-intent",
+            Self::Bcm54213peRegisterClaim => "bcm54213pe-register-claim",
+            Self::LinkReadinessClaim => "link-readiness-claim",
+            Self::PacketIoClaim => "packet-io-claim",
+            Self::NetworkingClaim => "networking-claim",
+            Self::SshClaim => "ssh-claim",
+            Self::Phase122Claim => "phase-12-2-claim",
+            Self::PhaseTransitionClaim => "phase-transition-claim",
+        }
+    }
+}
+
+pub const fn rp1_ethernet_bcm54213pe_boot_transport_sentinel_core_evidence()
+-> Rp1EthernetBcm54213peBootTransportSentinelCoreEvidence {
+    Rp1EthernetBcm54213peBootTransportSentinelCoreEvidence {
+        core_task_id: RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_CORE_TASK_ID,
+        proof_task_id: RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_PI5_PROOF_TASK_ID,
+        contract_id: RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_CONTRACT_ID,
+        candidate_boot_scenario:
+            RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_CANDIDATE_BOOT_SCENARIO,
+        control_boot_scenario:
+            RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_CONTROL_BOOT_SCENARIO,
+        boot_scenarios: RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_SCENARIOS,
+        selected_discriminator:
+            RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_SELECTED_DISCRIMINATOR,
+        purpose: RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_PURPOSE,
+        report_payloads: RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_REPORT_PAYLOADS,
+        operation_order: RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_OPERATION_ORDER,
+        allowed_classifications:
+            RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_ALLOWED_CLASSIFICATIONS,
+        boundary_classification:
+            RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_BOUNDARY_CLASSIFICATION,
+        rejected_runtime_claims:
+            RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_REJECTED_RUNTIME_CLAIMS,
+        retained_risks: RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_RETAINED_RISKS,
+        constructs_ethernet_target_facts: false,
+        constructs_mdio_targets: false,
+        constructs_man_frames: false,
+        constructs_macb_target: false,
+        constructs_gpio32_or_phy_target: false,
+        runtime_volatile_ethernet_access_intent: false,
+        permits_bcm54213pe_register_claims: false,
+        permits_link_readiness_claim: false,
+        permits_packet_io: false,
+        permits_networking: false,
+        permits_ssh: false,
+        permits_phase_12_2: false,
+        permits_phase_transition: false,
+    }
+}
+
+pub fn validate_rp1_ethernet_bcm54213pe_boot_transport_sentinel_core_evidence(
+    evidence: Rp1EthernetBcm54213peBootTransportSentinelCoreEvidence,
+) -> Result<(), Rp1EthernetBcm54213peBootTransportSentinelCoreError> {
+    if evidence.candidate_boot_scenario
+        != RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_CANDIDATE_BOOT_SCENARIO
+        || evidence.control_boot_scenario
+            != RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_CONTROL_BOOT_SCENARIO
+        || evidence.boot_scenarios != RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_SCENARIOS
+    {
+        return Err(Rp1EthernetBcm54213peBootTransportSentinelCoreError::ScenarioShapeMismatch);
+    }
+    if evidence.report_payloads != RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_REPORT_PAYLOADS {
+        return Err(Rp1EthernetBcm54213peBootTransportSentinelCoreError::PayloadShapeMismatch);
+    }
+    if evidence.operation_order != RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_OPERATION_ORDER {
+        return Err(Rp1EthernetBcm54213peBootTransportSentinelCoreError::OperationOrderMismatch);
+    }
+    if evidence.allowed_classifications
+        != RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_ALLOWED_CLASSIFICATIONS
+    {
+        return Err(
+            Rp1EthernetBcm54213peBootTransportSentinelCoreError::AllowedClassificationsMismatch,
+        );
+    }
+    if evidence.rejected_runtime_claims
+        != RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_REJECTED_RUNTIME_CLAIMS
+    {
+        return Err(Rp1EthernetBcm54213peBootTransportSentinelCoreError::RejectedClaimsMismatch);
+    }
+    if evidence.retained_risks != RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_RETAINED_RISKS {
+        return Err(Rp1EthernetBcm54213peBootTransportSentinelCoreError::RetainedRisksMismatch);
+    }
+    if evidence.constructs_ethernet_target_facts {
+        return Err(Rp1EthernetBcm54213peBootTransportSentinelCoreError::EthernetTargetFactsClaim);
+    }
+    if evidence.constructs_mdio_targets {
+        return Err(Rp1EthernetBcm54213peBootTransportSentinelCoreError::MdioTargetClaim);
+    }
+    if evidence.constructs_man_frames {
+        return Err(Rp1EthernetBcm54213peBootTransportSentinelCoreError::ManFrameClaim);
+    }
+    if evidence.constructs_macb_target {
+        return Err(Rp1EthernetBcm54213peBootTransportSentinelCoreError::MacbTargetClaim);
+    }
+    if evidence.constructs_gpio32_or_phy_target {
+        return Err(Rp1EthernetBcm54213peBootTransportSentinelCoreError::Gpio32OrPhyTargetClaim);
+    }
+    if evidence.runtime_volatile_ethernet_access_intent {
+        return Err(
+            Rp1EthernetBcm54213peBootTransportSentinelCoreError::RuntimeVolatileEthernetAccessIntent,
+        );
+    }
+    if evidence.permits_bcm54213pe_register_claims {
+        return Err(Rp1EthernetBcm54213peBootTransportSentinelCoreError::Bcm54213peRegisterClaim);
+    }
+    if evidence.permits_link_readiness_claim {
+        return Err(Rp1EthernetBcm54213peBootTransportSentinelCoreError::LinkReadinessClaim);
+    }
+    if evidence.permits_packet_io {
+        return Err(Rp1EthernetBcm54213peBootTransportSentinelCoreError::PacketIoClaim);
+    }
+    if evidence.permits_networking {
+        return Err(Rp1EthernetBcm54213peBootTransportSentinelCoreError::NetworkingClaim);
+    }
+    if evidence.permits_ssh {
+        return Err(Rp1EthernetBcm54213peBootTransportSentinelCoreError::SshClaim);
+    }
+    if evidence.permits_phase_12_2 {
+        return Err(Rp1EthernetBcm54213peBootTransportSentinelCoreError::Phase122Claim);
+    }
+    if evidence.permits_phase_transition {
+        return Err(Rp1EthernetBcm54213peBootTransportSentinelCoreError::PhaseTransitionClaim);
+    }
+    Ok(())
 }
 
 #[cfg(test)]
@@ -14474,6 +14733,117 @@ mod tests {
                 RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION,
                 "phase-transition-claim"
             )
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_bcm54213pe_boot_transport_sentinel_core_is_no_ethernet_no_mdio() {
+        let evidence = rp1_ethernet_bcm54213pe_boot_transport_sentinel_core_evidence();
+
+        assert_eq!(
+            evidence.core_task_id,
+            RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_CORE_TASK_ID
+        );
+        assert_eq!(
+            evidence.proof_task_id,
+            RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_PI5_PROOF_TASK_ID
+        );
+        assert_eq!(
+            evidence.candidate_boot_scenario,
+            RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_CANDIDATE_BOOT_SCENARIO
+        );
+        assert_eq!(
+            evidence.control_boot_scenario,
+            RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_CONTROL_BOOT_SCENARIO
+        );
+        assert_eq!(
+            evidence.boot_scenarios,
+            RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_SCENARIOS
+        );
+        assert_eq!(
+            evidence.report_payloads,
+            RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_REPORT_PAYLOADS
+        );
+        assert_eq!(
+            evidence.selected_discriminator,
+            RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_SELECTED_DISCRIMINATOR
+        );
+        assert_eq!(
+            evidence.allowed_classifications,
+            RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_ALLOWED_CLASSIFICATIONS
+        );
+        assert_eq!(
+            evidence.boundary_classification,
+            RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_BOUNDARY_CLASSIFICATION
+        );
+        assert_eq!(
+            evidence.rejected_runtime_claims,
+            RP1_ETHERNET_BCM54213PE_BOOT_TRANSPORT_SENTINEL_REJECTED_RUNTIME_CLAIMS
+        );
+        assert!(!evidence.constructs_ethernet_target_facts);
+        assert!(!evidence.constructs_mdio_targets);
+        assert!(!evidence.constructs_man_frames);
+        assert!(!evidence.constructs_macb_target);
+        assert!(!evidence.constructs_gpio32_or_phy_target);
+        assert!(!evidence.runtime_volatile_ethernet_access_intent);
+        assert!(!evidence.permits_bcm54213pe_register_claims);
+        assert!(!evidence.permits_link_readiness_claim);
+        assert!(!evidence.permits_packet_io);
+        assert!(!evidence.permits_networking);
+        assert!(!evidence.permits_ssh);
+        assert!(!evidence.permits_phase_12_2);
+        assert!(!evidence.permits_phase_transition);
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_boot_transport_sentinel_core_evidence(evidence),
+            Ok(())
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_bcm54213pe_boot_transport_sentinel_core_rejects_target_facts() {
+        let evidence = rp1_ethernet_bcm54213pe_boot_transport_sentinel_core_evidence();
+
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_boot_transport_sentinel_core_evidence(
+                Rp1EthernetBcm54213peBootTransportSentinelCoreEvidence {
+                    constructs_mdio_targets: true,
+                    ..evidence
+                }
+            ),
+            Err(Rp1EthernetBcm54213peBootTransportSentinelCoreError::MdioTargetClaim)
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_boot_transport_sentinel_core_evidence(
+                Rp1EthernetBcm54213peBootTransportSentinelCoreEvidence {
+                    runtime_volatile_ethernet_access_intent: true,
+                    ..evidence
+                }
+            ),
+            Err(
+                Rp1EthernetBcm54213peBootTransportSentinelCoreError::RuntimeVolatileEthernetAccessIntent
+            )
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_boot_transport_sentinel_core_evidence(
+                Rp1EthernetBcm54213peBootTransportSentinelCoreEvidence {
+                    permits_bcm54213pe_register_claims: true,
+                    ..evidence
+                }
+            ),
+            Err(Rp1EthernetBcm54213peBootTransportSentinelCoreError::Bcm54213peRegisterClaim)
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_boot_transport_sentinel_core_evidence(
+                Rp1EthernetBcm54213peBootTransportSentinelCoreEvidence {
+                    permits_networking: true,
+                    ..evidence
+                }
+            ),
+            Err(Rp1EthernetBcm54213peBootTransportSentinelCoreError::NetworkingClaim)
+        );
+        assert_eq!(
+            Rp1EthernetBcm54213peBootTransportSentinelCoreError::PhaseTransitionClaim.name(),
+            "phase-transition-claim"
         );
     }
 
