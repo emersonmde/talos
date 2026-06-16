@@ -1,0 +1,11 @@
+{
+  "endpoint": "GET /",
+  "http_code": 404,
+  "body_bytes": 55,
+  "ok": false,
+  "body_json": {
+    "error": "unknown endpoint: GET /",
+    "ok": false
+  },
+  "note": "retained because task validation requested GET /; deployed lab currently uses /status and /boot/files for boot identity"
+}

@@ -10397,6 +10397,19 @@ reset ownership, BMCR writes, Broadcom shadow/MMD/aux access, interrupt
 ownership, broad PHY/MAC configuration, packet I/O, networking, SSH, Phase
 12.2, and phase transition remain rejected.
 
+phase12-rp1-ethernet-kernel-entry-serial-beacon-pi5-proof-20260616 accepts
+earliest-kernel-entry-beacon-observed. The selected no-Ethernet/no-MDIO
+candidate tree 68d4c9ae71014c85199391abf7bb54d1bfbe62de17482a3354cb4f7cfea43376
+fetched da591740/kernel_2712.img twice at 47,360 bytes after power-cycle and
+retained the run-unique TALOS: rp1-ethernet-kernel-entry-serial-beacon
+capture-nonce=kernel-entry-beacon-cand-20260616T053728Z marker 89 times in the
+fresh serial window. The proof restores baseline tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This closes
+the fetched-kernel/earliest-serial visibility question only; BCM54213PE
+register values, Ethernet readiness, link readiness, packet I/O, networking,
+SSH, Phase 12.2, and phase transition remain rejected. The next queued task is
+only the kernel-entry beacon closeout.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

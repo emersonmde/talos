@@ -1,0 +1,8 @@
+target/tmp/kernel-entry-serial-beacon-pi5-proof-boot-tree/bcm2712-rpi-5-b.dtb
+target/tmp/kernel-entry-serial-beacon-pi5-proof-boot-tree/cmdline.txt
+target/tmp/kernel-entry-serial-beacon-pi5-proof-boot-tree/config.txt
+target/tmp/kernel-entry-serial-beacon-pi5-proof-boot-tree/kernel8.img
+target/tmp/kernel-entry-serial-beacon-pi5-proof-boot-tree/kernel_2712.img
+target/tmp/kernel-entry-serial-beacon-pi5-proof-boot-tree/overlays/bcm2712d0.dtbo
+target/tmp/kernel-entry-serial-beacon-pi5-proof-boot-tree/overlays/overlay_map.dtb
+target/tmp/kernel-entry-serial-beacon-pi5-proof-boot-tree/overlays/uart0-pi5.dtbo

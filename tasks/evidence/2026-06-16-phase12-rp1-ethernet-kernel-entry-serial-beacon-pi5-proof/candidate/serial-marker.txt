@@ -1,0 +1,1 @@
+TALOS: rp1-ethernet-kernel-entry-serial-beacon capture-nonce=kernel-entry-beacon-cand-20260616T053728Z

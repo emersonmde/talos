@@ -1,0 +1,71 @@
+{
+  "task_id": "phase12-rp1-ethernet-kernel-entry-serial-beacon-pi5-proof-20260616",
+  "run_label": "kernel-entry-serial-beacon-candidate-20260616T053728Z",
+  "nonce": "kernel-entry-beacon-cand-20260616T053728Z",
+  "serial_marker": "TALOS: rp1-ethernet-kernel-entry-serial-beacon capture-nonce=kernel-entry-beacon-cand-20260616T053728Z",
+  "archive": "target/talos-rpi5-kernel-entry-serial-beacon-candidate-20260616T053728Z.tar.gz",
+  "restore_snapshot": "pre-kernel-entry-serial-beacon-20260616T053728Z",
+  "selected_tree_hash": "68d4c9ae71014c85199391abf7bb54d1bfbe62de17482a3354cb4f7cfea43376",
+  "effective_kernel": "kernel_2712.img",
+  "expected_fetch_bytes": 47360,
+  "capture_bundle_exit": 0,
+  "root_endpoint": {
+    "endpoint": "GET /",
+    "http_code": 404,
+    "body_bytes": 55,
+    "ok": false,
+    "body_json": {
+      "error": "unknown endpoint: GET /",
+      "ok": false
+    },
+    "note": "retained because task validation requested GET /; deployed lab currently uses /status and /boot/files for boot identity"
+  },
+  "suggested_classification": "post-handoff-marker-visible",
+  "identity_join_allowed": true,
+  "identity_join_rejection_reasons": [],
+  "serial_has_beacon_marker": true,
+  "serial_has_firmware_network": true,
+  "serial_firmware_network_occurrences": 2,
+  "serial_response_bytes": 135543,
+  "serial_capture_mode": "read",
+  "serial_required_marker_occurrences": 89,
+  "serial_nonce_token_occurrences": 89,
+  "tftp_event_count": 13,
+  "expected_fetch_count": 2,
+  "expected_fetch_byte_match_count": 2,
+  "expected_fetches": [
+    {
+      "bytes": 47360,
+      "client_ip": "10.42.1.4",
+      "client_mac": "88:a2:9e:ae:c8:7f",
+      "filename": "da591740/kernel_2712.img",
+      "line": "Jun 16 05:37:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "status": "served"
+    },
+    {
+      "bytes": 47360,
+      "client_ip": "10.42.1.4",
+      "client_mac": "88:a2:9e:ae:c8:7f",
+      "filename": "da591740/kernel_2712.img",
+      "line": "Jun 16 05:37:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "status": "served"
+    }
+  ],
+  "post_task_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "post_task_effective_kernel": "kernel_2712.img",
+  "known_good_control": {
+    "required": false,
+    "rationale": "candidate retained selected-tree identity, fresh stable TFTP fetches, firmware NETWORK serial, final pre-restore identity, and restore proof; preceding accepted boot-transport sentinel candidate/control already proved the lab publication and capture path, so same-task known-good control is not needed unless this candidate is staging/capture-inconclusive"
+  },
+  "classification": "earliest-kernel-entry-beacon-observed",
+  "rejected_claims": [
+    "BCM54213PE register values",
+    "Ethernet readiness",
+    "link readiness",
+    "packet I/O",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ]
+}
