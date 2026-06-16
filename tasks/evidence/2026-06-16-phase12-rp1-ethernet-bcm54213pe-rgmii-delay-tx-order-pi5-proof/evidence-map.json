@@ -1,0 +1,45 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof-20260616",
+  "evidence_dir": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof",
+  "classification": "rgmii-delay-tx-order-timeout-link-not-ready",
+  "artifacts": {
+    "classification": "classification.json",
+    "capture_summary": "capture-summary.json",
+    "control_run_summary": "control-run/run-summary.json",
+    "candidate_run_summary": "candidate-run/run-summary.json",
+    "control_v4": "control-run/v4-check.json",
+    "candidate_v4": "candidate-run/v4-check.json",
+    "control_serial_freshness": "control-run/serial-freshness-guard.json",
+    "candidate_serial_freshness": "candidate-run/serial-freshness-guard.json",
+    "control_serial_window": "control-run/serial-observe-window.json",
+    "candidate_serial_window": "candidate-run/serial-observe-window.json",
+    "final_restore": "final-restored-boot-files.json",
+    "archive_reviews": [
+      "archive-review/control-review.txt",
+      "archive-review/candidate-review.txt"
+    ]
+  },
+  "accepted_boundary": [
+    "RX delay selected read/write/readback reached hardware",
+    "TX selected read reached hardware and reported GTXCLK_EN already set",
+    "candidate skipped redundant TX delay write because GTXCLK_EN was already enabled",
+    "BMCR autoneg restart write executed exactly once after RX/TX delay criteria",
+    "bounded convergence polling completed with link not ready"
+  ],
+  "rejected_claims": [
+    "broad-phy-mac-configuration",
+    "ethernet-driver-readiness",
+    "gpio32-reset-action",
+    "interrupt-ownership",
+    "link-ready",
+    "mii-ctrl1000-master-mode-writes",
+    "networking",
+    "packet-io",
+    "packet-transport",
+    "phase-12-2",
+    "phase-transition",
+    "sockets",
+    "ssh"
+  ],
+  "next_action": "Mechanically promote phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-closeout-20260616 on a future worker wake if dependencies remain satisfied."
+}

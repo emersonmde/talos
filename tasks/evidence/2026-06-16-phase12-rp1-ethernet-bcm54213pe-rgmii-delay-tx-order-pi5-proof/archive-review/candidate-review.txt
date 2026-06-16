@@ -1,0 +1,8 @@
+candidate_archive=tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof/candidate-archive.tar.gz
+candidate_archive_sha256=bce463f2bc0dab97121cd818d18b0d90b959fa17e2d8c332196c4d468a4ba44f
+kernel_2712_sha256=41821b7d85abacdc2fcef44d5cc3c6dfd99aeebaeefff7ed5f56d54d2f3bb6f9
+kernel_2712_size=55040
+header_image_size=55040
+text_offset=0
+flags=12
+forbidden_bcm54213pe_rgmii_delay_candidate_runtime_strings_absent=true

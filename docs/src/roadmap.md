@@ -10765,6 +10765,20 @@ evidence does not accept hardware success, TX delay write/readback success on th
 Pi 5, BMCR restart on the Pi 5, link readiness, packet I/O, networking, sockets,
 SSH, Phase 12.2, or phase transition.
 
+phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof-20260616
+accepts rgmii-delay-tx-order-timeout-link-not-ready. Serialized Pi 5 hardware
+evidence retained selected-tree identity, same-power-cycle TFTP byte agreement,
+serial nonce freshness, capture-chain-v4 readiness, final identity, and restore
+proof for the paired no-MDIO/no-Ethernet control and corrected candidate. The
+candidate reached RX delay write/readback, TX selected read/readback, observed
+TX GTXCLK_EN already set at raw 0x0e00, skipped the redundant TX write under the
+accepted policy, executed exactly one BMCR restart write, and completed eight
+bounded convergence samples with BMSR link-status=false,
+BMSR autoneg-complete=false, passive MACB_NSR link=false, and
+link-ready-terminal=false. Link readiness, packet I/O, networking, sockets, SSH,
+Phase 12.2, and phase transition remain rejected; the only mechanically gated
+next boundary is the TX-order closeout task.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

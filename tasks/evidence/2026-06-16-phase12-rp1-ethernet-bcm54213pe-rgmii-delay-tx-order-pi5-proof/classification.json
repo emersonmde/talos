@@ -1,0 +1,73 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof-20260616",
+  "classification": "rgmii-delay-tx-order-timeout-link-not-ready",
+  "status": "accepted",
+  "evidence_dir": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof",
+  "hardware_lock": {
+    "acquired": true,
+    "released_after_restore": true,
+    "restore_snapshot": "bcm54213pe-rgmii-delay-tx-order-pre-20260616T2106Z",
+    "final_restored_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "control": {
+    "classification": "no-mdio-no-ethernet-bcm54213pe-rgmii-delay-tx-order-control",
+    "archive_sha256": "7862a0ff7f3ead6403a1cb8ef7fbce233c8ff5a2a3f4f7c04e0498be963a8183",
+    "kernel_2712_sha256": "8f267d366a2b35142d8268b759fb344feafc0a6df1580c4d72ecb79f7e01767b",
+    "kernel_2712_bytes": 50656,
+    "capture_chain_v4": "capture-chain-v4-ready",
+    "serial_freshness": "serial-freshness-guard-v1-ready",
+    "expected_fetch_byte_count": 50656,
+    "expected_fetch_byte_match_count": 2,
+    "marker_occurrences_after_saved_cursor": 35
+  },
+  "candidate": {
+    "classification": "rgmii-delay-tx-order-timeout-link-not-ready",
+    "archive_sha256": "bce463f2bc0dab97121cd818d18b0d90b959fa17e2d8c332196c4d468a4ba44f",
+    "kernel_2712_sha256": "41821b7d85abacdc2fcef44d5cc3c6dfd99aeebaeefff7ed5f56d54d2f3bb6f9",
+    "kernel_2712_bytes": 55040,
+    "capture_chain_v4": "capture-chain-v4-ready",
+    "serial_freshness": "serial-freshness-guard-v1-ready",
+    "expected_fetch_byte_count": 55040,
+    "expected_fetch_byte_match_count": 2,
+    "marker_occurrences_after_saved_cursor": 31,
+    "runtime": {
+      "rx_readback_rgmii_skew_en": true,
+      "tx_selected_read_completed": true,
+      "tx_pre_raw": "0xe00",
+      "tx_readback_gtxclk_en": true,
+      "tx_delay_write_completed": false,
+      "tx_delay_write_skipped_already_enabled": true,
+      "tx_readback_completed": true,
+      "bmcr_write_count": "0x1",
+      "samples_taken": "0x8",
+      "poll_bmsr_link_status": false,
+      "poll_bmsr_autoneg_complete": false,
+      "passive_macb_nsr_link": false,
+      "link_ready_terminal": false,
+      "classification": "rgmii-delay-tx-order-timeout-link-not-ready"
+    }
+  },
+  "accepted_claims": [
+    "RX delay selected read/write/readback reached hardware",
+    "TX selected read reached hardware and reported GTXCLK_EN already set",
+    "candidate skipped redundant TX delay write because GTXCLK_EN was already enabled",
+    "BMCR autoneg restart write executed exactly once after RX/TX delay criteria",
+    "bounded convergence polling completed with link not ready"
+  ],
+  "rejected_claims": [
+    "broad-phy-mac-configuration",
+    "ethernet-driver-readiness",
+    "gpio32-reset-action",
+    "interrupt-ownership",
+    "link-ready",
+    "mii-ctrl1000-master-mode-writes",
+    "networking",
+    "packet-io",
+    "packet-transport",
+    "phase-12-2",
+    "phase-transition",
+    "sockets",
+    "ssh"
+  ],
+  "next_action": "Mechanically promote phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-closeout-20260616 on a future worker wake if dependencies remain satisfied."
+}

@@ -1,0 +1,1 @@
+TALOS: rp1-ethernet-bcm54213pe-rgmii-delay-control capture-nonce=bcm54213pe-rgmii-delay-tx-order-control-20260616T2106Z
