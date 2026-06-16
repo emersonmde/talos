@@ -1,0 +1,65 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-core-20260616",
+  "source_frontier": {
+    "closeout_task": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-closeout.md",
+    "closeout_commit": "fef9a9818f05836eb9f28e77eb6ec34b09b55c21",
+    "accepted_blocker": "TX delay selected-register read did not complete after RX delay write/readback matched"
+  },
+  "changed_files": [
+    "build.rs",
+    "src/main.rs",
+    "src/rp1_ethernet.rs",
+    "src/target/rpi5.rs",
+    "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-core.md",
+    "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-core/classification.json",
+    "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-core/evidence-map.json"
+  ],
+  "validation": {
+    "focused_test": {
+      "command": "cargo -Zjson-target-spec test --quiet rp1_ethernet_bcm54213pe_tx_selected_read_discriminator",
+      "environment": "QEMU path set to /opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin",
+      "result": "passed",
+      "tests": "529 no_std tests passed, including the two focused TX selected-read discriminator tests"
+    },
+    "candidate_build": {
+      "command": "TALOS_BOOT_SCENARIO=rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate cargo -Zjson-target-spec build --quiet --target targets/aarch64-talos-rpi5-bcm2712.json",
+      "result": "passed",
+      "sha256": "17a779a6043c08ed45bed823ad68744db43e4f44099a62e0a43fad85d28df5d2",
+      "bytes": 3458312,
+      "retained_strings": [
+        "tx-selected-read-discriminator-candidate",
+        "selected-discriminator=bcm54213pe-phy1-tx-selected-register-read",
+        "tx-selector-write-value=0x0c00",
+        "tx-read-frame=0x60f20000",
+        "tx-delay-write-count=0x0",
+        "bmcr-write-count=0x0",
+        "tx-selected-register-read-visible"
+      ]
+    },
+    "control_build": {
+      "command": "TALOS_BOOT_SCENARIO=rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_no_mdio_control cargo -Zjson-target-spec build --quiet --target targets/aarch64-talos-rpi5-bcm2712.json",
+      "result": "passed",
+      "sha256": "115ce869d55bcd524cfecebf6388d60dbb6b95c1bc4e671207a65f91e20b96ba",
+      "bytes": 3449032,
+      "retained_strings": [
+        "tx-selected-read-discriminator-control",
+        "target=none",
+        "ncr-observed-target=not-constructed",
+        "nsr-observed-target=not-constructed",
+        "man-observed-target=not-constructed",
+        "tx-selector-write-value=withheld",
+        "no-mdio-no-ethernet-bcm54213pe-tx-selected-read-discriminator-control"
+      ]
+    }
+  },
+  "rejected": {
+    "hardware_claim": true,
+    "tx_delay_write_readback": true,
+    "bmcr_restart": true,
+    "packet_io": true,
+    "networking": true,
+    "ssh": true,
+    "phase_12_2": true,
+    "phase_transition": true
+  }
+}

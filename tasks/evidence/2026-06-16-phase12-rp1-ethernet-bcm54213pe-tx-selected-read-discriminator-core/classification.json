@@ -1,0 +1,46 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-core-20260616",
+  "classification": "bcm54213pe-tx-selected-read-discriminator-core-local-static",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "fmt/lint/typecheck",
+    "unit tests",
+    "Pi 5 target compile-only image builds",
+    "image/string inspection"
+  ],
+  "accepted_boundary": {
+    "selected_discriminator": "bcm54213pe-phy1-tx-selected-register-read",
+    "candidate_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate",
+    "control_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_no_mdio_control",
+    "tx_selector_write_value": "0x0c00",
+    "tx_read_frame": "0x60f20000",
+    "tx_write_frame_prefix": "0x50f20000",
+    "tx_delay_write_count": "0x0",
+    "bmcr_write_count": "0x0"
+  },
+  "allowed_hardware_classifications": [
+    "tx-selected-register-read-visible",
+    "tx-selected-register-read-precondition-blocker",
+    "tx-selected-register-read-capture-blocker",
+    "no-mdio-no-ethernet-bcm54213pe-tx-selected-read-discriminator-control"
+  ],
+  "rejected_claims": [
+    "RX delay write/readback acceptance from this discriminator",
+    "TX delay write/readback",
+    "BMCR restart",
+    "autonegotiation convergence polling",
+    "MII_CTRL1000 master-mode writes",
+    "extra PHY writes beyond the selected TX selector write",
+    "GPIO32 event clear or PHY reset action",
+    "interrupt ownership",
+    "broad PHY or MAC configuration",
+    "link-ready acceptance",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition"
+  ],
+  "next_task": "phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof-20260616"
+}
