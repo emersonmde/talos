@@ -1948,3 +1948,22 @@ cursor, same-power-cycle TFTP delta, known-good control, candidate rerun on
 inconclusive evidence, hardwareTestLock, restore proof, and post-run forbidden
 claim review. The closeout itself authorizes no hardware run, write/restore
 surface, networking, SSH, Phase 12.2, or phase transition.
+
+phase12-rp1-ethernet-bcm54213pe-readonly-preflight-hw-proof-core-20260616,
+phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof-20260616, and
+phase12-rp1-ethernet-bcm54213pe-readonly-preflight-hw-proof-closeout-20260616
+close the hardware-proof slice as
+bcm54213pe-readonly-preflight-hw-proof-frontier-closed-candidate-fetch-blocker.
+The proof core preserved only the selected PHY1 MII_CTRL1000 0x09 and
+MII_STAT1000 0x0a candidate target set plus the no-MDIO/no-Ethernet control
+shape. The serialized Pi 5 proof accepted the control path with selected-tree
+identity, two matching 50536-byte TFTP fetches, fresh serial marker output,
+boot-staging-identity-ready, and restore evidence. The candidate rerun staged a
+selected 51512-byte candidate tree but produced no fresh TFTP events or serial
+output after power-cycle, so candidate raw/decoded register values remain
+deferred behind that blocker. Same-shaped hardware retries are closed for this
+candidate/control pair until supervisor planning selects a distinct
+discriminator or pause. Link readiness, GPIO32/PHY reset ownership, BMCR
+writes, Broadcom shadow/MMD/aux access, interrupt ownership, broad PHY/MAC
+configuration, packet I/O, networking, SSH, Phase 12.2, and phase transition
+remain rejected.

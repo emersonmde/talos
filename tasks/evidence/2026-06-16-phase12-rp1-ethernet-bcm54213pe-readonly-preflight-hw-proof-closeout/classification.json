@@ -1,0 +1,127 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-hw-proof-closeout-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-readonly-preflight-hw-proof-frontier-closed-candidate-fetch-blocker",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "accepted proof-core review",
+    "accepted serialized Pi 5 proof review",
+    "JSON evidence validation",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_inputs": {
+    "proof_core": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-hw-proof-core-20260616",
+      "classification": "bcm54213pe-readonly-preflight-hw-proof-core-local-static",
+      "candidate_targets": [
+        {
+          "surface": "MII_CTRL1000",
+          "phy_addr": 1,
+          "register": "0x09",
+          "clause22_man_read_frame": "0x60a60000"
+        },
+        {
+          "surface": "MII_STAT1000",
+          "phy_addr": 1,
+          "register": "0x0a",
+          "clause22_man_read_frame": "0x60aa0000"
+        }
+      ],
+      "control_constructs_mdio_targets": false,
+      "control_constructs_man_frames": false,
+      "control_constructs_macb_target": false,
+      "control_constructs_gpio_target": false
+    },
+    "pi5_proof": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof-20260616",
+      "classification": "bcm54213pe-readonly-preflight-candidate-rerun-no-tftp-fetch-blocked",
+      "result": "accepted-with-candidate-blocker"
+    }
+  },
+  "frontier": {
+    "name": "bcm54213pe-readonly-preflight-hw-proof-frontier-closed-candidate-fetch-blocker",
+    "accepted": [
+      "local/static candidate/control proof-core shape for PHY1 MII_CTRL1000 and MII_STAT1000",
+      "serialized Pi 5 no-MDIO/no-Ethernet control proof with selected-tree/TFTP/serial/restore evidence"
+    ],
+    "blocked": [
+      "candidate hardware path blocked by no fresh TFTP events or serial output after selected candidate publication and power-cycle"
+    ],
+    "deferred": [
+      "candidate raw/decoded MII_CTRL1000 and MII_STAT1000 values",
+      "any distinct follow-up discriminator for the candidate power/network-fetch blocker"
+    ],
+    "same_shaped_retry_closed": true
+  },
+  "control": {
+    "classification": "no-mdio-no-ethernet-bcm54213pe-readonly-preflight-control",
+    "selected_tree": "ad6afd3218a37a509c31b587c107dedec7b33fcd48df4a43c6eab939f5cd2ad5",
+    "expected_fetch_bytes": 50536,
+    "tftp_expected_fetch_count": 2,
+    "serial_marker_occurrences": 18,
+    "boot_staging_identity": "boot-staging-identity-ready",
+    "result": "accepted-control-proof"
+  },
+  "candidate_rerun": {
+    "classification": "bcm54213pe-readonly-preflight-candidate-rerun-no-tftp-fetch-blocked",
+    "selected_tree": "189219336873dd6f335fd3ad2f97bb20b8cb2f4a01e2635e4f3ae9dd5eacb5c8",
+    "expected_fetch_bytes": 51512,
+    "tftp_expected_fetch_count": 0,
+    "serial_has_marker": false,
+    "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "result": "blocked-no-fresh-tftp-or-serial"
+  },
+  "next_boundary": {
+    "decision": "supervisor-planning-required",
+    "planning_needed": true,
+    "planning_reason": "No queued mechanically unblocked follow-up exists after the accepted BCM54213PE read-only preflight hardware-proof closeout; supervisor must select a distinct Phase 12.1 discriminator for the candidate no-fresh-TFTP/no-serial blocker, a source/static contract, or an explicit pause.",
+    "hardware_authorized_by_this_task": false
+  },
+  "forbidden_claims": [
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition",
+    "link-readiness",
+    "ethernet-driver-readiness",
+    "gpio32-reset-ownership",
+    "bmcr-write-or-autoneg-retry",
+    "broadcom-shadow-mmd-aux-access",
+    "interrupt-ownership",
+    "broad-phy-configuration",
+    "macb-configuration"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Proof-core candidate/control boot scenarios are limited to the accepted MII_CTRL1000/MII_STAT1000 target set and no-MDIO/no-Ethernet control."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Serialized Pi 5 control proof accepted selected-tree, TFTP, serial marker, boot-staging identity, and restore evidence."
+    },
+    {
+      "disposition": "blocked",
+      "finding": "Candidate rerun selected tree remained staged, but power-cycle produced no fresh TFTP events or serial output."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Candidate raw/decoded MII_CTRL1000/MII_STAT1000 values remain deferred behind the candidate power/network-fetch blocker."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Packet I/O, networking, SSH, Phase 12.2, phase transition, link readiness, GPIO32 reset ownership, BMCR writes, Broadcom shadow/MMD/aux access, interrupt ownership, and broad PHY/MAC configuration remain rejected."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Generated boot archives were already removed after upload; retained hashes and lab evidence are durable."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "GET / returning 404 is retained as deployed endpoint evidence; /status and /boot/files supplied identity evidence."
+    }
+  ]
+}
