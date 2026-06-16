@@ -1,0 +1,40 @@
+Source: https://github.com/raspberrypi/linux/blob/rpi-6.12.y/drivers/net/phy/phy.c
+Ref: rpi-6.12.y
+Path: drivers/net/phy/phy.c
+Sections: generic driver dispatch for config_aneg/read_status loop.
+
+   993	int phy_config_aneg(struct phy_device *phydev)
+   994	{
+   995		if (phydev->drv->config_aneg)
+   996			return phydev->drv->config_aneg(phydev);
+   997	
+   998		/* Clause 45 PHYs that don't implement Clause 22 registers are not
+   999		 * allowed to call genphy_config_aneg()
+  1000		 */
+  1001		if (phydev->is_c45 && !(phydev->c45_ids.devices_in_package & BIT(0)))
+  1002			return genphy_c45_config_aneg(phydev);
+  1003	
+  1004		return genphy_config_aneg(phydev);
+  1005	}
+  1006	EXPORT_SYMBOL(phy_config_aneg);
+  1015	static int phy_check_link_status(struct phy_device *phydev)
+  1016	{
+  1017		int err;
+  1018	
+  1019		lockdep_assert_held(&phydev->lock);
+  1020	
+  1021		/* Keep previous state if loopback is enabled because some PHYs
+  1022		 * report that Link is Down when loopback is enabled.
+  1023		 */
+  1024		if (phydev->loopback_enabled)
+  1025			return 0;
+  1026	
+  1027		err = phy_read_status(phydev);
+  1028		if (err)
+  1029			return err;
+  1030	
+  1031		if (phydev->link && phydev->state != PHY_RUNNING) {
+  1032			phy_check_downshift(phydev);
+  1033			phydev->state = PHY_RUNNING;
+  1034			err = genphy_c45_eee_is_active(phydev,
+  1035						       NULL, NULL, NULL);

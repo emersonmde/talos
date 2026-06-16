@@ -1,0 +1,142 @@
+Source: https://github.com/raspberrypi/linux/blob/rpi-6.12.y/drivers/net/phy/phy_device.c
+Ref: rpi-6.12.y
+Path: drivers/net/phy/phy_device.c
+Sections: generic EEE broken-mode filtering, autoneg configuration, generic read_status.
+
+  2267	 * genphy_config_eee_advert - disable unwanted eee mode advertisement
+  2268	 * @phydev: target phy_device struct
+  2269	 *
+  2270	 * Description: Writes MDIO_AN_EEE_ADV after disabling unsupported energy
+  2271	 *   efficent ethernet modes. Returns 0 if the PHY's advertisement hasn't
+  2272	 *   changed, and 1 if it has changed.
+  2273	 */
+  2274	int genphy_config_eee_advert(struct phy_device *phydev)
+  2275	{
+  2276		int err;
+  2277	
+  2278		/* Nothing to disable */
+  2279		if (!phydev->eee_broken_modes)
+  2280			return 0;
+  2281	
+  2282		err = phy_modify_mmd_changed(phydev, MDIO_MMD_AN, MDIO_AN_EEE_ADV,
+  2283					     phydev->eee_broken_modes, 0);
+  2284		/* If the call failed, we assume that EEE is not supported */
+  2285		return err < 0 ? 0 : err;
+  2286	}
+  2287	EXPORT_SYMBOL(genphy_config_eee_advert);
+  2432	/**
+  2433	 * __genphy_config_aneg - restart auto-negotiation or write BMCR
+  2434	 * @phydev: target phy_device struct
+  2435	 * @changed: whether autoneg is requested
+  2436	 *
+  2437	 * Description: If auto-negotiation is enabled, we configure the
+  2438	 *   advertising, and then restart auto-negotiation.  If it is not
+  2439	 *   enabled, then we write the BMCR.
+  2440	 */
+  2441	int __genphy_config_aneg(struct phy_device *phydev, bool changed)
+  2442	{
+  2443		__ETHTOOL_DECLARE_LINK_MODE_MASK(fixed_advert);
+  2444		const struct phy_setting *set;
+  2445		unsigned long *advert;
+  2446		int err;
+  2447	
+  2448		err = genphy_c45_an_config_eee_aneg(phydev);
+  2449		if (err < 0)
+  2450			return err;
+  2451		else if (err)
+  2452			changed = true;
+  2453	
+  2454		err = genphy_setup_master_slave(phydev);
+  2455		if (err < 0)
+  2456			return err;
+  2457		else if (err)
+  2458			changed = true;
+  2459	
+  2460		if (phydev->autoneg == AUTONEG_ENABLE) {
+  2461			/* Only allow advertising what this PHY supports */
+  2462			linkmode_and(phydev->advertising, phydev->advertising,
+  2463				     phydev->supported);
+  2464			advert = phydev->advertising;
+  2465		} else if (phydev->speed < SPEED_1000) {
+  2466			return genphy_setup_forced(phydev);
+  2467		} else {
+  2468			linkmode_zero(fixed_advert);
+  2469	
+  2470			set = phy_lookup_setting(phydev->speed, phydev->duplex,
+  2471						 phydev->supported, true);
+  2472			if (set)
+  2473				linkmode_set_bit(set->bit, fixed_advert);
+  2474	
+  2475			advert = fixed_advert;
+  2476		}
+  2477	
+  2478		err = genphy_config_advert(phydev, advert);
+  2479		if (err < 0) /* error */
+  2480			return err;
+  2481		else if (err)
+  2482			changed = true;
+  2483	
+  2484		return genphy_check_and_restart_aneg(phydev, changed);
+  2485	}
+  2486	EXPORT_SYMBOL(__genphy_config_aneg);
+  2682	/**
+  2683	 * genphy_read_status - check the link status and update current link state
+  2684	 * @phydev: target phy_device struct
+  2685	 *
+  2686	 * Description: Check the link, then figure out the current state
+  2687	 *   by comparing what we advertise with what the link partner
+  2688	 *   advertises.  Start by checking the gigabit possibilities,
+  2689	 *   then move on to 10/100.
+  2690	 */
+  2691	int genphy_read_status(struct phy_device *phydev)
+  2692	{
+  2693		int err, old_link = phydev->link;
+  2694	
+  2695		/* Update the link, but return if there was an error */
+  2696		err = genphy_update_link(phydev);
+  2697		if (err)
+  2698			return err;
+  2699	
+  2700		/* why bother the PHY if nothing can have changed */
+  2701		if (phydev->autoneg == AUTONEG_ENABLE && old_link && phydev->link)
+  2702			return 0;
+  2703	
+  2704		phydev->master_slave_get = MASTER_SLAVE_CFG_UNSUPPORTED;
+  2705		phydev->master_slave_state = MASTER_SLAVE_STATE_UNSUPPORTED;
+  2706		phydev->speed = SPEED_UNKNOWN;
+  2707		phydev->duplex = DUPLEX_UNKNOWN;
+  2708		phydev->pause = 0;
+  2709		phydev->asym_pause = 0;
+  2710	
+  2711		if (phydev->is_gigabit_capable) {
+  2712			err = genphy_read_master_slave(phydev);
+  2713			if (err < 0)
+  2714				return err;
+  2715		}
+  2716	
+  2717		err = genphy_read_lpa(phydev);
+  2718		if (err < 0)
+  2719			return err;
+  2720	
+  2721		if (phydev->autoneg == AUTONEG_ENABLE && phydev->autoneg_complete) {
+  2722			phy_resolve_aneg_linkmode(phydev);
+  2723		} else if (phydev->autoneg == AUTONEG_DISABLE) {
+  2724			err = genphy_read_status_fixed(phydev);
+  2725			if (err < 0)
+  2726				return err;
+  2727		}
+  2728	
+  2729		return 0;
+  2730	}
+  2731	EXPORT_SYMBOL(genphy_read_status);
+  3628			linkmode_and(phydev->advertising_eee, phydev->supported_eee,
+  3629				     phydev->advertising_eee);
+  3630	
+  3631		/* Get the EEE modes we want to prohibit. We will ask
+  3632		 * the PHY stop advertising these mode later on
+  3633		 */
+  3634		of_set_phy_eee_broken(phydev);
+  3635	
+  3636		/* The Pause Frame bits indicate that the PHY can support passing
+  3637		 * pause frames. During autonegotiation, the PHYs will determine if
+  3638		 * they should allow pause frames to pass.  The MAC driver should then

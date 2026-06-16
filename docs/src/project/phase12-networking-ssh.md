@@ -1900,3 +1900,19 @@ authorized. Supervisor planning is required to queue the selected
 source/static follow-up
 phase12-rp1-ethernet-bcm54213pe-config-init-source-contract-20260615 or an
 explicit alternate/pause.
+
+phase12-rp1-ethernet-bcm54213pe-config-init-source-contract-20260615 accepts
+the BCM54213PE source/static contract as
+bcm54213pe-config-init-source-contract-readonly-preflight-contract-selected.
+The Linux helper path is bcm54xx_config_init -> bcm54213pe_config_init ->
+bcm54210e_config_init -> bcm54xx_config_clock_delay, with related generic
+read_status/aneg, APD/powerdown, EEE, interrupt, and suspend/resume surfaces.
+The contract separates read-only candidates such as MII_STAT1000,
+MII_CTRL1000, MII_BCM54XX_ISR/ECR/IMR context, Broadcom shadow/AUX context,
+and EEE MMD context from write targets such as IMR/ECR mask changes, RGMII
+delay shadow writes, APD/EEE writes, BMCR lifecycle writes, LED/WOL/PTP writes,
+and MACB/phylink configuration. No direct hardware proof is selected because
+the smallest potentially distinct reads still need a source/static preflight
+contract for side effects and selector mechanics. Link readiness, GPIO32/PHY
+reset ownership, BMCR retry, broad PHY/MAC configuration, packet I/O,
+networking, SSH, Phase 12.2, and phase transition remain rejected.

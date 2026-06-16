@@ -10265,6 +10265,18 @@ required to queue the selected source/static contract
 phase12-rp1-ethernet-bcm54213pe-config-init-source-contract-20260615 or an
 explicit alternate/pause.
 
+phase12-rp1-ethernet-bcm54213pe-config-init-source-contract-20260615 accepts
+bcm54213pe-config-init-source-contract-readonly-preflight-contract-selected.
+The contract names the Linux BCM54213PE helper paths for config_init,
+read_status/aneg, APD/powerdown, EEE, RGMII delay, interrupts, and
+suspend/resume; separates read-only candidates from write targets; and
+reconciles those surfaces with the accepted phy-not-ready status and GPIO32
+persistent-event-state blocker. No direct hardware proof is selected. The only
+selected follow-up is supervisor planning for a future source/static
+BCM54213PE read-only preflight contract or explicit pause; link readiness,
+GPIO32/PHY reset ownership, BMCR retry, broad PHY/MAC configuration, packet
+I/O, networking, SSH, Phase 12.2, and phase transition remain rejected.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

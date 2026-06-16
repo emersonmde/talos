@@ -1,0 +1,6 @@
+0470e8ff685cdafa8171d1153eea17d6726f16d1cda290bf1a24a78a676cf21f  linux-rpi-6.12-bcm-phy-lib-contract-excerpt.txt
+b4a5d4d3272d53f0898179307e66ae50947fe94b25b72193868e7118a8d7adf6  linux-rpi-6.12-brcmphy-register-contract-excerpt.txt
+c745a529512ef69185ba7f2712079e66b5d9efbdb963eb194ec91291fc297aa6  linux-rpi-6.12-broadcom-bcm54213pe-config-contract-excerpt.txt
+30ac2b2ab74612fb191a3746551ad5e3c3630b42a40d11d21e0435432d6086f6  linux-rpi-6.12-phy-device-aneg-status-contract-excerpt.txt
+21cfdfc28a90b76a37935402a1aa02aa7f10491ce99048b0c52409ec57ac3898  linux-rpi-6.12-phy-device-read-status-register-contract-excerpt.txt
+50c5ebda82b659699d9a8c624afc913d1857cb8cfe7e3e325cfbaa12ab0c4ca2  linux-rpi-6.12-phy-dispatch-contract-excerpt.txt

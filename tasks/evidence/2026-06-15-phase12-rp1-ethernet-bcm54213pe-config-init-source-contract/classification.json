@@ -1,0 +1,343 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-config-init-source-contract-20260615",
+  "status": "accepted",
+  "classification": "bcm54213pe-config-init-source-contract-readonly-preflight-contract-selected",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "retained public source excerpts with SHA-256 checksums",
+    "JSON evidence validation",
+    "diff checks",
+    "docs build"
+  ],
+  "accepted_inputs": {
+    "broadcom_phy_id_driver_inventory": {
+      "task_id": "phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory-20260615",
+      "commit": "1cd014289a30f393d7662e948139f8094e3de1f7",
+      "classification": "post-physical-broadcom-phy-id-driver-source-inventory-bcm54213pe-source-contract-selected",
+      "phy_model": "Broadcom BCM54213PE",
+      "combined_phy_id": "0x600d84a2"
+    },
+    "post_physical_status": {
+      "classification": "post-physical-link-status-phy-not-ready",
+      "bmcr": "0x1000",
+      "bmsr_first": "0x7949",
+      "bmsr_second": "0x7949",
+      "anar": "0x01e1",
+      "anlpar": "0x0000",
+      "macb_nsr": "0x00000006",
+      "bmsr_link_status": false,
+      "bmsr_autoneg_complete": false,
+      "anlpar_nonzero": false,
+      "macb_nsr_link": false
+    },
+    "gpio32_blocker": {
+      "classification": "post-physical-gpio32-reset-recovery-source-checkpoint-blocked-persistent-event-state",
+      "event_bits_before_write_restore": "0x0ab00000",
+      "event_bits_after_irqreset_clear": "0x08800000",
+      "decision": "GPIO32 / ETH_RST_N reset recovery remains blocked; this contract does not authorize GPIO32/RIO/pad/MMIO writes or event clear retries."
+    },
+    "rpi5_source_context": {
+      "phy_addr": 1,
+      "phy_mode": "rgmii-id",
+      "reset_gpio": "RP1 GPIO32 active-low ETH_RST_N",
+      "reset_duration_ms": 5,
+      "devicetree_properties": [
+        "brcm,powerdown-enable",
+        "eee-broken-1000t",
+        "eee-broken-100tx"
+      ]
+    }
+  },
+  "linux_driver_contract": {
+    "source_ref": "raspberrypi/linux rpi-6.12.y",
+    "driver_table_entry": {
+      "path": "drivers/net/phy/broadcom.c",
+      "phy_id": "PHY_ID_BCM54213PE",
+      "phy_id_mask": "0xffffffff",
+      "name": "Broadcom BCM54213PE",
+      "config_init": "bcm54xx_config_init",
+      "config_intr": "bcm_phy_config_intr",
+      "handle_interrupt": "bcm_phy_handle_interrupt",
+      "suspend": "bcm54xx_suspend",
+      "resume": "bcm54xx_resume"
+    },
+    "helper_paths": {
+      "config_init": [
+        "bcm54xx_config_init",
+        "case PHY_ID_BCM54213PE",
+        "bcm54213pe_config_init",
+        "bcm54210e_config_init",
+        "bcm54xx_config_clock_delay"
+      ],
+      "read_status": [
+        "phy_check_link_status",
+        "phy_read_status",
+        "genphy_read_status",
+        "genphy_update_link",
+        "genphy_read_master_slave",
+        "genphy_read_lpa",
+        "phy_resolve_aneg_linkmode when autoneg_complete is true"
+      ],
+      "autoneg_config": [
+        "phy_config_aneg",
+        "genphy_config_aneg",
+        "__genphy_config_aneg",
+        "genphy_c45_an_config_eee_aneg",
+        "genphy_setup_master_slave",
+        "genphy_config_advert",
+        "genphy_check_and_restart_aneg"
+      ],
+      "apd_powerdown": [
+        "brcm,powerdown-enable",
+        "PHY_BRCM_AUTO_PWRDWN_ENABLE",
+        "bcm_phy_enable_apd",
+        "BCM54XX_SHD_SCR3",
+        "BCM54XX_SHD_APD"
+      ],
+      "eee_broken_mode": [
+        "of_set_phy_eee_broken",
+        "genphy_config_eee_advert",
+        "MDIO_AN_EEE_ADV",
+        "BRCM_CL45VEN_EEE_CONTROL",
+        "BCM_CL45VEN_EEE_ADV"
+      ],
+      "rgmii_delay": [
+        "bcm54xx_config_clock_delay",
+        "MII_BCM54XX_AUX_CTL shadow MII_BCM54XX_AUXCTL_SHDWSEL_MISC",
+        "BCM54810_SHD_CLK_CTL"
+      ],
+      "interrupts": [
+        "bcm_phy_ack_intr",
+        "bcm_phy_config_intr",
+        "bcm_phy_handle_interrupt",
+        "MII_BCM54XX_ISR",
+        "MII_BCM54XX_IMR",
+        "MII_BCM54XX_ECR"
+      ],
+      "suspend_resume": [
+        "bcm54xx_suspend",
+        "phy_write(MII_BMCR, BMCR_PDOWN)",
+        "bcm54xx_iddq_set",
+        "bcm54xx_resume",
+        "genphy_resume",
+        "genphy_soft_reset when PHY_BRCM_IDDQ_SUSPEND",
+        "bcm54xx_config_init"
+      ]
+    }
+  },
+  "register_surfaces": {
+    "read_only_candidates": [
+      {
+        "register": "MII_BMCR",
+        "address": "0x00",
+        "source_path": "genphy_read_status_fixed and existing Talos status surface",
+        "classification": "already-sampled",
+        "decision": "Not a new discriminator by itself; may be baseline context only."
+      },
+      {
+        "register": "MII_BMSR",
+        "address": "0x01",
+        "source_path": "genphy_update_link",
+        "classification": "already-sampled",
+        "decision": "Not a new discriminator by itself; may be baseline context only."
+      },
+      {
+        "register": "MII_STAT1000",
+        "address": "0x0a",
+        "source_path": "genphy_read_lpa and genphy_read_master_slave",
+        "classification": "selected-for-future-readonly-contract",
+        "decision": "Potentially distinct from the accepted BMCR/BMSR/ANAR/ANLPAR/MACB_NSR sample because Linux reads gigabit/master-slave partner state only after autoneg completion; a future source/static contract must define when it is useful and how inconclusive results are classified."
+      },
+      {
+        "register": "MII_CTRL1000",
+        "address": "0x09",
+        "source_path": "genphy_read_lpa error path and bcm54210e master-mode write path",
+        "classification": "read-only-candidate-with-write-adjacent-risk",
+        "decision": "Read-only baseline may be useful only if the future contract forbids CTL1000_AS_MASTER/CTL1000_ENABLE_MASTER writes."
+      },
+      {
+        "register": "MII_LPA",
+        "address": "0x05",
+        "source_path": "genphy_read_lpa",
+        "classification": "already-sampled",
+        "decision": "Accepted ANLPAR 0x0000 already covers this surface."
+      },
+      {
+        "register": "MII_BCM54XX_ISR",
+        "address": "0x1a",
+        "source_path": "bcm_phy_ack_intr and bcm_phy_handle_interrupt",
+        "classification": "read-only-candidate-with-acknowledgement-risk",
+        "decision": "Linux treats reads as interrupt acknowledgement/clear-pending; future proof requires source-backed read side-effect classification and restore/rollback rules before hardware."
+      },
+      {
+        "register": "MII_BCM54XX_ECR",
+        "address": "0x10",
+        "source_path": "bcm54xx_config_init and bcm_phy_config_intr",
+        "classification": "read-only-candidate-with-write-adjacent-risk",
+        "decision": "Future contract may read only as context; ECR_IM writes remain forbidden until a write/restore contract."
+      },
+      {
+        "register": "MII_BCM54XX_IMR",
+        "address": "0x1b",
+        "source_path": "bcm54xx_config_init and bcm_phy_handle_interrupt",
+        "classification": "read-only-candidate-with-write-adjacent-risk",
+        "decision": "Future contract may read only as interrupt mask context; unmask writes remain forbidden until a write/restore contract."
+      },
+      {
+        "register": "Broadcom AUX shadow MII_BCM54XX_AUXCTL_SHDWSEL_MISC",
+        "address": "MII_BCM54XX_AUX_CTL 0x18 shadow selector",
+        "source_path": "bcm54xx_config_clock_delay",
+        "classification": "read-only-candidate-with-selector-side-effects-to-prove",
+        "decision": "A future source/static contract must prove the Talos access sequence can read without setting WREN or changing selected shadow state."
+      },
+      {
+        "register": "BCM54810_SHD_CLK_CTL",
+        "address": "Broadcom shadow 0x3",
+        "source_path": "bcm54xx_config_clock_delay",
+        "classification": "read-only-candidate-with-selector-side-effects-to-prove",
+        "decision": "Potential RGMII delay discriminator only after a future static contract defines no-write shadow read mechanics."
+      },
+      {
+        "register": "BRCM_CL45VEN_EEE_CONTROL / BCM_CL45VEN_EEE_ADV",
+        "address": "MMD AN vendor EEE control 0x803d / EEE advert 0x3c",
+        "source_path": "bcm_phy_set_eee and genphy_config_eee_advert",
+        "classification": "deferred-read-only-candidate",
+        "decision": "Only source/static follow-up may define Clause 45/MMD read mechanics; no EEE MMD writes selected."
+      }
+    ],
+    "write_targets": [
+      {
+        "target": "MII_BCM54XX_IMR",
+        "address": "0x1b",
+        "source_path": "bcm54xx_config_init",
+        "linux_action": "unmask duplex/speed/link events",
+        "decision": "deferred-write-restore-required"
+      },
+      {
+        "target": "MII_BCM54XX_ECR",
+        "address": "0x10",
+        "source_path": "bcm_phy_config_intr",
+        "linux_action": "mask or unmask interrupt routing via ECR_IM",
+        "decision": "deferred-write-restore-required"
+      },
+      {
+        "target": "MII_BCM54XX_AUX_CTL shadow MISC",
+        "address": "0x18 shadow selector",
+        "source_path": "bcm54xx_config_clock_delay",
+        "linux_action": "set or clear RXC-RXD skew with WREN",
+        "decision": "deferred-write-restore-required"
+      },
+      {
+        "target": "BCM54810_SHD_CLK_CTL",
+        "address": "Broadcom shadow 0x3",
+        "source_path": "bcm54xx_config_clock_delay",
+        "linux_action": "set or clear GTXCLK internal TX delay",
+        "decision": "deferred-write-restore-required"
+      },
+      {
+        "target": "MII_CTRL1000",
+        "address": "0x09",
+        "source_path": "bcm54210e_config_init",
+        "linux_action": "optional forced master-mode bits",
+        "decision": "rejected-for-current-frontier"
+      },
+      {
+        "target": "BCM54XX_SHD_SCR3 / BCM54XX_SHD_APD",
+        "address": "Broadcom shadows",
+        "source_path": "bcm_phy_enable_apd",
+        "linux_action": "auto power-down/DLL power behavior",
+        "decision": "deferred-write-restore-required"
+      },
+      {
+        "target": "MDIO_AN_EEE_ADV / BRCM_CL45VEN_EEE_CONTROL / BCM_CL45VEN_EEE_ADV",
+        "address": "Clause 45 AN MMD EEE registers",
+        "source_path": "genphy_config_eee_advert and bcm_phy_set_eee",
+        "linux_action": "EEE broken-mode advertisement and LPI enablement",
+        "decision": "deferred-write-restore-required"
+      },
+      {
+        "target": "MII_BMCR",
+        "address": "0x00",
+        "source_path": "bcm54xx_suspend, genphy_resume, genphy_check_and_restart_aneg",
+        "linux_action": "power-down, resume, soft reset, autoneg restart, forced speed",
+        "decision": "blocked-or-rejected-without-new-source-contract"
+      },
+      {
+        "target": "Broadcom LED/PTP/WOL expansion/shadow registers",
+        "address": "BCM54XX_SHD_LEDS1/LEDS2, BCM_EXP_MULTICOLOR, BCM54XX_WOL_INT_STATUS, PTP helpers",
+        "source_path": "bcm54xx_config_init and suspend path",
+        "linux_action": "LED configuration, WOL status acknowledgement, PTP setup",
+        "decision": "rejected-as-not-a-link-readiness-discriminator"
+      }
+    ]
+  },
+  "future_discriminator_decision": {
+    "direct_hardware_selected": false,
+    "source_static_followup_selected": true,
+    "selected_followup": "BCM54213PE read-only preflight source/static contract",
+    "planning_needed": true,
+    "planning_reason": "The current source contract identifies several possible read-only surfaces, but shadow/AUX, ISR acknowledgement, Clause 45/MMD, and write-adjacent risks require a new explicit source/static task before any hardware proof. No existing queued task is created or promoted by this worker.",
+    "minimum_preconditions_for_future_task": [
+      "Preserve accepted BCM54213PE exact ID and phy-not-ready status frontier.",
+      "Preserve accepted physical-link precondition without re-asking Matthew.",
+      "Preserve GPIO32 persistent-event-state blocker and forbid GPIO32/RIO/pad/MMIO writes.",
+      "Define whether each register access is pure read-only, read-with-side-effect, write/restore, blocked, or rejected.",
+      "Define hardware evidence and inconclusive-run triage before any later Pi 5 proof."
+    ]
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "The BCM54213PE Linux path is bcm54xx_config_init -> bcm54213pe_config_init -> bcm54210e_config_init -> bcm54xx_config_clock_delay for the model-specific RGMII delay portion."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The broader bcm54xx_config_init path also includes interrupt mask writes, APD/powerdown flag handling, RX refclk/DSP/LED/PTP/WOL paths, and WOL status reads; these are not all safe or relevant to a Talos discriminator."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Generic Linux read_status/aneg dependencies add MII_STAT1000, MII_CTRL1000, and MII_LPA context around the already accepted BMCR/BMSR/ANAR/ANLPAR status surface."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The contract separates read-only candidates from write targets and flags read side-effect risks for BCM54XX ISR and Broadcom shadow/AUX access."
+    },
+    {
+      "disposition": "blocked",
+      "finding": "No direct hardware proof is authorized because the smallest potentially distinct reads still need a source/static access contract and GPIO32 reset recovery remains blocked by persistent event state."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "RGMII delay, APD, EEE, interrupt, BMCR lifecycle, and Broadcom shadow/MMD writes require future write/restore contracts if they are ever considered."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Link readiness, GPIO32 ownership/reset, BMCR autoneg retry, broad PHY/MAC configuration, packet I/O, networking, SSH, Phase 12.2, and phase transition remain rejected."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "The accepted physical Ethernet link precondition remains accepted and is not re-asked."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No source, helper, task, or evidence files were removed."
+    }
+  ],
+  "rejected_claims": [
+    "link-readiness",
+    "gpio32-ownership",
+    "gpio32-reset-recovery",
+    "eth-rst-n-reset-assertion-or-deassertion",
+    "gpio32-event-clear-retry",
+    "gpio32-write-restore-retry-or-success",
+    "bmcr-write-or-autoneg-restart-retry",
+    "broad-phy-configuration",
+    "macb-configuration",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ]
+}
