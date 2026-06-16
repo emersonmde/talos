@@ -1,0 +1,81 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-report-core-20260616",
+  "source_inputs": [
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract.md",
+      "role": "accepted source/static target selection"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/classification.json",
+      "role": "accepted selected target and rejected surface classification"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/source/linux-rpi-6.12-mii-register-readonly-preflight-excerpt.txt",
+      "role": "MII_CTRL1000/MII_STAT1000 and bit definition provenance"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/source/linux-rpi-6.12-phy-device-master-slave-readonly-preflight-excerpt.txt",
+      "role": "master/slave read-only dependency provenance"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/source/linux-rpi-6.12-phy-device-read-status-register-contract-excerpt.txt",
+      "role": "read_status MII_STAT1000/MII_CTRL1000 context"
+    }
+  ],
+  "implemented_files": [
+    {
+      "path": "src/rp1_ethernet.rs",
+      "changes": [
+        "added BCM54213PE read-only preflight report constants",
+        "added candidate/control report evidence structs and builders",
+        "added validator errors for forbidden claim surfaces",
+        "added MII_CTRL1000/MII_STAT1000 decoders",
+        "added focused tests for report boundaries and decoders"
+      ]
+    }
+  ],
+  "validation": [
+    {
+      "level": "fmt/lint/typecheck",
+      "command": "cargo fmt --all -- --check",
+      "result": "pass after formatting"
+    },
+    {
+      "level": "unit tests / QEMU substitute",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "environment": {
+        "TMPDIR": "/opt/strider/openclaw/current/workspace/tmp",
+        "PATH_prefix": "/opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin"
+      },
+      "result": "pass",
+      "tests": "512 no_std tests passed"
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-report-core/*.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff whitespace check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "mdbook build",
+      "result": "not run; no docs/src files touched"
+    },
+    {
+      "level": "staged diff whitespace check",
+      "command": "git diff --cached --check",
+      "result": "pass before commit"
+    }
+  ],
+  "hardware": {
+    "hardwareTestLock_acquired": false,
+    "pi5_hardware_run": false,
+    "boot_archive_publication": false,
+    "lab_mutation": false
+  },
+  "next_action": "Mechanically promote phase12-rp1-ethernet-bcm54213pe-readonly-preflight-closeout-20260616 on the next worker wake if dependencies remain satisfied."
+}

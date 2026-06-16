@@ -1,0 +1,130 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-report-core-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-readonly-preflight-report-core-candidate-local-static",
+  "evidence_level": [
+    "Rust local/static report-core implementation",
+    "focused report surface unit tests",
+    "fmt/lint/typecheck",
+    "full no_std Rust tests through QEMU substitute",
+    "diff checks"
+  ],
+  "accepted_input": {
+    "source_contract_task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract-20260616",
+    "source_contract_commit": "94eee9c8c081722b5a9d323a44576116178e11b8",
+    "selected_targets": [
+      {
+        "surface": "MII_CTRL1000",
+        "phy_addr": 1,
+        "register": "0x09",
+        "future_clause22_man_frame_metadata": "0x60a60000",
+        "disposition": "selected"
+      },
+      {
+        "surface": "MII_STAT1000",
+        "phy_addr": 1,
+        "register": "0x0a",
+        "future_clause22_man_frame_metadata": "0x60aa0000",
+        "disposition": "selected"
+      }
+    ],
+    "context_only_status": {
+      "bmcr": "0x1000",
+      "bmsr": "0x7949/0x7949",
+      "anar": "0x01e1",
+      "anlpar": "0x0000",
+      "macb_nsr": "0x00000006"
+    },
+    "phy_id": {
+      "model": "Broadcom BCM54213PE",
+      "physid1": "0x600d",
+      "physid2": "0x84a2"
+    }
+  },
+  "implemented_surfaces": {
+    "candidate_report": {
+      "classification": "bcm54213pe-readonly-preflight-report-core-candidate-local-static",
+      "constructs_mdio_targets": true,
+      "constructs_man_frames": true,
+      "constructs_macb_target": false,
+      "constructs_gpio_target": false,
+      "runtime_volatile_access_intent": false
+    },
+    "control_report": {
+      "classification": "no-mdio-no-ethernet-bcm54213pe-readonly-preflight-control",
+      "constructs_mdio_targets": false,
+      "constructs_man_frames": false,
+      "constructs_macb_target": false,
+      "constructs_gpio_target": false,
+      "runtime_volatile_access_intent": false
+    },
+    "decoders": [
+      "decode_rp1_ethernet_phy1_ctrl1000",
+      "decode_rp1_ethernet_phy1_stat1000",
+      "decode_rp1_ethernet_phy1_gigabit_preflight"
+    ]
+  },
+  "validator_rejected_claims": [
+    "runtime-volatile-access-claim",
+    "hardware-proof-authorized-claim",
+    "gpio32-action-claim",
+    "bmcr-or-phy-write-claim",
+    "broadcom-shadow-mmd-aux-access-claim",
+    "interrupt-surface-access-claim",
+    "phy-or-mac-configuration-claim",
+    "link-readiness-claim",
+    "packet-io-claim",
+    "networking-claim",
+    "sockets-claim",
+    "ssh-claim",
+    "phase-12-2-claim",
+    "phase-transition-claim"
+  ],
+  "rejected_runtime_claims": [
+    "same-shaped-bmcr-bmsr-anar-anlpar-macb-nsr-retry",
+    "bmcr-autoneg-retry",
+    "gpio32-reset-recovery",
+    "broadcom-shadow-mmd-aux-access",
+    "interrupt-surface-access",
+    "broad-phy-configuration",
+    "macb-configuration",
+    "link-readiness",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "selected_next_task": {
+    "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-closeout-20260616",
+    "status": "queued",
+    "reason": "The report core is local/static and does not authorize hardware proof by itself."
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Candidate/control report surfaces encode exactly MII_CTRL1000 and MII_STAT1000 plus no broader PHY/MAC behavior."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Validators reject forbidden hardware, volatile access, write/restore, packet/networking/SSH/Phase 12.2, and phase-transition claims."
+    },
+    {
+      "disposition": "selected",
+      "finding": "The queued closeout is the only selected next task."
+    },
+    {
+      "disposition": "blocked",
+      "finding": "GPIO32 reset recovery remains blocked by accepted persistent or firmware-owned GPIO32 event-state evidence."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Any later hardware proof requires a separate explicit contract with full hardware evidence preconditions."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No source, helper, task, or evidence files were removed."
+    }
+  ]
+}
