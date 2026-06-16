@@ -10485,6 +10485,22 @@ phase12-rp1-ethernet-serial-freshness-pi5-proof-20260616. Hardware,
 register-read retry, Ethernet/link readiness, packet I/O, networking, SSH,
 Phase 12.2, and phase transition remain rejected.
 
+phase12-rp1-ethernet-serial-freshness-pi5-proof-20260616 accepts
+serial-cursor-freshness-proved. The marker-only no-MDIO/no-Ethernet Pi 5 proof
+published selected tree
+f73c75438663373b3d6df4e0ce451a45f163c4a582d8ba84bd79d161cf9cc68f with a
+47,352-byte kernel_2712.img, retained two matching
+da591740/kernel_2712.img TFTP serves, final pre-restore selected-tree identity,
+and restore proof back to baseline
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The
+pre-power serial sample and drain did not contain the run nonce, while the
+post-power saturated direct-read fallback retained the run-unique marker and
+nonce 45 times after the saved cursor boundary. The accepted frontier is
+limited to serial freshness and capture-chain identity; register values,
+Ethernet/link readiness, packet I/O, networking, SSH, Phase 12.2, and phase
+transition remain rejected. The only selected follow-up is the dependency-gated
+closeout phase12-rp1-ethernet-serial-freshness-closeout-20260616.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

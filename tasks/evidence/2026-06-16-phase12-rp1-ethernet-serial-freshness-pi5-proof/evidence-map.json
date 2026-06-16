@@ -1,0 +1,42 @@
+{
+  "task_id": "phase12-rp1-ethernet-serial-freshness-pi5-proof-20260616",
+  "classification": "serial-cursor-freshness-proved",
+  "accepted": true,
+  "evidence": {
+    "classification": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-serial-freshness-pi5-proof/classification.json",
+    "capture_summary": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-serial-freshness-pi5-proof/candidate/capture-invariant-summary.json",
+    "serial_freshness_guard": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-serial-freshness-pi5-proof/candidate/serial-freshness-guard.json",
+    "preflight_identity": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-serial-freshness-pi5-proof/candidate/preflight-identity.json",
+    "pre_power_serial_peek": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-serial-freshness-pi5-proof/candidate/pre-power-serial-peek.json",
+    "serial_observe_window": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-serial-freshness-pi5-proof/candidate/serial-observe-window.json",
+    "tftp_delta": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-serial-freshness-pi5-proof/candidate/tftp-delta-stable-pre-restore.json",
+    "final_pre_restore_status": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-serial-freshness-pi5-proof/candidate/final-pre-restore-status.json",
+    "restore_snapshot": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-serial-freshness-pi5-proof/candidate/restore-snapshot.json",
+    "post_restore_status": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-serial-freshness-pi5-proof/candidate/post-restore-status.json",
+    "post_restore_preflight_mismatch_retained": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-serial-freshness-pi5-proof/candidate/post-restore-preflight-mismatch-summary.json",
+    "archive": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-serial-freshness-pi5-proof/serial-freshness-kernel-entry-beacon-20260616T085546Z.tar.gz"
+  },
+  "summary": {
+    "selected_tree_hash": "f73c75438663373b3d6df4e0ce451a45f163c4a582d8ba84bd79d161cf9cc68f",
+    "expected_kernel_bytes": 47352,
+    "tftp_expected_fetch_count": 2,
+    "marker_occurrences_after_saved_cursor": 45,
+    "nonce_occurrences_after_saved_cursor": 45,
+    "cursor_nonce_fresh": true,
+    "restore_snapshot": "pre-serial-freshness-20260616T085546Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "validation": [
+    "static archive review",
+    "lab-controller API selected-tree publication",
+    "serial hardware boot/output",
+    "TFTP cursor delta",
+    "task-owned serial freshness guard",
+    "restore proof",
+    "jq empty",
+    "git diff --check",
+    "mdbook build",
+    "git diff --cached --check"
+  ],
+  "rejected_claims": null
+}

@@ -1,0 +1,30 @@
+{
+  "label": "serial-freshness-kernel-entry-beacon-20260616T085546Z",
+  "classification": "staging-publication-mismatch",
+  "reason": "pre-power-cycle boot identity did not match the expected staged tree",
+  "preflight_identity": {
+    "expected_tree_hash": "f73c75438663373b3d6df4e0ce451a45f163c4a582d8ba84bd79d161cf9cc68f",
+    "observed_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "expected_kernel": "kernel_2712.img",
+    "observed_effective_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 47352,
+    "observed_fetch_bytes": 104136,
+    "selected_tree_identity_source": "/boot/files",
+    "root_endpoint": {
+      "endpoint": "GET /",
+      "curl_exit": 0,
+      "http_code": 404,
+      "body_bytes": 55,
+      "usable_for_selected_tree_identity": false,
+      "selected_tree_identity_source": "/boot/files",
+      "fallback_used": true,
+      "fallback_reason": "root-endpoint-http-non-2xx"
+    },
+    "tree_matches": false,
+    "effective_kernel_matches": true,
+    "expected_fetch_present": true,
+    "expected_fetch_bytes_match": false,
+    "staging_publication_mismatch": true
+  }
+}

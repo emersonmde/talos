@@ -1,0 +1,1 @@
+target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-rp1-ethernet-kernel-entry-serial-beacon.img

@@ -1,0 +1,76 @@
+{
+  "label": "serial-freshness-kernel-entry-beacon-20260616T085546Z",
+  "classification": "serial-cursor-freshness-proved",
+  "proof_run_identity": {
+    "selected_tree_hash": "f73c75438663373b3d6df4e0ce451a45f163c4a582d8ba84bd79d161cf9cc68f",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 47352,
+    "serial": {
+      "pre_power_peek": {
+        "cursor": 4194304,
+        "bytes": 65536
+      },
+      "pre_power_drain": {
+        "final_cursor": 4194304,
+        "empty_before_power": false,
+        "discriminator": "bounded-drain-exhausted-before-power"
+      },
+      "cursor_start": 4194304,
+      "cursor_end": 4194304,
+      "window_bytes": 70594,
+      "response_bytes": 70594,
+      "capture_mode": "read",
+      "freshness_contract": {
+        "contract_version": "cursor-nonce-post-power-freshness-v1",
+        "marker_nonce": "serial-freshness-20260616T085546Z",
+        "marker_occurrences_after_saved_cursor": 45,
+        "nonce_occurrences_after_saved_cursor": 45,
+        "cursor_nonce_fresh": true,
+        "serial_freshness_ok": true
+      }
+    },
+    "tftp": {
+      "cursor_start": 4529960,
+      "cursor_end": 4531311,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2
+    },
+    "final_pre_restore": {
+      "tree_hash": "f73c75438663373b3d6df4e0ce451a45f163c4a582d8ba84bd79d161cf9cc68f",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 47352
+    },
+    "restore": {
+      "snapshot_name": "pre-serial-freshness-20260616T085546Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "identity_join_contract": {
+    "contract_version": "cursor-nonce-post-power-freshness-v1",
+    "decisive_serial_freshness_classification_allowed": true,
+    "rejection_reasons": [],
+    "rule": "missing or mismatched pre-power peek absence, post-power cursor/nonce proof, selected-tree/TFTP identity, final identity, or restore evidence rejects serial freshness"
+  },
+  "claim_boundary": {
+    "accepted_if_ready": "serial freshness and capture-chain identity only",
+    "rejected_runtime_claims": [
+      "BCM54213PE register values",
+      "link readiness",
+      "Ethernet readiness",
+      "GPIO32 or PHY reset ownership",
+      "BMCR or autoneg writes",
+      "Broadcom shadow/MMD/AUX access",
+      "interrupt ownership",
+      "packet I/O",
+      "networking",
+      "SSH",
+      "Phase 12.2",
+      "phase transition"
+    ]
+  }
+}
