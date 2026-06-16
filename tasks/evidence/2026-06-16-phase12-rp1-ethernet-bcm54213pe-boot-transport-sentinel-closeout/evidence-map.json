@@ -1,0 +1,90 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-closeout-20260616",
+  "source_inputs": [
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-core.md",
+      "role": "accepted local/static sentinel core"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-core/classification.json",
+      "role": "sentinel-core classification and candidate/control boundary"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-core/evidence-map.json",
+      "role": "sentinel-core implementation and validation evidence"
+    },
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-pi5-proof.md",
+      "role": "accepted serialized Pi 5 sentinel proof record"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-pi5-proof/classification.json",
+      "role": "Pi 5 proof classification and candidate/control outcome"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-pi5-proof/evidence-map.json",
+      "role": "Pi 5 proof evidence references"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-pi5-proof/capture-summary.json",
+      "role": "Pi 5 capture summary"
+    }
+  ],
+  "closeout_outputs": [
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-closeout.md",
+      "role": "boot-transport sentinel closeout task record"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-closeout/classification.json",
+      "role": "boot-transport sentinel closed-frontier classification"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-closeout/evidence-map.json",
+      "role": "boot-transport sentinel closeout evidence map"
+    },
+    {
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "role": "Phase 12 boot-transport sentinel closed-frontier documentation"
+    },
+    {
+      "path": "docs/src/roadmap.md",
+      "role": "roadmap boot-transport sentinel closed-frontier documentation"
+    }
+  ],
+  "validation": [
+    {
+      "level": "static/task evidence inspection",
+      "command": "manual review of accepted sentinel core and Pi 5 proof tasks plus JSON evidence",
+      "result": "pass"
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-closeout/*.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff whitespace check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff whitespace check",
+      "command": "git diff --cached --check",
+      "result": "pass before commit"
+    }
+  ],
+  "hardware": {
+    "hardwareTestLock_acquired": false,
+    "pi5_hardware_run": false,
+    "boot_archive_publication": false,
+    "lab_mutation": false,
+    "volatile_ethernet_access": false
+  },
+  "next_action": "Set planningNeeded=true for supervisor planning of a fetched-kernel execution or serial-emission discriminator, a source/static contract, or an explicit pause; no hardware, register-read retry, packet I/O, networking, SSH, Phase 12.2, or phase transition is authorized by this closeout."
+}

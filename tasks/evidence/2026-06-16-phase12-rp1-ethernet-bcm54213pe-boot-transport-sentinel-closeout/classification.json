@@ -1,0 +1,126 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-closeout-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-boot-transport-sentinel-frontier-closed-kernel-serial-boundary",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "accepted sentinel-core review",
+    "accepted serialized Pi 5 proof review",
+    "JSON evidence validation",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_inputs": {
+    "sentinel_core": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-core-20260616",
+      "classification": "bcm54213pe-boot-transport-sentinel-core-local-static",
+      "candidate_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_candidate",
+      "control_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_control",
+      "constructs_ethernet_target_facts": false,
+      "constructs_mdio_targets": false,
+      "constructs_man_frames": false,
+      "constructs_macb_target": false,
+      "constructs_gpio32_or_phy_target": false,
+      "runtime_volatile_ethernet_access_intent": false
+    },
+    "pi5_proof": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-pi5-proof-20260616",
+      "classification": "boot-transport-selected-tree-fresh-tftp-no-kernel-sentinel-serial",
+      "result": "accepted-with-kernel-serial-boundary"
+    }
+  },
+  "frontier": {
+    "name": "bcm54213pe-boot-transport-sentinel-frontier-closed-kernel-serial-boundary",
+    "accepted": [
+      "local/static no-Ethernet/no-MDIO sentinel core shape",
+      "candidate/control selected-tree publication through lab status",
+      "candidate/control two fresh 86744-byte TFTP serves after power-cycle",
+      "candidate/control final pre-restore selected-tree identity",
+      "candidate/control restore proof",
+      "boot transport no longer classified as a generic no-fresh-TFTP blocker for the no-MDIO/no-Ethernet sentinel pair"
+    ],
+    "deferred": [
+      "fetched-kernel execution or sentinel serial-emission visibility",
+      "candidate raw/decoded MII_CTRL1000 and MII_STAT1000 values",
+      "any distinct follow-up discriminator selected by supervisor planning"
+    ],
+    "same_shaped_register_retry_closed": true
+  },
+  "candidate": {
+    "classification": "bcm54213pe-boot-transport-sentinel-candidate-fresh-tftp-no-sentinel-serial",
+    "selected_tree": "9eb5f67cb0cad1dd6e5af49ddf8c52455325417f5b7f998d1e07abdcb48bb02c",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 86744,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "serial_has_firmware_network": true,
+    "serial_has_kernel_main": false,
+    "serial_has_marker": false,
+    "serial_marker_occurrences": 0,
+    "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "result": "fresh-tftp-no-sentinel-serial"
+  },
+  "control": {
+    "classification": "no-mdio-no-ethernet-bcm54213pe-boot-transport-sentinel-control-fresh-tftp-no-sentinel-serial",
+    "selected_tree": "9eb5f67cb0cad1dd6e5af49ddf8c52455325417f5b7f998d1e07abdcb48bb02c",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 86744,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "serial_has_firmware_network": true,
+    "serial_has_kernel_main": false,
+    "serial_has_marker": false,
+    "serial_marker_occurrences": 0,
+    "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "result": "fresh-tftp-no-sentinel-serial"
+  },
+  "next_boundary": {
+    "decision": "supervisor-planning-required",
+    "planning_needed": true,
+    "planning_reason": "No queued mechanically unblocked follow-up exists after the accepted BCM54213PE boot-transport sentinel closeout; supervisor must select a distinct Phase 12.1 discriminator for fetched-kernel execution or sentinel serial-emission visibility, a source/static contract, or an explicit pause.",
+    "hardware_authorized_by_this_task": false
+  },
+  "forbidden_claims": [
+    "bcm54213pe-register-values",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition",
+    "link-readiness",
+    "ethernet-driver-readiness",
+    "gpio32-reset-ownership",
+    "bmcr-write-or-autoneg-retry",
+    "broadcom-shadow-mmd-aux-access",
+    "interrupt-ownership",
+    "broad-phy-configuration",
+    "macb-configuration"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Sentinel core defines candidate/control no-Ethernet/no-MDIO boot scenarios and target-fact validators."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Serialized Pi 5 candidate/control proof accepted selected-tree identity, two matching 86744-byte TFTP serves, and restore evidence."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Sentinel nonce markers and kernel main output were not visible in the bounded serial windows."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "BCM54213PE register values, Ethernet readiness, link readiness, GPIO32/PHY reset ownership, BMCR writes, Broadcom shadow/MMD/aux access, interrupt ownership, broad PHY/MAC configuration, packet I/O, networking, SSH, Phase 12.2, and phase transition remain rejected."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Generated boot archives were already removed after upload; retained hashes and lab evidence are durable."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Candidate/control sentinel archives sharing tree and byte size is acceptable for this discriminator because retained nonces and report payload evidence define the two scenarios."
+    }
+  ]
+}

@@ -1984,3 +1984,17 @@ serial emission remains unaccepted. BCM54213PE register values, link readiness,
 GPIO32/PHY reset ownership, BMCR writes, Broadcom shadow/MMD/aux access,
 interrupt ownership, broad PHY/MAC configuration, packet I/O, networking, SSH,
 Phase 12.2, and phase transition remain rejected.
+
+phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-closeout-20260616
+closes the sentinel frontier as
+bcm54213pe-boot-transport-sentinel-frontier-closed-kernel-serial-boundary. The
+closed frontier accepts selected-tree publication, final pre-restore identity,
+fresh TFTP serving, firmware NETWORK serial presence, and restore proof for the
+no-Ethernet/no-MDIO sentinel pair. It does not accept sentinel nonce visibility
+or kernel main output, so the remaining boundary is fetched-kernel execution or
+sentinel serial-emission visibility rather than generic selected-tree/TFTP
+transport. Supervisor planning is required for a distinct Phase 12.1 follow-up
+or explicit pause. BCM54213PE register values, link readiness, GPIO32/PHY reset
+ownership, BMCR writes, Broadcom shadow/MMD/aux access, interrupt ownership,
+broad PHY/MAC configuration, packet I/O, networking, SSH, Phase 12.2, and phase
+transition remain rejected.

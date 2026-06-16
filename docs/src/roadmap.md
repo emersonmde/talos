@@ -10365,6 +10365,19 @@ access, interrupt ownership, broad PHY/MAC configuration, packet I/O,
 networking, SSH, Phase 12.2, and phase transition remain rejected. The next
 queued task is only the boot-transport sentinel closeout.
 
+phase12-rp1-ethernet-bcm54213pe-boot-transport-sentinel-closeout-20260616
+closes that sentinel frontier as
+bcm54213pe-boot-transport-sentinel-frontier-closed-kernel-serial-boundary. The
+accepted frontier is limited to no-Ethernet/no-MDIO selected-tree publication,
+fresh TFTP serving, firmware NETWORK serial presence, final pre-restore
+identity, and restore proof. Fetched-kernel execution or sentinel
+serial-emission visibility remains deferred because neither sentinel nonce nor
+kernel main output appeared in the bounded serial windows. No queued
+mechanically unblocked follow-up remains after the closeout; supervisor
+planning is required for a distinct Phase 12.1 discriminator, source/static
+contract, or explicit pause before any hardware, register-read retry, packet
+I/O, networking, SSH, Phase 12.2, or phase-transition work.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
