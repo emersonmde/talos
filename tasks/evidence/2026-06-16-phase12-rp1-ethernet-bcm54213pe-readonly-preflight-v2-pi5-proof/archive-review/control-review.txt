@@ -1,0 +1,29 @@
+archive=target/tmp/phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-pi5-proof-20260616T101900Z-control.tar.gz
+sha256=eea0b2d5c11ed28d6128053fb71ebe8f08504774d5c41f8e7711d3b0d5f1de21
+file_count=19
+kernel_size=50856
+header_image_size=50856
+text_offset=0
+flags=12
+loader_diagnostic=false
+circle_config_loader_diagnostic=false
+manifest:
+  bcm2712-rpi-5-b.dtb
+  cmdline.txt
+  config.txt
+  da591740
+  da591740/bcm2712-rpi-5-b.dtb
+  da591740/cmdline.txt
+  da591740/config.txt
+  da591740/kernel8.img
+  da591740/kernel_2712.img
+  da591740/overlays
+  da591740/overlays/bcm2712d0.dtbo
+  da591740/overlays/overlay_map.dtb
+  da591740/overlays/uart0-pi5.dtbo
+  kernel8.img
+  kernel_2712.img
+  overlays
+  overlays/bcm2712d0.dtbo
+  overlays/overlay_map.dtb
+  overlays/uart0-pi5.dtbo

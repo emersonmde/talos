@@ -2055,6 +2055,35 @@ writes, Broadcom shadow/MMD/aux access, interrupt ownership, broad PHY/MAC
 configuration, packet I/O, networking, SSH, Phase 12.2, and phase transition
 remain rejected.
 
+phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-proof-core-20260616
+accepts bcm54213pe-readonly-preflight-v2-proof-core-local-static. The v2 core
+keeps the accepted PHY1 MII_CTRL1000 0x09 and MII_STAT1000 0x0a target set, but
+adds the accepted cursor-nonce-post-power-freshness-v1 contract and splits the
+candidate serial surface into a pre-MDIO entry marker and a separate post-read
+values marker. The paired control emits the same capture-nonce freshness shape
+while constructing no MDIO, MAN, MACB, GPIO32/PHY, or RP1 Ethernet target
+facts. This local/static core accepts no register values, link readiness,
+GPIO32/PHY reset ownership, BMCR/autoneg, Broadcom shadow/MMD/aux access,
+interrupt ownership, packet I/O, networking, SSH, Phase 12.2, or phase
+transition.
+
+phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-pi5-proof-20260616
+accepts bcm54213pe-readonly-preflight-v2-post-read-values-visible. The paired
+control retained selected tree
+035d4affb2ed54ffe8d02a7f6cd2879ba404775ec49379062dd6f694f9e40abb, two
+matching 50,856-byte da591740/kernel_2712.img TFTP serves, 17 fresh serial
+marker/nonce occurrences, and restore proof while constructing no Ethernet or
+MDIO target facts. The candidate retained selected tree
+012e2aeae1fb00699b3ae9ead98433f68b8e093d96f4105332dfe6146b3b6ab3, two
+matching 52,056-byte TFTP serves, 17 fresh serial marker/nonce occurrences,
+final identity, and restore proof, then reached the post-read marker with PHY1
+MII_CTRL1000 0x09 raw 0x0200 valid and MII_STAT1000 0x0a raw 0x0000 valid.
+This accepts only the bounded read-only visibility of those two registers under
+the v2 freshness contract. It does not accept link readiness, GPIO32/PHY reset
+ownership, BMCR/autoneg, Broadcom shadow/MMD/aux access, interrupt ownership,
+broad PHY/MAC configuration, packet I/O, networking, sockets, SSH, Phase 12.2,
+or a phase transition. The selected next boundary is the queued v2 closeout.
+
 phase12-rp1-ethernet-bootinfo-report-serial-visibility-closeout-20260616 closes
 that frontier as
 bootinfo-report-serial-visibility-frontier-closed-serial-drain-blocked. The

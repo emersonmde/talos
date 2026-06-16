@@ -1,0 +1,89 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-pi5-proof-20260616",
+  "classification": "bcm54213pe-readonly-preflight-v2-post-read-values-visible",
+  "evidence": [
+    {
+      "level": "static archive/image review",
+      "paths": [
+        "archive-review/control-review.txt",
+        "archive-review/candidate-review.txt",
+        "control/archive.sha256",
+        "candidate/archive.sha256",
+        "control/kernel_2712.sha256",
+        "candidate/kernel_2712.sha256",
+        "control/kernel_2712.bytes",
+        "candidate/kernel_2712.bytes"
+      ]
+    },
+    {
+      "level": "lab-controller API",
+      "paths": [
+        "pre-snapshot-response.json",
+        "control-run/publish-archive.json",
+        "candidate-run/publish-archive.json",
+        "control-run/preflight-identity.json",
+        "candidate-run/preflight-identity.json",
+        "control-run/final-pre-restore-status.json",
+        "candidate-run/final-pre-restore-status.json",
+        "control-run/restore-snapshot.json",
+        "candidate-run/restore-snapshot.json",
+        "final-lab-status.json",
+        "final-boot-files.json"
+      ]
+    },
+    {
+      "level": "serial hardware boot/output",
+      "paths": [
+        "control-run/serial-observe-window.json",
+        "candidate-run/serial-observe-window.json"
+      ]
+    },
+    {
+      "level": "same-power-cycle TFTP evidence",
+      "paths": [
+        "control-run/tftp-delta-stable-pre-restore.json",
+        "candidate-run/tftp-delta-stable-pre-restore.json"
+      ]
+    },
+    {
+      "level": "serial freshness guard v1 replay",
+      "paths": [
+        "control-run/serial-freshness-guard.json",
+        "candidate-run/serial-freshness-guard.json"
+      ]
+    },
+    {
+      "level": "summary",
+      "paths": [
+        "control-run/capture-invariant-summary.json",
+        "candidate-run/capture-invariant-summary.json",
+        "capture-summary.json",
+        "classification.json"
+      ]
+    }
+  ],
+  "acceptance": {
+    "hardware_lock_acquisition_release_required": true,
+    "control_decisive": true,
+    "candidate_decisive": true,
+    "no_candidate_rerun_performed": true,
+    "bounded_candidate_registers_only": [
+      "MII_CTRL1000:0x09",
+      "MII_STAT1000:0x0a"
+    ],
+    "rejected_claims_preserved": [
+      "link readiness",
+      "GPIO32/PHY reset ownership",
+      "BMCR/autoneg",
+      "Broadcom shadow/MMD/aux access",
+      "interrupt ownership",
+      "broad PHY/MAC configuration",
+      "packet I/O",
+      "networking",
+      "sockets",
+      "SSH",
+      "Phase 12.2",
+      "phase transition"
+    ]
+  }
+}
