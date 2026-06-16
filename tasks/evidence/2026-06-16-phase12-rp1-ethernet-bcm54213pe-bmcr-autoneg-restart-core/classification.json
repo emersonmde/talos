@@ -1,0 +1,135 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-core-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-bmcr-autoneg-restart-proof-core-local-static",
+  "evidence_level": [
+    "local/static Rust contract tests",
+    "candidate/control compile-only builds",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_source_checkpoint": {
+    "task_id": "phase12-rp1-ethernet-bcm54213pe-link-recovery-source-checkpoint-20260616",
+    "commit": "37a5cbb12de00fb959b073ba6525860fb61f8b1c",
+    "classification": "bcm54213pe-bmcr-autoneg-restart-contract-selected"
+  },
+  "proof_core_contract": {
+    "contract_id": "phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-proof-contract-v1",
+    "candidate_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_bmcr_autoneg_restart_candidate",
+    "control_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_bmcr_autoneg_restart_no_mdio_control",
+    "selected_discriminator": "bcm54213pe-phy1-bmcr-autoneg-restart",
+    "preconditions": [
+      "corrected NCR.MPE bit 4 is already set",
+      "pre-read PHY1 BMCR isolate bit 10 is clear"
+    ],
+    "selected_registers": [
+      "pre-BMCR:0x00",
+      "pre-BMSR:0x01",
+      "pre-ANAR:0x04",
+      "pre-ANLPAR:0x05",
+      "pre-MII_CTRL1000:0x09",
+      "pre-MII_STAT1000:0x0a",
+      "post-BMCR:0x00",
+      "post-BMSR-first:0x01",
+      "post-BMSR-second:0x01",
+      "post-ANAR:0x04",
+      "post-ANLPAR:0x05",
+      "post-MII_CTRL1000:0x09",
+      "post-MII_STAT1000:0x0a",
+      "passive-MACB_NSR_LINK"
+    ],
+    "man_read_frames": [
+      "0x60820000",
+      "0x60860000",
+      "0x60920000",
+      "0x60960000",
+      "0x60a60000",
+      "0x60aa0000"
+    ],
+    "bmcr_write_frame_prefix": "0x50820000",
+    "bmcr_write_value": "0x1200",
+    "bmcr_write_frame": "0x50821200",
+    "candidate_constructs_mdio_target": true,
+    "candidate_constructs_man_frames": true,
+    "candidate_constructs_passive_macb_nsr_context": true,
+    "control_constructs_target_facts": false,
+    "permits_exactly_one_bmcr_write": true,
+    "permits_extra_phy_writes": false,
+    "permits_selector_write_surface": false,
+    "permits_gpio32_reset_action": false,
+    "permits_broadcom_shadow_mmd_aux_access": false,
+    "permits_interrupt_ownership": false,
+    "permits_phy_or_mac_configuration": false,
+    "permits_link_ready_acceptance": false,
+    "permits_packet_io": false,
+    "permits_networking": false,
+    "permits_ssh": false,
+    "permits_phase_12_2": false,
+    "permits_phase_transition": false
+  },
+  "allowed_future_hardware_classifications": [
+    "bcm54213pe-bmcr-autoneg-restart-post-status-sampled",
+    "bcm54213pe-bmcr-autoneg-restart-precondition-blocker",
+    "bcm54213pe-bmcr-autoneg-restart-timeout",
+    "bcm54213pe-bmcr-autoneg-restart-capture-blocker",
+    "no-mdio-no-ethernet-bcm54213pe-bmcr-autoneg-restart-control"
+  ],
+  "compile_only_artifacts": {
+    "candidate": {
+      "path": "target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-bcm54213pe-bmcr-autoneg-restart-candidate.img",
+      "sha256": "d4a70e105b4a899bc23595de159b1c1b316aa20a38c3d3f8f86226882b6ac06e",
+      "size_bytes": 53112,
+      "capture_nonce": "bcm54213pe-bmcr-core-candidate-20260616T1349Z"
+    },
+    "control": {
+      "path": "target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-bcm54213pe-bmcr-autoneg-restart-control.img",
+      "sha256": "56694f459167ae8231e97dcb61a8aaa4434ef0ed5a9b9d96ac38c1d1cf448bb0",
+      "size_bytes": 50184,
+      "capture_nonce": "bcm54213pe-bmcr-core-control-20260616T1349Z"
+    }
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Candidate/control local/static surfaces encode the checkpoint-selected BCM54213PE BMCR/autoneg restart boundary."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Exact BMCR write frame is pinned to 0x50821200."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Focused tests fail closed on target drift, extra writes, selector access, GPIO32 reset action, link-ready acceptance, networking, and phase transition."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Candidate and control compile-only builds passed under the new boot scenarios."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Runtime BMCR write evidence, selected-tree identity, TFTP/serial evidence, restore proof, and hardware lock handling remain in the queued Pi 5 proof."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Link-ready acceptance, Broadcom selector access, GPIO32 reset recovery, packet I/O, networking, SSH, Phase 12.2, and phase transition are not accepted by local/static evidence."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No hardware lock was acquired because validation was local/static and compile-only."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No stale helper or task evidence was removed."
+    }
+  ],
+  "next_action": {
+    "task_id": "phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-pi5-proof-20260616",
+    "mechanically_unblocked_after_acceptance": true,
+    "conditions": [
+      "hardwareTestLock.locked is false and hardwareTestLock.restored is true",
+      "supervisorIntervention.active is false",
+      "projects/talos has no conflicting uncommitted changes"
+    ]
+  }
+}

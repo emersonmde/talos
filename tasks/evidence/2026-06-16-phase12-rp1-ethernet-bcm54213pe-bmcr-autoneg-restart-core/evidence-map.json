@@ -1,0 +1,88 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-core-20260616",
+  "classification": "bcm54213pe-bmcr-autoneg-restart-proof-core-local-static",
+  "evidence": [
+    {
+      "label": "source checkpoint",
+      "level": "static/task evidence inspection",
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-link-recovery-source-checkpoint.md"
+    },
+    {
+      "label": "source checkpoint classification",
+      "level": "JSON evidence inspection",
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-link-recovery-source-checkpoint/classification.json"
+    },
+    {
+      "label": "local/static proof core contract",
+      "level": "source inspection and Rust tests",
+      "paths": [
+        "src/rp1_ethernet.rs",
+        "src/target/rpi5.rs",
+        "src/main.rs",
+        "build.rs"
+      ]
+    },
+    {
+      "label": "candidate compile-only script",
+      "level": "compile-only artifact build",
+      "path": "scripts/rpi5-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-candidate-image.sh"
+    },
+    {
+      "label": "control compile-only script",
+      "level": "compile-only artifact build",
+      "path": "scripts/rpi5-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-control-image.sh"
+    },
+    {
+      "label": "task classification",
+      "level": "task-owned JSON evidence",
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-core/classification.json"
+    },
+    {
+      "label": "task record",
+      "level": "task-owned markdown evidence",
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-core.md"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "gate": "focused Rust tests for the BMCR/autoneg restart proof core",
+      "command": "cargo -Zjson-target-spec test rp1_ethernet_bcm54213pe_bmcr_autoneg_restart -- --nocapture",
+      "result": "pass"
+    },
+    {
+      "gate": "candidate compile-only build",
+      "command": "TALOS_CAPTURE_NONCE=bcm54213pe-bmcr-core-candidate-20260616T1349Z ./scripts/rpi5-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-candidate-image.sh",
+      "result": "pass"
+    },
+    {
+      "gate": "control compile-only build",
+      "command": "TALOS_CAPTURE_NONCE=bcm54213pe-bmcr-core-control-20260616T1349Z ./scripts/rpi5-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-control-image.sh",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet",
+      "result": "pass"
+    },
+    {
+      "gate": "jq empty on task-owned JSON evidence",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "mdbook build",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "pass"
+    }
+  ],
+  "commit": null
+}
