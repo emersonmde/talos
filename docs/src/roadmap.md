@@ -10779,6 +10779,20 @@ link-ready-terminal=false. Link readiness, packet I/O, networking, sockets, SSH,
 Phase 12.2, and phase transition remain rejected; the only mechanically gated
 next boundary is the TX-order closeout task.
 
+phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-closeout-20260616 accepts
+bcm54213pe-rgmii-delay-tx-order-frontier-closed-timeout-link-not-ready. The
+closeout reconciles the accepted source correction, proof core, and serialized
+Pi 5 proof without a new hardware run. The closed frontier accepts selected-tree
+identity, same-power-cycle TFTP byte agreement, serial freshness, final identity,
+restore proof, the no-MDIO/no-Ethernet control, RX delay read/write/readback, TX
+selected read/readback with GTXCLK_EN already set, skip of the redundant TX
+write under the accepted policy, exactly one BMCR restart, and bounded
+convergence samples ending link-not-ready. It does not satisfy the queued
+link-ready packet-readiness checkpoint because no link-ready/autoneg-complete
+frontier was accepted. Supervisor planning is required for any bounded
+timeout/link-not-ready follow-up or explicit pause; packet I/O, networking,
+sockets, SSH, Phase 12.2, and phase transition remain rejected.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

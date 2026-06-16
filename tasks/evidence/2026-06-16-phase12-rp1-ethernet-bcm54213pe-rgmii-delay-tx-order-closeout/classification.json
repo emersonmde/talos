@@ -1,0 +1,177 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-closeout-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-rgmii-delay-tx-order-frontier-closed-timeout-link-not-ready",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "accepted TX-order source-correction review",
+    "accepted TX-order proof-core review",
+    "accepted serialized Pi 5 TX-order proof review",
+    "JSON evidence validation",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_inputs": {
+    "source_correction": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-source-correction-20260616",
+      "commit": "0b947e8e9bc2025b2072490266479b490f34327e",
+      "classification": "bcm54213pe-rgmii-delay-tx-order-source-correction-proof-core-selected"
+    },
+    "proof_core": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-core-20260616",
+      "commit": "1a24907ad8effd6925ca9fb31fd1a4378910340c",
+      "classification": "bcm54213pe-rgmii-delay-tx-order-proof-core-local-static",
+      "contract_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-contract-v1",
+      "tx_write_policy": "skip-redundant-tx-write-when-selected-tx-read-already-has-gtxclk-en-after-mask-0x03ff",
+      "control_constructs_target_facts": false
+    },
+    "pi5_proof": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof-20260616",
+      "commit": "6f574698cbb4c557ea4e91d32c832f23a60c00d0",
+      "classification": "rgmii-delay-tx-order-timeout-link-not-ready",
+      "control_classification": "no-mdio-no-ethernet-bcm54213pe-rgmii-delay-tx-order-control",
+      "serial_freshness_guard": "serial-freshness-guard-v1-ready",
+      "capture_chain_v4": "capture-chain-v4-ready",
+      "terminal_runtime_layer": "bounded convergence polling after corrected RX/TX delay criteria and exactly one BMCR restart ended link-not-ready"
+    }
+  },
+  "frontier": {
+    "name": "bcm54213pe-rgmii-delay-tx-order-frontier-closed-timeout-link-not-ready",
+    "accepted": [
+      "candidate/control selected-tree identity joined with same-power-cycle TFTP byte serves",
+      "cursor-nonce serial freshness guard replay",
+      "final pre-restore identity and restore proof",
+      "paired no-MDIO/no-Ethernet control",
+      "PHY1 RX delay selected read/write/readback reached hardware",
+      "PHY1 TX selected read/readback reached hardware",
+      "TX selected read reported GTXCLK_EN already set",
+      "redundant TX write skipped under accepted policy",
+      "exactly one BMCR restart write executed after corrected delay criteria",
+      "bounded convergence polling ended with link-ready-terminal false"
+    ],
+    "blocked": [
+      "link-ready packet-readiness source checkpoint remains dependency-gated because no link-ready/autoneg-complete frontier was accepted"
+    ],
+    "deferred": [
+      "supervisor-planned timeout/link-not-ready follow-up or explicit pause",
+      "GPIO32/PHY reset ownership",
+      "PHY/MAC configuration",
+      "interrupt ownership",
+      "DMA/descriptors",
+      "packet I/O",
+      "networking",
+      "sockets",
+      "SSH",
+      "Phase 12.2",
+      "phase transition"
+    ],
+    "hardware_authorized_by_this_task": false,
+    "write_or_configuration_authorized_by_closeout": false,
+    "phase_transition_authorized": false
+  },
+  "control_summary": {
+    "classification": "no-mdio-no-ethernet-bcm54213pe-rgmii-delay-tx-order-control",
+    "selected_tree_hash": "b1cbdd8e46cbff13b804ade11087f43e3bead258d1c8731352d7354ff0c0d2a4",
+    "kernel_sha256": "8f267d366a2b35142d8268b759fb344feafc0a6df1580c4d72ecb79f7e01767b",
+    "kernel_bytes": 50656,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "serial_nonce_occurrences": 35,
+    "serial_freshness_proven": true,
+    "constructed_mdio_or_ethernet_target_facts": false
+  },
+  "candidate_summary": {
+    "classification": "rgmii-delay-tx-order-timeout-link-not-ready",
+    "selected_tree_hash": "57139d9354cda7f2cde0be128cc9d4216fc99df9f9bf673e541cb6dd0d1be6e1",
+    "kernel_sha256": "41821b7d85abacdc2fcef44d5cc3c6dfd99aeebaeefff7ed5f56d54d2f3bb6f9",
+    "kernel_bytes": 55040,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "serial_nonce_occurrences": 31,
+    "serial_freshness_proven": true,
+    "rx_readback_rgmii_skew_en": true,
+    "tx_selected_read_completed": true,
+    "tx_pre_raw": "0xe00",
+    "tx_readback_raw": "0xe00",
+    "tx_readback_gtxclk_en": true,
+    "tx_delay_write_completed": false,
+    "tx_delay_write_skipped_already_enabled": true,
+    "tx_readback_completed": true,
+    "bmcr_write_count": "0x1",
+    "samples_taken": "0x8",
+    "poll_bmsr_link_status": false,
+    "poll_bmsr_autoneg_complete": false,
+    "passive_macb_nsr_link": false,
+    "link_ready_terminal": false,
+    "first_failing_runtime_layer": "bounded convergence polling after corrected delay criteria and BMCR restart ended link-not-ready"
+  },
+  "restore_summary": {
+    "baseline_tree_after_restore": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "control_final_pre_restore_tree_hash": "b1cbdd8e46cbff13b804ade11087f43e3bead258d1c8731352d7354ff0c0d2a4",
+    "candidate_final_pre_restore_tree_hash": "57139d9354cda7f2cde0be128cc9d4216fc99df9f9bf673e541cb6dd0d1be6e1"
+  },
+  "next_boundary": {
+    "decision": "supervisor-planning-required",
+    "selected_boundary": "bounded timeout/link-not-ready follow-up or explicit pause",
+    "planning_needed": true,
+    "task_id": null,
+    "link_ready_packet_readiness_checkpoint_unblocked": false,
+    "hardware_authorized_by_this_task": false
+  },
+  "forbidden_claims": [
+    "link-readiness",
+    "autoneg-complete",
+    "ethernet-driver-readiness",
+    "gpio32-phy-reset-ownership",
+    "interrupt-ownership",
+    "dma-descriptor-ownership",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "The source correction and proof core converted the prior source-control-flow blocker into a corrected RX-to-TX RGMII delay feature path."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The control retained the no-MDIO/no-Ethernet shape with selected-tree, TFTP, serial freshness, final identity, and restore evidence."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The candidate retained selected-tree, TFTP, serial freshness, final identity, and restore evidence, then completed RX selected read/write/readback and TX selected read/readback."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The candidate observed GTXCLK_EN already set and skipped the redundant TX write under the accepted policy."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The candidate executed exactly one BMCR restart and then timed out with link-ready-terminal false after eight bounded convergence samples."
+    },
+    {
+      "disposition": "blocked",
+      "finding": "The queued link-ready packet-readiness checkpoint remains blocked because no link-ready/autoneg-complete frontier was accepted."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Next bounded timeout/link-not-ready follow-up, GPIO32/reset, PHY/MAC configuration, interrupt ownership, packet I/O, networking, SSH, Phase 12.2, and alternate Phase 12.1 work require supervisor planning."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "No link readiness, packet behavior, Ethernet driver readiness, networking, SSH, Phase 12.2, or phase transition is accepted."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No task-owned source, script, docs, or evidence files were removed."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No new hardware run or inconclusive-run triage was needed because the accepted proof evidence was decisive."
+    }
+  ]
+}

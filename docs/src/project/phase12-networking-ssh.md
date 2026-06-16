@@ -2318,3 +2318,21 @@ an explicit skip policy when the selected TX read already has GTXCLK_EN set. The
 next boundary is the serialized Pi 5 proof task; local/static evidence still
 rejects hardware success, link readiness, packet I/O, networking, sockets, SSH,
 Phase 12.2, and phase transition.
+
+phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof-20260616
+accepts rgmii-delay-tx-order-timeout-link-not-ready, and
+phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-closeout-20260616 closes
+that frontier as
+bcm54213pe-rgmii-delay-tx-order-frontier-closed-timeout-link-not-ready. The
+serialized Pi 5 proof retained selected-tree identity, same-power-cycle TFTP
+byte agreement, serial nonce freshness, capture-chain-v4 readiness, final
+identity, and restore proof for the paired no-MDIO/no-Ethernet control and
+corrected candidate. The candidate completed RX delay write/readback, completed
+TX selected read/readback with GTXCLK_EN already set, skipped the redundant TX
+write under the accepted policy, executed exactly one BMCR restart, and then
+timed out after eight convergence samples with BMSR link-status=false, BMSR
+autoneg-complete=false, passive MACB_NSR link=false, and
+link-ready-terminal=false. The link-ready packet-readiness checkpoint remains
+blocked; supervisor planning is required for any timeout/link-not-ready
+follow-up or explicit pause. Packet I/O, networking, sockets, SSH, Phase 12.2,
+and phase transition remain rejected.
