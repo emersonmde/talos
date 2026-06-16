@@ -108,6 +108,7 @@
             talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_no_mdio_control",
             talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_candidate",
             talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_control",
+            talos_boot_scenario = "rpi5_rp1_ethernet_kernel_entry_serial_beacon",
             talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate",
             talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_control",
             talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
@@ -1001,6 +1002,15 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
 
     #[cfg(all(
         talos_target_rpi5_bcm2712,
+        talos_boot_scenario = "rpi5_rp1_ethernet_kernel_entry_serial_beacon"
+    ))]
+    {
+        let _ = dtb_pa;
+        target::rpi5::run_rp1_ethernet_kernel_entry_serial_beacon();
+    }
+
+    #[cfg(all(
+        talos_target_rpi5_bcm2712,
         talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate"
     ))]
     {
@@ -1236,6 +1246,7 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
             talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator_no_mmio_control",
             talos_boot_scenario = "rpi5_rp1_handoff_reset",
             talos_boot_scenario = "rpi5_rp1_post_handoff_marker_reset",
+            talos_boot_scenario = "rpi5_rp1_ethernet_kernel_entry_serial_beacon",
             talos_boot_scenario = "rpi5_rust_entry_uart10_marker_loop"
         )
     )))]

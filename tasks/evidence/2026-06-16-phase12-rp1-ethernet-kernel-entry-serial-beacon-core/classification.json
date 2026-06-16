@@ -1,0 +1,37 @@
+{
+  "task_id": "phase12-rp1-ethernet-kernel-entry-serial-beacon-core-20260616",
+  "classification": "kernel-entry-serial-beacon-core-local-static",
+  "evidence_level": "local-static-rust-build-and-artifact-review",
+  "selected_discriminator": "fresh-tftp-kernel-entry-serial-beacon-before-ethernet-mdio",
+  "boot_scenario": "rpi5_rp1_ethernet_kernel_entry_serial_beacon",
+  "archive_helper": "scripts/rpi5-rp1-ethernet-kernel-entry-serial-beacon-image.sh",
+  "beacon_marker": "TALOS: rp1-ethernet-kernel-entry-serial-beacon",
+  "beacon_payload": "kernel-entry-serial-beacon-payload-v1",
+  "emits_before_boot_info": true,
+  "hardware_performed": false,
+  "hardware_proof_task": "phase12-rp1-ethernet-kernel-entry-serial-beacon-pi5-proof-20260616",
+  "hardware_proof_allowed_classifications": [
+    "earliest-kernel-entry-beacon-observed",
+    "fresh-tftp-no-beacon-kernel-entry-or-serial-boundary",
+    "known-good-control-failed",
+    "staging-capture-inconclusive",
+    "restore-failed"
+  ],
+  "rejected_claims": [
+    "BCM54213PE register values",
+    "Ethernet readiness",
+    "link readiness",
+    "GPIO32 or PHY reset ownership",
+    "BMCR write",
+    "Broadcom shadow/MMD/AUX access",
+    "interrupt ownership",
+    "broad PHY or MAC configuration",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition"
+  ],
+  "next_action": "Mechanically promote phase12-rp1-ethernet-kernel-entry-serial-beacon-pi5-proof-20260616 on the next worker wake if dependencies remain satisfied."
+}

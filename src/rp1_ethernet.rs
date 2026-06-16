@@ -9583,6 +9583,255 @@ pub fn validate_rp1_ethernet_bcm54213pe_boot_transport_sentinel_core_evidence(
     Ok(())
 }
 
+pub const RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_CORE_TASK_ID: &str =
+    "phase12-rp1-ethernet-kernel-entry-serial-beacon-core-20260616";
+pub const RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_PI5_PROOF_TASK_ID: &str =
+    "phase12-rp1-ethernet-kernel-entry-serial-beacon-pi5-proof-20260616";
+pub const RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-kernel-entry-serial-beacon-contract-v1";
+pub const RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_BOOT_SCENARIO: &str =
+    "rpi5_rp1_ethernet_kernel_entry_serial_beacon";
+pub const RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_ARCHIVE_HELPER: &str =
+    "scripts/rpi5-rp1-ethernet-kernel-entry-serial-beacon-image.sh";
+pub const RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_MARKER: &str =
+    "TALOS: rp1-ethernet-kernel-entry-serial-beacon";
+pub const RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_PAYLOAD: &str =
+    "kernel-entry-serial-beacon-payload-v1";
+pub const RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_CLASSIFICATION: &str =
+    "kernel-entry-serial-beacon-core-local-static";
+pub const RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_SELECTED_DISCRIMINATOR: &str =
+    "fresh-tftp-kernel-entry-serial-beacon-before-ethernet-mdio";
+pub const RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_PURPOSE: &str = "prove or falsify earliest kernel-entry serial visibility after fresh Pi 5 TFTP fetch before Ethernet or MDIO behavior";
+pub const RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_HARDWARE_OUTCOMES: &[&str] = &[
+    "earliest-kernel-entry-beacon-observed",
+    "fresh-tftp-no-beacon-kernel-entry-or-serial-boundary",
+    "known-good-control-failed",
+    "staging-capture-inconclusive",
+    "restore-failed",
+];
+pub const RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_PROOF_PLAN: &[&str] = &[
+    "record pre-publication candidate identity and selected archive/kernel hash and size",
+    "record fresh serial cursor and fresh TFTP cursor before power-cycle",
+    "run known-good control before candidate interpretation when triage requires it",
+    "run candidate power-cycle and capture TFTP delta plus bounded serial window",
+    "if inconclusive, retain candidate identity, fresh serial cursor, TFTP delta, known-good control, then candidate rerun evidence before code changes",
+    "restore the pre-run boot snapshot and record post-restore identity before releasing hardwareTestLock",
+];
+pub const RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_REJECTED_CLAIMS: &[&str] = &[
+    "BCM54213PE register values",
+    "Ethernet readiness",
+    "link readiness",
+    "GPIO32 or PHY reset ownership",
+    "BMCR write",
+    "Broadcom shadow/MMD/AUX access",
+    "interrupt ownership",
+    "broad PHY or MAC configuration",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition",
+];
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetKernelEntrySerialBeaconCoreEvidence {
+    pub core_task_id: &'static str,
+    pub proof_task_id: &'static str,
+    pub contract_id: &'static str,
+    pub boot_scenario: &'static str,
+    pub archive_helper: &'static str,
+    pub marker: &'static str,
+    pub payload: &'static str,
+    pub classification: &'static str,
+    pub selected_discriminator: &'static str,
+    pub purpose: &'static str,
+    pub hardware_outcomes: &'static [&'static str],
+    pub proof_plan: &'static [&'static str],
+    pub rejected_claims: &'static [&'static str],
+    pub emits_before_boot_info: bool,
+    pub constructs_ethernet_target_facts: bool,
+    pub constructs_mdio_targets: bool,
+    pub constructs_man_frames: bool,
+    pub constructs_macb_target: bool,
+    pub constructs_gpio32_or_phy_target: bool,
+    pub performs_volatile_ethernet_access: bool,
+    pub permits_bcm54213pe_register_claims: bool,
+    pub permits_link_readiness_claim: bool,
+    pub permits_packet_io: bool,
+    pub permits_networking: bool,
+    pub permits_ssh: bool,
+    pub permits_phase_12_2: bool,
+    pub permits_phase_transition: bool,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Rp1EthernetKernelEntrySerialBeaconCoreError {
+    ScenarioMismatch,
+    ArchiveHelperMismatch,
+    MarkerMismatch,
+    PayloadMismatch,
+    ClassificationMismatch,
+    DiscriminatorMismatch,
+    HardwareOutcomesMismatch,
+    ProofPlanMismatch,
+    RejectedClaimsMismatch,
+    NotEarliestEntryBeacon,
+    EthernetTargetFactsClaim,
+    MdioTargetClaim,
+    ManFrameClaim,
+    MacbTargetClaim,
+    Gpio32OrPhyTargetClaim,
+    VolatileEthernetAccessClaim,
+    Bcm54213peRegisterClaim,
+    LinkReadinessClaim,
+    PacketIoClaim,
+    NetworkingClaim,
+    SshClaim,
+    Phase122Claim,
+    PhaseTransitionClaim,
+}
+
+impl Rp1EthernetKernelEntrySerialBeaconCoreError {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::ScenarioMismatch => "scenario-mismatch",
+            Self::ArchiveHelperMismatch => "archive-helper-mismatch",
+            Self::MarkerMismatch => "marker-mismatch",
+            Self::PayloadMismatch => "payload-mismatch",
+            Self::ClassificationMismatch => "classification-mismatch",
+            Self::DiscriminatorMismatch => "discriminator-mismatch",
+            Self::HardwareOutcomesMismatch => "hardware-outcomes-mismatch",
+            Self::ProofPlanMismatch => "proof-plan-mismatch",
+            Self::RejectedClaimsMismatch => "rejected-claims-mismatch",
+            Self::NotEarliestEntryBeacon => "not-earliest-entry-beacon",
+            Self::EthernetTargetFactsClaim => "ethernet-target-facts-claim",
+            Self::MdioTargetClaim => "mdio-target-claim",
+            Self::ManFrameClaim => "man-frame-claim",
+            Self::MacbTargetClaim => "macb-target-claim",
+            Self::Gpio32OrPhyTargetClaim => "gpio32-or-phy-target-claim",
+            Self::VolatileEthernetAccessClaim => "volatile-ethernet-access-claim",
+            Self::Bcm54213peRegisterClaim => "bcm54213pe-register-claim",
+            Self::LinkReadinessClaim => "link-readiness-claim",
+            Self::PacketIoClaim => "packet-io-claim",
+            Self::NetworkingClaim => "networking-claim",
+            Self::SshClaim => "ssh-claim",
+            Self::Phase122Claim => "phase-12-2-claim",
+            Self::PhaseTransitionClaim => "phase-transition-claim",
+        }
+    }
+}
+
+pub const fn rp1_ethernet_kernel_entry_serial_beacon_core_evidence()
+-> Rp1EthernetKernelEntrySerialBeaconCoreEvidence {
+    Rp1EthernetKernelEntrySerialBeaconCoreEvidence {
+        core_task_id: RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_CORE_TASK_ID,
+        proof_task_id: RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_PI5_PROOF_TASK_ID,
+        contract_id: RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_CONTRACT_ID,
+        boot_scenario: RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_BOOT_SCENARIO,
+        archive_helper: RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_ARCHIVE_HELPER,
+        marker: RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_MARKER,
+        payload: RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_PAYLOAD,
+        classification: RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_CLASSIFICATION,
+        selected_discriminator: RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_SELECTED_DISCRIMINATOR,
+        purpose: RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_PURPOSE,
+        hardware_outcomes: RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_HARDWARE_OUTCOMES,
+        proof_plan: RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_PROOF_PLAN,
+        rejected_claims: RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_REJECTED_CLAIMS,
+        emits_before_boot_info: true,
+        constructs_ethernet_target_facts: false,
+        constructs_mdio_targets: false,
+        constructs_man_frames: false,
+        constructs_macb_target: false,
+        constructs_gpio32_or_phy_target: false,
+        performs_volatile_ethernet_access: false,
+        permits_bcm54213pe_register_claims: false,
+        permits_link_readiness_claim: false,
+        permits_packet_io: false,
+        permits_networking: false,
+        permits_ssh: false,
+        permits_phase_12_2: false,
+        permits_phase_transition: false,
+    }
+}
+
+pub fn validate_rp1_ethernet_kernel_entry_serial_beacon_core_evidence(
+    evidence: Rp1EthernetKernelEntrySerialBeaconCoreEvidence,
+) -> Result<(), Rp1EthernetKernelEntrySerialBeaconCoreError> {
+    if evidence.boot_scenario != RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_BOOT_SCENARIO {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::ScenarioMismatch);
+    }
+    if evidence.archive_helper != RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_ARCHIVE_HELPER {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::ArchiveHelperMismatch);
+    }
+    if evidence.marker != RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_MARKER {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::MarkerMismatch);
+    }
+    if evidence.payload != RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_PAYLOAD {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::PayloadMismatch);
+    }
+    if evidence.classification != RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_CLASSIFICATION {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::ClassificationMismatch);
+    }
+    if evidence.selected_discriminator
+        != RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_SELECTED_DISCRIMINATOR
+    {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::DiscriminatorMismatch);
+    }
+    if evidence.hardware_outcomes != RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_HARDWARE_OUTCOMES {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::HardwareOutcomesMismatch);
+    }
+    if evidence.proof_plan != RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_PROOF_PLAN {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::ProofPlanMismatch);
+    }
+    if evidence.rejected_claims != RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_REJECTED_CLAIMS {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::RejectedClaimsMismatch);
+    }
+    if !evidence.emits_before_boot_info {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::NotEarliestEntryBeacon);
+    }
+    if evidence.constructs_ethernet_target_facts {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::EthernetTargetFactsClaim);
+    }
+    if evidence.constructs_mdio_targets {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::MdioTargetClaim);
+    }
+    if evidence.constructs_man_frames {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::ManFrameClaim);
+    }
+    if evidence.constructs_macb_target {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::MacbTargetClaim);
+    }
+    if evidence.constructs_gpio32_or_phy_target {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::Gpio32OrPhyTargetClaim);
+    }
+    if evidence.performs_volatile_ethernet_access {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::VolatileEthernetAccessClaim);
+    }
+    if evidence.permits_bcm54213pe_register_claims {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::Bcm54213peRegisterClaim);
+    }
+    if evidence.permits_link_readiness_claim {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::LinkReadinessClaim);
+    }
+    if evidence.permits_packet_io {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::PacketIoClaim);
+    }
+    if evidence.permits_networking {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::NetworkingClaim);
+    }
+    if evidence.permits_ssh {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::SshClaim);
+    }
+    if evidence.permits_phase_12_2 {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::Phase122Claim);
+    }
+    if evidence.permits_phase_transition {
+        return Err(Rp1EthernetKernelEntrySerialBeaconCoreError::PhaseTransitionClaim);
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -14849,6 +15098,117 @@ mod tests {
         );
         assert_eq!(
             Rp1EthernetBcm54213peBootTransportSentinelCoreError::PhaseTransitionClaim.name(),
+            "phase-transition-claim"
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_kernel_entry_serial_beacon_core_is_earliest_no_ethernet_beacon() {
+        let evidence = rp1_ethernet_kernel_entry_serial_beacon_core_evidence();
+
+        assert_eq!(
+            evidence.core_task_id,
+            RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_CORE_TASK_ID
+        );
+        assert_eq!(
+            evidence.proof_task_id,
+            RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_PI5_PROOF_TASK_ID
+        );
+        assert_eq!(
+            evidence.contract_id,
+            RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_CONTRACT_ID
+        );
+        assert_eq!(
+            evidence.boot_scenario,
+            RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_BOOT_SCENARIO
+        );
+        assert_eq!(
+            evidence.archive_helper,
+            RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_ARCHIVE_HELPER
+        );
+        assert_eq!(
+            evidence.marker,
+            RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_MARKER
+        );
+        assert_eq!(
+            evidence.payload,
+            RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_PAYLOAD
+        );
+        assert_eq!(
+            evidence.hardware_outcomes,
+            RP1_ETHERNET_KERNEL_ENTRY_SERIAL_BEACON_HARDWARE_OUTCOMES
+        );
+        assert!(evidence.emits_before_boot_info);
+        assert!(!evidence.constructs_ethernet_target_facts);
+        assert!(!evidence.constructs_mdio_targets);
+        assert!(!evidence.constructs_man_frames);
+        assert!(!evidence.constructs_macb_target);
+        assert!(!evidence.constructs_gpio32_or_phy_target);
+        assert!(!evidence.performs_volatile_ethernet_access);
+        assert!(!evidence.permits_bcm54213pe_register_claims);
+        assert!(!evidence.permits_link_readiness_claim);
+        assert!(!evidence.permits_packet_io);
+        assert!(!evidence.permits_networking);
+        assert!(!evidence.permits_ssh);
+        assert!(!evidence.permits_phase_12_2);
+        assert!(!evidence.permits_phase_transition);
+        assert_eq!(
+            validate_rp1_ethernet_kernel_entry_serial_beacon_core_evidence(evidence),
+            Ok(())
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_kernel_entry_serial_beacon_core_rejects_broader_claims() {
+        let evidence = rp1_ethernet_kernel_entry_serial_beacon_core_evidence();
+
+        assert_eq!(
+            validate_rp1_ethernet_kernel_entry_serial_beacon_core_evidence(
+                Rp1EthernetKernelEntrySerialBeaconCoreEvidence {
+                    emits_before_boot_info: false,
+                    ..evidence
+                }
+            ),
+            Err(Rp1EthernetKernelEntrySerialBeaconCoreError::NotEarliestEntryBeacon)
+        );
+        assert_eq!(
+            validate_rp1_ethernet_kernel_entry_serial_beacon_core_evidence(
+                Rp1EthernetKernelEntrySerialBeaconCoreEvidence {
+                    constructs_mdio_targets: true,
+                    ..evidence
+                }
+            ),
+            Err(Rp1EthernetKernelEntrySerialBeaconCoreError::MdioTargetClaim)
+        );
+        assert_eq!(
+            validate_rp1_ethernet_kernel_entry_serial_beacon_core_evidence(
+                Rp1EthernetKernelEntrySerialBeaconCoreEvidence {
+                    performs_volatile_ethernet_access: true,
+                    ..evidence
+                }
+            ),
+            Err(Rp1EthernetKernelEntrySerialBeaconCoreError::VolatileEthernetAccessClaim)
+        );
+        assert_eq!(
+            validate_rp1_ethernet_kernel_entry_serial_beacon_core_evidence(
+                Rp1EthernetKernelEntrySerialBeaconCoreEvidence {
+                    permits_bcm54213pe_register_claims: true,
+                    ..evidence
+                }
+            ),
+            Err(Rp1EthernetKernelEntrySerialBeaconCoreError::Bcm54213peRegisterClaim)
+        );
+        assert_eq!(
+            validate_rp1_ethernet_kernel_entry_serial_beacon_core_evidence(
+                Rp1EthernetKernelEntrySerialBeaconCoreEvidence {
+                    permits_networking: true,
+                    ..evidence
+                }
+            ),
+            Err(Rp1EthernetKernelEntrySerialBeaconCoreError::NetworkingClaim)
+        );
+        assert_eq!(
+            Rp1EthernetKernelEntrySerialBeaconCoreError::PhaseTransitionClaim.name(),
             "phase-transition-claim"
         );
     }

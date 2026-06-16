@@ -1,0 +1,62 @@
+{
+  "task_id": "phase12-rp1-ethernet-kernel-entry-serial-beacon-core-20260616",
+  "evidence": [
+    {
+      "level": "fmt",
+      "command": "cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "level": "focused unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet rp1_ethernet_kernel_entry_serial_beacon",
+      "result": "pass"
+    },
+    {
+      "level": "compile-only selected Pi 5 beacon scenario",
+      "command": "TALOS_CAPTURE_NONCE=core-static-20260616 TALOS_BOOT_SCENARIO=rpi5_rp1_ethernet_kernel_entry_serial_beacon cargo -Zjson-target-spec build --quiet",
+      "result": "pass"
+    },
+    {
+      "level": "image helper static build",
+      "command": "TALOS_CAPTURE_NONCE=core-static-20260616 ./scripts/rpi5-rp1-ethernet-kernel-entry-serial-beacon-image.sh",
+      "result": "pass"
+    },
+    {
+      "level": "static image string/hash review",
+      "command": "sha256sum, wc -c, strings, and readelf symbol review over target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-rp1-ethernet-kernel-entry-serial-beacon.img and debug/talos",
+      "result": "pass",
+      "artifact_review": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-kernel-entry-serial-beacon-core/static-artifact-review.json"
+    },
+    {
+      "level": "disassembly review",
+      "command": "objdump -d --demangle target/aarch64-talos-rpi5-bcm2712/debug/talos",
+      "result": "not-used",
+      "note": "/usr/bin/objdump could not disassemble the AArch64 ELF in this container"
+    },
+    {
+      "level": "full no_std Rust test suite through QEMU substitute",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "result": "pass"
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-16-phase12-rp1-ethernet-kernel-entry-serial-beacon-core/*.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff whitespace check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff whitespace check",
+      "command": "git diff --cached --check",
+      "result": "pass before commit"
+    }
+  ]
+}

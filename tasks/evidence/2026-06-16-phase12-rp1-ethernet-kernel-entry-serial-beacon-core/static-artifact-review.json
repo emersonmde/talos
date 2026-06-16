@@ -1,0 +1,47 @@
+{
+  "task_id": "phase12-rp1-ethernet-kernel-entry-serial-beacon-core-20260616",
+  "boot_scenario": "rpi5_rp1_ethernet_kernel_entry_serial_beacon",
+  "archive_helper": "scripts/rpi5-rp1-ethernet-kernel-entry-serial-beacon-image.sh",
+  "capture_nonce": "core-static-20260616",
+  "image": {
+    "path": "target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-rp1-ethernet-kernel-entry-serial-beacon.img",
+    "sha256": "b86b9a01f371c4b2c578503e194a6234245f947854a20dad4a9eaba164b3a546",
+    "bytes": 47336
+  },
+  "elf": {
+    "path": "target/aarch64-talos-rpi5-bcm2712/debug/talos",
+    "sha256": "8fb2a1c56c4da993e357179270d09a3d38781c6b210ab8d619aac5a46ad5c3e0",
+    "symbol_review_command": "readelf -s --wide target/aarch64-talos-rpi5-bcm2712/debug/talos | rg run_rp1_ethernet_kernel_entry_serial_beacon",
+    "symbol_review_result": "run_rp1_ethernet_kernel_entry_serial_beacon matched",
+    "negative_symbol_review_command": "readelf -s --wide target/aarch64-talos-rpi5-bcm2712/debug/talos | rg 'read_rp1_reg|write_rp1_reg|read_rp1_ethernet|write_rp1_ethernet|mdio|MAN|MACB|GPIO32|BCM54213PE'",
+    "negative_symbol_review_result": "only run_rp1_ethernet_kernel_entry_serial_beacon was relevant to the selected scenario review; no beacon path target-read/write symbol was found",
+    "disassembly_review_result": "not-used: /usr/bin/objdump could not disassemble the AArch64 ELF in this container"
+  },
+  "required_strings_present": [
+    "core-static-20260616",
+    "TALOS: rp1-ethernet-kernel-entry-serial-beacon",
+    "kernel-entry-serial-beacon-payload-v1",
+    "bcm54213pe-register-values=withheld",
+    "mdio-target-constructed=false",
+    "man-frame-constructed=false",
+    "packet-io-performed=false",
+    "networking-performed=false",
+    "ssh-performed=false",
+    "classification=kernel-entry-serial-beacon-core-local-static"
+  ],
+  "static_claims": {
+    "emits_before_boot_info": true,
+    "constructs_ethernet_target_facts": false,
+    "constructs_mdio_targets": false,
+    "constructs_man_frames": false,
+    "constructs_macb_target": false,
+    "constructs_gpio32_or_phy_target": false,
+    "performs_volatile_ethernet_access": false,
+    "claims_bcm54213pe_register_values": false,
+    "claims_packet_io": false,
+    "claims_networking": false,
+    "claims_ssh": false,
+    "claims_phase_12_2": false,
+    "claims_phase_transition": false
+  }
+}

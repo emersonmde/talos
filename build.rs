@@ -483,6 +483,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "rpi5_rp1_ethernet_kernel_entry_serial_beacon",
+        implied_values: &[],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate",
         implied_values: &[],
         asm_defines: &[],

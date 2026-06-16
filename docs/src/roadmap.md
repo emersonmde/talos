@@ -10372,11 +10372,30 @@ accepted frontier is limited to no-Ethernet/no-MDIO selected-tree publication,
 fresh TFTP serving, firmware NETWORK serial presence, final pre-restore
 identity, and restore proof. Fetched-kernel execution or sentinel
 serial-emission visibility remains deferred because neither sentinel nonce nor
-kernel main output appeared in the bounded serial windows. No queued
-mechanically unblocked follow-up remains after the closeout; supervisor
-planning is required for a distinct Phase 12.1 discriminator, source/static
-contract, or explicit pause before any hardware, register-read retry, packet
-I/O, networking, SSH, Phase 12.2, or phase-transition work.
+kernel main output appeared in the bounded serial windows. The selected
+follow-up is the kernel-entry serial beacon discriminator; no hardware,
+register-read retry, packet I/O, networking, SSH, Phase 12.2, or
+phase-transition work is authorized by the sentinel closeout alone.
+
+phase12-rp1-ethernet-kernel-entry-serial-beacon-core-20260616 accepts
+kernel-entry-serial-beacon-core-local-static as the smallest local/static
+discriminator for fetched-kernel execution or serial-emission visibility. It
+adds rpi5_rp1_ethernet_kernel_entry_serial_beacon and the archive helper
+scripts/rpi5-rp1-ethernet-kernel-entry-serial-beacon-image.sh. The scenario
+branches before BootInfo parsing and repeatedly emits
+TALOS: rp1-ethernet-kernel-entry-serial-beacon with optional
+TALOS_CAPTURE_NONCE, target=none, selected-registers=none, and withheld
+BCM54213PE register values. Static image review found the marker, payload,
+nonce, withheld register string, no MDIO/MAN target construction, no
+packet/network/SSH claims, and the accepted classification in a 47,336-byte
+kernel image. The proof plan for the queued Pi 5 task requires candidate
+identity, selected archive/kernel hash and size, fresh serial cursor, fresh
+TFTP cursor/delta, known-good control when triage requires it, candidate rerun
+before code changes if inconclusive, restore proof, and hardware lock release.
+BCM54213PE register values, Ethernet readiness, link readiness, GPIO32/PHY
+reset ownership, BMCR writes, Broadcom shadow/MMD/aux access, interrupt
+ownership, broad PHY/MAC configuration, packet I/O, networking, SSH, Phase
+12.2, and phase transition remain rejected.
 
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
