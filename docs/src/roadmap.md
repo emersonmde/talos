@@ -10432,6 +10432,21 @@ and reject forbidden BCM54213PE/register/networking claims. The next bounded
 task is the serialized Pi 5 proof for no selected TFTP, no earliest marker,
 earliest marker only, both markers observed, or a precise blocker.
 
+phase12-rp1-ethernet-bootinfo-report-serial-visibility-pi5-proof-20260616
+accepts staging-capture-inconclusive. The proof repaired the repeated
+control/candidate marker text after the initial saturated direct-read run
+showed the one-shot earliest marker could scroll out before capture. Final
+control and candidate runs retained selected-tree identity, matching TFTP
+serves, final pre-restore identity, restore proof, and marker output: control
+had 71 earliest and zero post-BootInfo marker occurrences; candidate had 69
+earliest and 68 post-BootInfo marker occurrences. The decisive blocker is
+serial-drain-not-empty-before-power because the 128-attempt pre-power serial
+drain still did not reach an empty /serial/read response, so the capture-chain
+identity guard rejects a definitive both-markers-observed result. Same-shaped
+retries are closed until a new discriminator addresses serial backlog/drain
+freshness. Ethernet/register/link/networking/SSH/Phase 12.2 claims remain
+rejected.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

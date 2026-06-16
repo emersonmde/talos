@@ -40,6 +40,7 @@ for required in \
     "accepted-frontier=kernel-entry-serial-beacon-frontier-closed-beacon-observed" \
     "bootinfo-source=report_boot_identity" \
     "marker=bootinfo-report-visibility-earliest-entry-marker" \
+    "retained-earliest-entry-marker=bootinfo-report-visibility-earliest-entry-marker" \
     "marker=bootinfo-report-visibility-post-bootinfo-report-path-marker" \
     "marker-stage=earliest-entry" \
     "marker-stage=post-bootinfo-report-path" \

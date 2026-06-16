@@ -39,6 +39,7 @@ for required in \
     "proof-task-id=phase12-rp1-ethernet-bootinfo-report-serial-visibility-pi5-proof-20260616" \
     "selected-discriminator=dual-stage-earliest-entry-and-post-bootinfo-report-path-serial-visibility" \
     "marker=bootinfo-report-visibility-earliest-entry-marker" \
+    "retained-earliest-entry-marker=bootinfo-report-visibility-earliest-entry-marker" \
     "marker-stage=earliest-entry" \
     "control-kind=earliest-only-before-bootinfo" \
     "marker-stage=control-stop-before-bootinfo" \

@@ -1,0 +1,11 @@
+candidate_archive=target/phase12-bootinfo-report-serial-visibility-pi5-proof-20260616T071613Z/candidate.tar.gz
+candidate_archive_sha256=0605bcf01fba533df140179e4722c7a2852cd5803f0ca602caf5cd48735002fe
+kernel_2712_sha256=775e501c418ff0d73cc7623563b72a32aff892c256b9a12382516969d9344e89
+kernel_2712_size=71048
+header_image_size=71048
+text_offset=0
+flags=12
+earliest_marker=bootinfo-report-visibility-earliest-entry-marker
+post_bootinfo_marker=bootinfo-report-visibility-post-bootinfo-report-path-marker
+capture_nonce=bootinfo-report-pi5-candidate-20260616T071613Z
+forbidden_bootinfo_report_visibility_candidate_runtime_strings_absent=true

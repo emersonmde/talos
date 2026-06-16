@@ -2031,3 +2031,26 @@ I/O, networking, SSH, Phase 12.2, and phase transition claims. The selected
 next boundary is the serialized Pi 5 proof that must classify no selected
 TFTP, no earliest marker, earliest marker only, both markers observed, or a
 precise capture/restore blocker without accepting Ethernet behavior.
+
+phase12-rp1-ethernet-bootinfo-report-serial-visibility-pi5-proof-20260616
+accepts staging-capture-inconclusive with the precise first failing invariant
+serial-drain-not-empty-before-power. The task repaired the proof instrumentation
+after the initial hardware run showed the one-shot earliest marker could scroll
+out under saturated direct-read capture; the repeated control/candidate report
+now retains the earliest marker token and the review scripts require it. Final
+Pi 5 control evidence retained selected tree
+b886e168d26f69a943a98d77de87a40a7079938fa041aee8494e32cb98ea9178, two matching
+55,120-byte da591740/kernel_2712.img TFTP serves, 71 earliest marker
+occurrences, zero post-BootInfo marker occurrences, final pre-restore identity,
+and restore proof. Final candidate evidence retained selected tree
+38173e8bd614d6034e09e4944e0d5e92ad80dcebafb78b260897be7f74cc8c19, two matching
+71,168-byte da591740/kernel_2712.img TFTP serves, 69 earliest marker
+occurrences, 68 post-BootInfo marker occurrences, final pre-restore identity,
+and restore proof. The capture-chain identity guard still rejects decisive
+classification because the 128-attempt pre-power serial drain exhausted without
+an empty /serial/read response. No same-shaped retry is authorized without a
+new discriminator for the serial-drain/backlog invariant. BCM54213PE register
+values, link readiness, Ethernet readiness, GPIO32/PHY reset ownership, BMCR
+writes, Broadcom shadow/MMD/aux access, interrupt ownership, broad PHY/MAC
+configuration, packet I/O, networking, SSH, Phase 12.2, and phase transition
+remain rejected.

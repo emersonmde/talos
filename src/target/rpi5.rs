@@ -12987,6 +12987,9 @@ pub fn run_rp1_ethernet_bootinfo_report_serial_visibility_earliest_only_control(
         write_rp1_ethernet_bootinfo_report_serial_visibility_capture_nonce();
         write_rp1_ethernet_bootinfo_report_serial_visibility_common();
         write_early_static(" control-kind=earliest-only-before-bootinfo");
+        write_early_static(
+            " retained-earliest-entry-marker=bootinfo-report-visibility-earliest-entry-marker",
+        );
         write_early_static(" marker-stage=control-stop-before-bootinfo");
         write_early_static(" post-bootinfo-report-path-marker-visible=false");
         write_early_static(
@@ -13002,6 +13005,9 @@ pub fn run_rp1_ethernet_bootinfo_report_serial_visibility_candidate() -> ! {
         write_early_static("TALOS: rp1-ethernet-bootinfo-report-serial-visibility");
         write_rp1_ethernet_bootinfo_report_serial_visibility_capture_nonce();
         write_rp1_ethernet_bootinfo_report_serial_visibility_common();
+        write_early_static(
+            " retained-earliest-entry-marker=bootinfo-report-visibility-earliest-entry-marker",
+        );
         write_early_static(" marker-stage=post-bootinfo-report-path");
         write_early_static(" marker=bootinfo-report-visibility-post-bootinfo-report-path-marker");
         write_early_static(" emits-before-boot-info=false emits-after-boot-info=true");

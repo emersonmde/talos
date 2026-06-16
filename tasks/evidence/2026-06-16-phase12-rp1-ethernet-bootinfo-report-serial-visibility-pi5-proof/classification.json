@@ -1,0 +1,59 @@
+{
+  "task_id": "phase12-rp1-ethernet-bootinfo-report-serial-visibility-pi5-proof-20260616",
+  "run_id": "20260616T072750Z",
+  "restore_snapshot": "pre-bootinfo-report-serial-visibility-final-20260616T072750Z",
+  "evidence_level": "serial hardware boot/output plus lab-controller API and TFTP evidence",
+  "repair_note": "Initial and rerun evidence showed one-shot earliest marker/backlog capture hazards; final run uses retained earliest marker text and a 128-attempt pre-power serial drain.",
+  "previous_classification": null,
+  "markers": {
+    "earliest_entry": "bootinfo-report-visibility-earliest-entry-marker",
+    "post_bootinfo_report_path": "bootinfo-report-visibility-post-bootinfo-report-path-marker"
+  },
+  "control": {
+    "identity_join_allowed": false,
+    "rejection_reasons": [
+      "serial-drain-not-empty-before-power"
+    ],
+    "suggested_classification": "identity-join-mismatch",
+    "earliest_marker_occurrences": 71,
+    "post_marker_occurrences": 0,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "serial_required_marker_occurrences": 71,
+    "serial_drain_empty_before_power": false
+  },
+  "candidate": {
+    "identity_join_allowed": false,
+    "rejection_reasons": [
+      "serial-drain-not-empty-before-power"
+    ],
+    "suggested_classification": "identity-join-mismatch",
+    "earliest_marker_occurrences": 69,
+    "post_marker_occurrences": 68,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "serial_required_marker_occurrences": 68,
+    "serial_drain_empty_before_power": false
+  },
+  "classification": "staging-capture-inconclusive",
+  "rejected_claims": [
+    "BCM54213PE register values",
+    "link readiness",
+    "Ethernet readiness",
+    "GPIO32 or PHY reset ownership",
+    "BMCR writes",
+    "Broadcom shadow/MMD/AUX access",
+    "interrupt ownership",
+    "broad PHY/MAC configuration",
+    "packet I/O",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "precise_blocker": {
+    "first_failing_invariant": "serial-drain-not-empty-before-power",
+    "reason": "control-final and candidate-final retained selected-tree identity, matching TFTP fetches, marker serial output, final pre-restore identity, and restore proof, but the capture-chain identity guard rejected both runs because the pre-power direct serial drain exhausted its bounded attempts before observing an empty read",
+    "no_same_shaped_retry_without_new_discriminator": true
+  }
+}
