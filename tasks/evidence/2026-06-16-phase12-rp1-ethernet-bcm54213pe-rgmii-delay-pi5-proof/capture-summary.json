@@ -1,0 +1,149 @@
+{
+  "control": {
+    "kind": "control",
+    "label": "bcm54213pe-rgmii-delay-control-20260616T1816Z",
+    "nonce": "bcm54213pe-rgmii-delay-control-20260616T1812Z",
+    "exits": {
+      "capture_bundle": 0,
+      "capture_chain_v4": 0,
+      "serial_freshness_guard": 0
+    },
+    "v4": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": [],
+      "identity": {
+        "selected_tree_hash": "8064606a64700931ae0887c2a7d4a0dfb8f899af9f09e7f86c6d8f2ae3b9282c",
+        "effective_kernel": "kernel_2712.img",
+        "expected_fetch_path": "da591740/kernel_2712.img",
+        "expected_fetch_byte_count": 50008,
+        "tftp": {
+          "cursor_file": 4542119,
+          "delta_cursor_start": 4542119,
+          "delta_cursor_end": 4543470,
+          "stable": true,
+          "event_count": 13,
+          "expected_fetch_count": 2,
+          "expected_fetch_byte_match_count": 2,
+          "expected_fetch_bytes_seen": [
+            50008,
+            50008
+          ]
+        },
+        "final_pre_restore": {
+          "tree_hash": "8064606a64700931ae0887c2a7d4a0dfb8f899af9f09e7f86c6d8f2ae3b9282c",
+          "effective_kernel": "kernel_2712.img",
+          "selected_tree_still_staged": true,
+          "expected_fetch_present": true,
+          "expected_fetch_bytes": 50008
+        },
+        "restore": {
+          "snapshot_name": "bcm54213pe-rgmii-delay-pre-20260616T1816Z",
+          "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+        }
+      }
+    },
+    "serial_freshness": {
+      "classification": "serial-freshness-guard-v1-ready",
+      "rejection_reasons": [],
+      "fields": {
+        "pre_power_peek_cursor": 4194304,
+        "pre_power_retained_bytes": 65536,
+        "pre_power_marker_occurrences": 0,
+        "pre_power_nonce_occurrences": 0,
+        "serial_drain_attempts": 16,
+        "serial_drain_terminal_state": "bounded-drain-exhausted-before-power",
+        "serial_drain_empty_before_power": false,
+        "serial_drain_final_cursor": 4194304,
+        "post_power_observe_cursor_start": 4194304,
+        "post_power_observe_cursor_end": 4194304,
+        "serial_capture_mode": "read",
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+        "start_cursor_saturated": true,
+        "observed_byte_range_or_response_bytes": 136495,
+        "required_marker": "TALOS: rp1-ethernet-bcm54213pe-rgmii-delay-control capture-nonce=bcm54213pe-rgmii-delay-control-20260616T1812Z",
+        "marker_occurrences_after_saved_cursor": 41,
+        "run_unique_nonce": "bcm54213pe-rgmii-delay-control-20260616T1812Z",
+        "nonce_occurrences_after_saved_cursor": 41,
+        "cursor_nonce_fresh": true,
+        "serial_freshness_ok": true
+      }
+    }
+  },
+  "candidate": {
+    "kind": "candidate",
+    "label": "bcm54213pe-rgmii-delay-candidate-20260616T1816Z",
+    "nonce": "bcm54213pe-rgmii-delay-candidate-20260616T1812Z",
+    "exits": {
+      "capture_bundle": 0,
+      "capture_chain_v4": 0,
+      "serial_freshness_guard": 0
+    },
+    "v4": {
+      "classification": "capture-chain-v4-ready",
+      "allowed": true,
+      "rejection_reasons": [],
+      "identity": {
+        "selected_tree_hash": "9d34d9007a837a0f671c0e627fe85c98531d9a1fa5fe60b88b802a350483be58",
+        "effective_kernel": "kernel_2712.img",
+        "expected_fetch_path": "da591740/kernel_2712.img",
+        "expected_fetch_byte_count": 53736,
+        "tftp": {
+          "cursor_file": 4543470,
+          "delta_cursor_start": 4543470,
+          "delta_cursor_end": 4544821,
+          "stable": true,
+          "event_count": 13,
+          "expected_fetch_count": 2,
+          "expected_fetch_byte_match_count": 2,
+          "expected_fetch_bytes_seen": [
+            53736,
+            53736
+          ]
+        },
+        "final_pre_restore": {
+          "tree_hash": "9d34d9007a837a0f671c0e627fe85c98531d9a1fa5fe60b88b802a350483be58",
+          "effective_kernel": "kernel_2712.img",
+          "selected_tree_still_staged": true,
+          "expected_fetch_present": true,
+          "expected_fetch_bytes": 53736
+        },
+        "restore": {
+          "snapshot_name": "bcm54213pe-rgmii-delay-pre-20260616T1816Z",
+          "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+        }
+      }
+    },
+    "serial_freshness": {
+      "classification": "serial-freshness-guard-v1-ready",
+      "rejection_reasons": [],
+      "fields": {
+        "pre_power_peek_cursor": 4194304,
+        "pre_power_retained_bytes": 65536,
+        "pre_power_marker_occurrences": 0,
+        "pre_power_nonce_occurrences": 0,
+        "serial_drain_attempts": 16,
+        "serial_drain_terminal_state": "bounded-drain-exhausted-before-power",
+        "serial_drain_empty_before_power": false,
+        "serial_drain_final_cursor": 4194304,
+        "post_power_observe_cursor_start": 4194304,
+        "post_power_observe_cursor_end": 4194304,
+        "serial_capture_mode": "read",
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+        "start_cursor_saturated": true,
+        "observed_byte_range_or_response_bytes": 137928,
+        "required_marker": "TALOS: rp1-ethernet-bcm54213pe-rgmii-delay-candidate capture-nonce=bcm54213pe-rgmii-delay-candidate-20260616T1812Z",
+        "marker_occurrences_after_saved_cursor": 36,
+        "run_unique_nonce": "bcm54213pe-rgmii-delay-candidate-20260616T1812Z",
+        "nonce_occurrences_after_saved_cursor": 36,
+        "cursor_nonce_fresh": true,
+        "serial_freshness_ok": true
+      }
+    }
+  },
+  "final_lab": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_2712_bytes": 104136
+  }
+}

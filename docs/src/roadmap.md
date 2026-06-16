@@ -10671,6 +10671,16 @@ is 53,720 bytes and no-MDIO control image
 RGMII delay proof under hardwareTestLock; packet I/O, networking, sockets, SSH,
 Phase 12.2, and phase transition remain rejected.
 
+phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof-20260616 accepts
+rgmii-delay-capture-blocker with decisive identity/TFTP/serial/restore evidence.
+The control proved the no-MDIO/no-Ethernet shape. The candidate performed the
+accepted RX delay write/readback on PHY1 AUX_CTL, observed rx-pre-raw 0x71e7,
+rx-write-value 0xf1e7, rx-readback-raw 0x71e7, and
+rx-readback-rgmii-skew-en=true, then stopped because the TX delay selected
+register read did not complete. BMCR restart, link-ready acceptance, packet I/O,
+networking, sockets, SSH, Phase 12.2, and phase transition remain rejected. The
+only mechanically unblocked follow-up is the queued RGMII delay closeout.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

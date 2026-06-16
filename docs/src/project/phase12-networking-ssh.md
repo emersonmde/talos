@@ -2231,3 +2231,13 @@ PHY1 RGMII RX/TX delay write/readback contract and the control withholds target
 construction. The only mechanically unblocked follow-up is the serialized Pi 5
 RGMII delay proof; packet I/O, networking, sockets, SSH, Phase 12.2, and phase
 transition remain rejected.
+
+phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof-20260616 accepts
+rgmii-delay-capture-blocker. Control selected-tree, same-power-cycle TFTP,
+serial freshness, and restore evidence proved the no-MDIO/no-Ethernet shape.
+Candidate evidence was equally decisive for identity and freshness: the RX
+delay write/readback matched on PHY1 AUX_CTL, but the TX delay selected-register
+read did not complete, so the candidate stopped before TX write, BMCR restart,
+or convergence polling. This preserves the blocker at the TX delay read layer;
+packet I/O, networking, sockets, SSH, Phase 12.2, and phase transition remain
+rejected.

@@ -1,0 +1,101 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof-20260616",
+  "classification": "rgmii-delay-capture-blocker",
+  "artifacts": [
+    {
+      "label": "task record",
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof.md"
+    },
+    {
+      "label": "aggregate classification",
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof/classification.json"
+    },
+    {
+      "label": "capture summary",
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof/capture-summary.json"
+    },
+    {
+      "label": "control v4 check",
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof/control-run/v4-check.json"
+    },
+    {
+      "label": "candidate v4 check",
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof/candidate-run/v4-check.json"
+    },
+    {
+      "label": "control serial freshness guard",
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof/control-run/serial-freshness-guard.json"
+    },
+    {
+      "label": "candidate serial freshness guard",
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof/candidate-run/serial-freshness-guard.json"
+    },
+    {
+      "label": "control run bundle",
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof/control-run/"
+    },
+    {
+      "label": "candidate run bundle",
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof/candidate-run/"
+    }
+  ],
+  "gates": [
+    {
+      "gate": "static archive/image review",
+      "status": "passed",
+      "paths": [
+        "archive-review/control-review.txt",
+        "archive-review/candidate-review.txt"
+      ]
+    },
+    {
+      "gate": "lab-controller selected-tree identity before power",
+      "status": "passed",
+      "control_tree": "8064606a64700931ae0887c2a7d4a0dfb8f899af9f09e7f86c6d8f2ae3b9282c",
+      "candidate_tree": "9d34d9007a837a0f671c0e627fe85c98531d9a1fa5fe60b88b802a350483be58"
+    },
+    {
+      "gate": "fresh serial cursor/nonce guard v1 replay",
+      "status": "passed",
+      "paths": [
+        "control-run/serial-freshness-guard.json",
+        "candidate-run/serial-freshness-guard.json"
+      ]
+    },
+    {
+      "gate": "same-power-cycle TFTP delta",
+      "status": "passed",
+      "control_fetch_bytes": 50008,
+      "candidate_fetch_bytes": 53736
+    },
+    {
+      "gate": "final pre-restore identity and POST /boot/restore proof",
+      "status": "passed",
+      "restored_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  ],
+  "control": {
+    "classification": "no-mdio-no-ethernet-bcm54213pe-rgmii-delay-control",
+    "v4_check": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof/control-run/v4-check.json",
+    "serial_freshness_guard": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof/control-run/serial-freshness-guard.json"
+  },
+  "candidate": {
+    "classification": "rgmii-delay-capture-blocker",
+    "first_failing_runtime_layer": "TX delay selected-register read did not complete after RX delay write/readback matched",
+    "v4_check": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof/candidate-run/v4-check.json",
+    "serial_freshness_guard": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof/candidate-run/serial-freshness-guard.json"
+  },
+  "rejected_claims": [
+    "link-ready",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition",
+    "gpio32-reset-action",
+    "interrupt-ownership",
+    "mii-ctrl1000-master-mode-writes",
+    "broad-phy-mac-configuration"
+  ]
+}
