@@ -1,0 +1,161 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-closeout-20260616",
+  "status": "accepted",
+  "classification": "tx-selected-register-read-visible-frontier-closed",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "accepted TX selected-register discriminator core review",
+    "accepted serialized Pi 5 TX selected-register proof review",
+    "JSON evidence validation",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_inputs": {
+    "core": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-core-20260616",
+      "commit": "5ffe6ddad56cea689bffd46465470b0d797de173",
+      "classification": "bcm54213pe-tx-selected-read-discriminator-core-local-static",
+      "candidate_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate",
+      "control_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_no_mdio_control",
+      "tx_selector_write_value": "0x0c00",
+      "tx_read_frame": "0x60f20000",
+      "tx_delay_write_count": "0x0",
+      "bmcr_write_count": "0x0"
+    },
+    "pi5_proof": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof-20260616",
+      "commit": "269c78ad7987a927e1cdae6405ed58c7bc35380b",
+      "classification": "tx-selected-register-read-visible",
+      "control_classification": "no-mdio-no-ethernet-bcm54213pe-tx-selected-read-discriminator-control",
+      "serial_freshness_guard": "serial-freshness-guard-v1-ready",
+      "capture_chain_v4": "capture-chain-v4-ready",
+      "accepted_frontier": "tx-selected-register-read-visible"
+    }
+  },
+  "frontier": {
+    "name": "tx-selected-register-read-visible-frontier-closed",
+    "accepted": [
+      "candidate/control selected-tree identity joined with same-power-cycle TFTP byte serves",
+      "cursor-nonce serial freshness guard replay",
+      "final pre-restore identity and restore proof",
+      "paired no-MDIO/no-Ethernet control",
+      "PHY1 TX shadow selector write completed with value 0x0c00",
+      "selected TX shadow register read completed",
+      "selected TX shadow raw value 0x0e00 was visible"
+    ],
+    "deferred": [
+      "TX delay write/readback resume decision",
+      "source-contract correction or explicit pause",
+      "BMCR restart after delay configuration",
+      "convergence polling",
+      "GPIO32/PHY reset ownership",
+      "interrupt ownership",
+      "packet I/O",
+      "networking",
+      "sockets",
+      "SSH",
+      "Phase 12.2",
+      "phase transition"
+    ],
+    "hardware_authorized_by_this_task": false,
+    "write_or_configuration_authorized_by_closeout": false,
+    "phase_transition_authorized": false
+  },
+  "control_summary": {
+    "classification": "no-mdio-no-ethernet-bcm54213pe-tx-selected-read-discriminator-control",
+    "selected_tree_hash": "7b3eaf35548fb7bd406ab50ff57c874db2ac9b9f921f3d16ddb413364d9a34fc",
+    "kernel_bytes": 49624,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "serial_nonce_occurrences": 45,
+    "serial_freshness_proven": true,
+    "constructed_mdio_or_ethernet_target_facts": false
+  },
+  "candidate_summary": {
+    "classification": "tx-selected-register-read-visible",
+    "selected_tree_hash": "e6da5228a04e32f7475e87238ec99a0ca6c9d234c6e3d50caefd55ec770ba4a8",
+    "kernel_bytes": 50384,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "serial_nonce_occurrences": 42,
+    "serial_freshness_proven": true,
+    "ncr_before": "0x10",
+    "ncr_after": "0x10",
+    "tx_selector_write_value": "0x0c00",
+    "tx_selector_write_count": "0x1",
+    "tx_selected_read_raw": "0x0e00",
+    "tx_selected_read_completed": true,
+    "rx_delay_write_count": "0x0",
+    "tx_delay_write_count": "0x0",
+    "bmcr_write_count": "0x0",
+    "packet_io_performed": false
+  },
+  "restore_summary": {
+    "baseline_tree_after_restore": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "control_final_pre_restore_tree_hash": "7b3eaf35548fb7bd406ab50ff57c874db2ac9b9f921f3d16ddb413364d9a34fc",
+    "candidate_final_pre_restore_tree_hash": "e6da5228a04e32f7475e87238ec99a0ca6c9d234c6e3d50caefd55ec770ba4a8"
+  },
+  "next_boundary": {
+    "decision": "post-tx-selected-read-source-checkpoint-mechanically-satisfied",
+    "selected_boundary": "phase12-rp1-ethernet-bcm54213pe-post-tx-selected-read-source-checkpoint-20260616",
+    "planning_needed": false,
+    "hardware_authorized_by_this_task": false,
+    "tx_delay_write_readback_authorized_by_this_task": false,
+    "bmcr_restart_authorized_by_this_task": false
+  },
+  "forbidden_claims": [
+    "rx-delay-write-readback-from-this-discriminator",
+    "tx-delay-write-readback-success",
+    "bmcr-restart-after-rgmii-delay",
+    "convergence-polling",
+    "link-readiness",
+    "link-not-ready-after-full-rgmii-delay-path",
+    "ethernet-driver-readiness",
+    "gpio32-phy-reset-ownership",
+    "interrupt-ownership",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "The local/static core bounded the discriminator to TX selector write plus selected TX register read and rejected TX write, BMCR restart, networking, and phase transition claims."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The no-MDIO/no-Ethernet control constructed no target facts while retaining the same reporting and capture shape."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The Pi 5 proof retained decisive selected-tree, TFTP, serial freshness, final identity, capture-chain, and restore evidence."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The candidate completed the TX selector write and selected TX register read, observing raw 0x0e00."
+    },
+    {
+      "disposition": "selected",
+      "finding": "The queued post-TX selected-read source checkpoint is the next mechanically dependency-satisfied boundary after this closeout."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "TX delay write/readback, BMCR restart, convergence polling, interrupts, packet I/O, networking, SSH, Phase 12.2, and phase transition require separate explicit tasks."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "No link readiness, Ethernet driver readiness, packet I/O, networking, SSH, Phase 12.2, or phase transition is accepted."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No task-owned source, script, docs, or evidence files were removed."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No new hardware run or inconclusive-run triage was needed because the accepted proof evidence was decisive."
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-closeout-20260616",
+  "classification": "tx-selected-register-read-visible-frontier-closed",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "accepted local/static discriminator core review",
+    "accepted serialized Pi 5 proof review",
+    "JSON evidence validation",
+    "docs build",
+    "diff checks"
+  ],
+  "files": {
+    "core_task": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-core.md",
+    "core_classification": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-core/classification.json",
+    "pi5_proof_task": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof.md",
+    "pi5_proof_classification": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof/classification.json",
+    "pi5_proof_capture_summary": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof/capture-summary.json",
+    "pi5_proof_evidence_map": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof/evidence-map.json",
+    "closeout_task": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-closeout.md",
+    "closeout_classification": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-closeout/classification.json"
+  },
+  "accepted_frontier": "tx-selected-register-read-visible-frontier-closed",
+  "decisive": true,
+  "next_boundary": "phase12-rp1-ethernet-bcm54213pe-post-tx-selected-read-source-checkpoint-20260616",
+  "rejected_followups": [
+    "hardware from this closeout",
+    "TX delay write/readback from this closeout",
+    "BMCR restart from this closeout",
+    "packet I/O",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ]
+}

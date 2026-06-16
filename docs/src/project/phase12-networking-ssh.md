@@ -2265,3 +2265,16 @@ tx-selected-read-completed=true. The proof keeps rx-delay-write-count=0x0,
 tx-delay-write-count=0x0, and bmcr-write-count=0x0, so TX delay write/readback,
 BMCR restart, convergence polling, link readiness, packet I/O, networking,
 sockets, SSH, Phase 12.2, and phase transition remain rejected.
+
+phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-closeout-20260616
+accepts tx-selected-register-read-visible-frontier-closed. The closeout
+reconciles the local/static discriminator core and serialized Pi 5 proof without
+a new hardware run. The closed frontier accepts only selected-tree/TFTP/serial
+freshness/final-identity/restore evidence, the no-MDIO/no-Ethernet control, the
+TX selector write completion, and selected TX shadow register read visibility at
+raw 0x0e00. The next mechanically dependency-satisfied boundary is the queued
+post-TX selected-read source checkpoint, which may decide between TX delay
+write/readback resume, source-contract correction, or explicit pause. TX delay
+write/readback, BMCR restart, convergence polling, link readiness, packet I/O,
+networking, sockets, SSH, Phase 12.2, and phase transition remain rejected by
+this closeout.
