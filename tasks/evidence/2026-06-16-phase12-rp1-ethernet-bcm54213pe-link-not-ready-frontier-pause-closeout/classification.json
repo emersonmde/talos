@@ -1,0 +1,103 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-link-not-ready-frontier-pause-closeout-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-link-not-ready-frontier-paused-return-to-generated-root-transport",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_input_frontier": {
+    "task_id": "phase12-rp1-ethernet-bcm54213pe-post-txorder-link-not-ready-source-checkpoint-20260616",
+    "commit": "9dd8bb783b3629e3f57a3a147c47f8079a23d094",
+    "classification": "bcm54213pe-post-txorder-link-not-ready-no-distinct-source-backed-discriminator-pause",
+    "selected_next_task": null,
+    "selected_discriminator": null
+  },
+  "closed_phase12_frontier": {
+    "classification": "bcm54213pe-link-not-ready-frontier-paused-return-to-generated-root-transport",
+    "pause_reason": "No mechanically ready, source-backed, qualitatively distinct link-not-ready discriminator remains selected after accepted corrected RGMII delay TX-order plus BMCR restart plus bounded convergence ended link-not-ready.",
+    "link_ready_packet_readiness_unblocked": false,
+    "generic_link_not_ready_discriminator_unblocked": false,
+    "phase12_hardware_authorized_by_this_task": false
+  },
+  "selected_next_task": "phase10-pi5-generated-root-firmware-initramfs-reservation-source-contract-20260616",
+  "selected_reason": "return-to-known-generated-root-boot-transport-blocker",
+  "selected_non_ethernet_boundary": {
+    "accepted_prior_task": "phase10-pi5-generated-root-boot-transport-closeout-20260605",
+    "accepted_prior_commit": "63d212d047e3e6a6647b0a0f1b7149d8518f0c7a",
+    "blocker": "Pi 5 firmware-loaded generated-root artifact consumption remains deferred until Talos reserves or copies the firmware initramfs range before early memory setup can overwrite it.",
+    "next_source_contract_task": "phase10-pi5-generated-root-firmware-initramfs-reservation-source-contract-20260616"
+  },
+  "accepted_ethernet_evidence_preserved": [
+    "physical Ethernet link precondition correction remains accepted and is not reopened",
+    "BMCR/autoneg restart and bounded convergence attempts ended link-not-ready",
+    "BCM54213PE read-only preflight and RGMII delay evidence remain retained context",
+    "corrected TX-order Pi 5 proof reached RX/TX delay criteria, skipped redundant TX write because GTXCLK_EN was already set, executed exactly one BMCR restart, and ended link-ready-terminal=false",
+    "post-TX-order source checkpoint found no selected distinct source-backed discriminator"
+  ],
+  "blocked": [
+    "link-ready packet-readiness until future accepted link-ready or autoneg-complete proof",
+    "generic link-not-ready discriminator core until selected_discriminator is non-null",
+    "GPIO32/ETH_RST_N reset ownership while persistent-or-firmware-owned event-state blocker remains controlling"
+  ],
+  "deferred": [
+    "MII_CTRL1000 master-mode writes behind unselected PHY_BRCM_EN_MASTER_MODE gate",
+    "interrupt ownership",
+    "APD/EEE/LED/WOL/expansion/suspend-resume/MAC/phylink work",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "rejected": [
+    "another BMCR/BMSR/ANAR/ANLPAR/MII_CTRL1000/MII_STAT1000/MACB_NSR poll",
+    "another bare BMCR restart",
+    "another convergence wait-count tweak",
+    "marker/capture-only retry",
+    "packet-readiness claim from timeout/link-not-ready evidence",
+    "hardware action from this static closeout"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Accepted Ethernet evidence is reconciled at timeout/link-not-ready without broadening to packet-readiness or networking."
+    },
+    {
+      "disposition": "blocked",
+      "finding": "Link-ready packet-readiness and generic link-not-ready discriminator tasks remain dependency-gated."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "GPIO32 reset ownership, master-mode writes, interrupt paths, PHY lifecycle paths, packet/networking/SSH, and Phase 12.2 require future explicit planning."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Same-shaped status polling, BMCR restart retry, wait tweak, and marker/capture-only retry are not selected."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No source, helper, task, docs, or evidence files were removed."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No hardware lock or inconclusive-run triage was needed for a static closeout."
+    }
+  ],
+  "forbidden_claims": [
+    "link-ready",
+    "autoneg-complete",
+    "ethernet-driver-readiness",
+    "gpio32-phy-reset-ownership",
+    "interrupt-ownership",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-link-not-ready-frontier-pause-closeout-20260616",
+  "classification": "bcm54213pe-link-not-ready-frontier-paused-return-to-generated-root-transport",
+  "evidence": {
+    "post_txorder_source_checkpoint": {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-post-txorder-link-not-ready-source-checkpoint.md",
+      "classification_path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-post-txorder-link-not-ready-source-checkpoint/classification.json",
+      "evidence_map_path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-post-txorder-link-not-ready-source-checkpoint/evidence-map.json",
+      "commit": "9dd8bb783b3629e3f57a3a147c47f8079a23d094",
+      "finding": "selected_next_task and selected_discriminator are null because no mechanically ready distinct source-backed Ethernet discriminator remains selected."
+    },
+    "accepted_tx_order_closeout": {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-closeout.md",
+      "classification_path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-closeout/classification.json",
+      "commit": "009a57a6bb69b33be32d2f8da07ff552e7779b0f",
+      "finding": "Closed frontier is timeout/link-not-ready after corrected RX/TX delay criteria and exactly one BMCR restart."
+    },
+    "accepted_tx_order_pi5_proof": {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof.md",
+      "classification_path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof/classification.json",
+      "capture_summary_path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof/capture-summary.json",
+      "finding": "Candidate runtime reported RX/TX delay completion, TX GTXCLK_EN already set, exactly one BMCR restart, eight samples, and link_ready_terminal=false."
+    },
+    "prior_ethernet_context": {
+      "bmcr_closeout_path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-closeout.md",
+      "convergence_closeout_path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-closeout.md",
+      "rgmii_delay_closeout_path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-closeout.md",
+      "gpio32_context_path": "docs/src/project/phase12-networking-ssh.md",
+      "finding": "Prior status, delay, and GPIO32/reset evidence does not unblock another same-shaped Ethernet attempt."
+    },
+    "selected_non_ethernet_followup": {
+      "path": "tasks/2026-06-05-phase10-pi5-generated-root-boot-transport-closeout.md",
+      "finding": "Pi 5 generated-root transport remains blocked on reserving or copying the firmware initramfs range before early memory setup can overwrite it."
+    },
+    "docs_updates": {
+      "roadmap_path": "docs/src/roadmap.md",
+      "phase12_path": "docs/src/project/phase12-networking-ssh.md",
+      "finding": "Docs record the paused Phase 12.1 frontier and selected generated-root follow-up task."
+    }
+  },
+  "validation": {
+    "static_task_evidence_inspection": "pass",
+    "jq_empty_on_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check_before_commit": "pass"
+  }
+}

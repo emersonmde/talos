@@ -2336,3 +2336,29 @@ link-ready-terminal=false. The link-ready packet-readiness checkpoint remains
 blocked; supervisor planning is required for any timeout/link-not-ready
 follow-up or explicit pause. Packet I/O, networking, sockets, SSH, Phase 12.2,
 and phase transition remain rejected.
+
+phase12-rp1-ethernet-bcm54213pe-post-txorder-link-not-ready-source-checkpoint-20260616
+accepts
+bcm54213pe-post-txorder-link-not-ready-no-distinct-source-backed-discriminator-pause.
+It reconciles the accepted TX-order timeout/link-not-ready frontier against the
+prior BMCR/autoneg, convergence, RGMII delay, GPIO32/reset, physical-link, and
+BCM54213PE source evidence. No mechanically ready, source-backed,
+qualitatively distinct link-not-ready discriminator is selected: GPIO32 /
+ETH_RST_N reset ownership remains held by the persistent-or-firmware-owned
+event-state blocker, MII_CTRL1000 master-mode writes remain behind an
+unselected PHY_BRCM_EN_MASTER_MODE gate, and interrupt, APD/EEE/lifecycle,
+MAC/phylink, packet, networking, sockets, SSH, Phase 12.2, and phase-transition
+work all require separate planning.
+
+phase12-rp1-ethernet-bcm54213pe-link-not-ready-frontier-pause-closeout-20260616
+accepts
+bcm54213pe-link-not-ready-frontier-paused-return-to-generated-root-transport.
+This closeout pauses Phase 12.1 at the accepted timeout/link-not-ready frontier
+instead of repeating status evidence or shrinking the claim to a shim. The
+accepted Ethernet evidence remains useful as retained context, but it does not
+unblock link-ready packet-readiness, GPIO32/PHY reset action, packet I/O,
+networking, sockets, SSH, Phase 12.2, or a phase transition. The next selected
+non-Ethernet task is
+phase10-pi5-generated-root-firmware-initramfs-reservation-source-contract-20260616,
+which returns the program to the earlier Pi 5 generated-root boot transport
+blocker.

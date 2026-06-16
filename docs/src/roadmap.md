@@ -10813,6 +10813,25 @@ is required, and the link-ready packet-readiness checkpoint remains
 dependency-gated until a future accepted proof establishes link-ready or
 autoneg-complete.
 
+phase12-rp1-ethernet-bcm54213pe-link-not-ready-frontier-pause-closeout-20260616
+accepts
+bcm54213pe-link-not-ready-frontier-paused-return-to-generated-root-transport.
+The closeout freezes Phase 12.1 at the accepted timeout/link-not-ready
+frontier rather than narrowing acceptance to a shim or repeating same-shaped
+status evidence. It preserves the accepted physical-link, BMCR/autoneg,
+convergence, read-only preflight, RGMII delay, corrected TX-order proof, and
+post-TX-order source checkpoint evidence while keeping link-ready
+packet-readiness dependency-gated until a future accepted proof establishes
+link-ready or autoneg-complete. It rejects more BMCR/BMSR/ANAR/ANLPAR/
+MII_CTRL1000/MII_STAT1000/MACB_NSR polling, another bare BMCR restart,
+convergence wait tweaks, marker/capture-only retries, GPIO32/PHY reset action,
+packet I/O, networking, sockets, SSH, Phase 12.2, and phase transition work
+from this frontier. The selected next non-Ethernet task is
+phase10-pi5-generated-root-firmware-initramfs-reservation-source-contract-20260616,
+returning to the known generated-root boot transport blocker where Pi 5
+firmware-loaded initramfs consumption remains deferred on reservation/copy of
+the firmware initramfs range before early memory setup can overwrite it.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
